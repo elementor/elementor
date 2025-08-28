@@ -2,202 +2,221 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const planPath = process.argv.find( ( a ) => a.startsWith( '--plan=' ) )?.split( '=' )[ 1 ];
-const only =
-  process.argv
-  	.find( ( a ) => a.startsWith( '--only=' ) )
-  	?.split( '=' )[ 1 ]
-  	?.split( ',' )
-  	.map( ( s ) => s.trim() )
-  	.filter( Boolean ) || [];
+// Constants for better maintainability
+const USAGE_MESSAGE = 'Usage: ts-node tests/scripts/apply-md-selection.ts --plan tests/docs/test-plans/x.md --only TC-001,TC-003';
+const TEST_TEMPLATE_HEADER = `import { test, expect } from '@playwright/test';
+// NOTE: Reuse helpers from tests/playwright/pages/editor-page.ts.
+// Import your fixtures/helpers here when needed.
+// import EditorPage from '../../pages/editor-page';
 
-if ( ! planPath || 0 === only.length ) {
-	console.error(
-		'Usage: ts-node tests/scripts/apply-md-selection.ts --plan tests/docs/test-plans/x.md --only TC-001,TC-003',
-	);
-	process.exit( 1 );
+test.describe('{widget} — {feature}', () => {
+});
+`;
+
+// Types for better type safety
+interface Row {
+	id: string;
+	title: string;
+	pre: string;
+	steps: string[];
+	expected: string[];
+	priority?: string;
+	type?: string;
 }
 
-const md = fs.readFileSync( planPath, 'utf8' );
-
-/** ---- Helpers ----------------------------------------------------------- */
-
-function escapeRegExp( s: string ) {
-	return s.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
+interface ParseResult {
+	success: boolean;
+	rows: Row[];
+	message?: string;
 }
 
-type Row = {
-  id: string;
-  title: string;
-  pre: string;
-  steps: string[];
-  expected: string[];
-  priority?: string;
-  type?: string;
-};
+interface FileInfo {
+	widget: string;
+	feature: string;
+	specDir: string;
+	specFile: string;
+}
+
+function parseCommandLineArgs(): { planPath: string | undefined; only: string[] } {
+	const planPath = process.argv.find( ( a ) => a.startsWith( '--plan=' ) )?.split( '=' )[ 1 ];
+	const only = process.argv
+		.find( ( a ) => a.startsWith( '--only=' ) )
+		?.split( '=' )[ 1 ]
+		?.split( ',' )
+		.map( ( s ) => s.trim() )
+		.filter( Boolean ) || [];
+
+	return { planPath, only };
+}
+
+function validateInputs( planPath: string | undefined, only: string[] ): { success: boolean; message?: string } {
+	if ( ! planPath || 0 === only.length ) {
+		return { success: false, message: USAGE_MESSAGE };
+	}
+
+	if ( ! fs.existsSync( planPath ) ) {
+		return { success: false, message: `Error: Plan file not found: ${ planPath }` };
+	}
+
+	return { success: true };
+}
 
 function parseBulletCards( markdown: string ): Row[] {
-	// Match "### TC-001 — Title" or "### TC-001 - Title"
 	const reHeader = /^###\s*TC-(\d+)\s*[—-]\s*(.+)$/gm;
 	const rows: Row[] = [];
-	let m: RegExpExecArray | null;
-
-	// Collect blocks between headers
 	const indices: { id: string; title: string; start: number; end: number }[] = [];
-	while ( ( m = reHeader.exec( markdown ) ) ) {
+
+	// Collect block indices
+	let match: RegExpExecArray | null;
+	while ( ( match = reHeader.exec( markdown ) ) ) {
 		indices.push( {
-			id: `TC-${ m[ 1 ] }`,
-			title: ( m[ 2 ] || '' ).trim(),
-			start: m.index + m[ 0 ].length,
+			id: `TC-${ match[ 1 ] }`,
+			title: ( match[ 2 ] || '' ).trim(),
+			start: match.index + match[ 0 ].length,
 			end: markdown.length,
 		} );
 	}
+
+	// Set end boundaries
 	for ( let i = 0; i < indices.length; i++ ) {
 		if ( i < indices.length - 1 ) {
 			indices[ i ].end = indices[ i + 1 ].start;
 		}
 	}
 
-	for ( const blk of indices ) {
-		const body = markdown.slice( blk.start, blk.end );
-
-		// - Preconditions: ...
-		const preMatch = body.match( /^\s*-\s*Preconditions:\s*(.+)$/m );
-		const pre = preMatch ? preMatch[ 1 ].trim() : '';
-
-		// Steps list: either numbered "1) ..." lines or "- ..." under "- Steps:"
-		const steps: string[] = [];
-		const stepsSection = body.split( /^\s*-\s*Steps:\s*$/m )[ 1 ]?.split( /^\s*-\s*Expected:\s*$/m )[ 0 ];
-		if ( stepsSection ) {
-			const numbered = [ ...stepsSection.matchAll( /^\s*(?:\d+|\-)\)\s*(.+)$|^\s*-\s+(.+)$/gm ) ];
-			for ( const sm of numbered ) {
-				const s = ( sm[ 1 ] || sm[ 2 ] || '' ).trim();
-				if ( s ) {
-					steps.push( s );
-				}
-			}
-			if ( 0 === steps.length ) {
-				// Fallback: any lines like "1) ..." in the block
-				for ( const sm of body.matchAll( /^\s*\d+\)\s*(.+)$/gm ) ) {
-					steps.push( ( sm[ 1 ] || '' ).trim() );
-				}
-			}
-		}
-
-		// Expected bullets after "- Expected:"
-		const expected: string[] = [];
-		const expectedSection = body.split( /^\s*-\s*Expected:\s*$/m )[ 1 ]?.split( /^\s*-\s*(Priority|Type|Status):/m )[ 0 ];
-		if ( expectedSection ) {
-			for ( const em of expectedSection.matchAll( /^\s*-\s+(.+)$/gm ) ) {
-				const e = ( em[ 1 ] || '' ).trim();
-				if ( e ) {
-					expected.push( e );
-				}
-			}
-			if ( 0 === expected.length ) {
-				// Single-line expected
-				const line = expectedSection.split( '\n' ).map( ( s ) => s.trim() ).filter( Boolean )[ 0 ];
-				if ( line ) {
-					expected.push( line );
-				}
-			}
-		}
-
-		// Optional Priority / Type
-		const prio = body.match( /^\s*-\s*Priority:\s*(.+)$/m )?.[ 1 ]?.trim();
-		const typ = body.match( /^\s*-\s*Type:\s*(.+)$/m )?.[ 1 ]?.trim();
-
-		rows.push( {
-			id: blk.id,
-			title: blk.title,
-			pre,
-			steps,
-			expected,
-			priority: prio,
-			type: typ,
-		} );
+	// Parse each block
+	for ( const block of indices ) {
+		const body = markdown.slice( block.start, block.end );
+		const row = parseBlockContent( body, block.id, block.title );
+		rows.push( row );
 	}
+
 	return rows;
+}
+
+function parseBlockContent( body: string, id: string, title: string ): Row {
+	// Extract preconditions
+	const preMatch = body.match( /^\s*-\s*Preconditions:\s*(.+)$/m );
+	const pre = preMatch ? preMatch[ 1 ].trim() : '';
+
+	// Extract steps
+	const steps = extractSteps( body );
+
+	// Extract expected results
+	const expected = extractExpected( body );
+
+	// Extract optional fields
+	const priority = body.match( /^\s*-\s*Priority:\s*(.+)$/m )?.[ 1 ]?.trim();
+	const type = body.match( /^\s*-\s*Type:\s*(.+)$/m )?.[ 1 ]?.trim();
+
+	return {
+		id,
+		title,
+		pre,
+		steps,
+		expected,
+		priority,
+		type,
+	};
+}
+
+function extractSteps( body: string ): string[] {
+	const steps: string[] = [];
+	const stepsSection = body.split( /^\s*-\s*Steps:\s*$/m )[ 1 ]?.split( /^\s*-\s*Expected:\s*$/m )[ 0 ];
+
+	if ( stepsSection ) {
+		const numberedMatches = [ ...stepsSection.matchAll( /^\s*(?:\d+|\-)\)\s*(.+)$|^\s*-\s+(.+)$/gm ) ];
+		for ( const match of numberedMatches ) {
+			const step = ( match[ 1 ] || match[ 2 ] || '' ).trim();
+			if ( step ) {
+				steps.push( step );
+			}
+		}
+
+		// Fallback: any numbered lines in the block
+		if ( 0 === steps.length ) {
+			for ( const match of body.matchAll( /^\s*\d+\)\s*(.+)$/gm ) ) {
+				steps.push( ( match[ 1 ] || '' ).trim() );
+			}
+		}
+	}
+
+	return steps;
+}
+
+function extractExpected( body: string ): string[] {
+	const expected: string[] = [];
+	const expectedSection = body.split( /^\s*-\s*Expected:\s*$/m )[ 1 ]?.split( /^\s*-\s*(Priority|Type|Status):/m )[ 0 ];
+
+	if ( expectedSection ) {
+		for ( const match of expectedSection.matchAll( /^\s*-\s+(.+)$/gm ) ) {
+			const expectation = ( match[ 1 ] || '' ).trim();
+			if ( expectation ) {
+				expected.push( expectation );
+			}
+		}
+
+		// Single-line expected fallback
+		if ( 0 === expected.length ) {
+			const line = expectedSection.split( '\n' ).map( ( s ) => s.trim() ).filter( Boolean )[ 0 ];
+			if ( line ) {
+				expected.push( line );
+			}
+		}
+	}
+
+	return expected;
 }
 
 function parseLegacyTable( markdown: string ): Row[] {
-	const rows = [ ...markdown.matchAll( /\|\s*TC-(\d+)\b\s*\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/g ) ].map( ( m ) => ( {
-		id: `TC-${ m[ 1 ] }`,
-		title: m[ 2 ].trim(),
-		pre: m[ 3 ].trim(),
-		steps: m[ 4 ].trim().split( /\s*\d+\)\s*/ ).map( ( s ) => s.trim() ).filter( Boolean ),
-		expected: [ m[ 5 ].trim() ],
-		priority: m[ 6 ].trim(),
-		type: m[ 7 ].trim(),
+	const tableMatches = [ ...markdown.matchAll( /\|\s*TC-(\d+)\b\s*\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/g ) ];
+
+	return tableMatches.map( ( match ) => ( {
+		id: `TC-${ match[ 1 ] }`,
+		title: match[ 2 ].trim(),
+		pre: match[ 3 ].trim(),
+		steps: match[ 4 ].trim().split( /\s*\d+\)\s*/ ).map( ( s ) => s.trim() ).filter( Boolean ),
+		expected: [ match[ 5 ].trim() ],
+		priority: match[ 6 ].trim(),
+		type: match[ 7 ].trim(),
 	} ) );
-	return rows;
 }
 
-/** ---- Parse ------------------------------------------------------------- */
+function parseMarkdown( markdown: string ): ParseResult {
+	const bulletRows = parseBulletCards( markdown );
+	
+	if ( bulletRows.length > 0 ) {
+		return { success: true, rows: bulletRows };
+	}
 
-let parsed: Row[] = [];
-const bulletRows = parseBulletCards( md );
-if ( bulletRows.length > 0 ) {
-	parsed = bulletRows;
-} else {
-	parsed = parseLegacyTable( md );
+	const tableRows = parseLegacyTable( markdown );
+	return { success: true, rows: tableRows };
 }
 
-const rows = parsed.filter( ( r ) => only.includes( r.id ) );
+function getFileInfo( planPath: string ): FileInfo {
+	const base = path.basename( planPath, '.md' );
+	const [ widgetRaw, featureRaw ] = base.split( '.' );
+	const widget = widgetRaw || 'example';
+	const feature = featureRaw || 'basic';
 
-if ( 0 === rows.length ) {
-	console.error( 'No matching TC IDs found in plan.' );
-	process.exit( 1 );
+	const specDir = path.join( 'tests', 'playwright', 'sanity', 'modules', widget );
+	const specFile = path.join( specDir, `${ feature }.test.ts` );
+
+	return { widget, feature, specDir, specFile };
 }
 
-/** ---- Derive widget/feature from plan file ----------------------------- */
+function createTestContent( row: Row ): string {
+	const stepsComment = row.steps.length
+		? row.steps.map( ( s, i ) => `  // ${ i + 1 }) ${ s }` ).join( '\n' )
+		: '  // (add steps)';
 
-const base = path.basename( planPath, '.md' ); // E.g. "div-block.background-color"
-const [ widgetRaw, featureRaw ] = base.split( '.' );
-const widget = widgetRaw || 'example';
-const feature = featureRaw || 'basic';
+	const expectedComment = row.expected.length
+		? row.expected.map( ( e ) => `  // - ${ e }` ).join( '\n' )
+		: '  // (add expected)';
 
-/** ---- Target spec path -------------------------------------------------- */
-
-const specDir = path.join(
-	'tests',
-	'playwright',
-	'sanity',
-	'modules',
-	widget,
-);
-fs.mkdirSync( specDir, { recursive: true } );
-const specFile = path.join( specDir, `${ feature }.test.ts` );
-
-/** ---- Write / append ---------------------------------------------------- */
-
-let header = '';
-if ( ! fs.existsSync( specFile ) ) {
-	header = `import { test, expect } from '@playwright/test';
-// NOTE: Reuse helpers from tests/playwright/pages/editor-page.ts.
-// Import your fixtures/helpers here when needed.
-// import EditorPage from '../../pages/editor-page';
-
-test.describe('${ widget } — ${ feature }', () => {
-});
-`;
-	fs.writeFileSync( specFile, header, 'utf8' );
-}
-
-// Insert tests before the closing describe if present
-const current = fs.readFileSync( specFile, 'utf8' );
-const insertAt = current.lastIndexOf( '});' );
-const prefix = insertAt >= 0 ? current.slice( 0, insertAt ) : current;
-const suffix = insertAt >= 0 ? current.slice( insertAt ) : '';
-
-let generated = '';
-for ( const r of rows ) {
-	const stepsComment = r.steps.length ? r.steps.map( ( s, i ) => `  // ${ i + 1 }) ${ s }` ).join( '\n' ) : '  // (add steps)';
-	const expectedComment = r.expected.length ? r.expected.map( ( e ) => `  // - ${ e }` ).join( '\n' ) : '  // (add expected)';
-
-	generated += `
-test('${ r.id } ${ r.title.replace( /'/g, "\\'" ) }', async ({ page }, testInfo) => {
-  // Preconditions: ${ r.pre || '(none specified)' }
+	return `
+test('${ row.id } ${ row.title.replace( /'/g, "\\'" ) }', async ({ page }, testInfo) => {
+  // Preconditions: ${ row.pre || '(none specified)' }
 ${ stepsComment }
 ${ expectedComment }
 
@@ -210,9 +229,74 @@ ${ expectedComment }
 `;
 }
 
-const output = insertAt >= 0 ? prefix + generated + suffix : prefix + generated;
-fs.writeFileSync( specFile, output, 'utf8' );
+function writeTestFile( specFile: string, fileInfo: FileInfo, rows: Row[] ): void {
+	// Create directory if it doesn't exist
+	fs.mkdirSync( fileInfo.specDir, { recursive: true } );
 
-for ( const r of rows ) {
-	console.log( `Added test from ${ r.id } -> ${ specFile }` );
+	// Generate header if file doesn't exist
+	let header = '';
+	if ( ! fs.existsSync( specFile ) ) {
+		header = TEST_TEMPLATE_HEADER
+			.replace( '{widget}', fileInfo.widget )
+			.replace( '{feature}', fileInfo.feature );
+		fs.writeFileSync( specFile, header, 'utf8' );
+	}
+
+	// Read current content and find insertion point
+	const current = fs.readFileSync( specFile, 'utf8' );
+	const insertAt = current.lastIndexOf( '});' );
+	const prefix = insertAt >= 0 ? current.slice( 0, insertAt ) : current;
+	const suffix = insertAt >= 0 ? current.slice( insertAt ) : '';
+
+	// Generate test content
+	const generated = rows.map( createTestContent ).join( '' );
+	const output = insertAt >= 0 ? prefix + generated + suffix : prefix + generated;
+
+	fs.writeFileSync( specFile, output, 'utf8' );
 }
+
+function main(): void {
+	const { planPath, only } = parseCommandLineArgs();
+	const validation = validateInputs( planPath, only );
+
+	if ( ! validation.success ) {
+		// eslint-disable-next-line no-console
+		console.error( validation.message );
+		process.exit( 1 );
+	}
+
+	try {
+		const markdown = fs.readFileSync( planPath!, 'utf8' );
+		const parseResult = parseMarkdown( markdown );
+
+		if ( ! parseResult.success ) {
+			// eslint-disable-next-line no-console
+			console.error( parseResult.message );
+			process.exit( 1 );
+		}
+
+		const filteredRows = parseResult.rows.filter( ( r ) => only.includes( r.id ) );
+
+		if ( 0 === filteredRows.length ) {
+			// eslint-disable-next-line no-console
+			console.error( 'No matching TC IDs found in plan.' );
+			process.exit( 1 );
+		}
+
+		const fileInfo = getFileInfo( planPath! );
+		writeTestFile( fileInfo.specFile, fileInfo, filteredRows );
+
+		// Log results
+		for ( const row of filteredRows ) {
+			// eslint-disable-next-line no-console
+			console.log( `Added test from ${ row.id } -> ${ fileInfo.specFile }` );
+		}
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error( `Error processing file: ${ error instanceof Error ? error.message : 'Unknown error' }` );
+		process.exit( 1 );
+	}
+}
+
+// Run the script
+main();
