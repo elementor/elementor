@@ -55,6 +55,7 @@ export default function createAtomicElementView( type ) {
 			const local = {};
 			const cssId = this.model.getSetting( '_cssid' );
 			const customAttributes = this.model.getSetting( 'attributes' )?.value ?? [];
+			const initialAttributes = this?.model?.config?.initial_attributes;
 
 			if ( cssId ) {
 				local.id = cssId.value;
@@ -78,6 +79,7 @@ export default function createAtomicElementView( type ) {
 			return {
 				...attr,
 				...local,
+				...initialAttributes,
 			};
 		},
 
@@ -214,20 +216,37 @@ export default function createAtomicElementView( type ) {
 		 * @return {Object} groups
 		 */
 		getContextMenuGroups() {
-			var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
-				transferGroupClipboardIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
+			const saveActions = [
+				{
+					name: 'save',
+					title: __( 'Save as a template', 'elementor' ),
+					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
+					callback: this.saveAsTemplate.bind( this ),
+					isEnabled: () => ! this.getContainer().isLocked(),
+				},
+			];
+
+			if ( elementorCommon.config.experimentalFeatures?.e_components ) {
+				saveActions.unshift(			{
+					name: 'save-component',
+					title: __( 'Save as a component', 'elementor' ),
+					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
+					callback: this.saveAsComponent.bind( this ),
+					isEnabled: () => ! this.getContainer().isLocked(),
+				} );
+			}
+
+			var groups = BaseElementView.prototype.getContextMenuGroups.apply(
+					this,
+					arguments,
+				),
+				transferGroupClipboardIndex = groups.indexOf(
+					_.findWhere( groups, { name: 'clipboard' } ),
+				);
 
 			groups.splice( transferGroupClipboardIndex + 1, 0, {
 				name: 'save',
-				actions: [
-					{
-						name: 'save',
-						title: __( 'Save as a template', 'elementor' ),
-						shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
-						callback: this.saveAsTemplate.bind( this ),
-						isEnabled: () => ! this.getContainer().isLocked(),
-					},
-				],
+				actions: saveActions,
 			} );
 
 			return groups;
@@ -237,6 +256,26 @@ export default function createAtomicElementView( type ) {
 			$e.route( 'library/save-template', {
 				model: this.model,
 			} );
+		},
+
+		saveAsComponent( openContextMenuEvent ) {
+			// Calculate the absolute position where the context menu was opened.
+			const openMenuOriginalEvent = openContextMenuEvent.originalEvent;
+			const iframeRect = elementor.$preview[ 0 ].getBoundingClientRect();
+			const anchorPosition = {
+				left: openMenuOriginalEvent.clientX + iframeRect.left,
+				top: openMenuOriginalEvent.clientY + iframeRect.top,
+			};
+
+			window.dispatchEvent( new CustomEvent(
+				'elementor/editor/open-save-as-component-form',
+				{
+					detail: {
+						element: elementor.getContainer( this.model.id ),
+						anchorPosition,
+					},
+				},
+			) );
 		},
 
 		isDroppingAllowed() {

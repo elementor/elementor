@@ -13,6 +13,7 @@ use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
+use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -21,17 +22,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Rest_Api {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'variables';
-
 	const HTTP_OK = 200;
 	const HTTP_CREATED = 201;
 	const HTTP_BAD_REQUEST = 400;
 	const HTTP_NOT_FOUND = 404;
 	const HTTP_SERVER_ERROR = 500;
-
 	const MAX_ID_LENGTH = 64;
 	const MAX_LABEL_LENGTH = 50;
 	const MAX_VALUE_LENGTH = 512;
-
 	private Variables_Repository $variables_repository;
 
 	public function __construct( Variables_Repository $variables_repository ) {
@@ -141,6 +139,24 @@ class Rest_Api {
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_value' ],
 					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/batch', [
+			'methods' => WP_REST_Server::CREATABLE,
+			'callback' => [ $this, 'process_batch' ],
+			'permission_callback' => [ $this, 'enough_permissions_to_perform_rw_action' ],
+			'args' => [
+				'watermark' => [
+					'required' => true,
+					'type' => 'integer',
+					'validate_callback' => [ $this, 'is_valid_watermark' ],
+				],
+				'operations' => [
+					'required' => true,
+					'type' => 'array',
+					'validate_callback' => [ $this, 'is_valid_operations_array' ],
 				],
 			],
 		] );
@@ -311,11 +327,13 @@ class Rest_Api {
 		$overrides = [];
 
 		$label = $request->get_param( 'label' );
+
 		if ( $label ) {
 			$overrides['label'] = $label;
 		}
 
 		$value = $request->get_param( 'value' );
+
 		if ( $value ) {
 			$overrides['value'] = $value;
 		}
@@ -395,5 +413,85 @@ class Rest_Api {
 				'status' => $status_code,
 			],
 		], $status_code );
+	}
+
+	public function is_valid_watermark( $watermark ) {
+		if ( ! is_numeric( $watermark ) || $watermark < 0 ) {
+			return new WP_Error(
+				'invalid_watermark',
+				__( 'Watermark must be a non-negative integer', 'elementor' )
+			);
+		}
+
+		return true;
+	}
+
+	public function is_valid_operations_array( $operations ) {
+		if ( ! is_array( $operations ) || empty( $operations ) ) {
+			return new WP_Error(
+				'invalid_operations_empty',
+				__( 'Operations array cannot be empty', 'elementor' )
+			);
+		}
+
+		foreach ( $operations as $index => $operation ) {
+			if ( ! is_array( $operation ) || ! isset( $operation['type'] ) ) {
+				return new WP_Error(
+					'invalid_operation_structure',
+					sprintf(
+						/* translators: %d: operation index */
+						__( 'Invalid operation structure at index %d', 'elementor' ),
+						$index
+					)
+				);
+			}
+
+			$allowed_types = [ 'create', 'update', 'delete', 'restore' ];
+
+			if ( ! in_array( $operation['type'], $allowed_types, true ) ) {
+				return new WP_Error(
+					'invalid_operation_type',
+					sprintf(
+						/* translators: %d: operation index */
+						__( 'Invalid operation type at index %d', 'elementor' ),
+						$index
+					)
+				);
+			}
+		}
+
+		return true;
+	}
+
+	public function process_batch( WP_REST_Request $request ) {
+		try {
+			return $this->process_batch_operations( $request );
+		} catch ( Exception $e ) {
+			return $this->batch_error_response( $e );
+		}
+	}
+
+	private function process_batch_operations( WP_REST_Request $request ) {
+		$watermark = $request->get_param( 'watermark' );
+		$operations = $request->get_param( 'operations' );
+
+		$result = $this->variables_repository->process_atomic_batch( $operations, $watermark );
+
+		$this->clear_cache();
+
+		return $this->success_response( $result );
+	}
+
+	private function batch_error_response( Exception $e ) {
+		if ( $e instanceof BatchOperationFailed ) {
+			return new WP_REST_Response( [
+				'success' => false,
+				'code' => 'atomic_operation_failed',
+				'message' => __( 'Batch operation failed', 'elementor' ),
+				'data' => $e->getErrorDetails(),
+			], self::HTTP_BAD_REQUEST );
+		}
+
+		return $this->error_response( $e );
 	}
 }

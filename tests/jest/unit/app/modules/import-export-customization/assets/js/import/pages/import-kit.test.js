@@ -7,6 +7,7 @@ const mockDispatch = jest.fn();
 const mockNavigate = jest.fn();
 const mockUseImportContext = jest.fn();
 const mockUseUploadKit = jest.fn();
+const mockUseQueryParams = jest.fn();
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import/context/import-context', () => ( {
 	useImportContext: () => mockUseImportContext(),
@@ -17,6 +18,9 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import/c
 		IMPORTING: 'IMPORTING',
 		COMPLETED: 'COMPLETED',
 	},
+	ACTION_TYPE: {
+		APPLY_ALL: 'apply-all',
+	},
 } ) );
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import/hooks/use-upload-kit', () => ( {
@@ -25,6 +29,13 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import/h
 
 jest.mock( '@reach/router', () => ( {
 	useNavigate: () => mockNavigate,
+} ) );
+
+jest.mock( 'elementor-app/hooks/use-query-params', () => ( {
+	__esModule: true,
+	default: () => ( {
+		getAll: () => mockUseQueryParams(),
+	} ),
 } ) );
 
 const mockSendPageViewsWebsiteTemplates = jest.fn();
@@ -54,12 +65,14 @@ describe( 'ImportKit Page', () => {
 		uploading = false,
 		error = null,
 		data = {},
+		queryParams = {},
 	} = {} ) {
 		mockUseImportContext.mockReturnValue( {
 			data,
 			dispatch: mockDispatch,
 		} );
 		mockUseUploadKit.mockReturnValue( { uploading, error } );
+		mockUseQueryParams.mockReturnValue( queryParams );
 	}
 
 	it( 'renders loader when uploading', async () => {
@@ -107,5 +120,65 @@ describe( 'ImportKit Page', () => {
 		} );
 		// Assert
 		expect( mockDispatch ).toHaveBeenCalledWith( { type: 'SET_FILE', payload: file } );
+	} );
+
+	it( 'stores action_type in context when kit upload params are present', () => {
+		// Arrange
+		const queryParams = {
+			id: 'test-id',
+			referrer: 'kit-library',
+			action_type: 'apply-all',
+		};
+		setup( { queryParams } );
+		// Act
+		render( <ImportKit /> );
+		// Assert
+		expect( mockDispatch ).toHaveBeenCalledWith( { type: 'SET_ACTION_TYPE', payload: 'apply-all' } );
+	} );
+
+	it( 'bypasses customization and goes directly to process when apply-all action is detected', () => {
+		// Arrange
+		const mockUploadedData = {
+			manifest: {
+				'site-settings': { some: 'settings' },
+				templates: { template1: {} },
+				content: { post1: {} },
+				plugins: [ { plugin: 'test-plugin' } ],
+			},
+		};
+		setup( {
+			data: {
+				actionType: 'apply-all',
+				uploadedData: mockUploadedData,
+			},
+		} );
+		// Act
+		render( <ImportKit /> );
+		// Assert
+		expect( mockDispatch ).toHaveBeenCalledWith( { type: 'ADD_INCLUDES', payload: [ 'settings', 'templates', 'content', 'plugins' ] } );
+		expect( mockDispatch ).toHaveBeenCalledWith( { type: 'SET_IMPORT_STATUS', payload: 'IMPORTING' } );
+		expect( mockNavigate ).toHaveBeenCalledWith( 'import-customization/process' );
+	} );
+
+	it( 'goes to customization when no apply-all action is detected', () => {
+		// Arrange
+		const mockUploadedData = {
+			manifest: {
+				'site-settings': { some: 'settings' },
+				templates: { template1: {} },
+				content: { post1: {} },
+			},
+		};
+		setup( {
+			data: {
+				actionType: null,
+				uploadedData: mockUploadedData,
+			},
+		} );
+		// Act
+		render( <ImportKit /> );
+		// Assert
+		expect( mockDispatch ).toHaveBeenCalledWith( { type: 'SET_IMPORT_STATUS', payload: 'CUSTOMIZING' } );
+		expect( mockNavigate ).toHaveBeenCalledWith( 'import-customization/content' );
 	} );
 } );
