@@ -1,7 +1,7 @@
 class EventBus {
-	private listeners = new Map< string, Set< ( data?: { itemValue: unknown } ) => void > >();
+	private listeners = new Map< string, Set< ( data?: unknown ) => void > >();
 
-	subscribe( eventName: string, callback: ( data?: { itemValue: unknown } ) => void ) {
+	subscribe( eventName: string, callback: ( data?: unknown ) => void ) {
 		if ( ! this.listeners.has( eventName ) ) {
 			this.listeners.set( eventName, new Set() );
 		}
@@ -11,7 +11,7 @@ class EventBus {
 		}
 	}
 
-	unsubscribe( eventName: string, callback?: ( data?: { itemValue: unknown } ) => void ) {
+	unsubscribe( eventName: string, callback?: ( data?: unknown ) => void ) {
 		const eventListeners = this.listeners.get( eventName );
 		if ( ! eventListeners ) {
 			return;
@@ -27,7 +27,7 @@ class EventBus {
 		}
 	}
 
-	emit( eventName: string, data?: { itemValue: unknown } ) {
+	emit( eventName: string, data?: unknown ) {
 		const eventListeners = this.listeners.get( eventName );
 		if ( eventListeners ) {
 			eventListeners.forEach( ( callback ) => callback( data ) );
