@@ -55,6 +55,7 @@ export default function createAtomicElementView( type ) {
 			const local = {};
 			const cssId = this.model.getSetting( '_cssid' );
 			const customAttributes = this.model.getSetting( 'attributes' )?.value ?? [];
+			const initialAttributes = this?.model?.config?.initial_attributes;
 
 			if ( cssId ) {
 				local.id = cssId.value;
@@ -78,6 +79,7 @@ export default function createAtomicElementView( type ) {
 			return {
 				...attr,
 				...local,
+				...initialAttributes,
 			};
 		},
 
