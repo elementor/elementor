@@ -113,7 +113,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 */
 	protected function print_custom_attributes() {
 		$settings = $this->get_atomic_settings();
-		$attributes = $settings['attributes'];
+		$attributes = $settings['attributes'] ?? '';
 		if ( ! empty( $attributes ) && is_string( $attributes ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo ' ' . $attributes;
