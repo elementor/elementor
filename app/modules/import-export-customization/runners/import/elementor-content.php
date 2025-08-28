@@ -90,10 +90,10 @@ class Elementor_Content extends Import_Runner_Base {
 						'imported_terms' => $imported_terms,
 					];
 
-					$import_result = apply_filters( 'elementor/import-export-customization/import/elementor-content/customization', null, $data, [], $customization, $this );
+					$import_result = apply_filters( 'elementor/import-export-customization/import/elementor-content/customization', null, $data, [], $customization ?? [], $this );
 
 					if ( is_array( $import_result ) ) {
-						$result[ $import_result['status'] ] = $import_result['result'];
+						$result[ $import_result['status'] ][ $id ] = $import_result['result'];
 						continue;
 					}
 				}
