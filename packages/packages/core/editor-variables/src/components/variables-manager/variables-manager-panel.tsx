@@ -11,7 +11,17 @@ import {
 import { ThemeProvider } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { ColorFilterIcon, TrashIcon, XIcon } from '@elementor/icons';
-import { Alert, AlertTitle, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
+import {
+	Alert,
+	AlertTitle,
+	Box,
+	Button,
+	Divider,
+	ErrorBoundary,
+	IconButton,
+	type IconButtonProps,
+	Stack,
+} from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getVariables } from '../../hooks/use-prop-variables';

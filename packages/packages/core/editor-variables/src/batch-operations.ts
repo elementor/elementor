@@ -125,26 +125,26 @@ export const buildOperationsArray = (
 export const validateOperations = ( operations: BatchOperation[] ): { isValid: boolean; errors: string[] } => {
 	const errors: string[] = [];
 
-	operations.forEach( ( op, index ) => {
+	operations.forEach( ( op ) => {
 		switch ( op.type ) {
 			case 'create':
 				if ( ! op.variable?.type || ! op.variable?.label || ! op.variable?.value ) {
-					errors.push( __( `Create operation at index ${ index } is missing required fields`, 'elementor' ) );
+					errors.push( __( 'Create operation is missing required fields', 'elementor' ) );
 				}
 				break;
 			case 'update':
 				if ( ! op.id || ! op.variable || ( ! op.variable.label && ! op.variable.value ) ) {
-					errors.push( __( `Update operation at index ${ index } is missing required fields`, 'elementor' ) );
+					errors.push( __( 'Update operation is missing required fields', 'elementor' ) );
 				}
 				break;
 			case 'delete':
 				if ( ! op.id ) {
-					errors.push( __( `Delete operation at index ${ index } is missing ID`, 'elementor' ) );
+					errors.push( __( 'Delete operation is missing ID', 'elementor' ) );
 				}
 				break;
 			case 'restore':
 				if ( ! op.id ) {
-					errors.push( __( `Restore operation at index ${ index } is missing ID`, 'elementor' ) );
+					errors.push( __( 'Restore operation is missing ID', 'elementor' ) );
 				}
 				break;
 		}

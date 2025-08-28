@@ -175,7 +175,6 @@ export const service = {
 	},
 
 	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList ) => {
-		console.log( 'batchSave', originalVariables, currentVariables );
 		const operations = buildOperationsArray( originalVariables, currentVariables );
 		const validation = validateOperations( operations );
 
