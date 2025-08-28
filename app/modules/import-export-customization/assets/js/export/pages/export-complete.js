@@ -42,7 +42,7 @@ export default function ExportComplete() {
 		if ( 'cloud' !== kitInfo.source && exportedData?.file ) {
 			downloadFile();
 		}
-	}, [ exportedData, kitInfo.source, downloadFile ] );
+	}, [ exportedData, kitInfo.source ] );
 
 	useEffect( () => {
 		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportSummary );
@@ -161,26 +161,43 @@ export default function ExportComplete() {
 
 	const getContentSummary = () => {
 		const content = exportedData?.manifest?.content;
-		if ( ! content ) {
+		const wpContent = exportedData?.manifest?.[ 'wp-content' ];
+		if ( ! content && ! wpContent ) {
 			return __( 'No content exported', 'elementor' );
 		}
 
 		const summaryTitles = elementorAppConfig[ 'import-export-customization' ]?.summaryTitles?.content || {};
 
-		const summaryParts = Object.entries( content ).map( ( [ docType, docs ] ) => {
+		const summaryPartsMap = {};
+
+		const getSummaryParts = ( [ docType, docs ] ) => {
 			const label = summaryTitles[ docType ];
 			if ( ! label ) {
-				return null;
+				return;
 			}
 
-			const count = Object.keys( docs ).length;
+			let count = Object.keys( docs ).length;
 			if ( 0 === count ) {
-				return null;
+				return;
+			}
+
+			const existingPart = summaryPartsMap[ docType ];
+
+			if ( existingPart ) {
+				count += existingPart.count;
 			}
 
 			const title = count > 1 ? label.plural : label.single;
-			return `${ count } ${ title }`;
-		} ).filter( ( part ) => part !== null );
+			summaryPartsMap[ docType ] = {
+				count,
+				title,
+			};
+		};
+
+		Object.entries( content || {} ).forEach( getSummaryParts );
+		Object.entries( wpContent || {} ).forEach( getSummaryParts );
+
+		const summaryParts = Object.values( summaryPartsMap ).map( ( { count, title } ) => `${ count } ${ title }` );
 
 		return summaryParts.length > 0 ? summaryParts.join( ' | ' ) : __( 'No content exported', 'elementor' );
 	};
