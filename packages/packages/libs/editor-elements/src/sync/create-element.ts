@@ -1,27 +1,22 @@
 import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 
 import { getContainer } from './get-container';
-import { type V1Element, type V1ElementSettingsProps } from './types';
+import { type V1Element, type V1ElementModelProps, type V1ElementSettingsProps } from './types';
 
 type Options = {
 	useHistory?: boolean;
+	at?: number;
+	clone?: boolean;
 };
 
-export function createElement( {
-	containerId,
-	settings,
-	type,
-	id,
-	options,
-}: {
-	settings: V1ElementSettingsProps;
-	type: string;
+export type CreateElementParams = {
 	containerId: string;
-	id?: string;
 	options?: Options;
-} ) {
+	model?: Omit< V1ElementModelProps, 'settings' | 'id' > & { settings?: V1ElementSettingsProps; id?: string };
+};
+
+export function createElement( { containerId, model, options }: CreateElementParams ) {
 	const container = getContainer( containerId );
-	const model = createElementModel( { settings, type, id } );
 
 	if ( ! container ) {
 		throw new Error( `Container with ID "${ containerId }" not found` );
@@ -32,15 +27,4 @@ export function createElement( {
 		model,
 		options: { edit: false, ...options },
 	} );
-}
-
-function createElementModel( { settings, type, id }: { settings: V1ElementSettingsProps; type: string; id?: string } ) {
-	return {
-		id,
-		elType: 'widget',
-		widgetType: type,
-		settings: {
-			...settings,
-		},
-	};
 }

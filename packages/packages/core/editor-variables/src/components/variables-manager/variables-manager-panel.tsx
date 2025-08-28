@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -15,6 +15,7 @@ import { Alert, Box, Button, Collapse, Divider, ErrorBoundary, IconButton, type 
 import { __ } from '@wordpress/i18n';
 
 import { getVariables } from '../../hooks/use-prop-variables';
+import { type TVariablesList } from '../../storage';
 import { VariablesManagerTable } from './variables-manager-table';
 import { VariablesImportPanel } from './variables-import-panel';
 
@@ -34,8 +35,9 @@ export const { panel, usePanelActions } = createPanel( {
 
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
-	const isDirty = false;
-	const variables = getVariables( false );
+	const [ isDirty, setIsDirty ] = useState( false );
+	const [ variables, setVariables ] = useState( getVariables( false ) );
+	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
 
 	// Import UI state
 	const [ showImportUI, setShowImportUI ] = React.useState( false );
@@ -47,23 +49,38 @@ export function VariablesManagerPanel() {
 			name: __( 'Delete', 'elementor' ),
 			icon: TrashIcon,
 			color: 'error.main',
-			onClick: () => {},
+			onClick: ( itemId: string ) => {
+				setDeletedVariables( [ ...deletedVariables, itemId ] );
+				setVariables( { ...variables, [ itemId ]: { ...variables[ itemId ], deleted: true } } );
+				setIsDirty( true );
+			},
 		},
 	];
 
-
+	const handleOnChange = ( newVariables: TVariablesList ) => {
+		setVariables( newVariables );
+		setIsDirty( true );
+	};
 
 	return (
 		<ThemeProvider>
 			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
 				<Panel>
 					<PanelHeader>
-						<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
-							<Stack width="100%" direction="row" gap={ 1 }>
-								<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
-									<ColorFilterIcon fontSize="inherit" />
-									{ __( 'Variable Manager', 'elementor' ) }
-								</PanelHeaderTitle>
+						<Stack width="100%" direction="column" alignItems="center">
+							<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
+								<Stack width="100%" direction="row" gap={ 1 }>
+									<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+										<ColorFilterIcon fontSize="inherit" />
+										{ __( 'Variable Manager', 'elementor' ) }
+									</PanelHeaderTitle>
+								</Stack>
+								<CloseButton
+									sx={ { marginLeft: 'auto' } }
+									onClose={ () => {
+										closePanel();
+									} }
+								/>
 							</Stack>
 							<IconButton
 								size="small"
@@ -80,6 +97,7 @@ export function VariablesManagerPanel() {
 									closePanel();
 								} }
 							/>
+							<Divider sx={ { width: '100%' } } />
 						</Stack>
 					</PanelHeader>
 					<PanelBody
@@ -100,6 +118,11 @@ export function VariablesManagerPanel() {
 								<VariablesManagerTable menuActions={ menuActions } variables={ variables } />
 							</>
 						) }
+						<VariablesManagerTable
+							menuActions={ menuActions }
+							variables={ variables }
+							onChange={ handleOnChange }
+						/>
 					</PanelBody>
 
 					<PanelFooter>

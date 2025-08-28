@@ -123,7 +123,7 @@ describe( 'GapControl', () => {
 		const input = screen.getAllByRole( 'spinbutton' )[ 0 ];
 
 		// Act.
-		fireEvent.change( input, { target: { value: 100 } } );
+		fireEvent.input( input, { target: { value: 100 } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( {
@@ -156,7 +156,7 @@ describe( 'GapControl', () => {
 		const input = screen.getAllByRole( 'spinbutton' )[ 0 ];
 
 		// Act.
-		fireEvent.change( input, { target: { value: 100 } } );
+		fireEvent.input( input, { target: { value: 100 } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( {

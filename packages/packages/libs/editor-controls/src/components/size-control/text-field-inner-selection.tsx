@@ -9,13 +9,13 @@ import {
 	InputAdornment,
 	Menu,
 	styled,
-	TextField,
 	type TextFieldProps,
 	usePopupState,
 } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
 import { DEFAULT_UNIT } from '../../utils/size-control';
+import { NumberInput } from '../number-input';
 
 type TextFieldInnerSelectionProps = {
 	placeholder?: string;
@@ -25,11 +25,13 @@ type TextFieldInnerSelectionProps = {
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
 	onKeyUp?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
-	inputProps: TextFieldProps[ 'InputProps' ] & {
+	InputProps: TextFieldProps[ 'InputProps' ] & {
 		endAdornment: React.JSX.Element;
 	};
+	inputProps?: TextFieldProps[ 'inputProps' ];
 	disabled?: boolean;
 	isPopoverOpen?: boolean;
+	id?: string;
 };
 
 export const TextFieldInnerSelection = forwardRef(
@@ -42,34 +44,38 @@ export const TextFieldInnerSelection = forwardRef(
 			onBlur,
 			onKeyDown,
 			onKeyUp,
+			InputProps,
 			inputProps,
 			disabled,
 			isPopoverOpen,
+			id,
 		}: TextFieldInnerSelectionProps,
 		ref
 	) => {
 		const { placeholder: boundPropPlaceholder } = useBoundProp( sizePropTypeUtil );
 
 		const getCursorStyle = () => ( {
-			input: { cursor: inputProps.readOnly ? 'default !important' : undefined },
+			input: { cursor: InputProps.readOnly ? 'default !important' : undefined },
 		} );
 
 		return (
-			<TextField
+			<NumberInput
 				ref={ ref }
 				sx={ getCursorStyle() }
 				size="tiny"
 				fullWidth
 				type={ type }
 				value={ value }
-				onChange={ onChange }
+				onInput={ onChange }
 				onKeyDown={ onKeyDown }
 				onKeyUp={ onKeyUp }
 				disabled={ disabled }
 				onBlur={ onBlur }
 				focused={ isPopoverOpen ? true : undefined }
 				placeholder={ placeholder ?? ( String( boundPropPlaceholder?.size ?? '' ) || undefined ) }
-				InputProps={ inputProps }
+				InputProps={ InputProps }
+				inputProps={ inputProps }
+				id={ id }
 			/>
 		);
 	}

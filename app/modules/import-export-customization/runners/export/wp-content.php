@@ -2,6 +2,7 @@
 
 namespace Elementor\App\Modules\ImportExportCustomization\Runners\Export;
 
+use Elementor\App\Modules\ImportExportCustomization\Compatibility\Customization;
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 use Elementor\Core\Utils\ImportExport\WP_Exporter;
 
@@ -20,18 +21,16 @@ class Wp_Content extends Export_Runner_Base {
 
 	public function export( array $data ) {
 		$customization = $data['customization']['content'] ?? null;
-		$include_menus = $customization['menus'] ?? true;
 		$exclude_post_types = [];
-
-		if ( ! $include_menus ) {
-			$exclude_post_types[] = 'nav_menu_item';
-		}
 
 		if ( isset( $data['selected_custom_post_types'] ) && ! in_array( 'post', $data['selected_custom_post_types'], true ) ) {
 			$exclude_post_types[] = 'post';
 		}
 
 		$post_types = ImportExportUtils::get_builtin_wp_post_types( $exclude_post_types );
+
+		$post_types = apply_filters( 'elementor/import-export-customization/wp-content/post-types/customization', $post_types, $data, $customization );
+
 		$custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
 
 		$files = [];
@@ -77,19 +76,9 @@ class Wp_Content extends Export_Runner_Base {
 	}
 
 	private function export_wp_post_type( $post_type, $customization ) {
-		$selected_pages = $customization['pages'] ?? null;
-
-		if ( null !== $selected_pages && empty( $selected_pages ) ) {
-			return [
-				'file' => [],
-				'manifest_data' => [],
-			];
-		}
-
 		$exporter_args = [
 			'content' => $post_type,
 			'status' => 'publish',
-			'limit' => 20,
 			'meta_query' => [
 				[
 					'key' => static::META_KEY_ELEMENTOR_EDIT_MODE,
@@ -99,9 +88,11 @@ class Wp_Content extends Export_Runner_Base {
 			'include_post_featured_image_as_attachment' => true,
 		];
 
-		if ( ! empty( $selected_pages ) ) {
-			$exporter_args['include'] = $selected_pages;
+		if ( 'pages' !== $post_type ) {
+			$exporter_args['limit'] = 20;
 		}
+
+		$exporter_args = apply_filters( 'elementor/import-export-customization/export/wp-content/query-args/customization', $exporter_args, $post_type, $customization );
 
 		$wp_exporter = new WP_Exporter( $exporter_args );
 
