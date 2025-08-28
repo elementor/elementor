@@ -33,7 +33,6 @@ export default function ImportKit() {
 
 	useEffect( () => {
 		if ( data.uploadedData ) {
-
 			if ( data.actionType === ACTION_TYPE.APPLY_ALL ) {
 				const includes = [];
 
