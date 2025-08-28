@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Core\Utils\Hints;
@@ -66,6 +67,10 @@ class Settings extends Settings_Page {
 	const TAB_PERFORMANCE = 'performance';
 
 	const ADMIN_MENU_PRIORITY = 10;
+	const INSTALLED = 'installed';
+	const ACTIVE = 'active';
+	const CONNECTED = 'connected';
+	const IMAGE_OPTIMIZER_PLUGIN_SLUG = 'image-optimization';
 
 	public Home_Module $home_module;
 
@@ -235,6 +240,57 @@ class Settings extends Settings_Page {
 		Plugin::$instance->files_manager->clear_cache();
 	}
 
+	private function should_display_image_optimizer_plg_description() {
+		$state = $this->get_image_optimizer_state();
+		return current_user_can( 'manage_options' ) && ( ! $state[ self::INSTALLED] || ! $state[ self::ACTIVE ] || ! $state[ self::CONNECTED ] );
+	}
+
+	private function get_image_optimizer_state() {
+		static $state = null;
+		if ( null === $state ) {
+			$state = [
+				self::INSTALLED => Hints::is_plugin_installed( self::IMAGE_OPTIMIZER_PLUGIN_SLUG ),
+				self::ACTIVE    => Hints::is_plugin_active( self::IMAGE_OPTIMIZER_PLUGIN_SLUG ),
+				self::CONNECTED => Hints::is_plugin_connected( 'image_optimizer' ),
+			];
+		}
+		return $state;
+	}
+
+	private function maybe_get_image_optimizer_plg_description() {
+		if ( ! $this->should_display_image_optimizer_plg_description() ) {
+			return '';
+		}
+
+		$campaign_data = [
+			'name' => 'elementor_image_optimization_campaign',
+			'campaign' => 'io-plg',
+			'source' => 'io-performance-install',
+			'medium' => 'wp-dash',
+		];
+
+		$state = $this->get_image_optimizer_state();
+
+		$action_url = Admin_Notices::add_plg_campaign_data(
+			Hints::get_plugin_action_url(
+				self::IMAGE_OPTIMIZER_PLUGIN_SLUG
+			),
+			$campaign_data
+		);
+
+		if ( $state[ self::INSTALLED ] && $state[ self::ACTIVE ] ) {
+			$action_url = admin_url( 'upload.php?page=image-optimization-settings' );
+		}
+
+		return sprintf( '<br><br><strong>%s</strong> %s <br><a href="%s" target="_blank">%s</a> %s',
+			esc_html__( 'Image Optimization Recommended:', 'elementor' ),
+			esc_html__( 'Large image files and outdated formats JPEG and PNG can slow down your site.', 'elementor' ),
+			$action_url,
+			esc_html__( 'Use Image Optimizer by Elementor', 'elementor' ),
+			esc_html__( 'to automatically optimize, compress and convert your images to modern formats like AVIF and WebP.', 'elementor' )
+		);
+	}
+
 	/**
 	 * Create tabs.
 	 *
@@ -252,13 +308,7 @@ class Settings extends Settings_Page {
 			esc_html__( 'Improve performance by applying %1$s on LCP image and %2$s on images below the fold.', 'elementor' ),
 			'<code>fetchpriority="high"</code>',
 			'<code>loading="lazy"</code>'
-		);
-		if ( ! Hints::is_plugin_installed( 'image-optimizer' ) || ! Hints::is_plugin_active( 'image-optimizer' ) ) {
-			$image_optimization_description .= '<br><br><strong>' . esc_html__( 'Image Optimization Recommended:', 'elementor' ) . '</strong> ' .
-			esc_html__( 'Large image files and outdated formats JPEG and PNG can slow down your site.', 'elementor' ) .
-			'<br><a href="' . Hints::get_plugin_action_url( 'image-optimizer' ) . '" target="_blank">' . esc_html__( 'Use Image Optimizer by Elementor', 'elementor' ) . '</a> ' .
-			esc_html__( 'to automatically optimize, compress and convert your images to modern formats like AVIF and WebP.', 'elementor' );
-		}
+		) . $this->maybe_get_image_optimizer_plg_description();
 
 		return [
 			self::TAB_GENERAL => [
