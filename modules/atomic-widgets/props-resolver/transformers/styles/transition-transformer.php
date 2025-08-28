@@ -20,7 +20,13 @@ class Transition_Transformer extends Transformer_Base {
 		$transition_strings = array_map( [ $this, 'map_to_transition_string' ], $transitions );
 		$valid_transitions = array_filter( $transition_strings );
 
-		return implode( ', ', $valid_transitions );
+		if ( empty( $valid_transitions ) ) {
+			return self::EMPTY_STRING;
+		}
+
+		$transition_string = implode( ', ', $valid_transitions );
+
+		return $transition_string . '; @media (prefers-reduced-motion: reduce) { transition-duration: 0s !important; }';
 	}
 
 	private function map_to_transition_string( $transition ): string {
