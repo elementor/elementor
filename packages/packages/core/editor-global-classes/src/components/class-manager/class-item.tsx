@@ -21,7 +21,6 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { CssClassUsageTrigger } from '../css-class-usage/components';
-import { useSearchAndFilters } from '../search-and-filter/context';
 import { useDeleteConfirmation } from './delete-confirmation-dialog';
 import { SortableTrigger, type SortableTriggerProps } from './sortable';
 
@@ -32,13 +31,19 @@ type ClassItemProps = React.PropsWithChildren< {
 	selected?: boolean;
 	disabled?: boolean;
 	sortableTriggerProps: SortableTriggerProps;
+	showSortIndicator?: boolean;
 } >;
 
-export const ClassItem = ( { id, label, renameClass, selected, disabled, sortableTriggerProps }: ClassItemProps ) => {
+export const ClassItem = ( {
+	id,
+	label,
+	renameClass,
+	selected,
+	disabled,
+	sortableTriggerProps,
+	showSortIndicator,
+}: ClassItemProps ) => {
 	const itemRef = useRef< HTMLElement >( null );
-	const {
-		search: { inputValue },
-	} = useSearchAndFilters();
 	const {
 		ref: editableRef,
 		openEditMode,
@@ -74,7 +79,7 @@ export const ClassItem = ( { id, label, renameClass, selected, disabled, sortabl
 						ref={ itemRef }
 						dense
 						disableGutters
-						showSortIndicator={ inputValue.length >= 2 }
+						showSortIndicator={ showSortIndicator }
 						showActions={ isSelected || isEditing }
 						shape="rounded"
 						onDoubleClick={ openEditMode }

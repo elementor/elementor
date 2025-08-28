@@ -32,7 +32,7 @@ class Wp_Content extends Import_Runner_Base {
 
 		$path = $data['extracted_directory_path'] . 'wp-content/';
 
-		$post_types = $this->filter_post_types( $data['selected_custom_post_types'], $data['customization']['content'] ?? null );
+		$post_types = $this->filter_post_types( $data );
 
 		$taxonomies = $imported_data['taxonomies'] ?? [];
 		$imported_terms = ImportExportUtils::map_old_new_term_ids( $imported_data );
@@ -75,6 +75,8 @@ class Wp_Content extends Import_Runner_Base {
 			'include' => 'page' === $post_type ? $customization['pages'] ?? null : null,
 		];
 
+		$args = apply_filters( 'elementor/import-export-customization/import/wp-content/query-args/customization', $args, $post_type, $customization );
+
 		$file = $path . $post_type . '/' . $post_type . '.xml';
 
 		if ( ! file_exists( $file ) ) {
@@ -87,19 +89,13 @@ class Wp_Content extends Import_Runner_Base {
 		return $result['summary']['posts'];
 	}
 
-	private function filter_post_types( $selected_custom_post_types, $customization ) {
+	private function filter_post_types( $data ) {
+		$selected_custom_post_types = $data['selected_custom_post_types'];
+		$customization = $data['customization']['content'] ?? null;
 		$exclude = [];
 
 		if ( ! empty( $selected_custom_post_types ) && in_array( 'post', $selected_custom_post_types, true ) ) {
 			$exclude[] = 'post';
-		}
-
-		if ( ! empty( $selected_custom_post_types ) && in_array( 'nav_menu_item', $selected_custom_post_types, true ) ) {
-			$exclude[] = 'nav_menu_item';
-		}
-
-		if ( is_array( $customization['pages'] ?? null ) && empty( $customization['pages'] ) ) {
-			$exclude[] = 'page';
 		}
 
 		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types( $exclude );
@@ -111,6 +107,9 @@ class Wp_Content extends Import_Runner_Base {
 		}
 
 		$post_types = array_merge( $wp_builtin_post_types, $this->selected_custom_post_types );
+
+		$post_types = apply_filters( 'elementor/import-export-customization/wp-content/post-types/customization', $post_types, $data, $customization );
+
 		$post_types = $this->force_element_to_be_last_by_value( $post_types, 'nav_menu_item' );
 
 		return $post_types;
