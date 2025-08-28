@@ -10,6 +10,7 @@ import { createControl } from '../../create-control';
 import { RepeatableControl } from '../repeatable-control';
 import { SelectionSizeControl } from '../selection-size-control';
 import { initialTransitionValue, transitionProperties } from './data';
+import { subscribeToTransitionEvent } from './trainsition-events';
 import { TransitionSelector } from './transition-selector';
 
 const DURATION_CONFIG = {
@@ -69,6 +70,8 @@ const disableAddItemTooltipContent = (
 		</Box>
 	</Alert>
 );
+
+subscribeToTransitionEvent();
 
 export const TransitionRepeaterControl = createControl(
 	( {
