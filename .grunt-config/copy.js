@@ -48,6 +48,7 @@ const getBuildFiles = [
 	'vendor/composer/**',
 	'vendor/sabberworm/**',
 	'vendor/symfony/**',
+	'vendor/myclabs/**',
 	'!php-scoper/**',
 	'!yarn.lock',
 	'!*~',
