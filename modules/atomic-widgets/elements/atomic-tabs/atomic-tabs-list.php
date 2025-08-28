@@ -9,25 +9,24 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tab_Link extends Atomic_Element_Base {
+class Atomic_Tabs_List extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-tab-link';
+		return 'e-tabs-list';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tab-link';
+		return 'e-tabs-list';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tab Link', 'elementor' );
+		return esc_html__( 'Atomic Tabs List', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -63,9 +62,14 @@ class Atomic_Tab_Link extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$display = String_Prop_Type::generate( 'block' );
-		$padding = Size_Prop_Type::generate( [
-			'size' => 4,
+		$display = String_Prop_Type::generate( 'flex' );
+		$gap = Size_Prop_Type::generate( [
+			'size' => 10,
+			'unit' => 'px',
+		] );
+		$justify_content = String_Prop_Type::generate( 'space-between' );
+		$min_width = Size_Prop_Type::generate( [
+			'size' => 30,
 			'unit' => 'px',
 		] );
 
@@ -74,24 +78,20 @@ class Atomic_Tab_Link extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'display', $display )
-						->add_prop( 'padding', $padding )
+						->add_prop( 'min-width', $min_width )
+						->add_prop( 'gap', $gap )
+						->add_prop( 'justify-content', $justify_content )
 				),
-		];
-	}
-
-	protected function define_initial_attributes() {
-		return [
-			'role' => 'tab',
-			'tabindex' => '-1',
 		];
 	}
 
 	protected function define_default_children() {
 		return [
-			Atomic_Heading::generate()
-				->settings( [
-					'title' => String_Prop_Type::generate( 'Tab' ),
-				] )
+			Atomic_Tab_Link::generate()
+				->is_locked( true )
+				->build(),
+			Atomic_Tab_Link::generate()
+				->is_locked( true )
 				->build(),
 		];
 	}
