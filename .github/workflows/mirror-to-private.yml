@@ -1,0 +1,38 @@
+name: Mirror to Private Repository
+
+on:
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch:  # Allows manual triggering
+
+permissions:
+  contents: read
+
+jobs:
+  mirror:
+    name: Mirror to private repository
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for proper mirroring
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup GitHub CLI
+        run: |
+          gh auth login --with-token <<< "${{ secrets.PRIVATE_REPO_TOKEN }}"
+
+      - name: Sync to private repository
+        run: |
+          # Sync specific branch to avoid master/main confusion
+          gh repo sync ${{ secrets.PRIVATE_REPO_OWNER }}/${{ secrets.PRIVATE_REPO_NAME }} --source ${{ github.repository }} --branch ${{ github.ref_name }}
+
+      - name: Verify mirror status
+        run: |
+          echo "✅ Successfully mirrored repository to private repo"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Private repository: ${{ secrets.PRIVATE_REPO_OWNER }}/${{ secrets.PRIVATE_REPO_NAME }}"
