@@ -43,12 +43,11 @@ const getBuildFiles = [
 	'!tmp/**',
 	'!vendor/**',
 	
-	// Include only essential vendor files for production
+	// Include production vendor files only
+	// Note: Run 'composer install --no-dev --optimize-autoloader' before build
 	'vendor/autoload.php',
 	'vendor/composer/**',
 	'vendor/sabberworm/**',
-	'vendor/symfony/**',
-	'vendor/myclabs/**',
 	'!php-scoper/**',
 	'!yarn.lock',
 	'!*~',
