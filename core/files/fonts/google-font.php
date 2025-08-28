@@ -253,7 +253,6 @@ class Google_Font {
 
 		$sanitize_font_name = static::sanitize_font_name( $font_name );
 
-		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		wp_enqueue_style(
 			'elementor-gf-' . $sanitize_font_name,
 			$font_url,

@@ -124,7 +124,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Run a map over each of the items.
 	 *
-	 * @param  callable  $callback
+	 * @param  callable $callback
 	 * @return $this
 	 */
 	public function map( callable $callback ) {

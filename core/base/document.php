@@ -640,7 +640,7 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @access public
 	 *
-	 * @param array    $actions An array of row action links.
+	 * @param array $actions An array of row action links.
 	 *
 	 * @return array An updated array of row action links.
 	 */
@@ -1050,6 +1050,8 @@ abstract class Document extends Controls_Stack {
 	 * @param bool $with_html_content
 	 *
 	 * @return array
+	 *
+	 * @throws \Exception If elements retrieval fails or data processing errors occur.
 	 */
 	public function get_elements_raw_data( $data = null, $with_html_content = false ) {
 		if ( ! static::get_property( 'has_elements' ) ) {
@@ -1457,7 +1459,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param string $key   Meta data key.
-	 * @param mixed $value Meta data value.
+	 * @param mixed  $value Meta data value.
 	 *
 	 * @return bool|int
 	 */

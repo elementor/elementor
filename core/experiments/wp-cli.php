@@ -18,7 +18,7 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * 1. wp elementor experiments activate container
 	 *      - This will activate the Container experiment.
 	 *
-	 * @param array $args
+	 * @param array      $args
 	 * @param array|null $assoc_args - Arguments from WP CLI command.
 	 */
 	public function activate( $args, $assoc_args ) {
@@ -58,7 +58,7 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * 1. wp elementor experiments deactivate container
 	 *      - This will deactivate the Container experiment.
 	 *
-	 * @param array $args
+	 * @param array      $args
 	 * @param array|null $assoc_args - Arguments from WP CLI command.
 	 */
 	public function deactivate( $args, $assoc_args ) {
@@ -159,7 +159,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 	/**
 	 * @param Experiments_Manager $experiments_manager manager.
-	 * @param array $experiments experiments.
+	 * @param array               $experiments experiments.
 	 *
 	 * @return bool true when all experiments exist, otherwise false
 	 */

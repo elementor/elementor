@@ -298,7 +298,7 @@ class Source_Cloud extends Source_Base {
 	/**
 	 * @param int $template_id
 	 * @return Document|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If the user has no permission or the post is not found.
 	 */
 	public function create_document_for_preview( int $template_id ) {
 		if ( ! current_user_can( 'edit_posts' ) ) {

@@ -75,7 +75,7 @@ abstract class Step_Base {
 	/**
 	 * Step_Base constructor.
 	 *
-	 * @param Checklist_Module $module
+	 * @param Checklist_Module             $module
 	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
 	 * @param ?Elementor_Adapter_Interface $elementor_adapter
 	 * @return void

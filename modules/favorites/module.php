@@ -238,6 +238,8 @@ class Module extends BaseModule {
 	 * Throw action doesn't exist exception.
 	 *
 	 * @param string $action
+	 *
+	 * @throws \InvalidArgumentException If favorite action fails or validation errors occur.
 	 */
 	public function action_doesnt_exists( $action ) {
 		throw new \InvalidArgumentException( sprintf( esc_html(

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Filtered_Promotions_Manager {
 
 	/**
-	 * @param array $promotion_data
+	 * @param array  $promotion_data
 	 * @param string $filter_name
 	 * @param string $url_key
 	 * @return array

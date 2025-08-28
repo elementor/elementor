@@ -113,7 +113,7 @@ class Module extends BaseModule {
 	/**
 	 * @param Render_Mode_Manager $manager
 	 *
-	 * @throws \Exception
+	 * @throws \Exception If render mode registration fails.
 	 */
 	public function register_render_mode( Render_Mode_Manager $manager ) {
 		$manager->register_render_mode( Render_Mode_Preview::class );

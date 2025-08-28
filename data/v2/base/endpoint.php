@@ -138,7 +138,7 @@ abstract class Endpoint extends Base_Route {
 	 * Endpoint constructor.
 	 *
 	 * @param \Elementor\Data\V2\Base\Controller|\Elementor\Data\V2\Base\Endpoint $parent
-	 * @param string $route
+	 * @param string                                                              $route
 	 */
 	public function __construct( $parent, $route = '/' ) {
 		$controller = $parent;

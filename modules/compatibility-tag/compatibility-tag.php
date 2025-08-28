@@ -35,7 +35,7 @@ class Compatibility_Tag extends Base_Object {
 	 * Return if plugins is compatible or not.
 	 *
 	 * @param Version $version
-	 * @param array $plugins_names
+	 * @param array   $plugins_names
 	 *
 	 * @return array
 	 * @throws \Exception If an error occurs during compatibility check.

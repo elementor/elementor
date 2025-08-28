@@ -47,7 +47,7 @@ class Module extends BaseModule implements Elementor_Counter_Adapter_Interface {
 
 	/**
 	 * @param self::EDITOR_COUNTER_KEY $key
-	 * @param int $count
+	 * @param int                      $count
 	 */
 	public function set_count( $key, $count = 0 ): void {
 		if ( ! $this->is_key_allowed( $key ) || ! is_int( $count ) ) {
