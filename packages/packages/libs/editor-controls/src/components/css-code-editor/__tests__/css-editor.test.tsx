@@ -93,10 +93,6 @@ describe( 'CssEditor', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-<<<<<<< HEAD
-		// Reset to default empty state
-=======
->>>>>>> d762885266ca98b29fb57c097667c9118c633c0b
 		mockGetValue.mockReturnValue( 'element.style {\n \n}' );
 		mockGetPosition.mockReturnValue( { lineNumber: 2, column: 1 } );
 	} );
