@@ -32,7 +32,9 @@ const getActual = ( value: string ): string => {
 
 const createEditorDidMountHandler = (
 	editorRef: React.MutableRefObject< editor.IStandaloneCodeEditor | null >,
-	monacoRef: React.MutableRefObject< MonacoEditor | null >
+	monacoRef: React.MutableRefObject< MonacoEditor | null >,
+	debounceTimer: React.MutableRefObject< NodeJS.Timeout | null >,
+	onChange: ( value: string, isValid: boolean ) => void
 ) => {
 	return ( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ) => {
 		editorRef.current = editor;
@@ -47,6 +49,30 @@ const createEditorDidMountHandler = (
 		} );
 
 		editor.setPosition( { lineNumber: 2, column: ( editor.getModel()?.getLineContent( 2 ).length ?? 0 ) + 1 } );
+
+		editor.onDidChangeModelContent( () => {
+			const code = editor.getModel()?.getValue() ?? '';
+			const userContent = getActual( code );
+
+			setCustomSyntaxRules( editor, monaco );
+
+			const currentTimer = debounceTimer.current;
+			if ( currentTimer ) {
+				clearTimeout( currentTimer );
+			}
+
+			const newTimer = setTimeout( () => {
+				if ( ! editorRef.current || ! monacoRef.current ) {
+					return;
+				}
+
+				const hasNoErrors = validate( editorRef.current, monacoRef.current );
+
+				onChange( userContent, hasNoErrors );
+			}, 500 );
+
+			debounceTimer.current = newTimer;
+		} );
 	};
 };
 
@@ -68,35 +94,7 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 		}
 	}, [] );
 
-	const handleEditorChange = () => {
-		if ( ! editorRef.current || ! monacoRef.current ) {
-			return;
-		}
-
-		const code = editorRef.current?.getModel()?.getValue() ?? '';
-		const userContent = getActual( code );
-
-		setCustomSyntaxRules( editorRef?.current, monacoRef.current );
-
-		const currentTimer = debounceTimer.current;
-		if ( currentTimer ) {
-			clearTimeout( currentTimer );
-		}
-
-		const newTimer = setTimeout( () => {
-			if ( ! editorRef.current || ! monacoRef.current ) {
-				return;
-			}
-
-			const hasNoErrors = validate( editorRef.current, monacoRef.current );
-
-			onChange( userContent, hasNoErrors );
-		}, 500 );
-
-		debounceTimer.current = newTimer;
-	};
-
-	const handleEditorDidMount = createEditorDidMountHandler( editorRef, monacoRef );
+	const handleEditorDidMount = createEditorDidMountHandler( editorRef, monacoRef, debounceTimer, onChange );
 
 	React.useEffect( () => {
 		const timerRef = debounceTimer;
@@ -117,7 +115,6 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 				theme={ theme.palette.mode === 'dark' ? 'vs-dark' : 'vs' }
 				value={ setVisualContent( value ) }
 				onMount={ handleEditorDidMount }
-				onChange={ handleEditorChange }
 				options={ {
 					lineNumbers: 'on',
 					folding: true,
