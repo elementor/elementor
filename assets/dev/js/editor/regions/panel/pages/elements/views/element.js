@@ -51,7 +51,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	isIntegration() {
-		return this.model.get( 'integration' );
+		return !! this.model.get( 'integration' );
 	},
 
 	onRender() {
@@ -82,7 +82,8 @@ module.exports = Marionette.ItemView.extend( {
 	onMouseDown() {
 		const title = this.model.get( 'title' ),
 			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
-			isIntegration = this.isIntegration();
+			isIntegration = this.isIntegration(),
+			configPromotion = elementor.config.promotion;
 
 		let promotion = configPromotion.elements,
 			// eslint-disable-next-line @wordpress/valid-sprintf

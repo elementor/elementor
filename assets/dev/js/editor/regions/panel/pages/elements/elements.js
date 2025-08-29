@@ -101,6 +101,8 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		if ( elementor.config.integrationWidgets ) {
+			const injectionPoint = elementsCollection.findIndex( { widgetType: 'image-carousel' } ) + 1;
+
 			jQuery.each( elementor.config.integrationWidgets, ( index, widget ) => {
 				elementsCollection.add( {
 					name: widget.name,
@@ -111,8 +113,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 					integration: true,
 					keywords: widget.keywords || [],
 				}, {
-					// Inject after the image-carousel widget.
-					at: elementsCollection.findIndex( { widgetType: 'image-carousel' } ) + 1,
+					at: injectionPoint,
 				} );
 			} );
 		}
