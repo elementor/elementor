@@ -1352,34 +1352,6 @@ class WP_Import extends \WP_Importer {
 	 * @param $args
 	 */
 	public function __construct( $file, $args = [] ) {
-		if ( ! function_exists( 'wp_tempnam' ) || ! function_exists( 'wp_upload_dir' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-
-		if ( ! function_exists( 'wp_insert_term' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/taxonomy.php';
-		}
-
-		if ( ! function_exists( 'wp_insert_attachment' ) || ! function_exists( 'wp_update_attachment_metadata' ) || ! function_exists( 'wp_generate_attachment_metadata' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/image.php';
-		}
-
-		if ( ! function_exists( 'wp_update_nav_menu_item' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/nav-menu.php';
-		}
-
-		if ( ! function_exists( 'wp_create_user' ) || ! function_exists( 'wp_insert_user' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/user.php';
-		}
-
-		if ( ! function_exists( 'wp_import_cleanup' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/import.php';
-		}
-
-		if ( ! function_exists( 'stick_post' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/post.php';
-		}
-
 		$this->requested_file_path = $file;
 		$this->args = $args;
 
