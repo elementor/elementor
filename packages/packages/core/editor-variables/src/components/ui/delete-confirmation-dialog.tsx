@@ -34,7 +34,7 @@ export const DeleteConfirmationDialog = ( {
 				<DialogContentText variant="body2" color="textPrimary">
 					{ __( 'All elements using', 'elementor' ) }
 					&nbsp;
-					<Typography variant="subtitle2" component="span" sx={ { wordBreak: 'break-all', overflowWrap: 'break-word' } }>
+					<Typography variant="subtitle2" component="span" sx={ { lineBreak: 'anywhere' } }>
 						{ label }
 					</Typography>
 					&nbsp;
