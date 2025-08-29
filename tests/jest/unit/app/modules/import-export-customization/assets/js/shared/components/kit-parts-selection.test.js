@@ -363,7 +363,7 @@ describe( 'KitPartsSelection Component', () => {
 
 			expect( templatesCheckbox.disabled ).toBe( false );
 			expect( settingsCheckbox.disabled ).toBe( false );
-			expect( contentCheckbox.disabled ).toBe( true );
+			expect( contentCheckbox.disabled ).toBe( false );
 		} );
 
 		it( 'should map settings type to site-settings in manifest', () => {
