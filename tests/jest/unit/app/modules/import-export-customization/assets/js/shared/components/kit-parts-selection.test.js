@@ -38,7 +38,7 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/k
 				open: [ 'Pages', 'Posts', 'Media' ],
 			},
 		},
-		required: false,
+		required: true,
 		dialog: null,
 	},
 ] );
@@ -212,7 +212,7 @@ describe( 'KitPartsSelection Component', () => {
 
 			// Assert
 			const contentCheckbox = within( screen.getByTestId( 'KitContentDataSelection-content' ) ).getByRole( 'checkbox' );
-			expect( contentCheckbox.disabled ).toBe( false );
+			expect( contentCheckbox.disabled ).toBe( true );
 		} );
 
 		it( 'should disable required items in export mode', async () => {
@@ -230,7 +230,7 @@ describe( 'KitPartsSelection Component', () => {
 			// Assert
 			const contentCheckbox = within( screen.getByTestId( 'KitContentDataSelection-content' ) ).getByRole( 'checkbox' );
 
-			expect( contentCheckbox.disabled ).toBe( false );
+			expect( contentCheckbox.disabled ).toBe( true );
 		} );
 
 		it( 'should enable non-required items in export mode', () => {
@@ -363,7 +363,7 @@ describe( 'KitPartsSelection Component', () => {
 
 			expect( templatesCheckbox.disabled ).toBe( false );
 			expect( settingsCheckbox.disabled ).toBe( false );
-			expect( contentCheckbox.disabled ).toBe( false );
+			expect( contentCheckbox.disabled ).toBe( true );
 		} );
 
 		it( 'should map settings type to site-settings in manifest', () => {
