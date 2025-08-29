@@ -8,14 +8,10 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 	// Use the same storage state for all tests in this worker.
 	baseURL: ( { workerBaseURL }, use ) => use( workerBaseURL ),
 	workerBaseURL: [ async ( {}, use ) => {
-		let baseUrl = process.env.BASE_URL || ( ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) )
+		await use( process.env.BASE_URL || ( ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) )
 			? process.env.TEST_SERVER
-			: process.env.DEV_SERVER );
-		if ( baseUrl ) {
-			baseUrl = baseUrl.replace( /^(https?:\/\/)\/+/g, '$1' );
-			baseUrl = baseUrl.replace( /\/$/, '' );
-		}
-		await use( baseUrl );
+			: process.env.DEV_SERVER ),
+		);
 	}, { scope: 'worker' } ],
 
 	// Use the same storage state for all tests in this worker.

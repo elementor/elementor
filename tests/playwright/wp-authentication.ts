@@ -16,8 +16,7 @@ export async function login( apiRequest: APIRequest, user: string, password: str
 }
 
 export async function fetchNonce( context: APIRequestContext, baseUrl: string ) {
-	const normalizedBaseUrl = baseUrl.replace( /\/$/, '' );
-	const response = await context.get( `${ normalizedBaseUrl }/wp-admin/post-new.php` );
+	const response = await context.get( `${ baseUrl }/wp-admin/post-new.php` );
 
 	await validateResponse( response, 'Failed to fetch page' );
 
@@ -35,15 +34,14 @@ export async function fetchNonce( context: APIRequestContext, baseUrl: string ) 
 }
 
 async function updateDatabase( context: APIRequestContext, baseUrl: string ): Promise<string> {
-	const normalizedBaseUrl = baseUrl.replace( /\/$/, '' );
 	const browser = await chromium.launch();
 	const browserContext = await browser.newContext();
 	const page: Page = await browserContext.newPage();
-	await page.goto( `${ normalizedBaseUrl }/wp-admin/post-new.php` );
+	await page.goto( `${ baseUrl }/wp-admin/post-new.php` );
 	await page.getByText( 'Update WordPress Database' ).click();
 	await page.getByText( 'Continue' ).click();
 
-	const retryResponse = await context.get( `${ normalizedBaseUrl }/wp-admin/post-new.php` );
+	const retryResponse = await context.get( `${ baseUrl }/wp-admin/post-new.php` );
 
 	const pageText = await retryResponse.text();
 	await browser.close();

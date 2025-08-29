@@ -9,10 +9,8 @@ const localTestServer = 'http://127.0.0.1:9400';
 const ciDevServer = 'http://localhost:8888';
 const ciTestServer = 'http://localhost:8889';
 
-const normalizeUrl = ( url: string ) => url.replace( /\/$/, '' );
-
-process.env.DEV_SERVER = normalizeUrl( isCI ? ciDevServer : localDevServer );
-process.env.TEST_SERVER = normalizeUrl( isCI ? ciTestServer : localTestServer );
+process.env.DEV_SERVER = isCI ? ciDevServer : localDevServer;
+process.env.TEST_SERVER = isCI ? ciTestServer : localTestServer;
 
 process.env.DEBUG_PORT = ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? '9223' : '9222';
 
