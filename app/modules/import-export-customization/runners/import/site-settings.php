@@ -275,6 +275,10 @@ class Site_Settings extends Import_Runner_Base {
 			return null;
 		}
 
+		if ( ! function_exists( 'wp_get_theme' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/theme.php';
+		}
+
 		$theme = $data['site_settings']['theme'];
 		$theme_slug = $theme['slug'];
 		$theme_name = $theme['name'];
