@@ -5,9 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/../autoloader.php';
+require_once ELEMENTOR_PATH . 'includes/libraries/sabberworm-css-parser/bootstrap.php';
 
-use Elementor\Modules\CssConverter\CSS_Converter_Autoloader;
 use Elementor\Modules\CssConverter\Exceptions\CssParseException;
 use Elementor\Modules\CssConverter\Parsers\ParsedCss;
 use Sabberworm\CSS\Parser;
@@ -20,12 +19,6 @@ class CssParser {
 	private $charset;
 
 	public function __construct( array $options = [] ) {
-		CSS_Converter_Autoloader::register();
-
-		if ( ! CSS_Converter_Autoloader::is_loaded() ) {
-			throw new CssParseException( 'CSS parser dependencies not loaded. Run composer install.' );
-		}
-
 		$this->charset = $options['charset'] ?? 'utf-8';
 		$this->settings = Settings::create()
 			->withDefaultCharset( $this->charset )

@@ -42,12 +42,6 @@ const getBuildFiles = [
 	'!test-results/',
 	'!tmp/**',
 	'!vendor/**',
-	
-	// Include production vendor files only
-	// Note: Run 'composer install --no-dev --optimize-autoloader' before build
-	'vendor/autoload.php',
-	'vendor/composer/**',
-	'vendor/sabberworm/**',
 	'!php-scoper/**',
 	'!yarn.lock',
 	'!*~',
