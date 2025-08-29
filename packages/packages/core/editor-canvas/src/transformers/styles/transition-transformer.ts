@@ -13,7 +13,9 @@ export const transitionTransformer = createTransformer( ( transitionValues: Tran
 		return null;
 	}
 
-	return transitionValues.filter( Boolean ).map( mapToTransitionString ).join( ', ' );
+	const transitionString = transitionValues.filter( Boolean ).map( mapToTransitionString ).join( ', ' );
+
+	return `${ transitionString }; @media (prefers-reduced-motion: reduce) { transition-duration: 0s !important; }`;
 } );
 
 const mapToTransitionString = ( value: TransitionValue ): string => {
