@@ -33,6 +33,10 @@
         {
             "step": "wp-cli",
             "command": "wp --user=admin elementor library import-dir /wordpress/wp-content/plugins/elementor/tests/playwright/templates || echo 'Template import failed or already imported'"
+        },
+        {
+            "step": "wp-cli",
+            "command": "wp --user=admin elementor library import-dir /wordpress/wp-content/plugins/elementor/tests/playwright/templates || echo 'Template import failed or already imported'"
         }
 	]
 }
