@@ -52,13 +52,15 @@ const getBuildFiles = [
 	'core/files/assets/**',
 	'vendor/autoload.php',
 	'vendor/composer/**',
-	'vendor/symfony/polyfill-php80/**',
-	'vendor/symfony/polyfill-php81/**',
-	'vendor/symfony/polyfill-mbstring/**',
-	'vendor/symfony/polyfill-ctype/**',
-	'vendor/symfony/polyfill-intl-grapheme/**',
-	'vendor/symfony/polyfill-intl-normalizer/**',
-	'vendor/symfony/deprecation-contracts/**',
+	'vendor/symfony/**',
+	'vendor/myclabs/deep-copy/**',
+	'vendor/thecodingmachine/safe/**',
+	'vendor/phpunit/phpunit/src/Framework/Assert/Functions.php',
+	'vendor/jetbrains/phpstorm-stubs/PhpStormStubsMap.php',
+	'vendor/humbug/php-scoper/src/functions.php',
+	'vendor/twig/twig/src/Resources/**',
+	'vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php',
+	'vendor_prefixed/**',
 ];
 /**
  * @type {{main: {src: string[], expand: boolean, dest: string}, secondary: {src: string[], expand: boolean, dest: string}}}
