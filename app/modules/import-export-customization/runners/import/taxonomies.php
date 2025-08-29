@@ -22,6 +22,10 @@ class Taxonomies extends Import_Runner_Base {
 	}
 
 	public function import( array $data, array $imported_data ) {
+		if ( ! function_exists( 'wp_insert_term' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/taxonomy.php';
+		}
+
 		$customization = $data['customization']['content'] ?? null;
 
 		if ( $customization ) {
