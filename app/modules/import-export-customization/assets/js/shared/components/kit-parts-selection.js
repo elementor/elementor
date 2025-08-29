@@ -45,7 +45,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 		}
 
 		if ( isImport ) {
-			return ! isExported( item ) || item.required;
+			return ! isExported( item );
 		}
 
 		return item.required && contextData?.data?.includes?.includes( item.type );
