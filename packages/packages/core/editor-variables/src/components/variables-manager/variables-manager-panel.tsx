@@ -75,6 +75,15 @@ export function VariablesManagerPanel() {
 										{ __( 'Variable Manager', 'elementor' ) }
 									</PanelHeaderTitle>
 								</Stack>
+								<IconButton
+									size="small"
+									color="secondary"
+									aria-label="Import variables"
+									onClick={ () => setShowImportUI( ( prev ) => ! prev ) }
+									sx={ { marginLeft: 'auto' } }
+								>
+									<FilesIcon fontSize="small" />
+								</IconButton>
 								<CloseButton
 									sx={ { marginLeft: 'auto' } }
 									onClose={ () => {
@@ -82,21 +91,6 @@ export function VariablesManagerPanel() {
 									} }
 								/>
 							</Stack>
-							<IconButton
-								size="small"
-								color="secondary"
-								aria-label="Import variables"
-								onClick={ () => setShowImportUI( ( prev ) => ! prev ) }
-								sx={ { marginLeft: 'auto' } }
-							>
-								<FilesIcon fontSize="small" />
-							</IconButton>
-							<CloseButton
-								sx={ { ml: 0 } }
-								onClose={ () => {
-									closePanel();
-								} }
-							/>
 							<Divider sx={ { width: '100%' } } />
 						</Stack>
 					</PanelHeader>
@@ -115,14 +109,13 @@ export function VariablesManagerPanel() {
 						{ ! showImportUI && (
 							<>
 								<Divider />
-								<VariablesManagerTable menuActions={ menuActions } variables={ variables } />
+								<VariablesManagerTable
+									menuActions={ menuActions }
+									variables={ variables }
+									onChange={ handleOnChange }
+								/>
 							</>
 						) }
-						<VariablesManagerTable
-							menuActions={ menuActions }
-							variables={ variables }
-							onChange={ handleOnChange }
-						/>
 					</PanelBody>
 
 					<PanelFooter>
