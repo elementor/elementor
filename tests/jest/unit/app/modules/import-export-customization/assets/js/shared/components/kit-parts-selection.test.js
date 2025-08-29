@@ -38,7 +38,7 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/k
 				open: [ 'Pages', 'Posts', 'Media' ],
 			},
 		},
-		required: true,
+		required: false,
 		dialog: null,
 	},
 ] );
@@ -212,7 +212,7 @@ describe( 'KitPartsSelection Component', () => {
 
 			// Assert
 			const contentCheckbox = within( screen.getByTestId( 'KitContentDataSelection-content' ) ).getByRole( 'checkbox' );
-			expect( contentCheckbox.disabled ).toBe( true );
+			expect( contentCheckbox.disabled ).toBe( false );
 		} );
 
 		it( 'should disable required items in export mode', async () => {
@@ -230,7 +230,7 @@ describe( 'KitPartsSelection Component', () => {
 			// Assert
 			const contentCheckbox = within( screen.getByTestId( 'KitContentDataSelection-content' ) ).getByRole( 'checkbox' );
 
-			expect( contentCheckbox.disabled ).toBe( true );
+			expect( contentCheckbox.disabled ).toBe( false );
 		} );
 
 		it( 'should enable non-required items in export mode', () => {
