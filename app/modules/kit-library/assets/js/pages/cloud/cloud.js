@@ -49,8 +49,6 @@ export default function Cloud( {
 
 	const isCloudKitsAvailable = cloudKitsData?.is_eligible || false;
 
-	const exportUrl = elementorCommon?.config?.experimentalFeatures?.[ 'import-export-customization' ] ? elementorAppConfig.base_url + '#/export-customization' : elementorAppConfig.base_url + '#/export';
-
 	const menuItems = useMenuItems( path );
 
 	const eventTracking = ( command, elementPosition, search = null, direction = null, sortType = null, action = null, eventType = 'click' ) => {
@@ -184,7 +182,7 @@ export default function Cloud( {
 											newLineButton={ true }
 											button={ {
 												text: __( 'Export this site', 'elementor' ),
-												url: exportUrl,
+												url: elementorAppConfig.base_url + '#/export',
 												target: '_blank',
 												variant: 'contained',
 												color: 'primary',
