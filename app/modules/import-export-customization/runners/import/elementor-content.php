@@ -34,6 +34,10 @@ class Elementor_Content extends Import_Runner_Base {
 	}
 
 	public function import( array $data, array $imported_data ) {
+		if ( ! function_exists( 'wp_set_post_terms' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/taxonomy.php';
+		}
+
 		$result['content'] = [];
 		$this->import_session_id = $data['session_id'];
 
