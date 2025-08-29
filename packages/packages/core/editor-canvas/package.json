@@ -41,6 +41,7 @@
     "@elementor/editor-notifications": "3.33.0",
     "@elementor/editor-documents": "3.33.0",
     "@elementor/editor-elements": "3.33.0",
+    "@elementor/editor-elements-panel": "3.33.0",
     "@elementor/editor-props": "3.33.0",
     "@elementor/editor-responsive": "3.33.0",
     "@elementor/editor-styles": "3.33.0",
