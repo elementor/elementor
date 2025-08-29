@@ -177,7 +177,7 @@ class Import {
 			$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 
 			// Using isset and not empty is important since empty array is valid option.
-			$this->settings_selected_override_conditions = $settings['customization']['templates']['themeBuilder']['overrideConditions'] ?? null;
+			$this->settings_selected_override_conditions = $settings['overrideConditions'] ?? null;
 			$this->settings_selected_custom_post_types = $settings['customization']['content']['customPostTypes'] ?? null;
 			$this->settings_selected_plugins = $settings['plugins'] ?? null;
 			$this->settings_customization = $settings['customization'] ?? null;
