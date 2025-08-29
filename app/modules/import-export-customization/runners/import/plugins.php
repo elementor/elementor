@@ -63,12 +63,6 @@ class Plugins extends Import_Runner_Base {
 			} )
 			->all();
 
-		if ( ! function_exists( 'request_filesystem_credentials' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-		}
-
 		$installed = $this->plugins_manager->install( $slugs );
 		$activated = $this->plugins_manager->activate( $installed['succeeded'] );
 
