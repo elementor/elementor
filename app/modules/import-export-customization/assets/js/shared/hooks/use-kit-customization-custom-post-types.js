@@ -11,11 +11,33 @@ export function useKitCustomizationCustomPostTypes( { data } ) {
 			return builtInCustomPostTypes;
 		}
 
-		const wpContent = data?.uploadedData?.manifest?.[ 'wp-content' ] || {};
+		const customPostTypesTitles = Object.values( data?.uploadedData?.manifest?.[ 'custom-post-type-title' ] || {} ).map( ( postType ) => {
+			return {
+				value: postType.name,
+				label: postType.label,
+			};
+		} );
 
-		return builtInCustomPostTypes.filter( ( postType ) => {
-			const contentArray = wpContent[ postType.value ];
-			return contentArray && Array.isArray( contentArray ) && contentArray.length > 0;
+		if ( ! customPostTypesTitles.some( ( postType ) => 'post' === postType.value ) ) {
+			customPostTypesTitles.push( {
+				value: 'post',
+				label: 'Post',
+			} );
+		}
+
+		const wpContent = data?.uploadedData?.manifest?.[ 'wp-content' ] || {};
+		const content = data?.uploadedData?.manifest?.content || {};
+
+		return customPostTypesTitles.filter( ( postType ) => {
+			const postTypeValue = postType.value;
+
+			const wpContentArray = wpContent[ postTypeValue ];
+			const isInWpContent = wpContentArray && Array.isArray( wpContentArray ) && wpContentArray.length > 0;
+
+			const contentObject = content[ postTypeValue ];
+			const isInElementorContent = contentObject && 'object' === typeof contentObject && Object.keys( contentObject ).length > 0;
+
+			return isInWpContent || isInElementorContent;
 		} );
 	}, [ isImport, data?.uploadedData, builtInCustomPostTypes ] );
 
