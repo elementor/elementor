@@ -17,8 +17,15 @@ class VariablesRoute {
 	private $parser;
 
 	public function __construct( $parser = null ) {
-		$this->parser = null !== $parser ? $parser : new CssParser();
+		$this->parser = $parser;
 		add_action( 'rest_api_init', [ $this, 'register_route' ] );
+	}
+
+	private function get_parser() {
+		if ( null === $this->parser ) {
+			$this->parser = new CssParser();
+		}
+		return $this->parser;
 	}
 
 	public function register_route() {
@@ -97,7 +104,7 @@ class VariablesRoute {
 		$css_path = $logs_dir . '/' . $basename . '.css';
 		file_put_contents( $css_path, $css );
 
-		$parser = $this->parser;
+		$parser = $this->get_parser();
 		$raw = [];
 
 		try {
@@ -155,7 +162,7 @@ class VariablesRoute {
 		foreach ( $raw as $item ) {
 			$name = isset( $item['name'] ) ? $item['name'] : '';
 			$value = isset( $item['value'] ) ? $item['value'] : '';
-			if ( $name === '' ) {
+			if ( '' === $name ) {
 				continue;
 			}
 			if ( isset( $seen_names[ $name ] ) ) {
