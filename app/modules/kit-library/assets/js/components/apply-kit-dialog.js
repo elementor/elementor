@@ -10,9 +10,6 @@ export default function ApplyKitDialog( props ) {
 
 		if ( elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ] ) {
 			url = `import-customization?referrer=kit-library&id=${ props.id }&file_url=${ encodeURIComponent( props.downloadLink ) }`;
-			if ( applyAll ) {
-				url += '&action_type=apply-all';
-			}
 		} else {
 			url = '/import/process' +
 				`?id=${ props.id }` +
