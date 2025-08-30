@@ -238,7 +238,7 @@ describe( 'KeyValueControl', () => {
 		// Assert
 		const keyInput = screen.getAllByRole( 'textbox' )[ 0 ];
 		const valueInput = screen.getAllByRole( 'textbox' )[ 1 ];
-		
+
 		expect( keyInput ).toHaveValue( '&lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt;' );
 		expect( valueInput ).toHaveValue( 'Value &amp; &quot;quotes&quot; &#39;test&#39; &gt; end' );
 	} );
