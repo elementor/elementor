@@ -188,7 +188,7 @@ class Global_Classes_REST_API {
 		$items_count = count( $items_result->unwrap() );
 
 		// Validate items count
-		if ( $items_count >= self::MAX_ITEMS ) {
+		if ( $items_count > self::MAX_ITEMS ) {
 			return Error_Builder::make( 'global_classes_limit_exceeded' )
 				->set_status( 400 )
 				->set_meta([
