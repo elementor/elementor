@@ -46,32 +46,13 @@ export default class WpAdminPage extends BasePage {
 	/**
 	 * Go to the WordPress Settings pages.
 	 *
-	 * @param {('tab-general' | 'tab-integrations' | 'tab-advanced' | 'tab-performance' | 'tab-experiments')} tab - The Elementor settings tab to open.
+	 * @param {('tab-general' | 'tab-integrations' | 'tab-advanced' | 'tab-experiments')} tab - The Elementor settings tab to open.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openElementorSettings( tab: 'tab-general' | 'tab-integrations' | 'tab-advanced' | 'tab-performance' | 'tab-experiments' ): Promise<void> {
+	async openElementorSettings( tab: 'tab-general' | 'tab-integrations' | 'tab-advanced' | 'tab-experiments' ): Promise<void> {
 		await this.page.goto( `/wp-admin/admin.php?page=elementor-settings#${ tab }` );
 		await this.page.locator( `#elementor-settings-${ tab }` ).waitFor();
-	}
-
-	/**
-	 * Set settings in Elementor advanced/performance tab, as they both have only select-based options.
-	 *
-	 * @param {('tab-advanced' | 'tab-performance')} tab      - Either Elementor advanced or performance tab.
-	 * @param {Object}                               settings - Settings to set ( `{ setting_id: setting_value }` );
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setElementorSettings( tab: 'tab-advanced' | 'tab-performance', settings: { [ n: string ]: string } ): Promise<void> {
-		await this.openElementorSettings( tab );
-
-		for ( const [ selector, state ] of Object.entries( settings ) ) {
-			await this.page.locator( `select[name="${ selector }"]` ).waitFor();
-			await this.page.selectOption( `[name="${ selector }"]`, state.toString() );
-		}
-
-		await this.page.click( '#submit' );
 	}
 
 	/**
@@ -373,7 +354,9 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async enableAdvancedUploads(): Promise<void> {
-		await this.setElementorSettings( 'tab-advanced', { elementor_unfiltered_files_upload: '1' } );
+		await this.openElementorSettings( 'tab-advanced' );
+		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '1' );
+		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}
 
 	/**
@@ -382,7 +365,9 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async disableAdvancedUploads(): Promise<void> {
-		await this.setElementorSettings( 'tab-advanced', { elementor_unfiltered_files_upload: '' } );
+		await this.openElementorSettings( 'tab-advanced' );
+		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '' );
+		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}
 
 	/**
