@@ -1,10 +1,7 @@
 import * as React from 'react';
-import { closeDialog, openDialog } from '@elementor/editor-global-dialog';
-import { InfoCircleFilledIcon } from '@elementor/icons';
-import { Box, Button, Icon, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { openDialog } from '@elementor/editor-global-dialog';
 
-import { API_ERROR_CODES } from '../api';
+import { type API_ERROR_CODES } from '../api';
 import { DuplicateLabelDialog } from './class-manager/duplicate-label-dialog';
 
 export type ErrorDialogData = {
@@ -32,9 +29,9 @@ type ErrorDialogProps = {
 export const showErrorDialog = ( data: ErrorDialogProps ) => {
 	const { code, modifiedLabels } = data;
 
-	if (code === "DUPLICATED_LABEL") {
+	if ( code === 'DUPLICATED_LABEL' ) {
 		openDialog( {
-			component: <DuplicateLabelDialog modifiedLabels={ modifiedLabels } />,					
+			component: <DuplicateLabelDialog modifiedLabels={ modifiedLabels } />,
 		} );
 	}
 };

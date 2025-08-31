@@ -1,13 +1,13 @@
-type Callback< T = any > = ( payload: T ) => void;
+type Callback< T = unknown > = ( payload: T ) => void;
 
-const subscribers = new Map< string, Set< Callback > >();
+const subscribers = new Map< string, Set< Callback< unknown > > >();
 
 export const subscribe = < T = unknown >( event: string, cb: Callback< T > ) => {
 	if ( ! subscribers.has( event ) ) {
 		subscribers.set( event, new Set() );
 	}
-	subscribers.get( event )?.add( cb );
-	return () => subscribers.get( event )?.delete( cb );
+	subscribers.get( event )?.add( cb as Callback< unknown > );
+	return () => subscribers.get( event )?.delete( cb as Callback< unknown > );
 };
 
 export const publish = < T = unknown >( event: string, payload: T ) => {

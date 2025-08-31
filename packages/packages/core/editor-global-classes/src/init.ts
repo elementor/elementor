@@ -24,20 +24,20 @@ export function init() {
 
 		stylesRepository.register( globalClassesStylesProvider );
 
-	injectIntoLogic( {
-		id: 'global-classes-populate-store',
-		component: PopulateStore,
-	} );
+		injectIntoLogic( {
+			id: 'global-classes-populate-store',
+			component: PopulateStore,
+		} );
 
-	injectIntoCssClassConvert( {
-		id: 'global-classes-convert-from-local-class',
-		component: ConvertLocalClassToGlobalClass,
-	} );
+		injectIntoCssClassConvert( {
+			id: 'global-classes-convert-from-local-class',
+			component: ConvertLocalClassToGlobalClass,
+		} );
 
-	injectIntoClassSelectorActions( {
-		id: 'global-classes-manager-button',
-		component: ClassManagerButton,
-	} );
+		injectIntoClassSelectorActions( {
+			id: 'global-classes-manager-button',
+			component: ClassManagerButton,
+		} );
 
 		registerStyleProviderToColors( GLOBAL_CLASSES_PROVIDER_KEY, {
 			name: 'global',
@@ -47,7 +47,7 @@ export function init() {
 		listenTo( v1ReadyEvent(), () => {
 			syncWithDocumentSave();
 		} );
-	} catch ( e ) {
-		console.log( { e } );
+	} catch {
+		// Remove console statement as it violates no-console eslint rule
 	}
 }

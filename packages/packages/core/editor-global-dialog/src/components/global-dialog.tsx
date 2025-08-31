@@ -25,7 +25,7 @@ export const GlobalDialog = () => {
 	return (
 		<ThemeProvider>
 			<Dialog open onClose={ () => setContent( null ) } maxWidth="sm" fullWidth>
-					{content.component}
+				{ content.component }
 			</Dialog>
 		</ThemeProvider>
 	);

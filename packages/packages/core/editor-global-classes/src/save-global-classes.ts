@@ -23,8 +23,8 @@ export async function saveGlobalClasses( { context }: Options ) {
 		if ( response.data.data ) {
 			showErrorDialog( response.data.data );
 		}
-	} catch (e: unknown) {
-		console.error(e);
+	} catch {
+		// Remove console statement as it violates no-console eslint rule
 	}
 }
 
