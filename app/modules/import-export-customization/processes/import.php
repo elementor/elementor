@@ -177,7 +177,7 @@ class Import {
 			$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 
 			// Using isset and not empty is important since empty array is valid option.
-			$this->settings_selected_override_conditions = $settings['overrideConditions'] ?? null;
+			$this->settings_selected_override_conditions = $settings['customization']['templates']['themeBuilder']['overrideConditions'] ?? null;
 			$this->settings_selected_custom_post_types = $settings['customization']['content']['customPostTypes'] ?? null;
 			$this->settings_selected_plugins = $settings['plugins'] ?? null;
 			$this->settings_customization = $settings['customization'] ?? null;
@@ -685,9 +685,15 @@ class Import {
 			return [];
 		}
 
+		$excluded = [ 'page', 'nav_menu_item' ];
+
+		if ( empty( $this->manifest['content']['post'] ?? [] ) && empty( $this->manifest['wp-content']['post'] ?? [] ) ) {
+			$excluded[] = 'post';
+		}
+
 		$manifest_post_types = array_keys( $this->manifest['custom-post-type-title'] );
 
-		return array_diff( $manifest_post_types, Utils::get_builtin_wp_post_types( [ 'post', 'nav_menu_item' ] ) );
+		return array_merge( $manifest_post_types, Utils::get_builtin_wp_post_types( $excluded ) );
 	}
 
 	/**

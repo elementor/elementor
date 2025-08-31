@@ -60,3 +60,16 @@ export function validate( editor: editor.IStandaloneCodeEditor, monaco: MonacoEd
 	const allMarkers = monaco.editor.getModelMarkers( { resource: model.uri } );
 	return allMarkers.filter( ( marker ) => marker.severity === monaco.MarkerSeverity.Error ).length === 0;
 }
+
+export function clearMarkersFromVisualContent( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ): void {
+	const model = editor.getModel();
+
+	if ( ! model ) {
+		return;
+	}
+
+	const allMarkers = monaco.editor.getModelMarkers( { resource: model.uri } );
+	const filteredMarkers = allMarkers.filter( ( marker ) => marker.startLineNumber !== 1 );
+	const nonCustomMarkers = filteredMarkers.filter( ( m ) => m.source !== 'custom-css-rules' );
+	monaco.editor.setModelMarkers( model, 'css', nonCustomMarkers );
+}

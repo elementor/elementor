@@ -5,6 +5,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
@@ -12,7 +13,6 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -58,7 +58,7 @@ class Div_Block extends Atomic_Element_Base {
 				->default( 'div' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
-			'attributes' => Key_Value_Array_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
 
@@ -140,6 +140,7 @@ class Div_Block extends Atomic_Element_Base {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
+		$initial_attributes = $this->define_initial_attributes();
 
 		$attributes = [
 			'class' => [
@@ -158,6 +159,6 @@ class Div_Block extends Atomic_Element_Base {
 			$attributes = array_merge( $attributes, $settings['link'] );
 		}
 
-		$this->add_render_attribute( '_wrapper', $attributes );
+		$this->add_render_attribute( '_wrapper', array_merge( $attributes, $initial_attributes ) );
 	}
 }

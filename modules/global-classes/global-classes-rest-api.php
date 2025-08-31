@@ -3,8 +3,8 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Modules\GlobalClasses\Usage\Applied_Global_Classes_Usage;
-use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
-use Elementor\Modules\GlobalClasses\Utils\Response_Builder;
+use Elementor\Core\Utils\Api\Error_Builder;
+use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,7 +37,7 @@ class Global_Classes_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
-				'permission_callback' => fn() => true,
+				'permission_callback' => fn() => is_user_logged_in(),
 				'args' => [
 					'context' => [
 						'type' => 'string',
@@ -182,7 +182,7 @@ class Global_Classes_REST_API {
 		$validation_result = null;
 
 		$items_result = $parser->parse_items(
-			$request->get_param( 'items' ),
+			$request->get_param( 'items' )
 		);
 
 		$items_count = count( $items_result->unwrap() );
@@ -196,6 +196,7 @@ class Global_Classes_REST_API {
 					'max_allowed' => self::MAX_ITEMS,
 				])
 				->set_message(sprintf(
+					/* translators: %d: Maximum allowed items. */
 					__( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
 					self::MAX_ITEMS
 				))
@@ -290,7 +291,6 @@ class Global_Classes_REST_API {
 			$response = $cb();
 		} catch ( \Exception $e ) {
 			return Error_Builder::make( 'unexpected_error' )
-				->set_status( 500 )
 				->set_message( __( 'Something went wrong', 'elementor' ) )
 				->build();
 		}

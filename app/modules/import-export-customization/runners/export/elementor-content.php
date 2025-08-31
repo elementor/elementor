@@ -25,7 +25,16 @@ class Elementor_Content extends Export_Runner_Base {
 
 	public function export( array $data ) {
 		$customization = $data['customization']['content'] ?? null;
-		$elementor_post_types = ImportExportUtils::get_elementor_post_types();
+		$selected_custom_post_types = $data['selected_custom_post_types'] ?? null;
+		$excluded_post_types = [];
+
+		if ( $selected_custom_post_types && ! in_array( 'post', $selected_custom_post_types, true ) ) {
+			$excluded_post_types[] = 'post';
+		}
+
+		$elementor_post_types = ImportExportUtils::get_elementor_post_types( $excluded_post_types );
+
+		$elementor_post_types = apply_filters( 'elementor/import-export-customization/elementor-content/post-types/customization', $elementor_post_types, $customization );
 
 		$files = [];
 		$manifest = [];
@@ -53,13 +62,6 @@ class Elementor_Content extends Export_Runner_Base {
 		$manifest_data = [];
 		$files = [];
 
-		if ( is_array( $selected_pages ) && empty( $selected_pages ) ) {
-			return [
-				'files' => $files,
-				'manifest_data' => $manifest_data,
-			];
-		}
-
 		$query_args = [
 			'post_type' => $post_type,
 			'post_status' => 'publish',
@@ -81,9 +83,7 @@ class Elementor_Content extends Export_Runner_Base {
 			],
 		];
 
-		if ( ! is_null( $selected_pages ) && ! empty( $selected_pages ) ) {
-			$query_args['post__in'] = $selected_pages;
-		}
+		$query_args = apply_filters( 'elementor/import-export-customization/export/elementor-content/query-args/customization', $query_args, $post_type, $customization );
 
 		$query = new \WP_Query( $query_args );
 
