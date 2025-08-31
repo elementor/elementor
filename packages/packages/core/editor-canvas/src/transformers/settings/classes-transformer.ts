@@ -15,11 +15,7 @@ function transformClassId( id: string, cache: Map< string, string > ): string {
 		cache.set( id, provider.getKey() );
 	}
 
-	const providerKey = cache.get( id );
-
-	if ( ! providerKey ) {
-		return id;
-	}
+	const providerKey = cache.get( id ) as string;
 
 	const provider = stylesRepository.getProviderByKey( providerKey );
 
