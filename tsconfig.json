@@ -25,6 +25,11 @@
         "noUnusedParameters": true,
         "checkJs": false,
         "allowJs": false,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "paths": {
+            "playwright": [
+                "./playwright"
+            ]
+        }
     }
 }
