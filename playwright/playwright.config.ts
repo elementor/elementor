@@ -10,8 +10,8 @@ _config( {
 } );
 
 export default defineConfig( {
-	testDir: '../',
-	testMatch: [ '**/e2e/*.e2e.ts' ],
+	testDir: '../e2e',
+	testMatch: [ '*.e2e.ts' ],
 	expect: {
 		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },
 		toHaveScreenshot: { maxDiffPixelRatio: 0.03 },

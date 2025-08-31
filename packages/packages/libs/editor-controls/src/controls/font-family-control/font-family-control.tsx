@@ -38,6 +38,7 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 		<>
 			<ControlActions>
 				<UnstableTag
+					id="font-family-control"
 					variant="outlined"
 					label={ fontFamily || placeholder }
 					endIcon={ <ChevronDownIcon fontSize="tiny" /> }

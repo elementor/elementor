@@ -66,7 +66,7 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'playwright/**/*.ts', 'playwright/**/*.tsx' ],
+			files: [ 'playwright/**/*.ts', 'playwright/**/*.tsx', 'e2e/**/*.ts', 'e2e/**/*.tsx' ],
 			rules: {
 				'local-rules:no-react-namespace': 'off',
 			},
