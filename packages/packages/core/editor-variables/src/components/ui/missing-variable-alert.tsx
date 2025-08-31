@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Alert, AlertAction, AlertTitle, ClickAwayListener, Typography } from '@elementor/ui';
+import { useSectionWidth } from '@elementor/editor-editing-panel';
+import { Alert, AlertAction, AlertTitle, ClickAwayListener } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type MissingVariableAlertProps = {
@@ -8,6 +9,8 @@ type MissingVariableAlertProps = {
 };
 
 export const MissingVariableAlert = ( { onClose, onClear }: MissingVariableAlertProps ) => {
+	const sectionWidth = useSectionWidth();
+
 	return (
 		<ClickAwayListener onClickAway={ onClose }>
 			<Alert
@@ -23,15 +26,13 @@ export const MissingVariableAlert = ( { onClose, onClear }: MissingVariableAlert
 						) }
 					</>
 				}
-				sx={ { maxWidth: 300 } }
+				sx={ { width: sectionWidth } }
 			>
 				<AlertTitle>{ __( 'This variable is missing', 'elementor' ) }</AlertTitle>
-				<Typography variant="body2" color="textPrimary">
-					{ __(
-						'It may have been deleted. Try clearing this field and select a different value or variable.',
-						'elementor'
-					) }
-				</Typography>
+				{ __(
+					'It may have been deleted. Try clearing this field and select a different value or variable.',
+					'elementor'
+				) }
 			</Alert>
 		</ClickAwayListener>
 	);
