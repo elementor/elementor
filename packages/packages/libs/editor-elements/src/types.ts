@@ -5,6 +5,7 @@ export type ElementID = string;
 export type Element = {
 	id: ElementID;
 	type: string;
+	isWidget: boolean;
 };
 
 export type ElementType = {
