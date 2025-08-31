@@ -36,7 +36,11 @@
   },
   "dependencies": {
     "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@1.0.1",
+    "@elementor/editor-documents": "*",
     "@modelcontextprotocol/sdk": "1.17.3",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "@elementor/editor-styles-repository": "*",
+    "@elementor/editor-global-classes": "*",
+    "@elementor/store": "*"
   }
 }
