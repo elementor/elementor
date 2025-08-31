@@ -11,7 +11,7 @@ export const setExperiment = async ( page: Page, experiment: string, state: 'act
 	const experimentElement = page.locator( `.elementor_experiment-${ experiment }` );
 	if ( await experimentElement.isVisible() ) {
 		await experimentElement.locator( 'select' ).selectOption( state );
-        await page.click('#submit');
-        await page.waitForLoadState('load');
+		await page.click( '#submit' );
+		await page.waitForLoadState( 'load' );
 	}
 };
