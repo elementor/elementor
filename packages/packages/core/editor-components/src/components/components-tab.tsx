@@ -42,9 +42,11 @@ const ComponentItem = ( { component }: { component: Component } ) => {
 
 const addComponent = ( model: CreateElementParams[ 'model' ] ) => {
 	const { container, options } = getContainerForNewElement();
+
 	if ( ! container ) {
 		throw new Error( `Can't find container to drop new component instance at` );
 	}
+
 	createElement( {
 		containerId: container.id,
 		model,
