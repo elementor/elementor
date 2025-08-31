@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useSectionWidth } from '@elementor/editor-editing-panel';
-import { Alert, AlertAction, AlertTitle, ClickAwayListener } from '@elementor/ui';
+import { Alert, AlertAction, AlertTitle, ClickAwayListener, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type DeletedVariableAlertProps = {
@@ -11,8 +10,6 @@ type DeletedVariableAlertProps = {
 };
 
 export const DeletedVariableAlert = ( { onClose, onUnlink, onRestore, label }: DeletedVariableAlertProps ) => {
-	const sectionWidth = useSectionWidth();
-
 	return (
 		<ClickAwayListener onClickAway={ onClose }>
 			<Alert
@@ -33,14 +30,21 @@ export const DeletedVariableAlert = ( { onClose, onUnlink, onRestore, label }: D
 						) }
 					</>
 				}
-				sx={ { width: sectionWidth } }
+				sx={ { maxWidth: 300 } }
 			>
 				<AlertTitle>{ __( 'Deleted variable', 'elementor' ) }</AlertTitle>
-				{ __( 'The variable', 'elementor' ) } &apos;{ label }&apos;{ ' ' }
-				{ __(
-					'has been deleted, but it is still referenced in this location. You may restore the variable or unlink it to assign a different value.',
-					'elementor'
-				) }
+				<Typography variant="body2" color="textPrimary">
+					{ __( 'The variable', 'elementor' ) }
+					&nbsp;&apos;
+					<Typography variant="body2" component="span" sx={ { lineBreak: 'anywhere' } }>
+						{ label }
+					</Typography>
+					&apos;&nbsp;
+					{ __(
+						'has been deleted, but it is still referenced in this location. You may restore the variable or unlink it to assign a different value.',
+						'elementor'
+					) }
+				</Typography>
 			</Alert>
 		</ClickAwayListener>
 	);
