@@ -28,7 +28,7 @@ export const DuplicateLabelDialog = ( { modifiedLabels }: { modifiedLabels: Modi
 
 	return (
 		<>
-		<DialogHeader>
+		<DialogHeader logo={false}>
 			<Box display="flex" alignItems="center" gap={ 1 }>
 					<Icon color="secondary">
 						<InfoCircleFilledIcon fontSize="medium" />
@@ -40,7 +40,7 @@ export const DuplicateLabelDialog = ( { modifiedLabels }: { modifiedLabels: Modi
 			</DialogHeader>
 			<DialogContent>
 		<Stack spacing={ 2 } direction="column">
-			<Typography variant="body2" sx={{ pb: 2 }}>
+			<Typography variant="body2">
 				
 				{ __(
 					'Some new classes used the same names as existing ones. To prevent conflicts, we added the prefix ',
