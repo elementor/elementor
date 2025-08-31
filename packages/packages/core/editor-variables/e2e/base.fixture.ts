@@ -1,5 +1,5 @@
 import { setDefaultTemplate } from 'playwright';
-import { Page, test } from '@playwright/test';
+import { type Page, test } from '@playwright/test';
 
 import { openVariableManager } from './utils';
 

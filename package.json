@@ -51,8 +51,9 @@
     "packages:release": "cd packages && npm run release",
     "e2e:v4": "npx playwright install chromium && playwright test -c playwright/playwright.config.ts",
     "e2e:v4:ui": "npm run e2e:v4 -- --ui",
-    "experimental:wp-playground": "npx @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./playwright/blueprints/local.json",
-    "experimental:wp-playground:ci": "npx @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./playwright/blueprints/ci.json"
+    "experimental:wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./playwright/blueprints/local.json",
+    "experimental:wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./playwright/blueprints/ci.json",
+    "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run experimental:wp-playground\" \"npm run e2e:v4:ui\""
   },
   "engines": {
     "node": ">=20.19.0",

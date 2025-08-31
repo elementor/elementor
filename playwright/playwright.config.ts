@@ -10,7 +10,6 @@ _config( {
 } );
 
 export default defineConfig( {
-	globalSetup: resolve( __dirname, './global-setup.ts' ),
 	testDir: '../',
 	testMatch: [ '**/e2e/*.e2e.ts' ],
 	expect: {
