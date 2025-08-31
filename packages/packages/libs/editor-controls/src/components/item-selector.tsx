@@ -22,7 +22,6 @@ type ItemSelectorProps = {
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
 	onDebounce?: ( name: string ) => void;
 	icon: React.ElementType< { fontSize: string } >;
-	disabledItems?: string[];
 };
 
 export const ItemSelector = ( {
@@ -35,11 +34,10 @@ export const ItemSelector = ( {
 	itemStyle = () => ( {} ),
 	onDebounce = () => {},
 	icon,
-	disabledItems,
 }: ItemSelectorProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 
-	const filteredItemsList = useFilteredItemsList( itemsList, searchValue, disabledItems );
+	const filteredItemsList = useFilteredItemsList( itemsList, searchValue );
 
 	const IconComponent = icon;
 
@@ -130,7 +128,6 @@ type ItemListProps = {
 	selectedItem: string | null;
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
 	onDebounce?: ( name: string ) => void;
-	disabledItems?: string[];
 };
 
 const ItemList = ( {

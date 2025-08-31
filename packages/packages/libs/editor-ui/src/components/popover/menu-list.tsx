@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo, useRef } from 'react';
-import { Box, ListItem, MenuList, MenuSubheader, styled } from '@elementor/ui';
+import { Box, MenuList, MenuSubheader, styled } from '@elementor/ui';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
 import { useScrollTop, useScrollToSelected } from '../../hooks';
@@ -8,7 +8,6 @@ import { useScrollTop, useScrollToSelected } from '../../hooks';
 export type VirtualizedItem< T, V extends string > = {
 	type: T;
 	value: V;
-	disabled?: boolean;
 	label?: string;
 	icon?: React.ReactNode;
 	secondaryText?: string;
@@ -106,7 +105,6 @@ export const PopoverMenuList = < T, V extends string >( {
 	} );
 
 	useScrollToSelected( { selectedValue, items, virtualizer } );
-	const virtualItems = virtualizer.getVirtualItems();
 
 	return (
 		<Box ref={ containerRef } sx={ { height: '100%', overflowY: 'auto' } }>
@@ -118,7 +116,7 @@ export const PopoverMenuList = < T, V extends string >( {
 					style={ { height: `${ virtualizer.getTotalSize() }px` } }
 					data-testid={ dataTestId }
 				>
-					{ virtualItems.map( ( virtualRow ) => {
+					{ virtualizer.getVirtualItems().map( ( virtualRow ) => {
 						const item = items[ virtualRow.index ];
 						const isLast = virtualRow.index === items.length - 1;
 						const isFirst =
@@ -143,26 +141,21 @@ export const PopoverMenuList = < T, V extends string >( {
 								</MenuSubheader>
 							);
 						}
-						const isDisabled = item.disabled;
+
 						return (
-							<ListItem
+							<li
 								key={ virtualRow.key }
 								role="option"
 								aria-selected={ isSelected }
-								aria-disabled={ isDisabled }
-								onClick={
-									isDisabled
-										? undefined
-										: ( e: React.MouseEvent< HTMLLIElement > ) => {
-												if ( ( e.target as HTMLElement ).closest( 'button' ) ) {
-													return;
-												}
-												onSelect( item.value );
-												onClose();
-										  }
-								}
-								onKeyDown={ ( event: React.KeyboardEvent< HTMLLIElement > ) => {
-									if ( event.key === 'Enter' && ! isDisabled ) {
+								onClick={ ( e ) => {
+									if ( ( e.target as HTMLElement ).closest( 'button' ) ) {
+										return;
+									}
+									onSelect( item.value );
+									onClose();
+								} }
+								onKeyDown={ ( event ) => {
+									if ( event.key === 'Enter' ) {
 										onSelect( item.value );
 										onClose();
 									}
@@ -178,13 +171,13 @@ export const PopoverMenuList = < T, V extends string >( {
 									}
 								} }
 								tabIndex={ isSelected ? 0 : tabIndexFallback }
-								sx={ {
+								style={ {
 									transform: `translateY(${ virtualRow.start + MENU_LIST_PADDING_TOP }px)`,
 									...( itemStyle ? itemStyle( item ) : {} ),
 								} }
 							>
 								{ menuItemContentTemplate ? menuItemContentTemplate( item ) : item.label || item.value }
-							</ListItem>
+							</li>
 						);
 					} ) }
 				</MenuListComponent>
@@ -209,9 +202,6 @@ export const StyledMenuList = styled( MenuList )( ( { theme } ) => ( {
 		},
 		'&[aria-selected="true"]': {
 			backgroundColor: theme.palette.action.selected,
-		},
-		'&[aria-disabled="true"]': {
-			color: theme.palette.text.disabled,
 		},
 		cursor: 'pointer',
 		textOverflow: 'ellipsis',

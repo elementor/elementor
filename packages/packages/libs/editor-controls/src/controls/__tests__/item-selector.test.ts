@@ -59,11 +59,11 @@ describe( 'ItemSelector', () => {
 		// Assert.
 		const expected = [
 			{ type: 'category', value: 'System' },
-			{ type: 'item', value: 'Font1', disabled: false },
-			{ type: 'item', value: 'Font2', disabled: false },
+			{ type: 'item', value: 'Font1' },
+			{ type: 'item', value: 'Font2' },
 			{ type: 'category', value: 'Google' },
-			{ type: 'item', value: 'Font3', disabled: false },
-			{ type: 'item', value: 'Font4', disabled: false },
+			{ type: 'item', value: 'Font3' },
+			{ type: 'item', value: 'Font4' },
 		];
 		expect( capturedItems ).toStrictEqual( expected );
 	} );
