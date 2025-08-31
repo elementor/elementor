@@ -49,7 +49,7 @@
     "restart:testing": "bash scripts/setup-testing.sh --restart",
     "packages:version": "cd packages && npm run version",
     "packages:release": "cd packages && npm run release",
-    "experimental:wp-playground": "npx @wp-playground/cli server --port=9401 --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json --blueprint-may-read-adjacent-files"
+    "experimental:wp-playground": "npx @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json --blueprint-may-read-adjacent-files"
   },
   "engines": {
     "node": ">=20.19.0",
