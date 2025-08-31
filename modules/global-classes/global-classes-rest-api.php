@@ -404,6 +404,7 @@ class Global_Classes_REST_API {
 		return [
 			'is_valid' => true,
 			'message' => empty( $modified_labels ) ? '' : sprintf(
+				/* translators: %d: Number of duplicate labels that were modified. */
 				__( 'Modified %d duplicate labels automatically.', 'elementor' ),
 				count( $modified_labels )
 			),
