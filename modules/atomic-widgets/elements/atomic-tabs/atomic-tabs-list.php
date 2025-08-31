@@ -87,10 +87,10 @@ class Atomic_Tabs_List extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		return [
-			Atomic_Tab_Link::generate()
+			Atomic_Tab::generate()
 				->is_locked( true )
 				->build(),
-			Atomic_Tab_Link::generate()
+			Atomic_Tab::generate()
 				->is_locked( true )
 				->build(),
 		];
