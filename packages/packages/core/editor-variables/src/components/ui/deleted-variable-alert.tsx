@@ -35,7 +35,7 @@ export const DeletedVariableAlert = ( { onClose, onUnlink, onRestore, label }: D
 				<AlertTitle>{ __( 'Deleted variable', 'elementor' ) }</AlertTitle>
 				<Typography variant="body2" color="textPrimary">
 					{ __( 'The variable', 'elementor' ) }
-					&nbsp;&apos;
+					&nbsp; &apos;
 					<Typography variant="body2" component="span" sx={ { lineBreak: 'anywhere' } }>
 						{ label }
 					</Typography>
