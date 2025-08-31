@@ -19,7 +19,7 @@ function transformClassId( id: string, cache: Map< string, string > ): string {
 
 	const provider = stylesRepository.getProviderByKey( providerKey );
 
-	return provider?.actions.resolveCssName( id ) || id;
+	return provider?.actions.resolveCssName( id ) ?? id;
 }
 
 export function createClassesTransformer() {
