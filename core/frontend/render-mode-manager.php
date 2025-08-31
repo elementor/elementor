@@ -126,7 +126,7 @@ class Render_Mode_Manager {
 			array_key_exists( $key, $this->render_modes )
 		) {
 			$this->set_current( new $this->render_modes[ $key ]( $post_id ) );
-		} elseif ( $this->is_template_preview_mode( $template_id, $key, $nonce ) ) {
+		} else if ( $this->is_template_preview_mode( $template_id, $key, $nonce ) ) {
 			$this->set_current( new $this->render_modes[ $key ]( $template_id ) );
 		} else {
 			$this->set_current( new Render_Mode_Normal( $post_id ) );

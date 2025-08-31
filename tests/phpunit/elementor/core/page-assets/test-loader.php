@@ -110,7 +110,7 @@ class Test_Loader extends Elementor_Test_Base {
 		// Validating that the test's dummy data is unique for each test.
 		if ( array_key_exists( $style_asset_key, $assets['styles'] ) ) {
 			throw new \Exception( 'Style asset key already exist, set a unique key for each style asset to prevent data collision.' );
-		} elseif ( array_key_exists( $script_asset_key, $assets['scripts'] ) ) {
+		} else if ( array_key_exists( $script_asset_key, $assets['scripts'] ) ) {
 			throw new \Exception( 'Script asset key already exist, set a unique key for script each asset to prevent data collision.' );
 		}
 

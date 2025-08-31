@@ -464,7 +464,7 @@ class Hints {
 				'url' => $url,
 				'classes' => [ 'elementor-button' ],
 			];
-		} elseif ( ! $is_active ) {
+		} else if ( ! $is_active ) {
 			$url = Admin_Notices::add_plg_campaign_data( self::get_plugin_action_url( $plugin_slug ), $campaign_data );
 			$data['content'] = esc_html__( 'Activate the Ally plugin to turn its accessibility features on across your site.', 'elementor' );
 			$data['action_button'] = [
@@ -472,7 +472,7 @@ class Hints {
 				'url' => $url,
 				'classes' => [ 'elementor-button' ],
 			];
-		} elseif ( ! $is_connected ) {
+		} else if ( ! $is_connected ) {
 			$data['content'] = esc_html__( "Connect the Ally plugin to your account to access all of it's accessibility features.", 'elementor' );
 			$data['action_button'] = [
 				'text' => esc_html__( 'Connect', 'elementor' ),
