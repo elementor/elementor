@@ -70,7 +70,6 @@ class Dynamic_Tags_Schemas {
 
 			case 'number':
 				return Number_Prop_Type::make()
-					->set_required( $control['required'] ?? false )
 					->default( $control['default'] ?? null );
 
 			case 'switcher':
