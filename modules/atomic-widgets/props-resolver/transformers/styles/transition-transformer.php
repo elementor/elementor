@@ -26,7 +26,8 @@ class Transition_Transformer extends Transformer_Base {
 
 		$transition_string = implode( ', ', $valid_transitions );
 
-		return $transition_string . '; @media (prefers-reduced-motion: reduce) { transition-duration: 0s !important; }';
+		// Return the complete CSS rule with the media query
+		return "{$transition_string}; @media (prefers-reduced-motion: reduce) { transition-delay: 0s; transition-duration: 0s; }";
 	}
 
 	private function map_to_transition_string( $transition ): string {
