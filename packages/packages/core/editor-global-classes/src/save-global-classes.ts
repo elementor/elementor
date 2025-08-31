@@ -23,7 +23,9 @@ export async function saveGlobalClasses( { context }: Options ) {
 		if ( response.data.data ) {
 			showErrorDialog( response.data.data );
 		}
-	} catch ( e: unknown ) {}
+	} catch (e: unknown) {
+		console.error(e);
+	}
 }
 
 function calculateChanges( state: GlobalClasses, initialData: GlobalClasses ) {
