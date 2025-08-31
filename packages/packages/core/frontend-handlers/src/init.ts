@@ -4,7 +4,7 @@ export function init() {
 	window.addEventListener( 'elementor/element/render', ( _event ) => {
 		const event = _event as CustomEvent< { id: string; type: string; element: Element } >;
 		const { id, type, element } = event.detail;
-
+		console.log( 'elementor/element/render', type);
 		// Ensure the "destroy" event was not triggered before the render event.
 		onElementDestroy( { elementType: type, elementId: id } );
 

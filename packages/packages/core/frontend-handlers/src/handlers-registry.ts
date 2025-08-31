@@ -3,6 +3,7 @@ type Handler = ( params: { element: Element; signal: AbortSignal } ) => ( () => 
 export const handlers: Map< string, Map< string, Handler > > = new Map();
 
 export const register = ( { elementType, id, callback }: { elementType: string; id: string; callback: Handler } ) => {
+	console.log( 'register', elementType, id, callback );
 	if ( ! handlers.has( elementType ) ) {
 		handlers.set( elementType, new Map() );
 	}

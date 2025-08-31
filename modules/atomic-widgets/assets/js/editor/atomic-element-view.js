@@ -181,6 +181,8 @@ export default function createAtomicElementView( type ) {
 		},
 
 		onRender() {
+			this.dispatchPreviewEvent( 'elementor/element/render' );
+
 			BaseElementView.prototype.onRender.apply( this, arguments );
 
 			// Defer to wait for everything to render.
@@ -188,6 +190,18 @@ export default function createAtomicElementView( type ) {
 				this.droppableInitialize();
 				this.updateHandlesPosition();
 			} );
+		},
+
+		dispatchPreviewEvent( eventType ) {
+			elementor?.$preview?.[ 0 ]?.contentWindow.dispatchEvent(
+				new CustomEvent( eventType, {
+					detail: {
+						id: this.model.get( 'id' ),
+						type: this.model.get( 'elType' ),
+						element: this.getDomElement().get( 0 ),
+					},
+				} ),
+			);
 		},
 
 		haveLink() {
