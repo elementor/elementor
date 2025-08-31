@@ -39,6 +39,7 @@ export { getWidgetsCache } from './sync/get-widgets-cache';
 export { updateElementSettings, type UpdateElementSettingsArgs } from './sync/update-element-settings';
 export { generateElementId } from './sync/generate-element-id';
 export { replaceElement } from './sync/replace-element';
+export { getContainerForNewElement } from './sync/get-container-for-new-element';
 
 export { ELEMENT_STYLE_CHANGE_EVENT, styleRerenderEvents } from './styles/consts';
 export {
