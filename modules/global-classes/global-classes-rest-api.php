@@ -3,8 +3,8 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Modules\GlobalClasses\Usage\Applied_Global_Classes_Usage;
-use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
-use Elementor\Modules\GlobalClasses\Utils\Response_Builder;
+use Elementor\Core\Utils\Api\Error_Builder;
+use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,7 +36,7 @@ class Global_Classes_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
-				'permission_callback' => fn() => true,
+				'permission_callback' => fn() => is_user_logged_in(),
 				'args' => [
 					'context' => [
 						'type' => 'string',
@@ -169,10 +169,11 @@ class Global_Classes_REST_API {
 
 		$items_count = count( $items_result->unwrap() );
 
-		if ( $items_count >= static::MAX_ITEMS ) {
+		if ( $items_count > static::MAX_ITEMS ) {
 			return Error_Builder::make( 'global_classes_limit_exceeded' )
 				->set_status( 400 )
 				->set_message( sprintf(
+					/* translators: %d: Maximum allowed items. */
 					__( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
 					static::MAX_ITEMS
 				) )

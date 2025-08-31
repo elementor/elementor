@@ -341,6 +341,7 @@ class Manager extends Base_Object {
 			'name' => 'container',
 			'title' => esc_html__( 'Container', 'elementor' ),
 			'description' => sprintf(
+				/* translators: 1: Link opening tag, 2: Link closing tag, 3: Link opening tag, 4: Link closing tag, 5: Link opening tag, 6: Link closing tag */
 				esc_html__( 'Create advanced layouts and responsive designs with %1$sFlexbox%2$s and %3$sGrid%4$s container elements. Give it a try using the %5$sContainer playground%6$s.', 'elementor' ),
 				'<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">',
 				'</a>',

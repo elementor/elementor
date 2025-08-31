@@ -5,7 +5,7 @@ export { TextAreaControl } from './controls/text-area-control';
 export { SizeControl } from './controls/size-control';
 export { StrokeControl } from './controls/stroke-control';
 export { BoxShadowRepeaterControl } from './controls/box-shadow-repeater-control';
-export { FilterRepeaterControl } from './controls/filter-repeater-control';
+export { FilterRepeaterControl } from './controls/filter-control/filter-repeater-control';
 export { SelectControl } from './controls/select-control';
 export { ColorControl } from './controls/color-control';
 export { ToggleControl } from './controls/toggle-control';
@@ -54,6 +54,7 @@ export { useFloatingActionsBar } from './components/floating-bar';
 export { useBoundProp, PropProvider, PropKeyProvider } from './bound-prop-context';
 export { ControlAdornmentsProvider } from './control-adornments/control-adornments-context';
 export { ControlAdornments } from './control-adornments/control-adornments';
+export { createControl } from './create-control';
 
 export {
 	injectIntoRepeaterItemIcon,

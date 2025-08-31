@@ -165,6 +165,7 @@ export const StyleTab = () => {
 									'filter',
 									'backdrop-filter',
 									'transform-origin',
+									'transition',
 								] }
 							/>
 							{ shouldRenderCustomCss && (
@@ -174,6 +175,8 @@ export const StyleTab = () => {
 										name: 'Custom CSS',
 										title: __( 'Custom CSS', 'elementor' ),
 									} }
+									fields={ [ 'custom_css' ] }
+									unmountOnExit={ false }
 								/>
 							) }
 						</SectionsList>

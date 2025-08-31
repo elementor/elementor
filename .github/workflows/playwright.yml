@@ -186,12 +186,6 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Remove run-tests label
-        if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-tests') && (needs.Playwright.result == 'success' || needs.Playwright.result == 'failure') }}
-        run: |
-          gh pr edit ${{ github.event.pull_request.number }} --remove-label "run-tests" --repo ${{ github.repository }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create revert PR on push failure
         id: create_revert_pr
         if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')) }}

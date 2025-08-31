@@ -23,7 +23,7 @@ export default function App() {
 			document.body.classList.remove( darkThemeClassName );
 		}
 
-		if ( ! elementorAppConfig.onboarding.onboardingAlreadyRan ) {
+		if ( ! elementorAppConfig?.onboarding?.onboardingAlreadyRan ) {
 			const formData = new FormData();
 
 			formData.append( '_nonce', elementorCommon.config.ajax.nonce );

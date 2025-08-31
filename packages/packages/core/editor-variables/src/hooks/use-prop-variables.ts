@@ -6,8 +6,18 @@ import { useVariableType } from '../context/variable-type-context';
 import { service } from '../service';
 import { type NormalizedVariable, type Variable } from '../types';
 
-export const useVariable = ( key: string ) => {
+export const getVariables = ( includeDeleted = true ) => {
 	const variables = service.variables();
+
+	if ( includeDeleted ) {
+		return variables;
+	}
+
+	return Object.fromEntries( Object.entries( variables ).filter( ( [ , variable ] ) => ! variable.deleted ) );
+};
+
+export const useVariable = ( key: string ) => {
+	const variables = getVariables();
 
 	if ( ! variables?.[ key ] ) {
 		return null;
@@ -48,13 +58,11 @@ const usePropVariables = ( propKey: PropKey ): NormalizedVariable[] => {
 	return useMemo( () => normalizeVariables( propKey ), [ propKey ] );
 };
 
-const isNotDeleted = ( { deleted }: { deleted?: boolean } ) => ! deleted;
-
-const normalizeVariables = ( propKey: string ): NormalizedVariable[] => {
-	const variables = service.variables();
+const normalizeVariables = ( propKey: string ) => {
+	const variables = getVariables( false );
 
 	return Object.entries( variables )
-		.filter( ( [ , variable ] ) => variable.type === propKey && isNotDeleted( variable ) )
+		.filter( ( [ , variable ] ) => variable.type === propKey )
 		.map( ( [ key, { label, value } ] ) => ( {
 			key,
 			label,

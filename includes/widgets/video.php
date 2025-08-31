@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Modules\DynamicTags\Module as TagsModule;
+use Elementor\Modules\Promotions\Controls\Promotion_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

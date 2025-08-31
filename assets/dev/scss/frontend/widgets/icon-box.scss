@@ -32,6 +32,16 @@
 				align-items: unset !important; // Specificity override to fix mobile icon alignment issue.
 			}
 		}
+
+		&bottom {
+
+			.elementor-icon-box-wrapper {
+				text-align: center;
+				flex-direction: column-reverse;
+				gap: var(--icon-box-icon-margin, 15px);
+				align-items: unset !important; // Specificity override to fix mobile icon alignment issue.
+			}
+		}
 	}
 }
 

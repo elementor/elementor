@@ -278,7 +278,7 @@
 	}
 }
 
-.e-div-block-base, .e-flexbox-base {
+.e-atomic-element {
 	&:has( .elementor-empty-view ) {
 		min-height: 120px;
 	}

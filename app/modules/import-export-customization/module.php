@@ -173,6 +173,7 @@ class Module extends BaseModule {
 		if ( $should_show_revert_section ) {
 			if ( ! empty( $penultimate_imported_kit ) ) {
 				$revert_text = sprintf(
+					/* translators: 1: kit title, 2: date, 3: line break, 4: kit title, 5: date. */
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s %3$s and revert to the site setting that came with "%4$s" on %5$s.', 'elementor' ),
 					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
@@ -182,6 +183,7 @@ class Module extends BaseModule {
 				);
 			} else {
 				$revert_text = sprintf(
+					/* translators: 1: kit title, 2: date, 3: line break */
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s.%3$s Your original site settings will be restored.', 'elementor' ),
 					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
@@ -595,6 +597,7 @@ class Module extends BaseModule {
 			'restApiBaseUrl' => Controller::get_base_url(),
 			'uiTheme' => $this->get_elementor_ui_theme_preference(),
 			'exportGroups' => $this->get_export_groups(),
+			'manifestVersion' => self::FORMAT_VERSION,
 		];
 	}
 
@@ -662,15 +665,6 @@ class Module extends BaseModule {
 				];
 			}
 		}
-
-		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		foreach ( $active_kit->get_tabs() as $key => $tab ) {
-			$summary_titles['site-settings'][ $key ] = $tab->get_title();
-		}
-
-		$summary_titles['site-settings']['theme'] = esc_html__( 'Theme', 'elementor' );
-		$summary_titles['site-settings']['experiments'] = esc_html__( 'Experiments', 'elementor' );
 
 		return $summary_titles;
 	}
