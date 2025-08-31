@@ -26,13 +26,14 @@ describe( 'createClassesTransformer', () => {
 
 	it( 'should transform class IDs using provider CSS names', () => {
 		const provider = createMockProvider( 'test-provider', [ createMockStyle( 'class-1' ) ] );
-		mockStylesRepository.getProviders.mockReturnValue( [ provider ] );
-		mockStylesRepository.getProviderByKey.mockReturnValue( provider );
+		const provider2 = createMockProvider( 'test-provider-2', [ createMockStyle( 'class-2' ) ] );
+		mockStylesRepository.getProviders.mockReturnValue( [ provider, provider2 ] );
+		mockStylesRepository.getProviderByKey.mockReturnValueOnce( provider ).mockReturnValueOnce( provider2 );
 		const transformer = createClassesTransformer();
 
-		const result = transformer( [ 'class-1' ], { key: 'test-key' } );
+		const result = transformer( [ 'class-1', 'class-2' ], { key: 'test-key' } );
 
-		expect( result ).toEqual( [ 'resolved-class-1' ] );
+		expect( result ).toEqual( [ 'resolved-class-1', 'resolved-class-2' ] );
 		expect( provider.actions.resolveCssName ).toHaveBeenCalledWith( 'class-1' );
 	} );
 

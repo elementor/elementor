@@ -70,42 +70,6 @@ describe( 'settings props resolver', () => {
 			},
 		},
 		{
-			name: 'classes',
-			props: {
-				classes: classesPropTypeUtil.create( [
-					'test-1',
-					'test-2-suffix',
-					'without-provider',
-					'',
-					null as unknown as string,
-					undefined as unknown as string,
-				] ),
-			},
-			prepare: () => {
-				jest.mocked( stylesRepository.getProviders ).mockReturnValue( [
-					createMockStylesProvider( {
-						key: 'test-1-provider',
-						actions: {
-							all: () => [ createMockStyleDefinition( { id: 'test-1' } ) ],
-						},
-					} ),
-					createMockStylesProvider( {
-						key: 'test-2-provider',
-						actions: {
-							resolveCssName: ( id ) => `${ id }-suffix`,
-							all: () => [ createMockStyleDefinition( { id: 'test-2' } ) ],
-						},
-					} ),
-				] );
-			},
-			schema: {
-				classes: classesPropType(),
-			},
-			expected: {
-				classes: [ 'test-1', 'test-2-suffix', 'without-provider' ],
-			},
-		},
-		{
 			name: 'link',
 			props: {
 				link1: linkPropTypeUtil.create( {
