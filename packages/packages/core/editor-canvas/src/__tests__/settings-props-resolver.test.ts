@@ -1,5 +1,7 @@
+import { createMockStyleDefinition, createMockStylesProvider } from 'test-utils';
 import {
 	booleanPropTypeUtil,
+	classesPropTypeUtil,
 	imageAttachmentIdPropType,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
@@ -10,6 +12,7 @@ import {
 	stringPropTypeUtil,
 	urlPropTypeUtil,
 } from '@elementor/editor-props';
+import { stylesRepository } from '@elementor/editor-styles-repository';
 import { getMediaAttachment } from '@elementor/wp-media';
 
 import { initSettingsTransformers } from '../init-settings-transformers';
@@ -18,6 +21,7 @@ import { settingsTransformersRegistry } from '../settings-transformers-registry'
 import { mockAttachmentData } from './mock-attachment-data';
 import {
 	booleanPropType,
+	classesPropType,
 	imagePropType,
 	linkPropType,
 	numberPropType,
@@ -63,6 +67,42 @@ describe( 'settings props resolver', () => {
 				url: 'url',
 				number: 123,
 				boolean: true,
+			},
+		},
+		{
+			name: 'classes',
+			props: {
+				classes: classesPropTypeUtil.create( [
+					'test-1',
+					'test-2-suffix',
+					'without-provider',
+					'',
+					null as unknown as string,
+					undefined as unknown as string,
+				] ),
+			},
+			prepare: () => {
+				jest.mocked( stylesRepository.getProviders ).mockReturnValue( [
+					createMockStylesProvider( {
+						key: 'test-1-provider',
+						actions: {
+							all: () => [ createMockStyleDefinition( { id: 'test-1' } ) ],
+						},
+					} ),
+					createMockStylesProvider( {
+						key: 'test-2-provider',
+						actions: {
+							resolveCssName: ( id ) => `${ id }-suffix`,
+							all: () => [ createMockStyleDefinition( { id: 'test-2' } ) ],
+						},
+					} ),
+				] );
+			},
+			schema: {
+				classes: classesPropType(),
+			},
+			expected: {
+				classes: [ 'test-1', 'test-2-suffix', 'without-provider' ],
 			},
 		},
 		{
