@@ -1,7 +1,7 @@
 @font-face {
   font-family: "eicons";
-  src: url("../fonts/eicons.eot?5.43.0");
-  src: url("../fonts/eicons.eot?5.43.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.43.0") format("woff2"), url("../fonts/eicons.woff?5.43.0") format("woff"), url("../fonts/eicons.ttf?5.43.0") format("truetype"), url("../fonts/eicons.svg?5.43.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.44.0");
+  src: url("../fonts/eicons.eot?5.44.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.44.0") format("woff2"), url("../fonts/eicons.woff?5.44.0") format("woff"), url("../fonts/eicons.ttf?5.44.0") format("truetype"), url("../fonts/eicons.svg?5.44.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -1985,6 +1985,10 @@
 
 .eicon-e-youtube:before {
   content: "\e9e8";
+}
+
+.eicon-contact:before {
+  content: "\ebd2";
 }
 
 .eicon-eye:before {
