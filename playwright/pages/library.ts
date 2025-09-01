@@ -23,8 +23,7 @@ export const importTemplate = async ( page: Page, templateName: string, template
 	const template = libraryBaseLocator.getByText( templateName );
 	if ( template ) {
 		await libraryBaseLocator.getByRole( 'button', { name: 'Insert' } ).click();
-	} else {
-		return;
+		return newPageId;
 	}
-	return newPageId;
+	return undefined;
 };

@@ -27,9 +27,6 @@
       "test-utils": [
         "./tests/test-utils"
       ],
-      "playwright": [
-        "../playwright"
-      ]
     },
   },
   "exclude": [
