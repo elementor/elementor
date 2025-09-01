@@ -227,6 +227,6 @@ describe( 'VariableControl', () => {
 		renderControl( <VariableControl />, props );
 
 		// Assert
-		expect( screen.getByText( '(changed)' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'primary-background-color (changed)' ) ).toBeInTheDocument();
 	} );
 } );
