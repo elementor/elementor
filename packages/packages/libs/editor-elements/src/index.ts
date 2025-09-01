@@ -8,9 +8,11 @@ export { useElementType } from './hooks/use-element-type';
 export { useSelectedElement } from './hooks/use-selected-element';
 export { useParentElement } from './hooks/use-parent-element';
 export { useElementChildren, type ElementChildren } from './hooks/use-element-children';
+export { useElementEditorSettings } from './hooks/use-element-editor-settings';
 
 // utils
 export { createElement, type CreateElementParams } from './sync/create-element';
+export { updateElementEditorSettings } from './sync/update-element-editor-settings';
 export { moveElement, type MoveElementParams } from './sync/move-element';
 export {
 	moveElements,
