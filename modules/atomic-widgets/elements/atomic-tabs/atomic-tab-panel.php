@@ -8,34 +8,38 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tabs extends Atomic_Element_Base {
+class Atomic_Tab_Panel extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-tabs';
+		return 'e-tab-panel';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tabs';
+		return 'e-tab-panel';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tabs', 'elementor' );
+		return esc_html__( 'Atomic Tab Panel', 'elementor' );
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'tab', 'panel', 'tabs' ];
 	}
 
 	public function get_icon() {
 		return 'eicon-tabs';
+	}
+
+	public function should_show_in_panel() {
+		return false;
 	}
 
 	protected static function define_props_schema(): array {
@@ -86,18 +90,19 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		] );
 	}
 
-	protected function define_default_children() {
-		$tabs_list = Atomic_Tabs_List::generate()
-			->is_locked( true )
-			->build();
-
-		$tabs_content = Atomic_Tabs_Content::generate()
-			->is_locked( true )
-			->build();
-
+	protected function define_initial_attributes() {
 		return [
-			$tabs_list,
-			$tabs_content,
+			'role' => 'tabpanel',
+		];
+	}
+
+	protected function define_default_children() {
+		return [
+			Atomic_Paragraph::generate()
+				->settings( [
+					'text' => String_Prop_Type::generate( 'Tab Content' ),
+				] )
+				->build(),
 		];
 	}
 
