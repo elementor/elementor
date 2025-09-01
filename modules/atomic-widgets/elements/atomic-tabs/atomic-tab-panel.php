@@ -8,29 +8,30 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tab_List extends Atomic_Element_Base {
+class Atomic_Tab_Panel extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-tab-list';
+		return 'e-tab-panel';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tab-list';
+		return 'e-tab-panel';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tab List', 'elementor' );
+		return esc_html__( 'Atomic Tab Panel', 'elementor' );
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'tab', 'panel', 'tabs' ];
 	}
 
 	public function get_icon() {
@@ -62,26 +63,46 @@ class Atomic_Tab_List extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$display = String_Prop_Type::generate( 'flex' );
-		$gap = Size_Prop_Type::generate( [
-			'size' => 10,
-			'unit' => 'px',
-		] );
-		$justify_content = String_Prop_Type::generate( 'space-between' );
-		$min_width = Size_Prop_Type::generate( [
-			'size' => 30,
-			'unit' => 'px',
-		] );
+		$display = String_Prop_Type::generate( 'block' );
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'display', $display )
-						->add_prop( 'min-width', $min_width )
-						->add_prop( 'gap', $gap )
-						->add_prop( 'justify-content', $justify_content )
+						->add_prop( 'padding', $this->get_base_padding() )
+						->add_prop( 'min-width', $this->get_base_min_width() )
 				),
+		];
+	}
+
+	protected function get_base_padding(): array {
+		return Size_Prop_Type::generate( [
+			'size' => 10,
+			'unit' => 'px',
+		] );
+	}
+
+	protected function get_base_min_width(): array {
+		return Size_Prop_Type::generate( [
+			'size' => 30,
+			'unit' => 'px',
+		] );
+	}
+
+	protected function define_initial_attributes() {
+		return [
+			'role' => 'tabpanel',
+		];
+	}
+
+	protected function define_default_children() {
+		return [
+			Atomic_Paragraph::generate()
+				->settings( [
+					'text' => String_Prop_Type::generate( 'Tab Content' ),
+				] )
+				->build(),
 		];
 	}
 
@@ -89,6 +110,7 @@ class Atomic_Tab_List extends Atomic_Element_Base {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
+		$initial_attributes = $this->define_initial_attributes();
 
 		$attributes = [
 			'class' => [
@@ -103,6 +125,6 @@ class Atomic_Tab_List extends Atomic_Element_Base {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );
 		}
 
-		$this->add_render_attribute( '_wrapper', $attributes );
+		$this->add_render_attribute( '_wrapper', array_merge( $attributes, $initial_attributes ) );
 	}
 }
