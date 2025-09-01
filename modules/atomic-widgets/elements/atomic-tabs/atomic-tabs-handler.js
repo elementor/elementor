@@ -3,12 +3,19 @@ import { register } from '@elementor/frontend-handlers';
 register( {
 	elementType: 'e-tabs',
 	uniqueId: 'e-tabs-handler',
-	callback: ( { element } ) => {
-		const testElement = document.createElement( 'div' );
-		testElement.style.height = '100%';
-		testElement.style.backgroundColor = 'red';
-		testElement.style.width = '100%';
-		element.appendChild( testElement );
-		console.log( element );
+	callback: ( { element, signal } ) => {
+		const tabs = element.querySelectorAll( '[data-element_type="e-tab"]' );
+		const tabPanels = element.querySelectorAll( '[data-element_type="e-tab-panel"]' );
+
+		tabs.forEach( ( tab, index ) => {
+			const clickHandler = () => {
+				tabPanels.forEach( ( tabPanel ) => {
+					tabPanel.style.display = 'none';
+				} );
+				tabPanels[ index ].style.display = 'block';
+			};
+
+			tab.addEventListener( 'click', clickHandler, { signal } );
+		} );
 	},
 } );

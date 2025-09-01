@@ -101,6 +101,12 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		];
 	}
 
+	public function define_initial_attributes() {
+		return [
+			'data-e-type' => $this->get_type(),
+		];
+	}
+
 	public function get_script_depends() {
 		return [ 'elementor-tabs-handler' ];
 	}
