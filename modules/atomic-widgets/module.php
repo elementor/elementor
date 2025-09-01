@@ -18,7 +18,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_List;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Link;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
@@ -246,7 +246,7 @@ class Module extends BaseModule {
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NESTED ) ) {
 			$elements_manager->register_element_type( new Atomic_Tabs() );
 			$elements_manager->register_element_type( new Atomic_Tabs_List() );
-			$elements_manager->register_element_type( new Atomic_Tab_Link() );
+			$elements_manager->register_element_type( new Atomic_Tab() );
 			$elements_manager->register_element_type( new Atomic_Tabs_Content() );
 			$elements_manager->register_element_type( new Atomic_Tab_Panel() );
 		}
