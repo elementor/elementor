@@ -18,7 +18,7 @@ export function ComponentsTab() {
 
 const ComponentItem = ( { component }: { component: Component } ) => {
 	const handleClick = () => {
-		addComponent( getComponentModel( component.id ) );
+		addComponentToPage( getComponentModel( component.id ) );
 	};
 
 	return (
@@ -40,7 +40,7 @@ const ComponentItem = ( { component }: { component: Component } ) => {
 	);
 };
 
-const addComponent = ( model: CreateElementParams[ 'model' ] ) => {
+const addComponentToPage = ( model: CreateElementParams[ 'model' ] ) => {
 	const { container, options } = getContainerForNewElement();
 
 	if ( ! container ) {
