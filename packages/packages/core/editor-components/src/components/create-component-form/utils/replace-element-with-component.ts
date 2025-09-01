@@ -4,12 +4,12 @@ import { numberPropTypeUtil } from '@elementor/editor-props';
 export const replaceElementWithComponent = async ( element: V1Element, componentId: number ) => {
 	replaceElement( {
 		currentElement: element,
-		newElement: getComponentModel( componentId ),
+		newElement: createComponentModel( componentId ),
 		withHistory: false,
 	} );
 };
 
-export const getComponentModel = ( componentId: number ) => {
+export const createComponentModel = ( componentId: number ) => {
 	return {
 		elType: 'widget',
 		widgetType: 'e-component',

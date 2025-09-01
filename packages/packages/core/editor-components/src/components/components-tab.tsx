@@ -4,7 +4,7 @@ import { List, ListItem, ListItemButton, ListItemText, Typography } from '@eleme
 
 import { useComponents } from '../hooks/use-components';
 import { type Component } from '../types';
-import { getComponentModel } from './create-component-form/utils/replace-element-with-component';
+import { createComponentModel } from './create-component-form/utils/replace-element-with-component';
 
 export function ComponentsTab() {
 	const { data: components } = useComponents();
@@ -18,7 +18,7 @@ export function ComponentsTab() {
 
 const ComponentItem = ( { component }: { component: Component } ) => {
 	const handleClick = () => {
-		addComponentToPage( getComponentModel( component.id ) );
+		addComponentToPage( createComponentModel( component.id ) );
 	};
 
 	return (

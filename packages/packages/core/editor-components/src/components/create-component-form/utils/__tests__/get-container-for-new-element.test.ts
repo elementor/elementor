@@ -1,11 +1,8 @@
-import { getContainer } from '../get-container';
-import { getContainerForNewElement } from '../get-container-for-new-element';
-import getCurrentDocumentContainer from '../get-current-document-container';
-import { getSelectedElements } from '../get-selected-elements';
+import { getContainer, getCurrentDocumentContainer, getSelectedElements } from '@elementor/editor-elements';
 
-jest.mock( '../get-container' );
-jest.mock( '../get-current-document-container' );
-jest.mock( '../get-selected-elements' );
+import { getContainerForNewElement } from '../get-container-for-new-element';
+
+jest.mock( '@elementor/editor-elements' );
 
 describe( 'getContainerForNewElement', () => {
 	const mockCurrentDocumentContainer = { id: 'doc1' };
