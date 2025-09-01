@@ -103,7 +103,7 @@ class Wp_Content extends Export_Runner_Base {
 				'path' => 'wp-content/' . $post_type . '/' . $post_type . '.xml',
 				'data' => $export_result['xml'],
 			],
-			'manifest_data' => $export_result['ids'],
+			'manifest_data' => $export_result['posts'],
 		];
 	}
 }
