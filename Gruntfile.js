@@ -9,6 +9,16 @@ module.exports = function( grunt ) {
 	const widgetsCss = new WidgetsCss( 'production' ),
 		eicons = new Eicons();
 
+	grunt.loadNpmTasks( 'grunt-concurrent' );
+
+	grunt.registerTask( 'concurrent', ( tasks ) => {
+		grunt.config.set( 'concurrent.onDemand', {
+			tasks,
+			options: { logConcurrentOutput: true },
+		} );
+		grunt.task.run( 'concurrent:onDemand' );
+	} );
+
 	require( 'load-grunt-tasks' )( grunt );
 
 	// Project configuration
@@ -43,15 +53,16 @@ module.exports = function( grunt ) {
 	] );
 
 	grunt.registerTask( 'scripts', ( isDevMode = false ) => {
-		const taskName = isDevMode ? 'webpack:development' : 'webpack:production';
+		const tasksToRun = [];
+		tasksToRun.push( isDevMode ? 'webpack:development' : 'webpack:production' );
 
-		grunt.task.run( 'create_eicons_frontend_js_file' );
+		tasksToRun.push( 'create_eicons_frontend_js_file' );
 
 		if ( ! isDevMode ) {
-			grunt.task.run( 'webpack:developmentNoWatch' );
+			tasksToRun.push( 'webpack:developmentNoWatch' );
 		}
 
-		grunt.task.run( taskName );
+		grunt.task.run( 'concurrent', tasksToRun );
 	} );
 
 	grunt.registerTask( 'watch_scripts', () => {
@@ -70,16 +81,14 @@ module.exports = function( grunt ) {
 		grunt.task.run( 'sass' );
 
 		if ( ! isDevMode ) {
-			grunt.task.run( 'postcss' );
-			grunt.task.run( 'css_templates' );
+			grunt.task.run( 'concurrent', [ 'postcss', 'css_templates' ] );
 
 			grunt.task.run( 'remove_widgets_unused_style_files' );
 		}
 	} );
 
 	grunt.registerTask( 'watch_styles', () => {
-		grunt.task.run( 'styles' );
-		grunt.task.run( 'watch:styles' );
+		grunt.task.run( 'concurrent', [ 'styles', 'watch:styles' ] );
 	} );
 
 	grunt.registerTask( 'css_templates', () => {
