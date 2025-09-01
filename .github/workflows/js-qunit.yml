@@ -30,6 +30,6 @@ jobs:
           node-version: 20.x
           cache: npm
       - name: Install Dependencies
-        run: npm i
+        run: npm i && npm run build:tools
       - name: "Run Qunit"
         run: npx grunt karma:unit
