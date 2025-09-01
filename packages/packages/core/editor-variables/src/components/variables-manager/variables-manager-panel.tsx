@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -15,6 +15,7 @@ import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButton
 import { __ } from '@wordpress/i18n';
 
 import { getVariables } from '../../hooks/use-prop-variables';
+import { service } from '../../service';
 import { type TVariablesList } from '../../storage';
 import { VariablesManagerTable } from './variables-manager-table';
 
@@ -34,11 +35,32 @@ export const { panel, usePanelActions } = createPanel( {
 
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
+
 	const [ isDirty, setIsDirty ] = useState( false );
 	const [ variables, setVariables ] = useState( getVariables( false ) );
 	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
 
+	const [ isSaving, setIsSaving ] = useState( false );
+
 	usePreventUnload( isDirty );
+
+	const handleSave = useCallback( async () => {
+		setIsSaving( true );
+
+		const originalVariables = getVariables( false );
+		const result = await service.batchSave( originalVariables, variables );
+
+		if ( result.success ) {
+			await service.load();
+			const updatedVariables = service.variables();
+
+			setVariables( updatedVariables );
+			setIsDirty( false );
+			setDeletedVariables( [] );
+		}
+
+		setIsSaving( false );
+	}, [ variables ] );
 
 	const menuActions = [
 		{
@@ -96,7 +118,14 @@ export function VariablesManagerPanel() {
 					</PanelBody>
 
 					<PanelFooter>
-						<Button fullWidth size="small" color="global" variant="contained" disabled={ ! isDirty }>
+						<Button
+							fullWidth
+							size="small"
+							color="global"
+							variant="contained"
+							disabled={ ! isDirty || isSaving }
+							onClick={ handleSave }
+						>
 							{ __( 'Save changes', 'elementor' ) }
 						</Button>
 					</PanelFooter>
