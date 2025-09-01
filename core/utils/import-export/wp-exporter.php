@@ -46,6 +46,8 @@ class WP_Exporter {
 
 	private $terms;
 
+	private $exported_posts = [];
+
 	/**
 	 * Run export, by requested args.
 	 * Returns XML with exported data.
@@ -143,6 +145,7 @@ class WP_Exporter {
 		return [
 			'ids' => $post_ids,
 			'xml' => $this->get_xml_export( array_merge( $post_ids, $thumbnail_ids ) ),
+			'posts' => $this->exported_posts,
 		];
 	}
 
@@ -463,6 +466,11 @@ class WP_Exporter {
 				// Begin Loop.
 				foreach ( $posts as $post ) {
 					setup_postdata( $post );
+
+					$this->exported_posts[ $post->ID ] = [
+						'id' => $post->ID,
+						'title' => $post->post_title,
+					];
 
 					$title = apply_filters( 'the_title_rss', $post->post_title );
 

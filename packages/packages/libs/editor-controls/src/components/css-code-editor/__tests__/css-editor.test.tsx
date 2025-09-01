@@ -44,9 +44,6 @@ const mockEditor = {
 		onDidChangeContent: jest.fn(),
 		pushEditOperations: jest.fn(),
 	} ) ),
-	onDidChangeModelContent: jest.fn( ( callback ) => {
-		setTimeout( () => callback(), 100 );
-	} ),
 	getPosition: mockGetPosition,
 	setPosition: jest.fn(),
 	layout: jest.fn(),
@@ -72,10 +69,13 @@ const mockMonaco = {
 } as unknown as MonacoEditor;
 
 jest.mock( '@monaco-editor/react', () => ( {
-	Editor: jest.fn( ( { onMount, value } ) => {
+	Editor: jest.fn( ( { onMount, onChange, value } ) => {
 		React.useEffect( () => {
 			onMount( mockEditor, mockMonaco );
-		}, [ onMount ] );
+			if ( onChange ) {
+				setTimeout( () => onChange(), 100 );
+			}
+		}, [ onMount, onChange ] );
 
 		return (
 			<div role="textbox" aria-label="CSS Editor" data-testid="css-editor">
@@ -113,11 +113,7 @@ describe( 'CssEditor', () => {
 
 		renderWithTheme( <CssEditor value="color: green;" onChange={ onChange } /> );
 
-		// Act
-		await waitFor( () => {
-			expect( mockEditor.onDidChangeModelContent ).toHaveBeenCalled();
-		} );
-
+		// Act & Assert
 		await waitFor(
 			() => {
 				expect( onChange ).toHaveBeenCalledWith( 'color: blue;', true );
@@ -135,11 +131,7 @@ describe( 'CssEditor', () => {
 
 		renderWithTheme( <CssEditor value="color: red" onChange={ onChange } /> );
 
-		// Act
-		await waitFor( () => {
-			expect( mockEditor.onDidChangeModelContent ).toHaveBeenCalled();
-		} );
-
+		// Act & Assert
 		await waitFor(
 			() => {
 				expect( onChange ).toHaveBeenCalledWith( 'color: red', false );
