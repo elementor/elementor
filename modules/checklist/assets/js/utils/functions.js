@@ -38,7 +38,7 @@ export function getAndUpdateStep( id, step, key, value ) {
 	return { ...step, [ key ]: value };
 }
 
-export function addMixpanelTrackingChecklistSteps( name, action, element = 'button' ) {
+export function addMixpanelTrackingChecklistSteps( name, action ) {
 	const documentMetaData = getDocumentMetaDataMixpanel();
 
 	name = name.replace( /_/g, '' );
