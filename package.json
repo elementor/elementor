@@ -18,7 +18,7 @@
     "build:tools": "cd packages && npm run build:tools",
     "build:ci": "cd packages && npm run build && cd .. && npx grunt webpack:production",
     "prepare-environment": "npm ci && composer install && cd packages && npm ci",
-    "prepare-environment:ci": "npm ci --prefer-local --no-audit && cd packages && npm ci --prefer-local --no-audit",
+    "prepare-environment:ci": "npm ci --prefer-local --no-audit --no-fund && cd packages && npm ci --prefer-local --no-audit --no-fund",
     "composer:no-dev": "composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload",
     "reinstall": "rm -rf node_modules packages/node_modules && npm cache clean --force && npm ci && cd packages && npm ci",
     "hard-reinstall": "rm -rf node_modules packages/node_modules && npm cache clean --force && npm i && cd packages && npm i",
