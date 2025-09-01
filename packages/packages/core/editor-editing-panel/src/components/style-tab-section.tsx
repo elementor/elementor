@@ -10,9 +10,13 @@ type Section = {
 	title: string;
 };
 
-type Props = { section: Section; fields?: string[]; unmountOnExit?: boolean };
+export type StyleTabSectionProps = {
+	section: Section;
+	fields?: string[];
+	unmountOnExit?: boolean;
+};
 
-export const StyleTabSection = ( { section, fields = [], unmountOnExit = true }: Props ) => {
+export const StyleTabSection = ( { section, fields = [], unmountOnExit = true }: StyleTabSectionProps ) => {
 	const { component, name, title } = section;
 	const tabDefaults = useDefaultPanelSettings();
 	const SectionComponent = component;

@@ -25,6 +25,7 @@ import { PositionSection } from './style-sections/position-section/position-sect
 import { SizeSection } from './style-sections/size-section/size-section';
 import { SpacingSection } from './style-sections/spacing-section/spacing-section';
 import { TypographySection } from './style-sections/typography-section/typography-section';
+import { getExtraStyleTabSections } from './style-tab-registry';
 import { StyleTabSection } from './style-tab-section';
 
 const TABS_HEADER_HEIGHT = '37px';
@@ -179,6 +180,14 @@ export const StyleTab = () => {
 									unmountOnExit={ false }
 								/>
 							) }
+							{ getExtraStyleTabSections().map( ( extra ) => (
+								<StyleTabSection
+									key={ extra.id }
+									section={ extra.section }
+									fields={ extra.fields }
+									unmountOnExit={ extra.unmountOnExit }
+								/>
+							) ) }
 						</SectionsList>
 						<Box sx={ { height: '150px' } } />
 					</StyleInheritanceProvider>
