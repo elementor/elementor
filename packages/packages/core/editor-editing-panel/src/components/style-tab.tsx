@@ -25,8 +25,9 @@ import { PositionSection } from './style-sections/position-section/position-sect
 import { SizeSection } from './style-sections/size-section/size-section';
 import { SpacingSection } from './style-sections/spacing-section/spacing-section';
 import { TypographySection } from './style-sections/typography-section/typography-section';
-import { getExtraStyleTabSections } from './style-tab-registry';
+import { getExtraStyleTabSections } from './style-tab-section-registry';
 import { StyleTabSection } from './style-tab-section';
+import { type ExtraSection } from './style-tab-section-registry';
 
 const TABS_HEADER_HEIGHT = '37px';
 
@@ -180,7 +181,7 @@ export const StyleTab = () => {
 									unmountOnExit={ false }
 								/>
 							) }
-							{ getExtraStyleTabSections().map( ( extra ) => (
+							{ getExtraStyleTabSections().map( ( extra: ExtraSection ) => (
 								<StyleTabSection
 									key={ extra.id }
 									section={ extra.section }
