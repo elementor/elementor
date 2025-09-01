@@ -17,7 +17,7 @@ else
 	echo "Warning: MIXPANEL_TOKEN not found."
 fi
 
-npm run build
+npm run build > build.log 2>&1
 mv build elementor
 
 # Make sure not to upload the .zip file to the artifact!

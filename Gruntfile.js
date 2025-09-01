@@ -23,7 +23,6 @@ module.exports = function( grunt ) {
 		sass: require( './.grunt-config/sass' ),
 		postcss: require( './.grunt-config/postcss' ),
 		watch: require( './.grunt-config/watch' ),
-		bumpup: require( './.grunt-config/bumpup' ),
 		replace: require( './.grunt-config/replace' ),
 		shell: require( './.grunt-config/shell' ),
 		release: require( './.grunt-config/release' ),
@@ -32,13 +31,6 @@ module.exports = function( grunt ) {
 		webpack: require( './.grunt-config/webpack' ),
 		karma: require( './.grunt-config/karma' ),
 	} );
-
-	// Default task(s).
-	grunt.registerTask( 'default', [
-		'i18n',
-		'scripts',
-		'styles',
-	] );
 
 	grunt.registerTask( 'create_widgets_temp_scss_files', () => widgetsCss.createWidgetsTempScssFiles() );
 
@@ -127,25 +119,13 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'build', [
-		'default',
+		'i18n',
+		'scripts',
+		'styles',
 		'usebanner',
 		'clean',
 		'copy',
 	] );
-
-	grunt.registerTask( 'publish', ( releaseType ) => {
-		releaseType = releaseType ? releaseType : 'patch';
-
-		var prevStableVersion = 'patch' === releaseType ? pkgInfo.prev_stable_version : pkgInfo.version;
-
-		grunt.config.set( 'prev_stable_version', prevStableVersion );
-
-		grunt.task.run( 'default' );
-		grunt.task.run( 'bumpup:' + releaseType );
-		grunt.task.run( 'replace' );
-		grunt.task.run( 'shell:git_add_all' );
-		grunt.task.run( 'release' );
-	} );
 
 	grunt.registerTask( 'test', [
 		'karma:unit',
