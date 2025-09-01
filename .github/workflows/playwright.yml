@@ -122,14 +122,6 @@ jobs:
       - name: Run v4 tests
         if: ${{ matrix.shardIndex == 'v4-tests' }}
         run: npm run test:playwright -- --grep="@v4-tests"
-          SKIP_DEFAULT="@plugin_tester_container|@plugin_tester_section"
-          if [ -n "${{ steps.read_skipped_tests.outputs.skip_pattern }}" ]; then
-            ALL_SKIP_PATTERN="$SKIP_DEFAULT|${{ steps.read_skipped_tests.outputs.skip_pattern }}"
-          else
-            ALL_SKIP_PATTERN="$SKIP_DEFAULT"
-          fi
-          echo "Using grep invert pattern: $ALL_SKIP_PATTERN"
-          npm run test:playwright -- --grep-invert="$ALL_SKIP_PATTERN" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
         run: npm run test:playwright -- --grep="@plugin_tester_container" --grep-invert="${{ steps.read_skipped_tests.outputs.skip_pattern }}"
