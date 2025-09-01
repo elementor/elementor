@@ -13,7 +13,7 @@
     "start": "npm run composer:no-dev && npm run build:packages && npm run styles && npm run scripts",
     "watch": "npm run build:tools && npm run composer:no-dev && npx concurrently \"npm run watch:packages\" \"npm run styles:watch\" \"npm run scripts:watch\"",
     "watch:packages": "cd packages && npm run dev",
-    "build": "npm run build:packages && npm run composer:no-dev && grunt build",
+    "build": "npm run build:packages && grunt build",
     "build:packages": "cd packages && npm run build",
     "build:tools": "cd packages && npm run build:tools",
     "build:ci": "cd packages && npm run build && cd .. && npx grunt webpack:production",
