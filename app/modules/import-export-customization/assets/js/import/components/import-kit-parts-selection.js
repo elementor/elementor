@@ -18,7 +18,7 @@ export default function ImportKitPartsSelection() {
 		dispatch( { type: actionType, payload: itemType } );
 	};
 
-	const handleSaveCustomization = ( key, payload, hasEnabledCustomization, excludedValues ) => {
+	const handleSaveCustomization = ( key, payload, hasEnabledCustomization ) => {
 		dispatch( {
 			type: 'SET_CUSTOMIZATION',
 			payload: {
