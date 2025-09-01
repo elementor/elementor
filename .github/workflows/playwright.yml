@@ -196,7 +196,7 @@ jobs:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
       - name: Checkout source code
-        if: ${{ (needs.Playwright.result == 'failure') }}
+        #if: ${{ (needs.Playwright.result == 'failure') }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
