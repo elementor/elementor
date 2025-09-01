@@ -254,7 +254,6 @@ jobs:
         # env:
         #   GH_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Send slack message
-        if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
         #if: ${{ needs.Playwright.result == 'failure' &&  github.event_name != 'workflow_dispatch'}}
         uses: ./.github/workflows/post-to-slack
         with:
