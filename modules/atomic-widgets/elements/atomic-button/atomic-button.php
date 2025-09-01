@@ -116,7 +116,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 			'unit' => 'px',
 		] );
 		$align_text_value = String_Prop_Type::generate( 'center' );
-		$z_index_value = Number_Prop_Type::generate(1);
+		$z_index_value = Number_Prop_Type::generate( 1 );
 
 		return [
 			'base' => Style_Definition::make()
