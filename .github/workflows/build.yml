@@ -45,6 +45,31 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
+      - name: Generate package-lock hashes
+        id: hash-files
+        shell: bash
+        run: |
+          echo "root_hash=$(sha256sum package-lock.json | cut -d ' ' -f 1)" >> $GITHUB_OUTPUT
+          echo "packages_hash=$(sha256sum packages/package-lock.json | cut -d ' ' -f 1)" >> $GITHUB_OUTPUT
+
+      - name: Try restore root node_modules cache
+        id: cache-root
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-root-${{ steps.hash-files.outputs.root_hash }}
+          restore-keys: |
+            ${{ runner.os }}-node-root-
+
+      - name: Try restore packages node_modules cache
+        id: cache-packages
+        uses: actions/cache/restore@v4
+        with:
+          path: packages/node_modules
+          key: ${{ runner.os }}-node-packages-${{ steps.hash-files.outputs.packages_hash }}
+          restore-keys: |
+            ${{ runner.os }}-node-packages-
+
       - name: Cache turbo build setup
         uses: actions/cache@v4
         with:
@@ -83,6 +108,20 @@ jobs:
 
       - name: Install dependencies
         uses: ./.github/workflows/install-dependencies
+
+      - name: Save root node_modules cache
+        if: steps.cache-root.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-root-${{ steps.hash-files.outputs.root_hash }}
+
+      - name: Save packages node_modules cache
+        if: steps.cache-packages.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: packages/node_modules
+          key: ${{ runner.os }}-node-packages-${{ steps.hash-files.outputs.packages_hash }}
 
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
