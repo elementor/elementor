@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
-import { buildOperationsArray, createBatchPayload, type OperationResult } from './batch-operations';
+import { buildOperationsArray, type OperationResult } from './batch-operations';
 import { OP_RW, Storage, type TVariablesList } from './storage';
 import { styleVariablesRepository } from './style-variables-repository';
 import { type Variable } from './types';
@@ -176,7 +176,7 @@ export const service = {
 
 	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList ) => {
 		const operations = buildOperationsArray( originalVariables, currentVariables );
-		const batchPayload = createBatchPayload( operations, storage.state.watermark );
+		const batchPayload = { operations, watermark: storage.state.watermark };
 
 		return apiClient
 			.batch( batchPayload )

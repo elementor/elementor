@@ -1,4 +1,4 @@
-import { type BatchOperation, type BatchPayload } from './api';
+import { type BatchOperation } from './api';
 import { type TVariable, type TVariablesList } from './storage';
 
 export type OperationType = 'create' | 'update' | 'delete' | 'restore';
@@ -80,11 +80,4 @@ export const buildOperationsArray = (
 		const id = op.id || op.variable?.id;
 		return id && ! ( isTempId( id ) && currentVariables[ id ]?.deleted );
 	} );
-};
-
-export const createBatchPayload = ( operations: BatchOperation[], watermark: number ): BatchPayload => {
-	return {
-		watermark,
-		operations,
-	};
 };

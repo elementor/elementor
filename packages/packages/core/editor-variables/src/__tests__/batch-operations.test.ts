@@ -1,4 +1,4 @@
-import { buildOperationsArray, createBatchPayload } from '../batch-operations';
+import { buildOperationsArray } from '../batch-operations';
 import { type TVariablesList } from '../storage';
 
 describe( 'batch-operations', () => {
@@ -133,7 +133,7 @@ describe( 'batch-operations', () => {
 			];
 
 			// Act.
-			const payload = createBatchPayload( operations, 9989 );
+			const payload = { operations, watermark: 9989 };
 
 			// Assert.
 			expect( payload ).toEqual( {
