@@ -18,36 +18,32 @@ import { slice } from './store';
 import { syncWithDocumentSave } from './sync-with-document-save';
 
 export function init() {
-	try {
-		registerSlice( slice );
-		registerPanel( panel );
+	registerSlice( slice );
+	registerPanel( panel );
 
-		stylesRepository.register( globalClassesStylesProvider );
+	stylesRepository.register( globalClassesStylesProvider );
 
-		injectIntoLogic( {
-			id: 'global-classes-populate-store',
-			component: PopulateStore,
-		} );
+	injectIntoLogic( {
+		id: 'global-classes-populate-store',
+		component: PopulateStore,
+	} );
 
-		injectIntoCssClassConvert( {
-			id: 'global-classes-convert-from-local-class',
-			component: ConvertLocalClassToGlobalClass,
-		} );
+	injectIntoCssClassConvert( {
+		id: 'global-classes-convert-from-local-class',
+		component: ConvertLocalClassToGlobalClass,
+	} );
 
-		injectIntoClassSelectorActions( {
-			id: 'global-classes-manager-button',
-			component: ClassManagerButton,
-		} );
+	injectIntoClassSelectorActions( {
+		id: 'global-classes-manager-button',
+		component: ClassManagerButton,
+	} );
 
-		registerStyleProviderToColors( GLOBAL_CLASSES_PROVIDER_KEY, {
-			name: 'global',
-			getThemeColor: ( theme ) => theme.palette.global.dark,
-		} );
+	registerStyleProviderToColors( GLOBAL_CLASSES_PROVIDER_KEY, {
+		name: 'global',
+		getThemeColor: ( theme ) => theme.palette.global.dark,
+	} );
 
-		listenTo( v1ReadyEvent(), () => {
-			syncWithDocumentSave();
-		} );
-	} catch {
-		// Remove console statement as it violates no-console eslint rule
-	}
+	listenTo( v1ReadyEvent(), () => {
+		syncWithDocumentSave();
+	} );
 }
