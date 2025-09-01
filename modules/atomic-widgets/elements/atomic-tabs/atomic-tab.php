@@ -79,10 +79,28 @@ class Atomic_Tab extends Atomic_Element_Base {
 		];
 	}
 
+	protected function define_initial_attributes() {
+		return [
+			'role' => 'tab',
+			'tabindex' => '-1',
+		];
+	}
+
+	protected function define_default_children() {
+		return [
+			Atomic_Heading::generate()
+				->settings( [
+					'title' => String_Prop_Type::generate( 'Tab' ),
+				] )
+				->build(),
+		];
+	}
+
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
+		$initial_attributes = $this->define_initial_attributes();
 
 		$attributes = [
 			'class' => [
@@ -97,16 +115,6 @@ class Atomic_Tab extends Atomic_Element_Base {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );
 		}
 
-		$this->add_render_attribute( '_wrapper', $attributes );
-	}
-
-	protected function define_default_children() {
-		return [
-			Atomic_Heading::generate()
-				->settings( [
-					'title' => String_Prop_Type::generate( 'Tab' ),
-				] )
-				->build(),
-		];
+		$this->add_render_attribute( '_wrapper', array_merge( $attributes, $initial_attributes ) );
 	}
 }

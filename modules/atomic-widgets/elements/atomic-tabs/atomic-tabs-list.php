@@ -10,24 +10,23 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tabs extends Atomic_Element_Base {
+class Atomic_Tabs_List extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-tabs';
+		return 'e-tabs-list';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tabs';
+		return 'e-tabs-list';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tabs', 'elementor' );
+		return esc_html__( 'Atomic Tabs List', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -36,6 +35,10 @@ class Atomic_Tabs extends Atomic_Element_Base {
 
 	public function get_icon() {
 		return 'eicon-tabs';
+	}
+
+	public function should_show_in_panel() {
+		return false;
 	}
 
 	protected static function define_props_schema(): array {
@@ -59,45 +62,37 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$display = String_Prop_Type::generate( 'block' );
+		$display = String_Prop_Type::generate( 'flex' );
+		$gap = Size_Prop_Type::generate( [
+			'size' => 10,
+			'unit' => 'px',
+		] );
+		$justify_content = String_Prop_Type::generate( 'space-between' );
+		$min_width = Size_Prop_Type::generate( [
+			'size' => 30,
+			'unit' => 'px',
+		] );
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'display', $display )
-						->add_prop( 'padding', $this->get_base_padding() )
-						->add_prop( 'min-width', $this->get_base_min_width() )
+						->add_prop( 'min-width', $min_width )
+						->add_prop( 'gap', $gap )
+						->add_prop( 'justify-content', $justify_content )
 				),
 		];
 	}
 
-	protected function get_base_padding(): array {
-		return Size_Prop_Type::generate( [
-			'size' => 10,
-			'unit' => 'px',
-		] );
-	}
-
-	protected function get_base_min_width(): array {
-		return Size_Prop_Type::generate( [
-			'size' => 30,
-			'unit' => 'px',
-		] );
-	}
-
 	protected function define_default_children() {
-		$tabs_list = Atomic_Tabs_List::generate()
-			->is_locked( true )
-			->build();
-
-		$tabs_content = Atomic_Tabs_Content::generate()
-			->is_locked( true )
-			->build();
-
 		return [
-			$tabs_list,
-			$tabs_content,
+			Atomic_Tab_Link::generate()
+				->is_locked( true )
+				->build(),
+			Atomic_Tab_Link::generate()
+				->is_locked( true )
+				->build(),
 		];
 	}
 
