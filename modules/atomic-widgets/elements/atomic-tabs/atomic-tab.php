@@ -15,19 +15,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tab_Link extends Atomic_Element_Base {
+class Atomic_Tab extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-tab-link';
+		return 'e-tab';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tab-link';
+		return 'e-tab';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tab Link', 'elementor' );
+		return esc_html__( 'Atomic Tab', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -84,6 +84,10 @@ class Atomic_Tab_Link extends Atomic_Element_Base {
 			'role' => 'tab',
 			'tabindex' => '-1',
 		];
+	}
+
+	protected function define_default_html_tag() {
+		return 'button';
 	}
 
 	protected function define_default_children() {
