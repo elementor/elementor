@@ -1,7 +1,5 @@
-import { createMockStyleDefinition, createMockStylesProvider } from 'test-utils';
 import {
 	booleanPropTypeUtil,
-	classesPropTypeUtil,
 	imageAttachmentIdPropType,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
@@ -12,7 +10,6 @@ import {
 	stringPropTypeUtil,
 	urlPropTypeUtil,
 } from '@elementor/editor-props';
-import { stylesRepository } from '@elementor/editor-styles-repository';
 import { getMediaAttachment } from '@elementor/wp-media';
 
 import { initSettingsTransformers } from '../init-settings-transformers';
@@ -21,7 +18,6 @@ import { settingsTransformersRegistry } from '../settings-transformers-registry'
 import { mockAttachmentData } from './mock-attachment-data';
 import {
 	booleanPropType,
-	classesPropType,
 	imagePropType,
 	linkPropType,
 	numberPropType,
