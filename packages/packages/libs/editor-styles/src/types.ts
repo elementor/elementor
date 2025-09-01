@@ -38,9 +38,3 @@ export type StyleDefinition = {
 };
 
 export type StyleDefinitionsMap = Record< StyleDefinition[ 'id' ], StyleDefinition >;
-
-export type ModifiedLabel = {
-	original: string;
-	modified: string;
-	id: string;
-};
