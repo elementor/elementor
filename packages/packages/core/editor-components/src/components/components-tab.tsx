@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { dropElement, type DropElementParams, getContainerForNewElement } from '@elementor/editor-elements';
+import { dropElement, type DropElementParams } from '@elementor/editor-elements';
 import { List, ListItem, ListItemButton, ListItemText, Typography } from '@elementor/ui';
 
 import { useComponents } from '../hooks/use-components';
 import { type Component } from '../types';
+import { getContainerForNewElement } from '../utils/get-container-for-new-element';
 import { createComponentModel } from './create-component-form/utils/replace-element-with-component';
 
 export function ComponentsTab() {

@@ -45,14 +45,15 @@ describe( 'getContainerForNewElement', () => {
 			// Arrange.
 			const mockParent = {
 				id: 'parent1',
-				children: [ { id: 'widget1' }, { id: 'widget2' } ],
+				children: [ { id: 'widget1' }, { id: 'widget2' }, { id: 'widget3' } ],
 			};
 			const mockWidget = {
 				model: { get: () => 'widget' },
-				id: 'widget1',
+				id: 'widget2',
 				parent: mockParent,
+				view: { _index: 1 },
 			};
-			mockGetSelectedElements.mockReturnValue( [ { id: 'widget1' } ] );
+			mockGetSelectedElements.mockReturnValue( [ { id: 'widget2' } ] );
 			mockGetContainer.mockReturnValue( mockWidget );
 
 			// Act.
@@ -61,7 +62,7 @@ describe( 'getContainerForNewElement', () => {
 			// Assert.
 			expect( result ).toEqual( {
 				container: mockParent,
-				options: { at: 1 },
+				options: { at: 2 },
 			} );
 		} );
 

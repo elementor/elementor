@@ -16,8 +16,7 @@ export const getContainerForNewElement = (): { container: V1Element | null; opti
 			case 'widget': {
 				container = selectedElement?.parent;
 
-				const selectedElIndex =
-					selectedElement?.parent?.children?.findIndex( ( el ) => el.id === selectedElement?.id ) ?? -1;
+				const selectedElIndex = selectedElement.view?._index ?? -1;
 
 				if ( selectedElIndex > -1 ) {
 					options = { at: selectedElIndex + 1 };
@@ -41,8 +40,10 @@ export const getContainerForNewElement = (): { container: V1Element | null; opti
 
 function getSelectedElementContainer() {
 	const selectedElements = getSelectedElements();
+
 	if ( selectedElements.length !== 1 ) {
 		return undefined;
 	}
+
 	return getContainer( selectedElements[ 0 ].id );
 }
