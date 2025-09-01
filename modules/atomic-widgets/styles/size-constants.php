@@ -19,7 +19,7 @@ class Size_Constants {
 	const UNIT_MILLI_SECOND = 'ms';
 	const UNIT_ANGLE_DEG = 'deg';
 
-	const COMMON_UNITS = [
+	const LENGTH_UNITS = [
 		self::UNIT_PX,
 		self::UNIT_EM,
 		self::UNIT_REM,
@@ -44,14 +44,14 @@ class Size_Constants {
 
 	public static function all(): array {
 		return [
-			...self::COMMON_UNITS,
+			...self::LENGTH_UNITS,
 			self::UNIT_PERCENT,
 			self::UNIT_AUTO,
 		];
 	}
 
 	private static function units_without_auto(): array {
-		return [ ...self::COMMON_UNITS, self::UNIT_PERCENT ];
+		return [ ...self::LENGTH_UNITS, self::UNIT_PERCENT ];
 	}
 
 	public static function layout() {
@@ -67,7 +67,7 @@ class Size_Constants {
 	}
 
 	public static function anchor_offset() {
-		return self::COMMON_UNITS;
+		return self::LENGTH_UNITS;
 	}
 
 	public static function typography(): array {
@@ -107,7 +107,23 @@ class Size_Constants {
 		return self::units_without_auto();
 	}
 
-	public static function filters() {
-		return self::COMMON_UNITS;
+	public static function drop_shadow() {
+		return self::LENGTH_UNITS;
+	}
+
+	public static function blur_filter() {
+		return self::LENGTH_UNITS;
+	}
+
+	public static function intensity_filter() {
+		return [ self::UNIT_PERCENT ];
+	}
+
+	public static function color_tone_filter() {
+		return [ self::UNIT_PERCENT ];
+	}
+
+	public static function hue_rotate_filter() {
+		return self::ANGLE_UNITS;
 	}
 }

@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import useQueryParams from 'elementor-app/hooks/use-query-params';
 import { BaseLayout, TopBar, PageHeader, CenteredContent } from '../../shared/components';
 import DropZone from '../components/drop-zone';
-import { IMPORT_STATUS, useImportContext } from '../context/import-context';
+import { IMPORT_STATUS, ACTION_TYPE, useImportContext } from '../context/import-context';
 import { useUploadKit } from '../hooks/use-upload-kit';
 import ImportError from '../components/import-error';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
@@ -14,7 +14,7 @@ export default function ImportKit() {
 	const { data, dispatch } = useImportContext();
 	const navigate = useNavigate();
 
-	const { id, referrer, file_url: fileUrl, nonce } = useQueryParams().getAll();
+	const { id, referrer, file_url: fileUrl, action_type: actionType, nonce } = useQueryParams().getAll();
 
 	const { uploading, error } = useUploadKit();
 
@@ -33,17 +33,44 @@ export default function ImportKit() {
 
 	useEffect( () => {
 		if ( data.uploadedData ) {
-			dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.CUSTOMIZING } );
-			navigate( 'import-customization/content' );
+			if ( data.actionType === ACTION_TYPE.APPLY_ALL ) {
+				const includes = [];
+
+				if ( data.uploadedData?.manifest?.[ 'site-settings' ] ) {
+					includes.push( 'settings' );
+				}
+
+				if ( 0 < Object.keys( data.uploadedData?.manifest?.templates || {} ).length ) {
+					includes.push( 'templates' );
+				}
+
+				if ( data.uploadedData?.manifest?.content ) {
+					includes.push( 'content' );
+				}
+
+				if ( data.uploadedData?.manifest?.plugins ) {
+					includes.push( 'plugins' );
+				}
+
+				dispatch( { type: 'ADD_INCLUDES', payload: includes } );
+				dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.IMPORTING } );
+				navigate( 'import-customization/process' );
+			} else {
+				dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.CUSTOMIZING } );
+				navigate( 'import-customization/content' );
+			}
 		}
-	}, [ data.uploadedData, dispatch, navigate ] );
+	}, [ data.uploadedData, dispatch, navigate, data.actionType ] );
 
 	useEffect( () => {
 		if ( id || fileUrl ) {
 			dispatch( { type: 'SET_KIT_UPLOAD_PARAMS', payload: { id, source: referrer, fileUrl, nonce } } );
+			if ( actionType ) {
+				dispatch( { type: 'SET_ACTION_TYPE', payload: actionType } );
+			}
 			dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.UPLOADING } );
 		}
-	}, [ id, referrer, fileUrl, nonce, dispatch ] );
+	}, [ id, referrer, fileUrl, actionType, nonce, dispatch ] );
 
 	useEffect( () => {
 		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportUploadBox );
@@ -97,7 +124,8 @@ export default function ImportKit() {
 						{ __( 'Upload a file with templates, site settings, content, etc., and apply them to your site ', 'elementor' ) }
 						<Link
 							href="#"
-							sx={ { color: 'info.main', ml: 1, textDecoration: 'none' } }
+							color="info.light"
+							sx={ { ml: 1, textDecoration: 'none' } }
 							data-testid="import-learn-more-link"
 						>
 							{ __( 'Learn more', 'elementor' ) }

@@ -126,8 +126,8 @@ describe( 'removeElements', () => {
 		// Arrange.
 		setupMockElementsForRemoval();
 
-		const mockRestoredElement1 = createMockChild( 'element-1', 'button' );
-		const mockRestoredElement2 = createMockChild( 'element-2', 'text' );
+		const mockRestoredElement1 = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
+		const mockRestoredElement2 = createMockChild( { id: 'element-2', elType: 'widget', widgetType: 'text' } );
 
 		mockCreateElement.mockReturnValueOnce( mockRestoredElement1 ).mockReturnValueOnce( mockRestoredElement2 );
 
@@ -145,16 +145,22 @@ describe( 'removeElements', () => {
 		expect( mockCreateElement ).toHaveBeenCalledTimes( 2 );
 		expect( mockCreateElement ).toHaveBeenNthCalledWith( 1, {
 			containerId: 'parent-1',
-			settings: { content: 'Text content' },
-			type: 'text',
-			id: 'element-2',
+			model: {
+				id: 'element-2',
+				elType: 'widget',
+				widgetType: 'text',
+				settings: { content: 'Text content' },
+			},
 			options: { useHistory: false, at: 1 },
 		} );
 		expect( mockCreateElement ).toHaveBeenNthCalledWith( 2, {
 			containerId: 'parent-1',
-			settings: { text: 'Button 1' },
-			type: 'button',
-			id: 'element-1',
+			model: {
+				id: 'element-1',
+				elType: 'widget',
+				widgetType: 'button',
+				settings: { text: 'Button 1' },
+			},
 			options: { useHistory: false, at: 0 },
 		} );
 
@@ -269,8 +275,8 @@ describe( 'removeElements', () => {
 		// Arrange.
 		setupMockElementsForRemoval();
 
-		const mockRestoredElement1 = createMockChild( 'element-1', 'button' );
-		const mockRestoredElement2 = createMockChild( 'element-2', 'text' );
+		const mockRestoredElement1 = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
+		const mockRestoredElement2 = createMockChild( { id: 'element-2', elType: 'widget', widgetType: 'text' } );
 
 		mockCreateElement
 			.mockReturnValueOnce( mockRestoredElement1 ) // First undo

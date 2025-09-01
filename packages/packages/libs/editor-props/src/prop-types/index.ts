@@ -41,3 +41,7 @@ export * from './transform-prop-types/perspective-origin';
 export * from './filter-prop-types/filter';
 export * from './filter-prop-types/backdrop-filter';
 export * from './filter-prop-types/drop-shadow-filter';
+export * from './filter-prop-types/filter-functions/blur-filter';
+export * from './filter-prop-types/filter-functions/intensity-filter';
+export * from './filter-prop-types/filter-functions/color-tone-filter';
+export * from './filter-prop-types/filter-functions/hue-rotate-filter';

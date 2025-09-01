@@ -8,13 +8,13 @@ export const VariableEditableCell = ( {
 	initialValue,
 	children,
 	editableElement,
-	onSave,
+	onChange,
 	prefixElement,
 }: {
 	initialValue: string;
 	children: React.ReactNode;
 	editableElement: ( { value, onChange, onValidationChange }: ValueFieldProps ) => JSX.Element;
-	onSave: ( newValue: string ) => void;
+	onChange: ( newValue: string ) => void;
 	prefixElement?: React.ReactNode;
 } ) => {
 	const [ value, setValue ] = useState( initialValue );
@@ -25,7 +25,7 @@ export const VariableEditableCell = ( {
 	};
 
 	const handleSave = () => {
-		onSave( value );
+		onChange( value );
 		setIsEditing( false );
 	};
 
@@ -47,21 +47,39 @@ export const VariableEditableCell = ( {
 
 	const editableContent = editableElement( { value, onChange: handleChange } );
 
+	if ( isEditing ) {
+		return (
+			<ClickAwayListener onClickAway={ handleSave }>
+				<Stack
+					direction="row"
+					alignItems="center"
+					gap={ 1 }
+					onDoubleClick={ handleDoubleClick }
+					onKeyDown={ handleKeyDown }
+					tabIndex={ 0 }
+					role="button"
+					aria-label="Double click or press Space to edit"
+				>
+					{ prefixElement }
+					{ editableContent }
+				</Stack>
+			</ClickAwayListener>
+		);
+	}
+
 	return (
-		<ClickAwayListener onClickAway={ handleSave }>
-			<Stack
-				direction="row"
-				alignItems="center"
-				gap={ 1 }
-				onDoubleClick={ handleDoubleClick }
-				onKeyDown={ handleKeyDown }
-				tabIndex={ 0 }
-				role="button"
-				aria-label="Double click or press Space to edit"
-			>
-				{ prefixElement }
-				{ isEditing ? editableContent : children }
-			</Stack>
-		</ClickAwayListener>
+		<Stack
+			direction="row"
+			alignItems="center"
+			gap={ 1 }
+			onDoubleClick={ handleDoubleClick }
+			onKeyDown={ handleKeyDown }
+			tabIndex={ 0 }
+			role="button"
+			aria-label="Double click or press Space to edit"
+		>
+			{ prefixElement }
+			{ children }
+		</Stack>
 	);
 };
