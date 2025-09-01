@@ -249,7 +249,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           path: elementor-tests-configuration
           persist-credentials: false
-          ref: shaharlimor1-patch-1
+          ref: main
       - name: Map GitHub user to Slack
         #if: ${{ needs.Playwright.result == 'failure' }}
         id: map_user
