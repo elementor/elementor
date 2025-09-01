@@ -11,7 +11,6 @@ import * as tracking from '../../utils/tracking';
 import * as variablesRegistry from '../../variables-registry/variable-type-registry';
 import { VariablesSelection } from '../variables-selection';
 
-// Mock dependencies
 jest.mock( '../../hooks/use-prop-variables' );
 jest.mock( '../../variables-registry/variable-type-registry' );
 jest.mock( '../../utils/tracking' );
@@ -55,7 +54,6 @@ const TestWrapper = ( { children, propTypeKey = 'color' }: { children: React.Rea
 	return <VariableTypeProvider propTypeKey={ propTypeKey }>{ children }</VariableTypeProvider>;
 };
 
-// Mock props
 const defaultProps = {
 	closePopover: jest.fn(),
 	onAdd: jest.fn(),
@@ -63,7 +61,6 @@ const defaultProps = {
 	onSettings: jest.fn(),
 };
 
-// Mock variable type
 const mockVariableType = {
 	icon: () => <span>ColorIcon</span>,
 	startIcon: null,
@@ -72,7 +69,6 @@ const mockVariableType = {
 	selectionFilter: null,
 };
 
-// Mock bound prop
 const mockBoundProp = {
 	value: '',
 	setValue: jest.fn(),
@@ -83,7 +79,6 @@ const mockBoundProp = {
 describe( 'VariablesSelection', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		// Setup default mocks
 		( variablesRegistry.getVariableType as jest.Mock ).mockReturnValue( mockVariableType );
 		( require( '@elementor/editor-controls' ).useBoundProp as jest.Mock ).mockReturnValue( mockBoundProp );
 		( tracking.trackVariableEvent as jest.Mock ).mockImplementation( () => {} );
@@ -96,7 +91,7 @@ describe( 'VariablesSelection', () => {
 
 	describe( 'Search', () => {
 		it( 'should filter variables when searching', () => {
-			// Arrange
+			// Arrange.
 			const mockVariables = [ { key: 'var1', label: 'Primary Color', value: '#ff0000' } ];
 
 			( useFilteredVariables as jest.Mock ).mockReturnValue( {
@@ -106,7 +101,7 @@ describe( 'VariablesSelection', () => {
 				hasNoCompatibleVariables: false,
 			} );
 
-			// Act
+			// Act.
 			renderWithTheme(
 				<TestWrapper>
 					<VariablesSelection { ...defaultProps } />
@@ -116,12 +111,12 @@ describe( 'VariablesSelection', () => {
 			const searchInput = screen.getByPlaceholderText( __( 'Search', 'elementor' ) );
 			fireEvent.change( searchInput, { target: { value: 'primary' } } );
 
-			// Assert
+			// Assert.
 			expect( useFilteredVariables ).toHaveBeenCalledWith( 'primary', 'color' );
 		} );
 
 		it( 'should show no search results when search has no matches', () => {
-			// Arrange
+			// Arrange.
 			( useFilteredVariables as jest.Mock ).mockReturnValue( {
 				list: [],
 				hasMatches: false,
@@ -129,21 +124,21 @@ describe( 'VariablesSelection', () => {
 				hasNoCompatibleVariables: false,
 			} );
 
-			// Act
+			// Act.
 			renderWithTheme(
 				<TestWrapper>
 					<VariablesSelection { ...defaultProps } />
 				</TestWrapper>
 			);
 
-			// Assert
+			// Assert.
 			expect( screen.getByText( /No results found/i ) ).toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'No Variables', () => {
 		it( 'should show empty state when no variables exist', () => {
-			// Arrange
+			// Arrange.
 			( useFilteredVariables as jest.Mock ).mockReturnValue( {
 				list: [],
 				hasMatches: false,
@@ -151,20 +146,20 @@ describe( 'VariablesSelection', () => {
 				hasNoCompatibleVariables: false,
 			} );
 
-			// Act
+			// Act.
 			renderWithTheme(
 				<TestWrapper>
 					<VariablesSelection { ...defaultProps } />
 				</TestWrapper>
 			);
 
-			// Assert
+			// Assert.
 			expect( screen.getByText( /Create your first .* variable/i ) ).toBeInTheDocument();
 			expect( screen.getByText( /Variables are saved attributes/ ) ).toBeInTheDocument();
 		} );
 
 		it( 'should not show search input when no variables exist', () => {
-			// Arrange
+			// Arrange.
 			( useFilteredVariables as jest.Mock ).mockReturnValue( {
 				list: [],
 				hasMatches: false,
@@ -172,19 +167,19 @@ describe( 'VariablesSelection', () => {
 				hasNoCompatibleVariables: false,
 			} );
 
-			// Act
+			// Act.
 			renderWithTheme(
 				<TestWrapper>
 					<VariablesSelection { ...defaultProps } />
 				</TestWrapper>
 			);
 
-			// Assert
+			// Assert.
 			expect( screen.queryByPlaceholderText( __( 'Search', 'elementor' ) ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should call onAdd when create button is clicked', () => {
-			// Arrange
+			// Arrange.
 			( useFilteredVariables as jest.Mock ).mockReturnValue( {
 				list: [],
 				hasMatches: false,
@@ -192,7 +187,7 @@ describe( 'VariablesSelection', () => {
 				hasNoCompatibleVariables: false,
 			} );
 
-			// Act
+			// Act.
 			renderWithTheme(
 				<TestWrapper>
 					<VariablesSelection { ...defaultProps } />
@@ -202,14 +197,14 @@ describe( 'VariablesSelection', () => {
 			const createButton = screen.getByText( __( 'Create a variable', 'elementor' ) );
 			fireEvent.click( createButton );
 
-			// Assert
+			// Assert.
 			expect( defaultProps.onAdd ).toHaveBeenCalled();
 		} );
 	} );
 
 	describe( 'No Compatible Variables', () => {
 		it( 'should show no compatible variables message when variables exist but none are compatible', () => {
-			// Arrange
+			// Arrange.
 			( useFilteredVariables as jest.Mock ).mockReturnValue( {
 				list: [],
 				hasMatches: false,
@@ -217,20 +212,20 @@ describe( 'VariablesSelection', () => {
 				hasNoCompatibleVariables: true,
 			} );
 
-			// Act
+			// Act.
 			renderWithTheme(
 				<TestWrapper>
 					<VariablesSelection { ...defaultProps } />
 				</TestWrapper>
 			);
 
-			// Assert
+			// Assert.
 			expect( screen.getByText( __( 'No compatible variables', 'elementor' ) ) ).toBeInTheDocument();
 			expect( screen.getByText( /none of your variables work with this control/ ) ).toBeInTheDocument();
 		} );
 
 		it( 'should prioritize no compatible variables over no variables', () => {
-			// Arrange - Both conditions could be true, but NoCompatibleVariables should take precedence
+			// Arrange.
 			( useFilteredVariables as jest.Mock ).mockReturnValue( {
 				list: [],
 				hasMatches: false,
@@ -238,14 +233,14 @@ describe( 'VariablesSelection', () => {
 				hasNoCompatibleVariables: true,
 			} );
 
-			// Act
+			// Act.
 			renderWithTheme(
 				<TestWrapper>
 					<VariablesSelection { ...defaultProps } />
 				</TestWrapper>
 			);
 
-			// Assert
+			// Assert.
 			expect( screen.getByText( __( 'No compatible variables', 'elementor' ) ) ).toBeInTheDocument();
 			expect( screen.queryByText( /Create your first .* variable/i ) ).not.toBeInTheDocument();
 		} );
@@ -253,7 +248,7 @@ describe( 'VariablesSelection', () => {
 
 	describe( 'Variable Selection', () => {
 		it( 'should render variables list when variables exist and match search', () => {
-			// Arrange
+			// Arrange.
 			const mockVariables = [
 				{ key: 'var1', label: 'Primary Color', value: '#ff0000' },
 				{ key: 'var2', label: 'Secondary Color', value: '#00ff00' },
@@ -266,20 +261,20 @@ describe( 'VariablesSelection', () => {
 				hasNoCompatibleVariables: false,
 			} );
 
-			// Act
+			// Act.
 			renderWithTheme(
 				<TestWrapper>
 					<VariablesSelection { ...defaultProps } />
 				</TestWrapper>
 			);
 
-			// Assert
+			// Assert.
 			expect( screen.getByText( 'Primary Color' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Secondary Color' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should call setValue and closePopover when variable is selected', () => {
-			// Arrange
+			// Arrange.
 			const mockVariables = [ { key: 'var1', label: 'Primary Color', value: '#ff0000' } ];
 
 			( useFilteredVariables as jest.Mock ).mockReturnValue( {
@@ -289,7 +284,7 @@ describe( 'VariablesSelection', () => {
 				hasNoCompatibleVariables: false,
 			} );
 
-			// Act
+			// Act.
 			renderWithTheme(
 				<TestWrapper>
 					<VariablesSelection { ...defaultProps } />
@@ -299,7 +294,7 @@ describe( 'VariablesSelection', () => {
 			const variableItem = screen.getByText( 'Primary Color' );
 			fireEvent.click( variableItem );
 
-			// Assert
+			// Assert.
 			expect( mockBoundProp.setValue ).toHaveBeenCalledWith( 'var1' );
 			expect( defaultProps.closePopover ).toHaveBeenCalled();
 			expect( tracking.trackVariableEvent ).toHaveBeenCalledWith( {
@@ -310,7 +305,7 @@ describe( 'VariablesSelection', () => {
 		} );
 
 		it( 'should show selected variable as active', () => {
-			// Arrange
+			// Arrange.
 			const mockVariables = [ { key: 'var1', label: 'Primary Color', value: '#ff0000' } ];
 
 			( useFilteredVariables as jest.Mock ).mockReturnValue( {
@@ -325,14 +320,14 @@ describe( 'VariablesSelection', () => {
 				value: 'var1',
 			} );
 
-			// Act
+			// Act.
 			renderWithTheme(
 				<TestWrapper>
 					<VariablesSelection { ...defaultProps } />
 				</TestWrapper>
 			);
 
-			// Assert
+			// Assert.
 			// eslint-disable-next-line testing-library/no-node-access
 			const selectedItem = screen.getByText( 'Primary Color' ).closest( '[aria-selected="true"]' );
 			expect( selectedItem ).toBeInTheDocument();
