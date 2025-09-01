@@ -26,7 +26,6 @@ export function useElementType( type?: string ) {
 				key: type,
 				controls: elementType.atomic_controls,
 				propsSchema: elementType.atomic_props_schema,
-				dependenciesPerTargetMapping: elementType.dependencies_per_target_mapping ?? {},
 				title: elementType.title,
 			};
 		},

@@ -9,6 +9,7 @@ import {
 } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
 import {
+	buildInverseDependencyGraph,
 	getElementLabel,
 	getElementSettings,
 	updateElementSettings,
@@ -34,6 +35,7 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	updateElementSettings: jest.fn(),
 	getElementLabel: jest.fn(),
 	getElementSettings: jest.fn(),
+	buildInverseDependencyGraph: jest.fn(),
 } ) );
 jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
@@ -413,7 +415,7 @@ describe( 'SettingsField dependency logic', () => {
 	describe( 'Dependency extraction', () => {
 		it( 'should extract direct dependencies correctly', () => {
 			// Arrange.
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'control-a': [ 'control-b', 'control-c' ],
 				'control-b': [ 'control-d' ],
 				'control-c': [],
@@ -427,7 +429,7 @@ describe( 'SettingsField dependency logic', () => {
 				'control-d': createMockPropType( { kind: 'plain' } ),
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 
 			const elementSettings = {
@@ -439,6 +441,7 @@ describe( 'SettingsField dependency logic', () => {
 
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -476,13 +479,13 @@ describe( 'SettingsField dependency logic', () => {
 				'dependent-control': createMockPropType( { kind: 'plain' } ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'parent-control': [ 'dependent-control' ],
 				'parent-control.child1': [ 'dependent-control' ],
 				'parent-control.child2': [],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 			const elementSettings = {
 				'parent-control': {
@@ -497,6 +500,7 @@ describe( 'SettingsField dependency logic', () => {
 
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -541,11 +545,11 @@ describe( 'SettingsField dependency logic', () => {
 				} ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'source-control': [ 'dependent-control' ],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 			const elementSettings = {
 				'source-control': { $$type: 'string', value: 'initial-value' },
@@ -554,6 +558,7 @@ describe( 'SettingsField dependency logic', () => {
 
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -592,11 +597,11 @@ describe( 'SettingsField dependency logic', () => {
 				} ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'source-control': [ 'dependent-control' ],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 			const elementSettings = {
 				'source-control': { $$type: 'string', value: 'initial-value' },
@@ -605,6 +610,7 @@ describe( 'SettingsField dependency logic', () => {
 
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -650,11 +656,11 @@ describe( 'SettingsField dependency logic', () => {
 				} ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'source-control': [ 'nested-object.child' ],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 
 			jest.mocked( useElementSettings ).mockReturnValue( {
@@ -667,6 +673,7 @@ describe( 'SettingsField dependency logic', () => {
 					},
 				},
 			} );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -751,12 +758,12 @@ describe( 'SettingsField dependency logic', () => {
 				} ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'source-control': [ 'mid-control' ],
 				'mid-control': [ 'nested-union.number' ],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 
 			jest.mocked( useElementSettings ).mockReturnValue( {
@@ -775,6 +782,7 @@ describe( 'SettingsField dependency logic', () => {
 					},
 				},
 			} );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -829,11 +837,11 @@ describe( 'SettingsField dependency logic', () => {
 				} ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'source-control': [ 'dependent-1', 'dependent-2' ],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 
 			jest.mocked( useElementSettings ).mockReturnValue( {
@@ -841,6 +849,7 @@ describe( 'SettingsField dependency logic', () => {
 				'dependent-1': { $$type: 'string', value: 'value-1' },
 				'dependent-2': { $$type: 'string', value: 'value-2' },
 			} );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -891,12 +900,12 @@ describe( 'SettingsField dependency logic', () => {
 				} ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'control-a': [ 'control-b' ],
 				'control-b': [ 'control-c' ],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 
 			jest.mocked( useElementSettings ).mockReturnValue( {
@@ -904,6 +913,7 @@ describe( 'SettingsField dependency logic', () => {
 				'control-b': { $$type: 'string', value: 'initial-b' },
 				'control-c': { $$type: 'string', value: 'initial-c' },
 			} );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -941,11 +951,11 @@ describe( 'SettingsField dependency logic', () => {
 				} ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'source-control': [ 'dependent-control' ],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 
 			const initialDependentValue = { $$type: 'string', value: 'preserved-value' };
@@ -955,6 +965,7 @@ describe( 'SettingsField dependency logic', () => {
 			};
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
