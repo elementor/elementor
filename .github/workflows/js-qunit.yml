@@ -30,6 +30,8 @@ jobs:
           node-version: 20.x
           cache: npm
       - name: Install Dependencies
-        run: npm run prepare-environment:ci && npm run build:tools
+        run: npm run prepare-environment:ci
+      - name: "Build Scripts"
+        run: npm run build:ci
       - name: "Run Qunit"
         run: npx grunt karma:unit
