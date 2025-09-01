@@ -277,8 +277,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Github User : <${{ steps.map_user.outputs.slack_user }}>"
-                    "text": "Github User: <${{ github.actor }}>"
+                    "text": "Github User: <${{ github.actor }}> | Slack User: <${{ steps.map_user.outputs.slack_user }}>"
                   }
                 }
               ]
