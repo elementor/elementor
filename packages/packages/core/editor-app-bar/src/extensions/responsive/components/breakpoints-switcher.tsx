@@ -37,7 +37,6 @@ export default function BreakpointsSwitcher() {
 				location: config.locations.topBar,
 				secondaryLocation: config.secondaryLocations.responsiveControls,
 				trigger: config.triggers.click,
-				element: config.elements.buttonIcon,
 				mode: value,
 			} );
 		}

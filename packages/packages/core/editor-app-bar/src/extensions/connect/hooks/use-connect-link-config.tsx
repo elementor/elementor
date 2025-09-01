@@ -14,7 +14,6 @@ const dispatchConnectClickEvent = ( eventName: string ) => {
 				location: config.locations.topBar,
 				secondaryLocation: config.secondaryLocations.eLogoMenu,
 				trigger: config.triggers.dropdownClick,
-				element: config.elements.buttonIcon,
 			} );
 		}
 	} catch ( error ) {

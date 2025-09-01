@@ -45,18 +45,17 @@ export function addMixpanelTrackingChecklistSteps( name, action, element = 'butt
 
 	const eventName = `checklist_steps_${ action }_${ name }`;
 
-	return (
-		elementorCommon.eventsManager.dispatchEvent(
-			eventName,
-			{
-				location: elementorCommon.eventsManager.config.locations.elementorEditor,
-				secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.checklistSteps,
-				trigger: elementorCommon.eventsManager.config.triggers.click,
-				element: elementorCommon.eventsManager.config.elements[ element ],
-				...documentMetaData,
-			},
-		)
-	);
+			return (
+			elementorCommon.eventsManager.dispatchEvent(
+				eventName,
+				{
+					location: elementorCommon.eventsManager.config.locations.elementorEditor,
+					secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.checklistSteps,
+					trigger: elementorCommon.eventsManager.config.triggers.click,
+					...documentMetaData,
+				},
+			)
+		);
 }
 
 export function addMixpanelTrackingChecklistHeader( name ) {
@@ -69,7 +68,6 @@ export function addMixpanelTrackingChecklistHeader( name ) {
 				location: elementorCommon.eventsManager.config.locations.elementorEditor,
 				secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.checklistHeader,
 				trigger: elementorCommon.eventsManager.config.triggers.click,
-				element: elementorCommon.eventsManager.config.elements.buttonIcon,
 				...documentMetaData,
 			},
 		)
@@ -87,7 +85,6 @@ export function addMixpanelTrackingChecklistTopBar( togglePopupState ) {
 				location: elementorCommon.eventsManager.config.locations.topBar,
 				secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.launchpad,
 				trigger: elementorCommon.eventsManager.config.triggers.toggleClick,
-				element: elementorCommon.eventsManager.config.elements.buttonIcon,
 				...documentMetaData,
 			},
 		)
@@ -104,7 +101,6 @@ export function dispatchChecklistOpenEvent() {
 				location: elementorCommon.eventsManager.config.locations.elementorEditor,
 				secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.launchpad,
 				trigger: elementorCommon.eventsManager.config.triggers.editorLoaded,
-				element: elementorCommon.eventsManager.config.elements.launchpadChecklist,
 				...documentMetaData,
 			},
 		)

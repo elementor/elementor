@@ -27,7 +27,6 @@ export default function MainMenuLocation() {
 				location: config.locations.topBar,
 				secondaryLocation: config.secondaryLocations.eLogoMenu,
 				trigger: config.triggers.dropdownClick,
-				element: config.elements.buttonIcon,
 			} );
 		}
 

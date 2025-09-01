@@ -47,7 +47,6 @@ export default function SettingsButton() {
 									location: config.locations.topBar,
 									secondaryLocation: config.secondaryLocations[ 'document-settings' ],
 									trigger: config.triggers.click,
-									element: config.elements.buttonIcon,
 								}
 							);
 						}
