@@ -24,7 +24,7 @@ class Test_Atomic_Tab extends Elementor_Test_Base {
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
 	}
 
-	public function test__render_Atomic_Tab(): void {
+	public function test__render_atomic_tab(): void {
 		// Arrange.
 		$mock_child =  [
 			'id' => 'e8e55a1',
