@@ -6,11 +6,12 @@ import { usePermissions } from '../../hooks/use-permissions';
 
 type Props = {
 	icon?: React.ReactNode;
-	title?: string;
+	title: string;
+	message: string;
 	onAdd?: () => void;
 };
 
-export const NoVariables = ( { icon, title, onAdd }: Props ) => {
+export const EmptyState = ( { icon, title, message, onAdd }: Props ) => {
 	const canAdd = usePermissions().canAdd();
 
 	return (
@@ -26,13 +27,7 @@ export const NoVariables = ( { icon, title, onAdd }: Props ) => {
 
 			{ canAdd ? (
 				<>
-					<NoVariablesContent
-						title={ title || __( 'Create your first variable', 'elementor' ) }
-						message={ __(
-							'Variables are saved attributes that you can apply anywhere on your site.',
-							'elementor'
-						) }
-					/>
+					<Content title={ title } message={ message } />
 					{ onAdd && (
 						<Button variant="outlined" color="secondary" size="small" onClick={ onAdd }>
 							{ __( 'Create a variable', 'elementor' ) }
@@ -40,7 +35,7 @@ export const NoVariables = ( { icon, title, onAdd }: Props ) => {
 					) }
 				</>
 			) : (
-				<NoVariablesContent
+				<Content
 					title={ __( 'There are no variables', 'elementor' ) }
 					message={ __( 'With your current role, you can only connect and detach variables.', 'elementor' ) }
 				/>
@@ -54,7 +49,7 @@ type NoVariablesContentProps = {
 	message: string;
 };
 
-function NoVariablesContent( { title, message }: NoVariablesContentProps ) {
+function Content( { title, message }: NoVariablesContentProps ) {
 	return (
 		<>
 			<Typography align="center" variant="subtitle2">
