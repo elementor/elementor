@@ -99,7 +99,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( (object) $this->mock_global_classes['items'], $response->get_data()['data'] );
 		$this->assertEquals( $this->mock_global_classes['order'], $response->get_data()['meta']['order'] );
-		$this->assertEquals( 200 , $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
 	}
 
 	public function test_all__returns_all_global_classes__preview_context() {
@@ -117,7 +117,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEquals( (object) $this->mock_global_classes['items'], $response->get_data()['data'] );
 		$this->assertEquals( $this->mock_global_classes['order'], $response->get_data()['meta']['order'] );
-		$this->assertEquals( 200 , $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
 	}
 
 	public function test_all__returns_empty_data_when_no_classes() {
@@ -131,7 +131,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( (object) [], $response->get_data()['data'] );
 		$this->assertEquals( [], $response->get_data()['meta']['order'] );
-		$this->assertEquals( 200 , $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
 	}
 
 	public function test_all__fails_when_context_is_invalid() {

@@ -8,10 +8,8 @@ use Elementor\Modules\AtomicWidgets\Opt_In;
 use Elementor\Core\Utils\Api\Parse_Result;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Plugin;
 
 class Global_Classes_Parser {
-
 	public static function make() {
 		return new static();
 	}
@@ -62,10 +60,10 @@ class Global_Classes_Parser {
 			return $result;
 		}
 
-		return $result->wrap([
+		return $result->wrap( [
 			'items' => $items_result->unwrap(),
 			'order' => $order_result->unwrap(),
-		]);
+		] );
 	}
 
 	public function parse_items( array $items ) {
@@ -90,14 +88,6 @@ class Global_Classes_Parser {
 
 				continue;
 			}
-
-			// if ( Plugin::$instance->experiments->is_feature_active( Opt_In::EXPERIMENT_NAME ) ) {
-			// if ( in_array( $sanitized_item['label'], $existing_labels, true ) ) {
-			// $result->errors()->add( "$item_id.id", 'duplicated_class_label' );
-
-			// continue;
-			// }
-			// }
 
 			$sanitized_items[ $sanitized_item['id'] ] = $sanitized_item;
 			$existing_labels[] = $sanitized_item['label'];
@@ -126,5 +116,56 @@ class Global_Classes_Parser {
 		return $result->is_valid()
 			? $result->wrap( $order->values() )
 			: $result;
+	}
+
+	public static function check_for_duplicate_labels( array $existing_items, array $request_items, array $changes ) {
+		if ( empty( $changes['added'] ) ) {
+			return false;
+		}
+
+		$duplicates = [];
+		$all_current_labels = [];
+
+		$existing_labels = array_column( $existing_items, 'label' );
+
+		foreach ( $request_items as $item_id => $item ) {
+			$label = $item['label'] ?? '';
+			if ( ! empty( $label ) ) {
+				$all_current_labels[ $item_id ] = $label;
+			}
+		}
+
+		$added_item_ids = $changes['added'] ?? [];
+
+		foreach ( $added_item_ids as $item_id ) {
+			if ( ! isset( $request_items[ $item_id ] ) ) {
+				continue;
+			}
+
+			$new_item = $request_items[ $item_id ];
+			$new_label = $new_item['label'] ?? '';
+
+			if ( in_array( $new_label, $existing_labels, true ) ) {
+				$duplicates[] = [
+					'item_id' => $item_id,
+					'label' => $new_label,
+				];
+			}
+
+			foreach ( $all_current_labels as $other_item_id => $other_label ) {
+				if ( $other_item_id !== $item_id && $other_label === $new_label ) {
+					$duplicates[] = [
+						'item_id' => $item_id,
+						'label' => $new_label,
+					];
+					break;
+				}
+			}
+		}
+
+		return [
+			'duplicates' => $duplicates,
+			'all_current_labels' => $all_current_labels,
+		];
 	}
 }

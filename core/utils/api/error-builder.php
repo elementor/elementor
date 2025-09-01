@@ -41,7 +41,7 @@ class Error_Builder {
 		$response_data = [
 			'code' => $this->code,
 			'message' => $this->message,
-			'data' => (object) array_merge(
+			'data' => array_merge(
 				[ 'status' => $this->status ],
 				$this->meta
 			),
