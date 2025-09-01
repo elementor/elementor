@@ -11,9 +11,9 @@ import { useVariableType } from '../context/variable-type-context';
 import { useFilteredVariables } from '../hooks/use-prop-variables';
 import { type ExtendedVirtualizedItem } from '../types';
 import { trackVariableEvent } from '../utils/tracking';
+import { EmptyState } from './ui/empty-state';
 import { MenuItemContent } from './ui/menu-item-content';
 import { NoSearchResults } from './ui/no-search-results';
-import { NoVariables } from './ui/no-variables';
 import { VariablesStyledMenuList } from './ui/styled-menu-list';
 
 const SIZE = 'tiny';
@@ -35,6 +35,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 		list: variables,
 		hasMatches: hasSearchResults,
 		isSourceNotEmpty: hasVariables,
+		NoCompatibleVariables,
 	} = useFilteredVariables( searchValue, propTypeUtil.key );
 
 	const handleSetVariable = ( key: string ) => {
@@ -140,8 +141,28 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 				/>
 			) }
 
-			{ ! hasVariables && (
-				<NoVariables title={ noVariableTitle } icon={ <VariableIcon fontSize="large" /> } onAdd={ onAdd } />
+			{ ! hasVariables && ! NoCompatibleVariables && (
+				<EmptyState
+					title={ noVariableTitle }
+					message={ __(
+						'Variables are saved attributes that you can apply anywhere on your site.',
+						'elementor'
+					) }
+					icon={ <VariableIcon fontSize="large" /> }
+					onAdd={ onAdd }
+				/>
+			) }
+
+			{ NoCompatibleVariables && (
+				<EmptyState
+					title={ __( 'No compatible variables', 'elementor' ) }
+					message={ __(
+						'Looks like none of your variables work with this control. Create a new variable to use it here.',
+						'elementor'
+					) }
+					icon={ <VariableIcon fontSize="large" /> }
+					onAdd={ onAdd }
+				/>
 			) }
 		</PopoverBody>
 	);
