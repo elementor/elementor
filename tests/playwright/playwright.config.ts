@@ -3,15 +3,8 @@ import { defineConfig } from '@playwright/test';
 import { config as _config } from 'dotenv';
 import { timeouts } from './config/timeouts';
 
-const isCI = Boolean( process.env.CI );
-const localDevServer = 'http://127.0.0.1:9400';
-const localTestServer = 'http://127.0.0.1:9400';
-const ciDevServer = 'http://localhost:8888';
-const ciTestServer = 'http://localhost:8889';
-
-process.env.DEV_SERVER = isCI ? ciDevServer : localDevServer;
-process.env.TEST_SERVER = isCI ? ciTestServer : localTestServer;
-
+process.env.DEV_SERVER = 'http://localhost:8888';
+process.env.TEST_SERVER = 'http://localhost:8889';
 process.env.DEBUG_PORT = ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? '9223' : '9222';
 
 _config( {

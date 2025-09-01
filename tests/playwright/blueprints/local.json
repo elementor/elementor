@@ -28,11 +28,7 @@
 		{ "step": "activatePlugin", "pluginPath": "/wordpress/wp-content/plugins/elementor" },
         { "step": "activateTheme", "themeFolderName": "hello-elementor" },
         { "step": "wp-cli", "command": "wp option add 'elementor_onboarded' 1" },
-        { "step": "wp-cli", "command": "wp elementor experiments activate e_atomic_elements,container,e_opt_in_v4,e_classes" },
-        { "step": "updateUserMeta", "meta": { "announcements_user_counter": 999, "elementor_enable_ai": 0, "_e_welcome_popover_displayed": 1 }, "userId": 1 },
-        {
-            "step": "wp-cli",
-            "command": "wp --user=admin elementor library import-dir /wordpress/wp-content/plugins/elementor/tests/playwright/templates || echo 'Template import failed or already imported'"
-        }
+        { "step": "wp-cli", "command": "wp elementor experiments activate e_atomic_elements,container,e_opt_in_v4,e_classes"},
+        { "step": "updateUserMeta", "meta": { "announcements_user_counter": 999, "elementor_enable_ai": 0, "_e_welcome_popover_displayed": 1 }, "userId": 1 }
 	]
 }
