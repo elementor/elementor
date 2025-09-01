@@ -40,6 +40,7 @@ export { updateElementSettings, type UpdateElementSettingsArgs } from './sync/up
 export { generateElementId } from './sync/generate-element-id';
 export { replaceElement } from './sync/replace-element';
 export { getContainerForNewElement } from './sync/get-container-for-new-element';
+export { dropElement, type DropElementParams } from './sync/drop-element';
 
 export { ELEMENT_STYLE_CHANGE_EVENT, styleRerenderEvents } from './styles/consts';
 export {
