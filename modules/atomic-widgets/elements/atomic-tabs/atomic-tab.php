@@ -86,6 +86,10 @@ class Atomic_Tab extends Atomic_Element_Base {
 		];
 	}
 
+	protected function define_default_html_tag() {
+		return 'button';
+	}
+
 	protected function define_default_children() {
 		return [
 			Atomic_Heading::generate()

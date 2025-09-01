@@ -1,12 +1,12 @@
 <?php
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Link;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 
-class Test_Atomic_Tab_Link extends Elementor_Test_Base {
+class Test_Atomic_Tab extends Elementor_Test_Base {
 	use MatchesSnapshots;
 
 	protected $instance;
@@ -16,15 +16,15 @@ class Test_Atomic_Tab_Link extends Elementor_Test_Base {
 
 		$mock =[
 			'id' => 'e8e55a1',
-			'elType' => Atomic_Tab_Link::get_element_type(),
+			'elType' => Atomic_Tab::get_element_type(),
 			'settings' => [],
-			'widgetType' => Atomic_Tab_Link::get_element_type(),
+			'widgetType' => Atomic_Tab::get_element_type(),
 		];
 
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
 	}
 
-	public function test__render_atomic_tab_link(): void {
+	public function test__render_Atomic_Tab(): void {
 		// Arrange.
 		$mock_child =  [
 			'id' => 'e8e55a1',
