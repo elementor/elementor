@@ -103,7 +103,7 @@ describe( 'VariablesSelection', () => {
 				list: mockVariables,
 				hasMatches: true,
 				isSourceNotEmpty: true,
-				NoCompatibleVariables: false,
+				hasNoCompatibleVariables: false,
 			} );
 
 			// Act
@@ -126,7 +126,7 @@ describe( 'VariablesSelection', () => {
 				list: [],
 				hasMatches: false,
 				isSourceNotEmpty: true,
-				NoCompatibleVariables: false,
+				hasNoCompatibleVariables: false,
 			} );
 
 			// Act
@@ -148,7 +148,7 @@ describe( 'VariablesSelection', () => {
 				list: [],
 				hasMatches: false,
 				isSourceNotEmpty: false,
-				NoCompatibleVariables: false,
+				hasNoCompatibleVariables: false,
 			} );
 
 			// Act
@@ -169,7 +169,7 @@ describe( 'VariablesSelection', () => {
 				list: [],
 				hasMatches: false,
 				isSourceNotEmpty: false,
-				NoCompatibleVariables: false,
+				hasNoCompatibleVariables: false,
 			} );
 
 			// Act
@@ -189,7 +189,7 @@ describe( 'VariablesSelection', () => {
 				list: [],
 				hasMatches: false,
 				isSourceNotEmpty: false,
-				NoCompatibleVariables: false,
+				hasNoCompatibleVariables: false,
 			} );
 
 			// Act
@@ -214,7 +214,7 @@ describe( 'VariablesSelection', () => {
 				list: [],
 				hasMatches: false,
 				isSourceNotEmpty: false,
-				NoCompatibleVariables: true,
+				hasNoCompatibleVariables: true,
 			} );
 
 			// Act
@@ -234,8 +234,8 @@ describe( 'VariablesSelection', () => {
 			( useFilteredVariables as jest.Mock ).mockReturnValue( {
 				list: [],
 				hasMatches: false,
-				isSourceNotEmpty: false,
-				NoCompatibleVariables: true,
+				isSourceNotEmpty: true,
+				hasNoCompatibleVariables: true,
 			} );
 
 			// Act
@@ -263,7 +263,7 @@ describe( 'VariablesSelection', () => {
 				list: mockVariables,
 				hasMatches: true,
 				isSourceNotEmpty: true,
-				NoCompatibleVariables: false,
+				hasNoCompatibleVariables: false,
 			} );
 
 			// Act
@@ -286,7 +286,7 @@ describe( 'VariablesSelection', () => {
 				list: mockVariables,
 				hasMatches: true,
 				isSourceNotEmpty: true,
-				NoCompatibleVariables: false,
+				hasNoCompatibleVariables: false,
 			} );
 
 			// Act
@@ -317,7 +317,7 @@ describe( 'VariablesSelection', () => {
 				list: mockVariables,
 				hasMatches: true,
 				isSourceNotEmpty: true,
-				NoCompatibleVariables: false,
+				hasNoCompatibleVariables: false,
 			} );
 
 			( require( '@elementor/editor-controls' ).useBoundProp as jest.Mock ).mockReturnValue( {

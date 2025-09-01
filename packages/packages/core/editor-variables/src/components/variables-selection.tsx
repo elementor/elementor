@@ -35,7 +35,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 		list: variables,
 		hasMatches: hasSearchResults,
 		isSourceNotEmpty: hasVariables,
-		NoCompatibleVariables,
+		hasNoCompatibleVariables,
 	} = useFilteredVariables( searchValue, propTypeUtil.key );
 
 	const handleSetVariable = ( key: string ) => {
@@ -141,7 +141,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 				/>
 			) }
 
-			{ ! hasVariables && ! NoCompatibleVariables && (
+			{ ! hasVariables && ! hasNoCompatibleVariables && (
 				<EmptyState
 					title={ noVariableTitle }
 					message={ __(
@@ -153,7 +153,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 				/>
 			) }
 
-			{ NoCompatibleVariables && (
+			{ hasNoCompatibleVariables && (
 				<EmptyState
 					title={ __( 'No compatible variables', 'elementor' ) }
 					message={ __(

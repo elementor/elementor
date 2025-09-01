@@ -39,7 +39,7 @@ export const useFilteredVariables = ( searchValue: string, propTypeKey: string )
 		list: searchFilteredVariables,
 		hasMatches: searchFilteredVariables.length > 0,
 		isSourceNotEmpty: typeFilteredVariables.length > 0,
-		NoCompatibleVariables: baseVariables.length > 0 && typeFilteredVariables.length === 0,
+		hasNoCompatibleVariables: baseVariables.length > 0 && typeFilteredVariables.length === 0,
 	};
 };
 
