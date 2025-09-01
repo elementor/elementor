@@ -1,8 +1,8 @@
 === Elementor Website Builder - More Than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
-Requires at least: 6.5
-Tested up to: 6.7
+Requires at least: 6.6
+Tested up to: 6.8
 Requires PHP: 7.4
 Stable tag: 3.12.1
 License: GPLv3
@@ -348,43 +348,59 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.28.3 - 2025-04-01 =
+= 3.31.3 - 2025-08-27 =
 
-* Tweak: Added Isolate object tool to Elementor AI image editing capabilities
-* Fix: Third dropdown in template display conditions not working in Theme Builder ([#30729](https://github.com/elementor/elementor/issues/30729), [#30732](https://github.com/elementor/elementor/issues/30732))
+* Tweak: Disabled indication popover on repeater items – Editor V4
+* Tweak: Enforced numeric keys in `promotionWidgets` and ensured consistent Pro widget injection
+* Fix: Floating Bar disappears from the frontend after activating Elementor Pro
 
-= 3.28.2 - 2025-03-30 =
+= 3.31.2 - 2025-08-11 =
 
-* New: Generate logo with AI
-* Tweak: Adjusted supported attributes and elements in SVG files ([#29340](https://github.com/elementor/elementor/issues/29340), [#30132](https://github.com/elementor/elementor/issues/30132))
-* Fix: "Create a page" button is not working in Elementor Home
-* Fix: Icons in Button widgets are not vertically aligned when changing the text line-height ([#30606](https://github.com/elementor/elementor/issues/30606))
+* Tweak: Improved permissions functionality in Class Management - Editor V4
+* Fix: Page failed to save on certain hosting providers due to blocked requests – Editor V4 ([#31992](https://github.com/elementor/elementor/issues/31992))
+* Fix: Renaming a class causes it to lose applied styles – Editor V4
+* Fix: Inherited values not working as expected with custom units in responsive modes – Editor V4
+* Fix: Visual Choose control not displaying properly in Firefox for Shape Divider
+* Fix: Icon alignment not working in Icon Box widget
 
-= 3.28.1 - 2025-03-23 =
+= 3.31.1 - 2025-08-06 =
 
-* Fix: Font URL is not updating after domain change when "Load Google Fonts Locally" feature is activated
+* Tweak: Updated `form-data` package version
+* Fix: Custom order field disappeared when set to 0 or cleared - Editor V4
 
-= 3.28.0 - 2025-03-17 =
+= 3.31.0 - 2025-08-05 =
 
-* New: Added a Clear Files & Data button to the WordPress frontend admin bar for quick and easy cache clearing ([#21642](https://github.com/elementor/elementor/issues/21642))
-* Tweak: Added a note clarifying that the Image Resolution control doesn't support dynamic background images ([#21359](https://github.com/elementor/elementor/issues/21359), [#22055](https://github.com/elementor/elementor/issues/22055))
-* Tweak: Added hover state Box Shadow controls to Button widget ([#4859](https://github.com/elementor/elementor/issues/4859), [#30210](https://github.com/elementor/elementor/issues/30210), [#17509](https://github.com/elementor/elementor/issues/17509))
-* Tweak: Renamed "Regenerate CSS & Data" to "Elementor Cache" in Elementor Tools for better clarity
-* Tweak: Hide Landing Page feature when no landing page posts exist on the site
-* Tweak: Promoted Load Google Fonts Locally feature to Stable status and enabled it by default for all websites
-* Tweak: Improved rendering functionality when updating CSS ID control to enhance editing performance in Accordion widget
-* Tweak: Improved rendering functionality when updating CSS ID control to enhance editing performance in Tabs widget
-* Tweak: Removed unused deprecated methods from `elementorCommon.helpers`
-* Tweak: Optimized style loading for the Text Editor widget by applying styles at the control level ensuring Drop Cap styles load only when enabled
-* Tweak: Updated Drop Cap controls to use CSS logical properties in Text Editor widget
-* Tweak: Updated minimum required WordPress version to 6.5
-* Tweak: Removed Modest Branding control from Video widget
-* Tweak: Promoted Optimized Markup feature to Beta status
-* Tweak: Added link color controls in Text Editor widget
-* Tweak: Applied hover color on focus for keyboard users in the Heading widget
-* Fix: Button icon alignment breaks when Inline Font Icons feature is activated ([#16077](https://github.com/elementor/elementor/issues/16077), [#16511](https://github.com/elementor/elementor/issues/16511), [#17692](https://github.com/elementor/elementor/issues/17692), [#17922](https://github.com/elementor/elementor/issues/17922), [#19253](https://github.com/elementor/elementor/issues/19253), [#19370](https://github.com/elementor/elementor/issues/19370), [#21236](https://github.com/elementor/elementor/issues/21236), [#21844](https://github.com/elementor/elementor/issues/21844), [#28080](https://github.com/elementor/elementor/issues/28080))
-* Fix: Editor fails to load in some edge cases when ACF Term fields are used as Dynamic Tags ([#29160](https://github.com/elementor/elementor/issues/29160))
-* Fix: Improved sanitization of titles to ensure consistent handling for Admin users in the Heading widget
-* Fix: Hover link color transition duration is not being applied in Heading widget
+* New: Introducing Variables - define reusable color and font values to ensure consistent and scalable design across your site - Editor V4
+* New: Introducing Inherited Values - style properties now indicate when values are inherited from Classes or Base styles - Editor V4
+* New: Introducing Filters - add visual effects like blur, brightness, and contrast with full design control - Editor V4
+* New: Introducing Backdrop Filters - apply visual effects behind elements for layered design - Editor V4
+* New: Introducing Divider - a modular layout element for visual separation - Editor V4
+* New: Class Usage Overview – gain insights into class usage directly from the Class Manager - Editor V4
+* New: Class Locator - locate all elements using a specific class across your design - Editor V4
+* Tweak: Removed background videos from the accessibility tree to improve screen reader behavior ([#23880](https://github.com/elementor/elementor/issues/23880))
+* Tweak: Search by Class name - quickly locate existing classes in the Class Manager - Editor V4
+* Tweak: Improved style detection across breakpoints when using Classes - Editor V4
+* Tweak: Added Custom option to Object Position in Size section - Editor V4
+* Tweak: Added ID control in YouTube element - Editor V4
+* Tweak: Added Opacity control - set element transparency - Editor V4
+* Tweak: Display Base Style indication - clearly shows when Base styles are applied to an element - Editor V4
+* Tweak: Improved drag and drop behavior into Flexbox and Div Blocks inside the Canvas - Editor V4
+* Tweak: Replaced select control with a visual choice control in Shape Dividers
+* Tweak: Replaced SASS mixins and functions with native CSS logical properties
+* Tweak: Added support for `lh` and `rlh` CSS units in Typography Line Height control
+* Tweak: Added responsive capabilities to Custom Mask
+* Tweak: Activated "Element Caching" experiment for all sites
+* Tweak: Updated Icon List widget to use CSS logical properties
+* Tweak: Updated Star Rating widget to use CSS logical properties
+* Tweak: Updated Alert widget to use CSS logical properties
+* Tweak: Updated Accordion widget to use CSS logical properties
+* Tweak: Updated Toggle widget to use CSS logical properties
+* Tweak: Updated Icon Box widget to use CSS logical properties
+* Tweak: Updated Menu Anchor widget to use CSS logical properties
+* Tweak: Updated Tabs widget to use CSS logical properties
+* Tweak: Updated Testimonial widget to use CSS logical properties
+* Tweak: Updated Text Editor widget to use CSS logical properties
+* Tweak: Updated Paragraph Spacing in Site Settings Typography to use CSS logical properties
+* Tweak: Optimized CSS output for Masks
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

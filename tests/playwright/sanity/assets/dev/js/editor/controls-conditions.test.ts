@@ -10,7 +10,7 @@ test( 'Editor Responsive Control Conditions', async ( { page, apiRequests }, tes
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
 
-	await editor.addWidget( 'heading' );
+	await editor.addWidget( { widgetType: 'heading' } );
 
 	const heading = await editor.getPreviewFrame().waitForSelector( 'text=Add Your Heading Text Here' );
 

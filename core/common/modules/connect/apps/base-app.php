@@ -170,10 +170,6 @@ abstract class Base_App {
 	}
 
 	public function action_reset() {
-		if ( current_user_can( 'manage_options' ) ) {
-			delete_option( 'elementor_remote_info_library' );
-		}
-
 		$this->redirect_to_admin_page();
 	}
 
@@ -616,6 +612,7 @@ abstract class Base_App {
 				break;
 
 			case 'cli':
+			case 'rest':
 				$this->admin_notice();
 				die;
 
@@ -719,6 +716,7 @@ abstract class Base_App {
 	protected function redirect_to_remote_authorize_url() {
 		switch ( $this->auth_mode ) {
 			case 'cli':
+			case 'rest':
 				$this->get_app_token_from_cli_token( Utils::get_super_global_value( $_REQUEST, 'token' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 				return;
 			default:
@@ -729,6 +727,12 @@ abstract class Base_App {
 
 	protected function get_auth_redirect_uri() {
 		$redirect_uri = $this->get_admin_url( 'get_token' );
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
+		$val = Utils::get_super_global_value( $_REQUEST, 'redirect_to' );
+		if ( $val ) {
+			$redirect_uri = add_query_arg( [ 'redirect_to' => $val ], $redirect_uri );
+		}
 
 		switch ( $this->auth_mode ) {
 			case 'popup':
@@ -750,6 +754,13 @@ abstract class Base_App {
 					printf( '[%s] %s', wp_kses_post( $notice['type'] ), wp_kses_post( $notice['content'] ) );
 				}
 				break;
+
+			case 'rest':
+				// After `wp_send_json` the script will die.
+				$this->delete( 'notices' );
+				wp_send_json( $notices );
+				break;
+
 			default:
 				/**
 				 * @var Admin_Notices $admin_notices
@@ -810,7 +821,7 @@ abstract class Base_App {
 			$this->set_auth_mode( 'xhr' );
 		}
 
-		$mode = Utils::get_super_global_value( $_REQUEST, 'mode' ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
+		$mode = Utils::get_super_global_value( $_REQUEST, 'mode' );
 
 		if ( $mode ) {
 			$allowed_auth_modes = [
@@ -819,6 +830,10 @@ abstract class Base_App {
 
 			if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$allowed_auth_modes[] = 'cli';
+			}
+
+			if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+				$allowed_auth_modes[] = 'rest';
 			}
 
 			if ( in_array( $mode, $allowed_auth_modes, true ) ) {

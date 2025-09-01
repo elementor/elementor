@@ -4,47 +4,27 @@ import { expectScreenshotToMatchLocator, addIcon, setIconSize } from './helper';
 import { expect } from '@playwright/test';
 
 test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordion', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdmin.setExperiments( {
-			container: 'active',
-			'nested-elements': 'active',
-		} );
-
-		await page.close();
-	} );
-
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			'nested-elements': 'inactive',
-			container: 'inactive',
-			e_font_icon_svg: 'default',
-		} );
-
+		await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
 	test( 'Nested Accordion Title Icon and Text No Overlap', async ( { browser, apiRequests }, testInfo ) => {
 		let url;
-		await test.step( 'experiment Inline Font Icons off', async () => {
+		await test.step( 'Inline Font Icons: Off', async () => {
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( {
-				e_font_icon_svg: 'inactive',
-			} );
+			await wpAdmin.setExperiments( { e_font_icon_svg: 'inactive' } );
 			const editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' );
 
 			// Act
 			// Set horizontal icon & style size to 70
 			await editor.closeNavigatorIfOpen();
-			const nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+			const nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 			const nestedAccordion = await editor.selectElement( nestedAccordionID );
 			await addIcon( editor, page, 'address card' );
 			await setIconSize( editor, '70' );
@@ -58,12 +38,10 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			url = page.url();
 		} );
 
-		await test.step( 'experiment Inline Font Icons on (default)', async () => {
+		await test.step( 'Inline Font Icons: On', async () => {
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( {
-				e_font_icon_svg: 'active',
-			} );
+			await wpAdmin.setExperiments( { e_font_icon_svg: 'active' } );
 			const editor = await wpAdmin.openNewPage();
 
 			// Assert
@@ -81,9 +59,9 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.closeNavigatorIfOpen();
-		const parentAccordionID = await editor.addWidget( 'nested-accordion', container );
+		const parentAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 		await editor.selectElement( parentAccordionID );
-		const nestedAccordionID = await editor.addWidget( 'nested-accordion', parentAccordionID, true );
+		const nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container: parentAccordionID, isContainerASection: true } );
 		await editor.selectElement( nestedAccordionID );
 		await addIcon( editor, page, 'address card' );
 		await editor.publishAndViewPage();

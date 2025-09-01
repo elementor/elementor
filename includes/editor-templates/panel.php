@@ -1,14 +1,11 @@
 <?php
 namespace Elementor;
 
-use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_post_id() );
-$is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_Module::EXPERIMENT_NAME );
 ?>
 <script type="text/template" id="tmpl-elementor-panel">
 	<div id="elementor-panel-state-loading">
@@ -55,8 +52,8 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 <script type="text/template" id="tmpl-elementor-exit-dialog">
 	<div><?php echo esc_html__( 'Now you can choose where you want to go on the site from the following options', 'elementor' ); ?></div>
 	<div>
-		<!-- translators: 1: Opening HTML <a> tag, 2: closing HTML <a> tag. -->
 		<?php printf(
+			/* translators: 1: Opening HTML <a> tag, 2: closing HTML <a> tag. */
 			esc_html__( 'Any time you can change the settings in %1$sUser Preferences%2$s', 'elementor' ),
 			'<a id="user-preferences">',
 			'</a>'
@@ -77,19 +74,16 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
-	<button id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php echo esc_attr__( 'Settings', 'elementor' ); ?>" aria-label="<?php printf( esc_attr__( '%s Settings', 'elementor' ), esc_attr( $document::get_title() ) ); ?>">
+	<button id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php echo esc_attr__( 'Settings', 'elementor' ); ?>" aria-label="<?php
+	printf(
+		/* translators: %s: Document title. */
+		esc_attr__( '%s Settings', 'elementor' ),
+		esc_attr( $document::get_title() )
+	); ?>">
 		<i class="eicon-cog" aria-hidden="true"></i>
 	</button>
 	<# if ( $e.components.get( 'document/elements' ).utils.showNavigator() ) { #>
-	<button id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php
-		echo $is_app_bar_active
-			? esc_attr__( 'Structure', 'elementor' )
-			: esc_attr__( 'Navigator', 'elementor' );
-	?>" aria-label="<?php
-		echo $is_app_bar_active
-			? esc_attr__( 'Structure', 'elementor' )
-			: esc_attr__( 'Navigator', 'elementor' );
-?>">
+	<button id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php echo esc_attr__( 'Structure', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Structure', 'elementor' ); ?>">
 		<i class="eicon-navigator" aria-hidden="true"></i>
 	</button>
 	<# } #>
@@ -149,7 +143,7 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 
 <script type="text/template" id="tmpl-elementor-mode-switcher-content">
 	<label for="elementor-mode-switcher-preview-input" id="elementor-mode-switcher-preview" title="<?php echo esc_attr__( 'Hide Panel', 'elementor' ); ?>">
-		<i class="eicon" aria-hidden="true" tabindex="0"></i>
+		<i class="eicon eicon-angle-left" aria-hidden="true" tabindex="0"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Hide Panel', 'elementor' ); ?></span>
 	</label>
 	<input id="elementor-mode-switcher-preview-input" type="checkbox">
@@ -225,7 +219,7 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 <script type="text/template" id="tmpl-elementor-panel-scheme-typography-item">
 	<div class="elementor-panel-heading">
 		<div class="elementor-panel-heading-toggle">
-			<i class="eicon" aria-hidden="true"></i>
+			<i class="eicon-caret-right" aria-hidden="true"></i>
 		</div>
 		<div class="elementor-panel-heading-title">{{{ title }}}</div>
 	</div>

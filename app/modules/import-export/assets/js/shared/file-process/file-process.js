@@ -9,7 +9,7 @@ export default function FileProcess( props ) {
 			className={ arrayToClassName( [ 'e-app-import-export-file-process', props.className ] ) }
 			icon="eicon-loading eicon-animation-spin"
 			// eslint-disable-next-line @wordpress/i18n-ellipsis
-			heading={ __( 'Setting up your kit...', 'elementor' ) }
+			heading={ __( 'Setting up your website template...', 'elementor' ) }
 			description={
 				<>
 					{ __( 'This usually takes a few moments.', 'elementor' ) }

@@ -4,9 +4,11 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Elements_Manager;
+use Elementor\Modules\AtomicWidgets\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -21,11 +23,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
+class Test_Atomic_Widgets_Base_Styles extends Elementor_Test_Base {
 	private Widgets_Manager $widgets_manager;
 	private MockObject $widgets_manager_mock;
 	private Elements_Manager $elements_manager;
 	private MockObject $elements_manager_mock;
+	private MockObject $mock_styles_manager;
 
 	public function set_up() {
 		parent::set_up();
@@ -38,7 +41,10 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 		$this->elements_manager_mock = $this->getMockBuilder( Elements_Manager::class )->disableOriginalConstructor()->onlyMethods( [ 'get_element_types' ] )->getMock();
 		Plugin::$instance->elements_manager = $this->elements_manager_mock;
 
-		remove_all_actions( 'elementor/css-file/post/parse' );
+		$this->mock_styles_manager = $this->createMock( Atomic_Styles_Manager::class );
+
+
+		remove_all_actions( 'elementor/atomic-widgets/styles/register' );
 	}
 
 	public function tear_down() {
@@ -48,7 +54,7 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 		Plugin::$instance->elements_manager = $this->elements_manager;
 	}
 
-	public function test_it__inject_elements_base_styles() {
+	public function test_register_styles__registers_styles_for_atomic_widgets() {
 		// Arrange
 		( new Atomic_Widget_Base_Styles() )->register_hooks();
 
@@ -63,56 +69,59 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 			]
 		] );
 
-		$this->widgets_manager_mock->method( 'get_widget_types' )->willReturn( [ $widget ] );
-		$this->elements_manager_mock->method( 'get_element_types' )->willReturn( [] );
+		$element = $this->make_mock_widget( [
+			'base_styles' => [
+				'base' => Style_Definition::make()
+					->add_variant(
+						Style_Variant::make()
+							->add_prop( 'color', Color_Prop_Type::generate( 'blue' ) )
+							->add_prop( 'font-size', String_Prop_Type::generate( '16px' ) )
+					)
+			]
+		] );
 
-		Plugin::$instance->kits_manager->create_new_kit( 'kit' );
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$this->widgets_manager_mock->method( 'get_widget_types' )->willReturn( [ $widget ] );
+		$this->elements_manager_mock->method( 'get_element_types' )->willReturn( [ $element ] );
+
+		$this->mock_styles_manager
+			->expects($this->once())
+			->method('register')
+			->with(
+				Atomic_Widget_Base_Styles::STYLES_KEY,
+				$this->callback(function($callback) use ($widget, $element) {
+					$styles = $callback([1]);
+
+					$expected = array_merge(
+						array_values( $widget->get_base_styles() ),
+						array_values( $element->get_base_styles() )
+					);
+
+					$this->assertEquals($expected, $styles);
+					return true;
+				})
+			);
 
 		// Act
-		$post_css = Post::create( $kit->get_id() );
-
-		// Assert
-		$css = $post_css->get_content();
-		$this->assertStringContainsString( '.elementor .test-widget-base{font-family:Poppins;color:red;}', $css );
+		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_styles_manager );
 	}
 
-	public function test_it__enqueues_fonts() {
-		// Arrange
+	public function test_cache_invalidation_on_global_cache_clear() {
+		// Arrange.
 		( new Atomic_Widget_Base_Styles() )->register_hooks();
 
-		$widget = $this->make_mock_widget( [
-			'base_styles' => [
-				'base' => Style_Definition::make()
-					->add_variant(
-						Style_Variant::make()
-							->add_prop( 'color', Color_Prop_Type::generate( 'red' ) )
-							->add_prop( 'font-family', String_Prop_Type::generate( 'Poppins' ) )
-					)
-					->add_variant( Style_Variant::make()
-						->set_breakpoint( 'mobile' )
-						->add_prop( 'font-family', String_Prop_Type::generate( 'Inter' ) )
-					)
-					->add_variant( Style_Variant::make()
-						->set_breakpoint( 'tablet' )
-						->add_prop( 'font-family', String_Prop_Type::generate( 'Inter' ) )
-					)
-			]
-		] );
+		$cache_validity = new Cache_Validity();
 
-		$this->widgets_manager_mock->method( 'get_widget_types' )->willReturn( [ $widget ] );
-		$this->elements_manager_mock->method( 'get_element_types' )->willReturn( [] );
+		// Act.
+		$cache_validity->validate( [ Atomic_Widget_Base_Styles::STYLES_KEY ] );
 
-		Plugin::$instance->kits_manager->create_new_kit( 'kit' );
-		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+		// Assert.
+		$this->assertTrue( $cache_validity->is_valid( [ Atomic_Widget_Base_Styles::STYLES_KEY ] ) );
 
-		// Act
-		$post_css = Post::create( $kit_id );
+		// Act.
+		do_action('elementor/core/files/clear_cache' );
 
-		// Assert
-		$post_css->get_content();
-
-		$this->assertSame( [ 'Poppins', 'Inter' ], $post_css->get_fonts() );
+		// Assert.
+		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Base_Styles::STYLES_KEY ] ) );
 	}
 
 	/**

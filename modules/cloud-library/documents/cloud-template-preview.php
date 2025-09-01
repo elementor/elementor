@@ -26,7 +26,6 @@ class Cloud_Template_Preview extends Document {
 		$properties['show_on_admin_bar'] = false;
 		$properties['show_in_finder'] = false;
 		$properties['register_type'] = true;
-		$properties['edit_capability'] = true;
 		$properties['support_conditions'] = false;
 		$properties['support_page_layout'] = false;
 

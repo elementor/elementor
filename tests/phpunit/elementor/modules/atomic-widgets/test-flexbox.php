@@ -77,4 +77,54 @@ class Test_Flexbox extends Elementor_Test_Base {
 		// Assert.
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
+
+	public function test__render_with_child_flexbox(): void {
+		// Arrange.
+		$mock_child_flexbox =  [
+			'id' => 'a3v23u9',
+			'elType' => Flexbox::get_element_type(),
+			'settings' => [],
+			'widgetType' => Flexbox::get_element_type(),
+		];
+
+		$mock_flexbox = [
+			'id' => 'e8e55a1',
+			'elType' => Flexbox::get_element_type(),
+			'settings' => [],
+			'widgetType' => Flexbox::get_element_type(),
+		];
+
+		$flexbox_element = Plugin::$instance->elements_manager->create_element_instance( $mock_flexbox );
+		$flexbox_element->add_child( $mock_child_flexbox );
+
+		// Act
+		ob_start();
+		$flexbox_element->print_element();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
+
+	public function test__render_with_css_id(): void {
+		// Arrange.
+		$mock_flexbox = [
+			'id' => 'e8e55a1',
+			'elType' => Flexbox::get_element_type(),
+			'settings' => [
+				'_cssid' => 'test-css-id',
+			],
+			'widgetType' => Flexbox::get_element_type(),
+		];
+
+		$flexbox_element = Plugin::$instance->elements_manager->create_element_instance( $mock_flexbox );
+
+		// Act.
+		ob_start();
+		$flexbox_element->print_element();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
 }

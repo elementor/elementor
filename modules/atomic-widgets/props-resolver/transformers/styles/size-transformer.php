@@ -11,10 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Size_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-		// The + operator cast the $value['size'] to numeric (either int or float - depends on the value)
-		$size = +$value['size'];
+		$size = $value['size'];
 		$unit = $value['unit'];
 
-		return $size . $unit;
+		if ( 'custom' === $unit ) {
+			return $size;
+		}
+
+		if ( 'auto' === $unit ) {
+			return 'auto';
+		}
+
+		return +$size . $unit;
 	}
 }

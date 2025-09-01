@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -110,13 +111,25 @@ trait Has_Atomic_Base {
 	}
 
 	public function get_atomic_controls() {
-		$controls = $this->define_atomic_controls();
+		$controls = apply_filters(
+			'elementor/atomic-widgets/controls',
+			$this->define_atomic_controls(),
+			$this
+		);
+
 		$schema = static::get_props_schema();
 
 		// Validate the schema only in the Editor.
 		static::validate_schema( $schema );
 
 		return $this->get_valid_controls( $schema, $controls );
+	}
+
+	protected function get_css_id_control_meta(): array {
+		return [
+			'layout' => 'two-columns',
+			'topDivider' => true,
+		];
 	}
 
 	final public function get_controls( $control_id = null ) {
@@ -133,6 +146,7 @@ trait Has_Atomic_Base {
 		$data['version'] = $this->version;
 		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
 		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
+		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
 
 		return $data;
 	}
@@ -141,6 +155,7 @@ trait Has_Atomic_Base {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
 		$raw_data['styles'] = $this->styles;
+		$raw_data['editor_settings'] = $this->editor_settings;
 
 		return $raw_data;
 	}
@@ -159,10 +174,23 @@ trait Has_Atomic_Base {
 		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
 	}
 
+	private function parse_editor_settings( array $data ): array {
+		$editor_data = [];
+
+		if ( isset( $data['title'] ) && is_string( $data['title'] ) ) {
+			$editor_data['title'] = sanitize_text_field( $data['title'] );
+		}
+
+		return $editor_data;
+	}
+
 	public static function get_props_schema(): array {
+		$schema = static::define_props_schema();
+		$schema['_cssid'] = String_Prop_Type::make();
+
 		return apply_filters(
 			'elementor/atomic-widgets/props-schema',
-			static::define_props_schema()
+			$schema
 		);
 	}
 }

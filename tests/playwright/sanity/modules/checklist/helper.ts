@@ -32,10 +32,8 @@ export class ChecklistHelper {
 
 		const frame = 'editor' === context ? this.editor.page : this.page;
 
-		if ( 'editor' === context && await this.editor.hasTopBar() ) {
+		if ( 'editor' === context ) {
 			await frame.locator( selectors.topBarIcon ).click();
-		} else if ( 'editor' === context ) {
-			// TODO: Implement openChecklist with no top bar
 		} else {
 			// TODO: Implement openChecklist in wp-admin
 		}

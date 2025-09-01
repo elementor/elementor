@@ -21,21 +21,14 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 			return {
 				'data-template_id': data.template_id,
 				'data-type': data.type,
+				'data-status': data.status,
 			};
 		}
 	},
 
 	ui() {
 		return _.extend( TemplateLibraryTemplateLocalView.prototype.ui.apply( this, arguments ), {
-			toggleMore: '.elementor-template-library-template-more-toggle',
 			previewImg: '.elementor-template-library-template-thumbnail img',
-		} );
-	},
-
-	events() {
-		return _.extend( TemplateLibraryTemplateLocalView.prototype.events.apply( this, arguments ), {
-			click: 'handleItemClicked',
-			'click @ui.toggleMore': 'onToggleMoreClick',
 		} );
 	},
 
@@ -83,45 +76,20 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 	},
 
 	onPreviewButtonClick( event ) {
-		if ( event.shiftKey ) {
-			return;
-		}
+		event.stopPropagation();
 
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
-			$e.route( 'library/view-folder', { model: this.model } );
-			return;
+			$e.route( 'library/view-folder', {
+				model: this.model,
+				onAfter: () => {
+					elementor.templates.resetBulkActionBar();
+				},
+			} );
 		}
 
-		TemplateLibraryTemplateLocalView.prototype.onPreviewButtonClick.apply( this, arguments );
-	},
-
-	handleItemClicked( event ) {
-		if ( 'list' === elementor.templates.getViewSelection() ) {
-			return;
+		if ( 'TEMPLATE' === this.model.get( 'subType' ) ) {
+			this.handleGridViewItemSingleClick();
 		}
-
-		if ( event.shiftKey ) {
-			this.handleShiftAndClick();
-
-			return;
-		}
-
-		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
-			$e.route( 'library/view-folder', { model: this.model } );
-		}
-	},
-
-	handleShiftAndClick() {
-		const itemIsSelected = this.$el.hasClass( 'bulk-selected-item' );
-
-		if ( itemIsSelected ) {
-			elementor.templates.removeBulkSelectionItem( this.model.get( 'template_id' ) );
-		} else {
-			elementor.templates.addBulkSelectionItem( this.model.get( 'template_id' ) );
-		}
-
-		this.$el.toggleClass( 'bulk-selected-item' );
-		elementor.templates.layout.handleBulkActionBar();
 	},
 
 	onDeleteButtonClick( event ) {
@@ -146,6 +114,38 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 				$e.routes.refreshContainer( 'library' );
 			},
 		} );
+	},
+
+	handleItemSingleClick() {
+		if ( 'grid' === elementor.templates.getViewSelection() ) {
+			this.handleGridViewItemSingleClick();
+		} else {
+			this.handleListViewItemSingleClick();
+		}
+	},
+
+	handleItemDoubleClick() {
+		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
+			$e.route( 'library/view-folder', {
+				model: this.model,
+				onAfter: () => {
+					elementor.templates.resetBulkActionBar();
+				},
+			} );
+		}
+	},
+
+	handleGridViewItemSingleClick() {
+		const itemIsSelected = this.$el.hasClass( 'bulk-selected-item' );
+
+		if ( itemIsSelected ) {
+			elementor.templates.removeBulkSelectionItem( this.model.get( 'template_id' ), this.model.get( 'type' ) );
+		} else {
+			elementor.templates.addBulkSelectionItem( this.model.get( 'template_id' ), this.model.get( 'type' ) );
+		}
+
+		this.$el.toggleClass( 'bulk-selected-item' );
+		elementor.templates.layout.handleBulkActionBar();
 	},
 } );
 

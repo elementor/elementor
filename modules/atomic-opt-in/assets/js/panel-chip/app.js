@@ -10,7 +10,7 @@ const App = ( props ) => {
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
-				<ThemeProvider colorScheme={ props.colorScheme }>
+				<ThemeProvider colorScheme={ props.colorScheme } palette="unstable">
 					<Infotip
 						content={ <PopoverCard doClose={ props.onClose } /> }
 						placement="right"

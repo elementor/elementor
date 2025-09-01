@@ -5,7 +5,7 @@ module.exports = elementorModules.Module.extend( {
 			position: {
 				my: 'center bottom',
 				at: 'center bottom-10',
-				of: '#elementor-panel-content-wrapper',
+				of: '#elementor-panel-inner',
 				autoRefresh: true,
 			},
 			hide: {

@@ -46,7 +46,7 @@ test.describe( 'AI @ai', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Modal can be opened and closed', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: noDataMock } );
 
@@ -62,7 +62,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Shows a message when there is a free plan', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: noPlanMock } );
 
@@ -76,7 +76,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Shows a message when there are no history items', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: noDataMock } );
 
@@ -90,7 +90,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Renders items from different periods correctly', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: differentPeriodsDataMock } );
 
@@ -106,7 +106,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Renders upgrade ad if a user has less than 90 items limit', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: thirtyDaysLimitDataMock } );
 
@@ -120,7 +120,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Renders a fallback icon for an unknown action', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: unknownActionDataMock } );
 
@@ -134,7 +134,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Removes item', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, {
 				getHistoryMock: differentPeriodsDataMock,
@@ -165,7 +165,7 @@ test.describe( 'AI @ai', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Text - History items list a11y', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, {
 				getHistoryMock: differentPeriodsDataMock,
@@ -186,7 +186,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Image - History items list a11y', async () => {
-			await editor.addWidget( 'image' );
+			await editor.addWidget( { widgetType: 'image' } );
 
 			await mockRoute( page, {
 				getHistoryMock: restoreImageDataMock,
@@ -213,7 +213,7 @@ test.describe( 'AI @ai', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Reuse button reuses prompt', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, {
 				getHistoryMock: reuseAndEditTextDataMock,
@@ -237,7 +237,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Edit button edits result', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, {
 				getHistoryMock: reuseAndEditTextDataMock,
@@ -267,7 +267,7 @@ test.describe( 'AI @ai', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Reuse button reuses prompt', async () => {
-			await editor.addWidget( 'html' );
+			await editor.addWidget( { widgetType: 'html' } );
 
 			await mockRoute( page, {
 				getHistoryMock: reuseAndEditTextDataMock,
@@ -297,7 +297,7 @@ test.describe( 'AI @ai', () => {
 		await test.step( 'Restore button restores prompt', async () => {
 			const { promptHistory, image } = EditorSelectors.ai;
 
-			await editor.addWidget( 'image' );
+			await editor.addWidget( { widgetType: 'image' } );
 
 			await mockRoute( page, {
 				getHistoryMock: restoreImageDataMock,

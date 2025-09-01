@@ -79,6 +79,11 @@
 
 	.elementor-image-box-img {
 		display: inline-block; // For alignment content
+
+		img {
+			display: block;
+			line-height: 0;
+		}
 	}
 
 	.elementor-image-box-title {

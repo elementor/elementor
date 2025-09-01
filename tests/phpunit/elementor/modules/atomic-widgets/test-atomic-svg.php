@@ -93,7 +93,10 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
-	public function test__should_render_svg_wrapped_in_link() : void {
+	/**
+	 * @dataProvider link_href_provider
+	 */
+	public function test__should_render_svg_wrapped_in_link( $href ) : void {
 		$element = [
 			'id' => 'abcd123',
 			'elType' => 'widget',
@@ -102,7 +105,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 					'id' => 123,
 				],
 				'link' => [
-					'href' => 'https://elementor.com',
+					'href' => $href,
 					'target' => '_blank',
 				]
 			],
@@ -168,5 +171,12 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 				],
 				'widgetType' => Atomic_Svg::get_element_type(),
 			];
+	}
+
+	public function link_href_provider(): array {
+		return [
+			'External link' => [ 'https://elementor.com' ],
+			'ID link'       => [ '#element-id' ],
+		];
 	}
 }

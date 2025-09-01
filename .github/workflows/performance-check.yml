@@ -12,6 +12,7 @@ on:
       - 'bin/**'
       - '.gitignore'
       - 'docs/**'
+      - 'tests/**'
   workflow_dispatch:
 
 jobs:
@@ -21,7 +22,7 @@ jobs:
 
   compare-v4-to-v3:
     name: Compare V4 to V3
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [build-plugin]
     env:
       PERFORMANCE_SCORE_THRESHOLD: 0.87
@@ -61,7 +62,6 @@ jobs:
           enable-svg-upload: true
           experiments: |-
             e_optimized_markup:true
-            editor_v2:true
             e_atomic_elements:true
             e_classes:true
           templates: |-
@@ -113,7 +113,7 @@ jobs:
 
       - name: Send Slack notification
         uses: slackapi/slack-github-action@v2.0.0
-        if: failure()
+        if: ${{ failure() && steps.run-performance-check.outputs.v3-performance-median-score > 0 && steps.run-performance-check.outputs.mixed-performance-median-score > 0 }}
         env:
           RUN_ID: ${{ github.run_id }}
           ARTIFACT_ID: ${{ steps.upload-reports.outputs.artifact-id }}

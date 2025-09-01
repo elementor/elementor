@@ -7,7 +7,7 @@ import {
 	ThemeProvider,
 } from '@elementor/ui';
 
-import { WelcomePopover } from './welcome-popover';
+import { WelcomeDialog } from './welcome-dialog';
 
 const App = ( props ) => {
 	const [ isWelcomeVisible, setIsWelcomeVisible ] = useState( true );
@@ -19,9 +19,9 @@ const App = ( props ) => {
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
-				<ThemeProvider colorScheme={ 'light' }>
+				<ThemeProvider colorScheme={ 'light' } palette="unstable">
 					{
-						isWelcomeVisible && <WelcomePopover doClose={ handleClose } />
+						isWelcomeVisible && <WelcomeDialog doClose={ handleClose } />
 					}
 				</ThemeProvider>
 			</LocalizationProvider>

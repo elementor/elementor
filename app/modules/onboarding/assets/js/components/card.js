@@ -1,4 +1,4 @@
-export default function Card( { image, imageAlt, text, link, name, clickAction } ) {
+export default function Card( { image, imageAlt, text, link, name, clickAction, target = '_self' } ) {
 	const onClick = () => {
 		elementorCommon.events.dispatchEvent( {
 			event: 'starting canvas click',
@@ -15,7 +15,7 @@ export default function Card( { image, imageAlt, text, link, name, clickAction }
 	};
 
 	return (
-		<a target="_self" className="e-onboarding__card" href={ link } onClick={ onClick }>
+		<a target={ target } className="e-onboarding__card" href={ link } onClick={ onClick }>
 			<img className="e-onboarding__card-image" src={ image } alt={ imageAlt } />
 			<div className="e-onboarding__card-text">{ text }</div>
 		</a>
@@ -29,4 +29,5 @@ Card.propTypes = {
 	link: PropTypes.string.isRequired,
 	name: PropTypes.string.isRequired,
 	clickAction: PropTypes.func,
+	target: PropTypes.string,
 };

@@ -65,6 +65,10 @@ class String_Prop_Type extends Plain_Prop_Type {
 	}
 
 	protected function sanitize_value( $value ) {
-		return sanitize_text_field( $value );
+		return preg_replace_callback( '/^(\s*)(.*?)(\s*)$/', function ( $matches ) {
+			[, $leading, $value, $trailing ] = $matches;
+
+			return $leading . sanitize_text_field( $value ) . $trailing;
+		}, $value );
 	}
 }

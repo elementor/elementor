@@ -127,6 +127,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 										'props' => [
 											'placeholder' => null,
 										],
+										'meta' => null,
 									],
 								],
 								[
@@ -148,6 +149,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 												],
 											],
 										],
+										'meta' => null,
 									],
 								],
 							],
@@ -161,6 +163,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 						'default' => [ '$$type' => 'string', 'value' => '' ],
 						'settings' => [],
 						'meta' => [],
+						'dependencies' => null,
 					],
 					'key' => [
 						'kind' => 'plain',
@@ -173,6 +176,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 							],
 						],
 						'meta' => [],
+						'dependencies' => null,
 					],
 				],
 			],
@@ -440,6 +444,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				String_Prop_Type::make()->enum( [ 'a', 'b', 'c' ] )->default( 'a' ),
 				[],
 			],
+
 			'url' => [
 				Url_Prop_Type::make()->default( 'http://example.com' ),
 				[ V1DynamicTags::URL_CATEGORY ],

@@ -6,13 +6,11 @@ use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Editor\Loader\Editor_Loader_Factory;
 use Elementor\Core\Editor\Loader\Editor_Loader_Interface;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 use Elementor\Core\Editor\Data;
-use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -32,13 +30,6 @@ class Editor {
 	 * User capability required to access Elementor editor.
 	 */
 	const EDITING_CAPABILITY = 'edit_posts';
-
-	/**
-	 * The const is deprecated, it remains here for backward compatibility.
-	 *
-	 * @deprecated Use App_Bar_Module::EXPERIMENT_NAME instead
-	 */
-	const EDITOR_V2_EXPERIMENT_NAME = App_Bar_Module::EXPERIMENT_NAME;
 
 	/**
 	 * Post ID.

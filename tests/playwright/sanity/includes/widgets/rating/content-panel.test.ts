@@ -10,7 +10,7 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
-				ratingId = await editor.addWidget( 'rating', container ),
+				ratingId = await editor.addWidget( { widgetType: 'rating', container } ),
 				ratingElement = editor.getPreviewFrame().locator( `.elementor-element-${ ratingId } .e-rating` );
 
 			await test.step( 'Rating Scale', async () => {

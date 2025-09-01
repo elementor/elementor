@@ -13,6 +13,7 @@ export default function SharedContextProvider( props ) {
 			customPostTypes: [],
 			selectedCustomPostTypes: null,
 			currentPage: null,
+			returnTo: null,
 		},
 		[ data, dispatch ] = useReducer( reducer, initialState );
 

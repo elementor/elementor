@@ -4,6 +4,7 @@
 
 /**
  * return all recursively nested elements in a flat array
+ *
  * @param {Container} model
  * @return {Container[]}
  */

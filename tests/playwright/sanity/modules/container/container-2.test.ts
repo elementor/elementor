@@ -6,26 +6,7 @@ import widgets from '../../../enums/widgets';
 import Breakpoints from '../../../assets/breakpoints';
 import EditorPage from '../../../pages/editor-page';
 
-test.describe( 'Container tests @container', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			container: true,
-			'nested-elements': true,
-		} );
-		await page.close();
-	} );
-
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await page.close();
-	} );
-
+test.describe( 'Container tests #2 @container', () => {
 	test( 'Justify icons are displayed correctly', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -64,9 +45,9 @@ test.describe( 'Container tests @container', () => {
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
-		await editor.addWidget( widgets.button, containerId );
-		await editor.addWidget( widgets.heading, containerId );
-		await editor.addWidget( widgets.image, containerId );
+		await editor.addWidget( { widgetType: widgets.button, container: containerId } );
+		await editor.addWidget( { widgetType: widgets.heading, container: containerId } );
+		await editor.addWidget( { widgetType: widgets.image, container: containerId } );
 
 		// Assert.
 		const resizers = editor.getPreviewFrame().locator( '.ui-resizable-handle.ui-resizable-e' );
@@ -127,9 +108,9 @@ test.describe( 'Container tests @container', () => {
 		const containerId3 = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( widgets.button, containerId1 );
-		const headingId = await editor.addWidget( widgets.heading, containerId2 );
-		await editor.addWidget( widgets.spacer, containerId3 );
+		await editor.addWidget( { widgetType: widgets.button, container: containerId1 } );
+		const headingId = await editor.addWidget( { widgetType: widgets.heading, container: containerId2 } );
+		await editor.addWidget( { widgetType: widgets.spacer, container: containerId3 } );
 
 		// Copy container 2 and paste it at the top of the page.
 		await contextMenu.copyElement( containerId2 );
@@ -231,7 +212,7 @@ async function captureJustifySnapShot(
 
 	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
 	const justifyControlsContent = await page.$( `${ justifyControlsClass } .elementor-control-content ` );
-	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
+	await page.waitForLoadState( 'domcontentloaded', { timeout: 5000 } ); // Let the icons rotate
 	expect.soft( await justifyControlsContent.screenshot( {
 		type: 'jpeg',
 		quality: 90,

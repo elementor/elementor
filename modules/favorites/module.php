@@ -94,9 +94,9 @@ class Module extends BaseModule {
 	/**
 	 * Merge new user favorites to a type.
 	 *
-	 * @param string        $type
-	 * @param array|string  $favorites
-	 * @param bool          $store
+	 * @param string       $type
+	 * @param array|string $favorites
+	 * @param bool         $store
 	 *
 	 * @return array|bool
 	 */
@@ -107,9 +107,9 @@ class Module extends BaseModule {
 	/**
 	 * Delete existing favorites from a type.
 	 *
-	 * @param string        $type
-	 * @param array|string  $favorites
-	 * @param bool          $store
+	 * @param string       $type
+	 * @param array|string $favorites
+	 * @param bool         $store
 	 *
 	 * @return array|int
 	 */

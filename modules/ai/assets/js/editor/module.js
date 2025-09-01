@@ -1,13 +1,15 @@
 import AiBehavior from './ai-behavior';
 import { __ } from '@wordpress/i18n';
-import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/constants';
+import { IMAGE_PROMPT_CATEGORIES, LOCATIONS, AI_EVENTS } from './pages/form-media/constants';
 import ReactUtils from 'elementor-utils/react';
+import React from 'react';
 import LayoutAppWrapper from './layout-app-wrapper';
 import { AiGetStartedConnect } from './ai-get-started-connect';
 import { getUiConfig } from './utils/editor-integration';
 import { getRemoteFrontendConfig } from './api';
 import { getUniqueId } from './context/requests-ids';
 import ApplyAiTitlesNavigatorBehavior from './integration/navigator/apply-ai-titles-to-navigator-behaviour';
+import { addAiPromotionForSiteLogo } from './utils/ai-promotion';
 
 setTimeout( async () => {
 	if ( '1' !== window.ElementorAiConfig?.is_get_started ) {
@@ -44,6 +46,14 @@ export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
 		elementor.hooks.addFilter( 'navigator/layout/behaviors', this.registerNavigatorBehavior.bind( this ) );
+
+		window.addEventListener( AI_EVENTS.SHOW_MODAL, this.handleAIModalEvent.bind( this ) );
+
+		$e.routes.on( 'run:after', ( component, route ) => {
+			if ( 'panel/global/settings-site-identity' === route ) {
+				addAiPromotionForSiteLogo();
+			}
+		} );
 
 		window.addEventListener( 'hashchange', function( e ) {
 			if ( e.newURL.includes( 'welcome-ai' ) ) {
@@ -135,8 +145,9 @@ export default class Module extends elementorModules.editor.utils.Module {
 		const mediaControl = [ 'media' ];
 		if ( mediaControl.includes( aiOptions.type ) ) {
 			const mediaTypes = view.options.model.get( 'media_types' );
+			const type = view.options.model.get( 'type' );
 
-			if ( mediaTypes.length && mediaTypes.includes( 'image' ) ) {
+			if ( this.isAiImageGenerationEnabled( mediaTypes, type ) ) {
 				behaviors.ai = {
 					behaviorClass: AiBehavior,
 					type: aiOptions.type,
@@ -149,7 +160,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 					controlView: view,
 					additionalOptions: {
 						defaultValue: view.options.model.get( 'default' ),
-						defaultImageType: aiOptions?.category || IMAGE_PROMPT_CATEGORIES[ 1 ].key,
+						defaultImageType: aiOptions?.category || Object.keys( IMAGE_PROMPT_CATEGORIES )[ 1 ],
 					},
 					context: this.getContextData( view, controlType ),
 				};
@@ -237,5 +248,73 @@ export default class Module extends elementorModules.editor.utils.Module {
 			controlType,
 			controlValue: view.options.container.settings.get( controlName ),
 		};
+	}
+
+	isAiImageGenerationEnabled( mediaTypes, controlType ) {
+		return mediaTypes.length &&
+			mediaTypes.includes( 'image' ) &&
+			! controlType.includes( 'media-preview' );
+	}
+
+	handleAIModalEvent( event ) {
+		const { modalType, location, imageId, imageUrl, context, ...additionalParams } = event.detail;
+
+		const targetLocation = location || modalType;
+		this.showAIModal( {
+			modalType,
+			location: targetLocation,
+			imageId,
+			imageUrl,
+			context,
+			isExternalTrigger: true,
+			...additionalParams,
+		} );
+	}
+
+	async showAIModal( { modalType, location, imageId, imageUrl, context, isExternalTrigger, ...additionalParams } ) {
+		const aiBehavior = new AiBehavior( {
+			type: 'media',
+			controlType: 'media',
+			onCloseCallback: () => {
+				window.dispatchEvent( new CustomEvent( AI_EVENTS.MODAL_CLOSED, {
+					detail: {
+						success: false,
+						error: 'User closed the modal manually without selecting an image',
+					},
+				} ) );
+			},
+			getControlValue: () => {
+				if ( imageId || imageUrl ) {
+					return {
+						id: imageId ? parseInt( imageId, 10 ) : '',
+						url: imageUrl || '',
+						source: imageId ? 'id' : 'url',
+					};
+				}
+			},
+			setControlValue: ( image ) => {
+				window.dispatchEvent( new CustomEvent( AI_EVENTS.MODAL_CLOSED, {
+					detail: {
+						modalType,
+						location,
+						success: true,
+						...image,
+					},
+				} ) );
+			},
+			additionalOptions: {
+				defaultImageType: Object.keys( IMAGE_PROMPT_CATEGORIES )[ 1 ],
+				location: LOCATIONS[ location?.toUpperCase()?.replace( '-', '_' ) ] || location,
+				isExternalTrigger,
+				hideBackButton: isExternalTrigger,
+				withoutHistory: isExternalTrigger,
+				hideAiBetaLogo: isExternalTrigger,
+				...additionalParams,
+			},
+		} );
+
+		aiBehavior.onAiButtonClick( {
+			stopPropagation: () => {},
+		} );
 	}
 }

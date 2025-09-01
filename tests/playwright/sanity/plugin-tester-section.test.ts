@@ -9,8 +9,7 @@ test.describe( `Plugin tester tests: sections @plugin_tester_section`, () => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
-		await wpAdmin.setExperiments( { container: 'inactive', e_optimized_markup: 'active' } );
-
+		await wpAdmin.setExperiments( { container: 'inactive' } );
 		await page.close();
 	} );
 

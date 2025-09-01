@@ -113,6 +113,7 @@ class Page extends PageBase {
 
 	public static function get_elementor_page() {
 		return get_pages( [
+			'post_status' => [ 'publish', 'draft' ],
 			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
 			'sort_order' => 'asc',
 			'sort_column' => 'post_date',

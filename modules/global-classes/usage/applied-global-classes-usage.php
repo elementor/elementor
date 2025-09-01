@@ -1,11 +1,7 @@
 <?php
 
-namespace Elementor\Modules\Global_Classes\Usage;
+namespace Elementor\Modules\GlobalClasses\Usage;
 
-use Elementor\Core\Base\Document;
-use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 
@@ -13,110 +9,118 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Collects and exposes usage data for all global CSS classes across Elementor documents.
+ */
 class Applied_Global_Classes_Usage {
+
 	/**
-	 * Get data about how global classes are applied across Elementor elements.
+	 * Document types that should be excluded from usage reporting.
 	 *
-	 * @return array<string, int> Statistics about applied global classes per element type
+	 * @var string[]
 	 */
-	public function get() {
-		$total_count_per_type = [];
-		$elementor_posts = $this->get_elementor_posts();
-		$global_class_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
+	private array $excluded_types = [ 'e-flexbox', 'template' ];
 
-		foreach ( $elementor_posts as $post ) {
-			$document = Plugin::$instance->documents->get( $post->ID );
-			$elements_data = $document->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+	/**
+	 * Tracks usage for each global class.
+	 *
+	 * @var array<string, Css_Class_Usage>
+	 */
+	private array $class_usages = [];
 
-			$count_per_type = $this->get_classes_count_per_element_type( $elements_data, $global_class_ids );
+	/**
+	 * Returns the total usage count per class ID (excluding template-only classes).
+	 *
+	 * @return array<string, int>
+	 */
+	public function get(): array {
+		$this->build_class_usages();
 
-			$total_count_per_type = Collection::make( $count_per_type )->reduce( function( $carry, $count, $element_type ) {
-				$carry[ $element_type ] ??= 0;
-				$carry[ $element_type ] += $count;
-
-				return $carry;
-			}, $total_count_per_type );
+		$result = [];
+		foreach ( $this->class_usages as $class_id => $usage ) {
+			if ( $usage->get_total_usage() > 0 ) {
+				$result[ $class_id ] = $usage->get_total_usage();
+			}
 		}
 
-		return $total_count_per_type;
+		return $result;
 	}
 
-	private function get_classes_count_per_element_type( $elements_data, $global_class_ids ) {
-		$count_per_type = [];
+	/**
+	 * Returns detailed usage information per class ID.
+	 * Each class ID maps to a list of document usages (excluding excluded types).
+	 *
+	 * @return array<string, array{
+	 *     pageId: int,
+	 *     title: string,
+	 *     type: string,
+	 *     total: int,
+	 *     elements: string[]
+	 * }>
+	 */
+	public function get_detailed_usage(): array {
+		$this->build_class_usages();
 
-		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $global_class_ids, &$total_count, &$count_per_type ) {
-			$element_type = $this->get_element_type( $element_data );
-			$element_instance = $this->get_element_instance( $element_type );
+		$result = [];
 
-			if ( ! $this->is_atomic_element( $element_instance ) ) {
-				return;
+		foreach ( $this->class_usages as $class_id => $usage ) {
+			$pages = $usage->get_pages();
+
+			$filtered_pages = array_filter(
+				$pages,
+				fn( $page_data ) => ! in_array( $page_data['type'], $this->excluded_types, true )
+			);
+
+			if ( empty( $filtered_pages ) ) {
+				continue;
 			}
 
-			/** @var Atomic_Element_Base | Atomic_Widget_Base $element_instance */
-			$classes_count = $this->get_classes_count_for_element( $element_instance->get_props_schema(), $element_data, $global_class_ids );
-
-			if ( 0 !== $classes_count ) {
-				$count_per_type[ $element_type ] ??= 0;
-				$count_per_type[ $element_type ] += $classes_count;
+			foreach ( $filtered_pages as $page_id => $page_data ) {
+				$result[ $class_id ][] = [
+					'pageId'   => $page_id,
+					'title'    => $page_data['title'],
+					'type'     => $page_data['type'],
+					'total'    => $page_data['total'],
+					'elements' => $page_data['elements'],
+				];
 			}
-		});
-
-		return $count_per_type;
-	}
-
-	private function get_classes_count_for_element( $atomic_props_schema, $atomic_element_data, $global_class_ids ) {
-		return Collection::make( $atomic_props_schema )->reduce( function( $carry, $prop, $prop_name ) use ( $atomic_element_data, $global_class_ids ) {
-			if ( ! $this->is_classes_prop( $prop ) ) {
-				return $carry;
-			}
-
-			$carry += $this->get_global_classes_count( $atomic_element_data['settings'][ $prop_name ]['value'] ?? [], $global_class_ids );
-
-			return $carry;
-		}, 0 );
-	}
-
-	private function get_element_type( $element ) {
-		return 'widget' === $element['elType'] ? $element['widgetType'] : $element['elType'];
-	}
-
-	private function get_element_instance( $element_type ) {
-		$widget = Plugin::$instance->widgets_manager->get_widget_types( $element_type );
-		$element = Plugin::$instance->elements_manager->get_element_types( $element_type );
-
-		return $widget ?? $element;
-	}
-
-	private function is_atomic_element( $element_instance ) {
-		if ( ! $element_instance ) {
-			return false;
 		}
 
-		return (
-			$element_instance instanceof Atomic_Element_Base ||
-			$element_instance instanceof Atomic_Widget_Base
+		return $result;
+	}
+
+	/**
+	 * Builds the internal usage map from all Elementor documents.
+	 *
+	 * This method initializes and aggregates class usage from all relevant documents,
+	 * merging duplicate class IDs found in multiple pages.
+	 */
+	private function build_class_usages(): void {
+		$this->class_usages = [];
+
+		$class_ids = Global_Classes_Repository::make()
+												->all()
+												->get_items()
+												->keys()
+												->all();
+
+		Plugin::$instance->db->iterate_elementor_documents(
+			function ( $document ) use ( $class_ids ) {
+				$usage = new Document_Usage( $document );
+				$usage->analyze();
+
+				foreach ( $usage->get_usages() as $class_id => $class_usage ) {
+					if ( ! in_array( $class_id, $class_ids, true ) ) {
+						continue;
+					}
+
+					if ( ! isset( $this->class_usages[ $class_id ] ) ) {
+						$this->class_usages[ $class_id ] = $class_usage;
+					} else {
+						$this->class_usages[ $class_id ]->merge( $class_usage );
+					}
+				}
+			}
 		);
-	}
-
-	private function is_classes_prop( $prop ) {
-		return 'plain' === $prop::KIND && 'classes' === $prop->get_key();
-	}
-
-	private function get_global_classes_count( $prop, $global_class_ids ) {
-		return count( array_intersect( $prop, $global_class_ids ) );
-	}
-
-	private function get_elementor_posts() {
-		$args = wp_parse_args( [
-			'post_type' => 'any',
-			'post_status' => [ 'publish' ],
-			'posts_per_page' => '-1',
-			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
-			'meta_value' => 'builder',
-		] );
-
-		$query = new \WP_Query( $args );
-
-		return $query->get_posts();
 	}
 }

@@ -1,5 +1,6 @@
-			<img class=""
-						id="123"
-								url="https://example.com/image.jpg"
-			/>
-		
+					
+		<img class="e-image-base "  
+									id="123"
+												src="https://example.com/image.jpg"
+						/>
+			

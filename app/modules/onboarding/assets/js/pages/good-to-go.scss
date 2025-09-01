@@ -1,13 +1,5 @@
 .e-onboarding {
 
-	&__page-goodToGo {
-
-		.e-onboarding__page-content-section-title,
-		.e-onboarding__page-content-section-text {
-			text-align: center;
-		}
-	}
-
 	&__cards-grid {
 
 		// Specificity.
@@ -22,6 +14,23 @@
 			&:not(:last-child) {
 				margin-inline-end: 20px;
 			}
+		}
+	}
+
+	&__page-goodToGo {
+
+		.e-onboarding__page-content-section-title,
+		.e-onboarding__page-content-section-text {
+			text-align: center;
+		}
+
+		.e-onboarding__cards-grid {
+			justify-content: center;
+			flex-wrap: nowrap; 
+		}
+
+		.e-onboarding__card {
+			max-width: 388px;
 		}
 	}
 

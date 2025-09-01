@@ -239,7 +239,9 @@ class Manager {
 	 * @return array Library data.
 	 */
 	public function get_library_data( array $args ) {
-		$library_data = Api::get_library_data( ! empty( $args['sync'] ) );
+		$force_update = ! empty( $args['sync'] );
+
+		$library_data = Api::get_library_data( $force_update );
 
 		if ( empty( $library_data ) ) {
 			return $library_data;
@@ -249,7 +251,6 @@ class Manager {
 		Plugin::$instance->documents->get_document_types();
 
 		$filter_sources = ! empty( $args['filter_sources'] ) ? $args['filter_sources'] : [];
-		$force_update = ! empty( $args['sync'] );
 
 		return [
 			'templates' => $this->get_templates( $filter_sources, $force_update ),
@@ -832,11 +833,8 @@ class Manager {
 		$sources = [
 			'local',
 			'remote',
+			'cloud',
 		];
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
-			$sources[] = 'cloud';
-		}
 
 		foreach ( $sources as $source_filename ) {
 			$class_name = ucwords( $source_filename );
@@ -898,6 +896,19 @@ class Manager {
 		$raw_binary = base64_decode( substr( $data['screenshot'], strlen( 'data:image/png;base64,' ) ) );
 
 		return $this->get_source( 'cloud' )->save_item_preview( $data['template_id'], $raw_binary );
+	}
+
+	/**
+	 * @throws \Exception
+	 */
+	public function template_screenshot_failed( $data ): string {
+		$validate_args = $this->ensure_args( [ 'template_id' ], $data );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		return $this->get_source( 'cloud' )->mark_preview_as_failed( $data['template_id'], $data['error'] );
 	}
 
 	public function bulk_delete_templates( $data ) {
@@ -973,7 +984,8 @@ class Manager {
 			'bulk_delete_templates',
 			'bulk_copy_templates',
 			'bulk_undo_delete_items',
-			'get_quota',
+			'get_templates_quota',
+			'template_screenshot_failed',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
@@ -1141,6 +1153,18 @@ class Manager {
 			? $this->format_args_for_bulk_action_from_local( $args )
 			: $this->format_args_for_bulk_action_from_cloud( $args );
 
+		if ( $source->supports_quota() && ! $this->is_action_to_same_source( $args ) ) {
+			$is_quota_valid  = $source->validate_quota( $bulk_args );
+
+			if ( is_wp_error( $is_quota_valid ) ) {
+				return $is_quota_valid;
+			}
+
+			if ( ! $is_quota_valid ) {
+				return new \WP_Error( 'quota_error', 'The moving failed because it will pass the maximum templates you can save.' );
+			}
+		}
+
 		$bulk_save = $source->save_bulk_items( $bulk_args );
 
 		if ( ! empty( $bulk_save ) ) {
@@ -1236,10 +1260,22 @@ class Manager {
 			? $this->format_args_for_bulk_action_from_local( $args )
 			: $this->format_args_for_bulk_action_from_cloud( $args );
 
+		if ( $source->supports_quota() && ! $this->is_action_to_same_source( $args ) ) {
+			$is_quota_valid  = $source->validate_quota( $bulk_args );
+
+			if ( is_wp_error( $is_quota_valid ) ) {
+				return $is_quota_valid;
+			}
+
+			if ( ! $is_quota_valid ) {
+				return new \WP_Error( 'quota_error', 'The copying failed because it will pass the maximum templates you can save.' );
+			}
+		}
+
 		return $source->save_bulk_items( $bulk_args );
 	}
 
-	public function get_quota( array $args ) {
+	public function get_templates_quota( array $args ) {
 		$validate_args = $this->ensure_args( [ 'source' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {

@@ -165,32 +165,6 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 		$this->assertFalse( $result );
 	}
 
-	public function test_validate__fail_when_passing_src_with_non_existing_attachment_id() {
-		// Arrange.
-		$prop_type = Image_Prop_Type::make();
-
-		// Act.
-		$result = $prop_type->validate( [
-			'$$type' => 'image',
-			'value' => [
-				'src' => [
-					'$$type' => 'image-src',
-					'value' => [
-						'id' => [
-							'$$type' => 'image-attachment-id',
-							'value' => -1
-						],
-						'url' => null,
-					],
-				],
-				'size' => [ '$$type' => 'string', 'value' => 'full' ],
-			],
-		] );
-
-		// Assert.
-		$this->assertFalse( $result );
-	}
-
 	public function test_validate__fail_when_passing_src_with_non_string_url() {
 		// Arrange.
 		$prop_type = Image_Prop_Type::make();

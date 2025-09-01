@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Elements;
 
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
@@ -40,7 +41,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 				'settings' => [
 					'image' => [
 						'id' => 123,
-						'url' => 'https://example.com/image.jpg',
+						'src' => 'https://example.com/image.jpg',
 					],
 				],
 				'widgetType' => Atomic_Image::get_element_type(),
@@ -53,7 +54,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'settings' => [
 						'image' => [
 							'id' => 123,
-							'url' => 'https://example.com/image.jpg',
+							'src' => 'https://example.com/image.jpg',
 						],
 						'link' => [
 							'href' => 'https://example.com',
@@ -91,6 +92,14 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'settings' => [],
 					'widgetType' => Atomic_Svg::get_element_type(),
 				]
+			],
+			'Atomic Divider default' => [
+				[
+					'id' => 'e8e55a1',
+					'elType' => 'widget',
+					'settings' => [],
+					'widgetType' => Atomic_Divider::get_element_type(),
+				],
 			],
 		];
 	}

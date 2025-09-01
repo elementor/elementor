@@ -130,15 +130,25 @@ const WidgetView = BaseWidget.extend( {
 		self.$el.imagesLoaded().always( function() {
 			setTimeout( function() {
 				// Since 'outerHeight' will not handle hidden elements, and mark them as empty (e.g. nested tabs).
-				const $widgetContainer = self.$el.children( '.elementor-widget-container' ).length ? self.$el.children( '.elementor-widget-container' ) : self.$el,
-					shouldHandleEmptyWidget = $widgetContainer.is( ':visible' ) && ! $widgetContainer.outerHeight();
+				const $widgetContainer = self.$el.children( '.elementor-widget-container' ).length ? self.$el.children( '.elementor-widget-container' ) : self.$el;
 
-				if ( shouldHandleEmptyWidget ) {
+				if ( self.shouldGetEmptyView( $widgetContainer ) ) {
 					self.handleEmptyWidget();
 				}
 			}, 200 );
 			// Is element empty?
 		} );
+	},
+
+	shouldGetEmptyView( $widgetContainer ) {
+		if ( ! $widgetContainer.is( ':visible' ) ) {
+			return false;
+		}
+
+		const hasZeroHeight = ! $widgetContainer.outerHeight();
+		const isEmpty = $widgetContainer.is( ':empty' );
+
+		return hasZeroHeight || isEmpty;
 	},
 
 	onClickEdit( event ) {

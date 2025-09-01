@@ -11,10 +11,11 @@ import SearchInput from '../../components/search-input';
 import SortSelect from '../../components/sort-select';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
 import useKits, { defaultQueryParams } from '../../hooks/use-kits';
+import useMenuItems from '../../hooks/use-menu-items';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import useTaxonomies from '../../hooks/use-taxonomies';
 import { Grid } from '@elementor/app-ui';
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useLastFilterContext } from '../../context/last-filter-context';
 import { useLocation } from '@reach/router';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
@@ -49,35 +50,6 @@ function useTaxonomiesSelection( setQueryParams ) {
 	} ), [ setQueryParams ] );
 
 	return [ selectTaxonomy, unselectTaxonomy ];
-}
-
-/**
- * Generate the menu items for the index page.
- *
- * @param {string} path
- * @return {Array} menu items
- */
-function useMenuItems( path ) {
-	return useMemo( () => {
-		const page = path.replace( '/', '' );
-
-		return [
-			{
-				label: __( 'All Website Kits', 'elementor' ),
-				icon: 'eicon-filter',
-				isActive: ! page,
-				url: '/kit-library',
-				trackEventData: { command: 'kit-library/select-organizing-category', category: 'all' },
-			},
-			{
-				label: __( 'Favorites', 'elementor' ),
-				icon: 'eicon-heart-o',
-				isActive: 'favorites' === page,
-				url: '/kit-library/favorites',
-				trackEventData: { command: 'kit-library/select-organizing-category', category: 'favorites' },
-			},
-		];
-	}, [ path ] );
 }
 
 /**
@@ -137,7 +109,7 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 
 export default function Index( props ) {
 	usePageTitle( {
-		title: __( 'Kit Library', 'elementor' ),
+		title: __( 'Website Templates', 'elementor' ),
 	} );
 
 	const menuItems = useMenuItems( props.path );
@@ -208,7 +180,7 @@ export default function Index( props ) {
 					<Grid item className="e-kit-library__index-layout-heading-search">
 						<SearchInput
 							// eslint-disable-next-line @wordpress/i18n-ellipsis
-							placeholder={ __( 'Search all Website Kits...', 'elementor' ) }
+							placeholder={ __( 'Search all Website Templates...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => {
 								setQueryParams( ( prev ) => ( { ...prev, search: value } ) );

@@ -19,7 +19,7 @@ const EditorModule = elementorModules.Module.extend( {
 	getEditorControlView( name ) {
 		const editor = elementor.getPanelView().getCurrentPageView();
 
-		return editor.children.findByModelCid( this.getEditorControlModel( name ).cid );
+		return editor.children.findByModelCid( this.getEditorControlModel( name )?.cid );
 	},
 
 	// TODO: Delete as soon as possible.

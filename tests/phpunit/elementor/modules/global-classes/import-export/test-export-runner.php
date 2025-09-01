@@ -44,7 +44,7 @@ class Test_Export_Runner extends Elementor_Test_Base {
 			'g-456' => [
 				'id' => 'g-456',
 				'type' => 'class',
-				'label' => 'Test 2',
+				'label' => 'test-2',
 				'variants' => [],
 			],
 		];
@@ -81,13 +81,14 @@ class Test_Export_Runner extends Elementor_Test_Base {
 								],
 							],
 						],
+						'custom_css' => null,
 					],
 				],
 			],
 			'g-456' => [
 				'id' => 'g-456',
 				'type' => 'class',
-				'label' => 'Test 2',
+				'label' => 'test-2',
 				'variants' => [],
 			],
 		];

@@ -1,6 +1,11 @@
 <?php
 namespace Elementor\Modules\GlobalClasses;
 
+use Elementor\Core\Base\Document;
+use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -67,7 +72,7 @@ class Global_Classes_Repository {
 			throw new \Exception( 'Failed to update global classes' );
 		}
 
-		do_action( 'elementor/global_classes/update', $this->context );
+		do_action( 'elementor/global_classes/update', $this->context, $updated_value, $current_value );
 	}
 
 	private function get_meta_key(): string {

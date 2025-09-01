@@ -52,7 +52,7 @@ class Getting_Started_Menu_Item implements Admin_Menu_Item_With_Page {
 							<?php echo esc_html__( 'Getting Started', 'elementor' ); ?>
 						</div>
 						<a class="e-getting-started__skip" href="<?php echo esc_url( admin_url() ); ?>">
-							<i class="eicon-close" aria-hidden="true" title="<?php esc_attr_e( 'Skip', 'elementor' ); ?>"></i>
+							<i class="eicon-close" aria-hidden="true"></i>
 							<span class="elementor-screen-only"><?php echo esc_html__( 'Skip', 'elementor' ); ?></span>
 						</a>
 					</div>

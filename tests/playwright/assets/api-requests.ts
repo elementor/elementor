@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { createReadStream } from 'fs';
 import { type APIRequestContext } from '@playwright/test';
 
 import { Image, Post, WpPage, User } from '../types/types';
@@ -36,20 +36,18 @@ export default class ApiRequests {
 
 	public async createMedia( request: APIRequestContext, image: Image ) {
 		const imagePath = image.filePath;
+		const multipart = {
+			file: createReadStream( imagePath ),
+			status: 'publish',
+			...image,
+		};
 		const response = await request.post( `${ this.baseUrl }/index.php`, {
 
 			params: { rest_route: '/wp/v2/media' },
 			headers: {
 				'X-WP-Nonce': this.nonce,
 			},
-			multipart: {
-				file: fs.createReadStream( imagePath ),
-				title: image.title,
-				status: 'publish',
-				description: image.description,
-				alt_text: image.alt_text,
-				caption: image.caption,
-			},
+			multipart,
 		} );
 
 		if ( ! response.ok() ) {
@@ -276,7 +274,7 @@ export default class ApiRequests {
 				username,
 				email,
 				password,
-				roles: [ ...roles ],
+				roles: roles ? roles.join( ',' ) : '',
 			},
 		} );
 

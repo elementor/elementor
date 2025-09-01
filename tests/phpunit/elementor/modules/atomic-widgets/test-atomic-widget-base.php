@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
 use Elementor\Core\DynamicTags\Tag;
+use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
@@ -36,6 +37,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
+		array_pop( $settings ); // remove common settings
 
 		// Assert.
 		$this->assertSame( $args['result'], $settings );
@@ -293,6 +295,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
 
 		$schema = [
+			'_cssid' => String_Prop_Type::make(),
+
 			'string_prop' => String_Prop_Type::make()
 				->enum( [ 'value-a', 'value-b' ] )
 				->default( 'value-a' ),
@@ -320,6 +324,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$keys = [
+			'_cssid', // will automatically be added as a common prop
 			'string_prop',
 			'number_prop',
 			'boolean_prop',
@@ -347,8 +352,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		$widget = $this->make_mock_widget( [ 'props_schema' => $schema ] );
 
+		$test_schema = $widget::get_props_schema();
+		unset( $test_schema['_cssid'] );
 		// Act & Assert.
-		$this->assertSame( $schema, $widget::get_props_schema() );
+		$this->assertSame( $schema, $test_schema );
 	}
 
 	public function test_get_atomic_controls__throws_when_control_is_invalid() {
@@ -470,13 +477,57 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_atomic_controls();
 	}
 
+	public function test_get_atomic_controls__supports_control_injections() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'prop-1' => String_Prop_Type::make()->default( '' ),
+				'prop-2' => String_Prop_Type::make()->default( '' ),
+				'prop-3' => String_Prop_Type::make()->default( '' ),
+			],
+			'controls' => [
+				Section::make()
+					->set_id( 'test-section-1')
+					->set_items( [
+						Textarea_Control::bind_to( 'prop-1' ),
+					] ),
+
+				Section::make()
+					->set_id( 'test-section-2')
+					->set_items( [
+						Textarea_Control::bind_to( 'prop-2' ),
+					] ),
+			]
+		] );
+
+		add_filter( 'elementor/atomic-widgets/controls', function ( $controls ) {
+			/** @var Section $second_section */
+			$second_section = Collection::make( $controls )->find(
+				fn( $control ) => $control instanceof Section && $control->get_id() === 'test-section-2'
+			);
+
+			$second_section->add_item(
+				Textarea_Control::bind_to( 'prop-3' )
+			);
+
+			return $controls;
+		} );
+
+		// Act.
+		$controls = $widget->get_atomic_controls();
+
+		// Assert.
+		$this->assertCount( 2, $controls[1]->get_items() );
+		$this->assertEquals( Textarea_Control::bind_to( 'prop-3' ), $controls[1]->get_items()[1] );
+	}
+
 	public function test_get_data_for_save() {
 		// Arrange.
 		$widget_styles = [
 			's-1234' => [
 				'id' => 's-1234',
 				'type' => 'class',
-				'label' => 'My Class',
+				'label' => 'my-class',
 				'variants' => [
 					[
 						'props' => [
@@ -489,9 +540,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'breakpoint' => 'desktop',
 							'state' => null,
 						],
+						'custom_css' => null,
 					],
 				],
 			]
+		];
+
+		$widget_editor_settings = [
+			'title' => 'My Custom Title',
 		];
 
 		$widget = $this->make_mock_widget( [
@@ -509,6 +565,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'not_in_schema' => [ '$$type' => 'string', 'value' => 'not-in-schema' ],
 				'not_a_prop_type' => [ '$$type' => 'string', 'value' => 'not-a-prop-type' ],
 			],
+			'editor_settings' => $widget_editor_settings,
 			'styles' => $widget_styles
 		] );
 
@@ -521,6 +578,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			'number_prop' => [ '$$type' => 'number', 'value' => 123 ],
 			'boolean_prop' => [ '$$type' => 'boolean', 'value' => true ],
 		], $data_for_save['settings'] );
+
+		$this->assertSame( $widget_editor_settings, $data_for_save['editor_settings'] );
 
 		$this->assertSame( $widget_styles, $data_for_save['styles'] );
 	}
@@ -548,6 +607,38 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $data_for_save['settings'] );
 	}
 
+	public function test_get_data_for_save__sanitize_editor_settings() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'editor_settings' => [
+				'title' => '<b>invalid HTML string</b>',
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'title' => 'invalid HTML string',
+		], $data_for_save['editor_settings'] );
+	}
+
+	public function test_get_data_for_save__removes_editor_settings_on_validation_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'editor_settings' => [
+				'title' => 6639,
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [], $data_for_save['editor_settings'] );
+	}
+
 	public function test_get_data_for_save__throws_on_styles_meta_state_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
@@ -561,7 +652,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],
@@ -596,7 +687,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],
@@ -674,7 +765,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'invalid-type',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],
@@ -811,6 +902,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'id' => 1,
 					'settings' => $options['settings'] ?? [],
 					'styles' => $options['styles'] ?? [],
+					'editor_settings' => $options['editor_settings'] ?? [],
 					'elType' => 'widget',
 					'widgetType' => 'test-widget',
 				], [] );

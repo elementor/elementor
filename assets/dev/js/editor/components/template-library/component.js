@@ -14,6 +14,10 @@ export default class Component extends ComponentModalBase {
 
 		// Remove whole component cache data.
 		$e.data.deleteCache( this, 'library' );
+
+		elementor.channels.templates.on( 'quota:update', ( { force } = {} ) => {
+			$e.components.get( 'cloud-library' ).utils.setQuotaConfig( force );
+		} );
 	}
 
 	getNamespace() {
@@ -38,7 +42,7 @@ export default class Component extends ComponentModalBase {
 				},
 			},
 			'templates/my-templates': {
-				title: __( 'My Templates', 'elementor' ),
+				title: __( 'Templates', 'elementor' ),
 				getFilter: () => ( {
 					source: elementor.templates.getSourceSelection() ?? 'local',
 					view: elementor.templates.getViewSelection() ?? 'list',
@@ -67,13 +71,10 @@ export default class Component extends ComponentModalBase {
 
 				this.manager.layout.showConnectView( args );
 			},
-		};
-
-		if ( elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ) {
-			defaultRoutes[ 'view-folder' ] = ( args ) => {
+			'view-folder': ( args ) => {
 				this.manager.layout.showFolderView( args );
-			};
-		}
+			},
+		};
 
 		return defaultRoutes;
 	}
@@ -157,6 +158,11 @@ export default class Component extends ComponentModalBase {
 				model: callbackParams.model,
 				data,
 				options: callbackParams.importOptions,
+				onAfter: () => {
+					this.manager.eventManager.sendTemplateInsertedEvent( {
+						library_type: callbackParams.model.get( 'source' ) ?? 'local',
+					} );
+				},
 			} );
 		} );
 	}
@@ -219,6 +225,12 @@ export default class Component extends ComponentModalBase {
 					$e.run( 'library/insert-template', {
 						model,
 						withPageSettings: true,
+						onAfter: () => {
+							elementor.templates.eventManager.sendInsertApplySettingsEvent( {
+								apply_modal_result: 'apply',
+								library_type: model.get( 'source' ),
+							} );
+						},
 					} );
 				};
 
@@ -226,6 +238,12 @@ export default class Component extends ComponentModalBase {
 					$e.run( 'library/insert-template', {
 						model,
 						withPageSettings: false,
+						onAfter: () => {
+							elementor.templates.eventManager.sendInsertApplySettingsEvent( {
+								apply_modal_result: `don't apply`,
+								library_type: model.get( 'source' ),
+							} );
+						},
 					} );
 				};
 

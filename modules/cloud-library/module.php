@@ -28,49 +28,70 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_experiment();
+		$this->register_experiments();
 
-		if ( Plugin::$instance->experiments->is_feature_active( $this->get_name() ) ) {
-			$this->register_app();
+		$this->register_app();
 
-			add_action( 'elementor/init', function () {
-				$this->set_cloud_library_settings();
-			}, 12 /** After the initiation of the connect cloud library */ );
+		add_action( 'elementor/init', function () {
+			$this->set_cloud_library_settings();
+		}, 12 /** After the initiation of the connect cloud library */ );
 
-			add_filter( 'elementor/editor/localize_settings', function ( $settings ) {
-				return $this->localize_settings( $settings );
-			}, 11 /** After Elementor Core */ );
+		add_filter( 'elementor/editor/localize_settings', function ( $settings ) {
+			return $this->localize_settings( $settings );
+		}, 11 /** After Elementor Core */ );
 
-			add_filter( 'elementor/render_mode/module', function( $module_name ) {
-				$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
+		add_filter( 'elementor/render_mode/module', function( $module_name ) {
+			$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
 
-				if ( $render_mode_manager && $render_mode_manager->get_current() instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
-					return 'cloud-library';
-				}
+			if ( $render_mode_manager && $render_mode_manager->get_current() instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
+				return 'cloud-library';
+			}
 
-				return $module_name;
-			}, 12);
+			return $module_name;
+		}, 12);
+
+		if ( $this->is_screenshot_proxy_mode( $_GET ) ) { // phpcs:ignore -- Checking nonce inside the method.
+			echo $this->get_proxy_data( htmlspecialchars( $_GET['href'] ) ); // phpcs:ignore -- Nonce was checked on the above method
+			die;
 		}
 	}
 
-	public function localize_settings( $settings ) {
-		if ( ! isset( $settings['i18n'] ) ) {
-			return $settings;
+	public function get_proxy_data( $url ) {
+		$response = wp_safe_remote_get( utf8_decode( $url ) );
+
+		if ( is_wp_error( $response ) ) {
+			return '';
 		}
 
-		$settings['i18n']['folder'] = 'Folder';
+		$content_type = wp_remote_retrieve_headers( $response )->offsetGet( 'content-type' );
+
+		header( 'content-type: ' . $content_type );
+
+		return wp_remote_retrieve_body( $response );
+	}
+
+	public function localize_settings( $settings ) {
+		if ( isset( $settings['i18n'] ) ) {
+			$settings['i18n']['folder'] = esc_html__( 'Folder', 'elementor' );
+		}
+
+		$settings['library']['doc_types'] = $this->get_document_types();
 
 		return $settings;
 	}
 
-	private function register_experiment() {
+	private function register_experiments() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => $this->get_name(),
 			'title' => esc_html__( 'Cloud Library', 'elementor' ),
-			'description' => esc_html__( 'Enable Cloud Library.', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_DEV,
-			'default' => ExperimentsManager::STATE_INACTIVE,
+			'release_status' => ExperimentsManager::RELEASE_STATUS_STABLE,
+			'default' => ExperimentsManager::STATE_ACTIVE,
 			'hidden' => true,
+			'mutable' => false,
+			'new_site' => [
+				'always_active' => true,
+				'minimum_installation_version' => '3.32.0',
+			],
 		] );
 	}
 
@@ -121,10 +142,24 @@ class Module extends BaseModule {
 				'utm_content' => 'cloud-library',
 				'source' => 'cloud-library',
 			] ) ),
-			'library_connect_title' => esc_html__( 'Connect', 'elementor' ),
-			'library_connect_sub_title' => esc_html__( 'Sub Title', 'elementor' ),
-			'library_connect_button_text' => esc_html__( 'Connect', 'elementor' ),
+			'library_connect_title_copy' => esc_html__( 'Connect to your Elementor account', 'elementor' ),
+			'library_connect_sub_title_copy' => esc_html__( 'Then you can find all your templates in one convenient library.', 'elementor' ),
+			'library_connect_button_copy' => esc_html__( 'Connect', 'elementor' ),
 		] );
+	}
+
+	private function get_document_types() {
+		$document_types = Plugin::$instance->documents->get_document_types( [
+			'show_in_library' => true,
+		] );
+
+		$data = [];
+
+		foreach ( $document_types as $name => $document_type ) {
+			$data[ $name ] = $document_type::get_title();
+		}
+
+		return $data;
 	}
 
 	public function print_content() {
@@ -142,5 +177,32 @@ class Module extends BaseModule {
 		echo Plugin::$instance->frontend->get_builder_content_for_display( $doc->get_main_id(), true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		wp_delete_post( $doc->get_main_id(), true );
+	}
+
+
+	protected function is_screenshot_proxy_mode( array $query_params ) {
+		$is_proxy = isset( $query_params['screenshot_proxy'] );
+
+		if ( $is_proxy ) {
+			if ( ! wp_verify_nonce( $query_params['nonce'], 'screenshot-proxy' ) ) {
+				// WP >= 6.2-alpha
+				if ( class_exists( '\WpOrg\Requests\Exception\Http\Status403' ) ) {
+					throw new \WpOrg\Requests\Exception\Http\Status403();
+				} else {
+					throw new \Requests_Exception_HTTP_403();
+				}
+			}
+
+			if ( ! $query_params['href'] ) {
+				// WP >= 6.2-alpha
+				if ( class_exists( '\WpOrg\Requests\Exception\Http\Status400' ) ) {
+					throw new \WpOrg\Requests\Exception\Http\Status400();
+				} else {
+					throw new \Requests_Exception_HTTP_400();
+				}
+			}
+		}
+
+		return $is_proxy;
 	}
 }

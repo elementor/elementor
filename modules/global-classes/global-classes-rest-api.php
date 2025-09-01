@@ -2,8 +2,10 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
-use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
-use Elementor\Modules\GlobalClasses\Utils\Response_Builder;
+use Elementor\Modules\GlobalClasses\Usage\Applied_Global_Classes_Usage;
+use Elementor\Core\Utils\Api\Error_Builder;
+use Elementor\Core\Utils\Api\Response_Builder;
+use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -12,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_Classes_REST_API {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'global-classes';
+	const API_BASE_USAGE = self::API_BASE . '/usage';
+	const MAX_ITEMS = 50;
 
 	private $repository = null;
 
@@ -32,6 +36,24 @@ class Global_Classes_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
+				'permission_callback' => fn() => is_user_logged_in(),
+				'args' => [
+					'context' => [
+						'type' => 'string',
+						'required' => false,
+						'default' => Global_Classes_Repository::CONTEXT_FRONTEND,
+						'enum' => [
+							Global_Classes_Repository::CONTEXT_FRONTEND,
+							Global_Classes_Repository::CONTEXT_PREVIEW,
+						],
+					],
+				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE_USAGE, [
+			[
+				'callback' => fn() => $this->route_wrapper( fn() => $this->get_usage() ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 				'args' => [
 					'context' => [
@@ -51,7 +73,7 @@ class Global_Classes_REST_API {
 			[
 				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->put( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'permission_callback' => fn() => current_user_can( Add_Capabilities::UPDATE_CLASS ),
 				'args' => [
 					'context' => [
 						'type' => 'string',
@@ -60,6 +82,28 @@ class Global_Classes_REST_API {
 						'enum' => [
 							Global_Classes_Repository::CONTEXT_FRONTEND,
 							Global_Classes_Repository::CONTEXT_PREVIEW,
+						],
+					],
+					'changes' => [
+						'type' => 'object',
+						'required' => true,
+						'additionalProperties' => false,
+						'properties' => [
+							'added' => [
+								'type' => 'array',
+								'required' => true,
+								'items' => [ 'type' => 'string' ],
+							],
+							'deleted' => [
+								'type' => 'array',
+								'required' => true,
+								'items' => [ 'type' => 'string' ],
+							],
+							'modified' => [
+								'type' => 'array',
+								'required' => true,
+								'items' => [ 'type' => 'string' ],
+							],
 						],
 					],
 					'items' => [
@@ -110,12 +154,31 @@ class Global_Classes_REST_API {
 			->build();
 	}
 
+	private function get_usage() {
+		$classes_usage = ( new Applied_Global_Classes_Usage() )->get_detailed_usage();
+
+		return Response_Builder::make( (object) $classes_usage )->build();
+	}
+
 	private function put( \WP_REST_Request $request ) {
 		$parser = Global_Classes_Parser::make();
 
 		$items_result = $parser->parse_items(
 			$request->get_param( 'items' )
 		);
+
+		$items_count = count( $items_result->unwrap() );
+
+		if ( $items_count > static::MAX_ITEMS ) {
+			return Error_Builder::make( 'global_classes_limit_exceeded' )
+				->set_status( 400 )
+				->set_message( sprintf(
+					/* translators: %d: Maximum allowed items. */
+					__( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
+					static::MAX_ITEMS
+				) )
+				->build();
+		}
 
 		if ( ! $items_result->is_valid() ) {
 			return Error_Builder::make( 'invalid_items' )
@@ -136,11 +199,17 @@ class Global_Classes_REST_API {
 				->build();
 		}
 
-		$context = $request->get_param( 'context' );
+		$repository = $this->get_repository()
+			->context( $request->get_param( 'context' ) );
 
-		$this->get_repository()->context( $context )->put(
-			$items_result->unwrap(),
-			$order_result->unwrap(),
+		$changes_resolver = Global_Classes_Changes_Resolver::make(
+			$repository,
+			$request->get_param( 'changes' ) ?? [],
+		);
+
+		$repository->put(
+			$changes_resolver->resolve_items( $items_result->unwrap() ),
+			$changes_resolver->resolve_order( $order_result->unwrap() ),
 		);
 
 		return Response_Builder::make()->no_content()->build();

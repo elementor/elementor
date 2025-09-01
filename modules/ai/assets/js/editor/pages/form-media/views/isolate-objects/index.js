@@ -13,6 +13,7 @@ import { useRequestIds } from '../../../../context/requests-ids';
 import usePromptSettings, { IMAGE_BACKGROUND_COLOR, IMAGE_RATIO } from '../../hooks/use-prompt-settings';
 import ColorInput from '../../components/color-picker';
 import { useMemo } from 'react';
+import { FEATURE_IDENTIFIER } from '../../constants';
 
 const IsolateObject = () => {
 	const { editImage } = useEditImage();
@@ -39,6 +40,7 @@ const IsolateObject = () => {
 				[ IMAGE_RATIO ]: generatedAspectRatio,
 				[ IMAGE_BACKGROUND_COLOR ]: generatedBgColor,
 			},
+			featureIdentifier: FEATURE_IDENTIFIER.ISOLATE_OBJECT,
 		} );
 	};
 

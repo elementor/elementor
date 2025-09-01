@@ -1,5 +1,7 @@
 module.exports = elementorModules.Module.extend( {
 
+	openMenuEvent: null,
+
 	getDefaultSettings() {
 		return {
 			context: 'preview',
@@ -142,7 +144,7 @@ module.exports = elementorModules.Module.extend( {
 			return;
 		}
 
-		action.callback();
+		action.callback( this.openMenuEvent );
 
 		this.getModal().hide();
 	},
@@ -178,6 +180,8 @@ module.exports = elementorModules.Module.extend( {
 		var self = this,
 			modal = self.getModal();
 
+		this.openMenuEvent = event;
+
 		modal.setSettings( 'position', {
 			of: event,
 		} );
@@ -203,6 +207,8 @@ module.exports = elementorModules.Module.extend( {
 		} );
 
 		modal.show();
+
+		elementor.templates.eventManager.sendContextMenuExposureEvent();
 	},
 
 	destroy() {

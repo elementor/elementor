@@ -167,7 +167,7 @@ class Control_Repeater extends Base_Data_Control implements Has_Validation {
 		<label>
 			<span class="elementor-control-title">{{{ data.label }}}</span>
 		</label>
-		<div class="elementor-repeater-fields-wrapper"></div>
+		<div class="elementor-repeater-fields-wrapper" role="list"></div>
 		<# if ( itemActions.add ) { #>
 			<div class="elementor-button-wrapper">
 				<button class="elementor-button elementor-repeater-add" type="button">

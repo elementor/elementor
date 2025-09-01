@@ -8,12 +8,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Section implements JsonSerializable {
+	private ?string $id = null;
 	private $label = null;
 	private $description = null;
 	private array $items = [];
 
 	public static function make(): self {
 		return new static();
+	}
+
+	public function set_id( string $id ): self {
+		$this->id = $id;
+
+		return $this;
+	}
+
+	public function get_id() {
+		return $this->id;
 	}
 
 	public function set_label( string $label ): self {

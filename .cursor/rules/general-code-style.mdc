@@ -1,0 +1,21 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Code Style
+
+## Avoid Magic Numbers
+- Do not use unexplained hardcoded values ("magic numbers") in code or tests.
+- Define such values as named constants or use existing constants to clarify their meaning.
+
+## Consistent Error Codes and Status
+- When returning error codes and HTTP status, always be very specific to use the correct code, not only 200 and 500.
+
+## Prioritize Style and Developer Experience
+- Always pay attention for clarity, maintainability, and ease of understanding, even if the underlying logic does not change.
+- Code style and developer experience are important for long-term project health.
+
+## Self Documented Code
+- Avoid adding comments that can be a constants or a well named function
+- Always prefer to create small funcitons that describe themself

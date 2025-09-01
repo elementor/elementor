@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements;
 
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Widget_Base;
 
@@ -13,12 +14,14 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	protected $version = '0.0';
 	protected $styles = [];
+	protected $editor_settings = [];
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 
 		$this->version = $data['version'] ?? '0.0';
 		$this->styles = $data['styles'] ?? [];
+		$this->editor_settings = $data['editor_settings'] ?? [];
 	}
 
 	abstract protected function define_atomic_controls(): array;
@@ -27,13 +30,16 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return [];
 	}
 
-	final public function get_initial_config() {
+	public function get_initial_config() {
 		$config = parent::get_initial_config();
+		$props_schema = static::get_props_schema();
 
 		$config['atomic'] = true;
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['base_styles'] = $this->get_base_styles();
-		$config['atomic_props_schema'] = static::get_props_schema();
+		$config['base_styles_dictionary'] = $this->get_base_styles_dictionary();
+		$config['atomic_props_schema'] = $props_schema;
+		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['version'] = $this->version;
 
 		return $config;
@@ -52,4 +58,8 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	 * @return array<string, Prop_Type>
 	 */
 	abstract protected static function define_props_schema(): array;
+
+	public static function generate() {
+		return Widget_Builder::make( static::get_element_type() );
+	}
 }

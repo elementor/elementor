@@ -19,7 +19,7 @@ class Kit_Library_Menu_Item implements Admin_Menu_Item {
 	}
 
 	public function get_label() {
-		return esc_html__( 'Kit Library', 'elementor' );
+		return esc_html__( 'Website Templates', 'elementor' );
 	}
 
 	public function get_capability() {

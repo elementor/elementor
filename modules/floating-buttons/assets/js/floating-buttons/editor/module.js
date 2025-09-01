@@ -31,6 +31,17 @@ class FloatingButtonsLibraryModule extends elementorModules.editor.utils.Module 
 			return behaviors;
 		}, 1000 );
 
+		elementor.hooks.addFilter( 'component/modal/close', ( close, component ) => {
+			if (
+				'library' === component.getNamespace() &&
+				'library/templates/floating-buttons' === component.defaultRoute
+			) {
+				return () => {};
+			}
+
+			return close;
+		}, 1000 );
+
 		elementor.hooks.addFilter(
 			'elementor/editor/template-library/template/promotion-link-search-params',
 			( queryString, templateData ) => {

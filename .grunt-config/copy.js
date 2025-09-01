@@ -46,6 +46,7 @@ const getBuildFiles = [
 	'!yarn.lock',
 	'!*~',
 	'!commitlint.config.js',
+	'!scripts/**',
 
 	// Conflict with above rule.
 	'core/files/assets/**',

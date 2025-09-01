@@ -5,15 +5,12 @@
 .e-con {
 
 	> .elementor-element-overlay {
-		@include start(0);
-		bottom: 0;
+		inset-block-end: 0;
+		inset-inline-start: 0;
 
 		&:after {
 			position: absolute;
-			left: 1px;
-			right: 1px;
-			top: 1px;
-			bottom: 1px;
+			inset: 1px;
 			outline: 1px solid var(--e-p-border-con);
 			animation: section-outline .75s;
 		}
@@ -71,6 +68,9 @@
 		width: 100%;
 		height: 100%;
 		min-height: 100px;
+		stroke: transparent;
+		stroke-width: 0;
+		-webkit-text-stroke: 0 transparent;
 
 		.elementor-first-add {
 			width: auto;
@@ -84,18 +84,6 @@
 		.elementor-empty-view {
 			// Use the Container's `min-height` or default to 100px.
 			min-height: var( --min-height, 100px );
-		}
-	}
-
-	&.e-div-block-base, &.e-flexbox-base {
-		&:has( .elementor-empty-view ) {
-			display: flex;
-		}
-
-		.elementor-empty-view {
-			flex: 1 1 auto;
-			height: auto;
-			min-height: unset;
 		}
 	}
 
@@ -290,9 +278,14 @@
 	}
 }
 
-.e-div-block-base:has( .elementor-empty-view ),
-.e-flexbox-base:has( .elementor-empty-view ) {
-	height: 100px;
+.e-atomic-element {
+	&:has( .elementor-empty-view ) {
+		min-height: 120px;
+	}
+
+	& > .elementor-empty-view.elementor-empty-view {
+		min-height: inherit;
+	}
 }
 
 // Fix RTL placeholder placement for Grid Container with `grid-auto-flow: row`.

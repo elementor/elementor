@@ -37,7 +37,6 @@ export default function AddSectionArea( props ) {
 					<button
 						type="button"
 						className="elementor-add-section-area-button elementor-add-section-button"
-						title={ __( 'Add new container', 'elementor' ) }
 						aria-label={ __( 'Add new container', 'elementor' ) }
 						onClick={ () => props.setIsRenderPresets( true ) }
 					>

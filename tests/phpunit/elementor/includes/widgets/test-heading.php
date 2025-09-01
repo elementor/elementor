@@ -50,21 +50,6 @@ class Test_Widget_Heading extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( '<img src="x" onerror="alert()">', $heading_widget->sanitize( $html_to_sanitize ) );
 	}
 
-	public function test_render__data_attributes_for_admin() {
-		// Arrange
-		$this->act_as_admin();
-		$heading = Plugin::$instance->elements_manager->create_element_instance( static::HEADING_NON_SECURE_SETTINGS_MOCK );
-
-		// Act
-		ob_start();
-		$heading->render_content();
-		$rendered_content = ob_get_clean();
-
-		// Assert
-		$this->assertStringContainsString( 'aria-disabled', $rendered_content );
-		$this->assertStringContainsString( '<script>alert()</script>', $rendered_content );
-	}
-
 	public function test_render__data_attributes_for_editor() {
 		// Arrange
 		$this->act_as_editor();
@@ -115,22 +100,5 @@ class Test_Widget_Heading extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertStringNotContainsString( '<script>alert(1)</script>', $rendered_content );
-	}
-
-	public function test_render__unsecure_contend_added_by_admin_accessible_by_contributor() {
-		// Arrange
-		$this->act_as_admin();
-		$heading = Plugin::$instance->elements_manager->create_element_instance( static::HEADING_NON_SECURE_SETTINGS_MOCK );
-
-		// Act
-		$this->act_as_subscriber();
-		set_current_screen( 'front' );
-		ob_start();
-		$heading->render_content();
-		$rendered_content = ob_get_clean();
-
-		// Assert
-		$this->assertStringContainsString( 'aria-disabled', $rendered_content );
-		$this->assertStringContainsString( '<script>alert()</script>', $rendered_content );
 	}
 }

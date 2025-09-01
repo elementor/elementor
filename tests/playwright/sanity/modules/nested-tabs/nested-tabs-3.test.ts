@@ -2,27 +2,9 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
-import { editTab, clickTabByPosition, setupExperiments, selectDropdownContainer, locators, templatePath } from './helper';
+import { editTab, clickTabByPosition, selectDropdownContainer, locators, templatePath } from './helper';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await setupExperiments( wpAdmin );
-
-		await page.close();
-	} );
-
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-
-		await page.close();
-	} );
-
 	test( 'Verify that the tab sizes don\'t shrink when adding a widget in the content section.', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -45,7 +27,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 
 		// Add content
-		await editor.addWidget( 'image', activeContentContainerId );
+		await editor.addWidget( { widgetType: 'image', container: activeContentContainerId } );
 
 		// Assert
 		// Verify that the tab width doesn't change after adding the content.
@@ -65,7 +47,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 
 			// Add widget.
-			await editor.addWidget( 'nested-tabs', container );
+			await editor.addWidget( { widgetType: 'nested-tabs', container } );
 			await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 
 			// Act.
@@ -120,7 +102,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 
 		// Assert.
@@ -139,11 +121,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Act.
 		// Add nested-tabs widget.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 		// Add image-carousel widget to tab #2.
 		const activeContainerId = await editTab( editor, 1 );
-		await editor.addWidget( 'image-carousel', activeContainerId );
+		await editor.addWidget( { widgetType: 'image-carousel', container: activeContainerId } );
 		// Add images to the image-carousel widget.
 		await page.locator( '.elementor-control-carousel .elementor-control-gallery-add' ).click();
 		await page.locator( '.media-modal .media-router #menu-item-browse' ).click();
@@ -174,7 +156,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			tabsWidgetId = await editor.addWidget( 'nested-tabs', container );
+			tabsWidgetId = await editor.addWidget( { widgetType: 'nested-tabs', container } );
 
 		await editor.getPreviewFrame().waitForSelector( locators.selectedTabTitle );
 
@@ -193,7 +175,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const lastContentContainer = editor.getPreviewFrame().locator( `.elementor-element-${ tabsWidgetId } .e-n-tabs-content .e-con` ).last(),
 			lastContentContainerId = await lastContentContainer.getAttribute( 'data-id' );
 		// Add content to the last tab.
-		await editor.addWidget( 'heading', lastContentContainerId );
+		await editor.addWidget( { widgetType: 'heading', container: lastContentContainerId } );
 		const secondTab = editor.getPreviewFrame().locator( '.e-n-tabs .e-n-tab-title:nth-child( 2 )' );
 		await secondTab.click();
 		// Use timeout to ensure that the value doesn't change after a short while.
@@ -210,9 +192,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
-		await editor.addWidget( 'heading', container );
-		await editor.addWidget( 'nested-tabs', container );
-		await editor.addWidget( 'heading', container );
+		await editor.addWidget( { widgetType: 'heading', container } );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
+		await editor.addWidget( { widgetType: 'heading', container } );
 
 		await editor.getPreviewFrame().waitForSelector( locators.selectedTabTitle );
 
@@ -229,16 +211,16 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Act.
 		// Add content
 		// Tab 1.
-		await editor.addWidget( 'video', contentContainerOneId );
+		await editor.addWidget( { widgetType: 'video', container: contentContainerOneId } );
 
 		// Tab 2.
 		await tabButtonTwo.click();
-		await editor.addWidget( 'heading', contentContainerTwoId );
+		await editor.addWidget( { widgetType: 'heading', container: contentContainerTwoId } );
 
 		// Tab 3.
 		await tabButtonThree.click();
-		await editor.addWidget( 'image', contentContainerThreeId );
-		await editor.addWidget( 'text-editor', contentContainerThreeId );
+		await editor.addWidget( { widgetType: 'image', container: contentContainerThreeId } );
+		await editor.addWidget( { widgetType: 'text-editor', container: contentContainerThreeId } );
 
 		// Set container direction to `row`.
 		await editor.selectElement( container );
@@ -281,7 +263,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs' );
+		await editor.addWidget( { widgetType: 'nested-tabs' } );
 		await editor.getPreviewFrame().waitForSelector( locators.selectedTabTitle );
 
 		// Act.
@@ -359,13 +341,13 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		widgetId = await editor.addElement( defaultWidgetInstance );
 		widgetsToTest.defaultWidget.widgetId = widgetId;
 		activeContainerId = await selectDropdownContainer( editor, widgetId );
-		await editor.addWidget( 'heading', activeContainerId );
+		await editor.addWidget( { widgetType: 'heading', container: activeContainerId } );
 
 		// Add second Nested Tabs widget with custom styled dropdown container via the widget settings.
 		widgetId = await editor.addElement( styledWidgetInstance );
 		widgetsToTest.styledWidget.widgetId = widgetId;
 		activeContainerId = await selectDropdownContainer( editor, widgetId );
-		await editor.addWidget( 'heading', activeContainerId );
+		await editor.addWidget( { widgetType: 'heading', container: activeContainerId } );
 
 		// Add third Nested Tabs widget with custom styled dropdown container via the widget settings, and custom
 		// styled dropdown container via the containers settings too, to make sure the container styling takes preference.
@@ -373,7 +355,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		widgetsToTest.styledWidgetContainer.widgetId = widgetId;
 		activeContainerId = await selectDropdownContainer( editor, widgetId );
 		await editor.applyElementSettings( activeContainerId, styledWidgetContainerSettings );
-		await editor.addWidget( 'heading', activeContainerId );
+		await editor.addWidget( { widgetType: 'heading', container: activeContainerId } );
 
 		await editor.togglePreviewMode();
 
@@ -425,7 +407,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			frame = editor.getPreviewFrame();
 
 		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 
 		// Assert
 		const nestedTabsHeading = frame.locator( '.e-n-tabs-heading' );

@@ -84,8 +84,8 @@
 		&-autocomplete-spinner {
 			display: none;
 			position: absolute;
-			top: 5px;
-			right: 0;
+			inset-block-start: 5px;
+			inset-inline-end: 0;
 			width: 10px;
 			height: 10px;
 			font-size: 10px;

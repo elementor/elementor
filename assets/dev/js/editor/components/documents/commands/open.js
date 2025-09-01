@@ -4,7 +4,7 @@ export class Open extends $e.modules.CommandBase {
 	}
 
 	apply( args ) {
-		const { id, selector, shouldScroll = true, setAsInitial = false } = args,
+		const { id, selector, shouldScroll = true, shouldNavigateToDefaultRoute = true, setAsInitial = false } = args,
 			currentDocument = elementor.documents.getCurrent();
 
 		// Already opened.
@@ -31,7 +31,7 @@ export class Open extends $e.modules.CommandBase {
 				elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );
 
 				// Tell the editor to load the document.
-				return $e.internal( 'editor/documents/load', { config, selector, setAsInitial, shouldScroll } );
+				return $e.internal( 'editor/documents/load', { config, selector, setAsInitial, shouldScroll, shouldNavigateToDefaultRoute } );
 			} )
 			.always( () => {
 				// TODO: move to $e.hooks.ui.

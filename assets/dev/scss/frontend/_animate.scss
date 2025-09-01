@@ -21,9 +21,9 @@
 	}
 }
 
-// Disable animations for users who experience motion sickness / vertigo
+// Respect reduced motion preference in animations
 @media (prefers-reduced-motion: reduce) {
 	.animated {
-		animation: none;
+		animation: none !important;
 	}
 }

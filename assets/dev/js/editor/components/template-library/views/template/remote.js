@@ -16,7 +16,9 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend( {
 		} );
 	},
 
-	onPreviewButtonClick() {
+	onPreviewButtonClick( event ) {
+		event.stopPropagation();
+
 		$e.route( 'library/preview', { model: this.model } );
 	},
 
