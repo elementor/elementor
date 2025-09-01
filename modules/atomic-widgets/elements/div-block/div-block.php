@@ -140,7 +140,6 @@ class Div_Block extends Atomic_Element_Base {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
-		$initial_attributes = $this->define_initial_attributes();
 
 		$attributes = [
 			'class' => [
@@ -159,6 +158,6 @@ class Div_Block extends Atomic_Element_Base {
 			$attributes = array_merge( $attributes, $settings['link'] );
 		}
 
-		$this->add_render_attribute( '_wrapper', array_merge( $attributes, $initial_attributes ) );
+		$this->add_render_attribute( '_wrapper', $attributes );
 	}
 }
