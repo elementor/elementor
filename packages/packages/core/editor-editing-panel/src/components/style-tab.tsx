@@ -16,7 +16,6 @@ import { StyleProvider } from '../contexts/style-context';
 import { StyleInheritanceProvider } from '../contexts/styles-inheritance-context';
 import { useActiveStyleDefId } from '../hooks/use-active-style-def-id';
 import { CssClassSelector } from './css-classes/css-class-selector';
-import { CustomCss } from './custom-css';
 import { SectionsList } from './sections-list';
 import { BackgroundSection } from './style-sections/background-section/background-section';
 import { BorderSection } from './style-sections/border-section/border-section';
@@ -27,6 +26,7 @@ import { SizeSection } from './style-sections/size-section/size-section';
 import { SpacingSection } from './style-sections/spacing-section/spacing-section';
 import { TypographySection } from './style-sections/typography-section/typography-section';
 import { StyleTabSection } from './style-tab-section';
+import { createLocation } from '@elementor/locations';
 
 const TABS_HEADER_HEIGHT = '37px';
 
@@ -36,6 +36,8 @@ export const styleTabSectionMenu = createMenu( {
 		section: StyleTabSection,
 	},
 } );
+
+export const { Slot: StyleTabSlot, inject: injectIntoStyleTab } = createLocation();
 
 const { useMenuItems } = styleTabSectionMenu;
 export const stickyHeaderStyles = {
@@ -178,20 +180,7 @@ export const StyleTab = () => {
 									'transition',
 								] }
 							/>
-							{ shouldRenderCustomCss && (
-								<StyleTabSection
-									section={ {
-										component: CustomCss,
-										name: 'Custom CSS',
-										title: __( 'Custom CSS', 'elementor' ),
-									} }
-									fields={ [ 'custom_css' ] }
-									unmountOnExit={ false }
-								/>
-							) }
-							{ extraSections[ 'style-sections' ].map( ( { id, MenuItem } ) => (
-								<MenuItem key={ id } />
-							) ) }
+							<StyleTabSlot />
 						</SectionsList>
 						<Box sx={ { height: '150px' } } />
 					</StyleInheritanceProvider>

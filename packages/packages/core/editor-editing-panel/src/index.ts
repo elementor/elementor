@@ -18,3 +18,5 @@ export { stylesInheritanceTransformersRegistry } from './styles-inheritance/styl
 export { controlsRegistry } from './controls-registry/controls-registry';
 export { StyleTabSection } from './components/style-tab-section';
 export { styleTabSectionMenu } from './components/style-tab';
+export { injectIntoStyleTab } from './components/style-tab';
+export { StyleIndicator } from './components/style-indicator';
