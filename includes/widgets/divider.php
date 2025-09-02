@@ -328,8 +328,8 @@ class Widget_Divider extends Widget_Base {
 		);
 	}
 
-	private function filter_styles_by( $array, $key, $value ) {
-		return array_filter( $array, function( $style ) use ( $key, $value ) {
+	private function filter_styles_by( $styles_array, $key, $value ) {
+		return array_filter( $styles_array, function( $style ) use ( $key, $value ) {
 			return $value === $style[ $key ];
 		} );
 	}
