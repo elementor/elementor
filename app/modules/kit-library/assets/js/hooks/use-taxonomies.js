@@ -17,6 +17,7 @@ export default function useTaxonomies() {
 		}
 
 		query.refetch().then( () => setForce( false ) );
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ force ] );
 
 	return {
