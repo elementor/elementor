@@ -22,7 +22,7 @@ class Styles_Renderer {
 
 	/**
 	 * @param array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}> $breakpoints
-	 * @param string $selector_prefix
+	 * @param string                                                                          $selector_prefix
 	 */
 	private function __construct( array $breakpoints, string $selector_prefix = self::DEFAULT_SELECTOR_PREFIX ) {
 		$this->breakpoints = $breakpoints;
