@@ -51,7 +51,7 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	public function show_in_panel(): bool {
-		return Plugin::$instance->experiments->is_feature_active( 'nested-elements', true );
+		return Plugin::$instance->experiments->is_feature_active( 'container' );
 	}
 
 	protected function tab_content_container( int $index ) {
@@ -1123,7 +1123,7 @@ class NestedTabs extends Widget_Nested_Base {
 	/**
 	 * Print the content area.
 	 *
-	 * @param int $index
+	 * @param int   $index
 	 * @param array $item_settings
 	 */
 	public function print_child( $index, $item_settings = [] ) {

@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Number_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Plugin;
 
@@ -131,6 +132,7 @@ class Dynamic_Tags_Editor_Config {
 		$map = [
 			'select'   => fn( $control ) => $this->convert_select_control_to_atomic( $control ),
 			'text'     => fn( $control ) => $this->convert_text_control_to_atomic( $control ),
+			'textarea' => fn( $control ) => $this->convert_textarea_control_to_atomic( $control ),
 			'switcher' => fn( $control ) => $this->convert_switch_control_to_atomic( $control ),
 			'number'   => fn( $control ) => $this->convert_number_control_to_atomic( $control ),
 		];
@@ -206,5 +208,11 @@ class Dynamic_Tags_Editor_Config {
 		->set_step( $control['step'] ?? null )
 		->set_should_force_int( $control['should_force_int'] ?? false )
 		->set_label( $control['label'] );
+	}
+
+	private function convert_textarea_control_to_atomic( $control ) {
+		return Textarea_Control::bind_to( $control['name'] )
+			->set_placeholder( $control['placeholder'] ?? '' )
+			->set_label( $control['label'] );
 	}
 }
