@@ -3,6 +3,7 @@ import { useId, useRef, useState } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { type PropTypeKey } from '@elementor/editor-props';
 import { Backdrop, bindPopover, Box, Infotip, Popover, usePopupState } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { VariableTypeProvider } from '../../../context/variable-type-context';
 import { usePermissions } from '../../../hooks/use-permissions';
@@ -12,7 +13,7 @@ import { createUnlinkHandler } from '../../../utils/unlink-variable';
 import { getVariableType } from '../../../variables-registry/variable-type-registry';
 import { VariableRestore } from '../../variable-restore';
 import { DeletedVariableAlert } from '../deleted-variable-alert';
-import { DeletedTag } from '../tags/deleted-tag';
+import { WarningVariableTag } from '../tags/warning-variable-tag';
 
 type Props = {
 	variable: Variable;
@@ -101,7 +102,11 @@ export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
 						},
 					} }
 				>
-					<DeletedTag label={ variable.label } onClick={ toggleInfotip } />
+					<WarningVariableTag
+						label={ variable.label }
+						onClick={ toggleInfotip }
+						suffix={ __( 'deleted', 'elementor' ) }
+					/>
 				</Infotip>
 
 				<Popover
