@@ -43,6 +43,10 @@
 	z-index: $first-layer;
 }
 
+#elementor-panel-elements-search-area:empty {
+	display: none;
+}
+
 #elementor-panel-elements-search-wrapper {
 	position: relative;
 }
