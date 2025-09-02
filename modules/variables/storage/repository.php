@@ -318,6 +318,7 @@ class Repository {
 
 		return [
 			'id' => $id,
+			'type' => 'create',
 			'variable' => array_merge( [ 'id' => $id ], $new_variable ),
 			'temp_id' => $temp_id,
 		];
@@ -341,6 +342,7 @@ class Repository {
 
 		return [
 			'id' => $id,
+			'type' => 'update',
 			'variable' => array_merge( [ 'id' => $id ], $updated_variable ),
 		];
 	}
@@ -357,6 +359,7 @@ class Repository {
 
 		return [
 			'id' => $id,
+			'type' => 'delete',
 			'deleted' => true,
 		];
 	}
@@ -390,6 +393,7 @@ class Repository {
 
 		return [
 			'id' => $id,
+			'type' => 'restore',
 			'variable' => array_merge( [ 'id' => $id ], $restored_variable ),
 		];
 	}

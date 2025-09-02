@@ -50,6 +50,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['default_children'] = $this->define_default_children();
 		$config['initial_attributes'] = $this->define_initial_attributes();
 		$config['include_in_widgets_config'] = true;
+		$config['default_html_tag'] = $this->define_default_html_tag();
 
 		return $config;
 	}
@@ -60,6 +61,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	protected function define_default_children() {
 		return [];
+	}
+
+	protected function define_default_html_tag() {
+		return 'div';
 	}
 
 	protected function define_initial_attributes() {
@@ -92,8 +97,9 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 */
 	protected function get_html_tag(): string {
 		$settings = $this->get_atomic_settings();
+		$default_html_tag = $this->define_default_html_tag();
 
-		return ! empty( $settings['link']['href'] ) ? 'a' : ( $settings['tag'] ?? 'div' );
+		return ! empty( $settings['link']['href'] ) ? 'a' : ( $settings['tag'] ?? $default_html_tag );
 	}
 
 	/**
