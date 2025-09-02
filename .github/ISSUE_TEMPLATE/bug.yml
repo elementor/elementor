@@ -89,7 +89,7 @@ body:
 
               - 💬 **Describe the issue in detail.** <br>Include as much context as you can. What happened? When did it start? What page or feature does it affect? <br>Feel free to attach screenshots or screen recordings - just drag and drop them into the text field when filling out the form.
 
-              - 👣 **List all steps to reproduce the issue.** <br>Pease be specific! <br>We need to follow the exact steps you took to reproduce the issue - ideally on a clean WordPress installation. <br>Reports without clear reproduction steps may be closed, as we cannot fix what we cannot replicate.
+              - 👣 **List all steps to reproduce the issue.** <br>Please be specific! <br>We need to follow the exact steps you took to reproduce the issue - ideally on a clean WordPress installation. <br>Reports without clear reproduction steps may be closed, as we cannot fix what we cannot replicate.
 
               - 🧠 **Explain what you expected to happen.** <br>Help us understand what you believe the correct or intended behavior should be.
     - type: textarea
