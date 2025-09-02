@@ -32,19 +32,34 @@ jobs:
           git config --global user.name "${{ secrets.MAINTAIN_USERNAME }}"
           git config --global user.email "${{ secrets.MAINTAIN_EMAIL }}"
 
+      - name: Setup SSH Key
+        run: |
+          # Create SSH directory
+          mkdir -p ~/.ssh
+          
+          # Add the deploy key
+          echo "${{ secrets.MIRROR_DEPLOY_KEY }}" > ~/.ssh/mirror_deploy_key
+          chmod 600 ~/.ssh/mirror_deploy_key
+          
+          # Add GitHub to known hosts
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+          
+          # Configure SSH to use the deploy key for github.com
+          cat >> ~/.ssh/config << EOF
+          Host github.com
+            HostName github.com
+            User git
+            IdentityFile ~/.ssh/mirror_deploy_key
+            IdentitiesOnly yes
+          EOF
+
       - name: Mirror to core repository
-        env:
-          MIRROR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TARGET_REPO: "https://github.com/elementor/elementor-core-mirror.git"
         run: |
           # Ensure we have the main branch available
           git fetch origin main:main || git checkout -b main origin/main
           
-          # Add the mirror repository as a remote
-          git remote add mirror $TARGET_REPO
-          
-          # Configure authentication for the mirror repository
-          git remote set-url mirror https://${MIRROR_TOKEN}@github.com/elementor/elementor-core-mirror.git
+          # Add the mirror repository as a remote (using SSH)
+          git remote add mirror git@github.com:elementor/elementor-core-mirror.git
           
           # Push the main branch to the mirror repository
           git push mirror main --force
