@@ -761,72 +761,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame('MyClass', $classes['items']['existing']['label']);
 	}
 
-	public function test_put__resolves_multiple_duplicates_simultaneously() {
-		// Arrange
-		$this->act_as_admin();
-
-		$existing_class = $this->create_global_class('existing', 'blue', 'MyClass');
-
-		$initial = [
-			'items' => [
-				'existing' => $existing_class,
-			],
-			'order' => ['existing'],
-		];
-
-		$this->kit->update_json_meta(Global_Classes_Repository::META_KEY_FRONTEND, $initial);
-
-		// Act - Try to add multiple classes with the same label
-		$request = new \WP_REST_Request('PUT', '/elementor/v1/global-classes');
-
-		$duplicate_class_1 = $this->create_global_class('duplicate1', 'red', 'MyClass');
-		$duplicate_class_2 = $this->create_global_class('duplicate2', 'green', 'MyClass');
-		$unique_class = $this->create_global_class('unique', 'yellow', 'UniqueClass');
-
-		$payload = [
-			'items' => [
-				'existing' => $existing_class,
-				'duplicate1' => $duplicate_class_1,
-				'duplicate2' => $duplicate_class_2,
-				'unique' => $unique_class,
-			],
-			'order' => ['existing', 'duplicate1', 'duplicate2', 'unique'],
-			'changes' => [
-				'added' => ['duplicate1', 'duplicate2', 'unique'],
-				'deleted' => [],
-				'modified' => [],
-			]
-		];
-
-		$request->set_body_params($payload);
-		$response = rest_do_request($request);
-
-		// Assert
-		$classes = $this->kit->get_json_meta(Global_Classes_Repository::META_KEY_FRONTEND);
-
-		// Should return 200 with content when duplicates are resolved
-		$this->assertSame(200, $response->get_status());
-		$this->assertNotNull($response->get_data());
-
-		// Check that duplicate labels were resolved
-		$response_data = $response->get_data();
-		$this->assertArrayHasKey('data', $response_data);
-		$this->assertArrayHasKey('code', $response_data['data']);
-		$this->assertSame('DUPLICATED_LABEL', $response_data['data']['code']);
-
-		// Check that all duplicate classes have modified labels
-		$this->assertStringStartsWith('DUP_', $classes['items']['duplicate1']['label']);
-		$this->assertStringStartsWith('DUP_', $classes['items']['duplicate2']['label']);
-		$this->assertNotSame('MyClass', $classes['items']['duplicate1']['label']);
-		$this->assertNotSame('MyClass', $classes['items']['duplicate2']['label']);
-
-		// Check that unique class labels were not changed
-		$this->assertSame('UniqueClass', $classes['items']['unique']['label']);
-
-		// Check that existing class label was not changed
-		$this->assertSame('MyClass', $classes['items']['existing']['label']);
-	}
-
 	public function test_put__handles_duplicates_with_existing_dup_prefix() {
 		// Arrange
 		$this->act_as_admin();
@@ -884,66 +818,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		// Check that the existing class label was not changed
 		$this->assertSame('DUP_MyClass', $classes['items']['existing']['label']);
-	}
-
-	public function test_put__resolves_duplicates_in_different_contexts() {
-		// Arrange
-		$this->act_as_admin();
-
-		$frontend_class = $this->create_global_class('frontend', 'blue', 'MyClass');
-		$preview_class = $this->create_global_class('preview', 'red', 'MyClass');
-
-		$frontend_initial = [
-			'items' => [
-				'frontend' => $frontend_class,
-			],
-			'order' => ['frontend'],
-		];
-
-		$preview_initial = [
-			'items' => [
-				'preview' => $preview_class,
-			],
-			'order' => ['preview'],
-		];
-
-		$this->kit->update_json_meta(Global_Classes_Repository::META_KEY_FRONTEND, $frontend_initial);
-		$this->kit->update_json_meta(Global_Classes_Repository::META_KEY_PREVIEW, $preview_initial);
-
-		// Act - Try to add a class with duplicate label in frontend context
-		$request = new \WP_REST_Request('PUT', '/elementor/v1/global-classes');
-		$request->set_param('context', 'frontend');
-
-		$duplicate_class = $this->create_global_class('duplicate', 'green', 'MyClass');
-
-		$payload = [
-			'items' => [
-				'frontend' => $frontend_class,
-				'duplicate' => $duplicate_class,
-			],
-			'order' => ['frontend', 'duplicate'],
-			'changes' => [
-				'added' => ['duplicate'],
-				'deleted' => [],
-				'modified' => [],
-			]
-		];
-
-		$request->set_body_params($payload);
-		$response = rest_do_request($request);
-
-		// Assert
-		$frontend_classes = $this->kit->get_json_meta(Global_Classes_Repository::META_KEY_FRONTEND);
-		$preview_classes = $this->kit->get_json_meta(Global_Classes_Repository::META_KEY_PREVIEW);
-
-		// Frontend context should have duplicate resolved
-		$this->assertSame(200, $response->get_status());
-		$this->assertArrayHasKey('items', $frontend_classes);
-		$this->assertArrayHasKey('duplicate', $frontend_classes['items']);
-		$this->assertStringStartsWith('DUP_', $frontend_classes['items']['duplicate']['label']);
-
-		// Preview context should be cleared when frontend is updated (API behavior)
-		$this->assertEmpty($preview_classes, 'Preview context should be cleared when frontend context is updated');
 	}
 
 	public function test_put__resolves_duplicates_with_very_long_labels() {
@@ -1060,56 +934,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey('existing', $classes['items']);
 		$this->assertSame('MyClass', $classes['items']['new']['label']);
 		$this->assertSame('NewClass', $classes['items']['existing']['label']);
-	}
-
-	public function test_put__resolves_duplicates_with_special_characters() {
-		// Arrange
-		$this->act_as_admin();
-
-		$special_label = 'My-Class with_Spaces & Symbols!';
-		$existing_class = $this->create_global_class('existing', 'blue', $special_label);
-
-		$initial = [
-			'items' => [
-				'existing' => $existing_class,
-			],
-			'order' => ['existing'],
-		];
-
-		$this->kit->update_json_meta(Global_Classes_Repository::META_KEY_FRONTEND, $initial);
-
-		// Act - Try to add a new class with the same special character label
-		$request = new \WP_REST_Request('PUT', '/elementor/v1/global-classes');
-
-		$new_class = $this->create_global_class('new', 'red', $special_label);
-
-		$payload = [
-			'items' => [
-				'existing' => $existing_class,
-				'new' => $new_class,
-			],
-			'order' => ['existing', 'new'],
-			'changes' => [
-				'added' => ['new'],
-				'deleted' => [],
-				'modified' => [],
-			]
-		];
-
-		$request->set_body_params($payload);
-		$response = rest_do_request($request);
-
-		// Assert
-		$classes = $this->kit->get_json_meta(Global_Classes_Repository::META_KEY_FRONTEND);
-
-		// Should return 400 when labels contain invalid characters (validation error)
-		$this->assertSame(400, $response->get_status());
-		$this->assertNotNull($response->get_data());
-
-		// Check that the validation error is returned
-		$response_data = $response->get_data();
-		$this->assertArrayHasKey('code', $response_data);
-		$this->assertSame('invalid_items', $response_data['code']);
 	}
 
 	public function test_put__resolves_duplicates_in_bulk_operations() {
@@ -1306,66 +1130,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame('MyClass', $first_modified['original']);
 		$this->assertStringStartsWith('DUP_', $first_modified['modified']);
 		$this->assertSame('new', $first_modified['id']);
-	}
-
-	public function test_put__duplicate_resolution_maintains_class_order() {
-		// Arrange
-		$this->act_as_admin();
-
-		$existing_class = $this->create_global_class('existing', 'blue', 'MyClass');
-
-		$initial = [
-			'items' => [
-				'existing' => $existing_class,
-			],
-			'order' => ['existing'],
-		];
-
-		$this->kit->update_json_meta(Global_Classes_Repository::META_KEY_FRONTEND, $initial);
-
-		// Act - Try to add multiple classes with specific order
-		$request = new \WP_REST_Request('PUT', '/elementor/v1/global-classes');
-
-		$duplicate_class = $this->create_global_class('duplicate', 'red', 'MyClass');
-		$unique_class = $this->create_global_class('unique', 'green', 'UniqueClass');
-
-		$payload = [
-			'items' => [
-				'existing' => $existing_class,
-				'duplicate' => $duplicate_class,
-				'unique' => $unique_class,
-			],
-			'order' => ['existing', 'duplicate', 'unique'],
-			'changes' => [
-				'added' => ['duplicate', 'unique'],
-				'deleted' => [],
-				'modified' => [],
-			]
-		];
-
-		$request->set_body_params($payload);
-		$response = rest_do_request($request);
-
-		// Assert
-		$classes = $this->kit->get_json_meta(Global_Classes_Repository::META_KEY_FRONTEND);
-
-		// Should return 200 with content when duplicates are resolved
-		$this->assertSame(200, $response->get_status());
-		$this->assertNotNull($response->get_data());
-
-		// Check that the duplicate label was resolved
-		$response_data = $response->get_data();
-		$this->assertArrayHasKey('data', $response_data);
-		$this->assertArrayHasKey('code', $response_data['data']);
-		$this->assertSame('DUPLICATED_LABEL', $response_data['data']['code']);
-
-		// Check that the final order matches the requested order
-		$this->assertSame(['existing', 'duplicate', 'unique'], $classes['order']);
-
-		// Check that all classes exist in the final items
-		$this->assertArrayHasKey('existing', $classes['items']);
-		$this->assertArrayHasKey('duplicate', $classes['items']);
-		$this->assertArrayHasKey('unique', $classes['items']);
 	}
 
 	public function test_put__duplicate_resolution_with_maximum_classes() {

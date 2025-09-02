@@ -38,15 +38,6 @@ class Error_Builder {
 	}
 
 	public function build() {
-		$response_data = [
-			'code' => $this->code,
-			'message' => $this->message,
-			'data' => array_merge(
-				[ 'status' => $this->status ],
-				$this->meta
-			),
-		];
-
-		return new \WP_REST_Response( $response_data, $this->status );
+		return new \WP_Error( $this->code, $this->message, [ 'status' => $this->status,'meta' => $this->meta ], );
 	}
 }
