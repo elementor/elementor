@@ -73,7 +73,8 @@ module.exports = function( grunt ) {
 		grunt.task.run( 'sass' );
 
 		if ( ! isDevMode ) {
-			concurrent( [ 'postcss', 'css_templates' ] );
+			grunt.task.run( 'postcss' );
+			grunt.task.run( 'css_templates' );
 
 			grunt.task.run( 'remove_widgets_unused_style_files' );
 		}
@@ -119,14 +120,11 @@ module.exports = function( grunt ) {
 		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/proxy.scss', '@import "' + mode + '";' );
 	} );
 
-	grunt.registerTask( 'build', [
-		'i18n',
-		'scripts',
-		'styles',
-		'usebanner',
-		'clean',
-		'copy',
-	] );
+	grunt.registerTask( 'build', () => {
+		concurrent( [ 'i18n', 'scripts', 'styles', 'usebanner' ] );
+		grunt.task.run( 'clean' );
+		grunt.task.run( 'copy' );
+	} );
 
 	grunt.registerTask( 'test', [
 		'karma:unit',
