@@ -2,11 +2,12 @@ import * as React from 'react';
 import { useId, useRef, useState } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { Backdrop, bindPopover, Box, Infotip, Popover, usePopupState } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { type Variable } from '../../../types';
 import { VariableSelectionPopover } from '../../variable-selection-popover';
 import { MismatchVariableAlert } from '../mismatch-variable-alert';
-import { MismatchTag } from '../tags/mismatch-tag';
+import { WarningVariableTag } from '../tags/warning-variable-tag';
 
 type Props = {
 	variable: Variable;
@@ -67,7 +68,11 @@ export const MismatchVariable = ( { variable }: Props ) => {
 					},
 				} }
 			>
-				<MismatchTag label={ variable.label } onClick={ toggleInfotip } />
+				<WarningVariableTag
+					label={ variable.label }
+					onClick={ toggleInfotip }
+					suffix={ __( 'changed', 'elementor' ) }
+				/>
 			</Infotip>
 
 			<Popover
