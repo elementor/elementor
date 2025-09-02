@@ -16,3 +16,5 @@ export type { PopoverActionProps } from './popover-action';
 export { registerStyleProviderToColors } from './provider-colors-registry';
 export { stylesInheritanceTransformersRegistry } from './styles-inheritance/styles-inheritance-transformers-registry';
 export { controlsRegistry } from './controls-registry/controls-registry';
+export { StyleTabSection } from './components/style-tab-section';
+export { styleTabSectionMenu } from './components/style-tab';
