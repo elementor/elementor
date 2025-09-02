@@ -242,8 +242,8 @@ class Manager extends BaseModule {
 	/**
 	 * Run processor.
 	 *
-	 * @param \Elementor\Data\V2\Base\Processor $processor
-	 * @param array                             $data
+	 * @param Processor $processor
+	 * @param array     $data
 	 *
 	 * @return mixed
 	 */
@@ -260,9 +260,9 @@ class Manager extends BaseModule {
 	 *
 	 * Filter them by class.
 	 *
-	 * @param \Elementor\Data\V2\Base\Processor[] $processors
-	 * @param string                              $filter_by_class
-	 * @param array                               $data
+	 * @param Processor[] $processors
+	 * @param string      $filter_by_class
+	 * @param array       $data
 	 *
 	 * @return false|array
 	 */

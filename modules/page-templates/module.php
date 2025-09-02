@@ -134,9 +134,7 @@ class Module extends BaseModule {
 	 * @access public
 	 * @static
 	 *
-	 * @param array     $page_templates Array of page templates. Keys are filenames,
-	 *                                  checks are translated names.
-	 *
+	 * @param array     $page_templates Array of page templates. Keys are filenames, checks are translated names.
 	 * @param \WP_Theme $wp_theme
 	 * @param \WP_Post  $post
 	 *
