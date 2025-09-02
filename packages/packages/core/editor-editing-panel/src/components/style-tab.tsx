@@ -4,8 +4,9 @@ import { CLASSES_PROP_KEY } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { type StyleDefinitionID, type StyleDefinitionState } from '@elementor/editor-styles';
 import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
+import { createMenu } from '@elementor/menus';
 import { SessionStorageProvider } from '@elementor/session';
-import { Box, Divider, Stack } from '@elementor/ui';
+import { Box, Divider, Stack, Typography } from "@elementor/ui";
 import { __ } from '@wordpress/i18n';
 
 import { ClassesPropProvider } from '../contexts/classes-prop-context';
@@ -25,11 +26,42 @@ import { PositionSection } from './style-sections/position-section/position-sect
 import { SizeSection } from './style-sections/size-section/size-section';
 import { SpacingSection } from './style-sections/spacing-section/spacing-section';
 import { TypographySection } from './style-sections/typography-section/typography-section';
-import { getExtraStyleTabSections } from './style-tab-section-registry';
 import { StyleTabSection } from './style-tab-section';
-import { type ExtraSection } from './style-tab-section-registry';
 
 const TABS_HEADER_HEIGHT = '37px';
+
+// Create menu for style tab sections
+const styleTabMenu = createMenu( {
+	components: {
+		section: StyleTabSection,
+	},
+} );
+
+const { registerSection, useMenuItems } = styleTabMenu;
+
+// Register test section
+const TestSection = () => {
+	return (
+		<Box sx={ { p: 2 } }>
+			<Typography variant="body2" color="text.secondary">
+				{ __( 'This is a test section to demonstrate the new menu system works!', 'elementor' ) }
+			</Typography>
+		</Box>
+	);
+};
+
+registerSection( {
+	id: 'test-section',
+	props: {
+		section: {
+			component: TestSection,
+			name: 'test',
+			title: __( 'Test Section', 'elementor' ),
+		},
+		fields: [ 'test-field' ],
+		unmountOnExit: false,
+	},
+} );
 
 export const stickyHeaderStyles = {
 	position: 'sticky',
@@ -45,6 +77,7 @@ export const StyleTab = () => {
 	const [ activeStyleState, setActiveStyleState ] = useState< StyleDefinitionState | null >( null );
 	const breakpoint = useActiveBreakpoint();
 	const shouldRenderCustomCss = isExperimentActive( EXPERIMENTAL_FEATURES.CUSTOM_CSS );
+	const extraSections = useMenuItems();
 
 	return (
 		<ClassesPropProvider prop={ currentClassesProp }>
@@ -181,13 +214,8 @@ export const StyleTab = () => {
 									unmountOnExit={ false }
 								/>
 							) }
-							{ getExtraStyleTabSections().map( ( extra: ExtraSection ) => (
-								<StyleTabSection
-									key={ extra.id }
-									section={ extra.section }
-									fields={ extra.fields }
-									unmountOnExit={ extra.unmountOnExit }
-								/>
+							{ extraSections.default.map( ( { id, MenuItem } ) => (
+								<MenuItem key={ id } />
 							) ) }
 						</SectionsList>
 						<Box sx={ { height: '150px' } } />
