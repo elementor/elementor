@@ -39,8 +39,8 @@ jobs:
           # Configure authentication for the mirror repository
           git remote set-url mirror https://${MIRROR_TOKEN}@github.com/elementor/elementor-core-mirror.git
           
-          # Push the current branch to the mirror repository
-          git push mirror ${{ github.ref_name }} --force
+          # Push the main branch to the mirror repository
+          git push mirror main --force
 
       - name: Verify mirror status
         run: |
