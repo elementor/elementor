@@ -10,6 +10,10 @@ on:
 
 permissions:
   contents: read
+  # Enable GITHUB_TOKEN to push to repositories
+  actions: read
+  checks: read
+  pull-requests: read
 
 jobs:
   mirror:
@@ -30,7 +34,7 @@ jobs:
 
       - name: Mirror to core repository
         env:
-          MIRROR_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          MIRROR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TARGET_REPO: "https://github.com/elementor/elementor-core-mirror.git"
         run: |
           # Ensure we have the main branch available
