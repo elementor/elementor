@@ -42,6 +42,7 @@ export default function ExportComplete() {
 		if ( 'cloud' !== kitInfo.source && exportedData?.file ) {
 			downloadFile();
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ exportedData, kitInfo.source ] );
 
 	useEffect( () => {
