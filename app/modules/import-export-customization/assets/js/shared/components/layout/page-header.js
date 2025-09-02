@@ -3,6 +3,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { XIcon } from '../icons';
+import useContextDetection from '../../hooks/use-context-detection';
 
 const ElementorLogo = ( props ) => {
 	return (
@@ -22,9 +23,18 @@ const StyledElementorLogo = styled( ElementorLogo )( ( { theme } ) => ( {
 
 export default function PageHeader( { title = __( 'Export', 'elementor' ) } ) {
 	const [ isHelpModalOpen, setIsHelpModalOpen ] = useState( false );
+	const { isImport, contextData } = useContextDetection();
 
 	const handleClose = () => {
-		window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-tools';
+		let path = 'admin.php?page=elementor-tools#tab-import-export-kit';
+		if ( isImport ) {
+			if ( 'cloud' === contextData?.data?.kitUploadParams?.source ) {
+				path = 'admin.php?page=elementor-app#kit-library/cloud';
+			} else if ( 'kit-library' === contextData?.data?.kitUploadParams?.source ) {
+				path = `admin.php?page=elementor-app#kit-library`;
+			}
+		}
+		window.top.location = elementorAppConfig.admin_url + path;
 	};
 
 	const handleHelpClick = () => {
