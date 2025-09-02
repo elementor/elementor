@@ -199,7 +199,7 @@ class Utils {
 	 * @param string $to
 	 *
 	 * @return string
-	 * @throws \Exception Replace URL exception.
+	 * @throws \Exception If URLs are missing or invalid URLs provided.
 	 */
 	public static function replace_urls( $from, $to ) {
 		$from = trim( $from );
