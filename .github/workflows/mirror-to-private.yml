@@ -1,17 +1,19 @@
-name: Mirror to Private Repository
+name: Mirror to Core Mirror Repository
 
 on:
   push:
     branches:
       - 'main'
-  workflow_dispatch:  # Allows manual triggering
+  pull_request:  # Run actual mirroring on PR create
+    branches:
+      - 'main'
 
 permissions:
   contents: read
 
 jobs:
   mirror:
-    name: Mirror to private repository
+    name: Mirror to elementor-core-mirror
     runs-on: ubuntu-22.04
     
     steps:
@@ -21,18 +23,28 @@ jobs:
           fetch-depth: 0  # Fetch full history for proper mirroring
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup GitHub CLI
+      - name: Configure Git
         run: |
-          gh auth login --with-token <<< "${{ secrets.PRIVATE_REPO_TOKEN }}"
+          git config --global user.name "${{ secrets.MAINTAIN_USERNAME }}"
+          git config --global user.email "${{ secrets.MAINTAIN_EMAIL }}"
 
-      - name: Sync to private repository
+      - name: Mirror to core repository
+        env:
+          MIRROR_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          TARGET_REPO: "https://github.com/elementor/elementor-core-mirror.git"
         run: |
-          # Sync specific branch to avoid master/main confusion
-          gh repo sync ${{ secrets.PRIVATE_REPO_OWNER }}/${{ secrets.PRIVATE_REPO_NAME }} --source ${{ github.repository }} --branch ${{ github.ref_name }}
+          # Add the mirror repository as a remote
+          git remote add mirror $TARGET_REPO
+          
+          # Configure authentication for the mirror repository
+          git remote set-url mirror https://${MIRROR_TOKEN}@github.com/elementor/elementor-core-mirror.git
+          
+          # Push the current branch to the mirror repository
+          git push mirror ${{ github.ref_name }} --force
 
       - name: Verify mirror status
         run: |
-          echo "✅ Successfully mirrored repository to private repo"
+          echo "✅ Successfully mirrored repository to elementor-core-mirror"
           echo "Branch: ${{ github.ref_name }}"
           echo "Commit: ${{ github.sha }}"
-          echo "Private repository: ${{ secrets.PRIVATE_REPO_OWNER }}/${{ secrets.PRIVATE_REPO_NAME }}"
+          echo "Target repository: elementor/elementor-core-mirror"
