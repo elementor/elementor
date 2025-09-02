@@ -23,7 +23,7 @@ export const variablesManagerFixture = test.extend< {
 		await use( variableData );
 	},
 	addedColorVariable: async ( { init: page }, use ) => {
-		const variableData = { name: `test-color-variable-${ Date.now() }`, value: 'Red', type: 'color' as const };
+		const variableData = { name: `test-color-variable-${ Date.now() }`, value: '#ff0000', type: 'color' as const };
 		await addVariable( page, variableData, 'Typography', 'text-color' );
 		await detachVariable( page, 'Typography', 'Text Color', variableData.name );
 		await use( variableData );

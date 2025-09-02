@@ -9,10 +9,11 @@ import { createControl } from '../create-control';
 type Props = Partial< Omit< UnstableColorFieldProps, 'value' | 'onChange' > > & {
 	propTypeUtil?: PropTypeUtil< string, string >;
 	anchorEl?: HTMLElement | null;
+	id?: string;
 };
 
 export const ColorControl = createControl(
-	( { propTypeUtil = colorPropTypeUtil, anchorEl, slotProps = {}, ...props }: Props ) => {
+	( { propTypeUtil = colorPropTypeUtil, anchorEl, slotProps = {}, id, ...props }: Props ) => {
 		const { value, setValue, placeholder: boundPropPlaceholder, disabled } = useBoundProp( propTypeUtil );
 
 		const placeholder = props.placeholder ?? boundPropPlaceholder;
@@ -24,7 +25,7 @@ export const ColorControl = createControl(
 		return (
 			<ControlActions>
 				<UnstableColorField
-					id="color-control"
+					id={ id }
 					size="tiny"
 					fullWidth
 					value={ value ?? '' }
