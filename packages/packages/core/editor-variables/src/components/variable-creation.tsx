@@ -159,7 +159,13 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 			</PopoverContent>
 
 			<CardActions sx={ { pt: 0.5, pb: 1 } }>
-				<Button id="create-variable-button" size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleCreateAndTrack }>
+				<Button
+					id="create-variable-button"
+					size="small"
+					variant="contained"
+					disabled={ isSubmitDisabled }
+					onClick={ handleCreateAndTrack }
+				>
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</CardActions>
