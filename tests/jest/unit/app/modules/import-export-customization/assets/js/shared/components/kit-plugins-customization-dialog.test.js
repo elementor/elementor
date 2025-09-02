@@ -445,6 +445,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					'advanced-custom-fields/acf': true,
 					'contact-form-7/wp-contact-form-7': true,
 				},
+				true,
 				[],
 			);
 			expect( mockHandleClose ).toHaveBeenCalledTimes( 1 );
@@ -473,6 +474,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					'advanced-custom-fields/acf': false,
 					'contact-form-7/wp-contact-form-7': true,
 				},
+				true,
 				[ 'advanced-custom-fields/acf' ],
 			);
 		} );
