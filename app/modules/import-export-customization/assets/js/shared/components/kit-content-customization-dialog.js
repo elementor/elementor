@@ -70,7 +70,7 @@ export function KitContentCustomizationDialog( {
 			open={ open }
 			title={ __( 'Edit content', 'elementor' ) }
 			handleClose={ handleClose }
-			handleSaveChanges={ () => handleSaveChanges( 'content', settings, unselectedValues.current ) }
+			handleSaveChanges={ () => handleSaveChanges( 'content', settings, true, unselectedValues.current ) }
 		>
 			<Stack>
 				{ isImport && ! customPostTypes?.length ? (
