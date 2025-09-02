@@ -33,6 +33,9 @@ jobs:
           MIRROR_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           TARGET_REPO: "https://github.com/elementor/elementor-core-mirror.git"
         run: |
+          # Ensure we have the main branch available
+          git fetch origin main:main || git checkout -b main origin/main
+          
           # Add the mirror repository as a remote
           git remote add mirror $TARGET_REPO
           
