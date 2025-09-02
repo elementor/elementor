@@ -18,4 +18,4 @@ alwaysApply: true
 
 ## Self Documented Code
 - Avoid adding comments that can be a constants or a well named function
-- Always prefer to create small funcitons that describe themself
+- Always prefer to create small functions that describe themself
