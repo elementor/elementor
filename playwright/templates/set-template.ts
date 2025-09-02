@@ -8,7 +8,7 @@ const templates = {
 
 export const setTemplate = async ( page: Page, template: keyof typeof templates ): Promise<string | undefined> => {
 	const wpAdmin = new WpAdminPage( page );
-	const editorPage = await wpAdmin.openNewPage();
+	const editorPage = await wpAdmin.openNewPage( false, false );
 	editorPage.loadTemplate( templates[ template ] );
 	return `${ editorPage.postId }`;
 };

@@ -14,4 +14,8 @@ export default defineConfig( {
 	testDir: '../e2e',
 	testMatch: [ '*.e2e.ts' ],
 	...basicPlaywrightConfig,
+	use: {
+		...basicPlaywrightConfig.use,
+		headless: true,
+	},
 } );

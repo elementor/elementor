@@ -9,7 +9,7 @@ export const variablesManagerFixture = test.extend< {
 } >( {
 	openVariableManager: async ( { page }, use ) => {
 		const adminPage = new WpAdminPage( page );
-		await adminPage.setExperiments( { variables_manager: 'active' } );
+		await adminPage.setExperiments( { e_variables_manager: 'active' } );
 		await setDefaultTemplate( page );
 		await openVariableManager( page );
 		await use( page );
