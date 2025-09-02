@@ -397,8 +397,7 @@ class Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @throws \Exception If post ID is missing.
-	 * @throws \Exception If current user don't have permissions to edit the post.
+	 * @throws \Exception If post ID is missing or current user don't have permissions to edit the post.
 	 */
 	public function ajax_render_tags( $data ) {
 		if ( empty( $data['post_id'] ) ) {
