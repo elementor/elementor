@@ -110,7 +110,7 @@ class Hints {
 	 * Print or Retrieve the notice template.
 	 *
 	 * @param array $notice
-	 * @param bool $return
+	 * @param bool  $return
 	 *
 	 * @return string|void
 	 */
