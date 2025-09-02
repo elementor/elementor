@@ -67,6 +67,7 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 				{ ...bindPopover( popoverState ) }
 			>
 				<ItemSelector
+					id="font-family-selector"
 					itemsList={ mapFontSubs }
 					selectedItem={ fontFamily }
 					onItemChange={ setFontFamily }

@@ -24,6 +24,7 @@ export const ColorControl = createControl(
 		return (
 			<ControlActions>
 				<UnstableColorField
+					id="color-control"
 					size="tiny"
 					fullWidth
 					value={ value ?? '' }
