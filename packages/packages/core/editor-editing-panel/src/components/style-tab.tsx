@@ -6,7 +6,7 @@ import { type StyleDefinitionID, type StyleDefinitionState } from '@elementor/ed
 import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { createMenu } from '@elementor/menus';
 import { SessionStorageProvider } from '@elementor/session';
-import { Box, Divider, Stack, Typography } from "@elementor/ui";
+import { Box, Divider, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ClassesPropProvider } from '../contexts/classes-prop-context';
@@ -32,6 +32,7 @@ const TABS_HEADER_HEIGHT = '37px';
 
 // Create menu for style tab sections
 const styleTabMenu = createMenu( {
+	groups: [ 'style-sections', 'style' ],
 	components: {
 		section: StyleTabSection,
 	},
@@ -39,7 +40,7 @@ const styleTabMenu = createMenu( {
 
 const { registerSection, useMenuItems } = styleTabMenu;
 
-// Register test section
+// Register test sections
 const TestSection = () => {
 	return (
 		<Box sx={ { p: 2 } }>
@@ -50,8 +51,19 @@ const TestSection = () => {
 	);
 };
 
+const AnotherTestSection = () => {
+	return (
+		<Box sx={ { p: 2 } }>
+			<Typography variant="body2" color="text.secondary">
+				{ __( 'This is another test section showing multiple sections work!', 'elementor' ) }
+			</Typography>
+		</Box>
+	);
+};
+
 registerSection( {
 	id: 'test-section',
+	group: 'style-sections',
 	props: {
 		section: {
 			component: TestSection,
@@ -59,6 +71,20 @@ registerSection( {
 			title: __( 'Test Section', 'elementor' ),
 		},
 		fields: [ 'test-field' ],
+		unmountOnExit: false,
+	},
+} );
+
+registerSection( {
+	id: 'another-test-section',
+	group: 'style',
+	props: {
+		section: {
+			component: AnotherTestSection,
+			name: 'another-test',
+			title: __( 'Another Test Section', 'elementor' ),
+		},
+		fields: [ 'another-field' ],
 		unmountOnExit: false,
 	},
 } );
@@ -214,7 +240,7 @@ export const StyleTab = () => {
 									unmountOnExit={ false }
 								/>
 							) }
-							{ extraSections.default.map( ( { id, MenuItem } ) => (
+							{ extraSections[ 'style-sections' ].map( ( { id, MenuItem } ) => (
 								<MenuItem key={ id } />
 							) ) }
 						</SectionsList>
