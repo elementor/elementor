@@ -41,6 +41,8 @@ export { getWidgetsCache } from './sync/get-widgets-cache';
 export { updateElementSettings, type UpdateElementSettingsArgs } from './sync/update-element-settings';
 export { generateElementId } from './sync/generate-element-id';
 export { replaceElement } from './sync/replace-element';
+export { getCurrentDocumentContainer } from './sync/get-current-document-container';
+export { dropElement, type DropElementParams } from './sync/drop-element';
 
 export { ELEMENT_STYLE_CHANGE_EVENT, styleRerenderEvents } from './styles/consts';
 export {
