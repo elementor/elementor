@@ -2,10 +2,13 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import ImportProcess from 'elementor/app/modules/import-export-customization/assets/js/import/pages/import-process';
 import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
+import useContextDetection from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection';
 
 const mockUseImportContext = jest.fn();
 const mockUseImportKit = jest.fn();
 const mockNavigate = jest.fn();
+
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection' );
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import/context/import-context', () => ( {
 	useImportContext: () => mockUseImportContext(),
@@ -34,6 +37,10 @@ jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
 describe( 'ImportProcess Page', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		useContextDetection.mockImplementation( () => ( {
+			isImport: true,
+			contextData: { data: { kitUploadParams: { source: 'cloud' } } },
+		} ) );
 		global.elementorAppConfig = { base_url: 'http://localhost' };
 		global.elementorCommon = {
 			eventsManager: {
