@@ -6,7 +6,7 @@ export const ResetButtonContainer = styled( Box )`
 	right: 8px;
 	opacity: 0;
 	pointer-events: none;
-	transition: opacity 0.2s ease-in-out;
+	transition: opacity 0.3s ease-in-out;
 `;
 
 export const EditorWrapper = styled( Box )`
@@ -22,8 +22,15 @@ export const EditorWrapper = styled( Box )`
 		pointer-events: auto;
 	}
 
-	.monaco-editor .colorpicker-widget {
-		z-index: 99999999 !important;
+	.monaco-editor .suggest-widget {
+		width: 220px !important;
+		max-width: 220px !important;
+	}
+
+	.visual-content-dimmed {
+		opacity: 0.6;
+		color: #aaa !important;
+		pointer-events: none;
 	}
 `;
 

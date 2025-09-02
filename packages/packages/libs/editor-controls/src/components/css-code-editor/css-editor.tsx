@@ -7,12 +7,13 @@ import { __ } from '@wordpress/i18n';
 
 import { ClearIconButton } from '../icon-buttons/clear-icon-button';
 import { EditorWrapper, ResetButtonContainer } from './css-editor.styles';
-import { setCustomSyntaxRules, validate } from './css-validation';
+import { clearMarkersFromVisualContent, setCustomSyntaxRules, validate } from './css-validation';
 import { ResizeHandleComponent } from './resize-handle';
+import { preventChangeOnVisualContent } from './visual-content-change-protection';
 
 type CssEditorProps = {
 	value: string;
-	onChange: ( value: string ) => void;
+	onChange: ( value: string, isValid: boolean ) => void;
 };
 
 const setVisualContent = ( value: string ): string => {
@@ -31,89 +32,29 @@ const getActual = ( value: string ): string => {
 		.join( '\n' );
 };
 
-const preventChangeOnVisualContent = ( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ) => {
-	const model = editor.getModel();
-	if ( ! model ) {
-		return;
-	}
-
-	editor.onKeyDown( ( e ) => {
-		const position = editor.getPosition();
-		if ( ! position ) {
-			return;
-		}
-
-		const totalLines = model.getLineCount();
-		const isInProtectedRange = position.lineNumber === 1 || position.lineNumber === totalLines;
-
-		if ( isInProtectedRange ) {
-			const allowedKeys = [
-				monaco.KeyCode.UpArrow,
-				monaco.KeyCode.DownArrow,
-				monaco.KeyCode.LeftArrow,
-				monaco.KeyCode.RightArrow,
-				monaco.KeyCode.Home,
-				monaco.KeyCode.End,
-				monaco.KeyCode.PageUp,
-				monaco.KeyCode.PageDown,
-				monaco.KeyCode.Tab,
-				monaco.KeyCode.Escape,
-			];
-
-			if ( ! allowedKeys.includes( e.keyCode ) ) {
-				e.preventDefault();
-				e.stopPropagation();
-			}
-		}
-	} );
-};
-
 const createEditorDidMountHandler = (
 	editorRef: React.MutableRefObject< editor.IStandaloneCodeEditor | null >,
 	monacoRef: React.MutableRefObject< MonacoEditor | null >,
-	debounceTimer: React.MutableRefObject< NodeJS.Timeout | null >,
-	onChange: ( value: string ) => void,
 	onUserContentChange: ( value: string ) => void
 ) => {
 	return ( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ) => {
 		editorRef.current = editor;
 		monacoRef.current = monaco;
 
-		preventChangeOnVisualContent( editor, monaco );
+		preventChangeOnVisualContent( editor );
 
 		setCustomSyntaxRules( editor, monaco );
 
 		const initialCode = editor.getModel()?.getValue() ?? '';
 		const initialUserContent = getActual( initialCode );
+
 		onUserContentChange( initialUserContent );
 
-		editor.onDidChangeModelContent( () => {
-			const code = editor.getModel()?.getValue() ?? '';
-			const userContent = getActual( code );
-
-			onUserContentChange( userContent );
-
-			setCustomSyntaxRules( editor, monaco );
-
-			const currentTimer = debounceTimer.current;
-			if ( currentTimer ) {
-				clearTimeout( currentTimer );
-			}
-
-			const newTimer = setTimeout( () => {
-				if ( ! editorRef.current || ! monacoRef.current ) {
-					return;
-				}
-
-				const hasNoErrors = validate( editorRef.current, monacoRef.current );
-
-				if ( hasNoErrors ) {
-					onChange( userContent );
-				}
-			}, 500 );
-
-			debounceTimer.current = newTimer;
+		monaco.editor.onDidChangeMarkers( () => {
+			setTimeout( () => clearMarkersFromVisualContent( editor, monaco ), 0 );
 		} );
+
+		editor.setPosition( { lineNumber: 2, column: ( editor.getModel()?.getLineContent( 2 ).length ?? 0 ) + 1 } );
 	};
 };
 
@@ -140,22 +81,43 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 		}
 	}, [] );
 
-	const handleEditorDidMount = createEditorDidMountHandler(
-		editorRef,
-		monacoRef,
-		debounceTimer,
-		onChange,
-		handleUserContentChange
-	);
+	const handleEditorChange = () => {
+		if ( ! editorRef.current || ! monacoRef.current ) {
+			return;
+		}
+
+		const code = editorRef.current?.getModel()?.getValue() ?? '';
+		const userContent = getActual( code );
+
+		setHasContent( userContent.trim() !== '' );
+
+		setCustomSyntaxRules( editorRef?.current, monacoRef.current );
+
+		const currentTimer = debounceTimer.current;
+		if ( currentTimer ) {
+			clearTimeout( currentTimer );
+		}
+
+		const newTimer = setTimeout( () => {
+			if ( ! editorRef.current || ! monacoRef.current ) {
+				return;
+			}
+
+			const hasNoErrors = validate( editorRef.current, monacoRef.current );
+
+			onChange( userContent, hasNoErrors );
+		}, 500 );
+
+		debounceTimer.current = newTimer;
+	};
+
+	const handleEditorDidMount = createEditorDidMountHandler( editorRef, monacoRef, handleUserContentChange );
 
 	const handleReset = () => {
 		const model = editorRef.current?.getModel();
 		if ( model ) {
 			model.setValue( setVisualContent( '' ) );
 		}
-
-		setHasContent( false );
-		onChange( '' );
 	};
 
 	React.useEffect( () => {
@@ -180,18 +142,24 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 				height="100%"
 				language="css"
 				theme={ theme.palette.mode === 'dark' ? 'vs-dark' : 'vs' }
-				defaultValue={ setVisualContent( value ) }
+				value={ setVisualContent( value ) }
 				onMount={ handleEditorDidMount }
+				onChange={ handleEditorChange }
 				options={ {
-					lineNumbers: 'off',
-					folding: false,
-					showFoldingControls: 'never',
+					lineNumbers: 'on',
+					folding: true,
 					minimap: { enabled: false },
 					fontFamily: 'Roboto, Arial, Helvetica, Verdana, sans-serif',
 					fontSize: 12,
 					renderLineHighlight: 'none',
 					hideCursorInOverviewRuler: true,
 					fixedOverflowWidgets: true,
+					suggestFontSize: 10,
+					suggestLineHeight: 14,
+					stickyScroll: {
+						enabled: false,
+					},
+					lineDecorationsWidth: 2,
 				} }
 			/>
 			<ResizeHandleComponent

@@ -58,10 +58,10 @@ describe( 'ImportComplete Page', () => {
 		// Assert
 		expect( screen.getByText( /Your website templates is now live on your site!/i ) ).toBeTruthy();
 		expect( screen.getByText( /You've imported and applied the following to your site:/i ) ).toBeTruthy();
-		expect( screen.getByText( /This website templates includes:/i ) ).toBeTruthy();
+		expect( screen.getByText( /What's included:/i ) ).toBeTruthy();
 		expect( screen.getByText( /Site settings/i ) ).toBeTruthy();
-		expect( screen.getByText( /Content/i ) ).toBeTruthy();
-		expect( screen.getByText( /Plugins/i ) ).toBeTruthy();
+		expect( screen.getByText( /Content/ ) ).toBeTruthy();
+		expect( screen.getByText( /Plugins/ ) ).toBeTruthy();
 		expect( screen.getByText( /Show me how/i ) ).toBeTruthy();
 		expect( screen.getByRole( 'img', { name: /Kit is live illustration/i } ) ).toBeTruthy();
 	} );

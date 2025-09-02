@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import kitContentData from '../kit-content-data';
 import useContextDetection from '../hooks/use-context-detection';
-import { ReExportBanner } from './ReExportBanner';
+import { ReExportBanner } from './re-export-banner';
 
 export default function KitPartsSelection( { data, onCheckboxChange, testId, handleSaveCustomization } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );
@@ -45,7 +45,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 		}
 
 		if ( isImport ) {
-			return ! isExported( item );
+			return ! isExported( item ) || item.required;
 		}
 
 		return item.required && contextData?.data?.includes?.includes( item.type );
@@ -53,14 +53,6 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 
 	const isEditDisabled = ( item ) => {
 		if ( isImport ) {
-			if ( contextData?.isOldExport && 'settings' === item.type ) {
-				return true;
-			}
-
-			if ( contextData.isOldExport && 'plugins' === item.type ) {
-				return true;
-			}
-
 			const manifestKey = 'settings' === item.type ? 'site-settings' : item.type;
 			return ! contextData?.data?.uploadedData?.manifest?.[ manifestKey ];
 		}

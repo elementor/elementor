@@ -1,14 +1,6 @@
 import { Box, Typography, Stack } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
-const ExternalLinkIcon = () => (
-	<Box
-		component="i"
-		sx={ { fontFamily: 'eicons' } }
-		className="eps-icon eicon-editor-external-link"
-	/>
-);
-
 export default function SummarySection( { title, subTitle } ) {
 	return (
 		<Box>
@@ -16,9 +8,8 @@ export default function SummarySection( { title, subTitle } ) {
 				<Typography variant="body2" color="text.primary">
 					{ title }
 				</Typography>
-				<ExternalLinkIcon />
 			</Stack>
-			<Typography variant="caption" color="text.secondary">
+			<Typography variant="body2" color="text.tertiary">
 				{ subTitle }
 			</Typography>
 		</Box>
