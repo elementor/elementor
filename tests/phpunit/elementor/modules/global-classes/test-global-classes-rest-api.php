@@ -1120,16 +1120,16 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey('modifiedLabels', $response_data['data']);
 		$modified_labels = $response_data['data']['modifiedLabels'];
 		$this->assertIsArray($modified_labels);
-		$this->assertCount(2, $modified_labels, 'Should have 2 modified labels: existing and new classes with same label');
+		$this->assertCount(1, $modified_labels, 'Should have 1 modified label: only the new class with duplicate label');
 
-		// Check first modified label structure
-		$first_modified = $modified_labels[0];
-		$this->assertArrayHasKey('original', $first_modified);
-		$this->assertArrayHasKey('modified', $first_modified);
-		$this->assertArrayHasKey('id', $first_modified);
-		$this->assertSame('MyClass', $first_modified['original']);
-		$this->assertStringStartsWith('DUP_', $first_modified['modified']);
-		$this->assertSame('new', $first_modified['id']);
+		// Check modified label structure
+		$modified_label = $modified_labels[0];
+		$this->assertArrayHasKey('original', $modified_label);
+		$this->assertArrayHasKey('modified', $modified_label);
+		$this->assertArrayHasKey('id', $modified_label);
+		$this->assertSame('MyClass', $modified_label['original']);
+		$this->assertStringStartsWith('DUP_', $modified_label['modified']);
+		$this->assertSame('new', $modified_label['id']);
 	}
 
 	public function test_put__duplicate_resolution_with_maximum_classes() {

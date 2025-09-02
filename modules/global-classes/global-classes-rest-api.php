@@ -164,19 +164,18 @@ class Global_Classes_REST_API {
 	private function put( \WP_REST_Request $request ) {
 		$context = $request->get_param( 'context' );
 		$changes = $request->get_param( 'changes' ) ?? [];
-
+		$new_added_items_ids = $changes['added'] ?? [];
 		$parser = Global_Classes_Parser::make();
-		$existing_items = Global_Classes_Repository::make()
+		$existing_labels = array_column(Global_Classes_Repository::make()
 			->context( $context )
 			->all()
 			->get_items()
 			->map( function ( $item ) {
 				return [
-					'id' => $item['id'],
 					'label' => $item['label'],
 				];
 			} )
-			->all();
+			->all(), 'label');
 
 		$items_result = $parser->parse_items(
 			$request->get_param( 'items' )
@@ -226,24 +225,20 @@ class Global_Classes_REST_API {
 			$changes,
 		);
 
-		$duplicate_validation = Global_Classes_Parser::check_for_duplicate_labels(
-			$existing_items,
+		$duplicated_labels = Global_Classes_Parser::check_for_duplicate_labels(
+			$existing_labels,
 			$items_result->unwrap(),
-			$changes
+			$new_added_items_ids
 		);
 
 		$final_items = $items_result->unwrap();
 		$duplicate_validation_result = null;
 
-		if ( false !== $duplicate_validation && ! empty( $duplicate_validation['duplicates'] ) ) {
-			$duplicate_result = $this->handle_duplicates( $duplicate_validation );
-			$duplicate_validation_result = $duplicate_result;
-
-			$modified_items = $duplicate_result['items'];
-			foreach ( $modified_items as $item_id => $modifications ) {
-				if ( isset( $final_items[ $item_id ] ) ) {
-					$final_items[ $item_id ] = array_merge( $final_items[ $item_id ], $modifications );
-				}
+		if ( ! empty( $duplicated_labels ) ) {
+			$modified_labels = $this->handle_duplicates( $duplicated_labels, $existing_labels );
+			$duplicate_validation_result = $modified_labels;
+			foreach ( $modified_labels as $item_id => $modifications ) {
+					$final_items[$modifications['id'] ]['label'] =  $modifications['modified'];
 			}
 		}
 
@@ -255,7 +250,7 @@ class Global_Classes_REST_API {
 		if ( $duplicate_validation_result ) {
 			$response_data = [
 				'code' => 'DUPLICATED_LABEL',
-				'modifiedLabels' => $duplicate_validation_result['meta']['modifiedLabels'],
+				'modifiedLabels' => $duplicate_validation_result,
 			];
 			return Response_Builder::make( $response_data )->build();
 		}
@@ -275,42 +270,24 @@ class Global_Classes_REST_API {
 		return $response;
 	}
 
-	private function handle_duplicates( array $duplicate_validation ) {
-		$duplicates = $duplicate_validation['duplicates'];
-		$all_current_labels = $duplicate_validation['all_current_labels'];
+	private function handle_duplicates( array $duplicate_labels, array $existing_labels ) {
 
-		$modified_items = [];
 		$modified_labels = [];
 
-		foreach ( $duplicates as $duplicate ) {
-			$item_id = $duplicate['item_id'];
-			$original_label = $duplicate['label'];
+		foreach ( $duplicate_labels as $duplicate_label ) {
+			$item_id = $duplicate_label['item_id'];
+			$original_label = $duplicate_label['label'];
 
-			$modified_label = $this->generate_unique_label( $original_label, array_values( $all_current_labels ) );
-
-			$modified_items[ $item_id ]['label'] = $modified_label;
+			$modified_label = $this->generate_unique_label( $original_label, $existing_labels );
 
 			$modified_labels[] = [
 				'original' => $original_label,
 				'modified' => $modified_label,
 				'id' => $item_id,
 			];
-
-			$all_current_labels[ $item_id ] = $modified_label;
 		}
 
-		return [
-			'is_valid' => true,
-			'message' => empty( $modified_labels ) ? '' : sprintf(
-				/* translators: %d: Number of duplicate labels that were modified. */
-				__( 'Modified %d duplicate labels automatically.', 'elementor' ),
-				count( $modified_labels )
-			),
-			'meta' => [
-				'modifiedLabels' => $modified_labels,
-			],
-			'items' => $modified_items,
-		];
+		return $modified_labels;
 	}
 
 

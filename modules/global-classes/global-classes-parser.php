@@ -118,54 +118,25 @@ class Global_Classes_Parser {
 			: $result;
 	}
 
-	public static function check_for_duplicate_labels( array $existing_items, array $request_items, array $changes ) {
-		if ( empty( $changes['added'] ) ) {
+	public static function check_for_duplicate_labels(array $existing_labels, array $request_items, array $new_added_items_ids)
+	{
+
+
+		if (empty($new_added_items_ids)) {
 			return false;
 		}
+		$new_added_items = array_filter($request_items, fn($item) => in_array($item['id'], $new_added_items_ids, true));
 
 		$duplicates = [];
-		$all_current_labels = [];
 
-		$existing_labels = array_column( $existing_items, 'label' );
-
-		foreach ( $request_items as $item_id => $item ) {
-			$label = $item['label'] ?? '';
-			if ( ! empty( $label ) ) {
-				$all_current_labels[ $item_id ] = $label;
-			}
-		}
-
-		$added_item_ids = $changes['added'] ?? [];
-
-		foreach ( $added_item_ids as $item_id ) {
-			if ( ! isset( $request_items[ $item_id ] ) ) {
-				continue;
-			}
-
-			$new_item = $request_items[ $item_id ];
-			$new_label = $new_item['label'] ?? '';
-
-			if ( in_array( $new_label, $existing_labels, true ) ) {
+		foreach ($new_added_items as $item_id => $item) {
+			if(in_array($item['label'], $existing_labels, true)) {
 				$duplicates[] = [
 					'item_id' => $item_id,
-					'label' => $new_label,
+					'label' => $item['label'],
 				];
 			}
-
-			foreach ( $all_current_labels as $other_item_id => $other_label ) {
-				if ( $other_item_id !== $item_id && $other_label === $new_label ) {
-					$duplicates[] = [
-						'item_id' => $item_id,
-						'label' => $new_label,
-					];
-					break;
-				}
-			}
 		}
-
-		return [
-			'duplicates' => $duplicates,
-			'all_current_labels' => $all_current_labels,
-		];
+return $duplicates;
 	}
 }
