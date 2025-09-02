@@ -175,7 +175,7 @@ class Global_Classes_REST_API {
 					'label' => $item['label'],
 				];
 			} )
-			->all(), 'label');
+		->all(), 'label');
 
 		$items_result = $parser->parse_items(
 			$request->get_param( 'items' )
@@ -238,7 +238,7 @@ class Global_Classes_REST_API {
 			$modified_labels = $this->handle_duplicates( $duplicated_labels, $existing_labels );
 			$duplicate_validation_result = $modified_labels;
 			foreach ( $modified_labels as $item_id => $modifications ) {
-					$final_items[$modifications['id'] ]['label'] =  $modifications['modified'];
+					$final_items[ $modifications['id'] ]['label'] = $modifications['modified'];
 			}
 		}
 

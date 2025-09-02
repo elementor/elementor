@@ -118,25 +118,23 @@ class Global_Classes_Parser {
 			: $result;
 	}
 
-	public static function check_for_duplicate_labels(array $existing_labels, array $request_items, array $new_added_items_ids)
-	{
+	public static function check_for_duplicate_labels( array $existing_labels, array $request_items, array $new_added_items_ids ) {
 
-
-		if (empty($new_added_items_ids)) {
+		if ( empty( $new_added_items_ids ) ) {
 			return false;
 		}
-		$new_added_items = array_filter($request_items, fn($item) => in_array($item['id'], $new_added_items_ids, true));
+		$new_added_items = array_filter( $request_items, fn( $item ) => in_array( $item['id'], $new_added_items_ids, true ) );
 
 		$duplicates = [];
 
-		foreach ($new_added_items as $item_id => $item) {
-			if(in_array($item['label'], $existing_labels, true)) {
+		foreach ( $new_added_items as $item_id => $item ) {
+			if ( in_array( $item['label'], $existing_labels, true ) ) {
 				$duplicates[] = [
 					'item_id' => $item_id,
 					'label' => $item['label'],
 				];
 			}
 		}
-return $duplicates;
+		return $duplicates;
 	}
 }
