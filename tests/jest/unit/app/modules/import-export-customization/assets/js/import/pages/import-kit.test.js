@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ImportKit from 'elementor/app/modules/import-export-customization/assets/js/import/pages/import-kit';
 import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
+import useContextDetection from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection';
 
 const mockDispatch = jest.fn();
 const mockNavigate = jest.fn();
@@ -22,6 +23,8 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import/c
 		APPLY_ALL: 'apply-all',
 	},
 } ) );
+
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection' );
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import/hooks/use-upload-kit', () => ( {
 	useUploadKit: () => mockUseUploadKit(),
@@ -48,6 +51,12 @@ jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
 describe( 'ImportKit Page', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+
+		useContextDetection.mockImplementation( () => ( {
+			isImport: true,
+			contextData: { data: { kitUploadParams: { source: 'cloud' } } },
+		} ) );
+
 		global.elementorAppConfig = { base_url: 'http://localhost' };
 		global.elementorCommon = {
 			eventsManager: {
