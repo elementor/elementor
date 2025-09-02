@@ -404,20 +404,20 @@ abstract class Source_Base {
 	}
 
 	/**
-	 * @param int $template_id
+	 * @param int   $template_id
 	 * @param mixed $data
 	 * @return string|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If template source operation fails or validation errors occur.
 	 */
 	public function save_item_preview( int $template_id, $data ) {
 		return new \WP_Error( 'template_error', 'Cannot save previews for this source' );
 	}
 
 	/**
-	 * @param int $template_id
+	 * @param int    $template_id
 	 * @param string $error
 	 * @return string|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If template processing fails or data validation errors occur.
 	 */
 	public function mark_preview_as_failed( int $template_id, string $error ) {
 		return new \WP_Error( 'template_error', 'Cannot mark preview as failed for this source' );
