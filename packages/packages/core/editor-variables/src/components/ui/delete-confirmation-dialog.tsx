@@ -33,9 +33,11 @@ export const DeleteConfirmationDialog = ( {
 			<DialogContent>
 				<DialogContentText variant="body2" color="textPrimary">
 					{ __( 'All elements using', 'elementor' ) }
-					<Typography variant="subtitle2" component="span">
-						&nbsp;{ label }&nbsp;
+					&nbsp;
+					<Typography variant="subtitle2" component="span" sx={ { lineBreak: 'anywhere' } }>
+						{ label }
 					</Typography>
+					&nbsp;
 					{ __( 'will keep their current values, but the variable itself will be removed.', 'elementor' ) }
 				</DialogContentText>
 			</DialogContent>
