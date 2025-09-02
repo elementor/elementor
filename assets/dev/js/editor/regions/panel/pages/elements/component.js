@@ -29,7 +29,6 @@ export default class Component extends ComponentBase {
 				location: elementorCommon.eventsManager.config.locations.widgetPanel,
 				secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations[ tab ],
 				trigger: elementorCommon.eventsManager.config.triggers.click,
-				element: elementorCommon.eventsManager.config.elements.accordionSection,
 			},
 		);
 	}

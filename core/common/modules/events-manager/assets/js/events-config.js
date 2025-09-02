@@ -100,17 +100,6 @@ const eventsConfig = {
 		},
 	},
 
-	elements: {
-		accordionSection: 'Accordion section',
-		buttonIcon: 'Button Icon',
-		mainCta: 'Main CTA',
-		button: 'Button',
-		link: 'Link',
-		dropdown: 'Dropdown',
-		toggle: 'Toggle',
-		launchpadChecklist: 'Checklist popup',
-	},
-
 	names: {
 		v1: {
 			layout: 'v1_widgets_tab_layout_section',

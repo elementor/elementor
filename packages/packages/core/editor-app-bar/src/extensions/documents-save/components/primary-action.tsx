@@ -59,7 +59,6 @@ export default function PrimaryAction() {
 									location: config.locations.topBar,
 									secondaryLocation: config.secondaryLocations[ 'publish-button' ],
 									trigger: config.triggers.click,
-									element: config.elements.mainCta,
 								}
 							);
 						}

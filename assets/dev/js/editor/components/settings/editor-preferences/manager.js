@@ -76,7 +76,6 @@ export default class extends BaseManager {
 					location: elementorCommon.eventsManager.config.locations.elementorEditor,
 					secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.userPreferences,
 					trigger: elementorCommon.eventsManager.config.triggers.toggleClick,
-					element: elementorCommon.eventsManager.config.elements.toggle,
 					postId,
 					postTitle,
 					postTypeTitle,

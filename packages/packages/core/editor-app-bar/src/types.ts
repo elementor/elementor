@@ -6,7 +6,7 @@ export type ExtendedWindow = Window & {
 				locations: Record< string, string >;
 				secondaryLocations: Record< string, string >;
 				triggers: Record< string, string >;
-				elements: Record< string, string >;
+				elements?: Record< string, string >;
 				names: {
 					topBar: Record< string, string >;
 				};
