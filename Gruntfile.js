@@ -11,14 +11,6 @@ module.exports = function( grunt ) {
 
 	grunt.loadNpmTasks( 'grunt-concurrent' );
 
-	grunt.registerTask( 'concurrent', ( tasks ) => {
-		grunt.config.set( 'concurrent.onDemand', {
-			tasks,
-			options: { logConcurrentOutput: true },
-		} );
-		grunt.task.run( 'concurrent:onDemand' );
-	} );
-
 	require( 'load-grunt-tasks' )( grunt );
 
 	// Project configuration
@@ -62,7 +54,7 @@ module.exports = function( grunt ) {
 			tasksToRun.push( 'webpack:developmentNoWatch' );
 		}
 
-		grunt.task.run( 'concurrent', tasksToRun );
+		concurrent( tasksToRun );
 	} );
 
 	grunt.registerTask( 'watch_scripts', () => {
@@ -81,14 +73,14 @@ module.exports = function( grunt ) {
 		grunt.task.run( 'sass' );
 
 		if ( ! isDevMode ) {
-			grunt.task.run( 'concurrent', [ 'postcss', 'css_templates' ] );
+			concurrent( [ 'postcss', 'css_templates' ] );
 
 			grunt.task.run( 'remove_widgets_unused_style_files' );
 		}
 	} );
 
 	grunt.registerTask( 'watch_styles', () => {
-		grunt.task.run( 'concurrent', [ 'styles', 'watch:styles' ] );
+		concurrent( [ 'styles', 'watch:styles' ] );
 	} );
 
 	grunt.registerTask( 'css_templates', () => {
@@ -139,4 +131,12 @@ module.exports = function( grunt ) {
 	grunt.registerTask( 'test', [
 		'karma:unit',
 	] );
+
+	const concurrent = ( tasks ) => {
+		grunt.config.set( 'concurrent.onDemand', {
+			tasks,
+			options: { logConcurrentOutput: true },
+		} );
+		grunt.task.run( 'concurrent:onDemand' );
+	};
 };
