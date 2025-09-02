@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { importTemplate } from '../pages';
+import WpAdminPage from '../../tests/playwright/pages/wp-admin-page';
 
 const templates = {
 	defaultV4: './playwright/templates/default-v4.json',
@@ -7,7 +7,10 @@ const templates = {
 } as const;
 
 export const setTemplate = async ( page: Page, template: keyof typeof templates ): Promise<string | undefined> => {
-	return await importTemplate( page, template, templates[ template ] );
+	const wpAdmin = new WpAdminPage( page );
+	const editorPage = await wpAdmin.openNewPage();
+	editorPage.loadTemplate( templates[ template ] );
+	return `${ editorPage.postId }`;
 };
 
 export const setDefaultTemplate = async ( page: Page, isV4 = true ): Promise<string | undefined> => {

@@ -7,11 +7,11 @@ import ApiRequests from '../assets/api-requests';
 let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
-	protected readonly apiRequests: ApiRequests;
+	protected readonly apiRequests?: ApiRequests;
 
-	constructor( page: Page, testInfo: TestInfo, apiRequests: ApiRequests ) {
+	constructor( page: Page, testInfo?: TestInfo, apiRequests?: ApiRequests ) {
 		super( page, testInfo );
-		this.apiRequests = apiRequests;
+		this.apiRequests = apiRequests ?? new ApiRequests( process.env.BASE_URL ?? '', process.env.NONCE ?? '' );
 	}
 
 	/**

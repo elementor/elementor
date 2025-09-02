@@ -14,7 +14,7 @@ interface SizeOptions {
 export default class v4Panel extends BasePage {
 	readonly inputField: string;
 
-	constructor( page: Page, testInfo: TestInfo ) {
+	constructor( page: Page, testInfo?: TestInfo ) {
 		super( page, testInfo );
 		this.inputField = 'input[class*="MuiInputBase"]';
 	}
