@@ -66,7 +66,7 @@ class Deprecation {
 	 * @since 3.1.0
 	 *
 	 * @param string $version
-	 * @param int $count
+	 * @param int    $count
 	 *
 	 * @return string|false
 	 */
@@ -309,10 +309,10 @@ class Deprecation {
 	 *
 	 * A method used to run deprecated actions through Elementor's deprecation process.
 	 *
-	 * @param string $hook
-	 * @param array $args
-	 * @param string $version
-	 * @param string $replacement
+	 * @param string      $hook
+	 * @param array       $args
+	 * @param string      $version
+	 * @param string      $replacement
 	 * @param null|string $base_version
 	 *
 	 * @throws \Exception Deprecation error.
@@ -333,10 +333,10 @@ class Deprecation {
 	 *
 	 * A method used to run deprecated filters through Elementor's deprecation process.
 	 *
-	 * @param string $hook
-	 * @param array $args
-	 * @param string $version
-	 * @param string $replacement
+	 * @param string      $hook
+	 * @param array       $args
+	 * @param string      $version
+	 * @param string      $replacement
 	 * @param null|string $base_version
 	 *
 	 * @return mixed
