@@ -17,6 +17,7 @@ import { __ } from '@wordpress/i18n';
 import { getVariables } from '../../hooks/use-prop-variables';
 import { service } from '../../service';
 import { type TVariablesList } from '../../storage';
+import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
@@ -36,10 +37,11 @@ export const { panel, usePanelActions } = createPanel( {
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 
-	const [ isDirty, setIsDirty ] = useState( false );
 	const [ variables, setVariables ] = useState( getVariables( false ) );
 	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
+	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
 
+	const [ isDirty, setIsDirty ] = useState( false );
 	const [ isSaving, setIsSaving ] = useState( false );
 
 	usePreventUnload( isDirty );
@@ -68,12 +70,19 @@ export function VariablesManagerPanel() {
 			icon: TrashIcon,
 			color: 'error.main',
 			onClick: ( itemId: string ) => {
-				setDeletedVariables( [ ...deletedVariables, itemId ] );
-				setVariables( { ...variables, [ itemId ]: { ...variables[ itemId ], deleted: true } } );
-				setIsDirty( true );
+				if ( variables[ itemId ] ) {
+					setDeleteConfirmation( { id: itemId, label: variables[ itemId ].label } );
+				}
 			},
 		},
 	];
+
+	const handleDeleteVariable = ( itemId: string ) => {
+		setDeletedVariables( [ ...deletedVariables, itemId ] );
+		setVariables( { ...variables, [ itemId ]: { ...variables[ itemId ], deleted: true } } );
+		setIsDirty( true );
+		setDeleteConfirmation( null );
+	};
 
 	const handleOnChange = ( newVariables: TVariablesList ) => {
 		setVariables( newVariables );
@@ -130,6 +139,15 @@ export function VariablesManagerPanel() {
 						</Button>
 					</PanelFooter>
 				</Panel>
+
+				{ deleteConfirmation && (
+					<DeleteConfirmationDialog
+						open
+						label={ deleteConfirmation.label }
+						onConfirm={ () => handleDeleteVariable( deleteConfirmation.id ) }
+						closeDialog={ () => setDeleteConfirmation( null ) }
+					/>
+				) }
 			</ErrorBoundary>
 		</ThemeProvider>
 	);
