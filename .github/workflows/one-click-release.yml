@@ -36,6 +36,7 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-22.04
+    if: github.repository == 'elementor/elementor'
     steps:
       - name: Check if Custom Core was executed
         if: github.event.inputs.custom_core_executed == 'false'

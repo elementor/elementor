@@ -9,7 +9,7 @@ on:
 
 jobs:
   publish-packages:
-    if: startsWith( github.repository, 'elementor/' )
+    if: github.repository == 'elementor/elementor'
     name: Publish Packages
     runs-on: ubuntu-24.04
 
