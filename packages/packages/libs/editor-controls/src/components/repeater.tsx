@@ -95,10 +95,10 @@ export const Repeater = < T, >( {
 		const newKey = generateNextKey( uniqueKeys );
 
 		if ( addToBottom ) {
-			setItems( [ ...items, newItem ] );
+			setItems( [ ...items, newItem ], undefined, { action: { type: 'add' } } );
 			setUniqueKeys( [ ...uniqueKeys, newKey ] );
 		} else {
-			setItems( [ newItem, ...items ] );
+			setItems( [ newItem, ...items ], undefined, { action: { type: 'add' } } );
 			setUniqueKeys( [ newKey, ...uniqueKeys ] );
 		}
 
@@ -114,7 +114,9 @@ export const Repeater = < T, >( {
 		// Insert the new (cloned item) at the next spot (after the current index)
 		const atPosition = 1 + index;
 
-		setItems( [ ...items.slice( 0, atPosition ), newItem, ...items.slice( atPosition ) ] );
+		setItems( [ ...items.slice( 0, atPosition ), newItem, ...items.slice( atPosition ) ], undefined, {
+			action: { type: 'duplicate' },
+		} );
 		setUniqueKeys( [ ...uniqueKeys.slice( 0, atPosition ), newKey, ...uniqueKeys.slice( atPosition ) ] );
 	};
 
@@ -128,7 +130,9 @@ export const Repeater = < T, >( {
 		setItems(
 			items.filter( ( _, pos ) => {
 				return pos !== index;
-			} )
+			} ),
+			undefined,
+			{ action: { type: 'remove' } }
 		);
 	};
 
@@ -143,18 +147,24 @@ export const Repeater = < T, >( {
 				}
 
 				return value;
-			} )
+			} ),
+			undefined,
+			{ action: { type: 'toggle-disable' } }
 		);
 	};
 
-	const onChangeOrder = ( reorderedKeys: number[] ) => {
+	const onChangeOrder = ( reorderedKeys: number[], meta: { from: number; to: number } ) => {
 		setUniqueKeys( reorderedKeys );
-		setItems( ( prevItems ) => {
-			return reorderedKeys.map( ( keyValue ) => {
-				const index = uniqueKeys.indexOf( keyValue );
-				return prevItems[ index ];
-			} );
-		} );
+		setItems(
+			( prevItems ) => {
+				return reorderedKeys.map( ( keyValue ) => {
+					const index = uniqueKeys.indexOf( keyValue );
+					return prevItems[ index ];
+				} );
+			},
+			undefined,
+			{ action: { type: 'reorder', payload: { ...meta } } }
+		);
 	};
 
 	return (

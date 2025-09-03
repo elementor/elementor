@@ -26,7 +26,7 @@ class Repository {
 	}
 
 	/**
-	 * @throws VariablesLimitReached
+	 * @throws VariablesLimitReached If database connection fails or query execution errors occur.
 	 */
 	private function assert_if_variables_limit_reached( array $db_record ) {
 		$variables_in_use = 0;
@@ -45,7 +45,7 @@ class Repository {
 	}
 
 	/**
-	 * @throws DuplicatedLabel
+	 * @throws DuplicatedLabel If variable creation fails or validation errors occur.
 	 */
 	private function assert_if_variable_label_is_duplicated( array $db_record, array $variable = [] ) {
 		foreach ( $db_record['data'] as $id => $existing_variable ) {
@@ -84,7 +84,7 @@ class Repository {
 	}
 
 	/**
-	 * @throws FatalError
+	 * @throws FatalError If variable update fails or validation errors occur.
 	 */
 	public function create( array $variable ) {
 		$db_record = $this->load();
@@ -118,8 +118,8 @@ class Repository {
 	}
 
 	/**
-	 * @throws RecordNotFound
-	 * @throws FatalError
+	 * @throws RecordNotFound If variable deletion fails or database errors occur.
+	 * @throws FatalError If variable deletion fails or database errors occur.
 	 */
 	public function update( string $id, array $variable ) {
 		$db_record = $this->load();
@@ -153,8 +153,8 @@ class Repository {
 	}
 
 	/**
-	 * @throws RecordNotFound
-	 * @throws FatalError
+	 * @throws RecordNotFound If bulk operation fails or validation errors occur.
+	 * @throws FatalError If bulk operation fails or validation errors occur.
 	 */
 	public function delete( string $id ) {
 		$db_record = $this->load();
@@ -183,8 +183,8 @@ class Repository {
 	}
 
 	/**
-	 * @throws RecordNotFound
-	 * @throws FatalError
+	 * @throws RecordNotFound If export operation fails or data serialization errors occur.
+	 * @throws FatalError If export operation fails or data serialization errors occur.
 	 */
 	public function restore( string $id, $overrides = [] ) {
 		$db_record = $this->load();
@@ -231,8 +231,8 @@ class Repository {
 	/**
 	 * Process multiple operations atomically
 	 *
-	 * @throws BatchOperationFailed
-	 * @throws FatalError
+	 * @throws BatchOperationFailed If batch operation fails or validation errors occur.
+	 * @throws FatalError If batch operation fails or validation errors occur.
 	 */
 	public function process_atomic_batch( array $operations, int $expected_watermark ): array {
 		$db_record = $this->load();
@@ -415,8 +415,7 @@ class Repository {
 			return 404;
 		}
 
-		if ( $e instanceof DuplicatedLabel ||
-			 $e instanceof VariablesLimitReached ) {
+		if ( $e instanceof DuplicatedLabel || $e instanceof VariablesLimitReached ) {
 			return 400;
 		}
 
