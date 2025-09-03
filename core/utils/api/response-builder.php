@@ -6,7 +6,6 @@ class Response_Builder {
 	private $data;
 	private int $status;
 	private array $meta = [];
-	private bool $empty = false;
 
 	const NO_CONTENT = 204;
 
