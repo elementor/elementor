@@ -120,7 +120,7 @@ class Global_Classes_Parser {
 
 	public static function check_for_duplicate_labels( array $existing_labels, array $items, array $new_items_ids ) {
 
-		if ( empty( $new_added_items_ids ) ) {
+		if ( empty( $new_items_ids ) ) {
 			return false;
 		}
 		$new_added_items = array_filter( $items, fn( $item ) => in_array( $item['id'], $new_items_ids, true ) );
