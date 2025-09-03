@@ -270,9 +270,9 @@ class Manager {
 	 * @access public
 	 * @deprecated 3.5.0 Use `register()` method instead.
 	 *
-	 * @param string $class
+	 * @param string $class_name
 	 */
-	public function register_tag( $class ) {
+	public function register_tag( $class_name ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 			__METHOD__,
 			'3.5.0',
@@ -280,7 +280,7 @@ class Manager {
 		);
 
 		/** @var Base_Tag $tag */
-		$instance = new $class();
+		$instance = new $class_name();
 
 		$this->register( $instance );
 	}
