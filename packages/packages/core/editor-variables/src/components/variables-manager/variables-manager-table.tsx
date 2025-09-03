@@ -33,7 +33,7 @@ type Props = {
 export const VariablesManagerTable = ( { menuActions, variables, onChange: handleOnChange }: Props ) => {
 	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
 	const rows = ids
-		.filter( ( id ) => ! variables[ id ].deleted )
+		.filter( ( id ) => ! variables[ id ]?.deleted )
 		.map( ( id ) => {
 			const variable = variables[ id ];
 			const variableType = getVariableType( variable.type );

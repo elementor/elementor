@@ -57,7 +57,7 @@ function Content( { title, message }: NoVariablesContentProps ) {
 			</Typography>
 
 			<Typography align="center" variant="caption" maxWidth="180px">
-				{ message }
+				{ React.createElement( 'div', { dangerouslySetInnerHTML: { __html: message } } ) }
 			</Typography>
 		</>
 	);
