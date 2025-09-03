@@ -7,6 +7,10 @@ import { HookOutsideProviderError } from './errors';
 export type SetValueMeta = {
 	bind?: PropKey;
 	validation?: ( value: PropValue ) => boolean;
+	action?: {
+		type: string;
+		payload?: Record< string, unknown >;
+	};
 };
 
 export type SetValue< T > = ( value: T, options?: CreateOptions, meta?: SetValueMeta ) => void;
