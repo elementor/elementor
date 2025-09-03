@@ -16,3 +16,7 @@ variablesManagerFixture.describe( 'Variable Manager', () => {
 		await expect( variableRow.getByText( addedColorVariable.value ) ).toBeVisible();
 	} );
 } );
+
+variablesManagerFixture( 'Variable Manager', async ( { openVariableManager } ) => {
+	expect( openVariableManager ).toBeDefined();
+} );

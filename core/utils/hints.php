@@ -110,11 +110,11 @@ class Hints {
 	 * Print or Retrieve the notice template.
 	 *
 	 * @param array $notice
-	 * @param bool $return
+	 * @param bool  $should_return
 	 *
 	 * @return string|void
 	 */
-	public static function get_notice_template( array $notice, bool $return = false ) {
+	public static function get_notice_template( array $notice, bool $should_return = false ) {
 		$default_settings = [
 			'type' => 'info',
 			'icon' => false,
@@ -187,7 +187,7 @@ class Hints {
 			$notice_settings['display']
 		);
 
-		if ( $return ) {
+		if ( $should_return ) {
 			return $notice_template;
 		}
 		echo wp_kses( $notice_template, self::get_notice_allowed_html() );
@@ -493,9 +493,9 @@ class Hints {
 
 		if ( ! $is_installed ) {
 			$step = self::INSTALL;
-		} else if ( ! $is_active ) {
+		} elseif ( ! $is_active ) {
 			$step = self::ACTIVATE;
-		} else if ( ! $is_connected ) {
+		} elseif ( ! $is_connected ) {
 			$step = self::CONNECT;
 		} else {
 			$step = self::CUSTOMIZE;

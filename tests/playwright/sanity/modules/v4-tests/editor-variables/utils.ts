@@ -1,8 +1,8 @@
 import { type Page } from '@playwright/test';
-import { canvasPageFrameLocator } from 'playwright';
+import EditorSelectors from '../../../../selectors/editor-selectors';
 
 export const getControl = async ( page: Page, styleSectionSelector: string, controlToAccessFrom: string ) => {
-	await canvasPageFrameLocator( page ).getByText( 'This is a title' ).click();
+	await page.frameLocator( EditorSelectors.canvas ).getByText( 'This is a title' ).click();
 	await page.getByRole( 'tab', { name: 'Style' } ).click();
 	if ( await page.locator( `#${ controlToAccessFrom }-control` ).isHidden() ) {
 		await page.getByRole( 'button', { name: styleSectionSelector } ).click();
@@ -34,7 +34,7 @@ export const addVariable = async ( page: Page, variable: { name: string, value: 
 };
 
 export const detachVariable = async ( page: Page, styleSectionSelector: string, controlLabelToDetach: string, variableName: string ) => {
-	await canvasPageFrameLocator( page ).getByText( 'This is a title' ).click();
+	await page.frameLocator( EditorSelectors.canvas ).getByText( 'This is a title' ).click();
 	await page.getByRole( 'tab', { name: 'Style' } ).click();
 	if ( await page.getByText( controlLabelToDetach ).isHidden() ) {
 		await page.getByRole( 'button', { name: styleSectionSelector } ).click();

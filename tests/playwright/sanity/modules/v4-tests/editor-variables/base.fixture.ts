@@ -1,8 +1,7 @@
-import { setDefaultTemplate } from 'playwright';
 import { type Page, test } from '@playwright/test';
 
 import { openVariableManager, addVariable, detachVariable } from './utils';
-import WpAdminPage from '../../tests/playwright/pages/wp-admin-page';
+import WpAdminPage from '../../../../pages/wp-admin-page';
 
 export const variablesManagerFixture = test.extend< {
 	init: Page;
@@ -13,7 +12,8 @@ export const variablesManagerFixture = test.extend< {
 	init: async ( { page }, use ) => {
 		const adminPage = new WpAdminPage( page );
 		await adminPage.setExperiments( { e_variables_manager: 'active' } );
-		await setDefaultTemplate( page );
+		const editorPage = await adminPage.openNewPage();
+		editorPage.loadTemplate( 'tests/playwright/templates/default-v4.json' );
 		await use( page );
 	},
 	addedFontVariable: async ( { init: page }, use ) => {

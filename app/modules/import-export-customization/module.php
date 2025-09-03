@@ -324,7 +324,7 @@ class Module extends BaseModule {
 	 * @param string $referrer Referrer of the file 'local' or 'kit-library'.
 	 * @param string $kit_id
 	 * @return array
-	 * @throws \Exception
+	 * @throws \Exception If customization validation fails or processing errors occur.
 	 */
 	public function upload_kit( $file, $referrer, $kit_id = null ) {
 		$this->ensure_writing_permissions();
@@ -352,11 +352,11 @@ class Module extends BaseModule {
 	 * so it will be available to use in different places such as: WP_Cli, Pro, etc.
 	 *
 	 * @param string $path Path to the file or session_id.
-	 * @param array $settings Settings the import use to determine which content to import.
-	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
-	 * @param bool $split_to_chunks Determine if the import process should be split into chunks.
+	 * @param array  $settings Settings the import use to determine which content to import.
+	 *               (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
+	 * @param bool   $split_to_chunks Determine if the import process should be split into chunks.
 	 * @return array
-	 * @throws \Exception
+	 * @throws \Exception If export configuration is invalid or processing fails.
 	 */
 	public function import_kit( string $path, array $settings, bool $split_to_chunks = false ): array {
 		$this->ensure_writing_permissions();
@@ -389,7 +389,7 @@ class Module extends BaseModule {
 	 * @return array Two types of response.
 	 *      1. The status and the runner name.
 	 *      2. The imported data. (Only if the runner is the last one in the import process)
-	 * @throws \Exception
+	 * @throws \Exception If export configuration is invalid or processing fails.
 	 */
 	public function import_kit_by_runner( string $session_id, string $runner_name ): array {
 		// Check session_id
@@ -414,7 +414,7 @@ class Module extends BaseModule {
 	 * @param array $settings Settings the export use to determine which content to export.
 	 *      (e.g: include, kit_info, selected_plugins, selected_cpt, etc.)
 	 * @return array
-	 * @throws \Exception
+	 * @throws \Exception If export configuration is invalid or processing fails.
 	 */
 	public function export_kit( array $settings ) {
 		$this->ensure_writing_permissions();
@@ -755,11 +755,11 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * @param string $class
+	 * @param string $class_name
 	 *
 	 * @return bool
 	 */
-	public function is_third_party_class( $class ) {
+	public function is_third_party_class( $class_name ) {
 		$allowed_classes = [
 			'Elementor\\',
 			'ElementorPro\\',
@@ -768,7 +768,7 @@ class Module extends BaseModule {
 		];
 
 		foreach ( $allowed_classes as $allowed_class ) {
-			if ( str_starts_with( $class, $allowed_class ) ) {
+			if ( str_starts_with( $class_name, $allowed_class ) ) {
 				return false;
 			}
 		}
