@@ -134,7 +134,7 @@ class Manager extends BaseModule {
 	 * Command extract args.
 	 *
 	 * @param string $command
-	 * @param array $args
+	 * @param array  $args
 	 *
 	 * @return \stdClass
 	 */
@@ -242,8 +242,8 @@ class Manager extends BaseModule {
 	/**
 	 * Run processor.
 	 *
-	 * @param \Elementor\Data\V2\Base\Processor $processor
-	 * @param array $data
+	 * @param Processor $processor
+	 * @param array     $data
 	 *
 	 * @return mixed
 	 */
@@ -260,9 +260,9 @@ class Manager extends BaseModule {
 	 *
 	 * Filter them by class.
 	 *
-	 * @param \Elementor\Data\V2\Base\Processor[] $processors
-	 * @param string $filter_by_class
-	 * @param array $data
+	 * @param Processor[] $processors
+	 * @param string      $filter_by_class
+	 * @param array       $data
 	 *
 	 * @return false|array
 	 */
@@ -293,7 +293,7 @@ class Manager extends BaseModule {
 	 * Use args as query.
 	 *
 	 * @param string $endpoint
-	 * @param array $args
+	 * @param array  $args
 	 * @param string $method
 	 * @param string $namespace Optional.
 	 * @param string $version Optional.
@@ -323,7 +323,7 @@ class Manager extends BaseModule {
 	 * Wrapper for `$this->run_request` return `$response->getData()` instead of `$response`.
 	 *
 	 * @param string $endpoint
-	 * @param array $args
+	 * @param array  $args
 	 * @param string $method
 	 *
 	 * @return array

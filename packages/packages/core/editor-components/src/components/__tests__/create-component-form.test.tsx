@@ -23,7 +23,7 @@ const mockComponentId = 123245;
 describe( 'CreateComponentForm', () => {
 	beforeEach( () => {
 		mockGetElementLabel.mockReturnValue( 'Div Block' );
-		mockGetComponents.mockReturnValue( Promise.resolve( [ { name: 'Existing Component', component_id: 123 } ] ) );
+		mockGetComponents.mockReturnValue( Promise.resolve( [ { name: 'Existing Component', id: 123 } ] ) );
 	} );
 
 	const triggerOpenFormEvent = ( element = mockElement, anchorPosition = { top: 100, left: 200 } ) => {

@@ -122,10 +122,16 @@ module.exports = Marionette.CompositeView.extend( {
 			model.settings = model.preset_settings;
 		}
 
-		const historyId = $e.internal( 'document/history/start-log', {
-			type: this.getHistoryType( options.event ),
-			title: elementor.helpers.getModelLabel( model ),
-		} );
+		const { useHistory = true } = options;
+
+		let historyId;
+
+		if ( useHistory ) {
+			historyId = $e.internal( 'document/history/start-log', {
+				type: this.getHistoryType( options.event ),
+				title: elementor.helpers.getModelLabel( model ),
+			} );
+		}
 
 		let container = this.getContainer();
 		if ( options.shouldWrap ) {
@@ -140,6 +146,7 @@ module.exports = Marionette.CompositeView.extend( {
 				options: {
 					at: options.at,
 					scrollIntoView: options.scrollIntoView,
+					useHistory,
 				},
 			} );
 
@@ -157,7 +164,9 @@ module.exports = Marionette.CompositeView.extend( {
 			options,
 		} );
 
-		$e.internal( 'document/history/end-log', { id: historyId } );
+		if ( useHistory ) {
+			$e.internal( 'document/history/end-log', { id: historyId } );
+		}
 
 		return widget;
 	},
