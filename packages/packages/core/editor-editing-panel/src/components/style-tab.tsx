@@ -30,15 +30,15 @@ import { StyleTabSection } from './style-tab-section';
 
 const TABS_HEADER_HEIGHT = '37px';
 
-export const styleTabSectionMenu = createMenu( {
-	components: {
-		section: StyleTabSection,
-	},
-} );
+// export const styleTabSectionMenu = createMenu( {
+// 	components: {
+// 		section: StyleTabSection,
+// 	},
+// } );
 
-// export const { Slot: StyleTabSlot, inject: injectIntoStyleTab } = createLocation();
+export const { Slot: StyleTabSlot, inject: injectIntoStyleTab } = createLocation();
 
-const { useMenuItems } = styleTabSectionMenu;
+// const { useMenuItems } = styleTabSectionMenu;
 export const stickyHeaderStyles = {
 	position: 'sticky',
 	zIndex: 1100,
@@ -52,8 +52,8 @@ export const StyleTab = () => {
 	const [ activeStyleDefId, setActiveStyleDefId ] = useActiveStyleDefId( currentClassesProp );
 	const [ activeStyleState, setActiveStyleState ] = useState< StyleDefinitionState | null >( null );
 	const breakpoint = useActiveBreakpoint();
-	const shouldRenderCustomCss = isExperimentActive( EXPERIMENTAL_FEATURES.CUSTOM_CSS );
-	const extraSections = useMenuItems();
+	// const shouldRenderCustomCss = isExperimentActive( EXPERIMENTAL_FEATURES.CUSTOM_CSS );
+	// const extraSections = useMenuItems();
 
 	return (
 		<ClassesPropProvider prop={ currentClassesProp }>
@@ -179,10 +179,7 @@ export const StyleTab = () => {
 									'transition',
 								] }
 							/>
-							{ /* <StyleTabSlot /> */ }
-							{ extraSections.default.map( ( { id, MenuItem } ) => (
-								<MenuItem key={ id } />
-							) ) }
+							<StyleTabSlot />
 						</SectionsList>
 						<Box sx={ { height: '150px' } } />
 					</StyleInheritanceProvider>
