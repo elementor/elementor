@@ -11,13 +11,25 @@ import {
 import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { ColorFilterIcon, TrashIcon, XIcon } from '@elementor/icons';
-import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
+import {
+	Alert,
+	Box,
+	Button,
+	Divider,
+	ErrorBoundary,
+	IconButton,
+	type IconButtonProps,
+	Link,
+	Stack,
+} from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getVariables } from '../../hooks/use-prop-variables';
 import { service } from '../../service';
 import { type TVariablesList } from '../../storage';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
+import { EmptyState } from '../ui/empty-state';
+import { VariablesManagerFilters } from './variables-manager-filters';
 import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
@@ -43,6 +55,9 @@ export function VariablesManagerPanel() {
 
 	const [ isDirty, setIsDirty ] = useState( false );
 	const [ isSaving, setIsSaving ] = useState( false );
+	const [ isEmptyFilter, setIsEmptyFilter ] = useState( false );
+	const [ searchValue, setSearchValue ] = useState( '' );
+	const [ filteredVariables, setFilteredVariables ] = useState( variables );
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 
 	usePreventUnload( isDirty );
@@ -99,6 +114,16 @@ export function VariablesManagerPanel() {
 		setIsDirty( true );
 	};
 
+	useEffect( () => {
+		const updatedFilteredVariables = filterVariablesBySearchValue( variables, searchValue );
+		setFilteredVariables( updatedFilteredVariables );
+		setIsEmptyFilter( Object.keys( updatedFilteredVariables ).length === 0 );
+	}, [ searchValue, variables ] );
+
+	const handleFilterChange = ( filter: string ) => {
+		console.log( filter );
+	};
+
 	return (
 		<ThemeProvider>
 			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
@@ -119,7 +144,6 @@ export function VariablesManagerPanel() {
 									} }
 								/>
 							</Stack>
-							<Divider sx={ { width: '100%' } } />
 						</Stack>
 					</PanelHeader>
 					<PanelBody
@@ -129,11 +153,32 @@ export function VariablesManagerPanel() {
 							height: '100%',
 						} }
 					>
-						<VariablesManagerTable
-							menuActions={ menuActions }
-							variables={ variables }
-							onChange={ handleOnChange }
+						<VariablesManagerFilters
+							onSearchChange={ setSearchValue }
+							onFilterChange={ handleFilterChange }
 						/>
+						<Divider sx={ { width: '100%' } } />
+						{ isEmptyFilter ? (
+							<EmptyState
+								title={ __( `Sorry, nothing matched`, 'elementor' ) + `\“${ searchValue }\”.` }
+								message={
+									__( 'Try something else.', 'elementor' ) +
+									'\n' +
+									(
+										<Link onClick={ () => setSearchValue( '' ) }>
+											{ __( 'Clear your input and try something else.', 'elementor' ) }
+										</Link>
+									)
+								}
+								icon={ <ColorFilterIcon fontSize="large" /> }
+							/>
+						) : (
+							<VariablesManagerTable
+								menuActions={ menuActions }
+								variables={ filteredVariables }
+								onChange={ handleOnChange }
+							/>
+						) }
 					</PanelBody>
 
 					<PanelFooter>
@@ -223,3 +268,12 @@ const usePreventUnload = ( isDirty: boolean ) => {
 		};
 	}, [ isDirty ] );
 };
+
+function filterVariablesBySearchValue( variables: TVariablesList, search: string ): TVariablesList {
+	if ( search.length === 0 ) {
+		return variables;
+	}
+
+	return Object.fromEntries( Object.entries( variables )
+		.filter( ( [ , variable ] ) => variable.label.toLowerCase().includes( search.toLowerCase() ) ) );
+}

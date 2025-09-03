@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { SaveChangesDialog, useDialog } from '@elementor/editor-ui';
 import { type BoxProps, type ButtonProps, type IconButtonProps, type StackProps } from '@elementor/ui';
 import { act, render, screen } from '@testing-library/react';
 
-import { VariablesManagerPanel, usePanelActions } from '../variables-manager-panel';
-import { SaveChangesDialog, useDialog } from '@elementor/editor-ui';
+import { usePanelActions, VariablesManagerPanel } from '../variables-manager-panel';
 
 jest.mock( '@elementor/editor-panels', () => ( {
 	__createPanel: () => ( {
@@ -74,18 +74,18 @@ jest.mock(
 );
 
 jest.mock( '../variables-manager-table', () => {
-	const VariablesManagerTable = ( props: { 
-		menuActions: unknown[]; 
-		variables: Record< string, unknown >; 
-		onChange: (variables: Record< string, unknown >) => void;
+	const VariablesManagerTable = ( props: {
+		menuActions: unknown[];
+		variables: Record< string, unknown >;
+		onChange: ( variables: Record< string, unknown > ) => void;
 	} ) => {
 		return (
 			<div
 				role="grid"
-				onClick={() => {
+				onClick={ () => {
 					// Simulate a change when clicking the grid
-					props.onChange({ 'var-1': { label: 'Changed', value: 'new value', type: 'color' } });
-				}}
+					props.onChange( { 'var-1': { label: 'Changed', value: 'new value', type: 'color' } } );
+				} }
 				data-props={ JSON.stringify( {
 					...props,
 					menuActions: props.menuActions?.map( ( action ) => {
@@ -208,7 +208,7 @@ describe( 'VariablesManagerPanel', () => {
 		const close = jest.fn();
 		jest.mocked( useDialog ).mockReturnValue( {
 			open: jest.fn(),
-			close: close,
+			close,
 			isOpen: false,
 		} );
 
@@ -231,13 +231,13 @@ describe( 'VariablesManagerPanel', () => {
 		// Act
 		const { getByLabelText } = render( <VariablesManagerPanel /> );
 		const table = screen.getByRole( 'grid' );
-		act(() => {
+		act( () => {
 			table.click();
-		});
-		act(() => {
+		} );
+		act( () => {
 			const closeButton = getByLabelText( 'Close' );
 			closeButton.click();
-		});
+		} );
 
 		// Assert
 		expect( openDialog ).toHaveBeenCalled();
