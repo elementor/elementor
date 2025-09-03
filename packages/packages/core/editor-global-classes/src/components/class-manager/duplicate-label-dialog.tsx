@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { closeDialog, EllipsisWithTooltip } from '@elementor/editor-ui';
 import { InfoCircleFilledIcon } from '@elementor/icons';
-import { __dispatch } from '@elementor/store';
 import {
 	Alert,
 	Box,
@@ -17,17 +16,13 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type ModifiedLabels, slice } from '../../store';
+import { type ModifiedLabels } from '../../store';
 import { usePanelActions } from './panel-actions';
 
 const DUP_PREFIX = 'DUP_';
 
 export const DuplicateLabelDialog = ( { modifiedLabels }: { modifiedLabels: ModifiedLabels } ) => {
 	const { open } = usePanelActions();
-
-	React.useEffect( () => {
-		__dispatch( slice.actions.updateMultiple( modifiedLabels ) );
-	}, [ modifiedLabels ] );
 
 	const handleButtonClick = () => {
 		localStorage.setItem( 'elementor-global-classes-search', 'DUP_' );
