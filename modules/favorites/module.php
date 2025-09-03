@@ -167,10 +167,10 @@ class Module extends BaseModule {
 	/**
 	 * Register a new type class.
 	 *
-	 * @param string $class
+	 * @param string $class_name
 	 */
-	public function register( $class ) {
-		$type_instance = new $class();
+	public function register( $class_name ) {
+		$type_instance = new $class_name();
 
 		$this->types[ $type_instance->get_name() ] = $type_instance;
 	}
