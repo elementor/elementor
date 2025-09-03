@@ -12,13 +12,6 @@ type ClearIconButtonProps = {
 const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
 	width: theme.spacing( 2.5 ),
 	height: theme.spacing( 2.5 ),
-
-	'&.Mui-disabled': {
-		pointerEvents: 'auto',
-		'&:hover': {
-			color: theme.palette.action.disabled,
-		},
-	},
 } ) );
 
 export const ClearIconButton = ( { tooltipText, onClick, disabled, size = 'tiny' }: ClearIconButtonProps ) => (
