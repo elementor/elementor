@@ -1,8 +1,7 @@
-import { setDefaultTemplate } from 'playwright';
 import { type Page, test } from '@playwright/test';
 
 import { openVariableManager } from './utils';
-import WpAdminPage from '../../tests/playwright/pages/wp-admin-page';
+import WpAdminPage from '../../../../pages/wp-admin-page';
 
 export const variablesManagerFixture = test.extend< {
 	openVariableManager: Page;

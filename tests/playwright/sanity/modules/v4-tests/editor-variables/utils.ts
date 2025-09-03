@@ -1,5 +1,4 @@
 import { type Page } from '@playwright/test';
-import { canvasPageFrameLocator } from 'playwright';
 
 export const openVariableManager = async ( page: Page ) => {
 	await canvasPageFrameLocator( page ).getByText( 'This is a title' ).click();
