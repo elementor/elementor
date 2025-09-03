@@ -165,7 +165,7 @@ export function VariablesManagerPanel() {
 						{ __( 'You have unsaved changes', 'elementor' ) }
 					</SaveChangesDialog.Title>
 					<SaveChangesDialog.Content>
-						<SaveChangesDialog.ContentText sx={ { mb: 2 } }>
+						<SaveChangesDialog.ContentText>
 							{ __( 'To avoid losing your updates, save your changes before leaving.', 'elementor' ) }
 						</SaveChangesDialog.ContentText>
 					</SaveChangesDialog.Content>
