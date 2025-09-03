@@ -29,7 +29,7 @@ export async function saveGlobalClasses( { context }: Options ) {
 }
 
 function calculateChanges( state: GlobalClasses, initialData: GlobalClasses ) {
-	const stateIds = Object.keys( state.items ); 
+	const stateIds = Object.keys( state.items );
 	const initialDataIds = Object.keys( initialData.items );
 
 	return {
