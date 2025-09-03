@@ -5,7 +5,7 @@ on:
 
 jobs:
   deploy-wp-assets:
-    if: ( github.actor == 'KingYes' || github.actor == 'arielk' || github.actor == 'yotamselementor' ) && startsWith( github.repository, 'elementor/' )
+    if: ( github.actor == 'KingYes' || github.actor == 'arielk' || github.actor == 'yotamselementor' ) && github.repository == 'elementor/elementor'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
