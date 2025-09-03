@@ -20,28 +20,28 @@ const parentElement = createMockElement( {
 	children: [ siblingElement1, currentElement, siblingElement2 ],
 } );
 
+
+
 const newElement: Omit< V1ElementModelProps, 'id' > = {
 	elType: 'widget',
 	widgetType: 'e-heading',
 };
 
 describe( 'replaceElement', () => {
-	beforeEach( () => {
-		const extendedWindow = window as unknown as ExtendedWindow;
+	const extendedWindow = window as unknown as ExtendedWindow;
+	it( 'should replace element', () => {
+		// Arrange.
 		extendedWindow.elementor = {
 			getContainer: ( id ) => {
-				if ( id === currentElement.id ) {
-					return { ...currentElement, parent: parentElement };
-				} else if ( id === parentElement.id ) {
-					return { ...parentElement };
+				switch ( id ) {
+					case currentElement.id:
+						return { ...currentElement, parent: parentElement };
+					case parentElement.id:
+						return { ...parentElement };
 				}
-
-				return undefined;
 			},
 		};
-	} );
 
-	it( 'should replace element', () => {
 		// Act.
 		replaceElement( { currentElement, newElement } );
 
@@ -54,6 +54,52 @@ describe( 'replaceElement', () => {
 
 		expect( mockRunCommand ).toHaveBeenCalledWith( 'document/elements/delete', {
 			container: { ...currentElement, parent: parentElement },
+			options: { useHistory: true },
+		} );
+	} );
+
+	it( 'should wrap widget in container when replacing element at document top level', () => {
+		// Arrange.
+		const documentElement = createMockElement( { model: { id: 'document' }, children: [ currentElement ] } );
+		const createdContainerElement = createMockElement( { model: { id: 'created-container-id' } } );
+
+		const extendedWindow = window as unknown as ExtendedWindow;
+		extendedWindow.elementor = {
+			getContainer: ( id ) => {
+				switch ( id ) {
+					case currentElement.id:
+						return { ...currentElement, parent: documentElement };
+					case 'document':
+						return { ...documentElement };
+					case 'created-container-id':
+						return { ...createdContainerElement };
+				}
+			},
+		};
+
+		mockRunCommandSync.mockReturnValueOnce( createdContainerElement );
+
+		// Act.
+		replaceElement( { currentElement, newElement } );
+
+		// Assert.
+		// First, create wrapper container
+		expect( mockRunCommandSync ).toHaveBeenNthCalledWith( 1, 'document/elements/create', {
+			container: documentElement,
+			model: { elType: 'container' },
+			options: { at: 0, useHistory: false, edit: false },
+		} );
+
+		// Then, create the widget inside the container
+		expect( mockRunCommandSync ).toHaveBeenNthCalledWith( 2, 'document/elements/create', {
+			container: createdContainerElement,
+			model: newElement,
+			options: { at: 0, useHistory: true, edit: false },
+		} );
+
+		// Finally, delete the original element
+		expect( mockRunCommand ).toHaveBeenCalledWith( 'document/elements/delete', {
+			container: { ...currentElement, parent: documentElement },
 			options: { useHistory: true },
 		} );
 	} );
