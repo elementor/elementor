@@ -20,3 +20,11 @@ export { StyleTabSection } from './components/style-tab-section';
 export { styleTabSectionMenu } from './components/style-tab';
 export { injectIntoStyleTab } from './components/style-tab';
 export { StyleIndicator } from './components/style-indicator';
+export { useClassesProp } from './contexts/classes-prop-context';
+export { useElement } from './contexts/element-context';
+export { useStyle } from './contexts/style-context';
+export { StylesProviderCannotUpdatePropsError } from './errors';
+export { useStylesRerender } from './hooks/use-styles-rerender';
+export { getSubtitle, getTitle, HISTORY_DEBOUNCE_WAIT } from './hooks/use-styles-fields';
+
+
