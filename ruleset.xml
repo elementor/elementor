@@ -52,8 +52,8 @@
 		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
-		<exclude name="PSR2.Methods.MethodDeclaration.Underscore" />
 		<exclude name="PSR2.Classes.PropertyDeclaration.Underscore" />
+		<exclude name="PSR2.Methods.MethodDeclaration.Underscore" />
 	</rule>
 
 	<rule ref="WordPress.NamingConventions.ValidHookName">
