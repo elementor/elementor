@@ -161,13 +161,12 @@ export function VariablesManagerPanel() {
 			</ErrorBoundary>
 			{ isSaveChangesDialogOpen && (
 				<SaveChangesDialog>
-					<SaveChangesDialog.Title onClose={ closeSaveChangesDialog }>{ __( 'You have unsaved changes', 'elementor' ) }</SaveChangesDialog.Title>
+					<SaveChangesDialog.Title onClose={ closeSaveChangesDialog }>
+						{ __( 'You have unsaved changes', 'elementor' ) }
+					</SaveChangesDialog.Title>
 					<SaveChangesDialog.Content>
 						<SaveChangesDialog.ContentText sx={ { mb: 2 } }>
-							{ __(
-								"To avoid losing your updates, save your changes before leaving.",
-								'elementor'
-							) }
+							{ __( 'To avoid losing your updates, save your changes before leaving.', 'elementor' ) }
 						</SaveChangesDialog.ContentText>
 					</SaveChangesDialog.Content>
 					<SaveChangesDialog.Actions

@@ -23,10 +23,16 @@ export const SaveChangesDialog = ( { children, onClose }: Pick< DialogProps, 'ch
 );
 
 const SaveChangesDialogTitle = ( { children, onClose }: React.PropsWithChildren & { onClose?: () => void } ) => (
-	<DialogTitle id={ TITLE_ID } display="flex" alignItems="center" gap={ 1 } sx={ { lineHeight: 1, justifyContent: 'space-between' } }>
+	<DialogTitle
+		id={ TITLE_ID }
+		display="flex"
+		alignItems="center"
+		gap={ 1 }
+		sx={ { lineHeight: 1, justifyContent: 'space-between' } }
+	>
 		<Stack direction="row" alignItems="center" gap={ 1 }>
-		<AlertTriangleFilledIcon color="secondary" />
-		{ children }
+			<AlertTriangleFilledIcon color="secondary" />
+			{ children }
 		</Stack>
 		{ onClose && (
 			<IconButton onClick={ onClose } size="small">
