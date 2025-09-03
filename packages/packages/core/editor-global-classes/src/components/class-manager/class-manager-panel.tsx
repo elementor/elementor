@@ -9,7 +9,7 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { ThemeProvider } from '@elementor/editor-ui';
+import { SaveChangesDialog, useDialog, ThemeProvider } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { XIcon } from '@elementor/icons';
 import { useMutation } from '@elementor/query';
@@ -42,7 +42,6 @@ import { hasDeletedItems, onDelete } from './delete-class';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
 import { blockPanelInteractions, unblockPanelInteractions } from './panel-interactions';
-import { SaveChangesDialog, useDialog } from './save-changes-dialog';
 
 const id = 'global-classes-manager';
 

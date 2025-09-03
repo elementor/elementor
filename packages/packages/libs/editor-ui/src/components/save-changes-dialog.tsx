@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { AlertTriangleFilledIcon } from '@elementor/icons';
+import { AlertTriangleFilledIcon, XIcon } from '@elementor/icons';
 import {
 	Button,
 	Dialog,
@@ -10,20 +10,29 @@ import {
 	type DialogContentTextProps,
 	type DialogProps,
 	DialogTitle,
+	IconButton,
+	Stack,
 } from '@elementor/ui';
 
 const TITLE_ID = 'save-changes-dialog';
 
-const SaveChangesDialog = ( { children, onClose }: Pick< DialogProps, 'children' | 'onClose' > ) => (
+export const SaveChangesDialog = ( { children, onClose }: Pick< DialogProps, 'children' | 'onClose' > ) => (
 	<Dialog open onClose={ onClose } aria-labelledby={ TITLE_ID } maxWidth="xs">
 		{ children }
 	</Dialog>
 );
 
-const SaveChangesDialogTitle = ( { children }: React.PropsWithChildren ) => (
-	<DialogTitle id={ TITLE_ID } display="flex" alignItems="center" gap={ 1 } sx={ { lineHeight: 1 } }>
+const SaveChangesDialogTitle = ( { children, onClose }: React.PropsWithChildren & { onClose?: () => void } ) => (
+	<DialogTitle id={ TITLE_ID } display="flex" alignItems="center" gap={ 1 } sx={ { lineHeight: 1, justifyContent: 'space-between' } }>
+		<Stack direction="row" alignItems="center" gap={ 1 }>
 		<AlertTriangleFilledIcon color="secondary" />
 		{ children }
+		</Stack>
+		{ onClose && (
+			<IconButton onClick={ onClose }>
+				<XIcon />
+			</IconButton>
+		) }
 	</DialogTitle>
 );
 
@@ -47,6 +56,7 @@ type ConfirmationDialogActionsProps = {
 		discard?: Action;
 	};
 };
+
 const SaveChangesDialogActions = ( { actions }: ConfirmationDialogActionsProps ) => {
 	const [ isConfirming, setIsConfirming ] = useState( false );
 	const { cancel, confirm, discard } = actions;
@@ -80,7 +90,7 @@ SaveChangesDialog.Content = SaveChangesDialogContent;
 SaveChangesDialog.ContentText = SaveChangesDialogContentText;
 SaveChangesDialog.Actions = SaveChangesDialogActions;
 
-const useDialog = () => {
+export const useDialog = () => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const open = () => setIsOpen( true );
@@ -88,5 +98,3 @@ const useDialog = () => {
 
 	return { isOpen, open, close };
 };
-
-export { SaveChangesDialog, useDialog };

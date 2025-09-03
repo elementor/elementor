@@ -8,7 +8,7 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { ThemeProvider } from '@elementor/editor-ui';
+import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { ColorFilterIcon, TrashIcon, XIcon } from '@elementor/icons';
 import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
@@ -43,8 +43,18 @@ export function VariablesManagerPanel() {
 
 	const [ isDirty, setIsDirty ] = useState( false );
 	const [ isSaving, setIsSaving ] = useState( false );
+	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 
 	usePreventUnload( isDirty );
+
+	const handleClosePanel = () => {
+		if ( isDirty ) {
+			openSaveChangesDialog();
+			return;
+		}
+
+		closePanel();
+	};
 
 	const handleSave = useCallback( async () => {
 		setIsSaving( true );
@@ -105,7 +115,7 @@ export function VariablesManagerPanel() {
 								<CloseButton
 									sx={ { marginLeft: 'auto' } }
 									onClose={ () => {
-										closePanel();
+										handleClosePanel();
 									} }
 								/>
 							</Stack>
@@ -149,6 +159,38 @@ export function VariablesManagerPanel() {
 					/>
 				) }
 			</ErrorBoundary>
+			{ isSaveChangesDialogOpen && (
+				<SaveChangesDialog>
+					<SaveChangesDialog.Title onClose={ closeSaveChangesDialog }>{ __( 'You have unsaved changes', 'elementor' ) }</SaveChangesDialog.Title>
+					<SaveChangesDialog.Content>
+						<SaveChangesDialog.ContentText sx={ { mb: 2 } }>
+							{ __(
+								"To avoid losing your updates, save your changes before leaving.",
+								'elementor'
+							) }
+						</SaveChangesDialog.ContentText>
+					</SaveChangesDialog.Content>
+					<SaveChangesDialog.Actions
+						actions={ {
+							discard: {
+								label: __( 'Discard', 'elementor' ),
+								action: () => {
+									closeSaveChangesDialog();
+									closePanel();
+								},
+							},
+							confirm: {
+								label: __( 'Save', 'elementor' ),
+								action: async () => {
+									await handleSave();
+									closeSaveChangesDialog();
+									closePanel();
+								},
+							},
+						} }
+					/>
+				</SaveChangesDialog>
+			) }
 		</ThemeProvider>
 	);
 }
