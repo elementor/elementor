@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { BrushBigIcon } from '@elementor/icons';
-import { IconButton, Paper, styled, Tooltip } from '@elementor/ui';
+import { IconButton, styled, Tooltip } from '@elementor/ui';
 
 type ClearIconButtonProps = {
 	onClick?: () => void;
@@ -10,8 +10,8 @@ type ClearIconButtonProps = {
 };
 
 const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
-	width: '20px',
-	height: '20px',
+	width: theme.spacing( 2.5 ),
+	height: theme.spacing( 2.5 ),
 
 	'&.Mui-disabled': {
 		pointerEvents: 'auto',
@@ -21,21 +21,10 @@ const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
 	},
 } ) );
 
-const ButtonWrapper = styled( Paper )( {
-	borderRadius: '20px',
-	width: '36px',
-	height: '24px',
-	display: 'flex',
-	justifyContent: 'center',
-	alignItems: 'center',
-} );
-
 export const ClearIconButton = ( { tooltipText, onClick, disabled, size = 'tiny' }: ClearIconButtonProps ) => (
 	<Tooltip title={ tooltipText } placement="top" disableInteractive>
-		<ButtonWrapper>
-			<CustomIconButton aria-label={ tooltipText } size={ size } onClick={ onClick } disabled={ disabled }>
-				<BrushBigIcon fontSize={ size } />
-			</CustomIconButton>
-		</ButtonWrapper>
+		<CustomIconButton aria-label={ tooltipText } size={ size } onClick={ onClick } disabled={ disabled }>
+			<BrushBigIcon fontSize={ size } />
+		</CustomIconButton>
 	</Tooltip>
 );

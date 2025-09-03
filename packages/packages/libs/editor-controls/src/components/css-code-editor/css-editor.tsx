@@ -5,8 +5,9 @@ import { useTheme } from '@elementor/ui';
 import { Editor } from '@monaco-editor/react';
 import { __ } from '@wordpress/i18n';
 
+import { FloatingActionsBar } from '../floating-bar';
 import { ClearIconButton } from '../icon-buttons/clear-icon-button';
-import { EditorWrapper, ResetButtonContainer } from './css-editor.styles';
+import { EditorWrapper } from './css-editor.styles';
 import { clearMarkersFromVisualContent, setCustomSyntaxRules, validate } from './css-validation';
 import { ResizeHandleComponent } from './resize-handle';
 import { preventChangeOnVisualContent } from './visual-content-change-protection';
@@ -65,7 +66,7 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 	const monacoRef = React.useRef< MonacoEditor | null >( null );
 	const debounceTimer = React.useRef< NodeJS.Timeout | null >( null );
 	const activeBreakpoint = useActiveBreakpoint();
-	const [ hasContent, setHasContent ] = React.useState< boolean >( value.trim() !== '' );
+	const [ hasContent, setHasContent ] = React.useState( value.trim() !== '' );
 
 	const handleUserContentChange = React.useCallback( ( newValue: string ) => {
 		setHasContent( newValue.trim() !== '' );
@@ -113,12 +114,7 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 
 	const handleEditorDidMount = createEditorDidMountHandler( editorRef, monacoRef, handleUserContentChange );
 
-	const handleReset = () => {
-		const model = editorRef.current?.getModel();
-		if ( model ) {
-			model.setValue( setVisualContent( '' ) );
-		}
-	};
+	const handleReset = () => editorRef.current?.getModel()?.setValue( setVisualContent( '' ) );
 
 	React.useEffect( () => {
 		const timerRef = debounceTimer;
@@ -131,42 +127,51 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 	}, [] );
 
 	return (
-		<EditorWrapper ref={ containerRef }>
-			{ hasContent && (
-				<ResetButtonContainer className="reset-btn-container">
-					<ClearIconButton tooltipText={ __( 'Clear', 'elementor' ) } onClick={ handleReset } />
-				</ResetButtonContainer>
-			) }
-			<Editor
-				key={ activeBreakpoint }
-				height="100%"
-				language="css"
-				theme={ theme.palette.mode === 'dark' ? 'vs-dark' : 'vs' }
-				value={ setVisualContent( value ) }
-				onMount={ handleEditorDidMount }
-				onChange={ handleEditorChange }
-				options={ {
-					lineNumbers: 'on',
-					folding: true,
-					minimap: { enabled: false },
-					fontFamily: 'Roboto, Arial, Helvetica, Verdana, sans-serif',
-					fontSize: 12,
-					renderLineHighlight: 'none',
-					hideCursorInOverviewRuler: true,
-					fixedOverflowWidgets: true,
-					suggestFontSize: 10,
-					suggestLineHeight: 14,
-					stickyScroll: {
-						enabled: false,
-					},
-					lineDecorationsWidth: 2,
-				} }
-			/>
-			<ResizeHandleComponent
-				onResize={ handleResize }
-				containerRef={ containerRef }
-				onHeightChange={ handleHeightChange }
-			/>
-		</EditorWrapper>
+		<FloatingActionsBar
+			actions={
+				hasContent
+					? [
+							<ClearIconButton
+								key="clear"
+								tooltipText={ __( 'Clear', 'elementor' ) }
+								onClick={ handleReset }
+							/>,
+					  ]
+					: []
+			}
+		>
+			<EditorWrapper ref={ containerRef }>
+				<Editor
+					key={ activeBreakpoint }
+					height="100%"
+					language="css"
+					theme={ theme.palette.mode === 'dark' ? 'vs-dark' : 'vs' }
+					value={ setVisualContent( value ) }
+					onMount={ handleEditorDidMount }
+					onChange={ handleEditorChange }
+					options={ {
+						lineNumbers: 'on',
+						folding: true,
+						minimap: { enabled: false },
+						fontFamily: 'Roboto, Arial, Helvetica, Verdana, sans-serif',
+						fontSize: 12,
+						renderLineHighlight: 'none',
+						hideCursorInOverviewRuler: true,
+						fixedOverflowWidgets: true,
+						suggestFontSize: 10,
+						suggestLineHeight: 14,
+						stickyScroll: {
+							enabled: false,
+						},
+						lineDecorationsWidth: 2,
+					} }
+				/>
+				<ResizeHandleComponent
+					onResize={ handleResize }
+					containerRef={ containerRef }
+					onHeightChange={ handleHeightChange }
+				/>
+			</EditorWrapper>
+		</FloatingActionsBar>
 	);
 };

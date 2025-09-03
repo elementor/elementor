@@ -1,14 +1,5 @@
 import { Box, Button, styled } from '@elementor/ui';
 
-export const ResetButtonContainer = styled( Box )`
-	position: absolute;
-	top: -16px;
-	right: 8px;
-	opacity: 0;
-	pointer-events: none;
-	transition: opacity 0.3s ease-in-out;
-`;
-
 export const EditorWrapper = styled( Box )`
 	border: 1px solid var( --e-a-border-color );
 	border-radius: 8px;
@@ -16,15 +7,10 @@ export const EditorWrapper = styled( Box )`
 	position: relative;
 	height: 200px;
 
-	&:hover .reset-btn-container,
-	&:focus-within .reset-btn-container {
-		opacity: 1;
-		pointer-events: auto;
-	}
-
 	.monaco-editor .suggest-widget {
 		width: 220px !important;
 		max-width: 220px !important;
+		z-index: 1001;
 	}
 
 	.visual-content-dimmed {
