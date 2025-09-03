@@ -223,8 +223,8 @@ class Editor_Common_Scripts_Settings {
 		return $client_env;
 	}
 
-	private static function ensure_numeric_keys( array $array ) {
-		return array_values( $array );
+	private static function ensure_numeric_keys( array $base_array ) {
+		return array_values( $base_array );
 	}
 
 	private static function bc_move_document_filters() {

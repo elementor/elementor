@@ -227,18 +227,18 @@ class Deprecation {
 	 *
 	 * @since 3.1.0
 	 *
-	 * @param string $function
+	 * @param string $function_name
 	 * @param string $version
-	 * @param string $replacement Optional. Default is ''
-	 * @param string $base_version Optional. Default is `null`
+	 * @param string $replacement   Optional. Default is ''
+	 * @param string $base_version  Optional. Default is `null`
 	 * @throws \Exception Deprecation error.
 	 */
-	public function deprecated_function( $function, $version, $replacement = '', $base_version = null ) {
-		$print_deprecated = $this->check_deprecation( $function, $version, $replacement, $base_version );
+	public function deprecated_function( $function_name, $version, $replacement = '', $base_version = null ) {
+		$print_deprecated = $this->check_deprecation( $function_name, $version, $replacement, $base_version );
 
 		if ( $print_deprecated ) {
 			// PHPCS - We need to echo special characters because they can exist in function calls.
-			_deprecated_function( $function, esc_html( $version ), $replacement );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			_deprecated_function( $function_name, esc_html( $version ), $replacement );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
