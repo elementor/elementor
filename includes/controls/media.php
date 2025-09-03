@@ -470,7 +470,7 @@ class Control_Media extends Control_Base_Multiple {
 		return wp_get_attachment_image_url( $control_value['id'], $control_value['size'] );
 	}
 
-	public static function sanitise_text( $string ) {
-		return esc_attr( strip_tags( $string ) );
+	public static function sanitise_text( $text ) {
+		return esc_attr( strip_tags( $text ) );
 	}
 }
