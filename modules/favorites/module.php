@@ -242,9 +242,6 @@ class Module extends BaseModule {
 	 * @throws \InvalidArgumentException If favorite action fails or validation errors occur.
 	 */
 	public function action_doesnt_exists( $action ) {
-		throw new \InvalidArgumentException( sprintf( esc_html(
-			"Action '%s' to apply on favorites doesn't exists",
-			$action
-		)) );
+		throw new \InvalidArgumentException( sprintf( "Action '%s' to apply on favorites doesn't exists", esc_html( $action ) ) );
 	}
 }
