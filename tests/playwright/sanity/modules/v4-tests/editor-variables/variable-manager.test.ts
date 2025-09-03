@@ -1,22 +1,24 @@
-import { expect } from '@playwright/test';
+import test, { expect } from '@playwright/test';
 
-import { variablesManagerFixture } from './base.fixture';
+import { addColorVariable, addFontVariable, initTemplate, openVariableManager } from './utils';
 
-variablesManagerFixture.describe( 'Variable Manager', () => {
-	variablesManagerFixture( 'Font Variable exists after creating in panel', async ( { addedFontVariable, openVariableManager } ) => {
-		expect( addedFontVariable ).toBeDefined();
-		const variableRow = openVariableManager.locator( 'tr', { hasText: addedFontVariable.name } );
+test.describe( 'Variable Manager @v4-tests', () => {
+	test.beforeEach( async ( { page } ) => {
+		await initTemplate( page );
+	} );
+
+	test( 'Font Variable exists after creating in panel', async ( { page } ) => {
+		const addedFontVariable = await addFontVariable( page );
+		await openVariableManager( page, 'Typography', 'font-family' );
+		const variableRow = page.locator( 'tr', { hasText: addedFontVariable.name } );
 		await expect( variableRow ).toBeVisible();
 		await expect( variableRow.getByText( addedFontVariable.value ) ).toBeVisible();
 	} );
-	variablesManagerFixture( 'Color Variable exists after creating in panel', async ( { addedColorVariable, openVariableManager } ) => {
-		expect( addedColorVariable ).toBeDefined();
-		const variableRow = openVariableManager.locator( 'tr', { hasText: addedColorVariable.name } );
+	test( 'Color Variable exists after creating in panel', async ( { page } ) => {
+		const addedColorVariable = await addColorVariable( page );
+		await openVariableManager( page, 'Typography', 'text-color' );
+		const variableRow = page.locator( 'tr', { hasText: addedColorVariable.name } );
 		await expect( variableRow ).toBeVisible();
 		await expect( variableRow.getByText( addedColorVariable.value ) ).toBeVisible();
 	} );
-} );
-
-variablesManagerFixture( 'Variable Manager', async ( { openVariableManager } ) => {
-	expect( openVariableManager ).toBeDefined();
 } );
