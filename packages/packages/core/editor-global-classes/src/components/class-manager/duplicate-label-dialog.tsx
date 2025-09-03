@@ -104,7 +104,7 @@ export const DuplicateLabelDialog = ( { modifiedLabels }: { modifiedLabels: Modi
 				<Button color="secondary" variant="text" onClick={ handleButtonClick }>
 					{ __( 'Go to Class Manager', 'elementor' ) }
 				</Button>
-				<Button color="secondary" variant="contained" onClick={ () => closeDialog() }>
+				<Button color="secondary" variant="contained" onClick={ closeDialog }>
 					{ __( 'Done', 'elementor' ) }
 				</Button>
 			</DialogActions>
