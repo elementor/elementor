@@ -81,9 +81,9 @@ class Editor {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param bool $die Optional. Whether to die at the end. Default is `true`.
+	 * @param bool $to_die Optional. Whether to die at the end. Default is `true`.
 	 */
-	public function init( $die = true ) {
+	public function init( $to_die = true ) {
 		if ( empty( $_REQUEST['post'] ) ) {
 			return;
 		}
@@ -160,7 +160,7 @@ class Editor {
 		$this->get_loader()->print_root_template();
 
 		// From the action it's an empty string, from tests its `false`
-		if ( false !== $die ) {
+		if ( false !== $to_die ) {
 			die;
 		}
 	}
