@@ -974,11 +974,11 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * @param string $class
+	 * @param string $class_name
 	 *
 	 * @return bool
 	 */
-	public function is_third_party_class( $class ) {
+	public function is_third_party_class( $class_name ) {
 		$allowed_classes = [
 			'Elementor\\',
 			'ElementorPro\\',
@@ -987,7 +987,7 @@ class Module extends BaseModule {
 		];
 
 		foreach ( $allowed_classes as $allowed_class ) {
-			if ( str_starts_with( $class, $allowed_class ) ) {
+			if ( str_starts_with( $class_name, $allowed_class ) ) {
 				return false;
 			}
 		}

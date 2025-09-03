@@ -37,12 +37,12 @@ class Manager {
 		$this->register_actions();
 	}
 
-	public function get( $class, $args ) {
-		$id = $class . '-' . wp_json_encode( $args );
+	public function get( $class_name, $args ) {
+		$id = $class_name . '-' . wp_json_encode( $args );
 
 		if ( ! isset( $this->files[ $id ] ) ) {
 			// Create an instance from dynamic args length.
-			$reflection_class = new \ReflectionClass( $class );
+			$reflection_class = new \ReflectionClass( $class_name );
 			$this->files[ $id ] = $reflection_class->newInstanceArgs( $args );
 		}
 
