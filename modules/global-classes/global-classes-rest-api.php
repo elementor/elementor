@@ -16,7 +16,8 @@ class Global_Classes_REST_API {
 	const API_BASE = 'global-classes';
 	const API_BASE_USAGE = self::API_BASE . '/usage';
 	const MAX_ITEMS = 50;
-
+	const LABEL_PREFIX = 'DUP_';
+	const MAX_LABEL_LENGTH = 50;
 	private $repository = null;
 
 	public function register_hooks() {
@@ -161,7 +162,18 @@ class Global_Classes_REST_API {
 	}
 
 	private function put( \WP_REST_Request $request ) {
+		$context = $request->get_param( 'context' );
+		$changes = $request->get_param( 'changes' ) ?? [];
+		$new_added_items_ids = $changes['added'] ?? [];
 		$parser = Global_Classes_Parser::make();
+		$existing_labels = Global_Classes_Repository::make()
+			->context( $context )
+			->all()
+			->get_items()
+			->map( function ( $item ) {
+				return $item['label'];
+			} )
+		->all();
 
 		$items_result = $parser->parse_items(
 			$request->get_param( 'items' )
@@ -169,14 +181,18 @@ class Global_Classes_REST_API {
 
 		$items_count = count( $items_result->unwrap() );
 
-		if ( $items_count > static::MAX_ITEMS ) {
+		if ( $items_count > self::MAX_ITEMS ) {
 			return Error_Builder::make( 'global_classes_limit_exceeded' )
 				->set_status( 400 )
-				->set_message( sprintf(
+				->set_meta([
+					'current_count' => $items_count,
+					'max_allowed' => self::MAX_ITEMS,
+				])
+				->set_message(sprintf(
 					/* translators: %d: Maximum allowed items. */
 					__( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
-					static::MAX_ITEMS
-				) )
+					self::MAX_ITEMS
+				))
 				->build();
 		}
 
@@ -204,13 +220,38 @@ class Global_Classes_REST_API {
 
 		$changes_resolver = Global_Classes_Changes_Resolver::make(
 			$repository,
-			$request->get_param( 'changes' ) ?? [],
+			$changes,
 		);
 
+		$duplicated_labels = Global_Classes_Parser::check_for_duplicate_labels(
+			$existing_labels,
+			$items_result->unwrap(),
+			$new_added_items_ids
+		);
+
+		$final_items = $items_result->unwrap();
+		$duplicate_validation_result = null;
+
+		if ( ! empty( $duplicated_labels ) ) {
+			$modified_labels = $this->handle_duplicates( $duplicated_labels, $existing_labels );
+			$duplicate_validation_result = $modified_labels;
+			foreach ( $modified_labels as $item_id => $labels ) {
+					$final_items[ $item_id ]['label'] = $labels['modified'];
+			}
+		}
+
 		$repository->put(
-			$changes_resolver->resolve_items( $items_result->unwrap() ),
+			$changes_resolver->resolve_items( $final_items ),
 			$changes_resolver->resolve_order( $order_result->unwrap() ),
 		);
+
+		if ( $duplicate_validation_result ) {
+			$response_data = [
+				'code' => 'DUPLICATED_LABEL',
+				'modifiedLabels' => $duplicate_validation_result,
+			];
+			return Response_Builder::make( $response_data )->build();
+		}
 
 		return Response_Builder::make()->no_content()->build();
 	}
@@ -225,5 +266,74 @@ class Global_Classes_REST_API {
 		}
 
 		return $response;
+	}
+
+	private function handle_duplicates( array $duplicate_labels, array $existing_labels ) {
+
+		$modified_labels = [];
+
+		foreach ( $duplicate_labels as $duplicate_label ) {
+			$item_id = $duplicate_label['item_id'];
+			$original_label = $duplicate_label['label'];
+
+			$modified_label = $this->generate_unique_label( $original_label, $existing_labels );
+
+			$modified_labels[ $item_id ] = [
+				'original' => $original_label,
+				'modified' => $modified_label,
+			];
+		}
+
+		return $modified_labels;
+	}
+
+
+	private function generate_unique_label( $original_label, $existing_labels ) {
+		$prefix = self::LABEL_PREFIX;
+		$max_length = self::MAX_LABEL_LENGTH;
+
+		$has_prefix = strpos( $original_label, $prefix ) === 0;
+
+		if ( $has_prefix ) {
+			$base_label = substr( $original_label, strlen( $prefix ) );
+
+			$counter = 1;
+			$new_label = $prefix . $base_label . $counter;
+
+			while ( in_array( $new_label, $existing_labels, true ) ) {
+				++$counter;
+				$new_label = $prefix . $base_label . $counter;
+			}
+
+			if ( strlen( $new_label ) > $max_length ) {
+				$available_length = $max_length - strlen( $prefix . $counter );
+				$base_label = substr( $base_label, 0, $available_length );
+				$new_label = $prefix . $base_label . $counter;
+			}
+		} else {
+			$new_label = $prefix . $original_label;
+
+			if ( strlen( $new_label ) > $max_length ) {
+				$available_length = $max_length - strlen( $prefix );
+				$new_label = $prefix . substr( $original_label, 0, $available_length );
+			}
+
+			$counter = 1;
+			$base_label = substr( $original_label, 0, $available_length ?? strlen( $original_label ) );
+
+			while ( in_array( $new_label, $existing_labels, true ) ) {
+				$new_label = $prefix . $base_label . $counter;
+
+				if ( strlen( $new_label ) > $max_length ) {
+					$available_length = $max_length - strlen( $prefix . $counter );
+					$base_label = substr( $original_label, 0, $available_length );
+					$new_label = $prefix . $base_label . $counter;
+				}
+
+				++$counter;
+			}
+		}
+
+		return $new_label;
 	}
 }
