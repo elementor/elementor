@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { ControlAdornments, ControlFormLabel, CssEditor } from '@elementor/editor-controls';
-import { SectionContent, useCustomCss } from '@elementor/editor-editing-panel';
 import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useCustomCss } from '../hooks/use-custom-css';
 import { CustomCssField } from './custom-css-field';
+import { SectionContent } from './section-content';
 
 export const CustomCss = () => {
 	const { customCss, setCustomCss } = useCustomCss();
@@ -25,7 +26,7 @@ export const CustomCss = () => {
 		<SectionContent>
 			<CustomCssField>
 				<Stack direction="row" alignItems="center" gap={ 1 }>
-					<ControlFormLabel>{ __( 'CSS code', 'elementor-pro' ) }</ControlFormLabel>
+					<ControlFormLabel>{ __( 'CSS code', 'elementor' ) }</ControlFormLabel>
 					<ControlAdornments />
 				</Stack>
 			</CustomCssField>
