@@ -154,8 +154,8 @@ class Export {
 		}
 	}
 
-	public function settings_include( $include ) {
-		$this->settings_include = $include;
+	public function settings_include( $included_settings ) {
+		$this->settings_include = $included_settings;
 	}
 
 	public function get_settings_include() {
