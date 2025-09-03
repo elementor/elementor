@@ -295,15 +295,15 @@ class Manager extends BaseModule {
 	 * @param string $endpoint
 	 * @param array  $args
 	 * @param string $method
-	 * @param string $namespace Optional.
-	 * @param string $version Optional.
+	 * @param string $name_space Optional.
+	 * @param string $version    Optional.
 	 *
 	 * @return \WP_REST_Response
 	 */
-	public function run_request( $endpoint, $args = [], $method = \WP_REST_Server::READABLE, $namespace = self::ROOT_NAMESPACE, $version = self::VERSION ) {
+	public function run_request( $endpoint, $args = [], $method = \WP_REST_Server::READABLE, $name_space = self::ROOT_NAMESPACE, $version = self::VERSION ) {
 		$this->run_server();
 
-		$endpoint = '/' . $namespace . '/v' . $version . '/' . trim( $endpoint, '/' );
+		$endpoint = '/' . $name_space . '/v' . $version . '/' . trim( $endpoint, '/' );
 
 		// Run reset api.
 		$request = new \WP_REST_Request( $method, $endpoint );
