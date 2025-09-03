@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { StyleIndicator, useCustomCss } from '@elementor/editor-editing-panel';
+
+import { useCustomCss } from '../hooks/use-custom-css';
+import { StyleIndicator } from './style-indicator';
 
 export const CustomCssIndicator = () => {
 	const { customCss } = useCustomCss();
