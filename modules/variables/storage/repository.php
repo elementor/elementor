@@ -415,8 +415,7 @@ class Repository {
 			return 404;
 		}
 
-		if ( $e instanceof DuplicatedLabel ||
-			 $e instanceof VariablesLimitReached ) {
+		if ( $e instanceof DuplicatedLabel || $e instanceof VariablesLimitReached ) {
 			return 400;
 		}
 

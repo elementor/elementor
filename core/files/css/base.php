@@ -908,7 +908,7 @@ abstract class Base extends Base_File {
 				$default_generic_fonts = Plugin::$instance->kits_manager->get_current_settings( 'default_generic_fonts' );
 
 				if ( $default_generic_fonts ) {
-					$value  .= ", $default_generic_fonts";
+					$value .= ", $default_generic_fonts";
 				}
 			}
 		} else {

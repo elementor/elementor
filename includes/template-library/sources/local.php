@@ -1352,7 +1352,7 @@ class Source_Local extends Source_Base {
 		if ( empty( $current_type ) ) {
 			$counts = (array) wp_count_posts( self::CPT );
 			unset( $counts['auto-draft'] );
-			$count  = array_sum( $counts );
+			$count = array_sum( $counts );
 
 			if ( 0 < $count ) {
 				return;
