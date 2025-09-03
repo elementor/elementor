@@ -815,7 +815,7 @@ class WP_Import extends \WP_Importer {
 						add_comment_meta( $inserted_comments[ $key ], wp_slash( $meta['key'] ), wp_slash_strings_only( $value ) );
 					}
 
-					$num_comments++;
+					++$num_comments;
 				}
 				unset( $newcomments, $inserted_comments, $post['comments'] );
 			}
