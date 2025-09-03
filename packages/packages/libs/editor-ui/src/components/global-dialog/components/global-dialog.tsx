@@ -10,9 +10,9 @@ export const GlobalDialog = () => {
 	const [ content, setContent ] = useState< DialogContentType | null >( null );
 
 	useEffect( () => {
-		const subscription = subscribeToDialogState( setContent );
+		const unsubscribe = subscribeToDialogState( setContent );
 		return () => {
-			subscription();
+			unsubscribe();
 		};
 	}, [] );
 

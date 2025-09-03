@@ -49,7 +49,7 @@ export const DuplicateLabelDialog = ( { modifiedLabels }: { modifiedLabels: Modi
 							'Some new classes used the same names as existing ones. To prevent conflicts, we added the prefix',
 							'elementor'
 						) }
-						<strong>{ DUP_PREFIX }</strong>
+						<strong> { DUP_PREFIX }</strong>
 					</Typography>
 
 					<Box>
