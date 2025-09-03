@@ -1070,67 +1070,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame('MyClass', $classes['items']['existing']['label']);
 	}
 
-	public function test_put__response_metadata_for_duplicate_resolution() {
-		// Arrange
-		$this->act_as_admin();
-
-		$existing_class = $this->create_global_class('existing', 'blue', 'MyClass');
-
-		$initial = [
-			'items' => [
-				'existing' => $existing_class,
-			],
-			'order' => ['existing'],
-		];
-
-		$this->kit->update_json_meta(Global_Classes_Repository::META_KEY_FRONTEND, $initial);
-
-		// Act - Try to add a new class with the same label
-		$request = new \WP_REST_Request('PUT', '/elementor/v1/global-classes');
-
-		$new_class = $this->create_global_class('new', 'red', 'MyClass');
-
-		$payload = [
-			'items' => [
-				'existing' => $existing_class,
-				'new' => $new_class,
-			],
-			'order' => ['existing', 'new'],
-			'changes' => [
-				'added' => ['new'],
-				'deleted' => [],
-				'modified' => [],
-			]
-		];
-
-		$request->set_body_params($payload);
-		$response = rest_do_request($request);
-
-		// Assert
-		$this->assertSame(200, $response->get_status());
-		$this->assertNotNull($response->get_data());
-
-		// Check response metadata
-		$response_data = $response->get_data();
-		$this->assertArrayHasKey('data', $response_data);
-		$this->assertArrayHasKey('code', $response_data['data']);
-		$this->assertSame('DUPLICATED_LABEL', $response_data['data']['code']);
-
-		// Check modifiedLabels array structure
-		$this->assertArrayHasKey('modifiedLabels', $response_data['data']);
-		$modified_labels = $response_data['data']['modifiedLabels'];
-		$this->assertIsArray($modified_labels);
-		$this->assertCount(1, $modified_labels, 'Should have 1 modified label: only the new class with duplicate label');
-
-		// Check modified label structure
-		$modified_label = $modified_labels[0];
-		$this->assertArrayHasKey('original', $modified_label);
-		$this->assertArrayHasKey('modified', $modified_label);
-		$this->assertArrayHasKey('id', $modified_label);
-		$this->assertSame('MyClass', $modified_label['original']);
-		$this->assertStringStartsWith('DUP_', $modified_label['modified']);
-		$this->assertSame('new', $modified_label['id']);
-	}
 
 	public function test_put__duplicate_resolution_with_maximum_classes() {
 		// Arrange

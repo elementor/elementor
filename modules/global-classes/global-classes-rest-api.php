@@ -166,16 +166,14 @@ class Global_Classes_REST_API {
 		$changes = $request->get_param( 'changes' ) ?? [];
 		$new_added_items_ids = $changes['added'] ?? [];
 		$parser = Global_Classes_Parser::make();
-		$existing_labels = array_column(Global_Classes_Repository::make()
+		$existing_labels = Global_Classes_Repository::make()
 			->context( $context )
 			->all()
 			->get_items()
 			->map( function ( $item ) {
-				return [
-					'label' => $item['label'],
-				];
+				return  $item['label'];
 			} )
-		->all(), 'label');
+		->all();
 
 		$items_result = $parser->parse_items(
 			$request->get_param( 'items' )
@@ -237,8 +235,8 @@ class Global_Classes_REST_API {
 		if ( ! empty( $duplicated_labels ) ) {
 			$modified_labels = $this->handle_duplicates( $duplicated_labels, $existing_labels );
 			$duplicate_validation_result = $modified_labels;
-			foreach ( $modified_labels as $item_id => $modifications ) {
-					$final_items[ $modifications['id'] ]['label'] = $modifications['modified'];
+			foreach ( $modified_labels as $item_id => $labels ) {
+					$final_items[$item_id ]['label'] = $labels['modified'];
 			}
 		}
 
@@ -280,10 +278,9 @@ class Global_Classes_REST_API {
 
 			$modified_label = $this->generate_unique_label( $original_label, $existing_labels );
 
-			$modified_labels[] = [
+			$modified_labels[$item_id] = [
 				'original' => $original_label,
 				'modified' => $modified_label,
-				'id' => $item_id,
 			];
 		}
 
