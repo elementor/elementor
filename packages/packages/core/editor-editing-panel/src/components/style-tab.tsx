@@ -4,6 +4,7 @@ import { CLASSES_PROP_KEY } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { type StyleDefinitionID, type StyleDefinitionState } from '@elementor/editor-styles';
 import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
+import { createLocation } from '@elementor/locations';
 import { createMenu } from '@elementor/menus';
 import { SessionStorageProvider } from '@elementor/session';
 import { Box, Divider, Stack } from '@elementor/ui';
@@ -26,18 +27,16 @@ import { SizeSection } from './style-sections/size-section/size-section';
 import { SpacingSection } from './style-sections/spacing-section/spacing-section';
 import { TypographySection } from './style-sections/typography-section/typography-section';
 import { StyleTabSection } from './style-tab-section';
-import { createLocation } from '@elementor/locations';
 
 const TABS_HEADER_HEIGHT = '37px';
 
 export const styleTabSectionMenu = createMenu( {
-	groups: [ 'style-sections', 'style' ],
 	components: {
 		section: StyleTabSection,
 	},
 } );
 
-export const { Slot: StyleTabSlot, inject: injectIntoStyleTab } = createLocation();
+// export const { Slot: StyleTabSlot, inject: injectIntoStyleTab } = createLocation();
 
 const { useMenuItems } = styleTabSectionMenu;
 export const stickyHeaderStyles = {
@@ -180,7 +179,10 @@ export const StyleTab = () => {
 									'transition',
 								] }
 							/>
-							<StyleTabSlot />
+							{ /* <StyleTabSlot /> */ }
+							{ extraSections.default.map( ( { id, MenuItem } ) => (
+								<MenuItem key={ id } />
+							) ) }
 						</SectionsList>
 						<Box sx={ { height: '150px' } } />
 					</StyleInheritanceProvider>
