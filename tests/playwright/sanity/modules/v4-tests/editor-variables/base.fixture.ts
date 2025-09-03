@@ -9,7 +9,8 @@ export const variablesManagerFixture = test.extend< {
 	openVariableManager: async ( { page }, use ) => {
 		const adminPage = new WpAdminPage( page );
 		await adminPage.setExperiments( { e_variables_manager: 'active' } );
-		await setDefaultTemplate( page );
+		const editorPage = await adminPage.openNewPage();
+		editorPage.loadTemplate( 'tests/playwright/templates/default-v4.json' );
 		await openVariableManager( page );
 		await use( page );
 	},

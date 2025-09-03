@@ -1,5 +1,6 @@
 const EditorSelectors = {
 	getWidgetByName: ( title: string ) => `[data-widget_type="${ title }.default"]`,
+	canvas: '#elementor-preview-iframe',
 	widget: '[data-element_type="widget"]',
 	container: '[data-element_type="container"]',
 	eflexbox: '[data-element_type="e-flexbox"]',
