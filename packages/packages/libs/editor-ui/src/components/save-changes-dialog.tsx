@@ -29,7 +29,7 @@ const SaveChangesDialogTitle = ( { children, onClose }: React.PropsWithChildren 
 		{ children }
 		</Stack>
 		{ onClose && (
-			<IconButton onClick={ onClose }>
+			<IconButton onClick={ onClose } size="small">
 				<XIcon />
 			</IconButton>
 		) }
