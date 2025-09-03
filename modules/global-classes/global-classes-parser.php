@@ -8,7 +8,6 @@ use Elementor\Modules\AtomicWidgets\Opt_In;
 use Elementor\Core\Utils\Api\Parse_Result;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Plugin;
 
 class Global_Classes_Parser {
 	public static function make() {
@@ -90,14 +89,6 @@ class Global_Classes_Parser {
 				continue;
 			}
 
-			if ( Plugin::$instance->experiments->is_feature_active( Opt_In::EXPERIMENT_NAME ) ) {
-				if ( in_array( $sanitized_item['label'], $existing_labels, true ) ) {
-					$result->errors()->add( "$item_id.id", 'duplicated_class_label' );
-
-					continue;
-				}
-			}
-
 			$sanitized_items[ $sanitized_item['id'] ] = $sanitized_item;
 			$existing_labels[] = $sanitized_item['label'];
 		}
@@ -125,5 +116,25 @@ class Global_Classes_Parser {
 		return $result->is_valid()
 			? $result->wrap( $order->values() )
 			: $result;
+	}
+
+	public static function check_for_duplicate_labels( array $existing_labels, array $items, array $new_items_ids ) {
+
+		if ( empty( $new_items_ids ) ) {
+			return false;
+		}
+		$new_added_items = array_filter( $items, fn( $item ) => in_array( $item['id'], $new_items_ids, true ) );
+
+		$duplicates = [];
+
+		foreach ( $new_added_items as $item_id => $item ) {
+			if ( in_array( $item['label'], $existing_labels, true ) ) {
+				$duplicates[] = [
+					'item_id' => $item_id,
+					'label' => $item['label'],
+				];
+			}
+		}
+		return $duplicates;
 	}
 }
