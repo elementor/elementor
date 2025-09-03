@@ -4,6 +4,7 @@ import { CLASSES_PROP_KEY } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { type StyleDefinitionID, type StyleDefinitionState } from '@elementor/editor-styles';
 import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
+import { createLocation } from '@elementor/locations';
 import { SessionStorageProvider } from '@elementor/session';
 import { Box, Divider, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -28,6 +29,8 @@ import { TypographySection } from './style-sections/typography-section/typograph
 import { StyleTabSection } from './style-tab-section';
 
 const TABS_HEADER_HEIGHT = '37px';
+
+export const { Slot: StyleTabSlot, inject: injectIntoStyleTab } = createLocation();
 
 export const stickyHeaderStyles = {
 	position: 'sticky',
@@ -179,6 +182,7 @@ export const StyleTab = () => {
 									unmountOnExit={ false }
 								/>
 							) }
+							<StyleTabSlot />
 						</SectionsList>
 						<Box sx={ { height: '150px' } } />
 					</StyleInheritanceProvider>
