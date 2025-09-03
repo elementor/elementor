@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { closeDialog } from '@elementor/editor-global-dialog';
-import { type ModifiedLabel } from '@elementor/editor-styles';
-import { EllipsisWithTooltip } from '@elementor/editor-ui';
+import { closeDialog, EllipsisWithTooltip } from '@elementor/editor-ui';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { __dispatch } from '@elementor/store';
 import {
@@ -19,12 +17,12 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { slice } from '../../store';
+import { type ModifiedLabels, slice } from '../../store';
 import { usePanelActions } from './panel-actions';
 
 const DUP_PREFIX = 'DUP_';
 
-export const DuplicateLabelDialog = ( { modifiedLabels }: { modifiedLabels: ModifiedLabel[] } ) => {
+export const DuplicateLabelDialog = ( { modifiedLabels }: { modifiedLabels: ModifiedLabels } ) => {
 	const { open } = usePanelActions();
 
 	React.useEffect( () => {
@@ -70,8 +68,8 @@ export const DuplicateLabelDialog = ( { modifiedLabels }: { modifiedLabels: Modi
 						</StyledBox>
 						<Divider sx={ { mt: 0.5, mb: 0.5 } } />
 						<Stack direction="column" gap={ 0.5 } sx={ { pb: 2 } }>
-							{ modifiedLabels.map( ( { original, modified, id } ) => (
-								<StyledBox key={ id }>
+							{ Object.values( modifiedLabels ).map( ( { original, modified }, index ) => (
+								<StyledBox key={ index }>
 									<Box sx={ { flex: 1 } }>
 										<EllipsisWithTooltip title={ original }>
 											<Typography variant="body2" sx={ { color: 'text.secondary' } }>

@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { openDialog } from '@elementor/editor-global-dialog';
+import { openDialog } from '@elementor/editor-ui';
 
 import { type API_ERROR_CODES } from '../api';
+import { type ModifiedLabels } from '../store';
 import { DuplicateLabelDialog } from './class-manager/duplicate-label-dialog';
 
 export type ErrorDialogData = {
@@ -10,7 +11,7 @@ export type ErrorDialogData = {
 	data: {
 		status: number;
 		meta: {
-			key: string; // The duplicated label
+			key: string;
 			duplicated_label: string;
 		};
 	};
@@ -19,16 +20,11 @@ export type ErrorDialogData = {
 type ErrorDialogProps = {
 	code: string;
 	message: string;
-	modifiedLabels: {
-		original: string;
-		modified: string;
-		id: string;
-	}[];
+	modifiedLabels: ModifiedLabels;
 };
 
 export const showErrorDialog = ( data: ErrorDialogProps ) => {
 	const { code, modifiedLabels } = data;
-
 	if ( code === 'DUPLICATED_LABEL' ) {
 		openDialog( {
 			component: <DuplicateLabelDialog modifiedLabels={ modifiedLabels } />,
