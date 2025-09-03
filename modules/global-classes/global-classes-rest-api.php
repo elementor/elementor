@@ -171,7 +171,7 @@ class Global_Classes_REST_API {
 			->all()
 			->get_items()
 			->map( function ( $item ) {
-				return  $item['label'];
+				return $item['label'];
 			} )
 		->all();
 
@@ -236,7 +236,7 @@ class Global_Classes_REST_API {
 			$modified_labels = $this->handle_duplicates( $duplicated_labels, $existing_labels );
 			$duplicate_validation_result = $modified_labels;
 			foreach ( $modified_labels as $item_id => $labels ) {
-					$final_items[$item_id ]['label'] = $labels['modified'];
+					$final_items[ $item_id ]['label'] = $labels['modified'];
 			}
 		}
 
@@ -278,7 +278,7 @@ class Global_Classes_REST_API {
 
 			$modified_label = $this->generate_unique_label( $original_label, $existing_labels );
 
-			$modified_labels[$item_id] = [
+			$modified_labels[ $item_id ] = [
 				'original' => $original_label,
 				'modified' => $modified_label,
 			];
