@@ -7,7 +7,7 @@ import { UPDATE_CLASS_CAPABILITY_KEY } from './capabilities';
 import { saveGlobalClasses } from './save-global-classes';
 import { selectIsDirty } from './store';
 
-export function syncWithDocumentSave( panelActions: { open: () => void } ) {
+export function syncWithDocumentSave( panelActions?: { open: () => void } ) {
 	const unsubscribe = syncDirtyState();
 
 	bindSaveAction( panelActions );
@@ -25,7 +25,7 @@ function syncDirtyState() {
 	} );
 }
 
-function bindSaveAction( panelActions: { open: () => void } ) {
+function bindSaveAction( panelActions?: { open: () => void } ) {
 	registerDataHook( 'after', 'document/save/save', ( args ) => {
 		const user = getCurrentUser();
 
@@ -37,7 +37,7 @@ function bindSaveAction( panelActions: { open: () => void } ) {
 
 		saveGlobalClasses( {
 			context: args.status === 'publish' ? 'frontend' : 'preview',
-			onApprove: panelActions.open,
+			onApprove: panelActions?.open,
 		} );
 	} );
 }

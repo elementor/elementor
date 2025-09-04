@@ -25,11 +25,11 @@ export const DuplicateLabelDialog = ( {
 	openPanel,
 }: {
 	modifiedLabels: ModifiedLabels;
-	openPanel: () => void;
+	openPanel?: () => void;
 } ) => {
 	const handleButtonClick = () => {
 		localStorage.setItem( 'elementor-global-classes-search', 'DUP_' );
-		openPanel();
+		openPanel?.();
 		closeDialog();
 	};
 

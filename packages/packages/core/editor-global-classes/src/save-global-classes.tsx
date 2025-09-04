@@ -9,7 +9,7 @@ import { type GlobalClasses, selectData, selectFrontendInitialData, selectPrevie
 
 type Options = {
 	context: ApiContext;
-	onApprove: () => void;
+	onApprove?: () => void;
 };
 
 export async function saveGlobalClasses( { context, onApprove }: Options ) {
