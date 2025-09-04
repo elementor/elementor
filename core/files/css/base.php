@@ -240,7 +240,7 @@ abstract class Base extends Base_File {
 				wp_add_inline_style( $dep, $meta['css'] );
 			}
 		} elseif ( self::CSS_STATUS_FILE === $meta['status'] ) { // Re-check if it's not empty after CSS update.
-			wp_enqueue_style( $this->get_file_handle_id(), $this->get_url(), $this->get_enqueue_dependencies(), null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			wp_enqueue_style( $this->get_file_handle_id(), $this->get_url(), $this->get_enqueue_dependencies(), null );
 		}
 
 		// Handle fonts.
@@ -908,7 +908,7 @@ abstract class Base extends Base_File {
 				$default_generic_fonts = Plugin::$instance->kits_manager->get_current_settings( 'default_generic_fonts' );
 
 				if ( $default_generic_fonts ) {
-					$value  .= ", $default_generic_fonts";
+					$value .= ", $default_generic_fonts";
 				}
 			}
 		} else {

@@ -26,7 +26,7 @@ export const EffectsSection = () => {
 	const { meta } = useStyle();
 
 	return (
-		<SectionContent>
+		<SectionContent gap={ 1 }>
 			<OpacityControlField />
 			<PanelDivider />
 			<StylesField bind="box-shadow" propDisplayName={ BOX_SHADOW_LABEL }>

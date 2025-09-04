@@ -4,13 +4,13 @@ import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { Section } from './section';
 import { getStylesInheritanceIndicators } from './style-tab-collapsible-content';
 
-type Section = {
+type SectionType = {
 	component: () => React.JSX.Element;
 	name: string;
 	title: string;
 };
 
-type Props = { section: Section; fields?: string[]; unmountOnExit?: boolean };
+type Props = { section: SectionType; fields?: string[]; unmountOnExit?: boolean };
 
 export const StyleTabSection = ( { section, fields = [], unmountOnExit = true }: Props ) => {
 	const { component, name, title } = section;

@@ -270,9 +270,9 @@ class Manager {
 	 * @access public
 	 * @deprecated 3.5.0 Use `register()` method instead.
 	 *
-	 * @param string $class
+	 * @param string $class_name
 	 */
-	public function register_tag( $class ) {
+	public function register_tag( $class_name ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 			__METHOD__,
 			'3.5.0',
@@ -280,7 +280,7 @@ class Manager {
 		);
 
 		/** @var Base_Tag $tag */
-		$instance = new $class();
+		$instance = new $class_name();
 
 		$this->register( $instance );
 	}
@@ -397,8 +397,7 @@ class Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @throws \Exception If post ID is missing.
-	 * @throws \Exception If current user don't have permissions to edit the post.
+	 * @throws \Exception If post ID is missing or current user don't have permissions to edit the post.
 	 */
 	public function ajax_render_tags( $data ) {
 		if ( empty( $data['post_id'] ) ) {
