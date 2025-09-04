@@ -286,6 +286,45 @@ describe( 'ImportComplete Page', () => {
 			expect( screen.getByText( '1 Taxonomy' ) ).toBeTruthy();
 		} );
 
+		it( 'counts taxonomies correctly for the provided example', () => {
+			// Arrange - matches the exact example provided by user
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					taxonomies: {
+						product: {
+							product_type: [
+								{ old_id: 5, new_id: 5, old_slug: 'external', new_slug: 'external' },
+								{ old_id: 3, new_id: 3, old_slug: 'grouped', new_slug: 'grouped' },
+								{ old_id: 2, new_id: 2, old_slug: 'simple', new_slug: 'simple' },
+								{ old_id: 4, new_id: 4, old_slug: 'variable', new_slug: 'variable' },
+							],
+							product_visibility: [
+								{ old_id: 7, new_id: 7, old_slug: 'exclude-from-catalog', new_slug: 'exclude-from-catalog' },
+								{ old_id: 6, new_id: 6, old_slug: 'exclude-from-search', new_slug: 'exclude-from-search' },
+								{ old_id: 8, new_id: 8, old_slug: 'featured', new_slug: 'featured' },
+								{ old_id: 9, new_id: 9, old_slug: 'outofstock', new_slug: 'outofstock' },
+								{ old_id: 10, new_id: 10, old_slug: 'rated-1', new_slug: 'rated-1' },
+								{ old_id: 11, new_id: 11, old_slug: 'rated-2', new_slug: 'rated-2' },
+								{ old_id: 12, new_id: 12, old_slug: 'rated-3', new_slug: 'rated-3' },
+								{ old_id: 13, new_id: 13, old_slug: 'rated-4', new_slug: 'rated-4' },
+								{ old_id: 14, new_id: 14, old_slug: 'rated-5', new_slug: 'rated-5' },
+							],
+							product_cat: [
+								{ old_id: 15, new_id: 15, old_slug: 'uncategorized', new_slug: 'uncategorized' },
+							],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '14 Taxonomies' ) ).toBeTruthy();
+		} );
+
 		it( 'combines counts from multiple sections for same content type', () => {
 			// Arrange
 			mockUseImportContext.mockReturnValue( {
@@ -376,6 +415,177 @@ describe( 'ImportComplete Page', () => {
 			render( <ImportComplete /> );
 			// Assert
 			expect( screen.getByText( 'No content imported' ) ).toBeTruthy();
+		} );
+
+		it( 'counts nav menu items from wp-content section', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					'wp-content': {
+						nav_menu_item: {
+							succeed: { 1: 101, 2: 102, 3: 103 },
+							failed: [],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '3 Menus' ) ).toBeTruthy();
+		} );
+
+		it( 'counts nav menu items from content section', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					content: {
+						nav_menu_item: {
+							succeed: { 1: 101 },
+							failed: [],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '1 Menu' ) ).toBeTruthy();
+		} );
+
+		it( 'counts nav menu items from elementor-content section', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					'elementor-content': {
+						nav_menu_item: {
+							succeed: { 1: 101, 2: 102 },
+							failed: [],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '2 Menus' ) ).toBeTruthy();
+		} );
+
+		it( 'combines nav menu items from multiple sections', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					'wp-content': {
+						nav_menu_item: {
+							succeed: { 1: 101, 2: 102 },
+							failed: [],
+						},
+					},
+					content: {
+						nav_menu_item: {
+							succeed: { 3: 103 },
+							failed: [],
+						},
+					},
+					'elementor-content': {
+						nav_menu_item: {
+							succeed: { 4: 104, 5: 105 },
+							failed: [],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '5 Menus' ) ).toBeTruthy();
+		} );
+
+		it( 'combines nav menu items with other content types', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					'wp-content': {
+						page: {
+							succeed: { 1: 101, 2: 102 },
+							failed: [],
+						},
+						nav_menu_item: {
+							succeed: { 3: 103, 4: 104 },
+							failed: [],
+						},
+					},
+					taxonomies: {
+						product: {
+							product_type: [
+								{ old_id: 1, new_id: 1 },
+							],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '2 Pages | 1 Taxonomy | 2 Menus' ) ).toBeTruthy();
+		} );
+
+		it( 'does not show menus when count is 0', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					'wp-content': {
+						nav_menu_item: {
+							succeed: {},
+							failed: [ { id: 1, error: 'Failed' } ],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( 'No content imported' ) ).toBeTruthy();
+		} );
+
+		it( 'does not show menus when nav_menu_item does not exist', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					'wp-content': {
+						page: {
+							succeed: { 1: 101 },
+							failed: [],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '1 Page' ) ).toBeTruthy();
+			expect( screen.queryByText( /Menu/ ) ).toBeFalsy();
 		} );
 	} );
 } );

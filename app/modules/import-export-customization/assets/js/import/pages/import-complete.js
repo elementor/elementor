@@ -81,7 +81,14 @@ export default function ImportComplete() {
 			} );
 		}
 
-		const hasContent = Object.keys( contentCounts ).length > 0 || totalTaxonomies > 0;
+		let totalNavMenuItems = 0;
+		[ wpContent, content, elementorContent ].forEach( ( contentSection ) => {
+			if ( contentSection?.nav_menu_item?.succeed ) {
+				totalNavMenuItems += Object.keys( contentSection.nav_menu_item.succeed ).length;
+			}
+		} );
+
+		const hasContent = Object.keys( contentCounts ).length > 0 || totalTaxonomies > 0 || totalNavMenuItems > 0;
 
 		if ( ! hasContent ) {
 			return __( 'No content imported', 'elementor' );
@@ -100,6 +107,11 @@ export default function ImportComplete() {
 		if ( totalTaxonomies > 0 ) {
 			const taxonomyLabel = totalTaxonomies > 1 ? __( 'Taxonomies', 'elementor' ) : __( 'Taxonomy', 'elementor' );
 			summaryParts.push( `${ totalTaxonomies } ${ taxonomyLabel }` );
+		}
+
+		if ( totalNavMenuItems > 0 ) {
+			const menuLabel = totalNavMenuItems > 1 ? __( 'Menus', 'elementor' ) : __( 'Menu', 'elementor' );
+			summaryParts.push( `${ totalNavMenuItems } ${ menuLabel }` );
 		}
 
 		return summaryParts.length > 0 ? summaryParts.join( ' | ' ) : __( 'No content imported', 'elementor' );
