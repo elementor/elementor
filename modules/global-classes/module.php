@@ -7,7 +7,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Database\Global_Classes_Database_Updater;
 use Elementor\Modules\GlobalClasses\ImportExport\Import_Export;
-use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export as ImportExportCustomizationImport_Export;
+use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Modules\GlobalClasses\Usage\Global_Classes_Usage;
 use Elementor\Plugin;
 
@@ -48,7 +48,7 @@ class Module extends BaseModule {
 			( new Global_Classes_Database_Updater() )->register();
 
 			if ( Plugin::$instance->experiments->is_feature_active( 'import-export-customization' ) ) {
-				( new ImportExportCustomizationImport_Export() )->register_hooks();
+				( new Import_Export_Customization() )->register_hooks();
 			}
 		}
 	}

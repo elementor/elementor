@@ -5,7 +5,7 @@ namespace Elementor\Modules\GlobalClasses\ImportExportCustomization;
 use Elementor\App\Modules\ImportExportCustomization\Processes\Export;
 use Elementor\App\Modules\ImportExportCustomization\Processes\Import;
 
-class Import_Export {
+class Import_Export_Customization {
 	const FILE_NAME = 'global-classes';
 
 	public function register_hooks() {

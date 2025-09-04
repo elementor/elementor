@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Import_Export {
+class Import_Export_Customization {
 	const FILE_NAME = 'kit-elements-defaults';
 
 	public function register() {
