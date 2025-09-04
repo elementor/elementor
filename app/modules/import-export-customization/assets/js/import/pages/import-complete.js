@@ -17,7 +17,7 @@ export default function ImportComplete() {
 	const navigate = useNavigate();
 
 	const getTemplatesSummary = useCallback( () => {
-		const templatesSummary = runnersState.templates?.succeed_summary;
+		const templatesSummary = runnersState?.templates?.succeed_summary;
 
 		if ( ! templatesSummary ) {
 			return __( 'No templates imported', 'elementor' );
@@ -37,36 +37,89 @@ export default function ImportComplete() {
 			} ).filter( ( part ) => part !== null );
 
 		return summaryParts.length > 0 ? summaryParts.join( ' | ' ) : __( 'No templates imported', 'elementor' );
-	}, [ runnersState.templates?.succeed_summary ] );
+	}, [ runnersState?.templates?.succeed_summary ] );
 
 	const getContentSummary = useCallback( () => {
-		const content = data?.uploadedData?.manifest?.content;
-		if ( ! content ) {
+		const elementorContent = runnersState?.[ 'elementor-content' ];
+		const wpContent = runnersState?.[ 'wp-content' ];
+		const content = runnersState?.content;
+		const taxonomies = runnersState?.taxonomies;
+
+		const contentCounts = {};
+		const summaryTitles = elementorAppConfig[ 'import-export-customization' ]?.summaryTitles?.content || {};
+
+		const countSucceedItems = ( contentSection ) => {
+			if ( ! contentSection ) {
+				return {};
+			}
+
+			const counts = {};
+			Object.entries( contentSection ).forEach( ( [ docType, result ] ) => {
+				if ( result?.succeed && Object.keys( result.succeed ).length > 0 ) {
+					counts[ docType ] = ( counts[ docType ] || 0 ) + Object.keys( result.succeed ).length;
+				}
+			} );
+			return counts;
+		};
+
+		const wpContentCounts = countSucceedItems( wpContent );
+		const contentCountsFromContent = countSucceedItems( content );
+		const elementorContentCounts = countSucceedItems( elementorContent );
+
+		[ wpContentCounts, contentCountsFromContent, elementorContentCounts ].forEach( ( counts ) => {
+			Object.entries( counts ).forEach( ( [ docType, count ] ) => {
+				contentCounts[ docType ] = ( contentCounts[ docType ] || 0 ) + count;
+			} );
+		} );
+
+		let totalTaxonomies = 0;
+		if ( taxonomies ) {
+			Object.values( taxonomies ).forEach( ( taxonomy ) => {
+				Object.values( taxonomy ).forEach( ( terms ) => {
+					totalTaxonomies += terms.length;
+				} );
+			} );
+		}
+
+		let totalNavMenuItems = 0;
+		[ wpContent, content, elementorContent ].forEach( ( contentSection ) => {
+			if ( contentSection?.nav_menu_item?.succeed ) {
+				totalNavMenuItems += Object.keys( contentSection.nav_menu_item.succeed ).length;
+			}
+		} );
+
+		const hasContent = Object.keys( contentCounts ).length > 0 || totalTaxonomies > 0 || totalNavMenuItems > 0;
+
+		if ( ! hasContent ) {
 			return __( 'No content imported', 'elementor' );
 		}
 
-		const summaryTitles = elementorAppConfig[ 'import-export-customization' ]?.summaryTitles?.content || {};
+		const summaryParts = [];
 
-		const summaryParts = Object.entries( content ).map( ( [ docType, docs ] ) => {
+		Object.entries( contentCounts ).forEach( ( [ docType, count ] ) => {
 			const label = summaryTitles[ docType ];
-			if ( ! label ) {
-				return null;
+			if ( label && count > 0 ) {
+				const title = count > 1 ? label.plural : label.single;
+				summaryParts.push( `${ count } ${ title }` );
 			}
-			const count = Object.keys( docs ).length;
-			if ( 0 === count ) {
-				return null;
-			}
+		} );
 
-			const title = count > 1 ? label.plural : label.single;
-			return `${ count } ${ title }`;
-		} ).filter( ( part ) => part !== null );
+		if ( totalTaxonomies > 0 ) {
+			const taxonomyLabel = totalTaxonomies > 1 ? __( 'Taxonomies', 'elementor' ) : __( 'Taxonomy', 'elementor' );
+			summaryParts.push( `${ totalTaxonomies } ${ taxonomyLabel }` );
+		}
+
+		if ( totalNavMenuItems > 0 ) {
+			const menuLabel = totalNavMenuItems > 1 ? __( 'Menus', 'elementor' ) : __( 'Menu', 'elementor' );
+			summaryParts.push( `${ totalNavMenuItems } ${ menuLabel }` );
+		}
 
 		return summaryParts.length > 0 ? summaryParts.join( ' | ' ) : __( 'No content imported', 'elementor' );
-	}, [ data?.uploadedData?.manifest?.content ] );
+	}, [ runnersState ] );
 
 	const getPluginsSummary = useCallback( () => {
-		return runnersState.plugins ? runnersState.plugins.join( ' | ' ) : __( 'No plugins imported', 'elementor' );
-	}, [ runnersState.plugins ] );
+		return runnersState?.plugins ? runnersState.plugins.join( ' | ' ) : __( 'No plugins imported', 'elementor' );
+	}, [ runnersState?.plugins ] );
 
 	const getSettingsSummary = useCallback( () => {
 		const siteSettings = data.includes.includes( 'settings' )
