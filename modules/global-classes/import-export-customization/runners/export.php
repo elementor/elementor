@@ -20,7 +20,6 @@ class Export extends Export_Runner_Base {
 	public function should_export( array $data ) {
 		// Same as the site-settings runner.
 		return (
-			Plugin::$instance->experiments->is_feature_active( 'import-export-customization' ) &&
 			isset( $data['include'] ) &&
 			in_array( 'settings', $data['include'], true )
 		);
