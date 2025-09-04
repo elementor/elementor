@@ -36,6 +36,7 @@ export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
 export { ClearIconButton } from './components/icon-buttons/clear-icon-button';
 export { Repeater } from './components/repeater';
+export { FloatingActionsBar } from './components/floating-bar';
 
 // types
 export type { ControlComponent } from './create-control';
