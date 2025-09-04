@@ -45,7 +45,8 @@
     "@elementor/locations": "3.33.0",
     "@elementor/query": "3.33.0",
     "@elementor/store": "3.33.0",
-    "@elementor/ui": "1.36.12"
+    "@elementor/ui": "1.36.12",
+    "@elementor/editor-ui": "3.33.0"
   },
   "peerDependencies": {
     "react": "^18.3.1",
