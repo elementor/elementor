@@ -14,7 +14,12 @@ import { selectFrontendInitialData, selectIsDirty, selectPreviewInitialData, sli
 import { syncWithDocumentSave } from '../sync-with-document-save';
 
 jest.mock( '@elementor/editor-v1-adapters' );
-jest.mock( '../api' );
+jest.mock( '../api', () => ( {
+	apiClient: {
+		publish: jest.fn().mockResolvedValue( { data: { data: {} } } ),
+		saveDraft: jest.fn().mockResolvedValue( { data: { data: {} } } ),
+	},
+} ) );
 jest.mock( '@elementor/editor-current-user' );
 
 describe( 'syncWithDocumentSave', () => {
@@ -30,7 +35,7 @@ describe( 'syncWithDocumentSave', () => {
 
 	it( 'should sync global classes dirty state with the document dirty state', () => {
 		// Arrange.
-		const unsubscribe = syncWithDocumentSave();
+		const unsubscribe = syncWithDocumentSave( { open: () => {} } );
 
 		// Act.
 		const styleDefinition = createMockStyleDefinition();
@@ -56,7 +61,7 @@ describe( 'syncWithDocumentSave', () => {
 			// Arrange.
 			const triggerHook = mockRegisterDataHook();
 
-			const unsubscribe = syncWithDocumentSave();
+			const unsubscribe = syncWithDocumentSave( { open: () => {} } );
 
 			const styleDefinition = createMockStyleDefinition();
 
@@ -109,7 +114,7 @@ describe( 'syncWithDocumentSave', () => {
 			capabilities: [],
 		} as never );
 
-		const unsubscribe = syncWithDocumentSave();
+		const unsubscribe = syncWithDocumentSave( { open: () => {} } );
 
 		const styleDefinition = createMockStyleDefinition();
 

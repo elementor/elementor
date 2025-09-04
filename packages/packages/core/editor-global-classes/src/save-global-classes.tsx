@@ -23,10 +23,10 @@ export async function saveGlobalClasses( { context, onApprove }: Options ) {
 	} );
 
 	dispatch( slice.actions.reset( { context } ) );
-	if ( response.data.data.code === 'DUPLICATED_LABEL' ) {
+	if ( response?.data?.data?.code === 'DUPLICATED_LABEL' ) {
 		openDialog( {
 			component: (
-				<DuplicateLabelDialog modifiedLabels={ response.data.data.modifiedLabels } openPanel={ onApprove } />
+				<DuplicateLabelDialog modifiedLabels={ response.data.data.modifiedLabels || [] } openPanel={ onApprove } />
 			),
 		} );
 	}

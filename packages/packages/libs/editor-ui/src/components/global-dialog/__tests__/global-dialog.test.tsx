@@ -201,11 +201,8 @@ describe( 'GlobalDialog', () => {
 		// Arrange
 		const TestDialogContent = () => <div>Test Dialog</div>;
 
-		let unmount: ReturnType< typeof render >[ 'unmount' ];
-		act( () => {
-			const result = render( <GlobalDialog /> );
-			unmount = result.unmount;
-		} );
+		const view = render( <GlobalDialog /> );
+		const unmount = view.unmount;
 
 		// Open dialog to verify subscription is working
 		act( () => {
