@@ -17,6 +17,14 @@ export const EditorWrapper = styled( Box )`
 		color: #aaa !important;
 		pointer-events: none;
 	}
+
+	.monaco-editor .monaco-scrollable-element > .scrollbar {
+		width: 6px !important;
+	}
+
+	.monaco-editor .monaco-scrollable-element > .scrollbar > .slider {
+		width: 6px !important;
+	}
 `;
 
 export const ResizeHandle = styled( Button )`
