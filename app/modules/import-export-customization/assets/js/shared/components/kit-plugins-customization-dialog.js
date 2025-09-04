@@ -288,9 +288,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 				</Button>
 				<Button
 					onClick={ () => {
-						const pluginsSelection = getPluginsSelection();
-						const hasEnabledCustomization = Object.values( pluginsSelection ).some( Boolean );
-						handleSaveChanges( 'plugins', pluginsSelection, hasEnabledCustomization, unselectedValues.current );
+						handleSaveChanges( 'plugins', getPluginsSelection(), unselectedValues.current );
 						handleClose();
 					} }
 					variant="contained"

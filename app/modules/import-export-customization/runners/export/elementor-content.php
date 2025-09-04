@@ -57,6 +57,8 @@ class Elementor_Content extends Export_Runner_Base {
 	}
 
 	private function export_elementor_post_type( $post_type, $customization ) {
+		$selected_pages = $customization['pages'] ?? null;
+
 		$manifest_data = [];
 		$files = [];
 

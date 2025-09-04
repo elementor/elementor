@@ -28,11 +28,13 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		if ( data.customization.settings ) {
 			return {
 				...data.customization.settings,
+				hasOtherEnabledParts: true,
 			};
 		}
 
 		return {
 			theme: initialState,
+			hasOtherEnabledParts: true,
 		};
 	} );
 
@@ -41,10 +43,12 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 			if ( data.customization.settings ) {
 				setSettings( {
 					...data.customization.settings,
+					hasOtherEnabledParts: true,
 				} );
 			} else {
 				setSettings( {
 					theme: initialState,
+					hasOtherEnabledParts: true,
 				} );
 			}
 		}
@@ -72,7 +76,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 			open={ open }
 			title={ __( 'Edit settings & configurations', 'elementor' ) }
 			handleClose={ handleClose }
-			handleSaveChanges={ () => handleSaveChanges( 'settings', settings, true, unselectedValues.current ) }
+			handleSaveChanges={ () => handleSaveChanges( 'settings', settings, unselectedValues.current ) }
 		>
 			<Stack>
 				<SettingSection
