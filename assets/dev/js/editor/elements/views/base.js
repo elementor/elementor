@@ -541,16 +541,16 @@ BaseElementView = BaseContainer.extend( {
 			settings = this.getEditModel().get( 'settings' );
 		}
 
-		this.controlsCSSParser.stylesheet.empty();
+		this.controlsCSSParser?.stylesheet?.empty();
 
-		this.controlsCSSParser.addStyleRules(
+		this.controlsCSSParser?.addStyleRules(
 			settings.getStyleControls(),
 			settings.attributes,
 			this.getEditModel().get( 'settings' ).controls,
 			[ /{{ID}}/g, /{{WRAPPER}}/g ],
 			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .elementor-element.' + this.getElementUniqueID() ] );
 
-		this.controlsCSSParser.addStyleToDocument();
+		this.controlsCSSParser?.addStyleToDocument();
 	},
 
 	renderCustomClasses() {

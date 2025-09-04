@@ -38,6 +38,7 @@ export class SwitchToActiveDocument extends $e.modules.hookUI.After {
 			await $e.run( 'editor/documents/switch', {
 				id: activeDocumentId,
 				mode: 'autosave',
+				selector: '[data-id="6f3f83c"] > .e-component > [data-elementor-id="1656"]',
 			} );
 		} catch ( e ) {
 			$e.run( 'editor/documents/switch', {

@@ -25,6 +25,9 @@ export default class AtomicContainer extends elementor.modules.elements.models.E
 	}
 
 	getDefaultChildren() {
+		if ( ! this.config?.default_children ) {
+			return;
+		}
 		const { default_children: defaultChildren } = this.config;
 
 		return defaultChildren.map( ( element ) => {
