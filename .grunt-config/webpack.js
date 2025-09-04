@@ -284,6 +284,10 @@ const prodSharedConfig = {
 		filename: '[name].js',
 	},
 	performance: { hints: false },
+	cache: {
+		type: 'filesystem',
+    	allowCollectingMemory: true,
+	}
 };
 
 const webpackProductionConfig = [
