@@ -3,7 +3,7 @@
 namespace Elementor\Testing\Modules\GlobalClasses\ImportExportCustomization;
 
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\GlobalClasses\ImportExportCustomization\Export_Runner;
+use Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners\Export as Export_Runner;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {

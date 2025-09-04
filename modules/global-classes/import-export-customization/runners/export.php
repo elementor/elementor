@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\GlobalClasses\ImportExportCustomization;
+namespace Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners;
 
 use Elementor\App\Modules\ImportExportCustomization\Runners\Export\Export_Runner_Base;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Export_Runner extends Export_Runner_Base {
+class Export extends Export_Runner_Base {
 	public static function get_name(): string {
 		return 'global-classes';
 	}

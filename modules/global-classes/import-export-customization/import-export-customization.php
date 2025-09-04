@@ -4,6 +4,8 @@ namespace Elementor\Modules\GlobalClasses\ImportExportCustomization;
 
 use Elementor\App\Modules\ImportExportCustomization\Processes\Export;
 use Elementor\App\Modules\ImportExportCustomization\Processes\Import;
+use Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners\Export as Export_Runner;
+use Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners\Import as Import_Runner;
 
 class Import_Export_Customization {
 	const FILE_NAME = 'global-classes';

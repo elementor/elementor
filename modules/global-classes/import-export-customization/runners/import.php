@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\GlobalClasses\ImportExportCustomization;
+namespace Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners;
 
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner_Base;
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Import_Runner extends Import_Runner_Base {
+class Import extends Import_Runner_Base {
 	public static function get_name(): string {
 		return 'global-classes';
 	}

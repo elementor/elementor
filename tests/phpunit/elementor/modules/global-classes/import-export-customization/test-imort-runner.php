@@ -3,7 +3,7 @@
 namespace Elementor\Testing\Modules\GlobalClasses\ImportExportCustomization;
 
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Runner;
+use Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners\Import as Import_Runner;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
