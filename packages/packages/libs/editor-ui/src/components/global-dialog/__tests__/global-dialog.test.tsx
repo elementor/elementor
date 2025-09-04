@@ -45,11 +45,7 @@ jest.mock( '../event-bus', () => {
 
 // Helper function to render GlobalDialog
 const renderGlobalDialog = () => {
-	let result: ReturnType< typeof render >;
-	act( () => {
-		result = render( <GlobalDialog /> );
-	} );
-	return result!;
+	return render( <GlobalDialog /> );
 };
 
 describe( 'GlobalDialog', () => {
