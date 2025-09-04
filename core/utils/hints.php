@@ -493,9 +493,9 @@ class Hints {
 
 		if ( ! $is_installed ) {
 			$step = self::INSTALL;
-		} else if ( ! $is_active ) {
+		} elseif ( ! $is_active ) {
 			$step = self::ACTIVATE;
-		} else if ( ! $is_connected ) {
+		} elseif ( ! $is_connected ) {
 			$step = self::CONNECT;
 		} else {
 			$step = self::CUSTOMIZE;
