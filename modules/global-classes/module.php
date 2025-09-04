@@ -47,10 +47,6 @@ class Module extends BaseModule {
 			( new Import_Export() )->register_hooks();
 			( new Import_Export_Customization() )->register_hooks();
 			( new Global_Classes_Database_Updater() )->register();
-
-			if ( Plugin::$instance->experiments->is_feature_active( 'import-export-customization' ) ) {
-				( new Import_Export_Customization() )->register_hooks();
-			}
 		}
 	}
 
