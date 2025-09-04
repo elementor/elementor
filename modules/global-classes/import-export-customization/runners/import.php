@@ -6,6 +6,7 @@ use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
+use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
