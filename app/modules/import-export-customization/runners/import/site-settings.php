@@ -59,6 +59,10 @@ class Site_Settings extends Import_Runner_Base {
 	private $imported_experiments = [];
 
 	public function get_theme_upgrader(): \Theme_Upgrader {
+		if ( ! function_exists( 'request_filesystem_credentials' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
 		if ( ! class_exists( '\Theme_Upgrader' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 		}
