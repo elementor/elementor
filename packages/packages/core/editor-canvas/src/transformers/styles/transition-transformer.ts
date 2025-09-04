@@ -13,7 +13,10 @@ export const transitionTransformer = createTransformer( ( transitionValues: Tran
 		return null;
 	}
 
-	return transitionValues.filter( Boolean ).map( mapToTransitionString ).join( ', ' );
+	const transitionString = transitionValues.filter( Boolean ).map( mapToTransitionString ).join( ', ' );
+
+	// Return the complete CSS rule with the media query
+	return `${ transitionString }; @media (prefers-reduced-motion: reduce) { transition-delay: 0s; transition-duration: 0s; }`;
 } );
 
 const mapToTransitionString = ( value: TransitionValue ): string => {
