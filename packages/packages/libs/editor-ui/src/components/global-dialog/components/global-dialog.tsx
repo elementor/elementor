@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Dialog } from '@elementor/ui';
 
 import ThemeProvider from '../../theme-provider';
-import { subscribeToDialogState } from '../event-bus';
+import { closeDialog, subscribeToDialogState } from '../event-bus';
 import { type DialogContent as DialogContentType } from '../event-bus';
 
 export const GlobalDialog = () => {
@@ -22,7 +22,7 @@ export const GlobalDialog = () => {
 
 	return (
 		<ThemeProvider>
-			<Dialog open onClose={ () => setContent( null ) } maxWidth="sm" fullWidth>
+			<Dialog role="dialog" open onClose={ closeDialog } maxWidth="sm" fullWidth>
 				{ content.component }
 			</Dialog>
 		</ThemeProvider>

@@ -17,16 +17,19 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { type ModifiedLabels } from '../../store';
-import { usePanelActions } from './panel-actions';
 
 const DUP_PREFIX = 'DUP_';
 
-export const DuplicateLabelDialog = ( { modifiedLabels }: { modifiedLabels: ModifiedLabels } ) => {
-	const { open } = usePanelActions();
-
+export const DuplicateLabelDialog = ( {
+	modifiedLabels,
+	openPanel,
+}: {
+	modifiedLabels: ModifiedLabels;
+	openPanel: () => void;
+} ) => {
 	const handleButtonClick = () => {
 		localStorage.setItem( 'elementor-global-classes-search', 'DUP_' );
-		open();
+		openPanel();
 		closeDialog();
 	};
 
