@@ -587,5 +587,77 @@ describe( 'ImportComplete Page', () => {
 			expect( screen.getByText( '1 Page' ) ).toBeTruthy();
 			expect( screen.queryByText( /Menu/ ) ).toBeFalsy();
 		} );
+
+		it( 'correctly combines pages from content and wp-content sections', () => {
+			// Arrange - matches the exact example provided by user
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [ 'Elementor' ],
+					taxonomies: {
+						post: {
+							category: [
+								{ old_id: 1, new_id: 1, old_slug: 'uncategorized', new_slug: 'uncategorized' },
+							],
+						},
+						product: {
+							product_type: [
+								{ old_id: 7, new_id: 5, old_slug: 'external', new_slug: 'external' },
+								{ old_id: 5, new_id: 3, old_slug: 'grouped', new_slug: 'grouped' },
+								{ old_id: 4, new_id: 2, old_slug: 'simple', new_slug: 'simple' },
+								{ old_id: 6, new_id: 4, old_slug: 'variable', new_slug: 'variable' },
+							],
+							product_visibility: [
+								{ old_id: 9, new_id: 7, old_slug: 'exclude-from-catalog', new_slug: 'exclude-from-catalog' },
+								{ old_id: 8, new_id: 6, old_slug: 'exclude-from-search', new_slug: 'exclude-from-search' },
+								{ old_id: 10, new_id: 8, old_slug: 'featured', new_slug: 'featured' },
+								{ old_id: 11, new_id: 9, old_slug: 'outofstock', new_slug: 'outofstock' },
+								{ old_id: 12, new_id: 10, old_slug: 'rated-1', new_slug: 'rated-1' },
+								{ old_id: 13, new_id: 11, old_slug: 'rated-2', new_slug: 'rated-2' },
+								{ old_id: 14, new_id: 12, old_slug: 'rated-3', new_slug: 'rated-3' },
+								{ old_id: 15, new_id: 13, old_slug: 'rated-4', new_slug: 'rated-4' },
+								{ old_id: 16, new_id: 14, old_slug: 'rated-5', new_slug: 'rated-5' },
+							],
+							product_cat: [
+								{ old_id: 17, new_id: 15, old_slug: 'uncategorized', new_slug: 'uncategorized' },
+							],
+						},
+					},
+					content: {
+						page: {
+							succeed: { 236: 1654, 336: 1651, 353: 1648, 10126: 1645, 10832: 1642, 16040: 1637 },
+							failed: [],
+						},
+						'e-floating-buttons': {
+							succeed: { 649: 1696, 4201: 1692, 10141: 1688, 10146: 1684, 10377: 1676, 10381: 1680, 10612: 1668, 10616: 1672, 10847: 1663, 10851: 1658 },
+							failed: [],
+						},
+					},
+					'wp-content': {
+						post: {
+							succeed: [],
+							failed: [],
+						},
+						page: {
+							succeed: { 248: 1701, 15856: 1702, 16104: 1703, 19955: 1704 },
+							failed: [],
+						},
+						product: {
+							succeed: { 547: 1705 },
+							failed: [],
+						},
+						nav_menu_item: {
+							succeed: [],
+							failed: [],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '10 Pages | 1 Product | 15 Taxonomies' ) ).toBeTruthy();
+		} );
 	} );
 } );
