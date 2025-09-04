@@ -100,6 +100,7 @@ class Modules_Manager {
 			'favorites',
 			'admin-top-bar',
 			'element-manager',
+			'pro-free-trial-popup',
 			'nested-elements',
 			// Depends on Nested Elements module
 			'nested-tabs',
