@@ -1,12 +1,12 @@
 <?php
-namespace Elementor\Modules\KitElementsDefaults\ImportExport\Runners;
+namespace Elementor\Modules\KitElementsDefaults\ImportExportCustomization\Runners;
 
-use Elementor\Modules\KitElementsDefaults\ImportExport\Import_Export;
+use Elementor\Modules\KitElementsDefaults\ImportExportCustomization\Import_Export;
 use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\KitElementsDefaults\Module;
 use Elementor\Modules\KitElementsDefaults\Utils\Settings_Sanitizer;
-use Elementor\App\Modules\ImportExport\Runners\Export\Export_Runner_Base;
+use Elementor\App\Modules\ImportExportCustomization\Runners\Export\Export_Runner_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
