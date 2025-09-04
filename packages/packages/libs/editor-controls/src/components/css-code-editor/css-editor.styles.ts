@@ -3,7 +3,7 @@ import { Box, Button, styled } from '@elementor/ui';
 export const EditorWrapper = styled( Box )`
 	border: 1px solid var( --e-a-border-color );
 	border-radius: 8px;
-	padding: 10px 12px;
+	padding: 4px;
 	position: relative;
 	height: 200px;
 
