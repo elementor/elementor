@@ -114,7 +114,7 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 				key={ activeBreakpoint }
 				height="100%"
 				language="css"
-				theme={ theme.palette.mode === 'dark' ? 'vs-dark' : 'vs' }
+				theme={ theme.palette.mode === 'dark' ? 'vs-dark' : 'modern-light' }
 				value={ setVisualContent( value ) }
 				onMount={ handleEditorDidMount }
 				onChange={ handleEditorChange }
