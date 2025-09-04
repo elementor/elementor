@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\KitElementsDefaults\ImportExportCustomization\Runners;
 
-use Elementor\Modules\KitElementsDefaults\ImportExportCustomization\Import_Export;
+use Elementor\Modules\KitElementsDefaults\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\KitElementsDefaults\Module;
@@ -63,7 +63,7 @@ class Export extends Export_Runner_Base {
 
 		return [
 			'files' => [
-				'path' => Import_Export::FILE_NAME,
+				'path' => Import_Export_Customization::FILE_NAME,
 				'data' => $default_values,
 			],
 		];

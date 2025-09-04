@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\KitElementsDefaults\ImportExportCustomization\Runners;
 
-use Elementor\Modules\KitElementsDefaults\ImportExportCustomization\Import_Export;
+use Elementor\Modules\KitElementsDefaults\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\KitElementsDefaults\Module;
@@ -30,7 +30,7 @@ class Import extends Import_Runner_Base {
 
 	public function import( array $data, array $imported_data ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$file_name = Import_Export::FILE_NAME;
+		$file_name = Import_Export_Customization::FILE_NAME;
 		$default_values = ImportExportUtils::read_json_file( "{$data['extracted_directory_path']}/{$file_name}.json" );
 
 		if ( ! $kit || ! $default_values ) {
