@@ -103,4 +103,279 @@ describe( 'ImportComplete Page', () => {
 			kit_source: 'file',
 		} ) );
 	} );
+
+	describe( 'getContentSummary function', () => {
+		beforeEach( () => {
+			global.elementorAppConfig = {
+				assets_url: 'http://localhost/assets/',
+				'import-export-customization': {
+					summaryTitles: {
+						content: {
+							page: { single: 'Page', plural: 'Pages' },
+							post: { single: 'Post', plural: 'Posts' },
+							product: { single: 'Product', plural: 'Products' },
+						},
+					},
+				},
+			};
+		} );
+
+		it( 'shows "No content imported" when no content exists', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( 'No content imported' ) ).toBeTruthy();
+		} );
+
+		it( 'shows "No content imported" when only failed items exist', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					'wp-content': {
+						page: {
+							succeed: {},
+							failed: [ { id: 1, error: 'Failed' } ],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( 'No content imported' ) ).toBeTruthy();
+		} );
+
+		it( 'counts succeed items from wp-content section', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					'wp-content': {
+						page: {
+							succeed: { 1: 101, 2: 102 },
+							failed: [],
+						},
+						post: {
+							succeed: { 3: 103 },
+							failed: [],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '2 Pages | 1 Post' ) ).toBeTruthy();
+		} );
+
+		it( 'counts succeed items from content section', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					content: {
+						page: {
+							succeed: { 1: 101, 2: 102, 3: 103 },
+							failed: [],
+						},
+						product: {
+							succeed: { 4: 104 },
+							failed: [],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '3 Pages | 1 Product' ) ).toBeTruthy();
+		} );
+
+		it( 'counts succeed items from elementor-content section', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					'elementor-content': {
+						page: {
+							succeed: { 1: 101 },
+							failed: [],
+						},
+						post: {
+							succeed: { 2: 102, 3: 103 },
+							failed: [],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '1 Page | 2 Posts' ) ).toBeTruthy();
+		} );
+
+		it( 'counts taxonomies correctly', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					taxonomies: {
+						product: {
+							product_type: [
+								{ old_id: 1, new_id: 1 },
+								{ old_id: 2, new_id: 2 },
+							],
+							product_cat: [
+								{ old_id: 3, new_id: 3 },
+							],
+						},
+						category: {
+							post_tag: [
+								{ old_id: 4, new_id: 4 },
+								{ old_id: 5, new_id: 5 },
+								{ old_id: 6, new_id: 6 },
+							],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '6 Taxonomies' ) ).toBeTruthy();
+		} );
+
+		it( 'shows singular form for single taxonomy', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					taxonomies: {
+						product: {
+							product_type: [
+								{ old_id: 1, new_id: 1 },
+							],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '1 Taxonomy' ) ).toBeTruthy();
+		} );
+
+		it( 'combines counts from multiple sections for same content type', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					'wp-content': {
+						page: {
+							succeed: { 1: 101, 2: 102 },
+							failed: [],
+						},
+					},
+					content: {
+						page: {
+							succeed: { 3: 103 },
+							failed: [],
+						},
+					},
+					'elementor-content': {
+						page: {
+							succeed: { 4: 104, 5: 105 },
+							failed: [],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '5 Pages' ) ).toBeTruthy();
+		} );
+
+		it( 'combines content types and taxonomies', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {
+					plugins: [],
+					'wp-content': {
+						page: {
+							succeed: { 1: 101, 2: 102 },
+							failed: [],
+						},
+						post: {
+							succeed: { 3: 103 },
+							failed: [],
+						},
+					},
+					taxonomies: {
+						product: {
+							product_type: [
+								{ old_id: 1, new_id: 1 },
+								{ old_id: 2, new_id: 2 },
+							],
+						},
+					},
+				},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( '2 Pages | 1 Post | 2 Taxonomies' ) ).toBeTruthy();
+		} );
+
+		it( 'handles empty runnersState gracefully', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: {},
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( 'No content imported' ) ).toBeTruthy();
+		} );
+
+		it( 'handles undefined runnersState gracefully', () => {
+			// Arrange
+			mockUseImportContext.mockReturnValue( {
+				isCompleted: true,
+				data: { includes: [ 'content' ] },
+				runnersState: undefined,
+			} );
+			// Act
+			render( <ImportComplete /> );
+			// Assert
+			expect( screen.getByText( 'No content imported' ) ).toBeTruthy();
+		} );
+	} );
 } );

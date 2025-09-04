@@ -17,7 +17,7 @@ export default function ImportComplete() {
 	const navigate = useNavigate();
 
 	const getTemplatesSummary = useCallback( () => {
-		const templatesSummary = runnersState.templates?.succeed_summary;
+		const templatesSummary = runnersState?.templates?.succeed_summary;
 
 		if ( ! templatesSummary ) {
 			return __( 'No templates imported', 'elementor' );
@@ -37,7 +37,7 @@ export default function ImportComplete() {
 			} ).filter( ( part ) => part !== null );
 
 		return summaryParts.length > 0 ? summaryParts.join( ' | ' ) : __( 'No templates imported', 'elementor' );
-	}, [ runnersState.templates?.succeed_summary ] );
+	}, [ runnersState?.templates?.succeed_summary ] );
 
 	const getContentSummary = useCallback( () => {
 		const elementorContent = runnersState?.[ 'elementor-content' ];
@@ -106,8 +106,8 @@ export default function ImportComplete() {
 	}, [ runnersState ] );
 
 	const getPluginsSummary = useCallback( () => {
-		return runnersState.plugins ? runnersState.plugins.join( ' | ' ) : __( 'No plugins imported', 'elementor' );
-	}, [ runnersState.plugins ] );
+		return runnersState?.plugins ? runnersState.plugins.join( ' | ' ) : __( 'No plugins imported', 'elementor' );
+	}, [ runnersState?.plugins ] );
 
 	const getSettingsSummary = useCallback( () => {
 		const siteSettings = data.includes.includes( 'settings' )
