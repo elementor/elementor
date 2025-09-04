@@ -49,6 +49,20 @@ export const preventChangeOnVisualContent = ( editor: editor.IStandaloneCodeEdit
 		applyVisualContentStyling();
 	} );
 
+	editor.onDidChangeCursorPosition( ( e ) => {
+		const totalLines = model.getLineCount();
+		const position = e.position;
+
+		if ( position.lineNumber === 1 ) {
+			editor.setPosition( { lineNumber: 2, column: 1 } );
+		} else if ( position.lineNumber === totalLines ) {
+			editor.setPosition( {
+				lineNumber: totalLines - 1,
+				column: model.getLineContent( totalLines - 1 ).length + 1,
+			} );
+		}
+	} );
+
 	const originalPushEditOperations = model.pushEditOperations;
 	model.pushEditOperations = function ( beforeCursorState, editOperations, cursorStateComputer ) {
 		const totalLines = model.getLineCount();

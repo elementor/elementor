@@ -3,7 +3,7 @@ import { Box, Button, styled } from '@elementor/ui';
 export const EditorWrapper = styled( Box )`
 	border: 1px solid var( --e-a-border-color );
 	border-radius: 8px;
-	padding: 10px 12px;
+	padding: 4px;
 	position: relative;
 	height: 200px;
 
@@ -16,6 +16,14 @@ export const EditorWrapper = styled( Box )`
 		opacity: 0.6;
 		color: #aaa !important;
 		pointer-events: none;
+	}
+
+	.monaco-editor .monaco-scrollable-element > .scrollbar {
+		width: 6px !important;
+	}
+
+	.monaco-editor .monaco-scrollable-element > .scrollbar > .slider {
+		width: 6px !important;
 	}
 `;
 
