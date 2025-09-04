@@ -32,7 +32,13 @@ const findByValue = ( value: string ) => {
 	}
 };
 
-export const TransitionSelector = ( { recentlyUsedList = [] }: { recentlyUsedList: string[] } ) => {
+export const TransitionSelector = ( {
+	recentlyUsedList = [],
+	disabledItems = [],
+}: {
+	recentlyUsedList: string[];
+	disabledItems?: string[];
+} ) => {
 	const { value, setValue } = useBoundProp( keyValuePropTypeUtil );
 	const {
 		key: { value: transitionLabel },
@@ -113,6 +119,7 @@ export const TransitionSelector = ( { recentlyUsedList = [] }: { recentlyUsedLis
 					sectionWidth={ 268 }
 					title={ __( 'Transition Property', 'elementor' ) }
 					icon={ VariationsIcon as React.ElementType< { fontSize: string } > }
+					disabledItems={ disabledItems }
 				/>
 			</Popover>
 		</Box>

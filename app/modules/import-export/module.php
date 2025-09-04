@@ -643,7 +643,7 @@ class Module extends BaseModule {
 			}
 
 			$import_result = apply_filters( 'elementor/import/kit/result', [ 'file_url' => $file_url ] );
-		} else if ( ! empty( $source ) ) {
+		} elseif ( ! empty( $source ) ) {
 			$import_result = apply_filters( 'elementor/import/kit/result/' . $source, [
 				'kit_id' => $kit_id,
 				'source' => $source,

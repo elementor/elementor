@@ -1049,7 +1049,7 @@ class Widget_Video extends Widget_Base {
 			if ( $is_static_render_mode ) {
 				$video_html = Embed::get_embed_thumbnail_html( $video_url, $post_id );
 				// YouTube API requires a different markup which was set above.
-			} else if ( 'youtube' !== $settings['video_type'] ) {
+			} elseif ( 'youtube' !== $settings['video_type'] ) {
 				$video_html = Embed::get_embed_html( $video_url, $embed_params, $embed_options );
 			}
 		}

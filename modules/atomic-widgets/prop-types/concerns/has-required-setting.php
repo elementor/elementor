@@ -25,6 +25,12 @@ trait Has_Required_Setting {
 		return $this;
 	}
 
+	public function set_required( bool $required ) {
+		$this->setting( 'required', $required );
+
+		return $this;
+	}
+
 	abstract public function get_setting( string $key, $default = null );
 
 	abstract public function setting( $key, $value );

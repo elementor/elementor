@@ -4,14 +4,15 @@ namespace Elementor\Modules\AtomicWidgets\Elements;
 
 class Element_Builder {
 	protected $element_type;
-	protected $settings;
-	protected $is_locked;
+	protected $settings = [];
+	protected $is_locked = false;
+	protected $children = [];
 
-	public static function make( $element_type ) {
+	public static function make( string $element_type ) {
 		return new self( $element_type );
 	}
 
-	private function __construct( $element_type ) {
+	private function __construct( string $element_type ) {
 		$this->element_type = $element_type;
 	}
 
