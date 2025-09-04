@@ -37,6 +37,7 @@ export { ControlToggleButtonGroup } from './components/control-toggle-button-gro
 export { CssEditor } from './components/css-code-editor/css-editor';
 export { ClearIconButton } from './components/icon-buttons/clear-icon-button';
 export { Repeater } from './components/repeater';
+export { FloatingActionsBar } from './components/floating-bar';
 
 // types
 export type { ControlComponent } from './create-control';
