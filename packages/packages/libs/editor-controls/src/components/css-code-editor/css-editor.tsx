@@ -133,6 +133,8 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 						enabled: false,
 					},
 					lineDecorationsWidth: 2,
+					wordWrap: 'on',
+					scrollBeyondLastLine: false,
 				} }
 			/>
 			<ResizeHandleComponent
