@@ -21,6 +21,7 @@ class Import extends Import_Runner_Base {
 	public function should_import( array $data ) {
 		// Together with site-settings.
 		return (
+			Plugin::$instance->experiments->is_feature_active( 'import-export-customization' ) &&
 			isset( $data['include'] ) &&
 			in_array( 'settings', $data['include'], true ) &&
 			! empty( $data['site_settings']['settings'] ) &&
