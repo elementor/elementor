@@ -18,7 +18,9 @@ export default function ImportKitPartsSelection() {
 		dispatch( { type: actionType, payload: itemType } );
 	};
 
-	const handleSaveCustomization = ( key, payload, hasEnabledCustomization ) => {
+	const handleSaveCustomization = ( key, payload ) => {
+		const hasEnabledPart = Object.values( payload ).some( ( value ) => value );
+
 		dispatch( {
 			type: 'SET_CUSTOMIZATION',
 			payload: {
@@ -27,7 +29,7 @@ export default function ImportKitPartsSelection() {
 			},
 		} );
 
-		if ( hasEnabledCustomization ) {
+		if ( hasEnabledPart ) {
 			dispatch( { type: 'ADD_INCLUDE', payload: key } );
 		} else {
 			dispatch( { type: 'REMOVE_INCLUDE', payload: key } );
