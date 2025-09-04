@@ -669,10 +669,6 @@ class Module extends BaseModule {
 		return $summary_titles;
 	}
 
-	public function has_pro(): bool {
-		return ElementorUtils::has_pro();
-	}
-
 	private function get_elementor_editor_home_page_url() {
 		if ( 'page' !== get_option( 'show_on_front' ) ) {
 			return '';
