@@ -10,6 +10,7 @@ export const EditorWrapper = styled( Box )`
 	.monaco-editor .suggest-widget {
 		width: 220px !important;
 		max-width: 220px !important;
+		z-index: 1001;
 	}
 
 	.visual-content-dimmed {
