@@ -11,10 +11,6 @@ const handleDone = () => {
 	window.top.location = elementorAppConfig.admin_url;
 };
 
-const handleSeeItLive = () => {
-	window.top.location = elementorAppConfig?.home_url ?? '';
-};
-
 export default function ImportComplete() {
 	const { data, isCompleted, runnersState } = useImportContext();
 	const { includes, analytics, uploadedData } = data;
@@ -171,7 +167,8 @@ export default function ImportComplete() {
 				color="secondary"
 				size="small"
 				data-testid="see-it-live-button"
-				onClick={ handleSeeItLive }
+				href={ elementorAppConfig?.home_url }
+				target="_blank"
 			>
 				{ __( 'See it Live', 'elementor' ) }
 			</Button>
