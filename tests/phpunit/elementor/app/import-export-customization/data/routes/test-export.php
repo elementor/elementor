@@ -23,6 +23,8 @@ class Test_Export extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		Plugin::$instance->experiments->set_feature_default_state( 'import-export-customization', 'active' );
+
 		$this->original_component = Plugin::$instance->app->get_component( 'import-export-customization' );
 
 		Plugin::$instance->app->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
@@ -37,6 +39,12 @@ class Test_Export extends Elementor_Test_Base {
 		if ( $this->rest_api_initialized ) {
 			remove_all_filters( 'rest_api_init' );
 			$this->rest_api_initialized = false;
+		}
+
+		Plugin::$instance->experiments->set_feature_default_state( 'import-export-customization', 'default' );
+
+		if ( post_type_exists( 'test_post_type' ) ) {
+			unregister_post_type( 'test_post_type' );
 		}
 
 		parent::tearDown();
