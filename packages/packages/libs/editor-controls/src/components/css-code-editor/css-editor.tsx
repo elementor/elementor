@@ -3,7 +3,10 @@ import type { editor, MonacoEditor } from 'monaco-types';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { useTheme } from '@elementor/ui';
 import { Editor } from '@monaco-editor/react';
+import { __ } from '@wordpress/i18n';
 
+import { FloatingActionsBar } from '../floating-bar';
+import { ClearIconButton } from '../icon-buttons/clear-icon-button';
 import { EditorWrapper } from './css-editor.styles';
 import { clearMarkersFromVisualContent, setCustomSyntaxRules, validate } from './css-validation';
 import { ResizeHandleComponent } from './resize-handle';
@@ -32,7 +35,8 @@ const getActual = ( value: string ): string => {
 
 const createEditorDidMountHandler = (
 	editorRef: React.MutableRefObject< editor.IStandaloneCodeEditor | null >,
-	monacoRef: React.MutableRefObject< MonacoEditor | null >
+	monacoRef: React.MutableRefObject< MonacoEditor | null >,
+	onUserContentChange: ( value: string ) => void
 ) => {
 	return ( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ) => {
 		editorRef.current = editor;
@@ -41,6 +45,11 @@ const createEditorDidMountHandler = (
 		preventChangeOnVisualContent( editor );
 
 		setCustomSyntaxRules( editor, monaco );
+
+		const initialCode = editor.getModel()?.getValue() ?? '';
+		const initialUserContent = getActual( initialCode );
+
+		onUserContentChange( initialUserContent );
 
 		monaco.editor.onDidChangeMarkers( () => {
 			setTimeout( () => clearMarkersFromVisualContent( editor, monaco ), 0 );
@@ -57,6 +66,11 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 	const monacoRef = React.useRef< MonacoEditor | null >( null );
 	const debounceTimer = React.useRef< NodeJS.Timeout | null >( null );
 	const activeBreakpoint = useActiveBreakpoint();
+	const [ hasContent, setHasContent ] = React.useState( value.trim() !== '' );
+
+	const handleUserContentChange = React.useCallback( ( newValue: string ) => {
+		setHasContent( newValue.trim() !== '' );
+	}, [] );
 
 	const handleResize = React.useCallback( () => {
 		editorRef.current?.layout();
@@ -75,6 +89,8 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 
 		const code = editorRef.current?.getModel()?.getValue() ?? '';
 		const userContent = getActual( code );
+
+		setHasContent( userContent.trim() !== '' );
 
 		setCustomSyntaxRules( editorRef?.current, monacoRef.current );
 
@@ -96,7 +112,9 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 		debounceTimer.current = newTimer;
 	};
 
-	const handleEditorDidMount = createEditorDidMountHandler( editorRef, monacoRef );
+	const handleEditorDidMount = createEditorDidMountHandler( editorRef, monacoRef, handleUserContentChange );
+
+	const handleReset = () => editorRef.current?.getModel()?.setValue( setVisualContent( '' ) );
 
 	React.useEffect( () => {
 		const timerRef = debounceTimer;
@@ -109,37 +127,51 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 	}, [] );
 
 	return (
-		<EditorWrapper ref={ containerRef }>
-			<Editor
-				key={ activeBreakpoint }
-				height="100%"
-				language="css"
-				theme={ theme.palette.mode === 'dark' ? 'vs-dark' : 'vs' }
-				value={ setVisualContent( value ) }
-				onMount={ handleEditorDidMount }
-				onChange={ handleEditorChange }
-				options={ {
-					lineNumbers: 'on',
-					folding: true,
-					minimap: { enabled: false },
-					fontFamily: 'Roboto, Arial, Helvetica, Verdana, sans-serif',
-					fontSize: 12,
-					renderLineHighlight: 'none',
-					hideCursorInOverviewRuler: true,
-					fixedOverflowWidgets: true,
-					suggestFontSize: 10,
-					suggestLineHeight: 14,
-					stickyScroll: {
-						enabled: false,
-					},
-					lineDecorationsWidth: 2,
-				} }
-			/>
-			<ResizeHandleComponent
-				onResize={ handleResize }
-				containerRef={ containerRef }
-				onHeightChange={ handleHeightChange }
-			/>
-		</EditorWrapper>
+		<FloatingActionsBar
+			actions={
+				hasContent
+					? [
+							<ClearIconButton
+								key="clear"
+								tooltipText={ __( 'Clear', 'elementor' ) }
+								onClick={ handleReset }
+							/>,
+					  ]
+					: []
+			}
+		>
+			<EditorWrapper ref={ containerRef }>
+				<Editor
+					key={ activeBreakpoint }
+					height="100%"
+					language="css"
+					theme={ theme.palette.mode === 'dark' ? 'vs-dark' : 'vs' }
+					value={ setVisualContent( value ) }
+					onMount={ handleEditorDidMount }
+					onChange={ handleEditorChange }
+					options={ {
+						lineNumbers: 'on',
+						folding: true,
+						minimap: { enabled: false },
+						fontFamily: 'Roboto, Arial, Helvetica, Verdana, sans-serif',
+						fontSize: 12,
+						renderLineHighlight: 'none',
+						hideCursorInOverviewRuler: true,
+						fixedOverflowWidgets: true,
+						suggestFontSize: 10,
+						suggestLineHeight: 14,
+						stickyScroll: {
+							enabled: false,
+						},
+						lineDecorationsWidth: 2,
+					} }
+				/>
+				<ResizeHandleComponent
+					onResize={ handleResize }
+					containerRef={ containerRef }
+					onHeightChange={ handleHeightChange }
+				/>
+			</EditorWrapper>
+		</FloatingActionsBar>
 	);
 };
