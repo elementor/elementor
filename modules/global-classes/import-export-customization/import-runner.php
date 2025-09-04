@@ -30,7 +30,7 @@ class Import_Runner extends Import_Runner_Base {
 	public function import( array $data, array $imported_data ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		$file_name = Import_Export::FILE_NAME;
+		$file_name = Import_Export_Customization::FILE_NAME;
 		$global_classes = ImportExportUtils::read_json_file( "{$data['extracted_directory_path']}/{$file_name}.json" );
 
 		if ( ! $kit || ! $global_classes ) {
