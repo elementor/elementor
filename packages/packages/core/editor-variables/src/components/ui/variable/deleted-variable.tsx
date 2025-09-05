@@ -132,13 +132,3 @@ export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
 		</>
 	);
 };
-//
-// because we dont have redux we got no reactivity
-// test here
-// ( value: string ) => {
-// 			if ( ! boundProp.value && boundProp.placeholder === value ) {
-// 				return boundProp.setValue( null );
-// 			}
-//
-// 			return boundProp.setValue( value );
-// 		}
