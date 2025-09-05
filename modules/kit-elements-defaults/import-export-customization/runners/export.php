@@ -66,6 +66,7 @@ class Export extends Export_Runner_Base {
 				'path' => Import_Export_Customization::FILE_NAME,
 				'data' => $default_values,
 			],
+			'manifest' => [],
 		];
 	}
 }

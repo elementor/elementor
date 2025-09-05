@@ -76,6 +76,7 @@ class Test_Export extends Elementor_Test_Base {
 					],
 				],
 			],
+			'manifest' => [],
 		], $result );
 	}
 

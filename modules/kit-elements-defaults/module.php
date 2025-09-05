@@ -50,10 +50,7 @@ class Module extends BaseModule {
 
 		if ( is_admin() ) {
 			( new Import_Export() )->register();
-
-			if ( Plugin::$instance->experiments->is_feature_active( 'import-export-customization' ) ) {
-				( new Import_Export_Customization() )->register();
-			}
+			( new Import_Export_Customization() )->register();
 		}
 	}
 }
