@@ -61,7 +61,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 
 	if ( onAdd ) {
 		actions.push(
-			<IconButton key="add" size={ SIZE } onClick={ onAddAndTrack }>
+			<IconButton id="add-variable-button" key="add" size={ SIZE } onClick={ onAddAndTrack }>
 				<PlusIcon fontSize={ SIZE } />
 			</IconButton>
 		);
@@ -69,7 +69,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 
 	if ( onSettings ) {
 		actions.push(
-			<IconButton key="settings" size={ SIZE } onClick={ onSettings }>
+			<IconButton id="variables-manager-button" key="settings" size={ SIZE } onClick={ onSettings }>
 				<SettingsIcon fontSize={ SIZE } />
 			</IconButton>
 		);

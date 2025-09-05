@@ -10,9 +10,10 @@ type Props = {
 	value: string;
 	onSearch: ( search: string ) => void;
 	placeholder: string;
+	id?: string;
 };
 
-export const PopoverSearch = ( { value, onSearch, placeholder }: Props ) => {
+export const PopoverSearch = ( { value, onSearch, placeholder, id }: Props ) => {
 	const inputRef = useRef< HTMLInputElement | null >( null );
 
 	const handleClear = () => {
@@ -31,6 +32,7 @@ export const PopoverSearch = ( { value, onSearch, placeholder }: Props ) => {
 				// eslint-disable-next-line jsx-a11y/no-autofocus
 				autoFocus
 				fullWidth
+				id={ id }
 				size={ SIZE }
 				value={ value }
 				inputRef={ inputRef }

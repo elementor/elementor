@@ -68,6 +68,7 @@ export const FontField = ( { value, onChange, onValidationChange }: FontFieldPro
 				{ ...bindPopover( fontPopoverState ) }
 			>
 				<ItemSelector
+					id="font-family-variables-selector"
 					itemsList={ mapFontSubs }
 					selectedItem={ fontFamily }
 					onItemChange={ handleFontFamilyChange }

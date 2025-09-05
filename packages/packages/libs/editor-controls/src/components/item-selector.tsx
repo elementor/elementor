@@ -23,6 +23,7 @@ type ItemSelectorProps = {
 	onDebounce?: ( name: string ) => void;
 	icon: React.ElementType< { fontSize: string } >;
 	disabledItems?: string[];
+	id?: string;
 };
 
 export const ItemSelector = ( {
@@ -36,6 +37,7 @@ export const ItemSelector = ( {
 	onDebounce = () => {},
 	icon,
 	disabledItems,
+	id = 'item-selector',
 }: ItemSelectorProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 
@@ -53,12 +55,13 @@ export const ItemSelector = ( {
 	};
 
 	return (
-		<PopoverBody width={ sectionWidth }>
+		<PopoverBody width={ sectionWidth } id={ id }>
 			<PopoverHeader title={ title } onClose={ handleClose } icon={ <IconComponent fontSize="tiny" /> } />
 			<PopoverSearch
 				value={ searchValue }
 				onSearch={ handleSearch }
 				placeholder={ __( 'Search', 'elementor' ) }
+				id={ id + '-search' }
 			/>
 
 			<Divider />

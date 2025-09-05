@@ -49,8 +49,9 @@
     "restart:testing": "bash scripts/setup-testing.sh --restart",
     "packages:version": "cd packages && npm run version",
     "packages:release": "cd packages && npm run release",
-    "experimental:wp-playground": "npx @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
-    "experimental:wp-playground:ci": "npx @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json"
+    "experimental:wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
+    "experimental:wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json",
+    "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run experimental:wp-playground\" \"npm run test:playwright -- --ui\""
   },
   "engines": {
     "node": ">=20.19.0",
@@ -71,7 +72,7 @@
     "@babel/runtime-corejs3": "^7.26.0",
     "@elementor/wp-lite-env": "^0.0.20",
     "@lodder/grunt-postcss": "^3.1.1",
-    "@playwright/test": "~1.54.1",
+    "@playwright/test": "1.54.1",
     "@tanstack/eslint-plugin-query": "^5.81.2",
     "@testing-library/dom": "^9.3.3",
     "@testing-library/react": "^14.1.2",
