@@ -69,7 +69,7 @@ add_action( 'elementor/experiments/feature-registered', function ( Experiments_M
 	];
 
 	// Immutable experiments are not real experiments and should not be activated.
-	if ( ! $experimental_data['mutable'] || in_array( $experimental_data['name'], $exclude, true ) ) {
+	if ( ( ! $experimental_data['mutable'] || in_array( $experimental_data['name'], $exclude, true ) ) && 'import-export-customization' !== $experimental_data['name'] ) {
 		return;
 	}
 
