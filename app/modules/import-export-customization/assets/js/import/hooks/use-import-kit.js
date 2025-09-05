@@ -55,7 +55,9 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 					path: 'import-runner',
 				} );
 
-				dispatch( { type: 'SET_RUNNERS_STATE', payload: { [ runner ]: result.data.imported_data?.[ runner ] || result.data[ runner ] } } );
+				const runnerKey = 'elementor-content' === runner ? 'content' : runner;
+
+				dispatch( { type: 'SET_RUNNERS_STATE', payload: { [ runnerKey ]: result.data.imported_data?.[ runnerKey ] || result.data[ runnerKey ] } } );
 			} catch ( e ) {
 				stopIterations = e;
 				setError( e );
