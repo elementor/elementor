@@ -128,10 +128,6 @@ class Editor_Common_Scripts_Settings {
 			'fontVariableRanges' => Group_Control_Typography::get_font_variable_ranges(),
 		];
 
-		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
-			$client_env['promotionWidgets'] = Api::get_promotion_widgets();
-		}
-
 		if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
 			$client_env['elementsPresets'] = Plugin::$instance->editor->get_elements_presets();
 		}
@@ -159,7 +155,42 @@ class Editor_Common_Scripts_Settings {
 			);
 		}
 
+		$is_admin_user_without_pro = current_user_can( 'manage_options' ) && ! Utils::has_pro();
+		if ( $is_admin_user_without_pro ) {
+			$client_env['integrationWidgets'] = array_merge(
+				( isset( $client_env['integrationWidgets'] ) && is_array( $client_env['integrationWidgets'] ) ?
+				$client_env['integrationWidgets'] :
+				[] ), [
+					[
+						'categories' => '[ "general" ]',
+						'icon' => 'eicon-accessibility',
+						'name' => 'ally-accessibility',
+						'title' => esc_html__( 'Ally Accessibility', 'elementor' ),
+						'keywords' => [
+							'Accessibility',
+							'Usability',
+							'Inclusive',
+							'Statement',
+							'WCAG',
+							'Ally',
+							'Complaince',
+						],
+					],
+				],
+			);
+		}
+
 		static::bc_move_document_filters();
+
+		// Remove all non numeric keys element from array added by 3rd party plugins
+		add_filter( 'elementor/editor/localize_settings', function ( $config ) {
+			if ( ! isset( $config['promotionWidgets'] ) ) {
+				$config['promotionWidgets'] = [];
+			}
+
+			$config['promotionWidgets'] = array_values( $config['promotionWidgets'] );
+			return $config;
+		}, 999 );
 
 		/**
 		 * Localize editor settings.
@@ -171,7 +202,29 @@ class Editor_Common_Scripts_Settings {
 		 * @param array $client_env  Editor configuration.
 		 * @param int   $post_id The ID of the current post being edited.
 		 */
-		return apply_filters( 'elementor/editor/localize_settings', $client_env );
+		$client_env = apply_filters( 'elementor/editor/localize_settings', $client_env );
+
+		if ( $is_admin_user_without_pro ) {
+			$client_env = self::ensure_pro_widgets( $client_env );
+		}
+
+		$client_env['promotionWidgets'] = self::ensure_numeric_keys( $client_env['promotionWidgets'] );
+
+		return $client_env;
+	}
+
+	private static function ensure_pro_widgets( array $client_env ) {
+		$pro_widgets = Api::get_promotion_widgets();
+		if ( ! isset( $client_env['promotionWidgets'] ) ) {
+			$client_env['promotionWidgets'] = $pro_widgets;
+		} else {
+			$client_env['promotionWidgets'] = array_merge( $pro_widgets, $client_env['promotionWidgets'] );
+		}
+		return $client_env;
+	}
+
+	private static function ensure_numeric_keys( array $base_array ) {
+		return array_values( $base_array );
 	}
 
 	private static function bc_move_document_filters() {

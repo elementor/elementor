@@ -694,7 +694,7 @@ module.exports = {
 	 * @return {string} the tag, if it is valid, otherwise, 'div'
 	 */
 	validateHTMLTag( tag ) {
-		return allowedHTMLWrapperTags.includes( tag.toLowerCase() ) ? tag : 'div';
+		return allowedHTMLWrapperTags.includes( tag?.toLowerCase() ) ? tag : 'div';
 	},
 
 	convertSizeToFrString( size ) {

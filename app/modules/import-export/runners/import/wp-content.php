@@ -107,18 +107,18 @@ class Wp_Content extends Import_Runner_Base {
 	}
 
 	/**
-	 * @param $array array The array we want to relocate his element.
-	 * @param $element mixed The value of the element in the array we want to shift to end of the array.
+	 * @param array $base_array The array we want to relocate his element.
+	 * @param mixed $element    The value of the element in the array we want to shift to end of the array.
 	 * @return mixed
 	 */
-	private function force_element_to_be_last_by_value( array $array, $element ) {
-		$index = array_search( $element, $array, true );
+	private function force_element_to_be_last_by_value( array $base_array, $element ) {
+		$index = array_search( $element, $base_array, true );
 
 		if ( false !== $index ) {
-			unset( $array[ $index ] );
-			$array[] = $element;
+			unset( $base_array[ $index ] );
+			$base_array[] = $element;
 		}
 
-		return $array;
+		return $base_array;
 	}
 }

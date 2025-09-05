@@ -94,13 +94,17 @@ describe( 'Repeater', () => {
 
 		// Assert.
 		expect( setValues ).toHaveBeenCalledTimes( 1 );
-		expect( setValues ).toHaveBeenCalledWith( [
-			itemSettings.initialValues,
-			{
-				$$type: 'example',
-				value: 'Initial item',
-			},
-		] );
+		expect( setValues ).toHaveBeenCalledWith(
+			[
+				itemSettings.initialValues,
+				{
+					$$type: 'example',
+					value: 'Initial item',
+				},
+			],
+			undefined,
+			{ action: { type: 'add' } }
+		);
 	} );
 
 	it( 'should add a new item to the bottom', () => {
@@ -139,13 +143,17 @@ describe( 'Repeater', () => {
 
 		// Assert.
 		expect( setValues ).toHaveBeenCalledTimes( 1 );
-		expect( setValues ).toHaveBeenCalledWith( [
-			{
-				$$type: 'example',
-				value: 'Initial item',
-			},
-			itemSettings.initialValues,
-		] );
+		expect( setValues ).toHaveBeenCalledWith(
+			[
+				{
+					$$type: 'example',
+					value: 'Initial item',
+				},
+				itemSettings.initialValues,
+			],
+			undefined,
+			{ action: { type: 'add' } }
+		);
 	} );
 
 	it( 'should duplicate an item when the duplicate button is clicked, and add it right after the clicked item', () => {
@@ -179,20 +187,24 @@ describe( 'Repeater', () => {
 		fireEvent.click( duplicateButton as Element );
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith( [
-			{
-				$$type: 'example',
-				value: 'First item',
-			},
-			{
-				$$type: 'example',
-				value: 'First item',
-			},
-			{
-				$$type: 'example',
-				value: 'Second item',
-			},
-		] );
+		expect( setValues ).toHaveBeenCalledWith(
+			[
+				{
+					$$type: 'example',
+					value: 'First item',
+				},
+				{
+					$$type: 'example',
+					value: 'First item',
+				},
+				{
+					$$type: 'example',
+					value: 'Second item',
+				},
+			],
+			undefined,
+			{ action: { type: 'duplicate' } }
+		);
 	} );
 
 	it( 'should remove the item when the remove button is clicked', () => {
@@ -226,12 +238,16 @@ describe( 'Repeater', () => {
 		fireEvent.click( removeButton as Element );
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith( [
-			{
-				$$type: 'example',
-				value: 'Second item',
-			},
-		] );
+		expect( setValues ).toHaveBeenCalledWith(
+			[
+				{
+					$$type: 'example',
+					value: 'Second item',
+				},
+			],
+			undefined,
+			{ action: { type: 'remove' } }
+		);
 	} );
 
 	it( 'should render the item content and pass the index as bind prop', () => {
@@ -292,13 +308,17 @@ describe( 'Repeater', () => {
 		fireEvent.click( disableButton as Element );
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith( [
-			{
-				$$type: 'example',
-				value: 'First item',
-				disabled: true,
-			},
-		] );
+		expect( setValues ).toHaveBeenCalledWith(
+			[
+				{
+					$$type: 'example',
+					value: 'First item',
+					disabled: true,
+				},
+			],
+			undefined,
+			{ action: { type: 'toggle-disable' } }
+		);
 	} );
 
 	it( 'should remove the disabled property when the enable button is clicked', () => {
@@ -327,12 +347,16 @@ describe( 'Repeater', () => {
 		fireEvent.click( enableButton as Element );
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith( [
-			{
-				$$type: 'example',
-				value: 'First item',
-			},
-		] );
+		expect( setValues ).toHaveBeenCalledWith(
+			[
+				{
+					$$type: 'example',
+					value: 'First item',
+				},
+			],
+			undefined,
+			{ action: { type: 'toggle-disable' } }
+		);
 	} );
 
 	it( 'should open the first repeater item popover, if the newly added item was added to top and "openOnAdd" is true', () => {

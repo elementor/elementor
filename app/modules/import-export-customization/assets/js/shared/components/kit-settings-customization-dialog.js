@@ -3,42 +3,58 @@ import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { SettingSection } from './customization-setting-section';
-import { SubSetting } from './customization-sub-setting';
 import { KitCustomizationDialog } from './kit-customization-dialog';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
+import useContextDetection from '../hooks/use-context-detection';
+
+function getInitialState( contextData, isImport ) {
+	const data = contextData.data;
+	let initialState = data.includes.includes( 'settings' );
+
+	if ( isImport && ! contextData?.isOldExport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme ) {
+		initialState = false;
+	}
+
+	return initialState;
+}
 
 export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
-	const isImport = data.hasOwnProperty( 'uploadedData' );
+	const { isImport, contextData } = useContextDetection();
 
-	const siteSettingsRegistry = elementorModules?.importExport?.siteSettingsRegistry;
-	const siteSettingsSections = siteSettingsRegistry?.getAll() || [];
-
-	const initialState = data.includes.includes( 'settings' );
+	const initialState = getInitialState( contextData, isImport );
 	const unselectedValues = useRef( data.analytics?.customization?.settings || [] );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.settings ) {
-			return data.customization.settings;
+			return {
+				...data.customization.settings,
+			};
 		}
 
-		return siteSettingsRegistry.getState( data, initialState );
+		return {
+			theme: initialState,
+		};
 	} );
 
 	useEffect( () => {
 		if ( open ) {
 			if ( data.customization.settings ) {
-				setSettings( data.customization.settings );
+				setSettings( {
+					...data.customization.settings,
+				} );
 			} else {
-				const state = siteSettingsRegistry.getState( data, initialState );
-
-				setSettings( state );
+				setSettings( {
+					theme: initialState,
+				} );
 			}
 		}
-	}, [ open, data.customization.settings, siteSettingsRegistry, data?.uploadedData, initialState ] );
+	}, [ open, data.customization.settings, data?.uploadedData, initialState ] );
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
-	}, [] );
+		if ( open ) {
+			AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+		}
+	}, [ open ] );
 
 	const handleToggleChange = ( settingKey, isChecked ) => {
 		unselectedValues.current = isChecked
@@ -56,49 +72,18 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 			open={ open }
 			title={ __( 'Edit settings & configurations', 'elementor' ) }
 			handleClose={ handleClose }
-			handleSaveChanges={ () => handleSaveChanges( 'settings', settings, unselectedValues.current ) }
+			handleSaveChanges={ () => handleSaveChanges( 'settings', settings, true, unselectedValues.current ) }
 		>
 			<Stack>
-				{ siteSettingsSections.map( ( siteSettingsSection ) => {
-					if ( siteSettingsSection.children ) {
-						return (
-							<SettingSection
-								key={ siteSettingsSection.key }
-								title={ siteSettingsSection.title }
-								description={ siteSettingsSection.description }
-								hasToggle={ false }
-							>
-								<Stack>
-									{ siteSettingsSection.children.map( ( siteSettingsChildSection ) => {
-										return (
-											<SubSetting
-												key={ siteSettingsChildSection.key }
-												label={ siteSettingsChildSection.title }
-												description={ siteSettingsChildSection.description }
-												settingKey={ siteSettingsChildSection.key }
-												onSettingChange={ handleToggleChange }
-												checked={ settings[ siteSettingsChildSection.key ] }
-												disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.[ siteSettingsChildSection.key ] }
-											/>
-										);
-									} ) }
-								</Stack>
-							</SettingSection>
-						);
-					}
-
-					return (
-						<SettingSection
-							key={ siteSettingsSection.key }
-							checked={ settings[ siteSettingsSection.key ] }
-							title={ siteSettingsSection.title }
-							description={ siteSettingsSection.description }
-							settingKey={ siteSettingsSection.key }
-							onSettingChange={ handleToggleChange }
-							disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.[ siteSettingsSection.key ] }
-						/>
-					);
-				} ) }
+				<SettingSection
+					key="theme"
+					checked={ settings.theme }
+					title={ __( 'Theme', 'elementor' ) }
+					description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
+					settingKey="theme"
+					onSettingChange={ handleToggleChange }
+					disabled={ isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme }
+				/>
 			</Stack>
 		</KitCustomizationDialog>
 	);

@@ -4,8 +4,13 @@ import { type CreateOptions, type PropKey, type PropType, type PropValue } from 
 
 import { HookOutsideProviderError } from './errors';
 
-type SetValueMeta = {
+export type SetValueMeta = {
 	bind?: PropKey;
+	validation?: ( value: PropValue ) => boolean;
+	action?: {
+		type: string;
+		payload?: Record< string, unknown >;
+	};
 };
 
 export type SetValue< T > = ( value: T, options?: CreateOptions, meta?: SetValueMeta ) => void;

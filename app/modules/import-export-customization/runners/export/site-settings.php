@@ -33,7 +33,7 @@ class Site_Settings extends Export_Runner_Base {
 		return $this->export_all( $data );
 	}
 
-	private function export_all( $data ) {
+	private function export_all( $data, $include_theme = true ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$kit_data = $kit->get_export_data();
 
@@ -48,19 +48,27 @@ class Site_Settings extends Export_Runner_Base {
 			unset( $kit_data['settings'][ $setting_key ] );
 		}
 
-		$theme_data = $this->export_theme();
+		if ( $include_theme ) {
+			$theme_data = $this->export_theme();
 
-		if ( $theme_data ) {
-			$kit_data['theme'] = $theme_data;
+			if ( $theme_data ) {
+				$kit_data['theme'] = $theme_data;
+				$manifest_data['theme'] = $theme_data;
+			}
 		}
 
 		$experiments_data = $this->export_experiments();
 
 		if ( $experiments_data ) {
 			$kit_data['experiments'] = $experiments_data;
+			$manifest_data['experiments'] = array_keys( $experiments_data );
 		}
 
 		$manifest_data['site-settings'] = array_fill_keys( self::ALLOWED_SETTINGS, true );
+
+		if ( ! $include_theme ) {
+			$manifest_data['site-settings']['theme'] = false;
+		}
 
 		return [
 			'files' => [
@@ -74,56 +82,13 @@ class Site_Settings extends Export_Runner_Base {
 	}
 
 	private function export_customization( $data, $customization ) {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit_data = $kit->get_export_data();
+		$result = apply_filters( 'elementor/import-export-customization/export/site-settings/customization', null, $data, $customization, $this );
 
-		foreach ( $customization as $key => $value ) {
-			if ( ! in_array( $key, self::ALLOWED_SETTINGS ) ) {
-				unset( $customization[ $key ] );
-			}
+		if ( is_array( $result ) ) {
+			return $result;
 		}
 
-		if ( ! $customization['globalColors'] ) {
-			$kit_data = $this->remove_global_colors( $kit_data );
-		}
-
-		if ( ! $customization['globalFonts'] ) {
-			$kit_data = $this->remove_global_fonts( $kit_data );
-		}
-
-		if ( ! $customization['themeStyleSettings'] ) {
-			$kit_data = $this->remove_theme_style( $kit_data );
-		}
-
-		if ( ! $customization['generalSettings'] ) {
-			$kit_data = $this->remove_other_settings( $kit_data );
-		}
-
-		if ( $customization['theme'] ) {
-			$theme_data = $this->export_theme();
-
-			if ( $theme_data ) {
-				$kit_data['theme'] = $theme_data;
-			}
-		}
-
-		if ( $customization['experiments'] ) {
-			$experiments_data = $this->export_experiments();
-
-			if ( $experiments_data ) {
-				$kit_data['experiments'] = $experiments_data;
-			}
-		}
-
-		return [
-			'files' => [
-				'path' => 'site-settings',
-				'data' => $kit_data,
-			],
-			'manifest' => [
-				[ 'site-settings' => $customization ],
-			],
-		];
+		return $this->export_all( $data, ! empty( $customization['theme'] ) );
 	}
 
 	public function export_theme() {
@@ -141,7 +106,7 @@ class Site_Settings extends Export_Runner_Base {
 		return $theme_data;
 	}
 
-	private function export_experiments() {
+	public function export_experiments() {
 		$features = Plugin::$instance->experiments->get_features();
 
 		if ( empty( $features ) ) {
@@ -161,71 +126,5 @@ class Site_Settings extends Export_Runner_Base {
 		}
 
 		return empty( $experiments_data ) ? null : $experiments_data;
-	}
-
-	private function remove_global_colors( $kit_data ) {
-		$color_keys = [ 'system_colors', 'custom_colors' ];
-
-		foreach ( $color_keys as $key ) {
-			if ( isset( $kit_data['settings'][ $key ] ) ) {
-				unset( $kit_data['settings'][ $key ] );
-			}
-		}
-
-		return $kit_data;
-	}
-
-	private function remove_global_fonts( $kit_data ) {
-		$typography_keys = [ 'system_typography', 'custom_typography', 'default_generic_fonts' ];
-
-		foreach ( $typography_keys as $key ) {
-			if ( isset( $kit_data['settings'][ $key ] ) ) {
-				unset( $kit_data['settings'][ $key ] );
-			}
-		}
-
-		return $kit_data;
-	}
-
-	private function remove_theme_style( $kit_data ) {
-		$theme_style_patterns = [
-			'/^body_/',
-			'/^h[1-6]_/',
-			'/^button_/',
-			'/^link_/',
-			'/^form_field_/',
-		];
-
-		foreach ( $kit_data['settings'] as $key => $value ) {
-			foreach ( $theme_style_patterns as $pattern ) {
-				if ( preg_match( $pattern, $key ) ) {
-					unset( $kit_data['settings'][ $key ] );
-					break;
-				}
-			}
-		}
-
-		return $kit_data;
-	}
-
-	private function remove_other_settings( $kit_data ) {
-		$settings_keys = [
-			'template',
-			'container_width',
-			'container_padding',
-			'space_between_widgets',
-			'viewport_md',
-			'viewport_lg',
-			'page_title_selector',
-			'activeItemIndex',
-		];
-
-		foreach ( $settings_keys as $key ) {
-			if ( isset( $kit_data['settings'][ $key ] ) ) {
-				unset( $kit_data['settings'][ $key ] );
-			}
-		}
-
-		return $kit_data;
 	}
 }

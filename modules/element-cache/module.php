@@ -25,10 +25,6 @@ class Module extends BaseModule {
 
 		$this->register_shortcode();
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
-			return;
-		}
-
 		add_filter( 'elementor/element_cache/unique_id', [ $this, 'get_unique_id' ] );
 
 		$this->add_advanced_tab_actions();
@@ -38,18 +34,6 @@ class Module extends BaseModule {
 		}
 
 		$this->clear_cache_on_site_changed();
-	}
-
-	public static function get_experimental_data(): array {
-		return [
-			'name' => 'e_element_cache',
-			'title' => esc_html__( 'Element Caching', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'Elements caching reduces loading times by serving up a copy of an element instead of rendering it fresh every time the page is loaded. When active, Elementor will determine which elements can benefit from static loading - but you can override this.', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_STABLE,
-			'default' => ExperimentsManager::STATE_ACTIVE,
-			'generator_tag' => true,
-		];
 	}
 
 	public function get_unique_id() {

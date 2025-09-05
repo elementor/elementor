@@ -4,9 +4,10 @@ import { getContainer } from './get-container';
 
 type Options = {
 	useHistory?: boolean;
+	at?: number;
 };
 
-export function deleteElement( { elementId, options }: { elementId: string; options?: Options } ): void {
+export function deleteElement( { elementId, options = {} }: { elementId: string; options?: Options } ): void {
 	const container = getContainer( elementId );
 
 	if ( ! container ) {

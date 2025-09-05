@@ -8,6 +8,7 @@ import {
 import { useSelectedElement } from '@elementor/editor-elements';
 import { __ } from '@wordpress/i18n';
 
+import { useStyle } from '../../../contexts/style-context';
 import { StylesField } from '../../../controls-registry/styles-field';
 import { getRecentlyUsedList } from '../../../utils/get-recently-used-styles';
 import { PanelDivider } from '../../panel-divider';
@@ -22,9 +23,10 @@ const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
 
 export const EffectsSection = () => {
 	const { element } = useSelectedElement();
+	const { meta } = useStyle();
 
 	return (
-		<SectionContent>
+		<SectionContent gap={ 1 }>
 			<OpacityControlField />
 			<PanelDivider />
 			<StylesField bind="box-shadow" propDisplayName={ BOX_SHADOW_LABEL }>
@@ -36,7 +38,10 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
-				<TransitionRepeaterControl recentlyUsedList={ getRecentlyUsedList( element?.id ) } />
+				<TransitionRepeaterControl
+					currentStyleState={ meta.state }
+					recentlyUsedListGetter={ () => getRecentlyUsedList( element?.id ?? '' ) }
+				/>
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>

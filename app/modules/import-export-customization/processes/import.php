@@ -147,9 +147,9 @@ class Import {
 	private $runners_import_metadata = [];
 
 	/**
-	 * @param string $path session_id | zip_file_path
-	 * @param array $settings Use to determine which content to import.
-	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
+	 * @param string     $path session_id | zip_file_path
+	 * @param array      $settings Use to determine which content to import.
+	 *           (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
 	 * @param array|null $old_instance An array of old instance parameters that will be used for creating new instance.
 	 *      We are using it for quick creation of the instance when the import process is being split into chunks.
 	 * @throws \Exception If the import session does not exist.
@@ -177,7 +177,7 @@ class Import {
 			$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 
 			// Using isset and not empty is important since empty array is valid option.
-			$this->settings_selected_override_conditions = $settings['overrideConditions'] ?? null;
+			$this->settings_selected_override_conditions = $settings['customization']['templates']['themeBuilder']['overrideConditions'] ?? null;
 			$this->settings_selected_custom_post_types = $settings['customization']['content']['customPostTypes'] ?? null;
 			$this->settings_selected_plugins = $settings['plugins'] ?? null;
 			$this->settings_customization = $settings['customization'] ?? null;
@@ -580,7 +580,7 @@ class Import {
 	/**
 	 * Prevent saving elements on elementor post creation.
 	 *
-	 * @param array $data
+	 * @param array    $data
 	 * @param Document $document
 	 *
 	 * @return array
@@ -605,6 +605,7 @@ class Import {
 	 *
 	 * @param string $zip_path The path to the zip file.
 	 * @return string The extracted directory path.
+	 * @throws \Error If import process fails, file validation errors occur, or data corruption is detected.
 	 */
 	private function extract_zip( $zip_path ) {
 		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_path, [ 'json', 'xml' ] );
@@ -624,6 +625,7 @@ class Import {
 	 * Get the manifest file from the extracted directory and adapt it if needed.
 	 *
 	 * @return string The manifest file content.
+	 * @throws \Error If import validation fails or processing errors occur.
 	 */
 	private function read_manifest_json() {
 		$manifest = Utils::read_json_file( $this->extracted_directory_path . 'manifest' );
@@ -685,9 +687,15 @@ class Import {
 			return [];
 		}
 
+		$excluded = [ 'page', 'nav_menu_item' ];
+
+		if ( empty( $this->manifest['content']['post'] ?? [] ) && empty( $this->manifest['wp-content']['post'] ?? [] ) ) {
+			$excluded[] = 'post';
+		}
+
 		$manifest_post_types = array_keys( $this->manifest['custom-post-type-title'] );
 
-		return array_diff( $manifest_post_types, Utils::get_builtin_wp_post_types( [ 'post', 'nav_menu_item' ] ) );
+		return array_merge( $manifest_post_types, Utils::get_builtin_wp_post_types( $excluded ) );
 	}
 
 	/**

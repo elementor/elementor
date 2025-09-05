@@ -8,7 +8,7 @@ export default function ExportIntro() {
 			</Typography>
 			<Typography variant="body1" color="text.secondary">
 				{ __( 'Choose which Elementor components - templates, content and site settings - to include in your website templates file. By default, all of your components will be exported.', 'elementor' ) }{ ' ' }
-				<Link href="https://go.elementor.com/app-what-are-kits" target="_blank" rel="noopener noreferrer">
+				<Link href="https://go.elementor.com/app-what-are-kits" color="info.light" target="_blank" rel="noopener noreferrer">
 					{ __( 'Learn more', 'elementor' ) }
 				</Link>
 			</Typography>

@@ -69,7 +69,7 @@ describe( 'LinkedDimensionsControl', () => {
 		const dimensionInput = screen.getAllByRole( 'spinbutton' )[ 0 ];
 
 		// Act.
-		fireEvent.change( dimensionInput, { target: { value: '10' } } );
+		fireEvent.input( dimensionInput, { target: { value: '10' } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( {
@@ -102,7 +102,7 @@ describe( 'LinkedDimensionsControl', () => {
 		const dimensionInput = screen.getAllByRole( 'spinbutton' )[ 0 ];
 
 		// Act.
-		fireEvent.change( dimensionInput, { target: { value: '10' } } );
+		fireEvent.input( dimensionInput, { target: { value: '10' } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( {

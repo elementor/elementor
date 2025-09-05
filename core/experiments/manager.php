@@ -341,6 +341,7 @@ class Manager extends Base_Object {
 			'name' => 'container',
 			'title' => esc_html__( 'Container', 'elementor' ),
 			'description' => sprintf(
+				/* translators: 1: Link opening tag, 2: Link closing tag, 3: Link opening tag, 4: Link closing tag, 5: Link opening tag, 6: Link closing tag */
 				esc_html__( 'Create advanced layouts and responsive designs with %1$sFlexbox%2$s and %3$sGrid%4$s container elements. Give it a try using the %5$sContainer playground%6$s.', 'elementor' ),
 				'<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">',
 				'</a>',
@@ -721,8 +722,6 @@ class Manager extends Base_Object {
 	 * @param array  $old_feature_data
 	 * @param string $new_state
 	 * @param string $old_state
-	 *
-	 * @throws Dependency_Exception If the feature dependency is not available or not active.
 	 */
 	private function on_feature_state_change( array $old_feature_data, $new_state, $old_state ) {
 		$new_feature_data = $this->get_features( $old_feature_data['name'] );
@@ -741,7 +740,7 @@ class Manager extends Base_Object {
 	}
 
 	/**
-	 * @throws Dependency_Exception If the feature dependency is not available or not active.
+	 * @throws Exceptions\Dependency_Exception If the feature dependency is not available or not active.
 	 */
 	private function validate_dependency( array $feature, $new_state ) {
 		$rollback = function ( $feature_option_key, $state ) {
@@ -931,7 +930,7 @@ class Manager extends Base_Object {
 	 * @param array $experimental_data
 	 * @return array
 	 *
-	 * @throws Dependency_Exception If the feature dependency is not initialized or depends on a hidden experiment.
+	 * @throws Exceptions\Dependency_Exception If the feature dependency is not initialized or depends on a hidden experiment.
 	 */
 	private function initialize_feature_dependencies( array $experimental_data ): array {
 		foreach ( $experimental_data['dependencies'] as $key => $dependency ) {

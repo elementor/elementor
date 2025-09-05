@@ -8,6 +8,8 @@ use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
+use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
+use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -15,10 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Repository {
 	const TOTAL_VARIABLES_COUNT = 100;
-
 	const FORMAT_VERSION_V1 = 1;
 	const VARIABLES_META_KEY = '_elementor_global_variables';
-
 	private Kit $kit;
 
 	public function __construct( Kit $kit ) {
@@ -26,7 +26,7 @@ class Repository {
 	}
 
 	/**
-	 * @throws VariablesLimitReached
+	 * @throws VariablesLimitReached If database connection fails or query execution errors occur.
 	 */
 	private function assert_if_variables_limit_reached( array $db_record ) {
 		$variables_in_use = 0;
@@ -45,7 +45,7 @@ class Repository {
 	}
 
 	/**
-	 * @throws DuplicatedLabel
+	 * @throws DuplicatedLabel If variable creation fails or validation errors occur.
 	 */
 	private function assert_if_variable_label_is_duplicated( array $db_record, array $variable = [] ) {
 		foreach ( $db_record['data'] as $id => $existing_variable ) {
@@ -84,7 +84,7 @@ class Repository {
 	}
 
 	/**
-	 * @throws FatalError
+	 * @throws FatalError If variable update fails or validation errors occur.
 	 */
 	public function create( array $variable ) {
 		$db_record = $this->load();
@@ -118,8 +118,8 @@ class Repository {
 	}
 
 	/**
-	 * @throws RecordNotFound
-	 * @throws FatalError
+	 * @throws RecordNotFound If variable deletion fails or database errors occur.
+	 * @throws FatalError If variable deletion fails or database errors occur.
 	 */
 	public function update( string $id, array $variable ) {
 		$db_record = $this->load();
@@ -153,8 +153,8 @@ class Repository {
 	}
 
 	/**
-	 * @throws RecordNotFound
-	 * @throws FatalError
+	 * @throws RecordNotFound If bulk operation fails or validation errors occur.
+	 * @throws FatalError If bulk operation fails or validation errors occur.
 	 */
 	public function delete( string $id ) {
 		$db_record = $this->load();
@@ -183,8 +183,8 @@ class Repository {
 	}
 
 	/**
-	 * @throws RecordNotFound
-	 * @throws FatalError
+	 * @throws RecordNotFound If export operation fails or data serialization errors occur.
+	 * @throws FatalError If export operation fails or data serialization errors occur.
 	 */
 	public function restore( string $id, $overrides = [] ) {
 		$db_record = $this->load();
@@ -226,6 +226,200 @@ class Repository {
 			'variable' => array_merge( [ 'id' => $id ], $restored_variable ),
 			'watermark' => $watermark,
 		];
+	}
+
+	/**
+	 * Process multiple operations atomically
+	 *
+	 * @throws BatchOperationFailed If batch operation fails or validation errors occur.
+	 * @throws FatalError If batch operation fails or validation errors occur.
+	 */
+	public function process_atomic_batch( array $operations, int $expected_watermark ): array {
+		$db_record = $this->load();
+		$results = [];
+		$errors = [];
+
+		foreach ( $operations as $index => $operation ) {
+			try {
+				$result = $this->process_single_operation( $db_record, $operation );
+				$results[] = $result;
+			} catch ( Exception $e ) {
+				$operation_id = $this->get_operation_identifier( $operation, $index );
+				$errors[ $operation_id ] = [
+					'status' => $this->get_error_status_code( $e ),
+					'message' => $e->getMessage(),
+				];
+			}
+		}
+
+		if ( ! empty( $errors ) ) {
+			$error_details = [];
+
+			foreach ( $errors as $operation_id => $error ) {
+				$error_details[ esc_html( $operation_id ) ] = [
+					'status' => (int) $error['status'],
+					'message' => esc_html( $error['message'] ),
+				];
+			}
+
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new BatchOperationFailed( 'Batch operation failed', $error_details );
+		}
+
+		$watermark = $this->save( $db_record );
+
+		if ( false === $watermark ) {
+			throw new FatalError( 'Failed to save batch operations' );
+		}
+
+		return [
+			'success' => true,
+			'watermark' => $watermark,
+			'results' => $results,
+		];
+	}
+
+	private function process_single_operation( array &$db_record, array $operation ): array {
+		switch ( $operation['type'] ) {
+			case 'create':
+				return $this->process_create_operation( $db_record, $operation );
+
+			case 'update':
+				return $this->process_update_operation( $db_record, $operation );
+
+			case 'delete':
+				return $this->process_delete_operation( $db_record, $operation );
+
+			case 'restore':
+				return $this->process_restore_operation( $db_record, $operation );
+
+			default:
+				throw new BatchOperationFailed( 'Invalid operation type: ' . esc_html( $operation['type'] ), [] );
+		}
+	}
+
+	private function process_create_operation( array &$db_record, array $operation ): array {
+		$variable_data = $operation['variable'];
+
+		$temp_id = $variable_data['id'] ?? null;
+		$new_variable = $this->extract_from( $variable_data, [ 'type', 'label', 'value' ] );
+
+		$this->assert_if_variable_label_is_duplicated( $db_record, $new_variable );
+
+		$this->assert_if_variables_limit_reached( $db_record );
+
+		$id = $this->new_id_for( $db_record['data'] );
+		$now = $this->now();
+
+		$new_variable['created_at'] = $now;
+		$new_variable['updated_at'] = $now;
+
+		$db_record['data'][ $id ] = $new_variable;
+
+		return [
+			'id' => $id,
+			'type' => 'create',
+			'variable' => array_merge( [ 'id' => $id ], $new_variable ),
+			'temp_id' => $temp_id,
+		];
+	}
+
+	private function process_update_operation( array &$db_record, array $operation ): array {
+		$id = $operation['id'];
+		$variable_data = $operation['variable'];
+
+		if ( ! isset( $db_record['data'][ $id ] ) ) {
+			throw new \Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound( 'Variable not found' );
+		}
+
+		$updated_fields = $this->extract_from( $variable_data, [ 'label', 'value' ] );
+		$updated_variable = array_merge( $db_record['data'][ $id ], $updated_fields );
+		$updated_variable['updated_at'] = $this->now();
+
+		$this->assert_if_variable_label_is_duplicated( $db_record, array_merge( $updated_variable, [ 'id' => $id ] ) );
+
+		$db_record['data'][ $id ] = $updated_variable;
+
+		return [
+			'id' => $id,
+			'type' => 'update',
+			'variable' => array_merge( [ 'id' => $id ], $updated_variable ),
+		];
+	}
+
+	private function process_delete_operation( array &$db_record, array $operation ): array {
+		$id = $operation['id'];
+
+		if ( ! isset( $db_record['data'][ $id ] ) ) {
+			throw new RecordNotFound( 'Variable not found' );
+		}
+
+		$db_record['data'][ $id ]['deleted'] = true;
+		$db_record['data'][ $id ]['deleted_at'] = $this->now();
+
+		return [
+			'id' => $id,
+			'type' => 'delete',
+			'deleted' => true,
+		];
+	}
+
+	private function process_restore_operation( array &$db_record, array $operation ): array {
+		$id = $operation['id'];
+
+		if ( ! isset( $db_record['data'][ $id ] ) ) {
+			throw new RecordNotFound( 'Variable not found' );
+		}
+
+		$overrides = [];
+
+		if ( isset( $operation['label'] ) ) {
+			$overrides['label'] = $operation['label'];
+		}
+
+		if ( isset( $operation['value'] ) ) {
+			$overrides['value'] = $operation['value'];
+		}
+
+		$restored_variable = $this->extract_from( $db_record['data'][ $id ], [ 'label', 'value', 'type' ] );
+		$restored_variable = array_merge( $restored_variable, $overrides );
+		$restored_variable['updated_at'] = $this->now();
+
+		$this->assert_if_variable_label_is_duplicated( $db_record, array_merge( $restored_variable, [ 'id' => $id ] ) );
+
+		$this->assert_if_variables_limit_reached( $db_record );
+
+		$db_record['data'][ $id ] = $restored_variable;
+
+		return [
+			'id' => $id,
+			'type' => 'restore',
+			'variable' => array_merge( [ 'id' => $id ], $restored_variable ),
+		];
+	}
+
+	private function get_operation_identifier( array $operation, int $index ): string {
+		if ( 'create' === $operation['type'] && isset( $operation['variable']['id'] ) ) {
+			return $operation['variable']['id'];
+		}
+
+		if ( isset( $operation['id'] ) ) {
+			return $operation['id'];
+		}
+
+		return "operation_{$index}";
+	}
+
+	private function get_error_status_code( Exception $e ): int {
+		if ( $e instanceof RecordNotFound ) {
+			return 404;
+		}
+
+		if ( $e instanceof DuplicatedLabel || $e instanceof VariablesLimitReached ) {
+			return 400;
+		}
+
+		return 500;
 	}
 
 	private function save( array $db_record ) {

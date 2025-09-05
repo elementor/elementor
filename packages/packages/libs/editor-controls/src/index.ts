@@ -5,7 +5,7 @@ export { TextAreaControl } from './controls/text-area-control';
 export { SizeControl } from './controls/size-control';
 export { StrokeControl } from './controls/stroke-control';
 export { BoxShadowRepeaterControl } from './controls/box-shadow-repeater-control';
-export { FilterRepeaterControl } from './controls/filter-repeater-control';
+export { FilterRepeaterControl } from './controls/filter-control/filter-repeater-control';
 export { SelectControl } from './controls/select-control';
 export { ColorControl } from './controls/color-control';
 export { ToggleControl } from './controls/toggle-control';
@@ -34,7 +34,9 @@ export { transitionProperties, transitionsItemsList } from './controls/transitio
 // components
 export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
-export { CssEditor } from './components/css-code-editor/css-editor';
+export { ClearIconButton } from './components/icon-buttons/clear-icon-button';
+export { Repeater } from './components/repeater';
+export { FloatingActionsBar } from './components/floating-bar';
 
 // types
 export type { ControlComponent } from './create-control';

@@ -26,7 +26,17 @@ class Templates extends Export_Runner_Base {
 		$customization = $data['customization']['templates'] ?? null;
 
 		if ( $customization ) {
-			return $this->export_customization( $data, $customization );
+			return $this->export_with_customization( $data, $customization );
+		}
+
+		return $this->export_all( $data );
+	}
+
+	private function export_with_customization( array $data, array $customization ) {
+		$result = apply_filters( 'elementor/import-export-customization/export/templates/customization', null, $data, $customization, $this );
+
+		if ( is_array( $result ) ) {
+			return $result;
 		}
 
 		return $this->export_all( $data );
@@ -38,21 +48,7 @@ class Templates extends Export_Runner_Base {
 		return $this->export_templates_by_types( $template_types, $data );
 	}
 
-	private function export_customization( array $data, $customization ) {
-		$template_types = [];
-
-		if ( isset( $customization['siteTemplates']['enabled'] ) && $customization['siteTemplates']['enabled'] ) {
-			$template_types = array_keys( Plugin::$instance->documents->get_document_types( [
-				'is_editable' => true,
-				'show_in_library' => true,
-				'export_group' => Library_Document::EXPORT_GROUP,
-			] ) );
-		}
-
-		return $this->export_templates_by_types( $template_types, $data );
-	}
-
-	private function export_templates_by_types( array $template_types, array $data ) {
+	public function export_templates_by_types( array $template_types, array $data ) {
 		$templates_manifest_data = [];
 		$files = [];
 
