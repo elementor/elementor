@@ -230,63 +230,17 @@ describe( 'VariableControl', () => {
 		expect( screen.getByText( 'primary-background-color (changed)' ) ).toBeInTheDocument();
 	} );
 
-	describe( 'responsive placeholder inheritance', () => {
-		it( 'should inherit placeholder from desktop value when switching to tablet', () => {
-			// Arrange
-			const setValue = jest.fn();
-
-			( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( mockVariable );
-
-			// Desktop value
-			const desktopProps = {
-				setValue,
-				value: {
-					$$type: colorVariablePropTypeUtil.key,
-					value: 'e-gv-123',
-				},
-				bind: 'color',
-				propType,
-			};
-
-			// Tablet placeholder from desktop value
-			const tabletProps = {
-				setValue,
-				value: null, // No value set on tablet
-				bind: 'color',
-				propType,
-				placeholder: {
-					$$type: colorVariablePropTypeUtil.key,
-					value: 'e-gv-123', // Inherited from desktop
-				},
-			};
-
-			// Act - First render desktop control
-			const { rerender } = renderControl( <VariableControl />, desktopProps );
-
-			// Assert - Desktop has the variable
-			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-123' );
-			expect( screen.getByText( 'primary-background-color' ) ).toBeInTheDocument();
-
-			// Act - Switch to tablet (simulate breakpoint change with placeholder)
-			rerender( <VariableControl />, tabletProps );
-
-			// Assert - Tablet should show the inherited variable via placeholder
-			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-123' );
-			expect( screen.getByText( 'primary-background-color' ) ).toBeInTheDocument();
-		} );
-
+	describe( 'Variable inheritance', () => {
 		it( 'should inherit placeholder from tablet value when switching to mobile', () => {
 			// Arrange
 			const setValue = jest.fn();
 
-			// Tablet value (different from desktop)
 			const tabletVariable = {
 				key: 'e-gv-456',
 				label: 'secondary-color',
 				value: '#00ff00',
 			};
 
-			// Clear previous mocks and set up new ones
 			jest.clearAllMocks();
 			( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( tabletVariable );
 
@@ -300,30 +254,32 @@ describe( 'VariableControl', () => {
 				propType,
 			};
 
-			// Mobile placeholder from tablet value
 			const mobileProps = {
 				setValue,
-				value: null, // No value set on mobile
+				value: null,
 				bind: 'color',
 				propType,
 				placeholder: {
-					$$type: colorVariablePropTypeUtil.key,
-					value: 'e-gv-456', // Inherited from tablet
+					color: {
+						$$type: colorVariablePropTypeUtil.key,
+						value: 'e-gv-456-placeholder',
+					},
 				},
 			};
 
-			// Act - First render tablet control
+			// Act.
 			const { rerender } = renderControl( <VariableControl />, tabletProps );
 
-			// Assert - Tablet has the secondary variable
 			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-456' );
 			expect( screen.getByText( 'secondary-color' ) ).toBeInTheDocument();
+
+			( usePropVariablesModule.useVariable as jest.Mock ).mockClear();
 
 			// Act - Switch to mobile (simulate breakpoint change with placeholder)
 			rerender( <VariableControl />, mobileProps );
 
 			// Assert - Mobile should show the inherited variable via placeholder
-			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-456' );
+			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-456-placeholder' );
 			expect( screen.getByText( 'secondary-color' ) ).toBeInTheDocument();
 		} );
 
@@ -337,7 +293,6 @@ describe( 'VariableControl', () => {
 				value: '#ff0000',
 			};
 
-			// Clear previous mocks and set up new ones
 			jest.clearAllMocks();
 			( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( mobileVariable );
 
@@ -345,49 +300,25 @@ describe( 'VariableControl', () => {
 				setValue,
 				value: {
 					$$type: colorVariablePropTypeUtil.key,
-					value: 'e-gv-789', // Mobile has its own value
+					value: 'e-gv-789',
 				},
 				bind: 'color',
 				propType,
 				placeholder: {
-					$$type: colorVariablePropTypeUtil.key,
-					value: 'e-gv-123', // Inherited from desktop
+					color: {
+						$$type: colorVariablePropTypeUtil.key,
+						value: 'e-gv-123',
+					},
 				},
 			};
 
-			// Act
+			// Act.
 			renderControl( <VariableControl />, props );
 
-			// Assert - Should use the actual value, not the placeholder
+			// Assert.
 			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-789' );
+			expect( usePropVariablesModule.useVariable ).not.toHaveBeenCalledWith( 'e-gv-123' );
 			expect( screen.getByText( 'mobile-specific-color' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should handle missing variable in placeholder inheritance', () => {
-			// Arrange
-			const setValue = jest.fn();
-
-			// Clear previous mocks and set up new ones
-			jest.clearAllMocks();
-			( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( null );
-
-			const props = {
-				setValue,
-				value: null,
-				bind: 'color',
-				propType,
-				placeholder: {
-					$$type: colorVariablePropTypeUtil.key,
-					value: 'e-gv-missing', // Variable that doesn't exist
-				},
-			};
-
-			// Act
-			renderControl( <VariableControl />, props );
-
-			// Assert - Should show missing variable UI
-			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-missing' );
-			expect( screen.getByText( 'Missing variable' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

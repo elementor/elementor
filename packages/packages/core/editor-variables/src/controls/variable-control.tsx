@@ -21,7 +21,6 @@ export const VariableControl = () => {
 	}
 
 	const { $$type: propTypeKey } = boundPropValue;
-	// const propTypeKey = boundPropValue?.$$type;
 
 	if ( assignedVariable?.deleted ) {
 		return <DeletedVariable variable={ assignedVariable } propTypeKey={ propTypeKey } />;
