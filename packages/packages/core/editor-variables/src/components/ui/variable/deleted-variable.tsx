@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { VariableTypeProvider } from '../../../context/variable-type-context';
 import { usePermissions } from '../../../hooks/use-permissions';
 import { restoreVariable } from '../../../hooks/use-prop-variables';
+import { resolveBoundPropAndSetValue } from '../../../hooks/use-variable-bound-prop';
 import { type Variable } from '../../../types';
 import { createUnlinkHandler } from '../../../utils/unlink-variable';
 import { getVariableType } from '../../../variables-registry/variable-type-registry';
@@ -28,7 +29,7 @@ type Handlers = {
 export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
 	const { propTypeUtil } = getVariableType( propTypeKey );
 
-	const { setValue } = useBoundProp();
+	const boundProp = useBoundProp();
 
 	const userPermissions = usePermissions();
 
@@ -47,7 +48,7 @@ export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
 	const handlers: Handlers = {};
 
 	if ( userPermissions.canUnlink() ) {
-		handlers.onUnlink = createUnlinkHandler( variable, propTypeKey, setValue );
+		handlers.onUnlink = createUnlinkHandler( variable, propTypeKey, boundProp.setValue );
 	}
 
 	if ( userPermissions.canRestore() ) {
@@ -57,8 +58,9 @@ export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
 			}
 
 			restoreVariable( variable.key )
-				.then( ( key ) => {
-					setValue( propTypeUtil.create( key ) );
+				.then( ( id ) => {
+					resolveBoundPropAndSetValue( propTypeUtil.create( id ), boundProp );
+
 					closeInfotip();
 				} )
 				.catch( () => {
@@ -130,3 +132,13 @@ export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
 		</>
 	);
 };
+//
+// because we dont have redux we got no reactivity
+// test here
+// ( value: string ) => {
+// 			if ( ! boundProp.value && boundProp.placeholder === value ) {
+// 				return boundProp.setValue( null );
+// 			}
+//
+// 			return boundProp.setValue( value );
+// 		}

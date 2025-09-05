@@ -17,6 +17,7 @@ import { LabelField, useLabelError } from './fields/label-field';
 import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
 import { EDIT_CONFIRMATION_DIALOG_ID, EditConfirmationDialog } from './ui/edit-confirmation-dialog';
 import { FormField } from './ui/form-field';
+import { useVariableBoundProp } from "../hooks/use-variable-bound-prop";
 
 const SIZE = 'tiny';
 
@@ -28,9 +29,9 @@ type Props = {
 };
 
 export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
-	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
+	const { icon: VariableIcon, valueField: ValueField, variableType } = useVariableType();
 
-	const { setValue: notifyBoundPropChange, value: assignedValue } = useBoundProp( propTypeUtil );
+	const { setValue: notifyBoundPropChange, value: assignedValue } = useVariableBoundProp();
 	const { propType } = useBoundProp();
 	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( EDIT_CONFIRMATION_DIALOG_ID );
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
