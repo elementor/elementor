@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { useDialog } from '@elementor/editor-ui';
 import { type BoxProps, type ButtonProps, type IconButtonProps, type StackProps } from '@elementor/ui';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { VariablesManagerPanel } from '../variables-manager-panel';
 
@@ -27,12 +28,18 @@ jest.mock( '@elementor/editor-panels', () => ( {
 jest.mock( '@elementor/editor-ui', () => ( {
 	ThemeProvider: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 	EllipsisWithTooltip: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
+	useDialog: jest.fn().mockReturnValue( {
+		open: jest.fn(),
+		close: jest.fn(),
+		isOpen: false,
+	} ),
 } ) );
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	changeEditMode: jest.fn(),
 	commandEndEvent: jest.fn(),
 	windowEvent: jest.fn(),
+	getCurrentEditMode: jest.fn().mockReturnValue( 'edit' ),
 } ) );
 
 jest.mock( '@elementor/ui', () => {
@@ -66,24 +73,43 @@ jest.mock(
 	{ virtual: true }
 );
 
-jest.mock( '../variables-manager-table', () => ( {
-	VariablesManagerTable: ( props: { menuActions: unknown[]; variables: Record< string, unknown > } ) => (
-		<div
-			role="grid"
-			data-props={ JSON.stringify( {
-				...props,
-				menuActions: props.menuActions?.map( ( action ) => {
-					const typedAction = action as { name: string; icon: unknown; color: string; onClick: unknown };
-					return {
-						...typedAction,
-						icon: typedAction.icon ? 'IconComponent' : undefined,
-						onClick: 'function',
-					};
-				} ),
-			} ) }
-		/>
-	),
-} ) );
+jest.mock( '../variables-manager-table', () => {
+	const VariablesManagerTable = ( props: {
+		menuActions: unknown[];
+		variables: Record< string, unknown >;
+		onChange: ( variables: Record< string, unknown > ) => void;
+	} ) => {
+		return (
+			<button
+				type="button"
+				role="grid"
+				aria-label="Variables Table"
+				tabIndex={ 0 }
+				onClick={ () => {
+					// Simulate a change when clicking the grid
+					props.onChange( { 'var-1': { label: 'Changed', value: 'new value', type: 'color' } } );
+				} }
+				onKeyDown={ ( event ) => {
+					if ( event.key === 'Enter' || event.key === ' ' ) {
+						props.onChange( { 'var-1': { label: 'Changed', value: 'new value', type: 'color' } } );
+					}
+				} }
+				data-props={ JSON.stringify( {
+					...props,
+					menuActions: props.menuActions?.map( ( action ) => {
+						const typedAction = action as { name: string; icon: unknown; color: string; onClick: unknown };
+						return {
+							...typedAction,
+							icon: typedAction.icon ? 'IconComponent' : undefined,
+							onClick: 'function',
+						};
+					} ),
+				} ) }
+			/>
+		);
+	};
+	return { VariablesManagerTable };
+} );
 
 describe( 'VariablesManagerPanel', () => {
 	const mockConsoleError = jest.fn();
@@ -183,5 +209,44 @@ describe( 'VariablesManagerPanel', () => {
 			flexDirection: 'column',
 			height: '100%',
 		} );
+	} );
+
+	it( 'should close the panel when trying to close with no unsaved changes', () => {
+		// Arrange
+		const close = jest.fn();
+		jest.mocked( useDialog ).mockReturnValue( {
+			open: jest.fn(),
+			close,
+			isOpen: false,
+		} );
+
+		// Act
+		render( <VariablesManagerPanel /> );
+
+		// Assert
+		expect( close ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should open save changes dialog when there is unsaved changes', async () => {
+		// Arrange
+		const openDialog = jest.fn();
+		jest.mocked( useDialog ).mockReturnValue( {
+			open: openDialog,
+			close: jest.fn(),
+			isOpen: false,
+		} );
+
+		// Act
+		render( <VariablesManagerPanel /> );
+
+		// Make changes to trigger isDirty
+		await screen.findByRole( 'grid', { name: 'Variables Table' } );
+		fireEvent.click( screen.getByRole( 'grid', { name: 'Variables Table' } ) );
+
+		// Try to close the panel
+		fireEvent.click( screen.getByLabelText( 'Close' ) );
+
+		// Assert
+		expect( openDialog ).toHaveBeenCalled();
 	} );
 } );

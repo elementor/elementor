@@ -8,6 +8,7 @@ export { InfoTipCard } from './components/infotip-card';
 export { InfoAlert } from './components/info-alert';
 export { WarningInfotip } from './components/warning-infotip';
 export * from './components/popover';
+export * from './components/save-changes-dialog';
 
 // hooks
 export { useEditable } from './hooks/use-editable';
