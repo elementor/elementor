@@ -38,7 +38,7 @@ export const basicPlaywrightConfig: PlaywrightTestConfig = {
 		launchOptions: {
 			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
 		},
-		headless: !! process.env.CI,
+		headless: true,
 		ignoreHTTPSErrors: true,
 		actionTimeout: timeouts.action,
 		navigationTimeout: timeouts.navigation,
@@ -56,7 +56,7 @@ export default defineConfig( {
 	...basicPlaywrightConfig,
 	use: {
 		...basicPlaywrightConfig.use,
-		storageState: `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json`,
+		storageState: process.env.CI ? `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json` : undefined,
 	},
 	testDir: './sanity',
 } );
