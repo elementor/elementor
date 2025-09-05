@@ -17,6 +17,13 @@ let elementor: ElementorType;
 let Backbone: BackboneType;
 let window: WindowType;
 
+/**
+ * Helper design contract:
+ * - Keep helpers generic & reusable (accept IDs/values; return IDs/locators).
+ * - Always operate via the Editor iframe (use this.getPreviewFrame()).
+ * - Use stable selectors (getByRole/getByTestId), no palette-click creation.
+ * - Prefer adding small helpers over modifying existing ones in a breaking way.
+ */
 export default class EditorPage extends BasePage {
 	readonly v4Panel: v4Panel;
 	readonly previewFrame: Frame;
