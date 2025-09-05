@@ -6,7 +6,7 @@ import { renderHook } from '@testing-library/react';
 import { ColorField } from '../../components/fields/color-field';
 import { useVariableType } from '../../context/variable-type-context';
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
-import { resolveBoundPropAndSetValue, unwrapValue, useVariableBoundProp } from '../use-variable-bound-prop';
+import { resolveBoundPropAndSetValue, useVariableBoundProp } from '../use-variable-bound-prop';
 
 // Mock dependencies
 jest.mock( '@elementor/editor-controls', () => ( {
