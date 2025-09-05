@@ -1123,7 +1123,7 @@ class NestedTabs extends Widget_Nested_Base {
 	/**
 	 * Print the content area.
 	 *
-	 * @param int $index
+	 * @param int   $index
 	 * @param array $item_settings
 	 */
 	public function print_child( $index, $item_settings = [] ) {

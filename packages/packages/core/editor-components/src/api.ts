@@ -1,6 +1,8 @@
 import { type V1ElementModelProps } from '@elementor/editor-elements';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 
+import { type Component } from './types';
+
 const BASE_URL = 'elementor/v1/components';
 
 type CreateComponentPayload = {
@@ -8,10 +10,7 @@ type CreateComponentPayload = {
 	content: V1ElementModelProps[];
 };
 
-type GetComponentResponse = Array< {
-	component_id: number;
-	name: string;
-} >;
+type GetComponentResponse = Array< Component >;
 
 export type CreateComponentResponse = {
 	component_id: number;

@@ -39,12 +39,12 @@ class Module extends BaseModule {
 	public function register_elementor_rest_field() {
 		register_rest_field( get_post_types( '', 'names' ),
 			'gutenberg_elementor_mode', [
-				'update_callback' => function( $request_value, $object ) {
-					if ( ! User::is_current_user_can_edit( $object->ID ) ) {
+				'update_callback' => function( $request_value, $obj ) {
+					if ( ! User::is_current_user_can_edit( $obj->ID ) ) {
 						return false;
 					}
 
-					$document = Plugin::$instance->documents->get( $object->ID );
+					$document = Plugin::$instance->documents->get( $obj->ID );
 
 					if ( ! $document ) {
 						return false;

@@ -60,6 +60,7 @@ class Dynamic_Tags_Schemas {
 
 		switch ( $control_type ) {
 			case 'text':
+			case 'textarea':
 				return String_Prop_Type::make()
 					->default( $control['default'] ?? null );
 
@@ -70,6 +71,7 @@ class Dynamic_Tags_Schemas {
 
 			case 'number':
 				return Number_Prop_Type::make()
+					->set_required( $control['required'] ?? false )
 					->default( $control['default'] ?? null );
 
 			case 'switcher':
