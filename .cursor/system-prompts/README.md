@@ -1,17 +1,18 @@
-# System Prompts Structure
+# System Prompts Directory
 
-## MCP Usage Approach
-**Use Playwright MCP when you need to understand app behavior!**
+This directory contains AI agent system prompts organized by purpose and domain.
 
-## File Structure:
-- **`mcp-rules.md`** - MCP-specific behavior and tool usage rules
-- **`agent-rules.md`** - General agent behavior and project management rules  
-- **`elementor-specific.md`** - Elementor-specific testing rules
+## Structure
 
-## Usage:
-1. **Use MCP when needed**: For app analysis and debugging
-2. **Follow Agent Rules**: Use project workflow and testing strategy
-3. **Apply Elementor Rules**: Use domain-specific testing patterns
+### Test Generation (`/test-gen/`)
+Specialized prompts for automated test generation and QA workflows:
+- **Process & Strategy** - High-level testing workflows and standards
+- **Platform Implementation** - Elementor-specific testing patterns
+- **Tool Integration** - MCP usage for interactive analysis
 
-## Key Principle:
+See `/test-gen/README.md` for detailed documentation.
+
+## Usage Principle
 **Analyze → Understand → Act → Verify**
+
+These prompts work together to provide comprehensive guidance for AI-assisted test generation, from planning through implementation to debugging.
