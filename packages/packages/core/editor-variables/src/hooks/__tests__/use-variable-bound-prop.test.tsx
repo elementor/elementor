@@ -1,3 +1,4 @@
+import { createMockPropType } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
 import { colorPropTypeUtil } from '@elementor/editor-props';
 import { BrushIcon } from '@elementor/icons';
@@ -20,12 +21,12 @@ jest.mock( '../../context/variable-type-context', () => ( {
 const mockUseBoundProp = jest.mocked( useBoundProp );
 const mockUseVariableType = jest.mocked( useVariableType );
 
-function createMockBoundProp( overrides: any = {} ) {
+function createMockBoundProp( overrides: Partial< Record< string, string > > = {} ): ReturnType< typeof useBoundProp > {
 	return {
 		bind: 'test-bind',
 		setValue: jest.fn(),
 		value: null,
-		propType: colorPropTypeUtil,
+		propType: createMockPropType(),
 		placeholder: null,
 		path: [ 'background', 'color' ],
 		restoreValue: jest.fn(),
@@ -72,7 +73,6 @@ describe( 'useVariableBoundProp', () => {
 	it( 'should use placeholder when value is null', () => {
 		// Arrange
 		const mockBoundProp = createMockBoundProp( {
-			value: null,
 			placeholder: 'e-gv-placeholder',
 		} );
 

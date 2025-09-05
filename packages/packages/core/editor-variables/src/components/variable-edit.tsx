@@ -11,13 +11,13 @@ import { __ } from '@wordpress/i18n';
 import { useVariableType } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
+import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { styleVariablesRepository } from '../style-variables-repository';
 import { ERROR_MESSAGES, labelHint, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
 import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
 import { EDIT_CONFIRMATION_DIALOG_ID, EditConfirmationDialog } from './ui/edit-confirmation-dialog';
 import { FormField } from './ui/form-field';
-import { useVariableBoundProp } from "../hooks/use-variable-bound-prop";
 
 const SIZE = 'tiny';
 
