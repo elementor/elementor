@@ -13,11 +13,11 @@ const button = await editor.getWidget(buttonId);
 
 **Panel Navigation - Use existing helper methods:**
 ```javascript
-// ✅ Correct - use existing helpers
+// Correct - use existing helpers
 await editor.openV2PanelTab('style');
 await editor.openV2Section('size');
 
-// ❌ Avoid - manual tab clicking
+//  Avoid - manual tab clicking
 await editor.page.getByRole('tab', { name: 'Style' }).click();
 ```
 
