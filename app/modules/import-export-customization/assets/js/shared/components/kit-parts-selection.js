@@ -1,10 +1,24 @@
 import { useState, Fragment } from 'react';
 import { Box, Typography, Stack, Checkbox, FormControlLabel, Button, Tooltip } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import kitContentData from '../kit-content-data';
 import useContextDetection from '../hooks/use-context-detection';
 import { ReExportBanner } from './re-export-banner';
+
+function getTooltipConfig( item, isImport, contextData, data ) {
+	if ( ! item.tooltipConfig ) {
+		return null;
+	}
+
+	const shouldShow = item.tooltipConfig.shouldShow( isImport, contextData, data );
+	
+	return shouldShow ? {
+		message: item.tooltipConfig.message,
+		shouldDisable: true,
+	} : null;
+}
 
 export default function KitPartsSelection( { data, onCheckboxChange, testId, handleSaveCustomization } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );
@@ -109,6 +123,10 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 	);
 
 	const getSectionEditButton = ( item, isLockedFeaturesNoPro ) => {
+		const tooltipConfig = getTooltipConfig( item, isImport, contextData, data );
+		const showTooltip = tooltipConfig !== null;
+		const tooltipMessage = tooltipConfig?.message;
+
 		if ( isLockedFeaturesNoPro ) {
 			return (
 				<Button
@@ -129,39 +147,50 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 		}
 
 		if ( ! isImport ) {
-			return (
+			const editButton = (
 				<Button
 					color="secondary"
 					onClick={ () => setActiveDialog( item.type ) }
 					sx={ { alignSelf: 'center' } }
 					data-type={ item.type }
-					disabled={ isEditDisabled( item ) }
+					disabled={ isEditDisabled( item ) || showTooltip }
 				>
 					{ __( 'Edit', 'elementor' ) }
 				</Button>
 			);
+
+			return showTooltip ? (
+				<Tooltip title={ tooltipMessage } arrow placement="top">
+					<Box sx={ { cursor: 'pointer' } }>{ editButton }</Box>
+				</Tooltip>
+			) : editButton;
 		}
 
-		return isExported( item )
-			? (
-				<Button
-					color="secondary"
-					onClick={ () => setActiveDialog( item.type ) }
-					sx={ { alignSelf: 'center' } }
-					data-type={ item.type }
-					disabled={ isEditDisabled( item ) }
-				>
-					{ __( 'Edit', 'elementor' ) }
-				</Button>
-			) : (
-				<Typography
-					variant="body1"
-					color="text.disabled"
-					sx={ { alignSelf: 'center' } }
-				>
-					{ __( 'Not exported', 'elementor' ) }
-				</Typography>
-			);
+		const editButton = isExported( item ) ? (
+			<Button
+				color="secondary"
+				onClick={ () => setActiveDialog( item.type ) }
+				sx={ { alignSelf: 'center' } }
+				data-type={ item.type }
+				disabled={ isEditDisabled( item ) || showTooltip }
+			>
+				{ __( 'Edit', 'elementor' ) }
+			</Button>
+		) : (
+			<Typography
+				variant="body1"
+				color="text.disabled"
+				sx={ { alignSelf: 'center' } }
+			>
+				{ __( 'Not exported', 'elementor' ) }
+			</Typography>
+		);
+
+		return showTooltip && isExported( item ) ? (
+			<Tooltip title={ tooltipMessage } arrow placement="top">
+				<Box sx={ { cursor: 'pointer' } }>{ editButton }</Box>
+			</Tooltip>
+		) : editButton;
 	};
 
 	return (

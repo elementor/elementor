@@ -15,7 +15,19 @@ function getInitialState( contextData, isImport ) {
 		initialState = false;
 	}
 
+	if ( isImport && contextData?.isOldExport && ! data?.uploadedData?.manifest?.theme ) {
+		initialState = false;
+	}
+
 	return initialState;
+}
+
+function isDisabled( isImport, contextData ) {
+	if ( isImport && contextData?.isOldExport && ! contextData?.data?.uploadedData?.manifest?.theme ) {
+		return true;
+	}
+
+	return isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme;
 }
 
 export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
@@ -82,7 +94,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
 					settingKey="theme"
 					onSettingChange={ handleToggleChange }
-					disabled={ isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme }
+					disabled={ isDisabled( isImport, contextData ) }
 				/>
 			</Stack>
 		</KitCustomizationDialog>

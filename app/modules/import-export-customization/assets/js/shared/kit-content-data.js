@@ -67,6 +67,36 @@ const kitContentData = [
 		},
 		dialog: KitSettingsCustomizationDialog,
 		required: false,
+		tooltipConfig: {
+			message: __( 'This website template was exported with an older version of Elementor, so component editing is limited.', 'elementor' ),
+			shouldShow: ( isImport, contextData, data ) => {
+				// Check if this is an old export
+				const isOldExport = contextData?.isOldExport === true;
+				
+				// Check if settings are disabled
+				const isDisabled = isImport && contextData?.isOldExport && ! contextData?.data?.uploadedData?.manifest?.theme;
+				if ( ! isDisabled ) {
+					const fallbackDisabled = isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme;
+					if ( ! fallbackDisabled ) {
+						return false;
+					}
+				}
+				
+				// Check initial state
+				const dataIncludes = contextData?.data?.includes?.includes( 'settings' );
+				let initialState = dataIncludes;
+				
+				if ( isImport && ! contextData?.isOldExport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme ) {
+					initialState = false;
+				}
+				
+				if ( isImport && contextData?.isOldExport && ! contextData?.data?.uploadedData?.manifest?.theme ) {
+					initialState = false;
+				}
+				
+				return isOldExport && ( isDisabled || fallbackDisabled ) && initialState === false;
+			},
+		},
 	},
 	{
 		type: 'plugins',
