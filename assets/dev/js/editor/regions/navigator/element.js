@@ -118,9 +118,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onModelEditorSettingsChange( elementModel, editorSettings ) {
-		const currentTitle = this.model.get( 'editor_settings' )?.title;
-
-		if ( editorSettings?.title !== currentTitle ) {
+		if ( undefined !== elementModel.changed?.editor_settings?.title ) {
 			this.ui.title.text( editorSettings.title );
 		}
 
