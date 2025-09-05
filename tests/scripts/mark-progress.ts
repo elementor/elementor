@@ -74,19 +74,16 @@ function processMarkdownContent( md: string, doneList: string[] ): { content: st
 		const idEsc = escapeRegExp( id );
 		const patterns = createRegexPatterns( idEsc );
 
-		// Check if already processed
 		if ( patterns.alreadyCheckedBullet.test( md ) || patterns.alreadyCheckedTable.test( md ) ) {
 			continue;
 		}
 
-		// Process bullet points
 		if ( patterns.bulletUnchecked.test( md ) ) {
 			md = md.replace( patterns.bulletUnchecked, `${ MARKDOWN_CHECKBOX_CHECKED } ${ id }$1` );
 			totalReplacements++;
 			continue;
 		}
 
-		// Process table entries
 		if ( patterns.tableUnchecked.test( md ) ) {
 			md = md.replace(
 				patterns.tableUnchecked,
@@ -96,16 +93,10 @@ function processMarkdownContent( md: string, doneList: string[] ): { content: st
 			continue;
 		}
 
-		// Not found → warn
 		warnings.push( `Warning: could not find mapping entry for ${ id }` );
 	}
 
 	return { content: md, totalReplacements, warnings };
-}
-
-function formatOutputMessage( doneList: string[], totalReplacements: number ): string {
-	const entriesText = 1 === totalReplacements ? 'entry' : 'entries';
-	return `Marked done: ${ doneList.join( ', ' ) } (updated ${ totalReplacements } ${ entriesText })`;
 }
 
 function main(): void {
@@ -118,20 +109,15 @@ function main(): void {
 
 	try {
 		const md = fs.readFileSync( planPath!, 'utf8' );
-		const { content, totalReplacements, warnings } = processMarkdownContent( md, doneList );
+		const { content, warnings } = processMarkdownContent( md, doneList );
 
 		warnings.forEach( ( warning ) => {
-			// eslint-disable-next-line no-console
-			console.warn( warning );
+			process.stderr.write( `${ warning }\n` );
 		} );
 
 		fs.writeFileSync( planPath!, content, 'utf8' );
-
-		// eslint-disable-next-line no-console
-		console.log( formatOutputMessage( doneList, totalReplacements ) );
 	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.error( `Error processing file: ${ error instanceof Error ? error.message : 'Unknown error' }` );
+		process.stderr.write( `Error processing file: ${ error instanceof Error ? error.message : 'Unknown error' }\n` );
 		process.exit( 1 );
 	}
 }
