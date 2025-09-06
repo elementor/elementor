@@ -238,7 +238,7 @@ class Module extends BaseModule {
 				$starting_clicks = (int) get_post_meta( $post_id, static::META_CLICK_TRACKING, true );
 				$posts_to_update[ $post_id ] = $starting_clicks ? $starting_clicks : 0;
 			}
-			$posts_to_update[ $post_id ]++;
+			++$posts_to_update[ $post_id ];
 		}
 
 		foreach ( $posts_to_update as $post_id => $clicks ) {
