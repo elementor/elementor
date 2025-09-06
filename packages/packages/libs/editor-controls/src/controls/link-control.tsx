@@ -1,33 +1,18 @@
 import * as React from 'react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { getLinkInLinkRestriction } from '@elementor/editor-elements';
-import {
-	linkPropTypeUtil,
-	type LinkPropValue,
-	numberPropTypeUtil,
-	stringPropTypeUtil,
-	urlPropTypeUtil,
-} from '@elementor/editor-props';
-import { type HttpResponse, httpService } from '@elementor/http-client';
+import { linkPropTypeUtil, type LinkPropValue, urlPropTypeUtil } from '@elementor/editor-props';
 import { MinusIcon, PlusIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
 import { Collapse, Grid, IconButton, Stack } from '@elementor/ui';
-import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
-import {
-	Autocomplete,
-	type CategorizedOption,
-	findMatchingOption,
-	type FlatOption,
-	isCategorizedOptionPool,
-} from '../components/autocomplete';
 import { ControlFormLabel } from '../components/control-form-label';
 import { RestrictedLinkInfotip } from '../components/restricted-link-infotip';
-import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 import { type ControlProps } from '../utils/types';
+import { QueryControl } from './query-control';
 import { SwitchControl } from './switch-control';
 
 type Props = ControlProps< {
@@ -48,8 +33,6 @@ type LinkSessionValue = {
 	};
 };
 
-type Response = HttpResponse< { value: FlatOption[] | CategorizedOption[] } >;
-
 const SIZE = 'tiny';
 
 export const LinkControl = createControl( ( props: Props ) => {
@@ -58,7 +41,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 	const [ isActive, setIsActive ] = useState( !! value );
 
 	const {
-		allowCustomValues,
+		allowCustomValues = true,
 		queryOptions: { endpoint = '', requestParams = {} },
 		placeholder,
 		minInputLength = 2,
@@ -67,9 +50,6 @@ export const LinkControl = createControl( ( props: Props ) => {
 	} = props || {};
 
 	const [ linkInLinkRestriction, setLinkInLinkRestriction ] = useState( getLinkInLinkRestriction( elementId ) );
-	const [ options, setOptions ] = useState< FlatOption[] | CategorizedOption[] >(
-		generateFirstLoadedOption( value )
-	);
 	const shouldDisableAddingLink = ! isActive && linkInLinkRestriction.shouldRestrict;
 
 	const onEnabledChange = () => {
@@ -96,18 +76,6 @@ export const LinkControl = createControl( ( props: Props ) => {
 		} );
 	};
 
-	const onOptionChange = ( newValue: number | null ) => {
-		const valueToSave: LinkPropValue[ 'value' ] | null = newValue
-			? {
-					...value,
-					destination: numberPropTypeUtil.create( newValue ),
-					label: stringPropTypeUtil.create( findMatchingOption( options, newValue )?.label || null ),
-			  }
-			: null;
-
-		onSaveNewValue( valueToSave );
-	};
-
 	const onTextChange = ( newValue: string | null ) => {
 		newValue = newValue?.trim() || '';
 
@@ -115,40 +83,12 @@ export const LinkControl = createControl( ( props: Props ) => {
 			? {
 					...value,
 					destination: urlPropTypeUtil.create( newValue ),
-					label: stringPropTypeUtil.create( '' ),
 			  }
 			: null;
 
-		onSaveNewValue( valueToSave );
-		updateOptions( newValue );
+		setValue( valueToSave );
+		setLinkSessionValue( { ...linkSessionValue, value: valueToSave } );
 	};
-
-	const onSaveNewValue = ( newValue: LinkPropValue[ 'value' ] | null ) => {
-		setValue( newValue );
-		setLinkSessionValue( { ...linkSessionValue, value: newValue } );
-	};
-
-	const updateOptions = ( newValue: string | null ) => {
-		setOptions( [] );
-
-		if ( ! newValue || ! endpoint || newValue.length < minInputLength ) {
-			return;
-		}
-
-		debounceFetch( { ...requestParams, term: newValue } );
-	};
-
-	const debounceFetch = useMemo(
-		() =>
-			debounce(
-				( params: FetchOptionsParams ) =>
-					fetchOptions( endpoint, params ).then( ( newOptions ) => {
-						setOptions( formatOptions( newOptions ) );
-					} ),
-				400
-			),
-		[ endpoint ]
-	);
 
 	return (
 		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
@@ -174,17 +114,14 @@ export const LinkControl = createControl( ( props: Props ) => {
 				<Collapse in={ isActive } timeout="auto" unmountOnExit>
 					<Stack gap={ 1.5 }>
 						<PropKeyProvider bind={ 'destination' }>
-							<ControlActions>
-								<Autocomplete
-									options={ options }
-									allowCustomValues={ allowCustomValues }
-									placeholder={ placeholder }
-									value={ value?.destination?.value?.settings?.label || value?.destination?.value }
-									onOptionChange={ onOptionChange }
-									onTextChange={ onTextChange }
-									minInputLength={ minInputLength }
-								/>
-							</ControlActions>
+							<QueryControl
+								queryOptions={ { endpoint, requestParams } }
+								allowCustomValues={ allowCustomValues }
+								minInputLength={ minInputLength }
+								placeholder={ placeholder }
+								externalValue={ value?.destination?.value }
+								setExternalValue={ onTextChange }
+							/>
 						</PropKeyProvider>
 						<PropKeyProvider bind={ 'isTargetBlank' }>
 							<Grid container alignItems="center" flexWrap="nowrap" justifyContent="space-between">
@@ -217,42 +154,3 @@ const ToggleIconControl = ( { disabled, active, onIconClick, label }: ToggleIcon
 		</IconButton>
 	);
 };
-
-type FetchOptionsParams = Record< string, unknown > & { term: string };
-
-async function fetchOptions( ajaxUrl: string, params: FetchOptionsParams ) {
-	if ( ! params || ! ajaxUrl ) {
-		return [];
-	}
-
-	try {
-		const { data: response } = await httpService().get< Response >( ajaxUrl, { params } );
-
-		return response.data.value;
-	} catch {
-		return [];
-	}
-}
-
-function formatOptions( options: FlatOption[] | CategorizedOption[] ): FlatOption[] | CategorizedOption[] {
-	const compareKey = isCategorizedOptionPool( options ) ? 'groupLabel' : 'label';
-
-	return options.sort( ( a, b ) =>
-		a[ compareKey ] && b[ compareKey ] ? a[ compareKey ].localeCompare( b[ compareKey ] ) : 0
-	);
-}
-
-function generateFirstLoadedOption( unionValue: LinkPropValue[ 'value' ] | null ): FlatOption[] {
-	const value = unionValue?.destination?.value;
-	const label = unionValue?.label?.value;
-	const type = unionValue?.destination?.$$type || 'url';
-
-	return value && label && type === 'number'
-		? [
-				{
-					id: value.toString(),
-					label,
-				},
-		  ]
-		: [];
-}
