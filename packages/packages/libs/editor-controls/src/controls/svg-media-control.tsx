@@ -7,7 +7,7 @@ import { type OpenOptions, useWpMediaAttachment, useWpMediaFrame } from '@elemen
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../bound-prop-context';
-import { EnableUnfilteredModal } from '../components/enable-unfiltered-modal';
+import { InfotipModal } from '../components/infotip-modal';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 import { useUnfilteredFilesUpload } from '../hooks/use-unfiltered-files-upload';
@@ -75,13 +75,12 @@ export const SvgMediaControl = createControl( () => {
 		if ( ! allowSvgUpload && openOptions === MODE_UPLOAD ) {
 			setUnfilteredModalOpenState( true );
 		} else {
-			open( openOptions );
+			setUnfilteredModalOpenState( true );
 		}
 	};
 
 	return (
 		<Stack gap={ 1 }>
-			<EnableUnfilteredModal open={ unfilteredModalOpenState } onClose={ onCloseUnfilteredModal } />
 			<ControlActions>
 				<StyledCard variant="outlined">
 					<StyledCardMediaContainer>
@@ -112,15 +111,17 @@ export const SvgMediaControl = createControl( () => {
 							>
 								{ __( 'Select SVG', 'elementor' ) }
 							</Button>
-							<Button
-								size="tiny"
-								variant="text"
-								color="inherit"
-								startIcon={ <UploadIcon /> }
-								onClick={ () => handleClick( MODE_UPLOAD ) }
-							>
-								{ __( 'Upload', 'elementor' ) }
-							</Button>
+							<InfotipModal open={ unfilteredModalOpenState } onClose={ onCloseUnfilteredModal }>
+								<Button
+									size="tiny"
+									variant="text"
+									color="inherit"
+									startIcon={ <UploadIcon /> }
+									onClick={ () => handleClick( MODE_UPLOAD ) }
+								>
+									{ __( 'Upload', 'elementor' ) }
+								</Button>
+							</InfotipModal>
 						</Stack>
 					</CardOverlay>
 				</StyledCard>
