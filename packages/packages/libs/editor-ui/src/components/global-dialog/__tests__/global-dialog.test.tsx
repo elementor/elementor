@@ -5,9 +5,9 @@ import { GlobalDialog } from '../components/global-dialog';
 import { closeDialog, type DialogStateCallback, openDialog } from '../subscribers';
 
 // Get mock functions for cleanup
-const mockEventBus = jest.requireMock( '../event-bus' );
+const mockEventBus = jest.requireMock( '../subscribers' );
 
-jest.mock( '../event-bus', () => {
+jest.mock( '../subscribers', () => {
 	let currentState: { component: React.ReactElement } | null = null;
 	const subscribers = new Set< DialogStateCallback >();
 
