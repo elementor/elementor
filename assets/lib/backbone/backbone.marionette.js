@@ -1665,6 +1665,7 @@
   
       var templateFunc = _.isFunction(template) ? template : Marionette.TemplateCache.get(template);
   
+      //?
       return templateFunc(data);
     }
   };
@@ -2638,6 +2639,7 @@
         }
       }, this);
   
+      // כאן?
       // Store the child view itself so we can properly remove and/or destroy it later
       this.children.add(view);
       this.renderChildView(view, index);
@@ -2662,6 +2664,7 @@
       if (!view.supportsRenderLifecycle) {
         Marionette.triggerMethodOn(view, 'render', view);
       }
+      // כאן?
       this.attachHtml(this, view, index);
       return view;
     },
