@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InfoCircleFilledIcon } from '@elementor/icons';
-import { Card, CardContent, CardHeader, Typography, Infotip } from '@elementor/ui';
+import { Card, CardContent, CardHeader, Infotip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type InfotipModalProps = {
@@ -17,19 +17,17 @@ export const InfotipModal = ( props: InfotipModalProps ) => {
 	);
 };
 function InfotipCard() {
-	const NON_ADMIN_TITLE_TEXT = __( "Sorry, you can't upload that file yet.", 'elementor' );
+	const NON_ADMIN_TITLE_TEXT = __( "Sorry, you can't upload that file yet", 'elementor' );
 	const NON_ADMIN_CONTENT_TEXT = __(
-		'To upload it anyway,\nask the site administrator to enable\nunfiltered file uploads.',
+		'To upload them anyway, ask the site administrator to enable unfiltered file uploads.',
 		'elementor'
 	);
 
 	return (
 		<Card elevation={ 0 } sx={ { maxWidth: 400, backgroundColor: '#F3F3F4' } }>
 			<CardHeader title={ NON_ADMIN_TITLE_TEXT } avatar={ <InfoCircleFilledIcon color={ 'secondary' } /> } />
-			<CardContent sx={ { paddingTop: '1px' } }>
-				<Typography variant="body1" sx={ { whiteSpace: 'pre-line' } }>
-					{ NON_ADMIN_CONTENT_TEXT }
-				</Typography>
+			<CardContent>
+				<Typography variant="body1">{ NON_ADMIN_CONTENT_TEXT }</Typography>
 			</CardContent>
 		</Card>
 	);
