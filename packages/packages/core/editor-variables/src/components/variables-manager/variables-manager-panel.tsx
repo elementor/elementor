@@ -140,6 +140,7 @@ export function VariablesManagerPanel() {
 								<Stack direction="row" gap={ 0.5 } alignItems="center">
 									<VariableManagerCreateMenu onCreate={ createVariable } variables={ variables } />
 									<CloseButton
+										aria-label="Close"
 										slotProps={ { icon: { fontSize: SIZE } } }
 										onClick={ () => {
 											handleClosePanel();
@@ -191,6 +192,7 @@ export function VariablesManagerPanel() {
 					/>
 				) }
 			</ErrorBoundary>
+
 			{ isSaveChangesDialogOpen && (
 				<SaveChangesDialog>
 					<SaveChangesDialog.Title onClose={ closeSaveChangesDialog }>

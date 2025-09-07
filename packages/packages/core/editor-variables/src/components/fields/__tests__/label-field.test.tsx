@@ -140,16 +140,15 @@ describe( 'LabelField', () => {
 
 	it( 'should select text on focus when selectOnShow is true', () => {
 		// Arrange
-		const selectMock = jest.fn();
 		renderLabelField( { selectOnShow: true } );
 		const input = screen.getByRole( 'textbox' ) as HTMLInputElement;
-		input.select = selectMock;
 
 		// Act
 		fireEvent.focus( input );
 
 		// Assert
-		expect( selectMock ).toHaveBeenCalled();
+		expect( input.selectionStart ).toBe( 0 );
+		expect( input.selectionEnd ).toBe( input.value.length );
 	} );
 } );
 

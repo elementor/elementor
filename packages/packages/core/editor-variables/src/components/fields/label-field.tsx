@@ -69,7 +69,7 @@ export const LabelField = ( {
 			value={ label }
 			error={ !! errorMsg }
 			onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => handleChange( e.target.value ) }
-			inputProps={ { 
+			inputProps={ {
 				maxLength: VARIABLE_LABEL_MAX_LENGTH,
 				...( selectOnShow && { onFocus: ( e: React.FocusEvent< HTMLInputElement > ) => e.target.select() } )
 			} }
