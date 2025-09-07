@@ -7,7 +7,6 @@ import {
 	Typography,
 	Button,
 	Divider,
-	Link,
 	List,
 	ListItem,
 } from '@elementor/ui';
@@ -65,7 +64,7 @@ export const ProFreeTrialDialog = ( { doClose, popupData } ) => {
 			<Stack py={ 2 } px={ 3 } direction="row" justifyContent="flex-end" gap={ 1.5 }>
 				<Button
 					onClick={ doClose }
-					color="secondary" 
+					color="secondary"
 					variant="text"
 				>
 					{ popupData.secondaryAction || 'Not now' }
@@ -85,4 +84,5 @@ export const ProFreeTrialDialog = ( { doClose, popupData } ) => {
 
 ProFreeTrialDialog.propTypes = {
 	doClose: PropTypes.func,
+	popupData: PropTypes.object,
 };

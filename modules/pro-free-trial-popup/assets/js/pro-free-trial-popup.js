@@ -11,7 +11,6 @@ import {
 import { ProFreeTrialDialog } from './editor-pro-free-trial-dialog';
 
 const App = ( props ) => {
-	console.log( props.popupData );
 	const [ isDialogVisible, setIsDialogVisible ] = useState( true );
 
 	const handleClose = () => {
@@ -61,3 +60,8 @@ const init = () => {
 };
 
 init();
+
+App.propTypes = {
+	isRTL: PropTypes.bool,
+	popupData: PropTypes.object,
+};
