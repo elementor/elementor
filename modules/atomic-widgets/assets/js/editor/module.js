@@ -33,7 +33,7 @@ class Module extends elementorModules.editor.utils.Module {
 		$e.components.register( new Component() );
 
 		this.registerAtomicWidgetTypes();
-		this.registerComponentInstanceType();
+		// this.registerComponentInstanceType();
 	}
 
 	registerAtomicWidgetTypes() {

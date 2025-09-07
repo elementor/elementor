@@ -89,8 +89,37 @@ function createComponentViewClassDeclaration( {
             console.log(componentId);
             console.log(componentData);
 
+		// const elements = this.createBackboneElementsCollection( componentData.elements );
+
+
 			// const renderedElements = await this.renderContainer( elements_data[0], componentSettings );
-			this.$el.html( '<div class="e-component">' + "test" + '</div>' );
+			// this.$el.html( '<div class="e-component">' + "test" + '</div>' );
+const elementModel = window.elementor.modules.elements.models.Element
+
+const lockEl = (el) => { 
+	if (el.elements) {
+		el.elements = el.elements.map( lockEl );
+	}
+	return {
+	...el, isLocked: true }
+}	
+
+		const lockedElements = componentData.elements.map( lockEl );
+			const firstElement = new elementModel( {... lockedElements[0], isLocked: true } );
+		const firstElementView = this.getChildView( firstElement );
+		var view = this.buildChildView( firstElement, firstElementView, { model: firstElement } );
+
+		// Add the view to children collection
+		this.children.add(view);
+		
+		// First set the container
+		this.$el.html('<div class="e-component"></div>');
+		
+		// Then render the child view properly using Elementor's mechanism
+		await this.renderChildView(view, 0);
+		
+		// Move the rendered view inside the e-component container
+		this.$('.e-component').append(view.$el);
 
 			this.#afterRenderTemplate();
 		}

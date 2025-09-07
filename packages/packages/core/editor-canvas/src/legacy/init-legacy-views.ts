@@ -22,7 +22,8 @@ export function initLegacyViews() {
 			let ElementType;
 
 			if ( type === 'e-component' ) {
-				return;
+				// return
+				console.log('------------ e-component ------------');
 				ElementType = createComponentType( { type, renderer, element: element as unknown as Component, config } );
 			} else {
 				ElementType = canBeTemplated( element )

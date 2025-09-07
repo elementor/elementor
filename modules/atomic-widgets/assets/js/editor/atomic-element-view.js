@@ -15,7 +15,7 @@ export default function createAtomicElementView( type ) {
 
 			const tagControl = this.model.getSetting( 'tag' );
 			const tagControlValue = tagControl?.value || tagControl;
-			const defaultTag = this.model.config.default_html_tag;
+			const defaultTag = this.model.config?.default_html_tag || 'div';
 
 			return tagControlValue || defaultTag;
 		},

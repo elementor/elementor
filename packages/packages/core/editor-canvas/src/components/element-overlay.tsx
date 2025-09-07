@@ -17,7 +17,7 @@ type Props = {
 const OverlayBox = styled( Box, {
 	shouldForwardProp: ( prop ) => prop !== 'isSelected' && prop !== 'isSmallerOffset',
 } )< Pick< Props, 'isSelected' | 'isSmallerOffset' > >( ( { theme, isSelected, isSmallerOffset } ) => ( {
-	outline: `${ isSelected ? '2px' : '1px' } solid ${ theme.palette.primary.light }`,
+	outline: `${ isSelected ? '7px' : '6px' } solid ${ theme.palette.primary.light }`,
 	outlineOffset: isSelected && ! isSmallerOffset ? '-2px' : '-1px',
 	pointerEvents: 'none',
 } ) );
@@ -32,6 +32,7 @@ export function ElementOverlay( { element, isSelected, id }: Props ) {
 	return (
 		isVisible && (
 			<FloatingPortal id={ CANVAS_WRAPPER_ID }>
+				<p>Overlay</p>
 				<OverlayBox
 					ref={ floating.setRef }
 					isSelected={ isSelected }

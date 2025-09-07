@@ -1,6 +1,7 @@
 import AtomicContainer from './atomic-element-model';
+import createAtomicElementView from './atomic-element-view';
 
-// const BaseElementView = elementor.modules.elements.views.BaseElement;
+const BaseElementView = elementor.modules.elements.views.BaseElement;
 const AtomicElementView = createAtomicElementView('e-component');
 
 const ComponentInstanceView = AtomicElementView.extend( {
@@ -17,35 +18,22 @@ const ComponentInstanceView = AtomicElementView.extend( {
 	// },
 
 	async _renderTemplate() {
-		console.log('------------ _renderTemplate ------------');
-		console.log(20, this);
 		const elements = await this.getComponentData();
-		console.log(22, this);
 		const firstElement = elements.at( 0 );
-		console.log(24,this);
 		const firstElementView = this.getChildView( firstElement );
-		console.log(26,this);
 		var view = this.buildChildView( firstElement, firstElementView, { model: firstElement } );
 
-		// this.children.add(view);
-		// this.$el.html( '<div class="e-component">');
-		console.log(31, this);
-      	await this.renderChildView(view, 0);
-		  console.log(33, this);
-		const html = this.$el[0].outerHTML;
-		console.log(35,this);
-		console.log('------------ html ------------');
-		console.log(37,this);
-		// console.log(this.$el[0].to);
-		console.log(39,this);
-		console.log(html);
-		console.log(41,this);
-		// this.$el.html( '<div class="e-component">' + html + '</div>' );
-		console.log(43,this);
+		// Add the view to children collection
+		this.children.add(view);
 		
-		// view.render();
-		// const html = view.$el[0].outerHTML;
-		// this.$el.html( '<div class="e-component">' + html + '</div>' );
+		// First set the container
+		this.$el.html('<div class="e-component"></div>');
+		
+		// Then render the child view properly using Elementor's mechanism
+		await this.renderChildView(view, 0);
+		
+		// Move the rendered view inside the e-component container
+		this.$('.e-component').append(view.$el);
 	},
 
 	async renderChildView(view, index) {
