@@ -24,7 +24,7 @@ export const ProFreeTrialDialog = ( { doClose, popupData } ) => {
 		return null;
 	}
 
-	if ( ! popupData.image || ! popupData.heading || ! popupData.subheading || ! popupData.introduction || ! popupData.listItems || ! popupData.secondaryAction || ! popupData.ctaUrl || ! popupData.ctaText ) {
+	if ( ! popupData || Object.values( popupData ).some( value => ! value ) ) {
 		return null;
 	}
 
