@@ -12,7 +12,12 @@ const headerContent = (
 );
 
 export default function ImportCustomization() {
-	const { isCustomizing, dispatch, isProcessing } = useImportContext();
+	const {
+		isCustomizing,
+		dispatch,
+		isProcessing,
+		data,
+	} = useImportContext();
 	const navigate = useNavigate();
 
 	useEffect( () => {
@@ -25,7 +30,21 @@ export default function ImportCustomization() {
 				variant="text"
 				color="secondary"
 				size="small"
-				onClick={ () => dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.PENDING } ) }
+				onClick={ () => {
+					if ( data?.kitUploadParams ) {
+						let url = '';
+						if ( 'cloud' === data?.kitUploadParams?.source ) {
+							url = 'kit-library/cloud';
+						} else if ( 'kit-library' === data?.kitUploadParams?.source ) {
+							url = 'kit-library';
+						}
+
+						navigate( url, { replace: true } );
+					} else {
+						dispatch( { type: 'RESET_STATE' } );
+						dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.PENDING } );
+					}
+				} }
 				data-testid="import-back-button"
 			>
 				{ __( 'Back', 'elementor' ) }

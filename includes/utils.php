@@ -199,7 +199,7 @@ class Utils {
 	 * @param string $to
 	 *
 	 * @return string
-	 * @throws \Exception Replace URL exception.
+	 * @throws \Exception If URLs are missing or invalid URLs provided.
 	 */
 	public static function replace_urls( $from, $to ) {
 		$from = trim( $from );
@@ -513,12 +513,12 @@ class Utils {
 	 * @access public
 	 * @static
 	 */
-	public static function array_inject( $array, $key, $insert ) {
-		$length = array_search( $key, array_keys( $array ), true ) + 1;
+	public static function array_inject( $base_array, $key, $insert ) {
+		$length = array_search( $key, array_keys( $base_array ), true ) + 1;
 
-		return array_slice( $array, 0, $length, true ) +
+		return array_slice( $base_array, 0, $length, true ) +
 			$insert +
-			array_slice( $array, $length, null, true );
+			array_slice( $base_array, $length, null, true );
 	}
 
 	/**
@@ -640,10 +640,10 @@ class Utils {
 	/**
 	 * Convert HTMLEntities to UTF-8 characters
 	 *
-	 * @param string $string
+	 * @param string $html_string
 	 * @return string
 	 */
-	public static function urlencode_html_entities( $string ) {
+	public static function urlencode_html_entities( $html_string ) {
 		$entities_dictionary = [
 			'&#145;' => "'", // Opening single quote
 			'&#146;' => "'", // Closing single quote
@@ -658,9 +658,9 @@ class Utils {
 		];
 
 		// Decode decimal entities
-		$string = str_replace( array_keys( $entities_dictionary ), array_values( $entities_dictionary ), $string );
+		$html_string = str_replace( array_keys( $entities_dictionary ), array_values( $entities_dictionary ), $html_string );
 
-		return rawurlencode( html_entity_decode( $string, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+		return rawurlencode( html_entity_decode( $html_string, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
 	}
 
 	/**
@@ -773,8 +773,8 @@ class Utils {
 	/**
 	 * Print internal content (not user input) without escaping.
 	 */
-	public static function print_unescaped_internal_string( $string ) {
-		echo $string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	public static function print_unescaped_internal_string( $internal_string ) {
+		echo $internal_string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -801,7 +801,7 @@ class Utils {
 		return new \WP_Query( $args );
 	}
 
-	public static function print_wp_kses_extended( $string, array $tags ) {
+	public static function print_wp_kses_extended( $text, array $tags ) {
 		$allowed_html = wp_kses_allowed_html( 'post' );
 
 		foreach ( $tags as $tag ) {
@@ -811,7 +811,7 @@ class Utils {
 			}
 		}
 
-		echo wp_kses( $string, $allowed_html );
+		echo wp_kses( $text, $allowed_html );
 	}
 
 	public static function is_elementor_path( $path ) {
@@ -877,19 +877,19 @@ class Utils {
 	/**
 	 * Return specific object property value if exist from array of keys.
 	 *
-	 * @param array $array
+	 * @param array $base_array
 	 * @param array $keys
 	 * @return mixed|null
 	 */
-	public static function get_array_value_by_keys( $array, $keys ) {
+	public static function get_array_value_by_keys( $base_array, $keys ) {
 		$keys = (array) $keys;
 		foreach ( $keys as $key ) {
-			if ( ! isset( $array[ $key ] ) ) {
+			if ( ! isset( $base_array[ $key ] ) ) {
 				return null;
 			}
-			$array = $array[ $key ];
+			$base_array = $base_array[ $key ];
 		}
-		return $array;
+		return $base_array;
 	}
 
 	public static function get_cached_callback( $callback, $cache_key, $cache_time = 24 * HOUR_IN_SECONDS ) {
@@ -946,15 +946,15 @@ class Utils {
 		return (bool) Plugin::$instance->kits_manager->get_previous_id();
 	}
 
-	public static function decode_string( string $string, ?string $fallback = '' ) {
+	public static function decode_string( string $encoded_string, ?string $fallback = '' ) {
 		try {
-			return base64_decode( $string, true ) ?? $fallback;
+			return base64_decode( $encoded_string, true ) ?? $fallback;
 		} catch ( \Exception $e ) {
 			return $fallback;
 		}
 	}
 
-	public static function encode_string( string $string ): string {
-		return base64_encode( $string );
+	public static function encode_string( string $decoded_string ): string {
+		return base64_encode( $decoded_string );
 	}
 }
