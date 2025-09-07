@@ -1,8 +1,19 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ClickAwayListener, Stack } from '@elementor/ui';
 
 import { type ValueFieldProps } from '../../variables-registry/create-variable-type-registry';
+
+type VariableEditableCellProps = {
+	initialValue: string;
+	children: React.ReactNode;
+	editableElement: ( { value, onChange, onValidationChange }: ValueFieldProps ) => JSX.Element;
+	onChange: ( newValue: string ) => void;
+	prefixElement?: React.ReactNode;
+	autoEdit?: boolean;
+	onRowRef?: ( ref: HTMLTableRowElement | null ) => void;
+	onAutoEditComplete?: () => void;
+};
 
 export const VariableEditableCell = ( {
 	initialValue,
@@ -10,15 +21,25 @@ export const VariableEditableCell = ( {
 	editableElement,
 	onChange,
 	prefixElement,
-}: {
-	initialValue: string;
-	children: React.ReactNode;
-	editableElement: ( { value, onChange, onValidationChange }: ValueFieldProps ) => JSX.Element;
-	onChange: ( newValue: string ) => void;
-	prefixElement?: React.ReactNode;
-} ) => {
+	autoEdit = false,
+	onRowRef,
+	onAutoEditComplete,
+}: VariableEditableCellProps ) => {
 	const [ value, setValue ] = useState( initialValue );
 	const [ isEditing, setIsEditing ] = useState( false );
+
+	const rowRef = useRef< HTMLTableRowElement >( null );
+
+	useEffect( () => {
+		onRowRef?.( rowRef?.current );
+	}, [ onRowRef ] );
+
+	useEffect( () => {
+		if ( autoEdit && ! isEditing ) {
+			setIsEditing( true );
+			onAutoEditComplete?.();
+		}
+	}, [ autoEdit, isEditing, onAutoEditComplete ] );
 
 	const handleDoubleClick = () => {
 		setIsEditing( true );
@@ -51,6 +72,7 @@ export const VariableEditableCell = ( {
 		return (
 			<ClickAwayListener onClickAway={ handleSave }>
 				<Stack
+					ref={ rowRef }
 					direction="row"
 					alignItems="center"
 					gap={ 1 }
@@ -69,6 +91,7 @@ export const VariableEditableCell = ( {
 
 	return (
 		<Stack
+			ref={ rowRef }
 			direction="row"
 			alignItems="center"
 			gap={ 1 }

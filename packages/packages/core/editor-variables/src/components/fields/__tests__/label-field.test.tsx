@@ -137,6 +137,20 @@ describe( 'LabelField', () => {
 			expect( screen.getByRole( 'textbox' ) ).not.toHaveAttribute( 'aria-invalid', 'true' );
 		} );
 	} );
+
+	it( 'should select text on focus when selectOnShow is true', () => {
+		// Arrange
+		const selectMock = jest.fn();
+		renderLabelField( { selectOnShow: true } );
+		const input = screen.getByRole( 'textbox' ) as HTMLInputElement;
+		input.select = selectMock;
+
+		// Act
+		fireEvent.focus( input );
+
+		// Assert
+		expect( selectMock ).toHaveBeenCalled();
+	} );
 } );
 
 describe( 'useLabelError', () => {

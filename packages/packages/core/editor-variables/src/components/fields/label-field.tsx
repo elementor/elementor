@@ -29,6 +29,7 @@ type LabelFieldProps = {
 	onErrorChange?: ( errorMsg: string ) => void;
 	size?: TextFieldProps[ 'size' ];
 	focusOnShow?: boolean;
+	selectOnShow?: boolean;
 };
 
 export const LabelField = ( {
@@ -39,6 +40,7 @@ export const LabelField = ( {
 	onErrorChange,
 	size = 'tiny',
 	focusOnShow = false,
+	selectOnShow = false,
 }: LabelFieldProps ) => {
 	const [ label, setLabel ] = useState( value );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
@@ -67,7 +69,10 @@ export const LabelField = ( {
 			value={ label }
 			error={ !! errorMsg }
 			onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => handleChange( e.target.value ) }
-			inputProps={ { maxLength: VARIABLE_LABEL_MAX_LENGTH } }
+			inputProps={ { 
+				maxLength: VARIABLE_LABEL_MAX_LENGTH,
+				...( selectOnShow && { onFocus: ( e: React.FocusEvent< HTMLInputElement > ) => e.target.select() } )
+			} }
 			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus={ focusOnShow }
 		/>
