@@ -8,6 +8,7 @@ import { ColorIndicator } from './components/ui/color-indicator';
 import { colorVariablePropTypeUtil } from './prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from './prop-types/font-variable-prop-type';
 import { registerVariableType } from './variables-registry/variable-type-registry';
+import { __ } from '@wordpress/i18n';
 
 export function registerVariableTypes() {
 	registerVariableType( {
@@ -17,6 +18,7 @@ export function registerVariableTypes() {
 		fallbackPropTypeUtil: colorPropTypeUtil,
 		variableType: 'color',
 		startIcon: ( { value } ) => <ColorIndicator size="inherit" component="span" value={ value } />,
+		defaultValue: __( '#ffffff', 'elementor' ),
 	} );
 
 	registerVariableType( {
@@ -25,5 +27,6 @@ export function registerVariableTypes() {
 		propTypeUtil: fontVariablePropTypeUtil,
 		fallbackPropTypeUtil: stringPropTypeUtil,
 		variableType: 'font',
+		defaultValue: __( 'Roboto', 'elementor' ),
 	} );
 }

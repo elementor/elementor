@@ -1,55 +1,40 @@
 import * as React from 'react';
 import { createElement } from 'react';
-import { BrushIcon, ExpandIcon, PlusIcon, TextIcon } from '@elementor/icons';
+import { PlusIcon } from '@elementor/icons';
 import { bindMenu, bindTrigger, IconButton, Menu, MenuItem, Typography, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
-import { fontVariablePropTypeUtil } from '../../prop-types/font-variable-prop-type';
 import { type TVariablesList } from '../../storage';
+import { getVariableTypes } from '../../variables-registry/variable-type-registry';
 
 export const SIZE = 'tiny';
 
-const DEFAULT_COLOR_VALUE = __( '#ffffff', 'elementor' );
-const DEFAULT_FONT_VALUE = __( 'Roboto', 'elementor' );
-
-type VariableManagerPlusMenuProps = {
+type VariableManagerCreateMenuProps = {
 	variables: TVariablesList;
 	onCreate: ( type: string, defaultName: string, defaultValue: string ) => void;
 	disabled?: boolean;
 };
 
-export const VariableManagerPlusMenu = ( { variables, onCreate, disabled }: VariableManagerPlusMenuProps ) => {
+export const VariableManagerCreateMenu = ( { variables, onCreate, disabled }: VariableManagerCreateMenuProps ) => {
 	const menuState = usePopupState( {
 		variant: 'popover',
 	} );
 
-	const menuOptions = [
-		{
-			key: 'color',
-			name: __( 'Color', 'elementor' ),
-			icon: BrushIcon,
+	const variableTypes = getVariableTypes();
+
+	const menuOptions = Object.entries( variableTypes ).map( ( [ key, variable ] ) => {
+		const displayName = variable.variableType.charAt( 0 ).toUpperCase() + variable.variableType.slice( 1 );
+
+		return {
+			key,
+			name: displayName,
+			icon: variable.icon,
 			onClick: () => {
-				const defaultName = getDefaultName( variables, colorVariablePropTypeUtil.key, 'color' );
-				onCreate( colorVariablePropTypeUtil.key, defaultName, DEFAULT_COLOR_VALUE );
+				const defaultName = getDefaultName( variables, key, variable.variableType );
+				onCreate( key, defaultName, variable.defaultValue || '' );
 			},
-		},
-		{
-			key: 'font',
-			name: __( 'Font', 'elementor' ),
-			icon: TextIcon,
-			onClick: () => {
-				const defaultName = getDefaultName( variables, fontVariablePropTypeUtil.key, 'font' );
-				onCreate( fontVariablePropTypeUtil.key, defaultName, DEFAULT_FONT_VALUE );
-			},
-		},
-		{
-			key: 'size',
-			name: __( 'Size', 'elementor' ),
-			icon: ExpandIcon,
-			onClick: () => {},
-		},
-	];
+		};
+	} );
 
 	return (
 		<>

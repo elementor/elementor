@@ -18,8 +18,8 @@ import { generateTempId } from '../../batch-operations';
 import { getVariables } from '../../hooks/use-prop-variables';
 import { service } from '../../service';
 import { type TVariablesList } from '../../storage';
-import { SIZE, VariableManagerPlusMenu } from './variables-manager-create-menu';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
+import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu';
 import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
@@ -41,11 +41,11 @@ export function VariablesManagerPanel() {
 
 	const [ variables, setVariables ] = useState( getVariables( false ) );
 	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
-	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
 	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
-	const [ autoEditVariableId, setAutoEditVariableId ] = useState< string | undefined >( undefined );
 
-	const [ isSaving, setIsSaving ] = useState( false );
+	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
+	const [ autoEditVariableId, setAutoEditVariableId ] = useState< string | undefined >( undefined );
+	const [ isDirty, setIsDirty ] = useState( false );
 
 	usePreventUnload( isDirty );
 
@@ -128,7 +128,7 @@ export function VariablesManagerPanel() {
 									</PanelHeaderTitle>
 								</Stack>
 								<Stack direction="row" gap={ 0.5 } alignItems="center">
-									<VariableManagerPlusMenu onCreate={ createVariable } variables={ variables } />
+									<VariableManagerCreateMenu onCreate={ createVariable } variables={ variables } />
 									<CloseButton
 										slotProps={ { icon: { fontSize: SIZE } } }
 										onClick={ () => {
