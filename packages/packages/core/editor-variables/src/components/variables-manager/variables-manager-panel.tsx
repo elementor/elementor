@@ -8,7 +8,7 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { ThemeProvider } from '@elementor/editor-ui';
+import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { ColorFilterIcon, TrashIcon } from '@elementor/icons';
 import { Alert, Box, Button, CloseButton, Divider, ErrorBoundary, Stack } from '@elementor/ui';
@@ -38,6 +38,7 @@ export const { panel, usePanelActions } = createPanel( {
 
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
+	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 
 	const [ variables, setVariables ] = useState( getVariables( false ) );
 	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
@@ -48,6 +49,15 @@ export function VariablesManagerPanel() {
 	const [ isDirty, setIsDirty ] = useState( false );
 
 	usePreventUnload( isDirty );
+
+	const handleClosePanel = () => {
+		if ( isDirty ) {
+			openSaveChangesDialog();
+			return;
+		}
+
+		closePanel();
+	};
 
 	const handleSave = useCallback( async () => {
 		const originalVariables = getVariables( false );
@@ -132,7 +142,7 @@ export function VariablesManagerPanel() {
 									<CloseButton
 										slotProps={ { icon: { fontSize: SIZE } } }
 										onClick={ () => {
-											closePanel();
+											handleClosePanel();
 										} }
 									/>
 								</Stack>
@@ -181,6 +191,37 @@ export function VariablesManagerPanel() {
 					/>
 				) }
 			</ErrorBoundary>
+			{ isSaveChangesDialogOpen && (
+				<SaveChangesDialog>
+					<SaveChangesDialog.Title onClose={ closeSaveChangesDialog }>
+						{ __( 'You have unsaved changes', 'elementor' ) }
+					</SaveChangesDialog.Title>
+					<SaveChangesDialog.Content>
+						<SaveChangesDialog.ContentText>
+							{ __( 'To avoid losing your updates, save your changes before leaving.', 'elementor' ) }
+						</SaveChangesDialog.ContentText>
+					</SaveChangesDialog.Content>
+					<SaveChangesDialog.Actions
+						actions={ {
+							discard: {
+								label: __( 'Discard', 'elementor' ),
+								action: () => {
+									closeSaveChangesDialog();
+									closePanel();
+								},
+							},
+							confirm: {
+								label: __( 'Save', 'elementor' ),
+								action: async () => {
+									await handleSave();
+									closeSaveChangesDialog();
+									closePanel();
+								},
+							},
+						} }
+					/>
+				</SaveChangesDialog>
+			) }
 		</ThemeProvider>
 	);
 }
