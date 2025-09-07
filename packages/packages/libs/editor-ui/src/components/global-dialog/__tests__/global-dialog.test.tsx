@@ -2,7 +2,7 @@ import * as React from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { GlobalDialog } from '../components/global-dialog';
-import { closeDialog, type DialogStateCallback, openDialog } from '../event-bus';
+import { closeDialog, type DialogStateCallback, openDialog } from '../subscribers';
 
 // Get mock functions for cleanup
 const mockEventBus = jest.requireMock( '../event-bus' );

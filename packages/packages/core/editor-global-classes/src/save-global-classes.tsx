@@ -3,7 +3,7 @@ import { openDialog } from '@elementor/editor-ui';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 import { hash } from '@elementor/utils';
 
-import { apiClient, type ApiContext } from './api';
+import { API_ERROR_CODES, apiClient, type ApiContext } from './api';
 import { DuplicateLabelDialog } from './components/class-manager/duplicate-label-dialog';
 import { type GlobalClasses, selectData, selectFrontendInitialData, selectPreviewInitialData, slice } from './store';
 
@@ -23,7 +23,7 @@ export async function saveGlobalClasses( { context, onApprove }: Options ) {
 	} );
 
 	dispatch( slice.actions.reset( { context } ) );
-	if ( response?.data?.data?.code === 'DUPLICATED_LABEL' ) {
+	if ( response?.data?.data?.code === API_ERROR_CODES.DUPLICATED_LABEL ) {
 		dispatch( slice.actions.updateMultiple( response.data.data.modifiedLabels ) );
 		openDialog( {
 			component: (

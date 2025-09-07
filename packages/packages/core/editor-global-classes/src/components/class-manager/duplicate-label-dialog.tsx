@@ -27,7 +27,7 @@ export const DuplicateLabelDialog = ( {
 	onApprove?: () => void;
 } ) => {
 	const handleButtonClick = () => {
-		localStorage.setItem( 'elementor-global-classes-search', 'DUP_' );
+		localStorage.setItem( 'elementor-global-classes-search', DUP_PREFIX );
 		onApprove?.();
 		closeDialog();
 	};

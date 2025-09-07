@@ -3,11 +3,11 @@ import * as React from 'react';
 import { Dialog } from '@elementor/ui';
 
 import ThemeProvider from '../../theme-provider';
-import { closeDialog, subscribeToDialogState } from '../event-bus';
-import { type DialogContent as DialogContentType } from '../event-bus';
+import { closeDialog, subscribeToDialogState } from '../subscribers';
+import { type DialogContent } from '../subscribers';
 
 export const GlobalDialog = () => {
-	const [ content, setContent ] = useState< DialogContentType | null >( null );
+	const [ content, setContent ] = useState< DialogContent | null >( null );
 
 	useEffect( () => {
 		const unsubscribe = subscribeToDialogState( setContent );

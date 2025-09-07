@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { waitFor } from '@testing-library/react';
 
-import { closeDialog, type DialogContent, openDialog, subscribeToDialogState } from '../event-bus';
+import { closeDialog, type DialogContent, openDialog, subscribeToDialogState } from '../subscribers';
 
 describe( 'subscribers', () => {
 	// Clean up state after each test
