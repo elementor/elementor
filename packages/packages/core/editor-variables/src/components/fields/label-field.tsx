@@ -71,7 +71,7 @@ export const LabelField = ( {
 			onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => handleChange( e.target.value ) }
 			inputProps={ {
 				maxLength: VARIABLE_LABEL_MAX_LENGTH,
-				...( selectOnShow && { onFocus: ( e: React.FocusEvent< HTMLInputElement > ) => e.target.select() } )
+				...( selectOnShow && { onFocus: ( e: React.FocusEvent< HTMLInputElement > ) => e.target.select() } ),
 			} }
 			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus={ focusOnShow }
