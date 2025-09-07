@@ -16,7 +16,7 @@ test.describe( 'Variable Manager @v4-tests', () => {
 	} );
 
 	test.afterAll( async () => {
-		await wpAdminPage.resetExperiments();
+		await wpAdminPage?.resetExperiments();
 		await context.close();
 	} );
 
