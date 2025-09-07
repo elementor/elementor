@@ -20,8 +20,6 @@ const parentElement = createMockElement( {
 	children: [ siblingElement1, currentElement, siblingElement2 ],
 } );
 
-
-
 const newElement: Omit< V1ElementModelProps, 'id' > = {
 	elType: 'widget',
 	widgetType: 'e-heading',
@@ -29,6 +27,7 @@ const newElement: Omit< V1ElementModelProps, 'id' > = {
 
 describe( 'replaceElement', () => {
 	const extendedWindow = window as unknown as ExtendedWindow;
+
 	it( 'should replace element', () => {
 		// Arrange.
 		extendedWindow.elementor = {
@@ -63,7 +62,6 @@ describe( 'replaceElement', () => {
 		const documentElement = createMockElement( { model: { id: 'document' }, children: [ currentElement ] } );
 		const createdContainerElement = createMockElement( { model: { id: 'created-container-id' } } );
 
-		const extendedWindow = window as unknown as ExtendedWindow;
 		extendedWindow.elementor = {
 			getContainer: ( id ) => {
 				switch ( id ) {

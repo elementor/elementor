@@ -18,7 +18,7 @@ export const replaceElement = ( { currentElement, newElement, withHistory = true
 	const { containerId, index } = getNewElementLocation( currentElement, newElement );
 
 	createElement( {
-		containerId: containerId,
+		containerId,
 		model: newElement,
 		options: { at: index, useHistory: withHistory },
 	} );
@@ -26,7 +26,10 @@ export const replaceElement = ( { currentElement, newElement, withHistory = true
 	deleteElement( { elementId: currentElement.id, options: { useHistory: withHistory } } );
 };
 
-function getNewElementLocation( currentElement: V1Element, newElement: Omit< V1ElementModelProps, 'id' >): ElementLocation{
+function getNewElementLocation(
+	currentElement: V1Element,
+	newElement: Omit< V1ElementModelProps, 'id' >
+): ElementLocation {
 	let location: ElementLocation;
 
 	const parent = getContainer( currentElement.id )?.parent;
@@ -41,20 +44,20 @@ function getNewElementLocation( currentElement: V1Element, newElement: Omit< V1E
 
 	location = { containerId: parent.id, index: elementIndex };
 
-	// If the element is at document top level and is a widget, wrap it in a container
+	// If the element is at document top level and is a widget, wrap it with an empty container
 	if ( parent.id === 'document' && newElement.elType === 'widget' ) {
 		location = createWrapperForWidget( parent.id, elementIndex );
 	}
 
 	return location;
-};
+}
 
-function createWrapperForWidget( parentId: string, elementIndex: number): ElementLocation {
-	const container = createElement({
+function createWrapperForWidget( parentId: string, elementIndex: number ): ElementLocation {
+	const container = createElement( {
 		containerId: parentId,
 		model: { elType: 'container' },
 		options: { at: elementIndex, useHistory: false },
-	});
+	} );
 
 	return { containerId: container.id, index: 0 };
-};
+}
