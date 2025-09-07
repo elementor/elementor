@@ -70,11 +70,11 @@ class Module extends BaseModule {
 	/**
 	 * Check if popup should be enqueued and enqueue if needed
 	 */
-	public function maybe_enqueue_popup(): void {		
+	public function maybe_enqueue_popup(): void {
 		if ( ! $this->should_show_popup() ) {
 			return;
 		}
-		
+
 		$this->enqueue_scripts();
 		$this->set_popup_as_displayed();
 	}
