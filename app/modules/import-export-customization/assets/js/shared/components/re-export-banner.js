@@ -4,6 +4,7 @@ export function ReExportBanner() {
 	return (
 		<Paper
 			color="secondary"
+			elevation={ 0 }
 		>
 			<Stack
 				direction="row"

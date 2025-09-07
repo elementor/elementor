@@ -1,5 +1,5 @@
-import { Box, Typography, Switch } from '@elementor/ui';
-import PropTypes from 'prop-types';
+import { Box, Typography, Switch, Stack } from '@elementor/ui';
+import * as PropTypes from 'prop-types';
 
 export const SettingSection = ( {
 	checked = false,
@@ -15,7 +15,7 @@ export const SettingSection = ( {
 	const getToggle = () => {
 		if ( notExported ) {
 			return (
-				<Typography data-testid={ `${ settingKey }-description` } variant="body1" color="text.secondary" sx={ { fontWeight: 400 } }>
+				<Typography data-testid={ `${ settingKey }-description` } variant="body1" color="text.secondary">
 					{ __( 'Not exported', 'elementor' ) }
 				</Typography>
 			);
@@ -40,21 +40,21 @@ export const SettingSection = ( {
 
 	return (
 		<Box key={ settingKey } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
-			<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
-				<Box>
-					<Typography variant="body1" sx={ { fontWeight: 500 } }>
+			<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center'} }>
+				<Stack spacing={1}>
+					<Typography variant="h6">
 						{ title }
 					</Typography>
 					{ description && (
-						<Typography data-testid={ `${ settingKey }-description` } variant="body1" color="text.secondary" sx={ { fontWeight: 400 } }>
+						<Typography data-testid={ `${ settingKey }-description` } variant="body1" color="text.secondary">
 							{ description }
 						</Typography>
 					) }
-				</Box>
+				</Stack>
 				{ getToggle() }
 			</Box>
 			{ children && (
-				<Box sx={ { mt: 2 } }>
+				<Box sx={ { mt: 1 } }>
 					{ children }
 				</Box>
 			) }
@@ -67,9 +67,9 @@ SettingSection.propTypes = {
 	description: PropTypes.string,
 	children: PropTypes.node,
 	hasToggle: PropTypes.bool,
-	notExported: PropTypes.bool,
 	checked: PropTypes.bool,
 	disabled: PropTypes.bool,
 	settingKey: PropTypes.string,
 	onSettingChange: PropTypes.func,
+	notExported: PropTypes.bool,
 };
