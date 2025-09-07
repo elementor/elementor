@@ -11,7 +11,6 @@ import {
 	Divider,
 	Icon,
 	Stack,
-	styled,
 	Typography,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -22,14 +21,14 @@ const DUP_PREFIX = 'DUP_';
 
 export const DuplicateLabelDialog = ( {
 	modifiedLabels,
-	openPanel,
+	onApprove,
 }: {
 	modifiedLabels: ModifiedLabels;
-	openPanel?: () => void;
+	onApprove?: () => void;
 } ) => {
 	const handleButtonClick = () => {
 		localStorage.setItem( 'elementor-global-classes-search', 'DUP_' );
-		openPanel?.();
+		onApprove?.();
 		closeDialog();
 	};
 
@@ -56,33 +55,82 @@ export const DuplicateLabelDialog = ( {
 					</Typography>
 
 					<Box>
-						<StyledBox>
-							<Typography variant="subtitle2" sx={ { fontWeight: 'bold' } }>
+						<Box
+							sx={ {
+								width: '100%',
+								display: 'flex',
+								gap: 2,
+								alignItems: 'flex-start',
+							} }
+						>
+							<Typography
+								variant="subtitle2"
+								sx={ {
+									fontWeight: 'bold',
+									flex: 1,
+									flexShrink: 1,
+									flexGrow: 1,
+									minWidth: 0,
+								} }
+							>
 								{ __( 'Before', 'elementor' ) }
 							</Typography>
-							<Typography sx={ { minWidth: '200px', fontWeight: 'bold' } } variant="subtitle2">
+							<Typography
+								variant="subtitle2"
+								sx={ {
+									minWidth: '200px',
+									fontWeight: 'bold',
+									flexShrink: 0,
+									flexGrow: 0,
+									width: '200px',
+									maxWidth: '200px',
+								} }
+							>
 								{ __( 'After', 'elementor' ) }
 							</Typography>
-						</StyledBox>
+						</Box>
 						<Divider sx={ { mt: 0.5, mb: 0.5 } } />
 						<Stack direction="column" gap={ 0.5 } sx={ { pb: 2 } }>
 							{ Object.values( modifiedLabels ).map( ( { original, modified }, index ) => (
-								<StyledBox key={ index }>
-									<Box sx={ { flex: 1 } }>
+								<Box
+									key={ index }
+									sx={ {
+										width: '100%',
+										display: 'flex',
+										gap: 2,
+										alignItems: 'flex-start',
+									} }
+								>
+									<Box
+										sx={ {
+											flex: 1,
+											flexShrink: 1,
+											flexGrow: 1,
+											minWidth: 0,
+										} }
+									>
 										<EllipsisWithTooltip title={ original }>
 											<Typography variant="body2" sx={ { color: 'text.secondary' } }>
 												{ original }
 											</Typography>
 										</EllipsisWithTooltip>
 									</Box>
-									<Box sx={ { minWidth: '200px' } }>
+									<Box
+										sx={ {
+											minWidth: '200px',
+											flexShrink: 0,
+											flexGrow: 0,
+											width: '200px',
+											maxWidth: '200px',
+										} }
+									>
 										<EllipsisWithTooltip title={ modified }>
 											<Typography variant="body2" sx={ { color: 'text.primary' } }>
 												{ modified }
 											</Typography>
 										</EllipsisWithTooltip>
 									</Box>
-								</StyledBox>
+								</Box>
 							) ) }
 						</Stack>
 						<Box>
@@ -109,24 +157,3 @@ export const DuplicateLabelDialog = ( {
 		</>
 	);
 };
-
-const StyledBox = styled( Box )`
-	width: 100%;
-	display: flex;
-	gap: 16px;
-	align-items: flex-start;
-
-	> *:first-of-type {
-		flex: 1;
-		flex-shrink: 1;
-		flex-grow: 1;
-		min-width: 0;
-	}
-
-	> *:last-of-type {
-		flex-shrink: 0;
-		flex-grow: 0;
-		width: 200px;
-		max-width: 200px;
-	}
-`;

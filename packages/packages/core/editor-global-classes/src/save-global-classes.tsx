@@ -24,11 +24,12 @@ export async function saveGlobalClasses( { context, onApprove }: Options ) {
 
 	dispatch( slice.actions.reset( { context } ) );
 	if ( response?.data?.data?.code === 'DUPLICATED_LABEL' ) {
+		dispatch( slice.actions.updateMultiple( { payload: response.data.data.modifiedLabels || [] } ) );
 		openDialog( {
 			component: (
 				<DuplicateLabelDialog
 					modifiedLabels={ response.data.data.modifiedLabels || [] }
-					openPanel={ onApprove }
+					onApprove={ onApprove }
 				/>
 			),
 		} );

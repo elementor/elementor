@@ -14,13 +14,7 @@ import { ClassManagerPanel, usePanelActions } from '../class-manager-panel';
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '../class-manager-introduction' );
 
-jest.mock( '../../../api', () => ( {
-	apiClient: {
-		all: jest.fn(),
-		publish: jest.fn().mockResolvedValue( { data: { data: {} } } ),
-		saveDraft: jest.fn().mockResolvedValue( { data: { data: {} } } ),
-	},
-} ) );
+jest.mock( '../../../api' );
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),

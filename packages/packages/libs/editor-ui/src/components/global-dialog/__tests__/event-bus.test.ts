@@ -3,7 +3,7 @@ import { waitFor } from '@testing-library/react';
 
 import { closeDialog, type DialogContent, openDialog, subscribeToDialogState } from '../event-bus';
 
-describe( 'EventBus', () => {
+describe( 'subscribers', () => {
 	// Clean up state after each test
 	afterEach( () => {
 		closeDialog();
