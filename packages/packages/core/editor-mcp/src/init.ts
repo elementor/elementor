@@ -1,50 +1,47 @@
-import { type AnyZodObject, type z, type ZodType } from 'zod';
+import { type AnyZodObject, type ZodTypeAny } from 'zod';
 import { AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
-import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
-import registerGlobalClassesTools from './commands/global-styles';
-import initWidgetsCommands from './commands/widgets/list-widgets';
+import { removeGlobalClass } from './commands/global-styles';
+import { listGlobalClasses } from './commands/global-styles/list-global-classes';
+import {
+	type RemoveGlobalClassInput,
+	RemoveGlobalClassParamsSchema,
+} from './commands/global-styles/remove-global-class';
 
 const sdk = new AngieMcpSdk();
 
 const toolRegistrations: ( ( mcpServer: McpServer ) => void )[] = [];
 
 type ToolRegistrationOptions<
-	InputArgs extends undefined | ZodType = undefined,
-	OutputSchema extends undefined | ZodType = undefined,
+	InputArgs extends undefined | ZodTypeAny = undefined,
+	OutputSchema extends undefined | ZodTypeAny = undefined,
 > = {
 	name: string;
 	description: string;
 	schema?: InputArgs;
 	outputSchema?: OutputSchema;
-
-	handler: (
-		args: InputArgs extends z.ZodType ? z.infer< InputArgs > : undefined,
-		server: McpServer,
-		extra: RequestHandlerExtra< ServerRequest, ServerNotification >
-	) => Promise< OutputSchema extends z.ZodType ? z.infer< OutputSchema > : undefined >;
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+	handler: Function;
 };
 
-export function addTool< T extends undefined | ZodType = undefined, O extends undefined | ZodType = undefined >(
+export function addTool< T extends undefined | ZodTypeAny = undefined, O extends undefined | ZodTypeAny = undefined >(
 	opts: ToolRegistrationOptions< T, O >
 ) {
 	const register = ( mcpServer: McpServer ) => {
-		const toolCallback = async function (
-			args: T extends ZodType ? z.infer< T > : undefined,
-			extra: RequestHandlerExtra< ServerRequest, ServerNotification >
-		) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const toolCallback: ToolCallback = async function ( args: any ) {
 			try {
-				const invocationResult = await opts.handler.call( tool, args, mcpServer, extra );
+				const invocationResult = await opts.handler.call( tool, args );
 				const asText =
-					!! invocationResult && 'message' in invocationResult && typeof invocationResult.message === 'string'
+					typeof invocationResult?.message === 'string'
 						? invocationResult.message
 						: JSON.stringify( invocationResult );
 				if ( opts.outputSchema ) {
 					return {
-						// structuredContent: invocationResult as { [ x: string ]: any },
-						content: [ { type: 'text', text: `This is the tool's response in JSON format:\n${ asText }` } ],
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						structuredContent: invocationResult as { [ x: string ]: any },
+						content: [ { type: 'text', text: asText } ],
 					};
 				}
 				return {
@@ -70,7 +67,7 @@ export function addTool< T extends undefined | ZodType = undefined, O extends un
 		if ( typeof opts.schema !== 'undefined' ) {
 			tool.inputSchema = opts.schema as AnyZodObject;
 		}
-		// tool.outputSchema = opts.outputSchema as AnyZodObject;
+		tool.outputSchema = opts.outputSchema as AnyZodObject;
 	};
 	toolRegistrations.push( register );
 }
@@ -78,20 +75,31 @@ export function addTool< T extends undefined | ZodType = undefined, O extends un
 export async function init() {
 	// Register global classes command
 	await sdk.waitForReady();
-	registerGlobalClassesTools( addTool );
-	initWidgetsCommands( addTool );
+	addTool( {
+		name: 'list-global-classes',
+		description: 'List all custom global classes (or "styles") defined in the editor',
+		// outputSchema: z.array( GlobalClassInfoSchema ).describe( 'List of global classes available in the editor' ),
+		handler: listGlobalClasses,
+	} );
+
+	addTool( {
+		name: 'remove-global-class',
+		description: 'Remove a global class by ID or label and unapply it from all elements that use it',
+		// outputSchema: RemoveGlobalClassOutputSchema,
+		schema: RemoveGlobalClassParamsSchema,
+		handler: ( input: RemoveGlobalClassInput ) => removeGlobalClass( input ).then( () => 'Class removed' ),
+	} );
 }
 
 export async function startMCPServer() {
 	await sdk.waitForReady();
 	const mcpServer = new McpServer( {
-		name: 'elementor-editor',
-		title: 'Elementor Editor MCP Server, supports V4 editor operations',
+		name: 'v4-editor-server',
 		version: '1.0.0',
 	} );
 	toolRegistrations.forEach( ( register ) => register( mcpServer ) );
 	await sdk.registerServer( {
-		name: 'elementor_editor-tools',
+		name: 'page-editor',
 		version: '1.0.0',
 		description: 'Elementor tools server for editing elementor website pages',
 		server: mcpServer,
