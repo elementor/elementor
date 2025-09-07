@@ -103,6 +103,7 @@ class Test_Export_Runner extends Elementor_Test_Base {
 					'order' => $sanitized_order,
 				],
 			],
+			'manifest' => [],
 		], $result );
 	}
 

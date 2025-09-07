@@ -51,6 +51,7 @@ class Export extends Export_Runner_Base {
 				'path' => Import_Export_Customization::FILE_NAME,
 				'data' => $global_classes_result->unwrap(),
 			],
+			'manifest' => [],
 		];
 	}
 }
