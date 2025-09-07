@@ -7,7 +7,7 @@ export { MenuListItem, MenuItemInfotip } from './components/menu-item';
 export { InfoTipCard } from './components/infotip-card';
 export { InfoAlert } from './components/info-alert';
 export { WarningInfotip } from './components/warning-infotip';
+export { GlobalDialog, openDialog, closeDialog } from './components/global-dialog';
 export * from './components/popover';
-
 // hooks
 export { useEditable } from './hooks/use-editable';
