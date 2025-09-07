@@ -67,7 +67,7 @@ class Module extends BaseModule {
 			$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Empty_View_Menu_Item( $function ) );
 		} else {
 			$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Menu_Item() );
-		};
+		}
 	}
 
 	public function __construct() {
