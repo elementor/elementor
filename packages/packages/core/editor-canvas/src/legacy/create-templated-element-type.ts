@@ -112,7 +112,11 @@ function createTemplatedElementViewClassDeclaration( {
 
 					return renderer.render( templateKey, context );
 				} )
-				.then( ( html ) => this.$el.html( html ) );
+				.then( ( html ) => {
+					console.log('------------ templated html ------------');
+					console.log(html);
+					this.$el.html( html );
+				} );
 
 			await process.execute();
 
