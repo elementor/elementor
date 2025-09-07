@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
 import { getLinkInLinkRestriction, type LinkInLinkRestriction, selectElement } from '@elementor/editor-elements';
-import { httpService } from '@elementor/http-client';
 import { useSessionStorage } from '@elementor/session';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
@@ -15,7 +14,13 @@ const propType = createMockPropType( {
 			kind: 'union',
 			prop_types: {
 				url: createMockPropType( { kind: 'plain' } ),
-				number: createMockPropType( { kind: 'plain' } ),
+				query: createMockPropType( {
+					kind: 'object',
+					shape: {
+						id: createMockPropType( { kind: 'plain' } ),
+						label: createMockPropType( { kind: 'plain' } ),
+					},
+				} ),
 			},
 		} ),
 		label: createMockPropType( { kind: 'object' } ),
@@ -41,16 +46,6 @@ const baseProps = {
 	setValue: jest.fn(),
 	propType,
 	value: null,
-};
-
-const ajaxResponse = {
-	value: [
-		{
-			id: 'val1',
-			value: 'val1',
-			label: 'Val 1',
-		},
-	],
 };
 
 const restrictionTestCases: [ LinkInLinkRestriction, string ][] = [
@@ -212,13 +207,10 @@ describe( '<LinkControl />', () => {
 		fireEvent.input( hrefInput, { target: { value: testHref } } );
 
 		// Assert.
-		expect( props.setValue ).toHaveBeenCalledWith( {
+		expect( props.setValue ).toHaveBeenNthCalledWith( 2, {
 			$$type: 'link',
 			value: {
-				label: {
-					$$type: 'string',
-					value: '',
-				},
+				label: null,
 				destination: {
 					$$type: 'url',
 					value: testHref,
@@ -340,6 +332,7 @@ describe( '<LinkControl />', () => {
 		const toggleButton = screen.getByRole( 'button', {
 			name: 'Toggle link',
 		} );
+
 		fireEvent.click( toggleButton );
 
 		const hrefInput = screen.getByPlaceholderText( 'test' );
@@ -351,86 +344,25 @@ describe( '<LinkControl />', () => {
 		fireEvent.input( hrefInput, { target: { value: 'Value' } } );
 
 		// Assert.
-		expect( props.setValue ).toHaveBeenCalledWith( {
+		expect( props.setValue ).toHaveBeenNthCalledWith( 2, {
 			$$type: 'link',
 			value: {
 				destination: {
 					$$type: 'url',
 					value: 'Value',
 				},
-				label: {
-					$$type: 'string',
-					value: '',
-				},
 			},
 		} );
 
-		expect( mockSetSessionValue ).toHaveBeenCalledWith( {
+		expect( mockSetSessionValue ).toHaveBeenNthCalledWith( 2, {
 			value: {
 				destination: {
 					$$type: 'url',
 					value: 'Value',
 				},
-				label: {
-					$$type: 'string',
-					value: '',
-				},
 			},
 			meta: { isEnabled: false },
 		} );
-	} );
-
-	it( 'should function as an autocomplete control when given options', async () => {
-		// Arrange.
-		jest.mocked( httpService ).mockReturnValue( {
-			// @ts-expect-error - We don't need all types for this test
-			get,
-		} );
-
-		const props = {
-			...baseProps,
-			value: {
-				$$type: 'link',
-				value: {
-					destination: {
-						$$type: 'url',
-						value: null,
-					},
-					isTargetBlank: {
-						$$type: 'boolean',
-						value: false,
-					},
-					label: null,
-				},
-			},
-		};
-
-		// Act.
-		renderControl(
-			<LinkControl
-				{ ...globalProps }
-				queryOptions={ { requestParams: {}, endpoint: 'example' } }
-				placeholder={ 'test' }
-				allowCustomValues={ true }
-			/>,
-			props
-		);
-
-		const hrefInput = screen.getByPlaceholderText( 'test' );
-
-		// Assert.
-		expect( hrefInput ).toBeVisible();
-
-		// Act.
-		fireEvent.input( hrefInput, { target: { value: 'Va' } } );
-
-		await waitFor(
-			() => {
-				// Assert.
-				expect( screen.getByText( 'Val 1' ) ).toBeVisible();
-			},
-			{ timeout: 600 }
-		);
 	} );
 
 	it( 'should prevent link enabling when ancestor has anchor', () => {
@@ -569,11 +501,3 @@ describe( '<LinkControl />', () => {
 		}
 	);
 } );
-
-async function get() {
-	return {
-		data: {
-			data: ajaxResponse,
-		},
-	};
-}

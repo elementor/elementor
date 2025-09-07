@@ -30,7 +30,7 @@ class Query_Control extends Atomic_Control_Base {
 				'post_title' => 'label',
 				'post_type' => 'groupLabel',
 			],
-			Post_Query::ALLOWED_POST_TYPES => $post_types
+			Post_Query::ALLOWED_POST_TYPES => $post_types,
 		], ) );
 
 		return $instance;
