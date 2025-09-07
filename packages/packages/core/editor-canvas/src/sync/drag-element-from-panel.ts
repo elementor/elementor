@@ -32,7 +32,6 @@ const getElementorChannels = () => {
 const getLegacyPanelElementView = ( { settings, ...rest }: Omit< V1ElementModelProps, 'id' > ) => {
 	const extendedWindow = window as unknown as CanvasExtendedWindow;
 	const LegacyElementModel = extendedWindow.elementor?.modules?.elements?.models?.Element;
-		?.Element;
 
 	if ( ! LegacyElementModel ) {
 		throw new Error( 'Elementor legacy Element model not found in editor modules' );
