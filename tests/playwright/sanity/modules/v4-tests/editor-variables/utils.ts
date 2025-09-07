@@ -1,9 +1,10 @@
-import { type Page } from '@playwright/test';
+import { TestInfo, type Page } from '@playwright/test';
 import EditorSelectors from '../../../../selectors/editor-selectors';
 import WpAdminPage from '../../../../pages/wp-admin-page';
+import ApiRequests from '../../../../assets/api-requests';
 
-export const initTemplate = async ( page: Page ) => {
-	const adminPage = new WpAdminPage( page );
+export const initTemplate = async ( page: Page, testInfo: TestInfo, apiRequests: ApiRequests ) => {
+	const adminPage = new WpAdminPage( page, testInfo, apiRequests );
 	await adminPage.setExperiments( { e_variables_manager: 'active' } );
 	const editorPage = await adminPage.openNewPage( false, false );
 	await editorPage.loadTemplate( 'tests/playwright/templates/default-v4.json' );
