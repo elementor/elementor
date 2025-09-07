@@ -70,11 +70,11 @@ class Module extends BaseModule {
 	/**
 	 * Check if popup should be enqueued and enqueue if needed
 	 */
-	public function maybe_enqueue_popup(): void {
+	public function maybe_enqueue_popup(): void {		
 		if ( ! $this->should_show_popup() ) {
 			return;
 		}
-
+		
 		$this->enqueue_scripts();
 		$this->set_popup_as_displayed();
 	}
@@ -85,16 +85,15 @@ class Module extends BaseModule {
 	 * @return bool True if popup should be shown
 	 */
 	private function should_show_popup(): bool {
+		if ( ! $this->is_feature_enabled() ) {
+			return false;
+		}
 
 		if ( $this->is_before_fourth_visit() ) {
 			return false;
 		}
 
 		if ( $this->has_popup_been_displayed() ) {
-			return false;
-		}
-
-		if ( ! $this->is_feature_enabled() ) {
 			return false;
 		}
 
