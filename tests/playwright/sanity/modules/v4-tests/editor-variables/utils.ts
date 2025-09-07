@@ -37,22 +37,22 @@ export const openVariablesPopover = async ( page: Page, styleSectionSelector: st
 	const control = await getControl( page, styleSectionSelector, controlToAccessFrom );
 	const controlBoundingBox = await control.boundingBox();
 	await page.mouse.move( controlBoundingBox.x + ( controlBoundingBox.width / 2 ), controlBoundingBox.y + ( controlBoundingBox.height / 2 ) );
-	await page.click( '#floating-action-bar' );
+	await page.click( EditorSelectors.floatingElements.v4.floatingActionsBar );
 	return control;
 };
 
 export const addVariable = async ( page: Page, variable: { name: string, value: string, type: 'font' | 'color' }, styleSectionSelector: string, controlToAccessFrom: string ) => {
 	await openVariablesPopover( page, styleSectionSelector, controlToAccessFrom );
-	await page.click( '#add-variable-button' );
+	await page.click( EditorSelectors.variables.manager.addButton );
 	await page.getByRole( 'textbox', { name: 'Name' } ).fill( variable.name );
 	if ( 'font' === variable.type ) {
-		await page.locator( '#variable-value-wrapper' ).getByRole( 'button' ).click();
+		await page.locator( EditorSelectors.variables.manager.valueInputWrapper ).getByRole( 'button' ).click();
 		await page.locator( `#${ controlToAccessFrom }-variables-selector-search` ).fill( variable.value );
 		await page.locator( `#${ controlToAccessFrom }-variables-selector` ).getByText( variable.value ).click();
 	} else if ( 'color' === variable.type ) {
-		await page.locator( '#variable-value-wrapper' ).getByRole( 'textbox' ).fill( variable.value );
+		await page.locator( EditorSelectors.variables.manager.valueInputWrapper ).getByRole( 'textbox' ).fill( variable.value );
 	}
-	await page.locator( '#create-variable-button' ).click();
+	await page.locator( EditorSelectors.variables.manager.createButton ).click();
 	await page.getByRole( 'button', { name: variable.name } ).waitFor();
 };
 
@@ -71,5 +71,5 @@ export const detachVariable = async ( page: Page, styleSectionSelector: string, 
 
 export const openVariableManager = async ( page: Page, styleSectionSelector: string, controlToAccessFrom: string ) => {
 	await openVariablesPopover( page, styleSectionSelector, controlToAccessFrom );
-	await page.click( '#variables-manager-button' );
+	await page.click( EditorSelectors.variables.manager.managerButton );
 };

@@ -211,6 +211,9 @@ const EditorSelectors = {
 				},
 			},
 		},
+		v4: {
+			floatingActionsBar: '#floating-action-bar',
+		},
 	},
 	contextMenu: {
 		menu: '.elementor-context-menu',
@@ -232,6 +235,15 @@ const EditorSelectors = {
 		features: {
 			essential: '#essential',
 			advanced: '#advanced',
+		},
+	},
+	variables: {
+		manager: {
+			managerButton: '#variables-manager-button',
+			addButton: '#add-variable-button',
+			createButton: '#create-variable-button',
+			valueInputWrapper: '#variable-value-wrapper',
+			valueInput: 'input[data-setting="value"]',
 		},
 	},
 };
