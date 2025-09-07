@@ -12,7 +12,7 @@ export const startDragElementFromPanel = ( props: Omit< V1ElementModelProps, 'id
 		.trigger( 'element:drag:start' );
 };
 
-export const endDragElement = () => {
+export const endDragElementFromPanel = () => {
 	getElementorChannels()?.panelElements?.trigger( 'element:drag:end' );
 };
 
@@ -20,7 +20,9 @@ const getElementorChannels = () => {
 	const channels = ( window as unknown as CanvasExtendedWindow ).elementor?.channels;
 
 	if ( ! channels ) {
-		throw new Error( 'Elementor channels not found' );
+		throw new Error(
+			'Elementor channels not found: Elementor editor is not initialized or channels are unavailable.'
+		);
 	}
 
 	return channels;
@@ -31,7 +33,7 @@ const getLegacyPanelElementView = ( { settings, ...rest }: Omit< V1ElementModelP
 		?.Element;
 
 	if ( ! LegacyElementModel ) {
-		throw new Error( 'Element model not found' );
+		throw new Error( 'Elementor legacy Element model not found in editor modules' );
 	}
 
 	const elementModel = new LegacyElementModel( {

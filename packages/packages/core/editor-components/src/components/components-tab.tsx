@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
-import { endDragElement, startDragElementFromPanel } from '@elementor/editor-canvas';
+import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
 import { dropElement, type DropElementParams } from '@elementor/editor-elements';
 import { List, ListItem, ListItemButton, ListItemText, Typography } from '@elementor/ui';
 
@@ -20,21 +19,10 @@ export function ComponentsTab() {
 }
 
 const ComponentItem = ( { component }: { component: Component } ) => {
-	const componentModel = useMemo(
-		() => createComponentModel( { id: component.id, name: component.name } ),
-		[ component.id, component.name ]
-	);
+	const componentModel = createComponentModel( { id: component.id, name: component.name } );
 
 	const handleClick = () => {
 		addComponentToPage( componentModel );
-	};
-
-	const handleDragStart = () => {
-		startDragElementFromPanel( componentModel );
-	};
-
-	const handleDragEnd = () => {
-		endDragElement();
 	};
 
 	return (
@@ -44,8 +32,8 @@ const ComponentItem = ( { component }: { component: Component } ) => {
 				shape="rounded"
 				onClick={ handleClick }
 				draggable
-				onDragStart={ handleDragStart }
-				onDragEnd={ handleDragEnd }
+				onDragStart={ () => startDragElementFromPanel( componentModel ) }
+				onDragEnd={ endDragElementFromPanel }
 			>
 				<ListItemText
 					primary={
