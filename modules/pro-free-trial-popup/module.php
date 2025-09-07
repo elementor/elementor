@@ -1,7 +1,7 @@
 <?php
 /**
  * Pro Free Trial Popup Module
- * 
+ *
  * @package Elementor\Modules\ProFreeTrialPopup
  * @since 3.32.0
  */
@@ -30,6 +30,7 @@ class Module extends BaseModule {
 	const AB_TEST_NAME = 'pro_free_trial_popup';
 	const REQUIRED_VISIT_COUNT = 4;
 	const EXTERNAL_DATA_URL = 'https://assets.elementor.com/pro-free-trial-popup/v1/pro-free-trial-popup.json';
+	const ACTIVE = 'active';
 
 	private Elementor_Adapter_Interface $elementor_adapter;
 
@@ -109,7 +110,7 @@ class Module extends BaseModule {
 	 */
 	private function is_feature_enabled(): bool {
 		$data = $this->get_external_data();
-		return ( $data['pro-free-trial-popup'][0]['status'] === 'active' );
+		return ( self::ACTIVE === $data['pro-free-trial-popup'][0]['status'] );
 	}
 
 	/**
