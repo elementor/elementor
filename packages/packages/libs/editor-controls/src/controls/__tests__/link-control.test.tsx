@@ -207,7 +207,7 @@ describe( '<LinkControl />', () => {
 		fireEvent.input( hrefInput, { target: { value: testHref } } );
 
 		// Assert.
-		expect( props.setValue ).toHaveBeenNthCalledWith( 2, {
+		expect( props.setValue ).toHaveBeenCalledWith( {
 			$$type: 'link',
 			value: {
 				label: null,
@@ -344,7 +344,7 @@ describe( '<LinkControl />', () => {
 		fireEvent.input( hrefInput, { target: { value: 'Value' } } );
 
 		// Assert.
-		expect( props.setValue ).toHaveBeenNthCalledWith( 2, {
+		expect( props.setValue ).toHaveBeenCalledWith( {
 			$$type: 'link',
 			value: {
 				destination: {
@@ -354,7 +354,7 @@ describe( '<LinkControl />', () => {
 			},
 		} );
 
-		expect( mockSetSessionValue ).toHaveBeenNthCalledWith( 2, {
+		expect( mockSetSessionValue ).toHaveBeenCalledWith( {
 			value: {
 				destination: {
 					$$type: 'url',

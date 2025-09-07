@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo, useState } from 'react';
-import { type LinkPropValue, numberPropTypeUtil, queryPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
+import { type LinkPropValue, numberPropTypeUtil, stringPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 import { debounce } from '@elementor/utils';
 
@@ -15,6 +15,8 @@ import {
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 
+type PropValue = LinkPropValue[ 'value' ][ 'destination' ];
+
 type Props = {
 	queryOptions: {
 		requestParams: Record< string, unknown >;
@@ -23,39 +25,52 @@ type Props = {
 	allowCustomValues?: boolean;
 	minInputLength?: number;
 	placeholder?: string;
-	externalValue?: string | number | null;
-	setExternalValue?: ( value: string | null ) => void;
+	onSetValue?: ( value: PropValue | null ) => void;
 };
 
 type Response = HttpResponse< { value: FlatOption[] | CategorizedOption[] } >;
 
 export const QueryControl = createControl( ( props: Props ) => {
-	const { value, setValue } = useBoundProp( queryPropTypeUtil );
+	const { value, setValue } = useBoundProp< PropValue >();
 
 	const {
 		allowCustomValues = false,
 		queryOptions: { endpoint = '', requestParams = {} },
 		placeholder,
 		minInputLength = 2,
-		externalValue = null,
-		setExternalValue,
+		onSetValue,
 	} = props || {};
 
 	const [ options, setOptions ] = useState< FlatOption[] | CategorizedOption[] >(
-		generateFirstLoadedOption( value )
+		generateFirstLoadedOption( value?.value )
 	);
 
 	const onOptionChange = ( newValue: number | null ) => {
-		setValue( {
-			...value,
-			id: numberPropTypeUtil.create( newValue ),
-			label: stringPropTypeUtil.create( findMatchingOption( options, newValue )?.label || null ),
-		} );
+		if ( newValue === null ) {
+			setValue( null );
+			onSetValue?.( null );
+
+			return;
+		}
+
+		const valueToSave = {
+			$$type: 'query',
+			value: {
+				id: numberPropTypeUtil.create( newValue ),
+				label: stringPropTypeUtil.create( findMatchingOption( options, newValue )?.label || null ),
+			},
+		};
+
+		setValue( valueToSave );
+		onSetValue?.( valueToSave );
 	};
 
 	const onTextChange = ( newValue: string | null ) => {
-		setValue( null );
-		setExternalValue?.( newValue?.trim() || '' );
+		const newLinkValue = newValue?.trim() || '';
+		const valueToSave = newLinkValue ? urlPropTypeUtil.create( newLinkValue ) : null;
+
+		setValue( valueToSave );
+		onSetValue?.( newLinkValue );
 		updateOptions( newValue );
 	};
 
@@ -87,7 +102,7 @@ export const QueryControl = createControl( ( props: Props ) => {
 				options={ options }
 				allowCustomValues={ allowCustomValues }
 				placeholder={ placeholder }
-				value={ value?.label?.value || value?.id?.value || externalValue }
+				value={ value?.value?.id?.value || value?.value }
 				onOptionChange={ onOptionChange }
 				onTextChange={ onTextChange }
 				minInputLength={ minInputLength }
@@ -120,10 +135,10 @@ function formatOptions( options: FlatOption[] | CategorizedOption[] ): FlatOptio
 	);
 }
 
-function generateFirstLoadedOption( unionValue: LinkPropValue[ 'value' ] | null ): FlatOption[] {
-	const value = unionValue?.destination?.value;
+function generateFirstLoadedOption( unionValue: PropValue | null ): FlatOption[] {
+	const value = unionValue?.id?.value;
 	const label = unionValue?.label?.value;
-	const type = unionValue?.destination?.$$type || 'url';
+	const type = unionValue?.id?.$$type || 'url';
 
 	return value && label && type === 'number'
 		? [

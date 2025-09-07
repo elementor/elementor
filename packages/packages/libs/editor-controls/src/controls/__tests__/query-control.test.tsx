@@ -264,16 +264,18 @@ describe( '<QueryControl />', () => {
 	} );
 
 	it( 'should handle custom values when allowCustomValues is true', () => {
+		// Arrange.
+		const props = {
+			...baseProps,
+			value: {
+				$$type: 'url',
+				value: 'Custom URL',
+			},
+		};
 		// Act.
 		renderControl(
-			<QueryControl
-				queryOptions={ queryOptions }
-				placeholder="Search posts..."
-				allowCustomValues={ true }
-				externalValue="Custom URL"
-				setExternalValue={ jest.fn() }
-			/>,
-			baseProps
+			<QueryControl queryOptions={ queryOptions } placeholder="Search posts..." allowCustomValues={ true } />,
+			props
 		);
 
 		const input = screen.getByDisplayValue( 'Custom URL' );
@@ -288,12 +290,7 @@ describe( '<QueryControl />', () => {
 
 		// Act.
 		renderControl(
-			<QueryControl
-				queryOptions={ queryOptions }
-				placeholder="Search posts..."
-				allowCustomValues={ true }
-				setExternalValue={ setExternalValue }
-			/>,
+			<QueryControl queryOptions={ queryOptions } placeholder="Search posts..." allowCustomValues={ true } />,
 			baseProps
 		);
 
