@@ -17,7 +17,8 @@ export const endDragElement = () => {
 };
 
 const getElementorChannels = () => {
-	const channels = ( window as unknown as CanvasExtendedWindow ).elementor?.channels;
+	const extendedWindow = window as unknown as CanvasExtendedWindow;
+	const channels = extendedWindow.elementor?.channels;
 
 	if ( ! channels ) {
 		throw new Error( 'Elementor channels not found' );
