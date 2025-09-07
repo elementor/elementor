@@ -17,7 +17,8 @@ export const endDragElementFromPanel = () => {
 };
 
 const getElementorChannels = () => {
-	const channels = ( window as unknown as CanvasExtendedWindow ).elementor?.channels;
+	const extendedWindow = window as unknown as CanvasExtendedWindow;
+	const channels = extendedWindow.elementor?.channels;
 
 	if ( ! channels ) {
 		throw new Error(
@@ -29,7 +30,8 @@ const getElementorChannels = () => {
 };
 
 const getLegacyPanelElementView = ( { settings, ...rest }: Omit< V1ElementModelProps, 'id' > ) => {
-	const LegacyElementModel = ( window as unknown as CanvasExtendedWindow )?.elementor?.modules?.elements?.models
+	const extendedWindow = window as unknown as CanvasExtendedWindow;
+	const LegacyElementModel = extendedWindow.elementor?.modules?.elements?.models?.Element;
 		?.Element;
 
 	if ( ! LegacyElementModel ) {

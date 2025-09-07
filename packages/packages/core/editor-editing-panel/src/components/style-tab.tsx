@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { CLASSES_PROP_KEY } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { type StyleDefinitionID, type StyleDefinitionState } from '@elementor/editor-styles';
-import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { createLocation } from '@elementor/locations';
 import { SessionStorageProvider } from '@elementor/session';
 import { Box, Divider, Stack } from '@elementor/ui';
@@ -16,7 +15,6 @@ import { StyleProvider } from '../contexts/style-context';
 import { StyleInheritanceProvider } from '../contexts/styles-inheritance-context';
 import { useActiveStyleDefId } from '../hooks/use-active-style-def-id';
 import { CssClassSelector } from './css-classes/css-class-selector';
-import { CustomCss } from './custom-css';
 import { SectionsList } from './sections-list';
 import { BackgroundSection } from './style-sections/background-section/background-section';
 import { BorderSection } from './style-sections/border-section/border-section';
@@ -45,7 +43,6 @@ export const StyleTab = () => {
 	const [ activeStyleDefId, setActiveStyleDefId ] = useActiveStyleDefId( currentClassesProp );
 	const [ activeStyleState, setActiveStyleState ] = useState< StyleDefinitionState | null >( null );
 	const breakpoint = useActiveBreakpoint();
-	const shouldRenderCustomCss = isExperimentActive( EXPERIMENTAL_FEATURES.CUSTOM_CSS );
 
 	return (
 		<ClassesPropProvider prop={ currentClassesProp }>
@@ -171,17 +168,6 @@ export const StyleTab = () => {
 									'transition',
 								] }
 							/>
-							{ shouldRenderCustomCss && (
-								<StyleTabSection
-									section={ {
-										component: CustomCss,
-										name: 'Custom CSS',
-										title: __( 'Custom CSS', 'elementor' ),
-									} }
-									fields={ [ 'custom_css' ] }
-									unmountOnExit={ false }
-								/>
-							) }
 							<StyleTabSlot />
 						</SectionsList>
 						<Box sx={ { height: '150px' } } />
