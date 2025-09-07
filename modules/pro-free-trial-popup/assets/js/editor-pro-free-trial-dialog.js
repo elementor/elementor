@@ -24,6 +24,10 @@ export const ProFreeTrialDialog = ( { doClose, popupData } ) => {
 		return null;
 	}
 
+	if ( ! popupData.image || ! popupData.heading || ! popupData.subheading || ! popupData.introduction || ! popupData.listItems || ! popupData.secondaryAction || ! popupData.ctaUrl || ! popupData.ctaText ) {
+		return null;
+	}
+
 	return (
 		<Dialog
 			open={ Boolean( anchorElRef.current ) }
@@ -32,25 +36,25 @@ export const ProFreeTrialDialog = ( { doClose, popupData } ) => {
 		>
 			<Box sx={ {
 				aspectRatio: '2',
-				backgroundImage: `url(${ popupData.image || 'https://assets.elementor.com/pro-free-trial/v1/images/pro_trial.png' })`,
+				backgroundImage: `url(${ popupData.image })`,
 				backgroundSize: 'cover',
 				backgroundPosition: 'center',
 			} } />
 			<Stack pt={ 3 } pb={ 1.5 } px={ 3 } gap={ 3 }>
 				<Box>
 					<Typography variant="h6" color="text.primary">
-						{ popupData.heading || 'Try Elementor Pro Free' }
+						{ popupData.heading }
 					</Typography>
 					<Typography variant="h6" color="text.primary">
-						{ popupData.subheading || 'Elementor Pro Free Trial' }
+						{ popupData.subheading }
 					</Typography>
 				</Box>
 				<Box>
 					<Typography variant="body1" color="text.secondary">
-						{ popupData.introduction || 'Unlock advanced features and take your website to the next level.' }
+						{ popupData.introduction }
 					</Typography>
 					<List sx={ { pl: 2 } }>
-						{ ( popupData.listItems || [] ).map( ( text, index ) => {
+						{ ( popupData.listItems ).map( ( text, index ) => {
 							return (
 								<ListItem key={ index } sx={ { listStyle: 'disc', display: 'list-item', color: 'text.secondary', p: 0 } }>
 									<Typography variant="body1">{ text }</Typography>
@@ -67,15 +71,15 @@ export const ProFreeTrialDialog = ( { doClose, popupData } ) => {
 					color="secondary"
 					variant="text"
 				>
-					{ popupData.secondaryAction || 'Not now' }
+					{ popupData.secondaryAction }
 				</Button>
 				<Button
 					variant="contained"
 					color="accent"
-					href={ popupData.ctaUrl || 'https://go.elementor.com/pro-trial' }
+					href={ popupData.ctaUrl }
 					target="_blank"
 				>
-					{ popupData.ctaText || 'Unlock my free trial' }
+					{ popupData.ctaText }
 				</Button>
 			</Stack>
 		</Dialog>
