@@ -11,7 +11,7 @@ import {
 import { ProFreeTrialDialog } from './editor-pro-free-trial-dialog';
 
 const App = ( props ) => {
-	console.log( 'App started' );
+	console.log( props.popupData );
 	const [ isDialogVisible, setIsDialogVisible ] = useState( true );
 
 	const handleClose = () => {
@@ -23,7 +23,7 @@ const App = ( props ) => {
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ 'light' } palette="unstable">
 					{
-						isDialogVisible && <ProFreeTrialDialog doClose={ handleClose } />
+						isDialogVisible && <ProFreeTrialDialog doClose={ handleClose } popupData={ props.popupData } />
 					}
 				</ThemeProvider>
 			</LocalizationProvider>
@@ -55,6 +55,7 @@ const init = () => {
 	ReactUtils.render( (
 		<App
 			isRTL={ !! elementorCommon.config.isRTL }
+			popupData={ elementorProFreeTrialData }
 		/>
 	), getRootElement() );
 };
