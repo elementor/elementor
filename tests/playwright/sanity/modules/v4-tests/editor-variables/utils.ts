@@ -4,10 +4,11 @@ import WpAdminPage from '../../../../pages/wp-admin-page';
 import ApiRequests from '../../../../assets/api-requests';
 
 export const initTemplate = async ( page: Page, testInfo: TestInfo, apiRequests: ApiRequests ) => {
-	const adminPage = new WpAdminPage( page, testInfo, apiRequests );
-	await adminPage.setExperiments( { e_variables_manager: 'active' } );
-	const editorPage = await adminPage.openNewPage( false, false );
+	const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+	await wpAdminPage.setExperiments( { e_variables_manager: 'active' } );
+	const editorPage = await wpAdminPage.openNewPage( false, false );
 	await editorPage.loadTemplate( 'tests/playwright/templates/default-v4.json' );
+	return wpAdminPage;
 };
 
 export const addFontVariable = async ( page: Page ) => {

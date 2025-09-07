@@ -5,18 +5,18 @@ import { addColorVariable, addFontVariable, initTemplate, openVariableManager } 
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
 test.describe( 'Variable Manager @v4-tests', () => {
-	let wpAdmin: WpAdminPage;
+	let wpAdminPage: WpAdminPage;
 	let context: BrowserContext;
 	let page: Page;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		page = await context.newPage();
-		await initTemplate( page, testInfo, apiRequests );
+		wpAdminPage = await initTemplate( page, testInfo, apiRequests );
 	} );
 
 	test.afterAll( async () => {
-		await wpAdmin.resetExperiments();
+		await wpAdminPage.resetExperiments();
 		await context.close();
 	} );
 
