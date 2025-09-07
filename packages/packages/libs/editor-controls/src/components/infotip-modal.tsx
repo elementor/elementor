@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { InfoCircleFilledIcon } from '@elementor/icons';
-import { Card, CardContent, CardHeader, Typography } from '@elementor/ui';
-import Infotip from '@elementor/ui/Infotip';
+import { Card, CardContent, CardHeader, Typography, Infotip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type InfotipModalProps = {
@@ -25,7 +24,7 @@ function InfotipCard() {
 	);
 
 	return (
-		<Card elevation={ 0 } sx={ { maxWidth: 400 } } color={ 'error' }>
+		<Card elevation={ 0 } sx={ { maxWidth: 400, backgroundColor: '#F3F3F4' } }>
 			<CardHeader title={ NON_ADMIN_TITLE_TEXT } avatar={ <InfoCircleFilledIcon color={ 'secondary' } /> } />
 			<CardContent sx={ { paddingTop: '1px' } }>
 				<Typography variant="body1" sx={ { whiteSpace: 'pre-line' } }>
