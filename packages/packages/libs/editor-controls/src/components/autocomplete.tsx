@@ -44,7 +44,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 		...restProps
 	} = props;
 
-	const optionKeys = _factoryFilter( value, options, minInputLength ).map( ( { id } ) => id );
+	const optionKeys = factoryFilter( value, options, minInputLength ).map( ( { id } ) => id );
 	const allowClear = !! value;
 
 	// Prevents MUI warning when freeSolo/allowCustomValues is false
@@ -158,7 +158,8 @@ export function findMatchingOption(
 export function isCategorizedOptionPool( options: FlatOption[] | CategorizedOption[] ): options is CategorizedOption[] {
 	return options.every( ( option ) => 'groupLabel' in option );
 }
-function _factoryFilter< T extends FlatOption[] | CategorizedOption[] >(
+
+function factoryFilter< T extends FlatOption[] | CategorizedOption[] >(
 	newValue: string | number | null,
 	options: T,
 	minInputLength: number

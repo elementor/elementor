@@ -70,7 +70,7 @@ export const QueryControl = createControl( ( props: Props ) => {
 		const valueToSave = newLinkValue ? urlPropTypeUtil.create( newLinkValue ) : null;
 
 		setValue( valueToSave );
-		onSetValue?.( newLinkValue );
+		onSetValue?.( valueToSave );
 		updateOptions( newValue );
 	};
 

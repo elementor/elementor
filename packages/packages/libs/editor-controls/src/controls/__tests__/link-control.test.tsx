@@ -81,7 +81,6 @@ describe( '<LinkControl />', () => {
 							$$type: 'boolean',
 							value: false,
 						},
-						label: null,
 					},
 				},
 				meta: {
