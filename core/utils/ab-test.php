@@ -21,7 +21,7 @@ class Ab_Test {
 	 * Get variation for a specific test
 	 *
 	 * @param string $test_name The name of the A/B test
-	 * @param int $user_id Optional user ID, defaults to current user
+	 * @param int    $user_id Optional user ID, defaults to current user
 	 * @return int Returns 1 or 2 for variation assignment
 	 */
 	public static function get_variation( $test_name, $user_id = null ): int {
@@ -43,7 +43,7 @@ class Ab_Test {
 	 * Check if user should see the feature (50% probability)
 	 *
 	 * @param string $test_name The name of the A/B test
-	 * @param int $user_id Optional user ID, defaults to current user
+	 * @param int    $user_id Optional user ID, defaults to current user
 	 * @return bool True if user should see the feature
 	 */
 	public static function should_show_feature( $test_name, $user_id = null ): bool {
@@ -55,7 +55,7 @@ class Ab_Test {
 	 * Get variation ID from cache
 	 *
 	 * @param string $test_name The name of the A/B test
-	 * @param int $user_id User ID
+	 * @param int    $user_id User ID
 	 * @return int|false Variation ID or false if not cached
 	 */
 	private static function get_variation_id_from_cache( $test_name, $user_id ) {
@@ -67,8 +67,8 @@ class Ab_Test {
 	 * Set variation ID in cache
 	 *
 	 * @param string $test_name The name of the A/B test
-	 * @param int $user_id User ID
-	 * @param int $variation_id Variation ID to cache
+	 * @param int    $user_id User ID
+	 * @param int    $variation_id Variation ID to cache
 	 */
 	private static function set_variation_id_from_cache( $test_name, $user_id, $variation_id ): void {
 		$cache_key = self::PREFIX_CACHE_KEY . $test_name . '_' . $user_id;
