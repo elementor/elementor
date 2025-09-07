@@ -24,7 +24,7 @@ export const ProFreeTrialDialog = ( { doClose, popupData } ) => {
 		return null;
 	}
 
-	if ( ! popupData || Object.values( popupData ).some( value => ! value ) ) {
+	if ( ! popupData || Object.values( popupData ).some( ( value ) => ! value ) ) {
 		return null;
 	}
 
