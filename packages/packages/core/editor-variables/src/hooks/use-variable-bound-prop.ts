@@ -1,5 +1,5 @@
 import { useBoundProp } from '@elementor/editor-controls';
-import { type PropValue } from '@elementor/editor-props';
+import { isTransformable, type PropValue } from '@elementor/editor-props';
 
 import { useVariableType } from '../context/variable-type-context';
 
@@ -29,13 +29,9 @@ export const resolveBoundPropAndSetValue = ( value: PropValue, boundProp: BoundP
 };
 
 const unwrapValue = ( input: PropValue ): PropValue => {
-	if ( typeof input === 'string' ) {
-		return input;
+	if ( isTransformable( input ) ) {
+		return input.value;
 	}
 
-	if ( input && typeof input === 'object' && 'value' in input ) {
-		return input.value as PropValue;
-	}
-
-	return null;
+	return input;
 };
