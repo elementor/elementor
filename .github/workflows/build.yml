@@ -42,6 +42,28 @@ jobs:
       artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME}}
       changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
     steps:
+      - name: Setup SSH Key for private repository
+        if: github.repository == 'elementor/elementor-core-mirror'
+        run: |
+          # Create SSH directory
+          mkdir -p ~/.ssh
+          
+          # Add the deploy key
+          echo "${{ secrets.MIRROR_DEPLOY_KEY }}" > ~/.ssh/mirror_deploy_key
+          chmod 600 ~/.ssh/mirror_deploy_key
+          
+          # Add GitHub to known hosts
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+          
+          # Configure SSH to use the deploy key for github.com
+          cat >> ~/.ssh/config << EOF
+          Host github.com
+            HostName github.com
+            User git
+            IdentityFile ~/.ssh/mirror_deploy_key
+            IdentitiesOnly yes
+          EOF
+
       - name: Checkout source code
         uses: actions/checkout@v4
 
