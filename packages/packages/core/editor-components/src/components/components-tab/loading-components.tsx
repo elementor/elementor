@@ -7,9 +7,10 @@ const rows = Array.from( { length: ROWS_COUNT }, ( _, index ) => index );
 export const LoadingComponents = () => {
 	return (
 		<Stack
-			id="elementor-loading-components"
+			aria-label="Loading components"
 			gap={ 1 }
 			sx={ {
+				pointerEvents: 'none',
 				position: 'relative',
 				maxHeight: '300px',
 				overflow: 'hidden',

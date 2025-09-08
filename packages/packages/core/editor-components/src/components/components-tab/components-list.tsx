@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { ThemeProvider } from '@elementor/editor-ui';
 import { BanIcon } from '@elementor/icons';
 import { Divider, Icon, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -11,20 +10,18 @@ import { LoadingComponents } from './loading-components';
 export function ComponentsList() {
 	const { data: components, isLoading } = useComponents();
 
-	if ( ! components && ! isLoading ) {
+	if ( ( ! components || components.length === 0 ) && ! isLoading ) {
 		return <EmptyState />;
 	}
 
 	return (
-		<ThemeProvider>
-			<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5, px: 2 } }>
-				{ isLoading ? (
-					<LoadingComponents />
-				) : (
-					components?.map( ( component ) => <ComponentItem key={ component.id } component={ component } /> )
-				) }
-			</List>
-		</ThemeProvider>
+		<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5, px: 2 } }>
+			{ isLoading ? (
+				<LoadingComponents />
+			) : (
+				components?.map( ( component ) => <ComponentItem key={ component.id } component={ component } /> )
+			) }
+		</List>
 	);
 }
 
@@ -34,17 +31,14 @@ const EmptyState = () => {
 			alignItems="center"
 			justifyContent="center"
 			height="100%"
-			sx={ {
-				px: 2.5,
-				pt: 10,
-			} }
+			sx={ { px: 2.5, pt: 10 } }
 			gap={ 1.75 }
 			overflow="hidden"
 		>
 			<Icon fontSize="large">
 				<BanIcon fontSize="large" />
 			</Icon>
-			<Typography align="center" variant="subtitle2" color="text.secondary">
+			<Typography align="center" variant="subtitle2" color="text.secondary" fontWeight="bold">
 				{ __( 'Text that explains that there are no Components yet.', 'elementor' ) }
 			</Typography>
 			<Typography variant="caption" align="center" color="text.secondary">
@@ -54,11 +48,11 @@ const EmptyState = () => {
 				) }
 			</Typography>
 			<Divider sx={ { width: '100%' } } color="divider" />
-			<Typography align="start" variant="caption" color="text.secondary">
+			<Typography align="left" variant="caption" color="text.secondary">
 				{ __( 'To create a component, first design it, then choose one of three options:', 'elementor' ) }
 			</Typography>
 			<Typography
-				align="start"
+				align="left"
 				variant="caption"
 				color="text.secondary"
 				sx={ { display: 'flex', flexDirection: 'column' } }
