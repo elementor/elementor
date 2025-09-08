@@ -310,24 +310,24 @@
 		}
 	}
 
-	&__chat-button-shadow,
-	&__contact-box-shadow,
-	&__contact-box-shadow:is(a),
-	&__content {
+	.e-contact-buttons__chat-button-shadow,
+	.e-contact-buttons__contact-box-shadow,
+	.e-contact-buttons__contact-box-shadow:is(a),
+	.e-contact-buttons__content {
 		box-shadow: var(--e-contact-buttons-box-shadow);
 	}
 
-	&__chat-button-drop-shadow {
+	.e-contact-buttons__chat-button-drop-shadow {
 		filter: var(--e-contact-buttons-drop-shadow);
 	}
 
-	&__content {
+	.e-contact-buttons__content {
 		border-radius: var(--e-contact-buttons-border-radius);
 		font-family: var(--e-global-typography-text-font-family, 'Poppins'), Sans-serif;
 		overflow: hidden;
 	}
 
-	&__top-bar {
+	.e-contact-buttons__top-bar {
 		align-items: center;
 		background-color: var(--e-contact-buttons-top-bar-bg);
 		display: flex;
@@ -336,20 +336,20 @@
 		position: relative;
 	}
 
-	&__top-bar-title {
+	.e-contact-buttons__top-bar-title {
 		color: var(--e-contact-buttons-top-bar-title);
 		font-size: 24px;
 		font-weight: bold;
 		margin-block-end: 0;
 	}
 
-	&__top-bar-subtitle {
+	.e-contact-buttons__top-bar-subtitle {
 		color: var(--e-contact-buttons-top-bar-subtitle);
 		font-size: 20px;
 		margin-block-end: 0;
 	}
 
-	&__profile-image {
+	.e-contact-buttons__profile-image {
 		align-items: center;
 		display: flex;
 		position: relative;
@@ -387,8 +387,8 @@
 		}
 	}
 
-	&__close-button,
-	&__close-button[type="button"] {
+	.e-contact-buttons__close-button,
+	.e-contact-buttons__close-button[type="button"] {
 		background: none;
 		border: 0;
 		color: var(--e-contact-buttons-close-button-color);
@@ -405,13 +405,13 @@
 		}
 	}
 
-	&__content-wrapper,
-	&__chat-button-container,
-	&__contact-icon-link {
+	.e-contact-buttons__content-wrapper,
+	.e-contact-buttons__chat-button-container,
+	.e-contact-buttons__contact-icon-link {
 		pointer-events: auto;
 	}
 
-	&__chat-button-container {
+	.e-contact-buttons__chat-button-container {
 		display: flex;
 		max-width: max-content;
 
@@ -420,8 +420,8 @@
 		}
 	}
 
-	&__chat-button,
-	&__chat-button[type="button"] {
+	.e-contact-buttons__chat-button,
+	.e-contact-buttons__chat-button[type="button"] {
 		align-items: center;
 		background-color: var(--e-contact-buttons-button-bg);
 		border-radius: 50%;
@@ -526,7 +526,7 @@
 		}
 	}
 
-	&__message-bubble {
+	.e-contact-buttons__message-bubble {
 		background-color: var(--e-contact-buttons-message-bubble-chat-bg);
 		padding: 25px 20px;
 		padding-inline-start: 40px;
@@ -541,7 +541,7 @@
 		}
 	}
 
-	&__bubble {
+	.e-contact-buttons__bubble {
 		background-color: var(--e-contact-buttons-message-bubble-bubble-bg);
 		border-radius: 15px;
 		padding: 20px;
@@ -566,7 +566,7 @@
 		}
 	}
 
-	&__message-bubble-name {
+	.e-contact-buttons__message-bubble-name {
 		color: var(--e-contact-buttons-message-bubble-name);
 		font-size: 20px;
 		line-height: 25px;
@@ -574,14 +574,14 @@
 		margin-block-end: 8px;
 	}
 
-	&__message-bubble-body {
+	.e-contact-buttons__message-bubble-body {
 		color: var(--e-contact-buttons-message-bubble-body);
 		font-size: 20px;
 		line-height: 25px;
 		margin-block-end: 8px;
 	}
 
-	&__message-bubble-time {
+	.e-contact-buttons__message-bubble-time {
 		color: var(--e-contact-buttons-message-bubble-time);
 		font-size: 20px;
 		line-height: 25px;
@@ -590,25 +590,25 @@
 		text-align: end;
 	}
 
-	&__powered-container {
+	.e-contact-buttons__powered-container {
 		text-align: center;
 	}
 
-	&__powered-text {
+	.e-contact-buttons__powered-text {
 		color: #{$contact-buttons-default-text-color};
 		font-size: 16px;
 		font-weight: 500;
 		margin-block-end: 12px;
 	}
 
-	&__dots-container {
+	.e-contact-buttons__dots-container {
 		background-color: var(--e-contact-buttons-message-bubble-bubble-bg);
 		border-radius: 15px;
 		display: inline-flex;
 		padding: 10px 12px;
 	}
 
-	&__dot {
+	.e-contact-buttons__dot {
 		animation: e-contact-buttons-typing-jump 1s infinite;
 		background-color: var(--e-contact-buttons-message-bubble-name);
 		border-radius: 50%;
@@ -620,19 +620,19 @@
 		width: 7px;
 	}
 
-	&__dot-1 {
+	.e-contact-buttons__dot-1 {
 		animation-delay: 200ms;
 	}
 
-	&__dot-2 {
+	.e-contact-buttons__dot-2 {
 		animation-delay: 400ms;
 	}
 
-	&__dot-3 {
+	.e-contact-buttons__dot-3 {
 		animation-delay: 600ms;
 	}
 
-	&__send-button {
+	.e-contact-buttons__send-button {
 		background-color: var(--e-contact-buttons-chat-box-bg);
 		padding: 12px 20px 20px 20px;
 
@@ -646,7 +646,7 @@
 		}
 	}
 
-	&__send-cta {
+	.e-contact-buttons__send-cta {
 		align-items: center;
 		background-color: var(--e-contact-buttons-send-button-bg);
 		border-radius: 30px;
@@ -677,7 +677,7 @@
 		}
 	}
 
-	&__content.visible {
+	.e-contact-buttons__content.visible {
 
 		.e-contact-buttons__message-bubble.has-typing-animation {
 

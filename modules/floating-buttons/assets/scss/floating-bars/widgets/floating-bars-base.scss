@@ -91,7 +91,7 @@
 		--e-floating-bars-corners: #{$floating-bars-border-radius-sharp};
 	}
 
-	&__announcement-text {
+	.e-floating-bars__announcement-text {
 		align-items: center;
 		color: var(--e-floating-bars-announcement-text-color);
 		display: flex;
@@ -101,7 +101,7 @@
 		margin: 0;
 	}
 
-	&__announcement-icon {
+	.e-floating-bars__announcement-icon {
 		align-items: center;
 		color: var(--e-floating-bars-announcement-icon-color);
 		display: flex;
@@ -119,7 +119,7 @@
 		}
 	}
 
-	&__cta-icon {
+	.e-floating-bars__cta-icon {
 		color: var(--e-floating-bars-cta-button-text-color);
 		display: inline-flex;
 		transition: $transition-hover;
@@ -132,7 +132,7 @@
 		}
 	}
 
-	&__cta-button-container {
+	.e-floating-bars__cta-button-container {
 		order: 3;
 
 		@media (max-width: $screen-mobile-max) {
@@ -142,8 +142,8 @@
 		}
 	}
 
-	& .e-floating-bars__cta-button,
-	& .e-floating-bars__cta-button:not([href]):not([tabindex]) {
+	.e-floating-bars__cta-button,
+	.e-floating-bars__cta-button:not([href]):not([tabindex]) {
 		align-items: center;
 		color: var(--e-floating-bars-cta-button-text-color);
 		display: inline-flex;
@@ -218,8 +218,8 @@
 		}
 	}
 
-	&__close-button,
-	&__close-button[type="button"] {
+	.e-floating-bars__close-button,
+	.e-floating-bars__close-button[type="button"] {
 		align-items: center;
 		display: flex;
 		position: absolute;
@@ -246,7 +246,7 @@
 		}
 	}
 
-	&__overlay {
+	.e-floating-bars__overlay {
 		background-position: center center;
 		background-size: cover;
 		height: 100%;
