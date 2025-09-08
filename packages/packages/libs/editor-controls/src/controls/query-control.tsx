@@ -19,8 +19,8 @@ type PropValue = LinkPropValue[ 'value' ][ 'destination' ];
 
 type Props = {
 	queryOptions: {
-		requestParams: Record< string, unknown >;
-		endpoint: string;
+		params: Record< string, unknown >;
+		url: string;
 	};
 	allowCustomValues?: boolean;
 	minInputLength?: number;
@@ -34,8 +34,8 @@ export const QueryControl = createControl( ( props: Props ) => {
 	const { value, setValue } = useBoundProp< PropValue >();
 
 	const {
-		allowCustomValues = false,
-		queryOptions: { endpoint = '', requestParams = {} },
+		allowCustomValues = true,
+		queryOptions: { url = '', params = {} },
 		placeholder,
 		minInputLength = 2,
 		onSetValue,
@@ -77,23 +77,23 @@ export const QueryControl = createControl( ( props: Props ) => {
 	const updateOptions = ( newValue: string | null ) => {
 		setOptions( [] );
 
-		if ( ! newValue || ! endpoint || newValue.length < minInputLength ) {
+		if ( ! newValue || ! url || newValue.length < minInputLength ) {
 			return;
 		}
 
-		debounceFetch( { ...requestParams, term: newValue } );
+		debounceFetch( { ...params, term: newValue } );
 	};
 
 	const debounceFetch = useMemo(
 		() =>
 			debounce(
 				( params: FetchOptionsParams ) =>
-					fetchOptions( endpoint, params ).then( ( newOptions ) => {
+					fetchOptions( url, params ).then( ( newOptions ) => {
 						setOptions( formatOptions( newOptions ) );
 					} ),
 				400
 			),
-		[ endpoint ]
+		[ url ]
 	);
 
 	return (

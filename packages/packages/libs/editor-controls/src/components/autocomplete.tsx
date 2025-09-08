@@ -60,6 +60,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 			ref={ ref }
 			forcePopupIcon={ false }
 			disableClearable={ true } // Disabled component's auto clear icon to use our custom one instead
+			disablePortal={ true }
 			freeSolo={ allowCustomValues }
 			value={ value?.toString() || '' }
 			size={ 'tiny' }

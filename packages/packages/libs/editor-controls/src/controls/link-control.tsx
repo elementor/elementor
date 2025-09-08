@@ -17,8 +17,8 @@ import { SwitchControl } from './switch-control';
 
 type Props = ControlProps< {
 	queryOptions: {
-		requestParams: Record< string, unknown >;
-		endpoint: string;
+		params: Record< string, unknown >;
+		url: string;
 	};
 	allowCustomValues?: boolean;
 	minInputLength?: number;
@@ -42,7 +42,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 
 	const {
 		allowCustomValues = true,
-		queryOptions: { endpoint = '', requestParams = {} },
+		queryOptions: { url = '', params = {} },
 		placeholder,
 		minInputLength = 2,
 		context: { elementId },
@@ -112,7 +112,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 					<Stack gap={ 1.5 }>
 						<PropKeyProvider bind={ 'destination' }>
 							<QueryControl
-								queryOptions={ { endpoint, requestParams } }
+								queryOptions={ { url, params } }
 								allowCustomValues={ allowCustomValues }
 								minInputLength={ minInputLength }
 								placeholder={ placeholder }

@@ -10,7 +10,6 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Number_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
-use Elementor\Modules\WpRest\Classes\Post_Query;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -221,11 +220,12 @@ class Dynamic_Tags_Editor_Config {
 
 	private function convert_query_control_to_atomic( $control ) {
 		$post_types = isset( $control['autocomplete']['query']['post_type'] ) ? $control['autocomplete']['query']['post_type'] : [];
-		$post_types = ! empty( $post_types ) ? $post_types : null;
+		$post_types = ! empty( $post_types ) && 'any' !== $post_types ? $post_types : null;
 
-		return Query_Control::bind_to( $control['name'], [
-			Post_Query::ALLOWED_POST_TYPES => $post_types,
-		] )
-			->set_label( $control['label'] );
+		return Query_Control::bind_to( $control['name'] )
+			->set_post_types( $post_types )
+			->set_placeholder( $control['placeholder'] ?? '' )
+			->set_label( $control['label'] )
+			->set_allow_custom_values( false );
 	}
 }

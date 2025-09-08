@@ -35,8 +35,8 @@ const globalProps = {
 	context: { elementId: '1' },
 	allowCustomValues: true,
 	queryOptions: {
-		requestParams: {},
-		endpoint: '',
+		params: {},
+		url: '',
 	},
 };
 
