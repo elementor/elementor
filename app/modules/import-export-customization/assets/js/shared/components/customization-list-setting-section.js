@@ -31,45 +31,48 @@ export function ListSettingSection( {
 				<Typography variant="h6" >
 					{ title }
 				</Typography>
-				<FormControlLabel
-					control={
-						<Checkbox
-							color="info"
-							checked={ settings.length === items.length }
-							indeterminate={ settings.length > 0 && ( settings.length !== items.length ) }
-							onChange={ ( e, checked ) => {
-								if ( checked ) {
-									onSettingChange( items.map( ( { value } ) => value ), true );
-								} else {
-									onSettingChange( [], true );
-								}
-							} }
-							disabled={ disabled }
-							sx={ { p: 0 } }
-						/>
-					}
-					sx={ { gap: 1 } }
-					slotProps={{
-						typography: {
-							sx: {
-								fontWeight: 500,
-							},
-						},
-					}}
-					label={`${ __( 'All', 'elementor-pro' ) } ${ title.toLowerCase() }`}
-				/>
-			</Stack>
-			<Box sx={ { mt: 2, flexGrow: 1 } }>
-				<Grid container spacing={ 1 } alignItems="center" >
+				<Grid container spacing={ 1 } alignItems="start" >
 					{ loading
-						? <Grid item xs={ 12 } sx={ { p: 1, alignItems: 'center', textAlign: 'center' } } >
+						?
+						<Grid item xs={ 12 } sx={ { p: 1, alignItems: 'center', textAlign: 'center' } } >
 							<CircularProgress size={ 30 } />
 						</Grid>
-						: ( showMore ? items : items.slice( 0, DEFAULT_VISIBLE_ITEMS_COUNT ) ).map( ( item ) => {
+						:
+						<>
+						<Grid key={ 'all' } item xs={ 12 } sx={ { py: 1, px: 0 } } >
+							<FormControlLabel
+								control={
+									<Checkbox
+										color="info"
+										checked={ settings.length === items.length }
+										indeterminate={ settings.length > 0 && ( settings.length !== items.length ) }
+										onChange={ ( e, checked ) => {
+											if ( checked ) {
+												onSettingChange( items.map( ( { value } ) => value ), true );
+											} else {
+												onSettingChange( [], true );
+											}
+										} }
+										disabled={ disabled }
+										sx={ { p: 0 } }
+									/>
+								}
+								sx={ { gap: 1 } }
+								slotProps={{
+									typography: {
+										sx: {
+											fontWeight: 500,
+										},
+									},
+								}}
+								label={`${ __( 'All', 'elementor-pro' ) } ${ title.toLowerCase() }`}
+							/>
+						</Grid>
+						{ ( showMore ? items : items.slice( 0, DEFAULT_VISIBLE_ITEMS_COUNT ) ).map( ( item ) => {
 							return (
-								<Grid key={ item.value } item xs={ 3 } sx={ { p: 1, alignItems: 'center' } } >
+								<Grid key={ item.value } item xs={ 3 } sx={ { py: 1, px: 0 } } >
 									<FormControlLabel
-									sx={{maxWidth: '100%'}}
+										sx={{ maxWidth: '100%', gap: 1 }}
 										control={
 											<Checkbox
 												color="info"
@@ -81,7 +84,7 @@ export function ListSettingSection( {
 														onSettingChange( settings.filter( ( setting ) => setting !== item.value ) );
 													}
 												} }
-												sx={ { py: 0 } }
+												sx={ { p: 0 } }
 												disabled={ disabled }
 											/>
 										}
@@ -100,17 +103,20 @@ export function ListSettingSection( {
 								</Grid>
 							);
 						} ) }
+						</>
+						}
 				</Grid>
-			</Box>
-			{ items.length > DEFAULT_VISIBLE_ITEMS_COUNT && (
-				<Button
-					variant="text"
-					color="info"
-					onClick={ () => setShowMore( ! showMore ) }
-				>
-					{ showMore ? __( 'Show less', 'elementor' ) : __( 'Show more', 'elementor' ) }
-				</Button>
-			) }
+			</Stack>
+			
+				{ items.length > DEFAULT_VISIBLE_ITEMS_COUNT && (
+					<Button
+						variant="text"
+						color="info"
+						onClick={ () => setShowMore( ! showMore ) }
+					>
+						{ showMore ? __( 'Show less', 'elementor' ) : __( 'Show more', 'elementor' ) }
+					</Button>
+				) }
 		</Box>
 	);
 }
