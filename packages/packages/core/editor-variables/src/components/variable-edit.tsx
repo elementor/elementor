@@ -31,7 +31,7 @@ type Props = {
 export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
 	const { icon: VariableIcon, valueField: ValueField, variableType } = useVariableType();
 
-	const { setValue: notifyBoundPropChange, value: assignedValue } = useVariableBoundProp();
+	const { setVariableValue: notifyBoundPropChange, variableId } = useVariableBoundProp();
 	const { propType } = useBoundProp();
 	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( EDIT_CONFIRMATION_DIALOG_ID );
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
@@ -106,7 +106,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 	};
 
 	const maybeTriggerBoundPropChange = () => {
-		if ( editId === assignedValue ) {
+		if ( editId === variableId ) {
 			notifyBoundPropChange( editId );
 		}
 	};

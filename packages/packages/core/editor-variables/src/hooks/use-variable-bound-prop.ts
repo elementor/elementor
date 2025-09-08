@@ -5,14 +5,19 @@ import { useVariableType } from '../context/variable-type-context';
 
 type BoundProp = ReturnType< typeof useBoundProp< PropValue > >;
 
-export const useVariableBoundProp = (): ReturnType< typeof useBoundProp< string > > => {
+type VariableBoundProp = ReturnType< typeof useBoundProp< string > > & {
+	setVariableValue: ( value: PropValue ) => void;
+	variableId: string | null;
+};
+
+export const useVariableBoundProp = (): VariableBoundProp => {
 	const { propTypeUtil } = useVariableType();
 	const boundProp = useBoundProp( propTypeUtil );
 
 	return {
 		...boundProp,
-		setValue: ( value: PropValue ) => resolveBoundPropAndSetValue( value, boundProp as BoundProp ),
-		value: boundProp.value ?? boundProp.placeholder,
+		setVariableValue: ( value: PropValue ) => resolveBoundPropAndSetValue( value, boundProp as BoundProp ),
+		variableId: boundProp.value ?? boundProp.placeholder,
 	};
 };
 

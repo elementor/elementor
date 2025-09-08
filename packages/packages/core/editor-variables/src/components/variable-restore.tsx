@@ -25,7 +25,7 @@ type Props = {
 export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 	const { icon: VariableIcon, valueField: ValueField, variableType } = useVariableType();
 
-	const { setValue: notifyBoundPropChange } = useVariableBoundProp();
+	const { setVariableValue: notifyBoundPropChange } = useVariableBoundProp();
 	const { propType } = useBoundProp();
 
 	const variable = useVariable( variableId );

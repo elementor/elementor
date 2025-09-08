@@ -21,17 +21,19 @@ jest.mock( '../../context/variable-type-context', () => ( {
 const mockUseBoundProp = jest.mocked( useBoundProp );
 const mockUseVariableType = jest.mocked( useVariableType );
 
-function createMockBoundProp( overrides: Partial< Record< string, string > > = {} ): ReturnType< typeof useBoundProp > {
+function createMockBoundProp( overrides: Partial< Record< string, string > > = {} ) {
 	return {
 		bind: 'test-bind',
 		setValue: jest.fn(),
-		value: null,
+		value: null as string | null,
 		propType: createMockPropType(),
-		placeholder: null,
+		placeholder: null as string | null | object,
 		path: [ 'background', 'color' ],
 		restoreValue: jest.fn(),
 		isDisabled: jest.fn(),
 		disabled: false,
+		variableId: null,
+		setVariableValue: jest.fn(),
 		...overrides,
 	};
 }
@@ -65,8 +67,8 @@ describe( 'useVariableBoundProp', () => {
 		// Assert
 		expect( result.current ).toEqual( {
 			...mockBoundProp,
-			setValue: expect.any( Function ),
-			value: 'e-gv-a01',
+			setVariableValue: expect.any( Function ),
+			variableId: 'e-gv-a01',
 		} );
 	} );
 
@@ -82,7 +84,7 @@ describe( 'useVariableBoundProp', () => {
 		const { result } = renderHook( () => useVariableBoundProp() );
 
 		// Assert
-		expect( result.current.value ).toBe( 'e-gv-placeholder' );
+		expect( result.current.variableId ).toBe( 'e-gv-placeholder' );
 	} );
 
 	it( 'should use placeholder when value is undefined', () => {
@@ -98,7 +100,7 @@ describe( 'useVariableBoundProp', () => {
 		const { result } = renderHook( () => useVariableBoundProp() );
 
 		// Assert
-		expect( result.current.value ).toBe( 'e-gv-placeholder' );
+		expect( result.current.variableId ).toBe( 'e-gv-placeholder' );
 	} );
 
 	it( 'should call resolveBoundPropAndSetValue when setValue is called', () => {
@@ -108,7 +110,7 @@ describe( 'useVariableBoundProp', () => {
 
 		// Act
 		const { result } = renderHook( () => useVariableBoundProp() );
-		result.current.setValue( 'new-value' );
+		result.current.setVariableValue( 'new-value' );
 
 		// Assert
 		expect( mockBoundProp.setValue ).toHaveBeenCalledWith( 'new-value' );
@@ -176,7 +178,7 @@ describe( 'resolveBoundPropAndSetValue', () => {
 		};
 
 		// Act
-		resolveBoundPropAndSetValue( { $$type: 'color', value: 'e-gv-placeholder' }, mockBoundProp );
+		resolveBoundPropAndSetValue( { value: 'e-gv-placeholder' }, mockBoundProp );
 
 		// Assert
 		expect( mockBoundProp.setValue ).toHaveBeenCalledWith( null );
