@@ -16,7 +16,7 @@ class Query_Builder {
 				'post_title' => 'label',
 				'post_type' => 'groupLabel',
 			],
-			Post_Query::ALLOWED_POST_TYPES => $config[ 'post_types' ] ?? null,
+			Post_Query::ALLOWED_POST_TYPES => $config['post_types'] ?? null,
 		] );
 		$endpoint = $config['endpoint'] ?? Post_Query::ENDPOINT;
 		$namespace = $config['namespace'] ?? Post_Query::NAMESPACE;
