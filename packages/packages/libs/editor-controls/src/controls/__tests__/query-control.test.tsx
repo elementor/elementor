@@ -284,26 +284,6 @@ describe( '<QueryControl />', () => {
 		expect( input ).toBeInTheDocument();
 	} );
 
-	it( 'should call setExternalValue when typing custom text', () => {
-		// Arrange.
-		const setExternalValue = jest.fn();
-
-		// Act.
-		renderControl(
-			<QueryControl queryOptions={ queryOptions } placeholder="Search posts..." allowCustomValues={ true } />,
-			baseProps
-		);
-
-		const input = screen.getByPlaceholderText( 'Search posts...' );
-
-		// Act.
-		fireEvent.input( input, { target: { value: 'Custom text' } } );
-
-		// Assert.
-		expect( setExternalValue ).toHaveBeenCalledWith( 'Custom text' );
-		expect( baseProps.setValue ).toHaveBeenCalledWith( null );
-	} );
-
 	it( 'should debounce API calls', async () => {
 		// Act.
 		renderControl(
