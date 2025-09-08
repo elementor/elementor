@@ -142,7 +142,7 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 					/>
 				</FormField>
 				<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
-					<Typography variant="h5">
+					<Typography variant="h5" id="variable-value-wrapper">
 						<ValueField
 							value={ value }
 							onChange={ ( newValue ) => {
@@ -160,7 +160,13 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 			</PopoverContent>
 
 			<CardActions sx={ { pt: 0.5, pb: 1 } }>
-				<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleCreateAndTrack }>
+				<Button
+					id="create-variable-button"
+					size="small"
+					variant="contained"
+					disabled={ isSubmitDisabled }
+					onClick={ handleCreateAndTrack }
+				>
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</CardActions>
