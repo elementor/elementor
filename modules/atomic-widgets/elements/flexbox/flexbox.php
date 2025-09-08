@@ -97,6 +97,7 @@ class Flexbox extends Atomic_Element_Base {
 						])
 						->set_label( esc_html__( 'HTML Tag', 'elementor' ) ),
 					Link_Control::bind_to( 'link' )
+						->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
 						->set_label( __( 'Link', 'elementor' ) )
 						->set_meta( [
 							'topDivider' => true,
