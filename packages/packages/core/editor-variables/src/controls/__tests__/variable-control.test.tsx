@@ -232,7 +232,7 @@ describe( 'VariableControl', () => {
 
 	describe( 'Variable inheritance', () => {
 		it( 'should inherit placeholder from tablet value when switching to mobile', () => {
-			// Arrange
+			// Arrange.
 			const setValue = jest.fn();
 
 			const tabletVariable = {
@@ -284,7 +284,7 @@ describe( 'VariableControl', () => {
 		} );
 
 		it( 'should prioritize value over placeholder when both are provided', () => {
-			// Arrange
+			// Arrange.
 			const setValue = jest.fn();
 
 			const mobileVariable = {
