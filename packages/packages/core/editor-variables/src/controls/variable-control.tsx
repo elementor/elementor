@@ -12,7 +12,7 @@ import { getVariableType } from '../variables-registry/variable-type-registry';
 export const VariableControl = () => {
 	const boundProp = useBoundProp();
 
-	const boundPropValue = boundProp.value as TransformablePropValue< string, string >;
+	const boundPropValue = ( boundProp.value ?? boundProp.placeholder ) as TransformablePropValue< string, string >;
 
 	const assignedVariable = useVariable( boundPropValue?.value );
 
