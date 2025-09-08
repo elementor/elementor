@@ -9,17 +9,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Query_Builder {
-	public static function build( ?array $post_types, ?string $namespace, ?string $endpoint ): array {
+	public static function build( ?array $config = [] ): array {
 		$params = Post_Query::build_query_params( [
 			Post_Query::POST_KEYS_CONVERSION_MAP => [
 				'ID' => 'id',
 				'post_title' => 'label',
 				'post_type' => 'groupLabel',
 			],
-			Post_Query::ALLOWED_POST_TYPES => $post_types,
+			Post_Query::ALLOWED_POST_TYPES => $config[ 'post_types' ] ?? null,
 		] );
-		$endpoint = $endpoint ?? Post_Query::ENDPOINT;
-		$namespace = $namespace ?? Post_Query::NAMESPACE;
+		$endpoint = $config['endpoint'] ?? Post_Query::ENDPOINT;
+		$namespace = $config['namespace'] ?? Post_Query::NAMESPACE;
 		$url = $namespace . '/' . $endpoint;
 
 		return [

@@ -223,7 +223,7 @@ class Dynamic_Tags_Editor_Config {
 		$post_types = ! empty( $post_types ) && 'any' !== $post_types ? $post_types : null;
 
 		return Query_Control::bind_to( $control['name'] )
-			->set_post_types( $post_types )
+			->set_query_config( [ 'post_types' => $post_types ] )
 			->set_placeholder( $control['placeholder'] ?? '' )
 			->set_label( $control['label'] )
 			->set_allow_custom_values( false );
