@@ -14,8 +14,6 @@ export const ACTION_TYPE = {
 	APPLY_ALL: 'apply-all',
 };
 
-const ELEMENTOR_MIN_VERSION = '3.32.0';
-
 const importReducer = ( state, { type, payload } ) => {
 	switch ( type ) {
 		case 'SET_IMPORT_STATUS':
@@ -98,7 +96,7 @@ export default function ImportContextProvider( props ) {
 	const [ data, dispatch ] = useReducer( importReducer, initialState );
 
 	const isOldExport = isVersionLessThan( data.uploadedData?.manifest?.version, elementorAppConfig[ 'import-export-customization' ].manifestVersion );
-	const isOldElementorVersion = isVersionLessThan( elementorAppConfig[ 'import-export-customization' ].elementorVersion, ELEMENTOR_MIN_VERSION );
+	const isOldElementorVersion = isVersionLessThan( elementorAppConfig[ 'import-export-customization' ].elementorVersion, data.uploadedData?.manifest?.elementor_version );
 
 	return (
 		<ImportContext.Provider value={ {
