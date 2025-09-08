@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Query_Builder {
-	static public function build( ?array $post_types, ?string $namespace, ?string $endpoint ): array {
+	public static function build( ?array $post_types, ?string $namespace, ?string $endpoint ): array {
 		$params = Post_Query::build_query_params( [
 			Post_Query::POST_KEYS_CONVERSION_MAP => [
 				'ID' => 'id',
