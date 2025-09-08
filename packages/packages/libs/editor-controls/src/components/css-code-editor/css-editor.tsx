@@ -120,6 +120,7 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 				onChange={ handleEditorChange }
 				options={ {
 					lineNumbers: 'on',
+					lineNumbersMinChars: 3,
 					folding: true,
 					minimap: { enabled: false },
 					fontFamily: 'Roboto, Arial, Helvetica, Verdana, sans-serif',
