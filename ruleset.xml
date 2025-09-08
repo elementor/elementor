@@ -37,10 +37,7 @@
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
 		<exclude name="Squiz.Commenting.VariableComment.Missing" />
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamTag" />
-		<exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType" />
 		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
-		<exclude name="Squiz.Commenting.FunctionCommentThrowTag.Missing" />
-		<exclude name="Squiz.Commenting.FunctionComment.EmptyThrows" />
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
 		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction" />
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamType" />
@@ -55,6 +52,8 @@
 		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
+		<exclude name="PSR2.Classes.PropertyDeclaration.Underscore" />
+		<exclude name="PSR2.Methods.MethodDeclaration.Underscore" />
 	</rule>
 
 	<rule ref="WordPress.NamingConventions.ValidHookName">
