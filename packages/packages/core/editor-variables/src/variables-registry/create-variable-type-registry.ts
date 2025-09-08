@@ -28,6 +28,7 @@ type VariableTypeOptions = {
 	startIcon?: ( { value }: { value: string } ) => JSX.Element;
 	valueField: ( { value, onChange, onValidationChange, propType }: ValueFieldProps ) => JSX.Element;
 	variableType: string;
+	defaultValue?: string;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
 	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
@@ -46,6 +47,7 @@ export function createVariableTypeRegistry() {
 		valueField,
 		propTypeUtil,
 		variableType,
+		defaultValue,
 		selectionFilter,
 		valueTransformer,
 		fallbackPropTypeUtil,
@@ -72,6 +74,7 @@ export function createVariableTypeRegistry() {
 			valueField,
 			propTypeUtil,
 			variableType,
+			defaultValue,
 			selectionFilter,
 			valueTransformer,
 			fallbackPropTypeUtil,
@@ -94,6 +97,10 @@ export function createVariableTypeRegistry() {
 		return variableTypes[ key ];
 	};
 
+	const getVariableTypes = () => {
+		return variableTypes;
+	};
+
 	const hasVariableType = ( key: string ) => {
 		return key in variableTypes;
 	};
@@ -101,6 +108,7 @@ export function createVariableTypeRegistry() {
 	return {
 		registerVariableType,
 		getVariableType,
+		getVariableTypes,
 		hasVariableType,
 	};
 }
