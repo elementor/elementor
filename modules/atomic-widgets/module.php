@@ -158,6 +158,17 @@ class Module extends BaseModule {
 			add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
 			add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
+			add_action(
+				'elementor/frontend/after_enqueue_post_styles',
+				function() {
+					wp_enqueue_style(
+						'reduce-motion-transformer-styles',
+						get_stylesheet_directory_uri() . './assets/dev/scss/frontend/reduce-motion-transformer-styles.scss',
+						[]
+					);
+				},
+				99
+			);
 		}
 	}
 
