@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createElement, useState } from 'react';
+import { createElement, useEffect, useRef } from 'react';
 import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { GripVerticalIcon } from '@elementor/icons';
 import {
@@ -28,10 +28,47 @@ type Props = {
 	menuActions: VariableManagerMenuAction[];
 	variables: TVariablesList;
 	onChange: ( variables: TVariablesList ) => void;
+	ids: string[];
+	onIdsChange: ( ids: string[] ) => void;
+	autoEditVariableId?: string;
+	onAutoEditComplete?: () => void;
 };
 
-export const VariablesManagerTable = ( { menuActions, variables, onChange: handleOnChange }: Props ) => {
-	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
+export const VariablesManagerTable = ( {
+	menuActions,
+	variables,
+	onChange: handleOnChange,
+	ids,
+	onIdsChange: setIds,
+	autoEditVariableId,
+	onAutoEditComplete,
+}: Props ) => {
+	const tableContainerRef = useRef< HTMLDivElement >( null );
+	const variableRowRefs = useRef< Map< string, HTMLTableRowElement > >( new Map() );
+
+	useEffect( () => {
+		if ( autoEditVariableId && tableContainerRef.current ) {
+			const rowElement = variableRowRefs.current.get( autoEditVariableId );
+			if ( rowElement ) {
+				setTimeout( () => {
+					rowElement.scrollIntoView( {
+						behavior: 'smooth',
+						block: 'center',
+						inline: 'nearest',
+					} );
+				}, 100 );
+			}
+		}
+	}, [ autoEditVariableId ] );
+
+	const handleRowRef = ( id: string ) => ( ref: HTMLTableRowElement | null ) => {
+		if ( ref ) {
+			variableRowRefs.current.set( id, ref );
+		} else {
+			variableRowRefs.current.delete( id );
+		}
+	};
+
 	const rows = ids
 		.filter( ( id ) => ! variables[ id ].deleted )
 		.map( ( id ) => {
@@ -40,9 +77,9 @@ export const VariablesManagerTable = ( { menuActions, variables, onChange: handl
 
 			return {
 				id,
+				type: variable.type,
 				name: variable.label,
 				value: variable.value,
-				type: variable.type,
 				...variableType,
 			};
 		} );
@@ -53,7 +90,7 @@ export const VariablesManagerTable = ( { menuActions, variables, onChange: handl
 	};
 
 	return (
-		<TableContainer sx={ { overflow: 'initial' } }>
+		<TableContainer ref={ tableContainerRef } sx={ { overflow: 'initial' } }>
 			<Table sx={ tableSX } aria-label="Variables manager list with drag and drop reordering" stickyHeader>
 				<TableHead>
 					<TableRow>
@@ -155,8 +192,14 @@ export const VariablesManagerTable = ( { menuActions, variables, onChange: handl
 															value={ value }
 															onChange={ onChange }
 															focusOnShow
+															selectOnShow={ autoEditVariableId === row.id }
 														/>
 													) }
+													autoEdit={ autoEditVariableId === row.id }
+													onRowRef={ handleRowRef( row.id ) }
+													onAutoEditComplete={
+														autoEditVariableId === row.id ? onAutoEditComplete : undefined
+													}
 												>
 													<EllipsisWithTooltip
 														title={ row.name }
@@ -178,6 +221,7 @@ export const VariablesManagerTable = ( { menuActions, variables, onChange: handl
 														}
 													} }
 													editableElement={ row.valueField }
+													onRowRef={ handleRowRef( row.id ) }
 												>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
 													<EllipsisWithTooltip
