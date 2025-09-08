@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -8,14 +8,16 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { ThemeProvider } from '@elementor/editor-ui';
+import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { ColorFilterIcon, TrashIcon, XIcon } from '@elementor/icons';
 import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getVariables } from '../../hooks/use-prop-variables';
+import { service } from '../../service';
 import { type TVariablesList } from '../../storage';
+import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
@@ -34,11 +36,43 @@ export const { panel, usePanelActions } = createPanel( {
 
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
-	const [ isDirty, setIsDirty ] = useState( false );
+
 	const [ variables, setVariables ] = useState( getVariables( false ) );
 	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
+	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
+
+	const [ isDirty, setIsDirty ] = useState( false );
+	const [ isSaving, setIsSaving ] = useState( false );
+	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 
 	usePreventUnload( isDirty );
+
+	const handleClosePanel = () => {
+		if ( isDirty ) {
+			openSaveChangesDialog();
+			return;
+		}
+
+		closePanel();
+	};
+
+	const handleSave = useCallback( async () => {
+		setIsSaving( true );
+
+		const originalVariables = getVariables( false );
+		const result = await service.batchSave( originalVariables, variables );
+
+		if ( result.success ) {
+			await service.load();
+			const updatedVariables = service.variables();
+
+			setVariables( updatedVariables );
+			setIsDirty( false );
+			setDeletedVariables( [] );
+		}
+
+		setIsSaving( false );
+	}, [ variables ] );
 
 	const menuActions = [
 		{
@@ -46,12 +80,19 @@ export function VariablesManagerPanel() {
 			icon: TrashIcon,
 			color: 'error.main',
 			onClick: ( itemId: string ) => {
-				setDeletedVariables( [ ...deletedVariables, itemId ] );
-				setVariables( { ...variables, [ itemId ]: { ...variables[ itemId ], deleted: true } } );
-				setIsDirty( true );
+				if ( variables[ itemId ] ) {
+					setDeleteConfirmation( { id: itemId, label: variables[ itemId ].label } );
+				}
 			},
 		},
 	];
+
+	const handleDeleteVariable = ( itemId: string ) => {
+		setDeletedVariables( [ ...deletedVariables, itemId ] );
+		setVariables( { ...variables, [ itemId ]: { ...variables[ itemId ], deleted: true } } );
+		setIsDirty( true );
+		setDeleteConfirmation( null );
+	};
 
 	const handleOnChange = ( newVariables: TVariablesList ) => {
 		setVariables( newVariables );
@@ -74,7 +115,7 @@ export function VariablesManagerPanel() {
 								<CloseButton
 									sx={ { marginLeft: 'auto' } }
 									onClose={ () => {
-										closePanel();
+										handleClosePanel();
 									} }
 								/>
 							</Stack>
@@ -96,12 +137,59 @@ export function VariablesManagerPanel() {
 					</PanelBody>
 
 					<PanelFooter>
-						<Button fullWidth size="small" color="global" variant="contained" disabled={ ! isDirty }>
+						<Button
+							fullWidth
+							size="small"
+							color="global"
+							variant="contained"
+							disabled={ ! isDirty || isSaving }
+							onClick={ handleSave }
+						>
 							{ __( 'Save changes', 'elementor' ) }
 						</Button>
 					</PanelFooter>
 				</Panel>
+
+				{ deleteConfirmation && (
+					<DeleteConfirmationDialog
+						open
+						label={ deleteConfirmation.label }
+						onConfirm={ () => handleDeleteVariable( deleteConfirmation.id ) }
+						closeDialog={ () => setDeleteConfirmation( null ) }
+					/>
+				) }
 			</ErrorBoundary>
+			{ isSaveChangesDialogOpen && (
+				<SaveChangesDialog>
+					<SaveChangesDialog.Title onClose={ closeSaveChangesDialog }>
+						{ __( 'You have unsaved changes', 'elementor' ) }
+					</SaveChangesDialog.Title>
+					<SaveChangesDialog.Content>
+						<SaveChangesDialog.ContentText>
+							{ __( 'To avoid losing your updates, save your changes before leaving.', 'elementor' ) }
+						</SaveChangesDialog.ContentText>
+					</SaveChangesDialog.Content>
+					<SaveChangesDialog.Actions
+						actions={ {
+							discard: {
+								label: __( 'Discard', 'elementor' ),
+								action: () => {
+									closeSaveChangesDialog();
+									closePanel();
+								},
+							},
+							confirm: {
+								label: __( 'Save', 'elementor' ),
+								action: async () => {
+									await handleSave();
+									closeSaveChangesDialog();
+									closePanel();
+								},
+							},
+						} }
+					/>
+				</SaveChangesDialog>
+			) }
 		</ThemeProvider>
 	);
 }

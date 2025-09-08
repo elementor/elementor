@@ -32,6 +32,13 @@ type GlobalClassesState = {
 	isDirty: boolean;
 };
 
+export type ModifiedLabels = {
+	[ id: string ]: {
+		original: string;
+		modified: string;
+	};
+};
+
 const localHistory = SnapshotHistory.get< GlobalClasses >( 'global-classes' );
 
 const initialState: GlobalClassesState = {
@@ -108,6 +115,14 @@ export const slice = createSlice( {
 			state.isDirty = true;
 		},
 
+		updateMultiple( state, { payload }: PayloadAction< ModifiedLabels > ) {
+			localHistory.next( state.data );
+			Object.entries( payload ).forEach( ( [ id, { modified } ] ) => {
+				state.data.items[ id ].label = modified;
+			} );
+
+			state.isDirty = false;
+		},
 		updateProps(
 			state,
 			{

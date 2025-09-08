@@ -13,7 +13,7 @@
     "start": "npm run composer:no-dev && npm run build:packages && npm run styles && npm run scripts",
     "watch": "npm run build:tools && npm run composer:no-dev && npx concurrently \"npm run watch:packages\" \"npm run styles:watch\" \"npm run scripts:watch\"",
     "watch:packages": "cd packages && npm run dev",
-    "build": "npm run build:packages && npm run composer:no-dev && grunt build",
+    "build": "npm run build:packages && grunt build",
     "build:packages": "cd packages && npm run build",
     "build:tools": "cd packages && npm run build:tools",
     "build:ci": "cd packages && npm run build && cd .. && npx grunt webpack:production",
@@ -49,7 +49,8 @@
     "restart:testing": "bash scripts/setup-testing.sh --restart",
     "packages:version": "cd packages && npm run version",
     "packages:release": "cd packages && npm run release",
-    "experimental:wp-playground": "npx @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json --blueprint-may-read-adjacent-files"
+    "experimental:wp-playground": "npx @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
+    "experimental:wp-playground:ci": "npx @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json"
   },
   "engines": {
     "node": ">=20.19.0",
@@ -100,6 +101,7 @@
     "grunt-bumpup": "~0.6.3",
     "grunt-checktextdomain": "~1.0.1",
     "grunt-cli": "^1.5.0",
+    "grunt-concurrent": "^3.0.0",
     "grunt-contrib-clean": "~2.0.1",
     "grunt-contrib-copy": "~1.0.0",
     "grunt-contrib-qunit": "^10.1.1",

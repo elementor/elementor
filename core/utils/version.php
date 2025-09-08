@@ -87,7 +87,7 @@ class Version {
 	 * @param bool $should_validate
 	 *
 	 * @return static
-	 * @throws \Exception
+	 * @throws \Exception If version comparison fails or invalid version format is provided.
 	 */
 	public static function create_from_string( $version, $should_validate = true ) {
 		if ( $should_validate && ! static::is_valid_version( $version ) ) {
@@ -131,7 +131,7 @@ class Version {
 	 * @param string $part
 	 *
 	 * @return bool
-	 * @throws \Exception
+	 * @throws \Exception If version validation fails or parsing errors occur.
 	 */
 	public function compare( $operator, $version, $part = self::PART_STAGE ) {
 		if ( ! ( $version instanceof Version ) ) {
