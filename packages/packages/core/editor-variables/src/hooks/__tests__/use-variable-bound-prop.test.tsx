@@ -170,10 +170,13 @@ describe( 'resolveBoundPropAndSetValue', () => {
 	it( 'should handle object values with value property', () => {
 		// Arrange
 		mockBoundProp.value = null;
-		mockBoundProp.placeholder = { value: 'e-gv-placeholder' };
+		mockBoundProp.placeholder = {
+			$$type: 'color',
+			value: 'e-gv-placeholder',
+		};
 
 		// Act
-		resolveBoundPropAndSetValue( { value: 'e-gv-placeholder' }, mockBoundProp );
+		resolveBoundPropAndSetValue( { $$type: 'color', value: 'e-gv-placeholder' }, mockBoundProp );
 
 		// Assert
 		expect( mockBoundProp.setValue ).toHaveBeenCalledWith( null );
