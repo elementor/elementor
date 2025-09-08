@@ -13,23 +13,23 @@ type CreateTypeOptions = {
 	type: string;
 	renderer: DomRenderer;
 	element: Component;
-    config: Record<string, V1ElementConfig>
+	config: Record<string, V1ElementConfig>
 };
 
 type Widget = {
-    id: string;
-    elType: string;
-    widgetType: string;
-    settings: Props;
-    styles?: Record<StyleDefinitionID, StyleDefinition>;
-    elements: Widget[];
+	id: string;
+	elType: string;
+	widgetType: string;
+	settings: Props;
+	styles?: Record<StyleDefinitionID, StyleDefinition>;
+	elements: Widget[];
 }
 
 export type Component = {
-    elements_data: Widget[];
+	elements_data: Widget[];
 }
 
-export function createComponentType( { type, renderer, element, config}: CreateTypeOptions ): typeof ElementType {
+export function createComponentType({ type, renderer, element, config }: CreateTypeOptions): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
 
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
@@ -38,12 +38,12 @@ export function createComponentType( { type, renderer, element, config}: CreateT
 		}
 
 		getView() {
-			return createComponentViewClassDeclaration( {
+			return createComponentViewClassDeclaration({
 				type,
 				renderer,
-                elements_data: element.elements_data,
-                config,
-			} );
+				elements_data: element.elements_data,
+				config,
+			});
 		}
 	};
 }
@@ -51,15 +51,15 @@ export function createComponentType( { type, renderer, element, config}: CreateT
 type CreateViewOptions = {
 	type: string;
 	renderer: DomRenderer;
-    elements_data: Widget[];
-    config: Record<string, V1ElementConfig>
+	elements_data: Widget[];
+	config: Record<string, V1ElementConfig>
 };
 
-function createComponentViewClassDeclaration( {
-    elements_data,
+function createComponentViewClassDeclaration({
+	elements_data,
 	renderer,
-    config,
-}: CreateViewOptions ): typeof ElementView {
+	config,
+}: CreateViewOptions): typeof ElementView {
 	const BaseView = createElementViewClassDeclaration();
 
 	return class extends BaseView {
@@ -73,66 +73,78 @@ function createComponentViewClassDeclaration( {
 			this.render();
 		}
 
+		// childViewEvents = false;
+
+		onChildviewContextMenu(childView) {
+			console.log('Childview ' + childView + ' was clicked');
+		}
+
 		// Overriding Marionette original render method to inject our renderer.
 		async _renderTemplate() {
 			this.#beforeRenderTemplate();
 
-            const instanceSettings = this.model.get( 'settings' ).toJSON();
 
-            const componentId = instanceSettings.component_id.value;
-            console.log('------------ render component instance ------------');
-            console.log(componentId);
-            console.log(componentId);
-            const componentData = elementor.documents[componentId] ?? (await elementor.documents.request( componentId ) );
+			// this.model.set('isLocked', true);
+			
+			const instanceSettings = this.model.get('settings').toJSON();
 
-            console.log('------------ render component instance ------------');
-            console.log(componentId);
-            console.log(componentData);
+			const componentId = instanceSettings.component_id.value;
+			console.log('------------ render component instance ------------');
+			console.log(componentId);
+			console.log(componentId);
+			const componentData = elementor.documents[componentId] ?? (await elementor.documents.request(componentId));
 
-		// const elements = this.createBackboneElementsCollection( componentData.elements );
+			console.log('------------ render component instance ------------');
+			console.log(componentId);
+			console.log(componentData);
+
+			// const elements = this.createBackboneElementsCollection( componentData.elements );
 
 
 			// const renderedElements = await this.renderContainer( elements_data[0], componentSettings );
 			// this.$el.html( '<div class="e-component">' + "test" + '</div>' );
-const elementModel = window.elementor.modules.elements.models.Element
+			const ElementModel = window.elementor.modules.elements.models.Element
 
-const lockEl = (el) => { 
-	if (el.elements) {
-		el.elements = el.elements.map( lockEl );
-	}
-	return {
-	...el, isLocked: true }
-}	
+			const lockEl = (el) => {
+				if (el.elements) {
+					el.elements = el.elements.map(lockEl);
+				}
+				return { ...el, isLocked: true, isEditable: false }
+			}
 
-		const lockedElements = componentData.elements.map( lockEl );
-			const firstElement = new elementModel( {... lockedElements[0], isLocked: true } );
-		const firstElementView = this.getChildView( firstElement );
-		var view = this.buildChildView( firstElement, firstElementView, { model: firstElement } );
+			const lockedElements = componentData.elements.map(lockEl);
+			const firstElement = new ElementModel({ ...lockedElements[0], isLocked: true });
 
-		// Add the view to children collection
-		this.children.add(view);
-		
-		// First set the container
-		this.$el.html('<div class="e-component"></div>');
-		
-		// Then render the child view properly using Elementor's mechanism
-		await this.renderChildView(view, 0);
-		
-		// Move the rendered view inside the e-component container
-		this.$('.e-component').append(view.$el);
+			const firstElementView = this.getChildView(firstElement);
+//
+			var view = this.buildChildView(firstElement, firstElementView, { model: firstElement });
 
+			// Add the view to children collection
+			this.children.add(view);
+
+			// First set the container
+			this.$el.html(`<div class="e-component" data-component-id="${componentId}"></div>`);
+
+			// Then render the child view properly using Elementor's mechanism
+			await this.renderChildView(view, 0);
+//
+			// Move the rendered view inside the e-component container
+			await this.$('.e-component').append(view.$el);
+			this.initDraggable();
 			this.#afterRenderTemplate();
+
+			
 		}
 
 		// Emulating the original Marionette behavior.
 		#beforeRenderTemplate() {
-			this.triggerMethod( 'before:render:template' );
+			this.triggerMethod('before:render:template');
 		}
 
 		#afterRenderTemplate() {
 			this.bindUIElements();
 
-			this.triggerMethod( 'render:template' );
+			this.triggerMethod('render:template');
 		}
 	};
 }

@@ -39,6 +39,9 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 		}
 
 		attributes() {
+			const t= super.attributes();
+			console.log('------------ attributes ------------');
+			console.log(t);
 			return {
 				...super.attributes(),
 
