@@ -148,7 +148,7 @@
 		--e-link-in-bio-container-width: 100%;
 	}
 
-	&__bg {
+	.e-link-in-bio__bg {
 		background-position: center center;
 		background-repeat: no-repeat;
 		background-size: cover;
@@ -158,14 +158,14 @@
 		z-index: $ground-layer;
 	}
 
-	&__bg-overlay {
+	.e-link-in-bio__bg-overlay {
 		background-position: center center;
 		background-repeat: no-repeat;
 		background-size: cover;
 		opacity: var(--background-overlay-opacity);
 	}
 
-	&__content {
+	.e-link-in-bio__content {
 		color: $link-in-bio-text-color-default;
 		display: flex;
 		flex-direction: column;
@@ -180,7 +180,7 @@
 		}
 	}
 
-	&__identity {
+	.e-link-in-bio__identity {
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: auto;
@@ -254,35 +254,35 @@
 		}
 	}
 
-	&__bio {
+	.e-link-in-bio__bio {
 
 		> * {
 			margin-block: 0;
 		}
 	}
 
-	&__heading {
+	.e-link-in-bio__heading {
 		color: var(--e-link-in-bio-heading-color);
 		font-size: 36px;
 		font-weight: 600;
 		line-height: 42px;
 	}
 
-	&__about-heading {
+	.e-link-in-bio__about-heading {
 		color: var(--e-link-in-bio-about-heading-color);
 		font-size: 16px;
 		font-weight: 500;
 		line-height: 20px;
 	}
 
-	&__title {
+	.e-link-in-bio__title {
 		color: var(--e-link-in-bio-title-color);
 		font-size: 20px;
 		font-weight: 500;
 		line-height: 35px;
 	}
 
-	&__description {
+	.e-link-in-bio__description {
 		color: var(--e-link-in-bio-description-color);
 		font-size: 16px;
 		font-weight: 300;
@@ -290,7 +290,7 @@
 		margin-block-start: 20px;
 	}
 
-	&__bio--footer {
+	.e-link-in-bio__bio--footer {
 		margin-block-start: 34px;
 
 		.e-link-in-bio__description {
@@ -305,7 +305,7 @@
 		}
 	}
 
-	&__icons {
+	.e-link-in-bio__icons {
 		display: flex;
 		flex-flow: row wrap;
 		gap: var(--e-link-in-bio-icon-gap);
@@ -326,7 +326,7 @@
 		}
 	}
 
-	&__icon {
+	.e-link-in-bio__icon {
 		display: flex;
 
 		.e-link-in-bio__icon-link {
@@ -367,7 +367,7 @@
 		}
 	}
 
-	&__image-links {
+	.e-link-in-bio__image-links {
 		display: grid;
 		grid-template-columns: repeat(var(--e-link-in-bio-image-links-columns, 2), minmax(0, 1fr));
 		grid-template-rows: auto;
@@ -401,7 +401,7 @@
 		}
 	}
 
-	&__ctas {
+	.e-link-in-bio__ctas {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr);
 		grid-template-rows: auto;
