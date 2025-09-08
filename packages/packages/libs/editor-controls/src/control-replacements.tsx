@@ -25,8 +25,27 @@ export const useControlReplacement = ( OriginalComponent: ComponentType ) => {
 	const { value } = useBoundProp();
 	const replacements = useContext( ControlReplacementContext );
 
+	const types = ['link'];
+
 	try {
-		const replacement = replacements.find( ( r ) => r.condition( { value } ) );
+		let replacement = replacements.find( ( r ) => r.condition( { value } ) );
+
+		// If not found, and value is a 'link', test against each value.value property
+		if (
+			!replacement &&
+			value &&
+			value.$$type === 'link' &&
+			value.value &&
+			typeof value.value === 'object'
+		) {
+			for (const key in value.value) {
+				if (Object.prototype.hasOwnProperty.call(value.value, key)) {
+					const item = value.value[key];
+					replacement = replacements.find( r => r.condition( { value: item } ) );
+					if (replacement) break;
+				}
+			}
+		}
 
 		return replacement?.component ?? OriginalComponent;
 	} catch {

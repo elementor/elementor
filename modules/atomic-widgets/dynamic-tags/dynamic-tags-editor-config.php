@@ -135,6 +135,8 @@ class Dynamic_Tags_Editor_Config {
 			'textarea' => fn( $control ) => $this->convert_textarea_control_to_atomic( $control ),
 			'switcher' => fn( $control ) => $this->convert_switch_control_to_atomic( $control ),
 			'number'   => fn( $control ) => $this->convert_number_control_to_atomic( $control ),
+			'choose'   => fn( $control ) => $this->convert_choose_control_to_atomic( $control ),
+			'media'   => fn( $control ) => $this->convert_media_control_to_atomic( $control ),
 		];
 
 		if ( ! isset( $map[ $control['type'] ] ) ) {
@@ -213,6 +215,16 @@ class Dynamic_Tags_Editor_Config {
 	private function convert_textarea_control_to_atomic( $control ) {
 		return Textarea_Control::bind_to( $control['name'] )
 			->set_placeholder( $control['placeholder'] ?? '' )
+			->set_label( $control['label'] );
+	}
+
+	private function convert_choose_control_to_atomic( $control ) {
+		return Switch_Control::bind_to( $control['name'] )
+			->set_label( $control['atomic_label'] ?? $control['label'] );
+	}
+
+	private function convert_media_control_to_atomic( $control ) {
+		return Text_Control::bind_to( $control['name'] )
 			->set_label( $control['label'] );
 	}
 }
