@@ -275,10 +275,10 @@ describe( 'VariableControl', () => {
 
 			( usePropVariablesModule.useVariable as jest.Mock ).mockClear();
 
-			// Act - Switch to mobile (simulate breakpoint change with placeholder)
+			// Act.
 			rerender( <VariableControl />, mobileProps );
 
-			// Assert - Mobile should show the inherited variable via placeholder
+			// Assert.
 			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-456-placeholder' );
 			expect( screen.getByText( 'secondary-color' ) ).toBeInTheDocument();
 		} );
