@@ -1,5 +1,6 @@
 {
-  "name": "@elementor/editor-variables",
+  "name": "@elementor/mixpanel",
+  "description": "Elementor Mixpanel package",
   "version": "3.33.0",
   "private": false,
   "author": "Elementor Team",
@@ -19,7 +20,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/elementor/elementor.git",
-    "directory": "packages/core/editor-variables"
+    "directory": "packages/libs/mixpanel"
   },
   "bugs": {
     "url": "https://github.com/elementor/elementor/issues"
@@ -37,27 +38,6 @@
   "scripts": {
     "build": "tsup --config=../../tsup.build.ts",
     "dev": "tsup --config=../../tsup.dev.ts"
-  },
-  "dependencies": {
-    "@elementor/editor": "3.33.0",
-    "@elementor/editor-canvas": "3.33.0",
-    "@elementor/editor-controls": "3.33.0",
-    "@elementor/editor-current-user": "3.33.0",
-    "@elementor/editor-editing-panel": "3.33.0",
-    "@elementor/editor-panels": "3.33.0",
-    "@elementor/editor-props": "3.33.0",
-    "@elementor/editor-ui": "3.33.0",
-    "@elementor/editor-v1-adapters": "3.33.0",
-    "@elementor/http-client": "3.33.0",
-    "@elementor/icons": "1.46.0",
-    "@elementor/mixpanel": "3.33.0",
-    "@elementor/schema": "3.33.0",
-    "@elementor/ui": "1.36.12",
-    "@wordpress/i18n": "^5.13.0"
-  },
-  "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "tsup": "^8.3.5"
