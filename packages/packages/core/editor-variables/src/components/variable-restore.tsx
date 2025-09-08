@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { PopoverContentRefContextProvider } from '../context/variable-selection-popover.context';
 import { useVariableType } from '../context/variable-type-context';
 import { restoreVariable, useVariable } from '../hooks/use-prop-variables';
+import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { ERROR_MESSAGES, labelHint, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
 import { FormField } from './ui/form-field';
@@ -22,9 +23,9 @@ type Props = {
 };
 
 export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
-	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
+	const { icon: VariableIcon, valueField: ValueField, variableType } = useVariableType();
 
-	const { setValue: notifyBoundPropChange } = useBoundProp( propTypeUtil );
+	const { setVariableValue: notifyBoundPropChange } = useVariableBoundProp();
 	const { propType } = useBoundProp();
 
 	const variable = useVariable( variableId );

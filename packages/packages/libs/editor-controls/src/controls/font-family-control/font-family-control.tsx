@@ -38,6 +38,7 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 		<>
 			<ControlActions>
 				<UnstableTag
+					id="font-family-control"
 					variant="outlined"
 					label={ fontFamily || placeholder }
 					endIcon={ <ChevronDownIcon fontSize="tiny" /> }
@@ -66,6 +67,7 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 				{ ...bindPopover( popoverState ) }
 			>
 				<ItemSelector
+					id="font-family-selector"
 					itemsList={ mapFontSubs }
 					selectedItem={ fontFamily }
 					onItemChange={ setFontFamily }
