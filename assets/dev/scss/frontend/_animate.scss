@@ -21,7 +21,7 @@
 	}
 }
 
-// Respect reduced motion preference in animations
+// Respect reduced motion preference in animations and transitions
 @media (prefers-reduced-motion: reduce) {
 	.animated {
 		animation: none !important;
