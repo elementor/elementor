@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { useVariableType } from '../context/variable-type-context';
 import { useInitialValue } from '../hooks/use-initial-value';
 import { createVariable } from '../hooks/use-prop-variables';
+import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { trackVariableEvent } from '../utils/tracking';
 import { ERROR_MESSAGES, labelHint, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
@@ -25,7 +26,7 @@ type Props = {
 export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
 
-	const { setValue: setVariable, path } = useBoundProp( propTypeUtil );
+	const { setVariableValue: setVariable, path } = useVariableBoundProp();
 	const { propType } = useBoundProp();
 
 	const initialValue = useInitialValue();
