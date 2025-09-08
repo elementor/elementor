@@ -190,7 +190,7 @@ describe( 'resolveBoundPropAndSetValue', () => {
 		mockBoundProp.placeholder = 'e-gv-placeholder';
 
 		// Act
-		resolveBoundPropAndSetValue( { value: 'e-gv-placeholder' }, mockBoundProp );
+		resolveBoundPropAndSetValue( { $$type: 'color', value: 'e-gv-placeholder' }, mockBoundProp );
 
 		// Assert
 		expect( mockBoundProp.setValue ).toHaveBeenCalledWith( null );
