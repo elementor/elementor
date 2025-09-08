@@ -229,4 +229,96 @@ describe( 'VariableControl', () => {
 		// Assert
 		expect( screen.getByText( 'primary-background-color (changed)' ) ).toBeInTheDocument();
 	} );
+
+	describe( 'Variable inheritance', () => {
+		it( 'should inherit placeholder from tablet value when switching to mobile', () => {
+			// Arrange.
+			const setValue = jest.fn();
+
+			const tabletVariable = {
+				key: 'e-gv-456',
+				label: 'secondary-color',
+				value: '#00ff00',
+			};
+
+			jest.clearAllMocks();
+			( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( tabletVariable );
+
+			const tabletProps = {
+				setValue,
+				value: {
+					$$type: colorVariablePropTypeUtil.key,
+					value: 'e-gv-456',
+				},
+				bind: 'color',
+				propType,
+			};
+
+			const mobileProps = {
+				setValue,
+				value: null,
+				bind: 'color',
+				propType,
+				placeholder: {
+					color: {
+						$$type: colorVariablePropTypeUtil.key,
+						value: 'e-gv-456-placeholder',
+					},
+				},
+			};
+
+			// Act.
+			const { rerender } = renderControl( <VariableControl />, tabletProps );
+
+			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-456' );
+			expect( screen.getByText( 'secondary-color' ) ).toBeInTheDocument();
+
+			( usePropVariablesModule.useVariable as jest.Mock ).mockClear();
+
+			// Act.
+			rerender( <VariableControl />, mobileProps );
+
+			// Assert.
+			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-456-placeholder' );
+			expect( screen.getByText( 'secondary-color' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should prioritize value over placeholder when both are provided', () => {
+			// Arrange.
+			const setValue = jest.fn();
+
+			const mobileVariable = {
+				key: 'e-gv-789',
+				label: 'mobile-specific-color',
+				value: '#ff0000',
+			};
+
+			jest.clearAllMocks();
+			( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( mobileVariable );
+
+			const props = {
+				setValue,
+				value: {
+					$$type: colorVariablePropTypeUtil.key,
+					value: 'e-gv-789',
+				},
+				bind: 'color',
+				propType,
+				placeholder: {
+					color: {
+						$$type: colorVariablePropTypeUtil.key,
+						value: 'e-gv-123',
+					},
+				},
+			};
+
+			// Act.
+			renderControl( <VariableControl />, props );
+
+			// Assert.
+			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-789' );
+			expect( usePropVariablesModule.useVariable ).not.toHaveBeenCalledWith( 'e-gv-123' );
+			expect( screen.getByText( 'mobile-specific-color' ) ).toBeInTheDocument();
+		} );
+	} );
 } );
