@@ -12,6 +12,7 @@ export const transitionTransformer = createTransformer( ( transitionValues: Tran
 	if ( transitionValues?.length < 1 ) {
 		return null;
 	}
+
 	return transitionValues.filter( Boolean ).map( mapToTransitionString ).join( ', ' );
 } );
 
