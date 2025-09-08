@@ -1,7 +1,7 @@
 import { injectIntoTop } from '@elementor/editor';
 import { controlActionsMenu, registerControlReplacement } from '@elementor/editor-editing-panel';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
-import type { PropValue } from '@elementor/editor-props';
+import { isTransformable, type PropValue } from '@elementor/editor-props';
 
 import { panel } from './components/variables-manager/variables-manager-panel';
 import { VariableControl } from './controls/variable-control';
@@ -39,7 +39,7 @@ export function init() {
 }
 
 function hasVariable( value: PropValue ) {
-	if ( value && typeof value === 'object' && '$$type' in value ) {
+	if ( isTransformable( value ) ) {
 		return hasVariableType( value.$$type );
 	}
 
