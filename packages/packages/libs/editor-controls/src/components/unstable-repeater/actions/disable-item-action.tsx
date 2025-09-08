@@ -7,7 +7,7 @@ import { useRepeaterContext } from '../context/repeater-context';
 const SIZE = 'tiny';
 
 export const DisableItemAction = () => {
-	const { items, updateItem, index } = useRepeaterContext();
+	const { items, updateItem, index = -1 } = useRepeaterContext();
 
 	if ( index === -1 ) {
 		return null;
