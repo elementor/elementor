@@ -121,14 +121,14 @@ export const DynamicSettingsPopover = ( { dynamicTag }: { dynamicTag: DynamicTag
 						onClose={ popupState.close }
 						icon={ <DatabaseIcon fontSize={ SIZE } /> }
 					/>
-					<DynamicSettings controls={ dynamicTag.atomic_controls } />
+					<DynamicSettings controls={ dynamicTag.atomic_controls } tagName={ dynamicTag.name } />
 				</PopoverBody>
 			</Popover>
 		</>
 	);
 };
 
-const DynamicSettings = ( { controls }: { controls: DynamicTag[ 'atomic_controls' ] } ) => {
+const DynamicSettings = ( { controls, tagName }: { controls: DynamicTag[ 'atomic_controls' ]; tagName: string } ) => {
 	const tabs = controls.filter( ( { type } ) => type === 'section' ) as ControlsSection[];
 	const { getTabsProps, getTabProps, getTabPanelProps } = useTabs< number >( 0 );
 
@@ -137,6 +137,21 @@ const DynamicSettings = ( { controls }: { controls: DynamicTag[ 'atomic_controls
 		return null;
 	}
 
+	if ( tagName === 'popup' ) {
+		const singleTab = tabs[0];
+		return (
+			<Stack p={ 2 } gap={ 2 } sx={ { overflowY: 'auto' } }>
+				{ singleTab.value.items.map( ( item ) => {
+					if ( item.type === 'control' ) {
+						return <Control key={ item.value.bind } control={ item.value } />;
+					}
+					return null;
+				} ) }
+			</Stack>
+		);
+	}
+
+	// Other tags - render with tabs UI
 	return (
 		<>
 			<Tabs size="small" variant="fullWidth" { ...getTabsProps() }>
@@ -172,7 +187,17 @@ const LAYOUT_OVERRIDE_FIELDS = {
 	separator: 'two-columns',
 } as const;
 
+const DYNAMIC_TAG_LAYOUT_OVERRIDES = {
+	select: 'full',
+	switch: 'full',
+} as const;
+
 const getLayout = ( control: Control[ 'value' ] ): ControlLayout => {
+	const dynamicOverride = DYNAMIC_TAG_LAYOUT_OVERRIDES[ control.type as keyof typeof DYNAMIC_TAG_LAYOUT_OVERRIDES ];
+	if ( dynamicOverride ) {
+		return dynamicOverride;
+	}
+
 	return (
 		LAYOUT_OVERRIDE_FIELDS[ control.bind as keyof typeof LAYOUT_OVERRIDE_FIELDS ] ??
 		controlsRegistry.getLayout( control.type as ControlType )
