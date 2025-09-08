@@ -7,8 +7,8 @@ import { useRepeaterContext } from '../context/repeater-context';
 
 const SIZE = 'tiny';
 
-export const RemoveItemAction = ( { index = -1 }: { index?: number } ) => {
-	const { removeItem } = useRepeaterContext();
+export const RemoveItemAction = () => {
+	const { removeItem, index } = useRepeaterContext();
 
 	if ( index === -1 ) {
 		return null;

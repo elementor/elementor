@@ -6,8 +6,8 @@ import { __ } from '@wordpress/i18n';
 import { useRepeaterContext } from '../context/repeater-context';
 const SIZE = 'tiny';
 
-export const DisableItemAction = ( { index = -1 }: { index?: number } ) => {
-	const { items, updateItem } = useRepeaterContext();
+export const DisableItemAction = () => {
+	const { items, updateItem, index } = useRepeaterContext();
 
 	if ( index === -1 ) {
 		return null;

@@ -85,12 +85,18 @@ export const RepeatableControl = createControl(
 								ariaLabel={ repeaterLabel }
 							/>
 						</Header>
-						<ItemsContainer
-							isSortable={ false }
-							itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } /> }
-						>
-							{ showDuplicate && <DuplicateItemAction /> }
-							{ showToggle && <DisableItemAction /> }
+						<ItemsContainer isSortable={ false }>
+							<Item
+								Icon={ ItemIcon }
+								Label={ ItemLabel }
+								actions={
+									<>
+										{ showDuplicate && <DuplicateItemAction /> }
+										{ showToggle && <DisableItemAction /> }
+									</>
+								}
+							/>
+
 							<RemoveItemAction />
 						</ItemsContainer>
 						<EditItemPopover>
