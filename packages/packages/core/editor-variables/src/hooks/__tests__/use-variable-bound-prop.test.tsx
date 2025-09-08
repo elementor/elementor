@@ -9,7 +9,6 @@ import { useVariableType } from '../../context/variable-type-context';
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
 import { resolveBoundPropAndSetValue, useVariableBoundProp } from '../use-variable-bound-prop';
 
-// Mock dependencies
 jest.mock( '@elementor/editor-controls', () => ( {
 	useBoundProp: jest.fn(),
 } ) );
@@ -178,7 +177,7 @@ describe( 'resolveBoundPropAndSetValue', () => {
 		};
 
 		// Act
-		resolveBoundPropAndSetValue( { value: 'e-gv-placeholder' }, mockBoundProp );
+		resolveBoundPropAndSetValue( { $$type: 'color', value: 'e-gv-placeholder' }, mockBoundProp );
 
 		// Assert
 		expect( mockBoundProp.setValue ).toHaveBeenCalledWith( null );
