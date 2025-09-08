@@ -28,7 +28,7 @@ type Props = {
 export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
 	const { icon: VariableIcon, startIcon, variableType, propTypeUtil } = useVariableType();
 
-	const { variableId, setValue: setVariable, path } = useVariableBoundProp();
+	const { value: variable, setValue: setVariable, path } = useVariableBoundProp();
 	const [ searchValue, setSearchValue ] = useState( '' );
 
 	const {
@@ -124,7 +124,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 					items={ items }
 					onSelect={ handleSetVariable }
 					onClose={ () => {} }
-					selectedValue={ variableId ?? undefined }
+					selectedValue={ variable }
 					data-testid={ `${ variableType }-variables-list` }
 					menuListTemplate={ VariablesStyledMenuList }
 					menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
