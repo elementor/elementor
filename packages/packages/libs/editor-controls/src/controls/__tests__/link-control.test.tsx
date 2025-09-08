@@ -23,7 +23,6 @@ const propType = createMockPropType( {
 				} ),
 			},
 		} ),
-		label: createMockPropType( { kind: 'object' } ),
 		isTargetBlank: createMockPropType( { kind: 'object' } ),
 	},
 } );
@@ -115,7 +114,6 @@ describe( '<LinkControl />', () => {
 						$$type: 'boolean',
 						value: false,
 					},
-					label: null,
 				},
 			},
 		};
@@ -159,7 +157,6 @@ describe( '<LinkControl />', () => {
 						$$type: 'boolean',
 						value: false,
 					},
-					label: null,
 				},
 			},
 		};
@@ -194,7 +191,6 @@ describe( '<LinkControl />', () => {
 						$$type: 'boolean',
 						value: false,
 					},
-					label: null,
 				},
 			},
 		};
@@ -209,7 +205,6 @@ describe( '<LinkControl />', () => {
 		expect( props.setValue ).toHaveBeenCalledWith( {
 			$$type: 'link',
 			value: {
-				label: null,
 				destination: {
 					$$type: 'url',
 					value: testHref,
@@ -266,7 +261,6 @@ describe( '<LinkControl />', () => {
 					$$type: 'boolean',
 					value: false,
 				},
-				label: null,
 			},
 			meta: {
 				isEnabled: false,
@@ -295,7 +289,6 @@ describe( '<LinkControl />', () => {
 					$$type: 'boolean',
 					value: false,
 				},
-				label: null,
 			},
 		} );
 
