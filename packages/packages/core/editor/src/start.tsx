@@ -2,6 +2,7 @@ import * as React from 'react';
 import { type JSX } from 'react';
 import * as ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
+import { GlobalDialog } from '@elementor/editor-ui';
 import { __privateDispatchReadyEvent as dispatchReadyEvent } from '@elementor/editor-v1-adapters';
 import { createQueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore, __StoreProvider as StoreProvider } from '@elementor/store';
@@ -23,6 +24,7 @@ export function start( domElement: Element ): void {
 			<QueryClientProvider client={ queryClient }>
 				<DirectionProvider rtl={ window.document.dir === 'rtl' }>
 					<ThemeProvider>
+						<GlobalDialog />
 						<Shell />
 					</ThemeProvider>
 				</DirectionProvider>
