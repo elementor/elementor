@@ -52,14 +52,24 @@ const fs = require('fs');
 const path = require('path');
 
 try {
-    const figmaCssPath = '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/figma-extracted-variables.css';
-    const figmaCss = fs.readFileSync(figmaCssPath, 'utf8');
+    const figmanonColorCssPath = '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/figma-non-color-variables.css';
+    const figmanonColorCss = fs.readFileSync(figmanonColorCssPath, 'utf8');
     
-    console.log('Posting Figma extracted CSS variables...');
-    postCssToEndpoint(figmaCss);
+    console.log('Importing and pushing Figma App UI Elements NON-COLOR design variables to system...');
+    console.log('Source: https://www.figma.com/design/eHczmy48dhw7o9NLrVqAAm/App-UI-Elements--1-?node-id=2-354');
+    console.log('Variables include typography, spacing, border radius, shadows, and component dimensions...');
+    
+    postCssToEndpoint(figmanonColorCss).then(response => {
+        if (response) {
+            console.log('✅ Successfully pushed Figma NON-COLOR design variables to Elementor CSS Converter system');
+        } else {
+            console.log('❌ Failed to push non-color variables to system');
+        }
+    });
 } catch (error) {
-    console.error('Error reading Figma CSS file:', error);
-    // Fallback to example
-    const css = ':root { --main-color: #cccccc; --font-size: 16px; }';
+    console.error('Error reading Figma non-color CSS file:', error);
+    // Fallback to basic non-color variables
+    const css = ':root { --font-size-base: 12px; --spacing-md: 8px; --radius-md: 8px; }';
+    console.log('Using fallback non-color variables...');
     postCssToEndpoint(css);
 }
