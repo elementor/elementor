@@ -256,7 +256,6 @@ export const VariablesManagerTable = ( {
 					</UnstableSortableProvider>
 				</TableBody>
 			</Table>
-			<Divider sx={ { width: '100%' } } />
 		</TableContainer>
 	);
 };

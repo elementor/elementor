@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { colorPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { BrushIcon, TextIcon } from '@elementor/icons';
-import { __ } from '@wordpress/i18n';
 
 import { ColorField } from './components/fields/color-field';
 import { FontField } from './components/fields/font-field';
@@ -18,7 +17,7 @@ export function registerVariableTypes() {
 		fallbackPropTypeUtil: colorPropTypeUtil,
 		variableType: 'color',
 		startIcon: ( { value } ) => <ColorIndicator size="inherit" component="span" value={ value } />,
-		defaultValue: __( '#ffffff', 'elementor' ),
+		defaultValue: '#ffffff',
 	} );
 
 	registerVariableType( {
@@ -27,6 +26,6 @@ export function registerVariableTypes() {
 		propTypeUtil: fontVariablePropTypeUtil,
 		fallbackPropTypeUtil: stringPropTypeUtil,
 		variableType: 'font',
-		defaultValue: __( 'Roboto', 'elementor' ),
+		defaultValue: 'Roboto',
 	} );
 }
