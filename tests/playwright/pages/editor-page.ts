@@ -36,7 +36,7 @@ export default class EditorPage extends BasePage {
 	 * @param {TestInfo} testInfo    - Test information.
 	 * @param {number}   cleanPostId - Optional. Post ID.
 	 */
-	constructor( page: Page, testInfo?: TestInfo, cleanPostId: null | number = null ) {
+	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
 		this.v4Panel = new v4Panel( page, testInfo );
 		this.previewFrame = this.getPreviewFrame();
