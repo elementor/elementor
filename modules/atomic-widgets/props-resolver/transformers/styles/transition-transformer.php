@@ -19,8 +19,8 @@ class Transition_Transformer extends Transformer_Base {
 
 		$transition_strings = array_map( [ $this, 'map_to_transition_string' ], $transitions );
 		$valid_transitions = array_filter( $transition_strings );
+		
 		return implode( ', ', $valid_transitions );
-
 	}
 
 	private function map_to_transition_string( $transition ): string {
