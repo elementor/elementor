@@ -206,7 +206,7 @@ jobs:
 
       - name: Publish packages (and tag version)
         id: release-packages
-        working-directory: packages
+        working-directory: packages 
         run: |
           if [ "${{ env.CHANNEL }}" == "ga" ]; then
             # Assuming the version is already bumped in the creation of the release branch
