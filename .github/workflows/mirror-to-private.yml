@@ -1,4 +1,6 @@
 name: Mirror to Core Mirror Repository
+permissions:
+  contents: read
 
 on:
   push:
