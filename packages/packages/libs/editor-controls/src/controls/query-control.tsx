@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo, useState } from 'react';
-import { type LinkPropValue, numberPropTypeUtil, stringPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
+import { numberPropTypeUtil, stringPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 import { debounce } from '@elementor/utils';
 
@@ -14,8 +14,7 @@ import {
 } from '../components/autocomplete';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
-
-type PropValue = LinkPropValue[ 'value' ][ 'destination' ];
+import { type DestinationProp } from './link-control';
 
 type Props = {
 	queryOptions: {
@@ -25,17 +24,19 @@ type Props = {
 	allowCustomValues?: boolean;
 	minInputLength?: number;
 	placeholder?: string;
-	onSetValue?: ( value: PropValue | null ) => void;
+	onSetValue?: ( value: DestinationProp | null ) => void;
 };
 
 type Response = HttpResponse< { value: FlatOption[] | CategorizedOption[] } >;
 
+type FetchOptionsParams = Record< string, unknown > & { term: string };
+
 export const QueryControl = createControl( ( props: Props ) => {
-	const { value, setValue } = useBoundProp< PropValue >();
+	const { value, setValue } = useBoundProp< DestinationProp >();
 
 	const {
 		allowCustomValues = true,
-		queryOptions: { url = '', params = {} },
+		queryOptions: { url, params = {} },
 		placeholder,
 		minInputLength = 2,
 		onSetValue,
@@ -111,8 +112,6 @@ export const QueryControl = createControl( ( props: Props ) => {
 	);
 } );
 
-type FetchOptionsParams = Record< string, unknown > & { term: string };
-
 async function fetchOptions( ajaxUrl: string, params: FetchOptionsParams ) {
 	if ( ! params || ! ajaxUrl ) {
 		return [];
@@ -135,7 +134,7 @@ function formatOptions( options: FlatOption[] | CategorizedOption[] ): FlatOptio
 	);
 }
 
-function generateFirstLoadedOption( unionValue: PropValue | null ): FlatOption[] {
+function generateFirstLoadedOption( unionValue: DestinationProp | null ): FlatOption[] {
 	const value = unionValue?.id?.value;
 	const label = unionValue?.label?.value;
 	const type = unionValue?.id?.$$type || 'url';

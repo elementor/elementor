@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { getLinkInLinkRestriction } from '@elementor/editor-elements';
-import { linkPropTypeUtil, type LinkPropValue, type QueryPropValue } from '@elementor/editor-props';
+import { linkPropTypeUtil, type LinkPropValue } from '@elementor/editor-props';
 import { MinusIcon, PlusIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
 import { Collapse, Grid, IconButton, Stack } from '@elementor/ui';
@@ -33,6 +33,8 @@ type LinkSessionValue = {
 	};
 };
 
+export type DestinationProp = LinkPropValue[ 'value' ][ 'destination' ];
+
 const SIZE = 'tiny';
 
 export const LinkControl = createControl( ( props: Props ) => {
@@ -42,7 +44,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 
 	const {
 		allowCustomValues = true,
-		queryOptions: { url = '', params = {} },
+		queryOptions,
 		placeholder,
 		minInputLength = 2,
 		context: { elementId },
@@ -76,7 +78,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 		} );
 	};
 
-	const onSaveValueToSession = ( newValue: QueryPropValue | null ) => {
+	const onSaveValueToSession = ( newValue: DestinationProp[ 'value' ] | null ) => {
 		const valueToSave: LinkPropValue[ 'value' ] | null = newValue
 			? {
 					...value,
@@ -112,7 +114,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 					<Stack gap={ 1.5 }>
 						<PropKeyProvider bind={ 'destination' }>
 							<QueryControl
-								queryOptions={ { url, params } }
+								queryOptions={ queryOptions }
 								allowCustomValues={ allowCustomValues }
 								minInputLength={ minInputLength }
 								placeholder={ placeholder }
