@@ -3,7 +3,6 @@ import { createElement, useEffect, useRef } from 'react';
 import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { GripVerticalIcon } from '@elementor/icons';
 import {
-	Divider,
 	IconButton,
 	Stack,
 	type SxProps,
