@@ -287,6 +287,9 @@ describe( 'CreateComponentForm', () => {
 								value: mockComponentId,
 							},
 						},
+						editor_settings: {
+							title: 'My Test Component',
+						},
 					},
 					withHistory: false,
 				} );
