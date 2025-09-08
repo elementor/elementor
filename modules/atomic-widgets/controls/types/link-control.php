@@ -15,11 +15,6 @@ class Link_Control extends Atomic_Control_Base {
 
 	private ?string $placeholder = null;
 
-	public function __construct( ...$args ) {
-		parent::__construct( ...$args );
-		$this->set_placeholder( __( 'Type or paste your URL', 'elementor' ) );
-	}
-
 	public function get_type(): string {
 		return 'link';
 	}
