@@ -87,8 +87,8 @@ export const QueryControl = createControl( ( props: Props ) => {
 	const debounceFetch = useMemo(
 		() =>
 			debounce(
-				( params: FetchOptionsParams ) =>
-					fetchOptions( url, params ).then( ( newOptions ) => {
+				( queryParams: FetchOptionsParams ) =>
+					fetchOptions( url, queryParams ).then( ( newOptions ) => {
 						setOptions( formatOptions( newOptions ) );
 					} ),
 				400
