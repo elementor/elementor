@@ -1,12 +1,6 @@
-import { relative } from 'node:path';
-
 import * as React from 'react';
-import { hidden, white } from 'chalk';
-import { ThemeProvider } from '@elementor/editor-ui';
-import { Box, ListItem, ListItemButton, Skeleton, Stack, styled } from '@elementor/ui';
-const ROW_HEIGHT = 40;
+import { Box, ListItemButton, Skeleton, Stack } from '@elementor/ui';
 const ROWS_COUNT = 6;
-const ROWS_HEIGHT = ROW_HEIGHT * ROWS_COUNT;
 
 const rows = Array.from( { length: ROWS_COUNT }, ( _, index ) => index );
 
