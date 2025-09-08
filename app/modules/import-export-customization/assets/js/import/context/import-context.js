@@ -1,5 +1,6 @@
 import { useReducer, useContext, createContext } from 'react';
 import PropTypes from 'prop-types';
+import { isVersionLessThan } from '../utils/version-utils';
 
 export const IMPORT_STATUS = {
 	PENDING: 'PENDING',
@@ -12,6 +13,8 @@ export const IMPORT_STATUS = {
 export const ACTION_TYPE = {
 	APPLY_ALL: 'apply-all',
 };
+
+const ELEMENTOR_MIN_VERSION = '3.32.0';
 
 const importReducer = ( state, { type, payload } ) => {
 	switch ( type ) {
@@ -94,7 +97,8 @@ const initialState = {
 export default function ImportContextProvider( props ) {
 	const [ data, dispatch ] = useReducer( importReducer, initialState );
 
-	const isOldExport = data.uploadedData?.manifest?.version < elementorAppConfig[ 'import-export-customization' ].manifestVersion;
+	const isOldExport = isVersionLessThan( data.uploadedData?.manifest?.version, elementorAppConfig[ 'import-export-customization' ].manifestVersion );
+	const isOldElementorVersion = isVersionLessThan( elementorAppConfig[ 'import-export-customization' ].elementorVersion, ELEMENTOR_MIN_VERSION );
 
 	return (
 		<ImportContext.Provider value={ {
@@ -106,6 +110,7 @@ export default function ImportContextProvider( props ) {
 			isProcessing: data.importStatus === IMPORT_STATUS.IMPORTING,
 			isCompleted: data.importStatus === IMPORT_STATUS.COMPLETED,
 			isOldExport,
+			isOldElementorVersion,
 		} }>
 			{ props.children }
 		</ImportContext.Provider>
@@ -125,4 +130,3 @@ export function useImportContext() {
 
 	return context;
 }
-
