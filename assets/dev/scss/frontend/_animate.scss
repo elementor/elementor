@@ -26,8 +26,8 @@
 	.animated {
 		animation: none !important;
 	}
-	* {
-		transition-delay: 0s;
-		transition-duration: 0s;
+	html * {
+		transition-duration: 0s !important;
+		transition-delay: 0s !important;
 	}
 }
