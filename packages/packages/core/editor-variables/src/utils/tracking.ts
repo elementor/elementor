@@ -1,4 +1,4 @@
-import { useMixpanel } from '@elementor/mixpanel';
+import { getMixpanel } from '@elementor/mixpanel';
 
 type VariableEventData = {
 	varType: string;
@@ -7,14 +7,13 @@ type VariableEventData = {
 };
 
 export const trackVariableEvent = ( { varType, controlPath, action }: VariableEventData ) => {
-	const { trackEvent, mixpanelConfig } = useMixpanel();
-	const config = mixpanelConfig;
+	const { dispatchEvent, config } = getMixpanel();
 	if ( ! config?.names?.variables?.[ action ] ) {
 		return;
 	}
 
 	const name = config.names.variables[ action ];
-	trackEvent?.( name, {
+	dispatchEvent?.( name, {
 		location: config?.locations?.variables || '',
 		secondaryLocation: config?.secondaryLocations?.variablesPopover || '',
 		trigger: config?.triggers?.click || '',

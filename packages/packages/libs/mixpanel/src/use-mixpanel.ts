@@ -1,13 +1,17 @@
 export const useMixpanel = () => {
-	const { dispatchEvent, config } = window.elementorCommon?.eventsManager || {};
+	const { dispatchEvent, config } = getMixpanel();
 
 	return {
-		trackEvent: dispatchEvent,
-		mixpanelConfig: config,
+		dispatchEvent,
+		config,
 	};
 };
 
-export const trackEvent = <T extends { eventName: string } & Record< string, unknown >>( event: T ) => {
-	const { trackEvent } = useMixpanel();
-	trackEvent?.( event.eventName, event );
+export const trackEvent = < T extends { eventName: string } & Record< string, unknown > >( event: T ) => {
+	const { dispatchEvent } = getMixpanel();
+	dispatchEvent?.( event.eventName, event );
+};
+
+export const getMixpanel = () => {
+	return window.elementorCommon?.eventsManager || {};
 };
