@@ -65,12 +65,6 @@ module.exports = {
 				'local-rules:no-react-namespace': 'off',
 			},
 		},
-		{
-			files: [ 'playwright/**/*.ts', 'playwright/**/*.tsx', 'e2e/**/*.ts', 'e2e/**/*.tsx' ],
-			rules: {
-				'local-rules:no-react-namespace': 'off',
-			},
-		}
 	],
 	rules: {
 		// Custom canceled rules

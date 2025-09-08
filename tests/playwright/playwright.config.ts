@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import { defineConfig, PlaywrightTestConfig } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
 import { config as _config } from 'dotenv';
 import { timeouts } from './config/timeouts';
 
@@ -18,7 +18,8 @@ _config( {
 	path: resolve( __dirname, '../../.env' ),
 } );
 
-export const basicPlaywrightConfig: PlaywrightTestConfig = {
+export default defineConfig( {
+	testDir: './sanity',
 	timeout: timeouts.singleTest,
 	globalTimeout: timeouts.global,
 	grepInvert: /elements-regression/,
@@ -49,14 +50,6 @@ export const basicPlaywrightConfig: PlaywrightTestConfig = {
 				? process.env.TEST_SERVER
 				: process.env.DEV_SERVER ),
 		viewport: { width: 1920, height: 1080 },
+		storageState: `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json`,
 	},
-};
-
-export default defineConfig( {
-	...basicPlaywrightConfig,
-	use: {
-		...basicPlaywrightConfig.use,
-		storageState: process.env.CI ? `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json` : undefined,
-	},
-	testDir: './sanity',
 } );

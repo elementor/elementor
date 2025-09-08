@@ -47,8 +47,6 @@ const getBuildFiles = [
 	'!*~',
 	'!commitlint.config.js',
 	'!scripts/**',
-	'!playwright/**',
-	'!e2e/**',
 
 	// Conflict with above rule.
 	'core/files/assets/**',
