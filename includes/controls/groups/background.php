@@ -853,4 +853,18 @@ class Group_Control_Background extends Group_Control_Base {
 			'popover' => false,
 		];
 	}
+
+	/**
+	 * Get background control assets.
+	 *
+	 * @since 3.26.0
+	 * @access protected
+	 *
+	 * @return array Background control assets.
+	 */
+	public static function get_assets( $setting ) {
+		return [
+			'styles' => [ 'e-backgrounds' ],
+		];
+	}
 }
