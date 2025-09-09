@@ -638,7 +638,7 @@
 		background-color: var(--e-contact-buttons-chat-box-bg);
 		padding: 12px 20px 20px 20px;
 
-		&__send-cta {
+		.e-contact-buttons__send-cta {
 			color: var(--e-contact-buttons-send-button-icon);
 
 			&:hover,
