@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { dropElement, type DropElementParams } from '@elementor/editor-elements';
+import { dropElement } from '@elementor/editor-elements';
 import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -17,7 +17,6 @@ import {
 import { type Component } from '../types';
 import { getContainerForNewElement } from '../utils/get-container-for-new-element';
 import { createComponentModel } from './create-component-form/utils/replace-element-with-component';
-import { ComponentsMenu } from './components-menu';
 import { MenuListItem } from '@elementor/editor-ui';
 import { __ } from '@wordpress/i18n';
 
@@ -59,7 +58,7 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 					horizontal: "right",
 				}}
 			>
-				<MenuListItem sx={{ minWidth: "160px" }} onClick={() => {}}>
+				<MenuListItem sx={{ minWidth: "160px" }} >
 					<Typography variant="caption" sx={{ color: "text.primary" }}>
 						{__("Rename", "elementor")}
 					</Typography>
