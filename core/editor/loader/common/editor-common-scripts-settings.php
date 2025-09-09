@@ -181,7 +181,35 @@ class Editor_Common_Scripts_Settings {
 		 * @param array $client_env  Editor configuration.
 		 * @param int   $post_id The ID of the current post being edited.
 		 */
+<<<<<<< HEAD
 		return apply_filters( 'elementor/editor/localize_settings', $client_env );
+=======
+		$client_env = apply_filters( 'elementor/editor/localize_settings', $client_env );
+
+		if ( $is_admin_user_without_pro ) {
+			$client_env = self::ensure_pro_widgets( $client_env );
+		}
+
+		if ( ! empty( $client_env['promotionWidgets'] && is_array( $client_env['promotionWidgets'] ) ) ) {
+			$client_env['promotionWidgets'] = self::ensure_numeric_keys( $client_env['promotionWidgets'] );
+		}
+
+		return $client_env;
+	}
+
+	private static function ensure_pro_widgets( array $client_env ) {
+		$pro_widgets = Api::get_promotion_widgets();
+		if ( ! isset( $client_env['promotionWidgets'] ) ) {
+			$client_env['promotionWidgets'] = $pro_widgets;
+		} else {
+			$client_env['promotionWidgets'] = array_merge( $pro_widgets, $client_env['promotionWidgets'] );
+		}
+		return $client_env;
+	}
+
+	private static function ensure_numeric_keys( array $base_array ) {
+		return array_values( $base_array );
+>>>>>>> 0829f02c71 (Fix: Fatal error when no promotion widgets are set [ED-20905] (#32679))
 	}
 
 	private static function bc_move_document_filters() {
