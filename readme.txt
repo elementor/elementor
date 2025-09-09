@@ -350,7 +350,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 = 3.31.5 - 2025-09-09 =
 
-* Fix: Fatal error occurs for non-admin users when editing a page
+* Fix: Fatal error occurs for non-admin users when editing the page
 
 = 3.31.4 - 2025-09-08 =
 
