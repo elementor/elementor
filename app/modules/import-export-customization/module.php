@@ -598,7 +598,8 @@ class Module extends BaseModule {
 			'uiTheme' => $this->get_elementor_ui_theme_preference(),
 			'exportGroups' => $this->get_export_groups(),
 			'manifestVersion' => self::FORMAT_VERSION,
-			'elementorVersion' => ELEMENTOR_VERSION,
+			// 'elementorVersion' => ELEMENTOR_VERSION,
+			'elementorVersion' => '3.9.0',
 			'upgradeVersionUrl' => admin_url( 'plugins.php' ),
 		];
 	}

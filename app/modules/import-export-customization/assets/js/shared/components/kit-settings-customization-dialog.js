@@ -1,4 +1,4 @@
-import { Stack } from '@elementor/ui';
+import { Stack, Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
@@ -6,6 +6,7 @@ import { SettingSection } from './customization-setting-section';
 import { KitCustomizationDialog } from './kit-customization-dialog';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import useContextDetection from '../hooks/use-context-detection';
+import { UpgradeVersionBanner } from './upgrade-version-banner';
 
 function getInitialState( contextData, isImport ) {
 	const data = contextData.data;
@@ -75,6 +76,11 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 			handleSaveChanges={ () => handleSaveChanges( 'settings', settings, true, unselectedValues.current ) }
 		>
 			<Stack>
+				{ contextData?.isOldElementorVersion && (
+					<Box sx={ { mb: 2 } }>
+						<UpgradeVersionBanner />
+					</Box>
+				) }
 				<SettingSection
 					key="theme"
 					checked={ settings.theme }

@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Stack } from '@elementor/ui';
+import { Stack, Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { KitCustomizationDialog } from './kit-customization-dialog';
 import { ListSettingSection } from './customization-list-setting-section';
 import { SettingSection } from './customization-setting-section';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { useKitCustomizationCustomPostTypes } from '../hooks/use-kit-customization-custom-post-types';
+import { UpgradeVersionBanner } from './upgrade-version-banner';
 
 export function KitContentCustomizationDialog( {
 	open,
@@ -14,6 +15,7 @@ export function KitContentCustomizationDialog( {
 	handleSaveChanges,
 	data,
 	isImport,
+	isOldElementorVersion,
 } ) {
 	const { customPostTypes } = useKitCustomizationCustomPostTypes( { data } );
 
@@ -73,6 +75,11 @@ export function KitContentCustomizationDialog( {
 			handleSaveChanges={ () => handleSaveChanges( 'content', settings, true, unselectedValues.current ) }
 		>
 			<Stack>
+				{ isOldElementorVersion && (
+					<Box sx={ { mb: 2 } }>
+						<UpgradeVersionBanner />
+					</Box>
+				) }
 				{ isImport && ! customPostTypes?.length ? (
 					<SettingSection
 						title={ __( 'Custom post types', 'elementor' ) }
@@ -108,7 +115,7 @@ export function KitContentCustomizationDialog( {
 KitContentCustomizationDialog.propTypes = {
 	open: PropTypes.bool.isRequired,
 	isImport: PropTypes.bool,
-	isOldExport: PropTypes.bool,
+	isOldElementorVersion: PropTypes.bool,
 	handleClose: PropTypes.func.isRequired,
 	handleSaveChanges: PropTypes.func.isRequired,
 	data: PropTypes.object.isRequired,
