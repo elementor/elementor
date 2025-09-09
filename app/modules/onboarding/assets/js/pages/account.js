@@ -129,7 +129,7 @@ export default function Account() {
 		};
 	}
 
-	const connectSuccessCallback = ( data ) => {
+	const connectSuccessCallback = ( event, data ) => {
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
 
 		stateToUpdate.isLibraryConnected = true;
@@ -138,6 +138,11 @@ export default function Account() {
 		elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
 		elementorCommon.config.library_connect.current_access_tier = data.access_tier;
 		elementorCommon.config.library_connect.plan_type = data.plan_type;
+
+
+		if ( data.tracking_opted_in && elementorCommon.config.editor_events ) {
+			elementorCommon.config.editor_events.can_send_events = true;
+		}
 
 		updateState( stateToUpdate );
 
@@ -214,7 +219,7 @@ export default function Account() {
 				{ actionButton.ref && ! state.isLibraryConnected &&
 				<Connect
 					buttonRef={ actionButton.ref }
-					successCallback={ ( data ) => connectSuccessCallback( data ) }
+					successCallback={ ( event, data ) => connectSuccessCallback( event, data ) }
 					errorCallback={ connectFailureCallback }
 				/> }
 				<span>
