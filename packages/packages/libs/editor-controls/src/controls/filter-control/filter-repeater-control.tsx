@@ -80,7 +80,18 @@ const Repeater = ( { propTypeUtil, label, filterPropName }: RepeaterProps ) => {
 					ariaLabel={ filterPropName === 'backdrop-filter' ? 'backdrop filter' : 'filter' }
 				/>
 			</Header>
-			<ItemsContainer itemTemplate={ <Item Label={ FilterLabel } Icon={ FilterIcon } /> }>
+			<ItemsContainer>
+				<Item
+					Label={ FilterLabel }
+					Icon={ FilterIcon }
+					actions={
+						<>
+							<DuplicateItemAction />
+							<DisableItemAction />
+							<RemoveItemAction />
+						</>
+					}
+				/>
 				<DuplicateItemAction />
 				<DisableItemAction />
 				<RemoveItemAction />
