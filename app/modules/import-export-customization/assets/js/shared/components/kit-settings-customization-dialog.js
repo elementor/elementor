@@ -19,6 +19,14 @@ function getInitialState( contextData, isImport ) {
 	return initialState;
 }
 
+function isExported( contextData ) {
+	if ( contextData?.isOldExport ) {
+		return contextData?.data?.uploadedData?.manifest?.theme;
+	}
+
+	return contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme;
+}
+
 export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
 	const { isImport, contextData } = useContextDetection();
 
@@ -81,6 +89,13 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 						<UpgradeVersionBanner />
 					</Box>
 				) }
+				{ isImport && ! isExported( contextData ) ? (
+					<SettingSection
+						title={ __( 'Theme', 'elementor' ) }
+						settingKey="theme"
+						notExported
+					/>
+				) : (
 				<SettingSection
 					key="theme"
 					checked={ settings.theme }
@@ -89,7 +104,9 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					settingKey="theme"
 					onSettingChange={ handleToggleChange }
 					disabled={ isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme }
+					notExported
 				/>
+				) }
 			</Stack>
 		</KitCustomizationDialog>
 	);
