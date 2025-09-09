@@ -175,7 +175,7 @@
 			color: var(--e-floating-bars-cta-button-text-color-hover);
 			transition: $transition-hover;
 
-			&__cta-icon {
+			.e-floating-bars__cta-icon {
 				color: var(--e-floating-bars-cta-button-text-color-hover);
 				transition: $transition-hover;
 
@@ -214,7 +214,7 @@
 		&.is-type-link {
 			text-decoration: none;
 
-			&__cta-text {
+			.e-floating-bars__cta-text {
 				text-decoration: underline;
 			}
 		}

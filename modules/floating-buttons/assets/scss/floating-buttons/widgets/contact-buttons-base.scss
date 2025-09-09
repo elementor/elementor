@@ -79,7 +79,7 @@
 			inset-inline-start: 0;
 		}
 
-		&__chat-button-container {
+		.e-contact-buttons__chat-button-container {
 			justify-content: flex-start;
 			padding-inline-start: 20px;
 			padding-inline-end: 0;
@@ -96,7 +96,7 @@
 		justify-content: flex-end;
 		inset-inline-end: var(--e-contact-buttons-horizontal-offset);
 
-		&__chat-button-container {
+		.e-contact-buttons__chat-button-container {
 			justify-content: flex-end;
 			inset-inline-end: var(--e-contact-buttons-horizontal-offset);
 			padding-inline-end: 20px;
@@ -112,12 +112,12 @@
 		justify-content: center;
 		transform: translateX(-50%);
 
-		&__chat-button-container {
+		.e-contact-buttons__chat-button-container {
 			justify-content: center;
 			padding-inline: 0;
 		}
 
-		&__content-wrapper {
+		.e-contact-buttons__content-wrapper {
 			inset-inline-end: calc(var(--e-contact-buttons-chat-box-width) / 2 - 40px);
 			position: relative;
 		}
@@ -126,11 +126,11 @@
 	&.has-v-alignment-top {
 		top: var(--e-contact-buttons-vertical-offset);
 
-		&__content-wrapper {
+		.e-contact-buttons__content-wrapper {
 			order: 2;
 		}
 
-		&__chat-button-container {
+		.e-contact-buttons__chat-button-container {
 			order: 1;
 		}
 	}
@@ -141,17 +141,17 @@
 		top: 50%;
 		transform: translateY(-50%);
 
-		&__chat-button-container {
+		.e-contact-buttons__chat-button-container {
 			padding-inline: 0;
 		}
 
 		&.has-h-alignment-start {
 
-			&__content-wrapper {
+			.e-contact-buttons__content-wrapper {
 				order: 2;
 			}
 
-			&__chat-button-container {
+			.e-contact-buttons__chat-button-container {
 				order: 1;
 				padding-inline: 0;
 			}
@@ -286,7 +286,7 @@
 
 	&:not(.has-animations) {
 
-		&__content-wrapper {
+		.e-contact-buttons__content-wrapper {
 			&.hidden {
 				display: none;
 			}
@@ -295,7 +295,7 @@
 
 	&.has-animations {
 
-		&__content-wrapper {
+		.e-contact-buttons__content-wrapper {
 
 			&.hidden {
 				display: block;
@@ -535,7 +535,7 @@
 
 		&.has-typing-animation {
 
-			&__bubble-container {
+			.e-contact-buttons__bubble-container {
 				height: 0;
 				opacity: 0;
 				visibility: hidden;
@@ -681,9 +681,9 @@
 
 	&__content.visible {
 
-		&__message-bubble.has-typing-animation {
+		.e-contact-buttons__message-bubble.has-typing-animation {
 
-			&__dots-container {
+			.e-contact-buttons__dots-container {
 				animation-delay: 0;
 				animation-duration: 2s;
 				animation-fill-mode: forwards;
@@ -691,7 +691,7 @@
 				animation-name: e-contact-buttons-disappear;
 			}
 
-			&__bubble-container {
+			.e-contact-buttons__bubble-container {
 				animation-delay: 2s;
 				animation-duration: .1s;
 				animation-fill-mode: forwards;
