@@ -139,7 +139,6 @@ export default function Account() {
 		elementorCommon.config.library_connect.current_access_tier = data.access_tier;
 		elementorCommon.config.library_connect.plan_type = data.plan_type;
 
-
 		if ( data.tracking_opted_in && elementorCommon.config.editor_events ) {
 			elementorCommon.config.editor_events.can_send_events = true;
 		}
