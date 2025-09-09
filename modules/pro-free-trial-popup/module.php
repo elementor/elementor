@@ -36,7 +36,10 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
-		$this->elementor_adapter = new Elementor_Adapter();
+
+		if ( ! ( current_user_can( 'manage_options' ) ) ) {
+			return;
+		}
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			return;
@@ -45,6 +48,8 @@ class Module extends BaseModule {
 		if ( Utils::has_pro() ) {
 			return;
 		}
+
+		$this->elementor_adapter = new Elementor_Adapter();
 
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'maybe_enqueue_popup' ] );
 	}
@@ -85,6 +90,7 @@ class Module extends BaseModule {
 	 * @return bool True if popup should be shown
 	 */
 	private function should_show_popup(): bool {
+
 		if ( ! $this->is_feature_enabled() ) {
 			return false;
 		}
