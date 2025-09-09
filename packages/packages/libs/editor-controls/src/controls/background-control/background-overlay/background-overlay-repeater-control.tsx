@@ -88,10 +88,18 @@ export const BackgroundOverlayRepeaterControl = createControl( () => {
 				<Header label={ __( 'Overlay', 'elementor' ) }>
 					<TooltipAddItemAction newItemIndex={ 0 } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } /> }>
-					<DuplicateItemAction />
-					<DisableItemAction />
-					<RemoveItemAction />
+				<ItemsContainer>
+					<Item
+						Icon={ ItemIcon }
+						Label={ ItemLabel }
+						actions={
+							<>
+								<DuplicateItemAction />
+								<DisableItemAction />
+								<RemoveItemAction />
+							</>
+						}
+					/>
 				</ItemsContainer>
 				<EditItemPopover>
 					<ItemContent />

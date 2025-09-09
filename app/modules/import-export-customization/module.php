@@ -168,7 +168,7 @@ class Module extends BaseModule {
 		$user_time_format = get_option( 'time_format' );
 		$date_format = $user_date_format . ' ' . $user_time_format;
 
-		$should_show_revert_section = $this->should_show_revert_section( $last_imported_kit );
+		$should_show_revert_section = ! empty( $last_imported_kit );
 
 		if ( $should_show_revert_section ) {
 			if ( ! empty( $penultimate_imported_kit ) ) {
@@ -598,6 +598,8 @@ class Module extends BaseModule {
 			'uiTheme' => $this->get_elementor_ui_theme_preference(),
 			'exportGroups' => $this->get_export_groups(),
 			'manifestVersion' => self::FORMAT_VERSION,
+			'elementorVersion' => ELEMENTOR_VERSION,
+			'upgradeVersionUrl' => admin_url( 'plugins.php' ),
 		];
 	}
 
@@ -667,29 +669,6 @@ class Module extends BaseModule {
 		}
 
 		return $summary_titles;
-	}
-
-	public function should_show_revert_section( $last_imported_kit ) {
-		if ( empty( $last_imported_kit ) ) {
-			return false;
-		}
-
-		// TODO: BC - remove in the future
-		// The 'templates' runner was in core and moved to the Pro plugin. (Part of it still exits in the Core for BC)
-		// The runner that is in the core version is missing the revert functionality,
-		// therefore we shouldn't display the revert section if the import process done with the core version.
-		$is_import_templates_ran = isset( $last_imported_kit['runners']['templates'] );
-		if ( $this->has_pro() && $is_import_templates_ran ) {
-			$has_imported_templates = ! empty( $last_imported_kit['runners']['templates'] );
-
-			return $has_imported_templates;
-		}
-
-		return true;
-	}
-
-	public function has_pro(): bool {
-		return ElementorUtils::has_pro();
 	}
 
 	private function get_elementor_editor_home_page_url() {
