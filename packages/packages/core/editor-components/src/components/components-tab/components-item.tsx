@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { dropElement, type DropElementParams } from '@elementor/editor-elements';
-import { BanIcon, DotsVerticalIcon } from '@elementor/icons';
+import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindTrigger,
 	Box,
@@ -28,27 +28,23 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 	};
 
 	return (
-		<ListItemButton shape="rounded" sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }>
-			<Box sx={ { display: 'flex', width: '100%', alignItems: 'center', gap: 1 } } onClick={ handleClick }>
+		<ListItemButton shape="rounded" sx={{ border: "solid 1px", borderColor: "divider", py: 0.5, px: 1 }}>
+			<Box sx={{ display: "flex", width: "100%", alignItems: "center", gap: 1 }} onClick={handleClick}>
 				<ListItemIcon size="tiny">
-					<BanIcon fontSize="tiny" />
+					<ComponentsIcon fontSize="tiny" />
 				</ListItemIcon>
 				<ListItemText
 					primary={
-						<Typography variant="caption" sx={ { color: 'text.primary' } }>
-							{ component.name }
+						<Typography variant="caption" sx={{ color: "text.primary" }}>
+							{component.name}
 						</Typography>
 					}
 				/>
 			</Box>
-			<IconButton
-				sx={ { width: '20px', height: '20px' } }
-				aria-label="More actions"
-				{ ...bindTrigger( popupState ) }
-			>
+			<IconButton sx={{ width: "20px", height: "20px" }} aria-label="More actions" {...bindTrigger(popupState)}>
 				<DotsVerticalIcon fontSize="tiny" />
 			</IconButton>
-			<ComponentsMenu popupState={ popupState } />
+			<ComponentsMenu popupState={popupState} />
 		</ListItemButton>
 	);
 };
