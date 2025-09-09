@@ -95,7 +95,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 					checked={ data.includes.includes( item.type ) }
 					onChange={ () => onCheckboxChange( item.type ) }
 					disabled={ disabled }
-					sx={ { py: 0 } }
+					sx={ { p: 0, mx: 1 } }
 					data-testid={ `KitContentDataSelection-${ item.type }` }
 					data-type={ item.type }
 				/>
