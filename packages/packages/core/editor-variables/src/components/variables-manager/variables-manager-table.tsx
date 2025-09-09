@@ -85,6 +85,11 @@ export const VariablesManagerTable = ( {
 
 	const rows = ids
 		.filter( ( id ) => ! variables[ id ].deleted )
+		.sort( ( a, b ) => {
+			const orderA = variables[ a ]?.order ?? Number.MAX_SAFE_INTEGER;
+			const orderB = variables[ b ]?.order ?? Number.MAX_SAFE_INTEGER;
+			return orderA - orderB;
+		} )
 		.map( ( id ) => {
 			const variable = variables[ id ];
 			const variableType = getVariableType( variable.type );
