@@ -316,6 +316,7 @@ describe( 'styles prop resolver', () => {
 			props: {
 				background: backgroundPropTypeUtil.create( {
 					color: colorPropTypeUtil.create( '#000' ),
+					clip: stringPropTypeUtil.create( 'text' ),
 					'background-overlay': backgroundOverlayPropTypeUtil.create( [
 						backgroundColorOverlayPropTypeUtil.create( {
 							color: colorPropTypeUtil.create( 'blue' ),
@@ -370,6 +371,7 @@ describe( 'styles prop resolver', () => {
 			},
 			expected: {
 				'background-color': '#000',
+				'background-clip': 'text',
 				'background-attachment': 'scroll,scroll,scroll,fixed',
 				'background-image':
 					'linear-gradient(blue, blue),linear-gradient(yellow, yellow),url(thumbnail-image-url-123),url(medium_large-image-url-123)',
@@ -560,6 +562,7 @@ describe( 'styles prop resolver', () => {
 			props: {
 				background: backgroundPropTypeUtil.create( {
 					color: colorPropTypeUtil.create( '#000' ),
+					clip: stringPropTypeUtil.create( 'border-box' ),
 					'background-overlay': backgroundOverlayPropTypeUtil.create( [
 						backgroundImageOverlayPropTypeUtil.create( {
 							image: imagePropTypeUtil.create( {
@@ -581,6 +584,7 @@ describe( 'styles prop resolver', () => {
 			},
 			expected: {
 				'background-color': '#000',
+				'background-clip': 'border-box',
 				'background-image': 'url(original-image-url-123)',
 				'background-repeat': 'repeat',
 				'background-size': '1400px auto',
