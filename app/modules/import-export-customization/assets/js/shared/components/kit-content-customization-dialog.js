@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Stack, Box } from '@elementor/ui';
+import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { KitCustomizationDialog } from './kit-customization-dialog';
 import { ListSettingSection } from './customization-list-setting-section';
