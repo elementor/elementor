@@ -45,8 +45,3 @@ export const arrayToObjectByKey = ( array, key ) => {
 
 	return finalObject;
 };
-
-export const htmlDecodeTextContent = ( input ) => {
-	const doc = new DOMParser().parseFromString( input, 'text/html' );
-	return doc.documentElement.textContent;
-};
