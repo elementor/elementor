@@ -93,11 +93,10 @@ export const RepeatableControl = createControl(
 									<>
 										{ showDuplicate && <DuplicateItemAction /> }
 										{ showToggle && <DisableItemAction /> }
+										<RemoveItemAction />
 									</>
 								}
 							/>
-
-							<RemoveItemAction />
 						</ItemsContainer>
 						<EditItemPopover>
 							<Content />
