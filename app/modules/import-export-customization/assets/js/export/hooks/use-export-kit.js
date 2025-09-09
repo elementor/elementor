@@ -79,7 +79,7 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 			navigate( '/export-customization/complete' );
 		} catch ( err ) {
 			setStatus( STATUS_ERROR );
-			setError( err instanceof ImportExportError ? err : new ImportExportError() );
+			setError( err instanceof ImportExportError ? err : new ImportExportError( err.message ) );
 		}
 	}, [ includes, kitInfo, customization, dispatch, navigate ] );
 

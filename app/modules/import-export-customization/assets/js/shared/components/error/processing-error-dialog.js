@@ -59,16 +59,18 @@ export const messagesContent = {
 	},
 	timeout: {
 		title: __( 'Unable to download the Website Template', 'elementor' ),
-		text: <>
-			{ __( 'It took too much time to download your Website Template and we were unable to complete the process. If all the Website Template’s parts don’t appear in ', 'elementor' ) }
-			<Link href={ elementorAppConfig.pages_url } >
-				{ __( 'Pages', 'elementor' ) }
-			</Link>
-			{ __( ', try again and if the problem persists contact ', 'elementor' ) }
-			<Link href="https://my.elementor.com/support-center/">
-				{ __( 'Support', 'elementor' ) }
-			</Link>
-		</>,
+		text: (
+			<>
+				{ __( 'It took too much time to download your Website Template and we were unable to complete the process. If all the Website Template’s parts don’t appear in ', 'elementor' ) }
+				<Link href={ elementorAppConfig.pages_url } >
+					{ __( 'Pages', 'elementor' ) }
+				</Link>
+				{ __( ', try again and if the problem persists contact ', 'elementor' ) }
+				<Link href="https://my.elementor.com/support-center/">
+					{ __( 'Support', 'elementor' ) }
+				</Link>
+			</>
+		),
 	},
 	'invalid-kit-library-zip-error': {
 		title: __( 'Unable to download the Website Template', 'elementor' ),
@@ -190,6 +192,7 @@ export function ProcessingErrorDialog( {
 				</Button>
 				{ shouldRenderTryAgainButton( errorType ) && (
 					<Button
+						data-testid="try-again-button"
 						onClick={ () => {
 							if ( handleTryAgain ) {
 								handleTryAgain();
@@ -200,7 +203,7 @@ export function ProcessingErrorDialog( {
 					>
 						{ __( 'Try Again', 'elementor' ) }
 					</Button>
-				)}
+				) }
 			</>
 		);
 	};
@@ -215,6 +218,7 @@ export function ProcessingErrorDialog( {
 
 	return (
 		<Dialog
+			data-testid="error-dialog"
 			open={ open }
 			onClose={ () => {
 				if ( handleClose ) {

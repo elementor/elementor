@@ -54,7 +54,7 @@ export function useUploadKit() {
 			}
 			dispatch( { type: 'SET_UPLOADED_DATA', payload: result.data } );
 		} catch ( e ) {
-			setError( e instanceof ImportExportError ? e : new ImportExportError() );
+			setError( e instanceof ImportExportError ? e : new ImportExportError( e.message ) );
 			AppsEventTracking.sendKitImportUploadFile( e.message );
 		} finally {
 			setUploading( false );
