@@ -74,11 +74,9 @@ export function KitContentCustomizationDialog( {
 			handleClose={ handleClose }
 			handleSaveChanges={ () => handleSaveChanges( 'content', settings, true, unselectedValues.current ) }
 		>
-			<Stack>
+			<Stack gap={ 2 }>
 				{ isOldElementorVersion && (
-					<Box sx={ { mb: 2 } }>
-						<UpgradeVersionBanner />
-					</Box>
+					<UpgradeVersionBanner />
 				) }
 				{ isImport && ! customPostTypes?.length ? (
 					<SettingSection

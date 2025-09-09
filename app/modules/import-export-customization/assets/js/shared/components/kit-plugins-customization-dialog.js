@@ -238,12 +238,10 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 			</DialogHeader>
 
 			<DialogContent dividers sx={ { p: 3 } }>
-				{ isOldElementorVersion && (
-					<Box sx={ { mb: 2 } }>
+				<Stack gap={ 2 }>
+					{ isOldElementorVersion && (
 						<UpgradeVersionBanner />
-					</Box>
-				) }
-				<Stack>
+					) }
 					{ isLoading ? (
 						<Stack spacing={ 3 } alignItems="center" sx={ { py: 8 } }>
 							<CircularProgress size={ 30 } />

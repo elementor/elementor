@@ -83,11 +83,9 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 			handleClose={ handleClose }
 			handleSaveChanges={ () => handleSaveChanges( 'settings', settings, true, unselectedValues.current ) }
 		>
-			<Stack>
+			<Stack gap={ 2 }>
 				{ contextData?.isOldElementorVersion && (
-					<Box sx={ { mb: 2 } }>
-						<UpgradeVersionBanner />
-					</Box>
+					<UpgradeVersionBanner />
 				) }
 				{ isImport && ! isExported( contextData ) ? (
 					<SettingSection
