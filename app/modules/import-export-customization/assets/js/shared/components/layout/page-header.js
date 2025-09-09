@@ -1,5 +1,4 @@
-import { Button, Box, Typography, Stack, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Link, styled, SvgIcon } from '@elementor/ui';
-import { useState } from 'react';
+import { Typography, Stack, IconButton, styled, SvgIcon } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
 import { XIcon } from '../icons';
