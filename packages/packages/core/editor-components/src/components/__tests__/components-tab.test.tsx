@@ -2,15 +2,15 @@ import * as React from 'react';
 import { createMockElement, renderWithTheme } from 'test-utils';
 import { dropElement } from '@elementor/editor-elements';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, screen, render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
-import { type Component } from '../../../types';
-import { getContainerForNewElement } from '../../../utils/get-container-for-new-element';
+import { useComponents } from '../../hooks/use-components';
+import { type Component } from '../../types';
+import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
 import { ComponentItem } from '../components-item';
 import { ComponentsList } from '../components-list';
 import { ComponentsMenu } from '../components-menu';
-import { createComponentModel } from '../../create-component-form/utils/replace-element-with-component';
-import { useComponents } from '../../../hooks/use-components';
+import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
 
 // Mock dependencies
 jest.mock( '@elementor/editor-elements' );
@@ -89,7 +89,7 @@ describe( 'ComponentsList', () => {
 		expect( screen.getByText( '1. Right-click and select Create Component' ) ).toBeInTheDocument();
 		expect( screen.getByText( '2. Use the component icon in the Structure panel' ) ).toBeInTheDocument();
 		expect( screen.getByText( '3. Use the component icon in the Edit panel header' ) ).toBeInTheDocument();
-		
+
 		// Expect the console warning about fullWidth prop
 		expect( console ).toHaveErrored();
 	} );

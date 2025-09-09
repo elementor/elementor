@@ -3,7 +3,7 @@ import { ComponentsIcon } from '@elementor/icons';
 import { Divider, Icon, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useComponents } from '../../hooks/use-components';
+import { useComponents } from '../hooks/use-components';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 

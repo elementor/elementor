@@ -2,20 +2,24 @@ import * as React from 'react';
 import { dropElement, type DropElementParams } from '@elementor/editor-elements';
 import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
 import {
+	bindMenu,
 	bindTrigger,
 	Box,
 	IconButton,
 	ListItemButton,
 	ListItemIcon,
 	ListItemText,
+	Menu,
 	Typography,
 	usePopupState,
 } from '@elementor/ui';
 
-import { type Component } from '../../types';
-import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
-import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
+import { type Component } from '../types';
+import { getContainerForNewElement } from '../utils/get-container-for-new-element';
+import { createComponentModel } from './create-component-form/utils/replace-element-with-component';
 import { ComponentsMenu } from './components-menu';
+import { MenuListItem } from '@elementor/editor-ui';
+import { __ } from '@wordpress/i18n';
 
 export const ComponentItem = ( { component }: { component: Component } ) => {
 	const popupState = usePopupState( {
@@ -44,7 +48,32 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 			<IconButton size="tiny" aria-label="More actions" {...bindTrigger(popupState)}>
 				<DotsVerticalIcon fontSize="tiny" />
 			</IconButton>
-			<ComponentsMenu popupState={popupState} />
+			<Menu
+				{...bindMenu(popupState)}
+				anchorOrigin={{
+					vertical: "bottom",
+					horizontal: "right",
+				}}
+				transformOrigin={{
+					vertical: "top",
+					horizontal: "right",
+				}}
+			>
+				<MenuListItem sx={{ minWidth: "160px" }} onClick={() => {}}>
+					<Typography variant="caption" sx={{ color: "text.primary" }}>
+						{__("Rename", "elementor")}
+					</Typography>
+				</MenuListItem>
+				<MenuListItem
+					onClick={() => {
+						popupState.close();
+					}}
+				>
+					<Typography variant="caption" sx={{ color: "error.light" }}>
+						{__("Delete", "elementor")}
+					</Typography>
+				</MenuListItem>
+			</Menu>
 		</ListItemButton>
 	);
 };
