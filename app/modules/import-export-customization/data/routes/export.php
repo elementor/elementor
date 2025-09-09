@@ -4,6 +4,7 @@ namespace Elementor\App\Modules\ImportExportCustomization\Data\Routes;
 use Elementor\Plugin;
 use Elementor\App\Modules\ImportExportCustomization\Data\Response;
 use Elementor\Utils as ElementorUtils;
+use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,6 +22,11 @@ class Export extends Base_Route {
 	}
 
 	protected function callback( $request ): \WP_REST_Response {
+		/**
+		 * @var $module ImportExportCustomizationModule
+		 */
+		$module = Plugin::$instance->app->get_component( 'import-export-customization' );
+
 		try {
 			$settings = [
 				'include' => $request->get_param( 'include' ),
@@ -34,8 +40,6 @@ class Export extends Base_Route {
 			$settings = array_filter( $settings );
 
 			$source = $settings['kitInfo']['source'];
-
-			$module = Plugin::$instance->app->get_component( 'import-export-customization' );
 
 			$export = $module->export_kit( $settings );
 
@@ -73,7 +77,11 @@ class Export extends Base_Route {
 				],
 			] );
 
-			return Response::error( 'export_error', $e->getMessage() );
+			if ( $module->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
+				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
+			}
+
+			return Response::error( $e->getMessage(), 'export_error' );
 		}
 	}
 

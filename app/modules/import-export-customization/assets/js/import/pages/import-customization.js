@@ -20,6 +20,7 @@ export default function ImportCustomization() {
 	} = useImportContext();
 	const navigate = useNavigate();
 
+	console.log("!_DATA_!", data)
 	useEffect( () => {
 		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportCustomization );
 	}, [] );

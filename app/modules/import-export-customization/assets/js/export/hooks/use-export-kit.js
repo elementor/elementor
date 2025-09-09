@@ -2,17 +2,20 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from '@reach/router';
 import { generateScreenshot } from '../utils/screenshot';
 import { EXPORT_STATUS } from '../context/export-context';
+import { ImportExportError } from '../../shared/error/import-export-error';
 
 const STATUS_PROCESSING = 'processing';
 const STATUS_ERROR = 'error';
 
 export const useExportKit = ( { includes, kitInfo, customization, isExporting, dispatch } ) => {
 	const [ status, setStatus ] = useState( STATUS_PROCESSING );
+	const [ error, setError ] = useState( null );
 	const navigate = useNavigate();
 
 	const exportKit = useCallback( async () => {
 		try {
 			setStatus( STATUS_PROCESSING );
+			setError( null );
 
 			const exportData = {
 				kitInfo: {
@@ -47,7 +50,8 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 
 			if ( ! response.ok ) {
 				const errorMessage = result?.data?.message || `HTTP error! with the following code: ${ result?.data?.code }`;
-				throw new Error( errorMessage );
+				const errorCode = 408 === response?.status ? 'timeout' : result?.data?.code;
+				throw new ImportExportError( errorMessage, errorCode );
 			}
 
 			const isExportLocal = 'file' === kitInfo.source && result.data && result.data.file;
@@ -68,13 +72,14 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 
 				dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
 			} else {
-				throw new Error( 'Invalid response format from server' );
+				throw new ImportExportError( 'Invalid response format from server' );
 			}
 
 			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
 			navigate( '/export-customization/complete' );
-		} catch ( error ) {
+		} catch ( err ) {
 			setStatus( STATUS_ERROR );
+			setError( err instanceof ImportExportError ? err : new ImportExportError() );
 		}
 	}, [ includes, kitInfo, customization, dispatch, navigate ] );
 
@@ -88,5 +93,7 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 		status,
 		STATUS_PROCESSING,
 		STATUS_ERROR,
+		error,
+		exportKit,
 	};
 };
