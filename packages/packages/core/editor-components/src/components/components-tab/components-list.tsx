@@ -10,17 +10,18 @@ import { LoadingComponents } from './loading-components';
 export function ComponentsList() {
 	const { data: components, isLoading } = useComponents();
 
-	if ( ( ! components || components.length === 0 ) && ! isLoading ) {
+
+	if (isLoading) {
+		return <LoadingComponents />;
+	}
+
+	if ( ( ! components || components.length === 0 ) ) {
 		return <EmptyState />;
 	}
 
 	return (
 		<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5, px: 2 } }>
-			{ isLoading ? (
-				<LoadingComponents />
-			) : (
-				components?.map( ( component ) => <ComponentItem key={ component.id } component={ component } /> )
-			) }
+			{ components?.map( ( component ) => <ComponentItem key={ component.id } component={ component } /> ) }
 		</List>
 	);
 }
@@ -47,7 +48,7 @@ const EmptyState = () => {
 					"elementor",
 				)}
 			</Typography>
-			<Divider sx={{ width: "100%" }} color="divider" />
+			<Divider fullWidth color="text.secondary" />
 			<Typography align="left" variant="caption" color="text.secondary">
 				{__("To create a component, first design it, then choose one of three options:", "elementor")}
 			</Typography>

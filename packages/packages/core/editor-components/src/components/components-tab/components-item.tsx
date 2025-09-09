@@ -24,7 +24,7 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 	} );
 
 	const handleClick = () => {
-		addComponentToPage( createComponentModel( component ) );
+		addComponentToPage(component);
 	};
 
 	return (
@@ -41,7 +41,7 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 					}
 				/>
 			</Box>
-			<IconButton sx={{ width: "20px", height: "20px" }} aria-label="More actions" {...bindTrigger(popupState)}>
+			<IconButton size="tiny" aria-label="More actions" {...bindTrigger(popupState)}>
 				<DotsVerticalIcon fontSize="tiny" />
 			</IconButton>
 			<ComponentsMenu popupState={popupState} />
@@ -49,8 +49,9 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 	);
 };
 
-const addComponentToPage = ( model: DropElementParams[ 'model' ] ) => {
+const addComponentToPage = ( component: Component ) => {
 	const { container, options } = getContainerForNewElement();
+	const model = createComponentModel( component );
 
 	if ( ! container ) {
 		throw new Error( `Can't find container to drop new component instance at` );

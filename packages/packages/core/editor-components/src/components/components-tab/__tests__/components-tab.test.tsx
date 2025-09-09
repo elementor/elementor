@@ -2,21 +2,21 @@ import * as React from 'react';
 import { createMockElement, renderWithTheme } from 'test-utils';
 import { dropElement } from '@elementor/editor-elements';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, render } from '@testing-library/react';
 
-import { useComponents } from '../../hooks/use-components';
-import { type Component } from '../../types';
-import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
-import { ComponentItem } from '../components-tab/components-item';
-import { ComponentsList } from '../components-tab/components-list';
-import { ComponentsMenu } from '../components-tab/components-menu';
-import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
+import { type Component } from '../../../types';
+import { getContainerForNewElement } from '../../../utils/get-container-for-new-element';
+import { ComponentItem } from '../components-item';
+import { ComponentsList } from '../components-list';
+import { ComponentsMenu } from '../components-menu';
+import { createComponentModel } from '../../create-component-form/utils/replace-element-with-component';
+import { useComponents } from '../../../hooks/use-components';
 
 // Mock dependencies
 jest.mock( '@elementor/editor-elements' );
-jest.mock( '../../hooks/use-components' );
-jest.mock( '../../utils/get-container-for-new-element' );
-jest.mock( '../create-component-form/utils/replace-element-with-component' );
+jest.mock( '../../../hooks/use-components' );
+jest.mock( '../../../utils/get-container-for-new-element' );
+jest.mock( '../../create-component-form/utils/replace-element-with-component' );
 
 const mockUseComponents = jest.mocked( useComponents );
 const mockDropElement = jest.mocked( dropElement );
@@ -43,7 +43,7 @@ const queryClient = new QueryClient( {
 } );
 
 const renderWithQuery = ( children: React.ReactElement ) => {
-	return renderWithTheme( <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider> );
+	return render( <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider> );
 };
 
 describe( 'ComponentsList', () => {
@@ -89,6 +89,9 @@ describe( 'ComponentsList', () => {
 		expect( screen.getByText( '1. Right-click and select Create Component' ) ).toBeInTheDocument();
 		expect( screen.getByText( '2. Use the component icon in the Structure panel' ) ).toBeInTheDocument();
 		expect( screen.getByText( '3. Use the component icon in the Edit panel header' ) ).toBeInTheDocument();
+		
+		// Expect the console warning about fullWidth prop
+		expect( console ).toHaveErrored();
 	} );
 
 	it( 'should render list of components when data is available', () => {
