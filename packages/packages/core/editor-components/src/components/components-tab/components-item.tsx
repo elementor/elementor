@@ -24,7 +24,7 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 	} );
 
 	const handleClick = () => {
-		addComponentToPage( createComponentModel( component.id ) );
+		addComponentToPage( createComponentModel( component ) );
 	};
 
 	return (

@@ -118,6 +118,9 @@ describe( 'ComponentsList', () => {
 					value: 1,
 				},
 			},
+			editor_settings: {
+				title: 'Test Component',
+			},
 		};
 
 		beforeEach( () => {
@@ -156,7 +159,7 @@ describe( 'ComponentsList', () => {
 			fireEvent.click( componentButton );
 
 			// Assert.
-			expect( mockCreateComponentModel ).toHaveBeenCalledWith( mockComponent.id );
+			expect( mockCreateComponentModel ).toHaveBeenCalledWith( mockComponent );
 			expect( mockDropElement ).toHaveBeenCalledWith( {
 				containerId: mockContainer.id,
 				model: mockModel,
@@ -238,6 +241,9 @@ describe( 'ComponentsList', () => {
 						$$type: 'number' as const,
 						value: 1,
 					},
+				},
+				editor_settings: {
+					title: 'Test Component',
 				},
 			};
 			mockUseComponents.mockReturnValue( {
