@@ -1,12 +1,15 @@
 @import './link-in-bio-vars';
 
-.elementor-widget-link-in-bio .e-link-in-bio-var-5 {
+.e-link-in-bio-var-5 {
 	--e-link-in-bio-ctas-border-radius: #{$link-in-bio-border-radius-sharp};
 	--e-link-in-bio-ctas-gap: 20px 15px;
 	--e-link-in-bio-ctas-padding-block-end: 5px;
 	--e-link-in-bio-ctas-padding-block-start: 5px;
 	--e-link-in-bio-ctas-padding-inline-end: 7px;
 	--e-link-in-bio-ctas-padding-inline-start: 7px;
+}
+
+.elementor-widget-link-in-bio .e-link-in-bio-var-5 {
 
 	.e-link-in-bio__ctas {
 

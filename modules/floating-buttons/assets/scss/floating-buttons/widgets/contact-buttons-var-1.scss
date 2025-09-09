@@ -1,4 +1,4 @@
-.elementor-widget-contact-buttons .e-contact-buttons-var-1 {
+.e-contact-buttons-var-1 {
 	--e-contact-buttons-button-bg: #324A6D;
 	--e-contact-buttons-button-bg-hover: #1C2448;
 	--e-contact-buttons-top-bar-bg: #324A6D;
@@ -11,7 +11,9 @@
 	--e-contact-buttons-var-1-size-small: 26px;
 	--e-contact-buttons-var-1-size-medium: 28px;
 	--e-contact-buttons-var-1-size-large: 32px;
+}
 
+.elementor-widget-contact-buttons .e-contact-buttons-var-1 {
 	.e-contact-buttons {
 
 		&__contact {

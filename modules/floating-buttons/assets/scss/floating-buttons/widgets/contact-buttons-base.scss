@@ -1,6 +1,6 @@
 @import "./contact-buttons-vars";
 
-.elementor-widget-contact-buttons .e-contact-buttons {
+.e-contact-buttons {
 	--e-contact-buttons-chat-box-width: #{$contact-buttons-default-width};
 	--e-contact-buttons-size-small: #{$contact-buttons-size-small};
 	--e-contact-buttons-size-medium: #{$contact-buttons-size-medium};
@@ -25,7 +25,9 @@
 	--e-contact-buttons-vertical-offset: #{$contact-buttons-offset-preset};
 	--e-contact-buttons-box-shadow: #{$contact-buttons-default-box-shadow};
 	--e-contact-buttons-drop-shadow: #{$contact-buttons-default-drop-shadow};
+}
 
+.elementor-widget-contact-buttons .e-contact-buttons {
 	// Platform specific colors
 	// Default used for email, sms
 	--e-contact-buttons-button-bg: #467FF7;

@@ -1,4 +1,4 @@
-.elementor-widget-contact-buttons .e-contact-buttons-var-7 {
+.e-contact-buttons-var-7 {
 	--e-contact-buttons-chat-button-padding-block-end: 16px;
 	--e-contact-buttons-chat-button-padding-block-start: 16px;
 	--e-contact-buttons-chat-button-padding-inline-end: 20px;
@@ -6,7 +6,9 @@
 	--e-contact-buttons-chat-button-gap: 8px;
 	--e-contact-buttons-horizontal-offset: 0;
 	--e-contact-buttons-vertical-offset: 0;
+}
 
+.elementor-widget-contact-buttons .e-contact-buttons-var-7 {
 	&.has-h-alignment-end,
 	&.has-h-alignment-start {
 

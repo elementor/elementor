@@ -1,4 +1,4 @@
-[class^="elementor-widget-floating-bars-"] .e-floating-bars-var-2 {
+.e-floating-bars-var-2 {
 	--e-floating-bars-announcement-bg-color: #ffffff;
 	--e-floating-bars-headline-text-color: #1C2448;
 	--e-floating-bars-headline-text-color-hover: #467FF7;
@@ -15,8 +15,10 @@
 	--e-floating-bars-scroll-duration: 100s;
 	--e-floating-bars-scroll-direction: forwards;
 	--e-floating-bars-ticker-controls-order: 1;
-	--e-floating-bars-headline-icon-gap: 10px;
+	--e-floating-bars-headline-icon-gap: 10px;	
+}
 
+[class^="elementor-widget-floating-bars-"] .e-floating-bars-var-2 {
 	align-items: stretch;
 	gap: 0;
 	padding: 0;

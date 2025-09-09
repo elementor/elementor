@@ -1,4 +1,4 @@
-.elementor-widget-contact-buttons .e-contact-buttons-var-9 {
+.e-contact-buttons-var-9 {
 	--e-contact-buttons-size-small: 48px;
 	--e-contact-buttons-size-medium: 56px;
 	--e-contact-buttons-size-large: 64px;
@@ -11,8 +11,10 @@
 	--e-contact-buttons-chat-button-padding-block-end: 8px;
 	--e-contact-buttons-chat-button-padding-block-start: 8px;
 	--e-contact-buttons-chat-button-padding-inline-end: 16px;
-	--e-contact-buttons-chat-button-padding-inline-start: 16px;
+	--e-contact-buttons-chat-button-padding-inline-start: 16px;	
+}
 
+.elementor-widget-contact-buttons .e-contact-buttons-var-9 {
 	width: auto;
 
 	.e-contact-buttons {

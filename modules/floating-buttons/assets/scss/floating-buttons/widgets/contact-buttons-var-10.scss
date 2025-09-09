@@ -1,6 +1,6 @@
 @import "./contact-buttons-vars";
 
-.elementor-widget-contact-buttons .e-contact-buttons-var-10 {
+.e-contact-buttons-var-10 {
 	--e-contact-buttons-size-small: 40px;
 	--e-contact-buttons-size-medium: 48px;
 	--e-contact-buttons-size-large: 56px;
@@ -16,7 +16,9 @@
 	--e-contact-buttons-contact-padding-block-start: 8px;
 	--e-contact-buttons-contact-padding-inline-end: 12px;
 	--e-contact-buttons-contact-padding-inline-start: 12px;
+}
 
+.elementor-widget-contact-buttons .e-contact-buttons-var-10 {
 	width: auto;
 
 	.has-corners-rounded {

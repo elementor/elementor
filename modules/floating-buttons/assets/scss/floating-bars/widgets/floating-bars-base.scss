@@ -1,6 +1,6 @@
 @import './floating-bars-vars';
 
-[class^="elementor-widget-floating-bars-"] .e-floating-bars {
+.e-floating-bars {
 	--e-floating-bars-announcement-bg-color: #467FF7;
 	--e-floating-bars-announcement-text-color: #FFFFFF;
 	--e-floating-bars-announcement-icon-color: #FFFFFF;
@@ -29,7 +29,9 @@
 	--e-floating-bars-cta-button-animation-duration: 1000ms;
 	--e-floating-bars-background-overlay-opacity: 0.5;
 	--e-floating-bars-close-icon-size: 24px;
+}
 
+[class^="elementor-widget-floating-bars-"] .e-floating-bars {
 	align-items: center;
 	background-color: var(--e-floating-bars-announcement-bg-color);
 	color: var(--e-floating-bars-announcement-text-color);

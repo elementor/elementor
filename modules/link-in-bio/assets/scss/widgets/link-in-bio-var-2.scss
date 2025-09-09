@@ -1,10 +1,13 @@
-.elementor-widget-link-in-bio .e-link-in-bio-var-2 {
+.e-link-in-bio-var-2 {
 	--e-link-in-bio-gutter-block-end: 35px;
 	--e-link-in-bio-identity-image-cover-height: 215px;
 	--e-link-in-bio-identity-image-profile-width: 130px;
 	--e-link-in-bio-identity-image-profile-border-color: #{$white};
 	--e-link-in-bio-identity-image-profile-border-style: solid;
 	--e-link-in-bio-identity-image-profile-border-width: 3px;
+}
+
+.elementor-widget-link-in-bio .e-link-in-bio-var-2 {
 
 	.e-link-in-bio__identity {
 		grid-template-rows: 1fr auto auto;

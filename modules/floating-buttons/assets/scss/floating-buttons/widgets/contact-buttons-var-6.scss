@@ -1,6 +1,6 @@
 @import "./contact-buttons-vars";
 
-.elementor-widget-contact-buttons .e-contact-buttons-var-6 {
+.e-contact-buttons-var-6 {
 	--e-contact-buttons-icon-size-small: 25px;
 	--e-contact-buttons-icon-size-medium: 30px;
 	--e-contact-buttons-icon-size-large: 35px;
@@ -12,7 +12,9 @@
 	--e-contact-buttons-button-bar-padding-inline-end: 12px;
 	--e-contact-buttons-button-bar-padding-inline-start: 12px;
 	--e-contact-buttons-vertical-offset: 20px;
+}
 
+.elementor-widget-contact-buttons .e-contact-buttons-var-6 {
 	width: auto;
 
 	.e-contact-buttons {
