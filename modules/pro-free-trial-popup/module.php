@@ -37,7 +37,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		if ( ! ( current_user_can( 'manage_options' ) ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
