@@ -181,9 +181,6 @@ class Editor_Common_Scripts_Settings {
 		 * @param array $client_env  Editor configuration.
 		 * @param int   $post_id The ID of the current post being edited.
 		 */
-<<<<<<< HEAD
-		return apply_filters( 'elementor/editor/localize_settings', $client_env );
-=======
 		$client_env = apply_filters( 'elementor/editor/localize_settings', $client_env );
 
 		if ( $is_admin_user_without_pro ) {
@@ -209,7 +206,6 @@ class Editor_Common_Scripts_Settings {
 
 	private static function ensure_numeric_keys( array $base_array ) {
 		return array_values( $base_array );
->>>>>>> 0829f02c71 (Fix: Fatal error when no promotion widgets are set [ED-20905] (#32679))
 	}
 
 	private static function bc_move_document_filters() {
