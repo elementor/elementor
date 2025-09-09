@@ -1,5 +1,5 @@
 import { getSelectedElements } from '@elementor/editor-elements';
-import { trackEvent } from '@elementor/mixpanel';
+import { sendMixpanelEvent } from '@elementor/utils';
 
 import { eventBus } from '../../services/event-bus';
 import { type initialTransitionValue } from './data';
@@ -19,7 +19,7 @@ export function subscribeToTransitionEvent() {
 		const value = payload?.itemValue?.selection?.value?.value?.value;
 		const selectedElements = getSelectedElements();
 		const widgetType = selectedElements[ 0 ]?.type ?? null;
-		trackEvent( {
+		sendMixpanelEvent( {
 			transition_type: value ?? 'unknown',
 			...transitionRepeaterMixpanelEvent,
 			widget_type: widgetType,
