@@ -139,11 +139,11 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 		<Box key={ settingKey } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
 			<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
 				<Box>
-					<Typography variant="body1" sx={ { fontWeight: 500 } }>
+					<Typography variant="h6">
 						{ title }
 					</Typography>
 					{ description && (
-						<Typography variant="body1" color="text.secondary" sx={ { fontWeight: 400 } }>
+						<Typography variant="body1" color="text.secondary">
 							{ description }
 						</Typography>
 					) }
