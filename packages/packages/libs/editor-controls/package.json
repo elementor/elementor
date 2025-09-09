@@ -50,6 +50,7 @@
     "@elementor/http-client": "3.33.0",
     "@elementor/icons": "^1.51.1",
     "@elementor/locations": "3.33.0",
+    "@elementor/mixpanel": "3.33.0",
     "@elementor/query": "3.33.0",
     "@elementor/session": "3.33.0",
     "@elementor/ui": "1.36.12",
