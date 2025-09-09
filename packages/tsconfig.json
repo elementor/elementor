@@ -7,10 +7,6 @@
       "DOM.Iterable",
       "ESNext"
     ],
-    "typeRoots": [
-      "./node_modules/@types",
-      "./types"
-    ],
     "jsx": "react",
     "moduleResolution": "Bundler",
     "esModuleInterop": false,
