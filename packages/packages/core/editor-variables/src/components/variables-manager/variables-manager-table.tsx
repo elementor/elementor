@@ -69,6 +69,20 @@ export const VariablesManagerTable = ( {
 		}
 	};
 
+	// Sort ids by variable order if not already sorted
+	React.useEffect( () => {
+		const sortedIds = [...ids].sort( ( a, b ) => {
+			const orderA = variables[ a ]?.order ?? Number.MAX_SAFE_INTEGER;
+			const orderB = variables[ b ]?.order ?? Number.MAX_SAFE_INTEGER;
+			return orderA - orderB;
+		} );
+
+		// Only update if the order is different
+		if ( JSON.stringify( sortedIds ) !== JSON.stringify( ids ) ) {
+			setIds( sortedIds );
+		}
+	}, [ ids, variables, setIds ] );
+
 	const rows = ids
 		.filter( ( id ) => ! variables[ id ].deleted )
 		.map( ( id ) => {
@@ -103,7 +117,20 @@ export const VariablesManagerTable = ( {
 				<TableBody>
 					<UnstableSortableProvider
 						value={ ids }
-						onChange={ setIds }
+						onChange={ ( newIds ) => {
+							// Update the order of variables based on their new positions
+							const updatedVariables = { ...variables };
+							newIds.forEach( ( id, index ) => {
+								if ( updatedVariables[ id ] ) {
+									updatedVariables[ id ] = {
+										...updatedVariables[ id ],
+										order: index + 1,
+									};
+								}
+							} );
+							handleOnChange( updatedVariables );
+							setIds( newIds );
+						} }
 						variant="static"
 						restrictAxis
 						dragOverlay={ ( { children: dragOverlayChildren, ...dragOverlayProps } ) => (

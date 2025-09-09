@@ -100,6 +100,11 @@ class Rest_Api {
 					'validate_callback' => [ $this, 'is_valid_variable_value' ],
 					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
+				'order' => [
+					'required' => false,
+					'type' => 'integer',
+					'validate_callback' => [ $this, 'is_valid_order' ],
+				],
 			],
 		] );
 
@@ -214,6 +219,17 @@ class Rest_Api {
 		return true;
 	}
 
+	public function is_valid_order( $order ) {
+		if ( ! is_numeric( $order ) || $order < 0 ) {
+			return new WP_Error(
+				'invalid_order',
+				__( 'Order must be a non-negative integer', 'elementor' )
+			);
+		}
+
+		return true;
+	}
+
 	public function is_valid_variable_value( $value ) {
 		$value = trim( $value );
 
@@ -278,11 +294,18 @@ class Rest_Api {
 		$id = $request->get_param( 'id' );
 		$label = $request->get_param( 'label' );
 		$value = $request->get_param( 'value' );
+		$order = $request->get_param( 'order' );
 
-		$result = $this->variables_repository->update( $id, [
+		$update_data = [
 			'label' => $label,
 			'value' => $value,
-		] );
+		];
+
+		if ( null !== $order ) {
+			$update_data['order'] = $order;
+		}
+
+		$result = $this->variables_repository->update( $id, $update_data );
 
 		$this->clear_cache();
 
@@ -358,10 +381,11 @@ class Rest_Api {
 
 	private function list_of_variables() {
 		$db_record = $this->variables_repository->load();
+		$variables = $this->variables_repository->variables(); // This will return ordered variables
 
 		return $this->success_response( [
-			'variables' => $db_record['data'],
-			'total' => count( $db_record['data'] ),
+			'variables' => $variables,
+			'total' => count( $variables ),
 			'watermark' => $db_record['watermark'],
 		] );
 	}
@@ -426,6 +450,35 @@ class Rest_Api {
 		return true;
 	}
 
+	public function is_valid_variable_ids_array( $variables ) {
+		if ( ! is_array( $variables ) || empty( $variables ) ) {
+			return new WP_Error(
+				'invalid_variables_empty',
+				__( 'Variables array cannot be empty', 'elementor' )
+			);
+		}
+
+		foreach ( $variables as $index => $variable_id ) {
+			if ( ! is_string( $variable_id ) ) {
+				return new WP_Error(
+					'invalid_variable_id_type',
+					sprintf(
+						/* translators: %d: variable index */
+						__( 'Invalid variable ID type at index %d', 'elementor' ),
+						$index
+					)
+				);
+			}
+
+			$validation_result = $this->is_valid_variable_id( $variable_id );
+			if ( is_wp_error( $validation_result ) ) {
+				return $validation_result;
+			}
+		}
+
+		return true;
+	}
+
 	public function is_valid_operations_array( $operations ) {
 		if ( ! is_array( $operations ) || empty( $operations ) ) {
 			return new WP_Error(
@@ -446,7 +499,7 @@ class Rest_Api {
 				);
 			}
 
-			$allowed_types = [ 'create', 'update', 'delete', 'restore' ];
+			$allowed_types = [ 'create', 'update', 'delete', 'restore', 'reorder' ];
 
 			if ( ! in_array( $operation['type'], $allowed_types, true ) ) {
 				return new WP_Error(
@@ -480,6 +533,26 @@ class Rest_Api {
 		$this->clear_cache();
 
 		return $this->success_response( $result );
+	}
+
+	public function reorder_variables( WP_REST_Request $request ) {
+		try {
+			$variables = $request->get_param( 'variables' );
+			$watermark = $request->get_param( 'watermark' );
+
+			$result = $this->variables_repository->process_atomic_batch( [
+				[
+					'type' => 'reorder',
+					'variables' => $variables,
+				],
+			], $watermark );
+
+			$this->clear_cache();
+
+			return $this->success_response( $result );
+		} catch ( Exception $e ) {
+			return $this->error_response( $e );
+		}
 	}
 
 	private function batch_error_response( Exception $e ) {
