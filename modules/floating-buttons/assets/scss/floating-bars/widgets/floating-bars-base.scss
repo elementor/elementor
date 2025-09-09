@@ -1,6 +1,6 @@
 @import './floating-bars-vars';
 
-.e-floating-bars {
+[class^="elementor-widget-floating-bars-"] .e-floating-bars {
 	--e-floating-bars-announcement-bg-color: #467FF7;
 	--e-floating-bars-announcement-text-color: #FFFFFF;
 	--e-floating-bars-announcement-icon-color: #FFFFFF;
@@ -91,7 +91,7 @@
 		--e-floating-bars-corners: #{$floating-bars-border-radius-sharp};
 	}
 
-	.e-floating-bars__announcement-text {
+	&__announcement-text {
 		align-items: center;
 		color: var(--e-floating-bars-announcement-text-color);
 		display: flex;
@@ -101,7 +101,7 @@
 		margin: 0;
 	}
 
-	.e-floating-bars__announcement-icon {
+	&__announcement-icon {
 		align-items: center;
 		color: var(--e-floating-bars-announcement-icon-color);
 		display: flex;
@@ -119,7 +119,7 @@
 		}
 	}
 
-	.e-floating-bars__cta-icon {
+	&__cta-icon {
 		color: var(--e-floating-bars-cta-button-text-color);
 		display: inline-flex;
 		transition: $transition-hover;
@@ -132,7 +132,7 @@
 		}
 	}
 
-	.e-floating-bars__cta-button-container {
+	&__cta-button-container {
 		order: 3;
 
 		@media (max-width: $screen-mobile-max) {
@@ -142,8 +142,8 @@
 		}
 	}
 
-	.e-floating-bars__cta-button,
-	.e-floating-bars__cta-button:not([href]):not([tabindex]) {
+	&__cta-button,
+	&__cta-button:not([href]):not([tabindex]) {
 		align-items: center;
 		color: var(--e-floating-bars-cta-button-text-color);
 		display: inline-flex;
@@ -173,7 +173,7 @@
 			color: var(--e-floating-bars-cta-button-text-color-hover);
 			transition: $transition-hover;
 
-			.e-floating-bars__cta-icon {
+			&__cta-icon {
 				color: var(--e-floating-bars-cta-button-text-color-hover);
 				transition: $transition-hover;
 
@@ -212,14 +212,14 @@
 		&.is-type-link {
 			text-decoration: none;
 
-			.e-floating-bars__cta-text {
+			&__cta-text {
 				text-decoration: underline;
 			}
 		}
 	}
 
-	.e-floating-bars__close-button,
-	.e-floating-bars__close-button[type="button"] {
+	&__close-button,
+	&__close-button[type="button"] {
 		align-items: center;
 		display: flex;
 		position: absolute;
@@ -246,7 +246,7 @@
 		}
 	}
 
-	.e-floating-bars__overlay {
+	&__overlay {
 		background-position: center center;
 		background-size: cover;
 		height: 100%;
