@@ -62,7 +62,6 @@ export { createControl } from './create-control';
 export {
 	injectIntoRepeaterItemIcon,
 	injectIntoRepeaterItemLabel,
-	injectIntoRepeaterHeaderActions,
 	injectIntoRepeaterItemActions,
 } from './components/unstable-repeater/locations';
 
