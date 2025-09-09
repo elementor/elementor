@@ -32,7 +32,7 @@ export function useKitCustomizationCustomPostTypes( { data } ) {
 			const postTypeValue = postType.value;
 
 			const wpContentArray = wpContent[ postTypeValue ];
-			const isInWpContent = wpContentArray && Array.isArray( wpContentArray ) && wpContentArray.length > 0;
+			const isInWpContent = wpContentArray && 'object' === typeof wpContentArray && Object.keys( wpContentArray ).length > 0;
 
 			const contentObject = content[ postTypeValue ];
 			const isInElementorContent = contentObject && 'object' === typeof contentObject && Object.keys( contentObject ).length > 0;
