@@ -192,7 +192,6 @@ export const VariablesManagerTable = ( {
 												},
 											} }
 											style={ { ...itemStyle, ...triggerStyle } }
-											disableDivider={ isDragOverlay || index === rows.length - 1 }
 										>
 											<VariableTableCell noPadding width={ 10 } maxWidth={ 10 }>
 												<IconButton
