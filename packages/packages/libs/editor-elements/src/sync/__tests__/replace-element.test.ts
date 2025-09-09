@@ -12,9 +12,9 @@ jest.mock( '@elementor/editor-v1-adapters' );
 const mockRunCommand = jest.mocked( runCommand );
 const mockRunCommandSync = jest.mocked( runCommandSync );
 
-const currentElement = createMockElement( { model: { id: 'current-element' } } );
-const siblingElement1 = createMockElement( { model: { id: 'sibling-element-1' } } );
-const siblingElement2 = createMockElement( { model: { id: 'sibling-element-2' } } );
+const currentElement = createMockElement( { model: { id: 'current-element' } , view: { _index: 1 } } );
+const siblingElement1 = createMockElement( { model: { id: 'sibling-element-1' }, view: { _index: 0 } } );
+const siblingElement2 = createMockElement( { model: { id: 'sibling-element-2' }, view: { _index: 2 } } );
 const parentElement = createMockElement( {
 	model: { id: 'parent-element' },
 	children: [ siblingElement1, currentElement, siblingElement2 ],
@@ -59,7 +59,7 @@ describe( 'replaceElement', () => {
 
 	it( 'should wrap widget in container when replacing element at document top level', () => {
 		// Arrange.
-		const documentElement = createMockElement( { model: { id: 'document' }, children: [ currentElement ] } );
+		const documentElement = createMockElement( { model: { id: 'document' }, children: [ siblingElement1, currentElement, siblingElement2 ] } );
 		const createdContainerElement = createMockElement( { model: { id: 'created-container-id' } } );
 
 		extendedWindow.elementor = {
@@ -81,21 +81,18 @@ describe( 'replaceElement', () => {
 		replaceElement( { currentElement, newElement } );
 
 		// Assert.
-		// First, create wrapper container
 		expect( mockRunCommandSync ).toHaveBeenNthCalledWith( 1, 'document/elements/create', {
 			container: documentElement,
 			model: { elType: 'container' },
-			options: { at: 0, useHistory: false, edit: false },
+			options: { at: 1, useHistory: false, edit: false },
 		} );
 
-		// Then, create the widget inside the container
 		expect( mockRunCommandSync ).toHaveBeenNthCalledWith( 2, 'document/elements/create', {
 			container: createdContainerElement,
 			model: newElement,
 			options: { at: 0, useHistory: true, edit: false },
 		} );
 
-		// Finally, delete the original element
 		expect( mockRunCommand ).toHaveBeenCalledWith( 'document/elements/delete', {
 			container: { ...currentElement, parent: documentElement },
 			options: { useHistory: true },
