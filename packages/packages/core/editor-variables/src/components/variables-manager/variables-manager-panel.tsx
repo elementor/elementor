@@ -167,7 +167,6 @@ export function VariablesManagerPanel() {
 							autoEditVariableId={ autoEditVariableId }
 							onAutoEditComplete={ handleAutoEditComplete }
 						/>
-						
 					</PanelBody>
 
 					<PanelFooter>
