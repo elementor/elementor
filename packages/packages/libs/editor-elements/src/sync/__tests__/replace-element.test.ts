@@ -12,7 +12,7 @@ jest.mock( '@elementor/editor-v1-adapters' );
 const mockRunCommand = jest.mocked( runCommand );
 const mockRunCommandSync = jest.mocked( runCommandSync );
 
-const currentElement = createMockElement( { model: { id: 'current-element' } , view: { _index: 1 } } );
+const currentElement = createMockElement( { model: { id: 'current-element' }, view: { _index: 1 } } );
 const siblingElement1 = createMockElement( { model: { id: 'sibling-element-1' }, view: { _index: 0 } } );
 const siblingElement2 = createMockElement( { model: { id: 'sibling-element-2' }, view: { _index: 2 } } );
 const parentElement = createMockElement( {
@@ -59,7 +59,10 @@ describe( 'replaceElement', () => {
 
 	it( 'should wrap widget in container when replacing element at document top level', () => {
 		// Arrange.
-		const documentElement = createMockElement( { model: { id: 'document' }, children: [ siblingElement1, currentElement, siblingElement2 ] } );
+		const documentElement = createMockElement( {
+			model: { id: 'document' },
+			children: [ siblingElement1, currentElement, siblingElement2 ],
+		} );
 		const createdContainerElement = createMockElement( { model: { id: 'created-container-id' } } );
 
 		extendedWindow.elementor = {
