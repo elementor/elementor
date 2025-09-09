@@ -348,6 +348,14 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.31.5 - 2025-09-09 =
+
+* Fix: Fatal error occurs for non-admin users when editing a page
+
+= 3.31.4 - 2025-09-08 =
+
+* Tweak: Enabled external applications to open AI modals via API
+
 = 3.31.3 - 2025-08-27 =
 
 * Tweak: Disabled indication popover on repeater items – Editor V4
