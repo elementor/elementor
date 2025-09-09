@@ -178,6 +178,14 @@ export const service = {
 		const operations = buildOperationsArray( originalVariables, currentVariables );
 		const batchPayload = { operations, watermark: storage.state.watermark };
 
+		if ( operations.length === 0 ) {
+			return Promise.resolve( {
+				success: true,
+				watermark: storage.state.watermark,
+				operations: 0,
+			} );
+		}
+
 		return apiClient
 			.batch( batchPayload )
 			.then( ( response ) => {

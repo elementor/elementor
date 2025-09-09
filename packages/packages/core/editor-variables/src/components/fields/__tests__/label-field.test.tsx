@@ -137,6 +137,19 @@ describe( 'LabelField', () => {
 			expect( screen.getByRole( 'textbox' ) ).not.toHaveAttribute( 'aria-invalid', 'true' );
 		} );
 	} );
+
+	it( 'should select text on focus when selectOnShow is true', () => {
+		// Arrange
+		renderLabelField( { selectOnShow: true } );
+		const input = screen.getByRole( 'textbox' ) as HTMLInputElement;
+
+		// Act
+		fireEvent.focus( input );
+
+		// Assert
+		expect( input.selectionStart ).toBe( 0 );
+		expect( input.selectionEnd ).toBe( input.value.length );
+	} );
 } );
 
 describe( 'useLabelError', () => {
