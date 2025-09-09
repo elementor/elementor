@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { dropElement } from '@elementor/editor-elements';
+import { MenuListItem } from '@elementor/editor-ui';
 import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -13,12 +14,11 @@ import {
 	Typography,
 	usePopupState,
 } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { type Component } from '../types';
 import { getContainerForNewElement } from '../utils/get-container-for-new-element';
 import { createComponentModel } from './create-component-form/utils/replace-element-with-component';
-import { MenuListItem } from '@elementor/editor-ui';
-import { __ } from '@wordpress/i18n';
 
 export const ComponentItem = ( { component }: { component: Component } ) => {
 	const popupState = usePopupState( {
@@ -27,49 +27,49 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 	} );
 
 	const handleClick = () => {
-		addComponentToPage(component);
+		addComponentToPage( component );
 	};
 
 	return (
-		<ListItemButton shape="rounded" sx={{ border: "solid 1px", borderColor: "divider", py: 0.5, px: 1 }}>
-			<Box sx={{ display: "flex", width: "100%", alignItems: "center", gap: 1 }} onClick={handleClick}>
+		<ListItemButton shape="rounded" sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }>
+			<Box sx={ { display: 'flex', width: '100%', alignItems: 'center', gap: 1 } } onClick={ handleClick }>
 				<ListItemIcon size="tiny">
 					<ComponentsIcon fontSize="tiny" />
 				</ListItemIcon>
 				<ListItemText
 					primary={
-						<Typography variant="caption" sx={{ color: "text.primary" }}>
-							{component.name}
+						<Typography variant="caption" sx={ { color: 'text.primary' } }>
+							{ component.name }
 						</Typography>
 					}
 				/>
 			</Box>
-			<IconButton size="tiny" aria-label="More actions" {...bindTrigger(popupState)}>
+			<IconButton size="tiny" aria-label="More actions" { ...bindTrigger( popupState ) }>
 				<DotsVerticalIcon fontSize="tiny" />
 			</IconButton>
 			<Menu
-				{...bindMenu(popupState)}
-				anchorOrigin={{
-					vertical: "bottom",
-					horizontal: "right",
-				}}
-				transformOrigin={{
-					vertical: "top",
-					horizontal: "right",
-				}}
+				{ ...bindMenu( popupState ) }
+				anchorOrigin={ {
+					vertical: 'bottom',
+					horizontal: 'right',
+				} }
+				transformOrigin={ {
+					vertical: 'top',
+					horizontal: 'right',
+				} }
 			>
-				<MenuListItem sx={{ minWidth: "160px" }} >
-					<Typography variant="caption" sx={{ color: "text.primary" }}>
-						{__("Rename", "elementor")}
+				<MenuListItem sx={ { minWidth: '160px' } }>
+					<Typography variant="caption" sx={ { color: 'text.primary' } }>
+						{ __( 'Rename', 'elementor' ) }
 					</Typography>
 				</MenuListItem>
 				<MenuListItem
-					onClick={() => {
+					onClick={ () => {
 						popupState.close();
-					}}
+					} }
 				>
-					<Typography variant="caption" sx={{ color: "error.light" }}>
-						{__("Delete", "elementor")}
+					<Typography variant="caption" sx={ { color: 'error.light' } }>
+						{ __( 'Delete', 'elementor' ) }
 					</Typography>
 				</MenuListItem>
 			</Menu>

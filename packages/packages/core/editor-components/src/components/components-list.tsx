@@ -10,12 +10,11 @@ import { LoadingComponents } from './loading-components';
 export function ComponentsList() {
 	const { data: components, isLoading } = useComponents();
 
-
-	if (isLoading) {
+	if ( isLoading ) {
 		return <LoadingComponents />;
 	}
 
-	if ( ( ! components || components.length === 0 ) ) {
+	if ( ! components || components.length === 0 ) {
 		return <EmptyState />;
 	}
 
@@ -32,35 +31,35 @@ const EmptyState = () => {
 			alignItems="center"
 			justifyContent="center"
 			height="100%"
-			sx={{ px: 2.5, pt: 10 }}
-			gap={1.75}
+			sx={ { px: 2.5, pt: 10 } }
+			gap={ 1.75 }
 			overflow="hidden"
 		>
 			<Icon fontSize="large">
 				<ComponentsIcon fontSize="large" />
 			</Icon>
 			<Typography align="center" variant="subtitle2" color="text.secondary" fontWeight="bold">
-				{__("Text that explains that there are no Components yet.", "elementor")}
+				{ __( 'Text that explains that there are no Components yet.', 'elementor' ) }
 			</Typography>
 			<Typography variant="caption" align="center" color="text.secondary">
-				{__(
-					"Once you have Components, this is where you can manage them—rearrange, duplicate, rename and delete irrelevant classes.",
-					"elementor",
-				)}
+				{ __(
+					'Once you have Components, this is where you can manage them—rearrange, duplicate, rename and delete irrelevant classes.',
+					'elementor'
+				) }
 			</Typography>
 			<Divider fullWidth color="text.secondary" />
 			<Typography align="left" variant="caption" color="text.secondary">
-				{__("To create a component, first design it, then choose one of three options:", "elementor")}
+				{ __( 'To create a component, first design it, then choose one of three options:', 'elementor' ) }
 			</Typography>
 			<Typography
 				align="left"
 				variant="caption"
 				color="text.secondary"
-				sx={{ display: "flex", flexDirection: "column" }}
+				sx={ { display: 'flex', flexDirection: 'column' } }
 			>
-				<span>{__("1. Right-click and select Create Component", "elementor")}</span>
-				<span>{__("2. Use the component icon in the Structure panel", "elementor")}</span>
-				<span>{__("3. Use the component icon in the Edit panel header", "elementor")}</span>
+				<span>{ __( '1. Right-click and select Create Component', 'elementor' ) }</span>
+				<span>{ __( '2. Use the component icon in the Structure panel', 'elementor' ) }</span>
+				<span>{ __( '3. Use the component icon in the Edit panel header', 'elementor' ) }</span>
 			</Typography>
 		</Stack>
 	);
