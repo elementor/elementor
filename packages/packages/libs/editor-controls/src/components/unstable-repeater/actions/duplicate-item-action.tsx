@@ -7,8 +7,8 @@ import { useRepeaterContext } from '../context/repeater-context';
 
 const SIZE = 'tiny';
 
-export const DuplicateItemAction = ( { index = -1 }: { index?: number } ) => {
-	const { items, addItem } = useRepeaterContext();
+export const DuplicateItemAction = () => {
+	const { items, addItem, index = -1 } = useRepeaterContext();
 
 	if ( index === -1 ) {
 		return null;

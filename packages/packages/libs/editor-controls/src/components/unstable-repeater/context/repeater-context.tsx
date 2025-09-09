@@ -7,6 +7,7 @@ import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
 import { eventBus } from '../../../services/event-bus';
 import { type Item, type RepeatablePropValue } from '../types';
+import { ItemContext } from './item-context';
 
 type SetterFn< T > = ( prevItems: T ) => T;
 
@@ -35,12 +36,13 @@ export const EMPTY_OPEN_ITEM = -1;
 
 export const useRepeaterContext = () => {
 	const context = React.useContext( RepeaterContext );
+	const itemContext = React.useContext( ItemContext );
 
 	if ( ! context ) {
 		throw new Error( 'useRepeaterContext must be used within a RepeaterContextProvider' );
 	}
 
-	return context;
+	return { ...context, ...itemContext };
 };
 
 export const RepeaterContextProvider = < T extends RepeatablePropValue = RepeatablePropValue >( {
