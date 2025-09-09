@@ -96,15 +96,15 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 						notExported
 					/>
 				) : (
-				<SettingSection
-					key="theme"
-					checked={ settings.theme }
-					title={ __( 'Theme', 'elementor' ) }
-					description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
-					settingKey="theme"
-					onSettingChange={ handleToggleChange }
-					disabled={ isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme }
-				/>
+					<SettingSection
+						key="theme"
+						checked={ settings.theme }
+						title={ __( 'Theme', 'elementor' ) }
+						description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
+						settingKey="theme"
+						onSettingChange={ handleToggleChange }
+						disabled={ isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme }
+					/>
 				) }
 			</Stack>
 		</KitCustomizationDialog>
