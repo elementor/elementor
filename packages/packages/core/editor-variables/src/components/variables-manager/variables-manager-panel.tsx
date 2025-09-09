@@ -167,7 +167,7 @@ export function VariablesManagerPanel() {
 							autoEditVariableId={ autoEditVariableId }
 							onAutoEditComplete={ handleAutoEditComplete }
 						/>
-						<Divider sx={ { width: '100%' } } />
+						
 					</PanelBody>
 
 					<PanelFooter>
