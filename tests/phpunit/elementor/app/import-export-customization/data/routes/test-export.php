@@ -179,8 +179,8 @@ class Test_Export extends Elementor_Test_Base {
 		$this->assertEquals( 500, $response->get_status() );
 		$data = $response->get_data();
 
-		$this->assertEquals( 'export_error', $data['data']['code'] );
-		$this->assertEquals( 'Could not read the exported file.', $data['data']['message'] );
+		$this->assertEquals( 'invalid-zip-file', $data['data']['code'] );
+		$this->assertEquals( 'export_error', $data['data']['message'] );
 	}
 
 	public function test_export_error_with_exception() {
@@ -194,7 +194,7 @@ class Test_Export extends Elementor_Test_Base {
 
 		$mock_module->expects( $this->once() )
 			->method( 'export_kit' )
-			->willThrowException( new \Exception( 'Export failed due to invalid data' ) );
+			->willThrowException( new \Exception( 'cloud-upload-failed' ) );
 
 		Plugin::$instance->app->add_component( 'import-export-customization', $mock_module );
 
@@ -211,8 +211,8 @@ class Test_Export extends Elementor_Test_Base {
 		$this->assertEquals( 500, $response->get_status() );
 		$data = $response->get_data();
 
-		$this->assertEquals( 'export_error', $data['data']['code'] );
-		$this->assertEquals( 'Export failed due to invalid data', $data['data']['message'] );
+		$this->assertEquals( 'cloud-upload-failed', $data['data']['code'] );
+		$this->assertEquals( 'export-error', $data['data']['message'] );
 	}
 
 	private function send_export_request( $params = [] ) {

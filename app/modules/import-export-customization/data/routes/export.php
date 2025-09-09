@@ -5,6 +5,7 @@ use Elementor\Plugin;
 use Elementor\App\Modules\ImportExportCustomization\Data\Response;
 use Elementor\Utils as ElementorUtils;
 use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
+use Elementor\App\Modules\ImportExportCustomization\Processes\Import;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -47,7 +48,7 @@ class Export extends Base_Route {
 			$file = ElementorUtils::file_get_contents( $file_name );
 
 			if ( ! $file ) {
-				throw new \Error( 'Could not read the exported file.' );
+				throw new \Error( Import::ZIP_FILE_ERROR_KEY );
 			}
 
 			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );

@@ -33,20 +33,7 @@ Link.propTypes = {
 	href: PropTypes.string.isRequired,
 	children: PropTypes.node.isRequired,
 };
-function LearnMoreLink() {
-	return (
-		<Link
-			href="https://go.elementor.com/app-general-load-issue/"
-			variant="body2"
-			color="info.light"
-			underline="hover"
-			target="_blank"
-			rel="noopener noreferrer"
-		>
-			{ __( 'Learn more', 'elementor' ) }
-		</Link>
-	);
-}
+
 export const messagesContent = {
 	general: {
 		title: __( 'Unable to download the Website Template', 'elementor' ),
