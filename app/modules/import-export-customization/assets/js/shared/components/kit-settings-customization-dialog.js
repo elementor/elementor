@@ -104,7 +104,6 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					settingKey="theme"
 					onSettingChange={ handleToggleChange }
 					disabled={ isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme }
-					notExported
 				/>
 				) }
 			</Stack>
