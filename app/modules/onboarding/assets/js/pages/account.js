@@ -131,6 +131,7 @@ export default function Account() {
 
 	const connectSuccessCallback = ( event, data ) => {
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
+		const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
 
 		stateToUpdate.isLibraryConnected = true;
 
@@ -139,7 +140,7 @@ export default function Account() {
 		elementorCommon.config.library_connect.current_access_tier = data.access_tier;
 		elementorCommon.config.library_connect.plan_type = data.plan_type;
 
-		if ( data.tracking_opted_in && elementorCommon.config.editor_events ) {
+		if ( isTrackingOptedInConnect ) {
 			elementorCommon.config.editor_events.can_send_events = true;
 		}
 
