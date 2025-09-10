@@ -203,6 +203,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 								handleSaveChanges={ handleSaveCustomization }
 								isImport={ isImport }
 								isOldExport={ contextData.isOldExport }
+								isOldElementorVersion={ contextData.isOldElementorVersion }
 							/>
 						) }
 					</Fragment>
