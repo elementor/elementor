@@ -109,18 +109,7 @@ export default class Component extends ComponentBase {
 	 * @return {number} document id
 	 */
 	getCurrentId() {
-		if ( this.currentDocument ) {
-			return this.currentDocument.id;
-		}
-
-		// Fallback to active-document URL parameter
-		const activeDocumentId = parseInt( getQueryParam( 'active-document' ) );
-		if ( ! isNaN( activeDocumentId ) ) {
-			return activeDocumentId;
-		}
-
-		// Final fallback to initial document
-		return this.getInitialId();
+		return this.currentDocument.id;
 	}
 
 	getInitialId() {
