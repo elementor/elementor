@@ -219,11 +219,12 @@ export const VariablesManagerTable = ( {
 													} }
 													editableElement={ row.valueField }
 													onRowRef={ handleRowRef( row.id ) }
+													gap={ 0.5 }
 												>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
 													<EllipsisWithTooltip
 														title={ row.value }
-														sx={ { border: '4px solid transparent' } }
+														sx={ { border: '4px solid transparent', lineHeight: '1' } }
 													>
 														{ row.value }
 													</EllipsisWithTooltip>

@@ -13,6 +13,7 @@ type VariableEditableCellProps = {
 	autoEdit?: boolean;
 	onRowRef?: ( ref: HTMLTableRowElement | null ) => void;
 	onAutoEditComplete?: () => void;
+	gap?: number;
 };
 
 export const VariableEditableCell = ( {
@@ -24,6 +25,7 @@ export const VariableEditableCell = ( {
 	autoEdit = false,
 	onRowRef,
 	onAutoEditComplete,
+	gap = 1,
 }: VariableEditableCellProps ) => {
 	const [ value, setValue ] = useState( initialValue );
 	const [ isEditing, setIsEditing ] = useState( false );
@@ -75,7 +77,8 @@ export const VariableEditableCell = ( {
 					ref={ rowRef }
 					direction="row"
 					alignItems="center"
-					gap={ 1 }
+					verticalAlign="middle"
+					gap={ gap }
 					onDoubleClick={ handleDoubleClick }
 					onKeyDown={ handleKeyDown }
 					tabIndex={ 0 }
@@ -94,7 +97,7 @@ export const VariableEditableCell = ( {
 			ref={ rowRef }
 			direction="row"
 			alignItems="center"
-			gap={ 1 }
+			gap={ gap }
 			onDoubleClick={ handleDoubleClick }
 			onKeyDown={ handleKeyDown }
 			tabIndex={ 0 }
