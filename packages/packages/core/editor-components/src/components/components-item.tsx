@@ -34,10 +34,12 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 	};
 
 	return (
-		<ListItemButton 				draggable
-				onDragStart={ () => startDragElementFromPanel( componentModel ) }
+		<ListItemButton
+			draggable
+			onDragStart={ () => startDragElementFromPanel( componentModel ) }
 			onDragEnd={endDragElementFromPanel}
-			shape="rounded" sx={{ border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 }}>
+			shape="rounded"
+			sx={{ border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 }}>
 			<Box sx={ { display: 'flex', width: '100%', alignItems: 'center', gap: 1 } } onClick={ handleClick }>
 				<ListItemIcon size="tiny">
 					<EyeIcon fontSize="tiny" />
