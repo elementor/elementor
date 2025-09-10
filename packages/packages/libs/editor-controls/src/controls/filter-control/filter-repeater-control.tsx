@@ -92,9 +92,6 @@ const Repeater = ( { propTypeUtil, label, filterPropName }: RepeaterProps ) => {
 						</>
 					}
 				/>
-				<DuplicateItemAction />
-				<DisableItemAction />
-				<RemoveItemAction />
 			</ItemsContainer>
 			<EditItemPopover>
 				<FilterContent />
