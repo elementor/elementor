@@ -21,6 +21,13 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		register_post_type( Component_Document::TYPE, [
+			'label'    => Component_Document::get_title(),
+			'labels'   => Component_Document::get_labels(),
+			'public'   => true,
+			'supports' => Component_Document::get_supported_features(),
+		] );
+
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_action( 'elementor/documents/register', fn ( $documents_manager ) => $this->register_document_type( $documents_manager ) );
 
@@ -55,11 +62,6 @@ class Module extends BaseModule {
 			Component_Document::get_class_full_name()
 		);
 
-		register_post_type( Component_Document::TYPE, [
-			'label'    => Component_Document::get_title(),
-			'labels'   => Component_Document::get_labels(),
-			'public'   => false,
-			'supports' => Component_Document::get_supported_features(),
-		] );
+		
 	}
 }

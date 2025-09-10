@@ -8,6 +8,7 @@ const BASE_URL = 'elementor/v1/components';
 type CreateComponentPayload = {
 	name: string;
 	content: V1ElementModelProps[];
+	status: 'publish' | 'draft';
 };
 
 type GetComponentResponse = Array< Component >;
@@ -21,8 +22,11 @@ export const apiClient = {
 		httpService()
 			.get< HttpResponse< GetComponentResponse > >( `${ BASE_URL }` )
 			.then( ( res ) => res.data.data ),
-	create: ( payload: CreateComponentPayload ) =>
-		httpService()
+	create: ( payload: CreateComponentPayload ) => {
+		console.log('------------ payload ------------');
+		console.log(payload);
+		return httpService()
 			.post< HttpResponse< CreateComponentResponse > >( `${ BASE_URL }`, payload )
-			.then( ( res ) => res.data.data ),
+			.then( ( res ) => res.data.data );
+	}
 };

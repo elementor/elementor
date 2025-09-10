@@ -16,4 +16,10 @@ export function init() {
 		id: 'create-component-popup',
 		component: CreateComponentForm,
 	} );
+
+	// window.components = {
+	// 	created: [],
+	// 	modified: [],
+	// 	deleted: [],
+	// }
 }

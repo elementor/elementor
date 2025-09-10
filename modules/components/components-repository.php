@@ -43,12 +43,12 @@ class Components_Repository {
 		return Components::make( $components );
 	}
 
-	public function create( string $name, array $content ) {
+	public function create( string $name, array $content, string $status ) {
 		$document = Plugin::$instance->documents->create(
 			Component_Document::get_type(),
 			[
 				'post_title' => $name,
-				'post_status' => 'publish',
+				'post_status' => $status,
 			]
 		);
 
@@ -60,6 +60,8 @@ class Components_Repository {
 			throw new \Exception( 'Failed to create component' );
 		}
 
+		error_log('------------ document ------------');
+		error_log(print_r($document, true));
 		return $document->get_main_id();
 	}
 	private function extract_styles( array $elements, array $styles = [] ) {

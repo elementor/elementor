@@ -61,6 +61,7 @@ export function CreateComponentForm() {
 			{
 				name: values.componentName,
 				content: [ element.element.model.toJSON( { remove: [ 'default' ] } ) ],
+				status: 'draft',
 			},
 			{
 				onSuccess: ( result: CreateComponentResponse ) => {
