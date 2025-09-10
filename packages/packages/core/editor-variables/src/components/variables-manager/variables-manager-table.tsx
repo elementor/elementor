@@ -70,7 +70,7 @@ export const VariablesManagerTable = ( {
 	};
 
 	useEffect( () => {
-		const sortedIds = [ ...ids ].sort( sortVariablesOrder(variables) );
+		const sortedIds = [ ...ids ].sort( sortVariablesOrder( variables ) );
 
 		if ( JSON.stringify( sortedIds ) !== JSON.stringify( ids ) ) {
 			setIds( sortedIds );
@@ -79,7 +79,7 @@ export const VariablesManagerTable = ( {
 
 	const rows = ids
 		.filter( ( id ) => ! variables[ id ].deleted )
-		.sort( sortVariablesOrder(variables) )
+		.sort( sortVariablesOrder( variables ) )
 		.map( ( id ) => {
 			const variable = variables[ id ];
 			const variableType = getVariableType( variable.type );
@@ -276,11 +276,10 @@ export const VariablesManagerTable = ( {
 		</TableContainer>
 	);
 };
-function sortVariablesOrder(variables: TVariablesList): (a: string, b: string) => number {
-	return (a, b) => {
-		const orderA = variables[a]?.order ?? Number.MAX_SAFE_INTEGER;
-		const orderB = variables[b]?.order ?? Number.MAX_SAFE_INTEGER;
+function sortVariablesOrder( variables: TVariablesList ): ( a: string, b: string ) => number {
+	return ( a, b ) => {
+		const orderA = variables[ a ]?.order ?? Number.MAX_SAFE_INTEGER;
+		const orderB = variables[ b ]?.order ?? Number.MAX_SAFE_INTEGER;
 		return orderA - orderB;
 	};
 }
-
