@@ -3,6 +3,7 @@ import Document from './document';
 import * as commands from './commands/';
 import * as internalCommands from './commands/internal/';
 import * as hooks from './hooks';
+import { getQueryParam } from 'elementor-editor-utils/query-params';
 
 export default class Component extends ComponentBase {
 	__construct( args = {} ) {
@@ -108,7 +109,18 @@ export default class Component extends ComponentBase {
 	 * @return {number} document id
 	 */
 	getCurrentId() {
-		return this.currentDocument.id;
+		if ( this.currentDocument ) {
+			return this.currentDocument.id;
+		}
+
+		// Fallback to active-document URL parameter
+		const activeDocumentId = parseInt( getQueryParam( 'active-document' ) );
+		if ( ! isNaN( activeDocumentId ) ) {
+			return activeDocumentId;
+		}
+
+		// Final fallback to initial document
+		return this.getInitialId();
 	}
 
 	getInitialId() {
@@ -149,7 +161,8 @@ export default class Component extends ComponentBase {
 	}
 
 	isCurrent( id ) {
-		return parseInt( id ) === this.currentDocument.id;
+		const currentId = this.getCurrentId();
+		return currentId ? parseInt( id ) === currentId : false;
 	}
 
 	unsetCurrent() {
