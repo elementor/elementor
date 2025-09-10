@@ -31,7 +31,9 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 	};
 
 	return (
-		<ListItemButton shape="rounded" sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }>
+		<ListItemButton shape="rounded" sx={ { 
+			border: 'solid 1px',
+			 borderColor: 'divider', py: 0.5, px: 1, height: '36px' } }> 
 			<Box sx={ { display: 'flex', width: '100%', alignItems: 'center', gap: 1 } } onClick={ handleClick }>
 				<ListItemIcon size="tiny">
 					<EyeIcon fontSize="tiny" />

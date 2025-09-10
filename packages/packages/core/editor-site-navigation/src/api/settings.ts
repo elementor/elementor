@@ -5,14 +5,12 @@ export type Settings = {
 	page_on_front: number;
 };
 
-type Homepage = number;
-
 export const getSettings = () => {
 	const baseUri = '/elementor/v1/site-navigation/homepage';
 
 	const uri = baseUri;
 
-	return apiFetch< Homepage >( { path: uri } );
+	return apiFetch< Settings >( { path: uri } );
 };
 
 export const updateSettings = ( settings: Settings ) => {
