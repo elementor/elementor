@@ -4,7 +4,7 @@ import { OnboardingContext } from '../context/context';
 export default function Connect( props ) {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext );
 
-	const connectSuccessCallback = ( data ) => {
+	const connectSuccessCallback = ( event, data ) => {
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', 'account', 'completed' );
 
 		elementorCommon.config.library_connect.is_connected = true;
@@ -19,7 +19,7 @@ export default function Connect( props ) {
 
 	useEffect( () => {
 		jQuery( props.buttonRef.current ).elementorConnect( {
-			success: ( data ) => props.successCallback ? props.successCallback( data ) : connectSuccessCallback( data ),
+			success: ( event, data ) => props.successCallback ? props.successCallback( event, data ) : connectSuccessCallback( event, data ),
 			error: () => {
 				if ( props.errorCallback ) {
 					props.errorCallback();
