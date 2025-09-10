@@ -157,9 +157,7 @@ export const VariablesManagerTable = ( {
 									isDragged,
 									dropPosition,
 									setTriggerRef,
-									isDragOverlay,
 									isSorting,
-									index,
 								}: UnstableSortableItemRenderProps ) => {
 									const showIndicationBefore = showDropIndication && dropPosition === 'before';
 									const showIndicationAfter = showDropIndication && dropPosition === 'after';
