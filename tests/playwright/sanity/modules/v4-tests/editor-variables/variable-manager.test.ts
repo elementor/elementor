@@ -4,7 +4,7 @@ import { parallelTest as test } from '../../../../parallelTest';
 import { addColorVariable, addFontVariable, initTemplate, openVariableManager } from './utils';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
-test.describe.skip( 'Variable Manager @v4-tests', () => {
+test.describe( 'Variable Manager @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
 	let context: BrowserContext;
 	let page: Page;
