@@ -131,29 +131,6 @@ class Editor_Common_Scripts_Settings {
 		if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
 			$client_env['elementsPresets'] = Plugin::$instance->editor->get_elements_presets();
 		}
-		if ( current_user_can( 'manage_options' ) && ! Utils::has_pro() ) {
-			$client_env['integrationWidgets'] = array_merge(
-				( isset( $client_env['integrationWidgets'] ) && is_array( $client_env['integrationWidgets'] ) ?
-				$client_env['integrationWidgets'] :
-				[] ), [
-					[
-						'categories' => '[ "general" ]',
-						'icon' => 'eicon-accessibility',
-						'name' => 'ally-accessibility',
-						'title' => esc_html__( 'Ally Accessibility', 'elementor' ),
-						'keywords' => [
-							'Accessibility',
-							'Usability',
-							'Inclusive',
-							'Statement',
-							'WCAG',
-							'Ally',
-							'Complaince',
-						],
-					],
-				],
-			);
-		}
 
 		$is_admin_user_without_pro = current_user_can( 'manage_options' ) && ! Utils::has_pro();
 		if ( $is_admin_user_without_pro ) {
@@ -181,16 +158,6 @@ class Editor_Common_Scripts_Settings {
 		}
 
 		static::bc_move_document_filters();
-
-		// Remove all non numeric keys element from array added by 3rd party plugins
-		add_filter( 'elementor/editor/localize_settings', function ( $config ) {
-			if ( ! isset( $config['promotionWidgets'] ) ) {
-				$config['promotionWidgets'] = [];
-			}
-
-			$config['promotionWidgets'] = array_values( $config['promotionWidgets'] );
-			return $config;
-		}, 999 );
 
 		/**
 		 * Localize editor settings.
