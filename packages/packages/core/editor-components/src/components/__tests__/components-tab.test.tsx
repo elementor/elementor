@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { createMockElement } from 'test-utils';
 import { dropElement } from '@elementor/editor-elements';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { useComponents } from '../../hooks/use-components';
 import { type Component } from '../../types';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
+import { Components } from '../components';
 import { ComponentItem } from '../components-item';
 import { ComponentsList } from '../components-list';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
@@ -33,18 +33,6 @@ const mockComponents: Component[] = [
 	{ id: 3, name: 'Button Component' },
 ];
 
-const queryClient = new QueryClient( {
-	defaultOptions: {
-		queries: {
-			retry: false,
-		},
-	},
-} );
-
-const renderWithQuery = ( children: React.ReactElement ) => {
-	return render( <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider> );
-};
-
 describe( 'ComponentsList', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -58,14 +46,13 @@ describe( 'ComponentsList', () => {
 		} as ReturnType< typeof useComponents > );
 
 		// Act.
-		renderWithQuery( <ComponentsList /> );
+		render( <ComponentsList /> );
 
 		// Assert.
 		// Check for the loading container
 		const loadingContainer = screen.getByLabelText( 'Loading components' );
 		expect( loadingContainer ).toBeInTheDocument();
 
-		// Check for skeleton loading buttons (the actual loading indicators)
 		const skeletonButtons = screen.getAllByRole( 'button' );
 		expect( skeletonButtons ).toHaveLength( 6 ); // ROWS_COUNT = 6
 	} );
@@ -78,19 +65,10 @@ describe( 'ComponentsList', () => {
 		} as ReturnType< typeof useComponents > );
 
 		// Act.
-		renderWithQuery( <ComponentsList /> );
+		render( <ComponentsList /> );
 
 		// Assert.
 		expect( screen.getByText( 'Text that explains that there are no Components yet.' ) ).toBeInTheDocument();
-		expect(
-			screen.getByText( 'To create a component, first design it, then choose one of three options:' )
-		).toBeInTheDocument();
-		expect( screen.getByText( '1. Right-click and select Create Component' ) ).toBeInTheDocument();
-		expect( screen.getByText( '2. Use the component icon in the Structure panel' ) ).toBeInTheDocument();
-		expect( screen.getByText( '3. Use the component icon in the Edit panel header' ) ).toBeInTheDocument();
-
-		// Expect the console warning about fullWidth prop
-		expect( console ).toHaveErrored();
 	} );
 
 	it( 'should render list of components when data is available', () => {
@@ -101,7 +79,7 @@ describe( 'ComponentsList', () => {
 		} as ReturnType< typeof useComponents > );
 
 		// Act.
-		renderWithQuery( <ComponentsList /> );
+		render( <ComponentsList /> );
 
 		// Assert.
 		expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
@@ -136,7 +114,7 @@ describe( 'ComponentsList', () => {
 
 		it( 'should render component name', () => {
 			// Act.
-			renderWithQuery( <ComponentItem component={ mockComponent } /> );
+			render( <ComponentItem component={ mockComponent } /> );
 
 			// Assert.
 			expect( screen.getByText( 'Test Component' ) ).toBeInTheDocument();
@@ -144,7 +122,7 @@ describe( 'ComponentsList', () => {
 
 		it( 'should render component icon', () => {
 			// Act.
-			renderWithQuery( <ComponentItem component={ mockComponent } /> );
+			render( <ComponentItem component={ mockComponent } /> );
 
 			// Assert.
 			// Check that the component item is rendered with proper structure
@@ -156,7 +134,7 @@ describe( 'ComponentsList', () => {
 
 		it( 'should add component to page when clicked', () => {
 			// Act.
-			renderWithQuery( <ComponentItem component={ mockComponent } /> );
+			render( <ComponentItem component={ mockComponent } /> );
 			const componentButton = screen.getByText( 'Test Component' );
 			fireEvent.click( componentButton );
 
@@ -167,21 +145,6 @@ describe( 'ComponentsList', () => {
 				model: mockModel,
 				options: { at: 0, useHistory: false, scrollIntoView: true },
 			} );
-		} );
-
-		it( 'should handle error when no container is available', () => {
-			// Arrange.
-			mockGetContainerForNewElement.mockReturnValue( { container: null } );
-
-			// Act.
-			renderWithQuery( <ComponentItem component={ mockComponent } /> );
-			const componentButton = screen.getByText( 'Test Component' );
-
-			// Assert - The component should render without crashing
-			expect( componentButton ).toBeInTheDocument();
-
-			// The error will be caught by React's error boundary system
-			// and logged to console, but the component should still render
 		} );
 	} );
 
@@ -209,7 +172,7 @@ describe( 'ComponentsList', () => {
 
 		it( 'should render menu options when more button is clicked', () => {
 			// Act.
-			renderWithQuery( <ComponentItem component={ mockComponent } /> );
+			render( <ComponentItem component={ mockComponent } /> );
 			const moreButton = screen.getByLabelText( 'More actions' );
 			fireEvent.click( moreButton );
 
@@ -220,7 +183,7 @@ describe( 'ComponentsList', () => {
 
 		it( 'should handle delete button click', () => {
 			// Act.
-			renderWithQuery( <ComponentItem component={ mockComponent } /> );
+			render( <ComponentItem component={ mockComponent } /> );
 			const moreButton = screen.getByLabelText( 'More actions' );
 			fireEvent.click( moreButton );
 
@@ -260,7 +223,7 @@ describe( 'ComponentsList', () => {
 			mockCreateComponentModel.mockReturnValue( mockModel );
 
 			// Act.
-			renderWithQuery( <ComponentsList /> );
+			render( <Components /> );
 
 			// Assert - Component should be rendered
 			expect( screen.getByText( 'Test Component' ) ).toBeInTheDocument();

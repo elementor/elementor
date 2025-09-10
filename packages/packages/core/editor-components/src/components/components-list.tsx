@@ -47,7 +47,7 @@ const EmptyState = () => {
 					'elementor'
 				) }
 			</Typography>
-			<Divider fullWidth color="text.secondary" />
+			<Divider sx={ { width: '100%' } } color="text.secondary" />
 			<Typography align="left" variant="caption" color="text.secondary">
 				{ __( 'To create a component, first design it, then choose one of three options:', 'elementor' ) }
 			</Typography>
