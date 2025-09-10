@@ -15,12 +15,10 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { useUpdateUnfilteredFilesUpload } from '../hooks/use-unfiltered-files-upload';
-import { InfotipModal } from './infotip-modal';
 
 type EnableUnfilteredModalProps = {
 	open: boolean;
 	onClose: ( enabled: boolean ) => void;
-	children: React.ReactNode;
 };
 
 type LocalModalProps = {
@@ -34,6 +32,11 @@ type LocalModalProps = {
 const ADMIN_TITLE_TEXT = __( 'Enable Unfiltered Uploads', 'elementor' );
 const ADMIN_CONTENT_TEXT = __(
 	'Before you enable unfiltered files upload, note that such files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.',
+	'elementor'
+);
+const NON_ADMIN_TITLE_TEXT = __( "Sorry, you can't upload that file yet", 'elementor' );
+const NON_ADMIN_CONTENT_TEXT = __(
+	'This is because this file type may pose a security risk. To upload them anyway, ask the site administrator to enable unfiltered file uploads.',
 	'elementor'
 );
 
@@ -72,7 +75,7 @@ export const EnableUnfilteredModal = ( props: EnableUnfilteredModalProps ) => {
 
 	const dialogProps = { ...props, isPending, handleEnable, isError, onClose };
 
-	return <AdminDialog { ...dialogProps } />;
+	return canManageOptions ? <AdminDialog { ...dialogProps } /> : <NonAdminDialog { ...dialogProps } />;
 };
 
 const AdminDialog = ( { open, onClose, handleEnable, isPending, isError }: LocalModalProps ) => (
@@ -109,8 +112,19 @@ const AdminDialog = ( { open, onClose, handleEnable, isPending, isError }: Local
 	</Dialog>
 );
 
-const NonAdminDialog = ( { open, onClose, children }: LocalModalProps & { children: React.ReactNode } ) => (
-	<InfotipModal open={ open } onClose={ onClose }>
-		{ children }
-	</InfotipModal>
+const NonAdminDialog = ( { open, onClose }: LocalModalProps ) => (
+	<Dialog open={ open } maxWidth={ 'sm' } onClose={ () => onClose( false ) }>
+		<DialogHeader logo={ false }>
+			<DialogTitle>{ NON_ADMIN_TITLE_TEXT }</DialogTitle>
+		</DialogHeader>
+		<Divider />
+		<DialogContent>
+			<DialogContentText>{ NON_ADMIN_CONTENT_TEXT }</DialogContentText>
+		</DialogContent>
+		<DialogActions>
+			<Button size={ 'medium' } onClick={ () => onClose( false ) } variant="contained" color="primary">
+				{ __( 'Got it', 'elementor' ) }
+			</Button>
+		</DialogActions>
+	</Dialog>
 );
