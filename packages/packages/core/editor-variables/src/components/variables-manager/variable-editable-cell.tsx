@@ -77,7 +77,6 @@ export const VariableEditableCell = ( {
 					ref={ rowRef }
 					direction="row"
 					alignItems="center"
-					verticalAlign="middle"
 					gap={ gap }
 					onDoubleClick={ handleDoubleClick }
 					onKeyDown={ handleKeyDown }
