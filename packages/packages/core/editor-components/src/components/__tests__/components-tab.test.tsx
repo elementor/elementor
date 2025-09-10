@@ -10,16 +10,21 @@ import { Components } from '../components';
 import { ComponentItem } from '../components-item';
 import { ComponentsList } from '../components-list';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
-
+import { useSearch } from '@elementor/utils';s
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../hooks/use-components' );
 jest.mock( '../../utils/get-container-for-new-element' );
 jest.mock( '../create-component-form/utils/replace-element-with-component' );
+jest.mock( '@elementor/utils', () => ( {
+	...jest.requireActual( '@elementor/utils' ),
+	useSearch: jest.fn(),
+} ) );
 
 const mockUseComponents = jest.mocked( useComponents );
 const mockDropElement = jest.mocked( dropElement );
 const mockGetContainerForNewElement = jest.mocked( getContainerForNewElement );
 const mockCreateComponentModel = jest.mocked( createComponentModel );
+const mockUseSearch = jest.mocked( useSearch );
 
 const mockComponent: Component = {
 	id: 1,
@@ -35,6 +40,13 @@ const mockComponents: Component[] = [
 describe( 'ComponentsList', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		// Default mock for useSearch - no search active
+		mockUseSearch.mockReturnValue( {
+			inputValue: '',
+			debouncedValue: '',
+			handleChange: jest.fn(),
+			onClearSearch: jest.fn(),
+		} );
 	} );
 
 	it( 'should show loading components when data is loading', () => {
@@ -216,6 +228,125 @@ describe( 'ComponentsList', () => {
 
 			expect( screen.getByText( 'Rename' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Search Tests', () => {
+		beforeEach( () => {
+			jest.clearAllMocks();
+			// Default mock for useSearch - no search active
+			mockUseSearch.mockReturnValue( {
+				inputValue: '',
+				debouncedValue: '',
+				handleChange: jest.fn(),
+				onClearSearch: jest.fn(),
+			} );
+		} );
+
+		it( 'should show 1 component based on search value', () => {
+			// Mock search with "header" term
+			mockUseSearch.mockReturnValue( {
+				inputValue: 'header',
+				debouncedValue: 'header',
+				handleChange: jest.fn(),
+				onClearSearch: jest.fn(),
+			} );
+
+			mockUseComponents.mockReturnValue( {
+				data: mockComponents,
+				isLoading: false,
+			} as ReturnType< typeof useComponents > );
+
+			render( <ComponentsList /> );
+
+			expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Footer Component' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Button Component' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should show 2 components based on search value', () => {
+			// Mock search with "component" term (matches both Header and Footer)
+			mockUseSearch.mockReturnValue( {
+				inputValue: 'component',
+				debouncedValue: 'component',
+				handleChange: jest.fn(),
+				onClearSearch: jest.fn(),
+			} );
+
+			mockUseComponents.mockReturnValue( {
+				data: mockComponents,
+				isLoading: false,
+			} as ReturnType< typeof useComponents > );
+
+			render( <ComponentsList /> );
+
+			expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Footer Component' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Button Component' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should show not found message if no match found with search value', () => {
+			// Mock search with non-matching term
+			mockUseSearch.mockReturnValue( {
+				inputValue: 'nonexistent',
+				debouncedValue: 'nonexistent',
+				handleChange: jest.fn(),
+				onClearSearch: jest.fn(),
+			} );
+
+			mockUseComponents.mockReturnValue( {
+				data: mockComponents,
+				isLoading: false,
+			} as ReturnType< typeof useComponents > );
+
+			render( <ComponentsList /> );
+
+			expect( screen.getByText( 'Text that explains that there are no Components yet.' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Header Component' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Footer Component' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Button Component' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should be case insensitive when searching', () => {
+			// Mock search with uppercase term
+			mockUseSearch.mockReturnValue( {
+				inputValue: 'BUTTON',
+				debouncedValue: 'BUTTON',
+				handleChange: jest.fn(),
+				onClearSearch: jest.fn(),
+			} );
+
+			mockUseComponents.mockReturnValue( {
+				data: mockComponents,
+				isLoading: false,
+			} as ReturnType< typeof useComponents > );
+
+			render( <ComponentsList /> );
+
+			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Header Component' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Footer Component' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should show all components when search is empty', () => {
+			// Mock empty search
+			mockUseSearch.mockReturnValue( {
+				inputValue: '',
+				debouncedValue: '',
+				handleChange: jest.fn(),
+				onClearSearch: jest.fn(),
+			} );
+
+			mockUseComponents.mockReturnValue( {
+				data: mockComponents,
+				isLoading: false,
+			} as ReturnType< typeof useComponents > );
+
+			render( <ComponentsList /> );
+
+			expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Footer Component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

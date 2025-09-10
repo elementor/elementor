@@ -10,7 +10,7 @@ type SearchContextType = {
 	onClearSearch: () => void;
 };
 
-export const SearchContext = createContext< SearchContextType | undefined >( undefined );
+const SearchContext = createContext< SearchContextType | undefined >( undefined );
 
 export const SearchProvider = ( {
 	children,
