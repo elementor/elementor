@@ -3,7 +3,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import ImportProcess from 'elementor/app/modules/import-export-customization/assets/js/import/pages/import-process';
 import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 import useContextDetection from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection';
-import { messagesContent } from 'elementor/app/modules/import-export-customization/assets/js/shared/components/error/processing-error-dialog';
 
 const mockUseImportContext = jest.fn();
 const mockUseImportKit = jest.fn();

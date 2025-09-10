@@ -212,7 +212,7 @@ class Test_Export extends Elementor_Test_Base {
 		$data = $response->get_data();
 
 		$this->assertEquals( 'cloud-upload-failed', $data['data']['code'] );
-		$this->assertEquals( 'export-error', $data['data']['message'] );
+		$this->assertEquals( 'export_error', $data['data']['message'] );
 	}
 
 	private function send_export_request( $params = [] ) {

@@ -120,7 +120,7 @@ describe( 'ImportKit Page', () => {
 		'failed-to-fetch-quota',
 		'insufficient-quota',
 		'error-loading-resource',
-	] )( 'renders Try Again button for all required types of errors', ( code) => {
+	] )( 'renders Try Again button for all required types of errors', ( code ) => {
 		// Arrange
 		setup( { error: { code } } );
 		// Act
