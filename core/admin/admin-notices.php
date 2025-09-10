@@ -391,7 +391,8 @@ class Admin_Notices extends Module {
 
 		$experiments = Plugin::$instance->experiments;
 		$is_all_performance_features_active = (
-			$experiments->is_feature_active( 'e_font_icon_svg' )
+			$experiments->is_feature_active( 'e_font_icon_svg' ) &&
+			$experiments->is_feature_active( 'e_optimized_markup' )
 		);
 
 		if ( $is_all_performance_features_active ) {
