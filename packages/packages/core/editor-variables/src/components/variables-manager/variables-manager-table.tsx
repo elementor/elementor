@@ -125,9 +125,7 @@ export const VariablesManagerTable = ( {
 									isDragged,
 									dropPosition,
 									setTriggerRef,
-									isDragOverlay,
 									isSorting,
-									index,
 								}: UnstableSortableItemRenderProps ) => {
 									const showIndicationBefore = showDropIndication && dropPosition === 'before';
 									const showIndicationAfter = showDropIndication && dropPosition === 'after';
@@ -160,7 +158,6 @@ export const VariablesManagerTable = ( {
 												},
 											} }
 											style={ { ...itemStyle, ...triggerStyle } }
-											disableDivider={ isDragOverlay || index === rows.length - 1 }
 										>
 											<VariableTableCell noPadding width={ 10 } maxWidth={ 10 }>
 												<IconButton
