@@ -91,19 +91,22 @@ export const SvgMediaControl = createControl( () => {
 		return (
 			<Alert
 				sx={ {
-					width: 280,
-					gap: 0.5,
+					width: '320px',
+					p: '16px',
 				} }
 				color="secondary"
 				icon={ <InfoCircleFilledIcon /> }
 			>
-				<AlertTitle>{ __( "Sorry, you can't upload that file yet.", 'elementor' ) }</AlertTitle>
+				<AlertTitle>
+					<Typography variant="subtitle2">
+						{ __( "Sorry, you can't upload that file yet.", 'elementor' ) }
+					</Typography>
+				</AlertTitle>
 				<Box component="span">
 					<Typography variant="body1">
-						{ __(
-							'To upload them anyway, ask the site administrator to enable unfiltered file uploads.',
-							'elementor'
-						) }
+						{ __( 'To upload them anyway,', 'elementor' ) }
+						<br />
+						{ __( 'ask the site administrator to enable unfiltered file uploads.', 'elementor' ) }
 					</Typography>
 				</Box>
 			</Alert>
@@ -151,7 +154,21 @@ export const SvgMediaControl = createControl( () => {
 							>
 								{ __( 'Select SVG', 'elementor' ) }
 							</Button>
-							<Infotip placement="right" content={ infotipContent() }>
+							{ canManageOptions ? (
+								<Infotip placement="right" content={ infotipContent() }>
+									<span>
+										<Button
+											disabled={true}
+											size="tiny"
+											variant="text"
+											color="inherit"
+											startIcon={ <UploadIcon /> }
+										>
+											{ __( 'Upload', 'elementor' ) }
+										</Button>
+									</span>
+								</Infotip>
+							) : (
 								<Button
 									size="tiny"
 									variant="text"
@@ -161,7 +178,7 @@ export const SvgMediaControl = createControl( () => {
 								>
 									{ __( 'Upload', 'elementor' ) }
 								</Button>
-							</Infotip>
+							) }
 						</Stack>
 					</CardOverlay>
 				</StyledCard>
