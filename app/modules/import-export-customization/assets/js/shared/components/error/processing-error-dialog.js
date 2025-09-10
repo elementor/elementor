@@ -242,7 +242,7 @@ export function ProcessingErrorDialog( {
 				{ renderButtons() }
 			</DialogActions>
 		</Dialog>
-	)
+	);
 }
 
 ProcessingErrorDialog.propTypes = {
