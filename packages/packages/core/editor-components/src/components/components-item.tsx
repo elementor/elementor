@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { dropElement } from '@elementor/editor-elements';
 import { MenuListItem } from '@elementor/editor-ui';
-import { EyeIcon, DotsVerticalIcon } from '@elementor/icons';
+import { DotsVerticalIcon, EyeIcon } from '@elementor/icons';
 import {
 	bindMenu,
 	bindTrigger,
