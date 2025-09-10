@@ -3,7 +3,6 @@ import Document from './document';
 import * as commands from './commands/';
 import * as internalCommands from './commands/internal/';
 import * as hooks from './hooks';
-import { getQueryParam } from 'elementor-editor-utils/query-params';
 
 export default class Component extends ComponentBase {
 	__construct( args = {} ) {
@@ -150,8 +149,7 @@ export default class Component extends ComponentBase {
 	}
 
 	isCurrent( id ) {
-		const currentId = this.getCurrentId();
-		return currentId ? parseInt( id ) === currentId : false;
+		return parseInt( id ) === this.currentDocument.id;
 	}
 
 	unsetCurrent() {
