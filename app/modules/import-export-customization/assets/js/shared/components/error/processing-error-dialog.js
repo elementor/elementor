@@ -117,7 +117,7 @@ export const messagesContent = {
 					{ __( 'Support', 'elementor' ) }
 				</Link>
 				{ '. ' }
-				<Link href="https://go.elementor.com/app-general-load-issue/" >
+				<Link href="https://go.elementor.com/app-import-export-common-errors" >
 					{ __( 'Learn more', 'elementor' ) }
 				</Link>
 			</>
@@ -128,7 +128,7 @@ export const messagesContent = {
 		text: (
 			<>
 				{ __( 'We couldn’t add your export to the library. Try again. ', 'elementor' ) }
-				<Link href="https://go.elementor.com/app-general-load-issue/" >
+				<Link href="https://go.elementor.com/app-import-export-common-errors" >
 					{ __( 'Learn more', 'elementor' ) }
 				</Link>
 			</>
@@ -142,8 +142,8 @@ export const messagesContent = {
 				<Link href="https://my.elementor.com/support-center/">
 					{ __( 'Support', 'elementor' ) }
 				</Link>
-				{ '. '}
-				<Link href="https://go.elementor.com/app-general-load-issue/" >
+				{ '. ' }
+				<Link href="https://go.elementor.com/app-import-export-common-errors" >
 					{ __( 'Learn more', 'elementor' ) }
 				</Link>
 			</>
