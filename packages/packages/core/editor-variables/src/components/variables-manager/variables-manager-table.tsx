@@ -69,15 +69,9 @@ export const VariablesManagerTable = ( {
 		}
 	};
 
-	// Sort ids by variable order if not already sorted
-	React.useEffect( () => {
-		const sortedIds = [ ...ids ].sort( ( a, b ) => {
-			const orderA = variables[ a ]?.order ?? Number.MAX_SAFE_INTEGER;
-			const orderB = variables[ b ]?.order ?? Number.MAX_SAFE_INTEGER;
-			return orderA - orderB;
-		} );
+	useEffect( () => {
+		const sortedIds = [ ...ids ].sort( sortVariablesOrder(variables) );
 
-		// Only update if the order is different
 		if ( JSON.stringify( sortedIds ) !== JSON.stringify( ids ) ) {
 			setIds( sortedIds );
 		}
@@ -85,11 +79,7 @@ export const VariablesManagerTable = ( {
 
 	const rows = ids
 		.filter( ( id ) => ! variables[ id ].deleted )
-		.sort( ( a, b ) => {
-			const orderA = variables[ a ]?.order ?? Number.MAX_SAFE_INTEGER;
-			const orderB = variables[ b ]?.order ?? Number.MAX_SAFE_INTEGER;
-			return orderA - orderB;
-		} )
+		.sort( sortVariablesOrder(variables) )
 		.map( ( id ) => {
 			const variable = variables[ id ];
 			const variableType = getVariableType( variable.type );
@@ -123,7 +113,6 @@ export const VariablesManagerTable = ( {
 					<UnstableSortableProvider
 						value={ ids }
 						onChange={ ( newIds ) => {
-							// Update the order of variables based on their new positions
 							const updatedVariables = { ...variables };
 							newIds.forEach( ( id, index ) => {
 								if ( updatedVariables[ id ] ) {
@@ -287,3 +276,11 @@ export const VariablesManagerTable = ( {
 		</TableContainer>
 	);
 };
+function sortVariablesOrder(variables: TVariablesList): (a: string, b: string) => number {
+	return (a, b) => {
+		const orderA = variables[a]?.order ?? Number.MAX_SAFE_INTEGER;
+		const orderB = variables[b]?.order ?? Number.MAX_SAFE_INTEGER;
+		return orderA - orderB;
+	};
+}
+

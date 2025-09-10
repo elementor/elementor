@@ -534,25 +534,6 @@ class Rest_Api {
 		return $this->success_response( $result );
 	}
 
-	public function reorder_variables( WP_REST_Request $request ) {
-		try {
-			$variables = $request->get_param( 'variables' );
-			$watermark = $request->get_param( 'watermark' );
-
-			$result = $this->variables_repository->process_atomic_batch( [
-				[
-					'type' => 'reorder',
-					'variables' => $variables,
-				],
-			], $watermark );
-
-			$this->clear_cache();
-
-			return $this->success_response( $result );
-		} catch ( Exception $e ) {
-			return $this->error_response( $e );
-		}
-	}
 
 	private function batch_error_response( Exception $e ) {
 		if ( $e instanceof BatchOperationFailed ) {

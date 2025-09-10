@@ -99,7 +99,6 @@ class Repository {
 			'order',
 		] );
 
-		// If order is not provided, set it to the end of the list
 		if ( ! isset( $new_variable['order'] ) ) {
 			$new_variable['order'] = $this->get_next_order( $list_of_variables );
 		}
@@ -312,7 +311,6 @@ class Repository {
 		$temp_id = $variable_data['id'] ?? null;
 		$new_variable = $this->extract_from( $variable_data, [ 'type', 'label', 'value', 'order' ] );
 
-		// If order is not provided, set it to the end of the list
 		if ( ! isset( $new_variable['order'] ) ) {
 			$new_variable['order'] = $this->get_next_order( $db_record['data'] );
 		}
@@ -470,18 +468,18 @@ class Repository {
 	}
 
 	private function get_next_order( array $list_of_variables ): int {
-		$max_order = 0;
+		$highest_order = 0;
 
 		foreach ( $list_of_variables as $variable ) {
 			if ( isset( $variable['deleted'] ) && $variable['deleted'] ) {
 				continue;
 			}
 
-			if ( isset( $variable['order'] ) && $variable['order'] > $max_order ) {
-				$max_order = $variable['order'];
+			if ( isset( $variable['order'] ) && $variable['order'] > $highest_order ) {
+				$highest_order = $variable['order'];
 			}
 		}
 
-		return $max_order + 1;
+		return $highest_order + 1;
 	}
 }
