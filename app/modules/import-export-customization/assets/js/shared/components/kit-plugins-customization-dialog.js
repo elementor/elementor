@@ -18,14 +18,13 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import useKitPlugins from '../hooks/use-kit-plugins';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
+import { UpgradeVersionBanner } from './upgrade-version-banner';
 
 const REQUIRED_PLUGINS = [
 	'elementor/elementor',
 ];
 
-export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
-	const isImport = data.hasOwnProperty( 'uploadedData' );
-
+export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges, data, isImport, isOldElementorVersion } ) {
 	const { pluginsList: fetchedPluginsList, isLoading: fetchIsLoading } = useKitPlugins( { open: open && ! isImport } );
 
 	const pluginsList = useMemo( () => {
@@ -239,7 +238,10 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 			</DialogHeader>
 
 			<DialogContent dividers sx={ { p: 3 } }>
-				<Stack>
+				<Stack gap={ 2 }>
+					{ isOldElementorVersion && (
+						<UpgradeVersionBanner />
+					) }
 					{ isLoading ? (
 						<Stack spacing={ 3 } alignItems="center" sx={ { py: 8 } }>
 							<CircularProgress size={ 30 } />
@@ -309,4 +311,6 @@ KitPluginsCustomizationDialog.propTypes = {
 	handleClose: PropTypes.func.isRequired,
 	handleSaveChanges: PropTypes.func.isRequired,
 	data: PropTypes.object.isRequired,
+	isImport: PropTypes.bool,
+	isOldElementorVersion: PropTypes.bool,
 };
