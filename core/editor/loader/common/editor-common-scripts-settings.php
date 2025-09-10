@@ -208,7 +208,7 @@ class Editor_Common_Scripts_Settings {
 			$client_env = self::ensure_pro_widgets( $client_env );
 		}
 
-		if ( ! empty( $client_env['promotionWidgets'] && is_array( $client_env['promotionWidgets'] ) ) ) {
+		if ( ! empty( $client_env['promotionWidgets'] ) && is_array( $client_env['promotionWidgets'] ) ) {
 			$client_env['promotionWidgets'] = self::ensure_numeric_keys( $client_env['promotionWidgets'] );
 		}
 
