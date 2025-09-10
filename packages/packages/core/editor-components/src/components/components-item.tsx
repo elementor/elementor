@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { dropElement, DropElementParams } from '@elementor/editor-elements';
+import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
+import { dropElement, type DropElementParams } from '@elementor/editor-elements';
 import { MenuListItem } from '@elementor/editor-ui';
 import { DotsVerticalIcon, EyeIcon } from '@elementor/icons';
 import {
@@ -19,10 +20,9 @@ import { __ } from '@wordpress/i18n';
 import { type Component } from '../types';
 import { getContainerForNewElement } from '../utils/get-container-for-new-element';
 import { createComponentModel } from './create-component-form/utils/replace-element-with-component';
-import { startDragElementFromPanel, endDragElementFromPanel } from '@elementor/editor-canvas';
 
 export const ComponentItem = ( { component }: { component: Component } ) => {
-		const componentModel = createComponentModel( { id: component.id, name: component.name } );
+	const componentModel = createComponentModel( { id: component.id, name: component.name } );
 
 	const popupState = usePopupState( {
 		variant: 'popover',
@@ -37,9 +37,10 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 		<ListItemButton
 			draggable
 			onDragStart={ () => startDragElementFromPanel( componentModel ) }
-			onDragEnd={endDragElementFromPanel}
+			onDragEnd={ endDragElementFromPanel }
 			shape="rounded"
-			sx={{ border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 }}>
+			sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }
+		>
 			<Box sx={ { display: 'flex', width: '100%', alignItems: 'center', gap: 1 } } onClick={ handleClick }>
 				<ListItemIcon size="tiny">
 					<EyeIcon fontSize="tiny" />
@@ -85,7 +86,7 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 	);
 };
 
-const addComponentToPage = ( model: DropElementParams[ 'model' ]  ) => {
+const addComponentToPage = ( model: DropElementParams[ 'model' ] ) => {
 	const { container, options } = getContainerForNewElement();
 
 	if ( ! container ) {
