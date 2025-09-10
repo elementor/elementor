@@ -14,9 +14,11 @@ class Background_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
 		$overlay = $value['background-overlay'] ?? [];
 		$color = $value['color'] ?? null;
+		$clip = $value['clip'] ?? null;
 
 		return Multi_Props::generate( array_merge( $overlay, [
 			'background-color' => $color,
+			'background-clip' => $clip,
 		] ) );
 	}
 }
