@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { dropElement } from '@elementor/editor-elements';
 import { MenuListItem } from '@elementor/editor-ui';
-import { BlockIcon, DotsVerticalIcon } from '@elementor/icons';
+import { EyeIcon, DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
 	bindTrigger,
@@ -34,7 +34,7 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 		<ListItemButton shape="rounded" sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }>
 			<Box sx={ { display: 'flex', width: '100%', alignItems: 'center', gap: 1 } } onClick={ handleClick }>
 				<ListItemIcon size="tiny">
-					<BlockIcon fontSize="tiny" />
+					<EyeIcon fontSize="tiny" />
 				</ListItemIcon>
 				<ListItemText
 					primary={

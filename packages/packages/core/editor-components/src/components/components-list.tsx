@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BlockIcon } from '@elementor/icons';
+import { EyeIcon } from '@elementor/icons';
 import { Divider, Icon, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -36,7 +36,7 @@ const EmptyState = () => {
 			overflow="hidden"
 		>
 			<Icon fontSize="large">
-				<BlockIcon fontSize="large" />
+				<EyeIcon fontSize="large" />
 			</Icon>
 			<Typography align="center" variant="subtitle2" color="text.secondary" fontWeight="bold">
 				{ __( 'Text that explains that there are no Components yet.', 'elementor' ) }
