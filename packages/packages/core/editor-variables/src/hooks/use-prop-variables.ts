@@ -73,7 +73,7 @@ const normalizeVariables = ( propKey: string ) => {
 			key,
 			label,
 			value,
-			order
+			order,
 		} ) );
 };
 

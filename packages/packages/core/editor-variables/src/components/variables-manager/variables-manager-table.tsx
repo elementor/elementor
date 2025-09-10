@@ -71,7 +71,7 @@ export const VariablesManagerTable = ( {
 
 	// Sort ids by variable order if not already sorted
 	React.useEffect( () => {
-		const sortedIds = [...ids].sort( ( a, b ) => {
+		const sortedIds = [ ...ids ].sort( ( a, b ) => {
 			const orderA = variables[ a ]?.order ?? Number.MAX_SAFE_INTEGER;
 			const orderB = variables[ b ]?.order ?? Number.MAX_SAFE_INTEGER;
 			return orderA - orderB;

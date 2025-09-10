@@ -47,7 +47,9 @@ export const buildOperationsArray = (
 				} );
 			} else if (
 				! variable.deleted &&
-				( original.label !== variable.label || original.value !== variable.value || original.order !== variable.order )
+				( original.label !== variable.label ||
+					original.value !== variable.value ||
+					original.order !== variable.order )
 			) {
 				operations.push( {
 					type: 'update',

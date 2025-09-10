@@ -381,11 +381,10 @@ class Rest_Api {
 
 	private function list_of_variables() {
 		$db_record = $this->variables_repository->load();
-		$variables = $this->variables_repository->variables(); // This will return ordered variables
 
 		return $this->success_response( [
-			'variables' => $variables,
-			'total' => count( $variables ),
+			'variables' => $db_record['data'] ?? [],
+			'total' => count( $db_record['data'] ),
 			'watermark' => $db_record['watermark'],
 		] );
 	}
