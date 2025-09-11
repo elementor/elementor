@@ -88,7 +88,7 @@ class Manager {
 			'operator' => $config['operator'],
 			'path' => $config['path'],
 			'value' => $config['value'] ?? null,
-			'onTermUnmet' => $config['on_term_unmet'] ?? null
+			'onTermUnmet' => $config['on_term_unmet'] ?? null,
 		];
 
 		if ( empty( $this->dependencies ) ) {
