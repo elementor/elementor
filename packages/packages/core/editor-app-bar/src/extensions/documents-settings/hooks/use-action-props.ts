@@ -20,8 +20,8 @@ export default function useActionProps() {
 
 	const document = activeDocument && activeDocument.type.value !== 'kit' ? activeDocument : hostDocument;
 
-	/* translators: %s: Post type label. */
 	const ButtonTitle = document
+		/* translators: %s: Post type label. */
 		? __( '%s Settings', 'elementor' ).replace( '%s', document.type.label )
 		: __( 'Document Settings', 'elementor' );
 
