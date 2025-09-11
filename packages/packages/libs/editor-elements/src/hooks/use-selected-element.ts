@@ -1,11 +1,12 @@
 import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 
+import { getElementType } from '../sync/get-element-type';
 import { getSelectedElements } from '../sync/get-selected-elements';
-import { useElementType } from './use-element-type';
 
 export function useSelectedElement() {
 	const elements = useListenTo(
 		[
+			commandEndEvent( 'editor/documents/load' ),
 			commandEndEvent( 'document/elements/select' ),
 			commandEndEvent( 'document/elements/deselect' ),
 			commandEndEvent( 'document/elements/select-all' ),
@@ -16,7 +17,7 @@ export function useSelectedElement() {
 
 	const [ element ] = elements;
 
-	const elementType = useElementType( element?.type );
+	const elementType = getElementType( element?.type );
 
 	if ( elements.length !== 1 || ! elementType ) {
 		return { element: null, elementType: null };
