@@ -1,5 +1,4 @@
 import {
-	type DependencyTerm,
 	extractValue,
 	isDependencyMet,
 	type PropsSchema,
