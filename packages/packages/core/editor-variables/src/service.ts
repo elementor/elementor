@@ -17,8 +17,8 @@ export const service = {
 		return storage.state.watermark;
 	},
 
-	init: async () => {
-		await service.load();
+	init: () => {
+		return service.load();
 	},
 
 	load: () => {
