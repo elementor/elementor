@@ -69,8 +69,17 @@ export const VariablesManagerTable = ( {
 		}
 	};
 
+	useEffect( () => {
+		const sortedIds = [ ...ids ].sort( sortVariablesOrder( variables ) );
+
+		if ( JSON.stringify( sortedIds ) !== JSON.stringify( ids ) ) {
+			setIds( sortedIds );
+		}
+	}, [ ids, variables, setIds ] );
+
 	const rows = ids
 		.filter( ( id ) => ! variables[ id ].deleted )
+		.sort( sortVariablesOrder( variables ) )
 		.map( ( id ) => {
 			const variable = variables[ id ];
 			const variableType = getVariableType( variable.type );
@@ -103,7 +112,19 @@ export const VariablesManagerTable = ( {
 				<TableBody>
 					<UnstableSortableProvider
 						value={ ids }
-						onChange={ setIds }
+						onChange={ ( newIds ) => {
+							const updatedVariables = { ...variables };
+							newIds.forEach( ( id, index ) => {
+								if ( updatedVariables[ id ] ) {
+									updatedVariables[ id ] = {
+										...updatedVariables[ id ],
+										order: index + 1,
+									};
+								}
+							} );
+							handleOnChange( updatedVariables );
+							setIds( newIds );
+						} }
 						variant="static"
 						restrictAxis
 						dragOverlay={ ( { children: dragOverlayChildren, ...dragOverlayProps } ) => (
@@ -256,3 +277,10 @@ export const VariablesManagerTable = ( {
 		</TableContainer>
 	);
 };
+function sortVariablesOrder( variables: TVariablesList ): ( a: string, b: string ) => number {
+	return ( a, b ) => {
+		const orderA = variables[ a ]?.order ?? Number.MAX_SAFE_INTEGER;
+		const orderB = variables[ b ]?.order ?? Number.MAX_SAFE_INTEGER;
+		return orderA - orderB;
+	};
+}
