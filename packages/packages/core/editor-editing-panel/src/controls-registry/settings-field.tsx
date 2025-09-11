@@ -50,12 +50,12 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 			dependenciesPerTargetMapping
 		);
 
-		const settings = updateValues( newValue, dependents, propsSchema, elementSettingValues );
+		const settings = updateValues( newValue, dependents, propsSchema, elementSettingValues, elementId );
 
 		undoableUpdateElementProp( settings );
 	};
 
-	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues );
+	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues ).isMet;
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>

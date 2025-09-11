@@ -18,6 +18,9 @@ export type DependencyTerm = {
 	operator: DependencyOperator;
 	path: string[];
 	value: PropValue;
+	onTermUnmet?: {
+		setValue?: TransformablePropValue< string >;
+	};
 };
 
 export type Dependency = {
