@@ -6,7 +6,7 @@ import { addInitialDocumentStyles, removeInitialDocumentStyles } from '@elemento
 import { __privateListenTo as listenTo, commandStartEvent, registerDataHook } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
-import { ComponentsTab } from './components/components-tab';
+import { Components } from './components/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { ExtendedWindow } from './types';
 
@@ -21,7 +21,7 @@ export function init() {
 	injectTab( {
 		id: 'components',
 		label: __( 'Components', 'elementor' ),
-		component: ComponentsTab,
+		component: Components,
 	} );
 
 	injectIntoTop( {

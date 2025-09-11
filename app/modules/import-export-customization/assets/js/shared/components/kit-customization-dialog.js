@@ -16,7 +16,6 @@ export function KitCustomizationDialog( {
 	handleSaveChanges,
 	children,
 	saveDisabled = false,
-	minHeight = '600px',
 } ) {
 	return (
 		<Dialog
@@ -24,11 +23,6 @@ export function KitCustomizationDialog( {
 			onClose={ handleClose }
 			maxWidth="md"
 			fullWidth
-			PaperProps={ {
-				sx: {
-					minHeight,
-				},
-			} }
 		>
 			<DialogHeader onClose={ handleClose }>
 				<DialogTitle>
@@ -70,5 +64,4 @@ KitCustomizationDialog.propTypes = {
 	children: PropTypes.node.isRequired,
 	title: PropTypes.string.isRequired,
 	saveDisabled: PropTypes.bool,
-	minHeight: PropTypes.string,
 };

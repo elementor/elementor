@@ -11,7 +11,7 @@ export default function KitInfo() {
 	};
 
 	return (
-		<Box sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
+		<Box sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 3.5 } }>
 			<Typography variant="caption" component="label" color="text.secondary">
 				{ __( 'Website template name', 'elementor' ) } *
 			</Typography>
