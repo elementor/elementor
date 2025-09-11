@@ -344,6 +344,14 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function register_scripts() {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_swiper_11' ) ) {
+			$swiper_version = '11.2.10';
+			$swiper_path_js = 'assets/lib/swiper/v11/';
+		} else {
+			$swiper_version = '8.4.5';
+			$swiper_path_js = 'assets/lib/swiper/v8/';
+		}
+
 		/**
 		 * Before frontend register scripts.
 		 *
@@ -374,9 +382,9 @@ class Frontend extends App {
 
 		wp_register_script(
 			'swiper',
-			$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/v8/' ),
+			$this->get_js_assets_url( 'swiper', $swiper_path_js ),
 			[],
-			'8.4.5',
+			$swiper_version,
 			true
 		);
 
@@ -476,6 +484,14 @@ class Frontend extends App {
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_swiper_11' ) ) {
+			$swiper_version = '11.2.10';
+			$swiper_path_css = 'assets/lib/swiper/v11/';
+		} else {
+			$swiper_version = '8.4.5';
+			$swiper_path_css = 'assets/lib/swiper/v8/css/';
+		}
+
 		/**
 		 * Before frontend register styles.
 		 *
@@ -529,9 +545,9 @@ class Frontend extends App {
 
 		wp_register_style(
 			'swiper',
-			$this->get_css_assets_url( 'swiper', 'assets/lib/swiper/v8/css/' ),
+			$this->get_css_assets_url( 'swiper', $swiper_path_css ),
 			[],
-			'8.4.5'
+			$swiper_version
 		);
 
 		wp_register_style(
