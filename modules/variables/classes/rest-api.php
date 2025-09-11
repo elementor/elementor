@@ -449,34 +449,6 @@ class Rest_Api {
 		return true;
 	}
 
-	public function is_valid_variable_ids_array( $variables ) {
-		if ( ! is_array( $variables ) || empty( $variables ) ) {
-			return new WP_Error(
-				'invalid_variables_empty',
-				__( 'Variables array cannot be empty', 'elementor' )
-			);
-		}
-
-		foreach ( $variables as $index => $variable_id ) {
-			if ( ! is_string( $variable_id ) ) {
-				return new WP_Error(
-					'invalid_variable_id_type',
-					sprintf(
-						/* translators: %d: variable index */
-						__( 'Invalid variable ID type at index %d', 'elementor' ),
-						$index
-					)
-				);
-			}
-
-			$validation_result = $this->is_valid_variable_id( $variable_id );
-			if ( is_wp_error( $validation_result ) ) {
-				return $validation_result;
-			}
-		}
-
-		return true;
-	}
 
 	public function is_valid_operations_array( $operations ) {
 		if ( ! is_array( $operations ) || empty( $operations ) ) {
