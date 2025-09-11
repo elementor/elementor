@@ -13,11 +13,16 @@ import { Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ElementProvider, useElement } from '../../../contexts/element-context';
-import { type ChildElement, getElementByType } from '../get-element-by-type';
+import { getElementByType } from '../get-element-by-type';
 import { addItem, duplicateItem, moveItem, removeItem, TAB_ELEMENT_TYPE, type TabItem } from './actions';
 
 const TAB_LIST_ELEMENT_TYPE = 'e-tabs-list';
 const TAB_CONTENT_ELEMENT_TYPE = 'e-tabs-content';
+
+type ChildElement = {
+	type: string;
+	target_container_selector: string;
+};
 
 export const TabsControl = ( { childElements }: { childElements: ChildElement[] } ) => {
 	const { element } = useElement();

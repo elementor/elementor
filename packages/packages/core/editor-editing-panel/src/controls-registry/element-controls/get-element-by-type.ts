@@ -1,10 +1,5 @@
 import { getContainer } from '@elementor/editor-elements';
 
-export type ChildElement = {
-	type: string;
-	target_container_selector: string;
-};
-
 export const getElementByType = ( elementId: string, type: string ) => {
 	const currentElement = getContainer( elementId );
 
