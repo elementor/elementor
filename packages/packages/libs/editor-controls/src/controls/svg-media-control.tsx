@@ -154,7 +154,7 @@ export const SvgMediaControl = createControl( () => {
 							>
 								{ __( 'Select SVG', 'elementor' ) }
 							</Button>
-							{ ! canManageOptions ? (
+							{ canManageOptions ? (
 								<Button
 									size="tiny"
 									variant="text"
