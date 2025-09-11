@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createMockElement } from 'test-utils';
 import { dropElement } from '@elementor/editor-elements';
+import { useSearch } from '@elementor/utils';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { useComponents } from '../../hooks/use-components';
@@ -10,7 +11,6 @@ import { Components } from '../components';
 import { ComponentItem } from '../components-item';
 import { ComponentsList } from '../components-list';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
-import { useSearch } from '@elementor/utils';s
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../hooks/use-components' );
 jest.mock( '../../utils/get-container-for-new-element' );
@@ -282,7 +282,7 @@ describe( 'ComponentsList', () => {
 
 			expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Footer Component' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Button Component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should show not found message if no match found with search value', () => {

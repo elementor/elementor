@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { EyeIcon } from '@elementor/icons';
 import { Divider, Icon, List, Stack, Typography } from '@elementor/ui';
+import { useSearch } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../hooks/use-components';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
-import { useSearch } from '@elementor/utils';
 
 export function ComponentsList() {
 	const { components, isLoading } = useFilteredComponents();
@@ -66,14 +66,14 @@ const EmptyState = () => {
 	);
 };
 
+const useFilteredComponents = () => {
+	const { data: components, isLoading } = useComponents();
+	const { debouncedValue: searchValue } = useSearch();
 
- const useFilteredComponents = () => {
-  const { data: components, isLoading } = useComponents()
-  const { debouncedValue: searchValue } = useSearch()
-
-	 return {
-		components: components?.filter( ( component ) => component.name.toLowerCase().includes( searchValue.toLowerCase() ) ),
-		isLoading
-	}
-
-}
+	return {
+		components: components?.filter( ( component ) =>
+			component.name.toLowerCase().includes( searchValue.toLowerCase() )
+		),
+		isLoading,
+	};
+};
