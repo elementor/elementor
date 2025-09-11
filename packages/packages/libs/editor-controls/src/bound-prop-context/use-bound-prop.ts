@@ -55,12 +55,35 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 			return propKeyContext?.setValue( null, options, meta );
 		}
 
+		if ( propKeyContext.bind === '__title' ) {
+			return propKeyContext?.setValue( {
+				$$type: 'overrides-value',
+				value: {
+					key: {
+						$$type: 'string',
+						value: '__title',
+					},
+					value: {
+						$$type: 'string',
+						value,
+					},
+				},
+			} );
+		}
+
 		return propKeyContext?.setValue( propTypeUtil?.create( value, options ), {}, meta );
 	}
 
 	const propType = resolveUnionPropType( propKeyContext.propType, propTypeUtil.key );
 
-	const value = propTypeUtil.extract( propKeyContext.value ?? propType.default ?? null );
+	let value: TValue | null = null;
+
+	if ( propKeyContext.value?.$$type === 'overrides-value' ) {
+		value = propKeyContext.value.value.value.value;
+	} else {
+		value = propTypeUtil.extract( propKeyContext.value ?? propType.default ?? null );
+	}
+
 	const placeholder = propTypeUtil.extract( propKeyContext.placeholder ?? null );
 
 	return {
@@ -90,7 +113,7 @@ const useValidation = ( propType: PropType ) => {
 			valid = false;
 		}
 
-		setIsValid( valid );
+		// setIsValid( valid );
 
 		return valid;
 	};
@@ -98,7 +121,7 @@ const useValidation = ( propType: PropType ) => {
 	const restoreValue = () => setIsValid( true );
 
 	return {
-		isValid,
+		isValid: true,
 		setIsValid,
 		validate,
 		restoreValue,

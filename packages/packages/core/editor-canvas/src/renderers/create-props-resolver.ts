@@ -20,6 +20,7 @@ type ResolveArgs = {
 	props: Props;
 	schema?: PropsSchema;
 	signal?: AbortSignal;
+	overrides?: Map< string, unknown >;
 };
 
 type TransformArgs = {
@@ -28,6 +29,7 @@ type TransformArgs = {
 	type: PropType;
 	signal?: AbortSignal;
 	depth?: number;
+	overrides: Map< string, unknown >;
 };
 
 type ResolvedProps = Record< string, unknown >;
@@ -37,14 +39,14 @@ export type PropsResolver = ReturnType< typeof createPropsResolver >;
 const TRANSFORM_DEPTH_LIMIT = 3;
 
 export function createPropsResolver( { transformers, schema: initialSchema, onPropResolve }: CreatePropResolverArgs ) {
-	async function resolve( { props, schema, signal }: ResolveArgs ): Promise< ResolvedProps > {
+	async function resolve( { props, schema, signal, overrides = new Map() }: ResolveArgs ): Promise< ResolvedProps > {
 		schema = schema ?? initialSchema;
 
 		const promises = Promise.all(
 			Object.entries( schema ).map( async ( [ key, type ] ) => {
 				const value = props[ key ] ?? type.default;
 
-				const transformed = await transform( { value, key, type, signal } );
+				const transformed = await transform( { value, key, type, signal, overrides } );
 
 				onPropResolve?.( { key, value: transformed } );
 
@@ -59,7 +61,7 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 		return Object.assign( {}, ...( await promises ).filter( Boolean ) );
 	}
 
-	async function transform( { value, key, type, signal, depth = 0 }: TransformArgs ) {
+	async function transform( { value, key, type, signal, depth = 0, overrides }: TransformArgs ) {
 		if ( value === null || value === undefined ) {
 			return null;
 		}
@@ -102,7 +104,7 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 		if ( type.kind === 'array' ) {
 			resolvedValue = await Promise.all(
 				resolvedValue.map( ( item: PropValue ) =>
-					transform( { value: item, key, type: type.item_prop_type, depth, signal } )
+					transform( { value: item, key, type: type.item_prop_type, depth, signal, overrides } )
 				)
 			);
 		}
@@ -114,9 +116,9 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 		}
 
 		try {
-			const transformed = await transformer( resolvedValue, { key, signal } );
+			const transformed = await transformer( resolvedValue, { key, signal, overrides } );
 
-			return transform( { value: transformed, key, type, signal, depth: depth + 1 } );
+			return transform( { value: transformed, key, type, signal, depth: depth + 1, overrides } );
 		} catch {
 			return null;
 		}

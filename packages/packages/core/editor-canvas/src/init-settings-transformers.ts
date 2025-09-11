@@ -2,6 +2,8 @@ import { settingsTransformersRegistry } from './settings-transformers-registry';
 import { attributesTransformer } from './transformers/settings/attributes-transformer';
 import { createClassesTransformer } from './transformers/settings/classes-transformer';
 import { linkTransformer } from './transformers/settings/link-transformer';
+import { overridesPlaceholderTransformer } from './transformers/settings/overrides-placeholder-transformer';
+import { overridesValueTransformer } from './transformers/settings/overrides-value-transformer';
 import { imageSrcTransformer } from './transformers/shared/image-src-transformer';
 import { imageTransformer } from './transformers/shared/image-transformer';
 import { plainTransformer } from './transformers/shared/plain-transformer';
@@ -13,5 +15,7 @@ export function initSettingsTransformers() {
 		.register( 'image', imageTransformer )
 		.register( 'image-src', imageSrcTransformer )
 		.register( 'attributes', attributesTransformer )
+		.register( 'overrides-value', overridesValueTransformer )
+		.register( 'overrides-placeholder', overridesPlaceholderTransformer )
 		.registerFallback( plainTransformer );
 }

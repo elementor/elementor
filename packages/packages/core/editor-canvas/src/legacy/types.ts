@@ -36,6 +36,12 @@ export declare class ElementView {
 
 	model: BackboneModel< ElementModel >;
 
+	container: {
+		parent?: {
+			view?: ElementView;
+		};
+	};
+
 	onRender( ...args: unknown[] ): void;
 
 	onDestroy( ...args: unknown[] ): void;

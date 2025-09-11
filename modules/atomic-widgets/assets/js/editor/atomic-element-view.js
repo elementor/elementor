@@ -8,6 +8,8 @@ export default function createAtomicElementView( type ) {
 
 		emptyView: AtomicElementEmptyView,
 
+		settingsOverrides: new Map(),
+
 		tagName() {
 			if ( this.haveLink() ) {
 				return 'a';
@@ -179,6 +181,18 @@ export default function createAtomicElementView( type ) {
 			this._parent.removeChildView( this );
 
 			parent.addChild( this.model, AtomicElementView, this._index );
+		},
+
+		getSettingsOverrides() {
+			return this.settingsOverrides;
+		},
+
+		_renderTemplate() {
+			const parentView = this.container?.parent?.view;
+
+			this.settingsOverrides = new Map( [ ...( parentView?.getSettingsOverrides?.() ?? [] ) ] );
+
+			BaseElementView.prototype._renderTemplate.apply( this, arguments );
 		},
 
 		onRender() {

@@ -2,10 +2,10 @@ import { getWidgetsCache } from '@elementor/editor-elements';
 import { __privateListenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { createDomRenderer } from '../renderers/create-dom-renderer';
+import { type Component, createComponentType } from './create-component-type';
 import { createElementType } from './create-element-type';
 import { canBeTemplated, createTemplatedElementType } from './create-templated-element-type';
 import type { LegacyWindow } from './types';
-import { Component, createComponentType } from './create-component-type';
 
 export function initLegacyViews() {
 	__privateListenTo( v1ReadyEvent(), () => {
@@ -23,8 +23,12 @@ export function initLegacyViews() {
 
 			if ( type === 'e-component' ) {
 				// return
-				console.log('------------ e-component ------------');
-				ElementType = createComponentType( { type, renderer, element: element as unknown as Component, config } );
+				ElementType = createComponentType( {
+					type,
+					renderer,
+					element: element as unknown as Component,
+					config,
+				} );
 			} else {
 				ElementType = canBeTemplated( element )
 					? createTemplatedElementType( { type, renderer, element } )

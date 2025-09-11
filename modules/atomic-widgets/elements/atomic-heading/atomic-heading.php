@@ -10,8 +10,10 @@ use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Overrides_Placeholder_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
@@ -50,8 +52,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
 				->default( 'h2' ),
 
-			'title' => String_Prop_Type::make()
-				->default( __( 'This is a title', 'elementor' ) ),
+			'title' => Union_Prop_Type::create_from(
+				String_Prop_Type::make()->default( __( 'This is a title', 'elementor' ) )
+			)->add_prop_type( Overrides_Placeholder_Prop_Type::make() ),
 
 			'link' => Link_Prop_Type::make(),
 

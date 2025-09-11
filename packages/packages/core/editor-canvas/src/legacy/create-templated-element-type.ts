@@ -1,3 +1,4 @@
+import { Children } from 'react';
 import type { V1ElementConfig } from '@elementor/editor-elements';
 
 import { type DomRenderer } from '../renderers/create-dom-renderer';
@@ -6,7 +7,6 @@ import { settingsTransformersRegistry } from '../settings-transformers-registry'
 import { signalizedProcess } from '../utils/signalized-process';
 import { createElementViewClassDeclaration } from './create-element-type';
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
-import { Children } from 'react';
 
 type CreateTypeOptions = {
 	type: string;
@@ -76,6 +76,12 @@ function createTemplatedElementViewClassDeclaration( {
 	return class extends BaseView {
 		#abortController: AbortController | null = null;
 
+		#settingsOverrides: Map< string, unknown > = new Map();
+
+		getSettingsOverrides() {
+			return this.#settingsOverrides;
+		}
+
 		getTemplateType() {
 			return 'twig';
 		}
@@ -95,9 +101,18 @@ function createTemplatedElementViewClassDeclaration( {
 				.then( ( _, signal ) => {
 					const settings = this.model.get( 'settings' ).toJSON();
 
+					const parentView = this.container?.parent?.view as
+						| ( ElementView & {
+								getSettingsOverrides: () => Map< string, unknown >;
+						  } )
+						| undefined;
+
+					this.#settingsOverrides = new Map( [ ...( parentView?.getSettingsOverrides?.() ?? [] ) ] );
+
 					return resolveProps( {
 						props: settings,
 						signal,
+						overrides: this.#settingsOverrides,
 					} );
 				} )
 				.then( ( resolvedSettings ) => {
@@ -107,14 +122,12 @@ function createTemplatedElementViewClassDeclaration( {
 						type,
 						settings: resolvedSettings,
 						base_styles: baseStylesDictionary,
-						Children
+						Children,
 					};
 
 					return renderer.render( templateKey, context );
 				} )
 				.then( ( html ) => {
-					console.log('------------ templated html ------------');
-					console.log(html);
 					this.$el.html( html );
 				} );
 

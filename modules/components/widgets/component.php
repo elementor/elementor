@@ -1,8 +1,13 @@
 <?php
 namespace Elementor\Modules\Components\Widgets;
 
+use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Overrides_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -41,15 +46,23 @@ class Component extends Atomic_Widget_Base {
 	protected static function define_props_schema(): array {
 		return [
 			'component_id' => Number_Prop_Type::make(),
+			'__title' => Union_Prop_Type::create_from( String_Prop_Type::make() )
+				->add_prop_type( Overrides_Value_Prop_Type::make() ),
+//			'overrides' => OverridesPropType::make(), // Something like that!!
 		];
 	}
 
 	protected function define_atomic_controls(): array {
-		return [];
-	}
-
-	protected function get_settings_controls(): array {
-		return [];
+		return [
+			Section::make()
+				->set_label( __( 'Content', 'elementor' ) )
+				->set_items( [
+					Text_Control::bind_to( '__title' )
+						->set_label( esc_html__( 'Title', 'elementor' ) )
+						->set_description( esc_html__( 'Enter a title for this component', 'elementor' ) ),
+//					OverriedsControls::bind_to('overrides'), // Here it is!!
+				] ),
+		];
 	}
 
 	protected function content_template() {

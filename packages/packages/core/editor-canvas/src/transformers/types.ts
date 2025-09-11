@@ -3,6 +3,7 @@ export type UnbrandedTransformer< TValue > = (
 	options: {
 		key: string;
 		signal?: AbortSignal;
+		overrides: Map< string, unknown >;
 	}
 ) => unknown;
 
