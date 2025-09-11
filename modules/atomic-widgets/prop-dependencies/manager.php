@@ -36,6 +36,7 @@ class Manager {
 	 *             operator: string,
 	 *             path: array<string>,
 	 *             value?: mixed,
+	 *             onTermUnmet?: mixed
 	 *         }
 	 *     }
 	 */
@@ -70,6 +71,7 @@ class Manager {
 	 *  operator: string,
 	 *  path: array<string>,
 	 *  value?: mixed,
+	 *  on_term_unmet?: mixed,
 	 * }
 	 * @return self
 	 */
@@ -86,6 +88,7 @@ class Manager {
 			'operator' => $config['operator'],
 			'path' => $config['path'],
 			'value' => $config['value'] ?? null,
+			'onTermUnmet' => $config['on_term_unmet'] ?? null
 		];
 
 		if ( empty( $this->dependencies ) ) {

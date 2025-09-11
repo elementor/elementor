@@ -1,10 +1,12 @@
 import {
+	type DependencyTerm,
 	extractValue,
 	isDependencyMet,
 	type PropsSchema,
 	type PropType,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
+import { getSessionStorageItem, removeSessionStorageItem, setSessionStorageItem } from '@elementor/session';
 
 type Value = TransformablePropValue< string > | null;
 
@@ -65,7 +67,8 @@ export function updateValues(
 	values: Values,
 	dependencies: string[],
 	propsSchema: PropsSchema,
-	elementValues: Values
+	elementValues: Values,
+	elementId: string
 ): Values {
 	if ( ! dependencies.length ) {
 		return values;
@@ -81,10 +84,39 @@ export function updateValues(
 				return newValues;
 			}
 
-			if ( ! isDependencyMet( propType?.dependencies, combinedValues ) ) {
+			const testDependencies = {
+				previousValues: isDependencyMet( propType.dependencies, elementValues ),
+				newValues: isDependencyMet( propType.dependencies, combinedValues ),
+			};
+
+			if ( ! testDependencies.newValues.isMet ) {
+				const newValue =
+					testDependencies.newValues.failingDependencies.find( ( term ) => term.onTermUnmet?.setValue )
+						?.onTermUnmet?.setValue ?? null;
+
+				const currentValue =
+					extractValue( dependency.split( '.' ), elementValues ) ?? ( propType.default as Value );
+
+				savePreviousValueToStorage( {
+					path: dependency,
+					elementId,
+					value: currentValue,
+				} );
+
 				return {
 					...newValues,
-					...updateValue( path, null, combinedValues ),
+					...updateValue( path, newValue, combinedValues ),
+				};
+			}
+
+			if ( ! testDependencies.previousValues.isMet ) {
+				const savedValue = retrievePreviousValueFromStorage< Value >( { path: dependency, elementId } );
+
+				removePreviousValueFromStorage( { path: dependency, elementId } );
+
+				return {
+					...newValues,
+					...updateValue( path, savedValue ?? ( propType.default as Value ), combinedValues ),
 				};
 			}
 
@@ -144,7 +176,7 @@ function updateValue( path: string[], value: Value, values: Values ) {
 		}
 
 		if ( index === path.length - 1 ) {
-			carry[ key ] = value !== null ? ( { ...( carry[ key ] ?? {} ), value } as Value ) : null;
+			carry[ key ] = value ?? null;
 
 			return ( carry[ key ]?.value as Values ) ?? carry.value;
 		}
@@ -153,4 +185,31 @@ function updateValue( path: string[], value: Value, values: Values ) {
 	}, newValue );
 
 	return { [ topPropKey ]: newValue[ topPropKey ] ?? null };
+}
+
+function savePreviousValueToStorage( { path, elementId, value }: { path: string; elementId: string; value: unknown } ) {
+	const prefix = `elementor/${ elementId }`;
+	const savedValue = retrievePreviousValueFromStorage( { path, elementId } );
+
+	if ( savedValue ) {
+		return;
+	}
+
+	const key = `${ prefix }:${ path }`;
+
+	setSessionStorageItem( key, value );
+}
+
+function retrievePreviousValueFromStorage< T >( { path, elementId }: { path: string; elementId: string } ) {
+	const prefix = `elementor/${ elementId }`;
+	const key = `${ prefix }:${ path }`;
+
+	return getSessionStorageItem< T >( key ) ?? null;
+}
+
+function removePreviousValueFromStorage( { path, elementId }: { path: string; elementId: string } ) {
+	const prefix = `elementor/${ elementId }`;
+	const key = `${ prefix }:${ path }`;
+
+	removeSessionStorageItem( key );
 }

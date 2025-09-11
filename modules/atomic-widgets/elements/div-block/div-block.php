@@ -47,6 +47,12 @@ class Div_Block extends Atomic_Element_Base {
 			->where( [
 				'operator' => 'not_exist',
 				'path' => [ 'link', 'destination' ],
+				'on_term_unmet' => [
+					'setValue' => [
+						'$$type' => 'string',
+						'value' => 'a (link)',
+					]
+				],
 			] )
 			->get();
 
@@ -54,7 +60,7 @@ class Div_Block extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tag' => String_Prop_Type::make()
-				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a (link)' ] )
 				->default( 'div' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
