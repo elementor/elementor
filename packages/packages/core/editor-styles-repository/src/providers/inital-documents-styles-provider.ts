@@ -3,7 +3,7 @@ import { __getState as getState, __subscribeWithSelector as subscribeWithSelecto
 import { selectFlatData, SLICE_NAME } from '../store/initial-documents-styles-store';
 import { createStylesProvider } from '../utils/create-styles-provider';
 
-export const InitialDocumentsStylesProvider = createStylesProvider( {
+export const initialDocumentsStylesProvider = createStylesProvider( {
 	key: 'initial-documents-styles',
 	priority: 100,
 	subscribe: ( cb ) =>
