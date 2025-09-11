@@ -31,8 +31,9 @@ export {
 	isRouteActive as __privateIsRouteActive,
 	isExperimentActive,
 	EXPERIMENTAL_FEATURES,
-	getDocumentConfig,
 } from './readers';
+
+export { ajax } from './ajax';
 
 export { undoable } from './undoable';
 

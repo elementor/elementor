@@ -1,8 +1,9 @@
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
-import { getDocumentConfig } from '@elementor/editor-v1-adapters';
+
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { selectData, slice } from './initial-documents-styles-store';
+import { load } from './document-config';
 
 type InitialDocumentId = number;
 
@@ -24,7 +25,7 @@ export async function addInitialDocumentStyles( ids: InitialDocumentId[] ) {
 }
 
 async function fetchDocumentStyleDefinitions( id: number ): Promise< StyleDefinition[] > {
-	const config = ( await getDocumentConfig( id ) ) as Element;
+	const config = ( await load( id ) ) as Element;
 
 	return extractStyles( config );
 }
@@ -32,3 +33,4 @@ async function fetchDocumentStyleDefinitions( id: number ): Promise< StyleDefini
 function extractStyles( element: Element ): Array< StyleDefinition > {
 	return [ ...Object.values( element.styles ?? {} ), ...( element.elements ?? [] ).flatMap( extractStyles ) ];
 }
+
