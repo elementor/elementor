@@ -33,9 +33,9 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 	return (
 		<ListItemButton shape="rounded" sx={ { 
 			border: 'solid 1px',
-			 borderColor: 'divider', py: 0.5, px: 1, height: '36px' } }> 
-			<Box sx={ { display: 'flex', width: '100%', alignItems: 'center', gap: 1 } } onClick={ handleClick }>
-				<ListItemIcon size="tiny">
+			 borderColor: 'divider', pl:1, pr:0,  py: 0.5, height: '36px' } }> 
+			<Box sx={ { display: 'flex', width: '100%', alignItems: 'center' } } onClick={ handleClick }>
+				<ListItemIcon size="tiny" sx={ { color: 'text.primary' } }>
 					<EyeIcon fontSize="small" />
 				</ListItemIcon>
 				<ListItemText 
@@ -47,7 +47,7 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 				/>
 			</Box>
 			<IconButton size="tiny" aria-label="More actions" { ...bindTrigger( popupState ) }>
-				<DotsVerticalIcon fontSize="small" />
+				<DotsVerticalIcon fontSize="tiny" />
 			</IconButton>
 			<Menu
 				{ ...bindMenu( popupState ) }
