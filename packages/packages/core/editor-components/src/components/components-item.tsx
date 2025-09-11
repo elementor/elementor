@@ -36,9 +36,9 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 			 borderColor: 'divider', py: 0.5, px: 1, height: '36px' } }> 
 			<Box sx={ { display: 'flex', width: '100%', alignItems: 'center', gap: 1 } } onClick={ handleClick }>
 				<ListItemIcon size="tiny">
-					<EyeIcon fontSize="tiny" />
+					<EyeIcon fontSize="small" />
 				</ListItemIcon>
-				<ListItemText
+				<ListItemText 
 					primary={
 						<Typography variant="caption" sx={ { color: 'text.primary' } }>
 							{ component.name }
@@ -47,7 +47,7 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 				/>
 			</Box>
 			<IconButton size="tiny" aria-label="More actions" { ...bindTrigger( popupState ) }>
-				<DotsVerticalIcon fontSize="tiny" />
+				<DotsVerticalIcon fontSize="small" />
 			</IconButton>
 			<Menu
 				{ ...bindMenu( popupState ) }

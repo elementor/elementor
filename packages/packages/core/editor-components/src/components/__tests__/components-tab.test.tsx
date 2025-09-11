@@ -327,7 +327,7 @@ describe( 'ComponentsList', () => {
 			expect( screen.queryByText( 'Header Component' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Footer Component' ) ).not.toBeInTheDocument();
 		} );
-
+ 
 		it( 'should show all components when search is empty', () => {
 			// Mock empty search
 			mockUseSearch.mockReturnValue( {

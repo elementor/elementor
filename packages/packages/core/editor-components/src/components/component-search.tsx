@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { SearchIcon } from '@elementor/icons';
 import { Box, InputAdornment, Stack, TextField } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
 import { useSearch } from '@elementor/utils';
+import { __ } from '@wordpress/i18n';
 
 export const ComponentSearch = () => {
-	const {inputValue, handleChange
-} = useSearch();
+	const { inputValue, handleChange } = useSearch();
 
 	return (
 		<Stack direction="row" gap={ 0.5 } sx={ { width: '100%', px: 2, py: 1.5 } }>
@@ -21,7 +20,7 @@ export const ComponentSearch = () => {
 					InputProps={ {
 						startAdornment: (
 							<InputAdornment position="start">
-								<SearchIcon fontSize={ 'tiny' } />
+								<SearchIcon fontSize={ 'small' } />
 							</InputAdornment>
 						),
 					} }
