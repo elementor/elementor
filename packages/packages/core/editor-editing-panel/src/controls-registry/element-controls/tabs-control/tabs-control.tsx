@@ -22,7 +22,7 @@ import {
 	removeItem,
 	TAB_ELEMENT_TYPE,
 	TAB_PANEL_ELEMENT_TYPE,
-	type TabsPropValue,
+	type TabItem,
 } from './actions';
 
 export const TabsControl = () => {
@@ -34,7 +34,7 @@ export const TabsControl = () => {
 
 	const tabLinks = values[ TAB_ELEMENT_TYPE ] ?? [];
 
-	const repeaterValues: RepeaterItem< TabsPropValue >[] = tabLinks.map( ( tabLink ) => {
+	const repeaterValues: RepeaterItem< TabItem >[] = tabLinks.map( ( tabLink ) => {
 		const { title: titleSetting } = getElementEditorSettings( tabLink.id ) ?? {};
 
 		return {
@@ -44,9 +44,9 @@ export const TabsControl = () => {
 	} );
 
 	const setValue = (
-		_newValues: RepeaterItem< TabsPropValue >[],
+		_newValues: RepeaterItem< TabItem >[],
 		_options: CreateOptions,
-		meta?: SetRepeaterValuesMeta< RepeaterItem< TabsPropValue > >
+		meta?: SetRepeaterValuesMeta< RepeaterItem< TabItem > >
 	) => {
 		if ( meta?.action?.type === 'add' ) {
 			const items = meta.action.payload;
@@ -69,12 +69,19 @@ export const TabsControl = () => {
 		if ( meta?.action?.type === 'reorder' ) {
 			const { from, to } = meta.action.payload;
 
-			return moveItem( { from, to, tabListId: tabList.id, tabContentId: tabContent.id, tabLinks } );
+			return moveItem( {
+				toIndex: to,
+				tabListId: tabList.id,
+				tabContentId: tabContent.id,
+				movedElementId: tabLinks[ from ].id,
+			} );
 		}
 	};
 
 	return (
 		<Repeater
+			addToBottom
+			showToggle={ false }
 			openOnAdd={ false }
 			values={ repeaterValues }
 			setValues={ setValue }
@@ -97,7 +104,7 @@ export const TabsControl = () => {
 	);
 };
 
-const ItemLabel = ( { value }: { value: TabsPropValue } ) => {
+const ItemLabel = ( { value }: { value: TabItem } ) => {
 	const id = value.id ?? '';
 
 	const editorSettings = useElementEditorSettings( id );
@@ -157,7 +164,7 @@ const ItemContent = () => {
 	);
 };
 
-const ElementItem = ( { children, value }: { children: React.ReactNode; value: TabsPropValue } ) => {
+const ElementItem = ( { children, value }: { children: React.ReactNode; value: TabItem } ) => {
 	const elementType = useElementType( TAB_ELEMENT_TYPE );
 
 	if ( ! elementType ) {

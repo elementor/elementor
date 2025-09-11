@@ -2,7 +2,6 @@ import { type ItemActionPayload } from '@elementor/editor-controls';
 import {
 	createElements,
 	duplicateElements,
-	type ElementModel,
 	generateElementId,
 	getElementSetting,
 	moveElements,
@@ -12,7 +11,7 @@ import {
 import { stringPropTypeUtil, type StringPropValue } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 
-export type TabsPropValue = {
+export type TabItem = {
 	id?: string;
 	title?: string;
 };
@@ -20,7 +19,7 @@ export type TabsPropValue = {
 export const TAB_ELEMENT_TYPE = 'e-tab';
 export const TAB_PANEL_ELEMENT_TYPE = 'e-tab-panel';
 
-export const duplicateItem = ( { items }: { items: ItemActionPayload< TabsPropValue > } ) => {
+export const duplicateItem = ( { items }: { items: ItemActionPayload< TabItem > } ) => {
 	items.forEach( ( { item } ) => {
 		const tabId = item.id as string;
 
@@ -34,15 +33,22 @@ export const duplicateItem = ( { items }: { items: ItemActionPayload< TabsPropVa
 			elementIds: [ tabId, tabPanelId ],
 			title: __( 'Duplicate Tab', 'elementor' ),
 			onCreate: ( duplicatedElements ) => {
-				const tabsLink = duplicatedElements.find( ( element ) => element.originalElementId === tabId );
-				const tabsPanel = duplicatedElements.find( ( element ) => element.originalElementId === tabPanelId );
+				const tab = duplicatedElements.find( ( element ) => element.originalElementId === tabId );
+				const tabPanel = duplicatedElements.find( ( element ) => element.originalElementId === tabPanelId );
 
-				if ( tabsPanel && tabsLink ) {
+				if ( tabPanel && tab ) {
 					updateElementSettings( {
 						withHistory: false,
-						id: tabsLink.id,
+						id: tab.id,
 						props: {
-							'tab-panel-id': stringPropTypeUtil.create( tabsPanel.id ),
+							'tab-panel-id': stringPropTypeUtil.create( tabPanel.id ),
+						},
+					} );
+					updateElementSettings( {
+						withHistory: false,
+						id: tabPanel.id,
+						props: {
+							'tab-id': stringPropTypeUtil.create( tab.id ),
 						},
 					} );
 				}
@@ -52,20 +58,16 @@ export const duplicateItem = ( { items }: { items: ItemActionPayload< TabsPropVa
 };
 
 export const moveItem = ( {
-	from,
-	to,
+	toIndex,
 	tabListId,
-	tabLinks,
 	tabContentId,
+	movedElementId,
 }: {
-	from: number;
-	to: number;
+	toIndex: number;
 	tabListId: string;
-	tabLinks: ElementModel[];
 	tabContentId: string;
+	movedElementId: string;
 } ) => {
-	const movedElementId = tabLinks[ from ].id;
-
 	const { value: tabPanelId } = getElementSetting< StringPropValue >( movedElementId, 'tab-panel-id' ) ?? {};
 
 	if ( ! tabPanelId ) {
@@ -78,18 +80,18 @@ export const moveItem = ( {
 			{
 				elementId: movedElementId,
 				targetContainerId: tabListId,
-				options: { at: to },
+				options: { at: toIndex },
 			},
 			{
 				elementId: tabPanelId,
 				targetContainerId: tabContentId,
-				options: { at: to },
+				options: { at: toIndex },
 			},
 		],
 	} );
 };
 
-export const removeItem = ( { items }: { items: ItemActionPayload< TabsPropValue > } ) => {
+export const removeItem = ( { items }: { items: ItemActionPayload< TabItem > } ) => {
 	removeElements( {
 		title: __( 'Tabs', 'elementor' ),
 		elementIds: items.flatMap( ( { item } ) => {
@@ -112,10 +114,11 @@ export const addItem = ( {
 }: {
 	tabContentId: string;
 	tabListId: string;
-	items: ItemActionPayload< TabsPropValue >;
+	items: ItemActionPayload< TabItem >;
 } ) => {
-	items.forEach( ( { item } ) => {
+	items.forEach( ( { item, index } ) => {
 		const newTabPanelId = generateElementId();
+		const newTabId = generateElementId();
 
 		createElements( {
 			title: __( 'Tabs', 'elementor' ),
@@ -125,16 +128,21 @@ export const addItem = ( {
 					model: {
 						id: newTabPanelId,
 						elType: TAB_PANEL_ELEMENT_TYPE,
+						settings: {
+							'tab-id': stringPropTypeUtil.create( newTabId ),
+						},
 					},
 				},
 				{
 					containerId: tabListId,
 					model: {
+						id: newTabId,
 						elType: TAB_ELEMENT_TYPE,
 						settings: {
 							...item,
 							'tab-panel-id': stringPropTypeUtil.create( newTabPanelId ),
 						},
+						editor_settings: { title: `Tab #${ index + 1 }` },
 					},
 				},
 			],
