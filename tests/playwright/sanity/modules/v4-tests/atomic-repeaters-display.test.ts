@@ -9,7 +9,6 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 	let context: BrowserContext;
 	let page: Page;
 
-
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		page = await context.newPage();
@@ -29,7 +28,7 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 	repeaterControls.forEach( ( contorl ) => {
 		let containerId: string;
 
-		test.only( `repeater control ${ contorl } stability`, async () => {
+		test( `repeater control ${ contorl } stability`, async () => {
 			editor = await wpAdmin.openNewPage();
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
@@ -46,6 +45,5 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 
 			await expect.soft( parentDiv ).toHaveScreenshot('transform-parent-' + controlName + '.png');
 		} );
-
 	} );
 } );
