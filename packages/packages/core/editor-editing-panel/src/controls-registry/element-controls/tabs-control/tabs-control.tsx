@@ -8,8 +8,7 @@ import {
 	useElementType,
 } from '@elementor/editor-elements';
 import { type CreateOptions } from '@elementor/editor-props';
-import { EditableField, useEditable } from '@elementor/editor-ui';
-import { Stack } from '@elementor/ui';
+import { Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ElementProvider, useElement } from '../../../contexts/element-context';
@@ -125,41 +124,19 @@ const ItemContent = () => {
 
 	const label = editorSettings?.title ?? '';
 
-	const {
-		ref,
-		openEditMode,
-		error,
-		getProps: getEditableProps,
-	} = useEditable( {
-		value: label,
-		onSubmit: ( newValue ) => {
-			updateElementEditorSettings( {
-				elementId: element.id,
-				settings: {
-					title: newValue,
-				},
-			} );
-		},
-	} );
-
 	return (
 		<Stack p={ 2 }>
 			<ControlFormLabel sx={ { mb: 1 } }>{ __( 'Tab name', 'elementor' ) }</ControlFormLabel>
-			<Stack
-				onClick={ openEditMode }
-				justifyContent="center"
-				sx={ {
-					mb: 1.5,
-					width: '100%',
-					height: 28,
-					borderRadius: 1,
-					border: '1px solid',
-					borderColor: 'divider',
-					px: 1,
+			<TextField
+				value={ label }
+				size="tiny"
+				onChange={ ( { target }: React.ChangeEvent< HTMLInputElement > ) => {
+					updateElementEditorSettings( {
+						elementId: element.id,
+						settings: { title: target.value },
+					} );
 				} }
-			>
-				<EditableField { ...getEditableProps() } value={ label } error={ error } ref={ ref } />
-			</Stack>
+			/>
 		</Stack>
 	);
 };

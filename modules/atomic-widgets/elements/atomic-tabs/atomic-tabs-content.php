@@ -91,14 +91,7 @@ class Atomic_Tabs_Content extends Atomic_Element_Base {
 	}
 
 	protected function define_default_children() {
-		return [
-			Atomic_Tab_Panel::generate()
-				->is_locked( true )
-				->build(),
-			Atomic_Tab_Panel::generate()
-				->is_locked( true )
-				->build(),
-		];
+		return [];
 	}
 
 	protected function add_render_attributes() {
