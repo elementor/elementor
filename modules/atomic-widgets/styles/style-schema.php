@@ -225,6 +225,24 @@ class Style_Schema {
 
 	private static function get_effects_props() {
 		return [
+			'mix-blend-mode' => String_Prop_Type::make()->enum( [
+				'normal',
+				'multiply',
+				'screen',
+				'overlay',
+				'darken',
+				'lighten',
+				'color-dodge',
+				'saturation',
+				'color',
+				'difference',
+				'exclusion',
+				'hue',
+				'luminosity',
+				'soft-light',
+				'hard-light',
+				'color-burn',
+			] ),
 			'box-shadow' => Box_Shadow_Prop_Type::make(),
 			'opacity' => Size_Prop_Type::make()
 				->units( Size_Constants::opacity() )

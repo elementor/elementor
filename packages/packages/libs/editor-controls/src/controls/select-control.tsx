@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { stringPropTypeUtil, type StringPropValue } from '@elementor/editor-props';
 import { MenuListItem } from '@elementor/editor-ui';
-import { Select, type SelectChangeEvent, Typography } from '@elementor/ui';
+import { Select, type SelectChangeEvent, type SelectProps, Typography } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
@@ -16,9 +16,10 @@ export type SelectOption = {
 type Props = {
 	options: SelectOption[];
 	onChange?: ( newValue: string | null, previousValue: string | null | undefined ) => void;
+	MenuProps?: SelectProps[ 'MenuProps' ];
 };
 
-export const SelectControl = createControl( ( { options, onChange }: Props ) => {
+export const SelectControl = createControl( ( { options, onChange, MenuProps }: Props ) => {
 	const { value, setValue, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
 	const handleChange = ( event: SelectChangeEvent< StringPropValue[ 'value' ] > ) => {
 		const newValue = event.target.value || null;
@@ -33,6 +34,7 @@ export const SelectControl = createControl( ( { options, onChange }: Props ) => 
 				sx={ { overflow: 'hidden' } }
 				displayEmpty
 				size="tiny"
+				MenuProps={ MenuProps }
 				renderValue={ ( selectedValue: string | null ) => {
 					const findOptionByValue = ( searchValue: string | null ) =>
 						options.find( ( opt ) => opt.value === searchValue );
