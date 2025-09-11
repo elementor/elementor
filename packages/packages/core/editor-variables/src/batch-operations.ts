@@ -47,7 +47,9 @@ export const buildOperationsArray = (
 				} );
 			} else if (
 				! variable.deleted &&
-				( original.label !== variable.label || original.value !== variable.value )
+				( original.label !== variable.label ||
+					original.value !== variable.value ||
+					original.order !== variable.order )
 			) {
 				operations.push( {
 					type: 'update',
@@ -55,6 +57,7 @@ export const buildOperationsArray = (
 					variable: {
 						...( original.label !== variable.label && { label: variable.label } ),
 						...( original.value !== variable.value && { value: variable.value } ),
+						...( original.order !== variable.order && { order: variable.order } ),
 					},
 				} );
 			}
