@@ -100,6 +100,11 @@ class Rest_Api {
 					'validate_callback' => [ $this, 'is_valid_variable_value' ],
 					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
+				'order' => [
+					'required' => false,
+					'type' => 'integer',
+					'validate_callback' => [ $this, 'is_valid_order' ],
+				],
 			],
 		] );
 
@@ -214,6 +219,17 @@ class Rest_Api {
 		return true;
 	}
 
+	public function is_valid_order( $order ) {
+		if ( ! is_numeric( $order ) || $order < 0 ) {
+			return new WP_Error(
+				'invalid_order',
+				__( 'Order must be a non-negative integer', 'elementor' )
+			);
+		}
+
+		return true;
+	}
+
 	public function is_valid_variable_value( $value ) {
 		$value = trim( $value );
 
@@ -278,11 +294,18 @@ class Rest_Api {
 		$id = $request->get_param( 'id' );
 		$label = $request->get_param( 'label' );
 		$value = $request->get_param( 'value' );
+		$order = $request->get_param( 'order' );
 
-		$result = $this->variables_repository->update( $id, [
+		$update_data = [
 			'label' => $label,
 			'value' => $value,
-		] );
+		];
+
+		if ( null !== $order ) {
+			$update_data['order'] = $order;
+		}
+
+		$result = $this->variables_repository->update( $id, $update_data );
 
 		$this->clear_cache();
 
@@ -360,7 +383,7 @@ class Rest_Api {
 		$db_record = $this->variables_repository->load();
 
 		return $this->success_response( [
-			'variables' => $db_record['data'],
+			'variables' => $db_record['data'] ?? [],
 			'total' => count( $db_record['data'] ),
 			'watermark' => $db_record['watermark'],
 		] );
@@ -426,6 +449,7 @@ class Rest_Api {
 		return true;
 	}
 
+
 	public function is_valid_operations_array( $operations ) {
 		if ( ! is_array( $operations ) || empty( $operations ) ) {
 			return new WP_Error(
@@ -446,7 +470,7 @@ class Rest_Api {
 				);
 			}
 
-			$allowed_types = [ 'create', 'update', 'delete', 'restore' ];
+			$allowed_types = [ 'create', 'update', 'delete', 'restore', 'reorder' ];
 
 			if ( ! in_array( $operation['type'], $allowed_types, true ) ) {
 				return new WP_Error(
@@ -481,6 +505,7 @@ class Rest_Api {
 
 		return $this->success_response( $result );
 	}
+
 
 	private function batch_error_response( Exception $e ) {
 		if ( $e instanceof BatchOperationFailed ) {
