@@ -15,6 +15,7 @@ import {
 	Infotip,
 	Stack,
 	styled,
+	ThemeProvider,
 	Typography,
 } from '@elementor/ui';
 import { type OpenOptions, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
@@ -153,7 +154,7 @@ export const SvgMediaControl = createControl( () => {
 							>
 								{ __( 'Select SVG', 'elementor' ) }
 							</Button>
-							{ canManageOptions ? (
+							{ ! canManageOptions ? (
 								<Button
 									size="tiny"
 									variant="text"
@@ -166,9 +167,17 @@ export const SvgMediaControl = createControl( () => {
 							) : (
 								<Infotip placement="right" content={ infotipContent } color={ 'secondary' }>
 									<span>
-										<Button size="tiny" variant="text" color="inherit" startIcon={ <UploadIcon /> }>
-											{ __( 'Upload', 'elementor' ) }
-										</Button>
+										<ThemeProvider colorScheme={ 'dark' }>
+											<Button
+												disabled="true"
+												size="tiny"
+												variant="text"
+												color="inherit"
+												startIcon={ <UploadIcon /> }
+											>
+												{ __( 'Upload', 'elementor' ) }
+											</Button>
+										</ThemeProvider>
 									</span>
 								</Infotip>
 							) }

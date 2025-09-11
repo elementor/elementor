@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import {
 	Button,
 	CircularProgress,
