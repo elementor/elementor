@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { dropElement } from '@elementor/editor-elements';
+import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
+import { dropElement, type DropElementParams } from '@elementor/editor-elements';
 import { MenuListItem } from '@elementor/editor-ui';
 import { DotsVerticalIcon, EyeIcon } from '@elementor/icons';
 import {
@@ -21,17 +22,25 @@ import { getContainerForNewElement } from '../utils/get-container-for-new-elemen
 import { createComponentModel } from './create-component-form/utils/replace-element-with-component';
 
 export const ComponentItem = ( { component }: { component: Component } ) => {
+	const componentModel = createComponentModel( { id: component.id, name: component.name } );
+
 	const popupState = usePopupState( {
 		variant: 'popover',
 		disableAutoFocus: true,
 	} );
 
 	const handleClick = () => {
-		addComponentToPage( component );
+		addComponentToPage( componentModel );
 	};
 
 	return (
-		<ListItemButton shape="rounded" sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }>
+		<ListItemButton
+			draggable
+			onDragStart={ () => startDragElementFromPanel( componentModel ) }
+			onDragEnd={ endDragElementFromPanel }
+			shape="rounded"
+			sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }
+		>
 			<Box sx={ { display: 'flex', width: '100%', alignItems: 'center', gap: 1 } } onClick={ handleClick }>
 				<ListItemIcon size="tiny">
 					<EyeIcon fontSize="tiny" />
@@ -77,9 +86,8 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 	);
 };
 
-const addComponentToPage = ( component: Component ) => {
+const addComponentToPage = ( model: DropElementParams[ 'model' ] ) => {
 	const { container, options } = getContainerForNewElement();
-	const model = createComponentModel( component );
 
 	if ( ! container ) {
 		throw new Error( `Can't find container to drop new component instance at` );
