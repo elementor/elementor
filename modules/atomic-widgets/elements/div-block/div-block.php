@@ -51,7 +51,7 @@ class Div_Block extends Atomic_Element_Base {
 					'setValue' => [
 						'$$type' => 'string',
 						'value' => 'a (link)',
-					]
+					],
 				],
 			] )
 			->get();
