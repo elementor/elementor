@@ -13,5 +13,9 @@ export const trackEvent = < T extends { eventName: string } & Record< string, un
 };
 
 export const getMixpanel = () => {
-	return window.elementorCommon?.eventsManager || {};
+	const eventsManager = window.elementorCommon?.eventsManager || {};
+	return {
+		dispatchEvent: eventsManager.dispatchEvent?.bind( eventsManager ),
+		config: eventsManager.config,
+	};
 };
