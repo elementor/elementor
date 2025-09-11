@@ -94,11 +94,12 @@ export const SvgMediaControl = createControl( () => {
 					width: '320px',
 					p: '16px',
 				} }
+				size="small"
 				color="secondary"
 				icon={ <InfoCircleFilledIcon /> }
 			>
 				<AlertTitle>
-					<Typography variant="subtitle2">
+					<Typography variant="subtitle1">
 						{ __( "Sorry, you can't upload that file yet.", 'elementor' ) }
 					</Typography>
 				</AlertTitle>
@@ -155,20 +156,6 @@ export const SvgMediaControl = createControl( () => {
 								{ __( 'Select SVG', 'elementor' ) }
 							</Button>
 							{ canManageOptions ? (
-								<Infotip placement="right" content={ infotipContent() }>
-									<span>
-										<Button
-											disabled={true}
-											size="tiny"
-											variant="text"
-											color="inherit"
-											startIcon={ <UploadIcon /> }
-										>
-											{ __( 'Upload', 'elementor' ) }
-										</Button>
-									</span>
-								</Infotip>
-							) : (
 								<Button
 									size="tiny"
 									variant="text"
@@ -178,6 +165,14 @@ export const SvgMediaControl = createControl( () => {
 								>
 									{ __( 'Upload', 'elementor' ) }
 								</Button>
+							) : (
+								<Infotip placement="right" content={ infotipContent() } color={ 'secondary' }>
+									<span>
+										<Button size="tiny" variant="text" color="inherit" startIcon={ <UploadIcon /> }>
+											{ __( 'Upload', 'elementor' ) }
+										</Button>
+									</span>
+								</Infotip>
 							) }
 						</Stack>
 					</CardOverlay>
