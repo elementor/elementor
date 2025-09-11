@@ -1,10 +1,10 @@
-import { mainMenu } from '../../locations';
+import { toolsMenu } from '../../locations';
 import useActionProps from './hooks/use-action-props';
 
 export function init() {
-	mainMenu.registerToggleAction( {
+	toolsMenu.registerToggleAction( {
 		id: 'open-history',
-		priority: 20,
+		priority: 4,
 		useProps: useActionProps,
 	} );
 }
