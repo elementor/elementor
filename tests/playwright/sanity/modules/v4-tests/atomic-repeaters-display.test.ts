@@ -34,16 +34,16 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 			await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
 			await editor.openV2PanelTab( 'style' );
 			await editor.openV2Section( 'effects' );
-			
+
 			const controlRepeaterAdditionButton = page.getByRole( 'button', { name: `Add ${ contorl } item` } );
 			await editor.page.pause();
 			await controlRepeaterAdditionButton.click();
-			await page.locator('.MuiBackdrop-root').click();
+			await page.locator( '.MuiBackdrop-root' ).click();
 
 			const parentDiv = controlRepeaterAdditionButton.locator( '../../..' );
-			const controlName = contorl.trim().toLowerCase().replace(/\s+/g, "-")
+			const controlName = contorl.trim().toLowerCase().replace( /\s+/g, "-" );
 
-			await expect.soft( parentDiv ).toHaveScreenshot('transform-parent-' + controlName + '.png');
+			await expect.soft( parentDiv ).toHaveScreenshot( 'transform-parent-' + controlName + '.png' );
 		} );
 	} );
 } );
