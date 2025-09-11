@@ -46,9 +46,7 @@ const WAIT_FOR_CLOSE_TIMEOUT_MS = 300;
 
 export const EnableUnfilteredModal = ( props: EnableUnfilteredModalProps ) => {
 	const { mutateAsync, isPending } = useUpdateUnfilteredFilesUpload();
-	const { canUser } = useCurrentUserCapabilities();
 	const [ isError, setIsError ] = useState( false );
-	const canManageOptions = canUser( 'manage_options' );
 
 	const onClose = ( enabled: boolean ) => {
 		props.onClose( enabled );
