@@ -87,6 +87,14 @@ export default class Component extends ComponentBase {
 			return this.documents[ id ];
 		}
 
+		if ( this.isGlobalPanelCommand() ) {
+			const activeDocumentId = this.getActiveDocumentId();
+
+			if ( ! isNaN( activeDocumentId ) && parseInt( id ) === activeDocumentId ) {
+				return this.getMockDocument();
+			}
+		}
+
 		return false;
 	}
 
@@ -111,15 +119,42 @@ export default class Component extends ComponentBase {
 			id: activeDocumentId,
 			config: {
 				type: initialConfig.type || 'page',
+				status: initialConfig.status || { value: 'publish', label: 'Published' },
+				user: initialConfig.user || { can_publish: true },
+				revisions: initialConfig.revisions || { current_id: activeDocumentId },
 				panel: {
+					title: initialConfig.panel?.title || 'Page',
 					default_route: initialConfig.panel?.default_route || 'panel/elements/categories',
 					has_elements: initialConfig.panel?.has_elements !== false,
+					show_navigator: initialConfig.panel?.show_navigator !== false,
+					allow_adding_widgets: initialConfig.panel?.allow_adding_widgets !== false,
+					widgets_settings: initialConfig.panel?.widgets_settings || {},
+					elements_categories: initialConfig.panel?.elements_categories || {},
+					messages: initialConfig.panel?.messages || {},
+					show_copy_and_share: initialConfig.panel?.show_copy_and_share || false,
+					library_close_title: initialConfig.panel?.library_close_title || 'Close',
+					publish_button_title: initialConfig.panel?.publish_button_title || 'Publish',
+					allow_closing_remote_library: initialConfig.panel?.allow_closing_remote_library !== false,
 					...initialConfig.panel,
 				},
 				...initialConfig,
 			},
+			container: {
+				settings: {
+					get: ( key ) => {
+						if ( 'post_title' === key ) {
+							return initialConfig.title || 'Document';
+						}
+						return null;
+					},
+				},
+			},
 			$element: null,
-			editor: { status: 'loading' },
+			editor: {
+				status: 'loading',
+				isChanged: false,
+				isSaving: false,
+			},
 		};
 	}
 
@@ -129,10 +164,20 @@ export default class Component extends ComponentBase {
 		}
 
 		if ( this.isGlobalPanelCommand() ) {
+			this.ensureGlobalDocumentConfig();
 			return this.getMockDocument();
 		}
 
 		return null;
+	}
+
+	ensureGlobalDocumentConfig() {
+		if ( !! elementor?.config?.document ) {
+			return;
+		}
+
+		const mockDocument = this.getMockDocument();
+		elementor.config.document = mockDocument.config;
 	}
 
 	getCurrentId() {
