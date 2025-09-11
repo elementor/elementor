@@ -58,6 +58,7 @@ export function makeMockV1Document( {
 				all_post_type: `https://localhost/wp-admin/post.php`,
 				permalink: `https://localhost/?p=${ id }`,
 			},
+			elements: [],
 		},
 		editor: {
 			isChanged: false,

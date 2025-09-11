@@ -65,6 +65,7 @@ export type V1Document = {
 			main_dashboard: string;
 			all_post_type: string;
 		};
+		elements: unknown;
 	};
 	editor: {
 		isChanged: boolean;
