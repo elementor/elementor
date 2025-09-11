@@ -4,6 +4,7 @@ import {
 	type Element,
 	getElementEditorSettings,
 	updateElementEditorSettings,
+	useElementChildren,
 	useElementEditorSettings,
 	useElementType,
 } from '@elementor/editor-elements';
@@ -12,26 +13,22 @@ import { Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ElementProvider, useElement } from '../../../contexts/element-context';
-import { useElementsField } from '../../elements-field';
-import { useChildContainers } from '../ues-child-containers';
-import {
-	addItem,
-	duplicateItem,
-	moveItem,
-	removeItem,
-	TAB_ELEMENT_TYPE,
-	TAB_PANEL_ELEMENT_TYPE,
-	type TabItem,
-} from './actions';
+import { type ChildElement, getElementByType } from '../get-element-by-type';
+import { addItem, duplicateItem, moveItem, removeItem, TAB_ELEMENT_TYPE, type TabItem } from './actions';
 
-export const TabsControl = () => {
-	const { values } = useElementsField();
-	const { tabList, tabContent } = useChildContainers( {
-		tabList: TAB_ELEMENT_TYPE,
-		tabContent: TAB_PANEL_ELEMENT_TYPE,
-	} );
+const TAB_LIST_ELEMENT_TYPE = 'e-tabs-list';
+const TAB_CONTENT_ELEMENT_TYPE = 'e-tabs-content';
 
-	const tabLinks = values[ TAB_ELEMENT_TYPE ] ?? [];
+export const TabsControl = ( { childElements }: { childElements: ChildElement[] } ) => {
+	const { element } = useElement();
+
+	const { [ TAB_ELEMENT_TYPE ]: tabLinks } = useElementChildren(
+		element.id,
+		childElements.map( ( child ) => child.type )
+	);
+
+	const tabList = getElementByType( element.id, TAB_LIST_ELEMENT_TYPE );
+	const tabContent = getElementByType( element.id, TAB_CONTENT_ELEMENT_TYPE );
 
 	const repeaterValues: RepeaterItem< TabItem >[] = tabLinks.map( ( tabLink ) => {
 		const { title: titleSetting } = getElementEditorSettings( tabLink.id ) ?? {};
