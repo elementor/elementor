@@ -41,7 +41,7 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 			await page.locator( '.MuiBackdrop-root' ).click();
 
 			const parentDiv = controlRepeaterAdditionButton.locator( '../../..' );
-			const controlName = contorl.trim().toLowerCase().replace( /\s+/g, "-" );
+			const controlName = contorl.trim().toLowerCase().replace( /\s+/g, '-' );
 
 			await expect.soft( parentDiv ).toHaveScreenshot( 'transform-parent-' + controlName + '.png' );
 		} );
