@@ -6,6 +6,15 @@ import { renderHook } from '@testing-library/react';
 
 import useActionProps from '../use-action-props';
 
+jest.mock( '@elementor/editor-documents', () => ( {
+	__useActiveDocument: jest.fn( () => ( {
+		type: { value: 'page', label: 'Page' },
+	} ) ),
+	__useHostDocument: jest.fn( () => ( {
+		type: { value: 'page', label: 'Page' },
+	} ) ),
+} ) );
+
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	__privateOpenRoute: jest.fn(),
 	__privateUseRouteStatus: jest.fn( () => ( { isActive: true, isBlocked: true } ) ),
@@ -32,6 +41,38 @@ describe( '@elementor/editor-app-bar - useDocumentSettingsPanelActionProps', () 
 		expect( result.current.selected ).toBe( true );
 		expect( result.current.disabled ).toBe( true );
 		expect( useRouteStatus ).toHaveBeenCalledTimes( 1 );
-		expect( useRouteStatus ).toHaveBeenCalledWith( 'panel/elements' );
+		expect( useRouteStatus ).toHaveBeenCalledWith( 'panel/page-settings' );
+	} );
+
+	it( 'should handle no document gracefully', () => {
+		// Arrange.
+		const { __useActiveDocument, __useHostDocument } = require( '@elementor/editor-documents' );
+		__useActiveDocument.mockReturnValue( null );
+		__useHostDocument.mockReturnValue( null );
+
+		// Act.
+		const { result } = renderHook( () => useActionProps() );
+
+		// Assert.
+		expect( result.current.title ).toBe( 'Document Settings' );
+		expect( result.current.disabled ).toBe( true );
+	} );
+
+	it( 'should display document type in title when document is available', () => {
+		// Arrange.
+		const { __useActiveDocument, __useHostDocument } = require( '@elementor/editor-documents' );
+		__useActiveDocument.mockReturnValue( {
+			type: { value: 'page', label: 'Page' },
+		} );
+		__useHostDocument.mockReturnValue( {
+			type: { value: 'page', label: 'Page' },
+		} );
+
+		// Act.
+		const { result } = renderHook( () => useActionProps() );
+
+		// Assert.
+		expect( result.current.title ).toBe( 'Page Settings' );
+		expect( result.current.disabled ).toBe( true );
 	} );
 } );
