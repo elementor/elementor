@@ -9,15 +9,15 @@ export default {
 		attributeValue: 'selected',
 	},
 	elementsPanel: {
-		attribute: 'value',
+		attribute: 'aria-label',
 		attributeValue: 'Add Element',
 	},
-	documentSettings: {
-		attribute: 'value',
-		attributeValue: 'document-settings',
+	pageSettings: {
+		attribute: 'aria-label',
+		attributeValue: 'Page Settings',
 	},
 	siteSettings: {
-		attribute: 'value',
+		attribute: 'aria-label',
 		attributeValue: 'Site Settings',
 	},
 	saveOptions: {
