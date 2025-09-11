@@ -49,8 +49,33 @@ export default class extends BaseRegion {
 		};
 	}
 
+	isGlobalPanelCommand() {
+		const hash = window.location.hash;
+		return hash.includes( '#e:run:panel/global/open' );
+	}
+
+	getMockLayout() {
+		return {
+			elements: {
+				currentView: {
+					recursiveChildInvoke: () => {},
+				},
+			},
+			activateElementsMouseInteraction: () => {},
+			deactivateElementsMouseInteraction: () => {},
+		};
+	}
+
 	getLayout() {
-		return this.currentView;
+		if ( this.currentView ) {
+			return this.currentView;
+		}
+
+		if ( this.isGlobalPanelCommand() ) {
+			return this.getMockLayout();
+		}
+
+		return undefined;
 	}
 
 	getDraggableOptions() {

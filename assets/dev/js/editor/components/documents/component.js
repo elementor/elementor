@@ -3,6 +3,7 @@ import Document from './document';
 import * as commands from './commands/';
 import * as internalCommands from './commands/internal/';
 import * as hooks from './hooks';
+import { getQueryParam } from 'elementor-editor-utils/query-params';
 
 export default class Component extends ComponentBase {
 	__construct( args = {} ) {
@@ -89,26 +90,67 @@ export default class Component extends ComponentBase {
 		return false;
 	}
 
-	/**
-	 * Function getCurrent().
-	 *
-	 * Return's current document.
-	 *
-	 * @return {Document} document
-	 */
-	getCurrent() {
-		return this.currentDocument;
+	isGlobalPanelCommand() {
+		const hash = window.location.hash;
+		const globalPanelHashes = [
+			'#e:run:panel/global/open',
+		];
+
+		return globalPanelHashes.some( ( panelHash ) => hash.includes( panelHash ) );
 	}
 
-	/**
-	 * Function getCurrentId().
-	 *
-	 * Return's current document id.
-	 *
-	 * @return {number} document id
-	 */
+	getActiveDocumentId() {
+		return parseInt( getQueryParam( 'active-document' ) );
+	}
+
+	getMockDocument() {
+		const initialConfig = elementor.config.initial_document || {};
+		const activeDocumentId = this.getActiveDocumentId() || initialConfig?.id || 1;
+
+		return {
+			id: activeDocumentId,
+			config: {
+				type: initialConfig.type || 'page',
+				panel: {
+					default_route: initialConfig.panel?.default_route || 'panel/elements/categories',
+					has_elements: initialConfig.panel?.has_elements !== false,
+					...initialConfig.panel,
+				},
+				...initialConfig,
+			},
+			$element: null,
+			editor: { status: 'loading' },
+		};
+	}
+
+	getCurrent() {
+		if ( this.currentDocument ) {
+			return this.currentDocument;
+		}
+
+		if ( this.isGlobalPanelCommand() ) {
+			return this.getMockDocument();
+		}
+
+		return null;
+	}
+
 	getCurrentId() {
-		return this.currentDocument.id;
+		if ( this.currentDocument ) {
+			return this.currentDocument.id;
+		}
+
+		if ( ! this.isGlobalPanelCommand() ) {
+			return null;
+		}
+
+		const activeDocumentId = this.getActiveDocumentId();
+
+		if ( ! isNaN( activeDocumentId ) ) {
+			return activeDocumentId;
+		}
+
+		return this.getInitialId();
 	}
 
 	getInitialId() {
@@ -149,7 +191,8 @@ export default class Component extends ComponentBase {
 	}
 
 	isCurrent( id ) {
-		return parseInt( id ) === this.currentDocument.id;
+		const currentId = this.getCurrentId();
+		return currentId ? parseInt( id ) === currentId : false;
 	}
 
 	unsetCurrent() {
