@@ -8,5 +8,16 @@ export type ExtendedWindow = Window & {
 		config?: {
 			experimentalFeatures?: Record< string, boolean >;
 		};
+		ajax?: {
+			load: ( data: {
+				action: string;
+				unique_id: string;
+				data: {
+					id: number;
+				};
+				success: ( result: unknown ) => void;
+				error: ( error: unknown ) => void;
+			} ) => Promise< unknown >;
+		};
 	};
 };

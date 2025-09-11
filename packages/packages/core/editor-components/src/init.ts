@@ -1,5 +1,5 @@
 import { injectIntoTop } from '@elementor/editor';
-import { getCurrentDocumentId } from '@elementor/editor-elements';
+import { getCurrentDocumentId, V1ElementModelProps, V1ElementSettingsProps } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { type NumberPropValue } from '@elementor/editor-props';
 import { addInitialDocumentStyles, removeInitialDocumentStyles } from '@elementor/editor-styles-repository';
@@ -8,6 +8,14 @@ import { __ } from '@wordpress/i18n';
 
 import { ComponentsTab } from './components/components-tab';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
+import { ExtendedWindow } from './types';
+
+type Element = V1ElementModelProps & {
+	elements?: Element[];
+	settings?: V1ElementSettingsProps & {
+		component_id?: NumberPropValue;
+	};
+};
 
 export function init() {
 	injectTab( {
@@ -22,21 +30,13 @@ export function init() {
 	} );
 
 	registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
-		const elements = elementor.documents.currentDocument.config.elements as Element[];
+		const extendedWindow = window as unknown as ExtendedWindow;
+		const elements = extendedWindow.elementor.documents.currentDocument.config.elements as Element[];
 
 		const componentIds = new Set( getComponentIds( elements ) );
 
 		await addInitialDocumentStyles( Array.from( componentIds ) );
 	} );
-
-	type Element = {
-		elements?: Element[];
-		widgetType?: string;
-		elType?: string;
-		settings?: {
-			component_id?: NumberPropValue;
-		};
-	};
 
 	const getComponentIds = ( elements: Element[] ) => {
 		return elements.flatMap( ( element ) => {

@@ -2,8 +2,14 @@ import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { selectData, slice } from './initial-documents-styles-store';
+import { getDocumentConfig } from '@elementor/editor-v1-adapters';
 
 type InitialDocumentId = number;
+
+type Element = {
+	elements: Array< Element >;
+	styles?: Record< StyleDefinitionID, StyleDefinition >;
+};
 
 export async function addInitialDocumentStyles( ids: InitialDocumentId[] ) {
 	const data = selectData( getState() );
@@ -17,30 +23,11 @@ export async function addInitialDocumentStyles( ids: InitialDocumentId[] ) {
 	dispatch( slice.actions.add( Object.fromEntries( entries ) ) );
 }
 
-function fetchDocumentStyleDefinitions( id: number ): Promise< StyleDefinition[] > {
-	return new Promise( ( resolve, reject ) => {
-		window.elementorCommon.ajax.load( {
-			action: 'get_document_config',
-			unique_id: `document-styles-${ id }`,
-			data: { id },
-			success: ( result: Element ) => {
-				try {
-					resolve( extractStyles( result ) );
-				} catch ( error ) {
-					reject( error );
-				}
-			},
-			error: ( error: unknown ) => {
-				reject( error );
-			},
-		} );
-	} );
-}
+async function fetchDocumentStyleDefinitions( id: number ): Promise< StyleDefinition[] > {
+	const config = await getDocumentConfig( id ) as Element;
 
-type Element = {
-	elements: Array< Element >;
-	styles?: Record< StyleDefinitionID, StyleDefinition >;
-};
+	return extractStyles( config );
+}
 
 function extractStyles( element: Element ): Array< StyleDefinition > {
 	return [ ...Object.values( element.styles ?? {} ), ...( element.elements ?? [] ).flatMap( extractStyles ) ];
