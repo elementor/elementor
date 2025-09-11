@@ -1,7 +1,7 @@
-import { type AjaxRequest, type ExtendedWindow } from "./types";
+import { RequestParams, type ExtendedWindow } from "./types";
 
 export const ajax = {
-    async load( data: AjaxRequest ) {
+    async load( data: RequestParams ) {
         const extendedWindow = window as unknown as ExtendedWindow;
 
         return new Promise( ( success, error ) => {
@@ -12,11 +12,9 @@ export const ajax = {
             } );
         } );
     },
-    invalidateCache( data: Partial< AjaxRequest > & Pick< AjaxRequest, 'unique_id' | 'data' > ) {
+    invalidateCache( data: RequestParams ) {
         const extendedWindow = window as unknown as ExtendedWindow;
     
-        extendedWindow.elementorCommon?.ajax?.invalidateCache( {
-            ...data
-        } );
+        extendedWindow.elementorCommon?.ajax?.invalidateCache( data );
     }
 };

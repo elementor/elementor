@@ -1,7 +1,10 @@
-export type AjaxRequest = {
+export type RequestParams< TData = object > = {
 	action: string;
 	unique_id: string;
-	data: object;
+	data: TData;
+};
+
+type Headers< TData = object > =  RequestParams<TData> & {
 	success: ( result: unknown ) => void;
 	error: ( error: unknown ) => void;
 };
@@ -9,8 +12,8 @@ export type AjaxRequest = {
 export type ExtendedWindow = Window & {
 	elementorCommon?: {
 		ajax?: {
-			load: ( data: AjaxRequest ) => Promise< unknown >;
-			invalidateCache: ( data: Partial< AjaxRequest > ) => void;
+			load: ( data: Headers ) => Promise< unknown >;
+			invalidateCache: ( data: RequestParams ) => void;
 		};
 	};
 };
