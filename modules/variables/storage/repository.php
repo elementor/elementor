@@ -96,7 +96,12 @@ class Repository {
 			'type',
 			'label',
 			'value',
+			'order',
 		] );
+
+		if ( ! isset( $new_variable['order'] ) ) {
+			$new_variable['order'] = $this->get_next_order( $list_of_variables );
+		}
 
 		$this->assert_if_variable_label_is_duplicated( $db_record, $new_variable );
 
@@ -133,6 +138,7 @@ class Repository {
 		$updated_variable = array_merge( $list_of_variables[ $id ], $this->extract_from( $variable, [
 			'label',
 			'value',
+			'order',
 		] ) );
 
 		$this->assert_if_variable_label_is_duplicated( $db_record, array_merge( $updated_variable, [ 'id' => $id ] ) );
@@ -199,6 +205,7 @@ class Repository {
 			'label',
 			'value',
 			'type',
+			'order',
 		] );
 
 		if ( array_key_exists( 'label', $overrides ) ) {
@@ -302,7 +309,11 @@ class Repository {
 		$variable_data = $operation['variable'];
 
 		$temp_id = $variable_data['id'] ?? null;
-		$new_variable = $this->extract_from( $variable_data, [ 'type', 'label', 'value' ] );
+		$new_variable = $this->extract_from( $variable_data, [ 'type', 'label', 'value', 'order' ] );
+
+		if ( ! isset( $new_variable['order'] ) ) {
+			$new_variable['order'] = $this->get_next_order( $db_record['data'] );
+		}
 
 		$this->assert_if_variable_label_is_duplicated( $db_record, $new_variable );
 
@@ -332,7 +343,7 @@ class Repository {
 			throw new \Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound( 'Variable not found' );
 		}
 
-		$updated_fields = $this->extract_from( $variable_data, [ 'label', 'value' ] );
+		$updated_fields = $this->extract_from( $variable_data, [ 'label', 'value', 'order' ] );
 		$updated_variable = array_merge( $db_record['data'][ $id ], $updated_fields );
 		$updated_variable['updated_at'] = $this->now();
 
@@ -454,5 +465,21 @@ class Repository {
 			'watermark' => 0,
 			'version' => self::FORMAT_VERSION_V1,
 		];
+	}
+
+	private function get_next_order( array $list_of_variables ): int {
+		$highest_order = 0;
+
+		foreach ( $list_of_variables as $variable ) {
+			if ( isset( $variable['deleted'] ) && $variable['deleted'] ) {
+				continue;
+			}
+
+			if ( isset( $variable['order'] ) && $variable['order'] > $highest_order ) {
+				$highest_order = $variable['order'];
+			}
+		}
+
+		return $highest_order + 1;
 	}
 }
