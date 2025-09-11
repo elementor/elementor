@@ -171,6 +171,8 @@ describe( 'VariablesManagerTable', () => {
 			variables: mockVariables,
 			menuActions: mockMenuActions,
 			onChange: jest.fn(),
+			ids: Object.keys( mockVariables ),
+			onIdsChange: jest.fn(),
 		};
 
 		return render( <VariablesManagerTable { ...defaultProps } { ...props } /> );
@@ -247,7 +249,7 @@ describe( 'VariablesManagerTable', () => {
 	} );
 
 	it( 'should handle empty variables list', () => {
-		renderTable( { variables: {} } );
+		renderTable( { variables: {}, ids: [] } );
 
 		const editableCells = screen.queryAllByRole( 'button' );
 		expect( editableCells ).toHaveLength( 0 );

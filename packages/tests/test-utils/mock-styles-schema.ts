@@ -1005,6 +1005,15 @@ export const mockStylesSchema = {
 				meta: {},
 				settings: {},
 			},
+			clip: {
+				kind: 'plain',
+				key: 'string',
+				default: null,
+				meta: {},
+				settings: {
+					enum: [ 'border-box', 'padding-box', 'content-box', 'text' ],
+				},
+			},
 		},
 	},
 	filter: {

@@ -16,6 +16,7 @@ export { FontFamilyControl } from './controls/font-family-control/font-family-co
 export { ItemSelector } from './components/item-selector';
 export { UrlControl } from './controls/url-control';
 export { LinkControl } from './controls/link-control';
+export { QueryControl } from './controls/query-control';
 export { GapControl } from './controls/gap-control';
 export { AspectRatioControl } from './controls/aspect-ratio-control';
 export { SvgMediaControl } from './controls/svg-media-control';
@@ -61,7 +62,6 @@ export { createControl } from './create-control';
 export {
 	injectIntoRepeaterItemIcon,
 	injectIntoRepeaterItemLabel,
-	injectIntoRepeaterHeaderActions,
 	injectIntoRepeaterItemActions,
 } from './components/unstable-repeater/locations';
 
