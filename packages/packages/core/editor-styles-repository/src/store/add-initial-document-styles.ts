@@ -27,8 +27,6 @@ export async function addInitialDocumentStyles( ids: InitialDocumentId[] ) {
 async function fetchDocumentStyleDefinitions( id: number ): Promise< StyleDefinition[] > {
 	const config = ( await load( id ) ) as Element;
 
-	console.log( 'config', config );
-
 	return extractStyles( config );
 }
 
