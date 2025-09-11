@@ -1,8 +1,23 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import { imageSrcPropTypeUtil } from '@elementor/editor-props';
-import { UploadIcon } from '@elementor/icons';
-import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack, styled } from '@elementor/ui';
+import { InfoCircleFilledIcon, UploadIcon } from '@elementor/icons';
+import {
+	Alert,
+	AlertTitle,
+	Box,
+	Button,
+	Card,
+	CardMedia,
+	CardOverlay,
+	CircularProgress,
+	Infotip,
+	Stack,
+	styled,
+	ThemeProvider,
+	Typography,
+} from '@elementor/ui';
 import { type OpenOptions, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
 import { __ } from '@wordpress/i18n';
 
@@ -47,6 +62,8 @@ export const SvgMediaControl = createControl( () => {
 	const src = attachment?.url ?? url?.value ?? null;
 	const { data: allowSvgUpload } = useUnfilteredFilesUpload();
 	const [ unfilteredModalOpenState, setUnfilteredModalOpenState ] = useState( false );
+	const { canUser } = useCurrentUserCapabilities();
+	const canManageOptions = canUser( 'manage_options' );
 
 	const { open } = useWpMediaFrame( {
 		mediaTypes: [ 'svg' ],
@@ -70,6 +87,31 @@ export const SvgMediaControl = createControl( () => {
 			open( MODE_UPLOAD );
 		}
 	};
+
+	const infotipContent = (
+		<Alert
+			sx={ {
+				width: '320px',
+				p: '16px',
+			} }
+			size="small"
+			color="secondary"
+			icon={ <InfoCircleFilledIcon /> }
+		>
+			<AlertTitle>
+				<Typography variant="subtitle1">
+					{ __( "Sorry, you can't upload that file yet.", 'elementor' ) }
+				</Typography>
+			</AlertTitle>
+			<Box component="span">
+				<Typography variant="body1">
+					{ __( 'To upload them anyway,', 'elementor' ) }
+					<br />
+					{ __( 'ask the site administrator to enable unfiltered file uploads.', 'elementor' ) }
+				</Typography>
+			</Box>
+		</Alert>
+	);
 
 	const handleClick = ( openOptions?: OpenOptions ) => {
 		if ( ! allowSvgUpload && openOptions === MODE_UPLOAD ) {
@@ -112,15 +154,33 @@ export const SvgMediaControl = createControl( () => {
 							>
 								{ __( 'Select SVG', 'elementor' ) }
 							</Button>
-							<Button
-								size="tiny"
-								variant="text"
-								color="inherit"
-								startIcon={ <UploadIcon /> }
-								onClick={ () => handleClick( MODE_UPLOAD ) }
-							>
-								{ __( 'Upload', 'elementor' ) }
-							</Button>
+							{ canManageOptions ? (
+								<Button
+									size="tiny"
+									variant="text"
+									color="inherit"
+									startIcon={ <UploadIcon /> }
+									onClick={ () => handleClick( MODE_UPLOAD ) }
+								>
+									{ __( 'Upload', 'elementor' ) }
+								</Button>
+							) : (
+								<Infotip placement="right" content={ infotipContent } color={ 'secondary' }>
+									<span>
+										<ThemeProvider colorScheme={ 'dark' }>
+											<Button
+												disabled="true"
+												size="tiny"
+												variant="text"
+												color="inherit"
+												startIcon={ <UploadIcon /> }
+											>
+												{ __( 'Upload', 'elementor' ) }
+											</Button>
+										</ThemeProvider>
+									</span>
+								</Infotip>
+							) }
 						</Stack>
 					</CardOverlay>
 				</StyledCard>
