@@ -21,7 +21,7 @@ export async function getDocumentConfig( id: number ) {
 
 	return new Promise( ( success, error ) => {
 		extendedWindow.elementorCommon?.ajax?.load( {
-		action: 'get_document_config',
+			action: 'get_document_config',
 			unique_id: `document-config-${ id }-${ Date.now() }`,
 			data: { id },
 			success,

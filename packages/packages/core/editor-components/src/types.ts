@@ -1,4 +1,4 @@
-import { V1Document } from "@elementor/editor-documents";
+import { type V1Document } from '@elementor/editor-documents';
 
 export type ComponentFormValues = {
 	componentName: string;
@@ -15,4 +15,4 @@ export type ExtendedWindow = Window & {
 			currentDocument: V1Document;
 		};
 	};
-}
+};

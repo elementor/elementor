@@ -1,5 +1,9 @@
 import { injectIntoTop } from '@elementor/editor';
-import { getCurrentDocumentId, V1ElementModelProps, V1ElementSettingsProps } from '@elementor/editor-elements';
+import {
+	getCurrentDocumentId,
+	type V1ElementModelProps,
+	type V1ElementSettingsProps,
+} from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { type NumberPropValue } from '@elementor/editor-props';
 import { addInitialDocumentStyles, removeInitialDocumentStyles } from '@elementor/editor-styles-repository';
@@ -8,7 +12,7 @@ import { __ } from '@wordpress/i18n';
 
 import { Components } from './components/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
-import { ExtendedWindow } from './types';
+import { type ExtendedWindow } from './types';
 
 type Element = V1ElementModelProps & {
 	elements?: Element[];

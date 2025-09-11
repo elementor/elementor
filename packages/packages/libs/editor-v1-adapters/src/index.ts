@@ -27,7 +27,12 @@ export {
 
 export type * from './listeners';
 
-export { isRouteActive as __privateIsRouteActive, isExperimentActive, EXPERIMENTAL_FEATURES, getDocumentConfig } from './readers';
+export {
+	isRouteActive as __privateIsRouteActive,
+	isExperimentActive,
+	EXPERIMENTAL_FEATURES,
+	getDocumentConfig,
+} from './readers';
 
 export { undoable } from './undoable';
 
