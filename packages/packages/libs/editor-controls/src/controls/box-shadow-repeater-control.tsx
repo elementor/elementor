@@ -25,7 +25,11 @@ export const BoxShadowRepeaterControl = createControl( () => {
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ () => disabled }>
 			<UnstableRepeater initial={ initialShadow } propTypeUtil={ boxShadowPropTypeUtil }>
 				<Header label={ __( 'Box shadow', 'elementor' ) }>
-					<TooltipAddItemAction newItemIndex={ 0 } disabled={ disabled } />
+					<TooltipAddItemAction
+						newItemIndex={ 0 }
+						disabled={ disabled }
+						ariaLabel={ 'Box shadow' }
+					/>
 				</Header>
 				<ItemsContainer>
 					<Item
