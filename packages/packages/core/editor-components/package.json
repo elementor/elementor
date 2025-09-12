@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@elementor/editor": "3.33.0",
+    "@elementor/utils": "3.33.0",
     "@elementor/editor-canvas": "3.33.0",
     "@elementor/editor-elements": "3.33.0",
     "@elementor/editor-elements-panel": "3.33.0",

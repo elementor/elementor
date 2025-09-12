@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { EyeIcon } from '@elementor/icons';
 import { Divider, Icon, List, Stack, Typography } from '@elementor/ui';
+import { useSearch } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../hooks/use-components';
@@ -8,7 +9,7 @@ import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 
 export function ComponentsList() {
-	const { data: components, isLoading } = useComponents();
+	const { components, isLoading } = useFilteredComponents();
 
 	if ( isLoading ) {
 		return <LoadingComponents />;
@@ -19,7 +20,7 @@ export function ComponentsList() {
 	}
 
 	return (
-		<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5, px: 2 } }>
+		<List sx={ { display: 'flex', flexDirection: 'column', gap: 1, px: 2 } }>
 			{ components?.map( ( component ) => <ComponentItem key={ component.id } component={ component } /> ) }
 		</List>
 	);
@@ -63,4 +64,16 @@ const EmptyState = () => {
 			</Typography>
 		</Stack>
 	);
+};
+
+const useFilteredComponents = () => {
+	const { data: components, isLoading } = useComponents();
+	const { debouncedValue: searchValue } = useSearch();
+
+	return {
+		components: components?.filter( ( component ) =>
+			component.name.toLowerCase().includes( searchValue.toLowerCase() )
+		),
+		isLoading,
+	};
 };
