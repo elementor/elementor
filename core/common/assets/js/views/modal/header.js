@@ -36,9 +36,9 @@ export default class extends Marionette.LayoutView {
 	onCloseModalClick() {
 		this._parent._parent._parent.hideModal();
 
-		const type = elementor.config?.document?.type ?? 'default';
+		const documentType = this.getDocumentType();
 
-		const customEvent = new CustomEvent( `core/modal/close/${ type }` );
+		const customEvent = new CustomEvent( `core/modal/close/${ documentType }` );
 
 		window.dispatchEvent( customEvent );
 
@@ -46,6 +46,16 @@ export default class extends Marionette.LayoutView {
 			$e.internal( 'document/save/set-is-modified', { status: false } );
 			window.location.href = elementor.config.admin_floating_button_admin_url;
 		}
+	}
+
+	getDocumentType() {
+		const DEFAULT_TYPE = 'default';
+
+		if ( 'undefined' !== typeof elementor ) {
+			return DEFAULT_TYPE;
+		}
+
+		return elementor?.config?.document?.type ?? DEFAULT_TYPE;
 	}
 
 	isFloatingButtonLibraryClose() {
