@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -46,6 +47,7 @@ class Atomic_Tab extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
+			'tab-panel-id' => String_Prop_Type::make(),
 		];
 	}
 

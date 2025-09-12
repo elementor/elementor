@@ -46,6 +46,7 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
+			'tab-id' => String_Prop_Type::make(),
 		];
 	}
 

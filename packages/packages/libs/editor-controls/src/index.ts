@@ -36,7 +36,7 @@ export { transitionProperties, transitionsItemsList } from './controls/transitio
 export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
 export { ClearIconButton } from './components/icon-buttons/clear-icon-button';
-export { Repeater } from './components/repeater';
+export { Repeater, type SetRepeaterValuesMeta, type ItemActionPayload, type RepeaterItem } from './components/repeater';
 export { FloatingActionsBar } from './components/floating-bar';
 
 // types
@@ -45,7 +45,7 @@ export type { ToggleButtonGroupItem } from './components/control-toggle-button-g
 export type { EqualUnequalItems } from './controls/equal-unequal-sizes-control';
 export type { ControlActionsItems } from './control-actions/control-actions-context';
 export type { PropProviderProps } from './bound-prop-context';
-export type { SetValue } from './bound-prop-context/prop-context';
+export type { SetValue, SetValueMeta } from './bound-prop-context/prop-context';
 export type { ExtendedOption, Unit, LengthUnit, AngleUnit, TimeUnit } from './utils/size-control';
 export type { ToggleControlProps } from './controls/toggle-control';
 export type { FontCategory } from './controls/font-family-control/font-family-control';
