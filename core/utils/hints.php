@@ -344,6 +344,10 @@ class Hints {
 	 * @return bool
 	 */
 	public static function is_plugin_installed( $plugin ): bool {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
 		$plugins = get_plugins();
 		$plugin = self::ensure_plugin_folder( $plugin );
 		return ! empty( $plugins[ $plugin ] );
