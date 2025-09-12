@@ -4,7 +4,6 @@ export type { V1Element, V1ElementModelProps, V1ElementSettingsProps, V1ElementC
 
 // hooks
 export { useElementSetting, useElementSettings } from './hooks/use-element-setting';
-export { useElementType } from './hooks/use-element-type';
 export { useSelectedElement } from './hooks/use-selected-element';
 export { useParentElement } from './hooks/use-parent-element';
 export { useElementChildren, type ElementChildren } from './hooks/use-element-children';

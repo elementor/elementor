@@ -1,14 +1,13 @@
-import { createMockElementType, createMockPropType, dispatchCommandAfter } from 'test-utils';
+import { createMockElementType, createMockPropType } from 'test-utils';
 import { type PropsSchema } from '@elementor/editor-props';
-import { act, renderHook } from '@testing-library/react';
 
-import { useElementType } from '../../hooks/use-element-type';
-import { getWidgetsCache } from '../../sync/get-widgets-cache';
 import { type Control } from '../../types';
+import { getElementType } from '../get-element-type';
+import { getWidgetsCache } from '../get-widgets-cache';
 
-jest.mock( '../../sync/get-widgets-cache' );
+jest.mock( '../get-widgets-cache' );
 
-describe( 'useElementType', () => {
+describe( 'getElementType', () => {
 	const bind = 'tag';
 
 	const mockAtomicControl: Control = {
@@ -22,10 +21,10 @@ describe( 'useElementType', () => {
 
 	it( 'should return null if no type is provided', () => {
 		// Act.
-		const { result } = renderHook( () => useElementType() );
+		const result = getElementType( '' );
 
 		// Assert.
-		expect( result.current ).toBeNull();
+		expect( result ).toBeNull();
 	} );
 
 	it( 'should return null if no element type is found', () => {
@@ -40,10 +39,10 @@ describe( 'useElementType', () => {
 		} );
 
 		// Act.
-		const { result } = renderHook( () => useElementType( 'unknown-type' ) );
+		const result = getElementType( 'unknown-type' );
 
 		// Assert.
-		expect( result.current ).toBeNull();
+		expect( result ).toBeNull();
 	} );
 
 	it( 'should return null if the element type does not have atomic controls', () => {
@@ -58,10 +57,10 @@ describe( 'useElementType', () => {
 		} );
 
 		// Act.
-		const { result } = renderHook( () => useElementType( 'heading' ) );
+		const result = getElementType( 'heading' );
 
 		// Assert.
-		expect( result.current ).toBeNull();
+		expect( result ).toBeNull();
 	} );
 
 	it( 'should return null if the widget cache is empty', () => {
@@ -69,10 +68,10 @@ describe( 'useElementType', () => {
 		jest.mocked( getWidgetsCache ).mockReturnValue( null );
 
 		// Act.
-		const { result } = renderHook( () => useElementType( 'atomic-heading' ) );
+		const result = getElementType( 'atomic-heading' );
 
 		// Assert.
-		expect( result.current ).toBeNull();
+		expect( result ).toBeNull();
 	} );
 
 	it( 'should return the correct parameters if the element type found', () => {
@@ -91,10 +90,10 @@ describe( 'useElementType', () => {
 		} );
 
 		// Act.
-		const { result } = renderHook( () => useElementType( 'atomic-heading' ) );
+		const result = getElementType( 'atomic-heading' );
 
 		// Assert.
-		expect( result.current ).toEqual(
+		expect( result ).toEqual(
 			createMockElementType( {
 				key: 'atomic-heading',
 				title: 'Heading',
@@ -122,12 +121,10 @@ describe( 'useElementType', () => {
 		} );
 
 		// Act.
-		const { result, rerender } = renderHook( ( { type } ) => useElementType( type ), {
-			initialProps: { type: 'atomic-heading' },
-		} );
+		const result = getElementType( 'atomic-heading' );
 
 		// Assert.
-		expect( result.current ).toEqual(
+		expect( result ).toEqual(
 			createMockElementType( {
 				key: 'atomic-heading',
 				title: 'Heading',
@@ -135,66 +132,13 @@ describe( 'useElementType', () => {
 		);
 
 		// Act.
-		rerender( { type: 'atomic-image' } );
+		const result2 = getElementType( 'atomic-image' );
 
 		// Assert.
-		expect( result.current ).toEqual(
+		expect( result2 ).toEqual(
 			createMockElementType( {
 				key: 'atomic-image',
 				title: 'Image',
-			} )
-		);
-	} );
-
-	it( 'should update the response when the document load event fired', () => {
-		// Arrange.
-		jest.mocked( getWidgetsCache ).mockReturnValue( {
-			'atomic-heading': {
-				title: 'Heading',
-				controls: {},
-				atomic_controls: [ mockAtomicControl ],
-				atomic_props_schema: {},
-			},
-		} );
-
-		// Act.
-		const { result } = renderHook( () => useElementType( 'atomic-heading' ) );
-
-		// Assert.
-		expect( result.current ).toEqual(
-			createMockElementType( {
-				key: 'atomic-heading',
-				title: 'Heading',
-				controls: [ mockAtomicControl ],
-			} )
-		);
-
-		// Arrange.
-		const newMockAtomicControl: Control = {
-			type: 'control',
-			value: { bind: 'new-bind', type: 'text', props: {} },
-		};
-
-		jest.mocked( getWidgetsCache ).mockReturnValue( {
-			'atomic-heading': {
-				title: 'Heading',
-				controls: {},
-				atomic_controls: [ newMockAtomicControl ],
-				atomic_props_schema: {},
-			},
-		} );
-
-		// Act.
-		act( () => {
-			dispatchCommandAfter( 'editor/documents/load' );
-		} );
-
-		// Assert.
-		expect( result.current ).toEqual(
-			createMockElementType( {
-				key: 'atomic-heading',
-				title: 'Heading',
-				controls: [ newMockAtomicControl ],
 			} )
 		);
 	} );
