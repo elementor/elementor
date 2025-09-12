@@ -137,6 +137,16 @@ abstract class Base_Control extends Base_Object {
 		return [];
 	}
 
+	/**
+	 * Get control assets.
+	 *
+	 * @since 3.3.0
+	 * @access protected
+	 *
+	 * @param array $setting
+	 *
+	 * @return array Control assets.
+	 */
 	public static function get_assets( $setting ) {
 		return [];
 	}

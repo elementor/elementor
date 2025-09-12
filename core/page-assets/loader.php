@@ -36,6 +36,11 @@ class Loader extends Module {
 
 	private function init_styles(): array {
 		$styles = [
+			'e-backgrounds' => [
+				'src' => $this->get_css_assets_url( 'backgrounds', 'assets/css/conditionals/' ),
+				'version' => ELEMENTOR_VERSION,
+				'dependencies' => [],
+			],
 			'e-shapes' => [
 				'src' => $this->get_css_assets_url( 'shapes', 'assets/css/conditionals/' ),
 				'version' => ELEMENTOR_VERSION,

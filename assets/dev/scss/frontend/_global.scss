@@ -50,60 +50,6 @@
 		line-height: 1;
 		border: none;
 	}
-
-	// Background Video
-	.elementor-background-video-container,
-	.elementor-background-holder,
-	.elementor-background {
-		inset: 0;
-		position: absolute;
-		overflow: hidden;
-		z-index: $ground-layer;
-		direction: ltr;
-	}
-
-	.elementor-background-video-container {
-		transition: opacity 1s;
-		pointer-events: none; // This prevents the player from showing video info on hover
-
-		&.elementor-loading {
-			opacity: 0;
-		}
-	}
-
-	.elementor-background-video,
-	.elementor-background-video-embed {
-		max-width: none; //Stretch the background video on all section
-	}
-
-	.elementor-background-video,
-	.elementor-background-video-embed,
-	.elementor-background-video-hosted {
-		@include absolute-center;
-	}
-
-	.elementor-background-video-hosted {
-		object-fit: cover; // For HTML5 portrait video
-	}
-	// End Background Video
-
-	.elementor-background-overlay {
-		inset: 0;
-		position: absolute;
-	}
-
-	.elementor-background-slideshow {
-		position: absolute;
-		inset: 0;
-		z-index: $ground-layer;
-
-		&__slide__image {
-			width: 100%;
-			height: 100%;
-			background-position: center center;
-			background-size: cover;
-		}
-	}
 }
 
 .elementor-widget-wrap,
