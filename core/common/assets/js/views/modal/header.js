@@ -27,6 +27,26 @@ export default class extends Marionette.LayoutView {
 		};
 	}
 
+	onRender() {
+		this.bindEscapeKey();
+	}
+
+	bindEscapeKey() {
+		this.onDocumentKeyDown = ( event ) => {
+			if ( 'Escape' === event.key ) {
+				this.onCloseModalClick();
+			}
+		};
+		
+		document.addEventListener( 'keydown', this.onDocumentKeyDown );
+	}
+
+	onDestroy() {
+		if ( this.onDocumentKeyDown ) {
+			document.removeEventListener( 'keydown', this.onDocumentKeyDown );
+		}
+	}
+
 	templateHelpers() {
 		return {
 			closeType: this.getOption( 'closeType' ),
@@ -51,7 +71,7 @@ export default class extends Marionette.LayoutView {
 	getDocumentType() {
 		const DEFAULT_TYPE = 'default';
 
-		if ( 'undefined' !== typeof elementor ) {
+		if ( 'undefined' === typeof window.elementor ) {
 			return DEFAULT_TYPE;
 		}
 
