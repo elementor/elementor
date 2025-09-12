@@ -37,7 +37,7 @@ export default class extends Marionette.LayoutView {
 				this.onCloseModalClick();
 			}
 		};
-		
+
 		document.addEventListener( 'keydown', this.onDocumentKeyDown );
 	}
 
