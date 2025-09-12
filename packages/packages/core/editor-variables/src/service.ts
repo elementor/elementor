@@ -18,7 +18,7 @@ export const service = {
 	},
 
 	init: () => {
-		service.load();
+		return service.load();
 	},
 
 	load: () => {

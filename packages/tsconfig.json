@@ -21,6 +21,7 @@
     "allowSyntheticDefaultImports": false,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "experimentalDecorators": true,
     "noEmit": true,
     "paths": {
       "@elementor/*": [

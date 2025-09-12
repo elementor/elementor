@@ -1,0 +1,43 @@
+{
+  "name": "@elementor/editor-mcp",
+  "description": "Elementor Editor V4 MCP",
+  "version": "1.0.0",
+  "private": false,
+  "author": "Elementor Team",
+  "homepage": "https://elementor.com/",
+  "license": "GPL-3.0-or-later",
+  "main": "dist/index.ts",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elementor/elementor.git",
+    "directory": "packages/core/editor-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/elementor/elementor/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup --config=../../tsup.build.ts",
+    "dev": "tsup --config=../../tsup.dev.ts"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  },
+  "dependencies": {
+    "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@1.0.1",
+    "@elementor/schema": "*",
+    "@modelcontextprotocol/sdk": "1.17.3",
+    "@elementor/store": "*"
+  }
+}
