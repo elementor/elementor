@@ -11,6 +11,7 @@ type ControlReplacement = {
 
 type ConditionArgs = {
 	value: PropValue;
+	placeholder?: PropValue;
 };
 
 type Props = PropsWithChildren< { replacements: ControlReplacement[] } >;
@@ -22,30 +23,11 @@ export const ControlReplacementsProvider = ( { replacements, children }: Props )
 };
 
 export const useControlReplacement = ( OriginalComponent: ComponentType ) => {
-	const { value } = useBoundProp();
+	const { value, placeholder } = useBoundProp();
 	const replacements = useContext( ControlReplacementContext );
 
-	const types = ['link'];
-
 	try {
-		let replacement = replacements.find( ( r ) => r.condition( { value } ) );
-
-		// If not found, and value is a 'link', test against each value.value property
-		if (
-			!replacement &&
-			value &&
-			value.$$type === 'link' &&
-			value.value &&
-			typeof value.value === 'object'
-		) {
-			for (const key in value.value) {
-				if (Object.prototype.hasOwnProperty.call(value.value, key)) {
-					const item = value.value[key];
-					replacement = replacements.find( r => r.condition( { value: item } ) );
-					if (replacement) break;
-				}
-			}
-		}
+		const replacement = replacements.find( ( r ) => r.condition( { value, placeholder } ) );
 
 		return replacement?.component ?? OriginalComponent;
 	} catch {
@@ -65,45 +47,4 @@ export const createControlReplacementsRegistry = () => {
 	}
 
 	return { registerControlReplacement, getControlReplacements };
-};
-
-export const SlotChildren = ( {
-	children,
-	whitelist = [],
-	sorted = false,
-	props = {},
-}: {
-	children: React.ReactNode;
-	whitelist: React.FC[];
-	sorted?: boolean;
-	props?: Record< string, unknown >;
-} ) => {
-	const filtered = (
-		! whitelist.length
-			? React.Children.toArray( children )
-			: React.Children.toArray( children ).filter(
-					( child ) => React.isValidElement( child ) && whitelist.includes( child.type as React.FC )
-			  )
-	) as React.ReactElement[];
-
-	if ( sorted ) {
-		sort( filtered, whitelist );
-	}
-
-	return filtered.map( ( child, index ) => (
-		<React.Fragment key={ index }>{ React.cloneElement( child, props ) }</React.Fragment>
-	) );
-};
-
-const sort = ( childrenArray: React.ReactElement[], whitelist: unknown[] ) => {
-	childrenArray.sort( ( a, b ) => {
-		const aIndex = whitelist.indexOf( a.type );
-		const bIndex = whitelist.indexOf( b.type );
-
-		if ( aIndex === -1 || bIndex === -1 ) {
-			return 0;
-		}
-
-		return aIndex - bIndex;
-	} );
 };

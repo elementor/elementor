@@ -4,6 +4,7 @@ import {
 	__useActiveDocumentActions as useActiveDocumentActions,
 } from '@elementor/editor-documents';
 import { useUserStylesCapability } from '@elementor/editor-styles-repository';
+import { SaveChangesDialog, useDialog } from '@elementor/editor-ui';
 import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -11,7 +12,6 @@ import { globalClassesStylesProvider } from '../../global-classes-styles-provide
 import { usePrefetchCssClassUsage } from '../../hooks/use-prefetch-css-class-usage';
 import { usePanelActions } from './class-manager-panel';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
-import { SaveChangesDialog, useDialog } from './save-changes-dialog';
 
 export const ClassManagerButton = () => {
 	const document = useActiveDocument();

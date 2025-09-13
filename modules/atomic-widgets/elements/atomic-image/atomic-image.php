@@ -81,6 +81,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 				->set_label( __( 'Image resolution', 'elementor' ) )
 				->set_meta( [ 'layout' => 'two-columns' ] ),
 			Link_Control::bind_to( 'link' )
+				->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
 				->set_label( __( 'Link', 'elementor' ) )
 				->set_meta( [
 					'topDivider' => true,
