@@ -14,7 +14,15 @@ class Font_Size_Property_Mapper implements Class_Property_Mapper_Interface {
 	}
 
 	public function map_to_schema( string $property, $value ): array {
-		return [ 'font-size' => $this->normalize_size_value( $value ) ];
+		$normalized = $this->normalize_size_value( $value );
+		$parsed = $this->parse_size_value( $normalized );
+		
+		return [ 
+			'font-size' => [
+				'$$type' => 'size',
+				'value' => $parsed,
+			],
+		];
 	}
 
 	public function get_supported_properties(): array {
@@ -47,5 +55,26 @@ class Font_Size_Property_Mapper implements Class_Property_Mapper_Interface {
 		}
 		
 		return $value;
+	}
+
+	private function parse_size_value( string $value ): array {
+		if ( 1 === preg_match( self::SIZE_PATTERN, $value, $matches ) ) {
+			$number = (float) $matches[1];
+			$unit = $matches[2];
+			
+			if ( 0 === $number % 1 ) {
+				$number = (int) $number;
+			}
+			
+			return [
+				'size' => $number,
+				'unit' => $unit,
+			];
+		}
+		
+		return [
+			'size' => 16,
+			'unit' => 'px',
+		];
 	}
 }

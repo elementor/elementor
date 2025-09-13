@@ -73,7 +73,7 @@ class Class_Conversion_Service {
 
 			$converted = $this->convert_single_class( $css_class, $results['stats'] );
 
-			if ( ! empty( $converted['variants']['desktop'] ) ) {
+			if ( ! empty( $converted['variants'][0]['props'] ) ) {
 				$results['converted_classes'][] = $converted;
 				$results['stats']['classes_converted']++;
 				$existing_class_names[] = $class_name;
@@ -131,8 +131,15 @@ class Class_Conversion_Service {
 			'type' => 'class',
 			'label' => $this->generate_class_label( $css_class['selector'] ),
 			'variants' => [
-				'desktop' => $schema_properties
-			]
+				[
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+					'props' => $schema_properties,
+					'custom_css' => null,
+				],
+			],
 		];
 	}
 
@@ -172,12 +179,22 @@ class Class_Conversion_Service {
 
 	private function generate_class_id( string $selector ): string {
 		$class_name = $this->extract_class_name( $selector );
-		return sanitize_title( $class_name );
+		$existing_ids = $this->get_existing_global_class_names();
+		
+		// Generate ID with g- prefix and hash like Elementor's native system
+		do {
+			$hash = substr( dechex( mt_rand() ), 0, 7 );
+			$id = 'g-' . $hash;
+		} while ( in_array( $id, $existing_ids, true ) );
+		
+		return $id;
 	}
 
 	private function generate_class_label( string $selector ): string {
 		$class_name = $this->extract_class_name( $selector );
-		return ucwords( str_replace( [ '-', '_' ], ' ', $class_name ) );
+		// Labels can't contain spaces, so use PascalCase instead
+		$words = explode( '-', str_replace( '_', '-', $class_name ) );
+		return implode( '', array_map( 'ucfirst', $words ) );
 	}
 
 	private function extract_class_name( string $selector ): string {

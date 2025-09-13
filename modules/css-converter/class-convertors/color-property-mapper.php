@@ -24,7 +24,12 @@ class Color_Property_Mapper implements Class_Property_Mapper_Interface {
 	}
 
 	public function map_to_schema( string $property, $value ): array {
-		return [ 'color' => $this->normalize_color_value( $value ) ];
+		return [ 
+			'color' => [
+				'$$type' => 'color',
+				'value' => $this->normalize_color_value( $value ),
+			],
+		];
 	}
 
 	public function get_supported_properties(): array {
