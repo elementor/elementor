@@ -2,12 +2,25 @@
 
 ## Phase 2: Extended Property Support
 
-### Additional CSS Properties
-- **Spacing Shorthand**: margin, padding shorthand expansion
-- **Typography Extended**: font shorthand, text-decoration, text-transform
-- **Layout Properties**: display, width, height, position
-- **Border Properties**: border-width, border-style, border-radius
+### Next Priority Properties (Ready for Implementation)
+- **Typography Extended**: 
+  - `font-weight` (normal, bold, 100-900)
+  - `text-align` (left, center, right, justify)
+  - `line-height` (unitless, px, em, rem, %)
+  - `text-decoration` (none, underline, line-through)
+  - `text-transform` (none, uppercase, lowercase, capitalize)
+- **Layout Properties**: 
+  - `display` (block, inline, flex, grid, none, inline-block)
+  - `width`, `height` (px, %, em, rem, vh, vw, auto)
+  - `opacity` (0-1, percentage)
+- **Spacing Properties**:
+  - `margin` (shorthand and individual sides)
+  - `padding` (shorthand and individual sides)
+
+### Additional CSS Properties (Phase 2B)
+- **Border Properties**: border-width, border-style, border-radius, border-color
 - **Background Properties**: background-color, background-image (basic)
+- **Position Properties**: position, top, right, bottom, left, z-index
 
 ### Complex Property Mappings
 - **CSS Shorthand Expansion**: 

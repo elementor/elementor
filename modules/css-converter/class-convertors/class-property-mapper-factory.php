@@ -5,14 +5,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/font-weight-property-mapper.php';
+require_once __DIR__ . '/text-align-property-mapper.php';
+require_once __DIR__ . '/line-height-property-mapper.php';
+require_once __DIR__ . '/text-decoration-property-mapper.php';
+require_once __DIR__ . '/text-transform-property-mapper.php';
+require_once __DIR__ . '/display-property-mapper.php';
+require_once __DIR__ . '/dimension-property-mapper.php';
+require_once __DIR__ . '/opacity-property-mapper.php';
+
 class Class_Property_Mapper_Factory {
 	private static $registry = null;
 
 	public static function get_registry(): Class_Property_Mapper_Registry {
-		if ( null === self::$registry ) {
-			self::$registry = new Class_Property_Mapper_Registry();
-			self::init_default_mappers();
-		}
+		// Force reinitialize for now to ensure new mappers are loaded
+		self::$registry = new Class_Property_Mapper_Registry();
+		self::init_default_mappers();
 		
 		return self::$registry;
 	}
@@ -21,6 +29,14 @@ class Class_Property_Mapper_Factory {
 		$mappers = [
 			new Color_Property_Mapper(),
 			new Font_Size_Property_Mapper(),
+			new Font_Weight_Property_Mapper(),
+			new Text_Align_Property_Mapper(),
+			new Line_Height_Property_Mapper(),
+			new Text_Decoration_Property_Mapper(),
+			new Text_Transform_Property_Mapper(),
+			new Display_Property_Mapper(),
+			new Dimension_Property_Mapper(),
+			new Opacity_Property_Mapper(),
 		];
 
 		$mappers = apply_filters( 'elementor_css_converter_property_mappers', $mappers );

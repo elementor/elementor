@@ -9,7 +9,7 @@ class Class_Property_Mapper_Registry {
 	private $mappers = [];
 
 	public function __construct() {
-		$this->init_default_mappers();
+		// Don't init default mappers here - let the factory handle it
 	}
 
 	public function register( Class_Property_Mapper_Interface $mapper ): void {
