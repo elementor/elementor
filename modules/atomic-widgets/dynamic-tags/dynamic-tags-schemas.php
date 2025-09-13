@@ -6,6 +6,7 @@ use Elementor\Core\DynamicTags\Base_Tag;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -60,6 +61,7 @@ class Dynamic_Tags_Schemas {
 
 		switch ( $control_type ) {
 			case 'text':
+			case 'textarea':
 				return String_Prop_Type::make()
 					->default( $control['default'] ?? null );
 
@@ -70,6 +72,7 @@ class Dynamic_Tags_Schemas {
 
 			case 'number':
 				return Number_Prop_Type::make()
+					->set_required( $control['required'] ?? false )
 					->default( $control['default'] ?? null );
 
 			case 'switcher':
@@ -77,6 +80,11 @@ class Dynamic_Tags_Schemas {
 
 				return Boolean_Prop_Type::make()
 					->default( 'yes' === $default || true === $default );
+
+			case 'query':
+				return Query_Prop_Type::make()
+					->set_required( $control['required'] ?? false )
+					->default( $control['default'] ?? null );
 
 			default:
 				return null;

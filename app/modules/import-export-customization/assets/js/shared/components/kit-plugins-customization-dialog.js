@@ -18,14 +18,13 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import useKitPlugins from '../hooks/use-kit-plugins';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
+import { UpgradeVersionBanner } from './upgrade-version-banner';
 
 const REQUIRED_PLUGINS = [
 	'elementor/elementor',
 ];
 
-export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
-	const isImport = data.hasOwnProperty( 'uploadedData' );
-
+export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges, data, isImport, isOldElementorVersion } ) {
 	const { pluginsList: fetchedPluginsList, isLoading: fetchIsLoading } = useKitPlugins( { open: open && ! isImport } );
 
 	const pluginsList = useMemo( () => {
@@ -139,11 +138,11 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 		<Box key={ settingKey } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
 			<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
 				<Box>
-					<Typography variant="body1" sx={ { fontWeight: 500 } }>
+					<Typography variant="h6">
 						{ title }
 					</Typography>
 					{ description && (
-						<Typography variant="body1" color="text.secondary" sx={ { fontWeight: 400 } }>
+						<Typography variant="body1" color="text.secondary">
 							{ description }
 						</Typography>
 					) }
@@ -239,7 +238,10 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 			</DialogHeader>
 
 			<DialogContent dividers sx={ { p: 3 } }>
-				<Stack>
+				<Stack gap={ 2 }>
+					{ isOldElementorVersion && (
+						<UpgradeVersionBanner />
+					) }
 					{ isLoading ? (
 						<Stack spacing={ 3 } alignItems="center" sx={ { py: 8 } }>
 							<CircularProgress size={ 30 } />
@@ -288,7 +290,9 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 				</Button>
 				<Button
 					onClick={ () => {
-						handleSaveChanges( 'plugins', getPluginsSelection(), unselectedValues.current );
+						const pluginsSelection = getPluginsSelection();
+						const hasEnabledCustomization = Object.values( pluginsSelection ).some( Boolean );
+						handleSaveChanges( 'plugins', pluginsSelection, hasEnabledCustomization, unselectedValues.current );
 						handleClose();
 					} }
 					variant="contained"
@@ -307,4 +311,6 @@ KitPluginsCustomizationDialog.propTypes = {
 	handleClose: PropTypes.func.isRequired,
 	handleSaveChanges: PropTypes.func.isRequired,
 	data: PropTypes.object.isRequired,
+	isImport: PropTypes.bool,
+	isOldElementorVersion: PropTypes.bool,
 };

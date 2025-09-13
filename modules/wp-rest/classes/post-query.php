@@ -15,6 +15,7 @@ class Post_Query {
 	const ENDPOINT = 'post';
 
 	const EXCLUDED_POST_TYPE_KEYS = 'excluded_post_types';
+	const ALLOWED_POST_TYPES = 'allowed_post_types';
 	const SEARCH_TERM_KEY = 'term';
 	const POST_KEYS_CONVERSION_MAP = 'post_keys_conversion_map';
 	const MAX_COUNT_KEY = 'max_count';
@@ -38,13 +39,14 @@ class Post_Query {
 	 * @param $args array{
 	 *     excluded_post_types: array,
 	 *     post_keys_conversion_map: array,
+	 *     allowed_post_types: array,
 	 *     max_count: int,
 	 * } The query parameters
 	 * @return array The query parameters.
 	 */
 	public static function build_query_params( array $args ): array {
-		$allowed_keys = [ self::EXCLUDED_POST_TYPE_KEYS, self::POST_KEYS_CONVERSION_MAP, self::MAX_COUNT_KEY ];
-		$keys_to_encode = [ self::EXCLUDED_POST_TYPE_KEYS, self::POST_KEYS_CONVERSION_MAP ];
+		$allowed_keys = [ self::EXCLUDED_POST_TYPE_KEYS, self::POST_KEYS_CONVERSION_MAP, self::MAX_COUNT_KEY, self::ALLOWED_POST_TYPES ];
+		$keys_to_encode = [ self::EXCLUDED_POST_TYPE_KEYS, self::POST_KEYS_CONVERSION_MAP, self::ALLOWED_POST_TYPES ];
 
 		$params = [];
 
@@ -71,7 +73,7 @@ class Post_Query {
 	}
 
 	/**
-	 * @param string $search_term The original search query.
+	 * @param string    $search_term The original search query.
 	 * @param \WP_Query $wp_query The WP_Query instance.
 	 * @return string Modified search query.
 	 */
@@ -136,6 +138,14 @@ class Post_Query {
 			return $post_type->name;
 		} );
 
+		$filtered_post_types = $params[ self::ALLOWED_POST_TYPES ] ?? [];
+
+		if ( ! empty( $filtered_post_types ) ) {
+			$post_type_slugs = $post_type_slugs->filter( function ( $post_type ) use ( $filtered_post_types ) {
+				return in_array( $post_type, $filtered_post_types, true );
+			} );
+		}
+
 		$this->add_filter_to_customize_query();
 
 		$posts = new Collection( get_posts( [
@@ -191,6 +201,13 @@ class Post_Query {
 	 */
 	private function get_endpoint_registration_args() {
 		return [
+			self::ALLOWED_POST_TYPES => [
+				'description' => 'Allowed post types',
+				'type' => [ 'array', 'string' ],
+				'required' => false,
+				'default' => null,
+				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
+			],
 			self::EXCLUDED_POST_TYPE_KEYS => [
 				'description' => 'Post type to exclude',
 				'type' => [ 'array', 'string' ],

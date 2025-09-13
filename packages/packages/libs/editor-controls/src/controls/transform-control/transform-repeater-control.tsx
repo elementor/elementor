@@ -16,7 +16,6 @@ import {
 import { DisableItemAction } from '../../components/unstable-repeater/actions/disable-item-action';
 import { RemoveItemAction } from '../../components/unstable-repeater/actions/remove-item-action';
 import { EditItemPopover } from '../../components/unstable-repeater/items/edit-item-popover';
-import { injectIntoRepeaterHeaderActions } from '../../components/unstable-repeater/locations';
 import { ControlAdornments } from '../../control-adornments/control-adornments';
 import { createControl } from '../../create-control';
 import { initialRotateValue, initialScaleValue, initialSkewValue, initialTransformValue } from './initial-values';
@@ -32,19 +31,11 @@ export const TransformRepeaterControl = createControl( () => {
 	const headerRef = useRef< HTMLDivElement >( null );
 	const popupState = usePopupState( { variant: 'popover' } );
 
-	const repeaterBindKey = 'transform-functions';
-
-	injectIntoRepeaterHeaderActions( {
-		id: 'transform-base-control',
-		component: () => <TransformBasePopoverTrigger popupState={ popupState } repeaterBindKey={ repeaterBindKey } />,
-		options: { overwrite: true },
-	} );
-
 	return (
 		<PropProvider { ...context }>
 			<TransformBaseControl popupState={ popupState } anchorRef={ headerRef } />
-			<PropKeyProvider bind={ repeaterBindKey }>
-				<Repeater headerRef={ headerRef } propType={ context.propType } />
+			<PropKeyProvider bind={ 'transform-functions' }>
+				<Repeater headerRef={ headerRef } propType={ context.propType } popupState={ popupState } />
 			</PropKeyProvider>
 		</PropProvider>
 	);
@@ -63,10 +54,18 @@ const ToolTip = (
 	</Box>
 );
 
-const Repeater = ( { headerRef, propType }: { headerRef: React.RefObject< HTMLDivElement >; propType: PropType } ) => {
+const Repeater = ( {
+	headerRef,
+	propType,
+	popupState,
+}: {
+	headerRef: React.RefObject< HTMLDivElement >;
+	propType: PropType;
+	popupState: PopupState;
+} ) => {
 	const transformFunctionsContext = useBoundProp( transformFunctionsPropTypeUtil );
 	const availableValues = [ initialTransformValue, initialScaleValue, initialRotateValue, initialSkewValue ];
-	const { value: transformValues } = transformFunctionsContext;
+	const { value: transformValues, bind } = transformFunctionsContext;
 
 	const getInitialValue = () => {
 		return availableValues.find( ( value ) => ! transformValues?.some( ( item ) => item.$$type === value.$$type ) );
@@ -85,6 +84,7 @@ const Repeater = ( { headerRef, propType }: { headerRef: React.RefObject< HTMLDi
 					adornment={ () => <ControlAdornments customContext={ { path: [ 'transform' ], propType } } /> }
 					ref={ headerRef }
 				>
+					<TransformBasePopoverTrigger popupState={ popupState } repeaterBindKey={ bind } />
 					<TooltipAddItemAction
 						disabled={ shouldDisableAddItem }
 						tooltipContent={ ToolTip }
@@ -92,9 +92,17 @@ const Repeater = ( { headerRef, propType }: { headerRef: React.RefObject< HTMLDi
 						ariaLabel={ 'transform' }
 					/>
 				</Header>
-				<ItemsContainer itemTemplate={ <Item Icon={ TransformIcon } Label={ TransformLabel } /> }>
-					<DisableItemAction />
-					<RemoveItemAction />
+				<ItemsContainer>
+					<Item
+						Icon={ TransformIcon }
+						Label={ TransformLabel }
+						actions={
+							<>
+								<DisableItemAction />
+								<RemoveItemAction />
+							</>
+						}
+					/>
 				</ItemsContainer>
 				<EditItemPopover>
 					<TransformContent />

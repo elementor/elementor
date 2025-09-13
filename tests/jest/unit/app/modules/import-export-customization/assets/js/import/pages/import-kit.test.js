@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ImportKit from 'elementor/app/modules/import-export-customization/assets/js/import/pages/import-kit';
 import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
+import useContextDetection from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection';
 
 const mockDispatch = jest.fn();
 const mockNavigate = jest.fn();
@@ -22,6 +23,8 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import/c
 		APPLY_ALL: 'apply-all',
 	},
 } ) );
+
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection' );
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import/hooks/use-upload-kit', () => ( {
 	useUploadKit: () => mockUseUploadKit(),
@@ -48,7 +51,16 @@ jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
 describe( 'ImportKit Page', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		global.elementorAppConfig = { base_url: 'http://localhost' };
+
+		useContextDetection.mockImplementation( () => ( {
+			isImport: true,
+			contextData: { data: { kitUploadParams: { source: 'cloud' } } },
+		} ) );
+
+		global.elementorAppConfig = {
+			base_url: 'http://localhost',
+			pages_url: 'http://localhost',
+		};
 		global.elementorCommon = {
 			eventsManager: {
 				config: eventsConfig,
@@ -88,12 +100,34 @@ describe( 'ImportKit Page', () => {
 
 	it( 'renders ImportError when error is present', () => {
 		// Arrange
-		setup( { error: { message: 'Some error' } } );
+		setup( { error: { code: 'general' } } );
 		// Act
 		render( <ImportKit /> );
 		// Assert
-		expect( screen.getByTestId( 'import-error-try-again-button' ) ).toBeTruthy();
-		expect( screen.getByText( /Uploading failed/i ) ).toBeTruthy();
+		expect( screen.getByTestId( 'try-again-button' ) ).toBeTruthy();
+		expect( screen.getByTestId( 'error-dialog' ) ).toBeTruthy();
+	} );
+
+	it.each( [
+		'general',
+		'timeout',
+		'cloud-upload-failed',
+		'third-party-error',
+		'invalid-zip-file',
+		'zip-archive-module-missing',
+		'no-write-permissions',
+		'plugin-installation-permissions-error',
+		'failed-to-fetch-quota',
+		'insufficient-quota',
+		'error-loading-resource',
+	] )( 'renders Try Again button for all required types of errors', ( code ) => {
+		// Arrange
+		setup( { error: { code } } );
+		// Act
+		render( <ImportKit /> );
+		// Assert
+		expect( screen.getByTestId( 'try-again-button' ) ).toBeTruthy();
+		expect( screen.getByTestId( 'error-dialog' ) ).toBeTruthy();
 	} );
 
 	it( 'renders main content and DropZone when not uploading or error', () => {

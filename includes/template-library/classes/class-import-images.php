@@ -160,7 +160,7 @@ class Import_Images {
 			$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
 
 			$file_content = $svg_handler->sanitizer( $file_content );
-		};
+		}
 
 		$upload = wp_upload_bits(
 			$filename,

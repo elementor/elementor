@@ -37,6 +37,8 @@ class Module extends BaseModule {
 
 	const KIT_LIBRARY_ERROR_KEY = 'invalid-kit-library-zip-error';
 
+	const CLOUD_KIT_LIBRARY_ERROR_LOADING_RESOURCE = 'error-loading-resource';
+
 	const NO_WRITE_PERMISSIONS_KEY = 'no-write-permissions';
 
 	const THIRD_PARTY_ERROR = 'third-party-error';
@@ -168,7 +170,7 @@ class Module extends BaseModule {
 		$user_time_format = get_option( 'time_format' );
 		$date_format = $user_date_format . ' ' . $user_time_format;
 
-		$should_show_revert_section = $this->should_show_revert_section( $last_imported_kit );
+		$should_show_revert_section = ! empty( $last_imported_kit );
 
 		if ( $should_show_revert_section ) {
 			if ( ! empty( $penultimate_imported_kit ) ) {
@@ -324,7 +326,7 @@ class Module extends BaseModule {
 	 * @param string $referrer Referrer of the file 'local' or 'kit-library'.
 	 * @param string $kit_id
 	 * @return array
-	 * @throws \Exception
+	 * @throws \Exception If customization validation fails or processing errors occur.
 	 */
 	public function upload_kit( $file, $referrer, $kit_id = null ) {
 		$this->ensure_writing_permissions();
@@ -352,11 +354,11 @@ class Module extends BaseModule {
 	 * so it will be available to use in different places such as: WP_Cli, Pro, etc.
 	 *
 	 * @param string $path Path to the file or session_id.
-	 * @param array $settings Settings the import use to determine which content to import.
-	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
-	 * @param bool $split_to_chunks Determine if the import process should be split into chunks.
+	 * @param array  $settings Settings the import use to determine which content to import.
+	 *               (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
+	 * @param bool   $split_to_chunks Determine if the import process should be split into chunks.
 	 * @return array
-	 * @throws \Exception
+	 * @throws \Exception If export configuration is invalid or processing fails.
 	 */
 	public function import_kit( string $path, array $settings, bool $split_to_chunks = false ): array {
 		$this->ensure_writing_permissions();
@@ -389,7 +391,7 @@ class Module extends BaseModule {
 	 * @return array Two types of response.
 	 *      1. The status and the runner name.
 	 *      2. The imported data. (Only if the runner is the last one in the import process)
-	 * @throws \Exception
+	 * @throws \Exception If export configuration is invalid or processing fails.
 	 */
 	public function import_kit_by_runner( string $session_id, string $runner_name ): array {
 		// Check session_id
@@ -414,7 +416,7 @@ class Module extends BaseModule {
 	 * @param array $settings Settings the export use to determine which content to export.
 	 *      (e.g: include, kit_info, selected_plugins, selected_cpt, etc.)
 	 * @return array
-	 * @throws \Exception
+	 * @throws \Exception If export configuration is invalid or processing fails.
 	 */
 	public function export_kit( array $settings ) {
 		$this->ensure_writing_permissions();
@@ -598,6 +600,8 @@ class Module extends BaseModule {
 			'uiTheme' => $this->get_elementor_ui_theme_preference(),
 			'exportGroups' => $this->get_export_groups(),
 			'manifestVersion' => self::FORMAT_VERSION,
+			'elementorVersion' => ELEMENTOR_VERSION,
+			'upgradeVersionUrl' => admin_url( 'plugins.php' ),
 		];
 	}
 
@@ -669,29 +673,6 @@ class Module extends BaseModule {
 		return $summary_titles;
 	}
 
-	public function should_show_revert_section( $last_imported_kit ) {
-		if ( empty( $last_imported_kit ) ) {
-			return false;
-		}
-
-		// TODO: BC - remove in the future
-		// The 'templates' runner was in core and moved to the Pro plugin. (Part of it still exits in the Core for BC)
-		// The runner that is in the core version is missing the revert functionality,
-		// therefore we shouldn't display the revert section if the import process done with the core version.
-		$is_import_templates_ran = isset( $last_imported_kit['runners']['templates'] );
-		if ( $this->has_pro() && $is_import_templates_ran ) {
-			$has_imported_templates = ! empty( $last_imported_kit['runners']['templates'] );
-
-			return $has_imported_templates;
-		}
-
-		return true;
-	}
-
-	public function has_pro(): bool {
-		return ElementorUtils::has_pro();
-	}
-
 	private function get_elementor_editor_home_page_url() {
 		if ( 'page' !== get_option( 'show_on_front' ) ) {
 			return '';
@@ -755,11 +736,11 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * @param string $class
+	 * @param string $class_name
 	 *
 	 * @return bool
 	 */
-	public function is_third_party_class( $class ) {
+	public function is_third_party_class( $class_name ) {
 		$allowed_classes = [
 			'Elementor\\',
 			'ElementorPro\\',
@@ -768,7 +749,7 @@ class Module extends BaseModule {
 		];
 
 		foreach ( $allowed_classes as $allowed_class ) {
-			if ( str_starts_with( $class, $allowed_class ) ) {
+			if ( str_starts_with( $class_name, $allowed_class ) ) {
 				return false;
 			}
 		}

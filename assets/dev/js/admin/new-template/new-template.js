@@ -26,7 +26,7 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 
 	showModalByHash() {
 		if ( '#add_new' === location.hash ) {
-			this.layout.showModal();
+			this.layout?.showModal();
 
 			location.hash = '';
 		}
@@ -43,7 +43,7 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 	onAddButtonClick( event ) {
 		event.preventDefault();
 
-		this.layout.showModal();
+		this.layout?.showModal();
 	},
 } );
 

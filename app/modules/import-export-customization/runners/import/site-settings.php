@@ -59,6 +59,10 @@ class Site_Settings extends Import_Runner_Base {
 	private $imported_experiments = [];
 
 	public function get_theme_upgrader(): \Theme_Upgrader {
+		if ( ! function_exists( 'request_filesystem_credentials' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
 		if ( ! class_exists( '\Theme_Upgrader' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 		}
@@ -273,6 +277,10 @@ class Site_Settings extends Import_Runner_Base {
 	public function import_theme( array $data ) {
 		if ( empty( $data['site_settings']['theme'] ) ) {
 			return null;
+		}
+
+		if ( ! function_exists( 'wp_get_theme' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/theme.php';
 		}
 
 		$theme = $data['site_settings']['theme'];

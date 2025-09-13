@@ -5,6 +5,7 @@ import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking
 import kitContentData from '../kit-content-data';
 import useContextDetection from '../hooks/use-context-detection';
 import { ReExportBanner } from './re-export-banner';
+import { UpgradeVersionBanner } from './upgrade-version-banner';
 
 export default function KitPartsSelection( { data, onCheckboxChange, testId, handleSaveCustomization } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );
@@ -45,7 +46,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 		}
 
 		if ( isImport ) {
-			return ! isExported( item );
+			return ! isExported( item ) || item.required;
 		}
 
 		return item.required && contextData?.data?.includes?.includes( item.type );
@@ -94,7 +95,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 					checked={ data.includes.includes( item.type ) }
 					onChange={ () => onCheckboxChange( item.type ) }
 					disabled={ disabled }
-					sx={ { py: 0 } }
+					sx={ { p: 0, mx: 1 } }
 					data-testid={ `KitContentDataSelection-${ item.type }` }
 					data-type={ item.type }
 				/>
@@ -169,6 +170,9 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 			{ contextData?.isOldExport && (
 				<ReExportBanner />
 			) }
+			{ contextData?.isOldElementorVersion && (
+				<UpgradeVersionBanner />
+			) }
 			{ kitContentData.map( ( item ) => {
 				const isLockedFeaturesNoPro = item.data.features?.locked && ! elementorAppConfig.hasPro;
 				const disabled = isDisabled( item );
@@ -203,6 +207,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 								handleSaveChanges={ handleSaveCustomization }
 								isImport={ isImport }
 								isOldExport={ contextData.isOldExport }
+								isOldElementorVersion={ contextData.isOldElementorVersion }
 							/>
 						) }
 					</Fragment>

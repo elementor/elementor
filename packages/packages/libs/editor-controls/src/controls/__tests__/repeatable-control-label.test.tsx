@@ -26,6 +26,8 @@ const TEXT_TERTIARY_COLOR = 'rgb(105, 114, 125)';
 const stringPropType = createMockPropType( { kind: 'object' } );
 
 const getMockRepeaterContext = ( value: RepeatablePropValue, setValue?: ReturnType< typeof jest.fn > ) => ( {
+	index: 0,
+	value,
 	setItems: setValue ?? jest.fn(),
 	items: [ { key: 0, item: value } ],
 	isOpen: false,

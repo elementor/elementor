@@ -68,7 +68,10 @@ export function CreateComponentForm() {
 						throw new Error( `Can't replace element with component: element not found` );
 					}
 
-					replaceElementWithComponent( element.element, result.component_id );
+					replaceElementWithComponent( element.element, {
+						id: result.component_id,
+						name: values.componentName,
+					} );
 
 					setResultNotification( {
 						show: true,

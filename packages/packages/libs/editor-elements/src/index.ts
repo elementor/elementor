@@ -8,9 +8,11 @@ export { useElementType } from './hooks/use-element-type';
 export { useSelectedElement } from './hooks/use-selected-element';
 export { useParentElement } from './hooks/use-parent-element';
 export { useElementChildren, type ElementChildren } from './hooks/use-element-children';
+export { useElementEditorSettings } from './hooks/use-element-editor-settings';
 
 // utils
 export { createElement, type CreateElementParams } from './sync/create-element';
+export { updateElementEditorSettings } from './sync/update-element-editor-settings';
 export { moveElement, type MoveElementParams } from './sync/move-element';
 export {
 	moveElements,
@@ -39,6 +41,8 @@ export { getWidgetsCache } from './sync/get-widgets-cache';
 export { updateElementSettings, type UpdateElementSettingsArgs } from './sync/update-element-settings';
 export { generateElementId } from './sync/generate-element-id';
 export { replaceElement } from './sync/replace-element';
+export { getCurrentDocumentContainer } from './sync/get-current-document-container';
+export { dropElement, type DropElementParams } from './sync/drop-element';
 
 export { ELEMENT_STYLE_CHANGE_EVENT, styleRerenderEvents } from './styles/consts';
 export {

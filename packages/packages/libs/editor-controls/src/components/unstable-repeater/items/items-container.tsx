@@ -1,18 +1,20 @@
 import * as React from 'react';
 
 import { SortableItem, SortableProvider } from '../../sortable';
+import { ItemContext } from '../context/item-context';
 import { useRepeaterContext } from '../context/repeater-context';
-import { type Item, type ItemProps, type RepeatablePropValue } from '../types';
+import { type Item, type RepeatablePropValue } from '../types';
 
 export const ItemsContainer = < T extends RepeatablePropValue >( {
-	itemTemplate,
 	isSortable = true,
 	children,
-}: React.PropsWithChildren< { itemTemplate: React.ReactNode; isSortable?: boolean } > ) => {
+}: React.PropsWithChildren< {
+	isSortable?: boolean;
+} > ) => {
 	const { items, setItems } = useRepeaterContext();
 	const keys = items.map( ( { key } ) => key );
 
-	if ( ! itemTemplate ) {
+	if ( ! children ) {
 		return null;
 	}
 
@@ -34,14 +36,7 @@ export const ItemsContainer = < T extends RepeatablePropValue >( {
 
 					return (
 						<SortableItem id={ key } key={ `sortable-${ key }` } disabled={ ! isSortable }>
-							{ React.isValidElement< React.PropsWithChildren< ItemProps< T > > >( itemTemplate )
-								? React.cloneElement( itemTemplate, {
-										key,
-										value,
-										index,
-										children,
-								  } )
-								: null }
+							<ItemContext.Provider value={ { index, value } }>{ children }</ItemContext.Provider>
 						</SortableItem>
 					);
 				} ) }
