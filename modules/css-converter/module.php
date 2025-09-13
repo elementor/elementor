@@ -7,19 +7,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\CssConverter\Routes\VariablesRoute;
+use Elementor\Modules\CssConverter\Routes\Classes_Route;
 
 class Module extends BaseModule {
 	private $variables_route;
+	private $classes_route;
 
 	public function get_name() {
 		return 'css-converter';
 	}
 
-	public function __construct( $variables_route = null ) {
+	public function __construct( $variables_route = null, $classes_route = null ) {
 		parent::__construct();
 		$this->variables_route = $variables_route;
+		$this->classes_route = $classes_route;
 		// Only initialize routes in non-test environments
-		if ( ! $this->is_test_environment() && ! $variables_route ) {
+		if ( ! $this->is_test_environment() && ! $variables_route && ! $classes_route ) {
 			$this->init_routes();
 		}
 	}
@@ -39,6 +42,7 @@ class Module extends BaseModule {
 	private function init_routes(): void {
 		try {
 			$this->variables_route = new VariablesRoute();
+			$this->classes_route = new Classes_Route();
 		} catch ( \Throwable $e ) {
 			// Log error in production but don't break the site
 			if ( function_exists( 'error_log' ) ) {
@@ -57,5 +61,13 @@ class Module extends BaseModule {
 
 	public function set_variables_route( $variables_route ): void {
 		$this->variables_route = $variables_route;
+	}
+
+	public function get_classes_route() {
+		return $this->classes_route;
+	}
+
+	public function set_classes_route( $classes_route ): void {
+		$this->classes_route = $classes_route;
 	}
 }
