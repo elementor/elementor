@@ -6,6 +6,7 @@ import { settingsTransformersRegistry } from '../settings-transformers-registry'
 import { signalizedProcess } from '../utils/signalized-process';
 import { createElementViewClassDeclaration } from './create-element-type';
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
+import { Children } from 'react';
 
 type CreateTypeOptions = {
 	type: string;
@@ -106,11 +107,16 @@ function createTemplatedElementViewClassDeclaration( {
 						type,
 						settings: resolvedSettings,
 						base_styles: baseStylesDictionary,
+						Children
 					};
 
 					return renderer.render( templateKey, context );
 				} )
-				.then( ( html ) => this.$el.html( html ) );
+				.then( ( html ) => {
+					console.log('------------ templated html ------------');
+					console.log(html);
+					this.$el.html( html );
+				} );
 
 			await process.execute();
 

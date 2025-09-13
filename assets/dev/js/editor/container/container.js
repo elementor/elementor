@@ -522,7 +522,9 @@ export default class Container extends ArgsObject {
 	}
 
 	isEditable() {
-		return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ) && 'open' === this.document.editor.status;
+		const { isEditable = true } = this.model.toJSON();
+
+		return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ) && 'open' === this.document.editor.status && isEditable;
 	}
 
 	isDesignable() {
