@@ -1,14 +1,19 @@
 <?php
-namespace Elementor\Modules\CssConverter\Tests\Integration;
+namespace Elementor\Testing\Modules\CssConverter;
+
+use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Modules\CssConverter\Services\Class_Conversion_Service;
+use Elementor\Modules\CssConverter\Parsers\CssParser;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\CssConverter\Services\Class_Conversion_Service;
-use Elementor\Modules\CssConverter\Parsers\CssParser;
-
-class CSS_Class_Conversion_Test extends \WP_UnitTestCase {
+/**
+ * @group css-converter
+ * @group css-converter-integration
+ */
+class Test_CSS_Class_Conversion_Integration extends Elementor_Test_Base {
 	private $service;
 	private $parser;
 
@@ -42,10 +47,10 @@ class CSS_Class_Conversion_Test extends \WP_UnitTestCase {
 			/* Class with unsupported properties */
 			.mixed-properties {
 				color: #333333;
-				background-color: #f8f9fa; /* Should be skipped */
 				font-size: 15px;
-				margin: 20px; /* Should be skipped */
-				padding: 10px; /* Should be skipped */
+				background-color: #f8f9fa;
+				margin: 20px;
+				padding: 10px;
 			}
 			
 			/* Complex selectors that should be ignored */

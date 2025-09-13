@@ -1,14 +1,19 @@
 <?php
-namespace Elementor\Modules\CssConverter\Tests\Api;
+namespace Elementor\Testing\Modules\CssConverter;
+
+use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Modules\CssConverter\Routes\Classes_Route;
+use WP_REST_Request;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\CssConverter\Routes\Classes_Route;
-use WP_REST_Request;
-
-class Classes_Route_Test extends \WP_UnitTestCase {
+/**
+ * @group css-converter
+ * @group css-converter-api
+ */
+class Test_Classes_Route extends Elementor_Test_Base {
 	private $route;
 	private $server;
 

@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Modules\CssConverter\Services\Class_Conversion_Service;
+use Elementor\Modules\CssConverter\Config\Class_Converter_Config;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use WP_REST_Request;
@@ -13,9 +14,11 @@ use WP_REST_Response;
 
 class Classes_Route {
 	private $conversion_service;
+	private $config;
 
-	public function __construct( $conversion_service = null ) {
+	public function __construct( $conversion_service = null, $config = null ) {
 		$this->conversion_service = $conversion_service;
+		$this->config = $config ?: Class_Converter_Config::get_instance();
 		add_action( 'rest_api_init', [ $this, 'register_route' ] );
 	}
 
@@ -65,6 +68,12 @@ class Classes_Route {
 		$url = $request->get_param( 'url' );
 		$css = $request->get_param( 'css' );
 		$store = $request->get_param( 'store' );
+
+		// Input validation
+		$validation_error = $this->validate_request( $request );
+		if ( $validation_error ) {
+			return $validation_error;
+		}
 
 		if ( $this->is_invalid_url_or_css( $url, $css ) ) {
 			return new WP_REST_Response( [ 'error' => 'Missing url or css parameter' ], 400 );
@@ -224,8 +233,48 @@ class Classes_Route {
 		return false !== strpos( $lower, 'text/css' ) || false !== strpos( $lower, 'text/plain' );
 	}
 
+	private function validate_request( WP_REST_Request $request ): ?WP_REST_Response {
+		$css = $request->get_param( 'css' );
+		
+		// Check CSS size limit
+		if ( is_string( $css ) && strlen( $css ) > $this->config->get_max_css_size() ) {
+			return new WP_REST_Response( [
+				'error' => 'CSS too large',
+				'details' => 'Maximum size: ' . $this->config->get_max_css_size() . ' bytes',
+			], 413 );
+		}
+
+		// Rate limiting (simple implementation)
+		if ( $this->is_rate_limited() ) {
+			return new WP_REST_Response( [
+				'error' => 'Rate limit exceeded',
+				'details' => 'Too many requests. Please try again later.',
+			], 429 );
+		}
+
+		return null;
+	}
+
+	private function is_rate_limited(): bool {
+		$user_id = get_current_user_id();
+		$key = "css_converter_rate_limit_{$user_id}";
+		$requests = get_transient( $key );
+
+		if ( false === $requests ) {
+			set_transient( $key, 1, MINUTE_IN_SECONDS );
+			return false;
+		}
+
+		if ( $requests >= 10 ) { // 10 requests per minute
+			return true;
+		}
+
+		set_transient( $key, $requests + 1, MINUTE_IN_SECONDS );
+		return false;
+	}
+
 	private function ensure_logs_directory(): string {
-		$logs_dir = __DIR__ . '/../logs';
+		$logs_dir = __DIR__ . '/../' . $this->config->get_log_directory();
 		if ( ! file_exists( $logs_dir ) ) {
 			wp_mkdir_p( $logs_dir );
 		}

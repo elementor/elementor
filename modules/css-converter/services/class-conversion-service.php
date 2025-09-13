@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Modules\CssConverter\Parsers\CssParser;
 use Elementor\Modules\CssConverter\Variable_Conversion_Service;
 use Elementor\Modules\CssConverter\ClassConvertors\Class_Property_Mapper_Registry;
+use Elementor\Modules\CssConverter\ClassConvertors\Class_Property_Mapper_Factory;
+use Elementor\Modules\CssConverter\Config\Class_Converter_Config;
 use Elementor\Modules\CssConverter\Exceptions\CssParseException;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
@@ -16,13 +18,14 @@ class Class_Conversion_Service {
 	private $css_parser;
 	private $variable_conversion_service;
 	private $property_mapper_registry;
+	private $config;
 	private $warnings = [];
-	private $supported_properties = [ 'color', 'font-size' ];
 
-	public function __construct() {
-		$this->css_parser = new CssParser();
-		$this->variable_conversion_service = new Variable_Conversion_Service();
-		$this->property_mapper_registry = new Class_Property_Mapper_Registry();
+	public function __construct( $css_parser = null, $variable_conversion_service = null, $property_mapper_registry = null, $config = null ) {
+		$this->css_parser = $css_parser ?: new CssParser();
+		$this->variable_conversion_service = $variable_conversion_service ?: new Variable_Conversion_Service();
+		$this->property_mapper_registry = $property_mapper_registry ?: Class_Property_Mapper_Factory::get_registry();
+		$this->config = $config ?: Class_Converter_Config::get_instance();
 	}
 
 	public function convert_css_to_global_classes( string $css ): array {
@@ -101,7 +104,7 @@ class Class_Conversion_Service {
 				$value = $this->resolve_css_variables( $value, $css_variables );
 			}
 
-			if ( in_array( $property, $this->supported_properties, true ) ) {
+			if ( $this->config->is_property_supported( $property ) ) {
 				$mapper = $this->property_mapper_registry->resolve( $property, $value );
 
 				if ( $mapper ) {
@@ -135,12 +138,15 @@ class Class_Conversion_Service {
 
 	private function resolve_css_variables( string $value, array $css_variables ): string {
 		if ( 1 === preg_match_all( '/var\(\s*(--[\w-]+)\s*\)/', $value, $matches ) ) {
+			// Create a lookup map for better performance
+			$variable_map = [];
+			foreach ( $css_variables as $css_var ) {
+				$variable_map[ $css_var['name'] ] = $css_var['value'];
+			}
+
 			foreach ( $matches[1] as $var_name ) {
-				foreach ( $css_variables as $css_var ) {
-					if ( $css_var['name'] === $var_name ) {
-						$value = str_replace( "var({$var_name})", $css_var['value'], $value );
-						break;
-					}
+				if ( isset( $variable_map[ $var_name ] ) ) {
+					$value = str_replace( "var({$var_name})", $variable_map[ $var_name ], $value );
 				}
 			}
 		}
@@ -149,13 +155,19 @@ class Class_Conversion_Service {
 	}
 
 	private function get_existing_global_class_names(): array {
-		try {
-			$repository = Global_Classes_Repository::make();
-			$classes = $repository->all();
-			return array_keys( $classes->get_items()->all() );
-		} catch ( \Exception $e ) {
-			return [];
+		static $cached_names = null;
+		
+		if ( null === $cached_names ) {
+			try {
+				$repository = Global_Classes_Repository::make();
+				$classes = $repository->all();
+				$cached_names = array_keys( $classes->get_items()->all() );
+			} catch ( \Exception $e ) {
+				$cached_names = [];
+			}
 		}
+		
+		return $cached_names;
 	}
 
 	private function generate_class_id( string $selector ): string {

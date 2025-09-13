@@ -48,11 +48,33 @@ class Color_Property_Mapper implements Class_Property_Mapper_Interface {
 	}
 
 	private function is_rgb_color( string $value ): bool {
-		return 1 === preg_match( self::RGB_PATTERN, $value );
+		if ( 1 !== preg_match( self::RGB_PATTERN, $value, $matches ) ) {
+			return false;
+		}
+		
+		// Validate RGB values are within 0-255 range
+		$r = (int) $matches[1];
+		$g = (int) $matches[2];
+		$b = (int) $matches[3];
+		
+		return $r >= 0 && $r <= 255 && $g >= 0 && $g <= 255 && $b >= 0 && $b <= 255;
 	}
 
 	private function is_rgba_color( string $value ): bool {
-		return 1 === preg_match( self::RGBA_PATTERN, $value );
+		if ( 1 !== preg_match( self::RGBA_PATTERN, $value, $matches ) ) {
+			return false;
+		}
+		
+		// Validate RGBA values are within valid ranges
+		$r = (int) $matches[1];
+		$g = (int) $matches[2];
+		$b = (int) $matches[3];
+		$a = (float) $matches[4];
+		
+		return $r >= 0 && $r <= 255 && 
+			   $g >= 0 && $g <= 255 && 
+			   $b >= 0 && $b <= 255 && 
+			   $a >= 0 && $a <= 1;
 	}
 
 	private function is_hsl_color( string $value ): bool {

@@ -1,13 +1,18 @@
 <?php
-namespace Elementor\Modules\CssConverter\Tests\Unit;
+namespace Elementor\Testing\Modules\CssConverter;
+
+use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Modules\CssConverter\ClassConvertors\Color_Property_Mapper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\CssConverter\ClassConvertors\Color_Property_Mapper;
-
-class Color_Property_Mapper_Test extends \WP_UnitTestCase {
+/**
+ * @group css-converter
+ * @group css-converter-mappers
+ */
+class Test_Color_Property_Mapper extends Elementor_Test_Base {
 	private $mapper;
 
 	public function setUp(): void {

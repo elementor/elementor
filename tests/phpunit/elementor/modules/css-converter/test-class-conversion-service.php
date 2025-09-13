@@ -1,13 +1,18 @@
 <?php
-namespace Elementor\Modules\CssConverter\Tests\Unit;
+namespace Elementor\Testing\Modules\CssConverter;
+
+use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Modules\CssConverter\Services\Class_Conversion_Service;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\CssConverter\Services\Class_Conversion_Service;
-
-class Class_Conversion_Service_Test extends \WP_UnitTestCase {
+/**
+ * @group css-converter
+ * @group css-converter-service
+ */
+class Test_Class_Conversion_Service extends Elementor_Test_Base {
 	private $service;
 
 	public function setUp(): void {
