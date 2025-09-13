@@ -30,11 +30,9 @@ class Module extends BaseModule {
 		$settings = [
 			'can_send_events' => $can_send_events,
 			'elementor_version' => ELEMENTOR_VERSION,
-			'site_url' => hash( 'sha256', get_site_url() ),
 			'wp_version' => get_bloginfo( 'version' ),
 			'user_agent' => esc_html( Utils::get_super_global_value( $_SERVER, 'HTTP_USER_AGENT' ) ),
 			'site_language' => get_locale(),
-			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
 			'subscription_id' => self::get_subscription_id(),
 			'subscription' => self::get_subscription(),
 			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,

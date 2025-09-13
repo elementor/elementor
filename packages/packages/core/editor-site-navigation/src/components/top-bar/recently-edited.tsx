@@ -72,7 +72,6 @@ export default function RecentlyEdited() {
 								location: config.locations.topBar,
 								secondaryLocation: config.secondaryLocations.documentNameDropdown,
 								trigger: config.triggers.dropdownClick,
-								element: config.elements.dropdown,
 							}
 						);
 					}
