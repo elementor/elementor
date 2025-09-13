@@ -1,0 +1,51 @@
+<?php
+namespace Elementor\Modules\CssConverter\ClassConvertors;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Font_Size_Property_Mapper implements Class_Property_Mapper_Interface {
+	private const SUPPORTED_UNITS = [ 'px', 'em', 'rem', '%', 'pt', 'vh', 'vw' ];
+	private const SIZE_PATTERN = '/^(\d+(?:\.\d+)?)(px|em|rem|%|pt|vh|vw)$/';
+
+	public function supports( string $property, $value ): bool {
+		return 'font-size' === $property && $this->is_valid_size( $value );
+	}
+
+	public function map_to_schema( string $property, $value ): array {
+		return [ 'font-size' => $this->normalize_size_value( $value ) ];
+	}
+
+	public function get_supported_properties(): array {
+		return [ 'font-size' ];
+	}
+
+	private function is_valid_size( string $value ): bool {
+		$value = trim( $value );
+		
+		if ( 1 === preg_match( self::SIZE_PATTERN, $value, $matches ) ) {
+			$unit = $matches[2];
+			return in_array( $unit, self::SUPPORTED_UNITS, true );
+		}
+		
+		return false;
+	}
+
+	private function normalize_size_value( string $value ): string {
+		$value = trim( $value );
+		
+		if ( 1 === preg_match( self::SIZE_PATTERN, $value, $matches ) ) {
+			$number = (float) $matches[1];
+			$unit = $matches[2];
+			
+			if ( 0 === $number % 1 ) {
+				$number = (int) $number;
+			}
+			
+			return $number . $unit;
+		}
+		
+		return $value;
+	}
+}

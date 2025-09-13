@@ -96,6 +96,50 @@ class CssParser {
 		return 0 === strpos( $property, '--' );
 	}
 
+	public function extract_classes( ParsedCss $parsed ): array {
+		$classes = [];
+		$this->extract_classes_recursive( $parsed->get_document(), $classes );
+		return $classes;
+	}
+
+	private function extract_classes_recursive( $css_node, &$classes ) {
+		if ( $css_node instanceof \Sabberworm\CSS\RuleSet\DeclarationBlock ) {
+			$this->process_declaration_block_for_classes( $css_node, $classes );
+		}
+		$this->process_node_contents_recursively( $css_node, 'extract_classes_recursive', $classes );
+	}
+
+	private function process_declaration_block_for_classes( $css_node, &$classes ) {
+		foreach ( $css_node->getSelectors() as $selector ) {
+			$selector_string = $selector->getSelector();
+			
+			if ( $this->is_simple_class_selector( $selector_string ) ) {
+				$this->extract_properties_from_class( $css_node, $selector_string, $classes );
+			}
+		}
+	}
+
+	private function extract_properties_from_class( $css_node, $selector_string, &$classes ) {
+		$properties = [];
+		
+		foreach ( $css_node->getRules() as $rule ) {
+			$property = $rule->getRule();
+			$value = (string) $rule->getValue();
+			$properties[ $property ] = $value;
+		}
+
+		$classes[] = [
+			'selector' => $selector_string,
+			'properties' => $properties,
+			'original_block' => $css_node->render( \Sabberworm\CSS\OutputFormat::create() ),
+		];
+	}
+
+	private function is_simple_class_selector( string $selector ): bool {
+		$trimmed = trim( $selector );
+		return 1 === preg_match( '/^\.[\w-]+$/', $trimmed );
+	}
+
 	public function validate_css( string $css ): array {
 		$errors = [];
 

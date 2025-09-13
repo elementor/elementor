@@ -846,3 +846,517 @@ The simplified MVP significantly reduces implementation risks:
 - **Leverages proven patterns** (existing variable conversion system)
 
 This approach provides a solid foundation for CSS class conversion while maintaining manageable complexity and clear deliverables.
+
+---
+
+## IMPLEMENTATION PLAN
+
+### Phase 1: MVP Development (Estimated: 2-3 weeks)
+
+#### Step 1: Extend CSS Parser for Class Extraction (3-4 days)
+
+**Objective**: Enhance existing CSS parser to extract simple class selectors
+
+**Files to Modify:**
+- `parsers/css-parser.php` - Add class extraction methods
+- `parsers/parsed-css.php` - Extend to store class data
+
+**Implementation Details:**
+```php
+// Add to CssParser class
+public function extract_classes(ParsedCss $parsed): array {
+    $classes = [];
+    $this->extract_classes_recursive($parsed->get_document(), $classes);
+    return $classes;
+}
+
+private function extract_classes_recursive($css_node, &$classes) {
+    if ($css_node instanceof \Sabberworm\CSS\RuleSet\DeclarationBlock) {
+        $this->process_declaration_block_for_classes($css_node, $classes);
+    }
+    $this->process_node_contents_recursively($css_node, 'extract_classes_recursive', $classes);
+}
+
+private function process_declaration_block_for_classes($css_node, &$classes) {
+    foreach ($css_node->getSelectors() as $selector) {
+        $selector_string = $selector->getSelector();
+        
+        // Only process simple class selectors (.className)
+        if ($this->is_simple_class_selector($selector_string)) {
+            $this->extract_properties_from_class($css_node, $selector_string, $classes);
+        }
+    }
+}
+
+private function is_simple_class_selector(string $selector): bool {
+    $trimmed = trim($selector);
+    // Match only .className (no spaces, no pseudo-selectors, no combinators)
+    return preg_match('/^\.[\w-]+$/', $trimmed);
+}
+```
+
+**Testing Requirements:**
+- Unit tests for simple class selector detection
+- Tests for skipping complex selectors
+- Integration tests with existing parser
+
+#### Step 2: Create Property Mappers (2-3 days)
+
+**Objective**: Implement Color and Font-Size property mappers
+
+**New Files to Create:**
+- `class-convertors/class-property-mapper-interface.php`
+- `class-convertors/color-property-mapper.php`
+- `class-convertors/font-size-property-mapper.php`
+- `class-convertors/class-property-mapper-registry.php`
+
+**Implementation Details:**
+```php
+// class-property-mapper-interface.php
+interface Class_Property_Mapper_Interface {
+    public function supports(string $property, $value): bool;
+    public function map_to_schema(string $property, $value): array;
+    public function get_supported_properties(): array;
+}
+
+// color-property-mapper.php
+class Color_Property_Mapper implements Class_Property_Mapper_Interface {
+    public function supports(string $property, $value): bool {
+        return 'color' === $property && $this->is_valid_color($value);
+    }
+    
+    public function map_to_schema(string $property, $value): array {
+        return ['color' => $this->normalize_color_value($value)];
+    }
+    
+    private function is_valid_color(string $value): bool {
+        // Support hex, rgb, rgba, hsl, named colors
+        return $this->is_hex_color($value) || 
+               $this->is_rgb_color($value) || 
+               $this->is_named_color($value);
+    }
+    
+    private function normalize_color_value(string $value): string {
+        // Convert to consistent format (prefer hex)
+        if ($this->is_rgb_color($value)) {
+            return $this->rgb_to_hex($value);
+        }
+        return strtolower($value);
+    }
+}
+
+// font-size-property-mapper.php  
+class Font_Size_Property_Mapper implements Class_Property_Mapper_Interface {
+    private const SUPPORTED_UNITS = ['px', 'em', 'rem', '%', 'pt'];
+    
+    public function supports(string $property, $value): bool {
+        return 'font-size' === $property && $this->is_valid_size($value);
+    }
+    
+    public function map_to_schema(string $property, $value): array {
+        return ['font-size' => $this->normalize_size_value($value)];
+    }
+    
+    private function is_valid_size(string $value): bool {
+        foreach (self::SUPPORTED_UNITS as $unit) {
+            if (preg_match('/^\d+(\.\d+)?' . $unit . '$/', $value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+```
+
+**Testing Requirements:**
+- Unit tests for each property mapper
+- Color format conversion tests (rgb→hex, etc.)
+- Size unit validation tests
+- Registry resolution tests
+
+#### Step 3: Build Class Conversion Service (3-4 days)
+
+**Objective**: Create main service to orchestrate class conversion
+
+**New Files to Create:**
+- `services/class-conversion-service.php`
+- `exceptions/class-conversion-exception.php`
+
+**Implementation Details:**
+```php
+class Class_Conversion_Service {
+    private $css_parser;
+    private $variable_conversion_service;
+    private $property_mapper_registry;
+    private $warnings = [];
+    private $supported_properties = ['color', 'font-size'];
+    
+    public function __construct() {
+        $this->css_parser = new CssParser();
+        $this->variable_conversion_service = new Variable_Conversion_Service();
+        $this->property_mapper_registry = new Class_Property_Mapper_Registry();
+        $this->init_property_mappers();
+    }
+    
+    public function convert_css_to_global_classes(string $css): array {
+        try {
+            $parsed = $this->css_parser->parse($css);
+            $classes = $this->css_parser->extract_classes($parsed);
+            
+            return $this->process_classes($classes);
+            
+        } catch (CssParseException $e) {
+            throw new Class_Conversion_Exception('Failed to parse CSS: ' . $e->getMessage());
+        }
+    }
+    
+    private function process_classes(array $classes): array {
+        $results = [
+            'converted_classes' => [],
+            'skipped_classes' => [],
+            'css_variables' => [],
+            'warnings' => [],
+            'stats' => [
+                'total_classes_found' => count($classes),
+                'classes_converted' => 0,
+                'classes_skipped' => 0,
+                'properties_converted' => 0,
+                'properties_skipped' => 0,
+                'variables_converted' => 0
+            ]
+        ];
+        
+        $existing_class_names = $this->get_existing_global_class_names();
+        
+        foreach ($classes as $css_class) {
+            $class_name = $this->extract_class_name($css_class['selector']);
+            
+            // Skip duplicates
+            if (in_array($class_name, $existing_class_names)) {
+                $this->add_warning("Skipped duplicate class: {$css_class['selector']}");
+                $results['skipped_classes'][] = [
+                    'selector' => $css_class['selector'],
+                    'reason' => 'duplicate'
+                ];
+                $results['stats']['classes_skipped']++;
+                continue;
+            }
+            
+            $converted = $this->convert_single_class($css_class);
+            
+            if (!empty($converted['variants']['desktop'])) {
+                $results['converted_classes'][] = $converted;
+                $results['stats']['classes_converted']++;
+                $existing_class_names[] = $class_name; // Prevent duplicates within same conversion
+            } else {
+                $results['skipped_classes'][] = [
+                    'selector' => $css_class['selector'],
+                    'reason' => 'no_supported_properties'
+                ];
+                $results['stats']['classes_skipped']++;
+            }
+        }
+        
+        $results['warnings'] = $this->warnings;
+        return $results;
+    }
+    
+    private function convert_single_class(array $css_class): array {
+        $schema_properties = [];
+        $css_variables = [];
+        
+        foreach ($css_class['properties'] as $property => $value) {
+            // Handle CSS variables
+            if (str_starts_with($property, '--')) {
+                $css_variables[] = ['name' => $property, 'value' => $value];
+                continue;
+            }
+            
+            // Handle var() references
+            if (str_contains($value, 'var(')) {
+                $value = $this->resolve_css_variables($value, $css_variables);
+            }
+            
+            // Process supported properties only
+            if (in_array($property, $this->supported_properties)) {
+                $mapper = $this->property_mapper_registry->resolve($property, $value);
+                
+                if ($mapper) {
+                    $mapped = $mapper->map_to_schema($property, $value);
+                    $schema_properties = array_merge($schema_properties, $mapped);
+                    $this->stats['properties_converted']++;
+                } else {
+                    $this->add_warning("Failed to map property: {$property} with value: {$value}");
+                    $this->stats['properties_skipped']++;
+                }
+            } else {
+                $this->add_warning("Skipped unsupported property: {$property} in {$css_class['selector']}");
+                $this->stats['properties_skipped']++;
+            }
+        }
+        
+        // Convert CSS variables to Editor Variables
+        if (!empty($css_variables)) {
+            $converted_variables = $this->variable_conversion_service->convert_to_editor_variables($css_variables);
+            // Handle variable conversion results...
+        }
+        
+        return [
+            'id' => $this->generate_class_id($css_class['selector']),
+            'type' => 'class',
+            'label' => $this->generate_class_label($css_class['selector']),
+            'variants' => [
+                'desktop' => $schema_properties
+            ]
+        ];
+    }
+    
+    private function generate_class_id(string $selector): string {
+        $class_name = $this->extract_class_name($selector);
+        return sanitize_title($class_name);
+    }
+    
+    private function generate_class_label(string $selector): string {
+        $class_name = $this->extract_class_name($selector);
+        return ucwords(str_replace(['-', '_'], ' ', $class_name));
+    }
+    
+    private function extract_class_name(string $selector): string {
+        return ltrim(trim($selector), '.');
+    }
+}
+```
+
+**Testing Requirements:**
+- Integration tests with real CSS samples
+- Duplicate detection tests
+- CSS variable resolution tests
+- Error handling tests
+
+#### Step 4: Create REST API Endpoint (2 days)
+
+**Objective**: Extend existing API to support class conversion
+
+**Files to Modify:**
+- `routes/variables-route.php` - Add class conversion endpoint
+- OR create new `routes/classes-route.php`
+
+**Implementation Details:**
+```php
+// Add to existing VariablesRoute or create new ClassesRoute
+public function register_class_conversion_route() {
+    register_rest_route('elementor/v2', '/css-converter/classes', [
+        'methods' => 'POST',
+        'callback' => [$this, 'convert_classes'],
+        'permission_callback' => [$this, 'check_permissions'],
+        'args' => [
+            'css' => [
+                'required' => false,
+                'type' => 'string',
+                'description' => 'CSS string to convert'
+            ],
+            'url' => [
+                'required' => false,
+                'type' => 'string',
+                'description' => 'URL to fetch CSS from'
+            ]
+        ]
+    ]);
+}
+
+public function convert_classes(\WP_REST_Request $request) {
+    try {
+        $css = $this->get_css_from_request($request);
+        
+        $conversion_service = new Class_Conversion_Service();
+        $results = $conversion_service->convert_css_to_global_classes($css);
+        
+        // Store converted classes in Global Classes repository
+        if (!empty($results['converted_classes'])) {
+            $this->store_global_classes($results['converted_classes']);
+        }
+        
+        return rest_ensure_response([
+            'success' => true,
+            'data' => $results
+        ]);
+        
+    } catch (Exception $e) {
+        return new \WP_Error('conversion_failed', $e->getMessage(), ['status' => 400]);
+    }
+}
+
+private function store_global_classes(array $classes) {
+    $repository = Global_Classes_Repository::make();
+    $current_classes = $repository->all();
+    
+    // Merge new classes with existing ones
+    $updated_items = $current_classes->get_items()->all();
+    $updated_order = $current_classes->get_order()->all();
+    
+    foreach ($classes as $class) {
+        $updated_items[$class['id']] = $class;
+        $updated_order[] = $class['id'];
+    }
+    
+    $repository->put($updated_items, $updated_order);
+}
+```
+
+**Testing Requirements:**
+- API endpoint tests
+- Authentication tests
+- Global Classes storage tests
+- Error response tests
+
+#### Step 5: Integration & Testing (2-3 days)
+
+**Objective**: Integrate all components and create comprehensive test suite
+
+**New Files to Create:**
+- `tests/unit/class-conversion-service-test.php`
+- `tests/unit/color-property-mapper-test.php`
+- `tests/unit/font-size-property-mapper-test.php`
+- `tests/integration/css-class-conversion-test.php`
+- `tests/api/classes-route-test.php`
+
+**Test Scenarios to Cover:**
+```php
+// Unit Tests
+class Color_Property_Mapper_Test extends \WP_UnitTestCase {
+    public function test_supports_hex_colors() {
+        $mapper = new Color_Property_Mapper();
+        $this->assertTrue($mapper->supports('color', '#ff0000'));
+        $this->assertTrue($mapper->supports('color', '#f00'));
+        $this->assertFalse($mapper->supports('background-color', '#ff0000'));
+    }
+    
+    public function test_normalizes_color_values() {
+        $mapper = new Color_Property_Mapper();
+        $result = $mapper->map_to_schema('color', '#FF0000');
+        $this->assertEquals(['color' => '#ff0000'], $result);
+    }
+}
+
+// Integration Tests  
+class CSS_Class_Conversion_Test extends \WP_UnitTestCase {
+    public function test_converts_simple_class() {
+        $css = '.test-class { color: #ff0000; font-size: 16px; }';
+        $service = new Class_Conversion_Service();
+        $result = $service->convert_css_to_global_classes($css);
+        
+        $this->assertEquals(1, $result['stats']['classes_converted']);
+        $this->assertArrayHasKey('test-class', $result['converted_classes'][0]);
+    }
+    
+    public function test_skips_duplicate_classes() {
+        // Create existing global class first
+        $this->create_global_class('existing-class');
+        
+        $css = '.existing-class { color: #ff0000; }';
+        $service = new Class_Conversion_Service();
+        $result = $service->convert_css_to_global_classes($css);
+        
+        $this->assertEquals(0, $result['stats']['classes_converted']);
+        $this->assertEquals(1, $result['stats']['classes_skipped']);
+    }
+}
+```
+
+**Manual Testing Checklist:**
+- [ ] Convert simple CSS classes successfully
+- [ ] Skip unsupported properties with warnings
+- [ ] Handle CSS variables correctly
+- [ ] Skip duplicate classes
+- [ ] API endpoint responds correctly
+- [ ] Global Classes appear in Elementor editor
+- [ ] Error handling works properly
+
+### Phase 2: Documentation & Polish (1 week)
+
+#### Step 6: User Documentation (2-3 days)
+
+**Files to Create:**
+- `docs/USER-GUIDE.md` - End-user instructions
+- `docs/API-REFERENCE.md` - Developer API documentation
+- `docs/TROUBLESHOOTING.md` - Common issues and solutions
+
+**Documentation Content:**
+```markdown
+# CSS Class Converter - User Guide
+
+## Supported CSS Properties (MVP)
+- `color` - Text color (hex, rgb, rgba, hsl, named colors)
+- `font-size` - Font size (px, em, rem, %, pt)
+
+## Supported CSS Patterns
+✅ Simple class selectors: `.my-class { ... }`
+✅ CSS variables: `--my-var: value;` and `var(--my-var)`
+
+## Not Supported (Coming in Future Versions)
+❌ Complex selectors: `.parent .child`, `.class:hover`
+❌ Media queries: `@media (max-width: 768px)`
+❌ Other properties: `background-color`, `margin`, `padding`, etc.
+
+## How to Use
+1. Navigate to Elementor > Tools > CSS Converter
+2. Paste your CSS or provide a URL
+3. Click "Convert Classes"
+4. Review conversion results and warnings
+5. Converted classes will appear in Global Classes panel
+```
+
+#### Step 7: Code Review & Optimization (2-3 days)
+
+**Review Checklist:**
+- [ ] Code follows WordPress coding standards
+- [ ] All functions have proper error handling
+- [ ] Security: Input validation and sanitization
+- [ ] Performance: No N+1 queries or memory leaks
+- [ ] Accessibility: Proper ARIA labels if UI added
+- [ ] Internationalization: All strings are translatable
+
+#### Step 8: Deployment Preparation (1-2 days)
+
+**Deployment Checklist:**
+- [ ] Feature flag implementation
+- [ ] Database migration scripts (if needed)
+- [ ] Rollback plan
+- [ ] Performance monitoring setup
+- [ ] User feedback collection mechanism
+
+### Success Criteria
+
+**MVP is considered successful when:**
+1. ✅ Converts simple CSS classes with `color` and `font-size` properties
+2. ✅ Integrates CSS variables with existing Editor Variables system
+3. ✅ Skips unsupported features gracefully with clear warnings
+4. ✅ Provides REST API for programmatic access
+5. ✅ Stores converted classes in Global Classes system
+6. ✅ Has comprehensive test coverage (>90%)
+7. ✅ Includes complete user and developer documentation
+
+### Risk Mitigation
+
+**Potential Risks & Mitigation:**
+1. **CSS Parsing Edge Cases**: Extensive testing with real-world CSS samples
+2. **Performance Issues**: Limit CSS file size, add processing timeouts
+3. **User Confusion**: Clear documentation about limitations and supported features
+4. **Integration Conflicts**: Thorough testing with existing Global Classes functionality
+
+### Post-MVP Evaluation
+
+**Metrics to Track:**
+- Conversion success rate
+- User adoption rate  
+- Most requested missing features
+- Performance metrics (conversion time, memory usage)
+- User feedback and support requests
+
+**Decision Points for Phase 2:**
+- Which additional properties to prioritize
+- Whether responsive support is needed
+- User demand for conflict resolution features
+- Performance optimization requirements
+
+This implementation plan provides a clear, step-by-step approach to delivering the MVP CSS Class Converter with manageable risk and clear success criteria.
