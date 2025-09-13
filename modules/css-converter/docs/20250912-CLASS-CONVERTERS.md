@@ -276,126 +276,193 @@ class Breakpoint_Resolver {
 }
 ```
 
-### Implementation Roadmap
+### Updated Implementation Roadmap
 
-#### Phase 1: Basic Class Extraction (MVP)
-- Extend parser to extract simple `.className` selectors
-- Create basic property mappers for color, background, typography
-- Implement class merging for duplicates
-- Support desktop variant only (no responsive)
-- Handle CSS variables within classes
+#### Phase 1: Minimal MVP (Current)
+**Scope**: Absolute minimum viable functionality
+- Extend parser to extract simple `.className` selectors only
+- Create TWO property mappers: Color_Property_Mapper, Font_Size_Property_Mapper  
+- CSS variable extraction and conversion to Editor Variables
+- Skip duplicate classes entirely
+- Desktop variant only (no responsive)
+- Skip unsupported properties with warnings
 
-#### Phase 2: Responsive Support  
-- Add media query parsing
-- Implement breakpoint resolution to variants
-- Support tablet/mobile variants
-- Handle responsive CSS variable references
+**Deliverables**:
+- Enhanced CSS parser for class extraction
+- Color property mapper (hex, rgb, rgba, hsl)
+- Font-size property mapper (px, em, rem, %)
+- CSS variable integration with existing variable conversion system
+- Basic REST API endpoint for class conversion
+- Simple conversion reporting (converted, skipped, warnings)
 
-#### Phase 3: Advanced Features
-- Pseudo-selector support (:hover, :focus)
-- Complex property mappings (flexbox, grid)
-- CSS function resolution (calc(), etc.)
-- Import/export integration
+#### Phase 2: Extended Property Support (Next)
+**Moved to FUTURE.md** - See detailed roadmap in `/docs/class/FUTURE.md`
+- Additional CSS properties (background-color, font-weight, margins, etc.)
+- CSS shorthand expansion
+- Complex property mappings
 
-#### Phase 4: Integration & UI
-- Editor integration for class import
-- Conflict resolution UI
-- Bulk import tools
-- Performance optimization
+#### Phase 3: Responsive Support
+**Moved to FUTURE.md** - See detailed roadmap in `/docs/class/FUTURE.md`  
+- Media query parsing and breakpoint resolution
+- Tablet/mobile variant support
+- Responsive CSS variable handling
 
-### Questions for Consideration
+#### Phase 4: Advanced Features  
+**Moved to FUTURE.md** - See detailed roadmap in `/docs/class/FUTURE.md`
+- Pseudo-selector support
+- Complex selector handling
+- Conflict resolution strategies
 
-1. **Property Support Scope**: Which CSS properties should be supported in MVP? (colors, typography, spacing vs full CSS spec)
+#### Phase 5+: Long-term Enhancements
+**Moved to FUTURE.md** - See detailed roadmap in `/docs/class/FUTURE.md`
+- Performance optimizations
+- Advanced CSS features
+- AI-assisted conversion
+- Editor integration and UI
 
-2. **Breakpoint Mapping**: How should custom CSS breakpoints map to Elementor's system? Should we support custom breakpoints?
+### MVP Requirements & Decisions
 
-3. **Conflict Resolution Strategy**: When duplicate class names have different styles, should we:
-   - Auto-rename variants (.button-1, .button-2)
-   - Merge conflicting properties (last wins)
-   - Prompt user for resolution
-   - Skip conflicting classes
+Based on stakeholder feedback, the MVP scope has been significantly simplified to focus on core functionality:
 
-4. **CSS Variable Handling**: Should CSS variables within classes be:
-   - Converted to Global Variables and referenced
-   - Resolved to literal values
-   - Kept as CSS variables in the generated classes
+#### 1. **Property Support Scope** ✅ DECIDED
+**MVP Scope**: Support only `color` and `font-size` properties
+- **Rationale**: Start with the most common and straightforward CSS properties
+- **Implementation**: Create Color_Property_Mapper and Font_Size_Property_Mapper
+- **Future**: All other properties moved to Phase 2+ (see FUTURE.md)
 
-5. **Unsupported Properties**: For CSS properties that don't map to Atomic Schema:
-   - Skip the property (partial conversion)
-   - Skip the entire class
-   - Fallback to HTML widget with raw CSS
+#### 2. **Breakpoint Mapping** ✅ DECIDED  
+**MVP Scope**: Skip ALL responsive/breakpoint support
+- **Rationale**: Avoid complexity of media query parsing and breakpoint resolution
+- **Implementation**: Only support desktop variant, ignore @media rules
+- **Future**: Responsive support moved to Phase 3 (see FUTURE.md)
 
-6. **Performance Considerations**: For large CSS files:
-   - Streaming parser for memory efficiency
-   - Batch processing limits
-   - Progress indicators for UI
+#### 3. **Conflict Resolution Strategy** ✅ DECIDED
+**MVP Scope**: Skip duplicate classes entirely
+- **Rationale**: Avoid complex conflict resolution logic in initial version
+- **Implementation**: If class name already exists, skip the duplicate
+- **Future**: Advanced conflict resolution moved to Phase 5 (see FUTURE.md)
 
-### Testing Scenarios
+#### 4. **CSS Variable Handling** ✅ DECIDED
+**MVP Scope**: Convert CSS variables to Editor Variables with conflict resolution
+- **Implementation Strategy**:
+  - Extract CSS variables from class rules (e.g., `--my-variable: 3`)
+  - Convert to Editor Variables using existing variable conversion system
+  - If Editor Variable already exists with different value, resolve to literal value
+  - Replace `var()` references with resolved values or variable references
+- **Example**:
+  ```css
+  .myClass {
+      --primary: #007cba;
+      color: var(--primary);
+      font-size: 16px;
+  }
+  ```
+  Becomes:
+  - Editor Variable: `--primary: #007cba` (if not exists)
+  - Global Class: `color: var(--primary), font-size: 16px`
 
-#### Basic Class Conversion
+#### 5. **Unsupported Properties** ✅ DECIDED
+**MVP Scope**: Skip unsupported properties (partial conversion)
+- **Rationale**: Allow partial conversion rather than failing entire class
+- **Implementation**: Warn about skipped properties, convert supported ones
+- **Future**: Custom CSS support via atomic widgets moved to Phase 9 (see FUTURE.md)
+
+#### 6. **Performance Considerations** ✅ DECIDED
+**MVP Scope**: Skip performance optimizations
+- **Rationale**: Focus on core functionality first, optimize later
+- **Implementation**: Basic synchronous processing, no streaming or batching
+- **Future**: Performance optimizations moved to Phase 6 (see FUTURE.md)
+
+### MVP Testing Scenarios
+
+#### Scenario 1: Basic Supported Properties
 ```css
 .simple-class {
-    color: #ff0000;
-    background-color: #ffffff;
-    font-size: 16px;
-    margin: 10px;
+    color: #ff0000;        /* ✅ SUPPORTED - converted */
+    font-size: 16px;       /* ✅ SUPPORTED - converted */
+    background-color: #fff; /* ❌ SKIPPED - unsupported in MVP */
+    margin: 10px;          /* ❌ SKIPPED - unsupported in MVP */
 }
 ```
+**Expected Output:**
+- Global Class with color and font-size only
+- Warnings for skipped properties
 
-#### CSS Variables in Classes
+#### Scenario 2: CSS Variables with var() References
 ```css
 .variable-class {
-    --primary: #007cba;
-    --spacing: 16px;
-    color: var(--primary);
-    margin: var(--spacing);
-    background: #f0f0f0;
+    --primary: #007cba;     /* ✅ CONVERTED to Editor Variable */
+    --spacing: 16px;        /* ❌ SKIPPED - spacing not supported */
+    color: var(--primary);  /* ✅ RESOLVED to variable reference */
+    font-size: 14px;        /* ✅ SUPPORTED - converted */
+    margin: var(--spacing); /* ❌ SKIPPED - margin not supported */
 }
 ```
+**Expected Output:**
+- Editor Variable: `--primary: #007cba`
+- Global Class: `color: var(--primary), font-size: 14px`
+- Warnings for unsupported variable and property
 
-#### Responsive Classes  
+#### Scenario 3: Duplicate Classes (Skipped)
+```css
+/* First occurrence */
+.button {
+    color: red;
+    font-size: 16px;
+}
+
+/* Second occurrence - SKIPPED */
+.button {
+    color: blue;
+    font-size: 14px;
+}
+```
+**Expected Output:**
+- Only first .button class converted
+- Warning: "Skipped duplicate class: .button"
+
+#### Scenario 4: Complex Selectors (Skipped)
+```css
+.simple-class { color: red; }           /* ✅ SUPPORTED */
+.parent .child { color: blue; }         /* ❌ SKIPPED - complex selector */
+.button:hover { color: green; }         /* ❌ SKIPPED - pseudo-selector */
+#main .content { color: black; }        /* ❌ SKIPPED - ID selector */
+```
+**Expected Output:**
+- Only .simple-class converted
+- Warnings for all skipped complex selectors
+
+#### Scenario 5: Responsive CSS (Skipped)
 ```css
 .responsive-class {
-    font-size: 18px;
+    font-size: 18px;  /* ✅ SUPPORTED */
 }
 
 @media (max-width: 768px) {
     .responsive-class {
-        font-size: 16px;
-    }
-}
-
-@media (max-width: 480px) {
-    .responsive-class {
-        font-size: 14px;
+        font-size: 16px;  /* ❌ SKIPPED - media query */
     }
 }
 ```
+**Expected Output:**
+- Only desktop font-size converted
+- Warning: "Skipped media query - responsive support not available in MVP"
 
-#### Duplicate Class Names
+#### Scenario 6: Mixed Supported/Unsupported Properties
 ```css
-/* File 1 */
-.button {
-    color: red;
-    padding: 10px;
-}
-
-/* File 2 */  
-.button {
-    color: blue;
-    margin: 5px;
+.mixed-class {
+    color: #333;              /* ✅ SUPPORTED */
+    font-size: 16px;          /* ✅ SUPPORTED */
+    font-weight: bold;        /* ❌ SKIPPED */
+    background-color: #f0f0f0; /* ❌ SKIPPED */
+    padding: 10px;            /* ❌ SKIPPED */
+    border-radius: 4px;       /* ❌ SKIPPED */
 }
 ```
-
-#### Complex Property Mappings
-```css
-.complex-class {
-    margin: 10px 20px 15px 25px; /* Shorthand */
-    font: bold 16px/1.5 Arial, sans-serif; /* Font shorthand */
-    background: url(image.jpg) no-repeat center/cover; /* Background shorthand */
-    transform: translateX(50px) rotate(45deg); /* Transform functions */
-}
-```
+**Expected Output:**
+- Global Class with only color and font-size
+- Multiple warnings for unsupported properties
+- Partial conversion success
 
 ### Style Schema Analysis
 
@@ -507,7 +574,7 @@ The Variables module augments the schema to support Global Variable references:
 
 ### Updated Implementation Strategy
 
-#### Class Converter Architecture
+#### Simplified MVP Architecture
 
 ```php
 interface Class_Property_Mapper_Interface {
@@ -516,44 +583,97 @@ interface Class_Property_Mapper_Interface {
     public function get_schema_properties(): array;
 }
 
-class Typography_Property_Mapper implements Class_Property_Mapper_Interface {
-    // Maps font, font-family, font-size, etc. to schema
-}
-
-class Spacing_Property_Mapper implements Class_Property_Mapper_Interface {
-    // Maps margin, padding shorthand to dimensions
-}
-
+// MVP: Only TWO property mappers
 class Color_Property_Mapper implements Class_Property_Mapper_Interface {
-    // Maps color, background-color, border-color, etc.
+    // Maps ONLY 'color' property to Color_Prop_Type
+    public function supports(string $property, $value): bool {
+        return 'color' === $property;
+    }
+    
+    public function map_to_schema(string $property, $value): array {
+        // Convert color values (hex, rgb, rgba, hsl) to schema format
+        return ['color' => $this->normalize_color_value($value)];
+    }
 }
 
-class Layout_Property_Mapper implements Class_Property_Mapper_Interface {  
-    // Maps display, flex, grid properties
+class Font_Size_Property_Mapper implements Class_Property_Mapper_Interface {
+    // Maps ONLY 'font-size' property to Size_Prop_Type  
+    public function supports(string $property, $value): bool {
+        return 'font-size' === $property;
+    }
+    
+    public function map_to_schema(string $property, $value): array {
+        // Convert font-size values (px, em, rem, %) to schema format
+        return ['font-size' => $this->normalize_size_value($value)];
+    }
 }
+
+// Future mappers moved to Phase 2+:
+// - Typography_Property_Mapper (font-weight, font-family, etc.)
+// - Spacing_Property_Mapper (margin, padding)  
+// - Background_Property_Mapper (background-color, background-image)
+// - Layout_Property_Mapper (display, width, height)
 ```
 
-#### Enhanced Conversion Pipeline
+#### Simplified MVP Conversion Pipeline
 
 ```php
 class Class_Conversion_Service {
+    private $supported_properties = ['color', 'font-size'];
+    private $css_variable_service;
+    
     public function convert_css_classes_to_global_classes(string $css): array {
         $parsed = $this->parser->parse($css);
-        $classes = $this->extract_classes($parsed);
+        $classes = $this->extract_simple_classes($parsed); // Only .className selectors
+        $results = [];
         
-        return array_map([$this, 'convert_single_class'], $classes);
+        foreach ($classes as $css_class) {
+            // Skip duplicate class names entirely
+            if ($this->class_already_exists($css_class['selector'])) {
+                $this->add_warning("Skipped duplicate class: {$css_class['selector']}");
+                continue;
+            }
+            
+            $converted = $this->convert_single_class($css_class);
+            if (!empty($converted['variants']['desktop'])) {
+                $results[] = $converted;
+            }
+        }
+        
+        return $results;
     }
     
     private function convert_single_class(array $css_class): array {
         $schema_properties = [];
+        $css_variables = [];
         
         foreach ($css_class['properties'] as $property => $value) {
-            $mapper = $this->property_mapper_registry->resolve($property, $value);
-            
-            if ($mapper) {
-                $mapped = $mapper->map_to_schema($property, $value);
-                $schema_properties = array_merge($schema_properties, $mapped);
+            // Handle CSS variables
+            if (str_starts_with($property, '--')) {
+                $css_variables[] = ['name' => $property, 'value' => $value];
+                continue;
             }
+            
+            // Handle var() references  
+            if (str_contains($value, 'var(')) {
+                $value = $this->resolve_css_variables($value, $css_variables);
+            }
+            
+            // Only process supported properties
+            if (in_array($property, $this->supported_properties)) {
+                $mapper = $this->property_mapper_registry->resolve($property, $value);
+                if ($mapper) {
+                    $mapped = $mapper->map_to_schema($property, $value);
+                    $schema_properties = array_merge($schema_properties, $mapped);
+                }
+            } else {
+                $this->add_warning("Skipped unsupported property: {$property}");
+            }
+        }
+        
+        // Convert CSS variables to Editor Variables
+        if (!empty($css_variables)) {
+            $this->css_variable_service->convert_to_editor_variables($css_variables);
         }
         
         return [
@@ -561,68 +681,168 @@ class Class_Conversion_Service {
             'type' => 'class',
             'label' => $this->generate_class_label($css_class['selector']),
             'variants' => [
-                'desktop' => $schema_properties,
-                // Responsive variants added by media query processor
+                'desktop' => $schema_properties
+                // No responsive variants in MVP
             ]
         ];
+    }
+    
+    private function extract_simple_classes(ParsedCss $parsed): array {
+        // Only extract simple .className selectors
+        // Skip complex selectors, pseudo-selectors, media queries
+        // Implementation details...
     }
 }
 ```
 
 ### Final Recommendations
 
-#### MVP Scope (Phase 1)
-**Focus on most common and straightforward CSS properties:**
+#### MVP Scope (Phase 1) - UPDATED
+**Simplified focus on only essential properties:**
 
-1. **Basic Typography:** font-size, font-weight, color, text-align
-2. **Simple Spacing:** margin, padding (individual values, not shorthand)  
-3. **Colors:** color, background-color, border-color
-4. **Basic Layout:** display, width, height
-5. **Simple Border:** border-width, border-style, border-radius
+**SUPPORTED in MVP:**
+1. **Color Properties:** `color` only
+2. **Typography Properties:** `font-size` only  
+3. **CSS Variables:** Extract and convert to Editor Variables
 
-**Skip in MVP:**
-- CSS shorthand properties (implement expansion later)
-- Complex background properties (gradients, images)
+**EXPLICITLY SKIPPED in MVP:**
+- All other CSS properties (background-color, font-weight, margin, padding, etc.)
+- CSS shorthand properties  
+- Responsive/breakpoint support (@media queries)
+- Pseudo-selectors (:hover, :focus, etc.)
+- Complex selectors (nested, combinators, etc.)
+- Duplicate class handling
+- Performance optimizations
+- Complex background properties
 - Transform, filter, animation properties
-- Pseudo-selectors
-- Media queries (responsive variants)
+
+**MVP Conversion Example:**
+```css
+/* Input CSS */
+.simple-class {
+    color: #ff0000;
+    font-size: 16px;
+    --primary: #007cba;
+    background-color: #ffffff; /* SKIPPED */
+    margin: 10px; /* SKIPPED */
+}
+
+/* Output Global Class */
+{
+    "id": "simple-class",
+    "type": "class",
+    "label": "Simple Class", 
+    "variants": {
+        "desktop": {
+            "color": "#ff0000",
+            "font-size": "16px"
+        }
+    }
+}
+
+/* Output Editor Variable */
+{
+    "id": "e-gv-color-hex-primary-variable",
+    "type": "color-hex", 
+    "value": "#007cba",
+    "source": "css-variable",
+    "name": "--primary"
+}
+```
 
 #### Data Migration Considerations
 
-**Global Classes Storage Format:**
+**MVP Global Classes Storage Format:**
 ```php
-// Kit metadata: _elementor_global_classes
+// Kit metadata: _elementor_global_classes (MVP simplified)
 [
     'items' => [
-        'button-primary-class' => [
-            'id' => 'button-primary-class',
+        'simple-class' => [
+            'id' => 'simple-class',
             'type' => 'class', 
-            'label' => 'Primary Button',
+            'label' => 'Simple Class',
             'variants' => [
                 'desktop' => [
-                    'font-size' => '16px',
-                    'color' => '#ffffff',
-                    'background' => ['color' => '#007cba'],
-                    'padding' => ['top' => '12px', 'right' => '24px', 'bottom' => '12px', 'left' => '24px']
-                ],
-                'tablet' => [
-                    'font-size' => '14px'  // Responsive override
-                ],
-                'mobile' => [
-                    'font-size' => '12px'  // Mobile override  
+                    'color' => '#ff0000',      // Only supported properties
+                    'font-size' => '16px'      // Only supported properties
                 ]
+                // No tablet/mobile variants in MVP
             ]
         ]
     ],
-    'order' => ['button-primary-class']
+    'order' => ['simple-class']
+]
+
+// Conversion Report Format
+[
+    'converted_classes' => [
+        ['id' => 'simple-class', 'properties' => ['color', 'font-size']]
+    ],
+    'skipped_classes' => [
+        ['selector' => '.button', 'reason' => 'duplicate']
+    ],
+    'css_variables' => [
+        ['name' => '--primary', 'converted' => true, 'id' => 'e-gv-color-hex-primary-variable']
+    ],
+    'warnings' => [
+        'Skipped unsupported property: background-color in .simple-class',
+        'Skipped duplicate class: .button',
+        'Skipped complex selector: .parent .child'
+    ],
+    'stats' => [
+        'total_classes_found' => 5,
+        'classes_converted' => 1,
+        'classes_skipped' => 4,
+        'properties_converted' => 2,
+        'properties_skipped' => 8,
+        'variables_converted' => 1
+    ]
 ]
 ```
 
-This comprehensive analysis provides a complete foundation for implementing CSS class to Global Classes conversion. The Style Schema analysis reveals exactly which CSS properties are supported and their expected format, enabling precise mapping from CSS to the Global Classes system.
+## Summary & Next Steps
 
-The next steps would be:
-1. **Create detailed technical specifications** for the MVP property mappers
-2. **Implement the enhanced CSS parser** to extract class selectors
-3. **Build the property mapping system** using the identified schema structure
-4. **Create comprehensive tests** for various CSS input scenarios
-5. **Design the user interface** for import/conflict resolution
+### MVP Scope Validation ✅
+
+The HVV feedback has been analyzed and is **clear and realistic**:
+
+1. **Simplified Property Support**: Starting with only `color` and `font-size` is pragmatic and achievable
+2. **No Responsive Support**: Skipping breakpoints eliminates significant complexity  
+3. **Skip Duplicates**: Avoiding conflict resolution reduces MVP scope appropriately
+4. **CSS Variable Integration**: Leveraging existing variable conversion system is efficient
+5. **Partial Conversion**: Skipping unsupported properties allows gradual adoption
+
+### Technical Feasibility Assessment ✅
+
+The simplified MVP is **technically sound and implementable**:
+
+- **Leverages Existing Architecture**: Builds on proven CSS variable conversion system
+- **Minimal New Components**: Only requires 2 new property mappers and class extraction
+- **Clear Boundaries**: Well-defined scope prevents feature creep
+- **Incremental Approach**: Allows for learning and iteration before adding complexity
+
+### Implementation Readiness
+
+**Immediate Next Steps:**
+1. **Implement Enhanced CSS Parser** - Extend existing parser to extract `.className` selectors
+2. **Create Color Property Mapper** - Handle color values (hex, rgb, rgba, hsl)  
+3. **Create Font-Size Property Mapper** - Handle size values (px, em, rem, %)
+4. **Integrate CSS Variable Handling** - Use existing Variable_Conversion_Service
+5. **Build Class Conversion Service** - Orchestrate the conversion pipeline
+6. **Create REST API Endpoint** - Extend existing `/css-converter/variables` pattern
+7. **Implement Comprehensive Testing** - Cover all MVP scenarios and edge cases
+
+**Future Enhancements:**
+- **Detailed roadmap in `/docs/class/FUTURE.md`** covers all advanced features
+- **Phased approach** allows for controlled expansion of functionality
+- **Modular architecture** supports adding new property mappers incrementally
+
+### Risk Assessment: LOW ✅
+
+The simplified MVP significantly reduces implementation risks:
+- **No complex CSS parsing** (media queries, pseudo-selectors, combinators)
+- **No conflict resolution logic** (skip duplicates)
+- **No performance optimization requirements** (basic synchronous processing)
+- **Leverages proven patterns** (existing variable conversion system)
+
+This approach provides a solid foundation for CSS class conversion while maintaining manageable complexity and clear deliverables.
