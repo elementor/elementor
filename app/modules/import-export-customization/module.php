@@ -37,6 +37,8 @@ class Module extends BaseModule {
 
 	const KIT_LIBRARY_ERROR_KEY = 'invalid-kit-library-zip-error';
 
+	const CLOUD_KIT_LIBRARY_ERROR_LOADING_RESOURCE = 'error-loading-resource';
+
 	const NO_WRITE_PERMISSIONS_KEY = 'no-write-permissions';
 
 	const THIRD_PARTY_ERROR = 'third-party-error';
