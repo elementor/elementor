@@ -849,7 +849,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openPageSettingsPanel(): Promise<void> {
-		await this.clickTopBarItem( TopBarSelectors.documentSettings );
+		await this.clickTopBarItem( TopBarSelectors.pageSettings );
 		await this.page.locator( EditorSelectors.panels.pageSettings.wrapper ).waitFor();
 	}
 
