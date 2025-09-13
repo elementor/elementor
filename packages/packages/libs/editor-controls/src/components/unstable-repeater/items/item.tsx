@@ -40,7 +40,7 @@ export const Item = < T extends RepeatablePropValue >( { Label, Icon, actions }:
 				ref={ setRef }
 				variant="outlined"
 				aria-label={ __( 'Open item', 'elementor' ) }
-				sx={ { minHeight: ( theme ) => theme.spacing( 4 ) } }
+				sx={ { minHeight: ( theme ) => theme.spacing( 3.5 ) } }
 				{ ...triggerProps }
 				onClick={ onClick }
 				startIcon={
