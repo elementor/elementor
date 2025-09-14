@@ -35,6 +35,7 @@ export default class AtomicContainer extends elementor.modules.elements.models.E
 				settings: element.settings || {},
 				elements: element.elements || [],
 				isLocked: element.isLocked || false,
+				editor_settings: element.editor_settings || {},
 			};
 		} );
 	}
