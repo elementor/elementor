@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createElement, useEffect, useRef } from 'react';
+import { createElement, useEffect, useMemo, useRef } from 'react';
 import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { GripVerticalIcon } from '@elementor/icons';
 import {
@@ -84,14 +84,15 @@ export const VariablesManagerTable = ( {
 			const variable = variables[ id ];
 			const variableType = getVariableType( variable.type );
 
-			return {
-				id,
-				type: variable.type,
-				name: variable.label,
-				value: variable.value,
-				...variableType,
-			};
-		} );
+				return {
+					id,
+					type: variable.type,
+					name: variable.label,
+					value: variable.value,
+					...variableType,
+				};
+			} );
+	}, [ ids, variables ] );
 
 	const tableSX: SxProps = {
 		minWidth: 250,
@@ -203,21 +204,30 @@ export const VariablesManagerTable = ( {
 														}
 													} }
 													prefixElement={ createElement( row.icon, { fontSize: 'inherit' } ) }
-													editableElement={ ( { value, onChange } ) => (
-														<LabelField
-															id={ 'variable-label-' + row.id }
-															size="tiny"
-															value={ value }
-															onChange={ onChange }
-															focusOnShow
-															selectOnShow={ autoEditVariableId === row.id }
-														/>
+													editableElement={ ( {
+														value,
+														onChange,
+														onValidationChange,
+														error,
+													} ) => (
+													<LabelField
+														id={ 'variable-label-' + row.id }
+														size="tiny"
+														value={ value }
+														onChange={ onChange }
+														onErrorChange={ onValidationChange }
+														error={ error }
+														focusOnShow
+														selectOnShow={ autoEditVariableId === row.id }
+														showWarningInfotip={ true }
+													/>
 													) }
 													autoEdit={ autoEditVariableId === row.id }
 													onRowRef={ handleRowRef( row.id ) }
 													onAutoEditComplete={
 														autoEditVariableId === row.id ? onAutoEditComplete : undefined
 													}
+													fieldType="label"
 												>
 													<EllipsisWithTooltip
 														title={ row.name }

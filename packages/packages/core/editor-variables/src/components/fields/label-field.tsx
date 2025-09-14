@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { WarningInfotip } from '@elementor/editor-ui';
 import { TextField, type TextFieldProps } from '@elementor/ui';
 
-import { validateLabel, VARIABLE_LABEL_MAX_LENGTH } from '../../utils/validations';
+import { labelHint, validateLabel, VARIABLE_LABEL_MAX_LENGTH } from '../../utils/validations';
 function isLabelEqual( a: string, b: string ) {
 	return a.trim().toLowerCase() === b.trim().toLowerCase();
 }
@@ -30,6 +31,7 @@ type LabelFieldProps = {
 	size?: TextFieldProps[ 'size' ];
 	focusOnShow?: boolean;
 	selectOnShow?: boolean;
+	showWarningInfotip?: boolean;
 };
 
 export const LabelField = ( {
@@ -41,9 +43,11 @@ export const LabelField = ( {
 	size = 'tiny',
 	focusOnShow = false,
 	selectOnShow = false,
+	showWarningInfotip = false,
 }: LabelFieldProps ) => {
 	const [ label, setLabel ] = useState( value );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+	const fieldRef = useRef< HTMLElement >( null );
 
 	const handleChange = ( newValue: string ) => {
 		setLabel( newValue );
@@ -61,8 +65,11 @@ export const LabelField = ( {
 		errorMsg = error.message;
 	}
 
-	return (
+	const hintMsg = ! errorMsg ? labelHint( label ) : '';
+
+	const textField = (
 		<TextField
+			ref={ fieldRef }
 			id={ id }
 			size={ size }
 			fullWidth
@@ -77,4 +84,23 @@ export const LabelField = ( {
 			autoFocus={ focusOnShow }
 		/>
 	);
+
+	if ( showWarningInfotip ) {
+		const tooltipWidth = Math.max( 240, fieldRef.current?.getBoundingClientRect().width ?? 260 );
+
+		return (
+			<WarningInfotip
+				open={ Boolean( errorMsg || hintMsg ) }
+				text={ errorMsg || hintMsg }
+				placement="bottom-start"
+				width={ tooltipWidth }
+				offset={ [ 0, -15 ] }
+				{ ...( hintMsg && { hasError: false } ) }
+			>
+				{ textField }
+			</WarningInfotip>
+		);
+	}
+
+	return textField;
 };
