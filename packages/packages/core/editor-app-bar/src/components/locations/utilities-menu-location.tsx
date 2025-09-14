@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Fragment } from 'react';
-import { Divider } from '@elementor/ui';
 
 import { utilitiesMenu } from '../../locations';
 import ToolbarMenu from '../ui/toolbar-menu';
@@ -22,7 +21,7 @@ export default function UtilitiesMenuLocation() {
 
 	return (
 		<ToolbarMenu>
-			{ toolbarMenuItems.map( ( { MenuItem, id }, index ) => (
+			{ toolbarMenuItems.map( ( { MenuItem, id } ) => (
 				<Fragment key={ id }>
 					<MenuItem />
 				</Fragment>
