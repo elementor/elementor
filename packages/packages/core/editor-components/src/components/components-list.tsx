@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { EyeIcon } from '@elementor/icons';
-import { Divider, Icon, List, Stack, Typography } from '@elementor/ui';
+import { Box, Divider, Icon, Link, List, Stack, Typography } from '@elementor/ui';
 import { useSearch } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
@@ -9,10 +9,14 @@ import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 
 export function ComponentsList() {
-	const { components, isLoading } = useFilteredComponents();
+	const { components, isLoading, searchValue } = useFilteredComponents();
 
 	if ( isLoading ) {
 		return <LoadingComponents />;
+	}
+
+	if ( searchValue.length > 0 && ( ! components || components.length === 0 ) ) {
+		return <EmptySearchResult />;
 	}
 
 	if ( ! components || components.length === 0 ) {
@@ -66,6 +70,62 @@ const EmptyState = () => {
 	);
 };
 
+const EmptySearchResult = () => {
+	const { debouncedValue: searchValue, onClearSearch } = useSearch();
+	return (
+		<Stack
+			color={ 'text.secondary' }
+			pt={ 5 }
+			alignItems="center"
+			gap={ 1 }
+			overflow={ 'hidden' }
+			justifySelf={ 'center' }
+		>
+			<EyeIcon />
+			<Box
+				sx={ {
+					width: '100%',
+				} }
+			>
+				<Typography align="center" variant="subtitle2" color="inherit">
+					{ __( 'Sorry, nothing matched', 'elementor' ) }
+				</Typography>
+				{ searchValue && (
+					<Typography
+						variant="subtitle2"
+						color="inherit"
+						sx={ {
+							display: 'flex',
+							width: '100%',
+							justifyContent: 'center',
+						} }
+					>
+						<span>&ldquo;</span>
+						<span
+							style={ {
+								maxWidth: '80%',
+								overflow: 'hidden',
+								textOverflow: 'ellipsis',
+							} }
+						>
+							{ searchValue }
+						</span>
+						<span>&rdquo;.</span>
+					</Typography>
+				) }
+			</Box>
+			<Typography align="center" variant="caption" color="inherit">
+				{ __( 'Try something else.', 'elementor' ) }
+			</Typography>
+			<Typography align="center" variant="caption" color="inherit">
+				<Link color="secondary" variant="caption" component="button" onClick={ onClearSearch }>
+					{ __( 'Clear & try again', 'elementor' ) }
+				</Link>
+			</Typography>
+		</Stack>
+	);
+};
+
 const useFilteredComponents = () => {
 	const { data: components, isLoading } = useComponents();
 	const { debouncedValue: searchValue } = useSearch();
@@ -75,5 +135,6 @@ const useFilteredComponents = () => {
 			component.name.toLowerCase().includes( searchValue.toLowerCase() )
 		),
 		isLoading,
+		searchValue,
 	};
 };
