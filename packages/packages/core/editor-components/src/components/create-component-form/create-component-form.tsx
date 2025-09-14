@@ -91,6 +91,92 @@ export function CreateComponentForm() {
 			},
 			"panel": {
 				"title": "Component",
+				"widgets_settings": [],
+				"elements_categories": {
+					"favorites": {
+						"title": "Favorites",
+						"icon": "eicon-heart",
+						"sort": "a-z",
+						"hideIfEmpty": false,
+						"active": true
+					},
+					"v4-elements": {
+						"title": "Atomic Elements",
+						"hideIfEmpty": true,
+						"active": true,
+						"icon": "font"
+					},
+					"layout": {
+						"title": "Layout",
+						"hideIfEmpty": true,
+						"active": true,
+						"icon": "font"
+					},
+					"basic": {
+						"title": "Basic",
+						"icon": "eicon-font",
+						"active": true
+					},
+					"pro-elements": {
+						"title": "Pro",
+						"active": true,
+						"icon": "font"
+					},
+					"helloplus": {
+						"title": "Hello+",
+						"hideIfEmpty": true,
+						"active": true,
+						"icon": "font"
+					},
+					"general": {
+						"title": "General",
+						"icon": "eicon-font",
+						"active": true
+					},
+					"link-in-bio": {
+						"title": "Link In Bio",
+						"hideIfEmpty": true,
+						"active": true,
+						"icon": "font"
+					},
+					"theme-elements": {
+						"title": "Site",
+						"active": false,
+						"icon": "font"
+					},
+					"woocommerce-elements": {
+						"title": "WooCommerce",
+						"active": false,
+						"icon": "font"
+					},
+					"unlimited_elements": {
+						"title": "Unlimited Elements",
+						"icon": "uc-default-widget-icon ue-wi-svg",
+						"active": true
+					},
+					"uc_category_1": {
+						"title": "Creative Widgets",
+						"icon": "uc-default-widget-icon ue-wi-svg",
+						"active": true
+					},
+					"wordpress": {
+						"title": "WordPress",
+						"icon": "eicon-wordpress",
+						"active": false
+					}
+				},
+				"default_route": "panel/elements/categories",
+				"has_elements": true,
+				"support_kit": false,
+				"messages": {
+					"publish_notification": "Hurray! Your Component is live."
+				},
+				"show_navigator": true,
+				"allow_adding_widgets": true,
+				"show_copy_and_share": false,
+				"library_close_title": "Close",
+				"publish_button_title": "Publish",
+				"allow_closing_remote_library": true
 			},
 			"urls": {
 				"exit_to_dashboard": "http://hackathon-2025.local/wp-admin/post.php?post=1&action=edit",
