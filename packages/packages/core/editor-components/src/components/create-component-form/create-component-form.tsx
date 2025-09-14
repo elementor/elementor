@@ -57,44 +57,70 @@ export function CreateComponentForm() {
 			throw new Error( `Can't save element as component: element not found` );
 		}
 
-		createComponent(
-			{
-				name: values.componentName,
-				content: [ element.element.model.toJSON( { remove: [ 'default' ] } ) ],
-				status: 'draft',
+		const tempId = 1;
+
+		window.elementor.documents.addDocumentByConfig({
+			id: tempId,
+			type: 'elementor_component',
+			elements: [ element.element.model.toJSON( { remove: [ 'default' ] } ) ],
+			"container": "body",
+			"post_type_title": "Component",
+			"user": {
+				"can_publish": true,
+				"locked": false
 			},
-			{
-				onSuccess: ( result: CreateComponentResponse ) => {
-					if ( ! element ) {
-						throw new Error( `Can't replace element with component: element not found` );
-					}
-
-					replaceElementWithComponent( element.element, {
-						id: result.component_id,
-						name: values.componentName,
-					} );
-
-					setResultNotification( {
-						show: true,
-						// Translators: %1$s: Component name, %2$s: Component ID
-						message: __( 'Component saved successfully as: %1$s (ID: %2$s)', 'elementor' )
-							.replace( '%1$s', values.componentName )
-							.replace( '%2$s', result.component_id.toString() ),
-						type: 'success',
-					} );
-
-					resetAndClosePopup();
+			revisions: {
+				"enabled": true,
+				"current_id": tempId
+			},
+			"settings": {
+				"name": "page",
+				"panelPage": {
+					"title": "Component Settings"
 				},
-				onError: () => {
-					const errorMessage = __( 'Failed to save component. Please try again.', 'elementor' );
-					setResultNotification( {
-						show: true,
-						message: errorMessage,
-						type: 'error',
-					} );
+				"controls": {},
+				"tabs": {
+					"settings": "Settings"
 				},
-			}
-		);
+				"settings": {
+					"post_title": "Product Card",
+					"post_status": "publish"
+				},
+				"cssWrapperSelector": ""
+
+			},
+			"panel": {
+				"title": "Component",
+			},
+			"urls": {
+				"exit_to_dashboard": "http://hackathon-2025.local/wp-admin/post.php?post=1&action=edit",
+			},
+			"remoteLibrary": {
+				"type": "block",
+				"default_route": "templates/blocks",
+				"category": "elementor_component",
+				"autoImportSettings": false
+			},
+			"status": {
+				"value": "publish",
+				"label": "Published"
+			},
+		});
+		replaceElementWithComponent( element.element, {
+			id: tempId,
+			name: values.componentName,
+		} );
+
+		setResultNotification( {
+			show: true,
+			// Translators: %1$s: Component name, %2$s: Component ID
+			message: __( 'Component saved successfully as: %1$s (ID: %2$s)', 'elementor' )
+				.replace( '%1$s', values.componentName )
+				.replace( '%2$s', tempId.toString() ),
+			type: 'success',
+		} );
+
+		resetAndClosePopup();
 	};
 
 	const resetAndClosePopup = () => {

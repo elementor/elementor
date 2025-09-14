@@ -26,8 +26,28 @@ export class Open extends $e.modules.CommandBase {
 			elementor.documents.invalidateCache();
 		}
 
-		return elementor.documents.request( id )
+		if ( elementor.documents.documents[ id ] ) {
+			console.log('------------ /open, elementor.documents.documents[ id ]: ------------');
+			console.log(elementor.documents.documents[ id ]);
+
+			const config = elementor.documents.documents[ id ].config;
+			elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );
+
+			if ( elementor.loaded ) {
+				elementor.$previewContents.find( `.elementor-${ id }` ).removeClass( 'loading' );
+			}
+
+			return $e.internal( 'editor/documents/load', { config, selector, setAsInitial, shouldScroll, shouldNavigateToDefaultRoute } );
+		}
+
+		return elementor.documents.request( 6 )
 			.then( ( config ) => {
+				// if ( elementor.documents.documents[ id ] ) {
+				// 	config = elementor.documents.documents[ id ].config;
+				// }
+
+				console.log('------------ /open, config: ------------');
+				console.log(config);
 				elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );
 
 				// Tell the editor to load the document.

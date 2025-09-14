@@ -59,7 +59,9 @@ class Component extends Atomic_Widget_Base {
 
 		$post_id = $this->get_settings( 'component_id' )['value'];
 		$content = Plugin::$instance->frontend->get_builder_content( $post_id );
-		$html    = sprintf( '<div class="e-component">%s</div>', $content );
+		// $html    = sprintf( '<div class="e-component">%s</div>', $content );
+
+		$html    = sprintf( '<div data-elementor-type="elementor_component" data-elementor-id="1" class="elementor elementor-1" data-elementor-post-type="elementor_component"></div>' );
 
 		// PHPCS - should not be escaped.
 		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
