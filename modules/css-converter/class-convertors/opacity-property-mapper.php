@@ -46,7 +46,8 @@ class Opacity_Property_Mapper implements Class_Property_Mapper_Interface {
 
 		$decimal = (float) $value;
 		if ( $decimal >= 0 && $decimal <= 1 ) {
-			if ( 0 === $decimal % 1 ) {
+			// Check if it's a whole number (like 0.0 or 1.0)
+			if ( floor( $decimal ) == $decimal ) {
 				return (string) (int) $decimal;
 			}
 			return (string) $decimal;

@@ -23,7 +23,26 @@ class Class_Converter_Config {
 
 	private function init_default_config(): void {
 		$this->config = [
-			'supported_properties' => [ 'color', 'font-size' ],
+			'supported_properties' => [ 
+				'color', 
+				'font-size',
+				'font-weight',
+				'text-align',
+				'line-height',
+				'text-decoration',
+				'text-transform',
+				'display',
+				'width',
+				'height',
+				'min-width',
+				'min-height',
+				'max-width',
+				'max-height',
+				'opacity',
+				// Spacing properties
+				'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+				'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+			],
 			'max_css_size' => 1024 * 1024, // 1MB
 			'max_classes_per_request' => 100,
 			'enable_caching' => true,

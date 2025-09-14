@@ -37,6 +37,8 @@ class Class_Property_Mapper_Factory {
 			new Display_Property_Mapper(),
 			new Dimension_Property_Mapper(),
 			new Opacity_Property_Mapper(),
+			new Margin_Property_Mapper(),
+			new Padding_Property_Mapper(),
 		];
 
 		$mappers = apply_filters( 'elementor_css_converter_property_mappers', $mappers );
