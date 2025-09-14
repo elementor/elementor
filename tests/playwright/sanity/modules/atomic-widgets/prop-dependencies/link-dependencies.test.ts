@@ -43,8 +43,8 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 		await editor.openV2PanelTab( 'general' );
 
 		test.step( 'Check tag control is enabled', async () => {
-			expect( helper.getHtmlTagControl() ).toHaveText( 'Div' );
 			await expect( helper.getHtmlTagControl() ).toBeVisible();
+			await expect( helper.getHtmlTagControl() ).toHaveText( 'Div' );
 		} );
 
 		await helper.setHtmlTagControl( 'section' );
@@ -55,7 +55,7 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 		} );
 
 		test.step( 'Validate tag control value is a (link) and tooltip is visible', async () => {
-			expect( helper.getHtmlTagControl( true ) ).toHaveText( 'a (link)' );
+			await expect( helper.getHtmlTagControl( true ) ).toHaveText( 'a (link)' );
 			await helper.getHtmlTagControl( true ).hover();
 
 			const tooltip = page.locator( ":has-text('The tag is locked to 'a' tag because this Div block has a link. To pick a different tag, remove the link first.')" );
@@ -71,7 +71,7 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 		} );
 
 		test.step( 'Validate tag control value is section', async () => {
-			expect( helper.getHtmlTagControl() ).toHaveText( 'Section' );
+			await expect( helper.getHtmlTagControl() ).toHaveText( 'Section' );
 		} );
 	} );
 } );
