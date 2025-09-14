@@ -172,7 +172,7 @@ describe( 'duplicateElements', () => {
 		} );
 	} );
 
-	it( 'should call onCreate callback when provided', () => {
+	it( 'should call onCreate callback when provided, without modifying the duplicated elements', () => {
 		// Arrange.
 		const { mockDuplicatedElement1 } = setupMockElementsForDuplication( mockGetContainer );
 
@@ -214,7 +214,7 @@ describe( 'duplicateElements', () => {
 				at: 1,
 			},
 		] );
-		expect( duplicateResult.duplicatedElements[ 0 ] ).toHaveProperty( 'customProperty', 'modified' );
+		expect( duplicateResult.duplicatedElements[ 0 ] ).not.toHaveProperty( 'customProperty', 'modified' );
 	} );
 
 	it( 'should call onCreate callback on redo when provided', () => {
