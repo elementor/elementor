@@ -4,16 +4,15 @@
 
 ### Next Priority Properties (Ready for Implementation)
 
-### Remaining Advanced Properties (Phase 3)
-- **Advanced Background Properties**:
-  - background-image (background-image-overlay-transformer)
-  - background (background-transformer)
+### Future Enhancements (Phase 4+)
+- **Advanced Background Overlays**:
   - background-gradient (background-gradient-overlay-transformer)
   - background-overlay (background-overlay-transformer)
-- **Stroke Properties**:
-  - stroke (stroke-transformer)
-- **Transition Properties**:
-  - transition (transition-transformer)
+- **Transform Properties**:
+  - transform, transform-origin
+  - transform-functions (scale, rotate, translate, skew)
+- **Animation Properties**:
+  - animation, keyframes support
 
 ### Complex Property Mappings
 - **CSS Shorthand Expansion**: 

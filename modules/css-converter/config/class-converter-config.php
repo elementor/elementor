@@ -48,7 +48,7 @@ class Class_Converter_Config {
 				'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style',
 				'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',
 				// Background properties
-				'background-color',
+				'background-color', 'background-image', 'background',
 				// Filter properties
 				'filter',
 				// Flex properties
@@ -57,6 +57,10 @@ class Class_Converter_Config {
 				'position', 'top', 'right', 'bottom', 'left', 'z-index',
 				// Shadow properties
 				'box-shadow', 'text-shadow',
+				// Stroke properties
+				'stroke', 'stroke-width', 'stroke-dasharray', 'stroke-linecap', 'stroke-linejoin',
+				// Transition properties
+				'transition', 'transition-property', 'transition-duration', 'transition-timing-function', 'transition-delay',
 			],
 			'max_css_size' => 1024 * 1024, // 1MB
 			'max_classes_per_request' => 100,
