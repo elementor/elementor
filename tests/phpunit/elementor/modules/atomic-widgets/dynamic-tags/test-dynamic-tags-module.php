@@ -292,7 +292,6 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 
 		// Act.
 		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'dynamicTags' => [ 'tags' => $tags ] ] );
-		var_dump( $settings['atomicDynamicTags']['tags'] );
 
 		// Assert.
 		$expected = [
