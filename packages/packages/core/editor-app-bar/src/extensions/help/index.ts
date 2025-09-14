@@ -4,7 +4,7 @@ import useActionProps from './hooks/use-action-props';
 export function init() {
 	mainMenu.registerLink( {
 		id: 'open-help-center',
-		priority: 45,
+		group: 'help',
 		useProps: useActionProps,
 	} );
 }
