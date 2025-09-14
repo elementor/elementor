@@ -44,7 +44,7 @@ export const StyleTab = () => {
 	const [ activeStyleState, setActiveStyleState ] = useState< StyleDefinitionState | null >( null );
 	const breakpoint = useActiveBreakpoint();
 
-	if ( !currentClassesProp ) {
+	if ( ! currentClassesProp ) {
 		return null;
 	}
 
