@@ -83,8 +83,6 @@ export const useCustomCss = () => {
 
 	return {
 		customCss,
-		meta,
-		styleId: currentStyleId,
 		setCustomCss,
 	};
 };
