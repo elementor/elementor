@@ -4,7 +4,7 @@ export type RequestParams< TData = object > = {
 	data: TData;
 };
 
-type Headers< TData = object > =  RequestParams<TData> & {
+type Headers< TData = object > = RequestParams< TData > & {
 	success: ( result: unknown ) => void;
 	error: ( error: unknown ) => void;
 };

@@ -1,7 +1,7 @@
 import { __dispatch as dispatch } from '@elementor/store';
 
-import { slice } from './initial-documents-styles-store';
 import { invalidateCache } from './document-config';
+import { slice } from './initial-documents-styles-store';
 
 type InitialDocumentId = number;
 
