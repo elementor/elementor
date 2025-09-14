@@ -76,8 +76,8 @@ export class AtomicHelper {
 		await option.waitFor( { state: 'detached' } );
 	}
 
-	getHtmlTagControl( shouldTargetDisabled: boolean = false ) {
-		return this.page.locator( `.MuiBox-root:has(> label:text-matches("Tag", "i")) .MuiSelect-select.MuiSelect-outlined.MuiInputBase-input.MuiOutlinedInput-input${ shouldTargetDisabled ? '.Mui-disabled' : ':not(.Mui-disabled)' }` );
+	getHtmlTagControl( currentValue: string ) {
+		return this.page.getByText( currentValue, { exact: true } );
 	}
 
 	async addAtomicElement( elementType: ElementType, container: string = 'document' ) {

@@ -43,35 +43,35 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 		await editor.openV2PanelTab( 'general' );
 
 		test.step( 'Check tag control is enabled', async () => {
-			await expect( helper.getHtmlTagControl() ).toBeVisible();
-			await expect( helper.getHtmlTagControl() ).toHaveText( 'Div' );
+			await expect( helper.getHtmlTagControl( 'Div' ) ).toBeVisible();
+			await expect( helper.getHtmlTagControl( 'Div' ) ).toHaveText( 'Div' );
 		} );
 
 		await helper.setHtmlTagControl( 'section' );
 
 		test.step( 'Check tag control is disabled when link is set', async () => {
 			await helper.setLinkControl( { value: 'https://www.google.com' } );
-			await expect( helper.getHtmlTagControl( true ) ).toBeVisible();
+			await expect( helper.getHtmlTagControl( 'a (link)' ) ).toBeVisible();
 		} );
 
 		test.step( 'Validate tag control value is a (link) and tooltip is visible', async () => {
-			await expect( helper.getHtmlTagControl( true ) ).toHaveText( 'a (link)' );
-			await helper.getHtmlTagControl( true ).hover();
+			await expect( helper.getHtmlTagControl( 'a (link)' ) ).toHaveText( 'a (link)' );
+			await helper.getHtmlTagControl( 'a (link)' ).hover();
 
 			const tooltip = page.locator( ":has-text('The tag is locked to 'a' tag because this Div block has a link. To pick a different tag, remove the link first.')" );
 
 			await tooltip.waitFor();
 			await expect( tooltip ).toBeVisible();
-			await expect( helper.getHtmlTagControl( true ) ).toHaveCSS( 'cursor', 'not-allowed' );
+			await expect( helper.getHtmlTagControl( 'a (link)' ) ).toHaveCSS( 'cursor', 'not-allowed' );
 		} );
 
 		test.step( 'Check tag control is enabled when link is removed', async () => {
 			await helper.setLinkControl( { value: '' } );
-			await expect( helper.getHtmlTagControl() ).toBeVisible();
+			await expect( helper.getHtmlTagControl( 'Section' ) ).toBeVisible();
 		} );
 
 		test.step( 'Validate tag control value is section', async () => {
-			await expect( helper.getHtmlTagControl() ).toHaveText( 'Section' );
+			await expect( helper.getHtmlTagControl( 'Section' ) ).toHaveText( 'Section' );
 		} );
 	} );
 } );
