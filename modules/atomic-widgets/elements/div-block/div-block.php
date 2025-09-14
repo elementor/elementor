@@ -9,7 +9,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Html_Tag_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -31,7 +31,7 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Div Block', 'elementor' );
+		return esc_html__( 'Div block', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -47,20 +47,9 @@ class Div_Block extends Atomic_Element_Base {
 			->where( [
 				'operator' => 'not_exist',
 				'path' => [ 'link', 'destination' ],
-				'on_term_unmet' => [
-					'setValue' => [
-						'$$type' => 'string',
-						'value' => 'a',
-					],
-					'cursor' => 'not-allowed',
-					'tooltip' => [
-						'title' => __( 'HTML Tag', 'elementor' ),
-						'description' => sprintf(
-							/* translators: %s: Element name. */
-							__( 'The tag is locked to \'a\' tag because this %1$s has a link. To pick a different tag, remove the link first', 'elementor' ),
-							( new static())->get_title()
-						),
-					],
+				'newValue' => [
+					'$$type' => 'string',
+					'value' => 'a',
 				],
 			] )
 			->get();
@@ -83,7 +72,7 @@ class Div_Block extends Atomic_Element_Base {
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
 				->set_items( [
-					Select_Control::bind_to( 'tag' )
+					Html_Tag_Control::bind_to( 'tag' )
 						->set_options( [
 							[
 								'value' => 'div',

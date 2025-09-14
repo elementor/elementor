@@ -18,13 +18,7 @@ export type DependencyTerm = {
 	operator: DependencyOperator;
 	path: string[];
 	value: PropValue;
-	onTermUnmet?: {
-		setValue?: TransformablePropValue< string >;
-		tooltip?: {
-			title: string;
-			description: string;
-		};
-	};
+	newValue?: TransformablePropValue< string >;
 };
 
 export type Dependency = {

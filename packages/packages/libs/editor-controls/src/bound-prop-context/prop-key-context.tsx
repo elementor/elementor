@@ -12,7 +12,7 @@ import {
 } from '@elementor/editor-props';
 
 import { HookOutsideProviderError, MissingPropTypeError, UnsupportedParentError } from './errors';
-import { type SetValue, type Tooltip, usePropContext } from './prop-context';
+import { type SetValue, usePropContext } from './prop-context';
 
 export type PropKeyContextValue< T, P > = {
 	bind: PropKey;
@@ -23,8 +23,6 @@ export type PropKeyContextValue< T, P > = {
 	path: PropKey[];
 	isDisabled?: ( propType: PropType ) => boolean | undefined;
 	disabled?: boolean;
-	getTooltip?: ( propType: PropType ) => Tooltip | undefined;
-	tooltip?: Tooltip;
 };
 
 const PropKeyContext = createContext< PropKeyContextValue< PropValue, PropType > | null >( null );

@@ -1,12 +1,6 @@
 import * as React from 'react';
 import { createContext, useContext } from 'react';
-import {
-	type CreateOptions,
-	type DependencyTerm,
-	type PropKey,
-	type PropType,
-	type PropValue,
-} from '@elementor/editor-props';
+import { type CreateOptions, type PropKey, type PropType, type PropValue } from '@elementor/editor-props';
 
 import { HookOutsideProviderError } from './errors';
 
@@ -21,15 +15,12 @@ export type SetValueMeta = {
 
 export type SetValue< T > = ( value: T, options?: CreateOptions, meta?: SetValueMeta ) => void;
 
-export type Tooltip = DependencyTerm[ 'onTermUnmet' ][ 'tooltip' ];
-
 type PropContext< T extends PropValue, P extends PropType > = {
 	setValue: SetValue< T >;
 	value: T | null;
 	propType: P;
 	placeholder?: T;
 	isDisabled?: ( propType: PropType ) => boolean | undefined;
-	getTooltip?: ( propType: PropType ) => Tooltip | undefined;
 };
 
 const PropContext = createContext< PropContext< PropValue, PropType > | null >( null );
@@ -45,7 +36,6 @@ export const PropProvider = < T extends PropValue, P extends PropType >( {
 	propType,
 	placeholder,
 	isDisabled,
-	getTooltip,
 }: PropProviderProps< T, P > ) => {
 	return (
 		<PropContext.Provider
@@ -55,7 +45,6 @@ export const PropProvider = < T extends PropValue, P extends PropType >( {
 				setValue: setValue as SetValue< PropValue >,
 				placeholder,
 				isDisabled,
-				getTooltip,
 			} }
 		>
 			{ children }

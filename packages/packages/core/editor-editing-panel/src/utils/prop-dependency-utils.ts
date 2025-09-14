@@ -90,8 +90,7 @@ export function updateValues(
 
 			if ( ! testDependencies.newValues.isMet ) {
 				const newValue =
-					testDependencies.newValues.failingDependencies.find( ( term ) => term.onTermUnmet?.setValue )
-						?.onTermUnmet?.setValue ?? null;
+					testDependencies.newValues.failingDependencies.find( ( term ) => term.newValue )?.newValue ?? null;
 
 				const currentValue =
 					extractValue( dependency.split( '.' ), elementValues ) ?? ( propType.default as Value );

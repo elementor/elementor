@@ -57,27 +57,8 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 
 	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues ).isMet;
 
-	const getTooltip = ( prop: PropType ) => {
-		const dependencyMet = isDependencyMet( prop?.dependencies, elementSettingValues );
-
-		if ( dependencyMet.isMet ) {
-			return undefined;
-		}
-
-		return (
-			dependencyMet.failingDependencies.find( ( dependency ) => dependency.onTermUnmet?.tooltip )?.onTermUnmet
-				?.tooltip ?? undefined
-		);
-	};
-
 	return (
-		<PropProvider
-			propType={ propType }
-			value={ value }
-			setValue={ setValue }
-			isDisabled={ isDisabled }
-			getTooltip={ getTooltip }
-		>
+		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
 			<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>
 		</PropProvider>
 	);
