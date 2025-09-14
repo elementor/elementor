@@ -159,6 +159,7 @@ export const StyleTab = () => {
 									title: __( 'Effects', 'elementor' ),
 								} }
 								fields={ [
+									'mix-blend-mode',
 									'box-shadow',
 									'opacity',
 									'transform',
