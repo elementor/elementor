@@ -3,7 +3,7 @@ import { InfoAlert } from '@elementor/editor-ui';
 import { type AlertProps, AlertTitle, Box, Infotip, type InfotipProps, useTheme } from '@elementor/ui';
 import { DirectionProvider } from '@elementor/ui';
 
-export type Props = {
+type Props = {
 	infotipProps?: Partial< InfotipProps >;
 	alertProps?: Partial< AlertProps >;
 	title?: string;

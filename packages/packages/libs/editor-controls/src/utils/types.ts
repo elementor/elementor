@@ -3,11 +3,3 @@ export type ControlProps< TControlProps = unknown > = TControlProps & {
 		elementId: string;
 	};
 };
-
-export type ExtendedWindow = Window & {
-	elementorFrontend?: {
-		config?: {
-			is_rtl?: boolean;
-		};
-	};
-};
