@@ -115,6 +115,7 @@ class App extends BaseApp {
 			'admin_url' => admin_url(),
 			'login_url' => wp_login_url(),
 			'base_url' => $this->get_base_url(),
+			'home_url' => home_url(),
 			'promotion' => Filtered_Promotions_Manager::get_filtered_promotion_data(
 				[ 'upgrade_url' => 'https://go.elementor.com/go-pro-theme-builder/' ],
 				'elementor/site-editor/promotion',
@@ -286,10 +287,9 @@ class App extends BaseApp {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => 'import-export-customization',
 			'title' => esc_html__( 'Import/Export Customization', 'elementor' ),
-			'description' => esc_html__( 'Enable advanced customization options for import/export functionality.', 'elementor' ),
-			'hidden' => true,
-			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
-			'default' => ExperimentsManager::STATE_INACTIVE,
+			'description' => esc_html__( 'Enhanced import/export for website templates. Selectively include site content, templates, and settings with advanced granular control.', 'elementor' ),
+			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
+			'default' => ExperimentsManager::STATE_ACTIVE,
 		] );
 	}
 

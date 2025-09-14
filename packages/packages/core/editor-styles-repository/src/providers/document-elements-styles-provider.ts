@@ -28,7 +28,7 @@ export const documentElementsStylesProvider = createStylesProvider( {
 		return `${ ELEMENTS_STYLES_PROVIDER_KEY_PREFIX }${ documentId }`;
 	},
 	priority: 50,
-	subscribe: ( cb ) => listenTo( styleRerenderEvents, cb ),
+	subscribe: ( cb ) => listenTo( styleRerenderEvents, () => cb() ),
 	actions: {
 		all: ( meta = {} ) => {
 			let elements = getElements();

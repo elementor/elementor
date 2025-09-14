@@ -2,112 +2,124 @@ import * as React from 'react';
 import { type RefObject, useRef } from 'react';
 import { dimensionsPropTypeUtil, type PropKey, sizePropTypeUtil } from '@elementor/editor-props';
 import { DetachIcon, LinkIcon, SideBottomIcon, SideLeftIcon, SideRightIcon, SideTopIcon } from '@elementor/icons';
-import { Grid, Stack, ToggleButton, Tooltip } from '@elementor/ui';
+import { Grid, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
 import { ControlLabel } from '../components/control-label';
-import { createControl } from '../create-control';
+import { StyledToggleButton } from '../components/control-toggle-button-group';
 import { type ExtendedOption } from '../utils/size-control';
 import { SizeControl } from './size-control';
 
-export const LinkedDimensionsControl = createControl(
-	( {
-		label,
-		isSiteRtl = false,
-		extendedOptions,
-	}: {
-		label: string;
-		isSiteRtl?: boolean;
-		extendedOptions?: ExtendedOption[];
-	} ) => {
-		const { value: sizeValue, setValue: setSizeValue, disabled: sizeDisabled } = useBoundProp( sizePropTypeUtil );
-		const gridRowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ) ];
+export const LinkedDimensionsControl = ( {
+	label,
+	isSiteRtl = false,
+	extendedOptions,
+	min,
+}: {
+	label: string;
+	isSiteRtl?: boolean;
+	extendedOptions?: ExtendedOption[];
+	min?: number;
+} ) => {
+	const {
+		value: sizeValue,
+		setValue: setSizeValue,
+		disabled: sizeDisabled,
+		placeholder: sizePlaceholder,
+	} = useBoundProp( sizePropTypeUtil );
+	const gridRowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ) ];
 
-		const {
-			value: dimensionsValue,
-			setValue: setDimensionsValue,
-			propType,
-			disabled: dimensionsDisabled,
-		} = useBoundProp( dimensionsPropTypeUtil );
+	const {
+		value: dimensionsValue,
+		setValue: setDimensionsValue,
+		propType,
+		placeholder: dimensionsPlaceholder,
+		disabled: dimensionsDisabled,
+	} = useBoundProp( dimensionsPropTypeUtil );
 
-		const isLinked = ! dimensionsValue && ! sizeValue ? true : !! sizeValue;
+	const hasUserValues = !! ( dimensionsValue || sizeValue );
+	const hasPlaceholders = !! ( sizePlaceholder || dimensionsPlaceholder );
 
-		const onLinkToggle = () => {
-			if ( ! isLinked ) {
-				setSizeValue( dimensionsValue[ 'block-start' ]?.value ?? null );
-				return;
-			}
+	const isLinked =
+		( ! hasUserValues && ! hasPlaceholders ) || ( hasPlaceholders ? !! sizePlaceholder : !! sizeValue );
+	const onLinkToggle = () => {
+		if ( ! isLinked ) {
+			setSizeValue( dimensionsValue[ 'block-start' ]?.value ?? null );
+			return;
+		}
 
-			const value = sizeValue ? sizePropTypeUtil.create( sizeValue ) : null;
+		const value = sizeValue ? sizePropTypeUtil.create( sizeValue ) : null;
 
-			setDimensionsValue( {
-				'block-start': value,
-				'block-end': value,
-				'inline-start': value,
-				'inline-end': value,
-			} );
-		};
+		setDimensionsValue( {
+			'block-start': value,
+			'block-end': value,
+			'inline-start': value,
+			'inline-end': value,
+		} );
+	};
 
-		const tooltipLabel = label.toLowerCase();
+	const tooltipLabel = label.toLowerCase();
 
-		const LinkedIcon = isLinked ? LinkIcon : DetachIcon;
-		// translators: %s: Tooltip title.
-		const linkedLabel = __( 'Link %s', 'elementor' ).replace( '%s', tooltipLabel );
-		// translators: %s: Tooltip title.
-		const unlinkedLabel = __( 'Unlink %s', 'elementor' ).replace( '%s', tooltipLabel );
+	const LinkedIcon = isLinked ? LinkIcon : DetachIcon;
+	// translators: %s: Tooltip title.
+	const linkedLabel = __( 'Link %s', 'elementor' ).replace( '%s', tooltipLabel );
+	// translators: %s: Tooltip title.
+	const unlinkedLabel = __( 'Unlink %s', 'elementor' ).replace( '%s', tooltipLabel );
 
-		const disabled = sizeDisabled || dimensionsDisabled;
+	const disabled = sizeDisabled || dimensionsDisabled;
 
-		return (
-			<PropProvider
-				propType={ propType }
-				value={ dimensionsValue }
-				setValue={ setDimensionsValue }
-				isDisabled={ () => disabled }
-			>
-				<Stack direction="row" gap={ 2 } flexWrap="nowrap">
-					<ControlFormLabel>{ label }</ControlFormLabel>
-					<Tooltip title={ isLinked ? unlinkedLabel : linkedLabel } placement="top">
-						<ToggleButton
-							aria-label={ isLinked ? unlinkedLabel : linkedLabel }
-							size={ 'tiny' }
-							value={ 'check' }
-							selected={ isLinked }
-							sx={ { marginLeft: 'auto' } }
-							onChange={ onLinkToggle }
-							disabled={ disabled }
-						>
-							<LinkedIcon fontSize={ 'tiny' } />
-						</ToggleButton>
-					</Tooltip>
-				</Stack>
+	return (
+		<PropProvider
+			propType={ propType }
+			value={ dimensionsValue }
+			setValue={ setDimensionsValue }
+			placeholder={ dimensionsPlaceholder }
+			isDisabled={ () => disabled }
+		>
+			<Stack direction="row" gap={ 2 } flexWrap="nowrap">
+				<ControlFormLabel>{ label }</ControlFormLabel>
+				<Tooltip title={ isLinked ? unlinkedLabel : linkedLabel } placement="top">
+					<StyledToggleButton
+						aria-label={ isLinked ? unlinkedLabel : linkedLabel }
+						size={ 'tiny' }
+						value={ 'check' }
+						selected={ isLinked }
+						sx={ { marginLeft: 'auto' } }
+						onChange={ onLinkToggle }
+						disabled={ disabled }
+						isPlaceholder={ hasPlaceholders }
+					>
+						<LinkedIcon fontSize={ 'tiny' } />
+					</StyledToggleButton>
+				</Tooltip>
+			</Stack>
 
-				{ getCssDimensionProps( isSiteRtl ).map( ( row, index ) => (
-					<Stack direction="row" gap={ 2 } flexWrap="nowrap" key={ index } ref={ gridRowRefs[ index ] }>
-						{ row.map( ( { icon, ...props } ) => (
-							<Grid container gap={ 0.75 } alignItems="center" key={ props.bind }>
-								<Grid item xs={ 12 }>
-									<Label { ...props } />
-								</Grid>
-								<Grid item xs={ 12 }>
-									<Control
-										bind={ props.bind }
-										startIcon={ icon }
-										isLinked={ isLinked }
-										extendedOptions={ extendedOptions }
-										anchorRef={ gridRowRefs[ index ] }
-									/>
-								</Grid>
+			{ getCssDimensionProps( isSiteRtl ).map( ( row, index ) => (
+				<Stack direction="row" gap={ 2 } flexWrap="nowrap" key={ index } ref={ gridRowRefs[ index ] }>
+					{ row.map( ( { icon, ...props } ) => (
+						<Grid container gap={ 0.75 } alignItems="center" key={ props.bind }>
+							<Grid item xs={ 12 }>
+								<Label { ...props } />
 							</Grid>
-						) ) }
-					</Stack>
-				) ) }
-			</PropProvider>
-		);
-	}
-);
+							<Grid item xs={ 12 }>
+								<Control
+									bind={ props.bind }
+									startIcon={ icon }
+									isLinked={ isLinked }
+									extendedOptions={ extendedOptions }
+									anchorRef={ gridRowRefs[ index ] }
+									min={ min }
+								/>
+							</Grid>
+						</Grid>
+					) ) }
+				</Stack>
+			) ) }
+		</PropProvider>
+	);
+};
 
 const Control = ( {
 	bind,
@@ -115,20 +127,34 @@ const Control = ( {
 	isLinked,
 	extendedOptions,
 	anchorRef,
+	min,
 }: {
 	bind: PropKey;
 	startIcon: React.ReactNode;
 	isLinked: boolean;
 	extendedOptions?: ExtendedOption[];
 	anchorRef: RefObject< HTMLDivElement >;
+	min?: number;
 } ) => {
 	if ( isLinked ) {
-		return <SizeControl startIcon={ startIcon } extendedOptions={ extendedOptions } anchorRef={ anchorRef } />;
+		return (
+			<SizeControl
+				startIcon={ startIcon }
+				extendedOptions={ extendedOptions }
+				anchorRef={ anchorRef }
+				min={ min }
+			/>
+		);
 	}
 
 	return (
 		<PropKeyProvider bind={ bind }>
-			<SizeControl startIcon={ startIcon } extendedOptions={ extendedOptions } anchorRef={ anchorRef } />
+			<SizeControl
+				startIcon={ startIcon }
+				extendedOptions={ extendedOptions }
+				anchorRef={ anchorRef }
+				min={ min }
+			/>
 		</PropKeyProvider>
 	);
 };

@@ -16,7 +16,7 @@ trait Mock_Bypass_Register {
 			if ( ! $this->controller->bypass_register_status ) {
 				return parent::register();
 			}
-		} else if ( ! $this->bypass_register_status ) {
+		} elseif ( ! $this->bypass_register_status ) {
 			parent::register();
 		}
 	}

@@ -32,10 +32,15 @@ const findByValue = ( value: string ) => {
 	}
 };
 
-export const TransitionSelector = ( { recentlyUsedList }: { recentlyUsedList: string[] } ) => {
+export const TransitionSelector = ( {
+	recentlyUsedList = [],
+	disabledItems = [],
+}: {
+	recentlyUsedList: string[];
+	disabledItems?: string[];
+} ) => {
 	const { value, setValue } = useBoundProp( keyValuePropTypeUtil );
 	const {
-		value: { value: transitionValue },
 		key: { value: transitionLabel },
 	} = value;
 	const defaultRef = useRef< HTMLDivElement >( null );
@@ -54,12 +59,14 @@ export const TransitionSelector = ( { recentlyUsedList }: { recentlyUsedList: st
 		if ( recentItems.length === 0 ) {
 			return filteredItems;
 		}
+		const [ first, ...rest ] = filteredItems;
 		return [
+			first,
 			{
-				label: __( 'Recent', 'elementor' ),
+				label: __( 'Recently Used', 'elementor' ),
 				items: recentItems,
 			},
-			...filteredItems,
+			...rest,
 		];
 	};
 
@@ -106,12 +113,13 @@ export const TransitionSelector = ( { recentlyUsedList }: { recentlyUsedList: st
 			>
 				<ItemSelector
 					itemsList={ getItemList() }
-					selectedItem={ transitionValue }
+					selectedItem={ transitionLabel }
 					onItemChange={ handleTransitionPropertyChange }
 					onClose={ popoverState.close }
 					sectionWidth={ 268 }
 					title={ __( 'Transition Property', 'elementor' ) }
 					icon={ VariationsIcon as React.ElementType< { fontSize: string } > }
+					disabledItems={ disabledItems }
 				/>
 			</Popover>
 		</Box>

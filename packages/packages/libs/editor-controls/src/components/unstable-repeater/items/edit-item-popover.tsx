@@ -5,18 +5,15 @@ import { PropKeyProvider } from '../../../bound-prop-context';
 import { EMPTY_OPEN_ITEM, useRepeaterContext } from '../context/repeater-context';
 
 export const EditItemPopover = ( { children }: { children: React.ReactNode } ) => {
-	const { popoverState, openItemIndex, isOpen, rowRef, setOpenItemIndex, setRowRef, items } = useRepeaterContext();
-	const popoverProps = bindPopover( popoverState );
+	const { popoverState, openItemIndex, isOpen, rowRef, setOpenItemIndex, setRowRef } = useRepeaterContext();
 
 	if ( ! isOpen || ! rowRef ) {
 		return null;
 	}
 
-	const bind = items[ openItemIndex ].item.$$type;
-
 	const onClose = () => {
-		popoverProps.onClose?.();
 		setRowRef( null );
+		popoverState.setAnchorEl( null );
 		setOpenItemIndex( EMPTY_OPEN_ITEM );
 	};
 
@@ -29,15 +26,11 @@ export const EditItemPopover = ( { children }: { children: React.ReactNode } ) =
 				},
 			} }
 			anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
-			{ ...popoverProps }
-			anchorEl={ rowRef }
+			{ ...bindPopover( popoverState ) }
 			onClose={ onClose }
 		>
 			<PropKeyProvider bind={ String( openItemIndex ) }>
-				<Box>
-					{ React.isValidElement< { bind: string; index: number } >( children ) &&
-						React.cloneElement( children, { bind, index: openItemIndex } ) }
-				</Box>
+				<Box>{ children }</Box>
 			</PropKeyProvider>
 		</Popover>
 	);

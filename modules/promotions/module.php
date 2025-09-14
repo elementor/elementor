@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Promotions;
 
 use Elementor\Api;
+use Elementor\Controls_Manager;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Code_Promotion_Item;
@@ -14,6 +15,7 @@ use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
+use Elementor\Includes\EditorAssetsAPI;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -65,6 +67,11 @@ class Module extends Base_Module {
 			return;
 		}
 
+		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
+			$controls_manager->register( new Controls\Promotion_Control() );
+		} );
+
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
 	}
 
@@ -91,6 +98,36 @@ class Module extends Base_Module {
 		$admin_menu->register( 'go_elementor_pro', new Go_Pro_Promotion_Item() );
 	}
 
+	public function enqueue_react_data(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+
+		wp_enqueue_script(
+			'e-react-promotions',
+			ELEMENTOR_ASSETS_URL . 'js/e-react-promotions' . $min_suffix . '.js',
+			[
+				'react',
+				'react-dom',
+				'backbone-marionette',
+				'elementor-editor-modules',
+				'elementor-v2-ui',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_set_script_translations( 'e-react-promotions', 'elementor' );
+
+		wp_localize_script(
+			'e-react-promotions',
+			'elementorPromotionsData',
+			$this->get_app_js_config()
+		);
+	}
+
 	public function enqueue_editor_v4_alphachip(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
@@ -110,5 +147,20 @@ class Module extends Base_Module {
 			ELEMENTOR_VERSION,
 			true
 		);
+	}
+
+	private function get_app_js_config(): array {
+		$editor_assets_api = new EditorAssetsAPI( $this->get_api_config() );
+		$promotion_data = new PromotionData( $editor_assets_api );
+
+		return $promotion_data->get_promotion_data();
+	}
+
+	private function get_api_config(): array {
+		return [
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/free-to-pro-upsell/v1/free-to-pro-upsell.json',
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_free_to_pro_upsell',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'free-to-pro-upsell',
+		];
 	}
 }

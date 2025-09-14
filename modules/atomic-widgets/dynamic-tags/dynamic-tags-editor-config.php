@@ -3,8 +3,12 @@
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Query_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Number_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Plugin;
 
@@ -27,7 +31,7 @@ class Dynamic_Tags_Editor_Config {
 			return $this->tags;
 		}
 
-		$atomic_tags = [];
+		$atomic_tags  = [];
 		$dynamic_tags = Plugin::$instance->dynamic_tags->get_tags_config();
 
 		foreach ( $dynamic_tags as $name => $tag ) {
@@ -67,12 +71,12 @@ class Dynamic_Tags_Editor_Config {
 		}
 
 		$converted_tag = [
-			'name' => $tag['name'],
-			'categories' => $tag['categories'],
-			'label' => $tag['title'] ?? '',
-			'group' => $tag['group'] ?? '',
+			'name'            => $tag['name'],
+			'categories'      => $tag['categories'],
+			'label'           => $tag['title'] ?? '',
+			'group'           => $tag['group'] ?? '',
 			'atomic_controls' => [],
-			'props_schema' => $this->schemas->get( $tag['name'] ),
+			'props_schema'    => $this->schemas->get( $tag['name'] ),
 		];
 
 		if ( ! isset( $tag['controls'] ) ) {
@@ -127,8 +131,12 @@ class Dynamic_Tags_Editor_Config {
 
 	private function convert_control_to_atomic( $control ) {
 		$map = [
-			'select' => fn( $control ) => $this->convert_select_control_to_atomic( $control ),
-			'text' => fn( $control ) => $this->convert_text_control_to_atomic( $control ),
+			'select'   => fn( $control ) => $this->convert_select_control_to_atomic( $control ),
+			'text'     => fn( $control ) => $this->convert_text_control_to_atomic( $control ),
+			'textarea' => fn( $control ) => $this->convert_textarea_control_to_atomic( $control ),
+			'switcher' => fn( $control ) => $this->convert_switch_control_to_atomic( $control ),
+			'number'   => fn( $control ) => $this->convert_number_control_to_atomic( $control ),
+			'query'   => fn( $control ) => $this->convert_query_control_to_atomic( $control ),
 		];
 
 		if ( ! isset( $map[ $control['type'] ] ) ) {
@@ -165,8 +173,8 @@ class Dynamic_Tags_Editor_Config {
 		);
 
 		return Select_Control::bind_to( $control['name'] )
-			->set_label( $control['label'] )
-			->set_options( $options );
+			->set_options( $options )
+			->set_label( $control['label'] );
 	}
 
 	/**
@@ -177,5 +185,47 @@ class Dynamic_Tags_Editor_Config {
 	private function convert_text_control_to_atomic( $control ) {
 		return Text_Control::bind_to( $control['name'] )
 			->set_label( $control['label'] );
+	}
+
+	/**
+	 * @param $control
+	 *
+	 * @return Switch_Control
+	 */
+	private function convert_switch_control_to_atomic( $control ) {
+		return Switch_Control::bind_to( $control['name'] )
+			->set_label( $control['atomic_label'] ?? $control['label'] );
+	}
+
+	/**
+	 * @param $control
+	 *
+	 * @return Number_Control
+	 */
+	private function convert_number_control_to_atomic( $control ) {
+		return Number_Control::bind_to( $control['name'] )
+		->set_placeholder( $control['placeholder'] ?? '' )
+		->set_max( $control['max'] ?? null )
+		->set_min( $control['min'] ?? null )
+		->set_step( $control['step'] ?? null )
+		->set_should_force_int( $control['should_force_int'] ?? false )
+		->set_label( $control['label'] );
+	}
+
+	private function convert_textarea_control_to_atomic( $control ) {
+		return Textarea_Control::bind_to( $control['name'] )
+			->set_placeholder( $control['placeholder'] ?? '' )
+			->set_label( $control['label'] );
+	}
+
+	private function convert_query_control_to_atomic( $control ) {
+		$post_types = isset( $control['autocomplete']['query']['post_type'] ) ? $control['autocomplete']['query']['post_type'] : [];
+		$post_types = ! empty( $post_types ) && 'any' !== $post_types ? $post_types : null;
+
+		return Query_Control::bind_to( $control['name'] )
+			->set_query_config( [ 'post_types' => $post_types ] )
+			->set_placeholder( $control['placeholder'] ?? '' )
+			->set_label( $control['label'] )
+			->set_allow_custom_values( false );
 	}
 }

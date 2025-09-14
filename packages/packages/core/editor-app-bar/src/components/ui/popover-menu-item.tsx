@@ -8,6 +8,7 @@ type ExtraProps = {
 	text?: string;
 	icon?: JSX.Element;
 	isGroupParent?: boolean;
+	showExternalLinkIcon?: boolean;
 };
 
 type PopoverMenuItemProps = MenuItemProps & ExtraProps;
@@ -23,9 +24,10 @@ export default function PopoverMenuItem( {
 	target,
 	disabled,
 	isGroupParent,
+	showExternalLinkIcon,
 	...props
 }: PopoverMenuItemProps ) {
-	const isExternalLink = href && target === '_blank';
+	const isExternalLink = href && target === '_blank' && showExternalLinkIcon;
 
 	return (
 		<MenuItem

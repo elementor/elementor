@@ -88,10 +88,18 @@ export const BackgroundOverlayRepeaterControl = createControl( () => {
 				<Header label={ __( 'Overlay', 'elementor' ) }>
 					<TooltipAddItemAction newItemIndex={ 0 } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } /> }>
-					<DuplicateItemAction />
-					<DisableItemAction />
-					<RemoveItemAction />
+				<ItemsContainer>
+					<Item
+						Icon={ ItemIcon }
+						Label={ ItemLabel }
+						actions={
+							<>
+								<DuplicateItemAction />
+								<DisableItemAction />
+								<RemoveItemAction />
+							</>
+						}
+					/>
 				</ItemsContainer>
 				<EditItemPopover>
 					<ItemContent />
@@ -174,8 +182,8 @@ const ItemIconImage = ( { value }: { value: BackgroundImageOverlay } ) => {
 		<CardMedia
 			image={ imageUrl }
 			sx={ ( theme: Theme ) => ( {
-				height: '1em',
-				width: '1em',
+				height: '1rem',
+				width: '1rem',
 				borderRadius: `${ theme.shape.borderRadius / 2 }px`,
 				outline: `1px solid ${ theme.palette.action.disabled }`,
 			} ) }
@@ -257,6 +265,8 @@ const ImageOverlayContent = () => {
 };
 
 const StyledUnstableColorIndicator = styled( UnstableColorIndicator )( ( { theme } ) => ( {
+	height: '1rem',
+	width: '1rem',
 	borderRadius: `${ theme.shape.borderRadius / 2 }px`,
 } ) );
 

@@ -2,28 +2,27 @@ import * as React from 'react';
 import { bindTrigger, UnstableTag } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { SlotChildren } from '../../../control-replacements';
-import { DisableItemAction } from '../actions/disable-item-action';
-import { DuplicateItemAction } from '../actions/duplicate-item-action';
-import { RemoveItemAction } from '../actions/remove-item-action';
 import { useRepeaterContext } from '../context/repeater-context';
 import { RepeaterItemActionsSlot, RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../locations';
 import { type ItemProps, type RepeatablePropValue } from '../types';
 
-export const Item = < T extends RepeatablePropValue >( {
-	Label,
-	Icon,
-	value,
-	index = -1,
-	children,
-}: React.PropsWithChildren< ItemProps< T > > ) => {
-	const { items, popoverState, setRowRef, openItemIndex, setOpenItemIndex } = useRepeaterContext();
+export const Item = < T extends RepeatablePropValue >( { Label, Icon, actions }: ItemProps< T > ) => {
+	const { items, popoverState, setRowRef, openItemIndex, setOpenItemIndex, index = -1, value } = useRepeaterContext();
 	const triggerProps = bindTrigger( popoverState );
 	const key = items[ index ].key ?? -1;
 
 	const onClick = ( ev: React.MouseEvent ) => {
 		triggerProps.onClick( ev );
 		setOpenItemIndex( index );
+	};
+
+	const setRef = ( ref: HTMLDivElement | null ) => {
+		if ( ! ref || openItemIndex !== index || ref === popoverState.anchorEl ) {
+			return;
+		}
+
+		setRowRef( ref );
+		popoverState.setAnchorEl( ref );
 	};
 
 	return (
@@ -38,9 +37,10 @@ export const Item = < T extends RepeatablePropValue >( {
 				}
 				showActionsOnHover
 				fullWidth
-				ref={ ( ref ) => ref && openItemIndex === index && setRowRef( ref ) }
+				ref={ setRef }
 				variant="outlined"
 				aria-label={ __( 'Open item', 'elementor' ) }
+				sx={ { minHeight: ( theme ) => theme.spacing( 4 ) } }
 				{ ...triggerProps }
 				onClick={ onClick }
 				startIcon={
@@ -51,14 +51,7 @@ export const Item = < T extends RepeatablePropValue >( {
 				actions={
 					<>
 						<RepeaterItemActionsSlot index={ index ?? -1 } />
-
-						<SlotChildren
-							whitelist={ [ DuplicateItemAction, DisableItemAction, RemoveItemAction ] as React.FC[] }
-							props={ { index } }
-							sorted
-						>
-							{ children }
-						</SlotChildren>
+						{ actions }
 					</>
 				}
 			/>

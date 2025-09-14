@@ -4,14 +4,15 @@ import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon } from '@elementor/icons';
-import { Button, CardActions, Divider, FormHelperText, IconButton } from '@elementor/ui';
+import { Button, CardActions, Divider, FormHelperText, IconButton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useVariableType } from '../context/variable-type-context';
 import { useInitialValue } from '../hooks/use-initial-value';
 import { createVariable } from '../hooks/use-prop-variables';
+import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { trackVariableEvent } from '../utils/tracking';
-import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
+import { ERROR_MESSAGES, labelHint, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
 import { FormField } from './ui/form-field';
 
@@ -25,7 +26,8 @@ type Props = {
 export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
 
-	const { setValue: setVariable, path } = useBoundProp( propTypeUtil );
+	const { setVariableValue: setVariable, path } = useVariableBoundProp();
+	const { propType } = useBoundProp();
 
 	const initialValue = useInitialValue();
 
@@ -79,15 +81,23 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 		} );
 	};
 
-	const hasEmptyValue = () => {
-		return '' === value.trim() || '' === label.trim();
+	const hasEmptyFields = () => {
+		if ( '' === label.trim() ) {
+			return true;
+		}
+
+		if ( 'string' === typeof value ) {
+			return '' === value.trim();
+		}
+
+		return false === Boolean( value );
 	};
 
 	const hasErrors = () => {
 		return !! errorMessage;
 	};
 
-	const isSubmitDisabled = hasEmptyValue() || hasErrors();
+	const isSubmitDisabled = hasEmptyFields() || hasErrors();
 
 	return (
 		<PopoverBody height="auto">
@@ -109,31 +119,54 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 			<Divider />
 
 			<PopoverContent p={ 2 }>
-				<LabelField
-					value={ label }
-					error={ labelFieldError }
-					onChange={ ( newValue ) => {
-						setLabel( newValue );
-						setErrorMessage( '' );
-					} }
-				/>
-				<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
-					<ValueField
-						value={ value }
+				<FormField
+					id="variable-label"
+					label={ __( 'Name', 'elementor' ) }
+					errorMsg={ labelFieldError?.message }
+					noticeMsg={ labelHint( label ) }
+				>
+					<LabelField
+						id="variable-label"
+						value={ label }
+						error={ labelFieldError }
 						onChange={ ( newValue ) => {
-							setValue( newValue );
+							setLabel( newValue );
 							setErrorMessage( '' );
-							setValueFieldError( '' );
 						} }
-						onValidationChange={ setValueFieldError }
+						onErrorChange={ ( errorMsg ) => {
+							setLabelFieldError( {
+								value: label,
+								message: errorMsg,
+							} );
+						} }
 					/>
+				</FormField>
+				<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+					<Typography variant="h5" id="variable-value-wrapper">
+						<ValueField
+							value={ value }
+							onChange={ ( newValue ) => {
+								setValue( newValue );
+								setErrorMessage( '' );
+								setValueFieldError( '' );
+							} }
+							onValidationChange={ setValueFieldError }
+							propType={ propType }
+						/>
+					</Typography>
 				</FormField>
 
 				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 			</PopoverContent>
 
 			<CardActions sx={ { pt: 0.5, pb: 1 } }>
-				<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleCreateAndTrack }>
+				<Button
+					id="create-variable-button"
+					size="small"
+					variant="contained"
+					disabled={ isSubmitDisabled }
+					onClick={ handleCreateAndTrack }
+				>
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</CardActions>

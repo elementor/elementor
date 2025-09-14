@@ -18,7 +18,6 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'connect-polylang-elementor', installSource: 'api' },
 	{ pluginName: 'dynamic-visibility-for-elementor', installSource: 'api' },
 	{ pluginName: 'elementskit-lite', installSource: 'api' },
-	{ pluginName: 'envato-elements', installSource: 'cli' },
 	{ pluginName: 'exclusive-addons-for-elementor', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'header-footer-elementor', installSource: 'api' },
 	{ pluginName: 'jeg-elementor-kit', installSource: 'cli' },
@@ -34,7 +33,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
 	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
-	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'api' },
+	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'cli', hasInstallationPage: true },
 	{ pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
 	{ pluginName: 'visibility-logic-elementor', installSource: 'api' },
 	{ pluginName: 'ht-mega-for-elementor', installSource: 'api' },
@@ -46,6 +45,8 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'akismet', installSource: 'api' },
 	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'hello-plus', installSource: 'cli' },
+	{ pluginName: 'template-kit-import', installSource: 'api' },
+	{ pluginName: 'template-kit-export', installSource: 'api' },
 ];
 
 export const generatePluginTests = ( testType: string ) => {

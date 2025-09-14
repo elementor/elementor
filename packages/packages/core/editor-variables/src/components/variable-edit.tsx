@@ -5,14 +5,15 @@ import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon, TrashIcon } from '@elementor/icons';
-import { Button, CardActions, Divider, FormHelperText, IconButton } from '@elementor/ui';
+import { Button, CardActions, Divider, FormHelperText, IconButton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useVariableType } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
+import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { styleVariablesRepository } from '../style-variables-repository';
-import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
+import { ERROR_MESSAGES, labelHint, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
 import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
 import { EDIT_CONFIRMATION_DIALOG_ID, EditConfirmationDialog } from './ui/edit-confirmation-dialog';
@@ -28,9 +29,10 @@ type Props = {
 };
 
 export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
-	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
+	const { icon: VariableIcon, valueField: ValueField, variableType } = useVariableType();
 
-	const { setValue: notifyBoundPropChange, value: assignedValue } = useBoundProp( propTypeUtil );
+	const { setVariableValue: notifyBoundPropChange, variableId } = useVariableBoundProp();
+	const { propType } = useBoundProp();
 	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( EDIT_CONFIRMATION_DIALOG_ID );
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
 	const [ editConfirmation, setEditConfirmation ] = useState( false );
@@ -46,8 +48,8 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 
 	const userPermissions = usePermissions();
 
-	const [ value, setValue ] = useState( variable.value );
-	const [ label, setLabel ] = useState( variable.label );
+	const [ value, setValue ] = useState( () => variable.value );
+	const [ label, setLabel ] = useState( () => variable.label );
 
 	useEffect( () => {
 		styleVariablesRepository.update( {
@@ -104,7 +106,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 	};
 
 	const maybeTriggerBoundPropChange = () => {
-		if ( editId === assignedValue ) {
+		if ( editId === variableId ) {
 			notifyBoundPropChange( editId );
 		}
 	};
@@ -136,8 +138,16 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 		);
 	}
 
-	const hasEmptyValues = () => {
-		return ! value.trim() || ! label.trim();
+	const hasEmptyFields = () => {
+		if ( '' === label.trim() ) {
+			return true;
+		}
+
+		if ( 'string' === typeof value ) {
+			return '' === value.trim();
+		}
+
+		return false === Boolean( value );
 	};
 
 	const noValueChanged = () => {
@@ -148,7 +158,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 		return !! errorMessage;
 	};
 
-	const isSubmitDisabled = noValueChanged() || hasEmptyValues() || hasErrors();
+	const isSubmitDisabled = noValueChanged() || hasEmptyFields() || hasErrors();
 
 	return (
 		<>
@@ -176,24 +186,41 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 				<Divider />
 
 				<PopoverContent p={ 2 }>
-					<LabelField
-						value={ label }
-						error={ labelFieldError }
-						onChange={ ( newValue ) => {
-							setLabel( newValue );
-							setErrorMessage( '' );
-						} }
-					/>
-					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
-						<ValueField
-							value={ value }
+					<FormField
+						id="variable-label"
+						label={ __( 'Name', 'elementor' ) }
+						errorMsg={ labelFieldError?.message }
+						noticeMsg={ labelHint( label ) }
+					>
+						<LabelField
+							id="variable-label"
+							value={ label }
+							error={ labelFieldError }
 							onChange={ ( newValue ) => {
-								setValue( newValue );
+								setLabel( newValue );
 								setErrorMessage( '' );
-								setValueFieldError( '' );
 							} }
-							onValidationChange={ setValueFieldError }
+							onErrorChange={ ( errorMsg ) => {
+								setLabelFieldError( {
+									value: label,
+									message: errorMsg,
+								} );
+							} }
 						/>
+					</FormField>
+					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+						<Typography variant="h5">
+							<ValueField
+								value={ value }
+								onChange={ ( newValue ) => {
+									setValue( newValue );
+									setErrorMessage( '' );
+									setValueFieldError( '' );
+								} }
+								onValidationChange={ setValueFieldError }
+								propType={ propType }
+							/>
+						</Typography>
 					</FormField>
 
 					{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }

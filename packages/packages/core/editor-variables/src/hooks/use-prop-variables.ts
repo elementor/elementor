@@ -6,8 +6,18 @@ import { useVariableType } from '../context/variable-type-context';
 import { service } from '../service';
 import { type NormalizedVariable, type Variable } from '../types';
 
-export const useVariable = ( key: string ) => {
+export const getVariables = ( includeDeleted = true ) => {
 	const variables = service.variables();
+
+	if ( includeDeleted ) {
+		return variables;
+	}
+
+	return Object.fromEntries( Object.entries( variables ).filter( ( [ , variable ] ) => ! variable.deleted ) );
+};
+
+export const useVariable = ( key: string ) => {
+	const variables = getVariables();
 
 	if ( ! variables?.[ key ] ) {
 		return null;
@@ -24,11 +34,17 @@ export const useFilteredVariables = ( searchValue: string, propTypeKey: string )
 
 	const typeFilteredVariables = useVariableSelectionFilter( baseVariables );
 	const searchFilteredVariables = filterVariablesBySearchValue( typeFilteredVariables, searchValue );
+	const sortedVariables = searchFilteredVariables.sort( ( a, b ) => {
+		const orderA = a.order ?? Number.MAX_SAFE_INTEGER;
+		const orderB = b.order ?? Number.MAX_SAFE_INTEGER;
+		return orderA - orderB;
+	} );
 
 	return {
-		list: searchFilteredVariables,
+		list: sortedVariables,
 		hasMatches: searchFilteredVariables.length > 0,
 		isSourceNotEmpty: typeFilteredVariables.length > 0,
+		hasNoCompatibleVariables: baseVariables.length > 0 && typeFilteredVariables.length === 0,
 	};
 };
 
@@ -48,17 +64,16 @@ const usePropVariables = ( propKey: PropKey ): NormalizedVariable[] => {
 	return useMemo( () => normalizeVariables( propKey ), [ propKey ] );
 };
 
-const isNotDeleted = ( { deleted }: { deleted?: boolean } ) => ! deleted;
-
-const normalizeVariables = ( propKey: string ): NormalizedVariable[] => {
-	const variables = service.variables();
+const normalizeVariables = ( propKey: string ) => {
+	const variables = getVariables( false );
 
 	return Object.entries( variables )
-		.filter( ( [ , variable ] ) => variable.type === propKey && isNotDeleted( variable ) )
-		.map( ( [ key, { label, value } ] ) => ( {
+		.filter( ( [ , variable ] ) => variable.type === propKey )
+		.map( ( [ key, { label, value, order } ] ) => ( {
 			key,
 			label,
 			value,
+			order,
 		} ) );
 };
 

@@ -1,10 +1,10 @@
-import { type StylesProvider, type UserCapabilities } from '../types';
+import { type StylesCollection, type StylesProvider, type UserCapabilities } from '../types';
 
 export type CreateStylesProviderOptions = {
 	key: string | ( () => string );
 	priority?: number;
 	limit?: number;
-	subscribe?: ( callback: () => void ) => () => void;
+	subscribe?: ( callback: ( current?: StylesCollection, previous?: StylesCollection ) => void ) => () => void;
 	labels?: {
 		singular: string;
 		plural: string;
