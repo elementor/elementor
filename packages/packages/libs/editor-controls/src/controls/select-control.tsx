@@ -16,10 +16,9 @@ export type SelectOption = {
 type Props = {
 	options: SelectOption[];
 	onChange?: ( newValue: string | null, previousValue: string | null | undefined ) => void;
-	fallbackLabels?: Record< string, string >;
 };
 
-export const SelectControl = createControl( ( { options, onChange, fallbackLabels = {} }: Props ) => {
+export const SelectControl = createControl( ( { options, onChange }: Props ) => {
 	const { value, setValue, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
 	const handleChange = ( event: SelectChangeEvent< StringPropValue[ 'value' ] > ) => {
 		const newValue = event.target.value || null;
@@ -52,7 +51,7 @@ export const SelectControl = createControl( ( { options, onChange, fallbackLabel
 						return '';
 					}
 					const option = findOptionByValue( selectedValue );
-					return option?.label || fallbackLabels[ selectedValue ] || selectedValue;
+					return option?.label || selectedValue;
 				} }
 				value={ value ?? '' }
 				onChange={ handleChange }
