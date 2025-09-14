@@ -17,19 +17,19 @@ export class AtomicHelper {
 		this.wpAdmin = wpAdmin;
 	}
 
-	async setLinkControl( config: { toggleMode?: boolean; value?: string; isTargetBlank?: boolean; } ) {
+	async setLinkControl( config: { toggleMode?: boolean; value?: string; isTargetBlank?: boolean; } = {} ) {
 		const {
-			toggleMode = true,
 			value = '',
 			isTargetBlank = false,
 		} = config;
+		const toggleMode = config.toggleMode ?? !! value;
+		const linkSection = this.page.locator( '.MuiStack-root:has(> .MuiStack-root > *[aria-label="Toggle link"])' );
 
-		const linkSection = this.page.locator( '.MuiStack-root:has(>.MuiStack-root > [aria-label="Toggle link"])' );
+		await linkSection.waitFor( { state: 'visible', timeout: 10000 } );
 
-		await linkSection.waitFor();
-		const linkToggleButton = linkSection.locator( '[aria-label="Toggle link"]' );
+		const linkToggleButton = linkSection.locator( '*[aria-label="Toggle link"]' );
 
-		await linkToggleButton.waitFor();
+		await linkToggleButton.waitFor( { state: 'visible', timeout: 10000 } );
 
 		const isToggled = await this.isLinkToggleButtonEnabled( linkToggleButton );
 
@@ -65,12 +65,16 @@ export class AtomicHelper {
 		await this.editor.openV2PanelTab( 'general' );
 
 		const htmlTagControl = this.getHtmlTagControl();
+		const option = this.page.locator( `li[data-value="${ tag }"]` );
 
-		await htmlTagControl.fill( tag );
+		await htmlTagControl.click();
+		await option.waitFor();
+		await option.click();
+		await option.waitFor( { state: 'detached' } );
 	}
 
-	getHtmlTagControl() {
-		return this.page.locator( '.MuiBox-root:has( > label:text-matches("Tag", "i")) input.MuiSelect-nativeInput' );
+	getHtmlTagControl( shouldTargetDisabled: boolean = false ) {
+		return this.page.locator( `.MuiBox-root:has(> label:text-matches("Tag", "i")) .MuiSelect-select.MuiSelect-outlined.MuiInputBase-input.MuiOutlinedInput-input${ shouldTargetDisabled ? '.Mui-disabled' : ':not(.Mui-disabled)' }` );
 	}
 
 	async addAtomicElement( elementType: ElementType, container: string = 'document' ) {

@@ -33,7 +33,7 @@ test.describe( 'Atomic link control dependencies @atomic-widgets', () => {
 		await page.close();
 	} );
 
-	test( 'Tag control enabled and disabled based on link value @atomic-widgets', async ( { page } ) => {
+	test( 'Tag control enabled and disabled based on link value @atomic-widgets', async ( { page, apiRequests }, testInfo ) => {
 		const helper = new AtomicHelper( page, editor, wpAdmin );
 
 		if ( ! divBlockId ) {
@@ -43,28 +43,35 @@ test.describe( 'Atomic link control dependencies @atomic-widgets', () => {
 		await editor.openV2PanelTab( 'general' );
 
 		test.step( 'Check tag control is enabled', async () => {
-			expect( helper.getHtmlTagControl() ).toHaveValue( 'div' );
-			expect( await helper.getHtmlTagControl().isDisabled() ).toBeFalsy();
+			expect( helper.getHtmlTagControl() ).toHaveText( 'Div' );
+			await expect( helper.getHtmlTagControl() ).toBeVisible();
 		} );
 
 		await helper.setHtmlTagControl( 'section' );
 
 		test.step( 'Check tag control is disabled when link is set', async () => {
 			await helper.setLinkControl( { value: 'https://www.google.com' } );
-			expect( await helper.getHtmlTagControl().isDisabled() ).toBeTruthy();
+			await expect( helper.getHtmlTagControl( true ) ).toBeVisible();
 		} );
 
-		test.step( 'Validate tag control value is a (link)', async () => {
-			expect( helper.getHtmlTagControl() ).toHaveValue( 'a' );
+		test.step( 'Validate tag control value is a (link) and tooltip is visible', async () => {
+			expect( helper.getHtmlTagControl( true ) ).toHaveText( 'a (link)' );
+			await helper.getHtmlTagControl( true ).hover();
+
+			const tooltip = page.locator( ":has-text('The tag is locked to 'a' tag because this Div block has a link. To pick a different tag, remove the link first.')" );
+
+			await tooltip.waitFor();
+			await expect( tooltip ).toBeVisible();
+			await expect( helper.getHtmlTagControl( true ) ).toHaveCSS( 'cursor', 'not-allowed' );
 		} );
 
 		test.step( 'Check tag control is enabled when link is removed', async () => {
 			await helper.setLinkControl( { value: '' } );
-			expect( await helper.getHtmlTagControl().isDisabled() ).toBeFalsy();
+			await expect( helper.getHtmlTagControl() ).toBeVisible();
 		} );
 
 		test.step( 'Validate tag control value is section', async () => {
-			expect( helper.getHtmlTagControl() ).toHaveValue( 'section' );
+			expect( helper.getHtmlTagControl() ).toHaveText( 'Section' );
 		} );
 	} );
 } );
