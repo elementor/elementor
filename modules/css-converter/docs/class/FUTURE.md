@@ -1,5 +1,16 @@
 # CSS Class Converter - Future Improvements
 
+Bugs:
+Scan the /css-converter folder for `require_once` references. 
+Replace this approach with proper PHP namespaces.
+
+Clean up css-converter root folder. 
+Never add random test files to this folder.
+Remove plugins/elementor/modules/css-converter/test-class-conversion.php
+plugins/elementor/modules/css-converter/variable-conversion-service.php
+plugins/elementor/modules/css-converter/DEPLOYMENT.md
+
+
 ## Phase 2: Extended Property Support
 
 ### Next Priority Properties (Ready for Implementation)
