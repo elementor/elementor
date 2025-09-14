@@ -65,10 +65,13 @@ export class AtomicHelper {
 		await this.editor.openV2PanelTab( 'general' );
 
 		const htmlTagControl = this.getHtmlTagControl();
+
+		await htmlTagControl.waitFor( { state: 'visible', timeout: 10000 } );
+		await htmlTagControl.click();
+
 		const option = this.page.locator( `li[data-value="${ tag }"]` );
 
-		await htmlTagControl.click();
-		await option.waitFor();
+		await option.waitFor( { state: 'visible', timeout: 10000 } );
 		await option.click();
 		await option.waitFor( { state: 'detached' } );
 	}
