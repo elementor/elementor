@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Select_Control extends Atomic_Control_Base {
 	private array $options = [];
+	private ?array $fallback_labels = null;
 
 	public function get_type(): string {
 		return 'select';
@@ -23,6 +24,13 @@ class Select_Control extends Atomic_Control_Base {
 	public function get_props(): array {
 		return [
 			'options' => $this->options,
+			'fallbackLabels' => $this->fallback_labels,
 		];
+	}
+
+	public function set_fallback_labels( array $fallback_labels ): self {
+		$this->fallback_labels = $fallback_labels;
+
+		return $this;
 	}
 }

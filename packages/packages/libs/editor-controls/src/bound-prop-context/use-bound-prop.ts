@@ -8,7 +8,7 @@ import {
 } from '@elementor/editor-props';
 
 import { MissingPropTypeError } from './errors';
-import { type SetValue, type SetValueMeta } from './prop-context';
+import { type SetValue, type SetValueMeta, type Tooltip } from './prop-context';
 import { type PropKeyContextValue, usePropKeyContext } from './prop-key-context';
 
 type UseBoundProp< TValue extends PropValue > = {
@@ -21,6 +21,7 @@ type UseBoundProp< TValue extends PropValue > = {
 	restoreValue: () => void;
 	isDisabled?: ( propType: PropType ) => boolean | undefined;
 	disabled?: boolean;
+	tooltip?: Tooltip;
 };
 
 export function useBoundProp< T extends PropValue = PropValue, P extends PropType = PropType >(): PropKeyContextValue<
@@ -40,10 +41,11 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 	const { isValid, validate, restoreValue } = useValidation( propKeyContext.propType );
 
 	const disabled = propKeyContext.isDisabled?.( propKeyContext.propType );
+	const tooltip = propKeyContext.getTooltip?.( propKeyContext.propType );
 
 	// allow using the hook without a propTypeUtil, with no modifications or validations.
 	if ( ! propTypeUtil ) {
-		return { ...propKeyContext, disabled } as PropKeyContextValue< PropValue, PropType >;
+		return { ...propKeyContext, disabled, tooltip } as PropKeyContextValue< PropValue, PropType >;
 	}
 
 	function setValue( value: TValue | null, options: CreateOptions, meta?: SetValueMeta ) {
@@ -71,6 +73,7 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 		restoreValue,
 		placeholder,
 		disabled,
+		tooltip,
 	};
 }
 

@@ -50,7 +50,16 @@ class Div_Block extends Atomic_Element_Base {
 				'on_term_unmet' => [
 					'setValue' => [
 						'$$type' => 'string',
-						'value' => 'a (link)',
+						'value' => 'a',
+					],
+					'cursor' => 'not-allowed',
+					'tooltip' => [
+						'title' => __( 'HTML Tag', 'elementor' ),
+						'description' => sprintf(
+							/* translators: %s: Element name. */
+							__( 'The tag is locked to \'a\' tag because this %1$s has a link. To pick a different tag, remove the link first', 'elementor' ),
+							( new static())->get_title()
+						),
 					],
 				],
 			] )
@@ -60,7 +69,7 @@ class Div_Block extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tag' => String_Prop_Type::make()
-				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a (link)' ] )
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a' ] )
 				->default( 'div' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
@@ -101,6 +110,9 @@ class Div_Block extends Atomic_Element_Base {
 								'label' => 'Footer',
 							],
 						])
+						->set_fallback_labels( [
+							'a' => 'a (link)',
+						] )
 						->set_label( esc_html__( 'HTML Tag', 'elementor' ) ),
 					Link_Control::bind_to( 'link' )
 						->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )

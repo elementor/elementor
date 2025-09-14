@@ -20,6 +20,10 @@ export type DependencyTerm = {
 	value: PropValue;
 	onTermUnmet?: {
 		setValue?: TransformablePropValue< string >;
+		tooltip?: {
+			title: string;
+			description: string;
+		};
 	};
 };
 
