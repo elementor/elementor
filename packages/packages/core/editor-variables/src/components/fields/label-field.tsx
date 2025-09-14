@@ -86,7 +86,7 @@ export const LabelField = ( {
 	);
 
 	if ( showWarningInfotip ) {
-		const tooltipWidth = Math.max( 240, fieldRef.current?.getBoundingClientRect().width ?? 260 );
+		const tooltipWidth = Math.max( 240, fieldRef.current?.getBoundingClientRect().width ?? 240 );
 
 		return (
 			<WarningInfotip
