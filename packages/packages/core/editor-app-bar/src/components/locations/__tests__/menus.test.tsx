@@ -75,7 +75,7 @@ describe( 'Menus components', () => {
 		{
 			menuName: 'Tools',
 			menu: toolsMenu,
-			maxItems: 5,
+			maxItems: 7,
 			Component: ToolsMenuLocation,
 		},
 		{
