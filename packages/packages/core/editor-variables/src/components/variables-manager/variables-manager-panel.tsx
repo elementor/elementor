@@ -38,8 +38,18 @@ export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 
-	const { variables, ids, isDirty, hasValidationErrors, setIds, handleOnChange, createVariable, handleDeleteVariable, handleSave, setHasValidationErrors } =
-		useVariablesManagerState();
+	const {
+		variables,
+		ids,
+		isDirty,
+		hasValidationErrors,
+		setIds,
+		handleOnChange,
+		createVariable,
+		handleDeleteVariable,
+		handleSave,
+		setHasValidationErrors,
+	} = useVariablesManagerState();
 
 	const { autoEditVariableId, startAutoEdit, handleAutoEditComplete } = useAutoEdit();
 
