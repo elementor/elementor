@@ -4,7 +4,7 @@ import EditorPage from '../../../../pages/editor-page';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import { AtomicHelper } from '../helper';
 
-test.describe( 'Atomic link control dependencies @atomic-widgets', () => {
+test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependencies', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
 	let divBlockId: string;
