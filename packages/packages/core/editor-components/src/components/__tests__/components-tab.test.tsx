@@ -11,6 +11,7 @@ import { Components } from '../components';
 import { ComponentItem } from '../components-item';
 import { ComponentsList } from '../components-list';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
+
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../hooks/use-components' );
 jest.mock( '../../utils/get-container-for-new-element' );
@@ -234,7 +235,6 @@ describe( 'ComponentsList', () => {
 	describe( 'Search Tests', () => {
 		beforeEach( () => {
 			jest.clearAllMocks();
-			// Default mock for useSearch - no search active
 			mockUseSearch.mockReturnValue( {
 				inputValue: '',
 				debouncedValue: '',
@@ -244,7 +244,6 @@ describe( 'ComponentsList', () => {
 		} );
 
 		it( 'should show 1 component based on search value', () => {
-			// Mock search with "header" term
 			mockUseSearch.mockReturnValue( {
 				inputValue: 'header',
 				debouncedValue: 'header',
@@ -265,7 +264,6 @@ describe( 'ComponentsList', () => {
 		} );
 
 		it( 'should show 2 components based on search value', () => {
-			// Mock search with "component" term (matches both Header and Footer)
 			mockUseSearch.mockReturnValue( {
 				inputValue: 'component',
 				debouncedValue: 'component',
@@ -286,7 +284,6 @@ describe( 'ComponentsList', () => {
 		} );
 
 		it( 'should show not found message if no match found with search value', () => {
-			// Mock search with non-matching term
 			mockUseSearch.mockReturnValue( {
 				inputValue: 'nonexistent',
 				debouncedValue: 'nonexistent',
@@ -301,10 +298,31 @@ describe( 'ComponentsList', () => {
 
 			render( <ComponentsList /> );
 
-			expect( screen.getByText( 'Text that explains that there are no Components yet.' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Header Component' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Footer Component' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Button Component' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Sorry, nothing matched' ) ).toBeInTheDocument();
+		} );
+		it( 'should clean the search', () => {
+			const mockOnClearSearch = jest.fn();
+
+			mockUseSearch.mockReturnValue( {
+				inputValue: 'nonexistent',
+				debouncedValue: 'nonexistent',
+				handleChange: jest.fn(),
+				onClearSearch: mockOnClearSearch,
+			} );
+
+			mockUseComponents.mockReturnValue( {
+				data: mockComponents,
+				isLoading: false,
+			} as ReturnType< typeof useComponents > );
+
+			render( <ComponentsList /> );
+
+			expect( screen.getByText( 'Sorry, nothing matched' ) ).toBeInTheDocument();
+
+			const clearBtn = screen.getByRole( 'button', { name: /clear & try again/i } );
+			fireEvent.click( clearBtn );
+
+			expect( mockOnClearSearch ).toHaveBeenCalled();
 		} );
 
 		it( 'should be case insensitive when searching', () => {
@@ -327,9 +345,8 @@ describe( 'ComponentsList', () => {
 			expect( screen.queryByText( 'Header Component' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Footer Component' ) ).not.toBeInTheDocument();
 		} );
- 
+
 		it( 'should show all components when search is empty', () => {
-			// Mock empty search
 			mockUseSearch.mockReturnValue( {
 				inputValue: '',
 				debouncedValue: '',
