@@ -1,4 +1,4 @@
-export default class AtomicContainer extends elementor.modules.elements.models.Element {
+export default class AtomicElementBaseModel extends elementor.modules.elements.models.Element {
 	/**
 	 * Do not allow section, column or container be placed in the Atomic container.
 	 *
@@ -27,19 +27,25 @@ export default class AtomicContainer extends elementor.modules.elements.models.E
 	getDefaultChildren() {
 		const { default_children: defaultChildren } = this.config;
 
-		return defaultChildren.map( ( element ) => {
-			return {
-				elType: element.elType,
-				widgetType: element.widgetType,
-				id: elementorCommon.helpers.getUniqueId(),
-				settings: element.settings || {},
-				elements: element.elements || [],
-				isLocked: element.isLocked || false,
-			};
-		} );
+		return defaultChildren;
 	}
 
 	onElementCreate() {
-		this.set( 'elements', this.getDefaultChildren() );
+		this.set( 'elements', this.getDefaultChildren().map( ( element ) => this.buildElement( element ) ) );
+	}
+
+	buildElement( element ) {
+		const id = elementorCommon.helpers.getUniqueId();
+
+		const elements = ( element.elements || [] ).map( ( el ) => this.buildElement( el ) );
+
+		return {
+			elType: element.elType,
+			widgetType: element.widgetType,
+			id,
+			settings: element.settings || {},
+			elements,
+			isLocked: element.isLocked || false,
+		};
 	}
 }

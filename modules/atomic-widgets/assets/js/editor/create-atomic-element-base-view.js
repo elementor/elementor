@@ -1,9 +1,10 @@
 import AtomicElementEmptyView from './container/atomic-element-empty-view';
 import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
-const BaseElementView = elementor.modules.elements.views.BaseElement;
-export default function createAtomicElementView( type ) {
-	const AtomicElementView = BaseElementView.extend( {
+export default function createAtomicElementBaseView( type ) {
+	const BaseElementView = elementor.modules.elements.views.BaseElement;
+
+	return BaseElementView.extend( {
 		template: Marionette.TemplateCache.get( `#tmpl-elementor-${ type }-content` ),
 
 		emptyView: AtomicElementEmptyView,
@@ -56,7 +57,7 @@ export default function createAtomicElementView( type ) {
 			const local = {};
 			const cssId = this.model.getSetting( '_cssid' );
 			const customAttributes = this.model.getSetting( 'attributes' )?.value ?? [];
-			const initialAttributes = this?.model?.config?.initial_attributes;
+			const initialAttributes = this?.model?.config?.initial_attributes ?? {};
 
 			if ( cssId ) {
 				local.id = cssId.value;
@@ -79,8 +80,9 @@ export default function createAtomicElementView( type ) {
 
 			return {
 				...attr,
-				...local,
 				...initialAttributes,
+				...customAttributes,
+				...local,
 			};
 		},
 
@@ -178,7 +180,7 @@ export default function createAtomicElementView( type ) {
 			const parent = this._parent;
 			this._parent.removeChildView( this );
 
-			parent.addChild( this.model, AtomicElementView, this._index );
+			parent.addChild( this.model, this.constructor, this._index );
 		},
 
 		onRender() {
@@ -561,6 +563,5 @@ export default function createAtomicElementView( type ) {
 			return 0 === this.model.collection.indexOf( this.model );
 		},
 	} );
-
-	return AtomicElementView;
 }
+

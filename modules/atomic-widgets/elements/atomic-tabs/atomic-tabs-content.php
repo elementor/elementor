@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -90,10 +91,6 @@ class Atomic_Tabs_Content extends Atomic_Element_Base {
 		] );
 	}
 
-	protected function define_default_children() {
-		return [];
-	}
-
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
@@ -113,6 +110,6 @@ class Atomic_Tabs_Content extends Atomic_Element_Base {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );
 		}
 
-		$this->add_render_attribute( '_wrapper', array_merge( $attributes, $initial_attributes ) );
+		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
 	}
 }

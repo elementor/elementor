@@ -26,11 +26,17 @@ class Element_Builder {
 		return $this;
 	}
 
+	public function children( array $children ) {
+		$this->children = $children;
+		return $this;
+	}
+
 	public function build() {
 		return [
 			'elType' => $this->element_type,
 			'settings' => $this->settings,
 			'isLocked' => $this->is_locked,
+			'elements' => $this->children,
 		];
 	}
 }
