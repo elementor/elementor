@@ -42,6 +42,21 @@ class Class_Converter_Config {
 				// Spacing properties
 				'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
 				'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+				// Border properties
+				'border-width', 'border-style', 'border-radius', 'border-color',
+				'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width',
+				'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style',
+				'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',
+				// Background properties
+				'background-color',
+				// Filter properties
+				'filter',
+				// Flex properties
+				'flex', 'flex-grow', 'flex-shrink', 'flex-basis',
+				// Position properties
+				'position', 'top', 'right', 'bottom', 'left', 'z-index',
+				// Shadow properties
+				'box-shadow', 'text-shadow',
 			],
 			'max_css_size' => 1024 * 1024, // 1MB
 			'max_classes_per_request' => 100,

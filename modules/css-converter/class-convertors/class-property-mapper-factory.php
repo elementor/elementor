@@ -13,6 +13,17 @@ require_once __DIR__ . '/text-transform-property-mapper.php';
 require_once __DIR__ . '/display-property-mapper.php';
 require_once __DIR__ . '/dimension-property-mapper.php';
 require_once __DIR__ . '/opacity-property-mapper.php';
+require_once __DIR__ . '/margin-property-mapper.php';
+require_once __DIR__ . '/padding-property-mapper.php';
+require_once __DIR__ . '/border-width-property-mapper.php';
+require_once __DIR__ . '/border-style-property-mapper.php';
+require_once __DIR__ . '/border-color-property-mapper.php';
+require_once __DIR__ . '/border-radius-property-mapper.php';
+require_once __DIR__ . '/background-color-property-mapper.php';
+require_once __DIR__ . '/filter-property-mapper.php';
+require_once __DIR__ . '/flex-property-mapper.php';
+require_once __DIR__ . '/position-property-mapper.php';
+require_once __DIR__ . '/shadow-property-mapper.php';
 
 class Class_Property_Mapper_Factory {
 	private static $registry = null;
@@ -39,6 +50,15 @@ class Class_Property_Mapper_Factory {
 			new Opacity_Property_Mapper(),
 			new Margin_Property_Mapper(),
 			new Padding_Property_Mapper(),
+			new Border_Width_Property_Mapper(),
+			new Border_Style_Property_Mapper(),
+			new Border_Color_Property_Mapper(),
+			new Border_Radius_Property_Mapper(),
+			new Background_Color_Property_Mapper(),
+			new Filter_Property_Mapper(),
+			new Flex_Property_Mapper(),
+			new Position_Property_Mapper(),
+			new Shadow_Property_Mapper(),
 		];
 
 		$mappers = apply_filters( 'elementor_css_converter_property_mappers', $mappers );

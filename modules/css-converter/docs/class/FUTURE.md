@@ -4,10 +4,16 @@
 
 ### Next Priority Properties (Ready for Implementation)
 
-### Additional CSS Properties (Phase 2B)
-- **Border Properties**: border-width, border-style, border-radius, border-color
-- **Background Properties**: background-color, background-image (basic)
-- **Position Properties**: position, top, right, bottom, left, z-index
+### Remaining Advanced Properties (Phase 3)
+- **Advanced Background Properties**:
+  - background-image (background-image-overlay-transformer)
+  - background (background-transformer)
+  - background-gradient (background-gradient-overlay-transformer)
+  - background-overlay (background-overlay-transformer)
+- **Stroke Properties**:
+  - stroke (stroke-transformer)
+- **Transition Properties**:
+  - transition (transition-transformer)
 
 ### Complex Property Mappings
 - **CSS Shorthand Expansion**: 
