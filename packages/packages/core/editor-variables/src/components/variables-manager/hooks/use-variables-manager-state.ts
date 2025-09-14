@@ -12,6 +12,7 @@ export const useVariablesManagerState = () => {
 	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
 	const [ ids, setIds ] = useState< string[] >( () => Object.keys( getVariables( false ) ) );
 	const [ isDirty, setIsDirty ] = useState( false );
+	const [ hasValidationErrors, setHasValidationErrors ] = useState( false );
 
 	const handleOnChange = useCallback( ( newVariables: TVariablesList ) => {
 		setVariables( newVariables );
@@ -67,10 +68,12 @@ export const useVariablesManagerState = () => {
 		deletedVariables,
 		ids,
 		isDirty,
+		hasValidationErrors,
 		setIds,
 		handleOnChange,
 		createVariable,
 		handleDeleteVariable,
 		handleSave,
+		setHasValidationErrors,
 	};
 };

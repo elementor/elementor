@@ -32,6 +32,7 @@ type Props = {
 	onIdsChange: ( ids: string[] ) => void;
 	autoEditVariableId?: string;
 	onAutoEditComplete?: () => void;
+	onFieldError?: ( hasError: boolean ) => void;
 };
 
 export const VariablesManagerTable = ( {
@@ -42,6 +43,7 @@ export const VariablesManagerTable = ( {
 	onIdsChange: setIds,
 	autoEditVariableId,
 	onAutoEditComplete,
+	onFieldError,
 }: Props ) => {
 	const tableContainerRef = useRef< HTMLDivElement >( null );
 	const variableRowRefs = useRef< Map< string, HTMLTableRowElement > >( new Map() );
@@ -214,7 +216,10 @@ export const VariablesManagerTable = ( {
 															size="tiny"
 															value={ value }
 															onChange={ onChange }
-															onErrorChange={ onValidationChange }
+															onErrorChange={ ( errorMsg ) => {
+																onValidationChange?.( errorMsg );
+																onFieldError?.( !! errorMsg );
+															} }
 															error={ error }
 															focusOnShow
 															selectOnShow={ autoEditVariableId === row.id }

@@ -38,7 +38,7 @@ export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 
-	const { variables, ids, isDirty, setIds, handleOnChange, createVariable, handleDeleteVariable, handleSave } =
+	const { variables, ids, isDirty, hasValidationErrors, setIds, handleOnChange, createVariable, handleDeleteVariable, handleSave, setHasValidationErrors } =
 		useVariablesManagerState();
 
 	const { autoEditVariableId, startAutoEdit, handleAutoEditComplete } = useAutoEdit();
@@ -132,6 +132,7 @@ export function VariablesManagerPanel() {
 							onIdsChange={ setIds }
 							autoEditVariableId={ autoEditVariableId }
 							onAutoEditComplete={ handleAutoEditComplete }
+							onFieldError={ setHasValidationErrors }
 						/>
 					</PanelBody>
 
@@ -141,7 +142,7 @@ export function VariablesManagerPanel() {
 							size="small"
 							color="global"
 							variant="contained"
-							disabled={ ! isDirty }
+							disabled={ ! isDirty || hasValidationErrors }
 							onClick={ handleSave }
 						>
 							{ __( 'Save changes', 'elementor' ) }
