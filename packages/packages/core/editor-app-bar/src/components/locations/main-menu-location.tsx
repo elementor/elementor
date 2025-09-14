@@ -41,10 +41,6 @@ export default function MainMenuLocation() {
 				{ menuItems.default.map( ( { MenuItem, id } ) => (
 					<MenuItem key={ id } />
 				) ) }
-				{ menuItems.help.length > 0 && <Divider /> }
-				{ menuItems.help.map( ( { MenuItem, id } ) => (
-					<MenuItem key={ id } />
-				) ) }
 				{ menuItems.exits.length > 0 && <Divider /> }
 				{ menuItems.exits.map( ( { MenuItem, id } ) => (
 					<MenuItem key={ id } />
