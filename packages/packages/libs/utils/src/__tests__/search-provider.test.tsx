@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { act, renderHook } from '@testing-library/react';
 
-import { SearchProvider, useSearch } from '../search-provider';
+import { SearchProvider, useSearch } from '../search-provider/search-provider';
 
 // Mock localStorage
 const localStorageMock = {
