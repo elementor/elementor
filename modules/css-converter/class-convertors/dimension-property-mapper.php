@@ -13,6 +13,9 @@ class Dimension_Property_Mapper implements Class_Property_Mapper_Interface {
 	}
 
 	public function map_to_schema( string $property, $value ): array {
+		if (is_string($value) && strtolower(trim($value)) === 'auto') {
+			return [];
+		}
 		$normalized = $this->normalize_dimension_value( $value );
 
 		if ( in_array( $normalized, self::KEYWORD_VALUES, true ) ) {

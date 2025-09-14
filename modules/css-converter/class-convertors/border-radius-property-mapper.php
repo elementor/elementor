@@ -22,6 +22,15 @@ class Border_Radius_Property_Mapper implements Class_Property_Mapper_Interface {
 				'border-bottom-left-radius' => [ '$$type' => 'size', 'value' => $parsed['bottom-left'] ],
 			];
 		}
+		if (in_array($property, [
+			'border-top-left-radius',
+			'border-top-right-radius',
+			'border-bottom-right-radius',
+			'border-bottom-left-radius',
+		], true)) {
+			$parsed = $this->parse_radius_value($value);
+			return [ $property => [ '$$type' => 'size', 'value' => $parsed ] ];
+		}
 		$parsed = $this->parse_radius_value( $value );
 		return [ $property => [ '$$type' => 'size', 'value' => $parsed ] ];
 	}

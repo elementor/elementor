@@ -2,7 +2,7 @@
 namespace Elementor\Modules\CssConverter\ClassConvertors;
 
 class Shadow_Property_Mapper implements Class_Property_Mapper_Interface {
-	const SUPPORTED_PROPERTIES = [ 'box-shadow', 'text-shadow' ];
+	const SUPPORTED_PROPERTIES = [ 'text-shadow' ];
 	const SIZE_PATTERN = '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw)?$/';
 	const HEX3_PATTERN = '/^#([A-Fa-f0-9]{3})$/';
 	const HEX6_PATTERN = '/^#([A-Fa-f0-9]{6})$/';

@@ -29,6 +29,7 @@ require_once __DIR__ . '/position-property-mapper.php';
 require_once __DIR__ . '/shadow-property-mapper.php';
 require_once __DIR__ . '/stroke-property-mapper.php';
 require_once __DIR__ . '/transition-property-mapper.php';
+require_once __DIR__ . '/box-shadow-property-mapper.php';
 
 class Class_Property_Mapper_Factory {
 	private static $registry = null;
@@ -69,6 +70,7 @@ class Class_Property_Mapper_Factory {
 			new Shadow_Property_Mapper(),
 			new Stroke_Property_Mapper(),
 			new Transition_Property_Mapper(),
+			new Box_Shadow_Property_Mapper(),
 		];
 
 		$mappers = apply_filters( 'elementor_css_converter_property_mappers', $mappers );

@@ -39,27 +39,20 @@ class Class_Converter_Config {
 				'max-width',
 				'max-height',
 				'opacity',
-				// Spacing properties
 				'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
 				'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
-				// Border properties
 				'border', 'border-width', 'border-style', 'border-radius', 'border-color',
 				'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width',
 				'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style',
 				'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',
-				// Background properties
+				'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius',
 				'background-color', 'background-image', 'background',
-				// Filter properties
 				'filter',
-				// Flex properties
 				'flex', 'flex-grow', 'flex-shrink', 'flex-basis',
-				// Position properties
 				'position', 'top', 'right', 'bottom', 'left', 'z-index',
-				// Shadow properties
+				'inset-block-start', 'inset-block-end', 'inset-inline-start', 'inset-inline-end',
 				'box-shadow', 'text-shadow',
-				// Stroke properties
-				'stroke', 'stroke-width', 'stroke-dasharray', 'stroke-linecap', 'stroke-linejoin',
-				// Transition properties
+				'stroke', 'stroke-width',
 				'transition', 'transition-property', 'transition-duration', 'transition-timing-function', 'transition-delay',
 			],
 			'max_css_size' => 1024 * 1024, // 1MB
