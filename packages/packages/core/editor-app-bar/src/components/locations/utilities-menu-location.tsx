@@ -24,7 +24,6 @@ export default function UtilitiesMenuLocation() {
 		<ToolbarMenu>
 			{ toolbarMenuItems.map( ( { MenuItem, id }, index ) => (
 				<Fragment key={ id }>
-					{ index === 0 && <Divider orientation="vertical" /> }
 					<MenuItem />
 				</Fragment>
 			) ) }
