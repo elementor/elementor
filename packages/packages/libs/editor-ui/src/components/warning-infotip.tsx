@@ -13,7 +13,10 @@ interface WarningInfotipProps extends PropsWithChildren {
 }
 
 export const WarningInfotip = forwardRef(
-	( { children, open, title, text, placement, width, offset, hasError = true }: WarningInfotipProps, ref: unknown ) => {
+	(
+		{ children, open, title, text, placement, width, offset, hasError = true }: WarningInfotipProps,
+		ref: unknown
+	) => {
 		return (
 			<Infotip
 				ref={ ref }
@@ -28,10 +31,10 @@ export const WarningInfotip = forwardRef(
 				} }
 				arrow={ false }
 				content={
-					<Alert 
+					<Alert
 						color={ hasError ? 'error' : 'secondary' }
 						severity="warning"
-						variant="standard" 
+						variant="standard"
 						size="small"
 					>
 						{ title ? <AlertTitle>{ title }</AlertTitle> : null }
