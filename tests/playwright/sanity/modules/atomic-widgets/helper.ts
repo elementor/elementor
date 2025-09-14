@@ -23,18 +23,23 @@ export class AtomicHelper {
 			isTargetBlank = false,
 		} = config;
 		const toggleMode = config.toggleMode ?? !! value;
-		const linkSection = this.page.locator( '.MuiStack-root:has(> .MuiStack-root > *[aria-label="Toggle link"])' );
 
-		await linkSection.waitFor( { state: 'visible', timeout: 10000 } );
+		const linkSectionSelector = '.MuiStack-root:has(> .MuiStack-root > *[aria-label="Toggle link"])';
+		const toggleLinkButtonSelector = linkSectionSelector + ' *[aria-label="Toggle link"]';
 
-		const linkToggleButton = linkSection.locator( '*[aria-label="Toggle link"]' );
+		await this.page.waitForTimeout( 1000 );
+		await this.page.waitForSelector( linkSectionSelector, { state: 'visible', timeout: 10000 } );
 
-		await linkToggleButton.waitFor( { state: 'visible', timeout: 10000 } );
+		const linkSection = this.page.locator( linkSectionSelector );
+
+		await this.page.waitForTimeout( 1000 );
+		await this.page.waitForSelector( toggleLinkButtonSelector, { state: 'visible', timeout: 10000 } );
+
+		const linkToggleButton = linkSection.locator( toggleLinkButtonSelector );
 
 		const isToggled = await this.isLinkToggleButtonEnabled( linkToggleButton );
 
 		if ( isToggled !== toggleMode ) {
-			await linkToggleButton.waitFor();
 			await linkToggleButton.click();
 		}
 
@@ -42,16 +47,21 @@ export class AtomicHelper {
 			return;
 		}
 
-		const linkInput = linkSection.locator( '.MuiAutocomplete-root input' );
-		const clearButton = linkSection.locator( '.MuiAutocomplete-root .MuiIconButton-root' );
+		const linkInputSelector = linkSectionSelector + ' .MuiAutocomplete-root input';
+		const clearButtonSelector = linkSectionSelector + ' .MuiAutocomplete-root .MuiIconButton-root';
+		const newTabSwitchSelector = linkSectionSelector + ' .MuiSwitch-input';
 
-		await linkInput.waitFor();
+		await this.page.waitForTimeout( 1000 );
+		await this.page.waitForSelector( linkInputSelector, { state: 'visible', timeout: 10000 } );
+
+		const linkInput = linkSection.locator( linkInputSelector );
+		const clearButton = linkSection.locator( clearButtonSelector );
 
 		if ( await clearButton.isVisible() ) {
 			await clearButton.click();
 		}
 
-		const newTabSwitch = linkSection.locator( '.MuiSwitch-input' );
+		const newTabSwitch = linkSection.locator( newTabSwitchSelector );
 		const isTargetBlankSelected = await newTabSwitch.isChecked();
 
 		if ( isTargetBlankSelected !== isTargetBlank ) {
@@ -64,20 +74,27 @@ export class AtomicHelper {
 	async setHtmlTagControl( tag: 'div' | 'header' | 'section' | 'article' | 'aside' | 'footer' ) {
 		await this.editor.openV2PanelTab( 'general' );
 
-		const htmlTagControl = this.getHtmlTagControl();
+		const htmlTagControl = await this.getHtmlTagControl();
+		const optionSelector = `li[data-value="${ tag }"]`;
 
-		await htmlTagControl.waitFor( { state: 'visible', timeout: 10000 } );
 		await htmlTagControl.click();
+		await this.page.waitForTimeout( 1000 );
+		await this.page.waitForSelector( optionSelector, { state: 'visible', timeout: 10000 } );
 
-		const option = this.page.locator( `li[data-value="${ tag }"]` );
+		const option = this.page.locator( optionSelector );
 
-		await option.waitFor( { state: 'visible', timeout: 10000 } );
 		await option.click();
-		await option.waitFor( { state: 'detached' } );
+		await this.page.waitForTimeout( 1000 );
+		await this.page.waitForSelector( optionSelector, { state: 'detached', timeout: 10000 } );
 	}
 
-	getHtmlTagControl( currentValue: string ) {
-		return this.page.getByText( currentValue, { exact: true } );
+	async getHtmlTagControl( shouldTargetDisabled: boolean = false ) {
+		const selector = `.MuiBox-root:has(> label:text-matches("Tag", "i")) .MuiSelect-select${ shouldTargetDisabled ? '.Mui-disabled' : ':not(.Mui-disabled)' }`;
+
+		await this.page.waitForTimeout( 1000 );
+		await this.page.waitForSelector( selector, { state: 'visible', timeout: 10000 } );
+
+		return this.page.locator( selector );
 	}
 
 	async addAtomicElement( elementType: ElementType, container: string = 'document' ) {
