@@ -5,4 +5,4 @@ export { debounce } from './debounce';
 export { encodeString, decodeString } from './encoding';
 export { hash } from './hash';
 
-export { SearchProvider, useSearch } from './search-provider';
+export { SearchProvider, useSearch } from './search-provider/search-provider';
