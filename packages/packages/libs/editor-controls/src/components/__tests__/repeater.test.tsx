@@ -103,7 +103,7 @@ describe( 'Repeater', () => {
 				},
 			],
 			undefined,
-			{ action: { type: 'add' } }
+			{ action: { type: 'add', payload: [ { index: 0, item: itemSettings.initialValues } ] } }
 		);
 	} );
 
@@ -152,7 +152,7 @@ describe( 'Repeater', () => {
 				itemSettings.initialValues,
 			],
 			undefined,
-			{ action: { type: 'add' } }
+			{ action: { type: 'add', payload: [ { index: 1, item: itemSettings.initialValues } ] } }
 		);
 	} );
 
@@ -203,7 +203,7 @@ describe( 'Repeater', () => {
 				},
 			],
 			undefined,
-			{ action: { type: 'duplicate' } }
+			{ action: { type: 'duplicate', payload: [ { index: 1, item: values[ 0 ] } ] } }
 		);
 	} );
 
@@ -246,7 +246,7 @@ describe( 'Repeater', () => {
 				},
 			],
 			undefined,
-			{ action: { type: 'remove' } }
+			{ action: { type: 'remove', payload: [ { index: 0, item: values[ 0 ] } ] } }
 		);
 	} );
 
