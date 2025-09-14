@@ -44,10 +44,16 @@ class Text_Align_Property_Mapper implements Class_Property_Mapper_Interface {
 
 		$value = trim( strtolower( $value ) );
 
-		if ( in_array( $value, self::VALID_ALIGNMENTS, true ) ) {
-			return $value;
-		}
+		// Map CSS values to Elementor V4 schema values
+		$mapping = [
+			'left' => 'start',
+			'right' => 'end',
+			'center' => 'center',
+			'justify' => 'justify',
+			'start' => 'start',
+			'end' => 'end',
+		];
 
-		return null;
+		return $mapping[ $value ] ?? null;
 	}
 }

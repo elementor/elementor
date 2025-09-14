@@ -59,12 +59,13 @@ class Line_Height_Property_Mapper implements Class_Property_Mapper_Interface {
 				$number = (int) $number;
 			}
 
-			if ( empty( $unit ) ) {
-				return [
-					'size' => $number,
-					'unit' => '',
-				];
-			}
+		if ( empty( $unit ) ) {
+			// For unitless line-height, convert to em equivalent
+			return [
+				'size' => $number,
+				'unit' => 'em',
+			];
+		}
 
 			return [
 				'size' => $number,
@@ -74,7 +75,7 @@ class Line_Height_Property_Mapper implements Class_Property_Mapper_Interface {
 
 		return [
 			'size' => 1.2,
-			'unit' => '',
+			'unit' => 'em',
 		];
 	}
 }

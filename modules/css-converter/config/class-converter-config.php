@@ -43,7 +43,7 @@ class Class_Converter_Config {
 				'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
 				'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
 				// Border properties
-				'border-width', 'border-style', 'border-radius', 'border-color',
+				'border', 'border-width', 'border-style', 'border-radius', 'border-color',
 				'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width',
 				'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style',
 				'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',

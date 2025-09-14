@@ -11,10 +11,16 @@ class Opacity_Property_Mapper implements Class_Property_Mapper_Interface {
 	public function map_to_schema( string $property, $value ): array {
 		$normalized_opacity = $this->normalize_opacity( $value );
 
+		// Convert to percentage for Elementor V4 schema
+		$percentage = (float) $normalized_opacity * 100;
+
 		return [
 			'opacity' => [
-				'$$type' => 'string',
-				'value' => $normalized_opacity,
+				'$$type' => 'size',
+				'value' => [
+					'size' => $percentage,
+					'unit' => '%',
+				],
 			],
 		];
 	}
