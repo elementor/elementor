@@ -19,7 +19,6 @@ require_once __DIR__ . '/border-width-property-mapper.php';
 require_once __DIR__ . '/border-style-property-mapper.php';
 require_once __DIR__ . '/border-color-property-mapper.php';
 require_once __DIR__ . '/border-radius-property-mapper.php';
-require_once __DIR__ . '/border-shorthand-property-mapper.php';
 require_once __DIR__ . '/background-color-property-mapper.php';
 require_once __DIR__ . '/background-image-property-mapper.php';
 require_once __DIR__ . '/background-property-mapper.php';
@@ -60,7 +59,6 @@ class Class_Property_Mapper_Factory {
 			new Border_Style_Property_Mapper(),
 			new Border_Color_Property_Mapper(),
 			new Border_Radius_Property_Mapper(),
-			new Border_Shorthand_Property_Mapper(),
 			new Background_Color_Property_Mapper(),
 			new Background_Image_Property_Mapper(),
 			new Background_Property_Mapper(),

@@ -4,7 +4,7 @@
  * This file can be run via WP-CLI or included in a test environment
  * 
  * Usage:
- * - Via WP-CLI: wp eval-file test-class-conversion.php
+ * - Via WP-CLI: wp eval-file docs/test/test-class-conversion.php
  * - Via browser: Access this file directly (if ABSPATH is defined)
  * - Via PHPUnit: Include in test suite
  */
@@ -13,17 +13,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Include required files
-require_once __DIR__ . '/parsers/css-parser.php';
-require_once __DIR__ . '/parsers/parsed-css.php';
-require_once __DIR__ . '/exceptions/css-parse-exception.php';
-require_once __DIR__ . '/exceptions/class-conversion-exception.php';
-require_once __DIR__ . '/variable-conversion-service.php';
-require_once __DIR__ . '/class-convertors/class-property-mapper-interface.php';
-require_once __DIR__ . '/class-convertors/color-property-mapper.php';
-require_once __DIR__ . '/class-convertors/font-size-property-mapper.php';
-require_once __DIR__ . '/class-convertors/class-property-mapper-registry.php';
-require_once __DIR__ . '/services/class-conversion-service.php';
+// Include required files (updated paths)
+require_once __DIR__ . '/../../parsers/css-parser.php';
+require_once __DIR__ . '/../../parsers/parsed-css.php';
+require_once __DIR__ . '/../../exceptions/css-parse-exception.php';
+require_once __DIR__ . '/../../exceptions/class-conversion-exception.php';
+require_once __DIR__ . '/../../services/variable-conversion-service.php';
+require_once __DIR__ . '/../../class-convertors/class-property-mapper-interface.php';
+require_once __DIR__ . '/../../class-convertors/color-property-mapper.php';
+require_once __DIR__ . '/../../class-convertors/font-size-property-mapper.php';
+require_once __DIR__ . '/../../class-convertors/class-property-mapper-registry.php';
+require_once __DIR__ . '/../../services/class-conversion-service.php';
 
 use Elementor\Modules\CssConverter\Services\Class_Conversion_Service;
 use Elementor\Modules\CssConverter\ClassConvertors\Color_Property_Mapper;

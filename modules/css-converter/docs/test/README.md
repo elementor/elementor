@@ -37,6 +37,17 @@ Automated test runner script with multiple test modes:
 ./run-tests.sh performance
 ```
 
+### `test-class-conversion.php`
+Comprehensive PHP test file for manual testing and debugging:
+
+```bash
+# Run via WP-CLI
+wp eval-file docs/test/test-class-conversion.php
+
+# Run via browser (if enabled)
+# Access: /wp-content/plugins/elementor/modules/css-converter/docs/test/test-class-conversion.php?run_tests=1
+```
+
 ## Usage
 
 1. **Navigate to test directory:**

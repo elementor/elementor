@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Modules\CssConverter\Parsers\CssParser;
-use Elementor\Modules\CssConverter\Variable_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Variable_Conversion_Service;
 use Elementor\Modules\CssConverter\ClassConvertors\Class_Property_Mapper_Registry;
 use Elementor\Modules\CssConverter\ClassConvertors\Class_Property_Mapper_Factory;
 use Elementor\Modules\CssConverter\Config\Class_Converter_Config;
@@ -57,11 +57,14 @@ class Class_Conversion_Service {
 		];
 
 		$existing_class_names = $this->get_existing_global_class_names();
+		$existing_labels = $this->get_existing_global_class_labels();
+		$seen_labels = [];
 
 		foreach ( $classes as $css_class ) {
 			$class_name = $this->extract_class_name( $css_class['selector'] );
+			$label = $this->generate_class_label( $css_class['selector'] );
 
-			if ( in_array( $class_name, $existing_class_names, true ) ) {
+			if ( in_array( $label, $existing_labels, true ) || in_array( $label, $seen_labels, true ) ) {
 				$this->add_warning( "Skipped duplicate class: {$css_class['selector']}" );
 				$results['skipped_classes'][] = [
 					'selector' => $css_class['selector'],
@@ -77,6 +80,7 @@ class Class_Conversion_Service {
 				$results['converted_classes'][] = $converted;
 				$results['stats']['classes_converted']++;
 				$existing_class_names[] = $class_name;
+				$seen_labels[] = $label;
 			} else {
 				$results['skipped_classes'][] = [
 					'selector' => $css_class['selector'],
@@ -177,6 +181,26 @@ class Class_Conversion_Service {
 		return $cached_names;
 	}
 
+	private function get_existing_global_class_labels(): array {
+		static $cached_labels = null;
+		if ( null === $cached_labels ) {
+			$cached_labels = [];
+			try {
+				$repository = Global_Classes_Repository::make();
+				$classes = $repository->all();
+				$items = $classes->get_items()->all();
+				foreach ( $items as $item ) {
+					if ( isset( $item['label'] ) && is_string( $item['label'] ) ) {
+						$cached_labels[] = $item['label'];
+					}
+				}
+			} catch ( \Exception $e ) {
+				$cached_labels = [];
+			}
+		}
+		return $cached_labels;
+	}
+
 	private function generate_class_id( string $selector ): string {
 		$class_name = $this->extract_class_name( $selector );
 		$existing_ids = $this->get_existing_global_class_names();
@@ -192,9 +216,18 @@ class Class_Conversion_Service {
 
 	private function generate_class_label( string $selector ): string {
 		$class_name = $this->extract_class_name( $selector );
-		// Labels can't contain spaces, so use PascalCase instead
-		$words = explode( '-', str_replace( '_', '-', $class_name ) );
-		return implode( '', array_map( 'ucfirst', $words ) );
+		$normalized = strtolower( trim( $class_name ) );
+		$normalized = str_replace( '_', '-', $normalized );
+		$normalized = preg_replace( '/[^a-z0-9\-]+/', '-', $normalized );
+		$normalized = preg_replace( '/-+/', '-', $normalized );
+		$normalized = trim( $normalized, '-' );
+		if ( '' === $normalized ) {
+			$normalized = 'class';
+		}
+		if ( preg_match( '/^[0-9]/', $normalized ) ) {
+			$normalized = 'c-' . $normalized;
+		}
+		return $normalized;
 	}
 
 	private function extract_class_name( string $selector ): string {

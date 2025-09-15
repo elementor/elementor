@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\CssConverter;
+namespace Elementor\Modules\CssConverter\Services;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

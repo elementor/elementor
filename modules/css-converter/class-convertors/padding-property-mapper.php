@@ -15,14 +15,36 @@ class Padding_Property_Mapper implements Class_Property_Mapper_Interface {
 		if ( $property === 'padding' ) {
 			$parsed = $this->parse_padding_shorthand( $value );
 			return [
-				'padding-top' => [ '$$type' => 'size', 'value' => $parsed['top'] ],
-				'padding-right' => [ '$$type' => 'size', 'value' => $parsed['right'] ],
-				'padding-bottom' => [ '$$type' => 'size', 'value' => $parsed['bottom'] ],
-				'padding-left' => [ '$$type' => 'size', 'value' => $parsed['left'] ],
+				'padding' => [
+					'$$type' => 'dimensions',
+					'value' => [
+						'block-start' => [ '$$type' => 'size', 'value' => $parsed['top'] ],
+						'inline-end' => [ '$$type' => 'size', 'value' => $parsed['right'] ],
+						'block-end' => [ '$$type' => 'size', 'value' => $parsed['bottom'] ],
+						'inline-start' => [ '$$type' => 'size', 'value' => $parsed['left'] ],
+					],
+				],
 			];
 		}
+
 		$parsed = $this->parse_size_value( $value );
-		return [ $property => [ '$$type' => 'size', 'value' => $parsed ] ];
+		$dimensions_value = [];
+		if ( $property === 'padding-top' ) {
+			$dimensions_value['block-start'] = [ '$$type' => 'size', 'value' => $parsed ];
+		} elseif ( $property === 'padding-right' ) {
+			$dimensions_value['inline-end'] = [ '$$type' => 'size', 'value' => $parsed ];
+		} elseif ( $property === 'padding-bottom' ) {
+			$dimensions_value['block-end'] = [ '$$type' => 'size', 'value' => $parsed ];
+		} elseif ( $property === 'padding-left' ) {
+			$dimensions_value['inline-start'] = [ '$$type' => 'size', 'value' => $parsed ];
+		}
+
+		return [
+			'padding' => [
+				'$$type' => 'dimensions',
+				'value' => $dimensions_value,
+			],
+		];
 	}
 
 	public function get_supported_properties(): array {

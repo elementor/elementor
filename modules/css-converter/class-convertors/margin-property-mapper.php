@@ -15,14 +15,36 @@ class Margin_Property_Mapper implements Class_Property_Mapper_Interface {
 		if ( $property === 'margin' ) {
 			$parsed = $this->parse_margin_shorthand( $value );
 			return [
-				'margin-top' => [ '$$type' => 'size', 'value' => $parsed['top'] ],
-				'margin-right' => [ '$$type' => 'size', 'value' => $parsed['right'] ],
-				'margin-bottom' => [ '$$type' => 'size', 'value' => $parsed['bottom'] ],
-				'margin-left' => [ '$$type' => 'size', 'value' => $parsed['left'] ],
+				'margin' => [
+					'$$type' => 'dimensions',
+					'value' => [
+						'block-start' => [ '$$type' => 'size', 'value' => $parsed['top'] ],
+						'inline-end' => [ '$$type' => 'size', 'value' => $parsed['right'] ],
+						'block-end' => [ '$$type' => 'size', 'value' => $parsed['bottom'] ],
+						'inline-start' => [ '$$type' => 'size', 'value' => $parsed['left'] ],
+					],
+				],
 			];
 		}
+
 		$parsed = $this->parse_size_value( $value );
-		return [ $property => [ '$$type' => 'size', 'value' => $parsed ] ];
+		$dimensions_value = [];
+		if ( $property === 'margin-top' ) {
+			$dimensions_value['block-start'] = [ '$$type' => 'size', 'value' => $parsed ];
+		} elseif ( $property === 'margin-right' ) {
+			$dimensions_value['inline-end'] = [ '$$type' => 'size', 'value' => $parsed ];
+		} elseif ( $property === 'margin-bottom' ) {
+			$dimensions_value['block-end'] = [ '$$type' => 'size', 'value' => $parsed ];
+		} elseif ( $property === 'margin-left' ) {
+			$dimensions_value['inline-start'] = [ '$$type' => 'size', 'value' => $parsed ];
+		}
+
+		return [
+			'margin' => [
+				'$$type' => 'dimensions',
+				'value' => $dimensions_value,
+			],
+		];
 	}
 
 	public function get_supported_properties(): array {
