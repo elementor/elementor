@@ -44,6 +44,27 @@ export const HtmlTagControl = createControl( ( { options, onChange, fallbackLabe
 		isEnabled: !! disabled,
 	};
 
+	const renderValue = ( selectedValue: string | null ) => {
+		if ( selectedValue ) {
+			return findOptionByValue( selectedValue )?.label || fallbackLabels[ selectedValue ] || selectedValue;
+		}
+
+		if ( ! placeholder ) {
+			return '';
+		}
+
+		const placeholderOption = findOptionByValue( placeholder );
+		const displayText = placeholderOption?.label || placeholder;
+
+		return (
+			<Typography component="span" variant="caption" color="text.tertiary">
+				{ displayText }
+			</Typography>
+		);
+	};
+
+	const findOptionByValue = ( searchValue: string | null ) => options.find( ( opt ) => opt.value === searchValue );
+
 	return (
 		<ControlActions>
 			<ConditionalControlInfotip { ...infoTipProps }>
@@ -51,26 +72,7 @@ export const HtmlTagControl = createControl( ( { options, onChange, fallbackLabe
 					sx={ { overflow: 'hidden', cursor: disabled ? 'not-allowed' : undefined } }
 					displayEmpty
 					size="tiny"
-					renderValue={ ( selectedValue: string | null ) => {
-						const findOptionByValue = ( searchValue: string | null ) =>
-							options.find( ( opt ) => opt.value === searchValue );
-
-						if ( ! selectedValue || selectedValue === '' ) {
-							if ( placeholder ) {
-								const placeholderOption = findOptionByValue( placeholder );
-								const displayText = placeholderOption?.label || placeholder;
-
-								return (
-									<Typography component="span" variant="caption" color="text.tertiary">
-										{ displayText }
-									</Typography>
-								);
-							}
-							return '';
-						}
-						const option = findOptionByValue( selectedValue );
-						return option?.label || fallbackLabels[ selectedValue ] || selectedValue;
-					} }
+					renderValue={ renderValue }
 					value={ value ?? '' }
 					onChange={ handleChange }
 					disabled={ disabled }
