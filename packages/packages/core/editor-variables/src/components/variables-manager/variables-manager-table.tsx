@@ -32,6 +32,7 @@ type Props = {
 	onIdsChange: ( ids: string[] ) => void;
 	autoEditVariableId?: string;
 	onAutoEditComplete?: () => void;
+	onFieldError?: ( hasError: boolean ) => void;
 };
 
 export const VariablesManagerTable = ( {
@@ -42,6 +43,7 @@ export const VariablesManagerTable = ( {
 	onIdsChange: setIds,
 	autoEditVariableId,
 	onAutoEditComplete,
+	onFieldError,
 }: Props ) => {
 	const tableContainerRef = useRef< HTMLDivElement >( null );
 	const variableRowRefs = useRef< Map< string, HTMLTableRowElement > >( new Map() );
@@ -203,14 +205,25 @@ export const VariablesManagerTable = ( {
 														}
 													} }
 													prefixElement={ createElement( row.icon, { fontSize: 'inherit' } ) }
-													editableElement={ ( { value, onChange } ) => (
+													editableElement={ ( {
+														value,
+														onChange,
+														onValidationChange,
+														error,
+													} ) => (
 														<LabelField
 															id={ 'variable-label-' + row.id }
 															size="tiny"
 															value={ value }
 															onChange={ onChange }
+															onErrorChange={ ( errorMsg ) => {
+																onValidationChange?.( errorMsg );
+																onFieldError?.( !! errorMsg );
+															} }
+															error={ error }
 															focusOnShow
 															selectOnShow={ autoEditVariableId === row.id }
+															showWarningInfotip={ true }
 														/>
 													) }
 													autoEdit={ autoEditVariableId === row.id }
@@ -218,6 +231,7 @@ export const VariablesManagerTable = ( {
 													onAutoEditComplete={
 														autoEditVariableId === row.id ? onAutoEditComplete : undefined
 													}
+													fieldType="label"
 												>
 													<EllipsisWithTooltip
 														title={ row.name }
