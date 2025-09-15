@@ -35,6 +35,12 @@ const globalUseBoundPropArgs = {
 	restoreValue: jest.fn(),
 };
 
+const setValuesWrapper = ( setValues: ( value: unknown ) => void ) => {
+	return ( value: unknown ) => {
+		setValues( value );
+	};
+};
+
 describe( 'UnstableRepeater', () => {
 	beforeEach( () => {
 		jest.mocked( useBoundProp ).mockReturnValue( {
@@ -56,9 +62,11 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
+				<ItemsContainer>
+					<Item { ...createItemSettings() } />
+				</ItemsContainer>
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
@@ -67,7 +75,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Assert.
 		expect( screen.getByText( 'Test Repeater' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Add item' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: /Add test repeater item/i } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Open item' } ) ).not.toBeInTheDocument();
 	} );
 
@@ -87,7 +95,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValues,
+			setValue: setValuesWrapper( setValues ),
 			...globalUseBoundPropArgs,
 		} );
 
@@ -95,9 +103,11 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
+				<ItemsContainer>
+					<Item { ...createItemSettings() } />
+				</ItemsContainer>
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
@@ -126,7 +136,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValues,
+			setValue: setValuesWrapper( setValues ),
 			...globalUseBoundPropArgs,
 		} );
 
@@ -134,16 +144,18 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
+				<ItemsContainer>
+					<Item { ...createItemSettings() } />
+				</ItemsContainer>
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
 			</UnstableRepeater>
 		);
 
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+		const addButton = screen.getByRole( 'button', { name: /Add test repeater item/i } );
 		fireEvent.click( addButton );
 
 		// Assert.
@@ -168,7 +180,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValues,
+			setValue: setValuesWrapper( setValues ),
 			...globalUseBoundPropArgs,
 		} );
 
@@ -180,9 +192,11 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
+				<ItemsContainer>
+					<Item { ...createItemSettings() } />
+				</ItemsContainer>
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
@@ -203,7 +217,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValues,
+			setValue: setValuesWrapper( setValues ),
 			...globalUseBoundPropArgs,
 		} );
 
@@ -215,9 +229,11 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
+				<ItemsContainer>
+					<Item { ...createItemSettings() } />
+				</ItemsContainer>
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
@@ -238,14 +254,16 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: [],
-			setValue: setValues,
+			setValue: setValuesWrapper( setValues ),
 			...globalUseBoundPropArgs,
 		} );
 
 		// Act.
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
-				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
+				<ItemsContainer>
+					<Item { ...createItemSettings() } />
+				</ItemsContainer>
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
@@ -254,7 +272,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Assert.
 		expect( screen.queryByText( 'Test Repeater' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Add item' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /Add test repeater item/i } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Open item' } ) ).not.toBeInTheDocument();
 	} );
 
@@ -289,7 +307,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValues,
+			setValue: setValuesWrapper( setValues ),
 			...globalUseBoundPropArgs,
 		} );
 
@@ -297,9 +315,11 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ customInitialValues }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item { ...customItemSettings } /> } />
+				<ItemsContainer>
+					<Item { ...customItemSettings } />
+				</ItemsContainer>
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
@@ -332,7 +352,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValues,
+			setValue: setValuesWrapper( setValues ),
 			...globalUseBoundPropArgs,
 		} );
 
@@ -340,10 +360,10 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
-					<DuplicateItemAction />
+				<ItemsContainer>
+					<Item { ...itemSettings } actions={ <DuplicateItemAction /> } />
 				</ItemsContainer>
 				<EditItemPopover>Content</EditItemPopover>
 			</UnstableRepeater>
@@ -391,7 +411,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValues,
+			setValue: setValuesWrapper( setValues ),
 			...globalUseBoundPropArgs,
 		} );
 
@@ -399,10 +419,10 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
-					<RemoveItemAction />
+				<ItemsContainer>
+					<Item { ...itemSettings } actions={ <RemoveItemAction /> } />
 				</ItemsContainer>
 				<EditItemPopover>Content</EditItemPopover>
 			</UnstableRepeater>
@@ -444,7 +464,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValues,
+			setValue: setValuesWrapper( setValues ),
 			...globalUseBoundPropArgs,
 		} );
 
@@ -452,10 +472,10 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
-					<DisableItemAction />
+				<ItemsContainer>
+					<Item { ...itemSettings } actions={ <DisableItemAction /> } />
 				</ItemsContainer>
 				<EditItemPopover>Content</EditItemPopover>
 			</UnstableRepeater>
@@ -494,7 +514,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValues,
+			setValue: setValuesWrapper( setValues ),
 			...globalUseBoundPropArgs,
 		} );
 
@@ -502,10 +522,10 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
-					<DisableItemAction />
+				<ItemsContainer>
+					<Item { ...itemSettings } actions={ <DisableItemAction /> } />
 				</ItemsContainer>
 				<EditItemPopover>Content</EditItemPopover>
 			</UnstableRepeater>
@@ -542,7 +562,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: [],
-			setValue: setValues,
+			setValue: setValuesWrapper( setValues ),
 			...globalUseBoundPropArgs,
 		} );
 
@@ -554,16 +574,18 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> } />
+				<ItemsContainer>
+					<Item { ...itemSettings } />
+				</ItemsContainer>
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
 			</UnstableRepeater>
 		);
 
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+		const addButton = screen.getByRole( 'button', { name: /Add repeater item/i } );
 
 		fireEvent.click( addButton );
 

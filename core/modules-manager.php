@@ -100,6 +100,7 @@ class Modules_Manager {
 			'favorites',
 			'admin-top-bar',
 			'element-manager',
+			'pro-free-trial-popup',
 			'nested-elements',
 			// Depends on Nested Elements module
 			'nested-tabs',
@@ -107,6 +108,7 @@ class Modules_Manager {
 			'container-converter',
 			'web-cli',
 			'promotions',
+			'pro-install',
 			'notes',
 			'performance-lab',
 			'lazyload',

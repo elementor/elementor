@@ -58,35 +58,42 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 		return <NotFound notFoundType={ notFoundType } />;
 	}
 
+	const isFiltersApplied = filters?.length || searchValue;
+
+	const allowSorting = filteredCssClasses.length > 1 && ! isFiltersApplied;
+
 	return (
 		<DeleteConfirmationProvider>
 			<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
-				<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
-					{ filteredCssClasses?.map( ( { id, label } ) => {
-						return (
-							<SortableItem key={ id } id={ id }>
-								{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
-									<ClassItem
-										id={ id }
-										label={ label }
-										renameClass={ ( newLabel: string ) => {
-											dispatch(
-												slice.actions.update( {
-													style: {
-														id,
-														label: newLabel,
-													},
-												} )
-											);
-										} }
-										selected={ isDragged }
-										disabled={ disabled || isDragPlaceholder }
-										sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
-									/>
-								) }
-							</SortableItem>
-						);
-					} ) }
+				<SortableProvider
+					value={ classesOrder }
+					onChange={ reorderClasses }
+					disableDragOverlay={ ! allowSorting }
+				>
+					{ filteredCssClasses?.map( ( { id, label } ) => (
+						<SortableItem key={ id } id={ id }>
+							{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
+								<ClassItem
+									id={ id }
+									label={ label }
+									renameClass={ ( newLabel: string ) => {
+										dispatch(
+											slice.actions.update( {
+												style: {
+													id,
+													label: newLabel,
+												},
+											} )
+										);
+									} }
+									selected={ isDragged }
+									disabled={ disabled || isDragPlaceholder }
+									sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
+									showSortIndicator={ allowSorting }
+								/>
+							) }
+						</SortableItem>
+					) ) }
 				</SortableProvider>
 			</List>
 		</DeleteConfirmationProvider>

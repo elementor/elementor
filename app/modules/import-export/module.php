@@ -178,6 +178,7 @@ class Module extends BaseModule {
 		if ( $should_show_revert_section ) {
 			if ( ! empty( $penultimate_imported_kit ) ) {
 				$revert_text = sprintf(
+					/* translators: 1: Last imported kit title, 2: Last imported kit date, 3: Line break <br>, 4: Penultimate imported kit title, 5: Penultimate imported kit date. */
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s %3$s and revert to the site setting that came with "%4$s" on %5$s.', 'elementor' ),
 					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
@@ -187,6 +188,7 @@ class Module extends BaseModule {
 				);
 			} else {
 				$revert_text = sprintf(
+					/* translators: 1: Last imported kit title, 2: Last imported kit date, 3: Line break <br>. */
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s.%3$s Your original site settings will be restored.', 'elementor' ),
 					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
@@ -327,7 +329,7 @@ class Module extends BaseModule {
 	 * @param string $referrer Referrer of the file 'local' or 'kit-library'.
 	 * @param string $kit_id
 	 * @return array
-	 * @throws \Exception
+	 * @throws \Exception If export validation fails or processing errors occur.
 	 */
 	public function upload_kit( $file, $referrer, $kit_id = null ) {
 		$this->ensure_writing_permissions();
@@ -355,11 +357,11 @@ class Module extends BaseModule {
 	 * so it will be available to use in different places such as: WP_Cli, Pro, etc.
 	 *
 	 * @param string $path Path to the file or session_id.
-	 * @param array $settings Settings the import use to determine which content to import.
-	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
-	 * @param bool $split_to_chunks Determine if the import process should be split into chunks.
+	 * @param array  $settings Settings the import use to determine which content to import.
+	 *       (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
+	 * @param bool   $split_to_chunks Determine if the import process should be split into chunks.
 	 * @return array
-	 * @throws \Exception
+	 * @throws \Exception If export configuration is invalid or processing fails.
 	 */
 	public function import_kit( string $path, array $settings, bool $split_to_chunks = false ): array {
 		$this->ensure_writing_permissions();
@@ -392,7 +394,7 @@ class Module extends BaseModule {
 	 * @return array Two types of response.
 	 *      1. The status and the runner name.
 	 *      2. The imported data. (Only if the runner is the last one in the import process)
-	 * @throws \Exception
+	 * @throws \Exception If import configuration is invalid or processing fails.
 	 */
 	public function import_kit_by_runner( string $session_id, string $runner_name ): array {
 		// Check session_id
@@ -417,7 +419,7 @@ class Module extends BaseModule {
 	 * @param array $settings Settings the export use to determine which content to export.
 	 *      (e.g: include, kit_info, selected_plugins, selected_cpt, etc.)
 	 * @return array
-	 * @throws \Exception
+	 * @throws \Exception If import/export process fails or validation errors occur.
 	 */
 	public function export_kit( array $settings ) {
 		$this->ensure_writing_permissions();
@@ -615,6 +617,8 @@ class Module extends BaseModule {
 
 	/**
 	 * Handle upload kit ajax request.
+	 *
+	 * @throws \Error If operation validation fails or processing errors occur.
 	 */
 	private function handle_upload_kit() {
 		// PHPCS - A URL that should contain special chars (auth headers information).
@@ -641,7 +645,7 @@ class Module extends BaseModule {
 			}
 
 			$import_result = apply_filters( 'elementor/import/kit/result', [ 'file_url' => $file_url ] );
-		} else if ( ! empty( $source ) ) {
+		} elseif ( ! empty( $source ) ) {
 			$import_result = apply_filters( 'elementor/import/kit/result/' . $source, [
 				'kit_id' => $kit_id,
 				'source' => $source,
@@ -767,6 +771,8 @@ class Module extends BaseModule {
 
 	/**
 	 * Handle export kit ajax request.
+	 *
+	 * @throws \Error If cleanup process fails or file system errors occur.
 	 */
 	private function handle_export_kit() {
 		// PHPCS - Already validated in caller function
@@ -968,11 +974,11 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * @param string $class
+	 * @param string $class_name
 	 *
 	 * @return bool
 	 */
-	public function is_third_party_class( $class ) {
+	public function is_third_party_class( $class_name ) {
 		$allowed_classes = [
 			'Elementor\\',
 			'ElementorPro\\',
@@ -981,7 +987,7 @@ class Module extends BaseModule {
 		];
 
 		foreach ( $allowed_classes as $allowed_class ) {
-			if ( str_starts_with( $class, $allowed_class ) ) {
+			if ( str_starts_with( $class_name, $allowed_class ) ) {
 				return false;
 			}
 		}

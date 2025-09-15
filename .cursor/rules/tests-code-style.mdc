@@ -1,10 +1,33 @@
 ---
-description: 
+description: Technical testing rules and code quality standards
 globs: *test*
 alwaysApply: false
 ---
-# Testing Best Practices
+# Technical Testing Rules
 
-## Reduce Code Duplication
-- For repeated code such as test setup, mocks or assertions, extract them into helper methods or setup functions.
-- Example: If multiple tests initialize the same mocks or objects, move this logic to a shared setup function rather than duplicating code in each test.
+## Code Quality Standards
+- Define test data as named constants for clarity and reusability (follows general magic numbers rule)
+- Always use the Arrange-Act-Assert pattern with clear comments
+- Remove all console.log and debug comments from final tests
+- No try/catch blocks around control interactions unless specifically testing error handling
+
+## Test Reliability Rules
+- Never rely on flaky behavior or timeouts - use condition-based waits only
+- Use stable selectors: `getByRole`, `getByTestId`, or semantic selectors
+- Never update snapshots unless explicitly instructed to do so
+- Do not hardcode dynamic content (avatars, dates, version numbers, IDs)
+- All tests must run headlessly in both CI and local environments
+
+## Browser & Environment Rules
+- Handle browser dialogs explicitly: use `page.once('dialog', …)` and accept/dismiss explicitly
+- Do not modify the test environment unless explicitly instructed
+- Never restart the environment or change the WordPress instance without permission
+- When debugging, still run in headless mode
+- For localhost:8888, use credentials: `admin` / `password`
+
+## Code Organization Rules
+- Extract repeated test setup, mocks or assertions into helper methods
+- New helpers must be minimal, generic, and reusable
+- Prefer optional parameters over modifying existing helper behavior
+- Always read existing helpers before adding new code
+- If a change risks breaking existing helpers, request approval first

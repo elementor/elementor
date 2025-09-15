@@ -2,6 +2,11 @@ import { render, screen, fireEvent, within } from '@testing-library/react';
 import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 import KitPartsSelection from 'elementor/app/modules/import-export-customization/assets/js/shared/components/kit-parts-selection';
 
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
+
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/kit-content-data', () => [
 	{
 		type: 'templates',
@@ -38,6 +43,8 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/k
 	},
 ] );
 
+import useContextDetection from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection';
+
 describe( 'KitPartsSelection Component', () => {
 	const mockOnCheckboxChange = jest.fn();
 	const mockHandleSaveCustomization = jest.fn();
@@ -56,6 +63,13 @@ describe( 'KitPartsSelection Component', () => {
 				config: eventsConfig,
 			},
 		};
+
+		useContextDetection.mockReturnValue( {
+			isImport: false,
+			contextData: {
+				data: mockData,
+			},
+		} );
 	} );
 
 	describe( 'Component Rendering', () => {
@@ -201,7 +215,7 @@ describe( 'KitPartsSelection Component', () => {
 			expect( contentCheckbox.disabled ).toBe( true );
 		} );
 
-		it( 'should disable required items in export mode', () => {
+		it( 'should disable required items in export mode', async () => {
 			// Arrange
 			const props = {
 				data: mockData,
@@ -215,6 +229,7 @@ describe( 'KitPartsSelection Component', () => {
 
 			// Assert
 			const contentCheckbox = within( screen.getByTestId( 'KitContentDataSelection-content' ) ).getByRole( 'checkbox' );
+
 			expect( contentCheckbox.disabled ).toBe( true );
 		} );
 
@@ -280,6 +295,16 @@ describe( 'KitPartsSelection Component', () => {
 					},
 				},
 			};
+
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					isImport: true,
+					isOldExport: false,
+					data: importData,
+				},
+			} );
+
 			const props = {
 				data: importData,
 				onCheckboxChange: mockOnCheckboxChange,
@@ -308,11 +333,19 @@ describe( 'KitPartsSelection Component', () => {
 				uploadedData: {
 					manifest: {
 						templates: true,
-						'site-settings': true,
+						'site-settings': { test: true },
 						content: true,
 					},
 				},
 			};
+
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					data: importData,
+				},
+			} );
+
 			const props = {
 				data: importData,
 				onCheckboxChange: mockOnCheckboxChange,
@@ -330,7 +363,7 @@ describe( 'KitPartsSelection Component', () => {
 
 			expect( templatesCheckbox.disabled ).toBe( false );
 			expect( settingsCheckbox.disabled ).toBe( false );
-			expect( contentCheckbox.disabled ).toBe( false );
+			expect( contentCheckbox.disabled ).toBe( true );
 		} );
 
 		it( 'should map settings type to site-settings in manifest', () => {
@@ -427,6 +460,13 @@ describe( 'KitPartsSelection Component', () => {
 
 		it( 'should not call onCheckboxChange when disabled checkbox is clicked', () => {
 			// Arrange
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					isOldExport: false,
+				},
+			} );
+
 			const importData = {
 				includes: [ 'templates' ],
 				customization: {},
@@ -478,10 +518,21 @@ describe( 'KitPartsSelection Component', () => {
 				customization: {},
 				uploadedData: {
 					manifest: {
-						templates: true,
+						templates: {
+							123: {},
+						},
 					},
 				},
 			};
+
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					isOldExport: false,
+					data: importData,
+				},
+			} );
+
 			const props = {
 				data: importData,
 				onCheckboxChange: mockOnCheckboxChange,
@@ -489,13 +540,14 @@ describe( 'KitPartsSelection Component', () => {
 				testId: 'test-kit-parts',
 			};
 			render( <KitPartsSelection { ...props } /> );
-			const editButtons = screen.getAllByText( 'Edit' );
-			const settingsEditButton = editButtons.find( ( button ) =>
-				'settings' === button.getAttribute( 'data-type' ),
-			);
+			const settingsSection = screen.getByTestId( `KitPartsSelectionRow-settings` );
+			const settingsCheckbox = within( screen.getByTestId( 'KitContentDataSelection-settings' ) ).getByRole( 'checkbox' );
+			const contentCheckbox = within( screen.getByTestId( 'KitContentDataSelection-content' ) ).getByRole( 'checkbox' );
 
 			// Act & Assert
-			expect( settingsEditButton.disabled ).toBe( true );
+			expect( within( settingsSection ).getByText( 'Not exported' ) ).toBeTruthy();
+			expect( settingsCheckbox.disabled ).toBe( true );
+			expect( contentCheckbox.disabled ).toBe( true );
 		} );
 	} );
 

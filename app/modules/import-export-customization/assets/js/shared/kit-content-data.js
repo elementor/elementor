@@ -1,7 +1,6 @@
-import { KitSettingsCustomizationDialog } from './components/kit-settings-customization-dialog';
 import { KitPluginsCustomizationDialog } from './components/kit-plugins-customization-dialog';
-import { KitTemplatesCustomizationDialog } from './components/kit-templates-customization-dialog';
 import { KitContentCustomizationDialog } from './components/kit-content-customization-dialog';
+import { KitSettingsCustomizationDialog } from './components/kit-settings-customization-dialog';
 
 const kitContentData = [
 	{
@@ -11,7 +10,6 @@ const kitContentData = [
 			features: {
 				open: [
 					__( 'Elementor Pages', 'elementor' ),
-					__( 'Landing Pages', 'elementor' ),
 					__( 'Elementor Posts', 'elementor' ),
 					__( 'WP Pages', 'elementor' ),
 					__( 'WP Posts', 'elementor' ),
@@ -30,6 +28,8 @@ const kitContentData = [
 			features: {
 				open: [
 					__( 'Saved Templates', 'elementor' ),
+				],
+				locked: [
 					__( 'Headers', 'elementor' ),
 					__( 'Footers', 'elementor' ),
 					__( 'Archives', 'elementor' ),
@@ -40,9 +40,10 @@ const kitContentData = [
 					__( 'Popups', 'elementor' ),
 					__( 'Global widgets', 'elementor' ),
 				],
+				tooltip: __( 'To import or export these components, you’ll need Elementor Pro.', 'elementor' ),
 			},
 		},
-		dialog: KitTemplatesCustomizationDialog,
+		dialog: null,
 		required: false,
 	},
 	{
@@ -72,7 +73,7 @@ const kitContentData = [
 			title: __( 'Plugins', 'elementor' ),
 			features: {
 				open: [
-					__( 'All plugins are required for this website templates work', 'elementor' ),
+					__( 'All plugins are required for this website templates to work', 'elementor' ),
 				],
 			},
 		},
