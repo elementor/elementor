@@ -11,6 +11,9 @@ module.exports = {
 			'<rootDir>/packages/libs/$1/src',
 			'<rootDir>/packages/tools/$1/src',
 		],
+		// Fix React context resolution issues
+		'^react$': '<rootDir>/node_modules/react',
+		'^react-dom$': '<rootDir>/node_modules/react-dom',
 	},
 	// By default, jest will treat everything under `__tests__` as a test file, we only need `__tests__/*.test.ts`.
 	testMatch: [ '<rootDir>/packages/**/__tests__/**/*.test.[jt]s?(x)' ],
@@ -28,5 +31,11 @@ module.exports = {
 		global: {
 			lines: 80,
 		},
+	},
+	// Fix React context issues
+	resolver: undefined,
+	// Ensure React context works properly
+	globals: {
+		React: require( 'react' ),
 	},
 };
