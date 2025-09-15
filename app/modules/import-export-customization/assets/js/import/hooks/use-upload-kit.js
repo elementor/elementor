@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useImportContext } from '../context/import-context';
 import { AppsEventTracking } from '../../../../../../assets/js/event-track/apps-event-tracking';
-import { ImportExportError } from '../../shared/error/import-export-error';
 
 export function useUploadKit() {
 	const { data, isUploading, dispatch } = useImportContext();
@@ -10,7 +9,6 @@ export function useUploadKit() {
 	async function uploadKit() {
 		try {
 			setUploading( true );
-			setError( null );
 			const baseUrl = elementorAppConfig[ 'import-export-customization' ].restApiBaseUrl;
 			const uploadUrl = `${ baseUrl }/upload`;
 
@@ -45,8 +43,7 @@ export function useUploadKit() {
 
 			if ( ! response.ok ) {
 				const errorMessage = result?.data?.message || `HTTP error! with the following code: ${ result?.data?.code }`;
-				const errorCode = 408 === response?.status ? 'timeout' : result?.data?.code;
-				throw new ImportExportError( errorMessage, errorCode );
+				throw new Error( errorMessage );
 			}
 
 			if ( data.file ) {
@@ -54,7 +51,7 @@ export function useUploadKit() {
 			}
 			dispatch( { type: 'SET_UPLOADED_DATA', payload: result.data } );
 		} catch ( e ) {
-			setError( e instanceof ImportExportError ? e : new ImportExportError( e.message ) );
+			setError( e );
 			AppsEventTracking.sendKitImportUploadFile( e.message );
 		} finally {
 			setUploading( false );
@@ -73,6 +70,5 @@ export function useUploadKit() {
 	return {
 		uploading,
 		error,
-		uploadKit,
 	};
 }

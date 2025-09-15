@@ -11,9 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Cloud_Kits extends Library {
 	const THRESHOLD_UNLIMITED = -1;
 	const FAILED_TO_FETCH_QUOTA_KEY = 'failed-to-fetch-quota';
-
-	const FAILED_TO_UPLOAD_KIT = 'cloud-upload-failed';
-
 	const INSUFFICIENT_QUOTA_KEY = 'insufficient-quota';
 
 	public function get_title() {
@@ -111,19 +108,22 @@ class Cloud_Kits extends Library {
 		] );
 
 		if ( empty( $response['id'] ) ) {
-			throw new \Exception( static::FAILED_TO_UPLOAD_KIT, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			$error_message = esc_html__( 'Failed to create kit: Invalid response', 'elementor' );
+			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		if ( empty( $response['uploadUrl'] ) ) {
 			$this->delete_kit( $response['id'] );
-			throw new \Exception( static::FAILED_TO_UPLOAD_KIT, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			$error_message = esc_html__( 'Failed to create kit: No upload URL provided', 'elementor' );
+			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$upload_success = $this->upload_content_file( $response['uploadUrl'], $content_file_data );
 
 		if ( ! $upload_success ) {
 			$this->delete_kit( $response['id'] );
-			throw new \Exception( static::FAILED_TO_UPLOAD_KIT, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			$error_message = esc_html__( 'Failed to create kit: Content upload failed', 'elementor' );
+			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		return $response;
