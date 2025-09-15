@@ -149,6 +149,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 												],
 											],
 											'fallbackLabels' => null,
+											'placeholder' => '',
 										],
 										'meta' => null,
 									],
