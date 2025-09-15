@@ -14,12 +14,11 @@ export function ComponentsList() {
 	if ( isLoading ) {
 		return <LoadingComponents />;
 	}
-
-	if ( searchValue.length > 0 && ( ! components || components.length === 0 ) ) {
-		return <EmptySearchResult />;
-	}
-
-	if ( ! components || components.length === 0 ) {
+	const isEmpty = ! components || components.length === 0;
+	if ( isEmpty ) {
+		if ( searchValue.length > 0 ) {
+			return <EmptySearchResult />;
+		}
 		return <EmptyState />;
 	}
 

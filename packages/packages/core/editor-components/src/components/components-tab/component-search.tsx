@@ -21,7 +21,7 @@ export const ComponentSearch = () => {
 					InputProps={ {
 						startAdornment: (
 							<InputAdornment position="start">
-								<SearchIcon fontSize={ 'small' } />
+								<SearchIcon fontSize={ 'tiny' } />
 							</InputAdornment>
 						),
 					} }
