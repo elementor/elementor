@@ -1,3 +1,5 @@
+import { initialInputControlState as tabPanelId } from '@wordpress/components/src/input-control/reducer/state';
+
 const createAtomicTabsView = () => {
 	const AtomicElementBaseView = elementor.modules.elements.views.createAtomicElementBase( 'e-tabs' );
 
@@ -5,10 +7,9 @@ const createAtomicTabsView = () => {
 		attributes() {
 			const defaultActiveTab = this.model.getSetting( 'default_active_tab' );
 
-			return {
-				'default-active-tab': defaultActiveTab?.value,
-				...super.attributes(),
-			};
+			return defaultActiveTab?.value
+				? { 'default-active-tab': defaultActiveTab.value }
+				: super.attributes();
 		}
 	};
 };

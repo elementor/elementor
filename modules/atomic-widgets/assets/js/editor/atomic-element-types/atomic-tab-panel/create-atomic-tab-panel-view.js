@@ -5,10 +5,9 @@ const createAtomicTabPanelView = () => {
 		attributes() {
 			const tabId = this.model.getSetting( 'tab_id' );
 
-			return {
-				'aria-labelledby': tabId?.value,
-				...super.attributes(),
-			};
+			return tabId?.value
+				? { 'aria-labelledby': tabId.value, ...super.attributes() }
+				: super.attributes();
 		}
 	};
 };
