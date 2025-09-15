@@ -33,6 +33,8 @@ import { DynamicSelection } from './dynamic-selection';
 
 const SIZE = 'tiny';
 
+const tagsWithoutTabs = ['popup'];
+
 export const DynamicSelectionControl = () => {
 	const { setValue: setAnyValue } = useBoundProp();
 	const { bind, value } = useBoundProp( dynamicPropTypeUtil );
@@ -137,21 +139,16 @@ const DynamicSettings = ( { controls, tagName }: { controls: DynamicTag[ 'atomic
 		return null;
 	}
 
-	if ( tagName === 'popup' ) {
+	if ( tagsWithoutTabs.includes( tagName ) ) {
 		const singleTab = tabs[0];
 		return (
-			<Stack p={ 2 } gap={ 2 } sx={ { overflowY: 'auto' } }>
-				{ singleTab.value.items.map( ( item ) => {
-					if ( item.type === 'control' ) {
-						return <Control key={ item.value.bind } control={ item.value } />;
-					}
-					return null;
-				} ) }
-			</Stack>
+			<>
+				<Divider />
+				<ControlsItemsStack items={ singleTab.value.items } />
+			</>
 		);
 	}
 
-	// Other tags - render with tabs UI
 	return (
 		<>
 			<Tabs size="small" variant="fullWidth" { ...getTabsProps() }>
@@ -168,14 +165,7 @@ const DynamicSettings = ( { controls, tagName }: { controls: DynamicTag[ 'atomic
 						sx={ { flexGrow: 1, py: 0, overflowY: 'auto' } }
 						{ ...getTabPanelProps( index ) }
 					>
-						<Stack p={ 2 } gap={ 2 }>
-							{ value.items.map( ( item ) => {
-								if ( item.type === 'control' ) {
-									return <Control key={ item.value.bind } control={ item.value } />;
-								}
-								return null;
-							} ) }
-						</Stack>
+						<ControlsItemsStack items={ value.items } />
 					</TabPanel>
 				);
 			} ) }
@@ -191,7 +181,6 @@ const LAYOUT_OVERRIDE_FIELDS = {
 
 const DYNAMIC_TAG_LAYOUT_OVERRIDES = {
 	select: 'full',
-	switch: 'full',
 } as const;
 
 const getLayout = ( control: Control[ 'value' ] ): ControlLayout => {
@@ -232,3 +221,16 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 		</DynamicControl>
 	);
 };
+
+function ControlsItemsStack( { items }: { items: ControlsSection[ 'value' ][ 'items' ] } ) {
+	return (
+		<Stack p={ 2 } gap={ 2 } sx={ { overflowY: 'auto' } }>
+			{ items.map( ( item ) => {
+				if ( item.type === 'control' ) {
+					return <Control key={ item.value.bind } control={ item.value } />;
+				}
+				return null;
+			} ) }
+		</Stack>
+	);
+}

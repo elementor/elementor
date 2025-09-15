@@ -203,7 +203,7 @@ class Dynamic_Tags_Editor_Config {
 	 */
 	private function convert_switch_control_to_atomic( $control ) {
 		return Switch_Control::bind_to( $control['name'] )
-			->set_label( $control['atomic_label'] ?? $control['label'] );
+			->set_label( html_entity_decode($control['atomic_label'] ?? $control['label']) );
 	}
 
 	/**

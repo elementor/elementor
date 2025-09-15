@@ -33,7 +33,9 @@ export const SelectControl = createControl( ( { options, onChange, MenuProps }: 
 				sx={ { overflow: 'hidden' } }
 				displayEmpty
 				size="tiny"
-				MenuProps={ MenuProps }
+				MenuProps={ {
+					disablePortal: true,
+				} }
 				renderValue={ ( selectedValue: string | null ) => {
 					const findOptionByValue = ( searchValue: string | null ) =>
 						options.find( ( opt ) => opt.value === searchValue );

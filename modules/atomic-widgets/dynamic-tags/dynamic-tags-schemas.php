@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Core\DynamicTags\Base_Tag;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
@@ -62,37 +63,86 @@ class Dynamic_Tags_Schemas {
 		switch ( $control_type ) {
 			case 'text':
 			case 'textarea':
-				return String_Prop_Type::make()
+				$prop_type = String_Prop_Type::make()
 					->default( $control['default'] ?? null );
+				break;
 
 			case 'select':
-				$string_prop = String_Prop_Type::make()
+				$prop_type = String_Prop_Type::make()
 					->default( $control['default'] ?? null );
 
 				if ( ! isset( $control['collection_id'] ) || empty( $control['collection_id'] ) ) {
-					$string_prop->enum( array_keys( $control['options'] ?? [] ) );
+					$prop_type->enum( array_keys( $control['options'] ?? [] ) );
 				}
-
-				return $string_prop;
+				break;
 
 			case 'number':
-				return Number_Prop_Type::make()
+				$prop_type = Number_Prop_Type::make()
 					->set_required( $control['required'] ?? false )
 					->default( $control['default'] ?? null );
+				break;
 
 			case 'switcher':
 				$default = $control['default'];
 
-				return Boolean_Prop_Type::make()
+				$prop_type = Boolean_Prop_Type::make()
 					->default( 'yes' === $default || true === $default );
+				break;
 
 			case 'query':
-				return Query_Prop_Type::make()
+				$prop_type = Query_Prop_Type::make()
 					->set_required( $control['required'] ?? false )
 					->default( $control['default'] ?? null );
+				break;
 
 			default:
 				return null;
 		}
+
+		if ( isset( $control['condition'] ) && is_array( $control['condition'] ) ) {
+			$dependencies = $this->convert_condition_to_dependencies( $control['condition'] );
+			$prop_type->set_dependencies( $dependencies );
+		}
+
+		return $prop_type;
+	}
+
+	private function convert_condition_to_dependencies( array $condition ): ?array {
+		$manager = Dependency_Manager::make( Dependency_Manager::RELATION_AND );
+
+		foreach ( $condition as $raw_key => $value ) {
+			$is_negated = false !== strpos( (string) $raw_key, '!' );
+			$key = rtrim( (string) $raw_key, '!' );
+
+			$path = $this->parse_condition_path( $key );
+
+			if ( is_array( $value ) ) {
+				$manager->where( [
+					'operator' => $is_negated ? 'nin' : 'in',
+					'path' => $path,
+					'value' => $value,
+				] );
+				continue;
+			}
+
+			$manager->where( [
+				'operator' => $is_negated ? 'ne' : 'eq',
+				'path' => $path,
+				'value' => $value,
+			] );
+		}
+
+		return $manager->get();
+	}
+
+	private function parse_condition_path( string $key ): array {
+		if ( false === strpos( $key, '[' ) ) {
+			return [ $key ];
+		}
+
+		$key = str_replace( ']', '', $key );
+		$tokens = explode( '[', $key );
+
+		return array_values( array_filter( $tokens, static fn( $t ) => '' !== $t ) );
 	}
 }
