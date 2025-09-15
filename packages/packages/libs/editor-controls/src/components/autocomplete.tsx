@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import { XIcon } from '@elementor/icons';
+import { SearchIcon, XIcon } from '@elementor/icons';
 import {
 	Autocomplete as AutocompleteBase,
 	type AutocompleteRenderInputParams,
@@ -30,6 +30,7 @@ export type Props = {
 	allowCustomValues?: boolean;
 	placeholder?: string;
 	minInputLength?: number;
+	showStartSearchIcon?: boolean;
 };
 
 export const Autocomplete = forwardRef( ( props: Props, ref ) => {
@@ -41,6 +42,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 		placeholder = '',
 		minInputLength = 2,
 		value = '',
+		showStartSearchIcon = false,
 		...restProps
 	} = props;
 
@@ -88,6 +90,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 					allowClear={ allowClear }
 					placeholder={ placeholder }
 					hasSelectedValue={ isValueFromOptions }
+					showStartSearchIcon={ showStartSearchIcon }
 				/>
 			) }
 		/>
@@ -100,12 +103,14 @@ const TextInput = ( {
 	placeholder,
 	handleChange,
 	hasSelectedValue,
+	showStartSearchIcon,
 }: {
 	params: AutocompleteRenderInputParams;
 	allowClear: boolean;
 	handleChange: ( newValue: string | null ) => void;
 	placeholder: string;
 	hasSelectedValue: boolean;
+	showStartSearchIcon: boolean;
 } ) => {
 	const onChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		handleChange( event.target.value );
@@ -123,6 +128,13 @@ const TextInput = ( {
 			} }
 			InputProps={ {
 				...params.InputProps,
+				startAdornment: showStartSearchIcon ? (
+					<InputAdornment position="start">
+						<SearchIcon fontSize={ params.size } />
+					</InputAdornment>
+				) : (
+					params.InputProps.startAdornment
+				),
 				endAdornment: <ClearButton params={ params } allowClear={ allowClear } handleChange={ handleChange } />,
 			} }
 		/>

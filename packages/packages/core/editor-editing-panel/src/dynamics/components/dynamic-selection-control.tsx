@@ -207,12 +207,21 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 		? { ...control.props, MenuProps: { ...( control.props?.MenuProps ?? {} ), disablePortal: true } }
 		: control.props;
 
+	const isSwitchControl = control.type === 'switch';
+
 	return (
 		<DynamicControl bind={ control.bind }>
 			<Grid
 				container
 				gap={ 0.75 }
-				sx={ layout === 'two-columns' ? { display: 'grid', gridTemplateColumns: '1fr 1fr' } : {} }
+				sx={
+					layout === 'two-columns'
+						? {
+								display: 'grid',
+								gridTemplateColumns: isSwitchControl ? 'minmax(0, 1fr) max-content' : '1fr 1fr',
+						  }
+						: {}
+				}
 			>
 				{ control.label ? (
 					<Grid item xs={ 12 }>
