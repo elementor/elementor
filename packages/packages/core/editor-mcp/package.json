@@ -1,7 +1,7 @@
 {
   "name": "@elementor/editor-mcp",
   "description": "Elementor Editor V4 MCP",
-  "version": "1.0.0",
+  "version": "3.33.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -36,8 +36,9 @@
   },
   "dependencies": {
     "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@1.0.1",
-    "@elementor/schema": "*",
+    "@elementor/schema": "3.33.0",
     "@modelcontextprotocol/sdk": "1.17.3",
-    "@elementor/store": "*"
+    "@elementor/store": "3.33.0",
+    "@elementor/editor-v1-adapters": "3.33.0"
   }
 }
