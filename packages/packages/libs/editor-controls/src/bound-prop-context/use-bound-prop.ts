@@ -8,7 +8,7 @@ import {
 } from '@elementor/editor-props';
 
 import { MissingPropTypeError } from './errors';
-import { type SetValue } from './prop-context';
+import { type SetValue, type SetValueMeta } from './prop-context';
 import { type PropKeyContextValue, usePropKeyContext } from './prop-key-context';
 
 type UseBoundProp< TValue extends PropValue > = {
@@ -46,8 +46,8 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 		return { ...propKeyContext, disabled } as PropKeyContextValue< PropValue, PropType >;
 	}
 
-	function setValue( value: TValue | null, options: CreateOptions, meta: { bind?: PropKey } ) {
-		if ( ! validate( value ) ) {
+	function setValue( value: TValue | null, options: CreateOptions, meta?: SetValueMeta ) {
+		if ( ! validate( value, meta?.validation ) ) {
 			return;
 		}
 
@@ -79,10 +79,14 @@ const useValidation = ( propType: PropType ) => {
 
 	// If the value does not pass the prop type validation, set the isValid state to false.
 	// This will prevent the value from being set in the model, and its fallback will be used instead.
-	const validate = ( value: PropValue | null ) => {
+	const validate = ( value: PropValue | null, validation?: ( value: PropValue ) => boolean ) => {
 		let valid = true;
 
 		if ( propType.settings.required && value === null ) {
+			valid = false;
+		}
+
+		if ( validation && ! validation( value ) ) {
 			valid = false;
 		}
 

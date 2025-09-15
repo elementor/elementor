@@ -34,6 +34,7 @@ export default function usePluginsData( plugins ) {
 	};
 
 	return {
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		pluginsData: useMemo( () => getPluginsData(), [ plugins ] ),
 	};
 }

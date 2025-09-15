@@ -57,7 +57,7 @@ class Module extends BaseModule {
 	}
 
 	public function get_proxy_data( $url ) {
-		$response = wp_safe_remote_get( utf8_decode( $url ) );
+		$response = wp_safe_remote_get( $url );
 
 		if ( is_wp_error( $response ) ) {
 			return '';
@@ -113,7 +113,7 @@ class Module extends BaseModule {
 	/**
 	 * @param Render_Mode_Manager $manager
 	 *
-	 * @throws \Exception
+	 * @throws \Exception If render mode registration fails.
 	 */
 	public function register_render_mode( Render_Mode_Manager $manager ) {
 		$manager->register_render_mode( Render_Mode_Preview::class );

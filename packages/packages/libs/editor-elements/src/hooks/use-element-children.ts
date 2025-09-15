@@ -3,7 +3,7 @@ import { __privateUseListenTo as useListenTo, commandEndEvent, v1ReadyEvent } fr
 import { getContainer } from '../sync/get-container';
 import { type ElementID } from '../types';
 
-type ElementModel = {
+export type ElementModel = {
 	id: string;
 };
 
@@ -24,19 +24,21 @@ export function useElementChildren< T extends ElementChildren >(
 		() => {
 			const container = getContainer( elementId );
 
-			const children = container?.children || [];
-
-			return childrenTypes.reduce( ( acc, type ) => {
-				const childElements = children
-					.filter( ( child ) => child.model?.get( 'widgetType' ) === type )
-					.map( ( child ) => ( { id: child.id } ) );
-
-				if ( childElements ) {
-					acc[ type ] = childElements;
-				}
+			const elementChildren = childrenTypes.reduce( ( acc, type ) => {
+				acc[ type ] = [];
 
 				return acc;
 			}, {} as ElementChildren );
+
+			container?.children?.forEachRecursive?.( ( { model, id } ) => {
+				const elType = model.get( 'elType' );
+
+				if ( elType && elType in elementChildren ) {
+					elementChildren[ elType ].push( { id } );
+				}
+			} );
+
+			return elementChildren;
 		},
 		[ elementId ]
 	) as T;

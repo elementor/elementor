@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
+import { buildOperationsArray, type OperationResult } from './batch-operations';
 import { OP_RW, Storage, type TVariablesList } from './storage';
 import { styleVariablesRepository } from './style-variables-repository';
 import { type Variable } from './types';
@@ -10,6 +11,10 @@ const storage = new Storage();
 export const service = {
 	variables: (): TVariablesList => {
 		return storage.load();
+	},
+
+	getWatermark: (): number => {
+		return storage.state.watermark;
 	},
 
 	init: () => {
@@ -165,6 +170,60 @@ export const service = {
 				return {
 					id: variableId,
 					variable: restoredVariable,
+				};
+			} );
+	},
+
+	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList ) => {
+		const operations = buildOperationsArray( originalVariables, currentVariables );
+		const batchPayload = { operations, watermark: storage.state.watermark };
+
+		if ( operations.length === 0 ) {
+			return Promise.resolve( {
+				success: true,
+				watermark: storage.state.watermark,
+				operations: 0,
+			} );
+		}
+
+		return apiClient
+			.batch( batchPayload )
+			.then( ( response ) => {
+				const { success, data: payload } = response.data;
+
+				if ( ! success ) {
+					throw new Error( 'Unexpected response from server' );
+				}
+
+				return payload;
+			} )
+			.then( ( data ) => {
+				const { results, watermark } = data;
+
+				handleWatermark( OP_RW, watermark );
+
+				if ( results ) {
+					results.forEach( ( result: OperationResult ) => {
+						if ( result.variable ) {
+							const { id: variableId, ...variableData } = result.variable;
+
+							if ( result.type === 'create' ) {
+								storage.add( variableId, variableData );
+							} else {
+								storage.update( variableId, variableData );
+							}
+
+							styleVariablesRepository.update( {
+								[ variableId ]: variableData,
+							} );
+						}
+					} );
+				}
+
+				return {
+					success: true,
+					watermark,
+					operations: operations.length,
 				};
 			} );
 	},

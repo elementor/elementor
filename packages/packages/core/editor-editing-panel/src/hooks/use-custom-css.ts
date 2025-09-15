@@ -83,6 +83,7 @@ export const useCustomCss = () => {
 
 	return {
 		customCss,
+		meta,
 		setCustomCss,
 	};
 };

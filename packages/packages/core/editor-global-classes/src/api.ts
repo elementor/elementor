@@ -49,3 +49,7 @@ export const apiClient = {
 			},
 		} ),
 };
+
+export const API_ERROR_CODES = {
+	DUPLICATED_LABEL: 'DUPLICATED_LABEL',
+};

@@ -13,6 +13,7 @@ import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { createControl } from '../create-control';
+import { escapeHtmlAttr } from '../utils/escape-html-attr';
 import { TextControl } from './text-control';
 
 type KeyValueControlProps = {
@@ -21,6 +22,7 @@ type KeyValueControlProps = {
 	regexKey?: string;
 	regexValue?: string;
 	validationErrorMessage?: string;
+	escapeHtml?: boolean;
 	getHelperText?: ( key: string, value: string ) => { keyHelper?: string; valueHelper?: string };
 };
 
@@ -36,6 +38,10 @@ export const KeyValueControl = createControl( ( props: KeyValueControlProps = {}
 
 	const keyLabel = props.keyName || __( 'Key', 'elementor' );
 	const valueLabel = props.valueName || __( 'Value', 'elementor' );
+	const { keyHelper, valueHelper } = props.getHelperText?.( sessionState.key, sessionState.value ) || {
+		keyHelper: undefined,
+		valueHelper: undefined,
+	};
 
 	const [ keyRegex, valueRegex, errMsg ] = useMemo< [ RegExp | undefined, RegExp | undefined, string ] >(
 		() => [
@@ -112,9 +118,9 @@ export const KeyValueControl = createControl( ( props: KeyValueControlProps = {}
 					</FormLabel>
 					<PropKeyProvider bind={ 'key' }>
 						<TextControl
-							inputValue={ sessionState.key }
+							inputValue={ props.escapeHtml ? escapeHtmlAttr( sessionState.key ) : sessionState.key }
 							error={ !! keyError }
-							helperText={ props.getHelperText?.( sessionState.key, sessionState.value )?.keyHelper }
+							helperText={ keyHelper }
 						/>
 					</PropKeyProvider>
 					{ !! keyError && <FormHelperText error>{ keyError }</FormHelperText> }
@@ -125,10 +131,10 @@ export const KeyValueControl = createControl( ( props: KeyValueControlProps = {}
 					</FormLabel>
 					<PropKeyProvider bind={ 'value' }>
 						<TextControl
-							inputValue={ sessionState.value }
+							inputValue={ props.escapeHtml ? escapeHtmlAttr( sessionState.value ) : sessionState.value }
 							error={ !! valueError }
 							inputDisabled={ !! keyError }
-							helperText={ props.getHelperText?.( sessionState.key, sessionState.value )?.valueHelper }
+							helperText={ valueHelper }
 						/>
 					</PropKeyProvider>
 					{ !! valueError && <FormHelperText error>{ valueError }</FormHelperText> }

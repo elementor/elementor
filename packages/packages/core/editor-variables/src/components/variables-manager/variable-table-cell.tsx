@@ -25,6 +25,7 @@ export const VariableTableCell = ( {
 		cursor: 'initial',
 		typography: 'caption',
 		...( isHeader && { color: 'text.primary', fontWeight: 'bold' } ),
+		...( isHeader && ! noPadding && { padding: '10px 16px' } ),
 		...( width && { width } ),
 		...sx,
 	};
