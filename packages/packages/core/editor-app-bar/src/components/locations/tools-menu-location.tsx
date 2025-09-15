@@ -5,7 +5,7 @@ import ToolbarMenu from '../ui/toolbar-menu';
 import ToolbarMenuMore from '../ui/toolbar-menu-more';
 import IntegrationsMenuLocation from './integrations-menu-location';
 
-const MAX_TOOLBAR_ACTIONS = 7;
+const MAX_TOOLBAR_ACTIONS = 5;
 
 const { useMenuItems } = toolsMenu;
 
