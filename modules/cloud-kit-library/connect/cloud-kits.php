@@ -37,6 +37,10 @@ class Cloud_Kits extends Library {
 	 * @return array|\WP_Error
 	 */
 	public function get_quota() {
+		if ( ! $this->is_connected() ) {
+			return new \WP_Error( 'not_connected', esc_html__( 'Not connected', 'elementor' ) );
+		}
+
 		return $this->http_request( 'GET', 'quota/kits', [], [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
