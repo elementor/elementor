@@ -22,7 +22,7 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 	const repeaterControls = [ 'filter' ];
 		
 	for ( const control of repeaterControls ) {
-		test.only( `repeater control ${ control } stability`, async () => {
+		test( `repeater control ${ control } stability`, async () => {
 			const editor = await wpAdmin.openNewPage();
 			await editor.addWidget( { widgetType: 'e-heading' } );
 			await editor.openV2PanelTab( 'style' );
