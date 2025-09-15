@@ -5,7 +5,7 @@ import { type ExtendedWindow } from '../../../types';
 
 export default function useActionProps() {
 	return {
-		title: __( 'Help', 'elementor' ),
+		title: __( 'Help Center', 'elementor' ),
 		href: 'https://go.elementor.com/editor-top-bar-learn/',
 		icon: HelpIcon,
 		target: '_blank',
