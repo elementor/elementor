@@ -14,7 +14,7 @@ import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
-import { extractOrderedDependencies, updateValues, type Values } from '../utils/prop-dependency-utils';
+import { extractOrderedDependencies, getUpdatedValues, type Values } from '../utils/prop-dependency-utils';
 import { createTopLevelObjectType } from './create-top-level-object-type';
 
 type SettingsFieldProps = {
@@ -50,7 +50,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 			dependenciesPerTargetMapping
 		);
 
-		const settings = updateValues( newValue, dependents, propsSchema, elementSettingValues, elementId );
+		const settings = getUpdatedValues( newValue, dependents, propsSchema, elementSettingValues, elementId );
 
 		undoableUpdateElementProp( settings );
 	};

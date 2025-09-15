@@ -1,4 +1,5 @@
 import {
+	type DependencyTerm,
 	extractValue,
 	isDependencyMet,
 	type PropsSchema,
@@ -62,7 +63,7 @@ function extractPropOrderedDependencies(
 	);
 }
 
-export function updateValues(
+export function getUpdatedValues(
 	values: Values,
 	dependencies: string[],
 	propsSchema: PropsSchema,
@@ -89,16 +90,12 @@ export function updateValues(
 			};
 
 			if ( ! testDependencies.newValues.isMet ) {
-				const newValue =
-					testDependencies.newValues.failingDependencies.find( ( term ) => term.newValue )?.newValue ?? null;
-
-				const currentValue =
-					extractValue( dependency.split( '.' ), elementValues ) ?? ( propType.default as Value );
-
-				savePreviousValueToStorage( {
-					path: dependency,
+				const newValue = handleUnmetCondition( {
+					failingDependencies: testDependencies.newValues.failingDependencies,
+					dependency,
+					elementValues: combinedValues,
+					defaultValue: propType.default as Value,
 					elementId,
-					value: currentValue,
 				} );
 
 				return {
@@ -136,12 +133,31 @@ function getPropType( schema: PropsSchema, elementValues: Values, path: string[]
 		return null;
 	}
 
-	return keys.reduce( ( prop: PropType | null, key, index ) => {
-		if ( ! prop?.kind ) {
-			return null;
-		}
+	return keys.reduce(
+		( prop: PropType | null, key, index ) =>
+			evaluatePropType( { prop, key, index, path, elementValues, basePropKey } ),
+		baseProp
+	);
+}
 
-		if ( 'union' === prop.kind ) {
+function evaluatePropType( props: {
+	prop: PropType | null;
+	key: string;
+	index: number;
+	path: string[];
+	elementValues: Values;
+	basePropKey: string;
+} ) {
+	const { prop } = props;
+
+	if ( ! prop?.kind ) {
+		return null;
+	}
+
+	const { key, index, path, elementValues, basePropKey } = props;
+
+	switch ( prop.kind ) {
+		case 'union':
 			const value = extractValue( path.slice( 0, index + 1 ), elementValues );
 			const type = ( value?.$$type as string ) ?? null;
 
@@ -150,18 +166,13 @@ function getPropType( schema: PropsSchema, elementValues: Values, path: string[]
 				elementValues,
 				path.slice( 0, index + 2 )
 			);
-		}
-
-		if ( 'array' === prop.kind ) {
+		case 'array':
 			return prop.item_prop_type;
-		}
-
-		if ( 'object' === prop.kind ) {
+		case 'object':
 			return prop.shape[ key ];
-		}
+	}
 
-		return prop[ key as keyof typeof prop ] as PropType;
-	}, baseProp );
+	return prop[ key as keyof typeof prop ] as PropType;
 }
 
 function updateValue( path: string[], value: Value, values: Values ) {
@@ -183,6 +194,26 @@ function updateValue( path: string[], value: Value, values: Values ) {
 	}, newValue );
 
 	return { [ topPropKey ]: newValue[ topPropKey ] ?? null };
+}
+
+function handleUnmetCondition( props: {
+	failingDependencies: DependencyTerm[];
+	dependency: string;
+	elementValues: Values;
+	defaultValue: Value;
+	elementId: string;
+} ) {
+	const { failingDependencies, dependency, elementValues, defaultValue, elementId } = props;
+	const newValue = failingDependencies.find( ( term ) => term.newValue )?.newValue ?? null;
+	const currentValue = extractValue( dependency.split( '.' ), elementValues ) ?? defaultValue;
+
+	savePreviousValueToStorage( {
+		path: dependency,
+		elementId,
+		value: currentValue,
+	} );
+
+	return newValue;
 }
 
 function savePreviousValueToStorage( { path, elementId, value }: { path: string; elementId: string; value: unknown } ) {
