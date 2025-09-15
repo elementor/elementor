@@ -1,6 +1,6 @@
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { BrowserContext, Page, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 	let wpAdmin: WpAdminPage;
@@ -18,8 +18,7 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 		await wpAdmin.resetExperiments();
 	} );
 
-	// const repeaterControls = [ 'filter', 'Backdrop filter', 'transform', 'Box shadow', 'transitions' ];
-	const repeaterControls = [ 'filter' ];
+	const repeaterControls = [ 'filter', 'Backdrop filter', 'transform', 'Box shadow', 'transitions' ];
 		
 	for ( const control of repeaterControls ) {
 		test( `repeater control ${ control } stability`, async () => {
