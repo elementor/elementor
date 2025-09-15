@@ -42,7 +42,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'default_active_tab' => String_Prop_Type::make(),
+			'default-active-tab' => String_Prop_Type::make(),
 		];
 	}
 
@@ -145,8 +145,8 @@ class Atomic_Tabs extends Atomic_Element_Base {
 			]
 		];
 
-		if ( ! empty( $settings['default_active_tab'] ) ) {
-			$attributes['default-active-tab'] = esc_attr( $settings['default_active_tab'] );
+		if ( ! empty( $settings['default-active-tab'] ) ) {
+			$attributes['default-active-tab'] = esc_attr( $settings['default-active-tab'] );
 		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {

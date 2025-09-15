@@ -9,13 +9,16 @@ register( {
 
 		const setActiveTab = ( id ) => {
 			tabPanels.forEach( ( tabPanel ) => {
-				tabPanel.style.display = 'none';
-				tabPanel.setAttribute( 'hidden', 'true' );
+				const activeTab = tabPanel.getAttribute( 'data-tab-id' ) === id;
 
-				if ( tabPanel.getAttribute( 'aria-labelledby' ) === id ) {
+				if ( activeTab ) {
 					tabPanel.style.display = '';
 					tabPanel.removeAttribute( 'hidden' );
+					return;
 				}
+
+				tabPanel.style.display = 'none';
+				tabPanel.setAttribute( 'hidden', 'true' );
 			} );
 		};
 

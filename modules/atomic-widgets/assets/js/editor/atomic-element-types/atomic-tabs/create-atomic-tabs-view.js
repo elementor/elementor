@@ -3,7 +3,7 @@ const createAtomicTabsView = () => {
 
 	return class AtomicTabsView extends AtomicElementBaseView {
 		attributes() {
-			const defaultActiveTab = this.model.getSetting( 'default_active_tab' );
+			const defaultActiveTab = this.model.getSetting( 'default-active-tab' );
 
 			return defaultActiveTab?.value
 				? { 'default-active-tab': defaultActiveTab.value }
