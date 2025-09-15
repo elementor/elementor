@@ -13,7 +13,7 @@ export function useSearchState( { localStorageKey }: { localStorageKey?: string 
 		}
 		return '';
 	};
-	const { debouncedValue, inputValue, handleChange, setInputValue } = useDebounceState( {
+	const { debouncedValue, inputValue, handleChange } = useDebounceState( {
 		delay: 300,
 		initialValue: getInitialSearchValue(),
 	} );
@@ -21,6 +21,5 @@ export function useSearchState( { localStorageKey }: { localStorageKey?: string 
 		debouncedValue,
 		inputValue,
 		handleChange,
-		setInputValue,
 	};
 }

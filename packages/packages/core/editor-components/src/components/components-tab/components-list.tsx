@@ -70,7 +70,7 @@ const EmptyState = () => {
 };
 
 const EmptySearchResult = () => {
-	const { searchValue, onClearSearch } = useSearch();
+	const { searchValue, clearSearch } = useSearch();
 	return (
 		<Stack
 			color={ 'text.secondary' }
@@ -117,7 +117,7 @@ const EmptySearchResult = () => {
 				{ __( 'Try something else.', 'elementor' ) }
 			</Typography>
 			<Typography align="center" variant="caption" color="inherit">
-				<Link color="secondary" variant="caption" component="button" onClick={ onClearSearch }>
+				<Link color="secondary" variant="caption" component="button" onClick={ clearSearch }>
 					{ __( 'Clear & try again', 'elementor' ) }
 				</Link>
 			</Typography>

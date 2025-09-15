@@ -4,7 +4,7 @@ import { useSearchState, type UseSearchStateResult } from '@elementor/utils';
 
 type SearchContextType = Pick< UseSearchStateResult, 'handleChange' | 'inputValue' > & {
 	searchValue: UseSearchStateResult[ 'debouncedValue' ];
-	onClearSearch: () => void;
+	clearSearch: () => void;
 };
 
 const SearchContext = createContext< SearchContextType | undefined >( undefined );
@@ -18,12 +18,12 @@ export const SearchProvider = ( {
 } ) => {
 	const { debouncedValue, handleChange, inputValue } = useSearchState( { localStorageKey } );
 
-	const onClearSearch = () => {
+	const clearSearch = () => {
 		handleChange( '' );
 	};
 
 	return (
-		<SearchContext.Provider value={ { handleChange, onClearSearch, searchValue: debouncedValue, inputValue } }>
+		<SearchContext.Provider value={ { handleChange, clearSearch, searchValue: debouncedValue, inputValue } }>
 			{ children }
 		</SearchContext.Provider>
 	);
