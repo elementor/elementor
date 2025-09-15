@@ -30,6 +30,7 @@ export {
 export { deleteElement } from './sync/delete-element';
 export { removeElements } from './sync/remove-elements';
 export { getContainer, selectElement } from './sync/get-container';
+export { getElementType } from './sync/get-element-type';
 export { getElementSetting, getElementSettings } from './sync/get-element-setting';
 export { getElementEditorSettings } from './sync/get-element-editor-settings';
 export { getElementStyles } from './sync/get-element-styles';
