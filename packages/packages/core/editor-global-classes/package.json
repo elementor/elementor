@@ -1,67 +1,67 @@
 {
-	"name": "@elementor/editor-global-classes",
-	"version": "3.33.0",
-	"private": false,
-	"author": "Elementor Team",
-	"homepage": "https://elementor.com/",
-	"license": "GPL-3.0-or-later",
-	"main": "dist/index.js",
-	"module": "dist/index.mjs",
-	"types": "dist/index.d.ts",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"import": "./dist/index.mjs",
-			"require": "./dist/index.js"
-		},
-		"./package.json": "./package.json"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/elementor/elementor.git",
-		"directory": "packages/core/editor-global-classes"
-	},
-	"bugs": {
-		"url": "https://github.com/elementor/elementor/issues"
-	},
-	"publishConfig": {
-		"access": "public"
-	},
-	"files": [
-		"README.md",
-		"CHANGELOG.md",
-		"/dist",
-		"/src",
-		"!**/__tests__"
-	],
-	"scripts": {
-		"build": "tsup --config=../../tsup.build.ts",
-		"dev": "tsup --config=../../tsup.dev.ts"
-	},
-	"dependencies": {
-		"@elementor/editor": "3.33.0",
-		"@elementor/editor-current-user": "3.33.0",
-		"@elementor/editor-documents": "3.33.0",
-		"@elementor/editor-editing-panel": "3.33.0",
-		"@elementor/editor-panels": "3.33.0",
-		"@elementor/editor-props": "3.33.0",
-		"@elementor/editor-styles": "3.33.0",
-		"@elementor/editor-styles-repository": "3.33.0",
-		"@elementor/editor-ui": "3.33.0",
-		"@elementor/editor-v1-adapters": "3.33.0",
-		"@elementor/http-client": "3.33.0",
-		"@elementor/icons": "1.52.0",
-		"@elementor/query": "3.33.0",
-		"@elementor/store": "3.33.0",
-		"@elementor/ui": "1.36.12",
-		"@elementor/utils": "3.33.0",
-		"@wordpress/i18n": "^5.13.0"
-	},
-	"peerDependencies": {
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
-	},
-	"devDependencies": {
-		"tsup": "^8.3.5"
-	}
+  "name": "@elementor/editor-global-classes",
+  "version": "3.33.0",
+  "private": false,
+  "author": "Elementor Team",
+  "homepage": "https://elementor.com/",
+  "license": "GPL-3.0-or-later",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elementor/elementor.git",
+    "directory": "packages/core/editor-global-classes"
+  },
+  "bugs": {
+    "url": "https://github.com/elementor/elementor/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "README.md",
+    "CHANGELOG.md",
+    "/dist",
+    "/src",
+    "!**/__tests__"
+  ],
+  "scripts": {
+    "build": "tsup --config=../../tsup.build.ts",
+    "dev": "tsup --config=../../tsup.dev.ts"
+  },
+  "dependencies": {
+    "@elementor/editor": "3.33.0",
+    "@elementor/editor-current-user": "3.33.0",
+    "@elementor/editor-documents": "3.33.0",
+    "@elementor/editor-editing-panel": "3.33.0",
+    "@elementor/editor-panels": "3.33.0",
+    "@elementor/editor-props": "3.33.0",
+    "@elementor/editor-styles": "3.33.0",
+    "@elementor/editor-styles-repository": "3.33.0",
+    "@elementor/editor-ui": "3.33.0",
+    "@elementor/editor-v1-adapters": "3.33.0",
+    "@elementor/http-client": "3.33.0",
+    "@elementor/icons": "1.52.0",
+    "@elementor/query": "3.33.0",
+    "@elementor/store": "3.33.0",
+    "@elementor/ui": "1.36.12",
+    "@elementor/utils": "3.33.0",
+    "@wordpress/i18n": "^5.13.0"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  }
 }
