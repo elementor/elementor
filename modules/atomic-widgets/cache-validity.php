@@ -59,6 +59,10 @@ class Cache_Validity {
 
 		$current_item = &$state_item;
 
+		if ( ! $current_item ) {
+			return;
+		}
+
 		if ( ! empty( $keys ) ) {
 			if ( ! $state_item || 'boolean' === gettype( $state_item ) ) {
 				return;
@@ -67,7 +71,7 @@ class Cache_Validity {
 			$current_item = &$this->get_nested_item( $current_item, $keys );
 		}
 
-		if ( 'boolean' === gettype( $current_item ) ) {
+		if ( true === $current_item ) {
 			$current_item = false;
 		} else {
 			$current_item['state'] = false;
@@ -117,27 +121,21 @@ class Cache_Validity {
 
 	public function clear( array $keys ): void {
 		$root = array_shift( $keys );
-		$last_key = array_pop( $keys );
-
 		$state_item = $this->get_stored_data( $root );
 
 		if ( 'boolean' === gettype( $state_item ) && ! empty( $keys ) ) {
-			if ( empty( $keys ) ) {
-				$this->delete_stored_data( $root );
-
-				return;
-			}
-
-			$state_item = [
-				'state' => $state_item,
-			];
+			return;
 		}
 
-		$current_item = &$state_item;
+		if ( empty( $keys ) ) {
+			$this->delete_stored_data( $root );
 
-		if ( ! empty( $keys ) ) {
-			$current_item = &$this->get_nested_item( $current_item, $keys );
+			return;
 		}
+
+		$last_key = array_pop( $keys );
+
+		$current_item = &$this->get_nested_item( $state_item, $keys );
 
 		if ( empty( $current_item['children'] ) ) {
 			return;

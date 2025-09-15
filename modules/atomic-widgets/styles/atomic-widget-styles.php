@@ -22,7 +22,7 @@ class Atomic_Widget_Styles {
 
 		add_action(
 			'elementor/core/files/clear_cache',
-			fn() => $this->invalidate_cache(),
+			fn() => $this->clear_cache(),
 		);
 
 		add_action(
@@ -76,8 +76,14 @@ class Atomic_Widget_Styles {
 		}
 	}
 
-	private function clear_cache( $post_id ) {
+	private function clear_cache( ?string $post_id = null ) {
 		$cache_validity = new Cache_Validity();
+
+		if ( empty( $post_id ) ) {
+			$cache_validity->clear( [ self::STYLES_KEY ] );
+
+			return;
+		}
 
 		$cache_validity->clear( [ self::STYLES_KEY, $post_id ] );
 	}
