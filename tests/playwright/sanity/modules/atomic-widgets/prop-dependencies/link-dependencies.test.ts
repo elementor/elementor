@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
-import EditorPage from '../../../../pages/editor-page';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import { AtomicHelper, ElementType } from '../helper';
 
@@ -10,12 +9,9 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 		{ label: 'Flexbox', elementType: 'e-flexbox' },
 	];
 
-	let editor: EditorPage;
-	let wpAdmin: WpAdminPage;
-
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			e_opt_in_v4_page: 'active',
@@ -25,19 +21,20 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 		await wpAdmin.setExperiments( {
 			e_nested_elements: 'active',
 		} );
-
-		editor = await wpAdmin.openNewPage();
 	} );
 
-	test.afterAll( async ( { browser } ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		await wpAdmin.resetExperiments();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
+		await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
 	for ( const { label, elementType } of tests ) {
-		test( `${ label } - link control - tag and new tab switch dependencies`, async ( { page } ) => {
+		test( `${ label } - link control - tag and new tab switch dependencies`, async ( { page, apiRequests }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			const editor = await wpAdmin.openNewPage();
 			const helper = new AtomicHelper( page, editor, wpAdmin );
 
 			await helper.addAtomicElement( elementType );
