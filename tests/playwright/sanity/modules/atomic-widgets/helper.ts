@@ -28,7 +28,8 @@ export class AtomicHelper {
 		await this.page.locator( LINK_SECTION_BASE_SELECTOR ).waitFor( { timeout: 600 } );
 
 		const toggleMode = config.toggleMode ?? !! value;
-		const isToggled = await this.page.locator( '.MuiCollapse-root .MuiAutocomplete-root input[placeholder="Type or paste your URL"]' ).isVisible();
+		const linkInput = this.page.locator( '.MuiCollapse-root .MuiAutocomplete-root input[placeholder="Type or paste your URL"]' );
+		const isToggled = await linkInput.isVisible();
 
 		if ( isToggled !== toggleMode ) {
 			await this.page.locator( LINK_SECTION_BASE_SELECTOR + TOGGLE_LINK_SELECTOR ).click();
@@ -38,7 +39,7 @@ export class AtomicHelper {
 			return;
 		}
 
-		await this.page.locator( '.MuiCollapse-root .MuiAutocomplete-root input[placeholder="Type or paste your URL"]' ).fill( value );
+		await linkInput.fill( value );
 
 		const newTabSwitch = this.page.locator( `${ LINK_SECTION_BASE_SELECTOR } .MuiSwitch-switchBase` );
 
@@ -58,7 +59,7 @@ export class AtomicHelper {
 	}
 
 	public getHtmlTagControl( deeperSelector: string = '' ) {
-		const control = this.page.locator( `.MuiStack-root >.MuiBox-root` ).filter( { has: this.page.locator( 'label' ) } ).first();
+		const control = this.page.locator( `.MuiStack-root >.MuiBox-root>label`, { hasText: /Tag/ig } ).locator( '..' );
 
 		return deeperSelector
 			? control.locator( deeperSelector )
