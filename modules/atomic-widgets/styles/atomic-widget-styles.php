@@ -27,7 +27,7 @@ class Atomic_Widget_Styles {
 
 		add_action(
 			'deleted_post',
-			fn( $post_id ) => $this->invalidate_cache( $post_id )
+			fn( $post_id ) => $this->invalidate_cache( [ $post_id ] )
 		);
 	}
 
