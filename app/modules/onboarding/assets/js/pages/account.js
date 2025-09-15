@@ -5,6 +5,7 @@ import Connect from '../utils/connect';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 import { safeDispatchEvent } from '../utils/utils';
+import { trackOpenConnectPageEvent } from '../utils/mixpanel-events';
 
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
@@ -28,6 +29,9 @@ export default function Account() {
 				},
 			);
 		}
+
+		// Track connect page open event
+		trackOpenConnectPageEvent();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
