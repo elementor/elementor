@@ -2,7 +2,7 @@ import { useDebounceState, type UseDebounceStateResult } from './use-debounce-st
 
 export type UseSearchStateResult = UseDebounceStateResult;
 
-export function useSearchState( { localStorageKey }: { localStorageKey: string } ) {
+export function useSearchState( { localStorageKey }: { localStorageKey?: string } ) {
 	const getInitialSearchValue = () => {
 		if ( localStorageKey ) {
 			const storedValue = localStorage.getItem( localStorageKey );
