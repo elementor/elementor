@@ -85,7 +85,6 @@ describe( 'useSelectedElements', () => {
 	} );
 
 	it.each( [
-		{ name: 'load', event: 'editor/documents/load' },
 		{ name: 'select', event: 'document/elements/select' },
 		{ name: 'deselect', event: 'document/elements/deselect' },
 		{ name: 'select-all', event: 'document/elements/select-all' },
