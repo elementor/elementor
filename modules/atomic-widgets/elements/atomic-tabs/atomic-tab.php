@@ -2,7 +2,6 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -115,8 +114,11 @@ class Atomic_Tab extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			'aria-controls' => $settings['tab_panel_id'],
 		];
+
+		if( ! empty( $settings['tab_panel_id'] ) ) {
+			$attributes['aria-controls'] = esc_attr( $settings['tab_panel_id'] );
+		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );

@@ -120,9 +120,12 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 				'e-atomic-element',
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
-			],
-			'aria-labelledby' => $settings['tab_id'],
+			]
 		];
+
+		if ( ! empty( $settings[ 'aria-labelledby' ] ) ) {
+			$attributes['aria-labelledby'] = esc_attr( $settings[ 'aria-labelledby' ] );
+		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );
