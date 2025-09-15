@@ -6,7 +6,6 @@ import { getSelectedElements } from '../sync/get-selected-elements';
 export function useSelectedElement() {
 	const elements = useListenTo(
 		[
-			commandEndEvent( 'editor/documents/load' ),
 			commandEndEvent( 'document/elements/select' ),
 			commandEndEvent( 'document/elements/deselect' ),
 			commandEndEvent( 'document/elements/select-all' ),
