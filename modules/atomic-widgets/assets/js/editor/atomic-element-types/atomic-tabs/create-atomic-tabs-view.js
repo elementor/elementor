@@ -1,5 +1,3 @@
-import { initialInputControlState as tabPanelId } from '@wordpress/components/src/input-control/reducer/state';
-
 const createAtomicTabsView = () => {
 	const AtomicElementBaseView = elementor.modules.elements.views.createAtomicElementBase( 'e-tabs' );
 
