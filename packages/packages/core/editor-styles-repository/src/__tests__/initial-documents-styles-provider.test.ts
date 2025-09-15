@@ -1,16 +1,16 @@
 import { createMockStyleDefinition } from 'test-utils';
-import { __getState as getState, __subscribeWithSelector as subscribeWithSelector } from '@elementor/store';
+import { __getState as getState } from '@elementor/store';
 
-import { SLICE_NAME } from '../store/initial-documents-styles-store';
 import { initialDocumentsStylesProvider } from '../providers/inital-documents-styles-provider';
+import { SLICE_NAME } from '../store/initial-documents-styles-store';
 
 jest.mock( '@elementor/store', () => {
-    const actual = jest.requireActual( '@elementor/store' );
-    return {
-        ...actual,
-        __getState: jest.fn(),
-        __subscribeWithSelector: jest.fn(),
-    };
+	const actual = jest.requireActual( '@elementor/store' );
+	return {
+		...actual,
+		__getState: jest.fn(),
+		__subscribeWithSelector: jest.fn(),
+	};
 } );
 
 describe( 'initialDocumentsStylesProvider', () => {
@@ -54,5 +54,3 @@ describe( 'initialDocumentsStylesProvider', () => {
 		expect( key ).toBe( 'initial-documents-styles' );
 	} );
 } );
-
-
