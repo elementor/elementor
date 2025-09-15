@@ -20,7 +20,7 @@ class Atomic_Widget_Base_Styles {
 
 		add_action(
 			'elementor/core/files/clear_cache',
-			fn() => $this->clear_cache(),
+			fn() => $this->invalidate_cache(),
 		);
 	}
 
@@ -32,10 +32,10 @@ class Atomic_Widget_Base_Styles {
 		);
 	}
 
-	private function clear_cache() {
+	private function invalidate_cache() {
 		$cache_validity = new Cache_Validity();
 
-		$cache_validity->clear( [ self::STYLES_KEY ] );
+		$cache_validity->invalidate( [ self::STYLES_KEY ] );
 	}
 
 	public function get_all_base_styles(): array {

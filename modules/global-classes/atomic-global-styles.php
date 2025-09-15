@@ -26,7 +26,7 @@ class Atomic_Global_Styles {
 
 		add_action(
 			'elementor/core/files/clear_cache',
-			fn() => $this->clear_cache(),
+			fn() => $this->invalidate_cache(),
 		);
 
 		add_filter('elementor/atomic-widgets/settings/transformers/classes',
@@ -56,7 +56,7 @@ class Atomic_Global_Styles {
 			return;
 		}
 
-		$this->clear_cache();
+		$this->invalidate_cache();
 	}
 
 	private function invalidate_cache( ?string $context = null ) {
@@ -69,12 +69,6 @@ class Atomic_Global_Styles {
 		}
 
 		$cache_validity->invalidate( [ self::STYLES_KEY, $context ] );
-	}
-
-	private function clear_cache() {
-		$cache_validity = new Cache_Validity();
-
-		$cache_validity->clear( [ self::STYLES_KEY ] );
 	}
 
 	private function transform_classes_names( $ids ) {

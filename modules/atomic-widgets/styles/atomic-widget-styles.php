@@ -22,12 +22,12 @@ class Atomic_Widget_Styles {
 
 		add_action(
 			'elementor/core/files/clear_cache',
-			fn() => $this->clear_cache(),
+			fn() => $this->invalidate_cache(),
 		);
 
 		add_action(
 			'deleted_post',
-			fn( $post_id ) => $this->clear_cache( $post_id )
+			fn( $post_id ) => $this->invalidate_cache( $post_id )
 		);
 	}
 
@@ -74,18 +74,6 @@ class Atomic_Widget_Styles {
 		foreach ( $post_ids as $post_id ) {
 			$cache_validity->invalidate( [ self::STYLES_KEY, $post_id ] );
 		}
-	}
-
-	private function clear_cache( ?string $post_id = null ) {
-		$cache_validity = new Cache_Validity();
-
-		if ( empty( $post_id ) ) {
-			$cache_validity->clear( [ self::STYLES_KEY ] );
-
-			return;
-		}
-
-		$cache_validity->clear( [ self::STYLES_KEY, $post_id ] );
 	}
 
 	private function get_style_key( $post_id ) {

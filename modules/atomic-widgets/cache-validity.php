@@ -16,7 +16,7 @@ class Cache_Validity {
 		$state_item = $this->get_stored_data( $root );
 
 		if ( ! empty( $keys ) ) {
-			if ( ! $state_item || 'boolean' === gettype( $state_item ) ) {
+			if ( ! isset( $state_item['children'] ) ) {
 				return false;
 			}
 
@@ -35,97 +35,17 @@ class Cache_Validity {
 
 		$state_item = $this->get_stored_data( $root );
 
-		if ( ! $state_item || 'boolean' === gettype( $state_item ) ) {
-			return null;
-		}
-
-		$state_item = $this->get_nested_item( $state_item, $keys );
+		$state_item = $this->get_nested_item(
+			$state_item,
+			$keys,
+		);
 
 		return isset( $state_item['meta'] ) ? $state_item['meta'] : null;
 	}
 
 	public function invalidate( array $keys ): void {
 		$root = array_shift( $keys );
-
 		$state_item = $this->get_stored_data( $root );
-
-		if ( 'boolean' === gettype( $state_item ) && empty( $keys ) ) {
-			$state_item = false;
-
-			$this->update_stored_data( $root, $state_item );
-
-			return;
-		}
-
-		$current_item = &$state_item;
-
-		if ( ! $current_item ) {
-			return;
-		}
-
-		if ( ! empty( $keys ) ) {
-			if ( ! $state_item || 'boolean' === gettype( $state_item ) ) {
-				return;
-			}
-
-			$current_item = &$this->get_nested_item( $current_item, $keys );
-		}
-
-		if ( true === $current_item ) {
-			$current_item = false;
-		} else {
-			$current_item['state'] = false;
-
-			unset( $current_item['meta'] );
-			unset( $current_item['children'] );
-		}
-
-		$this->update_stored_data( $root, $state_item );
-	}
-
-	public function validate( array $keys, $meta = null ): void {
-		$root = array_shift( $keys );
-
-		$state_item = $this->get_stored_data( $root );
-
-		if ( 'boolean' === gettype( $state_item ) && ! empty( $keys ) ) {
-			$state_item = [
-				'state' => $state_item,
-			];
-		}
-
-		$current_item = &$state_item;
-
-		if ( ! empty( $keys ) ) {
-			$current_item = &$this->get_nested_item( $current_item, $keys );
-		}
-
-		if ( 'boolean' === gettype( $current_item ) && null === $meta ) {
-			$current_item = true;
-
-			$this->update_stored_data( $root, $state_item );
-
-			return;
-		}
-
-		$current_item['state'] = true;
-
-		if ( null === $meta ) {
-			unset( $current_item['meta'] );
-		} else {
-			$current_item['meta'] = $meta;
-		}
-
-		$this->update_stored_data( $root, $state_item );
-	}
-
-	public function clear( array $keys ): void {
-		$root = array_shift( $keys );
-		$state_item = $this->get_stored_data( $root );
-
-		if ( 'boolean' === gettype( $state_item ) && ! empty( $keys ) ) {
-			return;
-		}
 
 		if ( empty( $keys ) ) {
 			$this->delete_stored_data( $root );
@@ -137,15 +57,79 @@ class Cache_Validity {
 
 		$current_item = &$this->get_nested_item( $state_item, $keys );
 
-		if ( empty( $current_item['children'] ) ) {
+		if ( ! $this->is_leaf( $current_item ) ) {
 			return;
 		}
 
 		unset( $current_item['children'][ $last_key ] );
 
+		if ( empty( $current_item['children'] ) ) {
+			unset( $current_item['children'] );
+		}
+
 		$this->update_stored_data( $root, $state_item );
 	}
 
+	public function validate( array $keys, $meta = null ): void {
+		$root = array_shift( $keys );
+
+		$state_item = $this->get_stored_data( $root );
+
+		if ( empty( $keys ) ) {
+			$this->validate_root_node( $state_item, $root, $meta );
+
+			return;
+		}
+
+		$current_item = &$this->get_nested_item( $state_item, $keys );
+
+		if ( ! $this->is_leaf( $current_item ) && null === $meta ) {
+			// Leaf nodes with no meta should just be a boolean value instead of an array
+			$this->validate_primitive_leaf_node( $state_item, $root, $keys );
+
+			return;
+		}
+
+		if ( null === $meta ) {
+			unset( $current_item['meta'] );
+		} else {
+			$current_item = [
+				'state' => true,
+				'meta' => $meta,
+			];
+		}
+
+		$this->update_stored_data( $root, $state_item );
+	}
+
+	private function is_leaf( $item ): bool {
+		return is_array( $item ) && isset( $item['children'] ) && ! empty( $item['children'] );
+	}
+
+	private function validate_root_node( array &$state_item, string $root, $meta = null ) {
+		$data = [
+			'state' => true,
+		];
+
+		if ( null !== $meta ) {
+			$data['meta'] = $meta;
+		}
+
+		$this->update_stored_data( $root, $data );
+	}
+
+	private function validate_primitive_leaf_node( array &$state_item, string $root, array $keys = [] ) {
+		$last_key = array_pop( $keys );
+		$parent_item = &$state_item;
+
+		if ( ! empty( $keys ) ) {
+			$parent_item = &$this->get_nested_item( $parent_item, $keys );
+		}
+
+		$parent_item['children'][ $last_key ] = true;
+
+		$this->update_stored_data( $root, $state_item );
+	}
 
 	/**
 	 * @param array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} $root_item
@@ -185,7 +169,7 @@ class Cache_Validity {
 	 * @return array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean
 	 */
 	private function get_stored_data( string $root ) {
-		return get_option( self::CACHE_KEY_PREFIX . $root, false );
+		return get_option( self::CACHE_KEY_PREFIX . $root, [ 'state' => false ] );
 	}
 
 	private function update_stored_data( string $root, $data ) {

@@ -16,13 +16,13 @@ class Component_Styles {
 	public function register_hooks() {
 		add_action( 'elementor/post/render', fn( $post_id ) => $this->render_post( $post_id ) );
 
-		add_action( 'elementor/document/after_save', fn( Document $document ) => $this->clear_cache(
+		add_action( 'elementor/document/after_save', fn( Document $document ) => $this->invalidate_cache(
 			[ $document->get_main_post()->ID ]
 		), 20, 2 );
 
 		add_action(
 			'elementor/core/files/clear_cache',
-			fn() => $this->clear_cache(),
+			fn() => $this->invalidate_cache(),
 		);
 	}
 
@@ -67,17 +67,17 @@ class Component_Styles {
 		return $components;
 	}
 
-	private function clear_cache( ?array $post_ids = null ) {
+	private function invalidate_cache( ?array $post_ids = null ) {
 		$cache_validity = new Cache_Validity();
 
 		if ( empty( $post_ids ) ) {
-			$cache_validity->clear( [ self::CACHE_ROOT_KEY ] );
+			$cache_validity->invalidate( [ self::CACHE_ROOT_KEY ] );
 
 			return;
 		}
 
 		foreach ( $post_ids as $post_id ) {
-			$cache_validity->clear( [ self::CACHE_ROOT_KEY, $post_id ] );
+			$cache_validity->invalidate( [ self::CACHE_ROOT_KEY, $post_id ] );
 		}
 	}
 }
