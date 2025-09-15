@@ -194,28 +194,8 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		// Act.
 		$cache_validity->validate( [ ROOT_KEY ], [ 'foo' => 'bar' ] );
 		$cache_validity->validate( [ ROOT_KEY, 'nested' ], [ 'foo' => 'bar' ] );
+		$cache_validity->validate( [ ROOT_KEY, 'nested', 'nested-2' ], [ 'foo' => 'bar' ] );
 
-		// Assert.
-		$this->assertTrue(
-			$cache_validity->is_valid( [ ROOT_KEY ] ),
-			'Cache state should be true after validation.'
-		);
-		$this->assertEquals(
-			$cache_validity->get_meta( [ ROOT_KEY ] ),
-			[ 'foo' => 'bar' ],
-			'Meta data should be stored.'
-		);
-		$this->assertTrue(
-			$cache_validity->is_valid( [ ROOT_KEY, 'nested' ] ),
-			'Cache state should be true after validation.'
-		);
-		$this->assertEquals(
-			$cache_validity->get_meta( [ ROOT_KEY, 'nested' ] ),
-			[ 'foo' => 'bar' ],
-			'Meta data should be stored.'
-		);
-
-		// Act.
 		$cache_validity->clear( [ ROOT_KEY, 'nested' ] );
 
 		// Assert.
@@ -232,45 +212,17 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 			$cache_validity->is_valid( [ ROOT_KEY, 'nested' ] ),
 			'Cache state should be false after clearing.'
 		);
+		$this->assertFalse(
+			$cache_validity->is_valid( [ ROOT_KEY, 'nested', 'nested-2' ] ),
+			'Cache state of children should be false too.'
+		);
 		$this->assertNull(
 			$cache_validity->get_meta( [ ROOT_KEY, 'nested' ] ),
-			'Meta data should be empty.'
+			'Meta data should be empty after clearing.'
 		);
-	}
-
-	public function test_clear_method_should_clear_all_children() {
-		// Arrange.
-		$cache_validity = new Cache_Validity();
-
-		// Act.
-		$cache_validity->validate( [ ROOT_KEY ] );
-		$cache_validity->validate( [ ROOT_KEY, 'foo', 'bar' ] );
-
-		// Assert.
-		$this->assertFalse(
-			$cache_validity->is_valid( [ ROOT_KEY, 'foo' ] ),
-			'Parent cache state should be false initially.'
-		);
-		$this->assertTrue(
-			$cache_validity->is_valid( [ ROOT_KEY, 'foo', 'bar' ] ),
-			'Child cache state should be true initially.'
-		);
-
-		// Act.
-		$cache_validity->clear( [ ROOT_KEY, 'foo' ] );
-
-		// Assert.
-		$this->assertTrue(
-			$cache_validity->is_valid( [ ROOT_KEY ] ),
-			'Cache state should be true after clearing.'
-		);
-		$this->assertFalse(
-			$cache_validity->is_valid( [ ROOT_KEY, 'foo' ] ),
-			'Cache state should be false after clearing.'
-		);
-		$this->assertFalse(
-			$cache_validity->is_valid( [ ROOT_KEY, 'foo', 'bar' ] ),
-			'Cache state should be false after clearing.'
+		$this->assertNull(
+			$cache_validity->get_meta( [ ROOT_KEY, 'nested', 'nested-2' ] ),
+			'Meta data of children should be empty too.'
 		);
 	}
 }
