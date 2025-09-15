@@ -202,6 +202,11 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 
 	const layout = getLayout( control );
 
+	const shouldDisablePortal = control.type === 'select';
+	const controlProps = shouldDisablePortal
+		? { ...control.props, MenuProps: { ...( control.props?.MenuProps ?? {} ), disablePortal: true } }
+		: control.props;
+
 	return (
 		<DynamicControl bind={ control.bind }>
 			<Grid
@@ -215,7 +220,7 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 					</Grid>
 				) : null }
 				<Grid item xs={ 12 }>
-					<BaseControl type={ control.type as ControlType } props={ control.props } />
+					<BaseControl type={ control.type as ControlType } props={ controlProps } />
 				</Grid>
 			</Grid>
 		</DynamicControl>
