@@ -13,14 +13,16 @@ class Post_Query {
 	const MAX_RESPONSE_COUNT = 100;
 	const NAMESPACE = 'elementor/v1';
 	const ENDPOINT = 'post';
-
 	const EXCLUDED_POST_TYPE_KEYS = 'excluded_post_types';
 	const ALLOWED_POST_TYPES = 'allowed_post_types';
+	const INCLUDED_POST_TYPE_KEY = 'included_post_types';
+	const META_QUERY_KEY = 'meta_query';
+	const IS_PUBLIC_KEY = 'is_public';
+	const POSTS_PER_PAGE_KEY = 'posts_per_page';
 	const SEARCH_TERM_KEY = 'term';
 	const POST_KEYS_CONVERSION_MAP = 'post_keys_conversion_map';
 	const MAX_COUNT_KEY = 'max_count';
 	const NONCE_KEY = 'x_wp_nonce';
-
 	const FORBIDDEN_POST_TYPES = [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment' ];
 
 	public function register( bool $override_existing_endpoints = false ): void {
@@ -45,8 +47,23 @@ class Post_Query {
 	 * @return array The query parameters.
 	 */
 	public static function build_query_params( array $args ): array {
-		$allowed_keys = [ self::EXCLUDED_POST_TYPE_KEYS, self::POST_KEYS_CONVERSION_MAP, self::MAX_COUNT_KEY, self::ALLOWED_POST_TYPES ];
-		$keys_to_encode = [ self::EXCLUDED_POST_TYPE_KEYS, self::POST_KEYS_CONVERSION_MAP, self::ALLOWED_POST_TYPES ];
+		$allowed_keys = [
+			self::EXCLUDED_POST_TYPE_KEYS,
+			self::ALLOWED_POST_TYPES,
+			self::INCLUDED_POST_TYPE_KEY,
+			self::POST_KEYS_CONVERSION_MAP,
+			self::META_QUERY_KEY,
+			self::IS_PUBLIC_KEY,
+			self::POSTS_PER_PAGE_KEY,
+			self::MAX_COUNT_KEY,
+		];
+		$keys_to_encode = [
+			self::EXCLUDED_POST_TYPE_KEYS,
+			self::ALLOWED_POST_TYPES,
+			self::INCLUDED_POST_TYPE_KEY,
+			self::POST_KEYS_CONVERSION_MAP,
+			self::META_QUERY_KEY,
+		];
 
 		$params = [];
 
@@ -123,38 +140,57 @@ class Post_Query {
 			], 200 );
 		}
 
-		$excluded_types = array_merge( self::FORBIDDEN_POST_TYPES, $params[ self::EXCLUDED_POST_TYPE_KEYS ] ?? [] );
-		$keys_format_map = $params[ self::POST_KEYS_CONVERSION_MAP ];
-		$requested_count = $params[ self::MAX_COUNT_KEY ] ?? 0;
-		$validated_count = max( $requested_count, 1 );
+		$excluded_types = array_merge(
+			self::FORBIDDEN_POST_TYPES,
+			$params[ self::EXCLUDED_POST_TYPE_KEYS ] ?? []
+		);
+		$keys_format_map = $params[ self::POST_KEYS_CONVERSION_MAP ] ?? [];
+
+		$requested_posts_per_page = $params[ self::POSTS_PER_PAGE_KEY ] ?? null;
+		$requested_max_count = $params[ self::MAX_COUNT_KEY ] ?? null;
+		$requested_count = $requested_posts_per_page ?? $requested_max_count ?? self::MAX_RESPONSE_COUNT;
+		$validated_count = max( (int) $requested_count, 1 );
 		$max_count = min( $validated_count, self::MAX_RESPONSE_COUNT );
-		$post_types = new Collection( get_post_types( [ 'public' => true ], 'object' ) );
+
+		$is_public_param = $params[ self::IS_PUBLIC_KEY ] ?? true;
+		$is_public = ! in_array( strtolower( (string) $is_public_param ), [ '0', 'false' ], true );
+
+		$post_types = new Collection( get_post_types( $is_public ? [ 'public' => true ] : [], 'object' ) );
 
 		$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types ) {
 			return ! in_array( $post_type->name, $excluded_types, true );
 		} );
 
-		$post_type_slugs = $post_types->map( function ( $post_type ) {
-			return $post_type->name;
-		} );
-
-		$filtered_post_types = $params[ self::ALLOWED_POST_TYPES ] ?? [];
-
-		if ( ! empty( $filtered_post_types ) ) {
-			$post_type_slugs = $post_type_slugs->filter( function ( $post_type ) use ( $filtered_post_types ) {
-				return in_array( $post_type, $filtered_post_types, true );
+		$included_post_types = $params[ self::INCLUDED_POST_TYPE_KEY ] ?? [];
+		if ( ! empty( $included_post_types ) ) {
+			$post_type_slugs = new Collection( (array) $included_post_types );
+		} else {
+			$post_type_slugs = $post_types->map( function ( $post_type ) {
+				return $post_type->name;
 			} );
+			$allowed_post_types = $params[ self::ALLOWED_POST_TYPES ] ?? [];
+			if ( ! empty( $allowed_post_types ) ) {
+				$post_type_slugs = $post_type_slugs->filter( function ( $post_type ) use ( $allowed_post_types ) {
+					return in_array( $post_type, $allowed_post_types, true );
+				} );
+			}
 		}
 
 		$this->add_filter_to_customize_query();
 
-		$posts = new Collection( get_posts( [
+		$query_args = [
 			'post_type' => $post_type_slugs->all(),
 			'numberposts' => $max_count,
 			'suppress_filters' => false,
 			'custom_search' => true,
 			'search_term' => $term,
-		] ) );
+		];
+
+		if ( ! empty( $params[ self::META_QUERY_KEY ] ) && is_array( $params[ self::META_QUERY_KEY ] ) ) {
+			$query_args['meta_query'] = $params[ self::META_QUERY_KEY ];
+		}
+
+		$posts = new Collection( get_posts( $query_args ) );
 
 		$this->remove_filter_to_customize_query();
 
