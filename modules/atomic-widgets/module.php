@@ -111,7 +111,7 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_CUSTOM_CSS = 'atomic_custom_css';
 	const EXPERIMENT_NESTED = 'e_nested_elements';
-	const EXPERIMENT_MCP = 'editor_mcp';
+	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -212,7 +212,7 @@ class Module extends BaseModule {
 		]);
 
 		Plugin::$instance->experiments->add_feature([
-			'name' => self::EDITOR_MCP,
+			'name' => self::EXPERIMENT_EDITOR_MCP,
 			'title' => esc_html__( 'Editor MCP for atomic widgets', 'elementor' ),
 			'description' => esc_html__( 'Editor MCP for atomic widgets.', 'elementor' ),
 			'hidden' => true,
