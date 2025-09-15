@@ -1,5 +1,28 @@
 == Changelog ==
 
+= 3.32.0 - 2025-09-15 =
+
+* New: Introducing Transform controls to move, scale, rotate, and skew elements with 2D and 3D support - Editor V4
+* New: Introducing Transitions to control how elements animate between states - Editor V4
+* New: Added filter and sort options in Class Manager - Editor V4
+* New: Introducing advanced import and export customization for Website Templates, with selective import of themes, experiments, custom assets, and content
+* Tweak: Added option to convert local styles into a reusable Global Class - Editor V4
+* Tweak: Variables now update live on the canvas while editing a variable - Editor V4
+* Tweak: Updated custom unit UI and improved functionality - Editor V4
+* Tweak: Enabled typing negative values in style fields - Editor V4
+* Tweak: Added Bottom position option on layout setting in Icon Box widget
+* Tweak: Reduced API-Info size for better performance
+* Tweak: Added option for connected users to install Elementor Pro via the Connect Account tab
+* Tweak: Enabled ZIP download of Website Templates from the library
+* Tweak: Merged Cloud Library feature into version
+* Tweak: Optimized compiled CSS output for background videos
+* Tweak: Merged Element Caching feature and moved to Performance tab
+* Fix: Reaching the Global Class limit prevented page saving - Editor V4 ([#32277](https://github.com/elementor/elementor/issues/32277))
+* Fix: PHP 8.4 deprecation notices when running with `WP_DEBUG` enabled
+* Fix: Indications popover not displaying correctly in repeaters for Background Overlay - Editor V4
+* Fix: Reduced-motion preferences are not applied to entrance and exit animations
+* Fix: Added required PHP and WordPress versions to the plugin header
+
 = 3.31.5 - 2025-09-09 =
 
 * Fix: Fatal error occurs for non-admin users when editing a page
