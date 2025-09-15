@@ -27,10 +27,18 @@ export const BoxShadowRepeaterControl = createControl( () => {
 				<Header label={ __( 'Box shadow', 'elementor' ) }>
 					<TooltipAddItemAction newItemIndex={ 0 } disabled={ disabled } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } /> }>
-					<DuplicateItemAction />
-					<DisableItemAction />
-					<RemoveItemAction />
+				<ItemsContainer>
+					<Item
+						Icon={ ItemIcon }
+						Label={ ItemLabel }
+						actions={
+							<>
+								<DuplicateItemAction />
+								<DisableItemAction />
+								<RemoveItemAction />
+							</>
+						}
+					/>
 				</ItemsContainer>
 				<EditItemPopover>
 					<Content />

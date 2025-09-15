@@ -10,10 +10,6 @@ export const { Slot: RepeaterItemLabelSlot, inject: injectIntoRepeaterItemLabel 
 	value: PropValue;
 } >();
 
-export const { Slot: RepeaterHeaderActionsSlot, inject: injectIntoRepeaterHeaderActions } = createLocation< {
-	value: PropValue;
-} >();
-
 export const { Slot: RepeaterItemActionsSlot, inject: injectIntoRepeaterItemActions } = createLocation< {
 	index: number;
 } >();
