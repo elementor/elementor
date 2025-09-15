@@ -1,10 +1,10 @@
 import AtomicElementEmptyView from './container/atomic-element-empty-view';
 import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
-export default function createAtomicElementBaseView( type ) {
-	const BaseElementView = elementor.modules.elements.views.BaseElement;
+const BaseElementView = elementor.modules.elements.views.BaseElement;
 
-	return BaseElementView.extend( {
+export default function createAtomicElementBaseView( type ) {
+	const AtomicElementView = BaseElementView.extend( {
 		template: Marionette.TemplateCache.get( `#tmpl-elementor-${ type }-content` ),
 
 		emptyView: AtomicElementEmptyView,
@@ -180,7 +180,7 @@ export default function createAtomicElementBaseView( type ) {
 			const parent = this._parent;
 			this._parent.removeChildView( this );
 
-			parent.addChild( this.model, this.constructor, this._index );
+			parent.addChild( this.model, AtomicElementView, this._index );
 		},
 
 		onRender() {
@@ -577,5 +577,7 @@ export default function createAtomicElementBaseView( type ) {
 			return 0 === this.model.collection.indexOf( this.model );
 		},
 	} );
+
+	return AtomicElementView;
 }
 
