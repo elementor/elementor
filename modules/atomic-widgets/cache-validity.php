@@ -78,6 +78,13 @@ class Cache_Validity {
 		if ( empty( $keys ) ) {
 			$state_item['state'] = true;
 
+			if ( null !== $meta ) {
+				$state_item['meta'] = $meta;
+			}
+			else {
+				unset( $state_item['meta'] );
+			}
+
 			$this->update_stored_data( $root, $state_item );
 
 			return;
@@ -106,23 +113,6 @@ class Cache_Validity {
 
 	private function is_leaf( $item ): bool {
 		return ! is_array( $item ) || ! isset( $item['children'] ) || empty( $item['children'] );
-	}
-
-	private function validate_empty_root_node( array &$state_item, string $root, $meta = null ) {
-		$data = [
-			'state' => true,
-
-		];
-
-		if ( 'boolean' === gettype( $state_item ) ) {
-			$data['state'] = $state_item;
-		}
-
-		if ( null !== $meta && 'boolean' === gettype( $state_item ) ) {
-			$data = $meta;
-		}
-
-		$this->update_stored_data( $root, $data );
 	}
 
 	private function validate_primitive_leaf_node( array &$state_item, string $root, array $keys = [] ) {
