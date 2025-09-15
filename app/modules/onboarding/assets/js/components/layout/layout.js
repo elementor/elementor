@@ -5,6 +5,7 @@ import Header from './header';
 import ProgressBar from '../progress-bar/progress-bar';
 import Content from '../../../../../../assets/js/layout/content';
 import Connect from '../../utils/connect';
+import { trackUpgradeNowClickEvent } from '../../utils/mixpanel-events';
 
 export default function Layout( props ) {
 	useEffect( () => {
@@ -77,7 +78,7 @@ export default function Layout( props ) {
 	if ( ! state.hasPro ) {
 		headerButtons.push( {
 			id: 'go-pro',
-			text: __( 'Upgrade', 'elementor' ),
+			text: __( 'Upgradehjkhoiwheiog', 'elementor' ),
 			hideText: false,
 			className: 'eps-button__go-pro-btn',
 			url: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
@@ -92,6 +93,9 @@ export default function Layout( props ) {
 						step: state.currentStep,
 					},
 				} );
+
+				// Track upgrade now button click
+				trackUpgradeNowClickEvent();
 			},
 		} );
 	}
