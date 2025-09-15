@@ -19,6 +19,7 @@ export type ValueFieldProps = {
 	onChange: ( value: string ) => void;
 	onValidationChange?: ( value: string ) => void;
 	propType?: PropType;
+	error?: { value: string; message: string };
 };
 
 type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
@@ -26,7 +27,7 @@ type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
 type VariableTypeOptions = {
 	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > >;
 	startIcon?: ( { value }: { value: string } ) => JSX.Element;
-	valueField: ( { value, onChange, onValidationChange, propType }: ValueFieldProps ) => JSX.Element;
+	valueField: ( { value, onChange, onValidationChange, propType, error }: ValueFieldProps ) => JSX.Element;
 	variableType: string;
 	defaultValue?: string;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
