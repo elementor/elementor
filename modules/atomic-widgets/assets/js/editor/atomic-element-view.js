@@ -193,6 +193,12 @@ export default function createAtomicElementView( type ) {
 			} );
 		},
 
+		onDestroy() {
+			BaseElementView.prototype.onDestroy.apply( this, arguments );
+
+			this.dispatchPreviewEvent( 'elementor/element/destroy' );
+		},
+
 		dispatchPreviewEvent( eventType ) {
 			elementor?.$preview?.[ 0 ]?.contentWindow.dispatchEvent(
 				new CustomEvent( eventType, {
