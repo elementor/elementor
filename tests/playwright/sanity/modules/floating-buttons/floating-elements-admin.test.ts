@@ -14,11 +14,11 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 		const editor = await floatingElPage.goToFloatingButtonElementorEditor();
 		await floatingElPage.waitForPanel();
 
-		await test.step( 'Check that the editor has no button to Add Element and no navigator', async () => {
-			const navigator = page.locator( 'header [aria-label="Structure"]' );
-			await expect( navigator ).toBeHidden();
+		await test.step( 'Check that the Top Bar has no "Add Element" and no "Site Settings" buttons', async () => {
 			const addButton = page.locator( 'header [aria-label="Add Element"]' );
 			await expect( addButton ).toBeHidden();
+			const siteSettings = page.locator( 'header [aria-label="Site Settings"]' );
+			await expect( siteSettings ).toBeHidden();
 		} );
 
 		await test.step( 'Check that the floating element has been selected correctly when opening.', async () => {
