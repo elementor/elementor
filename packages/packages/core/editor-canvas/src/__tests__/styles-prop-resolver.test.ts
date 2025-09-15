@@ -381,6 +381,15 @@ describe( 'styles prop resolver', () => {
 			},
 		},
 		{
+			name: 'mix-blend-mode',
+			props: {
+				'mix-blend-mode': stringPropTypeUtil.create( 'multiply' ),
+			},
+			expected: {
+				'mix-blend-mode': 'multiply',
+			},
+		},
+		{
 			name: 'filter',
 			props: {
 				filter: filters,
