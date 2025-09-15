@@ -4,16 +4,18 @@ export type RequestParams< TData = object > = {
 	data: TData;
 };
 
-type Headers< TData = object > = RequestParams< TData > & {
-	success: ( result: unknown ) => void;
+type Headers< TRequestData = object, TResponseData = object > = RequestParams< TRequestData > & {
+	success: ( result: TResponseData ) => void;
 	error: ( error: unknown ) => void;
 };
 
 export type ExtendedWindow = Window & {
 	elementorCommon?: {
 		ajax?: {
-			load: ( data: Headers ) => Promise< unknown >;
-			invalidateCache: ( data: RequestParams ) => void;
+			load: < TRequestData = object, TResponseData = object >(
+				data: Headers< TRequestData, TResponseData >
+			) => Promise< unknown >;
+			invalidateCache: < TRequestData = object >( data: RequestParams< TRequestData > ) => void;
 		};
 	};
 };
