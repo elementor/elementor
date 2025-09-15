@@ -58,7 +58,7 @@ export class AtomicHelper {
 	}
 
 	public getHtmlTagControl( deeperSelector: string = '' ) {
-		const control = this.page.locator( `.MuiStack-root >.MuiBox-root:has(>label)`, { has: this.page.locator( 'label', { hasText: /Tag/ig } ) } );
+		const control = this.page.locator( `.MuiStack-root >.MuiBox-root:has(>label)` ).filter( { hasText: /Tag/ig } );
 
 		return deeperSelector
 			? control.locator( deeperSelector )
