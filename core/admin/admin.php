@@ -166,9 +166,11 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function enqueue_styles() {
+		$direction_suffix = is_rtl() ? '-rtl' : '';
+
 		wp_register_style(
 			'elementor-admin',
-			$this->get_css_assets_url( 'admin' ),
+			$this->get_css_assets_url( 'admin' . $direction_suffix ),
 			[
 				'elementor-common',
 			],
