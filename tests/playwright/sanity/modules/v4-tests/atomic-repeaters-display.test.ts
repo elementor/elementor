@@ -19,7 +19,7 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 	} );
 
 	const repeaterControls = [ 'filter', 'Backdrop filter', 'transform', 'Box shadow', 'transitions' ];
-		
+
 	for ( const control of repeaterControls ) {
 		test( `repeater control ${ control } stability`, async () => {
 			const editor = await wpAdmin.openNewPage();
@@ -37,5 +37,5 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 
 			await expect.soft( parentDiv ).toHaveScreenshot( 'transform-parent-' + controlName + '.png' );
 		} );
-	};
+	}
 } );
