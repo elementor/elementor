@@ -48,7 +48,6 @@ export const HtmlTagControl = createControl( ( { options, onChange, fallbackLabe
 		<ControlActions>
 			<ConditionalControlInfotip { ...infoTipProps }>
 				<StyledSelect
-					slotProps={ {} }
 					sx={ { overflow: 'hidden', cursor: disabled ? 'not-allowed' : undefined } }
 					displayEmpty
 					size="tiny"

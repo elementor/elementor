@@ -2,18 +2,21 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import EditorPage from '../../../../pages/editor-page';
 import WpAdminPage from '../../../../pages/wp-admin-page';
-import { AtomicHelper } from '../helper';
+import { AtomicHelper, ElementType } from '../helper';
 
 test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependencies', () => {
+	const tests: { label: string, elementType: ElementType }[] = [
+		{ label: 'Div block', elementType: 'e-div-block' },
+		{ label: 'Flexbox', elementType: 'e-flexbox' },
+	];
+
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
-	let divBlockId: string;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		// Enable atomic elements and nested elements experiments
 		await wpAdmin.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
@@ -22,7 +25,7 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 		await wpAdmin.setExperiments( {
 			e_nested_elements: 'active',
 		} );
-		await page.pause();
+
 		editor = await wpAdmin.openNewPage();
 	} );
 
@@ -33,48 +36,50 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 		await page.close();
 	} );
 
-	test( 'Tag control enabled and disabled based on link value @atomic-widgets', async ( { page, apiRequests }, testInfo ) => {
-		const helper = new AtomicHelper( page, editor, wpAdmin );
+	for ( const { label, elementType } of tests ) {
+		test( `${ label } tag control enabled and disabled based on link value @atomic-widgets`, async ( { page } ) => {
+			const helper = new AtomicHelper( page, editor, wpAdmin );
 
-		if ( ! divBlockId ) {
-			divBlockId = await helper.addAtomicElement( 'e-div-block' );
-		}
+			await helper.addAtomicElement( elementType );
+			await editor.openV2PanelTab( 'general' );
 
-		await editor.openV2PanelTab( 'general' );
+			await test.step( 'Check tag control is enabled', async () => {
+				expect( await helper.isHtmlTagControlDisabled() ).toBeFalsy();
+			} );
 
-		test.step( 'Check tag control is enabled', async () => {
-			await expect( await helper.getHtmlTagControl() ).toBeVisible();
-			await expect( await helper.getHtmlTagControl() ).toHaveText( 'Div' );
+			await test.step( 'Check tag control is disabled when link is set', async () => {
+				await helper.setHtmlTagControl( 'section' );
+				await helper.setLinkControl( { value: 'https://www.google.com', isTargetBlank: true } );
+
+				expect( await helper.isHtmlTagControlDisabled() ).toBeTruthy();
+			} );
+
+			await test.step( 'Validate tag control value is a (link) and tooltip is visible', async () => {
+				const disabledTagControl = helper.getHtmlTagControl( '.MuiInputBase-root' );
+				const tooltip = page.locator( '.MuiAlert-content' );
+
+				expect( await disabledTagControl.innerText() ).toMatch( /a \(link\)/i );
+
+				await disabledTagControl.hover();
+				await tooltip.waitFor();
+
+				expect( await tooltip.innerText() ).toMatch( `The tag is locked to \'a\' tag because this ${ label } has a link. To pick a different tag, remove the link first.` );
+			} );
+
+			await test.step( 'Validate not-allowed as cursor', async () => {
+				await expect( helper.getHtmlTagControl( '[role="combobox"]' ) ).toHaveCSS( 'cursor', 'not-allowed' );
+			} );
+
+			await test.step( 'Assert new tab switch is disabled', async () => {
+				expect( await helper.isNewTabSwitchOn() ).toBeTruthy();
+			} );
+
+			await test.step( 'Check tag control is enabled and new tab switch is back on after link is removed', async () => {
+				await helper.setLinkControl( { value: '' } );
+
+				expect( await helper.isHtmlTagControlDisabled() ).toBeFalsy();
+				expect( await helper.isNewTabSwitchOn() ).toBeFalsy();
+			} );
 		} );
-
-		await helper.setHtmlTagControl( 'section' );
-
-		test.step( 'Check tag control is disabled when link is set', async () => {
-			await helper.setLinkControl( { value: 'https://www.google.com' } );
-			await expect( await helper.getHtmlTagControl( true ) ).toBeVisible();
-		} );
-
-		test.step( 'Validate tag control value is a (link) and tooltip is visible', async () => {
-			await expect( await helper.getHtmlTagControl( true ) ).toHaveText( 'a (link)' );
-			await ( await helper.getHtmlTagControl( true ) ).hover();
-
-			const tooltipSelector = ":has-text('The tag is locked to 'a' tag because this Div block has a link. To pick a different tag, remove the link first.')";
-
-			await page.waitForSelector( tooltipSelector, { state: 'visible', timeout: 10000 } );
-
-			const tooltip = page.locator( tooltipSelector );
-
-			await expect( tooltip ).toBeVisible();
-			await expect( await helper.getHtmlTagControl( true ) ).toHaveCSS( 'cursor', 'not-allowed' );
-		} );
-
-		test.step( 'Check tag control is enabled when link is removed', async () => {
-			await helper.setLinkControl( { value: '' } );
-			await expect( await helper.getHtmlTagControl() ).toBeVisible();
-		} );
-
-		test.step( 'Validate tag control value is section', async () => {
-			await expect( await helper.getHtmlTagControl() ).toHaveText( 'Section' );
-		} );
-	} );
+	}
 } );
