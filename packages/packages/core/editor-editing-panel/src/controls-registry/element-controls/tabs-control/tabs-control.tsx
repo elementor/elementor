@@ -3,10 +3,10 @@ import { ControlFormLabel, Repeater, type RepeaterItem, type SetRepeaterValuesMe
 import {
 	type Element,
 	getElementEditorSettings,
+	getElementType,
 	updateElementEditorSettings,
 	useElementChildren,
 	useElementEditorSettings,
-	useElementType,
 } from '@elementor/editor-elements';
 import { type CreateOptions } from '@elementor/editor-props';
 import { Stack, TextField } from '@elementor/ui';
@@ -144,7 +144,7 @@ const ItemContent = () => {
 };
 
 const ElementItem = ( { children, value }: { children: React.ReactNode; value: TabItem } ) => {
-	const elementType = useElementType( TAB_ELEMENT_TYPE );
+	const elementType = getElementType( TAB_ELEMENT_TYPE );
 
 	if ( ! elementType ) {
 		return null;
