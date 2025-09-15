@@ -37,7 +37,7 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 	} );
 
 	for ( const { label, elementType } of tests ) {
-		test( `${ label } tag control enabled and disabled based on link value @atomic-widgets`, async ( { page } ) => {
+		test( `${ label } - link control - tag and new tab switch dependencies`, async ( { page } ) => {
 			const helper = new AtomicHelper( page, editor, wpAdmin );
 
 			await helper.addAtomicElement( elementType );
