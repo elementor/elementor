@@ -6,14 +6,14 @@ import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 
 export function init() {
-	injectTab({
+	injectTab( {
 		id: 'components',
-		label: __('Components', 'elementor'),
+		label: __( 'Components', 'elementor' ),
 		component: Components,
-	});
+	} );
 
-	injectIntoTop({
+	injectIntoTop( {
 		id: 'create-component-popup',
 		component: CreateComponentForm,
-	});
+	} );
 }
