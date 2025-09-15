@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { PropKeyProvider, PropProvider, type SetValue, useBoundProp } from '@elementor/editor-controls';
-import { isDependencyMet, type PropType } from '@elementor/editor-props';
-import { type PropKey } from '@elementor/editor-props';
+import { isDependencyMet, type PropKey, type PropType } from '@elementor/editor-props';
 
 import { createTopLevelObjectType } from '../controls-registry/create-top-level-object-type';
 import { useDynamicTag } from './hooks/use-dynamic-tag';
@@ -38,7 +37,6 @@ export const DynamicControl = ( { bind, children }: DynamicControlProps ) => {
 
 	const propType = createTopLevelObjectType( { schema: dynamicTag.props_schema } );
 
-	// Build defaults for initial dependency evaluation
 	const defaults = React.useMemo( () => {
 		const result: Record< string, DynamicPropValue > = {};
 		Object.entries( dynamicTag.props_schema ?? {} ).forEach( ( [ key, prop ] ) => {

@@ -33,7 +33,7 @@ import { DynamicSelection } from './dynamic-selection';
 
 const SIZE = 'tiny';
 
-const tagsWithoutTabs = ['popup'];
+const tagsWithoutTabs = [ 'popup' ];
 
 export const DynamicSelectionControl = () => {
 	const { setValue: setAnyValue } = useBoundProp();
@@ -140,7 +140,7 @@ const DynamicSettings = ( { controls, tagName }: { controls: DynamicTag[ 'atomic
 	}
 
 	if ( tagsWithoutTabs.includes( tagName ) ) {
-		const singleTab = tabs[0];
+		const singleTab = tabs[ 0 ];
 		return (
 			<>
 				<Divider />
