@@ -124,11 +124,39 @@ class Export {
 			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
 		];
 
+		// Start media collection for kit export
+		$media_collector = null;
+		if ( $this->is_media_collection_enabled() ) {
+			$media_collector = new \Elementor\TemplateLibrary\Classes\Template_Media_Collector();
+			$media_collector->start_collection();
+		}
+
 		foreach ( $this->runners as $runner ) {
 			if ( $runner->should_export( $data ) ) {
 				$export_result = $runner->export( $data );
 				$this->handle_export_result( $export_result );
 			}
+		}
+
+		// Handle media collection and ZIP creation
+		if ( $media_collector ) {
+			$media_result = $media_collector->create_media_zip();
+			if ( ! empty( $media_result['mapping'] ) ) {
+				$this->manifest_data['media_mapping'] = $media_result['mapping'];
+			}
+
+			// Add media ZIP to the kit ZIP if we have media
+			if ( $media_result['zip_path'] && file_exists( $media_result['zip_path'] ) ) {
+				$this->zip->addFile( $media_result['zip_path'], 'media.zip' );
+				
+				// Store media ZIP path for potential cloud upload
+				if ( $media_result['zip_path'] ) {
+					$this->manifest_data['media_zip_path'] = $media_result['zip_path'];
+				}
+			}
+
+			// Cleanup media collector
+			$media_collector->cleanup();
 		}
 
 		$this->add_json_file( 'manifest', $this->manifest_data );
@@ -367,4 +395,19 @@ class Export {
 	private function add_file( $file, $content ) {
 		$this->zip->addFromString( $file, $content );
 	}
+
+	/**
+	 * Check if media collection is enabled.
+	 *
+	 * @return bool True if media collection is enabled.
+	 */
+	private function is_media_collection_enabled() {
+		/**
+		 * Filter to enable/disable media collection for kit exports.
+		 *
+		 * @param bool $enabled Whether media collection is enabled.
+		 */
+		return apply_filters( 'elementor/kit_export/enable_media_collection', false );
+	}
+
 }

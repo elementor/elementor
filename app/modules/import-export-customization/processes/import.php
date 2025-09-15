@@ -320,6 +320,9 @@ class Import {
 		remove_filter( 'elementor/document/save/data', [ Plugin::$instance->modules_manager->get_modules( 'content-sanitizer' ), 'sanitize_content' ] );
 		add_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10, 2 );
 
+		// Handle media ZIP extraction and mapping
+		$media_dir = $this->setup_media_mapping();
+
 		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 
@@ -334,6 +337,12 @@ class Import {
 
 		// After the upload complete, set the elementor upload state back to false.
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
+
+		// Clear media mapping and cleanup
+		\Elementor\TemplateLibrary\Classes\Template_Media_Mapper::clear_mapping();
+		if ( $media_dir ) {
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $media_dir );
+		}
 
 		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
 
@@ -823,6 +832,104 @@ class Import {
 		$import_sessions[ $this->session_id ]['runners'] = $this->runners_import_metadata;
 
 		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
+	}
+
+	/**
+	 * Setup media mapping for kit import.
+	 *
+	 * @return string|null Media directory path or null if no media.
+	 */
+	private function setup_media_mapping() {
+		$media_dir = null;
+
+		// Check if we have media ZIP in the kit
+		$media_zip_path = $this->extracted_directory_path . '/media.zip';
+		if ( file_exists( $media_zip_path ) ) {
+			$media_dir = $this->extract_media_zip( $media_zip_path );
+		}
+
+		// Check for media ZIP URL in manifest (cloud-based)
+		if ( ! $media_dir && ! empty( $this->manifest['media_zip_url'] ) ) {
+			$media_dir = $this->download_and_extract_media_zip( $this->manifest['media_zip_url'] );
+		}
+
+		// Set up media mapping if we have both directory and mapping
+		if ( $media_dir && ! empty( $this->manifest['media_mapping'] ) ) {
+			\Elementor\TemplateLibrary\Classes\Template_Media_Mapper::set_mapping( 
+				$this->manifest['media_mapping'], 
+				$media_dir 
+			);
+		}
+
+		return $media_dir;
+	}
+
+	/**
+	 * Extract local media ZIP file.
+	 *
+	 * @param string $zip_path Path to media ZIP file.
+	 * @return string|null Extracted directory path or null on failure.
+	 */
+	private function extract_media_zip( $zip_path ) {
+		if ( ! class_exists( '\ZipArchive' ) ) {
+			return null;
+		}
+
+		$zip = new \ZipArchive();
+		if ( $zip->open( $zip_path ) !== true ) {
+			return null;
+		}
+
+		$media_dir = dirname( $zip_path ) . '/media';
+		if ( ! $zip->extractTo( $media_dir ) ) {
+			$zip->close();
+			return null;
+		}
+
+		$zip->close();
+		return $media_dir;
+	}
+
+	/**
+	 * Download and extract media ZIP from cloud.
+	 *
+	 * @param string $zip_url URL to media ZIP file.
+	 * @return string|null Extracted directory path or null on failure.
+	 */
+	private function download_and_extract_media_zip( $zip_url ) {
+		// Download ZIP file
+		$response = wp_safe_remote_get( $zip_url, [
+			'timeout' => 60,
+			'user-agent' => 'Elementor Kit Importer',
+		] );
+
+		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			return null;
+		}
+
+		$zip_content = wp_remote_retrieve_body( $response );
+		if ( empty( $zip_content ) ) {
+			return null;
+		}
+
+		// Save ZIP to temp file
+		$temp_dir = Plugin::$instance->uploads_manager->create_unique_dir();
+		$zip_path = $temp_dir . '/media.zip';
+		
+		if ( ! file_put_contents( $zip_path, $zip_content ) ) {
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $temp_dir );
+			return null;
+		}
+
+		// Extract ZIP
+		$media_dir = $this->extract_media_zip( $zip_path );
+		if ( ! $media_dir ) {
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $temp_dir );
+			return null;
+		}
+
+		unlink( $zip_path ); // Remove ZIP file, keep extracted files
+		return $media_dir;
 	}
 
 	/**

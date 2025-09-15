@@ -64,6 +64,11 @@ class Source_Cloud extends Source_Base {
 		$decoded_data = json_decode( $data['content'], true );
 		$data['content'] = $decoded_data['content'];
 
+		// Set media mapping if available
+		if ( ! empty( $decoded_data['media_mapping'] ) ) {
+			\Elementor\TemplateLibrary\Classes\Template_Media_Mapper::set_mapping( $decoded_data['media_mapping'] );
+		}
+
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 
 		$data['content'] = $this->replace_elements_ids( $data['content'] );
@@ -84,6 +89,9 @@ class Source_Cloud extends Source_Base {
 		// After the upload complete, set the elementor upload state back to false
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
 
+		// Clear mapping after processing
+		\Elementor\TemplateLibrary\Classes\Template_Media_Mapper::clear_mapping();
+
 		return $data;
 	}
 
@@ -94,7 +102,29 @@ class Source_Cloud extends Source_Base {
 	public function save_item( $template_data ): int {
 		$app = $this->get_app();
 
+		// Set up media collector before processing (same pattern as kit export)
+		$media_collector = null;
+		if ( $this->is_media_collection_enabled() ) {
+			$media_collector = new \Elementor\TemplateLibrary\Classes\Template_Media_Collector();
+			$media_collector->start_collection();
+		}
+
 		$resource_data = $this->format_resource_item_for_create( $template_data );
+
+		// Collect media and add to resource data if we have a collector
+		if ( $media_collector ) {
+			$media_result = $media_collector->create_media_zip();
+			if ( ! empty( $media_result['mapping'] ) ) {
+				// Decode existing content, add media mapping, re-encode
+				$content = json_decode( $resource_data['content'], true );
+				$content['media_mapping'] = $media_result['mapping'];
+				if ( $media_result['zip_path'] ) {
+					$content['media_zip_path'] = $media_result['zip_path'];
+				}
+				$resource_data['content'] = wp_json_encode( $content );
+			}
+			$media_collector->cleanup();
+		}
 
 		$response = $app->post_resource( $resource_data );
 
@@ -196,6 +226,20 @@ class Source_Cloud extends Source_Base {
 			'title' => $data['title'],
 			'type' => $data['templateType'],
 		];
+
+		// Collect media files and create ZIP
+		$media_result = $this->collect_and_upload_template_media( 
+			$data['content']['content'], 
+			$data['content']['page_settings'] ?? [] 
+		);
+		if ( ! empty( $media_result['mapping'] ) ) {
+			$export_data['media_mapping'] = $media_result['mapping'];
+		}
+		
+		// Store media ZIP path for potential upload via signed URL
+		if ( $media_result['zip_path'] ) {
+			$export_data['media_zip_path'] = $media_result['zip_path'];
+		}
 
 		return [
 			'name' => 'elementor-' . $data['id'] . '-' . gmdate( 'Y-m-d' ) . '.json',
@@ -474,5 +518,61 @@ class Source_Cloud extends Source_Base {
 		}
 
 		return $quota['currentUsage'] + count( $items ) <= $quota['threshold'];
+	}
+
+	/**
+	 * Collect template media and create ZIP.
+	 *
+	 * @param array $content Template content.
+	 * @param array $page_settings Template page settings.
+	 * @return array Media mapping and ZIP info.
+	 */
+	private function collect_and_upload_template_media( $content, $page_settings = [] ) {
+		// Only collect media if enabled
+		if ( ! $this->is_media_collection_enabled() ) {
+			return [
+				'mapping' => [],
+				'zip_path' => null,
+			];
+		}
+
+		try {
+			$media_collector = new \Elementor\TemplateLibrary\Classes\Template_Media_Collector();
+			$media_collector->start_collection();
+
+			// Process content through normal export flow to trigger on_export methods
+			$this->process_export_import_content( $content, 'on_export' );
+
+			// Process page settings if they exist
+			if ( ! empty( $page_settings ) ) {
+				$this->process_export_import_content( [ [ 'settings' => $page_settings ] ], 'on_export' );
+			}
+
+			// Create media ZIP and get mapping
+			$result = $media_collector->create_media_zip();
+
+			return $result;
+		} catch ( Exception $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( 'Elementor: Failed to collect template media: ' . $e->getMessage() );
+			return [
+				'mapping' => [],
+				'zip_path' => null,
+			];
+		}
+	}
+
+	/**
+	 * Check if media collection is enabled.
+	 *
+	 * @return bool True if media collection is enabled.
+	 */
+	private function is_media_collection_enabled() {
+		/**
+		 * Filter to enable/disable media collection for cloud templates.
+		 *
+		 * @param bool $enabled Whether media collection is enabled.
+		 */
+		return apply_filters( 'elementor/template_library/enable_media_collection', false );
 	}
 }

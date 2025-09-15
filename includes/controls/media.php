@@ -52,6 +52,27 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	/**
+	 * Export media images.
+	 *
+	 * Collect media URLs for export and register them with the media collector.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @param array $settings Control settings.
+	 *
+	 * @return array Control settings.
+	 */
+	public function on_export( $settings ) {
+		if ( ! empty( $settings['url'] ) ) {
+			// Register media URL with the collector
+			do_action( 'elementor/template_library/collect_media_url', $settings['url'], $settings );
+		}
+
+		return $settings; // Return unchanged for JSON export
+	}
+
+	/**
 	 * Import media images.
 	 *
 	 * Used to import media control files from external sites while importing
@@ -66,6 +87,27 @@ class Control_Media extends Control_Base_Multiple {
 	 */
 	public function on_import( $settings ) {
 		if ( empty( $settings['url'] ) ) {
+			return $settings;
+		}
+
+		// Check for local file mapping first
+		$local_file_path = \Elementor\TemplateLibrary\Classes\Template_Media_Mapper::get_local_file_path( $settings['url'] );
+
+		if ( $local_file_path !== $settings['url'] && file_exists( $local_file_path ) ) {
+			// Import from local file instead of remote URL
+			$filename = basename( $local_file_path );
+			$settings = Plugin::$instance->templates_manager->get_import_images_instance()->import([
+				'tmp_name' => $local_file_path,
+				'name' => $filename,
+			]);
+
+			if ( ! $settings ) {
+				$settings = [
+					'id' => '',
+					'url' => Utils::get_placeholder_image_src(),
+				];
+			}
+
 			return $settings;
 		}
 

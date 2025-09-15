@@ -33,6 +33,29 @@ class Control_Gallery extends Base_Data_Control {
 	}
 
 	/**
+	 * Export gallery images.
+	 *
+	 * Collect gallery media URLs for export and register them with the media collector.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @param array $settings Control settings.
+	 *
+	 * @return array Control settings.
+	 */
+	public function on_export( $settings ) {
+		foreach ( $settings as $attachment ) {
+			if ( ! empty( $attachment['url'] ) ) {
+				// Register media URL with the collector
+				do_action( 'elementor/template_library/collect_media_url', $attachment['url'], $attachment );
+			}
+		}
+
+		return $settings; // Return unchanged for JSON export
+	}
+
+	/**
 	 * Import gallery images.
 	 *
 	 * Used to import gallery control files from external sites while importing
@@ -51,7 +74,20 @@ class Control_Gallery extends Base_Data_Control {
 				continue;
 			}
 
-			$attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $attachment );
+			// Check for local file mapping first
+			$local_file_path = \Elementor\TemplateLibrary\Classes\Template_Media_Mapper::get_local_file_path( $attachment['url'] );
+
+			if ( $local_file_path !== $attachment['url'] && file_exists( $local_file_path ) ) {
+				// Import from local file instead of remote URL
+				$filename = basename( $local_file_path );
+				$attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import([
+					'tmp_name' => $local_file_path,
+					'name' => $filename,
+				]);
+			} else {
+				// Fallback to normal import
+				$attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $attachment );
+			}
 		}
 
 		// Filter out attachments that don't exist
