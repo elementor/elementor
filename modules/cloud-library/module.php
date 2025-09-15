@@ -57,7 +57,8 @@ class Module extends BaseModule {
 	}
 
 	public function get_proxy_data( $url ) {
-		$response = wp_safe_remote_get( utf8_decode( $url ) );
+		$url = mb_convert_encoding( $url, 'ISO-8859-1', 'UTF-8' );
+		$response = wp_safe_remote_get( $url );
 
 		if ( is_wp_error( $response ) ) {
 			return '';
