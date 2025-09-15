@@ -185,6 +185,8 @@ const DynamicSettings = ( { controls, tagName }: { controls: DynamicTag[ 'atomic
 
 const LAYOUT_OVERRIDE_FIELDS = {
 	separator: 'two-columns',
+	action: 'full',
+	off_canvas: 'full',
 } as const;
 
 const DYNAMIC_TAG_LAYOUT_OVERRIDES = {
