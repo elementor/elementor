@@ -189,7 +189,7 @@ module.exports = Marionette.CompositeView.extend( {
 		args.model = Object.fromEntries(
 			Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
 				// The `custom` property is responsible for storing global-widgets related data.
-				.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) ),
+				.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom', 'editor_settings' ].includes( key ) ),
 		);
 
 		args.container = this.getContainer();
