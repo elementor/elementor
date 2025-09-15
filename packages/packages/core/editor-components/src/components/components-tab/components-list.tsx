@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { EyeIcon } from '@elementor/icons';
 import { Box, Divider, Icon, Link, List, Stack, Typography } from '@elementor/ui';
-import { useSearch } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
-import { useComponents } from '../hooks/use-components';
+import { useComponents } from '../../hooks/use-components';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
+import { useSearch } from './search-provider';
 
 export function ComponentsList() {
 	const { components, isLoading, searchValue } = useFilteredComponents();
@@ -71,7 +71,7 @@ const EmptyState = () => {
 };
 
 const EmptySearchResult = () => {
-	const { debouncedValue: searchValue, onClearSearch } = useSearch();
+	const { searchValue, onClearSearch } = useSearch();
 	return (
 		<Stack
 			color={ 'text.secondary' }
@@ -128,7 +128,7 @@ const EmptySearchResult = () => {
 
 const useFilteredComponents = () => {
 	const { data: components, isLoading } = useComponents();
-	const { debouncedValue: searchValue } = useSearch();
+	const { searchValue } = useSearch();
 
 	return {
 		components: components?.filter( ( component ) =>

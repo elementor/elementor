@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { SearchIcon } from '@elementor/icons';
 import { Box, InputAdornment, Stack, TextField } from '@elementor/ui';
-import { useSearch } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
+
+import { useSearch } from './search-provider';
 
 export const ComponentSearch = () => {
 	const { inputValue, handleChange } = useSearch();

@@ -1,4 +1,6 @@
-import { useDebounceState } from '../use-debounce-state';
+import { useDebounceState, type UseDebounceStateResult } from './use-debounce-state';
+
+export type UseSearchStateResult = UseDebounceStateResult;
 
 export function useSearchState( { localStorageKey }: { localStorageKey: string } ) {
 	const getInitialSearchValue = () => {
