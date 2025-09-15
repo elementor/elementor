@@ -13,12 +13,13 @@ export type SelectOption = {
 	disabled?: boolean;
 };
 
-type SelectControlProps = {
+type Props = {
 	options: SelectOption[];
 	onChange?: ( newValue: string | null, previousValue: string | null | undefined ) => void;
 	MenuProps?: SelectProps[ 'MenuProps' ];
 };
-export const SelectControl = createControl( ( { options, onChange, MenuProps }: SelectControlProps ) => {
+
+export const SelectControl = createControl( ( { options, onChange, MenuProps }: Props ) => {
 	const { value, setValue, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
 	const handleChange = ( event: SelectChangeEvent< StringPropValue[ 'value' ] > ) => {
 		const newValue = event.target.value || null;

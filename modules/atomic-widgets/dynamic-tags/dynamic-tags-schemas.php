@@ -66,14 +66,9 @@ class Dynamic_Tags_Schemas {
 					->default( $control['default'] ?? null );
 
 			case 'select':
-				$string_prop = String_Prop_Type::make()
-					->default( $control['default'] ?? null );
-
-				if ( ! isset( $control['collection_id'] ) || empty( $control['collection_id'] ) ) {
-					$string_prop->enum( array_keys( $control['options'] ?? [] ) );
-				}
-
-				return $string_prop;
+				return String_Prop_Type::make()
+					->default( $control['default'] ?? null )
+					->enum( array_keys( $control['options'] ?? [] ) );
 
 			case 'number':
 				return Number_Prop_Type::make()

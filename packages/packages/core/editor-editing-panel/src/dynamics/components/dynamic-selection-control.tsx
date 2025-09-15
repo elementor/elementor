@@ -170,8 +170,6 @@ const DynamicSettings = ( { controls }: { controls: DynamicTag[ 'atomic_controls
 
 const LAYOUT_OVERRIDE_FIELDS = {
 	separator: 'two-columns',
-	action: 'full',
-	off_canvas: 'full',
 } as const;
 
 const getLayout = ( control: Control[ 'value' ] ): ControlLayout => {
