@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\App\Modules\ImportExportCustomization\Data\Routes;
 
-use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
 use Elementor\Plugin;
 use Elementor\App\Modules\ImportExportCustomization\Data\Response;
 
@@ -20,11 +19,6 @@ class Import_Runner extends Base_Route {
 	}
 
 	protected function callback( $request ): \WP_REST_Response {
-		/**
-		 * @var $module ImportExportCustomizationModule
-		 */
-		$module = Plugin::$instance->app->get_component( 'import-export-customization' );
-
 		try {
 			$session_id = $request->get_param( 'session' );
 			$runner = $request->get_param( 'runner' );
@@ -59,10 +53,6 @@ class Import_Runner extends Base_Route {
 					'trace' => $e->getTraceAsString(),
 				],
 			] );
-
-			if ( $module->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
-				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
-			}
 
 			return Response::error( $e->getMessage(), 'import_runner_error' );
 		}

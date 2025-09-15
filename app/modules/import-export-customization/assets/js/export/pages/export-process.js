@@ -1,16 +1,16 @@
 import { Redirect } from '@reach/router';
 import { Stack } from '@elementor/ui';
 import { BaseLayout, TopBar, PageHeader, CenteredContent } from '../../shared/components';
-import { EXPORT_STATUS, useExportContext } from '../context/export-context';
+import { useExportContext } from '../context/export-context';
 import { useExportKit } from '../hooks/use-export-kit';
 import ExportProcessing from '../components/export-processing';
-import { ProcessingErrorDialog } from '../../shared/components/error/processing-error-dialog';
+import ExportError from '../components/export-error';
 
 export default function ExportProcess() {
 	const { data, dispatch, isExporting, isPending } = useExportContext();
 	const { kitInfo, includes, customization } = data;
 
-	const { status, STATUS_PROCESSING, STATUS_ERROR, error, exportKit } = useExportKit( {
+	const { status, STATUS_PROCESSING, STATUS_ERROR } = useExportKit( {
 		includes,
 		kitInfo,
 		customization,
@@ -34,13 +34,6 @@ export default function ExportProcess() {
 		<PageHeader title={ __( 'Export', 'elementor' ) } />
 	);
 
-	const handleTryAgain = () => {
-		exportKit();
-	};
-	const handleCloseError = () => {
-		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.PENDING } );
-	};
-
 	return (
 		<BaseLayout topBar={ <TopBar>{ headerContent }</TopBar> }>
 			<CenteredContent>
@@ -50,11 +43,7 @@ export default function ExportProcess() {
 					) }
 
 					{ status === STATUS_ERROR && (
-						<ProcessingErrorDialog
-							error={ error }
-							handleClose={ handleCloseError }
-							handleTryAgain={ handleTryAgain }
-						/>
+						<ExportError statusText={ getStatusText() } />
 					) }
 				</Stack>
 			</CenteredContent>

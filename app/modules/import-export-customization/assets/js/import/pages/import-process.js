@@ -4,10 +4,10 @@ import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { BaseLayout, CenteredContent, PageHeader, TopBar } from '../../shared/components';
 import { useImportKit, IMPORT_PROCESSING_STATUS } from '../hooks/use-import-kit';
-import { IMPORT_STATUS, useImportContext } from '../context/import-context';
+import ImportError from '../components/import-error';
+import { useImportContext } from '../context/import-context';
 import { PluginActivation } from '../components/plugin-activation';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
-import { ProcessingErrorDialog } from '../../shared/components/error/processing-error-dialog';
 
 const headerContent = (
 	<PageHeader title={ __( 'Import', 'elementor' ) } />
@@ -16,7 +16,7 @@ const headerContent = (
 export default function ImportProcess() {
 	const { data, dispatch, isProcessing, runnersState } = useImportContext();
 	const { includes, customization } = data;
-	const { status, error, importKit } = useImportKit( {
+	const { status, error } = useImportKit( {
 		data,
 		includes,
 		customization,
@@ -37,14 +37,6 @@ export default function ImportProcess() {
 			AppsEventTracking.sendKitImportStatus( error );
 		}
 	}, [ status, error, navigate, isProcessing ] );
-
-	const handleTryAgain = () => {
-		importKit();
-	};
-	const handleCloseError = () => {
-		dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.CUSTOMIZING } );
-		navigate( 'import-customization/content' );
-	};
 
 	return (
 		<BaseLayout
@@ -72,11 +64,9 @@ export default function ImportProcess() {
 						</>
 					) }
 
-					<ProcessingErrorDialog
-						error={ error }
-						handleClose={ handleCloseError }
-						handleTryAgain={ handleTryAgain }
-					/>
+					{ error && (
+						<ImportError statusText={ error.message } />
+					) }
 				</Stack>
 			</CenteredContent>
 		</BaseLayout>

@@ -7,7 +7,7 @@ import { BaseLayout, TopBar, PageHeader, CenteredContent } from '../../shared/co
 import DropZone from '../components/drop-zone';
 import { IMPORT_STATUS, ACTION_TYPE, useImportContext } from '../context/import-context';
 import { useUploadKit } from '../hooks/use-upload-kit';
-import { ProcessingErrorDialog } from '../../shared/components/error/processing-error-dialog';
+import ImportError from '../components/import-error';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function ImportKit() {
@@ -16,7 +16,7 @@ export default function ImportKit() {
 
 	const { id, referrer, file_url: fileUrl, action_type: actionType, nonce } = useQueryParams().getAll();
 
-	const { uploading, error, uploadKit } = useUploadKit();
+	const { uploading, error } = useUploadKit();
 
 	const headerContent = (
 		<PageHeader title={ __( 'Import', 'elementor' ) } />
@@ -25,24 +25,6 @@ export default function ImportKit() {
 	const onFileSelect = ( file ) => {
 		dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.UPLOADING } );
 		dispatch( { type: 'SET_FILE', payload: file } );
-	};
-
-	const handleTryAgain = () => {
-		uploadKit();
-	};
-	const handleCloseError = () => {
-		if ( data.file ) {
-			return dispatch( { type: 'SET_EXPORT_STATUS', payload: IMPORT_STATUS.CUSTOMIZING } );
-		}
-
-		let path = 'admin.php?page=elementor-tools#tab-import-export-kit';
-		if ( 'cloud' === data?.kitUploadParams?.source ) {
-			path = 'admin.php?page=elementor-app#kit-library/cloud';
-		} else if ( 'kit-library' === data?.kitUploadParams?.source ) {
-			path = `admin.php?page=elementor-app#kit-library`;
-		}
-
-		window.top.location = elementorAppConfig.admin_url + path;
 	};
 
 	useEffect( () => {
@@ -95,6 +77,16 @@ export default function ImportKit() {
 	}, [] );
 
 	const renderContent = () => {
+		if ( error ) {
+			return (
+				<CenteredContent data-testid="import-error">
+					<Stack spacing={ 3 } alignItems="center" >
+						<ImportError statusText={ __( 'Uploading failed', 'elementor' ) } />
+					</Stack>
+				</CenteredContent>
+			);
+		}
+
 		if ( uploading || referrer ) {
 			return (
 				<CenteredContent data-testid="import-loader">
@@ -154,11 +146,6 @@ export default function ImportKit() {
 			topBar={ <TopBar>{ headerContent }</TopBar> }
 		>
 			{ renderContent() }
-			<ProcessingErrorDialog
-				error={ error }
-				handleClose={ handleCloseError }
-				handleTryAgain={ handleTryAgain }
-			/>
 		</BaseLayout>
 	);
 }

@@ -4,8 +4,6 @@ namespace Elementor\App\Modules\ImportExportCustomization\Data\Routes;
 use Elementor\Plugin;
 use Elementor\App\Modules\ImportExportCustomization\Data\Response;
 use Elementor\Utils as ElementorUtils;
-use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
-use Elementor\App\Modules\ImportExportCustomization\Processes\Import;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,11 +21,6 @@ class Export extends Base_Route {
 	}
 
 	protected function callback( $request ): \WP_REST_Response {
-		/**
-		 * @var $module ImportExportCustomizationModule
-		 */
-		$module = Plugin::$instance->app->get_component( 'import-export-customization' );
-
 		try {
 			$settings = [
 				'include' => $request->get_param( 'include' ),
@@ -42,13 +35,15 @@ class Export extends Base_Route {
 
 			$source = $settings['kitInfo']['source'];
 
+			$module = Plugin::$instance->app->get_component( 'import-export-customization' );
+
 			$export = $module->export_kit( $settings );
 
 			$file_name = $export['file_name'];
 			$file = ElementorUtils::file_get_contents( $file_name );
 
 			if ( ! $file ) {
-				throw new \Error( Import::ZIP_FILE_ERROR_KEY );
+				throw new \Error( 'Could not read the exported file.' );
 			}
 
 			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
@@ -78,11 +73,7 @@ class Export extends Base_Route {
 				],
 			] );
 
-			if ( $module->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
-				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
-			}
-
-			return Response::error( $e->getMessage(), 'export_error' );
+			return Response::error( 'export_error', $e->getMessage() );
 		}
 	}
 

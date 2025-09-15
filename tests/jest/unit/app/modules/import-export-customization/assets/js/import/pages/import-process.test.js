@@ -41,10 +41,7 @@ describe( 'ImportProcess Page', () => {
 			isImport: true,
 			contextData: { data: { kitUploadParams: { source: 'cloud' } } },
 		} ) );
-		global.elementorAppConfig = {
-			base_url: 'http://localhost',
-			pages_url: 'http://localhost',
-		};
+		global.elementorAppConfig = { base_url: 'http://localhost' };
 		global.elementorCommon = {
 			eventsManager: {
 				config: eventsConfig,
@@ -87,15 +84,12 @@ describe( 'ImportProcess Page', () => {
 
 	it( 'renders ImportError when error is present', () => {
 		// Arrange
-		setup( {
-			status: 'IN_PROGRESS',
-			error: { code: 'general', message: 'Failed' },
-		} );
+		setup( { status: 'IN_PROGRESS', error: { message: 'Failed!' } } );
 		// Act
 		render( <ImportProcess /> );
 		// Assert
-		expect( screen.getByTestId( 'error-dialog' ) ).toBeTruthy();
-		expect( screen.getByText( 'We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact' ) ).toBeTruthy();
+		expect( screen.getByTestId( 'import-error' ) ).toBeTruthy();
+		expect( screen.getByText( 'Failed!' ) ).toBeTruthy();
 	} );
 
 	it( 'navigates to /import-customization/complete when status is DONE and no error (first useEffect)', () => {
