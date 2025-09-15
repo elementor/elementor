@@ -9,10 +9,10 @@ import {
 import {
 	type Element,
 	getElementEditorSettings,
+	getElementType,
 	updateElementEditorSettings,
 	useElementChildren,
 	useElementEditorSettings,
-	useElementType,
 } from '@elementor/editor-elements';
 import { type CreateOptions, stringPropTypeUtil } from '@elementor/editor-props';
 import { InfoCircleFilledIcon } from '@elementor/icons';
@@ -177,7 +177,7 @@ const ItemContent = () => {
 };
 
 const ElementItem = ( { children, value }: { children: React.ReactNode; value: TabItem } ) => {
-	const elementType = useElementType( TAB_ELEMENT_TYPE );
+	const elementType = getElementType( TAB_ELEMENT_TYPE );
 
 	if ( ! elementType ) {
 		return null;
