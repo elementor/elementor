@@ -10,10 +10,13 @@ import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 
 import Shell from './components/shell';
 import { ensureCurrentUser } from './ensure-current-user';
+import { initMcp } from './mcp';
 
 export function start( domElement: Element ): void {
 	const store = __createStore();
 	const queryClient = createQueryClient();
+
+	initMcp();
 
 	ensureCurrentUser();
 

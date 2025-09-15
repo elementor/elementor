@@ -2,7 +2,7 @@
   "name": "@elementor/editor-mcp",
   "description": "Elementor Editor V4 MCP",
   "version": "3.33.0",
-  "private": false,
+  "private": true,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
   "license": "GPL-3.0-or-later",
