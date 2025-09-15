@@ -6,6 +6,7 @@ class Widget_Builder {
 	protected $widget_type;
 	protected $settings = [];
 	protected $is_locked = false;
+	protected $editor_settings = [];
 
 	public static function make( string $widget_type ) {
 		return new self( $widget_type );
@@ -25,12 +26,20 @@ class Widget_Builder {
 		return $this;
 	}
 
+	public function editor_settings( array $editor_settings ) {
+		$this->editor_settings = $editor_settings;
+		return $this;
+	}
+
 	public function build() {
-		return [
+		$widget_data = [
 			'elType' => 'widget',
 			'widgetType' => $this->widget_type,
 			'settings' => $this->settings,
 			'isLocked' => $this->is_locked,
+			'editor_settings' => $this->editor_settings,
 		];
+
+		return $widget_data;
 	}
 }

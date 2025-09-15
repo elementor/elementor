@@ -11,6 +11,5 @@ export type RepeatablePropValue = TransformablePropValue< PropKey, PropValue >;
 export type ItemProps< T > = {
 	Label: React.ComponentType< { value: T } >;
 	Icon: React.ComponentType< { value: T } >;
-	value?: Item< T >;
-	index?: number;
+	actions?: React.ReactNode;
 };

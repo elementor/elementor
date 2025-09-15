@@ -9,6 +9,8 @@ module.exports = function( grunt ) {
 	const widgetsCss = new WidgetsCss( 'production' ),
 		eicons = new Eicons();
 
+	grunt.loadNpmTasks( 'grunt-concurrent' );
+
 	require( 'load-grunt-tasks' )( grunt );
 
 	// Project configuration
@@ -23,7 +25,6 @@ module.exports = function( grunt ) {
 		sass: require( './.grunt-config/sass' ),
 		postcss: require( './.grunt-config/postcss' ),
 		watch: require( './.grunt-config/watch' ),
-		bumpup: require( './.grunt-config/bumpup' ),
 		replace: require( './.grunt-config/replace' ),
 		shell: require( './.grunt-config/shell' ),
 		release: require( './.grunt-config/release' ),
@@ -32,13 +33,6 @@ module.exports = function( grunt ) {
 		webpack: require( './.grunt-config/webpack' ),
 		karma: require( './.grunt-config/karma' ),
 	} );
-
-	// Default task(s).
-	grunt.registerTask( 'default', [
-		'i18n',
-		'scripts',
-		'styles',
-	] );
 
 	grunt.registerTask( 'create_widgets_temp_scss_files', () => widgetsCss.createWidgetsTempScssFiles() );
 
@@ -51,15 +45,16 @@ module.exports = function( grunt ) {
 	] );
 
 	grunt.registerTask( 'scripts', ( isDevMode = false ) => {
-		const taskName = isDevMode ? 'webpack:development' : 'webpack:production';
+		const tasksToRun = [];
+		tasksToRun.push( isDevMode ? 'webpack:development' : 'webpack:production' );
 
-		grunt.task.run( 'create_eicons_frontend_js_file' );
+		tasksToRun.push( 'create_eicons_frontend_js_file' );
 
 		if ( ! isDevMode ) {
-			grunt.task.run( 'webpack:developmentNoWatch' );
+			tasksToRun.push( 'webpack:developmentNoWatch' );
 		}
 
-		grunt.task.run( taskName );
+		concurrent( tasksToRun );
 	} );
 
 	grunt.registerTask( 'watch_scripts', () => {
@@ -86,8 +81,7 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'watch_styles', () => {
-		grunt.task.run( 'styles' );
-		grunt.task.run( 'watch:styles' );
+		concurrent( [ 'styles', 'watch:styles' ] );
 	} );
 
 	grunt.registerTask( 'css_templates', () => {
@@ -126,28 +120,21 @@ module.exports = function( grunt ) {
 		fs.writeFileSync( 'assets/dev/scss/frontend/breakpoints/proxy.scss', '@import "' + mode + '";' );
 	} );
 
-	grunt.registerTask( 'build', [
-		'default',
-		'usebanner',
-		'clean',
-		'copy',
-	] );
-
-	grunt.registerTask( 'publish', ( releaseType ) => {
-		releaseType = releaseType ? releaseType : 'patch';
-
-		var prevStableVersion = 'patch' === releaseType ? pkgInfo.prev_stable_version : pkgInfo.version;
-
-		grunt.config.set( 'prev_stable_version', prevStableVersion );
-
-		grunt.task.run( 'default' );
-		grunt.task.run( 'bumpup:' + releaseType );
-		grunt.task.run( 'replace' );
-		grunt.task.run( 'shell:git_add_all' );
-		grunt.task.run( 'release' );
+	grunt.registerTask( 'build', () => {
+		concurrent( [ 'i18n', 'scripts', 'styles', 'usebanner' ] );
+		grunt.task.run( 'clean' );
+		grunt.task.run( 'copy' );
 	} );
 
 	grunt.registerTask( 'test', [
 		'karma:unit',
 	] );
+
+	const concurrent = ( tasks ) => {
+		grunt.config.set( 'concurrent.onDemand', {
+			tasks,
+			options: { logConcurrentOutput: true },
+		} );
+		grunt.task.run( 'concurrent:onDemand' );
+	};
 };

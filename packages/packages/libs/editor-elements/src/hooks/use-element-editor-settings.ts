@@ -1,6 +1,6 @@
 import { __privateUseListenTo as useListenTo, windowEvent } from '@elementor/editor-v1-adapters';
 
-import { getContainer } from '../sync/get-container';
+import { getElementEditorSettings } from '../sync/get-element-editor-settings';
 import { type ElementID } from '../types';
 
 export const useElementEditorSettings = ( elementId: ElementID ) => {
@@ -10,9 +10,3 @@ export const useElementEditorSettings = ( elementId: ElementID ) => {
 		[ elementId ]
 	);
 };
-
-function getElementEditorSettings( elementId: ElementID ) {
-	const container = getContainer( elementId );
-
-	return container?.model.get( 'editor_settings' ) ?? {};
-}

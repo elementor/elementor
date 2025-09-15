@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createElement, useState } from 'react';
+import { createElement, useEffect, useRef } from 'react';
 import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { GripVerticalIcon } from '@elementor/icons';
 import {
@@ -28,21 +28,67 @@ type Props = {
 	menuActions: VariableManagerMenuAction[];
 	variables: TVariablesList;
 	onChange: ( variables: TVariablesList ) => void;
+	ids: string[];
+	onIdsChange: ( ids: string[] ) => void;
+	autoEditVariableId?: string;
+	onAutoEditComplete?: () => void;
 };
 
-export const VariablesManagerTable = ( { menuActions, variables, onChange: handleOnChange }: Props ) => {
-	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
+export const VariablesManagerTable = ( {
+	menuActions,
+	variables,
+	onChange: handleOnChange,
+	ids,
+	onIdsChange: setIds,
+	autoEditVariableId,
+	onAutoEditComplete,
+}: Props ) => {
+	const tableContainerRef = useRef< HTMLDivElement >( null );
+	const variableRowRefs = useRef< Map< string, HTMLTableRowElement > >( new Map() );
+
+	useEffect( () => {
+		if ( autoEditVariableId && tableContainerRef.current ) {
+			const rowElement = variableRowRefs.current.get( autoEditVariableId );
+			if ( rowElement ) {
+				setTimeout( () => {
+					rowElement.scrollIntoView( {
+						behavior: 'smooth',
+						block: 'center',
+						inline: 'nearest',
+					} );
+				}, 100 );
+			}
+		}
+	}, [ autoEditVariableId ] );
+
+	const handleRowRef = ( id: string ) => ( ref: HTMLTableRowElement | null ) => {
+		if ( ref ) {
+			variableRowRefs.current.set( id, ref );
+		} else {
+			variableRowRefs.current.delete( id );
+		}
+	};
+
+	useEffect( () => {
+		const sortedIds = [ ...ids ].sort( sortVariablesOrder( variables ) );
+
+		if ( JSON.stringify( sortedIds ) !== JSON.stringify( ids ) ) {
+			setIds( sortedIds );
+		}
+	}, [ ids, variables, setIds ] );
+
 	const rows = ids
 		.filter( ( id ) => ! variables[ id ].deleted )
+		.sort( sortVariablesOrder( variables ) )
 		.map( ( id ) => {
 			const variable = variables[ id ];
 			const variableType = getVariableType( variable.type );
 
 			return {
 				id,
+				type: variable.type,
 				name: variable.label,
 				value: variable.value,
-				type: variable.type,
 				...variableType,
 			};
 		} );
@@ -53,7 +99,7 @@ export const VariablesManagerTable = ( { menuActions, variables, onChange: handl
 	};
 
 	return (
-		<TableContainer sx={ { overflow: 'initial' } }>
+		<TableContainer ref={ tableContainerRef } sx={ { overflow: 'initial' } }>
 			<Table sx={ tableSX } aria-label="Variables manager list with drag and drop reordering" stickyHeader>
 				<TableHead>
 					<TableRow>
@@ -66,7 +112,19 @@ export const VariablesManagerTable = ( { menuActions, variables, onChange: handl
 				<TableBody>
 					<UnstableSortableProvider
 						value={ ids }
-						onChange={ setIds }
+						onChange={ ( newIds ) => {
+							const updatedVariables = { ...variables };
+							newIds.forEach( ( id, index ) => {
+								if ( updatedVariables[ id ] ) {
+									updatedVariables[ id ] = {
+										...updatedVariables[ id ],
+										order: index + 1,
+									};
+								}
+							} );
+							handleOnChange( updatedVariables );
+							setIds( newIds );
+						} }
 						variant="static"
 						restrictAxis
 						dragOverlay={ ( { children: dragOverlayChildren, ...dragOverlayProps } ) => (
@@ -88,9 +146,7 @@ export const VariablesManagerTable = ( { menuActions, variables, onChange: handl
 									isDragged,
 									dropPosition,
 									setTriggerRef,
-									isDragOverlay,
 									isSorting,
-									index,
 								}: UnstableSortableItemRenderProps ) => {
 									const showIndicationBefore = showDropIndication && dropPosition === 'before';
 									const showIndicationAfter = showDropIndication && dropPosition === 'after';
@@ -123,7 +179,6 @@ export const VariablesManagerTable = ( { menuActions, variables, onChange: handl
 												},
 											} }
 											style={ { ...itemStyle, ...triggerStyle } }
-											disableDivider={ isDragOverlay || index === rows.length - 1 }
 										>
 											<VariableTableCell noPadding width={ 10 } maxWidth={ 10 }>
 												<IconButton
@@ -155,8 +210,14 @@ export const VariablesManagerTable = ( { menuActions, variables, onChange: handl
 															value={ value }
 															onChange={ onChange }
 															focusOnShow
+															selectOnShow={ autoEditVariableId === row.id }
 														/>
 													) }
+													autoEdit={ autoEditVariableId === row.id }
+													onRowRef={ handleRowRef( row.id ) }
+													onAutoEditComplete={
+														autoEditVariableId === row.id ? onAutoEditComplete : undefined
+													}
 												>
 													<EllipsisWithTooltip
 														title={ row.name }
@@ -178,6 +239,7 @@ export const VariablesManagerTable = ( { menuActions, variables, onChange: handl
 														}
 													} }
 													editableElement={ row.valueField }
+													onRowRef={ handleRowRef( row.id ) }
 												>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
 													<EllipsisWithTooltip
@@ -214,3 +276,10 @@ export const VariablesManagerTable = ( { menuActions, variables, onChange: handl
 		</TableContainer>
 	);
 };
+function sortVariablesOrder( variables: TVariablesList ): ( a: string, b: string ) => number {
+	return ( a, b ) => {
+		const orderA = variables[ a ]?.order ?? Number.MAX_SAFE_INTEGER;
+		const orderB = variables[ b ]?.order ?? Number.MAX_SAFE_INTEGER;
+		return orderA - orderB;
+	};
+}
