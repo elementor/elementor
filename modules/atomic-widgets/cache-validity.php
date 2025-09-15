@@ -57,7 +57,7 @@ class Cache_Validity {
 
 		$current_item = &$this->get_nested_item( $state_item, $keys );
 
-		if ( ! $this->is_leaf( $current_item ) ) {
+		if ( $this->is_leaf( $current_item ) ) {
 			return;
 		}
 
@@ -76,14 +76,16 @@ class Cache_Validity {
 		$state_item = $this->get_stored_data( $root );
 
 		if ( empty( $keys ) ) {
-			$this->validate_root_node( $state_item, $root, $meta );
+			$state_item['state'] = true;
+
+			$this->update_stored_data( $root, $state_item );
 
 			return;
 		}
 
 		$current_item = &$this->get_nested_item( $state_item, $keys );
 
-		if ( ! $this->is_leaf( $current_item ) && null === $meta ) {
+		if ( $this->is_leaf( $current_item ) && null === $meta ) {
 			// Leaf nodes with no meta should just be a boolean value instead of an array
 			$this->validate_primitive_leaf_node( $state_item, $root, $keys );
 
@@ -103,16 +105,21 @@ class Cache_Validity {
 	}
 
 	private function is_leaf( $item ): bool {
-		return is_array( $item ) && isset( $item['children'] ) && ! empty( $item['children'] );
+		return ! is_array( $item ) || ! isset( $item['children'] ) || empty( $item['children'] );
 	}
 
-	private function validate_root_node( array &$state_item, string $root, $meta = null ) {
+	private function validate_empty_root_node( array &$state_item, string $root, $meta = null ) {
 		$data = [
 			'state' => true,
+
 		];
 
-		if ( null !== $meta ) {
-			$data['meta'] = $meta;
+		if ( 'boolean' === gettype( $state_item ) ) {
+			$data['state'] = $state_item;
+		}
+
+		if ( null !== $meta && 'boolean' === gettype( $state_item ) ) {
+			$data = $meta;
 		}
 
 		$this->update_stored_data( $root, $data );
