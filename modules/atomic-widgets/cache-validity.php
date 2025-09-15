@@ -80,8 +80,7 @@ class Cache_Validity {
 
 			if ( null !== $meta ) {
 				$state_item['meta'] = $meta;
-			}
-			else {
+			} else {
 				unset( $state_item['meta'] );
 			}
 
