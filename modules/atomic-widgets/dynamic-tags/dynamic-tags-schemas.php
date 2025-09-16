@@ -113,7 +113,6 @@ class Dynamic_Tags_Schemas {
 		foreach ( $condition as $raw_key => $value ) {
 			$is_negated = false !== strpos( (string) $raw_key, '!' );
 			$key = rtrim( (string) $raw_key, '!' );
-
 			$path = $this->parse_condition_path( $key );
 
 			if ( is_array( $value ) ) {

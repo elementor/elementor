@@ -141,7 +141,7 @@ class Post_Query {
 			], 200 );
 		}
 
-		$excluded_types = $params[ self::EXCLUDED_POST_TYPE_KEYS ] ?? [];
+		$excluded_types = array_unique( array_merge( self::DEFAULT_FORBIDDEN_POST_TYPES, $params[ self::EXCLUDED_POST_TYPE_KEYS ] ?? [] ) );
 		$included_types = $params[ self::INCLUDED_POST_TYPE_KEY ] ?? [];
 		$keys_format_map = $params[ self::POST_KEYS_CONVERSION_MAP ] ?? [];
 
