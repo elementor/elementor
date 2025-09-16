@@ -25,20 +25,24 @@ class Utils {
 
 		$result += $imported_data['templates']['succeed'] ?? [];
 
+		if ( isset( $imported_data['content'] ) ) {
+			foreach ( $imported_data['content'] as $post_type ) {
+				$content_data = $post_type['succeed'] ?? [];
+				$result = static::prioritize_content_over_templates( $result, $content_data );
+			}
+		}
+
 		if ( isset( $imported_data['wp-content'] ) ) {
 			foreach ( $imported_data['wp-content'] as $post_type ) {
 				$result += $post_type['succeed'] ?? [];
 			}
 		}
 
-		if ( isset( $imported_data['content'] ) ) {
-			foreach ( $imported_data['content'] as $post_type ) {
-				$content_data = $post_type['succeed'] ?? [];
-				$result = array_replace( $result, $content_data );
-			}
-		}
-
 		return $result;
+	}
+
+	private static function prioritize_content_over_templates( array $existing_mappings, array $content_mappings ) {
+		return array_replace( $existing_mappings, $content_mappings );
 	}
 
 	public static function map_old_new_term_ids( array $imported_data ) {
