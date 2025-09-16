@@ -26,6 +26,7 @@ export class Open extends $e.modules.CommandBase {
 			elementor.documents.invalidateCache();
 		}
 
+		// here we get the doc's config from the server
 		return elementor.documents.request( id )
 			.then( ( config ) => {
 				elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );

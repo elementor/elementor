@@ -23,6 +23,7 @@ export class Load extends $e.modules.CommandInternalBase {
 
 		elementor.templates.init();
 
+		//מעניין!!!!
 		const document = new Document( config );
 
 		elementor.documents.add( document );

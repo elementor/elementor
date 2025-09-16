@@ -279,6 +279,11 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getHandlesOverlay() {
+		const { isEditable = true } = this.model.toJSON();
+		if ( !isEditable ) {
+			return;
+		}
+
 		const elementType = this.getElementType();
 		if ( ! elementor.userCan( 'design' ) && elementType !== 'widget' ) {
 			return;
@@ -541,16 +546,16 @@ BaseElementView = BaseContainer.extend( {
 			settings = this.getEditModel().get( 'settings' );
 		}
 
-		this.controlsCSSParser.stylesheet.empty();
+		this.controlsCSSParser?.stylesheet?.empty();
 
-		this.controlsCSSParser.addStyleRules(
+		this.controlsCSSParser?.addStyleRules(
 			settings.getStyleControls(),
 			settings.attributes,
 			this.getEditModel().get( 'settings' ).controls,
 			[ /{{ID}}/g, /{{WRAPPER}}/g ],
 			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .elementor-element.' + this.getElementUniqueID() ] );
 
-		this.controlsCSSParser.addStyleToDocument();
+		this.controlsCSSParser?.addStyleToDocument();
 	},
 
 	renderCustomClasses() {
@@ -1154,14 +1159,14 @@ BaseElementView = BaseContainer.extend( {
 	 * Initialize the Droppable instance.
 	 */
 	initDraggable() {
-		if ( ! elementor.userCan( 'design' ) ) {
-			return;
-		}
+		// if ( ! elementor.userCan( 'design' ) ) {
+		// 	return;
+		// }
 
 		// Init the draggable only for Containers and their children.
-		if ( ! this.$el.hasClass( '.e-con' ) && ! this.$el.parents( '.e-con' ).length ) {
-			return;
-		}
+		// if ( ! this.$el.hasClass( '.e-con' ) && ! this.$el.parents( '.e-con' ).length ) {
+		// 	return;
+		// }
 
 		this.getDomElement().html5Draggable( {
 			onDragStart: ( e ) => {
