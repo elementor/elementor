@@ -12,7 +12,7 @@ export const ConditionalField: React.FC< {
 
 	const { values: depValues } = useStylesFields( depList );
 
-	const isHidden = ! isDependencyMet( propType?.dependencies, depValues );
+	const isHidden = ! isDependencyMet( propType?.dependencies, depValues ).isMet;
 
 	return isHidden ? null : children;
 };
