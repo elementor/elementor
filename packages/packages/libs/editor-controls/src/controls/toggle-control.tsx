@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { type PropValue, stringPropTypeUtil, type StringPropValue } from '@elementor/editor-props';
+import { AlertTriangleIcon, PhotoIcon } from '@elementor/icons';
 import { type ToggleButtonProps } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
@@ -9,20 +10,36 @@ import { createControl } from '../create-control';
 type PhpOption = {
 	value: string;
 	label: string;
+	icon?: string;
 	showTooltip?: boolean;
 	exclusive?: boolean;
+};
+
+// Icon mapping from eicon-* to React icons
+const iconMapping: Record< string, React.ComponentType< any > > = {
+	'eicon-video-camera': AlertTriangleIcon,
+	'eicon-image-bold': PhotoIcon,
 };
 
 const convertPhpOptionsToToggleItems = (
 	phpOptions: PhpOption[]
 ): Array< ToggleButtonGroupItem< string > & { exclusive?: boolean } > => {
-	return phpOptions.map( ( option ) => ( {
-		value: option.value,
-		label: option.label,
-		renderContent: () => option.label,
-		showTooltip: option.showTooltip,
-		exclusive: option.exclusive,
-	} ) );
+	return phpOptions.map( ( option ) => {
+		const IconComponent = option.icon ? iconMapping[ option.icon ] : null;
+
+		return {
+			value: option.value,
+			label: option.label,
+			renderContent: ( { size } ) => {
+				if ( IconComponent ) {
+					return <IconComponent fontSize={ size } />;
+				}
+				return option.label;
+			},
+			showTooltip: option.showTooltip,
+			exclusive: option.exclusive,
+		};
+	} );
 };
 
 export type ToggleControlProps< T extends PropValue > = {

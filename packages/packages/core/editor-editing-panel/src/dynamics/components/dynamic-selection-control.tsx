@@ -172,6 +172,7 @@ const LAYOUT_OVERRIDE_FIELDS = {
 	separator: 'two-columns',
 	action: 'full',
 	off_canvas: 'full',
+	type: 'two-columns',
 } as const;
 
 const getLayout = ( control: Control[ 'value' ] ): ControlLayout => {

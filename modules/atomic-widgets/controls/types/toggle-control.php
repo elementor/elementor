@@ -20,7 +20,7 @@ class Toggle_Control extends Atomic_Control_Base {
 
 	/**
 	 * Set the toggle button options
-	 *
+	 * 
 	 * @param array $options Array of options with 'value', 'label', and optional 'show_tooltip'
 	 * @return self
 	 */
@@ -30,21 +30,24 @@ class Toggle_Control extends Atomic_Control_Base {
 	}
 
 	/**
-	 * Add a single option to the toggle control
-	 *
-	 * @param mixed $value The option value
-	 * @param string $label The option label
-	 * @param bool $show_tooltip Whether to show tooltip
-	 * @param bool $exclusive Whether this option is exclusive (for non-exclusive mode)
+	 * Set options from control configuration (dynamic format)
+	 * 
+	 * @param array $control_options Format: ['key' => ['title' => 'Label', 'icon' => 'eicon-name']]
 	 * @return self
 	 */
-	public function add_option( $value, string $label, bool $show_tooltip = false, bool $exclusive = false ): self {
-		$this->options[] = [
-			'value' => $value,
-			'label' => $label,
-			'showTooltip' => $show_tooltip,
-			'exclusive' => $exclusive,
-		];
+	public function add_options( array $control_options ): self {
+		$this->options = [];
+		
+		foreach ( $control_options as $value => $config ) {
+			$this->options[] = [
+				'value' => $value,
+				'label' => $config['title'] ?? $value,
+				'icon' => $config['icon'] ?? null,
+				'showTooltip' => true,
+				'exclusive' => false,
+			];
+		}
+		
 		return $this;
 	}
 
@@ -106,7 +109,6 @@ class Toggle_Control extends Atomic_Control_Base {
 			'fullWidth' => $this->full_width,
 			'size' => $this->size,
 			'exclusive' => $this->exclusive,
-			'maxItems' => $this->max_items,
 			'convertOptions' => true,
 		];
 	}

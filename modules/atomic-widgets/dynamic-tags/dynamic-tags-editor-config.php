@@ -242,9 +242,8 @@ class Dynamic_Tags_Editor_Config {
 	private function convert_choose_control_to_atomic( $control ) {
 		return Toggle_Control::bind_to( $control['name'] )
 			->set_label( $control['atomic_label'] ?? $control['label'] )
-			->add_option( 'video', __( 'Video', 'elementor' ), true )
-			->add_option( 'image', __( 'Image', 'elementor' ), true )
-			->set_size( 'small' )
+			->add_options( $control['options'] )
+			->set_size( 'tiny' )
 			->set_exclusive( true );
 	}
 
