@@ -49,8 +49,6 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Flex_Trans
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Attributes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Entrance_Animation_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Entrance_Animation_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
