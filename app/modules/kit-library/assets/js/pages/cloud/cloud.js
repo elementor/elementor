@@ -112,16 +112,16 @@ export default function Cloud( {
 		);
 	}
 
-	if ( ! isCloudKitsAvailable && ! shouldShowLoading ) {
-		return (
-			<UpgradeScreen
-				menuItems={ menuItems }
-				forceRefetch={ forceRefetch }
-				isFetching={ isFetching }
-				cloudKitsData={ cloudKitsData }
-			/>
-		);
-	}
+	// if ( ! isCloudKitsAvailable && ! shouldShowLoading ) {
+	// 	return (
+	// 		<UpgradeScreen
+	// 			menuItems={ menuItems }
+	// 			forceRefetch={ forceRefetch }
+	// 			isFetching={ isFetching }
+	// 			cloudKitsData={ cloudKitsData }
+	// 		/>
+	// 	);
+	// }
 
 	return (
 		<Layout

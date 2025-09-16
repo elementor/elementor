@@ -135,7 +135,7 @@ class Module extends BaseModule {
 	 * Render the import/export tab content.
 	 */
 	private function render_import_export_tab_content() {
-		$is_cloud_kits_available = CloudKitLibrary::get_app()->check_eligibility()['is_eligible'];
+		$is_cloud_kits_available = true;
 
 		$content_data = [
 			'export' => [
