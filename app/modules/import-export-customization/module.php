@@ -100,10 +100,6 @@ class Module extends BaseModule {
 		( new Usage() )->register();
 
 		$this->revert = new Revert();
-
-		// Clean up any contaminated data from the original import-export module
-		// This ensures no cross-module data contamination after switching to separate option keys
-		$this->cleanup_contaminated_session_data();
 	}
 
 	public function get_init_settings() {
@@ -759,21 +755,5 @@ class Module extends BaseModule {
 		}
 
 		return true;
-	}
-
-	private function cleanup_contaminated_session_data() {
-		// Check if we've already performed this cleanup
-		$cleanup_flag = get_option( 'elementor_import_customization_cleanup_done', false );
-
-		if ( $cleanup_flag ) {
-			return;
-		}
-
-		// Clear any contaminated data from the original import-export module's option
-		// This prevents cross-module data contamination that was causing menu link issues
-		delete_option( 'elementor_import_sessions' );
-
-		// Set flag to prevent running this cleanup again
-		update_option( 'elementor_import_customization_cleanup_done', true, false );
 	}
 }

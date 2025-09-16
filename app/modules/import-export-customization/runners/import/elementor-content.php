@@ -111,6 +111,8 @@ class Elementor_Content extends Import_Runner_Base {
 			}
 		}
 
+		error_log( '[MENU DEBUG] Elementor-Content final result for ' . $post_type . ': ' . print_r( $result, true ) );
+
 		return $result;
 	}
 
@@ -179,6 +181,7 @@ class Elementor_Content extends Import_Runner_Base {
 		}
 
 		if ( ! empty( $post_settings['show_on_front'] ) ) {
+			error_log( '[MENU DEBUG] Frontpage detected in read_and_import_post: post_id=' . $new_post_id . ', exported_id=' . $post_settings['title'] );
 			$this->set_page_on_front( $new_post_id );
 		}
 
@@ -206,16 +209,25 @@ class Elementor_Content extends Import_Runner_Base {
 	}
 
 	private function set_page_on_front( $page_id ) {
+		error_log( '[MENU DEBUG] Setting frontpage: page_id=' . $page_id );
+		error_log( '[MENU DEBUG] Previous page_on_front: ' . get_option( 'page_on_front', 'not set' ) );
+
 		update_option( 'page_on_front', $page_id );
 
+		error_log( '[MENU DEBUG] New page_on_front: ' . get_option( 'page_on_front' ) );
+
 		if ( ! $this->show_page_on_front ) {
+			error_log( '[MENU DEBUG] Setting show_on_front to page' );
 			update_option( 'show_on_front', 'page' );
 		}
+
+		error_log( '[MENU DEBUG] Final show_on_front: ' . get_option( 'show_on_front' ) );
 	}
 
 	private function handle_frontpage_setting_after_import( array $import_result, array $post_settings, $exported_page_id ) {
 		if ( static::IMPORT_STATUS_SUCCEEDED === $import_result['status'] && ! empty( $post_settings['show_on_front'] ) ) {
 			$new_page_id = $import_result['result'];
+			error_log( '[MENU DEBUG] Frontpage detected in filter: exported_id=' . $exported_page_id . ', new_id=' . $new_page_id );
 			$this->set_page_on_front( $new_page_id );
 		}
 	}

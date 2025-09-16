@@ -23,17 +23,22 @@ class Utils {
 	public static function map_old_new_post_ids( array $imported_data ) {
 		$result = [];
 
+		// Add templates first (lowest priority)
 		$result += $imported_data['templates']['succeed'] ?? [];
 
-		if ( isset( $imported_data['content'] ) ) {
-			foreach ( $imported_data['content'] as $post_type ) {
+		// Add wp-content data (medium priority)
+		if ( isset( $imported_data['wp-content'] ) ) {
+			foreach ( $imported_data['wp-content'] as $post_type ) {
 				$result += $post_type['succeed'] ?? [];
 			}
 		}
 
-		if ( isset( $imported_data['wp-content'] ) ) {
-			foreach ( $imported_data['wp-content'] as $post_type ) {
-				$result += $post_type['succeed'] ?? [];
+		// Add content data last (highest priority) - this ensures current session data overwrites old data
+		if ( isset( $imported_data['content'] ) ) {
+			foreach ( $imported_data['content'] as $post_type ) {
+				// Use array union (+) to preserve keys, then array_replace to overwrite with priority
+				$content_data = $post_type['succeed'] ?? [];
+				$result = array_replace( $result, $content_data );
 			}
 		}
 

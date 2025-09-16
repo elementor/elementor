@@ -61,9 +61,39 @@ class Wp_Content extends Import_Runner_Base {
 	}
 
 	private function import_wp_post_type( $path, $post_type, array $imported_data, array $taxonomies, array $imported_terms, $customization ) {
+		// Debug: Log the imported_data structure for this post type
+		error_log( '[MENU DEBUG] Processing post type: ' . $post_type );
+		error_log( '[MENU DEBUG] imported_data keys: ' . print_r( array_keys( $imported_data ), true ) );
+
+		// Debug templates data
+		if ( isset( $imported_data['templates']['succeed'] ) ) {
+			error_log( '[MENU DEBUG] templates succeed mappings: ' . print_r( $imported_data['templates']['succeed'], true ) );
+		}
+
+		// Debug wp-content data
+		if ( isset( $imported_data['wp-content'] ) ) {
+			error_log( '[MENU DEBUG] wp-content keys: ' . print_r( array_keys( $imported_data['wp-content'] ), true ) );
+			foreach ( $imported_data['wp-content'] as $wpc_post_type => $wpc_data ) {
+				if ( isset( $wpc_data['succeed'] ) && ! empty( $wpc_data['succeed'] ) ) {
+					error_log( '[MENU DEBUG] wp-content ' . $wpc_post_type . ' succeed: ' . print_r( $wpc_data['succeed'], true ) );
+				}
+			}
+		}
+
+		if ( isset( $imported_data['content'] ) ) {
+			error_log( '[MENU DEBUG] content keys: ' . print_r( array_keys( $imported_data['content'] ), true ) );
+
+			if ( isset( $imported_data['content']['page'] ) && isset( $imported_data['content']['page']['succeed'] ) ) {
+				error_log( '[MENU DEBUG] page succeed mappings: ' . print_r( $imported_data['content']['page']['succeed'], true ) );
+			}
+		}
+
+		$post_mappings = ImportExportUtils::map_old_new_post_ids( $imported_data );
+		error_log( '[MENU DEBUG] map_old_new_post_ids result for ' . $post_type . ': ' . print_r( $post_mappings, true ) );
+
 		$args = [
 			'fetch_attachments' => true,
-			'posts' => ImportExportUtils::map_old_new_post_ids( $imported_data ),
+			'posts' => $post_mappings,
 			'terms' => $imported_terms,
 			'taxonomies' => ! empty( $taxonomies[ $post_type ] ) ? $taxonomies[ $post_type ] : [],
 			'posts_meta' => [

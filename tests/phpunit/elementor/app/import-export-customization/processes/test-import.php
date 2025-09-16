@@ -157,7 +157,7 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertCount( 1, $result );
 		$this->assertEquals( [ 'Elementor', 'Elementor Pro' ], $result['plugins'] );
 
-		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$import_sessions_options = get_option( Module::OPTION_KEY_elementor_import_customization_sessions );
 		$this->assertEquals( [ 'plugins' => [] ], array_pop( $import_sessions_options )['runners'] );
 	}
 
@@ -201,7 +201,7 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertCount( 1, $result );
 		$this->assertEquals( [ 'Elementor', ], $result['plugins'] );
 
-		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$import_sessions_options = get_option( Module::OPTION_KEY_elementor_import_customization_sessions );
 		$this->assertEquals( [ 'plugins' => [] ], array_pop( $import_sessions_options )['runners'] );
 	}
 
@@ -270,7 +270,7 @@ class Test_Import extends Elementor_Test_Base {
 				'imported_experiments' => [],
 			],
 		];
-		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$import_sessions_options = get_option( Module::OPTION_KEY_elementor_import_customization_sessions );
 
 		$this->assertEquals( $expected_runners, array_pop( $import_sessions_options )['runners'] );
 
@@ -296,7 +296,7 @@ class Test_Import extends Elementor_Test_Base {
 		// Assert
 		$this->assertEmpty( $result );
 
-		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$import_sessions_options = get_option( Module::OPTION_KEY_elementor_import_customization_sessions );
 		$this->assertEmpty( array_pop( $import_sessions_options )['runners'] );
 	}
 
@@ -315,7 +315,7 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertCount( 1, $result );
 		$this->assert_valid_taxonomies( $result );
 
-		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$import_sessions_options = get_option( Module::OPTION_KEY_elementor_import_customization_sessions );
 		$this->assertEquals( [ 'taxonomies' => [] ], array_pop( $import_sessions_options )['runners'] );
 
 		// Test terms parent/child relationship.
@@ -345,7 +345,7 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertCount( 1, $result );
 		$this->assert_valid_taxonomies( $result );
 
-		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$import_sessions_options = get_option( Module::OPTION_KEY_elementor_import_customization_sessions );
 		$this->assertEquals( [ 'taxonomies' => [] ], array_pop( $import_sessions_options )['runners'] );
 
 		// Cleanups
@@ -386,7 +386,7 @@ class Test_Import extends Elementor_Test_Base {
 				'page_on_front' => 0,
 			],
 		];
-		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$import_sessions_options = get_option( Module::OPTION_KEY_elementor_import_customization_sessions );
 		$this->assertEquals( $expected_runners, array_pop( $import_sessions_options )['runners'] );
 
 		$this->assert_valid_elementor_content( $result, $manifest, $zip_path );
@@ -421,7 +421,7 @@ class Test_Import extends Elementor_Test_Base {
 				'custom_post_types' => [ 'tests', 'post' ],
 			],
 		];
-		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+		$import_sessions_options = get_option( Module::OPTION_KEY_elementor_import_customization_sessions );
 		$this->assertEquals( $expected_runners, array_pop( $import_sessions_options )['runners'] );
 
 		unregister_post_type( 'tests' );
@@ -541,7 +541,7 @@ class Test_Import extends Elementor_Test_Base {
 		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-with-thumbnail.zip', $import_settings );
 		$import->init_import_session();
 
-		$import_sessions = get_option( 'elementor_import_sessions' );
+		$import_sessions = get_option( 'elementor_import_customization_sessions' );
 		$this->assertEquals( 'manifest-thumbnail', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
 	}
 
@@ -552,7 +552,7 @@ class Test_Import extends Elementor_Test_Base {
 		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
 		$import->init_import_session();
 
-		$import_sessions = get_option( 'elementor_import_sessions' );
+		$import_sessions = get_option( 'elementor_import_customization_sessions' );
 		$this->assertEquals( '', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
 	}
 
@@ -565,7 +565,7 @@ class Test_Import extends Elementor_Test_Base {
 		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
 		$import->init_import_session();
 
-		$import_sessions = get_option( 'elementor_import_sessions' );
+		$import_sessions = get_option( 'elementor_import_customization_sessions' );
 		$this->assertEquals( 'api-thumbnail', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
 
 		$cleanup();
@@ -580,7 +580,7 @@ class Test_Import extends Elementor_Test_Base {
 		$import = new Import( __DIR__ . '/../mock/kit-library-manifest-only.zip', $import_settings );
 		$import->init_import_session();
 
-		$import_sessions = get_option( 'elementor_import_sessions' );
+		$import_sessions = get_option( 'elementor_import_customization_sessions' );
 		$this->assertEquals( '', $import_sessions[ $import->get_session_id() ]['kit_thumbnail'] );
 
 		$cleanup();
