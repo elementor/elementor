@@ -62,6 +62,8 @@ class Test_Tracker extends Elementor_Test_Base {
 		update_option( 'elementor_optimized_image_loading', '1' );
 		update_option( 'elementor_optimized_gutenberg_loading', '1' );
 		update_option( 'elementor_lazy_load_background_images', '1' );
+		update_option( 'elementor_local_google_fonts', '1' );
+
 
 		// Act.
 		$actual = Tracker::get_settings_performance_usage();
@@ -72,6 +74,7 @@ class Test_Tracker extends Elementor_Test_Base {
 			'optimized_image_loading' => '1',
 			'optimized_gutenberg_loading' => '1',
 			'lazy_load_background_images' => '1',
+			'local_google_fonts' => '1',
 		], $actual );
 	}
 
