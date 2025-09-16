@@ -97,6 +97,7 @@ class Elementor_Content extends Import_Runner_Base {
 					$import_result = apply_filters( 'elementor/import-export-customization/import/elementor-content/customization', null, $data, [], $customization ?? [], $this );
 
 					if ( is_array( $import_result ) ) {
+						// HVV: Test if we need this.
 						$this->handle_frontpage_setting_after_import( $import_result, $post_settings, $id );
 						$result[ $import_result['status'] ][ $id ] = $import_result['result'];
 						continue;
