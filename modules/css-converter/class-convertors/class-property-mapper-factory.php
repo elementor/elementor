@@ -20,6 +20,7 @@ require_once __DIR__ . '/border-style-property-mapper.php';
 require_once __DIR__ . '/border-color-property-mapper.php';
 require_once __DIR__ . '/border-radius-property-mapper.php';
 require_once __DIR__ . '/border-shorthand-property-mapper.php';
+require_once __DIR__ . '/border-zero-property-mapper.php';
 require_once __DIR__ . '/background-color-property-mapper.php';
 require_once __DIR__ . '/background-image-property-mapper.php';
 require_once __DIR__ . '/background-property-mapper.php';
@@ -38,12 +39,12 @@ class Class_Property_Mapper_Factory {
 		// Force reinitialize for now to ensure new mappers are loaded
 		self::$registry = new Class_Property_Mapper_Registry();
 		self::init_default_mappers();
-		
+
 		return self::$registry;
 	}
 
 	private static function init_default_mappers(): void {
-		$mappers = [
+		$mappers = array(
 			new Color_Property_Mapper(),
 			new Font_Size_Property_Mapper(),
 			new Font_Weight_Property_Mapper(),
@@ -60,6 +61,7 @@ class Class_Property_Mapper_Factory {
 			new Border_Style_Property_Mapper(),
 			new Border_Color_Property_Mapper(),
 			new Border_Radius_Property_Mapper(),
+			new Border_Zero_Property_Mapper(),
 			new Border_Shorthand_Property_Mapper(),
 			new Background_Color_Property_Mapper(),
 			new Background_Image_Property_Mapper(),
@@ -71,7 +73,7 @@ class Class_Property_Mapper_Factory {
 			new Stroke_Property_Mapper(),
 			new Transition_Property_Mapper(),
 			new Box_Shadow_Property_Mapper(),
-		];
+		);
 
 		$mappers = apply_filters( 'elementor_css_converter_property_mappers', $mappers );
 
