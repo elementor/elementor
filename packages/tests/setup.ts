@@ -11,8 +11,6 @@ import { __flushAllInjections } from '@elementor/locations';
 import { __deleteStore } from '@elementor/store';
 
 jest.mock( '@elementor/http-client' );
-jest.mock( '@elementor/editor-mcp' );
-jest.mock( '@elementor-external/angie-sdk' );
 
 globalThis.structuredClone = ( value ) => JSON.parse( JSON.stringify( value ) );
 
