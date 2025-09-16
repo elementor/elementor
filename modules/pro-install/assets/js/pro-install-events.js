@@ -79,22 +79,16 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 	const upgradeButton = document.querySelector( '.button-upgrade' );
 	if ( upgradeButton ) {
-		upgradeButton.addEventListener( 'click', () => {
-			window.trackUpgradeNowClickEvent();
-		} );
+		upgradeButton.addEventListener( 'click', window.trackUpgradeNowClickEvent );
 	}
 
 	const connectButton = document.querySelector( '.elementor-license-box .button-primary[href*="elementor-connect-account"]' );
 	if ( connectButton ) {
-		connectButton.addEventListener( 'click', () => {
-			window.trackConnectAccountEvent();
-		} );
+		connectButton.addEventListener( 'click', window.trackConnectAccountEvent );
 	}
 
 	const proInstallButton = document.querySelector( '.elementor-license-box .button-primary[href*="elementor_do_pro_install"]' );
 	if ( proInstallButton ) {
-		proInstallButton.addEventListener( 'click', () => {
-			window.trackProInstallEvent();
-		} );
+		proInstallButton.addEventListener( 'click', window.trackProInstallEvent );
 	}
 } );
