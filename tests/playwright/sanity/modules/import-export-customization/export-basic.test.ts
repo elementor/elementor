@@ -1,15 +1,7 @@
-import { parallelTest as test } from '../../../parallelTest';
 import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { promises as fs } from 'fs';
-import * as path from 'path';
 import { setupCompleteTestData, cleanupCreatedItems, CreatedItems } from './utils/test-seeders';
-
-async function verifyZipStructure( zipPath: string ) {
-	// Check if file exists and has content
-	const stats = await fs.stat( zipPath );
-	expect( stats.size ).toBeGreaterThan( 0 );
-}
 
 test.describe( 'Import Export Customization - Basic Export', () => {
 	let wpAdminPage: WpAdminPage;
@@ -18,10 +10,8 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 	test.beforeEach( async ( { page, apiRequests } ) => {
 		wpAdminPage = new WpAdminPage( page, test.info(), apiRequests );
 
-		// Login to WordPress admin
 		await wpAdminPage.login();
 
-		// Setup comprehensive test data and store created items
 		createdItems = await setupCompleteTestData( page, test.info(), apiRequests );
 	} );
 
@@ -30,96 +20,76 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 		await apiRequests.cleanUpTestPages( page.request );
 	} );
 
-	test.only( 'should export kit with default settings', async ( { page } ) => {
-		// Navigate to export page
+	test.only( 'should complete full export process with progress and summary', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export-customization' );
 		await page.waitForLoadState( 'networkidle' );
 
-		// Fill kit information
 		await page.fill( 'input[placeholder="Type name here..."]', 'test-kit' );
 		await page.fill( 'textarea[placeholder="Type description here..."]', 'Test Description' );
 
-		// Start download
-		const downloadPromise = page.waitForEvent( 'download' );
 		await page.click( 'button:has-text("Export as .zip")' );
-		const download = await downloadPromise;
 
-		// Verify download started
-		expect( download.suggestedFilename() ).toBe( 'test-kit.zip' );
+		await page.waitForURL( /.*export-customization\/process.*/ );
 
-		// Save the file to a specific location for easy access
-		const downloadsDir = path.join( __dirname, '../../../../downloads' );
-		await fs.mkdir( downloadsDir, { recursive: true } );
+		await expect( page.locator( 'text=Setting up your website template...' ) ).toBeVisible();
+		await expect( page.locator( 'text=This usually takes a few moments.' ) ).toBeVisible();
+		await expect( page.locator( 'text=Don\'t close this window until the process is finished.' ) ).toBeVisible();
 
-		const downloadPath = path.join( downloadsDir, 'test-kit.zip' );
-		await download.saveAs( downloadPath );
+		await page.waitForURL( /.*export-customization\/complete.*/, { timeout: 30000 } );
 
-		// Verify file exists and has content
-		const stats = await fs.stat( downloadPath );
-		expect( stats.size ).toBeGreaterThan( 0 );
+		await expect( page.locator( 'text=Your .zip file is ready' ) ).toBeVisible();
+		await expect( page.locator( 'text=Once the download is complete, you can upload it to be used for other sites.' ) ).toBeVisible();
+
+		await expect( page.locator( 'text=What\'s included:' ) ).toBeVisible();
+
+		await page.pause()
+		const contentSection = page.locator( '[data-testid="summary_section_content"]' );
+		await expect( contentSection ).toBeVisible();
+		await expect( contentSection.locator( 'text=13 Pages | 2 Floating Elements | 3 Posts | 3 Taxonomies' ) ).toBeVisible();
+		await expect( contentSection.locator( 'text=13 Pages' ) ).toBeVisible();
+		await expect( contentSection.locator( 'text=2 Floating Elements' ) ).toBeVisible();
+		await expect( contentSection.locator( 'text=3 Posts' ) ).toBeVisible();
+		await expect( contentSection.locator( 'text=3 Taxonomies' ) ).toBeVisible();
+
+		const templatesSection = page.locator( '[data-testid="summary_section_templates"]' );
+		await expect( templatesSection ).toBeVisible();
+		await expect( templatesSection.locator( 'text=Templates' ) ).toBeVisible();
+		await expect( templatesSection.locator( 'text=No templates exported' ) ).toBeVisible();
+
+		const settingsSection = page.locator( '[data-testid="summary_section_settings"]' );
+		await expect( settingsSection ).toBeVisible();
+		await expect( settingsSection.locator( 'text=Site settings' ) ).toBeVisible();
+		await expect( settingsSection.locator( 'text=Theme' ) ).toBeVisible();
+		await expect( settingsSection.locator( 'text=Global Colors' ) ).toBeVisible();
+		await expect( settingsSection.locator( 'text=Global Fonts' ) ).toBeVisible();
+		await expect( settingsSection.locator( 'text=Theme Style Settings' ) ).toBeVisible();
+		await expect( settingsSection.locator( 'text=General Settings' ) ).toBeVisible();
+		await expect( settingsSection.locator( 'text=Experiments' ) ).toBeVisible();
+
+		const pluginsSection = page.locator( '[data-testid="summary_section_plugins"]' );
+		await expect( pluginsSection ).toBeVisible();
+		await expect( pluginsSection.locator( 'text=Plugins' ) ).toBeVisible();
+		await expect( pluginsSection.locator( 'text=Elementor' ) ).toBeVisible();
+		await expect( pluginsSection.locator( 'text=Hello Dolly' ) ).toBeVisible();
+		await expect( pluginsSection.locator( 'text=WordPress Importer' ) ).toBeVisible();
+
+		await expect( page.locator( 'text=Is the automatic download not starting?' ) ).toBeVisible();
+		await expect( page.locator( 'text=Download manually.' ) ).toBeVisible();
+
+		await expect( page.locator( '[data-testid="done-button"]' ) ).toBeVisible();
 
 		await page.pause()
 	} );
 
 	test( 'should validate required kit name field', async ( { page } ) => {
-		// Navigate to export page
 		await page.goto( '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export-customization' );
 		await page.waitForLoadState( 'networkidle' );
 
-		// Try to export without kit name
-		await page.click( 'button:has-text("Export as .zip")' );
+		const exportButton = page.locator( 'button:has-text("Export as .zip")' );
+		await expect( exportButton ).toBeDisabled();
 
-		// Verify validation error is shown
-		await expect( page.locator( 'text=Website template name is required' ) ).toBeVisible();
-	} );
-
-	test( 'should export with all default sections selected', async ( { page } ) => {
-		// Navigate to export page
-		await page.goto( '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export-customization' );
-		await page.waitForLoadState( 'networkidle' );
-
-		// Verify all sections are selected by default
-		await expect( page.locator( '[data-testid="content-section"] input[type="checkbox"]' ) ).toBeChecked();
-		await expect( page.locator( '[data-testid="settings-section"] input[type="checkbox"]' ) ).toBeChecked();
-		await expect( page.locator( '[data-testid="plugins-section"] input[type="checkbox"]' ) ).toBeChecked();
-
-		// Fill kit information
-		await page.fill( 'input[placeholder="Type name here..."]', 'Default Sections Kit' );
-
-		// Start download
-		const downloadPromise = page.waitForEvent( 'download' );
-		await page.click( 'button:has-text("Export as .zip")' );
-		const download = await downloadPromise;
-
-		// Verify download completed
-		const downloadPath = await download.path();
-		expect( downloadPath ).toBeTruthy();
-
-		// Verify ZIP file structure
-		await verifyZipStructure( downloadPath );
-	} );
-
-	test( 'should show export progress indicator', async ( { page } ) => {
-		// Navigate to export page
-		await page.goto( '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export-customization' );
-		await page.waitForLoadState( 'networkidle' );
-
-		// Fill kit information
-		await page.fill( 'input[placeholder="Type name here..."]', 'Progress Test Kit' );
-
-		// Start export and wait for progress indicator
-		await page.click( 'button:has-text("Export as .zip")' );
-
-		// Verify progress indicator is shown
-		await expect( page.locator( '[data-testid="export-progress"]' ) ).toBeVisible();
-		await expect( page.locator( 'text=Exporting...' ) ).toBeVisible();
-
-		// Wait for download to complete
-		// const downloadPromise = page.waitForEvent( 'download' );
-		// const download = await downloadPromise;
-
-		// Verify progress indicator is hidden after completion
-		await expect( page.locator( '[data-testid="export-progress"]' ) ).not.toBeVisible();
+		await page.fill( 'input[placeholder="Type name here..."]', 'test-kit' );
+		await expect( exportButton ).toBeEnabled();
 	} );
 } );
 

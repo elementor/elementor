@@ -24,29 +24,24 @@ export async function setupCompleteTestData( page: Page, testInfo: TestInfo, api
 		elementorPages: [],
 	};
 
-	// Create pages
 	createdItems.pages = await createSampleContent( apiRequests, request, 'pages', [
 		{ title: 'Home Page', content: 'Welcome to our website' },
 		{ title: 'About Page', content: 'Learn more about us' },
 		{ title: 'Contact Page', content: 'Get in touch with us' },
 	] );
 
-	// Create posts
 	createdItems.posts = await createSampleContent( apiRequests, request, 'posts', [
 		{ title: 'Blog Post 1', content: 'First blog post content' },
 		{ title: 'Blog Post 2', content: 'Second blog post content' },
 	] );
 
-	// Create Elementor content using custom page template
 	const elementorPageId = await createElementorContent( page, testInfo, apiRequests );
 	createdItems.elementorPages.push( { id: elementorPageId } );
 
-	// Create taxonomies
 	const taxonomies = await createTaxonomies( apiRequests, request );
 	createdItems.categories.push( ...taxonomies.categories );
 	createdItems.tags.push( ...taxonomies.tags );
 
-	// Create navigation menu
 	const navMenu = await createNavigationMenu( apiRequests, request );
 	createdItems.menus.push( navMenu );
 
@@ -85,13 +80,11 @@ export async function createElementorContent( page: Page, testInfo: TestInfo, ap
 }
 
 export async function createTaxonomies( apiRequests: ApiRequests, request: APIRequestContext ) {
-	// Create categories
 	const categoryId = await apiRequests.create( request, 'categories', {
 		name: 'Test Category',
 		slug: 'test-category',
 	} as Post );
 
-	// Create tags
 	const tagId = await apiRequests.create( request, 'tags', {
 		name: 'Test Tag',
 		slug: 'test-tag',
@@ -104,7 +97,6 @@ export async function createTaxonomies( apiRequests: ApiRequests, request: APIRe
 }
 
 export async function createNavigationMenu( apiRequests: ApiRequests, request: APIRequestContext ) {
-	// Create menu
 	const menuId = await apiRequests.create( request, 'menus', { name: 'Test Menu' } as Post );
 
 	return { id: menuId, name: 'Test Menu' };
@@ -115,12 +107,10 @@ export async function cleanupCreatedItems( apiRequests: ApiRequests, request: AP
 		return;
 	}
 
-	// Delete menus
 	for ( const menu of createdItems.menus || [] ) {
 		await apiRequests.delete( request, 'menus', menu.id );
 	}
 
-	// Delete taxonomies
 	for ( const category of createdItems.categories || [] ) {
 		await apiRequests.delete( request, 'categories', category.id );
 	}
@@ -129,7 +119,6 @@ export async function cleanupCreatedItems( apiRequests: ApiRequests, request: AP
 		await apiRequests.delete( request, 'tags', tag.id );
 	}
 
-	// Delete pages and posts
 	for ( const page of createdItems.pages || [] ) {
 		await apiRequests.delete( request, 'pages', page.id );
 	}
@@ -138,7 +127,6 @@ export async function cleanupCreatedItems( apiRequests: ApiRequests, request: AP
 		await apiRequests.delete( request, 'posts', post.id );
 	}
 
-	// Delete Elementor pages
 	for ( const elementorPage of createdItems.elementorPages || [] ) {
 		await apiRequests.delete( request, 'pages', elementorPage.id );
 	}
