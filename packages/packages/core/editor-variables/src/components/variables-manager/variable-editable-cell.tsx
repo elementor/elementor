@@ -28,6 +28,7 @@ export const VariableEditableCell = React.memo(
 		autoEdit = false,
 		onRowRef,
 		onAutoEditComplete,
+		gap,
 		fieldType,
 	}: VariableEditableCellProps ) => {
 		const [ value, setValue ] = useState( initialValue );
@@ -135,21 +136,3 @@ export const VariableEditableCell = React.memo(
 		);
 	}
 );
-
-	return (
-		<Stack
-			ref={ rowRef }
-			direction="row"
-			alignItems="center"
-			gap={ gap }
-			onDoubleClick={ handleDoubleClick }
-			onKeyDown={ handleKeyDown }
-			tabIndex={ 0 }
-			role="button"
-			aria-label="Double click or press Space to edit"
-		>
-			{ prefixElement }
-			{ children }
-		</Stack>
-	);
-};
