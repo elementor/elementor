@@ -1,4 +1,3 @@
-// --- Upgrade Now ---
 window.trackUpgradeNowClickEvent = function() {
 	if ( ! window.elementorCommon?.config?.experimentalFeatures?.editor_events ) {
 		return;
@@ -18,7 +17,6 @@ window.trackUpgradeNowClickEvent = function() {
 	dispatchEvent?.( eventName, eventData );
 };
 
-// --- Connect Account ---
 window.trackConnectAccountEvent = function() {
 	if ( ! window.elementorCommon?.config?.experimentalFeatures?.editor_events ) {
 		return;
@@ -38,7 +36,6 @@ window.trackConnectAccountEvent = function() {
 	dispatchEvent?.( eventName, eventData );
 };
 
-// --- Open Connect Page ---
 window.trackOpenConnectPageEvent = function() {
 	if ( ! window.elementorCommon?.config?.experimentalFeatures?.editor_events ) {
 		return;
@@ -58,7 +55,6 @@ window.trackOpenConnectPageEvent = function() {
 	dispatchEvent?.( eventName, eventData );
 };
 
-// --- Pro Install ---
 window.trackProInstallEvent = function() {
 	if ( ! window.elementorCommon?.config?.experimentalFeatures?.editor_events ) {
 		return;
@@ -78,12 +74,9 @@ window.trackProInstallEvent = function() {
 	dispatchEvent?.( eventName, eventData );
 };
 
-// --- Attach handlers ---
 document.addEventListener( 'DOMContentLoaded', () => {
-	// Page load event
 	window.trackOpenConnectPageEvent();
 
-	// Upgrade button click
 	const upgradeButton = document.querySelector( '.button-upgrade' );
 	if ( upgradeButton ) {
 		upgradeButton.addEventListener( 'click', () => {
@@ -91,7 +84,6 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		} );
 	}
 
-	// Connect button click
 	const connectButton = document.querySelector( '.elementor-license-box .button-primary[href*="elementor-connect-account"]' );
 	if ( connectButton ) {
 		connectButton.addEventListener( 'click', () => {
@@ -99,7 +91,6 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		} );
 	}
 
-	// Pro install / activate button click
 	const proInstallButton = document.querySelector( '.elementor-license-box .button-primary[href*="elementor_do_pro_install"]' );
 	if ( proInstallButton ) {
 		proInstallButton.addEventListener( 'click', () => {
