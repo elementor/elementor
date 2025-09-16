@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { __ } from '@wordpress/i18n';
 
 import { createControl } from '../create-control';
 import { SelectControl, type SelectOption } from './select-control';
@@ -16,21 +15,12 @@ const getOffCanvasElements = () => {
 		`[data-elementor-id="${ documentId }"] .elementor-widget-off-canvas.elementor-element-edit-mode`
 	);
 
-	const result = Array.from( offCanvasElements as unknown as HTMLElement[] ).map( ( offCanvasElement ) => {
+	return Array.from( offCanvasElements as unknown as HTMLElement[] ).map( ( offCanvasElement ) => {
 		return {
 			label: offCanvasElement.querySelector( '.e-off-canvas' )?.getAttribute( 'aria-label' ) ?? '',
 			value: offCanvasElement.dataset.id,
 		} as SelectOption;
 	} );
-
-	return [
-		{
-			label: __( 'Select a widget', 'elementor' ),
-			value: 'select',
-			disabled: true,
-		},
-		...result,
-	];
 };
 
 const collectionMethods = {
