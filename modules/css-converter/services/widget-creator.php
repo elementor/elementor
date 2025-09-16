@@ -7,10 +7,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Plugin;
 use Elementor\Core\Base\Document;
+use Elementor\Modules\CssConverter\Services\Widget_Hierarchy_Processor;
+use Elementor\Modules\CssConverter\Services\Widget_Error_Handler;
 
 class Widget_Creator {
 	private $creation_stats;
 	private $error_log;
+	private $hierarchy_processor;
+	private $error_handler;
 
 	public function __construct() {
 		$this->creation_stats = [
@@ -22,6 +26,8 @@ class Widget_Creator {
 			'warnings' => [],
 		];
 		$this->error_log = [];
+		$this->hierarchy_processor = new Widget_Hierarchy_Processor();
+		$this->error_handler = new Widget_Error_Handler();
 	}
 
 	public function create_widgets( $styled_widgets, $css_processing_result, $options = [] ) {
@@ -49,11 +55,15 @@ class Widget_Creator {
 			$document = $this->get_elementor_document( $post_id );
 
 			// Step 5: Process widgets in dependency order (Parent → Children)
-			$elementor_elements = $this->process_widgets_hierarchically( $styled_widgets );
+			$hierarchy_result = $this->hierarchy_processor->process_widget_hierarchy( $styled_widgets );
+			$elementor_elements = $this->convert_widgets_to_elementor_format( $hierarchy_result['widgets'] );
 
 			// Step 6: Save to Elementor document in draft mode (HVV requirement)
 			$this->save_to_document( $document, $elementor_elements );
 
+			// Merge hierarchy processing stats
+			$this->merge_hierarchy_stats( $hierarchy_result['stats'] );
+			
 			return [
 				'success' => true,
 				'post_id' => $post_id,
@@ -62,7 +72,10 @@ class Widget_Creator {
 				'global_classes_created' => $this->creation_stats['global_classes_created'],
 				'variables_created' => $this->creation_stats['variables_created'],
 				'stats' => $this->creation_stats,
+				'hierarchy_stats' => $hierarchy_result['stats'],
 				'errors' => $this->error_log,
+				'hierarchy_errors' => $hierarchy_result['errors'],
+				'error_report' => $this->error_handler->generate_error_report(),
 			];
 
 		} catch ( \Exception $e ) {
@@ -196,18 +209,21 @@ class Widget_Creator {
 		return $document;
 	}
 
-	private function process_widgets_hierarchically( $styled_widgets ) {
-		// Process widgets in hierarchical order: parents first, then children
+	private function convert_widgets_to_elementor_format( $processed_widgets ) {
+		// Convert hierarchy-processed widgets to Elementor format
 		$elementor_elements = [];
 
-		foreach ( $styled_widgets as $widget ) {
+		foreach ( $processed_widgets as $widget ) {
 			try {
 				$elementor_widget = $this->convert_widget_to_elementor_format( $widget );
 				$elementor_elements[] = $elementor_widget;
 				$this->creation_stats['widgets_created']++;
 			} catch ( \Exception $e ) {
 				// HVV: Graceful degradation - continue on widget failure
-				$this->handle_widget_creation_failure( $widget, $e );
+				$fallback_widget = $this->handle_widget_creation_failure( $widget, $e );
+				if ( $fallback_widget ) {
+					$elementor_elements[] = $fallback_widget;
+				}
 			}
 		}
 
@@ -230,9 +246,9 @@ class Widget_Creator {
 			'settings' => $this->merge_settings_with_styles( $settings, $applied_styles ),
 		];
 
-		// Handle children for container widgets
-		if ( ! empty( $widget['children'] ) ) {
-			$elementor_widget['elements'] = $this->process_widget_children( $widget['children'] );
+		// Handle children for container widgets (already processed by hierarchy processor)
+		if ( ! empty( $widget['elements'] ) ) {
+			$elementor_widget['elements'] = $this->convert_widgets_to_elementor_format( $widget['elements'] );
 		}
 
 		return $elementor_widget;
@@ -307,30 +323,25 @@ class Widget_Creator {
 	}
 
 	private function handle_widget_creation_failure( $widget, $exception ) {
-		// HVV: Graceful degradation strategy
+		// HVV: Graceful degradation strategy using error handler
 		$this->creation_stats['widgets_failed']++;
 		
 		$error_data = [
-			'widget_type' => $widget['widget_type'] ?? 'unknown',
-			'original_tag' => $widget['original_tag'] ?? 'unknown',
-			'error' => $exception->getMessage(),
-			'fallback_strategy' => 'html_widget',
+			'message' => $exception->getMessage(),
+			'exception' => $exception,
+		];
+		
+		$context = [
+			'widget' => $widget,
+			'operation' => 'widget_creation',
 		];
 
-		$this->error_log[] = $error_data;
-		$this->creation_stats['errors'][] = $error_data;
-
-		// Try to create HTML widget fallback
-		try {
-			$html_fallback = $this->create_html_widget_fallback( $widget );
+		// Use error handler for graceful degradation
+		$fallback_widget = $this->error_handler->handle_error( 'widget_creation_failed', $error_data, $context );
+		
+		if ( $fallback_widget ) {
 			$this->creation_stats['widgets_created']++;
-			return $html_fallback;
-		} catch ( \Exception $fallback_exception ) {
-			$this->creation_stats['errors'][] = [
-				'widget_type' => 'html_fallback',
-				'error' => $fallback_exception->getMessage(),
-				'original_error' => $exception->getMessage(),
-			];
+			return $fallback_widget;
 		}
 
 		return null;
@@ -402,6 +413,16 @@ class Widget_Creator {
 		return $this->error_log;
 	}
 
+	private function merge_hierarchy_stats( $hierarchy_stats ) {
+		// Merge hierarchy processing statistics into creation stats
+		$this->creation_stats['hierarchy_stats'] = $hierarchy_stats;
+		$this->creation_stats['total_widgets_processed'] = $hierarchy_stats['total_widgets'] ?? 0;
+		$this->creation_stats['parent_widgets'] = $hierarchy_stats['parent_widgets'] ?? 0;
+		$this->creation_stats['child_widgets'] = $hierarchy_stats['child_widgets'] ?? 0;
+		$this->creation_stats['hierarchy_depth'] = $hierarchy_stats['depth_levels'] ?? 0;
+		$this->creation_stats['hierarchy_errors'] = $hierarchy_stats['hierarchy_errors'] ?? 0;
+	}
+
 	public function reset_stats() {
 		$this->creation_stats = [
 			'widgets_created' => 0,
@@ -412,5 +433,7 @@ class Widget_Creator {
 			'warnings' => [],
 		];
 		$this->error_log = [];
+		$this->hierarchy_processor = new Widget_Hierarchy_Processor();
+		$this->error_handler = new Widget_Error_Handler();
 	}
 }
