@@ -175,9 +175,16 @@ class Dynamic_Tags_Editor_Config {
 			$control['options']
 		);
 
-		return Select_Control::bind_to( $control['name'] )
+		$select_control = Select_Control::bind_to( $control['name'] )
+			->set_placeholder( $control['placeholder'] ?? '' )
 			->set_options( $options )
-			->set_label( $control['label'] );
+			->set_label( $control['atomic_label'] ?? $control['label'] );
+
+		if ( isset( $control['collection_id'] ) ) {
+			$select_control->set_collection_id( $control['collection_id'] );
+		}
+
+		return $select_control;
 	}
 
 	/**
