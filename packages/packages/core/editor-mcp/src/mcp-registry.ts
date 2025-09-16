@@ -1,5 +1,5 @@
-import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { type z, type ZodRawShape } from '@elementor/schema';
+import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
@@ -44,7 +44,7 @@ const isAlphabet = ( str: string ): string | never => {
  */
 export const getMCPByDomain = ( namespace: string ): MCPRegistryEntry => {
 	const mcpName = `editor-${ isAlphabet( namespace ) }`;
-	// @ts-ignore: QUnit fails this
+	// @ts-expect-error: QUnit fails this
 	if ( typeof jest !== 'undefined' ) {
 		return mockMcpRegistry();
 	}
@@ -65,7 +65,9 @@ export const getMCPByDomain = ( namespace: string ): MCPRegistryEntry => {
 };
 
 export interface MCPRegistryEntry {
-	addTool: ( opts: ToolRegistrationOptions ) => void;
+	addTool: < T extends undefined | ZodRawShape = undefined, O extends undefined | ZodRawShape = undefined >(
+		opts: ToolRegistrationOptions< T, O >
+	) => void;
 	setMCPDescription: ( description: string ) => void;
 }
 
