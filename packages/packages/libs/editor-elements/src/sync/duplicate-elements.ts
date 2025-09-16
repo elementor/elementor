@@ -11,7 +11,7 @@ type DuplicateElementsParams = {
 	elementIds: string[];
 	title: string;
 	subtitle?: string;
-	onCreate?: ( duplicatedElements: DuplicatedElement[] ) => DuplicatedElement[];
+	onCreate?: ( duplicatedElements: DuplicatedElement[] ) => void;
 };
 
 type DuplicatedElement = {
@@ -60,7 +60,9 @@ export const duplicateElements = ( {
 					return acc;
 				}, [] as DuplicatedElement[] );
 
-				return { duplicatedElements: onCreate?.( duplicatedElements ) ?? duplicatedElements };
+				onCreate?.( duplicatedElements );
+
+				return { duplicatedElements };
 			},
 			undo: ( _: { elementIds: string[] }, { duplicatedElements }: DuplicatedElementsResult ) => {
 				// Delete duplicated elements in reverse order to avoid dependency issues
@@ -100,7 +102,9 @@ export const duplicateElements = ( {
 					return acc;
 				}, [] as DuplicatedElement[] );
 
-				return { duplicatedElements: onCreate?.( duplicatedElements ) ?? duplicatedElements };
+				onCreate?.( duplicatedElements );
+
+				return { duplicatedElements };
 			},
 		},
 		{
