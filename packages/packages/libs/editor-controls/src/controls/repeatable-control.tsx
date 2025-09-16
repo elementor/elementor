@@ -4,17 +4,17 @@ import { createArrayPropUtils } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 
 import { PropProvider, useBoundProp } from '../bound-prop-context';
-import { ControlRepeater, Header, Item, TooltipAddItemAction } from '../components/control-repeater';
-import { DisableItemAction } from '../components/control-repeater/actions/disable-item-action';
-import { DuplicateItemAction } from '../components/control-repeater/actions/duplicate-item-action';
-import { RemoveItemAction } from '../components/control-repeater/actions/remove-item-action';
-import { type TooltipAddItemActionProps } from '../components/control-repeater/actions/tooltip-add-item-action';
-import { EditItemPopover } from '../components/control-repeater/items/edit-item-popover';
-import { ItemsContainer } from '../components/control-repeater/items/items-container';
-import { type RepeatablePropValue } from '../components/control-repeater/types';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
 import { type CollectionPropUtil } from '../components/repeater';
+import { Header, Item, TooltipAddItemAction, UnstableRepeater } from '../components/unstable-repeater';
+import { DisableItemAction } from '../components/unstable-repeater/actions/disable-item-action';
+import { DuplicateItemAction } from '../components/unstable-repeater/actions/duplicate-item-action';
+import { RemoveItemAction } from '../components/unstable-repeater/actions/remove-item-action';
+import { type TooltipAddItemActionProps } from '../components/unstable-repeater/actions/tooltip-add-item-action';
+import { EditItemPopover } from '../components/unstable-repeater/items/edit-item-popover';
+import { ItemsContainer } from '../components/unstable-repeater/items/items-container';
+import { type RepeatablePropValue } from '../components/unstable-repeater/types';
 import { createControl } from '../create-control';
 import {
 	type ChildControlConfig,
@@ -74,7 +74,7 @@ export const RepeatableControl = createControl(
 		return (
 			<PropProvider propType={ propType } value={ value } setValue={ setValue }>
 				<RepeatableControlContext.Provider value={ contextValue }>
-					<ControlRepeater
+					<UnstableRepeater
 						initial={ childPropTypeUtil.create( initialValues || null ) }
 						propTypeUtil={ childArrayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
 					>
@@ -101,7 +101,7 @@ export const RepeatableControl = createControl(
 						<EditItemPopover>
 							<Content />
 						</EditItemPopover>
-					</ControlRepeater>
+					</UnstableRepeater>
 				</RepeatableControlContext.Provider>
 			</PropProvider>
 		);

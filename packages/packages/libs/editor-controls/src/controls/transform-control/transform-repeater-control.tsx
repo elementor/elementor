@@ -6,10 +6,16 @@ import { bindTrigger, Box, IconButton, type PopupState, Typography, usePopupStat
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
-import { ControlRepeater, Header, Item, ItemsContainer, TooltipAddItemAction } from '../../components/control-repeater';
-import { DisableItemAction } from '../../components/control-repeater/actions/disable-item-action';
-import { RemoveItemAction } from '../../components/control-repeater/actions/remove-item-action';
-import { EditItemPopover } from '../../components/control-repeater/items/edit-item-popover';
+import {
+	Header,
+	Item,
+	ItemsContainer,
+	TooltipAddItemAction,
+	UnstableRepeater,
+} from '../../components/unstable-repeater';
+import { DisableItemAction } from '../../components/unstable-repeater/actions/disable-item-action';
+import { RemoveItemAction } from '../../components/unstable-repeater/actions/remove-item-action';
+import { EditItemPopover } from '../../components/unstable-repeater/items/edit-item-popover';
 import { ControlAdornments } from '../../control-adornments/control-adornments';
 import { createControl } from '../../create-control';
 import { initialRotateValue, initialScaleValue, initialSkewValue, initialTransformValue } from './initial-values';
@@ -69,7 +75,7 @@ const Repeater = ( {
 
 	return (
 		<PropProvider { ...transformFunctionsContext }>
-			<ControlRepeater
+			<UnstableRepeater
 				initial={ getInitialValue() ?? initialTransformValue }
 				propTypeUtil={ transformFunctionsPropTypeUtil }
 			>
@@ -101,7 +107,7 @@ const Repeater = ( {
 				<EditItemPopover>
 					<TransformContent />
 				</EditItemPopover>
-			</ControlRepeater>
+			</UnstableRepeater>
 		</PropProvider>
 	);
 };

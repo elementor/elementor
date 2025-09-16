@@ -20,9 +20,9 @@ import { __ } from '@wordpress/i18n';
 import { type SetValueMeta } from '../bound-prop-context';
 import { ControlAdornments } from '../control-adornments/control-adornments';
 import { useSyncExternalState } from '../hooks/use-sync-external-state';
-import { RepeaterItemIconSlot, RepeaterItemLabelSlot } from './control-repeater/locations';
 import { SectionContent } from './section-content';
 import { SortableItem, SortableProvider } from './sortable';
+import { RepeaterItemIconSlot, RepeaterItemLabelSlot } from './unstable-repeater/locations';
 
 const SIZE = 'tiny';
 

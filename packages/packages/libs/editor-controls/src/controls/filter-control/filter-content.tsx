@@ -10,9 +10,9 @@ import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
 import { ControlFormLabel } from '../../components/control-form-label';
-import { useRepeaterContext } from '../../components/control-repeater/context/repeater-context';
 import { PopoverContent } from '../../components/popover-content';
 import { PopoverGridContainer } from '../../components/popover-grid-container';
+import { useRepeaterContext } from '../../components/unstable-repeater/context/repeater-context';
 import { SelectControl } from '../select-control';
 import { type FilterFunction } from './configs';
 import { useFilterConfig } from './context/filter-config-context';
