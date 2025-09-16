@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom';
-
 module.exports = {
 	verbose: true,
 	rootDir: __dirname,

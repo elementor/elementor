@@ -1,5 +1,4 @@
 import { AngieMcpSdk } from '@elementor-external/angie-sdk';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 import { activateMcpRegistration } from './mcp-registry';
 
@@ -7,7 +6,7 @@ let sdk: AngieMcpSdk;
 
 const getSDK = () => {
 	// @ts-ignore: QUnit fails this
-	if ( typeof jest !== 'undefined' ) {
+	if ( typeof globalThis.jest !== 'undefined' ) {
 		return {} as unknown as AngieMcpSdk;
 	}
 	if ( ! sdk ) {
@@ -16,17 +15,12 @@ const getSDK = () => {
 	return sdk;
 };
 
-export async function init() {
-	if ( isExperimentActive( 'editor_mcp' ) ) {
-		await getSDK().waitForReady();
-	}
+export function init() {
+	return getSDK().waitForReady();
 }
 
-export async function startMCPServer() {
-	if ( isExperimentActive( 'editor_mcp' ) ) {
-		await getSDK().waitForReady();
-		await activateMcpRegistration( sdk );
-	}
+export function startMCPServer() {
+	return getSDK().waitForReady().then(() => activateMcpRegistration(sdk));
 }
 
 document.addEventListener(

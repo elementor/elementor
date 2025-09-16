@@ -1,18 +1,18 @@
 {
   "name": "@elementor/editor-mcp",
-  "description": "Elementor Editor V4 MCP",
   "version": "3.33.0",
-  "private": true,
+  "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
   "license": "GPL-3.0-or-later",
-  "main": "dist/index.ts",
+  "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.ts"
+      "require": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -27,6 +27,13 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "README.md",
+    "CHANGELOG.md",
+    "/dist",
+    "/src",
+    "!**/__tests__"
+  ],
   "scripts": {
     "build": "tsup --config=../../tsup.build.ts",
     "dev": "tsup --config=../../tsup.dev.ts"

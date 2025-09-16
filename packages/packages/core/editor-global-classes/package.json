@@ -5,7 +5,7 @@
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
   "license": "GPL-3.0-or-later",
-  "main": "dist/index.js",
+  "main": "dist/index.ts",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
