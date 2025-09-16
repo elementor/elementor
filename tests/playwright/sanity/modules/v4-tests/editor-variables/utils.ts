@@ -99,9 +99,16 @@ export const saveAndExitVariableManager = async ( page: Page, shouldSave: boolea
 
 export const deleteAllVariables = async ( page: Page ) => {
 	await openVariableManager( page, 'Typography', 'text-color' );
-	const allVariablesLocators = ( await page.locator( 'tbody' ).locator( 'tr' ).all() ).reverse();
-	for ( const variableLocator of allVariablesLocators ) {
-		await deleteVariable( page, await variableLocator.getByText( /test-.*-variable/i ).textContent() );
+
+	const testVariableRows = page.locator( 'tbody tr' ).filter( { hasText: /test-.*-variable/i } );
+	const rowCount = await testVariableRows.count();
+
+	for ( let i = rowCount - 1; i >= 0; i-- ) {
+		const variableName = await testVariableRows.nth( i ).getByText( /test-.*-variable/i ).textContent();
+		if ( variableName ) {
+			await deleteVariable( page, variableName );
+		}
 	}
-	await saveAndExitVariableManager( page, allVariablesLocators.length > 0 );
+
+	await saveAndExitVariableManager( page, rowCount > 0 );
 };
