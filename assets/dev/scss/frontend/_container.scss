@@ -175,7 +175,7 @@
 		height: 100%;
 	}
 
-	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
+	:is( .elementor-section-wrap, [data-elementor-id] ):where:not( [data-elementor-type="elementor_component"] ) > & {
 		// Default top-level containers to be centered.
 		--margin-left: auto;
 		--margin-right: auto;
