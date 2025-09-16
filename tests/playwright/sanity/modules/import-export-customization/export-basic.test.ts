@@ -42,7 +42,6 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 
 		await expect( page.locator( 'text=What\'s included:' ) ).toBeVisible();
 
-		await page.pause()
 		const contentSection = page.locator( '[data-testid="summary_section_content"]' );
 		await expect( contentSection ).toBeVisible();
 		await expect( contentSection.locator( 'text=13 Pages | 2 Floating Elements | 3 Posts | 3 Taxonomies' ) ).toBeVisible();
@@ -77,8 +76,6 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 		await expect( page.locator( 'text=Download manually.' ) ).toBeVisible();
 
 		await expect( page.locator( '[data-testid="done-button"]' ) ).toBeVisible();
-
-		await page.pause()
 	} );
 
 	test( 'should validate required kit name field', async ( { page } ) => {

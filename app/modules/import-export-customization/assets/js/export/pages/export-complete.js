@@ -200,7 +200,7 @@ export default function ExportComplete() {
 		Object.entries( content || {} ).forEach( getSummaryParts );
 		Object.entries( wpContent || {} ).forEach( getSummaryParts );
 
-		if ( Object.keys( taxonomies ).length ) {
+		if ( Object.keys( taxonomies || {} ).length ) {
 			const allTaxonomiesSet = new Set();
 
 			Object.values( taxonomies ).forEach( ( postTypeTaxonomies ) => {

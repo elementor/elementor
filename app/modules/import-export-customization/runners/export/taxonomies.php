@@ -78,7 +78,6 @@ class Taxonomies extends Export_Runner_Base {
 
 			$data = $this->export_terms( $taxonomy );
 
-
 			if ( empty( $data ) ) {
 				continue;
 			}
