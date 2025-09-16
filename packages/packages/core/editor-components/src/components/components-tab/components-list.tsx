@@ -7,6 +7,7 @@ import { useComponents } from '../../hooks/use-components';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
+import { useEffect } from 'react';
 
 export function ComponentsList() {
 	const { components, isLoading, searchValue } = useFilteredComponents();
@@ -24,7 +25,7 @@ export function ComponentsList() {
 
 	return (
 		<List sx={ { display: 'flex', flexDirection: 'column', gap: 1, px: 2 } }>
-			{ components?.map( ( component ) => <ComponentItem key={ component.id } component={ component } /> ) }
+			{ components?.map( ( component ) => <ComponentItem key={ component?.id } component={ component } /> ) }
 		</List>
 	);
 }
@@ -126,12 +127,22 @@ const EmptySearchResult = () => {
 };
 
 const useFilteredComponents = () => {
-	const { data: components, isLoading } = useComponents();
+	// const { data: components, isLoading } = useComponents();
+	const [isLoading, setIsLoading] = React.useState(false);
+	const components = useComponents();
+	console.log('components', components );
 	const { searchValue } = useSearch();
+
+useEffect(() => {
+	setIsLoading(true);
+	if(components){
+		setIsLoading(false);
+	}
+}, [components]);
 
 	return {
 		components: components?.filter( ( component ) =>
-			component.name.toLowerCase().includes( searchValue.toLowerCase() )
+			component?.name?.toLowerCase().includes( searchValue.toLowerCase() )
 		),
 		isLoading,
 		searchValue,

@@ -10,6 +10,15 @@ type CreateComponentPayload = {
 	content: V1ElementModelProps[];
 };
 
+type UpdatePayload = {
+	items: Component[];
+	changes: {
+		added: Component[ 'id' ][];
+		deleted: Component[ 'id' ][];
+		modified: Component[ 'id' ][];
+	};
+};
+
 type GetComponentResponse = Array< Component >;
 
 export type CreateComponentResponse = {
@@ -22,6 +31,10 @@ export const apiClient = {
 			.get< HttpResponse< GetComponentResponse > >( `${ BASE_URL }` )
 			.then( ( res ) => res.data.data ),
 	create: ( payload: CreateComponentPayload ) =>
+		httpService()
+			.post< HttpResponse< CreateComponentResponse > >( `${ BASE_URL }`, payload )
+			.then( ( res ) => res.data.data ),
+	update: ( payload: UpdatePayload ) =>
 		httpService()
 			.post< HttpResponse< CreateComponentResponse > >( `${ BASE_URL }`, payload )
 			.then( ( res ) => res.data.data ),
