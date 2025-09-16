@@ -7,7 +7,7 @@ type Props = {
 	infotipProps?: Partial< InfotipProps >;
 	alertProps?: Partial< AlertProps >;
 	title?: string;
-	description?: string;
+	description?: React.ReactNode | string;
 	isEnabled?: boolean;
 };
 

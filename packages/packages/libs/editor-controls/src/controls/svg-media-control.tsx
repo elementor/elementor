@@ -3,20 +3,7 @@ import { useState } from 'react';
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import { imageSrcPropTypeUtil } from '@elementor/editor-props';
 import { UploadIcon } from '@elementor/icons';
-import {
-	Alert,
-	AlertTitle,
-	Box,
-	Button,
-	Card,
-	CardMedia,
-	CardOverlay,
-	CircularProgress,
-	Stack,
-	styled,
-	ThemeProvider,
-	Typography,
-} from '@elementor/ui';
+import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack, styled, ThemeProvider } from '@elementor/ui';
 import { type OpenOptions, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
 import { __ } from '@wordpress/i18n';
 
@@ -98,9 +85,12 @@ export const SvgMediaControl = createControl( () => {
 
 	const infotipProps = {
 		title: __( "Sorry, you can't upload that file yet.", 'elementor' ),
-		description: __(
-			'To upload them anyway, ask the site administrator to enable unfiltered file uploads.',
-			'elementor'
+		description: (
+			<>
+				{ __( 'To upload them anyway, ask the site administrator to enable unfiltered', 'elementor' ) }
+				<br />
+				{ __( 'file uploads.', 'elementor' ) }
+			</>
 		),
 		isEnabled: ! canManageOptions,
 	};
