@@ -59,7 +59,7 @@ describe( 'VariableEditableCell Error Display', () => {
 			},
 			{
 				reason: 'variable name exceeds maximum length',
-				value: 'a'.repeat( 51 ), 
+				value: 'a'.repeat( 51 ),
 				message: ERROR_MESSAGES.VARIABLE_LABEL_MAX_LENGTH,
 			},
 		] )( 'should display error message when $reason', ( { value, message } ) => {
