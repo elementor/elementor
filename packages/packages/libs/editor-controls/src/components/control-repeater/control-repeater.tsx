@@ -5,7 +5,7 @@ import { SectionContent } from '../section-content';
 import { RepeaterContextProvider } from './context/repeater-context';
 import { type RepeatablePropValue } from './types';
 
-export const UnstableRepeater = < T extends RepeatablePropValue >( {
+export const ControlRepeater = < T extends RepeatablePropValue >( {
 	children,
 	initial,
 	propTypeUtil,
