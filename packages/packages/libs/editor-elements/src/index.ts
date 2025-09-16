@@ -4,10 +4,9 @@ export type { V1Element, V1ElementModelProps, V1ElementSettingsProps, V1ElementC
 
 // hooks
 export { useElementSetting, useElementSettings } from './hooks/use-element-setting';
-export { useElementType } from './hooks/use-element-type';
 export { useSelectedElement } from './hooks/use-selected-element';
 export { useParentElement } from './hooks/use-parent-element';
-export { useElementChildren, type ElementChildren } from './hooks/use-element-children';
+export { useElementChildren, type ElementChildren, type ElementModel } from './hooks/use-element-children';
 export { useElementEditorSettings } from './hooks/use-element-editor-settings';
 
 // utils
@@ -31,7 +30,9 @@ export {
 export { deleteElement } from './sync/delete-element';
 export { removeElements } from './sync/remove-elements';
 export { getContainer, selectElement } from './sync/get-container';
+export { getElementType } from './sync/get-element-type';
 export { getElementSetting, getElementSettings } from './sync/get-element-setting';
+export { getElementEditorSettings } from './sync/get-element-editor-settings';
 export { getElementStyles } from './sync/get-element-styles';
 export { getElementLabel } from './sync/get-element-label';
 export { getElements } from './sync/get-elements';

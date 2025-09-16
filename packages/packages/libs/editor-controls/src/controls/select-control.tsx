@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { stringPropTypeUtil, type StringPropValue } from '@elementor/editor-props';
 import { MenuListItem } from '@elementor/editor-ui';
-import { Select, type SelectChangeEvent, Typography } from '@elementor/ui';
+import { Select, type SelectChangeEvent, type SelectProps, Typography } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
@@ -13,12 +13,12 @@ export type SelectOption = {
 	disabled?: boolean;
 };
 
-type Props = {
+type SelectControlProps = {
 	options: SelectOption[];
 	onChange?: ( newValue: string | null, previousValue: string | null | undefined ) => void;
+	MenuProps?: SelectProps[ 'MenuProps' ];
 };
-
-export const SelectControl = createControl( ( { options, onChange }: Props ) => {
+export const SelectControl = createControl( ( { options, onChange, MenuProps }: SelectControlProps ) => {
 	const { value, setValue, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
 	const handleChange = ( event: SelectChangeEvent< StringPropValue[ 'value' ] > ) => {
 		const newValue = event.target.value || null;
@@ -26,6 +26,7 @@ export const SelectControl = createControl( ( { options, onChange }: Props ) => 
 		onChange?.( newValue, value );
 		setValue( newValue );
 	};
+	const isDisabled = disabled || options.length === 0;
 
 	return (
 		<ControlActions>
@@ -33,6 +34,7 @@ export const SelectControl = createControl( ( { options, onChange }: Props ) => 
 				sx={ { overflow: 'hidden' } }
 				displayEmpty
 				size="tiny"
+				MenuProps={ MenuProps }
 				renderValue={ ( selectedValue: string | null ) => {
 					const findOptionByValue = ( searchValue: string | null ) =>
 						options.find( ( opt ) => opt.value === searchValue );
@@ -55,7 +57,7 @@ export const SelectControl = createControl( ( { options, onChange }: Props ) => 
 				} }
 				value={ value ?? '' }
 				onChange={ handleChange }
-				disabled={ disabled }
+				disabled={ isDisabled }
 				fullWidth
 			>
 				{ options.map( ( { label, ...props } ) => (
