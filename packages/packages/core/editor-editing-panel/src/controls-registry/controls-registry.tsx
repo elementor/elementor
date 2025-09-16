@@ -13,6 +13,7 @@ import {
 	TextAreaControl,
 	TextControl,
 	UrlControl,
+	ToggleControl,
 } from '@elementor/editor-controls';
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
@@ -50,6 +51,7 @@ const controlTypes = {
 	number: { component: NumberControl, layout: 'two-columns', propTypeUtil: numberPropTypeUtil },
 	repeatable: { component: RepeatableControl, layout: 'full', propTypeUtil: undefined },
 	'key-value': { component: KeyValueControl, layout: 'full', propTypeUtil: keyValuePropTypeUtil },
+	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

@@ -76,11 +76,15 @@ class Dynamic_Tags_Schemas {
 					->default( $control['default'] ?? null );
 
 			case 'switcher':
-			case 'choose':
 				$default = $control['default'];
 
 				return Boolean_Prop_Type::make()
 					->default( 'yes' === $default || true === $default );
+
+			case 'choose':
+				return String_Prop_Type::make()
+					->default( $control['default'] ?? null )
+					->enum( array_keys( $control['options'] ?? [] ) );
 
 			case 'query':
 				return Query_Prop_Type::make()

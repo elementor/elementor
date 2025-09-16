@@ -6,12 +6,32 @@ import { useBoundProp } from '../bound-prop-context';
 import { ControlToggleButtonGroup, type ToggleButtonGroupItem } from '../components/control-toggle-button-group';
 import { createControl } from '../create-control';
 
+type PhpOption = {
+	value: string;
+	label: string;
+	showTooltip?: boolean;
+	exclusive?: boolean;
+};
+
+const convertPhpOptionsToToggleItems = (
+	phpOptions: PhpOption[]
+): Array< ToggleButtonGroupItem< string > & { exclusive?: boolean } > => {
+	return phpOptions.map( ( option ) => ( {
+		value: option.value,
+		label: option.label,
+		renderContent: () => option.label,
+		showTooltip: option.showTooltip,
+		exclusive: option.exclusive,
+	} ) );
+};
+
 export type ToggleControlProps< T extends PropValue > = {
 	options: Array< ToggleButtonGroupItem< T > & { exclusive?: boolean } >;
 	fullWidth?: boolean;
 	size?: ToggleButtonProps[ 'size' ];
 	exclusive?: boolean;
 	maxItems?: number;
+	convertOptions?: boolean;
 };
 
 export const ToggleControl = createControl(
@@ -21,10 +41,17 @@ export const ToggleControl = createControl(
 		size = 'tiny',
 		exclusive = true,
 		maxItems,
+		convertOptions = false,
 	}: ToggleControlProps< StringPropValue[ 'value' ] > ) => {
 		const { value, setValue, placeholder, disabled } = useBoundProp( stringPropTypeUtil );
 
-		const exclusiveValues = options.filter( ( option ) => option.exclusive ).map( ( option ) => option.value );
+		const processedOptions = convertOptions
+			? convertPhpOptionsToToggleItems( options as unknown as PhpOption[] )
+			: options;
+
+		const exclusiveValues = processedOptions
+			.filter( ( option ) => option.exclusive )
+			.map( ( option ) => option.value );
 
 		const handleNonExclusiveToggle = ( selectedValues: StringPropValue[ 'value' ][] ) => {
 			const newSelectedValue = selectedValues[ selectedValues.length - 1 ];
@@ -38,7 +65,7 @@ export const ToggleControl = createControl(
 		};
 
 		const toggleButtonGroupProps = {
-			items: options,
+			items: processedOptions,
 			maxItems,
 			fullWidth,
 			size,
