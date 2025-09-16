@@ -86,7 +86,6 @@ jest.mock( '../variables-manager-table', () => {
 				aria-label="Variables Table"
 				tabIndex={ 0 }
 				onClick={ () => {
-					// Simulate a change when clicking the grid
 					props.onChange( { 'var-1': { label: 'Changed', value: 'new value', type: 'color' } } );
 				} }
 				onKeyDown={ ( event ) => {
@@ -239,11 +238,9 @@ describe( 'VariablesManagerPanel', () => {
 		// Act
 		render( <VariablesManagerPanel /> );
 
-		// Make changes to trigger isDirty
 		await screen.findByRole( 'grid', { name: 'Variables Table' } );
 		fireEvent.click( screen.getByRole( 'grid', { name: 'Variables Table' } ) );
 
-		// Try to close the panel
 		fireEvent.click( screen.getByLabelText( 'Close' ) );
 
 		// Assert

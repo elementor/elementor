@@ -151,13 +151,19 @@ const DynamicSettings = ( { controls, tagName }: { controls: DynamicTag[ 'atomic
 
 	return (
 		<>
-			<Tabs size="small" variant="fullWidth" { ...getTabsProps() }>
-				{ tabs.map( ( { value }, index ) => (
-					<Tab key={ index } label={ value.label } sx={ { px: 1, py: 0.5 } } { ...getTabProps( index ) } />
-				) ) }
-			</Tabs>
+			{ tabs.length > 1 && (
+				<Tabs size="small" variant="fullWidth" { ...getTabsProps() }>
+					{ tabs.map( ( { value }, index ) => (
+						<Tab
+							key={ index }
+							label={ value.label }
+							sx={ { px: 1, py: 0.5 } }
+							{ ...getTabProps( index ) }
+						/>
+					) ) }
+				</Tabs>
+			) }
 			<Divider />
-
 			{ tabs.map( ( { value }, index ) => {
 				return (
 					<TabPanel
