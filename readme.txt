@@ -348,7 +348,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.32.1 - 2025-09-16 =
+= 3.32. - 2025-09-16 =
 
 * Tweak: Disabled Load Google Fonts locally on all sites by default
 * Tweak: Moved the Load Google Fonts locally option to the Performance tab as a feature
