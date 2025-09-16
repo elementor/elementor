@@ -140,10 +140,8 @@ class Post_Query {
 			], 200 );
 		}
 
-		$excluded_types = array_merge(
-			self::FORBIDDEN_POST_TYPES,
-			$params[ self::EXCLUDED_POST_TYPE_KEYS ] ?? []
-		);
+		$excluded_types = $params[ self::EXCLUDED_POST_TYPE_KEY ];
+		$included_types = $params[ self::INCLUDED_POST_TYPE_KEY ];
 		$keys_format_map = $params[ self::POST_KEYS_CONVERSION_MAP ] ?? [];
 
 		$requested_posts_per_page = $params[ self::POSTS_PER_PAGE_KEY ] ?? null;
