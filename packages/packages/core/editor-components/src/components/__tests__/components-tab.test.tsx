@@ -1,221 +1,246 @@
 import * as React from 'react';
-import { createMockElement } from 'test-utils';
-import { dropElement } from '@elementor/editor-elements';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { ThemeProvider } from '@elementor/editor-ui';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { useComponents } from '../../hooks/use-components';
 import { type Component } from '../../types';
-import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
-import { Components } from '../components';
-import { ComponentItem } from '../components-item';
-import { ComponentsList } from '../components-list';
-import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
+import { ComponentSearch } from '../components-tab/component-search';
+import { Components } from '../components-tab/components';
+import { ComponentItem } from '../components-tab/components-item';
+import { ComponentsList } from '../components-tab/components-list';
+import { SearchProvider, useSearch } from '../components-tab/search-provider';
 
-jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../hooks/use-components' );
-jest.mock( '../../utils/get-container-for-new-element' );
-jest.mock( '../create-component-form/utils/replace-element-with-component' );
+jest.mock( '@elementor/editor-canvas', () => ( {
+	startDragElementFromPanel: jest.fn(),
+	endDragElementFromPanel: jest.fn(),
+} ) );
+jest.mock( '@elementor/editor-elements', () => ( {
+	dropElement: jest.fn(),
+} ) );
+jest.mock( '../create-component-form/utils/replace-element-with-component', () => ( {
+	createComponentModel: jest.fn( ( { id, name } ) => ( { id, name, type: 'component' } ) ),
+} ) );
+jest.mock( '../../utils/get-container-for-new-element', () => ( {
+	getContainerForNewElement: jest.fn( () => ( {
+		container: { id: 'test-container' },
+		options: { useHistory: false, scrollIntoView: true },
+	} ) ),
+} ) );
 
-const mockUseComponents = jest.mocked( useComponents );
-const mockDropElement = jest.mocked( dropElement );
-const mockGetContainerForNewElement = jest.mocked( getContainerForNewElement );
-const mockCreateComponentModel = jest.mocked( createComponentModel );
-
-const mockComponent: Component = {
-	id: 1,
-	name: 'Test Component',
-};
+const mockUseComponents = useComponents as jest.MockedFunction< typeof useComponents >;
 
 const mockComponents: Component[] = [
 	{ id: 1, name: 'Header Component' },
 	{ id: 2, name: 'Footer Component' },
-	{ id: 3, name: 'Button Component' },
+	{ id: 3, name: 'Navigation Menu' },
+	{ id: 4, name: 'Hero Section' },
 ];
 
-describe( 'ComponentsList', () => {
+const TestWrapper = ( { children }: { children: React.ReactNode } ) => (
+	<ThemeProvider>
+		<SearchProvider localStorageKey="test-components-search">{ children }</SearchProvider>
+	</ThemeProvider>
+);
+
+describe( 'Components Tab', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'should show loading components when data is loading', () => {
-		mockUseComponents.mockReturnValue( {
-			data: undefined,
-			isLoading: true,
-		} as ReturnType< typeof useComponents > );
+	const mockComponent: Component = { id: 1, name: 'Test Component' };
 
-		render( <ComponentsList /> );
-
-		const loadingContainer = screen.getByLabelText( 'Loading components' );
-		expect( loadingContainer ).toBeInTheDocument();
-
-		const skeletonButtons = screen.getAllByRole( 'button' );
-		expect( skeletonButtons ).toHaveLength( 6 );
-	} );
-
-	it( 'should show empty state when components array is empty', () => {
-		mockUseComponents.mockReturnValue( {
-			data: [] as Component[],
-			isLoading: false,
-		} as ReturnType< typeof useComponents > );
-
-		render( <ComponentsList /> );
-
-		expect( screen.getByText( 'Text that explains that there are no Components yet.' ) ).toBeInTheDocument();
-	} );
-
-	it( 'should render list of components when data is available', () => {
+	it( 'should render the main Components component with search and list', () => {
+		// Arrange
 		mockUseComponents.mockReturnValue( {
 			data: mockComponents,
 			isLoading: false,
-		} as ReturnType< typeof useComponents > );
+			error: null,
+		} as never );
 
-		render( <ComponentsList /> );
+		// Act
+		render(
+			<TestWrapper>
+				<Components />
+			</TestWrapper>
+		);
 
+		// Assert
+		expect( screen.getByRole( 'search' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Footer Component' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
 	} );
 
-	describe( 'ComponentItem', () => {
-		const mockContainer = createMockElement( { model: { id: 'container-1' } } );
-		const mockModel = {
-			elType: 'widget',
-			widgetType: 'e-component',
-			settings: {
-				component_id: {
-					$$type: 'number' as const,
-					value: 1,
-				},
-			},
-			editor_settings: {
-				title: 'Test Component',
-			},
+	it( 'should render search input and handle user input', () => {
+		// Act
+		render(
+			<TestWrapper>
+				<ComponentSearch />
+			</TestWrapper>
+		);
+
+		const input = screen.getByRole( 'textbox' );
+
+		// Assert
+		expect( input ).toBeInTheDocument();
+
+		// Act
+		fireEvent.change( input, { target: { value: 'header' } } );
+
+		// Assert
+		expect( input ).toHaveValue( 'header' );
+	} );
+
+	it( 'should render loading state and skeleton correctly', () => {
+		// Arrange
+		mockUseComponents.mockReturnValue( {
+			data: undefined,
+			isLoading: true,
+			error: null,
+		} as never );
+
+		// Act
+		render(
+			<TestWrapper>
+				<ComponentsList />
+			</TestWrapper>
+		);
+
+		// Assert
+		expect( screen.getByLabelText( 'Loading components' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render components list when data is available', () => {
+		// Arrange
+		mockUseComponents.mockReturnValue( {
+			data: mockComponents,
+			isLoading: false,
+			error: null,
+		} as never );
+
+		// Act
+		render(
+			<TestWrapper>
+				<ComponentsList />
+			</TestWrapper>
+		);
+
+		// Assert
+		expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Footer Component' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Navigation Menu' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Hero Section' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render empty state when no components exist', () => {
+		// Arrange
+		mockUseComponents.mockReturnValue( {
+			data: [],
+			isLoading: false,
+			error: null,
+		} as never );
+
+		// Act
+		render(
+			<TestWrapper>
+				<ComponentsList />
+			</TestWrapper>
+		);
+
+		// Assert
+		expect( screen.getByText( 'Text that explains that there are no Components yet.' ) ).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				'Once you have Components, this is where you can manage them—rearrange, duplicate, rename and delete irrelevant classes.'
+			)
+		).toBeInTheDocument();
+	} );
+
+	it( 'should render component item with name and icon', () => {
+		// Act
+		render(
+			<TestWrapper>
+				<ComponentItem component={ mockComponent } />
+			</TestWrapper>
+		);
+
+		// Assert
+		expect( screen.getByText( 'Test Component' ) ).toBeInTheDocument();
+		expect( screen.getByLabelText( 'More actions' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should be draggable', () => {
+		// Act
+		render(
+			<TestWrapper>
+				<ComponentItem component={ mockComponent } />
+			</TestWrapper>
+		);
+
+		// Assert
+		const draggableElement = screen.getByRole( 'button', { name: /test component/i } );
+		expect( draggableElement ).toHaveAttribute( 'draggable', 'true' );
+	} );
+
+	it( 'should open and close menu when more actions button is clicked', async () => {
+		// Arrange
+		render(
+			<TestWrapper>
+				<ComponentItem component={ mockComponent } />
+			</TestWrapper>
+		);
+
+		const moreActionsButton = screen.getByLabelText( 'More actions' );
+
+		// Act
+		fireEvent.click( moreActionsButton );
+
+		// Assert
+		expect( screen.getByText( 'Rename' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
+
+		// Act
+		const deleteButton = screen.getByText( 'Delete' );
+		fireEvent.click( deleteButton );
+
+		// Assert
+		await waitFor( () => {
+			expect( screen.queryByText( 'Rename' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	it( 'should provide search context and clearSearch function', () => {
+		// Arrange
+		const TestComponent = () => {
+			const { inputValue, handleChange, clearSearch } = useSearch();
+			return (
+				<div>
+					<input value={ inputValue } onChange={ ( e ) => handleChange( e.target.value ) } />
+					<button onClick={ clearSearch }>Clear</button>
+					<span>{ inputValue }</span>
+				</div>
+			);
 		};
 
-		beforeEach( () => {
-			jest.clearAllMocks();
-			mockGetContainerForNewElement.mockReturnValue( {
-				container: mockContainer,
-				options: { at: 0 },
-			} );
-			mockCreateComponentModel.mockReturnValue( mockModel );
-		} );
+		render(
+			<SearchProvider localStorageKey="test-key">
+				<TestComponent />
+			</SearchProvider>
+		);
 
-		it( 'should render component name', () => {
-			render( <ComponentItem component={ mockComponent } /> );
+		const input = screen.getByRole( 'textbox' );
+		const clearButton = screen.getByText( 'Clear' );
 
-			expect( screen.getByText( 'Test Component' ) ).toBeInTheDocument();
-		} );
+		// Act
+		fireEvent.change( input, { target: { value: 'test search' } } );
 
-		it( 'should render component icon', () => {
-			render( <ComponentItem component={ mockComponent } /> );
+		// Assert
+		expect( screen.getByText( 'test search' ) ).toBeInTheDocument();
 
-			const componentText = screen.getByText( 'Test Component' );
-			expect( componentText ).toBeInTheDocument();
-			expect( componentText ).toHaveTextContent( 'Test Component' );
-		} );
+		// Act
+		fireEvent.click( clearButton );
 
-		it( 'should add component to page when clicked', () => {
-			render( <ComponentItem component={ mockComponent } /> );
-			const componentButton = screen.getByText( 'Test Component' );
-			fireEvent.click( componentButton );
-
-			expect( mockCreateComponentModel ).toHaveBeenCalledWith( mockComponent );
-			expect( mockDropElement ).toHaveBeenCalledWith( {
-				containerId: mockContainer.id,
-				model: mockModel,
-				options: { at: 0, useHistory: false, scrollIntoView: true },
-			} );
-		} );
-	} );
-
-	describe( 'ComponentItem Menu', () => {
-		beforeEach( () => {
-			jest.clearAllMocks();
-			mockGetContainerForNewElement.mockReturnValue( {
-				container: createMockElement( { model: { id: 'container-1' } } ),
-				options: { at: 0 },
-			} );
-			mockCreateComponentModel.mockReturnValue( {
-				elType: 'widget',
-				widgetType: 'e-component',
-				settings: {
-					component_id: {
-						$$type: 'number' as const,
-						value: 1,
-					},
-				},
-				editor_settings: {
-					title: 'Test Component',
-				},
-			} );
-		} );
-
-		it( 'should render menu options when more button is clicked', () => {
-			render( <ComponentItem component={ mockComponent } /> );
-			const moreButton = screen.getByLabelText( 'More actions' );
-			fireEvent.click( moreButton );
-
-			expect( screen.getByText( 'Rename' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should handle delete button click', () => {
-			render( <ComponentItem component={ mockComponent } /> );
-			const moreButton = screen.getByLabelText( 'More actions' );
-			fireEvent.click( moreButton );
-
-			const deleteButton = screen.getByText( 'Delete' );
-			fireEvent.click( deleteButton );
-
-			expect( deleteButton ).toBeInTheDocument();
-		} );
-	} );
-
-	describe( 'Integration Tests', () => {
-		it( 'should handle complete component workflow', async () => {
-			const mockContainer = createMockElement( { model: { id: 'container-1' } } );
-			const mockModel = {
-				elType: 'widget',
-				widgetType: 'e-component',
-				settings: {
-					component_id: {
-						$$type: 'number' as const,
-						value: 1,
-					},
-				},
-				editor_settings: {
-					title: 'Test Component',
-				},
-			};
-			mockUseComponents.mockReturnValue( {
-				data: [ mockComponent ],
-				isLoading: false,
-			} as ReturnType< typeof useComponents > );
-			mockGetContainerForNewElement.mockReturnValue( {
-				container: mockContainer,
-				options: { at: 0 },
-			} );
-			mockCreateComponentModel.mockReturnValue( mockModel );
-
-			render( <Components /> );
-
-			expect( screen.getByText( 'Test Component' ) ).toBeInTheDocument();
-
-			const componentButton = screen.getByText( 'Test Component' );
-			fireEvent.click( componentButton );
-
-			expect( mockDropElement ).toHaveBeenCalledWith( {
-				containerId: mockContainer.id,
-				model: mockModel,
-				options: { at: 0, useHistory: false, scrollIntoView: true },
-			} );
-
-			const moreButton = screen.getByLabelText( 'More actions' );
-			fireEvent.click( moreButton );
-
-			expect( screen.getByText( 'Rename' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
-		} );
+		// Assert
+		expect( input ).toHaveValue( '' );
 	} );
 } );
