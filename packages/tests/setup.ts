@@ -1,4 +1,5 @@
 // Add JSDOM matchers.
+import '@jest/globals';
 import '@testing-library/jest-dom';
 import '@wordpress/jest-console';
 
