@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useMemo, useState } from 'react';
 import { numberPropTypeUtil, stringPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
 import { type HttpResponse, httpService } from '@elementor/http-client';
+import { SearchIcon } from '@elementor/icons';
 import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
@@ -106,7 +107,7 @@ export const QueryControl = createControl( ( props: Props ) => {
 				options={ options }
 				allowCustomValues={ allowCustomValues }
 				placeholder={ normalizedPlaceholder }
-				showStartSearchIcon={ true }
+				startAdornment={ <SearchIcon fontSize="tiny" /> }
 				value={ value?.value?.id?.value || value?.value }
 				onOptionChange={ onOptionChange }
 				onTextChange={ onTextChange }

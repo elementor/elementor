@@ -206,23 +206,18 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 	const controlProps = shouldDisablePortal
 		? { ...control.props, MenuProps: { ...( control.props?.MenuProps ?? {} ), disablePortal: true } }
 		: control.props;
-
 	const isSwitchControl = control.type === 'switch';
+	const layoutStyleProps =
+		layout === 'two-columns'
+			? {
+					display: 'grid',
+					gridTemplateColumns: isSwitchControl ? 'minmax(0, 1fr) max-content' : '1fr 1fr',
+			  }
+			: {};
 
 	return (
 		<DynamicControl bind={ control.bind }>
-			<Grid
-				container
-				gap={ 0.75 }
-				sx={
-					layout === 'two-columns'
-						? {
-								display: 'grid',
-								gridTemplateColumns: isSwitchControl ? 'minmax(0, 1fr) max-content' : '1fr 1fr',
-						  }
-						: {}
-				}
-			>
+			<Grid container gap={ 0.75 } sx={ layoutStyleProps }>
 				{ control.label ? (
 					<Grid item xs={ 12 }>
 						<ControlFormLabel>{ control.label }</ControlFormLabel>
@@ -239,10 +234,9 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 function ControlsItemsStack( { items }: { items: ControlsSection[ 'value' ][ 'items' ] } ) {
 	return (
 		<Stack p={ 2 } gap={ 2 } sx={ { overflowY: 'auto' } }>
-			{ items.map( ( item ) =>  ( item.type === 'control'
-					? <Control key={ item.value.bind } control={ item.value } />;
-					: null;
-			) ) }
+			{ items.map( ( item ) =>
+				item.type === 'control' ? <Control key={ item.value.bind } control={ item.value } /> : null
+			) }
 		</Stack>
 	);
 }

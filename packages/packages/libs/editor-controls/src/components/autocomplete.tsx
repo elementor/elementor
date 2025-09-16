@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import { SearchIcon, XIcon } from '@elementor/icons';
+import { XIcon } from '@elementor/icons';
 import {
 	Autocomplete as AutocompleteBase,
 	type AutocompleteRenderInputParams,
@@ -30,7 +30,7 @@ export type Props = {
 	allowCustomValues?: boolean;
 	placeholder?: string;
 	minInputLength?: number;
-	showStartSearchIcon?: boolean;
+	startAdornment?: React.ReactNode;
 };
 
 export const Autocomplete = forwardRef( ( props: Props, ref ) => {
@@ -42,7 +42,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 		placeholder = '',
 		minInputLength = 2,
 		value = '',
-		showStartSearchIcon = false,
+		startAdornment,
 		...restProps
 	} = props;
 
@@ -64,6 +64,8 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 			disableClearable={ true } // Disabled component's auto clear icon to use our custom one instead
 			disablePortal={ true }
 			freeSolo={ allowCustomValues }
+			openOnFocus={ false }
+			open={ ( value?.toString()?.length ?? 0 ) >= minInputLength }
 			value={ value?.toString() || '' }
 			size={ 'tiny' }
 			onChange={ ( _, newValue ) => onOptionChange( Number( newValue ) ) }
@@ -90,7 +92,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 					allowClear={ allowClear }
 					placeholder={ placeholder }
 					hasSelectedValue={ isValueFromOptions }
-					showStartSearchIcon={ showStartSearchIcon }
+					startAdornment={ startAdornment }
 				/>
 			) }
 		/>
@@ -103,14 +105,14 @@ const TextInput = ( {
 	placeholder,
 	handleChange,
 	hasSelectedValue,
-	showStartSearchIcon,
+	startAdornment,
 }: {
 	params: AutocompleteRenderInputParams;
 	allowClear: boolean;
 	handleChange: ( newValue: string | null ) => void;
 	placeholder: string;
 	hasSelectedValue: boolean;
-	showStartSearchIcon: boolean;
+	startAdornment?: React.ReactNode;
 } ) => {
 	const onChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		handleChange( event.target.value );
@@ -128,10 +130,8 @@ const TextInput = ( {
 			} }
 			InputProps={ {
 				...params.InputProps,
-				startAdornment: showStartSearchIcon ? (
-					<InputAdornment position="start">
-						<SearchIcon fontSize={ params.size } />
-					</InputAdornment>
+				startAdornment: startAdornment ? (
+					<InputAdornment position="start">{ startAdornment }</InputAdornment>
 				) : (
 					params.InputProps.startAdornment
 				),

@@ -21,6 +21,8 @@ class Manager {
 
 	const DYNAMIC_SETTING_KEY = '__dynamic__';
 
+	const CONTROL_OPTION_KEYS = [ 'id', 'label' ];
+
 	private $tags_groups = [];
 
 	private $tags_info = [];
@@ -160,22 +162,19 @@ class Manager {
 	}
 
 	private function normalize_settings( $value ) {
-		if ( is_array( $value ) && isset( $value['$$type'], $value['value'] ) ) {
+		if ( $this->is_typed_value_wrapper( $value ) ) {
 			return $this->normalize_settings( $value['value'] );
 		}
 
-		if ( is_array( $value ) && array_key_exists( 'id', $value ) ) {
-			$keys = array_keys( $value );
-			$allowed = [ 'id', 'label' ];
-			if ( empty( array_diff( $keys, $allowed ) ) ) {
-				return $this->normalize_settings( $value['id'] );
-			}
+		if ( $this->is_id_label_option( $value ) ) {
+			return $this->normalize_settings( $value['id'] );
 		}
 
 		if ( is_array( $value ) ) {
 			foreach ( $value as $k => $v ) {
 				$value[ $k ] = $this->normalize_settings( $v );
 			}
+
 			return $value;
 		}
 
@@ -184,6 +183,20 @@ class Manager {
 		}
 
 		return $value;
+	}
+
+	private function is_typed_value_wrapper( $value ) {
+		return is_array( $value ) && isset( $value['$$type'], $value['value'] );
+	}
+
+	private function is_id_label_option( $value ) {
+		if ( ! is_array( $value ) || ! array_key_exists( 'id', $value ) ) {
+			return false;
+		}
+
+		$keys = array_keys( $value );
+
+		return empty( array_diff( $keys, self::CONTROL_OPTION_KEYS ) );
 	}
 
 	/**

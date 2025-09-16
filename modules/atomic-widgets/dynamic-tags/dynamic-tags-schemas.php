@@ -99,15 +99,15 @@ class Dynamic_Tags_Schemas {
 				return null;
 		}
 
-		if ( isset( $control['condition'] ) && is_array( $control['condition'] ) ) {
-			$dependencies = $this->convert_condition_to_dependencies( $control['condition'] );
-			$prop_type->set_dependencies( $dependencies );
-		}
+		$prop_type->set_dependencies( $this->create_dependencies_from_condition( $control['condition'] ?? null ) );
 
 		return $prop_type;
 	}
 
-	private function convert_condition_to_dependencies( array $condition ): ?array {
+	private function create_dependencies_from_condition( $condition ): ?array {
+		if ( ! is_array( $condition ) || empty( $condition ) ) {
+			return null;
+		}
 		$manager = Dependency_Manager::make( Dependency_Manager::RELATION_AND );
 
 		foreach ( $condition as $raw_key => $value ) {

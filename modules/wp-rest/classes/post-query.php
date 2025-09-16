@@ -14,16 +14,16 @@ class Post_Query {
 	const NAMESPACE = 'elementor/v1';
 	const ENDPOINT = 'post';
 	const EXCLUDED_POST_TYPE_KEYS = 'excluded_post_types';
-	const ALLOWED_POST_TYPES = 'allowed_post_types';
+	const POSTS_SEARCH_FILTER_PRIORITY = 10;
+	const POSTS_SEARCH_FILTER_ACCEPTED_ARGS = 2;
 	const INCLUDED_POST_TYPE_KEY = 'included_post_types';
 	const META_QUERY_KEY = 'meta_query';
 	const IS_PUBLIC_KEY = 'is_public';
 	const POSTS_PER_PAGE_KEY = 'posts_per_page';
 	const SEARCH_TERM_KEY = 'term';
 	const POST_KEYS_CONVERSION_MAP = 'post_keys_conversion_map';
-	const MAX_COUNT_KEY = 'max_count';
 	const NONCE_KEY = 'x_wp_nonce';
-	const FORBIDDEN_POST_TYPES = [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment' ];
+	const DEFAULT_FORBIDDEN_POST_TYPES = [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment' ];
 
 	public function register( bool $override_existing_endpoints = false ): void {
 		register_rest_route( self::NAMESPACE, self::ENDPOINT, [
@@ -31,7 +31,6 @@ class Post_Query {
 				'methods' => \WP_REST_Server::READABLE,
 				'permission_callback' => fn ( \WP_REST_Request $request ) => $this->validate_access_permission( $request ),
 				'args' => $this->get_endpoint_registration_args(),
-				'sanitize_callback' => 'esc_attr',
 				'callback' => fn ( \WP_REST_Request $request ) => $this->route_wrapper( fn() => $this->get_posts( $request ) ),
 			],
 		], $override_existing_endpoints );
@@ -41,25 +40,21 @@ class Post_Query {
 	 * @param $args array{
 	 *     excluded_post_types: array,
 	 *     post_keys_conversion_map: array,
-	 *     allowed_post_types: array,
-	 *     max_count: int,
+	 *     included_post_types: array,
 	 * } The query parameters
 	 * @return array The query parameters.
 	 */
 	public static function build_query_params( array $args ): array {
 		$allowed_keys = [
 			self::EXCLUDED_POST_TYPE_KEYS,
-			self::ALLOWED_POST_TYPES,
 			self::INCLUDED_POST_TYPE_KEY,
 			self::POST_KEYS_CONVERSION_MAP,
 			self::META_QUERY_KEY,
 			self::IS_PUBLIC_KEY,
 			self::POSTS_PER_PAGE_KEY,
-			self::MAX_COUNT_KEY,
 		];
 		$keys_to_encode = [
 			self::EXCLUDED_POST_TYPE_KEYS,
-			self::ALLOWED_POST_TYPES,
 			self::INCLUDED_POST_TYPE_KEY,
 			self::POST_KEYS_CONVERSION_MAP,
 			self::META_QUERY_KEY,
@@ -99,9 +94,15 @@ class Post_Query {
 		$is_custom_search = $wp_query->get( 'custom_search' ) ?? false;
 
 		if ( $is_custom_search && ! empty( $term ) ) {
+			$escaped = esc_sql( $term );
 			$search_term .= ' AND (';
-			$search_term .= "post_title LIKE '%" . esc_sql( $term ) . "%' ";
-			$search_term .= "OR ID LIKE '%" . esc_sql( $term ) . "%')";
+			$search_term .= "post_title LIKE '%{$escaped}%'";
+			if ( ctype_digit( $term ) ) {
+				$search_term .= ' OR ID = ' . intval( $term );
+			} else {
+				$search_term .= " OR ID LIKE '%{$escaped}%'";
+			}
+			$search_term .= ')';
 		}
 
 		return $search_term;
@@ -140,8 +141,8 @@ class Post_Query {
 			], 200 );
 		}
 
-		$excluded_types = $params[ self::EXCLUDED_POST_TYPE_KEY ];
-		$included_types = $params[ self::INCLUDED_POST_TYPE_KEY ];
+		$excluded_types = $params[ self::EXCLUDED_POST_TYPE_KEYS ] ?? [];
+		$included_types = $params[ self::INCLUDED_POST_TYPE_KEY ] ?? [];
 		$keys_format_map = $params[ self::POST_KEYS_CONVERSION_MAP ] ?? [];
 
 		$requested_count = $params[ self::POSTS_PER_PAGE_KEY ] ?? 0;
@@ -151,24 +152,17 @@ class Post_Query {
 		$is_public_param = $params[ self::IS_PUBLIC_KEY ] ?? true;
 		$is_public = ! in_array( strtolower( (string) $is_public_param ), [ '0', 'false' ], true );
 
-		$post_types = new Collection( get_post_types( $is_public ? [ 'public' => true ] : [], 'object' ) );
-
-		$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types ) {
-			return ! in_array( $post_type->name, $excluded_types, true );
-		} );
-
-		$post_types = new Collection( get_post_types( [ 'public' => $is_public ], 'object' ) );
+		$post_types = new Collection( get_post_types( [ 'public' => $is_public ], 'objects' ) );
 		$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types, $included_types ) {
-			return ( empty( $excluded_types[ $post_type ] ) || ! in_array( $post_type->name, $excluded_types, true ) ) &&
+			return ! in_array( $post_type->name, $excluded_types, true ) &&
 				( empty( $included_types ) || in_array( $post_type->name, $included_types, true ) );
 		} );
-		}
 
 		$this->add_filter_to_customize_query();
 
 		$query_args = [
-			'post_type' => $post_type_slugs->all(),
-			'numberposts' => $max_count,
+			'post_type' => array_keys( $post_types->all() ),
+			'numberposts' => $post_count,
 			'suppress_filters' => false,
 			'custom_search' => true,
 			'search_term' => $term,
@@ -182,15 +176,23 @@ class Post_Query {
 
 		$this->remove_filter_to_customize_query();
 
+		// Build a name => label map for robust lookups
+		$post_type_labels = ( new Collection( $post_types->all() ) )
+			->map( function ( $pt ) { return $pt->label; } )
+			->all();
+
 		return new \WP_REST_Response( [
 			'success' => true,
 			'data' => [
 				'value' => $posts
-					->map( function ( $post ) use ( $keys_format_map, $post_types ) {
+					->map( function ( $post ) use ( $keys_format_map, $post_type_labels ) {
 						$post_object = (array) $post;
 
 						if ( isset( $post_object['post_type'] ) ) {
-							$post_object['post_type'] = $post_types->get( ( $post_object['post_type'] ) )->label;
+							$pt_name = $post_object['post_type'];
+							if ( isset( $post_type_labels[ $pt_name ] ) ) {
+								$post_object['post_type'] = $post_type_labels[ $pt_name ];
+							}
 						}
 
 						return $this->translate_keys( $post_object, $keys_format_map );
@@ -204,8 +206,8 @@ class Post_Query {
 	 * @return void
 	 */
 	private function add_filter_to_customize_query() {
-		$priority = 10;
-		$accepted_args = 2;
+		$priority = self::POSTS_SEARCH_FILTER_PRIORITY;
+		$accepted_args = self::POSTS_SEARCH_FILTER_ACCEPTED_ARGS;
 
 		add_filter( 'posts_search', [ $this, 'customize_search' ], $priority, $accepted_args );
 	}
@@ -214,8 +216,8 @@ class Post_Query {
 	 * @return void
 	 */
 	private function remove_filter_to_customize_query() {
-		$priority = 10;
-		$accepted_args = 2;
+		$priority = self::POSTS_SEARCH_FILTER_PRIORITY;
+		$accepted_args = self::POSTS_SEARCH_FILTER_ACCEPTED_ARGS;
 
 		remove_filter( 'posts_search', [ $this, 'customize_search' ], $priority, $accepted_args );
 	}
@@ -225,8 +227,8 @@ class Post_Query {
 	 */
 	private function get_endpoint_registration_args() {
 		return [
-			self::ALLOWED_POST_TYPES => [
-				'description' => 'Allowed post types',
+			self::INCLUDED_POST_TYPE_KEY => [
+				'description' => 'Included post types',
 				'type' => [ 'array', 'string' ],
 				'required' => false,
 				'default' => null,
@@ -236,7 +238,7 @@ class Post_Query {
 				'description' => 'Post type to exclude',
 				'type' => [ 'array', 'string' ],
 				'required' => false,
-				'default' => self::FORBIDDEN_POST_TYPES,
+				'default' => self::DEFAULT_FORBIDDEN_POST_TYPES,
 				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
 			],
 			self::SEARCH_TERM_KEY => [
@@ -253,28 +255,48 @@ class Post_Query {
 				'default' => [],
 				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
 			],
-			self::MAX_COUNT_KEY => [
-				'description' => 'Max count of returned items',
-				'type' => 'number',
+			self::POSTS_PER_PAGE_KEY => [
+				'description' => 'Posts per page',
+				'type' => 'integer',
 				'required' => false,
 				'default' => self::MAX_RESPONSE_COUNT,
+			],
+			self::IS_PUBLIC_KEY => [
+				'description' => 'Whether to include only public post types',
+				'type' => 'boolean',
+				'required' => false,
+				'default' => true,
+			],
+			self::META_QUERY_KEY => [
+				'description' => 'WP_Query meta_query array',
+				'type' => 'array',
+				'required' => false,
+				'default' => [],
+				'sanitize_callback' => fn ( $value ) => is_array( $value ) ? $value : [],
 			],
 		];
 	}
 
 	/**
-	 * @param Array<string>|string $input The input data, expected to be an array or JSON-encoded string.
+	 * @param array<string>|string $input The input data, expected to be an array or JSON-encoded string.
 	 * @return array The sanitized array of strings.
 	 */
 	private function sanitize_string_array( $input ) {
 		if ( ! is_array( $input ) ) {
-			$input = json_decode( sanitize_text_field( $input ) ) ?? [];
+			$raw = sanitize_text_field( $input );
+			$decoded = json_decode( $raw, true );
+			if ( is_array( $decoded ) ) {
+				$input = $decoded;
+			} else {
+				$input = strpos( $raw, ',' ) !== false ? explode( ',', $raw ) : ( $raw !== '' ? [ $raw ] : [] );
+			}
 		}
 
 		$array = new Collection( json_decode( json_encode( $input ), true ) );
 
 		return $array
 			->map( 'sanitize_text_field' )
+			->filter( function ( $value ) { return $value !== ''; } )
 			->all();
 	}
 
