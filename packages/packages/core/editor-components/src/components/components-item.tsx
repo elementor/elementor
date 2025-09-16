@@ -22,7 +22,7 @@ import { getContainerForNewElement } from '../utils/get-container-for-new-elemen
 import { createComponentModel } from './create-component-form/utils/replace-element-with-component';
 
 export const ComponentItem = ( { component }: { component: Component } ) => {
-	const componentModel = createComponentModel( { id: component.id, name: component.name } );
+	const componentModel2 = createComponentModel( { id: component.id, name: component.name } );
 
 	const popupState = usePopupState( {
 		variant: 'popover',
@@ -30,13 +30,13 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 	} );
 
 	const handleClick = () => {
-		addComponentToPage( componentModel );
+		addComponentToPage( componentModel2 );
 	};
 
 	return (
 		<ListItemButton
 			draggable
-			onDragStart={ () => startDragElementFromPanel( componentModel ) }
+			onDragStart={ () => startDragElementFromPanel( componentModel2 ) }
 			onDragEnd={ endDragElementFromPanel }
 			shape="rounded"
 			sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }
