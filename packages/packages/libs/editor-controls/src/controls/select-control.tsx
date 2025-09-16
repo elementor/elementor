@@ -26,6 +26,7 @@ export const SelectControl = createControl( ( { options, onChange, MenuProps }: 
 		onChange?.( newValue, value );
 		setValue( newValue );
 	};
+	const isDisabled = disabled || options.length === 0;
 
 	return (
 		<ControlActions>
@@ -56,7 +57,7 @@ export const SelectControl = createControl( ( { options, onChange, MenuProps }: 
 				} }
 				value={ value ?? '' }
 				onChange={ handleChange }
-				disabled={ disabled }
+				disabled={ isDisabled }
 				fullWidth
 			>
 				{ options.map( ( { label, ...props } ) => (

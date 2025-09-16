@@ -7,7 +7,6 @@ import { EditingPanel } from '../editing-panel';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
-	useElementType: jest.fn(),
 	useSelectedElement: jest.fn(),
 } ) );
 
