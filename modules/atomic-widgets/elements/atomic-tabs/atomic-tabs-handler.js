@@ -14,6 +14,7 @@ register( {
 				if ( activeTab ) {
 					tabPanel.style.display = '';
 					tabPanel.removeAttribute( 'hidden' );
+
 					return;
 				}
 
@@ -22,7 +23,7 @@ register( {
 			} );
 		};
 
-		const defaultActiveTab = element.getAttribute( 'default-active-tab' );
+		const defaultActiveTab = element.getAttribute( 'data-active-tab' );
 
 		setActiveTab( defaultActiveTab );
 

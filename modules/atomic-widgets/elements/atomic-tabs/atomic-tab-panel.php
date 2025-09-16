@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -48,6 +49,7 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tab-id' => String_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
 
@@ -57,10 +59,7 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
 				->set_items( [
-					Text_Control::bind_to( '_cssid' )
-						->set_label( __( 'ID', 'elementor' ) )
-						->set_meta( $this->get_css_id_control_meta() ),
-				] ),
+] ),
 		];
 	}
 

@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -43,6 +44,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'default-active-tab' => String_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
 
@@ -146,7 +148,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		];
 
 		if ( ! empty( $settings['default-active-tab'] ) ) {
-			$attributes['default-active-tab'] = esc_attr( $settings['default-active-tab'] );
+			$attributes['data-active-tab'] = esc_attr( $settings['default-active-tab'] );
 		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
