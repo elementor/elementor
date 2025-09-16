@@ -1,11 +1,12 @@
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { AngieMcpSdk } from '@elementor-external/angie-sdk';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 import { activateMcpRegistration } from './mcp-registry';
 
 let sdk: AngieMcpSdk;
 
 const getSDK = () => {
+	// @ts-ignore: QUnit fails this
 	if ( typeof jest !== 'undefined' ) {
 		return {} as unknown as AngieMcpSdk;
 	}
