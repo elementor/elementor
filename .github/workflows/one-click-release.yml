@@ -210,7 +210,7 @@ jobs:
         run: |
           if [ "${{ env.CHANNEL }}" == "ga" ]; then
             # Assuming the version is already bumped in the creation of the release branch
-            npm run release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
+            npm run packages:release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
           else
             if [ ${{ github.event.inputs.dry_run }} == 'false' ]; then
               LATEST_BETA_NUM=$(git tag -l "v${{ env.PACKAGE_VERSION }}-*" | sed 's/.*-//' | sort -nr | head -n1 || echo "0")
@@ -221,7 +221,7 @@ jobs:
               git tag -a "v${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}" -m "Release ${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}"
               git push origin "v${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}"
             fi
-            npm run release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
+            npm run packages:release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
