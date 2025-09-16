@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Select_Control extends Atomic_Control_Base {
 	private array $options = [];
+	private ?array $fallback_labels = null;
 	private ?string $collection_id = null;
 	private ?string $placeholder = null;
 
@@ -37,6 +38,7 @@ class Select_Control extends Atomic_Control_Base {
 	public function get_props(): array {
 		$props = [
 			'options' => $this->options,
+			'fallbackLabels' => $this->fallback_labels,
 			'placeholder' => $this->placeholder,
 		];
 
@@ -44,5 +46,11 @@ class Select_Control extends Atomic_Control_Base {
 			$props['collectionId'] = $this->collection_id;
 		}
 		return $props;
+	}
+
+	public function set_fallback_labels( array $fallback_labels ): self {
+		$this->fallback_labels = $fallback_labels;
+
+		return $this;
 	}
 }
