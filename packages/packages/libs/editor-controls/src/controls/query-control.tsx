@@ -67,6 +67,13 @@ export const QueryControl = createControl( ( props: Props ) => {
 	};
 
 	const onTextChange = ( newValue: string | null ) => {
+		if ( ! newValue ) {
+			setValue( null );
+			onSetValue?.( null );
+
+			return;
+		}
+
 		const newLinkValue = newValue?.trim() || '';
 		const valueToSave = newLinkValue ? urlPropTypeUtil.create( newLinkValue ) : null;
 
