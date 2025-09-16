@@ -144,11 +144,9 @@ class Post_Query {
 		$included_types = $params[ self::INCLUDED_POST_TYPE_KEY ];
 		$keys_format_map = $params[ self::POST_KEYS_CONVERSION_MAP ] ?? [];
 
-		$requested_posts_per_page = $params[ self::POSTS_PER_PAGE_KEY ] ?? null;
-		$requested_max_count = $params[ self::MAX_COUNT_KEY ] ?? null;
-		$requested_count = $requested_posts_per_page ?? $requested_max_count ?? self::MAX_RESPONSE_COUNT;
-		$validated_count = max( (int) $requested_count, 1 );
-		$max_count = min( $validated_count, self::MAX_RESPONSE_COUNT );
+		$requested_count = $params[ self::POSTS_PER_PAGE_KEY ] ?? 0;
+		$validated_count = max( $requested_count, 1 );
+		$post_count = min( $validated_count, self::MAX_RESPONSE_COUNT );
 
 		$is_public_param = $params[ self::IS_PUBLIC_KEY ] ?? true;
 		$is_public = ! in_array( strtolower( (string) $is_public_param ), [ '0', 'false' ], true );
