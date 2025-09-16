@@ -63,7 +63,7 @@ export const SvgMediaControl = createControl( () => {
 	const { data: allowSvgUpload } = useUnfilteredFilesUpload();
 	const [ unfilteredModalOpenState, setUnfilteredModalOpenState ] = useState( false );
 	const { canUser } = useCurrentUserCapabilities();
-	const canManageOptions = false;
+	const canManageOptions = canUser( 'manage_options' );
 
 	const { open } = useWpMediaFrame( {
 		mediaTypes: [ 'svg' ],
