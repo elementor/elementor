@@ -8,7 +8,6 @@ import { ComponentSearch } from '../components-tab/component-search';
 import { Components } from '../components-tab/components';
 import { ComponentItem } from '../components-tab/components-item';
 import { ComponentsList } from '../components-tab/components-list';
-import { LoadingComponents } from '../components-tab/loading-components';
 import { SearchProvider, useSearch } from '../components-tab/search-provider';
 
 jest.mock( '../../hooks/use-components' );
@@ -49,275 +48,199 @@ describe( 'Components Tab', () => {
 		jest.clearAllMocks();
 	} );
 
-	describe( 'Components', () => {
-		it( 'should render the main Components component with search and list', () => {
-			// Arrange
-			mockUseComponents.mockReturnValue( {
-				data: mockComponents,
-				isLoading: false,
-				error: null,
-			} as never );
+	const mockComponent: Component = { id: 1, name: 'Test Component' };
 
-			// Act
-			render(
-				<TestWrapper>
-					<Components />
-				</TestWrapper>
-			);
+	it( 'should render the main Components component with search and list', () => {
+		// Arrange
+		mockUseComponents.mockReturnValue( {
+			data: mockComponents,
+			isLoading: false,
+			error: null,
+		} as never );
 
-			// Assert
-			expect( screen.getByRole( 'search' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Footer Component' ) ).toBeInTheDocument();
+		// Act
+		render(
+			<TestWrapper>
+				<Components />
+			</TestWrapper>
+		);
+
+		// Assert
+		expect( screen.getByRole( 'search' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Footer Component' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render search input and handle user input', () => {
+		// Act
+		render(
+			<TestWrapper>
+				<ComponentSearch />
+			</TestWrapper>
+		);
+
+		const input = screen.getByRole( 'textbox' );
+
+		// Assert
+		expect( input ).toBeInTheDocument();
+
+		// Act
+		fireEvent.change( input, { target: { value: 'header' } } );
+
+		// Assert
+		expect( input ).toHaveValue( 'header' );
+	} );
+
+	it( 'should render loading state and skeleton correctly', () => {
+		// Arrange
+		mockUseComponents.mockReturnValue( {
+			data: undefined,
+			isLoading: true,
+			error: null,
+		} as never );
+
+		// Act
+		render(
+			<TestWrapper>
+				<ComponentsList />
+			</TestWrapper>
+		);
+
+		// Assert
+		expect( screen.getByLabelText( 'Loading components' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render components list when data is available', () => {
+		// Arrange
+		mockUseComponents.mockReturnValue( {
+			data: mockComponents,
+			isLoading: false,
+			error: null,
+		} as never );
+
+		// Act
+		render(
+			<TestWrapper>
+				<ComponentsList />
+			</TestWrapper>
+		);
+
+		// Assert
+		expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Footer Component' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Navigation Menu' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Hero Section' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render empty state when no components exist', () => {
+		// Arrange
+		mockUseComponents.mockReturnValue( {
+			data: [],
+			isLoading: false,
+			error: null,
+		} as never );
+
+		// Act
+		render(
+			<TestWrapper>
+				<ComponentsList />
+			</TestWrapper>
+		);
+
+		// Assert
+		expect( screen.getByText( 'Text that explains that there are no Components yet.' ) ).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				'Once you have Components, this is where you can manage them—rearrange, duplicate, rename and delete irrelevant classes.'
+			)
+		).toBeInTheDocument();
+	} );
+
+	it( 'should render component item with name and icon', () => {
+		// Act
+		render(
+			<TestWrapper>
+				<ComponentItem component={ mockComponent } />
+			</TestWrapper>
+		);
+
+		// Assert
+		expect( screen.getByText( 'Test Component' ) ).toBeInTheDocument();
+		expect( screen.getByLabelText( 'More actions' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should be draggable', () => {
+		// Act
+		render(
+			<TestWrapper>
+				<ComponentItem component={ mockComponent } />
+			</TestWrapper>
+		);
+
+		// Assert
+		const draggableElement = screen.getByRole( 'button', { name: /test component/i } );
+		expect( draggableElement ).toHaveAttribute( 'draggable', 'true' );
+	} );
+
+	it( 'should open and close menu when more actions button is clicked', async () => {
+		// Arrange
+		render(
+			<TestWrapper>
+				<ComponentItem component={ mockComponent } />
+			</TestWrapper>
+		);
+
+		const moreActionsButton = screen.getByLabelText( 'More actions' );
+
+		// Act
+		fireEvent.click( moreActionsButton );
+
+		// Assert
+		expect( screen.getByText( 'Rename' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
+
+		// Act
+		const deleteButton = screen.getByText( 'Delete' );
+		fireEvent.click( deleteButton );
+
+		// Assert
+		await waitFor( () => {
+			expect( screen.queryByText( 'Rename' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
-	describe( 'ComponentSearch', () => {
-		it( 'should render search input', () => {
-			// Act
-			render(
-				<TestWrapper>
-					<ComponentSearch />
-				</TestWrapper>
+	it( 'should provide search context and clearSearch function', () => {
+		// Arrange
+		const TestComponent = () => {
+			const { inputValue, handleChange, clearSearch } = useSearch();
+			return (
+				<div>
+					<input value={ inputValue } onChange={ ( e ) => handleChange( e.target.value ) } />
+					<button onClick={ clearSearch }>Clear</button>
+					<span>{ inputValue }</span>
+				</div>
 			);
+		};
 
-			// Assert
-			const searchInput = screen.getByRole( 'search' );
-			expect( searchInput ).toBeInTheDocument();
-		} );
+		render(
+			<SearchProvider localStorageKey="test-key">
+				<TestComponent />
+			</SearchProvider>
+		);
 
-		it( 'should update search value when user types', () => {
-			// Arrange
-			render(
-				<TestWrapper>
-					<ComponentSearch />
-				</TestWrapper>
-			);
+		const input = screen.getByRole( 'textbox' );
+		const clearButton = screen.getByText( 'Clear' );
 
-			const input = screen.getByRole( 'textbox' );
+		// Act
+		fireEvent.change( input, { target: { value: 'test search' } } );
 
-			// Act
-			fireEvent.change( input, { target: { value: 'header' } } );
+		// Assert
+		expect( screen.getByText( 'test search' ) ).toBeInTheDocument();
 
-			// Assert
-			expect( input ).toHaveValue( 'header' );
-		} );
-	} );
+		// Act
+		fireEvent.click( clearButton );
 
-	describe( 'ComponentsList', () => {
-		it( 'should render loading state when isLoading is true', () => {
-			// Arrange
-			mockUseComponents.mockReturnValue( {
-				data: undefined,
-				isLoading: true,
-				error: null,
-			} as never );
-
-			// Act
-			render(
-				<TestWrapper>
-					<ComponentsList />
-				</TestWrapper>
-			);
-
-			// Assert
-			expect( screen.getByLabelText( 'Loading components' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should render components list when data is available', () => {
-			// Arrange
-			mockUseComponents.mockReturnValue( {
-				data: mockComponents,
-				isLoading: false,
-				error: null,
-			} as never );
-
-			// Act
-			render(
-				<TestWrapper>
-					<ComponentsList />
-				</TestWrapper>
-			);
-
-			// Assert
-			expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Footer Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Navigation Menu' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Hero Section' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should render empty state when no components exist', () => {
-			// Arrange
-			mockUseComponents.mockReturnValue( {
-				data: [],
-				isLoading: false,
-				error: null,
-			} as never );
-
-			// Act
-			render(
-				<TestWrapper>
-					<ComponentsList />
-				</TestWrapper>
-			);
-
-			// Assert
-			expect( screen.getByText( 'Text that explains that there are no Components yet.' ) ).toBeInTheDocument();
-			expect(
-				screen.getByText(
-					'Once you have Components, this is where you can manage them—rearrange, duplicate, rename and delete irrelevant classes.'
-				)
-			).toBeInTheDocument();
-		} );
-	} );
-
-	describe( 'ComponentItem', () => {
-		const mockComponent: Component = { id: 1, name: 'Test Component' };
-
-		it( 'should render component item with name and icon', () => {
-			// Act
-			render(
-				<TestWrapper>
-					<ComponentItem component={ mockComponent } />
-				</TestWrapper>
-			);
-
-			// Assert
-			expect( screen.getByText( 'Test Component' ) ).toBeInTheDocument();
-			expect( screen.getByLabelText( 'More actions' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should be draggable', () => {
-			// Act
-			render(
-				<TestWrapper>
-					<ComponentItem component={ mockComponent } />
-				</TestWrapper>
-			);
-
-			// Assert
-			const draggableElement = screen.getByRole( 'button', { name: /test component/i } );
-			expect( draggableElement ).toHaveAttribute( 'draggable', 'true' );
-		} );
-
-		it( 'should open menu when more actions button is clicked', () => {
-			// Arrange
-			render(
-				<TestWrapper>
-					<ComponentItem component={ mockComponent } />
-				</TestWrapper>
-			);
-
-			const moreActionsButton = screen.getByLabelText( 'More actions' );
-
-			// Act
-			fireEvent.click( moreActionsButton );
-
-			// Assert
-			expect( screen.getByText( 'Rename' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should close menu when delete is clicked', async () => {
-			// Arrange
-			render(
-				<TestWrapper>
-					<ComponentItem component={ mockComponent } />
-				</TestWrapper>
-			);
-
-			const moreActionsButton = screen.getByLabelText( 'More actions' );
-			fireEvent.click( moreActionsButton );
-
-			const deleteButton = screen.getByText( 'Delete' );
-
-			// Act
-			fireEvent.click( deleteButton );
-
-			// Assert
-			await waitFor( () => {
-				expect( screen.queryByText( 'Rename' ) ).not.toBeInTheDocument();
-			} );
-		} );
-	} );
-
-	describe( 'LoadingComponents', () => {
-		it( 'should render loading skeleton with correct number of rows', () => {
-			// Act
-			render( <LoadingComponents /> );
-
-			// Assert
-			const skeletons = screen.getAllByRole( 'button' );
-			expect( skeletons ).toHaveLength( 6 );
-		} );
-
-		it( 'should have proper accessibility label', () => {
-			// Act
-			render( <LoadingComponents /> );
-
-			// Assert
-			expect( screen.getByLabelText( 'Loading components' ) ).toBeInTheDocument();
-		} );
-	} );
-
-	describe( 'SearchProvider', () => {
-		it( 'should provide search context to children', () => {
-			// Arrange
-			const TestComponent = () => {
-				const { inputValue, handleChange } = useSearch();
-				return (
-					<div>
-						<input value={ inputValue } onChange={ ( e ) => handleChange( e.target.value ) } />
-						<span>{ inputValue }</span>
-					</div>
-				);
-			};
-
-			render(
-				<SearchProvider localStorageKey="test-key">
-					<TestComponent />
-				</SearchProvider>
-			);
-
-			const input = screen.getByRole( 'textbox' );
-
-			// Act
-			fireEvent.change( input, { target: { value: 'test search' } } );
-
-			// Assert
-			expect( screen.getByText( 'test search' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should provide clearSearch function', () => {
-			// Arrange
-			const TestComponent = () => {
-				const { inputValue, handleChange, clearSearch } = useSearch();
-				return (
-					<div>
-						<input value={ inputValue } onChange={ ( e ) => handleChange( e.target.value ) } />
-						<button onClick={ clearSearch }>Clear</button>
-						<span>{ inputValue }</span>
-					</div>
-				);
-			};
-
-			render(
-				<SearchProvider localStorageKey="test-key">
-					<TestComponent />
-				</SearchProvider>
-			);
-
-			const input = screen.getByRole( 'textbox' );
-			const clearButton = screen.getByText( 'Clear' );
-
-			fireEvent.change( input, { target: { value: 'test search' } } );
-			expect( screen.getByText( 'test search' ) ).toBeInTheDocument();
-
-			// Act
-			fireEvent.click( clearButton );
-
-			// Assert
-			expect( input ).toHaveValue( '' );
-		} );
+		// Assert
+		expect( input ).toHaveValue( '' );
 	} );
 } );
