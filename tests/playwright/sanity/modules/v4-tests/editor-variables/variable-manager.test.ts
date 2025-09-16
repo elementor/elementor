@@ -37,7 +37,7 @@ test.describe( 'Variable Manager @v4-tests', () => {
 
 	test( 'Variable name validation error displays and clears correctly', async () => {
 		await createVariableFromManager( page, 'color' );
-		const nameField = page.getByRole( 'textbox', { name: 'Variable Label' } );
+		const nameField = page.getByRole( 'textbox', { name: 'Name' } );
 
 		await test.step( 'Display validation error for invalid input', async () => {
 			await nameField.fill( ' ' );

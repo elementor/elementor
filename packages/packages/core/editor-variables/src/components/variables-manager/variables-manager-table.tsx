@@ -1,7 +1,5 @@
+import * as React from 'react';
 import { createElement, useEffect, useRef } from 'react';
-
-import { __ } from '@wordpress/i18n';
-
 import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { GripVerticalIcon } from '@elementor/icons';
 import {
@@ -17,13 +15,14 @@ import {
 	type UnstableSortableItemRenderProps,
 	UnstableSortableProvider,
 } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { type TVariablesList } from '../../storage';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { LabelField } from '../fields/label-field';
 import { VariableEditMenu, type VariableManagerMenuAction } from './utils/variable-edit-menu';
-import { VariableEditableCell } from './variable-editable-cell';
 import { VariableTableCell } from './utils/variable-table-cell';
+import { VariableEditableCell } from './variable-editable-cell';
 
 type Props = {
 	menuActions: VariableManagerMenuAction[];
