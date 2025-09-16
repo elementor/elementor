@@ -1,9 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useSearchState } from '../index';
+import { useSearchState } from '../use-search-state';
 
-// Mock localStorage
-const localStorageMock = {
+const mockLocalStorage = {
 	getItem: jest.fn(),
 	setItem: jest.fn(),
 	removeItem: jest.fn(),
@@ -11,104 +10,325 @@ const localStorageMock = {
 };
 
 Object.defineProperty( window, 'localStorage', {
-	value: localStorageMock,
-} );
-
-beforeEach( () => {
-	jest.useFakeTimers();
-	localStorageMock.getItem.mockClear();
-	localStorageMock.removeItem.mockClear();
-} );
-
-afterEach( () => {
-	jest.runOnlyPendingTimers();
-	jest.clearAllTimers();
-	jest.clearAllMocks();
+	value: mockLocalStorage,
 } );
 
 describe( 'useSearchState', () => {
-	it( 'should initialize with empty values by default', () => {
-		const { result } = renderHook( () => useSearchState( {} ) );
-
-		expect( result.current.inputValue ).toBe( '' );
-		expect( result.current.debouncedValue ).toBe( '' );
+	beforeEach( () => {
+		jest.clearAllMocks();
+		jest.useFakeTimers();
 	} );
 
-	it( 'should initialize with value from localStorage when localStorageKey is provided', () => {
-		localStorageMock.getItem.mockReturnValue( 'stored-search-value' );
-
-		const { result } = renderHook( () => useSearchState( { localStorageKey: 'test-key' } ) );
-
-		expect( localStorageMock.getItem ).toHaveBeenCalledWith( 'test-key' );
-		expect( localStorageMock.removeItem ).toHaveBeenCalledWith( 'test-key' );
-		expect( result.current.inputValue ).toBe( 'stored-search-value' );
-		expect( result.current.debouncedValue ).toBe( 'stored-search-value' );
+	afterEach( () => {
+		jest.useRealTimers();
 	} );
 
-	it( 'should not call localStorage when localStorageKey is not provided', () => {
-		const { result } = renderHook( () => useSearchState( {} ) );
+	describe( 'Basic functionality', () => {
+		it( 'should return initial values when no localStorage key is provided', () => {
+			// Act
+			const { result } = renderHook( () => useSearchState( {} ) );
 
-		expect( localStorageMock.getItem ).not.toHaveBeenCalled();
-		expect( localStorageMock.removeItem ).not.toHaveBeenCalled();
-		expect( result.current.inputValue ).toBe( '' );
-		expect( result.current.debouncedValue ).toBe( '' );
+			// Assert
+			expect( result.current.inputValue ).toBe( '' );
+			expect( result.current.debouncedValue ).toBe( '' );
+			expect( typeof result.current.handleChange ).toBe( 'function' );
+		} );
+
+		it( 'should handle input changes and update inputValue immediately', () => {
+			// Arrange
+			const { result } = renderHook( () => useSearchState( {} ) );
+
+			// Act
+			act( () => {
+				result.current.handleChange( 'test search' );
+			} );
+
+			// Assert
+			expect( result.current.inputValue ).toBe( 'test search' );
+		} );
+
+		it( 'should debounce the debouncedValue with 300ms delay', () => {
+			// Arrange
+			const { result } = renderHook( () => useSearchState( {} ) );
+
+			// Act
+			act( () => {
+				result.current.handleChange( 'test search' );
+			} );
+
+			// Assert
+			expect( result.current.inputValue ).toBe( 'test search' );
+			expect( result.current.debouncedValue ).toBe( '' );
+
+			// Act
+			act( () => {
+				jest.advanceTimersByTime( 300 );
+			} );
+
+			// Assert
+			expect( result.current.debouncedValue ).toBe( 'test search' );
+		} );
+
+		it( 'should cancel previous debounced calls when new input is provided', () => {
+			// Arrange
+			const { result } = renderHook( () => useSearchState( {} ) );
+
+			// Act
+			act( () => {
+				result.current.handleChange( 'first search' );
+			} );
+
+			act( () => {
+				jest.advanceTimersByTime( 200 );
+			} );
+
+			act( () => {
+				result.current.handleChange( 'second search' );
+			} );
+
+			act( () => {
+				jest.advanceTimersByTime( 300 );
+			} );
+
+			// Assert
+			expect( result.current.debouncedValue ).toBe( 'second search' );
+		} );
 	} );
 
-	it( 'should handle localStorage when no stored value exists', () => {
-		localStorageMock.getItem.mockReturnValue( null );
+	describe( 'localStorage integration', () => {
+		it( 'should not interact with localStorage when no key is provided', () => {
+			// Act
+			renderHook( () => useSearchState( {} ) );
 
-		const { result } = renderHook( () => useSearchState( { localStorageKey: 'test-key' } ) );
+			// Assert
+			expect( mockLocalStorage.getItem ).not.toHaveBeenCalled();
+			expect( mockLocalStorage.removeItem ).not.toHaveBeenCalled();
+		} );
 
-		expect( localStorageMock.getItem ).toHaveBeenCalledWith( 'test-key' );
-		expect( localStorageMock.removeItem ).not.toHaveBeenCalled();
-		expect( result.current.inputValue ).toBe( '' );
-		expect( result.current.debouncedValue ).toBe( '' );
+		it( 'should return empty string when localStorage key is provided but no stored value exists', () => {
+			// Arrange
+			mockLocalStorage.getItem.mockReturnValue( null );
+
+			// Act
+			const { result } = renderHook( () => useSearchState( { localStorageKey: 'test-key' } ) );
+
+			// Assert
+			expect( mockLocalStorage.getItem ).toHaveBeenCalledWith( 'test-key' );
+			expect( result.current.inputValue ).toBe( '' );
+			expect( result.current.debouncedValue ).toBe( '' );
+		} );
+
+		it( 'should return stored value from localStorage and remove it', () => {
+			// Arrange
+			const storedValue = 'stored search term';
+			mockLocalStorage.getItem.mockReturnValue( storedValue );
+
+			// Act
+			const { result } = renderHook( () => useSearchState( { localStorageKey: 'test-key' } ) );
+
+			// Assert
+			expect( mockLocalStorage.getItem ).toHaveBeenCalledWith( 'test-key' );
+			expect( mockLocalStorage.removeItem ).toHaveBeenCalledWith( 'test-key' );
+			expect( result.current.inputValue ).toBe( storedValue );
+			expect( result.current.debouncedValue ).toBe( storedValue );
+		} );
+
+		it( 'should handle empty string stored in localStorage', () => {
+			// Arrange
+			mockLocalStorage.getItem.mockReturnValue( '' );
+
+			// Act
+			const { result } = renderHook( () => useSearchState( { localStorageKey: 'test-key' } ) );
+
+			// Assert
+			expect( mockLocalStorage.getItem ).toHaveBeenCalledWith( 'test-key' );
+			expect( mockLocalStorage.removeItem ).not.toHaveBeenCalled();
+			expect( result.current.inputValue ).toBe( '' );
+			expect( result.current.debouncedValue ).toBe( '' );
+		} );
+
+		it( 'should handle localStorage with non-string values', () => {
+			// Arrange
+			mockLocalStorage.getItem.mockReturnValue( null );
+
+			// Act
+			const { result } = renderHook( () => useSearchState( { localStorageKey: 'test-key' } ) );
+
+			// Assert
+			expect( mockLocalStorage.getItem ).toHaveBeenCalledWith( 'test-key' );
+			expect( mockLocalStorage.removeItem ).not.toHaveBeenCalled();
+			expect( result.current.inputValue ).toBe( '' );
+			expect( result.current.debouncedValue ).toBe( '' );
+		} );
 	} );
 
-	it( 'should update inputValue immediately when handleChange is called', () => {
-		const { result } = renderHook( () => useSearchState( {} ) );
+	describe( 'Debounce behavior', () => {
+		it( 'should maintain separate input and debounced values during typing', () => {
+			// Arrange
+			const { result } = renderHook( () => useSearchState( {} ) );
 
-		act( () => {
-			result.current.handleChange( 'test search' );
+			// Act
+			act( () => {
+				result.current.handleChange( 'a' );
+			} );
+
+			// Assert
+			expect( result.current.inputValue ).toBe( 'a' );
+			expect( result.current.debouncedValue ).toBe( '' );
+
+			// Act
+			act( () => {
+				result.current.handleChange( 'ab' );
+			} );
+
+			// Assert
+			expect( result.current.inputValue ).toBe( 'ab' );
+			expect( result.current.debouncedValue ).toBe( '' );
+
+			// Act
+			act( () => {
+				result.current.handleChange( 'abc' );
+			} );
+
+			// Assert
+			expect( result.current.inputValue ).toBe( 'abc' );
+			expect( result.current.debouncedValue ).toBe( '' );
+
+			// Act
+			act( () => {
+				jest.advanceTimersByTime( 300 );
+			} );
+
+			// Assert
+			expect( result.current.inputValue ).toBe( 'abc' );
+			expect( result.current.debouncedValue ).toBe( 'abc' );
 		} );
 
-		expect( result.current.inputValue ).toBe( 'test search' );
-		expect( result.current.debouncedValue ).toBe( '' );
+		it( 'should handle rapid successive changes correctly', () => {
+			// Arrange
+			const { result } = renderHook( () => useSearchState( {} ) );
+
+			// Act
+			act( () => {
+				result.current.handleChange( 'h' );
+			} );
+			act( () => {
+				result.current.handleChange( 'he' );
+			} );
+			act( () => {
+				result.current.handleChange( 'hel' );
+			} );
+			act( () => {
+				result.current.handleChange( 'hell' );
+			} );
+			act( () => {
+				result.current.handleChange( 'hello' );
+			} );
+
+			// Assert
+			expect( result.current.inputValue ).toBe( 'hello' );
+			expect( result.current.debouncedValue ).toBe( '' );
+
+			// Act
+			act( () => {
+				jest.advanceTimersByTime( 300 );
+			} );
+
+			// Assert
+			expect( result.current.debouncedValue ).toBe( 'hello' );
+		} );
 	} );
 
-	it( 'should update debouncedValue after delay', () => {
-		const { result } = renderHook( () => useSearchState( {} ) );
+	describe( 'Edge cases', () => {
+		it( 'should handle undefined localStorageKey', () => {
+			// Act
+			const { result } = renderHook( () => useSearchState( { localStorageKey: undefined } ) );
 
-		act( () => {
-			result.current.handleChange( 'debounced search' );
+			// Assert
+			expect( result.current.inputValue ).toBe( '' );
+			expect( result.current.debouncedValue ).toBe( '' );
+			expect( mockLocalStorage.getItem ).not.toHaveBeenCalled();
 		} );
 
-		expect( result.current.inputValue ).toBe( 'debounced search' );
-		expect( result.current.debouncedValue ).toBe( '' );
+		it( 'should handle empty localStorageKey', () => {
+			// Act
+			const { result } = renderHook( () => useSearchState( { localStorageKey: '' } ) );
 
-		act( () => {
-			jest.advanceTimersByTime( 300 );
+			// Assert
+			expect( result.current.inputValue ).toBe( '' );
+			expect( result.current.debouncedValue ).toBe( '' );
+			expect( mockLocalStorage.getItem ).not.toHaveBeenCalled();
 		} );
 
-		expect( result.current.debouncedValue ).toBe( 'debounced search' );
-	} );
+		it( 'should handle special characters in search terms', () => {
+			// Arrange
+			const { result } = renderHook( () => useSearchState( {} ) );
+			const specialChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
 
-	it( 'should cancel previous debounce and keep the latest value', () => {
-		const { result } = renderHook( () => useSearchState( {} ) );
+			// Act
+			act( () => {
+				result.current.handleChange( specialChars );
+			} );
 
-		act( () => {
-			result.current.handleChange( 'first search' );
+			// Assert
+			expect( result.current.inputValue ).toBe( specialChars );
+
+			// Act
+			act( () => {
+				jest.advanceTimersByTime( 300 );
+			} );
+
+			// Assert
+			expect( result.current.debouncedValue ).toBe( specialChars );
 		} );
 
-		act( () => {
-			result.current.handleChange( 'second search' );
+		it( 'should handle very long search terms', () => {
+			// Arrange
+			const { result } = renderHook( () => useSearchState( {} ) );
+			const longSearchTerm = 'a'.repeat( 1000 );
+
+			// Act
+			act( () => {
+				result.current.handleChange( longSearchTerm );
+			} );
+
+			// Assert
+			expect( result.current.inputValue ).toBe( longSearchTerm );
+
+			// Act
+			act( () => {
+				jest.advanceTimersByTime( 300 );
+			} );
+
+			// Assert
+			expect( result.current.debouncedValue ).toBe( longSearchTerm );
 		} );
 
-		act( () => {
-			jest.advanceTimersByTime( 300 );
-		} );
+		it( 'should handle multiple hook instances independently', () => {
+			// Arrange
+			mockLocalStorage.getItem.mockReturnValue( null );
 
-		expect( result.current.inputValue ).toBe( 'second search' );
-		expect( result.current.debouncedValue ).toBe( 'second search' );
+			const { result: result1 } = renderHook( () => useSearchState( { localStorageKey: 'key1' } ) );
+			const { result: result2 } = renderHook( () => useSearchState( { localStorageKey: 'key2' } ) );
+
+			// Act
+			act( () => {
+				result1.current.handleChange( 'search1' );
+				result2.current.handleChange( 'search2' );
+			} );
+
+			// Assert
+			expect( result1.current.inputValue ).toBe( 'search1' );
+			expect( result2.current.inputValue ).toBe( 'search2' );
+
+			// Act
+			act( () => {
+				jest.advanceTimersByTime( 300 );
+			} );
+
+			// Assert
+			expect( result1.current.debouncedValue ).toBe( 'search1' );
+			expect( result2.current.debouncedValue ).toBe( 'search2' );
+		} );
 	} );
 } );

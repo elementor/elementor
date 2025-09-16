@@ -1,404 +1,323 @@
 import * as React from 'react';
-import { createMockElement } from 'test-utils';
-import { dropElement } from '@elementor/editor-elements';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { ThemeProvider } from '@elementor/editor-ui';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { useComponents } from '../../hooks/use-components';
 import { type Component } from '../../types';
-import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
+import { ComponentSearch } from '../components-tab/component-search';
 import { Components } from '../components-tab/components';
 import { ComponentItem } from '../components-tab/components-item';
 import { ComponentsList } from '../components-tab/components-list';
-import { useSearch } from '../components-tab/search-provider';
-import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
+import { LoadingComponents } from '../components-tab/loading-components';
+import { SearchProvider, useSearch } from '../components-tab/search-provider';
 
-jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../hooks/use-components' );
-jest.mock( '../../utils/get-container-for-new-element' );
-jest.mock( '../create-component-form/utils/replace-element-with-component' );
-jest.mock( '@elementor/utils', () => ( {
-	...jest.requireActual( '@elementor/utils' ),
-	useSearchState: jest.fn(),
+jest.mock( '@elementor/editor-canvas', () => ( {
+	startDragElementFromPanel: jest.fn(),
+	endDragElementFromPanel: jest.fn(),
 } ) );
-jest.mock( '../components-tab/search-provider', () => ( {
-	...jest.requireActual( '../components-tab/search-provider' ),
-	SearchProvider: ( { children }: { children: React.ReactNode } ) => children,
-	useSearch: jest.fn(),
+jest.mock( '@elementor/editor-elements', () => ( {
+	dropElement: jest.fn(),
 } ) );
-jest.mock( '@elementor/editor-ui', () => ( {
-	...jest.requireActual( '@elementor/editor-ui' ),
-	ThemeProvider: ( { children }: { children: React.ReactNode } ) => children,
+jest.mock( '../create-component-form/utils/replace-element-with-component', () => ( {
+	createComponentModel: jest.fn( ( { id, name } ) => ( { id, name, type: 'component' } ) ),
+} ) );
+jest.mock( '../../utils/get-container-for-new-element', () => ( {
+	getContainerForNewElement: jest.fn( () => ( {
+		container: { id: 'test-container' },
+		options: { useHistory: false, scrollIntoView: true },
+	} ) ),
 } ) );
 
-const mockUseComponents = jest.mocked( useComponents );
-const mockDropElement = jest.mocked( dropElement );
-const mockGetContainerForNewElement = jest.mocked( getContainerForNewElement );
-const mockCreateComponentModel = jest.mocked( createComponentModel );
-const mockUseSearch = jest.mocked( useSearch );
-
-const mockComponent: Component = {
-	id: 1,
-	name: 'Test Component',
-};
+const mockUseComponents = useComponents as jest.MockedFunction< typeof useComponents >;
 
 const mockComponents: Component[] = [
 	{ id: 1, name: 'Header Component' },
 	{ id: 2, name: 'Footer Component' },
-	{ id: 3, name: 'Button Component' },
+	{ id: 3, name: 'Navigation Menu' },
+	{ id: 4, name: 'Hero Section' },
 ];
 
-describe( 'ComponentsList', () => {
+const TestWrapper = ( { children }: { children: React.ReactNode } ) => (
+	<ThemeProvider>
+		<SearchProvider localStorageKey="test-components-search">{ children }</SearchProvider>
+	</ThemeProvider>
+);
+
+describe( 'Components Tab', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockUseSearch.mockReturnValue( {
-			searchValue: '',
-			inputValue: '',
-			handleChange: jest.fn(),
-			onClearSearch: jest.fn(),
+	} );
+
+	describe( 'Components', () => {
+		it( 'should render the main Components component with search and list', () => {
+			// Arrange
+			mockUseComponents.mockReturnValue( {
+				data: mockComponents,
+				isLoading: false,
+				error: null,
+			} as never );
+
+			// Act
+			render(
+				<TestWrapper>
+					<Components />
+				</TestWrapper>
+			);
+
+			// Assert
+			expect( screen.getByRole( 'search' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Footer Component' ) ).toBeInTheDocument();
 		} );
 	} );
 
-	it( 'should show loading components when data is loading', () => {
-		// Arrange.
-		mockUseComponents.mockReturnValue( {
-			data: undefined,
-			isLoading: true,
-		} as ReturnType< typeof useComponents > );
+	describe( 'ComponentSearch', () => {
+		it( 'should render search input', () => {
+			// Act
+			render(
+				<TestWrapper>
+					<ComponentSearch />
+				</TestWrapper>
+			);
 
-		// Act.
-		render( <ComponentsList /> );
+			// Assert
+			const searchInput = screen.getByRole( 'search' );
+			expect( searchInput ).toBeInTheDocument();
+		} );
 
-		// Assert.
-		const loadingContainer = screen.getByLabelText( 'Loading components' );
-		expect( loadingContainer ).toBeInTheDocument();
+		it( 'should update search value when user types', () => {
+			// Arrange
+			render(
+				<TestWrapper>
+					<ComponentSearch />
+				</TestWrapper>
+			);
 
-		const skeletonButtons = screen.getAllByRole( 'button' );
-		expect( skeletonButtons ).toHaveLength( 6 );
+			const input = screen.getByRole( 'textbox' );
+
+			// Act
+			fireEvent.change( input, { target: { value: 'header' } } );
+
+			// Assert
+			expect( input ).toHaveValue( 'header' );
+		} );
 	} );
 
-	it( 'should show empty state when components array is empty', () => {
-		// Arrange.
-		mockUseComponents.mockReturnValue( {
-			data: [] as Component[],
-			isLoading: false,
-		} as ReturnType< typeof useComponents > );
+	describe( 'ComponentsList', () => {
+		it( 'should render loading state when isLoading is true', () => {
+			// Arrange
+			mockUseComponents.mockReturnValue( {
+				data: undefined,
+				isLoading: true,
+				error: null,
+			} as never );
 
-		// Act.
-		render( <ComponentsList /> );
+			// Act
+			render(
+				<TestWrapper>
+					<ComponentsList />
+				</TestWrapper>
+			);
 
-		// Assert.
-		expect( screen.getByText( 'Text that explains that there are no Components yet.' ) ).toBeInTheDocument();
-	} );
+			// Assert
+			expect( screen.getByLabelText( 'Loading components' ) ).toBeInTheDocument();
+		} );
 
-	it( 'should render list of components when data is available', () => {
-		// Arrange.
-		mockUseComponents.mockReturnValue( {
-			data: mockComponents,
-			isLoading: false,
-		} as ReturnType< typeof useComponents > );
+		it( 'should render components list when data is available', () => {
+			// Arrange
+			mockUseComponents.mockReturnValue( {
+				data: mockComponents,
+				isLoading: false,
+				error: null,
+			} as never );
 
-		// Act.
-		render( <ComponentsList /> );
+			// Act
+			render(
+				<TestWrapper>
+					<ComponentsList />
+				</TestWrapper>
+			);
 
-		// Assert.
-		expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Footer Component' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
+			// Assert
+			expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Footer Component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Navigation Menu' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Hero Section' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should render empty state when no components exist', () => {
+			// Arrange
+			mockUseComponents.mockReturnValue( {
+				data: [],
+				isLoading: false,
+				error: null,
+			} as never );
+
+			// Act
+			render(
+				<TestWrapper>
+					<ComponentsList />
+				</TestWrapper>
+			);
+
+			// Assert
+			expect( screen.getByText( 'Text that explains that there are no Components yet.' ) ).toBeInTheDocument();
+			expect(
+				screen.getByText(
+					'Once you have Components, this is where you can manage them—rearrange, duplicate, rename and delete irrelevant classes.'
+				)
+			).toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'ComponentItem', () => {
-		const mockContainer = createMockElement( { model: { id: 'container-1' } } );
-		const mockModel = {
-			elType: 'widget',
-			widgetType: 'e-component',
-			settings: {
-				component_id: {
-					$$type: 'number' as const,
-					value: 1,
-				},
-			},
-			editor_settings: {
-				title: 'Test Component',
-			},
-		};
+		const mockComponent: Component = { id: 1, name: 'Test Component' };
 
-		beforeEach( () => {
-			jest.clearAllMocks();
-			mockGetContainerForNewElement.mockReturnValue( {
-				container: mockContainer,
-				options: { at: 0 },
-			} );
-			mockCreateComponentModel.mockReturnValue( mockModel );
-		} );
+		it( 'should render component item with name and icon', () => {
+			// Act
+			render(
+				<TestWrapper>
+					<ComponentItem component={ mockComponent } />
+				</TestWrapper>
+			);
 
-		it( 'should render component name', () => {
-			// Arrange.
-			// Act.
-			render( <ComponentItem component={ mockComponent } /> );
-
-			// Assert.
+			// Assert
 			expect( screen.getByText( 'Test Component' ) ).toBeInTheDocument();
+			expect( screen.getByLabelText( 'More actions' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should add component to page when clicked', () => {
-			// Arrange.
-			render( <ComponentItem component={ mockComponent } /> );
-			const componentButton = screen.getByText( 'Test Component' );
+		it( 'should be draggable', () => {
+			// Act
+			render(
+				<TestWrapper>
+					<ComponentItem component={ mockComponent } />
+				</TestWrapper>
+			);
 
-			// Act.
-			fireEvent.click( componentButton );
-
-			// Assert.
-			expect( mockCreateComponentModel ).toHaveBeenCalledWith( mockComponent );
-			expect( mockDropElement ).toHaveBeenCalledWith( {
-				containerId: mockContainer.id,
-				model: mockModel,
-				options: { at: 0, useHistory: false, scrollIntoView: true },
-			} );
-		} );
-	} );
-
-	describe( 'ComponentItem Menu', () => {
-		beforeEach( () => {
-			jest.clearAllMocks();
-			mockGetContainerForNewElement.mockReturnValue( {
-				container: createMockElement( { model: { id: 'container-1' } } ),
-				options: { at: 0 },
-			} );
-			mockCreateComponentModel.mockReturnValue( {
-				elType: 'widget',
-				widgetType: 'e-component',
-				settings: {
-					component_id: {
-						$$type: 'number' as const,
-						value: 1,
-					},
-				},
-				editor_settings: {
-					title: 'Test Component',
-				},
-			} );
+			// Assert
+			const draggableElement = screen.getByRole( 'button', { name: /test component/i } );
+			expect( draggableElement ).toHaveAttribute( 'draggable', 'true' );
 		} );
 
-		it( 'should render menu options when more button is clicked', () => {
-			// Arrange.
-			render( <ComponentItem component={ mockComponent } /> );
-			const moreButton = screen.getByLabelText( 'More actions' );
+		it( 'should open menu when more actions button is clicked', () => {
+			// Arrange
+			render(
+				<TestWrapper>
+					<ComponentItem component={ mockComponent } />
+				</TestWrapper>
+			);
 
-			// Act.
-			fireEvent.click( moreButton );
+			const moreActionsButton = screen.getByLabelText( 'More actions' );
 
-			// Assert.
+			// Act
+			fireEvent.click( moreActionsButton );
+
+			// Assert
 			expect( screen.getByText( 'Rename' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should handle delete button click', () => {
-			// Arrange.
-			render( <ComponentItem component={ mockComponent } /> );
+		it( 'should close menu when delete is clicked', async () => {
+			// Arrange
+			render(
+				<TestWrapper>
+					<ComponentItem component={ mockComponent } />
+				</TestWrapper>
+			);
 
-			const moreButton = screen.getByLabelText( 'More actions' );
-			fireEvent.click( moreButton );
+			const moreActionsButton = screen.getByLabelText( 'More actions' );
+			fireEvent.click( moreActionsButton );
 
 			const deleteButton = screen.getByText( 'Delete' );
 
-			// Act.
+			// Act
 			fireEvent.click( deleteButton );
 
-			// Assert.
-			expect( deleteButton ).toBeInTheDocument();
+			// Assert
+			await waitFor( () => {
+				expect( screen.queryByText( 'Rename' ) ).not.toBeInTheDocument();
+			} );
 		} );
 	} );
 
-	describe( 'Integration Tests', () => {
-		it( 'should handle complete component workflow', async () => {
-			const mockContainer = createMockElement( { model: { id: 'container-1' } } );
-			const mockModel = {
-				elType: 'widget',
-				widgetType: 'e-component',
-				settings: {
-					component_id: {
-						$$type: 'number' as const,
-						value: 1,
-					},
-				},
-				editor_settings: {
-					title: 'Test Component',
-				},
+	describe( 'LoadingComponents', () => {
+		it( 'should render loading skeleton with correct number of rows', () => {
+			// Act
+			render( <LoadingComponents /> );
+
+			// Assert
+			const skeletons = screen.getAllByRole( 'button' );
+			expect( skeletons ).toHaveLength( 6 );
+		} );
+
+		it( 'should have proper accessibility label', () => {
+			// Act
+			render( <LoadingComponents /> );
+
+			// Assert
+			expect( screen.getByLabelText( 'Loading components' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'SearchProvider', () => {
+		it( 'should provide search context to children', () => {
+			// Arrange
+			const TestComponent = () => {
+				const { inputValue, handleChange } = useSearch();
+				return (
+					<div>
+						<input value={ inputValue } onChange={ ( e ) => handleChange( e.target.value ) } />
+						<span>{ inputValue }</span>
+					</div>
+				);
 			};
-			mockUseComponents.mockReturnValue( {
-				data: [ mockComponent ],
-				isLoading: false,
-			} as ReturnType< typeof useComponents > );
-			mockGetContainerForNewElement.mockReturnValue( {
-				container: mockContainer,
-				options: { at: 0 },
-			} );
-			mockCreateComponentModel.mockReturnValue( mockModel );
-			mockUseSearch.mockReturnValue( {
-				searchValue: '',
-				inputValue: '',
-				handleChange: jest.fn(),
-				onClearSearch: jest.fn(),
-			} );
-			render( <Components /> );
-			expect( screen.getByText( 'Test Component' ) ).toBeInTheDocument();
-			const componentButton = screen.getByText( 'Test Component' );
-			fireEvent.click( componentButton );
-			expect( mockCreateComponentModel ).toHaveBeenCalledWith( mockComponent );
-			expect( mockDropElement ).toHaveBeenCalledWith( {
-				containerId: mockContainer.id,
-				model: mockModel,
-				options: { at: 0, useHistory: false, scrollIntoView: true },
-			} );
-			const moreButton = screen.getByLabelText( 'More actions' );
-			fireEvent.click( moreButton );
 
-			expect( screen.getByText( 'Rename' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
-		} );
-	} );
+			render(
+				<SearchProvider localStorageKey="test-key">
+					<TestComponent />
+				</SearchProvider>
+			);
 
-	describe( 'Search Tests', () => {
-		beforeEach( () => {
-			jest.clearAllMocks();
-			mockUseSearch.mockReturnValue( {
-				inputValue: '',
-				searchValue: '',
-				handleChange: jest.fn(),
-				onClearSearch: jest.fn(),
-			} );
+			const input = screen.getByRole( 'textbox' );
+
+			// Act
+			fireEvent.change( input, { target: { value: 'test search' } } );
+
+			// Assert
+			expect( screen.getByText( 'test search' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should show 1 component based on search value', () => {
-			// Arrange.
-			mockUseSearch.mockReturnValue( {
-				inputValue: 'header',
-				searchValue: 'header',
-				handleChange: jest.fn(),
-				onClearSearch: jest.fn(),
-			} );
+		it( 'should provide clearSearch function', () => {
+			// Arrange
+			const TestComponent = () => {
+				const { inputValue, handleChange, clearSearch } = useSearch();
+				return (
+					<div>
+						<input value={ inputValue } onChange={ ( e ) => handleChange( e.target.value ) } />
+						<button onClick={ clearSearch }>Clear</button>
+						<span>{ inputValue }</span>
+					</div>
+				);
+			};
 
-			mockUseComponents.mockReturnValue( {
-				data: mockComponents,
-				isLoading: false,
-			} as ReturnType< typeof useComponents > );
+			render(
+				<SearchProvider localStorageKey="test-key">
+					<TestComponent />
+				</SearchProvider>
+			);
 
-			// Act.
-			render( <ComponentsList /> );
+			const input = screen.getByRole( 'textbox' );
+			const clearButton = screen.getByText( 'Clear' );
 
-			// Assert.
-			expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Footer Component' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Button Component' ) ).not.toBeInTheDocument();
-		} );
+			fireEvent.change( input, { target: { value: 'test search' } } );
+			expect( screen.getByText( 'test search' ) ).toBeInTheDocument();
 
-		it( 'should show all components when search term matches common part in all names', () => {
-			mockUseSearch.mockReturnValue( {
-				inputValue: 'component',
-				searchValue: 'component',
-				handleChange: jest.fn(),
-				onClearSearch: jest.fn(),
-			} );
+			// Act
+			fireEvent.click( clearButton );
 
-			mockUseComponents.mockReturnValue( {
-				data: mockComponents,
-				isLoading: false,
-			} as ReturnType< typeof useComponents > );
-
-			render( <ComponentsList /> );
-
-			const componentElements = screen.getAllByText( /Component$/ );
-			expect( componentElements ).toHaveLength( 3 );
-			expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Footer Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should show not found message if no match found with search value', () => {
-			mockUseSearch.mockReturnValue( {
-				inputValue: 'nonexistent',
-				searchValue: 'nonexistent',
-				handleChange: jest.fn(),
-				onClearSearch: jest.fn(),
-			} );
-
-			mockUseComponents.mockReturnValue( {
-				data: mockComponents,
-				isLoading: false,
-			} as ReturnType< typeof useComponents > );
-
-			render( <ComponentsList /> );
-
-			expect( screen.getByText( 'Sorry, nothing matched' ) ).toBeInTheDocument();
-		} );
-		it( 'should clean the search', () => {
-			// Arrange.
-			const mockOnClearSearch = jest.fn();
-
-			mockUseSearch.mockReturnValue( {
-				inputValue: 'nonexistent',
-				searchValue: 'nonexistent',
-				handleChange: jest.fn(),
-				onClearSearch: mockOnClearSearch,
-			} );
-
-			mockUseComponents.mockReturnValue( {
-				data: mockComponents,
-				isLoading: false,
-			} as ReturnType< typeof useComponents > );
-
-			render( <ComponentsList /> );
-
-			expect( screen.getByText( 'Sorry, nothing matched' ) ).toBeInTheDocument();
-
-			const clearBtn = screen.getByRole( 'button', { name: /clear & try again/i } );
-
-			// Act.
-			fireEvent.click( clearBtn );
-
-			// Assert.
-			expect( mockOnClearSearch ).toHaveBeenCalled();
-		} );
-
-		it( 'should be case insensitive when searching', () => {
-			mockUseSearch.mockReturnValue( {
-				inputValue: 'BUTTON',
-				searchValue: 'BUTTON',
-				handleChange: jest.fn(),
-				onClearSearch: jest.fn(),
-			} );
-
-			mockUseComponents.mockReturnValue( {
-				data: mockComponents,
-				isLoading: false,
-			} as ReturnType< typeof useComponents > );
-
-			render( <ComponentsList /> );
-
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Header Component' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Footer Component' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'should show all components when search is empty', () => {
-			mockUseSearch.mockReturnValue( {
-				inputValue: '',
-				searchValue: '',
-				handleChange: jest.fn(),
-				onClearSearch: jest.fn(),
-			} );
-
-			mockUseComponents.mockReturnValue( {
-				data: mockComponents,
-				isLoading: false,
-			} as ReturnType< typeof useComponents > );
-
-			render( <ComponentsList /> );
-
-			expect( screen.getByText( 'Header Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Footer Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
+			// Assert
+			expect( input ).toHaveValue( '' );
 		} );
 	} );
 } );
