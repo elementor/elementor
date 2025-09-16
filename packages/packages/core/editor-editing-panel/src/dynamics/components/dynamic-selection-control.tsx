@@ -239,12 +239,10 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 function ControlsItemsStack( { items }: { items: ControlsSection[ 'value' ][ 'items' ] } ) {
 	return (
 		<Stack p={ 2 } gap={ 2 } sx={ { overflowY: 'auto' } }>
-			{ items.map( ( item ) => {
-				if ( item.type === 'control' ) {
-					return <Control key={ item.value.bind } control={ item.value } />;
-				}
-				return null;
-			} ) }
+			{ items.map( ( item ) =>  ( item.type === 'control'
+					? <Control key={ item.value.bind } control={ item.value } />;
+					: null;
+			) ) }
 		</Stack>
 	);
 }
