@@ -7,6 +7,7 @@ export { StrokeControl } from './controls/stroke-control';
 export { BoxShadowRepeaterControl } from './controls/box-shadow-repeater-control';
 export { FilterRepeaterControl } from './controls/filter-control/filter-repeater-control';
 export { SelectControl } from './controls/select-control';
+export { SelectControlWrapper } from './controls/select-control-wrapper';
 export { ColorControl } from './controls/color-control';
 export { ToggleControl } from './controls/toggle-control';
 export { NumberControl } from './controls/number-control';
@@ -63,7 +64,7 @@ export {
 	injectIntoRepeaterItemIcon,
 	injectIntoRepeaterItemLabel,
 	injectIntoRepeaterItemActions,
-} from './components/unstable-repeater/locations';
+} from './components/control-repeater/locations';
 
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';

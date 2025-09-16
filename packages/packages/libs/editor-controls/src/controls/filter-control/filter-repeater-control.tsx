@@ -8,18 +8,12 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { PropProvider, useBoundProp } from '../../bound-prop-context';
-import {
-	Header,
-	Item,
-	ItemsContainer,
-	TooltipAddItemAction,
-	UnstableRepeater,
-} from '../../components/unstable-repeater';
-import { DisableItemAction } from '../../components/unstable-repeater/actions/disable-item-action';
-import { DuplicateItemAction } from '../../components/unstable-repeater/actions/duplicate-item-action';
-import { RemoveItemAction } from '../../components/unstable-repeater/actions/remove-item-action';
-import { EditItemPopover } from '../../components/unstable-repeater/items/edit-item-popover';
-import type { RepeatablePropValue } from '../../components/unstable-repeater/types';
+import { ControlRepeater, Header, Item, ItemsContainer, TooltipAddItemAction } from '../../components/control-repeater';
+import { DisableItemAction } from '../../components/control-repeater/actions/disable-item-action';
+import { DuplicateItemAction } from '../../components/control-repeater/actions/duplicate-item-action';
+import { RemoveItemAction } from '../../components/control-repeater/actions/remove-item-action';
+import { EditItemPopover } from '../../components/control-repeater/items/edit-item-popover';
+import type { RepeatablePropValue } from '../../components/control-repeater/types';
 import { createControl } from '../../create-control';
 import { FilterConfigProvider, useFilterConfig } from './context/filter-config-context';
 import { FilterContent } from './filter-content';
@@ -73,7 +67,7 @@ const Repeater = ( { propTypeUtil, label, filterPropName }: RepeaterProps ) => {
 	const { getInitialValue } = useFilterConfig();
 
 	return (
-		<UnstableRepeater initial={ getInitialValue() as RepeatablePropValue } propTypeUtil={ propTypeUtil }>
+		<ControlRepeater initial={ getInitialValue() as RepeatablePropValue } propTypeUtil={ propTypeUtil }>
 			<Header label={ label }>
 				<TooltipAddItemAction
 					newItemIndex={ 0 }
@@ -96,7 +90,7 @@ const Repeater = ( { propTypeUtil, label, filterPropName }: RepeaterProps ) => {
 			<EditItemPopover>
 				<FilterContent />
 			</EditItemPopover>
-		</UnstableRepeater>
+		</ControlRepeater>
 	);
 };
 
