@@ -39,7 +39,7 @@ describe( 'Autocomplete', () => {
 		fireEvent.input( input, { target: { value: 'Moses' } } );
 
 		// Assert.
-		expect( screen.queryByRole( 'presentation' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'No options' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should allow values outside of options when allowCustomValues is on', () => {

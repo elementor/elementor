@@ -176,9 +176,10 @@ class Post_Query {
 
 		$this->remove_filter_to_customize_query();
 
-		// Build a name => label map for robust lookups
 		$post_type_labels = ( new Collection( $post_types->all() ) )
-			->map( function ( $pt ) { return $pt->label; } )
+			->map( function ( $pt ) {
+				return $pt->label;
+			} )
 			->all();
 
 		return new \WP_REST_Response( [
@@ -288,7 +289,7 @@ class Post_Query {
 			if ( is_array( $decoded ) ) {
 				$input = $decoded;
 			} else {
-				$input = strpos( $raw, ',' ) !== false ? explode( ',', $raw ) : ( $raw !== '' ? [ $raw ] : [] );
+				$input = false !== strpos( $raw, ',' ) ? explode( ',', $raw ) : ( '' !== $raw ? [ $raw ] : [] );
 			}
 		}
 
@@ -296,7 +297,9 @@ class Post_Query {
 
 		return $array
 			->map( 'sanitize_text_field' )
-			->filter( function ( $value ) { return $value !== ''; } )
+			->filter( function ( $value ) {
+				return '' !== $value;
+			} )
 			->all();
 	}
 

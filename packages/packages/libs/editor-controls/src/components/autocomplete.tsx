@@ -56,6 +56,10 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 
 	const isValueFromOptions = typeof value === 'number' && !! findMatchingOption( options, value );
 
+	const valueLength = value?.toString()?.length ?? 0;
+	const meetsMinLength = valueLength >= minInputLength;
+	const shouldOpen = meetsMinLength && ( allowCustomValues ? optionKeys.length > 0 : true );
+
 	return (
 		<AutocompleteBase
 			{ ...restProps }
@@ -65,7 +69,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 			disablePortal={ true }
 			freeSolo={ allowCustomValues }
 			openOnFocus={ false }
-			open={ ( value?.toString()?.length ?? 0 ) >= minInputLength }
+			open={ shouldOpen }
 			value={ value?.toString() || '' }
 			size={ 'tiny' }
 			onChange={ ( _, newValue ) => onOptionChange( Number( newValue ) ) }
