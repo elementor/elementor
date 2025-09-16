@@ -157,19 +157,11 @@ class Post_Query {
 			return ! in_array( $post_type->name, $excluded_types, true );
 		} );
 
-		$included_post_types = $params[ self::INCLUDED_POST_TYPE_KEY ] ?? [];
-		if ( ! empty( $included_post_types ) ) {
-			$post_type_slugs = new Collection( (array) $included_post_types );
-		} else {
-			$post_type_slugs = $post_types->map( function ( $post_type ) {
-				return $post_type->name;
-			} );
-			$allowed_post_types = $params[ self::ALLOWED_POST_TYPES ] ?? [];
-			if ( ! empty( $allowed_post_types ) ) {
-				$post_type_slugs = $post_type_slugs->filter( function ( $post_type ) use ( $allowed_post_types ) {
-					return in_array( $post_type, $allowed_post_types, true );
-				} );
-			}
+		$post_types = new Collection( get_post_types( [ 'public' => $is_public ], 'object' ) );
+		$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types, $included_types ) {
+			return ( empty( $excluded_types[ $post_type ] ) || ! in_array( $post_type->name, $excluded_types, true ) ) &&
+				( empty( $included_types ) || in_array( $post_type->name, $included_types, true ) );
+		} );
 		}
 
 		$this->add_filter_to_customize_query();
