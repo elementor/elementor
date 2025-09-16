@@ -5,7 +5,7 @@ import { activateMcpRegistration } from './mcp-registry';
 let sdk: AngieMcpSdk;
 
 const getSDK = () => {
-	// @ts-ignore: QUnit fails this
+	// @ts-expect-error: QUnit fails this
 	if ( typeof globalThis.jest !== 'undefined' ) {
 		return {} as unknown as AngieMcpSdk;
 	}
@@ -20,7 +20,9 @@ export function init() {
 }
 
 export function startMCPServer() {
-	return getSDK().waitForReady().then(() => activateMcpRegistration(sdk));
+	return getSDK()
+		.waitForReady()
+		.then( () => activateMcpRegistration( sdk ) );
 }
 
 document.addEventListener(

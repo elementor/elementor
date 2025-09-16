@@ -10,7 +10,7 @@ type ZodTypeAny = z.ZodTypeAny;
 
 const mcpRegistry: { [ namespace: string ]: McpServer } = {};
 const mcpDescriptions: { [ namespace: string ]: string } = {};
-// @ts-ignore
+// @ts-expect-error: QUnit fails this
 let isMcpRegistrationActivated = false || typeof globalThis.jest !== 'undefined';
 
 export async function activateMcpRegistration( sdk: AngieMcpSdk ) {
@@ -44,7 +44,7 @@ const isAlphabet = ( str: string ): string | never => {
  */
 export const getMCPByDomain = ( namespace: string ): MCPRegistryEntry => {
 	const mcpName = `editor-${ isAlphabet( namespace ) }`;
-	// @ts-ignore
+	// @ts-expect-error: QUnit fails this
 	if ( typeof globalThis.jest !== 'undefined' ) {
 		return mockMcpRegistry();
 	}

@@ -28,5 +28,5 @@ module.exports = {
 		global: {
 			lines: 80,
 		},
-	}
+	},
 };
