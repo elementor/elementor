@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Modules\CssConverter\Services\Widget_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Request_Validator;
 use Elementor\Modules\CssConverter\Config\Class_Converter_Config;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 use WP_REST_Request;
@@ -13,10 +14,12 @@ use WP_REST_Response;
 
 class Widgets_Route {
 	private $conversion_service;
+	private $request_validator;
 	private $config;
 
 	public function __construct( $conversion_service = null, $config = null ) {
 		$this->conversion_service = $conversion_service;
+		$this->request_validator = new Request_Validator();
 		$this->config = $config ?: Class_Converter_Config::get_instance();
 		add_action( 'rest_api_init', [ $this, 'register_route' ] );
 	}
@@ -79,6 +82,20 @@ class Widgets_Route {
 							'default' => true,
 							'description' => 'Whether to create global classes from CSS classes',
 						],
+						'timeout' => [
+							'type' => 'integer',
+							'default' => 30,
+							'minimum' => 1,
+							'maximum' => 300,
+							'description' => 'Timeout in seconds for URL fetching (1-300)',
+						],
+						'globalClassThreshold' => [
+							'type' => 'integer',
+							'default' => 1,
+							'minimum' => 1,
+							'maximum' => 100,
+							'description' => 'Minimum usage count to create global class (1-100)',
+						],
 					],
 				],
 			],
@@ -101,8 +118,8 @@ class Widgets_Route {
 		$follow_imports = $request->get_param( 'followImports' ) ?: false;
 		$options = $request->get_param( 'options' ) ?: [];
 
-		// Input validation
-		$validation_error = $this->validate_request( $request );
+		// Enhanced input validation using Request_Validator
+		$validation_error = $this->request_validator->validate_widget_conversion_request( $request );
 		if ( $validation_error ) {
 			return $validation_error;
 		}
