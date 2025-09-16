@@ -203,7 +203,7 @@ describe( 'SvgMediaControl', () => {
 		expect( open ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should show no permissions modal for user without admin permissions', async () => {
+	it( 'should show infotip on hover for user without admin permissions', async () => {
 		// Arrange
 		const open = jest.fn();
 		jest.mocked( useWpMediaFrame ).mockReturnValue( { open } );
@@ -218,7 +218,8 @@ describe( 'SvgMediaControl', () => {
 		renderControl( <SvgMediaControl />, props );
 
 		// Assert
-		fireEvent.click( screen.getByText( 'Upload' ) );
+		const uploadButton = screen.getByText( 'Upload' );
+		fireEvent.mouseEnter( uploadButton );
 		expect(
 			await screen.findByText( /ask the site administrator to enable unfiltered/, {}, { timeout: 3000 } )
 		).toBeInTheDocument();
