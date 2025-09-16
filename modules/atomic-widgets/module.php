@@ -154,6 +154,7 @@ class Module extends BaseModule {
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
+			add_action( 'elementor/atomic-widgets/motion-effects/transformers/register', fn ( $transformers ) => $this->register_motion_effects_transformers( $transformers ) );
 			add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
 
 			// Add entrance animations CSS
@@ -187,10 +188,19 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_motions(): void {
-		 // Quick CDN setup for testing
+		 // Load Motion.js library
 		 wp_enqueue_script('motion-js', plugins_url('assets/js/motion.js', __FILE__), [], '11.13.5', true);
 		 
-		 // Your implementation
+		 // Load the simple motion effects handler
+		 wp_enqueue_script(
+			 'simple-motion-effects-handler', 
+			 plugins_url('assets/js/motion-effects-handler.js', __FILE__), 
+			 [], // No dependencies for now
+			 '1.0.0', 
+			 true
+		 );
+		 
+		 // Keep existing for compatibility
 		 wp_enqueue_script('atomic-motion-effects', plugins_url('assets/js/atomic-motion-effects.js', __FILE__), ['motion-js'], '1.0.0', true);
 		}
 
@@ -295,7 +305,7 @@ class Module extends BaseModule {
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
 		$transformers->register( Key_Value_Array_Prop_Type::get_key(), new Attributes_Transformer() );
-		$transformers->register( Motion_Effects_Prop_Type::get_key(), new Motion_Effects_Data_Transformer() );
+		// $transformers->register( Motion_Effects_Prop_Type::get_key(), new Motion_Effects_Data_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {
@@ -326,7 +336,7 @@ class Module extends BaseModule {
 		$transformers->register( Transform_Scale_Prop_Type::get_key(), new Transform_Scale_Transformer() );
 		$transformers->register( Transform_Rotate_Prop_Type::get_key(), new Transform_Rotate_Transformer() );
 		$transformers->register( Transform_Skew_Prop_Type::get_key(), new Transform_Skew_Transformer() );
-		$transformers->register( Motion_Effects_Prop_Type::get_key(), new Motion_Effects_Transformer() );
+		// $transformers->register( Motion_Effects_Prop_Type::get_key(), new Motion_Effects_Transformer() );
 		$transformers->register( Transform_Prop_Type::get_key(), new Transform_Transformer() );
 		$transformers->register(
 			Border_Radius_Prop_Type::get_key(),
@@ -346,7 +356,12 @@ class Module extends BaseModule {
 		);
 
 		// Add entrance animation transformer
-		$transformers->register( Entrance_Animation_Prop_Type::get_key(), new Entrance_Animation_Transformer() );
+		// $transformers->register( Entrance_Animation_Prop_Type::get_key(), new Entrance_Animation_Transformer() );
+	}
+
+	private function register_motion_effects_transformers( Transformers_Registry $transformers ) {
+		$transformers->register_fallback( new Plain_Transformer() );
+		$transformers->register( Motion_Effects_Prop_Type::get_key(), new Motion_Effects_Data_Transformer() );
 	}
 
 	public function register_import_transformers( Transformers_Registry $transformers ) {

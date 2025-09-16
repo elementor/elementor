@@ -1,34 +1,38 @@
 import * as React from 'react';
-import {
-	EntranceAnimationControl,
-	TransitionRepeaterControl,
-} from '@elementor/editor-controls';
-import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
+import { TextField } from '@elementor/ui';
+import { motionEffectsPropTypeUtil } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
-
-import { StylesField } from '../../../controls-registry/styles-field';
-import { PanelDivider } from '../../panel-divider';
+import { SettingsField } from '../../../controls-registry/settings-field';
 import { SectionContent } from '../../section-content';
+import { useBoundProp } from '@elementor/editor-controls';
 
-const ENTRANCE_ANIMATION_LABEL = __( 'Entrance Animation', 'elementor' );
-const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
+const MOTION_EFFECTS_LABEL = __( 'Motion Effects', 'elementor' );
+
+const SimpleMotionEffectsControl = () => {
+    const { value, setValue, disabled } = useBoundProp(motionEffectsPropTypeUtil);
+    
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue(event.target.value);
+    };
+    
+    return (
+        <TextField
+            value={value || ''}
+            onChange={handleChange}
+            placeholder="Type 'yes' to enable motion effects"
+            size="tiny"
+            fullWidth
+            disabled={disabled}
+        />
+    );
+};
 
 export const MotionEffectsSection = () => {
-	// const shouldShowTransition = isExperimentActive( EXPERIMENTAL_FEATURES.TRANSITIONS );
-
-	return (
-		<SectionContent>
-			<StylesField bind="entrance-animation" propDisplayName={ ENTRANCE_ANIMATION_LABEL }>
-				<EntranceAnimationControl />
-			</StylesField>
-			{/* { shouldShowTransition && (
-				<>
-					<PanelDivider />
-					<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
-						<TransitionRepeaterControl />
-					</StylesField>
-				</>
-			) } */}
-		</SectionContent>
-	);
+    return (
+        <SectionContent>
+            <SettingsField bind="motion-effects" propDisplayName={ MOTION_EFFECTS_LABEL }>
+                <SimpleMotionEffectsControl />
+            </SettingsField>
+        </SectionContent>
+    );
 }; 
