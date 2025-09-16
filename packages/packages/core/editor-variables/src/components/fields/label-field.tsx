@@ -22,7 +22,7 @@ export const useLabelError = ( initialError?: LabelErrorProps ) => {
 	};
 };
 
-type LabelFieldProps = {
+export type LabelFieldProps = {
 	value: string;
 	error?: LabelErrorProps;
 	onChange: ( value: string ) => void;
