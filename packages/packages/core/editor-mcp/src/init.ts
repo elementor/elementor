@@ -5,7 +5,7 @@ import { activateMcpRegistration } from './mcp-registry';
 let sdk: AngieMcpSdk;
 
 const getSDK = () => {
-	// @ts-expect-error: QUnit fails this
+	// @ts-ignore - QUnit fails this
 	if ( typeof globalThis.jest !== 'undefined' ) {
 		return {} as unknown as AngieMcpSdk;
 	}
