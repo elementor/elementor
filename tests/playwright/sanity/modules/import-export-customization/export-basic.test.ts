@@ -27,6 +27,7 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 
 	test.afterEach( async ( { page, apiRequests } ) => {
 		await cleanupCreatedItems( apiRequests, page.context().request, createdItems );
+		await apiRequests.cleanUpTestPages( page.request );
 	} );
 
 	test.only( 'should export kit with default settings', async ( { page } ) => {
@@ -114,7 +115,7 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 		await expect( page.locator( 'text=Exporting...' ) ).toBeVisible();
 
 		// Wait for download to complete
-		const downloadPromise = page.waitForEvent( 'download' );
+		// const downloadPromise = page.waitForEvent( 'download' );
 		// const download = await downloadPromise;
 
 		// Verify progress indicator is hidden after completion
