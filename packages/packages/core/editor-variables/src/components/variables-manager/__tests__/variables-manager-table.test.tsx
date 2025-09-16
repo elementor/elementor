@@ -61,7 +61,7 @@ jest.mock( '@elementor/ui', () => {
 	};
 } );
 
-jest.mock( '../utils/variable-edit-menu', () => ( {
+jest.mock( '../variable-edit-menu', () => ( {
 	VariableEditMenu: ( props: { menuActions: unknown[]; disabled?: boolean } ) => (
 		<div
 			aria-label="Actions menu"
@@ -79,7 +79,7 @@ jest.mock( '../utils/variable-edit-menu', () => ( {
 	),
 } ) );
 
-jest.mock( '../utils/variable-table-cell', () => ( {
+jest.mock( '../variable-table-cell', () => ( {
 	VariableTableCell: ( { children, ...props }: TableCellProps ) => {
 		const safeProps = {
 			...props,

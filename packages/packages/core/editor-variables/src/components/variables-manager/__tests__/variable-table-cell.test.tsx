@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 
-import { VariableTableCell } from '../utils/variable-table-cell';
+import { VariableTableCell } from '../variable-table-cell';
 
 jest.mock( '@elementor/ui', () => ( {
 	...jest.requireActual( '@elementor/ui' ),

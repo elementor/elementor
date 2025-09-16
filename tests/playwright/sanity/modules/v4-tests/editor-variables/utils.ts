@@ -80,13 +80,6 @@ export const openVariableManager = async ( page: Page, styleSectionSelector: str
 	await page.click( EditorSelectors.variables.manager.managerButton );
 };
 
-export const createVariableFromManager = async ( page: Page, type: 'font' | 'color' ) => {
-	await openVariableManager( page, 'Typography', 'text-color' );
-
-	await page.getByRole( 'button', { name: 'Add variable' } ).click();
-	await page.locator( 'li' ).filter( { hasText: type } ).click();
-};
-
 export const deleteVariable = async ( page: Page, variableName: string ) => {
 	await openVariableManager( page, 'Typography', 'text-color' );
 	const variableLocator = page.locator( 'tr', { hasText: variableName } );

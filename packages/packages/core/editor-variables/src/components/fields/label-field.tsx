@@ -22,7 +22,7 @@ export const useLabelError = ( initialError?: LabelErrorProps ) => {
 	};
 };
 
-export type LabelFieldProps = {
+type LabelFieldProps = {
 	value: string;
 	error?: LabelErrorProps;
 	onChange: ( value: string ) => void;
@@ -79,7 +79,6 @@ export const LabelField = ( {
 			inputProps={ {
 				maxLength: VARIABLE_LABEL_MAX_LENGTH,
 				...( selectOnShow && { onFocus: ( e: React.FocusEvent< HTMLInputElement > ) => e.target.select() } ),
-				'aria-label': 'Name',
 			} }
 			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus={ focusOnShow }
