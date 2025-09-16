@@ -75,3 +75,10 @@ export const openVariableManager = async ( page: Page, styleSectionSelector: str
 	await openVariablesPopover( page, styleSectionSelector, controlToAccessFrom );
 	await page.click( EditorSelectors.variables.manager.managerButton );
 };
+
+export const createVariableFromManager = async ( page: Page, type: 'font' | 'color' ) => {
+	await openVariableManager( page, 'Typography', 'text-color' );
+
+	await page.getByRole( 'button', { name: 'Add variable' } ).click();
+	await page.locator( 'li' ).filter( { hasText: type } ).click();
+};

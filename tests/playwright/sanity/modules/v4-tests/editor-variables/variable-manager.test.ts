@@ -1,7 +1,7 @@
 import { BrowserContext, Page, expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 
-import { addColorVariable, addFontVariable, initTemplate, openVariableManager } from './utils';
+import { addColorVariable, addFontVariable, initTemplate, openVariableManager, createVariableFromManager } from './utils';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
 test.describe( 'Variable Manager @v4-tests', () => {
@@ -33,5 +33,20 @@ test.describe( 'Variable Manager @v4-tests', () => {
 		const variableRow = page.locator( 'tr', { hasText: addedColorVariable.name } );
 		await expect( variableRow ).toBeVisible();
 		await expect( variableRow.getByText( addedColorVariable.value ) ).toBeVisible();
+	} );
+
+	test( 'Variable name validation error displays and clears correctly', async () => {
+		await createVariableFromManager( page, 'color' );
+		const nameField = page.getByRole( 'textbox', { name: 'Variable Label' } );
+
+		await test.step( 'Display validation error for invalid input', async () => {
+			await nameField.fill( ' ' );
+			await expect( page.getByText( 'Give your variable a name.' ) ).toBeVisible();
+		} );
+
+		await test.step( 'Clear validation error when input is fixed', async () => {
+			await nameField.fill( 'valid-variable-name' );
+			await expect( page.getByText( 'Give your variable a name.' ) ).not.toBeVisible();
+		} );
 	} );
 } );

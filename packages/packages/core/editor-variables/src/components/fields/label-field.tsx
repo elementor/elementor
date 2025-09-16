@@ -79,6 +79,7 @@ export const LabelField = ( {
 			inputProps={ {
 				maxLength: VARIABLE_LABEL_MAX_LENGTH,
 				...( selectOnShow && { onFocus: ( e: React.FocusEvent< HTMLInputElement > ) => e.target.select() } ),
+				'aria-label': 'Variable label',
 			} }
 			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus={ focusOnShow }
