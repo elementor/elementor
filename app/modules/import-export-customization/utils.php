@@ -41,7 +41,7 @@ class Utils {
 		return $result;
 	}
 
-	private static function prioritize_content_over_templates( array $existing_mappings, array $content_mappings ) {
+	public static function prioritize_content_over_templates( array $existing_mappings, array $content_mappings ) {
 		return array_replace( $existing_mappings, $content_mappings );
 	}
 
