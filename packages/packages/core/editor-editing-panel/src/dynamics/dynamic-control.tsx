@@ -38,12 +38,10 @@ export const DynamicControl = ( { bind, children }: DynamicControlProps ) => {
 	const propType = createTopLevelObjectType( { schema: dynamicTag.props_schema } );
 
 	const defaults = React.useMemo( () => {
-		const result: Record< string, DynamicPropValue > = {};
-		Object.entries( dynamicTag.props_schema ?? {} ).forEach( ( [ key, prop ] ) => {
+		return Object.entries( dynamicTag.props_schema ?? {} ).reduce( ( result, [ key, prop ] ) => {
 			// @ts-expect-error default exists on prop type
-			result[ key ] = prop?.default ?? null;
-		} );
-		return result;
+		return { ...result, [ key ]: prop?.default ?? null };
+		}, {} as Record< string, DynamicPropValue > );
 	}, [ dynamicTag.props_schema ] );
 
 	const effectiveSettings = { ...defaults, ...( settings ?? {} ) } as Record< string, DynamicPropValue >;
