@@ -154,44 +154,44 @@ class Import {
 	 *      We are using it for quick creation of the instance when the import process is being split into chunks.
 	 * @throws \Exception If the import session does not exist.
 	 */
-	public function __construct( string $path, array $settings = [], array $old_instance = null ) {
-		if ( ! empty( $old_instance ) ) {
-			$this->set_import_object( $old_instance );
+public function __construct( string $path, array $settings = [], array $old_instance = null ) {
+	if ( ! empty( $old_instance ) ) {
+		$this->set_import_object( $old_instance );
+	} else {
+		if ( is_file( $path ) ) {
+			$this->extracted_directory_path = $this->extract_zip( $path );
 		} else {
-			if ( is_file( $path ) ) {
-				$this->extracted_directory_path = $this->extract_zip( $path );
-			} else {
-				$elementor_tmp_directory = Plugin::$instance->uploads_manager->get_temp_dir();
-				$path = $elementor_tmp_directory . basename( $path );
+			$elementor_tmp_directory = Plugin::$instance->uploads_manager->get_temp_dir();
+			$path = $elementor_tmp_directory . basename( $path );
 
-				if ( ! is_dir( $path ) ) {
-					throw new \Exception( 'Couldn’t execute the import process because the import session does not exist.' );
-				}
-
-				$this->extracted_directory_path = $path . '/';
+			if ( ! is_dir( $path ) ) {
+				throw new \Exception( 'Couldn’t execute the import process because the import session does not exist.' );
 			}
 
-			$this->session_id = basename( $this->extracted_directory_path );
-			$this->kit_id = $settings['id'] ?? '';
-			$this->settings_referrer = ! empty( $settings['referrer'] ) ? $settings['referrer'] : 'local';
-			$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
-
-			// Using isset and not empty is important since empty array is valid option.
-			$this->settings_selected_override_conditions = $settings['customization']['templates']['themeBuilder']['overrideConditions'] ?? null;
-			$this->settings_selected_custom_post_types = $settings['customization']['content']['customPostTypes'] ?? null;
-			$this->settings_selected_plugins = $settings['plugins'] ?? null;
-			$this->settings_customization = $settings['customization'] ?? null;
-
-			$this->manifest = $this->read_manifest_json();
-			$this->site_settings = $this->read_site_settings_json();
-
-			$this->set_default_settings();
+			$this->extracted_directory_path = $path . '/';
 		}
 
-		add_filter( 'wp_php_error_args', function ( $args, $error ) {
-			return $this->filter_php_error_args( $args, $error );
-		}, 10, 2 );
+		$this->session_id = basename( $this->extracted_directory_path );
+		$this->kit_id = $settings['id'] ?? '';
+		$this->settings_referrer = ! empty( $settings['referrer'] ) ? $settings['referrer'] : 'local';
+		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
+
+		// Using isset and not empty is important since empty array is valid option.
+		$this->settings_selected_override_conditions = $settings['customization']['templates']['themeBuilder']['overrideConditions'] ?? null;
+		$this->settings_selected_custom_post_types = $settings['customization']['content']['customPostTypes'] ?? null;
+		$this->settings_selected_plugins = $settings['plugins'] ?? null;
+		$this->settings_customization = $settings['customization'] ?? null;
+
+		$this->manifest = $this->read_manifest_json();
+		$this->site_settings = $this->read_site_settings_json();
+
+		$this->set_default_settings();
 	}
+
+	add_filter( 'wp_php_error_args', function ( $args, $error ) {
+		return $this->filter_php_error_args( $args, $error );
+	}, 10, 2 );
+}
 
 	/**
 	 * Set the import object parameters.
@@ -199,30 +199,30 @@ class Import {
 	 * @param array $instance
 	 * @return void
 	 */
-	private function set_import_object( array $instance ) {
-		$this->session_id = $instance['session_id'];
+private function set_import_object( array $instance ) {
+	$this->session_id = $instance['session_id'];
 
-		$instance_data = $instance['instance_data'];
+	$instance_data = $instance['instance_data'];
 
-		$this->extracted_directory_path = $instance_data['extracted_directory_path'];
-		$this->runners = $instance_data['runners'];
-		$this->adapters = $instance_data['adapters'];
+	$this->extracted_directory_path = $instance_data['extracted_directory_path'];
+	$this->runners = $instance_data['runners'];
+	$this->adapters = $instance_data['adapters'];
 
-		$this->manifest = $instance_data['manifest'];
-		$this->site_settings = $instance_data['site_settings'];
+	$this->manifest = $instance_data['manifest'];
+	$this->site_settings = $instance_data['site_settings'];
 
-		$this->settings_include = $instance_data['settings_include'];
-		$this->settings_referrer = $instance_data['settings_referrer'];
-		$this->settings_conflicts = $instance_data['settings_conflicts'];
-		$this->settings_selected_override_conditions = $instance_data['settings_selected_override_conditions'];
-		$this->settings_selected_custom_post_types = $instance_data['settings_selected_custom_post_types'];
-		$this->settings_selected_plugins = $instance_data['settings_selected_plugins'];
-		$this->settings_customization = $instance_data['settings_customization'];
+	$this->settings_include = $instance_data['settings_include'];
+	$this->settings_referrer = $instance_data['settings_referrer'];
+	$this->settings_conflicts = $instance_data['settings_conflicts'];
+	$this->settings_selected_override_conditions = $instance_data['settings_selected_override_conditions'];
+	$this->settings_selected_custom_post_types = $instance_data['settings_selected_custom_post_types'];
+	$this->settings_selected_plugins = $instance_data['settings_selected_plugins'];
+	$this->settings_customization = $instance_data['settings_customization'];
 
-		$this->documents_data = $instance_data['documents_data'];
-		$this->imported_data = $instance_data['imported_data'];
-		$this->runners_import_metadata = $instance_data['runners_import_metadata'];
-	}
+	$this->documents_data = $instance_data['documents_data'];
+	$this->imported_data = $instance_data['imported_data'];
+	$this->runners_import_metadata = $instance_data['runners_import_metadata'];
+}
 
 	/**
 	 * Creating a new instance of the import process by the id of the old import session.
@@ -232,17 +232,17 @@ class Import {
 	 * @return Import
 	 * @throws \Exception If the import session does not exist.
 	 */
-	public static function from_session( string $session_id ): Import {
-		$import_sessions = Utils::get_import_sessions();
+public static function from_session( string $session_id ): Import {
+	$import_sessions = Utils::get_import_sessions();
 
-		if ( ! $import_sessions || ! isset( $import_sessions[ $session_id ] ) ) {
-			throw new \Exception( 'Couldn’t execute the import process because the import session does not exist.' );
-		}
-
-		$import_session = $import_sessions[ $session_id ];
-
-		return new self( $session_id, [], $import_session );
+	if ( ! $import_sessions || ! isset( $import_sessions[ $session_id ] ) ) {
+		throw new \Exception( 'Couldn’t execute the import process because the import session does not exist.' );
 	}
+
+	$import_session = $import_sessions[ $session_id ];
+
+	return new self( $session_id, [], $import_session );
+}
 
 	/**
 	 * Register a runner.
@@ -250,18 +250,18 @@ class Import {
 	 *
 	 * @param Import_Runner_Base $runner_instance
 	 */
-	public function register( Import_Runner_Base $runner_instance ) {
-		$this->runners[ $runner_instance::get_name() ] = $runner_instance;
-	}
+public function register( Import_Runner_Base $runner_instance ) {
+	$this->runners[ $runner_instance::get_name() ] = $runner_instance;
+}
 
-	public function register_default_runners() {
-		$this->register( new Site_Settings() );
-		$this->register( new Plugins() );
-		$this->register( new Templates() );
-		$this->register( new Taxonomies() );
-		$this->register( new Elementor_Content() );
-		$this->register( new Wp_Content() );
-	}
+public function register_default_runners() {
+	$this->register( new Site_Settings() );
+	$this->register( new Plugins() );
+	$this->register( new Templates() );
+	$this->register( new Taxonomies() );
+	$this->register( new Elementor_Content() );
+	$this->register( new Wp_Content() );
+}
 
 	/**
 	 * Set default settings for the import.
@@ -301,8 +301,12 @@ class Import {
 	 */
 	public function run() {
 		if ( empty( $this->runners ) ) {
-			throw new \Exception( 'Couldn’t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
+			throw new \Exception( 'Couldn\'t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
 		}
+
+		// Clear any stale import session data to prevent cross-session contamination
+		// This ensures clean data for the current import while maintaining cross-module compatibility
+		$this->clear_stale_import_sessions();
 
 		$data = [
 			'session_id' => $this->session_id,
@@ -320,7 +324,7 @@ class Import {
 		remove_filter( 'elementor/document/save/data', [ Plugin::$instance->modules_manager->get_modules( 'content-sanitizer' ), 'sanitize_content' ] );
 		add_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10, 2 );
 
-		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
+		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads .
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 
 		foreach ( $this->runners as $runner ) {
@@ -838,5 +842,28 @@ class Import {
 		}
 
 		return $args;
+	}
+
+	private function clear_stale_import_sessions() {
+		// Get current import sessions
+		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, [] );
+
+		if ( empty( $import_sessions ) ) {
+			return;
+		}
+
+		// Keep only the most recent session (if any) and clear the rest to prevent contamination
+		// This maintains some history for revert functionality while preventing cross-session data issues
+		$sessions_by_time = $import_sessions;
+		uasort( $sessions_by_time, function( $a, $b ) {
+			return ( $a['start_timestamp'] ?? 0 ) <=> ( $b['start_timestamp'] ?? 0 );
+		} );
+
+		// Keep only the last session, remove all others
+		$sessions_to_keep = array_slice( $sessions_by_time, -1, 1, true );
+
+		if ( count( $sessions_to_keep ) !== count( $import_sessions ) ) {
+			update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $sessions_to_keep, false );
+		}
 	}
 }
