@@ -10,7 +10,7 @@ import {
 import { initEnv } from '@elementor/env';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { useRepeaterContext } from '../../components/unstable-repeater/context/repeater-context';
+import { useRepeaterContext } from '../../components/control-repeater/context/repeater-context';
 import {
 	getInitialBackgroundOverlay,
 	initialBackgroundColorOverlay,
@@ -18,7 +18,7 @@ import {
 } from '../background-control/background-overlay/background-overlay-repeater-control';
 import { createMockGradientOverlay, gradientPropType } from './background-gradient-color-control.test';
 
-jest.mock( '../../components/unstable-repeater/context/repeater-context' );
+jest.mock( '../../components/control-repeater/context/repeater-context' );
 jest.mocked( useRepeaterContext ).mockReturnValue( { rowRef: document.body } as never );
 
 const stubBackgroundColorOverlay = ( color: string ): BackgroundOverlayItemPropValue => {
