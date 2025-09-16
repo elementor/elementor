@@ -77,6 +77,7 @@ export default function Layout( props ) {
 	if ( ! state.hasPro ) {
 		headerButtons.push( {
 			id: 'go-pro',
+			text: __( 'Upgrade', 'elementor' ),
 			hideText: false,
 			className: 'eps-button__go-pro-btn',
 			url: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
