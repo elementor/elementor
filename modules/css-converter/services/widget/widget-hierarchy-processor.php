@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\CssConverter\Services;
+namespace Elementor\Modules\CssConverter\Services\Widget;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -25,11 +25,11 @@ class Widget_Hierarchy_Processor {
 		
 		$this->processing_stats['total_widgets'] = count( $widgets );
 		
-		// Step 1: Build hierarchy tree from flat widget list
-		$hierarchy_tree = $this->build_hierarchy_tree( $widgets );
+		// Step 1: Widgets already have hierarchy structure from Widget Mapper
+		// No need to rebuild hierarchy tree - use existing nested structure
 		
 		// Step 2: Process widgets in dependency order (parents first)
-		$processed_widgets = $this->process_tree_hierarchically( $hierarchy_tree );
+		$processed_widgets = $this->process_tree_hierarchically( $widgets );
 		
 		// Step 3: Validate hierarchy integrity
 		$this->validate_hierarchy_integrity( $processed_widgets );
@@ -166,13 +166,16 @@ class Widget_Hierarchy_Processor {
 	}
 
 	private function apply_container_defaults( $settings ) {
-		// Apply default container settings
+		// Apply default e-flexbox settings for Elementor v4 atomic widgets
 		$defaults = [
-			'content_width' => 'boxed',
-			'flex_direction' => 'column',
-			'flex_wrap' => 'nowrap',
-			'align_items' => 'stretch',
+			'direction' => 'column',
+			'wrap' => 'nowrap',
 			'justify_content' => 'flex-start',
+			'align_items' => 'stretch',
+			'gap' => [
+				'column' => '0',
+				'row' => '0',
+			],
 		];
 		
 		return array_merge( $defaults, $settings );
@@ -250,25 +253,31 @@ class Widget_Hierarchy_Processor {
 		switch ( $widget['widget_type'] ) {
 			case 'e-heading':
 				$defaults = [
-					'title' => $widget['settings']['text'] ?? 'Heading',
-					'size' => $this->determine_heading_size( $widget['settings']['tag'] ?? 'h1' ),
-					'header_size' => $this->map_heading_tag_to_size( $widget['settings']['tag'] ?? 'h1' ),
+					'title' => $widget['settings']['text'] ?? 'This is a title',
+					'tag' => $widget['settings']['tag'] ?? 'h2',
+					'classes' => [],
+					'link' => null,
+					'attributes' => null,
 				];
 				break;
-			case 'e-text':
 			case 'e-paragraph':
 				$defaults = [
-					'editor' => $widget['settings']['text'] ?? 'Text content',
+					'paragraph' => $widget['settings']['text'] ?? 'Type your paragraph here',
+					'classes' => [],
+					'link' => null,
+					'attributes' => null,
 				];
 				break;
 			case 'e-button':
 				$defaults = [
 					'text' => $widget['settings']['text'] ?? 'Button',
+					'classes' => [],
 					'link' => [
 						'url' => $widget['attributes']['href'] ?? '#',
 						'is_external' => false,
 						'nofollow' => false,
 					],
+					'attributes' => null,
 				];
 				break;
 			case 'e-image':
@@ -277,6 +286,8 @@ class Widget_Hierarchy_Processor {
 						'url' => $widget['attributes']['src'] ?? '',
 						'alt' => $widget['attributes']['alt'] ?? '',
 					],
+					'classes' => [],
+					'attributes' => null,
 				];
 				break;
 			default:
@@ -310,16 +321,17 @@ class Widget_Hierarchy_Processor {
 	}
 
 	private function validate_no_circular_references( $widgets, $visited = [], $path = [] ) {
-		foreach ( $widgets as $widget ) {
-			$widget_id = $widget['id'];
+		foreach ( $widgets as $index => $widget ) {
+			// Use a combination of widget type and position as identifier since widgets don't have IDs yet
+			$widget_identifier = $widget['widget_type'] . '_' . $index;
 			
-			if ( in_array( $widget_id, $path, true ) ) {
-				throw new \Exception( "Circular reference detected in widget hierarchy: " . implode( ' -> ', $path ) . ' -> ' . $widget_id );
+			if ( in_array( $widget_identifier, $path, true ) ) {
+				throw new \Exception( "Circular reference detected in widget hierarchy: " . implode( ' -> ', $path ) . ' -> ' . $widget_identifier );
 			}
 			
-			if ( ! in_array( $widget_id, $visited, true ) ) {
-				$visited[] = $widget_id;
-				$new_path = array_merge( $path, [ $widget_id ] );
+			if ( ! in_array( $widget_identifier, $visited, true ) ) {
+				$visited[] = $widget_identifier;
+				$new_path = array_merge( $path, [ $widget_identifier ] );
 				
 				if ( ! empty( $widget['elements'] ) ) {
 					$this->validate_no_circular_references( $widget['elements'], $visited, $new_path );

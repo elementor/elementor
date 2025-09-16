@@ -1,12 +1,12 @@
 <?php
-namespace Elementor\Modules\CssConverter\Services;
+namespace Elementor\Modules\CssConverter\Services\Css;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\CssConverter\Services\Css_Specificity_Calculator;
-use Elementor\Modules\CssConverter\Services\Class_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Css\Css_Specificity_Calculator;
+use Elementor\Modules\CssConverter\Services\Class\Class_Conversion_Service;
 use Elementor\Modules\CssConverter\Parsers\CssParser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 

@@ -25,7 +25,7 @@ require_once __DIR__ . '/../../class-convertors/font-size-property-mapper.php';
 require_once __DIR__ . '/../../class-convertors/class-property-mapper-registry.php';
 require_once __DIR__ . '/../../services/class-conversion-service.php';
 
-use Elementor\Modules\CssConverter\Services\Class_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Class\Class_Conversion_Service;
 use Elementor\Modules\CssConverter\ClassConvertors\Color_Property_Mapper;
 use Elementor\Modules\CssConverter\ClassConvertors\Font_Size_Property_Mapper;
 

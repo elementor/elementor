@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Testing\Modules\CssConverter\Services;
 
-use Elementor\Modules\CssConverter\Services\Widget_Error_Handler;
+use Elementor\Modules\CssConverter\Services\Widget\Widget_Error_Handler;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {

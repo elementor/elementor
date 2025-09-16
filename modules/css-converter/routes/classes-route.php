@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\CssConverter\Services\Class_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Class\Class_Conversion_Service;
 use Elementor\Modules\CssConverter\Config\Class_Converter_Config;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;

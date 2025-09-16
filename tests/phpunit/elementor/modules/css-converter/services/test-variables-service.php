@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\CssConverter;
 
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Modules\CssConverter\Services\Variables_Service;
+use Elementor\Modules\CssConverter\Services\Variable\Variables_Service;
 use Elementor\Modules\CssConverter\Parsers\CssParser;
 use Elementor\Modules\CssConverter\Parsers\ParsedCss;
 

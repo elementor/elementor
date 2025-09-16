@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Testing\Modules\CssConverter\Services;
 
-use Elementor\Modules\CssConverter\Services\Request_Validator;
+use Elementor\Modules\CssConverter\Services\Css\Request_Validator;
 use ElementorEditorTesting\Elementor_Test_Base;
 use WP_REST_Request;
 

@@ -1,9 +1,9 @@
 <?php
 namespace Elementor\Testing\Modules\CssConverter\Services;
 
-use Elementor\Modules\CssConverter\Services\Css_Processor;
-use Elementor\Modules\CssConverter\Services\Html_Parser;
-use Elementor\Modules\CssConverter\Services\Widget_Mapper;
+use Elementor\Modules\CssConverter\Services\Css\Css_Processor;
+use Elementor\Modules\CssConverter\Services\Css\Html_Parser;
+use Elementor\Modules\CssConverter\Services\Widget\Widget_Mapper;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {

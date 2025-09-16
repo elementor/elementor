@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\CssConverter\Services;
+namespace Elementor\Modules\CssConverter\Services\Widget;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

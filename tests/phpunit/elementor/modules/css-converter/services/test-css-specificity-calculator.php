@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Testing\Modules\CssConverter\Services;
 
-use Elementor\Modules\CssConverter\Services\Css_Specificity_Calculator;
+use Elementor\Modules\CssConverter\Services\Css\Css_Specificity_Calculator;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {

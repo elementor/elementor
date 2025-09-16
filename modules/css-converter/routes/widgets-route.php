@@ -5,8 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\CssConverter\Services\Widget_Conversion_Service;
-use Elementor\Modules\CssConverter\Services\Request_Validator;
+use Elementor\Modules\CssConverter\Services\Widget\Widget_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Css\Request_Validator;
 use Elementor\Modules\CssConverter\Config\Class_Converter_Config;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 use WP_REST_Request;

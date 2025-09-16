@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\CssConverter;
 
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Modules\CssConverter\Services\Class_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Class\Class_Conversion_Service;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

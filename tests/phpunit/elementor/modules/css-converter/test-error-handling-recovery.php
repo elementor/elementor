@@ -1,9 +1,9 @@
 <?php
 namespace Elementor\Testing\Modules\CssConverter;
 
-use Elementor\Modules\CssConverter\Services\Widget_Error_Handler;
-use Elementor\Modules\CssConverter\Services\Widget_Conversion_Service;
-use Elementor\Modules\CssConverter\Services\Request_Validator;
+use Elementor\Modules\CssConverter\Services\Widget\Widget_Error_Handler;
+use Elementor\Modules\CssConverter\Services\Widget\Widget_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Css\Request_Validator;
 use ElementorEditorTesting\Elementor_Test_Base;
 use WP_REST_Request;
 
