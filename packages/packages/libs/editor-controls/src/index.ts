@@ -65,7 +65,7 @@ export {
 	injectIntoRepeaterItemIcon,
 	injectIntoRepeaterItemLabel,
 	injectIntoRepeaterItemActions,
-} from './components/unstable-repeater/locations';
+} from './components/control-repeater/locations';
 
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';

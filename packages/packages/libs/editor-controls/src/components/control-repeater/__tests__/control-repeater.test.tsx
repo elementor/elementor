@@ -8,12 +8,12 @@ import { DisableItemAction } from '../actions/disable-item-action';
 import { DuplicateItemAction } from '../actions/duplicate-item-action';
 import { RemoveItemAction } from '../actions/remove-item-action';
 import { TooltipAddItemAction } from '../actions/tooltip-add-item-action';
+import { ControlRepeater } from '../control-repeater';
 import { Header } from '../header/header';
 import { EditItemPopover } from '../items/edit-item-popover';
 import { Item } from '../items/item';
 import { ItemsContainer } from '../items/items-container';
 import { type ItemProps, type RepeatablePropValue } from '../types';
-import { UnstableRepeater } from '../unstable-repeater';
 
 jest.mock( '../../../bound-prop-context/use-bound-prop' );
 jest.mock( '../../../bound-prop-context' );
@@ -41,7 +41,7 @@ const setValuesWrapper = ( setValues: ( value: unknown ) => void ) => {
 	};
 };
 
-describe( 'UnstableRepeater', () => {
+describe( 'ControlRepeater', () => {
 	beforeEach( () => {
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: [],
@@ -60,7 +60,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater { ...defaultProps }>
+			<ControlRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
@@ -70,7 +70,7 @@ describe( 'UnstableRepeater', () => {
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		);
 
 		// Assert.
@@ -101,7 +101,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater { ...defaultProps }>
+			<ControlRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
@@ -111,7 +111,7 @@ describe( 'UnstableRepeater', () => {
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		);
 
 		// Assert.
@@ -142,7 +142,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater { ...defaultProps }>
+			<ControlRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
@@ -152,7 +152,7 @@ describe( 'UnstableRepeater', () => {
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		);
 
 		const addButton = screen.getByRole( 'button', { name: /Add test repeater item/i } );
@@ -190,7 +190,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater { ...defaultProps }>
+			<ControlRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
@@ -200,7 +200,7 @@ describe( 'UnstableRepeater', () => {
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		);
 
 		const openItemButton = screen.getByRole( 'button', { name: 'Open item' } );
@@ -227,7 +227,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater { ...defaultProps }>
+			<ControlRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
@@ -237,7 +237,7 @@ describe( 'UnstableRepeater', () => {
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		);
 
 		const openItemButtons = screen.getAllByRole( 'button', { name: 'Open item' } );
@@ -260,14 +260,14 @@ describe( 'UnstableRepeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater { ...defaultProps }>
+			<ControlRepeater { ...defaultProps }>
 				<ItemsContainer>
 					<Item { ...createItemSettings() } />
 				</ItemsContainer>
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		);
 
 		// Assert.
@@ -313,7 +313,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater { ...defaultProps } initial={ customInitialValues }>
+			<ControlRepeater { ...defaultProps } initial={ customInitialValues }>
 				<Header label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
@@ -323,7 +323,7 @@ describe( 'UnstableRepeater', () => {
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		);
 
 		// Assert.
@@ -358,7 +358,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater { ...defaultProps }>
+			<ControlRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
@@ -366,7 +366,7 @@ describe( 'UnstableRepeater', () => {
 					<Item { ...itemSettings } actions={ <DuplicateItemAction /> } />
 				</ItemsContainer>
 				<EditItemPopover>Content</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		);
 
 		// eslint-disable-next-line testing-library/no-node-access
@@ -417,7 +417,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater { ...defaultProps }>
+			<ControlRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
@@ -425,7 +425,7 @@ describe( 'UnstableRepeater', () => {
 					<Item { ...itemSettings } actions={ <RemoveItemAction /> } />
 				</ItemsContainer>
 				<EditItemPopover>Content</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		);
 
 		// eslint-disable-next-line testing-library/no-node-access
@@ -470,7 +470,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
+			<ControlRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
 				</Header>
@@ -478,7 +478,7 @@ describe( 'UnstableRepeater', () => {
 					<Item { ...itemSettings } actions={ <DisableItemAction /> } />
 				</ItemsContainer>
 				<EditItemPopover>Content</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		);
 
 		// eslint-disable-next-line testing-library/no-node-access
@@ -520,7 +520,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
+			<ControlRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
 				</Header>
@@ -528,7 +528,7 @@ describe( 'UnstableRepeater', () => {
 					<Item { ...itemSettings } actions={ <DisableItemAction /> } />
 				</ItemsContainer>
 				<EditItemPopover>Content</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		);
 
 		// eslint-disable-next-line testing-library/no-node-access
@@ -572,7 +572,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
+			<ControlRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
 				</Header>
@@ -582,7 +582,7 @@ describe( 'UnstableRepeater', () => {
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		);
 
 		const addButton = screen.getByRole( 'button', { name: /Add repeater item/i } );
