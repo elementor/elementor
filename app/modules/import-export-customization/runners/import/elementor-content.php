@@ -97,6 +97,7 @@ class Elementor_Content extends Import_Runner_Base {
 					$import_result = apply_filters( 'elementor/import-export-customization/import/elementor-content/customization', null, $data, [], $customization ?? [], $this );
 
 					if ( is_array( $import_result ) ) {
+						$this->handle_frontpage_setting_after_import( $import_result, $post_settings, $id );
 						$result[ $import_result['status'] ][ $id ] = $import_result['result'];
 						continue;
 					}
@@ -211,6 +212,14 @@ class Elementor_Content extends Import_Runner_Base {
 			update_option( 'show_on_front', 'page' );
 		}
 	}
+
+	private function handle_frontpage_setting_after_import( array $import_result, array $post_settings, $exported_page_id ) {
+		if ( static::IMPORT_STATUS_SUCCEEDED === $import_result['status'] && ! empty( $post_settings['show_on_front'] ) ) {
+			$new_page_id = $import_result['result'];
+			$this->set_page_on_front( $new_page_id );
+		}
+	}
+
 
 	public function get_import_session_metadata(): array {
 		return [
