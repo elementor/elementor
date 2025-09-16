@@ -25,15 +25,16 @@ class Utils {
 
 		$result += $imported_data['templates']['succeed'] ?? [];
 
-		if ( isset( $imported_data['content'] ) ) {
-			foreach ( $imported_data['content'] as $post_type ) {
+		if ( isset( $imported_data['wp-content'] ) ) {
+			foreach ( $imported_data['wp-content'] as $post_type ) {
 				$result += $post_type['succeed'] ?? [];
 			}
 		}
 
-		if ( isset( $imported_data['wp-content'] ) ) {
-			foreach ( $imported_data['wp-content'] as $post_type ) {
-				$result += $post_type['succeed'] ?? [];
+		if ( isset( $imported_data['content'] ) ) {
+			foreach ( $imported_data['content'] as $post_type ) {
+				$content_data = $post_type['succeed'] ?? [];
+				$result = array_replace( $result, $content_data );
 			}
 		}
 
