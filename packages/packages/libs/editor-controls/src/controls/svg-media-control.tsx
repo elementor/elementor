@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import { imageSrcPropTypeUtil } from '@elementor/editor-props';
-import { InfoCircleFilledIcon, UploadIcon } from '@elementor/icons';
+import { UploadIcon } from '@elementor/icons';
 import {
 	Alert,
 	AlertTitle,
@@ -12,7 +12,6 @@ import {
 	CardMedia,
 	CardOverlay,
 	CircularProgress,
-	Infotip,
 	Stack,
 	styled,
 	ThemeProvider,
@@ -22,6 +21,7 @@ import { type OpenOptions, useWpMediaAttachment, useWpMediaFrame } from '@elemen
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../bound-prop-context';
+import { ConditionalControlInfotip } from '../components/conditional-control-infotip';
 import { EnableUnfilteredModal } from '../components/enable-unfiltered-modal';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
@@ -88,37 +88,21 @@ export const SvgMediaControl = createControl( () => {
 		}
 	};
 
-	const infotipContent = (
-		<Alert
-			sx={ {
-				width: '320px',
-				p: '16px',
-			} }
-			size="small"
-			color="secondary"
-			icon={ <InfoCircleFilledIcon /> }
-		>
-			<AlertTitle>
-				<Typography variant="subtitle1">
-					{ __( "Sorry, you can't upload that file yet.", 'elementor' ) }
-				</Typography>
-			</AlertTitle>
-			<Box component="span">
-				<Typography variant="body1">
-					{ __( 'To upload them anyway,', 'elementor' ) }
-					<br />
-					{ __( 'ask the site administrator to enable unfiltered file uploads.', 'elementor' ) }
-				</Typography>
-			</Box>
-		</Alert>
-	);
-
 	const handleClick = ( openOptions?: OpenOptions ) => {
 		if ( ! allowSvgUpload && openOptions === MODE_UPLOAD ) {
 			setUnfilteredModalOpenState( true );
 		} else {
 			open( openOptions );
 		}
+	};
+
+	const infotipProps = {
+		title: __( "Sorry, you can't upload that file yet.", 'elementor' ),
+		description: __(
+			'To upload them anyway, ask the site administrator to enable unfiltered file uploads.',
+			'elementor'
+		),
+		isEnabled: ! canManageOptions,
 	};
 
 	return (
@@ -154,33 +138,19 @@ export const SvgMediaControl = createControl( () => {
 							>
 								{ __( 'Select SVG', 'elementor' ) }
 							</Button>
-							{ canManageOptions ? (
-								<Button
-									size="tiny"
-									variant="text"
-									color="inherit"
-									startIcon={ <UploadIcon /> }
-									onClick={ () => handleClick( MODE_UPLOAD ) }
-								>
-									{ __( 'Upload', 'elementor' ) }
-								</Button>
-							) : (
-								<Infotip placement="right" content={ infotipContent } color={ 'secondary' }>
-									<span>
-										<ThemeProvider colorScheme={ 'dark' }>
-											<Button
-												disabled="true"
-												size="tiny"
-												variant="text"
-												color="inherit"
-												startIcon={ <UploadIcon /> }
-											>
-												{ __( 'Upload', 'elementor' ) }
-											</Button>
-										</ThemeProvider>
-									</span>
-								</Infotip>
-							) }
+							<ConditionalControlInfotip { ...infotipProps }>
+								<span>
+									<Button
+										size="tiny"
+										variant="text"
+										color="secondary"
+										startIcon={ <UploadIcon /> }
+										onClick={ () => handleClick( MODE_UPLOAD ) }
+									>
+										{ __( 'Upload', 'elementor' ) }
+									</Button>
+								</span>
+							</ConditionalControlInfotip>
 						</Stack>
 					</CardOverlay>
 				</StyledCard>
