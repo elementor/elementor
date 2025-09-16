@@ -3,9 +3,8 @@ import { TrashIcon } from '@elementor/icons';
 import { type IconButtonProps, type MenuItemProps, type MenuProps } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { VariableEditMenu } from '../variable-edit-menu';
+import { VariableEditMenu } from '../utils/variable-edit-menu';
 
-// Mock implementations need to be defined before jest.mock()
 const mockPopupState = {
 	isOpen: false,
 	anchorEl: null,
