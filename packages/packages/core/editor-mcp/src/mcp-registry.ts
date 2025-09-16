@@ -4,6 +4,8 @@ import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/m
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
+import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
+
 type ZodTypeAny = z.ZodTypeAny;
 
 const mcpRegistry: { [ namespace: string ]: McpServer } = {};
@@ -39,8 +41,11 @@ const isAlphabet = ( str: string ): string | never => {
  *
  * @param namespace The namespace of the MCP server. It should contain only lowercase alphabetic characters.
  */
-export const getMCPByDomain = ( namespace: string ) => {
+export const getMCPByDomain = ( namespace: string ): MCPRegistryEntry => {
 	const mcpName = `editor-${ isAlphabet( namespace ) }`;
+	if ( typeof jest !== 'undefined' ) {
+		return mockMcpRegistry();
+	}
 	if ( ! mcpRegistry[ namespace ] ) {
 		mcpRegistry[ namespace ] = new McpServer( {
 			name: mcpName,
@@ -56,6 +61,11 @@ export const getMCPByDomain = ( namespace: string ) => {
 		},
 	};
 };
+
+export interface MCPRegistryEntry {
+	addTool: ( opts: ToolRegistrationOptions ) => void;
+	setMCPDescription: ( description: string ) => void;
+}
 
 type ToolRegistrationOptions<
 	InputArgs extends undefined | ZodRawShape = undefined,

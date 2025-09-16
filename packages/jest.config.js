@@ -1,5 +1,7 @@
 import '@testing-library/jest-dom';
 
+import { expect } from '@jest/globals';
+
 module.exports = {
 	verbose: true,
 	rootDir: __dirname,
@@ -30,5 +32,8 @@ module.exports = {
 		global: {
 			lines: 80,
 		},
+	},
+	_FORCE_LOADED: {
+		expect,
 	},
 };
