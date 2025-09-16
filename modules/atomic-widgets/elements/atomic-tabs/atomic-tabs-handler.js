@@ -12,7 +12,7 @@ register( {
 				const activeTab = tabPanel.getAttribute( 'data-tab-id' ) === id;
 
 				if ( activeTab ) {
-					tabPanel.style.display = '';
+					tabPanel.style.removeProperty( 'display' );
 					tabPanel.removeAttribute( 'hidden' );
 
 					return;
