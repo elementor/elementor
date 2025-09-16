@@ -3,17 +3,27 @@ import { AngieMcpSdk } from '@elementor-external/angie-sdk';
 
 import { activateMcpRegistration } from './mcp-registry';
 
-const sdk = new AngieMcpSdk();
+let sdk: AngieMcpSdk;
+
+const getSDK = () => {
+	if ( typeof jest !== 'undefined' ) {
+		return {} as unknown as AngieMcpSdk;
+	}
+	if ( ! sdk ) {
+		sdk = new AngieMcpSdk();
+	}
+	return sdk;
+};
 
 export async function init() {
 	if ( isExperimentActive( 'editor_mcp' ) ) {
-		await sdk.waitForReady();
+		await getSDK().waitForReady();
 	}
 }
 
 export async function startMCPServer() {
 	if ( isExperimentActive( 'editor_mcp' ) ) {
-		await sdk.waitForReady();
+		await getSDK().waitForReady();
 		await activateMcpRegistration( sdk );
 	}
 }
