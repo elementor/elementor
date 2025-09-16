@@ -410,5 +410,13 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_register_script(
+			'elementor-tabs-handler',
+			$this->get_js_assets_url( 'tabs-handler' ),
+			[ $frontend_handlers_package_config['handle'] ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 }

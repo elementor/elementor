@@ -7,7 +7,7 @@ type Props = {
 	infotipProps?: Partial< InfotipProps >;
 	alertProps?: Partial< AlertProps >;
 	title?: string;
-	description?: string;
+	description?: React.ReactNode | string;
 	isEnabled?: boolean;
 };
 
@@ -45,7 +45,7 @@ export const ConditionalControlInfotip = React.forwardRef(
 									sx={ { width: 300, px: 1.5, py: 2 } }
 									{ ...alertProps }
 								>
-									<Box sx={ { flexDirection: 'column', display: 'flex' } }>
+									<Box sx={ { flexDirection: 'column', display: 'flex', gap: 0.5 } }>
 										<AlertTitle>{ title }</AlertTitle>
 										<Box>{ description }</Box>
 									</Box>
