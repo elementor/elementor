@@ -8,21 +8,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\CssConverter\Routes\VariablesRoute;
 use Elementor\Modules\CssConverter\Routes\Classes_Route;
+use Elementor\Modules\CssConverter\Routes\Widgets_Route;
 
 class Module extends BaseModule {
 	private $variables_route;
 	private $classes_route;
+	private $widgets_route;
 
 	public function get_name() {
 		return 'css-converter';
 	}
 
-	public function __construct( $variables_route = null, $classes_route = null ) {
+	public function __construct( $variables_route = null, $classes_route = null, $widgets_route = null ) {
 		parent::__construct();
 		$this->variables_route = $variables_route;
 		$this->classes_route = $classes_route;
+		$this->widgets_route = $widgets_route;
 		// Only initialize routes in non-test environments
-		if ( ! $this->is_test_environment() && ! $variables_route && ! $classes_route ) {
+		if ( ! $this->is_test_environment() && ! $variables_route && ! $classes_route && ! $widgets_route ) {
 			$this->init_routes();
 		}
 	}
@@ -43,6 +46,7 @@ class Module extends BaseModule {
 		try {
 			$this->variables_route = new VariablesRoute();
 			$this->classes_route = new Classes_Route();
+			$this->widgets_route = new Widgets_Route();
 		} catch ( \Throwable $e ) {
 			// Log error in production but don't break the site
 			if ( function_exists( 'error_log' ) ) {
