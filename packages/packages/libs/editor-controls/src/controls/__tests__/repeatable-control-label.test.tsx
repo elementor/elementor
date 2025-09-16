@@ -10,14 +10,14 @@ jest.mock( '../../bound-prop-context', () => ( {
 	useBoundProp: jest.fn(),
 } ) );
 
-jest.mock( '../../components/unstable-repeater/context/repeater-context', () => ( {
-	...jest.requireActual( '../../components/unstable-repeater/context/repeater-context' ),
+jest.mock( '../../components/control-repeater/context/repeater-context', () => ( {
+	...jest.requireActual( '../../components/control-repeater/context/repeater-context' ),
 	useRepeaterContext: jest.fn(),
 } ) );
 
 import { useBoundProp } from '../../bound-prop-context';
-import { useRepeaterContext } from '../../components/unstable-repeater/context/repeater-context';
-import { type RepeatablePropValue } from '../../components/unstable-repeater/types';
+import { useRepeaterContext } from '../../components/control-repeater/context/repeater-context';
+import { type RepeatablePropValue } from '../../components/control-repeater/types';
 const mockUseRepeaterContext = useRepeaterContext as jest.MockedFunction< typeof useRepeaterContext >;
 const mockUseBoundProp = useBoundProp as jest.MockedFunction< typeof useBoundProp >;
 const TEXT_PRIMARY_COLOR = 'rgb(12, 13, 14)';
