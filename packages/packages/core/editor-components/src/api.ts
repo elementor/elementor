@@ -36,6 +36,6 @@ export const apiClient = {
 			.then( ( res ) => res.data.data ),
 	update: ( payload: UpdatePayload ) =>
 		httpService()
-			.post< HttpResponse< CreateComponentResponse > >( `${ BASE_URL }`, payload )
+			.put< HttpResponse< CreateComponentResponse > >( `${ BASE_URL }`, payload )
 			.then( ( res ) => res.data.data ),
 };
