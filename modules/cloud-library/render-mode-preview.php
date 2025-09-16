@@ -19,6 +19,29 @@ class Render_Mode_Preview extends Render_Mode_Base {
 	public function __construct( $template_id ) {
 		$this->template_id = $template_id;
 		$this->document = $this->create_document();
+		
+		// Switch WordPress global post context to match the document
+		global $post, $wp_query;
+		$post = get_post( $this->document->get_main_id() );
+		setup_postdata( $post );
+		
+		Plugin::$instance->db->switch_to_post( $this->document->get_main_id() );
+		
+		// Switch to document BEFORE calling parent constructor
+		Plugin::$instance->documents->switch_to_document( $this->document );
+		
+		// Add template filter immediately to ensure it's applied before template selection
+		add_filter( 'template_include', [ $this, 'filter_template' ] );
+		
+		// Add body class filter immediately to ensure correct classes are set
+		add_filter( 'body_class', [ $this, 'filter_body_class' ], 999 );
+		
+		// Add cleanup action to run after page is fully rendered
+		add_action( 'wp_footer', [ $this, 'cleanup' ], 999 );
+		
+		// Set the module to use for rendering
+		add_filter( 'elementor/render_mode/module', [ $this, 'filter_render_mode_module' ] );
+		
 		parent::__construct( $this->document->get_main_id() );
 	}
 
@@ -29,12 +52,33 @@ class Render_Mode_Preview extends Render_Mode_Base {
 	public function prepare_render() {
 		parent::prepare_render();
 		show_admin_bar( false );
-
-		add_filter( 'template_include', [ $this, 'filter_template' ] );
 	}
 
 	public function filter_template() {
 		return ELEMENTOR_PATH . 'modules/page-templates/templates/canvas.php';
+	}
+
+	public function filter_body_class( $classes ) {
+		// Remove any existing elementor-page classes
+		$classes = array_filter( $classes, function( $class ) {
+			return ! preg_match( '/^elementor-page/', $class );
+		} );
+
+		// Add the correct elementor-page class for our document
+		$classes[] = 'elementor-page elementor-page-' . $this->document->get_main_id();
+
+		return $classes;
+	}
+
+	public function cleanup() {
+		// Clean up the temporary document after screenshot is taken
+		if ( $this->document && $this->document->get_main_id() ) {
+			wp_delete_post( $this->document->get_main_id(), true );
+		}
+	}
+
+	public function filter_render_mode_module( $module ) {
+		return 'cloud-library';
 	}
 
 	public function enqueue_scripts() {
@@ -68,8 +112,6 @@ class Render_Mode_Preview extends Render_Mode_Base {
 		if ( is_wp_error( $document ) ) {
 			wp_die();
 		}
-
-		Plugin::$instance->documents->switch_to_document( $document );
 
 		return $document;
 	}

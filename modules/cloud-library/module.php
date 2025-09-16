@@ -43,23 +43,16 @@ class Module extends BaseModule {
 		add_filter( 'elementor/render_mode/module', function( $module_name ) {
 			$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
 
-				// Debug: Log the render mode detection
-				error_log( 'Cloud Library Debug - Render mode filter called. Module name: ' . $module_name );
-				error_log( 'Cloud Library Debug - Render mode manager exists: ' . ( $render_mode_manager ? 'yes' : 'no' ) );
+			if ( $render_mode_manager ) {
+				$current_render_mode = $render_mode_manager->get_current();
 
-				if ( $render_mode_manager ) {
-					$current_render_mode = $render_mode_manager->get_current();
-					error_log( 'Cloud Library Debug - Current render mode: ' . ( $current_render_mode ? get_class( $current_render_mode ) : 'null' ) );
-
-					if ( $current_render_mode instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
-						error_log( 'Cloud Library Debug - Switching to cloud-library module' );
-						return 'cloud-library';
-					}
+				if ( $current_render_mode instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
+					return 'cloud-library';
 				}
+			}
 
-				error_log( 'Cloud Library Debug - Using default module: ' . $module_name );
-				return $module_name;
-			}, 12);
+			return $module_name;
+		}, 12);
 
 		if ( $this->is_screenshot_proxy_mode( $_GET ) ) { // phpcs:ignore -- Checking nonce inside the method.
 			echo $this->get_proxy_data( htmlspecialchars( $_GET['href'] ) ); // phpcs:ignore -- Nonce was checked on the above method
@@ -184,16 +177,12 @@ class Module extends BaseModule {
 	private function print_thumbnail_preview_callback() {
 		$doc = Plugin::$instance->documents->get_current();
 
-		// Debug: Log the current document
-		error_log( 'Cloud Library Debug - Current document: ' . ( $doc ? $doc->get_main_id() : 'null' ) );
-
 		// Ensure we're using the correct document and it's properly switched
 		if ( ! $doc ) {
 			// If no current document, try to get it from the render mode
 			$render_mode = Plugin::$instance->frontend->render_mode_manager->get_current();
 			if ( $render_mode instanceof Render_Mode_Preview ) {
 				$doc = $render_mode->get_document();
-				error_log( 'Cloud Library Debug - Got document from render mode: ' . $doc->get_main_id() );
 			}
 		}
 
@@ -202,17 +191,13 @@ class Module extends BaseModule {
 			return;
 		}
 
-		// Debug: Log the document we're about to render
-		error_log( 'Cloud Library Debug - Rendering document: ' . $doc->get_main_id() );
-
 		// Ensure the document is switched before rendering
 		Plugin::$instance->documents->switch_to_document( $doc );
 
-		// PHPCS - should not be escaped.
-		echo Plugin::$instance->frontend->get_builder_content_for_display( $doc->get_main_id(), true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-
-		// Clean up the temporary document
-		wp_delete_post( $doc->get_main_id(), true );
+		// Use the document's get_content method which works for Cloud_Template_Preview
+		$content = $doc->get_content( true );
+		
+		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 

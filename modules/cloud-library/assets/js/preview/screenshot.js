@@ -5,10 +5,6 @@ class Screenshot extends elementorModules.ViewModule {
 	getDefaultSettings() {
 		return {
 			empty_content_headline: 'Empty Content.',
-			crop: {
-				width: ElementorScreenshotConfig?.crop?.width || 1200,
-				height: ElementorScreenshotConfig?.crop?.height || 1500,
-			},
 			excluded_external_css_urls: [
 				'https://kit-pro.fontawesome.com',
 			],
@@ -41,8 +37,6 @@ class Screenshot extends elementorModules.ViewModule {
 	onInit() {
 		super.onInit();
 
-		this.log( 'Screenshot init', 'time' );
-
 		/**
 		 * Hold the timeout timer
 		 *
@@ -57,153 +51,11 @@ class Screenshot extends elementorModules.ViewModule {
 	 * The main method for this class.
 	 */
 	captureScreenshot() {
-		// if ( ! this.elements.$elementor.length && ! this.getSettings( 'kit_id' ) ) {
-		// 	elementorCommon.helpers.consoleWarn(
-		// 		'Screenshots: The content of this page is empty, the module will create a fake conent just for this screenshot.',
-		// 	);
-
-		// 	this.createFakeContent();
-		// }
-
-		// this.removeUnnecessaryElements();
-		// this.handleIFrames();
-		// this.removeFirstSectionMargin();
-		// this.handleLinks();
-		// this.loadExternalCss();
-		// this.loadExternalImages();
-
 		return Promise.resolve()
 			.then( this.createImage.bind( this ) )
-			.then( this.cropCanvas.bind( this ) )
 			.then( this.save.bind( this ) )
 			.then( this.screenshotSucceed.bind( this ) )
 			.catch( this.screenshotFailed.bind( this ) );
-	}
-
-	/**
-	 * Fake content for documents that dont have any content.
-	 */
-	createFakeContent() {
-		this.elements.$elementor = jQuery( '<div>' ).css( {
-			height: this.getSettings( 'crop.height' ),
-			width: this.getSettings( 'crop.width' ),
-			display: 'flex',
-			alignItems: 'center',
-			justifyContent: 'center',
-		} );
-
-		this.elements.$elementor.append(
-			jQuery( '<h1>' ).css( { fontSize: '85px' } ).html( this.getSettings( 'empty_content_headline' ) ),
-		);
-
-		document.body.prepend( this.elements.$elementor );
-	}
-
-	/**
-	 * CSS from another server cannot be loaded with the current dom to image library.
-	 * this method take all the links from another domain and proxy them.
-	 */
-	loadExternalCss() {
-		const excludedUrls = [
-			this.getSettings( 'home_url' ),
-			...this.getSettings( 'excluded_external_css_urls' ),
-		];
-
-		const notSelector = excludedUrls
-			.map( ( url ) => `[href^="${ url }"]` )
-			.join( ', ' );
-
-		jQuery( 'link' ).not( notSelector ).each( ( index, el ) => {
-			const $link = jQuery( el ),
-				$newLink = $link.clone();
-
-			$newLink.attr( 'href', this.getScreenshotProxyUrl( $link.attr( 'href' ) ) );
-
-			this.elements.$head.append( $newLink );
-			$link.remove();
-		} );
-	}
-
-	/**
-	 * Make a proxy to images urls that has some problems with cross origin (like youtube).
-	 */
-	loadExternalImages() {
-		const selector = this.getSettings( 'external_images_urls' )
-			.map( ( url ) => `img[src^="${ url }"]` )
-			.join( ', ' );
-
-		jQuery( selector ).each( ( index, el ) => {
-			const $img = jQuery( el );
-
-			$img.attr( 'src', this.getScreenshotProxyUrl( $img.attr( 'src' ) ) );
-		} );
-	}
-
-	/**
-	 * Html to images libraries can not snapshot IFrames
-	 * this method convert all the IFrames to some other elements.
-	 */
-	handleIFrames() {
-		this.elements.$elementor.find( 'iframe' ).each( ( index, el ) => {
-			const $iframe = jQuery( el ),
-				$iframeMask = jQuery( '<div />', {
-					css: {
-						background: 'gray',
-						width: $iframe.width(),
-						height: $iframe.height(),
-					},
-				} );
-
-			$iframe.before( $iframeMask );
-			$iframe.remove();
-		} );
-	}
-
-	/**
-	 * Remove all the sections that should not be in the screenshot.
-	 */
-	removeUnnecessaryElements() {
-		let currentHeight = 0;
-
-		// We need to keep all elements as for Kit we render the entire homepage
-		if ( this.getSettings( 'kit_id' ) ) {
-			return;
-		}
-
-		this.elements.$sections
-			.filter( ( index, el ) => {
-				let shouldBeRemoved = false;
-
-				if ( currentHeight >= this.getSettings( 'crop.height' ) ) {
-					shouldBeRemoved = true;
-				}
-
-				currentHeight += jQuery( el ).outerHeight();
-
-				return shouldBeRemoved;
-			} )
-			.each( ( index, el ) => {
-				el.remove();
-			} );
-
-		// Some 3rd party plugins inject elements into the dom, so this method removes all
-		// the elements that was injected, to make sure that it capture a screenshot only of the post itself.
-		// this.elements.$notElementorElements.remove();
-	}
-
-	/**
-	 * Some urls make some problems to the svg parser.
-	 * this method convert all the urls to just '/'.
-	 */
-	handleLinks() {
-		elementorCommon.elements.$body.find( 'a' ).attr( 'href', '/' );
-	}
-
-	/**
-	 * Remove unnecessary margin from the first element of the post (singles and footers).
-	 */
-	removeFirstSectionMargin() {
-		this.elements.$firstSection.css( { marginTop: 0 } );
 	}
 
 	/**
@@ -226,100 +78,52 @@ class Screenshot extends elementorModules.ViewModule {
 
 		await Promise.race( [ pageLoadedPromise, timeOutPromise ] );
 
-		console.log( 'Start creating screenshot with html-to-image.' );
-
 		try {
-			// Debug: Check if element exists
-			console.log( 'Elementor selector:', ElementorScreenshotConfig.selector );
-			console.log( 'Elementor element:', this.elements.$elementor );
-			console.log( 'Elementor element length:', this.elements.$elementor.length );
-			
 			// Re-select element if not found (DOM might not be ready during init)
 			let $elementorElement = this.elements.$elementor;
 			if ( ! $elementorElement.length ) {
-				console.log( 'Re-selecting Elementor element...' );
 				$elementorElement = jQuery( ElementorScreenshotConfig.selector );
-				console.log( 'Re-selected element:', $elementorElement );
-				console.log( 'Re-selected element length:', $elementorElement.length );
 			}
-			
-			// Debug: Check what Elementor elements exist in the DOM
-			console.log( 'All Elementor elements in DOM:', jQuery( '[class*="elementor-"]' ) );
-			console.log( 'All elements with "elementor" in class:', jQuery( '[class*="elementor"]' ) );
-			console.log( 'Body children:', jQuery( 'body > *' ) );
-			
-					// Debug: Check the current document context
-		console.log( 'Expected document ID:', ElementorScreenshotConfig.post_id );
-		console.log( 'Template ID:', ElementorScreenshotConfig.template_id );
-		console.log( 'Current page ID from body class:', jQuery( 'body' ).attr( 'class' ).match( /page-id-(\d+)/ )?.[1] || 'not found' );
-		console.log( 'Current browser URL:', window.location.href );
-		console.log( 'Current page title:', document.title );
-			
+
 			// Fallback: Find the main Elementor container if the specific selector fails
 			if ( ! $elementorElement.length ) {
-				console.log( 'Trying fallback selector...' );
 				// Look for the main Elementor container (not header/footer)
 				$elementorElement = jQuery( 'body > div.elementor:not(.elementor-location-header):not(.elementor-location-footer)' );
-				console.log( 'Fallback element:', $elementorElement );
-				console.log( 'Fallback element length:', $elementorElement.length );
 			}
-			
+
 			if ( ! $elementorElement.length ) {
 				throw new Error( 'Elementor container not found. Selector: ' + ElementorScreenshotConfig.selector );
 			}
 
-			const canvas = await toCanvas( $elementorElement[0], {
-				quality: 0.1,
+			const canvas = await toCanvas( $elementorElement[ 0 ], {
+				quality: 0.15,
 				imagePlaceholder: this.getSettings( 'image_placeholder' ),
+				backgroundColor: null, // Use actual background
+				style: {
+					transform: 'scale(1)',
+					transformOrigin: 'top left',
+				},
 			} );
 
-			return canvas.toDataURL( 'image/webp', 0.01 );
+			return canvas.toDataURL( 'image/webp', 0.15 );
 		} catch ( error ) {
-			console.log( 'Screenshot creation failed:', error );
 			throw error;
 		}
 	}
 
-	/**
-	 * Crop the image to requested sizes.
-	 *
-	 * @param {string} dataUrl
-	 * @return {Promise<HTMLCanvasElement>} Canvas
-	 */
-	cropCanvas( dataUrl ) {
-		return new Promise( ( resolve ) => {
-			const image = new Image();
-			image.onload = () => {
-				const width = this.getSettings( 'crop.width' );
-				const height = this.getSettings( 'crop.height' );
-
-				const cropCanvas = document.createElement( 'canvas' ),
-					cropContext = cropCanvas.getContext( '2d' ),
-					ratio = width / image.width;
-
-				cropCanvas.width = width;
-				cropCanvas.height = height > image.height ? image.height : height;
-
-				cropContext.drawImage( image, 0, 0, image.width, image.height, 0, 0, image.width * ratio, image.height * ratio );
-
-				resolve( cropCanvas );
-			};
-			image.src = dataUrl;
-		} );
-	}
 
 	/**
 	 * Send the image to the server.
 	 *
-	 * @param {HTMLCanvasElement} canvas
+	 * @param {string} dataUrl
 	 * @return {Promise<string>} Screenshot URL
 	 */
-	save( canvas ) {
+	save( dataUrl ) {
 		const { key, action } = this.getSaveAction();
 
 		const data = {
 			[ key ]: this.getSettings( key ),
-			screenshot: canvas.toDataURL( 'image/webp', 0.01 ),
+			screenshot: dataUrl,
 		};
 
 		return new Promise( ( resolve, reject ) => {
@@ -330,13 +134,9 @@ class Screenshot extends elementorModules.ViewModule {
 			elementorCommon.ajax.addRequest( action, {
 				data,
 				success: ( url ) => {
-					console.log( `Screenshot created: ${ encodeURI( url ) }` );
-
 					resolve( url );
 				},
 				error: () => {
-					console.log( 'Failed to create screenshot.' );
-
 					reject();
 				},
 			} );
@@ -368,13 +168,9 @@ class Screenshot extends elementorModules.ViewModule {
 				elementorCommon.ajax.addRequest( route, {
 					data,
 					success: () => {
-						console.log( `Marked as failed.` );
-
 						resolve();
 					},
 					error: () => {
-						console.log( 'Failed to mark this screenshot as failed.' );
-
 						reject();
 					},
 				} );
@@ -405,8 +201,6 @@ class Screenshot extends elementorModules.ViewModule {
 	 * @param {Error} e
 	 */
 	screenshotFailed( e ) {
-		console.log( e, null );
-
 		this.markAsFailed( e )
 			.then( () => this.screenshotDone( false ) );
 	}
@@ -431,27 +225,6 @@ class Screenshot extends elementorModules.ViewModule {
 			id: this.getSettings( key ),
 			imageUrl,
 		}, '*' );
-
-		console.log( `Screenshot ${ success ? 'Succeed' : 'Failed' }.` );
-	}
-
-	/**
-	 * Log messages for debugging.
-	 *
-	 * @param {any}     message
-	 * @param {string?} timerMethod
-	 */
-	log( message ) {
-		if ( ! this.getSettings( 'isDebug' ) ) {
-			return;
-		}
-
-		// eslint-disable-next-line no-console
-		console.log(
-			'string' === typeof message
-				? `${ this.getSettings( 'post_id' ) } - ${ message }`
-				: message,
-		);
 	}
 
 	getSaveAction() {
