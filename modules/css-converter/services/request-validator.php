@@ -445,7 +445,7 @@ class Request_Validator {
 	private function calculate_html_nesting_depth( $html ) {
 		// Simple depth calculation using DOM parsing
 		$dom = new \DOMDocument();
-		$dom->loadHTML( $html, LIBXML_HTML_NOINFERRED | LIBXML_HTML_NODEFDTD );
+		$dom->loadHTML( $html, \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD );
 		
 		return $this->get_max_element_depth( $dom->documentElement );
 	}

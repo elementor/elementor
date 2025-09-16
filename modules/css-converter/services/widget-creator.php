@@ -239,16 +239,39 @@ class Widget_Creator {
 		$widget_id = wp_generate_uuid4();
 
 		// Base Elementor widget structure
-		$elementor_widget = [
-			'id' => $widget_id,
-			'elType' => 'widget',
-			'widgetType' => $this->map_to_elementor_widget_type( $widget_type ),
-			'settings' => $this->merge_settings_with_styles( $settings, $applied_styles ),
-		];
+		$mapped_type = $this->map_to_elementor_widget_type( $widget_type );
+		
+		if ( 'e-flexbox' === $mapped_type ) {
+			// Flexbox containers have special structure in Elementor
+			$elementor_widget = [
+				'id' => $widget_id,
+				'elType' => 'e-flexbox',
+				'settings' => $this->merge_settings_with_styles( $settings, $applied_styles ),
+				'isInner' => false,
+				'styles' => [],
+				'editor_settings' => [],
+				'version' => '0.0',
+			];
+		} else {
+			// Regular widgets
+			$elementor_widget = [
+				'id' => $widget_id,
+				'elType' => 'widget',
+				'widgetType' => $mapped_type,
+				'settings' => $this->merge_settings_with_styles( $settings, $applied_styles ),
+				'isInner' => false,
+				'styles' => [],
+				'editor_settings' => [],
+				'version' => '0.0',
+			];
+		}
 
 		// Handle children for container widgets (already processed by hierarchy processor)
 		if ( ! empty( $widget['elements'] ) ) {
 			$elementor_widget['elements'] = $this->convert_widgets_to_elementor_format( $widget['elements'] );
+		} else {
+			// Ensure elements array exists (required by Elementor)
+			$elementor_widget['elements'] = [];
 		}
 
 		return $elementor_widget;
@@ -257,26 +280,27 @@ class Widget_Creator {
 	private function map_to_elementor_widget_type( $widget_type ) {
 		// Map our internal widget types to actual Elementor widget types
 		$mapping = [
-			'e-heading' => 'heading',
-			'e-paragraph' => 'text-editor',
-			'e-flexbox' => 'container',
-			'e-link' => 'button', // Links can be represented as buttons
-			'e-button' => 'button',
-			'e-image' => 'image',
+			'e-heading' => 'e-heading',
+			'e-paragraph' => 'e-paragraph',
+			'e-flexbox' => 'e-flexbox',
+			'e-link' => 'e-button', // Links can be represented as buttons
+			'e-button' => 'e-button',
+			'e-image' => 'e-image',
 		];
 
 		return $mapping[ $widget_type ] ?? 'html'; // Fallback to HTML widget
 	}
 
 	private function merge_settings_with_styles( $settings, $applied_styles ) {
-		$merged_settings = $settings;
+		// Format settings according to Elementor's structure
+		$merged_settings = $this->format_elementor_settings( $settings );
 
 		// Apply computed styles to widget settings
 		if ( ! empty( $applied_styles['computed_styles'] ) ) {
 			foreach ( $applied_styles['computed_styles'] as $property => $style_data ) {
 				$elementor_property = $this->map_css_property_to_elementor_setting( $property );
 				if ( $elementor_property ) {
-					$merged_settings[ $elementor_property ] = $style_data['value'];
+					$merged_settings[ $elementor_property ] = $this->format_elementor_value( $style_data['value'] );
 				}
 			}
 		}
@@ -287,6 +311,30 @@ class Widget_Creator {
 		}
 
 		return $merged_settings;
+	}
+
+	private function format_elementor_settings( $settings ) {
+		$formatted_settings = [];
+		
+		foreach ( $settings as $key => $value ) {
+			// Special formatting for specific fields
+			if ( 'tag' === $key && is_string( $value ) ) {
+				$formatted_settings[ $key ] = [
+					'$$type' => 'string',
+					'value' => $value,
+				];
+			} else {
+				$formatted_settings[ $key ] = $this->format_elementor_value( $value );
+			}
+		}
+		
+		return $formatted_settings;
+	}
+
+	private function format_elementor_value( $value ) {
+		// Format values according to Elementor's expected structure
+		// Only specific fields need the $$type wrapper (like 'tag' for headings)
+		return $value;
 	}
 
 	private function map_css_property_to_elementor_setting( $css_property ) {
@@ -385,8 +433,19 @@ class Widget_Creator {
 			throw new \Exception( 'Invalid Elementor document' );
 		}
 
-		// Save elements to document
+		// Save elements to document - use update_meta directly for _elementor_data
 		try {
+			$post_id = $document->get_main_id();
+			
+			// Save the elements data directly to _elementor_data meta
+			update_post_meta( $post_id, '_elementor_data', wp_json_encode( $elementor_elements ) );
+			
+			// Set additional required Elementor meta keys
+			update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
+			update_post_meta( $post_id, '_elementor_template_type', 'wp-post' );
+			update_post_meta( $post_id, '_elementor_version', '3.33.0' );
+			
+			// Also try the document save method as backup
 			$document->save( [
 				'elements' => $elementor_elements,
 			] );
@@ -401,8 +460,8 @@ class Widget_Creator {
 			return elementor_get_edit_url( $post_id );
 		}
 
-		// Fallback to WordPress edit URL
-		return admin_url( 'post.php?post=' . $post_id . '&action=edit' );
+		// Fallback to manual Elementor URL construction
+		return admin_url( 'post.php?post=' . $post_id . '&action=elementor' );
 	}
 
 	public function get_creation_stats() {

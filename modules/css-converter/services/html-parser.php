@@ -27,7 +27,7 @@ class Html_Parser {
 		$html = $this->prepare_html( $html );
 		
 		// Load HTML with error recovery
-		$success = $this->dom->loadHTML( $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+		$success = $this->dom->loadHTML( $html, \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD );
 		
 		if ( ! $success ) {
 			$errors = libxml_get_errors();
@@ -178,7 +178,7 @@ class Html_Parser {
 		// Parse HTML to find linked stylesheets
 		$temp_dom = new DOMDocument();
 		libxml_use_internal_errors( true );
-		$temp_dom->loadHTML( $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+		$temp_dom->loadHTML( $html, \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD );
 		
 		$links = $temp_dom->getElementsByTagName( 'link' );
 		foreach ( $links as $link ) {

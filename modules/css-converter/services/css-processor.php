@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Modules\CssConverter\Services\Css_Specificity_Calculator;
 use Elementor\Modules\CssConverter\Services\Class_Conversion_Service;
-use Elementor\Modules\CssConverter\Parsers\Css_Parser;
+use Elementor\Modules\CssConverter\Parsers\CssParser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 
 class Css_Processor {
@@ -19,7 +19,7 @@ class Css_Processor {
 	public function __construct() {
 		$this->specificity_calculator = new Css_Specificity_Calculator();
 		$this->class_conversion_service = new Class_Conversion_Service();
-		$this->css_parser = new Css_Parser();
+		$this->css_parser = new CssParser();
 		
 		// Initialize Global Classes Repository if available
 		if ( class_exists( 'Elementor\Modules\GlobalClasses\Global_Classes_Repository' ) ) {

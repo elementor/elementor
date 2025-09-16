@@ -174,8 +174,8 @@ class Widget_Conversion_Service {
 			];
 
 			throw new Class_Conversion_Exception( 
-				'Widget conversion failed: ' . $e->getMessage(),
-				$conversion_log
+				'Widget conversion failed: ' . $e->getMessage() . '. Log: ' . wp_json_encode( $conversion_log ),
+				0
 			);
 		}
 	}
@@ -186,7 +186,7 @@ class Widget_Conversion_Service {
 		// Extract inline CSS from <style> tags
 		$dom = new \DOMDocument();
 		libxml_use_internal_errors( true );
-		$dom->loadHTML( $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+		$dom->loadHTML( $html, \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD );
 		
 		$style_tags = $dom->getElementsByTagName( 'style' );
 		foreach ( $style_tags as $style ) {

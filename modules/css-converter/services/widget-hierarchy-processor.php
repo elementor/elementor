@@ -250,21 +250,22 @@ class Widget_Hierarchy_Processor {
 		switch ( $widget['widget_type'] ) {
 			case 'e-heading':
 				$defaults = [
-					'title' => $widget['element_data']['content'] ?? 'Heading',
-					'size' => $this->determine_heading_size( $widget['element_data']['tag'] ?? 'h1' ),
-					'header_size' => $this->map_heading_tag_to_size( $widget['element_data']['tag'] ?? 'h1' ),
+					'title' => $widget['settings']['text'] ?? 'Heading',
+					'size' => $this->determine_heading_size( $widget['settings']['tag'] ?? 'h1' ),
+					'header_size' => $this->map_heading_tag_to_size( $widget['settings']['tag'] ?? 'h1' ),
 				];
 				break;
 			case 'e-text':
+			case 'e-paragraph':
 				$defaults = [
-					'editor' => $widget['element_data']['content'] ?? 'Text content',
+					'editor' => $widget['settings']['text'] ?? 'Text content',
 				];
 				break;
 			case 'e-button':
 				$defaults = [
-					'text' => $widget['element_data']['content'] ?? 'Button',
+					'text' => $widget['settings']['text'] ?? 'Button',
 					'link' => [
-						'url' => $widget['element_data']['attributes']['href'] ?? '#',
+						'url' => $widget['attributes']['href'] ?? '#',
 						'is_external' => false,
 						'nofollow' => false,
 					],
@@ -273,8 +274,8 @@ class Widget_Hierarchy_Processor {
 			case 'e-image':
 				$defaults = [
 					'image' => [
-						'url' => $widget['element_data']['attributes']['src'] ?? '',
-						'alt' => $widget['element_data']['attributes']['alt'] ?? '',
+						'url' => $widget['attributes']['src'] ?? '',
+						'alt' => $widget['attributes']['alt'] ?? '',
 					],
 				];
 				break;
@@ -286,7 +287,7 @@ class Widget_Hierarchy_Processor {
 	}
 
 	private function validate_widget_structure( $widget ) {
-		$required_fields = [ 'widget_type', 'element_data' ];
+		$required_fields = [ 'widget_type', 'settings' ];
 		
 		foreach ( $required_fields as $field ) {
 			if ( ! isset( $widget[ $field ] ) ) {
@@ -295,7 +296,7 @@ class Widget_Hierarchy_Processor {
 		}
 		
 		// Validate widget type
-		$supported_types = [ 'e-heading', 'e-text', 'e-flexbox', 'e-button', 'e-image', 'e-link' ];
+		$supported_types = [ 'e-heading', 'e-text', 'e-paragraph', 'e-flexbox', 'e-button', 'e-image', 'e-link' ];
 		if ( ! in_array( $widget['widget_type'], $supported_types, true ) ) {
 			throw new \Exception( "Unsupported widget type: {$widget['widget_type']}" );
 		}
