@@ -17,9 +17,9 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type Component } from '../types';
-import { getContainerForNewElement } from '../utils/get-container-for-new-element';
-import { createComponentModel } from './create-component-form/utils/replace-element-with-component';
+import { type Component } from '../../types';
+import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
+import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
 
 export const ComponentItem = ( { component }: { component: Component } ) => {
 	const componentModel = createComponentModel( { id: component.id, name: component.name } );

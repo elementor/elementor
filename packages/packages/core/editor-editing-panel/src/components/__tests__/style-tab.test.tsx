@@ -32,7 +32,6 @@ describe( 'style-tab', () => {
 		} );
 		jest.mocked( useCustomCss ).mockReturnValue( {
 			customCss: null,
-			meta: { breakpoint: null, state: null },
 			setCustomCss: jest.fn(),
 		} );
 		jest.mocked( useStyle ).mockReturnValue( {
