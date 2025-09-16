@@ -114,7 +114,7 @@ class Atomic_Tab extends Atomic_Element_Base {
 			],
 		];
 
-		if( ! empty( $settings['tab-panel-id'] ) ) {
+		if ( ! empty( $settings['tab-panel-id'] ) ) {
 			$attributes['aria-controls'] = esc_attr( $settings['tab-panel-id'] );
 		}
 

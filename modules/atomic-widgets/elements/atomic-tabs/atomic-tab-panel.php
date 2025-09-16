@@ -58,8 +58,7 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
-				->set_items( [
-] ),
+				->set_items( [] ),
 		];
 	}
 
@@ -119,12 +118,12 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 				'e-atomic-element',
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
-			]
+			],
 		];
 
-		if ( ! empty( $settings[ 'tab-id' ] ) ) {
-			$attributes['data-tab-id'] = esc_attr( $settings[ 'tab-id' ] );
-			$attributes['aria-labelledby'] = esc_attr( $settings[ 'tab-id' ] );
+		if ( ! empty( $settings['tab-id'] ) ) {
+			$attributes['data-tab-id'] = esc_attr( $settings['tab-id'] );
+			$attributes['aria-labelledby'] = esc_attr( $settings['tab-id'] );
 		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
