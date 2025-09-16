@@ -2,7 +2,6 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -11,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -48,6 +48,7 @@ class Atomic_Tab extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tab-panel-id' => String_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
 
@@ -56,11 +57,7 @@ class Atomic_Tab extends Atomic_Element_Base {
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
-				->set_items( [
-					Text_Control::bind_to( '_cssid' )
-						->set_label( __( 'ID', 'elementor' ) )
-						->set_meta( $this->get_css_id_control_meta() ),
-				] ),
+				->set_items( [] ),
 		];
 	}
 
@@ -117,10 +114,14 @@ class Atomic_Tab extends Atomic_Element_Base {
 			],
 		];
 
+		if ( ! empty( $settings['tab-panel-id'] ) ) {
+			$attributes['aria-controls'] = esc_attr( $settings['tab-panel-id'] );
+		}
+
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );
 		}
 
-		$this->add_render_attribute( '_wrapper', array_merge( $attributes, $initial_attributes ) );
+		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
 	}
 }

@@ -1,7 +1,10 @@
 import { BrowserContext, Page, expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 
-import { addColorVariable, addFontVariable, initTemplate, openVariableManager, createVariableFromManager } from './utils';
+import {
+	addColorVariable, addFontVariable,
+	createVariableFromManager, deleteAllVariables, initTemplate, openVariableManager,
+} from './utils';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
 test.describe( 'Variable Manager @v4-tests', () => {
@@ -13,6 +16,10 @@ test.describe( 'Variable Manager @v4-tests', () => {
 		context = await browser.newContext();
 		page = await context.newPage();
 		wpAdminPage = await initTemplate( page, testInfo, apiRequests );
+	} );
+
+	test.beforeEach( async () => {
+		await deleteAllVariables( page );
 	} );
 
 	test.afterAll( async () => {
@@ -33,6 +40,11 @@ test.describe( 'Variable Manager @v4-tests', () => {
 		const variableRow = page.locator( 'tr', { hasText: addedColorVariable.name } );
 		await expect( variableRow ).toBeVisible();
 		await expect( variableRow.getByText( addedColorVariable.value ) ).toBeVisible();
+	} );
+	test( 'Color variable screenshot test', async ( ) => {
+		await addColorVariable( page );
+		await openVariableManager( page, 'Typography', 'text-color' );
+		await expect( page ).toHaveScreenshot( 'color-variable-screenshot.png' );
 	} );
 
 	test( 'Variable name validation error displays and clears correctly', async () => {

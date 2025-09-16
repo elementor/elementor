@@ -72,6 +72,10 @@ export const detachVariable = async ( page: Page, styleSectionSelector: string, 
 };
 
 export const openVariableManager = async ( page: Page, styleSectionSelector: string, controlToAccessFrom: string ) => {
+	if ( await page.getByText( 'Variable Manager' ).isVisible() ) {
+		return;
+	}
+	await page.locator( 'header' ).getByRole( 'button', { name: 'Add Element' } ).click();
 	await openVariablesPopover( page, styleSectionSelector, controlToAccessFrom );
 	await page.click( EditorSelectors.variables.manager.managerButton );
 };
@@ -81,4 +85,37 @@ export const createVariableFromManager = async ( page: Page, type: 'font' | 'col
 
 	await page.getByRole( 'button', { name: 'Add variable' } ).click();
 	await page.locator( 'li' ).filter( { hasText: type } ).click();
+};
+
+export const deleteVariable = async ( page: Page, variableName: string ) => {
+	await openVariableManager( page, 'Typography', 'text-color' );
+	const variableLocator = page.locator( 'tr', { hasText: variableName } );
+	await variableLocator.hover();
+	await variableLocator.getByRole( 'toolbar' ).click();
+	await page.getByRole( 'menuitem', { name: 'Delete', includeHidden: true } ).click();
+	await page.getByRole( 'button', { name: 'Delete' } ).click();
+};
+
+export const saveAndExitVariableManager = async ( page: Page, shouldSave: boolean ) => {
+	if ( shouldSave ) {
+		await page.locator( '#elementor-panel' ).getByRole( 'button', { name: /Save/ } ).click();
+		await page.waitForRequest( ( response ) => response.url().includes( 'list' ) && null === response.failure() );
+	}
+	await page.locator( '#elementor-panel' ).getByRole( 'button', { name: 'Close' } ).click();
+};
+
+export const deleteAllVariables = async ( page: Page ) => {
+	await openVariableManager( page, 'Typography', 'text-color' );
+
+	const testVariableRows = page.locator( 'tbody tr' ).filter( { hasText: /test-.*-variable/i } );
+	const rowCount = await testVariableRows.count();
+
+	for ( let i = rowCount - 1; i >= 0; i-- ) {
+		const variableName = await testVariableRows.nth( i ).getByText( /test-.*-variable/i ).textContent();
+		if ( variableName ) {
+			await deleteVariable( page, variableName );
+		}
+	}
+
+	await saveAndExitVariableManager( page, rowCount > 0 );
 };

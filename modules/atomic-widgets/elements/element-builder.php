@@ -32,12 +32,18 @@ class Element_Builder {
 		return $this;
 	}
 
+	public function children( array $children ) {
+		$this->children = $children;
+		return $this;
+	}
+
 	public function build() {
 		$element_data = [
 			'elType' => $this->element_type,
 			'settings' => $this->settings,
 			'isLocked' => $this->is_locked,
 			'editor_settings' => $this->editor_settings,
+			'elements' => $this->children,
 		];
 
 		return $element_data;
