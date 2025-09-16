@@ -1,9 +1,9 @@
 import { getElements } from '@elementor/editor-elements';
-import { getByDomain } from '@elementor/editor-mcp';
+import { getMCPByDomain } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
 
 export const initListElementsInPageTool = () => {
-	getByDomain( 'root' ).addTool( {
+	getMCPByDomain( 'root' ).addTool( {
 		name: 'list-elements-in-page',
 		description: 'List all elements in the current page',
 		outputSchema: {

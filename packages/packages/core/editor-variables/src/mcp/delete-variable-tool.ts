@@ -1,10 +1,10 @@
-import { getByDomain } from '@elementor/editor-mcp';
+import { getMCPByDomain } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
 
 import { service } from '../service';
 
 export const initDeleteVariableTool = () => {
-	getByDomain( 'variables' ).addTool( {
+	getMCPByDomain( 'variables' ).addTool( {
 		name: 'delete-global-variable',
 		schema: {
 			id: z.string().describe( 'The unique identifier of the variable to be deleted.' ),

@@ -1,4 +1,4 @@
-import { getByDomain } from '@elementor/editor-mcp';
+import { getMCPByDomain } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
 
 import { service } from '../service';
@@ -17,7 +17,7 @@ const OutputSchema = {
 };
 
 export const initCreateVariableTool = () => {
-	getByDomain( 'variables' ).addTool( {
+	getMCPByDomain( 'variables' ).addTool( {
 		name: 'create-global-variable',
 		schema: InputSchema,
 		outputSchema: OutputSchema,

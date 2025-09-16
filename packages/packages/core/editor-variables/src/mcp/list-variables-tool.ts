@@ -1,4 +1,4 @@
-import { getByDomain } from '@elementor/editor-mcp';
+import { getMCPByDomain } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
 
 import { service } from '../service';
@@ -19,7 +19,7 @@ const VariableListSchema = {
 };
 
 export const initListVariablesTool = () => {
-	getByDomain( 'variables' ).addTool( {
+	getMCPByDomain( 'variables' ).addTool( {
 		name: 'list-global-variables',
 		description: `List editor global variables
   

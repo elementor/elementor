@@ -39,7 +39,7 @@ const isAlphabet = ( str: string ): string | never => {
  *
  * @param namespace The namespace of the MCP server. It should contain only lowercase alphabetic characters.
  */
-export const getByDomain = ( namespace: string ) => {
+export const getMCPByDomain = ( namespace: string ) => {
 	const mcpName = `editor-${ isAlphabet( namespace ) }`;
 	if ( ! mcpRegistry[ namespace ] ) {
 		mcpRegistry[ namespace ] = new McpServer( {
