@@ -83,6 +83,7 @@ export default function HelloTheme() {
 
 		setHelloInstalledInOnboarding( true );
 
+		OnboardingEventTracking.sendS2EndState();
 		goToNextScreen();
 	}, [] );
 
@@ -154,12 +155,15 @@ export default function HelloTheme() {
 
 	if ( state.isHelloThemeActivated ) {
 		actionButton.onClick = () => {
+			OnboardingEventTracking.trackS2Action( 'continue_hello_biz' );
 			sendNextButtonEvent();
 
+			OnboardingEventTracking.sendS2EndState();
 			goToNextScreen();
 		};
 	} else {
 		actionButton.onClick = () => {
+			OnboardingEventTracking.trackS2Action( 'continue_hello_biz' );
 			OnboardingEventTracking.sendHelloBizContinue( state.currentStep );
 			sendNextButtonEvent();
 
@@ -168,6 +172,7 @@ export default function HelloTheme() {
 			} else if ( ! state.isHelloThemeInstalled ) {
 				installHelloTheme();
 			} else {
+				OnboardingEventTracking.sendS2EndState();
 				goToNextScreen();
 			}
 		};

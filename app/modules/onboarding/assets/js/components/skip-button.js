@@ -40,6 +40,12 @@ export default function SkipButton( props ) {
 	// If the button is a link, no onClick functionality should be added.
 	button.onClick = () => {
 		const stepNumber = getStepNumber( state.currentStep );
+
+		if ( 2 === stepNumber ) {
+			OnboardingEventTracking.trackS2Action( 'skipped' );
+			OnboardingEventTracking.sendS2EndState();
+		}
+
 		OnboardingEventTracking.sendOnboardingSkip( stepNumber );
 
 		elementorCommon.events.dispatchEvent( {

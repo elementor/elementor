@@ -6,6 +6,7 @@ const ONBOARDING_EVENTS_MAP = {
 	CORE_ONBOARDING: 'core_onboarding',
 	CONNECT_STATUS: 'core_onboarding_connect_status',
 	S1_END_STATE: 'core_onboarding_s1_end_state',
+	S2_END_STATE: 'core_onboarding_s2_end_state',
 	EXIT: 'core_onboarding_exit',
 	SKIP: 'core_onboarding_skip',
 	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
@@ -16,6 +17,7 @@ const ONBOARDING_STORAGE_KEYS = {
 	START_TIME: 'elementor_onboarding_start_time',
 	INITIATED: 'elementor_onboarding_initiated',
 	S1_ACTIONS: 'elementor_onboarding_s1_actions',
+	S2_ACTIONS: 'elementor_onboarding_s2_actions',
 	PENDING_EXIT: 'elementor_onboarding_pending_exit',
 	PENDING_SKIP: 'elementor_onboarding_pending_skip',
 	PENDING_CREATE_ACCOUNT_STATUS: 'elementor_onboarding_pending_create_account_status',
@@ -168,6 +170,62 @@ export class OnboardingEventTracking {
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.S1_ACTIONS );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to send S1 end state:', error );
+		}
+	}
+
+	static trackS2Action( action ) {
+		try {
+			const startTimeStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+			if ( ! startTimeStr ) {
+				return;
+			}
+
+			const startTime = parseInt( startTimeStr, 10 );
+			const currentTime = Date.now();
+			const timeSpent = Math.round( ( currentTime - startTime ) / 1000 );
+
+			const existingActionsStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.S2_ACTIONS );
+			const existingActions = existingActionsStr ? JSON.parse( existingActionsStr ) : [];
+
+			const actionData = {
+				action,
+				timestamp: currentTime,
+				time_spent: timeSpent,
+			};
+
+			existingActions.push( actionData );
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.S2_ACTIONS, JSON.stringify( existingActions ) );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to track S2 action:', error );
+		}
+	}
+
+	static sendS2EndState() {
+		try {
+			const actionsStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.S2_ACTIONS );
+			const startTimeStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+
+			if ( ! actionsStr || ! startTimeStr ) {
+				return;
+			}
+
+			const actions = JSON.parse( actionsStr );
+			const startTime = parseInt( startTimeStr, 10 );
+			const currentTime = Date.now();
+			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
+
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.S2_END_STATE, {
+				location: 'plugin_onboarding',
+				trigger: 'user_redirects_out_of_step',
+				step_number: 2,
+				step_name: 'hello_biz_theme',
+				s2_end_state: actions,
+				total_time_spent: totalTimeSpent,
+			} );
+
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.S2_ACTIONS );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to send S2 end state:', error );
 		}
 	}
 

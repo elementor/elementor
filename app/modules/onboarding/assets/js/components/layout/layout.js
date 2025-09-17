@@ -132,6 +132,11 @@ export default function Layout( props ) {
 			elRef: setupTopbarUpgradeTracking,
 			onClick: () => {
 				const stepNumber = getStepNumber( props.pageId );
+
+				if ( 2 === stepNumber ) {
+					OnboardingEventTracking.trackS2Action( 'upgrade_topbar' );
+				}
+
 				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_topbar' );
 
 				elementorCommon.events.dispatchEvent( {
