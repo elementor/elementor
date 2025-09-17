@@ -25,15 +25,21 @@ jest.mock( '@elementor/editor-panels', () => ( {
 	PanelFooter: ( { children }: { children: React.ReactNode } ) => <footer>{ children }</footer>,
 } ) );
 
-jest.mock( '@elementor/editor-ui', () => ( {
-	ThemeProvider: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
-	EllipsisWithTooltip: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
-	useDialog: jest.fn().mockReturnValue( {
-		open: jest.fn(),
-		close: jest.fn(),
-		isOpen: false,
-	} ),
-} ) );
+jest.mock( '@elementor/editor-ui', () => {
+	const actual = jest.requireActual( '@elementor/editor-ui' );
+
+	return {
+		__esModule: true,
+		...actual,
+		ThemeProvider: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
+		EllipsisWithTooltip: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
+		useDialog: jest.fn().mockReturnValue( {
+			open: jest.fn(),
+			close: jest.fn(),
+			isOpen: false,
+		} ),
+	};
+} );
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	changeEditMode: jest.fn(),
