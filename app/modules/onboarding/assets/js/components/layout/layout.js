@@ -1,4 +1,4 @@
-import { useRef, useContext, useEffect } from 'react';
+import { useRef, useContext, useEffect, useCallback } from 'react';
 import { OnboardingContext } from '../../context/context';
 
 import Header from './header';
@@ -11,6 +11,34 @@ export default function Layout( props ) {
 	const initializeExitTracking = ( stepNumber ) => {
 		OnboardingEventTracking.setupWindowCloseTracking( stepNumber );
 	};
+
+	const hasHoveredTopbarUpgrade = useRef( false );
+
+	const setupTopbarUpgradeTracking = useCallback( ( buttonElement ) => {
+		if ( ! buttonElement ) {
+			return;
+		}
+
+		const handleMouseEnter = () => {
+			hasHoveredTopbarUpgrade.current = true;
+		};
+
+		const handleMouseLeave = () => {
+			if ( hasHoveredTopbarUpgrade.current ) {
+				const stepNumber = getStepNumber( props.pageId );
+				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'no_click' );
+				hasHoveredTopbarUpgrade.current = false;
+			}
+		};
+
+		buttonElement.addEventListener( 'mouseenter', handleMouseEnter );
+		buttonElement.addEventListener( 'mouseleave', handleMouseLeave );
+
+		return () => {
+			buttonElement.removeEventListener( 'mouseenter', handleMouseEnter );
+			buttonElement.removeEventListener( 'mouseleave', handleMouseLeave );
+		};
+	}, [ props.pageId ] );
 
 	useEffect( () => {
 		elementorCommon.events.dispatchEvent( {
@@ -45,7 +73,6 @@ export default function Layout( props ) {
 
 	const { state, updateState } = useContext( OnboardingContext ),
 		headerButtons = [],
-		goProButtonRef = useRef(),
 		createAccountButton = {
 			id: 'create-account',
 			text: __( 'Create Account', 'elementor' ),
@@ -99,8 +126,11 @@ export default function Layout( props ) {
 			className: 'eps-button__go-pro-btn',
 			url: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
 			target: '_blank',
-			elRef: goProButtonRef,
+			elRef: setupTopbarUpgradeTracking,
 			onClick: () => {
+				const stepNumber = getStepNumber( props.pageId );
+				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_topbar' );
+
 				elementorCommon.events.dispatchEvent( {
 					event: 'go pro',
 					version: '',

@@ -8,6 +8,7 @@ const ONBOARDING_EVENTS_MAP = {
 	S1_END_STATE: 'core_onboarding_s1_end_state',
 	EXIT: 'core_onboarding_exit',
 	SKIP: 'core_onboarding_skip',
+	TOP_UPGRADE: 'core_onboarding_top_upgrade',
 };
 
 const ONBOARDING_STORAGE_KEYS = {
@@ -269,6 +270,17 @@ export class OnboardingEventTracking {
 			} );
 		}
 		this.storeSkipEventForLater( currentStep );
+	}
+
+	static sendTopUpgrade( currentStep, upgradeClicked ) {
+		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.TOP_UPGRADE, {
+			location: 'plugin_onboarding',
+			trigger: 'upgrade_interaction',
+			step_number: currentStep,
+			step_name: this.getStepName( currentStep ),
+			action_step: currentStep,
+			upgrade_clicked: upgradeClicked,
+		} );
 	}
 
 	static handleStorageError( message, error ) {

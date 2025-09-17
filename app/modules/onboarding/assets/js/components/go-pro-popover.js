@@ -4,7 +4,7 @@ import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
 import Checklist from './checklist';
 import ChecklistItem from './checklist-item';
 import Button from './button';
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useRef } from 'react';
 import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function GoProPopover( props ) {
@@ -15,6 +15,36 @@ export default function GoProPopover( props ) {
 			OnboardingEventTracking.trackS1Action( 'upgrade_topbar' );
 		}
 	};
+
+	const upgradeButtonRef = useRef( null );
+	const hasHoveredUpgradeButton = useRef( false );
+
+	const setupUpgradeButtonTracking = useCallback( ( buttonElement ) => {
+		if ( ! buttonElement ) {
+			return;
+		}
+
+		upgradeButtonRef.current = buttonElement;
+
+		const handleMouseEnter = () => {
+			hasHoveredUpgradeButton.current = true;
+		};
+
+		const handleMouseLeave = () => {
+			if ( hasHoveredUpgradeButton.current ) {
+				OnboardingEventTracking.sendTopUpgrade( state.currentStep, 'no_click' );
+				hasHoveredUpgradeButton.current = false;
+			}
+		};
+
+		buttonElement.addEventListener( 'mouseenter', handleMouseEnter );
+		buttonElement.addEventListener( 'mouseleave', handleMouseLeave );
+
+		return () => {
+			buttonElement.removeEventListener( 'mouseenter', handleMouseEnter );
+			buttonElement.removeEventListener( 'mouseleave', handleMouseLeave );
+		};
+	}, [ state.currentStep ] );
 
 	const alreadyHaveProButtonRef = useCallback( ( alreadyHaveProButton ) => {
 		if ( ! alreadyHaveProButton ) {
@@ -63,8 +93,10 @@ export default function GoProPopover( props ) {
 			target: '_blank',
 			href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
 			tabIndex: 0,
+			elRef: setupUpgradeButtonTracking,
 			onClick: () => {
 				trackUpgradeFromAccountSetup();
+				OnboardingEventTracking.sendTopUpgrade( state.currentStep, 'on_tooltip' );
 
 				elementorCommon.events.dispatchEvent( {
 					event: 'get elementor pro',
