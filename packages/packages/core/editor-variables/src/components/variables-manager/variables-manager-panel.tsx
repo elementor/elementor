@@ -48,6 +48,7 @@ export function VariablesManagerPanel() {
 		createVariable,
 		handleDeleteVariable,
 		handleSave,
+		isSaving,
 		setHasValidationErrors,
 	} = useVariablesManagerState();
 
@@ -152,8 +153,9 @@ export function VariablesManagerPanel() {
 							size="small"
 							color="global"
 							variant="contained"
-							disabled={ ! isDirty || hasValidationErrors }
+							disabled={ ! isDirty || hasValidationErrors || isSaving }
 							onClick={ handleSave }
+							loading={ isSaving }
 						>
 							{ __( 'Save changes', 'elementor' ) }
 						</Button>
