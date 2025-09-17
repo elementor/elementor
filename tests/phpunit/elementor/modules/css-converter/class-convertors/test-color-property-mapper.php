@@ -87,4 +87,54 @@ class Test_Color_Property_Mapper extends Elementor_Test_Base {
 		$properties = $this->mapper->get_supported_properties();
 		$this->assertEquals( [ 'color' ], $properties );
 	}
+
+	public function test_supports_v4_conversion() {
+		$this->assertTrue( $this->mapper->supports_v4_conversion( 'color', '#ff0000' ) );
+		$this->assertFalse( $this->mapper->supports_v4_conversion( 'background-color', '#ff0000' ) );
+	}
+
+	public function test_get_v4_property_name() {
+		$this->assertEquals( 'color', $this->mapper->get_v4_property_name( 'color' ) );
+	}
+
+	public function test_map_to_v4_atomic_hex_color() {
+		$result = $this->mapper->map_to_v4_atomic( 'color', '#ff0000' );
+		$expected = [
+			'property' => 'color',
+			'value' => [
+				'$$type' => 'color',
+				'value' => '#ff0000',
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_rgb_color() {
+		$result = $this->mapper->map_to_v4_atomic( 'color', 'rgb(255, 0, 0)' );
+		$expected = [
+			'property' => 'color',
+			'value' => [
+				'$$type' => 'color',
+				'value' => '#ff0000',
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_named_color() {
+		$result = $this->mapper->map_to_v4_atomic( 'color', 'red' );
+		$expected = [
+			'property' => 'color',
+			'value' => [
+				'$$type' => 'color',
+				'value' => 'red',
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_unsupported_property() {
+		$result = $this->mapper->map_to_v4_atomic( 'background-color', '#ff0000' );
+		$this->assertNull( $result );
+	}
 }

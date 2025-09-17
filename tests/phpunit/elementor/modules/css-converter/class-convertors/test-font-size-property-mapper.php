@@ -86,4 +86,63 @@ class Test_Font_Size_Property_Mapper extends Elementor_Test_Base {
 		$properties = $this->mapper->get_supported_properties();
 		$this->assertEquals( [ 'font-size' ], $properties );
 	}
+
+	public function test_supports_v4_conversion() {
+		$this->assertTrue( $this->mapper->supports_v4_conversion( 'font-size', '16px' ) );
+		$this->assertFalse( $this->mapper->supports_v4_conversion( 'line-height', '16px' ) );
+	}
+
+	public function test_get_v4_property_name() {
+		$this->assertEquals( 'font-size', $this->mapper->get_v4_property_name( 'font-size' ) );
+	}
+
+	public function test_map_to_v4_atomic_pixel_size() {
+		$result = $this->mapper->map_to_v4_atomic( 'font-size', '16px' );
+		$expected = [
+			'property' => 'font-size',
+			'value' => [
+				'$$type' => 'size',
+				'value' => [
+					'size' => 16,
+					'unit' => 'px',
+				],
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_em_size() {
+		$result = $this->mapper->map_to_v4_atomic( 'font-size', '1.5em' );
+		$expected = [
+			'property' => 'font-size',
+			'value' => [
+				'$$type' => 'size',
+				'value' => [
+					'size' => 1.5,
+					'unit' => 'em',
+				],
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_percentage_size() {
+		$result = $this->mapper->map_to_v4_atomic( 'font-size', '120%' );
+		$expected = [
+			'property' => 'font-size',
+			'value' => [
+				'$$type' => 'size',
+				'value' => [
+					'size' => 120,
+					'unit' => '%',
+				],
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_unsupported_property() {
+		$result = $this->mapper->map_to_v4_atomic( 'line-height', '16px' );
+		$this->assertNull( $result );
+	}
 }

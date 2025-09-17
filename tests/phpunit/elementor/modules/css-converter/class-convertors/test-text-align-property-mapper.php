@@ -92,4 +92,42 @@ class Test_Text_Align_Property_Mapper extends Elementor_Test_Base {
 		$properties = $this->mapper->get_supported_properties();
 		$this->assertEquals( [ 'text-align' ], $properties );
 	}
+
+	public function test_supports_v4_conversion() {
+		$this->assertTrue( $this->mapper->supports_v4_conversion( 'text-align', 'center' ) );
+		$this->assertFalse( $this->mapper->supports_v4_conversion( 'color', 'center' ) );
+	}
+
+	public function test_get_v4_property_name() {
+		$this->assertEquals( 'text-align', $this->mapper->get_v4_property_name( 'text-align' ) );
+	}
+
+	public function test_map_to_v4_atomic_text_align() {
+		$result = $this->mapper->map_to_v4_atomic( 'text-align', 'center' );
+		$expected = [
+			'property' => 'text-align',
+			'value' => [
+				'$$type' => 'string',
+				'value' => 'center',
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_normalizes_case() {
+		$result = $this->mapper->map_to_v4_atomic( 'text-align', 'CENTER' );
+		$expected = [
+			'property' => 'text-align',
+			'value' => [
+				'$$type' => 'string',
+				'value' => 'center',
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_unsupported_property() {
+		$result = $this->mapper->map_to_v4_atomic( 'color', 'center' );
+		$this->assertNull( $result );
+	}
 }

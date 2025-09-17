@@ -75,4 +75,69 @@ class Test_Background_Color_Property_Mapper extends TestCase {
 		$this->assertContains( 'background-color', $properties );
 		$this->assertCount( 1, $properties );
 	}
+
+	public function test_supports_v4_conversion() {
+		$this->assertTrue( $this->mapper->supports_v4_conversion( 'background-color', '#ff0000' ) );
+		$this->assertFalse( $this->mapper->supports_v4_conversion( 'color', '#ff0000' ) );
+	}
+
+	public function test_get_v4_property_name() {
+		$this->assertEquals( 'background', $this->mapper->get_v4_property_name( 'background-color' ) );
+	}
+
+	public function test_map_to_v4_atomic_background_color() {
+		$result = $this->mapper->map_to_v4_atomic( 'background-color', '#ff0000' );
+		$expected = [
+			'property' => 'background',
+			'value' => [
+				'$$type' => 'background',
+				'value' => [
+					'color' => [
+						'$$type' => 'color',
+						'value' => '#ff0000',
+					],
+				],
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_rgb_background() {
+		$result = $this->mapper->map_to_v4_atomic( 'background-color', 'rgb(255, 0, 0)' );
+		$expected = [
+			'property' => 'background',
+			'value' => [
+				'$$type' => 'background',
+				'value' => [
+					'color' => [
+						'$$type' => 'color',
+						'value' => '#ff0000',
+					],
+				],
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_named_background() {
+		$result = $this->mapper->map_to_v4_atomic( 'background-color', 'red' );
+		$expected = [
+			'property' => 'background',
+			'value' => [
+				'$$type' => 'background',
+				'value' => [
+					'color' => [
+						'$$type' => 'color',
+						'value' => 'red',
+					],
+				],
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_unsupported_property() {
+		$result = $this->mapper->map_to_v4_atomic( 'color', '#ff0000' );
+		$this->assertNull( $result );
+	}
 }

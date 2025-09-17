@@ -139,4 +139,73 @@ class Test_Margin_Property_Mapper extends Elementor_Test_Base {
 		$expected = [ 'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left' ];
 		$this->assertEquals( $expected, $properties );
 	}
+
+	public function test_supports_v4_conversion() {
+		$this->assertTrue( $this->mapper->supports_v4_conversion( 'margin', '10px' ) );
+		$this->assertTrue( $this->mapper->supports_v4_conversion( 'margin-top', '10px' ) );
+		$this->assertFalse( $this->mapper->supports_v4_conversion( 'padding', '10px' ) );
+	}
+
+	public function test_get_v4_property_name() {
+		$this->assertEquals( 'margin', $this->mapper->get_v4_property_name( 'margin' ) );
+		$this->assertEquals( 'margin-top', $this->mapper->get_v4_property_name( 'margin-top' ) );
+	}
+
+	public function test_map_to_v4_atomic_margin_single() {
+		$result = $this->mapper->map_to_v4_atomic( 'margin-top', '10px' );
+		$expected = [
+			'property' => 'margin-top',
+			'value' => [
+				'$$type' => 'size',
+				'value' => [
+					'size' => 10,
+					'unit' => 'px',
+				],
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_margin_shorthand() {
+		$result = $this->mapper->map_to_v4_atomic( 'margin', '10px 20px' );
+		$expected = [
+			'property' => 'margin',
+			'value' => [
+				'margin-top' => [
+					'$$type' => 'size',
+					'value' => [
+						'size' => 10,
+						'unit' => 'px',
+					],
+				],
+				'margin-right' => [
+					'$$type' => 'size',
+					'value' => [
+						'size' => 20,
+						'unit' => 'px',
+					],
+				],
+				'margin-bottom' => [
+					'$$type' => 'size',
+					'value' => [
+						'size' => 10,
+						'unit' => 'px',
+					],
+				],
+				'margin-left' => [
+					'$$type' => 'size',
+					'value' => [
+						'size' => 20,
+						'unit' => 'px',
+					],
+				],
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_unsupported_property() {
+		$result = $this->mapper->map_to_v4_atomic( 'padding', '10px' );
+		$this->assertNull( $result );
+	}
 }
