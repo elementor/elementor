@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,6 +43,8 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
+			'default-active-tab' => String_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
 
@@ -87,11 +90,29 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	}
 
 	protected function define_default_children() {
+		$tab_element = Atomic_Tab::generate()
+			->is_locked( true )
+			->build();
+
+		$tab_panel_element = Atomic_Tab_Panel::generate()
+			->is_locked( true )
+			->build();
+
 		$tabs_list = Atomic_Tabs_List::generate()
+			->children( [
+				$tab_element,
+				$tab_element,
+				$tab_element,
+			] )
 			->is_locked( true )
 			->build();
 
 		$tabs_content = Atomic_Tabs_Content::generate()
+			->children( [
+				$tab_panel_element,
+				$tab_panel_element,
+				$tab_panel_element,
+			] )
 			->is_locked( true )
 			->build();
 
@@ -99,6 +120,16 @@ class Atomic_Tabs extends Atomic_Element_Base {
 			$tabs_list,
 			$tabs_content,
 		];
+	}
+
+	public function define_initial_attributes() {
+		return [
+			'data-e-type' => $this->get_type(),
+		];
+	}
+
+	public function get_script_depends() {
+		return [ 'elementor-tabs-handler' ];
 	}
 
 	protected function add_render_attributes() {
@@ -116,10 +147,14 @@ class Atomic_Tabs extends Atomic_Element_Base {
 			],
 		];
 
+		if ( ! empty( $settings['default-active-tab'] ) ) {
+			$attributes['data-active-tab'] = esc_attr( $settings['default-active-tab'] );
+		}
+
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );
 		}
 
-		$this->add_render_attribute( '_wrapper', array_merge( $attributes, $initial_attributes ) );
+		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
 	}
 }
