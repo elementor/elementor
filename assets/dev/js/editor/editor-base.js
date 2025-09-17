@@ -1216,6 +1216,10 @@ export default class EditorBase extends Marionette.Application {
 
 		Events.dispatch( elementorCommon.elements.$window, 'elementor/loaded', null, 'elementor:loaded' );
 
+		if ( window.OnboardingEventTracking && window.OnboardingEventTracking.checkAndSendEditorLoadedFromOnboarding ) {
+			window.OnboardingEventTracking.checkAndSendEditorLoadedFromOnboarding();
+		}
+
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
 				Events.dispatch( elementorCommon.elements.$window, 'elementor/init', null, 'elementor:init' );
