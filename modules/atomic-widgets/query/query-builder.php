@@ -16,11 +16,7 @@ class Query_Builder {
 				'post_title' => 'label',
 				'post_type' => 'groupLabel',
 			],
-			Post_Query::INCLUDED_POST_TYPE_KEY => $config[ Post_Query::INCLUDED_POST_TYPE_KEY ] ?? null,
-			Post_Query::EXCLUDED_POST_TYPE_KEYS => $config[ Post_Query::EXCLUDED_POST_TYPE_KEYS ] ?? null,
-			Post_Query::META_QUERY_KEY => $config[ Post_Query::META_QUERY_KEY ] ?? null,
-			Post_Query::IS_PUBLIC_KEY => $config[ Post_Query::IS_PUBLIC_KEY ] ?? null,
-			Post_Query::POSTS_PER_PAGE_KEY => $config[ Post_Query::POSTS_PER_PAGE_KEY ] ?? null,
+			Post_Query::ALLOWED_POST_TYPES => $config['post_types'] ?? null,
 		] );
 		$endpoint = $config['endpoint'] ?? Post_Query::ENDPOINT;
 		$namespace = $config['namespace'] ?? Post_Query::NAMESPACE;

@@ -21,8 +21,6 @@ class Manager {
 
 	const DYNAMIC_SETTING_KEY = '__dynamic__';
 
-	const CONTROL_OPTION_KEYS = [ 'id', 'label' ];
-
 	private $tags_groups = [];
 
 	private $tags_info = [];
@@ -161,44 +159,6 @@ class Manager {
 		return $this->tag_to_text( $tag );
 	}
 
-	private function normalize_settings( $value ) {
-		if ( $this->is_typed_value_wrapper( $value ) ) {
-			return $this->normalize_settings( $value['value'] );
-		}
-
-		if ( $this->is_id_label_option( $value ) ) {
-			return $this->normalize_settings( $value['id'] );
-		}
-
-		if ( is_array( $value ) ) {
-			foreach ( $value as $k => $v ) {
-				$value[ $k ] = $this->normalize_settings( $v );
-			}
-
-			return $value;
-		}
-
-		if ( is_object( $value ) ) {
-			return $this->normalize_settings( get_object_vars( $value ) );
-		}
-
-		return $value;
-	}
-
-	private function is_typed_value_wrapper( $value ) {
-		return is_array( $value ) && isset( $value['$$type'], $value['value'] );
-	}
-
-	private function is_id_label_option( $value ) {
-		if ( ! is_array( $value ) || ! array_key_exists( 'id', $value ) ) {
-			return false;
-		}
-
-		$keys = array_keys( $value );
-
-		return empty( array_diff( $keys, self::CONTROL_OPTION_KEYS ) );
-	}
-
 	/**
 	 * @since 2.0.0
 	 * @access public
@@ -218,7 +178,7 @@ class Manager {
 		$tag_class = $tag_info['class'];
 
 		return new $tag_class( [
-			'settings' => $this->normalize_settings( $settings ),
+			'settings' => $settings,
 			'id' => $tag_id,
 		] );
 	}
@@ -238,7 +198,7 @@ class Manager {
 			return null;
 		}
 
-		$tag = $this->create_tag( $tag_id, $tag_name, $this->normalize_settings( $settings ) );
+		$tag = $this->create_tag( $tag_id, $tag_name, $settings );
 
 		if ( ! $tag ) {
 			return null;
