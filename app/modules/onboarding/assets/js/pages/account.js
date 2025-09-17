@@ -146,6 +146,9 @@ export default function Account() {
 
 			// Now that tracking is enabled, send the delayed onboarding initiation event
 			OnboardingEventTracking.sendCoreOnboardingInitiated();
+
+			// Track connection success with tracking permission details
+			OnboardingEventTracking.sendConnectStatus( 'success', data.tracking_opted_in, data.access_tier );
 		}
 
 		updateState( stateToUpdate );
@@ -200,6 +203,11 @@ export default function Account() {
 				action: 'connect account',
 			},
 		} );
+
+		// Track connection failure (only if tracking is already enabled)
+		if ( elementorCommon.config.editor_events?.can_send_events ) {
+			OnboardingEventTracking.sendConnectStatus( 'fail', false, null );
+		}
 
 		setNoticeState( {
 			type: 'error',

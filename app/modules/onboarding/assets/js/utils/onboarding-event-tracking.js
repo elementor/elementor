@@ -4,6 +4,7 @@ const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
 	HELLO_BIZ_CONTINUE: 'core_onboarding_s2_hellobiz',
 	CORE_ONBOARDING: 'core_onboarding',
+	CONNECT_STATUS: 'core_onboarding_connect_status',
 };
 
 const ONBOARDING_STORAGE_KEYS = {
@@ -91,5 +92,17 @@ export class OnboardingEventTracking {
 			// eslint-disable-next-line no-console
 			console.warn( 'Failed to clear onboarding storage:', error );
 		}
+	}
+
+	static sendConnectStatus( status, trackingOptedIn = false, userTier = null ) {
+		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.CONNECT_STATUS, {
+			location: 'plugin_onboarding',
+			trigger: 'connect_flow_returns_status',
+			step_number: 1,
+			step_name: 'account_setup',
+			onboarding_connect_status: status,
+			tracking_opted_in: trackingOptedIn,
+			user_tier: userTier,
+		} );
 	}
 }
