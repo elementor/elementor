@@ -1,79 +1,59 @@
-window.trackUpgradeNowClickEvent = function() {
-	if ( ! window.elementorCommon?.config?.experimentalFeatures?.editor_events ) {
+function getDispatchEvent() {
+	const isEnabled = window.elementorCommon?.config?.experimentalFeatures?.editor_events;
+	if ( ! isEnabled ) {
+		return null;
+	}
+
+	const eventsManager = window.elementorCommon?.eventsManager;
+	return eventsManager?.dispatchEvent?.bind( eventsManager ) || null;
+}
+
+function trackEditorEvent( eventName, eventData ) {
+	const dispatchEvent = getDispatchEvent();
+	if ( ! dispatchEvent ) {
 		return;
 	}
 
-	const eventsManager = window.elementorCommon?.eventsManager || {};
-	const dispatchEvent = eventsManager.dispatchEvent?.bind( eventsManager );
+	dispatchEvent( eventName, eventData );
+}
 
-	const eventName = 'upgrade_now_click';
-	const eventData = {
+window.trackUpgradeNowClickEvent = function() {
+	trackEditorEvent( 'upgrade_now_click', {
 		app_type: 'editor',
 		location: 'Elementor WP-admin pages',
 		secondaryLocation: 'Connect account page',
 		trigger: 'click',
-	};
-
-	dispatchEvent?.( eventName, eventData );
+	} );
 };
 
 window.trackConnectAccountEvent = function() {
-	if ( ! window.elementorCommon?.config?.experimentalFeatures?.editor_events ) {
-		return;
-	}
-
-	const eventsManager = window.elementorCommon?.eventsManager || {};
-	const dispatchEvent = eventsManager.dispatchEvent?.bind( eventsManager );
-
-	const eventName = 'connect_account';
-	const eventData = {
+	trackEditorEvent( 'connect_account', {
 		app_type: 'editor',
 		location: 'Elementor WP-admin pages',
 		secondaryLocation: 'Connect account page',
 		trigger: 'click',
-	};
-
-	dispatchEvent?.( eventName, eventData );
+	} );
 };
 
 window.trackOpenConnectPageEvent = function() {
-	if ( ! window.elementorCommon?.config?.experimentalFeatures?.editor_events ) {
-		return;
-	}
-
-	const eventsManager = window.elementorCommon?.eventsManager || {};
-	const dispatchEvent = eventsManager.dispatchEvent?.bind( eventsManager );
-
-	const eventName = 'open_connect_page';
-	const eventData = {
+	trackEditorEvent( 'open_connect_page', {
 		app_type: 'editor',
 		location: 'Elementor WP-admin pages',
 		secondaryLocation: 'Connect account page',
 		trigger: 'page_load',
-	};
-
-	dispatchEvent?.( eventName, eventData );
+	} );
 };
 
 window.trackProInstallEvent = function() {
-	if ( ! window.elementorCommon?.config?.experimentalFeatures?.editor_events ) {
-		return;
-	}
-
-	const eventsManager = window.elementorCommon?.eventsManager || {};
-	const dispatchEvent = eventsManager.dispatchEvent?.bind( eventsManager );
-
-	const eventName = 'pro_install';
-	const eventData = {
+	trackEditorEvent( 'pro_install', {
 		app_type: 'editor',
 		location: 'Elementor WP-admin pages',
 		secondaryLocation: 'Connect account page',
 		trigger: 'click',
-	};
-
-	dispatchEvent?.( eventName, eventData );
+	} );
 };
 
+// Attach events on DOM ready
 document.addEventListener( 'DOMContentLoaded', () => {
 	window.trackOpenConnectPageEvent();
 
