@@ -13,6 +13,7 @@ export const useVariablesManagerState = () => {
 	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
 	const [ isDirty, setIsDirty ] = useState( false );
 	const [ hasValidationErrors, setHasValidationErrors ] = useState( false );
+	const [ isSaving, setIsSaving ] = useState( false );
 	const [ searchValue, setSearchValue ] = useState( '' );
 
 	const handleOnChange = useCallback(
@@ -51,6 +52,7 @@ export const useVariablesManagerState = () => {
 	const handleSave = useCallback( async (): Promise< { success: boolean; error?: string } > => {
 		try {
 			const originalVariables = getVariables( false );
+			setIsSaving( true );
 			const result = await service.batchSave( originalVariables, variables );
 
 			if ( result.success ) {
@@ -60,11 +62,13 @@ export const useVariablesManagerState = () => {
 				setVariables( updatedVariables );
 				setDeletedVariables( [] );
 				setIsDirty( false );
+				setIsSaving( false );
 				return { success: true };
 			}
 			throw new Error( __( 'Failed to save variables. Please try again.', 'elementor' ) );
 		} catch ( error ) {
 			const errorMessage = error instanceof Error ? error.message : ERROR_MESSAGES.UNEXPECTED_ERROR;
+			setIsSaving( false );
 			return { success: false, error: errorMessage };
 		}
 	}, [ variables ] );
@@ -85,6 +89,7 @@ export const useVariablesManagerState = () => {
 		createVariable,
 		handleDeleteVariable,
 		handleSave,
+		isSaving,
 		handleSearch,
 		searchValue,
 		setHasValidationErrors,
