@@ -39,7 +39,6 @@ export default function ConnectScreen( {
 
 				if ( isTrackingActive( data ) ) {
 					elementorCommon.config.editor_events.can_send_events = true;
-					elementorCommon.eventsManager?.enableTracking?.();
 				}
 
 				onConnectSuccess?.();

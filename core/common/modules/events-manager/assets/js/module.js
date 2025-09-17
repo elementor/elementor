@@ -3,15 +3,16 @@ import mixpanel from 'mixpanel-browser';
 import { TIERS } from 'elementor-utils/tiers';
 
 export default class extends elementorModules.Module {
+	trackingEnabled = false;
+
 	onInit() {
 		this.config = eventsConfig;
 
-		if ( elementorCommon.config.editor_events?.token ) {
-			mixpanel.init( elementorCommon.config.editor_events?.token, { persistence: 'localStorage' } );
+		mixpanel.init( elementorCommon.config.editor_events?.token, { persistence: 'localStorage', autocapture: false } );
 
-			if ( elementorCommon.config.editor_events?.can_send_events ) {
-				this.enableTracking();
-			}
+		if ( elementorCommon.config.editor_events?.can_send_events ) {
+			mixpanel.init( elementorCommon.config.editor_events?.token, { persistence: 'localStorage' } );
+			this.enableTracking();
 		}
 	}
 
@@ -31,11 +32,17 @@ export default class extends elementorModules.Module {
 				$plan_type: elementorCommon.config.library_connect?.plan_type || TIERS.free,
 			} );
 		}
+
+		this.trackingEnabled = true;
 	}
 
 	dispatchEvent( name, data ) {
 		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
 			return;
+		}
+
+		if ( ! this.trackingEnabled ) {
+			this.enableTracking();
 		}
 
 		const eventData = {
