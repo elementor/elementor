@@ -22,10 +22,9 @@ class Dynamic_Tags_Converter {
 	 * @param array $control
 	 * @return Plain_Prop_Type|Object_Prop_Type|null
 	 */
-	public function convert_control_to_prop_type( array $control )
-	{
+	public function convert_control_to_prop_type( array $control ) {
 		$control_type = $control['type'];
-		$dependencies = !empty( $control['condition'] ) ? $this->convert_conditions_to_prop_dependencies( $control['condition'] ) : [];
+		$dependencies = ! empty( $control['condition'] ) ? $this->convert_conditions_to_prop_dependencies( $control['condition'] ) : [];
 
 		switch ( $control_type ) {
 			case 'text':
@@ -81,7 +80,7 @@ class Dynamic_Tags_Converter {
 		}
 	}
 
-	private function convert_conditions_to_prop_dependencies( array $conditions ): array {
+	private function convert_conditions_to_prop_dependencies( array $conditions ): ?array {
 		if ( empty( $conditions ) ) {
 			return [];
 		}
@@ -99,7 +98,7 @@ class Dynamic_Tags_Converter {
 			]);
 		}
 
-		return $dependency_manager->get() ?: [];
+		return $dependency_manager->get();
 	}
 
 	private function determine_condition_operator( string $path, $value ): string {

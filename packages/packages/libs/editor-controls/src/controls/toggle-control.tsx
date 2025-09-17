@@ -27,9 +27,9 @@ export const ToggleControl = createControl(
 	}: ToggleControlProps< StringPropValue[ 'value' ] > ) => {
 		const { value, setValue, placeholder, disabled } = useBoundProp( stringPropTypeUtil );
 
-	const processedOptions = convertOptions
-		? convertToggleOptionsToAtomic( options as DynamicToggleOption[] )
-		: options as Array< ToggleButtonGroupItem< StringPropValue[ 'value' ] > & { exclusive?: boolean } >;
+		const processedOptions = convertOptions
+			? convertToggleOptionsToAtomic( options as DynamicToggleOption[] )
+			: ( options as Array< ToggleButtonGroupItem< StringPropValue[ 'value' ] > & { exclusive?: boolean } > );
 
 		const exclusiveValues = processedOptions
 			.filter( ( option ) => option.exclusive )
