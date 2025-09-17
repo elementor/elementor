@@ -4,20 +4,20 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import ExportKitPartsSelection from 'elementor/app/modules/import-export-customization/assets/js/export/components/export-kit-parts-selection';
 
 const createQueryWrapper = () => {
-	const queryClient = new QueryClient({
+	const queryClient = new QueryClient( {
 		defaultOptions: {
 			queries: {
 				retry: false,
 			},
 		},
-	});
-	
-	const Wrapper = ({ children }) => (
-		<QueryClientProvider client={queryClient}>
-			{children}
+	} );
+
+	const Wrapper = ( { children } ) => (
+		<QueryClientProvider client={ queryClient }>
+			{ children }
 		</QueryClientProvider>
 	);
-	
+
 	return Wrapper;
 };
 
