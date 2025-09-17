@@ -1,4 +1,4 @@
-import eventsConfig from '../../../../../core/common/modules/events-manager/assets/js/events-config';
+import eventsConfig from '../../../../../../core/common/modules/events-manager/assets/js/events-config';
 
 const ONBOARDING_EVENTS_MAP = {
 	VIEW_ACCOUNT_SETUP: 'view_account_setup',
