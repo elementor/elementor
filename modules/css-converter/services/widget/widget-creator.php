@@ -409,7 +409,10 @@ class Widget_Creator {
 		$v4_props = [];
 
 		foreach ( $computed_styles as $property => $style_data ) {
-			$v4_prop = $this->convert_css_property_to_v4( $property, $style_data['value'] );
+			// Extract the actual CSS value from the style data structure
+			$css_value = $style_data['value'] ?? $style_data;
+			
+			$v4_prop = $this->convert_css_property_to_v4( $property, $css_value );
 			if ( $v4_prop ) {
 				$v4_props[ $v4_prop['property'] ] = $v4_prop['value'];
 			}

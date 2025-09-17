@@ -141,10 +141,7 @@ class Widget_Hierarchy_Processor {
 			$widget['settings'] = $this->apply_container_defaults( $widget['settings'] ?? [] );
 		}
 		
-		// Apply parent-specific styling
-		if ( ! empty( $widget['applied_styles'] ) ) {
-			$widget['settings'] = $this->apply_parent_styles( $widget['settings'], $widget['applied_styles'] );
-		}
+		// Note: Styling is now handled by Widget Creator using v4 atomic styles
 		
 		return $widget;
 	}
@@ -152,10 +149,7 @@ class Widget_Hierarchy_Processor {
 	private function process_child_widget( $widget ) {
 		// Special processing for child/content widgets
 		
-		// Apply child-specific styling
-		if ( ! empty( $widget['applied_styles'] ) ) {
-			$widget['settings'] = $this->apply_child_styles( $widget['settings'], $widget['applied_styles'] );
-		}
+		// Note: Styling is now handled by Widget Creator using v4 atomic styles
 		
 		// Ensure content widgets have proper content settings
 		if ( in_array( $widget['widget_type'], [ 'e-heading', 'e-text', 'e-button' ], true ) ) {
@@ -181,46 +175,6 @@ class Widget_Hierarchy_Processor {
 		return array_merge( $defaults, $settings );
 	}
 
-	private function apply_parent_styles( $settings, $applied_styles ) {
-		// v4 Atomic Widgets: Most styling is handled in Widget Creator's convert_styles_to_v4_format()
-		// This method now only handles layout configuration settings, not visual styling
-		
-		if ( ! empty( $applied_styles['computed_styles'] ) ) {
-			foreach ( $applied_styles['computed_styles'] as $property => $style_data ) {
-				switch ( $property ) {
-					case 'flex-direction':
-						// Layout configuration setting for e-flexbox
-						$settings['direction'] = $style_data['value'];
-						break;
-					case 'justify-content':
-						// Layout configuration setting for e-flexbox
-						$settings['justify_content'] = $this->map_css_justify_content( $style_data['value'] );
-						break;
-					case 'align-items':
-						// Layout configuration setting for e-flexbox
-						$settings['align_items'] = $this->map_css_align_items( $style_data['value'] );
-						break;
-					case 'gap':
-						// Layout configuration setting for e-flexbox
-						$settings['gap'] = $style_data['value'];
-						break;
-					// Removed: display, padding, margin - these are styling properties, handled in v4 styles array
-				}
-			}
-		}
-		
-		return $settings;
-	}
-
-	private function apply_child_styles( $settings, $applied_styles ) {
-		// v4 Atomic Widgets: All styling is handled in Widget Creator's convert_styles_to_v4_format()
-		// This method is now a no-op as child widget styling goes into the styles array, not settings
-		
-		// All visual styling (color, font-size, font-weight, text-align, line-height, etc.)
-		// is now handled by the v4 atomic styling system in Widget Creator
-		
-		return $settings;
-	}
 
 	private function apply_content_defaults( $settings, $widget ) {
 		// Apply default content settings based on widget type
@@ -383,31 +337,6 @@ class Widget_Hierarchy_Processor {
 		return 'widget_' . wp_generate_uuid4();
 	}
 
-	// Helper methods for CSS value mapping
-	private function map_css_justify_content( $value ) {
-		$mapping = [
-			'flex-start' => 'flex-start',
-			'flex-end' => 'flex-end',
-			'center' => 'center',
-			'space-between' => 'space-between',
-			'space-around' => 'space-around',
-			'space-evenly' => 'space-evenly',
-		];
-		
-		return $mapping[ $value ] ?? 'flex-start';
-	}
-
-	private function map_css_align_items( $value ) {
-		$mapping = [
-			'flex-start' => 'flex-start',
-			'flex-end' => 'flex-end',
-			'center' => 'center',
-			'stretch' => 'stretch',
-			'baseline' => 'baseline',
-		];
-		
-		return $mapping[ $value ] ?? 'stretch';
-	}
 
 
 	private function determine_heading_size( $tag ) {
