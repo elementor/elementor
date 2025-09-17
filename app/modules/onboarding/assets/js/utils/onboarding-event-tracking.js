@@ -11,6 +11,9 @@ const ONBOARDING_EVENTS_MAP = {
 	STEP4_END_STATE: 'core_onboarding_s4_end_state',
 	STEP4_RETURN_STEP4: 'core_onboarding_s4_return_s4',
 	EDITOR_LOADED_FROM_ONBOARDING: 'editor_loaded_from_onboarding',
+	POST_ONBOARDING_1ST_CLICK: 'post_onboarding_1st_click',
+	POST_ONBOARDING_2ND_CLICK: 'post_onboarding_2nd_click',
+	POST_ONBOARDING_3RD_CLICK: 'post_onboarding_3rd_click',
 	EXIT: 'core_onboarding_exit',
 	SKIP: 'core_onboarding_skip',
 	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
@@ -26,6 +29,7 @@ const ONBOARDING_STORAGE_KEYS = {
 	STEP4_ACTIONS: 'elementor_onboarding_s4_actions',
 	STEP4_SITE_STARTER_CHOICE: 'elementor_onboarding_s4_site_starter_choice',
 	EDITOR_LOAD_TRACKED: 'elementor_onboarding_editor_load_tracked',
+	POST_ONBOARDING_CLICK_COUNT: 'elementor_onboarding_click_count',
 	PENDING_EXIT: 'elementor_onboarding_pending_exit',
 	PENDING_SKIP: 'elementor_onboarding_pending_skip',
 	PENDING_CREATE_ACCOUNT_STATUS: 'elementor_onboarding_pending_create_account_status',
@@ -457,9 +461,96 @@ export class OnboardingEventTracking {
 			} );
 
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED, 'true' );
-			this.clearAllOnboardingStorage();
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, '0' );
+			this.setupPostOnboardingClickTracking();
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to check and send editor loaded from onboarding:', error );
+		}
+	}
+
+	static setupPostOnboardingClickTracking() {
+		if ( 'undefined' === typeof document ) {
+			return;
+		}
+
+		const handleClick = ( event ) => {
+			this.trackPostOnboardingClick( event );
+		};
+
+		document.addEventListener( 'click', handleClick, true );
+	}
+
+	static trackPostOnboardingClick( event ) {
+		try {
+			const currentCount = parseInt( localStorage.getItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT ) || '0', 10 );
+
+			if ( currentCount > 3 ) {
+				return;
+			}
+
+			const newCount = currentCount + 1;
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, newCount.toString() );
+
+			if ( 1 === newCount ) {
+				return;
+			}
+
+			const target = event.target;
+			const clickData = this.extractClickData( target );
+			const eventName = this.getClickEventName( newCount );
+
+			if ( eventName ) {
+				const siteStarterChoice = this.getSiteStarterChoice();
+
+				this.dispatchEvent( eventName, {
+					location: 'editor',
+					trigger: 'click',
+					editor_loaded_from_onboarding_source: siteStarterChoice,
+					element_title: clickData.title,
+					element_id: clickData.id,
+					element_type: clickData.type,
+				} );
+			}
+
+			if ( newCount >= 4 ) {
+				this.cleanupPostOnboardingTracking();
+			}
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to track post-onboarding click:', error );
+		}
+	}
+
+	static extractClickData( element ) {
+		const title = element.title || element.textContent?.trim() || element.getAttribute( 'aria-label' ) || '';
+		const id = element.id || '';
+		const type = element.tagName?.toLowerCase() || '';
+
+		return {
+			title: title.substring( 0, 100 ),
+			id,
+			type,
+		};
+	}
+
+	static getClickEventName( clickCount ) {
+		switch ( clickCount ) {
+			case 2:
+				return ONBOARDING_EVENTS_MAP.POST_ONBOARDING_1ST_CLICK;
+			case 3:
+				return ONBOARDING_EVENTS_MAP.POST_ONBOARDING_2ND_CLICK;
+			case 4:
+				return ONBOARDING_EVENTS_MAP.POST_ONBOARDING_3RD_CLICK;
+			default:
+				return null;
+		}
+	}
+
+	static cleanupPostOnboardingTracking() {
+		try {
+			document.removeEventListener( 'click', this.trackPostOnboardingClick );
+			this.clearAllOnboardingStorage();
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to cleanup post-onboarding tracking:', error );
 		}
 	}
 
