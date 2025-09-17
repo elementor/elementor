@@ -38,6 +38,8 @@ export default function Account() {
 		skipButton = {
 			text: __( 'Skip setup', 'elementor' ),
 			action: () => {
+				OnboardingEventTracking.trackS1Action( 'skip' );
+
 				safeDispatchEvent(
 					'skip_setup',
 					{
@@ -49,6 +51,8 @@ export default function Account() {
 				);
 
 				updateState( getStateObjectToUpdate( state, 'steps', pageId, 'skipped' ) );
+
+				OnboardingEventTracking.sendS1EndState();
 				navigate( 'onboarding/' + nextStep );
 			},
 		};
@@ -117,6 +121,8 @@ export default function Account() {
 		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
+			OnboardingEventTracking.trackS1Action( 'create' );
+
 			safeDispatchEvent(
 				'new_account_connect',
 				{
@@ -140,6 +146,8 @@ export default function Account() {
 		elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
 		elementorCommon.config.library_connect.current_access_tier = data.access_tier;
 		elementorCommon.config.library_connect.plan_type = data.plan_type;
+
+		OnboardingEventTracking.trackS1Action( 'connect' );
 
 		if ( isTrackingOptedInConnect ) {
 			elementorCommon.config.editor_events.can_send_events = true;
@@ -182,6 +190,7 @@ export default function Account() {
 			message: 'Alrighty - your account is connected.',
 		} );
 
+		OnboardingEventTracking.sendS1EndState();
 		navigate( 'onboarding/' + nextStep );
 	};
 
@@ -252,6 +261,8 @@ export default function Account() {
 								ref={ alreadyHaveAccountLinkRef }
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
 								onClick={ () => {
+									OnboardingEventTracking.trackS1Action( 'connect' );
+
 									safeDispatchEvent(
 										'existing_account_connect',
 										{

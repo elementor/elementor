@@ -5,11 +5,17 @@ import Checklist from './checklist';
 import ChecklistItem from './checklist-item';
 import Button from './button';
 import { useCallback, useContext } from 'react';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function GoProPopover( props ) {
 	const { state, updateState } = useContext( OnboardingContext );
 
-	// Handle the Pro Upload popup window.
+	const trackUpgradeFromAccountSetup = () => {
+		if ( 1 === state.currentStep ) {
+			OnboardingEventTracking.trackS1Action( 'upgrade_topbar' );
+		}
+	};
+
 	const alreadyHaveProButtonRef = useCallback( ( alreadyHaveProButton ) => {
 		if ( ! alreadyHaveProButton ) {
 			return;
@@ -58,6 +64,8 @@ export default function GoProPopover( props ) {
 			href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
 			tabIndex: 0,
 			onClick: () => {
+				trackUpgradeFromAccountSetup();
+
 				elementorCommon.events.dispatchEvent( {
 					event: 'get elementor pro',
 					version: '',

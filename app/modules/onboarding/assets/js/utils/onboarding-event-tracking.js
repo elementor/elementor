@@ -5,11 +5,13 @@ const ONBOARDING_EVENTS_MAP = {
 	HELLO_BIZ_CONTINUE: 'core_onboarding_s2_hellobiz',
 	CORE_ONBOARDING: 'core_onboarding',
 	CONNECT_STATUS: 'core_onboarding_connect_status',
+	S1_END_STATE: 'core_onboarding_s1_end_state',
 };
 
 const ONBOARDING_STORAGE_KEYS = {
 	START_TIME: 'elementor_onboarding_start_time',
 	INITIATED: 'elementor_onboarding_initiated',
+	S1_ACTIONS: 'elementor_onboarding_s1_actions',
 };
 
 export class OnboardingEventTracking {
@@ -59,8 +61,7 @@ export class OnboardingEventTracking {
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.START_TIME, startTime.toString() );
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.INITIATED, 'true' );
 		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.warn( 'Failed to store onboarding initiation data:', error );
+			this.handleStorageError( 'Failed to store onboarding initiation data:', error );
 		}
 	}
 
@@ -89,8 +90,7 @@ export class OnboardingEventTracking {
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.START_TIME );
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.INITIATED );
 		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.warn( 'Failed to clear onboarding storage:', error );
+			this.handleStorageError( 'Failed to clear onboarding storage:', error );
 		}
 	}
 
@@ -104,5 +104,66 @@ export class OnboardingEventTracking {
 			tracking_opted_in: trackingOptedIn,
 			user_tier: userTier,
 		} );
+	}
+
+	static trackS1Action( action ) {
+		try {
+			const startTimeStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+			if ( ! startTimeStr ) {
+				return;
+			}
+
+			const startTime = parseInt( startTimeStr, 10 );
+			const currentTime = Date.now();
+			const timeSpent = Math.round( ( currentTime - startTime ) / 1000 );
+
+			const existingActionsStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.S1_ACTIONS );
+			const existingActions = existingActionsStr ? JSON.parse( existingActionsStr ) : [];
+
+			const actionData = {
+				action,
+				timestamp: currentTime,
+				time_spent: timeSpent,
+			};
+
+			existingActions.push( actionData );
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.S1_ACTIONS, JSON.stringify( existingActions ) );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to track S1 action:', error );
+		}
+	}
+
+	static sendS1EndState() {
+		try {
+			const actionsStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.S1_ACTIONS );
+			const startTimeStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+
+			if ( ! actionsStr || ! startTimeStr ) {
+				return;
+			}
+
+			const actions = JSON.parse( actionsStr );
+			const startTime = parseInt( startTimeStr, 10 );
+			const currentTime = Date.now();
+			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
+
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.S1_END_STATE, {
+				location: 'plugin_onboarding',
+				trigger: 'user_redirects_out_of_step',
+				step_number: 1,
+				step_name: 'account_setup',
+				s1_end_state: actions,
+				total_time_spent: totalTimeSpent,
+			} );
+
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.S1_ACTIONS );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to send S1 end state:', error );
+		}
+	}
+
+	static handleStorageError( message, error ) {
+		// eslint-disable-next-line no-console
+		console.warn( message, error );
 	}
 }
