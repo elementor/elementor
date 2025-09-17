@@ -1,12 +1,10 @@
-import { type z, type ZodRawShape } from '@elementor/schema';
+import { type z, type ZodRawShape, type ZodTypeAny } from '@elementor/schema';
 import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
-
-type ZodTypeAny = z.ZodTypeAny;
 
 const mcpRegistry: { [ namespace: string ]: McpServer } = {};
 const mcpDescriptions: { [ namespace: string ]: string } = {};
