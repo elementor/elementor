@@ -33,6 +33,8 @@ import { DynamicSelection } from './dynamic-selection';
 
 const SIZE = 'tiny';
 
+const tagsWithoutTabs = [ 'popup' ];
+
 export const DynamicSelectionControl = () => {
 	const { setValue: setAnyValue } = useBoundProp();
 	const { bind, value } = useBoundProp( dynamicPropTypeUtil );
@@ -121,20 +123,30 @@ export const DynamicSettingsPopover = ( { dynamicTag }: { dynamicTag: DynamicTag
 						onClose={ popupState.close }
 						icon={ <DatabaseIcon fontSize={ SIZE } /> }
 					/>
-					<DynamicSettings controls={ dynamicTag.atomic_controls } />
+					<DynamicSettings controls={ dynamicTag.atomic_controls } tagName={ dynamicTag.name } />
 				</PopoverBody>
 			</Popover>
 		</>
 	);
 };
 
-const DynamicSettings = ( { controls }: { controls: DynamicTag[ 'atomic_controls' ] } ) => {
+const DynamicSettings = ( { controls, tagName }: { controls: DynamicTag[ 'atomic_controls' ]; tagName: string } ) => {
 	const tabs = controls.filter( ( { type } ) => type === 'section' ) as ControlsSection[];
 	const { getTabsProps, getTabProps, getTabPanelProps } = useTabs< number >( 0 );
 
 	if ( ! tabs.length ) {
 		// Dynamic must have hierarchical controls.
 		return null;
+	}
+
+	if ( tagsWithoutTabs.includes( tagName ) ) {
+		const singleTab = tabs[ 0 ];
+		return (
+			<>
+				<Divider />
+				<ControlsItemsStack items={ singleTab.value.items } />
+			</>
+		);
 	}
 
 	return (
@@ -159,14 +171,7 @@ const DynamicSettings = ( { controls }: { controls: DynamicTag[ 'atomic_controls
 						sx={ { flexGrow: 1, py: 0, overflowY: 'auto' } }
 						{ ...getTabPanelProps( index ) }
 					>
-						<Stack p={ 2 } gap={ 2 }>
-							{ value.items.map( ( item ) => {
-								if ( item.type === 'control' ) {
-									return <Control key={ item.value.bind } control={ item.value } />;
-								}
-								return null;
-							} ) }
-						</Stack>
+						<ControlsItemsStack items={ value.items } />
 					</TabPanel>
 				);
 			} ) }
@@ -180,7 +185,16 @@ const LAYOUT_OVERRIDE_FIELDS = {
 	off_canvas: 'full',
 } as const;
 
+const DYNAMIC_TAG_LAYOUT_OVERRIDES = {
+	select: 'full',
+} as const;
+
 const getLayout = ( control: Control[ 'value' ] ): ControlLayout => {
+	const dynamicOverride = DYNAMIC_TAG_LAYOUT_OVERRIDES[ control.type as keyof typeof DYNAMIC_TAG_LAYOUT_OVERRIDES ];
+	if ( dynamicOverride ) {
+		return dynamicOverride;
+	}
+
 	return (
 		LAYOUT_OVERRIDE_FIELDS[ control.bind as keyof typeof LAYOUT_OVERRIDE_FIELDS ] ??
 		controlsRegistry.getLayout( control.type as ControlType )
@@ -194,22 +208,41 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 
 	const layout = getLayout( control );
 
+	const shouldDisablePortal = control.type === 'select';
+	const controlProps = shouldDisablePortal
+		? { ...control.props, MenuProps: { ...( control.props?.MenuProps ?? {} ), disablePortal: true } }
+		: control.props;
+	const isSwitchControl = control.type === 'switch';
+	const layoutStyleProps =
+		layout === 'two-columns'
+			? {
+					display: 'grid',
+					gridTemplateColumns: isSwitchControl ? 'minmax(0, 1fr) max-content' : '1fr 1fr',
+			  }
+			: {};
+
 	return (
 		<DynamicControl bind={ control.bind }>
-			<Grid
-				container
-				gap={ 0.75 }
-				sx={ layout === 'two-columns' ? { display: 'grid', gridTemplateColumns: '1fr 1fr' } : {} }
-			>
+			<Grid container gap={ 0.75 } sx={ layoutStyleProps }>
 				{ control.label ? (
 					<Grid item xs={ 12 }>
 						<ControlFormLabel>{ control.label }</ControlFormLabel>
 					</Grid>
 				) : null }
 				<Grid item xs={ 12 }>
-					<BaseControl type={ control.type as ControlType } props={ control.props } />
+					<BaseControl type={ control.type as ControlType } props={ controlProps } />
 				</Grid>
 			</Grid>
 		</DynamicControl>
 	);
 };
+
+function ControlsItemsStack( { items }: { items: ControlsSection[ 'value' ][ 'items' ] } ) {
+	return (
+		<Stack p={ 2 } gap={ 2 } sx={ { overflowY: 'auto' } }>
+			{ items.map( ( item ) =>
+				item.type === 'control' ? <Control key={ item.value.bind } control={ item.value } /> : null
+			) }
+		</Stack>
+	);
+}
