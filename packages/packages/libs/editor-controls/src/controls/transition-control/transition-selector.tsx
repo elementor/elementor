@@ -32,10 +32,9 @@ const findByValue = ( value: string ) => {
 	}
 };
 
-export const TransitionSelector = ( { recentlyUsedList }: { recentlyUsedList: string[] } ) => {
+export const TransitionSelector = ( { recentlyUsedList = [] }: { recentlyUsedList: string[] } ) => {
 	const { value, setValue } = useBoundProp( keyValuePropTypeUtil );
 	const {
-		value: { value: transitionValue },
 		key: { value: transitionLabel },
 	} = value;
 	const defaultRef = useRef< HTMLDivElement >( null );
@@ -108,7 +107,7 @@ export const TransitionSelector = ( { recentlyUsedList }: { recentlyUsedList: st
 			>
 				<ItemSelector
 					itemsList={ getItemList() }
-					selectedItem={ transitionValue }
+					selectedItem={ transitionLabel }
 					onItemChange={ handleTransitionPropertyChange }
 					onClose={ popoverState.close }
 					sectionWidth={ 268 }

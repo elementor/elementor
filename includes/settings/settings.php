@@ -371,6 +371,7 @@ class Settings extends Settings_Page {
 										'0' => esc_html__( 'Disable', 'elementor' ),
 									],
 									'desc' => sprintf(
+										/* translators: 1: Link opening tag, 2: Link closing tag */
 										esc_html__( 'Disable this option if you want to prevent Google Fonts from being loaded. This setting is recommended when loading fonts from a different source (plugin, theme or %1$scustom fonts%2$s).', 'elementor' ),
 										'<a href="' . admin_url( 'admin.php?page=elementor_custom_fonts' ) . '">',
 										'</a>'
@@ -464,6 +465,18 @@ class Settings extends Settings_Page {
 										'0' => esc_html__( 'Disable', 'elementor' ),
 									],
 									'desc' => esc_html__( 'Improve initial page load performance by lazy loading all background images except the first one.', 'elementor' ),
+								],
+							],
+							'local_google_fonts' => [
+								'label' => esc_html__( 'Load Google Fonts Locally', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '0',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => esc_html__( 'Load Google fonts locally to benefit from faster performance and ensure GDPR compliance. Fonts will be served from your own server instead of Google’s. Only the very first load (in the editor and on the front end) may take slightly longer.', 'elementor' ),
 								],
 							],
 						],

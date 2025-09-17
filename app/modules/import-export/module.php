@@ -178,6 +178,7 @@ class Module extends BaseModule {
 		if ( $should_show_revert_section ) {
 			if ( ! empty( $penultimate_imported_kit ) ) {
 				$revert_text = sprintf(
+					/* translators: 1: Last imported kit title, 2: Last imported kit date, 3: Line break <br>, 4: Penultimate imported kit title, 5: Penultimate imported kit date. */
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s %3$s and revert to the site setting that came with "%4$s" on %5$s.', 'elementor' ),
 					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
@@ -187,6 +188,7 @@ class Module extends BaseModule {
 				);
 			} else {
 				$revert_text = sprintf(
+					/* translators: 1: Last imported kit title, 2: Last imported kit date, 3: Line break <br>. */
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s.%3$s Your original site settings will be restored.', 'elementor' ),
 					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),

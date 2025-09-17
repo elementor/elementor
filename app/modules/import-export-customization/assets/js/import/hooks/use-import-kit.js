@@ -55,7 +55,9 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 					path: 'import-runner',
 				} );
 
-				dispatch( { type: 'SET_RUNNERS_STATE', payload: { [ runner ]: result.data.imported_data?.[ runner ] || result.data[ runner ] } } );
+				const runnerKey = 'elementor-content' === runner ? 'content' : runner;
+
+				dispatch( { type: 'SET_RUNNERS_STATE', payload: { [ runnerKey ]: result.data.imported_data?.[ runnerKey ] || result.data[ runnerKey ] } } );
 			} catch ( e ) {
 				stopIterations = e;
 				setError( e );
@@ -94,12 +96,14 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 		if ( isProcessing && data.includes.length ) {
 			importKit();
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ data.includes, isProcessing ] );
 
 	useEffect( () => {
 		if ( isProcessing && data.importedData && ! error ) {
 			runImportRunners();
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ data.importedData, isProcessing, error ] );
 
 	return {

@@ -4,6 +4,12 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { Repeater } from '../repeater';
 
+const setValuesWrapper = ( setValues: ( value: unknown ) => void ) => {
+	return ( value: unknown ) => {
+		setValues( value );
+	};
+};
+
 describe( 'Repeater', () => {
 	it( 'should render the repeater with no items', () => {
 		// Arrange.
@@ -78,7 +84,7 @@ describe( 'Repeater', () => {
 			<Repeater
 				label={ 'Repeater' }
 				itemSettings={ itemSettings }
-				setValues={ setValues }
+				setValues={ setValuesWrapper( setValues ) }
 				values={ [
 					{
 						$$type: 'example',
@@ -123,7 +129,7 @@ describe( 'Repeater', () => {
 				addToBottom
 				label={ 'Repeater' }
 				itemSettings={ itemSettings }
-				setValues={ setValues }
+				setValues={ setValuesWrapper( setValues ) }
 				values={ [
 					{
 						$$type: 'example',
@@ -171,7 +177,12 @@ describe( 'Repeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
+			<Repeater
+				label={ 'Repeater' }
+				itemSettings={ itemSettings }
+				values={ values }
+				setValues={ setValuesWrapper( setValues ) }
+			/>
 		);
 		// eslint-disable-next-line testing-library/no-node-access
 		const duplicateButton = document.querySelector( 'button[aria-label="Duplicate"]' );
@@ -218,7 +229,12 @@ describe( 'Repeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
+			<Repeater
+				label={ 'Repeater' }
+				itemSettings={ itemSettings }
+				values={ values }
+				setValues={ setValuesWrapper( setValues ) }
+			/>
 		);
 		// eslint-disable-next-line testing-library/no-node-access
 		const removeButton = document.querySelector( 'button[aria-label="Remove"]' );
@@ -251,7 +267,12 @@ describe( 'Repeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
+			<Repeater
+				label={ 'Repeater' }
+				itemSettings={ itemSettings }
+				values={ values }
+				setValues={ setValuesWrapper( setValues ) }
+			/>
 		);
 
 		const [ , secondItem ] = screen.getAllByRole( 'button', { name: 'Open item' } );
@@ -284,7 +305,12 @@ describe( 'Repeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
+			<Repeater
+				label={ 'Repeater' }
+				itemSettings={ itemSettings }
+				values={ values }
+				setValues={ setValuesWrapper( setValues ) }
+			/>
 		);
 		// eslint-disable-next-line testing-library/no-node-access
 		const disableButton = document.querySelector( 'button[aria-label="Hide"]' );
@@ -319,7 +345,12 @@ describe( 'Repeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
+			<Repeater
+				label={ 'Repeater' }
+				itemSettings={ itemSettings }
+				values={ values }
+				setValues={ setValuesWrapper( setValues ) }
+			/>
 		);
 		// eslint-disable-next-line testing-library/no-node-access
 		const enableButton = document.querySelector( 'button[aria-label="Show"]' );

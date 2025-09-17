@@ -32,6 +32,23 @@
 
 	#menu-posts-elementor_library {
 
+        a[href*="page=go_cloud_hosting_plans"] {
+            font-weight: 600;
+            background-color: $e-hosting-promotion;
+            color: $white;
+            margin: 3px 10px 0;
+            display: block;
+            text-align: center;
+            border-radius: $default-border-radius;
+            transition: $transition-hover;
+
+            &:hover,
+            &:focus {
+                background-color: $e-hosting-promotion-hover;
+                box-shadow: none;
+            }
+        }
+
 		.wp-menu-image {
 
 			&:before {

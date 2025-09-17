@@ -778,7 +778,7 @@ class Widget_Icon_List extends Widget_Base {
 							<?php } ?>
 						</span>
 					<?php endif; ?>
-					<span <?php $this->print_render_attribute_string( $repeater_setting_key ); ?>><?php $this->print_unescaped_setting( 'text', 'icon_list', $index ); ?></span>
+					<span <?php $this->print_render_attribute_string( $repeater_setting_key ); ?>><?php echo wp_kses_post( $item['text'] ); ?></span>
 					<?php if ( ! empty( $item['link']['url'] ) ) : ?>
 						</a>
 					<?php endif; ?>
@@ -822,8 +822,8 @@ class Widget_Icon_List extends Widget_Base {
 					view.addInlineEditingAttributes( iconTextKey ); #>
 
 					<li {{{ view.getRenderAttributeString( 'list_item' ) }}}>
-						<# if ( item.link && item.link.url ) { #>
-							<a href="{{ elementor.helpers.sanitizeUrl( item.link.url ) }}">
+						<# if ( item.link && item.link?.url ) { #>
+							<a href="{{ elementor.helpers.sanitizeUrl( item.link?.url ) }}">
 						<# } #>
 						<# if ( item.icon || item.selected_icon.value ) { #>
 						<span class="elementor-icon-list-icon">
@@ -839,7 +839,7 @@ class Widget_Icon_List extends Widget_Base {
 						</span>
 						<# } #>
 						<span {{{ view.getRenderAttributeString( iconTextKey ) }}}>{{{ item.text }}}</span>
-						<# if ( item.link && item.link.url ) { #>
+						<# if ( item.link && item.link?.url ) { #>
 							</a>
 						<# } #>
 					</li>

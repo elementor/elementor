@@ -12,6 +12,7 @@ use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Bars_Base;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Empty_View_Menu_Item;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Menu_Item;
 use Elementor\Modules\FloatingButtons\Base\Widget_Contact_Button_Base;
+use Elementor\Modules\FloatingButtons\Classes\Action\Action_Handler;
 use Elementor\Modules\FloatingButtons\Control\Hover_Animation_Floating_Buttons;
 use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Plugin;
@@ -171,44 +172,12 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'admin_init', function () {
-			$action = filter_input( INPUT_GET, 'action' );
-			$menu_args = $this->get_contact_menu_args();
+			$action = sanitize_text_field( filter_input( INPUT_GET, 'action' ) );
 
-			switch ( $action ) {
-				case 'remove_from_entire_site':
-					$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
-					check_admin_referer( 'remove_from_entire_site_' . $post );
-					delete_post_meta( $post, '_elementor_conditions' );
-
-					wp_redirect( $menu_args['menu_slug'] );
-					exit;
-				case 'set_as_entire_site':
-					$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
-					check_admin_referer( 'set_as_entire_site_' . $post );
-
-					$posts = get_posts( [
-						'post_type' => static::CPT_FLOATING_BUTTONS,
-						'posts_per_page' => -1,
-						'post_status' => 'publish',
-						'fields' => 'ids',
-						'no_found_rows' => true,
-						'update_post_term_cache' => false,
-						'update_post_meta_cache' => false,
-						'meta_query' => Floating_Buttons::get_meta_query_for_floating_buttons(
-							Floating_Buttons::get_floating_element_type( $post )
-						),
-					] );
-
-					foreach ( $posts as $post_id ) {
-						delete_post_meta( $post_id, '_elementor_conditions' );
-					}
-
-					update_post_meta( $post, '_elementor_conditions', [ 'include/general' ] );
-
-					wp_redirect( $menu_args['menu_slug'] );
-					exit;
-				default:
-					break;
+			if ( $action ) {
+				$menu_args = $this->get_contact_menu_args();
+				$action_handler = new Action_Handler( $action, $menu_args );
+				$action_handler->process_action();
 			}
 		} );
 

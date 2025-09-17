@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\Parsers;
 
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
-use Elementor\Modules\AtomicWidgets\Parsers\Parse_Result;
+use Elementor\Core\Utils\Api\Parse_Result;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use ElementorEditorTesting\Elementor_Test_Base;
 

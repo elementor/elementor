@@ -163,25 +163,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
-          
-      - name: Publish packages (and tag version)
-        id: release-packages
-        run: |
-          if [ "${{ env.CHANNEL }}" == "ga" ]; then
-            # Assuming the version is already bumped in the creation of the release branch
-            npm run packages:release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
-          else
-            if [ ${{ github.event.inputs.dry_run }} == 'false' ]; then
-              LATEST_BETA_TAG=$(gh tag list --limit 1 --pattern "${{ env.PACKAGE_VERSION }}-beta-") || "${{ env.PACKAGE_VERSION }}-beta-0"
-              npm run packages:version set ${{ env.PACKAGE_VERSION }} --tag `beta-${LATEST_BETA_TAG}`
-              gh tag create ${{ env.PACKAGE_VERSION }}-beta-${LATEST_BETA_TAG} --annotate "Beta ${{ env.PACKAGE_VERSION }}" --message "Beta ${{ env.PACKAGE_VERSION }}"
-            fi
-            npm run packages:release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
-          DRY_RUN: ${{ github.event.inputs.dry_run }}
 
       - name: Post To Slack Created Release
         if: github.event.inputs.dry_run == 'false'
@@ -222,3 +203,27 @@ jobs:
                         }
                       ]
                     }
+
+      - name: Publish packages (and tag version)
+        id: release-packages
+        working-directory: packages
+        run: |
+          if [ "${{ env.CHANNEL }}" == "ga" ]; then
+            # Assuming the version is already bumped in the creation of the release branch
+            npm run release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
+          else
+            if [ ${{ github.event.inputs.dry_run }} == 'false' ]; then
+              LATEST_BETA_NUM=$(git tag -l "v${{ env.PACKAGE_VERSION }}-*" | sed 's/.*-//' | sort -nr | head -n1 || echo "0")
+              NEXT_BETA_NUM=$((LATEST_BETA_NUM + 1))
+              node scripts/version-manager/index.js set "${{ env.PACKAGE_VERSION }}" --tag "${NEXT_BETA_NUM}"
+              git config --global user.email "github-actions@github.com"
+              git config --global user.name "GitHub Actions"
+              git tag -a "v${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}" -m "Release ${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}"
+              git push origin "v${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}"
+            fi
+            npm run release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
