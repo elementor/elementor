@@ -123,6 +123,7 @@ export default function Account() {
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
 			OnboardingEventTracking.trackS1Action( 'create' );
+			OnboardingEventTracking.sendCreateMyAccount( 1, 'on_main_cta', 'main_cta' );
 
 			safeDispatchEvent(
 				'new_account_connect',

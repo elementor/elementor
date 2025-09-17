@@ -82,6 +82,9 @@ export default function Layout( props ) {
 			target: '_blank',
 			rel: 'opener',
 			onClick: () => {
+				const stepNumber = getStepNumber( props.pageId );
+				OnboardingEventTracking.sendCreateMyAccount( stepNumber, 'on_topbar', 'topbar' );
+
 				elementorCommon.events.dispatchEvent( {
 					event: 'create account',
 					version: '',

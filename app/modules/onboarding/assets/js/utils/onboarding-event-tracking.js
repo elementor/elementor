@@ -8,7 +8,7 @@ const ONBOARDING_EVENTS_MAP = {
 	S1_END_STATE: 'core_onboarding_s1_end_state',
 	EXIT: 'core_onboarding_exit',
 	SKIP: 'core_onboarding_skip',
-	TOP_UPGRADE: 'core_onboarding_top_upgrade',
+	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
 };
 
 const ONBOARDING_STORAGE_KEYS = {
@@ -273,13 +273,25 @@ export class OnboardingEventTracking {
 	}
 
 	static sendTopUpgrade( currentStep, upgradeClicked ) {
-		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.TOP_UPGRADE, {
+		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT, {
 			location: 'plugin_onboarding',
 			trigger: 'upgrade_interaction',
 			step_number: currentStep,
 			step_name: this.getStepName( currentStep ),
 			action_step: currentStep,
 			upgrade_clicked: upgradeClicked,
+		} );
+	}
+
+	static sendCreateMyAccount( currentStep, upgradeClicked, createAccountClicked ) {
+		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT, {
+			location: 'plugin_onboarding',
+			trigger: 'upgrade_interaction',
+			step_number: currentStep,
+			step_name: this.getStepName( currentStep ),
+			action_step: currentStep,
+			upgrade_clicked: upgradeClicked,
+			create_account_clicked: createAccountClicked,
 		} );
 	}
 
