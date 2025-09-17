@@ -5,6 +5,7 @@ import { options, setSelectedFeatureList } from '../utils/utils';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 import useButtonAction from '../utils/use-button-action';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function ChooseFeatures() {
 	const { setAjax } = useAjax(),
@@ -27,6 +28,8 @@ export default function ChooseFeatures() {
 						step: state.currentStep,
 					},
 				} );
+
+				OnboardingEventTracking.sendUpgradeNowStep3( selectedFeatures, state.currentStep );
 
 				setAjax( {
 					data: {
