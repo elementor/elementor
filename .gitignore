@@ -28,7 +28,6 @@ yarn.lock
 .vscode/
 !vscode/extensions.json
 .idea/
-.history/
 
 # other
 Thumbs.db
