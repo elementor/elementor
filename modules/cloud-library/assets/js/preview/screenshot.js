@@ -111,7 +111,6 @@ class Screenshot extends elementorModules.ViewModule {
 		}
 	}
 
-
 	/**
 	 * Send the image to the server.
 	 *
