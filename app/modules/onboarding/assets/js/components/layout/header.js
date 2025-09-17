@@ -18,8 +18,13 @@ export default function Header( props ) {
 		}
 	};
 
+	const trackXButtonExit = () => {
+		OnboardingEventTracking.storeExitEventForLater( 'x_button', state.currentStep );
+	};
+
 	const onClose = () => {
 		trackExitFromAccountSetup();
+		trackXButtonExit();
 
 		elementorCommon.events.dispatchEvent( {
 			event: 'close modal',

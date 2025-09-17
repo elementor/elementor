@@ -6,12 +6,14 @@ const ONBOARDING_EVENTS_MAP = {
 	CORE_ONBOARDING: 'core_onboarding',
 	CONNECT_STATUS: 'core_onboarding_connect_status',
 	S1_END_STATE: 'core_onboarding_s1_end_state',
+	EXIT: 'core_onboarding_exit',
 };
 
 const ONBOARDING_STORAGE_KEYS = {
 	START_TIME: 'elementor_onboarding_start_time',
 	INITIATED: 'elementor_onboarding_initiated',
 	S1_ACTIONS: 'elementor_onboarding_s1_actions',
+	PENDING_EXIT: 'elementor_onboarding_pending_exit',
 };
 
 export class OnboardingEventTracking {
@@ -160,6 +162,61 @@ export class OnboardingEventTracking {
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to send S1 end state:', error );
 		}
+	}
+
+	static storeExitEventForLater( exitType, currentStep ) {
+		try {
+			const exitData = {
+				exitType,
+				currentStep,
+				timestamp: Date.now(),
+			};
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT, JSON.stringify( exitData ) );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to store exit event:', error );
+		}
+	}
+
+	static sendStoredExitEvent() {
+		try {
+			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT );
+			if ( ! storedDataStr ) {
+				return;
+			}
+
+			const exitData = JSON.parse( storedDataStr );
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.EXIT, {
+				location: 'plugin_onboarding',
+				trigger: 'exit_action_detected',
+				step_number: exitData.currentStep,
+				step_name: this.getStepName( exitData.currentStep ),
+				action_step: exitData.exitType,
+				exit_timestamp: exitData.timestamp,
+			} );
+
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to send stored exit event:', error );
+		}
+	}
+
+	static getStepName( stepNumber ) {
+		const stepNames = {
+			1: 'account_setup',
+			2: 'hello_biz_theme',
+			3: 'choose_features',
+			4: 'good_to_go',
+		};
+		return stepNames[ stepNumber ] || 'unknown_step';
+	}
+
+	static setupWindowCloseTracking( currentStep ) {
+		const handleWindowClose = () => {
+			this.storeExitEventForLater( 'close_window', currentStep );
+		};
+
+		window.addEventListener( 'beforeunload', handleWindowClose );
+		window.addEventListener( 'pagehide', handleWindowClose );
 	}
 
 	static handleStorageError( message, error ) {

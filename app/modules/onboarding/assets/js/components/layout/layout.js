@@ -5,10 +5,14 @@ import Header from './header';
 import ProgressBar from '../progress-bar/progress-bar';
 import Content from '../../../../../../assets/js/layout/content';
 import Connect from '../../utils/connect';
+import { OnboardingEventTracking } from '../../utils/onboarding-event-tracking';
 
 export default function Layout( props ) {
+	const initializeExitTracking = ( stepNumber ) => {
+		OnboardingEventTracking.setupWindowCloseTracking( stepNumber );
+	};
+
 	useEffect( () => {
-		// Send modal load event for current step.
 		elementorCommon.events.dispatchEvent( {
 			event: 'modal load',
 			version: '',
@@ -19,12 +23,25 @@ export default function Layout( props ) {
 			},
 		} );
 
+		const stepNumber = getStepNumber( props.pageId );
+		initializeExitTracking( stepNumber );
+
 		updateState( {
-			currentStep: props.pageId,
+			currentStep: stepNumber,
 			nextStep: props.nextStep || '',
 			proNotice: null,
 		} );
 	}, [ props.pageId ] );
+
+	const getStepNumber = ( pageId ) => {
+		const stepMapping = {
+			account: 1,
+			hello: 2,
+			chooseFeatures: 3,
+			goodToGo: 4,
+		};
+		return stepMapping[ pageId ] || 1;
+	};
 
 	const { state, updateState } = useContext( OnboardingContext ),
 		headerButtons = [],
