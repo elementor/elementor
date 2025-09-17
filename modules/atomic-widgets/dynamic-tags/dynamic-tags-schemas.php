@@ -3,6 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Core\DynamicTags\Base_Tag;
+use Elementor\Modules\AtomicWidgets\Image\Placeholder_Image;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
@@ -105,8 +107,9 @@ class Dynamic_Tags_Schemas {
 					->set_dependencies( $dependencies );
 
 			case 'media':
-				return String_Prop_Type::make()
-					->default( $control['default'] ?? null )
+				return Image_Prop_Type::make()
+					->default_url( Placeholder_Image::get_placeholder_image() )
+					->default_size( 'full' )
 					->set_dependencies( $dependencies );
 
 			default:

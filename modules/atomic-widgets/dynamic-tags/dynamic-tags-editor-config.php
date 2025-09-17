@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Query_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
@@ -248,7 +249,8 @@ class Dynamic_Tags_Editor_Config {
 	}
 
 	private function convert_media_control_to_atomic( $control ) {
-		return Text_Control::bind_to( $control['name'] )
+		return Image_Control::bind_to( $control['name'] )
+			->set_show_mode( 'media' )
 			->set_label( $control['label'] );
 	}
 }
