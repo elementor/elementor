@@ -5,6 +5,7 @@ import { options, setSelectedFeatureList } from '../utils/utils';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 import useButtonAction from '../utils/use-button-action';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function ChooseFeatures() {
 	const { setAjax } = useAjax(),
@@ -19,14 +20,7 @@ export default function ChooseFeatures() {
 			href: elementorAppConfig.onboarding.urls.upgrade,
 			target: '_blank',
 			onClick: () => {
-				elementorCommon.events.dispatchEvent( {
-					event: 'next',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-					},
-				} );
+				OnboardingEventTracking.sendNextEvent( state.currentStep );
 
 				setAjax( {
 					data: {

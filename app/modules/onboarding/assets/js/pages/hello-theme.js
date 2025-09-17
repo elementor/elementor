@@ -5,6 +5,7 @@ import { useNavigate } from '@reach/router';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function HelloTheme() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
@@ -59,16 +60,7 @@ export default function HelloTheme() {
 	const onHelloThemeActivationSuccess = useCallback( () => {
 		setIsInstalling( false );
 
-		elementorCommon.events.dispatchEvent( {
-			event: 'indication prompt',
-			version: '',
-			details: {
-				placement: elementorAppConfig.onboarding.eventPlacement,
-				step: state.currentStep,
-				action_state: 'success',
-				action: 'hello theme activation',
-			},
-		} );
+		OnboardingEventTracking.sendIndicationPrompt( 'hello theme activation', 'success', state.currentStep );
 
 		setNoticeState( noticeStateSuccess );
 
@@ -86,16 +78,7 @@ export default function HelloTheme() {
 	}, [] );
 
 	const onErrorInstallHelloTheme = () => {
-		elementorCommon.events.dispatchEvent( {
-			event: 'indication prompt',
-			version: '',
-			details: {
-				placement: elementorAppConfig.onboarding.eventPlacement,
-				step: state.currentStep,
-				action_state: 'failure',
-				action: 'hello theme install',
-			},
-		} );
+		OnboardingEventTracking.sendIndicationPrompt( 'hello theme install', 'failure', state.currentStep );
 
 		setNoticeState( {
 			type: 'error',
@@ -129,14 +112,7 @@ export default function HelloTheme() {
 	};
 
 	const sendNextButtonEvent = () => {
-		elementorCommon.events.dispatchEvent( {
-			event: 'next',
-			version: '',
-			details: {
-				placement: elementorAppConfig.onboarding.eventPlacement,
-				step: state.currentStep,
-			},
-		} );
+		OnboardingEventTracking.sendNextEvent( state.currentStep );
 	};
 
 	/**
@@ -160,6 +136,7 @@ export default function HelloTheme() {
 	} else {
 		actionButton.onClick = () => {
 			sendNextButtonEvent();
+			OnboardingEventTracking.sendHelloBizContinue( state.currentStep );
 
 			if ( state.isHelloThemeInstalled && ! state.isHelloThemeActivated ) {
 				activateHelloTheme();
@@ -236,16 +213,7 @@ export default function HelloTheme() {
 			if ( 'success' === activateHelloThemeAjaxState.status && activateHelloThemeAjaxState.response?.helloThemeActivated ) {
 				onHelloThemeActivationSuccess();
 			} else if ( 'error' === activateHelloThemeAjaxState.status ) {
-				elementorCommon.events.dispatchEvent( {
-					event: 'indication prompt',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-						action_state: 'failure',
-						action: 'hello theme activation',
-					},
-				} );
+				OnboardingEventTracking.sendIndicationPrompt( 'hello theme activation', 'failure', state.currentStep );
 
 				setNoticeState( {
 					type: 'error',

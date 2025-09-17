@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { OnboardingContext } from '../../context/context';
+import { OnboardingEventTracking } from '../../utils/onboarding-event-tracking';
 import { useNavigate } from '@reach/router';
 
 import ProgressBarItem from './progress-bar-item';
@@ -56,15 +57,7 @@ export default function ProgressBar() {
 
 		if ( state.steps[ itemConfig.id ] ) {
 			itemConfig.onClick = () => {
-				elementorCommon.events.dispatchEvent( {
-					event: 'step click',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-						next_step: itemConfig.id,
-					},
-				} );
+				OnboardingEventTracking.dispatchElementorEvent( 'step click', { step: state.currentStep, next_step: itemConfig.id } );
 
 				navigate( '/onboarding/' + itemConfig.id );
 			};

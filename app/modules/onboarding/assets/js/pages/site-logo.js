@@ -9,6 +9,7 @@ import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dial
 
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function SiteLogo() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
@@ -25,14 +26,7 @@ export default function SiteLogo() {
 		actionButton = {
 			role: 'button',
 			onClick: () => {
-				elementorCommon.events.dispatchEvent( {
-					event: 'next',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-					},
-				} );
+				OnboardingEventTracking.sendNextEvent( state.currentStep );
 
 				if ( file.id ) {
 					if ( file.id !== state.siteLogo.id ) {
@@ -122,13 +116,7 @@ export default function SiteLogo() {
 	};
 
 	const onImageRemoveClick = () => {
-		elementorCommon.events.dispatchEvent( {
-			event: 'remove selected logo',
-			version: '',
-			details: {
-				placement: elementorAppConfig.onboarding.eventPlacement,
-			},
-		} );
+		OnboardingEventTracking.dispatchElementorEvent( 'remove selected logo' );
 
 		setFile( null );
 	};
@@ -140,14 +128,7 @@ export default function SiteLogo() {
 	useEffect( () => {
 		if ( 'initial' !== uploadImageAjaxState.status ) {
 			if ( 'success' === uploadImageAjaxState.status && uploadImageAjaxState.response?.imageAttachment?.id ) {
-				elementorCommon.events.dispatchEvent( {
-					event: 'logo image uploaded',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						source: fileSource,
-					},
-				} );
+				OnboardingEventTracking.dispatchElementorEvent( 'logo image uploaded', { source: fileSource } );
 
 				setIsUploading( false );
 
@@ -161,15 +142,7 @@ export default function SiteLogo() {
 
 				setFile( null );
 
-				elementorCommon.events.dispatchEvent( {
-					event: 'indication prompt',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						action_state: 'failure',
-						action: 'logo image upload',
-					},
-				} );
+				OnboardingEventTracking.sendIndicationPrompt( 'logo image upload', 'failure', state.currentStep );
 
 				setNoticeState( {
 					type: 'error',
@@ -184,14 +157,7 @@ export default function SiteLogo() {
 	useEffect( () => {
 		if ( 'initial' !== updateLogoAjaxState.status ) {
 			if ( 'success' === updateLogoAjaxState.status && updateLogoAjaxState.response?.siteLogoUpdated ) {
-				elementorCommon.events.dispatchEvent( {
-					event: 'logo image updated',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						source: fileSource,
-					},
-				} );
+				OnboardingEventTracking.dispatchElementorEvent( 'logo image updated', { source: fileSource } );
 
 				setIsUploading( false );
 
@@ -212,16 +178,7 @@ export default function SiteLogo() {
 			} else if ( 'error' === updateLogoAjaxState.status ) {
 				setIsUploading( false );
 
-				elementorCommon.events.dispatchEvent( {
-					event: 'indication prompt',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-						action_state: 'failure',
-						action: 'update site logo',
-					},
-				} );
+				OnboardingEventTracking.sendIndicationPrompt( 'update site logo', 'failure', state.currentStep );
 
 				setNoticeState( {
 					type: 'error',
@@ -275,28 +232,12 @@ export default function SiteLogo() {
 								setNoticeState( null );
 							} }
 							onButtonClick={ () => {
-								elementorCommon.events.dispatchEvent( {
-									event: 'browse file click',
-									version: '',
-									details: {
-										placement: elementorAppConfig.onboarding.eventPlacement,
-										step: state.currentStep,
-									},
-								} );
+								OnboardingEventTracking.dispatchElementorEvent( 'browse file click', { step: state.currentStep } );
 							} }
 							// TODO: DEAL WITH ERROR
 							onError={ ( error ) => {
 								if ( 'file_not_allowed' === error.id ) {
-									elementorCommon.events.dispatchEvent( {
-										event: 'indication prompt',
-										version: '',
-										details: {
-											placement: elementorAppConfig.onboarding.eventPlacement,
-											step: state.currentStep,
-											action_state: 'failure',
-											action: 'logo upload format',
-										},
-									} );
+									OnboardingEventTracking.sendIndicationPrompt( 'logo upload format', 'failure', state.currentStep );
 
 									setNoticeState( {
 										type: 'error',

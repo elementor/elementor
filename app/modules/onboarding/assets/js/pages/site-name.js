@@ -5,6 +5,7 @@ import useAjax from 'elementor-app/hooks/use-ajax';
 
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function SiteName() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
@@ -18,14 +19,7 @@ export default function SiteName() {
 		actionButton = {
 			text: __( 'Next', 'elementor' ),
 			onClick: () => {
-				elementorCommon.events.dispatchEvent( {
-					event: 'next',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-					},
-				} );
+				OnboardingEventTracking.sendNextEvent( state.currentStep );
 
 				// Only run the site name update AJAX if the new name is different than the existing one and it isn't empty.
 				if ( nameInputRef.current.value !== state.siteName && '' !== nameInputRef.current.value ) {
@@ -77,16 +71,7 @@ export default function SiteName() {
 
 				navigate( 'onboarding/' + nextStep );
 			} else if ( 'error' === ajaxState.status ) {
-				elementorCommon.events.dispatchEvent( {
-					event: 'indication prompt',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-						action_state: 'failure',
-						action: 'site name update',
-					},
-				} );
+				OnboardingEventTracking.sendIndicationPrompt( 'site name update', 'failure', state.currentStep );
 
 				setNoticeState( {
 					type: 'error',

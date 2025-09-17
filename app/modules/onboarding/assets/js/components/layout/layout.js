@@ -2,6 +2,7 @@ import { useRef, useContext, useEffect } from 'react';
 import { OnboardingContext } from '../../context/context';
 
 import Header from './header';
+import { OnboardingEventTracking } from '../../utils/onboarding-event-tracking';
 import ProgressBar from '../progress-bar/progress-bar';
 import Content from '../../../../../../assets/js/layout/content';
 import Connect from '../../utils/connect';
@@ -9,14 +10,9 @@ import Connect from '../../utils/connect';
 export default function Layout( props ) {
 	useEffect( () => {
 		// Send modal load event for current step.
-		elementorCommon.events.dispatchEvent( {
-			event: 'modal load',
-			version: '',
-			details: {
-				placement: elementorAppConfig.onboarding.eventPlacement,
-				step: props.pageId,
-				user_state: elementorCommon.config.library_connect.is_connected ? 'logged' : 'anon',
-			},
+		OnboardingEventTracking.dispatchElementorEvent( 'modal load', {
+			step: props.pageId,
+			user_state: elementorCommon.config.library_connect.is_connected ? 'logged' : 'anon',
 		} );
 
 		updateState( {
@@ -38,15 +34,7 @@ export default function Layout( props ) {
 			target: '_blank',
 			rel: 'opener',
 			onClick: () => {
-				elementorCommon.events.dispatchEvent( {
-					event: 'create account',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-						source: 'header',
-					},
-				} );
+				OnboardingEventTracking.dispatchElementorEvent( 'create account', { step: state.currentStep, source: 'header' } );
 			},
 		};
 
@@ -59,15 +47,7 @@ export default function Layout( props ) {
 			url: 'https://my.elementor.com/websites/?utm_source=onboarding-wizard&utm_medium=wp-dash&utm_campaign=my-account&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
 			target: '_blank',
 			onClick: () => {
-				elementorCommon.events.dispatchEvent( {
-					event: 'my elementor click',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-						source: 'header',
-					},
-				} );
+				OnboardingEventTracking.dispatchElementorEvent( 'my elementor click', { step: state.currentStep, source: 'header' } );
 			},
 		} );
 	} else {
@@ -84,14 +64,7 @@ export default function Layout( props ) {
 			target: '_blank',
 			elRef: goProButtonRef,
 			onClick: () => {
-				elementorCommon.events.dispatchEvent( {
-					event: 'go pro',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-					},
-				} );
+				OnboardingEventTracking.dispatchElementorEvent( 'go pro', { step: state.currentStep } );
 			},
 		} );
 	}

@@ -81,14 +81,7 @@ export default function Account() {
 		actionButton.text = __( 'Let’s do it', 'elementor' );
 
 		actionButton.onClick = () => {
-			elementorCommon.events.dispatchEvent( {
-				event: 'next',
-				version: '',
-				details: {
-					placement: elementorAppConfig.onboarding.eventPlacement,
-					step: state.currentStep,
-				},
-			} );
+			OnboardingEventTracking.sendNextEvent( state.currentStep );
 
 			updateState( getStateObjectToUpdate( state, 'steps', pageId, 'completed' ) );
 
@@ -122,16 +115,7 @@ export default function Account() {
 
 		OnboardingEventTracking.sendAccountConnectedSuccess( data );
 
-		elementorCommon.events.dispatchEvent( {
-			event: 'indication prompt',
-			version: '',
-			details: {
-				placement: elementorAppConfig.onboarding.eventPlacement,
-				step: state.currentStep,
-				action_state: 'success',
-				action: 'connect account',
-			},
-		} );
+		OnboardingEventTracking.sendAccountConnectIndicationPrompt( 'success', state.currentStep );
 
 		setNoticeState( {
 			type: 'success',
@@ -150,16 +134,7 @@ export default function Account() {
 		return elementorAppConfig.onboarding.experiment ? 'chooseFeatures' : 'siteName';
 	}
 	const connectFailureCallback = () => {
-		elementorCommon.events.dispatchEvent( {
-			event: 'indication prompt',
-			version: '',
-			details: {
-				placement: elementorAppConfig.onboarding.eventPlacement,
-				step: state.currentStep,
-				action_state: 'failure',
-				action: 'connect account',
-			},
-		} );
+		OnboardingEventTracking.sendAccountConnectIndicationPrompt( 'failure', state.currentStep );
 
 		setNoticeState( {
 			type: 'error',

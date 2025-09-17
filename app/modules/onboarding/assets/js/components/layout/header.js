@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { OnboardingContext } from '../../context/context';
 import Grid from 'elementor-app/ui/grid/grid';
 import GoProPopover from '../go-pro-popover';
+import { OnboardingEventTracking } from '../../utils/onboarding-event-tracking';
 import HeaderButtons from 'elementor-app/layout/header-buttons';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 
@@ -11,14 +12,7 @@ export default function Header( props ) {
 	const { state } = useContext( OnboardingContext );
 
 	const onClose = () => {
-		elementorCommon.events.dispatchEvent( {
-			event: 'close modal',
-			version: '',
-			details: {
-				placement: elementorAppConfig.onboarding.eventPlacement,
-				step: state.currentStep,
-			},
-		} );
+		OnboardingEventTracking.sendCloseEvent( state.currentStep );
 
 		window.top.location = elementorAppConfig.admin_url;
 	};

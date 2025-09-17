@@ -5,6 +5,7 @@ import Checklist from './checklist';
 import ChecklistItem from './checklist-item';
 import Button from './button';
 import { useCallback, useContext } from 'react';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function GoProPopover( props ) {
 	const { state, updateState } = useContext( OnboardingContext );
@@ -18,14 +19,7 @@ export default function GoProPopover( props ) {
 		alreadyHaveProButton.addEventListener( 'click', ( event ) => {
 			event.preventDefault();
 
-			elementorCommon.events.dispatchEvent( {
-				event: 'already have pro',
-				version: '',
-				details: {
-					placement: elementorAppConfig.onboarding.eventPlacement,
-					step: state.currentStep,
-				},
-			} );
+			OnboardingEventTracking.dispatchElementorEvent( 'already have pro', { step: state.currentStep } );
 
 			// Open the Pro Upload screen in a popup.
 			window.open(
@@ -58,14 +52,7 @@ export default function GoProPopover( props ) {
 			href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
 			tabIndex: 0,
 			onClick: () => {
-				elementorCommon.events.dispatchEvent( {
-					event: 'get elementor pro',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-					},
-				} );
+				OnboardingEventTracking.dispatchElementorEvent( 'get elementor pro', { step: state.currentStep } );
 			},
 		};
 

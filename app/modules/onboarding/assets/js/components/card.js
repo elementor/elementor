@@ -1,13 +1,8 @@
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
+
 export default function Card( { image, imageAlt, text, link, name, clickAction, target = '_self' } ) {
 	const onClick = () => {
-		elementorCommon.events.dispatchEvent( {
-			event: 'starting canvas click',
-			version: '',
-			details: {
-				placement: elementorAppConfig.onboarding.eventPlacement,
-				selection: name,
-			},
-		} );
+		OnboardingEventTracking.dispatchElementorEvent( 'starting canvas click', { selection: name } );
 
 		if ( clickAction ) {
 			clickAction();

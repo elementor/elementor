@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 import Button from './button';
 
@@ -26,14 +27,7 @@ export default function SkipButton( props ) {
 
 	// If the button is a link, no onClick functionality should be added.
 	button.onClick = () => {
-		elementorCommon.events.dispatchEvent( {
-			event: 'skip',
-			version: '',
-			details: {
-				placement: elementorAppConfig.onboarding.eventPlacement,
-				step: state.currentStep,
-			},
-		} );
+		OnboardingEventTracking.sendSkipEvent( state.currentStep );
 
 		if ( ! button.href ) {
 			action();

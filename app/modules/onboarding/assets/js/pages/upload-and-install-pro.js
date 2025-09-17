@@ -6,6 +6,7 @@ import DropZone from '../../../../../assets/js/organisms/drop-zone';
 import Notice from '../components/notice';
 import { OnboardingContext } from '../context/context';
 import ElementorLoading from 'elementor-app/molecules/elementor-loading';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function UploadAndInstallPro() {
 	usePageTitle( { title: __( 'Upload and Install Elementor Pro', 'elementor' ) } );
@@ -30,17 +31,7 @@ export default function UploadAndInstallPro() {
 	const setErrorNotice = ( error = null, step = 'upload' ) => {
 		const errorMessage = error?.message || 'That didn\'t work. Try uploading your file again.';
 
-		elementorCommon.events.dispatchEvent( {
-			event: 'indication prompt',
-			version: '',
-			details: {
-				placement: elementorAppConfig.onboarding.eventPlacement,
-				step: state.currentStep,
-				action_state: 'failure',
-				action: step + ' pro',
-				source: fileSource,
-			},
-		} );
+		OnboardingEventTracking.sendIndicationPrompt( step + ' pro', 'failure', state.currentStep, { source: fileSource } );
 
 		setNoticeState( {
 			type: 'error',
@@ -58,15 +49,7 @@ export default function UploadAndInstallPro() {
 			setIsLoading( false );
 
 			if ( 'success' === installProZipAjaxState.status && installProZipAjaxState.response?.elementorProInstalled ) {
-				elementorCommon.events.dispatchEvent( {
-					event: 'pro uploaded',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-						source: fileSource,
-					},
-				} );
+				OnboardingEventTracking.dispatchElementorEvent( 'pro uploaded', { step: state.currentStep, source: fileSource } );
 
 				if ( opener && opener !== window ) {
 					opener.jQuery( 'body' ).trigger( 'elementor/upload-and-install-pro/success' );
@@ -81,14 +64,7 @@ export default function UploadAndInstallPro() {
 	}, [ installProZipAjaxState.status ] );
 
 	const onProUploadHelpLinkClick = () => {
-		elementorCommon.events.dispatchEvent( {
-			event: 'pro plugin upload help',
-			version: '',
-			details: {
-				placement: elementorAppConfig.onboarding.eventPlacement,
-				step: state.currentStep,
-			},
-		} );
+		OnboardingEventTracking.dispatchElementorEvent( 'pro plugin upload help', { step: state.currentStep } );
 	};
 
 	if ( isLoading ) {
