@@ -54,7 +54,6 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 			 * Acknowledge history of each created item, because we cannot pass the elements when they do not exist
 			 * in getHistory().
 			 */
-
 			if ( this.isHistoryActive() && this.history ) {
 				$e.internal( 'document/history/log-sub-item', {
 					container,
