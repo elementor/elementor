@@ -6,7 +6,6 @@ export type DynamicToggleOption = {
 	value: string;
 	label: string;
 	icon?: string;
-	'atomic-icon'?: string;
 	showTooltip?: boolean;
 	exclusive?: boolean;
 };
@@ -15,7 +14,7 @@ export const convertToggleOptionsToAtomic = (
 	options: DynamicToggleOption[]
 ): Array< ToggleButtonGroupItem< string > & { exclusive?: boolean } > => {
 	return options.map( ( option ) => {
-		const iconName = option[ 'atomic-icon' ];
+		const iconName = option.icon;
 		const IconComponent = Icons[ iconName as keyof typeof Icons ];
 
 		return {

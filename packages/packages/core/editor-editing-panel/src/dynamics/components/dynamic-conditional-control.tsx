@@ -30,14 +30,18 @@ export const DynamicConditionalControl: React.FC< DynamicConditionalControlProps
 	// Get dependency values from dynamic settings
 	const dependencyValues = dependencyKeys.reduce(
 		( acc, key ) => {
-			acc[ key ] = dynamicSettings[ key ];
+			const dynamicValue = dynamicSettings[ key ];
+			acc[ key ] = {
+				$$type: dynamicValue?.$$type || 'plain',
+				value: dynamicValue?.value
+			};
 
 			return acc;
 		},
 		{} as Record< string, DynamicPropValue >
 	);
 
-	const isHidden = ! isDependencyMet( propType?.dependencies, dependencyValues );
+	const isHidden = ! isDependencyMet( propType?.dependencies, dependencyValues ).isMet;
 
 	return isHidden ? null : <>{ children }</>;
 };

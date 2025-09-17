@@ -25,7 +25,7 @@ class Toggle_Control extends Atomic_Control_Base {
 			$this->options[] = [
 				'value' => $value,
 				'label' => $config['title'] ?? $value,
-				'icon' => $config['icon'] ?? null,
+				'icon' => $config['atomic-icon'] ?? null,
 				'showTooltip' => true,
 				'exclusive' => false,
 			];
