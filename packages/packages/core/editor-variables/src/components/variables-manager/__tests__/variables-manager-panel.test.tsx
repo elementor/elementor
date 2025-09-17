@@ -4,6 +4,7 @@ import { type BoxProps, type ButtonProps, type IconButtonProps, type StackProps 
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { VariablesManagerPanel } from '../variables-manager-panel';
+import { useFilteredVariables } from "../../../hooks/use-prop-variables";
 
 jest.mock( '@elementor/editor-panels', () => ( {
 	__createPanel: () => ( {
@@ -23,6 +24,18 @@ jest.mock( '@elementor/editor-panels', () => ( {
 		<h2 data-props={ JSON.stringify( { sx } ) }>{ children }</h2>
 	),
 	PanelFooter: ( { children }: { children: React.ReactNode } ) => <footer>{ children }</footer>,
+} ) );
+
+jest.mock( '../../ui/no-search-results', () => ( {
+	NoSearchResults: ( { searchValue, onClear }: {
+		searchValue: string;
+		onClear: () => void;
+	} ) => (
+		<div data-testid="no-search-results">
+			<p>No results for { searchValue }</p>
+			<button onClick={ onClear }>Clear Search</button>
+		</div>
+	),
 } ) );
 
 jest.mock( '@elementor/editor-ui', () => {
@@ -79,6 +92,10 @@ jest.mock(
 	{ virtual: true }
 );
 
+jest.mock( '../hooks/use-variables-manager-state', () => ( {
+	useVariablesManagerState: jest.fn(),
+} ) );
+
 jest.mock( '../variables-manager-table', () => {
 	const VariablesManagerTable = ( props: {
 		menuActions: unknown[];
@@ -117,13 +134,33 @@ jest.mock( '../variables-manager-table', () => {
 	return { VariablesManagerTable };
 } );
 
+const mockUseVariablesManagerState = require( '../hooks/use-variables-manager-state' ).useVariablesManagerState;
+
+const mockHandleSearch = jest.fn();
+
 describe( 'VariablesManagerPanel', () => {
 	const mockConsoleError = jest.fn();
 	const originalError = window.console.error;
+	const defaultMockState = {
+		variables: { 'var-1': { label: 'Primary Color', value: '#ff0000', type: 'color' } },
+		isDirty: false,
+		hasValidationErrors: false,
+		searchValue: '',
+		handleOnChange: jest.fn(),
+		createVariable: jest.fn(),
+		handleDeleteVariable: jest.fn(),
+		handleSave: jest.fn(),
+		handleSearch: mockHandleSearch,
+		setHasValidationErrors: jest.fn(),
+	};
 
 	beforeEach( () => {
 		jest.clearAllMocks();
 		window.console.error = mockConsoleError;
+
+
+
+		mockUseVariablesManagerState.mockReturnValue( defaultMockState );
 	} );
 
 	afterEach( () => {
@@ -254,5 +291,34 @@ describe( 'VariablesManagerPanel', () => {
 
 		// Assert
 		expect( openDialog ).toHaveBeenCalled();
+	} );
+
+	describe( 'Search', () => {
+		it( 'should render search component correctly', () => {
+			// Arrange & Act
+			render( <VariablesManagerPanel /> );
+
+			const searchInput = screen.getByPlaceholderText( 'Search' );
+			expect( searchInput ).toBeInTheDocument();
+
+			fireEvent.change( searchInput, { target: { value: 'primary' } } );
+
+			expect( mockHandleSearch ).toHaveBeenCalledWith( 'primary' );
+		} );
+
+		it( 'should show no search results component when search returns empty', () => {
+			// Arrange
+			mockUseVariablesManagerState.mockReturnValue( {
+				...defaultMockState,
+				variables: {},
+				searchValue: 'nonexistent',
+			} );
+
+			// Act
+			render( <VariablesManagerPanel /> );
+
+			// Assert
+			expect( screen.getByText( 'No results for nonexistent' ) ).toBeInTheDocument();
+		} );
 	} );
 } );
