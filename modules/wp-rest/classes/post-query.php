@@ -141,8 +141,10 @@ class Post_Query {
 			], 200 );
 		}
 
-		$excluded_types = array_unique( array_merge( self::DEFAULT_FORBIDDEN_POST_TYPES, $params[ self::EXCLUDED_POST_TYPE_KEYS ] ?? [] ) );
 		$included_types = $params[ self::INCLUDED_POST_TYPE_KEY ] ?? [];
+		$excluded_types = ! empty( $included_types )
+			? ( $params[ self::EXCLUDED_POST_TYPE_KEYS ] ?? [] )
+			: array_unique( array_merge( self::DEFAULT_FORBIDDEN_POST_TYPES, $params[ self::EXCLUDED_POST_TYPE_KEYS ] ?? [] ) );
 		$keys_format_map = $params[ self::POST_KEYS_CONVERSION_MAP ] ?? [];
 
 		$requested_count = $params[ self::POSTS_PER_PAGE_KEY ] ?? 0;
@@ -152,11 +154,17 @@ class Post_Query {
 		$is_public_param = $params[ self::IS_PUBLIC_KEY ] ?? true;
 		$is_public = ! in_array( strtolower( (string) $is_public_param ), [ '0', 'false' ], true );
 
-		$post_types = new Collection( get_post_types( [ 'public' => $is_public ], 'objects' ) );
-		$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types, $included_types ) {
-			return ! in_array( $post_type->name, $excluded_types, true ) &&
-				( empty( $included_types ) || in_array( $post_type->name, $included_types, true ) );
-		} );
+		if ( ! empty( $included_types ) ) {
+			$post_types = new Collection( get_post_types( [], 'objects' ) );
+			$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types, $included_types ) {
+				return in_array( $post_type->name, $included_types, true ) && ! in_array( $post_type->name, $excluded_types, true );
+			} );
+		} else {
+			$post_types = new Collection( get_post_types( [ 'public' => $is_public ], 'objects' ) );
+			$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types ) {
+				return ! in_array( $post_type->name, $excluded_types, true );
+			} );
+		}
 
 		$this->add_filter_to_customize_query();
 
