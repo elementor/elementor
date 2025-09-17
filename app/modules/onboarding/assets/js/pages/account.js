@@ -129,7 +129,7 @@ export default function Account() {
 		};
 	}
 
-	const connectSuccessCallback = ( event,data ) => {
+	const connectSuccessCallback = ( event, data ) => {
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
 		const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
 
