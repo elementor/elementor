@@ -18,6 +18,10 @@ const GetStartedListItem = ( { item, image, adminUrl } ) => {
 		event.preventDefault();
 		openDialog( true );
 	};
+	console.log(item)
+	console.log(adminUrl)
+	console.log(item.url)
+	console.log(url);
 
 	return (
 		<ListItem alignItems="flex-start" sx={ { gap: 1, p: 0, maxWidth: '150px' } }>
