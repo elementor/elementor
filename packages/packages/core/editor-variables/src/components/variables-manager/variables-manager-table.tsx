@@ -20,9 +20,9 @@ import { __ } from '@wordpress/i18n';
 import { type TVariablesList } from '../../storage';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { LabelField } from '../fields/label-field';
-import { VariableEditMenu, type VariableManagerMenuAction } from './variable-edit-menu';
+import { VariableEditMenu, type VariableManagerMenuAction } from './utils/variable-edit-menu';
+import { VariableTableCell } from './utils/variable-table-cell';
 import { VariableEditableCell } from './variable-editable-cell';
-import { VariableTableCell } from './variable-table-cell';
 
 type Props = {
 	menuActions: VariableManagerMenuAction[];
@@ -32,6 +32,7 @@ type Props = {
 	onIdsChange: ( ids: string[] ) => void;
 	autoEditVariableId?: string;
 	onAutoEditComplete?: () => void;
+	onFieldError?: ( hasError: boolean ) => void;
 };
 
 export const VariablesManagerTable = ( {
@@ -42,6 +43,7 @@ export const VariablesManagerTable = ( {
 	onIdsChange: setIds,
 	autoEditVariableId,
 	onAutoEditComplete,
+	onFieldError,
 }: Props ) => {
 	const tableContainerRef = useRef< HTMLDivElement >( null );
 	const variableRowRefs = useRef< Map< string, HTMLTableRowElement > >( new Map() );
@@ -203,14 +205,25 @@ export const VariablesManagerTable = ( {
 														}
 													} }
 													prefixElement={ createElement( row.icon, { fontSize: 'inherit' } ) }
-													editableElement={ ( { value, onChange } ) => (
+													editableElement={ ( {
+														value,
+														onChange,
+														onValidationChange,
+														error,
+													} ) => (
 														<LabelField
 															id={ 'variable-label-' + row.id }
 															size="tiny"
 															value={ value }
 															onChange={ onChange }
+															onErrorChange={ ( errorMsg ) => {
+																onValidationChange?.( errorMsg );
+																onFieldError?.( !! errorMsg );
+															} }
+															error={ error }
 															focusOnShow
 															selectOnShow={ autoEditVariableId === row.id }
+															showWarningInfotip={ true }
 														/>
 													) }
 													autoEdit={ autoEditVariableId === row.id }
@@ -218,6 +231,7 @@ export const VariablesManagerTable = ( {
 													onAutoEditComplete={
 														autoEditVariableId === row.id ? onAutoEditComplete : undefined
 													}
+													fieldType="label"
 												>
 													<EllipsisWithTooltip
 														title={ row.name }
@@ -240,11 +254,16 @@ export const VariablesManagerTable = ( {
 													} }
 													editableElement={ row.valueField }
 													onRowRef={ handleRowRef( row.id ) }
+													gap={ 0.25 }
 												>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
 													<EllipsisWithTooltip
 														title={ row.value }
-														sx={ { border: '4px solid transparent' } }
+														sx={ {
+															border: '4px solid transparent',
+															lineHeight: '1',
+															pt: 0.25,
+														} }
 													>
 														{ row.value }
 													</EllipsisWithTooltip>

@@ -148,6 +148,8 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 													'label' => 'Email',
 												],
 											],
+											'fallbackLabels' => null,
+											'placeholder' => '',
 										],
 										'meta' => null,
 									],

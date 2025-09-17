@@ -14,11 +14,9 @@ import { ColorFilterIcon, TrashIcon } from '@elementor/icons';
 import { Alert, Box, Button, CloseButton, Divider, ErrorBoundary, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { generateTempId } from '../../batch-operations';
-import { getVariables } from '../../hooks/use-prop-variables';
-import { service } from '../../service';
-import { type TVariablesList } from '../../storage';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
+import { useAutoEdit } from './hooks/use-auto-edit';
+import { useVariablesManagerState } from './hooks/use-variables-manager-state';
 import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu';
 import { VariablesManagerTable } from './variables-manager-table';
 
@@ -40,13 +38,23 @@ export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 
-	const [ variables, setVariables ] = useState( getVariables( false ) );
-	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
-	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
+	const {
+		variables,
+		ids,
+		isDirty,
+		hasValidationErrors,
+		setIds,
+		handleOnChange,
+		createVariable,
+		handleDeleteVariable,
+		handleSave,
+		isSaving,
+		setHasValidationErrors,
+	} = useVariablesManagerState();
+
+	const { autoEditVariableId, startAutoEdit, handleAutoEditComplete } = useAutoEdit();
 
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
-	const [ autoEditVariableId, setAutoEditVariableId ] = useState< string | undefined >( undefined );
-	const [ isDirty, setIsDirty ] = useState( false );
 
 	usePreventUnload( isDirty );
 
@@ -59,57 +67,23 @@ export function VariablesManagerPanel() {
 		closePanel();
 	};
 
-	const handleSave = useCallback( async () => {
-		const originalVariables = getVariables( false );
-		const result = await service.batchSave( originalVariables, variables );
+	const handleCreateVariable = useCallback(
+		( type: string, defaultName: string, defaultValue: string ) => {
+			const newId = createVariable( type, defaultName, defaultValue );
+			if ( newId ) {
+				startAutoEdit( newId );
+			}
+		},
+		[ createVariable, startAutoEdit ]
+	);
 
-		setIsDirty( false );
-
-		if ( result.success ) {
-			await service.load();
-			const updatedVariables = service.variables();
-
-			setVariables( updatedVariables );
-			setIds( Object.keys( updatedVariables ) );
-			setDeletedVariables( [] );
-		} else {
-			setIsDirty( true );
-		}
-	}, [ variables ] );
-
-	const handleOnChange = ( newVariables: TVariablesList ) => {
-		setVariables( newVariables );
-		setIsDirty( true );
-	};
-
-	const createVariable = useCallback( ( type: string, defaultName: string, defaultValue: string ) => {
-		const newId = generateTempId();
-		const newVariable = {
-			id: newId,
-			label: defaultName,
-			value: defaultValue,
-			type,
-		};
-
-		setVariables( ( prev ) => ( { ...prev, [ newId ]: newVariable } ) );
-		setIds( ( prev ) => [ ...prev, newId ] );
-		setIsDirty( true );
-
-		setAutoEditVariableId( newId );
-	}, [] );
-
-	const handleDeleteVariable = ( itemId: string ) => {
-		setDeletedVariables( [ ...deletedVariables, itemId ] );
-		setVariables( { ...variables, [ itemId ]: { ...variables[ itemId ], deleted: true } } );
-		setIsDirty( true );
-		setDeleteConfirmation( null );
-	};
-
-	const handleAutoEditComplete = useCallback( () => {
-		setTimeout( () => {
-			setAutoEditVariableId( undefined );
-		}, 100 );
-	}, [] );
+	const handleDeleteVariableWithConfirmation = useCallback(
+		( itemId: string ) => {
+			handleDeleteVariable( itemId );
+			setDeleteConfirmation( null );
+		},
+		[ handleDeleteVariable ]
+	);
 
 	const menuActions = [
 		{
@@ -138,7 +112,10 @@ export function VariablesManagerPanel() {
 									</PanelHeaderTitle>
 								</Stack>
 								<Stack direction="row" gap={ 0.5 } alignItems="center">
-									<VariableManagerCreateMenu onCreate={ createVariable } variables={ variables } />
+									<VariableManagerCreateMenu
+										onCreate={ handleCreateVariable }
+										variables={ variables }
+									/>
 									<CloseButton
 										aria-label="Close"
 										slotProps={ { icon: { fontSize: SIZE } } }
@@ -166,6 +143,7 @@ export function VariablesManagerPanel() {
 							onIdsChange={ setIds }
 							autoEditVariableId={ autoEditVariableId }
 							onAutoEditComplete={ handleAutoEditComplete }
+							onFieldError={ setHasValidationErrors }
 						/>
 					</PanelBody>
 
@@ -175,8 +153,9 @@ export function VariablesManagerPanel() {
 							size="small"
 							color="global"
 							variant="contained"
-							disabled={ ! isDirty }
+							disabled={ ! isDirty || hasValidationErrors || isSaving }
 							onClick={ handleSave }
+							loading={ isSaving }
 						>
 							{ __( 'Save changes', 'elementor' ) }
 						</Button>
@@ -187,7 +166,7 @@ export function VariablesManagerPanel() {
 					<DeleteConfirmationDialog
 						open
 						label={ deleteConfirmation.label }
-						onConfirm={ () => handleDeleteVariable( deleteConfirmation.id ) }
+						onConfirm={ () => handleDeleteVariableWithConfirmation( deleteConfirmation.id ) }
 						closeDialog={ () => setDeleteConfirmation( null ) }
 					/>
 				) }

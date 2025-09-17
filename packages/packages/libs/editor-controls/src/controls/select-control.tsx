@@ -13,13 +13,12 @@ export type SelectOption = {
 	disabled?: boolean;
 };
 
-type Props = {
+type SelectControlProps = {
 	options: SelectOption[];
 	onChange?: ( newValue: string | null, previousValue: string | null | undefined ) => void;
 	MenuProps?: SelectProps[ 'MenuProps' ];
 };
-
-export const SelectControl = createControl( ( { options, onChange, MenuProps }: Props ) => {
+export const SelectControl = createControl( ( { options, onChange, MenuProps }: SelectControlProps ) => {
 	const { value, setValue, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
 	const handleChange = ( event: SelectChangeEvent< StringPropValue[ 'value' ] > ) => {
 		const newValue = event.target.value || null;
@@ -27,6 +26,7 @@ export const SelectControl = createControl( ( { options, onChange, MenuProps }: 
 		onChange?.( newValue, value );
 		setValue( newValue );
 	};
+	const isDisabled = disabled || options.length === 0;
 
 	return (
 		<ControlActions>
@@ -57,7 +57,7 @@ export const SelectControl = createControl( ( { options, onChange, MenuProps }: 
 				} }
 				value={ value ?? '' }
 				onChange={ handleChange }
-				disabled={ disabled }
+				disabled={ isDisabled }
 				fullWidth
 			>
 				{ options.map( ( { label, ...props } ) => (
