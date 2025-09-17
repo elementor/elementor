@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import ExportKitPartsSelection from 'elementor/app/modules/import-export-customization/assets/js/export/components/export-kit-parts-selection';
@@ -17,6 +18,10 @@ const createQueryWrapper = () => {
 			{ children }
 		</QueryClientProvider>
 	);
+	
+	Wrapper.propTypes = {
+		children: PropTypes.node.isRequired,
+	};
 
 	return Wrapper;
 };
