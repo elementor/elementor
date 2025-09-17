@@ -9,6 +9,7 @@ const ONBOARDING_EVENTS_MAP = {
 	EXIT: 'core_onboarding_exit',
 	SKIP: 'core_onboarding_skip',
 	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
+	CREATE_ACCOUNT_STATUS: 'core_onboarding_create_account_status',
 };
 
 const ONBOARDING_STORAGE_KEYS = {
@@ -17,6 +18,9 @@ const ONBOARDING_STORAGE_KEYS = {
 	S1_ACTIONS: 'elementor_onboarding_s1_actions',
 	PENDING_EXIT: 'elementor_onboarding_pending_exit',
 	PENDING_SKIP: 'elementor_onboarding_pending_skip',
+	PENDING_CREATE_ACCOUNT_STATUS: 'elementor_onboarding_pending_create_account_status',
+	PENDING_CREATE_MY_ACCOUNT: 'elementor_onboarding_pending_create_my_account',
+	PENDING_TOP_UPGRADE: 'elementor_onboarding_pending_top_upgrade',
 };
 
 export class OnboardingEventTracking {
@@ -273,26 +277,157 @@ export class OnboardingEventTracking {
 	}
 
 	static sendTopUpgrade( currentStep, upgradeClicked ) {
-		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT, {
-			location: 'plugin_onboarding',
-			trigger: 'upgrade_interaction',
-			step_number: currentStep,
-			step_name: this.getStepName( currentStep ),
-			action_step: currentStep,
-			upgrade_clicked: upgradeClicked,
-		} );
+		if ( elementorCommon.config.editor_events?.can_send_events ) {
+			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT, {
+				location: 'plugin_onboarding',
+				trigger: 'upgrade_interaction',
+				step_number: currentStep,
+				step_name: this.getStepName( currentStep ),
+				action_step: currentStep,
+				upgrade_clicked: upgradeClicked,
+			} );
+		}
+		this.storeTopUpgradeEventForLater( currentStep, upgradeClicked );
 	}
 
 	static sendCreateMyAccount( currentStep, upgradeClicked, createAccountClicked ) {
-		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT, {
-			location: 'plugin_onboarding',
-			trigger: 'upgrade_interaction',
-			step_number: currentStep,
-			step_name: this.getStepName( currentStep ),
-			action_step: currentStep,
-			upgrade_clicked: upgradeClicked,
-			create_account_clicked: createAccountClicked,
-		} );
+		if ( elementorCommon.config.editor_events?.can_send_events ) {
+			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT, {
+				location: 'plugin_onboarding',
+				trigger: 'upgrade_interaction',
+				step_number: currentStep,
+				step_name: this.getStepName( currentStep ),
+				action_step: currentStep,
+				upgrade_clicked: upgradeClicked,
+				create_account_clicked: createAccountClicked,
+			} );
+		}
+		this.storeCreateMyAccountEventForLater( currentStep, upgradeClicked, createAccountClicked );
+	}
+
+	static sendCreateAccountStatus( status, currentStep = 1 ) {
+		if ( elementorCommon.config.editor_events?.can_send_events ) {
+			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_ACCOUNT_STATUS, {
+				location: 'plugin_onboarding',
+				trigger: 'create_flow_returns_status',
+				step_number: currentStep,
+				step_name: this.getStepName( currentStep ),
+				onboarding_create_account_status: status,
+			} );
+		}
+		this.storeCreateAccountStatusEventForLater( status, currentStep );
+	}
+
+	static storeTopUpgradeEventForLater( currentStep, upgradeClicked ) {
+		try {
+			const eventData = {
+				currentStep,
+				upgradeClicked,
+				timestamp: Date.now(),
+			};
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE, JSON.stringify( eventData ) );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to store top upgrade event:', error );
+		}
+	}
+
+	static sendStoredTopUpgradeEvent() {
+		try {
+			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
+			if ( ! storedDataStr ) {
+				return;
+			}
+
+			const eventData = JSON.parse( storedDataStr );
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT, {
+				location: 'plugin_onboarding',
+				trigger: 'upgrade_interaction',
+				step_number: eventData.currentStep,
+				step_name: this.getStepName( eventData.currentStep ),
+				action_step: eventData.currentStep,
+				upgrade_clicked: eventData.upgradeClicked,
+				event_timestamp: eventData.timestamp,
+			} );
+
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to send stored top upgrade event:', error );
+		}
+	}
+
+	static storeCreateMyAccountEventForLater( currentStep, upgradeClicked, createAccountClicked ) {
+		try {
+			const eventData = {
+				currentStep,
+				upgradeClicked,
+				createAccountClicked,
+				timestamp: Date.now(),
+			};
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT, JSON.stringify( eventData ) );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to store create my account event:', error );
+		}
+	}
+
+	static sendStoredCreateMyAccountEvent() {
+		try {
+			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT );
+			if ( ! storedDataStr ) {
+				return;
+			}
+
+			const eventData = JSON.parse( storedDataStr );
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT, {
+				location: 'plugin_onboarding',
+				trigger: 'upgrade_interaction',
+				step_number: eventData.currentStep,
+				step_name: this.getStepName( eventData.currentStep ),
+				action_step: eventData.currentStep,
+				upgrade_clicked: eventData.upgradeClicked,
+				create_account_clicked: eventData.createAccountClicked,
+				event_timestamp: eventData.timestamp,
+			} );
+
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to send stored create my account event:', error );
+		}
+	}
+
+	static storeCreateAccountStatusEventForLater( status, currentStep ) {
+		try {
+			const eventData = {
+				status,
+				currentStep,
+				timestamp: Date.now(),
+			};
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS, JSON.stringify( eventData ) );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to store create account status event:', error );
+		}
+	}
+
+	static sendStoredCreateAccountStatusEvent() {
+		try {
+			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS );
+			if ( ! storedDataStr ) {
+				return;
+			}
+
+			const eventData = JSON.parse( storedDataStr );
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_ACCOUNT_STATUS, {
+				location: 'plugin_onboarding',
+				trigger: 'create_flow_returns_status',
+				step_number: eventData.currentStep,
+				step_name: this.getStepName( eventData.currentStep ),
+				onboarding_create_account_status: eventData.status,
+				event_timestamp: eventData.timestamp,
+			} );
+
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to send stored create account status event:', error );
+		}
 	}
 
 	static handleStorageError( message, error ) {
