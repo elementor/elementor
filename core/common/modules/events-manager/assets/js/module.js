@@ -6,24 +6,30 @@ export default class extends elementorModules.Module {
 	onInit() {
 		this.config = eventsConfig;
 
-		if ( elementorCommon.config.editor_events?.can_send_events ) {
+		if ( elementorCommon.config.editor_events?.token ) {
 			mixpanel.init( elementorCommon.config.editor_events?.token, { persistence: 'localStorage' } );
 
-			const userId = elementorCommon.config.library_connect?.user_id;
-
-			if ( userId ) {
-				mixpanel.identify( userId );
-
-				mixpanel.register( {
-					appType: 'Editor',
-				} );
-
-				mixpanel.people.set_once( {
-					$user_id: userId,
-					$last_login: new Date().toISOString(),
-					$plan_type: elementorCommon.config.library_connect?.plan_type || TIERS.free,
-				} );
+			if ( elementorCommon.config.editor_events?.can_send_events ) {
+				this.enableTracking();
 			}
+		}
+	}
+
+	enableTracking() {
+		const userId = elementorCommon.config.library_connect?.user_id;
+
+		if ( userId ) {
+			mixpanel.identify( userId );
+
+			mixpanel.register( {
+				appType: 'Editor',
+			} );
+
+			mixpanel.people.set_once( {
+				$user_id: userId,
+				$last_login: new Date().toISOString(),
+				$plan_type: elementorCommon.config.library_connect?.plan_type || TIERS.free,
+			} );
 		}
 	}
 

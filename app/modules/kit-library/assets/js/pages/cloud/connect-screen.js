@@ -17,6 +17,10 @@ export default function ConnectScreen( {
 } ) {
 	const connectButtonRef = useRef();
 
+	const isTrackingActive = ( data ) => {
+		return data.tracking_opted_in && elementorCommon.config.editor_events;
+	};
+
 	useEffect( () => {
 		if ( ! connectButtonRef.current ) {
 			return;
@@ -32,6 +36,11 @@ export default function ConnectScreen( {
 				elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
 				elementorCommon.config.library_connect.current_access_tier = data.access_tier;
 				elementorCommon.config.library_connect.plan_type = data.plan_type;
+
+				if ( isTrackingActive( data ) ) {
+					elementorCommon.config.editor_events.can_send_events = true;
+					elementorCommon.eventsManager?.enableTracking?.();
+				}
 
 				onConnectSuccess?.();
 			},
