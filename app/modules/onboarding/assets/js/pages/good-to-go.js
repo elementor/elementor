@@ -2,6 +2,7 @@ import Grid from 'elementor-app/ui/grid/grid';
 import Layout from '../components/layout/layout';
 import Card from '../components/card';
 import FooterButtons from '../components/layout/footer-buttons';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function GoodToGo() {
 	const pageId = 'goodToGo',
@@ -28,6 +29,7 @@ export default function GoodToGo() {
 					imageAlt={ __( 'Click here to create a new page and open it in Elementor Editor', 'elementor' ) }
 					text={ __( 'Edit a blank canvas with the Elementor Editor', 'elementor' ) }
 					link={ elementorAppConfig.onboarding.urls.createNewPage }
+					clickAction={ () => OnboardingEventTracking.sendOnboardingSource( 'blank_canvas' ) }
 				/>
 				<Card
 					name="template"
@@ -36,6 +38,7 @@ export default function GoodToGo() {
 					text={ __( 'Choose a professionally-designed template or import your own', 'elementor' ) }
 					link={ kitLibraryLink }
 					clickAction={ () => {
+						OnboardingEventTracking.sendOnboardingSource( 'kit_library' );
 						// The location is reloaded to make sure the Kit Library's state is re-created.
 						location.href = kitLibraryLink;
 						location.reload();
@@ -48,6 +51,7 @@ export default function GoodToGo() {
 					text={ __( 'Create a professional site in minutes using AI', 'elementor' ) }
 					link={ elementorAppConfig.onboarding.urls.sitePlanner }
 					target="_blank"
+					clickAction={ () => OnboardingEventTracking.sendOnboardingSource( 'site_planner' ) }
 				/>
 			</Grid>
 			<FooterButtons skipButton={ { ...skipButton, target: '_self' } } className="e-onboarding__good-to-go-footer" />

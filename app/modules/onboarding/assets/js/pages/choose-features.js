@@ -19,20 +19,21 @@ export default function ChooseFeatures() {
 			text: __( 'Upgrade Now', 'elementor' ),
 			href: elementorAppConfig.onboarding.urls.upgrade,
 			target: '_blank',
-			onClick: () => {
-				OnboardingEventTracking.sendNextEvent( state.currentStep );
+		onClick: () => {
+			OnboardingEventTracking.sendNextEvent( state.currentStep );
+			OnboardingEventTracking.sendUpgradeNowStep3( selectedFeatures, state.currentStep );
 
-				setAjax( {
-					data: {
-						action: 'elementor_save_onboarding_features',
-						data: JSON.stringify( {
-							features: selectedFeatures,
-						} ),
-					},
-				} );
+			setAjax( {
+				data: {
+					action: 'elementor_save_onboarding_features',
+					data: JSON.stringify( {
+						features: selectedFeatures,
+					} ),
+				},
+			} );
 
-				handleAction( 'completed' );
-			},
+			handleAction( 'completed' );
+		},
 		};
 
 	let skipButton;
