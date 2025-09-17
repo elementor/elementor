@@ -5,6 +5,7 @@ import Connect from '../utils/connect';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 import { safeDispatchEvent } from '../utils/utils';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
@@ -142,6 +143,9 @@ export default function Account() {
 
 		if ( isTrackingOptedInConnect ) {
 			elementorCommon.config.editor_events.can_send_events = true;
+
+			// Now that tracking is enabled, send the delayed onboarding initiation event
+			OnboardingEventTracking.sendCoreOnboardingInitiated();
 		}
 
 		updateState( stateToUpdate );

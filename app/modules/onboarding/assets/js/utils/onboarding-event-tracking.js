@@ -3,6 +3,12 @@ import eventsConfig from '../../../../../../core/common/modules/events-manager/a
 const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
 	HELLO_BIZ_CONTINUE: 'core_onboarding_s2_hellobiz',
+	CORE_ONBOARDING: 'core_onboarding',
+};
+
+const ONBOARDING_STORAGE_KEYS = {
+	START_TIME: 'elementor_onboarding_start_time',
+	INITIATED: 'elementor_onboarding_initiated',
 };
 
 export class OnboardingEventTracking {
@@ -43,5 +49,47 @@ export class OnboardingEventTracking {
 			step_number: stepNumber,
 			step_name: 'hello_biz_theme',
 		} );
+	}
+
+	static initiateCoreOnboarding() {
+		const startTime = Date.now();
+
+		try {
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.START_TIME, startTime.toString() );
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.INITIATED, 'true' );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.warn( 'Failed to store onboarding initiation data:', error );
+		}
+	}
+
+	static sendCoreOnboardingInitiated() {
+		const startTimeStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+		const wasInitiated = localStorage.getItem( ONBOARDING_STORAGE_KEYS.INITIATED );
+
+		if ( ! wasInitiated || ! startTimeStr ) {
+			return;
+		}
+
+		const startTime = parseInt( startTimeStr, 10 );
+		const currentTime = Date.now();
+		const totalOnboardingTime = Math.round( ( currentTime - startTime ) / 1000 );
+
+		this.dispatchEvent( ONBOARDING_EVENTS_MAP.CORE_ONBOARDING, {
+			location: 'plugin_onboarding',
+			trigger: 'core_onboarding_initiated',
+			step_number: 1,
+			step_name: 'onboarding_start',
+			onboarding_start_time: startTime,
+			total_onboarding_time_seconds: totalOnboardingTime,
+		} );
+
+		try {
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.INITIATED );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.warn( 'Failed to clear onboarding storage:', error );
+		}
 	}
 }
