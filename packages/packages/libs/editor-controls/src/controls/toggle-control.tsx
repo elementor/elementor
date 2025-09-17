@@ -1,46 +1,11 @@
 import * as React from 'react';
 import { type PropValue, stringPropTypeUtil, type StringPropValue } from '@elementor/editor-props';
-import { AlertTriangleIcon, PhotoIcon } from '@elementor/icons';
 import { type ToggleButtonProps } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
 import { ControlToggleButtonGroup, type ToggleButtonGroupItem } from '../components/control-toggle-button-group';
 import { createControl } from '../create-control';
-
-type PhpOption = {
-	value: string;
-	label: string;
-	icon?: string;
-	showTooltip?: boolean;
-	exclusive?: boolean;
-};
-
-// Icon mapping from eicon-* to React icons
-const iconMapping: Record< string, React.ComponentType< any > > = {
-	'eicon-video-camera': AlertTriangleIcon,
-	'eicon-image-bold': PhotoIcon,
-};
-
-const convertPhpOptionsToToggleItems = (
-	phpOptions: PhpOption[]
-): Array< ToggleButtonGroupItem< string > & { exclusive?: boolean } > => {
-	return phpOptions.map( ( option ) => {
-		const IconComponent = option.icon ? iconMapping[ option.icon ] : null;
-
-		return {
-			value: option.value,
-			label: option.label,
-			renderContent: ( { size } ) => {
-				if ( IconComponent ) {
-					return <IconComponent fontSize={ size } />;
-				}
-				return option.label;
-			},
-			showTooltip: option.showTooltip,
-			exclusive: option.exclusive,
-		};
-	} );
-};
+import { convertToggleOptionsToAtomic, type DynamicToggleOption } from '../utils/convert-toggle-options-to-atomic';
 
 export type ToggleControlProps< T extends PropValue > = {
 	options: Array< ToggleButtonGroupItem< T > & { exclusive?: boolean } >;
@@ -62,9 +27,9 @@ export const ToggleControl = createControl(
 	}: ToggleControlProps< StringPropValue[ 'value' ] > ) => {
 		const { value, setValue, placeholder, disabled } = useBoundProp( stringPropTypeUtil );
 
-		const processedOptions = convertOptions
-			? convertPhpOptionsToToggleItems( options as unknown as PhpOption[] )
-			: options;
+	const processedOptions = convertOptions
+		? convertToggleOptionsToAtomic( options as DynamicToggleOption[] )
+		: options as Array< ToggleButtonGroupItem< StringPropValue[ 'value' ] > & { exclusive?: boolean } >;
 
 		const exclusiveValues = processedOptions
 			.filter( ( option ) => option.exclusive )

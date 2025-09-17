@@ -12,32 +12,15 @@ class Toggle_Control extends Atomic_Control_Base {
 	private bool $full_width = false;
 	private string $size = 'tiny';
 	private bool $exclusive = true;
-	private ?int $max_items = null;
+	private bool $convert_options = false;
 
 	public function get_type(): string {
 		return 'toggle';
 	}
 
-	/**
-	 * Set the toggle button options
-	 * 
-	 * @param array $options Array of options with 'value', 'label', and optional 'show_tooltip'
-	 * @return self
-	 */
-	public function set_options( array $options ): self {
-		$this->options = $options;
-		return $this;
-	}
-
-	/**
-	 * Set options from control configuration (dynamic format)
-	 * 
-	 * @param array $control_options Format: ['key' => ['title' => 'Label', 'icon' => 'eicon-name']]
-	 * @return self
-	 */
 	public function add_options( array $control_options ): self {
 		$this->options = [];
-		
+
 		foreach ( $control_options as $value => $config ) {
 			$this->options[] = [
 				'value' => $value,
@@ -47,28 +30,10 @@ class Toggle_Control extends Atomic_Control_Base {
 				'exclusive' => false,
 			];
 		}
-		
-		return $this;
-	}
-
-	/**
-	 * Set whether the toggle control should take full width
-	 *
-	 * @param bool $full_width
-	 * @return self
-	 */
-	public function set_full_width( bool $full_width ): self {
-		$this->full_width = $full_width;
 
 		return $this;
 	}
 
-	/**
-	 * Set the size of toggle buttons
-	 *
-	 * @param string $size One of: 'tiny', 'small', 'medium', 'large'
-	 * @return self
-	 */
 	public function set_size( string $size ): self {
 		$allowed_sizes = [ 'tiny', 'small', 'medium', 'large' ];
 
@@ -79,12 +44,6 @@ class Toggle_Control extends Atomic_Control_Base {
 		return $this;
 	}
 
-	/**
-	 * Set whether the toggle control allows only one selection (exclusive) or multiple
-	 *
-	 * @param bool $exclusive
-	 * @return self
-	 */
 	public function set_exclusive( bool $exclusive ): self {
 		$this->exclusive = $exclusive;
 
@@ -92,13 +51,13 @@ class Toggle_Control extends Atomic_Control_Base {
 	}
 
 	/**
-	 * Set maximum number of items to show before switching to dropdown
+	 * Whether to convert the v3 options to v4 compatible
 	 *
-	 * @param int|null $max_items
-	 * @return self
+	 * @param bool $convert_options
+	 * @return $this
 	 */
-	public function set_max_items( ?int $max_items ): self {
-		$this->max_items = $max_items;
+	public function set_convert_options( bool $convert_options ): self {
+		$this->convert_options = $convert_options;
 
 		return $this;
 	}
@@ -109,7 +68,7 @@ class Toggle_Control extends Atomic_Control_Base {
 			'fullWidth' => $this->full_width,
 			'size' => $this->size,
 			'exclusive' => $this->exclusive,
-			'convertOptions' => true,
+			'convertOptions' => $this->convert_options,
 		];
 	}
 }

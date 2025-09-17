@@ -245,7 +245,8 @@ class Dynamic_Tags_Editor_Config {
 			->set_label( $control['atomic_label'] ?? $control['label'] )
 			->add_options( $control['options'] )
 			->set_size( 'tiny' )
-			->set_exclusive( true );
+			->set_exclusive( true )
+			->set_convert_options( true );
 	}
 
 	private function convert_media_control_to_atomic( $control ) {

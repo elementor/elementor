@@ -13,8 +13,8 @@ import {
 	SwitchControl,
 	TextAreaControl,
 	TextControl,
-	UrlControl,
 	ToggleControl,
+	UrlControl,
 } from '@elementor/editor-controls';
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
