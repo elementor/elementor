@@ -864,7 +864,7 @@ class Widget_Image_Box extends Widget_Base {
 				var titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size );
 
 				if ( settings.link?.url ) {
-					title_html = '<a href="' + elementor.helpers.sanitizeUrl( settings.link?.url ) + '">' + title_html + '</a>';
+					title_html = '<a href="' + elementor.helpers.sanitizeUrl( settings.link?.url ) + '">' + titleText + '</a>';
 				}
 
 				view.addRenderAttribute( 'title_text', 'class', 'elementor-image-box-title' );
