@@ -7,6 +7,7 @@ const ONBOARDING_EVENTS_MAP = {
 	CONNECT_STATUS: 'core_onboarding_connect_status',
 	S1_END_STATE: 'core_onboarding_s1_end_state',
 	S2_END_STATE: 'core_onboarding_s2_end_state',
+	S3_END_STATE: 'core_onboarding_s3_end_state',
 	EXIT: 'core_onboarding_exit',
 	SKIP: 'core_onboarding_skip',
 	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
@@ -18,6 +19,7 @@ const ONBOARDING_STORAGE_KEYS = {
 	INITIATED: 'elementor_onboarding_initiated',
 	STEP1_ACTIONS: 'elementor_onboarding_s1_actions',
 	STEP2_ACTIONS: 'elementor_onboarding_s2_actions',
+	STEP3_ACTIONS: 'elementor_onboarding_s3_actions',
 	PENDING_EXIT: 'elementor_onboarding_pending_exit',
 	PENDING_SKIP: 'elementor_onboarding_pending_skip',
 	PENDING_CREATE_ACCOUNT_STATUS: 'elementor_onboarding_pending_create_account_status',
@@ -226,6 +228,63 @@ export class OnboardingEventTracking {
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to send Step 2 end state:', error );
+		}
+	}
+
+	static trackStep3Action( action, additionalData = {} ) {
+		try {
+			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+			if ( ! startTimeString ) {
+				return;
+			}
+
+			const startTime = parseInt( startTimeString, 10 );
+			const currentTime = Date.now();
+			const timeSpent = Math.round( ( currentTime - startTime ) / 1000 );
+
+			const existingActionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS );
+			const existingActions = existingActionsString ? JSON.parse( existingActionsString ) : [];
+
+			const actionData = {
+				action,
+				timestamp: currentTime,
+				time_spent: timeSpent,
+				...additionalData,
+			};
+
+			existingActions.push( actionData );
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS, JSON.stringify( existingActions ) );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to track Step 3 action:', error );
+		}
+	}
+
+	static sendStep3EndState() {
+		try {
+			const actionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS );
+			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+
+			if ( ! actionsString || ! startTimeString ) {
+				return;
+			}
+
+			const actions = JSON.parse( actionsString );
+			const startTime = parseInt( startTimeString, 10 );
+			const currentTime = Date.now();
+			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
+
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.S3_END_STATE, {
+				location: 'plugin_onboarding',
+				trigger: 'user_redirects_out_of_step',
+				step_number: 3,
+				step_name: 'choose_features',
+				s3_end_state: actions,
+				total_time_spent: totalTimeSpent,
+			} );
+
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to send Step 3 end state:', error );
 		}
 	}
 

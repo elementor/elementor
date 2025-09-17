@@ -20,6 +20,10 @@ export default function ChooseFeatures() {
 			href: elementorAppConfig.onboarding.urls.upgrade,
 			target: '_blank',
 			onClick: () => {
+				OnboardingEventTracking.trackStep3Action( 'upgrade_now', {
+					pro_features_checked: OnboardingEventTracking.extractSelectedFeatureTitles( selectedFeatures ),
+				} );
+
 				elementorCommon.events.dispatchEvent( {
 					event: 'next',
 					version: '',
@@ -30,6 +34,7 @@ export default function ChooseFeatures() {
 				} );
 
 				OnboardingEventTracking.sendUpgradeNowStep3( selectedFeatures, state.currentStep );
+				OnboardingEventTracking.sendStep3EndState();
 
 				setAjax( {
 					data: {
@@ -50,6 +55,11 @@ export default function ChooseFeatures() {
 		skipButton = {
 			text: __( 'Skip', 'elementor' ),
 			action: () => {
+				OnboardingEventTracking.trackStep3Action( 'skipped', {
+					pro_features_checked: OnboardingEventTracking.extractSelectedFeatureTitles( selectedFeatures ),
+				} );
+				OnboardingEventTracking.sendStep3EndState();
+
 				setAjax( {
 					data: {
 						action: 'elementor_save_onboarding_features',
@@ -80,6 +90,24 @@ export default function ChooseFeatures() {
 		return !! features.advanced.length || !! features.essential.length;
 	}
 
+	function handleFeatureSelection( event, option ) {
+		const checked = event.currentTarget.checked;
+		const itemId = event.target.value;
+
+		setSelectedFeatureList( {
+			checked,
+			id: itemId,
+			text: option.text,
+			selectedFeatures,
+			setSelectedFeatures,
+		} );
+
+		OnboardingEventTracking.trackStep3Action( 'pro_features_checked', {
+			feature_name: option.text,
+			feature_checked: checked,
+		} );
+	}
+
 	return (
 		<Layout pageId={ pageId } nextStep={ nextStep }>
 			<PageContentLayout
@@ -106,7 +134,7 @@ export default function ChooseFeatures() {
 									<input
 										className="e-onboarding__choose-features-section__checkbox"
 										type="checkbox"
-										onChange={ ( event ) => setSelectedFeatureList( { checked: event.currentTarget.checked, id: event.target.value, text: option.text, selectedFeatures, setSelectedFeatures } ) }
+										onChange={ ( event ) => handleFeatureSelection( event, option ) }
 										id={ itemId }
 										value={ itemId }
 									/>

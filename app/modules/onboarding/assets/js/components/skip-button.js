@@ -44,6 +44,9 @@ export default function SkipButton( props ) {
 		if ( 2 === stepNumber ) {
 			OnboardingEventTracking.trackStep2Action( 'skipped' );
 			OnboardingEventTracking.sendStep2EndState();
+		} else if ( 3 === stepNumber ) {
+			OnboardingEventTracking.trackStep3Action( 'skipped' );
+			OnboardingEventTracking.sendStep3EndState();
 		}
 
 		OnboardingEventTracking.sendOnboardingSkip( stepNumber );

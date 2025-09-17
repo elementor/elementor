@@ -18,6 +18,9 @@ export default function Header( props ) {
 		} else if ( 2 === state.currentStep ) {
 			OnboardingEventTracking.trackStep2Action( 'exit' );
 			OnboardingEventTracking.sendStep2EndState();
+		} else if ( 3 === state.currentStep ) {
+			OnboardingEventTracking.trackStep3Action( 'exit' );
+			OnboardingEventTracking.sendStep3EndState();
 		}
 	};
 

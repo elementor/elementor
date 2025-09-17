@@ -135,6 +135,8 @@ export default function Layout( props ) {
 
 				if ( 2 === stepNumber ) {
 					OnboardingEventTracking.trackStep2Action( 'upgrade_topbar' );
+				} else if ( 3 === stepNumber ) {
+					OnboardingEventTracking.trackStep3Action( 'upgrade_topbar' );
 				}
 
 				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_topbar' );
