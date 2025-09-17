@@ -28,6 +28,7 @@ export default function Account() {
 				},
 			);
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
 	let skipButton;
