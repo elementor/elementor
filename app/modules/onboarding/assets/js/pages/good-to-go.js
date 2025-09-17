@@ -54,6 +54,8 @@ export default function GoodToGo() {
 							site_starter: 'kit_library',
 						} );
 						OnboardingEventTracking.sendStep4EndState();
+
+						// The location is reloaded to make sure the Kit Library's state is re-created.
 						location.href = kitLibraryLink;
 						location.reload();
 					} }

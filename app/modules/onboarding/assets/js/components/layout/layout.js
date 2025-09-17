@@ -41,6 +41,7 @@ export default function Layout( props ) {
 	}, [ props.pageId ] );
 
 	useEffect( () => {
+		// Send modal load event for current step.
 		elementorCommon.events.dispatchEvent( {
 			event: 'modal load',
 			version: '',

@@ -18,6 +18,7 @@ export default function App() {
 	useEffect( () => {
 		OnboardingEventTracking.initiateCoreOnboarding();
 
+		// This is to prevent dark theme in onboarding app from the frontend and not backend
 		const darkThemeClassName = 'eps-theme-dark';
 		const hasDarkMode = document.body.classList.contains( darkThemeClassName );
 
