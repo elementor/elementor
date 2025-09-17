@@ -8,6 +8,7 @@ const ONBOARDING_EVENTS_MAP = {
 	S1_END_STATE: 'core_onboarding_s1_end_state',
 	S2_END_STATE: 'core_onboarding_s2_end_state',
 	S3_END_STATE: 'core_onboarding_s3_end_state',
+	S4_END_STATE: 'core_onboarding_s4_end_state',
 	EXIT: 'core_onboarding_exit',
 	SKIP: 'core_onboarding_skip',
 	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
@@ -20,6 +21,7 @@ const ONBOARDING_STORAGE_KEYS = {
 	STEP1_ACTIONS: 'elementor_onboarding_s1_actions',
 	STEP2_ACTIONS: 'elementor_onboarding_s2_actions',
 	STEP3_ACTIONS: 'elementor_onboarding_s3_actions',
+	STEP4_ACTIONS: 'elementor_onboarding_s4_actions',
 	PENDING_EXIT: 'elementor_onboarding_pending_exit',
 	PENDING_SKIP: 'elementor_onboarding_pending_skip',
 	PENDING_CREATE_ACCOUNT_STATUS: 'elementor_onboarding_pending_create_account_status',
@@ -288,6 +290,63 @@ export class OnboardingEventTracking {
 		}
 	}
 
+	static trackStep4Action( action, additionalData = {} ) {
+		try {
+			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+			if ( ! startTimeString ) {
+				return;
+			}
+
+			const startTime = parseInt( startTimeString, 10 );
+			const currentTime = Date.now();
+			const timeSpent = Math.round( ( currentTime - startTime ) / 1000 );
+
+			const existingActionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS );
+			const existingActions = existingActionsString ? JSON.parse( existingActionsString ) : [];
+
+			const actionData = {
+				action,
+				timestamp: currentTime,
+				time_spent: timeSpent,
+				...additionalData,
+			};
+
+			existingActions.push( actionData );
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS, JSON.stringify( existingActions ) );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to track Step 4 action:', error );
+		}
+	}
+
+	static sendStep4EndState() {
+		try {
+			const actionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS );
+			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+
+			if ( ! actionsString || ! startTimeString ) {
+				return;
+			}
+
+			const actions = JSON.parse( actionsString );
+			const startTime = parseInt( startTimeString, 10 );
+			const currentTime = Date.now();
+			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
+
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.S4_END_STATE, {
+				location: 'plugin_onboarding',
+				trigger: 'user_redirects_out_of_step',
+				step_number: 4,
+				step_name: 'good_to_go',
+				s4_end_state: actions,
+				total_time_spent: totalTimeSpent,
+			} );
+
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to send Step 4 end state:', error );
+		}
+	}
+
 	static storeExitEventForLater( exitType, currentStep ) {
 		try {
 			const exitData = {
@@ -329,9 +388,9 @@ export class OnboardingEventTracking {
 			1: 'account_setup',
 			2: 'hello_biz_theme',
 			3: 'choose_features',
-			4: 'site_name',
-			5: 'site_logo',
-			6: 'good_to_go',
+			4: 'good_to_go',
+			5: 'site_name',
+			6: 'site_logo',
 		};
 		return stepNames[ stepNumber ] || 'unknown_step';
 	}
