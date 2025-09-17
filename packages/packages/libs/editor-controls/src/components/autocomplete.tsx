@@ -30,6 +30,7 @@ export type Props = {
 	allowCustomValues?: boolean;
 	placeholder?: string;
 	minInputLength?: number;
+	startAdornment?: React.ReactNode;
 };
 
 export const Autocomplete = forwardRef( ( props: Props, ref ) => {
@@ -41,6 +42,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 		placeholder = '',
 		minInputLength = 2,
 		value = '',
+		startAdornment,
 		...restProps
 	} = props;
 
@@ -54,6 +56,10 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 
 	const isValueFromOptions = typeof value === 'number' && !! findMatchingOption( options, value );
 
+	const valueLength = value?.toString()?.length ?? 0;
+	const meetsMinLength = valueLength >= minInputLength;
+	const shouldOpen = meetsMinLength && ( allowCustomValues ? optionKeys.length > 0 : true );
+
 	return (
 		<AutocompleteBase
 			{ ...restProps }
@@ -62,6 +68,8 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 			disableClearable={ true } // Disabled component's auto clear icon to use our custom one instead
 			disablePortal={ true }
 			freeSolo={ allowCustomValues }
+			openOnFocus={ false }
+			open={ shouldOpen }
 			value={ value?.toString() || '' }
 			size={ 'tiny' }
 			onChange={ ( _, newValue ) => onOptionChange( Number( newValue ) ) }
@@ -88,6 +96,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 					allowClear={ allowClear }
 					placeholder={ placeholder }
 					hasSelectedValue={ isValueFromOptions }
+					startAdornment={ startAdornment }
 				/>
 			) }
 		/>
@@ -100,12 +109,14 @@ const TextInput = ( {
 	placeholder,
 	handleChange,
 	hasSelectedValue,
+	startAdornment,
 }: {
 	params: AutocompleteRenderInputParams;
 	allowClear: boolean;
 	handleChange: ( newValue: string | null ) => void;
 	placeholder: string;
 	hasSelectedValue: boolean;
+	startAdornment?: React.ReactNode;
 } ) => {
 	const onChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		handleChange( event.target.value );
@@ -123,6 +134,11 @@ const TextInput = ( {
 			} }
 			InputProps={ {
 				...params.InputProps,
+				startAdornment: startAdornment ? (
+					<InputAdornment position="start">{ startAdornment }</InputAdornment>
+				) : (
+					params.InputProps.startAdornment
+				),
 				endAdornment: <ClearButton params={ params } allowClear={ allowClear } handleChange={ handleChange } />,
 			} }
 		/>
