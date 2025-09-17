@@ -13,11 +13,11 @@ export default function Header( props ) {
 
 	const trackExitFromAccountSetup = () => {
 		if ( 1 === state.currentStep ) {
-			OnboardingEventTracking.trackS1Action( 'exit' );
-			OnboardingEventTracking.sendS1EndState();
+			OnboardingEventTracking.trackStep1Action( 'exit' );
+			OnboardingEventTracking.sendStep1EndState();
 		} else if ( 2 === state.currentStep ) {
-			OnboardingEventTracking.trackS2Action( 'exit' );
-			OnboardingEventTracking.sendS2EndState();
+			OnboardingEventTracking.trackStep2Action( 'exit' );
+			OnboardingEventTracking.sendStep2EndState();
 		}
 	};
 

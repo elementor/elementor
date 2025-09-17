@@ -38,7 +38,7 @@ export default function Account() {
 		skipButton = {
 			text: __( 'Skip setup', 'elementor' ),
 			action: () => {
-				OnboardingEventTracking.trackS1Action( 'skip' );
+				OnboardingEventTracking.trackStep1Action( 'skip' );
 				OnboardingEventTracking.sendOnboardingSkip( 1 );
 
 				safeDispatchEvent(
@@ -53,7 +53,7 @@ export default function Account() {
 
 				updateState( getStateObjectToUpdate( state, 'steps', pageId, 'skipped' ) );
 
-				OnboardingEventTracking.sendS1EndState();
+				OnboardingEventTracking.sendStep1EndState();
 				navigate( 'onboarding/' + nextStep );
 			},
 		};
@@ -122,7 +122,7 @@ export default function Account() {
 		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
-			OnboardingEventTracking.trackS1Action( 'create' );
+			OnboardingEventTracking.trackStep1Action( 'create' );
 			OnboardingEventTracking.sendCreateMyAccount( 1, 'on_main_cta', 'main_cta' );
 
 			safeDispatchEvent(
@@ -149,7 +149,7 @@ export default function Account() {
 		elementorCommon.config.library_connect.current_access_tier = data.access_tier;
 		elementorCommon.config.library_connect.plan_type = data.plan_type;
 
-		OnboardingEventTracking.trackS1Action( 'connect' );
+		OnboardingEventTracking.trackStep1Action( 'connect' );
 
 		if ( isTrackingOptedInConnect ) {
 			elementorCommon.config.editor_events.can_send_events = true;
@@ -195,7 +195,7 @@ export default function Account() {
 			message: 'Alrighty - your account is connected.',
 		} );
 
-		OnboardingEventTracking.sendS1EndState();
+		OnboardingEventTracking.sendStep1EndState();
 		navigate( 'onboarding/' + nextStep );
 	};
 
@@ -267,7 +267,7 @@ export default function Account() {
 								ref={ alreadyHaveAccountLinkRef }
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
 								onClick={ () => {
-									OnboardingEventTracking.trackS1Action( 'connect' );
+									OnboardingEventTracking.trackStep1Action( 'connect' );
 
 									safeDispatchEvent(
 										'existing_account_connect',

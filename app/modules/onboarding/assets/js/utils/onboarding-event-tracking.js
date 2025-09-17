@@ -16,8 +16,8 @@ const ONBOARDING_EVENTS_MAP = {
 const ONBOARDING_STORAGE_KEYS = {
 	START_TIME: 'elementor_onboarding_start_time',
 	INITIATED: 'elementor_onboarding_initiated',
-	S1_ACTIONS: 'elementor_onboarding_s1_actions',
-	S2_ACTIONS: 'elementor_onboarding_s2_actions',
+	STEP1_ACTIONS: 'elementor_onboarding_s1_actions',
+	STEP2_ACTIONS: 'elementor_onboarding_s2_actions',
 	PENDING_EXIT: 'elementor_onboarding_pending_exit',
 	PENDING_SKIP: 'elementor_onboarding_pending_skip',
 	PENDING_CREATE_ACCOUNT_STATUS: 'elementor_onboarding_pending_create_account_status',
@@ -117,19 +117,19 @@ export class OnboardingEventTracking {
 		} );
 	}
 
-	static trackS1Action( action ) {
+	static trackStep1Action( action ) {
 		try {
-			const startTimeStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
-			if ( ! startTimeStr ) {
+			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+			if ( ! startTimeString ) {
 				return;
 			}
 
-			const startTime = parseInt( startTimeStr, 10 );
+			const startTime = parseInt( startTimeString, 10 );
 			const currentTime = Date.now();
 			const timeSpent = Math.round( ( currentTime - startTime ) / 1000 );
 
-			const existingActionsStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.S1_ACTIONS );
-			const existingActions = existingActionsStr ? JSON.parse( existingActionsStr ) : [];
+			const existingActionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS );
+			const existingActions = existingActionsString ? JSON.parse( existingActionsString ) : [];
 
 			const actionData = {
 				action,
@@ -138,23 +138,23 @@ export class OnboardingEventTracking {
 			};
 
 			existingActions.push( actionData );
-			localStorage.setItem( ONBOARDING_STORAGE_KEYS.S1_ACTIONS, JSON.stringify( existingActions ) );
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS, JSON.stringify( existingActions ) );
 		} catch ( error ) {
-			this.handleStorageError( 'Failed to track S1 action:', error );
+			this.handleStorageError( 'Failed to track Step 1 action:', error );
 		}
 	}
 
-	static sendS1EndState() {
+	static sendStep1EndState() {
 		try {
-			const actionsStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.S1_ACTIONS );
-			const startTimeStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+			const actionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS );
+			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
 
-			if ( ! actionsStr || ! startTimeStr ) {
+			if ( ! actionsString || ! startTimeString ) {
 				return;
 			}
 
-			const actions = JSON.parse( actionsStr );
-			const startTime = parseInt( startTimeStr, 10 );
+			const actions = JSON.parse( actionsString );
+			const startTime = parseInt( startTimeString, 10 );
 			const currentTime = Date.now();
 			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
 
@@ -167,25 +167,25 @@ export class OnboardingEventTracking {
 				total_time_spent: totalTimeSpent,
 			} );
 
-			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.S1_ACTIONS );
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS );
 		} catch ( error ) {
-			this.handleStorageError( 'Failed to send S1 end state:', error );
+			this.handleStorageError( 'Failed to send Step 1 end state:', error );
 		}
 	}
 
-	static trackS2Action( action ) {
+	static trackStep2Action( action ) {
 		try {
-			const startTimeStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
-			if ( ! startTimeStr ) {
+			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+			if ( ! startTimeString ) {
 				return;
 			}
 
-			const startTime = parseInt( startTimeStr, 10 );
+			const startTime = parseInt( startTimeString, 10 );
 			const currentTime = Date.now();
 			const timeSpent = Math.round( ( currentTime - startTime ) / 1000 );
 
-			const existingActionsStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.S2_ACTIONS );
-			const existingActions = existingActionsStr ? JSON.parse( existingActionsStr ) : [];
+			const existingActionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS );
+			const existingActions = existingActionsString ? JSON.parse( existingActionsString ) : [];
 
 			const actionData = {
 				action,
@@ -194,23 +194,23 @@ export class OnboardingEventTracking {
 			};
 
 			existingActions.push( actionData );
-			localStorage.setItem( ONBOARDING_STORAGE_KEYS.S2_ACTIONS, JSON.stringify( existingActions ) );
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS, JSON.stringify( existingActions ) );
 		} catch ( error ) {
-			this.handleStorageError( 'Failed to track S2 action:', error );
+			this.handleStorageError( 'Failed to track Step 2 action:', error );
 		}
 	}
 
-	static sendS2EndState() {
+	static sendStep2EndState() {
 		try {
-			const actionsStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.S2_ACTIONS );
-			const startTimeStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+			const actionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS );
+			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
 
-			if ( ! actionsStr || ! startTimeStr ) {
+			if ( ! actionsString || ! startTimeString ) {
 				return;
 			}
 
-			const actions = JSON.parse( actionsStr );
-			const startTime = parseInt( startTimeStr, 10 );
+			const actions = JSON.parse( actionsString );
+			const startTime = parseInt( startTimeString, 10 );
 			const currentTime = Date.now();
 			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
 
@@ -223,9 +223,9 @@ export class OnboardingEventTracking {
 				total_time_spent: totalTimeSpent,
 			} );
 
-			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.S2_ACTIONS );
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS );
 		} catch ( error ) {
-			this.handleStorageError( 'Failed to send S2 end state:', error );
+			this.handleStorageError( 'Failed to send Step 2 end state:', error );
 		}
 	}
 

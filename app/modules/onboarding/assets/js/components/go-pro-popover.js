@@ -12,7 +12,7 @@ export default function GoProPopover( props ) {
 
 	const trackUpgradeFromAccountSetup = () => {
 		if ( 1 === state.currentStep ) {
-			OnboardingEventTracking.trackS1Action( 'upgrade_topbar' );
+			OnboardingEventTracking.trackStep1Action( 'upgrade_topbar' );
 		}
 	};
 
