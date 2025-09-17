@@ -18,7 +18,7 @@ const createQueryWrapper = () => {
 			{ children }
 		</QueryClientProvider>
 	);
-	
+
 	Wrapper.propTypes = {
 		children: PropTypes.node.isRequired,
 	};
