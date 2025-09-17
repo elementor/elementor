@@ -2,6 +2,7 @@ import eventsConfig from '../../../../../../core/common/modules/events-manager/a
 
 const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
+	HELLO_BIZ_CONTINUE: 'core_onboarding_s2_hellobiz',
 };
 
 export class OnboardingEventTracking {
@@ -33,5 +34,14 @@ export class OnboardingEventTracking {
 			allSelected.push( ...selectedFeatures.advanced );
 		}
 		return allSelected;
+	}
+
+	static sendHelloBizContinue( stepNumber = 2 ) {
+		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE, {
+			location: 'plugin_onboarding',
+			trigger: eventsConfig.triggers.click,
+			step_number: stepNumber,
+			step_name: 'hello_biz_theme',
+		} );
 	}
 }
