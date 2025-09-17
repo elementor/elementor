@@ -1,6 +1,6 @@
 import * as React from 'react';
-import * as Icons from '@elementor/icons';
 import type { ToggleButtonGroupItem } from '@elementor/editor-controls';
+import * as Icons from '@elementor/icons';
 
 export type DynamicToggleOption = {
 	value: string;
