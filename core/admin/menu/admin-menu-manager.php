@@ -16,10 +16,6 @@ class Admin_Menu_Manager {
 	 */
 	private $items = [];
 
-	public function __construct() {
-		add_action( 'admin_init', [ $this, 'handle_external_redirects' ] );
-	}
-
 	public function register( $item_slug, Admin_Menu_Item $item ) {
 		$this->items[ $item_slug ] = $item;
 	}
@@ -48,30 +44,6 @@ class Admin_Menu_Manager {
 		add_action( 'admin_head', function () {
 			$this->hide_invisible_menus();
 		} );
-
-		add_action( 'elementor/admin/menu/register', [ $this, 'register_cloud_hosting_plans' ], 999 );
-	}
-
-	/**
-	 * Register Cloud Hosting Plans menu item.
-	 */
-	public function register_cloud_hosting_plans( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( 'go_cloud_hosting_plans', new Cloud_Hosting_Plans_Menu_Item() );
-	}
-
-	/**
-	 * Handle external redirects.
-	 */
-	public function handle_external_redirects() {
-		if ( empty( $_GET['page'] ) ) {
-			return;
-		}
-
-		if ( 'go_cloud_hosting_plans' === $_GET['page'] ) {
-			wp_redirect( Cloud_Hosting_Plans_Menu_Item::get_url() );
-
-			exit;
-		}
 	}
 
 	private function register_wp_menus() {
