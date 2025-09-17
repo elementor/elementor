@@ -1,7 +1,7 @@
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { AngieMcpSdk } from '@elementor-external/angie-sdk';
 
 import { activateMcpRegistration } from './mcp-registry';
-import { isExperimentActive } from '../../../libs/editor-v1-adapters/src/readers';
 
 let sdk: AngieMcpSdk;
 
@@ -26,8 +26,8 @@ export function init() {
 export function startMCPServer() {
 	if ( isExperimentActive( 'editor_mcp' ) ) {
 		return getSDK()
-				.waitForReady()
-				.then( () => activateMcpRegistration( sdk ) );
+			.waitForReady()
+			.then( () => activateMcpRegistration( sdk ) );
 	}
 	return Promise.resolve();
 }
