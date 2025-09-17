@@ -39,6 +39,7 @@ export default function Account() {
 			text: __( 'Skip setup', 'elementor' ),
 			action: () => {
 				OnboardingEventTracking.trackS1Action( 'skip' );
+				OnboardingEventTracking.sendOnboardingSkip( 1 );
 
 				safeDispatchEvent(
 					'skip_setup',
@@ -155,6 +156,7 @@ export default function Account() {
 			OnboardingEventTracking.sendCoreOnboardingInitiated();
 			OnboardingEventTracking.sendConnectStatus( 'success', data.tracking_opted_in, data.access_tier );
 			OnboardingEventTracking.sendStoredExitEvent();
+			OnboardingEventTracking.sendStoredSkipEvent();
 		}
 
 		updateState( stateToUpdate );

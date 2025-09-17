@@ -7,6 +7,7 @@ const ONBOARDING_EVENTS_MAP = {
 	CONNECT_STATUS: 'core_onboarding_connect_status',
 	S1_END_STATE: 'core_onboarding_s1_end_state',
 	EXIT: 'core_onboarding_exit',
+	SKIP: 'core_onboarding_skip',
 };
 
 const ONBOARDING_STORAGE_KEYS = {
@@ -14,6 +15,7 @@ const ONBOARDING_STORAGE_KEYS = {
 	INITIATED: 'elementor_onboarding_initiated',
 	S1_ACTIONS: 'elementor_onboarding_s1_actions',
 	PENDING_EXIT: 'elementor_onboarding_pending_exit',
+	PENDING_SKIP: 'elementor_onboarding_pending_skip',
 };
 
 export class OnboardingEventTracking {
@@ -205,7 +207,9 @@ export class OnboardingEventTracking {
 			1: 'account_setup',
 			2: 'hello_biz_theme',
 			3: 'choose_features',
-			4: 'good_to_go',
+			4: 'site_name',
+			5: 'site_logo',
+			6: 'good_to_go',
 		};
 		return stepNames[ stepNumber ] || 'unknown_step';
 	}
@@ -217,6 +221,54 @@ export class OnboardingEventTracking {
 
 		window.addEventListener( 'beforeunload', handleWindowClose );
 		window.addEventListener( 'pagehide', handleWindowClose );
+	}
+
+	static storeSkipEventForLater( currentStep ) {
+		try {
+			const skipData = {
+				currentStep,
+				timestamp: Date.now(),
+			};
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_SKIP, JSON.stringify( skipData ) );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to store skip event:', error );
+		}
+	}
+
+	static sendStoredSkipEvent() {
+		try {
+			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_SKIP );
+			if ( ! storedDataStr ) {
+				return;
+			}
+
+			const skipData = JSON.parse( storedDataStr );
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.SKIP, {
+				location: 'plugin_onboarding',
+				trigger: 'skip_clicked',
+				step_number: skipData.currentStep,
+				step_name: this.getStepName( skipData.currentStep ),
+				action_step: skipData.currentStep,
+				skip_timestamp: skipData.timestamp,
+			} );
+
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_SKIP );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to send stored skip event:', error );
+		}
+	}
+
+	static sendOnboardingSkip( currentStep ) {
+		if ( elementorCommon.config.editor_events?.can_send_events ) {
+			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.SKIP, {
+				location: 'plugin_onboarding',
+				trigger: 'skip_clicked',
+				step_number: currentStep,
+				step_name: this.getStepName( currentStep ),
+				action_step: currentStep,
+			} );
+		}
+		this.storeSkipEventForLater( currentStep );
 	}
 
 	static handleStorageError( message, error ) {
