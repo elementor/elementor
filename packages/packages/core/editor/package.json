@@ -42,7 +42,6 @@
   "dependencies": {
     "@elementor/editor-current-user": "3.33.0",
     "@elementor/editor-v1-adapters": "3.33.0",
-    "@elementor/editor-mcp": "3.33.0",
     "@elementor/editor-elements": "3.33.0",
     "@elementor/schema": "3.33.0",
     "@elementor/locations": "3.33.0",
