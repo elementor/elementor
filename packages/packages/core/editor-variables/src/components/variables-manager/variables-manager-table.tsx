@@ -20,9 +20,9 @@ import { __ } from '@wordpress/i18n';
 import { type TVariablesList } from '../../storage';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { LabelField } from '../fields/label-field';
-import { VariableEditMenu, type VariableManagerMenuAction } from './variable-edit-menu';
+import { VariableEditMenu, type VariableManagerMenuAction } from './utils/variable-edit-menu';
+import { VariableTableCell } from './utils/variable-table-cell';
 import { VariableEditableCell } from './variable-editable-cell';
-import { VariableTableCell } from './variable-table-cell';
 
 type Props = {
 	menuActions: VariableManagerMenuAction[];
@@ -254,11 +254,16 @@ export const VariablesManagerTable = ( {
 													} }
 													editableElement={ row.valueField }
 													onRowRef={ handleRowRef( row.id ) }
+													gap={ 0.25 }
 												>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
 													<EllipsisWithTooltip
 														title={ row.value }
-														sx={ { border: '4px solid transparent' } }
+														sx={ {
+															border: '4px solid transparent',
+															lineHeight: '1',
+															pt: 0.25,
+														} }
 													>
 														{ row.value }
 													</EllipsisWithTooltip>
