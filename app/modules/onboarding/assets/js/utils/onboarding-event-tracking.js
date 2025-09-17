@@ -1,27 +1,29 @@
 import eventsConfig from '../../../../../../core/common/modules/events-manager/assets/js/events-config';
 
 const ONBOARDING_EVENTS_MAP = {
-	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
-	HELLO_BIZ_CONTINUE: 'core_onboarding_s2_hellobiz',
+	UPGRADE_NOW_S3: 'core_onboarding_step3_upgrade_now',
+	HELLO_BIZ_CONTINUE: 'core_onboarding_step2_hellobiz',
 	CORE_ONBOARDING: 'core_onboarding',
 	CONNECT_STATUS: 'core_onboarding_connect_status',
-	S1_END_STATE: 'core_onboarding_s1_end_state',
-	S2_END_STATE: 'core_onboarding_s2_end_state',
-	S3_END_STATE: 'core_onboarding_s3_end_state',
-	S4_END_STATE: 'core_onboarding_s4_end_state',
+	STEP1_END_STATE: 'core_onboarding_step1_end_state',
+	STEP2_END_STATE: 'core_onboarding_step2_end_state',
+	STEP3_END_STATE: 'core_onboarding_step3_end_state',
+	STEP4_END_STATE: 'core_onboarding_step4_end_state',
+	STEP4_RETURN_STEP4: 'core_onboarding_step4_return_s4',
 	EXIT: 'core_onboarding_exit',
-	SKIP: 'core_onboarding_skip',
-	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
+	SKIP: 'core_onboarding_stepkip',
+	CREATE_MY_ACCOUNT: 'core_onboarding_step1_create_my_account',
 	CREATE_ACCOUNT_STATUS: 'core_onboarding_create_account_status',
 };
 
 const ONBOARDING_STORAGE_KEYS = {
-	START_TIME: 'elementor_onboarding_start_time',
+	START_TIME: 'elementor_onboarding_steptart_time',
 	INITIATED: 'elementor_onboarding_initiated',
-	STEP1_ACTIONS: 'elementor_onboarding_s1_actions',
-	STEP2_ACTIONS: 'elementor_onboarding_s2_actions',
-	STEP3_ACTIONS: 'elementor_onboarding_s3_actions',
-	STEP4_ACTIONS: 'elementor_onboarding_s4_actions',
+	STEP1_ACTIONS: 'elementor_onboarding_step1_actions',
+	STEP2_ACTIONS: 'elementor_onboarding_step2_actions',
+	STEP3_ACTIONS: 'elementor_onboarding_step3_actions',
+	STEP4_ACTIONS: 'elementor_onboarding_step4_actions',
+	STEP4_SITE_STARTER_CHOICE: 'elementor_onboarding_step4_site_starter_choice',
 	PENDING_EXIT: 'elementor_onboarding_pending_exit',
 	PENDING_SKIP: 'elementor_onboarding_pending_skip',
 	PENDING_CREATE_ACCOUNT_STATUS: 'elementor_onboarding_pending_create_account_status',
@@ -162,7 +164,7 @@ export class OnboardingEventTracking {
 			const currentTime = Date.now();
 			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
 
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.S1_END_STATE, {
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP1_END_STATE, {
 				location: 'plugin_onboarding',
 				trigger: 'user_redirects_out_of_step',
 				step_number: 1,
@@ -218,7 +220,7 @@ export class OnboardingEventTracking {
 			const currentTime = Date.now();
 			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
 
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.S2_END_STATE, {
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP2_END_STATE, {
 				location: 'plugin_onboarding',
 				trigger: 'user_redirects_out_of_step',
 				step_number: 2,
@@ -275,7 +277,7 @@ export class OnboardingEventTracking {
 			const currentTime = Date.now();
 			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
 
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.S3_END_STATE, {
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP3_END_STATE, {
 				location: 'plugin_onboarding',
 				trigger: 'user_redirects_out_of_step',
 				step_number: 3,
@@ -344,6 +346,68 @@ export class OnboardingEventTracking {
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to send Step 4 end state:', error );
+		}
+	}
+
+	static storeSiteStarterChoice( siteStarter ) {
+		try {
+			const choiceData = {
+				site_starter: siteStarter,
+				timestamp: Date.now(),
+			};
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.S4_SITE_STARTER_CHOICE, JSON.stringify( choiceData ) );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to store site starter choice:', error );
+		}
+	}
+
+	static checkAndSendReturnToStep4() {
+		try {
+			const storedChoiceString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.S4_SITE_STARTER_CHOICE );
+			if ( ! storedChoiceString ) {
+				return;
+			}
+
+			const choiceData = JSON.parse( storedChoiceString );
+
+			if ( ! choiceData.return_event_sent ) {
+				this.dispatchEvent( ONBOARDING_EVENTS_MAP.S4_RETURN_S4, {
+					location: 'plugin_onboarding',
+					trigger: 'user_returns_to_onboarding',
+					step_number: 4,
+					step_name: 'good_to_go',
+					return_to_onboarding: choiceData.site_starter,
+					original_choice_timestamp: choiceData.timestamp,
+				} );
+
+				choiceData.return_event_sent = true;
+				localStorage.setItem( ONBOARDING_STORAGE_KEYS.S4_SITE_STARTER_CHOICE, JSON.stringify( choiceData ) );
+			}
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to check and send return to Step 4:', error );
+		}
+	}
+
+	static getSiteStarterChoice() {
+		try {
+			const storedChoiceString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.S4_SITE_STARTER_CHOICE );
+			if ( ! storedChoiceString ) {
+				return null;
+			}
+
+			const choiceData = JSON.parse( storedChoiceString );
+			return choiceData.site_starter;
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to get site starter choice:', error );
+			return null;
+		}
+	}
+
+	static clearSiteStarterChoice() {
+		try {
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.S4_SITE_STARTER_CHOICE );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to clear site starter choice:', error );
 		}
 	}
 

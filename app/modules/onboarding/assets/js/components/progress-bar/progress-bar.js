@@ -72,7 +72,6 @@ export default function ProgressBar() {
 				const currentStepNumber = getStepNumberFromPageId( state.currentStep );
 				const nextStepNumber = getStepNumberFromPageId( itemConfig.id );
 
-				// Track stepper clicks when on Step 4
 				if ( 4 === currentStepNumber ) {
 					OnboardingEventTracking.trackStep4Action( 'stepper_clicks', {
 						from_step: currentStepNumber,

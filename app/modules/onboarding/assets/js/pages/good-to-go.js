@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import Grid from 'elementor-app/ui/grid/grid';
 import Layout from '../components/layout/layout';
 import Card from '../components/card';
@@ -11,6 +12,10 @@ export default function GoodToGo() {
 			href: elementorAppConfig.onboarding.urls.createNewPage,
 		},
 		kitLibraryLink = elementorAppConfig.onboarding.urls.kitLibrary + '&referrer=onboarding';
+
+	useEffect( () => {
+		OnboardingEventTracking.checkAndSendReturnToStep4();
+	}, [] );
 
 	return (
 		<Layout pageId={ pageId }>
@@ -30,6 +35,7 @@ export default function GoodToGo() {
 					text={ __( 'Edit a blank canvas with the Elementor Editor', 'elementor' ) }
 					link={ elementorAppConfig.onboarding.urls.createNewPage }
 					clickAction={ () => {
+						OnboardingEventTracking.storeSiteStarterChoice( 'blank_canvas' );
 						OnboardingEventTracking.trackStep4Action( 'site_starter', {
 							site_starter: 'blank_canvas',
 						} );
@@ -43,11 +49,11 @@ export default function GoodToGo() {
 					text={ __( 'Choose a professionally-designed template or import your own', 'elementor' ) }
 					link={ kitLibraryLink }
 					clickAction={ () => {
+						OnboardingEventTracking.storeSiteStarterChoice( 'kit_library' );
 						OnboardingEventTracking.trackStep4Action( 'site_starter', {
 							site_starter: 'kit_library',
 						} );
 						OnboardingEventTracking.sendStep4EndState();
-						// The location is reloaded to make sure the Kit Library's state is re-created.
 						location.href = kitLibraryLink;
 						location.reload();
 					} }
@@ -60,6 +66,7 @@ export default function GoodToGo() {
 					link={ elementorAppConfig.onboarding.urls.sitePlanner }
 					target="_blank"
 					clickAction={ () => {
+						OnboardingEventTracking.storeSiteStarterChoice( 'site_planner' );
 						OnboardingEventTracking.trackStep4Action( 'site_starter', {
 							site_starter: 'site_planner',
 						} );
