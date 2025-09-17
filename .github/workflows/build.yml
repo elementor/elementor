@@ -37,7 +37,7 @@ jobs:
   build-plugin:
     name: Build plugin
     runs-on: ubuntu-22.04
-    # if: startsWith( github.repository, 'elementor/' )
+    if: startsWith( github.repository, 'elementor/' )
     outputs:
       artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME}}
       changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
@@ -89,8 +89,6 @@ jobs:
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
-        env:
-          MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
 
       - uses: actions/upload-artifact@v4
         id: upload-artifact
@@ -102,7 +100,7 @@ jobs:
           retention-days: 3
 
       - name: Find existing comment on PR (Elementor repo)
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
         uses: peter-evans/find-comment@v3
         id: find
         with:
