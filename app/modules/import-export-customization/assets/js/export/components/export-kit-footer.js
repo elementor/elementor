@@ -77,7 +77,7 @@ export default function ExportKitFooter() {
 	};
 
 	const handleExportAsZip = () => {
-		const hasCloudMediaFormat = data.customization?.content?.mediaFormat === 'cloud';
+		const hasCloudMediaFormat = 'cloud' === data.customization?.content?.mediaFormat;
 
 		if ( hasCloudMediaFormat ) {
 			dispatch( { type: 'SET_MEDIA_FORMAT_VALIDATION', payload: true } );
