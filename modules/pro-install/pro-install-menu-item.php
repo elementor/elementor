@@ -40,6 +40,7 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function render() {
+		$this->enqueue_scripts();
 		?>
 		<div class="wrap elementor-admin-page-license">
 			<h2 class="wp-heading-inline"><?php echo esc_html( $this->get_page_title() ); ?></h2>
@@ -191,5 +192,15 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 
 	private function get_elementor_pro_file_path(): string {
 		return 'elementor-pro/elementor-pro.php';
+	}
+
+	private function enqueue_scripts() {
+		wp_enqueue_script(
+			'elementor-pro-install-events',
+			ELEMENTOR_URL . 'modules/pro-install/assets/js/pro-install-events.js',
+			[ 'elementor-common' ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 }
