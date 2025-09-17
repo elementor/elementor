@@ -15,6 +15,7 @@ class Widget_Creator {
 	private $error_log;
 	private $hierarchy_processor;
 	private $error_handler;
+	private $current_widget_class_id;
 
 	public function __construct() {
 		$this->creation_stats = [
@@ -295,14 +296,30 @@ class Widget_Creator {
 		// Format settings according to Elementor v4 atomic widget structure
 		$merged_settings = $this->format_elementor_settings( $settings );
 
-		// V4 atomic widgets: Add global classes to the classes array instead of _element_css_classes
+		// V4 atomic widgets: Add classes array with proper $$type wrapper
+		$classes = [];
+
+		// Add global classes
 		if ( ! empty( $applied_styles['global_classes'] ) ) {
-			$existing_classes = $merged_settings['classes'] ?? [];
-			$merged_settings['classes'] = array_merge( $existing_classes, $applied_styles['global_classes'] );
+			$classes = array_merge( $classes, $applied_styles['global_classes'] );
 		}
 
-		// Note: CSS styles are handled separately in the 'styles' array, not in settings
-		// The applied_styles['computed_styles'] will be processed in the styles array
+		// Add generated class ID if we have computed styles
+		if ( ! empty( $applied_styles['computed_styles'] ) ) {
+			$class_id = $this->generate_unique_class_id();
+			$classes[] = $class_id;
+			
+			// Store the class ID for use in styles generation
+			$this->current_widget_class_id = $class_id;
+		}
+
+		// Add classes to settings with proper v4 format
+		if ( ! empty( $classes ) ) {
+			$merged_settings['classes'] = [
+				'$$type' => 'classes',
+				'value' => $classes,
+			];
+		}
 
 		return $merged_settings;
 	}
@@ -342,13 +359,219 @@ class Widget_Creator {
 		// Convert CSS styles to Elementor v4 atomic widget styles format
 		$v4_styles = [];
 
-		if ( ! empty( $applied_styles['computed_styles'] ) ) {
-			// For now, return empty array as v4 styling is complex
-			// TODO: Implement proper v4 atomic styling conversion
-			// This would involve converting CSS properties to atomic style objects
+		if ( ! empty( $applied_styles['computed_styles'] ) && ! empty( $this->current_widget_class_id ) ) {
+			// Use the class ID that was generated and stored in merge_settings_with_styles
+			$class_id = $this->current_widget_class_id;
+			
+			// Create v4 style object
+			$style_object = $this->create_v4_style_object( $class_id, $applied_styles['computed_styles'] );
+			
+			if ( ! empty( $style_object['variants'][0]['props'] ) ) {
+				$v4_styles[ $class_id ] = $style_object;
+			}
 		}
 
 		return $v4_styles;
+	}
+
+	private function generate_unique_class_id() {
+		// Generate unique class ID in Elementor v4 format: e-{widget-id}-{hash}
+		$widget_id = substr( wp_generate_uuid4(), 0, 8 );
+		$hash = substr( md5( microtime() . wp_rand() ), 0, 7 );
+		return "e-{$widget_id}-{$hash}";
+	}
+
+	private function create_v4_style_object( $class_id, $computed_styles ) {
+		// Create v4 atomic style object structure
+		$style_object = [
+			'id' => $class_id,
+			'label' => 'local',
+			'type' => 'class',
+			'variants' => [
+				[
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+					'props' => $this->map_css_to_v4_props( $computed_styles ),
+					'custom_css' => null,
+				],
+			],
+		];
+
+		return $style_object;
+	}
+
+	private function map_css_to_v4_props( $computed_styles ) {
+		$v4_props = [];
+
+		foreach ( $computed_styles as $property => $style_data ) {
+			$v4_prop = $this->convert_css_property_to_v4( $property, $style_data['value'] );
+			if ( $v4_prop ) {
+				$v4_props[ $v4_prop['property'] ] = $v4_prop['value'];
+			}
+		}
+
+		return $v4_props;
+	}
+
+	private function convert_css_property_to_v4( $property, $value ) {
+		switch ( $property ) {
+			case 'color':
+				return [
+					'property' => 'color',
+					'value' => [ '$$type' => 'color', 'value' => $value ],
+				];
+
+			case 'font-size':
+				$parsed = $this->parse_css_size_value( $value );
+				return [
+					'property' => 'font-size',
+					'value' => [ '$$type' => 'size', 'value' => $parsed ],
+				];
+
+			case 'font-weight':
+				return [
+					'property' => 'font-weight',
+					'value' => [ '$$type' => 'string', 'value' => $value ],
+				];
+
+			case 'text-align':
+				return [
+					'property' => 'text-align',
+					'value' => [ '$$type' => 'string', 'value' => $value ],
+				];
+
+			case 'line-height':
+				$parsed = $this->parse_css_line_height_value( $value );
+				return [
+					'property' => 'line-height',
+					'value' => [ '$$type' => 'size', 'value' => $parsed ],
+				];
+
+			case 'background-color':
+				return [
+					'property' => 'background',
+					'value' => [
+						'$$type' => 'background',
+						'value' => [
+							'color' => [ '$$type' => 'color', 'value' => $value ],
+						],
+					],
+				];
+
+			case 'padding':
+				$parsed = $this->parse_css_dimensions_value( $value );
+				return [
+					'property' => 'padding',
+					'value' => [ '$$type' => 'dimensions', 'value' => $parsed ],
+				];
+
+			case 'margin':
+				$parsed = $this->parse_css_dimensions_value( $value );
+				return [
+					'property' => 'margin',
+					'value' => [ '$$type' => 'dimensions', 'value' => $parsed ],
+				];
+
+			case 'width':
+				$parsed = $this->parse_css_size_value( $value );
+				return [
+					'property' => 'width',
+					'value' => [ '$$type' => 'size', 'value' => $parsed ],
+				];
+
+			case 'border-width':
+				$parsed = $this->parse_css_size_value( $value );
+				return [
+					'property' => 'border-width',
+					'value' => [ '$$type' => 'size', 'value' => $parsed ],
+				];
+
+			case 'border-color':
+				return [
+					'property' => 'border-color',
+					'value' => [ '$$type' => 'color', 'value' => $value ],
+				];
+
+			case 'border-style':
+				return [
+					'property' => 'border-style',
+					'value' => [ '$$type' => 'string', 'value' => $value ],
+				];
+
+			default:
+				// For unsupported properties, return null
+				return null;
+		}
+	}
+
+	private function parse_css_size_value( $value ) {
+		// Parse CSS size values into v4 format
+		if ( preg_match( '/^(\d+(?:\.\d+)?)(px|em|rem|%|vw|vh)$/', $value, $matches ) ) {
+			return [
+				'size' => floatval( $matches[1] ),
+				'unit' => $matches[2],
+			];
+		}
+
+		// Default fallback
+		return [
+			'size' => 16,
+			'unit' => 'px',
+		];
+	}
+
+	private function parse_css_line_height_value( $value ) {
+		// Parse line-height values for v4
+		if ( is_numeric( $value ) ) {
+			return [
+				'size' => floatval( $value ),
+				'unit' => '',
+			];
+		}
+
+		return $this->parse_css_size_value( $value );
+	}
+
+	private function parse_css_dimensions_value( $value ) {
+		// Parse CSS spacing values (margin, padding) into v4 dimensions format
+		$parts = explode( ' ', trim( $value ) );
+		
+		switch ( count( $parts ) ) {
+			case 1:
+				$parsed_value = $this->parse_css_size_value( $parts[0] );
+				return [
+					'block-start' => [ '$$type' => 'size', 'value' => $parsed_value ],
+					'block-end' => [ '$$type' => 'size', 'value' => $parsed_value ],
+					'inline-start' => [ '$$type' => 'size', 'value' => $parsed_value ],
+					'inline-end' => [ '$$type' => 'size', 'value' => $parsed_value ],
+				];
+			case 2:
+				$vertical = $this->parse_css_size_value( $parts[0] );
+				$horizontal = $this->parse_css_size_value( $parts[1] );
+				return [
+					'block-start' => [ '$$type' => 'size', 'value' => $vertical ],
+					'block-end' => [ '$$type' => 'size', 'value' => $vertical ],
+					'inline-start' => [ '$$type' => 'size', 'value' => $horizontal ],
+					'inline-end' => [ '$$type' => 'size', 'value' => $horizontal ],
+				];
+			case 4:
+				return [
+					'block-start' => [ '$$type' => 'size', 'value' => $this->parse_css_size_value( $parts[0] ) ],
+					'inline-end' => [ '$$type' => 'size', 'value' => $this->parse_css_size_value( $parts[1] ) ],
+					'block-end' => [ '$$type' => 'size', 'value' => $this->parse_css_size_value( $parts[2] ) ],
+					'inline-start' => [ '$$type' => 'size', 'value' => $this->parse_css_size_value( $parts[3] ) ],
+				];
+			default:
+				$zero = [ 'size' => 0, 'unit' => 'px' ];
+				return [
+					'block-start' => [ '$$type' => 'size', 'value' => $zero ],
+					'block-end' => [ '$$type' => 'size', 'value' => $zero ],
+					'inline-start' => [ '$$type' => 'size', 'value' => $zero ],
+					'inline-end' => [ '$$type' => 'size', 'value' => $zero ],
+				];
+		}
 	}
 
 	private function process_widget_children( $children ) {

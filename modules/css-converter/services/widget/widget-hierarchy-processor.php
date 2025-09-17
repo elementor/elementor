@@ -136,8 +136,8 @@ class Widget_Hierarchy_Processor {
 	private function process_parent_widget( $widget ) {
 		// Special processing for parent/container widgets
 		
-		// Ensure container widgets have proper layout settings
-		if ( 'e-flexbox' === $widget['widget_type'] || 'container' === $widget['widget_type'] ) {
+		// Ensure e-flexbox widgets have proper layout settings
+		if ( 'e-flexbox' === $widget['widget_type'] ) {
 			$widget['settings'] = $this->apply_container_defaults( $widget['settings'] ?? [] );
 		}
 		
@@ -182,36 +182,29 @@ class Widget_Hierarchy_Processor {
 	}
 
 	private function apply_parent_styles( $settings, $applied_styles ) {
-		// Apply styles specific to parent/container widgets
+		// v4 Atomic Widgets: Most styling is handled in Widget Creator's convert_styles_to_v4_format()
+		// This method now only handles layout configuration settings, not visual styling
 		
 		if ( ! empty( $applied_styles['computed_styles'] ) ) {
 			foreach ( $applied_styles['computed_styles'] as $property => $style_data ) {
 				switch ( $property ) {
-					case 'display':
-						if ( 'flex' === $style_data['value'] ) {
-							$settings['flex_direction'] = 'row';
-						} elseif ( 'grid' === $style_data['value'] ) {
-							$settings['container_type'] = 'grid';
-						}
-						break;
 					case 'flex-direction':
-						$settings['flex_direction'] = $style_data['value'];
+						// Layout configuration setting for e-flexbox
+						$settings['direction'] = $style_data['value'];
 						break;
 					case 'justify-content':
+						// Layout configuration setting for e-flexbox
 						$settings['justify_content'] = $this->map_css_justify_content( $style_data['value'] );
 						break;
 					case 'align-items':
+						// Layout configuration setting for e-flexbox
 						$settings['align_items'] = $this->map_css_align_items( $style_data['value'] );
 						break;
 					case 'gap':
+						// Layout configuration setting for e-flexbox
 						$settings['gap'] = $style_data['value'];
 						break;
-					case 'padding':
-						$settings['padding'] = $this->parse_spacing_value( $style_data['value'] );
-						break;
-					case 'margin':
-						$settings['margin'] = $this->parse_spacing_value( $style_data['value'] );
-						break;
+					// Removed: display, padding, margin - these are styling properties, handled in v4 styles array
 				}
 			}
 		}
@@ -220,29 +213,11 @@ class Widget_Hierarchy_Processor {
 	}
 
 	private function apply_child_styles( $settings, $applied_styles ) {
-		// Apply styles specific to child/content widgets
+		// v4 Atomic Widgets: All styling is handled in Widget Creator's convert_styles_to_v4_format()
+		// This method is now a no-op as child widget styling goes into the styles array, not settings
 		
-		if ( ! empty( $applied_styles['computed_styles'] ) ) {
-			foreach ( $applied_styles['computed_styles'] as $property => $style_data ) {
-				switch ( $property ) {
-					case 'color':
-						$settings['title_color'] = $style_data['value'];
-						break;
-					case 'font-size':
-						$settings['title_size'] = $this->parse_size_value( $style_data['value'] );
-						break;
-					case 'font-weight':
-						$settings['title_weight'] = $style_data['value'];
-						break;
-					case 'text-align':
-						$settings['align'] = $style_data['value'];
-						break;
-					case 'line-height':
-						$settings['title_line_height'] = $this->parse_line_height_value( $style_data['value'] );
-						break;
-				}
-			}
-		}
+		// All visual styling (color, font-size, font-weight, text-align, line-height, etc.)
+		// is now handled by the v4 atomic styling system in Widget Creator
 		
 		return $settings;
 	}
@@ -364,7 +339,7 @@ class Widget_Hierarchy_Processor {
 	}
 
 	private function validate_parent_can_contain_children( $parent_widget ) {
-		$container_types = [ 'e-flexbox', 'container', 'section' ];
+		$container_types = [ 'e-flexbox' ];
 		
 		if ( ! in_array( $parent_widget['widget_type'], $container_types, true ) ) {
 			$this->error_log[] = [
@@ -434,76 +409,6 @@ class Widget_Hierarchy_Processor {
 		return $mapping[ $value ] ?? 'stretch';
 	}
 
-	private function parse_spacing_value( $value ) {
-		// Parse CSS spacing values (margin, padding) into Elementor format
-		$parts = explode( ' ', trim( $value ) );
-		
-		switch ( count( $parts ) ) {
-			case 1:
-				return [
-					'top' => $parts[0],
-					'right' => $parts[0],
-					'bottom' => $parts[0],
-					'left' => $parts[0],
-					'unit' => 'px',
-					'isLinked' => true,
-				];
-			case 2:
-				return [
-					'top' => $parts[0],
-					'right' => $parts[1],
-					'bottom' => $parts[0],
-					'left' => $parts[1],
-					'unit' => 'px',
-					'isLinked' => false,
-				];
-			case 4:
-				return [
-					'top' => $parts[0],
-					'right' => $parts[1],
-					'bottom' => $parts[2],
-					'left' => $parts[3],
-					'unit' => 'px',
-					'isLinked' => false,
-				];
-			default:
-				return [
-					'top' => '0',
-					'right' => '0',
-					'bottom' => '0',
-					'left' => '0',
-					'unit' => 'px',
-					'isLinked' => true,
-				];
-		}
-	}
-
-	private function parse_size_value( $value ) {
-		// Parse CSS size values into Elementor format
-		if ( preg_match( '/^(\d+(?:\.\d+)?)(px|em|rem|%|vw|vh)$/', $value, $matches ) ) {
-			return [
-				'size' => floatval( $matches[1] ),
-				'unit' => $matches[2],
-			];
-		}
-		
-		return [
-			'size' => 16,
-			'unit' => 'px',
-		];
-	}
-
-	private function parse_line_height_value( $value ) {
-		// Parse line-height values
-		if ( is_numeric( $value ) ) {
-			return [
-				'size' => floatval( $value ),
-				'unit' => '',
-			];
-		}
-		
-		return $this->parse_size_value( $value );
-	}
 
 	private function determine_heading_size( $tag ) {
 		$sizes = [
