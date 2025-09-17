@@ -1,9 +1,12 @@
 <?php
 namespace Elementor\Modules\CssConverter\ClassConvertors;
 
-class Stroke_Property_Mapper implements Class_Property_Mapper_Interface {
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Stroke_Property_Mapper extends Unified_Property_Mapper_Base {
 	const SUPPORTED_PROPERTIES = [
-		'stroke', 'stroke-width'
+		'stroke',
+		'stroke-width',
 	];
 	const SIZE_PATTERN = '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw)?$/';
 	const HEX3_PATTERN = '/^#([A-Fa-f0-9]{3})$/';
@@ -11,9 +14,31 @@ class Stroke_Property_Mapper implements Class_Property_Mapper_Interface {
 	const RGB_PATTERN = '/^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/';
 	const RGBA_PATTERN = '/^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)$/';
 	const NAMED_COLORS = [
-		'black', 'white', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta',
-		'silver', 'gray', 'maroon', 'olive', 'lime', 'aqua', 'teal', 'navy',
-		'fuchsia', 'purple', 'orange', 'pink', 'brown', 'gold', 'violet', 'transparent', 'none'
+		'black',
+		'white',
+		'red',
+		'green',
+		'blue',
+		'yellow',
+		'cyan',
+		'magenta',
+		'silver',
+		'gray',
+		'maroon',
+		'olive',
+		'lime',
+		'aqua',
+		'teal',
+		'navy',
+		'fuchsia',
+		'purple',
+		'orange',
+		'pink',
+		'brown',
+		'gold',
+		'violet',
+		'transparent',
+		'none',
 	];
 	const LINECAP_VALUES = [ 'butt', 'round', 'square' ];
 	const LINEJOIN_VALUES = [ 'miter', 'round', 'bevel' ];
@@ -24,7 +49,7 @@ class Stroke_Property_Mapper implements Class_Property_Mapper_Interface {
 
 	public function map_to_schema( string $property, $value ): array {
 		// If this is a shorthand or color value for 'stroke', parse as object
-		if ( $property === 'stroke' ) {
+		if ( 'stroke' === $property ) {
 			$parsed = $this->parse_stroke_shorthand( $value );
 			return [
 				'stroke' => [
@@ -54,7 +79,7 @@ class Stroke_Property_Mapper implements Class_Property_Mapper_Interface {
 			'stroke' => 'color',
 			'stroke-width' => 'width',
 		];
-		return $map[$property] ?? $property;
+		return $map[ $property ] ?? $property;
 	}
 
 	private function parse_stroke_shorthand( string $value ): array {
@@ -63,32 +88,44 @@ class Stroke_Property_Mapper implements Class_Property_Mapper_Interface {
 		$result = [];
 		foreach ( $parts as $part ) {
 			if ( $this->is_color( $part ) ) {
-				$result['color'] = [ '$$type' => 'color', 'value' => $this->normalize_color( $part ) ];
+				$result['color'] = [
+					'$$type' => 'color',
+					'value' => $this->normalize_color( $part ),
+				];
 			} elseif ( $this->is_width( $part ) ) {
 				$width = $this->parse_width( $part );
-				$result['width'] = [ '$$type' => 'size', 'value' => $width ];
+				$result['width'] = [
+					'$$type' => 'size',
+					'value' => $width,
+				];
 			}
 		}
 		return $result;
 	}
 
 	private function parse_stroke_value( string $key, string $value ) {
-		if ( $key === 'color' ) {
-			return [ '$$type' => 'color', 'value' => $this->normalize_color( $value ) ];
+		if ( 'color' === $key ) {
+			return [
+				'$$type' => 'color',
+				'value' => $this->normalize_color( $value ),
+			];
 		}
-		if ( $key === 'width' ) {
+		if ( 'width' === $key ) {
 			$width = $this->parse_width( $value );
-			return [ '$$type' => 'size', 'value' => $width ];
+			return [
+				'$$type' => 'size',
+				'value' => $width,
+			];
 		}
 		return $value;
 	}
 
 	private function is_color( string $value ): bool {
 		return in_array( $value, self::NAMED_COLORS, true ) ||
-			   1 === preg_match( self::HEX3_PATTERN, $value ) ||
-			   1 === preg_match( self::HEX6_PATTERN, $value ) ||
-			   1 === preg_match( self::RGB_PATTERN, $value ) ||
-			   1 === preg_match( self::RGBA_PATTERN, $value );
+				1 === preg_match( self::HEX3_PATTERN, $value ) ||
+				1 === preg_match( self::HEX6_PATTERN, $value ) ||
+				1 === preg_match( self::RGB_PATTERN, $value ) ||
+				1 === preg_match( self::RGBA_PATTERN, $value );
 	}
 
 	private function normalize_color( string $value ): string {
@@ -117,14 +154,18 @@ class Stroke_Property_Mapper implements Class_Property_Mapper_Interface {
 			if ( 0 === $number % 1 ) {
 				$number = (int) $number;
 			}
-			return [ 'size' => $number, 'unit' => $unit ];
+			return [
+				'size' => $number,
+				'unit' => $unit,
+			];
 		}
-		return [ 'size' => 1, 'unit' => 'px' ];
+		return [
+			'size' => 1,
+			'unit' => 'px',
+		];
 	}
 
 	private function is_dasharray( string $value ): bool {
 		return preg_match( '/^([\d\s,]+)$/', $value );
 	}
 }
-
-

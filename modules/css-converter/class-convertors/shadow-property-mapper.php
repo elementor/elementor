@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Modules\CssConverter\ClassConvertors;
 
-class Shadow_Property_Mapper implements Class_Property_Mapper_Interface {
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Shadow_Property_Mapper extends Unified_Property_Mapper_Base {
 	const SUPPORTED_PROPERTIES = [ 'text-shadow' ];
 	const SIZE_PATTERN = '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw)?$/';
 	const HEX3_PATTERN = '/^#([A-Fa-f0-9]{3})$/';
@@ -15,7 +17,12 @@ class Shadow_Property_Mapper implements Class_Property_Mapper_Interface {
 
 	public function map_to_schema( string $property, $value ): array {
 		$normalized = $this->normalize_shadow_value( $value );
-		return [ $property => [ '$$type' => 'string', 'value' => $normalized ] ];
+		return [
+			$property => [
+				'$$type' => 'string',
+				'value' => $normalized,
+			],
+		];
 	}
 
 	public function get_supported_properties(): array {
@@ -26,13 +33,13 @@ class Shadow_Property_Mapper implements Class_Property_Mapper_Interface {
 		if ( ! is_string( $value ) ) {
 			return false;
 		}
-		
+
 		$value = trim( strtolower( $value ) );
-		
+
 		if ( $value === 'none' ) {
 			return true;
 		}
-		
+
 		// Basic validation for shadow syntax
 		// This is a simplified check - real shadow parsing is complex
 		return preg_match( '/^[\d\s\w#(),.-]+$/', $value );
@@ -40,11 +47,11 @@ class Shadow_Property_Mapper implements Class_Property_Mapper_Interface {
 
 	private function normalize_shadow_value( string $value ): string {
 		$value = trim( $value );
-		
+
 		if ( strtolower( $value ) === 'none' ) {
 			return 'none';
 		}
-		
+
 		return $value;
 	}
 }

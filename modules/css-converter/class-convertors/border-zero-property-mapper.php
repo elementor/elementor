@@ -5,9 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Border_Zero_Property_Mapper implements Class_Property_Mapper_Interface {
-	const SUPPORTED_PROPERTIES = array( 'border' );
-	const ZERO_VALUES          = array( '0', '0px', 'none' );
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Border_Zero_Property_Mapper extends Unified_Property_Mapper_Base {
+	const SUPPORTED_PROPERTIES = [ 'border' ];
+	const ZERO_VALUES          = [ '0', '0px', 'none' ];
 
 	public function get_supported_properties(): array {
 		return self::SUPPORTED_PROPERTIES;
@@ -23,51 +25,51 @@ class Border_Zero_Property_Mapper implements Class_Property_Mapper_Interface {
 	}
 
 	public function map_to_schema( string $property, $value ): array {
-		return array(
-			'border-top-width'    => array(
+		return [
+			'border-top-width'    => [
 				'$$type' => 'size',
-				'value'  => array(
+				'value'  => [
 					'size' => 0,
 					'unit' => 'px',
-				),
-			),
-			'border-right-width'  => array(
+				],
+			],
+			'border-right-width'  => [
 				'$$type' => 'size',
-				'value'  => array(
+				'value'  => [
 					'size' => 0,
 					'unit' => 'px',
-				),
-			),
-			'border-bottom-width' => array(
+				],
+			],
+			'border-bottom-width' => [
 				'$$type' => 'size',
-				'value'  => array(
+				'value'  => [
 					'size' => 0,
 					'unit' => 'px',
-				),
-			),
-			'border-left-width'   => array(
+				],
+			],
+			'border-left-width'   => [
 				'$$type' => 'size',
-				'value'  => array(
+				'value'  => [
 					'size' => 0,
 					'unit' => 'px',
-				),
-			),
-			'border-top-style'    => array(
+				],
+			],
+			'border-top-style'    => [
 				'$$type' => 'string',
 				'value'  => 'none',
-			),
-			'border-right-style'  => array(
+			],
+			'border-right-style'  => [
 				'$$type' => 'string',
 				'value'  => 'none',
-			),
-			'border-bottom-style' => array(
+			],
+			'border-bottom-style' => [
 				'$$type' => 'string',
 				'value'  => 'none',
-			),
-			'border-left-style'   => array(
+			],
+			'border-left-style'   => [
 				'$$type' => 'string',
 				'value'  => 'none',
-			),
-		);
+			],
+		];
 	}
 }

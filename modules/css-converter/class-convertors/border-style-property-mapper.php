@@ -1,12 +1,26 @@
 <?php
 namespace Elementor\Modules\CssConverter\ClassConvertors;
 
-class Border_Style_Property_Mapper implements Class_Property_Mapper_Interface {
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Border_Style_Property_Mapper extends Unified_Property_Mapper_Base {
 	const SUPPORTED_PROPERTIES = [
-		'border-style', 'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style'
+		'border-style',
+		'border-top-style',
+		'border-right-style',
+		'border-bottom-style',
+		'border-left-style',
 	];
 	const VALID_STYLES = [
-		'none', 'solid', 'dashed', 'dotted', 'double', 'groove', 'ridge', 'inset', 'outset'
+		'none',
+		'solid',
+		'dashed',
+		'dotted',
+		'double',
+		'groove',
+		'ridge',
+		'inset',
+		'outset',
 	];
 
 	public function supports( string $property, $value ): bool {
@@ -17,14 +31,31 @@ class Border_Style_Property_Mapper implements Class_Property_Mapper_Interface {
 		if ( $property === 'border-style' ) {
 			$parsed = $this->parse_border_style_shorthand( $value );
 			return [
-				'border-top-style' => [ '$$type' => 'string', 'value' => $parsed['top'] ],
-				'border-right-style' => [ '$$type' => 'string', 'value' => $parsed['right'] ],
-				'border-bottom-style' => [ '$$type' => 'string', 'value' => $parsed['bottom'] ],
-				'border-left-style' => [ '$$type' => 'string', 'value' => $parsed['left'] ],
+				'border-top-style' => [
+					'$$type' => 'string',
+					'value' => $parsed['top'],
+				],
+				'border-right-style' => [
+					'$$type' => 'string',
+					'value' => $parsed['right'],
+				],
+				'border-bottom-style' => [
+					'$$type' => 'string',
+					'value' => $parsed['bottom'],
+				],
+				'border-left-style' => [
+					'$$type' => 'string',
+					'value' => $parsed['left'],
+				],
 			];
 		}
 		$normalized = $this->normalize_border_style( $value );
-		return [ $property => [ '$$type' => 'string', 'value' => $normalized ] ];
+		return [
+			$property => [
+				'$$type' => 'string',
+				'value' => $normalized,
+			],
+		];
 	}
 
 	public function get_supported_properties(): array {
@@ -59,7 +90,7 @@ class Border_Style_Property_Mapper implements Class_Property_Mapper_Interface {
 		$parts = preg_split( '/\s+/', trim( $value ) );
 		$count = count( $parts );
 		$top = $right = $bottom = $left = 'none';
-		
+
 		if ( $count === 1 ) {
 			$top = $right = $bottom = $left = $parts[0];
 		} elseif ( $count === 2 ) {
@@ -75,7 +106,7 @@ class Border_Style_Property_Mapper implements Class_Property_Mapper_Interface {
 			$bottom = $parts[2];
 			$left = $parts[3];
 		}
-		
+
 		return [
 			'top' => $this->normalize_border_style( $top ),
 			'right' => $this->normalize_border_style( $right ),

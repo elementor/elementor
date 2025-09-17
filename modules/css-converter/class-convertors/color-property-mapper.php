@@ -5,18 +5,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Color_Property_Mapper implements Class_Property_Mapper_Interface {
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Color_Property_Mapper extends Unified_Property_Mapper_Base {
 	private const HEX3_PATTERN = '/^#([A-Fa-f0-9]{3})$/';
 	private const HEX6_PATTERN = '/^#([A-Fa-f0-9]{6})$/';
 	private const HEXA_PATTERN = '/^#([A-Fa-f0-9]{8})$/';
 	private const RGB_PATTERN = '/^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/';
 	private const RGBA_PATTERN = '/^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)$/';
 	private const HSL_PATTERN = '/^hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)$/';
-	
+
 	private const NAMED_COLORS = [
-		'black', 'white', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta',
-		'silver', 'gray', 'maroon', 'olive', 'lime', 'aqua', 'teal', 'navy',
-		'fuchsia', 'purple', 'orange', 'pink', 'brown', 'gold', 'violet'
+		'black',
+		'white',
+		'red',
+		'green',
+		'blue',
+		'yellow',
+		'cyan',
+		'magenta',
+		'silver',
+		'gray',
+		'maroon',
+		'olive',
+		'lime',
+		'aqua',
+		'teal',
+		'navy',
+		'fuchsia',
+		'purple',
+		'orange',
+		'pink',
+		'brown',
+		'gold',
+		'violet',
 	];
 
 	public function supports( string $property, $value ): bool {
@@ -24,7 +46,7 @@ class Color_Property_Mapper implements Class_Property_Mapper_Interface {
 	}
 
 	public function map_to_schema( string $property, $value ): array {
-		return [ 
+		return [
 			'color' => [
 				'$$type' => 'color',
 				'value' => $this->normalize_color_value( $value ),
@@ -38,30 +60,30 @@ class Color_Property_Mapper implements Class_Property_Mapper_Interface {
 
 	private function is_valid_color( string $value ): bool {
 		$value = trim( $value );
-		
+
 		return $this->is_hex_color( $value ) ||
-			   $this->is_rgb_color( $value ) ||
-			   $this->is_rgba_color( $value ) ||
-			   $this->is_hsl_color( $value ) ||
-			   $this->is_named_color( $value );
+				$this->is_rgb_color( $value ) ||
+				$this->is_rgba_color( $value ) ||
+				$this->is_hsl_color( $value ) ||
+				$this->is_named_color( $value );
 	}
 
 	private function is_hex_color( string $value ): bool {
 		return 1 === preg_match( self::HEX3_PATTERN, $value ) ||
-			   1 === preg_match( self::HEX6_PATTERN, $value ) ||
-			   1 === preg_match( self::HEXA_PATTERN, $value );
+				1 === preg_match( self::HEX6_PATTERN, $value ) ||
+				1 === preg_match( self::HEXA_PATTERN, $value );
 	}
 
 	private function is_rgb_color( string $value ): bool {
 		if ( 1 !== preg_match( self::RGB_PATTERN, $value, $matches ) ) {
 			return false;
 		}
-		
+
 		// Validate RGB values are within 0-255 range
 		$r = (int) $matches[1];
 		$g = (int) $matches[2];
 		$b = (int) $matches[3];
-		
+
 		return $r >= 0 && $r <= 255 && $g >= 0 && $g <= 255 && $b >= 0 && $b <= 255;
 	}
 
@@ -69,17 +91,17 @@ class Color_Property_Mapper implements Class_Property_Mapper_Interface {
 		if ( 1 !== preg_match( self::RGBA_PATTERN, $value, $matches ) ) {
 			return false;
 		}
-		
+
 		// Validate RGBA values are within valid ranges
 		$r = (int) $matches[1];
 		$g = (int) $matches[2];
 		$b = (int) $matches[3];
 		$a = (float) $matches[4];
-		
-		return $r >= 0 && $r <= 255 && 
-			   $g >= 0 && $g <= 255 && 
-			   $b >= 0 && $b <= 255 && 
-			   $a >= 0 && $a <= 1;
+
+		return $r >= 0 && $r <= 255 &&
+				$g >= 0 && $g <= 255 &&
+				$b >= 0 && $b <= 255 &&
+				$a >= 0 && $a <= 1;
 	}
 
 	private function is_hsl_color( string $value ): bool {
@@ -128,10 +150,10 @@ class Color_Property_Mapper implements Class_Property_Mapper_Interface {
 			$r = (int) $matches[1];
 			$g = (int) $matches[2];
 			$b = (int) $matches[3];
-			
+
 			return sprintf( '#%02x%02x%02x', $r, $g, $b );
 		}
-		
+
 		return $rgb;
 	}
 
@@ -141,15 +163,15 @@ class Color_Property_Mapper implements Class_Property_Mapper_Interface {
 			$g = (int) $matches[2];
 			$b = (int) $matches[3];
 			$a = (float) $matches[4];
-			
+
 			if ( 1.0 === $a ) {
 				return sprintf( '#%02x%02x%02x', $r, $g, $b );
 			}
-			
+
 			$alpha = (int) round( $a * 255 );
 			return sprintf( '#%02x%02x%02x%02x', $r, $g, $b, $alpha );
 		}
-		
+
 		return $rgba;
 	}
 }

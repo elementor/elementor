@@ -1,9 +1,15 @@
 <?php
 namespace Elementor\Modules\CssConverter\ClassConvertors;
 
-class Padding_Property_Mapper implements Class_Property_Mapper_Interface {
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Padding_Property_Mapper extends Unified_Property_Mapper_Base {
 	const SUPPORTED_PROPERTIES = [
-		'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left'
+		'padding',
+		'padding-top',
+		'padding-right',
+		'padding-bottom',
+		'padding-left',
 	];
 	const SIZE_PATTERN = '/^(\-?\d*\.?\d+)(px|em|rem|%|vh|vw)?$/';
 
@@ -18,10 +24,22 @@ class Padding_Property_Mapper implements Class_Property_Mapper_Interface {
 				'padding' => [
 					'$$type' => 'dimensions',
 					'value' => [
-						'block-start' => [ '$$type' => 'size', 'value' => $parsed['top'] ],
-						'inline-end' => [ '$$type' => 'size', 'value' => $parsed['right'] ],
-						'block-end' => [ '$$type' => 'size', 'value' => $parsed['bottom'] ],
-						'inline-start' => [ '$$type' => 'size', 'value' => $parsed['left'] ],
+						'block-start' => [
+							'$$type' => 'size',
+							'value' => $parsed['top'],
+						],
+						'inline-end' => [
+							'$$type' => 'size',
+							'value' => $parsed['right'],
+						],
+						'block-end' => [
+							'$$type' => 'size',
+							'value' => $parsed['bottom'],
+						],
+						'inline-start' => [
+							'$$type' => 'size',
+							'value' => $parsed['left'],
+						],
 					],
 				],
 			];
@@ -30,13 +48,25 @@ class Padding_Property_Mapper implements Class_Property_Mapper_Interface {
 		$parsed = $this->parse_size_value( $value );
 		$dimensions_value = [];
 		if ( $property === 'padding-top' ) {
-			$dimensions_value['block-start'] = [ '$$type' => 'size', 'value' => $parsed ];
+			$dimensions_value['block-start'] = [
+				'$$type' => 'size',
+				'value' => $parsed,
+			];
 		} elseif ( $property === 'padding-right' ) {
-			$dimensions_value['inline-end'] = [ '$$type' => 'size', 'value' => $parsed ];
+			$dimensions_value['inline-end'] = [
+				'$$type' => 'size',
+				'value' => $parsed,
+			];
 		} elseif ( $property === 'padding-bottom' ) {
-			$dimensions_value['block-end'] = [ '$$type' => 'size', 'value' => $parsed ];
+			$dimensions_value['block-end'] = [
+				'$$type' => 'size',
+				'value' => $parsed,
+			];
 		} elseif ( $property === 'padding-left' ) {
-			$dimensions_value['inline-start'] = [ '$$type' => 'size', 'value' => $parsed ];
+			$dimensions_value['inline-start'] = [
+				'$$type' => 'size',
+				'value' => $parsed,
+			];
 		}
 
 		return [
@@ -96,8 +126,14 @@ class Padding_Property_Mapper implements Class_Property_Mapper_Interface {
 			if ( 0 === $number % 1 ) {
 				$number = (int) $number;
 			}
-			return [ 'size' => $number, 'unit' => $unit ];
+			return [
+				'size' => $number,
+				'unit' => $unit,
+			];
 		}
-		return [ 'size' => 0, 'unit' => 'px' ];
+		return [
+			'size' => 0,
+			'unit' => 'px',
+		];
 	}
 }

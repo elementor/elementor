@@ -44,7 +44,7 @@ class Class_Property_Mapper_Factory {
 	}
 
 	private static function init_default_mappers(): void {
-		$mappers = array(
+		$mappers = [
 			new Color_Property_Mapper(),
 			new Font_Size_Property_Mapper(),
 			new Font_Weight_Property_Mapper(),
@@ -73,7 +73,7 @@ class Class_Property_Mapper_Factory {
 			new Stroke_Property_Mapper(),
 			new Transition_Property_Mapper(),
 			new Box_Shadow_Property_Mapper(),
-		);
+		];
 
 		$mappers = apply_filters( 'elementor_css_converter_property_mappers', $mappers );
 

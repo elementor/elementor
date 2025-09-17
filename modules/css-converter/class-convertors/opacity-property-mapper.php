@@ -2,7 +2,9 @@
 
 namespace Elementor\Modules\CssConverter\ClassConvertors;
 
-class Opacity_Property_Mapper implements Class_Property_Mapper_Interface {
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Opacity_Property_Mapper extends Unified_Property_Mapper_Base {
 
 	public function supports( string $property, $value ): bool {
 		return 'opacity' === $property && $this->is_valid_opacity( $value );

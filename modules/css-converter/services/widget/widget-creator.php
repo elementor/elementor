@@ -9,6 +9,7 @@ use Elementor\Plugin;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\CssConverter\Services\Widget\Widget_Hierarchy_Processor;
 use Elementor\Modules\CssConverter\Services\Widget\Widget_Error_Handler;
+use Elementor\Modules\CssConverter\ClassConvertors\Class_Property_Mapper_Factory;
 
 class Widget_Creator {
 	private $creation_stats;
@@ -16,6 +17,7 @@ class Widget_Creator {
 	private $hierarchy_processor;
 	private $error_handler;
 	private $current_widget_class_id;
+	private $property_mapper_registry;
 
 	public function __construct() {
 		$this->creation_stats = [
@@ -29,6 +31,7 @@ class Widget_Creator {
 		$this->error_log = [];
 		$this->hierarchy_processor = new Widget_Hierarchy_Processor();
 		$this->error_handler = new Widget_Error_Handler();
+		$this->property_mapper_registry = Class_Property_Mapper_Factory::get_registry();
 	}
 
 	public function create_widgets( $styled_widgets, $css_processing_result, $options = [] ) {
@@ -416,163 +419,17 @@ class Widget_Creator {
 	}
 
 	private function convert_css_property_to_v4( $property, $value ) {
-		switch ( $property ) {
-			case 'color':
-				return [
-					'property' => 'color',
-					'value' => [ '$$type' => 'color', 'value' => $value ],
-				];
-
-			case 'font-size':
-				$parsed = $this->parse_css_size_value( $value );
-				return [
-					'property' => 'font-size',
-					'value' => [ '$$type' => 'size', 'value' => $parsed ],
-				];
-
-			case 'font-weight':
-				return [
-					'property' => 'font-weight',
-					'value' => [ '$$type' => 'string', 'value' => $value ],
-				];
-
-			case 'text-align':
-				return [
-					'property' => 'text-align',
-					'value' => [ '$$type' => 'string', 'value' => $value ],
-				];
-
-			case 'line-height':
-				$parsed = $this->parse_css_line_height_value( $value );
-				return [
-					'property' => 'line-height',
-					'value' => [ '$$type' => 'size', 'value' => $parsed ],
-				];
-
-			case 'background-color':
-				return [
-					'property' => 'background',
-					'value' => [
-						'$$type' => 'background',
-						'value' => [
-							'color' => [ '$$type' => 'color', 'value' => $value ],
-						],
-					],
-				];
-
-			case 'padding':
-				$parsed = $this->parse_css_dimensions_value( $value );
-				return [
-					'property' => 'padding',
-					'value' => [ '$$type' => 'dimensions', 'value' => $parsed ],
-				];
-
-			case 'margin':
-				$parsed = $this->parse_css_dimensions_value( $value );
-				return [
-					'property' => 'margin',
-					'value' => [ '$$type' => 'dimensions', 'value' => $parsed ],
-				];
-
-			case 'width':
-				$parsed = $this->parse_css_size_value( $value );
-				return [
-					'property' => 'width',
-					'value' => [ '$$type' => 'size', 'value' => $parsed ],
-				];
-
-			case 'border-width':
-				$parsed = $this->parse_css_size_value( $value );
-				return [
-					'property' => 'border-width',
-					'value' => [ '$$type' => 'size', 'value' => $parsed ],
-				];
-
-			case 'border-color':
-				return [
-					'property' => 'border-color',
-					'value' => [ '$$type' => 'color', 'value' => $value ],
-				];
-
-			case 'border-style':
-				return [
-					'property' => 'border-style',
-					'value' => [ '$$type' => 'string', 'value' => $value ],
-				];
-
-			default:
-				// For unsupported properties, return null
-				return null;
-		}
-	}
-
-	private function parse_css_size_value( $value ) {
-		// Parse CSS size values into v4 format
-		if ( preg_match( '/^(\d+(?:\.\d+)?)(px|em|rem|%|vw|vh)$/', $value, $matches ) ) {
-			return [
-				'size' => floatval( $matches[1] ),
-				'unit' => $matches[2],
-			];
-		}
-
-		// Default fallback
-		return [
-			'size' => 16,
-			'unit' => 'px',
-		];
-	}
-
-	private function parse_css_line_height_value( $value ) {
-		// Parse line-height values for v4
-		if ( is_numeric( $value ) ) {
-			return [
-				'size' => floatval( $value ),
-				'unit' => '',
-			];
-		}
-
-		return $this->parse_css_size_value( $value );
-	}
-
-	private function parse_css_dimensions_value( $value ) {
-		// Parse CSS spacing values (margin, padding) into v4 dimensions format
-		$parts = explode( ' ', trim( $value ) );
+		// Use the unified property mapper system instead of custom conversion logic
+		$mapper = $this->property_mapper_registry->resolve( $property, $value );
 		
-		switch ( count( $parts ) ) {
-			case 1:
-				$parsed_value = $this->parse_css_size_value( $parts[0] );
-				return [
-					'block-start' => [ '$$type' => 'size', 'value' => $parsed_value ],
-					'block-end' => [ '$$type' => 'size', 'value' => $parsed_value ],
-					'inline-start' => [ '$$type' => 'size', 'value' => $parsed_value ],
-					'inline-end' => [ '$$type' => 'size', 'value' => $parsed_value ],
-				];
-			case 2:
-				$vertical = $this->parse_css_size_value( $parts[0] );
-				$horizontal = $this->parse_css_size_value( $parts[1] );
-				return [
-					'block-start' => [ '$$type' => 'size', 'value' => $vertical ],
-					'block-end' => [ '$$type' => 'size', 'value' => $vertical ],
-					'inline-start' => [ '$$type' => 'size', 'value' => $horizontal ],
-					'inline-end' => [ '$$type' => 'size', 'value' => $horizontal ],
-				];
-			case 4:
-				return [
-					'block-start' => [ '$$type' => 'size', 'value' => $this->parse_css_size_value( $parts[0] ) ],
-					'inline-end' => [ '$$type' => 'size', 'value' => $this->parse_css_size_value( $parts[1] ) ],
-					'block-end' => [ '$$type' => 'size', 'value' => $this->parse_css_size_value( $parts[2] ) ],
-					'inline-start' => [ '$$type' => 'size', 'value' => $this->parse_css_size_value( $parts[3] ) ],
-				];
-			default:
-				$zero = [ 'size' => 0, 'unit' => 'px' ];
-				return [
-					'block-start' => [ '$$type' => 'size', 'value' => $zero ],
-					'block-end' => [ '$$type' => 'size', 'value' => $zero ],
-					'inline-start' => [ '$$type' => 'size', 'value' => $zero ],
-					'inline-end' => [ '$$type' => 'size', 'value' => $zero ],
-				];
+		if ( $mapper && method_exists( $mapper, 'map_to_v4_atomic' ) ) {
+			return $mapper->map_to_v4_atomic( $property, $value );
 		}
+		
+		// Fallback for properties not yet supported by unified mappers
+		return null;
 	}
+
 
 	private function process_widget_children( $children ) {
 		$elementor_children = [];
@@ -714,5 +571,6 @@ class Widget_Creator {
 		$this->error_log = [];
 		$this->hierarchy_processor = new Widget_Hierarchy_Processor();
 		$this->error_handler = new Widget_Error_Handler();
+		$this->property_mapper_registry = Class_Property_Mapper_Factory::get_registry();
 	}
 }

@@ -5,7 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Border_Shorthand_Property_Mapper implements Class_Property_Mapper_Interface {
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Border_Shorthand_Property_Mapper extends Unified_Property_Mapper_Base {
 	const SUPPORTED_PROPERTIES = [ 'border' ];
 
 	public function get_supported_properties(): array {
@@ -21,24 +23,60 @@ class Border_Shorthand_Property_Mapper implements Class_Property_Mapper_Interfac
 		$result = [];
 
 		if ( isset( $parsed['width'] ) ) {
-			$result['border-top-width'] = [ '$$type' => 'size', 'value' => $parsed['width'] ];
-			$result['border-right-width'] = [ '$$type' => 'size', 'value' => $parsed['width'] ];
-			$result['border-bottom-width'] = [ '$$type' => 'size', 'value' => $parsed['width'] ];
-			$result['border-left-width'] = [ '$$type' => 'size', 'value' => $parsed['width'] ];
+			$result['border-top-width'] = [
+				'$$type' => 'size',
+				'value' => $parsed['width'],
+			];
+			$result['border-right-width'] = [
+				'$$type' => 'size',
+				'value' => $parsed['width'],
+			];
+			$result['border-bottom-width'] = [
+				'$$type' => 'size',
+				'value' => $parsed['width'],
+			];
+			$result['border-left-width'] = [
+				'$$type' => 'size',
+				'value' => $parsed['width'],
+			];
 		}
 
 		if ( isset( $parsed['style'] ) ) {
-			$result['border-top-style'] = [ '$$type' => 'string', 'value' => $parsed['style'] ];
-			$result['border-right-style'] = [ '$$type' => 'string', 'value' => $parsed['style'] ];
-			$result['border-bottom-style'] = [ '$$type' => 'string', 'value' => $parsed['style'] ];
-			$result['border-left-style'] = [ '$$type' => 'string', 'value' => $parsed['style'] ];
+			$result['border-top-style'] = [
+				'$$type' => 'string',
+				'value' => $parsed['style'],
+			];
+			$result['border-right-style'] = [
+				'$$type' => 'string',
+				'value' => $parsed['style'],
+			];
+			$result['border-bottom-style'] = [
+				'$$type' => 'string',
+				'value' => $parsed['style'],
+			];
+			$result['border-left-style'] = [
+				'$$type' => 'string',
+				'value' => $parsed['style'],
+			];
 		}
 
 		if ( isset( $parsed['color'] ) ) {
-			$result['border-top-color'] = [ '$$type' => 'color', 'value' => $parsed['color'] ];
-			$result['border-right-color'] = [ '$$type' => 'color', 'value' => $parsed['color'] ];
-			$result['border-bottom-color'] = [ '$$type' => 'color', 'value' => $parsed['color'] ];
-			$result['border-left-color'] = [ '$$type' => 'color', 'value' => $parsed['color'] ];
+			$result['border-top-color'] = [
+				'$$type' => 'color',
+				'value' => $parsed['color'],
+			];
+			$result['border-right-color'] = [
+				'$$type' => 'color',
+				'value' => $parsed['color'],
+			];
+			$result['border-bottom-color'] = [
+				'$$type' => 'color',
+				'value' => $parsed['color'],
+			];
+			$result['border-left-color'] = [
+				'$$type' => 'color',
+				'value' => $parsed['color'],
+			];
 		}
 
 		return $result;
@@ -73,40 +111,72 @@ class Border_Shorthand_Property_Mapper implements Class_Property_Mapper_Interfac
 
 	private function is_width( string $value ): bool {
 		return preg_match( '/^(\d*\.?\d+)(px|em|rem|%|pt|pc|in|cm|mm|ex|ch|vw|vh|vmin|vmax)?$/', $value ) ||
-			   in_array( $value, [ 'thin', 'medium', 'thick' ], true );
+				in_array( $value, [ 'thin', 'medium', 'thick' ], true );
 	}
 
 	private function is_style( string $value ): bool {
 		return in_array( $value, [
-			'none', 'hidden', 'dotted', 'dashed', 'solid', 'double',
-			'groove', 'ridge', 'inset', 'outset'
+			'none',
+			'hidden',
+			'dotted',
+			'dashed',
+			'solid',
+			'double',
+			'groove',
+			'ridge',
+			'inset',
+			'outset',
 		], true );
 	}
 
 	private function is_color( string $value ): bool {
 		return preg_match( '/^#([0-9a-f]{3}|[0-9a-f]{6})$/i', $value ) ||
-			   preg_match( '/^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/i', $value ) ||
-			   preg_match( '/^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/i', $value ) ||
-			   in_array( strtolower( $value ), [
-				   'black', 'silver', 'gray', 'white', 'maroon', 'red', 'purple', 'fuchsia',
-				   'green', 'lime', 'olive', 'yellow', 'navy', 'blue', 'teal', 'aqua'
-			   ], true );
+				preg_match( '/^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/i', $value ) ||
+				preg_match( '/^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/i', $value ) ||
+				in_array( strtolower( $value ), [
+					'black',
+					'silver',
+					'gray',
+					'white',
+					'maroon',
+					'red',
+					'purple',
+					'fuchsia',
+					'green',
+					'lime',
+					'olive',
+					'yellow',
+					'navy',
+					'blue',
+					'teal',
+					'aqua',
+				], true );
 	}
 
 	private function parse_width( string $value ): array {
 		if ( in_array( $value, [ 'thin', 'medium', 'thick' ], true ) ) {
-			$size_map = [ 'thin' => 1, 'medium' => 3, 'thick' => 5 ];
-			return [ 'size' => $size_map[ $value ], 'unit' => 'px' ];
+			$size_map = [
+				'thin' => 1,
+				'medium' => 3,
+				'thick' => 5,
+			];
+			return [
+				'size' => $size_map[ $value ],
+				'unit' => 'px',
+			];
 		}
 
 		if ( preg_match( '/^(\d*\.?\d+)(px|em|rem|%|pt|pc|in|cm|mm|ex|ch|vw|vh|vmin|vmax)?$/', $value, $matches ) ) {
 			return [
 				'size' => (float) $matches[1],
-				'unit' => $matches[2] ?? 'px'
+				'unit' => $matches[2] ?? 'px',
 			];
 		}
 
-		return [ 'size' => 1, 'unit' => 'px' ];
+		return [
+			'size' => 1,
+			'unit' => 'px',
+		];
 	}
 
 	private function normalize_color( string $color ): string {
@@ -128,7 +198,7 @@ class Border_Shorthand_Property_Mapper implements Class_Property_Mapper_Interfac
 			'navy' => '#000080',
 			'blue' => '#0000ff',
 			'teal' => '#008080',
-			'aqua' => '#00ffff'
+			'aqua' => '#00ffff',
 		];
 
 		return $color_map[ $color ] ?? $color;

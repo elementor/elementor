@@ -22,17 +22,17 @@ class Class_Property_Mapper_Registry {
 				return $mapper;
 			}
 		}
-		
+
 		return null;
 	}
 
 	public function get_all_supported_properties(): array {
 		$properties = [];
-		
+
 		foreach ( $this->mappers as $mapper ) {
 			$properties = array_merge( $properties, $mapper->get_supported_properties() );
 		}
-		
+
 		return array_unique( $properties );
 	}
 

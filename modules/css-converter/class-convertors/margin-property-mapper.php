@@ -1,9 +1,15 @@
 <?php
 namespace Elementor\Modules\CssConverter\ClassConvertors;
 
-class Margin_Property_Mapper implements Class_Property_Mapper_Interface {
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Margin_Property_Mapper extends Unified_Property_Mapper_Base {
 	const SUPPORTED_PROPERTIES = [
-		'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left'
+		'margin',
+		'margin-top',
+		'margin-right',
+		'margin-bottom',
+		'margin-left',
 	];
 	const SIZE_PATTERN = '/^(\-?\d*\.?\d+)(px|em|rem|%|vh|vw)?$/';
 
@@ -18,10 +24,22 @@ class Margin_Property_Mapper implements Class_Property_Mapper_Interface {
 				'margin' => [
 					'$$type' => 'dimensions',
 					'value' => [
-						'block-start' => [ '$$type' => 'size', 'value' => $parsed['top'] ],
-						'inline-end' => [ '$$type' => 'size', 'value' => $parsed['right'] ],
-						'block-end' => [ '$$type' => 'size', 'value' => $parsed['bottom'] ],
-						'inline-start' => [ '$$type' => 'size', 'value' => $parsed['left'] ],
+						'block-start' => [
+							'$$type' => 'size',
+							'value' => $parsed['top'],
+						],
+						'inline-end' => [
+							'$$type' => 'size',
+							'value' => $parsed['right'],
+						],
+						'block-end' => [
+							'$$type' => 'size',
+							'value' => $parsed['bottom'],
+						],
+						'inline-start' => [
+							'$$type' => 'size',
+							'value' => $parsed['left'],
+						],
 					],
 				],
 			];
@@ -30,13 +48,25 @@ class Margin_Property_Mapper implements Class_Property_Mapper_Interface {
 		$parsed = $this->parse_size_value( $value );
 		$dimensions_value = [];
 		if ( $property === 'margin-top' ) {
-			$dimensions_value['block-start'] = [ '$$type' => 'size', 'value' => $parsed ];
+			$dimensions_value['block-start'] = [
+				'$$type' => 'size',
+				'value' => $parsed,
+			];
 		} elseif ( $property === 'margin-right' ) {
-			$dimensions_value['inline-end'] = [ '$$type' => 'size', 'value' => $parsed ];
+			$dimensions_value['inline-end'] = [
+				'$$type' => 'size',
+				'value' => $parsed,
+			];
 		} elseif ( $property === 'margin-bottom' ) {
-			$dimensions_value['block-end'] = [ '$$type' => 'size', 'value' => $parsed ];
+			$dimensions_value['block-end'] = [
+				'$$type' => 'size',
+				'value' => $parsed,
+			];
 		} elseif ( $property === 'margin-left' ) {
-			$dimensions_value['inline-start'] = [ '$$type' => 'size', 'value' => $parsed ];
+			$dimensions_value['inline-start'] = [
+				'$$type' => 'size',
+				'value' => $parsed,
+			];
 		}
 
 		return [
@@ -96,8 +126,14 @@ class Margin_Property_Mapper implements Class_Property_Mapper_Interface {
 			if ( 0 === $number % 1 ) {
 				$number = (int) $number;
 			}
-			return [ 'size' => $number, 'unit' => $unit ];
+			return [
+				'size' => $number,
+				'unit' => $unit,
+			];
 		}
-		return [ 'size' => 0, 'unit' => 'px' ];
+		return [
+			'size' => 0,
+			'unit' => 'px',
+		];
 	}
 }

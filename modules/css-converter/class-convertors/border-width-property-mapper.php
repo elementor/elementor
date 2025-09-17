@@ -1,9 +1,15 @@
 <?php
 namespace Elementor\Modules\CssConverter\ClassConvertors;
 
-class Border_Width_Property_Mapper implements Class_Property_Mapper_Interface {
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Border_Width_Property_Mapper extends Unified_Property_Mapper_Base {
 	const SUPPORTED_PROPERTIES = [
-		'border-width', 'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width'
+		'border-width',
+		'border-top-width',
+		'border-right-width',
+		'border-bottom-width',
+		'border-left-width',
 	];
 	const SIZE_PATTERN = '/^(\d*\.?\d+)(px|em|rem|%|vh|vw)?$/';
 	const KEYWORD_VALUES = [ 'thin', 'medium', 'thick' ];
@@ -16,14 +22,31 @@ class Border_Width_Property_Mapper implements Class_Property_Mapper_Interface {
 		if ( $property === 'border-width' ) {
 			$parsed = $this->parse_border_width_shorthand( $value );
 			return [
-				'border-top-width' => [ '$$type' => 'size', 'value' => $parsed['top'] ],
-				'border-right-width' => [ '$$type' => 'size', 'value' => $parsed['right'] ],
-				'border-bottom-width' => [ '$$type' => 'size', 'value' => $parsed['bottom'] ],
-				'border-left-width' => [ '$$type' => 'size', 'value' => $parsed['left'] ],
+				'border-top-width' => [
+					'$$type' => 'size',
+					'value' => $parsed['top'],
+				],
+				'border-right-width' => [
+					'$$type' => 'size',
+					'value' => $parsed['right'],
+				],
+				'border-bottom-width' => [
+					'$$type' => 'size',
+					'value' => $parsed['bottom'],
+				],
+				'border-left-width' => [
+					'$$type' => 'size',
+					'value' => $parsed['left'],
+				],
 			];
 		}
 		$parsed = $this->parse_border_width_value( $value );
-		return [ $property => [ '$$type' => 'size', 'value' => $parsed ] ];
+		return [
+			$property => [
+				'$$type' => 'size',
+				'value' => $parsed,
+			],
+		];
 	}
 
 	public function get_supported_properties(): array {
@@ -58,7 +81,7 @@ class Border_Width_Property_Mapper implements Class_Property_Mapper_Interface {
 		$parts = preg_split( '/\s+/', trim( $value ) );
 		$count = count( $parts );
 		$top = $right = $bottom = $left = 'medium';
-		
+
 		if ( $count === 1 ) {
 			$top = $right = $bottom = $left = $parts[0];
 		} elseif ( $count === 2 ) {
@@ -74,7 +97,7 @@ class Border_Width_Property_Mapper implements Class_Property_Mapper_Interface {
 			$bottom = $parts[2];
 			$left = $parts[3];
 		}
-		
+
 		return [
 			'top' => $this->parse_border_width_value( $top ),
 			'right' => $this->parse_border_width_value( $right ),
@@ -85,13 +108,20 @@ class Border_Width_Property_Mapper implements Class_Property_Mapper_Interface {
 
 	private function parse_border_width_value( string $value ): array {
 		$value = trim( strtolower( $value ) );
-		
+
 		// Handle keyword values
 		if ( in_array( $value, self::KEYWORD_VALUES, true ) ) {
-			$size_map = [ 'thin' => 1, 'medium' => 3, 'thick' => 5 ];
-			return [ 'size' => $size_map[ $value ], 'unit' => 'px' ];
+			$size_map = [
+				'thin' => 1,
+				'medium' => 3,
+				'thick' => 5,
+			];
+			return [
+				'size' => $size_map[ $value ],
+				'unit' => 'px',
+			];
 		}
-		
+
 		// Handle size values
 		if ( 1 === preg_match( self::SIZE_PATTERN, $value, $matches ) ) {
 			$number = (float) $matches[1];
@@ -99,9 +129,15 @@ class Border_Width_Property_Mapper implements Class_Property_Mapper_Interface {
 			if ( 0 === $number % 1 ) {
 				$number = (int) $number;
 			}
-			return [ 'size' => $number, 'unit' => $unit ];
+			return [
+				'size' => $number,
+				'unit' => $unit,
+			];
 		}
-		
-		return [ 'size' => 3, 'unit' => 'px' ]; // Default to medium
+
+		return [
+			'size' => 3,
+			'unit' => 'px',
+		]; // Default to medium
 	}
 }

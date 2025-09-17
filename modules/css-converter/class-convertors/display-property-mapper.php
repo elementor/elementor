@@ -2,7 +2,9 @@
 
 namespace Elementor\Modules\CssConverter\ClassConvertors;
 
-class Display_Property_Mapper implements Class_Property_Mapper_Interface {
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Display_Property_Mapper extends Unified_Property_Mapper_Base {
 
 	const VALID_DISPLAYS = [
 		'block',

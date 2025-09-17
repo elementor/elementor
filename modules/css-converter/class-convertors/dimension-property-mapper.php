@@ -2,7 +2,9 @@
 
 namespace Elementor\Modules\CssConverter\ClassConvertors;
 
-class Dimension_Property_Mapper implements Class_Property_Mapper_Interface {
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Dimension_Property_Mapper extends Unified_Property_Mapper_Base {
 
 	const SUPPORTED_PROPERTIES = [ 'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height' ];
 	const SIZE_PATTERN = '/^(\d*\.?\d+)(px|em|rem|%|vh|vw|vmin|vmax)?$/';
@@ -13,7 +15,7 @@ class Dimension_Property_Mapper implements Class_Property_Mapper_Interface {
 	}
 
 	public function map_to_schema( string $property, $value ): array {
-		if (is_string($value) && strtolower(trim($value)) === 'auto') {
+		if ( is_string( $value ) && strtolower( trim( $value ) ) === 'auto' ) {
 			return [];
 		}
 		$normalized = $this->normalize_dimension_value( $value );

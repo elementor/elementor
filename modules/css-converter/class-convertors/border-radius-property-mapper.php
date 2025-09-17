@@ -1,10 +1,15 @@
 <?php
 namespace Elementor\Modules\CssConverter\ClassConvertors;
 
-class Border_Radius_Property_Mapper implements Class_Property_Mapper_Interface {
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Border_Radius_Property_Mapper extends Unified_Property_Mapper_Base {
 	const SUPPORTED_PROPERTIES = [
-		'border-radius', 'border-top-left-radius', 'border-top-right-radius', 
-		'border-bottom-right-radius', 'border-bottom-left-radius'
+		'border-radius',
+		'border-top-left-radius',
+		'border-top-right-radius',
+		'border-bottom-right-radius',
+		'border-bottom-left-radius',
 	];
 	const SIZE_PATTERN = '/^(\d*\.?\d+)(px|em|rem|%|vh|vw)?$/';
 
@@ -16,23 +21,45 @@ class Border_Radius_Property_Mapper implements Class_Property_Mapper_Interface {
 		if ( $property === 'border-radius' ) {
 			$parsed = $this->parse_border_radius_shorthand( $value );
 			return [
-				'border-top-left-radius' => [ '$$type' => 'size', 'value' => $parsed['top-left'] ],
-				'border-top-right-radius' => [ '$$type' => 'size', 'value' => $parsed['top-right'] ],
-				'border-bottom-right-radius' => [ '$$type' => 'size', 'value' => $parsed['bottom-right'] ],
-				'border-bottom-left-radius' => [ '$$type' => 'size', 'value' => $parsed['bottom-left'] ],
+				'border-top-left-radius' => [
+					'$$type' => 'size',
+					'value' => $parsed['top-left'],
+				],
+				'border-top-right-radius' => [
+					'$$type' => 'size',
+					'value' => $parsed['top-right'],
+				],
+				'border-bottom-right-radius' => [
+					'$$type' => 'size',
+					'value' => $parsed['bottom-right'],
+				],
+				'border-bottom-left-radius' => [
+					'$$type' => 'size',
+					'value' => $parsed['bottom-left'],
+				],
 			];
 		}
-		if (in_array($property, [
+		if ( in_array($property, [
 			'border-top-left-radius',
 			'border-top-right-radius',
 			'border-bottom-right-radius',
 			'border-bottom-left-radius',
-		], true)) {
-			$parsed = $this->parse_radius_value($value);
-			return [ $property => [ '$$type' => 'size', 'value' => $parsed ] ];
+		], true) ) {
+			$parsed = $this->parse_radius_value( $value );
+			return [
+				$property => [
+					'$$type' => 'size',
+					'value' => $parsed,
+				],
+			];
 		}
 		$parsed = $this->parse_radius_value( $value );
-		return [ $property => [ '$$type' => 'size', 'value' => $parsed ] ];
+		return [
+			$property => [
+				'$$type' => 'size',
+				'value' => $parsed,
+			],
+		];
 	}
 
 	public function get_supported_properties(): array {
@@ -54,7 +81,7 @@ class Border_Radius_Property_Mapper implements Class_Property_Mapper_Interface {
 		$parts = preg_split( '/\s+/', trim( $value ) );
 		$count = count( $parts );
 		$top_left = $top_right = $bottom_right = $bottom_left = '0px';
-		
+
 		if ( $count === 1 ) {
 			$top_left = $top_right = $bottom_right = $bottom_left = $parts[0];
 		} elseif ( $count === 2 ) {
@@ -70,7 +97,7 @@ class Border_Radius_Property_Mapper implements Class_Property_Mapper_Interface {
 			$bottom_right = $parts[2];
 			$bottom_left = $parts[3];
 		}
-		
+
 		return [
 			'top-left' => $this->parse_radius_value( $top_left ),
 			'top-right' => $this->parse_radius_value( $top_right ),
@@ -86,9 +113,15 @@ class Border_Radius_Property_Mapper implements Class_Property_Mapper_Interface {
 			if ( 0 === $number % 1 ) {
 				$number = (int) $number;
 			}
-			return [ 'size' => $number, 'unit' => $unit ];
+			return [
+				'size' => $number,
+				'unit' => $unit,
+			];
 		}
-		
-		return [ 'size' => 0, 'unit' => 'px' ];
+
+		return [
+			'size' => 0,
+			'unit' => 'px',
+		];
 	}
 }

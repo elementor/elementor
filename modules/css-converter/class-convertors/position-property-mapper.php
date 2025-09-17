@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Modules\CssConverter\ClassConvertors;
 
-class Position_Property_Mapper implements Class_Property_Mapper_Interface {
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Position_Property_Mapper extends Unified_Property_Mapper_Base {
 	const SUPPORTED_PROPERTIES = [ 'position', 'top', 'right', 'bottom', 'left', 'z-index' ];
 	const SIZE_PATTERN = '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw)?$/';
 	const POSITION_VALUES = [ 'static', 'relative', 'absolute', 'fixed', 'sticky' ];
@@ -17,21 +19,41 @@ class Position_Property_Mapper implements Class_Property_Mapper_Interface {
 			'bottom' => 'inset-block-end',
 			'left' => 'inset-inline-start',
 		];
-		$target_property = $logical_map[$property] ?? $property;
-		if (in_array($property, ['top', 'right', 'bottom', 'left'], true)) {
-			$size = $this->parse_position_size_value($value);
-			return [ $target_property => [ '$$type' => 'size', 'value' => $size ] ];
+		$target_property = $logical_map[ $property ] ?? $property;
+		if ( in_array( $property, [ 'top', 'right', 'bottom', 'left' ], true ) ) {
+			$size = $this->parse_position_size_value( $value );
+			return [
+				$target_property => [
+					'$$type' => 'size',
+					'value' => $size,
+				],
+			];
 		}
 		if ( $property === 'position' ) {
 			$normalized = $this->normalize_position_value( $value );
-			return [ $property => [ '$$type' => 'string', 'value' => $normalized ] ];
+			return [
+				$property => [
+					'$$type' => 'string',
+					'value' => $normalized,
+				],
+			];
 		}
 		if ( $property === 'z-index' ) {
 			$number = $this->parse_z_index_value( $value );
-			return [ $property => [ '$$type' => 'number', 'value' => $number ] ];
+			return [
+				$property => [
+					'$$type' => 'number',
+					'value' => $number,
+				],
+			];
 		}
 		$size = $this->parse_position_size_value( $value );
-		return [ $property => [ '$$type' => 'size', 'value' => $size ] ];
+		return [
+			$property => [
+				'$$type' => 'size',
+				'value' => $size,
+			],
+		];
 	}
 
 	public function get_supported_properties(): array {
@@ -42,17 +64,17 @@ class Position_Property_Mapper implements Class_Property_Mapper_Interface {
 		if ( ! is_string( $value ) ) {
 			return false;
 		}
-		
+
 		$value = trim( strtolower( $value ) );
-		
+
 		if ( $property === 'position' ) {
 			return in_array( $value, self::POSITION_VALUES, true );
 		}
-		
+
 		if ( $property === 'z-index' ) {
 			return $value === 'auto' || ( is_numeric( $value ) && (int) $value == $value );
 		}
-		
+
 		// top, right, bottom, left
 		return $value === 'auto' || 1 === preg_match( self::SIZE_PATTERN, $value );
 	}
@@ -64,21 +86,24 @@ class Position_Property_Mapper implements Class_Property_Mapper_Interface {
 
 	private function parse_z_index_value( string $value ): int {
 		$value = trim( strtolower( $value ) );
-		
+
 		if ( $value === 'auto' ) {
 			return 0;
 		}
-		
+
 		return (int) $value;
 	}
 
 	private function parse_position_size_value( string $value ): array {
 		$value = trim( strtolower( $value ) );
-		
+
 		if ( $value === 'auto' ) {
-			return [ 'size' => 'auto', 'unit' => '' ];
+			return [
+				'size' => 'auto',
+				'unit' => '',
+			];
 		}
-		
+
 		// Allow negative values
 		if ( 1 === preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw)?$/', $value, $matches ) ) {
 			$number = (float) $matches[1];
@@ -86,9 +111,15 @@ class Position_Property_Mapper implements Class_Property_Mapper_Interface {
 			if ( 0 === $number % 1 ) {
 				$number = (int) $number;
 			}
-			return [ 'size' => $number, 'unit' => $unit ];
+			return [
+				'size' => $number,
+				'unit' => $unit,
+			];
 		}
-		
-		return [ 'size' => 0, 'unit' => 'px' ];
+
+		return [
+			'size' => 0,
+			'unit' => 'px',
+		];
 	}
 }

@@ -2,7 +2,9 @@
 
 namespace Elementor\Modules\CssConverter\ClassConvertors;
 
-class Line_Height_Property_Mapper implements Class_Property_Mapper_Interface {
+require_once __DIR__ . '/unified-property-mapper-base.php';
+
+class Line_Height_Property_Mapper extends Unified_Property_Mapper_Base {
 
 	const UNIT_PATTERN = '/^(\d*\.?\d+)(px|em|rem|%)?$/';
 
@@ -59,13 +61,13 @@ class Line_Height_Property_Mapper implements Class_Property_Mapper_Interface {
 				$number = (int) $number;
 			}
 
-		if ( empty( $unit ) ) {
-			// For unitless line-height, convert to em equivalent
-			return [
-				'size' => $number,
-				'unit' => 'em',
-			];
-		}
+			if ( empty( $unit ) ) {
+				// For unitless line-height, convert to em equivalent
+				return [
+					'size' => $number,
+					'unit' => 'em',
+				];
+			}
 
 			return [
 				'size' => $number,
