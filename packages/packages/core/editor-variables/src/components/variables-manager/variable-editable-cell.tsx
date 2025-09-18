@@ -35,13 +35,19 @@ export const VariableEditableCell = React.memo(
 		const [ isEditing, setIsEditing ] = useState( false );
 
 		const { labelFieldError, setLabelFieldError } = useLabelError();
+		const [ valueFieldError, setValueFieldError ] = useState( '' );
 
 		const rowRef = useRef< HTMLTableRowElement >( null );
 
 		const handleSave = useCallback( () => {
-			onChange( value );
+			const hasError =
+				( fieldType === 'label' && labelFieldError?.message ) || ( fieldType === 'value' && valueFieldError );
+
+			if ( ! hasError ) {
+				onChange( value );
+			}
 			setIsEditing( false );
-		}, [ value, onChange ] );
+		}, [ value, onChange, fieldType, labelFieldError, valueFieldError ] );
 
 		useEffect( () => {
 			onRowRef?.( rowRef?.current );
@@ -81,12 +87,14 @@ export const VariableEditableCell = React.memo(
 						value,
 						message: errorMsg,
 					} );
+				} else {
+					setValueFieldError( errorMsg );
 				}
 			},
-			[ fieldType, value, setLabelFieldError ]
+			[ fieldType, value, setLabelFieldError, setValueFieldError ]
 		);
 
-		const currentError = fieldType === 'label' ? labelFieldError : undefined;
+		const currentError = fieldType === 'label' ? labelFieldError : fieldType === 'value' ? { value, message: valueFieldError } : undefined;
 
 		const editableContent = editableElement( {
 			value,
