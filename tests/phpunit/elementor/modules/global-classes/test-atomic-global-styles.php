@@ -100,7 +100,6 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 				} )
 			);
 
-
 		// Act.
 		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ 0 ] );
 	}
@@ -245,7 +244,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		$cache_validity->validate( [ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_FRONTEND ] );
 		$cache_validity->validate( [ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_PREVIEW ] );
 
-		do_action('elementor/core/files/clear_cache' );
+		do_action( 'elementor/core/files/clear_cache' );
 
 		// Assert.
 		$this->assertFalse( $cache_validity->is_valid(

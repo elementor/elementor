@@ -34,6 +34,7 @@ class Cache_Validity_Item {
 		if ( empty( $keys ) ) {
 			$data['state'] = true;
 			$data['meta'] = $meta;
+
 			$this->update_stored_data( $data );
 
 			return;
@@ -162,10 +163,6 @@ class Cache_Validity_Item {
 
 			if ( ! isset( $current['children'][ $key ] ) ) {
 				$current['children'][ $key ] = [ 'state' => false ];
-			}
-
-			if ( is_bool( $current ) ) {
-				$current = [ 'state' => $current ];
 			}
 
 			$current = &$current['children'][ $key ];
