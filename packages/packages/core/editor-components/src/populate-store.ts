@@ -1,17 +1,12 @@
 import { useEffect } from 'react';
-import { __useDispatch as useDispatch } from '@elementor/store';
+import { __dispatch as dispatch } from '@elementor/store';
 
-import { apiClient } from './api';
-import { slice } from './store';
+import loadComponents from './load-components';
 
 export function PopulateStore() {
-	const dispatch = useDispatch();
-
 	useEffect( () => {
-		apiClient.get().then( ( response ) => {
-			dispatch( slice.actions.load( response ) );
-		} );
-	}, [ dispatch ] );
+		dispatch( loadComponents() );
+	}, [] );
 
 	return null;
 }
