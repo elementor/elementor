@@ -272,11 +272,25 @@ describe( 'VariablesManagerPanel', () => {
 			isOpen: false,
 		} );
 
+		let isDirty = false;
+		const mockHandleOnChange = jest.fn( () => {
+			isDirty = true;
+		} );
+
+		mockUseVariablesManagerState.mockImplementation( () => ( {
+			...defaultMockState,
+			isDirty,
+			handleOnChange: mockHandleOnChange,
+		} ) );
+
 		// Act
-		render( <VariablesManagerPanel /> );
+		const { rerender } = render( <VariablesManagerPanel /> );
 
 		await screen.findByRole( 'grid', { name: 'Variables Table' } );
+
 		fireEvent.click( screen.getByRole( 'grid', { name: 'Variables Table' } ) );
+
+		rerender( <VariablesManagerPanel /> );
 
 		fireEvent.click( screen.getByLabelText( 'Close' ) );
 
