@@ -52,7 +52,7 @@ describe( '@elementor/env', () => {
 		// Assert.
 		expect( validEnv ).toEqual( { test: 'value' } );
 		expect( invalidEnv ).toEqual( {} );
-		expect( console ).toHaveWarned( 'invalidEnv - error' );
+		expect( console ).toHaveWarnedWith( 'invalidEnv - error' );
 	} );
 
 	it( 'should support a standalone validation', () => {
