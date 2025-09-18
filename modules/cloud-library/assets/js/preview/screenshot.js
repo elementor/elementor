@@ -63,7 +63,7 @@ class Screenshot extends elementorModules.ViewModule {
 		await Promise.race( [ pageLoadedPromise, timeOutPromise ] );
 
 		let $elementorElement = this.elements.$elementor;
-		
+
 		if ( ! $elementorElement.length ) {
 			$elementorElement = jQuery( ElementorScreenshotConfig.selector );
 		}
@@ -76,11 +76,11 @@ class Screenshot extends elementorModules.ViewModule {
 			throw new Error( 'Elementor container not found. Selector: ' + ElementorScreenshotConfig.selector );
 		}
 
-		this.preprocessLazyImages($elementorElement);
-		
-		const bodyStyle = window.getComputedStyle(document.body);
+		this.preprocessLazyImages( $elementorElement );
+
+		const bodyStyle = window.getComputedStyle( document.body );
 		const bodyBackgroundColor = bodyStyle.backgroundColor;
-		
+
 		const canvas = await toCanvas( $elementorElement[ 0 ], {
 			quality: this.getSettings( 'image_quality' ),
 			imagePlaceholder: this.getSettings( 'image_placeholder' ),
@@ -94,21 +94,21 @@ class Screenshot extends elementorModules.ViewModule {
 		return canvas.toDataURL( 'image/webp', this.getSettings( 'image_quality' ) );
 	}
 
-	preprocessLazyImages($element) {
-		const lazyImages = $element.find('img[data-src], img.swiper-lazy, img.lazy');
-		
-		lazyImages.each((index, img) => {
-			const $img = jQuery(img);
-			
-			if ($img.attr('data-src')) {
-				$img.attr('src', $img.attr('data-src'));
-				$img.removeAttr('data-src');
+	preprocessLazyImages( $element ) {
+		const lazyImages = $element.find( 'img[data-src], img.swiper-lazy, img.lazy' );
+
+		lazyImages.each( ( index, img ) => {
+			const $img = jQuery( img );
+
+			if ( $img.attr( 'data-src' ) ) {
+				$img.attr( 'src', $img.attr( 'data-src' ) );
+				$img.removeAttr( 'data-src' );
 			}
-			
-			$img.removeClass('swiper-lazy lazy swiper-slide-image');
-			$img.removeAttr('loading');
-			$img.removeAttr('data-srcset');
-		});
+
+			$img.removeClass( 'swiper-lazy lazy swiper-slide-image' );
+			$img.removeAttr( 'loading' );
+			$img.removeAttr( 'data-srcset' );
+		} );
 	}
 
 	/**
@@ -167,7 +167,6 @@ class Screenshot extends elementorModules.ViewModule {
 			}
 		} );
 	}
-
 
 	/**
 	 * Notify that the screenshot has been succeed.
