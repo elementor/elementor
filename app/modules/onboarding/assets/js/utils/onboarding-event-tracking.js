@@ -55,7 +55,14 @@ export class OnboardingEventTracking {
 		elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
 		elementorCommon.config.library_connect.current_access_tier = data.access_tier;
 		elementorCommon.config.library_connect.plan_type = data.plan_type;
-		elementorCommon.config.library_connect.user_id = data.user_id || null;
+
+		if ( data.user_id ) {
+			elementorCommon.config.library_connect.user_id = data.user_id;
+		} else if ( data.id ) {
+			elementorCommon.config.library_connect.user_id = data.id;
+		} else if ( data.userId ) {
+			elementorCommon.config.library_connect.user_id = data.userId;
+		}
 	}
 
 	static sendUpgradeNowStep3( selectedFeatures, currentStep ) {
