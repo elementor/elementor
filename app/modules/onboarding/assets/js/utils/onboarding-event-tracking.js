@@ -43,7 +43,15 @@ export class OnboardingEventTracking {
 			return;
 		}
 
-		return elementorCommon.eventsManager.dispatchEvent( eventName, payload );
+		if ( ! elementorCommon.eventsManager || typeof elementorCommon.eventsManager.dispatchEvent !== 'function' ) {
+			return;
+		}
+
+		try {
+			return elementorCommon.eventsManager.dispatchEvent( eventName, payload );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to dispatch event:', error );
+		}
 	}
 
 	static updateLibraryConnectConfig( data ) {
@@ -55,14 +63,7 @@ export class OnboardingEventTracking {
 		elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
 		elementorCommon.config.library_connect.current_access_tier = data.access_tier;
 		elementorCommon.config.library_connect.plan_type = data.plan_type;
-
-		if ( data.user_id ) {
-			elementorCommon.config.library_connect.user_id = data.user_id;
-		} else if ( data.id ) {
-			elementorCommon.config.library_connect.user_id = data.id;
-		} else if ( data.userId ) {
-			elementorCommon.config.library_connect.user_id = data.userId;
-		}
+		elementorCommon.config.library_connect.user_id = data.user_id || null;
 	}
 
 	static sendUpgradeNowStep3( selectedFeatures, currentStep ) {

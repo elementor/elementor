@@ -157,6 +157,7 @@ class Library extends Common_App {
 			'access_tier' => ConnectModule::ACCESS_TIER_FREE,
 			'plan_type' => ConnectModule::ACCESS_TIER_FREE,
 			'tracking_opted_in' => $this->get( 'data_share_opted_in' ) ?? false,
+			'user_id' => $this->get_user_id(),
 		];
 	}
 
