@@ -8,7 +8,7 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
+import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { ColorFilterIcon, TrashIcon } from '@elementor/icons';
 import { Alert, Box, Button, CloseButton, Divider, ErrorBoundary, Stack, usePopupState } from '@elementor/ui';
@@ -16,8 +16,10 @@ import { __ } from '@wordpress/i18n';
 
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
+import { NoSearchResults } from '../ui/no-search-results';
 import { useAutoEdit } from './hooks/use-auto-edit';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
+import { getVariables } from '../../hooks/use-prop-variables';
 import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu';
 import { VariablesManagerTable } from './variables-manager-table';
 
@@ -45,23 +47,21 @@ export function VariablesManagerPanel() {
 
 	const {
 		variables,
-		ids,
 		isDirty,
 		hasValidationErrors,
-		setIds,
+		searchValue,
 		handleOnChange,
 		createVariable,
 		handleDeleteVariable,
 		handleSave,
 		isSaving,
+		handleSearch,
 		setHasValidationErrors,
 	} = useVariablesManagerState();
 
 	const { autoEditVariableId, startAutoEdit, handleAutoEditComplete } = useAutoEdit();
 
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
-
-	const hasVariables = Object.values( variables ).some( ( variable ) => ! variable.deleted );
 
 	usePreventUnload( isDirty );
 
@@ -105,6 +105,9 @@ export function VariablesManagerPanel() {
 		},
 	];
 
+	const hasVariables = Object.values( variables ).some( ( variable ) => ! variable.deleted );
+	const hasSearchValue = searchValue !== '';
+
 	return (
 		<ThemeProvider>
 			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
@@ -133,7 +136,6 @@ export function VariablesManagerPanel() {
 									/>
 								</Stack>
 							</Stack>
-							<Divider sx={ { width: '100%' } } />
 						</Stack>
 					</PanelHeader>
 					<PanelBody
@@ -143,18 +145,33 @@ export function VariablesManagerPanel() {
 							height: '100%',
 						} }
 					>
-						{ hasVariables ? (
+						<SearchField
+							placeholder={ __( 'Search', 'elementor' ) }
+							value={ searchValue }
+							onSearch={ handleSearch }
+						/>
+						<Divider sx={ { width: '100%' } } />
+
+						{ hasVariables && (
 							<VariablesManagerTable
 								menuActions={ menuActions }
 								variables={ variables }
 								onChange={ handleOnChange }
-								ids={ ids }
-								onIdsChange={ setIds }
 								autoEditVariableId={ autoEditVariableId }
 								onAutoEditComplete={ handleAutoEditComplete }
 								onFieldError={ setHasValidationErrors }
 							/>
-						) : (
+						) }
+
+						{ ! hasVariables && hasSearchValue && (
+							<NoSearchResults
+								searchValue={ searchValue }
+								onClear={ () => handleSearch( '' ) }
+								icon={ <ColorFilterIcon fontSize="large" /> }
+							/>
+						) }
+
+						{ ! hasVariables && ! hasSearchValue && (
 							<EmptyState
 								title={ __( 'Create your first variable', 'elementor' ) }
 								message={ __(

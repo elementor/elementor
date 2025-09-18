@@ -5,6 +5,7 @@ import { type PropKey } from '@elementor/editor-props';
 import { useVariableType } from '../context/variable-type-context';
 import { service } from '../service';
 import { type NormalizedVariable, type Variable } from '../types';
+import { filterBySearch } from '../utils/filter-by-search';
 
 export const getVariables = ( includeDeleted = true ) => {
 	const variables = service.variables();
@@ -33,7 +34,7 @@ export const useFilteredVariables = ( searchValue: string, propTypeKey: string )
 	const baseVariables = usePropVariables( propTypeKey );
 
 	const typeFilteredVariables = useVariableSelectionFilter( baseVariables );
-	const searchFilteredVariables = filterVariablesBySearchValue( typeFilteredVariables, searchValue );
+	const searchFilteredVariables = filterBySearch( typeFilteredVariables, searchValue );
 	const sortedVariables = searchFilteredVariables.sort( ( a, b ) => {
 		const orderA = a.order ?? Number.MAX_SAFE_INTEGER;
 		const orderB = b.order ?? Number.MAX_SAFE_INTEGER;
@@ -53,11 +54,6 @@ const useVariableSelectionFilter = ( variables: NormalizedVariable[] ): Normaliz
 	const { propType } = useBoundProp();
 
 	return selectionFilter ? selectionFilter( variables, propType ) : variables;
-};
-
-const filterVariablesBySearchValue = ( variables: NormalizedVariable[], searchValue: string ): NormalizedVariable[] => {
-	const lowerSearchValue = searchValue.toLowerCase();
-	return variables.filter( ( { label } ) => label.toLowerCase().includes( lowerSearchValue ) );
 };
 
 const usePropVariables = ( propKey: PropKey ): NormalizedVariable[] => {
