@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import { EyeIcon } from '@elementor/icons';
 import { Box, Divider, Icon, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -7,7 +8,6 @@ import { useComponents } from '../../hooks/use-components';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
-import { useEffect } from 'react';
 
 export function ComponentsList() {
 	const { components, isLoading, searchValue } = useFilteredComponents();
@@ -128,21 +128,20 @@ const EmptySearchResult = () => {
 
 const useFilteredComponents = () => {
 	// const { data: components, isLoading } = useComponents();
-	const [isLoading, setIsLoading] = React.useState(false);
+	const [ isLoading, setIsLoading ] = React.useState( false );
 	const components = useComponents();
-	console.log('components', components );
 	const { searchValue } = useSearch();
 
-useEffect(() => {
-	setIsLoading(true);
-	if(components){
-		setIsLoading(false);
-	}
-}, [components]);
+	useEffect( () => {
+		setIsLoading( true );
+		if ( components ) {
+			setIsLoading( false );
+		}
+	}, [ components ] );
 
 	return {
-		components: components?.filter( ( component ) =>
-			component?.name?.toLowerCase().includes( searchValue.toLowerCase() )
+		components: components?.filter(
+			( component ) => component?.name?.toLowerCase().includes( searchValue.toLowerCase() )
 		),
 		isLoading,
 		searchValue,
