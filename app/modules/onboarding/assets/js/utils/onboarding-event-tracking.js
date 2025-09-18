@@ -241,6 +241,9 @@ export class OnboardingEventTracking {
 			const actionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS );
 			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
 
+			// eslint-disable-next-line no-console
+			console.log( 'Step2EndState Debug:', { actionsString, startTimeString, canSendEvents: elementorCommon.config.editor_events?.can_send_events } );
+
 			if ( ! actionsString || ! startTimeString ) {
 				return;
 			}
@@ -469,20 +472,26 @@ export class OnboardingEventTracking {
 	static checkAndSendEditorLoadedFromOnboarding() {
 		try {
 			const alreadyTracked = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED );
+			const siteStarterChoice = this.getSiteStarterChoice();
+			
+			// eslint-disable-next-line no-console
+			console.log( 'EditorLoadedFromOnboarding Debug:', { alreadyTracked, siteStarterChoice, eventsManagerAvailable: !! elementorCommon.eventsManager } );
+			
 			if ( alreadyTracked ) {
 				return;
 			}
 
-			const siteStarterChoice = this.getSiteStarterChoice();
 			if ( ! siteStarterChoice ) {
 				return;
 			}
 
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.EDITOR_LOADED_FROM_ONBOARDING, {
-				location: 'editor',
-				trigger: 'elementor_loaded',
-				editor_loaded_from_onboarding_source: siteStarterChoice,
-			} );
+			if ( elementorCommon.eventsManager && 'function' === typeof elementorCommon.eventsManager.dispatchEvent ) {
+				elementorCommon.eventsManager.dispatchEvent( ONBOARDING_EVENTS_MAP.EDITOR_LOADED_FROM_ONBOARDING, {
+					location: 'editor',
+					trigger: 'elementor_loaded',
+					editor_loaded_from_onboarding_source: siteStarterChoice,
+				} );
+			}
 
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED, 'true' );
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, '0' );
