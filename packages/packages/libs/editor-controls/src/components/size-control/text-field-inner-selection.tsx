@@ -109,7 +109,11 @@ export const SelectionEndAdornment = < T extends string >( {
 	};
 
 	const { placeholder, showPrimaryColor } = useUnitPlaceholder( value );
-
+	const itemStyles = {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+	};
 	return (
 		<InputAdornment position="end">
 			<StyledButton
@@ -120,13 +124,22 @@ export const SelectionEndAdornment = < T extends string >( {
 			>
 				{ placeholder ?? alternativeOptionLabels[ value ] ?? value }
 			</StyledButton>
-
 			<Menu MenuListProps={ { dense: true } } { ...bindMenu( popupState ) }>
 				{ options.map( ( option, index ) => (
 					<MenuListItem
 						key={ option }
 						onClick={ () => handleMenuItemClick( index ) }
 						{ ...menuItemsAttributes?.[ option ] }
+						primaryTypographyProps={ {
+							variant: 'caption',
+							sx: {
+								...itemStyles,
+								lineHeight: '1',
+							},
+						} }
+						menuItemTextProps={ {
+							sx: itemStyles,
+						} }
 					>
 						{ alternativeOptionLabels[ option ] ?? option.toUpperCase() }
 					</MenuListItem>
