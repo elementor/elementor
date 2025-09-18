@@ -16,8 +16,10 @@ const ONBOARDING_EVENTS_MAP = {
 	POST_ONBOARDING_3RD_CLICK: 'post_onboarding_3rd_click',
 	EXIT: 'core_onboarding_exit',
 	SKIP: 'core_onboarding_skip',
+	TOP_UPGRADE: 'core_onboarding_top_upgrade',
 	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
 	CREATE_ACCOUNT_STATUS: 'core_onboarding_create_account_status',
+	STEP1_CLICKED_CONNECT: 'core_onboarding_s1_clicked_connect',
 };
 
 const ONBOARDING_STORAGE_KEYS = {
@@ -39,11 +41,11 @@ const ONBOARDING_STORAGE_KEYS = {
 
 export class OnboardingEventTracking {
 	static dispatchEvent( eventName, payload ) {
-		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
+		if ( ! elementorCommon.eventsManager || 'function' !== typeof elementorCommon.eventsManager.dispatchEvent ) {
 			return;
 		}
 
-		if ( ! elementorCommon.eventsManager || typeof elementorCommon.eventsManager.dispatchEvent !== 'function' ) {
+		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
 			return;
 		}
 
@@ -89,12 +91,14 @@ export class OnboardingEventTracking {
 	}
 
 	static sendHelloBizContinue( stepNumber = 2 ) {
-		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE, {
-			location: 'plugin_onboarding',
-			trigger: eventsConfig.triggers.click,
-			step_number: stepNumber,
-			step_name: 'hello_biz_theme',
-		} );
+		if ( elementorCommon.config.editor_events?.can_send_events ) {
+			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE, {
+				location: 'plugin_onboarding',
+				trigger: eventsConfig.triggers.click,
+				step_number: stepNumber,
+				step_name: 'hello_biz_theme',
+			} );
+		}
 	}
 
 	static initiateCoreOnboarding() {
@@ -681,7 +685,7 @@ export class OnboardingEventTracking {
 
 	static sendTopUpgrade( currentStep, upgradeClicked ) {
 		if ( elementorCommon.config.editor_events?.can_send_events ) {
-			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT, {
+			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.TOP_UPGRADE, {
 				location: 'plugin_onboarding',
 				trigger: 'upgrade_interaction',
 				step_number: currentStep,
@@ -693,7 +697,7 @@ export class OnboardingEventTracking {
 		this.storeTopUpgradeEventForLater( currentStep, upgradeClicked );
 	}
 
-	static sendCreateMyAccount( currentStep, upgradeClicked, createAccountClicked ) {
+	static sendCreateMyAccount( currentStep, createAccountClicked ) {
 		if ( elementorCommon.config.editor_events?.can_send_events ) {
 			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT, {
 				location: 'plugin_onboarding',
@@ -701,11 +705,10 @@ export class OnboardingEventTracking {
 				step_number: currentStep,
 				step_name: this.getStepName( currentStep ),
 				action_step: currentStep,
-				upgrade_clicked: upgradeClicked,
 				create_account_clicked: createAccountClicked,
 			} );
 		}
-		this.storeCreateMyAccountEventForLater( currentStep, upgradeClicked, createAccountClicked );
+		this.storeCreateMyAccountEventForLater( currentStep, createAccountClicked );
 	}
 
 	static sendCreateAccountStatus( status, currentStep = 1 ) {
@@ -719,6 +722,15 @@ export class OnboardingEventTracking {
 			} );
 		}
 		this.storeCreateAccountStatusEventForLater( status, currentStep );
+	}
+
+	static sendStep1ClickedConnect( currentStep = 1 ) {
+		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP1_CLICKED_CONNECT, {
+			location: 'plugin_onboarding',
+			trigger: eventsConfig.triggers.click,
+			step_number: currentStep,
+			step_name: this.getStepName( currentStep ),
+		} );
 	}
 
 	static storeTopUpgradeEventForLater( currentStep, upgradeClicked ) {
@@ -742,7 +754,7 @@ export class OnboardingEventTracking {
 			}
 
 			const eventData = JSON.parse( storedDataStr );
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT, {
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.TOP_UPGRADE, {
 				location: 'plugin_onboarding',
 				trigger: 'upgrade_interaction',
 				step_number: eventData.currentStep,
@@ -833,6 +845,53 @@ export class OnboardingEventTracking {
 		}
 	}
 
+	static setupTopUpgradeTracking( currentStep ) {
+		if ( 'undefined' === typeof document ) {
+			return;
+		}
+
+		const upgradeButtons = document.querySelectorAll( '.elementor-button-upgrade, .eps-button--upgrade, [data-upgrade-button]' );
+
+		upgradeButtons.forEach( ( button ) => {
+			let isHovered = false;
+			let hasClicked = false;
+
+			const handleMouseEnter = () => {
+				isHovered = true;
+			};
+
+			const handleMouseLeave = () => {
+				if ( isHovered && ! hasClicked ) {
+					this.sendTopUpgrade( currentStep, 'no_click' );
+				}
+				isHovered = false;
+			};
+
+			const handleClick = () => {
+				hasClicked = true;
+
+				let upgradeClickedValue = 'on_topbar';
+
+				if ( button.closest( '.elementor-tooltip' ) ) {
+					upgradeClickedValue = 'on_tooltip';
+				} else if ( button.closest( '.eps-app__header' ) ) {
+					upgradeClickedValue = 'on_topbar';
+				}
+
+				if ( elementorCommon.config.library_connect?.is_connected &&
+					'pro' === elementorCommon.config.library_connect?.current_access_tier ) {
+					upgradeClickedValue = 'already_pro_user';
+				}
+
+				this.sendTopUpgrade( currentStep, upgradeClickedValue );
+			};
+
+			button.addEventListener( 'mouseenter', handleMouseEnter );
+			button.addEventListener( 'mouseleave', handleMouseLeave );
+			button.addEventListener( 'click', handleClick );
+		} );
+	}
+
 	static handleStorageError( message, error ) {
 		// eslint-disable-next-line no-console
 		console.warn( message, error );
@@ -840,3 +899,4 @@ export class OnboardingEventTracking {
 }
 
 window.OnboardingEventTracking = OnboardingEventTracking;
+window.OnboardingEventTracking.STORAGE_KEYS = ONBOARDING_STORAGE_KEYS;

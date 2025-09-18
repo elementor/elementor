@@ -86,6 +86,10 @@ export default function ChooseFeatures() {
 		}
 	}, [ selectedFeatures ] );
 
+	useEffect( () => {
+		OnboardingEventTracking.setupTopUpgradeTracking( state.currentStep );
+	}, [] );
+
 	function isFeatureSelected( features ) {
 		return !! features.advanced.length || !! features.essential.length;
 	}

@@ -29,6 +29,8 @@ export default function Account() {
 				},
 			);
 		}
+
+		OnboardingEventTracking.setupTopUpgradeTracking( state.currentStep );
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
@@ -265,6 +267,7 @@ export default function Account() {
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
 								onClick={ () => {
 									OnboardingEventTracking.trackStep1Action( 'connect' );
+									OnboardingEventTracking.sendStep1ClickedConnect( state.currentStep );
 
 									safeDispatchEvent(
 										'existing_account_connect',

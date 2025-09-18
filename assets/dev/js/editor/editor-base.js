@@ -1216,7 +1216,7 @@ export default class EditorBase extends Marionette.Application {
 
 		Events.dispatch( elementorCommon.elements.$window, 'elementor/loaded', null, 'elementor:loaded' );
 
-		if ( window.OnboardingEventTracking && window.OnboardingEventTracking.checkAndSendEditorLoadedFromOnboarding ) {
+		if ( window.OnboardingEventTracking && 'function' === typeof window.OnboardingEventTracking.checkAndSendEditorLoadedFromOnboarding ) {
 			window.OnboardingEventTracking.checkAndSendEditorLoadedFromOnboarding();
 		}
 

@@ -41,6 +41,8 @@ export default function HelloTheme() {
 
 			goToNextScreen();
 		}
+
+		OnboardingEventTracking.setupTopUpgradeTracking( state.currentStep );
 	}, [] );
 
 	const resetScreenContent = () => {
