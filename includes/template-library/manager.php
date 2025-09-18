@@ -263,7 +263,7 @@ class Manager {
 		 * @since 3.32.2
 		 * @param-out $full_library_data - 'templates' and 'config' data ('config' holds the list of categories).
 		 */
-		return apply_filters( 'elementor/library/full-data',  $full_library_data );
+		return apply_filters( 'elementor/library/full-data', $full_library_data );
 	}
 
 	/**
