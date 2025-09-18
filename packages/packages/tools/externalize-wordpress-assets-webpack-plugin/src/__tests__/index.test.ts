@@ -68,7 +68,7 @@ describe( '@elementor/externalize-wordpress-assets-webpack-plugin', () => {
 		expect.assertions( 4 );
 
 		// Act.
-		compiler.run( ( err, stats ) => {
+		compiler?.run( ( err, stats ) => {
 			// Assert.
 			expect( err ).toBe( null );
 			expect( stats?.hasErrors() ).toBe( false );

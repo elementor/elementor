@@ -15,7 +15,7 @@ module.exports = {
 	// By default, jest will treat everything under `__tests__` as a test file, we only need `__tests__/*.test.ts`.
 	testMatch: [ '<rootDir>/packages/**/__tests__/**/*.test.[jt]s?(x)' ],
 	// Setup files to run for all the tests.
-	setupFilesAfterEnv: [ '<rootDir>/tests/setup.ts' ],
+	setupFilesAfterEnv: [ '<rootDir>/tests/setup.ts', '<rootDir>/tests/custom-matchers.ts' ],
 	// Code coverage.
 	collectCoverageFrom: [
 		'packages/**/*.{js,jsx,ts,tsx}',
