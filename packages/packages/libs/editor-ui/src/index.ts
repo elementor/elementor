@@ -8,6 +8,8 @@ export { InfoTipCard } from './components/infotip-card';
 export { InfoAlert } from './components/info-alert';
 export { WarningInfotip } from './components/warning-infotip';
 export { GlobalDialog, openDialog, closeDialog } from './components/global-dialog';
+export { SearchField } from './components/search-field';
+
 export * from './components/popover';
 export * from './components/save-changes-dialog';
 
