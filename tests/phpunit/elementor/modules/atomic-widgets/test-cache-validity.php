@@ -2,7 +2,8 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
-use Elementor\Modules\AtomicWidgets\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity_Item;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,7 +25,7 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 	 * Clear all WordPress options used by Cache_Validity class.
 	 */
 	private function clear_cache_validity_options(): void {
-		delete_option( Cache_Validity::CACHE_KEY_PREFIX . ROOT_KEY );
+		delete_option( Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY );
 	}
 
 	public function test_validation_on_root_key() {
@@ -155,7 +156,12 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$this->assertEquals(
 			$cache_validity->get_meta( [ ROOT_KEY ] ),
 			[ 'foo' => 'bar' ],
-			'Meta data should be stored.'
+			'Meta data should be stored for root key.'
+		);
+		$this->assertEquals(
+			$cache_validity->get_meta( [ ROOT_KEY, 'nested' ] ),
+			[ 'foo' => 'bar' ],
+			'Meta data should be stored for nested key.'
 		);
 
 		// Act.
@@ -165,11 +171,11 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$this->assertEquals(
 			$cache_validity->get_meta( [ ROOT_KEY ] ),
 			[ 'foo' => 'bar' ],
-			'Meta data should be stored.'
+			'Meta data should remain stored for root key.'
 		);
 		$this->assertNull(
 			$cache_validity->get_meta( [ ROOT_KEY, 'nested' ] ),
-			'Meta data should be cleaned.'
+			'Meta data should be cleaned for nested key.'
 		);
 	}
 
@@ -240,10 +246,14 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$cache_validity->validate( [ ROOT_KEY ] );
 
 		// Assert.
-		$stored_data = get_option( Cache_Validity::CACHE_KEY_PREFIX . ROOT_KEY );
+		$stored_data = get_option( Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY );
 
 		$this->assertEquals(
-			[ 'state' => true ],
+			[
+				'state' => true,
+				'meta' => null,
+				'children' => [],
+			],
 			$stored_data,
 		);
 	}
@@ -256,11 +266,12 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$cache_validity->validate( [ ROOT_KEY ], [ 'foo' => 'bar' ] );
 
 		// Assert.
-		$stored_data = get_option( Cache_Validity::CACHE_KEY_PREFIX . ROOT_KEY );
+		$stored_data = get_option( Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY );
 
 		$this->assertEquals(
 			[
 				'state' => true,
+				'children' => [],
 				'meta' => [ 'foo' => 'bar' ],
 			],
 			$stored_data,
@@ -275,7 +286,7 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$cache_validity->validate( [ ROOT_KEY, 'nested', 'nested-2' ] );
 
 		// Assert.
-		$stored_data = get_option( Cache_Validity::CACHE_KEY_PREFIX . ROOT_KEY );
+		$stored_data = get_option( Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY );
 
 		$this->assertEquals(
 			[
@@ -297,7 +308,7 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$cache_validity->validate( [ ROOT_KEY, 'nested', 'nested-3' ] );
 
 		// Assert.
-		$stored_data = get_option( Cache_Validity::CACHE_KEY_PREFIX . ROOT_KEY );
+		$stored_data = get_option( Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY );
 
 		$this->assertEquals(
 			[
@@ -333,7 +344,7 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$cache_validity->invalidate( [ ROOT_KEY, 'nested', 'nested-2' ] );
 
 		// Assert.
-		$stored_data = get_option( Cache_Validity::CACHE_KEY_PREFIX . ROOT_KEY );
+		$stored_data = get_option( Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY );
 
 		$this->assertEquals(
 			[
@@ -356,12 +367,134 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$cache_validity->invalidate( [ ROOT_KEY, 'nested' ] );
 
 		// Assert.
-		$stored_data = get_option( Cache_Validity::CACHE_KEY_PREFIX . ROOT_KEY, null );
+		$stored_data = get_option( Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY, null );
 
 		$this->assertEquals(
 			[
 				'state' => true,
+				'children' => [],
 				'meta' => [ 'foo' => 'bar' ],
+			],
+			$stored_data,
+		);
+	}
+
+	public function test_placeholder_nodes_are_removed_after_invalidation() {
+		// Arrange.
+		$cache_validity = new Cache_Validity();
+
+		// Act.
+		$cache_validity->validate( [ ROOT_KEY, 'nested', 'nested-1', 'empty-1', 'empty-2', 'nested-1-1' ] );
+		$cache_validity->validate( [ ROOT_KEY, 'nested', 'nested-2', 'empty-3', 'empty-4', 'nested-2-1', 'nested-2-1-1' ] );
+		$cache_validity->validate( [ ROOT_KEY, 'nested', 'nested-2', 'empty-3', 'empty-4', 'nested-2-1', 'nested-2-1-2' ] );
+
+		// Assert.
+		$stored_data = get_option( Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY );
+
+		$this->assertEquals(
+			[
+				'state' => false,
+				'children' => [
+					'nested' => [
+						'state' => false,
+						'children' => [
+							'nested-1' => [
+								'state' => false,
+								'children' => [
+									'empty-1' => [
+										'state' => false,
+										'children' => [
+											'empty-2' => [
+												'state' => false,
+												'children' => [
+													'nested-1-1' => true,
+												],
+											],
+										],
+									],
+								],
+							],
+							'nested-2' => [
+								'state' => false,
+								'children' => [
+									'empty-3' => [
+										'state' => false,
+										'children' => [
+											'empty-4' => [
+												'state' => false,
+												'children' => [
+													'nested-2-1' => [
+														'state' => false,
+														'children' => [
+															'nested-2-1-1' => true,
+															'nested-2-1-2' => true,
+														],
+													],
+												],
+											],
+										],
+									],
+								],
+							],
+						],
+					],
+				],
+			],
+			$stored_data,
+		);
+
+		// Act.
+		$cache_validity->invalidate( [ ROOT_KEY, 'nested', 'nested-1', 'empty-1', 'empty-2', 'nested-1-2' ] );
+
+		// Assert.
+		$stored_data = get_option( Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY );
+
+		$this->assertEquals(
+			[
+				'state' => false,
+				'children' => [
+					'nested' => [
+						'state' => false,
+						'children' => [
+							'nested-2' => [
+								'state' => false,
+								'children' => [
+									'empty-3' => [
+										'state' => false,
+										'children' => [
+											'empty-4' => [
+												'state' => false,
+												'children' => [
+													'nested-2-1' => [
+														'state' => false,
+														'children' => [
+															'nested-2-1-1' => true,
+															'nested-2-1-2' => true,
+														],
+													],
+												],
+											],
+										],
+									],
+								],
+							],
+						],
+					],
+				],
+			],
+			$stored_data,
+		);
+
+		// Act.
+		$cache_validity->invalidate( [ ROOT_KEY, 'nested', 'nested-2', 'empty-3', 'empty-4' ] );
+
+		// Assert.
+		$stored_data = get_option( Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY );
+
+		$this->assertEquals(
+			[
+				'state' => false,
+				'children' => [],
 			],
 			$stored_data,
 		);

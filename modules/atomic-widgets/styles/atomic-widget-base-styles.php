@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Plugin;
 

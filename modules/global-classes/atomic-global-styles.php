@@ -4,7 +4,7 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
-use Elementor\Modules\AtomicWidgets\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
 
 class Atomic_Global_Styles {
 	const STYLES_KEY = 'global';
