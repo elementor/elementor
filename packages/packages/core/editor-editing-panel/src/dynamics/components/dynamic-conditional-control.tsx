@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { isDependencyMet, type PropType, type PropValue, type PropsSchema } from '@elementor/editor-props';
+import { isDependencyMet, type PropsSchema, type PropType, type PropValue } from '@elementor/editor-props';
 
 import { type DynamicPropValue } from '../utils';
 
@@ -9,7 +9,6 @@ type DynamicConditionalControlProps = React.PropsWithChildren< {
 	dynamicSettings?: Record< string, DynamicPropValue >;
 } >;
 
-
 export const DynamicConditionalControl: React.FC< DynamicConditionalControlProps > = ( {
 	children,
 	propType,
@@ -17,8 +16,10 @@ export const DynamicConditionalControl: React.FC< DynamicConditionalControlProps
 	dynamicSettings,
 } ) => {
 	const defaults = React.useMemo< Record< string, PropValue | null > >( () => {
-		if ( ! propsSchema ) return {};
-		
+		if ( ! propsSchema ) {
+			return {};
+		}
+
 		const entries = Object.entries( propsSchema ) as Array< [ string, PropType ] >;
 		return entries.reduce< Record< string, PropValue | null > >( ( result, [ key, prop ] ) => {
 			result[ key ] = prop?.default ?? null;
@@ -27,19 +28,24 @@ export const DynamicConditionalControl: React.FC< DynamicConditionalControlProps
 	}, [ propsSchema ] );
 
 	const convertedSettings = React.useMemo( () => {
-		if ( ! dynamicSettings ) return {};
-		
-		return Object.entries( dynamicSettings ).reduce< Record< string, PropValue > >( ( result, [ key, dynamicValue ] ) => {
-			if ( dynamicValue && typeof dynamicValue === 'object' && '$$type' in dynamicValue ) {
-				result[ key ] = dynamicValue as PropValue;
-			} else {
-				result[ key ] = {
-					$$type: 'plain',
-					value: dynamicValue
-				} as PropValue;
-			}
-			return result;
-		}, {} );
+		if ( ! dynamicSettings ) {
+			return {};
+		}
+
+		return Object.entries( dynamicSettings ).reduce< Record< string, PropValue > >(
+			( result, [ key, dynamicValue ] ) => {
+				if ( dynamicValue && typeof dynamicValue === 'object' && '$$type' in dynamicValue ) {
+					result[ key ] = dynamicValue as PropValue;
+				} else {
+					result[ key ] = {
+						$$type: 'plain',
+						value: dynamicValue,
+					} as PropValue;
+				}
+				return result;
+			},
+			{}
+		);
 	}, [ dynamicSettings ] );
 
 	const effectiveSettings = React.useMemo( () => {

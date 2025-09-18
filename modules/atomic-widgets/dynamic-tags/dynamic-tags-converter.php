@@ -22,7 +22,7 @@ class Dynamic_Tags_Converter {
 	 * @param array $control
 	 * @return Plain_Prop_Type|Object_Prop_Type|null
 	 */
-	public function convert_control_to_prop_type( array $control ) {
+	public static function convert_control_to_prop_type( array $control ) {
 		$control_type = $control['type'];
 
 		switch ( $control_type ) {
@@ -76,12 +76,12 @@ class Dynamic_Tags_Converter {
 				return null;
 		}
 
-		$prop_type->set_dependencies( $this->create_dependencies_from_condition( $control['condition'] ?? null ) );
+		$prop_type->set_dependencies( self::create_dependencies_from_condition( $control['condition'] ?? null ) );
 
 		return $prop_type;
 	}
 
-	private function create_dependencies_from_condition( $condition ): ?array {
+	private static function create_dependencies_from_condition( $condition ): ?array {
 		if ( ! is_array( $condition ) || empty( $condition ) ) {
 			return null;
 		}
@@ -91,7 +91,7 @@ class Dynamic_Tags_Converter {
 		foreach ( $condition as $raw_key => $value ) {
 			$is_negated = false !== strpos( (string) $raw_key, '!' );
 			$key = rtrim( (string) $raw_key, '!' );
-			$path = $this->parse_condition_path( $key );
+			$path = self::parse_condition_path( $key );
 
 			if ( is_array( $value ) ) {
 				$manager->where( [
@@ -112,7 +112,7 @@ class Dynamic_Tags_Converter {
 		return $manager->get();
 	}
 
-	private function parse_condition_path( string $key ): array {
+	private static function parse_condition_path( string $key ): array {
 		if ( false === strpos( $key, '[' ) ) {
 			return [ $key ];
 		}

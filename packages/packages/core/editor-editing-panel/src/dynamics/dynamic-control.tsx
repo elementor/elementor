@@ -39,18 +39,14 @@ export const DynamicControl = ( { bind, children }: DynamicControlProps ) => {
 	const propType = createTopLevelObjectType( { schema: dynamicTag.props_schema } );
 
 	return (
-		<PropProvider
-			propType={propType}
-			setValue={setDynamicValue}
-			value={{ [bind]: dynamicValue }}
-		>
-			<PropKeyProvider bind={bind}>
+		<PropProvider propType={ propType } setValue={ setDynamicValue } value={ { [ bind ]: dynamicValue } }>
+			<PropKeyProvider bind={ bind }>
 				<DynamicConditionalControl
-					propType={dynamicPropType}
-					propsSchema={dynamicTag.props_schema}
-					dynamicSettings={settings}
+					propType={ dynamicPropType }
+					propsSchema={ dynamicTag.props_schema }
+					dynamicSettings={ settings }
 				>
-					{children}
+					{ children }
 				</DynamicConditionalControl>
 			</PropKeyProvider>
 		</PropProvider>

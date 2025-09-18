@@ -17,12 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Dynamic_Tags_Schemas {
-	private Dynamic_Tags_Converter $converter;
 	private array $tags_schemas = [];
-
-	public function __construct( Dynamic_Tags_Converter $converter ) {
-		$this->converter = $converter;
-	}
 
 	public function get( string $tag_name ) {
 		if ( isset( $this->tags_schemas[ $tag_name ] ) ) {
@@ -38,7 +33,7 @@ class Dynamic_Tags_Schemas {
 				continue;
 			}
 
-			$prop_type = $this->converter->convert_control_to_prop_type( $control );
+			$prop_type = Dynamic_Tags_Converter::convert_control_to_prop_type( $control );
 
 			if ( ! $prop_type ) {
 				continue;

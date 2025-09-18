@@ -19,8 +19,7 @@ class Dynamic_Tags_Module {
 	private Dynamic_Tags_Schemas $schemas;
 
 	private function __construct() {
-		$converter = new Dynamic_Tags_Converter();
-		$this->schemas  = new Dynamic_Tags_Schemas( $converter );
+		$this->schemas  = new Dynamic_Tags_Schemas();
 		$this->registry = new Dynamic_Tags_Editor_Config( $this->schemas );
 	}
 
