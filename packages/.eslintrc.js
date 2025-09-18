@@ -48,6 +48,8 @@ module.exports = {
 		// Some file need `require` to work.
 		'@typescript-eslint/no-require-imports': 'off',
 
+		'@typescript-eslint/ban-ts-comment': 'off',
+
 		// This rule interferes with React rules of hooks when using our "private" methods convention
 		// (e.g. `__useHook()` instead of `useHook()`).
 		'@wordpress/no-unused-vars-before-return': 'off',
