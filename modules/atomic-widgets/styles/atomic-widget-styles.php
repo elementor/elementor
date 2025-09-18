@@ -44,8 +44,6 @@ class Atomic_Widget_Styles {
 	private function parse_post_styles( $post_id ) {
 		$post_styles = [];
 
-		echo '<h3>Post styles</h3>';
-
 		Utils::traverse_post_elements( $post_id, function( $element_data ) use ( &$post_styles ) {
 			$post_styles = array_merge( $post_styles, $this->parse_element_style( $element_data ) );
 		} );

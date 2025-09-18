@@ -252,7 +252,6 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 			[
 				'state' => true,
 				'meta' => null,
-				'children' => [],
 			],
 			$stored_data,
 		);
@@ -271,7 +270,6 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$this->assertEquals(
 			[
 				'state' => true,
-				'children' => [],
 				'meta' => [ 'foo' => 'bar' ],
 			],
 			$stored_data,
@@ -441,10 +439,11 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 				],
 			],
 			$stored_data,
+			'Stored data should include all required placeholders'
 		);
 
 		// Act.
-		$cache_validity->invalidate( [ ROOT_KEY, 'nested', 'nested-1', 'empty-1', 'empty-2', 'nested-1-2' ] );
+		$cache_validity->invalidate( [ ROOT_KEY, 'nested', 'nested-1', 'empty-1', 'empty-2', 'nested-1-1' ] );
 
 		// Assert.
 		$stored_data = get_option( Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY );
@@ -483,6 +482,7 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 				],
 			],
 			$stored_data,
+			'Should remove the whole path of placeholder nodes'
 		);
 
 		// Act.
@@ -494,7 +494,6 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$this->assertEquals(
 			[
 				'state' => false,
-				'children' => [],
 			],
 			$stored_data,
 		);

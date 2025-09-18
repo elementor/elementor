@@ -12,158 +12,207 @@ class Cache_Validity_Item {
 
 	private string $root;
 
-	function __construct( string $root ) {
+	public function __construct( string $root ) {
 		$this->root = $root;
 	}
 
 	public function get( array $keys ): ?array {
 		$data = $this->get_stored_data();
 
-		[ $data, $nodes ] = $this->get_nodes_on_path( $data, $keys );
-		$node = array_reverse( $nodes )[0]['node'] ?? false;
+		$node = $this->get_node( $data, $keys );
+
+		if ( null === $node ) {
+			return null;
+		}
 
 		return is_bool( $node ) ? [ 'state' => $node ] : $node;
 	}
 
 	public function validate( array $keys, $meta = null ) {
 		$data = $this->get_stored_data();
-		[ $data, $nodes ] = $this->get_nodes_on_path( $data, $keys, true );
-		// $nodes = array_reverse( $nodes );
-
-		$item = array_pop( $nodes );
-
-		if ( null === $item ) {
-			return;
-		}
 
 		if ( empty( $keys ) ) {
 			$data['state'] = true;
 			$data['meta'] = $meta;
-
-			// echo PHP_EOL . 'validate root' . PHP_EOL;
-			// echo PHP_EOL . 'root data: ' . json_encode( $data, JSON_PRETTY_PRINT ) . PHP_EOL;
-			// echo PHP_EOL . '-----' . PHP_EOL;
-
 			$this->update_stored_data( $data );
+
 			return;
 		}
 
-		$parent_node = $item['parent_node'];
-		$node = $item['node'];
-		[ 'key' => $node_key ] = $nodes[0] ?? null;
+		$data = $this->get_data_with_placeholders( $data, $keys );
 
-		if ( null === $meta && empty( $node['children'] ) ) {
-			$parent_node['children'][ $node_key ] = true;
-		} else {
+		$last_key = array_pop( $keys );
+		$parent = &$this->get_node( $data, $keys );
+
+		if ( ! isset( $parent['children'] ) ) {
+			$parent['children'] = [];
+		}
+
+		$node = &$parent['children'][ $last_key ];
+
+		if ( null !== $meta || ( is_array( $node ) && ! empty( $node['children'] ) ) ) {
+			if ( is_bool( $node ) ) {
+				$node = [ 'state' => $node ];
+				$parent['children'][ $last_key ] = $node;
+			}
+
 			$node['state'] = true;
 
 			if ( null !== $meta ) {
 				$node['meta'] = $meta;
-			} else {
-				unset( $node['meta'] );
 			}
+		} else {
+			$parent['children'][ $last_key ] = true;
 		}
-
-		echo PHP_EOL . 'validate: ' . implode( ', ', $keys ) . PHP_EOL;
-		echo PHP_EOL . 'data: ' . json_encode( $data, JSON_PRETTY_PRINT ) . PHP_EOL;
-		echo PHP_EOL . '-----' . PHP_EOL;
 
 		$this->update_stored_data( $data );
 	}
 
 	public function invalidate( array $keys ) {
 		$data = $this->get_stored_data();
-		[ $data, $nodes ] = $this->get_nodes_on_path( $data, $keys );
-		$nodes = array_reverse( $nodes );
-		$invalidated_item = array_shift( $nodes );
-		$item_to_remove = $invalidated_item;
 
 		if ( empty( $keys ) ) {
-			$data['state'] = false;
-			$data['meta'] = null;
+			$this->delete_stored_data();
+
+			return;
+		}
+
+		$last_key = array_pop( $keys );
+		$parent = &$this->get_node( $data, $keys );
+
+		if ( ! is_array( $parent ) ) {
+			return;
+		}
+
+		if ( isset( $parent['children'] ) && count( $parent['children'] ) > 1 ) {
+			// if parent has more children - simply unset the invalidated node from the parent's children.
+			unset( $parent['children'][ $last_key ] );
 
 			$this->update_stored_data( $data );
 			return;
 		}
 
-		if ( ! $invalidated_item['node'] ) {
-			return;
-		}
-
-		foreach ( $nodes as $node_data ) {
-			if ( ! $this->is_placeholder_node( $node_data['node'] ) ) {
-				break;
-			}
-
-			$item_to_remove = $node_data;
-		}
-
-		unset( $item_to_remove['parent_node']['children'][ $item_to_remove['key'] ] );
-
-		echo PHP_EOL . 'invalidate: ' . implode( ', ', $keys ) . PHP_EOL;
-		echo PHP_EOL . 'data: ' . json_encode( $data, JSON_PRETTY_PRINT ) . PHP_EOL;
-		echo PHP_EOL . '-----' . PHP_EOL;
+		$data = &$this->get_data_without_placeholders( $data, $keys, $last_key );
 
 		$this->update_stored_data( $data );
+	}
+
+	private function &get_data_without_placeholders( array &$data, array $keys, string $last_key ) {
+		$remove_node = [
+			'key' => null,
+			'node' => null,
+		];
+
+		if ( ! isset( $data['children'] ) || $this->is_placeholder_node( $data ) ) {
+			$remove_node['node'] = &$data;
+		}
+
+		$current = &$data;
+		$parent = &$current;
+
+		while ( ! empty( $keys ) ) {
+			$key = array_shift( $keys );
+			$parent = &$current;
+			$current = &$current['children'][ $key ];
+
+			if ( isset( $current['children'] ) && $this->is_placeholder_node( $current ) && empty( $remove_node['node'] ) ) {
+				$remove_node = [
+					'key' => $key,
+					'node' => &$parent,
+				];
+			} elseif ( is_array( $current ) && ! $this->is_placeholder_node( $current ) ) {
+				$remove_node = [
+					'key' => null,
+					'node' => null,
+				];
+			}
+		}
+
+		if ( $remove_node['node'] ) {
+			if ( $remove_node['key'] ) {
+				unset( $remove_node['node']['children'][ $remove_node['key'] ] );
+			} else {
+				unset( $data['children'] );
+			}
+		} elseif ( $parent ) {
+			unset( $parent['children'][ $last_key ] );
+		}
+
+		return $data;
 	}
 
 	/**
 	 * @param array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean $data
 	 * @param array<string>                                                                                     $keys
-	 * @return array{key: string, node: array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean, parent_node: array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean}
+	 * @return array<array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean | null>
 	 */
-	private function get_nodes_on_path( array $data, array $keys, ?bool $add_placeholder = false ): array {
+	private function get_data_with_placeholders( array $data, array $keys ): ?array {
 		$current = &$data;
 
-		$nodes = array_merge( array_map( function( $key ) use ( &$current, $add_placeholder ) {
-			if ( null === $key ) {
-				return [
-					'key' => $key,
-					'node' => &$current,
-					'parent_node' => null,
-				];
+		while ( ! empty( $keys ) ) {
+			$key = array_shift( $keys );
+
+			if ( is_bool( $current ) ) {
+				$current = [ 'state' => $current ];
 			}
 
-			$parent = &$current;
-
-			if ( $add_placeholder ) {
-				if ( ! isset( $current['children'] ) ) {
-					$current['children'] = [];
-				}
-
-				if ( ! isset( $current['children'][ $key ] ) ) {
-					$current['children'][ $key ] = [ 'state' => false ];
-				}
+			if ( ! isset( $current['children'] ) ) {
+				$current['children'] = [];
 			}
+
+			if ( ! isset( $current['children'][ $key ] ) ) {
+				$current['children'][ $key ] = [ 'state' => false ];
+			}
+
+			if ( is_bool( $current ) ) {
+				$current = [ 'state' => $current ];
+			}
+
+			$current = &$current['children'][ $key ];
+		}
+
+		return $data;
+	}
+
+	/**
+	 * @param array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean $data
+	 * @param array<string>                                                                                     $keys
+	 * @return array<array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean | null> | null | boolean
+	 */
+	private function &get_node( array &$data, array $keys ) {
+		$current = &$data;
+
+		while ( ! empty( $keys ) ) {
+			$key = array_shift( $keys );
 
 			if ( isset( $current['children'][ $key ] ) ) {
 				$current = &$current['children'][ $key ];
 			} else {
 				$current = null;
 			}
+		}
 
-			return [
-				'key' => $key,
-				'node' => &$current,
-				'parent_node' => &$parent,
-			];
-		}, array_merge( [ null ], $keys ) ) );
-
-		return [ $data, $nodes ];
+		return $current;
 	}
 
 	private function is_placeholder_node( $data ): bool {
+		if ( ! is_array( $data ) ) {
+			return false;
+		}
+
 		return ( ! isset( $data['children'] ) || 1 === count( $data['children'] ) ) && ! $data['state'];
 	}
 
 	/**
-	 * @param string $root
-	 * @return array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean
+	 * @return array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>}
 	 */
 	private function get_stored_data() {
 		return get_option( self::CACHE_KEY_PREFIX . $this->root, [ 'state' => false ] );
 	}
 
+	/**
+	 * @param string $data
+	 */
 	private function update_stored_data( $data ) {
 		update_option( self::CACHE_KEY_PREFIX . $this->root, $data, false );
 	}
