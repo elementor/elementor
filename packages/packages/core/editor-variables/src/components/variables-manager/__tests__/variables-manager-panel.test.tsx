@@ -4,7 +4,6 @@ import { type BoxProps, type ButtonProps, type IconButtonProps, type StackProps 
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { VariablesManagerPanel } from '../variables-manager-panel';
-import { useFilteredVariables } from "../../../hooks/use-prop-variables";
 
 jest.mock( '@elementor/editor-panels', () => ( {
 	__createPanel: () => ( {
@@ -27,10 +26,7 @@ jest.mock( '@elementor/editor-panels', () => ( {
 } ) );
 
 jest.mock( '../../ui/no-search-results', () => ( {
-	NoSearchResults: ( { searchValue, onClear }: {
-		searchValue: string;
-		onClear: () => void;
-	} ) => (
+	NoSearchResults: ( { searchValue, onClear }: { searchValue: string; onClear: () => void } ) => (
 		<div data-testid="no-search-results">
 			<p>No results for { searchValue }</p>
 			<button onClick={ onClear }>Clear Search</button>
@@ -156,8 +152,6 @@ describe( 'VariablesManagerPanel', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		window.console.error = mockConsoleError;
-
-
 
 		mockUseVariablesManagerState.mockReturnValue( defaultMockState );
 	} );

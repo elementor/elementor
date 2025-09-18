@@ -62,11 +62,7 @@ describe( 'filterBySearch', () => {
 
 		// Assert.
 		expect( result ).toHaveLength( 3 );
-		expect( result.map( ( v ) => v.label ) ).toEqual( [
-			'Primary Color',
-			'Secondary Color',
-			'Background Color',
-		] );
+		expect( result.map( ( v ) => v.label ) ).toEqual( [ 'Primary Color', 'Secondary Color', 'Background Color' ] );
 	} );
 
 	it( 'should return empty array for non-existent search term', () => {
