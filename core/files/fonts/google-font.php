@@ -33,7 +33,7 @@ class Google_Font {
 			return true;
 		}
 
-		$is_local_gf_enabled = (bool) get_option( 'elementor_lazy_load_background_images', '0' );
+		$is_local_gf_enabled = (bool) get_option( 'elementor_local_google_fonts', '0' );
 		if ( ! $is_local_gf_enabled ) {
 			$force_enqueue_from_cdn = true;
 		}
