@@ -46,6 +46,18 @@ export class OnboardingEventTracking {
 		return elementorCommon.eventsManager.dispatchEvent( eventName, payload );
 	}
 
+	static updateLibraryConnectConfig( data ) {
+		if ( ! elementorCommon.config.library_connect ) {
+			return;
+		}
+
+		elementorCommon.config.library_connect.is_connected = true;
+		elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
+		elementorCommon.config.library_connect.current_access_tier = data.access_tier;
+		elementorCommon.config.library_connect.plan_type = data.plan_type;
+		elementorCommon.config.library_connect.user_id = data.user_id || null;
+	}
+
 	static sendUpgradeNowStep3( selectedFeatures, currentStep ) {
 		const proFeaturesChecked = this.extractSelectedFeatureTitles( selectedFeatures );
 		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.UPGRADE_NOW_S3, {
@@ -340,7 +352,7 @@ export class OnboardingEventTracking {
 			const currentTime = Date.now();
 			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
 
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.S4_END_STATE, {
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP4_END_STATE, {
 				location: 'plugin_onboarding',
 				trigger: 'user_redirects_out_of_step',
 				step_number: 4,

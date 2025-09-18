@@ -1,5 +1,6 @@
 import { useEffect, useContext } from 'react';
 import { OnboardingContext } from '../context/context';
+import { OnboardingEventTracking } from './onboarding-event-tracking';
 
 export default function Connect( props ) {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext );
@@ -7,10 +8,7 @@ export default function Connect( props ) {
 	const connectSuccessCallback = ( event, data ) => {
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', 'account', 'completed' );
 
-		elementorCommon.config.library_connect.is_connected = true;
-		elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
-		elementorCommon.config.library_connect.current_access_tier = data.access_tier;
-		elementorCommon.config.library_connect.plan_type = data.plan_type;
+		OnboardingEventTracking.updateLibraryConnectConfig( data );
 
 		stateToUpdate.isLibraryConnected = true;
 
