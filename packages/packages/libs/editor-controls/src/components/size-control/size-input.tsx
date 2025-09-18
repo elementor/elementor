@@ -72,6 +72,16 @@ export const SizeInput = ( {
 		'aria-haspopup': true,
 	};
 
+	const menuItemsAttributes = units.includes( 'custom' )
+		? {
+				custom: popupAttributes,
+		  }
+		: undefined;
+
+	const alternativeOptionLabels = {
+		custom: <MathFunctionIcon fontSize="tiny" />,
+	};
+
 	const InputProps = {
 		...popupAttributes,
 		readOnly: isUnitExtendedOption( unit ),
@@ -89,16 +99,8 @@ export const SizeInput = ( {
 				options={ units }
 				onClick={ handleUnitChange }
 				value={ unit }
-				alternativeOptionLabels={ {
-					custom: <MathFunctionIcon fontSize="tiny" />,
-				} }
-				menuItemsAttributes={
-					units.includes( 'custom' )
-						? {
-								custom: popupAttributes,
-						  }
-						: undefined
-				}
+				alternativeOptionLabels={ alternativeOptionLabels }
+				menuItemsAttributes={ menuItemsAttributes }
 			/>
 		),
 	};
