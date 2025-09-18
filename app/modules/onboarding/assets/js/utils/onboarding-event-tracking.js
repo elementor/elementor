@@ -134,7 +134,6 @@ export class OnboardingEventTracking {
 		} );
 
 		try {
-			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.START_TIME );
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.INITIATED );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to clear onboarding storage:', error );
@@ -212,6 +211,10 @@ export class OnboardingEventTracking {
 	static trackStep2Action( action ) {
 		try {
 			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+			
+			// eslint-disable-next-line no-console
+			console.log( 'trackStep2Action called:', { action, startTimeString } );
+			
 			if ( ! startTimeString ) {
 				return;
 			}
