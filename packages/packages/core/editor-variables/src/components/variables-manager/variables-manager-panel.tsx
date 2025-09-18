@@ -19,7 +19,6 @@ import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
 import { useAutoEdit } from './hooks/use-auto-edit';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
-import { getVariables } from '../../hooks/use-prop-variables';
 import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu';
 import { VariablesManagerTable } from './variables-manager-table';
 
@@ -106,7 +105,6 @@ export function VariablesManagerPanel() {
 	];
 
 	const hasVariables = Object.values( variables ).some( ( variable ) => ! variable.deleted );
-	const hasSearchValue = searchValue !== '';
 
 	return (
 		<ThemeProvider>
@@ -163,7 +161,7 @@ export function VariablesManagerPanel() {
 							/>
 						) }
 
-						{ ! hasVariables && hasSearchValue && (
+						{ ! hasVariables && searchValue && (
 							<NoSearchResults
 								searchValue={ searchValue }
 								onClear={ () => handleSearch( '' ) }
@@ -171,7 +169,7 @@ export function VariablesManagerPanel() {
 							/>
 						) }
 
-						{ ! hasVariables && ! hasSearchValue && (
+						{ ! hasVariables && ! searchValue && (
 							<EmptyState
 								title={ __( 'Create your first variable', 'elementor' ) }
 								message={ __(
