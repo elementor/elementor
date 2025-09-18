@@ -20,11 +20,6 @@ class Render_Mode_Preview extends Render_Mode_Base {
 		$this->template_id = $template_id;
 		$this->document = $this->create_document();
 
-		// Switch WordPress global post context to match the document
-		global $post, $wp_query;
-		$post = get_post( $this->document->get_main_id() );
-		setup_postdata( $post );
-
 		Plugin::$instance->db->switch_to_post( $this->document->get_main_id() );
 
 		// Switch to document BEFORE calling parent constructor
