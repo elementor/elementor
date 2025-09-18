@@ -4,33 +4,19 @@ import { toCanvas } from 'html-to-image';
 class Screenshot extends elementorModules.ViewModule {
 	getDefaultSettings() {
 		return {
-			empty_content_headline: 'Empty Content.',
-			excluded_external_css_urls: [
-				'https://kit-pro.fontawesome.com',
-			],
-			external_images_urls: [
-				'https://i.ytimg.com', // Youtube images domain.
-			],
 			timeout: 15000, // Wait until screenshot taken or fail in 15 secs.
 			render_timeout: 5000, // Wait until all the element will be loaded or 5 sec and then take screenshot.
-			timerLabel: null,
-			timer_label: `${ ElementorScreenshotConfig.post_id } - timer`,
+			image_quality: 0.15, // Image quality for WebP compression
 			image_placeholder: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
-			isDebug: elementorCommonConfig.isElementorDebug,
 			...ElementorScreenshotConfig,
 		};
 	}
 
 	getDefaultElements() {
 		const $elementor = jQuery( ElementorScreenshotConfig.selector );
-		const $sections = $elementor.find( '.elementor-section-wrap > .elementor-section, .elementor > .elementor-section' );
 
 		return {
 			$elementor,
-			$sections,
-			$firstSection: $sections.first(),
-			$notElementorElements: elementorCommon.elements.$body.find( '> *:not(style, link)' ).not( $elementor ),
-			$head: jQuery( 'head' ),
 		};
 	}
 
@@ -42,7 +28,9 @@ class Screenshot extends elementorModules.ViewModule {
 		 *
 		 * @type {number|null}
 		 */
-		this.timeoutTimer = setTimeout( this.screenshotFailed.bind( this ), this.getSettings( 'timeout' ) );
+		this.timeoutTimer = setTimeout( () => {
+			this.screenshotFailed( new Error( 'Screenshot timeout reached' ) );
+		}, this.getSettings( 'timeout' ) );
 
 		return this.captureScreenshot();
 	}
@@ -52,10 +40,10 @@ class Screenshot extends elementorModules.ViewModule {
 	 */
 	captureScreenshot() {
 		return Promise.resolve()
-			.then( this.createImage.bind( this ) )
-			.then( this.save.bind( this ) )
-			.then( this.screenshotSucceed.bind( this ) )
-			.catch( this.screenshotFailed.bind( this ) );
+			.then( () => this.createImage() )
+			.then( ( imageData ) => this.save( imageData ) )
+			.then( ( url ) => this.screenshotSucceed( url ) )
+			.catch( ( error ) => this.screenshotFailed( error ) );
 	}
 
 	/**
@@ -65,50 +53,62 @@ class Screenshot extends elementorModules.ViewModule {
 	 */
 	async createImage() {
 		const pageLoadedPromise = new Promise( ( resolve ) => {
-			window.addEventListener( 'load', () => {
-				resolve();
-			} );
+			window.addEventListener( 'load', () => resolve() );
 		} );
 
 		const timeOutPromise = new Promise( ( resolve ) => {
-			setTimeout( () => {
-				resolve();
-			}, this.getSettings( 'render_timeout' ) );
+			setTimeout( () => resolve(), this.getSettings( 'render_timeout' ) );
 		} );
 
 		await Promise.race( [ pageLoadedPromise, timeOutPromise ] );
 
-		try {
-			// Re-select element if not found (DOM might not be ready during init)
-			let $elementorElement = this.elements.$elementor;
-			if ( ! $elementorElement.length ) {
-				$elementorElement = jQuery( ElementorScreenshotConfig.selector );
-			}
-
-			// Fallback: Find the main Elementor container if the specific selector fails
-			if ( ! $elementorElement.length ) {
-				// Look for the main Elementor container (not header/footer)
-				$elementorElement = jQuery( 'body > div.elementor:not(.elementor-location-header):not(.elementor-location-footer)' );
-			}
-
-			if ( ! $elementorElement.length ) {
-				throw new Error( 'Elementor container not found. Selector: ' + ElementorScreenshotConfig.selector );
-			}
-
-			const canvas = await toCanvas( $elementorElement[ 0 ], {
-				quality: 0.15,
-				imagePlaceholder: this.getSettings( 'image_placeholder' ),
-				backgroundColor: null, // Use actual background
-				style: {
-					transform: 'scale(1)',
-					transformOrigin: 'top left',
-				},
-			} );
-
-			return canvas.toDataURL( 'image/webp', 0.15 );
-		} catch ( error ) {
-			throw error;
+		let $elementorElement = this.elements.$elementor;
+		
+		if ( ! $elementorElement.length ) {
+			$elementorElement = jQuery( ElementorScreenshotConfig.selector );
 		}
+
+		if ( ! $elementorElement.length ) {
+			$elementorElement = jQuery( 'body > div.elementor:not(.elementor-location-header):not(.elementor-location-footer)' );
+		}
+
+		if ( ! $elementorElement.length ) {
+			throw new Error( 'Elementor container not found. Selector: ' + ElementorScreenshotConfig.selector );
+		}
+
+		this.preprocessLazyImages($elementorElement);
+		
+		const bodyStyle = window.getComputedStyle(document.body);
+		const bodyBackgroundColor = bodyStyle.backgroundColor;
+		
+		const canvas = await toCanvas( $elementorElement[ 0 ], {
+			quality: this.getSettings( 'image_quality' ),
+			imagePlaceholder: this.getSettings( 'image_placeholder' ),
+			backgroundColor: bodyBackgroundColor || null,
+			style: {
+				transform: 'scale(1)',
+				transformOrigin: 'top left',
+			},
+		} );
+
+		return canvas.toDataURL( 'image/webp', this.getSettings( 'image_quality' ) );
+	}
+
+	preprocessLazyImages($element) {
+		const lazyImages = $element.find('img[data-src], img.swiper-lazy, img.lazy');
+		
+		lazyImages.each((index, img) => {
+			const $img = jQuery(img);
+			
+			if ($img.attr('data-src')) {
+				$img.attr('src', $img.attr('data-src'));
+				$img.removeAttr('data-src');
+			}
+			
+			$img.removeClass('swiper-lazy lazy swiper-slide-image');
+			$img.removeAttr('loading');
+			$img.removeAttr('data-srcset');
+		});
 	}
 
 	/**
@@ -132,12 +132,8 @@ class Screenshot extends elementorModules.ViewModule {
 
 			elementorCommon.ajax.addRequest( action, {
 				data,
-				success: ( url ) => {
-					resolve( url );
-				},
-				error: () => {
-					reject();
-				},
+				success: ( url ) => resolve( url ),
+				error: () => reject(),
 			} );
 		} );
 	}
@@ -156,7 +152,6 @@ class Screenshot extends elementorModules.ViewModule {
 				resolve();
 			} else {
 				const route = templateId ? 'template_screenshot_failed' : 'screenshot_failed';
-
 				const data = templateId ? {
 					template_id: templateId,
 					error: e.message || e.toString(),
@@ -166,24 +161,13 @@ class Screenshot extends elementorModules.ViewModule {
 
 				elementorCommon.ajax.addRequest( route, {
 					data,
-					success: () => {
-						resolve();
-					},
-					error: () => {
-						reject();
-					},
+					success: () => resolve(),
+					error: () => reject(),
 				} );
 			}
 		} );
 	}
 
-	/**
-	 * @param {string} url
-	 * @return {string} Screenshot Proxy URL
-	 */
-	getScreenshotProxyUrl( url ) {
-		return `${ this.getSettings( 'home_url' ) }?screenshot_proxy&nonce=${ this.getSettings( 'nonce' ) }&href=${ url }`;
-	}
 
 	/**
 	 * Notify that the screenshot has been succeed.

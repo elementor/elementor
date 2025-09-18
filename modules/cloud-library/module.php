@@ -177,9 +177,7 @@ class Module extends BaseModule {
 	private function print_thumbnail_preview_callback() {
 		$doc = Plugin::$instance->documents->get_current();
 
-		// Ensure we're using the correct document and it's properly switched
 		if ( ! $doc ) {
-			// If no current document, try to get it from the render mode
 			$render_mode = Plugin::$instance->frontend->render_mode_manager->get_current();
 			if ( $render_mode instanceof Render_Mode_Preview ) {
 				$doc = $render_mode->get_document();
@@ -191,10 +189,8 @@ class Module extends BaseModule {
 			return;
 		}
 
-		// Ensure the document is switched before rendering
 		Plugin::$instance->documents->switch_to_document( $doc );
 
-		// Use the document's get_content method which works for Cloud_Template_Preview
 		$content = $doc->get_content( true );
 		
 		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
