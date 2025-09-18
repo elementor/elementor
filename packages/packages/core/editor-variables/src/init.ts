@@ -6,6 +6,7 @@ import { isTransformable, type PropValue } from '@elementor/editor-props';
 import { panel } from './components/variables-manager/variables-manager-panel';
 import { VariableControl } from './controls/variable-control';
 import { usePropVariableAction } from './hooks/use-prop-variable-action';
+import { initMcp } from './mcp';
 import { registerVariableTypes } from './register-variable-types';
 import { StyleVariablesRenderer } from './renderers/style-variables-renderer';
 import { registerRepeaterInjections } from './repeater-injections';
@@ -28,7 +29,9 @@ export function init() {
 		useProps: usePropVariableAction,
 	} );
 
-	variablesService.init();
+	variablesService.init().then( () => {
+		initMcp();
+	} );
 
 	injectIntoTop( {
 		id: 'canvas-style-variables-render',
