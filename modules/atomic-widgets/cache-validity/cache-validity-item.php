@@ -40,6 +40,27 @@ class Cache_Validity_Item {
 			return;
 		}
 
+		$this->validate_nested_node( $data, $keys, $meta );
+	}
+
+	public function invalidate( array $keys ) {
+		$data = $this->get_stored_data();
+
+		if ( empty( $keys ) ) {
+			$this->delete_stored_data();
+
+			return;
+		}
+
+		$this->invalidate_nested_node( $data, $keys );
+	}
+
+	/**
+	 * @param array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean $data
+	 * @param array<string>                                                                                     $keys
+	 * @param mixed | null                                                                                      $meta
+	 */
+	private function validate_nested_node( array $data, array $keys, $meta = null ) {
 		$data = $this->get_data_with_placeholders( $data, $keys );
 
 		$last_key = array_pop( $keys );
@@ -69,15 +90,11 @@ class Cache_Validity_Item {
 		$this->update_stored_data( $data );
 	}
 
-	public function invalidate( array $keys ) {
-		$data = $this->get_stored_data();
-
-		if ( empty( $keys ) ) {
-			$this->delete_stored_data();
-
-			return;
-		}
-
+	/**
+	 * @param array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean $data
+	 * @param array<string>                                                                                     $keys
+	 */
+	private function invalidate_nested_node( array $data, array $keys ) {
 		$last_key = array_pop( $keys );
 		$parent = &$this->get_node( $data, $keys );
 
