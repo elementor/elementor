@@ -70,7 +70,6 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 				location: elementorCommon.eventsManager.config.locations.widgetPanel,
 				secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations[ this.model.get( 'name' ) ],
 				trigger: elementorCommon.eventsManager.config.triggers.accordionClick,
-				element: elementorCommon.eventsManager.config.elements.accordionSection,
 			},
 		);
 	},

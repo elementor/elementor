@@ -6,7 +6,7 @@ import { isStepChecked, addMixpanelTrackingChecklistSteps } from '../../utils/fu
 import { STEP, MIXPANEL_CHECKLIST_STEPS } from '../../utils/consts';
 
 const { PROMOTION_DATA } = STEP;
-const { TITLE, ACCORDION_SECTION } = MIXPANEL_CHECKLIST_STEPS;
+const { TITLE } = MIXPANEL_CHECKLIST_STEPS;
 
 function CheckListItem( props ) {
 	const { expandedIndex, setExpandedIndex, setSteps, index, step } = props,
@@ -15,7 +15,7 @@ function CheckListItem( props ) {
 		promotionData = step.config[ PROMOTION_DATA ];
 
 	const handleExpandClick = () => {
-		addMixpanelTrackingChecklistSteps( step.config.id, TITLE, ACCORDION_SECTION );
+		addMixpanelTrackingChecklistSteps( step.config.id, TITLE );
 		setExpandedIndex( index === expandedIndex ? -1 : index );
 	};
 

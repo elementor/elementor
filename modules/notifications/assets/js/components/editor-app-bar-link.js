@@ -36,7 +36,6 @@ export const editorAppBarLink = () => {
 							location: elementorCommon.eventsManager.config.locations.topBar,
 							secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations[ 'whats-new' ],
 							trigger: elementorCommon.eventsManager.config.triggers.click,
-							element: elementorCommon.eventsManager.config.elements.buttonIcon,
 						},
 					);
 
