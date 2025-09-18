@@ -192,7 +192,7 @@ class Module extends BaseModule {
 		Plugin::$instance->documents->switch_to_document( $doc );
 
 		$content = $doc->get_content( true );
-		
+
 		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 

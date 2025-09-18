@@ -19,29 +19,29 @@ class Render_Mode_Preview extends Render_Mode_Base {
 	public function __construct( $template_id ) {
 		$this->template_id = $template_id;
 		$this->document = $this->create_document();
-		
+
 		// Switch WordPress global post context to match the document
 		global $post, $wp_query;
 		$post = get_post( $this->document->get_main_id() );
 		setup_postdata( $post );
-		
+
 		Plugin::$instance->db->switch_to_post( $this->document->get_main_id() );
-		
+
 		// Switch to document BEFORE calling parent constructor
 		Plugin::$instance->documents->switch_to_document( $this->document );
-		
+
 		// Add template filter immediately to ensure it's applied before template selection
 		add_filter( 'template_include', [ $this, 'filter_template' ] );
-		
+
 		// Add body class filter immediately to ensure correct classes are set
 		add_filter( 'body_class', [ $this, 'filter_body_class' ], 999 );
-		
+
 		// Add cleanup action to run after page is fully rendered
 		add_action( 'wp_footer', [ $this, 'cleanup' ], 999 );
-		
+
 		// Set the module to use for rendering
 		add_filter( 'elementor/render_mode/module', [ $this, 'filter_render_mode_module' ] );
-		
+
 		parent::__construct( $this->document->get_main_id() );
 	}
 
