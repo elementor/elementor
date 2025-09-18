@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
-import { PopoverHeader, PopoverMenuList, SearchField } from '@elementor/editor-ui';
+import { PopoverHeader, PopoverMenuList, PopoverSearch } from '@elementor/editor-ui';
 import { DatabaseIcon } from '@elementor/icons';
 import { Divider, Link, Stack, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -86,7 +86,7 @@ export const DynamicSelection = ( { close: closePopover }: DynamicSelectionProps
 				<NoDynamicTags />
 			) : (
 				<Fragment>
-					<SearchField
+					<PopoverSearch
 						value={ searchValue }
 						onSearch={ handleSearch }
 						placeholder={ __( 'Search dynamic tags…', 'elementor' ) }

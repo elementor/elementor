@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import { PopoverBody, PopoverHeader, PopoverMenuList, SearchField } from '@elementor/editor-ui';
+import { PopoverBody, PopoverHeader, PopoverMenuList, PopoverSearch } from '@elementor/editor-ui';
 import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
@@ -57,7 +57,7 @@ export const ItemSelector = ( {
 	return (
 		<PopoverBody width={ sectionWidth } id={ id }>
 			<PopoverHeader title={ title } onClose={ handleClose } icon={ <IconComponent fontSize="tiny" /> } />
-			<SearchField
+			<PopoverSearch
 				value={ searchValue }
 				onSearch={ handleSearch }
 				placeholder={ __( 'Search', 'elementor' ) }
