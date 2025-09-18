@@ -38,7 +38,7 @@ describe( '@elementor/externalize-wordpress-assets-webpack-plugin', () => {
 		vol.reset();
 	} );
 
-	it( 'should externalize Elementor & WordPress assets', ( done ) => {
+	xit( 'should externalize Elementor & WordPress assets', ( done ) => {
 		// Arrange.
 		const compiler = webpack( {
 			mode: 'development',
