@@ -32,13 +32,21 @@ export const CustomCssIndicator = () => {
 		const state = meta.state;
 
 		function search( node: BreakpointNode, ancestorHasCss: boolean ): boolean | undefined {
-			const hasHere = !! getVariantByMeta( style!, {
-				breakpoint: node.id as BreakpointId,
-				state,
-			} )?.custom_css?.raw?.trim();
+			if ( ! style ) {
+				return undefined;
+			}
+
+			const hasHere = Boolean(
+				getVariantByMeta( style, {
+					breakpoint: node.id as BreakpointId,
+					state,
+				} )?.custom_css?.raw?.trim()
+			);
+
 			if ( node.id === target ) {
 				return ancestorHasCss;
 			}
+
 			for ( const child of node.children ?? [] ) {
 				const res = search( child, ancestorHasCss || hasHere );
 				if ( res !== undefined ) {
@@ -52,7 +60,6 @@ export const CustomCssIndicator = () => {
 	}, [ hasContent, style, meta ] );
 
 	if ( ! hasContent ) {
-		// Show grey dot if value is inherited from prior breakpoints
 		if ( hasInheritedContent ) {
 			return <StyleIndicator />;
 		}
@@ -61,5 +68,3 @@ export const CustomCssIndicator = () => {
 
 	return <StyleIndicator getColor={ provider ? getStylesProviderThemeColor( provider.getKey() ) : undefined } />;
 };
-
-// intentionally no extra helpers; the inheritance check is done inline for brevity
