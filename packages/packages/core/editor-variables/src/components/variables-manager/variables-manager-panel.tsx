@@ -11,10 +11,11 @@ import {
 import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { ColorFilterIcon, TrashIcon } from '@elementor/icons';
-import { Alert, Box, Button, CloseButton, Divider, ErrorBoundary, Stack } from '@elementor/ui';
+import { Alert, Box, Button, CloseButton, Divider, ErrorBoundary, Stack, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
+import { EmptyState } from '../ui/empty-state';
 import { useAutoEdit } from './hooks/use-auto-edit';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
 import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu';
@@ -38,6 +39,10 @@ export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 
+	const createMenuState = usePopupState( {
+		variant: 'popover',
+	} );
+
 	const {
 		variables,
 		ids,
@@ -55,6 +60,8 @@ export function VariablesManagerPanel() {
 	const { autoEditVariableId, startAutoEdit, handleAutoEditComplete } = useAutoEdit();
 
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
+
+	const hasVariables = Object.values( variables ).some( ( variable ) => ! variable.deleted );
 
 	usePreventUnload( isDirty );
 
@@ -115,6 +122,7 @@ export function VariablesManagerPanel() {
 									<VariableManagerCreateMenu
 										onCreate={ handleCreateVariable }
 										variables={ variables }
+										menuState={ createMenuState }
 									/>
 									<CloseButton
 										aria-label="Close"
@@ -135,16 +143,28 @@ export function VariablesManagerPanel() {
 							height: '100%',
 						} }
 					>
-						<VariablesManagerTable
-							menuActions={ menuActions }
-							variables={ variables }
-							onChange={ handleOnChange }
-							ids={ ids }
-							onIdsChange={ setIds }
-							autoEditVariableId={ autoEditVariableId }
-							onAutoEditComplete={ handleAutoEditComplete }
-							onFieldError={ setHasValidationErrors }
-						/>
+						{ hasVariables ? (
+							<VariablesManagerTable
+								menuActions={ menuActions }
+								variables={ variables }
+								onChange={ handleOnChange }
+								ids={ ids }
+								onIdsChange={ setIds }
+								autoEditVariableId={ autoEditVariableId }
+								onAutoEditComplete={ handleAutoEditComplete }
+								onFieldError={ setHasValidationErrors }
+							/>
+						) : (
+							<EmptyState
+								title={ __( 'Create your first variable', 'elementor' ) }
+								message={ __(
+									'Variables are saved attributes that you can apply anywhere on your site.',
+									'elementor'
+								) }
+								icon={ <ColorFilterIcon fontSize="large" /> }
+								onAdd={ createMenuState.open }
+							/>
+						) }
 					</PanelBody>
 
 					<PanelFooter>
