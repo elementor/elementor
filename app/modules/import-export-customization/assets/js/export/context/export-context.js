@@ -34,6 +34,7 @@ const initialState = {
 			plugins: null,
 		},
 	},
+	showMediaFormatValidation: false,
 };
 
 function exportReducer( state, { type, payload } ) {
@@ -87,6 +88,8 @@ function exportReducer( state, { type, payload } ) {
 					},
 				},
 			};
+		case 'SET_MEDIA_FORMAT_VALIDATION':
+			return { ...state, showMediaFormatValidation: payload };
 		case 'RESET_STATE':
 			return { ...initialState };
 		default:
