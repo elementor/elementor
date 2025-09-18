@@ -1,10 +1,25 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import { Infotip, MenuItem, type MenuItemProps, MenuItemText } from '@elementor/ui';
+import {
+	Infotip,
+	MenuItem,
+	type MenuItemProps,
+	MenuItemText,
+	type MenuItemTextProps,
+	type TypographyProps,
+} from '@elementor/ui';
 
 import { InfoAlert } from './info-alert';
-
-export const MenuListItem = ( { children, ...props }: MenuItemProps ) => {
+type MenuListItemProps = MenuItemProps & {
+	menuItemTextProps?: MenuItemTextProps;
+	primaryTypographyProps?: TypographyProps;
+};
+export const MenuListItem = ( {
+	children,
+	menuItemTextProps,
+	primaryTypographyProps = { variant: 'caption' },
+	...props
+}: MenuListItemProps ) => {
 	return (
 		<MenuItem
 			dense
@@ -15,9 +30,8 @@ export const MenuListItem = ( { children, ...props }: MenuItemProps ) => {
 		>
 			<MenuItemText
 				primary={ children }
-				primaryTypographyProps={ {
-					variant: 'caption',
-				} }
+				primaryTypographyProps={ primaryTypographyProps }
+				{ ...menuItemTextProps }
 			/>
 		</MenuItem>
 	);

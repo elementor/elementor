@@ -1,5 +1,12 @@
 == Changelog ==
 
+= 3.32.2 - 2025-09-18 =
+
+* Tweak: Improved compatibility for 3rd-party plugins serving templates
+* Fix: Structure Panel indicators not visible in RTL layouts
+* Fix: Issues with loading Google Fonts when enabling or disabling Load Google Fonts Locally option ([#32795](https://github.com/elementor/elementor/issues/32795))
+* Fix: Background videos not displaying correctly on RTL websites
+
 = 3.32.1 - 2025-09-16 =
 
 * Tweak: Disabled Load Google Fonts locally on all sites by default
