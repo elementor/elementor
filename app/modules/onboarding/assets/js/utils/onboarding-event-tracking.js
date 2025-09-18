@@ -37,6 +37,7 @@ const ONBOARDING_STORAGE_KEYS = {
 	PENDING_CREATE_ACCOUNT_STATUS: 'elementor_onboarding_pending_create_account_status',
 	PENDING_CREATE_MY_ACCOUNT: 'elementor_onboarding_pending_create_my_account',
 	PENDING_TOP_UPGRADE: 'elementor_onboarding_pending_top_upgrade',
+	PENDING_STEP1_CLICKED_CONNECT: 'elementor_onboarding_pending_step1_clicked_connect',
 };
 
 export class OnboardingEventTracking {
@@ -211,7 +212,7 @@ export class OnboardingEventTracking {
 	static trackStep2Action( action ) {
 		try {
 			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
-			
+
 			if ( ! startTimeString ) {
 				return;
 			}
@@ -456,6 +457,7 @@ export class OnboardingEventTracking {
 				ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS,
 				ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT,
 				ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
+				ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
 			];
 
 			keysToRemove.forEach( ( key ) => {
@@ -728,12 +730,15 @@ export class OnboardingEventTracking {
 	}
 
 	static sendStep1ClickedConnect( currentStep = 1 ) {
-		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP1_CLICKED_CONNECT, {
-			location: 'plugin_onboarding',
-			trigger: eventsConfig.triggers.click,
-			step_number: currentStep,
-			step_name: this.getStepName( currentStep ),
-		} );
+		if ( elementorCommon.config.editor_events?.can_send_events ) {
+			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP1_CLICKED_CONNECT, {
+				location: 'plugin_onboarding',
+				trigger: eventsConfig.triggers.click,
+				step_number: currentStep,
+				step_name: this.getStepName( currentStep ),
+			} );
+		}
+		this.storeStep1ClickedConnectEventForLater( currentStep );
 	}
 
 	static storeTopUpgradeEventForLater( currentStep, upgradeClicked ) {
@@ -845,6 +850,40 @@ export class OnboardingEventTracking {
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to send stored create account status event:', error );
+		}
+	}
+
+	static storeStep1ClickedConnectEventForLater( currentStep ) {
+		try {
+			const eventData = {
+				currentStep,
+				timestamp: Date.now(),
+			};
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT, JSON.stringify( eventData ) );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to store step1 clicked connect event:', error );
+		}
+	}
+
+	static sendStoredStep1ClickedConnectEvent() {
+		try {
+			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
+			if ( ! storedDataStr ) {
+				return;
+			}
+
+			const eventData = JSON.parse( storedDataStr );
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP1_CLICKED_CONNECT, {
+				location: 'plugin_onboarding',
+				trigger: eventsConfig.triggers.click,
+				step_number: eventData.currentStep,
+				step_name: this.getStepName( eventData.currentStep ),
+				event_timestamp: eventData.timestamp,
+			} );
+
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to send stored step1 clicked connect event:', error );
 		}
 	}
 

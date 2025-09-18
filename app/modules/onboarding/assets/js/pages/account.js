@@ -161,6 +161,7 @@ export default function Account() {
 			OnboardingEventTracking.sendStoredTopUpgradeEvent();
 			OnboardingEventTracking.sendStoredCreateMyAccountEvent();
 			OnboardingEventTracking.sendStoredCreateAccountStatusEvent();
+			OnboardingEventTracking.sendStoredStep1ClickedConnectEvent();
 		}
 
 		updateState( stateToUpdate );
