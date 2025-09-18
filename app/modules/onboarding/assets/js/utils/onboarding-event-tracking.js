@@ -212,9 +212,6 @@ export class OnboardingEventTracking {
 		try {
 			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
 			
-			// eslint-disable-next-line no-console
-			console.log( 'trackStep2Action called:', { action, startTimeString } );
-			
 			if ( ! startTimeString ) {
 				return;
 			}
@@ -243,9 +240,6 @@ export class OnboardingEventTracking {
 		try {
 			const actionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS );
 			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
-
-			// eslint-disable-next-line no-console
-			console.log( 'Step2EndState Debug:', { actionsString, startTimeString, canSendEvents: elementorCommon.config.editor_events?.can_send_events } );
 
 			if ( ! actionsString || ! startTimeString ) {
 				return;
@@ -475,14 +469,11 @@ export class OnboardingEventTracking {
 	static checkAndSendEditorLoadedFromOnboarding() {
 		try {
 			const alreadyTracked = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED );
-			const siteStarterChoice = this.getSiteStarterChoice();
-			
-			// eslint-disable-next-line no-console
-			console.log( 'EditorLoadedFromOnboarding Debug:', { alreadyTracked, siteStarterChoice, eventsManagerAvailable: !! elementorCommon.eventsManager } );
-			
 			if ( alreadyTracked ) {
 				return;
 			}
+
+			const siteStarterChoice = this.getSiteStarterChoice();
 
 			if ( ! siteStarterChoice ) {
 				return;
