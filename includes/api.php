@@ -226,8 +226,8 @@ class Api {
 
 		/**
 		 * Filters the library data to allow 3rd party extending the response data.
-		 * @since 3.32.2
 		 *
+		 * @since 3.32.2
 		 * @param-out array $library_data an array of templates data.
 		 */
 		$library_data = apply_filters( 'elementor/remote/library/data', $library_data );

@@ -259,6 +259,7 @@ class Manager {
 
 		/**
 		 * Filter the full library data.
+		 *
 		 * @since 3.32.2
 		 * @param-out $full_library_data - 'templates' and 'config' data ('config' holds the list of categories).
 		 */
