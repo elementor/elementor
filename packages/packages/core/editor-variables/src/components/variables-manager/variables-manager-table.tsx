@@ -234,20 +234,31 @@ export const VariablesManagerTable = ( {
 												</VariableEditableCell>
 											</VariableTableCell>
 											<VariableTableCell>
-												<VariableEditableCell
-													initialValue={ row.value }
-													onChange={ ( value ) => {
-														if ( value !== row.value ) {
-															handleOnChange( {
-																...variables,
-																[ row.id ]: { ...variables[ row.id ], value },
-															} );
-														}
-													} }
-													editableElement={ row.valueField }
-													onRowRef={ handleRowRef( row.id ) }
-													gap={ 0.25 }
-												>
+											<VariableEditableCell
+												initialValue={ row.value }
+												onChange={ ( value ) => {
+													if ( value !== row.value ) {
+														handleOnChange( {
+															...variables,
+															[ row.id ]: { ...variables[ row.id ], value },
+														} );
+													}
+												} }
+												editableElement={ ( { value, onChange, onValidationChange, error } ) =>
+													row.valueField( {
+														value,
+														onChange,
+														onValidationChange: ( errorMsg ) => {
+															onValidationChange?.( errorMsg );
+															onFieldError?.( !! errorMsg );
+														},
+														error,
+													} )
+												}
+												onRowRef={ handleRowRef( row.id ) }
+												gap={ 0.25 }
+												fieldType="value"
+											>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
 													<EllipsisWithTooltip
 														title={ row.value }
