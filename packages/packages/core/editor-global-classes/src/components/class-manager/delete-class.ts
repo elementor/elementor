@@ -1,5 +1,4 @@
 import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-documents';
-import { getElements, getElementSettings, updateElementSettings } from '@elementor/editor-elements';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __dispatch as dispatch } from '@elementor/store';
 
@@ -9,18 +8,7 @@ let isDeleted = false;
 
 export const deleteClass = ( id: string ) => {
 	dispatch( slice.actions.delete( id ) );
-	getElements().forEach( ( element ) => {
-		const classes = getElementSettings< { value?: string[] } | null >( element.id, [ 'classes' ] ).classes;
-		if ( classes && Array.isArray( classes.value ) && classes.value.includes( id ) ) {
-			const newClasses = classes.value.filter( ( classId ) => classId !== id );
-			classes.value = newClasses;
-			updateElementSettings( {
-				id: element.id,
-				props: { classes },
-				withHistory: false,
-			} );
-		}
-	} );
+
 	isDeleted = true;
 };
 
