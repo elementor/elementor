@@ -10,7 +10,14 @@ type Props = {
 
 export const NoSearchResults = ( { searchValue, onClear, icon }: Props ) => {
 	return (
-		<Stack gap={ 1 } p={ 2.5 } color="text.secondary" sx={ { pb: 3.5 } }>
+		<Stack
+			gap={ 1 }
+			alignItems="center"
+			justifyContent="center"
+			p={ 2.5 }
+			color="text.secondary"
+			sx={ { pb: 3.5 } }
+		>
 			{ icon }
 			<Typography align="center" variant="subtitle2">
 				{ __( 'Sorry, nothing matched', 'elementor' ) }
