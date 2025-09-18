@@ -571,6 +571,7 @@ class Settings extends Settings_Page {
 			'elementor_disable_color_schemes',
 			'elementor_disable_typography_schemes',
 			'elementor_css_print_method',
+			'elementor_local_google_fonts',
 		];
 
 		foreach ( $css_settings as $option_name ) {
