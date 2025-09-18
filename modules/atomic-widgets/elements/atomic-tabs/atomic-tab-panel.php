@@ -49,6 +49,7 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tab-id' => String_Prop_Type::make(),
+			'tabs-id' => String_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
@@ -108,9 +109,13 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
+
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 		$initial_attributes = $this->define_initial_attributes();
+
+		$default_active_tab = $this->get_context( $settings['tabs-id'] )['default-active-tab'];
+		$is_active = $default_active_tab === $settings['tab-id'];
 
 		$attributes = [
 			'class' => [
@@ -124,6 +129,11 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 		if ( ! empty( $settings['tab-id'] ) ) {
 			$attributes['data-tab-id'] = esc_attr( $settings['tab-id'] );
 			$attributes['aria-labelledby'] = esc_attr( $settings['tab-id'] );
+		}
+
+		if ( ! $is_active ) {
+			$attributes['hidden'] = 'true';
+			$attributes['style'] = 'display: none;';
 		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {

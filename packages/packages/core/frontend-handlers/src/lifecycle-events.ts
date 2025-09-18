@@ -1,5 +1,11 @@
 import { handlers } from './handlers-registry';
 
+type ExtendedWindow = Window & {
+	elementorFrontend: {
+		isEditMode: () => boolean;
+	};
+};
+
 const unmountCallbacks: Map< string, Map< string, () => void > > = new Map();
 
 export const onElementRender = ( {
@@ -19,7 +25,10 @@ export const onElementRender = ( {
 	}
 
 	Array.from( handlers.get( elementType )?.values() ?? [] ).forEach( ( handler ) => {
-		const unmount = handler( { element, signal: controller.signal } );
+		const extendedWindow = window as unknown as ExtendedWindow;
+		const isEditor = !! extendedWindow.elementorFrontend?.isEditMode?.();
+
+		const unmount = handler( { element, signal: controller.signal, isEditor } );
 
 		if ( typeof unmount === 'function' ) {
 			manualUnmount.push( unmount );
