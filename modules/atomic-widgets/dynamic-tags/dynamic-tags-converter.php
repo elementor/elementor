@@ -24,98 +24,102 @@ class Dynamic_Tags_Converter {
 	 */
 	public function convert_control_to_prop_type( array $control ) {
 		$control_type = $control['type'];
-		$dependencies = ! empty( $control['condition'] ) ? $this->convert_conditions_to_prop_dependencies( $control['condition'] ) : [];
 
 		switch ( $control_type ) {
 			case 'text':
 			case 'textarea':
-				return String_Prop_Type::make()
-					->default( $control['default'] ?? null )
-					->set_dependencies( $dependencies );
+				$prop_type = String_Prop_Type::make()
+					->default( $control['default'] ?? null );
+				break;
 
 			case 'select':
-				$string_prop = String_Prop_Type::make()
-					->default( $control['default'] ?? null )
-					->set_dependencies( $dependencies );
+				$prop_type = String_Prop_Type::make()
+					->default( $control['default'] ?? null );
 
 				if ( ! isset( $control['collection_id'] ) || empty( $control['collection_id'] ) ) {
-					$string_prop->enum( array_keys( $control['options'] ?? [] ) );
+					$prop_type->enum( array_keys( $control['options'] ?? [] ) );
 				}
-
-				return $string_prop;
+				break;
 
 			case 'number':
-				return Number_Prop_Type::make()
+				$prop_type = Number_Prop_Type::make()
 					->set_required( $control['required'] ?? false )
-					->default( $control['default'] ?? null )
-					->set_dependencies( $dependencies );
+					->default( $control['default'] ?? null );
+				break;
 
 			case 'switcher':
 				$default = $control['default'];
 
-				return Boolean_Prop_Type::make()
-					->default( 'yes' === $default || true === $default )
-					->set_dependencies( $dependencies );
+				$prop_type = Boolean_Prop_Type::make()
+					->default( 'yes' === $default || true === $default );
+				break;
 
 			case 'choose':
-				return String_Prop_Type::make()
+				$prop_type = String_Prop_Type::make()
 					->default( $control['default'] ?? null )
-					->enum( array_keys( $control['options'] ?? [] ) )
-					->set_dependencies( $dependencies );
+					->enum( array_keys( $control['options'] ?? [] ) );
+				break;
 
 			case 'query':
-				return Query_Prop_Type::make()
+				$prop_type = Query_Prop_Type::make()
 					->set_required( $control['required'] ?? false )
-					->default( $control['default'] ?? null )
-					->set_dependencies( $dependencies );
+					->default( $control['default'] ?? null );
+				break;
 
 			case 'media':
-				return Image_Prop_Type::make()
+				$prop_type = Image_Prop_Type::make()
 					->default_url( Placeholder_Image::get_placeholder_image() )
-					->default_size( 'full' )
-					->set_dependencies( $dependencies );
+					->default_size( 'full' );
+				break;
 
 			default:
 				return null;
 		}
+
+		$prop_type->set_dependencies( $this->create_dependencies_from_condition( $control['condition'] ?? null ) );
+
+		return $prop_type;
 	}
 
-	private function convert_conditions_to_prop_dependencies( array $conditions ): ?array {
-		if ( empty( $conditions ) ) {
-			return [];
+	private function create_dependencies_from_condition( $condition ): ?array {
+		if ( ! is_array( $condition ) || empty( $condition ) ) {
+			return null;
 		}
 
-		$dependency_manager = Dependency_Manager::make( Dependency_Manager::RELATION_AND );
+		$manager = Dependency_Manager::make( Dependency_Manager::RELATION_AND );
 
-		foreach ( $conditions as $path => $value ) {
-			$operator = $this->determine_condition_operator( $path, $value );
-			$clean_path = $this->clean_path_from_operator( $path );
+		foreach ( $condition as $raw_key => $value ) {
+			$is_negated = false !== strpos( (string) $raw_key, '!' );
+			$key = rtrim( (string) $raw_key, '!' );
+			$path = $this->parse_condition_path( $key );
 
-			$dependency_manager->where([
-				'operator' => $operator,
-				'path' => [ $clean_path ],
+			if ( is_array( $value ) ) {
+				$manager->where( [
+					'operator' => $is_negated ? 'nin' : 'in',
+					'path' => $path,
+					'value' => $value,
+				] );
+				continue;
+			}
+
+			$manager->where( [
+				'operator' => $is_negated ? 'ne' : 'eq',
+				'path' => $path,
 				'value' => $value,
-			]);
+			] );
 		}
 
-		return $dependency_manager->get();
+		return $manager->get();
 	}
 
-	private function determine_condition_operator( string $path, $value ): string {
-		$has_negation = str_ends_with( $path, '!' );
-
-		if ( is_array( $value ) ) {
-			return $has_negation ? 'nin' : 'in';
+	private function parse_condition_path( string $key ): array {
+		if ( false === strpos( $key, '[' ) ) {
+			return [ $key ];
 		}
 
-		return $has_negation ? 'ne' : 'eq';
-	}
+		$key = str_replace( ']', '', $key );
+		$tokens = explode( '[', $key );
 
-	private function clean_path_from_operator( string $path ): string {
-		if ( str_ends_with( $path, '!' ) ) {
-			return substr( $path, 0, -1 );
-		}
-
-		return $path;
+		return array_values( array_filter( $tokens, static fn( $t ) => '' !== $t ) );
 	}
 }

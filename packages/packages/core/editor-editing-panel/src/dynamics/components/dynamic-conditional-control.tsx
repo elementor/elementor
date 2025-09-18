@@ -1,47 +1,56 @@
 import * as React from 'react';
-import { isDependency, isDependencyMet, type PropKey, type PropType } from '@elementor/editor-props';
+import { isDependencyMet, type PropType, type PropValue, type PropsSchema } from '@elementor/editor-props';
 
 import { type DynamicPropValue } from '../utils';
 
 type DynamicConditionalControlProps = React.PropsWithChildren< {
 	propType?: PropType;
+	propsSchema?: PropsSchema;
 	dynamicSettings?: Record< string, DynamicPropValue >;
 } >;
 
-const getDynamicDependencies = ( propType?: PropType ): PropKey[] => {
-	if ( ! propType?.dependencies?.terms.length ) {
-		return [];
-	}
-
-	return propType.dependencies.terms.flatMap( ( term ) => ( ! isDependency( term ) ? term.path : [] ) );
-};
 
 export const DynamicConditionalControl: React.FC< DynamicConditionalControlProps > = ( {
 	children,
 	propType,
-	dynamicSettings = {},
+	propsSchema,
+	dynamicSettings,
 } ) => {
-	const dependencyKeys = getDynamicDependencies( propType );
+	const defaults = React.useMemo< Record< string, PropValue | null > >( () => {
+		if ( ! propsSchema ) return {};
+		
+		const entries = Object.entries( propsSchema ) as Array< [ string, PropType ] >;
+		return entries.reduce< Record< string, PropValue | null > >( ( result, [ key, prop ] ) => {
+			result[ key ] = prop?.default ?? null;
+			return result;
+		}, {} );
+	}, [ propsSchema ] );
 
-	if ( ! dependencyKeys.length ) {
+	const convertedSettings = React.useMemo( () => {
+		if ( ! dynamicSettings ) return {};
+		
+		return Object.entries( dynamicSettings ).reduce< Record< string, PropValue > >( ( result, [ key, dynamicValue ] ) => {
+			if ( dynamicValue && typeof dynamicValue === 'object' && '$$type' in dynamicValue ) {
+				result[ key ] = dynamicValue as PropValue;
+			} else {
+				result[ key ] = {
+					$$type: 'plain',
+					value: dynamicValue
+				} as PropValue;
+			}
+			return result;
+		}, {} );
+	}, [ dynamicSettings ] );
+
+	const effectiveSettings = React.useMemo( () => {
+		return { ...defaults, ...convertedSettings } as Record< string, PropValue >;
+	}, [ defaults, convertedSettings ] );
+
+	if ( ! propType?.dependencies?.terms.length ) {
 		return <>{ children }</>;
 	}
 
-	// Get dependency values from dynamic settings
-	const dependencyValues = dependencyKeys.reduce(
-		( acc, key ) => {
-			const dynamicValue = dynamicSettings[ key ];
-			acc[ key ] = {
-				$$type: dynamicValue?.$$type || 'plain',
-				value: dynamicValue?.value
-			};
-
-			return acc;
-		},
-		{} as Record< string, DynamicPropValue >
-	);
-
-	const isHidden = ! isDependencyMet( propType?.dependencies, dependencyValues ).isMet;
+	const isHidden = ! isDependencyMet( propType?.dependencies, effectiveSettings ).isMet;
 
 	return isHidden ? null : <>{ children }</>;
 };
