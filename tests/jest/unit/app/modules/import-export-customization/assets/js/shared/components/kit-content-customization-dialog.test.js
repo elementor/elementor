@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-kit-customization-custom-post-types', () => ( {
 	useKitCustomizationCustomPostTypes: jest.fn(),
