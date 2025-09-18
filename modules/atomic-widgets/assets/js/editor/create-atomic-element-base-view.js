@@ -2,7 +2,8 @@ import AtomicElementEmptyView from './container/atomic-element-empty-view';
 import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
-export default function createAtomicElementView( type ) {
+
+export default function createAtomicElementBaseView( type ) {
 	const AtomicElementView = BaseElementView.extend( {
 		template: Marionette.TemplateCache.get( `#tmpl-elementor-${ type }-content` ),
 
@@ -56,7 +57,7 @@ export default function createAtomicElementView( type ) {
 			const local = {};
 			const cssId = this.model.getSetting( '_cssid' );
 			const customAttributes = this.model.getSetting( 'attributes' )?.value ?? [];
-			const initialAttributes = this?.model?.config?.initial_attributes;
+			const initialAttributes = this?.model?.config?.initial_attributes ?? {};
 
 			if ( cssId ) {
 				local.id = cssId.value;
@@ -79,8 +80,9 @@ export default function createAtomicElementView( type ) {
 
 			return {
 				...attr,
-				...local,
 				...initialAttributes,
+				...customAttributes,
+				...local,
 			};
 		},
 
@@ -584,3 +586,4 @@ export default function createAtomicElementView( type ) {
 
 	return AtomicElementView;
 }
+

@@ -1,5 +1,6 @@
 import {
 	type ControlComponent,
+	HtmlTagControl,
 	ImageControl,
 	KeyValueControl,
 	LinkControl,
@@ -50,6 +51,7 @@ const controlTypes = {
 	number: { component: NumberControl, layout: 'two-columns', propTypeUtil: numberPropTypeUtil },
 	repeatable: { component: RepeatableControl, layout: 'full', propTypeUtil: undefined },
 	'key-value': { component: KeyValueControl, layout: 'full', propTypeUtil: keyValuePropTypeUtil },
+	'html-tag': { component: HtmlTagControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

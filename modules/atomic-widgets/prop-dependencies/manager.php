@@ -36,6 +36,7 @@ class Manager {
 	 *             operator: string,
 	 *             path: array<string>,
 	 *             value?: mixed,
+	 *             newValue?: array
 	 *         }
 	 *     }
 	 */
@@ -70,6 +71,7 @@ class Manager {
 	 *  operator: string,
 	 *  path: array<string>,
 	 *  value?: mixed,
+	 *  newValue?: array,
 	 * }
 	 * @return self
 	 */
@@ -86,6 +88,7 @@ class Manager {
 			'operator' => $config['operator'],
 			'path' => $config['path'],
 			'value' => $config['value'] ?? null,
+			'newValue' => $config['newValue'] ?? null,
 		];
 
 		if ( empty( $this->dependencies ) ) {
