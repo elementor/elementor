@@ -26,8 +26,6 @@ class Render_Mode_Preview extends Render_Mode_Base {
 
 		add_filter( 'template_include', [ $this, 'filter_template' ] );
 
-		add_filter( 'body_class', [ $this, 'filter_body_class' ], 999 );
-
 		add_action( 'wp_footer', [ $this, 'cleanup' ], 999 );
 
 		add_filter( 'elementor/render_mode/module', [ $this, 'filter_render_mode_module' ] );
@@ -46,18 +44,6 @@ class Render_Mode_Preview extends Render_Mode_Base {
 
 	public function filter_template() {
 		return ELEMENTOR_PATH . 'modules/page-templates/templates/canvas.php';
-	}
-
-	public function filter_body_class( $classes ) {
-		// Remove any existing elementor-page classes
-		$classes = array_filter( $classes, function( $class ) {
-			return ! preg_match( '/^elementor-page/', $class );
-		} );
-
-		// Add the correct elementor-page class for our document
-		$classes[] = 'elementor-page elementor-page-' . $this->document->get_main_id();
-
-		return $classes;
 	}
 
 	public function cleanup() {
