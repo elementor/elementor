@@ -3,7 +3,7 @@ import { TrashIcon } from '@elementor/icons';
 import { type IconButtonProps, type MenuItemProps, type MenuProps } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { VariableEditMenu } from '../utils/variable-edit-menu';
+import { VariableEditMenu } from '../ui/variable-edit-menu';
 
 const mockPopupState = {
 	isOpen: false,

@@ -11,10 +11,11 @@ import {
 import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { ColorFilterIcon, TrashIcon } from '@elementor/icons';
-import { Alert, Box, Button, CloseButton, Divider, ErrorBoundary, Stack } from '@elementor/ui';
+import { Alert, Box, Button, CloseButton, Divider, ErrorBoundary, Stack, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
+import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
 import { useAutoEdit } from './hooks/use-auto-edit';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
@@ -38,6 +39,10 @@ export const { panel, usePanelActions } = createPanel( {
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
+
+	const createMenuState = usePopupState( {
+		variant: 'popover',
+	} );
 
 	const {
 		variables,
@@ -99,7 +104,7 @@ export function VariablesManagerPanel() {
 		},
 	];
 
-	const hasVariables = Object.keys( variables ).length !== 0;
+	const hasVariables = Object.values( variables ).some( ( variable ) => ! variable.deleted );
 
 	return (
 		<ThemeProvider>
@@ -118,6 +123,7 @@ export function VariablesManagerPanel() {
 									<VariableManagerCreateMenu
 										onCreate={ handleCreateVariable }
 										variables={ variables }
+										menuState={ createMenuState }
 									/>
 									<CloseButton
 										aria-label="Close"
@@ -143,6 +149,7 @@ export function VariablesManagerPanel() {
 							onSearch={ handleSearch }
 						/>
 						<Divider sx={ { width: '100%' } } />
+
 						{ hasVariables && (
 							<VariablesManagerTable
 								menuActions={ menuActions }
@@ -154,11 +161,23 @@ export function VariablesManagerPanel() {
 							/>
 						) }
 
-						{ ! hasVariables && (
+						{ ! hasVariables && searchValue && (
 							<NoSearchResults
 								searchValue={ searchValue }
 								onClear={ () => handleSearch( '' ) }
 								icon={ <ColorFilterIcon fontSize="large" /> }
+							/>
+						) }
+
+						{ ! hasVariables && ! searchValue && (
+							<EmptyState
+								title={ __( 'Create your first variable', 'elementor' ) }
+								message={ __(
+									'Variables are saved attributes that you can apply anywhere on your site.',
+									'elementor'
+								) }
+								icon={ <ColorFilterIcon fontSize="large" /> }
+								onAdd={ createMenuState.open }
 							/>
 						) }
 					</PanelBody>

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { createElement } from 'react';
+import { createElement, useRef } from 'react';
 import { PlusIcon } from '@elementor/icons';
-import { bindMenu, bindTrigger, IconButton, Menu, MenuItem, Typography, usePopupState } from '@elementor/ui';
+import { bindMenu, bindTrigger, IconButton, Menu, MenuItem, type PopupState, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type TVariablesList } from '../../storage';
@@ -13,12 +13,16 @@ type VariableManagerCreateMenuProps = {
 	variables: TVariablesList;
 	onCreate: ( type: string, defaultName: string, defaultValue: string ) => void;
 	disabled?: boolean;
+	menuState: PopupState;
 };
 
-export const VariableManagerCreateMenu = ( { variables, onCreate, disabled }: VariableManagerCreateMenuProps ) => {
-	const menuState = usePopupState( {
-		variant: 'popover',
-	} );
+export const VariableManagerCreateMenu = ( {
+	variables,
+	onCreate,
+	disabled,
+	menuState,
+}: VariableManagerCreateMenuProps ) => {
+	const buttonRef = useRef< HTMLButtonElement >( null );
 
 	const variableTypes = getVariableTypes();
 
@@ -40,6 +44,7 @@ export const VariableManagerCreateMenu = ( { variables, onCreate, disabled }: Va
 		<>
 			<IconButton
 				{ ...bindTrigger( menuState ) }
+				ref={ buttonRef }
 				disabled={ disabled }
 				size={ SIZE }
 				aria-label={ __( 'Add variable', 'elementor' ) }
@@ -56,7 +61,7 @@ export const VariableManagerCreateMenu = ( { variables, onCreate, disabled }: Va
 					elevation: 6,
 				} }
 				{ ...bindMenu( menuState ) }
-				anchorEl={ menuState.anchorEl }
+				anchorEl={ buttonRef.current }
 				anchorOrigin={ {
 					vertical: 'bottom',
 					horizontal: 'right',
@@ -65,8 +70,7 @@ export const VariableManagerCreateMenu = ( { variables, onCreate, disabled }: Va
 					vertical: 'top',
 					horizontal: 'right',
 				} }
-				open={ menuState.isOpen }
-				onClose={ menuState.close }
+				data-testid="variable-manager-create-menu"
 			>
 				{ menuOptions.map( ( option ) => (
 					<MenuItem
