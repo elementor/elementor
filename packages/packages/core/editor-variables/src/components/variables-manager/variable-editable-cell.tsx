@@ -94,7 +94,11 @@ export const VariableEditableCell = React.memo(
 			[ fieldType, value, setLabelFieldError, setValueFieldError ]
 		);
 
-		const currentError = fieldType === 'label' ? labelFieldError : fieldType === 'value' ? { value, message: valueFieldError } : undefined;
+		const currentError = fieldType === 'label' 
+			? labelFieldError 
+			: fieldType === 'value' 
+			? { value, message: valueFieldError } 
+			: undefined;
 
 		const editableContent = editableElement( {
 			value,
