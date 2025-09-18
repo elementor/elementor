@@ -81,7 +81,8 @@ class Cache_Validity_Item {
 		$last_key = array_pop( $keys );
 		$parent = &$this->get_node( $data, $keys );
 
-		if ( ! is_array( $parent ) ) {
+		if ( ! is_array( $parent ) || ! isset( $parent['children'][ $last_key ] ) ) {
+			// node doesn't exist - no need to do anything
 			return;
 		}
 
@@ -93,12 +94,12 @@ class Cache_Validity_Item {
 			return;
 		}
 
-		$data = &$this->get_data_without_placeholders( $data, $keys, $last_key );
+		$data = $this->get_data_without_placeholders( $data, $keys, $last_key );
 
 		$this->update_stored_data( $data );
 	}
 
-	private function &get_data_without_placeholders( array &$data, array $keys, string $last_key ) {
+	private function get_data_without_placeholders( array $data, array $keys, string $last_key ) {
 		$remove_node = [
 			'key' => null,
 			'node' => null,
