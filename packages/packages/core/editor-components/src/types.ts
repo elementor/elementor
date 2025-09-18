@@ -1,8 +1,11 @@
-export type ComponentFormValues = {
-	componentName: string;
-};
+declare global {
+    interface Window {
+        components: {
+            created: any[];
+            modified: any[];
+            deleted: any[];
+        };
+    }
+}
 
-export type Component = {
-	id: number;
-	name: string;
-};
+export {};

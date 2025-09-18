@@ -1,9 +1,12 @@
-import { injectIntoTop } from '@elementor/editor';
+import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { __ } from '@wordpress/i18n';
 
+import './types';
+
 import { ComponentsTab } from './components/components-tab';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
+import { SyncWithDocumentSave } from './sync-with-document';
 
 export function init() {
 	injectTab( {
@@ -17,9 +20,14 @@ export function init() {
 		component: CreateComponentForm,
 	} );
 
-	// window.components = {
-	// 	created: [],
-	// 	modified: [],
-	// 	deleted: [],
-	// }
+	window.components = {
+		created: [],
+		modified: [],
+		deleted: [],
+	};
+
+	injectIntoLogic({
+		id: 'components-sync-with-document',
+		component: SyncWithDocumentSave,
+	});
 }

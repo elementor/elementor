@@ -38,6 +38,8 @@ export function getV1DocumentPermalink( documentData: V1Document ) {
 }
 
 export function normalizeV1Document( documentData: V1Document ): Document {
+	console.log('------------ /normalizeV1Document, documentData: ------------');
+	console.log(documentData);
 	// Draft or autosave.
 	const isUnpublishedRevision = documentData.config.revisions.current_id !== documentData.id;
 	const exitToUrl = getV1DocumentsExitTo( documentData );

@@ -57,7 +57,7 @@ export function CreateComponentForm() {
 			throw new Error( `Can't save element as component: element not found` );
 		}
 
-		const tempId = 1;
+		const tempId = Date.now();
 
 		window.elementor.documents.addDocumentByConfig({
 			id: tempId,
@@ -76,14 +76,14 @@ export function CreateComponentForm() {
 			"settings": {
 				"name": "page",
 				"panelPage": {
-					"title": "Component Settings"
+					"title": values.componentName
 				},
 				"controls": {},
 				"tabs": {
 					"settings": "Settings"
 				},
 				"settings": {
-					"post_title": "Product Card",
+					"post_title": values.componentName,
 					"post_status": "publish"
 				},
 				"cssWrapperSelector": ""
@@ -192,6 +192,9 @@ export function CreateComponentForm() {
 				"label": "Published"
 			},
 		});
+
+		window.components.created.push( tempId );
+
 		replaceElementWithComponent( element.element, {
 			id: tempId,
 			name: values.componentName,

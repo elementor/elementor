@@ -27,6 +27,11 @@ export class Save extends $e.modules.CommandInternalBase {
 			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } );
 		}
 
+		console.log('------------ elements ------------');
+		console.log(elements);
+
+		filter
+
 		const successArgs = {
 			status,
 			oldStatus,

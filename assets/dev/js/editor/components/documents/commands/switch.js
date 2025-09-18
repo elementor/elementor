@@ -18,6 +18,8 @@ export class Switch extends $e.modules.CommandBase {
 			selector: args.selector,
 		} )
 			.then( () => {
+				console.log('------------ /switch, id: ------------');
+				console.log(id);
 				return $e.run( 'editor/documents/open', { id, shouldScroll, shouldNavigateToDefaultRoute, selector: args.selector, setAsInitial } );
 			} )
 			.then( () => {
