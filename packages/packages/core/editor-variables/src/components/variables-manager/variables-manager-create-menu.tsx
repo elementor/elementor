@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createElement, useRef } from 'react';
 import { PlusIcon } from '@elementor/icons';
-import { bindMenu, bindTrigger, IconButton, Menu, MenuItem, type PopupState,Typography } from '@elementor/ui';
+import { bindMenu, bindTrigger, IconButton, Menu, MenuItem, type PopupState, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type TVariablesList } from '../../storage';
