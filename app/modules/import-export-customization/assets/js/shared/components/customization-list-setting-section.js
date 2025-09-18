@@ -26,7 +26,7 @@ export function ListSettingSection( {
 	const [ showMore, setShowMore ] = useState( false );
 
 	return (
-		<Box key={ settingKey } sx={ { border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
+		<Box key={ settingKey } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
 			<Stack spacing={ 2 } >
 				<Typography variant="h6" >
 					{ title }
