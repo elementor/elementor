@@ -1,8 +1,20 @@
-// Define the storage keys directly to avoid import issues
 const ONBOARDING_STORAGE_KEYS = {
+	START_TIME: 'elementor_onboarding_start_time',
+	INITIATED: 'elementor_onboarding_initiated',
+	STEP1_ACTIONS: 'elementor_onboarding_step1_actions',
+	STEP2_ACTIONS: 'elementor_onboarding_step2_actions',
+	STEP3_ACTIONS: 'elementor_onboarding_step3_actions',
+	STEP4_ACTIONS: 'elementor_onboarding_step4_actions',
 	STEP4_SITE_STARTER_CHOICE: 'elementor_onboarding_s4_site_starter_choice',
 	EDITOR_LOAD_TRACKED: 'elementor_onboarding_editor_load_tracked',
 	POST_ONBOARDING_CLICK_COUNT: 'elementor_onboarding_click_count',
+	PENDING_EXIT: 'elementor_onboarding_pending_exit',
+	PENDING_SKIP: 'elementor_onboarding_pending_skip',
+	PENDING_CREATE_ACCOUNT_STATUS: 'elementor_onboarding_pending_create_account_status',
+	PENDING_CREATE_MY_ACCOUNT: 'elementor_onboarding_pending_create_my_account',
+	PENDING_TOP_UPGRADE: 'elementor_onboarding_pending_top_upgrade',
+	PENDING_CONNECT_STATUS: 'elementor_onboarding_pending_connect_status',
+	PENDING_STEP1_CLICKED_CONNECT: 'elementor_onboarding_pending_step1_clicked_connect',
 };
 
 class PostOnboardingTracking {
@@ -259,11 +271,15 @@ class PostOnboardingTracking {
 			ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS,
 			ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS,
 			ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE,
+			ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED,
+			ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT,
 			ONBOARDING_STORAGE_KEYS.PENDING_EXIT,
 			ONBOARDING_STORAGE_KEYS.PENDING_SKIP,
 			ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS,
 			ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT,
 			ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
+			ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS,
+			ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
 		];
 
 		keysToRemove.forEach( ( key ) => {
