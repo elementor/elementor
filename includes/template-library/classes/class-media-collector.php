@@ -55,7 +55,7 @@ class Media_Collector {
 		}
 	}
 
-	private function download_and_save_media( string $url ): string|false {
+	private function download_and_save_media( string $url ) {
 		if ( $this->is_local_url( $url ) ) {
 			$local_file_path = $this->get_local_file_path( $url );
 			if ( $local_file_path && file_exists( $local_file_path ) ) {
