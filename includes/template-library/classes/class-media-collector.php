@@ -206,8 +206,4 @@ class Media_Collector {
 
 		return false;
 	}
-
-	public function get_collected_media(): array {
-		return array_unique( $this->collected_media );
-	}
 }
