@@ -252,18 +252,10 @@ class Manager {
 
 		$filter_sources = ! empty( $args['filter_sources'] ) ? $args['filter_sources'] : [];
 
-		$full_library_data = [
+		return [
 			'templates' => $this->get_templates( $filter_sources, $force_update ),
 			'config' => $library_data['types_data'],
 		];
-
-		/**
-		 * Filter the full library data.
-		 *
-		 * @since 3.32.2
-		 * @param-out $full_library_data - 'templates' and 'config' data ('config' holds the list of categories).
-		 */
-		return apply_filters( 'elementor/library/full-data', $full_library_data );
 	}
 
 	/**
