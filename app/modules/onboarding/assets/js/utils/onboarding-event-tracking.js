@@ -1,5 +1,5 @@
 import eventsConfig from '../../../../../../core/common/modules/events-manager/assets/js/events-config';
-import { convertKeysToEnglishNames } from './utils';
+import { options } from './utils';
 
 const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
@@ -93,15 +93,41 @@ export class OnboardingEventTracking {
 	}
 
 	static extractSelectedFeatureKeys( selectedFeatures ) {
-		const allSelectedKeys = [];
+		const allSelectedFeatures = [];
 		if ( selectedFeatures.essential ) {
-			allSelectedKeys.push( ...selectedFeatures.essential );
+			allSelectedFeatures.push( ...selectedFeatures.essential );
 		}
 		if ( selectedFeatures.advanced ) {
-			allSelectedKeys.push( ...selectedFeatures.advanced );
+			allSelectedFeatures.push( ...selectedFeatures.advanced );
 		}
 
-		return convertKeysToEnglishNames( allSelectedKeys );
+		return this.convertFeaturesToEnglishNames( allSelectedFeatures );
+	}
+
+	static convertFeaturesToEnglishNames( features ) {
+		// Hard-coded English names for consistent reporting
+		const englishFeatureNames = [
+			'Templates & Theme Builder',
+			'WooCommerce Builder',
+			'Lead Collection & Form Builder',
+			'Dynamic Content',
+			'Popup Builder',
+			'Custom Code & CSS',
+			'Motion Effects & Animations',
+			'Notes & Collaboration',
+		];
+
+		// Create a mapping based on the options array order
+		const featureMapping = {};
+		options.forEach( ( option, index ) => {
+			// Map the translated text to the English equivalent
+			featureMapping[ option.text ] = englishFeatureNames[ index ];
+		} );
+
+		// Convert features to English names
+		return features.map( ( feature ) => {
+			return featureMapping[ feature ] || feature;
+		} );
 	}
 
 	static sendHelloBizContinue( stepNumber = 2 ) {
