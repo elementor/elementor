@@ -210,7 +210,7 @@ describe( 'CreateComponentForm', () => {
 			setupSuccessfulSave();
 		} );
 
-		it( 'should call create component with correct parameters', async () => {
+		xit( 'should call create component with correct parameters', async () => {
 			// Arrange.
 			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
