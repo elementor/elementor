@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Context;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -130,6 +131,14 @@ class Atomic_Tabs extends Atomic_Element_Base {
 
 	public function get_script_depends() {
 		return [ 'elementor-tabs-handler' ];
+	}
+
+	protected function set_context() {
+		$default_active_tab = $this->get_atomic_settings()['default-active-tab'];
+
+		return [
+			'default-active-tab' => $default_active_tab,
+		];
 	}
 
 	protected function add_render_attributes() {
