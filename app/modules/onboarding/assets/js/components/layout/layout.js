@@ -17,7 +17,7 @@ export default function Layout( props ) {
 			return;
 		}
 
-		const stepNumber = getStepNumber( props.pageId );
+		const stepNumber = OnboardingEventTracking.getStepNumber( props.pageId );
 		return OnboardingEventTracking.setupSingleUpgradeButtonTracking( buttonElement, stepNumber );
 	}, [ props.pageId ] );
 
@@ -33,7 +33,7 @@ export default function Layout( props ) {
 			},
 		} );
 
-		const stepNumber = getStepNumber( props.pageId );
+		const stepNumber = OnboardingEventTracking.getStepNumber( props.pageId );
 		initializeExitTracking( stepNumber );
 
 		updateState( {
@@ -42,16 +42,6 @@ export default function Layout( props ) {
 			proNotice: null,
 		} );
 	}, [ props.pageId, props.nextStep, updateState ] );
-
-	const getStepNumber = ( pageId ) => {
-		const stepMapping = {
-			account: 1,
-			hello: 2,
-			chooseFeatures: 3,
-			goodToGo: 4,
-		};
-		return stepMapping[ pageId ] || 1;
-	};
 
 	const { state, updateState } = useContext( OnboardingContext ),
 		headerButtons = [],
@@ -64,7 +54,7 @@ export default function Layout( props ) {
 			target: '_blank',
 			rel: 'opener',
 			onClick: () => {
-				const stepNumber = getStepNumber( props.pageId );
+				const stepNumber = OnboardingEventTracking.getStepNumber( props.pageId );
 				OnboardingEventTracking.sendCreateMyAccount( stepNumber, 'on_topbar', 'topbar' );
 
 				elementorCommon.events.dispatchEvent( {
@@ -113,7 +103,7 @@ export default function Layout( props ) {
 			target: '_blank',
 			elRef: setupTopbarUpgradeTracking,
 			onClick: () => {
-				const stepNumber = getStepNumber( props.pageId );
+				const stepNumber = OnboardingEventTracking.getStepNumber( props.pageId );
 
 				if ( stepNumber >= 2 && stepNumber <= 4 ) {
 					OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );

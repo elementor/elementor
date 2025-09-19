@@ -9,17 +9,6 @@ export default function ProgressBar() {
 	const { state } = useContext( OnboardingContext ),
 		navigate = useNavigate(),
 
-		getStepNumberFromPageId = ( pageId ) => {
-			const stepMapping = {
-				account: 1,
-				hello: 2,
-				chooseFeatures: 3,
-				goodToGo: 4,
-				siteName: 5,
-				siteLogo: 6,
-			};
-			return stepMapping[ pageId ] || null;
-		},
 		progressBarItemsConfig = [
 			{
 				id: 'account',
@@ -69,8 +58,8 @@ export default function ProgressBar() {
 
 		if ( state.steps[ itemConfig.id ] ) {
 			itemConfig.onClick = () => {
-				const currentStepNumber = getStepNumberFromPageId( state.currentStep );
-				const nextStepNumber = getStepNumberFromPageId( itemConfig.id );
+				const currentStepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+				const nextStepNumber = OnboardingEventTracking.getStepNumber( itemConfig.id );
 
 				if ( 4 === currentStepNumber ) {
 					OnboardingEventTracking.trackStepAction( 4, 'stepper_clicks', {

@@ -840,6 +840,18 @@ export class OnboardingEventTracking {
 		return existingActionsString ? JSON.parse( existingActionsString ) : [];
 	}
 
+	static getStepNumber( pageId ) {
+		const stepMapping = {
+			account: 1,
+			hello: 2,
+			chooseFeatures: 3,
+			goodToGo: 4,
+			siteName: 5,
+			siteLogo: 6,
+		};
+		return stepMapping[ pageId ] || null;
+	}
+
 	static getStepConfig( stepNumber ) {
 		const stepConfigs = {
 			1: {

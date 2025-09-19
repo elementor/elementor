@@ -25,21 +25,9 @@ export default function SkipButton( props ) {
 	// Make sure the 'action' prop doesn't get printed on the button markup which causes an error.
 	delete button.action;
 
-	const getStepNumber = ( stepId ) => {
-		const stepMapping = {
-			account: 1,
-			hello: 2,
-			chooseFeatures: 3,
-			siteName: 4,
-			siteLogo: 5,
-			goodToGo: 6,
-		};
-		return stepMapping[ stepId ] || 1;
-	};
-
 	// If the button is a link, no onClick functionality should be added.
 	button.onClick = () => {
-		const stepNumber = getStepNumber( state.currentStep );
+		const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 
 		OnboardingEventTracking.trackStepAction( stepNumber, 'skipped' );
 		OnboardingEventTracking.sendStepEndState( stepNumber );
