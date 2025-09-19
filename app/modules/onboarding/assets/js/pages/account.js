@@ -153,15 +153,7 @@ export default function Account() {
 		if ( isTrackingOptedInConnect ) {
 			elementorCommon.config.editor_events.can_send_events = true;
 
-			OnboardingEventTracking.sendCoreOnboardingInitiated();
-			OnboardingEventTracking.sendConnectStatus( 'success', data.tracking_opted_in, data.access_tier );
-			OnboardingEventTracking.sendCreateAccountStatus( 'success', 1 );
-			OnboardingEventTracking.sendStoredExitEvent();
-			OnboardingEventTracking.sendStoredSkipEvent();
-			OnboardingEventTracking.sendStoredTopUpgradeEvent();
-			OnboardingEventTracking.sendStoredCreateMyAccountEvent();
-			OnboardingEventTracking.sendStoredCreateAccountStatusEvent();
-			OnboardingEventTracking.sendStoredStep1ClickedConnectEvent();
+			OnboardingEventTracking.sendConnectionSuccessEvents( data );
 		}
 
 		updateState( stateToUpdate );

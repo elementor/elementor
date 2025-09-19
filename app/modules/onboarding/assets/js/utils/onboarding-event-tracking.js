@@ -883,6 +883,22 @@ export class OnboardingEventTracking {
 		return stepConfigs[ stepNumber ] || null;
 	}
 
+	static sendConnectionSuccessEvents( data ) {
+		this.sendCoreOnboardingInitiated();
+		this.sendConnectStatus( 'success', data.tracking_opted_in, data.access_tier );
+		this.sendCreateAccountStatus( 'success', 1 );
+		this.sendAllStoredEvents();
+	}
+
+	static sendAllStoredEvents() {
+		this.sendStoredExitEvent();
+		this.sendStoredSkipEvent();
+		this.sendStoredTopUpgradeEvent();
+		this.sendStoredCreateMyAccountEvent();
+		this.sendStoredCreateAccountStatusEvent();
+		this.sendStoredStep1ClickedConnectEvent();
+	}
+
 	static handleStorageError( message, error ) {
 		// eslint-disable-next-line no-console
 		console.warn( message, error );
