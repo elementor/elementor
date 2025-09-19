@@ -138,17 +138,15 @@ class PostOnboardingTracking {
 	static findMeaningfulTitle( element ) {
 		let currentElement = element;
 		let attempts = 0;
-		const maxAttempts = 5; // Don't go too far up the DOM tree
+		const maxAttempts = 5;
 
 		while ( currentElement && attempts < maxAttempts ) {
-			// Try different ways to get a meaningful title
 			const title = this.extractTitleFromElement( currentElement );
 
 			if ( title && title.trim().length > 0 ) {
 				return title.trim();
 			}
 
-			// Move to parent element
 			currentElement = currentElement.parentElement;
 			attempts++;
 		}
@@ -157,7 +155,6 @@ class PostOnboardingTracking {
 	}
 
 	static extractTitleFromElement( element ) {
-		// Try multiple sources for title text
 		const sources = [
 			element.title,
 			element.getAttribute( 'aria-label' ),
@@ -165,7 +162,6 @@ class PostOnboardingTracking {
 			element.getAttribute( 'data-title' ),
 			element.textContent?.trim(),
 			element.innerText?.trim(),
-			// Look for text in specific child elements
 			element.querySelector( '.elementor-widget-title' )?.textContent?.trim(),
 			element.querySelector( '.elementor-heading-title' )?.textContent?.trim(),
 			element.querySelector( '.elementor-button-text' )?.textContent?.trim(),
@@ -182,11 +178,9 @@ class PostOnboardingTracking {
 	}
 
 	static generateFallbackTitle( element ) {
-		// Generate a fallback title based on element characteristics
 		const tagName = element.tagName?.toLowerCase() || 'element';
 		const className = element.className || '';
 
-		// Try to extract meaningful info from classes
 		if ( className.includes( 'eicon-' ) ) {
 			const iconClass = className.split( ' ' ).find( ( cls ) => cls.startsWith( 'eicon-' ) );
 			if ( iconClass ) {
