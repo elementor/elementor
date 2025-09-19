@@ -1177,10 +1177,11 @@ export default class EditorBase extends Marionette.Application {
 
 	async checkAndLoadPostOnboardingTracking() {
 		try {
+			const onboardingStartTime = localStorage.getItem( 'elementor_onboarding_start_time' );
 			const siteStarterChoice = localStorage.getItem( 'elementor_onboarding_s4_site_starter_choice' );
 			const editorLoadTracked = localStorage.getItem( 'elementor_onboarding_editor_load_tracked' );
 
-			const hasOnboardingData = siteStarterChoice || editorLoadTracked;
+			const hasOnboardingData = onboardingStartTime || siteStarterChoice || editorLoadTracked;
 
 			if ( ! hasOnboardingData ) {
 				return;
