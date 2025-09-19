@@ -69,7 +69,8 @@ class Dynamic_Tags_Converter {
 			case 'media':
 				$prop_type = Image_Prop_Type::make()
 					->default_url( Placeholder_Image::get_placeholder_image() )
-					->default_size( 'full' );
+					->default_size( 'full' )
+					->set_shape_meta( 'src', [ 'isDynamic' => true ] );
 				break;
 
 			default:
