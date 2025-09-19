@@ -20,8 +20,12 @@ export default function ChooseFeatures() {
 			href: elementorAppConfig.onboarding.urls.upgrade,
 			target: '_blank',
 			onClick: () => {
+				OnboardingEventTracking.trackStepAction( 3, 'pro_features_checked', {
+					features: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
+				} );
+
 				OnboardingEventTracking.trackStepAction( 3, 'upgrade_now', {
-					pro_features_checked: OnboardingEventTracking.extractSelectedFeatureTitles( selectedFeatures ),
+					pro_features_checked: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
 				} );
 
 				elementorCommon.events.dispatchEvent( {
@@ -55,8 +59,12 @@ export default function ChooseFeatures() {
 		skipButton = {
 			text: __( 'Skip', 'elementor' ),
 			action: () => {
+				OnboardingEventTracking.trackStepAction( 3, 'pro_features_checked', {
+					features: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
+				} );
+
 				OnboardingEventTracking.trackStepAction( 3, 'skipped', {
-					pro_features_checked: OnboardingEventTracking.extractSelectedFeatureTitles( selectedFeatures ),
+					pro_features_checked: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
 				} );
 				OnboardingEventTracking.sendStepEndState( 3 );
 
@@ -94,21 +102,15 @@ export default function ChooseFeatures() {
 		return !! features.advanced.length || !! features.essential.length;
 	}
 
-	function handleFeatureSelection( event, option ) {
+	function handleFeatureSelection( event ) {
 		const checked = event.currentTarget.checked;
 		const itemId = event.target.value;
 
 		setSelectedFeatureList( {
 			checked,
 			id: itemId,
-			text: option.text,
 			selectedFeatures,
 			setSelectedFeatures,
-		} );
-
-		OnboardingEventTracking.trackStepAction( 3, 'pro_features_checked', {
-			feature_name: option.text,
-			feature_checked: checked,
 		} );
 	}
 

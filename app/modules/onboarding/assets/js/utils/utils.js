@@ -41,22 +41,21 @@ export const options = [
  * @param {Object}   param0
  * @param {boolean}  param0.checked
  * @param {string}   param0.id
- * @param {string}   param0.text
  * @param {Object}   param0.selectedFeatures
  * @param {Function} param0.setSelectedFeatures
  */
-export const setSelectedFeatureList = ( { checked, id, text, selectedFeatures, setSelectedFeatures } ) => {
+export const setSelectedFeatureList = ( { checked, id, selectedFeatures, setSelectedFeatures } ) => {
 	const tier = id.split( '-' )[ 0 ];
 
 	if ( checked ) {
 		setSelectedFeatures( {
 			...selectedFeatures,
-			[ tier ]: [ ...selectedFeatures[ tier ], text ],
+			[ tier ]: [ ...selectedFeatures[ tier ], id ],
 		} );
 	} else {
 		setSelectedFeatures( {
 			...selectedFeatures,
-			[ tier ]: selectedFeatures[ tier ].filter( ( item ) => item !== text ),
+			[ tier ]: selectedFeatures[ tier ].filter( ( item ) => item !== id ),
 		} );
 	}
 };

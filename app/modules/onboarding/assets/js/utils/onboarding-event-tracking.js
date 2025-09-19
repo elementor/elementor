@@ -9,7 +9,7 @@ const ONBOARDING_EVENTS_MAP = {
 	STEP2_END_STATE: 'core_onboarding_s2_end_state',
 	STEP3_END_STATE: 'core_onboarding_s3_end_state',
 	STEP4_END_STATE: 'core_onboarding_s4_end_state',
-	STEP4_RETURN_STEP4: 'core_onboarding_s4_return_s4',
+	STEP4_RETURN_STEP4: 'core_onboarding_s4_return',
 	EDITOR_LOADED_FROM_ONBOARDING: 'editor_loaded_from_onboarding',
 	POST_ONBOARDING_1ST_CLICK: 'post_onboarding_1st_click',
 	POST_ONBOARDING_2ND_CLICK: 'post_onboarding_2nd_click',
@@ -81,7 +81,7 @@ export class OnboardingEventTracking {
 	}
 
 	static sendUpgradeNowStep3( selectedFeatures, currentStep ) {
-		const proFeaturesChecked = this.extractSelectedFeatureTitles( selectedFeatures );
+		const proFeaturesChecked = this.extractSelectedFeatureKeys( selectedFeatures );
 		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.UPGRADE_NOW_S3, {
 			location: 'plugin_onboarding',
 			trigger: eventsConfig.triggers.click,
@@ -91,7 +91,7 @@ export class OnboardingEventTracking {
 		} );
 	}
 
-	static extractSelectedFeatureTitles( selectedFeatures ) {
+	static extractSelectedFeatureKeys( selectedFeatures ) {
 		const allSelected = [];
 		if ( selectedFeatures.essential ) {
 			allSelected.push( ...selectedFeatures.essential );
@@ -411,7 +411,7 @@ export class OnboardingEventTracking {
 				trigger: 'exit_action_detected',
 				step_number: exitData.currentStep,
 				step_name: this.getStepName( exitData.currentStep ),
-				action_step: exitData.exitType,
+				action_step: `${ exitData.exitType }/${ this.getStepName( exitData.currentStep ) }`,
 				exit_timestamp: exitData.timestamp,
 			} );
 
@@ -462,12 +462,13 @@ export class OnboardingEventTracking {
 			}
 
 			const skipData = JSON.parse( storedDataStr );
+			const stepName = this.getStepName( skipData.currentStep );
 			this.dispatchEvent( ONBOARDING_EVENTS_MAP.SKIP, {
 				location: 'plugin_onboarding',
 				trigger: 'skip_clicked',
 				step_number: skipData.currentStep,
-				step_name: this.getStepName( skipData.currentStep ),
-				action_step: skipData.currentStep,
+				step_name: stepName,
+				action_step: stepName,
 				skip_timestamp: skipData.timestamp,
 			} );
 
@@ -834,7 +835,7 @@ export class OnboardingEventTracking {
 			const actionData = {
 				action,
 				timestamp: timeData.currentTime,
-				time_spent: timeData.timeSpent,
+				time_spent: `${ timeData.timeSpent }s`,
 				...additionalData,
 			};
 
@@ -864,7 +865,7 @@ export class OnboardingEventTracking {
 				trigger: 'user_redirects_out_of_step',
 				step_number: stepNumber,
 				step_name: stepName,
-				total_time_spent: totalTimeSpent,
+				total_time_spent: `${ totalTimeSpent }s`,
 			};
 
 			eventData[ endStateProperty ] = actions;

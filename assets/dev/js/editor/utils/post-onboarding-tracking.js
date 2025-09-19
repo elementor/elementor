@@ -83,14 +83,17 @@ class PostOnboardingTracking {
 				}
 
 				if ( elementorCommon.eventsManager && 'function' === typeof elementorCommon.eventsManager.dispatchEvent ) {
-					elementorCommon.eventsManager.dispatchEvent( eventName, {
+					const clickNumber = this.getClickNumber( newCount );
+					const eventData = {
 						location: 'editor',
 						trigger: 'click',
 						editor_loaded_from_onboarding_source: siteStarterChoice,
-						element_title: clickData.title,
-						element_id: clickData.id,
-						element_type: clickData.type,
-					} );
+					};
+
+					eventData[ `post_onboarding_${ clickNumber }_click_action_title` ] = clickData.title;
+					eventData[ `post_onboarding_${ clickNumber }_click_action_selector` ] = clickData.selector;
+
+					elementorCommon.eventsManager.dispatchEvent( eventName, eventData );
 				}
 			}
 
@@ -105,14 +108,33 @@ class PostOnboardingTracking {
 
 	static extractClickData( element ) {
 		const title = element.title || element.textContent?.trim() || element.getAttribute( 'aria-label' ) || '';
-		const id = element.id || '';
-		const type = element.tagName?.toLowerCase() || '';
+		const selector = this.generateLongSelector( element );
 
 		return {
 			title: title.substring( 0, 100 ),
-			id,
-			type,
+			selector,
 		};
+	}
+
+	static generateLongSelector( element ) {
+		const selectorParts = [];
+		let currentElement = element;
+
+		for ( let i = 0; i < 4 && currentElement && currentElement !== document.body; i++ ) {
+			let selector = currentElement.tagName.toLowerCase();
+
+			if ( 0 === i && currentElement.id ) {
+				selector += `#${ currentElement.id }`;
+			} else if ( currentElement.classList.length > 0 ) {
+				const classes = Array.from( currentElement.classList ).slice( 0, 3 );
+				selector += `.${ classes.join( '.' ) }`;
+			}
+
+			selectorParts.unshift( selector );
+			currentElement = currentElement.parentElement;
+		}
+
+		return selectorParts.join( ' > ' );
 	}
 
 	static getClickEventName( clickCount ) {
@@ -123,6 +145,19 @@ class PostOnboardingTracking {
 				return 'post_onboarding_2nd_click';
 			case 4:
 				return 'post_onboarding_3rd_click';
+			default:
+				return null;
+		}
+	}
+
+	static getClickNumber( clickCount ) {
+		switch ( clickCount ) {
+			case 2:
+				return '1st';
+			case 3:
+				return '2nd';
+			case 4:
+				return '3rd';
 			default:
 				return null;
 		}

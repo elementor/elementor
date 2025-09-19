@@ -157,18 +157,6 @@ export default function Account() {
 
 		updateState( stateToUpdate );
 
-		safeDispatchEvent(
-			'account_connected_success',
-			{
-				location: 'plugin_onboarding',
-				trigger: elementorCommon.eventsManager?.config?.triggers?.success,
-				step_number: 1,
-				step_name: ONBOARDING_STEP_NAMES.CONNECT,
-				connection_successful: true,
-				user_tier: data.access_tier,
-			},
-		);
-
 		elementorCommon.events.dispatchEvent( {
 			event: 'indication prompt',
 			version: '',
