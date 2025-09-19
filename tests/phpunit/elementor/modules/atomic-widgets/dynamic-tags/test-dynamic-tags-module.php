@@ -278,7 +278,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				$tag->add_control(
 					'unsupported-control',
 					[
-						'type' => 'choose',
+						'type' => 'code',
 					]
 				);
 			},

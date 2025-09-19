@@ -3,6 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Query_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
@@ -139,6 +141,8 @@ class Dynamic_Tags_Editor_Config {
 			'switcher' => fn( $control ) => $this->convert_switch_control_to_atomic( $control ),
 			'number'   => fn( $control ) => $this->convert_number_control_to_atomic( $control ),
 			'query'   => fn( $control ) => $this->convert_query_control_to_atomic( $control ),
+			'choose'   => fn( $control ) => $this->convert_choose_control_to_atomic( $control ),
+			'media'   => fn( $control ) => $this->convert_media_control_to_atomic( $control ),
 		];
 
 		if ( ! isset( $map[ $control['type'] ] ) ) {
@@ -260,5 +264,20 @@ class Dynamic_Tags_Editor_Config {
 
 	private function is_control_elementor_query( $control ): bool {
 		return isset( $control['autocomplete']['object'] ) && 'library_template' === $control['autocomplete']['object'];
+	}
+
+	private function convert_choose_control_to_atomic( $control ) {
+		return Toggle_Control::bind_to( $control['name'] )
+			->set_label( $control['atomic_label'] ?? $control['label'] )
+			->add_options( $control['options'] )
+			->set_size( 'tiny' )
+			->set_exclusive( true )
+			->set_convert_options( true );
+	}
+
+	private function convert_media_control_to_atomic( $control ) {
+		return Image_Control::bind_to( $control['name'] )
+			->set_show_mode( 'media' )
+			->set_label( $control['label'] );
 	}
 }
