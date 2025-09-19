@@ -51,6 +51,14 @@ class Control_Media extends Control_Base_Multiple {
 		];
 	}
 
+	public function on_export( $settings ) {
+		if ( ! empty( $settings['url'] ) ) {
+			do_action( 'elementor/templates/collect_media_url', $settings['url'], $settings );
+		}
+
+		return $settings;
+	}
+
 	/**
 	 * Import media images.
 	 *

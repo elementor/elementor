@@ -32,6 +32,16 @@ class Control_Gallery extends Base_Data_Control {
 		return 'gallery';
 	}
 
+	public function on_export( $settings ) {
+		foreach ( $settings as $attachment ) {
+			if ( ! empty( $attachment['url'] ) ) {
+				do_action( 'elementor/templates/collect_media_url', $attachment['url'], $attachment );
+			}
+		}
+
+		return $settings;
+	}
+
 	/**
 	 * Import gallery images.
 	 *
