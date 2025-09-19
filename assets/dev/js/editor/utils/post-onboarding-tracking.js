@@ -8,39 +8,26 @@ const ONBOARDING_STORAGE_KEYS = {
 class PostOnboardingTracking {
 	static checkAndSendEditorLoadedFromOnboarding() {
 		try {
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Starting checkAndSendEditorLoadedFromOnboarding' );
-
 			const alreadyTracked = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED );
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Already tracked?', alreadyTracked );
 			if ( alreadyTracked ) {
 				return;
 			}
 
 			const siteStarterChoiceString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Site starter choice string:', siteStarterChoiceString );
 			if ( ! siteStarterChoiceString ) {
 				return;
 			}
 
 			const choiceData = JSON.parse( siteStarterChoiceString );
 			const siteStarterChoice = choiceData.site_starter;
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Site starter choice:', siteStarterChoice );
 
 			if ( ! siteStarterChoice ) {
 				return;
 			}
 
 			const canDispatch = elementorCommon.eventsManager && 'function' === typeof elementorCommon.eventsManager.dispatchEvent;
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Can dispatch events?', canDispatch );
 
 			if ( canDispatch ) {
-				// eslint-disable-next-line no-console
-				console.log( 'PostOnboardingTracking: Dispatching editor_loaded_from_onboarding event' );
 				elementorCommon.eventsManager.dispatchEvent( 'editor_loaded_from_onboarding', {
 					location: 'editor',
 					trigger: 'elementor_loaded',
@@ -50,8 +37,6 @@ class PostOnboardingTracking {
 
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED, 'true' );
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, '0' );
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Setting up click tracking' );
 			this.setupPostOnboardingClickTracking();
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
@@ -129,13 +114,83 @@ class PostOnboardingTracking {
 	}
 
 	static extractClickData( element ) {
-		const title = element.title || element.textContent?.trim() || element.getAttribute( 'aria-label' ) || '';
+		const title = this.findMeaningfulTitle( element );
 		const selector = this.generateLongSelector( element );
 
 		return {
 			title: title.substring( 0, 100 ),
 			selector,
 		};
+	}
+
+	static findMeaningfulTitle( element ) {
+		let currentElement = element;
+		let attempts = 0;
+		const maxAttempts = 5; // Don't go too far up the DOM tree
+
+		while ( currentElement && attempts < maxAttempts ) {
+			// Try different ways to get a meaningful title
+			const title = this.extractTitleFromElement( currentElement );
+
+			if ( title && title.trim().length > 0 ) {
+				return title.trim();
+			}
+
+			// Move to parent element
+			currentElement = currentElement.parentElement;
+			attempts++;
+		}
+
+		return this.generateFallbackTitle( element );
+	}
+
+	static extractTitleFromElement( element ) {
+		// Try multiple sources for title text
+		const sources = [
+			element.title,
+			element.getAttribute( 'aria-label' ),
+			element.getAttribute( 'data-tooltip' ),
+			element.getAttribute( 'data-title' ),
+			element.textContent?.trim(),
+			element.innerText?.trim(),
+			// Look for text in specific child elements
+			element.querySelector( '.elementor-widget-title' )?.textContent?.trim(),
+			element.querySelector( '.elementor-heading-title' )?.textContent?.trim(),
+			element.querySelector( '.elementor-button-text' )?.textContent?.trim(),
+			element.querySelector( '[data-tooltip]' )?.getAttribute( 'data-tooltip' ),
+		];
+
+		for ( const source of sources ) {
+			if ( source && source.length > 0 && source !== 'undefined' ) {
+				return source;
+			}
+		}
+
+		return '';
+	}
+
+	static generateFallbackTitle( element ) {
+		// Generate a fallback title based on element characteristics
+		const tagName = element.tagName?.toLowerCase() || 'element';
+		const className = element.className || '';
+
+		// Try to extract meaningful info from classes
+		if ( className.includes( 'eicon-' ) ) {
+			const iconClass = className.split( ' ' ).find( ( cls ) => cls.startsWith( 'eicon-' ) );
+			if ( iconClass ) {
+				return iconClass.replace( 'eicon-', '' ).replace( '-', ' ' );
+			}
+		}
+
+		if ( className.includes( 'elementor-button' ) ) {
+			return 'Elementor Button';
+		}
+
+		if ( className.includes( 'elementor-widget' ) ) {
+			return 'Elementor Widget';
+		}
+
+		return `${ tagName } element`;
 	}
 
 	static generateLongSelector( element ) {

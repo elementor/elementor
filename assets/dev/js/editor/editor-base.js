@@ -1180,22 +1180,13 @@ export default class EditorBase extends Marionette.Application {
 			const siteStarterChoice = localStorage.getItem( 'elementor_onboarding_s4_site_starter_choice' );
 			const editorLoadTracked = localStorage.getItem( 'elementor_onboarding_editor_load_tracked' );
 
-			// eslint-disable-next-line no-console
-			console.log( 'EditorBase: Checking onboarding data', { siteStarterChoice, editorLoadTracked } );
-
 			const hasOnboardingData = siteStarterChoice || editorLoadTracked;
 
 			if ( ! hasOnboardingData ) {
-				// eslint-disable-next-line no-console
-				console.log( 'EditorBase: No onboarding data found, skipping post-onboarding tracking' );
 				return;
 			}
 
-			// eslint-disable-next-line no-console
-			console.log( 'EditorBase: Loading post-onboarding tracking module' );
 			const { default: PostOnboardingTracking } = await import( './utils/post-onboarding-tracking' );
-			// eslint-disable-next-line no-console
-			console.log( 'EditorBase: Post-onboarding tracking module loaded, calling checkAndSendEditorLoadedFromOnboarding' );
 			PostOnboardingTracking.checkAndSendEditorLoadedFromOnboarding();
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
