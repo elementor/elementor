@@ -209,6 +209,11 @@ class Widget_Conversion_Service {
 		
 		foreach ( $widgets as &$widget ) {
 			$widget['applied_styles'] = $this->css_processor->apply_styles_to_widget( $widget, $css_processing_result );
+			
+			// Recursively apply styles to nested children
+			if ( ! empty( $widget['children'] ) ) {
+				$widget['children'] = $this->apply_css_to_widgets( $widget['children'], $css_processing_result );
+			}
 		}
 
 		return $widgets;
