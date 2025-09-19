@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Modules\CssConverter\Services\Css\Css_Specificity_Calculator;
 use Elementor\Modules\CssConverter\Services\Class\Class_Conversion_Service;
 use Elementor\Modules\CssConverter\Parsers\CssParser;
+use Elementor\Modules\CssConverter\Parsers\Simple_Css_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 
 class Css_Processor {
@@ -43,8 +44,14 @@ class Css_Processor {
 
 		try {
 			// Parse CSS into rules
-			$parsed_css = $this->css_parser->parse( $css );
-			$css_rules = $this->extract_css_rules( $parsed_css );
+			if ( $this->css_parser instanceof Simple_Css_Parser ) {
+				// Simple parser returns rules directly
+				$css_rules = $this->css_parser->parse( $css );
+			} else {
+				// Sabberworm parser returns parsed CSS object
+				$parsed_css = $this->css_parser->parse( $css );
+				$css_rules = $this->extract_css_rules( $parsed_css );
+			}
 			
 			$processing_result['stats']['rules_processed'] = count( $css_rules );
 
@@ -69,11 +76,16 @@ class Css_Processor {
 	private function extract_css_rules( $parsed_css ) {
 		$rules = [];
 		
-		if ( ! $parsed_css || ! method_exists( $parsed_css, 'getAllRuleSets' ) ) {
+		if ( ! $parsed_css || ! method_exists( $parsed_css, 'get_document' ) ) {
 			return $rules;
 		}
 
-		foreach ( $parsed_css->getAllRuleSets() as $rule_set ) {
+		$document = $parsed_css->get_document();
+		if ( ! $document || ! method_exists( $document, 'getAllRuleSets' ) ) {
+			return $rules;
+		}
+
+		foreach ( $document->getAllRuleSets() as $rule_set ) {
 			$selectors = [];
 			
 			// Get all selectors for this rule set

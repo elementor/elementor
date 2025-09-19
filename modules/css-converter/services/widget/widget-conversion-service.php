@@ -183,14 +183,10 @@ class Widget_Conversion_Service {
 	private function extract_all_css( $html, $css_urls, $follow_imports ) {
 		$all_css = '';
 
-		// Extract inline CSS from <style> tags
-		$dom = new \DOMDocument();
-		libxml_use_internal_errors( true );
-		$dom->loadHTML( $html, \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD );
-		
-		$style_tags = $dom->getElementsByTagName( 'style' );
-		foreach ( $style_tags as $style ) {
-			$all_css .= $style->textContent . "\n";
+		// Extract inline CSS from <style> tags using regex to avoid DOM parsing issues
+		preg_match_all( '/<style[^>]*>(.*?)<\/style>/is', $html, $matches );
+		foreach ( $matches[1] as $css_content ) {
+			$all_css .= trim( $css_content ) . "\n";
 		}
 
 		// Fetch external CSS files using CSS processor

@@ -238,6 +238,7 @@ class Widget_Creator {
 		$widget_type = $widget['widget_type'];
 		$settings = $widget['settings'] ?? [];
 		$applied_styles = $widget['applied_styles'] ?? [];
+		$attributes = $widget['attributes'] ?? [];
 
 		// Generate unique widget ID
 		$widget_id = wp_generate_uuid4();
@@ -245,12 +246,20 @@ class Widget_Creator {
 		// Base Elementor widget structure
 		$mapped_type = $this->map_to_elementor_widget_type( $widget_type );
 		
+		// Merge widget attributes into settings for Elementor v4 compatibility
+		$merged_settings = $this->merge_settings_with_styles( $settings, $applied_styles );
+		
+		// Add widget attributes to settings (preserves HTML id, class, etc.)
+		if ( ! empty( $attributes ) ) {
+			$merged_settings['attributes'] = $attributes;
+		}
+		
 		if ( 'e-flexbox' === $mapped_type ) {
 			// Flexbox containers have special structure in Elementor
 			$elementor_widget = [
 				'id' => $widget_id,
 				'elType' => 'e-flexbox',
-				'settings' => $this->merge_settings_with_styles( $settings, $applied_styles ),
+				'settings' => $merged_settings,
 				'isInner' => false,
 				'styles' => $this->convert_styles_to_v4_format( $applied_styles ),
 				'editor_settings' => [],
@@ -262,7 +271,7 @@ class Widget_Creator {
 				'id' => $widget_id,
 				'elType' => 'widget',
 				'widgetType' => $mapped_type,
-				'settings' => $this->merge_settings_with_styles( $settings, $applied_styles ),
+				'settings' => $merged_settings,
 				'isInner' => false,
 				'styles' => $this->convert_styles_to_v4_format( $applied_styles ),
 				'editor_settings' => [],
@@ -322,6 +331,9 @@ class Widget_Creator {
 				'$$type' => 'classes',
 				'value' => $classes,
 			];
+		} else {
+			// Ensure classes array exists even if empty
+			$merged_settings['classes'] = [];
 		}
 
 		return $merged_settings;
@@ -362,8 +374,13 @@ class Widget_Creator {
 		// Convert CSS styles to Elementor v4 atomic widget styles format
 		$v4_styles = [];
 
-		if ( ! empty( $applied_styles['computed_styles'] ) && ! empty( $this->current_widget_class_id ) ) {
-			// Use the class ID that was generated and stored in merge_settings_with_styles
+		// Process computed styles (from external CSS + inline styles)
+		if ( ! empty( $applied_styles['computed_styles'] ) ) {
+			// Generate class ID if not already set
+			if ( empty( $this->current_widget_class_id ) ) {
+				$this->current_widget_class_id = $this->generate_unique_class_id();
+			}
+			
 			$class_id = $this->current_widget_class_id;
 			
 			// Create v4 style object
