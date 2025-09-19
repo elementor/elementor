@@ -913,5 +913,4 @@ export class OnboardingEventTracking {
 	}
 }
 
-window.OnboardingEventTracking = OnboardingEventTracking;
-window.OnboardingEventTracking.STORAGE_KEYS = ONBOARDING_STORAGE_KEYS;
+export { ONBOARDING_STORAGE_KEYS };

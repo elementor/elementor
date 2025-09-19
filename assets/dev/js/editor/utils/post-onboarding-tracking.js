@@ -1,12 +1,14 @@
+import { ONBOARDING_STORAGE_KEYS } from '../../../../../app/modules/onboarding/assets/js/utils/onboarding-event-tracking';
+
 class PostOnboardingTracking {
 	static checkAndSendEditorLoadedFromOnboarding() {
 		try {
-			const alreadyTracked = localStorage.getItem( 'elementor_onboarding_editor_load_tracked' );
+			const alreadyTracked = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED );
 			if ( alreadyTracked ) {
 				return;
 			}
 
-			const siteStarterChoiceString = localStorage.getItem( 'elementor_onboarding_s4_site_starter_choice' );
+			const siteStarterChoiceString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
 			if ( ! siteStarterChoiceString ) {
 				return;
 			}
@@ -26,8 +28,8 @@ class PostOnboardingTracking {
 				} );
 			}
 
-			localStorage.setItem( 'elementor_onboarding_editor_load_tracked', 'true' );
-			localStorage.setItem( 'elementor_onboarding_click_count', '0' );
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED, 'true' );
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, '0' );
 			this.setupPostOnboardingClickTracking();
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
@@ -49,14 +51,14 @@ class PostOnboardingTracking {
 
 	static trackPostOnboardingClick( event ) {
 		try {
-			const currentCount = parseInt( localStorage.getItem( 'elementor_onboarding_click_count' ) || '0', 10 );
+			const currentCount = parseInt( localStorage.getItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT ) || '0', 10 );
 
 			if ( currentCount > 3 ) {
 				return;
 			}
 
 			const newCount = currentCount + 1;
-			localStorage.setItem( 'elementor_onboarding_click_count', newCount.toString() );
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, newCount.toString() );
 
 			if ( 1 === newCount ) {
 				return;
@@ -67,7 +69,7 @@ class PostOnboardingTracking {
 			const eventName = this.getClickEventName( newCount );
 
 			if ( eventName ) {
-				const siteStarterChoiceString = localStorage.getItem( 'elementor_onboarding_s4_site_starter_choice' );
+				const siteStarterChoiceString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
 				let siteStarterChoice = null;
 
 				if ( siteStarterChoiceString ) {
@@ -138,18 +140,18 @@ class PostOnboardingTracking {
 
 	static clearAllOnboardingStorage() {
 		const keysToRemove = [
-			'elementor_onboarding_start_time',
-			'elementor_onboarding_initiated',
-			'elementor_onboarding_s1_actions',
-			'elementor_onboarding_s2_actions',
-			'elementor_onboarding_s3_actions',
-			'elementor_onboarding_s4_actions',
-			'elementor_onboarding_s4_site_starter_choice',
-			'elementor_onboarding_pending_exit',
-			'elementor_onboarding_pending_skip',
-			'elementor_onboarding_pending_create_account_status',
-			'elementor_onboarding_pending_create_my_account',
-			'elementor_onboarding_pending_top_upgrade',
+			ONBOARDING_STORAGE_KEYS.START_TIME,
+			ONBOARDING_STORAGE_KEYS.INITIATED,
+			ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS,
+			ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS,
+			ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS,
+			ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS,
+			ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE,
+			ONBOARDING_STORAGE_KEYS.PENDING_EXIT,
+			ONBOARDING_STORAGE_KEYS.PENDING_SKIP,
+			ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS,
+			ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT,
+			ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
 		];
 
 		keysToRemove.forEach( ( key ) => {

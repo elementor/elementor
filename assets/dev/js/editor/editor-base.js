@@ -18,7 +18,6 @@ import KitManager from '../../../../core/kits/assets/js/manager.js';
 import Navigator from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
-import PostOnboardingTracking from './utils/post-onboarding-tracking';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import Selection from './components/selection/manager';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
@@ -1176,6 +1175,23 @@ export default class EditorBase extends Marionette.Application {
 		return ElementorConfig;
 	}
 
+	async checkAndLoadPostOnboardingTracking() {
+		try {
+			const hasOnboardingData = localStorage.getItem( 'elementor_onboarding_s4_site_starter_choice' ) ||
+				localStorage.getItem( 'elementor_onboarding_editor_load_tracked' );
+
+			if ( ! hasOnboardingData ) {
+				return;
+			}
+
+			const { default: PostOnboardingTracking } = await import( './utils/post-onboarding-tracking' );
+			PostOnboardingTracking.checkAndSendEditorLoadedFromOnboarding();
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.warn( 'Failed to load post-onboarding tracking:', error );
+		}
+	}
+
 	onStart() {
 		this.config = this.getConfig();
 
@@ -1217,7 +1233,7 @@ export default class EditorBase extends Marionette.Application {
 
 		Events.dispatch( elementorCommon.elements.$window, 'elementor/loaded', null, 'elementor:loaded' );
 
-		PostOnboardingTracking.checkAndSendEditorLoadedFromOnboarding();
+		this.checkAndLoadPostOnboardingTracking();
 
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
