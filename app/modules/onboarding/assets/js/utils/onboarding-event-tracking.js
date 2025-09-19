@@ -1,4 +1,5 @@
 import eventsConfig from '../../../../../../core/common/modules/events-manager/assets/js/events-config';
+import { convertKeysToEnglishNames } from './utils';
 
 const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
@@ -92,14 +93,15 @@ export class OnboardingEventTracking {
 	}
 
 	static extractSelectedFeatureKeys( selectedFeatures ) {
-		const allSelected = [];
+		const allSelectedKeys = [];
 		if ( selectedFeatures.essential ) {
-			allSelected.push( ...selectedFeatures.essential );
+			allSelectedKeys.push( ...selectedFeatures.essential );
 		}
 		if ( selectedFeatures.advanced ) {
-			allSelected.push( ...selectedFeatures.advanced );
+			allSelectedKeys.push( ...selectedFeatures.advanced );
 		}
-		return allSelected;
+
+		return convertKeysToEnglishNames( allSelectedKeys );
 	}
 
 	static sendHelloBizContinue( stepNumber = 2 ) {
