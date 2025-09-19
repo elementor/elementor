@@ -18,25 +18,41 @@ const ONBOARDING_STORAGE_KEYS = {
 };
 
 class PostOnboardingTracking {
+	static warn( message, error = null ) {
+		// eslint-disable-next-line no-console
+		console.warn( message, error );
+	}
 	static checkAndSendEditorLoadedFromOnboarding() {
 		try {
 			// eslint-disable-next-line no-console
 			console.log( 'PostOnboardingTracking: Starting checkAndSendEditorLoadedFromOnboarding' );
 
-			const alreadyTracked = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED );
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Already tracked?', alreadyTracked );
-			if ( alreadyTracked ) {
-				return;
-			}
-
 			const siteStarterChoiceString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
 			// eslint-disable-next-line no-console
 			console.log( 'PostOnboardingTracking: Site starter choice string:', siteStarterChoiceString );
+
 			if ( ! siteStarterChoiceString ) {
+				// eslint-disable-next-line no-console
+				console.log( 'PostOnboardingTracking: No site starter choice found, skipping' );
 				return;
 			}
 
+			const alreadyTracked = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED );
+			// eslint-disable-next-line no-console
+			console.log( 'PostOnboardingTracking: Already tracked?', alreadyTracked );
+
+			if ( ! alreadyTracked ) {
+				this.sendEditorLoadedEvent( siteStarterChoiceString );
+			}
+
+			this.setupClickTrackingIfNeeded();
+		} catch ( error ) {
+			this.warn( 'Failed to check and send editor loaded from onboarding:', error );
+		}
+	}
+
+	static sendEditorLoadedEvent( siteStarterChoiceString ) {
+		try {
 			const choiceData = JSON.parse( siteStarterChoiceString );
 			const siteStarterChoice = choiceData.site_starter;
 			// eslint-disable-next-line no-console
@@ -61,14 +77,30 @@ class PostOnboardingTracking {
 			}
 
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED, 'true' );
-			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, '0' );
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Setting up click tracking' );
-			this.setupPostOnboardingClickTracking();
 		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.warn( 'Failed to check and send editor loaded from onboarding:', error );
+			this.warn( 'Failed to send editor loaded event:', error );
 		}
+	}
+
+	static setupClickTrackingIfNeeded() {
+		const clickCount = parseInt( localStorage.getItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT ) || '0', 10 );
+		// eslint-disable-next-line no-console
+		console.log( 'PostOnboardingTracking: Current click count for setup:', clickCount );
+
+		if ( clickCount >= 4 ) {
+			// eslint-disable-next-line no-console
+			console.log( 'PostOnboardingTracking: Click tracking already completed, cleaning up' );
+			this.clearAllOnboardingStorage();
+			return;
+		}
+
+		if ( 0 === clickCount ) {
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, '0' );
+		}
+
+		// eslint-disable-next-line no-console
+		console.log( 'PostOnboardingTracking: Setting up click tracking' );
+		this.setupPostOnboardingClickTracking();
 	}
 
 	static setupPostOnboardingClickTracking() {
@@ -119,8 +151,7 @@ class PostOnboardingTracking {
 						const choiceData = JSON.parse( siteStarterChoiceString );
 						siteStarterChoice = choiceData.site_starter;
 					} catch ( error ) {
-						// eslint-disable-next-line no-console
-						console.warn( 'Failed to parse site starter choice:', error );
+						this.warn( 'Failed to parse site starter choice:', error );
 					}
 				}
 
@@ -143,8 +174,7 @@ class PostOnboardingTracking {
 				this.cleanupPostOnboardingTracking();
 			}
 		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.warn( 'Failed to track post-onboarding click:', error );
+			this.warn( 'Failed to track post-onboarding click:', error );
 		}
 	}
 
@@ -274,8 +304,7 @@ class PostOnboardingTracking {
 			document.removeEventListener( 'click', this.trackPostOnboardingClick );
 			this.clearAllOnboardingStorage();
 		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.warn( 'Failed to cleanup post-onboarding tracking:', error );
+			this.warn( 'Failed to cleanup post-onboarding tracking:', error );
 		}
 	}
 
