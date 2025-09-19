@@ -1,12 +1,9 @@
 import { useExportContext } from '../context/export-context';
 import { KitPartsSelection } from '../../shared/components';
 import kitContentData from '../../shared/kit-content-data';
-import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 
 export default function ExportKitPartsSelection() {
 	const { data, dispatch } = useExportContext();
-	const { data: cloudKitsData } = useCloudKitsEligibility();
-	const isCloudKitsEligible = cloudKitsData?.is_eligible || false;
 
 	const handleCheckboxChange = ( itemType ) => {
 		const isChecked = data.includes.includes( itemType );
@@ -42,10 +39,6 @@ export default function ExportKitPartsSelection() {
 		} else {
 			dispatch( { type: 'REMOVE_INCLUDE', payload: key } );
 		}
-
-		if ( data.showMediaFormatValidation ) {
-			dispatch( { type: 'SET_MEDIA_FORMAT_VALIDATION', payload: false } );
-		}
 	};
 
 	return (
@@ -53,8 +46,6 @@ export default function ExportKitPartsSelection() {
 			data={ data }
 			onCheckboxChange={ handleCheckboxChange }
 			handleSaveCustomization={ handleSaveCustomization }
-			isCloudKitsEligible={ isCloudKitsEligible }
-			showMediaFormatValidation={ data.showMediaFormatValidation }
 		/>
 	);
 }

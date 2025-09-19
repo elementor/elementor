@@ -56,13 +56,6 @@ describe( 'ExportKitFooter Component', () => {
 		useExportContext.mockReturnValue( {
 			dispatch: mockDispatch,
 			isTemplateNameValid: true,
-			data: {
-				customization: {
-					content: {
-						mediaFormat: 'link',
-					},
-				},
-			},
 		} );
 
 		useConnectState.mockReturnValue( {
