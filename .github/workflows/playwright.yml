@@ -234,6 +234,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PUBLIC_CLOUD_DEVOPS_TOKEN }}
           SLACK_TOKEN: ${{ secrets.CLOUD_SLACK_BOT_TOKEN }}
+      - name: Debug Slack mapping
+        run: |
+          echo "GitHub user: ${{ github.actor }}"
+          echo "Slack user: ${{ steps.map_user.outputs.slack_user }}"
+          echo "Revert status: ${{ steps.create_revert_pr.outputs.status }}"
       - name: Send slack message
         if: always()
         uses: ./.github/workflows/post-to-slack
@@ -258,7 +263,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{ github.event_name == 'schedule' && 'Scheduled run failed' || (github.event_name == 'pull_request' && (steps.map_user.outputs.slack_user && format('{0} please check the run', steps.map_user.outputs.slack_user) || format('{0} please check the run.\\n\\n@svitlanad please add this team member to slack list', github.actor))) || (steps.map_user.outputs.slack_user && format('{0} please check the run', steps.map_user.outputs.slack_user) || format('{0} please check the run.\\n\\n@svitlanad please add this team member to slack list', github.actor)) }}"
+                    "text": "${{ github.event_name == 'schedule' && 'Scheduled run failed' || (github.event_name == 'pull_request' && (steps.map_user.outputs.slack_user && format('{0} please check the run', steps.map_user.outputs.slack_user) || format('{0} please check the run.\n\n@svitlanad please add this team member to slack list', github.actor))) || (steps.map_user.outputs.slack_user && format('{0} please check the run', steps.map_user.outputs.slack_user) || format('{0} please check the run.\n\n@svitlanad please add this team member to slack list', github.actor)) }}"
                   }
                 }
               ]
