@@ -1,4 +1,9 @@
-import { ONBOARDING_STORAGE_KEYS } from '../../../../../../app/modules/onboarding/assets/js/utils/onboarding-event-tracking';
+// Define the storage keys directly to avoid import issues
+const ONBOARDING_STORAGE_KEYS = {
+	STEP4_SITE_STARTER_CHOICE: 'elementor_onboarding_s4_site_starter_choice',
+	EDITOR_LOAD_TRACKED: 'elementor_onboarding_editor_load_tracked',
+	POST_ONBOARDING_CLICK_COUNT: 'elementor_onboarding_click_count',
+};
 
 class PostOnboardingTracking {
 	static checkAndSendEditorLoadedFromOnboarding() {
