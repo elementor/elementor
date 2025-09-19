@@ -22,6 +22,16 @@ const ONBOARDING_EVENTS_MAP = {
 	STEP1_CLICKED_CONNECT: 'core_onboarding_s1_clicked_connect',
 };
 
+const ONBOARDING_STEP_NAMES = {
+	CONNECT: 'connect',
+	HELLO_BIZ: 'hello_biz',
+	PRO_FEATURES: 'pro_features',
+	SITE_STARTER: 'site_starter',
+	SITE_NAME: 'site_name',
+	SITE_LOGO: 'site_logo',
+	ONBOARDING_START: 'onboarding_start',
+};
+
 const ONBOARDING_STORAGE_KEYS = {
 	START_TIME: 'elementor_onboarding_start_time',
 	INITIATED: 'elementor_onboarding_initiated',
@@ -76,7 +86,7 @@ export class OnboardingEventTracking {
 			location: 'plugin_onboarding',
 			trigger: eventsConfig.triggers.click,
 			step_number: currentStep,
-			step_name: 'choose_features',
+			step_name: ONBOARDING_STEP_NAMES.PRO_FEATURES,
 			pro_features_checked: proFeaturesChecked,
 		} );
 	}
@@ -98,7 +108,7 @@ export class OnboardingEventTracking {
 				location: 'plugin_onboarding',
 				trigger: eventsConfig.triggers.click,
 				step_number: stepNumber,
-				step_name: 'hello_biz_theme',
+				step_name: ONBOARDING_STEP_NAMES.HELLO_BIZ,
 			} );
 		}
 	}
@@ -130,7 +140,7 @@ export class OnboardingEventTracking {
 			location: 'plugin_onboarding',
 			trigger: 'core_onboarding_initiated',
 			step_number: 1,
-			step_name: 'onboarding_start',
+			step_name: ONBOARDING_STEP_NAMES.ONBOARDING_START,
 			onboarding_start_time: startTime,
 			total_onboarding_time_seconds: totalOnboardingTime,
 		} );
@@ -148,7 +158,7 @@ export class OnboardingEventTracking {
 				location: 'plugin_onboarding',
 				trigger: 'connect_flow_returns_status',
 				step_number: 1,
-				step_name: 'account_setup',
+				step_name: ONBOARDING_STEP_NAMES.CONNECT,
 				onboarding_connect_status: status,
 				tracking_opted_in: trackingOptedIn,
 				user_tier: userTier,
@@ -197,7 +207,7 @@ export class OnboardingEventTracking {
 					location: 'plugin_onboarding',
 					trigger: 'user_returns_to_onboarding',
 					step_number: 4,
-					step_name: 'good_to_go',
+					step_name: ONBOARDING_STEP_NAMES.SITE_STARTER,
 					return_to_onboarding: choiceData.site_starter,
 					original_choice_timestamp: choiceData.timestamp,
 				} );
@@ -413,12 +423,12 @@ export class OnboardingEventTracking {
 
 	static getStepName( stepNumber ) {
 		const stepNames = {
-			1: 'account_setup',
-			2: 'hello_biz_theme',
-			3: 'choose_features',
-			4: 'good_to_go',
-			5: 'site_name',
-			6: 'site_logo',
+			1: ONBOARDING_STEP_NAMES.CONNECT,
+			2: ONBOARDING_STEP_NAMES.HELLO_BIZ,
+			3: ONBOARDING_STEP_NAMES.PRO_FEATURES,
+			4: ONBOARDING_STEP_NAMES.SITE_STARTER,
+			5: ONBOARDING_STEP_NAMES.SITE_NAME,
+			6: ONBOARDING_STEP_NAMES.SITE_LOGO,
 		};
 		return stepNames[ stepNumber ] || 'unknown_step';
 	}
@@ -671,7 +681,7 @@ export class OnboardingEventTracking {
 				location: 'plugin_onboarding',
 				trigger: 'connect_flow_returns_status',
 				step_number: 1,
-				step_name: 'account_setup',
+				step_name: ONBOARDING_STEP_NAMES.CONNECT,
 				onboarding_connect_status: eventData.status,
 				tracking_opted_in: eventData.trackingOptedIn,
 				user_tier: eventData.userTier,
@@ -901,25 +911,25 @@ export class OnboardingEventTracking {
 			1: {
 				actionsKey: ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS,
 				eventName: ONBOARDING_EVENTS_MAP.STEP1_END_STATE,
-				stepName: 'account_setup',
+				stepName: ONBOARDING_STEP_NAMES.CONNECT,
 				endStateProperty: 's1_end_state',
 			},
 			2: {
 				actionsKey: ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS,
 				eventName: ONBOARDING_EVENTS_MAP.STEP2_END_STATE,
-				stepName: 'hello_biz_theme',
+				stepName: ONBOARDING_STEP_NAMES.HELLO_BIZ,
 				endStateProperty: 's2_end_state',
 			},
 			3: {
 				actionsKey: ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS,
 				eventName: ONBOARDING_EVENTS_MAP.STEP3_END_STATE,
-				stepName: 'choose_features',
+				stepName: ONBOARDING_STEP_NAMES.PRO_FEATURES,
 				endStateProperty: 's3_end_state',
 			},
 			4: {
 				actionsKey: ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS,
 				eventName: ONBOARDING_EVENTS_MAP.STEP4_END_STATE,
-				stepName: 'good_to_go',
+				stepName: ONBOARDING_STEP_NAMES.SITE_STARTER,
 				endStateProperty: 's4_end_state',
 			},
 		};
@@ -958,4 +968,4 @@ export class OnboardingEventTracking {
 	}
 }
 
-export { ONBOARDING_STORAGE_KEYS };
+export { ONBOARDING_STORAGE_KEYS, ONBOARDING_STEP_NAMES };
