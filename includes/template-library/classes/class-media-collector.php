@@ -69,32 +69,32 @@ class Media_Collector {
 	private function is_local_url( string $url ): bool {
 		$site_url = get_site_url();
 		$home_url = get_home_url();
-		
+
 		return strpos( $url, $site_url ) === 0 || strpos( $url, $home_url ) === 0;
 	}
 
 	private function get_local_file_path( string $url ): string|false {
 		$site_url = get_site_url();
 		$home_url = get_home_url();
-		
+
 		$relative_path = str_replace( [ $site_url, $home_url ], '', $url );
 		$relative_path = ltrim( $relative_path, '/' );
-		
+
 		$upload_dir = wp_upload_dir();
 		$uploads_path = $upload_dir['basedir'];
-		
+
 		$possible_paths = [
 			$uploads_path . '/' . $relative_path,
 			ABSPATH . $relative_path,
 			$uploads_path . '/' . basename( $url ),
 		];
-		
+
 		foreach ( $possible_paths as $path ) {
 			if ( file_exists( $path ) ) {
 				return $path;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -103,10 +103,10 @@ class Media_Collector {
 		$extension = pathinfo( $original_filename, PATHINFO_EXTENSION );
 		$name_without_extension = pathinfo( $original_filename, PATHINFO_FILENAME );
 		$unique_filename = sanitize_file_name( $name_without_extension . '_' . uniqid() . '.' . $extension );
-		
+
 		$destination_path = $this->temp_dir . '/' . $unique_filename;
 		$copied = copy( $source_path, $destination_path );
-		
+
 		return $copied ? $unique_filename : false;
 	}
 
@@ -196,7 +196,7 @@ class Media_Collector {
 
 		$allowed_mime_types = get_allowed_mime_types();
 		$file_extension = strtolower( pathinfo( $url, PATHINFO_EXTENSION ) );
-		
+
 		foreach ( $allowed_mime_types as $pattern => $mime_type ) {
 			$pattern_regex = '/^(' . str_replace( '|', '|', $pattern ) . ')$/i';
 			if ( preg_match( $pattern_regex, $file_extension ) ) {
