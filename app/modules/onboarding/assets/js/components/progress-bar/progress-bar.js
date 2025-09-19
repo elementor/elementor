@@ -8,7 +8,6 @@ import { OnboardingEventTracking } from '../../utils/onboarding-event-tracking';
 export default function ProgressBar() {
 	const { state } = useContext( OnboardingContext ),
 		navigate = useNavigate(),
-
 		progressBarItemsConfig = [
 			{
 				id: 'account',

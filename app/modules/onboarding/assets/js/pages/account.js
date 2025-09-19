@@ -42,6 +42,7 @@ export default function Account() {
 			action: () => {
 				OnboardingEventTracking.trackStepAction( 1, 'skip' );
 				OnboardingEventTracking.sendOnboardingSkip( 1 );
+				OnboardingEventTracking.sendStepEndState( 1 );
 
 				safeDispatchEvent(
 					'skip_setup',
@@ -54,8 +55,6 @@ export default function Account() {
 				);
 
 				updateState( getStateObjectToUpdate( state, 'steps', pageId, 'skipped' ) );
-
-				OnboardingEventTracking.sendStepEndState( 1 );
 				navigate( 'onboarding/' + nextStep );
 			},
 		};
@@ -210,11 +209,8 @@ export default function Account() {
 			},
 		} );
 
-		// Track connection failure (only if tracking is already enabled)
-		if ( elementorCommon.config.editor_events?.can_send_events ) {
-			OnboardingEventTracking.sendConnectStatus( 'fail', false, null );
-			OnboardingEventTracking.sendCreateAccountStatus( 'fail', 1 );
-		}
+		OnboardingEventTracking.sendConnectStatus( 'fail', false, null );
+		OnboardingEventTracking.sendCreateAccountStatus( 'fail', 1 );
 
 		setNoticeState( {
 			type: 'error',

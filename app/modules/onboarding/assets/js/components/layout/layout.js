@@ -104,10 +104,7 @@ export default function Layout( props ) {
 			target: '_blank',
 			elRef: setupTopbarUpgradeTracking,
 			onClick: () => {
-				if ( stepNumber >= 2 && stepNumber <= 4 ) {
-					OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
-				}
-
+				OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
 				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_topbar' );
 
 				elementorCommon.events.dispatchEvent( {

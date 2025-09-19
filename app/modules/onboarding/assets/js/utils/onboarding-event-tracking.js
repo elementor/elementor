@@ -34,6 +34,7 @@ const ONBOARDING_STORAGE_KEYS = {
 	POST_ONBOARDING_CLICK_COUNT: 'elementor_onboarding_click_count',
 	PENDING_EXIT: 'elementor_onboarding_pending_exit',
 	PENDING_SKIP: 'elementor_onboarding_pending_skip',
+	PENDING_CONNECT_STATUS: 'elementor_onboarding_pending_connect_status',
 	PENDING_CREATE_ACCOUNT_STATUS: 'elementor_onboarding_pending_create_account_status',
 	PENDING_CREATE_MY_ACCOUNT: 'elementor_onboarding_pending_create_my_account',
 	PENDING_TOP_UPGRADE: 'elementor_onboarding_pending_top_upgrade',
@@ -142,15 +143,18 @@ export class OnboardingEventTracking {
 	}
 
 	static sendConnectStatus( status, trackingOptedIn = false, userTier = null ) {
-		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.CONNECT_STATUS, {
-			location: 'plugin_onboarding',
-			trigger: 'connect_flow_returns_status',
-			step_number: 1,
-			step_name: 'account_setup',
-			onboarding_connect_status: status,
-			tracking_opted_in: trackingOptedIn,
-			user_tier: userTier,
-		} );
+		if ( elementorCommon.config.editor_events?.can_send_events ) {
+			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.CONNECT_STATUS, {
+				location: 'plugin_onboarding',
+				trigger: 'connect_flow_returns_status',
+				step_number: 1,
+				step_name: 'account_setup',
+				onboarding_connect_status: status,
+				tracking_opted_in: trackingOptedIn,
+				user_tier: userTier,
+			} );
+		}
+		this.storeConnectStatusEventForLater( status, trackingOptedIn, userTier );
 	}
 
 	static trackStepAction( stepNumber, action, additionalData = {} ) {
@@ -241,6 +245,7 @@ export class OnboardingEventTracking {
 				ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE,
 				ONBOARDING_STORAGE_KEYS.PENDING_EXIT,
 				ONBOARDING_STORAGE_KEYS.PENDING_SKIP,
+				ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS,
 				ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS,
 				ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT,
 				ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
@@ -640,6 +645,45 @@ export class OnboardingEventTracking {
 		}
 	}
 
+	static storeConnectStatusEventForLater( status, trackingOptedIn, userTier ) {
+		try {
+			const eventData = {
+				status,
+				trackingOptedIn,
+				userTier,
+				timestamp: Date.now(),
+			};
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS, JSON.stringify( eventData ) );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to store connect status event:', error );
+		}
+	}
+
+	static sendStoredConnectStatusEvent() {
+		try {
+			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS );
+			if ( ! storedDataStr ) {
+				return;
+			}
+
+			const eventData = JSON.parse( storedDataStr );
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.CONNECT_STATUS, {
+				location: 'plugin_onboarding',
+				trigger: 'connect_flow_returns_status',
+				step_number: 1,
+				step_name: 'account_setup',
+				onboarding_connect_status: eventData.status,
+				tracking_opted_in: eventData.trackingOptedIn,
+				user_tier: eventData.userTier,
+				event_timestamp: eventData.timestamp,
+			} );
+
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to send stored connect status event:', error );
+		}
+	}
+
 	static storeStep1ClickedConnectEventForLater( currentStep ) {
 		try {
 			const eventData = {
@@ -901,6 +945,7 @@ export class OnboardingEventTracking {
 	static sendAllStoredEvents() {
 		this.sendStoredExitEvent();
 		this.sendStoredSkipEvent();
+		this.sendStoredConnectStatusEvent();
 		this.sendStoredTopUpgradeEvent();
 		this.sendStoredCreateMyAccountEvent();
 		this.sendStoredCreateAccountStatusEvent();
