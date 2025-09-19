@@ -26,22 +26,13 @@ class PostOnboardingTracking {
 	}
 	static checkAndSendEditorLoadedFromOnboarding() {
 		try {
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Starting checkAndSendEditorLoadedFromOnboarding' );
-
 			const siteStarterChoiceString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Site starter choice string:', siteStarterChoiceString );
 
 			if ( ! siteStarterChoiceString ) {
-				// eslint-disable-next-line no-console
-				console.log( 'PostOnboardingTracking: No site starter choice found, skipping' );
 				return;
 			}
 
 			const alreadyTracked = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED );
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Already tracked?', alreadyTracked );
 
 			if ( ! alreadyTracked ) {
 				this.sendEditorLoadedEvent( siteStarterChoiceString );
@@ -57,20 +48,14 @@ class PostOnboardingTracking {
 		try {
 			const choiceData = JSON.parse( siteStarterChoiceString );
 			const siteStarterChoice = choiceData.site_starter;
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Site starter choice:', siteStarterChoice );
 
 			if ( ! siteStarterChoice ) {
 				return;
 			}
 
 			const canDispatch = elementorCommon.eventsManager && 'function' === typeof elementorCommon.eventsManager.dispatchEvent;
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Can dispatch events?', canDispatch );
 
 			if ( canDispatch ) {
-				// eslint-disable-next-line no-console
-				console.log( 'PostOnboardingTracking: Dispatching editor_loaded_from_onboarding event' );
 				elementorCommon.eventsManager.dispatchEvent( 'editor_loaded_from_onboarding', {
 					location: 'editor',
 					trigger: 'elementor_loaded',
@@ -86,12 +71,8 @@ class PostOnboardingTracking {
 
 	static setupClickTrackingIfNeeded() {
 		const clickCount = parseInt( localStorage.getItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT ) || '0', 10 );
-		// eslint-disable-next-line no-console
-		console.log( 'PostOnboardingTracking: Current click count for setup:', clickCount );
 
 		if ( clickCount >= 4 ) {
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Click tracking already completed, cleaning up' );
 			this.clearAllOnboardingStorage();
 			return;
 		}
@@ -100,8 +81,6 @@ class PostOnboardingTracking {
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, '0' );
 		}
 
-		// eslint-disable-next-line no-console
-		console.log( 'PostOnboardingTracking: Setting up click tracking' );
 		this.setupPostOnboardingClickTracking();
 	}
 
@@ -124,23 +103,15 @@ class PostOnboardingTracking {
 	static trackPostOnboardingClick( event ) {
 		try {
 			const currentCount = parseInt( localStorage.getItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT ) || '0', 10 );
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: Current click count:', currentCount );
 
 			if ( currentCount > 3 ) {
-				// eslint-disable-next-line no-console
-				console.log( 'PostOnboardingTracking: Max clicks reached, stopping tracking' );
 				return;
 			}
 
 			const newCount = currentCount + 1;
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, newCount.toString() );
-			// eslint-disable-next-line no-console
-			console.log( 'PostOnboardingTracking: New click count:', newCount );
 
 			if ( 1 === newCount ) {
-				// eslint-disable-next-line no-console
-				console.log( 'PostOnboardingTracking: Skipping first click' );
 				return;
 			}
 
@@ -195,9 +166,14 @@ class PostOnboardingTracking {
 	}
 
 	static findMeaningfulTitle( element ) {
-		let currentElement = element;
+		const directTitle = this.extractTitleFromElement( element );
+		if ( directTitle && directTitle.trim().length > 0 ) {
+			return directTitle.trim();
+		}
+
+		let currentElement = element.parentElement;
 		let attempts = 0;
-		const maxAttempts = 5;
+		const maxAttempts = 3;
 
 		while ( currentElement && attempts < maxAttempts ) {
 			const title = this.extractTitleFromElement( currentElement );
@@ -215,16 +191,15 @@ class PostOnboardingTracking {
 
 	static extractTitleFromElement( element ) {
 		const sources = [
-			element.title,
+			element.getAttribute( 'placeholder' ),
 			element.getAttribute( 'aria-label' ),
-			element.getAttribute( 'data-tooltip' ),
+			element.title,
 			element.getAttribute( 'data-title' ),
 			element.textContent?.trim(),
 			element.innerText?.trim(),
 			element.querySelector( '.elementor-widget-title' )?.textContent?.trim(),
 			element.querySelector( '.elementor-heading-title' )?.textContent?.trim(),
 			element.querySelector( '.elementor-button-text' )?.textContent?.trim(),
-			element.querySelector( '[data-tooltip]' )?.getAttribute( 'data-tooltip' ),
 		];
 
 		for ( const source of sources ) {
