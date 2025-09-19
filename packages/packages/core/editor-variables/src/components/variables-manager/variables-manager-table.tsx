@@ -20,28 +20,26 @@ import { __ } from '@wordpress/i18n';
 import { type TVariablesList } from '../../storage';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { LabelField } from '../fields/label-field';
-import { VariableEditMenu, type VariableManagerMenuAction } from './variable-edit-menu';
+import { VariableEditMenu, type VariableManagerMenuAction } from './utils/variable-edit-menu';
+import { VariableTableCell } from './utils/variable-table-cell';
 import { VariableEditableCell } from './variable-editable-cell';
-import { VariableTableCell } from './variable-table-cell';
 
 type Props = {
 	menuActions: VariableManagerMenuAction[];
 	variables: TVariablesList;
 	onChange: ( variables: TVariablesList ) => void;
-	ids: string[];
-	onIdsChange: ( ids: string[] ) => void;
 	autoEditVariableId?: string;
 	onAutoEditComplete?: () => void;
+	onFieldError?: ( hasError: boolean ) => void;
 };
 
 export const VariablesManagerTable = ( {
 	menuActions,
 	variables,
 	onChange: handleOnChange,
-	ids,
-	onIdsChange: setIds,
 	autoEditVariableId,
 	onAutoEditComplete,
+	onFieldError,
 }: Props ) => {
 	const tableContainerRef = useRef< HTMLDivElement >( null );
 	const variableRowRefs = useRef< Map< string, HTMLTableRowElement > >( new Map() );
@@ -69,17 +67,9 @@ export const VariablesManagerTable = ( {
 		}
 	};
 
-	useEffect( () => {
-		const sortedIds = [ ...ids ].sort( sortVariablesOrder( variables ) );
-
-		if ( JSON.stringify( sortedIds ) !== JSON.stringify( ids ) ) {
-			setIds( sortedIds );
-		}
-	}, [ ids, variables, setIds ] );
-
+	const ids = Object.keys( variables ).sort( sortVariablesOrder( variables ) );
 	const rows = ids
 		.filter( ( id ) => ! variables[ id ].deleted )
-		.sort( sortVariablesOrder( variables ) )
 		.map( ( id ) => {
 			const variable = variables[ id ];
 			const variableType = getVariableType( variable.type );
@@ -98,6 +88,22 @@ export const VariablesManagerTable = ( {
 		tableLayout: 'fixed',
 	};
 
+	const handleReorder = ( newIds: string[] ) => {
+		const updatedVariables = { ...variables };
+
+		newIds.forEach( ( id, index ) => {
+			const current = updatedVariables[ id ];
+
+			if ( ! current ) {
+				return;
+			}
+
+			updatedVariables[ id ] = Object.assign( {}, current, { order: index + 1 } );
+		} );
+
+		handleOnChange( updatedVariables );
+	};
+
 	return (
 		<TableContainer ref={ tableContainerRef } sx={ { overflow: 'initial' } }>
 			<Table sx={ tableSX } aria-label="Variables manager list with drag and drop reordering" stickyHeader>
@@ -112,19 +118,7 @@ export const VariablesManagerTable = ( {
 				<TableBody>
 					<UnstableSortableProvider
 						value={ ids }
-						onChange={ ( newIds ) => {
-							const updatedVariables = { ...variables };
-							newIds.forEach( ( id, index ) => {
-								if ( updatedVariables[ id ] ) {
-									updatedVariables[ id ] = {
-										...updatedVariables[ id ],
-										order: index + 1,
-									};
-								}
-							} );
-							handleOnChange( updatedVariables );
-							setIds( newIds );
-						} }
+						onChange={ handleReorder }
 						variant="static"
 						restrictAxis
 						dragOverlay={ ( { children: dragOverlayChildren, ...dragOverlayProps } ) => (
@@ -203,14 +197,25 @@ export const VariablesManagerTable = ( {
 														}
 													} }
 													prefixElement={ createElement( row.icon, { fontSize: 'inherit' } ) }
-													editableElement={ ( { value, onChange } ) => (
+													editableElement={ ( {
+														value,
+														onChange,
+														onValidationChange,
+														error,
+													} ) => (
 														<LabelField
 															id={ 'variable-label-' + row.id }
 															size="tiny"
 															value={ value }
 															onChange={ onChange }
+															onErrorChange={ ( errorMsg ) => {
+																onValidationChange?.( errorMsg );
+																onFieldError?.( !! errorMsg );
+															} }
+															error={ error }
 															focusOnShow
 															selectOnShow={ autoEditVariableId === row.id }
+															showWarningInfotip={ true }
 														/>
 													) }
 													autoEdit={ autoEditVariableId === row.id }
@@ -218,6 +223,7 @@ export const VariablesManagerTable = ( {
 													onAutoEditComplete={
 														autoEditVariableId === row.id ? onAutoEditComplete : undefined
 													}
+													fieldType="label"
 												>
 													<EllipsisWithTooltip
 														title={ row.name }
@@ -238,13 +244,34 @@ export const VariablesManagerTable = ( {
 															} );
 														}
 													} }
-													editableElement={ row.valueField }
+													editableElement={ ( {
+														value,
+														onChange,
+														onValidationChange,
+														error,
+													} ) =>
+														row.valueField( {
+															value,
+															onChange,
+															onValidationChange: ( errorMsg ) => {
+																onValidationChange?.( errorMsg );
+																onFieldError?.( !! errorMsg );
+															},
+															error,
+														} )
+													}
 													onRowRef={ handleRowRef( row.id ) }
+													gap={ 0.25 }
+													fieldType="value"
 												>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
 													<EllipsisWithTooltip
 														title={ row.value }
-														sx={ { border: '4px solid transparent' } }
+														sx={ {
+															border: '4px solid transparent',
+															lineHeight: '1',
+															pt: 0.25,
+														} }
 													>
 														{ row.value }
 													</EllipsisWithTooltip>
