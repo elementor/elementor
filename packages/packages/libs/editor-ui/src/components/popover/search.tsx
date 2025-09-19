@@ -13,7 +13,7 @@ type Props = {
 	id?: string;
 };
 
-export const SearchField = ( { value, onSearch, placeholder, id }: Props ) => {
+export const PopoverSearch = ( { value, onSearch, placeholder, id }: Props ) => {
 	const inputRef = useRef< HTMLInputElement | null >( null );
 
 	const handleClear = () => {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { PopoverBody } from '@elementor/editor-editing-panel';
-import { PopoverHeader, PopoverMenuList, SearchField, type VirtualizedItem } from '@elementor/editor-ui';
+import { PopoverHeader, PopoverMenuList, PopoverSearch, type VirtualizedItem } from '@elementor/editor-ui';
 import { ColorFilterIcon, PlusIcon, SettingsIcon } from '@elementor/icons';
 import { Divider, IconButton } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
@@ -110,7 +110,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 			/>
 
 			{ hasVariables && (
-				<SearchField
+				<PopoverSearch
 					value={ searchValue }
 					onSearch={ handleSearch }
 					placeholder={ __( 'Search', 'elementor' ) }

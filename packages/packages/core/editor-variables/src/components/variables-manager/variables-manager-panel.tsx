@@ -8,14 +8,13 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
+import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { ColorFilterIcon, TrashIcon } from '@elementor/icons';
 import { Alert, Box, Button, CloseButton, Divider, ErrorBoundary, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
-import { NoSearchResults } from '../ui/no-search-results';
 import { useAutoEdit } from './hooks/use-auto-edit';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
 import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu';
@@ -41,15 +40,15 @@ export function VariablesManagerPanel() {
 
 	const {
 		variables,
+		ids,
 		isDirty,
 		hasValidationErrors,
-		searchValue,
+		setIds,
 		handleOnChange,
 		createVariable,
 		handleDeleteVariable,
 		handleSave,
 		isSaving,
-		handleSearch,
 		setHasValidationErrors,
 	} = useVariablesManagerState();
 
@@ -99,8 +98,6 @@ export function VariablesManagerPanel() {
 		},
 	];
 
-	const hasVariables = Object.keys( variables ).length !== 0;
-
 	return (
 		<ThemeProvider>
 			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
@@ -128,6 +125,7 @@ export function VariablesManagerPanel() {
 									/>
 								</Stack>
 							</Stack>
+							<Divider sx={ { width: '100%' } } />
 						</Stack>
 					</PanelHeader>
 					<PanelBody
@@ -137,30 +135,16 @@ export function VariablesManagerPanel() {
 							height: '100%',
 						} }
 					>
-						<SearchField
-							placeholder={ __( 'Search', 'elementor' ) }
-							value={ searchValue }
-							onSearch={ handleSearch }
+						<VariablesManagerTable
+							menuActions={ menuActions }
+							variables={ variables }
+							onChange={ handleOnChange }
+							ids={ ids }
+							onIdsChange={ setIds }
+							autoEditVariableId={ autoEditVariableId }
+							onAutoEditComplete={ handleAutoEditComplete }
+							onFieldError={ setHasValidationErrors }
 						/>
-						<Divider sx={ { width: '100%' } } />
-						{ hasVariables && (
-							<VariablesManagerTable
-								menuActions={ menuActions }
-								variables={ variables }
-								onChange={ handleOnChange }
-								autoEditVariableId={ autoEditVariableId }
-								onAutoEditComplete={ handleAutoEditComplete }
-								onFieldError={ setHasValidationErrors }
-							/>
-						) }
-
-						{ ! hasVariables && (
-							<NoSearchResults
-								searchValue={ searchValue }
-								onClear={ () => handleSearch( '' ) }
-								icon={ <ColorFilterIcon fontSize="large" /> }
-							/>
-						) }
 					</PanelBody>
 
 					<PanelFooter>

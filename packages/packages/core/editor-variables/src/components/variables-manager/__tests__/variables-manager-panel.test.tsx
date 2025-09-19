@@ -25,30 +25,15 @@ jest.mock( '@elementor/editor-panels', () => ( {
 	PanelFooter: ( { children }: { children: React.ReactNode } ) => <footer>{ children }</footer>,
 } ) );
 
-jest.mock( '../../ui/no-search-results', () => ( {
-	NoSearchResults: ( { searchValue, onClear }: { searchValue: string; onClear: () => void } ) => (
-		<div data-testid="no-search-results">
-			<p>No results for { searchValue }</p>
-			<button onClick={ onClear }>Clear Search</button>
-		</div>
-	),
+jest.mock( '@elementor/editor-ui', () => ( {
+	ThemeProvider: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
+	EllipsisWithTooltip: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
+	useDialog: jest.fn().mockReturnValue( {
+		open: jest.fn(),
+		close: jest.fn(),
+		isOpen: false,
+	} ),
 } ) );
-
-jest.mock( '@elementor/editor-ui', () => {
-	const actual = jest.requireActual( '@elementor/editor-ui' );
-
-	return {
-		__esModule: true,
-		...actual,
-		ThemeProvider: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
-		EllipsisWithTooltip: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
-		useDialog: jest.fn().mockReturnValue( {
-			open: jest.fn(),
-			close: jest.fn(),
-			isOpen: false,
-		} ),
-	};
-} );
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	changeEditMode: jest.fn(),
@@ -88,10 +73,6 @@ jest.mock(
 	{ virtual: true }
 );
 
-jest.mock( '../hooks/use-variables-manager-state', () => ( {
-	useVariablesManagerState: jest.fn(),
-} ) );
-
 jest.mock( '../variables-manager-table', () => {
 	const VariablesManagerTable = ( props: {
 		menuActions: unknown[];
@@ -129,31 +110,13 @@ jest.mock( '../variables-manager-table', () => {
 	return { VariablesManagerTable };
 } );
 
-const mockUseVariablesManagerState = require( '../hooks/use-variables-manager-state' ).useVariablesManagerState;
-
-const mockHandleSearch = jest.fn();
-
 describe( 'VariablesManagerPanel', () => {
 	const mockConsoleError = jest.fn();
 	const originalError = window.console.error;
-	const defaultMockState = {
-		variables: { 'var-1': { label: 'Primary Color', value: '#ff0000', type: 'color' } },
-		isDirty: false,
-		hasValidationErrors: false,
-		searchValue: '',
-		handleOnChange: jest.fn(),
-		createVariable: jest.fn(),
-		handleDeleteVariable: jest.fn(),
-		handleSave: jest.fn(),
-		handleSearch: mockHandleSearch,
-		setHasValidationErrors: jest.fn(),
-	};
 
 	beforeEach( () => {
 		jest.clearAllMocks();
 		window.console.error = mockConsoleError;
-
-		mockUseVariablesManagerState.mockReturnValue( defaultMockState );
 	} );
 
 	afterEach( () => {
@@ -272,58 +235,15 @@ describe( 'VariablesManagerPanel', () => {
 			isOpen: false,
 		} );
 
-		let isDirty = false;
-		const mockHandleOnChange = jest.fn( () => {
-			isDirty = true;
-		} );
-
-		mockUseVariablesManagerState.mockImplementation( () => ( {
-			...defaultMockState,
-			isDirty,
-			handleOnChange: mockHandleOnChange,
-		} ) );
-
 		// Act
-		const { rerender } = render( <VariablesManagerPanel /> );
+		render( <VariablesManagerPanel /> );
 
 		await screen.findByRole( 'grid', { name: 'Variables Table' } );
-
 		fireEvent.click( screen.getByRole( 'grid', { name: 'Variables Table' } ) );
-
-		rerender( <VariablesManagerPanel /> );
 
 		fireEvent.click( screen.getByLabelText( 'Close' ) );
 
 		// Assert
 		expect( openDialog ).toHaveBeenCalled();
-	} );
-
-	describe( 'Search', () => {
-		it( 'should render search component correctly', () => {
-			// Arrange & Act
-			render( <VariablesManagerPanel /> );
-
-			const searchInput = screen.getByPlaceholderText( 'Search' );
-			expect( searchInput ).toBeInTheDocument();
-
-			fireEvent.change( searchInput, { target: { value: 'primary' } } );
-
-			expect( mockHandleSearch ).toHaveBeenCalledWith( 'primary' );
-		} );
-
-		it( 'should show no search results component when search returns empty', () => {
-			// Arrange
-			mockUseVariablesManagerState.mockReturnValue( {
-				...defaultMockState,
-				variables: {},
-				searchValue: 'nonexistent',
-			} );
-
-			// Act
-			render( <VariablesManagerPanel /> );
-
-			// Assert
-			expect( screen.getByText( 'No results for nonexistent' ) ).toBeInTheDocument();
-		} );
 	} );
 } );
