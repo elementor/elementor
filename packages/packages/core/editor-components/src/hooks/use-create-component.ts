@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@elementor/query';
 
 import { apiClient } from '../api';
-import { COMPONENTS_QUERY_KEY } from './use-components';
+
+const COMPONENTS_QUERY_KEY = 'components';
 
 export const useCreateComponentMutation = () => {
 	const queryClient = useQueryClient();

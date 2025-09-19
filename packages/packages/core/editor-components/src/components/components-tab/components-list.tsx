@@ -3,7 +3,7 @@ import { EyeIcon } from '@elementor/icons';
 import { Box, Divider, Icon, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useComponents } from '../../hooks/use-components';
+import { useComponents, useLoadStatus } from '../../hooks/use-components';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
@@ -24,7 +24,7 @@ export function ComponentsList() {
 
 	return (
 		<List sx={ { display: 'flex', flexDirection: 'column', gap: 1, px: 2 } }>
-			{ components?.map( ( component ) => <ComponentItem key={ component.id } component={ component } /> ) }
+			{ components?.map( ( component ) => <ComponentItem key={ component?.id } component={ component } /> ) }
 		</List>
 	);
 }
@@ -126,14 +126,15 @@ const EmptySearchResult = () => {
 };
 
 const useFilteredComponents = () => {
-	const { data: components, isLoading } = useComponents();
+	const components = useComponents();
+	const loadStatus = useLoadStatus();
 	const { searchValue } = useSearch();
 
 	return {
-		components: components?.filter( ( component ) =>
-			component.name.toLowerCase().includes( searchValue.toLowerCase() )
+		components: components?.filter(
+			( component ) => component?.name?.toLowerCase().includes( searchValue.toLowerCase() )
 		),
-		isLoading,
+		isLoading: loadStatus === 'pending',
 		searchValue,
 	};
 };

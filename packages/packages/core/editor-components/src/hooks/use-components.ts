@@ -1,13 +1,11 @@
-import { useQuery } from '@elementor/query';
+import { __useSelector as useSelector } from '@elementor/store';
 
-import { apiClient } from '../api';
-
-export const COMPONENTS_QUERY_KEY = 'components';
+import { selectComponents, selectLoadStatus } from '../store';
 
 export const useComponents = () => {
-	return useQuery( {
-		queryKey: [ COMPONENTS_QUERY_KEY ],
-		queryFn: apiClient.get,
-		staleTime: Infinity,
-	} );
+	return useSelector( selectComponents );
+};
+
+export const useLoadStatus = () => {
+	return useSelector( selectLoadStatus );
 };

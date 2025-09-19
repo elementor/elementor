@@ -146,7 +146,7 @@ const Form = ( {
 } ) => {
 	const { values, errors, isValid, handleChange, validateForm } = useForm< ComponentFormValues >( initialValues );
 
-	const { data: components } = useComponents();
+	const components = useComponents();
 
 	const existingComponentNames = useMemo( () => {
 		return components?.map( ( component ) => component.name ) ?? [];

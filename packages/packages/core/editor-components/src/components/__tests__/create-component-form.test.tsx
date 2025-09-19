@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { createMockElement } from 'test-utils';
+import { createMockElement, renderWithStore } from 'test-utils';
 import { getElementLabel, replaceElement, type V1Element } from '@elementor/editor-elements';
+import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { apiClient } from '../../api';
+import { slice } from '../../store';
 import { CreateComponentForm } from '../create-component-form/create-component-form';
 
 jest.mock( '@elementor/editor-elements' );
@@ -21,9 +23,19 @@ const mockElement: V1Element = createMockElement( { model: { id: 'test-element' 
 const mockComponentId = 123245;
 
 describe( 'CreateComponentForm', () => {
+	let store: Store< SliceState< typeof slice > >;
+
 	beforeEach( () => {
+		__registerSlice( slice );
+		store = __createStore();
+
 		mockGetElementLabel.mockReturnValue( 'Div Block' );
 		mockGetComponents.mockReturnValue( Promise.resolve( [ { name: 'Existing Component', id: 123 } ] ) );
+
+		// Mock components data in store
+		act( () => {
+			__dispatch( slice.actions.load( [ { name: 'Existing Component', id: 123 } ] ) );
+		} );
 	} );
 
 	const triggerOpenFormEvent = ( element = mockElement, anchorPosition = { top: 100, left: 200 } ) => {
@@ -43,10 +55,11 @@ describe( 'CreateComponentForm', () => {
 	} );
 
 	const setupForm = () => {
-		render(
+		renderWithStore(
 			<QueryClientProvider client={ queryClient }>
 				<CreateComponentForm />
-			</QueryClientProvider>
+			</QueryClientProvider>,
+			store
 		);
 		return {
 			openForm: () => triggerOpenFormEvent(),
@@ -259,7 +272,9 @@ describe( 'CreateComponentForm', () => {
 			await waitFor( () => {
 				expect( screen.queryByText( 'Create' ) ).not.toBeInTheDocument();
 			} );
-			expect( screen.getByText( 'Creating…' ) ).toBeDisabled();
+			await waitFor( () => {
+				expect( screen.getByText( 'Creating…' ) ).toBeDisabled();
+			} );
 
 			// Cancel button should be disabled.
 			expect( getCancelButton() ).toBeDisabled();
