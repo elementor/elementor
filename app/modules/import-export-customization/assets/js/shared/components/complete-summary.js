@@ -25,6 +25,7 @@ export default function CompleteSummary( {
 					sectionValue ? (
 						<SummarySection
 							key={ sectionKey }
+							sectionKey={ sectionKey }
 							title={ sectionValue.title }
 							subTitle={ sectionValue.subTitle }
 						/>
