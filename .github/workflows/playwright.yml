@@ -95,21 +95,6 @@ jobs:
       - name: Install playwright/test
         run: |
           npx playwright install chromium
-      # Step 2: Checkout the elementor-tests-configuration repo
-      #- name: Checkout elementor-tests-configuration repo
-      #  uses: actions/checkout@v4
-      #  with:
-      #    repository: elementor/elementor-tests-configuration
-      #    token: ${{ steps.generate-token.outputs.token }}
-
-      # Step 3: Run the skip-tests action (using the token to access the action)
-      #- name: Get skipped tests from JSON
-      #  id: read_skipped_tests
-      #  uses: elementor/elementor-tests-configuration/.github/actions/skip-tests@main
-      #  with:
-      #    file_path: "skipped_tests.json"
-      #  env:
-      #    GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Run Playwright tests
         if: ${{
           matrix.shardIndex != 'elements-regression' &&
@@ -196,16 +181,18 @@ jobs:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
       - name: Checkout source code
-        #if: ${{ (needs.Playwright.result == 'failure') }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create revert PR on push failure
+      - name: Create revert PR on push failure (FAKE FOR TESTING)
         id: create_revert_pr
-        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')) }}
+        if: always()
         continue-on-error: true
-        uses: ./.github/workflows/create-revert-pr
+        run: |
+          echo "status=created" >> $GITHUB_OUTPUT
+          echo "pr_number=12345" >> $GITHUB_OUTPUT
+          echo "pr_url=https://github.com/elementor/elementor-base/pull/12345" >> $GITHUB_OUTPUT
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMMIT_SHA: ${{ github.sha }}
@@ -217,13 +204,16 @@ jobs:
         id: revert_message
         if: always()
         run: |
-          TEST_RESULT="${{ needs.Playwright.result }}"
-          BASE_MESSAGE="Elementor Core: Playwright - ${{ github.event_name }} result: ${TEST_RESULT} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
+            BASE_MESSAGE="Elementor Core: Scheduled Playwright tests failed - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          else
+            BASE_MESSAGE="Elementor Core: Playwright - ${{ github.event_name }} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          fi
 
           if [[ "${{ steps.create_revert_pr.outputs.status }}" == "created" ]]; then
             REVERT_MESSAGE="
 
-          You can review revert of this commit here: [PR #${{ steps.create_revert_pr.outputs.pr_number }}](${{ steps.create_revert_pr.outputs.pr_url }})"
+          @svitlanad You can review revert of this commit here: [PR #${{ steps.create_revert_pr.outputs.pr_number }}](${{ steps.create_revert_pr.outputs.pr_url }})"
             echo "message=${BASE_MESSAGE}${REVERT_MESSAGE}" >> $GITHUB_OUTPUT
           else
             echo "message=${BASE_MESSAGE}" >> $GITHUB_OUTPUT
@@ -244,7 +234,6 @@ jobs:
           persist-credentials: false
           ref: main
       - name: Map GitHub user to Slack
-        #if: ${{ needs.Playwright.result == 'failure' }}
         id: map_user
         uses: ./elementor-tests-configuration/.github/actions/map-github-to-slack
         with:
@@ -252,8 +241,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PUBLIC_CLOUD_DEVOPS_TOKEN }}
           SLACK_TOKEN: ${{ secrets.CLOUD_SLACK_BOT_TOKEN }}
-        # env:
-        #   GH_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Send slack message
         if: always()
         uses: ./.github/workflows/post-to-slack
@@ -278,7 +265,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Github User: <${{ github.actor }}> | Slack User: <${{ steps.map_user.outputs.slack_user }}>"
+                    "text": "${{ github.event_name == 'schedule' && 'Scheduled run failed' || (github.event_name == 'pull_request' && (steps.map_user.outputs.slack_user && format('{0} please check the run', steps.map_user.outputs.slack_user) || format('{0} please check the run.\\n\\n@svitlanad please add this team member to slack list', github.actor))) || (steps.map_user.outputs.slack_user && format('{0} please check the run', steps.map_user.outputs.slack_user) || format('{0} please check the run.\\n\\n@svitlanad please add this team member to slack list', github.actor)) }}"
                   }
                 }
               ]
