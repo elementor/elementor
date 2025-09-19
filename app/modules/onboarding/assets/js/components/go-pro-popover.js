@@ -4,10 +4,29 @@ import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
 import Checklist from './checklist';
 import ChecklistItem from './checklist-item';
 import Button from './button';
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useRef } from 'react';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function GoProPopover( props ) {
 	const { state, updateState } = useContext( OnboardingContext );
+
+	const trackUpgradeFromAccountSetup = () => {
+		if ( 1 === state.currentStep ) {
+			OnboardingEventTracking.trackStepAction( 1, 'upgrade_topbar' );
+		}
+	};
+
+	const upgradeButtonRef = useRef( null );
+
+	const setupUpgradeButtonTracking = useCallback( ( buttonElement ) => {
+		if ( ! buttonElement ) {
+			return;
+		}
+
+		upgradeButtonRef.current = buttonElement;
+
+		return OnboardingEventTracking.setupSingleUpgradeButtonTracking( buttonElement, state.currentStep );
+	}, [ state.currentStep ] );
 
 	// Handle the Pro Upload popup window.
 	const alreadyHaveProButtonRef = useCallback( ( alreadyHaveProButton ) => {
@@ -47,7 +66,7 @@ export default function GoProPopover( props ) {
 					} );
 				} );
 		} );
-	}, [] );
+	}, [ state.currentStep, updateState ] );
 
 	// The buttonsConfig prop is an array of objects. To find the 'Upgrade Now' button, we need to iterate over the object.
 	const goProButton = props.buttonsConfig.find( ( button ) => 'go-pro' === button.id ),
@@ -57,7 +76,11 @@ export default function GoProPopover( props ) {
 			target: '_blank',
 			href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
 			tabIndex: 0,
+			elRef: setupUpgradeButtonTracking,
 			onClick: () => {
+				trackUpgradeFromAccountSetup();
+				OnboardingEventTracking.sendTopUpgrade( state.currentStep, 'on_tooltip' );
+
 				elementorCommon.events.dispatchEvent( {
 					event: 'get elementor pro',
 					version: '',

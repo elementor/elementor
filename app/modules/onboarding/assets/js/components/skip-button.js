@@ -3,6 +3,7 @@ import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
 
 import Button from './button';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function SkipButton( props ) {
 	const { button, className } = props,
@@ -26,6 +27,12 @@ export default function SkipButton( props ) {
 
 	// If the button is a link, no onClick functionality should be added.
 	button.onClick = () => {
+		const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+
+		OnboardingEventTracking.trackStepAction( stepNumber, 'skipped' );
+		OnboardingEventTracking.sendStepEndState( stepNumber );
+		OnboardingEventTracking.sendOnboardingSkip( stepNumber );
+
 		elementorCommon.events.dispatchEvent( {
 			event: 'skip',
 			version: '',

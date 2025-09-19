@@ -5,6 +5,7 @@ import { options, setSelectedFeatureList } from '../utils/utils';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 import useButtonAction from '../utils/use-button-action';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function ChooseFeatures() {
 	const { setAjax } = useAjax(),
@@ -19,6 +20,14 @@ export default function ChooseFeatures() {
 			href: elementorAppConfig.onboarding.urls.upgrade,
 			target: '_blank',
 			onClick: () => {
+				OnboardingEventTracking.trackStepAction( 3, 'pro_features_checked', {
+					features: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
+				} );
+
+				OnboardingEventTracking.trackStepAction( 3, 'upgrade_now', {
+					pro_features_checked: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
+				} );
+
 				elementorCommon.events.dispatchEvent( {
 					event: 'next',
 					version: '',
@@ -27,6 +36,9 @@ export default function ChooseFeatures() {
 						step: state.currentStep,
 					},
 				} );
+
+				OnboardingEventTracking.sendUpgradeNowStep3( selectedFeatures, state.currentStep );
+				OnboardingEventTracking.sendStepEndState( 3 );
 
 				setAjax( {
 					data: {
@@ -47,6 +59,15 @@ export default function ChooseFeatures() {
 		skipButton = {
 			text: __( 'Skip', 'elementor' ),
 			action: () => {
+				OnboardingEventTracking.trackStepAction( 3, 'pro_features_checked', {
+					features: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
+				} );
+
+				OnboardingEventTracking.trackStepAction( 3, 'skipped', {
+					pro_features_checked: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
+				} );
+				OnboardingEventTracking.sendStepEndState( 3 );
+
 				setAjax( {
 					data: {
 						action: 'elementor_save_onboarding_features',
@@ -73,8 +94,25 @@ export default function ChooseFeatures() {
 		}
 	}, [ selectedFeatures ] );
 
+	useEffect( () => {
+		OnboardingEventTracking.setupTopUpgradeTracking( state.currentStep );
+	}, [] );
+
 	function isFeatureSelected( features ) {
 		return !! features.advanced.length || !! features.essential.length;
+	}
+
+	function handleFeatureSelection( event, option ) {
+		const checked = event.currentTarget.checked;
+		const itemId = event.target.value;
+
+		setSelectedFeatureList( {
+			checked,
+			id: itemId,
+			text: option.text,
+			selectedFeatures,
+			setSelectedFeatures,
+		} );
 	}
 
 	return (
@@ -103,7 +141,7 @@ export default function ChooseFeatures() {
 									<input
 										className="e-onboarding__choose-features-section__checkbox"
 										type="checkbox"
-										onChange={ ( event ) => setSelectedFeatureList( { checked: event.currentTarget.checked, id: event.target.value, text: option.text, selectedFeatures, setSelectedFeatures } ) }
+										onChange={ ( event ) => handleFeatureSelection( event, option ) }
 										id={ itemId }
 										value={ itemId }
 									/>

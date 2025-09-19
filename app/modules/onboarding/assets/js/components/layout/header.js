@@ -4,13 +4,25 @@ import Grid from 'elementor-app/ui/grid/grid';
 import GoProPopover from '../go-pro-popover';
 import HeaderButtons from 'elementor-app/layout/header-buttons';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
+import { OnboardingEventTracking } from '../../utils/onboarding-event-tracking';
 
 export default function Header( props ) {
 	usePageTitle( { title: props.title } );
 
 	const { state } = useContext( OnboardingContext );
 
+	const trackExitFromAccountSetup = () => {
+		OnboardingEventTracking.trackExitAndSendEndState( state.currentStep );
+	};
+
+	const trackXButtonExit = () => {
+		OnboardingEventTracking.storeExitEventForLater( 'x_button', state.currentStep );
+	};
+
 	const onClose = () => {
+		trackExitFromAccountSetup();
+		trackXButtonExit();
+
 		elementorCommon.events.dispatchEvent( {
 			event: 'close modal',
 			version: '',

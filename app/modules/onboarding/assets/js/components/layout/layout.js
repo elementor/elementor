@@ -1,12 +1,29 @@
-import { useRef, useContext, useEffect } from 'react';
+import { useRef, useContext, useEffect, useCallback, useMemo } from 'react';
 import { OnboardingContext } from '../../context/context';
 
 import Header from './header';
 import ProgressBar from '../progress-bar/progress-bar';
 import Content from '../../../../../../assets/js/layout/content';
 import Connect from '../../utils/connect';
+import { OnboardingEventTracking } from '../../utils/onboarding-event-tracking';
 
 export default function Layout( props ) {
+	const stepNumber = useMemo( () => {
+		return OnboardingEventTracking.getStepNumber( props.pageId );
+	}, [ props.pageId ] );
+
+	const initializeExitTracking = useCallback( () => {
+		OnboardingEventTracking.setupWindowCloseTracking( stepNumber );
+	}, [ stepNumber ] );
+
+	const setupTopbarUpgradeTracking = useCallback( ( buttonElement ) => {
+		if ( ! buttonElement ) {
+			return;
+		}
+
+		return OnboardingEventTracking.setupSingleUpgradeButtonTracking( buttonElement, stepNumber );
+	}, [ stepNumber ] );
+
 	useEffect( () => {
 		// Send modal load event for current step.
 		elementorCommon.events.dispatchEvent( {
@@ -19,16 +36,17 @@ export default function Layout( props ) {
 			},
 		} );
 
+		initializeExitTracking();
+
 		updateState( {
-			currentStep: props.pageId,
+			currentStep: stepNumber,
 			nextStep: props.nextStep || '',
 			proNotice: null,
 		} );
-	}, [ props.pageId ] );
+	}, [ initializeExitTracking, stepNumber, props.pageId, props.nextStep, updateState ] );
 
 	const { state, updateState } = useContext( OnboardingContext ),
 		headerButtons = [],
-		goProButtonRef = useRef(),
 		createAccountButton = {
 			id: 'create-account',
 			text: __( 'Create Account', 'elementor' ),
@@ -38,6 +56,8 @@ export default function Layout( props ) {
 			target: '_blank',
 			rel: 'opener',
 			onClick: () => {
+				OnboardingEventTracking.sendCreateMyAccount( stepNumber, 'on_topbar', 'topbar' );
+
 				elementorCommon.events.dispatchEvent( {
 					event: 'create account',
 					version: '',
@@ -82,8 +102,11 @@ export default function Layout( props ) {
 			className: 'eps-button__go-pro-btn',
 			url: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
 			target: '_blank',
-			elRef: goProButtonRef,
+			elRef: setupTopbarUpgradeTracking,
 			onClick: () => {
+				OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
+				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_topbar' );
+
 				elementorCommon.events.dispatchEvent( {
 					event: 'go pro',
 					version: '',

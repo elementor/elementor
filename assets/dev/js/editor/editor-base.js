@@ -1175,6 +1175,26 @@ export default class EditorBase extends Marionette.Application {
 		return ElementorConfig;
 	}
 
+	async checkAndLoadPostOnboardingTracking() {
+		try {
+			const onboardingStartTime = localStorage.getItem( 'elementor_onboarding_start_time' );
+			const siteStarterChoice = localStorage.getItem( 'elementor_onboarding_s4_site_starter_choice' );
+			const editorLoadTracked = localStorage.getItem( 'elementor_onboarding_editor_load_tracked' );
+
+			const hasOnboardingData = onboardingStartTime || siteStarterChoice || editorLoadTracked;
+
+			if ( ! hasOnboardingData ) {
+				return;
+			}
+
+			const { default: PostOnboardingTracking } = await import( './utils/post-onboarding-tracking' );
+			PostOnboardingTracking.checkAndSendEditorLoadedFromOnboarding();
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.warn( 'Failed to load post-onboarding tracking:', error );
+		}
+	}
+
 	onStart() {
 		this.config = this.getConfig();
 
@@ -1215,6 +1235,8 @@ export default class EditorBase extends Marionette.Application {
 		this.addDeprecatedConfigProperties();
 
 		Events.dispatch( elementorCommon.elements.$window, 'elementor/loaded', null, 'elementor:loaded' );
+
+		this.checkAndLoadPostOnboardingTracking();
 
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {

@@ -5,6 +5,7 @@ import { useNavigate } from '@reach/router';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function HelloTheme() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
@@ -40,6 +41,8 @@ export default function HelloTheme() {
 
 			goToNextScreen();
 		}
+
+		OnboardingEventTracking.setupTopUpgradeTracking( state.currentStep );
 	}, [] );
 
 	const resetScreenContent = () => {
@@ -82,6 +85,7 @@ export default function HelloTheme() {
 
 		setHelloInstalledInOnboarding( true );
 
+		OnboardingEventTracking.sendStepEndState( 2 );
 		goToNextScreen();
 	}, [] );
 
@@ -153,12 +157,16 @@ export default function HelloTheme() {
 
 	if ( state.isHelloThemeActivated ) {
 		actionButton.onClick = () => {
+			OnboardingEventTracking.trackStepAction( 2, 'continue_hello_biz' );
 			sendNextButtonEvent();
 
+			OnboardingEventTracking.sendStepEndState( 2 );
 			goToNextScreen();
 		};
 	} else {
 		actionButton.onClick = () => {
+			OnboardingEventTracking.trackStepAction( 2, 'continue_hello_biz' );
+			OnboardingEventTracking.sendHelloBizContinue( state.currentStep );
 			sendNextButtonEvent();
 
 			if ( state.isHelloThemeInstalled && ! state.isHelloThemeActivated ) {
@@ -166,6 +174,7 @@ export default function HelloTheme() {
 			} else if ( ! state.isHelloThemeInstalled ) {
 				installHelloTheme();
 			} else {
+				OnboardingEventTracking.sendStepEndState( 2 );
 				goToNextScreen();
 			}
 		};
