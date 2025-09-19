@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Container\Container;
-use ElementorDeps\DI\Container as DIContainer;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
@@ -26,10 +24,6 @@ use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
 use Elementor\Data\V2\Manager as Data_Manager_V2;
 use Elementor\Core\Files\Uploads_Manager;
-use ElementorDeps\DI\{
-	DependencyException,
-	NotFoundException,
-};
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
