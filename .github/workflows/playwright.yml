@@ -109,13 +109,13 @@ jobs:
         run: npm run test:playwright -- --grep="@v4-tests"
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
-        run: npm run test:playwright -- --grep="@plugin_tester_container" --grep-invert="${{ steps.read_skipped_tests.outputs.skip_pattern }}"
+        run: npm run test:playwright -- --grep="@plugin_tester_container"
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
-        run: npm run test:playwright -- --grep="@plugin_tester_section" --grep-invert="${{ steps.read_skipped_tests.outputs.skip_pattern }}"
+        run: npm run test:playwright -- --grep="@plugin_tester_section"
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
-        run: npm run test:playwright:elements-regression --grep-invert="${{ steps.read_skipped_tests.outputs.skip_pattern }}"
+        run: npm run test:playwright:elements-regression
       - uses: actions/upload-artifact@v4
         if: always()
         with:
