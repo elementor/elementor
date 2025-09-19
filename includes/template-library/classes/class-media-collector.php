@@ -73,7 +73,7 @@ class Media_Collector {
 		return strpos( $url, $site_url ) === 0 || strpos( $url, $home_url ) === 0;
 	}
 
-	private function get_local_file_path( string $url ): string|false {
+	private function get_local_file_path( string $url ) {
 		$site_url = get_site_url();
 		$home_url = get_home_url();
 
@@ -98,7 +98,7 @@ class Media_Collector {
 		return false;
 	}
 
-	private function copy_local_file( string $source_path, string $original_url ): string|false {
+	private function copy_local_file( string $source_path, string $original_url ) {
 		$original_filename = basename( $original_url );
 		$extension = pathinfo( $original_filename, PATHINFO_EXTENSION );
 		$name_without_extension = pathinfo( $original_filename, PATHINFO_FILENAME );
@@ -110,7 +110,7 @@ class Media_Collector {
 		return $copied ? $unique_filename : false;
 	}
 
-	private function download_via_http( string $url ): string|false {
+	private function download_via_http( string $url ) {
 		$response = wp_safe_remote_get( $url, [
 			'timeout' => 30,
 			'user-agent' => 'Elementor Template Exporter',
