@@ -1,4 +1,4 @@
-import { useRef, useContext, useEffect, useCallback } from 'react';
+import { useRef, useContext, useEffect, useCallback, useMemo } from 'react';
 import { OnboardingContext } from '../../context/context';
 
 import Header from './header';
@@ -8,18 +8,21 @@ import Connect from '../../utils/connect';
 import { OnboardingEventTracking } from '../../utils/onboarding-event-tracking';
 
 export default function Layout( props ) {
-	const initializeExitTracking = ( stepNumber ) => {
+	const stepNumber = useMemo( () => {
+		return OnboardingEventTracking.getStepNumber( props.pageId );
+	}, [ props.pageId ] );
+
+	const initializeExitTracking = useCallback( () => {
 		OnboardingEventTracking.setupWindowCloseTracking( stepNumber );
-	};
+	}, [ stepNumber ] );
 
 	const setupTopbarUpgradeTracking = useCallback( ( buttonElement ) => {
 		if ( ! buttonElement ) {
 			return;
 		}
 
-		const stepNumber = OnboardingEventTracking.getStepNumber( props.pageId );
 		return OnboardingEventTracking.setupSingleUpgradeButtonTracking( buttonElement, stepNumber );
-	}, [ props.pageId ] );
+	}, [ stepNumber ] );
 
 	useEffect( () => {
 		// Send modal load event for current step.
@@ -33,15 +36,14 @@ export default function Layout( props ) {
 			},
 		} );
 
-		const stepNumber = OnboardingEventTracking.getStepNumber( props.pageId );
-		initializeExitTracking( stepNumber );
+		initializeExitTracking();
 
 		updateState( {
 			currentStep: stepNumber,
 			nextStep: props.nextStep || '',
 			proNotice: null,
 		} );
-	}, [ props.pageId, props.nextStep, updateState ] );
+	}, [ initializeExitTracking, stepNumber, props.pageId, props.nextStep, updateState ] );
 
 	const { state, updateState } = useContext( OnboardingContext ),
 		headerButtons = [],
@@ -54,7 +56,6 @@ export default function Layout( props ) {
 			target: '_blank',
 			rel: 'opener',
 			onClick: () => {
-				const stepNumber = OnboardingEventTracking.getStepNumber( props.pageId );
 				OnboardingEventTracking.sendCreateMyAccount( stepNumber, 'on_topbar', 'topbar' );
 
 				elementorCommon.events.dispatchEvent( {
@@ -103,8 +104,6 @@ export default function Layout( props ) {
 			target: '_blank',
 			elRef: setupTopbarUpgradeTracking,
 			onClick: () => {
-				const stepNumber = OnboardingEventTracking.getStepNumber( props.pageId );
-
 				if ( stepNumber >= 2 && stepNumber <= 4 ) {
 					OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
 				}
