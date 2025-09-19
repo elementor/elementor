@@ -890,6 +890,14 @@ export class OnboardingEventTracking {
 		this.sendAllStoredEvents();
 	}
 
+	static handleSiteStarterChoice( siteStarter ) {
+		this.storeSiteStarterChoice( siteStarter );
+		this.trackStepAction( 4, 'site_starter', {
+			site_starter: siteStarter,
+		} );
+		this.sendStepEndState( 4 );
+	}
+
 	static sendAllStoredEvents() {
 		this.sendStoredExitEvent();
 		this.sendStoredSkipEvent();
