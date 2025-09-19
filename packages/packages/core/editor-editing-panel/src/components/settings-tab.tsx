@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { ControlFormLabel } from '@elementor/editor-controls';
-import { type Control } from '@elementor/editor-elements';
+import {
+	type Control,
+	type ControlItem,
+	type ControlLayout,
+	type Element,
+	type ElementControl,
+} from '@elementor/editor-elements';
 import { SessionStorageProvider } from '@elementor/session';
 import { Divider } from '@elementor/ui';
 
@@ -23,10 +29,12 @@ export const SettingsTab = () => {
 	return (
 		<SessionStorageProvider prefix={ element.id }>
 			<SectionsList>
-				{ elementType.controls.map( ( { type, value }, index ) => {
-					if ( type === 'control' ) {
-						return <Control key={ value.bind } control={ value } />;
+				{ elementType.controls.map( ( control, index ) => {
+					if ( isControl( control ) ) {
+						return <Control key={ getKey( control, element ) } control={ control } />;
 					}
+
+					const { type, value } = control;
 
 					if ( type === 'section' ) {
 						return (
@@ -36,8 +44,8 @@ export const SettingsTab = () => {
 								defaultExpanded={ isDefaultExpanded( value.label ) }
 							>
 								{ value.items?.map( ( item ) => {
-									if ( item.type === 'control' ) {
-										return <Control key={ item.value.bind } control={ item.value } />;
+									if ( isControl( item ) ) {
+										return <Control key={ getKey( item, element ) } control={ item } />;
 									}
 
 									// TODO: Handle 2nd level sections
@@ -54,25 +62,46 @@ export const SettingsTab = () => {
 	);
 };
 
-const Control = ( { control }: { control: Control[ 'value' ] } ) => {
-	if ( ! controlsRegistry.get( control.type as ControlType ) ) {
+const Control = ( { control }: { control: Control | ElementControl } ) => {
+	if ( ! controlsRegistry.get( control.value.type as ControlType ) ) {
 		return null;
 	}
 
-	const layout = control.meta?.layout || controlsRegistry.getLayout( control.type as ControlType );
-	const controlProps = populateChildControlProps( control.props );
+	const layout = control.value.meta?.layout || controlsRegistry.getLayout( control.value.type as ControlType );
+	const controlProps = populateChildControlProps( control.value.props );
+
 	if ( layout === 'custom' ) {
-		controlProps.label = control.label;
+		controlProps.label = control.value.label;
+	}
+
+	if ( control.type === 'element' ) {
+		return <ControlLayout control={ control.value } layout={ layout } controlProps={ controlProps } />;
 	}
 
 	return (
-		<SettingsField bind={ control.bind } propDisplayName={ control.label || control.bind }>
+		<SettingsField bind={ control.value.bind } propDisplayName={ control.value.label || control.value.bind }>
+			<ControlLayout control={ control.value } layout={ layout } controlProps={ controlProps } />
+		</SettingsField>
+	);
+};
+
+const ControlLayout = ( {
+	control,
+	layout,
+	controlProps,
+}: {
+	control: Control[ 'value' ] | ElementControl[ 'value' ];
+	layout: ControlLayout;
+	controlProps: Record< string, unknown >;
+} ) => {
+	return (
+		<>
 			{ control.meta?.topDivider && <Divider /> }
 			<ControlTypeContainer layout={ layout }>
 				{ control.label && layout !== 'custom' ? <ControlFormLabel>{ control.label }</ControlFormLabel> : null }
 				<BaseControl type={ control.type as ControlType } props={ controlProps } />
 			</ControlTypeContainer>
-		</SettingsField>
+		</>
 	);
 };
 
@@ -91,4 +120,16 @@ function populateChildControlProps( props: Record< string, unknown > ) {
 	}
 
 	return props;
+}
+
+function getKey( control: Control | ElementControl, element: Element ) {
+	if ( control.type === 'control' ) {
+		return control.value.bind + '.' + element.id;
+	}
+
+	return control.value.type + '.' + element.id;
+}
+
+function isControl( control: ControlItem ): control is Control | ElementControl {
+	return control.type === 'control' || control.type === 'element';
 }

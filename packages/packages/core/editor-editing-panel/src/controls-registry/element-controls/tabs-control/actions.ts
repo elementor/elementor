@@ -131,6 +131,7 @@ export const addItem = ( {
 						settings: {
 							'tab-id': stringPropTypeUtil.create( newTabId ),
 						},
+						editor_settings: { title: `Tab ${ index + 1 } panel` },
 					},
 				},
 				{
@@ -142,7 +143,7 @@ export const addItem = ( {
 							...item,
 							'tab-panel-id': stringPropTypeUtil.create( newTabPanelId ),
 						},
-						editor_settings: { title: `Tab #${ index + 1 }` },
+						editor_settings: { title: `Tab ${ index + 1 }` },
 					},
 				},
 			],

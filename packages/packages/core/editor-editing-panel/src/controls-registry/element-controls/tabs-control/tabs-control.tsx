@@ -7,6 +7,7 @@ import {
 	useBoundProp,
 } from '@elementor/editor-controls';
 import {
+	type ChildElement,
 	type Element,
 	getElementEditorSettings,
 	getElementType,
@@ -20,18 +21,14 @@ import { Alert, Chip, Infotip, type InfotipProps, Stack, Switch, TextField, Typo
 import { __ } from '@wordpress/i18n';
 
 import { ElementProvider, useElement } from '../../../contexts/element-context';
+import { SettingsField } from '../../settings-field';
 import { getElementByType } from '../get-element-by-type';
 import { addItem, duplicateItem, moveItem, removeItem, TAB_ELEMENT_TYPE, type TabItem } from './actions';
 
 const TAB_LIST_ELEMENT_TYPE = 'e-tabs-list';
 const TAB_CONTENT_ELEMENT_TYPE = 'e-tabs-content';
 
-type ChildElement = {
-	type: string;
-	target_container_selector: string;
-};
-
-export const TabsControl = ( { childElements }: { childElements: ChildElement[] } ) => {
+export const TabsControl = ( { childElements, label }: { childElements: ChildElement[]; label: string } ) => {
 	const { element } = useElement();
 
 	const { [ TAB_ELEMENT_TYPE ]: tabLinks } = useElementChildren(
@@ -87,28 +84,30 @@ export const TabsControl = ( { childElements }: { childElements: ChildElement[] 
 	};
 
 	return (
-		<Repeater
-			addToBottom
-			showToggle={ false }
-			openOnAdd={ false }
-			values={ repeaterValues }
-			setValues={ setValue }
-			label={ __( 'Tabs', 'elementor' ) }
-			itemSettings={ {
-				initialValues: { title: 'Tab' },
-				Label: ( props ) => (
-					<ElementItem { ...props }>
-						<ItemLabel value={ props.value } />
-					</ElementItem>
-				),
-				Content: ( props ) => (
-					<ElementItem { ...props }>
-						<ItemContent />
-					</ElementItem>
-				),
-				Icon: () => null,
-			} }
-		/>
+		<SettingsField bind={ 'default-active-tab' } propDisplayName={ __( 'Tabs', 'elementor' ) }>
+			<Repeater
+				addToBottom
+				showToggle={ false }
+				openOnAdd={ false }
+				values={ repeaterValues }
+				setValues={ setValue }
+				label={ label }
+				itemSettings={ {
+					initialValues: { title: 'Tab' },
+					Label: ( props ) => (
+						<ElementItem { ...props }>
+							<ItemLabel value={ props.value } />
+						</ElementItem>
+					),
+					Content: ( props ) => (
+						<ElementItem { ...props }>
+							<ItemContent />
+						</ElementItem>
+					),
+					Icon: () => null,
+				} }
+			/>
+		</SettingsField>
 	);
 };
 
@@ -214,7 +213,7 @@ export const ConditionalTooltip = ( {
 	}
 
 	return (
-		<Infotip content={ content } arrow={ false } { ...props } open>
+		<Infotip content={ content } arrow={ false } { ...props }>
 			<span>{ children }</span>
 		</Infotip>
 	);

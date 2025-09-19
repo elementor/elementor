@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Tabs_Control;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -57,6 +58,14 @@ class Atomic_Tabs extends Atomic_Element_Base {
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
+					Tabs_Control::make( )
+						->set_child_element( 'e-tab', 'e-tabs-list' )
+						->set_child_element( 'e-tab-panel', 'e-tabs-content' )
+						->set_label( __( 'Menu items', 'elementor' ) )
+						->set_meta( [
+							'topDivider' => true,
+							'layout' => 'custom',
+						] ),
 				] ),
 		];
 	}
@@ -90,29 +99,33 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	}
 
 	protected function define_default_children() {
-		$tab_element = Atomic_Tab::generate()
-			->is_locked( true )
-			->build();
+		$default_tab_count = 3;
+		$tab_elements = [];
+		$tab_panel_elements = [];
 
-		$tab_panel_element = Atomic_Tab_Panel::generate()
-			->is_locked( true )
-			->build();
+		foreach ( range( 1, $default_tab_count ) as $i ) {
+			$tab_elements[] = Atomic_Tab::generate()
+				->editor_settings( [
+					'title' => "Tab {$i}",
+				] )
+				->is_locked( true )
+				->build();
+
+			$tab_panel_elements[] = Atomic_Tab_Panel::generate()
+				->is_locked( true )
+				->editor_settings( [
+					'title' => "Tab {$i} panel",
+				] )
+				->build();
+		}
 
 		$tabs_list = Atomic_Tabs_List::generate()
-			->children( [
-				$tab_element,
-				$tab_element,
-				$tab_element,
-			] )
+			->children( $tab_elements )
 			->is_locked( true )
 			->build();
 
 		$tabs_content = Atomic_Tabs_Content::generate()
-			->children( [
-				$tab_panel_element,
-				$tab_panel_element,
-				$tab_panel_element,
-			] )
+			->children( $tab_panel_elements )
 			->is_locked( true )
 			->build();
 
