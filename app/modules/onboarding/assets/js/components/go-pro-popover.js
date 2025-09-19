@@ -17,7 +17,6 @@ export default function GoProPopover( props ) {
 	};
 
 	const upgradeButtonRef = useRef( null );
-	const hasHoveredUpgradeButton = useRef( false );
 
 	const setupUpgradeButtonTracking = useCallback( ( buttonElement ) => {
 		if ( ! buttonElement ) {
@@ -26,26 +25,10 @@ export default function GoProPopover( props ) {
 
 		upgradeButtonRef.current = buttonElement;
 
-		const handleMouseEnter = () => {
-			hasHoveredUpgradeButton.current = true;
-		};
-
-		const handleMouseLeave = () => {
-			if ( hasHoveredUpgradeButton.current ) {
-				OnboardingEventTracking.sendTopUpgrade( state.currentStep, 'no_click' );
-				hasHoveredUpgradeButton.current = false;
-			}
-		};
-
-		buttonElement.addEventListener( 'mouseenter', handleMouseEnter );
-		buttonElement.addEventListener( 'mouseleave', handleMouseLeave );
-
-		return () => {
-			buttonElement.removeEventListener( 'mouseenter', handleMouseEnter );
-			buttonElement.removeEventListener( 'mouseleave', handleMouseLeave );
-		};
+		return OnboardingEventTracking.setupSingleUpgradeButtonTracking( buttonElement, state.currentStep );
 	}, [ state.currentStep ] );
 
+	// Handle the Pro Upload popup window.
 	const alreadyHaveProButtonRef = useCallback( ( alreadyHaveProButton ) => {
 		if ( ! alreadyHaveProButton ) {
 			return;
@@ -83,7 +66,7 @@ export default function GoProPopover( props ) {
 					} );
 				} );
 		} );
-	}, [] );
+	}, [ state.currentStep, updateState ] );
 
 	// The buttonsConfig prop is an array of objects. To find the 'Upgrade Now' button, we need to iterate over the object.
 	const goProButton = props.buttonsConfig.find( ( button ) => 'go-pro' === button.id ),

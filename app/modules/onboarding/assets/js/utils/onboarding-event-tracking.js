@@ -934,6 +934,52 @@ export class OnboardingEventTracking {
 		} );
 	}
 
+	static setupSingleUpgradeButtonTracking( buttonElement, currentStep ) {
+		if ( ! buttonElement || 'undefined' === typeof document ) {
+			return null;
+		}
+
+		let hasHovered = false;
+
+		const handleMouseEnter = () => {
+			hasHovered = true;
+		};
+
+		const handleMouseLeave = () => {
+			if ( hasHovered ) {
+				this.sendTopUpgrade( currentStep, 'no_click' );
+				hasHovered = false;
+			}
+		};
+
+		const handleClick = () => {
+			let upgradeClickedValue = 'on_topbar';
+
+			if ( buttonElement.closest( '.elementor-tooltip' ) ) {
+				upgradeClickedValue = 'on_tooltip';
+			} else if ( buttonElement.closest( '.eps-app__header' ) ) {
+				upgradeClickedValue = 'on_topbar';
+			}
+
+			if ( elementorCommon.config.library_connect?.is_connected &&
+				'pro' === elementorCommon.config.library_connect?.current_access_tier ) {
+				upgradeClickedValue = 'already_pro_user';
+			}
+
+			this.sendTopUpgrade( currentStep, upgradeClickedValue );
+		};
+
+		buttonElement.addEventListener( 'mouseenter', handleMouseEnter );
+		buttonElement.addEventListener( 'mouseleave', handleMouseLeave );
+		buttonElement.addEventListener( 'click', handleClick );
+
+		return () => {
+			buttonElement.removeEventListener( 'mouseenter', handleMouseEnter );
+			buttonElement.removeEventListener( 'mouseleave', handleMouseLeave );
+			buttonElement.removeEventListener( 'click', handleClick );
+		};
+	}
+
 	static handleStorageError( message, error ) {
 		// eslint-disable-next-line no-console
 		console.warn( message, error );
