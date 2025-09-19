@@ -12,19 +12,7 @@ export default function Header( props ) {
 	const { state } = useContext( OnboardingContext );
 
 	const trackExitFromAccountSetup = () => {
-		if ( 1 === state.currentStep ) {
-			OnboardingEventTracking.trackStep1Action( 'exit' );
-			OnboardingEventTracking.sendStep1EndState();
-		} else if ( 2 === state.currentStep ) {
-			OnboardingEventTracking.trackStep2Action( 'exit' );
-			OnboardingEventTracking.sendStep2EndState();
-		} else if ( 3 === state.currentStep ) {
-			OnboardingEventTracking.trackStep3Action( 'exit' );
-			OnboardingEventTracking.sendStep3EndState();
-		} else if ( 4 === state.currentStep ) {
-			OnboardingEventTracking.trackStep4Action( 'exit' );
-			OnboardingEventTracking.sendStep4EndState();
-		}
+		OnboardingEventTracking.trackExitAndSendEndState( state.currentStep );
 	};
 
 	const trackXButtonExit = () => {

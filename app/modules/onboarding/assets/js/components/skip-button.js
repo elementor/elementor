@@ -41,17 +41,8 @@ export default function SkipButton( props ) {
 	button.onClick = () => {
 		const stepNumber = getStepNumber( state.currentStep );
 
-		if ( 2 === stepNumber ) {
-			OnboardingEventTracking.trackStep2Action( 'skipped' );
-			OnboardingEventTracking.sendStep2EndState();
-		} else if ( 3 === stepNumber ) {
-			OnboardingEventTracking.trackStep3Action( 'skipped' );
-			OnboardingEventTracking.sendStep3EndState();
-		} else if ( 4 === stepNumber ) {
-			OnboardingEventTracking.trackStep4Action( 'skipped' );
-			OnboardingEventTracking.sendStep4EndState();
-		}
-
+		OnboardingEventTracking.trackStepAction( stepNumber, 'skipped' );
+		OnboardingEventTracking.sendStepEndState( stepNumber );
 		OnboardingEventTracking.sendOnboardingSkip( stepNumber );
 
 		elementorCommon.events.dispatchEvent( {

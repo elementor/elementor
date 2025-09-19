@@ -115,12 +115,8 @@ export default function Layout( props ) {
 			onClick: () => {
 				const stepNumber = getStepNumber( props.pageId );
 
-				if ( 2 === stepNumber ) {
-					OnboardingEventTracking.trackStep2Action( 'upgrade_topbar' );
-				} else if ( 3 === stepNumber ) {
-					OnboardingEventTracking.trackStep3Action( 'upgrade_topbar' );
-				} else if ( 4 === stepNumber ) {
-					OnboardingEventTracking.trackStep4Action( 'upgrade_topbar' );
+				if ( stepNumber >= 2 && stepNumber <= 4 ) {
+					OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
 				}
 
 				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_topbar' );

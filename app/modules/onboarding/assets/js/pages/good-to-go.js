@@ -36,10 +36,10 @@ export default function GoodToGo() {
 					link={ elementorAppConfig.onboarding.urls.createNewPage }
 					clickAction={ () => {
 						OnboardingEventTracking.storeSiteStarterChoice( 'blank_canvas' );
-						OnboardingEventTracking.trackStep4Action( 'site_starter', {
+						OnboardingEventTracking.trackStepAction( 4, 'site_starter', {
 							site_starter: 'blank_canvas',
 						} );
-						OnboardingEventTracking.sendStep4EndState();
+						OnboardingEventTracking.sendStepEndState( 4 );
 					} }
 				/>
 				<Card
@@ -50,10 +50,10 @@ export default function GoodToGo() {
 					link={ kitLibraryLink }
 					clickAction={ () => {
 						OnboardingEventTracking.storeSiteStarterChoice( 'kit_library' );
-						OnboardingEventTracking.trackStep4Action( 'site_starter', {
+						OnboardingEventTracking.trackStepAction( 4, 'site_starter', {
 							site_starter: 'kit_library',
 						} );
-						OnboardingEventTracking.sendStep4EndState();
+						OnboardingEventTracking.sendStepEndState( 4 );
 
 						// The location is reloaded to make sure the Kit Library's state is re-created.
 						location.href = kitLibraryLink;
@@ -69,10 +69,10 @@ export default function GoodToGo() {
 					target="_blank"
 					clickAction={ () => {
 						OnboardingEventTracking.storeSiteStarterChoice( 'site_planner' );
-						OnboardingEventTracking.trackStep4Action( 'site_starter', {
+						OnboardingEventTracking.trackStepAction( 4, 'site_starter', {
 							site_starter: 'site_planner',
 						} );
-						OnboardingEventTracking.sendStep4EndState();
+						OnboardingEventTracking.sendStepEndState( 4 );
 					} }
 				/>
 			</Grid>

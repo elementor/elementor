@@ -85,7 +85,7 @@ export default function HelloTheme() {
 
 		setHelloInstalledInOnboarding( true );
 
-		OnboardingEventTracking.sendStep2EndState();
+		OnboardingEventTracking.sendStepEndState( 2 );
 		goToNextScreen();
 	}, [] );
 
@@ -157,15 +157,15 @@ export default function HelloTheme() {
 
 	if ( state.isHelloThemeActivated ) {
 		actionButton.onClick = () => {
-			OnboardingEventTracking.trackStep2Action( 'continue_hello_biz' );
+			OnboardingEventTracking.trackStepAction( 2, 'continue_hello_biz' );
 			sendNextButtonEvent();
 
-			OnboardingEventTracking.sendStep2EndState();
+			OnboardingEventTracking.sendStepEndState( 2 );
 			goToNextScreen();
 		};
 	} else {
 		actionButton.onClick = () => {
-			OnboardingEventTracking.trackStep2Action( 'continue_hello_biz' );
+			OnboardingEventTracking.trackStepAction( 2, 'continue_hello_biz' );
 			OnboardingEventTracking.sendHelloBizContinue( state.currentStep );
 			sendNextButtonEvent();
 
@@ -174,7 +174,7 @@ export default function HelloTheme() {
 			} else if ( ! state.isHelloThemeInstalled ) {
 				installHelloTheme();
 			} else {
-				OnboardingEventTracking.sendStep2EndState();
+				OnboardingEventTracking.sendStepEndState( 2 );
 				goToNextScreen();
 			}
 		};

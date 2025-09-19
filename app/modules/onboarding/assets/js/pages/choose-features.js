@@ -20,7 +20,7 @@ export default function ChooseFeatures() {
 			href: elementorAppConfig.onboarding.urls.upgrade,
 			target: '_blank',
 			onClick: () => {
-				OnboardingEventTracking.trackStep3Action( 'upgrade_now', {
+				OnboardingEventTracking.trackStepAction( 3, 'upgrade_now', {
 					pro_features_checked: OnboardingEventTracking.extractSelectedFeatureTitles( selectedFeatures ),
 				} );
 
@@ -34,7 +34,7 @@ export default function ChooseFeatures() {
 				} );
 
 				OnboardingEventTracking.sendUpgradeNowStep3( selectedFeatures, state.currentStep );
-				OnboardingEventTracking.sendStep3EndState();
+				OnboardingEventTracking.sendStepEndState( 3 );
 
 				setAjax( {
 					data: {
@@ -55,10 +55,10 @@ export default function ChooseFeatures() {
 		skipButton = {
 			text: __( 'Skip', 'elementor' ),
 			action: () => {
-				OnboardingEventTracking.trackStep3Action( 'skipped', {
+				OnboardingEventTracking.trackStepAction( 3, 'skipped', {
 					pro_features_checked: OnboardingEventTracking.extractSelectedFeatureTitles( selectedFeatures ),
 				} );
-				OnboardingEventTracking.sendStep3EndState();
+				OnboardingEventTracking.sendStepEndState( 3 );
 
 				setAjax( {
 					data: {
@@ -106,7 +106,7 @@ export default function ChooseFeatures() {
 			setSelectedFeatures,
 		} );
 
-		OnboardingEventTracking.trackStep3Action( 'pro_features_checked', {
+		OnboardingEventTracking.trackStepAction( 3, 'pro_features_checked', {
 			feature_name: option.text,
 			feature_checked: checked,
 		} );

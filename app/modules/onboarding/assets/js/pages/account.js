@@ -40,7 +40,7 @@ export default function Account() {
 		skipButton = {
 			text: __( 'Skip setup', 'elementor' ),
 			action: () => {
-				OnboardingEventTracking.trackStep1Action( 'skip' );
+				OnboardingEventTracking.trackStepAction( 1, 'skip' );
 				OnboardingEventTracking.sendOnboardingSkip( 1 );
 
 				safeDispatchEvent(
@@ -55,7 +55,7 @@ export default function Account() {
 
 				updateState( getStateObjectToUpdate( state, 'steps', pageId, 'skipped' ) );
 
-				OnboardingEventTracking.sendStep1EndState();
+				OnboardingEventTracking.sendStepEndState( 1 );
 				navigate( 'onboarding/' + nextStep );
 			},
 		};
@@ -124,7 +124,7 @@ export default function Account() {
 		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
-			OnboardingEventTracking.trackStep1Action( 'create' );
+			OnboardingEventTracking.trackStepAction( 1, 'create' );
 			OnboardingEventTracking.sendCreateMyAccount( 1, 'on_main_cta', 'main_cta' );
 
 			safeDispatchEvent(
@@ -148,7 +148,7 @@ export default function Account() {
 
 		OnboardingEventTracking.updateLibraryConnectConfig( data );
 
-		OnboardingEventTracking.trackStep1Action( 'connect' );
+		OnboardingEventTracking.trackStepAction( 1, 'connect' );
 
 		if ( isTrackingOptedInConnect ) {
 			elementorCommon.config.editor_events.can_send_events = true;
@@ -195,7 +195,7 @@ export default function Account() {
 			message: 'Alrighty - your account is connected.',
 		} );
 
-		OnboardingEventTracking.sendStep1EndState();
+		OnboardingEventTracking.sendStepEndState( 1 );
 		navigate( 'onboarding/' + nextStep );
 	};
 
@@ -267,7 +267,7 @@ export default function Account() {
 								ref={ alreadyHaveAccountLinkRef }
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
 								onClick={ () => {
-									OnboardingEventTracking.trackStep1Action( 'connect' );
+									OnboardingEventTracking.trackStepAction( 1, 'connect' );
 									OnboardingEventTracking.sendStep1ClickedConnect( state.currentStep );
 
 									safeDispatchEvent(

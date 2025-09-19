@@ -153,230 +153,17 @@ export class OnboardingEventTracking {
 		} );
 	}
 
-	static trackStep1Action( action ) {
-		try {
-			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
-			if ( ! startTimeString ) {
-				return;
-			}
-
-			const startTime = parseInt( startTimeString, 10 );
-			const currentTime = Date.now();
-			const timeSpent = Math.round( ( currentTime - startTime ) / 1000 );
-
-			const existingActionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS );
-			const existingActions = existingActionsString ? JSON.parse( existingActionsString ) : [];
-
-			const actionData = {
-				action,
-				timestamp: currentTime,
-				time_spent: timeSpent,
-			};
-
-			existingActions.push( actionData );
-			localStorage.setItem( ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS, JSON.stringify( existingActions ) );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to track Step 1 action:', error );
+	static trackStepAction( stepNumber, action, additionalData = {} ) {
+		const stepConfig = this.getStepConfig( stepNumber );
+		if ( stepConfig ) {
+			this.trackStepActionInternal( stepNumber, action, stepConfig.actionsKey, additionalData );
 		}
 	}
 
-	static sendStep1EndState() {
-		try {
-			const actionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS );
-			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
-
-			if ( ! actionsString || ! startTimeString ) {
-				return;
-			}
-
-			const actions = JSON.parse( actionsString );
-			const startTime = parseInt( startTimeString, 10 );
-			const currentTime = Date.now();
-			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
-
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP1_END_STATE, {
-				location: 'plugin_onboarding',
-				trigger: 'user_redirects_out_of_step',
-				step_number: 1,
-				step_name: 'account_setup',
-				s1_end_state: actions,
-				total_time_spent: totalTimeSpent,
-			} );
-
-			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to send Step 1 end state:', error );
-		}
-	}
-
-	static trackStep2Action( action ) {
-		try {
-			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
-
-			if ( ! startTimeString ) {
-				return;
-			}
-
-			const startTime = parseInt( startTimeString, 10 );
-			const currentTime = Date.now();
-			const timeSpent = Math.round( ( currentTime - startTime ) / 1000 );
-
-			const existingActionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS );
-			const existingActions = existingActionsString ? JSON.parse( existingActionsString ) : [];
-
-			const actionData = {
-				action,
-				timestamp: currentTime,
-				time_spent: timeSpent,
-			};
-
-			existingActions.push( actionData );
-			localStorage.setItem( ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS, JSON.stringify( existingActions ) );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to track Step 2 action:', error );
-		}
-	}
-
-	static sendStep2EndState() {
-		try {
-			const actionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS );
-			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
-
-			if ( ! actionsString || ! startTimeString ) {
-				return;
-			}
-
-			const actions = JSON.parse( actionsString );
-			const startTime = parseInt( startTimeString, 10 );
-			const currentTime = Date.now();
-			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
-
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP2_END_STATE, {
-				location: 'plugin_onboarding',
-				trigger: 'user_redirects_out_of_step',
-				step_number: 2,
-				step_name: 'hello_biz_theme',
-				s2_end_state: actions,
-				total_time_spent: totalTimeSpent,
-			} );
-
-			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to send Step 2 end state:', error );
-		}
-	}
-
-	static trackStep3Action( action, additionalData = {} ) {
-		try {
-			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
-			if ( ! startTimeString ) {
-				return;
-			}
-
-			const startTime = parseInt( startTimeString, 10 );
-			const currentTime = Date.now();
-			const timeSpent = Math.round( ( currentTime - startTime ) / 1000 );
-
-			const existingActionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS );
-			const existingActions = existingActionsString ? JSON.parse( existingActionsString ) : [];
-
-			const actionData = {
-				action,
-				timestamp: currentTime,
-				time_spent: timeSpent,
-				...additionalData,
-			};
-
-			existingActions.push( actionData );
-			localStorage.setItem( ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS, JSON.stringify( existingActions ) );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to track Step 3 action:', error );
-		}
-	}
-
-	static sendStep3EndState() {
-		try {
-			const actionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS );
-			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
-
-			if ( ! actionsString || ! startTimeString ) {
-				return;
-			}
-
-			const actions = JSON.parse( actionsString );
-			const startTime = parseInt( startTimeString, 10 );
-			const currentTime = Date.now();
-			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
-
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP3_END_STATE, {
-				location: 'plugin_onboarding',
-				trigger: 'user_redirects_out_of_step',
-				step_number: 3,
-				step_name: 'choose_features',
-				s3_end_state: actions,
-				total_time_spent: totalTimeSpent,
-			} );
-
-			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to send Step 3 end state:', error );
-		}
-	}
-
-	static trackStep4Action( action, additionalData = {} ) {
-		try {
-			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
-			if ( ! startTimeString ) {
-				return;
-			}
-
-			const startTime = parseInt( startTimeString, 10 );
-			const currentTime = Date.now();
-			const timeSpent = Math.round( ( currentTime - startTime ) / 1000 );
-
-			const existingActionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS );
-			const existingActions = existingActionsString ? JSON.parse( existingActionsString ) : [];
-
-			const actionData = {
-				action,
-				timestamp: currentTime,
-				time_spent: timeSpent,
-				...additionalData,
-			};
-
-			existingActions.push( actionData );
-			localStorage.setItem( ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS, JSON.stringify( existingActions ) );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to track Step 4 action:', error );
-		}
-	}
-
-	static sendStep4EndState() {
-		try {
-			const actionsString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS );
-			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
-
-			if ( ! actionsString || ! startTimeString ) {
-				return;
-			}
-
-			const actions = JSON.parse( actionsString );
-			const startTime = parseInt( startTimeString, 10 );
-			const currentTime = Date.now();
-			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
-
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP4_END_STATE, {
-				location: 'plugin_onboarding',
-				trigger: 'user_redirects_out_of_step',
-				step_number: 4,
-				step_name: 'good_to_go',
-				s4_end_state: actions,
-				total_time_spent: totalTimeSpent,
-			} );
-
-			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to send Step 4 end state:', error );
+	static sendStepEndState( stepNumber ) {
+		const stepConfig = this.getStepConfig( stepNumber );
+		if ( stepConfig ) {
+			this.sendStepEndStateInternal( stepNumber, stepConfig.actionsKey, stepConfig.eventName, stepConfig.stepName, stepConfig.endStateProperty );
 		}
 	}
 
@@ -975,6 +762,113 @@ export class OnboardingEventTracking {
 
 	static setupSingleUpgradeButtonTracking( buttonElement, currentStep ) {
 		return this.setupSingleUpgradeButton( buttonElement, currentStep );
+	}
+
+	static trackExitAndSendEndState( currentStep ) {
+		this.trackStepAction( currentStep, 'exit' );
+		this.sendStepEndState( currentStep );
+	}
+
+	static trackStepActionInternal( stepNumber, action, storageKey, additionalData = {} ) {
+		try {
+			const timeData = this.calculateTimeSpent();
+			if ( ! timeData ) {
+				return;
+			}
+
+			const existingActions = this.getStoredActions( storageKey );
+			const actionData = {
+				action,
+				timestamp: timeData.currentTime,
+				time_spent: timeData.timeSpent,
+				...additionalData,
+			};
+
+			existingActions.push( actionData );
+			localStorage.setItem( storageKey, JSON.stringify( existingActions ) );
+		} catch ( error ) {
+			this.handleStorageError( `Failed to track Step ${ stepNumber } action:`, error );
+		}
+	}
+
+	static sendStepEndStateInternal( stepNumber, storageKey, eventName, stepName, endStateProperty ) {
+		try {
+			const actionsString = localStorage.getItem( storageKey );
+			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+
+			if ( ! actionsString || ! startTimeString ) {
+				return;
+			}
+
+			const actions = JSON.parse( actionsString );
+			const startTime = parseInt( startTimeString, 10 );
+			const currentTime = Date.now();
+			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
+
+			const eventData = {
+				location: 'plugin_onboarding',
+				trigger: 'user_redirects_out_of_step',
+				step_number: stepNumber,
+				step_name: stepName,
+				total_time_spent: totalTimeSpent,
+			};
+
+			eventData[ endStateProperty ] = actions;
+
+			this.dispatchEvent( eventName, eventData );
+			localStorage.removeItem( storageKey );
+		} catch ( error ) {
+			this.handleStorageError( `Failed to send Step ${ stepNumber } end state:`, error );
+		}
+	}
+
+	static calculateTimeSpent() {
+		const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+		if ( ! startTimeString ) {
+			return null;
+		}
+
+		const startTime = parseInt( startTimeString, 10 );
+		const currentTime = Date.now();
+		const timeSpent = Math.round( ( currentTime - startTime ) / 1000 );
+
+		return { startTime, currentTime, timeSpent };
+	}
+
+	static getStoredActions( storageKey ) {
+		const existingActionsString = localStorage.getItem( storageKey );
+		return existingActionsString ? JSON.parse( existingActionsString ) : [];
+	}
+
+	static getStepConfig( stepNumber ) {
+		const stepConfigs = {
+			1: {
+				actionsKey: ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS,
+				eventName: ONBOARDING_EVENTS_MAP.STEP1_END_STATE,
+				stepName: 'account_setup',
+				endStateProperty: 's1_end_state',
+			},
+			2: {
+				actionsKey: ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS,
+				eventName: ONBOARDING_EVENTS_MAP.STEP2_END_STATE,
+				stepName: 'hello_biz_theme',
+				endStateProperty: 's2_end_state',
+			},
+			3: {
+				actionsKey: ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS,
+				eventName: ONBOARDING_EVENTS_MAP.STEP3_END_STATE,
+				stepName: 'choose_features',
+				endStateProperty: 's3_end_state',
+			},
+			4: {
+				actionsKey: ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS,
+				eventName: ONBOARDING_EVENTS_MAP.STEP4_END_STATE,
+				stepName: 'good_to_go',
+				endStateProperty: 's4_end_state',
+			},
+		};
+
+		return stepConfigs[ stepNumber ] || null;
 	}
 
 	static handleStorageError( message, error ) {

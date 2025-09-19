@@ -73,11 +73,11 @@ export default function ProgressBar() {
 				const nextStepNumber = getStepNumberFromPageId( itemConfig.id );
 
 				if ( 4 === currentStepNumber ) {
-					OnboardingEventTracking.trackStep4Action( 'stepper_clicks', {
+					OnboardingEventTracking.trackStepAction( 4, 'stepper_clicks', {
 						from_step: currentStepNumber,
 						to_step: nextStepNumber,
 					} );
-					OnboardingEventTracking.sendStep4EndState();
+					OnboardingEventTracking.sendStepEndState( 4 );
 				}
 
 				elementorCommon.events.dispatchEvent( {
