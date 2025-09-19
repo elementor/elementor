@@ -4,14 +4,10 @@ exports[`<StyleRenderer /> should render styles and links in portal when contain
 <div
   data-testid="portal"
 >
-  <style
-    data-e-style-id="style1"
-  >
+  <style>
     .test { color: red; }
   </style>
-  <style
-    data-e-style-id="style2"
-  >
+  <style>
     .test2 { color: blue; }
   </style>
   <link

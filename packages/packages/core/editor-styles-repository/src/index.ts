@@ -7,11 +7,12 @@ export { useUserStylesCapability } from './hooks/use-user-styles-capability';
 export { validateStyleLabel } from './utils/validate-style-label';
 export { createStylesProvider, type CreateStylesProviderOptions } from './utils/create-styles-provider';
 export { isElementsStylesProvider } from './utils/is-elements-styles-provider';
+export { addInitialDocumentStyles } from './store/add-initial-document-styles';
+export { removeInitialDocumentStyles } from './store/remove-initial-document-styles';
 
 export { ELEMENTS_BASE_STYLES_PROVIDER_KEY } from './providers/element-base-styles-provider';
 export {
 	ELEMENTS_STYLES_PROVIDER_KEY_PREFIX,
 	ELEMENTS_STYLES_RESERVED_LABEL,
 } from './providers/document-elements-styles-provider';
-
 export { init } from './init';
