@@ -12,32 +12,13 @@ export default function Layout( props ) {
 		OnboardingEventTracking.setupWindowCloseTracking( stepNumber );
 	};
 
-	const hasHoveredTopbarUpgrade = useRef( false );
-
 	const setupTopbarUpgradeTracking = useCallback( ( buttonElement ) => {
 		if ( ! buttonElement ) {
 			return;
 		}
 
-		const handleMouseEnter = () => {
-			hasHoveredTopbarUpgrade.current = true;
-		};
-
-		const handleMouseLeave = () => {
-			if ( hasHoveredTopbarUpgrade.current ) {
-				const stepNumber = getStepNumber( props.pageId );
-				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'no_click' );
-				hasHoveredTopbarUpgrade.current = false;
-			}
-		};
-
-		buttonElement.addEventListener( 'mouseenter', handleMouseEnter );
-		buttonElement.addEventListener( 'mouseleave', handleMouseLeave );
-
-		return () => {
-			buttonElement.removeEventListener( 'mouseenter', handleMouseEnter );
-			buttonElement.removeEventListener( 'mouseleave', handleMouseLeave );
-		};
+		const stepNumber = getStepNumber( props.pageId );
+		return OnboardingEventTracking.setupSingleUpgradeButtonTracking( buttonElement, stepNumber );
 	}, [ props.pageId ] );
 
 	useEffect( () => {
@@ -60,7 +41,7 @@ export default function Layout( props ) {
 			nextStep: props.nextStep || '',
 			proNotice: null,
 		} );
-	}, [ props.pageId ] );
+	}, [ props.pageId, props.nextStep, updateState ] );
 
 	const getStepNumber = ( pageId ) => {
 		const stepMapping = {

@@ -887,85 +887,57 @@ export class OnboardingEventTracking {
 		}
 	}
 
-	static setupTopUpgradeTracking( currentStep ) {
+	static setupUpgradeButtonTracking( buttonElementOrStep, currentStepOrSelector ) {
 		if ( 'undefined' === typeof document ) {
-			return;
+			return null;
 		}
 
-		const upgradeButtons = document.querySelectorAll( '.elementor-button-upgrade, .eps-button--upgrade, [data-upgrade-button]' );
+		if ( 'number' === typeof buttonElementOrStep ) {
+			return this.setupAllUpgradeButtons( buttonElementOrStep, currentStepOrSelector );
+		}
 
-		upgradeButtons.forEach( ( button ) => {
-			let isHovered = false;
-			let hasClicked = false;
-
-			const handleMouseEnter = () => {
-				isHovered = true;
-			};
-
-			const handleMouseLeave = () => {
-				if ( isHovered && ! hasClicked ) {
-					this.sendTopUpgrade( currentStep, 'no_click' );
-				}
-				isHovered = false;
-			};
-
-			const handleClick = () => {
-				hasClicked = true;
-
-				let upgradeClickedValue = 'on_topbar';
-
-				if ( button.closest( '.elementor-tooltip' ) ) {
-					upgradeClickedValue = 'on_tooltip';
-				} else if ( button.closest( '.eps-app__header' ) ) {
-					upgradeClickedValue = 'on_topbar';
-				}
-
-				if ( elementorCommon.config.library_connect?.is_connected &&
-					'pro' === elementorCommon.config.library_connect?.current_access_tier ) {
-					upgradeClickedValue = 'already_pro_user';
-				}
-
-				this.sendTopUpgrade( currentStep, upgradeClickedValue );
-			};
-
-			button.addEventListener( 'mouseenter', handleMouseEnter );
-			button.addEventListener( 'mouseleave', handleMouseLeave );
-			button.addEventListener( 'click', handleClick );
-		} );
+		return this.setupSingleUpgradeButton( buttonElementOrStep, currentStepOrSelector );
 	}
 
-	static setupSingleUpgradeButtonTracking( buttonElement, currentStep ) {
-		if ( ! buttonElement || 'undefined' === typeof document ) {
+	static setupAllUpgradeButtons( currentStep, selector = '.elementor-button-upgrade, .eps-button--upgrade, [data-upgrade-button]' ) {
+		const upgradeButtons = document.querySelectorAll( selector );
+		const cleanupFunctions = [];
+
+		upgradeButtons.forEach( ( button ) => {
+			const cleanup = this.setupSingleUpgradeButton( button, currentStep );
+			if ( cleanup ) {
+				cleanupFunctions.push( cleanup );
+			}
+		} );
+
+		return () => {
+			cleanupFunctions.forEach( ( cleanup ) => cleanup() );
+		};
+	}
+
+	static setupSingleUpgradeButton( buttonElement, currentStep ) {
+		if ( ! buttonElement ) {
 			return null;
 		}
 
 		let hasHovered = false;
+		let hasClicked = false;
 
 		const handleMouseEnter = () => {
 			hasHovered = true;
 		};
 
 		const handleMouseLeave = () => {
-			if ( hasHovered ) {
+			if ( hasHovered && ! hasClicked ) {
 				this.sendTopUpgrade( currentStep, 'no_click' );
 				hasHovered = false;
 			}
 		};
 
 		const handleClick = () => {
-			let upgradeClickedValue = 'on_topbar';
+			hasClicked = true;
 
-			if ( buttonElement.closest( '.elementor-tooltip' ) ) {
-				upgradeClickedValue = 'on_tooltip';
-			} else if ( buttonElement.closest( '.eps-app__header' ) ) {
-				upgradeClickedValue = 'on_topbar';
-			}
-
-			if ( elementorCommon.config.library_connect?.is_connected &&
-				'pro' === elementorCommon.config.library_connect?.current_access_tier ) {
-				upgradeClickedValue = 'already_pro_user';
-			}
-
+			const upgradeClickedValue = this.determineUpgradeClickedValue( buttonElement );
 			this.sendTopUpgrade( currentStep, upgradeClickedValue );
 		};
 
@@ -978,6 +950,31 @@ export class OnboardingEventTracking {
 			buttonElement.removeEventListener( 'mouseleave', handleMouseLeave );
 			buttonElement.removeEventListener( 'click', handleClick );
 		};
+	}
+
+	static determineUpgradeClickedValue( buttonElement ) {
+		if ( elementorCommon.config.library_connect?.is_connected &&
+			'pro' === elementorCommon.config.library_connect?.current_access_tier ) {
+			return 'already_pro_user';
+		}
+
+		if ( buttonElement.closest( '.elementor-tooltip' ) ) {
+			return 'on_tooltip';
+		}
+
+		if ( buttonElement.closest( '.eps-app__header' ) ) {
+			return 'on_topbar';
+		}
+
+		return 'on_topbar';
+	}
+
+	static setupTopUpgradeTracking( currentStep ) {
+		return this.setupAllUpgradeButtons( currentStep );
+	}
+
+	static setupSingleUpgradeButtonTracking( buttonElement, currentStep ) {
+		return this.setupSingleUpgradeButton( buttonElement, currentStep );
 	}
 
 	static handleStorageError( message, error ) {
