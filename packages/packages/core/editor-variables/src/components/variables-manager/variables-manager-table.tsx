@@ -28,8 +28,6 @@ type Props = {
 	menuActions: VariableManagerMenuAction[];
 	variables: TVariablesList;
 	onChange: ( variables: TVariablesList ) => void;
-	ids: string[];
-	onIdsChange: ( ids: string[] ) => void;
 	autoEditVariableId?: string;
 	onAutoEditComplete?: () => void;
 	onFieldError?: ( hasError: boolean ) => void;
@@ -39,8 +37,6 @@ export const VariablesManagerTable = ( {
 	menuActions,
 	variables,
 	onChange: handleOnChange,
-	ids,
-	onIdsChange: setIds,
 	autoEditVariableId,
 	onAutoEditComplete,
 	onFieldError,
@@ -71,17 +67,9 @@ export const VariablesManagerTable = ( {
 		}
 	};
 
-	useEffect( () => {
-		const sortedIds = [ ...ids ].sort( sortVariablesOrder( variables ) );
-
-		if ( JSON.stringify( sortedIds ) !== JSON.stringify( ids ) ) {
-			setIds( sortedIds );
-		}
-	}, [ ids, variables, setIds ] );
-
+	const ids = Object.keys( variables ).sort( sortVariablesOrder( variables ) );
 	const rows = ids
 		.filter( ( id ) => ! variables[ id ].deleted )
-		.sort( sortVariablesOrder( variables ) )
 		.map( ( id ) => {
 			const variable = variables[ id ];
 			const variableType = getVariableType( variable.type );
@@ -100,6 +88,22 @@ export const VariablesManagerTable = ( {
 		tableLayout: 'fixed',
 	};
 
+	const handleReorder = ( newIds: string[] ) => {
+		const updatedVariables = { ...variables };
+
+		newIds.forEach( ( id, index ) => {
+			const current = updatedVariables[ id ];
+
+			if ( ! current ) {
+				return;
+			}
+
+			updatedVariables[ id ] = Object.assign( {}, current, { order: index + 1 } );
+		} );
+
+		handleOnChange( updatedVariables );
+	};
+
 	return (
 		<TableContainer ref={ tableContainerRef } sx={ { overflow: 'initial' } }>
 			<Table sx={ tableSX } aria-label="Variables manager list with drag and drop reordering" stickyHeader>
@@ -114,19 +118,7 @@ export const VariablesManagerTable = ( {
 				<TableBody>
 					<UnstableSortableProvider
 						value={ ids }
-						onChange={ ( newIds ) => {
-							const updatedVariables = { ...variables };
-							newIds.forEach( ( id, index ) => {
-								if ( updatedVariables[ id ] ) {
-									updatedVariables[ id ] = {
-										...updatedVariables[ id ],
-										order: index + 1,
-									};
-								}
-							} );
-							handleOnChange( updatedVariables );
-							setIds( newIds );
-						} }
+						onChange={ handleReorder }
 						variant="static"
 						restrictAxis
 						dragOverlay={ ( { children: dragOverlayChildren, ...dragOverlayProps } ) => (
@@ -252,9 +244,25 @@ export const VariablesManagerTable = ( {
 															} );
 														}
 													} }
-													editableElement={ row.valueField }
+													editableElement={ ( {
+														value,
+														onChange,
+														onValidationChange,
+														error,
+													} ) =>
+														row.valueField( {
+															value,
+															onChange,
+															onValidationChange: ( errorMsg ) => {
+																onValidationChange?.( errorMsg );
+																onFieldError?.( !! errorMsg );
+															},
+															error,
+														} )
+													}
 													onRowRef={ handleRowRef( row.id ) }
 													gap={ 0.25 }
+													fieldType="value"
 												>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
 													<EllipsisWithTooltip
