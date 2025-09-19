@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -9,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -46,6 +48,7 @@ class Atomic_Tabs_Content extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
+			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
 
@@ -90,17 +93,6 @@ class Atomic_Tabs_Content extends Atomic_Element_Base {
 		] );
 	}
 
-	protected function define_default_children() {
-		return [
-			Atomic_Tab_Panel::generate()
-				->is_locked( true )
-				->build(),
-			Atomic_Tab_Panel::generate()
-				->is_locked( true )
-				->build(),
-		];
-	}
-
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
@@ -120,6 +112,6 @@ class Atomic_Tabs_Content extends Atomic_Element_Base {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );
 		}
 
-		$this->add_render_attribute( '_wrapper', array_merge( $attributes, $initial_attributes ) );
+		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
 	}
 }

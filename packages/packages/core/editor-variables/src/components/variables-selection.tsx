@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { useBoundProp } from '@elementor/editor-controls';
 import { PopoverBody } from '@elementor/editor-editing-panel';
-import { PopoverHeader, PopoverMenuList, PopoverSearch, type VirtualizedItem } from '@elementor/editor-ui';
+import { PopoverHeader, PopoverMenuList, SearchField, type VirtualizedItem } from '@elementor/editor-ui';
 import { ColorFilterIcon, PlusIcon, SettingsIcon } from '@elementor/icons';
 import { Divider, IconButton } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
 import { useVariableType } from '../context/variable-type-context';
 import { useFilteredVariables } from '../hooks/use-prop-variables';
+import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { type ExtendedVirtualizedItem } from '../types';
 import { trackVariableEvent } from '../utils/tracking';
 import { EmptyState } from './ui/empty-state';
@@ -28,7 +28,7 @@ type Props = {
 export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
 	const { icon: VariableIcon, startIcon, variableType, propTypeUtil } = useVariableType();
 
-	const { value: variable, setValue: setVariable, path } = useBoundProp( propTypeUtil );
+	const { value: variable, setValue: setVariable, path } = useVariableBoundProp();
 	const [ searchValue, setSearchValue ] = useState( '' );
 
 	const {
@@ -61,7 +61,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 
 	if ( onAdd ) {
 		actions.push(
-			<IconButton key="add" size={ SIZE } onClick={ onAddAndTrack }>
+			<IconButton id="add-variable-button" key="add" size={ SIZE } onClick={ onAddAndTrack }>
 				<PlusIcon fontSize={ SIZE } />
 			</IconButton>
 		);
@@ -69,7 +69,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 
 	if ( onSettings ) {
 		actions.push(
-			<IconButton key="settings" size={ SIZE } onClick={ onSettings }>
+			<IconButton id="variables-manager-button" key="settings" size={ SIZE } onClick={ onSettings }>
 				<SettingsIcon fontSize={ SIZE } />
 			</IconButton>
 		);
@@ -110,7 +110,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 			/>
 
 			{ hasVariables && (
-				<PopoverSearch
+				<SearchField
 					value={ searchValue }
 					onSearch={ handleSearch }
 					placeholder={ __( 'Search', 'elementor' ) }

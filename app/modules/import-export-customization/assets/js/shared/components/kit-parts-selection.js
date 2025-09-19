@@ -1,14 +1,21 @@
-import { useState, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { Box, Typography, Stack, Checkbox, FormControlLabel, Button, Tooltip } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import kitContentData from '../kit-content-data';
 import useContextDetection from '../hooks/use-context-detection';
 import { ReExportBanner } from './re-export-banner';
+import { UpgradeVersionBanner } from './upgrade-version-banner';
 
-export default function KitPartsSelection( { data, onCheckboxChange, testId, handleSaveCustomization } ) {
+export default function KitPartsSelection( { data, onCheckboxChange, testId, handleSaveCustomization, isCloudKitsEligible = false, showMediaFormatValidation = false } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );
 	const { isImport, contextData } = useContextDetection();
+
+	useEffect( () => {
+		if ( showMediaFormatValidation && ! isImport ) {
+			setActiveDialog( 'content' );
+		}
+	}, [ showMediaFormatValidation, isImport ] );
 
 	const isSiteSettingsExported = () => {
 		const siteSettings = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ];
@@ -94,7 +101,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 					checked={ data.includes.includes( item.type ) }
 					onChange={ () => onCheckboxChange( item.type ) }
 					disabled={ disabled }
-					sx={ { py: 0 } }
+					sx={ { p: 0, mx: 1 } }
 					data-testid={ `KitContentDataSelection-${ item.type }` }
 					data-type={ item.type }
 				/>
@@ -169,6 +176,9 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 			{ contextData?.isOldExport && (
 				<ReExportBanner />
 			) }
+			{ contextData?.isOldElementorVersion && (
+				<UpgradeVersionBanner />
+			) }
 			{ kitContentData.map( ( item ) => {
 				const isLockedFeaturesNoPro = item.data.features?.locked && ! elementorAppConfig.hasPro;
 				const disabled = isDisabled( item );
@@ -203,6 +213,9 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 								handleSaveChanges={ handleSaveCustomization }
 								isImport={ isImport }
 								isOldExport={ contextData.isOldExport }
+								isOldElementorVersion={ contextData.isOldElementorVersion }
+								isCloudKitsEligible={ isCloudKitsEligible }
+								showMediaFormatValidation={ showMediaFormatValidation }
 							/>
 						) }
 					</Fragment>
@@ -215,6 +228,8 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 KitPartsSelection.propTypes = {
 	data: PropTypes.object.isRequired,
 	onCheckboxChange: PropTypes.func.isRequired,
-	handleSaveCustomization: PropTypes.func.isRequired,
 	testId: PropTypes.string,
+	handleSaveCustomization: PropTypes.func.isRequired,
+	isCloudKitsEligible: PropTypes.bool,
+	showMediaFormatValidation: PropTypes.bool,
 };

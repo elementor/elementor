@@ -8,15 +8,17 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { ThemeProvider } from '@elementor/editor-ui';
+import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { ColorFilterIcon, TrashIcon, XIcon } from '@elementor/icons';
-import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
+import { ColorFilterIcon, TrashIcon } from '@elementor/icons';
+import { Alert, Box, Button, CloseButton, Divider, ErrorBoundary, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { getVariables } from '../../hooks/use-prop-variables';
-import { service } from '../../service';
-import { type TVariablesList } from '../../storage';
+import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
+import { NoSearchResults } from '../ui/no-search-results';
+import { useAutoEdit } from './hooks/use-auto-edit';
+import { useVariablesManagerState } from './hooks/use-variables-manager-state';
+import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu';
 import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
@@ -35,32 +37,54 @@ export const { panel, usePanelActions } = createPanel( {
 
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
+	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 
-	const [ isDirty, setIsDirty ] = useState( false );
-	const [ variables, setVariables ] = useState( getVariables( false ) );
-	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
+	const {
+		variables,
+		isDirty,
+		hasValidationErrors,
+		searchValue,
+		handleOnChange,
+		createVariable,
+		handleDeleteVariable,
+		handleSave,
+		isSaving,
+		handleSearch,
+		setHasValidationErrors,
+	} = useVariablesManagerState();
 
-	const [ isSaving, setIsSaving ] = useState( false );
+	const { autoEditVariableId, startAutoEdit, handleAutoEditComplete } = useAutoEdit();
+
+	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
 
 	usePreventUnload( isDirty );
 
-	const handleSave = useCallback( async () => {
-		setIsSaving( true );
-
-		const originalVariables = getVariables( false );
-		const result = await service.batchSave( originalVariables, variables );
-
-		if ( result.success ) {
-			await service.load();
-			const updatedVariables = service.variables();
-
-			setVariables( updatedVariables );
-			setIsDirty( false );
-			setDeletedVariables( [] );
+	const handleClosePanel = () => {
+		if ( isDirty ) {
+			openSaveChangesDialog();
+			return;
 		}
 
-		setIsSaving( false );
-	}, [ variables ] );
+		closePanel();
+	};
+
+	const handleCreateVariable = useCallback(
+		( type: string, defaultName: string, defaultValue: string ) => {
+			const newId = createVariable( type, defaultName, defaultValue );
+			if ( newId ) {
+				startAutoEdit( newId );
+			}
+		},
+		[ createVariable, startAutoEdit ]
+	);
+
+	const handleDeleteVariableWithConfirmation = useCallback(
+		( itemId: string ) => {
+			handleDeleteVariable( itemId );
+			setDeleteConfirmation( null );
+		},
+		[ handleDeleteVariable ]
+	);
 
 	const menuActions = [
 		{
@@ -68,17 +92,14 @@ export function VariablesManagerPanel() {
 			icon: TrashIcon,
 			color: 'error.main',
 			onClick: ( itemId: string ) => {
-				setDeletedVariables( [ ...deletedVariables, itemId ] );
-				setVariables( { ...variables, [ itemId ]: { ...variables[ itemId ], deleted: true } } );
-				setIsDirty( true );
+				if ( variables[ itemId ] ) {
+					setDeleteConfirmation( { id: itemId, label: variables[ itemId ].label } );
+				}
 			},
 		},
 	];
 
-	const handleOnChange = ( newVariables: TVariablesList ) => {
-		setVariables( newVariables );
-		setIsDirty( true );
-	};
+	const hasVariables = Object.keys( variables ).length !== 0;
 
 	return (
 		<ThemeProvider>
@@ -93,14 +114,20 @@ export function VariablesManagerPanel() {
 										{ __( 'Variable Manager', 'elementor' ) }
 									</PanelHeaderTitle>
 								</Stack>
-								<CloseButton
-									sx={ { marginLeft: 'auto' } }
-									onClose={ () => {
-										closePanel();
-									} }
-								/>
+								<Stack direction="row" gap={ 0.5 } alignItems="center">
+									<VariableManagerCreateMenu
+										onCreate={ handleCreateVariable }
+										variables={ variables }
+									/>
+									<CloseButton
+										aria-label="Close"
+										slotProps={ { icon: { fontSize: SIZE } } }
+										onClick={ () => {
+											handleClosePanel();
+										} }
+									/>
+								</Stack>
 							</Stack>
-							<Divider sx={ { width: '100%' } } />
 						</Stack>
 					</PanelHeader>
 					<PanelBody
@@ -110,11 +137,30 @@ export function VariablesManagerPanel() {
 							height: '100%',
 						} }
 					>
-						<VariablesManagerTable
-							menuActions={ menuActions }
-							variables={ variables }
-							onChange={ handleOnChange }
+						<SearchField
+							placeholder={ __( 'Search', 'elementor' ) }
+							value={ searchValue }
+							onSearch={ handleSearch }
 						/>
+						<Divider sx={ { width: '100%' } } />
+						{ hasVariables && (
+							<VariablesManagerTable
+								menuActions={ menuActions }
+								variables={ variables }
+								onChange={ handleOnChange }
+								autoEditVariableId={ autoEditVariableId }
+								onAutoEditComplete={ handleAutoEditComplete }
+								onFieldError={ setHasValidationErrors }
+							/>
+						) }
+
+						{ ! hasVariables && (
+							<NoSearchResults
+								searchValue={ searchValue }
+								onClear={ () => handleSearch( '' ) }
+								icon={ <ColorFilterIcon fontSize="large" /> }
+							/>
+						) }
 					</PanelBody>
 
 					<PanelFooter>
@@ -123,23 +169,59 @@ export function VariablesManagerPanel() {
 							size="small"
 							color="global"
 							variant="contained"
-							disabled={ ! isDirty || isSaving }
+							disabled={ ! isDirty || hasValidationErrors || isSaving }
 							onClick={ handleSave }
+							loading={ isSaving }
 						>
 							{ __( 'Save changes', 'elementor' ) }
 						</Button>
 					</PanelFooter>
 				</Panel>
+
+				{ deleteConfirmation && (
+					<DeleteConfirmationDialog
+						open
+						label={ deleteConfirmation.label }
+						onConfirm={ () => handleDeleteVariableWithConfirmation( deleteConfirmation.id ) }
+						closeDialog={ () => setDeleteConfirmation( null ) }
+					/>
+				) }
 			</ErrorBoundary>
+
+			{ isSaveChangesDialogOpen && (
+				<SaveChangesDialog>
+					<SaveChangesDialog.Title onClose={ closeSaveChangesDialog }>
+						{ __( 'You have unsaved changes', 'elementor' ) }
+					</SaveChangesDialog.Title>
+					<SaveChangesDialog.Content>
+						<SaveChangesDialog.ContentText>
+							{ __( 'To avoid losing your updates, save your changes before leaving.', 'elementor' ) }
+						</SaveChangesDialog.ContentText>
+					</SaveChangesDialog.Content>
+					<SaveChangesDialog.Actions
+						actions={ {
+							discard: {
+								label: __( 'Discard', 'elementor' ),
+								action: () => {
+									closeSaveChangesDialog();
+									closePanel();
+								},
+							},
+							confirm: {
+								label: __( 'Save', 'elementor' ),
+								action: async () => {
+									await handleSave();
+									closeSaveChangesDialog();
+									closePanel();
+								},
+							},
+						} }
+					/>
+				</SaveChangesDialog>
+			) }
 		</ThemeProvider>
 	);
 }
-
-const CloseButton = ( { onClose, ...props }: IconButtonProps & { onClose: () => void } ) => (
-	<IconButton size="small" color="secondary" onClick={ onClose } aria-label="Close" { ...props }>
-		<XIcon fontSize="small" />
-	</IconButton>
-);
 
 const ErrorBoundaryFallback = () => (
 	<Box role="alert" sx={ { minHeight: '100%', p: 2 } }>

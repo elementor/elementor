@@ -1,5 +1,5 @@
 import { getSelectedElements } from '@elementor/editor-elements';
-import { sendMixpanelEvent } from '@elementor/utils';
+import { trackEvent } from '@elementor/mixpanel';
 
 import { eventBus } from '../../../services/event-bus';
 import { subscribeToTransitionEvent } from '../trainsition-events';
@@ -9,9 +9,9 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	getSelectedElements: jest.fn(),
 } ) );
 
-jest.mock( '@elementor/utils', () => ( {
-	...jest.requireActual( '@elementor/utils' ),
-	sendMixpanelEvent: jest.fn(),
+jest.mock( '@elementor/mixpanel', () => ( {
+	...jest.requireActual( '@elementor/mixpanel' ),
+	trackEvent: jest.fn(),
 } ) );
 
 jest.mock( '../../../services/event-bus', () => ( {
@@ -24,7 +24,7 @@ jest.mock( '../../../services/event-bus', () => ( {
 describe( 'Transition Events', () => {
 	// Arrange
 	const mockGetSelectedElements = getSelectedElements as jest.MockedFunction< typeof getSelectedElements >;
-	const mockSendMixpanelEvent = sendMixpanelEvent as jest.MockedFunction< typeof sendMixpanelEvent >;
+	const mockTrackEvent = trackEvent as jest.MockedFunction< typeof trackEvent >;
 	const mockEventBus = eventBus as jest.Mocked< typeof eventBus >;
 
 	beforeEach( () => {
@@ -68,7 +68,7 @@ describe( 'Transition Events', () => {
 		subscribeCallback( mockData );
 
 		// Assert
-		expect( mockSendMixpanelEvent ).toHaveBeenCalledWith( {
+		expect( mockTrackEvent ).toHaveBeenCalledWith( {
 			transition_type: mockTransitionValue,
 			eventName: 'click_added_transition',
 			location: 'V4 Style Tab',

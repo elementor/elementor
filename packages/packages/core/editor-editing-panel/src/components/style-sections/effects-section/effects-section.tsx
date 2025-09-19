@@ -13,6 +13,7 @@ import { StylesField } from '../../../controls-registry/styles-field';
 import { getRecentlyUsedList } from '../../../utils/get-recently-used-styles';
 import { PanelDivider } from '../../panel-divider';
 import { SectionContent } from '../../section-content';
+import { BlendModeField } from './blend-mode-field';
 import { OpacityControlField } from './opacity-control-field';
 
 const BOX_SHADOW_LABEL = __( 'Box shadow', 'elementor' );
@@ -26,7 +27,9 @@ export const EffectsSection = () => {
 	const { meta } = useStyle();
 
 	return (
-		<SectionContent>
+		<SectionContent gap={ 1 }>
+			<BlendModeField />
+			<PanelDivider />
 			<OpacityControlField />
 			<PanelDivider />
 			<StylesField bind="box-shadow" propDisplayName={ BOX_SHADOW_LABEL }>

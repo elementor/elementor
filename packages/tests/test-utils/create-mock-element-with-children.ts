@@ -25,10 +25,7 @@ export function createMockChild( modelData: V1ElementModelProps ): V1Element {
 }
 
 function createMockChildren( children: V1Element[] ): V1Element[ 'children' ] {
-	const mockChildren = [ ...children ] as V1Element[] & {
-		findRecursive?: ( predicate: ( child: V1Element ) => boolean ) => V1Element | undefined;
-		forEachRecursive?: ( callback: ( child: V1Element ) => void ) => V1Element[];
-	};
+	const mockChildren = [ ...children ] as NonNullable< V1Element[ 'children' ] >;
 
 	mockChildren.forEachRecursive = ( callback: ( child: V1Element ) => void ): V1Element[] => {
 		const processChild = ( child: V1Element ) => {

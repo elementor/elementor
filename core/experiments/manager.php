@@ -371,7 +371,11 @@ class Manager extends Base_Object {
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Reduce the DOM size by eliminating HTML tags in various elements and widgets. This experiment includes markup changes so it might require updating custom CSS/JS code and cause compatibility issues with third party plugins.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_STABLE,
-			'default' => self::STATE_ACTIVE,
+			'default' => self::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.30.0',
+			],
 		] );
 	}
 
@@ -722,8 +726,6 @@ class Manager extends Base_Object {
 	 * @param array  $old_feature_data
 	 * @param string $new_state
 	 * @param string $old_state
-	 *
-	 * @throws Dependency_Exception If the feature dependency is not available or not active.
 	 */
 	private function on_feature_state_change( array $old_feature_data, $new_state, $old_state ) {
 		$new_feature_data = $this->get_features( $old_feature_data['name'] );
@@ -742,7 +744,7 @@ class Manager extends Base_Object {
 	}
 
 	/**
-	 * @throws Dependency_Exception If the feature dependency is not available or not active.
+	 * @throws Exceptions\Dependency_Exception If the feature dependency is not available or not active.
 	 */
 	private function validate_dependency( array $feature, $new_state ) {
 		$rollback = function ( $feature_option_key, $state ) {
@@ -932,7 +934,7 @@ class Manager extends Base_Object {
 	 * @param array $experimental_data
 	 * @return array
 	 *
-	 * @throws Dependency_Exception If the feature dependency is not initialized or depends on a hidden experiment.
+	 * @throws Exceptions\Dependency_Exception If the feature dependency is not initialized or depends on a hidden experiment.
 	 */
 	private function initialize_feature_dependencies( array $experimental_data ): array {
 		foreach ( $experimental_data['dependencies'] as $key => $dependency ) {

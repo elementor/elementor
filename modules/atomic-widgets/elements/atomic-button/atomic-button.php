@@ -13,7 +13,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -77,6 +76,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 	protected function get_settings_controls(): array {
 		return [
 			Link_Control::bind_to( 'link' )
+				->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
 				->set_label( __( 'Link', 'elementor' ) ),
 			Text_Control::bind_to( '_cssid' )
 				->set_label( __( 'ID', 'elementor' ) )
@@ -116,7 +116,6 @@ class Atomic_Button extends Atomic_Widget_Base {
 			'unit' => 'px',
 		] );
 		$align_text_value = String_Prop_Type::generate( 'center' );
-		$z_index_value = Number_Prop_Type::generate( 1 );
 
 		return [
 			'base' => Style_Definition::make()
@@ -128,7 +127,6 @@ class Atomic_Button extends Atomic_Widget_Base {
 						->add_prop( 'border-radius', $border_radius_value )
 						->add_prop( 'border-width', $border_width_value )
 						->add_prop( 'text-align', $align_text_value )
-						->add_prop( 'z-index', $z_index_value )
 				),
 		];
 	}

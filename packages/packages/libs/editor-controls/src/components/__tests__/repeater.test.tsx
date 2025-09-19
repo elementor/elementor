@@ -4,12 +4,6 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { Repeater } from '../repeater';
 
-const setValuesWrapper = ( setValues: ( value: unknown ) => void ) => {
-	return ( value: unknown ) => {
-		setValues( value );
-	};
-};
-
 describe( 'Repeater', () => {
 	it( 'should render the repeater with no items', () => {
 		// Arrange.
@@ -84,7 +78,7 @@ describe( 'Repeater', () => {
 			<Repeater
 				label={ 'Repeater' }
 				itemSettings={ itemSettings }
-				setValues={ setValuesWrapper( setValues ) }
+				setValues={ setValues }
 				values={ [
 					{
 						$$type: 'example',
@@ -100,13 +94,17 @@ describe( 'Repeater', () => {
 
 		// Assert.
 		expect( setValues ).toHaveBeenCalledTimes( 1 );
-		expect( setValues ).toHaveBeenCalledWith( [
-			itemSettings.initialValues,
-			{
-				$$type: 'example',
-				value: 'Initial item',
-			},
-		] );
+		expect( setValues ).toHaveBeenCalledWith(
+			[
+				itemSettings.initialValues,
+				{
+					$$type: 'example',
+					value: 'Initial item',
+				},
+			],
+			undefined,
+			{ action: { type: 'add', payload: [ { index: 0, item: itemSettings.initialValues } ] } }
+		);
 	} );
 
 	it( 'should add a new item to the bottom', () => {
@@ -129,7 +127,7 @@ describe( 'Repeater', () => {
 				addToBottom
 				label={ 'Repeater' }
 				itemSettings={ itemSettings }
-				setValues={ setValuesWrapper( setValues ) }
+				setValues={ setValues }
 				values={ [
 					{
 						$$type: 'example',
@@ -145,13 +143,17 @@ describe( 'Repeater', () => {
 
 		// Assert.
 		expect( setValues ).toHaveBeenCalledTimes( 1 );
-		expect( setValues ).toHaveBeenCalledWith( [
-			{
-				$$type: 'example',
-				value: 'Initial item',
-			},
-			itemSettings.initialValues,
-		] );
+		expect( setValues ).toHaveBeenCalledWith(
+			[
+				{
+					$$type: 'example',
+					value: 'Initial item',
+				},
+				itemSettings.initialValues,
+			],
+			undefined,
+			{ action: { type: 'add', payload: [ { index: 1, item: itemSettings.initialValues } ] } }
+		);
 	} );
 
 	it( 'should duplicate an item when the duplicate button is clicked, and add it right after the clicked item', () => {
@@ -177,12 +179,7 @@ describe( 'Repeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<Repeater
-				label={ 'Repeater' }
-				itemSettings={ itemSettings }
-				values={ values }
-				setValues={ setValuesWrapper( setValues ) }
-			/>
+			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
 		);
 		// eslint-disable-next-line testing-library/no-node-access
 		const duplicateButton = document.querySelector( 'button[aria-label="Duplicate"]' );
@@ -190,20 +187,24 @@ describe( 'Repeater', () => {
 		fireEvent.click( duplicateButton as Element );
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith( [
-			{
-				$$type: 'example',
-				value: 'First item',
-			},
-			{
-				$$type: 'example',
-				value: 'First item',
-			},
-			{
-				$$type: 'example',
-				value: 'Second item',
-			},
-		] );
+		expect( setValues ).toHaveBeenCalledWith(
+			[
+				{
+					$$type: 'example',
+					value: 'First item',
+				},
+				{
+					$$type: 'example',
+					value: 'First item',
+				},
+				{
+					$$type: 'example',
+					value: 'Second item',
+				},
+			],
+			undefined,
+			{ action: { type: 'duplicate', payload: [ { index: 1, item: values[ 0 ] } ] } }
+		);
 	} );
 
 	it( 'should remove the item when the remove button is clicked', () => {
@@ -229,12 +230,7 @@ describe( 'Repeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<Repeater
-				label={ 'Repeater' }
-				itemSettings={ itemSettings }
-				values={ values }
-				setValues={ setValuesWrapper( setValues ) }
-			/>
+			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
 		);
 		// eslint-disable-next-line testing-library/no-node-access
 		const removeButton = document.querySelector( 'button[aria-label="Remove"]' );
@@ -242,12 +238,16 @@ describe( 'Repeater', () => {
 		fireEvent.click( removeButton as Element );
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith( [
-			{
-				$$type: 'example',
-				value: 'Second item',
-			},
-		] );
+		expect( setValues ).toHaveBeenCalledWith(
+			[
+				{
+					$$type: 'example',
+					value: 'Second item',
+				},
+			],
+			undefined,
+			{ action: { type: 'remove', payload: [ { index: 0, item: values[ 0 ] } ] } }
+		);
 	} );
 
 	it( 'should render the item content and pass the index as bind prop', () => {
@@ -267,12 +267,7 @@ describe( 'Repeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<Repeater
-				label={ 'Repeater' }
-				itemSettings={ itemSettings }
-				values={ values }
-				setValues={ setValuesWrapper( setValues ) }
-			/>
+			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
 		);
 
 		const [ , secondItem ] = screen.getAllByRole( 'button', { name: 'Open item' } );
@@ -305,12 +300,7 @@ describe( 'Repeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<Repeater
-				label={ 'Repeater' }
-				itemSettings={ itemSettings }
-				values={ values }
-				setValues={ setValuesWrapper( setValues ) }
-			/>
+			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
 		);
 		// eslint-disable-next-line testing-library/no-node-access
 		const disableButton = document.querySelector( 'button[aria-label="Hide"]' );
@@ -318,13 +308,17 @@ describe( 'Repeater', () => {
 		fireEvent.click( disableButton as Element );
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith( [
-			{
-				$$type: 'example',
-				value: 'First item',
-				disabled: true,
-			},
-		] );
+		expect( setValues ).toHaveBeenCalledWith(
+			[
+				{
+					$$type: 'example',
+					value: 'First item',
+					disabled: true,
+				},
+			],
+			undefined,
+			{ action: { type: 'toggle-disable' } }
+		);
 	} );
 
 	it( 'should remove the disabled property when the enable button is clicked', () => {
@@ -345,12 +339,7 @@ describe( 'Repeater', () => {
 
 		// Act.
 		renderWithTheme(
-			<Repeater
-				label={ 'Repeater' }
-				itemSettings={ itemSettings }
-				values={ values }
-				setValues={ setValuesWrapper( setValues ) }
-			/>
+			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ setValues } />
 		);
 		// eslint-disable-next-line testing-library/no-node-access
 		const enableButton = document.querySelector( 'button[aria-label="Show"]' );
@@ -358,12 +347,16 @@ describe( 'Repeater', () => {
 		fireEvent.click( enableButton as Element );
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith( [
-			{
-				$$type: 'example',
-				value: 'First item',
-			},
-		] );
+		expect( setValues ).toHaveBeenCalledWith(
+			[
+				{
+					$$type: 'example',
+					value: 'First item',
+				},
+			],
+			undefined,
+			{ action: { type: 'toggle-disable' } }
+		);
 	} );
 
 	it( 'should open the first repeater item popover, if the newly added item was added to top and "openOnAdd" is true', () => {

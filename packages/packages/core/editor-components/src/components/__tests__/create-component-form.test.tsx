@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { createMockElement, renderWithTheme } from 'test-utils';
+import { createMockElement } from 'test-utils';
 import { getElementLabel, replaceElement, type V1Element } from '@elementor/editor-elements';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { apiClient } from '../../api';
 import { CreateComponentForm } from '../create-component-form/create-component-form';
@@ -23,7 +23,7 @@ const mockComponentId = 123245;
 describe( 'CreateComponentForm', () => {
 	beforeEach( () => {
 		mockGetElementLabel.mockReturnValue( 'Div Block' );
-		mockGetComponents.mockReturnValue( Promise.resolve( [ { name: 'Existing Component', component_id: 123 } ] ) );
+		mockGetComponents.mockReturnValue( Promise.resolve( [ { name: 'Existing Component', id: 123 } ] ) );
 	} );
 
 	const triggerOpenFormEvent = ( element = mockElement, anchorPosition = { top: 100, left: 200 } ) => {
@@ -43,7 +43,7 @@ describe( 'CreateComponentForm', () => {
 	} );
 
 	const setupForm = () => {
-		renderWithTheme(
+		render(
 			<QueryClientProvider client={ queryClient }>
 				<CreateComponentForm />
 			</QueryClientProvider>
@@ -286,6 +286,9 @@ describe( 'CreateComponentForm', () => {
 								$$type: 'number',
 								value: mockComponentId,
 							},
+						},
+						editor_settings: {
+							title: 'My Test Component',
 						},
 					},
 					withHistory: false,
