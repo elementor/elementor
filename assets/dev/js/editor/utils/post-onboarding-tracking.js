@@ -18,6 +18,8 @@ const ONBOARDING_STORAGE_KEYS = {
 };
 
 class PostOnboardingTracking {
+	static clickHandler = null;
+
 	static warn( message, error = null ) {
 		// eslint-disable-next-line no-console
 		console.warn( message, error );
@@ -108,11 +110,15 @@ class PostOnboardingTracking {
 			return;
 		}
 
-		const handleClick = ( event ) => {
+		if ( this.clickHandler ) {
+			document.removeEventListener( 'click', this.clickHandler, true );
+		}
+
+		this.clickHandler = ( event ) => {
 			this.trackPostOnboardingClick( event );
 		};
 
-		document.addEventListener( 'click', handleClick, true );
+		document.addEventListener( 'click', this.clickHandler, true );
 	}
 
 	static trackPostOnboardingClick( event ) {
@@ -301,7 +307,10 @@ class PostOnboardingTracking {
 
 	static cleanupPostOnboardingTracking() {
 		try {
-			document.removeEventListener( 'click', this.trackPostOnboardingClick );
+			if ( this.clickHandler ) {
+				document.removeEventListener( 'click', this.clickHandler, true );
+				this.clickHandler = null;
+			}
 			this.clearAllOnboardingStorage();
 		} catch ( error ) {
 			this.warn( 'Failed to cleanup post-onboarding tracking:', error );
