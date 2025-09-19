@@ -215,9 +215,10 @@ jobs:
           ALLOW_WORKFLOW_CHANGES: 'true'
       - name: Generate revert message
         id: revert_message
-        if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
+        if: always()
         run: |
-          BASE_MESSAGE="Elementor Core: Playwright - ${{ github.event_name }} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          TEST_RESULT="${{ needs.Playwright.result }}"
+          BASE_MESSAGE="Elementor Core: Playwright - ${{ github.event_name }} result: ${TEST_RESULT} - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
           if [[ "${{ steps.create_revert_pr.outputs.status }}" == "created" ]]; then
             REVERT_MESSAGE="
@@ -254,7 +255,7 @@ jobs:
         # env:
         #   GH_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Send slack message
-        #if: ${{ needs.Playwright.result == 'failure' &&  github.event_name != 'workflow_dispatch'}}
+        if: always()
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
