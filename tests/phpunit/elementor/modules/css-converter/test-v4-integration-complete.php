@@ -63,7 +63,7 @@ class Test_V4_Integration_Complete extends Elementor_Test_Base {
 		$this->assertTrue( class_exists( 'Elementor\Modules\CssConverter\Services\Widget\Widget_Creator' ), 'Widget Creator class should exist' );
 		
 		// Test FR2: Proper Type Wrappers - validated through unified mappers
-		$this->assertTrue( class_exists( 'Elementor\Modules\CssConverter\ClassConvertors\Unified_Property_Mapper_Base' ), 'Unified Property Mapper Base should exist' );
+		$this->assertTrue( class_exists( 'Elementor\Modules\CssConverter\Convertors\Classes\Unified_Property_Mapper_Base' ), 'Unified Property Mapper Base should exist' );
 		
 		// Test FR4: Class Management
 		$widget_creator_reflection = new \ReflectionClass( 'Elementor\Modules\CssConverter\Services\Widget\Widget_Creator' );
@@ -111,7 +111,7 @@ class Test_V4_Integration_Complete extends Elementor_Test_Base {
 		$this->assertFalse( $hierarchy_reflection->hasMethod( 'apply_child_styles' ), 'No v3 child styles should remain' );
 		
 		// Proper $$type wrappers used
-		$this->assertTrue( interface_exists( 'Elementor\Modules\CssConverter\ClassConvertors\Unified_Property_Mapper_Interface' ), 'Unified interface for type wrappers should exist' );
+		$this->assertTrue( interface_exists( 'Elementor\Modules\CssConverter\Convertors\Classes\Unified_Property_Mapper_Interface' ), 'Unified interface for type wrappers should exist' );
 		
 		// Unique class IDs generated
 		$widget_creator_reflection = new \ReflectionClass( 'Elementor\Modules\CssConverter\Services\Widget\Widget_Creator' );
@@ -163,7 +163,7 @@ class Test_V4_Integration_Complete extends Elementor_Test_Base {
 			'Elementor\Modules\CssConverter\Services\Css\Css_Specificity_Calculator',
 			'Elementor\Modules\CssConverter\Services\Css\Request_Validator',
 			'Elementor\Modules\CssConverter\Routes\Widgets_Route',
-			'Elementor\Modules\CssConverter\ClassConvertors\Unified_Property_Mapper_Base',
+			'Elementor\Modules\CssConverter\Convertors\Classes\Unified_Property_Mapper_Base',
 		];
 
 		foreach ( $required_classes as $class_name ) {

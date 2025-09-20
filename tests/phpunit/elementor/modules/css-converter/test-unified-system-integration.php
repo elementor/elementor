@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\CssConverter;
 
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Modules\CssConverter\ClassConvertors\Class_Property_Mapper_Factory;
+use Elementor\Modules\CssConverter\Convertors\Classes\Class_Property_Mapper_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -2,11 +2,11 @@
 namespace Elementor\Testing\Modules\CssConverter;
 
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Modules\CssConverter\ClassConvertors\Class_Property_Mapper_Factory;
-use Elementor\Modules\CssConverter\ClassConvertors\Color_Property_Mapper;
-use Elementor\Modules\CssConverter\ClassConvertors\Background_Color_Property_Mapper;
-use Elementor\Modules\CssConverter\ClassConvertors\Font_Size_Property_Mapper;
-use Elementor\Modules\CssConverter\ClassConvertors\Margin_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\Classes\Class_Property_Mapper_Factory;
+use Elementor\Modules\CssConverter\Convertors\Classes\Color_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\Classes\Background_Color_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\Classes\Font_Size_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\Classes\Margin_Property_Mapper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

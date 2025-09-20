@@ -9,7 +9,7 @@ use Elementor\Plugin;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\CssConverter\Services\Widget\Widget_Hierarchy_Processor;
 use Elementor\Modules\CssConverter\Services\Widget\Widget_Error_Handler;
-use Elementor\Modules\CssConverter\ClassConvertors\Class_Property_Mapper_Factory;
+use Elementor\Modules\CssConverter\Convertors\Classes\Class_Property_Mapper_Factory;
 
 class Widget_Creator {
 	private $creation_stats;

@@ -6,20 +6,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Modules\CssConverter\Services\Css\Css_Specificity_Calculator;
-use Elementor\Modules\CssConverter\Services\Class\Class_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Css\Css_Property_Conversion_Service;
 use Elementor\Modules\CssConverter\Parsers\CssParser;
-use Elementor\Modules\CssConverter\Parsers\Simple_Css_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 
 class Css_Processor {
 	private $specificity_calculator;
-	private $class_conversion_service;
+	private $property_conversion_service;
 	private $css_parser;
 	private $global_classes_repository;
 
-	public function __construct() {
+	public function __construct( $property_conversion_service = null ) {
 		$this->specificity_calculator = new Css_Specificity_Calculator();
-		$this->class_conversion_service = new Class_Conversion_Service();
+		$this->property_conversion_service = $property_conversion_service ?: new Css_Property_Conversion_Service();
 		$this->css_parser = new CssParser();
 		
 		// Initialize Global Classes Repository if available
@@ -44,14 +43,8 @@ class Css_Processor {
 
 		try {
 			// Parse CSS into rules
-			if ( $this->css_parser instanceof Simple_Css_Parser ) {
-				// Simple parser returns rules directly
-				$css_rules = $this->css_parser->parse( $css );
-			} else {
-				// Sabberworm parser returns parsed CSS object
-				$parsed_css = $this->css_parser->parse( $css );
-				$css_rules = $this->extract_css_rules( $parsed_css );
-			}
+			$parsed_css = $this->css_parser->parse( $css );
+			$css_rules = $this->extract_css_rules( $parsed_css );
 			
 			$processing_result['stats']['rules_processed'] = count( $css_rules );
 
@@ -228,28 +221,9 @@ class Css_Processor {
 	}
 
 	private function convert_css_property( $property, $value ) {
-		// HVV Decision: "Exactly the same as Class import. This should be a shared functionality."
-		// Use existing class conversion service
-		
-		try {
-			$css_declaration = $property . ': ' . $value . ';';
-			$conversion_result = $this->class_conversion_service->convert_css_to_classes( 
-				'.' . 'temp-class { ' . $css_declaration . ' }', 
-				false // Don't store, just convert
-			);
-
-			if ( ! empty( $conversion_result['classes'] ) ) {
-				$temp_class = reset( $conversion_result['classes'] );
-				if ( ! empty( $temp_class['properties'] ) ) {
-					return reset( $temp_class['properties'] );
-				}
-			}
-		} catch ( \Exception $e ) {
-			// Return null to indicate conversion failed
-			return null;
-		}
-
-		return null;
+		// Use the dedicated CSS property conversion service
+		// This ensures consistency and proper separation of concerns
+		return $this->property_conversion_service->convert_property_to_schema( $property, $value );
 	}
 
 	private function extract_class_names( $selector ) {

@@ -5,8 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/../../../includes/libraries/sabberworm-css-parser/bootstrap.php';
-
 use Elementor\Modules\CssConverter\Exceptions\CssParseException;
 use Elementor\Modules\CssConverter\Parsers\ParsedCss;
 use Sabberworm\CSS\Parser;
@@ -19,11 +17,27 @@ class CssParser {
 	private $charset;
 
 	public function __construct( array $options = [] ) {
+		// Ensure Sabberworm CSS Parser autoloader is registered
+		$this->ensure_sabberworm_autoloader();
+		
 		$this->charset = $options['charset'] ?? 'utf-8';
 		$this->settings = Settings::create()
 			->withDefaultCharset( $this->charset )
 			->withMultibyteSupport( true )
 			->beStrict( false );
+	}
+
+	private function ensure_sabberworm_autoloader() {
+		// Check if Sabberworm classes are already available
+		if ( class_exists( 'Sabberworm\CSS\Parser' ) ) {
+			return;
+		}
+
+		// Load the autoloader if classes are not available
+		$autoloader_path = ELEMENTOR_PATH . 'includes/libraries/sabberworm-css-parser/bootstrap.php';
+		if ( file_exists( $autoloader_path ) ) {
+			require_once $autoloader_path;
+		}
 	}
 
 	public function parse( string $css ): ParsedCss {
@@ -49,37 +63,28 @@ class CssParser {
 
 	private function extract_variables_recursive( $css_node, &$variables ) {
 		if ( $css_node instanceof \Sabberworm\CSS\RuleSet\DeclarationBlock ) {
-			$this->process_declaration_block_for_variables( $css_node, $variables );
+			$this->process_declaration_block( $css_node, function( $selector_string, $css_node ) use ( &$variables ) {
+				if ( ! $this->is_root_selector( $selector_string ) ) {
+					return;
+				}
+				
+				foreach ( $css_node->getRules() as $rule ) {
+					$property = $rule->getRule();
+					if ( $this->is_css_variable( $property ) ) {
+						$value = (string) $rule->getValue();
+						$variables[ $property ] = [
+							'name' => $property,
+							'value' => $value,
+							'scope' => $selector_string,
+							'original_block' => $css_node->render( \Sabberworm\CSS\OutputFormat::create() ),
+						];
+					}
+				}
+			});
 		}
 		$this->process_node_contents_recursively( $css_node, 'extract_variables_recursive', $variables );
 	}
-	private function process_declaration_block_for_variables( $css_node, &$variables ) {
-		foreach ( $css_node->getSelectors() as $selector ) {
-			$selector_string = $selector->getSelector();
-			if ( ! $this->is_root_selector( $selector_string ) ) {
-				continue;
-			}
-			$this->extract_variables_from_rules( $css_node, $selector_string, $variables );
-		}
-	}
-	private function extract_variables_from_rules( $css_node, $selector_string, &$variables ) {
-		foreach ( $css_node->getRules() as $rule ) {
-			$property = $rule->getRule();
-			if ( ! $this->is_css_variable( $property ) ) {
-				continue;
-			}
-			$this->add_variable_to_collection( $property, $rule, $selector_string, $css_node, $variables );
-		}
-	}
-	private function add_variable_to_collection( $property, $rule, $selector_string, $css_node, &$variables ) {
-		$value = (string) $rule->getValue();
-		$variables[ $property ] = [
-			'name' => $property,
-			'value' => $value,
-			'scope' => $selector_string,
-			'original_block' => $css_node->render( \Sabberworm\CSS\OutputFormat::create() ),
-		];
-	}
+
 	private function process_node_contents_recursively( $css_node, $method_name, &$collection ) {
 		if ( ! method_exists( $css_node, 'getContents' ) ) {
 			return;
@@ -88,10 +93,12 @@ class CssParser {
 			$this->$method_name( $content, $collection );
 		}
 	}
+
 	private function is_root_selector( string $selector ): bool {
 		$trimmed = trim( $selector );
 		return ':root' === $trimmed || 'html' === $trimmed;
 	}
+	
 	private function is_css_variable( string $property ): bool {
 		return 0 === strpos( $property, '--' );
 	}

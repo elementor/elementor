@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Modules\CssConverter\Services\Css\Html_Parser;
 use Elementor\Modules\CssConverter\Services\Widget\Widget_Mapper;
-use Elementor\Modules\CssConverter\Services\Class\Class_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Css\Css_Property_Conversion_Service;
 use Elementor\Modules\CssConverter\Services\Css\Css_Processor;
 use Elementor\Modules\CssConverter\Services\Widget\Widget_Creator;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
@@ -15,15 +15,15 @@ use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 class Widget_Conversion_Service {
 	private $html_parser;
 	private $widget_mapper;
-	private $class_conversion_service;
+	private $property_conversion_service;
 	private $css_processor;
 	private $widget_creator;
 
 	public function __construct() {
 		$this->html_parser = new Html_Parser();
 		$this->widget_mapper = new Widget_Mapper();
-		$this->class_conversion_service = new Class_Conversion_Service();
-		$this->css_processor = new Css_Processor();
+		$this->property_conversion_service = new Css_Property_Conversion_Service();
+		$this->css_processor = new Css_Processor( $this->property_conversion_service );
 		$this->widget_creator = new Widget_Creator();
 	}
 

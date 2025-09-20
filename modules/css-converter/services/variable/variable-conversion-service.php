@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\CssConverter\VariableConvertors\Variable_Convertor_Registry;
+use Elementor\Modules\CssConverter\Convertors\Variables\Variable_Convertor_Registry;
 
 class Variable_Conversion_Service {
 	public static function convert_to_editor_variables( array $variables ): array {

@@ -19,15 +19,15 @@ require_once __DIR__ . '/../../parsers/parsed-css.php';
 require_once __DIR__ . '/../../exceptions/css-parse-exception.php';
 require_once __DIR__ . '/../../exceptions/class-conversion-exception.php';
 require_once __DIR__ . '/../../services/variable-conversion-service.php';
-require_once __DIR__ . '/../../class-convertors/class-property-mapper-interface.php';
-require_once __DIR__ . '/../../class-convertors/color-property-mapper.php';
-require_once __DIR__ . '/../../class-convertors/font-size-property-mapper.php';
-require_once __DIR__ . '/../../class-convertors/class-property-mapper-registry.php';
+require_once __DIR__ . '/../../convertors/classes/class-property-mapper-interface.php';
+require_once __DIR__ . '/../../convertors/classes/color-property-mapper.php';
+require_once __DIR__ . '/../../convertors/classes/font-size-property-mapper.php';
+require_once __DIR__ . '/../../convertors/classes/class-property-mapper-registry.php';
 require_once __DIR__ . '/../../services/class-conversion-service.php';
 
 use Elementor\Modules\CssConverter\Services\Class\Class_Conversion_Service;
-use Elementor\Modules\CssConverter\ClassConvertors\Color_Property_Mapper;
-use Elementor\Modules\CssConverter\ClassConvertors\Font_Size_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\Classes\Color_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\Classes\Font_Size_Property_Mapper;
 
 function test_property_mappers() {
 	echo "Testing Property Mappers...\n";

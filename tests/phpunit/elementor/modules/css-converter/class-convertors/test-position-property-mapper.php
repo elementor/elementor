@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Modules\CssConverter;
 
-use Elementor\Modules\CssConverter\ClassConvertors\Position_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\Classes\Position_Property_Mapper;
 use PHPUnit\Framework\TestCase;
 
 class Test_Position_Property_Mapper extends TestCase {

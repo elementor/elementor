@@ -7,8 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Modules\CssConverter\Parsers\CssParser;
 use Elementor\Modules\CssConverter\Services\Variable\Variable_Conversion_Service;
-use Elementor\Modules\CssConverter\ClassConvertors\Class_Property_Mapper_Registry;
-use Elementor\Modules\CssConverter\ClassConvertors\Class_Property_Mapper_Factory;
+use Elementor\Modules\CssConverter\Services\Css\Css_Property_Conversion_Service;
+use Elementor\Modules\CssConverter\Convertors\Classes\Class_Property_Mapper_Registry;
+use Elementor\Modules\CssConverter\Convertors\Classes\Class_Property_Mapper_Factory;
 use Elementor\Modules\CssConverter\Config\Class_Converter_Config;
 use Elementor\Modules\CssConverter\Exceptions\CssParseException;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
@@ -17,14 +18,14 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 class Class_Conversion_Service {
 	private $css_parser;
 	private $variable_conversion_service;
-	private $property_mapper_registry;
+	private $property_conversion_service;
 	private $config;
 	private $warnings = [];
 
-	public function __construct( $css_parser = null, $variable_conversion_service = null, $property_mapper_registry = null, $config = null ) {
+	public function __construct( $css_parser = null, $variable_conversion_service = null, $property_conversion_service = null, $config = null ) {
 		$this->css_parser = $css_parser ?: new CssParser();
 		$this->variable_conversion_service = $variable_conversion_service ?: new Variable_Conversion_Service();
-		$this->property_mapper_registry = $property_mapper_registry ?: Class_Property_Mapper_Factory::get_registry();
+		$this->property_conversion_service = $property_conversion_service ?: new Css_Property_Conversion_Service();
 		$this->config = $config ?: Class_Converter_Config::get_instance();
 	}
 
@@ -108,12 +109,11 @@ class Class_Conversion_Service {
 				$value = $this->resolve_css_variables( $value, $css_variables );
 			}
 
-			if ( $this->config->is_property_supported( $property ) ) {
-				$mapper = $this->property_mapper_registry->resolve( $property, $value );
+			if ( $this->property_conversion_service->is_property_supported( $property, $value ) ) {
+				$mapped = $this->property_conversion_service->convert_property_to_schema( $property, $value );
 
-				if ( $mapper ) {
-					$mapped = $mapper->map_to_schema( $property, $value );
-					$schema_properties = array_merge( $schema_properties, $mapped );
+				if ( $mapped ) {
+					$schema_properties = array_merge( $schema_properties, [ $property => $mapped ] );
 					$stats['properties_converted']++;
 				} else {
 					$this->add_warning( "Failed to map property: {$property} with value: {$value}" );

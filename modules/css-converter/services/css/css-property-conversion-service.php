@@ -1,0 +1,203 @@
+<?php
+namespace Elementor\Modules\CssConverter\Services\Css;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+use Elementor\Modules\CssConverter\Convertors\Classes\Class_Property_Mapper_Factory;
+use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
+
+/**
+ * CSS Property Conversion Service
+ * 
+ * Handles general CSS property conversion using the unified property mapper system.
+ * This service is used by both class conversion and widget conversion pipelines.
+ */
+class Css_Property_Conversion_Service {
+	private $property_mapper_registry;
+	private $conversion_stats;
+
+	public function __construct() {
+		$this->property_mapper_registry = Class_Property_Mapper_Factory::get_registry();
+		$this->reset_stats();
+	}
+
+	/**
+	 * Convert a single CSS property to Elementor schema format
+	 *
+	 * @param string $property CSS property name
+	 * @param mixed $value CSS property value
+	 * @return array|null Converted property in Elementor schema format, or null if conversion failed
+	 */
+	public function convert_property_to_schema( string $property, $value ): ?array {
+		try {
+			$mapper = $this->property_mapper_registry->resolve( $property, $value );
+			
+			if ( $mapper && method_exists( $mapper, 'map_to_schema' ) ) {
+				$schema_result = $mapper->map_to_schema( $property, $value );
+				
+				if ( ! empty( $schema_result ) ) {
+					$this->conversion_stats['properties_converted']++;
+					return reset( $schema_result );
+				}
+			}
+			
+			$this->conversion_stats['properties_failed']++;
+			$this->conversion_stats['unsupported_properties'][] = [
+				'property' => $property,
+				'value' => $value,
+				'reason' => 'No mapper available',
+			];
+			
+		} catch ( \Exception $e ) {
+			$this->conversion_stats['properties_failed']++;
+			$this->conversion_stats['unsupported_properties'][] = [
+				'property' => $property,
+				'value' => $value,
+				'reason' => $e->getMessage(),
+			];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Convert a single CSS property to Elementor v4 atomic format
+	 *
+	 * @param string $property CSS property name
+	 * @param mixed $value CSS property value
+	 * @return array|null Converted property in v4 atomic format, or null if conversion failed
+	 */
+	public function convert_property_to_v4_atomic( string $property, $value ): ?array {
+		try {
+			$mapper = $this->property_mapper_registry->resolve( $property, $value );
+			
+			if ( $mapper && method_exists( $mapper, 'map_to_v4_atomic' ) ) {
+				$v4_result = $mapper->map_to_v4_atomic( $property, $value );
+				
+				if ( ! empty( $v4_result ) ) {
+					$this->conversion_stats['properties_converted']++;
+					return $v4_result;
+				}
+			}
+			
+			$this->conversion_stats['properties_failed']++;
+			$this->conversion_stats['unsupported_properties'][] = [
+				'property' => $property,
+				'value' => $value,
+				'reason' => 'No v4 mapper available',
+			];
+			
+		} catch ( \Exception $e ) {
+			$this->conversion_stats['properties_failed']++;
+			$this->conversion_stats['unsupported_properties'][] = [
+				'property' => $property,
+				'value' => $value,
+				'reason' => $e->getMessage(),
+			];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Convert multiple CSS properties to schema format
+	 *
+	 * @param array $properties Array of ['property' => 'value'] pairs
+	 * @return array Array of converted properties
+	 */
+	public function convert_properties_to_schema( array $properties ): array {
+		$converted = [];
+		
+		foreach ( $properties as $property => $value ) {
+			$result = $this->convert_property_to_schema( $property, $value );
+			if ( $result ) {
+				$converted[ $property ] = $result;
+			}
+		}
+		
+		return $converted;
+	}
+
+	/**
+	 * Convert multiple CSS properties to v4 atomic format
+	 *
+	 * @param array $properties Array of ['property' => 'value'] pairs
+	 * @return array Array of converted properties
+	 */
+	public function convert_properties_to_v4_atomic( array $properties ): array {
+		$converted = [];
+		
+		foreach ( $properties as $property => $value ) {
+			$result = $this->convert_property_to_v4_atomic( $property, $value );
+			if ( $result ) {
+				$converted[ $result['property'] ] = $result['value'];
+			}
+		}
+		
+		return $converted;
+	}
+
+	/**
+	 * Check if a CSS property is supported for conversion
+	 *
+	 * @param string $property CSS property name
+	 * @param mixed $value CSS property value
+	 * @return bool True if supported, false otherwise
+	 */
+	public function is_property_supported( string $property, $value ): bool {
+		$mapper = $this->property_mapper_registry->resolve( $property, $value );
+		return $mapper && method_exists( $mapper, 'map_to_schema' );
+	}
+
+	/**
+	 * Check if a CSS property supports v4 atomic conversion
+	 *
+	 * @param string $property CSS property name
+	 * @param mixed $value CSS property value
+	 * @return bool True if v4 conversion is supported, false otherwise
+	 */
+	public function supports_v4_conversion( string $property, $value ): bool {
+		$mapper = $this->property_mapper_registry->resolve( $property, $value );
+		return $mapper && method_exists( $mapper, 'map_to_v4_atomic' );
+	}
+
+	/**
+	 * Get conversion statistics
+	 *
+	 * @return array Conversion statistics
+	 */
+	public function get_conversion_stats(): array {
+		return $this->conversion_stats;
+	}
+
+	/**
+	 * Reset conversion statistics
+	 */
+	public function reset_stats(): void {
+		$this->conversion_stats = [
+			'properties_converted' => 0,
+			'properties_failed' => 0,
+			'unsupported_properties' => [],
+		];
+	}
+
+	/**
+	 * Get list of supported CSS properties
+	 *
+	 * @return array List of supported CSS properties
+	 */
+	public function get_supported_properties(): array {
+		$supported = [];
+		$all_mappers = $this->property_mapper_registry->get_all_mappers();
+		
+		foreach ( $all_mappers as $mapper ) {
+			if ( method_exists( $mapper, 'get_supported_properties' ) ) {
+				$supported = array_merge( $supported, $mapper->get_supported_properties() );
+			}
+		}
+		
+		return array_unique( $supported );
+	}
+}
