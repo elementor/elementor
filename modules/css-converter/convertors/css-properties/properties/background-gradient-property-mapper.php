@@ -138,7 +138,6 @@ class Background_Gradient_Property_Mapper extends Property_Mapper_Base {
 	}
 
 	private function parse_gradient( string $value ): array {
-		// Parse linear-gradient(45deg, #667eea, #764ba2)
 		if ( preg_match( '/linear-gradient\s*\(\s*([^,]+),\s*(.+)\s*\)/', $value, $matches ) ) {
 			$angle_part = trim( $matches[1] );
 			$colors_part = trim( $matches[2] );
