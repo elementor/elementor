@@ -1,0 +1,200 @@
+---
+description: Clean Code standards for PHP files.
+globs: 
+  - "**/*.php"
+alwaysApply: false
+---
+
+# Elementor CSS Converter - Cursor Rules
+
+## Code Style Standards
+
+### Variable Declaration
+- Use typed properties when possible: `private string $property = '';`
+- Initialize arrays explicitly: `private array $items = [];`
+- Use nullable types when appropriate: `private ?string $value = null;`
+- Group related properties together
+- Use descriptive variable names that indicate purpose and type
+- Use snake_case for variable names: `$css_property` not `$cssProperty`
+- Avoid abbreviations: `$configuration` not `$config` (unless widely understood)
+
+### If Statements
+- Always use Yoda conditions: `if ( 'expected' === $actual )`
+- Use early returns to reduce nesting
+- Prefer guard clauses over deep nesting
+- Use explicit comparisons: `if ( ! empty( $array ) )` instead of `if ( $array )`
+- Always use braces, even for single-line statements
+- Add spaces inside parentheses: `if ( condition )` not `if (condition)`
+
+### Functions, Methods and Classes
+- Keep methods focused and single-purpose (max 30-40 lines)
+- Use descriptive method names that indicate what they return or do
+- Prefer static factory methods: `public static function make(): self`
+- Use fluent interfaces for builders: `return $this;`
+- Abstract methods should describe their contract clearly
+- Use type hints for all parameters and return types
+- Prefer composition over inheritance
+
+### Method Length Guidelines
+- **Short methods (1-10 lines)**: Simple getters, setters, validation
+- **Medium methods (10-30 lines)**: Business logic, data transformation
+- **Long methods (30+ lines)**: Should be refactored into smaller methods
+- **Maximum method length**: 50 lines (exceptional cases only)
+
+### Class Design
+- **Single Responsibility**: Each class should have one reason to change
+- **Open/Closed**: Open for extension, closed for modification
+- **Dependency Inversion**: Depend on abstractions, not concretions
+- **Interface Segregation**: Many client-specific interfaces over one general-purpose interface
+- Use composition over inheritance
+- Prefer immutable objects when possible
+- Use builder pattern for complex object creation
+
+### Namespacing
+- Follow PSR-4 autoloading standards
+- Use hierarchical namespaces that reflect directory structure
+- Keep namespace depth reasonable (max 6 levels)
+- Use descriptive namespace segments
+- Example: `Elementor\Modules\CssConverter\Convertors\CssProperties\`
+
+### Folder Structure
+- Group related functionality in subdirectories
+- Use descriptive, purpose-driven directory names
+- Separate interfaces, implementations, and tests
+- Use consistent naming across similar modules
+- Structure: `base/`, `types/`, `contracts/`, `exceptions/`
+- Examples:
+  - `convertors/css-properties/` - CSS property conversion logic
+  - `convertors/variables/` - CSS variable conversion logic
+  - `services/css/` - CSS processing services
+  - `services/class/` - Class conversion services
+  - `services/widget/` - Widget conversion services
+
+### File Organization
+- One class per file
+- File names should match class names in kebab-case
+- Use descriptive file names that indicate purpose
+- Group related files in appropriate subdirectories
+- Maximum file length: 300 lines (prefer smaller files)
+
+### Clean Code Principles
+- **No magic numbers**: Use named constants
+- **No comments**: Write self-documenting code
+- **Descriptive names**: Variables, methods, and classes should explain themselves
+- **Small functions**: Each function should do one thing well
+- **Consistent formatting**: Follow WordPress coding standards
+- **Error handling**: Use exceptions for exceptional cases
+- **Validation**: Validate inputs at boundaries
+
+### Design Patterns Usage
+- **Factory Pattern**: For object creation (`Css_Property_Convertor_Factory`)
+- **Registry Pattern**: For managing collections (`Css_Property_Convertor_Registry`)
+- **Builder Pattern**: For complex object construction (`Style_Definition::make()`)
+- **Strategy Pattern**: For interchangeable algorithms (property convertors)
+- **Template Method**: For defining algorithm skeletons (base classes)
+- **Dependency Injection**: For managing dependencies
+- **Fluent Interface**: For method chaining (`->set_label()->set_description()`)
+- **Abstract Factory**: For creating families of related convertors
+
+### SOLID Principles Application
+- **S - Single Responsibility**: Each class has one job
+- **O - Open/Closed**: Extend behavior through composition/inheritance
+- **L - Liskov Substitution**: Subtypes must be substitutable for base types
+- **I - Interface Segregation**: Use specific interfaces, not fat interfaces
+- **D - Dependency Inversion**: Depend on abstractions, inject dependencies
+
+### Error Handling
+- Use specific exception types for different error conditions
+- Provide meaningful error messages
+- Use early validation and fail fast
+- Log errors appropriately for debugging
+- Handle edge cases gracefully
+
+### Testing Guidelines
+- Write unit tests for all public methods
+- Use descriptive test method names
+- Test both happy path and edge cases
+- Mock external dependencies
+- Aim for high code coverage (>80%)
+
+### Performance Considerations
+- Avoid premature optimization
+- Use lazy loading when appropriate
+- Cache expensive operations
+- Minimize database queries
+- Profile code when performance issues arise
+- Use static analysis tools for performance bottlenecks
+- Consider memory usage for large CSS files
+
+### Documentation
+- Use type hints instead of docblocks when possible
+- Document complex business logic
+- Provide examples for public APIs
+- Keep documentation up to date with code changes
+- Use meaningful variable and method names over comments
+
+## Module-Specific Guidelines
+
+### CSS Converter Architecture
+- Separate parsing, conversion, and output concerns
+- Use property convertors for CSS property conversion
+- Implement unified interfaces for different convertor types
+- Handle CSS specificity and cascade rules properly
+- Support both v3 and v4 Elementor widget formats
+- Follow consistent naming: `*_Convertor_*` pattern
+
+### Property Convertors
+- Implement `Css_Property_Convertor_Interface` for consistency
+- Provide both `convert_to_schema()` and `convert_to_v4_atomic()` methods
+- Handle CSS shorthand properties appropriately
+- Validate input values before conversion
+- Return null for unsupported properties
+- Use consistent return formats
+- Follow variables convertor pattern for architecture alignment
+
+### Service Layer
+- Keep services focused on single responsibilities
+- Use dependency injection for service dependencies
+- Implement proper error handling and logging
+- Provide clear public APIs
+- Handle edge cases gracefully
+
+## Code Examples
+
+### Good Variable Declaration
+```php
+private string $css_property = '';
+private array $conversion_results = [];
+private ?Css_Parser $parser = null;
+```
+
+### Good Method Structure
+```php
+public function convert_property_to_schema( string $property, $value ): ?array {
+    if ( empty( $property ) ) {
+        return null;
+    }
+    
+    $mapper = $this->resolve_mapper( $property );
+    if ( null === $mapper ) {
+        return null;
+    }
+    
+    return $mapper->map_to_schema( $property, $value );
+}
+```
+
+### Good Class Design
+```php
+class Color_Property_Mapper implements Unified_Property_Mapper_Interface {
+    use Unified_Property_Mapper_Base;
+    
+    public static function make(): self {
+        return new self();
+    }
+    
+    public function supports_property( string $property ): bool {
+        return in_array( $property, [ 'color', 'background-color' ], true );
+    }
+}
+```

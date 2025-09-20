@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\CssConverter;
 
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Modules\CssConverter\Convertors\Classes\Color_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Color_Property_Mapper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\CssConverter;
 
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Modules\CssConverter\Convertors\Classes\Padding_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Padding_Property_Mapper;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

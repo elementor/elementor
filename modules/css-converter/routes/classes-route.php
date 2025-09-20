@@ -5,8 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\CssConverter\Services\Class\Class_Conversion_Service;
-use Elementor\Modules\CssConverter\Config\Class_Converter_Config;
+use Elementor\Modules\CssConverter\Services\GlobalClasses\Class_Conversion_Service;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Css_Property_Convertor_Config;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use WP_REST_Request;
@@ -18,7 +18,7 @@ class Classes_Route {
 
 	public function __construct( $conversion_service = null, $config = null ) {
 		$this->conversion_service = $conversion_service;
-		$this->config = $config ?: Class_Converter_Config::get_instance();
+		$this->config = $config ?: Css_Property_Convertor_Config::get_instance();
 		add_action( 'rest_api_init', [ $this, 'register_route' ] );
 	}
 

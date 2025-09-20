@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Modules\CssConverter;
 
-use Elementor\Modules\CssConverter\Convertors\Classes\Flex_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Flex_Property_Mapper;
 use PHPUnit\Framework\TestCase;
 
 class Test_Flex_Property_Mapper extends TestCase {

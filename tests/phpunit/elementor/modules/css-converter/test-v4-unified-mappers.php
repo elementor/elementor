@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\CssConverter;
 
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Modules\CssConverter\Convertors\Classes\Class_Property_Mapper_Factory;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Class_Property_Mapper_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -206,7 +206,7 @@ class Test_V4_Unified_Mappers extends Elementor_Test_Base {
 		];
 
 		foreach ( $mappers_to_test as $mapper_file ) {
-			$file_path = ELEMENTOR_CSS_PATH . 'modules/css-converter/convertors/classes/' . $mapper_file;
+			$file_path = ELEMENTOR_CSS_PATH . 'modules/css-converter/convertors/css-properties/' . $mapper_file;
 			if ( file_exists( $file_path ) ) {
 				$content = file_get_contents( $file_path );
 				$extends_unified = strpos( $content, 'extends Unified_Property_Mapper_Base' ) !== false;

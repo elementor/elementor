@@ -13,21 +13,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Include required files (updated paths)
-require_once __DIR__ . '/../../parsers/css-parser.php';
-require_once __DIR__ . '/../../parsers/parsed-css.php';
-require_once __DIR__ . '/../../exceptions/css-parse-exception.php';
-require_once __DIR__ . '/../../exceptions/class-conversion-exception.php';
-require_once __DIR__ . '/../../services/variable-conversion-service.php';
-require_once __DIR__ . '/../../convertors/classes/class-property-mapper-interface.php';
-require_once __DIR__ . '/../../convertors/classes/color-property-mapper.php';
-require_once __DIR__ . '/../../convertors/classes/font-size-property-mapper.php';
-require_once __DIR__ . '/../../convertors/classes/class-property-mapper-registry.php';
-require_once __DIR__ . '/../../services/class-conversion-service.php';
-
-use Elementor\Modules\CssConverter\Services\Class\Class_Conversion_Service;
-use Elementor\Modules\CssConverter\Convertors\Classes\Color_Property_Mapper;
-use Elementor\Modules\CssConverter\Convertors\Classes\Font_Size_Property_Mapper;
+// Use proper namespaces instead of require_once
+use Elementor\Modules\CssConverter\Services\GlobalClasses\Class_Conversion_Service;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Color_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Font_Size_Property_Mapper;
+use Elementor\Modules\CssConverter\Parsers\CssParser;
+use Elementor\Modules\CssConverter\Parsers\ParsedCss;
+use Elementor\Modules\CssConverter\Exceptions\CssParseException;
+use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
+use Elementor\Modules\CssConverter\Services\Variables\Variable_Conversion_Service;
 
 function test_property_mappers() {
 	echo "Testing Property Mappers...\n";

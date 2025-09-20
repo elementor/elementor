@@ -5,9 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\CssConverter\Services\Widget\Widget_Conversion_Service;
-use Elementor\Modules\CssConverter\Services\Css\Request_Validator;
-use Elementor\Modules\CssConverter\Config\Class_Converter_Config;
+use Elementor\Modules\CssConverter\Services\Widgets\Widget_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Css\Validation\Request_Validator;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Css_Property_Convertor_Config;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -20,7 +20,7 @@ class Widgets_Route {
 	public function __construct( $conversion_service = null, $config = null ) {
 		$this->conversion_service = $conversion_service;
 		$this->request_validator = new Request_Validator();
-		$this->config = $config ?: Class_Converter_Config::get_instance();
+		$this->config = $config ?: Css_Property_Convertor_Config::get_instance();
 		add_action( 'rest_api_init', [ $this, 'register_route' ] );
 	}
 
