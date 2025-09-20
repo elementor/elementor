@@ -3,6 +3,7 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Runners\Export;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\App\Modules\ImportExportCustomization\Utils;
 
 class Plugins extends Export_Runner_Base {
 
@@ -21,7 +22,7 @@ class Plugins extends Export_Runner_Base {
 	public function export( array $data ) {
 		$customization = $data['customization']['plugins'] ?? null;
 
-		if ( $customization ) {
+		if ( $customization && Utils::is_high_tier() ) {
 			$enabled_plugin_keys = Collection::make( $customization )->filter()->keys();
 
 			$plugins = Collection::make( $data['selected_plugins'] )

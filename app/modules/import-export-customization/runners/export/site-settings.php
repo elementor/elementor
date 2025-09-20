@@ -2,6 +2,7 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Runners\Export;
 
 use Elementor\Plugin;
+use Elementor\App\Modules\ImportExportCustomization\Utils;
 
 class Site_Settings extends Export_Runner_Base {
 	const ALLOWED_SETTINGS = [
@@ -26,7 +27,7 @@ class Site_Settings extends Export_Runner_Base {
 
 	public function export( array $data ) {
 		$customization = $data['customization']['settings'] ?? null;
-		if ( $customization ) {
+		if ( $customization && Utils::is_high_tier() ) {
 			return $this->export_customization( $data, $customization );
 		}
 

@@ -6,7 +6,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
-use Elementor\Modules\Library\Documents\Library_Document;
+use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 
 class Templates extends Export_Runner_Base {
 
@@ -25,7 +25,7 @@ class Templates extends Export_Runner_Base {
 	public function export( array $data ) {
 		$customization = $data['customization']['templates'] ?? null;
 
-		if ( $customization ) {
+		if ( $customization && ImportExportUtils::is_high_tier() ) {
 			return $this->export_with_customization( $data, $customization );
 		}
 
