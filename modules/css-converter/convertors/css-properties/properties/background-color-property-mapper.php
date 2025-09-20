@@ -40,7 +40,7 @@ class Background_Color_Property_Mapper extends Property_Mapper_Base {
 	];
 
 	public function supports( string $property, $value ): bool {
-		return in_array( $property, self::SUPPORTED_PROPERTIES, true ) && $this->is_valid_color( $value );
+		return in_array( $property, self::SUPPORTED_PROPERTIES, true ) && is_string( $value ) && $this->is_valid_color( $value );
 	}
 
 	public function map_to_schema( string $property, $value ): array {
@@ -75,7 +75,7 @@ class Background_Color_Property_Mapper extends Property_Mapper_Base {
 			],
 		];
 
-		return $this->create_v4_property_with_type( 'background', 'background', $background_value );
+		return $this->create_v4_property_with_type( $this->get_v4_property_name( $property ), 'background', $background_value );
 	}
 
 	private function is_valid_color( $value ): bool {

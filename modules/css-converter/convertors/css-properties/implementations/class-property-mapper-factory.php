@@ -26,6 +26,7 @@ use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Border_Sh
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Background_Color_Property_Mapper;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Background_Image_Property_Mapper;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Background_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Background_Gradient_Property_Mapper;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Filter_Property_Mapper;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Flex_Property_Mapper;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Position_Property_Mapper;
@@ -69,6 +70,7 @@ class Class_Property_Mapper_Factory {
 			new Border_Shorthand_Property_Mapper(),
 			new Background_Color_Property_Mapper(),
 			new Background_Image_Property_Mapper(),
+			new Background_Gradient_Property_Mapper(),
 			new Background_Property_Mapper(),
 			new Filter_Property_Mapper(),
 			new Flex_Property_Mapper(),

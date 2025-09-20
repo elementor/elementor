@@ -34,7 +34,33 @@ class CssParser {
 		}
 
 		// Load the autoloader if classes are not available
+		// First try the standard Elementor path
 		$autoloader_path = ELEMENTOR_PATH . 'includes/libraries/sabberworm-css-parser/bootstrap.php';
+		
+		// If that doesn't exist, try the elementor-css plugin path (for custom installations)
+		if ( ! file_exists( $autoloader_path ) ) {
+			$elementor_css_path = WP_PLUGIN_DIR . '/elementor-css/includes/libraries/sabberworm-css-parser/bootstrap.php';
+			if ( file_exists( $elementor_css_path ) ) {
+				$autoloader_path = $elementor_css_path;
+			}
+		}
+		
+		// If still not found, try relative to current module (for elementor-css plugin)
+		if ( ! file_exists( $autoloader_path ) ) {
+			$relative_path = dirname( __DIR__, 4 ) . '/includes/libraries/sabberworm-css-parser/bootstrap.php';
+			if ( file_exists( $relative_path ) ) {
+				$autoloader_path = $relative_path;
+			}
+		}
+		
+		// Last resort: try direct path for elementor-css plugin
+		if ( ! file_exists( $autoloader_path ) ) {
+			$direct_path = '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/plugins/elementor-css/includes/libraries/sabberworm-css-parser/bootstrap.php';
+			if ( file_exists( $direct_path ) ) {
+				$autoloader_path = $direct_path;
+			}
+		}
+		
 		if ( file_exists( $autoloader_path ) ) {
 			require_once $autoloader_path;
 		}

@@ -18,7 +18,17 @@ class Css_Processor {
 
 	public function __construct( $property_conversion_service = null ) {
 		$this->specificity_calculator = new Css_Specificity_Calculator();
-		$this->property_conversion_service = $property_conversion_service ?: new Css_Property_Conversion_Service();
+		
+		// Add error logging for property conversion service creation
+		try {
+			$this->property_conversion_service = $property_conversion_service ?: new Css_Property_Conversion_Service();
+		} catch ( \Exception $e ) {
+			// Log the error but continue - this will cause rules_processed to be 0
+			error_log( 'CSS Processor: Failed to create property conversion service: ' . $e->getMessage() );
+			error_log( 'CSS Processor: Stack trace: ' . $e->getTraceAsString() );
+			$this->property_conversion_service = null;
+		}
+		
 		$this->css_parser = new CssParser();
 		
 		// Initialize Global Classes Repository if available
@@ -32,14 +42,25 @@ class Css_Processor {
 			'global_classes' => [],
 			'widget_styles' => [],
 			'element_styles' => [],
+			'id_styles' => [],  // New: ID selector styles
 			'stats' => [
 				'rules_processed' => 0,
 				'properties_converted' => 0,
 				'global_classes_created' => 0,
+				'id_selectors_processed' => 0,  // New: ID selector stats
 				'unsupported_properties' => [],
 				'warnings' => [],
 			],
 		];
+
+		// Early return if property conversion service failed to initialize
+		if ( null === $this->property_conversion_service ) {
+			$processing_result['stats']['warnings'][] = [
+				'type' => 'property_conversion_service_unavailable',
+				'message' => 'Property conversion service failed to initialize - check error logs',
+			];
+			return $processing_result;
+		}
 
 		try {
 			// Parse CSS into rules
@@ -88,8 +109,8 @@ class Css_Processor {
 
 			// Get all declarations for this rule set
 			foreach ( $rule_set->getRules() as $rule ) {
-				if ( method_exists( $rule, 'getProperty' ) && method_exists( $rule, 'getValue' ) ) {
-					$property = $rule->getProperty();
+				if ( method_exists( $rule, 'getRule' ) && method_exists( $rule, 'getValue' ) ) {
+					$property = $rule->getRule();  // Fixed: use getRule() instead of getProperty()
 					$value = $rule->getValue();
 					$is_important = $rule->getIsImportant();
 
@@ -108,6 +129,53 @@ class Css_Processor {
 		return $rules;
 	}
 
+	private function extract_id_selectors( array $css_rules ): array {
+		$id_selectors = [];
+		
+		foreach ( $css_rules as $rule ) {
+			// Check if this rule has an ID selector
+			if ( preg_match( '/#([a-zA-Z][\w-]*)/', $rule['selector'], $matches ) ) {
+				$id_name = $matches[1];
+				
+				if ( ! isset( $id_selectors[ $id_name ] ) ) {
+					$id_selectors[ $id_name ] = [];
+				}
+				
+				$id_selectors[ $id_name ][] = [
+					'selector' => $rule['selector'],
+					'property' => $rule['property'],
+					'value' => $rule['value'],
+					'important' => $rule['important'],
+				];
+			}
+		}
+		
+		return $id_selectors;
+	}
+
+	private function match_elements_to_id_selectors( array $elements, array $id_selectors ): array {
+		$matches = [];
+		
+		foreach ( $elements as $element ) {
+			if ( ! empty( $element['attributes']['id'] ) ) {
+				$element_id = $element['attributes']['id'];
+				
+				if ( isset( $id_selectors[ $element_id ] ) ) {
+					$matches[ $element_id ] = [
+						'element' => $element,
+						'styles' => $id_selectors[ $element_id ],
+					];
+				}
+			}
+		}
+		
+		return $matches;
+	}
+
+	private function calculate_id_specificity( string $selector ): int {
+		return $this->specificity_calculator->calculate_specificity( $selector );
+	}
+
 	private function process_css_rule( $rule, &$processing_result ) {
 		$categorized_rule = $this->specificity_calculator->categorize_css_rule(
 			$rule['selector'],
@@ -116,10 +184,15 @@ class Css_Processor {
 			$rule['important']
 		);
 
-		// Route to appropriate processing based on target type
+		// Route to appropriate processing based on target type and category
 		switch ( $categorized_rule['target'] ) {
 			case 'widget_props':
-				$this->process_widget_prop_rule( $categorized_rule, $processing_result );
+				// Check if this is an ID selector for special handling
+				if ( $categorized_rule['category'] === 'id' ) {
+					$this->process_id_selector_rule( $categorized_rule, $processing_result );
+				} else {
+					$this->process_widget_prop_rule( $categorized_rule, $processing_result );
+				}
 				break;
 			case 'global_classes':
 				$this->process_global_class_rule( $categorized_rule, $processing_result );
@@ -127,6 +200,54 @@ class Css_Processor {
 			case 'element_styles':
 				$this->process_element_style_rule( $categorized_rule, $processing_result );
 				break;
+		}
+	}
+
+	private function process_id_selector_rule( $rule, &$processing_result ) {
+		// Extract ID from selector
+		if ( preg_match( '/#([a-zA-Z][\w-]*)/', $rule['selector'], $matches ) ) {
+			$id_name = $matches[1];
+			
+			// Convert CSS property to Elementor v4 format
+			try {
+				$converted_property = $this->convert_css_property( 
+					$rule['property'], 
+					$rule['value'] 
+				);
+
+				if ( $converted_property ) {
+					// Store ID-specific style for later application to matching widgets
+					if ( ! isset( $processing_result['id_styles'][ $id_name ] ) ) {
+						$processing_result['id_styles'][ $id_name ] = [];
+					}
+					
+					$processing_result['id_styles'][ $id_name ][] = [
+						'selector' => $rule['selector'],
+						'property' => $rule['property'],
+						'value' => $rule['value'],
+						'converted_property' => $converted_property,
+						'specificity' => $rule['specificity'],
+						'important' => $rule['important'],
+					];
+					
+					$processing_result['stats']['id_selectors_processed']++;
+					$processing_result['stats']['properties_converted']++;
+				} else {
+					$processing_result['stats']['unsupported_properties'][] = [
+						'property' => $rule['property'],
+						'value' => $rule['value'],
+						'selector' => $rule['selector'],
+						'reason' => 'No property mapper found',
+					];
+				}
+			} catch ( \Exception $e ) {
+				$processing_result['stats']['warnings'][] = [
+					'type' => 'id_selector_conversion_error',
+					'selector' => $rule['selector'],
+					'property' => $rule['property'],
+					'message' => $e->getMessage(),
+				];
+			}
 		}
 	}
 
@@ -223,7 +344,7 @@ class Css_Processor {
 	private function convert_css_property( $property, $value ) {
 		// Use the dedicated CSS property conversion service
 		// This ensures consistency and proper separation of concerns
-		return $this->property_conversion_service->convert_property_to_schema( $property, $value );
+		return $this->property_conversion_service->convert_property_to_v4_atomic( $property, $value );
 	}
 
 	private function extract_class_names( $selector ) {
@@ -299,6 +420,28 @@ class Css_Processor {
 	public function apply_styles_to_widget( $widget, $processing_result ) {
 		$widget_styles = [];
 		$applied_classes = [];
+		$id_styles = [];
+
+		// DEBUG: Log widget info
+		$widget_id = $widget['attributes']['id'] ?? 'no-id';
+		$widget_type = $widget['widget_type'] ?? 'unknown';
+		error_log( "CSS Processor: apply_styles_to_widget for {$widget_type} with ID: {$widget_id}" );
+		
+		// Apply ID-specific styles (highest specificity after !important and inline)
+		if ( ! empty( $widget['attributes']['id'] ) ) {
+			$widget_id = $widget['attributes']['id'];
+			error_log( "CSS Processor: Looking for ID styles for: {$widget_id}" );
+			error_log( "CSS Processor: Available ID styles: " . wp_json_encode( array_keys( $processing_result['id_styles'] ?? [] ) ) );
+			
+			if ( isset( $processing_result['id_styles'][ $widget_id ] ) ) {
+				$id_styles = $processing_result['id_styles'][ $widget_id ];
+				error_log( "CSS Processor: Found " . count( $id_styles ) . " ID styles for {$widget_id}" );
+			} else {
+				error_log( "CSS Processor: No ID styles found for {$widget_id}" );
+			}
+		} else {
+			error_log( "CSS Processor: Widget has no ID attribute" );
+		}
 
 		// Apply widget-specific styles (high specificity)
 		foreach ( $processing_result['widget_styles'] as $style ) {
@@ -327,12 +470,18 @@ class Css_Processor {
 			}
 		}
 
-		return [
+		$result = [
 			'widget_styles' => $widget_styles,
 			'global_classes' => $applied_classes,
 			'element_styles' => $element_styles,
-			'computed_styles' => $this->compute_final_styles( $widget_styles, $element_styles, $widget ),
+			'id_styles' => $id_styles,  // New: ID-specific styles
+			'computed_styles' => $this->compute_final_styles( $widget_styles, $element_styles, $widget, $id_styles ),
 		];
+		
+		// DEBUG: Log what we're returning
+		error_log( "CSS Processor: Returning applied styles with " . count( $id_styles ) . " ID styles for {$widget_type} ({$widget_id})" );
+		
+		return $result;
 	}
 
 	private function style_applies_to_widget( $style, $widget ) {
@@ -365,8 +514,21 @@ class Css_Processor {
 		return false;
 	}
 
-	private function compute_final_styles( $widget_styles, $element_styles, $widget ) {
+	private function compute_final_styles( $widget_styles, $element_styles, $widget, $id_styles = [] ) {
+		// Merge all styles with proper specificity order: element < widget < ID
 		$all_styles = array_merge( $element_styles, $widget_styles );
+		
+		// Add ID styles with their converted properties
+		foreach ( $id_styles as $id_style ) {
+			if ( isset( $id_style['converted_property'] ) ) {
+				$all_styles[] = [
+					'property' => $id_style['converted_property']['property'],
+					'value' => $id_style['converted_property']['value'],
+					'specificity' => $id_style['specificity'],
+					'important' => $id_style['important'],
+				];
+			}
+		}
 		
 		// Add inline styles (highest specificity after !important)
 		if ( ! empty( $widget['inline_css'] ) ) {

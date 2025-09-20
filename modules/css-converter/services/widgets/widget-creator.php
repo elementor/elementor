@@ -374,6 +374,28 @@ class Widget_Creator {
 		// Convert CSS styles to Elementor v4 atomic widget styles format
 		$v4_styles = [];
 
+		// DEBUG: Log what we received
+		error_log( 'Widget Creator: convert_styles_to_v4_format called with: ' . wp_json_encode( array_keys( $applied_styles ) ) );
+		
+		// Process ID styles first (highest specificity after !important and inline)
+		if ( ! empty( $applied_styles['id_styles'] ) ) {
+			error_log( 'Widget Creator: Processing ID styles: ' . count( $applied_styles['id_styles'] ) . ' styles found' );
+			
+			$id_class_id = $this->generate_unique_class_id();
+			$id_style_object = $this->create_v4_style_object_from_id_styles( $id_class_id, $applied_styles['id_styles'] );
+			
+			error_log( 'Widget Creator: ID style object created with props: ' . wp_json_encode( $id_style_object['variants'][0]['props'] ?? [] ) );
+			
+			if ( ! empty( $id_style_object['variants'][0]['props'] ) ) {
+				$v4_styles[ $id_class_id ] = $id_style_object;
+				error_log( 'Widget Creator: ID styles added to v4_styles with class ID: ' . $id_class_id );
+			} else {
+				error_log( 'Widget Creator: ID style object has no props - not added to v4_styles' );
+			}
+		} else {
+			error_log( 'Widget Creator: No ID styles found in applied_styles' );
+		}
+
 		// Process computed styles (from external CSS + inline styles)
 		if ( ! empty( $applied_styles['computed_styles'] ) ) {
 			// Generate class ID if not already set
@@ -392,6 +414,46 @@ class Widget_Creator {
 		}
 
 		return $v4_styles;
+	}
+
+	private function create_v4_style_object_from_id_styles( $class_id, $id_styles ) {
+		// Create v4 atomic style object from ID styles
+		$style_object = [
+			'id' => $class_id,
+			'label' => 'local',
+			'type' => 'class',
+			'variants' => [
+				[
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+					'props' => [],
+				],
+			],
+		];
+
+		// Convert ID styles to v4 props format
+		foreach ( $id_styles as $index => $id_style ) {
+			error_log( "Widget Creator: Processing ID style $index: " . wp_json_encode( $id_style ) );
+			
+			if ( isset( $id_style['converted_property'] ) ) {
+				$converted = $id_style['converted_property'];
+				error_log( "Widget Creator: Converted property found: " . wp_json_encode( $converted ) );
+				
+				// Apply the converted property to the style object
+				if ( isset( $converted['property'] ) && isset( $converted['value'] ) ) {
+					$style_object['variants'][0]['props'][ $converted['property'] ] = $converted['value'];
+					error_log( "Widget Creator: Added prop {$converted['property']} to style object" );
+				} else {
+					error_log( "Widget Creator: Converted property missing 'property' or 'value' keys" );
+				}
+			} else {
+				error_log( "Widget Creator: No 'converted_property' found in ID style" );
+			}
+		}
+
+		return $style_object;
 	}
 
 	private function generate_unique_class_id() {
@@ -439,7 +501,20 @@ class Widget_Creator {
 	}
 
 	private function convert_css_property_to_v4( $property, $value ) {
-		// Use the unified property mapper system instead of custom conversion logic
+		// Skip conversion if value is already in v4 format (has $$type)
+		if ( is_array( $value ) && isset( $value['$$type'] ) ) {
+			return [
+				'property' => $property,
+				'value' => $value,
+			];
+		}
+		
+		// Skip conversion if value is not a string (property mappers expect CSS strings)
+		if ( ! is_string( $value ) ) {
+			return null;
+		}
+		
+		// Use the unified property mapper system for CSS string values
 		$mapper = $this->property_mapper_registry->resolve( $property, $value );
 		
 		if ( $mapper && method_exists( $mapper, 'map_to_v4_atomic' ) ) {

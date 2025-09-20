@@ -41,7 +41,7 @@ class Color_Property_Mapper extends Property_Mapper_Base {
 	];
 
 	public function supports( string $property, $value ): bool {
-		return 'color' === $property && $this->is_valid_color( $value );
+		return 'color' === $property && is_string( $value ) && $this->is_valid_color( $value );
 	}
 
 	public function map_to_schema( string $property, $value ): array {
@@ -62,7 +62,7 @@ class Color_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		return $this->create_v4_property_with_type( 'color', 'color', $this->normalize_color_value( $value ) );
+		return $this->create_v4_property_with_type( $property, 'color', $this->normalize_color_value( $value ) );
 	}
 
 	private function is_valid_color( string $value ): bool {
