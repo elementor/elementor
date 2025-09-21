@@ -244,9 +244,25 @@ export const VariablesManagerTable = ( {
 															} );
 														}
 													} }
-													editableElement={ row.valueField }
+													editableElement={ ( {
+														value,
+														onChange,
+														onValidationChange,
+														error,
+													} ) =>
+														row.valueField( {
+															value,
+															onChange,
+															onValidationChange: ( errorMsg ) => {
+																onValidationChange?.( errorMsg );
+																onFieldError?.( !! errorMsg );
+															},
+															error,
+														} )
+													}
 													onRowRef={ handleRowRef( row.id ) }
 													gap={ 0.25 }
+													fieldType="value"
 												>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
 													<EllipsisWithTooltip
