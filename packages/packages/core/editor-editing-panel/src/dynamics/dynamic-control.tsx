@@ -47,7 +47,8 @@ export const DynamicControl = ( { bind, children }: DynamicControlProps ) => {
 
 	const effectiveSettings = { ...defaults, ...( settings ?? {} ) } as Record< string, DynamicPropValue >;
 
-	const isHidden = ! isDependencyMet( dynamicPropType?.dependencies, effectiveSettings );
+	const isHidden = ! isDependencyMet( dynamicPropType?.dependencies, effectiveSettings ).isMet;
+
 	if ( isHidden ) {
 		return null;
 	}
@@ -57,7 +58,7 @@ export const DynamicControl = ( { bind, children }: DynamicControlProps ) => {
 			propType={ propType }
 			setValue={ setDynamicValue }
 			value={ { [ bind ]: dynamicValue } }
-			isDisabled={ ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, effectiveSettings ) }
+			isDisabled={ ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, effectiveSettings ).isMet }
 		>
 			<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>
 		</PropProvider>

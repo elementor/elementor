@@ -10,10 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Post_Query extends Elementor_Test_Base {
+class Test_Term_Query extends Elementor_Test_Base {
 	use Post_Query_Data_Provider;
 
-	const URL = '/elementor/v1/post';
+	const URL = '/elementor/v1/term';
 
 	public function setUp(): void {
 		parent::setUp();

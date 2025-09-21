@@ -128,6 +128,15 @@ export const SvgMediaControl = createControl( () => {
 							>
 								{ __( 'Select SVG', 'elementor' ) }
 							</Button>
+							<Button
+								size="tiny"
+								variant="text"
+								color="inherit"
+								startIcon={ <UploadIcon /> }
+								onClick={ () => handleClick( MODE_UPLOAD ) }
+							>
+								{ __( 'Upload', 'elementor' ) }
+							</Button>
 							<ConditionalControlInfotip { ...infotipProps }>
 								<span>
 									<ThemeProvider colorScheme={ canManageOptions ? 'light' : 'dark' }>

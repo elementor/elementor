@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Dynamic_Prop_Types_Mapping {
-
 	public static function make(): self {
 		return new static();
 	}
