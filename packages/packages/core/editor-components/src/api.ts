@@ -10,7 +10,6 @@ export type CreateComponentPayload = {
 	content: V1ElementModelProps[];
 };
 
-
 type GetComponentResponse = Array< Component >;
 
 export type CreateComponentResponse = {
