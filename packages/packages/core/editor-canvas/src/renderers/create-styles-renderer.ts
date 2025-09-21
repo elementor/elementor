@@ -130,11 +130,7 @@ async function propsToCss( { props, resolve, signal }: PropsToCssArgs ) {
 }
 
 function customCssToString( customCss: CustomCss | null ): string {
-	if ( ! isExperimentActive( EXPERIMENTAL_FEATURES.CUSTOM_CSS ) || ! customCss?.raw ) {
-		return '';
-	}
-
-	const decoded = decodeString( customCss.raw );
+	const decoded = decodeString( customCss?.raw || '' );
 
 	if ( ! decoded.trim() ) {
 		return '';
