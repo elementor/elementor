@@ -194,18 +194,36 @@ function useClasses() {
 
 	return useMemo( () => {
 		const setClasses = ( ids: StyleDefinitionID[] ) => {
-			updateElementSettings( {
-				id: element.id,
-				props: { [ currentClassesProp ]: classesPropTypeUtil.create( ids ) },
-				withHistory: false,
-			} );
-
-			setDocumentModifiedStatus( true );
+			doApplyClasses( element.id, ids, currentClassesProp );
 		};
 
-		const getAppliedClasses = () =>
+		const _getAppliedClasses = () =>
 			getElementSetting< ClassesPropValue >( element.id, currentClassesProp )?.value || [];
 
-		return { setClasses, getAppliedClasses };
+		return { setClasses, getAppliedClasses: _getAppliedClasses };
 	}, [ currentClassesProp, element.id ] );
+}
+
+// Externalized for use outside of Hooks
+export function doGetAppliedClasses( elementId: string, classesPropType = 'classes' ) {
+	return getElementSetting< ClassesPropValue >( elementId, classesPropType )?.value || [];
+}
+
+export function doApplyClasses( elementId: string, classIds: StyleDefinitionID[], classesPropType = 'classes' ) {
+	updateElementSettings( {
+		id: elementId,
+		props: { [ classesPropType ]: classesPropTypeUtil.create( classIds ) },
+		withHistory: false,
+	} );
+	setDocumentModifiedStatus( true );
+}
+
+export function doUnapplyClass( elementId: string, classId: StyleDefinitionID, classesPropType = 'classes' ) {
+	const appliedClasses = getElementSetting< ClassesPropValue >( elementId, classesPropType )?.value || [];
+	if ( ! appliedClasses.includes( classId ) ) {
+		throw new Error( `Class ${ classId } is not applied to element ${ elementId }, cannot unapply it.` );
+	}
+
+	const updatedClassIds = appliedClasses.filter( ( id ) => id !== classId );
+	doApplyClasses( elementId, updatedClassIds, classesPropType );
 }

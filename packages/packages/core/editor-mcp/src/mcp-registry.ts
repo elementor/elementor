@@ -1,5 +1,5 @@
-import { type z, type ZodRawShape, type ZodTypeAny } from '@elementor/schema';
 import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
+import { type z, type ZodRawShape, type ZodTypeAny } from '@elementor/schema';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
@@ -37,7 +37,7 @@ export async function activateMcpRegistration( sdk: AngieMcpSdk ) {
 }
 
 const isAlphabet = ( str: string ): string | never => {
-	const passes = !! str && /^[a-z]+$/.test( str );
+	const passes = !! str && /^[a-z_]+$/.test( str );
 	if ( ! passes ) {
 		throw new Error( 'Not alphabet' );
 	}
