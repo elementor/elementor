@@ -1,14 +1,22 @@
-import { useMutation, useQueryClient } from '@elementor/query';
+import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 
-import { apiClient } from '../api';
-
-const COMPONENTS_QUERY_KEY = 'components';
+import createComponent from '../actions/create-component';
+import { type CreateComponentPayload } from '../api';
+import { selectCreateStatus } from '../store';
 
 export const useCreateComponentMutation = () => {
-	const queryClient = useQueryClient();
+	const dispatch = useDispatch();
+	const createStatus = useSelector( selectCreateStatus );
 
-	return useMutation( {
-		mutationFn: apiClient.create,
-		onSuccess: () => queryClient.invalidateQueries( { queryKey: [ COMPONENTS_QUERY_KEY ] } ),
-	} );
+	const createComponentAction = async ( payload: CreateComponentPayload ) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const result = await dispatch( createComponent( payload ) as any );
+		return result.payload;
+	};
+
+	return {
+		createComponent: createComponentAction,
+		isPending: createStatus === 'pending',
+		error: createStatus === 'error',
+	};
 };

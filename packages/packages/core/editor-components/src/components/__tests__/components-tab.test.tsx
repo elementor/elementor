@@ -10,7 +10,7 @@ import {
 import { jest } from '@jest/globals';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
-import loadComponents from '../../load-components';
+import loadComponents from '../../actions/load-components';
 import { slice } from '../../store';
 import { ComponentSearch } from '../components-tab/component-search';
 import { ComponentItem } from '../components-tab/components-item';

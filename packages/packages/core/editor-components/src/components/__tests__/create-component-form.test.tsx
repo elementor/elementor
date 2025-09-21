@@ -26,6 +26,7 @@ describe( 'CreateComponentForm', () => {
 	let store: Store< SliceState< typeof slice > >;
 
 	beforeEach( () => {
+		jest.clearAllMocks();
 		__registerSlice( slice );
 		store = __createStore();
 
@@ -276,8 +277,10 @@ describe( 'CreateComponentForm', () => {
 				expect( screen.getByText( 'Creating…' ) ).toBeDisabled();
 			} );
 
-			// Cancel button should be disabled.
-			expect( getCancelButton() ).toBeDisabled();
+			// Cancel button should be disabled (check before form closes).
+			await waitFor( () => {
+				expect( getCancelButton() ).toBeDisabled();
+			} );
 		} );
 
 		it( 'should call replace element with correct parameters after successful creation', async () => {
@@ -349,6 +352,7 @@ describe( 'CreateComponentForm', () => {
 
 		it( 'should show error notification when creation fails', async () => {
 			// Arrange.
+			setupFailedSave();
 			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
 
@@ -364,6 +368,7 @@ describe( 'CreateComponentForm', () => {
 
 		it( 'should reset loading state after error', async () => {
 			// Arrange.
+			setupFailedSave();
 			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
 
