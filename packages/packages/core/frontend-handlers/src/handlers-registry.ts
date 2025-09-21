@@ -1,4 +1,4 @@
-type Handler = ( params: { element: Element; signal: AbortSignal } ) => ( () => void ) | undefined;
+type Handler = ( params: { element: Element; signal: AbortSignal; isEditor: boolean } ) => ( () => void ) | undefined;
 
 export const handlers: Map< string, Map< string, Handler > > = new Map();
 

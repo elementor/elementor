@@ -21,6 +21,7 @@ const createAtomicTabsModel = () => {
 				const tabPanel = tabPanels[ index ];
 				tabPanel.settings._cssid = { $$type: 'string', value: tabPanels[ index ].id };
 				tabPanel.settings[ 'tab-id' ] = { $$type: 'string', value: tab.id };
+				tabPanel.settings[ 'tabs-id' ] = { $$type: 'string', value: this.id };
 			} );
 		}
 

@@ -3,9 +3,11 @@ import { register } from '@elementor/frontend-handlers';
 register( {
 	elementType: 'e-tabs',
 	uniqueId: 'e-tabs-handler',
-	callback: ( { element, signal } ) => {
+	callback: ( { element, signal, isEditor } ) => {
 		const tabs = element.querySelectorAll( '[data-element_type="e-tab"]' );
 		const tabPanels = element.querySelectorAll( '[data-element_type="e-tab-panel"]' );
+
+		// Listen to element selection in editor to handle active tab.
 
 		const setActiveTab = ( id ) => {
 			tabPanels.forEach( ( tabPanel ) => {
@@ -23,9 +25,10 @@ register( {
 			} );
 		};
 
-		const defaultActiveTab = element.getAttribute( 'data-active-tab' );
-
-		setActiveTab( defaultActiveTab );
+		if ( isEditor ) {
+			const defaultActiveTab = element.getAttribute( 'data-active-tab' );
+			setActiveTab( defaultActiveTab );
+		}
 
 		tabs.forEach( ( tab ) => {
 			const clickHandler = () => {
