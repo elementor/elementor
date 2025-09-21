@@ -3,7 +3,7 @@ import { EyeIcon } from '@elementor/icons';
 import { Box, Divider, Icon, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useComponents, useLoadStatus } from '../../hooks/use-components';
+import { useComponents } from '../../hooks/use-components';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
@@ -126,8 +126,7 @@ const EmptySearchResult = () => {
 };
 
 const useFilteredComponents = () => {
-	const components = useComponents();
-	const loadStatus = useLoadStatus();
+	const { components, loadStatus } = useComponents();
 	const { searchValue } = useSearch();
 
 	return {

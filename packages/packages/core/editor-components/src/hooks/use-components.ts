@@ -3,9 +3,8 @@ import { __useSelector as useSelector } from '@elementor/store';
 import { selectComponents, selectLoadStatus } from '../store';
 
 export const useComponents = () => {
-	return useSelector( selectComponents );
-};
+	const components = useSelector( selectComponents );
+	const loadStatus = useSelector( selectLoadStatus );
 
-export const useLoadStatus = () => {
-	return useSelector( selectLoadStatus );
+	return { components, loadStatus };
 };
