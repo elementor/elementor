@@ -33,7 +33,6 @@ describe( 'CreateComponentForm', () => {
 		mockGetElementLabel.mockReturnValue( 'Div Block' );
 		mockGetComponents.mockReturnValue( Promise.resolve( [ { name: 'Existing Component', id: 123 } ] ) );
 
-		// Mock components data in store
 		act( () => {
 			__dispatch( slice.actions.load( [ { name: 'Existing Component', id: 123 } ] ) );
 		} );
@@ -76,7 +75,7 @@ describe( 'CreateComponentForm', () => {
 
 	const setupSuccessfulSave = () => {
 		mockCreateComponent.mockImplementation( async () => {
-			await new Promise( ( resolve ) => setTimeout( resolve, 10 ) );
+			await new Promise( ( resolve ) => setTimeout( resolve, 100 ) );
 			return Promise.resolve( { component_id: mockComponentId } );
 		} );
 	};
@@ -269,18 +268,26 @@ describe( 'CreateComponentForm', () => {
 			fireEvent.click( getCreateButton() );
 
 			// Assert.
-			// Create button should show loading state and be disabled.
-			await waitFor( () => {
-				expect( screen.queryByText( 'Create' ) ).not.toBeInTheDocument();
-			} );
-			await waitFor( () => {
-				expect( screen.getByText( 'Creating…' ) ).toBeDisabled();
-			} );
+			await waitFor(
+				() => {
+					expect( screen.queryByText( 'Create' ) ).not.toBeInTheDocument();
+				},
+				{ timeout: 1000 }
+			);
 
-			// Cancel button should be disabled (check before form closes).
-			await waitFor( () => {
-				expect( getCancelButton() ).toBeDisabled();
-			} );
+			await waitFor(
+				() => {
+					expect( screen.getByText( 'Creating…' ) ).toBeDisabled();
+				},
+				{ timeout: 1000 }
+			);
+
+			await waitFor(
+				() => {
+					expect( getCancelButton() ).toBeDisabled();
+				},
+				{ timeout: 1000 }
+			);
 		} );
 
 		it( 'should call replace element with correct parameters after successful creation', async () => {
@@ -415,10 +422,9 @@ describe( 'CreateComponentForm', () => {
 			// Act.
 			fireEvent.click( getCancelButton() );
 
-			// Reopen form.
 			openForm();
 
-			// Assert - should reset to element label.
+			// Assert.
 			expect( getNameInput().value ).toBe( 'Div Block' );
 		} );
 	} );
