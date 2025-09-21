@@ -111,6 +111,7 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_NESTED = 'e_nested_elements';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
+
 	const PACKAGES = [
 		'editor-canvas',
 		'editor-controls', // TODO: Need to be registered and not enqueued.
