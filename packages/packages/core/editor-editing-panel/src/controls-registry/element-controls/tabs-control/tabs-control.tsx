@@ -7,7 +7,6 @@ import {
 	useBoundProp,
 } from '@elementor/editor-controls';
 import {
-	type ChildElement,
 	type Element,
 	getElementEditorSettings,
 	getElementType,
@@ -23,18 +22,26 @@ import { __ } from '@wordpress/i18n';
 import { ElementProvider, useElement } from '../../../contexts/element-context';
 import { SettingsField } from '../../settings-field';
 import { getElementByType } from '../get-element-by-type';
-import { addItem, duplicateItem, moveItem, removeItem, TAB_ELEMENT_TYPE, type TabItem } from './actions';
+import {
+	addItem,
+	duplicateItem,
+	moveItem,
+	removeItem,
+	TAB_ELEMENT_TYPE,
+	TAB_PANEL_ELEMENT_TYPE,
+	type TabItem,
+} from './actions';
 
 const TAB_LIST_ELEMENT_TYPE = 'e-tabs-list';
 const TAB_CONTENT_ELEMENT_TYPE = 'e-tabs-content';
 
-export const TabsControl = ( { childElements, label }: { childElements: ChildElement[]; label: string } ) => {
+export const TabsControl = ( { label }: { label: string } ) => {
 	const { element } = useElement();
 
-	const { [ TAB_ELEMENT_TYPE ]: tabLinks } = useElementChildren(
-		element.id,
-		childElements.map( ( child ) => child.type )
-	);
+	const { [ TAB_ELEMENT_TYPE ]: tabLinks } = useElementChildren( element.id, [
+		TAB_ELEMENT_TYPE,
+		TAB_PANEL_ELEMENT_TYPE,
+	] );
 
 	const tabList = getElementByType( element.id, TAB_LIST_ELEMENT_TYPE );
 	const tabContent = getElementByType( element.id, TAB_CONTENT_ELEMENT_TYPE );

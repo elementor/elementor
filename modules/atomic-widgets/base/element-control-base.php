@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Element_Control_Base implements JsonSerializable {
 	private $label = null;
 	private $meta = null;
-	private $child_elements = [];
 
 	abstract public function get_type(): string;
 
@@ -40,19 +39,6 @@ abstract class Element_Control_Base implements JsonSerializable {
 	public function get_meta(): array {
 		return $this->meta;
 	}
-	
-	public function set_child_element( string $element_type, string $target_container_selector ): self {
-		$this->child_elements[] = [
-			'type' => $element_type,
-			'target_container_selector' => $target_container_selector,
-		];
-
-		return $this;
-	}
-
-	public function get_child_elements(): array {
-		return $this->child_elements;
-	}
 
 	public function jsonSerialize(): array {
 		return [
@@ -62,7 +48,6 @@ abstract class Element_Control_Base implements JsonSerializable {
 				'meta' => $this->get_meta(),
 				'type' => $this->get_type(),
 				'props' => $this->get_props(),
-				'childElements' => $this->get_child_elements(),
 			],
 		];
 	}

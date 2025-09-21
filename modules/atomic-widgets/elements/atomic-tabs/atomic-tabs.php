@@ -59,8 +59,6 @@ class Atomic_Tabs extends Atomic_Element_Base {
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
 					Tabs_Control::make( )
-						->set_child_element( 'e-tab', 'e-tabs-list' )
-						->set_child_element( 'e-tab-panel', 'e-tabs-content' )
 						->set_label( __( 'Menu items', 'elementor' ) )
 						->set_meta( [
 							'topDivider' => true,

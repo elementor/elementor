@@ -55,8 +55,3 @@ export type ElementControl = {
 export type ControlItem = ControlsSection | Control | ElementControl;
 
 export type ControlLayout = 'full' | 'two-columns' | 'custom';
-
-export type ChildElement = {
-	type: string;
-	target_container_selector: string;
-};
