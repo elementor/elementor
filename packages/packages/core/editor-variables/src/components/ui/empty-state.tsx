@@ -18,10 +18,10 @@ export const EmptyState = ( { icon, title, message, onAdd }: Props ) => {
 		<Stack
 			gap={ 1 }
 			alignItems="center"
-			justifyContent="center"
+			justifyContent="flex-start"
 			height="100%"
 			color="text.secondary"
-			sx={ { p: 2.5, pb: 5.5 } }
+			sx={ { p: 2.5, pt: 8, pb: 5.5 } }
 		>
 			{ icon }
 
