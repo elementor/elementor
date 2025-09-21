@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\WpRest\Base;
 
+use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Collection;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,12 +20,13 @@ abstract class Query {
 
 	const MAX_RESPONSE_COUNT = 100;
 	const ITEMS_COUNT_KEY = 'items_count';
-
-	const SEARCH_TERM_KEY = 'term';
-
+	const FIELDS_KEY = 'fields';
+	
 	const INCLUDED_TYPE_KEY = 'included_types';
 	const EXCLUDED_TYPE_KEY = 'excluded_types';
-
+	const HIDE_EMPTY_KEY = 'hide_empty';
+	
+	const SEARCH_TERM_KEY = 'term';
 	const SEARCH_FILTER_PRIORITY = 10;
 	const SEARCH_FILTER_ACCEPTED_ARGS = 2;
 

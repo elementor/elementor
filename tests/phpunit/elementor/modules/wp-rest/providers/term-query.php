@@ -19,7 +19,6 @@ trait Term_Query {
 
 	protected function clean() {
 		foreach ( $this->terms as $term ) {
-			var_dump( $term->name );
 			wp_delete_term( $term->term_id, $term->taxonomy, $this->force_delete );
 		}
 
@@ -35,6 +34,7 @@ trait Term_Query {
 			unregister_taxonomy( $taxonomy );
 		}
 
+		$this->count = -1;
 		$this->terms = [];
 		$this->taxonomies = [];
 	}
@@ -54,7 +54,7 @@ trait Term_Query {
 
 	private function register_taxonomies() {
 		$this->taxonomies = [
-			'genre' => register_taxonomy( 'genre', 'post', [
+			'genre' => $this->factory()->taxonomies->register_taxonomy( 'genre', 'post', [
 				'hierarchical' => true,
 				'public' => true,
 				'labels' => [

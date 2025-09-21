@@ -3,7 +3,6 @@
 namespace Elementor\Modules\WpRest\Classes;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
 use Elementor\Modules\WpRest\Base\Query as Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,9 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Term_Query extends Base {
 	const ENDPOINT = 'term';
-
-	const FIELDS_KEY = 'fields';
-	const HIDE_EMPTY_KEY = 'hide_empty';
 
 	/**
 	 * @param \WP_REST_Request $request

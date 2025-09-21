@@ -32,12 +32,12 @@ class Query_Builder {
 
 	private static function build_post_query( ?array $config = [] ): array {
 		$params = Post_Query::build_query_params( [
-			Post_Query::KEYS_CONVERSION_MAP_KEY => $config[ Post_Query::KEYS_CONVERSION_MAP_KEY ] ?? null,
+			Post_Query::KEYS_CONVERSION_MAP_KEY => $config[ Query_Base::KEYS_CONVERSION_MAP_KEY ] ?? null,
 			Post_Query::INCLUDED_TYPE_KEY => $config[ Query_Base::INCLUDED_TYPE_KEY ] ?? null,
 			Post_Query::EXCLUDED_TYPE_KEY => $config[ Query_Base::EXCLUDED_TYPE_KEY ] ?? null,
-			Post_Query::META_QUERY_KEY => $config[ Post_Query::META_QUERY_KEY ] ?? null,
-			Post_Query::IS_PUBLIC_KEY => $config[ Post_Query::IS_PUBLIC_KEY ] ?? null,
-			Post_Query::ITEMS_COUNT_KEY => $config[ Post_Query::ITEMS_COUNT_KEY ] ?? null,
+			Post_Query::META_QUERY_KEY => $config[ Query_Base::META_QUERY_KEY ] ?? null,
+			Post_Query::IS_PUBLIC_KEY => $config[ Query_Base::IS_PUBLIC_KEY ] ?? null,
+			Post_Query::ITEMS_COUNT_KEY => $config[ Query_Base::ITEMS_COUNT_KEY ] ?? null,
 		] );
 
 		$endpoint = $config['endpoint'] ?? Post_Query::ENDPOINT;
@@ -52,14 +52,14 @@ class Query_Builder {
 
 	private static function build_term_query( ?array $config = [] ): array {
 		$params = Term_Query::build_query_params( [
-			Term_Query::KEYS_CONVERSION_MAP_KEY => $config[ Term_Query::KEYS_CONVERSION_MAP_KEY ] ?? null,
+			Term_Query::KEYS_CONVERSION_MAP_KEY => $config[ Query_Base::KEYS_CONVERSION_MAP_KEY ] ?? null,
 			Term_Query::INCLUDED_TYPE_KEY => $config[ Query_Base::INCLUDED_TYPE_KEY ] ?? null,
 			Term_Query::EXCLUDED_TYPE_KEY => $config[ Query_Base::EXCLUDED_TYPE_KEY ] ?? null,
-			Term_Query::META_QUERY_KEY => $config[ Term_Query::META_QUERY_KEY ] ?? null,
-			Term_Query::IS_PUBLIC_KEY => $config[ Term_Query::IS_PUBLIC_KEY ] ?? null,
-			Term_Query::HIDE_EMPTY_KEY => $config[ Term_Query::HIDE_EMPTY_KEY ] ?? null,
-			Term_Query::FIELDS_KEY => $config[ Term_Query::FIELDS_KEY ] ?? null,
-			Term_Query::ITEMS_COUNT_KEY => $config[ Term_Query::ITEMS_COUNT_KEY ] ?? null,
+			Term_Query::META_QUERY_KEY => $config[ Query_Base::META_QUERY_KEY ] ?? null,
+			Term_Query::IS_PUBLIC_KEY => $config[ Query_Base::IS_PUBLIC_KEY ] ?? null,
+			Term_Query::HIDE_EMPTY_KEY => $config[ Query_Base::HIDE_EMPTY_KEY ] ?? null,
+			Term_Query::FIELDS_KEY => $config[ Query_Base::FIELDS_KEY ] ?? null,
+			Term_Query::ITEMS_COUNT_KEY => $config[ Query_Base::ITEMS_COUNT_KEY ] ?? null,
 		] );
 
 		$endpoint = $config['endpoint'] ?? Term_Query::ENDPOINT;
@@ -74,12 +74,12 @@ class Query_Builder {
 
 	private static function build_user_query( ?array $config = [] ): array {
 		$params = User_Query::build_query_params( [
-			User_Query::KEYS_CONVERSION_MAP_KEY => $config[ User_Query::KEYS_CONVERSION_MAP_KEY ] ?? null,
+			User_Query::KEYS_CONVERSION_MAP_KEY => $config[ Query_Base::KEYS_CONVERSION_MAP_KEY ] ?? null,
 			User_Query::INCLUDED_TYPE_KEY => $config[ Query_Base::INCLUDED_TYPE_KEY ] ?? null,
 			User_Query::EXCLUDED_TYPE_KEY => $config[ Query_Base::EXCLUDED_TYPE_KEY ] ?? null,
-			User_Query::META_QUERY_KEY => $config[ User_Query::META_QUERY_KEY ] ?? null,
-			User_Query::FIELDS_KEY => $config[ User_Query::FIELDS_KEY ] ?? null,
-			User_Query::ITEMS_COUNT_KEY => $config[ User_Query::ITEMS_COUNT_KEY ] ?? null,
+			User_Query::META_QUERY_KEY => $config[ Query_Base::META_QUERY_KEY ] ?? null,
+			User_Query::FIELDS_KEY => $config[ Query_Base::FIELDS_KEY ] ?? null,
+			User_Query::ITEMS_COUNT_KEY => $config[ Query_Base::ITEMS_COUNT_KEY ] ?? null,
 		] );
 
 		$endpoint = $config['endpoint'] ?? User_Query::ENDPOINT;

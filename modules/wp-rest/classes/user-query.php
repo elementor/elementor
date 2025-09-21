@@ -3,7 +3,6 @@
 namespace Elementor\Modules\WpRest\Classes;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
 use Elementor\Modules\WpRest\Base\Query as Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,8 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class User_Query extends Base {
 	const ENDPOINT = 'user';
-
-	const FIELDS_KEY = 'fields';
 
 	/**
 	 * @param \WP_REST_Request $request
@@ -61,15 +58,15 @@ class User_Query extends Base {
 					return false;
 				}
 
-				$has_included_role = empty( $included_roles )
+				$is_of_included_role = empty( $included_roles )
 					|| Collection::make( $included_roles )
 						->some( fn( $role_slug ) => $this->is_user_of_role( $user, $role_slug ) );
 
-				$has_excluded_role = ! empty( $excluded_roles )
-					&& Collection::make( $excluded_roles )
-						->some( fn( $role_slug ) => $this->is_user_of_role( $user, $role_slug ) );
+				$is_not_of_excluded_role = empty( $excluded_roles )
+					|| ! Collection::make( $excluded_roles )
+					->some( fn( $role_slug ) => $this->is_user_of_role( $user, $role_slug ) );
 
-				return $has_included_role && ! $has_excluded_role;
+				return $is_of_included_role && $is_not_of_excluded_role;
 			} );
 
 		$this->remove_filter_to_customize_query();
@@ -80,7 +77,7 @@ class User_Query extends Base {
 		return new \WP_REST_Response( [
 			'success' => true,
 			'data' => [
-				'value' => $users
+				'value' => array_values( $users
 					->map( function ( $user ) use ( $keys_format_map, $roles ) {
 						$user_object = (array) $user;
 						$user_object['display_name'] = $user->data->display_name;
@@ -93,7 +90,7 @@ class User_Query extends Base {
 
 						return self::translate_keys( $user_object, $keys_format_map );
 					} )
-					->all(),
+					->all() ),
 			],
 		], 200 );
 	}
@@ -182,18 +179,18 @@ class User_Query extends Base {
 				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
 				'validate_callback' => fn ( $fields ) => ! $fields || in_array( $fields, [
 					'all',
-					‘ID‘,
-					‘display_name‘,
-					‘login‘,
-					‘user_login‘,
-					‘nicename‘,
-					‘user_nicename‘,
-					‘email‘,
-					‘user_email‘,
-					‘url‘,
-					‘user_url‘,
-					‘registered‘,
-					‘user_registered‘,
+					'ID',
+					'display_name',
+					'login',
+					'user_login',
+					'nicename',
+					'user_nicename',
+					'email',
+					'user_email',
+					'url',
+					'user_url',
+					'registered',
+					'user_registered',
 				], true ),
 			],
 		];
@@ -227,14 +224,8 @@ class User_Query extends Base {
 			return false;
 		}
 
-		$capabilities = $role->capabilities;
-
-		foreach ( $capabilities as $capability => $enabled ) {
-			if ( $enabled && ! $user->has_cap( $capability ) ) {
-				return false;
-			}
-		}
-
-		return true;
+		return ! Collection::make( $role->capabilities )->some( function( $enabled, $capability ) use ( $user ) {
+				return ! $user->has_cap( $capability ) && ! ( $user->allcaps[ $capability ] ?? false );
+		} );
 	}
 }

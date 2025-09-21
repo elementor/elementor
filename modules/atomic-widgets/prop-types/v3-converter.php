@@ -46,15 +46,8 @@ class V3_Converter {
 					->default( $control['default'] ?? null );
 
 			case 'switcher':
-				$default = $control['default'];
-
 				return Boolean_Prop_Type::make()
-					->default( 'yes' === $default || true === $default );
-
-			case 'choose':
-				return String_Prop_Type::make()
-					->default( $control['default'] ?? null )
-					->enum( array_keys( $control['options'] ?? [] ) );
+					->default( 'yes' === $control['default'] || true === $control['default'] );
 
 			case 'query':
 				return Query_Prop_Type::make()
@@ -102,11 +95,9 @@ class V3_Converter {
 
 		$is_termed_condition = isset( $control['conditions'] );
 		$conditions = $is_termed_condition ? $control['conditions'] : $control['condition'];
-		$relation = isset( $control['relation'] ) ? $control['relation'] : Dependency_Manager::RELATION_AND;
+		$relation = isset( $conditions['relation'] ) ? $conditions['relation'] : Dependency_Manager::RELATION_AND;
 
-		$dependencies = $this->convert_conditions( $conditions, $relation, $is_termed_condition );
-
-		return $dependencies;
+		return $this->convert_conditions( $conditions, $relation, $is_termed_condition );
 	}
 
 	private function convert_conditions( $conditions, $relation, $is_termed_condition ) {
@@ -162,7 +153,7 @@ class V3_Converter {
 			$operator = $is_negated ? 'ne' : 'eq';
 
 			if ( $prop_type instanceof Boolean_Prop_Type ) {
-				$operator = $is_negated ? 'exists' : 'not_exist';
+				$operator = $is_negated ? 'not_exist' : 'exists';
 			} else if ( $prop_type instanceof Array_Prop_Type || is_array( $value ) ) {
 				$operator = $is_negated ? 'nin' : 'in';
 			}
@@ -276,8 +267,8 @@ class V3_Converter {
 			'not_contains' => 'contains',
 		];
 
-		$key = $is_negated ? $negated_map[ $operator ] : $operator;
+		$new_operator = $conversion_map[ $operator ];
 
-		return $conversion_map[ $key ];
+		return $is_negated ? $negated_map[ $new_operator ] : $new_operator;
 	}
 }

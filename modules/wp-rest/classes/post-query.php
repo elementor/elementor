@@ -3,7 +3,6 @@
 namespace Elementor\Modules\WpRest\Classes;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
 use Elementor\Modules\WpRest\Base\Query as Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -56,8 +55,6 @@ class Post_Query extends Base {
 			], 200 );
 		}
 
-		$filter_by_post_type_inclusion = ! empty( $params[ self::INCLUDED_TYPE_KEY ] );
-
 		$included_types = $params[ self::INCLUDED_TYPE_KEY ];
 		$excluded_types = $params[ self::EXCLUDED_TYPE_KEY ];
 		$keys_format_map = $params[ self::KEYS_CONVERSION_MAP_KEY ];
@@ -68,9 +65,9 @@ class Post_Query extends Base {
 		$is_public_only = $params[ self::IS_PUBLIC_KEY ] ?? true;
 
 		$post_types = Collection::make( get_post_types( [], 'objects' ) )
-			->filter( function ( $post_type ) use ( $excluded_types, $included_types, $filter_by_post_type_inclusion ) {
-				return ( ! $filter_by_post_type_inclusion || in_array( $post_type->name, $included_types, true ) ) &&
-					( $filter_by_post_type_inclusion || ! in_array( $post_type->name, $excluded_types, true ) );
+			->filter( function ( $post_type ) use ( $excluded_types, $included_types ) {
+				return ( empty( $included_types ) || in_array( $post_type->name, $included_types, true ) ) &&
+					( empty( $excluded_types ) || ! in_array( $post_type->name, $excluded_types, true ) );
 			} );
 
 		$this->add_filter_to_customize_query();
