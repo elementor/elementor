@@ -49,10 +49,12 @@ export const CustomCssIndicator = () => {
 
 			for ( const child of node.children ?? [] ) {
 				const res = search( child, ancestorHasCss || hasHere );
+
 				if ( res !== undefined ) {
 					return res;
 				}
 			}
+
 			return undefined;
 		}
 
