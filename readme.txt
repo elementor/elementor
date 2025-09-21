@@ -348,7 +348,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-#### 3.32.2 - 2025-09-18
+= 3.32.2 - 2025-09-18 =
 
 * Tweak: Improved compatibility for 3rd-party plugins serving templates
 * Fix: Structure Panel indicators not visible in RTL layouts
