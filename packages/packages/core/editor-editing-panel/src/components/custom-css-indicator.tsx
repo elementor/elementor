@@ -8,7 +8,10 @@ import { useCustomCss } from '../hooks/use-custom-css';
 import { getStylesProviderThemeColor } from '../utils/get-styles-provider-color';
 import { StyleIndicator } from './style-indicator';
 
-const hasInheritedCustomCss = ( style: StyleDefinition | null, meta: StyleDefinitionVariant['meta'] | null ): boolean => {
+const hasInheritedCustomCss = (
+	style: StyleDefinition | null,
+	meta: StyleDefinitionVariant[ 'meta' ] | null
+): boolean => {
 	if ( ! style || ! meta ) {
 		return false;
 	}
