@@ -8,6 +8,38 @@ import { useCustomCss } from '../hooks/use-custom-css';
 import { getStylesProviderThemeColor } from '../utils/get-styles-provider-color';
 import { StyleIndicator } from './style-indicator';
 
+export const CustomCssIndicator = () => {
+	const { customCss } = useCustomCss();
+	const { id: styleId, provider, meta } = useStyle();
+	const {
+		element: { id: elementId },
+	} = useElement();
+
+	const style = React.useMemo(
+		() => ( styleId && provider ? provider.actions.get( styleId, { elementId } ) : null ),
+		[ styleId, provider, elementId ]
+	);
+
+	const hasContent = Boolean( customCss?.raw?.trim() );
+
+	const hasInheritedContent = React.useMemo( () => {
+		if ( hasContent ) {
+			return false;
+		}
+
+		return hasInheritedCustomCss( style, meta );
+	}, [ hasContent, style, meta ] );
+
+	if ( ! hasContent ) {
+		if ( hasInheritedContent ) {
+			return <StyleIndicator />;
+		}
+		return null;
+	}
+
+	return <StyleIndicator getColor={ provider ? getStylesProviderThemeColor( provider.getKey() ) : undefined } />;
+};
+
 const hasInheritedCustomCss = (
 	style: StyleDefinition | null,
 	meta: StyleDefinitionVariant[ 'meta' ] | null
@@ -48,36 +80,4 @@ const hasInheritedCustomCss = (
 	}
 
 	return Boolean( search( root, false ) );
-};
-
-export const CustomCssIndicator = () => {
-	const { customCss } = useCustomCss();
-	const { id: styleId, provider, meta } = useStyle();
-	const {
-		element: { id: elementId },
-	} = useElement();
-
-	const style = React.useMemo(
-		() => ( styleId && provider ? provider.actions.get( styleId, { elementId } ) : null ),
-		[ styleId, provider, elementId ]
-	);
-
-	const hasContent = Boolean( customCss?.raw?.trim() );
-
-	const hasInheritedContent = React.useMemo( () => {
-		if ( hasContent ) {
-			return false;
-		}
-
-		return hasInheritedCustomCss( style, meta );
-	}, [ hasContent, style, meta ] );
-
-	if ( ! hasContent ) {
-		if ( hasInheritedContent ) {
-			return <StyleIndicator />;
-		}
-		return null;
-	}
-
-	return <StyleIndicator getColor={ provider ? getStylesProviderThemeColor( provider.getKey() ) : undefined } />;
 };
