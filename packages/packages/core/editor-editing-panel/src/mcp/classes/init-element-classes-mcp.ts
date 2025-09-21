@@ -2,11 +2,7 @@ import { getMCPByDomain } from '@elementor/editor-mcp';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { z } from '@elementor/schema';
 
-import {
-	doApplyClasses,
-	doGetAppliedClasses,
-	doUnapplyClass,
-} from '../../components/css-classes/use-apply-and-unapply-class';
+import { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from '../../components/css-classes/apply-unapply-utils';
 
 const TOOL_NAME = 'element_classes';
 

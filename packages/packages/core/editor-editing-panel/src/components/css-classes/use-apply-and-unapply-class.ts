@@ -1,7 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { setDocumentModifiedStatus } from '@elementor/editor-documents';
-import { getElementLabel, getElementSetting, updateElementSettings } from '@elementor/editor-elements';
-import { classesPropTypeUtil, type ClassesPropValue } from '@elementor/editor-props';
+import { getElementLabel } from '@elementor/editor-elements';
 import { type StyleDefinitionID } from '@elementor/editor-styles';
 import { useGetStylesRepositoryCreateAction } from '@elementor/editor-styles-repository';
 import { undoable } from '@elementor/editor-v1-adapters';
@@ -10,6 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { useClassesProp } from '../../contexts/classes-prop-context';
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
+import { doApplyClasses, doGetAppliedClasses } from './apply-unapply-utils';
 
 type UndoableClassActionPayload = {
 	classId: StyleDefinitionID;
@@ -197,33 +196,8 @@ function useClasses() {
 			doApplyClasses( element.id, ids, currentClassesProp );
 		};
 
-		const _getAppliedClasses = () =>
-			getElementSetting< ClassesPropValue >( element.id, currentClassesProp )?.value || [];
+		const getAppliedClasses = () => doGetAppliedClasses( element.id, currentClassesProp ) || [];
 
-		return { setClasses, getAppliedClasses: _getAppliedClasses };
+		return { setClasses, getAppliedClasses };
 	}, [ currentClassesProp, element.id ] );
-}
-
-// Externalized for use outside of Hooks
-export function doGetAppliedClasses( elementId: string, classesPropType = 'classes' ) {
-	return getElementSetting< ClassesPropValue >( elementId, classesPropType )?.value || [];
-}
-
-export function doApplyClasses( elementId: string, classIds: StyleDefinitionID[], classesPropType = 'classes' ) {
-	updateElementSettings( {
-		id: elementId,
-		props: { [ classesPropType ]: classesPropTypeUtil.create( classIds ) },
-		withHistory: false,
-	} );
-	setDocumentModifiedStatus( true );
-}
-
-export function doUnapplyClass( elementId: string, classId: StyleDefinitionID, classesPropType = 'classes' ) {
-	const appliedClasses = getElementSetting< ClassesPropValue >( elementId, classesPropType )?.value || [];
-	if ( ! appliedClasses.includes( classId ) ) {
-		throw new Error( `Class ${ classId } is not applied to element ${ elementId }, cannot unapply it.` );
-	}
-
-	const updatedClassIds = appliedClasses.filter( ( id ) => id !== classId );
-	doApplyClasses( elementId, updatedClassIds, classesPropType );
 }
