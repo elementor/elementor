@@ -16,7 +16,7 @@ export const NoSearchResults = ( { searchValue, onClear, icon }: Props ) => {
 			justifyContent="center"
 			p={ 2.5 }
 			color="text.secondary"
-			sx={ { pb: 3.5, pt: 5 } }
+			sx={ { pb: 3.5, pt: 8 } }
 		>
 			{ icon }
 			<Typography align="center" variant="subtitle2">
