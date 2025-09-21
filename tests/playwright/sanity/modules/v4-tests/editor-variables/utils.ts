@@ -112,6 +112,7 @@ export const deleteAllVariables = async ( page: Page ) => {
 
 	for ( let i = rowCount - 1; i >= 0; i-- ) {
 		const variableName = await testVariableRows.nth( i ).getByText( /test-.*-variable/i ).textContent();
+
 		if ( variableName ) {
 			await deleteVariable( page, variableName );
 		}
@@ -119,3 +120,4 @@ export const deleteAllVariables = async ( page: Page ) => {
 
 	await saveAndExitVariableManager( page, rowCount > 0 );
 };
+

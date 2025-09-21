@@ -72,7 +72,7 @@ describe( '@elementor/generate-wordpress-asset-file-webpack-plugin', () => {
 		expect.assertions( 6 );
 
 		// Act.
-		compiler.run( ( err, stats ) => {
+		compiler?.run( ( err, stats ) => {
 			// Assert.
 			expect( err ).toBe( null );
 			expect( stats?.hasErrors() ).toBe( false );
