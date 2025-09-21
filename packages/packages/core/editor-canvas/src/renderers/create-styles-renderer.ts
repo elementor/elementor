@@ -6,7 +6,6 @@ import {
 	type StyleDefinitionState,
 	type StyleDefinitionType,
 } from '@elementor/editor-styles';
-import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { decodeString } from '@elementor/utils';
 
 import { type PropsResolver } from './create-props-resolver';
