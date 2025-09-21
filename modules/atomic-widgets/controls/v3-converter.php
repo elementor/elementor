@@ -54,7 +54,7 @@ class V3_Converter {
 	}
 
 	private function set_control_sections() {
-		foreach( $this->original_controls as $control ) {
+		foreach ( $this->original_controls as $control ) {
 			$control_type = isset( $control['type'] ) ? $control['type'] : null;
 
 			if ( ! $control_type || 'section' !== $control_type ) {
@@ -224,7 +224,7 @@ class V3_Converter {
 	}
 
 	private function is_control_attachment_query( $control ): bool {
-		return isset( $control['autocomplete']['object'] ) && $control['autocomplete']['object'] === 'attachment';
+		return isset( $control['autocomplete']['object'] ) && 'attachment' === $control['autocomplete']['object'];
 	}
 
 	private function is_control_user_query( $control ): bool {

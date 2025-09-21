@@ -14,7 +14,8 @@ abstract class Query {
 
 	const KEYS_CONVERSION_MAP_KEY = 'post_keys_conversion_map';
 	const IS_PUBLIC_KEY = 'is_public';
-	const TAX_QUERY_KEY = 'tax_query';	const META_QUERY_KEY = 'meta_query';
+	const TAX_QUERY_KEY = 'tax_query';
+	const META_QUERY_KEY = 'meta_query';
 
 	const MAX_RESPONSE_COUNT = 100;
 	const ITEMS_COUNT_KEY = 'items_count';

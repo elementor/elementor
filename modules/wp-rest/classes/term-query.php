@@ -65,7 +65,7 @@ class Term_Query extends Base {
 		}
 
 		$terms = $terms->filter( function ( $term ) use ( $included_types, $excluded_types ) {
-			return ( empty( $included_types ) ||  in_array( $term->taxonomy, $included_types, true ) )
+			return ( empty( $included_types ) || in_array( $term->taxonomy, $included_types, true ) )
 				&& ( empty( $excluded_types ) || ! in_array( $term->taxonomy, $excluded_types, true ) );
 		} );
 

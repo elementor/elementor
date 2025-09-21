@@ -19,6 +19,7 @@ trait Term_Query {
 
 	protected function clean() {
 		foreach ( $this->terms as $term ) {
+			var_dump( $term->name );
 			wp_delete_term( $term->term_id, $term->taxonomy, $this->force_delete );
 		}
 

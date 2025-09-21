@@ -78,9 +78,8 @@ class Dynamic_Tags_Editor_Config {
 		}
 
 		try {
-			//$atomic_controls = $this->convert_controls_to_atomic( $tag['controls'], $tag['force_convert_to_atomic'] ?? false );
 			$atomic_controls = V3_Converter::make( $tag['controls'] )
-				->get_atomic_controls($tag['force_convert_to_atomic'] ?? false );
+				->get_atomic_controls( $tag['force_convert_to_atomic'] ?? false );
 		} catch ( \Exception $e ) {
 			return null;
 		}

@@ -16,15 +16,15 @@ class Query_Builder {
 
 	public static function build( ?array $config = [] ): array {
 		$map = [
-			Post_Query::ENDPOINT => [ Query_Builder::class, 'build_post_query' ],
-			Term_Query::ENDPOINT => [ Query_Builder::class, 'build_term_query' ],
-			User_Query::ENDPOINT => [ Query_Builder::class, 'build_user_query' ],
+			Post_Query::ENDPOINT => [ self::class, 'build_post_query' ],
+			Term_Query::ENDPOINT => [ self::class, 'build_term_query' ],
+			User_Query::ENDPOINT => [ self::class, 'build_user_query' ],
 		];
 
 		$query_type = $config[ self::QUERY_TYPE_KEY ] ?? Post_Query::ENDPOINT;
 
 		if ( ! isset( $map[ $query_type ] ) ) {
-			throw new \Exception( "Query of $query_type is not supported" );
+			throw new \Exception( 'Query type is not supported' );
 		}
 
 		return $map[ $query_type ]( $config );
