@@ -1,7 +1,7 @@
-import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
+import { __useDispatch as useDispatch, __useSelector as useSelector, type AsyncThunkAction } from '@elementor/store';
 
-import createComponent from '../actions/create-component';
-import { type CreateComponentPayload } from '../api';
+import { createComponent } from '../actions';
+import { type CreateComponentPayload, type CreateComponentResponse } from '../api';
 import { selectCreateStatus } from '../store';
 
 export const useCreateComponentMutation = () => {
@@ -9,8 +9,13 @@ export const useCreateComponentMutation = () => {
 	const createStatus = useSelector( selectCreateStatus );
 
 	const createComponentAction = async ( payload: CreateComponentPayload ) => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const result = await dispatch( createComponent( payload ) as any );
+		const result = await dispatch(
+			createComponent( payload ) as AsyncThunkAction<
+				CreateComponentResponse,
+				CreateComponentPayload,
+				{ rejectValue: string }
+			>
+		);
 		return result.payload;
 	};
 

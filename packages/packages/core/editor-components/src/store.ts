@@ -5,8 +5,7 @@ import {
 	type SliceState,
 } from '@elementor/store';
 
-import createComponent from './actions/create-component';
-import loadComponents from './actions/load-components';
+import { createComponent, loadComponents } from './actions';
 import { type Component } from './types';
 
 type GetComponentResponse = Component[];
