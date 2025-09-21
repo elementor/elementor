@@ -90,7 +90,7 @@ class User_Query extends Base {
 
 						return self::translate_keys( $user_object, $keys_format_map );
 					} )
-					->all() ),
+				->all() ),
 			],
 		], 200 );
 	}

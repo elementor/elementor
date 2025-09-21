@@ -184,18 +184,18 @@ class V3_Converter {
 				$excluded_types = [];
 				break;
 
-			case  $this->is_control_elementor_query( $control ):
+			case $this->is_control_elementor_query( $control ):
 				$included_types = [ Source_Local::CPT ];
 				$excluded_types = [];
 				break;
 
-			case  $this->is_control_attachment_query( $control ):
+			case $this->is_control_attachment_query( $control ):
 				$included_types = [ 'attachment' ];
 				$excluded_types = [];
 				$query_config[ Query_Base::IS_PUBLIC_KEY ] = false;
 				break;
 
-			case  $this->is_control_user_query( $control ):
+			case $this->is_control_user_query( $control ):
 				$included_types = [ $control['autocomplete']['object'] ];
 				$excluded_types = null;
 				$query_type = User_Query::ENDPOINT;

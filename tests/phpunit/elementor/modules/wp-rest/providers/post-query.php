@@ -95,7 +95,7 @@ trait Post_Query {
 		return [
 			[
 				'params' => array_merge( Post_Query_Class::build_query_params( [
-					Post_Query_Class::EXCLUDED_TYPE_KEY => [],
+					Post_Query_Class::EXCLUDED_TYPE_KEY => Post_Query_Class::DEFAULT_FORBIDDEN_POST_TYPES,
 					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'id',
 						'post_title' => 'label',
@@ -114,7 +114,7 @@ trait Post_Query {
 			],
 			[
 				'params' => array_merge( Post_Query_Class::build_query_params( [
-					Post_Query_Class::EXCLUDED_TYPE_KEY => [ 'page', 'post' ],
+					Post_Query_Class::EXCLUDED_TYPE_KEY => array_merge( Post_Query_Class::DEFAULT_FORBIDDEN_POST_TYPES, [ 'page', 'post' ] ),
 					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'post_id',
 						'post_title' => 'random_key',
@@ -129,7 +129,7 @@ trait Post_Query {
 			],
 			[
 				'params' => array_merge( Post_Query_Class::build_query_params( [
-					Post_Query_Class::EXCLUDED_TYPE_KEY => [ 'page', 'post' ],
+					Post_Query_Class::EXCLUDED_TYPE_KEY => array_merge( Post_Query_Class::DEFAULT_FORBIDDEN_POST_TYPES, [ 'page', 'post' ] ),
 					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'post_id',
 						'post_title' => 'random_key',
@@ -139,7 +139,7 @@ trait Post_Query {
 			],
 			[
 				'params' => array_merge( Post_Query_Class::build_query_params( [
-					Post_Query_Class::EXCLUDED_TYPE_KEY => [ 'page', 'post' ],
+					Post_Query_Class::EXCLUDED_TYPE_KEY => array_merge( Post_Query_Class::DEFAULT_FORBIDDEN_POST_TYPES, [ 'page', 'post' ] ),
 					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'post_id',
 						'post_title' => 'random_key',
@@ -149,7 +149,7 @@ trait Post_Query {
 			],
 			[
 				'params' => array_merge( Post_Query_Class::build_query_params( [
-					Post_Query_Class::EXCLUDED_TYPE_KEY => [ 'product', 'post' ],
+					Post_Query_Class::EXCLUDED_TYPE_KEY => array_merge( Post_Query_Class::DEFAULT_FORBIDDEN_POST_TYPES, [ 'product', 'post' ] ),
 					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'id',
 						'post_title' => 'label',
