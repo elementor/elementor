@@ -58,7 +58,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
-					Tabs_Control::make( )
+					Tabs_Control::make()
 						->set_label( __( 'Menu items', 'elementor' ) )
 						->set_meta( [
 							'topDivider' => true,

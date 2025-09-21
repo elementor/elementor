@@ -15,4 +15,4 @@ class Tabs_Control extends Element_Control_Base {
 	public function get_props(): array {
 		return [];
 	}
-} 
+}
