@@ -62,25 +62,25 @@ export const SettingsTab = () => {
 	);
 };
 
-const Control = ( { control }: { control: Control | ElementControl } ) => {
-	if ( ! controlsRegistry.get( control.value.type as ControlType ) ) {
+const Control = ( { control: { value, type } }: { control: Control | ElementControl } ) => {
+	if ( ! controlsRegistry.get( value.type as ControlType ) ) {
 		return null;
 	}
 
-	const layout = control.value.meta?.layout || controlsRegistry.getLayout( control.value.type as ControlType );
-	const controlProps = populateChildControlProps( control.value.props );
+	const layout = value.meta?.layout || controlsRegistry.getLayout( value.type as ControlType );
+	const controlProps = populateChildControlProps( value.props );
 
 	if ( layout === 'custom' ) {
-		controlProps.label = control.value.label;
+		controlProps.label = value.label;
 	}
 
-	if ( control.type === 'element-control' ) {
-		return <ControlLayout control={ control.value } layout={ layout } controlProps={ controlProps } />;
+	if ( type === 'element-control' ) {
+		return <ControlLayout control={ value } layout={ layout } controlProps={ controlProps } />;
 	}
 
 	return (
-		<SettingsField bind={ control.value.bind } propDisplayName={ control.value.label || control.value.bind }>
-			<ControlLayout control={ control.value } layout={ layout } controlProps={ controlProps } />
+		<SettingsField bind={ value.bind } propDisplayName={ value.label || value.bind }>
+			<ControlLayout control={ value } layout={ layout } controlProps={ controlProps } />
 		</SettingsField>
 	);
 };
