@@ -5,10 +5,10 @@ import { useGetStylesRepositoryCreateAction } from '@elementor/editor-styles-rep
 import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
+import { doApplyClasses, doGetAppliedClasses } from '../../apply-unapply-actions';
 import { useClassesProp } from '../../contexts/classes-prop-context';
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
-import { doApplyClasses, doGetAppliedClasses } from './apply-unapply-utils';
 
 type UndoableClassActionPayload = {
 	classId: StyleDefinitionID;
