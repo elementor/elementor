@@ -148,7 +148,7 @@ class Styles_Renderer {
 			->implode( '' );
 	}
 
-	private function custom_css_to_css_string( ?array $custom_css ): string {	
+	private function custom_css_to_css_string( ?array $custom_css ): string {
 		return ! empty( $custom_css['raw'] )
 			? Utils::decode_string( $custom_css['raw'], '' ) . '\n'
 			: '';
