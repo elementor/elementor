@@ -10,7 +10,7 @@ import { addInitialDocumentStyles, removeInitialDocumentStyles } from '@elemento
 import { __privateListenTo as listenTo, commandStartEvent, registerDataHook } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
-import { Components } from './components/components';
+import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { type ExtendedWindow } from './types';
 

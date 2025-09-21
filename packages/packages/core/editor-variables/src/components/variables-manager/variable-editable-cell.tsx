@@ -14,6 +14,7 @@ type VariableEditableCellProps = {
 	autoEdit?: boolean;
 	onRowRef?: ( ref: HTMLTableRowElement | null ) => void;
 	onAutoEditComplete?: () => void;
+	gap?: number;
 	fieldType?: 'label' | 'value';
 };
 
@@ -27,19 +28,26 @@ export const VariableEditableCell = React.memo(
 		autoEdit = false,
 		onRowRef,
 		onAutoEditComplete,
+		gap = 1,
 		fieldType,
 	}: VariableEditableCellProps ) => {
 		const [ value, setValue ] = useState( initialValue );
 		const [ isEditing, setIsEditing ] = useState( false );
 
 		const { labelFieldError, setLabelFieldError } = useLabelError();
+		const [ valueFieldError, setValueFieldError ] = useState( '' );
 
 		const rowRef = useRef< HTMLTableRowElement >( null );
 
 		const handleSave = useCallback( () => {
-			onChange( value );
+			const hasError =
+				( fieldType === 'label' && labelFieldError?.message ) || ( fieldType === 'value' && valueFieldError );
+
+			if ( ! hasError ) {
+				onChange( value );
+			}
 			setIsEditing( false );
-		}, [ value, onChange ] );
+		}, [ value, onChange, fieldType, labelFieldError, valueFieldError ] );
 
 		useEffect( () => {
 			onRowRef?.( rowRef?.current );
@@ -79,12 +87,19 @@ export const VariableEditableCell = React.memo(
 						value,
 						message: errorMsg,
 					} );
+				} else {
+					setValueFieldError( errorMsg );
 				}
 			},
-			[ fieldType, value, setLabelFieldError ]
+			[ fieldType, value, setLabelFieldError, setValueFieldError ]
 		);
 
-		const currentError = fieldType === 'label' ? labelFieldError : undefined;
+		let currentError;
+		if ( fieldType === 'label' ) {
+			currentError = labelFieldError;
+		} else if ( fieldType === 'value' ) {
+			currentError = { value, message: valueFieldError };
+		}
 
 		const editableContent = editableElement( {
 			value,
@@ -100,7 +115,7 @@ export const VariableEditableCell = React.memo(
 						ref={ rowRef }
 						direction="row"
 						alignItems="center"
-						gap={ 1 }
+						gap={ gap }
 						onDoubleClick={ handleDoubleClick }
 						onKeyDown={ handleKeyDown }
 						tabIndex={ 0 }
@@ -119,7 +134,7 @@ export const VariableEditableCell = React.memo(
 				ref={ rowRef }
 				direction="row"
 				alignItems="center"
-				gap={ 1 }
+				gap={ gap }
 				onDoubleClick={ handleDoubleClick }
 				onKeyDown={ handleKeyDown }
 				tabIndex={ 0 }
