@@ -28,8 +28,6 @@ class Render_Mode_Preview extends Render_Mode_Base {
 
 		add_action( 'wp_footer', [ $this, 'cleanup' ], 999 );
 
-		add_filter( 'elementor/render_mode/module', [ $this, 'filter_render_mode_module' ] );
-
 		parent::__construct( $this->document->get_main_id() );
 	}
 
@@ -50,10 +48,6 @@ class Render_Mode_Preview extends Render_Mode_Base {
 		if ( $this->document && $this->document->get_main_id() ) {
 			wp_delete_post( $this->document->get_main_id(), true );
 		}
-	}
-
-	public function filter_render_mode_module( $module ) {
-		return 'cloud-library';
 	}
 
 	public function enqueue_scripts() {
