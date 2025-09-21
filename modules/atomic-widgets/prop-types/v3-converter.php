@@ -118,8 +118,8 @@ class V3_Converter {
 		$is_simple_term = true;
 
 		if ( $is_termed_condition ) {
-			if ( isset( $conditions[ 'terms' ] ) ) {
-				return $this->convert_conditions( $conditions[ 'terms' ],  $conditions[ 'relation' ] ?? Dependency_Manager::RELATION_AND, $is_termed_condition );
+			if ( isset( $conditions['terms'] ) ) {
+				return $this->convert_conditions( $conditions['terms'], $conditions['relation'] ?? Dependency_Manager::RELATION_AND, $is_termed_condition );
 			}
 
 			$is_simple_term = false;
@@ -188,7 +188,7 @@ class V3_Converter {
 		preg_match( self::EXTRACT_NEGATED_KEY_REGEX, $key, $key_parts );
 		preg_match( self::SUB_PROP_KEY_REGEX, $key_parts[1], $sub_prop_key_parts );
 
-		$is_negated = $key_parts[2] ?? null === "!";
+		$is_negated = '!' === ( $key_parts[2] ?? null );
 		$key = $sub_prop_key_parts[1] ?? null;
 		$sub_key = $sub_prop_key_parts[2] ?? null;
 

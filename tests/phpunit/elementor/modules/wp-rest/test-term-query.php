@@ -2,8 +2,8 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest;
 
-use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Providers\Post_Query as Post_Query_Data_Provider;
-use Elementor\Modules\WpRest\Classes\Post_Query;
+use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Providers\Term_Query as Term_Query_Data_Provider;
+use Elementor\Modules\WpRest\Classes\Term_Query;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Term_Query extends Elementor_Test_Base {
-	use Post_Query_Data_Provider;
+	use Term_Query_Data_Provider;
 
 	const URL = '/elementor/v1/term';
 
@@ -28,8 +28,8 @@ class Test_Term_Query extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_post_query_results() {
-		foreach ( $this->data_provider_post_query() as $data ) {
+	public function test_term_query_results() {
+		foreach ( $this->data_provider_term_query() as $data ) {
 			$this->execute( $data['params'], $data['expected'] );
 		}
 	}
@@ -37,10 +37,10 @@ class Test_Term_Query extends Elementor_Test_Base {
 	private function execute( $params, $expected ) {
 		// Arrange
 		$request = new \WP_REST_Request( 'GET', self::URL );
-		$request->set_param( Post_Query::EXCLUDED_TYPE_KEY, $params[ Post_Query::EXCLUDED_TYPE_KEY ] );
-		$request->set_param( Post_Query::SEARCH_TERM_KEY, $params[ Post_Query::SEARCH_TERM_KEY ] );
-		$request->set_param( Post_Query::KEYS_CONVERSION_MAP_KEY, $params[ Post_Query::KEYS_CONVERSION_MAP_KEY ] );
-		$request->set_header( Post_Query::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
+		$request->set_param( Term_Query::EXCLUDED_TYPE_KEY, $params[ Term_Query::EXCLUDED_TYPE_KEY ] );
+		$request->set_param( Term_Query::SEARCH_TERM_KEY, $params[ Term_Query::SEARCH_TERM_KEY ] );
+		$request->set_param( Term_Query::KEYS_CONVERSION_MAP_KEY, $params[ Term_Query::KEYS_CONVERSION_MAP_KEY ] );
+		$request->set_header( Term_Query::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
 
 		// Act
 		$response = rest_get_server()->dispatch( $request );
