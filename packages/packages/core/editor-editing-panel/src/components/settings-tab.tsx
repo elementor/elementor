@@ -74,7 +74,7 @@ const Control = ( { control }: { control: Control | ElementControl } ) => {
 		controlProps.label = control.value.label;
 	}
 
-	if ( control.type === 'element' ) {
+	if ( control.type === 'element-control' ) {
 		return <ControlLayout control={ control.value } layout={ layout } controlProps={ controlProps } />;
 	}
 
@@ -131,5 +131,5 @@ function getKey( control: Control | ElementControl, element: Element ) {
 }
 
 function isControl( control: ControlItem ): control is Control | ElementControl {
-	return control.type === 'control' || control.type === 'element';
+	return control.type === 'control' || control.type === 'element-control';
 }

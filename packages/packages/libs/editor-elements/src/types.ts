@@ -40,7 +40,7 @@ export type Control = {
 };
 
 export type ElementControl = {
-	type: 'element';
+	type: 'element-control';
 	value: {
 		type: string;
 		label?: string;

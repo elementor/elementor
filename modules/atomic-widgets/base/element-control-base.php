@@ -42,7 +42,7 @@ abstract class Element_Control_Base implements JsonSerializable {
 
 	public function jsonSerialize(): array {
 		return [
-			'type' => 'element',
+			'type' => 'element-control',
 			'value' => [
 				'label' => $this->get_label(),
 				'meta' => $this->get_meta(),
