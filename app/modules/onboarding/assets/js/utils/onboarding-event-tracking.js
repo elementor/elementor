@@ -49,6 +49,7 @@ const ONBOARDING_STORAGE_KEYS = {
 	PENDING_CREATE_ACCOUNT_STATUS: 'elementor_onboarding_pending_create_account_status',
 	PENDING_CREATE_MY_ACCOUNT: 'elementor_onboarding_pending_create_my_account',
 	PENDING_TOP_UPGRADE: 'elementor_onboarding_pending_top_upgrade',
+	PENDING_TOP_UPGRADE_NO_CLICK: 'elementor_onboarding_pending_top_upgrade_no_click',
 	PENDING_STEP1_CLICKED_CONNECT: 'elementor_onboarding_pending_step1_clicked_connect',
 };
 
@@ -287,6 +288,7 @@ export class OnboardingEventTracking {
 				ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS,
 				ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT,
 				ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
+				ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK,
 				ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
 			];
 
@@ -647,6 +649,47 @@ export class OnboardingEventTracking {
 		}
 	}
 
+	static scheduleDelayedNoClickEvent( currentStep, delay = 500 ) {
+		try {
+			const eventData = {
+				currentStep,
+				timestamp: Date.now(),
+				timeoutId: setTimeout( () => {
+					this.sendDelayedNoClickEvent();
+				}, delay ),
+			};
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK, JSON.stringify( {
+				currentStep: eventData.currentStep,
+				timestamp: eventData.timestamp,
+			} ) );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to schedule delayed no-click event:', error );
+		}
+	}
+
+	static cancelDelayedNoClickEvent() {
+		try {
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to cancel delayed no-click event:', error );
+		}
+	}
+
+	static sendDelayedNoClickEvent() {
+		try {
+			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
+			if ( ! storedDataStr ) {
+				return;
+			}
+
+			const eventData = JSON.parse( storedDataStr );
+			this.sendTopUpgrade( eventData.currentStep, 'no_click' );
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to send delayed no-click event:', error );
+		}
+	}
+
 	static storeCreateAccountStatusEventForLater( status, currentStep ) {
 		try {
 			const eventData = {
@@ -798,13 +841,14 @@ export class OnboardingEventTracking {
 
 		const handleMouseLeave = () => {
 			if ( hasHovered && ! hasClicked ) {
-				this.sendTopUpgrade( currentStep, 'no_click' );
+				this.scheduleDelayedNoClickEvent( currentStep );
 				hasHovered = false;
 			}
 		};
 
 		const handleClick = () => {
 			hasClicked = true;
+			this.cancelDelayedNoClickEvent();
 
 			const upgradeClickedValue = this.determineUpgradeClickedValue( buttonElement );
 			this.sendTopUpgrade( currentStep, upgradeClickedValue );
