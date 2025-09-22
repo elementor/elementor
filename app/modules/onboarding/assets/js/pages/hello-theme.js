@@ -43,6 +43,7 @@ export default function HelloTheme() {
 		}
 
 		OnboardingEventTracking.setupTopUpgradeTracking( state.currentStep );
+		OnboardingEventTracking.onStepLoad( 2 ); // Send stored step 1 events when reaching step 2
 	}, [] );
 
 	const resetScreenContent = () => {

@@ -521,8 +521,14 @@ export class OnboardingEventTracking {
 				upgrade_clicked: upgradeClicked,
 			} );
 		}
-		console.log( '💾 Storing TOP_UPGRADE for later:', { currentStep, upgradeClicked } );
-		this.storeTopUpgradeEventForLater( currentStep, upgradeClicked );
+
+		// Only store data for step 1 (pre-connection)
+		if ( 1 === currentStep ) {
+			console.log( '💾 Storing TOP_UPGRADE for later (step 1 only):', { currentStep, upgradeClicked } );
+			this.storeTopUpgradeEventForLater( currentStep, upgradeClicked );
+		} else {
+			console.log( '🚫 Not storing TOP_UPGRADE - step is post-connection:', { currentStep, upgradeClicked } );
+		}
 	}
 
 	static sendCreateMyAccount( currentStep, createAccountClicked ) {
@@ -1089,14 +1095,28 @@ export class OnboardingEventTracking {
 	static sendConnectionSuccessEvents( data ) {
 		console.log( '🎉 sendConnectionSuccessEvents called:', { tracking_opted_in: data.tracking_opted_in, access_tier: data.access_tier } );
 
-		// Debug: Check localStorage before sending events
-		const storedData = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
-		console.log( '🔍 localStorage check before sending events:', storedData );
+		// Debug: Check localStorage before any processing
+		const storedDataBefore = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
+		console.log( '🔍 localStorage check BEFORE connection processing:', storedDataBefore );
 
 		this.sendCoreOnboardingInitiated();
+
+		// Debug: Check localStorage after sendCoreOnboardingInitiated
+		const storedDataAfterInitiated = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
+		console.log( '🔍 localStorage check AFTER sendCoreOnboardingInitiated:', storedDataAfterInitiated );
+
 		this.sendAppropriateStatusEvent( 'success', data );
+
+		// Debug: Check localStorage after status event
+		const storedDataAfterStatus = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
+		console.log( '🔍 localStorage check AFTER sendAppropriateStatusEvent:', storedDataAfterStatus );
+
 		console.log( '📤 About to send all stored events...' );
 		this.sendAllStoredEvents();
+
+		// Debug: Check localStorage after sending all events
+		const storedDataAfterSend = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
+		console.log( '🔍 localStorage check AFTER sendAllStoredEvents:', storedDataAfterSend );
 	}
 
 	static sendConnectionFailureEvents() {
@@ -1109,6 +1129,10 @@ export class OnboardingEventTracking {
 		const hasConnectAction = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
 
 		console.log( '🔍 Checking stored actions for status event:', { status, hasCreateAccountAction: !! hasCreateAccountAction, hasConnectAction: !! hasConnectAction } );
+
+		// Debug: Check if TOP_UPGRADE data still exists here
+		const topUpgradeData = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
+		console.log( '🔍 TOP_UPGRADE data check in sendAppropriateStatusEvent:', topUpgradeData );
 
 		if ( hasCreateAccountAction ) {
 			console.log( `📤 Sending CREATE_ACCOUNT_STATUS (${ status }) - user clicked Create Account` );
@@ -1128,6 +1152,10 @@ export class OnboardingEventTracking {
 				this.sendConnectStatus( status, false, null );
 			}
 		}
+
+		// Debug: Check if TOP_UPGRADE data still exists after status event
+		const topUpgradeDataAfter = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
+		console.log( '🔍 TOP_UPGRADE data check AFTER status event:', topUpgradeDataAfter );
 	}
 
 	static handleSiteStarterChoice( siteStarter ) {
@@ -1149,6 +1177,29 @@ export class OnboardingEventTracking {
 		this.sendStoredStep1ClickedConnectEvent();
 		this.sendStoredStep1EndStateEvent();
 		console.log( '✅ sendAllStoredEvents completed' );
+	}
+
+	static sendStoredStep1EventsOnStep2() {
+		console.log( '🎯 sendStoredStep1EventsOnStep2 - sending step 1 events when reaching step 2...' );
+
+		// Debug: Check what data exists before sending
+		const topUpgradeData = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
+		console.log( '🔍 Step 1 TOP_UPGRADE data check on step 2:', topUpgradeData );
+
+		// Send stored step 1 events immediately
+		this.sendStoredTopUpgradeEvent();
+
+		console.log( '✅ sendStoredStep1EventsOnStep2 completed' );
+	}
+
+	static onStepLoad( currentStep ) {
+		console.log( '🎯 onStepLoad called:', { currentStep } );
+
+		// If we're on step 2 and have stored step 1 events, send them immediately
+		if ( 2 === currentStep || 'hello' === currentStep ) {
+			console.log( '🎯 Reached step 2 - checking for stored step 1 events...' );
+			this.sendStoredStep1EventsOnStep2();
+		}
 	}
 
 	static handleStorageError( message, error ) {
