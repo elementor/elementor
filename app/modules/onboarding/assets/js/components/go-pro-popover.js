@@ -80,6 +80,7 @@ export default function GoProPopover( props ) {
 			elRef: setupUpgradeButtonTracking,
 			onClick: () => {
 				trackUpgradeFromAccountSetup();
+				OnboardingEventTracking.cancelDelayedNoClickEvent();
 				OnboardingEventTracking.sendTopUpgrade( state.currentStep, 'on_tooltip' );
 
 				elementorCommon.events.dispatchEvent( {
