@@ -51,6 +51,7 @@ const ONBOARDING_STORAGE_KEYS = {
 	PENDING_TOP_UPGRADE: 'elementor_onboarding_pending_top_upgrade',
 	PENDING_TOP_UPGRADE_NO_CLICK: 'elementor_onboarding_pending_top_upgrade_no_click',
 	PENDING_STEP1_CLICKED_CONNECT: 'elementor_onboarding_pending_step1_clicked_connect',
+	PENDING_STEP1_END_STATE: 'elementor_onboarding_pending_step1_end_state',
 };
 
 export class OnboardingEventTracking {
@@ -757,6 +758,19 @@ export class OnboardingEventTracking {
 		}
 	}
 
+	static storeStep1EndStateForLater( eventData, storageKey ) {
+		try {
+			const storedEventData = {
+				...eventData,
+				timestamp: Date.now(),
+			};
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_END_STATE, JSON.stringify( storedEventData ) );
+			localStorage.removeItem( storageKey );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to store step1 end state event:', error );
+		}
+	}
+
 	static sendStoredStep1ClickedConnectEvent() {
 		try {
 			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
@@ -776,6 +790,25 @@ export class OnboardingEventTracking {
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to send stored step1 clicked connect event:', error );
+		}
+	}
+
+	static sendStoredStep1EndStateEvent() {
+		try {
+			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_END_STATE );
+			if ( ! storedDataStr ) {
+				return;
+			}
+
+			const eventData = JSON.parse( storedDataStr );
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP1_END_STATE, {
+				...eventData,
+				event_timestamp: eventData.timestamp,
+			} );
+
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_END_STATE );
+		} catch ( error ) {
+			this.handleStorageError( 'Failed to send stored step1 end state event:', error );
 		}
 	}
 
@@ -921,8 +954,15 @@ export class OnboardingEventTracking {
 
 			eventData[ endStateProperty ] = actions;
 
-			this.dispatchEvent( eventName, eventData );
-			localStorage.removeItem( storageKey );
+			if ( elementorCommon.config.editor_events?.can_send_events ) {
+				this.dispatchEvent( eventName, eventData );
+				localStorage.removeItem( storageKey );
+			} else if ( 1 === stepNumber ) {
+				this.storeStep1EndStateForLater( eventData, storageKey );
+			} else {
+				this.dispatchEvent( eventName, eventData );
+				localStorage.removeItem( storageKey );
+			}
 		} catch ( error ) {
 			this.handleStorageError( `Failed to send Step ${ stepNumber } end state:`, error );
 		}
@@ -1012,6 +1052,7 @@ export class OnboardingEventTracking {
 		this.sendStoredCreateMyAccountEvent();
 		this.sendStoredCreateAccountStatusEvent();
 		this.sendStoredStep1ClickedConnectEvent();
+		this.sendStoredStep1EndStateEvent();
 	}
 
 	static handleStorageError( message, error ) {
