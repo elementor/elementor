@@ -27,7 +27,7 @@ class Process_Media extends Base_Route {
 
 		try {
 			$media_urls = $request->get_param( 'media_urls' );
-			
+
 			if ( empty( $media_urls ) || ! is_array( $media_urls ) ) {
 				throw new \Error( 'Invalid media URLs provided' );
 			}

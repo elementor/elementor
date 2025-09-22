@@ -57,7 +57,7 @@ class Media_Collector {
 	/**
 	 * Process a single media URL (Step 2: Download and save).
 	 */
-	public function process_media_url( string $url ): string|false {
+	public function process_media_url( string $url ) {
 		if ( ! $this->is_media_url( $url ) ) {
 			return false;
 		}
@@ -158,8 +158,7 @@ class Media_Collector {
 
 	public function process_media_collection( array $media_urls ): array {
 		$this->start_processing();
-		
-		// Process each URL
+
 		foreach ( $media_urls as $url ) {
 			$this->process_media_url( $url );
 		}
@@ -194,7 +193,7 @@ class Media_Collector {
 		}
 
 		$mapping = [];
-		
+
 		foreach ( $this->collected_media as $url => $filename ) {
 			if ( is_string( $filename ) ) {
 				$file_path = $this->temp_dir . '/' . $filename;
