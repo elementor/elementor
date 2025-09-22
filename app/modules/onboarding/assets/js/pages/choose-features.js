@@ -92,7 +92,7 @@ export default function ChooseFeatures() {
 		} else {
 			setTierName( tiers.essential );
 		}
-	}, [ selectedFeatures, tiers.advanced, tiers.essential ] );
+	}, [ selectedFeatures ] );
 
 	useEffect( () => {
 		OnboardingEventTracking.setupTopUpgradeTracking( state.currentStep );
