@@ -102,19 +102,6 @@ export default function ChooseFeatures() {
 		return !! features.advanced.length || !! features.essential.length;
 	}
 
-	function handleFeatureSelection( event, option ) {
-		const checked = event.currentTarget.checked;
-		const itemId = event.target.value;
-
-		setSelectedFeatureList( {
-			checked,
-			id: itemId,
-			text: option.text,
-			selectedFeatures,
-			setSelectedFeatures,
-		} );
-	}
-
 	return (
 		<Layout pageId={ pageId } nextStep={ nextStep }>
 			<PageContentLayout
