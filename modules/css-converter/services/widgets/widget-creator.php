@@ -140,7 +140,12 @@ class Widget_Creator {
 			'type' => 'class',
 			'variants' => [
 				[
-					'meta' => $this->convert_properties_to_global_class_meta( $class_data['properties'] ?? [] ),
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+					'props' => $this->convert_properties_to_global_class_props( $class_data['properties'] ?? [] ),
+					'custom_css' => null,
 				],
 			],
 		];
@@ -150,21 +155,24 @@ class Widget_Creator {
 		// $repository->create( $global_class_data );
 	}
 
-	private function convert_properties_to_global_class_meta( $properties ) {
-		$meta = [];
+	private function convert_properties_to_global_class_props( $properties ) {
+		$props = [];
 		
 		foreach ( $properties as $property_data ) {
 			if ( ! empty( $property_data['converted_property'] ) ) {
 				$converted = $property_data['converted_property'];
 				
-				// Merge converted properties into meta
-				if ( is_array( $converted ) ) {
-					$meta = array_merge( $meta, $converted );
+				// Handle the property mapper format: ['property' => 'name', 'value' => [...]]
+				if ( is_array( $converted ) && isset( $converted['property'] ) && isset( $converted['value'] ) ) {
+					$props[ $converted['property'] ] = $converted['value'];
+				} elseif ( is_array( $converted ) ) {
+					// Fallback: merge if it's already in the correct format
+					$props = array_merge( $props, $converted );
 				}
 			}
 		}
 
-		return $meta;
+		return $props;
 	}
 
 	private function ensure_post_exists( $post_id, $post_type ) {

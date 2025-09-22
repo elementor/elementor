@@ -29,6 +29,9 @@ use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Backgroun
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Background_Gradient_Property_Mapper;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Filter_Property_Mapper;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Flex_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Flex_Direction_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Align_Items_Property_Mapper;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Gap_Property_Mapper;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Position_Property_Mapper;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Shadow_Property_Mapper;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Stroke_Property_Mapper;
@@ -74,6 +77,9 @@ class Class_Property_Mapper_Factory {
 			new Background_Property_Mapper(),
 			new Filter_Property_Mapper(),
 			new Flex_Property_Mapper(),
+			new Flex_Direction_Property_Mapper(),
+			new Align_Items_Property_Mapper(),
+			new Gap_Property_Mapper(),
 			new Position_Property_Mapper(),
 			new Shadow_Property_Mapper(),
 			new Stroke_Property_Mapper(),

@@ -70,9 +70,41 @@ class Border_Radius_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		// Basic implementation - convert property name to v4 format
-		// Keep original property name with hyphens for consistency
-		return $this->create_v4_property( $property, $value );
+		if ( $property === 'border-radius' ) {
+			$parsed = $this->parse_border_radius_shorthand( $value );
+			
+			// Check if all corners have the same value (uniform radius)
+			if ( $this->is_uniform_radius( $parsed ) ) {
+				// Use simple size type for uniform radius
+				return $this->create_v4_property_with_type( 'border-radius', 'size', $parsed['top-left'] );
+			} else {
+				// Use border-radius type with logical properties for individual corners
+				$border_radius_value = [
+					'start-start' => [
+						'$$type' => 'size',
+						'value' => $parsed['top-left'],
+					],
+					'start-end' => [
+						'$$type' => 'size',
+						'value' => $parsed['top-right'],
+					],
+					'end-start' => [
+						'$$type' => 'size',
+						'value' => $parsed['bottom-left'],
+					],
+					'end-end' => [
+						'$$type' => 'size',
+						'value' => $parsed['bottom-right'],
+					],
+				];
+				
+				return $this->create_v4_property_with_type( 'border-radius', 'border-radius', $border_radius_value );
+			}
+		}
+
+		// For individual corner properties, use size type
+		$parsed = $this->parse_radius_value( $value );
+		return $this->create_v4_property_with_type( $property, 'size', $parsed );
 	}
 
 	private function is_valid_border_radius( string $property, $value ): bool {
@@ -132,5 +164,17 @@ class Border_Radius_Property_Mapper extends Property_Mapper_Base {
 			'size' => 0,
 			'unit' => 'px',
 		];
+	}
+
+	private function is_uniform_radius( array $parsed ): bool {
+		// Check if all corners have the same size and unit
+		$reference = $parsed['top-left'];
+		
+		return $parsed['top-right']['size'] === $reference['size'] &&
+			   $parsed['top-right']['unit'] === $reference['unit'] &&
+			   $parsed['bottom-right']['size'] === $reference['size'] &&
+			   $parsed['bottom-right']['unit'] === $reference['unit'] &&
+			   $parsed['bottom-left']['size'] === $reference['size'] &&
+			   $parsed['bottom-left']['unit'] === $reference['unit'];
 	}
 }

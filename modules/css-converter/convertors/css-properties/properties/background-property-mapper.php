@@ -59,13 +59,8 @@ class Background_Property_Mapper extends Property_Mapper_Base {
 			];
 		}
 
-		// For now, we'll store the full background value as a string if it's complex
-		if ( empty( $result ) ) {
-			$result['background'] = [
-				'$$type' => 'string',
-				'value' => trim( $value ),
-			];
-		}
+		// Only return result if we successfully parsed something meaningful
+		// Don't fallback to generic string - let other mappers handle unsupported cases
 
 		return $result;
 	}
@@ -79,9 +74,42 @@ class Background_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		// Basic implementation - convert property name to v4 format
-		// Keep original property name with hyphens for consistency
-		return $this->create_v4_property( $property, $value );
+		$parsed = $this->parse_background_shorthand( $value );
+		
+		// If we found a color, create a proper background object
+		if ( isset( $parsed['color'] ) ) {
+			$background_value = [
+				'color' => [
+					'$$type' => 'color',
+					'value' => $parsed['color'],
+				],
+			];
+			
+			// Add image if present
+			if ( isset( $parsed['image'] ) ) {
+				$background_value['image'] = [
+					'$$type' => 'string',
+					'value' => $parsed['image'],
+				];
+			}
+			
+			return [
+				'property' => 'background',
+				'value' => [
+					'$$type' => 'background',
+					'value' => $background_value,
+				],
+			];
+		}
+		
+		// Fallback for complex backgrounds
+		return [
+			'property' => 'background',
+			'value' => [
+				'$$type' => 'string',
+				'value' => trim( $value ),
+			],
+		];
 	}
 
 	private function is_valid_background( $value ): bool {
@@ -89,14 +117,17 @@ class Background_Property_Mapper extends Property_Mapper_Base {
 			return false;
 		}
 
-		$value = trim( strtolower( $value ) );
+		$value = trim( $value );
 
-		if ( $value === 'none' || $value === 'transparent' ) {
-			return true;
+		if ( empty( $value ) ) {
+			return false;
 		}
 
-		// Basic validation - background shorthand is complex
-		return strlen( $value ) > 0;
+		// Check if it contains a color, URL, or gradient that we can parse
+		$parsed = $this->parse_background_shorthand( $value );
+		
+		// Only support backgrounds that we can meaningfully parse
+		return ! empty( $parsed );
 	}
 
 	private function parse_background_shorthand( string $value ): array {
@@ -138,6 +169,13 @@ class Background_Property_Mapper extends Property_Mapper_Base {
 				1 === preg_match( self::HEX6_PATTERN, $value ) ||
 				1 === preg_match( self::RGB_PATTERN, $value ) ||
 				1 === preg_match( self::RGBA_PATTERN, $value );
+	}
+
+	private function is_simple_color( string $value ): bool {
+		$value = trim( $value );
+		
+		// Check if the entire value is just a color (no other background properties)
+		return $this->is_color( $value );
 	}
 
 	private function normalize_color( string $value ): string {
