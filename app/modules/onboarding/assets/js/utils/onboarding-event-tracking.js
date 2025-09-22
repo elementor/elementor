@@ -2,6 +2,8 @@
 import eventsConfig from '../../../../../../core/common/modules/events-manager/assets/js/events-config';
 import { options } from './utils';
 
+console.log( '🚀 OnboardingEventTracking loaded with debugging!' );
+
 const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
 	HELLO_BIZ_CONTINUE: 'core_onboarding_s2_hellobiz',
@@ -1057,25 +1059,40 @@ export class OnboardingEventTracking {
 	static sendConnectionSuccessEvents( data ) {
 		console.log( '🎉 sendConnectionSuccessEvents called:', { tracking_opted_in: data.tracking_opted_in, access_tier: data.access_tier } );
 		this.sendCoreOnboardingInitiated();
+		this.sendAppropriateStatusEvent( 'success', data );
+		console.log( '📤 About to send all stored events...' );
+		this.sendAllStoredEvents();
+	}
 
+	static sendConnectionFailureEvents() {
+		console.log( '💥 sendConnectionFailureEvents called' );
+		this.sendAppropriateStatusEvent( 'fail' );
+	}
+
+	static sendAppropriateStatusEvent( status, data = null ) {
 		const hasCreateAccountAction = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT );
 		const hasConnectAction = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
 
-		console.log( '🔍 Checking stored actions:', { hasCreateAccountAction: !! hasCreateAccountAction, hasConnectAction: !! hasConnectAction } );
+		console.log( '🔍 Checking stored actions for status event:', { status, hasCreateAccountAction: !! hasCreateAccountAction, hasConnectAction: !! hasConnectAction } );
 
 		if ( hasCreateAccountAction ) {
-			console.log( '📤 Sending CREATE_ACCOUNT_STATUS (success) - user clicked Create Account' );
-			this.sendCreateAccountStatus( 'success', 1 );
+			console.log( `📤 Sending CREATE_ACCOUNT_STATUS (${ status }) - user clicked Create Account` );
+			this.sendCreateAccountStatus( status, 1 );
 		} else if ( hasConnectAction ) {
-			console.log( '📤 Sending CONNECT_STATUS (success) - user clicked Connect' );
-			this.sendConnectStatus( 'success', data.tracking_opted_in, data.access_tier );
+			console.log( `📤 Sending CONNECT_STATUS (${ status }) - user clicked Connect` );
+			if ( data ) {
+				this.sendConnectStatus( status, data.tracking_opted_in, data.access_tier );
+			} else {
+				this.sendConnectStatus( status, false, null );
+			}
 		} else {
-			console.log( '⚠️ No stored action found, defaulting to CONNECT_STATUS' );
-			this.sendConnectStatus( 'success', data.tracking_opted_in, data.access_tier );
+			console.log( `⚠️ No stored action found, defaulting to CONNECT_STATUS (${ status })` );
+			if ( data ) {
+				this.sendConnectStatus( status, data.tracking_opted_in, data.access_tier );
+			} else {
+				this.sendConnectStatus( status, false, null );
+			}
 		}
-
-		console.log( '📤 About to send all stored events...' );
-		this.sendAllStoredEvents();
 	}
 
 	static handleSiteStarterChoice( siteStarter ) {

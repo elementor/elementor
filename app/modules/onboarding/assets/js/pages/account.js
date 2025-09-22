@@ -188,8 +188,7 @@ export default function Account() {
 			},
 		} );
 
-		OnboardingEventTracking.sendConnectStatus( 'fail', false, null );
-		OnboardingEventTracking.sendCreateAccountStatus( 'fail', 1 );
+		OnboardingEventTracking.sendConnectionFailureEvents();
 
 		setNoticeState( {
 			type: 'error',
