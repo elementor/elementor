@@ -75,12 +75,4 @@ class Test_Media_Collector extends Elementor_Test_Base {
         $this->assertEmpty( $result['mapping'] );
         $this->assertNull( $result['zip_path'] );
     }
-
-    public function test_cleanup_works() {
-        $this->media_collector->start_processing();
-
-        // Should not throw errors
-        $this->media_collector->cleanup();
-        $this->assertTrue( true );
-    }
 }

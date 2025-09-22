@@ -35,7 +35,6 @@ class Process_Media extends Base_Route {
 			$media_collector = new \Elementor\TemplateLibrary\Classes\Media_Collector();
 			$result = $media_collector->process_media_collection( $media_urls );
 
-			// Cleanup temporary files
 			$media_collector->cleanup();
 
 			return Response::success( $result );
