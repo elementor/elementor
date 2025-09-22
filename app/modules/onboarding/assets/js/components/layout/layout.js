@@ -29,6 +29,21 @@ export default function Layout( props ) {
 
 	const { state, updateState } = useContext( OnboardingContext );
 
+	const handleTopbarConnectSuccess = useCallback( ( event, data ) => {
+		const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
+
+		OnboardingEventTracking.updateLibraryConnectConfig( data );
+
+		if ( isTrackingOptedInConnect ) {
+			elementorCommon.config.editor_events.can_send_events = true;
+			OnboardingEventTracking.sendConnectionSuccessEvents( data );
+		}
+
+		updateState( {
+			isLibraryConnected: true,
+		} );
+	}, [ updateState ] );
+
 	useEffect( () => {
 		// Send modal load event for current step.
 		elementorCommon.events.dispatchEvent( {
@@ -134,6 +149,7 @@ export default function Layout( props ) {
 				{ ! state.isLibraryConnected &&
 					<Connect
 						buttonRef={ createAccountButton.elRef }
+						successCallback={ handleTopbarConnectSuccess }
 					/>
 				}
 				<Header
