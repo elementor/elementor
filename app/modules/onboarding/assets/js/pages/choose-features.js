@@ -141,7 +141,7 @@ export default function ChooseFeatures() {
 									<input
 										className="e-onboarding__choose-features-section__checkbox"
 										type="checkbox"
-										onChange={ ( event ) => handleFeatureSelection( event, option ) }
+										onChange={ ( event ) => setSelectedFeatureList( { checked: event.currentTarget.checked, id: event.target.value, text: option.text, selectedFeatures, setSelectedFeatures } ) }
 										id={ itemId }
 										value={ itemId }
 									/>
