@@ -1057,8 +1057,23 @@ export class OnboardingEventTracking {
 	static sendConnectionSuccessEvents( data ) {
 		console.log( '🎉 sendConnectionSuccessEvents called:', { tracking_opted_in: data.tracking_opted_in, access_tier: data.access_tier } );
 		this.sendCoreOnboardingInitiated();
-		this.sendConnectStatus( 'success', data.tracking_opted_in, data.access_tier );
-		this.sendCreateAccountStatus( 'success', 1 );
+
+		const hasCreateAccountAction = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT );
+		const hasConnectAction = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
+
+		console.log( '🔍 Checking stored actions:', { hasCreateAccountAction: !! hasCreateAccountAction, hasConnectAction: !! hasConnectAction } );
+
+		if ( hasCreateAccountAction ) {
+			console.log( '📤 Sending CREATE_ACCOUNT_STATUS (success) - user clicked Create Account' );
+			this.sendCreateAccountStatus( 'success', 1 );
+		} else if ( hasConnectAction ) {
+			console.log( '📤 Sending CONNECT_STATUS (success) - user clicked Connect' );
+			this.sendConnectStatus( 'success', data.tracking_opted_in, data.access_tier );
+		} else {
+			console.log( '⚠️ No stored action found, defaulting to CONNECT_STATUS' );
+			this.sendConnectStatus( 'success', data.tracking_opted_in, data.access_tier );
+		}
+
 		console.log( '📤 About to send all stored events...' );
 		this.sendAllStoredEvents();
 	}

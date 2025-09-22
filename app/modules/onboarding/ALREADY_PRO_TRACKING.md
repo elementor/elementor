@@ -24,6 +24,12 @@
 - **Problem**: When clicking "Already have Pro" in step 3, events are sent for both step 2 AND step 3
 - **Analysis**: Suggests multiple event handlers or incorrect step tracking
 
+#### ❌ Issue 5: Both Status Events Always Sent - INCORRECT
+- **Problem**: Both `core_onboarding_connect_status` AND `core_onboarding_create_account_status` are sent regardless of user action
+- **Expected**: Only send the status event for the action the user actually took
+- **Root Cause**: `sendConnectionSuccessEvents()` always sends both status events
+- **Status**: ✅ FIXED - Now checks localStorage to determine which action was taken
+
 ---
 
 ## 🔧 DEBUGGING INSTRUMENTATION ADDED
