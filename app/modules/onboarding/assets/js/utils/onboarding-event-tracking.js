@@ -146,6 +146,8 @@ export class OnboardingEventTracking {
 		const startTime = Date.now();
 
 		try {
+			this.clearStaleSessionData();
+
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.START_TIME, startTime.toString() );
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.INITIATED, 'true' );
 		} catch ( error ) {
@@ -272,32 +274,10 @@ export class OnboardingEventTracking {
 		}
 	}
 
-	static clearAllOnboardingStorage() {
-		try {
-			const keysToRemove = [
-				ONBOARDING_STORAGE_KEYS.START_TIME,
-				ONBOARDING_STORAGE_KEYS.INITIATED,
-				ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS,
-				ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS,
-				ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS,
-				ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS,
-				ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE,
-				ONBOARDING_STORAGE_KEYS.PENDING_EXIT,
-				ONBOARDING_STORAGE_KEYS.PENDING_SKIP,
-				ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS,
-				ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS,
-				ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT,
-				ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
-				ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK,
-				ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
-			];
-
-			keysToRemove.forEach( ( key ) => {
-				localStorage.removeItem( key );
-			} );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to clear all onboarding storage:', error );
-		}
+	static clearStaleSessionData() {
+		Object.values( ONBOARDING_STORAGE_KEYS ).forEach( ( key ) => {
+			localStorage.removeItem( key );
+		} );
 	}
 
 	static checkAndSendEditorLoadedFromOnboarding() {
