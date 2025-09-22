@@ -10,12 +10,10 @@ import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 export default function GoProPopover( props ) {
 	const { state, updateState } = useContext( OnboardingContext );
 
-	const trackUpgradeFromAccountSetup = () => {
+	const trackUpgradeAction = useCallback( () => {
 		const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
-		if ( 1 === stepNumber ) {
-			OnboardingEventTracking.trackStepAction( 1, 'upgrade_topbar' );
-		}
-	};
+		OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
+	}, [ state.currentStep ] );
 
 	const upgradeButtonRef = useRef( null );
 
@@ -37,6 +35,10 @@ export default function GoProPopover( props ) {
 
 		alreadyHaveProButton.addEventListener( 'click', ( event ) => {
 			event.preventDefault();
+
+			trackUpgradeAction();
+			OnboardingEventTracking.cancelDelayedNoClickEvent();
+			OnboardingEventTracking.sendTopUpgrade( state.currentStep, 'already_pro_user' );
 
 			elementorCommon.events.dispatchEvent( {
 				event: 'already have pro',
@@ -67,7 +69,7 @@ export default function GoProPopover( props ) {
 					} );
 				} );
 		} );
-	}, [ state.currentStep, updateState ] );
+	}, [ state.currentStep, updateState, trackUpgradeAction ] );
 
 	// The buttonsConfig prop is an array of objects. To find the 'Upgrade Now' button, we need to iterate over the object.
 	const goProButton = props.buttonsConfig.find( ( button ) => 'go-pro' === button.id ),
@@ -79,7 +81,7 @@ export default function GoProPopover( props ) {
 			tabIndex: 0,
 			elRef: setupUpgradeButtonTracking,
 			onClick: () => {
-				trackUpgradeFromAccountSetup();
+				trackUpgradeAction();
 				OnboardingEventTracking.cancelDelayedNoClickEvent();
 				OnboardingEventTracking.sendTopUpgrade( state.currentStep, 'on_tooltip' );
 
