@@ -645,6 +645,13 @@ export class OnboardingEventTracking {
 	static scheduleDelayedNoClickEvent( currentStep, delay = 500 ) {
 		try {
 			console.log( '⏰ scheduleDelayedNoClickEvent:', { currentStep, delay } );
+
+			// Only use delayed no-click for step 1 (pre-connection)
+			if ( currentStep !== 1 ) {
+				console.log( '🚫 Skipping delayed no-click - not step 1:', currentStep );
+				return;
+			}
+
 			const eventData = {
 				currentStep,
 				timestamp: Date.now(),

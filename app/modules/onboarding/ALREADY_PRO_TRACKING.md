@@ -199,20 +199,59 @@ console.log( '📤 sendAllStoredEvents - checking all stored events...' );
 
 ---
 
-## 🔧 IDENTIFIED ROOT CAUSES (TO BE FILLED)
+## 🔧 IDENTIFIED ROOT CAUSES
 
-### Root Cause 1:
-- **Issue**: [To be determined]
-- **Evidence**: [Console logs showing the problem]
-- **Solution**: [Proposed fix]
+### ✅ Root Cause 1: Status Events Fixed
+- **Issue**: Both `core_onboarding_connect_status` AND `core_onboarding_create_account_status` always sent
+- **Evidence**: `connectFailureCallback()` in account.js was sending both events
+- **Solution**: ✅ IMPLEMENTED - Created `sendAppropriateStatusEvent()` method to send only correct event
 
-### Root Cause 2:
-- **Issue**: [To be determined]
-- **Evidence**: [Console logs showing the problem]  
-- **Solution**: [Proposed fix]
+### 🐛 Root Cause 2: Delayed No-Click Active in All Steps  
+- **Issue**: Step 3 shows unwanted `no_click` events from mouse hover
+- **Evidence**: Console logs show delayed no-click firing in step 3:
+  ```
+  ⏰ Scheduling delayed no-click event for step: 3
+  ⏰ Timeout fired - sending delayed no-click event for step: 3
+  ✅ Sending TOP_UPGRADE immediately
+  ```
+- **Solution**: 🔧 NEEDED - Limit delayed no-click mechanism to step 1 only
+
+### 🔍 Root Cause 3: Multiple Hover Cycles
+- **Issue**: Multiple mouse enter/leave cycles create multiple delayed events
+- **Evidence**: Console logs show repeated scheduling:
+  ```
+  🖱️ Mouse enter → 🖱️ Mouse leave → ⏰ Scheduling delayed no-click
+  🖱️ Mouse enter → 🖱️ Mouse leave → ⏰ Scheduling delayed no-click  
+  ⏰ Timeout fired → ⏰ Timeout fired (multiple events)
+  ```
+- **Solution**: 🔧 NEEDED - Better hover state management
 
 ---
 
-## ✅ FINAL RECOMMENDATIONS (TO BE FILLED)
+## ✅ FINAL RECOMMENDATIONS
 
-[Comprehensive fix recommendations based on test results]
+### 🎯 **IMMEDIATE FIX NEEDED:**
+
+**Limit Delayed No-Click to Step 1 Only:**
+```javascript
+static scheduleDelayedNoClickEvent( currentStep, delay = 500 ) {
+    // Only use delayed no-click for step 1 (pre-connection)
+    if ( currentStep !== 1 ) {
+        console.log( '🚫 Skipping delayed no-click - not step 1:', currentStep );
+        return;
+    }
+    // ... rest of existing logic
+}
+```
+
+### 📊 **CURRENT STATUS:**
+- ✅ **Step 1 Pre-Connection**: Working perfectly - events stored and sent after connection
+- ✅ **Step 1 Click Tracking**: Both "upgrade now" and "already have pro" working correctly  
+- ✅ **Status Events**: Fixed - only appropriate event sent based on user action
+- ❌ **Step 3 No-Click**: Unwanted events still firing - needs immediate fix
+- ❌ **Multiple Hovers**: Can create multiple delayed events - needs improvement
+
+### 🔧 **IMPLEMENTATION PRIORITY:**
+1. **HIGH**: Fix step 3 unwanted no-click events (simple 1-line fix)
+2. **MEDIUM**: Improve hover state management for multiple cycles
+3. **LOW**: Additional testing and edge case handling
