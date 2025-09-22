@@ -38,7 +38,8 @@ export default function GoProPopover( props ) {
 
 			trackUpgradeAction();
 			OnboardingEventTracking.cancelDelayedNoClickEvent();
-			OnboardingEventTracking.sendTopUpgrade( state.currentStep, 'already_pro_user' );
+			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+			OnboardingEventTracking.sendTopUpgrade( stepNumber, 'already_pro_user' );
 
 			elementorCommon.events.dispatchEvent( {
 				event: 'already have pro',
@@ -83,7 +84,8 @@ export default function GoProPopover( props ) {
 			onClick: () => {
 				trackUpgradeAction();
 				OnboardingEventTracking.cancelDelayedNoClickEvent();
-				OnboardingEventTracking.sendTopUpgrade( state.currentStep, 'on_tooltip' );
+				const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
 
 				elementorCommon.events.dispatchEvent( {
 					event: 'get elementor pro',
