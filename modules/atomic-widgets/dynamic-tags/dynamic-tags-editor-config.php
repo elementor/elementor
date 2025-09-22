@@ -86,7 +86,7 @@ class Dynamic_Tags_Editor_Config {
 		}
 
 		try {
-			$atomic_controls = $this->convert_controls_to_atomic( $tag['controls'], $tag['force_convert_to_atomic'] ?? false );
+			$atomic_controls = $this->convert_controls_to_atomic( $tag['controls'], $tag['force_convert_to_atomic'] ?? false, $tag );
 		} catch ( \Exception $e ) {
 			return null;
 		}
@@ -100,7 +100,7 @@ class Dynamic_Tags_Editor_Config {
 		return $converted_tag;
 	}
 
-	private function convert_controls_to_atomic( $controls, $force = false ) {
+	private function convert_controls_to_atomic( $controls, $force = false, $tag = [] ) {
 		$atomic_controls = [];
 
 		foreach ( $controls as $control ) {
@@ -108,7 +108,7 @@ class Dynamic_Tags_Editor_Config {
 				continue;
 			}
 
-			$atomic_control = $this->convert_control_to_atomic( $control );
+			$atomic_control = $this->convert_control_to_atomic( $control, $tag );
 
 			if ( ! $atomic_control ) {
 				if ( $force ) {
@@ -131,9 +131,9 @@ class Dynamic_Tags_Editor_Config {
 		return array_values( $atomic_controls );
 	}
 
-	private function convert_control_to_atomic( $control ) {
+	private function convert_control_to_atomic( $control, $tag = [] ) {
 		$map = [
-			'select'   => fn( $control ) => $this->convert_select_control_to_atomic( $control ),
+			'select'   => fn( $control ) => $this->convert_select_control_to_atomic( $control, $tag ),
 			'text'     => fn( $control ) => $this->convert_text_control_to_atomic( $control ),
 			'textarea' => fn( $control ) => $this->convert_textarea_control_to_atomic( $control ),
 			'switcher' => fn( $control ) => $this->convert_switch_control_to_atomic( $control ),
@@ -160,9 +160,28 @@ class Dynamic_Tags_Editor_Config {
 	 * @return Select_Control
 	 * @throws \Exception If control is missing options.
 	 */
-	private function convert_select_control_to_atomic( $control ) {
-		if ( empty( $control['options'] ) ) {
+	private function convert_select_control_to_atomic( $control, $tag = [] ) {
+		$options = $control['options'] ?? [];
+
+		if ( empty( $options ) && isset( $control['groups'] ) && is_array( $control['groups'] ) ) {
+			foreach ( $control['groups'] as $group ) {
+				if ( isset( $group['options'] ) && is_array( $group['options'] ) ) {
+					foreach ( $group['options'] as $key => $label ) {
+						if ( ! is_string( $key ) ) {
+							continue;
+						}
+						$options[ $key ] = (string) $label;
+					}
+				}
+			}
+		}
+
+		if ( empty( $options ) ) {
 			throw new \Exception( 'Select control must have options' );
+		}
+
+		if ( function_exists( 'apply_filters' ) ) {
+			$options = apply_filters( 'elementor/atomic/dynamic_tags/select_control_options', $options, $control, $tag );
 		}
 
 		$options = array_map(
@@ -170,8 +189,8 @@ class Dynamic_Tags_Editor_Config {
 				'value' => $key,
 				'label' => $value,
 			],
-			array_keys( $control['options'] ),
-			$control['options']
+			array_keys( $options ),
+			$options
 		);
 
 		$select_control = Select_Control::bind_to( $control['name'] )
