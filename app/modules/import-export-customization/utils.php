@@ -152,14 +152,14 @@ class Utils {
 		return $space_between_widgets;
 	}
 
-    public static function is_high_tier(): bool {
+	public static function is_high_tier(): bool {
 		if ( ! class_exists( 'ElementorPro\License\API' ) ) {
 			return false;
 		}
 
-        if ( ! method_exists( '\ElementorPro\License\API', 'get_plan_type' ) ) {
-            return false;
-        }
+		if ( ! method_exists( '\ElementorPro\License\API', 'get_plan_type' ) ) {
+			return false;
+		}
 
 		try {
 			$plan_type = \ElementorPro\License\API::get_plan_type();

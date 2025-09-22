@@ -75,7 +75,7 @@ class Wp_Content extends Import_Runner_Base {
 				static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID => $this->import_session_id,
 			],
 		];
-        
+
 		if ( 'page' === $post_type && ImportExportUtils::is_high_tier() ) {
 			$args['include'] = $customization['pages'] ?? null;
 		}
