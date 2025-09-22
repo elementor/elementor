@@ -15,6 +15,7 @@ export default function GoodToGo() {
 
 	useEffect( () => {
 		OnboardingEventTracking.checkAndSendReturnToStep4();
+		OnboardingEventTracking.onStepLoad( 4 );
 	}, [] );
 
 	return (

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { OnboardingContext } from '../context/context';
 
 import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
@@ -13,7 +12,6 @@ export default function GoProPopover( props ) {
 
 	const trackUpgradeAction = useCallback( () => {
 		const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
-		console.log( '🎯 trackUpgradeAction called:', { currentStep: state.currentStep, stepNumber } );
 		OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
 	}, [ state.currentStep ] );
 
@@ -45,11 +43,9 @@ export default function GoProPopover( props ) {
 		const clickHandler = ( event ) => {
 			event.preventDefault();
 
-			console.log( '🔥 Already have Pro clicked:', { currentStep: state.currentStep } );
 			trackUpgradeAction();
 			OnboardingEventTracking.cancelDelayedNoClickEvent();
 			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
-			console.log( '🔥 Sending already_pro_user for step:', { currentStep: state.currentStep, stepNumber } );
 			OnboardingEventTracking.sendTopUpgrade( stepNumber, 'already_pro_user' );
 
 			elementorCommon.events.dispatchEvent( {
@@ -97,11 +93,9 @@ export default function GoProPopover( props ) {
 			tabIndex: 0,
 			elRef: setupUpgradeButtonTracking,
 			onClick: () => {
-				console.log( '🔥 Upgrade now clicked:', { currentStep: state.currentStep } );
 				trackUpgradeAction();
 				OnboardingEventTracking.cancelDelayedNoClickEvent();
 				const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
-				console.log( '🔥 Sending on_tooltip for step:', { currentStep: state.currentStep, stepNumber } );
 				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
 
 				elementorCommon.events.dispatchEvent( {

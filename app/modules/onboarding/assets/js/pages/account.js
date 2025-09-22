@@ -31,6 +31,7 @@ export default function Account() {
 		}
 
 		OnboardingEventTracking.setupTopUpgradeTracking( state.currentStep );
+		OnboardingEventTracking.onStepLoad( 1 );
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 

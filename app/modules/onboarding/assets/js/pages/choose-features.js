@@ -92,10 +92,11 @@ export default function ChooseFeatures() {
 		} else {
 			setTierName( tiers.essential );
 		}
-	}, [ selectedFeatures ] );
+	}, [ selectedFeatures, tiers.advanced, tiers.essential ] );
 
 	useEffect( () => {
 		OnboardingEventTracking.setupTopUpgradeTracking( state.currentStep );
+		OnboardingEventTracking.onStepLoad( 3 );
 	}, [ state.currentStep ] );
 
 	function isFeatureSelected( features ) {

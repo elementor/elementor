@@ -1,8 +1,5 @@
-/* eslint-disable no-console */
 import eventsConfig from '../../../../../../core/common/modules/events-manager/assets/js/events-config';
 import { options } from './utils';
-
-console.log( '🚀 OnboardingEventTracking loaded with debugging!' );
 
 const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
@@ -43,6 +40,10 @@ const ONBOARDING_STORAGE_KEYS = {
 	STEP2_ACTIONS: 'elementor_onboarding_s2_actions',
 	STEP3_ACTIONS: 'elementor_onboarding_s3_actions',
 	STEP4_ACTIONS: 'elementor_onboarding_s4_actions',
+	STEP1_START_TIME: 'elementor_onboarding_s1_start_time',
+	STEP2_START_TIME: 'elementor_onboarding_s2_start_time',
+	STEP3_START_TIME: 'elementor_onboarding_s3_start_time',
+	STEP4_START_TIME: 'elementor_onboarding_s4_start_time',
 	STEP4_SITE_STARTER_CHOICE: 'elementor_onboarding_s4_site_starter_choice',
 	EDITOR_LOAD_TRACKED: 'elementor_onboarding_editor_load_tracked',
 	POST_ONBOARDING_CLICK_COUNT: 'elementor_onboarding_click_count',
@@ -393,9 +394,6 @@ export class OnboardingEventTracking {
 	static cleanupPostOnboardingTracking() {
 		try {
 			document.removeEventListener( 'click', this.trackPostOnboardingClick );
-			console.log( '🧹 cleanupPostOnboardingTracking called - would clear storage if method existed' );
-			// Note: clearAllOnboardingStorage method is not defined - commenting out to prevent errors
-			// this.clearAllOnboardingStorage();
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to cleanup post-onboarding tracking:', error );
 		}
@@ -508,10 +506,7 @@ export class OnboardingEventTracking {
 	}
 
 	static sendTopUpgrade( currentStep, upgradeClicked ) {
-		console.log( '🔥 sendTopUpgrade called:', { currentStep, upgradeClicked, can_send_events: elementorCommon.config.editor_events?.can_send_events } );
-
 		if ( elementorCommon.config.editor_events?.can_send_events ) {
-			console.log( '✅ Sending TOP_UPGRADE immediately:', { step_number: currentStep, step_name: this.getStepName( currentStep ), upgrade_clicked: upgradeClicked } );
 			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.TOP_UPGRADE, {
 				location: 'plugin_onboarding',
 				trigger: 'upgrade_interaction',
@@ -522,12 +517,8 @@ export class OnboardingEventTracking {
 			} );
 		}
 
-		// Only store data for step 1 (pre-connection)
 		if ( 1 === currentStep ) {
-			console.log( '💾 Storing TOP_UPGRADE for later (step 1 only):', { currentStep, upgradeClicked } );
 			this.storeTopUpgradeEventForLater( currentStep, upgradeClicked );
-		} else {
-			console.log( '🚫 Not storing TOP_UPGRADE - step is post-connection:', { currentStep, upgradeClicked } );
 		}
 	}
 
@@ -572,9 +563,7 @@ export class OnboardingEventTracking {
 
 	static storeTopUpgradeEventForLater( currentStep, upgradeClicked ) {
 		try {
-			const existingDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
 			const existingEvents = existingDataStr ? JSON.parse( existingDataStr ) : [];
-			console.log( '💾 storeTopUpgradeEventForLater - existing events:', existingEvents );
 
 			const eventData = {
 				currentStep,
@@ -582,9 +571,7 @@ export class OnboardingEventTracking {
 				timestamp: Date.now(),
 			};
 
-			// Add new event to array
 			existingEvents.push( eventData );
-			console.log( '💾 storeTopUpgradeEventForLater - storing events array:', existingEvents );
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE, JSON.stringify( existingEvents ) );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to store top upgrade event:', error );
@@ -593,29 +580,14 @@ export class OnboardingEventTracking {
 
 	static sendStoredTopUpgradeEvent() {
 		try {
-			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
-			console.log( '📤 sendStoredTopUpgradeEvent - stored data:', storedDataStr );
-
 			if ( ! storedDataStr ) {
-				console.log( '❌ No stored TOP_UPGRADE data found' );
 				return;
 			}
 
 			const storedEvents = JSON.parse( storedDataStr );
-			console.log( '📤 sendStoredTopUpgradeEvent - events array:', storedEvents );
-
-			// Handle both old single event format and new array format for backward compatibility
 			const eventsArray = Array.isArray( storedEvents ) ? storedEvents : [ storedEvents ];
 
-			// Send all stored events
-			eventsArray.forEach( ( eventData, index ) => {
-				console.log( `📤 Sending stored TOP_UPGRADE event ${ index + 1 }/${ eventsArray.length }:`, {
-					step_number: eventData.currentStep,
-					step_name: this.getStepName( eventData.currentStep ),
-					upgrade_clicked: eventData.upgradeClicked,
-					timestamp: eventData.timestamp,
-				} );
-
+			eventsArray.forEach( ( eventData ) => {
 				this.dispatchEvent( ONBOARDING_EVENTS_MAP.TOP_UPGRADE, {
 					location: 'plugin_onboarding',
 					trigger: 'upgrade_interaction',
@@ -628,7 +600,6 @@ export class OnboardingEventTracking {
 			} );
 
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
-			console.log( `🗑️ Removed stored TOP_UPGRADE data (sent ${ eventsArray.length } events)` );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to send stored top upgrade event:', error );
 		}
@@ -673,19 +644,16 @@ export class OnboardingEventTracking {
 
 	static scheduleDelayedNoClickEvent( currentStep, delay = 500 ) {
 		try {
-			console.log( '⏰ scheduleDelayedNoClickEvent:', { currentStep, delay } );
-
-			// Only use delayed no-click for step 1 (pre-connection)
 			if ( currentStep !== 1 ) {
-				console.log( '🚫 Skipping delayed no-click - not step 1:', currentStep );
 				return;
 			}
+
+			this.cancelDelayedNoClickEvent();
 
 			const eventData = {
 				currentStep,
 				timestamp: Date.now(),
 				timeoutId: setTimeout( () => {
-					console.log( '⏰ Timeout fired - sending delayed no-click event for step:', currentStep );
 					this.sendDelayedNoClickEvent();
 				}, delay ),
 			};
@@ -693,7 +661,6 @@ export class OnboardingEventTracking {
 				currentStep: eventData.currentStep,
 				timestamp: eventData.timestamp,
 			} ) );
-			console.log( '💾 Stored delayed no-click event data:', { currentStep: eventData.currentStep, timestamp: eventData.timestamp } );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to schedule delayed no-click event:', error );
 		}
@@ -701,7 +668,6 @@ export class OnboardingEventTracking {
 
 	static cancelDelayedNoClickEvent() {
 		try {
-			console.log( '❌ cancelDelayedNoClickEvent - removing stored data' );
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to cancel delayed no-click event:', error );
@@ -710,16 +676,11 @@ export class OnboardingEventTracking {
 
 	static sendDelayedNoClickEvent() {
 		try {
-			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
-			console.log( '⏰ sendDelayedNoClickEvent - stored data:', storedDataStr );
-
 			if ( ! storedDataStr ) {
-				console.log( '❌ No delayed no-click data found' );
 				return;
 			}
 
 			const eventData = JSON.parse( storedDataStr );
-			console.log( '⏰ Sending delayed no-click event:', { currentStep: eventData.currentStep } );
 			this.sendTopUpgrade( eventData.currentStep, 'no_click' );
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
 		} catch ( error ) {
@@ -901,20 +862,15 @@ export class OnboardingEventTracking {
 			return null;
 		}
 
-		console.log( '🎯 setupSingleUpgradeButton:', { currentStep, buttonElement: buttonElement.className || buttonElement.tagName } );
-
 		let hasHovered = false;
 		let hasClicked = false;
 
 		const handleMouseEnter = () => {
 			hasHovered = true;
-			console.log( '🖱️ Mouse enter on upgrade button:', { currentStep, hasHovered } );
 		};
 
 		const handleMouseLeave = () => {
-			console.log( '🖱️ Mouse leave on upgrade button:', { currentStep, hasHovered, hasClicked } );
 			if ( hasHovered && ! hasClicked ) {
-				console.log( '⏰ Scheduling delayed no-click event for step:', currentStep );
 				this.scheduleDelayedNoClickEvent( currentStep );
 				hasHovered = false;
 			}
@@ -922,11 +878,9 @@ export class OnboardingEventTracking {
 
 		const handleClick = () => {
 			hasClicked = true;
-			console.log( '🖱️ Click on upgrade button:', { currentStep, hasClicked } );
 			this.cancelDelayedNoClickEvent();
 
 			const upgradeClickedValue = this.determineUpgradeClickedValue( buttonElement );
-			console.log( '🎯 Determined upgrade clicked value:', { currentStep, upgradeClickedValue, buttonClass: buttonElement.className } );
 			this.sendTopUpgrade( currentStep, upgradeClickedValue );
 		};
 
@@ -973,16 +927,11 @@ export class OnboardingEventTracking {
 
 	static trackStepActionInternal( stepNumber, action, storageKey, additionalData = {} ) {
 		try {
-			const timeData = this.calculateTimeSpent();
-			if ( ! timeData ) {
-				return;
-			}
-
+			const currentTime = Date.now();
 			const existingActions = this.getStoredActions( storageKey );
 			const actionData = {
 				action,
-				timestamp: timeData.currentTime,
-				time_spent: `${ timeData.timeSpent }s`,
+				timestamp: currentTime,
 				...additionalData,
 			};
 
@@ -1006,6 +955,7 @@ export class OnboardingEventTracking {
 			const startTime = parseInt( startTimeString, 10 );
 			const currentTime = Date.now();
 			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
+			const stepTimeSpent = this.calculateStepTimeSpent( stepNumber );
 
 			const eventData = {
 				location: 'plugin_onboarding',
@@ -1015,16 +965,22 @@ export class OnboardingEventTracking {
 				total_time_spent: `${ totalTimeSpent }s`,
 			};
 
+			if ( stepTimeSpent !== null ) {
+				eventData.step_time_spent = `${ stepTimeSpent }s`;
+			}
+
 			eventData[ endStateProperty ] = actions;
 
 			if ( elementorCommon.config.editor_events?.can_send_events ) {
 				this.dispatchEvent( eventName, eventData );
 				localStorage.removeItem( storageKey );
+				this.clearStepStartTime( stepNumber );
 			} else if ( 1 === stepNumber ) {
 				this.storeStep1EndStateForLater( eventData, storageKey );
 			} else {
 				this.dispatchEvent( eventName, eventData );
 				localStorage.removeItem( storageKey );
+				this.clearStepStartTime( stepNumber );
 			}
 		} catch ( error ) {
 			this.handleStorageError( `Failed to send Step ${ stepNumber } end state:`, error );
@@ -1042,6 +998,55 @@ export class OnboardingEventTracking {
 		const timeSpent = Math.round( ( currentTime - startTime ) / 1000 );
 
 		return { startTime, currentTime, timeSpent };
+	}
+
+	static trackStepStartTime( stepNumber ) {
+		try {
+			const stepStartTimeKey = this.getStepStartTimeKey( stepNumber );
+			const currentTime = Date.now();
+			localStorage.setItem( stepStartTimeKey, currentTime.toString() );
+		} catch ( error ) {
+			this.handleStorageError( `Failed to track step ${ stepNumber } start time:`, error );
+		}
+	}
+
+	static calculateStepTimeSpent( stepNumber ) {
+		try {
+			const stepStartTimeKey = this.getStepStartTimeKey( stepNumber );
+			const stepStartTimeString = localStorage.getItem( stepStartTimeKey );
+
+			if ( ! stepStartTimeString ) {
+				return null;
+			}
+
+			const stepStartTime = parseInt( stepStartTimeString, 10 );
+			const currentTime = Date.now();
+			const stepTimeSpent = Math.round( ( currentTime - stepStartTime ) / 1000 );
+
+			return stepTimeSpent;
+		} catch ( error ) {
+			this.handleStorageError( `Failed to calculate step ${ stepNumber } time:`, error );
+			return null;
+		}
+	}
+
+	static getStepStartTimeKey( stepNumber ) {
+		const stepStartTimeKeys = {
+			1: ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
+			2: ONBOARDING_STORAGE_KEYS.STEP2_START_TIME,
+			3: ONBOARDING_STORAGE_KEYS.STEP3_START_TIME,
+			4: ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
+		};
+		return stepStartTimeKeys[ stepNumber ];
+	}
+
+	static clearStepStartTime( stepNumber ) {
+		try {
+			const stepStartTimeKey = this.getStepStartTimeKey( stepNumber );
+			localStorage.removeItem( stepStartTimeKey );
+		} catch ( error ) {
+			this.handleStorageError( `Failed to clear step ${ stepNumber } start time:`, error );
+		}
 	}
 
 	static getStoredActions( storageKey ) {
@@ -1093,34 +1098,12 @@ export class OnboardingEventTracking {
 	}
 
 	static sendConnectionSuccessEvents( data ) {
-		console.log( '🎉 sendConnectionSuccessEvents called:', { tracking_opted_in: data.tracking_opted_in, access_tier: data.access_tier } );
-
-		// Debug: Check localStorage before any processing
-		const storedDataBefore = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
-		console.log( '🔍 localStorage check BEFORE connection processing:', storedDataBefore );
-
 		this.sendCoreOnboardingInitiated();
-
-		// Debug: Check localStorage after sendCoreOnboardingInitiated
-		const storedDataAfterInitiated = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
-		console.log( '🔍 localStorage check AFTER sendCoreOnboardingInitiated:', storedDataAfterInitiated );
-
 		this.sendAppropriateStatusEvent( 'success', data );
-
-		// Debug: Check localStorage after status event
-		const storedDataAfterStatus = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
-		console.log( '🔍 localStorage check AFTER sendAppropriateStatusEvent:', storedDataAfterStatus );
-
-		console.log( '📤 About to send all stored events...' );
 		this.sendAllStoredEvents();
-
-		// Debug: Check localStorage after sending all events
-		const storedDataAfterSend = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
-		console.log( '🔍 localStorage check AFTER sendAllStoredEvents:', storedDataAfterSend );
 	}
 
 	static sendConnectionFailureEvents() {
-		console.log( '💥 sendConnectionFailureEvents called' );
 		this.sendAppropriateStatusEvent( 'fail' );
 	}
 
@@ -1128,34 +1111,19 @@ export class OnboardingEventTracking {
 		const hasCreateAccountAction = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT );
 		const hasConnectAction = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
 
-		console.log( '🔍 Checking stored actions for status event:', { status, hasCreateAccountAction: !! hasCreateAccountAction, hasConnectAction: !! hasConnectAction } );
-
-		// Debug: Check if TOP_UPGRADE data still exists here
-		const topUpgradeData = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
-		console.log( '🔍 TOP_UPGRADE data check in sendAppropriateStatusEvent:', topUpgradeData );
-
 		if ( hasCreateAccountAction ) {
-			console.log( `📤 Sending CREATE_ACCOUNT_STATUS (${ status }) - user clicked Create Account` );
 			this.sendCreateAccountStatus( status, 1 );
 		} else if ( hasConnectAction ) {
-			console.log( `📤 Sending CONNECT_STATUS (${ status }) - user clicked Connect` );
 			if ( data ) {
 				this.sendConnectStatus( status, data.tracking_opted_in, data.access_tier );
 			} else {
 				this.sendConnectStatus( status, false, null );
 			}
+		} else if ( data ) {
+			this.sendConnectStatus( status, data.tracking_opted_in, data.access_tier );
 		} else {
-			console.log( `⚠️ No stored action found, defaulting to CONNECT_STATUS (${ status })` );
-			if ( data ) {
-				this.sendConnectStatus( status, data.tracking_opted_in, data.access_tier );
-			} else {
-				this.sendConnectStatus( status, false, null );
-			}
+			this.sendConnectStatus( status, false, null );
 		}
-
-		// Debug: Check if TOP_UPGRADE data still exists after status event
-		const topUpgradeDataAfter = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
-		console.log( '🔍 TOP_UPGRADE data check AFTER status event:', topUpgradeDataAfter );
 	}
 
 	static handleSiteStarterChoice( siteStarter ) {
@@ -1167,7 +1135,6 @@ export class OnboardingEventTracking {
 	}
 
 	static sendAllStoredEvents() {
-		console.log( '📤 sendAllStoredEvents - checking all stored events...' );
 		this.sendStoredExitEvent();
 		this.sendStoredSkipEvent();
 		this.sendStoredConnectStatusEvent();
@@ -1176,28 +1143,19 @@ export class OnboardingEventTracking {
 		this.sendStoredCreateAccountStatusEvent();
 		this.sendStoredStep1ClickedConnectEvent();
 		this.sendStoredStep1EndStateEvent();
-		console.log( '✅ sendAllStoredEvents completed' );
 	}
 
 	static sendStoredStep1EventsOnStep2() {
-		console.log( '🎯 sendStoredStep1EventsOnStep2 - sending step 1 events when reaching step 2...' );
-
-		// Debug: Check what data exists before sending
-		const topUpgradeData = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
-		console.log( '🔍 Step 1 TOP_UPGRADE data check on step 2:', topUpgradeData );
-
-		// Send stored step 1 events immediately
 		this.sendStoredTopUpgradeEvent();
-
-		console.log( '✅ sendStoredStep1EventsOnStep2 completed' );
 	}
 
 	static onStepLoad( currentStep ) {
-		console.log( '🎯 onStepLoad called:', { currentStep } );
+		const stepNumber = this.getStepNumber( currentStep );
+		if ( stepNumber ) {
+			this.trackStepStartTime( stepNumber );
+		}
 
-		// If we're on step 2 and have stored step 1 events, send them immediately
 		if ( 2 === currentStep || 'hello' === currentStep ) {
-			console.log( '🎯 Reached step 2 - checking for stored step 1 events...' );
 			this.sendStoredStep1EventsOnStep2();
 		}
 	}
