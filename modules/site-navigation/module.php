@@ -2,24 +2,22 @@
 
 namespace Elementor\Modules\SiteNavigation;
 
-use Elementor\Core\Base\Module as Module_Base;
-use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
+use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\SiteNavigation\Data\Controller;
 use Elementor\Modules\SiteNavigation\Rest_Fields\Page_User_Can;
 use Elementor\Plugin;
-use Elementor\Utils;
-
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Module extends Module_Base {
+class Module extends BaseModule {
 	const PAGES_PANEL_EXPERIMENT_NAME = 'pages_panel';
 	const PACKAGES = [
 		'editor-site-navigation',
 	];
+
 	/**
 	 * Initialize the Site navigation module.
 	 *
@@ -27,23 +25,27 @@ class Module extends Module_Base {
 	 * @throws \Exception If the experiment registration fails.
 	 */
 	public function __construct() {
-		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
+		parent::__construct();
 
-		$this->register_pages_panel_experiment();
+		$this->register_experiment();
+
+		if ( ! $this->is_experiment_active() ) {
+			return;
+		}
+
+		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
-		if ( Plugin::$instance->experiments->is_feature_active( self::PAGES_PANEL_EXPERIMENT_NAME ) ) {
-			add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
-				$env['@elementor/editor-site-navigation'] = [
-					'is_pages_panel_active' => true,
-				];
+		add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
+			$env['@elementor/editor-site-navigation'] = [
+				'is_pages_panel_active' => true,
+			];
 
-				return $env;
-			} );
+			return $env;
+		} );
 
-			$this->register_rest_fields();
-		}
+		$this->register_rest_fields();
 	}
 
 	/**
@@ -55,6 +57,10 @@ class Module extends Module_Base {
 		return 'site-navigation';
 	}
 
+	public static function is_experiment_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::PAGES_PANEL_EXPERIMENT_NAME );
+	}
+
 	/**
 	 * Register Experiment
 	 *
@@ -62,7 +68,7 @@ class Module extends Module_Base {
 	 *
 	 * @return void
 	 */
-	private function register_pages_panel_experiment() {
+	private function register_experiment() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::PAGES_PANEL_EXPERIMENT_NAME,
 			'title' => esc_html__( 'Pages Panel', 'elementor' ),
