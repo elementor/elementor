@@ -29,16 +29,7 @@ export default function Layout( props ) {
 
 	const { state, updateState } = useContext( OnboardingContext );
 
-	const handleTopbarConnectSuccess = useCallback( ( event, data ) => {
-		const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
-
-		OnboardingEventTracking.updateLibraryConnectConfig( data );
-
-		if ( isTrackingOptedInConnect ) {
-			elementorCommon.config.editor_events.can_send_events = true;
-			OnboardingEventTracking.sendConnectionSuccessEvents( data );
-		}
-
+	const handleTopbarConnectSuccess = useCallback( () => {
 		updateState( {
 			isLibraryConnected: true,
 		} );

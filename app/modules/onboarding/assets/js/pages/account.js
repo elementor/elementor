@@ -139,21 +139,12 @@ export default function Account() {
 		};
 	}
 
-	const connectSuccessCallback = ( event, data ) => {
+	const connectSuccessCallback = () => {
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
-		const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
 
 		stateToUpdate.isLibraryConnected = true;
 
-		OnboardingEventTracking.updateLibraryConnectConfig( data );
-
 		OnboardingEventTracking.trackStepAction( 1, 'connect' );
-
-		if ( isTrackingOptedInConnect ) {
-			elementorCommon.config.editor_events.can_send_events = true;
-
-			OnboardingEventTracking.sendConnectionSuccessEvents( data );
-		}
 
 		updateState( stateToUpdate );
 
