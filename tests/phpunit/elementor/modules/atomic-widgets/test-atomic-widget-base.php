@@ -269,6 +269,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'src' => 'https://example.com/image.jpg',
 						],
 						'image_with_attachment' => [
+							'id' => 123,
 							'src' => 'https://example.com/image.jpg',
 							'width' => 100,
 							'height' => 200,
