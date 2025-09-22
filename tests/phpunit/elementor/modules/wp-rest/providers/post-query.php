@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 trait Post_Query {
 	private $force_delete = true;
-	private $all_posts = -1;
+	private $count = -1;
 
 	protected array $post_types;
 	protected array $posts;
@@ -22,7 +22,7 @@ trait Post_Query {
 
 		foreach ( get_posts( [
 			'post_type' => [ 'post', 'product', 'page', 'movie' ],
-			'numberposts' => $this->all_posts,
+			'numberposts' => $this->count,
 		] ) as $post ) {
 			var_dump( $post->post_title );
 		}
@@ -31,6 +31,7 @@ trait Post_Query {
 			unregister_post_type( $post_type );
 		}
 
+		$this->count = -1;
 		$this->posts = [];
 		$this->post_types = [];
 	}
@@ -38,7 +39,7 @@ trait Post_Query {
 	protected function init() {
 		foreach ( get_posts( [
 			'post_type' => [ 'post', 'product', 'page', 'movie' ],
-			'numberposts' => $this->all_posts,
+			'numberposts' => $this->count,
 		] ) as $post ) {
 			wp_delete_post( $post->ID, $this->force_delete );
 		}
@@ -61,6 +62,8 @@ trait Post_Query {
 	}
 
 	private function create_posts() {
+		$this->count = 0;
+
 		$this->posts = [
 			$this->insert_post( 'Hello World', 'The first post on the site.', 'publish', 'post' ),
 			$this->insert_post( 'My Blogging Journey', 'Sharing my experiences as a blogger.', 'publish', 'post' ),
@@ -78,22 +81,22 @@ trait Post_Query {
 	}
 
 	private function insert_post( $post_title, $description, $status, $post_type ) {
-		$post = $this->factory()->create_and_get_custom_post( [
+		$this->count++;
+
+		return $this->factory()->create_and_get_custom_post( [
 			'post_title' => $post_title,
 			'post_content' => $description,
 			'post_status' => $status,
 			'post_type' => $post_type,
 		] );
-
-		return $post;
 	}
 
 	public function data_provider_post_query() {
 		return [
 			[
 				'params' => array_merge( Post_Query_Class::build_query_params( [
-					Post_Query_Class::EXCLUDED_POST_TYPE_KEYS => [],
-					Post_Query_Class::POST_KEYS_CONVERSION_MAP => [
+					Post_Query_Class::EXCLUDED_TYPE_KEY => Post_Query_Class::DEFAULT_FORBIDDEN_POST_TYPES,
+					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'id',
 						'post_title' => 'label',
 					],
@@ -111,8 +114,8 @@ trait Post_Query {
 			],
 			[
 				'params' => array_merge( Post_Query_Class::build_query_params( [
-					Post_Query_Class::EXCLUDED_POST_TYPE_KEYS => [ 'page', 'post' ],
-					Post_Query_Class::POST_KEYS_CONVERSION_MAP => [
+					Post_Query_Class::EXCLUDED_TYPE_KEY => array_merge( Post_Query_Class::DEFAULT_FORBIDDEN_POST_TYPES, [ 'page', 'post' ] ),
+					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'post_id',
 						'post_title' => 'random_key',
 					],
@@ -126,8 +129,8 @@ trait Post_Query {
 			],
 			[
 				'params' => array_merge( Post_Query_Class::build_query_params( [
-					Post_Query_Class::EXCLUDED_POST_TYPE_KEYS => [ 'page', 'post' ],
-					Post_Query_Class::POST_KEYS_CONVERSION_MAP => [
+					Post_Query_Class::EXCLUDED_TYPE_KEY => array_merge( Post_Query_Class::DEFAULT_FORBIDDEN_POST_TYPES, [ 'page', 'post' ] ),
+					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'post_id',
 						'post_title' => 'random_key',
 					],
@@ -136,8 +139,8 @@ trait Post_Query {
 			],
 			[
 				'params' => array_merge( Post_Query_Class::build_query_params( [
-					Post_Query_Class::EXCLUDED_POST_TYPE_KEYS => [ 'page', 'post' ],
-					Post_Query_Class::POST_KEYS_CONVERSION_MAP => [
+					Post_Query_Class::EXCLUDED_TYPE_KEY => array_merge( Post_Query_Class::DEFAULT_FORBIDDEN_POST_TYPES, [ 'page', 'post' ] ),
+					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'post_id',
 						'post_title' => 'random_key',
 					],
@@ -146,8 +149,8 @@ trait Post_Query {
 			],
 			[
 				'params' => array_merge( Post_Query_Class::build_query_params( [
-					Post_Query_Class::EXCLUDED_POST_TYPE_KEYS => [ 'product', 'post' ],
-					Post_Query_Class::POST_KEYS_CONVERSION_MAP => [
+					Post_Query_Class::EXCLUDED_TYPE_KEY => array_merge( Post_Query_Class::DEFAULT_FORBIDDEN_POST_TYPES, [ 'product', 'post' ] ),
+					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'id',
 						'post_title' => 'label',
 					],

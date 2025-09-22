@@ -10,7 +10,11 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Number_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Query\Query_Builder;
+use Elementor\Modules\WpRest\Base\Query as Query_Base;
 use Elementor\Modules\WpRest\Classes\Post_Query;
+use Elementor\Modules\WpRest\Classes\Term_Query;
+use Elementor\Modules\WpRest\Classes\User_Query;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Plugin;
 
@@ -229,30 +233,55 @@ class Dynamic_Tags_Editor_Config {
 
 	private function convert_query_control_to_atomic( $control ) {
 		$query_config = [];
+		$query_type = Post_Query::ENDPOINT;
 
-		if ( $this->is_control_elementor_query( $control ) ) {
-			$post_types = [ Source_Local::CPT ];
-			$query_config[ Post_Query::EXCLUDED_POST_TYPE_KEYS ] = [];
-		} else {
-			$post_types = isset( $control['autocomplete']['query']['post_type'] ) ? $control['autocomplete']['query']['post_type'] : [];
-			$post_types = ! empty( $post_types ) && 'any' !== $post_types ? $post_types : null;
+		switch ( true ) {
+			case $this->is_control_term_query( $control ):
+				$query_type = Term_Query::ENDPOINT;
+				$included_types = null;
+				$excluded_types = [];
+				break;
+
+			case $this->is_control_elementor_query( $control ):
+				$included_types = [ Source_Local::CPT ];
+				$excluded_types = [];
+				break;
+
+			case $this->is_control_attachment_query( $control ):
+				$included_types = [ 'attachment' ];
+				$excluded_types = [];
+				$query_config[ Query_Base::IS_PUBLIC_KEY ] = false;
+				break;
+
+			case $this->is_control_user_query( $control ):
+				$included_types = [ $control['autocomplete']['object'] ];
+				$excluded_types = null;
+				$query_type = User_Query::ENDPOINT;
+				break;
+
+			default:
+				$included_types = isset( $control['autocomplete']['query']['post_type'] ) ? $control['autocomplete']['query']['post_type'] : [];
+				$included_types = ! empty( $included_types ) && 'any' !== $included_types ? $included_types : null;
+				$excluded_types = null;
 		}
 
 		if ( isset( $control['autocomplete']['query']['posts_per_page'] ) ) {
-			$query_config[ Post_Query::POSTS_PER_PAGE_KEY ] = $control['autocomplete']['query']['posts_per_page'];
+			$query_config[ Query_Base::ITEMS_COUNT_KEY ] = $control['autocomplete']['query']['posts_per_page'];
 		}
 
 		if ( isset( $control['autocomplete']['query']['post_status'] ) && in_array( 'private', $control['autocomplete']['query']['post_status'] ) ) {
-			$query_config[ Post_Query::IS_PUBLIC_KEY ] = false;
+			$query_config[ Query_Base::IS_PUBLIC_KEY ] = false;
 		}
 
-		$query_config[ Post_Query::INCLUDED_POST_TYPE_KEY ] = $post_types;
-		$query_config[ Post_Query::META_QUERY_KEY ] = $control['autocomplete']['query']['meta_query'] ?? null;
+		$query_config[ Query_Base::INCLUDED_TYPE_KEY ] = $included_types;
+		$query_config[ Query_Base::EXCLUDED_TYPE_KEY ] = $excluded_types;
+		$query_config[ Query_Builder::QUERY_TYPE_KEY ] = $query_type;
+		$query_config[ Query_Base::META_QUERY_KEY ] = $control['autocomplete']['query']['meta_query'] ?? null;
 
 		$query_control = Query_Control::bind_to( $control['name'] );
 		$query_control->set_query_config( $query_config );
-		$query_control->set_placeholder( $control['placeholder'] ?? '' );
-		$query_control->set_label( $control['label'] );
+		$query_control->set_placeholder( html_entity_decode( $control['placeholder'] ?? '' ) );
+		$query_control->set_label( html_entity_decode( $control['label'] ) );
 		$query_control->set_allow_custom_values( false );
 
 		return $query_control;
@@ -260,5 +289,20 @@ class Dynamic_Tags_Editor_Config {
 
 	private function is_control_elementor_query( $control ): bool {
 		return isset( $control['autocomplete']['object'] ) && 'library_template' === $control['autocomplete']['object'];
+	}
+
+	private function is_control_term_query( $control ): bool {
+		return isset( $control['autocomplete']['object'] ) && in_array( $control['autocomplete']['object'], [ 'tax', 'taxonomy', 'term' ], true );
+	}
+
+	private function is_control_attachment_query( $control ): bool {
+		return isset( $control['autocomplete']['object'] ) && 'attachment' === $control['autocomplete']['object'];
+	}
+
+	private function is_control_user_query( $control ): bool {
+		global $wp_roles;
+		$roles = array_keys( $wp_roles->roles );
+
+		return isset( $control['autocomplete']['object'] ) && in_array( $control['autocomplete']['object'], $roles, true );
 	}
 }

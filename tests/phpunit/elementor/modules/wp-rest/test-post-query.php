@@ -37,9 +37,10 @@ class Test_Post_Query extends Elementor_Test_Base {
 	private function execute( $params, $expected ) {
 		// Arrange
 		$request = new \WP_REST_Request( 'GET', self::URL );
-		$request->set_param( Post_Query::EXCLUDED_POST_TYPE_KEYS, $params[ Post_Query::EXCLUDED_POST_TYPE_KEYS ] );
+		$request->set_param( Post_Query::EXCLUDED_TYPE_KEY, $params[ Post_Query::EXCLUDED_TYPE_KEY ] ?? null );
+		$request->set_param( Post_Query::INCLUDED_TYPE_KEY, $params[ Post_Query::INCLUDED_TYPE_KEY ] ?? null );
 		$request->set_param( Post_Query::SEARCH_TERM_KEY, $params[ Post_Query::SEARCH_TERM_KEY ] );
-		$request->set_param( Post_Query::POST_KEYS_CONVERSION_MAP, $params[ Post_Query::POST_KEYS_CONVERSION_MAP ] );
+		$request->set_param( Post_Query::KEYS_CONVERSION_MAP_KEY, $params[ Post_Query::KEYS_CONVERSION_MAP_KEY ] );
 		$request->set_header( Post_Query::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
 
 		// Act
