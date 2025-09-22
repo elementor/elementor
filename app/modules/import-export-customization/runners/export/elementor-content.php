@@ -34,7 +34,9 @@ class Elementor_Content extends Export_Runner_Base {
 
 		$elementor_post_types = ImportExportUtils::get_elementor_post_types( $excluded_post_types );
 
-		$elementor_post_types = apply_filters( 'elementor/import-export-customization/elementor-content/post-types/customization', $elementor_post_types, $customization );
+		if ( $customization && ImportExportUtils::is_high_tier() ) {
+			$elementor_post_types = apply_filters( 'elementor/import-export-customization/elementor-content/post-types/customization', $elementor_post_types, $customization );
+		}
 
 		$files = [];
 		$manifest = [];

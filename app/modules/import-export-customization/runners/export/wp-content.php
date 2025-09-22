@@ -29,7 +29,9 @@ class Wp_Content extends Export_Runner_Base {
 
 		$post_types = ImportExportUtils::get_builtin_wp_post_types( $exclude_post_types );
 
-		$post_types = apply_filters( 'elementor/import-export-customization/wp-content/post-types/customization', $post_types, $data, $customization );
+		if ( $customization && ImportExportUtils::is_high_tier() ) {
+			$post_types = apply_filters( 'elementor/import-export-customization/wp-content/post-types/customization', $post_types, $data, $customization );
+		}
 
 		$custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
 
@@ -37,7 +39,7 @@ class Wp_Content extends Export_Runner_Base {
 		$manifest_data = [];
 
 		foreach ( $post_types as $post_type ) {
-			$export = $this->export_wp_post_type( $post_type, $customization );
+			$export = $this->export_wp_post_type( $post_type, $customization && ImportExportUtils::is_high_tier() ? $customization : null );
 
 			if ( ! empty( $export['file'] ) ) {
 				$files[] = $export['file'];
@@ -58,7 +60,7 @@ class Wp_Content extends Export_Runner_Base {
 			if ( 'post' === $post_type ) {
 				continue;
 			}
-			$export = $this->export_wp_post_type( $post_type, $customization );
+			$export = $this->export_wp_post_type( $post_type, $customization && ImportExportUtils::is_high_tier() ? $customization : null );
 
 			if ( ! empty( $export['file'] ) ) {
 				$files[] = $export['file'];

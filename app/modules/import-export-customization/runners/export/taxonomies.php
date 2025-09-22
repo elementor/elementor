@@ -18,7 +18,7 @@ class Taxonomies extends Export_Runner_Base {
 
 	public function export( array $data ) {
 		$customization = $data['customization']['content'] ?? null;
-		if ( $customization ) {
+		if ( $customization && ImportExportUtils::is_high_tier() ) {
 			return $this->export_customization( $data, $customization );
 		}
 

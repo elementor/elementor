@@ -89,7 +89,7 @@ class Site_Settings extends Import_Runner_Base {
 	public function import( array $data, array $imported_data ) {
 		$customization = $data['customization']['settings'] ?? null;
 
-		if ( $customization ) {
+		if ( $customization && Utils::is_high_tier() ) {
 			return $this->import_with_customization( $data, $imported_data, $customization );
 		}
 

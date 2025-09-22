@@ -38,6 +38,8 @@ class Wp_Content extends Import_Runner_Base {
 		$imported_terms = ImportExportUtils::map_old_new_term_ids( $imported_data );
 
 		$result['wp-content'] = [];
+		$customization = $data['customization']['content'] ?? null;
+		$customization = $customization && ImportExportUtils::is_high_tier() ? $customization : null;
 
 		foreach ( $post_types as $post_type ) {
 			$import = $this->import_wp_post_type(
@@ -46,7 +48,7 @@ class Wp_Content extends Import_Runner_Base {
 				$imported_data,
 				$taxonomies,
 				$imported_terms,
-				$data['customization']['content'] ?? null
+				$customization
 			);
 
 			if ( empty( $import ) ) {
@@ -72,8 +74,11 @@ class Wp_Content extends Import_Runner_Base {
 			'terms_meta' => [
 				static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID => $this->import_session_id,
 			],
-			'include' => 'page' === $post_type ? $customization['pages'] ?? null : null,
 		];
+        
+		if ( 'page' === $post_type && ImportExportUtils::is_high_tier() ) {
+			$args['include'] = $customization['pages'] ?? null;
+		}
 
 		$args = apply_filters( 'elementor/import-export-customization/import/wp-content/query-args/customization', $args, $post_type, $customization );
 
@@ -108,7 +113,9 @@ class Wp_Content extends Import_Runner_Base {
 
 		$post_types = array_merge( $wp_builtin_post_types, $this->selected_custom_post_types );
 
-		$post_types = apply_filters( 'elementor/import-export-customization/wp-content/post-types/customization', $post_types, $data, $customization );
+		if ( $customization && ImportExportUtils::is_high_tier() ) {
+			$post_types = apply_filters( 'elementor/import-export-customization/wp-content/post-types/customization', $post_types, $data, $customization );
+		}
 
 		$post_types = $this->force_element_to_be_last_by_value( $post_types, 'nav_menu_item' );
 

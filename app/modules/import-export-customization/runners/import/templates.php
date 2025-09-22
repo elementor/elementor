@@ -28,7 +28,7 @@ class Templates extends Import_Runner_Base {
 	public function import( array $data, array $imported_data ) {
 		$customization = $data['customization']['templates'] ?? null;
 
-		if ( $customization ) {
+		if ( $customization && ImportExportUtils::is_high_tier() ) {
 			return $this->import_with_customization( $data, $imported_data, $customization );
 		}
 

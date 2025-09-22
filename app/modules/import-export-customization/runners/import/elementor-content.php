@@ -52,7 +52,9 @@ class Elementor_Content extends Import_Runner_Base {
 
 		$post_types = ImportExportUtils::get_elementor_post_types( $excluded_post_types );
 
-		$post_types = apply_filters( 'elementor/import-export-customization/elementor-content/post-types/customization', $post_types, $customization );
+		if ( $customization && ImportExportUtils::is_high_tier() ) {
+			$post_types = apply_filters( 'elementor/import-export-customization/elementor-content/post-types/customization', $post_types, $customization );
+		}
 
 		foreach ( $post_types as $post_type ) {
 			if ( empty( $data['manifest']['content'][ $post_type ] ) ) {
@@ -94,7 +96,7 @@ class Elementor_Content extends Import_Runner_Base {
 						'imported_terms' => $imported_terms,
 					];
 
-					$import_result = apply_filters( 'elementor/import-export-customization/import/elementor-content/customization', null, $data, [], $customization ?? [], $this );
+				$import_result = apply_filters( 'elementor/import-export-customization/import/elementor-content/customization', null, $data, [], ( $customization && ImportExportUtils::is_high_tier() ) ? $customization : [], $this );
 
 					if ( is_array( $import_result ) ) {
 						$result[ $import_result['status'] ][ $id ] = $import_result['result'];
