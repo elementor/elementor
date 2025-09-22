@@ -151,15 +151,80 @@ class Test_Margin_Property_Mapper extends Elementor_Test_Base {
 		$this->assertEquals( 'margin-top', $this->mapper->get_v4_property_name( 'margin-top' ) );
 	}
 
-	public function test_map_to_v4_atomic_margin_single() {
-		$result = $this->mapper->map_to_v4_atomic( 'margin-top', '10px' );
+	public function test_map_to_v4_atomic_margin_bottom_individual() {
+		$result = $this->mapper->map_to_v4_atomic( 'margin-bottom', '16px' );
 		$expected = [
-			'property' => 'margin-top',
+			'property' => 'margin',
 			'value' => [
-				'$$type' => 'size',
+				'$$type' => 'dimensions',
 				'value' => [
-					'size' => 10,
-					'unit' => 'px',
+					'block-end' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 16,
+							'unit' => 'px',
+						],
+					],
+				],
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_margin_top_individual() {
+		$result = $this->mapper->map_to_v4_atomic( 'margin-top', '20px' );
+		$expected = [
+			'property' => 'margin',
+			'value' => [
+				'$$type' => 'dimensions',
+				'value' => [
+					'block-start' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 20,
+							'unit' => 'px',
+						],
+					],
+				],
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_margin_left_individual() {
+		$result = $this->mapper->map_to_v4_atomic( 'margin-left', '1em' );
+		$expected = [
+			'property' => 'margin',
+			'value' => [
+				'$$type' => 'dimensions',
+				'value' => [
+					'inline-start' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 1,
+							'unit' => 'em',
+						],
+					],
+				],
+			],
+		];
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_map_to_v4_atomic_margin_right_individual() {
+		$result = $this->mapper->map_to_v4_atomic( 'margin-right', '2rem' );
+		$expected = [
+			'property' => 'margin',
+			'value' => [
+				'$$type' => 'dimensions',
+				'value' => [
+					'inline-end' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 2,
+							'unit' => 'rem',
+						],
+					],
 				],
 			],
 		];
@@ -171,32 +236,35 @@ class Test_Margin_Property_Mapper extends Elementor_Test_Base {
 		$expected = [
 			'property' => 'margin',
 			'value' => [
-				'margin-top' => [
-					'$$type' => 'size',
-					'value' => [
-						'size' => 10,
-						'unit' => 'px',
+				'$$type' => 'dimensions',
+				'value' => [
+					'block-start' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 10,
+							'unit' => 'px',
+						],
 					],
-				],
-				'margin-right' => [
-					'$$type' => 'size',
-					'value' => [
-						'size' => 20,
-						'unit' => 'px',
+					'inline-end' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 20,
+							'unit' => 'px',
+						],
 					],
-				],
-				'margin-bottom' => [
-					'$$type' => 'size',
-					'value' => [
-						'size' => 10,
-						'unit' => 'px',
+					'block-end' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 10,
+							'unit' => 'px',
+						],
 					],
-				],
-				'margin-left' => [
-					'$$type' => 'size',
-					'value' => [
-						'size' => 20,
-						'unit' => 'px',
+					'inline-start' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 20,
+							'unit' => 'px',
+						],
 					],
 				],
 			],

@@ -85,29 +85,60 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		$parsed = $this->parse_margin_shorthand( $value );
-		if ( ! $parsed ) {
-			return null;
+		if ( $property === 'margin' ) {
+			// Handle margin shorthand
+			$parsed = $this->parse_margin_shorthand( $value );
+			if ( ! $parsed ) {
+				return null;
+			}
+
+			$dimensions_value = [
+				'block-start' => [
+					'$$type' => 'size',
+					'value' => $parsed['top'],
+				],
+				'inline-end' => [
+					'$$type' => 'size',
+					'value' => $parsed['right'],
+				],
+				'block-end' => [
+					'$$type' => 'size',
+					'value' => $parsed['bottom'],
+				],
+				'inline-start' => [
+					'$$type' => 'size',
+					'value' => $parsed['left'],
+				],
+			];
+
+			return $this->create_v4_property_with_type( 'margin', 'dimensions', $dimensions_value );
 		}
 
-		$dimensions_value = [
-			'block-start' => [
+		// Handle individual margin properties (margin-top, margin-bottom, etc.)
+		$parsed = $this->parse_size_value( $value );
+		$dimensions_value = [];
+
+		if ( $property === 'margin-top' ) {
+			$dimensions_value['block-start'] = [
 				'$$type' => 'size',
-				'value' => $parsed['top'],
-			],
-			'inline-end' => [
+				'value' => $parsed,
+			];
+		} elseif ( $property === 'margin-right' ) {
+			$dimensions_value['inline-end'] = [
 				'$$type' => 'size',
-				'value' => $parsed['right'],
-			],
-			'block-end' => [
+				'value' => $parsed,
+			];
+		} elseif ( $property === 'margin-bottom' ) {
+			$dimensions_value['block-end'] = [
 				'$$type' => 'size',
-				'value' => $parsed['bottom'],
-			],
-			'inline-start' => [
+				'value' => $parsed,
+			];
+		} elseif ( $property === 'margin-left' ) {
+			$dimensions_value['inline-start'] = [
 				'$$type' => 'size',
-				'value' => $parsed['left'],
-			],
-		];
+				'value' => $parsed,
+			];
+		}
 
 		return $this->create_v4_property_with_type( 'margin', 'dimensions', $dimensions_value );
 	}

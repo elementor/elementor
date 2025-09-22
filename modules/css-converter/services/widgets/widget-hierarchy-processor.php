@@ -249,22 +249,22 @@ class Widget_Hierarchy_Processor {
 		$this->validate_parent_child_compatibility( $processed_widgets );
 	}
 
-	private function validate_no_circular_references( $widgets, $visited = [], $path = [] ) {
+	private function validate_no_circular_references( $widgets, $path = [], $path_indices = [] ) {
 		foreach ( $widgets as $index => $widget ) {
-			// Use a combination of widget type and position as identifier since widgets don't have IDs yet
-			$widget_identifier = $widget['widget_type'] . '_' . $index;
+			// Create a unique identifier using the full path of indices
+			$current_path_indices = array_merge( $path_indices, [ $index ] );
+			$widget_identifier = $widget['widget_type'] . '_' . implode( '_', $current_path_indices );
 			
+			// Check if this widget is already in the current path (circular reference)
 			if ( in_array( $widget_identifier, $path, true ) ) {
 				throw new \Exception( "Circular reference detected in widget hierarchy: " . implode( ' -> ', $path ) . ' -> ' . $widget_identifier );
 			}
 			
-			if ( ! in_array( $widget_identifier, $visited, true ) ) {
-				$visited[] = $widget_identifier;
-				$new_path = array_merge( $path, [ $widget_identifier ] );
-				
-				if ( ! empty( $widget['elements'] ) ) {
-					$this->validate_no_circular_references( $widget['elements'], $visited, $new_path );
-				}
+			// Add current widget to path and recursively check children
+			$new_path = array_merge( $path, [ $widget_identifier ] );
+			
+			if ( ! empty( $widget['elements'] ) ) {
+				$this->validate_no_circular_references( $widget['elements'], $new_path, $current_path_indices );
 			}
 		}
 	}
