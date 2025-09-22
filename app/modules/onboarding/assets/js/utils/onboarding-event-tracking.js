@@ -393,7 +393,9 @@ export class OnboardingEventTracking {
 	static cleanupPostOnboardingTracking() {
 		try {
 			document.removeEventListener( 'click', this.trackPostOnboardingClick );
-			this.clearAllOnboardingStorage();
+			console.log( '🧹 cleanupPostOnboardingTracking called - would clear storage if method existed' );
+			// Note: clearAllOnboardingStorage method is not defined - commenting out to prevent errors
+			// this.clearAllOnboardingStorage();
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to cleanup post-onboarding tracking:', error );
 		}
@@ -1086,6 +1088,11 @@ export class OnboardingEventTracking {
 
 	static sendConnectionSuccessEvents( data ) {
 		console.log( '🎉 sendConnectionSuccessEvents called:', { tracking_opted_in: data.tracking_opted_in, access_tier: data.access_tier } );
+
+		// Debug: Check localStorage before sending events
+		const storedData = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
+		console.log( '🔍 localStorage check before sending events:', storedData );
+
 		this.sendCoreOnboardingInitiated();
 		this.sendAppropriateStatusEvent( 'success', data );
 		console.log( '📤 About to send all stored events...' );
