@@ -20,8 +20,8 @@ import { __ } from '@wordpress/i18n';
 import { type TVariablesList } from '../../storage';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { LabelField } from '../fields/label-field';
-import { VariableEditMenu, type VariableManagerMenuAction } from './utils/variable-edit-menu';
-import { VariableTableCell } from './utils/variable-table-cell';
+import { VariableEditMenu, type VariableManagerMenuAction } from './ui/variable-edit-menu';
+import { VariableTableCell } from './ui/variable-table-cell';
 import { VariableEditableCell } from './variable-editable-cell';
 
 type Props = {
