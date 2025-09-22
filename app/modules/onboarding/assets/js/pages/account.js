@@ -24,7 +24,7 @@ export default function Account() {
 					location: 'plugin_onboarding',
 					trigger: elementorCommon.eventsManager?.config?.triggers?.pageLoaded || 'page_loaded',
 					step_number: 1,
-					step_name: ONBOARDING_STEP_NAMES.CONNECT,
+					step_name: 'account_setup',
 					is_library_connected: state?.isLibraryConnected || false,
 				},
 			);
@@ -50,7 +50,7 @@ export default function Account() {
 						location: 'plugin_onboarding',
 						trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
 						step_number: 1,
-						step_name: ONBOARDING_STEP_NAMES.CONNECT,
+						step_name: 'account_setup',CONNECT,
 					},
 				);
 
@@ -132,7 +132,7 @@ export default function Account() {
 					location: 'plugin_onboarding',
 					trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
 					step_number: 1,
-					step_name: ONBOARDING_STEP_NAMES.CONNECT,
+					step_name: 'account_setup',CONNECT,
 					button_text: 'Start setup',
 				},
 			);
@@ -252,7 +252,7 @@ export default function Account() {
 											location: 'plugin_onboarding',
 											trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
 											step_number: 1,
-											step_name: ONBOARDING_STEP_NAMES.CONNECT,
+											step_name: 'account_setup',CONNECT,
 											button_text: 'Click here to connect',
 										},
 									);
