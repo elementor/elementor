@@ -90,6 +90,13 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
+		// Validate that all parsed values have required size and unit properties
+		foreach ( $parsed as $direction => $size_data ) {
+			if ( ! isset( $size_data['size'] ) || ! isset( $size_data['unit'] ) ) {
+				return null;
+			}
+		}
+
 		$dimensions_value = [
 			'block-start' => [
 				'$$type' => 'size',

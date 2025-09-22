@@ -28,6 +28,11 @@ abstract class Property_Mapper_Base implements Property_Mapper_Interface {
 	}
 
 	protected function create_v4_property_with_type( string $property_name, string $type, $value ): array {
+		// Ensure value is not null to prevent frontend errors
+		if ( null === $value ) {
+			return null;
+		}
+
 		return [
 			'property' => $property_name,
 			'value' => [

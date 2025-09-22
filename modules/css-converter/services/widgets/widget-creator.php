@@ -443,8 +443,13 @@ class Widget_Creator {
 				
 				// Apply the converted property to the style object
 				if ( isset( $converted['property'] ) && isset( $converted['value'] ) ) {
-					$style_object['variants'][0]['props'][ $converted['property'] ] = $converted['value'];
-					error_log( "Widget Creator: Added prop {$converted['property']} to style object" );
+					// Validate the property value structure
+					if ( $this->is_valid_v4_property_value( $converted['value'] ) ) {
+						$style_object['variants'][0]['props'][ $converted['property'] ] = $converted['value'];
+						error_log( "Widget Creator: Added prop {$converted['property']} to style object" );
+					} else {
+						error_log( "Widget Creator: Invalid v4 property value structure for {$converted['property']}: " . wp_json_encode( $converted['value'] ) );
+					}
 				} else {
 					error_log( "Widget Creator: Converted property missing 'property' or 'value' keys" );
 				}
@@ -454,6 +459,70 @@ class Widget_Creator {
 		}
 
 		return $style_object;
+	}
+
+	private function is_valid_v4_property_value( $value ): bool {
+		// Validate v4 atomic property value structure
+		if ( ! is_array( $value ) ) {
+			return false;
+		}
+
+		// Must have $$type
+		if ( ! isset( $value['$$type'] ) || ! is_string( $value['$$type'] ) ) {
+			return false;
+		}
+
+		// Must have value
+		if ( ! isset( $value['value'] ) ) {
+			return false;
+		}
+
+		// Special validation for dimensions type
+		if ( $value['$$type'] === 'dimensions' ) {
+			return $this->is_valid_dimensions_value( $value['value'] );
+		}
+
+		// Special validation for size type
+		if ( $value['$$type'] === 'size' ) {
+			return $this->is_valid_size_value( $value['value'] );
+		}
+
+		return true;
+	}
+
+	private function is_valid_dimensions_value( $dimensions ): bool {
+		if ( ! is_array( $dimensions ) ) {
+			return false;
+		}
+
+		$required_directions = [ 'block-start', 'inline-end', 'block-end', 'inline-start' ];
+		
+		foreach ( $required_directions as $direction ) {
+			if ( ! isset( $dimensions[ $direction ] ) ) {
+				return false;
+			}
+
+			$direction_value = $dimensions[ $direction ];
+			if ( ! is_array( $direction_value ) || 
+				 ! isset( $direction_value['$$type'] ) || 
+				 $direction_value['$$type'] !== 'size' ||
+				 ! isset( $direction_value['value'] ) ||
+				 ! $this->is_valid_size_value( $direction_value['value'] ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private function is_valid_size_value( $size ): bool {
+		if ( ! is_array( $size ) ) {
+			return false;
+		}
+
+		return isset( $size['size'] ) && isset( $size['unit'] ) && 
+			   ( is_numeric( $size['size'] ) || $size['size'] === '' ) &&
+			   is_string( $size['unit'] );
 	}
 
 	private function generate_unique_class_id() {

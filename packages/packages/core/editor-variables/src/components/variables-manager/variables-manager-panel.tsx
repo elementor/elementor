@@ -169,6 +169,13 @@ export function VariablesManagerPanel() {
 						</Collapse>
 						{ ! showImportUI && (
 							<>
+								<SearchField
+									placeholder={ __( 'Search', 'elementor' ) }
+									value={ searchValue }
+									onSearch={ handleSearch }
+								/>
+								<Divider sx={ { width: '100%' } } />
+
 								{ hasVariables && (
 									<VariablesManagerTable
 										menuActions={ menuActions }
