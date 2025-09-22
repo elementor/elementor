@@ -252,6 +252,60 @@ static scheduleDelayedNoClickEvent( currentStep, delay = 500 ) {
 - ❌ **Multiple Hovers**: Can create multiple delayed events - needs improvement
 
 ### 🔧 **IMPLEMENTATION PRIORITY:**
-1. **HIGH**: Fix step 3 unwanted no-click events (simple 1-line fix)
+1. ✅ **COMPLETED**: Fix step 3 unwanted no-click events (simple 1-line fix)
 2. **MEDIUM**: Improve hover state management for multiple cycles
 3. **LOW**: Additional testing and edge case handling
+
+---
+
+## 🔬 **LATEST CONSOLE LOG ANALYSIS - STEP 1 & 4 CLICKS**
+
+### **📊 New Issues Identified:**
+
+#### **🐛 Issue 1: Multiple "Already have Pro" Events in Step 1**
+```
+🔥 Already have Pro clicked: {currentStep: ''}           // ❌ EMPTY currentStep
+🎯 trackUpgradeAction called: {currentStep: '', stepNumber: null}
+🔥 sendTopUpgrade called: {currentStep: null, upgradeClicked: 'already_pro_user'}
+
+🔥 Already have Pro clicked: {currentStep: 'account'}    // ✅ CORRECT currentStep  
+🎯 trackUpgradeAction called: {currentStep: 'account', stepNumber: 1}
+🔥 sendTopUpgrade called: {currentStep: 1, upgradeClicked: 'already_pro_user'}
+```
+**Problem**: "Already have Pro" click fires TWICE in step 1 - once with empty currentStep, once correctly
+
+#### **🐛 Issue 2: Step 1 Events Not Sent After Connection**
+```
+📤 sendStoredTopUpgradeEvent - stored data: null        // ❌ NO STORED DATA FOUND
+❌ No stored TOP_UPGRADE data found
+```
+**Problem**: Despite storing events, they're not found when trying to send after connection
+
+#### **✅ Issue 3: Step 4 Working Correctly**
+```
+🚫 Skipping delayed no-click - not step 1: 4           // ✅ CORRECTLY SKIPPED
+🔥 Already have Pro clicked: {currentStep: 'goodToGo'}  // ✅ CORRECT currentStep
+🔥 sendTopUpgrade called: {currentStep: 4, upgradeClicked: 'already_pro_user'}
+✅ Sending TOP_UPGRADE immediately                       // ✅ SENT IMMEDIATELY
+```
+**Status**: Step 4 behavior is perfect - no unwanted no-click, correct step tracking
+
+### **🔍 Root Causes Identified:**
+
+#### **Root Cause 1: Popover Component Multiple Event Handlers**
+- **Evidence**: Two "Already have Pro" clicks with different currentStep values
+- **Likely Cause**: Popover component has multiple event listeners or is mounted multiple times
+- **Impact**: Duplicate events, some with incorrect step data
+
+#### **Root Cause 2: localStorage Storage/Retrieval Issue**  
+- **Evidence**: Events stored but not found during retrieval
+- **Possible Causes**: 
+  - Storage key conflicts (multiple events overwriting each other)
+  - Race condition between storage and retrieval
+  - localStorage data being cleared prematurely
+
+### **🎯 IMMEDIATE ACTIONS NEEDED:**
+
+1. **HIGH PRIORITY**: Fix double "Already have Pro" events in step 1
+2. **HIGH PRIORITY**: Debug localStorage storage/retrieval for step 1 events  
+3. **MEDIUM PRIORITY**: Investigate popover component mounting/event handling

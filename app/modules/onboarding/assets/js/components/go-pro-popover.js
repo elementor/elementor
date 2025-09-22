@@ -35,7 +35,14 @@ export default function GoProPopover( props ) {
 			return;
 		}
 
-		alreadyHaveProButton.addEventListener( 'click', ( event ) => {
+		// Remove any existing event listeners to prevent duplicates
+		const existingHandler = alreadyHaveProButton._elementorProHandler;
+		if ( existingHandler ) {
+			alreadyHaveProButton.removeEventListener( 'click', existingHandler );
+		}
+
+		// Create new handler
+		const clickHandler = ( event ) => {
 			event.preventDefault();
 
 			console.log( '🔥 Already have Pro clicked:', { currentStep: state.currentStep } );
@@ -73,7 +80,11 @@ export default function GoProPopover( props ) {
 						},
 					} );
 				} );
-		} );
+		};
+
+		// Store handler reference and add event listener
+		alreadyHaveProButton._elementorProHandler = clickHandler;
+		alreadyHaveProButton.addEventListener( 'click', clickHandler );
 	}, [ state.currentStep, updateState, trackUpgradeAction ] );
 
 	// The buttonsConfig prop is an array of objects. To find the 'Upgrade Now' button, we need to iterate over the object.

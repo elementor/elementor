@@ -564,12 +564,20 @@ export class OnboardingEventTracking {
 
 	static storeTopUpgradeEventForLater( currentStep, upgradeClicked ) {
 		try {
+			const existingDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
+			const existingEvents = existingDataStr ? JSON.parse( existingDataStr ) : [];
+			console.log( '💾 storeTopUpgradeEventForLater - existing events:', existingEvents );
+
 			const eventData = {
 				currentStep,
 				upgradeClicked,
 				timestamp: Date.now(),
 			};
-			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE, JSON.stringify( eventData ) );
+
+			// Add new event to array
+			existingEvents.push( eventData );
+			console.log( '💾 storeTopUpgradeEventForLater - storing events array:', existingEvents );
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE, JSON.stringify( existingEvents ) );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to store top upgrade event:', error );
 		}
@@ -585,21 +593,34 @@ export class OnboardingEventTracking {
 				return;
 			}
 
-			const eventData = JSON.parse( storedDataStr );
-			console.log( '📤 Sending stored TOP_UPGRADE:', { step_number: eventData.currentStep, step_name: this.getStepName( eventData.currentStep ), upgrade_clicked: eventData.upgradeClicked, timestamp: eventData.timestamp } );
+			const storedEvents = JSON.parse( storedDataStr );
+			console.log( '📤 sendStoredTopUpgradeEvent - events array:', storedEvents );
 
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.TOP_UPGRADE, {
-				location: 'plugin_onboarding',
-				trigger: 'upgrade_interaction',
-				step_number: eventData.currentStep,
-				step_name: this.getStepName( eventData.currentStep ),
-				action_step: eventData.currentStep,
-				upgrade_clicked: eventData.upgradeClicked,
-				event_timestamp: eventData.timestamp,
+			// Handle both old single event format and new array format for backward compatibility
+			const eventsArray = Array.isArray( storedEvents ) ? storedEvents : [ storedEvents ];
+
+			// Send all stored events
+			eventsArray.forEach( ( eventData, index ) => {
+				console.log( `📤 Sending stored TOP_UPGRADE event ${ index + 1 }/${ eventsArray.length }:`, {
+					step_number: eventData.currentStep,
+					step_name: this.getStepName( eventData.currentStep ),
+					upgrade_clicked: eventData.upgradeClicked,
+					timestamp: eventData.timestamp,
+				} );
+
+				this.dispatchEvent( ONBOARDING_EVENTS_MAP.TOP_UPGRADE, {
+					location: 'plugin_onboarding',
+					trigger: 'upgrade_interaction',
+					step_number: eventData.currentStep,
+					step_name: this.getStepName( eventData.currentStep ),
+					action_step: eventData.currentStep,
+					upgrade_clicked: eventData.upgradeClicked,
+					event_timestamp: eventData.timestamp,
+				} );
 			} );
 
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
-			console.log( '🗑️ Removed stored TOP_UPGRADE data' );
+			console.log( `🗑️ Removed stored TOP_UPGRADE data (sent ${ eventsArray.length } events)` );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to send stored top upgrade event:', error );
 		}
