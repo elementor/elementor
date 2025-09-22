@@ -31,6 +31,7 @@ import {
 } from '@elementor/editor-props';
 
 import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../errors';
+import { TabsControl } from './element-controls/tabs-control/tabs-control';
 
 type ControlRegistry = Record<
 	string,
@@ -63,7 +64,7 @@ export type ControlTypes = {
 };
 
 class ControlsRegistry {
-	constructor( private readonly controlsRegistry: ControlRegistry = controlTypes ) {
+	constructor( private readonly controlsRegistry: ControlRegistry ) {
 		this.controlsRegistry = controlsRegistry;
 	}
 
@@ -105,4 +106,7 @@ class ControlsRegistry {
 	}
 }
 
-export const controlsRegistry = new ControlsRegistry();
+export const controlsRegistry = new ControlsRegistry( controlTypes );
+
+// @ts-expect-error - we need to create a new control type and registry for the element controls
+controlsRegistry.register( 'tabs', TabsControl, 'full', undefined );
