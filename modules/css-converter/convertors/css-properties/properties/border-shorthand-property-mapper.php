@@ -18,9 +18,40 @@ class Border_Shorthand_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		// Basic implementation - convert property name to v4 format
-		// Keep original property name with hyphens for consistency
-		return $this->create_v4_property( $property, $value );
+		// Parse the border shorthand and create a proper border structure
+		$parsed = $this->parse_border_shorthand( $value );
+		
+		// Create a comprehensive border object
+		$border_value = [];
+		
+		if ( isset( $parsed['width'] ) ) {
+			$border_value['width'] = [
+				'$$type' => 'size',
+				'value' => $parsed['width'],
+			];
+		}
+		
+		if ( isset( $parsed['style'] ) ) {
+			$border_value['style'] = [
+				'$$type' => 'string',
+				'value' => $parsed['style'],
+			];
+		}
+		
+		if ( isset( $parsed['color'] ) ) {
+			$border_value['color'] = [
+				'$$type' => 'color',
+				'value' => $parsed['color'],
+			];
+		}
+
+		// If we have a complete border, return as border type, otherwise fallback to string
+		if ( ! empty( $border_value ) ) {
+			return $this->create_v4_property_with_type( 'border', 'border', $border_value );
+		}
+		
+		// Fallback to string representation
+		return $this->create_v4_property_with_type( 'border', 'string', trim( $value ) );
 	}
 
 	public function supports( string $property, $value ): bool {

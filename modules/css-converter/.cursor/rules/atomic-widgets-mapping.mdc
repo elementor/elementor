@@ -1,0 +1,222 @@
+---
+description: CSS Converter Atomic Widgets Mapping Rules
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# CSS Converter ↔ Atomic Widgets Mapping Rules
+
+## 🚨 CRITICAL PRINCIPLE: Reverse Engineering from Atomic V4
+
+**NEVER create property mappers randomly or from scratch!**
+
+All CSS property mappers MUST be derived from existing Elementor Atomic V4 transformers and prop types.
+
+## Mapping Discovery Process
+
+### 1. **ALWAYS Start with Atomic Widgets Analysis**
+
+Before creating ANY property mapper, you MUST:
+
+1. **Examine Atomic Elements**: `/plugins/elementor/modules/atomic-widgets/elements/`
+   - Check `atomic-heading/`, `atomic-paragraph/`, `atomic-button/`, etc.
+   - Look at their `define_props_schema()` methods
+   - Identify what prop types they use
+
+2. **Study Prop Types**: `/plugins/elementor/modules/atomic-widgets/prop-types/`
+   - Find the relevant prop type (e.g., `size-prop-type.php`, `color-prop-type.php`)
+   - Understand the expected `$$type` and `value` structure
+   - Note validation rules and supported formats
+
+3. **Check Style Definitions**: `/plugins/elementor/modules/atomic-widgets/styles/`
+   - See how styles are applied and transformed
+   - Understand the CSS output format
+
+### 2. **Property Mapper Creation Rules**
+
+#### ✅ CORRECT Process:
+```php
+// 1. First, examine the atomic widget
+// Example: atomic-heading.php uses Size_Prop_Type for font-size
+
+// 2. Check the prop type definition
+// Example: size-prop-type.php expects:
+// {
+//   "$$type": "size",
+//   "value": {
+//     "size": 16,
+//     "unit": "px"
+//   }
+// }
+
+// 3. Create mapper that produces EXACTLY this structure
+class Font_Size_Property_Mapper extends Property_Mapper_Base {
+    public function map_to_v4_atomic( string $property, $value ): ?array {
+        $parsed = $this->parse_size_value( $value );
+        return $this->create_v4_property_with_type( 'font-size', 'size', $parsed );
+    }
+}
+```
+
+#### ❌ WRONG Process:
+```php
+// DON'T create mappers based on assumptions or CSS specs
+class Random_Property_Mapper extends Property_Mapper_Base {
+    public function map_to_v4_atomic( string $property, $value ): ?array {
+        // This is WRONG - not based on atomic widgets!
+        return $this->create_v4_property_with_type( $property, 'string', $value );
+    }
+}
+```
+
+## Required Research Steps
+
+### For Each New Property Mapper:
+
+1. **Find the Atomic Widget** that uses this property
+   ```bash
+   grep -r "font-size" /plugins/elementor/modules/atomic-widgets/elements/
+   ```
+
+2. **Identify the Prop Type**
+   ```bash
+   grep -r "Size_Prop_Type" /plugins/elementor/modules/atomic-widgets/elements/
+   ```
+
+3. **Study the Prop Type Implementation**
+   ```php
+   // Read: /plugins/elementor/modules/atomic-widgets/prop-types/size-prop-type.php
+   // Understand the expected structure
+   ```
+
+4. **Check Existing Usage**
+   ```bash
+   grep -r "font-size" /plugins/elementor/modules/atomic-widgets/
+   ```
+
+5. **Test with Real Atomic Widget** before implementing
+
+## Atomic Widget → CSS Property Mapping
+
+### Core Atomic Elements:
+
+| Atomic Widget | File | Key Properties | Prop Types Used |
+|---------------|------|----------------|-----------------|
+| `e-heading` | `atomic-heading.php` | `title`, `tag`, `level` | `String_Prop_Type` |
+| `e-paragraph` | `atomic-paragraph.php` | `paragraph` | `String_Prop_Type` |
+| `e-button` | `atomic-button.php` | `text`, `link` | `String_Prop_Type`, `Link_Prop_Type` |
+| `e-flexbox` | `flexbox.php` | Layout properties | Various layout types |
+
+### Core Prop Types Reference:
+
+| Prop Type | File | Expected Structure | CSS Properties |
+|-----------|------|-------------------|----------------|
+| `Size_Prop_Type` | `size-prop-type.php` | `{"$$type":"size","value":{"size":16,"unit":"px"}}` | `font-size`, `width`, `height`, etc. |
+| `Color_Prop_Type` | `color-prop-type.php` | `{"$$type":"color","value":"#ffffff"}` | `color`, `background-color`, etc. |
+| `Dimensions_Prop_Type` | `dimensions-prop-type.php` | `{"$$type":"dimensions","value":{"block-start":...}}` | `margin`, `padding`, etc. |
+| `Background_Prop_Type` | `background-prop-type.php` | `{"$$type":"background","value":{"color":...}}` | `background` shorthand |
+| `Border_Radius_Prop_Type` | `border-radius-prop-type.php` | `{"$$type":"border-radius","value":{"start-start":...}}` | `border-radius` |
+| `Box_Shadow_Prop_Type` | `box-shadow-prop-type.php` | `{"$$type":"box-shadow","value":[...]}` | `box-shadow` |
+
+## Implementation Validation
+
+### Before Submitting Any Property Mapper:
+
+1. **Verify Atomic Widget Usage**:
+   ```php
+   // Can you find this property being used in an atomic widget?
+   // Does the atomic widget expect this exact $$type?
+   ```
+
+2. **Test Structure Compatibility**:
+   ```php
+   // Does your mapper output match the prop type's expected structure?
+   // Will the atomic widget accept this format?
+   ```
+
+3. **Check Existing Patterns**:
+   ```php
+   // Are there similar properties already implemented?
+   // Does your approach match the established patterns?
+   ```
+
+## Common Atomic Patterns
+
+### Size Properties:
+```php
+// Based on Size_Prop_Type
+return $this->create_v4_property_with_type( $property, 'size', [
+    'size' => $numeric_value,
+    'unit' => $unit
+]);
+```
+
+### Color Properties:
+```php
+// Based on Color_Prop_Type  
+return $this->create_v4_property_with_type( $property, 'color', $hex_color );
+```
+
+### Dimensions Properties:
+```php
+// Based on Dimensions_Prop_Type
+return $this->create_v4_property_with_type( $property, 'dimensions', [
+    'block-start' => ['$$type' => 'size', 'value' => $top],
+    'inline-end' => ['$$type' => 'size', 'value' => $right],
+    'block-end' => ['$$type' => 'size', 'value' => $bottom],
+    'inline-start' => ['$$type' => 'size', 'value' => $left],
+]);
+```
+
+## Enforcement Actions
+
+### When Creating Property Mappers:
+
+1. **MANDATORY**: Document which atomic widget uses this property
+2. **MANDATORY**: Reference the specific prop type file
+3. **MANDATORY**: Show the expected atomic structure in comments
+4. **MANDATORY**: Test with actual atomic widget before implementation
+
+### Code Review Checklist:
+
+- [ ] Property mapper references specific atomic widget
+- [ ] Output structure matches atomic prop type exactly
+- [ ] Implementation follows existing atomic patterns
+- [ ] No random or assumed property structures
+- [ ] Tested with real atomic widget usage
+
+## Examples of CORRECT Implementation
+
+### Font Size Mapper (Based on atomic-heading.php + Size_Prop_Type):
+```php
+/**
+ * Font Size Property Mapper
+ * 
+ * Based on: atomic-heading.php uses Size_Prop_Type for font-size
+ * Prop Type: /prop-types/size-prop-type.php
+ * Expected: {"$$type":"size","value":{"size":16,"unit":"px"}}
+ */
+class Font_Size_Property_Mapper extends Property_Mapper_Base {
+    // Implementation matches Size_Prop_Type exactly
+}
+```
+
+### Color Mapper (Based on atomic-heading.php + Color_Prop_Type):
+```php
+/**
+ * Color Property Mapper
+ * 
+ * Based on: atomic-heading.php uses Color_Prop_Type for color
+ * Prop Type: /prop-types/color-prop-type.php  
+ * Expected: {"$$type":"color","value":"#ffffff"}
+ */
+class Color_Property_Mapper extends Property_Mapper_Base {
+    // Implementation matches Color_Prop_Type exactly
+}
+```
+
+## Remember: ATOMIC WIDGETS ARE THE SOURCE OF TRUTH
+
+Never guess. Never assume. Always derive from existing atomic v4 transformers.
+
+The atomic widgets define the contract - we implement the reverse transformation.

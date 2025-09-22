@@ -49,6 +49,7 @@ class Css_Property_Convertor_Config {
 				'background-color', 'background-image', 'background',
 				'filter',
 				'flex', 'flex-grow', 'flex-shrink', 'flex-basis',
+				'flex-direction', 'align-items', 'gap', 'row-gap', 'column-gap',
 				'position', 'top', 'right', 'bottom', 'left', 'z-index',
 				'inset-block-start', 'inset-block-end', 'inset-inline-start', 'inset-inline-end',
 				'box-shadow', 'text-shadow',
