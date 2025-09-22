@@ -10,10 +10,8 @@ import {
 } from '@elementor/editor-panels';
 import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { ColorFilterIcon, TrashIcon, XIcon, FilesIcon } from '@elementor/icons';
-import { Alert, Box, Button, Collapse, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
-import { ColorFilterIcon, TrashIcon } from '@elementor/icons';
-import { Alert, Box, Button, CloseButton, Divider, ErrorBoundary, Stack, usePopupState } from '@elementor/ui';
+import { ColorFilterIcon, FilesIcon, TrashIcon } from '@elementor/icons';
+import { Alert, Box, Button, CloseButton, Collapse, Divider, ErrorBoundary, IconButton, Stack, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
@@ -171,58 +169,37 @@ export function VariablesManagerPanel() {
 						</Collapse>
 						{ ! showImportUI && (
 							<>
-								<Divider />
-								<VariablesManagerTable
-									menuActions={ menuActions }
-									variables={ variables }
-									onChange={ handleOnChange }
-								/>
-							</>
-						) }
-						<VariablesManagerTable
-							menuActions={ menuActions }
-							variables={ variables }
-							onChange={ handleOnChange }
-							ids={ ids }
-							onIdsChange={ setIds }
-							autoEditVariableId={ autoEditVariableId }
-							onAutoEditComplete={ handleAutoEditComplete }
-						<SearchField
-							placeholder={ __( 'Search', 'elementor' ) }
-							value={ searchValue }
-							onSearch={ handleSearch }
-						/>
-						<Divider sx={ { width: '100%' } } />
-
-						{ hasVariables && (
-							<VariablesManagerTable
-								menuActions={ menuActions }
-								variables={ variables }
-								onChange={ handleOnChange }
-								autoEditVariableId={ autoEditVariableId }
-								onAutoEditComplete={ handleAutoEditComplete }
-								onFieldError={ setHasValidationErrors }
-							/>
-						) }
-
-						{ ! hasVariables && searchValue && (
-							<NoSearchResults
-								searchValue={ searchValue }
-								onClear={ () => handleSearch( '' ) }
-								icon={ <ColorFilterIcon fontSize="large" /> }
-							/>
-						) }
-
-						{ ! hasVariables && ! searchValue && (
-							<EmptyState
-								title={ __( 'Create your first variable', 'elementor' ) }
-								message={ __(
-									'Variables are saved attributes that you can apply anywhere on your site.',
-									'elementor'
+								{ hasVariables && (
+									<VariablesManagerTable
+										menuActions={ menuActions }
+										variables={ variables }
+										onChange={ handleOnChange }
+										autoEditVariableId={ autoEditVariableId }
+										onAutoEditComplete={ handleAutoEditComplete }
+										onFieldError={ setHasValidationErrors }
+									/>
 								) }
-								icon={ <ColorFilterIcon fontSize="large" /> }
-								onAdd={ createMenuState.open }
-							/>
+
+								{ ! hasVariables && searchValue && (
+									<NoSearchResults
+										searchValue={ searchValue }
+										onClear={ () => handleSearch( '' ) }
+										icon={ <ColorFilterIcon fontSize="large" /> }
+									/>
+								) }
+
+								{ ! hasVariables && ! searchValue && (
+									<EmptyState
+										title={ __( 'Create your first variable', 'elementor' ) }
+										message={ __(
+											'Variables are saved attributes that you can apply anywhere on your site.',
+											'elementor'
+										) }
+										icon={ <ColorFilterIcon fontSize="large" /> }
+										onAdd={ createMenuState.open }
+									/>
+								) }
+							</>
 						) }
 					</PanelBody>
 

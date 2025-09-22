@@ -30,7 +30,6 @@
     "packages/tools/*"
   ],
   "devDependencies": {
-    "@jest/globals": "^29.7.0",
     "@swc/core": "^1.10.1",
     "@swc/jest": "^0.2.37",
     "@tanstack/eslint-plugin-query": "^5.56.1",
@@ -74,8 +73,5 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "form-data": "4.0.4"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.18.1"
   }
 }
