@@ -14,6 +14,11 @@ plugins/elementor/modules/css-converter/DEPLOYMENT.md
 ## Phase 2: Extended Property Support
 
 ### Next Priority Properties (Ready for Implementation)
+- **Text Elements**:
+  - blockquote support (convert to e-paragraph with special styling)
+  - cite, q (quote elements)
+  - pre, code (preformatted text elements)
+  - em, strong, i, b (inline text formatting)
 
 ### Future Enhancements (Phase 4+)
 - **Advanced Background Overlays**:

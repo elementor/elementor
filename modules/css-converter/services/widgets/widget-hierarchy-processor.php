@@ -179,11 +179,18 @@ class Widget_Hierarchy_Processor {
 	private function apply_content_defaults( $settings, $widget ) {
 		// Apply default content settings based on widget type
 		
+		// RADICAL DEBUG: Log input parameters
+		error_log("DEBUG apply_content_defaults: widget_type=" . $widget['widget_type']);
+		error_log("DEBUG apply_content_defaults: input settings=" . var_export($settings, true));
+		error_log("DEBUG apply_content_defaults: widget data=" . var_export($widget, true));
+		
 		switch ( $widget['widget_type'] ) {
 			case 'e-heading':
 				$defaults = [
 					'title' => $widget['settings']['text'] ?? 'This is a title',
+					'text' => $widget['settings']['text'] ?? 'This is a title', // Keep both for compatibility
 					'tag' => $widget['settings']['tag'] ?? 'h2',
+					'level' => $widget['settings']['level'] ?? 2,
 					'classes' => [],
 					'link' => null,
 					'attributes' => null,
@@ -223,7 +230,11 @@ class Widget_Hierarchy_Processor {
 				$defaults = [];
 		}
 		
-		return array_merge( $defaults, $settings );
+		// RADICAL DEBUG: Log the final merged result
+		$result = array_merge( $defaults, $settings );
+		error_log("DEBUG apply_content_defaults: final result=" . var_export($result, true));
+		
+		return $result;
 	}
 
 	private function validate_widget_structure( $widget ) {

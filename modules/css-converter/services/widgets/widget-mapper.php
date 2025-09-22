@@ -27,6 +27,7 @@ class Widget_Mapper {
 			
 			// Text elements
 			'p' => 'e-paragraph',
+			'blockquote' => 'e-paragraph', // Treat blockquote as paragraph with special styling
 			
 			// Container elements - always use flexbox (HVV decision)
 			'div' => 'e-flexbox',
@@ -118,7 +119,7 @@ class Widget_Mapper {
 	private function handle_paragraph( $element ) {
 		return [
 			'widget_type' => 'e-paragraph',
-			'original_tag' => 'p',
+			'original_tag' => $element['tag'], // Preserve original tag (p, blockquote, etc.)
 			'settings' => [
 				'text' => $element['content'],
 			],

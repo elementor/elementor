@@ -122,10 +122,13 @@ class Html_Parser {
 		foreach ( $element->childNodes as $child ) {
 			if ( $child->nodeType === XML_TEXT_NODE ) {
 				$text .= trim( $child->textContent );
+			} elseif ( $child->nodeType === XML_ELEMENT_NODE ) {
+				// Recursively extract text from nested elements
+				$text .= ' ' . $this->extract_text_content( $child );
 			}
 		}
 
-		return $text;
+		return trim( $text );
 	}
 
 	private function calculate_depth( DOMElement $element ) {

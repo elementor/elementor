@@ -1,0 +1,150 @@
+---
+description: CSS Converter Module Folder Structure Rules
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# CSS Converter Module Folder Structure
+
+## Root Folder Cleanliness Policy
+
+**CRITICAL**: The css-converter module root folder MUST remain clean and organized. 
+
+### ❌ NEVER place these in the root folder:
+- Temporary test files (`test-*.php`, `debug-*.php`)
+- Experimental scripts
+- One-off validation files
+- Development utilities
+- Backup files (`*.bak`, `*.old`)
+- IDE temporary files
+
+### ✅ Root folder should ONLY contain:
+- `services/` - Core service classes
+- `convertors/` - Property mappers and conversion logic
+- `routes/` - REST API endpoints
+- `docs/` - Official documentation
+- `tests/` - PHPUnit test suites
+- `tmp/` - Temporary files (auto-cleaned)
+- `.cursor/` - Cursor IDE rules
+- Core module files (`module.php`, `autoloader.php`)
+
+## Temporary Files Policy
+
+### Use `./tmp/` folder for:
+- Test scripts (`tmp/test-background-fix.php`)
+- Debug utilities (`tmp/debug-circular-reference.php`)
+- Validation scripts (`tmp/validate-margin-mapping.php`)
+- Development experiments (`tmp/experiment-*.php`)
+- Performance benchmarks (`tmp/benchmark-*.php`)
+
+### Temporary File Naming Convention:
+```
+tmp/
+├── test-{feature-name}.php          # Feature tests
+├── debug-{issue-name}.php           # Debug scripts
+├── validate-{component-name}.php    # Validation utilities
+├── benchmark-{performance-test}.php # Performance tests
+└── experiment-{research-topic}.php  # Research experiments
+```
+
+## Folder Structure Enforcement
+
+### Before creating ANY file in css-converter/:
+1. **Ask**: Does this belong in the root folder?
+2. **If temporary**: Move to `tmp/` folder
+3. **If permanent**: Place in appropriate subfolder
+4. **Clean up**: Remove temporary files after use
+
+### Auto-cleanup Policy:
+- `tmp/` folder contents should be cleaned regularly
+- Never commit temporary files to version control
+- Add `tmp/` to `.gitignore` if not already present
+
+## Subfolder Organization
+
+### `services/`
+- `css/` - CSS processing services
+- `widgets/` - Widget creation and mapping
+- Core service interfaces
+
+### `convertors/`
+- `css-properties/` - Property mappers
+- `html-elements/` - HTML element converters
+- Conversion utilities
+
+### `routes/`
+- REST API endpoint handlers
+- Request/response formatters
+
+### `docs/`
+- `class/` - Class documentation
+- `api/` - API documentation
+- Architecture guides
+
+### `tests/`
+- `phpunit/` - PHPUnit test suites
+- Test utilities and fixtures
+
+## File Naming Standards
+
+### Service Classes:
+- `{service-name}-service.php`
+- `class-{service-name}.php`
+
+### Property Mappers:
+- `{property-name}-property-mapper.php`
+- Follow kebab-case naming
+
+### Test Files:
+- `test-{class-name}.php` (in `tests/phpunit/`)
+- `{class-name}-test.php` (in `tests/phpunit/`)
+
+## Enforcement Actions
+
+### When you see violations:
+1. **Immediate**: Move misplaced files to correct location
+2. **Clean**: Remove unnecessary temporary files
+3. **Organize**: Ensure proper folder structure
+4. **Document**: Update this rule if structure evolves
+
+### Common Violations to Fix:
+- `test-*.php` files in root → Move to `tmp/`
+- `debug-*.php` files in root → Move to `tmp/`
+- Backup files in root → Delete or move to `tmp/`
+- Experimental code in root → Move to `tmp/`
+
+## Example Clean Structure:
+```
+css-converter/
+├── .cursor/rules/           # Cursor IDE rules
+├── convertors/              # Conversion logic
+├── docs/                    # Documentation
+├── routes/                  # API endpoints
+├── services/                # Core services
+├── tests/                   # PHPUnit tests
+├── tmp/                     # Temporary files (gitignored)
+│   ├── test-margin-fix.php
+│   ├── debug-circular-ref.php
+│   └── validate-props.php
+├── autoloader.php           # Core files only
+└── module.php
+```
+
+## Maintenance Commands
+
+### Clean temporary files:
+```bash
+# Remove all tmp files older than 7 days
+find tmp/ -name "*.php" -mtime +7 -delete
+
+# Clean all tmp files (use with caution)
+rm -rf tmp/*.php
+```
+
+### Validate structure:
+```bash
+# Check for misplaced files in root
+ls -la *.php | grep -E "(test-|debug-|temp-|experiment-)"
+```
+
+This structure ensures the css-converter module remains maintainable, organized, and professional.
