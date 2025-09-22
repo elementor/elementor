@@ -5,7 +5,7 @@ import Connect from '../utils/connect';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 import { safeDispatchEvent } from '../utils/utils';
-import { OnboardingEventTracking, ONBOARDING_STEP_NAMES } from '../utils/onboarding-event-tracking';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
