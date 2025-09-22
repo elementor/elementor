@@ -124,7 +124,7 @@ export default function Account() {
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
 			OnboardingEventTracking.trackStepAction( 1, 'create' );
-			OnboardingEventTracking.sendCreateMyAccount( 1, 'on_main_cta', 'main_cta' );
+			OnboardingEventTracking.sendCreateMyAccount( 1, 'main_cta' );
 
 			safeDispatchEvent(
 				'new_account_connect',

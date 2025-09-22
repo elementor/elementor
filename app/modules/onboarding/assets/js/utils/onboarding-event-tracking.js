@@ -609,11 +609,10 @@ export class OnboardingEventTracking {
 		}
 	}
 
-	static storeCreateMyAccountEventForLater( currentStep, upgradeClicked, createAccountClicked ) {
+	static storeCreateMyAccountEventForLater( currentStep, createAccountClicked ) {
 		try {
 			const eventData = {
 				currentStep,
-				upgradeClicked,
 				createAccountClicked,
 				timestamp: Date.now(),
 			};
