@@ -360,6 +360,12 @@ class Elements_Manager {
 		}
 	}
 
+	public function enqueue_elements_scripts() {
+		foreach ( $this->get_element_types() as $element ) {
+			$element->enqueue_scripts();
+		}
+	}
+
 	/**
 	 * Require files.
 	 *

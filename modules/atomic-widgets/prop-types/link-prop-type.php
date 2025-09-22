@@ -26,8 +26,7 @@ class Link_Prop_Type extends Object_Prop_Type {
 		return [
 			'destination' => Union_Prop_Type::make()
 				->add_prop_type( Url_Prop_Type::make()->skip_validation() )
-				->add_prop_type( Query_Prop_Type::make() )
-				->required(),
+				->add_prop_type( Query_Prop_Type::make() ),
 			'isTargetBlank' => Boolean_Prop_Type::make()
 				->set_dependencies( $target_blank_dependencies ),
 		];
