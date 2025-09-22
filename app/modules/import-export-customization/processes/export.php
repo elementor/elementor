@@ -137,8 +137,9 @@ class Export {
 			}
 		}
 
+		$media_urls = null;
 		if ( $media_collector ) {
-			$this->handle_media_collection_and_zip_creation( $media_collector );
+			$media_urls = $media_collector->get_collected_urls();
 		}
 
 		$this->add_json_file( 'manifest', $this->manifest_data );
@@ -149,6 +150,7 @@ class Export {
 		return [
 			'manifest' => $this->manifest_data,
 			'file_name' => $zip_file_name,
+			'media_urls' => $media_urls,
 		];
 	}
 
@@ -385,18 +387,5 @@ class Export {
 			isset( $data['customization']['content']['mediaFormat'] ) &&
 			'cloud' === $data['customization']['content']['mediaFormat']
 		);
-	}
-
-	private function handle_media_collection_and_zip_creation( $media_collector ) {
-		$media_result = $media_collector->create_media_zip();
-		if ( ! empty( $media_result['mapping'] ) ) {
-			$this->manifest_data['media_mapping'] = $media_result['mapping'];
-		}
-
-		if ( $media_result['zip_path'] && file_exists( $media_result['zip_path'] ) ) {
-			$this->manifest_data['media_zip_path'] = $media_result['zip_path'];
-		}
-
-		$media_collector->cleanup();
 	}
 }

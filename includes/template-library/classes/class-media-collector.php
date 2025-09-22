@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Media_Collector {
 
 	/**
-	 * Collected media URLs and their local filenames.
+	 * Collected media URLs and their metadata.
 	 *
 	 * @var array
 	 */
@@ -33,10 +33,16 @@ class Media_Collector {
 	}
 
 	/**
-	 * Start media collection for export.
+	 * Start media collection for export (Step 1: Collect URLs).
 	 */
 	public function start_collection() {
 		$this->collected_media = [];
+	}
+
+	/**
+	 * Start media processing (Step 2: Download media files and create zip).
+	 */
+	public function start_processing() {
 		$this->temp_dir = \Elementor\Plugin::$instance->uploads_manager->create_unique_dir();
 	}
 
@@ -45,14 +51,24 @@ class Media_Collector {
 			return;
 		}
 
+		$this->collected_media[ $url ] = true;
+	}
+
+	/**
+	 * Process a single media URL (Step 2: Download and save).
+	 */
+	public function process_media_url( string $url ): string|false {
+		if ( ! $this->is_media_url( $url ) ) {
+			return false;
+		}
+
 		$local_filename = $this->download_and_save_media( $url );
 		if ( $local_filename ) {
-			$this->collected_media[ $url ] = [
-				'original_url' => $url,
-				'filename' => $local_filename,
-				'data' => $media_data,
-			];
+			$this->collected_media[ $url ] = $local_filename;
+			return $local_filename;
 		}
+
+		return false;
 	}
 
 	private function download_and_save_media( string $url ) {
@@ -136,6 +152,21 @@ class Media_Collector {
 		return $saved ? $unique_filename : false;
 	}
 
+	public function get_collected_urls(): array {
+		return array_keys( $this->collected_media );
+	}
+
+	public function process_media_collection( array $media_urls ): array {
+		$this->start_processing();
+		
+		// Process each URL
+		foreach ( $media_urls as $url ) {
+			$this->process_media_url( $url );
+		}
+
+		return $this->create_media_zip();
+	}
+
 	public function create_media_zip(): array {
 		if ( empty( $this->collected_media ) ) {
 			return [
@@ -153,7 +184,7 @@ class Media_Collector {
 
 		$zip = new \ZipArchive();
 		$zip_filename = 'media-' . uniqid() . '.zip';
-		$zip_path = $this->temp_dir . $zip_filename;
+		$zip_path = $this->temp_dir . '/' . $zip_filename;
 
 		if ( $zip->open( $zip_path, \ZipArchive::CREATE ) !== true ) {
 			return [
@@ -163,11 +194,14 @@ class Media_Collector {
 		}
 
 		$mapping = [];
-		foreach ( $this->collected_media as $url => $media_info ) {
-			$file_path = $this->temp_dir . '/' . $media_info['filename'];
-			if ( file_exists( $file_path ) ) {
-				$zip->addFile( $file_path, $media_info['filename'] );
-				$mapping[ $url ] = $media_info['filename'];
+		
+		foreach ( $this->collected_media as $url => $filename ) {
+			if ( is_string( $filename ) ) {
+				$file_path = $this->temp_dir . '/' . $filename;
+				if ( file_exists( $file_path ) ) {
+					$zip->addFile( $file_path, $filename );
+					$mapping[ $url ] = $filename;
+				}
 			}
 		}
 
