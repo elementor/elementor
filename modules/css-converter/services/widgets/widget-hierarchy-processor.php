@@ -152,7 +152,7 @@ class Widget_Hierarchy_Processor {
 		// Note: Styling is now handled by Widget Creator using v4 atomic styles
 		
 		// Ensure content widgets have proper content settings
-		if ( in_array( $widget['widget_type'], [ 'e-heading', 'e-text', 'e-button' ], true ) ) {
+		if ( in_array( $widget['widget_type'], [ 'e-heading', 'e-text', 'e-paragraph', 'e-button' ], true ) ) {
 			$widget['settings'] = $this->apply_content_defaults( $widget['settings'], $widget );
 		}
 		
@@ -178,11 +178,6 @@ class Widget_Hierarchy_Processor {
 
 	private function apply_content_defaults( $settings, $widget ) {
 		// Apply default content settings based on widget type
-		
-		// RADICAL DEBUG: Log input parameters
-		error_log("DEBUG apply_content_defaults: widget_type=" . $widget['widget_type']);
-		error_log("DEBUG apply_content_defaults: input settings=" . var_export($settings, true));
-		error_log("DEBUG apply_content_defaults: widget data=" . var_export($widget, true));
 		
 		switch ( $widget['widget_type'] ) {
 			case 'e-heading':
@@ -230,11 +225,7 @@ class Widget_Hierarchy_Processor {
 				$defaults = [];
 		}
 		
-		// RADICAL DEBUG: Log the final merged result
-		$result = array_merge( $defaults, $settings );
-		error_log("DEBUG apply_content_defaults: final result=" . var_export($result, true));
-		
-		return $result;
+		return array_merge( $defaults, $settings );
 	}
 
 	private function validate_widget_structure( $widget ) {
