@@ -371,9 +371,15 @@ class Css_Processor {
 
 		foreach ( $processing_result['global_classes'] as $class_name => $class_data ) {
 			try {
+				// Get current global classes
+				$current_global_classes = $this->global_classes_repository->all();
+				$current_items = $current_global_classes->get_items()->all();
+				$current_order = $current_global_classes->get_order()->all();
+
 				// Prepare global class data in the format expected by Global Classes Repository
+				$class_id = sanitize_title( $class_name );
 				$global_class_data = [
-					'id' => sanitize_title( $class_name ),
+					'id' => $class_id,
 					'label' => $class_name,
 					'type' => 'class',
 					'variants' => [
@@ -383,12 +389,17 @@ class Css_Processor {
 					],
 				];
 
-				// Create or update global class
-				$result = $this->global_classes_repository->create( $global_class_data );
+				// Add new class to items (or update if exists)
+				$current_items[ $class_id ] = $global_class_data;
 				
-				if ( $result ) {
-					$processing_result['stats']['global_classes_created']++;
+				// Add to order if not already present
+				if ( ! in_array( $class_id, $current_order, true ) ) {
+					$current_order[] = $class_id;
 				}
+
+				// Update global classes repository
+				$this->global_classes_repository->put( $current_items, $current_order );
+				$processing_result['stats']['global_classes_created']++;
 
 			} catch ( \Exception $e ) {
 				$processing_result['stats']['warnings'][] = [
