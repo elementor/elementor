@@ -52,15 +52,6 @@ const getBuildFiles = [
 	'core/files/assets/**',
 	'vendor/autoload.php',
 	'vendor/composer/**',
-	'vendor/symfony/**',
-	'vendor/myclabs/deep-copy/**',
-	'vendor/thecodingmachine/safe/**',
-	'vendor/phpunit/phpunit/src/Framework/Assert/Functions.php',
-	'vendor/jetbrains/phpstorm-stubs/PhpStormStubsMap.php',
-	'vendor/humbug/php-scoper/src/functions.php',
-	'vendor/twig/twig/src/Resources/**',
-	'vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php',
-	'vendor_prefixed/**',
 ];
 
 const copy = {
