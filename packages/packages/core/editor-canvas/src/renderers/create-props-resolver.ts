@@ -92,6 +92,10 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 		let resolvedValue = value.value;
 
 		if ( type.kind === 'object' ) {
+			if ( ! resolvedValue || typeof resolvedValue !== 'object' ) {
+				return null;
+			}
+
 			resolvedValue = await resolve( {
 				props: resolvedValue,
 				schema: type.shape,
@@ -100,6 +104,10 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 		}
 
 		if ( type.kind === 'array' ) {
+			if ( ! Array.isArray( resolvedValue ) ) {
+				return null;
+			}
+
 			resolvedValue = await Promise.all(
 				resolvedValue.map( ( item: PropValue ) =>
 					transform( { value: item, key, type: type.item_prop_type, depth, signal } )
