@@ -32,6 +32,9 @@ export function useKitValidation() {
 	const templateName = data.kitInfo.title || '';
 	const description = data.kitInfo.description || '';
 
+	const hasDescriptionError = description.length > DESCRIPTION_MAX_LENGTH;
+	const descriptionCounterColor = hasDescriptionError ? 'error' : 'text.secondary';
+
 	useEffect( () => {
 		const nameValidationError = validateKitName( templateName );
 		const descriptionValidationError = validateDescription( description );
@@ -63,6 +66,8 @@ export function useKitValidation() {
 		templateName,
 		description,
 		nameError,
+		hasDescriptionError,
+		descriptionCounterColor,
 		handleNameChange,
 		handleDescriptionChange,
 		DESCRIPTION_MAX_LENGTH,

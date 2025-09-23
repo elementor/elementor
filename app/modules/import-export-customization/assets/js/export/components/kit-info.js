@@ -7,6 +7,8 @@ export default function KitInfo() {
 		templateName,
 		description,
 		nameError,
+		hasDescriptionError,
+		descriptionCounterColor,
 		handleNameChange,
 		handleDescriptionChange,
 		DESCRIPTION_MAX_LENGTH,
@@ -43,11 +45,11 @@ export default function KitInfo() {
 				onChange={ handleDescriptionChange }
 				placeholder={ __( 'Type description here...', 'elementor' ) }
 				inputProps={ { maxLength: DESCRIPTION_MAX_LENGTH } }
-				error={ description.length > DESCRIPTION_MAX_LENGTH }
+				error={ hasDescriptionError }
 			/>
 			<Typography
 				variant="caption"
-				color={ description.length > DESCRIPTION_MAX_LENGTH ? 'error' : 'text.secondary' }
+				color={ descriptionCounterColor }
 				sx={ { mt: 0.5, display: 'block' } }
 			>
 				{ description.length } / { DESCRIPTION_MAX_LENGTH } { __( 'characters', 'elementor' ) }
