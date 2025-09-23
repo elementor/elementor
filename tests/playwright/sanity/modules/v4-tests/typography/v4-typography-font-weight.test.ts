@@ -58,7 +58,7 @@ test.describe( 'V4 Typography Font Weight Tests @v4-tests', () => {
 		const options = page.locator( '[role="option"]' );
 		const weights = await options.allTextContents();
 		const extractedWeights = weights
-			.map( ( text ) => text.match( /(\d+)/ )?.[1] )
+			.map( ( text ) => text.match( /(\d+)/ )?.[ 1 ] )
 			.filter( Boolean ) as string[];
 
 		await page.keyboard.press( 'Escape' );
@@ -102,7 +102,7 @@ test.describe( 'V4 Typography Font Weight Tests @v4-tests', () => {
 
 			const weights = await getAvailableFontWeights();
 			expect( weights.length ).toBeGreaterThanOrEqual( 3 );
-			expect( weights.some( w => [ '400', '500', '700' ].includes( w ) ) ).toBe( true );
+			expect( weights.some( ( w ) => [ '400', '500', '700' ].includes( w ) ) ).toBe( true );
 		} );
 
 		test( 'Font weight availability changes with font selection', async () => {
@@ -119,8 +119,8 @@ test.describe( 'V4 Typography Font Weight Tests @v4-tests', () => {
 			expect( systemWeights.length ).toBeGreaterThanOrEqual( 1 );
 			expect( alternativeWeights.length ).toBeGreaterThanOrEqual( 1 );
 
-			const systemHasCommon = systemWeights.some( w => [ '400', '500', '700' ].includes( w ) );
-			const alternativeHasCommon = alternativeWeights.some( w => [ '400', '500', '700' ].includes( w ) );
+			const systemHasCommon = systemWeights.some( ( w ) => [ '400', '500', '700' ].includes( w ) );
+			const alternativeHasCommon = alternativeWeights.some( ( w ) => [ '400', '500', '700' ].includes( w ) );
 			expect( systemHasCommon ).toBe( true );
 			expect( alternativeHasCommon ).toBe( true );
 		} );

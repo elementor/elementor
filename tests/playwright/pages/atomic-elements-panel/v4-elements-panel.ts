@@ -264,21 +264,26 @@ export default class v4Panel extends BasePage {
 		const letterSpacingLabel = this.page.locator( 'label', { hasText: 'Letter spacing' } );
 		const letterSpacingContainer = letterSpacingLabel.locator( 'xpath=ancestor::div[contains(@class, "MuiGrid-container")][1]' );
 		const letterSpacingInput = letterSpacingContainer.locator( 'input' );
-		await letterSpacingInput.waitFor({ state: 'visible', timeout: 5000 });
+		await letterSpacingInput.waitFor( { state: 'visible', timeout: 5000 } );
 
-		// Click the current unit button to open the dropdown
+		// Only change unit if it's different from current unit
 		const currentUnitButton = letterSpacingContainer.locator( 'button[aria-haspopup="true"]' ).first();
-		await currentUnitButton.click();
-		
-		// Wait for and click the unit option
-		const unitOption = this.page.getByRole( 'menuitem', { name: unit.toUpperCase(), exact: true } );
-		await unitOption.waitFor({ state: 'visible' });
-		await unitOption.click();
+		const currentUnitText = await currentUnitButton.textContent();
 
-		// Wait for the unit change to be applied
-		await this.page.waitForTimeout( 500 );
+		if ( currentUnitText?.toLowerCase() !== unit.toLowerCase() ) {
+			await currentUnitButton.click();
+
+			// Wait for and click the unit option
+			const unitOption = this.page.getByRole( 'menuitem', { name: unit.toUpperCase(), exact: true } );
+			await unitOption.waitFor( { state: 'visible' } );
+			await unitOption.click();
+
+			// Wait for the unit change to be applied
+			await this.page.waitForTimeout( 500 );
+		}
 
 		// Set the value
+		await letterSpacingInput.clear();
 		await letterSpacingInput.fill( value.toString() );
 		await letterSpacingInput.press( 'Enter' );
 
@@ -302,19 +307,23 @@ export default class v4Panel extends BasePage {
 		const wordSpacingLabel = this.page.locator( 'label', { hasText: 'Word spacing' } );
 		const wordSpacingContainer = wordSpacingLabel.locator( 'xpath=ancestor::div[contains(@class, "MuiGrid-container")][1]' );
 		const wordSpacingInput = wordSpacingContainer.locator( 'input' );
-		await wordSpacingInput.waitFor({ state: 'visible', timeout: 5000 });
+		await wordSpacingInput.waitFor( { state: 'visible', timeout: 5000 } );
 
-		// Click the current unit button to open the dropdown
+		// Only change unit if it's different from current unit
 		const currentUnitButton = wordSpacingContainer.locator( 'button[aria-haspopup="true"]' ).first();
-		await currentUnitButton.click();
-		
-		// Wait for and click the unit option
-		const unitOption = this.page.getByRole( 'menuitem', { name: unit.toUpperCase(), exact: true } );
-		await unitOption.waitFor({ state: 'visible' });
-		await unitOption.click();
+		const currentUnitText = await currentUnitButton.textContent();
 
-		// Wait for the unit change to be applied
-		await this.page.waitForTimeout( 500 );
+		if ( currentUnitText?.toLowerCase() !== unit.toLowerCase() ) {
+			await currentUnitButton.click();
+
+			// Wait for and click the unit option
+			const unitOption = this.page.getByRole( 'menuitem', { name: unit.toUpperCase(), exact: true } );
+			await unitOption.waitFor( { state: 'visible' } );
+			await unitOption.click();
+
+			// Wait for the unit change to be applied
+			await this.page.waitForTimeout( 500 );
+		}
 
 		// Set the value
 		await wordSpacingInput.fill( value.toString() );
