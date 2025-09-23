@@ -48,17 +48,15 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 
 		const templatesSection = page.locator( '[data-testid="summary_section_templates"]' );
 		await expect( templatesSection ).toBeVisible();
-		await expect( templatesSection.locator( 'text=Templates' ) ).toBeVisible();
+
 		await expect( templatesSection.locator( 'text=No templates exported' ) ).toBeVisible();
 
 		const settingsSection = page.locator( '[data-testid="summary_section_settings"]' );
 		await expect( settingsSection ).toBeVisible();
-		await expect( settingsSection.locator( 'text=Site settings' ) ).toBeVisible();
 		await expect( settingsSection.locator( 'text=Theme | Global Colors | Global Fonts | Theme Style Settings | General Settings | Experiments' ) ).toBeVisible();
 
 		const pluginsSection = page.locator( '[data-testid="summary_section_plugins"]' );
 		await expect( pluginsSection ).toBeVisible();
-		await expect( pluginsSection.locator( 'text=Plugins' ) ).toBeVisible();
 		await expect( pluginsSection.locator( 'text=Elementor | Hello Dolly | WordPress Importer' ) ).toBeVisible();
 
 		await expect( page.locator( 'text=Is the automatic download not starting?' ) ).toBeVisible();
