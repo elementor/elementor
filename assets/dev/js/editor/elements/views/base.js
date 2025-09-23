@@ -1066,7 +1066,7 @@ BaseElementView = BaseContainer.extend( {
 			anchor?.getAttribute( 'href' ) ||
 			this.model?.get( 'settings' )?.get( 'link' )?.url ||
 			'';
-		if ( hash && hash.startsWith( '#' ) ) {
+		if ( hash && hash.startsWith( '#' ) && ! hash.includes( 'elementor-action' ) ) {
 			const scrollTargetElem = event.target?.ownerDocument.querySelector( hash );
 
 			if ( scrollTargetElem ) {
