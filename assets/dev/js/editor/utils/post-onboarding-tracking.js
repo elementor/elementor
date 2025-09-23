@@ -73,7 +73,7 @@ class PostOnboardingTracking {
 	static setupClickTrackingIfNeeded() {
 		const clickCount = parseInt( localStorage.getItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT ) || '0', 10 );
 
-		if ( clickCount >= 4 ) {
+		if ( clickCount >= 3 ) {
 			this.clearAllOnboardingStorage();
 			return;
 		}
@@ -105,7 +105,7 @@ class PostOnboardingTracking {
 		try {
 			const currentCount = parseInt( localStorage.getItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT ) || '0', 10 );
 
-			if ( currentCount > 3 ) {
+			if ( currentCount >= 3 ) {
 				return;
 			}
 
@@ -126,18 +126,14 @@ class PostOnboardingTracking {
 				target: target.tagName + ( target.className ? '.' + target.className.split( ' ' ).join( '.' ) : '' ),
 				title: clickData.title,
 				selector: clickData.selector,
-				willSkip: 1 === newCount
+				willTrack: true
 			} );
-
-			if ( 1 === newCount ) {
-				return;
-			}
 
 			this.storeClickData( newCount, clickData );
 			
 			this.dispatchStoredClickEvent( newCount );
 
-			if ( newCount >= 4 ) {
+			if ( newCount >= 3 ) {
 				this.cleanupPostOnboardingTracking();
 			}
 		} catch ( error ) {
@@ -155,9 +151,6 @@ class PostOnboardingTracking {
 		const excludedSelectors = [
 			'.announcements-container',
 			'.close-button',
-			'.elementor-panel-header',
-			'.elementor-panel-navigation',
-			'.elementor-panel-menu',
 		];
 
 		for ( const selector of excludedSelectors ) {
@@ -351,11 +344,11 @@ class PostOnboardingTracking {
 
 	static getClickEventName( clickCount ) {
 		switch ( clickCount ) {
-			case 2:
+			case 1:
 				return 'post_onboarding_1st_click';
-			case 3:
+			case 2:
 				return 'post_onboarding_2nd_click';
-			case 4:
+			case 3:
 				return 'post_onboarding_3rd_click';
 			default:
 				return null;
@@ -364,11 +357,11 @@ class PostOnboardingTracking {
 
 	static getClickNumber( clickCount ) {
 		switch ( clickCount ) {
-			case 2:
+			case 1:
 				return '1st';
-			case 3:
+			case 2:
 				return '2nd';
-			case 4:
+			case 3:
 				return '3rd';
 			default:
 				return null;

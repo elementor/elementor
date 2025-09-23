@@ -178,6 +178,37 @@ if ( 'undefined' !== typeof window ) {
 		console.log( '\n===============================================' );
 	};
 
+	window.testMixpanelIntegration = () => {
+		console.log( '🔍 MIXPANEL INTEGRATION TEST' );
+		console.log( '===============================================' );
+
+		// Test sending a mock end_state event with time_spent properties
+		const testEventData = {
+			location: 'plugin_onboarding',
+			trigger: 'user_redirects_out_of_step',
+			step_number: 999,
+			step_name: 'test_step',
+			total_time_spent: '99s',
+			step_time_spent: '88s',
+			test_property: 'test_value',
+		};
+
+		console.log( '🧪 Testing with mock event data:', testEventData );
+		console.log( '🧪 Event data keys:', Object.keys( testEventData ) );
+		console.log( '🧪 Has total_time_spent:', testEventData.hasOwnProperty( 'total_time_spent' ) );
+		console.log( '🧪 Has step_time_spent:', testEventData.hasOwnProperty( 'step_time_spent' ) );
+
+		try {
+			console.log( '🧪 Attempting to dispatch test event...' );
+			OnboardingEventTracking.dispatchEvent( 'core_onboarding_test_end_state', testEventData );
+			console.log( '✅ Test event dispatched successfully' );
+		} catch ( error ) {
+			console.error( '❌ Test event dispatch failed:', error );
+		}
+
+		console.log( '\n===============================================' );
+	};
+
 	window.debugReturnToStep4 = () => {
 		console.log( '🎯 Manual return to step 4 debug trigger called' );
 		OnboardingEventTracking.debugReturnToStep4Scenario();
@@ -270,6 +301,7 @@ if ( 'undefined' !== typeof window ) {
 	console.log( '  - window.debugOnboardingTimeSpent()' );
 	console.log( '  - window.debugTimingFlow()' );
 	console.log( '  - window.debugTimeSpentReporting()' );
+	console.log( '  - window.testMixpanelIntegration()' );
 	console.log( '  - window.debugReturnToStep4()' );
 	console.log( '  - window.testReturnToStep4()' );
 	console.log( '  - window.simulateSiteStarterChoice(siteStarter)' );
@@ -369,7 +401,24 @@ export class OnboardingEventTracking {
 				} );
 			}
 
-			return elementorCommon.eventsManager.dispatchEvent( eventName, payload );
+			// CRITICAL DEBUGGING: Intercept the actual Mixpanel call
+			const originalDispatchEvent = elementorCommon.eventsManager.dispatchEvent;
+			const result = originalDispatchEvent.call( elementorCommon.eventsManager, eventName, payload );
+
+			// Log what actually gets sent to Mixpanel
+			if ( eventName.includes( 'end_state' ) ) {
+				console.log( `🔍 MIXPANEL INTEGRATION RESULT:`, {
+					eventName,
+					result,
+					resultType: typeof result,
+					payloadAfterDispatch: payload,
+					elementorCommonAvailable: !! elementorCommon,
+					eventsManagerAvailable: !! elementorCommon?.eventsManager,
+					dispatchEventType: typeof elementorCommon?.eventsManager?.dispatchEvent,
+				} );
+			}
+
+			return result;
 		} catch ( error ) {
 			console.error( '❌ Failed to dispatch event:', error );
 			this.handleStorageError( 'Failed to dispatch event:', error );

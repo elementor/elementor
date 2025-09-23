@@ -199,11 +199,14 @@ If preservation logs appear but timing still fails, there may be another issue:
 - Displays full payload with all properties before dispatch
 - Confirms time_spent properties are included in the actual event
 
-#### **3. New Debug Function: `window.debugTimeSpentReporting()`**
-- Tests time calculations for all steps
-- Simulates event data creation process
-- Shows exactly what would be included in events
-- Verifies property existence in mock event data
+#### **3. New Debug Functions:**
+- `window.debugTimeSpentReporting()` - Tests time calculations and simulates event data creation
+- `window.testMixpanelIntegration()` - Tests Mixpanel integration with mock time_spent data
+
+#### **4. Mixpanel Integration Debugging:**
+- `🔍 MIXPANEL INTEGRATION RESULT` - Shows what happens after `elementorCommon.eventsManager.dispatchEvent`
+- Intercepts and logs the actual Mixpanel integration call
+- Displays result type and payload state after dispatch
 
 ### **Complete Debugging Protocol:**
 
@@ -217,6 +220,11 @@ window.debugTimingFlow()
 window.debugTimeSpentReporting()
 ```
 
+#### **Step 2b: Test Mixpanel Integration**
+```javascript
+window.testMixpanelIntegration()
+```
+
 #### **Step 3: Monitor Event Creation**
 Look for these specific logs during onboarding:
 ```
@@ -224,6 +232,7 @@ Look for these specific logs during onboarding:
 ✅ STEP_TIME_SPENT ADDED TO EVENT DATA: {property: 'step_time_spent', value: '11s', ...}
 🔍 TIME_SPENT VERIFICATION FOR STEP 1: {hasTotal: true, hasStep: true, ...}
 🔍 END_STATE EVENT PAYLOAD VERIFICATION: {hasTotal: true, hasStep: true, fullPayload: {...}}
+🔍 MIXPANEL INTEGRATION RESULT: {eventName: '...', result: ..., payloadAfterDispatch: {...}}
 ```
 
 #### **Step 4: Verify Final Dispatch**
@@ -233,10 +242,11 @@ Check that the `🔍 END_STATE EVENT PAYLOAD VERIFICATION` log shows:
 - `fullPayload` contains both time properties
 
 ### **What This Will Reveal:**
-1. **If time calculations work** but aren't added to event data
-2. **If time properties are added** but lost before dispatch
-3. **If time properties reach dispatch** but aren't in the final payload
-4. **The exact point** where time_spent data is lost
+1. **If time calculations work** but aren't added to event data → Problem in `sendStepEndStateInternal`
+2. **If time properties are added** but lost before dispatch → Problem in event data construction
+3. **If time properties reach dispatch** but lost in Mixpanel integration → Problem in `elementorCommon.eventsManager.dispatchEvent`
+4. **If properties survive Mixpanel integration** but still missing → Problem with Mixpanel configuration or property filtering
+5. **The exact point** where time_spent data is lost in the pipeline
 
 ### **Immediate Action:**
 1. **Refresh onboarding page** to load enhanced debugging
