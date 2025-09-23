@@ -6,6 +6,7 @@ const ONBOARDING_STORAGE_KEYS = {
 	STEP3_ACTIONS: 'elementor_onboarding_step3_actions',
 	STEP4_ACTIONS: 'elementor_onboarding_step4_actions',
 	STEP4_SITE_STARTER_CHOICE: 'elementor_onboarding_s4_site_starter_choice',
+	STEP4_HAS_PREVIOUS_CLICK: 'elementor_onboarding_s4_has_previous_click',
 	EDITOR_LOAD_TRACKED: 'elementor_onboarding_editor_load_tracked',
 	POST_ONBOARDING_CLICK_COUNT: 'elementor_onboarding_click_count',
 	PENDING_EXIT: 'elementor_onboarding_pending_exit',
@@ -339,7 +340,7 @@ class PostOnboardingTracking {
 			ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS,
 			ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS,
 			ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE,
-			'elementor_onboarding_s4_has_previous_click', // Step 4 card click tracking
+			ONBOARDING_STORAGE_KEYS.STEP4_HAS_PREVIOUS_CLICK,
 			ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED,
 			ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT,
 			ONBOARDING_STORAGE_KEYS.PENDING_EXIT,

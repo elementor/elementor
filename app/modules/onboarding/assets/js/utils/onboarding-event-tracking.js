@@ -153,9 +153,9 @@ if ( 'undefined' !== typeof window ) {
 		console.log( '🎯 DEBUG: Step 4 card click tracking analysis' );
 		console.log( '🎯 =========================================' );
 
-		const hasPreviousClick = localStorage.getItem( 'elementor_onboarding_s4_has_previous_click' );
+		const hasPreviousClick = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_HAS_PREVIOUS_CLICK );
 		console.log( '🎯 Step 4 previous click flag:', {
-			key: 'elementor_onboarding_s4_has_previous_click',
+			key: ONBOARDING_STORAGE_KEYS.STEP4_HAS_PREVIOUS_CLICK,
 			value: hasPreviousClick,
 			hasBeenClicked: !! hasPreviousClick,
 		} );
@@ -172,7 +172,7 @@ if ( 'undefined' !== typeof window ) {
 
 	window.resetStep4CardClick = () => {
 		console.log( '🧹 Resetting step 4 card click flag...' );
-		localStorage.removeItem( 'elementor_onboarding_s4_has_previous_click' );
+		localStorage.removeItem( ONBOARDING_STORAGE_KEYS.STEP4_HAS_PREVIOUS_CLICK );
 		console.log( '✅ Step 4 card click flag reset' );
 	};
 
