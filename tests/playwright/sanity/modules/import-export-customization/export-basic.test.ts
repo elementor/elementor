@@ -48,7 +48,6 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 
 		const templatesSection = page.locator( '[data-testid="summary_section_templates"]' );
 		await expect( templatesSection ).toBeVisible();
-		await page.pause();
 		await expect( templatesSection.locator( 'text=Templates' ) ).toBeVisible();
 		await expect( templatesSection.locator( 'text=No templates exported' ) ).toBeVisible();
 
