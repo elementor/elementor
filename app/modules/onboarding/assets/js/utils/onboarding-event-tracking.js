@@ -1,5 +1,8 @@
+/* eslint-disable no-console */
 import eventsConfig from '../../../../../../core/common/modules/events-manager/assets/js/events-config';
 import { options } from './utils';
+
+console.log( '🚀 OnboardingEventTracking loaded with EXIT DEBUGGING!' );
 
 const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
@@ -60,17 +63,23 @@ const ONBOARDING_STORAGE_KEYS = {
 
 export class OnboardingEventTracking {
 	static dispatchEvent( eventName, payload ) {
+		console.log( '🚀 dispatchEvent called:', { eventName, payload } );
+
 		if ( ! elementorCommon.eventsManager || 'function' !== typeof elementorCommon.eventsManager.dispatchEvent ) {
+			console.log( '❌ eventsManager not available or dispatchEvent not a function' );
 			return;
 		}
 
 		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
+			console.log( '❌ can_send_events is false, not sending event:', { eventName, can_send_events: elementorCommon.config.editor_events?.can_send_events } );
 			return;
 		}
 
 		try {
+			console.log( '✅ Dispatching event to Mixpanel:', { eventName, payload } );
 			return elementorCommon.eventsManager.dispatchEvent( eventName, payload );
 		} catch ( error ) {
+			console.error( '❌ Failed to dispatch event:', error );
 			this.handleStorageError( 'Failed to dispatch event:', error );
 		}
 	}
@@ -401,36 +410,47 @@ export class OnboardingEventTracking {
 
 	static storeExitEventForLater( exitType, currentStep ) {
 		try {
+			console.log( '💾 storeExitEventForLater called:', { exitType, currentStep } );
 			const exitData = {
 				exitType,
 				currentStep,
 				timestamp: Date.now(),
 			};
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT, JSON.stringify( exitData ) );
+			console.log( '💾 Exit event stored in localStorage:', exitData );
 		} catch ( error ) {
+			console.error( '❌ Failed to store exit event:', error );
 			this.handleStorageError( 'Failed to store exit event:', error );
 		}
 	}
 
 	static sendStoredExitEvent() {
 		try {
+			console.log( '📤 sendStoredExitEvent called - checking localStorage...' );
 			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT );
 			if ( ! storedDataStr ) {
+				console.log( '❌ No stored exit event found in localStorage' );
 				return;
 			}
 
+			console.log( '📤 Found stored exit event:', storedDataStr );
 			const exitData = JSON.parse( storedDataStr );
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.EXIT, {
+			const eventPayload = {
 				location: 'plugin_onboarding',
 				trigger: 'exit_action_detected',
 				step_number: exitData.currentStep,
 				step_name: this.getStepName( exitData.currentStep ),
 				action_step: `${ exitData.exitType }/${ this.getStepName( exitData.currentStep ) }`,
 				exit_timestamp: exitData.timestamp,
-			} );
+			};
+
+			console.log( '📤 Sending core_onboarding_exit event:', eventPayload );
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.EXIT, eventPayload );
 
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT );
+			console.log( '🗑️ Removed stored exit event from localStorage' );
 		} catch ( error ) {
+			console.error( '❌ Failed to send stored exit event:', error );
 			this.handleStorageError( 'Failed to send stored exit event:', error );
 		}
 	}
@@ -921,7 +941,9 @@ export class OnboardingEventTracking {
 	}
 
 	static trackExitAndSendEndState( currentStep ) {
+		console.log( '🚪 trackExitAndSendEndState called:', { currentStep } );
 		this.trackStepAction( currentStep, 'exit' );
+		console.log( '📊 Sending step end state for exit...' );
 		this.sendStepEndState( currentStep );
 	}
 
@@ -1135,6 +1157,7 @@ export class OnboardingEventTracking {
 	}
 
 	static sendAllStoredEvents() {
+		console.log( '📤 sendAllStoredEvents called - sending all stored events...' );
 		this.sendStoredExitEvent();
 		this.sendStoredSkipEvent();
 		this.sendStoredConnectStatusEvent();
@@ -1143,6 +1166,7 @@ export class OnboardingEventTracking {
 		this.sendStoredCreateAccountStatusEvent();
 		this.sendStoredStep1ClickedConnectEvent();
 		this.sendStoredStep1EndStateEvent();
+		console.log( '✅ sendAllStoredEvents completed' );
 	}
 
 	static sendStoredStep1EventsOnStep2() {

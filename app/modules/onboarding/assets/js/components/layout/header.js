@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useContext } from 'react';
 import { OnboardingContext } from '../../context/context';
 import Grid from 'elementor-app/ui/grid/grid';
@@ -12,17 +13,22 @@ export default function Header( props ) {
 	const { state } = useContext( OnboardingContext );
 
 	const trackExitFromAccountSetup = () => {
+		console.log( '🚪 trackExitFromAccountSetup called:', { currentStep: state.currentStep } );
 		OnboardingEventTracking.trackExitAndSendEndState( state.currentStep );
 	};
 
 	const trackXButtonExit = () => {
+		console.log( '❌ trackXButtonExit called:', { currentStep: state.currentStep } );
 		OnboardingEventTracking.storeExitEventForLater( 'x_button', state.currentStep );
 	};
 
 	const onClose = () => {
+		console.log( '🔴 X BUTTON CLICKED - onClose triggered:', { currentStep: state.currentStep } );
+
 		trackExitFromAccountSetup();
 		trackXButtonExit();
 
+		console.log( '📤 Dispatching close modal event...' );
 		elementorCommon.events.dispatchEvent( {
 			event: 'close modal',
 			version: '',
@@ -32,6 +38,7 @@ export default function Header( props ) {
 			},
 		} );
 
+		console.log( '🔄 Redirecting to admin URL...' );
 		window.top.location = elementorAppConfig.admin_url;
 	};
 
