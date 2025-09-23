@@ -37,7 +37,7 @@ export async function activateMcpRegistration( sdk: AngieMcpSdk ) {
 }
 
 const isAlphabet = ( str: string ): string | never => {
-	const passes = !! str && /^[a-z]+$/.test( str );
+	const passes = !! str && /^[a-z_]+$/.test( str );
 	if ( ! passes ) {
 		throw new Error( 'Not alphabet' );
 	}
