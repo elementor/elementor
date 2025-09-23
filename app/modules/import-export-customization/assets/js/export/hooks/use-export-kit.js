@@ -57,7 +57,7 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 
 			const isExportLocal = 'file' === kitInfo.source && result.data && result.data.file;
 			const isExportToCloud = 'cloud' === kitInfo.source && result.data && result.data.kit;
-			
+
 			let exportedData = null;
 
 			if ( isExportLocal ) {
@@ -77,7 +77,7 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 			const mediaUrls = result.data.media_urls;
 			if ( mediaUrls && mediaUrls.length > 0 ) {
 				setStatus( STATUS_PROCESSING_MEDIA );
-				
+
 				const mediaResponse = await fetch( `${ baseUrl }/process-media`, {
 					method: 'POST',
 					headers: {
