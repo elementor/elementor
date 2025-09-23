@@ -862,10 +862,14 @@ export class OnboardingEventTracking {
 	}
 
 	static setupAllUpgradeButtons( currentStep, selector = '.elementor-button-upgrade, .eps-button--upgrade, [data-upgrade-button]' ) {
+		console.log( '🔍 setupAllUpgradeButtons called:', { currentStep, selector } );
 		const upgradeButtons = document.querySelectorAll( selector );
+		console.log( '🔍 Found upgrade buttons:', { count: upgradeButtons.length, buttons: Array.from( upgradeButtons ).map( ( b ) => ( { className: b.className, id: b.id, tagName: b.tagName } ) ) } );
+
 		const cleanupFunctions = [];
 
-		upgradeButtons.forEach( ( button ) => {
+		upgradeButtons.forEach( ( button, index ) => {
+			console.log( `🔍 Setting up button ${ index + 1 }:`, { className: button.className, id: button.id } );
 			const cleanup = this.setupSingleUpgradeButton( button, currentStep );
 			if ( cleanup ) {
 				cleanupFunctions.push( cleanup );
@@ -879,28 +883,36 @@ export class OnboardingEventTracking {
 
 	static setupSingleUpgradeButton( buttonElement, currentStep ) {
 		if ( ! buttonElement ) {
+			console.log( '❌ setupSingleUpgradeButton: buttonElement is null/undefined' );
 			return null;
 		}
+
+		console.log( '🎯 setupSingleUpgradeButton:', { currentStep, buttonElement: { className: buttonElement.className, id: buttonElement.id, tagName: buttonElement.tagName } } );
 
 		let hasHovered = false;
 		let hasClicked = false;
 
 		const handleMouseEnter = () => {
+			console.log( '🖱️ Mouse enter on upgrade button:', { currentStep, buttonClass: buttonElement.className } );
 			hasHovered = true;
 		};
 
 		const handleMouseLeave = () => {
+			console.log( '🖱️ Mouse leave on upgrade button:', { currentStep, hasHovered, hasClicked, buttonClass: buttonElement.className } );
 			if ( hasHovered && ! hasClicked ) {
+				console.log( '⏰ Scheduling delayed no-click event from mouse leave' );
 				this.scheduleDelayedNoClickEvent( currentStep );
 				hasHovered = false;
 			}
 		};
 
 		const handleClick = () => {
+			console.log( '🖱️ Click on upgrade button:', { currentStep, buttonClass: buttonElement.className } );
 			hasClicked = true;
 			this.cancelDelayedNoClickEvent();
 
 			const upgradeClickedValue = this.determineUpgradeClickedValue( buttonElement );
+			console.log( '🎯 Determined upgrade clicked value:', { upgradeClickedValue, buttonClass: buttonElement.className } );
 			this.sendTopUpgrade( currentStep, upgradeClickedValue );
 		};
 
@@ -908,10 +920,13 @@ export class OnboardingEventTracking {
 		buttonElement.addEventListener( 'mouseleave', handleMouseLeave );
 		buttonElement.addEventListener( 'click', handleClick );
 
+		console.log( '✅ Event listeners added to button:', { className: buttonElement.className, id: buttonElement.id } );
+
 		return () => {
 			buttonElement.removeEventListener( 'mouseenter', handleMouseEnter );
 			buttonElement.removeEventListener( 'mouseleave', handleMouseLeave );
 			buttonElement.removeEventListener( 'click', handleClick );
+			console.log( '🧹 Event listeners removed from button:', { className: buttonElement.className, id: buttonElement.id } );
 		};
 	}
 
@@ -933,6 +948,7 @@ export class OnboardingEventTracking {
 	}
 
 	static setupTopUpgradeTracking( currentStep ) {
+		console.log( '🎯 setupTopUpgradeTracking called:', { currentStep } );
 		return this.setupAllUpgradeButtons( currentStep );
 	}
 

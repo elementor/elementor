@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { OnboardingContext } from '../context/context';
 
 import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
@@ -18,10 +19,14 @@ export default function GoProPopover( props ) {
 	const upgradeButtonRef = useRef( null );
 
 	const setupUpgradeButtonTracking = useCallback( ( buttonElement ) => {
+		console.log( '🔗 setupUpgradeButtonTracking called:', { buttonElement: !! buttonElement, currentStep: state.currentStep } );
+
 		if ( ! buttonElement ) {
+			console.log( '❌ setupUpgradeButtonTracking: buttonElement is null/undefined' );
 			return;
 		}
 
+		console.log( '🔗 Setting up popover upgrade button:', { className: buttonElement.className, href: buttonElement.href } );
 		upgradeButtonRef.current = buttonElement;
 
 		return OnboardingEventTracking.setupSingleUpgradeButtonTracking( buttonElement, state.currentStep );
@@ -29,23 +34,31 @@ export default function GoProPopover( props ) {
 
 	// Handle the Pro Upload popup window.
 	const alreadyHaveProButtonRef = useCallback( ( alreadyHaveProButton ) => {
+		console.log( '🔗 alreadyHaveProButtonRef called:', { alreadyHaveProButton: !! alreadyHaveProButton, currentStep: state.currentStep } );
+
 		if ( ! alreadyHaveProButton ) {
+			console.log( '❌ alreadyHaveProButton is null/undefined' );
 			return;
 		}
+
+		console.log( '🔗 Setting up Already Have Pro button:', { href: alreadyHaveProButton.href, className: alreadyHaveProButton.className } );
 
 		// Remove any existing event listeners to prevent duplicates
 		const existingHandler = alreadyHaveProButton._elementorProHandler;
 		if ( existingHandler ) {
+			console.log( '🧹 Removing existing Already Have Pro handler' );
 			alreadyHaveProButton.removeEventListener( 'click', existingHandler );
 		}
 
 		// Create new handler
 		const clickHandler = ( event ) => {
+			console.log( '🔥 Already have Pro clicked:', { currentStep: state.currentStep } );
 			event.preventDefault();
 
 			trackUpgradeAction();
 			OnboardingEventTracking.cancelDelayedNoClickEvent();
 			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+			console.log( '🔥 Sending already_pro_user for step:', { currentStep: state.currentStep, stepNumber } );
 			OnboardingEventTracking.sendTopUpgrade( stepNumber, 'already_pro_user' );
 
 			elementorCommon.events.dispatchEvent( {
@@ -81,6 +94,7 @@ export default function GoProPopover( props ) {
 		// Store handler reference and add event listener
 		alreadyHaveProButton._elementorProHandler = clickHandler;
 		alreadyHaveProButton.addEventListener( 'click', clickHandler );
+		console.log( '✅ Already Have Pro event listener added' );
 	}, [ state.currentStep, updateState, trackUpgradeAction ] );
 
 	// The buttonsConfig prop is an array of objects. To find the 'Upgrade Now' button, we need to iterate over the object.
@@ -93,9 +107,11 @@ export default function GoProPopover( props ) {
 			tabIndex: 0,
 			elRef: setupUpgradeButtonTracking,
 			onClick: () => {
+				console.log( '🔥 Upgrade now clicked:', { currentStep: state.currentStep } );
 				trackUpgradeAction();
 				OnboardingEventTracking.cancelDelayedNoClickEvent();
 				const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+				console.log( '🔥 Sending on_tooltip for step:', { currentStep: state.currentStep, stepNumber } );
 				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
 
 				elementorCommon.events.dispatchEvent( {

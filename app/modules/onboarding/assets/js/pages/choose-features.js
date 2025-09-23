@@ -63,10 +63,7 @@ export default function ChooseFeatures() {
 					features: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
 				} );
 
-				OnboardingEventTracking.trackStepAction( 3, 'skipped', {
-					pro_features_checked: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
-				} );
-				OnboardingEventTracking.sendStepEndState( 3 );
+				OnboardingEventTracking.trackStepAction( 3, 'skipped' );
 
 				setAjax( {
 					data: {
