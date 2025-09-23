@@ -123,35 +123,9 @@ class PostOnboardingTracking {
 			}
 
 			const clickData = this.extractClickData( target );
-			const eventName = this.getClickEventName( newCount );
-
-			if ( eventName ) {
-				const siteStarterChoiceString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
-				let siteStarterChoice = null;
-
-				if ( siteStarterChoiceString ) {
-					try {
-						const choiceData = JSON.parse( siteStarterChoiceString );
-						siteStarterChoice = choiceData.site_starter;
-					} catch ( error ) {
-						this.warn( 'Failed to parse site starter choice:', error );
-					}
-				}
-
-				if ( elementorCommon.eventsManager && 'function' === typeof elementorCommon.eventsManager.dispatchEvent ) {
-					const clickNumber = this.getClickNumber( newCount );
-					const eventData = {
-						location: 'editor',
-						trigger: 'click',
-						editor_loaded_from_onboarding_source: siteStarterChoice,
-					};
-
-					eventData[ `post_onboarding_${ clickNumber }_click_action_title` ] = clickData.title;
-					eventData[ `post_onboarding_${ clickNumber }_click_action_selector` ] = clickData.selector;
-
-					elementorCommon.eventsManager.dispatchEvent( eventName, eventData );
-				}
-			}
+			this.storeClickData( newCount, clickData );
+			
+			this.dispatchStoredClickEvent( newCount );
 
 			if ( newCount >= 4 ) {
 				this.cleanupPostOnboardingTracking();
@@ -183,6 +157,68 @@ class PostOnboardingTracking {
 		}
 
 		return true;
+	}
+
+	static storeClickData( clickCount, clickData ) {
+		const storageKey = `elementor_onboarding_click_${ clickCount }_data`;
+		const dataToStore = {
+			...clickData,
+			timestamp: Date.now(),
+			clickCount,
+		};
+		
+		localStorage.setItem( storageKey, JSON.stringify( dataToStore ) );
+	}
+
+	static getStoredClickData( clickCount ) {
+		const storageKey = `elementor_onboarding_click_${ clickCount }_data`;
+		const storedData = localStorage.getItem( storageKey );
+		
+		if ( ! storedData ) {
+			return null;
+		}
+		
+		try {
+			return JSON.parse( storedData );
+		} catch ( error ) {
+			this.warn( `Failed to parse stored click data for count ${ clickCount }:`, error );
+			return null;
+		}
+	}
+
+	static dispatchStoredClickEvent( clickCount ) {
+		const storedClickData = this.getStoredClickData( clickCount );
+		const eventName = this.getClickEventName( clickCount );
+
+		if ( ! eventName || ! storedClickData ) {
+			return;
+		}
+
+		const siteStarterChoiceString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
+		let siteStarterChoice = null;
+
+		if ( siteStarterChoiceString ) {
+			try {
+				const choiceData = JSON.parse( siteStarterChoiceString );
+				siteStarterChoice = choiceData.site_starter;
+			} catch ( error ) {
+				this.warn( 'Failed to parse site starter choice:', error );
+			}
+		}
+
+		if ( elementorCommon.eventsManager && 'function' === typeof elementorCommon.eventsManager.dispatchEvent ) {
+			const clickNumber = this.getClickNumber( clickCount );
+			const eventData = {
+				location: 'editor',
+				trigger: 'click',
+				editor_loaded_from_onboarding_source: siteStarterChoice,
+			};
+
+			eventData[ `post_onboarding_${ clickNumber }_click_action_title` ] = storedClickData.title;
+			eventData[ `post_onboarding_${ clickNumber }_click_action_selector` ] = storedClickData.selector;
+
+			elementorCommon.eventsManager.dispatchEvent( eventName, eventData );
+		}
 	}
 
 	static extractClickData( element ) {
@@ -355,6 +391,11 @@ class PostOnboardingTracking {
 		keysToRemove.forEach( ( key ) => {
 			localStorage.removeItem( key );
 		} );
+
+		for ( let i = 1; i <= 4; i++ ) {
+			const clickDataKey = `elementor_onboarding_click_${ i }_data`;
+			localStorage.removeItem( clickDataKey );
+		}
 	}
 }
 

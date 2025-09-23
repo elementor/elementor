@@ -102,42 +102,46 @@ The following keys should contain timing data:
 ## Root Cause Identified and Fixed
 
 ### **Issue Found:**
-The `getStepNumber()` method was only handling page ID strings (`'account'`, `'hello'`, etc.) but receiving numeric values (`1`, `2`, `3`) from the onboarding flow.
+**Timing Race Condition**: Step 1 start time was being stored correctly but immediately cleared by `clearStaleSessionData()`.
 
 **Log Evidence:**
 ```
-🔄 Step number resolved: Object
-❌ No step number found for currentStep: 1
-❌ No step number found for currentStep: 2
-❌ No step number found for currentStep: 3
+✅ Step 1 start time stored successfully
+🧹 Removing key: elementor_onboarding_s1_start_time, existing value: 1758652225056
+❌ No start time found for step 1
 ```
 
-### **Fix Applied:**
-1. **Enhanced `getStepNumber()` method** to handle:
-   - Numeric step numbers (return directly)
-   - String numeric values (convert to number)
-   - Page ID strings (map to numbers)
-   - Added comprehensive logging for debugging
+**Sequence:**
+1. `onStepLoad(1)` → stores step 1 start time ✅
+2. `initiateCoreOnboarding()` → calls `clearStaleSessionData()` → removes step 1 start time ❌
+3. Later when calculating time → step 1 start time is gone ❌
 
-2. **Added fallback logic in `onStepLoad()`** to:
-   - Use numeric currentStep values directly if step mapping fails
-   - Convert string numbers to numeric steps
-   - Ensure step start times are always tracked
+### **Fix Applied:**
+1. **Enhanced `clearStaleSessionData()` method** to:
+   - Detect recently set step start times (within 5 seconds)
+   - Preserve recent step start times during cleanup
+   - Only clear truly stale timing data
+   - Added comprehensive logging for preserved keys
+
+2. **Improved timing preservation logic**:
+   - Check timestamp age before clearing step start times
+   - Preserve any step start time set within the last 5 seconds
+   - Maintain existing logic to avoid overwriting valid start times
 
 ### **Expected Behavior After Fix:**
 ```
-🔍 getStepNumber called with: {pageId: 1, type: "number"}
-✅ Already a number, returning: 1
-🔄 Step number resolved: {currentStep: 1, stepNumber: 1}
-⏱️ Tracking start time for step 1
 ⏱️ trackStepStartTime called for step 1
 ✅ Step 1 start time stored successfully
+🧹 clearStaleSessionData called
+🧹 Preserving recent step start time: elementor_onboarding_s1_start_time, age: 1234ms
+⏱️ Step 1 time calculation: {stepTimeSpent: 30, ...}
+⏱️ Step time spent added to event data: 30s
 ```
 
 ### **Time Tracking Should Now Work:**
-- `total_time_spent` - Calculated from onboarding start time
-- `step_time_spent` - Calculated from individual step start times
-- Both should appear in `s1_end_state`, `s2_end_state`, etc. events
+- `total_time_spent` - Calculated from onboarding start time ✅
+- `step_time_spent` - Calculated from individual step start times ✅
+- Both should appear in `s1_end_state`, `s2_end_state`, etc. events ✅
 
 ## Next Steps
 1. **Test the fix**: Run through onboarding flow with console open

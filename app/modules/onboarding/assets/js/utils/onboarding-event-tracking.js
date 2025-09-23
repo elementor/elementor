@@ -246,6 +246,7 @@ const ONBOARDING_STORAGE_KEYS = {
 	PENDING_STEP1_CLICKED_CONNECT: 'elementor_onboarding_pending_step1_clicked_connect',
 	PENDING_STEP1_END_STATE: 'elementor_onboarding_pending_step1_end_state',
 	EXIT_WINDOW_EXECUTION: 'elementor_onboarding_exit_window_execution',
+	PENDIND_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
 };
 
 export class OnboardingEventTracking {
@@ -554,7 +555,30 @@ export class OnboardingEventTracking {
 	static clearStaleSessionData() {
 		console.log( '🧹 clearStaleSessionData called - clearing stale onboarding localStorage keys' );
 
+		// Get recently set step start times (within last 5 seconds) to preserve them
+		const recentStepStartTimes = [];
+		const currentTime = Date.now();
+		const recentThreshold = 5000; // 5 seconds
+
+		[
+			ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
+			ONBOARDING_STORAGE_KEYS.STEP2_START_TIME,
+			ONBOARDING_STORAGE_KEYS.STEP3_START_TIME,
+			ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
+		].forEach( ( key ) => {
+			const value = localStorage.getItem( key );
+			if ( value ) {
+				const timestamp = parseInt( value, 10 );
+				const age = currentTime - timestamp;
+				if ( age < recentThreshold ) {
+					recentStepStartTimes.push( key );
+					console.log( `🧹 Preserving recent step start time: ${ key }, age: ${ age }ms` );
+				}
+			}
+		} );
+
 		// CRITICAL FIX: Don't clear pending events that should be sent after connection
+		// Also preserve recently set step start times
 		const keysToPreserve = [
 			ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
 			ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT,
@@ -562,6 +586,8 @@ export class OnboardingEventTracking {
 			ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS,
 			ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
 			ONBOARDING_STORAGE_KEYS.PENDING_STEP1_END_STATE,
+			ONBOARDING_STORAGE_KEYS.PENDIND_TOP_UPGRADE_MOUSEOVER,
+			...recentStepStartTimes,
 		];
 
 		const allKeys = Object.values( ONBOARDING_STORAGE_KEYS );
@@ -611,169 +637,8 @@ export class OnboardingEventTracking {
 			}
 
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED, 'true' );
-			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, '0' );
-			this.setupPostOnboardingClickTracking();
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to check and send editor loaded from onboarding:', error );
-		}
-	}
-
-	static setupPostOnboardingClickTracking() {
-		if ( 'undefined' === typeof document ) {
-			return;
-		}
-
-		const handleClick = ( event ) => {
-			this.trackPostOnboardingClick( event );
-		};
-
-		document.addEventListener( 'click', handleClick, true );
-	}
-
-	static trackPostOnboardingClick( event ) {
-		try {
-			const currentCount = parseInt( localStorage.getItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT ) || '0', 10 );
-
-			if ( currentCount >= 3 ) {
-				return;
-			}
-
-			const target = event.target;
-
-			if ( ! this.shouldTrackClick( target ) ) {
-				return;
-			}
-
-			const newCount = currentCount + 1;
-			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, newCount.toString() );
-
-			const clickData = this.extractClickData( target );
-			const eventName = this.getClickEventName( newCount );
-
-			if ( eventName ) {
-				const siteStarterChoice = this.getSiteStarterChoice();
-
-				this.dispatchEvent( eventName, {
-					location: 'editor',
-					trigger: 'click',
-					editor_loaded_from_onboarding_source: siteStarterChoice,
-					element_title: clickData.title,
-					element_id: clickData.id,
-					element_type: clickData.type,
-				} );
-			}
-
-			if ( newCount >= 3 ) {
-				this.cleanupPostOnboardingTracking();
-			}
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to track post-onboarding click:', error );
-		}
-	}
-
-	static shouldTrackClick( element ) {
-		const elementorEditor = element.closest( '#elementor-editor-wrapper, .elementor-panel, .elementor-control' );
-
-		if ( ! elementorEditor ) {
-			return false;
-		}
-
-		const excludedSelectors = [
-			'.announcements-container',
-			'.close-button',
-			'.elementor-panel-header',
-			'.elementor-panel-navigation',
-			'.elementor-panel-menu',
-		];
-
-		for ( const selector of excludedSelectors ) {
-			if ( element.closest( selector ) ) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	static extractClickData( element ) {
-		const title = this.extractElementTitle( element );
-		const id = element.id || '';
-		const type = element.tagName?.toLowerCase() || '';
-
-		return {
-			title: title.substring( 0, 100 ),
-			id,
-			type,
-		};
-	}
-
-	static extractElementTitle( element ) {
-		const controlFieldContainer = element.closest( '.elementor-control-field' );
-
-		if ( controlFieldContainer ) {
-			const labelElement = controlFieldContainer.querySelector( 'label' );
-			if ( labelElement && labelElement.textContent ) {
-				return labelElement.textContent.trim();
-			}
-		}
-
-		const elementorLabel = this.findElementorControlLabel( element );
-		if ( elementorLabel ) {
-			return elementorLabel;
-		}
-
-		return this.getFallbackElementTitle( element );
-	}
-
-	static getFallbackElementTitle( element ) {
-		if ( 'select' === element.tagName?.toLowerCase() ) {
-			return element.title || element.getAttribute( 'aria-label' ) || '';
-		}
-
-		return element.title || element.textContent?.trim() || element.getAttribute( 'aria-label' ) || '';
-	}
-
-	static findElementorControlLabel( element ) {
-		const controlContainer = this.findElementorControlContainer( element );
-		if ( ! controlContainer ) {
-			return null;
-		}
-
-		return this.extractControlTitle( controlContainer );
-	}
-
-	static findElementorControlContainer( element ) {
-		return element.closest( '.elementor-control' );
-	}
-
-	static extractControlTitle( controlContainer ) {
-		const labelElement = controlContainer.querySelector( '.elementor-control-title' );
-
-		if ( labelElement && labelElement.textContent ) {
-			return labelElement.textContent.trim();
-		}
-
-		return null;
-	}
-
-	static getClickEventName( clickCount ) {
-		switch ( clickCount ) {
-			case 1:
-				return ONBOARDING_EVENTS_MAP.POST_ONBOARDING_1ST_CLICK;
-			case 2:
-				return ONBOARDING_EVENTS_MAP.POST_ONBOARDING_2ND_CLICK;
-			case 3:
-				return ONBOARDING_EVENTS_MAP.POST_ONBOARDING_3RD_CLICK;
-			default:
-				return null;
-		}
-	}
-
-	static cleanupPostOnboardingTracking() {
-		try {
-			document.removeEventListener( 'click', this.trackPostOnboardingClick );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to cleanup post-onboarding tracking:', error );
 		}
 	}
 
