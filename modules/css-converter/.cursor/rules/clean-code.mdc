@@ -104,11 +104,54 @@ alwaysApply: false
 - **D - Dependency Inversion**: Depend on abstractions, inject dependencies
 
 ### Error Handling
-- Use specific exception types for different error conditions
-- Provide meaningful error messages
-- Use early validation and fail fast
-- Log errors appropriately for debugging
-- Handle edge cases gracefully
+- **Avoid excessive try/catch blocks** - Use defensive programming instead
+- **Fail fast with early returns** - Return null or empty arrays for invalid input
+- **Use guard clauses** - Check preconditions at method start
+- **Validate inputs explicitly** - Use dedicated validation methods
+- **Return meaningful results** - Use result objects or structured arrays
+- **Log errors sparingly** - Only log unexpected system errors, not business logic failures
+- **Use nullable return types** - Prefer `?array` over throwing exceptions for expected failures
+
+#### ✅ GOOD Error Handling:
+```php
+public function create_widget( string $widget_type, array $html_element ): ?array {
+    if ( ! $this->supports_widget_type( $widget_type ) ) {
+        return null; // Early return, no exception
+    }
+    
+    $schema = $this->get_props_schema_safely( $widget_type );
+    if ( empty( $schema ) ) {
+        return null; // Defensive programming
+    }
+    
+    return $this->build_widget( $widget_type, $html_element, $schema );
+}
+
+private function get_props_schema_safely( string $widget_type ): array {
+    if ( ! class_exists( $this->widget_class_map[ $widget_type ] ) ) {
+        return []; // Return empty array, don't throw
+    }
+    
+    return $this->widget_class_map[ $widget_type ]::define_props_schema();
+}
+```
+
+#### ❌ BAD Error Handling:
+```php
+public function create_widget( string $widget_type, array $html_element ): array {
+    try {
+        if ( ! $this->supports_widget_type( $widget_type ) ) {
+            throw new \InvalidArgumentException( "Unsupported: {$widget_type}" );
+        }
+        
+        return $this->build_widget( $widget_type, $html_element );
+        
+    } catch ( \Exception $e ) {
+        error_log( $e->getMessage() ); // Excessive logging
+        return []; // Lost error context
+    }
+}
+```
 
 ### Testing Guidelines
 - Write unit tests for all public methods

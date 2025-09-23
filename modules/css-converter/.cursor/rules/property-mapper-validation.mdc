@@ -1,0 +1,190 @@
+---
+description: Property Mapper Validation Rules
+globs: ["convertors/css-properties/properties/*.php"]
+alwaysApply: true
+---
+
+# Property Mapper Validation Rules
+
+## 🚨 MANDATORY VALIDATION BEFORE IMPLEMENTATION
+
+**NEVER implement a property mapper without following this complete validation process!**
+
+## Pre-Implementation Checklist
+
+### 1. **Atomic Widget Research** (MANDATORY)
+- [ ] **Find the exact atomic widget** that uses this property
+- [ ] **Locate the prop type file** in `/atomic-widgets/prop-types/`
+- [ ] **Study the prop type's `define_shape()` method**
+- [ ] **Understand the expected `$$type` and `value` structure**
+- [ ] **Note all validation rules and requirements**
+- [ ] **Check for special handling (units, enums, etc.)**
+
+### 2. **Expected Structure Documentation** (MANDATORY)
+```php
+/**
+ * Property Mapper for [PROPERTY_NAME]
+ * 
+ * Based on: [ATOMIC_WIDGET_FILE] uses [PROP_TYPE_CLASS]
+ * Prop Type: /atomic-widgets/prop-types/[PROP_TYPE_FILE]
+ * 
+ * Expected Structure:
+ * {
+ *   "$$type": "[EXPECTED_TYPE]",
+ *   "value": {
+ *     // Document exact expected structure here
+ *   }
+ * }
+ * 
+ * Requirements:
+ * - [List all requirements from prop type]
+ * - [Include validation rules]
+ * - [Note special cases]
+ */
+```
+
+### 3. **Implementation Validation** (MANDATORY)
+- [ ] **Use correct base class method**:
+  - `create_v4_property_with_type()` for specific types
+  - NEVER use `create_v4_property()` unless you want string type
+- [ ] **Match atomic widget structure exactly**
+- [ ] **Handle all CSS shorthand variations**
+- [ ] **Support all edge cases (auto, inherit, etc.)**
+- [ ] **Validate numeric vs string values**
+
+### 4. **Testing Requirements** (MANDATORY)
+- [ ] **Create test with expected atomic widget structure**
+- [ ] **Test all supported CSS variations**
+- [ ] **Test edge cases and error conditions**
+- [ ] **Verify output matches atomic widget expectations**
+
+## Common Atomic Widget Patterns
+
+### Size Properties (width, height, max-width, etc.)
+```php
+// CORRECT: Based on Size_Prop_Type
+return $this->create_v4_property_with_type( $property, 'size', [
+    'size' => (float) $numeric_value,  // MUST be numeric, not string
+    'unit' => $unit_string
+]);
+
+// WRONG: Using string type
+return $this->create_v4_property( $property, $value );
+```
+
+### Dimensions Properties (margin, padding)
+```php
+// CORRECT: Based on Dimensions_Prop_Type
+return $this->create_v4_property_with_type( $property, 'dimensions', [
+    'block-start' => ['$$type' => 'size', 'value' => $top_size],
+    'inline-end' => ['$$type' => 'size', 'value' => $right_size],
+    'block-end' => ['$$type' => 'size', 'value' => $bottom_size],
+    'inline-start' => ['$$type' => 'size', 'value' => $left_size],
+]);
+```
+
+### Box Shadow Properties
+```php
+// CORRECT: Based on Box_Shadow_Prop_Type (array of Shadow_Prop_Type)
+return $this->create_v4_property_with_type( 'box-shadow', 'box-shadow', [
+    [
+        '$$type' => 'shadow',
+        'value' => [
+            'hOffset' => ['$$type' => 'size', 'value' => $h_offset],
+            'vOffset' => ['$$type' => 'size', 'value' => $v_offset],
+            'blur' => ['$$type' => 'size', 'value' => $blur],
+            'spread' => ['$$type' => 'size', 'value' => $spread],
+            'color' => ['$$type' => 'color', 'value' => $color],
+            'position' => $position // null or 'inset'
+        ]
+    ]
+]);
+```
+
+## Validation Methods
+
+### 1. **Structure Validation**
+```php
+private function validate_atomic_structure( array $result ): bool {
+    // Validate that result matches atomic widget expectations
+    // Check $$type, value structure, required fields
+    return $this->matches_atomic_widget_structure( $result );
+}
+```
+
+### 2. **Type Validation**
+```php
+private function ensure_correct_types( array $parsed ): array {
+    // Ensure numeric values are numeric, not strings
+    // Ensure required fields are present
+    // Validate against atomic widget prop type rules
+    return $validated_parsed;
+}
+```
+
+## Error Prevention Rules
+
+### 1. **Base Class Method Usage**
+- ✅ **Use `create_v4_property_with_type()`** when you know the specific atomic type
+- ❌ **NEVER use `create_v4_property()`** unless you specifically want string type
+- ✅ **Always specify the exact `$$type`** from atomic widget prop types
+
+### 2. **Data Type Handling**
+- ✅ **Numeric values MUST be numeric** (not strings)
+- ✅ **String values MUST be strings** (not numeric)
+- ✅ **Arrays MUST match atomic widget structure exactly**
+- ❌ **NEVER assume data types** - validate and convert properly
+
+### 3. **Shorthand Parsing**
+- ✅ **Handle ALL CSS shorthand variations** (1, 2, 3, 4 values)
+- ✅ **Support edge cases** (auto, inherit, initial, unset)
+- ✅ **Parse complex values** (rgba, calc, etc.)
+- ❌ **NEVER assume simple parsing is sufficient**
+
+## Review Checklist
+
+Before submitting any property mapper:
+
+- [ ] **Atomic widget research completed and documented**
+- [ ] **Expected structure matches atomic widget prop type exactly**
+- [ ] **Correct base class method used**
+- [ ] **All CSS variations supported**
+- [ ] **Edge cases handled**
+- [ ] **Validation tests created**
+- [ ] **Output verified against atomic widget expectations**
+- [ ] **No string types used where specific types expected**
+- [ ] **Numeric values are numeric, not strings**
+- [ ] **All required fields present**
+
+## Common Mistakes to Avoid
+
+### ❌ **Type Confusion**
+```php
+// WRONG: Using generic property creation
+return $this->create_v4_property( $property, $value );
+
+// CORRECT: Using specific type
+return $this->create_v4_property_with_type( $property, 'size', $parsed );
+```
+
+### ❌ **String vs Numeric Confusion**
+```php
+// WRONG: Size as string
+['size' => '500', 'unit' => 'px']
+
+// CORRECT: Size as numeric
+['size' => 500, 'unit' => 'px']
+```
+
+### ❌ **Incomplete Structure**
+```php
+// WRONG: Missing required fields
+['hOffset' => $h, 'vOffset' => $v]
+
+// CORRECT: Complete shadow structure
+['hOffset' => $h, 'vOffset' => $v, 'blur' => $b, 'spread' => $s, 'color' => $c, 'position' => null]
+```
+
+## Remember: VALIDATION IS MANDATORY
+
+Every property mapper MUST be validated against atomic widget expectations before implementation. No exceptions!

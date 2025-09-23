@@ -215,6 +215,78 @@ class Color_Property_Mapper extends Property_Mapper_Base {
 }
 ```
 
+## Special Cases & Exceptions
+
+### Display Property Grid Values
+- ✅ `display: grid` and `display: inline-grid` ARE supported (found in style-schema.php)
+- ❌ Grid layout properties (`grid-template-columns`, etc.) are NOT supported yet
+- 📋 Grid layout properties added to FUTURE.md pending atomic widget support
+
+### Properties Pending Atomic Widget Support
+- Grid layout properties (grid-template-*, grid-gap, etc.)
+- Advanced transforms (3D transforms, complex animations)
+- Modern CSS features (container queries, CSS layers)
+
+## Clean Code Principles for Atomic Widget Integration
+
+### **Error Handling Best Practices**
+- **No try/catch for business logic** - Use defensive programming
+- **Return null for unsupported widgets** - Don't throw exceptions
+- **Validate early and return fast** - Use guard clauses
+- **Separate concerns** - Use dedicated validation and result builder classes
+
+#### ✅ CORRECT Error Handling:
+```php
+class Atomic_Widget_Factory {
+    public function create_widget( string $widget_type, array $html_element ): ?array {
+        if ( ! $this->supports_widget_type( $widget_type ) ) {
+            return null; // Early return, no exception
+        }
+        
+        $schema = $this->get_props_schema_safely( $widget_type );
+        if ( empty( $schema ) ) {
+            return null; // Defensive programming
+        }
+        
+        return $this->build_validated_widget( $widget_type, $html_element, $schema );
+    }
+    
+    private function get_props_schema_safely( string $widget_type ): array {
+        $class = $this->get_atomic_widget_class( $widget_type );
+        if ( null === $class || ! method_exists( $class, 'define_props_schema' ) ) {
+            return [];
+        }
+        
+        return $class::define_props_schema();
+    }
+}
+```
+
+#### ❌ WRONG Error Handling:
+```php
+class Bad_Widget_Factory {
+    public function create_widget( string $widget_type, array $html_element ): array {
+        try {
+            if ( ! $this->supports_widget_type( $widget_type ) ) {
+                throw new \InvalidArgumentException( "Unsupported: {$widget_type}" );
+            }
+            
+            return $this->build_widget( $widget_type, $html_element );
+            
+        } catch ( \Exception $e ) {
+            error_log( "Widget creation failed: " . $e->getMessage() );
+            return []; // Lost all context about what failed
+        }
+    }
+}
+```
+
+### **Single Responsibility Principle**
+- **Separate parsing from validation** - Different classes for different concerns
+- **Use result builders** - Dedicated classes for building response structures
+- **Extract statistics calculation** - Separate stats logic from conversion logic
+- **Dedicated mappers** - One class per mapping concern
+
 ## Remember: ATOMIC WIDGETS ARE THE SOURCE OF TRUTH
 
 Never guess. Never assume. Always derive from existing atomic v4 transformers.
