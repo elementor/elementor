@@ -42,6 +42,12 @@ export default function GoProPopover( props ) {
 			return;
 		}
 
+		// CRITICAL FIX: Don't create event handler if currentStep is not properly initialized
+		if ( ! state.currentStep || '' === state.currentStep ) {
+			console.log( '⚠️ Skipping event handler creation - currentStep not initialized:', { currentStep: state.currentStep } );
+			return;
+		}
+
 		console.log( '🔗 Setting up Already Have Pro button:', { href: alreadyHaveProButton.href, className: alreadyHaveProButton.className } );
 
 		// Remove any existing event listeners to prevent duplicates
@@ -56,11 +62,23 @@ export default function GoProPopover( props ) {
 			console.log( '🔥 Already have Pro clicked:', { currentStep: state.currentStep } );
 			event.preventDefault();
 
+			// ADDITIONAL VALIDATION: Ensure we have valid step data before proceeding
+			if ( ! state.currentStep || '' === state.currentStep ) {
+				console.log( '❌ Already have Pro clicked but currentStep is invalid:', { currentStep: state.currentStep } );
+				return;
+			}
+
 			trackUpgradeAction();
 			OnboardingEventTracking.cancelDelayedNoClickEvent();
 			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 			console.log( '🔥 Sending already_pro_user for step:', { currentStep: state.currentStep, stepNumber } );
-			OnboardingEventTracking.sendTopUpgrade( stepNumber, 'already_pro_user' );
+
+			// VALIDATION: Only send if we have a valid step number
+			if ( stepNumber ) {
+				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'already_pro_user' );
+			} else {
+				console.log( '❌ Cannot send already_pro_user - invalid stepNumber:', { currentStep: state.currentStep, stepNumber } );
+			}
 
 			elementorCommon.events.dispatchEvent( {
 				event: 'already have pro',
@@ -109,11 +127,24 @@ export default function GoProPopover( props ) {
 			elRef: setupUpgradeButtonTracking,
 			onClick: () => {
 				console.log( '🔥 Upgrade now clicked:', { currentStep: state.currentStep } );
+
+				// VALIDATION: Ensure we have valid step data before proceeding
+				if ( ! state.currentStep || '' === state.currentStep ) {
+					console.log( '❌ Upgrade now clicked but currentStep is invalid:', { currentStep: state.currentStep } );
+					return;
+				}
+
 				trackUpgradeAction();
 				OnboardingEventTracking.cancelDelayedNoClickEvent();
 				const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 				console.log( '🔥 Sending on_tooltip for step:', { currentStep: state.currentStep, stepNumber } );
-				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
+
+				// VALIDATION: Only send if we have a valid step number
+				if ( stepNumber ) {
+					OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
+				} else {
+					console.log( '❌ Cannot send on_tooltip - invalid stepNumber:', { currentStep: state.currentStep, stepNumber } );
+				}
 
 				elementorCommon.events.dispatchEvent( {
 					event: 'get elementor pro',
