@@ -145,8 +145,6 @@ export default function Account() {
 
 		stateToUpdate.isLibraryConnected = true;
 
-		OnboardingEventTracking.trackStepAction( 1, 'connect' );
-
 		updateState( stateToUpdate );
 
 		elementorCommon.events.dispatchEvent( {
