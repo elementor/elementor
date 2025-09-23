@@ -985,24 +985,26 @@ export class OnboardingEventTracking {
 			const actionsString = localStorage.getItem( storageKey );
 			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
 
-			if ( ! actionsString || ! startTimeString ) {
+			if ( ! actionsString ) {
 				return;
 			}
 
 			const actions = JSON.parse( actionsString );
-			const startTime = parseInt( startTimeString, 10 );
-			const currentTime = Date.now();
-			const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
-			const stepTimeSpent = this.calculateStepTimeSpent( stepNumber );
-
 			const eventData = {
 				location: 'plugin_onboarding',
 				trigger: 'user_redirects_out_of_step',
 				step_number: stepNumber,
 				step_name: stepName,
-				total_time_spent: `${ totalTimeSpent }s`,
 			};
 
+			if ( startTimeString ) {
+				const startTime = parseInt( startTimeString, 10 );
+				const currentTime = Date.now();
+				const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
+				eventData.total_time_spent = `${ totalTimeSpent }s`;
+			}
+
+			const stepTimeSpent = this.calculateStepTimeSpent( stepNumber );
 			if ( stepTimeSpent !== null ) {
 				eventData.step_time_spent = `${ stepTimeSpent }s`;
 			}
