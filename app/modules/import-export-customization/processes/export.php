@@ -124,11 +124,22 @@ class Export {
 			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
 		];
 
+		$media_collector = null;
+		if ( $this->should_collect_media( $data ) ) {
+			$media_collector = new \Elementor\TemplateLibrary\Classes\Media_Collector();
+			$media_collector->start_collection();
+		}
+
 		foreach ( $this->runners as $runner ) {
 			if ( $runner->should_export( $data ) ) {
 				$export_result = $runner->export( $data );
 				$this->handle_export_result( $export_result );
 			}
+		}
+
+		$media_urls = null;
+		if ( $media_collector ) {
+			$media_urls = $media_collector->get_collected_urls();
 		}
 
 		$this->add_json_file( 'manifest', $this->manifest_data );
@@ -139,6 +150,7 @@ class Export {
 		return [
 			'manifest' => $this->manifest_data,
 			'file_name' => $zip_file_name,
+			'media_urls' => $media_urls,
 		];
 	}
 
@@ -254,7 +266,9 @@ class Export {
 		return [
 			'settings' => null,
 			'templates' => null,
-			'content' => null,
+			'content' => [
+				'mediaFormat' => 'link',
+			],
 			'plugins' => null,
 		];
 	}
@@ -366,5 +380,12 @@ class Export {
 	 */
 	private function add_file( $file, $content ) {
 		$this->zip->addFromString( $file, $content );
+	}
+
+	private function should_collect_media( $data ) {
+		return (
+			isset( $data['customization']['content']['mediaFormat'] ) &&
+			'cloud' === $data['customization']['content']['mediaFormat']
+		);
 	}
 }
