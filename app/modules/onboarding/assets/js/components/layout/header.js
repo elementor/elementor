@@ -13,20 +13,22 @@ export default function Header( props ) {
 
 	const { state } = useContext( OnboardingContext );
 
-	const trackExitFromAccountSetup = () => {
-		console.log( '🚪 trackExitFromAccountSetup called:', { currentStep: state.currentStep } );
-		OnboardingEventTracking.trackExitAndSendEndState( state.currentStep );
-	};
-
 	const trackXButtonExit = () => {
-		console.log( '❌ trackXButtonExit called:', { currentStep: state.currentStep } );
-		OnboardingEventTracking.storeExitEventForLater( 'x_button', state.currentStep );
+		const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+		console.log( '❌ trackXButtonExit called:', {
+			currentStep: state.currentStep,
+			stepNumber,
+			resolvedStepNumber: stepNumber || state.currentStep,
+		} );
+
+		// Mark that X button was clicked to prevent close_window tracking
+		OnboardingEventTracking.markXButtonClicked();
+		OnboardingEventTracking.storeExitEventForLater( 'x_button', stepNumber || state.currentStep );
 	};
 
 	const onClose = () => {
 		console.log( '🔴 X BUTTON CLICKED - onClose triggered:', { currentStep: state.currentStep } );
 
-		trackExitFromAccountSetup();
 		trackXButtonExit();
 
 		console.log( '📤 Dispatching close modal event...' );

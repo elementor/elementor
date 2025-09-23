@@ -24,6 +24,18 @@ if ( 'undefined' !== typeof document ) {
 				timestamp: Date.now(),
 			} );
 		}
+
+		const cardGridElement = target.closest( '.e-onboarding__cards-grid' );
+		if ( cardGridElement ) {
+			console.log( '🎯 STEP 4 CARD GRID CLICK DETECTED:', {
+				target: target.tagName,
+				className: target.className,
+				cardElement: cardGridElement,
+				timestamp: Date.now(),
+			} );
+
+			OnboardingEventTracking.handleStep4CardClick( event );
+		}
 	}, true );
 
 	console.log( '🖱️ Global onboarding click listener attached' );
@@ -137,6 +149,33 @@ if ( 'undefined' !== typeof window ) {
 		console.log( '⏱️ =========================' );
 	};
 
+	window.debugStep4CardClick = () => {
+		console.log( '🎯 DEBUG: Step 4 card click tracking analysis' );
+		console.log( '🎯 =========================================' );
+
+		const hasPreviousClick = localStorage.getItem( 'elementor_onboarding_s4_has_previous_click' );
+		console.log( '🎯 Step 4 previous click flag:', {
+			key: 'elementor_onboarding_s4_has_previous_click',
+			value: hasPreviousClick,
+			hasBeenClicked: !! hasPreviousClick,
+		} );
+
+		console.log( '🎯 Next card click will:', hasPreviousClick ? 'TRIGGER return event' : 'SET the flag for future detection' );
+		console.log( '🎯 =========================================' );
+	};
+
+	window.testStep4CardClick = () => {
+		console.log( '🧪 Testing step 4 card click detection...' );
+		const mockEvent = { target: document.body };
+		OnboardingEventTracking.handleStep4CardClick( mockEvent );
+	};
+
+	window.resetStep4CardClick = () => {
+		console.log( '🧹 Resetting step 4 card click flag...' );
+		localStorage.removeItem( 'elementor_onboarding_s4_has_previous_click' );
+		console.log( '✅ Step 4 card click flag reset' );
+	};
+
 	console.log( '🔍 Debug functions exposed:' );
 	console.log( '  - window.debugOnboardingTimeSpent()' );
 	console.log( '  - window.debugReturnToStep4()' );
@@ -144,6 +183,9 @@ if ( 'undefined' !== typeof window ) {
 	console.log( '  - window.simulateSiteStarterChoice(siteStarter)' );
 	console.log( '  - window.monitorOnboardingCalls()' );
 	console.log( '  - window.debugStepTiming()' );
+	console.log( '  - window.debugStep4CardClick()' );
+	console.log( '  - window.testStep4CardClick()' );
+	console.log( '  - window.resetStep4CardClick()' );
 }
 
 const ONBOARDING_EVENTS_MAP = {
@@ -190,6 +232,7 @@ const ONBOARDING_STORAGE_KEYS = {
 	STEP3_START_TIME: 'elementor_onboarding_s3_start_time',
 	STEP4_START_TIME: 'elementor_onboarding_s4_start_time',
 	STEP4_SITE_STARTER_CHOICE: 'elementor_onboarding_s4_site_starter_choice',
+	STEP4_HAS_PREVIOUS_CLICK: 'elementor_onboarding_s4_has_previous_click',
 	EDITOR_LOAD_TRACKED: 'elementor_onboarding_editor_load_tracked',
 	POST_ONBOARDING_CLICK_COUNT: 'elementor_onboarding_click_count',
 	PENDING_EXIT: 'elementor_onboarding_pending_exit',
@@ -204,6 +247,19 @@ const ONBOARDING_STORAGE_KEYS = {
 };
 
 export class OnboardingEventTracking {
+	// State management for mutual exclusivity between x_button and close_window
+	static xButtonClicked = false;
+
+	static markXButtonClicked() {
+		console.log( '🔒 X button clicked - preventing close_window tracking' );
+		this.xButtonClicked = true;
+	}
+
+	static resetXButtonState() {
+		console.log( '🔓 Resetting X button state' );
+		this.xButtonClicked = false;
+	}
+
 	static dispatchEvent( eventName, payload ) {
 		console.log( '🚀 dispatchEvent called:', { eventName, payload } );
 
@@ -833,13 +889,35 @@ export class OnboardingEventTracking {
 
 	static setupWindowCloseTracking( currentStep ) {
 		const handleWindowClose = ( event ) => {
-			console.log( '🚪 Window close detected:', { type: event.type, currentStep } );
-			this.storeExitEventForLater( 'close_window', currentStep );
+			console.log( '🚪 Window close detected:', {
+				type: event.type,
+				currentStep,
+				xButtonClicked: this.xButtonClicked,
+			} );
+
+			// Only track close_window if X button was NOT clicked
+			if ( ! this.xButtonClicked ) {
+				console.log( '✅ Tracking close_window - X button was not clicked' );
+				this.storeExitEventForLater( 'close_window', currentStep );
+			} else {
+				console.log( '🚫 Skipping close_window tracking - X button was clicked' );
+			}
 		};
 
 		const handleBeforeUnload = () => {
-			console.log( '⚠️ Before unload detected:', { currentStep } );
-			this.storeExitEventForLater( 'before_unload', currentStep );
+			console.log( '⚠️ Before unload detected:', {
+				currentStep,
+				xButtonClicked: this.xButtonClicked,
+			} );
+
+			// Only track close_window if X button was NOT clicked
+			// Report as close_window instead of before_unload as requested
+			if ( ! this.xButtonClicked ) {
+				console.log( '✅ Tracking close_window (from beforeunload) - X button was not clicked' );
+				this.storeExitEventForLater( 'close_window', currentStep );
+			} else {
+				console.log( '🚫 Skipping close_window tracking - X button was clicked' );
+			}
 		};
 
 		window.addEventListener( 'beforeunload', handleBeforeUnload );
@@ -1719,6 +1797,43 @@ export class OnboardingEventTracking {
 		}
 	}
 
+	static handleStep4CardClick() {
+		console.log( '🎯 handleStep4CardClick called:', {
+			timestamp: Date.now(),
+			timestampFormatted: new Date().toISOString(),
+		} );
+
+		const hasPreviousClick = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_HAS_PREVIOUS_CLICK );
+		console.log( '🔍 Checking for previous step 4 click:', {
+			hasPreviousClick,
+			storageKey: ONBOARDING_STORAGE_KEYS.STEP4_HAS_PREVIOUS_CLICK,
+		} );
+
+		if ( hasPreviousClick ) {
+			console.log( '🚀 Previous click detected - sending return to step 4 event BEFORE normal action...' );
+
+			const returnEventPayload = {
+				location: 'plugin_onboarding',
+				trigger: 'user_returns_to_step4_card_click',
+				step_number: 4,
+				step_name: ONBOARDING_STEP_NAMES.SITE_STARTER,
+				return_detected_via: 'card_click_detection',
+				timestamp: Date.now(),
+			};
+
+			console.log( '🚀 Return to step 4 event payload:', returnEventPayload );
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
+		} else {
+			console.log( '✨ First click on step 4 cards - marking as clicked for future detection' );
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.STEP4_HAS_PREVIOUS_CLICK, 'true' );
+
+			const verifyStored = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_HAS_PREVIOUS_CLICK );
+			console.log( '✅ Step 4 previous click flag stored:', verifyStored );
+		}
+
+		console.log( '✅ handleStep4CardClick completed - normal card action will proceed' );
+	}
+
 	static handleSiteStarterChoice( siteStarter ) {
 		console.log( '🎯 handleSiteStarterChoice called:', {
 			siteStarter,
@@ -1767,6 +1882,9 @@ export class OnboardingEventTracking {
 			timestamp: Date.now(),
 			timestampFormatted: new Date().toISOString(),
 		} );
+
+		// Reset X button state for new step to ensure clean tracking
+		this.resetXButtonState();
 
 		const stepNumber = this.getStepNumber( currentStep );
 		console.log( `🔄 Step number resolved:`, { currentStep, stepNumber } );

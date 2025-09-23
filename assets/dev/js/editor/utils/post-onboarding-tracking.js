@@ -108,6 +108,12 @@ class PostOnboardingTracking {
 				return;
 			}
 
+			const target = event.target;
+
+			if ( ! this.shouldTrackClick( target ) ) {
+				return;
+			}
+
 			const newCount = currentCount + 1;
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, newCount.toString() );
 
@@ -115,7 +121,6 @@ class PostOnboardingTracking {
 				return;
 			}
 
-			const target = event.target;
 			const clickData = this.extractClickData( target );
 			const eventName = this.getClickEventName( newCount );
 
@@ -155,6 +160,30 @@ class PostOnboardingTracking {
 		}
 	}
 
+	static shouldTrackClick( element ) {
+		const elementorEditor = element.closest( '#elementor-editor-wrapper, .elementor-panel, .elementor-control' );
+
+		if ( ! elementorEditor ) {
+			return false;
+		}
+
+		const excludedSelectors = [
+			'.announcements-container',
+			'.close-button',
+			'.elementor-panel-header',
+			'.elementor-panel-navigation',
+			'.elementor-panel-menu',
+		];
+
+		for ( const selector of excludedSelectors ) {
+			if ( element.closest( selector ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	static extractClickData( element ) {
 		const title = this.findMeaningfulTitle( element );
 		const selector = this.generateLongSelector( element );
@@ -190,13 +219,22 @@ class PostOnboardingTracking {
 	}
 
 	static extractTitleFromElement( element ) {
+		const controlFieldContainer = element.closest( '.elementor-control-field' );
+
+		if ( controlFieldContainer ) {
+			const labelElement = controlFieldContainer.querySelector( 'label' );
+			if ( labelElement && labelElement.textContent ) {
+				return labelElement.textContent.trim();
+			}
+		}
+
 		const sources = [
 			element.getAttribute( 'placeholder' ),
 			element.getAttribute( 'aria-label' ),
 			element.title,
 			element.getAttribute( 'data-title' ),
-			element.textContent?.trim(),
-			element.innerText?.trim(),
+			'select' === element.tagName?.toLowerCase() ? '' : element.textContent?.trim(),
+			'select' === element.tagName?.toLowerCase() ? '' : element.innerText?.trim(),
 			element.querySelector( '.elementor-widget-title' )?.textContent?.trim(),
 			element.querySelector( '.elementor-heading-title' )?.textContent?.trim(),
 			element.querySelector( '.elementor-button-text' )?.textContent?.trim(),
@@ -301,6 +339,7 @@ class PostOnboardingTracking {
 			ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS,
 			ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS,
 			ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE,
+			'elementor_onboarding_s4_has_previous_click', // Step 4 card click tracking
 			ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED,
 			ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT,
 			ONBOARDING_STORAGE_KEYS.PENDING_EXIT,
