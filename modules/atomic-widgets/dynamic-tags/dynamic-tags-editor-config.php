@@ -224,8 +224,6 @@ class Dynamic_Tags_Editor_Config {
 		return $options;
 	}
 
-
-
 	/**
 	 * @param $control
 	 *
