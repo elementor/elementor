@@ -87,7 +87,6 @@ const ONBOARDING_STORAGE_KEYS = {
 	PENDING_CREATE_MY_ACCOUNT: 'elementor_onboarding_pending_create_my_account',
 	PENDING_TOP_UPGRADE: 'elementor_onboarding_pending_top_upgrade',
 	PENDING_TOP_UPGRADE_NO_CLICK: 'elementor_onboarding_pending_top_upgrade_no_click',
-	PENDING_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
 	PENDING_STEP1_CLICKED_CONNECT: 'elementor_onboarding_pending_step1_clicked_connect',
 	PENDING_STEP1_END_STATE: 'elementor_onboarding_pending_step1_end_state',
 };
@@ -393,10 +392,23 @@ export class OnboardingEventTracking {
 	}
 
 	static clearStaleSessionData() {
-		console.log( '🧹 clearStaleSessionData called - clearing all onboarding localStorage keys' );
+		console.log( '🧹 clearStaleSessionData called - clearing stale onboarding localStorage keys' );
 
-		const keysToRemove = Object.values( ONBOARDING_STORAGE_KEYS );
-		console.log( '🧹 Keys to remove:', keysToRemove );
+		// CRITICAL FIX: Don't clear pending events that should be sent after connection
+		const keysToPreserve = [
+			ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
+			ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT,
+			ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS,
+			ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS,
+			ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
+			ONBOARDING_STORAGE_KEYS.PENDING_STEP1_END_STATE,
+		];
+
+		const allKeys = Object.values( ONBOARDING_STORAGE_KEYS );
+		const keysToRemove = allKeys.filter( ( key ) => ! keysToPreserve.includes( key ) );
+
+		console.log( '🧹 Keys to preserve (pending events):', keysToPreserve );
+		console.log( '🧹 Keys to remove (stale data):', keysToRemove );
 
 		keysToRemove.forEach( ( key ) => {
 			const existingValue = localStorage.getItem( key );
@@ -406,7 +418,15 @@ export class OnboardingEventTracking {
 			localStorage.removeItem( key );
 		} );
 
-		console.log( '✅ Stale session data cleared' );
+		// Log what was preserved
+		keysToPreserve.forEach( ( key ) => {
+			const existingValue = localStorage.getItem( key );
+			if ( existingValue ) {
+				console.log( `🔒 Preserved key: ${ key }, existing value:`, existingValue );
+			}
+		} );
+
+		console.log( '✅ Stale session data cleared, pending events preserved' );
 	}
 
 	static checkAndSendEditorLoadedFromOnboarding() {
@@ -458,10 +478,15 @@ export class OnboardingEventTracking {
 				return;
 			}
 
+			const target = event.target;
+			
+			if ( ! this.shouldTrackClick( target ) ) {
+				return;
+			}
+
 			const newCount = currentCount + 1;
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, newCount.toString() );
 
-			const target = event.target;
 			const clickData = this.extractClickData( target );
 			const eventName = this.getClickEventName( newCount );
 
@@ -486,6 +511,30 @@ export class OnboardingEventTracking {
 		}
 	}
 
+	static shouldTrackClick( element ) {
+		const elementorEditor = element.closest( '#elementor-editor-wrapper, .elementor-panel, .elementor-control' );
+		
+		if ( ! elementorEditor ) {
+			return false;
+		}
+
+		const excludedSelectors = [
+			'.announcements-container',
+			'.close-button',
+			'.elementor-panel-header',
+			'.elementor-panel-navigation',
+			'.elementor-panel-menu',
+		];
+
+		for ( const selector of excludedSelectors ) {
+			if ( element.closest( selector ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	static extractClickData( element ) {
 		const title = this.extractElementTitle( element );
 		const id = element.id || '';
@@ -499,6 +548,15 @@ export class OnboardingEventTracking {
 	}
 
 	static extractElementTitle( element ) {
+		const controlFieldContainer = element.closest( '.elementor-control-field' );
+		
+		if ( controlFieldContainer ) {
+			const labelElement = controlFieldContainer.querySelector( 'label' );
+			if ( labelElement && labelElement.textContent ) {
+				return labelElement.textContent.trim();
+			}
+		}
+
 		const elementorLabel = this.findElementorControlLabel( element );
 		if ( elementorLabel ) {
 			return elementorLabel;
@@ -508,6 +566,10 @@ export class OnboardingEventTracking {
 	}
 
 	static getFallbackElementTitle( element ) {
+		if ( element.tagName?.toLowerCase() === 'select' ) {
+			return element.title || element.getAttribute( 'aria-label' ) || '';
+		}
+		
 		return element.title || element.textContent?.trim() || element.getAttribute( 'aria-label' ) || '';
 	}
 
@@ -769,39 +831,6 @@ export class OnboardingEventTracking {
 		}
 	}
 
-	static sendUpgradeMouseoverEvent( currentStep, mouseAction, buttonElement ) {
-		const canSendEvents = elementorCommon.config.editor_events?.can_send_events;
-		console.log( '🖱️ sendUpgradeMouseoverEvent called:', {
-			currentStep,
-			mouseAction,
-			buttonClass: buttonElement.className,
-			can_send_events: canSendEvents,
-		} );
-
-		const upgradeLocation = this.determineUpgradeClickedValue( buttonElement );
-		const eventPayload = {
-			location: 'plugin_onboarding',
-			trigger: 'upgrade_mouseover',
-			step_number: currentStep,
-			step_name: this.getStepName( currentStep ),
-			action_step: currentStep,
-			upgrade_clicked: mouseAction,
-			upgrade_location: upgradeLocation,
-		};
-
-		if ( canSendEvents ) {
-			console.log( '✅ Sending mouseover event to Mixpanel immediately:', eventPayload );
-			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.TOP_UPGRADE, eventPayload );
-		}
-
-		if ( 1 === currentStep ) {
-			console.log( '💾 Storing mouseover event for later (step 1, tracking not enabled yet):', eventPayload );
-			this.storeMouseoverEventForLater( currentStep, mouseAction, upgradeLocation );
-		} else {
-			console.log( '❌ Cannot send mouseover events and not step 1 - event lost:', { currentStep, mouseAction } );
-		}
-	}
-
 	static sendCreateMyAccount( currentStep, createAccountClicked ) {
 		if ( elementorCommon.config.editor_events?.can_send_events ) {
 			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT, {
@@ -880,31 +909,6 @@ export class OnboardingEventTracking {
 		}
 	}
 
-	static storeMouseoverEventForLater( currentStep, mouseAction, upgradeLocation ) {
-		try {
-			console.log( '💾 storeMouseoverEventForLater called:', { currentStep, mouseAction, upgradeLocation } );
-
-			const existingDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_MOUSEOVER );
-			const existingEvents = existingDataString ? JSON.parse( existingDataString ) : [];
-
-			console.log( '💾 storeMouseoverEventForLater - existing events:', existingEvents );
-
-			const eventData = {
-				currentStep,
-				mouseAction,
-				upgradeLocation,
-				timestamp: Date.now(),
-			};
-
-			existingEvents.push( eventData );
-			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_MOUSEOVER, JSON.stringify( existingEvents ) );
-
-			console.log( '💾 storeMouseoverEventForLater - storing events array:', existingEvents );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to store mouseover event:', error );
-		}
-	}
-
 	static sendStoredTopUpgradeEvent() {
 		try {
 			console.log( '📤 sendStoredTopUpgradeEvent called - checking localStorage...' );
@@ -956,51 +960,6 @@ export class OnboardingEventTracking {
 			console.log( '🗑️ Removed stored TOP_UPGRADE events from localStorage' );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to send stored top upgrade event:', error );
-		}
-	}
-
-	static sendStoredMouseoverEvents() {
-		try {
-			console.log( '📤 sendStoredMouseoverEvents called - checking localStorage...' );
-			const storedDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_MOUSEOVER );
-
-			console.log( '📤 sendStoredMouseoverEvents - stored data:', storedDataString );
-
-			if ( ! storedDataString ) {
-				console.log( '❌ No stored mouseover data found' );
-				return;
-			}
-
-			const storedEvents = JSON.parse( storedDataString );
-			const eventsArray = Array.isArray( storedEvents ) ? storedEvents : [ storedEvents ];
-
-			console.log( '📤 sendStoredMouseoverEvents - processing events:', eventsArray );
-
-			eventsArray.forEach( ( eventData, index ) => {
-				console.log( `📤 Sending stored mouseover event ${ index + 1 }:`, {
-					step_number: eventData.currentStep,
-					step_name: this.getStepName( eventData.currentStep ),
-					mouse_action: eventData.mouseAction,
-					upgrade_location: eventData.upgradeLocation,
-					timestamp: eventData.timestamp,
-				} );
-
-				this.dispatchEvent( ONBOARDING_EVENTS_MAP.TOP_UPGRADE, {
-					location: 'plugin_onboarding',
-					trigger: 'upgrade_mouseover',
-					step_number: eventData.currentStep,
-					step_name: this.getStepName( eventData.currentStep ),
-					action_step: eventData.currentStep,
-					upgrade_clicked: eventData.mouseAction,
-					upgrade_location: eventData.upgradeLocation,
-					event_timestamp: eventData.timestamp,
-				} );
-			} );
-
-			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_MOUSEOVER );
-			console.log( '🗑️ Removed stored mouseover events from localStorage' );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to send stored mouseover events:', error );
 		}
 	}
 
@@ -1271,12 +1230,10 @@ export class OnboardingEventTracking {
 		const handleMouseEnter = () => {
 			console.log( '🖱️ Mouse enter on upgrade button:', { currentStep, buttonClass: buttonElement.className } );
 			hasHovered = true;
-			this.sendUpgradeMouseoverEvent( currentStep, 'mouseenter', buttonElement );
 		};
 
 		const handleMouseLeave = () => {
 			console.log( '🖱️ Mouse leave on upgrade button:', { currentStep, hasHovered, hasClicked, buttonClass: buttonElement.className } );
-			this.sendUpgradeMouseoverEvent( currentStep, 'mouseleave', buttonElement );
 			if ( hasHovered && ! hasClicked ) {
 				console.log( '⏰ Scheduling delayed no-click event from mouse leave' );
 				this.scheduleDelayedNoClickEvent( currentStep );
@@ -1661,7 +1618,6 @@ export class OnboardingEventTracking {
 		this.sendStoredSkipEvent();
 		this.sendStoredConnectStatusEvent();
 		this.sendStoredTopUpgradeEvent();
-		this.sendStoredMouseoverEvents();
 		this.sendStoredCreateMyAccountEvent();
 		this.sendStoredCreateAccountStatusEvent();
 		this.sendStoredStep1ClickedConnectEvent();
@@ -1671,7 +1627,6 @@ export class OnboardingEventTracking {
 
 	static sendStoredStep1EventsOnStep2() {
 		this.sendStoredTopUpgradeEvent();
-		this.sendStoredMouseoverEvents();
 	}
 
 	static onStepLoad( currentStep ) {

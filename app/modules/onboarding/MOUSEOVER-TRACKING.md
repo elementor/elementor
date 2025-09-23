@@ -1,4 +1,4 @@
-# Mouseover Tracking Issue - FIXED ✅
+# Mouseover Tracking Issue - CORRECTED ✅
 
 ## Original Problem
 I was seeing the mouseover logs but these weren't being sent to Mixpanel.
@@ -11,62 +11,47 @@ Mouse enter on upgrade button: {currentStep: 2, buttonClass: 'eps-app__header-bt
 
 This was happening in all steps but events weren't reaching Mixpanel.
 
-## Root Causes Identified & Fixed
+## Root Cause & Correct Fix
 
-### 1. Step 1 Only Limitation ✅ FIXED
+### The Issue ✅ FIXED
 **Problem**: `scheduleDelayedNoClickEvent()` had hardcoded check `if ( currentStep !== 1 ) { return; }` 
 **Fix**: Removed the step restriction so mouseover tracking works on all steps
 
-### 2. No Direct Mouseover Events ✅ FIXED  
-**Problem**: Only console logs were generated, no actual events sent to Mixpanel
-**Fix**: Added new `sendUpgradeMouseoverEvent()` method that sends immediate mouseover events
+### Incorrect First Attempt ❌ REVERTED
+Initially added immediate mouseenter/mouseleave event tracking, but this was wrong:
+- Sent separate events for `mouseenter` and `mouseleave` 
+- Used wrong `upgrade_clicked` values (`"mouseenter"`, `"mouseleave"`)
+- Created unnecessary duplicate events
 
-### 3. Missing Immediate Tracking ✅ FIXED
-**Problem**: Only delayed "no_click" events were sent after mouse leave
-**Fix**: Now sends immediate mouseover events on both `mouseenter` and `mouseleave`
+### Correct Implementation ✅ FINAL
+The existing delayed no-click pattern was already correct, just needed the step restriction removed:
 
-## Implementation Details
+1. **Mouse Enter**: Log to console, set `hasHovered = true`
+2. **Mouse Leave**: If hovered but not clicked, schedule delayed no-click event
+3. **Delayed Event (500ms)**: Send single event with `upgrade_clicked: "no_click"`
 
-### New Method Added
-```javascript
-static sendUpgradeMouseoverEvent( currentStep, mouseAction, buttonElement ) {
-    // Sends immediate mouseover events to Mixpanel with:
-    // - trigger: 'upgrade_mouseover'
-    // - upgrade_clicked: mouseAction ('mouseenter' or 'mouseleave')
-    // - upgrade_location: button location context
-}
+## Current Behavior (Correct)
+
+### Event Flow
+1. **Mouse Enter**: Console log only, no immediate event
+2. **Mouse Leave**: Console log + schedule delayed event if no click
+3. **500ms Later**: Single event sent with:
+   - `trigger: "upgrade_interaction"`
+   - `upgrade_clicked: "no_click"`
+   - `upgrade_location: "on_topbar"` (or appropriate location)
+
+### Works on All Steps Now
+- **Step 1**: Delayed no-click events stored in localStorage, sent after connection
+- **Steps 2-4**: Delayed no-click events sent immediately to Mixpanel
+- **All Steps**: Console logs show for debugging
+
+## Sample Correct Event
+```
+trigger: upgrade_interaction
+upgrade_clicked: no_click
+upgrade_location: on_topbar
+step_number: 3
+step_name: pro_features
 ```
 
-### Event Flow Now
-1. **Mouse Enter**: Immediate event sent to Mixpanel
-2. **Mouse Leave**: Immediate event sent to Mixpanel  
-3. **Delayed No-Click**: Still sent after 500ms if no click occurred
-
-## Expected Behavior After Fix
-- Mouseover events now work on ALL onboarding steps (not just step 1)
-- **Step 1 (Pre-Connection)**: Events stored in localStorage and sent after user connects
-- **Steps 2-4 (Post-Connection)**: Immediate events sent to Mixpanel on both mouseenter and mouseleave
-- Console logs still show for debugging
-- Delayed no-click events still work as before
-
-## Storage Pattern for Step 1 ✅ FIXED
-
-### The Problem You Identified
-You were absolutely right! In step 1, Mixpanel isn't activated yet because the user hasn't connected. The original fix would have lost these events.
-
-### The Solution
-- **Step 1**: Events stored in `localStorage` under `PENDING_TOP_UPGRADE_MOUSEOVER`
-- **After Connection**: All stored mouseover events sent via `sendStoredMouseoverEvents()`
-- **Integration**: Added to `sendAllStoredEvents()` and `sendStoredStep1EventsOnStep2()`
-
-### Event Flow by Step
-1. **Step 1 (No Mixpanel)**: 
-   - Mouseover events → localStorage
-   - Console logs for debugging
-   
-2. **User Connects**: 
-   - `sendAllStoredEvents()` called
-   - All stored mouseover events sent to Mixpanel
-   
-3. **Steps 2-4 (Mixpanel Active)**:
-   - Mouseover events → Immediate Mixpanel dispatch
+This matches the existing pattern and provides the hover tracking without duplicate events.
