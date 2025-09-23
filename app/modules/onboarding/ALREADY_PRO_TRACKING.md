@@ -45,7 +45,7 @@ console.log( '💾 Storing TOP_UPGRADE for later:' ) // when can_send_events = f
 
 #### 2. `sendStoredTopUpgradeEvent()` Method  
 ```javascript
-console.log( '📤 sendStoredTopUpgradeEvent - stored data:', storedDataStr );
+console.log( '📤 sendStoredTopUpgradeEvent - stored data:', storedDataString );
 console.log( '📤 Sending stored TOP_UPGRADE:', { step_number, step_name, upgrade_clicked } );
 console.log( '🗑️ Removed stored TOP_UPGRADE data' );
 ```

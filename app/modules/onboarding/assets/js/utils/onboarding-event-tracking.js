@@ -468,14 +468,14 @@ export class OnboardingEventTracking {
 	static sendStoredExitEvent() {
 		try {
 			console.log( '📤 sendStoredExitEvent called - checking localStorage...' );
-			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT );
-			if ( ! storedDataStr ) {
+			const storedDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT );
+			if ( ! storedDataString ) {
 				console.log( '❌ No stored exit event found in localStorage' );
 				return;
 			}
 
-			console.log( '📤 Found stored exit event:', storedDataStr );
-			const exitData = JSON.parse( storedDataStr );
+			console.log( '📤 Found stored exit event:', storedDataString );
+			const exitData = JSON.parse( storedDataString );
 			const eventPayload = {
 				location: 'plugin_onboarding',
 				trigger: 'exit_action_detected',
@@ -531,12 +531,12 @@ export class OnboardingEventTracking {
 
 	static sendStoredSkipEvent() {
 		try {
-			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_SKIP );
-			if ( ! storedDataStr ) {
+			const storedDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_SKIP );
+			if ( ! storedDataString ) {
 				return;
 			}
 
-			const skipData = JSON.parse( storedDataStr );
+			const skipData = JSON.parse( storedDataString );
 			const stepName = this.getStepName( skipData.currentStep );
 			this.dispatchEvent( ONBOARDING_EVENTS_MAP.SKIP, {
 				location: 'plugin_onboarding',
@@ -642,11 +642,11 @@ export class OnboardingEventTracking {
 
 	static sendStoredTopUpgradeEvent() {
 		try {
-			if ( ! storedDataStr ) {
+			if ( ! storedDataString ) {
 				return;
 			}
 
-			const storedEvents = JSON.parse( storedDataStr );
+			const storedEvents = JSON.parse( storedDataString );
 			const eventsArray = Array.isArray( storedEvents ) ? storedEvents : [ storedEvents ];
 
 			eventsArray.forEach( ( eventData ) => {
@@ -682,12 +682,12 @@ export class OnboardingEventTracking {
 
 	static sendStoredCreateMyAccountEvent() {
 		try {
-			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT );
-			if ( ! storedDataStr ) {
+			const storedDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT );
+			if ( ! storedDataString ) {
 				return;
 			}
 
-			const eventData = JSON.parse( storedDataStr );
+			const eventData = JSON.parse( storedDataString );
 			this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT, {
 				location: 'plugin_onboarding',
 				trigger: 'upgrade_interaction',
@@ -738,11 +738,12 @@ export class OnboardingEventTracking {
 
 	static sendDelayedNoClickEvent() {
 		try {
-			if ( ! storedDataStr ) {
+			const storedDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
+			if ( ! storedDataString ) {
 				return;
 			}
 
-			const eventData = JSON.parse( storedDataStr );
+			const eventData = JSON.parse( storedDataString );
 			this.sendTopUpgrade( eventData.currentStep, 'no_click' );
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
 		} catch ( error ) {
@@ -765,12 +766,12 @@ export class OnboardingEventTracking {
 
 	static sendStoredCreateAccountStatusEvent() {
 		try {
-			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS );
-			if ( ! storedDataStr ) {
+			const storedDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS );
+			if ( ! storedDataString ) {
 				return;
 			}
 
-			const eventData = JSON.parse( storedDataStr );
+			const eventData = JSON.parse( storedDataString );
 			this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_ACCOUNT_STATUS, {
 				location: 'plugin_onboarding',
 				trigger: 'create_flow_returns_status',
@@ -802,12 +803,12 @@ export class OnboardingEventTracking {
 
 	static sendStoredConnectStatusEvent() {
 		try {
-			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS );
-			if ( ! storedDataStr ) {
+			const storedDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS );
+			if ( ! storedDataString ) {
 				return;
 			}
 
-			const eventData = JSON.parse( storedDataStr );
+			const eventData = JSON.parse( storedDataString );
 			this.dispatchEvent( ONBOARDING_EVENTS_MAP.CONNECT_STATUS, {
 				location: 'plugin_onboarding',
 				trigger: 'connect_flow_returns_status',
@@ -852,12 +853,12 @@ export class OnboardingEventTracking {
 
 	static sendStoredStep1ClickedConnectEvent() {
 		try {
-			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
-			if ( ! storedDataStr ) {
+			const storedDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
+			if ( ! storedDataString ) {
 				return;
 			}
 
-			const eventData = JSON.parse( storedDataStr );
+			const eventData = JSON.parse( storedDataString );
 			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP1_CLICKED_CONNECT, {
 				location: 'plugin_onboarding',
 				trigger: eventsConfig.triggers.click,
@@ -874,12 +875,12 @@ export class OnboardingEventTracking {
 
 	static sendStoredStep1EndStateEvent() {
 		try {
-			const storedDataStr = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_END_STATE );
-			if ( ! storedDataStr ) {
+			const storedDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_END_STATE );
+			if ( ! storedDataString ) {
 				return;
 			}
 
-			const eventData = JSON.parse( storedDataStr );
+			const eventData = JSON.parse( storedDataString );
 			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP1_END_STATE, {
 				...eventData,
 				event_timestamp: eventData.timestamp,
