@@ -120,8 +120,14 @@ export class OnboardingEventTracking {
 	}
 
 	static convertFeaturesToEnglishNames( features ) {
-		// Hard-coded English names for consistent reporting
-		const englishFeatureNames = [
+		const englishFeatureNames = this.getConsistentEnglishFeatureNames();
+		const featureMapping = this.createFeatureMappingFromOptions( englishFeatureNames );
+		
+		return this.mapFeaturesToEnglishEquivalents( features, featureMapping );
+	}
+
+	static getConsistentEnglishFeatureNames() {
+		return [
 			'Templates & Theme Builder',
 			'WooCommerce Builder',
 			'Lead Collection & Form Builder',
@@ -131,15 +137,17 @@ export class OnboardingEventTracking {
 			'Motion Effects & Animations',
 			'Notes & Collaboration',
 		];
+	}
 
-		// Create a mapping based on the options array order
+	static createFeatureMappingFromOptions( englishFeatureNames ) {
 		const featureMapping = {};
 		options.forEach( ( option, index ) => {
-			// Map the translated text to the English equivalent
 			featureMapping[ option.text ] = englishFeatureNames[ index ];
 		} );
+		return featureMapping;
+	}
 
-		// Convert features to English names
+	static mapFeaturesToEnglishEquivalents( features, featureMapping ) {
 		return features.map( ( feature ) => {
 			return featureMapping[ feature ] || feature;
 		} );
@@ -340,16 +348,12 @@ export class OnboardingEventTracking {
 		try {
 			const currentCount = parseInt( localStorage.getItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT ) || '0', 10 );
 
-			if ( currentCount > 3 ) {
+			if ( currentCount >= 3 ) {
 				return;
 			}
 
 			const newCount = currentCount + 1;
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, newCount.toString() );
-
-			if ( 1 === newCount ) {
-				return;
-			}
 
 			const target = event.target;
 			const clickData = this.extractClickData( target );
@@ -368,7 +372,7 @@ export class OnboardingEventTracking {
 				} );
 			}
 
-			if ( newCount >= 4 ) {
+			if ( newCount >= 3 ) {
 				this.cleanupPostOnboardingTracking();
 			}
 		} catch ( error ) {
@@ -377,7 +381,7 @@ export class OnboardingEventTracking {
 	}
 
 	static extractClickData( element ) {
-		const title = element.title || element.textContent?.trim() || element.getAttribute( 'aria-label' ) || '';
+		const title = this.extractElementTitle( element );
 		const id = element.id || '';
 		const type = element.tagName?.toLowerCase() || '';
 
@@ -388,13 +392,49 @@ export class OnboardingEventTracking {
 		};
 	}
 
+	static extractElementTitle( element ) {
+		const elementorLabel = this.findElementorControlLabel( element );
+		if ( elementorLabel ) {
+			return elementorLabel;
+		}
+		
+		return this.getFallbackElementTitle( element );
+	}
+
+	static getFallbackElementTitle( element ) {
+		return element.title || element.textContent?.trim() || element.getAttribute( 'aria-label' ) || '';
+	}
+
+	static findElementorControlLabel( element ) {
+		const controlContainer = this.findElementorControlContainer( element );
+		if ( ! controlContainer ) {
+			return null;
+		}
+
+		return this.extractControlTitle( controlContainer );
+	}
+
+	static findElementorControlContainer( element ) {
+		return element.closest( '.elementor-control' );
+	}
+
+	static extractControlTitle( controlContainer ) {
+		const labelElement = controlContainer.querySelector( '.elementor-control-title' );
+		
+		if ( labelElement && labelElement.textContent ) {
+			return labelElement.textContent.trim();
+		}
+
+		return null;
+	}
+
 	static getClickEventName( clickCount ) {
 		switch ( clickCount ) {
-			case 2:
+			case 1:
 				return ONBOARDING_EVENTS_MAP.POST_ONBOARDING_1ST_CLICK;
-			case 3:
+			case 2:
 				return ONBOARDING_EVENTS_MAP.POST_ONBOARDING_2ND_CLICK;
-			case 4:
+			case 3:
 				return ONBOARDING_EVENTS_MAP.POST_ONBOARDING_3RD_CLICK;
 			default:
 				return null;
