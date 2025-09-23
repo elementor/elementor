@@ -348,6 +348,21 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.32.2 - 2025-09-18 =
+
+* Tweak: Improved compatibility for 3rd-party plugins serving templates
+* Fix: Structure Panel indicators not visible in RTL layouts
+* Fix: Issues with loading Google Fonts when enabling or disabling Load Google Fonts Locally option ([#32795](https://github.com/elementor/elementor/issues/32795))
+* Fix: Background videos not displaying correctly on RTL websites
+
+= 3.32.1 - 2025-09-16 =
+
+* Tweak: Disabled Load Google Fonts locally on all sites by default
+* Tweak: Moved the Load Google Fonts locally option to the Performance tab as a feature
+* Fix: Column editing handles appear outside the editing overlay
+* Fix: Full width containers not aligned to the center
+* Fix: Editor stuck on loading when using an Image Box widget with a link ([#32756](https://github.com/elementor/elementor/issues/32756))
+
 = 3.32.0 - 2025-09-15 =
 
 * New: Introducing Transform controls to move, scale, rotate, and skew elements with 2D and 3D support - Editor V4

@@ -1,10 +1,12 @@
 import {
+	type DependencyTerm,
 	extractValue,
 	isDependencyMet,
 	type PropsSchema,
 	type PropType,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
+import { getSessionStorageItem, removeSessionStorageItem, setSessionStorageItem } from '@elementor/session';
 
 type Value = TransformablePropValue< string > | null;
 
@@ -61,11 +63,12 @@ function extractPropOrderedDependencies(
 	);
 }
 
-export function updateValues(
+export function getUpdatedValues(
 	values: Values,
 	dependencies: string[],
 	propsSchema: PropsSchema,
-	elementValues: Values
+	elementValues: Values,
+	elementId: string
 ): Values {
 	if ( ! dependencies.length ) {
 		return values;
@@ -81,10 +84,34 @@ export function updateValues(
 				return newValues;
 			}
 
-			if ( ! isDependencyMet( propType?.dependencies, combinedValues ) ) {
+			const testDependencies = {
+				previousValues: isDependencyMet( propType.dependencies, elementValues ),
+				newValues: isDependencyMet( propType.dependencies, combinedValues ),
+			};
+
+			if ( ! testDependencies.newValues.isMet ) {
+				const newValue = handleUnmetCondition( {
+					failingDependencies: testDependencies.newValues.failingDependencies,
+					dependency,
+					elementValues: combinedValues,
+					defaultValue: propType.default as Value,
+					elementId,
+				} );
+
 				return {
 					...newValues,
-					...updateValue( path, null, combinedValues ),
+					...updateValue( path, newValue, combinedValues ),
+				};
+			}
+
+			if ( ! testDependencies.previousValues.isMet ) {
+				const savedValue = retrievePreviousValueFromStorage< Value >( { path: dependency, elementId } );
+
+				removePreviousValueFromStorage( { path: dependency, elementId } );
+
+				return {
+					...newValues,
+					...updateValue( path, savedValue ?? ( propType.default as Value ), combinedValues ),
 				};
 			}
 
@@ -106,12 +133,31 @@ function getPropType( schema: PropsSchema, elementValues: Values, path: string[]
 		return null;
 	}
 
-	return keys.reduce( ( prop: PropType | null, key, index ) => {
-		if ( ! prop?.kind ) {
-			return null;
-		}
+	return keys.reduce(
+		( prop: PropType | null, key, index ) =>
+			evaluatePropType( { prop, key, index, path, elementValues, basePropKey } ),
+		baseProp
+	);
+}
 
-		if ( 'union' === prop.kind ) {
+function evaluatePropType( props: {
+	prop: PropType | null;
+	key: string;
+	index: number;
+	path: string[];
+	elementValues: Values;
+	basePropKey: string;
+} ) {
+	const { prop } = props;
+
+	if ( ! prop?.kind ) {
+		return null;
+	}
+
+	const { key, index, path, elementValues, basePropKey } = props;
+
+	switch ( prop.kind ) {
+		case 'union':
 			const value = extractValue( path.slice( 0, index + 1 ), elementValues );
 			const type = ( value?.$$type as string ) ?? null;
 
@@ -120,18 +166,13 @@ function getPropType( schema: PropsSchema, elementValues: Values, path: string[]
 				elementValues,
 				path.slice( 0, index + 2 )
 			);
-		}
-
-		if ( 'array' === prop.kind ) {
+		case 'array':
 			return prop.item_prop_type;
-		}
-
-		if ( 'object' === prop.kind ) {
+		case 'object':
 			return prop.shape[ key ];
-		}
+	}
 
-		return prop[ key as keyof typeof prop ] as PropType;
-	}, baseProp );
+	return prop[ key as keyof typeof prop ] as PropType;
 }
 
 function updateValue( path: string[], value: Value, values: Values ) {
@@ -144,7 +185,7 @@ function updateValue( path: string[], value: Value, values: Values ) {
 		}
 
 		if ( index === path.length - 1 ) {
-			carry[ key ] = value !== null ? ( { ...( carry[ key ] ?? {} ), value } as Value ) : null;
+			carry[ key ] = value ?? null;
 
 			return ( carry[ key ]?.value as Values ) ?? carry.value;
 		}
@@ -153,4 +194,51 @@ function updateValue( path: string[], value: Value, values: Values ) {
 	}, newValue );
 
 	return { [ topPropKey ]: newValue[ topPropKey ] ?? null };
+}
+
+function handleUnmetCondition( props: {
+	failingDependencies: DependencyTerm[];
+	dependency: string;
+	elementValues: Values;
+	defaultValue: Value;
+	elementId: string;
+} ) {
+	const { failingDependencies, dependency, elementValues, defaultValue, elementId } = props;
+	const newValue = failingDependencies.find( ( term ) => term.newValue )?.newValue ?? null;
+	const currentValue = extractValue( dependency.split( '.' ), elementValues ) ?? defaultValue;
+
+	savePreviousValueToStorage( {
+		path: dependency,
+		elementId,
+		value: currentValue,
+	} );
+
+	return newValue;
+}
+
+function savePreviousValueToStorage( { path, elementId, value }: { path: string; elementId: string; value: unknown } ) {
+	const prefix = `elementor/${ elementId }`;
+	const savedValue = retrievePreviousValueFromStorage( { path, elementId } );
+
+	if ( savedValue ) {
+		return;
+	}
+
+	const key = `${ prefix }:${ path }`;
+
+	setSessionStorageItem( key, value );
+}
+
+function retrievePreviousValueFromStorage< T >( { path, elementId }: { path: string; elementId: string } ) {
+	const prefix = `elementor/${ elementId }`;
+	const key = `${ prefix }:${ path }`;
+
+	return getSessionStorageItem< T >( key ) ?? null;
+}
+
+function removePreviousValueFromStorage( { path, elementId }: { path: string; elementId: string } ) {
+	const prefix = `elementor/${ elementId }`;
+	const key = `${ prefix }:${ path }`;
+
+	removeSessionStorageItem( key );
 }
