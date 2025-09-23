@@ -140,7 +140,7 @@ class Admin_Notices extends Module {
 			) ),
 			$new_version,
 			esc_url( $upgrade_url ),
-			esc_attr( esc_html__( 'Update Now', 'elementor' ) )
+			esc_attr__( 'Update Now', 'elementor' )
 		);
 
 		$options = [
