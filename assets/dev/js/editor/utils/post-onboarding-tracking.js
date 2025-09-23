@@ -118,11 +118,21 @@ class PostOnboardingTracking {
 			const newCount = currentCount + 1;
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, newCount.toString() );
 
+			const clickData = this.extractClickData( target );
+			
+			// eslint-disable-next-line no-console
+			console.log( `🖱️ Post-onboarding click ${ newCount }:`, {
+				physicalClick: newCount,
+				target: target.tagName + ( target.className ? '.' + target.className.split( ' ' ).join( '.' ) : '' ),
+				title: clickData.title,
+				selector: clickData.selector,
+				willSkip: 1 === newCount
+			} );
+
 			if ( 1 === newCount ) {
 				return;
 			}
 
-			const clickData = this.extractClickData( target );
 			this.storeClickData( newCount, clickData );
 			
 			this.dispatchStoredClickEvent( newCount );
@@ -191,6 +201,8 @@ class PostOnboardingTracking {
 		const eventName = this.getClickEventName( clickCount );
 
 		if ( ! eventName || ! storedClickData ) {
+			// eslint-disable-next-line no-console
+			console.log( `❌ Cannot dispatch click ${ clickCount }:`, { eventName, hasStoredData: !! storedClickData } );
 			return;
 		}
 
@@ -216,6 +228,14 @@ class PostOnboardingTracking {
 
 			eventData[ `post_onboarding_${ clickNumber }_click_action_title` ] = storedClickData.title;
 			eventData[ `post_onboarding_${ clickNumber }_click_action_selector` ] = storedClickData.selector;
+
+			// eslint-disable-next-line no-console
+			console.log( `📤 Dispatching ${ eventName }:`, {
+				clickCount,
+				clickNumber,
+				title: storedClickData.title,
+				selector: storedClickData.selector
+			} );
 
 			elementorCommon.eventsManager.dispatchEvent( eventName, eventData );
 		}

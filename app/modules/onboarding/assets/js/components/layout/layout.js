@@ -16,8 +16,7 @@ export default function Layout( props ) {
 	const goProButtonRef = useRef();
 
 	const initializeExitTracking = useCallback( () => {
-		// Setup global window close tracking once
-		OnboardingEventTracking.setupGlobalWindowCloseTracking();
+		// Window close tracking removed - only X button tracking remains
 	}, [] );
 
 	const setupTopbarUpgradeTracking = useCallback( ( buttonElement ) => {

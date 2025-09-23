@@ -88,6 +88,96 @@ if ( 'undefined' !== typeof window ) {
 		}
 	};
 
+	window.debugTimingFlow = () => {
+		console.log( '🔍 TIMING FLOW DEBUG - Complete Analysis' );
+		console.log( '================================================' );
+
+		// Check all step start time keys
+		const stepKeys = [
+			'elementor_onboarding_s1_start_time',
+			'elementor_onboarding_s2_start_time',
+			'elementor_onboarding_s3_start_time',
+			'elementor_onboarding_s4_start_time',
+		];
+
+		stepKeys.forEach( ( key, index ) => {
+			const value = localStorage.getItem( key );
+			const stepNum = index + 1;
+
+			if ( value ) {
+				const timestamp = parseInt( value, 10 );
+				const age = Date.now() - timestamp;
+				console.log( `✅ Step ${ stepNum } start time FOUND:`, {
+					key,
+					value,
+					timestamp,
+					formatted: new Date( timestamp ).toISOString(),
+					ageMs: age,
+					ageSeconds: Math.round( age / 1000 ),
+				} );
+			} else {
+				console.log( `❌ Step ${ stepNum } start time MISSING:`, { key } );
+			}
+		} );
+
+		// Check onboarding start time
+		const startTime = localStorage.getItem( 'elementor_onboarding_start_time' );
+		if ( startTime ) {
+			const timestamp = parseInt( startTime, 10 );
+			const age = Date.now() - timestamp;
+			console.log( '✅ Onboarding start time FOUND:', {
+				value: startTime,
+				timestamp,
+				formatted: new Date( timestamp ).toISOString(),
+				ageMs: age,
+				ageSeconds: Math.round( age / 1000 ),
+			} );
+		} else {
+			console.log( '❌ Onboarding start time MISSING' );
+		}
+
+		console.log( '================================================' );
+	};
+
+	window.debugTimeSpentReporting = () => {
+		console.log( '🔍 TIME_SPENT REPORTING DEBUG' );
+		console.log( '===============================================' );
+
+		// Test time calculations for all steps
+		for ( let step = 1; step <= 4; step++ ) {
+			console.log( `\n🔍 Testing Step ${ step } time calculations:` );
+
+			const stepTimeSpent = OnboardingEventTracking.calculateStepTimeSpent( step );
+			console.log( `  Step time spent result: ${ stepTimeSpent }` );
+
+			const totalTimeData = OnboardingEventTracking.calculateTimeSpent();
+			console.log( `  Total time data:`, totalTimeData );
+
+			// Simulate event data creation
+			const mockEventData = {
+				location: 'plugin_onboarding',
+				trigger: 'user_redirects_out_of_step',
+				step_number: step,
+				step_name: `step_${ step }`,
+			};
+
+			// Add time properties like the real method does
+			if ( totalTimeData ) {
+				mockEventData.total_time_spent = `${ totalTimeData.timeSpent }s`;
+			}
+
+			if ( stepTimeSpent !== null ) {
+				mockEventData.step_time_spent = `${ stepTimeSpent }s`;
+			}
+
+			console.log( `  Mock event data:`, mockEventData );
+			console.log( `  Has total_time_spent: ${ mockEventData.hasOwnProperty( 'total_time_spent' ) }` );
+			console.log( `  Has step_time_spent: ${ mockEventData.hasOwnProperty( 'step_time_spent' ) }` );
+		}
+
+		console.log( '\n===============================================' );
+	};
+
 	window.debugReturnToStep4 = () => {
 		console.log( '🎯 Manual return to step 4 debug trigger called' );
 		OnboardingEventTracking.debugReturnToStep4Scenario();
@@ -178,6 +268,8 @@ if ( 'undefined' !== typeof window ) {
 
 	console.log( '🔍 Debug functions exposed:' );
 	console.log( '  - window.debugOnboardingTimeSpent()' );
+	console.log( '  - window.debugTimingFlow()' );
+	console.log( '  - window.debugTimeSpentReporting()' );
 	console.log( '  - window.debugReturnToStep4()' );
 	console.log( '  - window.testReturnToStep4()' );
 	console.log( '  - window.simulateSiteStarterChoice(siteStarter)' );
@@ -203,7 +295,6 @@ const ONBOARDING_EVENTS_MAP = {
 	POST_ONBOARDING_2ND_CLICK: 'post_onboarding_2nd_click',
 	POST_ONBOARDING_3RD_CLICK: 'post_onboarding_3rd_click',
 	EXIT_BUTTON: 'core_onboarding_exit_button',
-	EXIT_WINDOW: 'core_onboarding_exit_window',
 	SKIP: 'core_onboarding_skip',
 	TOP_UPGRADE: 'core_onboarding_top_upgrade',
 	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
@@ -236,7 +327,6 @@ const ONBOARDING_STORAGE_KEYS = {
 	STEP4_HAS_PREVIOUS_CLICK: 'elementor_onboarding_s4_has_previous_click',
 	EDITOR_LOAD_TRACKED: 'elementor_onboarding_editor_load_tracked',
 	POST_ONBOARDING_CLICK_COUNT: 'elementor_onboarding_click_count',
-	PENDING_EXIT_WINDOW: 'elementor_onboarding_pending_exit_window',
 	PENDING_SKIP: 'elementor_onboarding_pending_skip',
 	PENDING_CONNECT_STATUS: 'elementor_onboarding_pending_connect_status',
 	PENDING_CREATE_ACCOUNT_STATUS: 'elementor_onboarding_pending_create_account_status',
@@ -245,14 +335,10 @@ const ONBOARDING_STORAGE_KEYS = {
 	PENDING_TOP_UPGRADE_NO_CLICK: 'elementor_onboarding_pending_top_upgrade_no_click',
 	PENDING_STEP1_CLICKED_CONNECT: 'elementor_onboarding_pending_step1_clicked_connect',
 	PENDING_STEP1_END_STATE: 'elementor_onboarding_pending_step1_end_state',
-	EXIT_WINDOW_EXECUTION: 'elementor_onboarding_exit_window_execution',
 	PENDIND_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
 };
 
 export class OnboardingEventTracking {
-	// Global window close listeners reference for cleanup
-	static windowCloseHandlers = null;
-
 	static dispatchEvent( eventName, payload ) {
 		console.log( '🚀 dispatchEvent called:', { eventName, payload } );
 
@@ -268,6 +354,21 @@ export class OnboardingEventTracking {
 
 		try {
 			console.log( '✅ Dispatching event to Mixpanel:', { eventName, payload } );
+
+			// ENHANCED DEBUGGING: Check for time_spent properties in payload
+			if ( eventName.includes( 'end_state' ) ) {
+				console.log( `🔍 END_STATE EVENT PAYLOAD VERIFICATION:`, {
+					eventName,
+					hasTotal: payload.hasOwnProperty( 'total_time_spent' ),
+					totalValue: payload.total_time_spent,
+					hasStep: payload.hasOwnProperty( 'step_time_spent' ),
+					stepValue: payload.step_time_spent,
+					payloadKeys: Object.keys( payload ),
+					payloadSize: JSON.stringify( payload ).length,
+					fullPayload: payload,
+				} );
+			}
+
 			return elementorCommon.eventsManager.dispatchEvent( eventName, payload );
 		} catch ( error ) {
 			console.error( '❌ Failed to dispatch event:', error );
@@ -654,72 +755,6 @@ export class OnboardingEventTracking {
 		return stepNames[ stepNumber ] || 'unknown_step';
 	}
 
-	static setupGlobalWindowCloseTracking() {
-		console.log( '🌐 setupGlobalWindowCloseTracking called' );
-
-		// Clean up existing listeners first
-		this.cleanupWindowCloseTracking();
-
-		const handleWindowClose = ( event ) => {
-			console.log( '🚪 Global window close detected:', { type: event.type } );
-			const currentStep = this.getCurrentStep();
-			if ( currentStep ) {
-				this.sendExitWindowEvent( currentStep );
-			} else {
-				console.log( '❌ Could not determine current step for exit window tracking' );
-			}
-		};
-
-		// Store reference for cleanup
-		this.windowCloseHandlers = { handleWindowClose };
-
-		window.addEventListener( 'beforeunload', handleWindowClose );
-		window.addEventListener( 'pagehide', handleWindowClose );
-		window.addEventListener( 'unload', handleWindowClose );
-
-		console.log( '✅ Global window close tracking setup completed' );
-	}
-
-	static cleanupWindowCloseTracking() {
-		console.log( '🧹 cleanupWindowCloseTracking called' );
-
-		if ( this.windowCloseHandlers ) {
-			const { handleWindowClose } = this.windowCloseHandlers;
-
-			window.removeEventListener( 'beforeunload', handleWindowClose );
-			window.removeEventListener( 'pagehide', handleWindowClose );
-			window.removeEventListener( 'unload', handleWindowClose );
-
-			this.windowCloseHandlers = null;
-			console.log( '✅ Window close listeners cleaned up' );
-		} else {
-			console.log( '❌ No window close handlers to clean up' );
-		}
-	}
-
-	static getCurrentStep() {
-		// Try to get current step from URL or other context
-		const url = window.location.href;
-
-		if ( url.includes( 'account' ) ) {
-			return 1;
-		}
-		if ( url.includes( 'hello' ) ) {
-			return 2;
-		}
-		if ( url.includes( 'chooseFeatures' ) ) {
-			return 3;
-		}
-		if ( url.includes( 'goodToGo' ) ) {
-			return 4;
-		}
-
-		// Fallback - try to get from onboarding context if available
-		// This might need adjustment based on how the app stores current step
-		console.log( '⚠️ Could not determine current step from URL:', url );
-		return null;
-	}
-
 	static storeSkipEventForLater( currentStep ) {
 		try {
 			const skipData = {
@@ -785,78 +820,6 @@ export class OnboardingEventTracking {
 
 		// Add to step end state tracking
 		this.trackStepAction( currentStep, 'exit_button' );
-	}
-
-	static sendExitWindowEvent( currentStep ) {
-		console.log( '🚪 sendExitWindowEvent called:', { currentStep } );
-
-		// Debouncing check - prevent duplicate events within 1000ms
-		const now = Date.now();
-		const lastExecution = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXIT_WINDOW_EXECUTION );
-
-		if ( lastExecution && ( now - parseInt( lastExecution, 10 ) ) < 1000 ) {
-			console.log( '🚫 Skipping exit_window - too recent (debounced)' );
-			return;
-		}
-
-		console.log( '✅ Recording exit_window execution timestamp' );
-		localStorage.setItem( ONBOARDING_STORAGE_KEYS.EXIT_WINDOW_EXECUTION, now.toString() );
-
-		const eventData = {
-			location: 'plugin_onboarding',
-			trigger: 'window_close_detected',
-			step_number: currentStep,
-			step_name: this.getStepName( currentStep ),
-			action_step: currentStep,
-		};
-
-		console.log( '🚪 Exit window event data:', eventData );
-
-		if ( 1 === currentStep ) {
-			console.log( '💾 Storing exit_window event for later (step 1)' );
-			this.storeExitWindowEventForLater( eventData );
-		} else {
-			console.log( '📤 Sending exit_window event immediately' );
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.EXIT_WINDOW, eventData );
-		}
-
-		// Add to step end state tracking
-		this.trackStepAction( currentStep, 'exit_window' );
-	}
-
-	static storeExitWindowEventForLater( eventData ) {
-		try {
-			console.log( '💾 storeExitWindowEventForLater called:', eventData );
-			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT_WINDOW, JSON.stringify( eventData ) );
-			console.log( '✅ Exit window event stored for later' );
-		} catch ( error ) {
-			console.error( '❌ Failed to store exit window event:', error );
-			this.handleStorageError( 'Failed to store exit window event:', error );
-		}
-	}
-
-	static sendStoredExitWindowEvent() {
-		try {
-			console.log( '📤 sendStoredExitWindowEvent called - checking localStorage...' );
-			const storedDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT_WINDOW );
-
-			if ( ! storedDataString ) {
-				console.log( '❌ No stored exit window event found' );
-				return;
-			}
-
-			console.log( '📤 Found stored exit window event:', storedDataString );
-			const eventData = JSON.parse( storedDataString );
-
-			console.log( '📤 Sending stored exit window event:', eventData );
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.EXIT_WINDOW, eventData );
-
-			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT_WINDOW );
-			console.log( '🗑️ Removed stored exit window event from localStorage' );
-		} catch ( error ) {
-			console.error( '❌ Failed to send stored exit window event:', error );
-			this.handleStorageError( 'Failed to send stored exit window event:', error );
-		}
 	}
 
 	static sendTopUpgrade( currentStep, upgradeClicked ) {
@@ -1450,6 +1413,13 @@ export class OnboardingEventTracking {
 					startTimeFormatted: new Date( startTime ).toISOString(),
 					currentTimeFormatted: new Date( currentTime ).toISOString(),
 				} );
+
+				console.log( `✅ TOTAL_TIME_SPENT ADDED TO EVENT DATA:`, {
+					property: 'total_time_spent',
+					value: eventData.total_time_spent,
+					stepNumber,
+					eventDataKeys: Object.keys( eventData ),
+				} );
 			} else {
 				console.log( `❌ No start time found for total time calculation in step ${ stepNumber }` );
 			}
@@ -1458,13 +1428,40 @@ export class OnboardingEventTracking {
 			if ( stepTimeSpent !== null ) {
 				eventData.step_time_spent = `${ stepTimeSpent }s`;
 				console.log( `⏱️ Step time spent added to event data: ${ stepTimeSpent }s` );
+
+				console.log( `✅ STEP_TIME_SPENT ADDED TO EVENT DATA:`, {
+					property: 'step_time_spent',
+					value: eventData.step_time_spent,
+					stepNumber,
+					eventDataKeys: Object.keys( eventData ),
+				} );
 			} else {
 				console.log( `❌ No step time spent calculated for step ${ stepNumber }` );
+
+				// Additional debugging for missing step time
+				const stepStartTimeKey = this.getStepStartTimeKey( stepNumber );
+				const stepStartTimeValue = localStorage.getItem( stepStartTimeKey );
+				console.log( `🔍 Step ${ stepNumber } timing debug:`, {
+					stepStartTimeKey,
+					stepStartTimeValue,
+					hasValue: !! stepStartTimeValue,
+					allOnboardingKeys: Object.keys( localStorage ).filter( ( k ) => k.includes( 'onboarding' ) ),
+				} );
 			}
 
 			eventData[ endStateProperty ] = actions;
 
 			console.log( `📊 Final event data for step ${ stepNumber }:`, eventData );
+
+			// ENHANCED DEBUGGING: Verify time properties are in final event data
+			console.log( `🔍 TIME_SPENT VERIFICATION FOR STEP ${ stepNumber }:`, {
+				hasTotal: eventData.hasOwnProperty( 'total_time_spent' ),
+				totalValue: eventData.total_time_spent,
+				hasStep: eventData.hasOwnProperty( 'step_time_spent' ),
+				stepValue: eventData.step_time_spent,
+				allKeys: Object.keys( eventData ),
+				eventSize: JSON.stringify( eventData ).length,
+			} );
 
 			if ( elementorCommon.config.editor_events?.can_send_events ) {
 				console.log( `✅ Sending step ${ stepNumber } end state event immediately` );
@@ -1763,7 +1760,6 @@ export class OnboardingEventTracking {
 
 	static sendAllStoredEvents() {
 		console.log( '📤 sendAllStoredEvents called - sending all stored events...' );
-		this.sendStoredExitWindowEvent();
 		this.sendStoredSkipEvent();
 		this.sendStoredConnectStatusEvent();
 		this.sendStoredTopUpgradeEvent();

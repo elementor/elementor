@@ -143,8 +143,103 @@ The following keys should contain timing data:
 - `step_time_spent` - Calculated from individual step start times ✅
 - Both should appear in `s1_end_state`, `s2_end_state`, etc. events ✅
 
-## Next Steps
-1. **Test the fix**: Run through onboarding flow with console open
-2. **Verify logs**: Look for `✅ Already a number, returning: X` messages
-3. **Check events**: Confirm `time_spent` properties appear in end state events
-4. **Use debug function**: Call `window.debugOnboardingTimeSpent()` to verify timing data
+## Enhanced Debugging Added
+
+### **New Debug Function:**
+Added `window.debugTimingFlow()` for comprehensive timing analysis:
+- Shows all step start times with timestamps and ages
+- Displays onboarding start time status
+- Provides complete localStorage timing state
+
+### **Enhanced Error Logging:**
+Added detailed debugging when step time calculations fail:
+- Shows exact localStorage key being checked
+- Displays current value (if any)
+- Lists all onboarding-related keys for context
+
+## Next Steps - Debugging Protocol
+
+### **Step 1: Check Current State**
+In browser console, run:
+```javascript
+window.debugTimingFlow()
+```
+
+This will show you exactly which step start times are missing.
+
+### **Step 2: Monitor Preservation**
+Look for these logs during onboarding:
+```
+🧹 Preserving recent step start time: elementor_onboarding_s3_start_time, age: 1234ms
+```
+
+### **Step 3: Check Step End State Logs**
+When step end state is calculated, look for:
+```
+🔍 Step 3 timing debug: {stepStartTimeKey: "...", stepStartTimeValue: null, ...}
+```
+
+### **Step 4: Verify Fix**
+If preservation logs appear but timing still fails, there may be another issue:
+1. **Multiple clearance calls**: Check if `clearStaleSessionData()` is called multiple times
+2. **Different timing issue**: Step start times may be cleared elsewhere
+3. **Race condition timing**: 5-second threshold may be too short
+
+## Enhanced Time_Spent Debugging Added
+
+### **New Comprehensive Debugging:**
+
+#### **1. Event Data Verification Logging:**
+- `✅ TOTAL_TIME_SPENT ADDED TO EVENT DATA` - Confirms when total time is added
+- `✅ STEP_TIME_SPENT ADDED TO EVENT DATA` - Confirms when step time is added
+- `🔍 TIME_SPENT VERIFICATION FOR STEP X` - Verifies properties exist in final event data
+
+#### **2. Dispatch Event Payload Verification:**
+- `🔍 END_STATE EVENT PAYLOAD VERIFICATION` - Shows exact payload being sent to Mixpanel
+- Displays full payload with all properties before dispatch
+- Confirms time_spent properties are included in the actual event
+
+#### **3. New Debug Function: `window.debugTimeSpentReporting()`**
+- Tests time calculations for all steps
+- Simulates event data creation process
+- Shows exactly what would be included in events
+- Verifies property existence in mock event data
+
+### **Complete Debugging Protocol:**
+
+#### **Step 1: Check Timing State**
+```javascript
+window.debugTimingFlow()
+```
+
+#### **Step 2: Test Time Reporting**
+```javascript
+window.debugTimeSpentReporting()
+```
+
+#### **Step 3: Monitor Event Creation**
+Look for these specific logs during onboarding:
+```
+✅ TOTAL_TIME_SPENT ADDED TO EVENT DATA: {property: 'total_time_spent', value: '11s', ...}
+✅ STEP_TIME_SPENT ADDED TO EVENT DATA: {property: 'step_time_spent', value: '11s', ...}
+🔍 TIME_SPENT VERIFICATION FOR STEP 1: {hasTotal: true, hasStep: true, ...}
+🔍 END_STATE EVENT PAYLOAD VERIFICATION: {hasTotal: true, hasStep: true, fullPayload: {...}}
+```
+
+#### **Step 4: Verify Final Dispatch**
+Check that the `🔍 END_STATE EVENT PAYLOAD VERIFICATION` log shows:
+- `hasTotal: true`
+- `hasStep: true` 
+- `fullPayload` contains both time properties
+
+### **What This Will Reveal:**
+1. **If time calculations work** but aren't added to event data
+2. **If time properties are added** but lost before dispatch
+3. **If time properties reach dispatch** but aren't in the final payload
+4. **The exact point** where time_spent data is lost
+
+### **Immediate Action:**
+1. **Refresh onboarding page** to load enhanced debugging
+2. **Run `window.debugTimeSpentReporting()`** to test time reporting
+3. **Go through onboarding steps** and watch for the new verification logs
+4. **Check the `END_STATE EVENT PAYLOAD VERIFICATION`** logs to see if time properties are in the final payload
