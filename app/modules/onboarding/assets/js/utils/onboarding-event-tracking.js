@@ -202,7 +202,8 @@ const ONBOARDING_EVENTS_MAP = {
 	POST_ONBOARDING_1ST_CLICK: 'post_onboarding_1st_click',
 	POST_ONBOARDING_2ND_CLICK: 'post_onboarding_2nd_click',
 	POST_ONBOARDING_3RD_CLICK: 'post_onboarding_3rd_click',
-	EXIT: 'core_onboarding_exit',
+	EXIT_BUTTON: 'core_onboarding_exit_button',
+	EXIT_WINDOW: 'core_onboarding_exit_window',
 	SKIP: 'core_onboarding_skip',
 	TOP_UPGRADE: 'core_onboarding_top_upgrade',
 	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
@@ -235,7 +236,7 @@ const ONBOARDING_STORAGE_KEYS = {
 	STEP4_HAS_PREVIOUS_CLICK: 'elementor_onboarding_s4_has_previous_click',
 	EDITOR_LOAD_TRACKED: 'elementor_onboarding_editor_load_tracked',
 	POST_ONBOARDING_CLICK_COUNT: 'elementor_onboarding_click_count',
-	PENDING_EXIT: 'elementor_onboarding_pending_exit',
+	PENDING_EXIT_WINDOW: 'elementor_onboarding_pending_exit_window',
 	PENDING_SKIP: 'elementor_onboarding_pending_skip',
 	PENDING_CONNECT_STATUS: 'elementor_onboarding_pending_connect_status',
 	PENDING_CREATE_ACCOUNT_STATUS: 'elementor_onboarding_pending_create_account_status',
@@ -244,21 +245,12 @@ const ONBOARDING_STORAGE_KEYS = {
 	PENDING_TOP_UPGRADE_NO_CLICK: 'elementor_onboarding_pending_top_upgrade_no_click',
 	PENDING_STEP1_CLICKED_CONNECT: 'elementor_onboarding_pending_step1_clicked_connect',
 	PENDING_STEP1_END_STATE: 'elementor_onboarding_pending_step1_end_state',
+	EXIT_WINDOW_EXECUTION: 'elementor_onboarding_exit_window_execution',
 };
 
 export class OnboardingEventTracking {
-	// State management for mutual exclusivity between x_button and close_window
-	static xButtonClicked = false;
-
-	static markXButtonClicked() {
-		console.log( '🔒 X button clicked - preventing close_window tracking' );
-		this.xButtonClicked = true;
-	}
-
-	static resetXButtonState() {
-		console.log( '🔓 Resetting X button state' );
-		this.xButtonClicked = false;
-	}
+	// Global window close listeners reference for cleanup
+	static windowCloseHandlers = null;
 
 	static dispatchEvent( eventName, payload ) {
 		console.log( '🚀 dispatchEvent called:', { eventName, payload } );
@@ -785,96 +777,6 @@ export class OnboardingEventTracking {
 		}
 	}
 
-	static storeExitEventForLater( exitType, currentStep ) {
-		try {
-			console.log( '💾 storeExitEventForLater called:', { exitType, currentStep } );
-			const exitData = {
-				exitType,
-				currentStep,
-				timestamp: Date.now(),
-			};
-
-			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT, JSON.stringify( exitData ) );
-			console.log( '💾 Exit event stored in localStorage:', exitData );
-
-			this.attemptImmediateExitTracking( exitType, currentStep );
-		} catch ( error ) {
-			console.error( '❌ Failed to store exit event:', error );
-			this.handleStorageError( 'Failed to store exit event:', error );
-		}
-	}
-
-	static attemptImmediateExitTracking( exitType, currentStep ) {
-		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
-			console.log( '❌ Cannot send events immediately, relying on stored event' );
-			return;
-		}
-
-		try {
-			const eventPayload = {
-				location: 'plugin_onboarding',
-				trigger: 'exit_action_detected',
-				step_number: currentStep,
-				step_name: this.getStepName( currentStep ),
-				action_step: `${ exitType }/${ this.getStepName( currentStep ) }`,
-				exit_timestamp: Date.now(),
-			};
-
-			console.log( '🚀 Attempting immediate exit tracking with sendBeacon:', eventPayload );
-
-			if ( 'function' === typeof navigator.sendBeacon && elementorCommon.eventsManager?.getEndpoint ) {
-				const endpoint = elementorCommon.eventsManager.getEndpoint();
-				const success = navigator.sendBeacon( endpoint, JSON.stringify( {
-					event: ONBOARDING_EVENTS_MAP.EXIT,
-					data: eventPayload,
-				} ) );
-
-				if ( success ) {
-					console.log( '✅ Exit event sent via sendBeacon successfully' );
-					localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT );
-					return;
-				}
-			}
-
-			console.log( '📤 Fallback: Sending exit event via regular dispatch' );
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.EXIT, eventPayload );
-			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT );
-		} catch ( error ) {
-			console.error( '❌ Failed immediate exit tracking, keeping stored event:', error );
-		}
-	}
-
-	static sendStoredExitEvent() {
-		try {
-			console.log( '📤 sendStoredExitEvent called - checking localStorage...' );
-			const storedDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT );
-			if ( ! storedDataString ) {
-				console.log( '❌ No stored exit event found in localStorage' );
-				return;
-			}
-
-			console.log( '📤 Found stored exit event:', storedDataString );
-			const exitData = JSON.parse( storedDataString );
-			const eventPayload = {
-				location: 'plugin_onboarding',
-				trigger: 'exit_action_detected',
-				step_number: exitData.currentStep,
-				step_name: this.getStepName( exitData.currentStep ),
-				action_step: `${ exitData.exitType }/${ this.getStepName( exitData.currentStep ) }`,
-				exit_timestamp: exitData.timestamp,
-			};
-
-			console.log( '📤 Sending core_onboarding_exit event:', eventPayload );
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.EXIT, eventPayload );
-
-			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT );
-			console.log( '🗑️ Removed stored exit event from localStorage' );
-		} catch ( error ) {
-			console.error( '❌ Failed to send stored exit event:', error );
-			this.handleStorageError( 'Failed to send stored exit event:', error );
-		}
-	}
-
 	static getStepName( stepNumber ) {
 		const stepNames = {
 			1: ONBOARDING_STEP_NAMES.CONNECT,
@@ -887,44 +789,70 @@ export class OnboardingEventTracking {
 		return stepNames[ stepNumber ] || 'unknown_step';
 	}
 
-	static setupWindowCloseTracking( currentStep ) {
+	static setupGlobalWindowCloseTracking() {
+		console.log( '🌐 setupGlobalWindowCloseTracking called' );
+
+		// Clean up existing listeners first
+		this.cleanupWindowCloseTracking();
+
 		const handleWindowClose = ( event ) => {
-			console.log( '🚪 Window close detected:', {
-				type: event.type,
-				currentStep,
-				xButtonClicked: this.xButtonClicked,
-			} );
-
-			// Only track close_window if X button was NOT clicked
-			if ( ! this.xButtonClicked ) {
-				console.log( '✅ Tracking close_window - X button was not clicked' );
-				this.storeExitEventForLater( 'close_window', currentStep );
+			console.log( '🚪 Global window close detected:', { type: event.type } );
+			const currentStep = this.getCurrentStep();
+			if ( currentStep ) {
+				this.sendExitWindowEvent( currentStep );
 			} else {
-				console.log( '🚫 Skipping close_window tracking - X button was clicked' );
+				console.log( '❌ Could not determine current step for exit window tracking' );
 			}
 		};
 
-		const handleBeforeUnload = () => {
-			console.log( '⚠️ Before unload detected:', {
-				currentStep,
-				xButtonClicked: this.xButtonClicked,
-			} );
+		// Store reference for cleanup
+		this.windowCloseHandlers = { handleWindowClose };
 
-			// Only track close_window if X button was NOT clicked
-			// Report as close_window instead of before_unload as requested
-			if ( ! this.xButtonClicked ) {
-				console.log( '✅ Tracking close_window (from beforeunload) - X button was not clicked' );
-				this.storeExitEventForLater( 'close_window', currentStep );
-			} else {
-				console.log( '🚫 Skipping close_window tracking - X button was clicked' );
-			}
-		};
-
-		window.addEventListener( 'beforeunload', handleBeforeUnload );
+		window.addEventListener( 'beforeunload', handleWindowClose );
 		window.addEventListener( 'pagehide', handleWindowClose );
 		window.addEventListener( 'unload', handleWindowClose );
 
-		console.log( '✅ Window close tracking setup completed for step:', currentStep );
+		console.log( '✅ Global window close tracking setup completed' );
+	}
+
+	static cleanupWindowCloseTracking() {
+		console.log( '🧹 cleanupWindowCloseTracking called' );
+
+		if ( this.windowCloseHandlers ) {
+			const { handleWindowClose } = this.windowCloseHandlers;
+
+			window.removeEventListener( 'beforeunload', handleWindowClose );
+			window.removeEventListener( 'pagehide', handleWindowClose );
+			window.removeEventListener( 'unload', handleWindowClose );
+
+			this.windowCloseHandlers = null;
+			console.log( '✅ Window close listeners cleaned up' );
+		} else {
+			console.log( '❌ No window close handlers to clean up' );
+		}
+	}
+
+	static getCurrentStep() {
+		// Try to get current step from URL or other context
+		const url = window.location.href;
+
+		if ( url.includes( 'account' ) ) {
+			return 1;
+		}
+		if ( url.includes( 'hello' ) ) {
+			return 2;
+		}
+		if ( url.includes( 'chooseFeatures' ) ) {
+			return 3;
+		}
+		if ( url.includes( 'goodToGo' ) ) {
+			return 4;
+		}
+
+		// Fallback - try to get from onboarding context if available
+		// This might need adjustment based on how the app stores current step
+		console.log( '⚠️ Could not determine current step from URL:', url );
+		return null;
 	}
 
 	static storeSkipEventForLater( currentStep ) {
@@ -974,6 +902,96 @@ export class OnboardingEventTracking {
 			} );
 		}
 		this.storeSkipEventForLater( currentStep );
+	}
+
+	static sendExitButtonEvent( currentStep ) {
+		console.log( '🔴 sendExitButtonEvent called:', { currentStep } );
+
+		const eventData = {
+			location: 'plugin_onboarding',
+			trigger: 'exit_button_clicked',
+			step_number: currentStep,
+			step_name: this.getStepName( currentStep ),
+			action_step: currentStep,
+		};
+
+		console.log( '🔴 Exit button event data:', eventData );
+		this.dispatchEvent( ONBOARDING_EVENTS_MAP.EXIT_BUTTON, eventData );
+
+		// Add to step end state tracking
+		this.trackStepAction( currentStep, 'exit_button' );
+	}
+
+	static sendExitWindowEvent( currentStep ) {
+		console.log( '🚪 sendExitWindowEvent called:', { currentStep } );
+
+		// Debouncing check - prevent duplicate events within 1000ms
+		const now = Date.now();
+		const lastExecution = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXIT_WINDOW_EXECUTION );
+
+		if ( lastExecution && ( now - parseInt( lastExecution, 10 ) ) < 1000 ) {
+			console.log( '🚫 Skipping exit_window - too recent (debounced)' );
+			return;
+		}
+
+		console.log( '✅ Recording exit_window execution timestamp' );
+		localStorage.setItem( ONBOARDING_STORAGE_KEYS.EXIT_WINDOW_EXECUTION, now.toString() );
+
+		const eventData = {
+			location: 'plugin_onboarding',
+			trigger: 'window_close_detected',
+			step_number: currentStep,
+			step_name: this.getStepName( currentStep ),
+			action_step: currentStep,
+		};
+
+		console.log( '🚪 Exit window event data:', eventData );
+
+		if ( 1 === currentStep ) {
+			console.log( '💾 Storing exit_window event for later (step 1)' );
+			this.storeExitWindowEventForLater( eventData );
+		} else {
+			console.log( '📤 Sending exit_window event immediately' );
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.EXIT_WINDOW, eventData );
+		}
+
+		// Add to step end state tracking
+		this.trackStepAction( currentStep, 'exit_window' );
+	}
+
+	static storeExitWindowEventForLater( eventData ) {
+		try {
+			console.log( '💾 storeExitWindowEventForLater called:', eventData );
+			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT_WINDOW, JSON.stringify( eventData ) );
+			console.log( '✅ Exit window event stored for later' );
+		} catch ( error ) {
+			console.error( '❌ Failed to store exit window event:', error );
+			this.handleStorageError( 'Failed to store exit window event:', error );
+		}
+	}
+
+	static sendStoredExitWindowEvent() {
+		try {
+			console.log( '📤 sendStoredExitWindowEvent called - checking localStorage...' );
+			const storedDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT_WINDOW );
+
+			if ( ! storedDataString ) {
+				console.log( '❌ No stored exit window event found' );
+				return;
+			}
+
+			console.log( '📤 Found stored exit window event:', storedDataString );
+			const eventData = JSON.parse( storedDataString );
+
+			console.log( '📤 Sending stored exit window event:', eventData );
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.EXIT_WINDOW, eventData );
+
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT_WINDOW );
+			console.log( '🗑️ Removed stored exit window event from localStorage' );
+		} catch ( error ) {
+			console.error( '❌ Failed to send stored exit window event:', error );
+			this.handleStorageError( 'Failed to send stored exit window event:', error );
+		}
 	}
 
 	static sendTopUpgrade( currentStep, upgradeClicked ) {
@@ -1726,6 +1744,22 @@ export class OnboardingEventTracking {
 	}
 
 	static getStepNumber( pageId ) {
+		console.log( `🔍 getStepNumber called with:`, { pageId, type: typeof pageId } );
+
+		// If already a number, return it directly
+		if ( 'number' === typeof pageId ) {
+			console.log( `✅ Already a number, returning: ${ pageId }` );
+			return pageId;
+		}
+
+		// If string number, convert to number
+		if ( 'string' === typeof pageId && ! isNaN( pageId ) ) {
+			const numericStep = parseInt( pageId, 10 );
+			console.log( `✅ String number converted to: ${ numericStep }` );
+			return numericStep;
+		}
+
+		// Map page IDs to step numbers
 		const stepMapping = {
 			account: 1,
 			hello: 2,
@@ -1734,7 +1768,11 @@ export class OnboardingEventTracking {
 			siteName: 5,
 			siteLogo: 6,
 		};
-		return stepMapping[ pageId ] || null;
+
+		const mappedStep = stepMapping[ pageId ] || null;
+		console.log( `🔍 Page ID mapping result:`, { pageId, mappedStep, availableKeys: Object.keys( stepMapping ) } );
+
+		return mappedStep;
 	}
 
 	static getStepConfig( stepNumber ) {
@@ -1860,7 +1898,7 @@ export class OnboardingEventTracking {
 
 	static sendAllStoredEvents() {
 		console.log( '📤 sendAllStoredEvents called - sending all stored events...' );
-		this.sendStoredExitEvent();
+		this.sendStoredExitWindowEvent();
 		this.sendStoredSkipEvent();
 		this.sendStoredConnectStatusEvent();
 		this.sendStoredTopUpgradeEvent();
@@ -1883,9 +1921,6 @@ export class OnboardingEventTracking {
 			timestampFormatted: new Date().toISOString(),
 		} );
 
-		// Reset X button state for new step to ensure clean tracking
-		this.resetXButtonState();
-
 		const stepNumber = this.getStepNumber( currentStep );
 		console.log( `🔄 Step number resolved:`, { currentStep, stepNumber } );
 
@@ -1894,6 +1929,18 @@ export class OnboardingEventTracking {
 			this.trackStepStartTime( stepNumber );
 		} else {
 			console.log( `❌ No step number found for currentStep: ${ currentStep }` );
+
+			// Fallback: if currentStep is numeric, use it directly
+			if ( 'number' === typeof currentStep && currentStep >= 1 && currentStep <= 6 ) {
+				console.log( `🔄 Fallback: Using currentStep as numeric step number: ${ currentStep }` );
+				this.trackStepStartTime( currentStep );
+			} else if ( 'string' === typeof currentStep && ! isNaN( currentStep ) ) {
+				const numericStep = parseInt( currentStep, 10 );
+				if ( numericStep >= 1 && numericStep <= 6 ) {
+					console.log( `🔄 Fallback: Converting string step to number: ${ numericStep }` );
+					this.trackStepStartTime( numericStep );
+				}
+			}
 		}
 
 		if ( 2 === currentStep || 'hello' === currentStep ) {

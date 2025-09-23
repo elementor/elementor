@@ -99,8 +99,48 @@ The following keys should contain timing data:
 3. Look for timezone/clock issues
 4. Verify step transitions are tracked properly
 
+## Root Cause Identified and Fixed
+
+### **Issue Found:**
+The `getStepNumber()` method was only handling page ID strings (`'account'`, `'hello'`, etc.) but receiving numeric values (`1`, `2`, `3`) from the onboarding flow.
+
+**Log Evidence:**
+```
+🔄 Step number resolved: Object
+❌ No step number found for currentStep: 1
+❌ No step number found for currentStep: 2
+❌ No step number found for currentStep: 3
+```
+
+### **Fix Applied:**
+1. **Enhanced `getStepNumber()` method** to handle:
+   - Numeric step numbers (return directly)
+   - String numeric values (convert to number)
+   - Page ID strings (map to numbers)
+   - Added comprehensive logging for debugging
+
+2. **Added fallback logic in `onStepLoad()`** to:
+   - Use numeric currentStep values directly if step mapping fails
+   - Convert string numbers to numeric steps
+   - Ensure step start times are always tracked
+
+### **Expected Behavior After Fix:**
+```
+🔍 getStepNumber called with: {pageId: 1, type: "number"}
+✅ Already a number, returning: 1
+🔄 Step number resolved: {currentStep: 1, stepNumber: 1}
+⏱️ Tracking start time for step 1
+⏱️ trackStepStartTime called for step 1
+✅ Step 1 start time stored successfully
+```
+
+### **Time Tracking Should Now Work:**
+- `total_time_spent` - Calculated from onboarding start time
+- `step_time_spent` - Calculated from individual step start times
+- Both should appear in `s1_end_state`, `s2_end_state`, etc. events
+
 ## Next Steps
-1. Run through onboarding flow with console open
-2. Collect logs showing the exact failure point
-3. Use `window.debugOnboardingTimeSpent()` to inspect state
-4. Report findings with specific log outputs
+1. **Test the fix**: Run through onboarding flow with console open
+2. **Verify logs**: Look for `✅ Already a number, returning: X` messages
+3. **Check events**: Confirm `time_spent` properties appear in end state events
+4. **Use debug function**: Call `window.debugOnboardingTimeSpent()` to verify timing data

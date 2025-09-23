@@ -16,9 +16,9 @@ export default function Layout( props ) {
 	const goProButtonRef = useRef();
 
 	const initializeExitTracking = useCallback( () => {
-		// Setup window close tracking with mutual exclusivity to X button
-		OnboardingEventTracking.setupWindowCloseTracking( stepNumber );
-	}, [ stepNumber ] );
+		// Setup global window close tracking once
+		OnboardingEventTracking.setupGlobalWindowCloseTracking();
+	}, [] );
 
 	const setupTopbarUpgradeTracking = useCallback( ( buttonElement ) => {
 		if ( ! buttonElement ) {

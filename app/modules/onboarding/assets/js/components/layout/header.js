@@ -21,9 +21,8 @@ export default function Header( props ) {
 			resolvedStepNumber: stepNumber || state.currentStep,
 		} );
 
-		// Mark that X button was clicked to prevent close_window tracking
-		OnboardingEventTracking.markXButtonClicked();
-		OnboardingEventTracking.storeExitEventForLater( 'x_button', stepNumber || state.currentStep );
+		// Send exit button event
+		OnboardingEventTracking.sendExitButtonEvent( stepNumber || state.currentStep );
 	};
 
 	const onClose = () => {
