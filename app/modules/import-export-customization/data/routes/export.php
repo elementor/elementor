@@ -58,6 +58,7 @@ class Export extends Base_Route {
 				[
 					'manifest' => $export['manifest'],
 					'file' => base64_encode( $file ),
+					'media_urls' => $export['media_urls'],
 				],
 				$source,
 				$export,
