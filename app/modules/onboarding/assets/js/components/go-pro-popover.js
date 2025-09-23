@@ -13,6 +13,7 @@ export default function GoProPopover( props ) {
 
 	const trackUpgradeAction = useCallback( () => {
 		const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+		console.log( '🎯 trackUpgradeAction called:', { currentStep: state.currentStep, stepNumber } );
 		OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
 	}, [ state.currentStep ] );
 

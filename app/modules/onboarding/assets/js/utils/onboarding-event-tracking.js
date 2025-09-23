@@ -2,7 +2,24 @@
 import eventsConfig from '../../../../../../core/common/modules/events-manager/assets/js/events-config';
 import { options } from './utils';
 
-console.log( '🚀 OnboardingEventTracking loaded with EXIT DEBUGGING!' );
+console.log( '🚀 OnboardingEventTracking loaded with COMPREHENSIVE TIME SPENT DEBUGGING!' );
+
+if ( 'undefined' !== typeof window ) {
+	window.debugOnboardingTimeSpent = () => {
+		console.log( '🔍 Manual debug trigger called' );
+		OnboardingEventTracking.debugLocalStorageState();
+
+		const timeSpentData = OnboardingEventTracking.calculateTimeSpent();
+		console.log( '⏱️ Current time spent calculation:', timeSpentData );
+
+		for ( let step = 1; step <= 4; step++ ) {
+			const stepTimeSpent = OnboardingEventTracking.calculateStepTimeSpent( step );
+			console.log( `⏱️ Step ${ step } time spent:`, stepTimeSpent );
+		}
+	};
+
+	console.log( '🔍 Debug function exposed: window.debugOnboardingTimeSpent()' );
+}
 
 const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
@@ -122,7 +139,7 @@ export class OnboardingEventTracking {
 	static convertFeaturesToEnglishNames( features ) {
 		const englishFeatureNames = this.getConsistentEnglishFeatureNames();
 		const featureMapping = this.createFeatureMappingFromOptions( englishFeatureNames );
-		
+
 		return this.mapFeaturesToEnglishEquivalents( features, featureMapping );
 	}
 
@@ -167,12 +184,24 @@ export class OnboardingEventTracking {
 	static initiateCoreOnboarding() {
 		const startTime = Date.now();
 
+		console.log( '🚀 initiateCoreOnboarding called:', {
+			startTime,
+			startTimeFormatted: new Date( startTime ).toISOString(),
+		} );
+
 		try {
 			this.clearStaleSessionData();
 
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.START_TIME, startTime.toString() );
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.INITIATED, 'true' );
+
+			console.log( '✅ Onboarding initiation data stored successfully:', {
+				startTimeKey: ONBOARDING_STORAGE_KEYS.START_TIME,
+				initiatedKey: ONBOARDING_STORAGE_KEYS.INITIATED,
+				startTimeValue: startTime.toString(),
+			} );
 		} catch ( error ) {
+			console.error( '❌ Failed to store onboarding initiation data:', error );
 			this.handleStorageError( 'Failed to store onboarding initiation data:', error );
 		}
 	}
@@ -298,9 +327,20 @@ export class OnboardingEventTracking {
 	}
 
 	static clearStaleSessionData() {
-		Object.values( ONBOARDING_STORAGE_KEYS ).forEach( ( key ) => {
+		console.log( '🧹 clearStaleSessionData called - clearing all onboarding localStorage keys' );
+
+		const keysToRemove = Object.values( ONBOARDING_STORAGE_KEYS );
+		console.log( '🧹 Keys to remove:', keysToRemove );
+
+		keysToRemove.forEach( ( key ) => {
+			const existingValue = localStorage.getItem( key );
+			if ( existingValue ) {
+				console.log( `🧹 Removing key: ${ key }, existing value:`, existingValue );
+			}
 			localStorage.removeItem( key );
 		} );
+
+		console.log( '✅ Stale session data cleared' );
 	}
 
 	static checkAndSendEditorLoadedFromOnboarding() {
@@ -397,7 +437,7 @@ export class OnboardingEventTracking {
 		if ( elementorLabel ) {
 			return elementorLabel;
 		}
-		
+
 		return this.getFallbackElementTitle( element );
 	}
 
@@ -420,7 +460,7 @@ export class OnboardingEventTracking {
 
 	static extractControlTitle( controlContainer ) {
 		const labelElement = controlContainer.querySelector( '.elementor-control-title' );
-		
+
 		if ( labelElement && labelElement.textContent ) {
 			return labelElement.textContent.trim();
 		}
@@ -567,7 +607,20 @@ export class OnboardingEventTracking {
 	}
 
 	static sendTopUpgrade( currentStep, upgradeClicked ) {
-		if ( elementorCommon.config.editor_events?.can_send_events ) {
+		const canSendEvents = elementorCommon.config.editor_events?.can_send_events;
+		console.log( '🔥 sendTopUpgrade called:', {
+			currentStep,
+			upgradeClicked,
+			can_send_events: canSendEvents,
+			editor_events_config: elementorCommon.config.editor_events,
+		} );
+
+		if ( canSendEvents ) {
+			console.log( '✅ Sending TOP_UPGRADE immediately:', {
+				step_number: currentStep,
+				step_name: this.getStepName( currentStep ),
+				upgrade_clicked: upgradeClicked,
+			} );
 			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.TOP_UPGRADE, {
 				location: 'plugin_onboarding',
 				trigger: 'upgrade_interaction',
@@ -579,7 +632,10 @@ export class OnboardingEventTracking {
 		}
 
 		if ( 1 === currentStep ) {
+			console.log( '💾 Storing TOP_UPGRADE for later:', { currentStep, upgradeClicked } );
 			this.storeTopUpgradeEventForLater( currentStep, upgradeClicked );
+		} else {
+			console.log( '❌ Cannot send events and not step 1 - upgrade event lost:', { currentStep, upgradeClicked } );
 		}
 	}
 
@@ -624,8 +680,12 @@ export class OnboardingEventTracking {
 
 	static storeTopUpgradeEventForLater( currentStep, upgradeClicked ) {
 		try {
+			console.log( '💾 storeTopUpgradeEventForLater called:', { currentStep, upgradeClicked } );
+
 			const existingDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
 			const existingEvents = existingDataString ? JSON.parse( existingDataString ) : [];
+
+			console.log( '💾 storeTopUpgradeEventForLater - existing events:', existingEvents );
 
 			const eventData = {
 				currentStep,
@@ -635,6 +695,8 @@ export class OnboardingEventTracking {
 
 			existingEvents.push( eventData );
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE, JSON.stringify( existingEvents ) );
+
+			console.log( '💾 storeTopUpgradeEventForLater - storing events array:', existingEvents );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to store top upgrade event:', error );
 		}
@@ -642,14 +704,29 @@ export class OnboardingEventTracking {
 
 	static sendStoredTopUpgradeEvent() {
 		try {
+			console.log( '📤 sendStoredTopUpgradeEvent called - checking localStorage...' );
+			const storedDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
+
+			console.log( '📤 sendStoredTopUpgradeEvent - stored data:', storedDataString );
+
 			if ( ! storedDataString ) {
+				console.log( '❌ No stored TOP_UPGRADE data found' );
 				return;
 			}
 
 			const storedEvents = JSON.parse( storedDataString );
 			const eventsArray = Array.isArray( storedEvents ) ? storedEvents : [ storedEvents ];
 
-			eventsArray.forEach( ( eventData ) => {
+			console.log( '📤 sendStoredTopUpgradeEvent - processing events:', eventsArray );
+
+			eventsArray.forEach( ( eventData, index ) => {
+				console.log( `📤 Sending stored TOP_UPGRADE event ${ index + 1 }:`, {
+					step_number: eventData.currentStep,
+					step_name: this.getStepName( eventData.currentStep ),
+					upgrade_clicked: eventData.upgradeClicked,
+					timestamp: eventData.timestamp,
+				} );
+
 				this.dispatchEvent( ONBOARDING_EVENTS_MAP.TOP_UPGRADE, {
 					location: 'plugin_onboarding',
 					trigger: 'upgrade_interaction',
@@ -662,6 +739,7 @@ export class OnboardingEventTracking {
 			} );
 
 			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
+			console.log( '🗑️ Removed stored TOP_UPGRADE events from localStorage' );
 		} catch ( error ) {
 			this.handleStorageError( 'Failed to send stored top upgrade event:', error );
 		}
@@ -1008,6 +1086,13 @@ export class OnboardingEventTracking {
 
 	static trackStepActionInternal( stepNumber, action, storageKey, additionalData = {} ) {
 		try {
+			console.log( `📝 trackStepActionInternal called for step ${ stepNumber }:`, {
+				stepNumber,
+				action,
+				storageKey,
+				additionalData,
+			} );
+
 			const currentTime = Date.now();
 			const existingActions = this.getStoredActions( storageKey );
 			const actionData = {
@@ -1016,19 +1101,44 @@ export class OnboardingEventTracking {
 				...additionalData,
 			};
 
+			console.log( `📝 Adding action to step ${ stepNumber }:`, {
+				actionData,
+				existingActionsCount: existingActions.length,
+				currentTimeFormatted: new Date( currentTime ).toISOString(),
+			} );
+
 			existingActions.push( actionData );
 			localStorage.setItem( storageKey, JSON.stringify( existingActions ) );
+
+			console.log( `✅ Step ${ stepNumber } action stored successfully. Total actions: ${ existingActions.length }` );
 		} catch ( error ) {
+			console.error( `❌ Failed to track Step ${ stepNumber } action:`, error );
 			this.handleStorageError( `Failed to track Step ${ stepNumber } action:`, error );
 		}
 	}
 
 	static sendStepEndStateInternal( stepNumber, storageKey, eventName, stepName, endStateProperty ) {
 		try {
+			console.log( `📊 sendStepEndStateInternal called for step ${ stepNumber }:`, {
+				stepNumber,
+				storageKey,
+				eventName,
+				stepName,
+				endStateProperty,
+			} );
+
 			const actionsString = localStorage.getItem( storageKey );
 			const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
 
+			console.log( `📊 Step ${ stepNumber } end state data from localStorage:`, {
+				actionsString,
+				startTimeString,
+				hasActions: !! actionsString,
+				hasStartTime: !! startTimeString,
+			} );
+
 			if ( ! actionsString ) {
+				console.log( `❌ No actions found for step ${ stepNumber }, cannot send end state` );
 				return;
 			}
 
@@ -1045,34 +1155,57 @@ export class OnboardingEventTracking {
 				const currentTime = Date.now();
 				const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
 				eventData.total_time_spent = `${ totalTimeSpent }s`;
+
+				console.log( `⏱️ Total time spent calculation for step ${ stepNumber }:`, {
+					startTime,
+					currentTime,
+					totalTimeSpent,
+					startTimeFormatted: new Date( startTime ).toISOString(),
+					currentTimeFormatted: new Date( currentTime ).toISOString(),
+				} );
+			} else {
+				console.log( `❌ No start time found for total time calculation in step ${ stepNumber }` );
 			}
 
 			const stepTimeSpent = this.calculateStepTimeSpent( stepNumber );
 			if ( stepTimeSpent !== null ) {
 				eventData.step_time_spent = `${ stepTimeSpent }s`;
+				console.log( `⏱️ Step time spent added to event data: ${ stepTimeSpent }s` );
+			} else {
+				console.log( `❌ No step time spent calculated for step ${ stepNumber }` );
 			}
 
 			eventData[ endStateProperty ] = actions;
 
+			console.log( `📊 Final event data for step ${ stepNumber }:`, eventData );
+
 			if ( elementorCommon.config.editor_events?.can_send_events ) {
+				console.log( `✅ Sending step ${ stepNumber } end state event immediately` );
 				this.dispatchEvent( eventName, eventData );
 				localStorage.removeItem( storageKey );
 				this.clearStepStartTime( stepNumber );
 			} else if ( 1 === stepNumber ) {
+				console.log( `💾 Storing step ${ stepNumber } end state for later (cannot send events)` );
 				this.storeStep1EndStateForLater( eventData, storageKey );
 			} else {
+				console.log( `⚠️ Cannot send events but not step 1 - sending anyway for step ${ stepNumber }` );
 				this.dispatchEvent( eventName, eventData );
 				localStorage.removeItem( storageKey );
 				this.clearStepStartTime( stepNumber );
 			}
 		} catch ( error ) {
+			console.error( `❌ Failed to send Step ${ stepNumber } end state:`, error );
 			this.handleStorageError( `Failed to send Step ${ stepNumber } end state:`, error );
 		}
 	}
 
 	static calculateTimeSpent() {
+		console.log( '⏱️ calculateTimeSpent called' );
 		const startTimeString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.START_TIME );
+		console.log( '⏱️ startTimeString from localStorage:', startTimeString );
+
 		if ( ! startTimeString ) {
+			console.log( '❌ No start time found in localStorage' );
 			return null;
 		}
 
@@ -1080,25 +1213,51 @@ export class OnboardingEventTracking {
 		const currentTime = Date.now();
 		const timeSpent = Math.round( ( currentTime - startTime ) / 1000 );
 
+		console.log( '⏱️ Time calculation:', {
+			startTime,
+			currentTime,
+			timeSpent,
+			startTimeFormatted: new Date( startTime ).toISOString(),
+			currentTimeFormatted: new Date( currentTime ).toISOString(),
+		} );
+
 		return { startTime, currentTime, timeSpent };
 	}
 
 	static trackStepStartTime( stepNumber ) {
 		try {
+			console.log( `⏱️ trackStepStartTime called for step ${ stepNumber }` );
 			const stepStartTimeKey = this.getStepStartTimeKey( stepNumber );
 			const currentTime = Date.now();
+
+			console.log( `⏱️ Setting step ${ stepNumber } start time:`, {
+				stepStartTimeKey,
+				currentTime,
+				currentTimeFormatted: new Date( currentTime ).toISOString(),
+			} );
+
 			localStorage.setItem( stepStartTimeKey, currentTime.toString() );
+
+			console.log( `✅ Step ${ stepNumber } start time stored successfully` );
 		} catch ( error ) {
+			console.error( `❌ Failed to track step ${ stepNumber } start time:`, error );
 			this.handleStorageError( `Failed to track step ${ stepNumber } start time:`, error );
 		}
 	}
 
 	static calculateStepTimeSpent( stepNumber ) {
 		try {
+			console.log( `⏱️ calculateStepTimeSpent called for step ${ stepNumber }` );
 			const stepStartTimeKey = this.getStepStartTimeKey( stepNumber );
 			const stepStartTimeString = localStorage.getItem( stepStartTimeKey );
 
+			console.log( `⏱️ Step ${ stepNumber } start time from localStorage:`, {
+				stepStartTimeKey,
+				stepStartTimeString,
+			} );
+
 			if ( ! stepStartTimeString ) {
+				console.log( `❌ No start time found for step ${ stepNumber }` );
 				return null;
 			}
 
@@ -1106,8 +1265,17 @@ export class OnboardingEventTracking {
 			const currentTime = Date.now();
 			const stepTimeSpent = Math.round( ( currentTime - stepStartTime ) / 1000 );
 
+			console.log( `⏱️ Step ${ stepNumber } time calculation:`, {
+				stepStartTime,
+				currentTime,
+				stepTimeSpent,
+				stepStartTimeFormatted: new Date( stepStartTime ).toISOString(),
+				currentTimeFormatted: new Date( currentTime ).toISOString(),
+			} );
+
 			return stepTimeSpent;
 		} catch ( error ) {
+			console.error( `❌ Failed to calculate step ${ stepNumber } time:`, error );
 			this.handleStorageError( `Failed to calculate step ${ stepNumber } time:`, error );
 			return null;
 		}
@@ -1235,19 +1403,57 @@ export class OnboardingEventTracking {
 	}
 
 	static onStepLoad( currentStep ) {
+		console.log( `🔄 onStepLoad called:`, { currentStep } );
+
 		const stepNumber = this.getStepNumber( currentStep );
+		console.log( `🔄 Step number resolved:`, { currentStep, stepNumber } );
+
 		if ( stepNumber ) {
+			console.log( `⏱️ Tracking start time for step ${ stepNumber }` );
 			this.trackStepStartTime( stepNumber );
+		} else {
+			console.log( `❌ No step number found for currentStep: ${ currentStep }` );
 		}
 
 		if ( 2 === currentStep || 'hello' === currentStep ) {
+			console.log( `📤 Sending stored step 1 events on step 2 load` );
 			this.sendStoredStep1EventsOnStep2();
 		}
 	}
 
+	static debugLocalStorageState() {
+		console.log( '🔍 DEBUG: Current localStorage state for onboarding:' );
+
+		Object.entries( ONBOARDING_STORAGE_KEYS ).forEach( ( [ keyName, keyValue ] ) => {
+			const storedValue = localStorage.getItem( keyValue );
+			console.log( `🔍 ${ keyName } (${ keyValue }):`, storedValue );
+
+			if ( storedValue && keyValue.includes( 'TIME' ) ) {
+				try {
+					const timestamp = parseInt( storedValue, 10 );
+					console.log( `🔍   → Formatted: ${ new Date( timestamp ).toISOString() }` );
+				} catch ( e ) {
+					console.log( `🔍   → Invalid timestamp format` );
+				}
+			}
+
+			if ( storedValue && ( keyValue.includes( 'ACTIONS' ) || keyValue.includes( 'PENDING' ) ) ) {
+				try {
+					const parsed = JSON.parse( storedValue );
+					console.log( `🔍   → Parsed:`, parsed );
+				} catch ( e ) {
+					console.log( `🔍   → Invalid JSON format` );
+				}
+			}
+		} );
+
+		console.log( '🔍 DEBUG: localStorage state complete' );
+	}
+
 	static handleStorageError( message, error ) {
-		// eslint-disable-next-line no-console
-		console.warn( message, error );
+		console.error( message, error );
+		console.log( '🔍 Debugging localStorage state after error:' );
+		this.debugLocalStorageState();
 	}
 }
 
