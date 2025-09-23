@@ -10,7 +10,7 @@ export default function ExportProcess() {
 	const { data, dispatch, isExporting, isPending } = useExportContext();
 	const { kitInfo, includes, customization } = data;
 
-	const { status, STATUS_PROCESSING, STATUS_ERROR, error, exportKit } = useExportKit( {
+	const { status, STATUS_PROCESSING, STATUS_PROCESSING_MEDIA, STATUS_ERROR, error, exportKit } = useExportKit( {
 		includes,
 		kitInfo,
 		customization,
@@ -25,6 +25,10 @@ export default function ExportProcess() {
 	const getStatusText = () => {
 		if ( status === STATUS_PROCESSING ) {
 			return __( 'Setting up your website template...', 'elementor' );
+		}
+
+		if ( status === STATUS_PROCESSING_MEDIA ) {
+			return __( 'Processing media files...', 'elementor' );
 		}
 
 		return __( 'Export failed', 'elementor' );
@@ -45,7 +49,7 @@ export default function ExportProcess() {
 		<BaseLayout topBar={ <TopBar>{ headerContent }</TopBar> }>
 			<CenteredContent>
 				<Stack spacing={ 3 } alignItems="center">
-					{ status === STATUS_PROCESSING && (
+					{ ( status === STATUS_PROCESSING || status === STATUS_PROCESSING_MEDIA ) && (
 						<ExportProcessing statusText={ getStatusText() } />
 					) }
 
