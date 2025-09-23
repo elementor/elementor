@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { useContext } from 'react';
+import PropTypes from 'prop-types';
 import { OnboardingContext } from '../../context/context';
 import Grid from 'elementor-app/ui/grid/grid';
 import GoProPopover from '../go-pro-popover';
@@ -38,8 +39,11 @@ export default function Header( props ) {
 			},
 		} );
 
-		console.log( '🔄 Redirecting to admin URL...' );
-		window.top.location = elementorAppConfig.admin_url;
+		console.log( '⏱️ Ensuring exit tracking completes before navigation...' );
+		setTimeout( () => {
+			console.log( '🔄 Redirecting to admin URL after tracking completion...' );
+			window.top.location = elementorAppConfig.admin_url;
+		}, 100 );
 	};
 
 	return (

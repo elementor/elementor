@@ -18,7 +18,20 @@ if ( 'undefined' !== typeof window ) {
 		}
 	};
 
-	console.log( '🔍 Debug function exposed: window.debugOnboardingTimeSpent()' );
+	window.debugReturnToStep4 = () => {
+		console.log( '🎯 Manual return to step 4 debug trigger called' );
+		OnboardingEventTracking.debugReturnToStep4Scenario();
+	};
+
+	window.testReturnToStep4 = () => {
+		console.log( '🧪 Testing return to step 4 scenario...' );
+		OnboardingEventTracking.checkAndSendReturnToStep4();
+	};
+
+	console.log( '🔍 Debug functions exposed:' );
+	console.log( '  - window.debugOnboardingTimeSpent()' );
+	console.log( '  - window.debugReturnToStep4()' );
+	console.log( '  - window.testReturnToStep4()' );
 }
 
 const ONBOARDING_EVENTS_MAP = {
@@ -265,40 +278,92 @@ export class OnboardingEventTracking {
 
 	static storeSiteStarterChoice( siteStarter ) {
 		try {
+			console.log( '🎯 storeSiteStarterChoice called:', {
+				siteStarter,
+				timestamp: Date.now(),
+				storageKey: ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE,
+			} );
+
+			const existingChoiceString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
+			if ( existingChoiceString ) {
+				console.log( '🔄 Existing site starter choice found:', existingChoiceString );
+				try {
+					const existingChoice = JSON.parse( existingChoiceString );
+					console.log( '🔄 Parsed existing choice:', existingChoice );
+				} catch ( parseError ) {
+					console.error( '❌ Failed to parse existing choice:', parseError );
+				}
+			} else {
+				console.log( '✨ No existing site starter choice found - this is the first choice' );
+			}
+
 			const choiceData = {
 				site_starter: siteStarter,
 				timestamp: Date.now(),
 				return_event_sent: false,
 			};
+
+			console.log( '💾 Storing new site starter choice:', choiceData );
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, JSON.stringify( choiceData ) );
+			console.log( '✅ Site starter choice stored successfully' );
+
+			const verifyStored = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
+			console.log( '🔍 Verification - stored value:', verifyStored );
 		} catch ( error ) {
+			console.error( '❌ Failed to store site starter choice:', error );
 			this.handleStorageError( 'Failed to store site starter choice:', error );
 		}
 	}
 
 	static checkAndSendReturnToStep4() {
 		try {
+			console.log( '🔍 checkAndSendReturnToStep4 called - checking for existing site starter choice...' );
+			console.log( '🔍 Storage key being checked:', ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
+
 			const storedChoiceString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
+			console.log( '🔍 Raw stored choice string:', storedChoiceString );
+
 			if ( ! storedChoiceString ) {
+				console.log( '❌ No stored site starter choice found - user has not made a previous choice' );
 				return;
 			}
 
+			console.log( '✅ Found stored site starter choice, parsing...' );
 			const choiceData = JSON.parse( storedChoiceString );
+			console.log( '🔍 Parsed choice data:', {
+				site_starter: choiceData.site_starter,
+				timestamp: choiceData.timestamp,
+				return_event_sent: choiceData.return_event_sent,
+				timestampFormatted: new Date( choiceData.timestamp ).toISOString(),
+			} );
 
 			if ( ! choiceData.return_event_sent ) {
-				this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, {
+				console.log( '🚀 Return event not yet sent - sending core_onboarding_s4_return event...' );
+
+				const returnEventPayload = {
 					location: 'plugin_onboarding',
 					trigger: 'user_returns_to_onboarding',
 					step_number: 4,
 					step_name: ONBOARDING_STEP_NAMES.SITE_STARTER,
 					return_to_onboarding: choiceData.site_starter,
 					original_choice_timestamp: choiceData.timestamp,
-				} );
+				};
 
+				console.log( '🚀 Return event payload:', returnEventPayload );
+
+				this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
+
+				console.log( '✅ Return event dispatched, marking as sent...' );
 				choiceData.return_event_sent = true;
-				localStorage.setItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, JSON.stringify( choiceData ) );
+				const updatedChoiceData = JSON.stringify( choiceData );
+				localStorage.setItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, updatedChoiceData );
+
+				console.log( '✅ Updated choice data stored:', updatedChoiceData );
+			} else {
+				console.log( '⚠️ Return event already sent for this choice - skipping duplicate event' );
 			}
 		} catch ( error ) {
+			console.error( '❌ Failed to check and send return to Step 4:', error );
 			this.handleStorageError( 'Failed to check and send return to Step 4:', error );
 		}
 	}
@@ -497,11 +562,54 @@ export class OnboardingEventTracking {
 				currentStep,
 				timestamp: Date.now(),
 			};
+
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT, JSON.stringify( exitData ) );
 			console.log( '💾 Exit event stored in localStorage:', exitData );
+
+			this.attemptImmediateExitTracking( exitType, currentStep );
 		} catch ( error ) {
 			console.error( '❌ Failed to store exit event:', error );
 			this.handleStorageError( 'Failed to store exit event:', error );
+		}
+	}
+
+	static attemptImmediateExitTracking( exitType, currentStep ) {
+		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
+			console.log( '❌ Cannot send events immediately, relying on stored event' );
+			return;
+		}
+
+		try {
+			const eventPayload = {
+				location: 'plugin_onboarding',
+				trigger: 'exit_action_detected',
+				step_number: currentStep,
+				step_name: this.getStepName( currentStep ),
+				action_step: `${ exitType }/${ this.getStepName( currentStep ) }`,
+				exit_timestamp: Date.now(),
+			};
+
+			console.log( '🚀 Attempting immediate exit tracking with sendBeacon:', eventPayload );
+
+			if ( 'function' === typeof navigator.sendBeacon && elementorCommon.eventsManager?.getEndpoint ) {
+				const endpoint = elementorCommon.eventsManager.getEndpoint();
+				const success = navigator.sendBeacon( endpoint, JSON.stringify( {
+					event: ONBOARDING_EVENTS_MAP.EXIT,
+					data: eventPayload,
+				} ) );
+
+				if ( success ) {
+					console.log( '✅ Exit event sent via sendBeacon successfully' );
+					localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT );
+					return;
+				}
+			}
+
+			console.log( '📤 Fallback: Sending exit event via regular dispatch' );
+			this.dispatchEvent( ONBOARDING_EVENTS_MAP.EXIT, eventPayload );
+			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_EXIT );
+		} catch ( error ) {
+			console.error( '❌ Failed immediate exit tracking, keeping stored event:', error );
 		}
 	}
 
@@ -549,12 +657,21 @@ export class OnboardingEventTracking {
 	}
 
 	static setupWindowCloseTracking( currentStep ) {
-		const handleWindowClose = () => {
+		const handleWindowClose = ( event ) => {
+			console.log( '🚪 Window close detected:', { type: event.type, currentStep } );
 			this.storeExitEventForLater( 'close_window', currentStep );
 		};
 
-		window.addEventListener( 'beforeunload', handleWindowClose );
+		const handleBeforeUnload = () => {
+			console.log( '⚠️ Before unload detected:', { currentStep } );
+			this.storeExitEventForLater( 'before_unload', currentStep );
+		};
+
+		window.addEventListener( 'beforeunload', handleBeforeUnload );
 		window.addEventListener( 'pagehide', handleWindowClose );
+		window.addEventListener( 'unload', handleWindowClose );
+
+		console.log( '✅ Window close tracking setup completed for step:', currentStep );
 	}
 
 	static storeSkipEventForLater( currentStep ) {
@@ -1378,11 +1495,24 @@ export class OnboardingEventTracking {
 	}
 
 	static handleSiteStarterChoice( siteStarter ) {
+		console.log( '🎯 handleSiteStarterChoice called:', {
+			siteStarter,
+			timestamp: Date.now(),
+			timestampFormatted: new Date().toISOString(),
+		} );
+
+		console.log( '💾 Step 1: Storing site starter choice...' );
 		this.storeSiteStarterChoice( siteStarter );
+
+		console.log( '📝 Step 2: Tracking step action...' );
 		this.trackStepAction( 4, 'site_starter', {
 			site_starter: siteStarter,
 		} );
+
+		console.log( '📊 Step 3: Sending step end state...' );
 		this.sendStepEndState( 4 );
+
+		console.log( '✅ handleSiteStarterChoice completed for:', siteStarter );
 	}
 
 	static sendAllStoredEvents() {
@@ -1419,6 +1549,12 @@ export class OnboardingEventTracking {
 			console.log( `📤 Sending stored step 1 events on step 2 load` );
 			this.sendStoredStep1EventsOnStep2();
 		}
+
+		if ( 4 === stepNumber || 'goodToGo' === currentStep ) {
+			console.log( `🎯 Step 4 (Site Starter) loaded - checking for return to step 4 scenario...` );
+			console.log( `🎯 Current step details:`, { currentStep, stepNumber } );
+			this.checkAndSendReturnToStep4();
+		}
 	}
 
 	static debugLocalStorageState() {
@@ -1448,6 +1584,56 @@ export class OnboardingEventTracking {
 		} );
 
 		console.log( '🔍 DEBUG: localStorage state complete' );
+	}
+
+	static debugReturnToStep4Scenario() {
+		console.log( '🎯 DEBUG: Return to Step 4 scenario analysis' );
+		console.log( '🎯 ========================================' );
+
+		const storedChoiceString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
+		console.log( '🎯 Step 4 site starter choice storage key:', ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
+		console.log( '🎯 Raw stored value:', storedChoiceString );
+
+		if ( storedChoiceString ) {
+			try {
+				const choiceData = JSON.parse( storedChoiceString );
+				console.log( '🎯 Parsed choice data:', {
+					site_starter: choiceData.site_starter,
+					timestamp: choiceData.timestamp,
+					return_event_sent: choiceData.return_event_sent,
+					timestampFormatted: new Date( choiceData.timestamp ).toISOString(),
+					timeSinceChoice: Math.round( ( Date.now() - choiceData.timestamp ) / 1000 ) + 's',
+				} );
+
+				if ( choiceData.return_event_sent ) {
+					console.log( '🎯 ✅ Return event has already been sent for this choice' );
+				} else {
+					console.log( '🎯 ⚠️ Return event has NOT been sent yet - should trigger on next step 4 load' );
+				}
+			} catch ( error ) {
+				console.error( '🎯 ❌ Failed to parse stored choice data:', error );
+			}
+		} else {
+			console.log( '🎯 ❌ No site starter choice found - user has not made any choice yet' );
+		}
+
+		const currentUrl = window.location.href;
+		const isOnStep4 = currentUrl.includes( 'goodToGo' ) || currentUrl.includes( 'step4' ) || currentUrl.includes( 'site_starter' );
+		console.log( '🎯 Current URL analysis:', {
+			url: currentUrl,
+			isOnStep4,
+			urlContainsGoodToGo: currentUrl.includes( 'goodToGo' ),
+			urlContainsStep4: currentUrl.includes( 'step4' ),
+			urlContainsSiteStarter: currentUrl.includes( 'site_starter' ),
+		} );
+
+		console.log( '🎯 Event tracking configuration:', {
+			canSendEvents: elementorCommon.config.editor_events?.can_send_events,
+			eventsManagerAvailable: !! elementorCommon.eventsManager,
+			dispatchEventAvailable: 'function' === typeof elementorCommon.eventsManager?.dispatchEvent,
+		} );
+
+		console.log( '🎯 ========================================' );
 	}
 
 	static handleStorageError( message, error ) {

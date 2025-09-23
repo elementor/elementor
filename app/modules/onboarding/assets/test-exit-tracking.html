@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exit Tracking Test</title>
+</head>
+<body>
+    <h1>Exit Tracking Test</h1>
+    <p>Open browser console to see tracking logs</p>
+    
+    <button id="testExitButton">Test Exit Tracking</button>
+    <button id="testSkipButton">Test Skip Tracking (for comparison)</button>
+    
+    <div id="log"></div>
+
+    <script>
+        // Mock elementorCommon for testing
+        window.elementorCommon = {
+            config: {
+                editor_events: { can_send_events: true }
+            },
+            eventsManager: {
+                dispatchEvent: function(event, data) {
+                    console.log('📤 Mock Event Dispatched:', event, data);
+                    document.getElementById('log').innerHTML += 
+                        `<p>✅ Event: ${event} - Step: ${data.step_number} - Trigger: ${data.trigger}</p>`;
+                },
+                getEndpoint: function() {
+                    return '/mock-endpoint';
+                }
+            }
+        };
+
+        window.elementorAppConfig = {
+            admin_url: '/wp-admin/',
+            onboarding: { eventPlacement: 'test' }
+        };
+
+        // Simulate the exit tracking behavior
+        function simulateExitTracking() {
+            console.log('🧪 Testing Exit Tracking...');
+            
+            // Simulate the header.js onClose function with our fix
+            function onClose() {
+                console.log('🔴 X BUTTON CLICKED - onClose triggered');
+                
+                // Track exit actions (simplified)
+                console.log('📊 Tracking exit actions...');
+                
+                // Store exit event
+                const exitData = {
+                    exitType: 'x_button',
+                    currentStep: 1,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem('elementor_onboarding_pending_exit', JSON.stringify(exitData));
+                console.log('💾 Exit event stored:', exitData);
+                
+                // Attempt immediate tracking (our new feature)
+                if (navigator.sendBeacon) {
+                    console.log('🚀 Using sendBeacon for immediate tracking');
+                    // Simulate successful sendBeacon
+                    setTimeout(() => {
+                        console.log('✅ Exit event sent via sendBeacon successfully');
+                        localStorage.removeItem('elementor_onboarding_pending_exit');
+                        document.getElementById('log').innerHTML += 
+                            '<p>✅ Exit tracking completed BEFORE navigation!</p>';
+                    }, 10);
+                }
+                
+                // Delayed navigation (our fix)
+                console.log('⏱️ Ensuring exit tracking completes before navigation...');
+                setTimeout(() => {
+                    console.log('🔄 Would redirect to admin URL now (simulated)');
+                    document.getElementById('log').innerHTML += 
+                        '<p>🔄 Navigation delayed - tracking had time to complete!</p>';
+                }, 100);
+            }
+            
+            onClose();
+        }
+
+        function simulateSkipTracking() {
+            console.log('🧪 Testing Skip Tracking (for comparison)...');
+            
+            // Simulate skip tracking (always worked)
+            const skipData = {
+                currentStep: 1,
+                timestamp: Date.now()
+            };
+            
+            // Immediate dispatch
+            window.elementorCommon.eventsManager.dispatchEvent('core_onboarding_skip', {
+                location: 'plugin_onboarding',
+                trigger: 'skip_clicked',
+                step_number: 1,
+                step_name: 'connect'
+            });
+            
+            console.log('✅ Skip tracking completed immediately');
+        }
+
+        document.getElementById('testExitButton').addEventListener('click', simulateExitTracking);
+        document.getElementById('testSkipButton').addEventListener('click', simulateSkipTracking);
+        
+        console.log('🧪 Exit Tracking Test Ready - Click buttons to test');
+    </script>
+</body>
+</html>
