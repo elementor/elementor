@@ -86,7 +86,7 @@ class Dynamic_Tags_Editor_Config {
 		}
 
 		try {
-			$atomic_controls = $this->convert_controls_to_atomic( $tag['controls'], $tag['force_convert_to_atomic'] ?? false, $tag );
+			$atomic_controls = $this->convert_controls_to_atomic( $tag );
 		} catch ( \Exception $e ) {
 			return null;
 		}
@@ -100,8 +100,15 @@ class Dynamic_Tags_Editor_Config {
 		return $converted_tag;
 	}
 
-	private function convert_controls_to_atomic( $controls, $force = false, $tag = [] ) {
+	private function convert_controls_to_atomic( $tag ) {
 		$atomic_controls = [];
+
+		$controls = $tag['controls'] ?? null;
+		$force = $tag['force_convert_to_atomic'] ?? false;
+
+		if ( ! is_array( $controls ) ) {
+			return null;
+		}
 
 		foreach ( $controls as $control ) {
 			if ( 'section' === $control['type'] ) {
@@ -161,28 +168,13 @@ class Dynamic_Tags_Editor_Config {
 	 * @throws \Exception If control is missing options.
 	 */
 	private function convert_select_control_to_atomic( $control, $tag = [] ) {
-		$options = $control['options'] ?? [];
-
-		if ( empty( $options ) && isset( $control['groups'] ) && is_array( $control['groups'] ) ) {
-			foreach ( $control['groups'] as $group ) {
-				if ( isset( $group['options'] ) && is_array( $group['options'] ) ) {
-					foreach ( $group['options'] as $key => $label ) {
-						if ( ! is_string( $key ) ) {
-							continue;
-						}
-						$options[ $key ] = (string) $label;
-					}
-				}
-			}
-		}
+		$options = $this->extract_select_options_from_control( $control );
 
 		if ( empty( $options ) ) {
 			throw new \Exception( 'Select control must have options' );
 		}
 
-		if ( function_exists( 'apply_filters' ) ) {
-			$options = apply_filters( 'elementor/atomic/dynamic_tags/select_control_options', $options, $control, $tag );
-		}
+		$options = apply_filters( 'elementor/atomic/dynamic_tags/select_control_options', $options, $control, $tag );
 
 		$options = array_map(
 			fn( $key, $value ) => [
@@ -204,6 +196,31 @@ class Dynamic_Tags_Editor_Config {
 
 		return $select_control;
 	}
+
+	private function extract_select_options_from_control( $control ): array {
+		$options = $control['options'] ?? [];
+
+		if ( ! empty( $options ) ) {
+			return $options;
+		}
+
+		if ( isset( $control['groups'] ) && is_array( $control['groups'] ) ) {
+			foreach ( $control['groups'] as $group ) {
+				if ( isset( $group['options'] ) && is_array( $group['options'] ) ) {
+					foreach ( $group['options'] as $key => $label ) {
+						if ( ! is_string( $key ) ) {
+							continue;
+						}
+						$options[ $key ] = (string) $label;
+					}
+				}
+			}
+		}
+
+		return $options;
+	}
+
+
 
 	/**
 	 * @param $control
