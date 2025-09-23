@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { setupCompleteTestData, cleanupCreatedItems, CreatedItems } from './utils/test-seeders';
+import { ImportExportHelpers } from './helpers/import-export-helpers';
 
 test.describe( 'Import Export Customization - Basic Export', () => {
 	let wpAdminPage: WpAdminPage;
@@ -24,45 +25,23 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export-customization' );
 		await page.waitForLoadState( 'networkidle' );
 
-		await page.fill( 'input[placeholder="Type name here..."]', 'test-kit' );
-		await page.fill( 'textarea[placeholder="Type description here..."]', 'Test Description' );
+		await ImportExportHelpers.fillKitInfo( page, 'test-kit', 'Test Description' );
 
-		await page.click( 'button:has-text("Export as .zip")' );
+		await ImportExportHelpers.startExport( page );
 
-		await page.waitForURL( /.*export-customization\/process.*/ );
+		await ImportExportHelpers.waitForExportProcess( page );
 
-		await expect( page.locator( 'text=Setting up your website template...' ) ).toBeVisible();
-		await expect( page.locator( 'text=This usually takes a few moments.' ) ).toBeVisible();
-		await expect( page.locator( 'text=Don\'t close this window until the process is finished.' ) ).toBeVisible();
+		await ImportExportHelpers.waitForExportComplete( page );
 
-		await page.waitForURL( /.*export-customization\/complete.*/, { timeout: 30000 } );
-
-		await expect( page.locator( 'text=Your .zip file is ready' ) ).toBeVisible();
-		await expect( page.locator( 'text=Once the download is complete, you can upload it to be used for other sites.' ) ).toBeVisible();
-
-		await expect( page.locator( 'text=What\'s included:' ) ).toBeVisible();
-
-		const contentSection = page.locator( '[data-testid="summary_section_content"]' );
-		await expect( contentSection ).toBeVisible();
-		await expect( contentSection.locator( 'text=13 Pages | 2 Floating Elements | 3 Posts | 3 Taxonomies' ) ).toBeVisible();
-
-		const templatesSection = page.locator( '[data-testid="summary_section_templates"]' );
-		await expect( templatesSection ).toBeVisible();
-
-		await expect( templatesSection.locator( 'text=No templates exported' ) ).toBeVisible();
-
-		const settingsSection = page.locator( '[data-testid="summary_section_settings"]' );
-		await expect( settingsSection ).toBeVisible();
-		await expect( settingsSection.locator( 'text=Theme | Global Colors | Global Fonts | Theme Style Settings | General Settings | Experiments' ) ).toBeVisible();
-
-		const pluginsSection = page.locator( '[data-testid="summary_section_plugins"]' );
-		await expect( pluginsSection ).toBeVisible();
-		await expect( pluginsSection.locator( 'text=Elementor | Hello Dolly | WordPress Importer' ) ).toBeVisible();
+		await ImportExportHelpers.verifyContentSection( page, '13 Pages | 2 Floating Elements | 3 Posts | 3 Taxonomies' );
+		await ImportExportHelpers.verifyTemplatesSection( page, 'No templates exported' );
+		await ImportExportHelpers.verifySettingsSection( page, 'Theme | Global Colors | Global Fonts | Theme Style Settings | General Settings | Experiments' );
+		await ImportExportHelpers.verifyPluginsSection( page, 'Elementor | Hello Dolly | WordPress Importer' );
 
 		await expect( page.locator( 'text=Is the automatic download not starting?' ) ).toBeVisible();
 		await expect( page.locator( 'text=Download manually.' ) ).toBeVisible();
 
-		await expect( page.locator( '[data-testid="done-button"]' ) ).toBeVisible();
+		await ImportExportHelpers.verifyDoneButton( page );
 	} );
 
 	test( 'should validate required kit name field', async ( { page } ) => {
@@ -72,8 +51,7 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 		const exportButton = page.locator( 'button:has-text("Export as .zip")' );
 		await expect( exportButton ).toBeDisabled();
 
-		await page.fill( 'input[placeholder="Type name here..."]', 'test-kit' );
+		await ImportExportHelpers.fillKitInfo( page, 'test-kit' );
 		await expect( exportButton ).toBeEnabled();
 	} );
 } );
-
