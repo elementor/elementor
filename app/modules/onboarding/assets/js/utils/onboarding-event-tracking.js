@@ -163,7 +163,7 @@ if ( 'undefined' !== typeof window ) {
 
 			// Add time properties like the real method does
 			if ( totalTimeData ) {
-				mockEventData.total_time_spent = `${ totalTimeData.timeSpent }s`;
+				mockEventData.time_spent = `${ totalTimeData.timeSpent }s`;
 			}
 
 			if ( stepTimeSpent !== null ) {
@@ -171,7 +171,7 @@ if ( 'undefined' !== typeof window ) {
 			}
 
 			console.log( `  Mock event data:`, mockEventData );
-			console.log( `  Has total_time_spent: ${ mockEventData.hasOwnProperty( 'total_time_spent' ) }` );
+			console.log( `  Has time_spent: ${ mockEventData.hasOwnProperty( 'time_spent' ) }` );
 			console.log( `  Has step_time_spent: ${ mockEventData.hasOwnProperty( 'step_time_spent' ) }` );
 		}
 
@@ -188,14 +188,14 @@ if ( 'undefined' !== typeof window ) {
 			trigger: 'user_redirects_out_of_step',
 			step_number: 999,
 			step_name: 'test_step',
-			total_time_spent: '99s',
+			time_spent: '99s',
 			step_time_spent: '88s',
 			test_property: 'test_value',
 		};
 
 		console.log( '🧪 Testing with mock event data:', testEventData );
 		console.log( '🧪 Event data keys:', Object.keys( testEventData ) );
-		console.log( '🧪 Has total_time_spent:', testEventData.hasOwnProperty( 'total_time_spent' ) );
+		console.log( '🧪 Has time_spent:', testEventData.hasOwnProperty( 'time_spent' ) );
 		console.log( '🧪 Has step_time_spent:', testEventData.hasOwnProperty( 'step_time_spent' ) );
 
 		try {
@@ -391,8 +391,8 @@ export class OnboardingEventTracking {
 			if ( eventName.includes( 'end_state' ) ) {
 				console.log( `🔍 END_STATE EVENT PAYLOAD VERIFICATION:`, {
 					eventName,
-					hasTotal: payload.hasOwnProperty( 'total_time_spent' ),
-					totalValue: payload.total_time_spent,
+					hasTimeSpent: payload.hasOwnProperty( 'time_spent' ),
+					timeSpentValue: payload.time_spent,
 					hasStep: payload.hasOwnProperty( 'step_time_spent' ),
 					stepValue: payload.step_time_spent,
 					payloadKeys: Object.keys( payload ),
@@ -1453,7 +1453,7 @@ export class OnboardingEventTracking {
 				const startTime = parseInt( startTimeString, 10 );
 				const currentTime = Date.now();
 				const totalTimeSpent = Math.round( ( currentTime - startTime ) / 1000 );
-				eventData.total_time_spent = `${ totalTimeSpent }s`;
+				eventData.time_spent = `${ totalTimeSpent }s`;
 
 				console.log( `⏱️ Total time spent calculation for step ${ stepNumber }:`, {
 					startTime,
@@ -1463,9 +1463,9 @@ export class OnboardingEventTracking {
 					currentTimeFormatted: new Date( currentTime ).toISOString(),
 				} );
 
-				console.log( `✅ TOTAL_TIME_SPENT ADDED TO EVENT DATA:`, {
-					property: 'total_time_spent',
-					value: eventData.total_time_spent,
+				console.log( `✅ TIME_SPENT ADDED TO EVENT DATA:`, {
+					property: 'time_spent',
+					value: eventData.time_spent,
 					stepNumber,
 					eventDataKeys: Object.keys( eventData ),
 				} );
@@ -1504,8 +1504,8 @@ export class OnboardingEventTracking {
 
 			// ENHANCED DEBUGGING: Verify time properties are in final event data
 			console.log( `🔍 TIME_SPENT VERIFICATION FOR STEP ${ stepNumber }:`, {
-				hasTotal: eventData.hasOwnProperty( 'total_time_spent' ),
-				totalValue: eventData.total_time_spent,
+				hasTimeSpent: eventData.hasOwnProperty( 'time_spent' ),
+				timeSpentValue: eventData.time_spent,
 				hasStep: eventData.hasOwnProperty( 'step_time_spent' ),
 				stepValue: eventData.step_time_spent,
 				allKeys: Object.keys( eventData ),
