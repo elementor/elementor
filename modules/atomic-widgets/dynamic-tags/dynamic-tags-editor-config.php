@@ -204,21 +204,22 @@ class Dynamic_Tags_Editor_Config {
 	private function extract_select_options_from_control( $control ): array {
 		$options = $control['options'] ?? [];
 
-		if ( ! empty( $options ) ) {
+		if ( ! empty( $options ) ||  ! empty( $control['groups'] ) ) {
 			return $options;
 		}
 
-		if ( isset( $control['groups'] ) && is_array( $control['groups'] ) ) {
-			foreach ( $control['groups'] as $group ) {
-				if ( isset( $group['options'] ) && is_array( $group['options'] ) ) {
-					foreach ( $group['options'] as $key => $label ) {
-						if ( ! is_string( $key ) ) {
-							continue;
-						}
-						$options[ $key ] = (string) $label;
-					}
-				}
+		foreach ( $control['groups'] as $group ) {
+			if ( empty( $group['options'] ) ) {
+			    continue;
 			}
+			
+			$filtered = array_filter(
+                $group['options'],
+                fn( $label, $key ) => is_string( $key ),
+                ARRAY_FILTER_USE_BOTH
+             );
+			
+			$options = [...$options, ...$filtered];
 		}
 
 		return $options;
