@@ -12,10 +12,9 @@ export function useKitValidation() {
 			return __( 'Website template name is required', 'elementor' );
 		}
 
-		const specialCharsRegex = /[<>:"/\\|?*]/g;
 		const problematicCharsRegex = /[^\w\s\-_.()]/g;
 
-		if ( problematicCharsRegex.test( value ) || specialCharsRegex.test( value ) ) {
+		if ( problematicCharsRegex.test( value ) ) {
 			return __( 'Only letters, numbers, spaces, and basic punctuation (- _ . ( )) are allowed', 'elementor' );
 		}
 
