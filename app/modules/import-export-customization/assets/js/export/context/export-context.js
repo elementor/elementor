@@ -106,11 +106,14 @@ function exportReducer( state, { type, payload } ) {
 export function ExportContextProvider( { children } ) {
 	const [ data, dispatch ] = useReducer( exportReducer, initialState );
 
+	const isNameEmpty = ! ( data.kitInfo.title?.trim() || '' ).length;
+	const hasNameError = data.validationErrors.name || isNameEmpty;
+	const hasDescriptionError = data.validationErrors.description;
+
 	const value = {
 		data,
 		dispatch,
-		isTemplateNameValid: ( data.kitInfo.title?.trim() || '' ).length > 0 && ! data.validationErrors.name,
-		hasValidationErrors: !! ( data.validationErrors.name || data.validationErrors.description ),
+		hasValidationErrors: !! ( hasNameError || hasDescriptionError ),
 		isExporting: data.exportStatus === EXPORT_STATUS.EXPORTING,
 		isCompleted: data.exportStatus === EXPORT_STATUS.COMPLETED,
 		isPending: data.exportStatus === EXPORT_STATUS.PENDING,

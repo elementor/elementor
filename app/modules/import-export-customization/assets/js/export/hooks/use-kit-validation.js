@@ -9,13 +9,13 @@ export function useKitValidation() {
 
 	const validateKitName = ( value ) => {
 		if ( ! value || 0 === value.trim().length ) {
-			return __( 'Website template name is required', 'elementor' );
+			return __( 'Must add a website template name', 'elementor' );
 		}
 
 		const problematicCharsRegex = /[^\w\s\-_.()]/g;
 
 		if ( problematicCharsRegex.test( value ) ) {
-			return __( 'Only letters, numbers, spaces, and basic punctuation (- _ . ( )) are allowed', 'elementor' );
+			return __( 'Use characters only', 'elementor' );
 		}
 
 		return null;
