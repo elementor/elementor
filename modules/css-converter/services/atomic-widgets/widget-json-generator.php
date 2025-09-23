@@ -1,298 +1,292 @@
 <?php
+
 namespace Elementor\Modules\CssConverter\Services\AtomicWidgets;
+
+use Elementor\Modules\AtomicWidgets\Elements\Widget_Builder;
+use Elementor\Modules\AtomicWidgets\Elements\Element_Builder;
+use Elementor\Modules\CssConverter\Convertors\AtomicProperties\Implementations\Atomic_Prop_Mapper_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Widget_Json_Generator {
-	
-	private Widget_Id_Generator $id_generator;
-	
-	public function __construct() {
-		$this->id_generator = new Widget_Id_Generator();
+class Widget_JSON_Generator {
+	private $atomic_widget_service;
+
+	public function __construct( Atomic_Widget_Service $atomic_widget_service = null ) {
+		$this->atomic_widget_service = $atomic_widget_service ?: new Atomic_Widget_Service();
 	}
-	
-	public function generate_widget_json( string $widget_type, array $validated_props, array $html_element ): array {
-		$widget_id = $this->id_generator->generate_widget_id();
-		
-		$widget = [
-			'id' => $widget_id,
-			'elType' => $this->get_element_type( $widget_type ),
-			'widgetType' => $widget_type,
-			'settings' => $this->convert_props_to_settings( $validated_props, $html_element ),
-			'isInner' => false,
-			'elements' => [],
-			'version' => '0.0',
-		];
-		
-		$styles = $this->generate_styles_from_html( $html_element, $widget_id );
-		if ( ! empty( $styles ) ) {
-			$widget['styles'] = $styles;
+
+	public function generate_widget_json( array $element_data ): ?array {
+		if ( ! isset( $element_data['widget_type'] ) ) {
+			return null;
 		}
+
+		$widget_type = $element_data['widget_type'];
+		$props = $element_data['props'] ?? [];
+		$settings = $element_data['settings'] ?? [];
+		$editor_settings = $element_data['editor_settings'] ?? [];
+		$is_locked = $element_data['is_locked'] ?? false;
+
+		$atomic_props = $this->convert_props_to_atomic( $props );
+		$final_settings = array_merge( $settings, $atomic_props );
+
+		$builder = Widget_Builder::make( $widget_type );
 		
-		$editor_settings = $this->generate_editor_settings( $validated_props );
+		if ( ! empty( $final_settings ) ) {
+			$builder->settings( $final_settings );
+		}
+
 		if ( ! empty( $editor_settings ) ) {
-			$widget['editor_settings'] = $editor_settings;
+			$builder->editor_settings( $editor_settings );
 		}
-		
-		return $widget;
+
+		if ( $is_locked ) {
+			$builder->is_locked( true );
+		}
+
+		return $builder->build();
 	}
-	
-	private function get_element_type( string $widget_type ): string {
-		return in_array( $widget_type, [ 'e-flexbox' ], true ) ? 'e-flexbox' : 'widget';
+
+	public function generate_element_json( array $element_data ): ?array {
+		if ( ! isset( $element_data['element_type'] ) ) {
+			return null;
+		}
+
+		$element_type = $element_data['element_type'];
+		$props = $element_data['props'] ?? [];
+		$settings = $element_data['settings'] ?? [];
+		$children = $element_data['children'] ?? [];
+		$editor_settings = $element_data['editor_settings'] ?? [];
+		$is_locked = $element_data['is_locked'] ?? false;
+
+		$atomic_props = $this->convert_props_to_atomic( $props );
+		$final_settings = array_merge( $settings, $atomic_props );
+
+		$builder = Element_Builder::make( $element_type );
+		
+		if ( ! empty( $final_settings ) ) {
+			$builder->settings( $final_settings );
+		}
+
+		if ( ! empty( $children ) ) {
+			$processed_children = $this->process_children( $children );
+			$builder->children( $processed_children );
+		}
+
+		if ( ! empty( $editor_settings ) ) {
+			$builder->editor_settings( $editor_settings );
+		}
+
+		if ( $is_locked ) {
+			$builder->is_locked( true );
+		}
+
+		return $builder->build();
 	}
-	
-	private function convert_props_to_settings( array $validated_props, array $html_element ): array {
-		$settings = [];
-		
-		foreach ( $validated_props as $prop_name => $prop_value ) {
-			$settings[ $prop_name ] = $this->format_prop_for_settings( $prop_value );
+
+	public function generate_from_css_properties( string $widget_type, array $css_properties ): ?array {
+		if ( empty( $widget_type ) || empty( $css_properties ) ) {
+			return null;
 		}
-		
-		if ( ! empty( $html_element['attributes'] ) ) {
-			$settings['attributes'] = $html_element['attributes'];
-		}
-		
-		return $settings;
-	}
-	
-	private function format_prop_for_settings( $prop_value ) {
-		if ( is_array( $prop_value ) && isset( $prop_value['$$type'] ) ) {
-			return $prop_value;
-		}
-		
-		if ( is_string( $prop_value ) ) {
-			return [
-				'$$type' => 'string',
-				'value' => $prop_value,
-			];
-		}
-		
-		if ( is_numeric( $prop_value ) ) {
-			return [
-				'$$type' => 'number',
-				'value' => $prop_value,
-			];
-		}
-		
-		if ( is_bool( $prop_value ) ) {
-			return [
-				'$$type' => 'boolean',
-				'value' => $prop_value,
-			];
-		}
-		
-		if ( is_array( $prop_value ) ) {
-			return [
-				'$$type' => 'array',
-				'value' => $prop_value,
-			];
-		}
-		
-		return $prop_value;
-	}
-	
-	private function generate_styles_from_html( array $html_element, string $widget_id ): array {
-		$styles = [];
-		
-		if ( empty( $html_element['inline_styles'] ) ) {
-			return $styles;
-		}
-		
-		$class_id = $this->id_generator->generate_class_id( $widget_id );
-		
-		$styles[ $class_id ] = [
-			'id' => $class_id,
-			'label' => 'local',
-			'type' => 'class',
-			'variants' => [
-				[
-					'meta' => [
-						'breakpoint' => 'desktop',
-						'state' => null,
-					],
-					'props' => $this->convert_inline_styles_to_props( $html_element['inline_styles'] ),
-					'custom_css' => null,
-				],
-			],
-		];
-		
-		return $styles;
-	}
-	
-	private function convert_inline_styles_to_props( array $inline_styles ): array {
-		$props = [];
-		
-		foreach ( $inline_styles as $property => $value ) {
-			$converted_prop = $this->convert_css_property_to_atomic_prop( $property, $value );
-			
-			if ( $converted_prop !== null ) {
-				$props[ $property ] = $converted_prop;
+
+		$atomic_props = [];
+		foreach ( $css_properties as $property => $value ) {
+			$atomic_prop = $this->atomic_widget_service->convert_css_to_atomic_prop( $property, $value );
+			if ( null !== $atomic_prop ) {
+				$atomic_props[ $property ] = $atomic_prop;
 			}
 		}
-		
-		return $props;
-	}
-	
-	private function convert_css_property_to_atomic_prop( string $property, $value ): ?array {
-		switch ( $property ) {
-			case 'color':
-			case 'background-color':
-				return $this->create_color_prop( $value );
-				
-			case 'font-size':
-			case 'width':
-			case 'height':
-			case 'max-width':
-			case 'min-width':
-				return $this->create_size_prop( $value );
-				
-			case 'margin':
-			case 'padding':
-				return $this->create_dimensions_prop( $value );
-				
-			case 'display':
-			case 'text-align':
-			case 'font-weight':
-			case 'text-decoration':
-				return $this->create_string_prop( $value );
-				
-			default:
-				return $this->create_string_prop( $value );
+
+		if ( empty( $atomic_props ) ) {
+			return null;
 		}
+
+		return $this->generate_widget_json([
+			'widget_type' => $widget_type,
+			'props' => $atomic_props
+		]);
 	}
-	
-	private function create_color_prop( $value ): array {
-		return [
-			'$$type' => 'color',
-			'value' => $this->normalize_color_value( $value ),
-		];
+
+	public function validate_generated_json( array $json ): bool {
+		if ( ! isset( $json['elType'] ) ) {
+			return false;
+		}
+
+		if ( 'widget' === $json['elType'] && ! isset( $json['widgetType'] ) ) {
+			return false;
+		}
+
+		if ( isset( $json['settings'] ) && is_array( $json['settings'] ) ) {
+			return $this->validate_atomic_settings( $json['settings'] );
+		}
+
+		return true;
 	}
-	
-	private function create_size_prop( $value ): array {
-		$parsed = $this->parse_size_value( $value );
+
+	public function get_widget_builder_instance( string $widget_type ): Widget_Builder {
+		return Widget_Builder::make( $widget_type );
+	}
+
+	public function get_element_builder_instance( string $element_type ): Element_Builder {
+		return Element_Builder::make( $element_type );
+	}
+
+	private function convert_props_to_atomic( array $props ): array {
+		$atomic_props = [];
+
+		foreach ( $props as $prop_name => $prop_value ) {
+			if ( is_array( $prop_value ) && isset( $prop_value['$$type'] ) ) {
+				if ( $this->atomic_widget_service->validate_prop_structure( $prop_value['$$type'], $prop_value['value'] ) ) {
+					$atomic_props[ $prop_name ] = $prop_value;
+				}
+			} elseif ( is_string( $prop_value ) ) {
+				$atomic_prop = $this->convert_css_property_to_atomic_format( $prop_name, $prop_value );
+				if ( null !== $atomic_prop ) {
+					$atomic_props[ $prop_name ] = $atomic_prop;
+				}
+			}
+		}
+
+		return $atomic_props;
+	}
+
+	private function convert_css_property_to_atomic_format( string $css_property, string $css_value ): ?array {
+		return Atomic_Prop_Mapper_Factory::convert_css_property_to_atomic_format( $css_property, $css_value );
+	}
+
+	private function process_children( array $children ): array {
+		$processed_children = [];
+
+		foreach ( $children as $child ) {
+			if ( is_array( $child ) ) {
+				if ( isset( $child['widget_type'] ) ) {
+					$processed_child = $this->generate_widget_json( $child );
+				} elseif ( isset( $child['element_type'] ) ) {
+					$processed_child = $this->generate_element_json( $child );
+				} else {
+					$processed_child = $child;
+				}
+
+				if ( null !== $processed_child ) {
+					$processed_children[] = $processed_child;
+				}
+			}
+		}
+
+		return $processed_children;
+	}
+
+	private function validate_atomic_settings( array $settings ): bool {
+		foreach ( $settings as $setting_name => $setting_value ) {
+			if ( is_array( $setting_value ) && isset( $setting_value['$$type'] ) ) {
+				if ( ! $this->atomic_widget_service->validate_prop_structure( $setting_value ) ) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	public function create_heading_widget( string $text, array $css_properties = [] ): ?array {
+		$atomic_css_props = $this->convert_css_properties_to_atomic_props( $css_properties );
 		
-		return [
-			'$$type' => 'size',
-			'value' => [
-				'size' => $parsed['size'],
-				'unit' => $parsed['unit'],
+		$element_data = [
+			'widget_type' => 'atomic-heading',
+			'settings' => [
+				'title' => [
+					'$$type' => 'string',
+					'value' => $text
+				]
 			],
+			'props' => $atomic_css_props
 		];
+
+		return $this->generate_widget_json( $element_data );
 	}
-	
-	private function create_dimensions_prop( $value ): array {
-		$parsed = $this->parse_dimensions_value( $value );
+
+	public function create_paragraph_widget( string $text, array $css_properties = [] ): ?array {
+		$atomic_css_props = $this->convert_css_properties_to_atomic_props( $css_properties );
 		
-		return [
-			'$$type' => 'dimensions',
-			'value' => [
-				'block-start' => [ '$$type' => 'size', 'value' => $parsed['top'] ],
-				'inline-end' => [ '$$type' => 'size', 'value' => $parsed['right'] ],
-				'block-end' => [ '$$type' => 'size', 'value' => $parsed['bottom'] ],
-				'inline-start' => [ '$$type' => 'size', 'value' => $parsed['left'] ],
+		$element_data = [
+			'widget_type' => 'atomic-paragraph',
+			'settings' => [
+				'paragraph' => [
+					'$$type' => 'string',
+					'value' => $text
+				]
 			],
+			'props' => $atomic_css_props
 		];
+
+		return $this->generate_widget_json( $element_data );
 	}
-	
-	private function create_string_prop( $value ): array {
-		return [
-			'$$type' => 'string',
-			'value' => (string) $value,
+
+	public function create_button_widget( string $text, string $link = '', array $css_properties = [] ): ?array {
+		$atomic_css_props = $this->convert_css_properties_to_atomic_props( $css_properties );
+		
+		$settings = [
+			'text' => [
+				'$$type' => 'string',
+				'value' => $text
+			]
 		];
-	}
-	
-	private function normalize_color_value( $value ): string {
-		$value = trim( (string) $value );
-		
-		if ( preg_match( '/^#[0-9a-f]{3,6}$/i', $value ) ) {
-			return strtolower( $value );
-		}
-		
-		if ( preg_match( '/^rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i', $value, $matches ) ) {
-			return sprintf( '#%02x%02x%02x', $matches[1], $matches[2], $matches[3] );
-		}
-		
-		return $value;
-	}
-	
-	private function parse_size_value( $value ): array {
-		$value = trim( (string) $value );
-		
-		if ( preg_match( '/^(\d*\.?\d+)(px|em|rem|%|vh|vw|vmin|vmax)$/i', $value, $matches ) ) {
-			return [
-				'size' => (float) $matches[1],
-				'unit' => strtolower( $matches[2] ),
+
+		if ( ! empty( $link ) ) {
+			$settings['link'] = [
+				'$$type' => 'link',
+				'value' => [
+					'url' => $link,
+					'is_external' => false,
+					'nofollow' => false
+				]
 			];
 		}
-		
-		if ( is_numeric( $value ) ) {
-			return [
-				'size' => (float) $value,
-				'unit' => 'px',
-			];
-		}
-		
-		return [
-			'size' => 0,
-			'unit' => 'px',
+
+		$element_data = [
+			'widget_type' => 'atomic-button',
+			'settings' => $settings,
+			'props' => $atomic_css_props
 		];
+
+		return $this->generate_widget_json( $element_data );
 	}
-	
-	private function parse_dimensions_value( $value ): array {
-		$value = trim( (string) $value );
-		$parts = preg_split( '/\s+/', $value );
-		
-		$default_size = [ 'size' => 0, 'unit' => 'px' ];
-		
-		switch ( count( $parts ) ) {
-			case 1:
-				$parsed = $this->parse_size_value( $parts[0] );
-				return [
-					'top' => $parsed,
-					'right' => $parsed,
-					'bottom' => $parsed,
-					'left' => $parsed,
-				];
-				
-			case 2:
-				$vertical = $this->parse_size_value( $parts[0] );
-				$horizontal = $this->parse_size_value( $parts[1] );
-				return [
-					'top' => $vertical,
-					'right' => $horizontal,
-					'bottom' => $vertical,
-					'left' => $horizontal,
-				];
-				
-			case 3:
-				return [
-					'top' => $this->parse_size_value( $parts[0] ),
-					'right' => $this->parse_size_value( $parts[1] ),
-					'bottom' => $this->parse_size_value( $parts[2] ),
-					'left' => $this->parse_size_value( $parts[1] ),
-				];
-				
-			case 4:
-				return [
-					'top' => $this->parse_size_value( $parts[0] ),
-					'right' => $this->parse_size_value( $parts[1] ),
-					'bottom' => $this->parse_size_value( $parts[2] ),
-					'left' => $this->parse_size_value( $parts[3] ),
-				];
-				
-			default:
-				return [
-					'top' => $default_size,
-					'right' => $default_size,
-					'bottom' => $default_size,
-					'left' => $default_size,
-				];
+
+	private function convert_css_properties_to_atomic_props( array $css_properties ): array {
+		$atomic_props = [];
+
+		foreach ( $css_properties as $css_property => $css_value ) {
+			if ( is_string( $css_value ) ) {
+				$atomic_prop = $this->convert_css_property_to_atomic_format( $css_property, $css_value );
+				if ( null !== $atomic_prop ) {
+					$atomic_props[ $css_property ] = $atomic_prop;
+				}
+			} elseif ( is_array( $css_value ) && isset( $css_value['$$type'] ) ) {
+				$atomic_props[ $css_property ] = $css_value;
+			}
 		}
+
+		return $atomic_props;
 	}
-	
-	private function generate_editor_settings( array $validated_props ): array {
-		return [];
+
+	public function create_div_element( array $children = [], array $css_properties = [] ): ?array {
+		$element_data = [
+			'element_type' => 'div-block',
+			'children' => $children,
+			'props' => $css_properties
+		];
+
+		return $this->generate_element_json( $element_data );
+	}
+
+	public function create_flexbox_element( array $children = [], array $css_properties = [] ): ?array {
+		$element_data = [
+			'element_type' => 'flexbox',
+			'children' => $children,
+			'props' => $css_properties
+		];
+
+		return $this->generate_element_json( $element_data );
 	}
 }
