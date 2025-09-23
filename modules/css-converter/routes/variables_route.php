@@ -13,7 +13,7 @@ use Elementor\Plugin;
 use WP_REST_Request;
 use WP_REST_Response;
 
-class VariablesRoute {
+class Variables_Route {
 	private $parser;
 
 	public function __construct( $parser = null ) {

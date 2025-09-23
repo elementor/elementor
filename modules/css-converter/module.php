@@ -6,9 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Modules\CssConverter\Routes\VariablesRoute;
-use Elementor\Modules\CssConverter\Routes\Classes_Route;
-use Elementor\Modules\CssConverter\Routes\Widgets_Route;
 
 class Module extends BaseModule {
 	private $variables_route;
@@ -44,9 +41,44 @@ class Module extends BaseModule {
 
 	private function init_routes(): void {
 		try {
-			$this->variables_route = new VariablesRoute();
-			$this->classes_route = new Classes_Route();
-			$this->widgets_route = new Widgets_Route();
+			// Load ALL required dependencies to avoid cascading errors
+			$required_files = [
+				'/exceptions/class_conversion_exception.php',
+				'/exceptions/css_parse_exception.php',
+				'/parsers/css-parser.php',
+				'/parsers/parsed-css.php',
+				'/convertors/css-properties/css_property_convertor_config.php',
+				'/convertors/css-properties/contracts/property_mapper_interface.php',
+				'/convertors/css-properties/implementations/property_mapper_base.php',
+				'/convertors/css-properties/implementations/class_property_mapper_registry.php',
+				'/convertors/css-properties/implementations/class_property_mapper_factory.php',
+				'/services/css/validation/request_validator.php',
+				'/services/css/parsing/html_parser.php',
+				'/services/css/processing/css_specificity_calculator.php',
+				'/services/css/processing/css_property_conversion_service.php',
+				'/services/css/processing/css_processor.php',
+				'/services/widgets/widget-mapper.php',
+				'/services/widgets/widget-creator.php',
+				'/services/widgets/widget-conversion-service.php',
+			];
+			
+			foreach ($required_files as $file) {
+				$file_path = __DIR__ . $file;
+				if (file_exists($file_path)) {
+					require_once $file_path;
+				}
+			}
+			
+			// Only load the widgets route for now to avoid namespace issues
+			require_once __DIR__ . '/routes/widgets_route.php';
+			$this->widgets_route = new \Elementor\Modules\CssConverter\Routes\Widgets_Route();
+			
+			// TODO: Fix and re-enable other routes
+			// require_once __DIR__ . '/routes/variables_route.php';
+			// $this->variables_route = new \Elementor\Modules\CssConverter\Routes\Variables_Route();
+			// 
+			// require_once __DIR__ . '/routes/classes_route.php';
+			// $this->classes_route = new \Elementor\Modules\CssConverter\Routes\Classes_Route();
 		} catch ( \Throwable $e ) {
 			// Log error in production but don't break the site
 			if ( function_exists( 'error_log' ) ) {
