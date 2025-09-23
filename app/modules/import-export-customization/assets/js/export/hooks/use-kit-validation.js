@@ -15,11 +15,7 @@ export function useKitValidation() {
 		const specialCharsRegex = /[<>:"/\\|?*]/g;
 		const problematicCharsRegex = /[^\w\s\-_.()]/g;
 
-		if ( specialCharsRegex.test( value ) ) {
-			return __( 'Special characters < > : " / \\ | ? * are not allowed', 'elementor' );
-		}
-
-		if ( problematicCharsRegex.test( value ) ) {
+		if ( problematicCharsRegex.test( value ) || specialCharsRegex.test( value ) ) {
 			return __( 'Only letters, numbers, spaces, and basic punctuation (- _ . ( )) are allowed', 'elementor' );
 		}
 
@@ -30,6 +26,7 @@ export function useKitValidation() {
 		if ( value.length > DESCRIPTION_MAX_LENGTH ) {
 			return __( 'Description exceeds 300 characters', 'elementor' );
 		}
+
 		return null;
 	};
 
