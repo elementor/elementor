@@ -40,18 +40,18 @@ describe( 'Export Context', () => {
 			} );
 		} );
 
-		it( 'should correctly calculate template name validity', async () => {
+		it( 'should correctly calculate validation errors', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
-			expect( result.current.isTemplateNameValid ).toBe( false );
+			expect( result.current.hasValidationErrors ).toBe( true );
 
 			await waitFor( () => {
 				result.current.dispatch( { type: 'SET_KIT_TITLE', payload: 'My Kit' } );
 			} );
 
-			expect( result.current.isTemplateNameValid ).toBe( true );
+			expect( result.current.hasValidationErrors ).toBe( false );
 		} );
 
 		it( 'should correctly calculate export status flags', () => {
@@ -296,7 +296,7 @@ describe( 'Export Context', () => {
 				result.current.dispatch( { type: 'SET_KIT_TITLE', payload: '' } );
 			} );
 
-			expect( result.current.isTemplateNameValid ).toBe( false );
+			expect( result.current.hasValidationErrors ).toBe( true );
 		} );
 
 		it( 'should validate whitespace-only title as invalid', async () => {
@@ -308,7 +308,7 @@ describe( 'Export Context', () => {
 				result.current.dispatch( { type: 'SET_KIT_TITLE', payload: '   ' } );
 			} );
 
-			expect( result.current.isTemplateNameValid ).toBe( false );
+			expect( result.current.hasValidationErrors ).toBe( true );
 		} );
 
 		it( 'should validate proper title as valid', async () => {
@@ -320,7 +320,7 @@ describe( 'Export Context', () => {
 				result.current.dispatch( { type: 'SET_KIT_TITLE', payload: 'My Kit' } );
 			} );
 
-			expect( result.current.isTemplateNameValid ).toBe( true );
+			expect( result.current.hasValidationErrors ).toBe( false );
 		} );
 	} );
 } );
