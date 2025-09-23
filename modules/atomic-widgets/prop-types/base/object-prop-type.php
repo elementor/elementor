@@ -156,4 +156,12 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	public function get_dependencies(): ?array {
 		return $this->dependencies;
 	}
+
+	public function set_shape_meta( string $shape_key, array $meta ): self {
+		foreach ( $meta as $key => $value ) {
+			$this->get_shape_field( $shape_key )->meta( $key, $value );
+		}
+
+		return $this;
+	}
 }
