@@ -2,7 +2,65 @@
 import eventsConfig from '../../../../../../core/common/modules/events-manager/assets/js/events-config';
 import { options } from './utils';
 
-console.log( '🚀 OnboardingEventTracking loaded with COMPREHENSIVE TIME SPENT DEBUGGING!' );
+console.log( '🚀 OnboardingEventTracking loaded with COMPREHENSIVE RETURN-TO-STEP4 DEBUGGING!' );
+
+if ( 'undefined' !== typeof document ) {
+	document.addEventListener( 'click', ( event ) => {
+		const target = event.target;
+		const isOnboardingClick = target.closest( '.onboarding' ) || target.closest( '[data-onboarding]' ) || target.closest( '.site-starter' );
+
+		if ( isOnboardingClick ) {
+			console.log( '🖱️ ONBOARDING CLICK DETECTED:', {
+				target: target.tagName,
+				className: target.className,
+				id: target.id,
+				textContent: target.textContent?.trim().substring( 0, 50 ),
+				closest: {
+					onboarding: !! target.closest( '.onboarding' ),
+					dataOnboarding: !! target.closest( '[data-onboarding]' ),
+					siteStarter: !! target.closest( '.site-starter' ),
+				},
+				currentUrl: window.location.href,
+				timestamp: Date.now(),
+			} );
+		}
+	}, true );
+
+	console.log( '🖱️ Global onboarding click listener attached' );
+
+	let lastUrl = window.location.href;
+	const urlChangeDetector = () => {
+		const currentUrl = window.location.href;
+		if ( currentUrl !== lastUrl ) {
+			console.log( '🔄 URL CHANGE DETECTED:', {
+				from: lastUrl,
+				to: currentUrl,
+				timestamp: Date.now(),
+				timestampFormatted: new Date().toISOString(),
+			} );
+
+			const isStep4 = currentUrl.includes( 'goodToGo' ) || currentUrl.includes( 'step4' ) || currentUrl.includes( 'site_starter' );
+			if ( isStep4 ) {
+				console.log( '🎯 NAVIGATED TO STEP 4 - ensuring step start time and triggering return check...' );
+				setTimeout( () => {
+					OnboardingEventTracking.trackStepStartTime( 4 );
+					OnboardingEventTracking.checkAndSendReturnToStep4();
+				}, 100 );
+			}
+
+			lastUrl = currentUrl;
+		}
+	};
+
+	setInterval( urlChangeDetector, 500 );
+
+	window.addEventListener( 'popstate', () => {
+		console.log( '🔄 POPSTATE EVENT - browser navigation detected' );
+		setTimeout( urlChangeDetector, 100 );
+	} );
+
+	console.log( '🔄 URL change monitoring active' );
+}
 
 if ( 'undefined' !== typeof window ) {
 	window.debugOnboardingTimeSpent = () => {
@@ -28,10 +86,64 @@ if ( 'undefined' !== typeof window ) {
 		OnboardingEventTracking.checkAndSendReturnToStep4();
 	};
 
+	window.simulateSiteStarterChoice = ( siteStarter ) => {
+		console.log( '🧪 Simulating site starter choice:', siteStarter );
+		OnboardingEventTracking.handleSiteStarterChoice( siteStarter );
+	};
+
+	window.monitorOnboardingCalls = () => {
+		console.log( '🔍 Setting up onboarding method call monitoring...' );
+
+		const originalHandleSiteStarterChoice = OnboardingEventTracking.handleSiteStarterChoice;
+		OnboardingEventTracking.handleSiteStarterChoice = function( ...args ) {
+			console.log( '🎯 INTERCEPTED: handleSiteStarterChoice called with:', args );
+			console.trace( '🎯 Call stack:' );
+			return originalHandleSiteStarterChoice.apply( this, args );
+		};
+
+		const originalOnStepLoad = OnboardingEventTracking.onStepLoad;
+		OnboardingEventTracking.onStepLoad = function( ...args ) {
+			console.log( '🔄 INTERCEPTED: onStepLoad called with:', args );
+			console.trace( '🔄 Call stack:' );
+			return originalOnStepLoad.apply( this, args );
+		};
+
+		console.log( '✅ Monitoring setup complete' );
+	};
+
+	window.debugStepTiming = () => {
+		console.log( '⏱️ DEBUG: Step timing analysis' );
+		console.log( '⏱️ =========================' );
+
+		for ( let step = 1; step <= 4; step++ ) {
+			const stepStartTimeKey = OnboardingEventTracking.getStepStartTimeKey( step );
+			const stepStartTime = localStorage.getItem( stepStartTimeKey );
+
+			console.log( `⏱️ Step ${ step }:`, {
+				startTimeKey: stepStartTimeKey,
+				startTime: stepStartTime,
+				startTimeFormatted: stepStartTime ? new Date( parseInt( stepStartTime, 10 ) ).toISOString() : 'NOT SET',
+				timeSinceStart: stepStartTime ? Math.round( ( Date.now() - parseInt( stepStartTime, 10 ) ) / 1000 ) + 's' : 'N/A',
+			} );
+		}
+
+		const globalStartTime = localStorage.getItem( 'elementor_onboarding_start_time' );
+		console.log( '⏱️ Global onboarding start:', {
+			startTime: globalStartTime,
+			startTimeFormatted: globalStartTime ? new Date( parseInt( globalStartTime, 10 ) ).toISOString() : 'NOT SET',
+			totalTime: globalStartTime ? Math.round( ( Date.now() - parseInt( globalStartTime, 10 ) ) / 1000 ) + 's' : 'N/A',
+		} );
+
+		console.log( '⏱️ =========================' );
+	};
+
 	console.log( '🔍 Debug functions exposed:' );
 	console.log( '  - window.debugOnboardingTimeSpent()' );
 	console.log( '  - window.debugReturnToStep4()' );
 	console.log( '  - window.testReturnToStep4()' );
+	console.log( '  - window.simulateSiteStarterChoice(siteStarter)' );
+	console.log( '  - window.monitorOnboardingCalls()' );
+	console.log( '  - window.debugStepTiming()' );
 }
 
 const ONBOARDING_EVENTS_MAP = {
@@ -479,7 +591,7 @@ export class OnboardingEventTracking {
 			}
 
 			const target = event.target;
-			
+
 			if ( ! this.shouldTrackClick( target ) ) {
 				return;
 			}
@@ -513,7 +625,7 @@ export class OnboardingEventTracking {
 
 	static shouldTrackClick( element ) {
 		const elementorEditor = element.closest( '#elementor-editor-wrapper, .elementor-panel, .elementor-control' );
-		
+
 		if ( ! elementorEditor ) {
 			return false;
 		}
@@ -549,7 +661,7 @@ export class OnboardingEventTracking {
 
 	static extractElementTitle( element ) {
 		const controlFieldContainer = element.closest( '.elementor-control-field' );
-		
+
 		if ( controlFieldContainer ) {
 			const labelElement = controlFieldContainer.querySelector( 'label' );
 			if ( labelElement && labelElement.textContent ) {
@@ -566,10 +678,10 @@ export class OnboardingEventTracking {
 	}
 
 	static getFallbackElementTitle( element ) {
-		if ( element.tagName?.toLowerCase() === 'select' ) {
+		if ( 'select' === element.tagName?.toLowerCase() ) {
 			return element.title || element.getAttribute( 'aria-label' ) || '';
 		}
-		
+
 		return element.title || element.textContent?.trim() || element.getAttribute( 'aria-label' ) || '';
 	}
 
@@ -1444,6 +1556,18 @@ export class OnboardingEventTracking {
 			const stepStartTimeKey = this.getStepStartTimeKey( stepNumber );
 			const currentTime = Date.now();
 
+			const existingStartTime = localStorage.getItem( stepStartTimeKey );
+			if ( existingStartTime ) {
+				console.log( `⏱️ Step ${ stepNumber } start time already exists:`, {
+					existing: existingStartTime,
+					existingFormatted: new Date( parseInt( existingStartTime, 10 ) ).toISOString(),
+					new: currentTime,
+					newFormatted: new Date( currentTime ).toISOString(),
+				} );
+				console.log( `⏱️ Keeping existing start time for step ${ stepNumber }` );
+				return;
+			}
+
 			console.log( `⏱️ Setting step ${ stepNumber } start time:`, {
 				stepStartTimeKey,
 				currentTime,
@@ -1452,7 +1576,11 @@ export class OnboardingEventTracking {
 
 			localStorage.setItem( stepStartTimeKey, currentTime.toString() );
 
-			console.log( `✅ Step ${ stepNumber } start time stored successfully` );
+			const verifyStored = localStorage.getItem( stepStartTimeKey );
+			console.log( `✅ Step ${ stepNumber } start time stored successfully:`, {
+				stored: verifyStored,
+				storedFormatted: new Date( parseInt( verifyStored, 10 ) ).toISOString(),
+			} );
 		} catch ( error ) {
 			console.error( `❌ Failed to track step ${ stepNumber } start time:`, error );
 			this.handleStorageError( `Failed to track step ${ stepNumber } start time:`, error );
@@ -1598,6 +1726,9 @@ export class OnboardingEventTracking {
 			timestampFormatted: new Date().toISOString(),
 		} );
 
+		console.log( '⏱️ Step 0: Ensuring step 4 start time is tracked...' );
+		this.trackStepStartTime( 4 );
+
 		console.log( '💾 Step 1: Storing site starter choice...' );
 		this.storeSiteStarterChoice( siteStarter );
 
@@ -1630,7 +1761,12 @@ export class OnboardingEventTracking {
 	}
 
 	static onStepLoad( currentStep ) {
-		console.log( `🔄 onStepLoad called:`, { currentStep } );
+		console.log( `🔄 onStepLoad called:`, {
+			currentStep,
+			currentUrl: window.location.href,
+			timestamp: Date.now(),
+			timestampFormatted: new Date().toISOString(),
+		} );
 
 		const stepNumber = this.getStepNumber( currentStep );
 		console.log( `🔄 Step number resolved:`, { currentStep, stepNumber } );
@@ -1650,6 +1786,14 @@ export class OnboardingEventTracking {
 		if ( 4 === stepNumber || 'goodToGo' === currentStep ) {
 			console.log( `🎯 Step 4 (Site Starter) loaded - checking for return to step 4 scenario...` );
 			console.log( `🎯 Current step details:`, { currentStep, stepNumber } );
+			console.log( `🎯 URL analysis:`, {
+				href: window.location.href,
+				pathname: window.location.pathname,
+				search: window.location.search,
+				hash: window.location.hash,
+			} );
+
+			this.debugReturnToStep4Scenario();
 			this.checkAndSendReturnToStep4();
 		}
 	}
