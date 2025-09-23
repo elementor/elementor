@@ -1392,18 +1392,31 @@ export class OnboardingEventTracking {
 				additionalData,
 			} );
 
-			const currentTime = Date.now();
+			const timeData = this.calculateTimeSpent();
+			if ( ! timeData ) {
+				console.log( `❌ No time data available for step ${ stepNumber } action tracking` );
+				return;
+			}
+
 			const existingActions = this.getStoredActions( storageKey );
 			const actionData = {
 				action,
-				timestamp: currentTime,
+				timestamp: timeData.currentTime,
+				time_spent: `${ timeData.timeSpent }s`,
 				...additionalData,
 			};
 
 			console.log( `📝 Adding action to step ${ stepNumber }:`, {
 				actionData,
 				existingActionsCount: existingActions.length,
-				currentTimeFormatted: new Date( currentTime ).toISOString(),
+				currentTimeFormatted: new Date( timeData.currentTime ).toISOString(),
+			} );
+
+			console.log( `✅ ACTION TIME_SPENT ADDED:`, {
+				action,
+				stepNumber,
+				timeSpent: actionData.time_spent,
+				timestamp: actionData.timestamp,
 			} );
 
 			existingActions.push( actionData );

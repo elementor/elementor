@@ -142,12 +142,6 @@ class PostOnboardingTracking {
 	}
 
 	static shouldTrackClick( element ) {
-		const elementorEditor = element.closest( '#elementor-editor-wrapper, .elementor-panel, .elementor-control' );
-
-		if ( ! elementorEditor ) {
-			return false;
-		}
-
 		const excludedSelectors = [
 			'.announcements-container',
 			'.close-button',
