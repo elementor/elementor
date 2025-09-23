@@ -231,6 +231,7 @@ export class OnboardingEventTracking {
 			const choiceData = {
 				site_starter: siteStarter,
 				timestamp: Date.now(),
+				return_event_sent: false,
 			};
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, JSON.stringify( choiceData ) );
 		} catch ( error ) {
