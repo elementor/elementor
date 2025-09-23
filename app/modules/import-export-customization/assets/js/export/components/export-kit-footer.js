@@ -11,7 +11,7 @@ export default function ExportKitFooter() {
 	const connectButtonRef = useRef();
 	const navigate = useNavigate();
 	const { isConnected, isConnecting, setConnecting, handleConnectSuccess, handleConnectError } = useConnectState();
-	const { data, dispatch, isTemplateNameValid, isExporting } = useExportContext();
+	const { data, dispatch, isTemplateNameValid, hasValidationErrors, isExporting } = useExportContext();
 
 	const { data: cloudKitsData, isLoading: isCheckingEligibility, refetch: refetchEligibility } = useCloudKitsEligibility( {
 		enabled: isConnected,
@@ -72,11 +72,19 @@ export default function ExportKitFooter() {
 	};
 
 	const handleUploadClick = () => {
+		if ( hasValidationErrors ) {
+			return;
+		}
+
 		dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'cloud' } );
 		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
 	};
 
 	const handleExportAsZip = () => {
+		if ( hasValidationErrors ) {
+			return;
+		}
+
 		const hasCloudMediaFormat = 'cloud' === data.customization?.content?.mediaFormat;
 
 		if ( hasCloudMediaFormat ) {
@@ -96,7 +104,7 @@ export default function ExportKitFooter() {
 					variant="outlined"
 					color="secondary"
 					size="small"
-					disabled={ ! isTemplateNameValid }
+					disabled={ ! isTemplateNameValid || hasValidationErrors }
 					href={ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url?.replace( /&#038;/g, '&' ) || '#' }
 					data-testid="export-kit-footer-save-to-library-button"
 				>
@@ -126,7 +134,7 @@ export default function ExportKitFooter() {
 					variant="outlined"
 					color="secondary"
 					size="small"
-					disabled={ ! isTemplateNameValid }
+					disabled={ ! isTemplateNameValid || hasValidationErrors }
 					onClick={ handleUpgradeClick }
 					data-testid="export-kit-footer-save-to-library-button"
 				>
