@@ -624,7 +624,8 @@ export class OnboardingEventTracking {
 
 	static storeTopUpgradeEventForLater( currentStep, upgradeClicked ) {
 		try {
-			const existingEvents = existingDataStr ? JSON.parse( existingDataStr ) : [];
+			const existingDataString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
+			const existingEvents = existingDataString ? JSON.parse( existingDataString ) : [];
 
 			const eventData = {
 				currentStep,
