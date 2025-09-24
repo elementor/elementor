@@ -25,7 +25,9 @@ class Class_Property_Mapper_Registry {
 	private function initialize_basic_mappers(): void {
 		// Initialize enhanced property mappers for better CSS conversion
 		$basic_properties = [
-			'color', 'background-color', 'font-size', 'margin', 'padding',
+			'color', 'background-color', 'background', 'font-size', 'margin', 'padding',
+			'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+			'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
 			'border-radius', 'box-shadow', 'text-shadow', 'transform', 'transition',
 			'opacity', 'z-index', 'width', 'height', 'display', 'position',
 			'flex-direction', 'align-items', 'justify-content', 'gap', 'font-weight',

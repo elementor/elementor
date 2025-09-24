@@ -184,6 +184,9 @@ class Css_Processor {
 			$rule['important']
 		);
 
+		// Debug: Log CSS rule categorization
+		error_log( "CSS Processor: Rule categorization - Selector: {$rule['selector']}, Category: {$categorized_rule['category']}, Target: {$categorized_rule['target']}, Specificity: {$categorized_rule['specificity']}" );
+
 		// Route to appropriate processing based on target type and category
 		switch ( $categorized_rule['target'] ) {
 			case 'widget_props':
@@ -207,6 +210,7 @@ class Css_Processor {
 		// Extract ID from selector
 		if ( preg_match( '/#([a-zA-Z][\w-]*)/', $rule['selector'], $matches ) ) {
 			$id_name = $matches[1];
+			error_log( "CSS Processor: Processing ID selector rule for ID: {$id_name}, Property: {$rule['property']}, Value: {$rule['value']}" );
 			
 			// Convert CSS property to Elementor v4 format
 			try {
@@ -214,6 +218,8 @@ class Css_Processor {
 					$rule['property'], 
 					$rule['value'] 
 				);
+				
+				error_log( "CSS Processor: ID property conversion result: " . wp_json_encode( $converted_property ) );
 
 				if ( $converted_property ) {
 					// Store ID-specific style for later application to matching widgets

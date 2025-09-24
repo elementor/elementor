@@ -49,6 +49,10 @@ class Enhanced_Property_Mapper {
 				// Elementor expects 'background' prop type, not 'background-color'
 				return $this->create_background_property( $value );
 			
+			case 'background':
+				// Handle background shorthand and gradients
+				return $this->create_background_property( $value );
+			
 			case 'font-size':
 			case 'width':
 			case 'height':
@@ -60,6 +64,17 @@ class Enhanced_Property_Mapper {
 			case 'padding':
 			case 'margin':
 				return $this->create_shorthand_size_property( $property, $value );
+			
+			case 'margin-top':
+			case 'margin-right':
+			case 'margin-bottom':
+			case 'margin-left':
+			case 'padding-top':
+			case 'padding-right':
+			case 'padding-bottom':
+			case 'padding-left':
+				// Individual margin/padding properties as size
+				return $this->create_size_property( $value );
 			
 			case 'font-weight':
 				// font-weight is String_Prop_Type in Elementor schema
@@ -131,13 +146,29 @@ class Enhanced_Property_Mapper {
 	}
 
 	private function create_background_property( $value ): array {
-		// Elementor expects 'background' prop type with direct color value
-		// The Background_Transformer expects $value['color'] to be a direct color value
+		// Handle different background types: colors, gradients, etc.
+		$value = trim( $value );
+		
+		// Check if it's a gradient
+		if ( preg_match( '/^(linear-gradient|radial-gradient|conic-gradient)\s*\(/', $value ) ) {
+			return $this->create_background_gradient_property( $value );
+		}
+		
+		// Handle solid colors (background-color or background: #color)
+		if ( preg_match( '/^#[0-9a-fA-F]{3,6}$|^rgba?\(|^[a-zA-Z]+$/', $value ) ) {
+			// Elementor expects 'background' prop type with direct color value
+			return [
+				'$$type' => 'background',
+				'value' => [
+					'color' => $this->normalize_color_value( $value )
+				]
+			];
+		}
+		
+		// For other background values (images, etc.), store as string
 		return [
-			'$$type' => 'background',
-			'value' => [
-				'color' => $this->normalize_color_value( $value )  // Direct color value, not nested
-			]
+			'$$type' => 'string',
+			'value' => $value
 		];
 	}
 
@@ -264,6 +295,157 @@ class Enhanced_Property_Mapper {
 		];
 		
 		return $property_mappings[ $css_property ] ?? $css_property;
+	}
+
+	private function create_background_gradient_property( $value ): array {
+		$gradient_data = $this->parse_gradient_to_elementor_format( $value );
+
+		// Create the proper nested Elementor background structure
+		$background_value = [
+			'background-overlay' => [
+				'$$type' => 'background-overlay',
+				'value' => [
+					[
+						'$$type' => 'background-gradient-overlay',
+						'value' => $gradient_data,
+					],
+				],
+			],
+		];
+
+		return [
+			'$$type' => 'background',
+			'value' => $background_value
+		];
+	}
+
+	private function parse_gradient_to_elementor_format( string $value ): array {
+		// Parse linear-gradient
+		if ( preg_match( '/linear-gradient\s*\(\s*([^,]+),\s*(.+)\s*\)/', $value, $matches ) ) {
+			$angle_part = trim( $matches[1] );
+			$colors_part = trim( $matches[2] );
+
+			// Extract angle (default to 0 if not specified)
+			$angle = 0;
+			if ( preg_match( '/(\d+)deg/', $angle_part, $angle_matches ) ) {
+				$angle = (int) $angle_matches[1];
+			}
+
+			// Parse color stops in Elementor format
+			$stops = $this->parse_color_stops_elementor_format( $colors_part );
+
+			return [
+				'type' => [
+					'$$type' => 'string',
+					'value' => 'linear',
+				],
+				'angle' => [
+					'$$type' => 'number',
+					'value' => $angle,
+				],
+				'stops' => [
+					'$$type' => 'gradient-color-stop',
+					'value' => $stops,
+				],
+			];
+		}
+
+		// Parse radial-gradient
+		if ( preg_match( '/radial-gradient\s*\(\s*(.+)\s*\)/', $value, $matches ) ) {
+			$content = trim( $matches[1] );
+			
+			// For now, simple parsing - can be enhanced later
+			$stops = $this->parse_color_stops_elementor_format( $content );
+
+			return [
+				'type' => [
+					'$$type' => 'string',
+					'value' => 'radial',
+				],
+				'angle' => [
+					'$$type' => 'number',
+					'value' => 0,
+				],
+				'stops' => [
+					'$$type' => 'gradient-color-stop',
+					'value' => $stops,
+				],
+			];
+		}
+
+		// Fallback - shouldn't reach here if is_gradient() worked correctly
+		return [
+			'type' => [
+				'$$type' => 'string',
+				'value' => 'linear',
+			],
+			'angle' => [
+				'$$type' => 'number',
+				'value' => 0,
+			],
+			'stops' => [
+				'$$type' => 'gradient-color-stop',
+				'value' => [],
+			],
+		];
+	}
+
+	private function parse_color_stops_elementor_format( string $colors_part ): array {
+		// Split colors by comma, but be careful of rgba() values
+		$colors = [];
+		$current_color = '';
+		$paren_count = 0;
+		
+		for ( $i = 0; $i < strlen( $colors_part ); $i++ ) {
+			$char = $colors_part[ $i ];
+			
+			if ( $char === '(' ) {
+				$paren_count++;
+			} elseif ( $char === ')' ) {
+				$paren_count--;
+			} elseif ( $char === ',' && $paren_count === 0 ) {
+				$colors[] = trim( $current_color );
+				$current_color = '';
+				continue;
+			}
+			
+			$current_color .= $char;
+		}
+		
+		// Add the last color
+		if ( ! empty( $current_color ) ) {
+			$colors[] = trim( $current_color );
+		}
+
+		$stops = [];
+		foreach ( $colors as $index => $color ) {
+			$color = trim( $color );
+			
+			// Extract color and position
+			$position = $index * ( 100 / ( count( $colors ) - 1 ) ); // Default even distribution
+			
+			// Check if position is specified (e.g., "#ff0000 25%")
+			if ( preg_match( '/^(.+?)\s+(\d+)%$/', $color, $matches ) ) {
+				$color = trim( $matches[1] );
+				$position = (int) $matches[2];
+			}
+
+			$stops[] = [
+				'$$type' => 'color-stop',
+				'value' => [
+					'color' => [
+						'$$type' => 'color',
+						'value' => $this->normalize_color_value( $color ),
+					],
+					'offset' => [
+						'$$type' => 'number',
+						'value' => $position,
+					],
+				],
+			];
+		}
+
+		return $stops;
 	}
 
 	public function supports( string $property, $value = null ): bool {
