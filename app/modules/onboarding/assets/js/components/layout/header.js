@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { OnboardingContext } from '../../context/context';
@@ -15,22 +14,15 @@ export default function Header( props ) {
 
 	const trackXButtonExit = () => {
 		const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
-		console.log( '❌ trackXButtonExit called:', {
-			currentStep: state.currentStep,
-			stepNumber,
-			resolvedStepNumber: stepNumber || state.currentStep,
-		} );
 
 		// Send exit button event
 		OnboardingEventTracking.sendExitButtonEvent( stepNumber || state.currentStep );
 	};
 
 	const onClose = () => {
-		console.log( '🔴 X BUTTON CLICKED - onClose triggered:', { currentStep: state.currentStep } );
 
 		trackXButtonExit();
 
-		console.log( '📤 Dispatching close modal event...' );
 		elementorCommon.events.dispatchEvent( {
 			event: 'close modal',
 			version: '',
@@ -40,9 +32,7 @@ export default function Header( props ) {
 			},
 		} );
 
-		console.log( '⏱️ Ensuring exit tracking completes before navigation...' );
 		setTimeout( () => {
-			console.log( '🔄 Redirecting to admin URL after tracking completion...' );
 			window.top.location = elementorAppConfig.admin_url;
 		}, 100 );
 	};

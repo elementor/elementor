@@ -26,7 +26,6 @@ class PostOnboardingTracking {
 
 	static warn( message, error = null ) {
 		// eslint-disable-next-line no-console
-		console.warn( message, error );
 	}
 	static checkAndSendEditorLoadedFromOnboarding() {
 		try {
@@ -122,12 +121,6 @@ class PostOnboardingTracking {
 			const timeSinceLastClick = currentTime - this.lastClickTime;
 
 			if ( this.isDuplicateClick( target, timeSinceLastClick ) ) {
-				// eslint-disable-next-line no-console
-				console.log( `🚫 Duplicate click filtered:`, {
-					target: target.tagName + ( target.className ? '.' + target.className.split( ' ' ).slice( 0, 2 ).join( '.' ) : '' ),
-					timeSinceLastClick,
-					deduplicationWindow: this.DEDUPLICATION_WINDOW
-				} );
 				return;
 			}
 
@@ -139,16 +132,6 @@ class PostOnboardingTracking {
 
 			const clickData = this.extractClickData( target );
 			
-			// eslint-disable-next-line no-console
-			console.log( `🖱️ Post-onboarding click ${ newCount }:`, {
-				physicalClick: newCount,
-				target: target.tagName + ( target.className ? '.' + target.className.split( ' ' ).join( '.' ) : '' ),
-				title: clickData.title,
-				selector: clickData.selector,
-				timeSinceLastClick,
-				willTrack: true
-			} );
-
 			this.storeClickData( newCount, clickData );
 			
 			this.dispatchStoredClickEvent( newCount );
@@ -236,7 +219,6 @@ class PostOnboardingTracking {
 
 		if ( ! eventName || ! storedClickData ) {
 			// eslint-disable-next-line no-console
-			console.log( `❌ Cannot dispatch click ${ clickCount }:`, { eventName, hasStoredData: !! storedClickData } );
 			return;
 		}
 
@@ -262,14 +244,6 @@ class PostOnboardingTracking {
 
 			eventData[ `post_onboarding_${ clickNumber }_click_action_title` ] = storedClickData.title;
 			eventData[ `post_onboarding_${ clickNumber }_click_action_selector` ] = storedClickData.selector;
-
-			// eslint-disable-next-line no-console
-			console.log( `📤 Dispatching ${ eventName }:`, {
-				clickCount,
-				clickNumber,
-				title: storedClickData.title,
-				selector: storedClickData.selector
-			} );
 
 			elementorCommon.eventsManager.dispatchEvent( eventName, eventData );
 		}
