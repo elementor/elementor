@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Date_Time_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,6 +30,11 @@ class Dynamic_Tags_Converter {
 			case 'text':
 			case 'textarea':
 				$prop_type = String_Prop_Type::make()
+					->default( $control['default'] ?? null );
+				break;
+
+			case 'date_time':
+				$prop_type = Date_Time_Prop_Type::make()
 					->default( $control['default'] ?? null );
 				break;
 
