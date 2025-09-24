@@ -2,6 +2,7 @@ import eventsConfig from '../../../../../../../core/common/modules/events-manage
 import StorageManager, { ONBOARDING_STORAGE_KEYS } from './storage-manager.js';
 import EventDispatcher, { ONBOARDING_EVENTS_MAP, ONBOARDING_STEP_NAMES } from './event-dispatcher.js';
 import TimingManager from './timing-manager.js';
+import PostOnboardingTracker from './post-onboarding-tracker.js';
 
 class OnboardingTracker {
 	constructor() {
@@ -360,24 +361,7 @@ class OnboardingTracker {
 	}
 
 	checkAndSendEditorLoadedFromOnboarding() {
-		const alreadyTracked = StorageManager.exists( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED );
-		if ( alreadyTracked ) {
-			return;
-		}
-
-		const choiceData = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
-		const siteStarterChoice = choiceData?.site_starter;
-
-		if ( siteStarterChoice ) {
-			const canDispatch = EventDispatcher.canSendEvents();
-			if ( canDispatch ) {
-				EventDispatcher.dispatchEditorEvent( ONBOARDING_EVENTS_MAP.EDITOR_LOADED_FROM_ONBOARDING, {
-					editor_loaded_from_onboarding_source: siteStarterChoice,
-				} );
-			}
-
-			StorageManager.setString( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED, 'true' );
-		}
+		return PostOnboardingTracker.checkAndSendEditorLoadedFromOnboarding();
 	}
 
 	sendExitButtonEvent( currentStep ) {
@@ -676,6 +660,18 @@ class OnboardingTracker {
 	sendStoredStep1EventsOnStep2() {
 		this.sendStoredEvent( 'STEP1_CLICKED_CONNECT' );
 		this.sendStoredEvent( 'STEP1_END_STATE' );
+	}
+
+	setupPostOnboardingClickTracking() {
+		return PostOnboardingTracker.setupPostOnboardingClickTracking();
+	}
+
+	cleanupPostOnboardingTracking() {
+		return PostOnboardingTracker.cleanupPostOnboardingTracking();
+	}
+
+	clearAllOnboardingStorage() {
+		return PostOnboardingTracker.clearAllOnboardingStorage();
 	}
 }
 

@@ -14,14 +14,44 @@ export default function Layout( props ) {
 	}, [ props.pageId ] );
 
 	const goProButtonRef = useRef();
+	const cleanupRef = useRef( null );
+
+	const cleanupPreviousTopbarTracking = useCallback( () => {
+		if ( cleanupRef.current ) {
+			cleanupRef.current();
+			cleanupRef.current = null;
+		}
+	}, [] );
+
+	const resetTopbarButtonRef = useCallback( () => {
+		goProButtonRef.current = null;
+	}, [] );
+
+	const storeTopbarButtonAndSetupTracking = useCallback( ( buttonElement ) => {
+		goProButtonRef.current = buttonElement;
+		cleanupRef.current = OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, stepNumber );
+	}, [ stepNumber ] );
 
 	const setupTopbarUpgradeTracking = useCallback( ( buttonElement ) => {
+		cleanupPreviousTopbarTracking();
+
 		if ( ! buttonElement ) {
+			resetTopbarButtonRef();
 			return;
 		}
 
-		return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, stepNumber );
-	}, [ stepNumber ] );
+		storeTopbarButtonAndSetupTracking( buttonElement );
+	}, [ stepNumber, cleanupPreviousTopbarTracking, resetTopbarButtonRef, storeTopbarButtonAndSetupTracking ] );
+
+	const cleanupTopbarTrackingOnUnmount = useCallback( () => {
+		if ( cleanupRef.current ) {
+			cleanupRef.current();
+		}
+	}, [] );
+
+	useEffect( () => {
+		return cleanupTopbarTrackingOnUnmount;
+	}, [ cleanupTopbarTrackingOnUnmount ] );
 
 	const { state, updateState } = useContext( OnboardingContext );
 
@@ -65,7 +95,7 @@ export default function Layout( props ) {
 			target: '_blank',
 			rel: 'opener',
 			onClick: () => {
-				OnboardingEventTracking.sendEventDirect( 'CREATE_MY_ACCOUNT', { currentStep: stepNumber, createAccountClicked: 'topbar' } );
+				OnboardingEventTracking.sendEventOrStore( 'CREATE_MY_ACCOUNT', { currentStep: stepNumber, createAccountClicked: 'topbar' } );
 
 				elementorCommon.events.dispatchEvent( {
 					event: 'create account',
@@ -114,7 +144,7 @@ export default function Layout( props ) {
 			elRef: goProButtonRef,
 			onClick: () => {
 				OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
-				OnboardingEventTracking.sendEventDirect( 'TOP_UPGRADE', { currentStep: stepNumber, upgradeClicked: 'on_topbar' } );
+				OnboardingEventTracking.sendEventOrStore( 'TOP_UPGRADE', { currentStep: stepNumber, upgradeClicked: 'on_topbar' } );
 
 				elementorCommon.events.dispatchEvent( {
 					event: 'go pro',

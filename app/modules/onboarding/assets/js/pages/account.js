@@ -125,7 +125,7 @@ export default function Account() {
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
 			OnboardingEventTracking.trackStepAction( 1, 'create' );
-			OnboardingEventTracking.sendEventDirect( 'CREATE_MY_ACCOUNT', { currentStep: 1, createAccountClicked: 'main_cta' } );
+			OnboardingEventTracking.sendEventOrStore( 'CREATE_MY_ACCOUNT', { currentStep: 1, createAccountClicked: 'main_cta' } );
 
 			safeDispatchEvent(
 				'new_account_connect',
@@ -233,7 +233,7 @@ export default function Account() {
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
 								onClick={ () => {
 									OnboardingEventTracking.trackStepAction( 1, 'connect' );
-									OnboardingEventTracking.sendEventDirect( 'STEP1_CLICKED_CONNECT', { currentStep: state.currentStep } );
+									OnboardingEventTracking.sendEventOrStore( 'STEP1_CLICKED_CONNECT', { currentStep: state.currentStep } );
 
 									safeDispatchEvent(
 										'existing_account_connect',

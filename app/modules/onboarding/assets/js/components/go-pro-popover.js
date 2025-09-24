@@ -4,7 +4,7 @@ import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
 import Checklist from './checklist';
 import ChecklistItem from './checklist-item';
 import Button from './button';
-import { useCallback, useContext, useRef } from 'react';
+import { useCallback, useContext, useRef, useEffect } from 'react';
 import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 import StorageManager, { ONBOARDING_STORAGE_KEYS } from '../utils/modules/storage-manager.js';
 
@@ -17,18 +17,45 @@ export default function GoProPopover( props ) {
 	}, [ state.currentStep ] );
 
 	const upgradeButtonRef = useRef( null );
+	const cleanupRef = useRef( null );
+
+	const cleanupPreviousUpgradeTracking = useCallback( () => {
+		if ( cleanupRef.current ) {
+			cleanupRef.current();
+			cleanupRef.current = null;
+		}
+	}, [] );
+
+	const resetUpgradeButtonRef = useCallback( () => {
+		upgradeButtonRef.current = null;
+	}, [] );
+
+	const storeUpgradeButtonAndSetupTracking = useCallback( ( buttonElement ) => {
+		upgradeButtonRef.current = buttonElement;
+		cleanupRef.current = OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, state.currentStep );
+	}, [ state.currentStep ] );
 
 	const setupUpgradeButtonTracking = useCallback( ( buttonElement ) => {
+		cleanupPreviousUpgradeTracking();
+
 		if ( ! buttonElement ) {
+			resetUpgradeButtonRef();
 			return;
 		}
 
-		upgradeButtonRef.current = buttonElement;
+		storeUpgradeButtonAndSetupTracking( buttonElement );
+	}, [ state.currentStep, cleanupPreviousUpgradeTracking, resetUpgradeButtonRef, storeUpgradeButtonAndSetupTracking ] );
 
-		return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, state.currentStep );
-	}, [ state.currentStep ] );
+	const cleanupOnUnmount = useCallback( () => {
+		if ( cleanupRef.current ) {
+			cleanupRef.current();
+		}
+	}, [] );
 
-	// Handle the Pro Upload popup window.
+	useEffect( () => {
+		return cleanupOnUnmount;
+	}, [ cleanupOnUnmount ] );
+
 	const alreadyHaveProButtonRef = useCallback( ( alreadyHaveProButton ) => {
 		if ( ! alreadyHaveProButton ) {
 			return;
@@ -55,7 +82,7 @@ export default function GoProPopover( props ) {
 			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 
 			if ( stepNumber ) {
-				OnboardingEventTracking.sendEventDirect( 'TOP_UPGRADE', { currentStep: stepNumber, upgradeClicked: 'already_pro_user' } );
+				OnboardingEventTracking.sendEventOrStore( 'TOP_UPGRADE', { currentStep: stepNumber, upgradeClicked: 'already_pro_user' } );
 			}
 
 			elementorCommon.events.dispatchEvent( {
@@ -111,7 +138,7 @@ export default function GoProPopover( props ) {
 				const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 
 				if ( stepNumber ) {
-					OnboardingEventTracking.sendEventDirect( 'TOP_UPGRADE', { currentStep: stepNumber, upgradeClicked: 'on_tooltip' } );
+					OnboardingEventTracking.sendEventOrStore( 'TOP_UPGRADE', { currentStep: stepNumber, upgradeClicked: 'on_tooltip' } );
 				}
 
 				elementorCommon.events.dispatchEvent( {
