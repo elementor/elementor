@@ -20,6 +20,9 @@ const ONBOARDING_STORAGE_KEYS = {
 
 class PostOnboardingTracking {
 	static clickHandler = null;
+	static lastClickTime = 0;
+	static lastClickElement = null;
+	static DEDUPLICATION_WINDOW = 150;
 
 	static warn( message, error = null ) {
 		// eslint-disable-next-line no-console
@@ -115,6 +118,22 @@ class PostOnboardingTracking {
 				return;
 			}
 
+			const currentTime = Date.now();
+			const timeSinceLastClick = currentTime - this.lastClickTime;
+
+			if ( this.isDuplicateClick( target, timeSinceLastClick ) ) {
+				// eslint-disable-next-line no-console
+				console.log( `🚫 Duplicate click filtered:`, {
+					target: target.tagName + ( target.className ? '.' + target.className.split( ' ' ).slice( 0, 2 ).join( '.' ) : '' ),
+					timeSinceLastClick,
+					deduplicationWindow: this.DEDUPLICATION_WINDOW
+				} );
+				return;
+			}
+
+			this.lastClickTime = currentTime;
+			this.lastClickElement = target;
+
 			const newCount = currentCount + 1;
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, newCount.toString() );
 
@@ -126,6 +145,7 @@ class PostOnboardingTracking {
 				target: target.tagName + ( target.className ? '.' + target.className.split( ' ' ).join( '.' ) : '' ),
 				title: clickData.title,
 				selector: clickData.selector,
+				timeSinceLastClick,
 				willTrack: true
 			} );
 
@@ -139,6 +159,33 @@ class PostOnboardingTracking {
 		} catch ( error ) {
 			this.warn( 'Failed to track post-onboarding click:', error );
 		}
+	}
+
+	static isDuplicateClick( target, timeSinceLastClick ) {
+		if ( timeSinceLastClick > this.DEDUPLICATION_WINDOW ) {
+			return false;
+		}
+
+		if ( ! this.lastClickElement ) {
+			return false;
+		}
+
+		const isSameElement = this.lastClickElement === target;
+		const isRelatedElement = this.areElementsRelated( this.lastClickElement, target );
+		
+		return isSameElement || isRelatedElement;
+	}
+
+	static areElementsRelated( element1, element2 ) {
+		if ( ! element1 || ! element2 ) {
+			return false;
+		}
+
+		const isParentChild = element1.contains( element2 ) || element2.contains( element1 );
+		const shareCommonParent = element1.parentElement === element2.parentElement;
+		const bothInSameControl = element1.closest( '.elementor-control' ) === element2.closest( '.elementor-control' );
+		
+		return isParentChild || shareCommonParent || bothInSameControl;
 	}
 
 	static shouldTrackClick( element ) {
