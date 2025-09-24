@@ -43,8 +43,6 @@ export default function Layout( props ) {
 			},
 		} );
 
-		initializeExitTracking();
-
 		if ( goProButtonRef.current ) {
 			setupTopbarUpgradeTracking( goProButtonRef.current );
 		}
@@ -54,7 +52,7 @@ export default function Layout( props ) {
 			nextStep: props.nextStep || '',
 			proNotice: null,
 		} );
-	}, [ initializeExitTracking, setupTopbarUpgradeTracking, stepNumber, props.pageId, props.nextStep, updateState ] );
+	}, [ setupTopbarUpgradeTracking, stepNumber, props.pageId, props.nextStep, updateState ] );
 
 	const
 		headerButtons = [],
