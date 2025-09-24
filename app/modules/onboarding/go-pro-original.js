@@ -1,12 +1,13 @@
 /* eslint-disable no-console */
-import { OnboardingContext } from '../context/context';
+import { OnboardingContext } from './assets/js/context/context';
 
 import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
-import Checklist from './checklist';
-import ChecklistItem from './checklist-item';
-import Button from './button';
+import Checklist from './assets/js/components/checklist';
+import ChecklistItem from './assets/js/components/checklist-item';
+import Button from './assets/js/components/button';
 import { useCallback, useContext, useRef } from 'react';
-import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
+import PropTypes from 'prop-types';
+import { OnboardingEventTracking } from './assets/js/utils/onboarding-event-tracking';
 
 export default function GoProPopover( props ) {
 	const { state, updateState } = useContext( OnboardingContext );

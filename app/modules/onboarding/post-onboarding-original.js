@@ -125,9 +125,9 @@ class PostOnboardingTracking {
 				// eslint-disable-next-line no-console
 				console.log( `🚫 Duplicate click filtered:`, {
 					target: target.tagName + ( target.className ? '.' + target.className.split( ' ' ).slice( 0, 2 ).join( '.' ) : '' ),
-					timeSinceLastClick,
-					deduplicationWindow: this.DEDUPLICATION_WINDOW
-				} );
+				timeSinceLastClick,
+				deduplicationWindow: this.DEDUPLICATION_WINDOW,
+			} );
 				return;
 			}
 
@@ -137,21 +137,21 @@ class PostOnboardingTracking {
 			const newCount = currentCount + 1;
 			localStorage.setItem( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT, newCount.toString() );
 
-			const clickData = this.extractClickData( target );
-			
-			// eslint-disable-next-line no-console
+		const clickData = this.extractClickData( target );
+
+		// eslint-disable-next-line no-console
 			console.log( `🖱️ Post-onboarding click ${ newCount }:`, {
 				physicalClick: newCount,
 				target: target.tagName + ( target.className ? '.' + target.className.split( ' ' ).join( '.' ) : '' ),
 				title: clickData.title,
 				selector: clickData.selector,
-				timeSinceLastClick,
-				willTrack: true
-			} );
+			timeSinceLastClick,
+			willTrack: true,
+		} );
 
-			this.storeClickData( newCount, clickData );
-			
-			this.dispatchStoredClickEvent( newCount );
+		this.storeClickData( newCount, clickData );
+
+		this.dispatchStoredClickEvent( newCount );
 
 			if ( newCount >= 3 ) {
 				this.cleanupPostOnboardingTracking();
@@ -172,7 +172,7 @@ class PostOnboardingTracking {
 
 		const isSameElement = this.lastClickElement === target;
 		const isRelatedElement = this.areElementsRelated( this.lastClickElement, target );
-		
+
 		return isSameElement || isRelatedElement;
 	}
 
@@ -184,7 +184,7 @@ class PostOnboardingTracking {
 		const isParentChild = element1.contains( element2 ) || element2.contains( element1 );
 		const shareCommonParent = element1.parentElement === element2.parentElement;
 		const bothInSameControl = element1.closest( '.elementor-control' ) === element2.closest( '.elementor-control' );
-		
+
 		return isParentChild || shareCommonParent || bothInSameControl;
 	}
 
@@ -208,21 +208,21 @@ class PostOnboardingTracking {
 		const dataToStore = {
 			...clickData,
 			timestamp: Date.now(),
-			clickCount,
-		};
-		
-		localStorage.setItem( storageKey, JSON.stringify( dataToStore ) );
+		clickCount,
+	};
+
+	localStorage.setItem( storageKey, JSON.stringify( dataToStore ) );
 	}
 
 	static getStoredClickData( clickCount ) {
 		const storageKey = `elementor_onboarding_click_${ clickCount }_data`;
-		const storedData = localStorage.getItem( storageKey );
-		
-		if ( ! storedData ) {
-			return null;
-		}
-		
-		try {
+	const storedData = localStorage.getItem( storageKey );
+
+	if ( ! storedData ) {
+		return null;
+	}
+
+	try {
 			return JSON.parse( storedData );
 		} catch ( error ) {
 			this.warn( `Failed to parse stored click data for count ${ clickCount }:`, error );
@@ -266,10 +266,10 @@ class PostOnboardingTracking {
 			// eslint-disable-next-line no-console
 			console.log( `📤 Dispatching ${ eventName }:`, {
 				clickCount,
-				clickNumber,
-				title: storedClickData.title,
-				selector: storedClickData.selector
-			} );
+		clickNumber,
+		title: storedClickData.title,
+		selector: storedClickData.selector,
+	} );
 
 			elementorCommon.eventsManager.dispatchEvent( eventName, eventData );
 		}

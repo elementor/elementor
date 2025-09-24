@@ -4,9 +4,9 @@ import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
 import Checklist from './checklist';
 import ChecklistItem from './checklist-item';
 import Button from './button';
-import { useCallback, useContext, useRef, useEffect } from 'react';
+import { useCallback, useContext, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
-import StorageManager, { ONBOARDING_STORAGE_KEYS } from '../utils/modules/storage-manager.js';
 
 export default function GoProPopover( props ) {
 	const { state, updateState } = useContext( OnboardingContext );

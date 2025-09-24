@@ -83,6 +83,8 @@ class OnboardingTracker {
 					trigger: eventsConfig.triggers.click,
 				},
 				payloadBuilder: () => ( {} ),
+				stepOverride: 1,
+				stepNameOverride: ONBOARDING_STEP_NAMES.CONNECT,
 			},
 			STEP1_END_STATE: {
 				eventName: ONBOARDING_EVENTS_MAP.STEP1_END_STATE,
@@ -447,13 +449,24 @@ class OnboardingTracker {
 			return pageId;
 		}
 
+		// If string number, convert to number
+		if ( 'string' === typeof pageId && ! isNaN( pageId ) ) {
+			const numericStep = parseInt( pageId, 10 );
+			return numericStep;
+		}
+
+		// Map page IDs to step numbers
 		const stepMappings = {
 			account: 1,
 			connect: 1,
+			hello: 2,
 			hello_biz: 2,
+			chooseFeatures: 3,
 			pro_features: 3,
 			site_starter: 4,
 			goodToGo: 4,
+			siteName: 5,
+			siteLogo: 6,
 		};
 
 		const mappedStep = stepMappings[ pageId ];
@@ -466,6 +479,8 @@ class OnboardingTracker {
 			2: ONBOARDING_STEP_NAMES.HELLO_BIZ,
 			3: ONBOARDING_STEP_NAMES.PRO_FEATURES,
 			4: ONBOARDING_STEP_NAMES.SITE_STARTER,
+			5: ONBOARDING_STEP_NAMES.SITE_NAME,
+			6: ONBOARDING_STEP_NAMES.SITE_LOGO,
 		};
 
 		return stepNames[ stepNumber ] || 'unknown';
@@ -587,7 +602,7 @@ class OnboardingTracker {
 			StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
 
 			const upgradeClickedValue = this.determineUpgradeClickedValue( buttonElement );
-			this.sendEventDirect( 'TOP_UPGRADE', { currentStep, upgradeClicked: upgradeClickedValue } );
+			this.sendEventOrStore( 'TOP_UPGRADE', { currentStep, upgradeClicked: upgradeClickedValue } );
 		};
 
 		buttonElement.addEventListener( 'mouseenter', handleMouseEnter );

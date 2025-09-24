@@ -57,6 +57,14 @@ class ClickTracker {
 	}
 
 	shouldTrackClick( element ) {
+		if ( 'option' === element.tagName?.toLowerCase() ) {
+			return false;
+		}
+
+		if ( element.closest( 'select' ) && 'select' !== element.tagName?.toLowerCase() ) {
+			return false;
+		}
+
 		const excludedSelectors = [
 			'.announcements-container',
 			'.close-button',
@@ -91,11 +99,21 @@ class ClickTracker {
 			return false;
 		}
 
+		const isSelectOptionRelated = this.areSelectOptionRelated( element1, element2 );
 		const isParentChild = element1.contains( element2 ) || element2.contains( element1 );
 		const shareCommonParent = element1.parentElement === element2.parentElement;
 		const bothInSameControl = element1.closest( '.elementor-control' ) === element2.closest( '.elementor-control' );
 
-		return isParentChild || shareCommonParent || bothInSameControl;
+		return isSelectOptionRelated || isParentChild || shareCommonParent || bothInSameControl;
+	}
+
+	areSelectOptionRelated( element1, element2 ) {
+		const isElement1Select = 'select' === element1.tagName?.toLowerCase();
+		const isElement2Select = 'select' === element2.tagName?.toLowerCase();
+		const isElement1Option = 'option' === element1.tagName?.toLowerCase();
+		const isElement2Option = 'option' === element2.tagName?.toLowerCase();
+
+		return ( isElement1Select && isElement2Option ) || ( isElement1Option && isElement2Select );
 	}
 
 	extractClickData( element ) {

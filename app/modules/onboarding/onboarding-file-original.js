@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import eventsConfig from '../../../../../../core/common/modules/events-manager/assets/js/events-config';
-import { options } from './utils';
+import { options } from './assets/js/utils/utils';
 
 console.log( '🚀 OnboardingEventTracking loaded with COMPREHENSIVE RETURN-TO-STEP4 DEBUGGING!' );
 
@@ -1393,9 +1393,9 @@ export class OnboardingEventTracking {
 			} );
 
 			const currentTime = Date.now();
-			const existingActions = this.getStoredActions( storageKey );
-			
-			// Try to get global time data, but don't fail if missing
+		const existingActions = this.getStoredActions( storageKey );
+
+		// Try to get global time data, but don't fail if missing
 			const timeData = this.calculateTimeSpent();
 			const timeSpentValue = timeData ? `${ timeData.timeSpent }s` : '0s';
 
