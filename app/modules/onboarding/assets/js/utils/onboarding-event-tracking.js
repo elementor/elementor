@@ -178,11 +178,7 @@ export class OnboardingEventTracking {
 
 		this.dispatchEvent( ONBOARDING_EVENTS_MAP.CORE_ONBOARDING, {
 
-		try {
-			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.INITIATED );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to clear onboarding storage:', error );
-		}
+		localStorage.removeItem( ONBOARDING_STORAGE_KEYS.INITIATED );
 	}
 
 	static sendConnectStatus( status, trackingOptedIn = false, userTier = null ) {
@@ -211,13 +207,6 @@ export class OnboardingEventTracking {
 				siteStarter,
 
 			const existingChoiceString = localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
-			if ( existingChoiceString ) {
-				try {
-					const existingChoice = JSON.parse( existingChoiceString );
-				} catch ( parseError ) {
-				}
-			} else {
-			}
 
 			const choiceData = {
 
@@ -272,11 +261,7 @@ export class OnboardingEventTracking {
 	}
 
 	static clearSiteStarterChoice() {
-		try {
-			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to clear site starter choice:', error );
-		}
+		localStorage.removeItem( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
 	}
 
 	static clearStaleSessionData() {
@@ -553,11 +538,7 @@ export class OnboardingEventTracking {
 	}
 
 	static cancelDelayedNoClickEvent() {
-		try {
-			localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
-		} catch ( error ) {
-			this.handleStorageError( 'Failed to cancel delayed no-click event:', error );
-		}
+		localStorage.removeItem( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
 	}
 
 	static sendDelayedNoClickEvent() {
@@ -896,52 +877,30 @@ export class OnboardingEventTracking {
 	}
 
 	static trackStepStartTime( stepNumber ) {
-		try {
-			const stepStartTimeKey = this.getStepStartTimeKey( stepNumber );
-			const currentTime = Date.now();
+		const stepStartTimeKey = this.getStepStartTimeKey( stepNumber );
+		const currentTime = Date.now();
 
-			const existingStartTime = localStorage.getItem( stepStartTimeKey );
-			if ( existingStartTime ) {
-				return;
-			}
-
-				stepStartTimeKey,
-				currentTime,
-
-			localStorage.setItem( stepStartTimeKey, currentTime.toString() );
-
-			const verifyStored = localStorage.getItem( stepStartTimeKey );
-		} catch ( error ) {
-			this.handleStorageError( `Failed to track step ${ stepNumber } start time:`, error );
+		const existingStartTime = localStorage.getItem( stepStartTimeKey );
+		if ( existingStartTime ) {
+			return;
 		}
+
+		localStorage.setItem( stepStartTimeKey, currentTime.toString() );
 	}
 
 	static calculateStepTimeSpent( stepNumber ) {
-		try {
-			const stepStartTimeKey = this.getStepStartTimeKey( stepNumber );
-			const stepStartTimeString = localStorage.getItem( stepStartTimeKey );
+		const stepStartTimeKey = this.getStepStartTimeKey( stepNumber );
+		const stepStartTimeString = localStorage.getItem( stepStartTimeKey );
 
-				stepStartTimeKey,
-				stepStartTimeString,
-			} );
-
-			if ( ! stepStartTimeString ) {
-				return null;
-			}
-
-			const stepStartTime = parseInt( stepStartTimeString, 10 );
-			const currentTime = Date.now();
-			const stepTimeSpent = Math.round( ( currentTime - stepStartTime ) / 1000 );
-
-				stepStartTime,
-				currentTime,
-				stepTimeSpent,
-
-			return stepTimeSpent;
-		} catch ( error ) {
-			this.handleStorageError( `Failed to calculate step ${ stepNumber } time:`, error );
+		if ( ! stepStartTimeString ) {
 			return null;
 		}
+
+		const stepStartTime = parseInt( stepStartTimeString, 10 );
+		const currentTime = Date.now();
+		const stepTimeSpent = Math.round( ( currentTime - stepStartTime ) / 1000 );
+
+		return stepTimeSpent;
 	}
 
 	static getStepStartTimeKey( stepNumber ) {
@@ -955,17 +914,22 @@ export class OnboardingEventTracking {
 	}
 
 	static clearStepStartTime( stepNumber ) {
-		try {
-			const stepStartTimeKey = this.getStepStartTimeKey( stepNumber );
-			localStorage.removeItem( stepStartTimeKey );
-		} catch ( error ) {
-			this.handleStorageError( `Failed to clear step ${ stepNumber } start time:`, error );
-		}
+		const stepStartTimeKey = this.getStepStartTimeKey( stepNumber );
+		localStorage.removeItem( stepStartTimeKey );
 	}
 
 	static getStoredActions( storageKey ) {
 		const existingActionsString = localStorage.getItem( storageKey );
-		return existingActionsString ? JSON.parse( existingActionsString ) : [];
+		if ( ! existingActionsString ) {
+			return [];
+		}
+		
+		try {
+			return JSON.parse( existingActionsString );
+		} catch ( error ) {
+			// Silent fail - return empty array if data is corrupted
+			return [];
+		}
 	}
 
 	static getStepNumber( pageId ) {
