@@ -15,6 +15,7 @@ abstract class Property_Mapper_Base implements Property_Mapper_Interface {
 	}
 
 	protected function create_v4_property( string $property, $value ): array {
+		// Needs atomic mapper update: Replace string fallback with atomic widget-based type
 		return [
 			'$$type' => 'string',
 			'value' => (string) $value
@@ -22,9 +23,13 @@ abstract class Property_Mapper_Base implements Property_Mapper_Interface {
 	}
 
 	protected function create_v4_property_with_type( string $property, string $type, $value ): array {
+		// Needs atomic mapper update: Add atomic widget type validation
 		return [
-			'$$type' => $type,
-			'value' => $value
+			'property' => $property,
+			'value' => [
+				'$$type' => $type,
+				'value' => $value
+			]
 		];
 	}
 
@@ -50,13 +55,33 @@ abstract class Property_Mapper_Base implements Property_Mapper_Interface {
 	protected function parse_color_value( string $value ): string {
 		$value = trim( $value );
 		
-		// Basic color validation - just return as-is for now
-		return $value;
+		if ( preg_match( '/^#([a-f0-9]{3}|[a-f0-9]{6})$/i', $value ) ) {
+			return strtolower( $value );
+		}
+
+		if ( preg_match( '/^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i', $value, $matches ) ) {
+			$r = str_pad( dechex( (int) $matches[1] ), 2, '0', STR_PAD_LEFT );
+			$g = str_pad( dechex( (int) $matches[2] ), 2, '0', STR_PAD_LEFT );
+			$b = str_pad( dechex( (int) $matches[3] ), 2, '0', STR_PAD_LEFT );
+			return '#' . $r . $g . $b;
+		}
+
+		$named_colors = [
+			'red' => '#ff0000',
+			'green' => '#008000',
+			'blue' => '#0000ff',
+			'white' => '#ffffff',
+			'black' => '#000000',
+			'transparent' => 'transparent',
+		];
+
+		return $named_colors[ strtolower( $value ) ] ?? $value;
 	}
 
 	protected function is_valid_css_value( $value ): bool {
 		return is_string( $value ) && ! empty( trim( $value ) );
 	}
+
 
 	abstract public function get_supported_properties(): array;
 	abstract public function map_to_v4_atomic( string $property, $value ): ?array;

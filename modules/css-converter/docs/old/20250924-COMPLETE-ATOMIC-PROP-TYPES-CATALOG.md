@@ -1,6 +1,17 @@
 # Complete Atomic Prop Types Catalog - COMPREHENSIVE EDITION
 
-## 🎯 DEFINITIVE ANALYSIS OF ALL ELEMENTOR ATOMIC PROP TYPES
+## 🚨 **MERGED INTO COMPREHENSIVE GUIDE**
+
+**This document has been merged into**: `../COMPREHENSIVE-ATOMIC-WIDGETS-IMPLEMENTATION-GUIDE.md`
+
+**Please refer to the comprehensive guide for:**
+- Complete atomic prop types catalog (50 prop types)
+- Full implementation plan with phases
+- Atomic widget integration architecture
+- Complete code location updates
+- Testing strategies and templates
+
+## 🎯 DEFINITIVE ANALYSIS OF ALL ELEMENTOR ATOMIC PROP TYPES (LEGACY)
 
 **CRITICAL UPDATE**: This document has been completely rewritten based on systematic analysis of **every single prop type file** in `/plugins/elementor/modules/atomic-widgets/prop-types/`. 
 

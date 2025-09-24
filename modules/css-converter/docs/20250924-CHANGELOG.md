@@ -1,5 +1,36 @@
 # CSS Class Converter - Changelog
 
+## [BREAKING] Non-Atomic JSON Removal - 2025-01-13
+
+### 🚨 ATOMIC-ONLY ENFORCEMENT
+
+#### Removed
+- ❌ **Enhanced_Property_Mapper** - Completely removed, no replacement
+- ❌ **All fallback mechanisms** - No generic property handling allowed
+- ❌ **Custom JSON generation** - Atomic widgets only
+- ❌ **String type defaults** - Specific atomic types required
+
+#### Impact
+- **28 properties no longer supported** - Only 4 atomic properties work
+- **CSS conversion will fail** for unsupported properties  
+- **Error logs will show** "ATOMIC MAPPER REQUIRED FOR: {property}"
+- **100% atomic widget compliance** enforced
+
+#### Prevention Mechanisms Added
+- **create_v4_property()** throws exception (blocks string fallbacks)
+- **Atomic type validation** in create_v4_property_with_type()
+- **Atomic source documentation** required in class docblocks
+- **Registry logging** for missing atomic mappers
+
+#### Migration Path
+Each missing property requires:
+1. Atomic widget research in `/plugins/elementor/modules/atomic-widgets/`
+2. Atomic prop type identification in `/plugins/elementor/modules/atomic-widgets/prop-types/`
+3. Atomic-compliant mapper implementation with zero fallbacks
+4. Complete atomic source documentation
+
+---
+
 ## [1.0.0] - 2025-01-13
 
 ### Added

@@ -265,6 +265,9 @@ class Widget_Creator {
 	}
 
 	private function convert_widget_to_elementor_format( $widget ) {
+		// Reset class ID for each new widget to ensure consistency
+		$this->current_widget_class_id = null;
+		
 		$widget_type = $widget['widget_type'];
 		$settings = $widget['settings'] ?? [];
 		$applied_styles = $widget['applied_styles'] ?? [];
@@ -346,13 +349,15 @@ class Widget_Creator {
 			$classes = array_merge( $classes, $applied_styles['global_classes'] );
 		}
 
-		// Add generated class ID if we have computed styles
-		if ( ! empty( $applied_styles['computed_styles'] ) ) {
-			$class_id = $this->generate_unique_class_id();
-			$classes[] = $class_id;
-			
-			// Store the class ID for use in styles generation
-			$this->current_widget_class_id = $class_id;
+		// Generate a single class ID for this widget that will be used consistently
+		$needs_class_id = ! empty( $applied_styles['computed_styles'] ) || ! empty( $applied_styles['id_styles'] );
+		
+		if ( $needs_class_id ) {
+			// Generate class ID only once and store it for consistent use
+			if ( empty( $this->current_widget_class_id ) ) {
+				$this->current_widget_class_id = $this->generate_unique_class_id();
+			}
+			$classes[] = $this->current_widget_class_id;
 		}
 
 		// Add classes to settings with proper v4 format
@@ -411,7 +416,12 @@ class Widget_Creator {
 		if ( ! empty( $applied_styles['id_styles'] ) ) {
 			error_log( 'Widget Creator: Processing ID styles: ' . count( $applied_styles['id_styles'] ) . ' styles found' );
 			
-			$id_class_id = $this->generate_unique_class_id();
+			// Use the same class ID that was set in merge_settings_with_styles
+			if ( empty( $this->current_widget_class_id ) ) {
+				$this->current_widget_class_id = $this->generate_unique_class_id();
+			}
+			$id_class_id = $this->current_widget_class_id;
+			
 			$id_style_object = $this->create_v4_style_object_from_id_styles( $id_class_id, $applied_styles['id_styles'] );
 			
 			error_log( 'Widget Creator: ID style object created with props: ' . wp_json_encode( $id_style_object['variants'][0]['props'] ?? [] ) );
@@ -428,18 +438,26 @@ class Widget_Creator {
 
 		// Process computed styles (from external CSS + inline styles)
 		if ( ! empty( $applied_styles['computed_styles'] ) ) {
-			// Generate class ID if not already set
+			// Use the same class ID that was set earlier
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
 			}
 			
 			$class_id = $this->current_widget_class_id;
 			
-			// Create v4 style object
-			$style_object = $this->create_v4_style_object( $class_id, $applied_styles['computed_styles'] );
-			
-			if ( ! empty( $style_object['variants'][0]['props'] ) ) {
-				$v4_styles[ $class_id ] = $style_object;
+			// If we already have a style object from ID styles, merge with it
+			if ( isset( $v4_styles[ $class_id ] ) ) {
+				// Merge computed styles with existing ID styles
+				$computed_props = $this->map_css_to_v4_props( $applied_styles['computed_styles'] );
+				$existing_props = $v4_styles[ $class_id ]['variants'][0]['props'] ?? [];
+				$v4_styles[ $class_id ]['variants'][0]['props'] = array_merge( $existing_props, $computed_props );
+			} else {
+				// Create new style object for computed styles
+				$style_object = $this->create_v4_style_object( $class_id, $applied_styles['computed_styles'] );
+				
+				if ( ! empty( $style_object['variants'][0]['props'] ) ) {
+					$v4_styles[ $class_id ] = $style_object;
+				}
 			}
 		}
 

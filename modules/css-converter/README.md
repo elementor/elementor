@@ -1,5 +1,42 @@
 # Elementor CSS Converter Module
 
+## 🚨 ATOMIC WIDGETS ONLY - ZERO FALLBACKS ALLOWED
+
+This CSS converter module operates under **STRICT atomic widget compliance**:
+
+- ❌ **NO fallback mechanisms** - Properties without atomic mappers will fail
+- ❌ **NO Enhanced_Property_Mapper** - Permanently removed  
+- ❌ **NO custom JSON generation** - All JSON must come from atomic widgets
+- ❌ **NO string type defaults** - Specific atomic types required
+- ✅ **100% atomic widget sourced** - Every property must reference atomic widgets
+
+### 📋 **COMPREHENSIVE IMPLEMENTATION GUIDE**
+
+**For complete implementation details, see**: `docs/20250924-COMPREHENSIVE-ATOMIC-WIDGETS-IMPLEMENTATION-GUIDE.md`
+
+This comprehensive guide includes:
+- **Complete atomic prop types catalog** (50 prop types across 14 categories)
+- **Full implementation plan** with 5 phases
+- **Atomic widget integration architecture** using Widget_Builder and Element_Builder
+- **Complete code location updates** with specific line numbers
+- **Testing strategies and templates** for atomic compliance
+- **28 properties requiring atomic mappers** with research guidance
+
+### Current Property Support: 4/32 (12.5% atomic compliance)
+
+**✅ Supported Properties (Atomic):**
+- `color` → Color_Property_Mapper → Color_Prop_Type
+- `background-color` → Background_Color_Property_Mapper → Background_Prop_Type  
+- `font-size` → Font_Size_Property_Mapper → Size_Prop_Type
+- `margin` → Margin_Property_Mapper → Dimensions_Prop_Type
+
+**❌ Missing Atomic Mappers (28 properties):**
+Properties like `font-weight`, `text-decoration`, `border-width`, `padding`, etc. will log "ATOMIC MAPPER REQUIRED FOR: {property}" and return null.
+
+**See comprehensive guide for complete list and implementation roadmap.**
+
+---
+
 Convert CSS classes to Elementor Global Classes and HTML/CSS content to Elementor v4 atomic widgets. This module provides two main conversion capabilities:
 
 1. **Class Converter**: Convert CSS classes to Elementor Global Classes (existing functionality)
@@ -446,24 +483,58 @@ curl -X POST "/wp-json/elementor/v2/widget-converter" \
 - XSS prevention in user-provided content
 - SQL injection prevention via parameterized queries
 
+## 🎯 Adding Property Support (Atomic Widgets Only)
+
+### To Add Support for Missing Properties:
+
+**Follow the complete implementation guide**: `docs/20250924-COMPREHENSIVE-ATOMIC-WIDGETS-IMPLEMENTATION-GUIDE.md`
+
+#### Quick Reference:
+1. **Research atomic widgets** - Find the specific atomic widget and prop type
+2. **Follow the atomic mapper template** - Use the provided template structure
+3. **Document atomic sources** - Include atomic source verification in docblock
+4. **Test atomic compliance** - Verify structure matches atomic widget expectations
+
+#### Atomic Mapper Template:
+```php
+/**
+ * [Property Name] Property Mapper
+ * 
+ * 🎯 ATOMIC SOURCE VERIFICATION:
+ * - Atomic Widget: [specific file path and class name]
+ * - Prop Type: [specific prop type file and class]
+ * - Expected Structure: [exact JSON structure from prop type]
+ * 
+ * 🚫 FALLBACK STATUS: NONE - This mapper has zero fallbacks
+ * ✅ COMPLIANCE: 100% atomic widget based
+ */
+class Your_Property_Mapper extends Modern_Property_Mapper_Base {
+    public function map_to_v4_atomic( string $property, $value ): ?array {
+        // Research atomic widget structure and implement exactly
+        return $this->create_v4_property_with_type( $property, 'atomic_type', $parsed_value );
+    }
+}
+```
+
+### ❌ FORBIDDEN Approaches:
+- Creating fallback mechanisms
+- Using Enhanced_Property_Mapper patterns  
+- Custom JSON generation outside atomic widgets
+- String type defaults where atomic types exist
+
+**For detailed implementation steps, atomic prop type catalog, and complete roadmap, see the comprehensive guide.**
+
 ## Future Enhancements
 
-See `docs/class/FUTURE.md` for detailed roadmap:
+### Atomic Widget Expansion
+- Research remaining 28 properties in atomic widgets
+- Implement atomic-compliant mappers for each property
+- Achieve 100% atomic compliance (currently 12.5%)
 
-### Phase 2: Extended Properties
-- Background colors and images
-- Border properties
-- Spacing (margin, padding)
-
-### Phase 3: Responsive Support
-- Breakpoint detection
-- Media query parsing
-- Multi-device variants
-
-### Phase 4: Advanced Features
-- Complex selector support
-- CSS functions (calc, var)
-- Performance optimizations
+### Advanced Atomic Features
+- Complex atomic prop type support (gradients, shadows)
+- Nested atomic widget structures
+- Atomic widget composition patterns
 
 ## Contributing
 

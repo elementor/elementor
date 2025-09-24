@@ -6,7 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Needs atomic mapper update: Replace entire Enhanced_Property_Mapper with atomic widget-based mappers
 class Enhanced_Property_Mapper {
 	private string $property;
 
@@ -19,7 +18,7 @@ class Enhanced_Property_Mapper {
 			return null;
 		}
 
-		// Needs atomic mapper update: Replace with atomic widget research and implementation
+		// Get the atomic result
 		$atomic_result = $this->get_atomic_result( $property, $value );
 		if ( ! $atomic_result ) {
 			return null;
@@ -34,22 +33,24 @@ class Enhanced_Property_Mapper {
 			'value' => $atomic_result
 		];
 		
+		// Debug logging
+		error_log( "Enhanced_Property_Mapper: map_to_v4_atomic({$property}) -> " . wp_json_encode( $result ) );
+		
 		return $result;
 	}
 
 	private function get_atomic_result( string $property, $value ): ?array {
-		// Needs atomic mapper update: Replace switch statement with atomic widget prop type research
+		// Enhanced conversion based on Elementor's Style_Schema expectations
 		switch ( $property ) {
 			case 'color':
-				// Needs atomic mapper update: Use Color_Prop_Type from atomic widgets
 				return $this->create_color_property( $value );
 			
 			case 'background-color':
-				// Needs atomic mapper update: Use Background_Prop_Type from atomic widgets
+				// Elementor expects 'background' prop type, not 'background-color'
 				return $this->create_background_property( $value );
 			
 			case 'background':
-				// Needs atomic mapper update: Use Background_Prop_Type from atomic widgets
+				// Handle background shorthand and gradients
 				return $this->create_background_property( $value );
 			
 			case 'font-size':
@@ -57,12 +58,11 @@ class Enhanced_Property_Mapper {
 			case 'height':
 			case 'border-radius':
 			case 'line-height':
-				// Needs atomic mapper update: Use Size_Prop_Type from atomic widgets
+				// line-height is Size_Prop_Type in Elementor schema
 				return $this->create_size_property( $value );
 			
 			case 'padding':
 			case 'margin':
-				// Needs atomic mapper update: Use Dimensions_Prop_Type from atomic widgets
 				return $this->create_shorthand_size_property( $property, $value );
 			
 			case 'margin-top':
@@ -73,16 +73,15 @@ class Enhanced_Property_Mapper {
 			case 'padding-right':
 			case 'padding-bottom':
 			case 'padding-left':
-				// Needs atomic mapper update: Use Size_Prop_Type from atomic widgets
+				// Individual margin/padding properties as size
 				return $this->create_size_property( $value );
 			
 			case 'font-weight':
-				// Needs atomic mapper update: Use String_Prop_Type from atomic widgets
+				// font-weight is String_Prop_Type in Elementor schema
 				return $this->create_font_weight_property( $value );
 			
 			case 'opacity':
 			case 'z-index':
-				// Needs atomic mapper update: Use Number_Prop_Type from atomic widgets
 				return $this->create_number_property( $value );
 			
 			case 'display':
@@ -91,17 +90,14 @@ class Enhanced_Property_Mapper {
 			case 'align-items':
 			case 'justify-content':
 			case 'text-align':
-				// Needs atomic mapper update: Use String_Prop_Type from atomic widgets
 				return $this->create_string_property( $value );
 			
 			default:
-				// Needs atomic mapper update: Research atomic widget for this property
 				return $this->create_string_property( $value );
 		}
 	}
 
 	private function create_color_property( $value ): array {
-		// Needs atomic mapper update: Use Color_Prop_Type structure from atomic widgets
 		return [
 			'$$type' => 'color',
 			'value' => $this->normalize_color_value( $value )
@@ -109,7 +105,6 @@ class Enhanced_Property_Mapper {
 	}
 
 	private function create_size_property( $value ): array {
-		// Needs atomic mapper update: Use Size_Prop_Type structure from atomic widgets
 		$parsed = $this->parse_size_value( $value );
 		return [
 			'$$type' => 'size',
@@ -121,7 +116,6 @@ class Enhanced_Property_Mapper {
 	}
 
 	private function create_number_property( $value ): array {
-		// Needs atomic mapper update: Use Number_Prop_Type structure from atomic widgets
 		return [
 			'$$type' => 'number',
 			'value' => $this->parse_numeric_value( $value )
@@ -129,7 +123,6 @@ class Enhanced_Property_Mapper {
 	}
 
 	private function create_string_property( $value ): array {
-		// Needs atomic mapper update: Use String_Prop_Type structure from atomic widgets
 		return [
 			'$$type' => 'string',
 			'value' => (string) $value
@@ -137,7 +130,7 @@ class Enhanced_Property_Mapper {
 	}
 
 	private function create_shorthand_size_property( string $property, $value ): array {
-		// Needs atomic mapper update: Use Dimensions_Prop_Type structure from atomic widgets
+		// Handle shorthand properties like margin: 10px 0 or padding: 10px 20px 15px 25px
 		$value = trim( $value );
 		$parts = preg_split( '/\s+/', $value );
 		
@@ -153,7 +146,7 @@ class Enhanced_Property_Mapper {
 	}
 
 	private function create_background_property( $value ): array {
-		// Needs atomic mapper update: Use Background_Prop_Type structure from atomic widgets
+		// Handle different background types: colors, gradients, etc.
 		$value = trim( $value );
 		
 		// Check if it's a gradient
@@ -180,7 +173,7 @@ class Enhanced_Property_Mapper {
 	}
 
 	private function create_font_weight_property( $value ): array {
-		// Needs atomic mapper update: Use String_Prop_Type structure from atomic widgets
+		// Elementor expects font-weight as string, not number
 		$weight_mappings = [
 			'normal' => '400',
 			'bold' => '700',
@@ -281,7 +274,7 @@ class Enhanced_Property_Mapper {
 	}
 
 	public function map_to_schema( string $property, $value ): ?array {
-		// Needs atomic mapper update: Replace with atomic widget schema mapping
+		// Get the atomic result directly (not the v4 format)
 		$atomic_result = $this->get_atomic_result( $property, $value );
 		
 		if ( ! $atomic_result ) {
@@ -296,7 +289,7 @@ class Enhanced_Property_Mapper {
 	}
 
 	private function get_schema_property_name( string $css_property ): string {
-		// Needs atomic mapper update: Use atomic widget property name mapping
+		// Map CSS property names to Elementor schema property names
 		$property_mappings = [
 			'background-color' => 'background',  // CSS background-color -> Elementor background
 		];
@@ -305,7 +298,6 @@ class Enhanced_Property_Mapper {
 	}
 
 	private function create_background_gradient_property( $value ): array {
-		// Needs atomic mapper update: Use Background_Prop_Type gradient structure from atomic widgets
 		$gradient_data = $this->parse_gradient_to_elementor_format( $value );
 
 		// Create the proper nested Elementor background structure
@@ -328,7 +320,7 @@ class Enhanced_Property_Mapper {
 	}
 
 	private function parse_gradient_to_elementor_format( string $value ): array {
-		// Needs atomic mapper update: Use atomic widget gradient parsing
+		// Parse linear-gradient
 		if ( preg_match( '/linear-gradient\s*\(\s*([^,]+),\s*(.+)\s*\)/', $value, $matches ) ) {
 			$angle_part = trim( $matches[1] );
 			$colors_part = trim( $matches[2] );
@@ -399,7 +391,7 @@ class Enhanced_Property_Mapper {
 	}
 
 	private function parse_color_stops_elementor_format( string $colors_part ): array {
-		// Needs atomic mapper update: Use atomic widget color stop parsing
+		// Split colors by comma, but be careful of rgba() values
 		$colors = [];
 		$current_color = '';
 		$paren_count = 0;

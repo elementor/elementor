@@ -1,6 +1,17 @@
 # Complete Implementation Plan - Atomic Widgets Module Architecture
 
-## 🎯 **Overview**
+## 🚨 **MERGED INTO COMPREHENSIVE GUIDE**
+
+**This document has been merged into**: `../../COMPREHENSIVE-ATOMIC-WIDGETS-IMPLEMENTATION-GUIDE.md`
+
+**Please refer to the comprehensive guide for:**
+- Complete atomic prop types catalog (50 prop types)
+- Full implementation plan with phases
+- Atomic widget integration architecture
+- Complete code location updates
+- Testing strategies and templates
+
+## 🎯 **Overview** (LEGACY)
 
 This document outlines the complete implementation plan for the corrected architecture where the **Atomic Widgets Module creates JSON** using `Widget_Builder::make()` and `Element_Builder::make()`, as originally requested by the user.
 
