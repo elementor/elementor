@@ -33,7 +33,6 @@ export default function SkipButton( props ) {
 		OnboardingEventTracking.sendStepEndState( stepNumber );
 		OnboardingEventTracking.sendOnboardingSkip( stepNumber );
 
-		// Add exit tracking for step 4 skip button
 		if ( 4 === stepNumber ) {
 			OnboardingEventTracking.storeExitEventForLater( 'step4_skip_button', stepNumber );
 		}
@@ -48,10 +47,8 @@ export default function SkipButton( props ) {
 		} );
 
 		if ( button.href ) {
-			// Prevent default href navigation to avoid exit tracking
 			event.preventDefault();
 
-			// Navigate programmatically after tracking completes
 			setTimeout( () => {
 				window.location.href = button.href;
 			}, 100 );

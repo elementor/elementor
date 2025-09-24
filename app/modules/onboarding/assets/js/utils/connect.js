@@ -26,10 +26,8 @@ export default function Connect( props ) {
 	useEffect( () => {
 		jQuery( buttonRef.current ).elementorConnect( {
 			success: ( event, data ) => {
-				// Always run the core connection logic first (tracking setup)
 				handleCoreConnectionLogic( event, data );
 
-				// Then run custom callback if provided, otherwise use default
 				if ( successCallback ) {
 					successCallback( event, data );
 				} else {

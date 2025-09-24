@@ -33,22 +33,18 @@ export default function GoProPopover( props ) {
 			return;
 		}
 
-		// CRITICAL FIX: Don't create event handler if currentStep is not properly initialized
 		if ( ! state.currentStep || '' === state.currentStep ) {
 			return;
 		}
 
-		// Remove any existing event listeners to prevent duplicates
 		const existingHandler = alreadyHaveProButton._elementorProHandler;
 		if ( existingHandler ) {
 			alreadyHaveProButton.removeEventListener( 'click', existingHandler );
 		}
 
-		// Create new handler
 		const clickHandler = ( event ) => {
 			event.preventDefault();
 
-			// ADDITIONAL VALIDATION: Ensure we have valid step data before proceeding
 			if ( ! state.currentStep || '' === state.currentStep ) {
 				return;
 			}
@@ -57,10 +53,8 @@ export default function GoProPopover( props ) {
 			OnboardingEventTracking.cancelDelayedNoClickEvent();
 			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 
-			// VALIDATION: Only send if we have a valid step number
 			if ( stepNumber ) {
 				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'already_pro_user' );
-			} else {
 			}
 
 			elementorCommon.events.dispatchEvent( {
@@ -93,7 +87,6 @@ export default function GoProPopover( props ) {
 				} );
 		};
 
-		// Store handler reference and add event listener
 		alreadyHaveProButton._elementorProHandler = clickHandler;
 		alreadyHaveProButton.addEventListener( 'click', clickHandler );
 	}, [ state.currentStep, updateState, trackUpgradeAction ] );
@@ -108,7 +101,6 @@ export default function GoProPopover( props ) {
 			tabIndex: 0,
 			elRef: setupUpgradeButtonTracking,
 			onClick: () => {
-				// VALIDATION: Ensure we have valid step data before proceeding
 				if ( ! state.currentStep || '' === state.currentStep ) {
 					return;
 				}
@@ -117,10 +109,8 @@ export default function GoProPopover( props ) {
 				OnboardingEventTracking.cancelDelayedNoClickEvent();
 				const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 
-				// VALIDATION: Only send if we have a valid step number
 				if ( stepNumber ) {
 					OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
-				} else {
 				}
 
 				elementorCommon.events.dispatchEvent( {

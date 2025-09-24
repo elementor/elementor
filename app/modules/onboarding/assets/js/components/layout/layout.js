@@ -15,10 +15,6 @@ export default function Layout( props ) {
 
 	const goProButtonRef = useRef();
 
-	const initializeExitTracking = useCallback( () => {
-		// Window close tracking removed - only X button tracking remains
-	}, [] );
-
 	const setupTopbarUpgradeTracking = useCallback( ( buttonElement ) => {
 		if ( ! buttonElement ) {
 			return;

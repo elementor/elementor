@@ -14,8 +14,6 @@ export default function Header( props ) {
 
 	const trackXButtonExit = () => {
 		const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
-
-		// Send exit button event
 		OnboardingEventTracking.sendExitButtonEvent( stepNumber || state.currentStep );
 	};
 
