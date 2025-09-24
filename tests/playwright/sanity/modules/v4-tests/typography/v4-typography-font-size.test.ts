@@ -30,48 +30,48 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 
 	// Optimized helper function to test responsive behavior
 	async function testResponsiveBehavior( widgetType: string ) {
-		await setupWidgetWithTypography( setup.editor, widgetType );
+		await setupWidgetWithTypography( setup.driver, widgetType );
 
 		// Set desktop size
-		await setup.editor.v4Panel.setTypography( { fontSize: FONT_SIZES.DESKTOP } );
+		await setup.driver.editor.v4Panel.style.typography.setTypography( { fontSize: FONT_SIZES.DESKTOP } );
 
 		// Switch to tablet and set size
-		await setup.editor.changeResponsiveView( 'tablet' );
-		await setup.editor.v4Panel.setTypography( { fontSize: FONT_SIZES.TABLET } );
+		await setup.driver.editor.changeResponsiveView( 'tablet' );
+		await setup.driver.editor.v4Panel.style.typography.setTypography( { fontSize: FONT_SIZES.TABLET } );
 
 		// Verify tablet size
-		let typographyValues = await setup.editor.v4Panel.getTypographyValues();
+		let typographyValues = await setup.driver.editor.v4Panel.style.typography.getTypographyValues();
 		expect( typographyValues.fontSize ).toBe( FONT_SIZES.TABLET );
 
 		// Switch to mobile and set size
-		await setup.editor.changeResponsiveView( 'mobile' );
-		await setup.editor.v4Panel.setTypography( { fontSize: FONT_SIZES.MOBILE } );
+		await setup.driver.editor.changeResponsiveView( 'mobile' );
+		await setup.driver.editor.v4Panel.style.typography.setTypography( { fontSize: FONT_SIZES.MOBILE } );
 
 		// Verify mobile size
-		typographyValues = await setup.editor.v4Panel.getTypographyValues();
+		typographyValues = await setup.driver.editor.v4Panel.style.typography.getTypographyValues();
 		expect( typographyValues.fontSize ).toBe( FONT_SIZES.MOBILE );
 
 		// Switch back to desktop and verify all values persist
-		await setup.editor.changeResponsiveView( 'desktop' );
-		typographyValues = await setup.editor.v4Panel.getTypographyValues();
+		await setup.driver.editor.changeResponsiveView( 'desktop' );
+		typographyValues = await setup.driver.editor.v4Panel.style.typography.getTypographyValues();
 		expect( typographyValues.fontSize ).toBe( FONT_SIZES.DESKTOP );
 
-		await setup.editor.changeResponsiveView( 'tablet' );
-		typographyValues = await setup.editor.v4Panel.getTypographyValues();
+		await setup.driver.editor.changeResponsiveView( 'tablet' );
+		typographyValues = await setup.driver.editor.v4Panel.style.typography.getTypographyValues();
 		expect( typographyValues.fontSize ).toBe( FONT_SIZES.TABLET );
 
-		await setup.editor.changeResponsiveView( 'mobile' );
-		typographyValues = await setup.editor.v4Panel.getTypographyValues();
+		await setup.driver.editor.changeResponsiveView( 'mobile' );
+		typographyValues = await setup.driver.editor.v4Panel.style.typography.getTypographyValues();
 		expect( typographyValues.fontSize ).toBe( FONT_SIZES.MOBILE );
 	}
 
 	// Helper for unit testing with cached frame reference
 	async function testUnitChange( widgetType: string, unit: string, fontSize: string, expectedMultiplier: number ) {
-		await setupWidgetWithTypography( setup.editor, widgetType );
-		await setup.editor.v4Panel.setTypography( { fontSize } );
-		await setup.editor.v4Panel.setFontSizeUnit( unit );
+		await setupWidgetWithTypography( setup.driver, widgetType );
+		await setup.driver.editor.v4Panel.style.typography.setTypography( { fontSize } );
+		await setup.driver.editor.v4Panel.style.typography.setFontSizeUnit( unit );
 
-		const frame = setup.editor.getPreviewFrame();
+		const frame = setup.driver.editor.getPreviewFrame();
 		const element = frame.locator( WIDGET_CONFIGS[ widgetType.toUpperCase().replace( '-', '_' ) ].selector );
 
 		if ( 'vh' === unit ) {
@@ -103,20 +103,20 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 		const testWidgetConfig = WIDGET_CONFIGS.HEADING;
 
 		test( 'Numeric input accepts valid font sizes', async () => {
-			await setupWidgetWithTypography( setup.editor, testWidget );
+			await setupWidgetWithTypography( setup.driver, testWidget );
 
 			// Test regular number
-			await setup.editor.v4Panel.setTypography( { fontSize: '24' } );
-			let typographyValues = await setup.editor.v4Panel.getTypographyValues();
+			await setup.driver.editor.v4Panel.style.typography.setTypography( { fontSize: '24' } );
+			let typographyValues = await setup.driver.editor.v4Panel.style.typography.getTypographyValues();
 			expect( typographyValues.fontSize ).toBe( '24' );
 
 			// Test decimal number
-			await setup.editor.v4Panel.setTypography( { fontSize: '24.5' } );
-			typographyValues = await setup.editor.v4Panel.getTypographyValues();
+			await setup.driver.editor.v4Panel.style.typography.setTypography( { fontSize: '24.5' } );
+			typographyValues = await setup.driver.editor.v4Panel.style.typography.getTypographyValues();
 			expect( typographyValues.fontSize ).toBe( '24.5' );
 
 			// Use preview-only verification for better performance
-			await verifyFontSizePreview( setup.editor, testWidgetConfig.selector, '24.5' );
+			await verifyFontSizePreview( setup.driver, testWidgetConfig.selector, '24.5' );
 		} );
 
 		test( 'Responsive font size behavior', async () => {
@@ -137,12 +137,12 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 
 		test( 'Font size stepper functionality', async () => {
 			// Arrange
-			await setupWidgetWithTypography( setup.editor, testWidget );
+			await setupWidgetWithTypography( setup.driver, testWidget );
 
 			const INITIAL_FONT_SIZE = 20;
 			const DEFAULT_STEP = 1;
 
-			const input = setup.page.locator( 'label', { hasText: 'Font size' } )
+			const input = setup.driver.page.locator( 'label', { hasText: 'Font size' } )
 				.locator( 'xpath=following::input[1]' );
 
 			// Act - Set initial value
@@ -166,12 +166,12 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 		} );
 
 		test( 'Panel-only unit switching functionality', async () => {
-			await setupWidgetWithTypography( setup.editor, testWidget );
+			await setupWidgetWithTypography( setup.driver, testWidget );
 			const units = [ 'px', 'em', 'rem', 'vw', '%' ];
 
 			for ( const unit of units ) {
-				await setup.editor.v4Panel.setFontSizeUnit( unit );
-				const unitButton = setup.page.getByRole( 'button', { name: new RegExp( `^${ unit }$`, 'i' ) } ).first();
+				await setup.driver.editor.v4Panel.style.typography.setFontSizeUnit( unit );
+				const unitButton = setup.driver.page.getByRole( 'button', { name: new RegExp( `^${ unit }$`, 'i' ) } ).first();
 				const unitButtonText = await unitButton.textContent();
 				expect( unitButtonText.toLowerCase() ).toBe( unit.toLowerCase() );
 			}
@@ -189,16 +189,16 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 	for ( const widget of widgetConfigs ) {
 		test.describe( `${ widget.type } Widget-Specific Rendering Tests`, () => {
 			test( 'Font size persists after publishing', async () => {
-				await setupWidgetWithTypography( setup.editor, widget.type );
-				await setup.editor.v4Panel.setTypography( { fontSize: '22' } );
+				await setupWidgetWithTypography( setup.driver, widget.type );
+				await setup.driver.editor.v4Panel.style.typography.setTypography( { fontSize: '22' } );
 				// This test specifically needs publishing verification per widget
-				await verifyFontSizeWithPublishing( setup.editor, setup.page, widget.config.selector, '22' );
+				await verifyFontSizeWithPublishing( setup.driver, widget.config.selector, '22' );
 			} );
 
 			test( 'Font size unit change with screenshots', async () => {
-				await setupWidgetWithTypography( setup.editor, widget.type );
-				await setup.editor.v4Panel.setTypography( { fontSize: '10' } );
-				await setup.editor.v4Panel.setFontSizeUnit( 'em' );
+				await setupWidgetWithTypography( setup.driver, widget.type );
+				await setup.driver.editor.v4Panel.style.typography.setTypography( { fontSize: '10' } );
+				await setup.driver.editor.v4Panel.style.typography.setFontSizeUnit( 'em' );
 
 				const selector = widget.config.selector;
 
@@ -206,16 +206,16 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 				// Consider moving screenshots to a separate test suite or using test annotations
 				if ( 'true' === process.env.TAKE_SCREENSHOTS ) {
 					// Editor screenshot
-					await expect.soft( setup.editor.getPreviewFrame().locator( selector ) )
+					await expect.soft( setup.driver.editor.getPreviewFrame().locator( selector ) )
 						.toHaveScreenshot( `${ widget.type }-em-desktop-editor.png`, { timeout: timeouts.medium } );
 
 					// Published page screenshot
-					await setup.editor.publishAndViewPage();
-					await expect.soft( setup.page.locator( selector ) )
+					await setup.driver.editor.publishAndViewPage();
+					await expect.soft( setup.driver.page.locator( selector ) )
 						.toHaveScreenshot( `${ widget.type }-em-desktop-published.png`, { timeout: timeouts.medium } );
 				} else {
 					// Just verify the unit change works without screenshots
-					const frame = setup.editor.getPreviewFrame();
+					const frame = setup.driver.editor.getPreviewFrame();
 					const element = frame.locator( selector );
 					await expect( element ).toBeVisible();
 				}

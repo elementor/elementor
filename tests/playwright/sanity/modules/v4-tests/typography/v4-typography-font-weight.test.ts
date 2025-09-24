@@ -1,72 +1,61 @@
-import WpAdminPage from '../../../../pages/wp-admin-page';
 import { parallelTest as test } from '../../../../parallelTest';
-import { BrowserContext, Page, expect } from '@playwright/test';
-import EditorPage from '../../../../pages/editor-page';
+import { expect } from '@playwright/test';
+import {
+	WIDGET_CONFIGS,
+	FONT_FAMILIES,
+	setupTypographyTestSuite,
+	teardownTypographyTestSuite,
+	beforeEachTypographyTest,
+	setupWidgetWithTypography,
+	type TypographyTestSetup,
+} from './typography-test-helpers';
 import { timeouts } from '../../../../config/timeouts';
 
 const TEST_FONTS = {
-	SYSTEM: { name: 'Arial', type: 'system' as const },
-	ALTERNATIVE: { name: 'Times New Roman', type: 'system' as const },
+	SYSTEM: { name: FONT_FAMILIES.system, type: 'system' as const },
+	ALTERNATIVE: { name: FONT_FAMILIES.systemAlt, type: 'system' as const },
 };
 
-const WIDGET_CONFIGS = [
-	{ type: 'e-heading', selector: '.e-heading-base', defaultWeight: '500' },
-	{ type: 'e-paragraph', selector: '.e-paragraph-base', defaultWeight: '500' },
-	{ type: 'e-button', selector: '.e-button-base', defaultWeight: '500' },
-];
-
 test.describe( 'V4 Typography Font Weight Tests @v4-tests', () => {
-	let editor: EditorPage;
-	let wpAdmin: WpAdminPage;
-	let context: BrowserContext;
-	let page: Page;
-	const experimentName = 'e_atomic_elements';
+	let setup: TypographyTestSetup;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		context = await browser.newContext();
-		page = await context.newPage();
-		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { [ experimentName ]: 'active' } );
+		setup = await setupTypographyTestSuite( browser, apiRequests, testInfo );
 	} );
 
 	test.afterAll( async () => {
-		await wpAdmin.resetExperiments();
-		await context.close();
+		await teardownTypographyTestSuite( setup );
 	} );
 
 	test.beforeEach( async () => {
-		editor = await wpAdmin.openNewPage();
-		await editor.closeNavigatorIfOpen();
+		await beforeEachTypographyTest( setup );
 	} );
 
-	async function setupWidgetWithTypography( widgetType: string ) {
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-		const widgetId = await editor.addWidget( { widgetType, container: containerId } );
-		await editor.openV2PanelTab( 'style' );
-		await editor.openV2Section( 'typography' );
-		await editor.v4Panel.waitForTypographyControls();
-		return { containerId, widgetId };
-	}
-
 	async function getAvailableFontWeights(): Promise<string[]> {
-		const fontWeightCombobox = page.locator( 'label', { hasText: 'Font weight' } )
+		const fontWeightCombobox = setup.driver.page.locator( 'label', { hasText: 'Font weight' } )
 			.locator( 'xpath=following::*[@role="combobox"][1]' );
 
 		await fontWeightCombobox.click();
-		await page.waitForSelector( '[role="listbox"]', { timeout: 5000 } );
+		await setup.driver.page.waitForSelector( '[role="listbox"]', { timeout: 5000 } );
 
-		const options = page.locator( '[role="option"]' );
+		const options = setup.driver.page.locator( '[role="option"]' );
 		const weights = await options.allTextContents();
 		const extractedWeights = weights
 			.map( ( text ) => text.match( /(\d+)/ )?.[ 1 ] )
 			.filter( Boolean ) as string[];
 
-		await page.keyboard.press( 'Escape' );
+		await setup.driver.page.keyboard.press( 'Escape' );
 		return extractedWeights;
 	}
 
 	async function verifyFontWeightPreview( selector: string, expectedWeight: string ) {
-		const frame = editor.getPreviewFrame();
+		if ( ! setup.driver.editor ) {
+			throw new Error( 'Editor is not initialized' );
+		}
+		const frame = setup.driver.editor.getPreviewFrame();
+		if ( ! frame ) {
+			throw new Error( 'Preview frame is not available' );
+		}
 		const element = frame.locator( selector );
 		await expect( element ).toBeVisible( { timeout: timeouts.navigation } );
 		const computedWeight = await element.evaluate( ( el ) => window.getComputedStyle( el ).fontWeight );
@@ -75,8 +64,8 @@ test.describe( 'V4 Typography Font Weight Tests @v4-tests', () => {
 
 	async function verifyFontWeightWithPublishing( selector: string, expectedWeight: string ) {
 		await verifyFontWeightPreview( selector, expectedWeight );
-		await editor.publishAndViewPage();
-		const publishedElement = page.locator( selector );
+		await setup.driver.editor.publishAndViewPage();
+		const publishedElement = setup.driver.page.locator( selector );
 		await expect( publishedElement ).toBeVisible( { timeout: timeouts.navigation } );
 		const publishedWeight = await publishedElement.evaluate( ( el ) => window.getComputedStyle( el ).fontWeight );
 		expect( String( publishedWeight ) ).toBe( expectedWeight );
@@ -84,20 +73,20 @@ test.describe( 'V4 Typography Font Weight Tests @v4-tests', () => {
 
 	test.describe( 'Common Font Weight Functionality', () => {
 		const testWidget = 'e-heading';
-		const testWidgetConfig = WIDGET_CONFIGS.find( ( w ) => w.type === testWidget );
+		const testWidgetConfig = WIDGET_CONFIGS.HEADING;
 
 		test( 'Font weight control functionality and weight changes', async () => {
-			await setupWidgetWithTypography( testWidget );
+			await setupWidgetWithTypography( setup.driver, testWidget );
 
-			const fontWeightLabel = page.locator( 'label', { hasText: 'Font weight' } );
+			const fontWeightLabel = setup.driver.page.locator( 'label', { hasText: 'Font weight' } );
 			await expect( fontWeightLabel ).toBeVisible();
 
-			await verifyFontWeightPreview( testWidgetConfig.selector, testWidgetConfig.defaultWeight );
+			await verifyFontWeightPreview( testWidgetConfig.selector, '500' );
 
-			await editor.v4Panel.setTypography( { fontWeight: '700' } );
+			await setup.driver.editor.v4Panel.style.typography.setTypography( { fontWeight: '700' } );
 			await verifyFontWeightPreview( testWidgetConfig.selector, '700' );
 
-			await editor.v4Panel.setTypography( { fontWeight: '400' } );
+			await setup.driver.editor.v4Panel.style.typography.setTypography( { fontWeight: '400' } );
 			await verifyFontWeightPreview( testWidgetConfig.selector, '400' );
 
 			const weights = await getAvailableFontWeights();
@@ -106,14 +95,14 @@ test.describe( 'V4 Typography Font Weight Tests @v4-tests', () => {
 		} );
 
 		test( 'Font weight availability changes with font selection', async () => {
-			await setupWidgetWithTypography( testWidget );
+			await setupWidgetWithTypography( setup.driver, testWidget );
 
-			await editor.v4Panel.setFontFamily( TEST_FONTS.SYSTEM.name, TEST_FONTS.SYSTEM.type );
-			await page.waitForTimeout( 1000 );
+			await setup.driver.editor.v4Panel.style.typography.setFontFamily( TEST_FONTS.SYSTEM.name, TEST_FONTS.SYSTEM.type );
+			await setup.driver.page.waitForTimeout( 1000 );
 			const systemWeights = await getAvailableFontWeights();
 
-			await editor.v4Panel.setFontFamily( TEST_FONTS.ALTERNATIVE.name, TEST_FONTS.ALTERNATIVE.type );
-			await page.waitForTimeout( 1000 );
+			await setup.driver.editor.v4Panel.style.typography.setFontFamily( TEST_FONTS.ALTERNATIVE.name, TEST_FONTS.ALTERNATIVE.type );
+			await setup.driver.page.waitForTimeout( 1000 );
 			const alternativeWeights = await getAvailableFontWeights();
 
 			expect( systemWeights.length ).toBeGreaterThanOrEqual( 1 );
@@ -126,28 +115,34 @@ test.describe( 'V4 Typography Font Weight Tests @v4-tests', () => {
 		} );
 
 		test( 'Font weight persistence when switching fonts', async () => {
-			await setupWidgetWithTypography( testWidget );
+			await setupWidgetWithTypography( setup.driver, testWidget );
 
-			await editor.v4Panel.setFontFamily( TEST_FONTS.SYSTEM.name, TEST_FONTS.SYSTEM.type );
-			await editor.v4Panel.setTypography( { fontWeight: '700' } );
+			await setup.driver.editor.v4Panel.style.typography.setFontFamily( TEST_FONTS.SYSTEM.name, TEST_FONTS.SYSTEM.type );
+			await setup.driver.editor.v4Panel.style.typography.setTypography( { fontWeight: '700' } );
 			await verifyFontWeightPreview( testWidgetConfig.selector, '700' );
 
-			await editor.v4Panel.setFontFamily( TEST_FONTS.ALTERNATIVE.name, TEST_FONTS.ALTERNATIVE.type );
-			await page.waitForTimeout( 1000 );
+			await setup.driver.editor.v4Panel.style.typography.setFontFamily( TEST_FONTS.ALTERNATIVE.name, TEST_FONTS.ALTERNATIVE.type );
+			await setup.driver.page.waitForTimeout( 1000 );
 
-			const frame = editor.getPreviewFrame();
+			const frame = setup.driver.editor.getPreviewFrame();
 			const element = frame.locator( testWidgetConfig.selector );
 			const currentWeight = await element.evaluate( ( el ) => window.getComputedStyle( el ).fontWeight );
 			expect( [ '700', '600', '800', '500' ] ).toContain( String( currentWeight ) );
 		} );
 	} );
 
-	for ( const widget of WIDGET_CONFIGS ) {
+	const widgetConfigs = [
+		{ type: 'e-heading', config: WIDGET_CONFIGS.HEADING },
+		{ type: 'e-paragraph', config: WIDGET_CONFIGS.PARAGRAPH },
+		{ type: 'e-button', config: WIDGET_CONFIGS.BUTTON },
+	];
+
+	for ( const widget of widgetConfigs ) {
 		test.describe( `${ widget.type } Widget-Specific Tests`, () => {
 			test( 'Font weight renders correctly in published page', async () => {
-				await setupWidgetWithTypography( widget.type );
-				await editor.v4Panel.setTypography( { fontWeight: '700' } );
-				await verifyFontWeightWithPublishing( widget.selector, '700' );
+				await setupWidgetWithTypography( setup.driver, widget.type );
+				await setup.driver.editor.v4Panel.style.typography.setTypography( { fontWeight: '700' } );
+				await verifyFontWeightWithPublishing( widget.config.selector, '700' );
 			} );
 		} );
 	}

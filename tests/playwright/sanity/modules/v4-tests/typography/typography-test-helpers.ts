@@ -1,7 +1,8 @@
-import { BrowserContext, Page, expect } from '@playwright/test';
-import EditorPage from '../../../../pages/editor-page';
-import WpAdminPage from '../../../../pages/wp-admin-page';
+import { Browser, expect, TestInfo } from '@playwright/test';
+import { DriverFactory } from '../../../../drivers/driver-factory';
+import { EditorDriver } from '../../../../drivers/editor-driver';
 import { timeouts } from '../../../../config/timeouts';
+import ApiRequests from '../../../../assets/api-requests';
 
 // Common constants
 export const EXPERIMENT_NAME = 'e_atomic_elements';
@@ -63,30 +64,24 @@ export const SPACING_VALUES = {
 	UNITS: [ 'px', 'em', 'rem', 'vw', 'vh', '%' ],
 };
 
-// Common test setup interface
+// Common test setup interface using new driver architecture
 export interface TypographyTestSetup {
-	editor: EditorPage;
-	wpAdmin: WpAdminPage;
-	context: BrowserContext;
-	page: Page;
+	driver: EditorDriver;
 }
 
-// Common setup function for all typography tests
+// Common setup function for all typography tests using new driver architecture
 export async function setupTypographyTestSuite(
-	browser: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-	apiRequests: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-	testInfo: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+	browser: Browser,
+	apiRequests?: ApiRequests,
+	testInfo?: TestInfo,
 ): Promise<TypographyTestSetup> {
-	const context = await browser.newContext();
-	const page = await context.newPage();
-	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-	await wpAdmin.setExperiments( { [ EXPERIMENT_NAME ]: 'active' } );
+	// Set experiments first
+	await DriverFactory.setExperiments( browser, { [ EXPERIMENT_NAME ]: 'active' }, testInfo, apiRequests );
 
+	// Create driver
+	const driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests );
 	return {
-		editor: null as any, // eslint-disable-line @typescript-eslint/no-explicit-any -- Will be set in beforeEach
-		wpAdmin,
-		context,
-		page,
+		driver,
 	};
 }
 
@@ -94,40 +89,44 @@ export async function setupTypographyTestSuite(
 export async function teardownTypographyTestSuite(
 	setup: TypographyTestSetup,
 ): Promise<void> {
-	await setup.wpAdmin.resetExperiments();
-	await setup.context.close();
+	await setup.driver.close();
 }
 
 // Common beforeEach function
 export async function beforeEachTypographyTest(
 	setup: TypographyTestSetup,
 ): Promise<void> {
-	setup.editor = await setup.wpAdmin.openNewPage();
-	await setup.editor.closeNavigatorIfOpen();
+	await setup.driver.setupBasicPage();
 }
 
-// Common helper function to setup widget and open typography section
+// Common helper function to setup widget and open typography section using driver
 export async function setupWidgetWithTypography(
-	editor: EditorPage,
+	driver: EditorDriver,
 	widgetType: string,
 ): Promise<{ containerId: string; widgetId: string }> {
-	const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-	const widgetId = await editor.addWidget( { widgetType, container: containerId } );
+	const result = await driver.setupPageWithWidget( widgetType );
 
-	await editor.openV2PanelTab( 'style' );
-	await editor.openV2Section( 'typography' );
-	await editor.v4Panel.waitForTypographyControls();
+	// Wait for the style panel to be ready
+	await driver.editor.openV2PanelTab( 'style' );
 
-	return { containerId, widgetId };
+	// Wait a bit for the panel to load
+	await driver.page.waitForTimeout( 1000 );
+	await driver.editor.openV2Section( 'typography' );
+	await driver.editor.v4Panel.style.typography.waitForTypographyControls();
+
+	return { containerId: result.containerId, widgetId: result.widgetId };
 }
 
 // Common helper function to verify font size
 export async function verifyFontSizePreview(
-	editor: EditorPage,
+	driver: EditorDriver,
 	selector: string,
 	expectedSize: string,
 ): Promise<void> {
-	const frame = editor.getPreviewFrame();
+	const frame = driver.editor.getPreviewFrame();
+	if ( ! frame ) {
+		throw new Error( 'Preview frame is not available' );
+	}
 	const element = frame.locator( selector );
 
 	await expect( element ).toBeVisible( { timeout: timeouts.expect } );
@@ -136,29 +135,28 @@ export async function verifyFontSizePreview(
 
 // Common helper function to verify font size with publishing
 export async function verifyFontSizeWithPublishing(
-	editor: EditorPage,
-	page: Page,
+	driver: EditorDriver,
 	selector: string,
 	expectedSize: string,
 ): Promise<void> {
-	await verifyFontSizePreview( editor, selector, expectedSize );
+	await verifyFontSizePreview( driver, selector, expectedSize );
 
 	// Publish and verify
-	await editor.publishAndViewPage();
+	await driver.editor.publishAndViewPage();
 
-	const publishedElement = page.locator( selector );
+	const publishedElement = driver.page.locator( selector );
 	await expect( publishedElement ).toBeVisible( { timeout: timeouts.navigation } );
 	await expect( publishedElement ).toHaveCSS( 'font-size', `${ expectedSize }px`, { timeout: timeouts.expect } );
 }
 
 // Common helper function to verify letter spacing
 export async function verifyLetterSpacing(
-	editor: EditorPage,
+	driver: EditorDriver,
 	selector: string,
 	expectedValue: number,
 	expectedUnit: string,
 ): Promise<void> {
-	const frame = editor.getPreviewFrame();
+	const frame = driver.editor.getPreviewFrame();
 	const element = frame.locator( selector );
 	await expect( element ).toBeVisible( { timeout: timeouts.expect } );
 
@@ -213,13 +211,16 @@ export async function verifyLetterSpacing(
 }
 
 // Common helper function to verify word spacing
-export async function verifyWordSpacing(
-	editor: EditorPage,
+export async function verifyWordSpacingEditor(
+	driver: EditorDriver,
 	selector: string,
 	expectedValue: number,
 	expectedUnit: string,
 ): Promise<void> {
-	const frame = editor.getPreviewFrame();
+	const frame = driver.editor.getPreviewFrame();
+	if ( ! frame ) {
+		throw new Error( 'Preview frame is not available' );
+	}
 	const element = frame.locator( selector );
 	await expect( element ).toBeVisible( { timeout: timeouts.expect } );
 
@@ -275,11 +276,14 @@ export async function verifyWordSpacing(
 
 // Common helper function to verify font family
 export async function verifyFontFamily(
-	editor: EditorPage,
+	driver: EditorDriver,
 	selector: string,
 	expectedFamily: string,
 ): Promise<void> {
-	const frame = editor.getPreviewFrame();
+	const frame = driver.editor.getPreviewFrame();
+	if ( ! frame ) {
+		throw new Error( 'Preview frame is not available' );
+	}
 	const element = frame.locator( selector );
 	await expect( element ).toBeVisible( { timeout: timeouts.expect } );
 
@@ -289,17 +293,16 @@ export async function verifyFontFamily(
 
 // Common helper function to verify font family with publishing
 export async function verifyFontFamilyWithPublishing(
-	editor: EditorPage,
-	page: Page,
+	driver: EditorDriver,
 	selector: string,
 	expectedFamily: string,
 ): Promise<void> {
-	await verifyFontFamily( editor, selector, expectedFamily );
+	await verifyFontFamily( driver, selector, expectedFamily );
 
 	// Publish and verify
-	await editor.publishAndViewPage();
+	await driver.editor.publishAndViewPage();
 
-	const publishedElement = page.locator( selector );
+	const publishedElement = driver.page.locator( selector );
 	await expect( publishedElement ).toBeVisible( { timeout: timeouts.navigation } );
 	const publishedComputedFamily = await publishedElement.evaluate( ( e ) => window.getComputedStyle( e ).fontFamily );
 	expect( publishedComputedFamily.toLowerCase() ).toContain( expectedFamily.toLowerCase() );
