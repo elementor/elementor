@@ -309,12 +309,15 @@ class Css_Processor {
 				);
 
 				if ( $converted_property ) {
-					$processing_result['global_classes'][ $class_name ]['properties'][] = [
-						'original_property' => $rule['property'],
-						'original_value' => $rule['value'],
-						'converted_property' => $converted_property,
-						'important' => $rule['important'],
-					];
+				// Debug logging
+				error_log( "CSS Processor: Converting {$rule['property']}:{$rule['value']} -> " . wp_json_encode( $converted_property ) );
+				
+				$processing_result['global_classes'][ $class_name ]['properties'][] = [
+					'original_property' => $rule['property'],
+					'original_value' => $rule['value'],
+					'converted_property' => $converted_property,
+					'important' => $rule['important'],
+				];
 					$processing_result['stats']['properties_converted']++;
 				}
 			} catch ( \Exception $e ) {

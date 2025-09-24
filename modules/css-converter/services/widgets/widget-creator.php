@@ -47,10 +47,21 @@ class Widget_Creator {
 				$this->process_css_variables( $css_processing_result['css_variables'] );
 			}
 
-			// Step 2: Create Global Classes (HVV: threshold = 1)
-			if ( $create_global_classes && ! empty( $css_processing_result['global_classes'] ) ) {
-				$this->create_global_classes( $css_processing_result['global_classes'] );
-			}
+		// Step 2: Create Global Classes (HVV: threshold = 1)
+		error_log( "Widget Creator: create_global_classes = " . ($create_global_classes ? 'true' : 'false') );
+		error_log( "Widget Creator: css_processing_result keys = " . implode(', ', array_keys($css_processing_result)) );
+		if ( isset( $css_processing_result['global_classes'] ) ) {
+			error_log( "Widget Creator: global_classes count = " . count($css_processing_result['global_classes']) );
+		} else {
+			error_log( "Widget Creator: global_classes key missing from css_processing_result" );
+		}
+		
+		if ( $create_global_classes && ! empty( $css_processing_result['global_classes'] ) ) {
+			error_log( "Widget Creator: Creating global classes..." );
+			$this->create_global_classes( $css_processing_result['global_classes'] );
+		} else {
+			error_log( "Widget Creator: Skipping global classes creation" );
+		}
 
 			// Step 3: Create or get post
 			$post_id = $this->ensure_post_exists( $post_id, $post_type );
@@ -162,16 +173,27 @@ class Widget_Creator {
 			if ( ! empty( $property_data['converted_property'] ) ) {
 				$converted = $property_data['converted_property'];
 				
+				// Debug logging
+				error_log( "Widget Creator: Converting property to global class props: " . wp_json_encode( $converted ) );
+				
 				// Handle the property mapper format: ['property' => 'name', 'value' => [...]]
 				if ( is_array( $converted ) && isset( $converted['property'] ) && isset( $converted['value'] ) ) {
-					$props[ $converted['property'] ] = $converted['value'];
+					$property_key = $converted['property'];
+					$atomic_value = $converted['value'];
+					
+					error_log( "Widget Creator: Setting props['{$property_key}'] = " . wp_json_encode( $atomic_value ) );
+					$props[ $property_key ] = $atomic_value;
 				} elseif ( is_array( $converted ) ) {
 					// Fallback: merge if it's already in the correct format
+					error_log( "Widget Creator: Merging converted properties (fallback): " . wp_json_encode( $converted ) );
 					$props = array_merge( $props, $converted );
+				} else {
+					error_log( "Widget Creator: Unexpected converted property format: " . wp_json_encode( $converted ) );
 				}
 			}
 		}
 
+		error_log( "Widget Creator: Final props result: " . wp_json_encode( $props ) );
 		return $props;
 	}
 
@@ -495,16 +517,18 @@ class Widget_Creator {
 	private function map_css_to_v4_props( $computed_styles ) {
 		$v4_props = [];
 
-		foreach ( $computed_styles as $property => $style_data ) {
-			// Extract the actual CSS value from the style data structure
-			$css_value = $style_data['value'] ?? $style_data;
-			
-			$v4_prop = $this->convert_css_property_to_v4( $property, $css_value );
-			if ( $v4_prop ) {
-				$v4_props[ $v4_prop['property'] ] = $v4_prop['value'];
+		foreach ( $computed_styles as $property => $atomic_value ) {
+			// computed_styles already contains atomic format: property_name => atomic_value
+			// No need for additional conversion - just use the atomic value directly
+			if ( is_array( $atomic_value ) && isset( $atomic_value['$$type'] ) ) {
+				$v4_props[ $property ] = $atomic_value;
+				error_log( "Widget Creator: Adding atomic prop {$property}: " . wp_json_encode( $atomic_value ) );
+			} else {
+				error_log( "Widget Creator: Skipping non-atomic prop {$property}: " . wp_json_encode( $atomic_value ) );
 			}
 		}
 
+		error_log( "Widget Creator: Final v4_props: " . wp_json_encode( $v4_props ) );
 		return $v4_props;
 	}
 
@@ -526,7 +550,13 @@ class Widget_Creator {
 		$mapper = $this->property_mapper_registry->resolve( $property, $value );
 		
 		if ( $mapper && method_exists( $mapper, 'map_to_v4_atomic' ) ) {
-			return $mapper->map_to_v4_atomic( $property, $value );
+			$atomic_result = $mapper->map_to_v4_atomic( $property, $value );
+			if ( $atomic_result ) {
+				return [
+					'property' => $property,
+					'value' => $atomic_result,
+				];
+			}
 		}
 		
 		// Fallback for properties not yet supported by unified mappers

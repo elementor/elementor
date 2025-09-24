@@ -21,6 +21,10 @@ class Module extends BaseModule {
 		$this->variables_route = $variables_route;
 		$this->classes_route = $classes_route;
 		$this->widgets_route = $widgets_route;
+		
+		// Reset property mapper registry to ensure fresh instances
+		$this->reset_property_mapper_registry();
+		
 		// Only initialize routes in non-test environments
 		if ( ! $this->is_test_environment() && ! $variables_route && ! $classes_route && ! $widgets_route ) {
 			$this->init_routes();
@@ -37,6 +41,13 @@ class Module extends BaseModule {
 	private function is_phpunit_ajax_request(): bool {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- This is for test environment detection only
 		return isset( $_POST['action'] ) && 'phpunit' === $_POST['action'];
+	}
+
+	private function reset_property_mapper_registry(): void {
+		// Reset the property mapper registry to ensure fresh instances with latest code
+		if ( class_exists( 'Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory' ) ) {
+			\Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory::reset();
+		}
 	}
 
 	private function init_routes(): void {
