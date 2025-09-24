@@ -1,4 +1,3 @@
-
 export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
 	HELLO_BIZ_CONTINUE: 'core_onboarding_s2_hellobiz',
@@ -31,117 +30,131 @@ export const ONBOARDING_STEP_NAMES = {
 	ONBOARDING_START: 'onboarding_start',
 };
 
-class EventDispatcher {
-	static canSendEvents() {
-		return elementorCommon?.config?.editor_events?.can_send_events || false;
-	}
+export function canSendEvents() {
+	return elementorCommon?.config?.editor_events?.can_send_events || false;
+}
 
-	static isEventsManagerAvailable() {
-		return elementorCommon?.eventsManager &&
-			'function' === typeof elementorCommon.eventsManager.dispatchEvent;
-	}
+export function isEventsManagerAvailable() {
+	return elementorCommon?.eventsManager &&
+		'function' === typeof elementorCommon.eventsManager.dispatchEvent;
+}
 
-	static dispatch( eventName, payload = {} ) {
-		if ( ! this.isEventsManagerAvailable() ) {
-			return false;
-		}
-
-		if ( ! this.canSendEvents() ) {
-			return false;
-		}
-
-		try {
-			const result = elementorCommon.eventsManager.dispatchEvent( eventName, payload );
-			return result;
-		} catch ( error ) {
-			return false;
-		}
-	}
-
-	static dispatchIfAllowed( eventName, payload = {} ) {
-		if ( this.canSendEvents() ) {
-			return this.dispatch( eventName, payload );
-		}
+export function dispatch( eventName, payload = {} ) {
+	if ( ! isEventsManagerAvailable() ) {
 		return false;
 	}
 
-	static createEventPayload( basePayload = {} ) {
-		return {
-			location: 'plugin_onboarding',
-			trigger: 'user_action',
-			...basePayload,
-		};
+	if ( ! canSendEvents() ) {
+		return false;
 	}
 
-	static createStepEventPayload( stepNumber, stepName, additionalData = {} ) {
-		return this.createEventPayload( {
-			step_number: stepNumber,
-			step_name: stepName,
-			...additionalData,
-		} );
-	}
-
-	static createEditorEventPayload( additionalData = {} ) {
-		return {
-			location: 'editor',
-			trigger: 'elementor_loaded',
-			...additionalData,
-		};
-	}
-
-	static dispatchStepEvent( eventName, stepNumber, stepName, additionalData = {} ) {
-		const payload = this.createStepEventPayload( stepNumber, stepName, additionalData );
-		return this.dispatch( eventName, payload );
-	}
-
-	static dispatchEditorEvent( eventName, additionalData = {} ) {
-		const payload = this.createEditorEventPayload( additionalData );
-		return this.dispatch( eventName, payload );
-	}
-
-	static getClickEventName( clickCount ) {
-		const eventMap = {
-			1: ONBOARDING_EVENTS_MAP.POST_ONBOARDING_1ST_CLICK,
-			2: ONBOARDING_EVENTS_MAP.POST_ONBOARDING_2ND_CLICK,
-			3: ONBOARDING_EVENTS_MAP.POST_ONBOARDING_3RD_CLICK,
-		};
-
-		return eventMap[ clickCount ] || null;
-	}
-
-	static dispatchClickEvent( clickCount, clickData, siteStarterChoice = null ) {
-		const eventName = this.getClickEventName( clickCount );
-		if ( ! eventName ) {
-			return false;
-		}
-
-		const clickNumber = this.getClickNumber( clickCount );
-		const eventData = this.createEditorEventPayload( {
-			editor_loaded_from_onboarding_source: siteStarterChoice,
-		} );
-
-		eventData[ `post_onboarding_${ clickNumber }_click_action_title` ] = clickData.title;
-		eventData[ `post_onboarding_${ clickNumber }_click_action_selector` ] = clickData.selector;
-
-		return this.dispatch( eventName, eventData );
-	}
-
-	static getClickNumber( clickCount ) {
-		const clickNumbers = { 1: 'first', 2: 'second', 3: 'third' };
-		return clickNumbers[ clickCount ] || 'unknown';
-	}
-
-	static addTimeSpentToPayload( payload, totalTimeSpent, stepTimeSpent = null ) {
-		if ( totalTimeSpent !== null && totalTimeSpent !== undefined ) {
-			payload.time_spent = `${ totalTimeSpent }s`;
-		}
-
-		if ( stepTimeSpent !== null && stepTimeSpent !== undefined ) {
-			payload.step_time_spent = `${ stepTimeSpent }s`;
-		}
-
-		return payload;
+	try {
+		const result = elementorCommon.eventsManager.dispatchEvent( eventName, payload );
+		return result;
+	} catch ( error ) {
+		return false;
 	}
 }
+
+export function dispatchIfAllowed( eventName, payload = {} ) {
+	if ( canSendEvents() ) {
+		return dispatch( eventName, payload );
+	}
+	return false;
+}
+
+export function createEventPayload( basePayload = {} ) {
+	return {
+		location: 'plugin_onboarding',
+		trigger: 'user_action',
+		...basePayload,
+	};
+}
+
+export function createStepEventPayload( stepNumber, stepName, additionalData = {} ) {
+	return createEventPayload( {
+		step_number: stepNumber,
+		step_name: stepName,
+		...additionalData,
+	} );
+}
+
+export function createEditorEventPayload( additionalData = {} ) {
+	return {
+		location: 'editor',
+		trigger: 'elementor_loaded',
+		...additionalData,
+	};
+}
+
+export function dispatchStepEvent( eventName, stepNumber, stepName, additionalData = {} ) {
+	const payload = createStepEventPayload( stepNumber, stepName, additionalData );
+	return dispatch( eventName, payload );
+}
+
+export function dispatchEditorEvent( eventName, additionalData = {} ) {
+	const payload = createEditorEventPayload( additionalData );
+	return dispatch( eventName, payload );
+}
+
+export function getClickEventName( clickCount ) {
+	const eventMap = {
+		1: ONBOARDING_EVENTS_MAP.POST_ONBOARDING_1ST_CLICK,
+		2: ONBOARDING_EVENTS_MAP.POST_ONBOARDING_2ND_CLICK,
+		3: ONBOARDING_EVENTS_MAP.POST_ONBOARDING_3RD_CLICK,
+	};
+
+	return eventMap[ clickCount ] || null;
+}
+
+export function dispatchClickEvent( clickCount, clickData, siteStarterChoice = null ) {
+	const eventName = getClickEventName( clickCount );
+	if ( ! eventName ) {
+		return false;
+	}
+
+	const clickNumber = getClickNumber( clickCount );
+	const eventData = createEditorEventPayload( {
+		editor_loaded_from_onboarding_source: siteStarterChoice,
+	} );
+
+	eventData[ `post_onboarding_${ clickNumber }_click_action_title` ] = clickData.title;
+	eventData[ `post_onboarding_${ clickNumber }_click_action_selector` ] = clickData.selector;
+
+	return dispatch( eventName, eventData );
+}
+
+export function getClickNumber( clickCount ) {
+	const clickNumbers = { 1: 'first', 2: 'second', 3: 'third' };
+	return clickNumbers[ clickCount ] || 'unknown';
+}
+
+export function addTimeSpentToPayload( payload, totalTimeSpent, stepTimeSpent = null ) {
+	if ( totalTimeSpent !== null && totalTimeSpent !== undefined ) {
+		payload.time_spent = `${ totalTimeSpent }s`;
+	}
+
+	if ( stepTimeSpent !== null && stepTimeSpent !== undefined ) {
+		payload.step_time_spent = `${ stepTimeSpent }s`;
+	}
+
+	return payload;
+}
+
+const EventDispatcher = {
+	canSendEvents,
+	isEventsManagerAvailable,
+	dispatch,
+	dispatchIfAllowed,
+	createEventPayload,
+	createStepEventPayload,
+	createEditorEventPayload,
+	dispatchStepEvent,
+	dispatchEditorEvent,
+	getClickEventName,
+	dispatchClickEvent,
+	getClickNumber,
+	addTimeSpentToPayload,
+};
 
 export default EventDispatcher;

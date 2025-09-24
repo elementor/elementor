@@ -1,4 +1,3 @@
-
 export const ONBOARDING_STORAGE_KEYS = {
 	START_TIME: 'elementor_onboarding_start_time',
 	INITIATED: 'elementor_onboarding_initiated',
@@ -25,151 +24,168 @@ export const ONBOARDING_STORAGE_KEYS = {
 	PENDIND_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
 };
 
-class StorageManager {
-	static getString( key ) {
-		return localStorage.getItem( key );
+export function getString( key ) {
+	return localStorage.getItem( key );
+}
+
+export function setString( key, value ) {
+	localStorage.setItem( key, value );
+}
+
+export function remove( key ) {
+	localStorage.removeItem( key );
+}
+
+export function getObject( key ) {
+	const storedString = getString( key );
+	if ( ! storedString ) {
+		return null;
 	}
 
-	static setString( key, value ) {
-		localStorage.setItem( key, value );
-	}
-
-	static remove( key ) {
-		localStorage.removeItem( key );
-	}
-
-	static getObject( key ) {
-		const storedString = this.getString( key );
-		if ( ! storedString ) {
-			return null;
-		}
-
-		try {
-			return JSON.parse( storedString );
-		} catch ( error ) {
-			return null;
-		}
-	}
-
-	static setObject( key, value ) {
-		try {
-			const jsonString = JSON.stringify( value );
-			this.setString( key, jsonString );
-			return true;
-		} catch ( error ) {
-			return false;
-		}
-	}
-
-	static getArray( key ) {
-		const storedArray = this.getObject( key );
-		return Array.isArray( storedArray ) ? storedArray : [];
-	}
-
-	static appendToArray( key, item ) {
-		const existingArray = this.getArray( key );
-		existingArray.push( item );
-		return this.setObject( key, existingArray );
-	}
-
-	static getNumber( key, defaultValue = 0 ) {
-		const storedString = this.getString( key );
-		if ( ! storedString ) {
-			return defaultValue;
-		}
-
-		const parsed = parseInt( storedString, 10 );
-		return isNaN( parsed ) ? defaultValue : parsed;
-	}
-
-	static setNumber( key, value ) {
-		this.setString( key, value.toString() );
-	}
-
-	static incrementNumber( key, increment = 1 ) {
-		const currentValue = this.getNumber( key );
-		const newValue = currentValue + increment;
-		this.setNumber( key, newValue );
-		return newValue;
-	}
-
-	static exists( key ) {
-		return this.getString( key ) !== null;
-	}
-
-	static clearMultiple( keys ) {
-		keys.forEach( ( key ) => this.remove( key ) );
-	}
-
-	static clearAllOnboardingData() {
-		const keysToRemove = [
-			ONBOARDING_STORAGE_KEYS.START_TIME,
-			ONBOARDING_STORAGE_KEYS.INITIATED,
-			ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS,
-			ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS,
-			ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS,
-			ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS,
-			ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE,
-			ONBOARDING_STORAGE_KEYS.STEP4_HAS_PREVIOUS_CLICK,
-			ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED,
-			ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT,
-			ONBOARDING_STORAGE_KEYS.PENDING_SKIP,
-			ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS,
-			ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT,
-			ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
-			ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS,
-			ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
-		];
-
-		this.clearMultiple( keysToRemove );
-
-		for ( let i = 1; i <= 4; i++ ) {
-			const clickDataKey = `elementor_onboarding_click_${ i }_data`;
-			this.remove( clickDataKey );
-		}
-	}
-
-	static getStepStartTime( stepNumber ) {
-		const stepStartTimeKeys = {
-			1: ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
-			2: ONBOARDING_STORAGE_KEYS.STEP2_START_TIME,
-			3: ONBOARDING_STORAGE_KEYS.STEP3_START_TIME,
-			4: ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
-		};
-
-		const key = stepStartTimeKeys[ stepNumber ];
-		return key ? this.getNumber( key ) : null;
-	}
-
-	static setStepStartTime( stepNumber, timestamp ) {
-		const stepStartTimeKeys = {
-			1: ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
-			2: ONBOARDING_STORAGE_KEYS.STEP2_START_TIME,
-			3: ONBOARDING_STORAGE_KEYS.STEP3_START_TIME,
-			4: ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
-		};
-
-		const key = stepStartTimeKeys[ stepNumber ];
-		if ( key ) {
-			this.setNumber( key, timestamp );
-			return true;
-		}
-		return false;
-	}
-
-	static clearStepStartTime( stepNumber ) {
-		const stepStartTimeKeys = {
-			1: ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
-			2: ONBOARDING_STORAGE_KEYS.STEP2_START_TIME,
-			3: ONBOARDING_STORAGE_KEYS.STEP3_START_TIME,
-			4: ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
-		};
-
-		const key = stepStartTimeKeys[ stepNumber ];
-		if ( key ) {
-			this.remove( key );
-		}
+	try {
+		return JSON.parse( storedString );
+	} catch ( error ) {
+		return null;
 	}
 }
+
+export function setObject( key, value ) {
+	try {
+		const jsonString = JSON.stringify( value );
+		setString( key, jsonString );
+		return true;
+	} catch ( error ) {
+		return false;
+	}
+}
+
+export function getArray( key ) {
+	const storedArray = getObject( key );
+	return Array.isArray( storedArray ) ? storedArray : [];
+}
+
+export function appendToArray( key, item ) {
+	const existingArray = getArray( key );
+	existingArray.push( item );
+	return setObject( key, existingArray );
+}
+
+export function getNumber( key, defaultValue = 0 ) {
+	const storedString = getString( key );
+	if ( ! storedString ) {
+		return defaultValue;
+	}
+
+	const parsed = parseInt( storedString, 10 );
+	return isNaN( parsed ) ? defaultValue : parsed;
+}
+
+export function setNumber( key, value ) {
+	setString( key, value.toString() );
+}
+
+export function incrementNumber( key, increment = 1 ) {
+	const currentValue = getNumber( key );
+	const newValue = currentValue + increment;
+	setNumber( key, newValue );
+	return newValue;
+}
+
+export function exists( key ) {
+	return getString( key ) !== null;
+}
+
+export function clearMultiple( keys ) {
+	keys.forEach( ( key ) => remove( key ) );
+}
+
+export function clearAllOnboardingData() {
+	const keysToRemove = [
+		ONBOARDING_STORAGE_KEYS.START_TIME,
+		ONBOARDING_STORAGE_KEYS.INITIATED,
+		ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS,
+		ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS,
+		ONBOARDING_STORAGE_KEYS.STEP3_ACTIONS,
+		ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS,
+		ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE,
+		ONBOARDING_STORAGE_KEYS.STEP4_HAS_PREVIOUS_CLICK,
+		ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED,
+		ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT,
+		ONBOARDING_STORAGE_KEYS.PENDING_SKIP,
+		ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS,
+		ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT,
+		ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
+		ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS,
+		ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
+	];
+
+	clearMultiple( keysToRemove );
+
+	for ( let i = 1; i <= 4; i++ ) {
+		const clickDataKey = `elementor_onboarding_click_${ i }_data`;
+		remove( clickDataKey );
+	}
+}
+
+export function getStepStartTime( stepNumber ) {
+	const stepStartTimeKeys = {
+		1: ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
+		2: ONBOARDING_STORAGE_KEYS.STEP2_START_TIME,
+		3: ONBOARDING_STORAGE_KEYS.STEP3_START_TIME,
+		4: ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
+	};
+
+	const key = stepStartTimeKeys[ stepNumber ];
+	return key ? getNumber( key ) : null;
+}
+
+export function setStepStartTime( stepNumber, timestamp ) {
+	const stepStartTimeKeys = {
+		1: ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
+		2: ONBOARDING_STORAGE_KEYS.STEP2_START_TIME,
+		3: ONBOARDING_STORAGE_KEYS.STEP3_START_TIME,
+		4: ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
+	};
+
+	const key = stepStartTimeKeys[ stepNumber ];
+	if ( key ) {
+		setNumber( key, timestamp );
+		return true;
+	}
+	return false;
+}
+
+export function clearStepStartTime( stepNumber ) {
+	const stepStartTimeKeys = {
+		1: ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
+		2: ONBOARDING_STORAGE_KEYS.STEP2_START_TIME,
+		3: ONBOARDING_STORAGE_KEYS.STEP3_START_TIME,
+		4: ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
+	};
+
+	const key = stepStartTimeKeys[ stepNumber ];
+	if ( key ) {
+		remove( key );
+	}
+}
+
+const StorageManager = {
+	getString,
+	setString,
+	remove,
+	getObject,
+	setObject,
+	getArray,
+	appendToArray,
+	getNumber,
+	setNumber,
+	incrementNumber,
+	exists,
+	clearMultiple,
+	clearAllOnboardingData,
+	getStepStartTime,
+	setStepStartTime,
+	clearStepStartTime,
+};
 
 export default StorageManager;

@@ -1,15 +1,16 @@
-
 import StorageManager, { ONBOARDING_STORAGE_KEYS } from './storage-manager.js';
 import EventDispatcher from './event-dispatcher.js';
 
 class ClickTracker {
-	static DEDUPLICATION_WINDOW_MS = 1000;
-	static MAX_CLICKS = 3;
-	static lastClickTime = 0;
-	static lastClickElement = null;
-	static clickHandler = null;
+	constructor() {
+		this.DEDUPLICATION_WINDOW_MS = 1000;
+		this.MAX_CLICKS = 3;
+		this.lastClickTime = 0;
+		this.lastClickElement = null;
+		this.clickHandler = null;
+	}
 
-	static setupClickTracking() {
+	setupClickTracking() {
 		if ( this.clickHandler ) {
 			return;
 		}
@@ -21,7 +22,7 @@ class ClickTracker {
 		document.addEventListener( 'click', this.clickHandler, true );
 	}
 
-	static trackClick( event ) {
+	trackClick( event ) {
 		const currentCount = StorageManager.getNumber( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT );
 
 		if ( currentCount >= this.MAX_CLICKS ) {
@@ -55,7 +56,7 @@ class ClickTracker {
 		}
 	}
 
-	static shouldTrackClick( target ) {
+	shouldTrackClick( target ) {
 		if ( ! target || ! target.tagName ) {
 			return false;
 		}
@@ -79,7 +80,7 @@ class ClickTracker {
 		return hasClickableRole || hasClickableClass || hasClickHandler;
 	}
 
-	static isDuplicateClick( target, timeSinceLastClick ) {
+	isDuplicateClick( target, timeSinceLastClick ) {
 		if ( timeSinceLastClick > this.DEDUPLICATION_WINDOW_MS ) {
 			return false;
 		}
@@ -87,7 +88,7 @@ class ClickTracker {
 		return target === this.lastClickElement;
 	}
 
-	static extractClickData( element ) {
+	extractClickData( element ) {
 		const title = this.findMeaningfulTitle( element );
 		const selector = this.generateSelector( element );
 
@@ -97,7 +98,7 @@ class ClickTracker {
 		};
 	}
 
-	static findMeaningfulTitle( element ) {
+	findMeaningfulTitle( element ) {
 		const titleSources = [
 			() => element.getAttribute( 'title' ),
 			() => element.getAttribute( 'aria-label' ),
@@ -117,7 +118,7 @@ class ClickTracker {
 		return element.tagName.toLowerCase();
 	}
 
-	static generateSelector( element ) {
+	generateSelector( element ) {
 		const parts = [];
 		let current = element;
 
@@ -147,7 +148,7 @@ class ClickTracker {
 		return parts.join( ' > ' );
 	}
 
-	static storeClickData( clickCount, clickData ) {
+	storeClickData( clickCount, clickData ) {
 		const dataKey = `elementor_onboarding_click_${ clickCount }_data`;
 		const dataToStore = {
 			...clickData,
@@ -158,12 +159,12 @@ class ClickTracker {
 		StorageManager.setObject( dataKey, dataToStore );
 	}
 
-	static getStoredClickData( clickCount ) {
+	getStoredClickData( clickCount ) {
 		const dataKey = `elementor_onboarding_click_${ clickCount }_data`;
 		return StorageManager.getObject( dataKey );
 	}
 
-	static dispatchClickEvent( clickCount ) {
+	dispatchClickEvent( clickCount ) {
 		const storedClickData = this.getStoredClickData( clickCount );
 		if ( ! storedClickData ) {
 			return;
@@ -180,7 +181,7 @@ class ClickTracker {
 		EventDispatcher.dispatchClickEvent( clickCount, storedClickData, siteStarterChoice );
 	}
 
-	static cleanup() {
+	cleanup() {
 		if ( this.clickHandler ) {
 			document.removeEventListener( 'click', this.clickHandler, true );
 			this.clickHandler = null;
@@ -188,8 +189,10 @@ class ClickTracker {
 		StorageManager.clearAllOnboardingData();
 	}
 
-	static silentlyIgnoreTrackingErrors() {
+	silentlyIgnoreTrackingErrors() {
 	}
 }
 
-export default ClickTracker;
+const clickTracker = new ClickTracker();
+
+export default clickTracker;
