@@ -6,6 +6,7 @@ import ChecklistItem from './checklist-item';
 import Button from './button';
 import { useCallback, useContext, useRef } from 'react';
 import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
+import StorageManager, { ONBOARDING_STORAGE_KEYS } from '../utils/modules/storage-manager.js';
 
 export default function GoProPopover( props ) {
 	const { state, updateState } = useContext( OnboardingContext );
@@ -24,7 +25,7 @@ export default function GoProPopover( props ) {
 
 		upgradeButtonRef.current = buttonElement;
 
-		return OnboardingEventTracking.setupSingleUpgradeButtonTracking( buttonElement, state.currentStep );
+		return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, state.currentStep );
 	}, [ state.currentStep ] );
 
 	// Handle the Pro Upload popup window.
@@ -50,11 +51,11 @@ export default function GoProPopover( props ) {
 			}
 
 			trackUpgradeAction();
-			OnboardingEventTracking.cancelDelayedNoClickEvent();
+			StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
 			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 
 			if ( stepNumber ) {
-				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'already_pro_user' );
+				OnboardingEventTracking.sendEventDirect( 'TOP_UPGRADE', { currentStep: stepNumber, upgradeClicked: 'already_pro_user' } );
 			}
 
 			elementorCommon.events.dispatchEvent( {
@@ -106,11 +107,11 @@ export default function GoProPopover( props ) {
 				}
 
 				trackUpgradeAction();
-				OnboardingEventTracking.cancelDelayedNoClickEvent();
+				StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
 				const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 
 				if ( stepNumber ) {
-					OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
+					OnboardingEventTracking.sendEventDirect( 'TOP_UPGRADE', { currentStep: stepNumber, upgradeClicked: 'on_tooltip' } );
 				}
 
 				elementorCommon.events.dispatchEvent( {

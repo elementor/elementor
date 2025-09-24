@@ -42,7 +42,7 @@ export default function HelloTheme() {
 			goToNextScreen();
 		}
 
-		OnboardingEventTracking.setupTopUpgradeTracking( state.currentStep );
+		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
 		OnboardingEventTracking.onStepLoad( 2 );
 	}, [] );
 

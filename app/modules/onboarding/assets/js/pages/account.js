@@ -30,7 +30,7 @@ export default function Account() {
 			);
 		}
 
-		OnboardingEventTracking.setupTopUpgradeTracking( state.currentStep );
+		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
 		OnboardingEventTracking.onStepLoad( 1 );
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
@@ -42,7 +42,7 @@ export default function Account() {
 			text: __( 'Skip setup', 'elementor' ),
 			action: () => {
 				OnboardingEventTracking.trackStepAction( 1, 'skip' );
-				OnboardingEventTracking.sendOnboardingSkip( 1 );
+				OnboardingEventTracking.sendEventOrStore( 'SKIP', { currentStep: 1 } );
 				OnboardingEventTracking.sendStepEndState( 1 );
 
 				safeDispatchEvent(
@@ -125,7 +125,7 @@ export default function Account() {
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
 			OnboardingEventTracking.trackStepAction( 1, 'create' );
-			OnboardingEventTracking.sendCreateMyAccount( 1, 'main_cta' );
+			OnboardingEventTracking.sendEventDirect( 'CREATE_MY_ACCOUNT', { currentStep: 1, createAccountClicked: 'main_cta' } );
 
 			safeDispatchEvent(
 				'new_account_connect',
@@ -233,7 +233,7 @@ export default function Account() {
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
 								onClick={ () => {
 									OnboardingEventTracking.trackStepAction( 1, 'connect' );
-									OnboardingEventTracking.sendStep1ClickedConnect( state.currentStep );
+									OnboardingEventTracking.sendEventDirect( 'STEP1_CLICKED_CONNECT', { currentStep: state.currentStep } );
 
 									safeDispatchEvent(
 										'existing_account_connect',

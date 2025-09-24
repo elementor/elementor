@@ -92,7 +92,7 @@ export default function ChooseFeatures() {
 	}, [ selectedFeatures, tiers.advanced, tiers.essential ] );
 
 	useEffect( () => {
-		OnboardingEventTracking.setupTopUpgradeTracking( state.currentStep );
+		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
 		OnboardingEventTracking.onStepLoad( 3 );
 	}, [ state.currentStep ] );
 

@@ -20,7 +20,7 @@ export default function Layout( props ) {
 			return;
 		}
 
-		return OnboardingEventTracking.setupSingleUpgradeButtonTracking( buttonElement, stepNumber );
+		return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, stepNumber );
 	}, [ stepNumber ] );
 
 	const { state, updateState } = useContext( OnboardingContext );
@@ -65,7 +65,7 @@ export default function Layout( props ) {
 			target: '_blank',
 			rel: 'opener',
 			onClick: () => {
-				OnboardingEventTracking.sendCreateMyAccount( stepNumber, 'topbar' );
+				OnboardingEventTracking.sendEventDirect( 'CREATE_MY_ACCOUNT', { currentStep: stepNumber, createAccountClicked: 'topbar' } );
 
 				elementorCommon.events.dispatchEvent( {
 					event: 'create account',
@@ -114,7 +114,7 @@ export default function Layout( props ) {
 			elRef: goProButtonRef,
 			onClick: () => {
 				OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
-				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_topbar' );
+				OnboardingEventTracking.sendEventDirect( 'TOP_UPGRADE', { currentStep: stepNumber, upgradeClicked: 'on_topbar' } );
 
 				elementorCommon.events.dispatchEvent( {
 					event: 'go pro',
