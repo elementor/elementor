@@ -37,6 +37,8 @@ class Module extends BaseModule {
 
 	const KIT_LIBRARY_ERROR_KEY = 'invalid-kit-library-zip-error';
 
+	const CLOUD_KIT_LIBRARY_ERROR_LOADING_RESOURCE = 'error-loading-resource';
+
 	const NO_WRITE_PERMISSIONS_KEY = 'no-write-permissions';
 
 	const THIRD_PARTY_ERROR = 'third-party-error';
@@ -130,7 +132,7 @@ class Module extends BaseModule {
 	 * Render the import/export tab content.
 	 */
 	private function render_import_export_tab_content() {
-		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) && CloudKitLibrary::get_app()->check_eligibility()['is_eligible'];
+		$is_cloud_kits_available = CloudKitLibrary::get_app()->check_eligibility()['is_eligible'];
 
 		$content_data = [
 			'export' => [
@@ -168,11 +170,12 @@ class Module extends BaseModule {
 		$user_time_format = get_option( 'time_format' );
 		$date_format = $user_date_format . ' ' . $user_time_format;
 
-		$should_show_revert_section = $this->should_show_revert_section( $last_imported_kit );
+		$should_show_revert_section = ! empty( $last_imported_kit );
 
 		if ( $should_show_revert_section ) {
 			if ( ! empty( $penultimate_imported_kit ) ) {
 				$revert_text = sprintf(
+					/* translators: 1: kit title, 2: date, 3: line break, 4: kit title, 5: date. */
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s %3$s and revert to the site setting that came with "%4$s" on %5$s.', 'elementor' ),
 					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
@@ -182,6 +185,7 @@ class Module extends BaseModule {
 				);
 			} else {
 				$revert_text = sprintf(
+					/* translators: 1: kit title, 2: date, 3: line break */
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s.%3$s Your original site settings will be restored.', 'elementor' ),
 					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
@@ -235,41 +239,28 @@ class Module extends BaseModule {
 	}
 
 	private function print_item_content( $data ) {
-		$is_cloud_kits_feature_active = Plugin::$instance->experiments->is_feature_active( 'cloud-library' );
-
-		if ( $is_cloud_kits_feature_active ) { ?>
-			<div class="tab-import-export-kit__container">
-				<div class="tab-import-export-kit__box">
-					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-				</div>
-				<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
-
-				<?php if ( ! empty( $data['link'] ) ) : ?>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
-				<?php endif; ?>
-				<div class="tab-import-export-kit__box action-buttons">
-					<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
-						<a <?php ElementorUtils::print_html_attributes( [ 'id' => $data['button_secondary']['id'] ] ); ?> href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
-							<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
-						</a>
-					<?php endif; ?>
-					<a <?php ElementorUtils::print_html_attributes( [ 'id' => $data['secondary']['id'] ] ); ?> href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
-						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
-					</a>
-				</div>
+		?>
+		<div class="tab-import-export-kit__container">
+			<div class="tab-import-export-kit__box">
+				<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
 			</div>
-		<?php } else { ?>
-			<div class="tab-import-export-kit__container">
-				<div class="tab-import-export-kit__box">
-					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
-						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
-					</a>
-				</div>
-				<p><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+			<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+
+			<?php if ( ! empty( $data['link'] ) ) : ?>
 				<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+			<?php endif; ?>
+			<div class="tab-import-export-kit__box action-buttons">
+				<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
+					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
+						<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
+					</a>
+				<?php endif; ?>
+				<a <?php ElementorUtils::print_html_attributes( [ 'id' => $data['button']['id'] ] ); ?> href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
+					<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
+				</a>
 			</div>
-		<?php }
+		</div>
+		<?php
 	}
 
 	private function get_revert_href(): string {
@@ -335,7 +326,7 @@ class Module extends BaseModule {
 	 * @param string $referrer Referrer of the file 'local' or 'kit-library'.
 	 * @param string $kit_id
 	 * @return array
-	 * @throws \Exception
+	 * @throws \Exception If customization validation fails or processing errors occur.
 	 */
 	public function upload_kit( $file, $referrer, $kit_id = null ) {
 		$this->ensure_writing_permissions();
@@ -363,11 +354,11 @@ class Module extends BaseModule {
 	 * so it will be available to use in different places such as: WP_Cli, Pro, etc.
 	 *
 	 * @param string $path Path to the file or session_id.
-	 * @param array $settings Settings the import use to determine which content to import.
-	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
-	 * @param bool $split_to_chunks Determine if the import process should be split into chunks.
+	 * @param array  $settings Settings the import use to determine which content to import.
+	 *               (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
+	 * @param bool   $split_to_chunks Determine if the import process should be split into chunks.
 	 * @return array
-	 * @throws \Exception
+	 * @throws \Exception If export configuration is invalid or processing fails.
 	 */
 	public function import_kit( string $path, array $settings, bool $split_to_chunks = false ): array {
 		$this->ensure_writing_permissions();
@@ -400,7 +391,7 @@ class Module extends BaseModule {
 	 * @return array Two types of response.
 	 *      1. The status and the runner name.
 	 *      2. The imported data. (Only if the runner is the last one in the import process)
-	 * @throws \Exception
+	 * @throws \Exception If export configuration is invalid or processing fails.
 	 */
 	public function import_kit_by_runner( string $session_id, string $runner_name ): array {
 		// Check session_id
@@ -425,7 +416,7 @@ class Module extends BaseModule {
 	 * @param array $settings Settings the export use to determine which content to export.
 	 *      (e.g: include, kit_info, selected_plugins, selected_cpt, etc.)
 	 * @return array
-	 * @throws \Exception
+	 * @throws \Exception If export configuration is invalid or processing fails.
 	 */
 	public function export_kit( array $settings ) {
 		$this->ensure_writing_permissions();
@@ -607,6 +598,10 @@ class Module extends BaseModule {
 			'kitPreviewNonce' => wp_create_nonce( 'kit_thumbnail' ),
 			'restApiBaseUrl' => Controller::get_base_url(),
 			'uiTheme' => $this->get_elementor_ui_theme_preference(),
+			'exportGroups' => $this->get_export_groups(),
+			'manifestVersion' => self::FORMAT_VERSION,
+			'elementorVersion' => ELEMENTOR_VERSION,
+			'upgradeVersionUrl' => admin_url( 'plugins.php' ),
 		];
 	}
 
@@ -614,6 +609,17 @@ class Module extends BaseModule {
 		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
 
 		return $editor_preferences->get_model()->get_settings( 'ui_theme' );
+	}
+
+	private function get_export_groups() {
+		$export_groups = [];
+		$document_types = Plugin::$instance->documents->get_document_types();
+
+		foreach ( $document_types as $name => $document_type ) {
+			$export_groups[ $name ] = defined( $document_type . '::EXPORT_GROUP' ) ? $document_type::EXPORT_GROUP : '';
+		}
+
+		return $export_groups;
 	}
 
 	/**
@@ -664,39 +670,7 @@ class Module extends BaseModule {
 			}
 		}
 
-		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		foreach ( $active_kit->get_tabs() as $key => $tab ) {
-			$summary_titles['site-settings'][ $key ] = $tab->get_title();
-		}
-
-		$summary_titles['site-settings']['theme'] = esc_html__( 'Theme', 'elementor' );
-		$summary_titles['site-settings']['experiments'] = esc_html__( 'Experiments', 'elementor' );
-
 		return $summary_titles;
-	}
-
-	public function should_show_revert_section( $last_imported_kit ) {
-		if ( empty( $last_imported_kit ) ) {
-			return false;
-		}
-
-		// TODO: BC - remove in the future
-		// The 'templates' runner was in core and moved to the Pro plugin. (Part of it still exits in the Core for BC)
-		// The runner that is in the core version is missing the revert functionality,
-		// therefore we shouldn't display the revert section if the import process done with the core version.
-		$is_import_templates_ran = isset( $last_imported_kit['runners']['templates'] );
-		if ( $this->has_pro() && $is_import_templates_ran ) {
-			$has_imported_templates = ! empty( $last_imported_kit['runners']['templates'] );
-
-			return $has_imported_templates;
-		}
-
-		return true;
-	}
-
-	public function has_pro(): bool {
-		return ElementorUtils::has_pro();
 	}
 
 	private function get_elementor_editor_home_page_url() {
@@ -762,11 +736,11 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * @param string $class
+	 * @param string $class_name
 	 *
 	 * @return bool
 	 */
-	public function is_third_party_class( $class ) {
+	public function is_third_party_class( $class_name ) {
 		$allowed_classes = [
 			'Elementor\\',
 			'ElementorPro\\',
@@ -775,7 +749,7 @@ class Module extends BaseModule {
 		];
 
 		foreach ( $allowed_classes as $allowed_class ) {
-			if ( str_starts_with( $class, $allowed_class ) ) {
+			if ( str_starts_with( $class_name, $allowed_class ) ) {
 				return false;
 			}
 		}

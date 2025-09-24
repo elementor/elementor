@@ -34,7 +34,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function validate( $value ): bool {
-		if ( is_null( $value ) ) {
+		if ( is_null( $value ) || ( $this->is_transformable( $value ) && empty( $value['value'] ) ) ) {
 			return ! $this->is_required();
 		}
 

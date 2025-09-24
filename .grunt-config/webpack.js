@@ -69,13 +69,13 @@ const frontendRulesPresets = [ [
 		targets: {
 			browsers: [
 				'last 3 versions',
-				'Chrome >= 100',
-				'Firefox >= 100',
-				'Edge >= 100',
-				'Safari >= 15.5',
-				'iOS >= 15.5',
-				'Android >= 100',
-				'ChromeAndroid >= 100',
+				'Chrome >= 111',
+				'Firefox >= 111',
+				'Edge >= 111',
+				'Safari >= 16.4',
+				'iOS >= 16.4',
+				'Android >= 111',
+				'ChromeAndroid >= 111',
 				'not dead',
 			],
 		},
@@ -141,7 +141,9 @@ const entry = {
 	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
 	'editor-v4-opt-in': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/opt-in-page/app.js'),
 	'editor-v4-welcome-opt-in': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/welcome-screen/app.js'),
+	'pro-free-trial-popup': path.resolve( __dirname, '../modules/pro-free-trial-popup/assets/js/pro-free-trial-popup.js'),
 	'editor-v4-opt-in-alphachip': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/panel-chip/panel-chip.js' ),
+	'e-react-promotions': path.resolve( __dirname, '../modules/promotions/assets/js/react/index.js' ),
 	'e-wc-product-editor': path.resolve( __dirname, '../modules/wc-product-editor/assets/js/e-wc-product-editor.js' ),
 	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 	'cloud-library-screenshot': path.resolve( __dirname, '../modules/cloud-library/assets/js/preview/screenshot.js' ),
@@ -151,6 +153,7 @@ const frontendEntries = {
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
 	'youtube-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-youtube/youtube-handler.js' ),
+	'tabs-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/atomic-tabs-handler.js' ),
 };
 
 const externals = [
@@ -283,6 +286,10 @@ const prodSharedConfig = {
 		filename: '[name].js',
 	},
 	performance: { hints: false },
+	cache: {
+		type: 'filesystem',
+    	allowCollectingMemory: true,
+	}
 };
 
 const webpackProductionConfig = [

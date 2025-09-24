@@ -348,44 +348,42 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.31.1 - 2025-08-06 =
+= 3.32.2 - 2025-09-18 =
 
-* Tweak: Updated `form-data` package version
-* Fix: Custom order field disappeared when set to 0 or cleared - Editor V4
+* Tweak: Improved compatibility for 3rd-party plugins serving templates
+* Fix: Structure Panel indicators not visible in RTL layouts
+* Fix: Issues with loading Google Fonts when enabling or disabling Load Google Fonts Locally option ([#32795](https://github.com/elementor/elementor/issues/32795))
+* Fix: Background videos not displaying correctly on RTL websites
 
-= 3.31.0 - 2025-08-05 =
+= 3.32.1 - 2025-09-16 =
 
-* New: Introducing Variables - define reusable color and font values to ensure consistent and scalable design across your site - Editor V4
-* New: Introducing Inherited Values - style properties now indicate when values are inherited from Classes or Base styles - Editor V4
-* New: Introducing Filters - add visual effects like blur, brightness, and contrast with full design control - Editor V4
-* New: Introducing Backdrop Filters - apply visual effects behind elements for layered design - Editor V4
-* New: Introducing Divider - a modular layout element for visual separation - Editor V4
-* New: Class Usage Overview – gain insights into class usage directly from the Class Manager - Editor V4
-* New: Class Locator - locate all elements using a specific class across your design - Editor V4
-* Tweak: Removed background videos from the accessibility tree to improve screen reader behavior ([#23880](https://github.com/elementor/elementor/issues/23880))
-* Tweak: Search by Class name - quickly locate existing classes in the Class Manager - Editor V4
-* Tweak: Improved style detection across breakpoints when using Classes - Editor V4
-* Tweak: Added Custom option to Object Position in Size section - Editor V4
-* Tweak: Added ID control in YouTube element - Editor V4
-* Tweak: Added Opacity control - set element transparency - Editor V4
-* Tweak: Display Base Style indication - clearly shows when Base styles are applied to an element - Editor V4
-* Tweak: Improved drag and drop behavior into Flexbox and Div Blocks inside the Canvas - Editor V4
-* Tweak: Replaced select control with a visual choice control in Shape Dividers
-* Tweak: Replaced SASS mixins and functions with native CSS logical properties
-* Tweak: Added support for `lh` and `rlh` CSS units in Typography Line Height control
-* Tweak: Added responsive capabilities to Custom Mask
-* Tweak: Activated "Element Caching" experiment for all sites
-* Tweak: Updated Icon List widget to use CSS logical properties
-* Tweak: Updated Star Rating widget to use CSS logical properties
-* Tweak: Updated Alert widget to use CSS logical properties
-* Tweak: Updated Accordion widget to use CSS logical properties
-* Tweak: Updated Toggle widget to use CSS logical properties
-* Tweak: Updated Icon Box widget to use CSS logical properties
-* Tweak: Updated Menu Anchor widget to use CSS logical properties
-* Tweak: Updated Tabs widget to use CSS logical properties
-* Tweak: Updated Testimonial widget to use CSS logical properties
-* Tweak: Updated Text Editor widget to use CSS logical properties
-* Tweak: Updated Paragraph Spacing in Site Settings Typography to use CSS logical properties
-* Tweak: Optimized CSS output for Masks
+* Tweak: Disabled Load Google Fonts locally on all sites by default
+* Tweak: Moved the Load Google Fonts locally option to the Performance tab as a feature
+* Fix: Column editing handles appear outside the editing overlay
+* Fix: Full width containers not aligned to the center
+* Fix: Editor stuck on loading when using an Image Box widget with a link ([#32756](https://github.com/elementor/elementor/issues/32756))
+
+= 3.32.0 - 2025-09-15 =
+
+* New: Introducing Transform controls to move, scale, rotate, and skew elements with 2D and 3D support - Editor V4
+* New: Introducing Transitions to control how elements animate between states - Editor V4
+* New: Added filter and sort options in Class Manager - Editor V4
+* New: Introducing advanced import and export customization for Website Templates, with selective import of themes, experiments, custom assets, and content
+* Tweak: Added option to convert local styles into a reusable Global Class - Editor V4
+* Tweak: Variables now update live on the canvas while editing a variable - Editor V4
+* Tweak: Updated custom unit UI and improved functionality - Editor V4
+* Tweak: Enabled typing negative values in style fields - Editor V4
+* Tweak: Added Bottom position option on layout setting in Icon Box widget
+* Tweak: Reduced API-Info size for better performance
+* Tweak: Added option for connected users to install Elementor Pro via the Connect Account tab
+* Tweak: Enabled ZIP download of Website Templates from the library
+* Tweak: Merged Cloud Library feature into version
+* Tweak: Optimized compiled CSS output for background videos
+* Tweak: Merged Element Caching feature and moved to Performance tab
+* Fix: Reaching the Global Class limit prevented page saving - Editor V4 ([#32277](https://github.com/elementor/elementor/issues/32277))
+* Fix: PHP 8.4 deprecation notices when running with `WP_DEBUG` enabled
+* Fix: Indications popover not displaying correctly in repeaters for Background Overlay - Editor V4
+* Fix: Reduced-motion preferences are not applied to entrance and exit animations
+* Fix: Added required PHP and WordPress versions to the plugin header
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

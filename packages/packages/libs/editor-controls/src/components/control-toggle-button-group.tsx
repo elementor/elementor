@@ -42,7 +42,7 @@ const StyledToggleButtonGroup = styled( ToggleButtonGroup )`
 	}
 `;
 
-const StyledToggleButton = styled( ToggleButton, {
+export const StyledToggleButton = styled( ToggleButton, {
 	shouldForwardProp: ( prop ) => prop !== 'isPlaceholder',
 } )< { isPlaceholder: boolean } >`
 	${ ( { theme, isPlaceholder } ) =>
@@ -50,7 +50,7 @@ const StyledToggleButton = styled( ToggleButton, {
 		`
 		color: ${ theme.palette.text.tertiary };
 		background-color: ${ theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)' };
-		
+
 		&:hover {
 			background-color: ${ theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)' };
 		}

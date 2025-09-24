@@ -19,6 +19,15 @@ class Render_Mode_Preview extends Render_Mode_Base {
 	public function __construct( $template_id ) {
 		$this->template_id = $template_id;
 		$this->document = $this->create_document();
+
+		Plugin::$instance->db->switch_to_post( $this->document->get_main_id() );
+
+		Plugin::$instance->documents->switch_to_document( $this->document );
+
+		add_filter( 'template_include', [ $this, 'filter_template' ] );
+
+		add_action( 'wp_footer', [ $this, 'cleanup' ], 999 );
+
 		parent::__construct( $this->document->get_main_id() );
 	}
 
@@ -29,37 +38,25 @@ class Render_Mode_Preview extends Render_Mode_Base {
 	public function prepare_render() {
 		parent::prepare_render();
 		show_admin_bar( false );
-
-		add_filter( 'template_include', [ $this, 'filter_template' ] );
 	}
 
 	public function filter_template() {
 		return ELEMENTOR_PATH . 'modules/page-templates/templates/canvas.php';
 	}
 
+	public function cleanup() {
+		if ( $this->document && $this->document->get_main_id() ) {
+			wp_delete_post( $this->document->get_main_id(), true );
+		}
+	}
+
 	public function enqueue_scripts() {
 		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
 
 		wp_enqueue_script(
-			'dom-to-image',
-			ELEMENTOR_ASSETS_URL . "/lib/dom-to-image/js/dom-to-image{$suffix}.js",
-			[],
-			'2.6.0',
-			true
-		);
-
-		wp_enqueue_script(
-			'html2canvas',
-			ELEMENTOR_ASSETS_URL . "/lib/html2canvas/js/html2canvas{$suffix}.js",
-			[],
-			'1.4.1',
-			true
-		);
-
-		wp_enqueue_script(
 			'cloud-library-screenshot',
 			ELEMENTOR_ASSETS_URL . "/js/cloud-library-screenshot{$suffix}.js",
-			[ 'dom-to-image', 'html2canvas' ],
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -84,8 +81,6 @@ class Render_Mode_Preview extends Render_Mode_Base {
 		if ( is_wp_error( $document ) ) {
 			wp_die();
 		}
-
-		Plugin::$instance->documents->switch_to_document( $document );
 
 		return $document;
 	}

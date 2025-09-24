@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { type PropKey, type PropTypeUtil } from '@elementor/editor-props';
+import { type CreateOptions, type PropKey, type PropTypeUtil } from '@elementor/editor-props';
 import { CopyIcon, EyeIcon, EyeOffIcon, PlusIcon, XIcon } from '@elementor/icons';
 import {
 	bindPopover,
@@ -17,19 +17,21 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { type SetValueMeta } from '../bound-prop-context';
 import { ControlAdornments } from '../control-adornments/control-adornments';
 import { useSyncExternalState } from '../hooks/use-sync-external-state';
+import { RepeaterItemIconSlot, RepeaterItemLabelSlot } from './control-repeater/locations';
 import { SectionContent } from './section-content';
 import { SortableItem, SortableProvider } from './sortable';
-import { RepeaterItemIconSlot, RepeaterItemLabelSlot } from './unstable-repeater/locations';
 
 const SIZE = 'tiny';
 
 type AnchorEl = HTMLElement | null;
 
-type Item< T > = {
+export type RepeaterItem< T > = {
 	disabled?: boolean;
 } & T;
+
 export type CollectionPropUtil< T > = PropTypeUtil< PropKey, T[] >;
 
 type RepeaterItemContentProps< T > = {
@@ -41,12 +43,40 @@ type RepeaterItemContentProps< T > = {
 
 type RepeaterItemContent< T > = React.ComponentType< RepeaterItemContentProps< T > >;
 
+export type ItemActionPayload< T > = Array< { index: number; item: T } >;
+
+type AddItemMeta< T > = {
+	type: 'add';
+	payload: ItemActionPayload< T >;
+};
+
+type RemoveItemMeta< T > = {
+	type: 'remove';
+	payload: ItemActionPayload< T >;
+};
+
+type DuplicateItemMeta< T > = {
+	type: 'duplicate';
+	payload: ItemActionPayload< T >;
+};
+
+type ReorderItemMeta = {
+	type: 'reorder';
+	payload: { from: number; to: number };
+};
+
+export type SetRepeaterValuesMeta< T > =
+	| SetValueMeta< AddItemMeta< T > >
+	| SetValueMeta< RemoveItemMeta< T > >
+	| SetValueMeta< DuplicateItemMeta< T > >
+	| SetValueMeta< ReorderItemMeta >;
+
 type RepeaterProps< T > = {
 	label: string;
 	values?: T[];
 	addToBottom?: boolean;
 	openOnAdd?: boolean;
-	setValues: ( newValue: T[] ) => void;
+	setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
 	disabled?: boolean;
 	itemSettings: {
 		initialValues: T;
@@ -74,7 +104,7 @@ export const Repeater = < T, >( {
 	showToggle = true,
 	isSortable = true,
 	collectionPropUtil,
-}: RepeaterProps< Item< T > > ) => {
+}: RepeaterProps< RepeaterItem< T > > ) => {
 	const [ openItem, setOpenItem ] = useState( EMPTY_OPEN_ITEM );
 
 	const [ items, setItems ] = useSyncExternalState( {
@@ -95,10 +125,14 @@ export const Repeater = < T, >( {
 		const newKey = generateNextKey( uniqueKeys );
 
 		if ( addToBottom ) {
-			setItems( [ ...items, newItem ] );
+			setItems( [ ...items, newItem ], undefined, {
+				action: { type: 'add', payload: [ { index: items.length, item: newItem } ] },
+			} );
 			setUniqueKeys( [ ...uniqueKeys, newKey ] );
 		} else {
-			setItems( [ newItem, ...items ] );
+			setItems( [ newItem, ...items ], undefined, {
+				action: { type: 'add', payload: [ { index: 0, item: newItem } ] },
+			} );
 			setUniqueKeys( [ newKey, ...uniqueKeys ] );
 		}
 
@@ -114,7 +148,9 @@ export const Repeater = < T, >( {
 		// Insert the new (cloned item) at the next spot (after the current index)
 		const atPosition = 1 + index;
 
-		setItems( [ ...items.slice( 0, atPosition ), newItem, ...items.slice( atPosition ) ] );
+		setItems( [ ...items.slice( 0, atPosition ), newItem, ...items.slice( atPosition ) ], undefined, {
+			action: { type: 'duplicate', payload: [ { index: atPosition, item: newItem } ] },
+		} );
 		setUniqueKeys( [ ...uniqueKeys.slice( 0, atPosition ), newKey, ...uniqueKeys.slice( atPosition ) ] );
 	};
 
@@ -125,10 +161,14 @@ export const Repeater = < T, >( {
 			} )
 		);
 
+		const removedItem = items[ index ];
+
 		setItems(
 			items.filter( ( _, pos ) => {
 				return pos !== index;
-			} )
+			} ),
+			undefined,
+			{ action: { type: 'remove', payload: [ { index, item: removedItem } ] } }
 		);
 	};
 
@@ -139,22 +179,28 @@ export const Repeater = < T, >( {
 					const { disabled: propDisabled, ...rest } = value;
 
 					// If the items should not be disabled, remove the disabled property.
-					return { ...rest, ...( propDisabled ? {} : { disabled: true } ) } as Item< T >;
+					return { ...rest, ...( propDisabled ? {} : { disabled: true } ) } as RepeaterItem< T >;
 				}
 
 				return value;
-			} )
+			} ),
+			undefined,
+			{ action: { type: 'toggle-disable' } }
 		);
 	};
 
-	const onChangeOrder = ( reorderedKeys: number[] ) => {
+	const onChangeOrder = ( reorderedKeys: number[], meta: { from: number; to: number } ) => {
 		setUniqueKeys( reorderedKeys );
-		setItems( ( prevItems ) => {
-			return reorderedKeys.map( ( keyValue ) => {
-				const index = uniqueKeys.indexOf( keyValue );
-				return prevItems[ index ];
-			} );
-		} );
+		setItems(
+			( prevItems ) => {
+				return reorderedKeys.map( ( keyValue ) => {
+					const index = uniqueKeys.indexOf( keyValue );
+					return prevItems[ index ];
+				} );
+			},
+			undefined,
+			{ action: { type: 'reorder', payload: { ...meta } } }
+		);
 	};
 
 	return (

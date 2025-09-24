@@ -20,7 +20,7 @@ const initialState = {
 		content: null,
 		plugins: null,
 	},
-	includes: [ 'content', 'templates', 'settings', 'plugins' ], // All items selected by default
+	includes: [ 'content', ...( elementorAppConfig.hasPro ? [ 'templates' ] : [] ), 'settings', 'plugins' ],
 	kitInfo: {
 		title: null,
 		description: null,
@@ -34,6 +34,7 @@ const initialState = {
 			plugins: null,
 		},
 	},
+	showMediaFormatValidation: false,
 };
 
 function exportReducer( state, { type, payload } ) {
@@ -87,6 +88,8 @@ function exportReducer( state, { type, payload } ) {
 					},
 				},
 			};
+		case 'SET_MEDIA_FORMAT_VALIDATION':
+			return { ...state, showMediaFormatValidation: payload };
 		case 'RESET_STATE':
 			return { ...initialState };
 		default:

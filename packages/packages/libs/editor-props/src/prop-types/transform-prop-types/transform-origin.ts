@@ -1,14 +1,14 @@
 import { z } from '@elementor/schema';
 
 import { createPropUtils } from '../../utils/create-prop-utils';
-import { sizePropTypeUtil } from '../size';
+import { unknownChildrenSchema } from '../utils';
 
 export const transformOriginPropTypeUtil = createPropUtils(
 	'transform-origin',
 	z.strictObject( {
-		x: sizePropTypeUtil.schema.nullable(),
-		y: sizePropTypeUtil.schema.nullable(),
-		z: sizePropTypeUtil.schema.nullable(),
+		x: unknownChildrenSchema,
+		y: unknownChildrenSchema,
+		z: unknownChildrenSchema,
 	} )
 );
 

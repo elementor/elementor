@@ -8,7 +8,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 use Elementor\Modules\AtomicWidgets\Image\Placeholder_Image;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -52,7 +52,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 			'link' => Link_Prop_Type::make(),
 
-			'attributes' => Key_Value_Array_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make(),
 		];
 
 		return $props;
@@ -81,6 +81,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 				->set_label( __( 'Image resolution', 'elementor' ) )
 				->set_meta( [ 'layout' => 'two-columns' ] ),
 			Link_Control::bind_to( 'link' )
+				->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
 				->set_label( __( 'Link', 'elementor' ) )
 				->set_meta( [
 					'topDivider' => true,

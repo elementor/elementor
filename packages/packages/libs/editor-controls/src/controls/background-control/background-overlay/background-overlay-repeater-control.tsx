@@ -11,15 +11,15 @@ import { useWpMediaAttachment } from '@elementor/wp-media';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
+import { ControlRepeater, Header, ItemsContainer, TooltipAddItemAction } from '../../../components/control-repeater';
+import { DisableItemAction } from '../../../components/control-repeater/actions/disable-item-action';
+import { DuplicateItemAction } from '../../../components/control-repeater/actions/duplicate-item-action';
+import { RemoveItemAction } from '../../../components/control-repeater/actions/remove-item-action';
+import { useRepeaterContext } from '../../../components/control-repeater/context/repeater-context';
+import { EditItemPopover } from '../../../components/control-repeater/items/edit-item-popover';
+import { Item } from '../../../components/control-repeater/items/item';
+import { type CollectionPropUtil, type RepeatablePropValue } from '../../../components/control-repeater/types';
 import { PopoverContent } from '../../../components/popover-content';
-import { Header, ItemsContainer, TooltipAddItemAction, UnstableRepeater } from '../../../components/unstable-repeater';
-import { DisableItemAction } from '../../../components/unstable-repeater/actions/disable-item-action';
-import { DuplicateItemAction } from '../../../components/unstable-repeater/actions/duplicate-item-action';
-import { RemoveItemAction } from '../../../components/unstable-repeater/actions/remove-item-action';
-import { useRepeaterContext } from '../../../components/unstable-repeater/context/repeater-context';
-import { EditItemPopover } from '../../../components/unstable-repeater/items/edit-item-popover';
-import { Item } from '../../../components/unstable-repeater/items/item';
-import { type CollectionPropUtil, type RepeatablePropValue } from '../../../components/unstable-repeater/types';
 import { createControl } from '../../../create-control';
 import { env } from '../../../env';
 import { ColorControl } from '../../color-control';
@@ -81,22 +81,30 @@ export const BackgroundOverlayRepeaterControl = createControl( () => {
 
 	return (
 		<PropProvider propType={ propType } value={ overlayValues } setValue={ setValue }>
-			<UnstableRepeater
+			<ControlRepeater
 				initial={ getInitialBackgroundOverlay() as RepeatablePropValue }
 				propTypeUtil={ backgroundOverlayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
 			>
 				<Header label={ __( 'Overlay', 'elementor' ) }>
 					<TooltipAddItemAction newItemIndex={ 0 } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } /> }>
-					<DuplicateItemAction />
-					<DisableItemAction />
-					<RemoveItemAction />
+				<ItemsContainer>
+					<Item
+						Icon={ ItemIcon }
+						Label={ ItemLabel }
+						actions={
+							<>
+								<DuplicateItemAction />
+								<DisableItemAction />
+								<RemoveItemAction />
+							</>
+						}
+					/>
 				</ItemsContainer>
 				<EditItemPopover>
 					<ItemContent />
 				</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		</PropProvider>
 	);
 } );
@@ -257,6 +265,8 @@ const ImageOverlayContent = () => {
 };
 
 const StyledUnstableColorIndicator = styled( UnstableColorIndicator )( ( { theme } ) => ( {
+	height: '1rem',
+	width: '1rem',
 	borderRadius: `${ theme.shape.borderRadius / 2 }px`,
 } ) );
 

@@ -53,7 +53,7 @@ body {
 		#elementor-navigator__ai-titles + &__title {
 			padding-inline-end: 17.5px;
 		}
-		
+
 	}
 
 	&__ai-titles {
@@ -319,7 +319,7 @@ body {
 			z-index: 91;
 
 			&:not(:hover) {
-				transform: translateX(calc(100% * var(--direction-multiplier) - var(--e-editor-navigator-indicator-width)));
+				transform: translateX(calc(100% * var(--direction-multiplier) - (var(--e-editor-navigator-indicator-width) * var(--direction-multiplier))));
 			}
 		}
 

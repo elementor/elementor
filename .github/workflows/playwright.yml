@@ -186,12 +186,6 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Remove run-tests label
-        if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-tests') && (needs.Playwright.result == 'success' || needs.Playwright.result == 'failure') }}
-        run: |
-          gh pr edit ${{ github.event.pull_request.number }} --remove-label "run-tests" --repo ${{ github.repository }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create revert PR on push failure
         id: create_revert_pr
         if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')) }}
@@ -208,8 +202,13 @@ jobs:
         id: revert_message
         if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
         run: |
-          BASE_MESSAGE="Elementor Core: Playwright - ${{ github.event_name }} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
+
+          BASE_MESSAGE="Elementor Core: Scheduled Playwright tests failed - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          else
+            BASE_MESSAGE="Elementor Core: Playwright - ${{ github.event_name }} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          fi
+
           if [[ "${{ steps.create_revert_pr.outputs.status }}" == "created" ]]; then
             REVERT_MESSAGE="
 
@@ -218,8 +217,31 @@ jobs:
           else
             echo "message=${BASE_MESSAGE}" >> $GITHUB_OUTPUT
           fi
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
+          private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
+          owner: elementor
+      - name: Checkout private action repository
+        uses: actions/checkout@v4
+        with:
+          repository: elementor/elementor-tests-configuration
+          token: ${{ steps.generate-token.outputs.token }}
+          path: elementor-tests-configuration
+          persist-credentials: false
+          ref: main
+      - name: Map GitHub user to Slack
+        id: map_user
+        uses: ./elementor-tests-configuration/.github/actions/map-github-to-slack
+        with:
+          github_user: ${{ github.actor }}
+        env:
+          GH_TOKEN: ${{ secrets.PUBLIC_CLOUD_DEVOPS_TOKEN }}
+          SLACK_TOKEN: ${{ secrets.CLOUD_SLACK_BOT_TOKEN }}
       - name: Send slack message
-        if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
+        if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) }}
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
@@ -242,7 +264,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Github User: <${{ github.actor }}>"
+                    "text": "${{ github.event_name == 'schedule' && 'Scheduled run failed' || (steps.map_user.outputs.slack_user && format('{0} please check the run', steps.map_user.outputs.slack_user) || format('{0} please check the run', github.actor)) }}"
                   }
                 }
               ]

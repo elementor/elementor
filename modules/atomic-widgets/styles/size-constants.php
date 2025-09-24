@@ -15,20 +15,22 @@ class Size_Constants {
 	const UNIT_VH = 'vh';
 	const UNIT_AUTO = 'auto';
 	const UNIT_CUSTOM = 'custom';
+	const UNIT_SECOND = 's';
+	const UNIT_MILLI_SECOND = 'ms';
+	const UNIT_ANGLE_DEG = 'deg';
 
-	const COMMON_UNITS = [
+	const LENGTH_UNITS = [
 		self::UNIT_PX,
 		self::UNIT_EM,
 		self::UNIT_REM,
 		self::UNIT_VW,
 		self::UNIT_VH,
-		self::UNIT_CUSTOM,
 	];
 
-	const TIME_UNITS = [ 's', 'ms' ];
-	const EXTENDED_UNITS = [ 'auto', 'custom' ];
+	const TIME_UNITS = [ self::UNIT_SECOND, self::UNIT_MILLI_SECOND ];
+	const EXTENDED_UNITS = [ self::UNIT_AUTO, self::UNIT_CUSTOM ];
 	const VIEWPORT_MIN_MAX_UNITS = [ 'vmin', 'vmax' ];
-	const ANGLE_UNITS = [ 'deg', 'rad', 'grad', 'turn' ];
+	const ANGLE_UNITS = [ self::UNIT_ANGLE_DEG, 'rad', 'grad', 'turn' ];
 
 	public static function all_supported_units(): array {
 		return array_merge(
@@ -42,14 +44,14 @@ class Size_Constants {
 
 	public static function all(): array {
 		return [
-			...self::COMMON_UNITS,
+			...self::LENGTH_UNITS,
 			self::UNIT_PERCENT,
 			self::UNIT_AUTO,
 		];
 	}
 
 	private static function units_without_auto(): array {
-		return [ ...self::COMMON_UNITS, self::UNIT_PERCENT ];
+		return [ ...self::LENGTH_UNITS, self::UNIT_PERCENT ];
 	}
 
 	public static function layout() {
@@ -65,7 +67,7 @@ class Size_Constants {
 	}
 
 	public static function anchor_offset() {
-		return self::COMMON_UNITS;
+		return self::LENGTH_UNITS;
 	}
 
 	public static function typography(): array {
@@ -77,8 +79,11 @@ class Size_Constants {
 			self::UNIT_PX,
 			self::UNIT_EM,
 			self::UNIT_REM,
-			self::UNIT_CUSTOM,
 		];
+	}
+
+	public static function transition() {
+		return self::TIME_UNITS;
 	}
 
 	public static function border(): array {
@@ -87,18 +92,38 @@ class Size_Constants {
 
 
 	public static function opacity(): array {
-		return [ self::UNIT_PERCENT, self::UNIT_CUSTOM ];
+		return [ self::UNIT_PERCENT ];
 	}
 
 	public static function box_shadow(): array {
 		return self::units_without_auto();
 	}
 
-	public static function transform(): array {
+	public static function rotate(): array {
 		return self::ANGLE_UNITS;
 	}
 
-	public static function filters() {
-		return self::COMMON_UNITS;
+	public static function transform(): array {
+		return self::units_without_auto();
+	}
+
+	public static function drop_shadow() {
+		return self::LENGTH_UNITS;
+	}
+
+	public static function blur_filter() {
+		return self::LENGTH_UNITS;
+	}
+
+	public static function intensity_filter() {
+		return [ self::UNIT_PERCENT ];
+	}
+
+	public static function color_tone_filter() {
+		return [ self::UNIT_PERCENT ];
+	}
+
+	public static function hue_rotate_filter() {
+		return self::ANGLE_UNITS;
 	}
 }

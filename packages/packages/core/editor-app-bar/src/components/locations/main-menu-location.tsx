@@ -25,7 +25,7 @@ export default function MainMenuLocation() {
 		if ( config ) {
 			extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.elementorLogoDropdown, {
 				location: config.locations.topBar,
-				secondaryLocation: config.secondaryLocations.elementorLogo,
+				secondaryLocation: config.secondaryLocations.eLogoMenu,
 				trigger: config.triggers.dropdownClick,
 				element: config.elements.buttonIcon,
 			} );
@@ -39,6 +39,10 @@ export default function MainMenuLocation() {
 			<ToolbarLogo { ...toolbarLogoProps } onClick={ onToolbarClick } selected={ popupState.isOpen } />
 			<PopoverMenu onClick={ popupState.close } { ...bindMenu( popupState ) } marginThreshold={ 8 }>
 				{ menuItems.default.map( ( { MenuItem, id } ) => (
+					<MenuItem key={ id } />
+				) ) }
+				{ menuItems.help.length > 0 && <Divider /> }
+				{ menuItems.help.map( ( { MenuItem, id } ) => (
 					<MenuItem key={ id } />
 				) ) }
 				{ menuItems.exits.length > 0 && <Divider /> }
