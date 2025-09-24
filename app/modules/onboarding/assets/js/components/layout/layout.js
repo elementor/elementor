@@ -33,15 +33,13 @@ export default function Layout( props ) {
 	}, [ stepNumber ] );
 
 	const setupTopbarUpgradeTracking = useCallback( ( buttonElement ) => {
-		cleanupPreviousTopbarTracking();
-
 		if ( ! buttonElement ) {
 			resetTopbarButtonRef();
 			return;
 		}
 
 		storeTopbarButtonAndSetupTracking( buttonElement );
-	}, [ cleanupPreviousTopbarTracking, resetTopbarButtonRef, storeTopbarButtonAndSetupTracking ] );
+	}, [ resetTopbarButtonRef, storeTopbarButtonAndSetupTracking ] );
 
 	const cleanupTopbarTrackingOnUnmount = useCallback( () => {
 		if ( cleanupRef.current ) {
