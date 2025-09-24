@@ -1392,24 +1392,24 @@ export class OnboardingEventTracking {
 				additionalData,
 			} );
 
-			const timeData = this.calculateTimeSpent();
-			if ( ! timeData ) {
-				console.log( `❌ No time data available for step ${ stepNumber } action tracking` );
-				return;
-			}
-
+			const currentTime = Date.now();
 			const existingActions = this.getStoredActions( storageKey );
+			
+			// Try to get global time data, but don't fail if missing
+			const timeData = this.calculateTimeSpent();
+			const timeSpentValue = timeData ? `${ timeData.timeSpent }s` : '0s';
+
 			const actionData = {
 				action,
-				timestamp: timeData.currentTime,
-				time_spent: `${ timeData.timeSpent }s`,
+				timestamp: currentTime,
+				time_spent: timeSpentValue,
 				...additionalData,
 			};
 
 			console.log( `📝 Adding action to step ${ stepNumber }:`, {
 				actionData,
 				existingActionsCount: existingActions.length,
-				currentTimeFormatted: new Date( timeData.currentTime ).toISOString(),
+				currentTimeFormatted: new Date( currentTime ).toISOString(),
 			} );
 
 			console.log( `✅ ACTION TIME_SPENT ADDED:`, {
@@ -1811,7 +1811,7 @@ export class OnboardingEventTracking {
 
 		console.log( '📝 Step 2: Tracking step action...' );
 		this.trackStepAction( 4, 'site_starter', {
-			site_starter: siteStarter,
+			source_type: siteStarter,
 		} );
 
 		console.log( '📊 Step 3: Sending step end state...' );

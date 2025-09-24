@@ -12,11 +12,14 @@ class PostOnboardingTracker {
 
 		const alreadyTracked = StorageManager.exists( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED );
 		if ( alreadyTracked ) {
+			this.setupPostOnboardingClickTracking();
 			return;
 		}
 
 		this.sendEditorLoadedEvent();
 		StorageManager.setString( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED, 'true' );
+		
+		this.setupPostOnboardingClickTracking();
 	}
 
 	sendEditorLoadedEvent() {

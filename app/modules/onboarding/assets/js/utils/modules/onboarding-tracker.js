@@ -20,7 +20,7 @@ class OnboardingTracker {
 					trigger: 'skip_clicked',
 				},
 				payloadBuilder: ( eventData ) => ( {
-					action_step: this.getStepName( eventData.currentStep ),
+					action_step: eventData.currentStep,
 					skip_timestamp: eventData.timestamp,
 				} ),
 			},
@@ -346,7 +346,7 @@ class OnboardingTracker {
 		TimingManager.trackStepStartTime( 4 );
 		this.storeSiteStarterChoice( siteStarter );
 		this.trackStepAction( 4, 'site_starter', {
-			site_starter: siteStarter,
+			source_type: siteStarter,
 		} );
 		this.sendStepEndState( 4 );
 	}

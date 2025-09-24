@@ -41,7 +41,7 @@ export default function Layout( props ) {
 		}
 
 		storeTopbarButtonAndSetupTracking( buttonElement );
-	}, [ stepNumber, cleanupPreviousTopbarTracking, resetTopbarButtonRef, storeTopbarButtonAndSetupTracking ] );
+	}, [ cleanupPreviousTopbarTracking, resetTopbarButtonRef, storeTopbarButtonAndSetupTracking ] );
 
 	const cleanupTopbarTrackingOnUnmount = useCallback( () => {
 		if ( cleanupRef.current ) {

@@ -1,86 +1,83 @@
+/* eslint-disable no-console */
 import { OnboardingContext } from '../context/context';
 
 import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
 import Checklist from './checklist';
 import ChecklistItem from './checklist-item';
 import Button from './button';
-import { useCallback, useContext, useRef, useEffect } from 'react';
+import { useCallback, useContext, useRef } from 'react';
 import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
-import StorageManager, { ONBOARDING_STORAGE_KEYS } from '../utils/modules/storage-manager.js';
 
 export default function GoProPopover( props ) {
 	const { state, updateState } = useContext( OnboardingContext );
 
 	const trackUpgradeAction = useCallback( () => {
 		const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+		console.log( '🎯 trackUpgradeAction called:', { currentStep: state.currentStep, stepNumber } );
 		OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
 	}, [ state.currentStep ] );
 
 	const upgradeButtonRef = useRef( null );
-	const cleanupRef = useRef( null );
-
-	const cleanupPreviousUpgradeTracking = useCallback( () => {
-		if ( cleanupRef.current ) {
-			cleanupRef.current();
-			cleanupRef.current = null;
-		}
-	}, [] );
-
-	const resetUpgradeButtonRef = useCallback( () => {
-		upgradeButtonRef.current = null;
-	}, [] );
-
-	const storeUpgradeButtonAndSetupTracking = useCallback( ( buttonElement ) => {
-		upgradeButtonRef.current = buttonElement;
-		cleanupRef.current = OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, state.currentStep );
-	}, [ state.currentStep ] );
 
 	const setupUpgradeButtonTracking = useCallback( ( buttonElement ) => {
+		console.log( '🔗 setupUpgradeButtonTracking called:', { buttonElement: !! buttonElement, currentStep: state.currentStep } );
+
 		if ( ! buttonElement ) {
-			resetUpgradeButtonRef();
+			console.log( '❌ setupUpgradeButtonTracking: buttonElement is null/undefined' );
 			return;
 		}
 
-		storeUpgradeButtonAndSetupTracking( buttonElement );
-	}, [ resetUpgradeButtonRef, storeUpgradeButtonAndSetupTracking ] );
+		console.log( '🔗 Setting up popover upgrade button:', { className: buttonElement.className, href: buttonElement.href } );
+		upgradeButtonRef.current = buttonElement;
 
-	const cleanupOnUnmount = useCallback( () => {
-		if ( cleanupRef.current ) {
-			cleanupRef.current();
-		}
-	}, [] );
+		return OnboardingEventTracking.setupSingleUpgradeButtonTracking( buttonElement, state.currentStep );
+	}, [ state.currentStep ] );
 
-	useEffect( () => {
-		return cleanupOnUnmount;
-	}, [ cleanupOnUnmount ] );
-
+	// Handle the Pro Upload popup window.
 	const alreadyHaveProButtonRef = useCallback( ( alreadyHaveProButton ) => {
+		console.log( '🔗 alreadyHaveProButtonRef called:', { alreadyHaveProButton: !! alreadyHaveProButton, currentStep: state.currentStep } );
+
 		if ( ! alreadyHaveProButton ) {
+			console.log( '❌ alreadyHaveProButton is null/undefined' );
 			return;
 		}
 
+		// CRITICAL FIX: Don't create event handler if currentStep is not properly initialized
 		if ( ! state.currentStep || '' === state.currentStep ) {
+			console.log( '⚠️ Skipping event handler creation - currentStep not initialized:', { currentStep: state.currentStep } );
 			return;
 		}
 
+		console.log( '🔗 Setting up Already Have Pro button:', { href: alreadyHaveProButton.href, className: alreadyHaveProButton.className } );
+
+		// Remove any existing event listeners to prevent duplicates
 		const existingHandler = alreadyHaveProButton._elementorProHandler;
 		if ( existingHandler ) {
+			console.log( '🧹 Removing existing Already Have Pro handler' );
 			alreadyHaveProButton.removeEventListener( 'click', existingHandler );
 		}
 
+		// Create new handler
 		const clickHandler = ( event ) => {
+			console.log( '🔥 Already have Pro clicked:', { currentStep: state.currentStep } );
 			event.preventDefault();
 
+			// ADDITIONAL VALIDATION: Ensure we have valid step data before proceeding
 			if ( ! state.currentStep || '' === state.currentStep ) {
+				console.log( '❌ Already have Pro clicked but currentStep is invalid:', { currentStep: state.currentStep } );
 				return;
 			}
 
 			trackUpgradeAction();
-			StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
+			OnboardingEventTracking.cancelDelayedNoClickEvent();
 			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+			console.log( '🔥 Sending already_pro_user for step:', { currentStep: state.currentStep, stepNumber } );
 
+			// VALIDATION: Only send if we have a valid step number
 			if ( stepNumber ) {
-				OnboardingEventTracking.sendEventOrStore( 'TOP_UPGRADE', { currentStep: stepNumber, upgradeClicked: 'already_pro_user' } );
+				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'already_pro_user' );
+			} else {
+				console.log( '❌ Cannot send already_pro_user - invalid stepNumber:', { currentStep: state.currentStep, stepNumber } );
 			}
 
 			elementorCommon.events.dispatchEvent( {
@@ -92,37 +89,35 @@ export default function GoProPopover( props ) {
 				},
 			} );
 
-			const openProUploadPopup = () => {
-				window.open(
-					alreadyHaveProButton.href + '&mode=popup',
-					'elementorUploadPro',
-					`toolbar=no, menubar=no, width=728, height=531, top=100, left=100`,
-				);
-			};
+			// Open the Pro Upload screen in a popup.
+			window.open(
+				alreadyHaveProButton.href + '&mode=popup',
+				'elementorUploadPro',
+				`toolbar=no, menubar=no, width=728, height=531, top=100, left=100`,
+			);
 
-			const handleProUploadSuccess = () => {
-				updateState( {
-					hasPro: true,
-					proNotice: {
-						color: 'success',
-						children: __( 'Pro is now active! You can continue.', 'elementor' ),
-					},
-				} );
-			};
-
-			openProUploadPopup();
-
+			// Run the callback for when the upload succeeds.
 			elementorCommon.elements.$body
-				.on( 'elementor/upload-and-install-pro/success', handleProUploadSuccess );
+				.on( 'elementor/upload-and-install-pro/success', () => {
+					updateState( {
+						hasPro: true,
+						proNotice: {
+							type: 'success',
+							icon: 'eicon-check-circle-o',
+							message: __( 'Elementor Pro has been successfully installed.', 'elementor' ),
+						},
+					} );
+				} );
 		};
 
+		// Store handler reference and add event listener
 		alreadyHaveProButton._elementorProHandler = clickHandler;
 		alreadyHaveProButton.addEventListener( 'click', clickHandler );
+		console.log( '✅ Already Have Pro event listener added' );
 	}, [ state.currentStep, updateState, trackUpgradeAction ] );
 
-	const findGoProButton = () => props.buttonsConfig.find( ( button ) => 'go-pro' === button.id );
-
-	const goProButton = findGoProButton(),
+	// The buttonsConfig prop is an array of objects. To find the 'Upgrade Now' button, we need to iterate over the object.
+	const goProButton = props.buttonsConfig.find( ( button ) => 'go-pro' === button.id ),
 		getElProButton = {
 			text: elementorAppConfig.onboarding.experiment ? __( 'Upgrade now', 'elementor' ) : __( 'Upgrade Now', 'elementor' ),
 			className: 'e-onboarding__go-pro-cta',
@@ -131,16 +126,24 @@ export default function GoProPopover( props ) {
 			tabIndex: 0,
 			elRef: setupUpgradeButtonTracking,
 			onClick: () => {
+				console.log( '🔥 Upgrade now clicked:', { currentStep: state.currentStep } );
+
+				// VALIDATION: Ensure we have valid step data before proceeding
 				if ( ! state.currentStep || '' === state.currentStep ) {
+					console.log( '❌ Upgrade now clicked but currentStep is invalid:', { currentStep: state.currentStep } );
 					return;
 				}
 
 				trackUpgradeAction();
-				StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
+				OnboardingEventTracking.cancelDelayedNoClickEvent();
 				const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+				console.log( '🔥 Sending on_tooltip for step:', { currentStep: state.currentStep, stepNumber } );
 
+				// VALIDATION: Only send if we have a valid step number
 				if ( stepNumber ) {
-					OnboardingEventTracking.sendEventOrStore( 'TOP_UPGRADE', { currentStep: stepNumber, upgradeClicked: 'on_tooltip' } );
+					OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
+				} else {
+					console.log( '❌ Cannot send on_tooltip - invalid stepNumber:', { currentStep: state.currentStep, stepNumber } );
 				}
 
 				elementorCommon.events.dispatchEvent( {
