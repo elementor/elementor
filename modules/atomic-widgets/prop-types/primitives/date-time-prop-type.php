@@ -12,4 +12,3 @@ class Date_Time_Prop_Type extends String_Prop_Type {
 	}
 }
 
-
