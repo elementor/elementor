@@ -1,9 +1,3 @@
-/**
- * TimingManager - Centralized time tracking for onboarding events
- * 
- * Handles all time-related calculations including step timing, total onboarding time,
- * and time spent calculations. Provides consistent time tracking across the system.
- */
 
 import StorageManager, { ONBOARDING_STORAGE_KEYS } from './storage-manager.js';
 
@@ -65,12 +59,12 @@ class TimingManager {
 		return {
 			startTime,
 			currentTime,
-			timeSpent
+			timeSpent,
 		};
 	}
 
 	static formatTimeForEvent( timeInSeconds ) {
-		if ( timeInSeconds === null || timeInSeconds === undefined ) {
+		if ( null === timeInSeconds || timeInSeconds === undefined ) {
 			return null;
 		}
 		return `${ timeInSeconds }s`;
@@ -107,7 +101,7 @@ class TimingManager {
 	static clearStaleSessionData() {
 		const recentStepStartTimes = [];
 		const currentTime = this.getCurrentTime();
-		const recentThreshold = 5000; // 5 seconds
+		const recentStepStartTimeThresholdMs = 5000;
 
 		[
 			ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
@@ -119,7 +113,7 @@ class TimingManager {
 			if ( value ) {
 				const timestamp = parseInt( value, 10 );
 				const age = currentTime - timestamp;
-				if ( age < recentThreshold ) {
+				if ( age < recentStepStartTimeThresholdMs ) {
 					recentStepStartTimes.push( key );
 				}
 			}

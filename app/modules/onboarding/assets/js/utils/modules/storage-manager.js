@@ -1,9 +1,3 @@
-/**
- * StorageManager - Centralized localStorage operations for onboarding tracking
- * 
- * Handles all localStorage operations with consistent error handling and JSON parsing.
- * Eliminates duplication between onboarding and post-onboarding tracking.
- */
 
 export const ONBOARDING_STORAGE_KEYS = {
 	START_TIME: 'elementor_onboarding_start_time',
@@ -104,7 +98,7 @@ class StorageManager {
 	}
 
 	static clearMultiple( keys ) {
-		keys.forEach( key => this.remove( key ) );
+		keys.forEach( ( key ) => this.remove( key ) );
 	}
 
 	static clearAllOnboardingData() {

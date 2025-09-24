@@ -18,7 +18,6 @@ export default function GoProPopover( props ) {
 	const upgradeButtonRef = useRef( null );
 
 	const setupUpgradeButtonTracking = useCallback( ( buttonElement ) => {
-
 		if ( ! buttonElement ) {
 			return;
 		}
@@ -30,7 +29,6 @@ export default function GoProPopover( props ) {
 
 	// Handle the Pro Upload popup window.
 	const alreadyHaveProButtonRef = useCallback( ( alreadyHaveProButton ) => {
-
 		if ( ! alreadyHaveProButton ) {
 			return;
 		}
@@ -39,7 +37,6 @@ export default function GoProPopover( props ) {
 		if ( ! state.currentStep || '' === state.currentStep ) {
 			return;
 		}
-
 
 		// Remove any existing event listeners to prevent duplicates
 		const existingHandler = alreadyHaveProButton._elementorProHandler;
@@ -111,7 +108,6 @@ export default function GoProPopover( props ) {
 			tabIndex: 0,
 			elRef: setupUpgradeButtonTracking,
 			onClick: () => {
-
 				// VALIDATION: Ensure we have valid step data before proceeding
 				if ( ! state.currentStep || '' === state.currentStep ) {
 					return;

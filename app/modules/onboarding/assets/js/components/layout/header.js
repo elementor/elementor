@@ -20,7 +20,6 @@ export default function Header( props ) {
 	};
 
 	const onClose = () => {
-
 		trackXButtonExit();
 
 		elementorCommon.events.dispatchEvent( {

@@ -1,9 +1,3 @@
-/**
- * EventDispatcher - Centralized event dispatching for onboarding tracking
- * 
- * Handles all elementorCommon.eventsManager.dispatchEvent calls with consistent
- * error handling and validation. Eliminates duplication between tracking files.
- */
 
 export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
@@ -43,8 +37,8 @@ class EventDispatcher {
 	}
 
 	static isEventsManagerAvailable() {
-		return elementorCommon?.eventsManager && 
-			   typeof elementorCommon.eventsManager.dispatchEvent === 'function';
+		return elementorCommon?.eventsManager &&
+			'function' === typeof elementorCommon.eventsManager.dispatchEvent;
 	}
 
 	static dispatch( eventName, payload = {} ) {
@@ -75,23 +69,23 @@ class EventDispatcher {
 		return {
 			location: 'plugin_onboarding',
 			trigger: 'user_action',
-			...basePayload
+			...basePayload,
 		};
 	}
 
 	static createStepEventPayload( stepNumber, stepName, additionalData = {} ) {
-		return this.createEventPayload({
+		return this.createEventPayload( {
 			step_number: stepNumber,
 			step_name: stepName,
-			...additionalData
-		});
+			...additionalData,
+		} );
 	}
 
 	static createEditorEventPayload( additionalData = {} ) {
 		return {
 			location: 'editor',
 			trigger: 'elementor_loaded',
-			...additionalData
+			...additionalData,
 		};
 	}
 
@@ -122,9 +116,9 @@ class EventDispatcher {
 		}
 
 		const clickNumber = this.getClickNumber( clickCount );
-		const eventData = this.createEditorEventPayload({
+		const eventData = this.createEditorEventPayload( {
 			editor_loaded_from_onboarding_source: siteStarterChoice,
-		});
+		} );
 
 		eventData[ `post_onboarding_${ clickNumber }_click_action_title` ] = clickData.title;
 		eventData[ `post_onboarding_${ clickNumber }_click_action_selector` ] = clickData.selector;

@@ -1,9 +1,3 @@
-/**
- * PostOnboardingTracking - Refactored with Module Pattern
- * 
- * Tracks user interactions after onboarding completion using centralized modules.
- * Eliminates code duplication and follows clean architecture principles.
- */
 
 import StorageManager, { ONBOARDING_STORAGE_KEYS } from '../../../../../app/modules/onboarding/assets/js/utils/modules/storage-manager.js';
 import EventDispatcher from '../../../../../app/modules/onboarding/assets/js/utils/modules/event-dispatcher.js';
@@ -26,7 +20,7 @@ class PostOnboardingTracking {
 		StorageManager.setString( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED, 'true' );
 	}
 
-	static sendEditorLoadedEvent( siteStarterChoiceString ) {
+	static sendEditorLoadedEvent() {
 		const choiceData = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
 		const siteStarterChoice = choiceData?.site_starter;
 

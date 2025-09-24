@@ -1,15 +1,9 @@
-/**
- * ClickTracker - Centralized click tracking for post-onboarding events
- * 
- * Handles click detection, deduplication, data extraction, and event dispatching
- * for post-onboarding user interactions.
- */
 
 import StorageManager, { ONBOARDING_STORAGE_KEYS } from './storage-manager.js';
 import EventDispatcher from './event-dispatcher.js';
 
 class ClickTracker {
-	static DEDUPLICATION_WINDOW = 1000; // 1 second
+	static DEDUPLICATION_WINDOW_MS = 1000;
 	static MAX_CLICKS = 3;
 	static lastClickTime = 0;
 	static lastClickElement = null;
@@ -52,7 +46,7 @@ class ClickTracker {
 
 		const newCount = StorageManager.incrementNumber( ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT );
 		const clickData = this.extractClickData( target );
-		
+
 		this.storeClickData( newCount, clickData );
 		this.dispatchClickEvent( newCount );
 
@@ -68,17 +62,17 @@ class ClickTracker {
 
 		const tagName = target.tagName.toLowerCase();
 		const trackableTags = [ 'button', 'a', 'input', 'select', 'textarea' ];
-		
+
 		if ( trackableTags.includes( tagName ) ) {
 			return true;
 		}
 
-		const hasClickableRole = target.getAttribute( 'role' ) === 'button' ||
-								target.getAttribute( 'role' ) === 'link';
-		
+		const hasClickableRole = 'button' === target.getAttribute( 'role' ) ||
+								'link' === target.getAttribute( 'role' );
+
 		const hasClickableClass = target.classList.contains( 'elementor-button' ) ||
-								 target.classList.contains( 'elementor-clickable' ) ||
-								 target.classList.contains( 'e-btn' );
+								target.classList.contains( 'elementor-clickable' ) ||
+								target.classList.contains( 'e-btn' );
 
 		const hasClickHandler = target.onclick || target.getAttribute( 'onclick' );
 
@@ -86,7 +80,7 @@ class ClickTracker {
 	}
 
 	static isDuplicateClick( target, timeSinceLastClick ) {
-		if ( timeSinceLastClick > this.DEDUPLICATION_WINDOW ) {
+		if ( timeSinceLastClick > this.DEDUPLICATION_WINDOW_MS ) {
 			return false;
 		}
 
@@ -138,7 +132,7 @@ class ClickTracker {
 
 			if ( current.className ) {
 				const classes = current.className.split( ' ' )
-					.filter( cls => cls.length > 0 )
+					.filter( ( cls ) => cls.length > 0 )
 					.slice( 0, 2 )
 					.join( '.' );
 				if ( classes ) {
@@ -194,8 +188,7 @@ class ClickTracker {
 		StorageManager.clearAllOnboardingData();
 	}
 
-	static warn( message, error = null ) {
-		// Silent fail - don't let tracking break the user experience
+	static silentlyIgnoreTrackingErrors() {
 	}
 }
 

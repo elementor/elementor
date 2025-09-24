@@ -1,62 +1,57 @@
-/**
- * OnboardingEventTracking - Refactored with Module Pattern
- * 
- * Main onboarding tracking class using centralized modules for storage, events, and timing.
- * Eliminates code duplication and follows clean architecture principles.
- */
+import eventsConfig from '../../../../../../../core/common/modules/events-manager/assets/js/events-config';
+import StorageManager, { ONBOARDING_STORAGE_KEYS } from './storage-manager.js';
+import EventDispatcher, { ONBOARDING_EVENTS_MAP, ONBOARDING_STEP_NAMES } from './event-dispatcher.js';
+import TimingManager from './timing-manager.js';
 
-import eventsConfig from '../../../../../../core/common/modules/events-manager/assets/js/events-config';
-import { options } from './utils';
-import StorageManager, { ONBOARDING_STORAGE_KEYS } from './modules/storage-manager.js';
-import EventDispatcher, { ONBOARDING_EVENTS_MAP, ONBOARDING_STEP_NAMES } from './modules/event-dispatcher.js';
-import TimingManager from './modules/timing-manager.js';
+class OnboardingTracker {
+	constructor() {
+		this.initializeEventListeners();
+	}
 
-// Global event listeners for onboarding interactions
-if ( 'undefined' !== typeof document ) {
-	document.addEventListener( 'click', ( event ) => {
-		const target = event.target;
-		const isOnboardingClick = target.closest( '.onboarding' ) || target.closest( '[data-onboarding]' ) || target.closest( '.site-starter' );
-
-		if ( isOnboardingClick ) {
-			// Click tracking handled by modules
+	initializeEventListeners() {
+		if ( 'undefined' === typeof document ) {
+			return;
 		}
 
-		const cardGridElement = target.closest( '.e-onboarding__cards-grid' );
-		if ( cardGridElement ) {
-			OnboardingEventTracking.handleStep4CardClick( event );
-		}
-	}, true );
-
-	// URL change detection for step tracking
-	let lastUrl = window.location.href;
-	const urlChangeDetector = () => {
-		const currentUrl = window.location.href;
-		if ( currentUrl !== lastUrl ) {
-			const isStep4 = currentUrl.includes( 'goodToGo' ) || currentUrl.includes( 'step4' ) || currentUrl.includes( 'site_starter' );
-			if ( isStep4 ) {
-				setTimeout( () => {
-					TimingManager.trackStepStartTime( 4 );
-					OnboardingEventTracking.checkAndSendReturnToStep4();
-				}, 100 );
+		document.addEventListener( 'click', ( event ) => {
+			const cardGridElement = event.target.closest( '.e-onboarding__cards-grid' );
+			if ( cardGridElement ) {
+				this.handleStep4CardClick( event );
 			}
+		}, true );
 
-			lastUrl = currentUrl;
-		}
-	};
+		this.setupUrlChangeDetection();
+	}
 
-	setInterval( urlChangeDetector, 500 );
+	setupUrlChangeDetection() {
+		let lastUrl = window.location.href;
+		const urlChangeDetector = () => {
+			const currentUrl = window.location.href;
+			if ( currentUrl !== lastUrl ) {
+				const isStep4 = currentUrl.includes( 'goodToGo' ) || currentUrl.includes( 'step4' ) || currentUrl.includes( 'site_starter' );
+				if ( isStep4 ) {
+					setTimeout( () => {
+						TimingManager.trackStepStartTime( 4 );
+						this.checkAndSendReturnToStep4();
+					}, 100 );
+				}
 
-	window.addEventListener( 'popstate', () => {
-		setTimeout( urlChangeDetector, 100 );
-	} );
-}
+				lastUrl = currentUrl;
+			}
+		};
 
-export class OnboardingEventTracking {
-	static dispatchEvent( eventName, payload ) {
+		setInterval( urlChangeDetector, 500 );
+
+		window.addEventListener( 'popstate', () => {
+			setTimeout( urlChangeDetector, 100 );
+		} );
+	}
+
+	dispatchEvent( eventName, payload ) {
 		return EventDispatcher.dispatch( eventName, payload );
 	}
 
-	static updateLibraryConnectConfig( data ) {
+	updateLibraryConnectConfig( data ) {
 		if ( ! elementorCommon.config.library_connect ) {
 			return;
 		}
@@ -68,33 +63,33 @@ export class OnboardingEventTracking {
 		elementorCommon.config.library_connect.user_id = data.user_id || null;
 	}
 
-	static sendUpgradeNowStep3( selectedFeatures, currentStep ) {
+	sendUpgradeNowStep3( selectedFeatures, currentStep ) {
 		const proFeaturesChecked = this.extractSelectedFeatureKeys( selectedFeatures );
 
-		return EventDispatcher.dispatchStepEvent( 
-			ONBOARDING_EVENTS_MAP.UPGRADE_NOW_S3, 
-			currentStep, 
-			ONBOARDING_STEP_NAMES.PRO_FEATURES, 
+		return EventDispatcher.dispatchStepEvent(
+			ONBOARDING_EVENTS_MAP.UPGRADE_NOW_S3,
+			currentStep,
+			ONBOARDING_STEP_NAMES.PRO_FEATURES,
 			{
 				location: 'plugin_onboarding',
 				trigger: eventsConfig.triggers.click,
 				pro_features_checked: proFeaturesChecked,
-			}
+			},
 		);
 	}
 
-	static extractSelectedFeatureKeys( selectedFeatures ) {
+	extractSelectedFeatureKeys( selectedFeatures ) {
 		if ( ! selectedFeatures || ! Array.isArray( selectedFeatures ) ) {
 			return [];
 		}
 
 		return selectedFeatures
-			.filter( feature => feature && feature.is_checked )
-			.map( feature => feature.key )
-			.filter( key => key );
+			.filter( ( feature ) => feature && feature.is_checked )
+			.map( ( feature ) => feature.key )
+			.filter( ( key ) => key );
 	}
 
-	static sendHelloBizContinue( stepNumber ) {
+	sendHelloBizContinue( stepNumber ) {
 		if ( EventDispatcher.canSendEvents() ) {
 			return EventDispatcher.dispatchStepEvent(
 				ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE,
@@ -103,30 +98,35 @@ export class OnboardingEventTracking {
 				{
 					location: 'plugin_onboarding',
 					trigger: eventsConfig.triggers.click,
-				}
+				},
 			);
 		}
 	}
 
-	static sendCoreOnboardingInitiated() {
+	initiateCoreOnboarding() {
+		TimingManager.clearStaleSessionData();
+		TimingManager.initializeOnboardingStartTime();
+	}
+
+	sendCoreOnboardingInitiated() {
 		const startTime = TimingManager.initializeOnboardingStartTime();
 		const currentTime = TimingManager.getCurrentTime();
 		const totalOnboardingTime = Math.round( ( currentTime - startTime ) / 1000 );
 
-		const eventData = TimingManager.addTimingToEventData({
+		const eventData = TimingManager.addTimingToEventData( {
 			location: 'plugin_onboarding',
 			trigger: 'core_onboarding_initiated',
 			step_number: 1,
 			step_name: ONBOARDING_STEP_NAMES.ONBOARDING_START,
 			onboarding_start_time: startTime,
 			total_onboarding_time_seconds: totalOnboardingTime,
-		});
+		} );
 
 		this.dispatchEvent( ONBOARDING_EVENTS_MAP.CORE_ONBOARDING, eventData );
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.INITIATED );
 	}
 
-	static sendConnectStatus( status, trackingOptedIn = false, userTier = null ) {
+	sendConnectStatus( status, trackingOptedIn = false, userTier = null ) {
 		if ( EventDispatcher.canSendEvents() ) {
 			return EventDispatcher.dispatchStepEvent(
 				ONBOARDING_EVENTS_MAP.CONNECT_STATUS,
@@ -138,14 +138,12 @@ export class OnboardingEventTracking {
 					onboarding_connect_status: status,
 					tracking_opted_in: trackingOptedIn,
 					user_tier: userTier,
-				}
+				},
 			);
 		}
 	}
 
-	static storeSiteStarterChoice( siteStarter ) {
-		const existingChoiceString = StorageManager.getString( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
-
+	storeSiteStarterChoice( siteStarter ) {
 		const choiceData = {
 			site_starter: siteStarter,
 			timestamp: TimingManager.getCurrentTime(),
@@ -155,7 +153,7 @@ export class OnboardingEventTracking {
 		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
 	}
 
-	static checkAndSendReturnToStep4() {
+	checkAndSendReturnToStep4() {
 		const choiceData = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
 		if ( ! choiceData ) {
 			return;
@@ -170,7 +168,7 @@ export class OnboardingEventTracking {
 					trigger: 'user_returns_to_onboarding',
 					return_to_onboarding: choiceData.site_starter,
 					original_choice_timestamp: choiceData.timestamp,
-				}
+				},
 			);
 
 			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
@@ -180,19 +178,44 @@ export class OnboardingEventTracking {
 		}
 	}
 
-	static getSiteStarterChoice() {
+	getSiteStarterChoice() {
 		return StorageManager.getObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
 	}
 
-	static clearSiteStarterChoice() {
+	clearSiteStarterChoice() {
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
 	}
 
-	static clearStaleSessionData() {
+	handleSiteStarterChoice( siteStarter ) {
+		this.trackStepStartTime( 4 );
+		this.storeSiteStarterChoice( siteStarter );
+		this.trackStepAction( 4, 'site_starter', {
+			site_starter: siteStarter,
+		} );
+		this.sendStepEndState( 4 );
+	}
+
+	sendOnboardingSkip( currentStep ) {
+		if ( EventDispatcher.canSendEvents() ) {
+			return this.sendSkipEvent( currentStep );
+		}
+		this.storeSkipEventForLater( currentStep );
+	}
+
+	storeExitEventForLater( exitType, currentStep ) {
+		const exitData = {
+			exitType,
+			currentStep,
+			timestamp: TimingManager.getCurrentTime(),
+		};
+		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_EXIT, exitData );
+	}
+
+	clearStaleSessionData() {
 		TimingManager.clearStaleSessionData();
 	}
 
-	static checkAndSendEditorLoadedFromOnboarding() {
+	checkAndSendEditorLoadedFromOnboarding() {
 		const alreadyTracked = StorageManager.exists( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED );
 		if ( alreadyTracked ) {
 			return;
@@ -213,7 +236,7 @@ export class OnboardingEventTracking {
 		}
 	}
 
-	static storeSkipEventForLater( currentStep ) {
+	storeSkipEventForLater( currentStep ) {
 		const skipData = {
 			currentStep,
 			timestamp: TimingManager.getCurrentTime(),
@@ -221,7 +244,7 @@ export class OnboardingEventTracking {
 		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_SKIP, skipData );
 	}
 
-	static sendStoredSkipEvent() {
+	sendStoredSkipEvent() {
 		const skipData = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.PENDING_SKIP );
 		if ( ! skipData ) {
 			return;
@@ -236,14 +259,14 @@ export class OnboardingEventTracking {
 				trigger: 'skip_clicked',
 				action_step: stepName,
 				skip_timestamp: skipData.timestamp,
-			}
+			},
 		);
 
 		this.dispatchEvent( ONBOARDING_EVENTS_MAP.SKIP, eventData );
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_SKIP );
 	}
 
-	static sendSkipEvent( currentStep ) {
+	sendSkipEvent( currentStep ) {
 		if ( EventDispatcher.canSendEvents() ) {
 			return EventDispatcher.dispatchStepEvent(
 				ONBOARDING_EVENTS_MAP.SKIP,
@@ -253,12 +276,12 @@ export class OnboardingEventTracking {
 					location: 'plugin_onboarding',
 					trigger: 'skip_clicked',
 					action_step: currentStep,
-				}
+				},
 			);
 		}
 	}
 
-	static sendExitButtonEvent( currentStep ) {
+	sendExitButtonEvent( currentStep ) {
 		const eventData = EventDispatcher.createStepEventPayload(
 			currentStep,
 			this.getStepName( currentStep ),
@@ -266,13 +289,13 @@ export class OnboardingEventTracking {
 				location: 'plugin_onboarding',
 				trigger: 'exit_button_clicked',
 				action_step: currentStep,
-			}
+			},
 		);
 
 		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.EXIT_BUTTON, eventData );
 	}
 
-	static sendTopUpgrade( currentStep, upgradeClicked ) {
+	sendTopUpgrade( currentStep, upgradeClicked ) {
 		const canSendEvents = EventDispatcher.canSendEvents();
 
 		if ( canSendEvents ) {
@@ -284,14 +307,14 @@ export class OnboardingEventTracking {
 					trigger: 'upgrade_interaction',
 					action_step: currentStep,
 					upgrade_clicked: upgradeClicked,
-				}
+				},
 			);
 
 			return this.dispatchEvent( ONBOARDING_EVENTS_MAP.TOP_UPGRADE, eventData );
 		}
 	}
 
-	static sendCreateMyAccount( currentStep, createAccountClicked ) {
+	sendCreateMyAccount( currentStep, createAccountClicked ) {
 		if ( EventDispatcher.canSendEvents() ) {
 			return EventDispatcher.dispatchStepEvent(
 				ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT,
@@ -302,12 +325,12 @@ export class OnboardingEventTracking {
 					trigger: 'upgrade_interaction',
 					action_step: currentStep,
 					create_account_clicked: createAccountClicked,
-				}
+				},
 			);
 		}
 	}
 
-	static sendCreateAccountStatus( status, currentStep ) {
+	sendCreateAccountStatus( status, currentStep ) {
 		if ( EventDispatcher.canSendEvents() ) {
 			return EventDispatcher.dispatchStepEvent(
 				ONBOARDING_EVENTS_MAP.CREATE_ACCOUNT_STATUS,
@@ -317,12 +340,12 @@ export class OnboardingEventTracking {
 					location: 'plugin_onboarding',
 					trigger: 'create_flow_returns_status',
 					onboarding_create_account_status: status,
-				}
+				},
 			);
 		}
 	}
 
-	static sendStep1ClickedConnect( currentStep ) {
+	sendStep1ClickedConnect( currentStep ) {
 		if ( EventDispatcher.canSendEvents() ) {
 			return EventDispatcher.dispatchStepEvent(
 				ONBOARDING_EVENTS_MAP.STEP1_CLICKED_CONNECT,
@@ -331,13 +354,12 @@ export class OnboardingEventTracking {
 				{
 					location: 'plugin_onboarding',
 					trigger: eventsConfig.triggers.click,
-				}
+				},
 			);
 		}
 	}
 
-	// Storage methods for delayed events
-	static storeTopUpgradeEventForLater( currentStep, upgradeClicked ) {
+	storeTopUpgradeEventForLater( currentStep, upgradeClicked ) {
 		if ( ! currentStep || ! upgradeClicked ) {
 			return;
 		}
@@ -353,13 +375,13 @@ export class OnboardingEventTracking {
 		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE, existingEvents );
 	}
 
-	static sendStoredTopUpgradeEvent() {
+	sendStoredTopUpgradeEvent() {
 		const storedEvents = StorageManager.getArray( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
-		if ( storedEvents.length === 0 ) {
+		if ( 0 === storedEvents.length ) {
 			return;
 		}
 
-		storedEvents.forEach( eventData => {
+		storedEvents.forEach( ( eventData ) => {
 			const eventPayload = EventDispatcher.createStepEventPayload(
 				eventData.currentStep,
 				this.getStepName( eventData.currentStep ),
@@ -368,7 +390,7 @@ export class OnboardingEventTracking {
 					trigger: 'upgrade_interaction',
 					action_step: eventData.currentStep,
 					upgrade_clicked: eventData.upgradeClicked,
-				}
+				},
 			);
 
 			this.dispatchEvent( ONBOARDING_EVENTS_MAP.TOP_UPGRADE, eventPayload );
@@ -377,28 +399,27 @@ export class OnboardingEventTracking {
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE );
 	}
 
-	// Step tracking methods
-	static trackStepAction( stepNumber, action ) {
+	trackStepAction( stepNumber, action ) {
 		const stepConfig = this.getStepConfig( stepNumber );
 		if ( stepConfig ) {
 			this.trackStepActionInternal( stepNumber, action, stepConfig.storageKey );
 		}
 	}
 
-	static sendStepEndState( stepNumber ) {
+	sendStepEndState( stepNumber ) {
 		const stepConfig = this.getStepConfig( stepNumber );
 		if ( stepConfig ) {
-			this.sendStepEndStateInternal( 
-				stepNumber, 
-				stepConfig.storageKey, 
-				stepConfig.eventName, 
-				stepConfig.stepName, 
-				stepConfig.endStateProperty 
+			this.sendStepEndStateInternal(
+				stepNumber,
+				stepConfig.storageKey,
+				stepConfig.eventName,
+				stepConfig.stepName,
+				stepConfig.endStateProperty,
 			);
 		}
 	}
 
-	static trackStepActionInternal( stepNumber, action, storageKey, additionalData = {} ) {
+	trackStepActionInternal( stepNumber, action, storageKey, additionalData = {} ) {
 		const timeData = TimingManager.calculateTotalTimeSpent();
 		if ( ! timeData ) {
 			return;
@@ -411,9 +432,9 @@ export class OnboardingEventTracking {
 		StorageManager.setObject( storageKey, existingActions );
 	}
 
-	static sendStepEndStateInternal( stepNumber, storageKey, eventName, stepName, endStateProperty ) {
+	sendStepEndStateInternal( stepNumber, storageKey, eventName, stepName, endStateProperty ) {
 		const actions = StorageManager.getArray( storageKey );
-		if ( actions.length === 0 ) {
+		if ( 0 === actions.length ) {
 			return;
 		}
 
@@ -438,27 +459,27 @@ export class OnboardingEventTracking {
 		}
 	}
 
-	static calculateTimeSpent() {
+	calculateTimeSpent() {
 		return TimingManager.calculateTotalTimeSpent();
 	}
 
-	static trackStepStartTime( stepNumber ) {
+	trackStepStartTime( stepNumber ) {
 		return TimingManager.trackStepStartTime( stepNumber );
 	}
 
-	static calculateStepTimeSpent( stepNumber ) {
+	calculateStepTimeSpent( stepNumber ) {
 		return TimingManager.calculateStepTimeSpent( stepNumber );
 	}
 
-	static clearStepStartTime( stepNumber ) {
+	clearStepStartTime( stepNumber ) {
 		TimingManager.clearStepStartTime( stepNumber );
 	}
 
-	static getStoredActions( storageKey ) {
+	getStoredActions( storageKey ) {
 		return StorageManager.getArray( storageKey );
 	}
 
-	static getStepNumber( pageId ) {
+	getStepNumber( pageId ) {
 		if ( 'number' === typeof pageId ) {
 			return pageId;
 		}
@@ -476,7 +497,7 @@ export class OnboardingEventTracking {
 		return mappedStep || null;
 	}
 
-	static getStepName( stepNumber ) {
+	getStepName( stepNumber ) {
 		const stepNames = {
 			1: ONBOARDING_STEP_NAMES.CONNECT,
 			2: ONBOARDING_STEP_NAMES.HELLO_BIZ,
@@ -487,7 +508,7 @@ export class OnboardingEventTracking {
 		return stepNames[ stepNumber ] || 'unknown';
 	}
 
-	static getStepConfig( stepNumber ) {
+	getStepConfig( stepNumber ) {
 		const stepConfigs = {
 			1: {
 				storageKey: ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS,
@@ -518,18 +539,17 @@ export class OnboardingEventTracking {
 		return stepConfigs[ stepNumber ] || null;
 	}
 
-	// Connection success/failure handlers
-	static sendConnectionSuccessEvents( data ) {
+	sendConnectionSuccessEvents( data ) {
 		this.sendCoreOnboardingInitiated();
 		this.sendAppropriateStatusEvent( 'success', data );
 		this.sendAllStoredEvents();
 	}
 
-	static sendConnectionFailureEvents() {
+	sendConnectionFailureEvents() {
 		this.sendAppropriateStatusEvent( 'fail' );
 	}
 
-	static sendAppropriateStatusEvent( status, data = null ) {
+	sendAppropriateStatusEvent( status, data = null ) {
 		const hasCreateAccountAction = StorageManager.exists( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT );
 		const hasConnectAction = StorageManager.exists( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
 
@@ -548,7 +568,7 @@ export class OnboardingEventTracking {
 		}
 	}
 
-	static sendAllStoredEvents() {
+	sendAllStoredEvents() {
 		this.sendStoredSkipEvent();
 		this.sendStoredTopUpgradeEvent();
 		this.sendStoredCreateMyAccountEvent();
@@ -558,8 +578,7 @@ export class OnboardingEventTracking {
 		this.sendStoredStep1EndStateEvent();
 	}
 
-	// Step 4 card click handling
-	static handleStep4CardClick() {
+	handleStep4CardClick() {
 		const hasPreviousClick = StorageManager.exists( ONBOARDING_STORAGE_KEYS.STEP4_HAS_PREVIOUS_CLICK );
 
 		if ( hasPreviousClick ) {
@@ -569,20 +588,19 @@ export class OnboardingEventTracking {
 		}
 	}
 
-	// Upgrade button tracking
-	static setupAllUpgradeButtons( currentStep ) {
-		const upgradeButtons = document.querySelectorAll( 
-			'.elementor-button[href*="upgrade"], .e-btn[href*="upgrade"], .eps-button[href*="upgrade"]' 
+	setupAllUpgradeButtons( currentStep ) {
+		const upgradeButtons = document.querySelectorAll(
+			'.elementor-button[href*="upgrade"], .e-btn[href*="upgrade"], .eps-button[href*="upgrade"]',
 		);
 
-		upgradeButtons.forEach( button => {
+		upgradeButtons.forEach( ( button ) => {
 			this.setupSingleUpgradeButton( button, currentStep );
 		} );
 
 		return upgradeButtons.length;
 	}
 
-	static setupSingleUpgradeButton( buttonElement, currentStep ) {
+	setupSingleUpgradeButton( buttonElement, currentStep ) {
 		if ( ! buttonElement || buttonElement.dataset.onboardingTracked ) {
 			return null;
 		}
@@ -590,10 +608,8 @@ export class OnboardingEventTracking {
 		buttonElement.dataset.onboardingTracked = 'true';
 
 		let hasClicked = false;
-		let mouseEnterTime = null;
 
 		const handleMouseEnter = () => {
-			mouseEnterTime = TimingManager.getCurrentTime();
 			this.scheduleDelayedNoClickEvent( currentStep );
 		};
 
@@ -622,7 +638,7 @@ export class OnboardingEventTracking {
 		};
 	}
 
-	static determineUpgradeClickedValue( buttonElement ) {
+	determineUpgradeClickedValue( buttonElement ) {
 		if ( elementorCommon.config.library_connect?.is_connected &&
 			'pro' === elementorCommon.config.library_connect?.current_access_tier ) {
 			return 'already_pro_user';
@@ -639,21 +655,20 @@ export class OnboardingEventTracking {
 		return 'on_topbar';
 	}
 
-	static setupTopUpgradeTracking( currentStep ) {
+	setupTopUpgradeTracking( currentStep ) {
 		return this.setupAllUpgradeButtons( currentStep );
 	}
 
-	static setupSingleUpgradeButtonTracking( buttonElement, currentStep ) {
+	setupSingleUpgradeButtonTracking( buttonElement, currentStep ) {
 		return this.setupSingleUpgradeButton( buttonElement, currentStep );
 	}
 
-	static trackExitAndSendEndState( currentStep ) {
+	trackExitAndSendEndState( currentStep ) {
 		this.trackStepAction( currentStep, 'exit' );
 		this.sendStepEndState( currentStep );
 	}
 
-	// Delayed event methods
-	static scheduleDelayedNoClickEvent( currentStep, delay = 500 ) {
+	scheduleDelayedNoClickEvent( currentStep, delay = 500 ) {
 		this.cancelDelayedNoClickEvent();
 
 		const eventData = {
@@ -664,11 +679,11 @@ export class OnboardingEventTracking {
 		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK, eventData );
 	}
 
-	static cancelDelayedNoClickEvent() {
+	cancelDelayedNoClickEvent() {
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
 	}
 
-	static sendDelayedNoClickEvent() {
+	sendDelayedNoClickEvent() {
 		const eventData = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
 		if ( ! eventData ) {
 			return;
@@ -678,8 +693,7 @@ export class OnboardingEventTracking {
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
 	}
 
-	// Additional storage methods for other delayed events
-	static storeCreateMyAccountEventForLater( currentStep, createAccountClicked ) {
+	storeCreateMyAccountEventForLater( currentStep, createAccountClicked ) {
 		const eventData = {
 			currentStep,
 			createAccountClicked,
@@ -688,7 +702,7 @@ export class OnboardingEventTracking {
 		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT, eventData );
 	}
 
-	static sendStoredCreateMyAccountEvent() {
+	sendStoredCreateMyAccountEvent() {
 		const eventData = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT );
 		if ( ! eventData ) {
 			return;
@@ -702,14 +716,14 @@ export class OnboardingEventTracking {
 				trigger: 'upgrade_interaction',
 				action_step: eventData.currentStep,
 				create_account_clicked: eventData.createAccountClicked,
-			}
+			},
 		);
 
 		this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT, eventPayload );
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT );
 	}
 
-	static storeCreateAccountStatusEventForLater( status, currentStep ) {
+	storeCreateAccountStatusEventForLater( status, currentStep ) {
 		const eventData = {
 			status,
 			currentStep,
@@ -718,7 +732,7 @@ export class OnboardingEventTracking {
 		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS, eventData );
 	}
 
-	static sendStoredCreateAccountStatusEvent() {
+	sendStoredCreateAccountStatusEvent() {
 		const eventData = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS );
 		if ( ! eventData ) {
 			return;
@@ -731,14 +745,14 @@ export class OnboardingEventTracking {
 				location: 'plugin_onboarding',
 				trigger: 'create_flow_returns_status',
 				onboarding_create_account_status: eventData.status,
-			}
+			},
 		);
 
 		this.dispatchEvent( ONBOARDING_EVENTS_MAP.CREATE_ACCOUNT_STATUS, eventPayload );
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS );
 	}
 
-	static storeConnectStatusEventForLater( status, trackingOptedIn, userTier ) {
+	storeConnectStatusEventForLater( status, trackingOptedIn, userTier ) {
 		const eventData = {
 			status,
 			trackingOptedIn,
@@ -748,7 +762,7 @@ export class OnboardingEventTracking {
 		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS, eventData );
 	}
 
-	static sendStoredConnectStatusEvent() {
+	sendStoredConnectStatusEvent() {
 		const eventData = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS );
 		if ( ! eventData ) {
 			return;
@@ -763,14 +777,14 @@ export class OnboardingEventTracking {
 				onboarding_connect_status: eventData.status,
 				tracking_opted_in: eventData.trackingOptedIn,
 				user_tier: eventData.userTier,
-			}
+			},
 		);
 
 		this.dispatchEvent( ONBOARDING_EVENTS_MAP.CONNECT_STATUS, eventPayload );
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS );
 	}
 
-	static storeStep1ClickedConnectEventForLater( currentStep ) {
+	storeStep1ClickedConnectEventForLater( currentStep ) {
 		const eventData = {
 			currentStep,
 			timestamp: TimingManager.getCurrentTime(),
@@ -778,7 +792,7 @@ export class OnboardingEventTracking {
 		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT, eventData );
 	}
 
-	static storeStep1EndStateForLater( eventData, storageKey ) {
+	storeStep1EndStateForLater( eventData, storageKey ) {
 		const storedEventData = {
 			...eventData,
 			timestamp: TimingManager.getCurrentTime(),
@@ -787,7 +801,7 @@ export class OnboardingEventTracking {
 		StorageManager.remove( storageKey );
 	}
 
-	static sendStoredStep1ClickedConnectEvent() {
+	sendStoredStep1ClickedConnectEvent() {
 		const eventData = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
 		if ( ! eventData ) {
 			return;
@@ -799,14 +813,14 @@ export class OnboardingEventTracking {
 			{
 				location: 'plugin_onboarding',
 				trigger: eventsConfig.triggers.click,
-			}
+			},
 		);
 
 		this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP1_CLICKED_CONNECT, eventPayload );
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
 	}
 
-	static sendStoredStep1EndStateEvent() {
+	sendStoredStep1EndStateEvent() {
 		const eventData = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_END_STATE );
 		if ( ! eventData ) {
 			return;
@@ -819,8 +833,7 @@ export class OnboardingEventTracking {
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_END_STATE );
 	}
 
-	// Step load handler
-	static onStepLoad( currentStep ) {
+	onStepLoad( currentStep ) {
 		this.trackStepStartTime( this.getStepNumber( currentStep ) );
 
 		if ( 2 === this.getStepNumber( currentStep ) || 'hello_biz' === currentStep ) {
@@ -832,14 +845,16 @@ export class OnboardingEventTracking {
 		}
 	}
 
-	static sendStoredStep1EventsOnStep2() {
+	sendStoredStep1EventsOnStep2() {
 		this.sendStoredStep1ClickedConnectEvent();
 		this.sendStoredStep1EndStateEvent();
 	}
 
-	static handleStorageError( message, error ) {
-		// Silent fail - don't let storage errors break the user experience
+	silentlyIgnoreStorageErrors() {
 	}
 }
 
+const onboardingTracker = new OnboardingTracker();
+
+export default onboardingTracker;
 export { ONBOARDING_STORAGE_KEYS, ONBOARDING_STEP_NAMES };
