@@ -150,7 +150,7 @@ class Dynamic_Tags_Editor_Config {
 			'query'   => fn( $control ) => $this->convert_query_control_to_atomic( $control ),
 			'choose'   => fn( $control ) => $this->convert_choose_control_to_atomic( $control ),
 			'media'   => fn( $control ) => $this->convert_media_control_to_atomic( $control ),
-			'date_time' => fn( $control ) => $this->convert_date_time_control_to_atomic( $control ),
+			'date_time' => fn( $control ) => $this->convert_text_control_to_atomic( $control ),
 		];
 
 		if ( ! isset( $map[ $control['type'] ] ) ) {
@@ -321,9 +321,5 @@ class Dynamic_Tags_Editor_Config {
 		return Image_Control::bind_to( $control['name'] )
 			->set_show_mode( 'media' )
 			->set_label( $control['label'] );
-	}
-
-	private function convert_date_time_control_to_atomic( $control ) {
-		return $this->convert_text_control_to_atomic( $control );
 	}
 }
