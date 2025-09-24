@@ -17,9 +17,9 @@ class PostOnboardingTracker {
 		}
 
 		this.sendEditorLoadedEvent();
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED, 'true' );
-		
-		this.setupPostOnboardingClickTracking();
+	StorageManager.setString( ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED, 'true' );
+
+	this.setupPostOnboardingClickTracking();
 	}
 
 	sendEditorLoadedEvent() {

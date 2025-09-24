@@ -14,42 +14,15 @@ export default function Layout( props ) {
 	}, [ props.pageId ] );
 
 	const goProButtonRef = useRef();
-	const cleanupRef = useRef( null );
-
-	const cleanupPreviousTopbarTracking = useCallback( () => {
-		if ( cleanupRef.current ) {
-			cleanupRef.current();
-			cleanupRef.current = null;
-		}
-	}, [] );
-
-	const resetTopbarButtonRef = useCallback( () => {
-		goProButtonRef.current = null;
-	}, [] );
-
-	const storeTopbarButtonAndSetupTracking = useCallback( ( buttonElement ) => {
-		goProButtonRef.current = buttonElement;
-		cleanupRef.current = OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, stepNumber );
-	}, [ stepNumber ] );
 
 	const setupTopbarUpgradeTracking = useCallback( ( buttonElement ) => {
 		if ( ! buttonElement ) {
-			resetTopbarButtonRef();
 			return;
 		}
 
-		storeTopbarButtonAndSetupTracking( buttonElement );
-	}, [ resetTopbarButtonRef, storeTopbarButtonAndSetupTracking ] );
-
-	const cleanupTopbarTrackingOnUnmount = useCallback( () => {
-		if ( cleanupRef.current ) {
-			cleanupRef.current();
-		}
-	}, [] );
-
-	useEffect( () => {
-		return cleanupTopbarTrackingOnUnmount;
-	}, [ cleanupTopbarTrackingOnUnmount ] );
+		goProButtonRef.current = buttonElement;
+		return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, stepNumber );
+	}, [ stepNumber ] );
 
 	const { state, updateState } = useContext( OnboardingContext );
 
@@ -142,7 +115,7 @@ export default function Layout( props ) {
 			elRef: goProButtonRef,
 			onClick: () => {
 				OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
-				OnboardingEventTracking.sendEventOrStore( 'TOP_UPGRADE', { currentStep: stepNumber, upgradeClicked: 'on_topbar' } );
+				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_topbar' );
 
 				elementorCommon.events.dispatchEvent( {
 					event: 'go pro',

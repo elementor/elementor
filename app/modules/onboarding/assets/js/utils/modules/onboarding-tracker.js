@@ -284,6 +284,14 @@ class OnboardingTracker {
 		}
 	}
 
+	sendTopUpgrade( currentStep, upgradeClicked ) {
+		return this.sendEventOrStore( 'TOP_UPGRADE', { currentStep, upgradeClicked } );
+	}
+
+	cancelDelayedNoClickEvent() {
+		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
+	}
+
 	initiateCoreOnboarding() {
 		TimingManager.clearStaleSessionData();
 		TimingManager.initializeOnboardingStartTime();
@@ -378,10 +386,10 @@ class OnboardingTracker {
 		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.EXIT_BUTTON, eventData );
 	}
 
-	trackStepAction( stepNumber, action ) {
+	trackStepAction( stepNumber, action, additionalData = {} ) {
 		const stepConfig = this.getStepConfig( stepNumber );
 		if ( stepConfig ) {
-			this.trackStepActionInternal( stepNumber, action, stepConfig.storageKey );
+			this.trackStepActionInternal( stepNumber, action, stepConfig.storageKey, additionalData );
 		}
 	}
 
@@ -399,11 +407,7 @@ class OnboardingTracker {
 	}
 
 	trackStepActionInternal( stepNumber, action, storageKey, additionalData = {} ) {
-		const timeData = TimingManager.calculateTotalTimeSpent();
-		if ( ! timeData ) {
-			return;
-		}
-
+		// Always store the action, regardless of global timing availability
 		const existingActions = StorageManager.getArray( storageKey );
 		const actionData = { action, timestamp: TimingManager.getCurrentTime(), ...additionalData };
 

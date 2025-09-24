@@ -3,7 +3,7 @@ import EventDispatcher from './event-dispatcher.js';
 
 class ClickTracker {
 	constructor() {
-		this.DEDUPLICATION_WINDOW_MS = 1000;
+		this.DEDUPLICATION_WINDOW_MS = 150;
 		this.MAX_CLICKS = 3;
 		this.lastClickTime = 0;
 		this.lastClickElement = null;
@@ -56,28 +56,19 @@ class ClickTracker {
 		}
 	}
 
-	shouldTrackClick( target ) {
-		if ( ! target || ! target.tagName ) {
-			return false;
+	shouldTrackClick( element ) {
+		const excludedSelectors = [
+			'.announcements-container',
+			'.close-button',
+		];
+
+		for ( const selector of excludedSelectors ) {
+			if ( element.closest( selector ) ) {
+				return false;
+			}
 		}
 
-		const tagName = target.tagName.toLowerCase();
-		const trackableTags = [ 'button', 'a', 'input', 'select', 'textarea' ];
-
-		if ( trackableTags.includes( tagName ) ) {
-			return true;
-		}
-
-		const hasClickableRole = 'button' === target.getAttribute( 'role' ) ||
-								'link' === target.getAttribute( 'role' );
-
-		const hasClickableClass = target.classList.contains( 'elementor-button' ) ||
-								target.classList.contains( 'elementor-clickable' ) ||
-								target.classList.contains( 'e-btn' );
-
-		const hasClickHandler = target.onclick || target.getAttribute( 'onclick' );
-
-		return hasClickableRole || hasClickableClass || hasClickHandler;
+		return true;
 	}
 
 	isDuplicateClick( target, timeSinceLastClick ) {
@@ -85,7 +76,26 @@ class ClickTracker {
 			return false;
 		}
 
-		return target === this.lastClickElement;
+		if ( ! this.lastClickElement ) {
+			return false;
+		}
+
+		const isSameElement = this.lastClickElement === target;
+		const isRelatedElement = this.areElementsRelated( this.lastClickElement, target );
+
+		return isSameElement || isRelatedElement;
+	}
+
+	areElementsRelated( element1, element2 ) {
+		if ( ! element1 || ! element2 ) {
+			return false;
+		}
+
+		const isParentChild = element1.contains( element2 ) || element2.contains( element1 );
+		const shareCommonParent = element1.parentElement === element2.parentElement;
+		const bothInSameControl = element1.closest( '.elementor-control' ) === element2.closest( '.elementor-control' );
+
+		return isParentChild || shareCommonParent || bothInSameControl;
 	}
 
 	extractClickData( element ) {
@@ -99,53 +109,101 @@ class ClickTracker {
 	}
 
 	findMeaningfulTitle( element ) {
-		const titleSources = [
-			() => element.getAttribute( 'title' ),
-			() => element.getAttribute( 'aria-label' ),
-			() => element.textContent?.trim(),
-			() => element.getAttribute( 'alt' ),
-			() => element.getAttribute( 'placeholder' ),
-			() => element.value,
-		];
+		const directTitle = this.extractTitleFromElement( element );
+		if ( directTitle && directTitle.trim().length > 0 ) {
+			return directTitle.trim();
+		}
 
-		for ( const getTitle of titleSources ) {
-			const title = getTitle();
-			if ( title && title.length > 0 ) {
-				return title;
+		let currentElement = element.parentElement;
+		let attempts = 0;
+		const maxAttempts = 3;
+
+		while ( currentElement && attempts < maxAttempts ) {
+			const title = this.extractTitleFromElement( currentElement );
+
+			if ( title && title.trim().length > 0 ) {
+				return title.trim();
+			}
+
+			currentElement = currentElement.parentElement;
+			attempts++;
+		}
+
+		return this.generateFallbackTitle( element );
+	}
+
+	extractTitleFromElement( element ) {
+		const controlFieldContainer = element.closest( '.elementor-control-field' );
+
+		if ( controlFieldContainer ) {
+			const labelElement = controlFieldContainer.querySelector( 'label' );
+			if ( labelElement && labelElement.textContent ) {
+				return labelElement.textContent.trim();
 			}
 		}
 
-		return element.tagName.toLowerCase();
+		const sources = [
+			element.getAttribute( 'placeholder' ),
+			element.getAttribute( 'aria-label' ),
+			element.title,
+			element.getAttribute( 'data-title' ),
+			'select' === element.tagName?.toLowerCase() ? '' : element.textContent?.trim(),
+			'select' === element.tagName?.toLowerCase() ? '' : element.innerText?.trim(),
+			element.querySelector( '.elementor-widget-title' )?.textContent?.trim(),
+			element.querySelector( '.elementor-heading-title' )?.textContent?.trim(),
+			element.querySelector( '.elementor-button-text' )?.textContent?.trim(),
+		];
+
+		for ( const source of sources ) {
+			if ( source && source.length > 0 && source !== 'undefined' ) {
+				return source;
+			}
+		}
+
+		return '';
+	}
+
+	generateFallbackTitle( element ) {
+		const tagName = element.tagName?.toLowerCase() || 'element';
+		const className = element.className || '';
+
+		if ( className.includes( 'eicon-' ) ) {
+			const iconClass = className.split( ' ' ).find( ( cls ) => cls.startsWith( 'eicon-' ) );
+			if ( iconClass ) {
+				return iconClass.replace( 'eicon-', '' ).replace( '-', ' ' );
+			}
+		}
+
+		if ( className.includes( 'elementor-button' ) ) {
+			return 'Elementor Button';
+		}
+
+		if ( className.includes( 'elementor-widget' ) ) {
+			return 'Elementor Widget';
+		}
+
+		return `${ tagName } element`;
 	}
 
 	generateSelector( element ) {
-		const parts = [];
-		let current = element;
+		const selectorParts = [];
+		let currentElement = element;
 
-		while ( current && current !== document.body && parts.length < 5 ) {
-			let selector = current.tagName.toLowerCase();
+		for ( let i = 0; i < 4 && currentElement && currentElement !== document.body; i++ ) {
+			let selector = currentElement.tagName.toLowerCase();
 
-			if ( current.id ) {
-				selector += `#${ current.id }`;
-				parts.unshift( selector );
-				break;
+			if ( 0 === i && currentElement.id ) {
+				selector += `#${ currentElement.id }`;
+			} else if ( currentElement.classList.length > 0 ) {
+				const classes = Array.from( currentElement.classList ).slice( 0, 3 );
+				selector += `.${ classes.join( '.' ) }`;
 			}
 
-			if ( current.className ) {
-				const classes = current.className.split( ' ' )
-					.filter( ( cls ) => cls.length > 0 )
-					.slice( 0, 2 )
-					.join( '.' );
-				if ( classes ) {
-					selector += `.${ classes }`;
-				}
-			}
-
-			parts.unshift( selector );
-			current = current.parentElement;
+			selectorParts.unshift( selector );
+			currentElement = currentElement.parentElement;
 		}
 
-		return parts.join( ' > ' );
+		return selectorParts.join( ' > ' );
 	}
 
 	storeClickData( clickCount, clickData ) {
@@ -187,9 +245,6 @@ class ClickTracker {
 			this.clickHandler = null;
 		}
 		StorageManager.clearAllOnboardingData();
-	}
-
-	silentlyIgnoreTrackingErrors() {
 	}
 }
 

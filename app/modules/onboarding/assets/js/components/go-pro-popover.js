@@ -17,42 +17,15 @@ export default function GoProPopover( props ) {
 	}, [ state.currentStep ] );
 
 	const upgradeButtonRef = useRef( null );
-	const cleanupRef = useRef( null );
-
-	const cleanupPreviousUpgradeTracking = useCallback( () => {
-		if ( cleanupRef.current ) {
-			cleanupRef.current();
-			cleanupRef.current = null;
-		}
-	}, [] );
-
-	const resetUpgradeButtonRef = useCallback( () => {
-		upgradeButtonRef.current = null;
-	}, [] );
-
-	const storeUpgradeButtonAndSetupTracking = useCallback( ( buttonElement ) => {
-		upgradeButtonRef.current = buttonElement;
-		cleanupRef.current = OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, state.currentStep );
-	}, [ state.currentStep ] );
 
 	const setupUpgradeButtonTracking = useCallback( ( buttonElement ) => {
 		if ( ! buttonElement ) {
-			resetUpgradeButtonRef();
 			return;
 		}
 
-		storeUpgradeButtonAndSetupTracking( buttonElement );
-	}, [ resetUpgradeButtonRef, storeUpgradeButtonAndSetupTracking ] );
-
-	const cleanupOnUnmount = useCallback( () => {
-		if ( cleanupRef.current ) {
-			cleanupRef.current();
-		}
-	}, [] );
-
-	useEffect( () => {
-		return cleanupOnUnmount;
-	}, [ cleanupOnUnmount ] );
+		upgradeButtonRef.current = buttonElement;
+		return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, state.currentStep );
+	}, [ state.currentStep ] );
 
 	const alreadyHaveProButtonRef = useCallback( ( alreadyHaveProButton ) => {
 		if ( ! alreadyHaveProButton ) {
@@ -76,11 +49,11 @@ export default function GoProPopover( props ) {
 			}
 
 			trackUpgradeAction();
-			StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
+			OnboardingEventTracking.cancelDelayedNoClickEvent();
 			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 
 			if ( stepNumber ) {
-				OnboardingEventTracking.sendEventOrStore( 'TOP_UPGRADE', { currentStep: stepNumber, upgradeClicked: 'already_pro_user' } );
+				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'already_pro_user' );
 			}
 
 			elementorCommon.events.dispatchEvent( {
@@ -136,11 +109,11 @@ export default function GoProPopover( props ) {
 				}
 
 				trackUpgradeAction();
-				StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
+				OnboardingEventTracking.cancelDelayedNoClickEvent();
 				const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 
 				if ( stepNumber ) {
-					OnboardingEventTracking.sendEventOrStore( 'TOP_UPGRADE', { currentStep: stepNumber, upgradeClicked: 'on_tooltip' } );
+					OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
 				}
 
 				elementorCommon.events.dispatchEvent( {
