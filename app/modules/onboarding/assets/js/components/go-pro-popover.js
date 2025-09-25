@@ -76,47 +76,45 @@ export default function GoProPopover( props ) {
 		alreadyHaveProButton.addEventListener( 'click', clickHandler );
 	}, [ state.currentStep, updateState ] );
 
-	// The buttonsConfig prop is an array of objects. To find the 'Upgrade Now' button, we need to iterate over the object.
-	const goProButton = props.buttonsConfig.find( ( button ) => 'go-pro' === button.id ),
-		getElProButton = {
-			text: elementorAppConfig.onboarding.experiment ? __( 'Upgrade now', 'elementor' ) : __( 'Upgrade Now', 'elementor' ),
-			className: 'e-onboarding__go-pro-cta',
-			target: '_blank',
-			href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
-			tabIndex: 0,
-			elRef: ( buttonElement ) => {
-				if ( ! buttonElement ) {
-					return;
-				}
+	const getElProButton = {
+		text: elementorAppConfig.onboarding.experiment ? __( 'Upgrade now', 'elementor' ) : __( 'Upgrade Now', 'elementor' ),
+		className: 'e-onboarding__go-pro-cta',
+		target: '_blank',
+		href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
+		tabIndex: 0,
+		elRef: ( buttonElement ) => {
+			if ( ! buttonElement ) {
+				return;
+			}
 
-				upgradeButtonRef.current = buttonElement;
-				// Use state.currentStep if available, otherwise fall back to 'account' for step 1
-				const currentStep = state.currentStep || 'account';
-				return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, currentStep );
-			},
-			onClick: () => {
-				if ( ! state.currentStep || '' === state.currentStep ) {
-					return;
-				}
+			upgradeButtonRef.current = buttonElement;
+			// Use state.currentStep if available, otherwise fall back to 'account' for step 1
+			const currentStep = state.currentStep || 'account';
+			return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, currentStep );
+		},
+		onClick: () => {
+			if ( ! state.currentStep || '' === state.currentStep ) {
+				return;
+			}
 
-				const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
-				OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
-				OnboardingEventTracking.cancelDelayedNoClickEvent();
+			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+			OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
+			OnboardingEventTracking.cancelDelayedNoClickEvent();
 
-				if ( stepNumber ) {
-					OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
-				}
+			if ( stepNumber ) {
+				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
+			}
 
-				elementorCommon.events.dispatchEvent( {
-					event: 'get elementor pro',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-					},
-				} );
-			},
-		};
+			elementorCommon.events.dispatchEvent( {
+				event: 'get elementor pro',
+				version: '',
+				details: {
+					placement: elementorAppConfig.onboarding.eventPlacement,
+					step: state.currentStep,
+				},
+			} );
+		},
+	};
 
 	const targetRef = props.goProButtonRef || upgradeButtonRef;
 
