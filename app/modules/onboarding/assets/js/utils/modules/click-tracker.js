@@ -112,7 +112,7 @@ class ClickTracker {
 		if ( timeSinceLastSelect <= this.selectTimeoutWindow ) {
 			const isSelectElement = 'select' === element.tagName?.toLowerCase();
 			const isInSelectControl = !! element.closest( '.elementor-control-input-wrapper select' );
-			
+
 			if ( isSelectElement || isInSelectControl ) {
 				return true;
 			}
@@ -127,18 +127,18 @@ class ClickTracker {
 		}
 
 		const timeSinceLastClick = Date.now() - this.lastClickTime;
-		
+
 		if ( timeSinceLastClick > 500 ) {
 			return false;
 		}
 
 		const wasLastClickSelect = 'select' === this.lastClickElement.tagName?.toLowerCase();
 		const isCurrentClickSelect = 'select' === element.tagName?.toLowerCase();
-		
+
 		if ( wasLastClickSelect && isCurrentClickSelect ) {
 			const lastSelectControl = this.lastClickElement.closest( '.elementor-control' );
 			const currentSelectControl = element.closest( '.elementor-control' );
-			
+
 			if ( lastSelectControl && currentSelectControl && lastSelectControl === currentSelectControl ) {
 				return true;
 			}
@@ -150,7 +150,7 @@ class ClickTracker {
 	isDuplicateClick( target, timeSinceLastClick ) {
 		const extendedWindow = this.shouldUseExtendedWindow( this.lastClickElement, target );
 		const windowToUse = extendedWindow ? this.DEDUPLICATION_WINDOW_MS * 3 : this.DEDUPLICATION_WINDOW_MS;
-		
+
 		if ( timeSinceLastClick > windowToUse ) {
 			return false;
 		}
@@ -172,7 +172,7 @@ class ClickTracker {
 
 		const isElement1Select = 'select' === element1.tagName?.toLowerCase();
 		const isElement2Select = 'select' === element2.tagName?.toLowerCase();
-		
+
 		return isElement1Select || isElement2Select;
 	}
 
@@ -205,7 +205,7 @@ class ClickTracker {
 
 		const element1SelectParent = element1.closest( 'select' );
 		const element2SelectParent = element2.closest( 'select' );
-		
+
 		if ( element1SelectParent && element2SelectParent && element1SelectParent === element2SelectParent ) {
 			return true;
 		}
@@ -213,7 +213,7 @@ class ClickTracker {
 		if ( element1SelectParent && element1SelectParent === element2 ) {
 			return true;
 		}
-		
+
 		if ( element2SelectParent && element2SelectParent === element1 ) {
 			return true;
 		}

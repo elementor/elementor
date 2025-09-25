@@ -1,6 +1,5 @@
 export default function Button( props ) {
 	const { buttonSettings, type } = props;
-	const { elRef, ...otherSettings } = buttonSettings;
 
 	let buttonClasses = 'e-onboarding__button';
 
@@ -8,17 +7,19 @@ export default function Button( props ) {
 		buttonClasses += ` e-onboarding__button-${ type }`;
 	}
 
-	if ( otherSettings.className ) {
-		otherSettings.className += ' ' + buttonClasses;
+	if ( buttonSettings.className ) {
+		buttonSettings.className += ' ' + buttonClasses;
 	} else {
-		otherSettings.className = buttonClasses;
+		buttonSettings.className = buttonClasses;
 	}
 
-	if ( otherSettings.href ) {
-		return <a ref={ elRef } { ...otherSettings }>{ otherSettings.text }</a>;
+	const { elRef, ...buttonProps } = buttonSettings;
+
+	if ( buttonSettings.href ) {
+		return <a ref={ elRef } { ...buttonProps }>{ buttonSettings.text }</a>;
 	}
 
-	return <div ref={ elRef } { ...otherSettings }>{ otherSettings.text }</div>;
+	return <div ref={ elRef } { ...buttonProps }>{ buttonSettings.text }</div>;
 }
 
 Button.propTypes = {

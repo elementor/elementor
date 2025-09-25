@@ -21,8 +21,8 @@ export default function Layout( props ) {
 		}
 
 		goProButtonRef.current = buttonElement;
-		return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, stepNumber );
-	}, [ stepNumber ] );
+		return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, state.currentStep );
+	}, [ state.currentStep ] );
 
 	const { state, updateState } = useContext( OnboardingContext );
 
@@ -114,7 +114,8 @@ export default function Layout( props ) {
 			target: '_blank',
 			elRef: setupTopbarUpgradeTracking,
 			onClick: () => {
-				OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
+				const currentStepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+				OnboardingEventTracking.trackStepAction( currentStepNumber, 'upgrade_topbar' );
 				
 				elementorCommon.events.dispatchEvent( {
 					event: 'go pro',

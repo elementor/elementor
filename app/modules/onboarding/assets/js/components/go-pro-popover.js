@@ -93,39 +93,36 @@ export default function GoProPopover( props ) {
 		alreadyHaveProButton.addEventListener( 'click', clickHandler );
 	}, [ state.currentStep, updateState, trackUpgradeAction ] );
 
-	const findGoProButton = () => props.buttonsConfig.find( ( button ) => 'go-pro' === button.id );
+	const getElProButton = {
+		text: elementorAppConfig.onboarding.experiment ? __( 'Upgrade now', 'elementor' ) : __( 'Upgrade Now', 'elementor' ),
+		className: 'e-onboarding__go-pro-cta',
+		target: '_blank',
+		href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
+		tabIndex: 0,
+		elRef: setupUpgradeButtonTracking,
+		onClick: () => {
+			if ( ! state.currentStep || '' === state.currentStep ) {
+				return;
+			}
 
-	const goProButton = findGoProButton(),
-		getElProButton = {
-			text: elementorAppConfig.onboarding.experiment ? __( 'Upgrade now', 'elementor' ) : __( 'Upgrade Now', 'elementor' ),
-			className: 'e-onboarding__go-pro-cta',
-			target: '_blank',
-			href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
-			tabIndex: 0,
-			elRef: setupUpgradeButtonTracking,
-			onClick: () => {
-				if ( ! state.currentStep || '' === state.currentStep ) {
-					return;
-				}
+			trackUpgradeAction();
+			OnboardingEventTracking.cancelDelayedNoClickEvent();
+			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 
-				trackUpgradeAction();
-				OnboardingEventTracking.cancelDelayedNoClickEvent();
-				const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+			if ( stepNumber ) {
+				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
+			}
 
-				if ( stepNumber ) {
-					OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
-				}
-
-				elementorCommon.events.dispatchEvent( {
-					event: 'get elementor pro',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-					},
-				} );
-			},
-		};
+			elementorCommon.events.dispatchEvent( {
+				event: 'get elementor pro',
+				version: '',
+				details: {
+					placement: elementorAppConfig.onboarding.eventPlacement,
+					step: state.currentStep,
+				},
+			} );
+		},
+	};
 
 	return (
 		<PopoverDialog
