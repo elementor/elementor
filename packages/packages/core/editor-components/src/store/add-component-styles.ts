@@ -1,7 +1,7 @@
+import { type V1ElementData } from '@elementor/editor-elements';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
-import { type DocumentElement, type Element } from '../types';
 import { getComponentIds } from '../utils/get-component-ids';
 import { load } from './component-config';
 import { selectData, slice } from './components-styles-store';
@@ -19,16 +19,14 @@ export async function addComponentStyles( ids: InitialDocumentId[] ) {
 		ids.filter( ( id ) => ! data[ id ] ).map( async ( id ) => [ id, await load( id ) ] as const )
 	);
 
-	const styles = newDocumentsConfigs.map(
-		( [ id, config ] ) => [ id, extractStyles( config as DocumentElement ) ] as const
+	const styles = Object.fromEntries(
+		newDocumentsConfigs.map( ( [ id, config ] ) => [ id, extractStyles( config ) ] )
 	);
 
-	if ( styles.length ) {
-		dispatch( slice.actions.add( Object.fromEntries( styles ) ) );
-	}
+	dispatch( slice.actions.add( styles ) );
 
 	const otherComponentIds = newDocumentsConfigs.flatMap( ( [ , config ] ) =>
-		getComponentIds( config.elements as Element[] )
+		getComponentIds( config.elements ?? [] )
 	);
 
 	if ( otherComponentIds.length ) {
@@ -36,9 +34,6 @@ export async function addComponentStyles( ids: InitialDocumentId[] ) {
 	}
 }
 
-function extractStyles( element: DocumentElement ): Array< StyleDefinition > {
-	return [
-		...Object.values( element.styles ?? {} ),
-		...( ( element.elements ?? [] ) as DocumentElement[] ).flatMap( extractStyles ),
-	];
+function extractStyles( element: V1ElementData ): Array< StyleDefinition > {
+	return [ ...Object.values( element.styles ?? {} ), ...( element.elements ?? [] ).flatMap( extractStyles ) ];
 }
