@@ -36,7 +36,7 @@ class Taxonomies extends Export_Runner_Base {
 	}
 
 	public function export_all( array $data ) {
-		$selected_custom_post_types = $data['selected_custom_post_types'] ?? null;
+		$selected_custom_post_types = $data['customization']['content']['customPostTypes'] ?? null;
 		$exclude_post_types = [];
 
 		if ( is_array( $selected_custom_post_types ) && ! in_array( 'post', $selected_custom_post_types, true ) ) {
@@ -104,7 +104,7 @@ class Taxonomies extends Export_Runner_Base {
 	public function export_terms( $taxonomy ) {
 		$terms = get_terms( [
 			'taxonomy' => (array) $taxonomy,
-			'hide_empty' => true,
+			'hide_empty' => false,
 			'get' => 'all',
 		] );
 
