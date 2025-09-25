@@ -1,0 +1,326 @@
+---
+description: Debugging and validation protocols for PHP development.
+globs: 
+  - "**/*.php"
+alwaysApply: true
+---
+
+# Debugging & Validation Protocol
+
+## Pre-Implementation Checklist
+
+### 1. Dependency Verification
+**ALWAYS verify method/class existence before using them**
+
+```bash
+# Check if method exists in a class
+grep -n "function method_name" path/to/file.php
+
+# Check for method calls that might not exist
+grep -n "\$this->method_name" path/to/file.php
+
+# Verify class dependencies
+grep -n "class ClassName" path/to/file.php
+```
+
+### 2. Method Signature Verification
+**Verify method signatures match your expectations**
+
+```bash
+# Find method definition with parameters
+grep -A 3 "function method_name" path/to/file.php
+
+# Check return types
+grep -B 2 -A 5 "function method_name" path/to/file.php
+```
+
+## Implementation Validation
+
+### 1. Syntax Validation (MANDATORY)
+**Run on EVERY changed file before proceeding**
+
+```bash
+# Single file
+php -l path/to/file.php
+
+# Multiple files
+find . -name "*.php" -exec php -l {} \; | grep -v "No syntax errors"
+
+# Batch validation
+for file in *.php; do php -l "$file" || echo "ERROR in $file"; done
+```
+
+### 2. Method Dependency Check
+**Verify all called methods exist**
+
+```php
+// Create validation script template:
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Test class instantiation
+try {
+    $instance = new YourClass();
+    echo "✓ Class instantiated successfully\n";
+} catch (Exception $e) {
+    echo "✗ Class instantiation failed: " . $e->getMessage() . "\n";
+}
+
+// Test method calls
+try {
+    $result = $instance->your_method('test_value');
+    echo "✓ Method call successful\n";
+    var_dump($result);
+} catch (Exception $e) {
+    echo "✗ Method call failed: " . $e->getMessage() . "\n";
+}
+?>
+```
+
+### 3. Interface Compliance Check
+**Ensure classes implement required interfaces correctly**
+
+```bash
+# Check interface implementation
+grep -n "implements.*Interface" path/to/file.php
+
+# Verify all interface methods are implemented
+grep -n "public function" path/to/interface.php
+grep -n "public function" path/to/implementation.php
+```
+
+## Testing Protocol
+
+### 1. Incremental Testing
+**Test each change individually before moving to the next**
+
+```bash
+# Test single mapper
+php -c /path/to/php.ini test_single_mapper.php ClassName
+
+# Test specific functionality
+php test_specific_feature.php property_name test_value
+```
+
+### 2. Integration Testing
+**Test how changes work together**
+
+```php
+// Integration test template:
+<?php
+// Test multiple mappers working together
+$test_cases = [
+    ['property' => 'color', 'value' => '#ff0000'],
+    ['property' => 'font-size', 'value' => '16px'],
+    ['property' => 'padding', 'value' => '10px 20px'],
+];
+
+foreach ($test_cases as $test) {
+    echo "Testing {$test['property']}: {$test['value']}\n";
+    // Test implementation here
+}
+?>
+```
+
+### 3. Error Boundary Testing
+**Test edge cases and error conditions**
+
+```php
+// Test with invalid inputs
+$invalid_inputs = [
+    null,
+    '',
+    'invalid_value',
+    ['array_input'],
+    123,
+];
+
+foreach ($invalid_inputs as $input) {
+    try {
+        $result = $mapper->process($input);
+        echo "Input: " . var_export($input, true) . " -> Result: " . var_export($result, true) . "\n";
+    } catch (Exception $e) {
+        echo "Input: " . var_export($input, true) . " -> Error: " . $e->getMessage() . "\n";
+    }
+}
+```
+
+## Post-Implementation Validation
+
+### 1. Comprehensive File Validation
+**Run after completing a set of changes**
+
+```bash
+# Create comprehensive validation script
+cat > validate_changes.php << 'EOF'
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+$files = glob('path/to/changed/files/*.php');
+$errors = [];
+$warnings = [];
+
+foreach ($files as $file) {
+    echo "Validating: " . basename($file) . "\n";
+    
+    // Syntax check
+    $output = [];
+    $return_code = 0;
+    exec("php -l " . escapeshellarg($file) . " 2>&1", $output, $return_code);
+    
+    if ($return_code !== 0) {
+        $errors[] = basename($file) . ": " . implode(' ', $output);
+        continue;
+    }
+    
+    // Method dependency check
+    $content = file_get_contents($file);
+    
+    // Check for common issues
+    if (strpos($content, '$this->non_existent_method') !== false) {
+        $warnings[] = basename($file) . ": Potential method call issues";
+    }
+    
+    echo "  ✓ OK\n";
+}
+
+echo "\nSummary:\n";
+echo "Files: " . count($files) . "\n";
+echo "Errors: " . count($errors) . "\n";
+echo "Warnings: " . count($warnings) . "\n";
+
+if (!empty($errors)) {
+    echo "\nErrors:\n";
+    foreach ($errors as $error) {
+        echo "  ❌ $error\n";
+    }
+}
+
+if (!empty($warnings)) {
+    echo "\nWarnings:\n";
+    foreach ($warnings as $warning) {
+        echo "  ⚠️  $warning\n";
+    }
+}
+EOF
+
+php validate_changes.php
+```
+
+### 2. API Testing
+**Test actual API endpoints after changes**
+
+```bash
+# Test API endpoint with curl
+curl -X POST "http://localhost/wp-json/elementor/v2/widget-converter" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "html": "<div style=\"color: red;\">Test</div>",
+    "css": "",
+    "postId": null
+  }'
+
+# Check for 500 errors in logs
+tail -f /path/to/error.log | grep "500"
+```
+
+## Error Prevention Strategies
+
+### 1. Defensive Programming
+```php
+// Always check method existence
+if (method_exists($this, 'method_name')) {
+    return $this->method_name($value);
+}
+
+// Validate inputs
+if (!is_string($value) || empty($value)) {
+    return null;
+}
+
+// Use type hints
+public function process_value(string $property, $value): ?array {
+    // Implementation
+}
+```
+
+### 2. Logging for Debugging
+```php
+// Add debug logging
+error_log("DEBUG: Processing property: $property with value: $value");
+
+// Log method calls
+error_log("DEBUG: Calling method_name with: " . var_export($params, true));
+
+// Log results
+error_log("DEBUG: Method result: " . var_export($result, true));
+```
+
+### 3. Rollback Preparation
+```bash
+# Before making changes, create backup
+cp -r original_folder/ backup_$(date +%Y%m%d_%H%M%S)/
+
+# Track what files you're changing
+echo "$(date): Modified file.php" >> changes.log
+
+# Keep a list of changes for easy rollback
+git add -A && git commit -m "Backup before changes"
+```
+
+## Emergency Debugging
+
+### When You Get a 500 Error:
+
+1. **Check PHP Error Logs**
+```bash
+tail -f /path/to/php/error.log
+```
+
+2. **Enable WordPress Debug Mode**
+```php
+// In wp-config.php
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+define('WP_DEBUG_DISPLAY', false);
+```
+
+3. **Isolate the Problem**
+```php
+// Create minimal reproduction script
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Include only necessary files
+require_once 'problematic_file.php';
+
+// Test the specific failing code
+try {
+    $instance = new ProblematicClass();
+    $result = $instance->failing_method('test');
+    var_dump($result);
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage() . "\n";
+    echo "File: " . $e->getFile() . ":" . $e->getLine() . "\n";
+    echo "Trace:\n" . $e->getTraceAsString() . "\n";
+}
+?>
+```
+
+## Final Checklist Before Task Completion
+
+- [ ] All changed files pass `php -l` syntax check
+- [ ] All method calls verified to exist
+- [ ] All interface implementations complete
+- [ ] Integration tests pass
+- [ ] API endpoints return expected results (not 500 errors)
+- [ ] Error logs are clean
+- [ ] Edge cases tested
+- [ ] Rollback plan documented
+
+## Remember: NEVER ASSUME - ALWAYS VERIFY
+
+**The cost of verification is always less than the cost of debugging production errors.**
