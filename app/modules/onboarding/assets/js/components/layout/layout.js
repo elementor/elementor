@@ -9,6 +9,8 @@ import Connect from '../../utils/connect';
 import { OnboardingEventTracking } from '../../utils/onboarding-event-tracking';
 
 export default function Layout( props ) {
+	const { state, updateState } = useContext( OnboardingContext );
+
 	const stepNumber = useMemo( () => {
 		return OnboardingEventTracking.getStepNumber( props.pageId );
 	}, [ props.pageId ] );
@@ -23,8 +25,6 @@ export default function Layout( props ) {
 		goProButtonRef.current = buttonElement;
 		return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, state.currentStep );
 	}, [ state.currentStep ] );
-
-	const { state, updateState } = useContext( OnboardingContext );
 
 	const handleTopbarConnectSuccess = useCallback( () => {
 		updateState( {
@@ -116,7 +116,7 @@ export default function Layout( props ) {
 			onClick: () => {
 				const currentStepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 				OnboardingEventTracking.trackStepAction( currentStepNumber, 'upgrade_topbar' );
-				
+
 				elementorCommon.events.dispatchEvent( {
 					event: 'go pro',
 					version: '',
