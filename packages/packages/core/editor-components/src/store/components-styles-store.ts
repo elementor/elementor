@@ -18,7 +18,7 @@ const initialState: State = {
 
 export type StateWithInitialDocumentsStyles = SliceState< typeof slice >;
 
-export const SLICE_NAME = 'inital-documents-styles';
+export const SLICE_NAME = 'components-styles';
 
 export const slice = createSlice( {
 	name: SLICE_NAME,

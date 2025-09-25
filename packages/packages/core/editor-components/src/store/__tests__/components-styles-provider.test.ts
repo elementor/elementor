@@ -1,8 +1,8 @@
 import { createMockStyleDefinition } from 'test-utils';
 import { __getState as getState } from '@elementor/store';
 
-import { initialDocumentsStylesProvider } from '../providers/inital-documents-styles-provider';
-import { SLICE_NAME } from '../store/initial-documents-styles-store';
+import { componentsStylesProvider } from '../../components-styles-provider';
+import { SLICE_NAME } from '../components-styles-store';
 
 jest.mock( '@elementor/store', () => {
 	const actual = jest.requireActual( '@elementor/store' );
@@ -13,7 +13,7 @@ jest.mock( '@elementor/store', () => {
 	};
 } );
 
-describe( 'initialDocumentsStylesProvider', () => {
+describe( 'componentsStylesProvider', () => {
 	const DOC_ID_1 = 1;
 	const DOC_ID_2 = 2;
 
@@ -40,7 +40,7 @@ describe( 'initialDocumentsStylesProvider', () => {
 		{ id: 's-3', expected: STYLE_3 },
 	] )( 'should get a style for $id', ( { id, expected } ) => {
 		// Act.
-		const style = initialDocumentsStylesProvider.actions.get( id );
+		const style = componentsStylesProvider.actions.get( id );
 
 		// Assert.
 		expect( style ).toStrictEqual( expected );
@@ -48,9 +48,9 @@ describe( 'initialDocumentsStylesProvider', () => {
 
 	it( 'should expose the static key', () => {
 		// Act.
-		const key = initialDocumentsStylesProvider.getKey();
+		const key = componentsStylesProvider.getKey();
 
 		// Assert.
-		expect( key ).toBe( 'initial-documents-styles' );
+		expect( key ).toBe( 'components-styles' );
 	} );
 } );
