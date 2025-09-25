@@ -224,10 +224,10 @@ class Post_Query extends Base {
 
 		$post_types = get_post_types( $post_type_query_args, 'objects' );
 
-		return  Collection::make( $post_types )
+		return Collection::make( $post_types )
 				->filter( function ( $slug, $post_type ) use ( $included_types, $excluded_types ) {
-					return ( empty ( $included_types ) || in_array( $post_type, $included_types ) ) &&
-						( empty ( $excluded_types ) || ! in_array( $post_type, $excluded_types ) );
+					return ( empty( $included_types ) || in_array( $post_type, $included_types ) ) &&
+						( empty( $excluded_types ) || ! in_array( $post_type, $excluded_types ) );
 				} )->all();
 	}
 }

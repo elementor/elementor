@@ -349,7 +349,7 @@ class Dynamic_Tags_Editor_Config {
 		$roles = array_keys( $wp_roles->roles );
 
 		return isset( $control['autocomplete']['object'] ) && in_array( $control['autocomplete']['object'], $roles, true );
-  }
+	}
 
 	private function convert_choose_control_to_atomic( $control ) {
 		return Toggle_Control::bind_to( $control['name'] )
