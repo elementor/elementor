@@ -1,0 +1,342 @@
+/* ========================================
+   CSS CONVERTER COMPREHENSIVE TEST PLAN
+   ========================================
+   
+   This file contains test classes for all 54 supported CSS properties.
+   Use this with the CSS converter endpoint to test property mapping.
+   
+   Test each class individually or in groups to verify:
+   1. Correct property conversion
+   2. Proper data structure in Elementor
+   3. Visual appearance in editor controls
+   4. Frontend rendering accuracy
+*/
+
+/* ===================
+   TYPOGRAPHY TESTS
+   =================== */
+
+.typography-basic {
+    color: #ff6600;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.typography-advanced {
+    color: rgba(255, 0, 0, 0.8);
+    font-size: 2rem;
+    font-weight: 300;
+    text-align: justify;
+    line-height: 2.2;
+    text-decoration: underline;
+    text-transform: uppercase;
+}
+
+.typography-units {
+    font-size: 4vw;
+    line-height: 150%;
+    color: #abc;
+}
+
+/* ===================
+   LAYOUT & DISPLAY TESTS
+   =================== */
+
+.layout-basic {
+    display: flex;
+    width: 300px;
+    height: 200px;
+    opacity: 0.75;
+}
+
+.layout-dimensions {
+    display: grid;
+    width: 50%;
+    height: 100vh;
+    min-width: 200px;
+    min-height: 150px;
+    max-width: 800px;
+    max-height: 600px;
+    opacity: 1;
+}
+
+.layout-units {
+    width: 25vw;
+    height: 10em;
+    opacity: 50%;
+}
+
+/* ===================
+   SPACING TESTS
+   =================== */
+
+.spacing-shorthand {
+    margin: 10px 20px 15px 5px;
+    padding: 8px 16px;
+}
+
+.spacing-individual {
+    margin-top: 12px;
+    margin-right: 24px;
+    margin-bottom: 18px;
+    margin-left: 6px;
+    padding-top: 10px;
+    padding-right: 20px;
+    padding-bottom: 15px;
+    padding-left: 5px;
+}
+
+.spacing-units {
+    margin: 2rem 1em;
+    padding: 5% 3vh 2vw;
+}
+
+/* ===================
+   BORDER TESTS
+   =================== */
+
+.border-shorthand {
+    border: 2px solid #333;
+}
+
+.border-advanced {
+    border: 5px dashed rgba(255, 0, 0, 0.6);
+    border-radius: 15px;
+}
+
+.border-individual-width {
+    border-top-width: 1px;
+    border-right-width: 2px;
+    border-bottom-width: 3px;
+    border-left-width: 4px;
+    border-style: solid;
+    border-color: #666;
+}
+
+.border-individual-styles {
+    border-width: 2px;
+    border-top-style: solid;
+    border-right-style: dashed;
+    border-bottom-style: dotted;
+    border-left-style: double;
+    border-color: #999;
+}
+
+.border-individual-colors {
+    border-width: 1px;
+    border-style: solid;
+    border-top-color: #ff0000;
+    border-right-color: #00ff00;
+    border-bottom-color: #0000ff;
+    border-left-color: #ffff00;
+}
+
+.border-radius-individual {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 20px;
+    border: 1px solid #ccc;
+}
+
+.border-keywords {
+    border: thick groove silver;
+}
+
+/* ===================
+   BACKGROUND TESTS
+   =================== */
+
+.background-color {
+    background-color: #f0f8ff;
+}
+
+.background-image {
+    background-image: url("test-image.jpg");
+}
+
+.background-gradient {
+    background-image: linear-gradient(to right, #ff0000, #0000ff);
+}
+
+.background-shorthand {
+    background: #e6f3ff url("bg-pattern.png") no-repeat center;
+}
+
+/* ===================
+   EFFECTS TESTS
+   =================== */
+
+.effects-filter {
+    filter: blur(3px) brightness(1.2) contrast(0.8);
+}
+
+.effects-shadows {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ===================
+   FLEXBOX TESTS
+   =================== */
+
+.flex-shorthand {
+    flex: 1 2 300px;
+}
+
+.flex-individual {
+    flex-grow: 2;
+    flex-shrink: 0;
+    flex-basis: auto;
+}
+
+.flex-keywords {
+    flex: auto;
+}
+
+/* ===================
+   POSITION TESTS
+   =================== */
+
+.position-absolute {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    bottom: 40px;
+    left: 10px;
+    z-index: 100;
+}
+
+.position-relative {
+    position: relative;
+    top: 5px;
+    left: 10px;
+    z-index: auto;
+}
+
+.position-units {
+    position: fixed;
+    top: 2rem;
+    right: 5%;
+    z-index: 999;
+}
+
+/* ===================
+   SVG STROKE TESTS
+   =================== */
+
+.stroke-basic {
+    stroke: #ff6600;
+    stroke-width: 2px;
+}
+
+.stroke-advanced {
+    stroke: rgba(0, 255, 0, 0.7);
+    stroke-width: 3px;
+    stroke-dasharray: 5 10;
+    stroke-linecap: round;
+    stroke-linejoin: bevel;
+}
+
+/* ===================
+   TRANSITION TESTS
+   =================== */
+
+.transition-shorthand {
+    transition: all 0.3s ease-in-out 0.1s;
+}
+
+.transition-individual {
+    transition-property: opacity;
+    transition-duration: 0.5s;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 200ms;
+}
+
+.transition-multiple {
+    transition: opacity 0.2s linear, transform 0.4s ease;
+}
+
+/* ===================
+   COMPREHENSIVE TESTS
+   =================== */
+
+.comprehensive-test {
+    /* Typography */
+    color: #2c3e50;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: left;
+    line-height: 1.6;
+    text-decoration: none;
+    text-transform: capitalize;
+    
+    /* Layout */
+    display: inline-block;
+    width: 250px;
+    height: 150px;
+    opacity: 0.9;
+    
+    /* Spacing */
+    margin: 15px 25px;
+    padding: 12px 18px;
+    
+    /* Border */
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    
+    /* Background */
+    background-color: #ecf0f1;
+    
+    /* Effects */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    /* Position */
+    position: relative;
+    z-index: 1;
+    
+    /* Transition */
+    transition: all 0.25s ease;
+}
+
+.edge-case-test {
+    /* Zero values */
+    margin: 0;
+    padding: 0px;
+    border: 0;
+    
+    /* Negative values */
+    top: -10px;
+    left: -5px;
+    
+    /* Decimal values */
+    opacity: 0.33;
+    line-height: 1.25;
+    font-size: 14.5px;
+    
+    /* Mixed units */
+    width: calc(100% - 20px);
+    height: auto;
+}
+
+.color-formats-test {
+    /* Different color formats */
+    color: #ff0000;                    /* 6-digit hex */
+    background-color: #f00;            /* 3-digit hex */
+    border-color: rgb(255, 0, 0);      /* RGB */
+    outline-color: rgba(255, 0, 0, 0.5); /* RGBA */
+    text-shadow: 1px 1px 2px hsl(0, 100%, 50%); /* HSL */
+}
+
+.units-test {
+    /* All supported units */
+    font-size: 16px;        /* pixels */
+    width: 50%;             /* percentage */
+    height: 10em;           /* em */
+    margin: 2rem;           /* rem */
+    padding: 5vh 3vw;       /* viewport units */
+    border-width: thin;     /* keyword */
+    line-height: 1.5;       /* unitless */
+}

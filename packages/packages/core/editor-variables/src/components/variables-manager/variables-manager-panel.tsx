@@ -10,8 +10,8 @@ import {
 } from '@elementor/editor-panels';
 import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { ColorFilterIcon, TrashIcon } from '@elementor/icons';
-import { Alert, Box, Button, CloseButton, Divider, ErrorBoundary, Stack, usePopupState } from '@elementor/ui';
+import { ColorFilterIcon, FilesIcon, TrashIcon } from '@elementor/icons';
+import { Alert, Box, Button, CloseButton, Collapse, Divider, ErrorBoundary, IconButton, Stack, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
@@ -21,6 +21,7 @@ import { useAutoEdit } from './hooks/use-auto-edit';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
 import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu';
 import { VariablesManagerTable } from './variables-manager-table';
+import { VariablesImportPanel } from './variables-import-panel';
 
 const id = 'variables-manager';
 
@@ -57,6 +58,9 @@ export function VariablesManagerPanel() {
 		handleSearch,
 		setHasValidationErrors,
 	} = useVariablesManagerState();
+
+	// Import UI state
+	const [ showImportUI, setShowImportUI ] = React.useState( false );
 
 	const { autoEditVariableId, startAutoEdit, handleAutoEditComplete } = useAutoEdit();
 
@@ -119,6 +123,21 @@ export function VariablesManagerPanel() {
 										{ __( 'Variable Manager', 'elementor' ) }
 									</PanelHeaderTitle>
 								</Stack>
+								<IconButton
+									size="small"
+									color="secondary"
+									aria-label="Import variables"
+									onClick={ () => setShowImportUI( ( prev ) => ! prev ) }
+									sx={ { marginLeft: 'auto' } }
+								>
+									<FilesIcon fontSize="small" />
+								</IconButton>
+								<CloseButton
+									sx={ { marginLeft: 'auto' } }
+									onClose={ () => {
+										closePanel();
+									} }
+								/>
 								<Stack direction="row" gap={ 0.5 } alignItems="center">
 									<VariableManagerCreateMenu
 										onCreate={ handleCreateVariable }
@@ -143,42 +162,51 @@ export function VariablesManagerPanel() {
 							height: '100%',
 						} }
 					>
-						<SearchField
-							placeholder={ __( 'Search', 'elementor' ) }
-							value={ searchValue }
-							onSearch={ handleSearch }
-						/>
-						<Divider sx={ { width: '100%' } } />
+						<Collapse in={ showImportUI } timeout="auto" unmountOnExit>
+							<VariablesImportPanel onImported={ () => {
+								// No-op: storage.load() already triggers in service.load(); re-render occurs when panel props/state change
+							} } />
+						</Collapse>
+						{ ! showImportUI && (
+							<>
+								<SearchField
+									placeholder={ __( 'Search', 'elementor' ) }
+									value={ searchValue }
+									onSearch={ handleSearch }
+								/>
+								<Divider sx={ { width: '100%' } } />
 
-						{ hasVariables && (
-							<VariablesManagerTable
-								menuActions={ menuActions }
-								variables={ variables }
-								onChange={ handleOnChange }
-								autoEditVariableId={ autoEditVariableId }
-								onAutoEditComplete={ handleAutoEditComplete }
-								onFieldError={ setHasValidationErrors }
-							/>
-						) }
-
-						{ ! hasVariables && searchValue && (
-							<NoSearchResults
-								searchValue={ searchValue }
-								onClear={ () => handleSearch( '' ) }
-								icon={ <ColorFilterIcon fontSize="large" /> }
-							/>
-						) }
-
-						{ ! hasVariables && ! searchValue && (
-							<EmptyState
-								title={ __( 'Create your first variable', 'elementor' ) }
-								message={ __(
-									'Variables are saved attributes that you can apply anywhere on your site.',
-									'elementor'
+								{ hasVariables && (
+									<VariablesManagerTable
+										menuActions={ menuActions }
+										variables={ variables }
+										onChange={ handleOnChange }
+										autoEditVariableId={ autoEditVariableId }
+										onAutoEditComplete={ handleAutoEditComplete }
+										onFieldError={ setHasValidationErrors }
+									/>
 								) }
-								icon={ <ColorFilterIcon fontSize="large" /> }
-								onAdd={ createMenuState.open }
-							/>
+
+								{ ! hasVariables && searchValue && (
+									<NoSearchResults
+										searchValue={ searchValue }
+										onClear={ () => handleSearch( '' ) }
+										icon={ <ColorFilterIcon fontSize="large" /> }
+									/>
+								) }
+
+								{ ! hasVariables && ! searchValue && (
+									<EmptyState
+										title={ __( 'Create your first variable', 'elementor' ) }
+										message={ __(
+											'Variables are saved attributes that you can apply anywhere on your site.',
+											'elementor'
+										) }
+										icon={ <ColorFilterIcon fontSize="large" /> }
+										onAdd={ createMenuState.open }
+									/>
+								) }
+							</>
 						) }
 					</PanelBody>
 
