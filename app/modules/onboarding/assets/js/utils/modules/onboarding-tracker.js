@@ -423,6 +423,9 @@ class OnboardingTracker {
 			return;
 		}
 
+		
+		this.sendHoverEventsFromStepActions( actions, stepNumber );
+
 		let eventData = EventDispatcher.createStepEventPayload( stepNumber, stepName, {
 			location: 'plugin_onboarding',
 			trigger: 'user_redirects_out_of_step',
@@ -595,6 +598,7 @@ class OnboardingTracker {
 	}
 
 	setupSingleUpgradeButton( buttonElement, currentStep ) {
+		
 		if ( ! this.isValidButtonElement( buttonElement ) ) {
 			return null;
 		}
@@ -630,33 +634,32 @@ class OnboardingTracker {
 
 	createUpgradeButtonEventHandlers( buttonElement, currentStep ) {
 		let hasClicked = false;
+		let hasHovered = false;
 
 		const handleMouseEnter = () => {
-			this.scheduleDelayedNoClickEvent( currentStep );
+			
+			if ( ! hasHovered ) {
+				hasHovered = true;
+				this.trackUpgradeHoverAction( currentStep, buttonElement );
+			}
 		};
 
 		const handleMouseLeave = () => {
-			this.cancelDelayedEventIfNotClicked( hasClicked );
 		};
 
 		const handleClick = () => {
+			
 			if ( this.preventDuplicateClick( hasClicked ) ) {
 				return;
 			}
 			
 			hasClicked = true;
-			this.cancelDelayedNoClickEvent();
 			this.sendUpgradeClickEvent( buttonElement, currentStep );
 		};
 
 		return { handleMouseEnter, handleMouseLeave, handleClick };
 	}
 
-	cancelDelayedEventIfNotClicked( hasClicked ) {
-		if ( ! hasClicked ) {
-			StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
-		}
-	}
 
 	preventDuplicateClick( hasClicked ) {
 		return hasClicked;
@@ -665,6 +668,41 @@ class OnboardingTracker {
 	sendUpgradeClickEvent( buttonElement, currentStep ) {
 		const upgradeClickedValue = this.determineUpgradeClickedValue( buttonElement );
 		this.sendEventOrStore( 'TOP_UPGRADE', { currentStep, upgradeClicked: upgradeClickedValue } );
+	}
+
+	trackUpgradeHoverAction( currentStep, buttonElement ) {
+		
+		const stepNumber = this.getStepNumber( currentStep );
+		if ( ! stepNumber ) {
+			return;
+		}
+
+		const upgradeHoverValue = this.determineUpgradeClickedValue( buttonElement );
+		
+		this.trackStepAction( stepNumber, 'upgrade_hover', {
+			upgrade_hovered: upgradeHoverValue,
+			hover_timestamp: TimingManager.getCurrentTime()
+		} );
+	}
+
+	sendHoverEventsFromStepActions( actions, stepNumber ) {
+		
+		const hoverActions = actions.filter( action => action.action === 'upgrade_hover' );
+		
+		if ( hoverActions.length === 0 ) {
+			return;
+		}
+
+		
+		hoverActions.forEach( hoverAction => {
+			
+			this.sendEventOrStore( 'TOP_UPGRADE', { 
+				currentStep: stepNumber, 
+				upgradeClicked: 'no_click',
+				upgradeHovered: hoverAction.upgrade_hovered,
+				hoverTimestamp: hoverAction.hover_timestamp
+			} );
+		} );
 	}
 
 
@@ -730,26 +768,6 @@ class OnboardingTracker {
 		this.sendStepEndState( currentStep );
 	}
 
-	scheduleDelayedNoClickEvent( currentStep, delay = 500 ) {
-		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
-
-		const eventData = {
-			currentStep,
-			scheduledTime: TimingManager.getCurrentTime() + delay,
-		};
-
-		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK, eventData );
-	}
-
-	sendDelayedNoClickEvent() {
-		const eventData = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
-		if ( ! eventData ) {
-			return;
-		}
-
-		this.sendEventOrStore( 'TOP_UPGRADE', { currentStep: eventData.currentStep, upgradeClicked: 'no_click' } );
-		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
-	}
 
 	storeStep1EndStateForLater( eventData, storageKey ) {
 		this.storeEventForLater( 'STEP1_END_STATE', eventData );
