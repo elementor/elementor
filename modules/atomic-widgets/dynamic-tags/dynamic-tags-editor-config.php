@@ -3,6 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Query_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
@@ -86,7 +88,7 @@ class Dynamic_Tags_Editor_Config {
 		}
 
 		try {
-			$atomic_controls = $this->convert_controls_to_atomic( $tag['controls'], $tag['force_convert_to_atomic'] ?? false );
+			$atomic_controls = $this->convert_controls_to_atomic( $tag );
 		} catch ( \Exception $e ) {
 			return null;
 		}
@@ -100,15 +102,22 @@ class Dynamic_Tags_Editor_Config {
 		return $converted_tag;
 	}
 
-	private function convert_controls_to_atomic( $controls, $force = false ) {
+	private function convert_controls_to_atomic( $tag ) {
 		$atomic_controls = [];
+
+		$controls = $tag['controls'] ?? null;
+		$force = $tag['force_convert_to_atomic'] ?? false;
+
+		if ( ! is_array( $controls ) ) {
+			return null;
+		}
 
 		foreach ( $controls as $control ) {
 			if ( 'section' === $control['type'] ) {
 				continue;
 			}
 
-			$atomic_control = $this->convert_control_to_atomic( $control );
+			$atomic_control = $this->convert_control_to_atomic( $control, $tag );
 
 			if ( ! $atomic_control ) {
 				if ( $force ) {
@@ -131,14 +140,16 @@ class Dynamic_Tags_Editor_Config {
 		return array_values( $atomic_controls );
 	}
 
-	private function convert_control_to_atomic( $control ) {
+	private function convert_control_to_atomic( $control, $tag = [] ) {
 		$map = [
-			'select'   => fn( $control ) => $this->convert_select_control_to_atomic( $control ),
+			'select'   => fn( $control ) => $this->convert_select_control_to_atomic( $control, $tag ),
 			'text'     => fn( $control ) => $this->convert_text_control_to_atomic( $control ),
 			'textarea' => fn( $control ) => $this->convert_textarea_control_to_atomic( $control ),
 			'switcher' => fn( $control ) => $this->convert_switch_control_to_atomic( $control ),
 			'number'   => fn( $control ) => $this->convert_number_control_to_atomic( $control ),
 			'query'   => fn( $control ) => $this->convert_query_control_to_atomic( $control ),
+			'choose'   => fn( $control ) => $this->convert_choose_control_to_atomic( $control ),
+			'media'   => fn( $control ) => $this->convert_media_control_to_atomic( $control ),
 		];
 
 		if ( ! isset( $map[ $control['type'] ] ) ) {
@@ -160,18 +171,22 @@ class Dynamic_Tags_Editor_Config {
 	 * @return Select_Control
 	 * @throws \Exception If control is missing options.
 	 */
-	private function convert_select_control_to_atomic( $control ) {
-		if ( empty( $control['options'] ) ) {
+	private function convert_select_control_to_atomic( $control, $tag = [] ) {
+		$options = $this->extract_select_options_from_control( $control );
+
+		if ( empty( $options ) ) {
 			throw new \Exception( 'Select control must have options' );
 		}
+
+		$options = apply_filters( 'elementor/atomic/dynamic_tags/select_control_options', $options, $control, $tag );
 
 		$options = array_map(
 			fn( $key, $value ) => [
 				'value' => $key,
 				'label' => $value,
 			],
-			array_keys( $control['options'] ),
-			$control['options']
+			array_keys( $options ),
+			$options
 		);
 
 		$select_control = Select_Control::bind_to( $control['name'] )
@@ -184,6 +199,36 @@ class Dynamic_Tags_Editor_Config {
 		}
 
 		return $select_control;
+	}
+
+	private function extract_select_options_from_control( $control ): array {
+		$options = $control['options'] ?? [];
+
+		if ( ! empty( $options ) ) {
+			return $options;
+		}
+
+		if ( empty( $control['groups'] ) || ! is_array( $control['groups'] ) ) {
+			return $options;
+		}
+
+		foreach ( $control['groups'] as $group ) {
+			if ( empty( $group['options'] ) || ! is_array( $group['options'] ) ) {
+				continue;
+			}
+
+			$filtered = array_filter(
+				$group['options'],
+				static function ( $label, $key ) {
+					return is_string( $key );
+				},
+				ARRAY_FILTER_USE_BOTH
+			);
+
+			$options = array_merge( $options, $filtered );
+		}
+
+		return $options;
 	}
 
 	/**
@@ -260,5 +305,20 @@ class Dynamic_Tags_Editor_Config {
 
 	private function is_control_elementor_query( $control ): bool {
 		return isset( $control['autocomplete']['object'] ) && 'library_template' === $control['autocomplete']['object'];
+	}
+
+	private function convert_choose_control_to_atomic( $control ) {
+		return Toggle_Control::bind_to( $control['name'] )
+			->set_label( $control['atomic_label'] ?? $control['label'] )
+			->add_options( $control['options'] )
+			->set_size( 'tiny' )
+			->set_exclusive( true )
+			->set_convert_options( true );
+	}
+
+	private function convert_media_control_to_atomic( $control ) {
+		return Image_Control::bind_to( $control['name'] )
+			->set_show_mode( 'media' )
+			->set_label( $control['label'] );
 	}
 }
