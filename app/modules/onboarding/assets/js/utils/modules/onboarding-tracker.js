@@ -434,11 +434,11 @@ class OnboardingTracker {
 		} );
 
 		eventData = TimingManager.addTimingToEventData( eventData, stepNumber );
-		const filteredActions = actions.filter( ( action ) => 
+		const filteredActions = actions.filter( ( action ) =>
 			'upgrade_hover' !== action.action &&
 			'upgrade_topbar' !== action.action &&
 			'upgrade_now' !== action.action &&
-			'upgrade_already_pro' !== action.action
+			'upgrade_already_pro' !== action.action,
 		);
 		eventData[ endStateProperty ] = filteredActions;
 
@@ -825,12 +825,12 @@ class OnboardingTracker {
 
 	sendStoredStep1EventsOnStep2() {
 		this.sendStoredEvent( 'STEP1_CLICKED_CONNECT' );
-		
+
 		const step1Actions = StorageManager.getArray( ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS );
 		if ( step1Actions.length > 0 ) {
 			this.sendHoverEventsFromStepActions( step1Actions, 1 );
 		}
-		
+
 		this.sendStoredEvent( 'STEP1_END_STATE' );
 	}
 
