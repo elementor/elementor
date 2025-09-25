@@ -1,5 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
+import { type TVariable, type TVariablesList } from '../storage';
+
 export const ERROR_MESSAGES = {
 	MISSING_VARIABLE_NAME: __( 'Give your variable a name.', 'elementor' ),
 	MISSING_VARIABLE_VALUE: __( 'Add a value to complete your variable.', 'elementor' ),
@@ -36,7 +38,7 @@ export const mapServerError = ( error: ErrorResponse ): MappedError | undefined 
 	return undefined;
 };
 
-export const validateLabel = ( name: string ): string => {
+export const validateLabel = ( name: string, variables?: TVariablesList ): string => {
 	if ( ! name.trim() ) {
 		return ERROR_MESSAGES.MISSING_VARIABLE_NAME;
 	}
@@ -53,6 +55,10 @@ export const validateLabel = ( name: string ): string => {
 
 	if ( VARIABLE_LABEL_MAX_LENGTH < name.length ) {
 		return ERROR_MESSAGES.VARIABLE_LABEL_MAX_LENGTH;
+	}
+
+	if ( Object.values( variables ?? {} ).some( ( variable: TVariable ) => variable.label === name ) ) {
+		return ERROR_MESSAGES.DUPLICATED_LABEL;
 	}
 
 	return '';
