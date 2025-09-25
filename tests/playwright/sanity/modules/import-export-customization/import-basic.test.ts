@@ -1,18 +1,9 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
 import * as path from 'path';
 import { ImportExportHelpers } from './helpers/import-export-helpers';
 
 test.describe( 'Import Export Customization - Basic Import', () => {
-	let wpAdminPage: WpAdminPage;
-
-	test.beforeEach( async ( { page, apiRequests } ) => {
-		wpAdminPage = new WpAdminPage( page, test.info(), apiRequests );
-
-		await wpAdminPage.login();
-	} );
-
 	test( 'should complete full import process with progress and summary', async ( { page } ) => {
 		await ImportExportHelpers.openImportPage( page );
 
@@ -36,7 +27,7 @@ test.describe( 'Import Export Customization - Basic Import', () => {
 		await ImportExportHelpers.openImportPage( page );
 
 		const importButton = page.locator( 'button:has-text("Import")' );
-		await expect( importButton ).toBeDisabled();
+		await expect( importButton ).not.toBeVisible();
 
 		await ImportExportHelpers.uploadKitFile( page );
 

@@ -1,16 +1,7 @@
 import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
 import { ImportExportHelpers } from './helpers/import-export-helpers';
 
 test.describe( 'Import Export Customization - Import Customization', () => {
-	let wpAdminPage: WpAdminPage;
-
-	test.beforeEach( async ( { page, apiRequests } ) => {
-		wpAdminPage = new WpAdminPage( page, test.info(), apiRequests );
-
-		await wpAdminPage.login();
-	} );
-
 	test( 'should import kit with Theme unchecked in Settings dialog', async ( { page } ) => {
 		await ImportExportHelpers.openImportPage( page );
 

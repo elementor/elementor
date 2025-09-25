@@ -10,8 +10,6 @@ test.describe( 'Import Export Customization - Content Customization', () => {
 	test.beforeEach( async ( { page, apiRequests } ) => {
 		wpAdminPage = new WpAdminPage( page, test.info(), apiRequests );
 
-		await wpAdminPage.login();
-
 		createdItems = await setupCompleteTestData( page, test.info(), apiRequests );
 	} );
 

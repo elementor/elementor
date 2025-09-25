@@ -1,18 +1,12 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
 import { setupCompleteTestData, cleanupCreatedItems, CreatedItems } from './utils/test-seeders';
 import { ImportExportHelpers } from './helpers/import-export-helpers';
 
 test.describe( 'Import Export Customization - Basic Export', () => {
-	let wpAdminPage: WpAdminPage;
 	let createdItems: CreatedItems;
 
 	test.beforeEach( async ( { page, apiRequests } ) => {
-		wpAdminPage = new WpAdminPage( page, test.info(), apiRequests );
-
-		await wpAdminPage.login();
-
 		createdItems = await setupCompleteTestData( page, test.info(), apiRequests );
 	} );
 

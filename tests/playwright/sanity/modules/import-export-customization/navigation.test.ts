@@ -1,17 +1,8 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
 import { NavigationHelpers } from './helpers/navigation-helpers';
 
 test.describe( 'Import Export Customization - Navigation', () => {
-	let wpAdminPage: WpAdminPage;
-
-	test.beforeEach( async ( { page, apiRequests } ) => {
-		wpAdminPage = new WpAdminPage( page, test.info(), apiRequests );
-
-		await wpAdminPage.login();
-	} );
-
 	test( 'should navigate to export page from Elementor Tools', async ( { page } ) => {
 		await NavigationHelpers.navigateToExportCustomizationPage( page );
 
