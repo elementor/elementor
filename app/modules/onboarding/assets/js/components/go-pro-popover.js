@@ -92,11 +92,6 @@ export default function GoProPopover( props ) {
 				upgradeButtonRef.current = buttonElement;
 				// Use state.currentStep if available, otherwise fall back to 'account' for step 1
 				const currentStep = state.currentStep || 'account';
-				console.log( '🔧 popover elRef setupSingleUpgradeButton called:', {
-					stateCurrentStep: state.currentStep,
-					usingStep: currentStep,
-					buttonId: buttonElement.id
-				} );
 				return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, currentStep );
 			},
 			onClick: () => {
@@ -124,14 +119,6 @@ export default function GoProPopover( props ) {
 		};
 
 	const targetRef = props.goProButtonRef || upgradeButtonRef;
-	console.log( '🔍 GoProPopover render:', {
-		goProButtonRef: props.goProButtonRef,
-		upgradeButtonRef: upgradeButtonRef,
-		targetRef: targetRef,
-		targetRefCurrent: targetRef?.current,
-		targetRefCurrentId: targetRef?.current?.id,
-		targetRefCurrentClass: targetRef?.current?.className
-	} );
 
 	return (
 		<PopoverDialog

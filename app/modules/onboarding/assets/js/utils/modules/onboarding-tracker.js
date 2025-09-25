@@ -588,41 +588,20 @@ class OnboardingTracker {
 		let hasClicked = false;
 
 		const handleMouseEnter = () => {
-			console.log( '🖱️ HOVER: Mouse enter on upgrade button', { 
-				currentStep, 
-				buttonClass: buttonElement.className,
-				buttonId: buttonElement.id,
-				timestamp: new Date().toISOString()
-			} );
 			this.scheduleDelayedNoClickEvent( currentStep );
 		};
 
 		const handleMouseLeave = () => {
-			console.log( '🖱️ HOVER: Mouse leave on upgrade button', { 
-				hasClicked, 
-				currentStep,
-				buttonClass: buttonElement.className,
-				buttonId: buttonElement.id,
-				timestamp: new Date().toISOString()
-			} );
 			if ( ! hasClicked ) {
 				StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
-				console.log( '🗑️ HOVER: Removed pending no-click event on mouse leave' );
 			}
 		};
 
 		const handleClick = () => {
-			console.log( '🖱️ CLICK: Upgrade button clicked', { 
-				currentStep, 
-				buttonClass: buttonElement.className,
-				buttonId: buttonElement.id,
-				timestamp: new Date().toISOString()
-			} );
 			hasClicked = true;
 			StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
 
 			const upgradeClickedValue = this.determineUpgradeClickedValue( buttonElement );
-			console.log( '📊 CLICK: Sending TOP_UPGRADE event', { currentStep, upgradeClicked: upgradeClickedValue } );
 			this.sendEventOrStore( 'TOP_UPGRADE', { currentStep, upgradeClicked: upgradeClickedValue } );
 		};
 
@@ -663,7 +642,6 @@ class OnboardingTracker {
 	}
 
 	scheduleDelayedNoClickEvent( currentStep, delay = 500 ) {
-		console.log( '⏰ scheduleDelayedNoClickEvent called:', { currentStep, delay } );
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
 
 		const eventData = {
@@ -672,18 +650,14 @@ class OnboardingTracker {
 		};
 
 		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK, eventData );
-		console.log( '💾 Stored pending hover event:', eventData );
 	}
 
 	sendDelayedNoClickEvent() {
 		const eventData = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
-		console.log( '⏰ sendDelayedNoClickEvent called:', { eventData } );
 		if ( ! eventData ) {
-			console.log( '❌ No pending hover event found' );
 			return;
 		}
 
-		console.log( '📤 Sending delayed hover event (no_click):', { currentStep: eventData.currentStep } );
 		this.sendEventOrStore( 'TOP_UPGRADE', { currentStep: eventData.currentStep, upgradeClicked: 'no_click' } );
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
 	}
