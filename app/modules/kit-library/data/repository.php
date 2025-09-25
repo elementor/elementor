@@ -64,6 +64,8 @@ class Repository {
 	 * @param array $options
 	 *
 	 * @return array|null
+	 *
+	 * @throws WP_Error_Exception If kit is not found.
 	 */
 	public function find( $id, $options = [] ) {
 		$options = wp_parse_args( $options, [
@@ -123,6 +125,8 @@ class Repository {
 	 * @param $id
 	 *
 	 * @return array
+	 *
+	 * @throws WP_Error_Exception If download link retrieval fails or API errors occur.
 	 */
 	public function get_download_link( $id ) {
 		$response = $this->api->download_link( $id );
@@ -138,7 +142,8 @@ class Repository {
 	 * @param $id
 	 *
 	 * @return array
-	 * @throws \Exception
+	 *
+	 * @throws Error_404 If kit is not found.
 	 */
 	public function add_to_favorites( $id ) {
 		$kit = $this->find( $id, [ 'manifest_included' => false ] );
@@ -158,7 +163,8 @@ class Repository {
 	 * @param $id
 	 *
 	 * @return array
-	 * @throws \Exception
+	 *
+	 * @throws Error_404 If kit is not found.
 	 */
 	public function remove_from_favorites( $id ) {
 		$kit = $this->find( $id, [ 'manifest_included' => false ] );
@@ -178,6 +184,8 @@ class Repository {
 	 * @param bool $force_api_request
 	 *
 	 * @return Collection
+	 *
+	 * @throws WP_Error_Exception If kits data retrieval fails.
 	 */
 	private function get_kits_data( $force_api_request = false ) {
 		$data = get_transient( static::KITS_CACHE_KEY );
@@ -217,6 +225,8 @@ class Repository {
 	 * @param bool $force_api_request
 	 *
 	 * @return Collection
+	 *
+	 * @throws WP_Error_Exception If taxonomies data retrieval fails.
 	 */
 	private function get_taxonomies_data( $force_api_request = false ) {
 		$data = get_transient( static::KITS_TAXONOMIES_CACHE_KEY );

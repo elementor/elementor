@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import { PopoverBody, PopoverHeader, PopoverMenuList, PopoverSearch } from '@elementor/editor-ui';
+import { PopoverBody, PopoverHeader, PopoverMenuList, SearchField } from '@elementor/editor-ui';
 import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
@@ -22,6 +22,8 @@ type ItemSelectorProps = {
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
 	onDebounce?: ( name: string ) => void;
 	icon: React.ElementType< { fontSize: string } >;
+	disabledItems?: string[];
+	id?: string;
 };
 
 export const ItemSelector = ( {
@@ -34,10 +36,12 @@ export const ItemSelector = ( {
 	itemStyle = () => ( {} ),
 	onDebounce = () => {},
 	icon,
+	disabledItems,
+	id = 'item-selector',
 }: ItemSelectorProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 
-	const filteredItemsList = useFilteredItemsList( itemsList, searchValue );
+	const filteredItemsList = useFilteredItemsList( itemsList, searchValue, disabledItems );
 
 	const IconComponent = icon;
 
@@ -51,12 +55,13 @@ export const ItemSelector = ( {
 	};
 
 	return (
-		<PopoverBody width={ sectionWidth }>
+		<PopoverBody width={ sectionWidth } id={ id }>
 			<PopoverHeader title={ title } onClose={ handleClose } icon={ <IconComponent fontSize="tiny" /> } />
-			<PopoverSearch
+			<SearchField
 				value={ searchValue }
 				onSearch={ handleSearch }
 				placeholder={ __( 'Search', 'elementor' ) }
+				id={ id + '-search' }
 			/>
 
 			<Divider />
@@ -128,6 +133,7 @@ type ItemListProps = {
 	selectedItem: string | null;
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
 	onDebounce?: ( name: string ) => void;
+	disabledItems?: string[];
 };
 
 const ItemList = ( {

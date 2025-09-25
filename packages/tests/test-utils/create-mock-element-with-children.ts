@@ -16,25 +16,16 @@ function createMockModel< T >( data: T ): V1Model< T > {
 	};
 }
 
-export function createMockChild( id: string, widgetType?: string ): V1Element {
-	const modelData: V1ElementModelProps = {
-		widgetType,
-		elType: 'widget',
-		id,
-	};
-
+export function createMockChild( modelData: V1ElementModelProps ): V1Element {
 	return {
-		id,
+		id: modelData.id,
 		model: createMockModel( modelData ),
 		settings: createMockModel< V1ElementSettingsProps >( {} ),
 	};
 }
 
 function createMockChildren( children: V1Element[] ): V1Element[ 'children' ] {
-	const mockChildren = [ ...children ] as V1Element[] & {
-		findRecursive?: ( predicate: ( child: V1Element ) => boolean ) => V1Element | undefined;
-		forEachRecursive?: ( callback: ( child: V1Element ) => void ) => V1Element[];
-	};
+	const mockChildren = [ ...children ] as NonNullable< V1Element[ 'children' ] >;
 
 	mockChildren.forEachRecursive = ( callback: ( child: V1Element ) => void ): V1Element[] => {
 		const processChild = ( child: V1Element ) => {

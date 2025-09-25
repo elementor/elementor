@@ -1,15 +1,17 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { selectionSizePropTypeUtil } from '@elementor/editor-props';
+import { useEffect, useMemo, useState } from 'react';
+import { createArrayPropUtils, selectionSizePropTypeUtil, type SelectionSizePropValue } from '@elementor/editor-props';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useBoundProp } from '../../bound-prop-context';
 import { createControl } from '../../create-control';
 import { RepeatableControl } from '../repeatable-control';
 import { SelectionSizeControl } from '../selection-size-control';
 import { initialTransitionValue, transitionProperties } from './data';
+import { subscribeToTransitionEvent } from './trainsition-events';
 import { TransitionSelector } from './transition-selector';
 
 const DURATION_CONFIG = {
@@ -20,7 +22,7 @@ const DURATION_CONFIG = {
 
 // this config needs to be loaded at runtime/render since it's the transitionProperties object will be mutated by the pro plugin.
 // See: https://elementor.atlassian.net/browse/ED-20285
-const getSelectionSizeProps = ( recentlyUsedList: string[] ) => {
+const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: string[] ) => {
 	return {
 		selectionLabel: __( 'Type', 'elementor' ),
 		sizeLabel: __( 'Duration', 'elementor' ),
@@ -28,6 +30,7 @@ const getSelectionSizeProps = ( recentlyUsedList: string[] ) => {
 			component: TransitionSelector,
 			props: {
 				recentlyUsedList,
+				disabledItems,
 			},
 		},
 		sizeConfigMap: {
@@ -44,11 +47,11 @@ const getSelectionSizeProps = ( recentlyUsedList: string[] ) => {
 	};
 };
 
-function getChildControlConfig( recentlyUsedList: string[] ) {
+function getChildControlConfig( recentlyUsedList: string[], disabledItems?: string[] ) {
 	return {
 		propTypeUtil: selectionSizePropTypeUtil,
 		component: SelectionSizeControl as unknown as React.ComponentType< Record< string, unknown > >,
-		props: getSelectionSizeProps( recentlyUsedList ),
+		props: getSelectionSizeProps( recentlyUsedList, disabledItems ),
 	};
 }
 
@@ -70,6 +73,16 @@ const disableAddItemTooltipContent = (
 	</Alert>
 );
 
+subscribeToTransitionEvent();
+
+const getTransitionLabel = ( item: SelectionSizePropValue ) => {
+	return ( item.value.selection.value as { key: { value: string } } )?.key?.value ?? '';
+};
+
+const getDisabledItems = ( value: SelectionSizePropValue[] | null | undefined ) => {
+	return value?.map( getTransitionLabel ) ?? [];
+};
+
 export const TransitionRepeaterControl = createControl(
 	( {
 		recentlyUsedListGetter,
@@ -80,6 +93,14 @@ export const TransitionRepeaterControl = createControl(
 	} ) => {
 		const currentStyleIsNormal = currentStyleState === null;
 		const [ recentlyUsedList, setRecentlyUsedList ] = useState< string[] >( [] );
+
+		const childArrayPropTypeUtil = useMemo(
+			() => createArrayPropUtils( selectionSizePropTypeUtil.key, selectionSizePropTypeUtil.schema, 'transition' ),
+			[]
+		);
+
+		const { value } = useBoundProp( childArrayPropTypeUtil );
+		const disabledItems = useMemo( () => getDisabledItems( value ), [ value ] );
 
 		useEffect( () => {
 			recentlyUsedListGetter().then( setRecentlyUsedList );
@@ -94,7 +115,7 @@ export const TransitionRepeaterControl = createControl(
 				showDuplicate={ false }
 				showToggle={ true }
 				initialValues={ initialTransitionValue }
-				childControlConfig={ getChildControlConfig( recentlyUsedList ) }
+				childControlConfig={ getChildControlConfig( recentlyUsedList, disabledItems ) }
 				propKey="transition"
 				addItemTooltipProps={ {
 					disabled: ! currentStyleIsNormal,

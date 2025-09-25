@@ -34,6 +34,10 @@ class Elementor_Content extends Import_Runner_Base {
 	}
 
 	public function import( array $data, array $imported_data ) {
+		if ( ! function_exists( 'wp_set_post_terms' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/taxonomy.php';
+		}
+
 		$result['content'] = [];
 		$this->import_session_id = $data['session_id'];
 
@@ -90,10 +94,10 @@ class Elementor_Content extends Import_Runner_Base {
 						'imported_terms' => $imported_terms,
 					];
 
-					$import_result = apply_filters( 'elementor/import-export-customization/import/elementor-content/customization', null, $data, [], $customization, $this );
+					$import_result = apply_filters( 'elementor/import-export-customization/import/elementor-content/customization', null, $data, [], $customization ?? [], $this );
 
 					if ( is_array( $import_result ) ) {
-						$result[ $import_result['status'] ] = $import_result['result'];
+						$result[ $import_result['status'] ][ $id ] = $import_result['result'];
 						continue;
 					}
 				}

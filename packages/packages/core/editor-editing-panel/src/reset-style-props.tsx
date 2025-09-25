@@ -18,8 +18,10 @@ export function useResetStyleValueProps() {
 	const isStyle = useIsStyle();
 	const { value, setValue, path } = useBoundProp();
 
+	const isInRepeater = path?.some( ( key ) => ! isNaN( Number( key ) ) );
+
 	return {
-		visible: isStyle && value !== null && value !== undefined && path.length <= 2,
+		visible: isStyle && value !== null && value !== undefined && ! isInRepeater,
 		title: __( 'Clear', 'elementor' ),
 		icon: BrushBigIcon,
 		onClick: () => setValue( null ),

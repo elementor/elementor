@@ -20,7 +20,7 @@ const initialState = {
 		content: null,
 		plugins: null,
 	},
-	includes: [ 'content', 'templates', 'settings', 'plugins' ], // All items selected by default
+	includes: [ 'content', ...( elementorAppConfig.hasPro ? [ 'templates' ] : [] ), 'settings', 'plugins' ],
 	kitInfo: {
 		title: null,
 		description: null,
@@ -33,6 +33,11 @@ const initialState = {
 			content: null,
 			plugins: null,
 		},
+	},
+	showMediaFormatValidation: false,
+	validationErrors: {
+		name: null,
+		description: null,
 	},
 };
 
@@ -87,6 +92,10 @@ function exportReducer( state, { type, payload } ) {
 					},
 				},
 			};
+		case 'SET_MEDIA_FORMAT_VALIDATION':
+			return { ...state, showMediaFormatValidation: payload };
+		case 'SET_VALIDATION_ERRORS':
+			return { ...state, validationErrors: { ...state.validationErrors, ...payload } };
 		case 'RESET_STATE':
 			return { ...initialState };
 		default:
@@ -97,10 +106,14 @@ function exportReducer( state, { type, payload } ) {
 export function ExportContextProvider( { children } ) {
 	const [ data, dispatch ] = useReducer( exportReducer, initialState );
 
+	const isNameEmpty = ! ( data.kitInfo.title?.trim() || '' ).length;
+	const hasNameError = data.validationErrors.name || isNameEmpty;
+	const hasDescriptionError = data.validationErrors.description;
+
 	const value = {
 		data,
 		dispatch,
-		isTemplateNameValid: ( data.kitInfo.title?.trim() || '' ).length > 0,
+		hasValidationErrors: !! ( hasNameError || hasDescriptionError ),
 		isExporting: data.exportStatus === EXPORT_STATUS.EXPORTING,
 		isCompleted: data.exportStatus === EXPORT_STATUS.COMPLETED,
 		isPending: data.exportStatus === EXPORT_STATUS.PENDING,

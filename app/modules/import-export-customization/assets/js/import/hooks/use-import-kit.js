@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { IMPORT_STATUS } from '../context/import-context';
+import { ImportExportError } from '../../shared/error/import-export-error';
 
 async function request( {
 	data,
@@ -20,7 +21,8 @@ async function request( {
 	const result = await response.json();
 	if ( ! response.ok ) {
 		const errorMessage = result?.data?.message || `HTTP error! with the following code: ${ result?.data?.code }`;
-		throw new Error( errorMessage );
+		const errorCode = 408 === response?.status ? 'timeout' : result?.data?.code;
+		throw new ImportExportError( errorMessage, errorCode );
 	}
 
 	return result;
@@ -55,7 +57,9 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 					path: 'import-runner',
 				} );
 
-				dispatch( { type: 'SET_RUNNERS_STATE', payload: { [ runner ]: result.data.imported_data?.[ runner ] || result.data[ runner ] } } );
+				const runnerKey = 'elementor-content' === runner ? 'content' : runner;
+
+				dispatch( { type: 'SET_RUNNERS_STATE', payload: { [ runnerKey ]: result.data.imported_data?.[ runnerKey ] || result.data[ runnerKey ] } } );
 			} catch ( e ) {
 				stopIterations = e;
 				setError( e );
@@ -68,6 +72,7 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 
 	async function importKit() {
 		try {
+			setError( null );
 			setImportStatus( IMPORT_PROCESSING_STATUS.IN_PROGRESS );
 
 			const importData = {
@@ -107,5 +112,6 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 	return {
 		status,
 		error,
+		importKit,
 	};
 }

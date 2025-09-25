@@ -640,7 +640,7 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @access public
 	 *
-	 * @param array    $actions An array of row action links.
+	 * @param array $actions An array of row action links.
 	 *
 	 * @return array An updated array of row action links.
 	 */
@@ -727,16 +727,14 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/document/before_get_config', $this );
 
 		if ( static::get_property( 'has_elements' ) ) {
-			$widgets_config = Plugin::$instance->widgets_manager->get_widget_types_config();
-
-			// defines the elements that will be shown in the panel
 			$elements_config = Collection::make( Plugin::$instance->elements_manager->get_element_types() )
-				->filter( fn( $element ) => ( ! empty( $element->get_config()['show_in_panel'] ) ) )
+				->filter( fn( $element ) => ( ! empty( $element->get_config()['include_in_widgets_config'] ) ) )
 				->map( fn( $element ) => $element->get_config() )
 				->all();
 
-			$config['widgets'] = array_merge( $elements_config, $widgets_config );
 			$config['elements'] = $this->get_elements_raw_data( null, true );
+			// `get_elements_raw_data` has to be called before `get_widget_types_config`, because it affects it.
+			$config['widgets'] = array_merge( $elements_config, Plugin::$instance->widgets_manager->get_widget_types_config() );
 		}
 
 		$additional_config = [];
@@ -1052,6 +1050,8 @@ abstract class Document extends Controls_Stack {
 	 * @param bool $with_html_content
 	 *
 	 * @return array
+	 *
+	 * @throws \Exception If elements retrieval fails or data processing errors occur.
 	 */
 	public function get_elements_raw_data( $data = null, $with_html_content = false ) {
 		if ( ! static::get_property( 'has_elements' ) ) {
@@ -1459,7 +1459,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param string $key   Meta data key.
-	 * @param mixed $value Meta data value.
+	 * @param mixed  $value Meta data value.
 	 *
 	 * @return bool|int
 	 */
@@ -1799,7 +1799,7 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function print_elements( $elements_data ) {
-		$is_element_cache_active = Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) && 'disable' !== get_option( 'elementor_element_cache_ttl', '' );
+		$is_element_cache_active = 'disable' !== get_option( 'elementor_element_cache_ttl', '' );
 		if ( ! $is_element_cache_active ) {
 			ob_start();
 

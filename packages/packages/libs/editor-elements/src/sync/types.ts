@@ -50,7 +50,12 @@ export type V1ElementModelProps = {
 	id: string;
 	styles?: Record< StyleDefinitionID, StyleDefinition >;
 	elements?: V1Model< V1ElementModelProps >[];
-	settings?: V1Model< V1ElementSettingsProps >;
+	settings?: V1ElementSettingsProps;
+	editor_settings?: V1ElementEditorSettingsProps;
+};
+
+export type V1ElementEditorSettingsProps = {
+	title?: string;
 };
 
 export type V1ElementSettingsProps = Record< string, PropValue >;
@@ -71,5 +76,5 @@ export type V1ElementConfig = {
 type V1Model< T > = {
 	get: < K extends keyof T >( key: K ) => T[ K ];
 	set: < K extends keyof T >( key: K, value: T[ K ] ) => void;
-	toJSON: () => T;
+	toJSON: ( options?: { remove?: string[] } ) => T;
 };

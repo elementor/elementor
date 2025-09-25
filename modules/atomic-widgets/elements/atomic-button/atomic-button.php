@@ -76,6 +76,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 	protected function get_settings_controls(): array {
 		return [
 			Link_Control::bind_to( 'link' )
+				->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
 				->set_label( __( 'Link', 'elementor' ) ),
 			Text_Control::bind_to( '_cssid' )
 				->set_label( __( 'ID', 'elementor' ) )
