@@ -3,7 +3,6 @@ import { useRef, useState } from 'react';
 import { WarningInfotip } from '@elementor/editor-ui';
 import { TextField, type TextFieldProps } from '@elementor/ui';
 
-import { type TVariablesList } from '../../storage';
 import { labelHint, validateLabel, VARIABLE_LABEL_MAX_LENGTH } from '../../utils/validations';
 function isLabelEqual( a: string, b: string ) {
 	return a.trim().toLowerCase() === b.trim().toLowerCase();
@@ -33,7 +32,6 @@ export type LabelFieldProps = {
 	focusOnShow?: boolean;
 	selectOnShow?: boolean;
 	showWarningInfotip?: boolean;
-	variables?: TVariablesList;
 };
 
 export const LabelField = ( {
@@ -46,17 +44,15 @@ export const LabelField = ( {
 	focusOnShow = false,
 	selectOnShow = false,
 	showWarningInfotip = false,
-	variables,
 }: LabelFieldProps ) => {
 	const [ label, setLabel ] = useState( value );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
-
 	const fieldRef = useRef< HTMLElement >( null );
 
 	const handleChange = ( newValue: string ) => {
 		setLabel( newValue );
 
-		const errorMsg = validateLabel( newValue, variables );
+		const errorMsg = validateLabel( newValue );
 
 		setErrorMessage( errorMsg );
 		onErrorChange?.( errorMsg );
