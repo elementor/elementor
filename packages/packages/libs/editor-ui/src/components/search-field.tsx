@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRef } from 'react';
 import { SearchIcon, XIcon } from '@elementor/icons';
-import { Box, BoxProps, IconButton, InputAdornment, TextField } from '@elementor/ui';
+import { Box, type BoxProps, IconButton, InputAdornment, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 const SIZE = 'tiny';

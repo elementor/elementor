@@ -110,9 +110,11 @@ export function VariablesManagerPanel() {
 		<ThemeProvider>
 			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
 				<Panel>
-					<PanelHeader sx={{
-						height: 'unset'
-					}}>
+					<PanelHeader
+						sx={ {
+							height: 'unset',
+						} }
+					>
 						<Stack width="100%" direction="column" alignItems="center">
 							<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
 								<Stack width="100%" direction="row" gap={ 1 }>
@@ -136,18 +138,18 @@ export function VariablesManagerPanel() {
 									/>
 								</Stack>
 							</Stack>
-							<Stack width="100%" direction="row" gap={ 1 } >
+							<Stack width="100%" direction="row" gap={ 1 }>
 								<SearchField
-									sx={{
+									sx={ {
 										display: 'flex',
-										flex: 1
-									}}
+										flex: 1,
+									} }
 									placeholder={ __( 'Search', 'elementor' ) }
 									value={ searchValue }
 									onSearch={ handleSearch }
 								/>
 							</Stack>
-						<Divider sx={ { width: '100%' } } />
+							<Divider sx={ { width: '100%' } } />
 						</Stack>
 					</PanelHeader>
 					<PanelBody
