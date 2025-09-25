@@ -622,10 +622,9 @@ class OnboardingTracker {
 			return 'already_pro_user';
 		}
 
-		// Check if button is inside popover/tooltip first (more specific)
-		if ( buttonElement.closest( '.e-app__popover' ) || 
-			 buttonElement.closest( '.elementor-tooltip' ) ||
-			 buttonElement.closest( '.e-onboarding__go-pro-content' ) ) {
+		if ( buttonElement.closest( '.e-app__popover' ) ||
+			buttonElement.closest( '.elementor-tooltip' ) ||
+			buttonElement.closest( '.e-onboarding__go-pro-content' ) ) {
 			return 'on_tooltip';
 		}
 
