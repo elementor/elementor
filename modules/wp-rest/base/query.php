@@ -94,7 +94,7 @@ abstract class Query {
 		return $array
 			->reduce( function ( $carry, $value, $key ) {
 				if ( $value ) {
-					$carry[ $key ] = is_array( $value ) ? self::sanitize_string_array( $value ) :sanitize_text_field( $value );
+					$carry[ $key ] = is_array( $value ) ? self::sanitize_string_array( $value ) : sanitize_text_field( $value );
 				}
 
 				return $carry;
