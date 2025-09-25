@@ -183,6 +183,7 @@ const LAYOUT_OVERRIDE_FIELDS = {
 	separator: 'two-columns',
 	action: 'full',
 	off_canvas: 'full',
+	type: 'two-columns',
 } as const;
 
 const DYNAMIC_TAG_LAYOUT_OVERRIDES = {
