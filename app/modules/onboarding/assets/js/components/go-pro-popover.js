@@ -11,22 +11,9 @@ import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 export default function GoProPopover( props ) {
 	const { state, updateState } = useContext( OnboardingContext );
 
-	const trackUpgradeAction = useCallback( () => {
-		const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
-		OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
-	}, [ state.currentStep ] );
-
 	const upgradeButtonRef = useRef( null );
 
-	const setupUpgradeButtonTracking = useCallback( ( buttonElement ) => {
-		if ( ! buttonElement ) {
-			return;
-		}
-
-		upgradeButtonRef.current = buttonElement;
-		return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, state.currentStep );
-	}, [ state.currentStep ] );
-
+	// Handle the Pro Upload popup window.
 	const alreadyHaveProButtonRef = useCallback( ( alreadyHaveProButton ) => {
 		if ( ! alreadyHaveProButton ) {
 			return;
@@ -48,9 +35,9 @@ export default function GoProPopover( props ) {
 				return;
 			}
 
-			trackUpgradeAction();
-			OnboardingEventTracking.cancelDelayedNoClickEvent();
 			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+			OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
+			OnboardingEventTracking.cancelDelayedNoClickEvent();
 
 			if ( stepNumber ) {
 				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'already_pro_user' );
@@ -65,64 +52,69 @@ export default function GoProPopover( props ) {
 				},
 			} );
 
-			const openProUploadPopup = () => {
-				window.open(
-					alreadyHaveProButton.href + '&mode=popup',
-					'elementorUploadPro',
-					`toolbar=no, menubar=no, width=728, height=531, top=100, left=100`,
-				);
-			};
+			// Open the Pro Upload screen in a popup.
+			window.open(
+				alreadyHaveProButton.href + '&mode=popup',
+				'elementorUploadPro',
+				`toolbar=no, menubar=no, width=728, height=531, top=100, left=100`,
+			);
 
-			const handleProUploadSuccess = () => {
-				updateState( {
-					hasPro: true,
-					proNotice: {
-						color: 'success',
-						children: __( 'Pro is now active! You can continue.', 'elementor' ),
-					},
-				} );
-			};
-
-			openProUploadPopup();
-
+			// Run the callback for when the upload succeeds.
 			elementorCommon.elements.$body
-				.on( 'elementor/upload-and-install-pro/success', handleProUploadSuccess );
+				.on( 'elementor/upload-and-install-pro/success', () => {
+					updateState( {
+						hasPro: true,
+						proNotice: {
+							color: 'success',
+							children: __( 'Pro is now active! You can continue.', 'elementor' ),
+						},
+					} );
+				} );
 		};
 
 		alreadyHaveProButton._elementorProHandler = clickHandler;
 		alreadyHaveProButton.addEventListener( 'click', clickHandler );
-	}, [ state.currentStep, updateState, trackUpgradeAction ] );
+	}, [ state.currentStep, updateState ] );
 
-	const getElProButton = {
-		text: elementorAppConfig.onboarding.experiment ? __( 'Upgrade now', 'elementor' ) : __( 'Upgrade Now', 'elementor' ),
-		className: 'e-onboarding__go-pro-cta',
-		target: '_blank',
-		href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
-		tabIndex: 0,
-		elRef: setupUpgradeButtonTracking,
-		onClick: () => {
-			if ( ! state.currentStep || '' === state.currentStep ) {
-				return;
-			}
+	// The buttonsConfig prop is an array of objects. To find the 'Upgrade Now' button, we need to iterate over the object.
+	const goProButton = props.buttonsConfig.find( ( button ) => 'go-pro' === button.id ),
+		getElProButton = {
+			text: elementorAppConfig.onboarding.experiment ? __( 'Upgrade now', 'elementor' ) : __( 'Upgrade Now', 'elementor' ),
+			className: 'e-onboarding__go-pro-cta',
+			target: '_blank',
+			href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
+			tabIndex: 0,
+			elRef: ( buttonElement ) => {
+				if ( ! buttonElement ) {
+					return;
+				}
 
-			trackUpgradeAction();
-			OnboardingEventTracking.cancelDelayedNoClickEvent();
-			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+				upgradeButtonRef.current = buttonElement;
+				return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, state.currentStep );
+			},
+			onClick: () => {
+				if ( ! state.currentStep || '' === state.currentStep ) {
+					return;
+				}
 
-			if ( stepNumber ) {
-				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
-			}
+				const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+				OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
+				OnboardingEventTracking.cancelDelayedNoClickEvent();
 
-			elementorCommon.events.dispatchEvent( {
-				event: 'get elementor pro',
-				version: '',
-				details: {
-					placement: elementorAppConfig.onboarding.eventPlacement,
-					step: state.currentStep,
-				},
-			} );
-		},
-	};
+				if ( stepNumber ) {
+					OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
+				}
+
+				elementorCommon.events.dispatchEvent( {
+					event: 'get elementor pro',
+					version: '',
+					details: {
+						placement: elementorAppConfig.onboarding.eventPlacement,
+						step: state.currentStep,
+					},
+				} );
+			},
+		};
 
 	return (
 		<PopoverDialog
