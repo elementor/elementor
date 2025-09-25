@@ -22,7 +22,6 @@ export default function Layout( props ) {
 			return;
 		}
 
-		// Use state.currentStep if available, otherwise fall back to 'account' for step 1
 		const currentStep = state.currentStep || 'account';
 
 		goProButtonRef.current = buttonElement;
@@ -58,13 +57,10 @@ export default function Layout( props ) {
 		} );
 	}, [ setupTopbarUpgradeTracking, stepNumber, props.pageId, props.nextStep, updateState ] );
 
-	// Re-setup tracking when state.currentStep becomes available
 	useEffect( () => {
 		if ( goProButtonRef.current && state.currentStep && '' !== state.currentStep ) {
-			// Only setup if not already tracked with the current step
 			const currentTrackedStep = goProButtonRef.current.dataset.onboardingStep;
 			if ( currentTrackedStep !== state.currentStep ) {
-				// Remove existing tracking first
 				goProButtonRef.current.dataset.onboardingTracked = '';
 				goProButtonRef.current.dataset.onboardingStep = state.currentStep;
 				setupTopbarUpgradeTracking( goProButtonRef.current );
