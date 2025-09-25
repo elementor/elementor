@@ -548,7 +548,7 @@ class Documents_Manager {
 		$data = [
 			'elements' => $request['elements'],
 			'settings' => $request['settings'],
-			'nested_components' => $request['nested_components'],
+			// 'nested_components' => $request['nested_components'],
 			// 'components' => $request['components'],
 		];
 

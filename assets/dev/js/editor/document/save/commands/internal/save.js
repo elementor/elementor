@@ -23,7 +23,7 @@ export class Save extends $e.modules.CommandInternalBase {
 
 		let elements = [];
 
-		await window.myCustomSave();
+		await window.myCustomSave?.({container, status});
 
 		if ( elementor.config.document.panel.has_elements ) {
 			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } );
@@ -52,7 +52,7 @@ export class Save extends $e.modules.CommandInternalBase {
 					status,
 					elements,
 					settings,
-					nested_components: Object.values( elementor.documents.documents ).filter( ( doc ) => 'elementor_component' === doc.config.type ).map( ( doc ) => doc.config ),
+					// nested_components: Object.values( elementor.documents.documents ).filter( ( doc ) => 'elementor_component' === doc.config.type ).map( ( doc ) => doc.config ),
 				},
 				error: ( data ) => this.onSaveError( data, status, document ),
 			} )

@@ -13,9 +13,9 @@ export function syncWithDocumentSave() {
 function bindSaveAction() {
     // Register a dependency hook that runs before save and handles components
     registerDataHook('dependency', 'document/save/save', (args) => {
-        setTimeout(() => {
-            alert('dependency');
-        }, 10000);
+        // setTimeout(() => {
+        //     alert('dependency');
+        // }, 10000);
         const createdComponents = window.components?.created || [];
         
         if (createdComponents.length === 0) {

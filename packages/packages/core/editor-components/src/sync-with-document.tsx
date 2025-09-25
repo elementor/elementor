@@ -6,7 +6,7 @@ import { syncWithDocumentSave } from './sync-with-document-save';
 export function SyncWithDocumentSave() {
     useEffect(() => {
         listenTo(v1ReadyEvent(), () => {
-            syncWithDocumentSave();
+            // syncWithDocumentSave();
         });
 
         // eslint-disable-next-line react-compiler/react-compiler
