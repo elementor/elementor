@@ -13,6 +13,8 @@ class User_Query extends Base {
 	const ENDPOINT = 'user';
 	const SEARCH_FILTER_ACCEPTED_ARGS = 1;
 
+	const CACHE_HIERARCHY_KEY = 'elementor_roles_hierarchy';
+
 	private static ?array $roles_hierarchy = null;
 
 	public function __construct() {
@@ -21,9 +23,7 @@ class User_Query extends Base {
 		 add_action( 'add_cap', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
 		 add_action( 'remove_cap', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
 
-		if ( ! self::$roles_hierarchy ) {
-			$this->arrange_roles_by_capabilities();
-		}
+		 $this->arrange_roles_by_capabilities();
 	}
 	/**
 	 * @param \WP_REST_Request $request
@@ -178,16 +178,15 @@ class User_Query extends Base {
 
 		$this->arrange_roles_by_capabilities();
 		$computed_roles = [];
-		$arranged_role_slugs = array_column( self::$roles_hierarchy, 'slug' );
 
 		foreach ( $roles as $role ) {
-			$role_index = array_search( $role, $arranged_role_slugs, true );
+			$role_index = array_search( $role, self::$roles_hierarchy, true );
 
 			if ( false === $role_index || in_array( $role, $computed_roles, true ) ) {
 				continue;
 			}
 
-			$computed_roles = array_slice( $arranged_role_slugs, 0, $role_index + 1 );
+			$computed_roles = array_slice( self::$roles_hierarchy, 0, $role_index + 1 );
 		}
 
 		return $computed_roles;
@@ -212,7 +211,7 @@ class User_Query extends Base {
 		];
 	}
 
-	private static function is_user_of_role( \WP_User $user, string $role_slug ) {
+	private function is_user_of_role( \WP_User $user, string $role_slug ) {
 		$role = get_role( $role_slug );
 
 		if ( ! $role ) {
@@ -224,8 +223,12 @@ class User_Query extends Base {
 		} );
 	}
 
-	public static function arrange_roles_by_capabilities( $force = false ) {
-		if ( ! $force && self::$roles_hierarchy ) {
+	private function arrange_roles_by_capabilities( $force = false ) {
+		$cached = $this->load_roles_hierarchy_from_cache();
+
+		if ( ! $force && ! empty( $cached ) ) {
+			self::$roles_hierarchy = $cached;
+
 			return;
 		}
 
@@ -234,43 +237,55 @@ class User_Query extends Base {
 			->map( fn( $role, $slug ) => array_merge( (array) $role, [ 'slug' => $slug ] ) )
 			->all();
 
-		self::$roles_hierarchy = array_values( $roles );
+		self::$roles_hierarchy = array_column( array_values( $roles ), 'slug' );
 
-		$temp_user_a_id = self::generate_random_user();
+		$temp_user_a_id = $this->generate_random_user();
 		$temp_user_a = get_user_by( 'ID', $temp_user_a_id );
 
-		$temp_user_b_id = self::generate_random_user();
+		$temp_user_b_id = $this->generate_random_user();
 		$temp_user_b = get_user_by( 'ID', $temp_user_b_id );
 
 		usort( self::$roles_hierarchy, function( $role_a, $role_b ) use ( $temp_user_a, $temp_user_b ) {
-			$temp_user_a->set_role( $role_a['slug'] );
-			$temp_user_b->add_role( $role_b['slug'] );
+			$temp_user_a->set_role( $role_a );
+			$temp_user_b->add_role( $role_b );
 
-			$is_a_stronger = self::is_user_of_role( $temp_user_a, $role_b['slug'] );
-			$is_b_stronger = self::is_user_of_role( $temp_user_b, $role_a['slug'] );
+			$is_a_stronger = (int) $this->is_user_of_role( $temp_user_a, $role_b );
+			$is_b_stronger = (int) $this->is_user_of_role( $temp_user_b, $role_a );
 
-			if ( $is_a_stronger == $is_b_stronger ) {
-				return 0;
-			}
-
-			return $is_a_stronger ? -1 : 1;
+			return $is_b_stronger - $is_a_stronger;
 		} );
+
+		$this->save_roles_hierarchy_from_cache( $force );
+
+		if ( ! function_exists( 'wp_delete_user' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/user.php';
+		}
 
 		wp_delete_user( $temp_user_a_id );
 		wp_delete_user( $temp_user_b_id );
 	}
 
-	private static function generate_random_user( $random_string = null ) {
+	private function generate_random_user( $random_string = null ) {
 		$random_string = $random_string ?? wp_generate_password( 12, false );
 		$existing_user = get_user_by( 'login', $random_string );
 
 		if ( $existing_user instanceof \WP_User ) {
-			return self::generate_random_user();
+			return $this->generate_random_user();
 		}
 
 		return wp_insert_user( [
 			'user_login' => $random_string,
 			'user_pass' => $random_string,
 		] );
+	}
+
+	private function load_roles_hierarchy_from_cache() {
+		return get_transient( self::CACHE_HIERARCHY_KEY ) ?? null;
+	}
+
+	private function save_roles_hierarchy_from_cache( $force ) {
+		if ( $force || ! empty( $this->load_roles_hierarchy_from_cache() ) ) {
+			set_transient( self::CACHE_HIERARCHY_KEY, self::$roles_hierarchy, DAY_IN_SECONDS );
+		}
 	}
 }
