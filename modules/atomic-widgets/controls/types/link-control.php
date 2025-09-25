@@ -14,6 +14,8 @@ class Link_Control extends Atomic_Control_Base {
 	private int $minimum_input_length = 2;
 	private ?array $query_config = null;
 	private ?string $placeholder = null;
+    private ?string $aria_label = null;
+    private ?string $data_test_id = null;
 
 	public function get_type(): string {
 		return 'link';
@@ -37,12 +39,14 @@ class Link_Control extends Atomic_Control_Base {
 		return $this;
 	}
 
-	public function get_props(): array {
-		return [
-			'allowCustomValues' => $this->allow_custom_values,
-			'placeholder' => $this->placeholder,
-			'queryOptions' => Query_Builder::build( $this->query_config ),
-			'minInputLength' => $this->minimum_input_length,
-		];
-	}
+    public function get_props(): array {
+        return [
+            'allowCustomValues' => $this->allow_custom_values,
+            'placeholder' => $this->placeholder,
+            'queryOptions' => Query_Builder::build( $this->query_config ),
+            'minInputLength' => $this->minimum_input_length,
+            'ariaLabel' => 'Link URL',
+            'dataTestId' => 'link-url',
+        ];
+    }
 }

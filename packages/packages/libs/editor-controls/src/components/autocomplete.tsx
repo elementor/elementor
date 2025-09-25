@@ -31,6 +31,7 @@ export type Props = {
 	placeholder?: string;
 	minInputLength?: number;
 	startAdornment?: React.ReactNode;
+	inputProps?: Record< string, unknown >;
 };
 
 export const Autocomplete = forwardRef( ( props: Props, ref ) => {
@@ -97,6 +98,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 					placeholder={ placeholder }
 					hasSelectedValue={ isValueFromOptions }
 					startAdornment={ startAdornment }
+					extraInputProps={ restProps.inputProps }
 				/>
 			) }
 		/>
@@ -110,6 +112,7 @@ const TextInput = ( {
 	handleChange,
 	hasSelectedValue,
 	startAdornment,
+	extraInputProps,
 }: {
 	params: AutocompleteRenderInputParams;
 	allowClear: boolean;
@@ -117,6 +120,7 @@ const TextInput = ( {
 	placeholder: string;
 	hasSelectedValue: boolean;
 	startAdornment?: React.ReactNode;
+	extraInputProps?: Record< string, unknown >;
 } ) => {
 	const onChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		handleChange( event.target.value );
@@ -127,6 +131,7 @@ const TextInput = ( {
 			{ ...params }
 			placeholder={ placeholder }
 			onChange={ onChange }
+			inputProps={ { ...( params.inputProps ?? {} ), ...( extraInputProps ?? {} ) } }
 			sx={ {
 				'& .MuiInputBase-input': {
 					cursor: hasSelectedValue ? 'default' : undefined,

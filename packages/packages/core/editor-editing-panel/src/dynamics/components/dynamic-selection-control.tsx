@@ -85,7 +85,7 @@ export const DynamicSelectionControl = () => {
 				} }
 				{ ...bindPopover( selectionPopoverState ) }
 			>
-				<PopoverBody>
+				<PopoverBody data-testid="dynamic-tags-menu">
 					<DynamicSelection close={ selectionPopoverState.close } />
 				</PopoverBody>
 			</Popover>
@@ -104,7 +104,12 @@ export const DynamicSettingsPopover = ( { dynamicTag }: { dynamicTag: DynamicTag
 
 	return (
 		<>
-			<IconButton size={ SIZE } { ...bindTrigger( popupState ) } aria-label={ __( 'Settings', 'elementor' ) }>
+			<IconButton
+				size={ SIZE }
+				{ ...bindTrigger( popupState ) }
+				aria-label={ __( 'Settings', 'elementor' ) }
+				data-testid="dynamic-settings-button"
+			>
 				<SettingsIcon fontSize={ SIZE } />
 			</IconButton>
 			<Popover
@@ -117,7 +122,7 @@ export const DynamicSettingsPopover = ( { dynamicTag }: { dynamicTag: DynamicTag
 				} }
 				{ ...bindPopover( popupState ) }
 			>
-				<PopoverBody>
+				<PopoverBody data-testid="dynamic-settings-popover">
 					<PopoverHeader
 						title={ dynamicTag.label }
 						onClose={ popupState.close }
@@ -144,7 +149,9 @@ const DynamicSettings = ( { controls, tagName }: { controls: DynamicTag[ 'atomic
 		return (
 			<>
 				<Divider />
-				<ControlsItemsStack items={ singleTab.value.items } />
+				<Box data-testid="dynamic-settings-content">
+					<ControlsItemsStack items={ singleTab.value.items } />
+				</Box>
 			</>
 		);
 	}
@@ -168,6 +175,7 @@ const DynamicSettings = ( { controls, tagName }: { controls: DynamicTag[ 'atomic
 				return (
 					<TabPanel
 						key={ index }
+						data-testid="dynamic-settings-content"
 						sx={ { flexGrow: 1, py: 0, overflowY: 'auto' } }
 						{ ...getTabPanelProps( index ) }
 					>
@@ -210,9 +218,21 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 	const layout = getLayout( control );
 
 	const shouldDisablePortal = control.type === 'select';
-	const controlProps = shouldDisablePortal
-		? { ...control.props, MenuProps: { ...( control.props?.MenuProps ?? {} ), disablePortal: true } }
-		: control.props;
+	const baseControlProps = shouldDisablePortal
+		? {
+				...control.props,
+				MenuProps: {
+					...( control.props?.MenuProps ?? {} ),
+					disablePortal: true,
+				},
+				dataTestId: `dynamic-${ String( control.bind ) }`,
+		  }
+		: { ...control.props, dataTestId: `dynamic-${ String( control.bind ) }` };
+	const controlProps = {
+		...baseControlProps,
+		ariaLabel: control.label,
+		dataTestId: `dynamic-${ String( control.bind ) }`,
+	} as typeof baseControlProps & { ariaLabel?: string; dataTestId?: string };
 	const isSwitchControl = control.type === 'switch';
 	const layoutStyleProps =
 		layout === 'two-columns'
