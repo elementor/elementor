@@ -235,13 +235,12 @@ class User_Query extends Base {
 			->all();
 
 		self::$roles_hierarchy = array_values( $roles );
-		self::ensure_functions_loaded();
 
 		$temp_user_a_id = self::generate_random_user();
-		$temp_user_a = get_user( $temp_user_a_id );
+		$temp_user_a = get_user_by( 'ID', $temp_user_a_id );
 
 		$temp_user_b_id = self::generate_random_user();
-		$temp_user_b = get_user( $temp_user_b_id );
+		$temp_user_b = get_user_by( 'ID', $temp_user_b_id );
 
 		usort( self::$roles_hierarchy, function( $role_a, $role_b ) use ( $temp_user_a, $temp_user_b ) {
 			$temp_user_a->set_role( $role_a['slug'] );
@@ -273,20 +272,5 @@ class User_Query extends Base {
 			'user_login' => $random_string,
 			'user_pass' => $random_string,
 		] );
-	}
-
-	private static function ensure_functions_loaded() {
-		$functions = [
-			'wp_delete_user',
-			'get_user',
-		];
-
-		foreach ( $functions as $function ) {
-			if ( ! function_exists( $function ) ) {
-				require_once ABSPATH . 'wp-admin/includes/user.php';
-
-				break;
-			}
-		}
 	}
 }
