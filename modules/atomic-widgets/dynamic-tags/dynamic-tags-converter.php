@@ -41,6 +41,11 @@ class Dynamic_Tags_Converter {
 				}
 				break;
 
+			case 'date_time':
+				$prop_type = String_Prop_Type::make()
+					->default( $control['default'] ?? null );
+				break;
+
 			case 'number':
 				$prop_type = Number_Prop_Type::make()
 					->set_required( $control['required'] ?? false )

@@ -24,6 +24,8 @@ type Props = ControlProps< {
 	minInputLength?: number;
 	placeholder?: string;
 	label?: string;
+	ariaLabel?: string;
+	dataTestId?: string;
 } >;
 
 type LinkSessionValue = {
@@ -49,6 +51,8 @@ export const LinkControl = createControl( ( props: Props ) => {
 		minInputLength = 2,
 		context: { elementId },
 		label = __( 'Link', 'elementor' ),
+		ariaLabel,
+		dataTestId,
 	} = props || {};
 
 	const [ linkInLinkRestriction, setLinkInLinkRestriction ] = useState( getLinkInLinkRestriction( elementId ) );
@@ -119,6 +123,8 @@ export const LinkControl = createControl( ( props: Props ) => {
 								minInputLength={ minInputLength }
 								placeholder={ placeholder }
 								onSetValue={ onSaveValueToSession }
+								ariaLabel={ ariaLabel }
+								dataTestId={ dataTestId }
 							/>
 						</PropKeyProvider>
 						<PropKeyProvider bind={ 'isTargetBlank' }>

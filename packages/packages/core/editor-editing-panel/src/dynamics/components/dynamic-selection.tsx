@@ -76,7 +76,7 @@ export const DynamicSelection = ( { close: closePopover }: DynamicSelectionProps
 	] );
 
 	return (
-		<PopoverBody>
+		<PopoverBody data-testid="dynamic-selection">
 			<PopoverHeader
 				title={ __( 'Dynamic tags', 'elementor' ) }
 				onClose={ closePopover }
