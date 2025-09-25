@@ -22,8 +22,7 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 	} );
 
 	test( 'should complete full export process with progress and summary', async ( { page } ) => {
-		await page.goto( '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export-customization' );
-		await page.waitForLoadState( 'networkidle' );
+		await ImportExportHelpers.navigateToExportCustomizationPage( page );
 
 		await ImportExportHelpers.fillKitInfo( page, 'test-kit', 'Test Description' );
 
@@ -45,8 +44,7 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 	} );
 
 	test( 'should validate required kit name field', async ( { page } ) => {
-		await page.goto( '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export-customization' );
-		await page.waitForLoadState( 'networkidle' );
+		await ImportExportHelpers.navigateToExportCustomizationPage( page );
 
 		const exportButton = page.locator( 'button:has-text("Export as .zip")' );
 		await expect( exportButton ).toBeDisabled();

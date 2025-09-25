@@ -5,6 +5,8 @@ export const ImportExportSelectors = {
 	importNavigationButton: '#elementor-import-export__import',
 	tabContent: '#tab-import-export-kit',
 
+	exportCustomizationPage: '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export-customization',
+
 	kitNameInput: 'input[placeholder="Type name here..."]',
 	kitDescriptionInput: 'textarea[placeholder="Type description here..."]',
 
@@ -12,6 +14,11 @@ export const ImportExportSelectors = {
 	templatesSection: '[data-testid="KitPartsSelectionRow-templates"]',
 	settingsSection: '[data-testid="KitPartsSelectionRow-settings"]',
 	pluginsSection: '[data-testid="KitPartsSelectionRow-plugins"]',
+
+	contentCheckbox: '[data-testid="KitPartsSelectionRow-content"] input[type="checkbox"]',
+	templatesCheckbox: '[data-testid="KitPartsSelectionRow-templates"] input[type="checkbox"]',
+	settingsCheckbox: '[data-testid="KitPartsSelectionRow-settings"] input[type="checkbox"]',
+	pluginsCheckbox: '[data-testid="KitPartsSelectionRow-plugins"] input[type="checkbox"]',
 
 	contentEditButton: '[data-testid="KitPartsSelectionRow-content"] button:has-text("Edit")',
 	templatesUpgradeButton: '[data-testid="KitPartsSelectionRow-templates"] button:has-text("Upgrade")',
@@ -33,5 +40,5 @@ export const ImportExportSelectors = {
 	summaryPluginsSection: '[data-testid="summary_section_plugins"]',
 
 	doneButton: '[data-testid="done-button"]',
-	learnMoreLink: 'text=Build sites faster with Website Templates. Show me how'
+	learnMoreLink: 'text=Build sites faster with Website Templates. Show me how',
 } as const;

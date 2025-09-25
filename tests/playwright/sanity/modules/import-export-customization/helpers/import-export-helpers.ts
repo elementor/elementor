@@ -3,6 +3,11 @@ import * as path from 'path';
 import { ImportExportSelectors } from '../selectors/import-export-selectors';
 
 export class ImportExportHelpers {
+	static async navigateToExportCustomizationPage( page: Page ): Promise<void> {
+		await page.goto( ImportExportSelectors.exportCustomizationPage );
+		await page.waitForLoadState( 'networkidle' );
+	}
+
 	static async navigateToToolsPage( page: Page ): Promise<void> {
 		await page.goto( '/wp-admin/admin.php?page=elementor-tools' );
 		await page.waitForLoadState( 'networkidle' );
@@ -12,6 +17,12 @@ export class ImportExportHelpers {
 		await page.locator( ImportExportSelectors.websiteTemplatesTab ).scrollIntoViewIfNeeded();
 		await page.click( ImportExportSelectors.websiteTemplatesTab );
 		await page.waitForSelector( ImportExportSelectors.tabContent, { timeout: 10000 } );
+	}
+
+	static async uncheckAllSections( page: Page ): Promise<void> {
+		await page.uncheck( ImportExportSelectors.contentCheckbox );
+		await page.uncheck( ImportExportSelectors.templatesCheckbox );
+		await page.uncheck( ImportExportSelectors.settingsCheckbox );
 	}
 
 	static async openExportPage( page: Page ): Promise<void> {

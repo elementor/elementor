@@ -21,12 +21,9 @@ test.describe( 'Import Export Customization - Content Customization', () => {
 	} );
 
 	test( 'should export kit with all checkboxes unselected except plugins', async ( { page } ) => {
-		await page.goto( '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export-customization' );
-		await page.waitForLoadState( 'networkidle' );
+		await ImportExportHelpers.navigateToExportCustomizationPage( page );
 
-		await page.uncheck( '[data-testid="KitPartsSelectionRow-content"] input[type="checkbox"]' );
-		await page.uncheck( '[data-testid="KitPartsSelectionRow-templates"] input[type="checkbox"]' );
-		await page.uncheck( '[data-testid="KitPartsSelectionRow-settings"] input[type="checkbox"]' );
+		await ImportExportHelpers.uncheckAllSections( page );
 
 		await ImportExportHelpers.fillKitInfo( page, 'test-kit-unselected', 'Test Description' );
 
@@ -42,8 +39,7 @@ test.describe( 'Import Export Customization - Content Customization', () => {
 	} );
 
 	test( 'should export kit with Posts unchecked in Content dialog', async ( { page } ) => {
-		await page.goto( '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export-customization' );
-		await page.waitForLoadState( 'networkidle' );
+		await ImportExportHelpers.navigateToExportCustomizationPage( page );
 
 		await ImportExportHelpers.customizeContentSection( page, true );
 
@@ -59,8 +55,7 @@ test.describe( 'Import Export Customization - Content Customization', () => {
 	} );
 
 	test( 'should export kit with Theme unchecked in Settings dialog', async ( { page } ) => {
-		await page.goto( '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export-customization' );
-		await page.waitForLoadState( 'networkidle' );
+		await ImportExportHelpers.navigateToExportCustomizationPage( page );
 
 		await ImportExportHelpers.customizeSettingsSection( page, true );
 
@@ -75,8 +70,7 @@ test.describe( 'Import Export Customization - Content Customization', () => {
 	} );
 
 	test( 'should export kit with only Elementor plugin selected in Plugins dialog', async ( { page } ) => {
-		await page.goto( '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export-customization' );
-		await page.waitForLoadState( 'networkidle' );
+		await ImportExportHelpers.navigateToExportCustomizationPage( page );
 
 		await ImportExportHelpers.customizePluginsSection( page, true, true );
 
