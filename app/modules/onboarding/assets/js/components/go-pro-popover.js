@@ -90,7 +90,14 @@ export default function GoProPopover( props ) {
 				}
 
 				upgradeButtonRef.current = buttonElement;
-				return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, state.currentStep );
+				// Use state.currentStep if available, otherwise fall back to 'account' for step 1
+				const currentStep = state.currentStep || 'account';
+				console.log( '🔧 popover elRef setupSingleUpgradeButton called:', {
+					stateCurrentStep: state.currentStep,
+					usingStep: currentStep,
+					buttonId: buttonElement.id
+				} );
+				return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, currentStep );
 			},
 			onClick: () => {
 				if ( ! state.currentStep || '' === state.currentStep ) {
@@ -116,9 +123,19 @@ export default function GoProPopover( props ) {
 			},
 		};
 
+	const targetRef = props.goProButtonRef || upgradeButtonRef;
+	console.log( '🔍 GoProPopover render:', {
+		goProButtonRef: props.goProButtonRef,
+		upgradeButtonRef: upgradeButtonRef,
+		targetRef: targetRef,
+		targetRefCurrent: targetRef?.current,
+		targetRefCurrentId: targetRef?.current?.id,
+		targetRefCurrentClass: targetRef?.current?.className
+	} );
+
 	return (
 		<PopoverDialog
-			targetRef={ props.goProButtonRef || upgradeButtonRef }
+			targetRef={ targetRef }
 			wrapperClass="e-onboarding__go-pro"
 		>
 			<div className="e-onboarding__go-pro-content">

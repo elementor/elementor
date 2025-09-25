@@ -22,8 +22,16 @@ export default function Layout( props ) {
 			return;
 		}
 
+		// Use state.currentStep if available, otherwise fall back to 'account' for step 1
+		const currentStep = state.currentStep || 'account';
+		console.log( '🔧 setupTopbarUpgradeTracking called:', {
+			stateCurrentStep: state.currentStep,
+			usingStep: currentStep,
+			buttonId: buttonElement.id
+		} );
+
 		goProButtonRef.current = buttonElement;
-		return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, state.currentStep );
+		return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, currentStep );
 	}, [ state.currentStep ] );
 
 	const handleTopbarConnectSuccess = useCallback( () => {
@@ -54,6 +62,21 @@ export default function Layout( props ) {
 			proNotice: null,
 		} );
 	}, [ setupTopbarUpgradeTracking, stepNumber, props.pageId, props.nextStep, updateState ] );
+
+	// Re-setup tracking when state.currentStep becomes available
+	useEffect( () => {
+		if ( goProButtonRef.current && state.currentStep && '' !== state.currentStep ) {
+			// Only setup if not already tracked with the current step
+			const currentTrackedStep = goProButtonRef.current.dataset.onboardingStep;
+			if ( currentTrackedStep !== state.currentStep ) {
+				console.log( '🔄 Re-setting up topbar tracking with currentStep:', state.currentStep );
+				// Remove existing tracking first
+				goProButtonRef.current.dataset.onboardingTracked = '';
+				goProButtonRef.current.dataset.onboardingStep = state.currentStep;
+				setupTopbarUpgradeTracking( goProButtonRef.current );
+			}
+		}
+	}, [ state.currentStep, setupTopbarUpgradeTracking ] );
 
 	const
 		headerButtons = [],
