@@ -423,7 +423,6 @@ class OnboardingTracker {
 			return;
 		}
 
-		
 		this.sendHoverEventsFromStepActions( actions, stepNumber );
 
 		let eventData = EventDispatcher.createStepEventPayload( stepNumber, stepName, {
@@ -432,7 +431,8 @@ class OnboardingTracker {
 		} );
 
 		eventData = TimingManager.addTimingToEventData( eventData, stepNumber );
-		eventData[ endStateProperty ] = actions;
+		const filteredActions = actions.filter( ( action ) => 'upgrade_hover' !== action.action );
+		eventData[ endStateProperty ] = filteredActions;
 
 		if ( EventDispatcher.canSendEvents() ) {
 			this.dispatchEvent( eventName, eventData );
@@ -598,7 +598,6 @@ class OnboardingTracker {
 	}
 
 	setupSingleUpgradeButton( buttonElement, currentStep ) {
-		
 		if ( ! this.isValidButtonElement( buttonElement ) ) {
 			return null;
 		}
@@ -637,7 +636,6 @@ class OnboardingTracker {
 		let hasHovered = false;
 
 		const handleMouseEnter = () => {
-			
 			if ( ! hasHovered ) {
 				hasHovered = true;
 				this.trackUpgradeHoverAction( currentStep, buttonElement );
@@ -648,18 +646,16 @@ class OnboardingTracker {
 		};
 
 		const handleClick = () => {
-			
 			if ( this.preventDuplicateClick( hasClicked ) ) {
 				return;
 			}
-			
+
 			hasClicked = true;
 			this.sendUpgradeClickEvent( buttonElement, currentStep );
 		};
 
 		return { handleMouseEnter, handleMouseLeave, handleClick };
 	}
-
 
 	preventDuplicateClick( hasClicked ) {
 		return hasClicked;
@@ -671,40 +667,51 @@ class OnboardingTracker {
 	}
 
 	trackUpgradeHoverAction( currentStep, buttonElement ) {
-		
 		const stepNumber = this.getStepNumber( currentStep );
 		if ( ! stepNumber ) {
 			return;
 		}
 
 		const upgradeHoverValue = this.determineUpgradeClickedValue( buttonElement );
-		
+
 		this.trackStepAction( stepNumber, 'upgrade_hover', {
 			upgrade_hovered: upgradeHoverValue,
-			hover_timestamp: TimingManager.getCurrentTime()
+			hover_timestamp: TimingManager.getCurrentTime(),
 		} );
 	}
 
 	sendHoverEventsFromStepActions( actions, stepNumber ) {
-		
-		const hoverActions = actions.filter( action => action.action === 'upgrade_hover' );
-		
-		if ( hoverActions.length === 0 ) {
+		const hoverActions = actions.filter( ( action ) => 'upgrade_hover' === action.action );
+
+		if ( 0 === hoverActions.length ) {
 			return;
 		}
 
-		
-		hoverActions.forEach( hoverAction => {
-			
-			this.sendEventOrStore( 'TOP_UPGRADE', { 
-				currentStep: stepNumber, 
+		const hasClickEvent = this.hasExistingUpgradeClickEvent( stepNumber );
+		if ( hasClickEvent ) {
+			return;
+		}
+
+		hoverActions.forEach( ( hoverAction ) => {
+			this.sendEventOrStore( 'TOP_UPGRADE', {
+				currentStep: stepNumber,
 				upgradeClicked: 'no_click',
 				upgradeHovered: hoverAction.upgrade_hovered,
-				hoverTimestamp: hoverAction.hover_timestamp
+				hoverTimestamp: hoverAction.hover_timestamp,
 			} );
 		} );
 	}
 
+	hasExistingUpgradeClickEvent( stepNumber ) {
+		const config = this.EVENT_CONFIGS.TOP_UPGRADE;
+		const storedEvents = StorageManager.getArray( config.storageKey );
+
+		return storedEvents.some( ( event ) =>
+			event.currentStep === stepNumber &&
+			event.upgradeClicked &&
+			'no_click' !== event.upgradeClicked,
+		);
+	}
 
 	attachEventHandlersToButton( buttonElement, eventHandlers ) {
 		const { handleMouseEnter, handleMouseLeave, handleClick } = eventHandlers;
@@ -767,7 +774,6 @@ class OnboardingTracker {
 		this.trackStepAction( currentStep, 'exit' );
 		this.sendStepEndState( currentStep );
 	}
-
 
 	storeStep1EndStateForLater( eventData, storageKey ) {
 		this.storeEventForLater( 'STEP1_END_STATE', eventData );

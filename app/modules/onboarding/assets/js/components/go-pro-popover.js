@@ -90,7 +90,6 @@ export default function GoProPopover( props ) {
 			upgradeButtonRef.current = buttonElement;
 		},
 		onClick: () => {
-
 			if ( ! state.currentStep || '' === state.currentStep ) {
 				return;
 			}

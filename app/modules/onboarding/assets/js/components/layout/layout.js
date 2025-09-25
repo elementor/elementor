@@ -16,10 +16,10 @@ function shouldResetupButtonTracking( buttonRef, pageId, currentStep ) {
 	if ( ! buttonRef ) {
 		return false;
 	}
-	
+
 	const currentStepForTracking = getCurrentStepForTracking( pageId, currentStep );
 	const currentTrackedStep = buttonRef.dataset.onboardingStep;
-	
+
 	return currentTrackedStep !== currentStepForTracking;
 }
 
