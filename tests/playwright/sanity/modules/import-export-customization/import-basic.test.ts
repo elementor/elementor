@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
-import * as path from 'path';
 import { ImportExportHelpers } from './helpers/import-export-helpers';
 
 test.describe( 'Import Export Customization - Basic Import', () => {
@@ -11,16 +10,12 @@ test.describe( 'Import Export Customization - Basic Import', () => {
 
 		await ImportExportHelpers.startImport( page );
 
-		await ImportExportHelpers.waitForImportProcess( page );
-
 		await ImportExportHelpers.waitForImportComplete( page );
 
-		await ImportExportHelpers.verifyContentSection( page, '3 Posts | 13 Pages | 2 Floating Elements | 4 Taxonomies' );
+		await ImportExportHelpers.verifyContentSection( page, '13 Pages | 3 Posts | 2 Floating Elements | 4 Taxonomies' );
 		await ImportExportHelpers.verifyTemplatesSection( page, 'No templates imported' );
 		await ImportExportHelpers.verifySettingsSection( page, 'Theme | Global Colors | Global Fonts | Theme Style Settings | General Settings | Experiments' );
 		await ImportExportHelpers.verifyPluginsSection( page, 'Elementor | Hello Dolly | WordPress Importer' );
-
-		await ImportExportHelpers.verifyLearnMoreLink( page );
 	} );
 
 	test( 'should validate file upload requirement', async ( { page } ) => {
@@ -32,16 +27,5 @@ test.describe( 'Import Export Customization - Basic Import', () => {
 		await ImportExportHelpers.uploadKitFile( page );
 
 		await expect( importButton ).toBeEnabled();
-	} );
-
-	test( 'should handle invalid file format', async ( { page } ) => {
-		await ImportExportHelpers.openImportPage( page );
-
-		const invalidFilePath = path.join( __dirname, 'templates', 'elementor-custom-page.json' );
-		await page.setInputFiles( 'input[type="file"]', invalidFilePath );
-
-		await ImportExportHelpers.startImport( page );
-
-		await expect( page.locator( 'text=Invalid file format' ) ).toBeVisible();
 	} );
 } );

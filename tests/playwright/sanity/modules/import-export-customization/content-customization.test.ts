@@ -1,15 +1,11 @@
 import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
 import { setupCompleteTestData, cleanupCreatedItems, CreatedItems } from './utils/test-seeders';
 import { ImportExportHelpers } from './helpers/import-export-helpers';
 
 test.describe( 'Import Export Customization - Content Customization', () => {
-	let wpAdminPage: WpAdminPage;
 	let createdItems: CreatedItems;
 
 	test.beforeEach( async ( { page, apiRequests } ) => {
-		wpAdminPage = new WpAdminPage( page, test.info(), apiRequests );
-
 		createdItems = await setupCompleteTestData( page, test.info(), apiRequests );
 	} );
 
@@ -27,7 +23,6 @@ test.describe( 'Import Export Customization - Content Customization', () => {
 
 		await ImportExportHelpers.startExport( page );
 
-		await ImportExportHelpers.waitForExportProcess( page );
 		await ImportExportHelpers.waitForExportComplete( page );
 
 		await ImportExportHelpers.verifyContentSection( page, 'No content exported' );

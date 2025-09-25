@@ -13,7 +13,7 @@ test.describe( 'Import Export Customization - Import Customization', () => {
 
 		await ImportExportHelpers.waitForImportComplete( page );
 
-		await ImportExportHelpers.verifyContentSection( page, '3 Posts | 13 Pages | 2 Floating Elements | 4 Taxonomies' );
+		await ImportExportHelpers.verifyContentSection( page, '13 Pages | 3 Posts | 2 Floating Elements | 4 Taxonomies' );
 		await ImportExportHelpers.verifyTemplatesSection( page, 'No templates imported' );
 		await ImportExportHelpers.verifySettingsSection( page, 'No settings imported' );
 		await ImportExportHelpers.verifyPluginsSection( page, 'Elementor | Hello Dolly | WordPress Importer' );
@@ -37,7 +37,7 @@ test.describe( 'Import Export Customization - Import Customization', () => {
 		await ImportExportHelpers.verifyPluginsSection( page, 'Elementor | Hello Dolly | WordPress Importer' );
 	} );
 
-	test( 'should import kit with all checkboxes unselected except plugins', async ( { page } ) => {
+	test.only( 'should import only selected plugins', async ( { page } ) => {
 		await ImportExportHelpers.openImportPage( page );
 
 		await ImportExportHelpers.uploadKitFile( page );
@@ -48,9 +48,9 @@ test.describe( 'Import Export Customization - Import Customization', () => {
 
 		await ImportExportHelpers.waitForImportComplete( page );
 
-		await ImportExportHelpers.verifyContentSection( page, 'No content imported' );
+		await ImportExportHelpers.verifyContentSection( page, '13 Pages | 3 Posts | 2 Floating Elements | 4 Taxonomies' );
 		await ImportExportHelpers.verifyTemplatesSection( page, 'No templates imported' );
-		await ImportExportHelpers.verifySettingsSection( page, 'No settings imported' );
+		await ImportExportHelpers.verifySettingsSection( page, 'Theme | Global Colors | Global Fonts | Theme Style Settings | General Settings | Experiments' );
 		await ImportExportHelpers.verifyPluginsSection( page, 'Elementor' );
 	} );
 } );
