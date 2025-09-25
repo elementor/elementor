@@ -155,7 +155,7 @@ class OnboardingTracker {
 			return this.dispatchEvent( config.eventName, eventData );
 		}
 
-		const stepNumber = config.stepOverride || eventData.currentStep;
+		const stepNumber = config.stepOverride || this.getStepNumber( eventData.currentStep );
 		const stepName = config.stepNameOverride || this.getStepName( stepNumber );
 
 		const eventPayload = EventDispatcher.createStepEventPayload(
@@ -210,7 +210,7 @@ class OnboardingTracker {
 				return;
 			}
 
-			const stepNumber = config.stepOverride || eventData.currentStep;
+			const stepNumber = config.stepOverride || this.getStepNumber( eventData.currentStep );
 			const stepName = config.stepNameOverride || this.getStepName( stepNumber );
 
 			const eventPayload = EventDispatcher.createStepEventPayload(
@@ -666,6 +666,7 @@ class OnboardingTracker {
 		const upgradeClickedValue = this.determineUpgradeClickedValue( buttonElement );
 		this.sendEventOrStore( 'TOP_UPGRADE', { currentStep, upgradeClicked: upgradeClickedValue } );
 	}
+
 
 	attachEventHandlersToButton( buttonElement, eventHandlers ) {
 		const { handleMouseEnter, handleMouseLeave, handleClick } = eventHandlers;
