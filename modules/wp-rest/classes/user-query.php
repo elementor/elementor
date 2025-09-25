@@ -13,6 +13,14 @@ class User_Query extends Base {
 	const ENDPOINT = 'user';
 	const SEARCH_FILTER_ACCEPTED_ARGS = 1;
 
+	private static ?array $roles_hierarchy = null;
+
+	public function __construct() {
+		 add_action('add_role', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
+		 add_action('remove_role', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
+		 add_action('add_cap', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
+		 add_action('remove_cap', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
+	}
 	/**
 	 * @param \WP_REST_Request $request
 	 * @return \WP_REST_Response
@@ -42,6 +50,8 @@ class User_Query extends Base {
 		$query_args = [
 			'number' => $count,
 			'search' => "*$search_term*",
+			'role__in' => $this->get_propagated_role_list( $included_roles ),
+			'role__not_in' => $this->get_propagated_role_list( $excluded_roles ),
 		];
 
 		if ( ! empty( $params[ self::META_QUERY_KEY ] ) && is_array( $params[ self::META_QUERY_KEY ] ) ) {
@@ -49,28 +59,11 @@ class User_Query extends Base {
 		}
 
 		$this->add_filter_to_customize_query();
-
-		$users = Collection::make( get_users( $query_args ) )
-			->filter( function ( $user ) use ( $included_roles, $excluded_roles ) {
-				if ( ! ( $user instanceof \WP_User ) ) {
-					return false;
-				}
-
-				$is_of_included_role = empty( $included_roles )
-					|| Collection::make( $included_roles )
-						->some( fn( $role_slug ) => $this->is_user_of_role( $user, $role_slug ) );
-
-				$is_not_of_excluded_role = empty( $excluded_roles )
-					|| ! Collection::make( $excluded_roles )
-					->some( fn( $role_slug ) => $this->is_user_of_role( $user, $role_slug ) );
-
-				return $is_of_included_role && $is_not_of_excluded_role;
-			} );
-
+		$users = Collection::make( get_users( $query_args ) );
 		$this->remove_filter_to_customize_query();
 
 		global $wp_roles;
-		$roles = Collection::make( $wp_roles->roles );
+		$roles = $wp_roles->roles;
 
 		return new \WP_REST_Response( [
 			'success' => true,
@@ -94,7 +87,9 @@ class User_Query extends Base {
 	}
 
 	public function customize_user_query( $columns ) {
-		$columns[] = 'ID';
+		if ( ! in_array( 'ID', $columns, true ) ) {
+			$columns[] = 'ID';
+		}
 
 		return $columns;
 	}
@@ -126,14 +121,14 @@ class User_Query extends Base {
 		return [
 			self::INCLUDED_TYPE_KEY => [
 				'description' => 'User roles to include',
-				'type' => [ 'array', 'string' ],
+				'type' => 'array',
 				'required' => false,
 				'default' => null,
 				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
 			],
 			self::EXCLUDED_TYPE_KEY => [
 				'description' => 'User roles to exclude',
-				'type' => [ 'array', 'string' ],
+				'type' => 'array',
 				'required' => false,
 				'default' => null,
 				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
@@ -172,6 +167,28 @@ class User_Query extends Base {
 		];
 	}
 
+	private function get_propagated_role_list( $roles = [] ) {
+		if ( empty( $roles ) ) {
+			return [];
+		}
+
+		$this->arrange_roles_by_capabilities();
+		$computed_roles = [];
+		$arranged_role_slugs = array_column( self::$roles_hierarchy, 'slug' );
+
+		foreach ( $roles as $role ) {
+			$role_index = array_search( $role, $arranged_role_slugs, true );
+
+			if ( $role_index === false || in_array( $role, $computed_roles ) ) {
+				continue;
+			}
+
+			$computed_roles = array_slice( $arranged_role_slugs, 0, $role_index + 1 );
+		}
+
+		return $computed_roles;
+	}
+
 	protected static function get_allowed_param_keys(): array {
 		return [
 			self::EXCLUDED_TYPE_KEY,
@@ -201,5 +218,59 @@ class User_Query extends Base {
 		return ! Collection::make( $role->capabilities )->some( function( $enabled, $capability ) use ( $user ) {
 				return ! $user->has_cap( $capability ) && ! ( $user->allcaps[ $capability ] ?? false );
 		} );
+	}
+
+	public function arrange_roles_by_capabilities( $force = false ) {
+		if ( ! $force && self::$roles_hierarchy ) {
+			return;
+		}
+
+		global $wp_roles;
+
+		$roles = Collection::make( $wp_roles->roles )
+			->map( fn( $role, $slug ) => array_merge( (array) $role, [ 'slug' => $slug ] ) )
+			->all();
+		self::$roles_hierarchy = array_values( $roles );
+
+		$temp_user_a_id = $this->generate_random_user();
+		$temp_user_a = \get_user( $temp_user_a_id );
+
+		$temp_user_b_id = $this->generate_random_user();
+		$temp_user_b = \get_user( $temp_user_b_id );
+
+		usort( self::$roles_hierarchy, function( $role_a, $role_b ) use ( $temp_user_a, $temp_user_b ) {
+			$temp_user_a->set_role( $role_a['slug'] );
+			$temp_user_b->add_role( $role_b['slug'] );
+
+			$is_a_stronger = $this->is_user_of_role( $temp_user_a, $role_b['slug'] );
+			$is_b_stronger = $this->is_user_of_role( $temp_user_b, $role_a['slug'] );
+
+			if ( $is_a_stronger == $is_b_stronger ) {
+				return 0;
+			}
+
+			return $is_a_stronger ? -1 : 1;
+		} );
+
+		if ( ! function_exists( 'wp_delete_user' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/user.php';
+		}
+
+		wp_delete_user( $temp_user_a_id );
+		wp_delete_user( $temp_user_b_id );
+	}
+
+	private function generate_random_user( $random_string = null ) {
+		$random_string = $random_string ?? wp_generate_password( 12, false );
+		$existing_user = get_user_by( 'login', $random_string );
+
+		if ( $existing_user instanceof \WP_User ) {
+			return $this->generate_random_user();
+		}
+
+		return wp_insert_user( [
+			'user_login' => $random_string,
+			'user_pass' => $random_string
+		] );
 	}
 }

@@ -134,14 +134,14 @@ class Post_Query extends Base {
 		return [
 			self::INCLUDED_TYPE_KEY => [
 				'description' => 'Included post types',
-				'type' => [ 'array', 'string' ],
+				'type' => 'array',
 				'required' => false,
 				'default' => null,
 				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
 			],
 			self::EXCLUDED_TYPE_KEY => [
 				'description' => 'Post type to exclude',
-				'type' => [ 'array', 'string' ],
+				'type' => 'array',
 				'required' => false,
 				'default' => self::DEFAULT_FORBIDDEN_POST_TYPES,
 				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
@@ -155,7 +155,7 @@ class Post_Query extends Base {
 			],
 			self::KEYS_CONVERSION_MAP_KEY => [
 				'description' => 'Specify keys to extract and convert, i.e. ["key_1" => "new_key_1"].',
-				'type' => [ 'array', 'string' ],
+				'type' => 'array',
 				'required' => false,
 				'default' => [
 					'ID' => 'id',
