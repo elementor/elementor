@@ -14,21 +14,21 @@ class Term_Query extends Base {
 	const SEARCH_FILTER_ACCEPTED_ARGS = 3;
 
 	/**
-	 * @param array    $clauses Associative array of the clauses for the query.
-	 * @param array    $taxonomies Array of taxonomy names.
-	 * @param array    $args The args passed to 'get_terms()'.
+	 * @param array $clauses Associative array of the clauses for the query.
+	 * @param array $taxonomies Array of taxonomy names.
+	 * @param array $args The args passed to 'get_terms()'.
 	 * @return array Modified clauses.
 	 */
 	public function customize_terms_query( $clauses, $taxonomies, $args ) {
-		if ( ! $args[ 'custom_search' ] ) {
+		if ( ! $args['custom_search'] ) {
 			return $clauses;
 		}
 
-		if ( is_numeric( $args[ 'name__like' ] ) ) {
-			$clauses['where'] = '(' . $clauses['where'] . ' OR t.term_id = ' . $args[ 'name__like' ] . ')';
+		if ( is_numeric( $args['name__like'] ) ) {
+			$clauses['where'] = '(' . $clauses['where'] . ' OR t.term_id = ' . $args['name__like'] . ')';
 		}
 
-		if ( empty ( $args[ 'excluded_taxonomies' ] ) ) {
+		if ( empty( $args['excluded_taxonomies'] ) ) {
 			return $clauses;
 		}
 
@@ -122,8 +122,8 @@ class Term_Query extends Base {
 	 * @return void
 	 */
 	private function add_filter_to_customize_query() {
-		$priority = Term_Query::SEARCH_FILTER_PRIORITY;
-		$accepted_args = Term_Query::SEARCH_FILTER_ACCEPTED_ARGS;
+		$priority = self::SEARCH_FILTER_PRIORITY;
+		$accepted_args = self::SEARCH_FILTER_ACCEPTED_ARGS;
 
 		add_filter( 'terms_clauses', [ $this, 'customize_terms_query' ], $priority, $accepted_args );
 	}
@@ -132,8 +132,8 @@ class Term_Query extends Base {
 	 * @return void
 	 */
 	private function remove_filter_to_customize_query() {
-		$priority = Term_Query::SEARCH_FILTER_PRIORITY;
-		$accepted_args = Term_Query::SEARCH_FILTER_ACCEPTED_ARGS;
+		$priority = self::SEARCH_FILTER_PRIORITY;
+		$accepted_args = self::SEARCH_FILTER_ACCEPTED_ARGS;
 
 		remove_filter( 'terms_clauses', [ $this, 'customize_terms_query' ], $priority, $accepted_args );
 	}
