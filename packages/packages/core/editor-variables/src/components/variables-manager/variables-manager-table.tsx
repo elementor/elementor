@@ -216,6 +216,7 @@ export const VariablesManagerTable = ( {
 															focusOnShow
 															selectOnShow={ autoEditVariableId === row.id }
 															showWarningInfotip={ true }
+															variables={ variables }
 														/>
 													) }
 													autoEdit={ autoEditVariableId === row.id }
