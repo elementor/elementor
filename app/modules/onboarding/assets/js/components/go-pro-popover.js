@@ -88,16 +88,15 @@ export default function GoProPopover( props ) {
 			}
 
 			upgradeButtonRef.current = buttonElement;
-			// Use state.currentStep if available, otherwise fall back to 'account' for step 1
-			const currentStep = state.currentStep || 'account';
-			return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, currentStep );
 		},
 		onClick: () => {
+
 			if ( ! state.currentStep || '' === state.currentStep ) {
 				return;
 			}
 
 			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+
 			OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
 			OnboardingEventTracking.cancelDelayedNoClickEvent();
 

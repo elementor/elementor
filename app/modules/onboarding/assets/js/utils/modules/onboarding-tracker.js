@@ -445,18 +445,37 @@ class OnboardingTracker {
 	}
 
 	getStepNumber( pageId ) {
-		if ( 'number' === typeof pageId ) {
+		if ( this.isNumericPageId( pageId ) ) {
 			return pageId;
 		}
 
-		// If string number, convert to number
-		if ( 'string' === typeof pageId && ! isNaN( pageId ) ) {
-			const numericStep = parseInt( pageId, 10 );
-			return numericStep;
+		if ( this.isStringNumericPageId( pageId ) ) {
+			return this.convertStringToNumber( pageId );
 		}
 
-		// Map page IDs to step numbers
-		const stepMappings = {
+		return this.mapPageIdToStepNumber( pageId );
+	}
+
+	isNumericPageId( pageId ) {
+		return 'number' === typeof pageId;
+	}
+
+	isStringNumericPageId( pageId ) {
+		return 'string' === typeof pageId && ! isNaN( pageId );
+	}
+
+	convertStringToNumber( pageId ) {
+		return parseInt( pageId, 10 );
+	}
+
+	mapPageIdToStepNumber( pageId ) {
+		const stepMappings = this.getStepMappings();
+		const mappedStep = stepMappings[ pageId ];
+		return mappedStep || null;
+	}
+
+	getStepMappings() {
+		return {
 			account: 1,
 			connect: 1,
 			hello: 2,
@@ -468,9 +487,6 @@ class OnboardingTracker {
 			siteName: 5,
 			siteLogo: 6,
 		};
-
-		const mappedStep = stepMappings[ pageId ];
-		return mappedStep || null;
 	}
 
 	getStepName( stepNumber ) {
@@ -579,12 +595,40 @@ class OnboardingTracker {
 	}
 
 	setupSingleUpgradeButton( buttonElement, currentStep ) {
-		if ( ! buttonElement || buttonElement.dataset.onboardingTracked ) {
+		if ( ! this.isValidButtonElement( buttonElement ) ) {
 			return null;
 		}
 
-		buttonElement.dataset.onboardingTracked = 'true';
+		this.cleanupButtonTracking( buttonElement );
 
+		if ( this.isButtonAlreadyTrackedForStep( buttonElement, currentStep ) ) {
+			return null;
+		}
+
+		this.markButtonAsTracked( buttonElement, currentStep );
+		const eventHandlers = this.createUpgradeButtonEventHandlers( buttonElement, currentStep );
+		this.attachEventHandlersToButton( buttonElement, eventHandlers );
+
+		return () => {
+			this.cleanupButtonTracking( buttonElement );
+		};
+	}
+
+	isValidButtonElement( buttonElement ) {
+		return !! buttonElement;
+	}
+
+	isButtonAlreadyTrackedForStep( buttonElement, currentStep ) {
+		const existingStep = buttonElement.dataset.onboardingStep;
+		return buttonElement.dataset.onboardingTracked && existingStep === currentStep;
+	}
+
+	markButtonAsTracked( buttonElement, currentStep ) {
+		buttonElement.dataset.onboardingTracked = 'true';
+		buttonElement.dataset.onboardingStep = currentStep;
+	}
+
+	createUpgradeButtonEventHandlers( buttonElement, currentStep ) {
 		let hasClicked = false;
 
 		const handleMouseEnter = () => {
@@ -592,28 +636,73 @@ class OnboardingTracker {
 		};
 
 		const handleMouseLeave = () => {
-			if ( ! hasClicked ) {
-				StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
-			}
+			this.cancelDelayedEventIfNotClicked( hasClicked );
 		};
 
 		const handleClick = () => {
+			if ( this.preventDuplicateClick( hasClicked ) ) {
+				return;
+			}
+			
 			hasClicked = true;
-			StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
+			this.cancelDelayedNoClickEvent();
+			this.sendUpgradeClickEvent( buttonElement, currentStep );
+		};
 
-			const upgradeClickedValue = this.determineUpgradeClickedValue( buttonElement );
-			this.sendEventOrStore( 'TOP_UPGRADE', { currentStep, upgradeClicked: upgradeClickedValue } );
+		return { handleMouseEnter, handleMouseLeave, handleClick };
+	}
+
+	cancelDelayedEventIfNotClicked( hasClicked ) {
+		if ( ! hasClicked ) {
+			StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
+		}
+	}
+
+	preventDuplicateClick( hasClicked ) {
+		return hasClicked;
+	}
+
+	sendUpgradeClickEvent( buttonElement, currentStep ) {
+		const upgradeClickedValue = this.determineUpgradeClickedValue( buttonElement );
+		this.sendEventOrStore( 'TOP_UPGRADE', { currentStep, upgradeClicked: upgradeClickedValue } );
+	}
+
+	attachEventHandlersToButton( buttonElement, eventHandlers ) {
+		const { handleMouseEnter, handleMouseLeave, handleClick } = eventHandlers;
+
+		buttonElement._onboardingHandlers = {
+			mouseenter: handleMouseEnter,
+			mouseleave: handleMouseLeave,
+			click: handleClick,
 		};
 
 		buttonElement.addEventListener( 'mouseenter', handleMouseEnter );
 		buttonElement.addEventListener( 'mouseleave', handleMouseLeave );
 		buttonElement.addEventListener( 'click', handleClick );
+	}
 
-		return () => {
-			buttonElement.removeEventListener( 'mouseenter', handleMouseEnter );
-			buttonElement.removeEventListener( 'mouseleave', handleMouseLeave );
-			buttonElement.removeEventListener( 'click', handleClick );
-		};
+	cleanupButtonTracking( buttonElement ) {
+		if ( ! buttonElement ) {
+			return;
+		}
+
+		this.removeExistingEventHandlers( buttonElement );
+		this.clearTrackingDataAttributes( buttonElement );
+	}
+
+	removeExistingEventHandlers( buttonElement ) {
+		if ( buttonElement._onboardingHandlers ) {
+			const handlers = buttonElement._onboardingHandlers;
+			buttonElement.removeEventListener( 'mouseenter', handlers.mouseenter );
+			buttonElement.removeEventListener( 'mouseleave', handlers.mouseleave );
+			buttonElement.removeEventListener( 'click', handlers.click );
+			delete buttonElement._onboardingHandlers;
+		}
+	}
+
+	clearTrackingDataAttributes( buttonElement ) {
+		delete buttonElement.dataset.onboardingTracked;
+		delete buttonElement.dataset.onboardingStep;
 	}
 
 	determineUpgradeClickedValue( buttonElement ) {

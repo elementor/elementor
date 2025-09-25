@@ -8,6 +8,21 @@ import Content from '../../../../../../assets/js/layout/content';
 import Connect from '../../utils/connect';
 import { OnboardingEventTracking } from '../../utils/onboarding-event-tracking';
 
+function getCurrentStepForTracking( pageId, currentStep ) {
+	return pageId || currentStep || 'account';
+}
+
+function shouldResetupButtonTracking( buttonRef, pageId, currentStep ) {
+	if ( ! buttonRef ) {
+		return false;
+	}
+	
+	const currentStepForTracking = getCurrentStepForTracking( pageId, currentStep );
+	const currentTrackedStep = buttonRef.dataset.onboardingStep;
+	
+	return currentTrackedStep !== currentStepForTracking;
+}
+
 export default function Layout( props ) {
 	const { state, updateState } = useContext( OnboardingContext );
 
@@ -22,11 +37,10 @@ export default function Layout( props ) {
 			return;
 		}
 
-		const currentStep = state.currentStep || 'account';
-
+		const currentStep = getCurrentStepForTracking( props.pageId, state.currentStep );
 		goProButtonRef.current = buttonElement;
 		return OnboardingEventTracking.setupSingleUpgradeButton( buttonElement, currentStep );
-	}, [ state.currentStep ] );
+	}, [ state.currentStep, props.pageId ] );
 
 	const handleTopbarConnectSuccess = useCallback( () => {
 		updateState( {
@@ -58,15 +72,10 @@ export default function Layout( props ) {
 	}, [ setupTopbarUpgradeTracking, stepNumber, props.pageId, props.nextStep, updateState ] );
 
 	useEffect( () => {
-		if ( goProButtonRef.current && state.currentStep && '' !== state.currentStep ) {
-			const currentTrackedStep = goProButtonRef.current.dataset.onboardingStep;
-			if ( currentTrackedStep !== state.currentStep ) {
-				goProButtonRef.current.dataset.onboardingTracked = '';
-				goProButtonRef.current.dataset.onboardingStep = state.currentStep;
-				setupTopbarUpgradeTracking( goProButtonRef.current );
-			}
+		if ( shouldResetupButtonTracking( goProButtonRef.current, props.pageId, state.currentStep ) ) {
+			setupTopbarUpgradeTracking( goProButtonRef.current );
 		}
-	}, [ state.currentStep, setupTopbarUpgradeTracking ] );
+	}, [ state.currentStep, props.pageId, setupTopbarUpgradeTracking ] );
 
 	const
 		headerButtons = [],
@@ -127,7 +136,8 @@ export default function Layout( props ) {
 			target: '_blank',
 			elRef: setupTopbarUpgradeTracking,
 			onClick: () => {
-				const currentStepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+				const currentStep = getCurrentStepForTracking( props.pageId, state.currentStep );
+				const currentStepNumber = OnboardingEventTracking.getStepNumber( currentStep );
 				OnboardingEventTracking.trackStepAction( currentStepNumber, 'upgrade_topbar' );
 
 				elementorCommon.events.dispatchEvent( {
@@ -135,7 +145,7 @@ export default function Layout( props ) {
 					version: '',
 					details: {
 						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
+						step: currentStep,
 					},
 				} );
 			},
