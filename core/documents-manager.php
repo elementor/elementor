@@ -540,9 +540,16 @@ class Documents_Manager {
 			$request['settings']['template'] = 'default';
 		}
 
+		// if components experiment is active, we need to save the components
+		// if ( Plugin::$instance->experiments->is_feature_active( 'e_components' ) ) {
+		// 	$request['elements'] = Plugin::$instance->components->save_components( $request['elements'] );
+		// }
+
 		$data = [
 			'elements' => $request['elements'],
 			'settings' => $request['settings'],
+			'nested_components' => $request['nested_components'],
+			// 'components' => $request['components'],
 		];
 
 		$document->save( $data );

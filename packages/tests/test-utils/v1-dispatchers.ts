@@ -1,5 +1,6 @@
 export function dispatchCommandBefore( command: string, args: Record< string, unknown > = {} ) {
 	window.dispatchEvent(
+		// here
 		new CustomEvent( 'elementor/commands/run/before', {
 			detail: {
 				command,

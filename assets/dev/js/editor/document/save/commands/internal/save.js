@@ -1,5 +1,5 @@
 export class Save extends $e.modules.CommandInternalBase {
-	apply( args ) {
+	async apply( args ) {
 		const { status = 'draft', force = false, onSuccess = null, document = elementor.documents.getCurrent() } = args;
 
 		if ( ! force && document.editor.isSaving ) {
@@ -23,14 +23,19 @@ export class Save extends $e.modules.CommandInternalBase {
 
 		let elements = [];
 
+		await window.myCustomSave();
+
 		if ( elementor.config.document.panel.has_elements ) {
 			elements = container.model.get( 'elements' ).toJSON( { remove: [ 'default', 'editSettings', 'defaultEditSettings' ] } );
+			// Elements = elementor.hooks.applyFilters( 'document/save/elements', elements );
 		}
 
-		console.log('------------ elements ------------');
-		console.log(elements);
+		console.log( '------------ elements ------------' );
+		console.log( elements );
 
-		filter
+		// Filter
+
+
 
 		const successArgs = {
 			status,
@@ -47,6 +52,7 @@ export class Save extends $e.modules.CommandInternalBase {
 					status,
 					elements,
 					settings,
+					nested_components: Object.values( elementor.documents.documents ).filter( ( doc ) => 'elementor_component' === doc.config.type ).map( ( doc ) => doc.config ),
 				},
 				error: ( data ) => this.onSaveError( data, status, document ),
 			} )
