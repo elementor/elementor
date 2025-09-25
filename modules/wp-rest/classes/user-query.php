@@ -16,10 +16,14 @@ class User_Query extends Base {
 	private static ?array $roles_hierarchy = null;
 
 	public function __construct() {
-		 add_action('add_role', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
-		 add_action('remove_role', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
-		 add_action('add_cap', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
-		 add_action('remove_cap', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
+		 add_action( 'add_role', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
+		 add_action( 'remove_role', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
+		 add_action( 'add_cap', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
+		 add_action( 'remove_cap', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
+
+		 if ( ! self::$roles_hierarchy ) {
+			$this->arrange_roles_by_capabilities();
+		 }
 	}
 	/**
 	 * @param \WP_REST_Request $request
@@ -179,7 +183,7 @@ class User_Query extends Base {
 		foreach ( $roles as $role ) {
 			$role_index = array_search( $role, $arranged_role_slugs, true );
 
-			if ( $role_index === false || in_array( $role, $computed_roles ) ) {
+			if ( false === $role_index || in_array( $role, $computed_roles, true ) ) {
 				continue;
 			}
 
@@ -208,7 +212,7 @@ class User_Query extends Base {
 		];
 	}
 
-	private function is_user_of_role( \WP_User $user, string $role_slug ) {
+	private static function is_user_of_role( \WP_User $user, string $role_slug ) {
 		$role = get_role( $role_slug );
 
 		if ( ! $role ) {
@@ -220,7 +224,7 @@ class User_Query extends Base {
 		} );
 	}
 
-	public function arrange_roles_by_capabilities( $force = false ) {
+	public static function arrange_roles_by_capabilities( $force = false ) {
 		if ( ! $force && self::$roles_hierarchy ) {
 			return;
 		}
@@ -232,18 +236,18 @@ class User_Query extends Base {
 			->all();
 		self::$roles_hierarchy = array_values( $roles );
 
-		$temp_user_a_id = $this->generate_random_user();
-		$temp_user_a = \get_user( $temp_user_a_id );
+		$temp_user_a_id = self::generate_random_user();
+		$temp_user_a = get_user( $temp_user_a_id );
 
-		$temp_user_b_id = $this->generate_random_user();
-		$temp_user_b = \get_user( $temp_user_b_id );
+		$temp_user_b_id = self::generate_random_user();
+		$temp_user_b = get_user( $temp_user_b_id );
 
 		usort( self::$roles_hierarchy, function( $role_a, $role_b ) use ( $temp_user_a, $temp_user_b ) {
 			$temp_user_a->set_role( $role_a['slug'] );
 			$temp_user_b->add_role( $role_b['slug'] );
 
-			$is_a_stronger = $this->is_user_of_role( $temp_user_a, $role_b['slug'] );
-			$is_b_stronger = $this->is_user_of_role( $temp_user_b, $role_a['slug'] );
+			$is_a_stronger = self::is_user_of_role( $temp_user_a, $role_b['slug'] );
+			$is_b_stronger = self::is_user_of_role( $temp_user_b, $role_a['slug'] );
 
 			if ( $is_a_stronger == $is_b_stronger ) {
 				return 0;
@@ -260,17 +264,17 @@ class User_Query extends Base {
 		wp_delete_user( $temp_user_b_id );
 	}
 
-	private function generate_random_user( $random_string = null ) {
+	private static function generate_random_user( $random_string = null ) {
 		$random_string = $random_string ?? wp_generate_password( 12, false );
 		$existing_user = get_user_by( 'login', $random_string );
 
 		if ( $existing_user instanceof \WP_User ) {
-			return $this->generate_random_user();
+			return self::generate_random_user();
 		}
 
 		return wp_insert_user( [
 			'user_login' => $random_string,
-			'user_pass' => $random_string
+			'user_pass' => $random_string,
 		] );
 	}
 }
