@@ -117,6 +117,20 @@ export async function setupWidgetWithTypography(
 	return { containerId: result.containerId, widgetId: result.widgetId };
 }
 
+// Common helper function to set widget text content
+export async function setWidgetTextContent(
+	driver: EditorDriver,
+	text: string,
+	inputName: 'Title' | 'Text' | 'Button text' = 'Title',
+): Promise<void> {
+	// First open the general/content panel
+	await driver.editor.openV2PanelTab( 'general' );
+	await driver.page.waitForTimeout( 1000 );
+	
+	// Use the GeneralTab method
+	await driver.editor.v4Panel.general.setWidgetText( inputName, text );
+}
+
 // Common helper function to verify font size
 export async function verifyFontSizePreview(
 	driver: EditorDriver,

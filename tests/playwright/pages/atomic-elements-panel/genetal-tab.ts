@@ -27,9 +27,8 @@ export default class GeneralTab extends BasePage {
 	}
 
 	async setWidgetText( inputName: string, value: string ): Promise<void> {
-		await this.openSection( 'Content' );
-
 		const input = this.page.getByRole( 'textbox', { name: inputName } );
+		await input.click();
 		await input.fill( value );
 		await input.press( 'Enter' );
 	}

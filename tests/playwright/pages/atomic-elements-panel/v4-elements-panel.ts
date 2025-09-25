@@ -2,17 +2,20 @@ import BasePage from '../base-page';
 import { type Page, type TestInfo } from '@playwright/test';
 import EditorPage from '../editor-page';
 import StyleTab from './style-tab';
+import GeneralTab from './genetal-tab';
 
 export default class v4Panel extends BasePage {
 	readonly inputField: string;
 	readonly editor: EditorPage;
 	readonly style: StyleTab;
+	readonly general: GeneralTab;
 
 	constructor( page: Page, testInfo: TestInfo, editor: EditorPage ) {
 		super( page, testInfo );
 		this.inputField = 'input[class*="MuiInputBase"]';
 		this.editor = editor;
 		this.style = new StyleTab( page, testInfo );
+		this.general = new GeneralTab( page, testInfo );
 	}
 
 	async fillField( nth: number, text: string ): Promise<void> {

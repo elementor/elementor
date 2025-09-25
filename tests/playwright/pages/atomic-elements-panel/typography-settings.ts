@@ -29,40 +29,33 @@ export default class TypographySettings extends BasePage {
 	private async setSpacingValue( labelText: string, value: number, unit: string ): Promise<void> {
 		await this.waitForTypographyControls();
 
-		// Click "Show More" button if it exists and is visible
+		// Click "Show More" if needed
 		const showMoreButton = this.page.getByRole( 'button', { name: 'Show More' } );
 		if ( await showMoreButton.isVisible() ) {
 			await showMoreButton.click();
-			await this.page.waitForTimeout( TIMEOUTS.ANIMATION );
 		}
 
-		// Locate spacing input by label
+		// Find spacing container and input
 		const spacingLabel = this.page.locator( 'label', { hasText: labelText } );
 		const spacingContainer = spacingLabel.locator( 'xpath=ancestor::div[contains(@class, "MuiGrid-container")][1]' );
 		const spacingInput = spacingContainer.locator( 'input' );
 		await spacingInput.waitFor( { state: 'visible', timeout: 5000 } );
 
-		// Only change unit if it's different from current unit
+		// Set unit if different
 		const currentUnitButton = spacingContainer.locator( 'button[aria-haspopup="true"]' ).first();
 		const currentUnitText = await currentUnitButton.textContent();
 
 		if ( currentUnitText?.toLowerCase() !== unit.toLowerCase() ) {
 			await currentUnitButton.click();
-
-			// Wait for and click the unit option
 			const unitOption = this.page.getByRole( 'menuitem', { name: unit.toUpperCase(), exact: true } );
 			await unitOption.waitFor( { state: 'visible' } );
 			await unitOption.click();
-
-			await this.page.waitForTimeout( TIMEOUTS.ANIMATION );
 		}
 
 		// Set the value
 		await spacingInput.clear();
 		await spacingInput.fill( value.toString() );
 		await spacingInput.press( 'Enter' );
-
-		await this.page.waitForTimeout( TIMEOUTS.CHANGES_APPLY );
 	}
 
 	async setTypography( options: TypographyOptions ): Promise<void> {
@@ -115,19 +108,24 @@ export default class TypographySettings extends BasePage {
 	}
 
 	async setTextAlignment( alignment: 'left' | 'center' | 'right' | 'justify' ): Promise<void> {
-		const alignmentButton = this.page.locator( `[aria-label*="${ alignment }"], [title*="${ alignment }"], button[value="${ alignment }"]` ).first();
+		const alignmentMap = {
+			left: 'Start',
+			center: 'Center',
+			right: 'End',
+			justify: 'Justify',
+		};
 
-		if ( await alignmentButton.isVisible() ) {
-			await alignmentButton.click();
-		} else {
-			const alignmentControls = this.page.locator( '[role="radiogroup"], .alignment-controls, [aria-label*="align"]' );
-			if ( await alignmentControls.isVisible() ) {
-				const specificAlignment = alignmentControls.locator( `[aria-label*="${ alignment }"], [title*="${ alignment }"]` ).first();
-				if ( await specificAlignment.isVisible() ) {
-					await specificAlignment.click();
-				}
-			}
-		}
+		const buttonName = alignmentMap[ alignment ];
+		const alignmentButton = this.page.getByRole( 'button', { name: buttonName } );
+		await alignmentButton.click();
+	}
+
+	async clearTextAlignment(): Promise<void> {
+		const alignmentButton = this.page.getByRole( 'button', { name: /^(Start|Center|End|Justify)$/ } ).first();
+		await alignmentButton.hover();
+		const clearButton = this.page.getByRole( 'button', { name: 'Clear' } );
+		await clearButton.click();
+		await this.page.waitForTimeout( TIMEOUTS.CHANGES_APPLY );
 	}
 
 	async getTypographyValues(): Promise<Partial<TypographyOptions>> {
@@ -162,16 +160,11 @@ export default class TypographySettings extends BasePage {
 		return false;
 	}
 
-	/**
-	 * Waits for typography controls to be ready
-	 * @param {number} timeout - Optional. The timeout in milliseconds. Default is 5000.
-	 */
 	async waitForTypographyControls( timeout: number = 5000 ): Promise<void> {
 		await this.page.waitForSelector( 'label:has-text("Font size"), label:has-text("Font family"), .MuiButtonBase-root', { timeout } );
 	}
 
 	async setFontSizeUnit( unit: string ): Promise<void> {
-		// Find the font size unit button and click it
 		const unitButton = this.page.getByRole( 'button', { name: /^(px|em|rem|vw|vh|%)$/i } ).first();
 		await unitButton.click();
 
