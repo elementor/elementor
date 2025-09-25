@@ -37,7 +37,7 @@ test.describe( 'Import Export Customization - Import Customization', () => {
 		await ImportExportHelpers.verifyPluginsSection( page, 'Elementor | Hello Dolly | WordPress Importer' );
 	} );
 
-	test.only( 'should import only selected plugins', async ( { page } ) => {
+	test( 'should import only selected plugins', async ( { page } ) => {
 		await ImportExportHelpers.openImportPage( page );
 
 		await ImportExportHelpers.uploadKitFile( page );
