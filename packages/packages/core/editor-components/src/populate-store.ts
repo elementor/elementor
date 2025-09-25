@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { __dispatch as dispatch } from '@elementor/store';
 
-import loadComponents from './actions/load-components';
+import { loadComponents } from './actions';
 
 export function PopulateStore() {
 	useEffect( () => {
