@@ -139,6 +139,10 @@ class OnboardingTracker {
 	}
 
 	sendEventOrStore( eventType, eventData ) {
+		if ( 'TOP_UPGRADE' === eventType && 'no_click' !== eventData.upgradeClicked ) {
+			this.markUpgradeClickSent( eventData.currentStep );
+		}
+
 		if ( EventDispatcher.canSendEvents() ) {
 			return this.sendEventDirect( eventType, eventData );
 		}
@@ -687,8 +691,16 @@ class OnboardingTracker {
 			return;
 		}
 
-		const hasClickEvent = this.hasExistingUpgradeClickEvent( stepNumber );
-		if ( hasClickEvent ) {
+		const hasUpgradeClickInActions = actions.some( ( action ) =>
+			'upgrade_topbar' === action.action ||
+			'upgrade_tooltip' === action.action ||
+			'upgrade_now' === action.action,
+		);
+
+		const hasStoredClickEvent = this.hasExistingUpgradeClickEvent( stepNumber );
+		const hasClickBeenSent = this.hasUpgradeClickBeenSent( stepNumber );
+
+		if ( hasUpgradeClickInActions || hasStoredClickEvent || hasClickBeenSent ) {
 			return;
 		}
 
@@ -700,6 +712,17 @@ class OnboardingTracker {
 				hoverTimestamp: hoverAction.hover_timestamp,
 			} );
 		} );
+	}
+
+	markUpgradeClickSent( stepNumber ) {
+		if ( ! this.sentUpgradeClicks ) {
+			this.sentUpgradeClicks = new Set();
+		}
+		this.sentUpgradeClicks.add( stepNumber );
+	}
+
+	hasUpgradeClickBeenSent( stepNumber ) {
+		return this.sentUpgradeClicks && this.sentUpgradeClicks.has( stepNumber );
 	}
 
 	hasExistingUpgradeClickEvent( stepNumber ) {
