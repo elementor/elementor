@@ -1,7 +1,7 @@
 import { createMockStyleDefinition } from 'test-utils';
 import { __getState as getState } from '@elementor/store';
 
-import { componentsStylesProvider } from '../../components-styles-provider';
+import { componentsStylesProvider } from '../components-styles-provider';
 import { SLICE_NAME } from '../components-styles-store';
 
 jest.mock( '@elementor/store', () => {

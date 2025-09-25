@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 
 import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
-import { componentsStylesProvider } from './components-styles-provider';
+import { componentsStylesProvider } from './store/components-styles-provider';
 import { addComponentStyles } from './store/add-component-styles';
 import { slice } from './store/components-styles-store';
 import { removeComponentStyles } from './store/remove-component-styles';
