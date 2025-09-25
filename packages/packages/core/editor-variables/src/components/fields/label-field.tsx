@@ -3,8 +3,8 @@ import { useRef, useState } from 'react';
 import { WarningInfotip } from '@elementor/editor-ui';
 import { TextField, type TextFieldProps } from '@elementor/ui';
 
+import { type TVariablesList } from '../../storage';
 import { labelHint, validateLabel, VARIABLE_LABEL_MAX_LENGTH } from '../../utils/validations';
-import { TVariablesList } from '../../storage';
 function isLabelEqual( a: string, b: string ) {
 	return a.trim().toLowerCase() === b.trim().toLowerCase();
 }
