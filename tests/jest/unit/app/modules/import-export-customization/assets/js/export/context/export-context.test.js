@@ -1,7 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import PropTypes from 'prop-types';
 import { ExportContextProvider, useExportContext, EXPORT_STATUS } from 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context';
-import { useKitValidation } from 'elementor/app/modules/import-export-customization/assets/js/export/hooks/use-kit-validation';
 
 const createWrapper = () => {
 	const Wrapper = ( { children } ) => (
@@ -41,29 +40,18 @@ describe( 'Export Context', () => {
 			} );
 		} );
 
-		it( 'should correctly calculate validation errors using validation hook', async () => {
-			const { result } = renderHook( () => {
-				const exportContext = useExportContext();
-				const validationHook = useKitValidation();
-				return { exportContext, validationHook };
-			}, {
+		it( 'should correctly calculate template name validity', async () => {
+			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
-			expect( result.current.exportContext.hasValidationErrors ).toBe( true );
-			expect( result.current.validationHook.nameError ).toBeTruthy();
-
-			expect( result.current.validationHook.validateKitName( '' ) ).toBeTruthy();
-			expect( result.current.validationHook.validateKitName( 'Valid Name' ) ).toBeNull();
+			expect( result.current.isTemplateNameValid ).toBe( false );
 
 			await waitFor( () => {
-				result.current.exportContext.dispatch( { type: 'SET_KIT_TITLE', payload: 'My Kit' } );
+				result.current.dispatch( { type: 'SET_KIT_TITLE', payload: 'My Kit' } );
 			} );
 
-			await waitFor( () => {
-				expect( result.current.exportContext.hasValidationErrors ).toBe( false );
-				expect( result.current.validationHook.nameError ).toBeNull();
-			} );
+			expect( result.current.isTemplateNameValid ).toBe( true );
 		} );
 
 		it( 'should correctly calculate export status flags', () => {
@@ -308,7 +296,7 @@ describe( 'Export Context', () => {
 				result.current.dispatch( { type: 'SET_KIT_TITLE', payload: '' } );
 			} );
 
-			expect( result.current.hasValidationErrors ).toBe( true );
+			expect( result.current.isTemplateNameValid ).toBe( false );
 		} );
 
 		it( 'should validate whitespace-only title as invalid', async () => {
@@ -320,7 +308,7 @@ describe( 'Export Context', () => {
 				result.current.dispatch( { type: 'SET_KIT_TITLE', payload: '   ' } );
 			} );
 
-			expect( result.current.hasValidationErrors ).toBe( true );
+			expect( result.current.isTemplateNameValid ).toBe( false );
 		} );
 
 		it( 'should validate proper title as valid', async () => {
@@ -332,85 +320,7 @@ describe( 'Export Context', () => {
 				result.current.dispatch( { type: 'SET_KIT_TITLE', payload: 'My Kit' } );
 			} );
 
-			expect( result.current.hasValidationErrors ).toBe( false );
-		} );
-	} );
-
-	describe( 'Kit Validation Hook', () => {
-		it( 'should validate special characters in kit name', () => {
-			const { result } = renderHook( () => useKitValidation(), {
-				wrapper: createWrapper(),
-			} );
-
-			const validateKitName = result.current.validateKitName;
-
-			// Test special characters that should be rejected
-			expect( validateKitName( 'Kit<Name>' ) ).toBeTruthy();
-			expect( validateKitName( 'Kit"Name"' ) ).toBeTruthy();
-			expect( validateKitName( 'Kit|Name' ) ).toBeTruthy();
-			expect( validateKitName( 'Kit?Name' ) ).toBeTruthy();
-			expect( validateKitName( 'Kit*Name' ) ).toBeTruthy();
-
-			// Test valid characters that should be accepted
-			expect( validateKitName( 'My Kit Name' ) ).toBeNull();
-			expect( validateKitName( 'Kit-Name_123' ) ).toBeNull();
-			expect( validateKitName( 'Kit.Name(1)' ) ).toBeNull();
-		} );
-
-		it( 'should validate description length', async () => {
-			const { result } = renderHook( () => useKitValidation(), {
-				wrapper: createWrapper(),
-			} );
-
-			const validateDescription = result.current.validateDescription;
-			const DESCRIPTION_MAX_LENGTH = result.current.DESCRIPTION_MAX_LENGTH;
-
-			// Test valid description
-			expect( validateDescription( 'Short description' ) ).toBeNull();
-
-			// Test description at exactly max length
-			const exactLengthDescription = 'a'.repeat( DESCRIPTION_MAX_LENGTH );
-			expect( validateDescription( exactLengthDescription ) ).toBeNull();
-
-			// Test description exceeding max length
-			const tooLongDescription = 'a'.repeat( DESCRIPTION_MAX_LENGTH + 1 );
-			expect( validateDescription( tooLongDescription ) ).toBeTruthy();
-		} );
-
-		it( 'should handle description change validation', async () => {
-			const { result } = renderHook( () => {
-				const exportContext = useExportContext();
-				const validationHook = useKitValidation();
-				return { exportContext, validationHook };
-			}, {
-				wrapper: createWrapper(),
-			} );
-
-			// Set initial valid description
-			await waitFor( () => {
-				result.current.exportContext.dispatch( {
-					type: 'SET_KIT_DESCRIPTION',
-					payload: 'Valid description',
-				} );
-			} );
-
-			expect( result.current.validationHook.hasDescriptionError ).toBe( false );
-			expect( result.current.validationHook.descriptionCounterColor ).toBe( 'text.secondary' );
-
-			// Set description that exceeds limit
-			const longDescription = 'a'.repeat( 301 );
-			await waitFor( () => {
-				result.current.exportContext.dispatch( {
-					type: 'SET_KIT_DESCRIPTION',
-					payload: longDescription,
-				} );
-			} );
-
-			await waitFor( () => {
-				expect( result.current.validationHook.hasDescriptionError ).toBe( true );
-				expect( result.current.validationHook.descriptionCounterColor ).toBe( 'error' );
-				expect( result.current.exportContext.hasValidationErrors ).toBe( true );
-			} );
+			expect( result.current.isTemplateNameValid ).toBe( true );
 		} );
 	} );
 } );
