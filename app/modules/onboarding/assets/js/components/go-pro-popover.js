@@ -36,7 +36,7 @@ export default function GoProPopover( props ) {
 			}
 
 			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
-			OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
+			OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_already_pro' );
 			OnboardingEventTracking.cancelDelayedNoClickEvent();
 
 			if ( stepNumber ) {
@@ -95,8 +95,7 @@ export default function GoProPopover( props ) {
 			}
 
 			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
-
-			OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_topbar' );
+			OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_now' );
 			OnboardingEventTracking.cancelDelayedNoClickEvent();
 
 			if ( stepNumber ) {

@@ -140,7 +140,8 @@ class OnboardingTracker {
 
 	sendEventOrStore( eventType, eventData ) {
 		if ( 'TOP_UPGRADE' === eventType && 'no_click' !== eventData.upgradeClicked ) {
-			this.markUpgradeClickSent( eventData.currentStep );
+			const stepNumber = this.getStepNumber( eventData.currentStep );
+			this.markUpgradeClickSent( stepNumber );
 		}
 
 		if ( EventDispatcher.canSendEvents() ) {
@@ -427,24 +428,29 @@ class OnboardingTracker {
 			return;
 		}
 
-		this.sendHoverEventsFromStepActions( actions, stepNumber );
-
 		let eventData = EventDispatcher.createStepEventPayload( stepNumber, stepName, {
 			location: 'plugin_onboarding',
 			trigger: 'user_redirects_out_of_step',
 		} );
 
 		eventData = TimingManager.addTimingToEventData( eventData, stepNumber );
-		const filteredActions = actions.filter( ( action ) => 'upgrade_hover' !== action.action );
+		const filteredActions = actions.filter( ( action ) => 
+			'upgrade_hover' !== action.action &&
+			'upgrade_topbar' !== action.action &&
+			'upgrade_now' !== action.action &&
+			'upgrade_already_pro' !== action.action
+		);
 		eventData[ endStateProperty ] = filteredActions;
 
 		if ( EventDispatcher.canSendEvents() ) {
+			this.sendHoverEventsFromStepActions( actions, stepNumber );
 			this.dispatchEvent( eventName, eventData );
 			StorageManager.remove( storageKey );
 			TimingManager.clearStepStartTime( stepNumber );
 		} else if ( 1 === stepNumber ) {
 			this.storeStep1EndStateForLater( eventData, storageKey );
 		} else {
+			this.sendHoverEventsFromStepActions( actions, stepNumber );
 			this.dispatchEvent( eventName, eventData );
 			StorageManager.remove( storageKey );
 			TimingManager.clearStepStartTime( stepNumber );
@@ -694,7 +700,8 @@ class OnboardingTracker {
 		const hasUpgradeClickInActions = actions.some( ( action ) =>
 			'upgrade_topbar' === action.action ||
 			'upgrade_tooltip' === action.action ||
-			'upgrade_now' === action.action,
+			'upgrade_now' === action.action ||
+			'upgrade_already_pro' === action.action,
 		);
 
 		const hasStoredClickEvent = this.hasExistingUpgradeClickEvent( stepNumber );
@@ -729,11 +736,12 @@ class OnboardingTracker {
 		const config = this.EVENT_CONFIGS.TOP_UPGRADE;
 		const storedEvents = StorageManager.getArray( config.storageKey );
 
-		return storedEvents.some( ( event ) =>
-			event.currentStep === stepNumber &&
-			event.upgradeClicked &&
-			'no_click' !== event.upgradeClicked,
-		);
+		return storedEvents.some( ( event ) => {
+			const eventStepNumber = this.getStepNumber( event.currentStep );
+			return eventStepNumber === stepNumber &&
+				event.upgradeClicked &&
+				'no_click' !== event.upgradeClicked;
+		} );
 	}
 
 	attachEventHandlersToButton( buttonElement, eventHandlers ) {
@@ -817,6 +825,12 @@ class OnboardingTracker {
 
 	sendStoredStep1EventsOnStep2() {
 		this.sendStoredEvent( 'STEP1_CLICKED_CONNECT' );
+		
+		const step1Actions = StorageManager.getArray( ONBOARDING_STORAGE_KEYS.STEP1_ACTIONS );
+		if ( step1Actions.length > 0 ) {
+			this.sendHoverEventsFromStepActions( step1Actions, 1 );
+		}
+		
 		this.sendStoredEvent( 'STEP1_END_STATE' );
 	}
 
