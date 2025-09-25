@@ -85,6 +85,10 @@ class ClickTracker {
 
 		const excludedSelectors = [
 			'.announcements-container',
+			'.announcements-screen-overlay',
+			'.announcements-screen',
+			'.notifications-container',
+			'.notifications-overlay',
 			'.close-button',
 		];
 

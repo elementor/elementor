@@ -655,7 +655,7 @@ class OnboardingTracker {
 			return;
 		}
 
-		this.sendEventDirect( 'TOP_UPGRADE', { currentStep: eventData.currentStep, upgradeClicked: 'no_click' } );
+		this.sendEventOrStore( 'TOP_UPGRADE', { currentStep: eventData.currentStep, upgradeClicked: 'no_click' } );
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK );
 	}
 
@@ -667,7 +667,7 @@ class OnboardingTracker {
 	onStepLoad( currentStep ) {
 		TimingManager.trackStepStartTime( this.getStepNumber( currentStep ) );
 
-		if ( 2 === this.getStepNumber( currentStep ) || 'hello_biz' === currentStep ) {
+		if ( 2 === this.getStepNumber( currentStep ) || 'hello' === currentStep || 'hello_biz' === currentStep ) {
 			this.sendStoredStep1EventsOnStep2();
 		}
 

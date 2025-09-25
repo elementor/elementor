@@ -129,7 +129,7 @@ export default function GoProPopover( props ) {
 
 	return (
 		<PopoverDialog
-			targetRef={ upgradeButtonRef }
+			targetRef={ props.goProButtonRef || upgradeButtonRef }
 			wrapperClass="e-onboarding__go-pro"
 		>
 			<div className="e-onboarding__go-pro-content">
@@ -157,4 +157,5 @@ export default function GoProPopover( props ) {
 
 GoProPopover.propTypes = {
 	buttonsConfig: PropTypes.array.isRequired,
+	goProButtonRef: PropTypes.object,
 };

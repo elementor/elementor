@@ -140,6 +140,7 @@ export default function Layout( props ) {
 				<Header
 					title={ __( 'Getting Started', 'elementor' ) }
 					buttons={ headerButtons }
+					goProButtonRef={ goProButtonRef }
 				/>
 				<div className={ 'eps-app__main e-onboarding__page-' + props.pageId }>
 					<Content className="e-onboarding__content">
