@@ -239,7 +239,7 @@ class Dynamic_Tags_Editor_Config {
 			case $this->is_control_term_query( $control ):
 				$query_type = Term_Query::ENDPOINT;
 				$included_types = null;
-				$excluded_types = [];
+				$excluded_types = null;
 				break;
 
 			case $this->is_control_elementor_query( $control ):

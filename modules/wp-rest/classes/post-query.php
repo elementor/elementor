@@ -11,8 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Post_Query extends Base {
 	const ENDPOINT = 'post';
-
-	const DEFAULT_FORBIDDEN_POST_TYPES = [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment' ];
+	const SEARCH_FILTER_ACCEPTED_ARGS = 2;
+	const DEFAULT_FORBIDDEN_POST_TYPES = [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment', 'revision', 'nav_menu_item', 'custom_css', 'customize_changeset' ];
 
 	/**
 	 * @param string    $search_term The original search query.
@@ -55,25 +55,15 @@ class Post_Query extends Base {
 			], 200 );
 		}
 
-		$included_types = $params[ self::INCLUDED_TYPE_KEY ];
-		$excluded_types = $params[ self::EXCLUDED_TYPE_KEY ];
 		$keys_format_map = $params[ self::KEYS_CONVERSION_MAP_KEY ];
-
 		$requested_count = $params[ self::ITEMS_COUNT_KEY ] ?? 0;
 		$validated_count = max( $requested_count, 1 );
 		$post_count = min( $validated_count, self::MAX_RESPONSE_COUNT );
 		$is_public_only = $params[ self::IS_PUBLIC_KEY ] ?? true;
-
-		$post_types = Collection::make( get_post_types( [], 'objects' ) )
-			->filter( function ( $post_type ) use ( $excluded_types, $included_types ) {
-				return ( empty( $included_types ) || in_array( $post_type->name, $included_types, true ) ) &&
-					( empty( $excluded_types ) || ! in_array( $post_type->name, $excluded_types, true ) );
-			} );
-
-		$this->add_filter_to_customize_query();
+		$post_types = $this->get_post_types_from_params( $params );
 
 		$query_args = [
-			'post_type' => array_keys( $post_types->all() ),
+			'post_type' => array_keys( $post_types ),
 			'numberposts' => $post_count,
 			'suppress_filters' => false,
 			'custom_search' => true,
@@ -89,11 +79,11 @@ class Post_Query extends Base {
 			$query_args['tax_query'] = $params[ self::TAX_QUERY_KEY ];
 		}
 
+		$this->add_filter_to_customize_query();
 		$posts = new Collection( get_posts( $query_args ) );
-
 		$this->remove_filter_to_customize_query();
 
-		$post_type_labels = ( new Collection( $post_types->all() ) )
+		$post_type_labels = ( new Collection( $post_types ) )
 			->map( function ( $pt ) {
 				return $pt->label;
 			} )
@@ -223,5 +213,21 @@ class Post_Query extends Base {
 			self::META_QUERY_KEY,
 			self::TAX_QUERY_KEY,
 		];
+	}
+
+	private function get_post_types_from_params( $params ) {
+		$included_types = $params[ self::INCLUDED_TYPE_KEY ];
+		$excluded_types = $params[ self::EXCLUDED_TYPE_KEY ];
+		$post_type_query_args = [
+			'public' => true,
+		];
+
+		$post_types = get_post_types( $post_type_query_args, 'objects' );
+
+		return  Collection::make( $post_types )
+				->filter( function ( $slug, $post_type ) use ( $included_types, $excluded_types ) {
+					return ( empty ( $included_types ) || in_array( $post_type, $included_types ) ) &&
+						( empty ( $excluded_types ) || ! in_array( $post_type, $excluded_types ) );
+				} )->all();
 	}
 }

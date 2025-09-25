@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class User_Query extends Base {
 	const ENDPOINT = 'user';
+	const SEARCH_FILTER_ACCEPTED_ARGS = 1;
 
 	/**
 	 * @param \WP_REST_Request $request
@@ -32,8 +33,6 @@ class User_Query extends Base {
 		$included_roles = $params[ self::INCLUDED_TYPE_KEY ];
 		$excluded_roles = $params[ self::EXCLUDED_TYPE_KEY ];
 
-		$fields = $params[ self::FIELDS_KEY ];
-		$fields = is_array( $fields ) && 1 === count( $fields ) ? $fields[0] : $fields;
 		$keys_format_map = $params[ self::KEYS_CONVERSION_MAP_KEY ];
 
 		$requested_count = $params[ self::ITEMS_COUNT_KEY ] ?? 0;
@@ -43,7 +42,6 @@ class User_Query extends Base {
 		$query_args = [
 			'number' => $count,
 			'search' => "*$search_term*",
-			'fields' => $fields,
 		];
 
 		if ( ! empty( $params[ self::META_QUERY_KEY ] ) && is_array( $params[ self::META_QUERY_KEY ] ) ) {
@@ -171,28 +169,6 @@ class User_Query extends Base {
 				'default' => null,
 				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
 			],
-			self::FIELDS_KEY => [
-				'description' => 'Term fields to query for',
-				'type' => [ 'array', 'string' ],
-				'required' => false,
-				'default' => 'all',
-				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
-				'validate_callback' => fn ( $fields ) => ! $fields || in_array( $fields, [
-					'all',
-					'ID',
-					'display_name',
-					'login',
-					'user_login',
-					'nicename',
-					'user_nicename',
-					'email',
-					'user_email',
-					'url',
-					'user_url',
-					'registered',
-					'user_registered',
-				], true ),
-			],
 		];
 	}
 
@@ -203,7 +179,6 @@ class User_Query extends Base {
 			self::KEYS_CONVERSION_MAP_KEY,
 			self::META_QUERY_KEY,
 			self::ITEMS_COUNT_KEY,
-			self::FIELDS_KEY,
 		];
 	}
 
@@ -213,7 +188,6 @@ class User_Query extends Base {
 			self::INCLUDED_TYPE_KEY,
 			self::KEYS_CONVERSION_MAP_KEY,
 			self::META_QUERY_KEY,
-			self::FIELDS_KEY,
 		];
 	}
 

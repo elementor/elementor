@@ -58,7 +58,6 @@ class Query_Builder {
 			Term_Query::META_QUERY_KEY => $config[ Query_Base::META_QUERY_KEY ] ?? null,
 			Term_Query::IS_PUBLIC_KEY => $config[ Query_Base::IS_PUBLIC_KEY ] ?? null,
 			Term_Query::HIDE_EMPTY_KEY => $config[ Query_Base::HIDE_EMPTY_KEY ] ?? null,
-			Term_Query::FIELDS_KEY => $config[ Query_Base::FIELDS_KEY ] ?? null,
 			Term_Query::ITEMS_COUNT_KEY => $config[ Query_Base::ITEMS_COUNT_KEY ] ?? null,
 		] );
 
@@ -78,7 +77,6 @@ class Query_Builder {
 			User_Query::INCLUDED_TYPE_KEY => $config[ Query_Base::INCLUDED_TYPE_KEY ] ?? null,
 			User_Query::EXCLUDED_TYPE_KEY => $config[ Query_Base::EXCLUDED_TYPE_KEY ] ?? null,
 			User_Query::META_QUERY_KEY => $config[ Query_Base::META_QUERY_KEY ] ?? null,
-			User_Query::FIELDS_KEY => $config[ Query_Base::FIELDS_KEY ] ?? null,
 			User_Query::ITEMS_COUNT_KEY => $config[ Query_Base::ITEMS_COUNT_KEY ] ?? null,
 		] );
 

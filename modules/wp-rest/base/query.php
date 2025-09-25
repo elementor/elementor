@@ -20,7 +20,6 @@ abstract class Query {
 
 	const MAX_RESPONSE_COUNT = 100;
 	const ITEMS_COUNT_KEY = 'items_count';
-	const FIELDS_KEY = 'fields';
 
 	const INCLUDED_TYPE_KEY = 'included_types';
 	const EXCLUDED_TYPE_KEY = 'excluded_types';
@@ -28,7 +27,6 @@ abstract class Query {
 
 	const SEARCH_TERM_KEY = 'term';
 	const SEARCH_FILTER_PRIORITY = 10;
-	const SEARCH_FILTER_ACCEPTED_ARGS = 2;
 
 	/**
 	 * @param \WP_REST_Request $request
@@ -94,11 +92,13 @@ abstract class Query {
 		$array = new Collection( json_decode( json_encode( $input ), true ) );
 
 		return $array
-			->map( 'sanitize_text_field' )
-			->filter( function ( $value ) {
-				return '' !== $value;
-			} )
-			->all();
+			->reduce( function ( $carry, $value, $key ) {
+				if ( $value ) {
+					$carry[ $key ] = is_array( $value ) ? self::sanitize_string_array( $value ) :sanitize_text_field( $value );
+				}
+
+				return $carry;
+			}, [] );
 	}
 
 

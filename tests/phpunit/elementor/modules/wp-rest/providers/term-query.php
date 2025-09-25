@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 trait Term_Query {
 	private $uncategorized_term_id = 1;
-	
+
 	private $force_delete = true;
 	private $count = -1;
 
@@ -22,13 +22,11 @@ trait Term_Query {
 			wp_delete_term( $term->term_id, $term->taxonomy, $this->force_delete );
 		}
 
-		foreach ( get_terms( [
+		$this->assertEquals( count( get_terms( [
 			'exclude' => [ $this->uncategorized_term_id ],
 			'number' => $this->count,
 			'hide_empty' => false,
-		] ) as $term ) {
-			var_dump( $term->name );
-		}
+		] ) ), 0 );
 
 		foreach ( $this->taxonomies as $taxonomy ) {
 			unregister_taxonomy( $taxonomy );
@@ -187,6 +185,20 @@ trait Term_Query {
 					],
 				] ), [ Term_Query_Class::SEARCH_TERM_KEY => 'a ' ] ),
 				'expected' => [],
+			],
+			[
+				'params' => array_merge( Term_Query_Class::build_query_params( [
+					Term_Query_Class::KEYS_CONVERSION_MAP_KEY => [
+						'term_id' => 'my_id',
+						'name' => 'my_name',
+					],
+				] ), [ Term_Query_Class::SEARCH_TERM_KEY => $this->terms[7]->term_id ] ),
+				'expected' => [
+					[
+						'my_id' => $this->terms[7]->term_id,
+						'my_name' => $this->terms[7]->name,
+					],
+				],
 			],
 		];
 	}

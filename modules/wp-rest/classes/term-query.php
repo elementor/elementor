@@ -11,6 +11,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Term_Query extends Base {
 	const ENDPOINT = 'term';
+	const SEARCH_FILTER_ACCEPTED_ARGS = 3;
+
+	/**
+	 * @param array    $clauses Associative array of the clauses for the query.
+	 * @param array    $taxonomies Array of taxonomy names.
+	 * @param array    $args The args passed to 'get_terms()'.
+	 * @return array Modified clauses.
+	 */
+	public function customize_terms_query( $clauses, $taxonomies, $args ) {
+		if ( ! $args[ 'custom_search' ] ) {
+			return $clauses;
+		}
+
+		if ( is_numeric( $args[ 'name__like' ] ) ) {
+			$clauses['where'] = '(' . $clauses['where'] . ' OR t.term_id = ' . $args[ 'name__like' ] . ')';
+		}
+
+		if ( empty ( $args[ 'excluded_taxonomies' ] ) ) {
+			return $clauses;
+		}
+
+		$excluded_taxonomies = $args['excluded_taxonomies'];
+		$escaped = array_map( 'esc_sql', $excluded_taxonomies );
+		$list = "'" . implode( "','", $escaped ) . "'";
+		$clauses['where'] .= " AND tt.taxonomy NOT IN ({$list})";
+
+		return $clauses;
+	}
 
 	/**
 	 * @param \WP_REST_Request $request
@@ -29,11 +57,9 @@ class Term_Query extends Base {
 			], 200 );
 		}
 
-		$included_types = $params[ self::INCLUDED_TYPE_KEY ];
-		$excluded_types = $params[ self::EXCLUDED_TYPE_KEY ];
+		$included_taxonomies = $params[ self::INCLUDED_TYPE_KEY ];
+		$excluded_taxonomies = $params[ self::EXCLUDED_TYPE_KEY ];
 
-		$fields = $params[ self::FIELDS_KEY ];
-		$fields = is_array( $fields ) && 1 === count( $fields ) ? $fields[0] : $fields;
 		$keys_format_map = $params[ self::KEYS_CONVERSION_MAP_KEY ];
 
 		$requested_count = $params[ self::ITEMS_COUNT_KEY ] ?? 0;
@@ -44,26 +70,21 @@ class Term_Query extends Base {
 
 		$query_args = [
 			'number' => $count,
-			'fields' => $fields,
 			'name__like' => $term,
 			'hide_empty' => $should_hide_empty,
+			'taxonomy' => ! empty( $included_taxonomies ) ? $included_taxonomies : null,
+			'excluded_taxonomies' => $excluded_taxonomies ?? [],
+			'suppress_filter' => false,
+			'custom_search' => true,
 		];
 
 		if ( ! empty( $params[ self::META_QUERY_KEY ] ) && is_array( $params[ self::META_QUERY_KEY ] ) ) {
 			$query_args['meta_query'] = $params[ self::META_QUERY_KEY ];
 		}
 
+		$this->add_filter_to_customize_query();
 		$terms = new Collection( get_terms( $query_args ) );
-		$term_by_id = is_numeric( $term ) ? get_term( $term ) : null;
-
-		if ( $term_by_id && ! $terms->find( fn( $t ) => (int) $t->term_id === (int) $term ) ) {
-			$terms->push( $term_by_id );
-		}
-
-		$terms = $terms->filter( function ( $term ) use ( $included_types, $excluded_types ) {
-			return ( empty( $included_types ) || in_array( $term->taxonomy, $included_types, true ) )
-				&& ( empty( $excluded_types ) || ! in_array( $term->taxonomy, $excluded_types, true ) );
-		} );
+		$this->remove_filter_to_customize_query();
 
 		$term_group_labels = $terms
 			->reduce( function ( $term_types, $term ) {
@@ -95,6 +116,26 @@ class Term_Query extends Base {
 					->all(),
 			],
 		], 200 );
+	}
+
+	/**
+	 * @return void
+	 */
+	private function add_filter_to_customize_query() {
+		$priority = Term_Query::SEARCH_FILTER_PRIORITY;
+		$accepted_args = Term_Query::SEARCH_FILTER_ACCEPTED_ARGS;
+
+		add_filter( 'terms_clauses', [ $this, 'customize_terms_query' ], $priority, $accepted_args );
+	}
+
+	/**
+	 * @return void
+	 */
+	private function remove_filter_to_customize_query() {
+		$priority = Term_Query::SEARCH_FILTER_PRIORITY;
+		$accepted_args = Term_Query::SEARCH_FILTER_ACCEPTED_ARGS;
+
+		remove_filter( 'terms_clauses', [ $this, 'customize_terms_query' ], $priority, $accepted_args );
 	}
 
 	/**
@@ -153,25 +194,6 @@ class Term_Query extends Base {
 				'default' => null,
 				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
 			],
-			self::FIELDS_KEY => [
-				'description' => 'Term fields to query for',
-				'type' => 'string',
-				'required' => false,
-				'default' => 'all',
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => fn ( $fields ) => ! $fields || in_array( $fields, [
-					'all',
-					'all_with_object_id',
-					'ids',
-					'tt_ids',
-					'names',
-					'slugs',
-					'count',
-					'id=>parent',
-					'id=>name',
-					'id=>slug',
-				], true ),
-			],
 		];
 	}
 
@@ -194,7 +216,6 @@ class Term_Query extends Base {
 			self::KEYS_CONVERSION_MAP_KEY,
 			self::META_QUERY_KEY,
 			self::TAX_QUERY_KEY,
-			self::FIELDS_KEY,
 		];
 	}
 }
