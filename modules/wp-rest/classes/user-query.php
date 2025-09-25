@@ -21,9 +21,9 @@ class User_Query extends Base {
 		 add_action( 'add_cap', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
 		 add_action( 'remove_cap', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
 
-		 if ( ! self::$roles_hierarchy ) {
+		if ( ! self::$roles_hierarchy ) {
 			$this->arrange_roles_by_capabilities();
-		 }
+		}
 	}
 	/**
 	 * @param \WP_REST_Request $request
@@ -230,11 +230,12 @@ class User_Query extends Base {
 		}
 
 		global $wp_roles;
-
 		$roles = Collection::make( $wp_roles->roles )
 			->map( fn( $role, $slug ) => array_merge( (array) $role, [ 'slug' => $slug ] ) )
 			->all();
+
 		self::$roles_hierarchy = array_values( $roles );
+		self::ensure_functions_loaded();
 
 		$temp_user_a_id = self::generate_random_user();
 		$temp_user_a = get_user( $temp_user_a_id );
@@ -256,10 +257,6 @@ class User_Query extends Base {
 			return $is_a_stronger ? -1 : 1;
 		} );
 
-		if ( ! function_exists( 'wp_delete_user' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/user.php';
-		}
-
 		wp_delete_user( $temp_user_a_id );
 		wp_delete_user( $temp_user_b_id );
 	}
@@ -276,5 +273,20 @@ class User_Query extends Base {
 			'user_login' => $random_string,
 			'user_pass' => $random_string,
 		] );
+	}
+
+	private static function ensure_functions_loaded() {
+		$functions = [
+			'wp_delete_user',
+			'get_user',
+		];
+
+		foreach ( $functions as $function ) {
+			if ( ! function_exists( $function ) ) {
+				require_once ABSPATH . 'wp-admin/includes/user.php';
+
+				break;
+			}
+		}
 	}
 }
