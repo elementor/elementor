@@ -1,11 +1,11 @@
 import { createMockElementData, createMockStyleDefinition } from 'test-utils';
 import { type V1ElementData } from '@elementor/editor-elements';
+import { type StyleDefinition } from '@elementor/editor-styles';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { addComponentStyles } from '../add-component-styles';
 import { load } from '../component-config';
 import { selectData, slice, SLICE_NAME } from '../components-styles-store';
-import { StyleDefinition } from '@elementor/editor-styles';
 
 jest.mock( '@elementor/store', () => {
 	const actual = jest.requireActual( '@elementor/store' );
