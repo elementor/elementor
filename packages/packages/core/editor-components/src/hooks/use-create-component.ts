@@ -1,7 +1,7 @@
-import { __useDispatch as useDispatch, __useSelector as useSelector, type AsyncThunkAction } from '@elementor/store';
+import { __useDispatch as useDispatch, __useSelector as useSelector, type AnyAction } from '@elementor/store';
 
 import { createComponent } from '../actions';
-import { type CreateComponentPayload, type CreateComponentResponse } from '../api';
+import { type CreateComponentPayload } from '../api';
 import { selectCreateStatus } from '../store';
 
 export const useCreateComponentMutation = () => {
@@ -9,13 +9,7 @@ export const useCreateComponentMutation = () => {
 	const createStatus = useSelector( selectCreateStatus );
 
 	const createComponentAction = async ( payload: CreateComponentPayload ) => {
-		const result = await dispatch(
-			createComponent( payload ) as AsyncThunkAction<
-				CreateComponentResponse,
-				CreateComponentPayload,
-				{ rejectValue: string }
-			>
-		);
+		const result = await dispatch( createComponent( payload ) as unknown as AnyAction );
 		return result.payload;
 	};
 
