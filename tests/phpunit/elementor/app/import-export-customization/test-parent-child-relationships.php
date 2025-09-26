@@ -103,7 +103,15 @@ class Test_Parent_Child_Relationships extends Elementor_Test_Base {
 		}
 
 		$new_id = 500 + $post_settings['id'];
-		$current_mappings[ $post_settings['id'] ] = $new_id;
+		
+		$import_result = [
+			'status' => Import_Runner::IMPORT_STATUS_SUCCEEDED,
+			'result' => $new_id,
+		];
+		
+		$map_method = $reflection->getMethod( 'map_imported_post_id' );
+		$map_method->setAccessible( true );
+		$map_method->invoke( $import_runner, $post_settings['id'], $import_result );
 
 		$mappings_property->setValue( $import_runner, $current_mappings );
 		$orphans_property->setValue( $import_runner, $current_orphans );

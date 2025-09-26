@@ -106,14 +106,14 @@ class Elementor_Content extends Import_Runner_Base {
 
 					if ( is_array( $import_result ) ) {
 						$result[ $import_result['status'] ][ $id ] = $import_result['result'];
-						$this->track_import( $id, $import_result );
+						$this->map_imported_post_id( $id, $import_result );
 
 						continue;
 					}
 				}
 
 				$import_result = $this->read_and_import_post( $path, $id, $post_settings, $post_type, $imported_terms );
-				$this->track_import( $id, $import_result );
+				$this->map_imported_post_id( $id, $import_result );
 
 				$result[ $import_result['status'] ][ $id ] = $import_result['result'];
 			} catch ( \Exception $error ) {
@@ -249,7 +249,7 @@ class Elementor_Content extends Import_Runner_Base {
 	}
 
 
-	private function track_import( $original_id, $import_result ) {
+	private function map_imported_post_id( $original_id, $import_result ) {
 		if ( $import_result['status'] !== static::IMPORT_STATUS_SUCCEEDED ) {
 			return;
 		}
