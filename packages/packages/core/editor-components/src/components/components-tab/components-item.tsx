@@ -2,7 +2,7 @@ import * as React from 'react';
 import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
 import { dropElement, type DropElementParams } from '@elementor/editor-elements';
 import { MenuListItem } from '@elementor/editor-ui';
-import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
+import { DotsVerticalIcon, EyeIcon } from '@elementor/icons';
 import {
 	bindMenu,
 	bindTrigger,
@@ -43,7 +43,7 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 		>
 			<Box sx={ { display: 'flex', width: '100%', alignItems: 'center', gap: 1 } } onClick={ handleClick }>
 				<ListItemIcon size="tiny">
-					<ComponentsIcon fontSize="tiny" />
+					<EyeIcon fontSize="tiny" />
 				</ListItemIcon>
 				<ListItemText
 					primary={
