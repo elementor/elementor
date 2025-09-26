@@ -135,7 +135,7 @@ class Dynamic_Tags_Editor_Config {
 
 			if ( ! isset( $atomic_controls[ $section_name ] ) ) {
 				$atomic_controls[ $section_name ] = Section::make()
-					->set_label( html_entity_decode( $controls[ $section_name ]['label'] ) );
+					->set_label( $controls[ $section_name ]['label'] );
 			}
 
 			$atomic_controls[ $section_name ] = $atomic_controls[ $section_name ]->add_item( $atomic_control );
@@ -196,7 +196,7 @@ class Dynamic_Tags_Editor_Config {
 		$select_control = Select_Control::bind_to( $control['name'] )
 			->set_placeholder( $control['placeholder'] ?? '' )
 			->set_options( $options )
-			->set_label( html_entity_decode( $control['atomic_label'] ?? $control['label'] ) );
+			->set_label( $control['atomic_label'] ?? $control['label'] );
 
 		if ( isset( $control['collection_id'] ) ) {
 			$select_control->set_collection_id( $control['collection_id'] );
@@ -242,7 +242,7 @@ class Dynamic_Tags_Editor_Config {
 	 */
 	private function convert_text_control_to_atomic( $control ) {
 		return Text_Control::bind_to( $control['name'] )
-			->set_label( html_entity_decode( $control['label'] ) );
+			->set_label( $control['label'] );
 	}
 
 	/**
@@ -252,7 +252,7 @@ class Dynamic_Tags_Editor_Config {
 	 */
 	private function convert_switch_control_to_atomic( $control ) {
 		return Switch_Control::bind_to( $control['name'] )
-			->set_label( html_entity_decode( $control['atomic_label'] ?? $control['label'] ) );
+			->set_label( $control['atomic_label'] ?? $control['label'] );
 	}
 
 	/**
@@ -267,13 +267,13 @@ class Dynamic_Tags_Editor_Config {
 			->set_min( $control['min'] ?? null )
 			->set_step( $control['step'] ?? null )
 			->set_should_force_int( $control['should_force_int'] ?? false )
-			->set_label( html_entity_decode( $control['label'] ) );
+			->set_label( $control['label'] );
 	}
 
 	private function convert_textarea_control_to_atomic( $control ) {
 		return Textarea_Control::bind_to( $control['name'] )
-			->set_placeholder( html_entity_decode( $control['placeholder'] ?? '' ) )
-			->set_label( html_entity_decode( $control['label'] ) );
+			->set_placeholder( $control['placeholder'] ?? '' )
+			->set_label( $control['label'] );
 	}
 
 	private function convert_query_control_to_atomic( $control ) {
@@ -325,8 +325,8 @@ class Dynamic_Tags_Editor_Config {
 
 		$query_control = Query_Control::bind_to( $control['name'] );
 		$query_control->set_query_config( $query_config );
-		$query_control->set_placeholder( html_entity_decode( $control['placeholder'] ?? '' ) );
-		$query_control->set_label( html_entity_decode( $control['label'] ) );
+		$query_control->set_placeholder( $control['placeholder'] ?? '' );
+		$query_control->set_label( $control['label'] );
 		$query_control->set_allow_custom_values( false );
 
 		return $query_control;
@@ -353,7 +353,7 @@ class Dynamic_Tags_Editor_Config {
 
 	private function convert_choose_control_to_atomic( $control ) {
 		return Toggle_Control::bind_to( $control['name'] )
-			->set_label( html_entity_decode( $control['atomic_label'] ?? $control['label'] ) )
+			->set_label( $control['atomic_label'] ?? $control['label'] )
 			->add_options( $control['options'] )
 			->set_size( 'tiny' )
 			->set_exclusive( true )
@@ -363,6 +363,6 @@ class Dynamic_Tags_Editor_Config {
 	private function convert_media_control_to_atomic( $control ) {
 		return Image_Control::bind_to( $control['name'] )
 			->set_show_mode( 'media' )
-			->set_label( html_entity_decode( $control['label'] ) );
+			->set_label( $control['label'] );
 	}
 }

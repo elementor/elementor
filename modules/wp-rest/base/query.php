@@ -89,9 +89,7 @@ abstract class Query {
 			}
 		}
 
-		$array = new Collection( json_decode( json_encode( $input ), true ) );
-
-		return $array
+		return Collection::make( $input )
 			->reduce( function ( $carry, $value, $key ) {
 				if ( $value ) {
 					$carry[ $key ] = is_array( $value ) ? self::sanitize_string_array( $value ) : sanitize_text_field( $value );

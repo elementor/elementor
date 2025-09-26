@@ -211,15 +211,9 @@ class User_Query extends Base {
 		];
 	}
 
-	private function is_user_of_role( \WP_User $user, string $role_slug ) {
-		$role = get_role( $role_slug );
-
-		if ( ! $role ) {
-			return false;
-		}
-
-		return ! Collection::make( $role->capabilities )->some( function( $enabled, $capability ) use ( $user ) {
-				return ! $user->has_cap( $capability ) && ! ( $user->allcaps[ $capability ] ?? false );
+	private function is_user_of_role( \WP_User $user, \WP_Role $role ) {
+		return Collection::make( $role->capabilities )->every( function( $enabled, $capability ) use ( $user ) {
+				return $user->has_cap( $capability ) || ( isset( $user->allcaps[ $capability ] ) && $user->allcaps[ $capability ] );
 		} );
 	}
 
@@ -239,44 +233,23 @@ class User_Query extends Base {
 
 		self::$roles_hierarchy = array_column( array_values( $roles ), 'slug' );
 
-		$temp_user_a_id = $this->generate_random_user();
-		$temp_user_a = get_user_by( 'ID', $temp_user_a_id );
+		usort( self::$roles_hierarchy, function( $role_a_slug, $role_b_slug ) use ( $wp_roles ) {
+			$role_a = $wp_roles->role_objects[ $role_a_slug ];
+			$role_b = $wp_roles->role_objects[ $role_b_slug ];
 
-		$temp_user_b_id = $this->generate_random_user();
-		$temp_user_b = get_user_by( 'ID', $temp_user_b_id );
+			$temp_user_a = new \WP_User();
+			$temp_user_b =  new \WP_User();
 
-		usort( self::$roles_hierarchy, function( $role_a, $role_b ) use ( $temp_user_a, $temp_user_b ) {
-			$temp_user_a->set_role( $role_a );
-			$temp_user_b->add_role( $role_b );
+			$temp_user_a->set_role( $role_a_slug );
+			$temp_user_b->set_role( $role_b_slug );
 
-			$is_a_stronger = (int) $this->is_user_of_role( $temp_user_a, $role_b );
-			$is_b_stronger = (int) $this->is_user_of_role( $temp_user_b, $role_a );
+			$user_a_level = (int) $this->is_user_of_role( $temp_user_a, $role_b );
+			$user_b_level = (int) $this->is_user_of_role( $temp_user_b, $role_a );
 
-			return $is_b_stronger - $is_a_stronger;
+			return $user_b_level - $user_a_level;
 		} );
 
 		$this->save_roles_hierarchy_from_cache( $force );
-
-		if ( ! function_exists( 'wp_delete_user' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/user.php';
-		}
-
-		wp_delete_user( $temp_user_a_id );
-		wp_delete_user( $temp_user_b_id );
-	}
-
-	private function generate_random_user( $random_string = null ) {
-		$random_string = $random_string ?? wp_generate_password( 12, false );
-		$existing_user = get_user_by( 'login', $random_string );
-
-		if ( $existing_user instanceof \WP_User ) {
-			return $this->generate_random_user();
-		}
-
-		return wp_insert_user( [
-			'user_login' => $random_string,
-			'user_pass' => $random_string,
-		] );
 	}
 
 	private function load_roles_hierarchy_from_cache() {
