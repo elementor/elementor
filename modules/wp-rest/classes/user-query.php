@@ -238,7 +238,7 @@ class User_Query extends Base {
 			$role_b = $wp_roles->role_objects[ $role_b_slug ];
 
 			$temp_user_a = new \WP_User();
-			$temp_user_b =  new \WP_User();
+			$temp_user_b = new \WP_User();
 
 			$temp_user_a->set_role( $role_a_slug );
 			$temp_user_b->set_role( $role_b_slug );
