@@ -109,7 +109,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
-	const EXPERIMENT_CUSTOM_CSS = 'atomic_custom_css';
 	const EXPERIMENT_NESTED = 'e_nested_elements';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 
@@ -190,15 +189,6 @@ class Module extends BaseModule {
 			'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
-
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::EXPERIMENT_CUSTOM_CSS,
-			'title' => esc_html__( 'V4 Custom CSS', 'elementor' ),
-			'description' => esc_html__( 'Create endless custom styling.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		] );
 
