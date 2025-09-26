@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// TODO: Replace with atomic widgets approach
 // Needs atomic mapper update: Replace entire Enhanced_Property_Mapper with atomic widget-based mappers
 class Enhanced_Property_Mapper {
 	private string $property;

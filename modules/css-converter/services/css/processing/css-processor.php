@@ -19,22 +19,11 @@ class Css_Processor {
 	public function __construct( $property_conversion_service = null ) {
 		$this->specificity_calculator = new Css_Specificity_Calculator();
 		
-		// Add error logging for property conversion service creation
-		try {
-			$this->property_conversion_service = $property_conversion_service ?: new Css_Property_Conversion_Service();
-		} catch ( \Exception $e ) {
-			// Log the error but continue - this will cause rules_processed to be 0
-			error_log( 'CSS Processor: Failed to create property conversion service: ' . $e->getMessage() );
-			error_log( 'CSS Processor: Stack trace: ' . $e->getTraceAsString() );
-			$this->property_conversion_service = null;
-		}
+		$this->initialize_property_conversion_service( $property_conversion_service );
 		
 		$this->css_parser = new CssParser();
 		
-		// Initialize Global Classes Repository if available
-		if ( class_exists( 'Elementor\Modules\GlobalClasses\Global_Classes_Repository' ) ) {
-			$this->global_classes_repository = new Global_Classes_Repository();
-		}
+		$this->initialize_global_classes_repository();
 	}
 
 	public function process_css_for_widgets( $css, $widgets ) {
@@ -62,26 +51,12 @@ class Css_Processor {
 			return $processing_result;
 		}
 
-		try {
-			// Parse CSS into rules
-			$parsed_css = $this->css_parser->parse( $css );
-			$css_rules = $this->extract_css_rules( $parsed_css );
-			
-			$processing_result['stats']['rules_processed'] = count( $css_rules );
-
-			// Process each CSS rule
-			foreach ( $css_rules as $rule ) {
-				$this->process_css_rule( $rule, $processing_result );
-			}
-
-			// Create global classes (HVV: threshold = 1)
-			$this->create_global_classes( $processing_result );
-
-		} catch ( \Exception $e ) {
-			$processing_result['stats']['warnings'][] = [
-				'type' => 'css_processing_error',
-				'message' => $e->getMessage(),
-			];
+		$parsed_css = $this->parse_css_safely( $css );
+		
+		if ( $this->is_css_parsing_successful( $parsed_css ) ) {
+			$this->process_parsed_css( $parsed_css, $processing_result );
+		} else {
+			$this->handle_css_parsing_failure( $processing_result );
 		}
 
 		return $processing_result;
@@ -212,85 +187,54 @@ class Css_Processor {
 			$id_name = $matches[1];
 			error_log( "CSS Processor: Processing ID selector rule for ID: {$id_name}, Property: {$rule['property']}, Value: {$rule['value']}" );
 			
-			// Convert CSS property to Elementor v4 format
-			try {
-				$converted_property = $this->convert_css_property( 
-					$rule['property'], 
-					$rule['value'] 
-				);
-				
-				error_log( "CSS Processor: ID property conversion result: " . wp_json_encode( $converted_property ) );
+		$converted_property = $this->convert_css_property_safely( 
+			$rule['property'], 
+			$rule['value'] 
+		);
+		
+		$this->log_property_conversion_result( $converted_property );
 
-				if ( $converted_property ) {
-					// Store ID-specific style for later application to matching widgets
-					if ( ! isset( $processing_result['id_styles'][ $id_name ] ) ) {
-						$processing_result['id_styles'][ $id_name ] = [];
-					}
-					
-					$processing_result['id_styles'][ $id_name ][] = [
-						'selector' => $rule['selector'],
-						'property' => $rule['property'],
-						'value' => $rule['value'],
-						'converted_property' => $converted_property,
-						'specificity' => $rule['specificity'],
-						'important' => $rule['important'],
-					];
-					
-					$processing_result['stats']['id_selectors_processed']++;
-					$processing_result['stats']['properties_converted']++;
-				} else {
-					$processing_result['stats']['unsupported_properties'][] = [
-						'property' => $rule['property'],
-						'value' => $rule['value'],
-						'selector' => $rule['selector'],
-						'reason' => 'No property mapper found',
-					];
-				}
-			} catch ( \Exception $e ) {
-				$processing_result['stats']['warnings'][] = [
-					'type' => 'id_selector_conversion_error',
-					'selector' => $rule['selector'],
-					'property' => $rule['property'],
-					'message' => $e->getMessage(),
-				];
-			}
+		if ( $this->is_property_conversion_successful( $converted_property ) ) {
+			$this->store_id_specific_style( $processing_result, $id_name, $rule, $converted_property );
+			$this->record_successful_id_conversion( $processing_result );
+		} else {
+			$this->record_failed_id_conversion( $processing_result, $rule );
+		}
 		}
 	}
 
 	private function process_widget_prop_rule( $rule, &$processing_result ) {
-		// Convert CSS property to Elementor widget property using existing converters
-		try {
-			$converted_property = $this->convert_css_property( 
-				$rule['property'], 
-				$rule['value'] 
-			);
+		$converted_property = $this->convert_css_property_safely( 
+			$rule['property'], 
+			$rule['value'] 
+		);
 
-			if ( $converted_property ) {
-				$processing_result['widget_styles'][] = [
-					'selector' => $rule['selector'],
-					'original_property' => $rule['property'],
-					'original_value' => $rule['value'],
-					'converted_property' => $converted_property,
-					'specificity' => $rule['specificity'],
-					'important' => $rule['important'],
-				];
-				$processing_result['stats']['properties_converted']++;
-			} else {
-				$processing_result['stats']['unsupported_properties'][] = [
-					'property' => $rule['property'],
-					'value' => $rule['value'],
-					'selector' => $rule['selector'],
-					'reason' => 'No converter available',
-				];
-			}
-		} catch ( \Exception $e ) {
-			$processing_result['stats']['unsupported_properties'][] = [
-				'property' => $rule['property'],
-				'value' => $rule['value'],
-				'selector' => $rule['selector'],
-				'reason' => $e->getMessage(),
-			];
+		if ( $this->is_property_conversion_successful( $converted_property ) ) {
+			$this->store_widget_style( $processing_result, $rule, $converted_property );
+			$processing_result['stats']['properties_converted']++;
+		} else {
+			$this->record_widget_conversion_failure( $processing_result, $rule );
 		}
+	}
+
+	private function store_widget_style( array &$processing_result, array $rule, $converted_property ): void {
+		$processing_result['widget_styles'][] = [
+			'selector' => $rule['selector'],
+			'original_property' => $rule['property'],
+			'original_value' => $rule['value'],
+			'converted_property' => $converted_property,
+			'specificity' => $rule['specificity'],
+			'important' => $rule['important'],
+		];
+	}
+
+	private function record_widget_conversion_failure( array &$processing_result, array $rule ): void {
+		$processing_result['stats']['unsupported_properties'][] = [
+			'property' => $rule['property'],
+			'value' => $rule['value'],
+			'selector' => $rule['selector'],
+			'reason' => 'No converter available',
+		];
 	}
 
 	private function process_global_class_rule( $rule, &$processing_result ) {
@@ -554,6 +498,7 @@ class Css_Processor {
 					'value' => $id_style['converted_property']['value'],
 					'specificity' => $id_style['specificity'],
 					'important' => $id_style['important'],
+					'converted_property' => $id_style['converted_property'],
 				];
 			}
 		}
@@ -561,6 +506,9 @@ class Css_Processor {
 		// Add inline styles (highest specificity after !important)
 		if ( ! empty( $widget['inline_css'] ) ) {
 			foreach ( $widget['inline_css'] as $property => $style_data ) {
+				// Convert inline CSS to atomic format
+				$converted_property = $this->convert_css_property( $property, $style_data['value'] );
+				
 				$all_styles[] = [
 					'property' => $property,
 					'value' => $style_data['value'],
@@ -569,6 +517,7 @@ class Css_Processor {
 						Css_Specificity_Calculator::INLINE_WEIGHT,
 					'important' => $style_data['important'],
 					'source' => 'inline',
+					'converted_property' => $converted_property,
 				];
 			}
 		}
@@ -584,12 +533,20 @@ class Css_Processor {
 			$grouped_styles[ $property ][] = $style;
 		}
 
-		// Compute final value for each property
+		// Compute final value for each property - use atomic values when available
 		$computed_styles = [];
 		foreach ( $grouped_styles as $property => $styles ) {
 			$winning_style = $this->specificity_calculator->get_winning_style( $styles );
 			if ( $winning_style ) {
-				$computed_styles[ $property ] = $winning_style;
+				// Use converted atomic value if available, otherwise use original value
+				if ( ! empty( $winning_style['converted_property'] ) ) {
+					$converted = $winning_style['converted_property'];
+					if ( isset( $converted['property'] ) && isset( $converted['value'] ) ) {
+						$computed_styles[ $converted['property'] ] = $converted['value'];
+					}
+				} else {
+					$computed_styles[ $property ] = $winning_style;
+				}
 			}
 		}
 
@@ -689,5 +646,110 @@ class Css_Processor {
 			$base_path = dirname( $base_parts['path'] );
 			return $base_parts['scheme'] . '://' . $base_parts['host'] . $base_path . '/' . $relative_url;
 		}
+	}
+
+	private function initialize_property_conversion_service( $property_conversion_service ): void {
+		if ( $this->can_use_provided_service( $property_conversion_service ) ) {
+			$this->property_conversion_service = $property_conversion_service;
+			return;
+		}
+		
+		$this->property_conversion_service = $this->create_default_conversion_service();
+	}
+
+	private function can_use_provided_service( $service ): bool {
+		return null !== $service && is_object( $service );
+	}
+
+	private function create_default_conversion_service(): ?object {
+		if ( ! class_exists( 'Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service' ) ) {
+			$this->handle_service_creation_failure();
+			return null;
+		}
+		
+		return new Css_Property_Conversion_Service();
+	}
+
+	private function handle_service_creation_failure(): void {
+		error_log( 'CSS Processor: Failed to create property conversion service - class not available' );
+	}
+
+	private function initialize_global_classes_repository(): void {
+		$this->global_classes_repository = new Global_Classes_Repository();
+	}
+
+	private function parse_css_safely( string $css ) {
+		if ( ! $this->css_parser ) {
+			return null;
+		}
+		
+		return $this->css_parser->parse( $css );
+	}
+
+	private function is_css_parsing_successful( $parsed_css ): bool {
+		return null !== $parsed_css;
+	}
+
+	private function process_parsed_css( $parsed_css, array &$processing_result ): void {
+		$css_rules = $this->extract_css_rules( $parsed_css );
+		$processing_result['stats']['rules_processed'] = count( $css_rules );
+
+		foreach ( $css_rules as $rule ) {
+			$this->process_css_rule( $rule, $processing_result );
+		}
+
+		$this->create_global_classes( $processing_result );
+	}
+
+	private function handle_css_parsing_failure( array &$processing_result ): void {
+		$processing_result['stats']['warnings'][] = [
+			'type' => 'css_parsing_error',
+			'message' => 'Failed to parse CSS - invalid syntax or parser unavailable',
+		];
+	}
+
+	private function convert_css_property_safely( string $property, $value ) {
+		if ( ! $this->property_conversion_service ) {
+			return null;
+		}
+		
+		return $this->convert_css_property( $property, $value );
+	}
+
+	private function log_property_conversion_result( $converted_property ): void {
+		error_log( "CSS Processor: ID property conversion result: " . wp_json_encode( $converted_property ) );
+	}
+
+	private function is_property_conversion_successful( $converted_property ): bool {
+		return null !== $converted_property && ! empty( $converted_property );
+	}
+
+	private function store_id_specific_style( array &$processing_result, string $id_name, array $rule, $converted_property ): void {
+		if ( ! isset( $processing_result['id_styles'][ $id_name ] ) ) {
+			$processing_result['id_styles'][ $id_name ] = [];
+		}
+		
+		$processing_result['id_styles'][ $id_name ][] = [
+			'selector' => $rule['selector'],
+			'property' => $rule['property'],
+			'value' => $rule['value'],
+			'converted_property' => $converted_property,
+			'specificity' => $rule['specificity'],
+			'important' => $rule['important'],
+		];
+	}
+
+	private function record_successful_id_conversion( array &$processing_result ): void {
+		$processing_result['stats']['id_selectors_processed']++;
+		$processing_result['stats']['properties_converted']++;
+	}
+
+	private function record_failed_id_conversion( array &$processing_result, array $rule ): void {
+		$processing_result['stats']['unsupported_properties'][] = [
+			'property' => $rule['property'],
+			'value' => $rule['value'],
+			'selector' => $rule['selector'],
+			'reason' => 'No property mapper found',
+		];
 	}
 }

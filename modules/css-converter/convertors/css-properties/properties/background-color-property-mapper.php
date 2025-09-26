@@ -7,9 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Color_Property_Mapper extends Property_Mapper_Base {
+class Background_Color_Property_Mapper extends Property_Mapper_Base {
 
-	private const SUPPORTED_PROPERTIES = ['color'];
+	private const SUPPORTED_PROPERTIES = ['background-color'];
 
 	public function supports_property( string $property ): bool {
 		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
@@ -26,9 +26,11 @@ class Color_Property_Mapper extends Property_Mapper_Base {
 		}
 
 		return $this->create_v4_property_with_type( 
-			$property, 
-			'color', 
-			$normalized_color 
+			'background', 
+			'background', 
+			[
+				'color' => $normalized_color
+			]
 		);
 	}
 
@@ -41,9 +43,10 @@ class Color_Property_Mapper extends Property_Mapper_Base {
 	}
 
 	public function get_v4_property_name( string $property ): string {
-		return $property;
+		return 'background';
 	}
 
+	// TODO: Replace with atomic widgets approach
 	public function map_to_schema( string $property, $value ): ?array {
 		if ( ! $this->supports_property( $property ) ) {
 			return null;
@@ -55,7 +58,7 @@ class Color_Property_Mapper extends Property_Mapper_Base {
 		}
 
 		return [
-			$property => [
+			'background-color' => [
 				'$$type' => 'color',
 				'value' => $normalized_color
 			]

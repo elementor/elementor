@@ -44,6 +44,7 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 		return $property;
 	}
 
+	// TODO: Replace with atomic widgets approach
 	public function map_to_schema( string $property, $value ): ?array {
 		if ( ! $this->supports_property( $property ) ) {
 			return null;

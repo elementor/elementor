@@ -24,24 +24,29 @@ class Class_Property_Mapper_Registry {
 
 	private function initialize_basic_mappers(): void {
 		// Load specific property mappers
-		require_once __DIR__ . '/../properties/color_property_mapper.php';
-		require_once __DIR__ . '/../properties/background_color_property_mapper.php';
-		require_once __DIR__ . '/../properties/font_size_property_mapper.php';
-		require_once __DIR__ . '/../properties/margin_property_mapper.php';
+		require_once __DIR__ . '/../properties/color-property-mapper.php';
+		require_once __DIR__ . '/../properties/background-color-property-mapper.php';
+		require_once __DIR__ . '/../properties/font-size-property-mapper.php';
+		require_once __DIR__ . '/../properties/margin-property-mapper.php';
+		require_once __DIR__ . '/../properties/padding-property-mapper.php';
+		require_once __DIR__ . '/atomic-property-mapper-base.php';
+		require_once __DIR__ . '/../properties/atomic-padding-property-mapper.php';
 		
 		// Register specific property mappers
 		$this->mappers['color'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Color_Property_Mapper();
 		$this->mappers['background-color'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Background_Color_Property_Mapper();
 		$this->mappers['font-size'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Font_Size_Property_Mapper();
 		$this->mappers['margin'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Margin_Property_Mapper();
+		$this->mappers['padding'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Atomic_Padding_Property_Mapper();
 		
+		// TODO: Replace with atomic widgets approach
 		// Needs atomic mapper update: Add Enhanced_Property_Mapper for remaining properties
 		// Load the enhanced mapper for remaining properties
-		require_once __DIR__ . '/enhanced_property_mapper.php';
+		require_once __DIR__ . '/enhanced-property-mapper.php';
 		
 		// Fallback properties that still use enhanced mapper
 		$fallback_properties = [
-			'background', 'padding',
+			'background',
 			'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
 			'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
 			'border-radius', 'box-shadow', 'text-shadow', 'transform', 'transition',
@@ -51,7 +56,8 @@ class Class_Property_Mapper_Registry {
 		];
 		
 		foreach ( $fallback_properties as $property ) {
-			// Needs atomic mapper update: Replace Enhanced_Property_Mapper with atomic widget-based mapper
+			// TODO: Replace with atomic widgets approach
+		// Needs atomic mapper update: Replace Enhanced_Property_Mapper with atomic widget-based mapper
 			$this->mappers[ $property ] = new Enhanced_Property_Mapper( $property );
 		}
 	}
@@ -104,6 +110,7 @@ class Basic_Property_Mapper {
 	}
 
 	public function map_to_v4_atomic( string $property, $value ): ?array {
+		// TODO: Replace with atomic widgets approach
 		// Needs atomic mapper update: Replace string type with atomic widget-based type
 		return [
 			'$$type' => 'string',

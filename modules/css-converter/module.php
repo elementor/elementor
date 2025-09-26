@@ -39,67 +39,101 @@ class Module extends BaseModule {
 	}
 
 	private function is_phpunit_ajax_request(): bool {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- This is for test environment detection only
+		return $this->has_phpunit_action_in_post();
+	}
+
+	private function has_phpunit_action_in_post(): bool {
 		return isset( $_POST['action'] ) && 'phpunit' === $_POST['action'];
 	}
 
 	private function reset_property_mapper_registry(): void {
-		// Reset the property mapper registry to ensure fresh instances with latest code
-		if ( class_exists( 'Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory' ) ) {
-			\Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory::reset();
-		}
+		\Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory::reset();
 	}
 
 	private function init_routes(): void {
-		try {
-			// Load ALL required dependencies to avoid cascading errors
-			$required_files = [
-				'/exceptions/class_conversion_exception.php',
-				'/exceptions/css_parse_exception.php',
-				'/parsers/css-parser.php',
-				'/parsers/parsed-css.php',
-				'/convertors/css-properties/css_property_convertor_config.php',
-				'/convertors/css-properties/contracts/property_mapper_interface.php',
-				'/convertors/css-properties/implementations/property_mapper_base.php',
-				'/convertors/css-properties/implementations/class_property_mapper_registry.php',
-				'/convertors/css-properties/implementations/class_property_mapper_factory.php',
-				'/services/css/validation/request_validator.php',
-				'/services/css/parsing/html_parser.php',
-				'/services/css/processing/css_specificity_calculator.php',
-				'/services/css/processing/css_property_conversion_service.php',
-				'/services/css/processing/css_processor.php',
-				'/services/widgets/widget-mapper.php',
-				'/services/widgets/widget-creator.php',
-				'/services/widgets/widget-conversion-service.php',
-			];
-			
-			foreach ($required_files as $file) {
-				$file_path = __DIR__ . $file;
-				if (file_exists($file_path)) {
-					require_once $file_path;
-				}
-			}
-			
-			// Only load the widgets route for now to avoid namespace issues
-			require_once __DIR__ . '/routes/widgets_route.php';
-			$this->widgets_route = new \Elementor\Modules\CssConverter\Routes\Widgets_Route();
-			
-			// TODO: Fix and re-enable other routes
-			// require_once __DIR__ . '/routes/variables_route.php';
-			// $this->variables_route = new \Elementor\Modules\CssConverter\Routes\Variables_Route();
-			// 
-			// require_once __DIR__ . '/routes/classes_route.php';
-			// $this->classes_route = new \Elementor\Modules\CssConverter\Routes\Classes_Route();
-		} catch ( \Throwable $e ) {
-			// Log error in production but don't break the site
-			if ( function_exists( 'error_log' ) ) {
-				error_log( 'CSS Converter module failed to initialize: ' . $e->getMessage() );
-			}
+		if ( ! $this->can_initialize_routes() ) {
+			$this->handle_initialization_failure();
+			return;
+		}
+		
+		$this->load_required_dependencies();
+		$this->initialize_widgets_route();
+	}
 
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ){
-				throw $e;
+	private function can_initialize_routes(): bool {
+		return function_exists( 'error_log' ) && $this->has_required_directories();
+	}
+
+	private function has_required_directories(): bool {
+		$required_dirs = [ 'exceptions', 'parsers', 'convertors', 'services', 'routes' ];
+		
+		foreach ( $required_dirs as $dir ) {
+			if ( ! is_dir( __DIR__ . '/' . $dir ) ) {
+				return false;
 			}
 		}
+		
+		return true;
+	}
+
+	private function load_required_dependencies(): void {
+		$required_files = $this->get_required_files();
+		
+		foreach ( $required_files as $file ) {
+			$this->load_file_if_exists( $file );
+		}
+	}
+
+	private function get_required_files(): array {
+		return [
+			'/exceptions/class-conversion-exception.php',
+			'/exceptions/css-parse-exception.php',
+			'/parsers/css-parser.php',
+			'/parsers/parsed-css.php',
+			'/convertors/css-properties/css-property-convertor-config.php',
+			'/convertors/css-properties/contracts/property-mapper-interface.php',
+			'/convertors/css-properties/implementations/property-mapper-base.php',
+			'/convertors/css-properties/implementations/class-property-mapper-registry.php',
+			'/convertors/css-properties/implementations/class-property-mapper-factory.php',
+			'/services/css/validation/request-validator.php',
+			'/services/css/parsing/html-parser.php',
+			'/services/css/processing/css-specificity-calculator.php',
+			'/services/css/processing/css-property-conversion-service.php',
+			'/services/css/processing/css-processor.php',
+			'/services/widgets/widget-mapper.php',
+			'/services/widgets/widget-creator.php',
+			'/services/widgets/widget-conversion-service.php',
+		];
+	}
+
+	private function load_file_if_exists( string $file ): void {
+		$file_path = __DIR__ . $file;
+		if ( file_exists( $file_path ) ) {
+			require_once $file_path;
+		}
+	}
+
+	private function initialize_widgets_route(): void {
+		$widgets_route_file = __DIR__ . '/routes/widgets-route.php';
+		
+		if ( ! file_exists( $widgets_route_file ) ) {
+			$this->handle_widgets_route_missing();
+			return;
+		}
+		
+		require_once $widgets_route_file;
+		
+		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Widgets_Route' ) ) {
+			$this->widgets_route = new \Elementor\Modules\CssConverter\Routes\Widgets_Route();
+		}
+	}
+
+	private function handle_initialization_failure(): void {
+		error_log( 'CSS Converter module: Cannot initialize - missing required directories or functions' );
+	}
+
+	private function handle_widgets_route_missing(): void {
+		error_log( 'CSS Converter module: Widgets route file not found' );
 	}
 
 	public function get_variables_route() {
