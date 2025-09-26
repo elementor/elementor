@@ -92,6 +92,17 @@ class OnboardingTracker {
 				isRawPayload: true,
 				payloadBuilder: ( eventData ) => eventData,
 			},
+			EXIT_BUTTON: {
+				eventName: ONBOARDING_EVENTS_MAP.EXIT_BUTTON,
+				storageKey: ONBOARDING_STORAGE_KEYS.PENDING_EXIT_BUTTON,
+				basePayload: {
+					location: 'plugin_onboarding',
+					trigger: 'exit_button_clicked',
+				},
+				payloadBuilder: ( eventData ) => ( {
+					action_step: eventData.currentStep,
+				} ),
+			},
 		};
 	}
 
@@ -385,17 +396,7 @@ class OnboardingTracker {
 		this.trackStepAction( stepNumber, 'exit_button' );
 		this.sendStepEndState( stepNumber );
 		
-		const eventData = EventDispatcher.createStepEventPayload(
-			currentStep,
-			this.getStepName( currentStep ),
-			{
-				location: 'plugin_onboarding',
-				trigger: 'exit_button_clicked',
-				action_step: currentStep,
-			},
-		);
-
-		return this.dispatchEvent( ONBOARDING_EVENTS_MAP.EXIT_BUTTON, eventData );
+		return this.sendEventOrStore( 'EXIT_BUTTON', { currentStep } );
 	}
 
 	trackStepAction( stepNumber, action, additionalData = {} ) {
@@ -588,6 +589,7 @@ class OnboardingTracker {
 		this.sendStoredEvent( 'CONNECT_STATUS' );
 		this.sendStoredEvent( 'STEP1_CLICKED_CONNECT' );
 		this.sendStoredEvent( 'STEP1_END_STATE' );
+		this.sendStoredEvent( 'EXIT_BUTTON' );
 	}
 
 	handleStep4CardClick() {
