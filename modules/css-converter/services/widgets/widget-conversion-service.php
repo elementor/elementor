@@ -196,7 +196,7 @@ class Widget_Conversion_Service {
 		}
 	}
 
-	private function extract_all_css( $html, $css_urls, $follow_imports, $elements = [], $create_global_classes = true ) {
+	private function extract_all_css( $html, $css_urls, $follow_imports, &$elements = [], $create_global_classes = true ) {
 		$all_css = '';
 
 		// Extract inline CSS from <style> tags using regex to avoid DOM parsing issues
@@ -226,11 +226,11 @@ class Widget_Conversion_Service {
 		return $all_css;
 	}
 
-	private function extract_inline_css_from_elements( $elements ) {
+	private function extract_inline_css_from_elements( &$elements ) {
 		$inline_css = '';
 		$element_counter = 0;
 
-		foreach ( $elements as $element ) {
+		foreach ( $elements as &$element ) {
 			if ( ! empty( $element['inline_css'] ) ) {
 				$element_counter++;
 				
@@ -250,6 +250,7 @@ class Widget_Conversion_Service {
 					
 					// Store the class name in the element for later reference
 					$element['generated_class'] = $class_name;
+					error_log( "Widget Conversion Service: Set generated_class '{$class_name}' on element with tag '{$element['tag']}'" );
 				}
 			}
 			

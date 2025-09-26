@@ -41,8 +41,12 @@ class Color_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
+		if ( ! is_string( $value ) || empty( trim( $value ) ) ) {
+			return null;
+		}
+
 		$color_value = $this->parse_color_value( $value );
-		if ( null === $color_value ) {
+		if ( ! $this->is_valid_color_format( $color_value ) ) {
 			return null;
 		}
 
@@ -50,26 +54,26 @@ class Color_Property_Mapper extends Property_Mapper_Base {
 		return Color_Prop_Type::make()->generate( $color_value );
 	}
 
+	public function get_supported_properties(): array {
+		return self::SUPPORTED_PROPERTIES;
+	}
+
 	public function is_supported_property( string $property ): bool {
 		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
 	}
 
-	private function parse_color_value( $value ): ?string {
-		if ( ! is_string( $value ) ) {
-			return null;
-		}
-
+	protected function parse_color_value( string $value ): string {
 		$value = trim( $value );
 
 		if ( empty( $value ) ) {
-			return null;
+			return $value;
 		}
 
 		if ( $this->is_valid_color_format( $value ) ) {
 			return $value;
 		}
 
-		return null;
+		return $value;
 	}
 
 	private function is_valid_color_format( string $value ): bool {

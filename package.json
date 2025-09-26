@@ -160,6 +160,7 @@
     "html-to-image": "^1.11.11",
     "mime": "^3.0.0",
     "mixpanel-browser": "^2.50.0",
+    "mysql2": "^3.15.1",
     "prop-types": "^15.8.1",
     "reach-router-hash-history": "0.0.3",
     "react-avatar-editor": "^13.0.0",

@@ -63,6 +63,10 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 		return Dimensions_Prop_Type::make()->generate( $dimensions_data );
 	}
 
+	public function get_supported_properties(): array {
+		return self::SUPPORTED_PROPERTIES;
+	}
+
 	public function is_supported_property( string $property ): bool {
 		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
 	}
@@ -148,7 +152,7 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 		return $mapping[ $property ] ?? 'block-start';
 	}
 
-	private function parse_size_value( string $value ): ?array {
+	protected function parse_size_value( string $value ): array {
 		if ( preg_match( '/^(\d*\.?\d+)(px|em|rem|%|vw|vh)$/', $value, $matches ) ) {
 			return [
 				'size' => (float) $matches[1],
@@ -163,6 +167,10 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 			];
 		}
 
-		return null;
+		// Fallback for invalid values
+		return [
+			'size' => 0,
+			'unit' => 'px',
+		];
 	}
 }

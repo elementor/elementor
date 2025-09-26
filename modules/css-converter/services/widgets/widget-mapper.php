@@ -67,6 +67,14 @@ class Widget_Mapper {
 
 	public function map_element( $element ) {
 		$tag = $element['tag'];
+		error_log( "Widget Mapper: Processing element with tag '{$tag}'" );
+		
+		// Check if element has generated_class
+		if ( isset( $element['generated_class'] ) ) {
+			error_log( "Widget Mapper: Element has generated_class: '{$element['generated_class']}'" );
+		} else {
+			error_log( "Widget Mapper: Element has NO generated_class" );
+		}
 		
 		// Check if we have a mapping for this tag
 		if ( ! isset( $this->mapping_rules[ $tag ] ) ) {
@@ -82,7 +90,32 @@ class Widget_Mapper {
 
 		// Call the appropriate handler
 		$handler = $this->handlers[ $widget_type ];
-		return call_user_func( $handler, $element );
+		$widget = call_user_func( $handler, $element );
+		
+		// Add generated class name to widget attributes if it exists
+		if ( ! empty( $element['generated_class'] ) ) {
+			$widget = $this->add_generated_class_to_widget( $widget, $element['generated_class'] );
+		}
+		
+		return $widget;
+	}
+
+	private function add_generated_class_to_widget( $widget, $generated_class ) {
+		// Add the generated class name to the widget's attributes
+		if ( ! isset( $widget['attributes'] ) ) {
+			$widget['attributes'] = [];
+		}
+		
+		if ( ! isset( $widget['attributes']['class'] ) ) {
+			$widget['attributes']['class'] = $generated_class;
+		} else {
+			// Append to existing class attribute
+			$widget['attributes']['class'] .= ' ' . $generated_class;
+		}
+		
+		error_log( "Widget Mapper: Added generated class '{$generated_class}' to widget. Final class attribute: '{$widget['attributes']['class']}'" );
+		
+		return $widget;
 	}
 
 	public function map_elements( $elements ) {

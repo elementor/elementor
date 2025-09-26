@@ -88,7 +88,7 @@ class Width_Property_Mapper extends Property_Mapper_Base {
 		];
 	}
 
-	private function parse_width_value( $value ): ?array {
+	protected function parse_width_value( $value ): ?array {
 		if ( ! is_string( $value ) ) {
 			return null;
 		}

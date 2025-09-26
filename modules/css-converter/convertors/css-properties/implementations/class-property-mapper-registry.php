@@ -23,8 +23,9 @@ class Class_Property_Mapper_Registry {
 	}
 
 	private function initialize_basic_mappers(): void {
-		// Load atomic property mapper base
-		require_once __DIR__ . '/atomic-property-mapper-base.php';
+		// Load atomic-only enforcement classes
+		require_once __DIR__ . '/atomic-only-property-mapper-base.php';
+		require_once __DIR__ . '/atomic-only-mapper-factory.php';
 		
 		// Load atomic property mappers
 		require_once __DIR__ . '/../properties/color-property-mapper.php';
@@ -36,6 +37,11 @@ class Class_Property_Mapper_Registry {
 		require_once __DIR__ . '/../properties/border-radius-property-mapper.php';
 		require_once __DIR__ . '/../properties/box-shadow-property-mapper.php';
 		require_once __DIR__ . '/../properties/opacity-property-mapper.php';
+		require_once __DIR__ . '/../properties/height-property-mapper.php';
+		require_once __DIR__ . '/../properties/display-property-mapper.php';
+		require_once __DIR__ . '/../properties/position-property-mapper.php';
+		require_once __DIR__ . '/../properties/flex-direction-property-mapper.php';
+		require_once __DIR__ . '/../properties/text-align-property-mapper.php';
 		
 		// Register atomic property mappers
 		$this->mappers['color'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Color_Property_Mapper();
@@ -70,6 +76,24 @@ class Class_Property_Mapper_Registry {
 		
 		// Register atomic opacity mapper
 		$this->mappers['opacity'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Opacity_Property_Mapper();
+		
+		// Register comprehensive atomic height mapper for all height properties
+		$height_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Height_Property_Mapper();
+		foreach ( $height_mapper->get_supported_properties() as $property ) {
+			$this->mappers[ $property ] = $height_mapper;
+		}
+		
+		// Register atomic display mapper
+		$this->mappers['display'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Display_Property_Mapper();
+		
+		// Register atomic position mapper
+		$this->mappers['position'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Position_Property_Mapper();
+		
+		// Register atomic flex-direction mapper
+		$this->mappers['flex-direction'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Flex_Direction_Property_Mapper();
+		
+		// Register atomic text-align mapper
+		$this->mappers['text-align'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Text_Align_Property_Mapper();
 	}
 
 	public function register( string $property, object $mapper ): void {
@@ -90,6 +114,13 @@ class Class_Property_Mapper_Registry {
 
 	public function get_supported_properties(): array {
 		return array_keys( $this->mappers );
+	}
+
+	/**
+	 * 🎯 ATOMIC-ONLY VALIDATION: Validate all registered mappers are atomic compliant
+	 */
+	public function validate_atomic_compliance(): array {
+		return Atomic_Only_Mapper_Factory::validate_all_atomic_mappers();
 	}
 
 	public function supports_property( string $property ): bool {

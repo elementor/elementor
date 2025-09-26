@@ -8,6 +8,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * 🚫 DEPRECATED: Property_Mapper_Base - Use Atomic_Only_Property_Mapper_Base instead
+ * 
+ * This class has been STRIPPED of all manual JSON creation methods.
+ * All create_* and build_* methods have been REMOVED to eliminate temptations.
+ * 
+ * ✅ FOR NEW MAPPERS: Use Atomic_Only_Property_Mapper_Base
+ * 🚫 THIS CLASS: Only kept for backward compatibility with existing mappers
+ * 
+ * 🎯 ATOMIC-ONLY ENFORCEMENT:
+ * - ALL manual JSON creation methods REMOVED
+ * - ALL fallback mechanisms REMOVED  
+ * - ALL helper methods that enable non-atomic patterns REMOVED
+ * - Magic method prevents calling non-existent create_* methods
+ */
 abstract class Property_Mapper_Base implements Property_Mapper_Interface {
 	
 	public function supports( string $property, $value = null ): bool {
@@ -15,156 +30,50 @@ abstract class Property_Mapper_Base implements Property_Mapper_Interface {
 	}
 
 	/**
-	 * 🚫 ATOMIC-ONLY ENFORCEMENT: This method is FORBIDDEN
+	 * 🎯 ATOMIC-ONLY METHOD: Must return atomic prop type result directly
 	 * 
-	 * This method creates string fallbacks which violates atomic-only compliance.
-	 * Use create_v4_property_with_type() with specific atomic types instead.
+	 * CORRECT PATTERNS:
+	 * - return Size_Prop_Type::make()->generate( $data );
+	 * - return Color_Prop_Type::make()->generate( $color );
+	 * - return Dimensions_Prop_Type::make()->generate( $dimensions );
 	 * 
-	 * @throws \Exception Always throws to prevent string fallbacks
+	 * FORBIDDEN PATTERNS:
+	 * - return ['property' => $prop, 'value' => $val]; // Manual JSON
+	 * - return $this->create_anything(); // Helper methods (REMOVED)
+	 * - return ['$$type' => $type, 'value' => $val]; // Manual atomic structure
 	 */
-	protected function create_v4_property( string $property, $value ): array {
-		throw new \Exception( 
-			"ATOMIC-ONLY VIOLATION: create_v4_property() is forbidden. " .
-			"Use create_v4_property_with_type() with specific atomic types. " .
-			"Property: {$property}, Value: " . var_export( $value, true )
-		);
-	}
-
+	abstract public function map_to_v4_atomic( string $property, $value ): ?array;
 
 	/**
-	 * 🚫 ATOMIC-ONLY ENFORCEMENT: This method is DEPRECATED
-	 * 
-	 * This method creates manual JSON structures which violates atomic-only compliance.
-	 * Use atomic prop types directly: Size_Prop_Type::make()->generate($data)
-	 * 
-	 * @deprecated Use atomic prop types directly instead
-	 * @throws \Exception Always throws to enforce atomic-only compliance
+	 * Return array of supported CSS properties
 	 */
-	protected function create_v4_property_with_type( string $property, string $type, $value ): array {
-		throw new \Exception( 
-			"ATOMIC-ONLY VIOLATION: create_v4_property_with_type() is deprecated. " .
-			"Use atomic prop types directly: {$type}_Prop_Type::make()->generate(\$data). " .
-			"Property: {$property}, Type: {$type}, Value: " . var_export( $value, true ) . ". " .
-			"See documentation for correct atomic widget implementation patterns."
-		);
+	abstract public function get_supported_properties(): array;
+
+	/**
+	 * 🎯 ATOMIC-ONLY VALIDATION: Only validate input, never create JSON
+	 */
+	protected function is_valid_string_input( $value ): bool {
+		return is_string( $value ) && ! empty( trim( $value ) );
 	}
 
-	private function create_atomic_structure( string $type, $value ): array {
-		return [
-			'$$type' => $type,
-			'value' => $value
-		];
+	/**
+	 * 🎯 ATOMIC-ONLY VALIDATION: Only validate input, never create JSON
+	 */
+	protected function is_valid_numeric_input( $value ): bool {
+		return is_numeric( $value ) || ( is_string( $value ) && is_numeric( trim( $value ) ) );
 	}
 
-	private function build_property_response( string $property, array $atomic_value ): array {
-		return [
-			'property' => $property,
-			'value' => $atomic_value
-		];
-	}
-	
-	protected function validate_with_atomic_widgets( string $type, array $atomic_value ): ?array {
-		$validation_result = $this->validate_atomic_type_safely( $type, $atomic_value );
-		
-		if ( $this->is_validation_successful( $validation_result ) ) {
-			return $validation_result;
-		}
-		
-		$this->handle_validation_failure( $type );
-		return null;
+	/**
+	 * 🎯 ATOMIC-ONLY VALIDATION: Only validate input, never create JSON
+	 */
+	protected function is_supported_property( string $property ): bool {
+		return in_array( $property, $this->get_supported_properties(), true );
 	}
 
-	private function validate_atomic_type_safely( string $type, array $atomic_value ): ?array {
-		if ( ! $this->is_supported_atomic_type( $type ) ) {
-			return null;
-		}
-		
-		return $this->validate_atomic_type( $type, $atomic_value );
-	}
-
-	private function is_validation_successful( $result ): bool {
-		return null !== $result && is_array( $result );
-	}
-
-	private function is_supported_atomic_type( string $type ): bool {
-		$supported_types = [ 'size', 'dimensions', 'color', 'border-radius', 'box-shadow', 'string' ];
-		return in_array( $type, $supported_types, true );
-	}
-
-	private function handle_validation_failure( string $type ): void {
-		error_log( "Atomic widget validation failed for type: {$type}" );
-	}
-
-	private function validate_atomic_type( string $type, array $atomic_value ): ?array {
-		switch ( $type ) {
-			case 'size':
-				return $this->validate_size_type( $atomic_value );
-			case 'dimensions':
-				return $this->validate_dimensions_type( $atomic_value );
-			case 'color':
-				return $this->validate_color_type( $atomic_value );
-			case 'border-radius':
-				return $this->validate_border_radius_type( $atomic_value );
-			case 'box-shadow':
-				return $this->validate_box_shadow_type( $atomic_value );
-			case 'string':
-				return $this->validate_string_type( $atomic_value );
-		}
-		return null;
-	}
-
-	private function validate_size_type( array $atomic_value ): ?array {
-		$prop_type = \Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type::make();
-		if ( $prop_type->validate( $atomic_value ) ) {
-			return $prop_type->sanitize( $atomic_value );
-		}
-		return null;
-	}
-
-	private function validate_dimensions_type( array $atomic_value ): ?array {
-		$prop_type = \Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type::make();
-		if ( $prop_type->validate( $atomic_value ) ) {
-			return $prop_type->sanitize( $atomic_value );
-		}
-		return null;
-	}
-
-	private function validate_color_type( array $atomic_value ): ?array {
-		$prop_type = \Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type::make();
-		if ( $prop_type->validate( $atomic_value ) ) {
-			return $prop_type->sanitize( $atomic_value );
-		}
-		return null;
-	}
-
-	private function validate_border_radius_type( array $atomic_value ): ?array {
-		$prop_type = \Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type::make();
-		if ( $prop_type->validate( $atomic_value ) ) {
-			return $prop_type->sanitize( $atomic_value );
-		}
-		return null;
-	}
-
-	private function validate_box_shadow_type( array $atomic_value ): ?array {
-		$prop_type = \Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type::make();
-		if ( $prop_type->validate( $atomic_value ) ) {
-			return $prop_type->sanitize( $atomic_value );
-		}
-		return null;
-	}
-
-	private function validate_string_type( array $atomic_value ): ?array {
-		$prop_type = \Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type::make();
-		if ( $prop_type->validate( $atomic_value ) ) {
-			return $prop_type->sanitize( $atomic_value );
-		}
-		return null;
-	}
-
-	private function log_validation_error( string $type, \Exception $e ): void {
-		error_log( "Atomic widget validation failed for type $type: " . $e->getMessage() );
-	}
-
+	/**
+	 * 🎯 LEGACY PARSING METHODS: Only for existing mappers, DO NOT USE in new code
+	 * Use Atomic_Only_Property_Mapper_Base for new mappers instead
+	 */
 	protected function parse_size_value( string $value ): array {
 		$value = trim( $value );
 		
@@ -178,12 +87,25 @@ abstract class Property_Mapper_Base implements Property_Mapper_Interface {
 			];
 		}
 		
+		// Handle special values
+		if ( in_array( $value, [ 'auto', 'inherit', 'initial', 'unset' ], true ) ) {
+			return [
+				'size' => 0,
+				'unit' => $value
+			];
+		}
+		
+		// Fallback
 		return [
-			'size' => 0.0,
+			'size' => 0,
 			'unit' => 'px'
 		];
 	}
 
+	/**
+	 * 🎯 LEGACY PARSING METHODS: Only for existing mappers, DO NOT USE in new code
+	 * Use Atomic_Only_Property_Mapper_Base for new mappers instead
+	 */
 	protected function parse_color_value( string $value ): string {
 		$value = trim( $value );
 		
@@ -210,11 +132,34 @@ abstract class Property_Mapper_Base implements Property_Mapper_Interface {
 		return $named_colors[ strtolower( $value ) ] ?? $value;
 	}
 
-	protected function is_valid_css_value( $value ): bool {
-		return is_string( $value ) && ! empty( trim( $value ) );
+	/**
+	 * 🚫 ATOMIC-ONLY ENFORCEMENT: Prevent any manual JSON creation
+	 * 
+	 * This magic method prevents developers from accidentally calling
+	 * removed helper methods that used to create manual JSON.
+	 */
+	public function __call( string $method, array $args ) {
+		if ( str_starts_with( $method, 'create_' ) ) {
+			throw new \Exception(
+				"ATOMIC-ONLY VIOLATION: Method '{$method}' has been REMOVED. " .
+				"Use atomic prop types directly: Size_Prop_Type::make()->generate(), " .
+				"Color_Prop_Type::make()->generate(), etc. " .
+				"For new mappers, use Atomic_Only_Property_Mapper_Base instead."
+			);
+		}
+
+		if ( str_starts_with( $method, 'build_' ) ) {
+			throw new \Exception(
+				"ATOMIC-ONLY VIOLATION: Method '{$method}' has been REMOVED. " .
+				"Return atomic prop type results directly. " .
+				"For new mappers, use Atomic_Only_Property_Mapper_Base instead."
+			);
+		}
+
+		throw new \Exception(
+			"ATOMIC-ONLY VIOLATION: Method '{$method}' does not exist. " .
+			"Only atomic prop type methods are allowed. " .
+			"For new mappers, use Atomic_Only_Property_Mapper_Base instead."
+		);
 	}
-
-
-	abstract public function get_supported_properties(): array;
-	abstract public function map_to_v4_atomic( string $property, $value ): ?array;
 }

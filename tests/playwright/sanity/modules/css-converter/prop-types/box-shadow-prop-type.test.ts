@@ -1,29 +1,44 @@
-import { test, expect } from '@playwright/test';
-import EditorPage from '../../../../../pages/editor-page';
-import { convertHtmlWithCss } from '../../../../../helpers/css-converter-helper';
-import WpAdminPage from '../../../../../pages/wp-admin-page';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../parallelTest';
+import WpAdminPage from '../../../../pages/wp-admin-page';
+import EditorPage from '../../../../pages/editor-page';
+import { CssConverterHelper } from '../helper';
 
 test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
-	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
+	let editor: EditorPage;
+	let cssHelper: CssConverterHelper;
 
-	test.beforeEach( async ( { page } ) => {
-		editor = new EditorPage( page );
-		wpAdmin = new WpAdminPage( page );
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpAdmin.login();
+		// Enable atomic widgets experiments to match manual testing environment
 		await wpAdmin.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
+		} );
+
+		await wpAdmin.setExperiments( {
 			e_nested_elements: 'active',
 		} );
+
+		await page.close();
+		cssHelper = new CssConverterHelper();
 	} );
 
-	test.afterEach( async () => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
+		await page.close();
 	} );
 
-	test( 'should convert box-shadow properties and verify styling', async ( { page } ) => {
+	test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
+		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	} );
+
+	test( 'should convert box-shadow properties and verify styling', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.3);" data-test="simple-shadow">Simple box shadow</p>
@@ -36,12 +51,15 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 			</div>
 		`;
 
-		const apiResult = await convertHtmlWithCss( page, combinedCssContent, '' );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent );
 		const postId = apiResult.post_id;
-
+		const editUrl = apiResult.edit_url;
 		expect( postId ).toBeDefined();
+		expect( editUrl ).toBeDefined();
 
-		await editor.gotoPostId( postId );
+		await page.goto( editUrl );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
 
 		// Define test cases for both editor and frontend verification
 		const testCases = [

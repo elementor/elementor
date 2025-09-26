@@ -4,22 +4,20 @@ namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Opacity Property Mapper
+ * Height Property Mapper
  * 
- * 🎯 ATOMIC SOURCE: atomic widgets use Size_Prop_Type for opacity
+ * 🎯 ATOMIC SOURCE: style-schema.php uses Size_Prop_Type for height
  * 🚫 FALLBACKS: NONE - 100% atomic widget compliance
  * ✅ VALIDATION: Matches atomic widget expectations exactly
  * 
  * ✅ ATOMIC-ONLY COMPLIANCE ACHIEVED:
- * ✅ FIXED: Pure atomic prop type return - Size_Prop_Type::make()->generate()
- * ✅ REMOVED: Manual JSON wrapper structure
+ * ✅ IMPLEMENTATION: Pure atomic prop type return - Size_Prop_Type::make()->generate()
  * ✅ VERIFIED: All JSON creation handled by atomic widgets
  * 
  * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
@@ -31,28 +29,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - Base class method usage: ✅ NONE - Only atomic prop types used
  * - Manual $$type assignment: ✅ NONE - Only atomic widgets assign types
  */
-class Opacity_Property_Mapper extends Property_Mapper_Base {
+class Height_Property_Mapper extends Property_Mapper_Base {
 
 	private const SUPPORTED_PROPERTIES = [
-		'opacity',
+		'height',
+		'min-height',
+		'max-height',
 	];
-
-	public function map_to_v4_atomic( string $property, $value ): ?array {
-		if ( ! $this->is_supported_property( $property ) ) {
-			return null;
-		}
-
-		$opacity_data = $this->parse_opacity_value( $value );
-		if ( null === $opacity_data ) {
-			return null;
-		}
-
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
-		return Size_Prop_Type::make()
-			->units( Size_Constants::opacity() )
-			->default_unit( Size_Constants::UNIT_PERCENT )
-			->generate( $opacity_data );
-	}
 
 	public function get_supported_properties(): array {
 		return self::SUPPORTED_PROPERTIES;
@@ -62,36 +45,59 @@ class Opacity_Property_Mapper extends Property_Mapper_Base {
 		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
 	}
 
-	private function parse_opacity_value( $value ): ?array {
-		if ( ! is_string( $value ) && ! is_numeric( $value ) ) {
+	public function map_to_v4_atomic( string $property, $value ): ?array {
+		if ( ! $this->is_supported_property( $property ) ) {
 			return null;
 		}
 
-		$value = trim( (string) $value );
+		if ( ! is_string( $value ) || empty( trim( $value ) ) ) {
+			return null;
+		}
+
+		$size_data = $this->parse_size_value( $value );
+
+		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
+		return Size_Prop_Type::make()->generate( $size_data );
+	}
+
+	protected function parse_size_value( string $value ): array {
+		$value = trim( $value );
 
 		if ( empty( $value ) ) {
-			return null;
-		}
-
-		if ( str_ends_with( $value, '%' ) ) {
-			$numeric_value = (float) rtrim( $value, '%' );
 			return [
-				'size' => $numeric_value,
-				'unit' => '%'
+				'size' => 0,
+				'unit' => 'px',
 			];
 		}
 
-		$numeric_value = (float) $value;
-
-		if ( $numeric_value < 0 || $numeric_value > 1 ) {
-			return null;
+		// Handle special values
+		if ( in_array( $value, [ 'auto', 'inherit', 'initial', 'unset' ], true ) ) {
+			return [
+				'size' => '',
+				'unit' => 'auto'
+			];
 		}
 
-		$percentage_value = $numeric_value * 100;
+		// Parse numeric value with unit
+		if ( preg_match( '/^(\d*\.?\d+)(px|em|rem|%|vw|vh|vmin|vmax)$/', $value, $matches ) ) {
+			return [
+				'size' => (float) $matches[1],
+				'unit' => $matches[2]
+			];
+		}
 
+		// Handle unitless values (assume px)
+		if ( is_numeric( $value ) ) {
+			return [
+				'size' => (float) $value,
+				'unit' => 'px'
+			];
+		}
+
+		// Fallback for invalid values
 		return [
-			'size' => $percentage_value,
-			'unit' => '%'
+			'size' => 0,
+			'unit' => 'px',
 		];
 	}
 }

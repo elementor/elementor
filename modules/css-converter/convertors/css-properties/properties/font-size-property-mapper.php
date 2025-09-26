@@ -42,10 +42,11 @@ class Font_Size_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		$size_data = $this->parse_size_value( $value );
-		if ( null === $size_data ) {
+		if ( ! is_string( $value ) || empty( trim( $value ) ) ) {
 			return null;
 		}
+
+		$size_data = $this->parse_size_value( $value );
 
 		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return Size_Prop_Type::make()
@@ -53,19 +54,22 @@ class Font_Size_Property_Mapper extends Property_Mapper_Base {
 			->generate( $size_data );
 	}
 
+	public function get_supported_properties(): array {
+		return self::SUPPORTED_PROPERTIES;
+	}
+
 	public function is_supported_property( string $property ): bool {
 		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
 	}
 
-	private function parse_size_value( $value ): ?array {
-		if ( ! is_string( $value ) && ! is_numeric( $value ) ) {
-			return null;
-		}
-
-		$value = trim( (string) $value );
+	protected function parse_size_value( string $value ): array {
+		$value = trim( $value );
 
 		if ( empty( $value ) ) {
-			return null;
+			return [
+				'size' => 16,
+				'unit' => 'px',
+			];
 		}
 
 		if ( preg_match( '/^(\d*\.?\d+)(px|em|rem|%|vw|vh)$/', $value, $matches ) ) {
@@ -82,6 +86,10 @@ class Font_Size_Property_Mapper extends Property_Mapper_Base {
 			];
 		}
 
-		return null;
+		// Fallback for invalid values
+		return [
+			'size' => 16,
+			'unit' => 'px',
+		];
 	}
 }

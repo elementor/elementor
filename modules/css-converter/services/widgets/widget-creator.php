@@ -18,6 +18,7 @@ class Widget_Creator {
 	private $error_handler;
 	private $current_widget_class_id;
 	private $property_mapper_registry;
+	private $current_css_processing_result;
 
 	public function __construct() {
 		$this->creation_stats = [
@@ -36,6 +37,9 @@ class Widget_Creator {
 
 	public function create_widgets( $styled_widgets, $css_processing_result, $options = [] ) {
 		// HVV Requirement: Process dependencies in order: Variables → Global Classes → Parent → Children
+		
+		// Store the CSS processing result for use in helper methods
+		$this->current_css_processing_result = $css_processing_result;
 		
 		$post_id = $options['postId'] ?? null;
 		$post_type = $options['postType'] ?? 'page';
@@ -344,9 +348,16 @@ class Widget_Creator {
 		// V4 atomic widgets: Add classes array with proper $$type wrapper
 		$classes = [];
 
-		// Add global classes
+		// Add global classes (applied_styles['global_classes'] contains class names array from CSS processor)
 		if ( ! empty( $applied_styles['global_classes'] ) ) {
-			$classes = array_merge( $classes, $applied_styles['global_classes'] );
+			// Generate a unique class ID for this widget that will be used in the styles section
+			if ( empty( $this->current_widget_class_id ) ) {
+				$this->current_widget_class_id = $this->generate_unique_class_id();
+			}
+			
+			// Use the generated class ID instead of the global class names
+			$classes[] = $this->current_widget_class_id;
+			error_log( 'Widget Creator: Added generated class ID to classes: ' . $this->current_widget_class_id );
 		}
 
 		// Generate a single class ID for this widget that will be used consistently
@@ -360,15 +371,20 @@ class Widget_Creator {
 			$classes[] = $this->current_widget_class_id;
 		}
 
-		// Add classes to settings with proper v4 format
+		// Add classes to settings with proper v4 atomic widget format
 		if ( ! empty( $classes ) ) {
 			$merged_settings['classes'] = [
 				'$$type' => 'classes',
 				'value' => $classes,
 			];
+			error_log( 'Widget Creator: Final merged_settings classes: ' . wp_json_encode( $merged_settings['classes'] ) );
 		} else {
 			// Ensure classes array exists even if empty
-			$merged_settings['classes'] = [];
+			$merged_settings['classes'] = [
+				'$$type' => 'classes',
+				'value' => [],
+			];
+			error_log( 'Widget Creator: No classes to add - empty classes array' );
 		}
 
 		return $merged_settings;
@@ -412,7 +428,27 @@ class Widget_Creator {
 		// DEBUG: Log what we received
 		error_log( 'Widget Creator: convert_styles_to_v4_format called with: ' . wp_json_encode( array_keys( $applied_styles ) ) );
 		
-		// Process ID styles first (highest specificity after !important and inline)
+		// Process global classes first (convert to widget styles)
+		if ( ! empty( $applied_styles['global_classes'] ) ) {
+			error_log( 'Widget Creator: Processing global classes: ' . wp_json_encode( $applied_styles['global_classes'] ) );
+			
+			// Generate a unique class ID for this widget
+			if ( empty( $this->current_widget_class_id ) ) {
+				$this->current_widget_class_id = $this->generate_unique_class_id();
+			}
+			$class_id = $this->current_widget_class_id;
+			
+			// Get the global class properties from the CSS processing result
+			$global_class_props = $this->get_global_class_properties( $applied_styles['global_classes'] );
+			
+			if ( ! empty( $global_class_props ) ) {
+				$style_object = $this->create_v4_style_object_from_global_classes( $class_id, $global_class_props );
+				$v4_styles[ $class_id ] = $style_object;
+				error_log( 'Widget Creator: Added global class styles to v4_styles with class ID: ' . $class_id );
+			}
+		}
+		
+		// Process ID styles (highest specificity after !important and inline)
 		if ( ! empty( $applied_styles['id_styles'] ) ) {
 			error_log( 'Widget Creator: Processing ID styles: ' . count( $applied_styles['id_styles'] ) . ' styles found' );
 			
@@ -509,6 +545,58 @@ class Widget_Creator {
 		$widget_id = substr( wp_generate_uuid4(), 0, 8 );
 		$hash = substr( md5( microtime() . wp_rand() ), 0, 7 );
 		return "e-{$widget_id}-{$hash}";
+	}
+	
+	private function get_global_class_properties( $global_class_names ) {
+		// Get the actual global class properties from the CSS processing result
+		// The global_class_names array contains class names like ['inline-element-1']
+		// We need to get the actual properties from the global classes
+		
+		$props = [];
+		
+		// Access the global classes from the CSS processing result
+		if ( ! empty( $this->current_css_processing_result['global_classes'] ) ) {
+			foreach ( $global_class_names as $class_name ) {
+				if ( isset( $this->current_css_processing_result['global_classes'][ $class_name ] ) ) {
+					$global_class = $this->current_css_processing_result['global_classes'][ $class_name ];
+					
+					// Extract properties from the global class
+					if ( ! empty( $global_class['properties'] ) ) {
+						foreach ( $global_class['properties'] as $property_data ) {
+							if ( ! empty( $property_data['converted_property'] ) ) {
+								$converted = $property_data['converted_property'];
+								$original_property = $property_data['original_property'];
+								
+								// Add the converted property to props
+								$props[ $original_property ] = $converted;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		error_log( 'Widget Creator: Extracted global class props: ' . wp_json_encode( $props ) );
+		return $props;
+	}
+	
+	private function create_v4_style_object_from_global_classes( $class_id, $props ) {
+		// Create the v4 style object structure matching your example
+		return [
+			'id' => $class_id,
+			'label' => 'local',
+			'type' => 'class',
+			'variants' => [
+				[
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+					'props' => $props,
+					'custom_css' => null,
+				],
+			],
+		];
 	}
 
 	private function create_v4_style_object( $class_id, $computed_styles ) {
