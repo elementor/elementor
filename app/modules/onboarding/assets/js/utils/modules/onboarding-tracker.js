@@ -380,6 +380,11 @@ class OnboardingTracker {
 	}
 
 	sendExitButtonEvent( currentStep ) {
+		const stepNumber = this.getStepNumber( currentStep );
+		
+		this.trackStepAction( stepNumber, 'exit_button' );
+		this.sendStepEndState( stepNumber );
+		
 		const eventData = EventDispatcher.createStepEventPayload(
 			currentStep,
 			this.getStepName( currentStep ),
