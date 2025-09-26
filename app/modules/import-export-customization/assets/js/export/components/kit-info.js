@@ -1,18 +1,14 @@
 import { Typography, Input, Box } from '@elementor/ui';
 
-import { useKitValidation } from '../hooks/use-kit-validation';
+import { useExportContext } from '../context/export-context';
 
 export default function KitInfo() {
-	const {
-		templateName,
-		description,
-		nameError,
-		hasDescriptionError,
-		descriptionCounterColor,
-		handleNameChange,
-		handleDescriptionChange,
-		DESCRIPTION_MAX_LENGTH,
-	} = useKitValidation();
+	const { data, dispatch } = useExportContext();
+
+	const { templateName, description } = {
+		templateName: data.kitInfo.title || '',
+		description: data.kitInfo.description || '',
+	};
 
 	return (
 		<Box sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 3.5 } }>
@@ -23,17 +19,11 @@ export default function KitInfo() {
 				fullWidth
 				required
 				value={ templateName }
-				onChange={ handleNameChange }
+				onChange={ ( e ) => dispatch( { type: 'SET_KIT_TITLE', payload: e.target.value || '' } ) }
 				placeholder={ __( 'Type name here...', 'elementor' ) }
 				inputProps={ { maxLength: 75 } }
-				error={ !! nameError }
-				sx={ { mb: nameError ? 1 : 2 } }
+				sx={ { mb: 2 } }
 			/>
-			{ nameError && (
-				<Typography color="error.main" variant="caption" sx={ { mb: 2, display: 'block' } }>
-					{ nameError }
-				</Typography>
-			) }
 
 			<Typography variant="caption" component="label" color="text.secondary">
 				{ __( 'Description (Optional)', 'elementor' ) }
@@ -42,18 +32,9 @@ export default function KitInfo() {
 				fullWidth
 				multiline
 				value={ description }
-				onChange={ handleDescriptionChange }
+				onChange={ ( e ) => dispatch( { type: 'SET_KIT_DESCRIPTION', payload: e.target.value || '' } ) }
 				placeholder={ __( 'Type description here...', 'elementor' ) }
-				inputProps={ { maxLength: DESCRIPTION_MAX_LENGTH } }
-				error={ hasDescriptionError }
 			/>
-			<Typography
-				variant="caption"
-				color={ descriptionCounterColor }
-				sx={ { mt: 0.5, display: 'block' } }
-			>
-				{ description.length } / { DESCRIPTION_MAX_LENGTH } { __( 'characters', 'elementor' ) }
-			</Typography>
 		</Box>
 	);
 }
