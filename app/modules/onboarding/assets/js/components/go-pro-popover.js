@@ -4,10 +4,14 @@ import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
 import Checklist from './checklist';
 import ChecklistItem from './checklist-item';
 import Button from './button';
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useRef } from 'react';
+import PropTypes from 'prop-types';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function GoProPopover( props ) {
 	const { state, updateState } = useContext( OnboardingContext );
+
+	const upgradeButtonRef = useRef( null );
 
 	// Handle the Pro Upload popup window.
 	const alreadyHaveProButtonRef = useCallback( ( alreadyHaveProButton ) => {
@@ -15,8 +19,29 @@ export default function GoProPopover( props ) {
 			return;
 		}
 
-		alreadyHaveProButton.addEventListener( 'click', ( event ) => {
+		if ( ! state.currentStep || '' === state.currentStep ) {
+			return;
+		}
+
+		const existingHandler = alreadyHaveProButton._elementorProHandler;
+		if ( existingHandler ) {
+			alreadyHaveProButton.removeEventListener( 'click', existingHandler );
+		}
+
+		const clickHandler = ( event ) => {
 			event.preventDefault();
+
+			if ( ! state.currentStep || '' === state.currentStep ) {
+				return;
+			}
+
+			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+			OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_already_pro' );
+			OnboardingEventTracking.cancelDelayedNoClickEvent();
+
+			if ( stepNumber ) {
+				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'already_pro_user' );
+			}
 
 			elementorCommon.events.dispatchEvent( {
 				event: 'already have pro',
@@ -40,38 +65,59 @@ export default function GoProPopover( props ) {
 					updateState( {
 						hasPro: true,
 						proNotice: {
-							type: 'success',
-							icon: 'eicon-check-circle-o',
-							message: __( 'Elementor Pro has been successfully installed.', 'elementor' ),
+							color: 'success',
+							children: __( 'Pro is now active! You can continue.', 'elementor' ),
 						},
 					} );
 				} );
-		} );
-	}, [] );
-
-	// The buttonsConfig prop is an array of objects. To find the 'Upgrade Now' button, we need to iterate over the object.
-	const goProButton = props.buttonsConfig.find( ( button ) => 'go-pro' === button.id ),
-		getElProButton = {
-			text: elementorAppConfig.onboarding.experiment ? __( 'Upgrade now', 'elementor' ) : __( 'Upgrade Now', 'elementor' ),
-			className: 'e-onboarding__go-pro-cta',
-			target: '_blank',
-			href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
-			tabIndex: 0,
-			onClick: () => {
-				elementorCommon.events.dispatchEvent( {
-					event: 'get elementor pro',
-					version: '',
-					details: {
-						placement: elementorAppConfig.onboarding.eventPlacement,
-						step: state.currentStep,
-					},
-				} );
-			},
 		};
+
+		alreadyHaveProButton._elementorProHandler = clickHandler;
+		alreadyHaveProButton.addEventListener( 'click', clickHandler );
+	}, [ state.currentStep, updateState ] );
+
+	const getElProButton = {
+		text: elementorAppConfig.onboarding.experiment ? __( 'Upgrade now', 'elementor' ) : __( 'Upgrade Now', 'elementor' ),
+		className: 'e-onboarding__go-pro-cta',
+		target: '_blank',
+		href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
+		tabIndex: 0,
+		elRef: ( buttonElement ) => {
+			if ( ! buttonElement ) {
+				return;
+			}
+
+			upgradeButtonRef.current = buttonElement;
+		},
+		onClick: () => {
+			if ( ! state.currentStep || '' === state.currentStep ) {
+				return;
+			}
+
+			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+			OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_now' );
+			OnboardingEventTracking.cancelDelayedNoClickEvent();
+
+			if ( stepNumber ) {
+				OnboardingEventTracking.sendTopUpgrade( stepNumber, 'on_tooltip' );
+			}
+
+			elementorCommon.events.dispatchEvent( {
+				event: 'get elementor pro',
+				version: '',
+				details: {
+					placement: elementorAppConfig.onboarding.eventPlacement,
+					step: state.currentStep,
+				},
+			} );
+		},
+	};
+
+	const targetRef = props.goProButtonRef || upgradeButtonRef;
 
 	return (
 		<PopoverDialog
-			targetRef={ goProButton.elRef }
+			targetRef={ targetRef }
 			wrapperClass="e-onboarding__go-pro"
 		>
 			<div className="e-onboarding__go-pro-content">
@@ -99,4 +145,5 @@ export default function GoProPopover( props ) {
 
 GoProPopover.propTypes = {
 	buttonsConfig: PropTypes.array.isRequired,
+	goProButtonRef: PropTypes.object,
 };
