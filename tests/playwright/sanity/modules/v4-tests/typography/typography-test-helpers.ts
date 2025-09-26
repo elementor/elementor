@@ -4,10 +4,8 @@ import { EditorDriver } from '../../../../drivers/editor-driver';
 import { timeouts } from '../../../../config/timeouts';
 import ApiRequests from '../../../../assets/api-requests';
 
-// Common constants
 export const EXPERIMENT_NAME = 'e_atomic_elements';
 
-// Common widget configurations
 export const WIDGET_CONFIGS = {
 	HEADING: {
 		type: 'e-heading',
@@ -24,7 +22,6 @@ export const WIDGET_CONFIGS = {
 		selector: '.e-button-base',
 		defaultSize: '15px',
 	},
-	// For backward compatibility with array-based access
 	E_HEADING: {
 		type: 'e-heading',
 		selector: '.e-heading-base',
@@ -42,7 +39,6 @@ export const WIDGET_CONFIGS = {
 	},
 };
 
-// Common font families
 export const FONT_FAMILIES = {
 	system: 'Arial',
 	systemAlt: 'Times New Roman',
@@ -50,23 +46,18 @@ export const FONT_FAMILIES = {
 	trebuchet: 'Trebuchet MS',
 };
 
-// Common font sizes
 export const FONT_SIZES = {
 	DESKTOP: '24',
 	TABLET: '18',
 	MOBILE: '16',
 };
 
-// Common spacing values
 export const SPACING_VALUES = {
 	POSITIVE: [ 1, 2.5, 5 ],
 	NEGATIVE: [ -1, -2.5, -5 ],
 	UNITS: [ 'px', 'em', 'rem', 'vw', 'vh', '%' ],
 };
 
-
-
-// Common helper function to setup widget and open typography section using driver
 export async function setupWidgetWithTypography(
 	driver: EditorDriver,
 	widgetType: string,
@@ -84,7 +75,6 @@ export async function setupWidgetWithTypography(
 	return { containerId: result.containerId, widgetId: result.widgetId };
 }
 
-// Common helper function to set widget text content
 export async function setWidgetTextContent(
 	driver: EditorDriver,
 	text: string,
@@ -112,7 +102,6 @@ export async function verifyFontSizePreview(
 	await expect( element ).toHaveCSS( 'font-size', `${ expectedSize }px`, { timeout: timeouts.expect } );
 }
 
-// Common helper function to verify font size with publishing
 export async function verifyFontSizeWithPublishing(
 	driver: EditorDriver,
 	selector: string,
@@ -120,7 +109,6 @@ export async function verifyFontSizeWithPublishing(
 ): Promise<void> {
 	await verifyFontSizePreview( driver, selector, expectedSize );
 
-	// Publish and verify
 	await driver.editor.publishAndViewPage();
 
 	const publishedElement = driver.page.locator( selector );
@@ -128,8 +116,7 @@ export async function verifyFontSizeWithPublishing(
 	await expect( publishedElement ).toHaveCSS( 'font-size', `${ expectedSize }px`, { timeout: timeouts.expect } );
 }
 
-// Common function to verify spacing properties (letter spacing, word spacing, etc.)
-async function verifySpacing(
+async function verifySpacingEditor(
 	driver: EditorDriver,
 	selector: string,
 	expectedValue: number,
@@ -207,7 +194,7 @@ export async function verifyLetterSpacing(
 	expectedValue: number,
 	expectedUnit: string,
 ): Promise<void> {
-	await verifySpacing( driver, selector, expectedValue, expectedUnit, 'letterSpacing' );
+	await verifySpacingEditor( driver, selector, expectedValue, expectedUnit, 'letterSpacing' );
 }
 
 export async function verifyWordSpacingEditor(
@@ -216,7 +203,7 @@ export async function verifyWordSpacingEditor(
 	expectedValue: number,
 	expectedUnit: string,
 ): Promise<void> {
-	await verifySpacing( driver, selector, expectedValue, expectedUnit, 'wordSpacing' );
+	await verifySpacingEditor( driver, selector, expectedValue, expectedUnit, 'wordSpacing' );
 }
 
 export async function verifyFontEditor(
