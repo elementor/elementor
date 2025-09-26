@@ -64,40 +64,7 @@ export const SPACING_VALUES = {
 	UNITS: [ 'px', 'em', 'rem', 'vw', 'vh', '%' ],
 };
 
-// Common test setup interface using new driver architecture
-export interface TypographyTestSetup {
-	driver: EditorDriver;
-}
 
-// Common setup function for all typography tests using new driver architecture
-export async function setupTypographyTestSuite(
-	browser: Browser,
-	apiRequests?: ApiRequests,
-	testInfo?: TestInfo,
-): Promise<TypographyTestSetup> {
-	// Set experiments first
-	await DriverFactory.setExperiments( browser, { [ EXPERIMENT_NAME ]: 'active' }, testInfo, apiRequests );
-
-	// Create driver
-	const driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests );
-	return {
-		driver,
-	};
-}
-
-// Common teardown function
-export async function teardownTypographyTestSuite(
-	setup: TypographyTestSetup,
-): Promise<void> {
-	await setup.driver.close();
-}
-
-// Common beforeEach function
-export async function beforeEachTypographyTest(
-	setup: TypographyTestSetup,
-): Promise<void> {
-	await setup.driver.setupBasicPage();
-}
 
 // Common helper function to setup widget and open typography section using driver
 export async function setupWidgetWithTypography(
