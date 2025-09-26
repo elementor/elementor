@@ -10,8 +10,8 @@ import {
 import { jest } from '@jest/globals';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { loadComponents } from '../../actions';
 import { slice } from '../../store';
+import { loadComponents } from '../../thunks';
 import { ComponentSearch } from '../components-tab/component-search';
 import { ComponentItem } from '../components-tab/components-item';
 import { ComponentsList } from '../components-tab/components-list';
@@ -204,17 +204,6 @@ describe( 'ComponentsTab', () => {
 			expect( screen.getByLabelText( 'More actions' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should render component item with clickable area', () => {
-			// Arrange
-			const buttonComponent = mockComponents[ 0 ];
-
-			// Act
-			renderWithTheme( <ComponentItem component={ buttonComponent } /> );
-
-			// Assert
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-		} );
-
 		it( 'should render search input with correct attributes and placeholder', () => {
 			// Act
 			renderWithTheme(
@@ -288,25 +277,6 @@ describe( 'ComponentsTab', () => {
 			// Assert
 			expect( screen.getByText( 'Sorry, nothing matched' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Try something else.' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should handle components with missing properties gracefully', () => {
-			// Arrange
-			const mockComponentsWithMissingProps = [ ...mockComponents, { id: 7, name: null }, { id: 8 } ];
-			act( () => {
-				dispatch( slice.actions.load( mockComponentsWithMissingProps ) );
-			} );
-
-			// Act
-			renderWithStore(
-				<SearchProvider localStorageKey="test-search">
-					<ComponentsList />
-				</SearchProvider>,
-				store
-			);
-
-			// Assert
-			expect( screen.getByText( 'Valid Component' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

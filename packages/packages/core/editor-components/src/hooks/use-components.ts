@@ -1,10 +1,10 @@
 import { __useSelector as useSelector } from '@elementor/store';
 
-import { selectComponents, selectLoadStatus } from '../store';
+import { selectComponents, selectLoadIsPending } from '../store';
 
 export const useComponents = () => {
 	const components = useSelector( selectComponents );
-	const loadStatus = useSelector( selectLoadStatus );
+	const isLoading = useSelector( selectLoadIsPending );
 
-	return { components, loadStatus };
+	return { components, isLoading };
 };

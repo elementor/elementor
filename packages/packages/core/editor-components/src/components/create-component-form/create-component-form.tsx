@@ -7,7 +7,7 @@ import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Ty
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
-import { useCreateComponentMutation } from '../../hooks/use-create-component';
+import { useCreateComponent } from '../../hooks/use-create-component';
 import { type ComponentFormValues } from '../../types';
 import { useForm } from './hooks/use-form';
 import { createBaseComponentSchema, createSubmitComponentSchema } from './utils/component-form-schema';
@@ -34,7 +34,7 @@ export function CreateComponentForm() {
 
 	const [ resultNotification, setResultNotification ] = useState< ResultNotification | null >( null );
 
-	const { createComponent, isPending } = useCreateComponentMutation();
+	const { createComponent, isPending } = useCreateComponent();
 	useEffect( () => {
 		const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
 

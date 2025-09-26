@@ -5,7 +5,7 @@ import {
 	type SliceState,
 } from '@elementor/store';
 
-import { createComponent, loadComponents } from './actions';
+import { createComponent, loadComponents } from './thunks';
 import { type Component } from './types';
 
 type GetComponentResponse = Component[];
@@ -33,9 +33,6 @@ export const slice = createSlice( {
 		},
 		load: ( state, { payload } ) => {
 			state.data = payload;
-		},
-		clearCreateStatus: ( state ) => {
-			state.createStatus = 'idle';
 		},
 	},
 	extraReducers: ( builder ) => {
@@ -66,7 +63,11 @@ export const slice = createSlice( {
 } );
 
 const selectData = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].data;
+const selectLoadStatus = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].loadStatus;
+const selectCreateStatus = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].createStatus;
 
 export const selectComponents = createSelector( selectData, ( data: Component[] ) => data );
-export const selectLoadStatus = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].loadStatus;
-export const selectCreateStatus = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].createStatus;
+export const selectLoadIsPending = createSelector( selectLoadStatus, ( status ) => status === 'pending' );
+export const selectLoadError = createSelector( selectLoadStatus, ( status ) => status === 'error' );
+export const selectCreateIsPending = createSelector( selectCreateStatus, ( status ) => status === 'pending' );
+export const selectCreateError = createSelector( selectCreateStatus, ( status ) => status === 'error' );

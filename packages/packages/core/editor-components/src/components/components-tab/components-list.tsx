@@ -126,14 +126,14 @@ const EmptySearchResult = () => {
 };
 
 const useFilteredComponents = () => {
-	const { components, loadStatus } = useComponents();
+	const { components, isLoading } = useComponents();
 	const { searchValue } = useSearch();
 
 	return {
 		components: components?.filter(
 			( component ) => component?.name?.toLowerCase().includes( searchValue.toLowerCase() )
 		),
-		isLoading: loadStatus === 'pending',
+		isLoading,
 		searchValue,
 	};
 };

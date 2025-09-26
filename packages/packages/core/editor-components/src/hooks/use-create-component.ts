@@ -1,12 +1,13 @@
 import { __useDispatch as useDispatch, __useSelector as useSelector, type AnyAction } from '@elementor/store';
 
-import { createComponent } from '../actions';
 import { type CreateComponentPayload } from '../api';
-import { selectCreateStatus } from '../store';
+import { selectCreateError, selectCreateIsPending } from '../store';
+import { createComponent } from '../thunks';
 
-export const useCreateComponentMutation = () => {
+export const useCreateComponent = () => {
 	const dispatch = useDispatch();
-	const createStatus = useSelector( selectCreateStatus );
+	const isPending = useSelector( selectCreateIsPending );
+	const error = useSelector( selectCreateError );
 
 	const createComponentAction = async ( payload: CreateComponentPayload ) => {
 		const result = await dispatch( createComponent( payload ) as unknown as AnyAction );
@@ -15,7 +16,7 @@ export const useCreateComponentMutation = () => {
 
 	return {
 		createComponent: createComponentAction,
-		isPending: createStatus === 'pending',
-		error: createStatus === 'error',
+		isPending,
+		error,
 	};
 };

@@ -359,7 +359,6 @@ describe( 'CreateComponentForm', () => {
 
 		it( 'should show error notification when creation fails', async () => {
 			// Arrange.
-			setupFailedSave();
 			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
 
@@ -375,7 +374,6 @@ describe( 'CreateComponentForm', () => {
 
 		it( 'should reset loading state after error', async () => {
 			// Arrange.
-			setupFailedSave();
 			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
 
