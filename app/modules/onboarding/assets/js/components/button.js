@@ -13,13 +13,11 @@ export default function Button( props ) {
 		buttonSettings.className = buttonClasses;
 	}
 
-	const { elRef, ...buttonProps } = buttonSettings;
-
 	if ( buttonSettings.href ) {
-		return <a ref={ elRef } { ...buttonProps }>{ buttonSettings.text }</a>;
+		return <a { ...buttonSettings }>{ buttonSettings.text }</a>;
 	}
 
-	return <div ref={ elRef } { ...buttonProps }>{ buttonSettings.text }</div>;
+	return <div { ...buttonSettings }>{ buttonSettings.text }</div>;
 }
 
 Button.propTypes = {
