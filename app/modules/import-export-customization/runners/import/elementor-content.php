@@ -20,6 +20,8 @@ class Elementor_Content extends Import_Runner_Base {
 
 	private $current_session_mappings = [];
 
+	private $orphaned_posts = [];
+
 	public function __construct() {
 		$this->init_page_on_front_data();
 	}
@@ -119,6 +121,8 @@ class Elementor_Content extends Import_Runner_Base {
 			}
 		}
 
+		$this->backfill_parents();
+
 		return $result;
 	}
 
@@ -160,8 +164,18 @@ class Elementor_Content extends Import_Runner_Base {
 			$post_attributes['post_excerpt'] = $post_settings['excerpt'];
 		}
 
-		if ( ! empty( $post_settings['post_parent'] ) ) {
-			$post_attributes['post_parent'] = $this->resolve_parent_post_id( $post_settings['post_parent'] );
+		$post_parent = (int) ( $post_settings['post_parent'] ?? 0 );
+		if ( $post_parent ) {
+			if ( isset( $this->current_session_mappings[ $post_parent ] ) ) {
+				$post_parent = $this->current_session_mappings[ $post_parent ];
+			} else {
+				$this->orphaned_posts[ (int) $post_settings['id'] ] = $post_parent;
+				$post_parent = 0;
+			}
+		}
+		
+		if ( $post_parent ) {
+			$post_attributes['post_parent'] = $post_parent;
 		}
 
 		$new_document = Plugin::$instance->documents->create(
@@ -234,31 +248,6 @@ class Elementor_Content extends Import_Runner_Base {
 		];
 	}
 
-	private function get_mapped_post_id( $original_post_id ) {
-		if ( isset( $this->current_session_mappings[ $original_post_id ] ) ) {
-			return $this->current_session_mappings[ $original_post_id ];
-		}
-		
-		if ( empty( $this->imported_data ) ) {
-			return null;
-		}
-
-		try {
-			$post_mappings = ImportExportUtils::map_old_new_post_ids( $this->imported_data );
-			return $post_mappings[ $original_post_id ] ?? null;
-		} catch ( \Exception $e ) {
-			return null;
-		}
-	}
-
-	private function resolve_parent_post_id( $original_parent_id ) {
-		try {
-			$mapped_parent_id = $this->get_mapped_post_id( $original_parent_id );
-			return $mapped_parent_id ?: $original_parent_id;
-		} catch ( \Exception $e ) {
-			return $original_parent_id;
-		}
-	}
 
 	private function track_import( $original_id, $import_result ) {
 		if ( $import_result['status'] !== static::IMPORT_STATUS_SUCCEEDED ) {
@@ -266,5 +255,26 @@ class Elementor_Content extends Import_Runner_Base {
 		}
 
 		$this->current_session_mappings[ $original_id ] = $import_result['result'];
+	}
+
+	private function backfill_parents() {
+		global $wpdb;
+
+		foreach ( $this->orphaned_posts as $child_id => $parent_id ) {
+			$local_child_id = false;
+			$local_parent_id = false;
+
+			if ( isset( $this->current_session_mappings[ $child_id ] ) ) {
+				$local_child_id = $this->current_session_mappings[ $child_id ];
+			}
+			if ( isset( $this->current_session_mappings[ $parent_id ] ) ) {
+				$local_parent_id = $this->current_session_mappings[ $parent_id ];
+			}
+
+			if ( $local_child_id && $local_parent_id ) {
+				$wpdb->update( $wpdb->posts, [ 'post_parent' => $local_parent_id ], [ 'ID' => $local_child_id ], '%d', '%d' );
+				clean_post_cache( $local_child_id );
+			}
+		}
 	}
 }
