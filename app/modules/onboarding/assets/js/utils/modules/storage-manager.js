@@ -22,7 +22,7 @@ export const ONBOARDING_STORAGE_KEYS = {
 	PENDING_STEP1_CLICKED_CONNECT: 'elementor_onboarding_pending_step1_clicked_connect',
 	PENDING_STEP1_END_STATE: 'elementor_onboarding_pending_step1_end_state',
 	PENDING_EXIT_BUTTON: 'elementor_onboarding_pending_exit_button',
-	PENDIND_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
+	PENDING_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
 };
 
 export function getString( key ) {
