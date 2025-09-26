@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { EyeIcon } from '@elementor/icons';
+import { ComponentsIcon, EyeIcon } from '@elementor/icons';
 import { Box, Divider, Icon, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -80,7 +80,7 @@ const EmptySearchResult = () => {
 			overflow={ 'hidden' }
 			justifySelf={ 'center' }
 		>
-			<EyeIcon />
+			<ComponentsIcon />
 			<Box
 				sx={ {
 					width: '100%',
