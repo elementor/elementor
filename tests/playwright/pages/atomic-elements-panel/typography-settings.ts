@@ -64,7 +64,7 @@ export default class TypographySettings extends BasePage {
 		}
 
 		if ( options.fontWeight ) {
-			await this.setV4SelectControlValue( 'Font weight', options.fontWeight );
+			await this.setFontWeight( options.fontWeight );
 		}
 
 		if ( options.fontFamily ) {
@@ -84,7 +84,7 @@ export default class TypographySettings extends BasePage {
 		}
 
 		if ( options.textTransform ) {
-			await this.setV4SelectControlValue( 'Text transform', options.textTransform );
+			await this.setTextTransform( options.textTransform );
 		}
 	}
 
@@ -182,76 +182,29 @@ export default class TypographySettings extends BasePage {
 		await this.setSpacingValue( 'Word spacing', value, unit );
 	}
 
-	async setV4SelectControlValue( labelText: string, value: string, exactMatch: boolean = true ): Promise<void> {
+	async setFontWeight( weight: string ): Promise<void> {
 		const controlButton = this.page
 			.locator( 'div.MuiGrid-container' )
-			.filter( { has: this.page.locator( 'label', { hasText: labelText } ) } )
+			.filter( { has: this.page.locator( 'label', { hasText: 'Font weight' } ) } )
 			.locator( '[role="button"]' );
 
-		const buttonExists = await controlButton.isVisible().catch( () => false );
+		await controlButton.click();
+		await this.page.waitForSelector( '[role="listbox"], [role="menu"], [role="option"]', { timeout: 5000 } );
 
-		if ( buttonExists ) {
-			await controlButton.click();
-			await this.page.waitForSelector( '[role="listbox"], [role="menu"], [role="option"]', { timeout: 5000 } );
+		const option = this.page.getByRole( 'option', { name: weight, exact: true } );
+		await option.click();
+	}
 
-			let option = null;
+	async setTextTransform( transform: string ): Promise<void> {
+		const controlButton = this.page
+			.locator( 'div.MuiGrid-container' )
+			.filter( { has: this.page.locator( 'label', { hasText: 'Text transform' } ) } )
+			.locator( '[role="button"]' );
 
-			if ( exactMatch ) {
-				option = this.page.getByRole( 'option', { name: value, exact: true } )
-					.or( this.page.getByText( value, { exact: true } ) )
-					.or( this.page.locator( `[role="option"]:has-text("${ value }")` ).first() );
-			} else {
-				option = this.page.getByRole( 'option', { name: new RegExp( value, 'i' ) } )
-					.or( this.page.getByText( value ) )
-					.or( this.page.locator( `[role="option"]:has-text("${ value }")` ) ).first();
-			}
+		await controlButton.click();
+		await this.page.waitForSelector( '[role="listbox"], [role="menu"], [role="option"]', { timeout: 5000 } );
 
-			const isVisible = await option.isVisible().catch( () => false );
-
-			if ( ! isVisible ) {
-				const firstOption = this.page.locator( '[role="option"]' ).first();
-				await firstOption.click();
-			} else {
-				await option.click();
-			}
-		} else {
-			const labelElement = this.page.locator( 'label', { hasText: labelText } );
-			const selectElement = labelElement.locator( 'xpath=following::select[1]' );
-			const selectExists = await selectElement.isVisible().catch( () => false );
-
-			if ( selectExists ) {
-				await selectElement.selectOption( value );
-			} else {
-				const combobox = labelElement.locator( 'xpath=following::*[@role="combobox"][1]' );
-				const comboboxExists = await combobox.isVisible().catch( () => false );
-
-				if ( comboboxExists ) {
-					await combobox.click();
-					await this.page.waitForTimeout( 1000 );
-
-					const option = this.page.locator( `[role="option"]:has-text("${ value }")` ).first();
-					const optionExists = await option.isVisible().catch( () => false );
-
-					if ( optionExists ) {
-						await option.click();
-					}
-				} else {
-					const clickableElement = labelElement.locator( 'xpath=following::*[contains(@class, "select") or contains(@class, "dropdown") or @role="button" or @type="button"][1]' );
-					const clickableExists = await clickableElement.isVisible().catch( () => false );
-
-					if ( clickableExists ) {
-						await clickableElement.click();
-						await this.page.waitForTimeout( 1000 );
-
-						const option = this.page.locator( `text="${ value }"` ).first();
-						const optionExists = await option.isVisible().catch( () => false );
-
-						if ( optionExists ) {
-							await option.click();
-						}
-					}
-				}
-			}
-		}
+		const option = this.page.getByRole( 'option', { name: transform, exact: true } );
+		await option.click();
 	}
 }

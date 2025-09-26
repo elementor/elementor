@@ -66,6 +66,10 @@ export class EditorDriver {
 	async setupBasicPage(): Promise<EditorDriver> {
 		await this.createNewPage();
 		await this.editor.closeNavigatorIfOpen();
+		
+		// Handle any modal dialogs that might be blocking interactions
+		await this.handleModalDialogs();
+		
 		await this.editor.openElementsPanel();
 		return this;
 	}
@@ -92,5 +96,32 @@ export class EditorDriver {
 
 	async close(): Promise<void> {
 		await this.browserContext.close();
+	}
+
+	/**
+	 * Handle any modal dialogs that might be blocking interactions
+	 */
+	private async handleModalDialogs(): Promise<void> {
+		// Handle experiment confirmation dialogs
+		const experimentDialog = this.page.locator( '.dialog-type-confirm .dialog-confirm-ok' );
+		if ( await experimentDialog.isVisible() ) {
+			await experimentDialog.click();
+			await this.page.waitForLoadState( 'load' );
+		}
+
+		// Handle any other common modal dialogs
+		const commonModalSelectors = [
+			'.MuiDialog-container button[aria-label="close"]',
+			'.elementor-templates-modal__header__close',
+			'.dialog-button.dialog-ok',
+		];
+
+		for ( const selector of commonModalSelectors ) {
+			const modal = this.page.locator( selector );
+			if ( await modal.isVisible() ) {
+				await modal.click();
+				await this.page.waitForTimeout( 500 ); // Wait for modal to close
+			}
+		}
 	}
 }

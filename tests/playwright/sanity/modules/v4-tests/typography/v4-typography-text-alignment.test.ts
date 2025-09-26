@@ -63,7 +63,6 @@ test.describe( 'V4 Typography Text Styling Tests @v4-tests', () => {
 
 		test( 'Text alignment controls are present and functional', async () => {
 			await setupWidgetWithTypography( driver, testWidget );
-			await driver.page.pause();
 
 			await setTextAlignment( 'center' );
 			await verifyTextAlignment( testWidgetConfig.selector, 'center' );
