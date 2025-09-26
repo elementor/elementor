@@ -405,6 +405,8 @@ class OnboardingTracker {
 	sendExitButtonEvent( currentStep ) {
 		const stepNumber = this.getStepNumber( currentStep );
 
+		StorageManager.markExitButtonEventOccurred();
+
 		this.trackStepAction( stepNumber, 'exit_button' );
 		this.sendStepEndState( stepNumber );
 
@@ -412,6 +414,10 @@ class OnboardingTracker {
 	}
 
 	sendExitWindowEvent( currentStep ) {
+		if ( ! StorageManager.shouldAllowExitWindowEvent() ) {
+			return null;
+		}
+
 		const stepNumber = this.getStepNumber( currentStep );
 
 		this.trackStepAction( stepNumber, 'exit_window' );

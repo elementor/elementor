@@ -23,6 +23,7 @@ export const ONBOARDING_STORAGE_KEYS = {
 	PENDING_STEP1_END_STATE: 'elementor_onboarding_pending_step1_end_state',
 	PENDING_EXIT_BUTTON: 'elementor_onboarding_pending_exit_button',
 	PENDING_EXIT_WINDOW: 'elementor_onboarding_pending_exit_window',
+	EXIT_EVENT_DEDUPLICATION: 'elementor_onboarding_exit_event_deduplication',
 	PENDIND_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
 };
 
@@ -121,6 +122,7 @@ export function clearAllOnboardingData() {
 		ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
 		ONBOARDING_STORAGE_KEYS.PENDING_EXIT_BUTTON,
 		ONBOARDING_STORAGE_KEYS.PENDING_EXIT_WINDOW,
+		ONBOARDING_STORAGE_KEYS.EXIT_EVENT_DEDUPLICATION,
 		ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
 	];
 
@@ -174,6 +176,31 @@ export function clearStepStartTime( stepNumber ) {
 	}
 }
 
+export function shouldAllowExitWindowEvent() {
+	const exitEventData = getObject( ONBOARDING_STORAGE_KEYS.EXIT_EVENT_DEDUPLICATION );
+	if ( ! exitEventData ) {
+		return true;
+	}
+
+	const currentTime = Date.now();
+	const timeDifference = currentTime - exitEventData.timestamp;
+	const DEDUPLICATION_WINDOW_MS = 100;
+
+	return timeDifference > DEDUPLICATION_WINDOW_MS;
+}
+
+export function markExitButtonEventOccurred() {
+	const exitEventData = {
+		eventType: 'exit_button',
+		timestamp: Date.now(),
+	};
+	setObject( ONBOARDING_STORAGE_KEYS.EXIT_EVENT_DEDUPLICATION, exitEventData );
+}
+
+export function clearExitEventDeduplication() {
+	remove( ONBOARDING_STORAGE_KEYS.EXIT_EVENT_DEDUPLICATION );
+}
+
 const StorageManager = {
 	getString,
 	setString,
@@ -191,6 +218,9 @@ const StorageManager = {
 	getStepStartTime,
 	setStepStartTime,
 	clearStepStartTime,
+	shouldAllowExitWindowEvent,
+	markExitButtonEventOccurred,
+	clearExitEventDeduplication,
 };
 
 export default StorageManager;
