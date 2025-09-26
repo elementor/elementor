@@ -852,7 +852,6 @@ class OnboardingTracker {
 	clearAllOnboardingStorage() {
 		return PostOnboardingTracker.clearAllOnboardingStorage();
 	}
-
 }
 
 const onboardingTracker = new OnboardingTracker();
