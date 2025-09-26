@@ -93,12 +93,10 @@ export async function setWidgetTextContent(
 	// First open the general/content panel
 	await driver.editor.openV2PanelTab( 'general' );
 	await driver.page.waitForTimeout( 1000 );
-	
-	// Use the GeneralTab method
+
 	await driver.editor.v4Panel.general.setWidgetText( inputName, text );
 }
 
-// Common helper function to verify font size
 export async function verifyFontSizePreview(
 	driver: EditorDriver,
 	selector: string,
@@ -130,7 +128,6 @@ export async function verifyFontSizeWithPublishing(
 	await expect( publishedElement ).toHaveCSS( 'font-size', `${ expectedSize }px`, { timeout: timeouts.expect } );
 }
 
-// Common helper function to verify letter spacing
 export async function verifyLetterSpacing(
 	driver: EditorDriver,
 	selector: string,
@@ -199,7 +196,6 @@ export async function verifyLetterSpacing(
 	} ).toPass( { timeout: timeouts.expect } );
 }
 
-// Common helper function to verify word spacing
 export async function verifyWordSpacingEditor(
 	driver: EditorDriver,
 	selector: string,
@@ -263,8 +259,7 @@ export async function verifyWordSpacingEditor(
 	} ).toPass( { timeout: timeouts.expect } );
 }
 
-// Common helper function to verify font family
-export async function verifyFontFamily(
+export async function verifyFontEditor(
 	driver: EditorDriver,
 	selector: string,
 	expectedFamily: string,
@@ -280,15 +275,13 @@ export async function verifyFontFamily(
 	expect( computedFamily.toLowerCase() ).toContain( expectedFamily.toLowerCase() );
 }
 
-// Common helper function to verify font family with publishing
 export async function verifyFontFamilyWithPublishing(
 	driver: EditorDriver,
 	selector: string,
 	expectedFamily: string,
 ): Promise<void> {
-	await verifyFontFamily( driver, selector, expectedFamily );
+	await verifyFontEditor( driver, selector, expectedFamily );
 
-	// Publish and verify
 	await driver.editor.publishAndViewPage();
 
 	const publishedElement = driver.page.locator( selector );
