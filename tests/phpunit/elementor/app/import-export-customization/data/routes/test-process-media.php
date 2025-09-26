@@ -59,18 +59,37 @@ class Test_Process_Media extends Elementor_Test_Base {
         $this->init_rest_api();
         $this->act_as_admin();
 
-        $response = $this->send_request( [
-            'https://example.com/image1.jpg',
-            'https://example.com/image2.png'
-        ] );
+        $test_image_data = $this->create_test_image();
+        $test_image_url = $test_image_data['url'];
+        $test_image_path = $test_image_data['path'];
 
-		$this->assertEquals( 200, $response->get_status() );
-		$data = $response->get_data();
-		$this->assertArrayHasKey( 'data', $data );
-		$this->assertArrayHasKey( 'success', $data['data'] );
-		$this->assertArrayHasKey( 'message', $data['data'] );
-		$this->assertTrue( $data['data']['success'] );
-	}
+        $response = $this->send_request( [ $test_image_url ] );
+
+        $this->assertEquals( 200, $response->get_status() );
+
+        $data = $response->get_data();
+        $this->assertArrayHasKey( 'data', $data );
+        $this->assertArrayHasKey( 'success', $data['data'] );
+        $this->assertArrayHasKey( 'message', $data['data'] );
+        $this->assertTrue( $data['data']['success'] );
+    }
+
+    private function create_test_image() {
+        $upload_dir = wp_upload_dir();
+        $test_image_path = $upload_dir['path'] . '/test-image-' . uniqid() . '.jpg';
+
+        // Create a simple 1x1 pixel JPEG
+        $image_data = base64_decode('/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/wA==');
+
+        if ( ! file_put_contents( $test_image_path, $image_data ) ) {
+            $this->fail( 'Could not create test image file' );
+        }
+
+        return [
+            'path' => $test_image_path,
+            'url' => $upload_dir['url'] . '/' . basename( $test_image_path )
+        ];
+    }
 
     public function test_empty_array() {
         $this->init_rest_api();
@@ -103,6 +122,10 @@ class Test_Process_Media extends Elementor_Test_Base {
         );
 
         $request->set_param( 'media_urls', $media_urls );
+        $request->set_param( 'kit', [
+            'mediaUploadUrl' => 'https://example.com/upload',
+            'id' => 'test-kit-123'
+        ] );
 
         return rest_do_request( $request );
     }
