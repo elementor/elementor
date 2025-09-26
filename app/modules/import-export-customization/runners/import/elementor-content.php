@@ -260,20 +260,34 @@ class Elementor_Content extends Import_Runner_Base {
 	private function backfill_parents() {
 		global $wpdb;
 
-		foreach ( $this->orphaned_posts as $child_id => $parent_id ) {
-			$local_child_id = false;
-			$local_parent_id = false;
+		$max_iterations = 10;
+		$iteration = 0;
 
-			if ( isset( $this->current_session_mappings[ $child_id ] ) ) {
-				$local_child_id = $this->current_session_mappings[ $child_id ];
-			}
-			if ( isset( $this->current_session_mappings[ $parent_id ] ) ) {
-				$local_parent_id = $this->current_session_mappings[ $parent_id ];
+		while ( ! empty( $this->orphaned_posts ) && $iteration < $max_iterations ) {
+			$iteration++;
+			$resolved_in_this_iteration = [];
+
+			foreach ( $this->orphaned_posts as $child_id => $parent_id ) {
+				$local_child_id = $this->current_session_mappings[ $child_id ] ?? null;
+				$local_parent_id = $this->current_session_mappings[ $parent_id ] ?? null;
+
+				if ( $local_child_id && $local_parent_id ) {
+					$wpdb->update( $wpdb->posts, [ 'post_parent' => $local_parent_id ], [ 'ID' => $local_child_id ], '%d', '%d' );
+					clean_post_cache( $local_child_id );
+					$resolved_in_this_iteration[] = $child_id;
+				} elseif ( $local_child_id && ! $local_parent_id ) {
+					$wpdb->update( $wpdb->posts, [ 'post_parent' => 0 ], [ 'ID' => $local_child_id ], '%d', '%d' );
+					clean_post_cache( $local_child_id );
+					$resolved_in_this_iteration[] = $child_id;
+				}
 			}
 
-			if ( $local_child_id && $local_parent_id ) {
-				$wpdb->update( $wpdb->posts, [ 'post_parent' => $local_parent_id ], [ 'ID' => $local_child_id ], '%d', '%d' );
-				clean_post_cache( $local_child_id );
+			foreach ( $resolved_in_this_iteration as $resolved_id ) {
+				unset( $this->orphaned_posts[ $resolved_id ] );
+			}
+
+			if ( empty( $resolved_in_this_iteration ) ) {
+				break;
 			}
 		}
 	}
