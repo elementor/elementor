@@ -128,47 +128,52 @@ export async function verifyFontSizeWithPublishing(
 	await expect( publishedElement ).toHaveCSS( 'font-size', `${ expectedSize }px`, { timeout: timeouts.expect } );
 }
 
-export async function verifyLetterSpacing(
+// Common function to verify spacing properties (letter spacing, word spacing, etc.)
+async function verifySpacing(
 	driver: EditorDriver,
 	selector: string,
 	expectedValue: number,
 	expectedUnit: string,
+	cssProperty: 'letterSpacing' | 'wordSpacing',
 ): Promise<void> {
 	const frame = driver.editor.getPreviewFrame();
+	if ( ! frame ) {
+		throw new Error( 'Preview frame is not available' );
+	}
 	const element = frame.locator( selector );
 	await expect( element ).toBeVisible( { timeout: timeouts.expect } );
 
 	await expect( async () => {
-		const computedStyles = await element.evaluate( ( el ) => {
+		const computedStyles = await element.evaluate( ( el, property ) => {
 			const styles = window.getComputedStyle( el );
 			return {
-				letterSpacing: styles.letterSpacing,
+				spacing: styles[ property ],
 				fontSize: parseFloat( styles.fontSize ),
 				windowWidth: window.innerWidth,
 				windowHeight: window.innerHeight,
 			};
-		} );
+		}, cssProperty );
 
 		if ( 0 === expectedValue ) {
-			// For expected value 0, check if letter spacing is normal, 0px, or any value that evaluates to 0
-			const letterSpacingStr = computedStyles.letterSpacing;
-			if ( [ 'normal', '0px', 'normal normal' ].includes( letterSpacingStr ) ) {
+			// For expected value 0, check if spacing is normal, 0px, or any value that evaluates to 0
+			const spacingStr = computedStyles.spacing;
+			if ( [ 'normal', '0px', 'normal normal' ].includes( spacingStr ) ) {
 				return;
 			}
 			// If it's not one of the expected strings, check if the numeric value is 0
-			const numericPart = letterSpacingStr.replace( /[^0-9.-]/g, '' );
+			const numericPart = spacingStr.replace( /[^0-9.-]/g, '' );
 			const numericValue = parseFloat( numericPart );
 			expect( numericValue ).toBeCloseTo( 0, 0 );
 			return;
 		}
 
-		const letterSpacingStr = computedStyles.letterSpacing;
+		const spacingStr = computedStyles.spacing;
 		let computedValue;
 
-		if ( 'normal' === letterSpacingStr || '0px' === letterSpacingStr ) {
+		if ( 'normal' === spacingStr || '0px' === spacingStr ) {
 			computedValue = 0;
 		} else {
-			const numericPart = letterSpacingStr.replace( /[^0-9.-]/g, '' );
+			const numericPart = spacingStr.replace( /[^0-9.-]/g, '' );
 			computedValue = parseFloat( numericPart );
 		}
 
@@ -196,67 +201,22 @@ export async function verifyLetterSpacing(
 	} ).toPass( { timeout: timeouts.expect } );
 }
 
+export async function verifyLetterSpacing(
+	driver: EditorDriver,
+	selector: string,
+	expectedValue: number,
+	expectedUnit: string,
+): Promise<void> {
+	await verifySpacing( driver, selector, expectedValue, expectedUnit, 'letterSpacing' );
+}
+
 export async function verifyWordSpacingEditor(
 	driver: EditorDriver,
 	selector: string,
 	expectedValue: number,
 	expectedUnit: string,
 ): Promise<void> {
-	const frame = driver.editor.getPreviewFrame();
-	if ( ! frame ) {
-		throw new Error( 'Preview frame is not available' );
-	}
-	const element = frame.locator( selector );
-	await expect( element ).toBeVisible( { timeout: timeouts.expect } );
-
-	await expect( async () => {
-		const computedStyles = await element.evaluate( ( el ) => {
-			const styles = window.getComputedStyle( el );
-			return {
-				wordSpacing: styles.wordSpacing,
-				fontSize: parseFloat( styles.fontSize ),
-				windowWidth: window.innerWidth,
-				windowHeight: window.innerHeight,
-			};
-		} );
-
-		if ( 0 === expectedValue ) {
-			expect( [ 'normal', '0px', 'normal normal' ].includes( computedStyles.wordSpacing ) ).toBeTruthy();
-			return;
-		}
-
-		const wordSpacingStr = computedStyles.wordSpacing;
-		let computedValue;
-
-		if ( 'normal' === wordSpacingStr || '0px' === wordSpacingStr ) {
-			computedValue = 0;
-		} else {
-			const numericPart = wordSpacingStr.replace( /[^0-9.-]/g, '' );
-			computedValue = parseFloat( numericPart );
-		}
-
-		let expectedPixels = expectedValue;
-		switch ( expectedUnit ) {
-			case 'em':
-				expectedPixels = expectedValue * computedStyles.fontSize;
-				break;
-			case 'rem':
-				expectedPixels = expectedValue * 16; // 1rem = 16px
-				break;
-			case 'vw':
-				expectedPixels = ( expectedValue * computedStyles.windowWidth ) / 100;
-				break;
-			case 'vh':
-				expectedPixels = ( expectedValue * computedStyles.windowHeight ) / 100;
-				break;
-			case '%':
-				// For percentage, it's relative to font size
-				expectedPixels = ( expectedValue * computedStyles.fontSize ) / 100;
-				break;
-		}
-
-		expect( computedValue ).toBeCloseTo( expectedPixels, 0 );
-	} ).toPass( { timeout: timeouts.expect } );
+	await verifySpacing( driver, selector, expectedValue, expectedUnit, 'wordSpacing' );
 }
 
 export async function verifyFontEditor(
