@@ -77,7 +77,7 @@ class Cloud_Kits extends Library {
 		];
 	}
 
-	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes, string $mediaFormat = 'link' ) {
+	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes, string $media_format = 'link' ) {
 		$this->validate_quota();
 
 		$endpoint = 'kits';
@@ -93,7 +93,7 @@ class Cloud_Kits extends Library {
 				'title' => $title,
 				'description' => $description,
 				'includes' => wp_json_encode( $includes ),
-				'mediaFormat' => $mediaFormat,
+				'mediaFormat' => $media_format,
 			],
 			[
 				'previewFile' => [

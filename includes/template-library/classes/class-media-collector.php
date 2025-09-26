@@ -214,7 +214,7 @@ class Media_Collector {
 
 	public function cleanup() {
 		if ( $this->temp_dir ) {
-			// \Elementor\Plugin::$instance->uploads_manager->remove_file_or_dir( $this->temp_dir );
+			\Elementor\Plugin::$instance->uploads_manager->remove_file_or_dir( $this->temp_dir );
 		}
 	}
 
