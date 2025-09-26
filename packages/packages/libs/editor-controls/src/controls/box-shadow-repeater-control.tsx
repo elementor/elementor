@@ -5,14 +5,14 @@ import { FormLabel, Grid, styled, type SxProps, type Theme, UnstableColorIndicat
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
+import { ControlRepeater, Header, Item, ItemsContainer, TooltipAddItemAction } from '../components/control-repeater';
+import { DisableItemAction } from '../components/control-repeater/actions/disable-item-action';
+import { DuplicateItemAction } from '../components/control-repeater/actions/duplicate-item-action';
+import { RemoveItemAction } from '../components/control-repeater/actions/remove-item-action';
+import { useRepeaterContext } from '../components/control-repeater/context/repeater-context';
+import { EditItemPopover } from '../components/control-repeater/items/edit-item-popover';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
-import { Header, Item, ItemsContainer, TooltipAddItemAction, UnstableRepeater } from '../components/unstable-repeater';
-import { DisableItemAction } from '../components/unstable-repeater/actions/disable-item-action';
-import { DuplicateItemAction } from '../components/unstable-repeater/actions/duplicate-item-action';
-import { RemoveItemAction } from '../components/unstable-repeater/actions/remove-item-action';
-import { useRepeaterContext } from '../components/unstable-repeater/context/repeater-context';
-import { EditItemPopover } from '../components/unstable-repeater/items/edit-item-popover';
 import { createControl } from '../create-control';
 import { ColorControl } from './color-control';
 import { SelectControl } from './select-control';
@@ -23,19 +23,27 @@ export const BoxShadowRepeaterControl = createControl( () => {
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ () => disabled }>
-			<UnstableRepeater initial={ initialShadow } propTypeUtil={ boxShadowPropTypeUtil }>
+			<ControlRepeater initial={ initialShadow } propTypeUtil={ boxShadowPropTypeUtil }>
 				<Header label={ __( 'Box shadow', 'elementor' ) }>
-					<TooltipAddItemAction newItemIndex={ 0 } disabled={ disabled } />
+					<TooltipAddItemAction newItemIndex={ 0 } disabled={ disabled } ariaLabel={ 'Box shadow' } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } /> }>
-					<DuplicateItemAction />
-					<DisableItemAction />
-					<RemoveItemAction />
+				<ItemsContainer>
+					<Item
+						Icon={ ItemIcon }
+						Label={ ItemLabel }
+						actions={
+							<>
+								<DuplicateItemAction />
+								<DisableItemAction />
+								<RemoveItemAction />
+							</>
+						}
+					/>
 				</ItemsContainer>
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		</PropProvider>
 	);
 } );

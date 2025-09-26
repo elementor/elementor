@@ -3,7 +3,7 @@ import { __privateUseListenTo as useListenTo, commandEndEvent, v1ReadyEvent } fr
 import { getContainer } from '../sync/get-container';
 import { type ElementID } from '../types';
 
-type ElementModel = {
+export type ElementModel = {
 	id: string;
 };
 

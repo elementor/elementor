@@ -2,17 +2,21 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from '@reach/router';
 import { generateScreenshot } from '../utils/screenshot';
 import { EXPORT_STATUS } from '../context/export-context';
+import { ImportExportError } from '../../shared/error/import-export-error';
 
 const STATUS_PROCESSING = 'processing';
+const STATUS_PROCESSING_MEDIA = 'processing-media';
 const STATUS_ERROR = 'error';
 
 export const useExportKit = ( { includes, kitInfo, customization, isExporting, dispatch } ) => {
 	const [ status, setStatus ] = useState( STATUS_PROCESSING );
+	const [ error, setError ] = useState( null );
 	const navigate = useNavigate();
 
 	const exportKit = useCallback( async () => {
 		try {
 			setStatus( STATUS_PROCESSING );
+			setError( null );
 
 			const exportData = {
 				kitInfo: {
@@ -47,34 +51,61 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 
 			if ( ! response.ok ) {
 				const errorMessage = result?.data?.message || `HTTP error! with the following code: ${ result?.data?.code }`;
-				throw new Error( errorMessage );
+				const errorCode = 408 === response?.status ? 'timeout' : result?.data?.code;
+				throw new ImportExportError( errorMessage, errorCode );
 			}
 
 			const isExportLocal = 'file' === kitInfo.source && result.data && result.data.file;
 			const isExportToCloud = 'cloud' === kitInfo.source && result.data && result.data.kit;
 
+			let exportedData = null;
+
 			if ( isExportLocal ) {
-				const exportedData = {
+				exportedData = {
 					file: result.data.file, // This is base64 encoded file data
 					manifest: result.data.manifest,
 				};
-
-				dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
 			} else if ( isExportToCloud ) {
-				const exportedData = {
+				exportedData = {
 					kit: result.data.kit,
 					manifest: result.data.manifest,
 				};
-
-				dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
 			} else {
-				throw new Error( 'Invalid response format from server' );
+				throw new ImportExportError( 'Invalid response format from server' );
 			}
 
+			const mediaUrls = result.data.media_urls;
+			if ( mediaUrls && mediaUrls.length > 0 ) {
+				setStatus( STATUS_PROCESSING_MEDIA );
+
+				const mediaResponse = await fetch( `${ baseUrl }/process-media`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-WP-Nonce': window.wpApiSettings?.nonce || '',
+					},
+					body: JSON.stringify( { media_urls: mediaUrls } ),
+				} );
+
+				const mediaResult = await mediaResponse.json();
+
+				if ( ! mediaResponse.ok ) {
+					const errorMessage = mediaResult?.data?.message || `Media processing error! Code: ${ mediaResult?.data?.code }`;
+					throw new ImportExportError( errorMessage, mediaResult?.data?.code );
+				}
+
+				exportedData.media = {
+					mapping: mediaResult.data.mapping,
+					zip_path: mediaResult.data.zip_path,
+				};
+			}
+
+			dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
 			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
 			navigate( '/export-customization/complete' );
-		} catch ( error ) {
+		} catch ( err ) {
 			setStatus( STATUS_ERROR );
+			setError( err instanceof ImportExportError ? err : new ImportExportError( err.message ) );
 		}
 	}, [ includes, kitInfo, customization, dispatch, navigate ] );
 
@@ -87,6 +118,9 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 	return {
 		status,
 		STATUS_PROCESSING,
+		STATUS_PROCESSING_MEDIA,
 		STATUS_ERROR,
+		error,
+		exportKit,
 	};
 };

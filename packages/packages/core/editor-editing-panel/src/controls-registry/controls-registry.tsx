@@ -1,16 +1,19 @@
 import {
 	type ControlComponent,
+	HtmlTagControl,
 	ImageControl,
 	KeyValueControl,
 	LinkControl,
 	NumberControl,
+	QueryControl,
 	RepeatableControl,
-	SelectControl,
+	SelectControlWrapper,
 	SizeControl,
 	SvgMediaControl,
 	SwitchControl,
 	TextAreaControl,
 	TextControl,
+	ToggleControl,
 	UrlControl,
 } from '@elementor/editor-controls';
 import { type ControlLayout } from '@elementor/editor-elements';
@@ -22,11 +25,13 @@ import {
 	linkPropTypeUtil,
 	numberPropTypeUtil,
 	type PropTypeUtil,
+	queryPropTypeUtil,
 	sizePropTypeUtil,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
 
 import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../errors';
+import { TabsControl } from './element-controls/tabs-control/tabs-control';
 
 type ControlRegistry = Record<
 	string,
@@ -40,13 +45,16 @@ const controlTypes = {
 	text: { component: TextControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	textarea: { component: TextAreaControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	size: { component: SizeControl, layout: 'two-columns', propTypeUtil: sizePropTypeUtil },
-	select: { component: SelectControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
+	select: { component: SelectControlWrapper, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
 	link: { component: LinkControl, layout: 'custom', propTypeUtil: linkPropTypeUtil },
+	query: { component: QueryControl, layout: 'full', propTypeUtil: queryPropTypeUtil },
 	url: { component: UrlControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	switch: { component: SwitchControl, layout: 'two-columns', propTypeUtil: booleanPropTypeUtil },
 	number: { component: NumberControl, layout: 'two-columns', propTypeUtil: numberPropTypeUtil },
 	repeatable: { component: RepeatableControl, layout: 'full', propTypeUtil: undefined },
 	'key-value': { component: KeyValueControl, layout: 'full', propTypeUtil: keyValuePropTypeUtil },
+	'html-tag': { component: HtmlTagControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
+	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;
@@ -56,7 +64,7 @@ export type ControlTypes = {
 };
 
 class ControlsRegistry {
-	constructor( private readonly controlsRegistry: ControlRegistry = controlTypes ) {
+	constructor( private readonly controlsRegistry: ControlRegistry ) {
 		this.controlsRegistry = controlsRegistry;
 	}
 
@@ -98,4 +106,7 @@ class ControlsRegistry {
 	}
 }
 
-export const controlsRegistry = new ControlsRegistry();
+export const controlsRegistry = new ControlsRegistry( controlTypes );
+
+// @ts-expect-error - we need to create a new control type and registry for the element controls
+controlsRegistry.register( 'tabs', TabsControl, 'full', undefined );
