@@ -172,7 +172,6 @@ export function clearStepStartTime( stepNumber ) {
 	}
 }
 
-
 const StorageManager = {
 	getString,
 	setString,
