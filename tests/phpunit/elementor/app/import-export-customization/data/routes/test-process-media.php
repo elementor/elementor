@@ -64,30 +64,25 @@ class Test_Process_Media extends Elementor_Test_Base {
             'https://example.com/image2.png'
         ] );
 
-        $this->assertEquals( 200, $response->get_status() );
-        $data = $response->get_data();
-        $this->assertArrayHasKey( 'data', $data );
-        $this->assertArrayHasKey( 'mapping', $data['data'] );
-        $this->assertArrayHasKey( 'zip_path', $data['data'] );
-    }
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+		$this->assertArrayHasKey( 'data', $data );
+		$this->assertArrayHasKey( 'success', $data['data'] );
+		$this->assertArrayHasKey( 'message', $data['data'] );
+		$this->assertTrue( $data['data']['success'] );
+	}
 
-    public function test_handles_empty_array() {
+    public function test_empty_array() {
         $this->init_rest_api();
         $this->act_as_admin();
 
         $response = $this->send_request( [] );
 
         $status = $response->get_status();
-        $this->assertTrue( in_array( $status, [ 200, 500 ] ), "Expected 200 or 500, got {$status}" );
-
-        if ( $status === 200 ) {
-            $data = $response->get_data();
-            $this->assertArrayHasKey( 'data', $data );
-            $this->assertEmpty( $data['data']['mapping'] );
-        }
+        $this->assertEquals( 500, $status );
     }
 
-    public function test_handles_invalid_urls() {
+    public function test_invalid_urls() {
         $this->init_rest_api();
         $this->act_as_admin();
 
@@ -96,10 +91,9 @@ class Test_Process_Media extends Elementor_Test_Base {
             'data:image/jpeg;base64,...'
         ] );
 
-        $this->assertEquals( 200, $response->get_status() );
-        $data = $response->get_data();
-        $this->assertArrayHasKey( 'data', $data );
-        $this->assertIsArray( $data['data']['mapping'] );
+        $status = $response->get_status();
+
+        $this->assertEquals( 500, $status );
     }
 
     private function send_request( $media_urls ) {
