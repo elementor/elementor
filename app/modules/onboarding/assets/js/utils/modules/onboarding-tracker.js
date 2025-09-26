@@ -8,6 +8,7 @@ class OnboardingTracker {
 	constructor() {
 		this.initializeEventConfigs();
 		this.initializeEventListeners();
+		this.setupExitWindowTracking();
 	}
 
 	initializeEventConfigs() {
@@ -98,6 +99,17 @@ class OnboardingTracker {
 				basePayload: {
 					location: 'plugin_onboarding',
 					trigger: 'exit_button_clicked',
+				},
+				payloadBuilder: ( eventData ) => ( {
+					action_step: eventData.currentStep,
+				} ),
+			},
+			EXIT_WINDOW: {
+				eventName: ONBOARDING_EVENTS_MAP.EXIT_WINDOW,
+				storageKey: ONBOARDING_STORAGE_KEYS.PENDING_EXIT_WINDOW,
+				basePayload: {
+					location: 'plugin_onboarding',
+					trigger: 'exit_window',
 				},
 				payloadBuilder: ( eventData ) => ( {
 					action_step: eventData.currentStep,
@@ -392,11 +404,20 @@ class OnboardingTracker {
 
 	sendExitButtonEvent( currentStep ) {
 		const stepNumber = this.getStepNumber( currentStep );
-		
+
 		this.trackStepAction( stepNumber, 'exit_button' );
 		this.sendStepEndState( stepNumber );
-		
+
 		return this.sendEventOrStore( 'EXIT_BUTTON', { currentStep } );
+	}
+
+	sendExitWindowEvent( currentStep ) {
+		const stepNumber = this.getStepNumber( currentStep );
+
+		this.trackStepAction( stepNumber, 'exit_window' );
+		this.sendStepEndState( stepNumber );
+
+		return this.sendEventOrStore( 'EXIT_WINDOW', { currentStep } );
 	}
 
 	trackStepAction( stepNumber, action, additionalData = {} ) {
@@ -590,6 +611,7 @@ class OnboardingTracker {
 		this.sendStoredEvent( 'STEP1_CLICKED_CONNECT' );
 		this.sendStoredEvent( 'STEP1_END_STATE' );
 		this.sendStoredEvent( 'EXIT_BUTTON' );
+		this.sendStoredEvent( 'EXIT_WINDOW' );
 	}
 
 	handleStep4CardClick() {
@@ -851,6 +873,47 @@ class OnboardingTracker {
 
 	clearAllOnboardingStorage() {
 		return PostOnboardingTracker.clearAllOnboardingStorage();
+	}
+
+	setupExitWindowTracking() {
+		if ( 'undefined' === typeof window ) {
+			return;
+		}
+
+		const handleBeforeUnload = () => {
+			const currentStep = this.getCurrentStepFromUrl();
+			if ( currentStep ) {
+				this.sendExitWindowEvent( currentStep );
+			}
+		};
+
+		window.addEventListener( 'beforeunload', handleBeforeUnload );
+
+		return () => {
+			window.removeEventListener( 'beforeunload', handleBeforeUnload );
+		};
+	}
+
+	getCurrentStepFromUrl() {
+		const url = window.location.href;
+
+		if ( url.includes( 'hello' ) ) {
+			return 2;
+		}
+		if ( url.includes( 'pro_features' ) || url.includes( 'chooseFeatures' ) ) {
+			return 3;
+		}
+		if ( url.includes( 'site_starter' ) || url.includes( 'goodToGo' ) ) {
+			return 4;
+		}
+		if ( url.includes( 'siteName' ) ) {
+			return 5;
+		}
+		if ( url.includes( 'siteLogo' ) ) {
+			return 6;
+		}
+
+		return 1;
 	}
 }
 

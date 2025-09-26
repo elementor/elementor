@@ -13,6 +13,7 @@ export const ONBOARDING_EVENTS_MAP = {
 	POST_ONBOARDING_2ND_CLICK: 'post_onboarding_2nd_click',
 	POST_ONBOARDING_3RD_CLICK: 'post_onboarding_3rd_click',
 	EXIT_BUTTON: 'core_onboarding_exit_button',
+	EXIT_WINDOW: 'core_onboarding_exit_window',
 	SKIP: 'core_onboarding_skip',
 	TOP_UPGRADE: 'core_onboarding_top_upgrade',
 	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',

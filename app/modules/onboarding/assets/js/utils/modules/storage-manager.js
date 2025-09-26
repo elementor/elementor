@@ -22,6 +22,7 @@ export const ONBOARDING_STORAGE_KEYS = {
 	PENDING_STEP1_CLICKED_CONNECT: 'elementor_onboarding_pending_step1_clicked_connect',
 	PENDING_STEP1_END_STATE: 'elementor_onboarding_pending_step1_end_state',
 	PENDING_EXIT_BUTTON: 'elementor_onboarding_pending_exit_button',
+	PENDING_EXIT_WINDOW: 'elementor_onboarding_pending_exit_window',
 	PENDIND_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
 };
 
@@ -119,6 +120,7 @@ export function clearAllOnboardingData() {
 		ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS,
 		ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
 		ONBOARDING_STORAGE_KEYS.PENDING_EXIT_BUTTON,
+		ONBOARDING_STORAGE_KEYS.PENDING_EXIT_WINDOW,
 		ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
 	];
 
