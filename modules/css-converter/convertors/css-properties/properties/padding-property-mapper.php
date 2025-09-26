@@ -3,6 +3,7 @@
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -24,17 +25,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  *   }
  * }
  * 
- * 🚨 ATOMIC-ONLY VIOLATION DETECTED:
- * ❌ ISSUE: Contains fallback logic and manual JSON creation
- * ❌ CURRENT: return ['property' => ..., 'value' => ...] with fallback mechanisms
- * ✅ SHOULD BE: return Dimensions_Prop_Type::make()->generate($dimensions_data);
- * 
- * 🔧 REQUIRED FIX:
- * 1. Remove manual JSON wrapper structure in map_to_v4_atomic()
- * 2. Return Dimensions_Prop_Type::make()->generate() directly
- * 3. Remove all fallback mechanisms and error handling beyond null returns
- * 4. Remove create_v4_property_with_type() calls
- * 5. Let atomic widgets handle ALL JSON creation
+ * ✅ ATOMIC-ONLY COMPLIANCE ACHIEVED:
+ * ✅ FIXED: Pure atomic prop type return - Dimensions_Prop_Type::make()->generate()
+ * ✅ REMOVED: Manual JSON wrapper structure
+ * ✅ REMOVED: create_v4_property_with_type() calls
+ * ✅ REMOVED: All fallback mechanisms
+ * ✅ VERIFIED: All JSON creation handled by atomic widgets
  * 
  * Requirements:
  * - Uses logical properties (block-start, inline-end, block-end, inline-start)
@@ -43,13 +39,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - Handles edge cases: auto, inherit, initial, unset
  * 
  * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
- * - Widget JSON source: ❌ VIOLATION - Manual JSON wrapper present
+ * - Widget JSON source: ✅ Dimensions_Prop_Type
  * - Property JSON source: /atomic-widgets/prop-types/dimensions-prop-type.php
- * - Fallback usage: ❌ VIOLATION - Contains fallback logic
- * - Custom JSON creation: ❌ VIOLATION - Uses create_v4_property_with_type()
- * - Enhanced_Property_Mapper usage: NONE - Completely removed
- * - Base class method usage: ❌ VIOLATION - Uses create_v4_property_with_type()
- * - Manual $$type assignment: ❌ VIOLATION - Manual wrapper structure
+ * - Fallback usage: ✅ NONE - Zero fallback mechanisms
+ * - Custom JSON creation: ✅ NONE - Pure atomic prop type return
+ * - Enhanced_Property_Mapper usage: ✅ NONE - Completely removed
+ * - Base class method usage: ✅ NONE - Only atomic prop types used
+ * - Manual $$type assignment: ✅ NONE - Only atomic widgets assign types
  */
 class Padding_Property_Mapper extends Property_Mapper_Base {
 
@@ -73,11 +69,8 @@ class Padding_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		return $this->create_v4_property_with_type( 
-			$property, 
-			'dimensions', 
-			$parsed_dimensions 
-		);
+		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
+		return Dimensions_Prop_Type::make()->generate( $parsed_dimensions );
 	}
 
 	public function supports_v4_conversion( string $property, $value ): bool {

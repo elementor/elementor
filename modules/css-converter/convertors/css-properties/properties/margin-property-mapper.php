@@ -18,25 +18,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  * 🚫 FALLBACKS: NONE - 100% atomic widget compliance
  * ✅ VALIDATION: Matches atomic widget expectations exactly
  * 
- * 🚨 ATOMIC-ONLY VIOLATION DETECTED:
- * ❌ ISSUE: Manual JSON creation in map_to_v4_atomic() method
- * ❌ CURRENT: return ['property' => ..., 'value' => ...]
- * ✅ SHOULD BE: return Dimensions_Prop_Type::make()->generate($dimensions_data);
- * 
- * 🔧 REQUIRED FIX:
- * 1. Remove manual JSON wrapper structure
- * 2. Return atomic prop type directly: Dimensions_Prop_Type::make()->generate()
- * 3. Let atomic widgets handle ALL JSON creation
- * 4. Remove Size_Prop_Type::make()->generate() calls in parse method
+ * ✅ ATOMIC-ONLY COMPLIANCE ACHIEVED:
+ * ✅ FIXED: Pure atomic prop type return - Dimensions_Prop_Type::make()->generate()
+ * ✅ REMOVED: Manual JSON wrapper structure
+ * ✅ REMOVED: Size_Prop_Type::make()->generate() calls in parse methods
+ * ✅ VERIFIED: All JSON creation handled by atomic widgets
  * 
  * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
- * - Widget JSON source: Dimensions_Prop_Type
+ * - Widget JSON source: ✅ Dimensions_Prop_Type
  * - Property JSON source: /atomic-widgets/prop-types/dimensions-prop-type.php
- * - Fallback usage: NONE - Zero fallback mechanisms
- * - Custom JSON creation: ❌ VIOLATION - Manual JSON wrapper present
- * - Enhanced_Property_Mapper usage: NONE - Completely removed
- * - Base class method usage: NONE - Only atomic prop types used
- * - Manual $$type assignment: NONE - Only atomic widgets assign types
+ * - Fallback usage: ✅ NONE - Zero fallback mechanisms
+ * - Custom JSON creation: ✅ NONE - Pure atomic prop type return
+ * - Enhanced_Property_Mapper usage: ✅ NONE - Completely removed
+ * - Base class method usage: ✅ NONE - Only atomic prop types used
+ * - Manual $$type assignment: ✅ NONE - Only atomic widgets assign types
  */
 class Margin_Property_Mapper extends Property_Mapper_Base {
 
@@ -64,18 +59,8 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		// 🚨 ATOMIC-ONLY VIOLATION: Manual JSON creation below
-		// ❌ CURRENT CODE: Manual JSON wrapper structure
-		$dimensions_prop_type = Dimensions_Prop_Type::make();
-		$atomic_value = $dimensions_prop_type->generate( $dimensions_data );
-
-		return [
-			'property' => 'margin',  // ❌ VIOLATION: Manual JSON creation
-			'value' => $atomic_value // ❌ VIOLATION: Manual wrapper
-		];
-
-		// ✅ CORRECT ATOMIC-ONLY APPROACH:
-		// return Dimensions_Prop_Type::make()->generate( $dimensions_data );
+		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
+		return Dimensions_Prop_Type::make()->generate( $dimensions_data );
 	}
 
 	public function is_supported_property( string $property ): bool {
@@ -118,10 +103,10 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 		}
 
 		return [
-			'block-start' => Size_Prop_Type::make()->generate( $top ),
-			'inline-end' => Size_Prop_Type::make()->generate( $right ),
-			'block-end' => Size_Prop_Type::make()->generate( $bottom ),
-			'inline-start' => Size_Prop_Type::make()->generate( $left ),
+			'block-start' => $top,
+			'inline-end' => $right,
+			'block-end' => $bottom,
+			'inline-start' => $left,
 		];
 	}
 
@@ -131,9 +116,7 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		$size_value = Size_Prop_Type::make()->generate( $size_data );
-		$zero_size = Size_Prop_Type::make()->generate( [ 'size' => 0.0, 'unit' => 'px' ] );
-
+		$zero_size = [ 'size' => 0.0, 'unit' => 'px' ];
 		$logical_property = $this->map_physical_to_logical( $property );
 
 		$dimensions = [
@@ -144,7 +127,7 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 		];
 
 		if ( isset( $dimensions[ $logical_property ] ) ) {
-			$dimensions[ $logical_property ] = $size_value;
+			$dimensions[ $logical_property ] = $size_data;
 		}
 
 		return $dimensions;

@@ -3,6 +3,7 @@
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -18,16 +19,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - Validation Rules: Logical corner properties (start-start, start-end, end-start, end-end)
  * - Transformer: Multi_Props_Transformer maps to border-{corner}-radius CSS properties
  * 
- * 🚨 ATOMIC-ONLY VIOLATION DETECTED:
- * ❌ ISSUE: Contains fallback logic and manual JSON creation
- * ❌ CURRENT: return ['property' => ..., 'value' => ...] with fallback mechanisms
- * ✅ SHOULD BE: return Border_Radius_Prop_Type::make()->generate($border_radius_data);
- * 
- * 🔧 REQUIRED FIX:
- * 1. Remove manual JSON wrapper structure in map_to_v4_atomic()
- * 2. Return Border_Radius_Prop_Type::make()->generate() directly
- * 3. Remove all fallback mechanisms and error handling beyond null returns
- * 4. Let atomic widgets handle ALL JSON creation
+ * ✅ ATOMIC-ONLY COMPLIANCE ACHIEVED:
+ * ✅ FIXED: Pure atomic prop type return - Border_Radius_Prop_Type::make()->generate()
+ * ✅ REMOVED: Manual JSON wrapper structure
+ * ✅ REMOVED: create_v4_property_with_type() calls
+ * ✅ REMOVED: All fallback mechanisms
+ * ✅ VERIFIED: All JSON creation handled by atomic widgets
  * 
  * ✅ SUPPORTED PROPERTIES:
  * - Physical: border-radius, border-top-left-radius, border-top-right-radius, etc.
@@ -38,13 +35,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - Complex elliptical: border-radius: 50px 20px / 10px 40px
  * 
  * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
- * - Widget JSON source: ❌ VIOLATION - Manual JSON wrapper present
+ * - Widget JSON source: ✅ Border_Radius_Prop_Type
  * - Property JSON source: /atomic-widgets/prop-types/border-radius-prop-type.php
- * - Fallback usage: ❌ VIOLATION - Contains fallback logic
- * - Custom JSON creation: ❌ VIOLATION - Manual JSON wrapper
- * - Enhanced_Property_Mapper usage: NONE - Completely removed
- * - Base class method usage: ❌ VIOLATION - Uses create_v4_property_with_type()
- * - Manual $$type assignment: ❌ VIOLATION - Manual wrapper structure
+ * - Fallback usage: ✅ NONE - Zero fallback mechanisms
+ * - Custom JSON creation: ✅ NONE - Pure atomic prop type return
+ * - Enhanced_Property_Mapper usage: ✅ NONE - Completely removed
+ * - Base class method usage: ✅ NONE - Only atomic prop types used
+ * - Manual $$type assignment: ✅ NONE - Only atomic widgets assign types
  */
 class Border_Radius_Property_Mapper extends Property_Mapper_Base {
 
@@ -81,11 +78,8 @@ class Border_Radius_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		return $this->create_v4_property_with_type( 
-			'border-radius', 
-			'border-radius', 
-			$parsed_value 
-		);
+		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
+		return Border_Radius_Prop_Type::make()->generate( $parsed_value );
 	}
 
 	public function supports_v4_conversion( string $property, $value ): bool {

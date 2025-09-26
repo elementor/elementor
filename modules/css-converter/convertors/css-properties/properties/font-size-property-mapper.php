@@ -17,24 +17,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * 🚫 FALLBACKS: NONE - 100% atomic widget compliance
  * ✅ VALIDATION: Matches atomic widget expectations exactly
  * 
- * 🚨 ATOMIC-ONLY VIOLATION DETECTED:
- * ❌ ISSUE: Manual JSON creation in map_to_v4_atomic() method
- * ❌ CURRENT: return ['property' => ..., 'value' => ...]
- * ✅ SHOULD BE: return Size_Prop_Type::make()->units(Size_Constants::typography())->generate($size_data);
- * 
- * 🔧 REQUIRED FIX:
- * 1. Remove manual JSON wrapper structure (lines 50-53)
- * 2. Return atomic prop type directly: Size_Prop_Type::make()->units()->generate()
- * 3. Let atomic widgets handle ALL JSON creation
+ * ✅ ATOMIC-ONLY COMPLIANCE ACHIEVED:
+ * ✅ FIXED: Pure atomic prop type return - Size_Prop_Type::make()->units()->generate()
+ * ✅ REMOVED: Manual JSON wrapper structure
+ * ✅ VERIFIED: All JSON creation handled by atomic widgets
  * 
  * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
- * - Widget JSON source: Size_Prop_Type
+ * - Widget JSON source: ✅ Size_Prop_Type
  * - Property JSON source: /atomic-widgets/prop-types/size-prop-type.php
- * - Fallback usage: NONE - Zero fallback mechanisms
- * - Custom JSON creation: ❌ VIOLATION - Manual JSON wrapper present
- * - Enhanced_Property_Mapper usage: NONE - Completely removed
- * - Base class method usage: NONE - Only atomic prop types used
- * - Manual $$type assignment: NONE - Only atomic widgets assign types
+ * - Fallback usage: ✅ NONE - Zero fallback mechanisms
+ * - Custom JSON creation: ✅ NONE - Pure atomic prop type return
+ * - Enhanced_Property_Mapper usage: ✅ NONE - Completely removed
+ * - Base class method usage: ✅ NONE - Only atomic prop types used
+ * - Manual $$type assignment: ✅ NONE - Only atomic widgets assign types
  */
 class Font_Size_Property_Mapper extends Property_Mapper_Base {
 
@@ -52,22 +47,10 @@ class Font_Size_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		// 🚨 ATOMIC-ONLY VIOLATION: Manual JSON creation below
-		// ❌ CURRENT CODE: Manual JSON wrapper structure
-		$size_prop_type = Size_Prop_Type::make()
-			->units( Size_Constants::typography() );
-
-		$atomic_value = $size_prop_type->generate( $size_data );
-
-		return [
-			'property' => 'font-size',  // ❌ VIOLATION: Manual JSON creation
-			'value' => $atomic_value    // ❌ VIOLATION: Manual wrapper
-		];
-
-		// ✅ CORRECT ATOMIC-ONLY APPROACH:
-		// return Size_Prop_Type::make()
-		//     ->units( Size_Constants::typography() )
-		//     ->generate( $size_data );
+		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
+		return Size_Prop_Type::make()
+			->units( Size_Constants::typography() )
+			->generate( $size_data );
 	}
 
 	public function is_supported_property( string $property ): bool {
