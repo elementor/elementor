@@ -39,6 +39,7 @@ class WP_Import extends \WP_Importer {
 	const DEFAULT_BUMP_REQUEST_TIMEOUT = 60;
 	const DEFAULT_ALLOW_CREATE_USERS = true;
 	const DEFAULT_IMPORT_ATTACHMENT_SIZE_LIMIT = 0; // 0 = unlimited.
+	const MAX_PARENT_BACKFILL_ITERATIONS = 10;
 
 	/**
 	 * @var string
@@ -1194,40 +1195,61 @@ class WP_Import extends \WP_Importer {
 	 * the object (e.g. post) they represent in the menu
 	 */
 	private function backfill_parents() {
+		$this->backfill_post_parents();
+		$this->backfill_menu_item_parents();
+	}
+
+	private function backfill_post_parents() {
 		global $wpdb;
 
-		// Find parents for post orphans.
-		foreach ( $this->post_orphans as $child_id => $parent_id ) {
-			$local_child_id = false;
-			$local_parent_id = false;
+		$iteration = 0;
 
-			if ( isset( $this->processed_posts[ $child_id ] ) ) {
-				$local_child_id = $this->processed_posts[ $child_id ];
-			}
-			if ( isset( $this->processed_posts[ $parent_id ] ) ) {
-				$local_parent_id = $this->processed_posts[ $parent_id ];
+		while ( ! empty( $this->post_orphans ) && $iteration < self::MAX_PARENT_BACKFILL_ITERATIONS ) {
+			$iteration++;
+			$resolved_in_this_iteration = [];
+
+			foreach ( $this->post_orphans as $child_id => $parent_id ) {
+				$local_child_id = $this->processed_posts[ $child_id ] ?? null;
+				$local_parent_id = $this->processed_posts[ $parent_id ] ?? null;
+
+				if ( $local_child_id && $local_parent_id ) {
+					$this->update_post_parent( $local_child_id, $local_parent_id );
+					$resolved_in_this_iteration[] = $child_id;
+				} elseif ( $local_child_id && ! $local_parent_id ) {
+					$this->update_post_parent( $local_child_id, 0 );
+					$resolved_in_this_iteration[] = $child_id;
+				}
 			}
 
-			if ( $local_child_id && $local_parent_id ) {
-				$wpdb->update( $wpdb->posts, [ 'post_parent' => $local_parent_id ], [ 'ID' => $local_child_id ], '%d', '%d' );
-				clean_post_cache( $local_child_id );
+			$this->remove_resolved_orphans( $resolved_in_this_iteration );
+
+			if ( empty( $resolved_in_this_iteration ) ) {
+				break;
 			}
 		}
+	}
 
-		// Find parents for menu item orphans.
+	private function backfill_menu_item_parents() {
 		foreach ( $this->menu_item_orphans as $child_id => $parent_id ) {
-			$local_child_id = 0;
-			$local_parent_id = 0;
-			if ( isset( $this->processed_menu_items[ $child_id ] ) ) {
-				$local_child_id = $this->processed_menu_items[ $child_id ];
-			}
-			if ( isset( $this->processed_menu_items[ $parent_id ] ) ) {
-				$local_parent_id = $this->processed_menu_items[ $parent_id ];
-			}
+			$local_child_id = $this->processed_menu_items[ $child_id ] ?? 0;
+			$local_parent_id = $this->processed_menu_items[ $parent_id ] ?? 0;
 
 			if ( $local_child_id && $local_parent_id ) {
 				update_post_meta( $local_child_id, '_menu_item_menu_item_parent', (int) $local_parent_id );
 			}
+		}
+	}
+
+	private function update_post_parent( $child_id, $parent_id ) {
+		global $wpdb;
+
+		$wpdb->update( $wpdb->posts, [ 'post_parent' => $parent_id ], [ 'ID' => $child_id ], '%d', '%d' );
+		clean_post_cache( $child_id );
+	}
+
+	private function remove_resolved_orphans( array $resolved_ids ) {
+		foreach ( $resolved_ids as $resolved_id ) {
+			unset( $this->post_orphans[ $resolved_id ] );
 		}
 	}
 
