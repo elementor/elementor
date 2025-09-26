@@ -5,7 +5,7 @@ import { type Component } from './types';
 
 const BASE_URL = 'elementor/v1/components';
 
-type CreateComponentPayload = {
+export type CreateComponentPayload = {
 	name: string;
 	content: V1ElementModelProps[];
 };

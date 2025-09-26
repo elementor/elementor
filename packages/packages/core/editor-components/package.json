@@ -40,6 +40,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
+    "@elementor/store": "3.33.0",
     "@elementor/editor": "3.33.0",
     "@elementor/utils": "3.33.0",
     "@elementor/editor-canvas": "3.33.0",

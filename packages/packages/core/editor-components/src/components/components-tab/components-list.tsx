@@ -24,7 +24,9 @@ export function ComponentsList() {
 
 	return (
 		<List sx={ { display: 'flex', flexDirection: 'column', gap: 1, px: 2 } }>
-			{ components?.map( ( component ) => <ComponentItem key={ component.id } component={ component } /> ) }
+			{ components.map( ( component ) => (
+				<ComponentItem key={ component.id } component={ component } />
+			) ) }
 		</List>
 	);
 }
@@ -126,12 +128,12 @@ const EmptySearchResult = () => {
 };
 
 const useFilteredComponents = () => {
-	const { data: components, isLoading } = useComponents();
+	const { components, isLoading } = useComponents();
 	const { searchValue } = useSearch();
 
 	return {
-		components: components?.filter( ( component ) =>
-			component.name.toLowerCase().includes( searchValue.toLowerCase() )
+		components: components?.filter(
+			( component ) => component?.name?.toLowerCase().includes( searchValue.toLowerCase() )
 		),
 		isLoading,
 		searchValue,
