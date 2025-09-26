@@ -38,7 +38,6 @@ class Elementor_Content extends Import_Runner_Base {
 	}
 
 	public function import( array $data, array $imported_data ) {
-
 		if ( ! function_exists( 'wp_set_post_terms' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/taxonomy.php';
 		}
@@ -91,7 +90,7 @@ class Elementor_Content extends Import_Runner_Base {
 
 		foreach ( $posts_settings as $id => $post_settings ) {
 			try {
-				
+
 				if ( 'page' === $post_type ) {
 					$data = [
 						'path' => $path,
@@ -101,25 +100,19 @@ class Elementor_Content extends Import_Runner_Base {
 						'imported_terms' => $imported_terms,
 					];
 
-				$import_result = apply_filters( 'elementor/import-export-customization/import/elementor-content/customization', null, $data, [], $customization ?? [], $this );
+					$import_result = apply_filters( 'elementor/import-export-customization/import/elementor-content/customization', null, $data, [], $customization ?? [], $this );
 
-				if ( is_array( $import_result ) ) {
-					$result[ $import_result['status'] ][ $id ] = $import_result['result'];
-					
-				if ( $import_result['status'] === static::IMPORT_STATUS_SUCCEEDED ) {
-					$this->track_successful_import( $id, $import_result['result'] );
-				}
-					
-					continue;
-				}
+					if ( is_array( $import_result ) ) {
+						$result[ $import_result['status'] ][ $id ] = $import_result['result'];
+						$this->track_import( $id, $import_result );
+
+						continue;
+					}
 				}
 
-			$import_result = $this->read_and_import_post( $path, $id, $post_settings, $post_type, $imported_terms );
-			
-			if ( $import_result['status'] === static::IMPORT_STATUS_SUCCEEDED ) {
-				$this->track_successful_import( $id, $import_result['result'] );
-			}
-				
+				$import_result = $this->read_and_import_post( $path, $id, $post_settings, $post_type, $imported_terms );
+				$this->track_import( $id, $import_result );
+
 				$result[ $import_result['status'] ][ $id ] = $import_result['result'];
 			} catch ( \Exception $error ) {
 				$result['failed'][ $id ] = $error->getMessage();
@@ -267,7 +260,11 @@ class Elementor_Content extends Import_Runner_Base {
 		}
 	}
 
-	private function track_successful_import( $original_id, $new_id ) {
-		$this->current_session_mappings[ $original_id ] = $new_id;
+	private function track_import( $original_id, $import_result ) {
+		if ( $import_result['status'] !== static::IMPORT_STATUS_SUCCEEDED ) {
+			return;
+		}
+
+		$this->current_session_mappings[ $original_id ] = $import_result['result'];
 	}
 }
