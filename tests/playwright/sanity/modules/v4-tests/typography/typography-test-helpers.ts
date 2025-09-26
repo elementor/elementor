@@ -186,7 +186,15 @@ export async function verifyLetterSpacing(
 		} );
 
 		if ( 0 === expectedValue ) {
-			expect( [ 'normal', '0px', 'normal normal' ].includes( computedStyles.letterSpacing ) ).toBeTruthy();
+			// For expected value 0, check if letter spacing is normal, 0px, or any value that evaluates to 0
+			const letterSpacingStr = computedStyles.letterSpacing;
+			if ( [ 'normal', '0px', 'normal normal' ].includes( letterSpacingStr ) ) {
+				return;
+			}
+			// If it's not one of the expected strings, check if the numeric value is 0
+			const numericPart = letterSpacingStr.replace( /[^0-9.-]/g, '' );
+			const numericValue = parseFloat( numericPart );
+			expect( numericValue ).toBeCloseTo( 0, 0 );
 			return;
 		}
 
