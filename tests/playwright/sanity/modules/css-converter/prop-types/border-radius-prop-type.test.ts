@@ -151,7 +151,6 @@ test.describe( 'Border Radius Prop Type Integration @prop-types', () => {
 			await page.goto( `/?p=${ pageId }` );
 			await page.waitForLoadState();
 
-			// Test border-radius variations on frontend with vanilla Playwright assertions
 			const testCases = [
 				{
 					index: 0,

@@ -34,6 +34,7 @@ class Class_Property_Mapper_Registry {
 		require_once __DIR__ . '/../properties/atomic-padding-property-mapper.php';
 		require_once __DIR__ . '/../properties/width-property-mapper.php';
 		require_once __DIR__ . '/../properties/border-radius-property-mapper.php';
+		require_once __DIR__ . '/../properties/box-shadow-property-mapper.php';
 		
 		// Register atomic property mappers
 		$this->mappers['color'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Color_Property_Mapper();
@@ -58,6 +59,9 @@ class Class_Property_Mapper_Registry {
 		foreach ( $border_radius_mapper->get_supported_properties() as $property ) {
 			$this->mappers[ $property ] = $border_radius_mapper;
 		}
+		
+		// Register atomic box-shadow mapper
+		$this->mappers['box-shadow'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Box_Shadow_Property_Mapper();
 	}
 
 	public function register( string $property, object $mapper ): void {

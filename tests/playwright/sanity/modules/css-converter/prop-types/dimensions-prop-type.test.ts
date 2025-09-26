@@ -65,128 +65,36 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
-		await test.step( 'Verify padding: 20px (single value) in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			await elementorFrame.waitForLoadState();
-			
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 0 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
+		// Define test cases for both editor and frontend verification
+		const testCases = [
+			{ index: 0, name: 'padding: 20px', expected: { top: '20px', right: '20px', bottom: '20px', left: '20px' } },
+			{ index: 1, name: 'padding: 20px 40px', expected: { top: '20px', right: '40px', bottom: '20px', left: '40px' } },
+			{ index: 2, name: 'padding: 20px 30px 0px 10px', expected: { top: '20px', right: '30px', bottom: '0px', left: '10px' } },
+			{ index: 3, name: 'padding-top: 20px', expected: { top: '20px', right: '0px', bottom: '0px', left: '0px' } },
+			{ index: 4, name: 'padding-block-start: 30px', expected: { top: '30px', right: '0px', bottom: '0px', left: '0px' } },
+			{ index: 5, name: 'padding-left: 30px', expected: { top: '0px', right: '0px', bottom: '0px', left: '30px' } },
+			{ index: 6, name: 'padding-inline-start: 40px', expected: { top: '0px', right: '0px', bottom: '0px', left: '40px' } },
+			{ index: 7, name: 'padding-block: 20px', expected: { top: '20px', right: '0px', bottom: '20px', left: '0px' } },
+			{ index: 8, name: 'padding-block: 20px 30px', expected: { top: '20px', right: '0px', bottom: '30px', left: '0px' } },
+			{ index: 9, name: 'padding-inline: 20px', expected: { top: '0px', right: '20px', bottom: '0px', left: '20px' } },
+			{ index: 10, name: 'padding-inline: 20px 30px', expected: { top: '0px', right: '30px', bottom: '0px', left: '20px' } },
+		];
 
-			await expect( element ).toHaveCSS( 'padding-top', '20px' );
-			await expect( element ).toHaveCSS( 'padding-right', '20px' );
-			await expect( element ).toHaveCSS( 'padding-bottom', '20px' );
-			await expect( element ).toHaveCSS( 'padding-left', '20px' );
-		} );
+		// Editor verification using test cases array
+		for ( const testCase of testCases ) {
+			await test.step( `Verify ${ testCase.name } in editor`, async () => {
+				const elementorFrame = editor.getPreviewFrame();
+				await elementorFrame.waitForLoadState();
+				
+				const element = elementorFrame.locator( '.e-paragraph-base' ).nth( testCase.index );
+				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
-		await test.step( 'Verify padding: 20px 40px (two values) in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 1 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-			await expect( element ).toHaveCSS( 'padding-top', '20px' );
-			await expect( element ).toHaveCSS( 'padding-right', '40px' );
-			await expect( element ).toHaveCSS( 'padding-bottom', '20px' );
-			await expect( element ).toHaveCSS( 'padding-left', '40px' );
-		} );
-
-		await test.step( 'Verify padding: 20px 30px 0px 10px (four values) in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 2 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-			await expect( element ).toHaveCSS( 'padding-top', '20px' );
-			await expect( element ).toHaveCSS( 'padding-right', '30px' );
-			await expect( element ).toHaveCSS( 'padding-bottom', '0px' );
-			await expect( element ).toHaveCSS( 'padding-left', '10px' );
-		} );
-
-		await test.step( 'Verify padding-top: 20px in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 3 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-			await expect( element ).toHaveCSS( 'padding-top', '20px' );
-			await expect( element ).toHaveCSS( 'padding-right', '0px' );
-			await expect( element ).toHaveCSS( 'padding-bottom', '0px' );
-			await expect( element ).toHaveCSS( 'padding-left', '0px' );
-		} );
-
-		await test.step( 'Verify padding-block-start: 30px in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 4 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-			await expect( element ).toHaveCSS( 'padding-top', '30px' );
-			await expect( element ).toHaveCSS( 'padding-right', '0px' );
-			await expect( element ).toHaveCSS( 'padding-bottom', '0px' );
-			await expect( element ).toHaveCSS( 'padding-left', '0px' );
-		} );
-
-		await test.step( 'Verify padding-left: 30px in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 5 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-			await expect( element ).toHaveCSS( 'padding-top', '0px' );
-			await expect( element ).toHaveCSS( 'padding-right', '0px' );
-			await expect( element ).toHaveCSS( 'padding-bottom', '0px' );
-			await expect( element ).toHaveCSS( 'padding-left', '30px' );
-		} );
-
-		await test.step( 'Verify padding-inline-start: 40px in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 6 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-			await expect( element ).toHaveCSS( 'padding-top', '0px' );
-			await expect( element ).toHaveCSS( 'padding-right', '0px' );
-			await expect( element ).toHaveCSS( 'padding-bottom', '0px' );
-			await expect( element ).toHaveCSS( 'padding-left', '40px' );
-		} );
-
-		await test.step( 'Verify padding-block: 20px (single value) in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 7 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-			await expect( element ).toHaveCSS( 'padding-top', '20px' );
-			await expect( element ).toHaveCSS( 'padding-right', '0px' );
-			await expect( element ).toHaveCSS( 'padding-bottom', '20px' );
-			await expect( element ).toHaveCSS( 'padding-left', '0px' );
-		} );
-
-		await test.step( 'Verify padding-block: 20px 30px (two values) in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 8 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-			await expect( element ).toHaveCSS( 'padding-top', '20px' );
-			await expect( element ).toHaveCSS( 'padding-right', '0px' );
-			await expect( element ).toHaveCSS( 'padding-bottom', '30px' );
-			await expect( element ).toHaveCSS( 'padding-left', '0px' );
-		} );
-
-		await test.step( 'Verify padding-inline: 20px (single value) in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 9 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-			await expect( element ).toHaveCSS( 'padding-top', '0px' );
-			await expect( element ).toHaveCSS( 'padding-right', '20px' );
-			await expect( element ).toHaveCSS( 'padding-bottom', '0px' );
-			await expect( element ).toHaveCSS( 'padding-left', '20px' );
-		} );
-
-		await test.step( 'Verify padding-inline: 20px 30px (two values) in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 10 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-			await expect( element ).toHaveCSS( 'padding-top', '0px' );
-			await expect( element ).toHaveCSS( 'padding-right', '30px' );
-			await expect( element ).toHaveCSS( 'padding-bottom', '0px' );
-			await expect( element ).toHaveCSS( 'padding-left', '20px' );
-		} );
+				await expect( element ).toHaveCSS( 'padding-top', testCase.expected.top );
+				await expect( element ).toHaveCSS( 'padding-right', testCase.expected.right );
+				await expect( element ).toHaveCSS( 'padding-bottom', testCase.expected.bottom );
+				await expect( element ).toHaveCSS( 'padding-left', testCase.expected.left );
+			} );
+		}
 
 		await test.step( 'Publish page and verify all padding styles on frontend', async () => {
 			// Save the page first
@@ -197,21 +105,7 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 			await page.goto( `/?p=${ pageId }` );
 			await page.waitForLoadState();
 
-			// Test all padding variations on frontend
-			const testCases = [
-				{ index: 0, name: 'padding: 20px', expected: { top: '20px', right: '20px', bottom: '20px', left: '20px' } },
-				{ index: 1, name: 'padding: 20px 40px', expected: { top: '20px', right: '40px', bottom: '20px', left: '40px' } },
-				{ index: 2, name: 'padding: 20px 30px 0px 10px', expected: { top: '20px', right: '30px', bottom: '0px', left: '10px' } },
-				{ index: 3, name: 'padding-top: 20px', expected: { top: '20px', right: '0px', bottom: '0px', left: '0px' } },
-				{ index: 4, name: 'padding-block-start: 30px', expected: { top: '30px', right: '0px', bottom: '0px', left: '0px' } },
-				{ index: 5, name: 'padding-left: 30px', expected: { top: '0px', right: '0px', bottom: '0px', left: '30px' } },
-				{ index: 6, name: 'padding-inline-start: 40px', expected: { top: '0px', right: '0px', bottom: '0px', left: '40px' } },
-				{ index: 7, name: 'padding-block: 20px', expected: { top: '20px', right: '0px', bottom: '20px', left: '0px' } },
-				{ index: 8, name: 'padding-block: 20px 30px', expected: { top: '20px', right: '0px', bottom: '30px', left: '0px' } },
-				{ index: 9, name: 'padding-inline: 20px', expected: { top: '0px', right: '20px', bottom: '0px', left: '20px' } },
-				{ index: 10, name: 'padding-inline: 20px 30px', expected: { top: '0px', right: '30px', bottom: '0px', left: '20px' } },
-			];
-
+			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${testCase.name} on frontend`, async () => {
 					const frontendElement = page.locator( '.e-paragraph-base' ).nth( testCase.index );

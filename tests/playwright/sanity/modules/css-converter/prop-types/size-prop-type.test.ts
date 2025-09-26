@@ -59,40 +59,28 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
-		await test.step( 'Verify height: 100px in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			await elementorFrame.waitForLoadState();
-			
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 0 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
+		// Define test cases for both editor and frontend verification
+		const testCases = [
+			{ index: 0, name: 'height: 100px', property: 'height', expected: '100px' },
+			{ index: 1, name: 'font-size: 18px', property: 'font-size', expected: '18px' },
+			{ index: 2, name: 'max-width: 300px', property: 'max-width', expected: '300px' },
+			{ index: 3, name: 'min-height: 50px', property: 'min-height', expected: '50px' },
+		];
 
-			await expect( element ).toHaveCSS( 'height', '100px' );
-		} );
+		// Editor verification using test cases array
+		for ( const testCase of testCases ) {
+			await test.step( `Verify ${ testCase.name } in editor`, async () => {
+				const elementorFrame = editor.getPreviewFrame();
+				await elementorFrame.waitForLoadState();
+				
+				const element = elementorFrame.locator( '.e-paragraph-base' ).nth( testCase.index );
+				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
-		await test.step( 'Verify font-size: 18px in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 1 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
+				await expect( element ).toHaveCSS( testCase.property, testCase.expected );
+			} );
+		}
 
-			await expect( element ).toHaveCSS( 'font-size', '18px' );
-		} );
-
-		await test.step( 'Verify max-width: 300px in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 2 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-			await expect( element ).toHaveCSS( 'max-width', '300px' );
-		} );
-
-		await test.step( 'Verify min-height: 50px in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 3 );
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-			await expect( element ).toHaveCSS( 'min-height', '50px' );
-		} );
-
+		// Special case for width: auto in editor - flexible validation
 		await test.step( 'Verify width: auto in editor (computed validation)', async () => {
 			const elementorFrame = editor.getPreviewFrame();
 			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 4 );
@@ -119,14 +107,7 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 			await page.goto( `/?p=${ pageId }` );
 			await page.waitForLoadState();
 
-			// Test core size properties with vanilla Playwright assertions
-			const testCases = [
-				{ index: 0, name: 'height: 100px', property: 'height', expected: '100px' },
-				{ index: 1, name: 'font-size: 18px', property: 'font-size', expected: '18px' },
-				{ index: 2, name: 'max-width: 300px', property: 'max-width', expected: '300px' },
-				{ index: 3, name: 'min-height: 50px', property: 'min-height', expected: '50px' },
-			];
-
+			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${testCase.name} on frontend`, async () => {
 					const frontendElement = page.locator( '.e-paragraph-base' ).nth( testCase.index );
@@ -135,7 +116,7 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 				} );
 			}
 
-			// Special test for width: auto with computed validation on frontend
+			// Special case for width: auto on frontend - flexible validation
 			await test.step( 'Verify width: auto on frontend (computed validation)', async () => {
 				const frontendElement = page.locator( '.e-paragraph-base' ).nth( 4 );
 
