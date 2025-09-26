@@ -35,12 +35,17 @@ class Class_Property_Mapper_Registry {
 		require_once __DIR__ . '/../properties/width-property-mapper.php';
 		require_once __DIR__ . '/../properties/border-radius-property-mapper.php';
 		require_once __DIR__ . '/../properties/box-shadow-property-mapper.php';
+		require_once __DIR__ . '/../properties/opacity-property-mapper.php';
 		
 		// Register atomic property mappers
 		$this->mappers['color'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Color_Property_Mapper();
 		$this->mappers['background-color'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Background_Color_Property_Mapper();
 		$this->mappers['font-size'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Font_Size_Property_Mapper();
-		$this->mappers['margin'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Margin_Property_Mapper();
+		// Register comprehensive atomic margin mapper for all margin variations
+		$margin_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Margin_Property_Mapper();
+		foreach ( $margin_mapper->get_supported_properties() as $property ) {
+			$this->mappers[ $property ] = $margin_mapper;
+		}
 		
 		// Register comprehensive atomic padding mapper for all padding variations
 		$atomic_padding_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Atomic_Padding_Property_Mapper();
@@ -62,6 +67,9 @@ class Class_Property_Mapper_Registry {
 		
 		// Register atomic box-shadow mapper
 		$this->mappers['box-shadow'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Box_Shadow_Property_Mapper();
+		
+		// Register atomic opacity mapper
+		$this->mappers['opacity'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Opacity_Property_Mapper();
 	}
 
 	public function register( string $property, object $mapper ): void {

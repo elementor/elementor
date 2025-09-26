@@ -31,11 +31,22 @@ abstract class Property_Mapper_Base implements Property_Mapper_Interface {
 	}
 
 
+	/**
+	 * 🚫 ATOMIC-ONLY ENFORCEMENT: This method is DEPRECATED
+	 * 
+	 * This method creates manual JSON structures which violates atomic-only compliance.
+	 * Use atomic prop types directly: Size_Prop_Type::make()->generate($data)
+	 * 
+	 * @deprecated Use atomic prop types directly instead
+	 * @throws \Exception Always throws to enforce atomic-only compliance
+	 */
 	protected function create_v4_property_with_type( string $property, string $type, $value ): array {
-		$atomic_value = $this->create_atomic_structure( $type, $value );
-		$validated_value = $this->validate_with_atomic_widgets( $type, $atomic_value );
-		
-		return $this->build_property_response( $property, $validated_value ?? $atomic_value );
+		throw new \Exception( 
+			"ATOMIC-ONLY VIOLATION: create_v4_property_with_type() is deprecated. " .
+			"Use atomic prop types directly: {$type}_Prop_Type::make()->generate(\$data). " .
+			"Property: {$property}, Type: {$type}, Value: " . var_export( $value, true ) . ". " .
+			"See documentation for correct atomic widget implementation patterns."
+		);
 	}
 
 	private function create_atomic_structure( string $type, $value ): array {

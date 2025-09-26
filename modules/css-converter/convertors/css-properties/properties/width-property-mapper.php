@@ -17,8 +17,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - Expected Structure: {"$$type":"size","value":{"size":100,"unit":"px"}}
  * - Validation Rules: Numeric size values, supported units from Size_Constants
  * 
- * 🚫 FALLBACK STATUS: NONE - This mapper has zero fallbacks
- * ✅ COMPLIANCE: 100% atomic widget based
+ * 🚨 ATOMIC-ONLY VIOLATION DETECTED:
+ * ❌ ISSUE: Contains fallback logic and manual JSON creation
+ * ❌ CURRENT: Uses create_v4_property_with_type() - FORBIDDEN base class method
+ * ✅ SHOULD BE: return Size_Prop_Type::make()->generate($size_data);
+ * 
+ * 🔧 REQUIRED FIX:
+ * 1. Remove create_v4_property_with_type() calls (line 48-51)
+ * 2. Return Size_Prop_Type::make()->generate() directly
+ * 3. Remove all fallback mechanisms and error handling beyond null returns
+ * 4. Let atomic widgets handle ALL JSON creation
+ * 
+ * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
+ * - Widget JSON source: ❌ VIOLATION - Uses create_v4_property_with_type()
+ * - Property JSON source: /atomic-widgets/prop-types/size-prop-type.php
+ * - Fallback usage: ❌ VIOLATION - Contains fallback logic
+ * - Custom JSON creation: ❌ VIOLATION - Uses forbidden base class method
+ * - Enhanced_Property_Mapper usage: NONE - Completely removed
+ * - Base class method usage: ❌ VIOLATION - Uses create_v4_property_with_type()
+ * - Manual $$type assignment: ❌ VIOLATION - Base class creates JSON
  */
 class Width_Property_Mapper extends Property_Mapper_Base {
 

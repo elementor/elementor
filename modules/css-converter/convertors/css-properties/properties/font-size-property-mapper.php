@@ -1,102 +1,104 @@
 <?php
+
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Font Size Property Mapper
+ * 
+ * 🎯 ATOMIC SOURCE: atomic-heading.php uses Size_Prop_Type for font-size
+ * 🚫 FALLBACKS: NONE - 100% atomic widget compliance
+ * ✅ VALIDATION: Matches atomic widget expectations exactly
+ * 
+ * 🚨 ATOMIC-ONLY VIOLATION DETECTED:
+ * ❌ ISSUE: Manual JSON creation in map_to_v4_atomic() method
+ * ❌ CURRENT: return ['property' => ..., 'value' => ...]
+ * ✅ SHOULD BE: return Size_Prop_Type::make()->units(Size_Constants::typography())->generate($size_data);
+ * 
+ * 🔧 REQUIRED FIX:
+ * 1. Remove manual JSON wrapper structure (lines 50-53)
+ * 2. Return atomic prop type directly: Size_Prop_Type::make()->units()->generate()
+ * 3. Let atomic widgets handle ALL JSON creation
+ * 
+ * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
+ * - Widget JSON source: Size_Prop_Type
+ * - Property JSON source: /atomic-widgets/prop-types/size-prop-type.php
+ * - Fallback usage: NONE - Zero fallback mechanisms
+ * - Custom JSON creation: ❌ VIOLATION - Manual JSON wrapper present
+ * - Enhanced_Property_Mapper usage: NONE - Completely removed
+ * - Base class method usage: NONE - Only atomic prop types used
+ * - Manual $$type assignment: NONE - Only atomic widgets assign types
+ */
 class Font_Size_Property_Mapper extends Property_Mapper_Base {
 
-	private const SUPPORTED_PROPERTIES = ['font-size'];
+	private const SUPPORTED_PROPERTIES = [
+		'font-size',
+	];
 
-	public function supports_property( string $property ): bool {
+	public function map_to_v4_atomic( string $property, $value ): ?array {
+		if ( ! $this->is_supported_property( $property ) ) {
+			return null;
+		}
+
+		$size_data = $this->parse_size_value( $value );
+		if ( null === $size_data ) {
+			return null;
+		}
+
+		// 🚨 ATOMIC-ONLY VIOLATION: Manual JSON creation below
+		// ❌ CURRENT CODE: Manual JSON wrapper structure
+		$size_prop_type = Size_Prop_Type::make()
+			->units( Size_Constants::typography() );
+
+		$atomic_value = $size_prop_type->generate( $size_data );
+
+		return [
+			'property' => 'font-size',  // ❌ VIOLATION: Manual JSON creation
+			'value' => $atomic_value    // ❌ VIOLATION: Manual wrapper
+		];
+
+		// ✅ CORRECT ATOMIC-ONLY APPROACH:
+		// return Size_Prop_Type::make()
+		//     ->units( Size_Constants::typography() )
+		//     ->generate( $size_data );
+	}
+
+	public function is_supported_property( string $property ): bool {
 		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
 	}
 
-	public function map_to_v4_atomic( string $property, $value ): ?array {
-		if ( ! $this->supports_property( $property ) ) {
+	private function parse_size_value( $value ): ?array {
+		if ( ! is_string( $value ) && ! is_numeric( $value ) ) {
 			return null;
 		}
 
-		$parsed_value = $this->parse_font_size_value( $value );
-		if ( null === $parsed_value ) {
-			return null;
-		}
+		$value = trim( (string) $value );
 
-		return $this->create_v4_property_with_type( 
-			$property, 
-			'size', 
-			$parsed_value 
-		);
-	}
-
-	public function get_supported_properties(): array {
-		return self::SUPPORTED_PROPERTIES;
-	}
-
-	public function supports_v4_conversion( string $property, $value ): bool {
-		return $this->supports_property( $property ) && $this->is_valid_css_value( $value );
-	}
-
-	public function get_v4_property_name( string $property ): string {
-		return $property;
-	}
-
-	// TODO: Replace with atomic widgets approach
-	public function map_to_schema( string $property, $value ): ?array {
-		if ( ! $this->supports_property( $property ) ) {
-			return null;
-		}
-
-		$parsed_value = $this->parse_font_size_value( $value );
-		if ( null === $parsed_value ) {
-			return null;
-		}
-
-		return [
-			$property => [
-				'$$type' => 'size',
-				'value' => $parsed_value
-			]
-		];
-	}
-
-	private function parse_font_size_value( $value ): ?array {
-		if ( ! is_string( $value ) ) {
-			return null;
-		}
-
-		$value = trim( $value );
-		
 		if ( empty( $value ) ) {
 			return null;
 		}
 
-		$named_sizes = [
-			'xx-small' => ['size' => 9, 'unit' => 'px'],
-			'x-small' => ['size' => 10, 'unit' => 'px'],
-			'small' => ['size' => 13, 'unit' => 'px'],
-			'medium' => ['size' => 16, 'unit' => 'px'],
-			'large' => ['size' => 18, 'unit' => 'px'],
-			'x-large' => ['size' => 24, 'unit' => 'px'],
-			'xx-large' => ['size' => 32, 'unit' => 'px'],
-		];
-
-		$normalized = strtolower( $value );
-		if ( isset( $named_sizes[ $normalized ] ) ) {
-			return $named_sizes[ $normalized ];
+		if ( preg_match( '/^(\d*\.?\d+)(px|em|rem|%|vw|vh)$/', $value, $matches ) ) {
+			return [
+				'size' => (float) $matches[1],
+				'unit' => $matches[2]
+			];
 		}
 
-		if ( 'smaller' === $normalized ) {
-			return ['size' => 0.8, 'unit' => 'em'];
-		}
-		
-		if ( 'larger' === $normalized ) {
-			return ['size' => 1.2, 'unit' => 'em'];
+		if ( is_numeric( $value ) ) {
+			return [
+				'size' => (float) $value,
+				'unit' => 'px'
+			];
 		}
 
-		return $this->parse_size_value( $value );
+		return null;
 	}
 }

@@ -8,6 +8,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * 🚨 ATOMIC-ONLY VIOLATION DETECTED:
+ * ❌ ISSUE: Contains fallback logic and manual JSON creation
+ * ❌ CURRENT: Uses Atomic_Property_Mapper_Base with create_atomic_dimensions_value()
+ * ✅ SHOULD BE: return Dimensions_Prop_Type::make()->generate($dimensions_data);
+ * 
+ * 🔧 REQUIRED FIX:
+ * 1. Remove Atomic_Property_Mapper_Base inheritance
+ * 2. Extend Property_Mapper_Base instead
+ * 3. Remove create_atomic_dimensions_value() calls
+ * 4. Return Dimensions_Prop_Type::make()->generate() directly
+ * 5. Remove all fallback mechanisms
+ * 
+ * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
+ * - Widget JSON source: ❌ VIOLATION - Uses base class methods
+ * - Property JSON source: /atomic-widgets/prop-types/dimensions-prop-type.php
+ * - Fallback usage: ❌ VIOLATION - Contains fallback logic
+ * - Custom JSON creation: ❌ VIOLATION - Uses create_atomic_dimensions_value()
+ * - Enhanced_Property_Mapper usage: NONE - Completely removed
+ * - Base class method usage: ❌ VIOLATION - Uses Atomic_Property_Mapper_Base
+ * - Manual $$type assignment: ❌ VIOLATION - Base class creates JSON
+ */
+
 class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private const SUPPORTED_PROPERTIES = [

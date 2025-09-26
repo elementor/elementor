@@ -18,6 +18,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - Validation Rules: Logical corner properties (start-start, start-end, end-start, end-end)
  * - Transformer: Multi_Props_Transformer maps to border-{corner}-radius CSS properties
  * 
+ * 🚨 ATOMIC-ONLY VIOLATION DETECTED:
+ * ❌ ISSUE: Contains fallback logic and manual JSON creation
+ * ❌ CURRENT: return ['property' => ..., 'value' => ...] with fallback mechanisms
+ * ✅ SHOULD BE: return Border_Radius_Prop_Type::make()->generate($border_radius_data);
+ * 
+ * 🔧 REQUIRED FIX:
+ * 1. Remove manual JSON wrapper structure in map_to_v4_atomic()
+ * 2. Return Border_Radius_Prop_Type::make()->generate() directly
+ * 3. Remove all fallback mechanisms and error handling beyond null returns
+ * 4. Let atomic widgets handle ALL JSON creation
+ * 
  * ✅ SUPPORTED PROPERTIES:
  * - Physical: border-radius, border-top-left-radius, border-top-right-radius, etc.
  * - Logical: border-start-start-radius, border-start-end-radius, etc. (mapped to physical)
@@ -26,8 +37,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - Elliptical syntax: border-radius: 50px / 20px (not supported by Border_Radius_Prop_Type)
  * - Complex elliptical: border-radius: 50px 20px / 10px 40px
  * 
- * 🚫 FALLBACK STATUS: NONE - This mapper has zero fallbacks
- * ✅ COMPLIANCE: 100% atomic widget based
+ * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
+ * - Widget JSON source: ❌ VIOLATION - Manual JSON wrapper present
+ * - Property JSON source: /atomic-widgets/prop-types/border-radius-prop-type.php
+ * - Fallback usage: ❌ VIOLATION - Contains fallback logic
+ * - Custom JSON creation: ❌ VIOLATION - Manual JSON wrapper
+ * - Enhanced_Property_Mapper usage: NONE - Completely removed
+ * - Base class method usage: ❌ VIOLATION - Uses create_v4_property_with_type()
+ * - Manual $$type assignment: ❌ VIOLATION - Manual wrapper structure
  */
 class Border_Radius_Property_Mapper extends Property_Mapper_Base {
 

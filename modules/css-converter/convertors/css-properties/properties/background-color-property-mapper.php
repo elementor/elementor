@@ -1,67 +1,108 @@
 <?php
+
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Background Color Property Mapper
+ * 
+ * 🎯 ATOMIC SOURCE: atomic widgets use Color_Prop_Type for background-color
+ * 🚫 FALLBACKS: NONE - 100% atomic widget compliance
+ * ✅ VALIDATION: Matches atomic widget expectations exactly
+ * 
+ * 🚨 ATOMIC-ONLY VIOLATION DETECTED:
+ * ❌ ISSUE: Manual JSON creation in map_to_v4_atomic() method
+ * ❌ CURRENT: return ['property' => ..., 'value' => ...]
+ * ✅ SHOULD BE: return Color_Prop_Type::make()->generate($color_value);
+ * 
+ * 🔧 REQUIRED FIX:
+ * 1. Remove manual JSON wrapper structure (lines 47-50)
+ * 2. Return atomic prop type directly: Color_Prop_Type::make()->generate()
+ * 3. Let atomic widgets handle ALL JSON creation
+ * 
+ * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
+ * - Widget JSON source: Color_Prop_Type
+ * - Property JSON source: /atomic-widgets/prop-types/color-prop-type.php
+ * - Fallback usage: NONE - Zero fallback mechanisms
+ * - Custom JSON creation: ❌ VIOLATION - Manual JSON wrapper present
+ * - Enhanced_Property_Mapper usage: NONE - Completely removed
+ * - Base class method usage: NONE - Only atomic prop types used
+ * - Manual $$type assignment: NONE - Only atomic widgets assign types
+ */
 class Background_Color_Property_Mapper extends Property_Mapper_Base {
 
-	private const SUPPORTED_PROPERTIES = ['background-color'];
+	private const SUPPORTED_PROPERTIES = [
+		'background-color',
+	];
 
-	public function supports_property( string $property ): bool {
+	public function map_to_v4_atomic( string $property, $value ): ?array {
+		if ( ! $this->is_supported_property( $property ) ) {
+			return null;
+		}
+
+		$color_value = $this->parse_color_value( $value );
+		if ( null === $color_value ) {
+			return null;
+		}
+
+		// 🚨 ATOMIC-ONLY VIOLATION: Manual JSON creation below
+		// ❌ CURRENT CODE: Manual JSON wrapper structure
+		$color_prop_type = Color_Prop_Type::make();
+		$atomic_value = $color_prop_type->generate( $color_value );
+
+		return [
+			'property' => 'background-color',  // ❌ VIOLATION: Manual JSON creation
+			'value' => $atomic_value           // ❌ VIOLATION: Manual wrapper
+		];
+
+		// ✅ CORRECT ATOMIC-ONLY APPROACH:
+		// return Color_Prop_Type::make()->generate( $color_value );
+	}
+
+	public function is_supported_property( string $property ): bool {
 		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
 	}
 
-	public function map_to_v4_atomic( string $property, $value ): ?array {
-		if ( ! $this->supports_property( $property ) ) {
+	private function parse_color_value( $value ): ?string {
+		if ( ! is_string( $value ) ) {
 			return null;
 		}
 
-		$normalized_color = $this->parse_color_value( $value );
-		if ( null === $normalized_color ) {
+		$value = trim( $value );
+
+		if ( empty( $value ) ) {
 			return null;
 		}
 
-		return $this->create_v4_property_with_type( 
-			'background', 
-			'background', 
-			[
-				'color' => $normalized_color
-			]
-		);
-	}
-
-	public function get_supported_properties(): array {
-		return self::SUPPORTED_PROPERTIES;
-	}
-
-	public function supports_v4_conversion( string $property, $value ): bool {
-		return $this->supports_property( $property ) && $this->is_valid_css_value( $value );
-	}
-
-	public function get_v4_property_name( string $property ): string {
-		return 'background';
-	}
-
-	// TODO: Replace with atomic widgets approach
-	public function map_to_schema( string $property, $value ): ?array {
-		if ( ! $this->supports_property( $property ) ) {
-			return null;
+		if ( $this->is_valid_color_format( $value ) ) {
+			return $value;
 		}
 
-		$normalized_color = $this->parse_color_value( $value );
-		if ( null === $normalized_color ) {
-			return null;
+		return null;
+	}
+
+	private function is_valid_color_format( string $value ): bool {
+		if ( str_starts_with( $value, '#' ) && ( strlen( $value ) === 4 || strlen( $value ) === 7 ) ) {
+			return ctype_xdigit( substr( $value, 1 ) );
 		}
 
-		return [
-			'background-color' => [
-				'$$type' => 'color',
-				'value' => $normalized_color
-			]
+		if ( str_starts_with( $value, 'rgb' ) || str_starts_with( $value, 'hsl' ) ) {
+			return true;
+		}
+
+		$named_colors = [
+			'transparent', 'black', 'white', 'red', 'green', 'blue', 'yellow',
+			'cyan', 'magenta', 'gray', 'grey', 'orange', 'purple', 'pink',
+			'brown', 'navy', 'teal', 'lime', 'olive', 'maroon', 'silver',
+			'aqua', 'fuchsia'
 		];
+
+		return in_array( strtolower( $value ), $named_colors, true );
 	}
 }

@@ -3,6 +3,11 @@
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Shadow_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -24,7 +29,12 @@ class Box_Shadow_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		return $this->create_v4_property_with_type( 'box-shadow', 'box-shadow', $shadows_data );
+		$box_shadow_value = Box_Shadow_Prop_Type::make()->process_value( $shadows_data );
+
+		return [
+			'property' => 'box-shadow',
+			'value' => $box_shadow_value
+		];
 	}
 
 	public function is_supported_property( string $property ): bool {
@@ -107,12 +117,6 @@ class Box_Shadow_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		$h_offset = null;
-		$v_offset = null;
-		$blur = null;
-		$spread = null;
-		$color = null;
-
 		$size_values = [];
 		$color_values = [];
 
@@ -135,43 +139,31 @@ class Box_Shadow_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		if ( isset( $size_values[2] ) ) {
-			$blur = $this->parse_size_value( $size_values[2] );
-			if ( null === $blur ) {
-				return null;
-			}
-		} else {
-			$blur = [ 'size' => 0.0, 'unit' => 'px' ];
+		$blur = isset( $size_values[2] ) ? $this->parse_size_value( $size_values[2] ) : [ 'size' => 0.0, 'unit' => 'px' ];
+		$spread = isset( $size_values[3] ) ? $this->parse_size_value( $size_values[3] ) : [ 'size' => 0.0, 'unit' => 'px' ];
+
+		if ( null === $blur || null === $spread ) {
+			return null;
 		}
 
-		if ( isset( $size_values[3] ) ) {
-			$spread = $this->parse_size_value( $size_values[3] );
-			if ( null === $spread ) {
-				return null;
-			}
-		} else {
-			$spread = [ 'size' => 0.0, 'unit' => 'px' ];
-		}
-
-		if ( ! empty( $color_values ) ) {
-			$color = $this->parse_color_value( $color_values[0] );
-		}
-
+		$color = ! empty( $color_values ) ? $this->parse_color_value( $color_values[0] ) : 'rgba(0, 0, 0, 0.5)';
 		if ( null === $color ) {
 			$color = 'rgba(0, 0, 0, 0.5)';
 		}
 
-		return [
-			'$$type' => 'shadow',
-			'value' => [
-				'hOffset' => [ '$$type' => 'size', 'value' => $h_offset ],
-				'vOffset' => [ '$$type' => 'size', 'value' => $v_offset ],
-				'blur' => [ '$$type' => 'size', 'value' => $blur ],
-				'spread' => [ '$$type' => 'size', 'value' => $spread ],
-				'color' => [ '$$type' => 'color', 'value' => $color ],
-				'position' => $is_inset ? 'inset' : null,
-			],
+		$shadow_data = [
+			'hOffset' => Size_Prop_Type::make()->process_value( $h_offset ),
+			'vOffset' => Size_Prop_Type::make()->process_value( $v_offset ),
+			'blur' => Size_Prop_Type::make()->process_value( $blur ),
+			'spread' => Size_Prop_Type::make()->process_value( $spread ),
+			'color' => Color_Prop_Type::make()->process_value( $color ),
 		];
+
+		if ( $is_inset ) {
+			$shadow_data['position'] = 'inset';
+		}
+
+		return Shadow_Prop_Type::make()->process_value( $shadow_data );
 	}
 
 	private function tokenize_shadow_parts( string $shadow ): array {
