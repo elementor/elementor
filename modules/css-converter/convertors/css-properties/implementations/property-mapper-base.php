@@ -14,6 +14,22 @@ abstract class Property_Mapper_Base implements Property_Mapper_Interface {
 		return in_array( $property, $this->get_supported_properties(), true );
 	}
 
+	/**
+	 * 🚫 ATOMIC-ONLY ENFORCEMENT: This method is FORBIDDEN
+	 * 
+	 * This method creates string fallbacks which violates atomic-only compliance.
+	 * Use create_v4_property_with_type() with specific atomic types instead.
+	 * 
+	 * @throws \Exception Always throws to prevent string fallbacks
+	 */
+	protected function create_v4_property( string $property, $value ): array {
+		throw new \Exception( 
+			"ATOMIC-ONLY VIOLATION: create_v4_property() is forbidden. " .
+			"Use create_v4_property_with_type() with specific atomic types. " .
+			"Property: {$property}, Value: " . var_export( $value, true )
+		);
+	}
+
 
 	protected function create_v4_property_with_type( string $property, string $type, $value ): array {
 		$atomic_value = $this->create_atomic_structure( $type, $value );
@@ -60,7 +76,7 @@ abstract class Property_Mapper_Base implements Property_Mapper_Interface {
 	}
 
 	private function is_supported_atomic_type( string $type ): bool {
-		$supported_types = [ 'size', 'dimensions', 'color' ];
+		$supported_types = [ 'size', 'dimensions', 'color', 'border-radius', 'box-shadow', 'string' ];
 		return in_array( $type, $supported_types, true );
 	}
 
@@ -76,6 +92,12 @@ abstract class Property_Mapper_Base implements Property_Mapper_Interface {
 				return $this->validate_dimensions_type( $atomic_value );
 			case 'color':
 				return $this->validate_color_type( $atomic_value );
+			case 'border-radius':
+				return $this->validate_border_radius_type( $atomic_value );
+			case 'box-shadow':
+				return $this->validate_box_shadow_type( $atomic_value );
+			case 'string':
+				return $this->validate_string_type( $atomic_value );
 		}
 		return null;
 	}
@@ -98,6 +120,30 @@ abstract class Property_Mapper_Base implements Property_Mapper_Interface {
 
 	private function validate_color_type( array $atomic_value ): ?array {
 		$prop_type = \Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type::make();
+		if ( $prop_type->validate( $atomic_value ) ) {
+			return $prop_type->sanitize( $atomic_value );
+		}
+		return null;
+	}
+
+	private function validate_border_radius_type( array $atomic_value ): ?array {
+		$prop_type = \Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type::make();
+		if ( $prop_type->validate( $atomic_value ) ) {
+			return $prop_type->sanitize( $atomic_value );
+		}
+		return null;
+	}
+
+	private function validate_box_shadow_type( array $atomic_value ): ?array {
+		$prop_type = \Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type::make();
+		if ( $prop_type->validate( $atomic_value ) ) {
+			return $prop_type->sanitize( $atomic_value );
+		}
+		return null;
+	}
+
+	private function validate_string_type( array $atomic_value ): ?array {
+		$prop_type = \Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type::make();
 		if ( $prop_type->validate( $atomic_value ) ) {
 			return $prop_type->sanitize( $atomic_value );
 		}

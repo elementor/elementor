@@ -33,6 +33,7 @@ class Class_Property_Mapper_Registry {
 		require_once __DIR__ . '/../properties/margin-property-mapper.php';
 		require_once __DIR__ . '/../properties/atomic-padding-property-mapper.php';
 		require_once __DIR__ . '/../properties/width-property-mapper.php';
+		require_once __DIR__ . '/../properties/border-radius-property-mapper.php';
 		
 		// Register atomic property mappers
 		$this->mappers['color'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Color_Property_Mapper();
@@ -50,6 +51,12 @@ class Class_Property_Mapper_Registry {
 		$width_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Width_Property_Mapper();
 		foreach ( $width_mapper->get_supported_properties() as $property ) {
 			$this->mappers[ $property ] = $width_mapper;
+		}
+		
+		// Register comprehensive atomic border-radius mapper for all border-radius properties
+		$border_radius_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Border_Radius_Property_Mapper();
+		foreach ( $border_radius_mapper->get_supported_properties() as $property ) {
+			$this->mappers[ $property ] = $border_radius_mapper;
 		}
 	}
 
