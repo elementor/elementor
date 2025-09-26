@@ -5,7 +5,6 @@ import Connect from '../utils/connect';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 import { safeDispatchEvent } from '../utils/utils';
-import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
@@ -29,9 +28,6 @@ export default function Account() {
 				},
 			);
 		}
-
-		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
-		OnboardingEventTracking.onStepLoad( 1 );
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
@@ -41,10 +37,6 @@ export default function Account() {
 		skipButton = {
 			text: __( 'Skip setup', 'elementor' ),
 			action: () => {
-				OnboardingEventTracking.trackStepAction( 1, 'skip' );
-				OnboardingEventTracking.sendEventOrStore( 'SKIP', { currentStep: 1 } );
-				OnboardingEventTracking.sendStepEndState( 1 );
-
 				safeDispatchEvent(
 					'skip_setup',
 					{
@@ -124,9 +116,6 @@ export default function Account() {
 		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
-			OnboardingEventTracking.trackStepAction( 1, 'create' );
-			OnboardingEventTracking.sendEventOrStore( 'CREATE_MY_ACCOUNT', { currentStep: 1, createAccountClicked: 'main_cta' } );
-
 			safeDispatchEvent(
 				'new_account_connect',
 				{
@@ -140,12 +129,34 @@ export default function Account() {
 		};
 	}
 
-	const connectSuccessCallback = () => {
+	const connectSuccessCallback = ( event, data ) => {
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
+		const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
 
 		stateToUpdate.isLibraryConnected = true;
 
+		elementorCommon.config.library_connect.is_connected = true;
+		elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
+		elementorCommon.config.library_connect.current_access_tier = data.access_tier;
+		elementorCommon.config.library_connect.plan_type = data.plan_type;
+
+		if ( isTrackingOptedInConnect ) {
+			elementorCommon.config.editor_events.can_send_events = true;
+		}
+
 		updateState( stateToUpdate );
+
+		safeDispatchEvent(
+			'account_connected_success',
+			{
+				location: 'plugin_onboarding',
+				trigger: elementorCommon.eventsManager?.config?.triggers?.success,
+				step_number: 1,
+				step_name: 'account_setup',
+				connection_successful: true,
+				user_tier: data.access_tier,
+			},
+		);
 
 		elementorCommon.events.dispatchEvent( {
 			event: 'indication prompt',
@@ -164,7 +175,6 @@ export default function Account() {
 			message: 'Alrighty - your account is connected.',
 		} );
 
-		OnboardingEventTracking.sendStepEndState( 1 );
 		navigate( 'onboarding/' + nextStep );
 	};
 
@@ -186,8 +196,6 @@ export default function Account() {
 				action: 'connect account',
 			},
 		} );
-
-		OnboardingEventTracking.sendConnectionFailureEvents();
 
 		setNoticeState( {
 			type: 'error',
@@ -232,9 +240,6 @@ export default function Account() {
 								ref={ alreadyHaveAccountLinkRef }
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
 								onClick={ () => {
-									OnboardingEventTracking.trackStepAction( 1, 'connect' );
-									OnboardingEventTracking.sendEventOrStore( 'STEP1_CLICKED_CONNECT', { currentStep: state.currentStep } );
-
 									safeDispatchEvent(
 										'existing_account_connect',
 										{

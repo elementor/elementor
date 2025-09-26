@@ -1,25 +1,16 @@
 import { useContext } from 'react';
-import PropTypes from 'prop-types';
 import { OnboardingContext } from '../../context/context';
 import Grid from 'elementor-app/ui/grid/grid';
 import GoProPopover from '../go-pro-popover';
 import HeaderButtons from 'elementor-app/layout/header-buttons';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
-import { OnboardingEventTracking } from '../../utils/onboarding-event-tracking';
 
 export default function Header( props ) {
 	usePageTitle( { title: props.title } );
 
 	const { state } = useContext( OnboardingContext );
 
-	const trackXButtonExit = () => {
-		const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
-		OnboardingEventTracking.sendExitButtonEvent( stepNumber || state.currentStep );
-	};
-
 	const onClose = () => {
-		trackXButtonExit();
-
 		elementorCommon.events.dispatchEvent( {
 			event: 'close modal',
 			version: '',
@@ -29,9 +20,7 @@ export default function Header( props ) {
 			},
 		} );
 
-		setTimeout( () => {
-			window.top.location = elementorAppConfig.admin_url;
-		}, 100 );
+		window.top.location = elementorAppConfig.admin_url;
 	};
 
 	return (
@@ -44,7 +33,7 @@ export default function Header( props ) {
 				/>
 			</div>
 			<HeaderButtons buttons={ props.buttons } onClose={ onClose } />
-			{ ! state.hasPro && <GoProPopover buttonsConfig={ props.buttons } goProButtonRef={ props.goProButtonRef } /> }
+			{ ! state.hasPro && <GoProPopover buttonsConfig={ props.buttons } /> }
 		</Grid>
 	);
 }
@@ -52,7 +41,6 @@ export default function Header( props ) {
 Header.propTypes = {
 	title: PropTypes.string,
 	buttons: PropTypes.arrayOf( PropTypes.object ),
-	goProButtonRef: PropTypes.object,
 };
 
 Header.defaultProps = {

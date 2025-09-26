@@ -3,7 +3,6 @@ import { OnboardingContext } from '../../context/context';
 import { useNavigate } from '@reach/router';
 
 import ProgressBarItem from './progress-bar-item';
-import { OnboardingEventTracking } from '../../utils/onboarding-event-tracking';
 
 export default function ProgressBar() {
 	const { state } = useContext( OnboardingContext ),
@@ -57,17 +56,6 @@ export default function ProgressBar() {
 
 		if ( state.steps[ itemConfig.id ] ) {
 			itemConfig.onClick = () => {
-				const currentStepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
-				const nextStepNumber = OnboardingEventTracking.getStepNumber( itemConfig.id );
-
-				if ( 4 === currentStepNumber ) {
-					OnboardingEventTracking.trackStepAction( 4, 'stepper_clicks', {
-						from_step: currentStepNumber,
-						to_step: nextStepNumber,
-					} );
-					OnboardingEventTracking.sendStepEndState( 4 );
-				}
-
 				elementorCommon.events.dispatchEvent( {
 					event: 'step click',
 					version: '',
