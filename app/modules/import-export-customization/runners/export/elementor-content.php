@@ -36,6 +36,7 @@ class Elementor_Content extends Export_Runner_Base {
 
 		$elementor_post_types = apply_filters( 'elementor/import-export-customization/elementor-content/post-types/customization', $elementor_post_types, $customization );
 
+
 		$files = [];
 		$manifest = [];
 
@@ -108,6 +109,9 @@ class Elementor_Content extends Export_Runner_Base {
 				'terms' => $terms,
 			];
 
+			$this->add_parent_relationship_to_manifest( $post, $post_manifest_data );
+			$this->add_page_specific_fields_to_manifest( $post, $post_manifest_data );
+
 			if ( $post->ID === $this->page_on_front_id ) {
 				$post_manifest_data['show_on_front'] = true;
 			}
@@ -124,6 +128,20 @@ class Elementor_Content extends Export_Runner_Base {
 			'files' => $files,
 			'manifest_data' => $manifest_data,
 		];
+	}
+
+	private function add_parent_relationship_to_manifest( $post, &$manifest_data ) {
+		if ( $post->post_parent > 0 ) {
+			$manifest_data['post_parent'] = $post->post_parent;
+		}
+	}
+
+	private function add_page_specific_fields_to_manifest( $post, &$manifest_data ) {
+		if ( $post->post_type === 'page' ) {
+			$manifest_data['post_name'] = $post->post_name;
+			$manifest_data['post_status'] = $post->post_status;
+			$manifest_data['post_date'] = $post->post_date;
+		}
 	}
 
 	private function get_post_type_taxonomies( $post_type ) {

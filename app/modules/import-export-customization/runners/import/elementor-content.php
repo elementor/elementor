@@ -16,6 +16,10 @@ class Elementor_Content extends Import_Runner_Base {
 
 	private $import_session_id;
 
+	private $imported_data;
+
+	private $current_session_mappings = [];
+
 	public function __construct() {
 		$this->init_page_on_front_data();
 	}
@@ -34,12 +38,14 @@ class Elementor_Content extends Import_Runner_Base {
 	}
 
 	public function import( array $data, array $imported_data ) {
+
 		if ( ! function_exists( 'wp_set_post_terms' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/taxonomy.php';
 		}
 
 		$result['content'] = [];
 		$this->import_session_id = $data['session_id'];
+		$this->imported_data = $imported_data;
 
 		$customization = $data['customization']['content'] ?? null;
 
@@ -85,6 +91,7 @@ class Elementor_Content extends Import_Runner_Base {
 
 		foreach ( $posts_settings as $id => $post_settings ) {
 			try {
+				
 				if ( 'page' === $post_type ) {
 					$data = [
 						'path' => $path,
@@ -94,16 +101,25 @@ class Elementor_Content extends Import_Runner_Base {
 						'imported_terms' => $imported_terms,
 					];
 
-					$import_result = apply_filters( 'elementor/import-export-customization/import/elementor-content/customization', null, $data, [], $customization ?? [], $this );
+				$import_result = apply_filters( 'elementor/import-export-customization/import/elementor-content/customization', null, $data, [], $customization ?? [], $this );
 
-					if ( is_array( $import_result ) ) {
-						$result[ $import_result['status'] ][ $id ] = $import_result['result'];
-						continue;
-					}
+				if ( is_array( $import_result ) ) {
+					$result[ $import_result['status'] ][ $id ] = $import_result['result'];
+					
+				if ( $import_result['status'] === static::IMPORT_STATUS_SUCCEEDED ) {
+					$this->track_successful_import( $id, $import_result['result'] );
+				}
+					
+					continue;
+				}
 				}
 
-				$import_result = $this->read_and_import_post( $path, $id, $post_settings, $post_type, $imported_terms );
-
+			$import_result = $this->read_and_import_post( $path, $id, $post_settings, $post_type, $imported_terms );
+			
+			if ( $import_result['status'] === static::IMPORT_STATUS_SUCCEEDED ) {
+				$this->track_successful_import( $id, $import_result['result'] );
+			}
+				
 				$result[ $import_result['status'] ][ $id ] = $import_result['result'];
 			} catch ( \Exception $error ) {
 				$result['failed'][ $id ] = $error->getMessage();
@@ -140,6 +156,7 @@ class Elementor_Content extends Import_Runner_Base {
 	}
 
 	private function import_post( array $post_settings, array $post_data, $post_type, array $imported_terms ) {
+		
 		$post_attributes = [
 			'post_title' => $post_settings['title'],
 			'post_type' => $post_type,
@@ -148,6 +165,10 @@ class Elementor_Content extends Import_Runner_Base {
 
 		if ( ! empty( $post_settings['excerpt'] ) ) {
 			$post_attributes['post_excerpt'] = $post_settings['excerpt'];
+		}
+
+		if ( ! empty( $post_settings['post_parent'] ) ) {
+			$post_attributes['post_parent'] = $this->resolve_parent_post_id( $post_settings['post_parent'] );
 		}
 
 		$new_document = Plugin::$instance->documents->create(
@@ -172,6 +193,8 @@ class Elementor_Content extends Import_Runner_Base {
 		remove_filter( 'elementor/template_library/import_images/new_attachment', $new_attachment_callback );
 
 		$new_post_id = $new_document->get_main_id();
+
+
 
 		if ( ! empty( $post_settings['terms'] ) ) {
 			$this->set_post_terms( $new_post_id, $post_settings['terms'], $imported_terms );
@@ -216,5 +239,35 @@ class Elementor_Content extends Import_Runner_Base {
 		return [
 			'page_on_front' => $this->page_on_front_id ?? 0,
 		];
+	}
+
+	private function get_mapped_post_id( $original_post_id ) {
+		if ( isset( $this->current_session_mappings[ $original_post_id ] ) ) {
+			return $this->current_session_mappings[ $original_post_id ];
+		}
+		
+		if ( empty( $this->imported_data ) ) {
+			return null;
+		}
+
+		try {
+			$post_mappings = ImportExportUtils::map_old_new_post_ids( $this->imported_data );
+			return $post_mappings[ $original_post_id ] ?? null;
+		} catch ( \Exception $e ) {
+			return null;
+		}
+	}
+
+	private function resolve_parent_post_id( $original_parent_id ) {
+		try {
+			$mapped_parent_id = $this->get_mapped_post_id( $original_parent_id );
+			return $mapped_parent_id ?: $original_parent_id;
+		} catch ( \Exception $e ) {
+			return $original_parent_id;
+		}
+	}
+
+	private function track_successful_import( $original_id, $new_id ) {
+		$this->current_session_mappings[ $original_id ] = $new_id;
 	}
 }
