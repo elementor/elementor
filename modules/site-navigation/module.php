@@ -20,6 +20,7 @@ class Module extends Module_Base {
 	const PACKAGES = [
 		'editor-site-navigation',
 	];
+
 	/**
 	 * Initialize the Site navigation module.
 	 *
@@ -31,19 +32,21 @@ class Module extends Module_Base {
 
 		$this->register_pages_panel_experiment();
 
+		if ( ! Plugin::$instance->experiments->is_feature_active( self::PAGES_PANEL_EXPERIMENT_NAME ) ) {
+			return;
+		}
+
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
-		if ( Plugin::$instance->experiments->is_feature_active( self::PAGES_PANEL_EXPERIMENT_NAME ) ) {
-			add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
-				$env['@elementor/editor-site-navigation'] = [
-					'is_pages_panel_active' => true,
-				];
+		add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
+			$env['@elementor/editor-site-navigation'] = [
+				'is_pages_panel_active' => true,
+			];
 
-				return $env;
-			} );
+			return $env;
+		} );
 
-			$this->register_rest_fields();
-		}
+		$this->register_rest_fields();
 	}
 
 	/**
