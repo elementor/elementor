@@ -4,7 +4,7 @@ import {
 	WIDGET_CONFIGS,
 	SPACING_VALUES,
 	setupWidgetWithTypography,
-	verifyLetterSpacing,
+	verifySpacingEditor,
 } from './typography-test-helpers';
 import { DriverFactory } from '../../../../drivers/driver-factory';
 import type { EditorDriver } from '../../../../drivers/editor-driver';
@@ -43,14 +43,14 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			const letterSpacingLabel = driver.page.locator( 'label', { hasText: 'Letter Spacing' } );
 			await expect( letterSpacingLabel ).toBeVisible( { timeout: timeouts.expect } );
 
-			await driver.editor.v4Panel.style.typography.setLetterSpacing( 5, 'px' );
-			await verifyLetterSpacing( driver, widget.selector, 5, 'px' );
+			await driver.editor.v4Panel.style.typography.setSpacingValue( 'Letter spacing', 5, 'px' );
+			await verifySpacingEditor( driver, widget.selector, 5, 'px', 'letterSpacing' );
 		} );
 
 		await test.step( 'Test positive letter spacing values', async () => {
 			for ( const value of LETTER_SPACING_VALUES.POSITIVE ) {
-				await driver.editor.v4Panel.style.typography.setLetterSpacing( value, 'px' );
-				await verifyLetterSpacing( driver, widget.selector, value, 'px' );
+				await driver.editor.v4Panel.style.typography.setSpacingValue( 'Letter spacing', value, 'px' );
+				await verifySpacingEditor( driver, widget.selector, value, 'px', 'letterSpacing' );
 			}
 		} );
 
@@ -59,10 +59,10 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			await setupWidgetWithTypography( driver, widget.type );
 
 			for ( const value of LETTER_SPACING_VALUES.NEGATIVE ) {
-				await driver.editor.v4Panel.style.typography.setLetterSpacing( value, 'px' );
+				await driver.editor.v4Panel.style.typography.setSpacingValue( 'Letter spacing', value, 'px' );
 				// Elementor doesn't support negative letter spacing values in UI
 				// So we verify that the value remains at normal (0) instead
-				await verifyLetterSpacing( driver, widget.selector, 0, 'px' );
+				await verifySpacingEditor( driver, widget.selector, 0, 'px', 'letterSpacing' );
 			}
 		} );
 	} );
@@ -74,8 +74,8 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 
 			const testValue = 1.5;
 			const testUnit = 'px';
-			await driver.editor.v4Panel.style.typography.setLetterSpacing( testValue, testUnit );
-			await verifyLetterSpacing( driver, widget.selector, testValue, testUnit );
+			await driver.editor.v4Panel.style.typography.setSpacingValue( 'Letter spacing', testValue, testUnit );
+			await verifySpacingEditor( driver, widget.selector, testValue, testUnit, 'letterSpacing' );
 		} );
 	} );
 
@@ -86,9 +86,9 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			const testUnit = 'px';
 
 			await setupWidgetWithTypography( driver, widget.type );
-			await driver.editor.v4Panel.style.typography.setLetterSpacing( testValue, testUnit );
+			await driver.editor.v4Panel.style.typography.setSpacingValue( 'Letter spacing', testValue, testUnit );
 
-			await verifyLetterSpacing( driver, widget.selector, testValue, testUnit );
+			await verifySpacingEditor( driver, widget.selector, testValue, testUnit, 'letterSpacing' );
 			await driver.editor.publishAndViewPage();
 
 			const publishedElement = driver.page.locator( widget.selector );
@@ -113,8 +113,8 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			const showMoreButton = driver.page.getByRole( 'button', { name: 'Show More' } );
 			await showMoreButton.click();
 
-			await driver.editor.v4Panel.style.typography.setLetterSpacing( 2, 'em' );
-			await verifyLetterSpacing( driver, widget.selector, 2, 'em' );
+			await driver.editor.v4Panel.style.typography.setSpacingValue( 'Letter spacing', 2, 'em' );
+			await verifySpacingEditor( driver, widget.selector, 2, 'em', 'letterSpacing' );
 		} );
 
 		await test.step( 'Test letter spacing with REM units', async () => {
@@ -122,8 +122,8 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			await driver.setupBasicPage();
 			await setupWidgetWithTypography( driver, widget.type );
 
-			await driver.editor.v4Panel.style.typography.setLetterSpacing( 3, 'rem' );
-			await verifyLetterSpacing( driver, widget.selector, 3, 'rem' );
+			await driver.editor.v4Panel.style.typography.setSpacingValue( 'Letter spacing', 3, 'rem' );
+			await verifySpacingEditor( driver, widget.selector, 3, 'rem', 'letterSpacing' );
 		} );
 
 		await test.step( 'Test letter spacing with VW units', async () => {
@@ -131,8 +131,8 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			await driver.setupBasicPage();
 			await setupWidgetWithTypography( driver, widget.type );
 
-			await driver.editor.v4Panel.style.typography.setLetterSpacing( 4, 'vw' );
-			await verifyLetterSpacing( driver, widget.selector, 4, 'vw' );
+			await driver.editor.v4Panel.style.typography.setSpacingValue( 'Letter spacing', 4, 'vw' );
+			await verifySpacingEditor( driver, widget.selector, 4, 'vw', 'letterSpacing' );
 		} );
 
 		await test.step( 'Test letter spacing with VH units', async () => {
@@ -140,8 +140,8 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			await driver.setupBasicPage();
 			await setupWidgetWithTypography( driver, widget.type );
 
-			await driver.editor.v4Panel.style.typography.setLetterSpacing( 1, 'vh' );
-			await verifyLetterSpacing( driver, widget.selector, 1, 'vh' );
+			await driver.editor.v4Panel.style.typography.setSpacingValue( 'Letter spacing', 1, 'vh' );
+			await verifySpacingEditor( driver, widget.selector, 1, 'vh', 'letterSpacing' );
 		} );
 
 		await test.step( 'Test letter spacing with percentage units', async () => {
@@ -152,7 +152,7 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			// Test percentage value - Elementor might not support % for letter-spacing
 			await driver.editor.v4Panel.style.typography.setLetterSpacing( 150, '%' );
 			// Verify that it falls back to normal (0) since % might not be supported
-			await verifyLetterSpacing( driver, widget.selector, 0, 'px' );
+			await verifySpacingEditor( driver, widget.selector, 0, 'px', 'letterSpacing' );
 		} );
 	} );
 } );

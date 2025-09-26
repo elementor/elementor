@@ -2,7 +2,7 @@ import BasePage from '../base-page';
 import { type Page, type TestInfo } from '@playwright/test';
 import EditorPage from '../editor-page';
 import StyleTab from './style-tab';
-import GeneralTab from './genetal-tab';
+import GeneralTab from './general-tab';
 
 export default class v4Panel extends BasePage {
 	readonly inputField: string;
@@ -45,6 +45,4 @@ export default class v4Panel extends BasePage {
 			await this.page.locator( `button[value="${ options.overflow }"]` ).click();
 		}
 	}
-
-
 }

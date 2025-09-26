@@ -64,11 +64,7 @@ export async function setupWidgetWithTypography(
 ): Promise<{ containerId: string; widgetId: string }> {
 	const result = await driver.setupPageWithWidget( widgetType );
 
-	// Wait for the style panel to be ready
 	await driver.editor.openV2PanelTab( 'style' );
-
-	// Wait a bit for the panel to load
-	await driver.page.waitForTimeout( 1000 );
 	await driver.editor.openV2Section( 'typography' );
 	await driver.editor.v4Panel.style.typography.waitForTypographyControls();
 
@@ -80,10 +76,7 @@ export async function setWidgetTextContent(
 	text: string,
 	inputName: 'Title' | 'Text' | 'Button text' = 'Title',
 ): Promise<void> {
-	// First open the general/content panel
 	await driver.editor.openV2PanelTab( 'general' );
-	await driver.page.waitForTimeout( 1000 );
-
 	await driver.editor.v4Panel.general.setWidgetText( inputName, text );
 }
 
@@ -116,7 +109,7 @@ export async function verifyFontSizeWithPublishing(
 	await expect( publishedElement ).toHaveCSS( 'font-size', `${ expectedSize }px`, { timeout: timeouts.expect } );
 }
 
-async function verifySpacingEditor(
+export async function verifySpacingEditor(
 	driver: EditorDriver,
 	selector: string,
 	expectedValue: number,
@@ -188,23 +181,6 @@ async function verifySpacingEditor(
 	} ).toPass( { timeout: timeouts.expect } );
 }
 
-export async function verifyLetterSpacing(
-	driver: EditorDriver,
-	selector: string,
-	expectedValue: number,
-	expectedUnit: string,
-): Promise<void> {
-	await verifySpacingEditor( driver, selector, expectedValue, expectedUnit, 'letterSpacing' );
-}
-
-export async function verifyWordSpacingEditor(
-	driver: EditorDriver,
-	selector: string,
-	expectedValue: number,
-	expectedUnit: string,
-): Promise<void> {
-	await verifySpacingEditor( driver, selector, expectedValue, expectedUnit, 'wordSpacing' );
-}
 
 export async function verifyFontEditor(
 	driver: EditorDriver,

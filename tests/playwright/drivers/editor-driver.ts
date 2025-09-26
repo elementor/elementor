@@ -58,19 +58,17 @@ export class EditorDriver {
 		return this.lastWidgetResult;
 	}
 
-	async createNewPage(): Promise<EditorDriver> {
+	async createNewPage( closeNavigator: boolean = false ): Promise<EditorDriver> {
 		await this.wpAdmin.openNewPage();
+		if ( closeNavigator ) {
+			await this.editor.closeNavigatorIfOpen();
+		}
 		return this;
 	}
 
 	async setupBasicPage(): Promise<EditorDriver> {
 		await this.createNewPage();
 		await this.editor.closeNavigatorIfOpen();
-		
-		// Handle any modal dialogs that might be blocking interactions
-		await this.handleModalDialogs();
-		
-		await this.editor.openElementsPanel();
 		return this;
 	}
 
@@ -78,7 +76,7 @@ export class EditorDriver {
 		widget: string,
 		container?: { elType: string },
 	): Promise<WidgetTestResult> {
-		await this.setupBasicPage();
+		await this.createNewPage( true );
 
 		const containerToUse = container || { elType: 'container' };
 		const containerId = await this.editor.addElement( containerToUse, 'document' );
