@@ -14,14 +14,6 @@ abstract class Property_Mapper_Base implements Property_Mapper_Interface {
 		return in_array( $property, $this->get_supported_properties(), true );
 	}
 
-	protected function create_v4_property( string $property, $value ): array {
-		// TODO: Replace with atomic widgets approach
-		// Needs atomic mapper update: Replace string fallback with atomic widget-based type
-		return [
-			'$$type' => 'string',
-			'value' => (string) $value
-		];
-	}
 
 	protected function create_v4_property_with_type( string $property, string $type, $value ): array {
 		$atomic_value = $this->create_atomic_structure( $type, $value );

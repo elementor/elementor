@@ -33,7 +33,11 @@ class PaddingPropertyMapperTest extends AtomicWidgetComplianceTestCase {
             'padding-top',
             'padding-right', 
             'padding-bottom',
-            'padding-left'
+            'padding-left',
+            'padding-block-start',
+            'padding-inline-start',
+            'padding-block',
+            'padding-inline'
         ];
         
         foreach ($properties as $property) {
@@ -50,13 +54,13 @@ class PaddingPropertyMapperTest extends AtomicWidgetComplianceTestCase {
     public function it_supports_padding_shorthand_variations(): void {
         $shorthandTests = [
             // 1 value: all sides
-            '10px' => [10, 10, 10, 10],
+            '20px' => [20, 20, 20, 20],
             // 2 values: vertical, horizontal
-            '10px 20px' => [10, 20, 10, 20],
+            '20px 40px' => [20, 40, 20, 40],
             // 3 values: top, horizontal, bottom
             '10px 20px 30px' => [10, 20, 30, 20],
             // 4 values: top, right, bottom, left
-            '10px 20px 30px 40px' => [10, 20, 30, 40],
+            '20px 30px 0px 10px' => [20, 30, 0, 10],
         ];
         
         foreach ($shorthandTests as $input => $expected) {
@@ -97,6 +101,89 @@ class PaddingPropertyMapperTest extends AtomicWidgetComplianceTestCase {
             $this->assertArrayHasKey($expectedDirection, $result['value']);
             $this->assertEquals(15, $result['value'][$expectedDirection]['value']['size']);
             $this->assertEquals('px', $result['value'][$expectedDirection]['value']['unit']);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function it_supports_logical_padding_properties(): void {
+        $logicalTests = [
+            'padding-block-start' => ['block-start', 30],
+            'padding-inline-start' => ['inline-start', 40],
+        ];
+        
+        foreach ($logicalTests as $property => $expected) {
+            [$expectedDirection, $expectedValue] = $expected;
+            $result = $this->mapper->map_to_v4_atomic($property, $expectedValue . 'px');
+            
+            $this->assertUniversalMapperCompliance($result, 'dimensions');
+            $this->assertValidDimensionsPropType($result);
+            
+            // Should only have the specific direction set
+            $this->assertArrayHasKey($expectedDirection, $result['value']);
+            $this->assertEquals($expectedValue, $result['value'][$expectedDirection]['value']['size']);
+            $this->assertEquals('px', $result['value'][$expectedDirection]['value']['unit']);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function it_supports_padding_block_shorthand(): void {
+        $blockTests = [
+            // Single value: both block-start and block-end
+            '20px' => ['block-start' => 20, 'block-end' => 20],
+            // Two values: block-start, block-end
+            '20px 30px' => ['block-start' => 20, 'block-end' => 30],
+        ];
+        
+        foreach ($blockTests as $input => $expected) {
+            $result = $this->mapper->map_to_v4_atomic('padding-block', $input);
+            
+            $this->assertUniversalMapperCompliance($result, 'dimensions');
+            $this->assertValidDimensionsPropType($result);
+            
+            // Validate specific values match expected block parsing
+            foreach ($expected as $direction => $expectedValue) {
+                $this->assertArrayHasKey($direction, $result['value']);
+                $this->assertEquals($expectedValue, $result['value'][$direction]['value']['size']);
+                $this->assertEquals('px', $result['value'][$direction]['value']['unit']);
+            }
+            
+            // Should not have inline directions set
+            $this->assertArrayNotHasKey('inline-start', $result['value']);
+            $this->assertArrayNotHasKey('inline-end', $result['value']);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function it_supports_padding_inline_shorthand(): void {
+        $inlineTests = [
+            // Single value: both inline-start and inline-end
+            '20px' => ['inline-start' => 20, 'inline-end' => 20],
+            // Two values: inline-start, inline-end
+            '20px 30px' => ['inline-start' => 20, 'inline-end' => 30],
+        ];
+        
+        foreach ($inlineTests as $input => $expected) {
+            $result = $this->mapper->map_to_v4_atomic('padding-inline', $input);
+            
+            $this->assertUniversalMapperCompliance($result, 'dimensions');
+            $this->assertValidDimensionsPropType($result);
+            
+            // Validate specific values match expected inline parsing
+            foreach ($expected as $direction => $expectedValue) {
+                $this->assertArrayHasKey($direction, $result['value']);
+                $this->assertEquals($expectedValue, $result['value'][$direction]['value']['size']);
+                $this->assertEquals('px', $result['value'][$direction]['value']['unit']);
+            }
+            
+            // Should not have block directions set
+            $this->assertArrayNotHasKey('block-start', $result['value']);
+            $this->assertArrayNotHasKey('block-end', $result['value']);
         }
     }
     
@@ -155,8 +242,24 @@ class PaddingPropertyMapperTest extends AtomicWidgetComplianceTestCase {
      * @test
      */
     public function it_correctly_identifies_supported_properties(): void {
-        $this->assertTrue($this->mapper->supports('padding', '10px'));
-        $this->assertTrue($this->mapper->supports('padding-top', '10px'));
+        // Test all supported properties
+        $supportedProperties = [
+            'padding',
+            'padding-top',
+            'padding-right',
+            'padding-bottom', 
+            'padding-left',
+            'padding-block-start',
+            'padding-inline-start',
+            'padding-block',
+            'padding-inline'
+        ];
+        
+        foreach ($supportedProperties as $property) {
+            $this->assertTrue($this->mapper->supports($property, '10px'), "Should support property: {$property}");
+        }
+        
+        // Test unsupported properties
         $this->assertFalse($this->mapper->supports('margin', '10px'));
         $this->assertFalse($this->mapper->supports('padding', 'invalid-value'));
     }

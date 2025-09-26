@@ -23,42 +23,26 @@ class Class_Property_Mapper_Registry {
 	}
 
 	private function initialize_basic_mappers(): void {
-		// Load specific property mappers
+		// Load atomic property mapper base
+		require_once __DIR__ . '/atomic-property-mapper-base.php';
+		
+		// Load atomic property mappers
 		require_once __DIR__ . '/../properties/color-property-mapper.php';
 		require_once __DIR__ . '/../properties/background-color-property-mapper.php';
 		require_once __DIR__ . '/../properties/font-size-property-mapper.php';
 		require_once __DIR__ . '/../properties/margin-property-mapper.php';
-		require_once __DIR__ . '/../properties/padding-property-mapper.php';
-		require_once __DIR__ . '/atomic-property-mapper-base.php';
 		require_once __DIR__ . '/../properties/atomic-padding-property-mapper.php';
 		
-		// Register specific property mappers
+		// Register atomic property mappers
 		$this->mappers['color'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Color_Property_Mapper();
 		$this->mappers['background-color'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Background_Color_Property_Mapper();
 		$this->mappers['font-size'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Font_Size_Property_Mapper();
 		$this->mappers['margin'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Margin_Property_Mapper();
-		$this->mappers['padding'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Atomic_Padding_Property_Mapper();
 		
-		// TODO: Replace with atomic widgets approach
-		// Needs atomic mapper update: Add Enhanced_Property_Mapper for remaining properties
-		// Load the enhanced mapper for remaining properties
-		require_once __DIR__ . '/enhanced-property-mapper.php';
-		
-		// Fallback properties that still use enhanced mapper
-		$fallback_properties = [
-			'background',
-			'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
-			'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
-			'border-radius', 'box-shadow', 'text-shadow', 'transform', 'transition',
-			'opacity', 'z-index', 'width', 'height', 'display', 'position',
-			'flex-direction', 'align-items', 'justify-content', 'gap', 'font-weight',
-			'line-height', 'text-align'
-		];
-		
-		foreach ( $fallback_properties as $property ) {
-			// TODO: Replace with atomic widgets approach
-		// Needs atomic mapper update: Replace Enhanced_Property_Mapper with atomic widget-based mapper
-			$this->mappers[ $property ] = new Enhanced_Property_Mapper( $property );
+		// Register comprehensive atomic padding mapper for all padding variations
+		$atomic_padding_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Atomic_Padding_Property_Mapper();
+		foreach ( $atomic_padding_mapper->get_supported_properties() as $property ) {
+			$this->mappers[ $property ] = $atomic_padding_mapper;
 		}
 	}
 
@@ -102,31 +86,3 @@ class Class_Property_Mapper_Registry {
 	}
 }
 
-class Basic_Property_Mapper {
-	private string $property;
-
-	public function __construct( string $property ) {
-		$this->property = $property;
-	}
-
-	public function map_to_v4_atomic( string $property, $value ): ?array {
-		// TODO: Replace with atomic widgets approach
-		// Needs atomic mapper update: Replace string type with atomic widget-based type
-		return [
-			'$$type' => 'string',
-			'value' => (string) $value
-		];
-	}
-
-	public function supports( string $property, $value = null ): bool {
-		return $this->property === $property;
-	}
-
-	public function get_supported_properties(): array {
-		return [ $this->property ];
-	}
-
-	public function get_property(): string {
-		return $this->property;
-	}
-}
