@@ -7,10 +7,11 @@ type SectionContentProps = PropsWithChildren< {
 	sx?: {
 		pt?: number;
 	};
+	'aria-label'?: string;
 } >;
 
-export const SectionContent: FC< SectionContentProps > = ( { gap = 2, sx, children } ) => (
-	<Stack gap={ gap } sx={ { ...sx } }>
+export const SectionContent: FC< SectionContentProps > = ( { gap = 2, sx, children, 'aria-label': ariaLabel } ) => (
+	<Stack gap={ gap } sx={ { ...sx } } aria-label={ ariaLabel }>
 		{ children }
 	</Stack>
 );

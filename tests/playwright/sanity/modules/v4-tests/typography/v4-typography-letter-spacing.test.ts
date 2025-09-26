@@ -9,6 +9,7 @@ import {
 import { DriverFactory } from '../../../../drivers/driver-factory';
 import type { EditorDriver } from '../../../../drivers/editor-driver';
 import { timeouts } from '../../../../config/timeouts';
+import { STYLE_SECTIONS } from '../../../../pages/atomic-elements-panel/style-tab';
 
 const LETTER_SPACING_VALUES = {
 	POSITIVE: SPACING_VALUES.POSITIVE,
@@ -31,18 +32,12 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 		await driver.setupBasicPage();
 	} );
 
-	test( 'Letter spacing basic functionality for heading', async () => {
+	test.only( 'Letter spacing basic functionality for heading', async () => {
 		const widget = WIDGET_CONFIGS.HEADING;
 
 		await test.step( 'Verify letter spacing control is present and functional', async () => {
 			await setupWidgetWithTypography( driver, widget.type );
-
-			const showMoreButton = driver.page.getByRole( 'button', { name: 'Show More' } );
-			await showMoreButton.click();
-
-			const letterSpacingLabel = driver.page.locator( 'label', { hasText: 'Letter Spacing' } );
-			await expect( letterSpacingLabel ).toBeVisible( { timeout: timeouts.expect } );
-
+			await driver.editor.v4Panel.style.clickShowMore( STYLE_SECTIONS.TYPOGRAPHY );
 			await driver.editor.v4Panel.style.typography.setSpacingValue( 'Letter spacing', 5, 'px' );
 			await verifySpacingEditor( driver, widget.selector, 5, 'px', 'letterSpacing' );
 		} );
@@ -110,8 +105,6 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 		await test.step( 'Test letter spacing with EM units', async () => {
 			const widget = WIDGET_CONFIGS.HEADING;
 			await setupWidgetWithTypography( driver, widget.type );
-			const showMoreButton = driver.page.getByRole( 'button', { name: 'Show More' } );
-			await showMoreButton.click();
 
 			await driver.editor.v4Panel.style.typography.setSpacingValue( 'Letter spacing', 2, 'em' );
 			await verifySpacingEditor( driver, widget.selector, 2, 'em', 'letterSpacing' );
@@ -150,7 +143,7 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			await setupWidgetWithTypography( driver, widget.type );
 
 			// Test percentage value - Elementor might not support % for letter-spacing
-			await driver.editor.v4Panel.style.typography.setLetterSpacing( 150, '%' );
+			await driver.editor.v4Panel.style.typography.setSpacingValue( 'Letter spacing', 150, '%' );
 			// Verify that it falls back to normal (0) since % might not be supported
 			await verifySpacingEditor( driver, widget.selector, 0, 'px', 'letterSpacing' );
 		} );

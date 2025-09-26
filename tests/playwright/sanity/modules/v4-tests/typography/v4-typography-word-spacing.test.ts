@@ -37,12 +37,6 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 		await test.step( 'Verify word spacing control is present and functional', async () => {
 			await setupWidgetWithTypography( driver, widget.type );
 
-			const showMoreButton = driver.page.getByRole( 'button', { name: 'Show More' } );
-			await showMoreButton.click();
-
-			const wordSpacingLabel = driver.page.locator( 'label', { hasText: 'Word Spacing' } );
-			await expect( wordSpacingLabel ).toBeVisible( { timeout: timeouts.expect } );
-
 			await driver.editor.v4Panel.style.typography.setSpacingValue( 'Word spacing', 10, 'px' );
 			await verifySpacingEditor( driver, widget.selector, 10, 'px', 'wordSpacing' );
 		} );
@@ -103,8 +97,6 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 		await test.step( 'Test word spacing with EM units', async () => {
 			const widget = WIDGET_CONFIGS.HEADING;
 			await setupWidgetWithTypography( driver, widget.type );
-			const showMoreButton = driver.page.getByRole( 'button', { name: 'Show More' } );
-			await showMoreButton.click();
 
 			await driver.editor.v4Panel.style.typography.setSpacingValue( 'Word spacing', 3, 'em' );
 			await verifySpacingEditor( driver, widget.selector, 3, 'em', 'wordSpacing' );

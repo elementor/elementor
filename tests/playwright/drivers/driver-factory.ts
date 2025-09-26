@@ -1,7 +1,6 @@
 import { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
 import { EditorDriver, DriverContext } from './editor-driver';
 import WpAdminPage from '../pages/wp-admin-page';
-import { Experiments } from '../types/global-types';
 import ApiRequests from '../assets/api-requests';
 
 export class DriverFactory {
@@ -36,7 +35,7 @@ export class DriverFactory {
 		return new EditorDriver( driverContext );
 	}
 
-	static async setExperiments( browser: Browser, experiments: Experiments, testInfo?: TestInfo, apiRequests?: ApiRequests ): Promise<void> {
+	static async setExperiments( browser: Browser, experiments: { [key: string]: boolean | string }, testInfo?: TestInfo, apiRequests?: ApiRequests ): Promise<void> {
 		const { context, wpAdmin } = await this.createTemporaryContext( browser, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( experiments );
