@@ -56,26 +56,16 @@ class Border_Radius_Property_Mapper extends Property_Mapper_Base {
 	}
 
 	public function map_to_v4_atomic( string $property, $value ): ?array {
-		error_log( "🔍 BORDER-RADIUS DEBUG: Starting map_to_v4_atomic for property='$property', value='$value'" );
-		
 		if ( ! $this->supports( $property ) ) {
-			error_log( "❌ BORDER-RADIUS DEBUG: Property '$property' not supported" );
 			return null;
 		}
 
 		$parsed_value = $this->parse_border_radius_value( $property, $value );
 		if ( null === $parsed_value ) {
-			error_log( "❌ BORDER-RADIUS DEBUG: Failed to parse value '$value' for property '$property'" );
 			return null;
 		}
 
-		error_log( "✅ BORDER-RADIUS DEBUG: Parsed value: " . json_encode( $parsed_value ) );
-		
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
-		$atomic_result = Border_Radius_Prop_Type::make()->generate( $parsed_value );
-		error_log( "✅ BORDER-RADIUS DEBUG: Atomic result: " . json_encode( $atomic_result ) );
-		
-		return $atomic_result;
+		return Border_Radius_Prop_Type::make()->generate( $parsed_value );
 	}
 
 	public function supports_v4_conversion( string $property, $value ): bool {
@@ -133,20 +123,22 @@ class Border_Radius_Property_Mapper extends Property_Mapper_Base {
 
 		$size_value = $this->parse_size_value( $value );
 		
-		// ✅ OPTIMIZED: Use null for unset corners instead of 0px
-		// The Multi_Props_Transformer filters out null values with isset(), so only the actual corner gets processed
-		$shorthand_values = [null, null, null, null]; // Initialize all as null
+		// ✅ OPTIMIZED: Only include the corner with a value (matches Elementor editor behavior)
+		// The atomic widget system supports partial corner definitions
+		$result = [];
 		
-		// Set the specific corner to the provided value
-		$shorthand_values[ $corner_index ] = $this->create_size_prop( $size_value );
-		
-		// Convert to atomic widget format (logical properties)
-		return [
-			'start-start' => $shorthand_values[0], // top-left
-			'start-end' => $shorthand_values[1],   // top-right
-			'end-end' => $shorthand_values[2],     // bottom-right
-			'end-start' => $shorthand_values[3],   // bottom-left
+		// Map corner index to logical property
+		$corner_mapping = [
+			0 => 'start-start', // top-left
+			1 => 'start-end',   // top-right
+			2 => 'end-end',     // bottom-right
+			3 => 'end-start',   // bottom-left
 		];
+		
+		$logical_corner = $corner_mapping[ $corner_index ];
+		$result[ $logical_corner ] = $this->create_size_prop( $size_value );
+		
+		return $result;
 	}
 
 	private function parse_individual_corner( string $property, string $value ): ?array {
@@ -167,15 +159,12 @@ class Border_Radius_Property_Mapper extends Property_Mapper_Base {
 
 		$size_value = $this->parse_size_value( $value );
 		
-		// ✅ OPTIMIZED: Use null for unset corners instead of 0px
-		// The Multi_Props_Transformer filters out null values with isset(), so only the actual corner gets processed
-		// This is cleaner and more performant than setting unused corners to 0px
-		return [
-			'start-start' => $logical_corner === 'start-start' ? $this->create_size_prop( $size_value ) : null,
-			'start-end' => $logical_corner === 'start-end' ? $this->create_size_prop( $size_value ) : null,
-			'end-start' => $logical_corner === 'end-start' ? $this->create_size_prop( $size_value ) : null,
-			'end-end' => $logical_corner === 'end-end' ? $this->create_size_prop( $size_value ) : null,
-		];
+		// ✅ OPTIMIZED: Only include the corner with a value (matches Elementor editor behavior)
+		// The atomic widget system supports partial corner definitions
+		$result = [];
+		$result[ $logical_corner ] = $this->create_size_prop( $size_value );
+		
+		return $result;
 	}
 
 	private function parse_shorthand_border_radius( string $value ): ?array {
