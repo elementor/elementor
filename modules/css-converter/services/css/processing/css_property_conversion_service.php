@@ -82,6 +82,36 @@ class Css_Property_Conversion_Service {
 		return null;
 	}
 
+	/**
+	 * Convert a single CSS property to Elementor v4 atomic format with mapped property name
+	 *
+	 * @param string $property CSS property name
+	 * @param mixed $value CSS property value
+	 * @return array|null Array with 'property_name' and 'converted_value', or null if conversion failed
+	 */
+	public function convert_property_to_v4_atomic_with_name( string $property, $value ): ?array {
+		$mapper = $this->resolve_property_mapper_safely( $property, $value );
+		
+		if ( $this->can_convert_to_v4_atomic( $mapper ) ) {
+			$converted_value = $this->attempt_v4_atomic_conversion( $mapper, $property, $value );
+			
+			if ( $converted_value ) {
+				// Get the mapped property name (e.g., border-top-left-radius -> border-radius)
+				$mapped_property_name = method_exists( $mapper, 'get_v4_property_name' ) 
+					? $mapper->get_v4_property_name( $property )
+					: $property;
+				
+				return [
+					'property_name' => $mapped_property_name,
+					'converted_value' => $converted_value
+				];
+			}
+		}
+		
+		$this->record_conversion_failure( $property, $value, 'No v4 mapper available' );
+		return null;
+	}
+
 	private function can_convert_to_v4_atomic( ?object $mapper ): bool {
 		return null !== $mapper && method_exists( $mapper, 'map_to_v4_atomic' );
 	}
@@ -129,16 +159,89 @@ class Css_Property_Conversion_Service {
 	 * @return array Array of converted properties
 	 */
 	public function convert_properties_to_v4_atomic( array $properties ): array {
+		error_log( "🔍 CSS-SERVICE DEBUG: Starting convert_properties_to_v4_atomic with properties: " . json_encode( array_keys( $properties ) ) );
 		$converted = [];
 		
 		foreach ( $properties as $property => $value ) {
+			error_log( "🔍 CSS-SERVICE DEBUG: Processing property='$property', value='$value'" );
+			
+			$mapper = $this->resolve_property_mapper_safely( $property, $value );
+			if ( ! $mapper ) {
+				error_log( "❌ CSS-SERVICE DEBUG: No mapper found for property='$property'" );
+				continue;
+			}
+			
+			error_log( "✅ CSS-SERVICE DEBUG: Mapper found: " . get_class( $mapper ) );
+			
 			$result = $this->convert_property_to_v4_atomic( $property, $value );
-			if ( $result ) {
-				$converted[ $result['property'] ] = $result['value'];
+			if ( ! $result ) {
+				error_log( "❌ CSS-SERVICE DEBUG: Conversion failed for property='$property', value='$value'" );
+				continue;
+			}
+			
+			error_log( "✅ CSS-SERVICE DEBUG: Conversion result: " . json_encode( $result ) );
+			
+			if ( $result && $mapper ) {
+				// ✅ ATOMIC-COMPLIANT: Use mapper's property name method
+				$v4_property_name = method_exists( $mapper, 'get_v4_property_name' ) 
+					? $mapper->get_v4_property_name( $property )
+					: $property;
+				
+				error_log( "✅ CSS-SERVICE DEBUG: V4 property name: '$property' -> '$v4_property_name'" );
+				
+				// Handle border-radius merging to prevent overwriting
+				if ( 'border-radius' === $v4_property_name && isset( $converted[ $v4_property_name ] ) ) {
+					error_log( "🔄 CSS-SERVICE DEBUG: Merging border-radius values (collision detected)" );
+					$converted[ $v4_property_name ] = $this->merge_border_radius_values( 
+						$converted[ $v4_property_name ], 
+						$result 
+					);
+					error_log( "✅ CSS-SERVICE DEBUG: Merged result: " . json_encode( $converted[ $v4_property_name ] ) );
+				} else {
+					$converted[ $v4_property_name ] = $result;
+					error_log( "✅ CSS-SERVICE DEBUG: Stored as converted['$v4_property_name']" );
+				}
 			}
 		}
 		
+		error_log( "🎯 CSS-SERVICE DEBUG: Final converted properties: " . json_encode( array_keys( $converted ) ) );
 		return $converted;
+	}
+
+	/**
+	 * Merge two border-radius atomic structures
+	 * 
+	 * @param array $existing Existing border-radius atomic structure
+	 * @param array $new New border-radius atomic structure
+	 * @return array Merged border-radius atomic structure
+	 */
+	private function merge_border_radius_values( array $existing, array $new ): array {
+		// Both should have the same $$type and structure
+		if ( ! isset( $existing['$$type'] ) || ! isset( $new['$$type'] ) ||
+			 $existing['$$type'] !== 'border-radius' || $new['$$type'] !== 'border-radius' ) {
+			return $new; // Fallback to new value if structure is unexpected
+		}
+		
+		// Merge the corner values - new values take precedence over existing zeros
+		$merged_value = $existing['value'] ?? [];
+		$new_value = $new['value'] ?? [];
+		
+		foreach ( ['start-start', 'start-end', 'end-start', 'end-end'] as $corner ) {
+			if ( isset( $new_value[ $corner ] ) ) {
+				$new_size = $new_value[ $corner ]['value']['size'] ?? 0;
+				$existing_size = $merged_value[ $corner ]['value']['size'] ?? 0;
+				
+				// Use new value if it's non-zero, or if existing is zero
+				if ( $new_size > 0 || $existing_size === 0 ) {
+					$merged_value[ $corner ] = $new_value[ $corner ];
+				}
+			}
+		}
+		
+		return [
+			'$$type' => 'border-radius',
+			'value' => $merged_value
+		];
 	}
 
 	/**

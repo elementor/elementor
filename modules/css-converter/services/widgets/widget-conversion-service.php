@@ -232,6 +232,8 @@ class Widget_Conversion_Service {
 
 		foreach ( $elements as &$element ) {
 			if ( ! empty( $element['inline_css'] ) ) {
+				error_log( "🔍 CSS-EXTRACTION DEBUG: Found inline CSS on element '{$element['tag']}': " . json_encode( array_keys( $element['inline_css'] ) ) );
+				
 				$element_counter++;
 				
 				// Create a unique class name for this element
@@ -243,6 +245,7 @@ class Widget_Conversion_Service {
 					$value = $style_data['value'];
 					$important = $style_data['important'] ? ' !important' : '';
 					$css_rules[] = "  {$property}: {$value}{$important};";
+					error_log( "🔍 CSS-EXTRACTION DEBUG: Processing CSS property='$property', value='$value'" );
 				}
 				
 				if ( ! empty( $css_rules ) ) {
@@ -250,8 +253,10 @@ class Widget_Conversion_Service {
 					
 					// Store the class name in the element for later reference
 					$element['generated_class'] = $class_name;
-					error_log( "Widget Conversion Service: Set generated_class '{$class_name}' on element with tag '{$element['tag']}'" );
+					error_log( "✅ CSS-EXTRACTION DEBUG: Set generated_class '{$class_name}' on element with tag '{$element['tag']}'" );
 				}
+			} else {
+				error_log( "🔍 CSS-EXTRACTION DEBUG: No inline CSS found on element '{$element['tag']}'" );
 			}
 			
 			// Process child elements recursively

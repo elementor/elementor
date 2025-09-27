@@ -253,21 +253,26 @@ class Css_Processor {
 
 			// Convert CSS property using existing class conversion service
 			try {
-				$converted_property = $this->convert_css_property( 
+				$conversion_result = $this->convert_css_property_with_name( 
 					$rule['property'], 
 					$rule['value'] 
 				);
 
-				if ( $converted_property ) {
-				// Debug logging
-				error_log( "CSS Processor: Converting {$rule['property']}:{$rule['value']} -> " . wp_json_encode( $converted_property ) );
-				
-				$processing_result['global_classes'][ $class_name ]['properties'][] = [
-					'original_property' => $rule['property'],
-					'original_value' => $rule['value'],
-					'converted_property' => $converted_property,
-					'important' => $rule['important'],
-				];
+				if ( $conversion_result ) {
+					$mapped_property_name = $conversion_result['property_name'];
+					$converted_property = $conversion_result['converted_value'];
+					
+					// Debug logging
+					error_log( "CSS Processor: Converting {$rule['property']}:{$rule['value']} -> " . wp_json_encode( $converted_property ) );
+					error_log( "CSS Processor: Property name mapping: '{$rule['property']}' -> '$mapped_property_name'" );
+					
+					$processing_result['global_classes'][ $class_name ]['properties'][] = [
+						'original_property' => $rule['property'],
+						'original_value' => $rule['value'],
+						'mapped_property' => $mapped_property_name,  // ✅ NEW: Store mapped property name
+						'converted_property' => $converted_property,
+						'important' => $rule['important'],
+					];
 					$processing_result['stats']['properties_converted']++;
 				}
 			} catch ( \Exception $e ) {
@@ -298,6 +303,12 @@ class Css_Processor {
 		// Use the dedicated CSS property conversion service
 		// This ensures consistency and proper separation of concerns
 		return $this->property_conversion_service->convert_property_to_v4_atomic( $property, $value );
+	}
+
+	private function convert_css_property_with_name( $property, $value ) {
+		// Use the dedicated CSS property conversion service with property name mapping
+		// This ensures we get both the converted value and the mapped property name
+		return $this->property_conversion_service->convert_property_to_v4_atomic_with_name( $property, $value );
 	}
 
 	private function extract_class_names( $selector ) {

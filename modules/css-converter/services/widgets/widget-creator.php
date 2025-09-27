@@ -177,20 +177,23 @@ class Widget_Creator {
 			if ( ! empty( $property_data['converted_property'] ) ) {
 				$converted = $property_data['converted_property'];
 				
+				// ✅ NEW: Use mapped property name if available (e.g., border-top-left-radius -> border-radius)
+				$property_key = $property_data['mapped_property'] ?? $property_data['original_property'] ?? 'unknown';
+				
 				// Debug logging
 				error_log( "Widget Creator: Converting property to global class props: " . wp_json_encode( $converted ) );
+				error_log( "Widget Creator: Using property key: '$property_key'" );
 				
 				// Handle the property mapper format: ['property' => 'name', 'value' => [...]]
 				if ( is_array( $converted ) && isset( $converted['property'] ) && isset( $converted['value'] ) ) {
-					$property_key = $converted['property'];
 					$atomic_value = $converted['value'];
 					
 					error_log( "Widget Creator: Setting props['{$property_key}'] = " . wp_json_encode( $atomic_value ) );
 					$props[ $property_key ] = $atomic_value;
 				} elseif ( is_array( $converted ) ) {
-					// Fallback: merge if it's already in the correct format
-					error_log( "Widget Creator: Merging converted properties (fallback): " . wp_json_encode( $converted ) );
-					$props = array_merge( $props, $converted );
+					// ✅ FIXED: Use mapped property key instead of merging directly
+					error_log( "Widget Creator: Setting props['{$property_key}'] = " . wp_json_encode( $converted ) );
+					$props[ $property_key ] = $converted;
 				} else {
 					error_log( "Widget Creator: Unexpected converted property format: " . wp_json_encode( $converted ) );
 				}
@@ -565,10 +568,12 @@ class Widget_Creator {
 						foreach ( $global_class['properties'] as $property_data ) {
 							if ( ! empty( $property_data['converted_property'] ) ) {
 								$converted = $property_data['converted_property'];
-								$original_property = $property_data['original_property'];
 								
-								// Add the converted property to props
-								$props[ $original_property ] = $converted;
+								// ✅ FIXED: Use mapped property name (e.g., border-top-left-radius -> border-radius)
+								$property_key = $property_data['mapped_property'] ?? $property_data['original_property'] ?? 'unknown';
+								
+								// Add the converted property to props using the correct mapped key
+								$props[ $property_key ] = $converted;
 							}
 						}
 					}

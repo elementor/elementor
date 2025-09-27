@@ -82,6 +82,36 @@ class Css_Property_Conversion_Service {
 		return null;
 	}
 
+	/**
+	 * Convert a single CSS property to Elementor v4 atomic format with mapped property name
+	 *
+	 * @param string $property CSS property name
+	 * @param mixed $value CSS property value
+	 * @return array|null Array with 'property_name' and 'converted_value', or null if conversion failed
+	 */
+	public function convert_property_to_v4_atomic_with_name( string $property, $value ): ?array {
+		$mapper = $this->resolve_property_mapper_safely( $property, $value );
+		
+		if ( $this->can_convert_to_v4_atomic( $mapper ) ) {
+			$converted_value = $this->attempt_v4_atomic_conversion( $mapper, $property, $value );
+			
+			if ( $converted_value ) {
+				// Get the mapped property name (e.g., border-top-left-radius -> border-radius)
+				$mapped_property_name = method_exists( $mapper, 'get_v4_property_name' ) 
+					? $mapper->get_v4_property_name( $property )
+					: $property;
+				
+				return [
+					'property_name' => $mapped_property_name,
+					'converted_value' => $converted_value
+				];
+			}
+		}
+		
+		$this->record_conversion_failure( $property, $value, 'No v4 mapper available' );
+		return null;
+	}
+
 	private function can_convert_to_v4_atomic( ?object $mapper ): bool {
 		return null !== $mapper && method_exists( $mapper, 'map_to_v4_atomic' );
 	}
@@ -132,9 +162,16 @@ class Css_Property_Conversion_Service {
 		$converted = [];
 		
 		foreach ( $properties as $property => $value ) {
+			$mapper = $this->resolve_property_mapper_safely( $property, $value );
 			$result = $this->convert_property_to_v4_atomic( $property, $value );
-			if ( $result ) {
-				$converted[ $result['property'] ] = $result['value'];
+			
+			if ( $result && $mapper ) {
+				// ✅ ATOMIC-COMPLIANT: Use mapper's property name method
+				$v4_property_name = method_exists( $mapper, 'get_v4_property_name' ) 
+					? $mapper->get_v4_property_name( $property )
+					: $property;
+				
+				$converted[ $v4_property_name ] = $result;
 			}
 		}
 		
