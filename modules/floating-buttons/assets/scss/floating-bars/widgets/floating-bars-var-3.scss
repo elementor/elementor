@@ -17,7 +17,9 @@
 	--e-floating-bars-coupon-animation-duration: 1000ms;
 	--e-floating-bars-coupon-width: initial;
 	--e-floating-bars-coupon-height: initial;
+}
 
+[class^="elementor-widget-floating-bars-"] .e-floating-bars-var-3 {
 	.e-floating-bars {
 
 		&__coupon-button {
