@@ -29,15 +29,15 @@ class Widget_Mapper {
 			'p' => 'e-paragraph',
 			'blockquote' => 'e-paragraph', // Treat blockquote as paragraph with special styling
 			
-			// Container elements - always use flexbox (HVV decision)
-			'div' => 'e-flexbox',
-			'section' => 'e-flexbox',
-			'article' => 'e-flexbox',
-			'aside' => 'e-flexbox',
-			'header' => 'e-flexbox',
-			'footer' => 'e-flexbox',
-			'main' => 'e-flexbox',
-			'nav' => 'e-flexbox',
+			// Container elements - use div-block for simple containers
+			'div' => 'e-div-block',
+			'section' => 'e-div-block',
+			'article' => 'e-div-block',
+			'aside' => 'e-div-block',
+			'header' => 'e-div-block',
+			'footer' => 'e-div-block',
+			'main' => 'e-div-block',
+			'nav' => 'e-div-block',
 			
 			// Interactive elements
 			'a' => 'e-link',
@@ -58,6 +58,7 @@ class Widget_Mapper {
 		$this->handlers = [
 			'e-heading' => [ $this, 'handle_heading' ],
 			'e-paragraph' => [ $this, 'handle_paragraph' ],
+			'e-div-block' => [ $this, 'handle_div_block' ],
 			'e-flexbox' => [ $this, 'handle_flexbox' ],
 			'e-link' => [ $this, 'handle_link' ],
 			'e-button' => [ $this, 'handle_button' ],
@@ -67,14 +68,6 @@ class Widget_Mapper {
 
 	public function map_element( $element ) {
 		$tag = $element['tag'];
-		error_log( "Widget Mapper: Processing element with tag '{$tag}'" );
-		
-		// Check if element has generated_class
-		if ( isset( $element['generated_class'] ) ) {
-			error_log( "Widget Mapper: Element has generated_class: '{$element['generated_class']}'" );
-		} else {
-			error_log( "Widget Mapper: Element has NO generated_class" );
-		}
 		
 		// Check if we have a mapping for this tag
 		if ( ! isset( $this->mapping_rules[ $tag ] ) ) {
@@ -150,15 +143,49 @@ class Widget_Mapper {
 	}
 
 	private function handle_paragraph( $element ) {
+		// Only add settings that differ from defaults or are required
+		$settings = [];
+		
+		// paragraph is required - always add it
+		if ( ! empty( $element['content'] ) ) {
+			$settings['paragraph'] = $element['content'];
+		}
+		
+		// Only add other properties if they have values
+		// classes, link, attributes will be handled by the widget creator if needed
+
 		return [
 			'widget_type' => 'e-paragraph',
 			'original_tag' => $element['tag'], // Preserve original tag (p, blockquote, etc.)
-			'settings' => [
-				'text' => $element['content'],
-			],
+			'settings' => $settings,
 			'attributes' => $element['attributes'],
 			'inline_css' => $element['inline_css'] ?? [],
 			'children' => [], // Paragraphs don't have widget children
+		];
+	}
+
+	private function handle_div_block( $element ) {
+		// Map children recursively
+		$children = [];
+		if ( ! empty( $element['children'] ) ) {
+			$children = $this->map_elements( $element['children'] );
+		}
+
+		// Only add settings that differ from defaults
+		$settings = [];
+		
+		// e-div-block defaults to 'div', so only add tag if it's different
+		if ( $element['tag'] !== 'div' ) {
+			$settings['tag'] = $element['tag'];
+		}
+
+		return [
+			'widget_type' => 'e-div-block',
+			'original_tag' => $element['tag'],
+			'settings' => $settings,
+			'attributes' => $element['attributes'],
+			'inline_css' => $element['inline_css'] ?? [],
+			'children' => $children,
 		];
 	}
 

@@ -68,7 +68,10 @@ class CssParser {
 
 	public function parse( string $css ): ParsedCss {
 		if ( empty( trim( $css ) ) ) {
-			throw new CssParseException( 'Empty CSS provided' );
+			// ✅ GRACEFUL HANDLING: Return empty ParsedCss instead of throwing exception
+			// This allows HTML without CSS to be processed successfully
+			$empty_document = new \Sabberworm\CSS\CSSList\Document();
+			return new ParsedCss( $empty_document, '' );
 		}
 
 		try {

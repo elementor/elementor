@@ -294,11 +294,11 @@ class Widget_Creator {
 			$merged_settings['attributes'] = $attributes;
 		}
 		
-		if ( 'e-flexbox' === $mapped_type ) {
-			// Flexbox containers have special structure in Elementor
+		if ( 'e-div-block' === $mapped_type ) {
+			// Div-block containers have special structure in Elementor
 			$elementor_widget = [
 				'id' => $widget_id,
-				'elType' => 'e-flexbox',
+				'elType' => 'e-div-block',
 				'settings' => $merged_settings,
 				'isInner' => false,
 				'styles' => $this->convert_styles_to_v4_format( $applied_styles ),
@@ -335,7 +335,8 @@ class Widget_Creator {
 		$mapping = [
 			'e-heading' => 'e-heading',
 			'e-paragraph' => 'e-paragraph',
-			'e-flexbox' => 'e-flexbox',
+			'e-div-block' => 'e-div-block',
+			'e-flexbox' => 'e-flexbox', // Keep flexbox as option
 			'e-link' => 'e-button', // Links can be represented as buttons
 			'e-button' => 'e-button',
 			'e-image' => 'e-image',
@@ -360,7 +361,6 @@ class Widget_Creator {
 			
 			// Use the generated class ID instead of the global class names
 			$classes[] = $this->current_widget_class_id;
-			error_log( 'Widget Creator: Added generated class ID to classes: ' . $this->current_widget_class_id );
 		}
 
 		// Generate a single class ID for this widget that will be used consistently
@@ -375,20 +375,14 @@ class Widget_Creator {
 		}
 
 		// Add classes to settings with proper v4 atomic widget format
+		// Only add classes structure if there are actual classes to add
 		if ( ! empty( $classes ) ) {
 			$merged_settings['classes'] = [
 				'$$type' => 'classes',
 				'value' => $classes,
 			];
-			error_log( 'Widget Creator: Final merged_settings classes: ' . wp_json_encode( $merged_settings['classes'] ) );
-		} else {
-			// Ensure classes array exists even if empty
-			$merged_settings['classes'] = [
-				'$$type' => 'classes',
-				'value' => [],
-			];
-			error_log( 'Widget Creator: No classes to add - empty classes array' );
 		}
+		// If no classes, don't add the classes property at all (matches editor behavior)
 
 		return $merged_settings;
 	}

@@ -191,14 +191,11 @@ class Widget_Hierarchy_Processor {
 					'attributes' => null,
 				];
 				break;
-			case 'e-paragraph':
-				$defaults = [
-					'paragraph' => $widget['settings']['text'] ?? 'Type your paragraph here',
-					'classes' => [],
-					'link' => null,
-					'attributes' => null,
-				];
-				break;
+		case 'e-paragraph':
+			// Editor creates paragraph widgets with completely empty settings
+			// Content is handled through other mechanisms (likely in the element structure)
+			$defaults = [];
+			break;
 			case 'e-button':
 				$defaults = [
 					'text' => $widget['settings']['text'] ?? 'Button',
@@ -238,7 +235,7 @@ class Widget_Hierarchy_Processor {
 		}
 		
 		// Validate widget type
-		$supported_types = [ 'e-heading', 'e-text', 'e-paragraph', 'e-flexbox', 'e-button', 'e-image', 'e-link' ];
+		$supported_types = [ 'e-heading', 'e-text', 'e-paragraph', 'e-div-block', 'e-flexbox', 'e-button', 'e-image', 'e-link' ];
 		if ( ! in_array( $widget['widget_type'], $supported_types, true ) ) {
 			throw new \Exception( "Unsupported widget type: {$widget['widget_type']}" );
 		}
