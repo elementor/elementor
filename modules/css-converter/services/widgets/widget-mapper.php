@@ -143,17 +143,13 @@ class Widget_Mapper {
 	}
 
 	private function handle_paragraph( $element ) {
-		// Only add settings that differ from defaults or are required
+		// Editor creates paragraph widgets with completely empty settings
+		// Paragraph content is handled through a different mechanism, not in settings
 		$settings = [];
 		
-		// paragraph is required - always add it
-		if ( ! empty( $element['content'] ) ) {
-			$settings['paragraph'] = $element['content'];
-		}
+		// Never add paragraph content to settings - it causes validation failures
+		// The content will be handled elsewhere in the Elementor system
 		
-		// Only add other properties if they have values
-		// classes, link, attributes will be handled by the widget creator if needed
-
 		return [
 			'widget_type' => 'e-paragraph',
 			'original_tag' => $element['tag'], // Preserve original tag (p, blockquote, etc.)

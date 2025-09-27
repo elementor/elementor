@@ -290,7 +290,8 @@ class Widget_Creator {
 		$merged_settings = $this->merge_settings_with_styles( $settings, $applied_styles );
 		
 		// Add widget attributes to settings (preserves HTML id, class, etc.)
-		if ( ! empty( $attributes ) ) {
+		// Only add attributes if they have meaningful content (not just style attributes)
+		if ( ! empty( $attributes ) && ! $this->are_attributes_only_style( $attributes ) ) {
 			$merged_settings['attributes'] = $attributes;
 		}
 		
@@ -810,5 +811,18 @@ class Widget_Creator {
 		$this->hierarchy_processor = new Widget_Hierarchy_Processor();
 		$this->error_handler = new Widget_Error_Handler();
 		$this->property_mapper_registry = Class_Property_Mapper_Factory::get_registry();
+	}
+
+	private function are_attributes_only_style( array $attributes ): bool {
+		// Check if attributes contain only style-related attributes that shouldn't be in settings
+		$style_only_attributes = [ 'style', 'class' ];
+		
+		foreach ( $attributes as $key => $value ) {
+			if ( ! in_array( $key, $style_only_attributes, true ) ) {
+				return false; // Found non-style attribute
+			}
+		}
+		
+		return true; // Only style attributes found
 	}
 }
