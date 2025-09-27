@@ -39,7 +39,7 @@ test.describe( 'Border Radius Prop Type Integration @prop-types', () => {
 	} );
 
 	test( 'should convert border-radius properties and verify styling', async ( { page, request } ) => {
-		const combinedCssContent = `
+                const combinedCssContent = `
 			<div>
 				<p style="border-radius: 10px;" data-test="single-value">Single value border-radius</p>
 				<p style="border-radius: 10px 20px;" data-test="two-values">Two values border-radius</p>

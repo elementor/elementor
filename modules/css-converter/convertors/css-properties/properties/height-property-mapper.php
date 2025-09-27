@@ -11,23 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Height Property Mapper
- * 
+ *
  * 🎯 ATOMIC SOURCE: style-schema.php uses Size_Prop_Type for height
- * 🚫 FALLBACKS: NONE - 100% atomic widget compliance
- * ✅ VALIDATION: Matches atomic widget expectations exactly
- * 
- * ✅ ATOMIC-ONLY COMPLIANCE ACHIEVED:
- * ✅ IMPLEMENTATION: Pure atomic prop type return - Size_Prop_Type::make()->generate()
- * ✅ VERIFIED: All JSON creation handled by atomic widgets
- * 
- * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
- * - Widget JSON source: ✅ Size_Prop_Type
- * - Property JSON source: /atomic-widgets/prop-types/size-prop-type.php
- * - Fallback usage: ✅ NONE - Zero fallback mechanisms
- * - Custom JSON creation: ✅ NONE - Pure atomic prop type return
- * - Enhanced_Property_Mapper usage: ✅ NONE - Completely removed
- * - Base class method usage: ✅ NONE - Only atomic prop types used
- * - Manual $$type assignment: ✅ NONE - Only atomic widgets assign types
+ * ✅ ATOMIC-ONLY IMPLEMENTATION: Uses atomic prop types exclusively
  */
 class Height_Property_Mapper extends Property_Mapper_Base {
 

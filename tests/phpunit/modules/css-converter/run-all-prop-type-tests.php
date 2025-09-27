@@ -29,6 +29,10 @@ $test_files = [
 	'test-box-shadow-property-mapper.php',
 	'test-opacity-property-mapper.php',
 	'test-padding-property-mapper.php',
+	'test-margin-property-mapper.php',
+	'test-font-weight-property-mapper.php',
+	'test-max-width-property-mapper.php',
+	'test-border-width-property-mapper.php',
 ];
 
 $test_directory = __DIR__ . '/convertors/css-properties/properties/';
@@ -111,6 +115,7 @@ $atomic_compliant_mappers = [
 	'box-shadow' => 'Box_Shadow_Prop_Type (array of Shadow_Prop_Type)',
 	'opacity' => 'Size_Prop_Type with percentage units',
 	'padding' => 'Dimensions_Prop_Type',
+	'margin' => 'Dimensions_Prop_Type with negative values + logical properties',
 ];
 
 foreach ( $atomic_compliant_mappers as $mapper => $prop_type ) {

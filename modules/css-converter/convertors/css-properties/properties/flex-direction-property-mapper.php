@@ -11,23 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Flex Direction Property Mapper
- * 
+ *
  * 🎯 ATOMIC SOURCE: style-schema.php uses String_Prop_Type with enum for flex-direction
  * 🚫 FALLBACKS: NONE - 100% atomic widget compliance
  * ✅ VALIDATION: Matches atomic widget expectations exactly
- * 
+ *
  * ✅ ATOMIC-ONLY COMPLIANCE ACHIEVED:
  * ✅ IMPLEMENTATION: Pure atomic prop type return - String_Prop_Type::make()->enum()->generate()
  * ✅ VERIFIED: All JSON creation handled by atomic widgets
- * 
- * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
- * - Widget JSON source: ✅ String_Prop_Type
- * - Property JSON source: /atomic-widgets/prop-types/primitives/string-prop-type.php
- * - Fallback usage: ✅ NONE - Zero fallback mechanisms
- * - Custom JSON creation: ✅ NONE - Pure atomic prop type return
- * - Enhanced_Property_Mapper usage: ✅ NONE - Completely removed
- * - Base class method usage: ✅ NONE - Only atomic prop types used
- * - Manual $$type assignment: ✅ NONE - Only atomic widgets assign types
  */
 class Flex_Direction_Property_Mapper extends Property_Mapper_Base {
 

@@ -10,23 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * ✅ ATOMIC-ONLY COMPLIANCE ACHIEVED:
- * ✅ FIXED: Pure atomic prop type return - Dimensions_Prop_Type::make()->generate()
- * ✅ REMOVED: Atomic_Property_Mapper_Base inheritance
- * ✅ REMOVED: create_atomic_dimensions_value() calls
- * ✅ REMOVED: All fallback mechanisms
- * ✅ VERIFIED: All JSON creation handled by atomic widgets
- * 
- * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
- * - Widget JSON source: ✅ Dimensions_Prop_Type
- * - Property JSON source: /atomic-widgets/prop-types/dimensions-prop-type.php
- * - Fallback usage: ✅ NONE - Zero fallback mechanisms
- * - Custom JSON creation: ✅ NONE - Pure atomic prop type return
- * - Enhanced_Property_Mapper usage: ✅ NONE - Completely removed
- * - Base class method usage: ✅ Property_Mapper_Base only - No atomic violations
- * - Manual $$type assignment: ✅ NONE - Only atomic widgets assign types
+ * Padding Property Mapper
+ *
+ * ✅ ATOMIC-ONLY IMPLEMENTATION: Uses atomic prop types exclusively
  */
-
 class Atomic_Padding_Property_Mapper extends Property_Mapper_Base {
 
 	private const SUPPORTED_PROPERTIES = [

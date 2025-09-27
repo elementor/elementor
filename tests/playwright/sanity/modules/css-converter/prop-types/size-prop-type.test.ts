@@ -38,7 +38,7 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test.only( 'should convert size properties and verify core functionality', async ( { page, request } ) => {
+	test( 'should convert size properties and verify core functionality', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="height: 100px;" data-test="height-px">Height in pixels</p>

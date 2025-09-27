@@ -5,7 +5,6 @@ namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -13,25 +12,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Margin Property Mapper
- * 
+ *
  * 🎯 ATOMIC SOURCE: atomic widgets use Dimensions_Prop_Type for margin
- * 🚫 FALLBACKS: NONE - 100% atomic widget compliance
- * ✅ VALIDATION: Matches atomic widget expectations exactly
- * 
- * ✅ ATOMIC-ONLY COMPLIANCE ACHIEVED:
- * ✅ FIXED: Pure atomic prop type return - Dimensions_Prop_Type::make()->generate()
- * ✅ REMOVED: Manual JSON wrapper structure
- * ✅ REMOVED: Size_Prop_Type::make()->generate() calls in parse methods
- * ✅ VERIFIED: All JSON creation handled by atomic widgets
- * 
- * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
- * - Widget JSON source: ✅ Dimensions_Prop_Type
- * - Property JSON source: /atomic-widgets/prop-types/dimensions-prop-type.php
- * - Fallback usage: ✅ NONE - Zero fallback mechanisms
- * - Custom JSON creation: ✅ NONE - Pure atomic prop type return
- * - Enhanced_Property_Mapper usage: ✅ NONE - Completely removed
- * - Base class method usage: ✅ NONE - Only atomic prop types used
- * - Manual $$type assignment: ✅ NONE - Only atomic widgets assign types
+ * ✅ ATOMIC-ONLY IMPLEMENTATION: Uses atomic prop types exclusively
+ *
+ * ✅ COMPREHENSIVE COVERAGE:
+ * - Physical properties: margin, margin-top, margin-right, margin-bottom, margin-left
+ * - Logical properties: margin-block, margin-block-start, margin-block-end
+ * - Logical properties: margin-inline, margin-inline-start, margin-inline-end
+ * - Shorthand support: 1, 2, 3, 4 values for margin, margin-block, margin-inline
+ * - Negative values: margin: -20px; margin-top: -10px;
+ * - CSS keywords: auto, inherit, initial, unset, revert, revert-layer
  */
 class Margin_Property_Mapper extends Property_Mapper_Base {
 
@@ -59,7 +50,6 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return Dimensions_Prop_Type::make()->generate( $dimensions_data );
 	}
 
@@ -82,43 +72,152 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 			return null;
 		}
 
-		if ( 'margin' === $property ) {
-			return $this->parse_shorthand_margin( $value );
+		if ( $this->is_css_keyword( $value ) ) {
+			return $this->handle_css_keyword( $value );
 		}
 
-		return $this->parse_individual_margin( $property, $value );
+		switch ( $property ) {
+			case 'margin':
+				return $this->parse_shorthand_margin( $value );
+			case 'margin-block':
+				return $this->parse_logical_shorthand( $value, 'block' );
+			case 'margin-inline':
+				return $this->parse_logical_shorthand( $value, 'inline' );
+			default:
+				return $this->parse_individual_margin( $property, $value );
+		}
+	}
+
+	private function is_css_keyword( string $value ): bool {
+		$keywords = ['auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer'];
+		return in_array( strtolower( $value ), $keywords, true );
+	}
+
+	private function handle_css_keyword( string $value ): array {
+		$keyword = strtolower( $value );
+		
+		$keyword_size = [
+			'size' => $keyword,
+			'unit' => 'custom'
+		];
+
+		return $this->create_dimensions_structure([
+			'block-start' => $keyword_size,
+			'inline-end' => $keyword_size,
+			'block-end' => $keyword_size,
+			'inline-start' => $keyword_size,
+		]);
 	}
 
 	private function parse_shorthand_margin( string $value ): ?array {
 		$parts = preg_split( '/\s+/', trim( $value ) );
+		$parts = array_filter( $parts );
 		$count = count( $parts );
 
 		if ( $count < 1 || $count > 4 ) {
 			return null;
 		}
 
-		$top = $this->parse_size_value( $parts[0] );
-		$right = $this->parse_size_value( $parts[ $count > 1 ? 1 : 0 ] );
-		$bottom = $this->parse_size_value( $parts[ $count > 2 ? 2 : 0 ] );
-		$left = $this->parse_size_value( $parts[ $count > 3 ? 3 : ( $count > 1 ? 1 : 0 ) ] );
-
-		if ( null === $top || null === $right || null === $bottom || null === $left ) {
+		$dimensions = $this->map_shorthand_to_logical_properties( $parts );
+		
+		if ( null === $dimensions ) {
 			return null;
 		}
 
-		return [
-			'block-start' => $top,
-			'inline-end' => $right,
-			'block-end' => $bottom,
-			'inline-start' => $left,
-		];
+		return $this->create_dimensions_structure( $dimensions );
+	}
+
+	private function parse_logical_shorthand( string $value, string $axis ): ?array {
+		$parts = preg_split( '/\s+/', trim( $value ) );
+		$parts = array_filter( $parts );
+		$count = count( $parts );
+
+		if ( $count < 1 || $count > 2 ) {
+			return null;
+		}
+
+		$zero_size = [ 'size' => 0.0, 'unit' => 'px' ];
+		
+		if ( 'block' === $axis ) {
+			$start_value = $this->parse_size_value( $parts[0] );
+			$end_value = $count > 1 ? $this->parse_size_value( $parts[1] ) : $start_value;
+
+			return $this->create_dimensions_structure([
+				'block-start' => $start_value,
+				'inline-end' => $zero_size,
+				'block-end' => $end_value,
+				'inline-start' => $zero_size,
+			]);
+		}
+
+		if ( 'inline' === $axis ) {
+			$start_value = $this->parse_size_value( $parts[0] );
+			$end_value = $count > 1 ? $this->parse_size_value( $parts[1] ) : $start_value;
+
+			return $this->create_dimensions_structure([
+				'block-start' => $zero_size,
+				'inline-end' => $end_value,
+				'block-end' => $zero_size,
+				'inline-start' => $start_value,
+			]);
+		}
+
+		return null;
+	}
+
+	private function map_shorthand_to_logical_properties( array $parts ): ?array {
+		$count = count( $parts );
+		
+		switch ( $count ) {
+			case 1:
+				$all = $this->parse_size_value( $parts[0] );
+				return [
+					'block-start' => $all,
+					'inline-end' => $all,
+					'block-end' => $all,
+					'inline-start' => $all,
+				];
+
+			case 2:
+				$vertical = $this->parse_size_value( $parts[0] );
+				$horizontal = $this->parse_size_value( $parts[1] );
+				return [
+					'block-start' => $vertical,
+					'inline-end' => $horizontal,
+					'block-end' => $vertical,
+					'inline-start' => $horizontal,
+				];
+
+			case 3:
+				$top = $this->parse_size_value( $parts[0] );
+				$horizontal = $this->parse_size_value( $parts[1] );
+				$bottom = $this->parse_size_value( $parts[2] );
+				return [
+					'block-start' => $top,
+					'inline-end' => $horizontal,
+					'block-end' => $bottom,
+					'inline-start' => $horizontal,
+				];
+
+			case 4:
+				$top = $this->parse_size_value( $parts[0] );
+				$right = $this->parse_size_value( $parts[1] );
+				$bottom = $this->parse_size_value( $parts[2] );
+				$left = $this->parse_size_value( $parts[3] );
+				return [
+					'block-start' => $top,
+					'inline-end' => $right,
+					'block-end' => $bottom,
+					'inline-start' => $left,
+				];
+
+			default:
+				return null;
+		}
 	}
 
 	private function parse_individual_margin( string $property, string $value ): ?array {
 		$size_data = $this->parse_size_value( $value );
-		if ( null === $size_data ) {
-			return null;
-		}
 
 		$zero_size = [ 'size' => 0.0, 'unit' => 'px' ];
 		$logical_property = $this->map_physical_to_logical( $property );
@@ -134,7 +233,7 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 			$dimensions[ $logical_property ] = $size_data;
 		}
 
-		return $dimensions;
+		return $this->create_dimensions_structure( $dimensions );
 	}
 
 	private function map_physical_to_logical( string $property ): string {
@@ -152,25 +251,54 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 		return $mapping[ $property ] ?? 'block-start';
 	}
 
+	private function create_dimensions_structure( array $dimensions ): array {
+		$result = [];
+		
+		foreach ( $dimensions as $logical_property => $size_data ) {
+			$result[ $logical_property ] = Size_Prop_Type::make()->generate( $size_data );
+		}
+
+		return $result;
+	}
+
 	protected function parse_size_value( string $value ): array {
-		if ( preg_match( '/^(\d*\.?\d+)(px|em|rem|%|vw|vh)$/', $value, $matches ) ) {
+		$value = trim( $value );
+		
+		if ( empty( $value ) ) {
 			return [
-				'size' => (float) $matches[1],
-				'unit' => $matches[2]
+				'size' => 0.0,
+				'unit' => 'px'
 			];
 		}
 
-		if ( is_numeric( $value ) ) {
+		if ( $this->is_css_keyword( $value ) ) {
 			return [
-				'size' => (float) $value,
+				'size' => $value,
+				'unit' => 'custom'
+			];
+		}
+
+		if ( preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax)?$/i', $value, $matches ) ) {
+			$size = (float) $matches[1];
+			$unit = $matches[2] ?? 'px';
+			
+			return [
+				'size' => $size,
+				'unit' => strtolower( $unit )
+			];
+		}
+
+		if ( '0' === $value ) {
+			return [
+				'size' => 0.0,
 				'unit' => 'px'
 			];
 		}
 
 		// Fallback for invalid values
 		return [
-			'size' => 0,
-			'unit' => 'px',
+			'size' => 0.0,
+			'unit' => 'px'
 		];
 	}
 }

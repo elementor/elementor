@@ -50,28 +50,6 @@ class Css_Property_Conversion_Service {
 		return $this->property_mapper_registry->resolve( $property, $value );
 	}
 
-	// TODO: Replace with atomic widgets approach
-	private function can_convert_to_schema( ?object $mapper ): bool {
-		return null !== $mapper && method_exists( $mapper, 'map_to_schema' );
-	}
-
-	// TODO: Replace with atomic widgets approach
-	private function attempt_schema_conversion( object $mapper, string $property, $value ): ?array {
-		$schema_result = $mapper->map_to_schema( $property, $value );
-		
-		if ( $this->is_valid_schema_result( $schema_result ) ) {
-			$this->record_conversion_success();
-			return reset( $schema_result );
-		}
-		
-		$this->record_conversion_failure( $property, $value, 'Schema conversion failed' );
-		return null;
-	}
-
-	// TODO: Replace with atomic widgets approach
-	private function is_valid_schema_result( $result ): bool {
-		return ! empty( $result ) && is_array( $result );
-	}
 
 	private function record_conversion_success(): void {
 		$this->conversion_stats['properties_converted']++;
@@ -172,7 +150,7 @@ class Css_Property_Conversion_Service {
 	 */
 	public function is_property_supported( string $property, $value ): bool {
 		$mapper = $this->property_mapper_registry->resolve( $property, $value );
-		return $mapper && method_exists( $mapper, 'map_to_schema' );
+		return $mapper && method_exists( $mapper, 'map_to_v4_atomic' );
 	}
 
 	/**

@@ -15,24 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Box Shadow Property Mapper
- * 
+ *
  * 🎯 ATOMIC SOURCE: atomic widgets use Box_Shadow_Prop_Type for box-shadow
  * 🚫 FALLBACKS: NONE - 100% atomic widget compliance
  * ✅ VALIDATION: Matches atomic widget expectations exactly
- * 
+ *
  * ✅ ATOMIC-ONLY COMPLIANCE ACHIEVED:
  * ✅ FIXED: Pure atomic prop type return - Box_Shadow_Prop_Type::make()->process_value()
- * ✅ REMOVED: Manual JSON wrapper structure
  * ✅ VERIFIED: All JSON creation handled by atomic widgets
- * 
- * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
- * - Widget JSON source: ✅ Box_Shadow_Prop_Type
- * - Property JSON source: /atomic-widgets/prop-types/box-shadow-prop-type.php
- * - Fallback usage: ✅ NONE - Zero fallback mechanisms
- * - Custom JSON creation: ✅ NONE - Pure atomic prop type return
- * - Enhanced_Property_Mapper usage: ✅ NONE - Completely removed
- * - Base class method usage: ✅ NONE - Only atomic prop types used
- * - Manual $$type assignment: ✅ NONE - Only atomic widgets assign types
  */
 class Box_Shadow_Property_Mapper extends Property_Mapper_Base {
 
@@ -51,7 +41,7 @@ class Box_Shadow_Property_Mapper extends Property_Mapper_Base {
 		}
 
 		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
-		return Box_Shadow_Prop_Type::make()->process_value( $shadows_data );
+		return Box_Shadow_Prop_Type::make()->generate( $shadows_data );
 	}
 
 	public function get_supported_properties(): array {

@@ -192,18 +192,23 @@ export const IMPLEMENTED_PROP_TYPE_TESTS = {
 /**
  * 📊 TEST COVERAGE SUMMARY
  * 
- * Total Properties Tested: 40+
- * Total Test Files: 15
+ * Total Properties Tested: 45+
+ * Total Test Files: 18
  * Atomic Compliance: 100%
  * 
  * Property Categories:
- * - Size Properties: height, width, font-size, opacity (4 files)
- * - String Enum Properties: display, position, flex-direction, text-align (4 files)  
- * - Color Properties: color, background-color (1 file)
+ * - Size Properties: height, width, font-size, max-width, opacity (5 files)
+ * - String Enum Properties: display, position, flex-direction, text-align, font-weight (5 files)  
+ * - Color Properties: color, background-color (2 files)
  * - Dimensional Properties: padding, margin (2 files)
- * - Border Properties: border-radius (1 file)
+ * - Border Properties: border-radius, border-width (2 files)
  * - Effect Properties: box-shadow (1 file)
- * - Existing: dimensions, size, border-radius, box-shadow, opacity (5 files)
+ * - Existing: dimensions, size (1 file)
+ * 
+ * NEW ESSENTIAL PROPERTIES ADDED:
+ * ✅ font-weight-prop-type.test.ts - Typography weight with aliases
+ * ✅ max-width-prop-type.test.ts - Size constraints with all units
+ * ✅ border-width-prop-type.test.ts - Border sizing with shorthand support
  */
 
 export default IMPLEMENTED_PROP_TYPE_TESTS;

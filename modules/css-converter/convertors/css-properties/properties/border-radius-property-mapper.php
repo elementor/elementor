@@ -4,6 +4,7 @@ namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -11,37 +12,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Border Radius Property Mapper
- * 
+ *
  * 🎯 ATOMIC SOURCE VERIFICATION:
  * - Atomic Widget: style-schema.php uses Border_Radius_Prop_Type for border-radius
  * - Prop Type: /atomic-widgets/prop-types/border-radius-prop-type.php
  * - Expected Structure: {"$$type":"border-radius","value":{"start-start":{"$$type":"size","value":{"size":10,"unit":"px"}},...}}
  * - Validation Rules: Logical corner properties (start-start, start-end, end-start, end-end)
  * - Transformer: Multi_Props_Transformer maps to border-{corner}-radius CSS properties
- * 
- * ✅ ATOMIC-ONLY COMPLIANCE ACHIEVED:
- * ✅ FIXED: Pure atomic prop type return - Border_Radius_Prop_Type::make()->generate()
- * ✅ REMOVED: Manual JSON wrapper structure
- * ✅ REMOVED: create_v4_property_with_type() calls
- * ✅ REMOVED: All fallback mechanisms
- * ✅ VERIFIED: All JSON creation handled by atomic widgets
- * 
+ *
+ * ✅ ATOMIC-ONLY IMPLEMENTATION: Uses atomic prop types exclusively
+ *
  * ✅ SUPPORTED PROPERTIES:
  * - Physical: border-radius, border-top-left-radius, border-top-right-radius, etc.
  * - Logical: border-start-start-radius, border-start-end-radius, etc. (mapped to physical)
- * 
+ *
  * ❌ UNSUPPORTED (Atomic Widget Limitations):
  * - Elliptical syntax: border-radius: 50px / 20px (not supported by Border_Radius_Prop_Type)
  * - Complex elliptical: border-radius: 50px 20px / 10px 40px
- * 
- * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
- * - Widget JSON source: ✅ Border_Radius_Prop_Type
- * - Property JSON source: /atomic-widgets/prop-types/border-radius-prop-type.php
- * - Fallback usage: ✅ NONE - Zero fallback mechanisms
- * - Custom JSON creation: ✅ NONE - Pure atomic prop type return
- * - Enhanced_Property_Mapper usage: ✅ NONE - Completely removed
- * - Base class method usage: ✅ NONE - Only atomic prop types used
- * - Manual $$type assignment: ✅ NONE - Only atomic widgets assign types
  */
 class Border_Radius_Property_Mapper extends Property_Mapper_Base {
 
@@ -90,23 +77,6 @@ class Border_Radius_Property_Mapper extends Property_Mapper_Base {
 		return 'border-radius';
 	}
 
-	public function map_to_schema( string $property, $value ): ?array {
-		if ( ! $this->supports( $property ) ) {
-			return null;
-		}
-
-		$parsed_value = $this->parse_border_radius_value( $property, $value );
-		if ( null === $parsed_value ) {
-			return null;
-		}
-
-		return [
-			'border-radius' => [
-				'$$type' => 'border-radius',
-				'value' => $parsed_value
-			]
-		];
-	}
 
 	private function parse_border_radius_value( string $property, $value ): ?array {
 		if ( ! is_string( $value ) ) {
@@ -218,20 +188,14 @@ class Border_Radius_Property_Mapper extends Property_Mapper_Base {
 	}
 
 	private function create_size_prop( array $size_value ): array {
-		return [
-			'$$type' => 'size',
-			'value' => $size_value
-		];
+		return Size_Prop_Type::make()->generate( $size_value );
 	}
 
 	private function create_zero_size(): array {
-		return [
-			'$$type' => 'size',
-			'value' => [
-				'size' => 0.0,
-				'unit' => 'px'
-			]
-		];
+		return Size_Prop_Type::make()->generate( [
+			'size' => 0.0,
+			'unit' => 'px'
+		] );
 	}
 
 	private function map_logical_to_physical( string $property ): string {

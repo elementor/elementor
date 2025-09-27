@@ -4,6 +4,7 @@ namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -11,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Padding Property Mapper
- * 
+ *
  * 🎯 ATOMIC SOURCE VERIFICATION:
  * - Atomic Widget: style-schema.php uses Dimensions_Prop_Type for padding
  * - Prop Type: /atomic-widgets/prop-types/dimensions-prop-type.php
@@ -24,28 +25,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *     "inline-start": {"$$type": "size", "value": {"size": 20, "unit": "px"}}
  *   }
  * }
- * 
- * ✅ ATOMIC-ONLY COMPLIANCE ACHIEVED:
- * ✅ FIXED: Pure atomic prop type return - Dimensions_Prop_Type::make()->generate()
- * ✅ REMOVED: Manual JSON wrapper structure
- * ✅ REMOVED: create_v4_property_with_type() calls
- * ✅ REMOVED: All fallback mechanisms
- * ✅ VERIFIED: All JSON creation handled by atomic widgets
- * 
+ *
+ * ✅ ATOMIC-ONLY IMPLEMENTATION: Uses atomic prop types exclusively
+ *
  * Requirements:
  * - Uses logical properties (block-start, inline-end, block-end, inline-start)
  * - Each dimension value must be Size_Prop_Type structure
  * - Supports CSS shorthand: 1, 2, 3, 4 value syntax
  * - Handles edge cases: auto, inherit, initial, unset
- * 
- * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
- * - Widget JSON source: ✅ Dimensions_Prop_Type
- * - Property JSON source: /atomic-widgets/prop-types/dimensions-prop-type.php
- * - Fallback usage: ✅ NONE - Zero fallback mechanisms
- * - Custom JSON creation: ✅ NONE - Pure atomic prop type return
- * - Enhanced_Property_Mapper usage: ✅ NONE - Completely removed
- * - Base class method usage: ✅ NONE - Only atomic prop types used
- * - Manual $$type assignment: ✅ NONE - Only atomic widgets assign types
  */
 class Padding_Property_Mapper extends Property_Mapper_Base {
 
@@ -81,24 +68,6 @@ class Padding_Property_Mapper extends Property_Mapper_Base {
 		return $property;
 	}
 
-	// TODO: Replace with atomic widgets approach
-	public function map_to_schema( string $property, $value ): ?array {
-		if ( ! $this->supports_property( $property ) ) {
-			return null;
-		}
-
-		$parsed_dimensions = $this->parse_padding_dimensions( $value );
-		if ( null === $parsed_dimensions ) {
-			return null;
-		}
-
-		return [
-			$property => [
-				'$$type' => 'dimensions',
-				'value' => $parsed_dimensions
-			]
-		];
-	}
 
 	private function parse_padding_dimensions( $value ): ?array {
 		if ( ! is_string( $value ) ) {
@@ -211,10 +180,7 @@ class Padding_Property_Mapper extends Property_Mapper_Base {
 		$result = [];
 		
 		foreach ( $dimensions as $logical_property => $size_data ) {
-			$result[ $logical_property ] = [
-				'$$type' => 'size',
-				'value' => $size_data
-			];
+			$result[ $logical_property ] = Size_Prop_Type::make()->generate( $size_data );
 		}
 
 		return $result;

@@ -11,27 +11,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Width Property Mapper
- * 
+ *
  * 🎯 ATOMIC SOURCE VERIFICATION:
  * - Atomic Widget: style-schema.php uses Size_Prop_Type for width, height, min-width, max-width
  * - Prop Type: /atomic-widgets/prop-types/size-prop-type.php
  * - Expected Structure: {"$$type":"size","value":{"size":100,"unit":"px"}}
  * - Validation Rules: Numeric size values, supported units from Size_Constants
- * 
+ *
  * ✅ ATOMIC-ONLY COMPLIANCE ACHIEVED:
  * ✅ FIXED: Pure atomic prop type return - Size_Prop_Type::make()->generate()
- * ✅ REMOVED: create_v4_property_with_type() calls
- * ✅ REMOVED: All fallback mechanisms
  * ✅ VERIFIED: All JSON creation handled by atomic widgets
- * 
- * 🎯 ATOMIC-ONLY COMPLIANCE CHECK:
- * - Widget JSON source: ✅ Size_Prop_Type
- * - Property JSON source: /atomic-widgets/prop-types/size-prop-type.php
- * - Fallback usage: ✅ NONE - Zero fallback mechanisms
- * - Custom JSON creation: ✅ NONE - Pure atomic prop type return
- * - Enhanced_Property_Mapper usage: ✅ NONE - Completely removed
- * - Base class method usage: ✅ NONE - Only atomic prop types used
- * - Manual $$type assignment: ✅ NONE - Only atomic widgets assign types
  */
 class Width_Property_Mapper extends Property_Mapper_Base {
 
@@ -70,23 +59,6 @@ class Width_Property_Mapper extends Property_Mapper_Base {
 		return $property;
 	}
 
-	public function map_to_schema( string $property, $value ): ?array {
-		if ( ! $this->supports( $property ) ) {
-			return null;
-		}
-
-		$parsed_value = $this->parse_width_value( $value );
-		if ( null === $parsed_value ) {
-			return null;
-		}
-
-		return [
-			$property => [
-				'$$type' => 'size',
-				'value' => $parsed_value
-			]
-		];
-	}
 
 	protected function parse_width_value( $value ): ?array {
 		if ( ! is_string( $value ) ) {
