@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { parallelTest } from '../../../../../utils/parallel-test';
 import { CssConverterHelper } from '../helper';
 
 /**
@@ -9,14 +8,14 @@ import { CssConverterHelper } from '../helper';
  * shorthand syntax, CSS keywords, and atomic widget compliance.
  */
 
-parallelTest.describe('Margin Prop Type Integration @prop-types', () => {
+test.describe('Margin Prop Type Integration @prop-types', () => {
 	let helper: CssConverterHelper;
 
-	parallelTest.beforeEach(async ({ page, request }) => {
+	test.beforeEach(async ({ page, request }) => {
 		helper = new CssConverterHelper(page, request);
 	});
 
-	parallelTest('should convert negative margin values', async ({ page, request }) => {
+	test('should convert negative margin values', async ({ page, request }) => {
 		const html = '<div style="margin: -20px;">Negative margin content</div>';
 		
 		const apiResult = await helper.convertHtmlWithCss(html, '');
@@ -35,7 +34,7 @@ parallelTest.describe('Margin Prop Type Integration @prop-types', () => {
 		await expect(element).toHaveCSS('margin-left', '-20px');
 	});
 
-	parallelTest('should convert margin shorthand with mixed values', async ({ page, request }) => {
+	test('should convert margin shorthand with mixed values', async ({ page, request }) => {
 		const html = '<div style="margin: 10px -20px 30px -40px;">Mixed margin values</div>';
 		
 		const apiResult = await helper.convertHtmlWithCss(html, '');
@@ -54,7 +53,7 @@ parallelTest.describe('Margin Prop Type Integration @prop-types', () => {
 		await expect(element).toHaveCSS('margin-left', '-40px');
 	});
 
-	parallelTest('should convert margin-inline properties', async ({ page, request }) => {
+	test('should convert margin-inline properties', async ({ page, request }) => {
 		const html = '<div style="margin-inline: 10px 30px;">Inline margin dual</div>';
 		
 		const apiResult = await helper.convertHtmlWithCss(html, '');
@@ -73,7 +72,7 @@ parallelTest.describe('Margin Prop Type Integration @prop-types', () => {
 		await expect(element).toHaveCSS('margin-left', '10px');
 	});
 
-	parallelTest('should convert margin auto for centering', async ({ page, request }) => {
+	test('should convert margin auto for centering', async ({ page, request }) => {
 		const html = '<div style="margin: auto;">Auto margin centering</div>';
 		
 		const apiResult = await helper.convertHtmlWithCss(html, '');

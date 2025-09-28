@@ -80,22 +80,14 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 			} );
 		}
 
-		// Special case for width: auto in editor - flexible validation
-		await test.step( 'Verify width: auto in editor (computed validation)', async () => {
+		// Verify width: auto in editor
+		await test.step( 'Verify width: auto in editor', async () => {
 			const elementorFrame = editor.getPreviewFrame();
 			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 4 );
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-			// Auto width gets computed to pixels based on content, verify it's a reasonable value
-			const computedWidth = await element.evaluate( ( el ) => {
-				return window.getComputedStyle( el ).width;
-			} );
 			
-			expect( computedWidth ).toMatch( /^\d+(\.\d+)?px$/ );
-			
-			const widthValue = parseFloat( computedWidth );
-			expect( widthValue ).toBeGreaterThan( 0 );
-			expect( widthValue ).toBeLessThan( 500 ); // Should be reasonable for "Width auto" text
+			// Assert that the CSS property has the value 'auto'
+			await expect( element ).toHaveCSS( 'width', 'auto' );
 		} );
 
 		await test.step( 'Publish page and verify all size styles on frontend', async () => {
@@ -116,19 +108,12 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 				} );
 			}
 
-			// Special case for width: auto on frontend - flexible validation
-			await test.step( 'Verify width: auto on frontend (computed validation)', async () => {
+			// Verify width: auto on frontend
+			await test.step( 'Verify width: auto on frontend', async () => {
 				const frontendElement = page.locator( '.e-paragraph-base' ).nth( 4 );
-
-				const computedWidth = await frontendElement.evaluate( ( el ) => {
-					return window.getComputedStyle( el ).width;
-				} );
 				
-				// Auto width should be computed to a pixel value (may be 0 if element is hidden/collapsed)
-				expect( computedWidth ).toMatch( /^\d+(\.\d+)?px$/ );
-				
-				const widthValue = parseFloat( computedWidth );
-				expect( widthValue ).toBeGreaterThanOrEqual( 0 ); // Allow 0 for collapsed elements
+				// Assert that the CSS property has the value 'auto'
+				await expect( frontendElement ).toHaveCSS( 'width', 'auto' );
 			} );
 
 		} );
