@@ -444,7 +444,12 @@ class Widget_Star_Rating extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 		$rating_data = $this->get_rating();
-		$textual_rating = sprintf( esc_attr__( 'Rated %1$s out of %2$s', 'elementor' ), $rating_data[0], $rating_data[1] );
+		$textual_rating = sprintf(
+			/* translators: 1: Rating value. 2: Rating scale. */
+			esc_attr__( 'Rated %1$s out of %2$s', 'elementor' ),
+			$rating_data[0],
+			$rating_data[1]
+		);
 		$icon = '&#xE934;';
 
 		if ( 'star_fontawesome' === $settings['star_style'] ) {
@@ -470,9 +475,9 @@ class Widget_Star_Rating extends Widget_Base {
 			<?php if ( ! Utils::is_empty( $settings['title'] ) ) : ?>
 				<div class="elementor-star-rating__title"><?php echo esc_html( $settings['title'] ); ?></div>
 			<?php endif; ?>
-			<div <?php echo $this->get_render_attribute_string( 'icon_wrapper' ); ?>>
-				<?php echo $this->render_stars( $icon ); ?>
-				<span itemprop="ratingValue" class="elementor-screen-only"><?php echo esc_html( $textual_rating ); ?></span>
+			<div <?php $this->print_render_attribute_string( 'icon_wrapper' ); ?>>
+				<?php echo $this->render_stars( $icon ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<span itemprop="ratingValue" class="elementor-screen-only"><?php echo esc_html( $textual_rating );  ?></span>
 			</div>
 		</div>
 		<?php
