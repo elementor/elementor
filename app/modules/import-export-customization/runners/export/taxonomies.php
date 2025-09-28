@@ -39,7 +39,7 @@ class Taxonomies extends Export_Runner_Base {
 		$selected_custom_post_types = $data['selected_custom_post_types'] ?? null;
 		$exclude_post_types = [];
 
-		if ( is_array( $selected_custom_post_types ) && ! in_array( 'post', $selected_custom_post_types, true ) ) {
+		if ( $selected_custom_post_types && is_array( $selected_custom_post_types ) && ! in_array( 'post', $selected_custom_post_types, true ) ) {
 			$exclude_post_types[] = 'post';
 		}
 
