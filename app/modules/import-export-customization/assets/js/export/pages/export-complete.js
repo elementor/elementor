@@ -62,8 +62,7 @@ export default function ExportComplete() {
 				kit_description: Boolean( kitInfo.description ),
 				kit_page_count: contentCounts.page || 0,
 				kit_post_count: contentCounts.post || 0,
-				kit_post_type_count: exportedData?.manifest?.content ? Object.keys( exportedData?.manifest?.content )
-					.filter( ( key ) => ! elementorAppConfig?.builtinWpPostTypes?.includes( key ) ).length : 0,
+				kit_post_type_count: exportedData.manifest?.[ 'custom-post-type-title' ] ? Object.keys( exportedData.manifest?.[ 'custom-post-type-title' ] ).length : 0,
 				kit_source: kitInfo.source,
 			} );
 		}
