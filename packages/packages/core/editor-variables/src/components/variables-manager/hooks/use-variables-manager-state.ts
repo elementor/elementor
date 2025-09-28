@@ -6,7 +6,6 @@ import { getVariables } from '../../../hooks/use-prop-variables';
 import { service } from '../../../service';
 import { type TVariablesList } from '../../../storage';
 import { filterBySearch } from '../../../utils/filter-by-search';
-import { ERROR_MESSAGES } from '../../../utils/validations';
 
 export const useVariablesManagerState = () => {
 	const [ variables, setVariables ] = useState( () => getVariables( false ) );
@@ -49,28 +48,21 @@ export const useVariablesManagerState = () => {
 		setSearchValue( searchTerm );
 	};
 
-	const handleSave = useCallback( async (): Promise< { success: boolean; error?: string } > => {
-		try {
-			const originalVariables = getVariables( false );
-			setIsSaving( true );
-			const result = await service.batchSave( originalVariables, variables );
+	const handleSave = useCallback( async (): Promise< { success: boolean } > => {
+		const originalVariables = getVariables( false );
+		setIsSaving( true );
+		const result = await service.batchSave( originalVariables, variables );
 
-			if ( result.success ) {
-				await service.load();
-				const updatedVariables = service.variables();
+		if ( result.success ) {
+			await service.load();
+			const updatedVariables = service.variables();
 
-				setVariables( updatedVariables );
-				setDeletedVariables( [] );
-				setIsDirty( false );
-				setIsSaving( false );
-				return { success: true };
-			}
-			throw new Error( __( 'Failed to save variables. Please try again.', 'elementor' ) );
-		} catch ( error ) {
-			const errorMessage = error instanceof Error ? error.message : ERROR_MESSAGES.UNEXPECTED_ERROR;
-			setIsSaving( false );
-			return { success: false, error: errorMessage };
+			setVariables( updatedVariables );
+			setDeletedVariables( [] );
+			setIsDirty( false );
+			return { success: true };
 		}
+		throw new Error( __( 'Failed to save variables. Please try again.', 'elementor' ) );
 	}, [ variables ] );
 
 	const filteredVariables = () => {
@@ -93,5 +85,6 @@ export const useVariablesManagerState = () => {
 		handleSearch,
 		searchValue,
 		setHasValidationErrors,
+		setIsSaving,
 	};
 };

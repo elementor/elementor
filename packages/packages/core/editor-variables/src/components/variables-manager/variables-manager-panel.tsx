@@ -11,13 +11,26 @@ import {
 import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { ColorFilterIcon, TrashIcon } from '@elementor/icons';
-import { Alert, Box, Button, CloseButton, Divider, ErrorBoundary, Stack, usePopupState } from '@elementor/ui';
+import {
+	Alert,
+	AlertAction,
+	AlertTitle,
+	Box,
+	Button,
+	CloseButton,
+	Divider,
+	Infotip,
+	Stack,
+	usePopupState,
+} from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { type MappedError, mapServerError } from '../../utils/validations';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
 import { useAutoEdit } from './hooks/use-auto-edit';
+import { useDuplicateErrorNavigation } from './hooks/use-duplicate-error-navigation';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
 import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu';
 import { VariablesManagerTable } from './variables-manager-table';
@@ -56,11 +69,14 @@ export function VariablesManagerPanel() {
 		isSaving,
 		handleSearch,
 		setHasValidationErrors,
+		setIsSaving,
 	} = useVariablesManagerState();
 
 	const { autoEditVariableId, startAutoEdit, handleAutoEditComplete } = useAutoEdit();
+	const { createNavigationCallback, resetNavigation } = useDuplicateErrorNavigation();
 
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
+	const [ serverError, setServerError ] = useState< MappedError | null >( null );
 
 	usePreventUnload( isDirty );
 
@@ -82,6 +98,35 @@ export function VariablesManagerPanel() {
 		},
 		[ createVariable, startAutoEdit ]
 	);
+
+
+	const handleSaveClick = async () => {
+		try {
+			setServerError( null );
+			resetNavigation();
+
+			await handleSave();
+			return { success: true };
+		} catch ( error ) {
+			const mappedError = mapServerError( error as any );
+			const duplicatedIds = mappedError?.action?.data?.duplicatedIds;
+
+			if ( mappedError && 'label' === mappedError.field ) {
+				if ( duplicatedIds && mappedError.action ) {
+					mappedError.action.callback = createNavigationCallback(
+						duplicatedIds,
+						startAutoEdit,
+						() => setServerError( null )
+					);
+				}
+				setServerError( mappedError );
+				resetNavigation();
+			}
+			return { success: false, error: mappedError };
+		} finally {
+			setIsSaving( false );
+		}
+	};
 
 	const handleDeleteVariableWithConfirmation = useCallback(
 		( itemId: string ) => {
@@ -108,113 +153,144 @@ export function VariablesManagerPanel() {
 
 	return (
 		<ThemeProvider>
-			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
-				<Panel>
-					<PanelHeader
-						sx={ {
-							height: 'unset',
-						} }
-					>
-						<Stack width="100%" direction="column" alignItems="center">
-							<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
-								<Stack width="100%" direction="row" gap={ 1 }>
-									<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
-										<ColorFilterIcon fontSize="inherit" />
-										{ __( 'Variable Manager', 'elementor' ) }
-									</PanelHeaderTitle>
-								</Stack>
-								<Stack direction="row" gap={ 0.5 } alignItems="center">
-									<VariableManagerCreateMenu
-										onCreate={ handleCreateVariable }
-										variables={ variables }
-										menuState={ createMenuState }
-									/>
-									<CloseButton
-										aria-label="Close"
-										slotProps={ { icon: { fontSize: SIZE } } }
-										onClick={ () => {
-											handleClosePanel();
-										} }
-									/>
-								</Stack>
-							</Stack>
+			<Panel>
+				<PanelHeader
+					sx={ {
+						height: 'unset',
+					} }
+				>
+					<Stack width="100%" direction="column" alignItems="center">
+						<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
 							<Stack width="100%" direction="row" gap={ 1 }>
-								<SearchField
-									sx={ {
-										display: 'flex',
-										flex: 1,
+								<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+									<ColorFilterIcon fontSize="inherit" />
+									{ __( 'Variable Manager', 'elementor' ) }
+								</PanelHeaderTitle>
+							</Stack>
+							<Stack direction="row" gap={ 0.5 } alignItems="center">
+								<VariableManagerCreateMenu
+									onCreate={ handleCreateVariable }
+									variables={ variables }
+									menuState={ createMenuState }
+								/>
+								<CloseButton
+									aria-label="Close"
+									slotProps={ { icon: { fontSize: SIZE } } }
+									onClick={ () => {
+										handleClosePanel();
 									} }
-									placeholder={ __( 'Search', 'elementor' ) }
-									value={ searchValue }
-									onSearch={ handleSearch }
 								/>
 							</Stack>
-							<Divider sx={ { width: '100%' } } />
 						</Stack>
-					</PanelHeader>
-					<PanelBody
-						sx={ {
-							display: 'flex',
-							flexDirection: 'column',
-							height: '100%',
-						} }
+						<Stack width="100%" direction="row" gap={ 1 }>
+							<SearchField
+								sx={ {
+									display: 'flex',
+									flex: 1,
+								} }
+								placeholder={ __( 'Search', 'elementor' ) }
+								value={ searchValue }
+								onSearch={ handleSearch }
+							/>
+						</Stack>
+						<Divider sx={ { width: '100%' } } />
+					</Stack>
+				</PanelHeader>
+				<PanelBody
+					sx={ {
+						display: 'flex',
+						flexDirection: 'column',
+						height: '100%',
+					} }
+				>
+					{ hasVariables && (
+						<VariablesManagerTable
+							menuActions={ menuActions }
+							variables={ variables }
+							onChange={ handleOnChange }
+							autoEditVariableId={ autoEditVariableId }
+							onAutoEditComplete={ handleAutoEditComplete }
+							onFieldError={ setHasValidationErrors }
+						/>
+					) }
+
+					{ ! hasVariables && searchValue && (
+						<NoSearchResults
+							searchValue={ searchValue }
+							onClear={ () => handleSearch( '' ) }
+							icon={ <ColorFilterIcon fontSize="large" /> }
+						/>
+					) }
+
+					{ ! hasVariables && ! searchValue && (
+						<EmptyState
+							title={ __( 'Create your first variable', 'elementor' ) }
+							message={ __(
+								'Variables are saved attributes that you can apply anywhere on your site.',
+								'elementor'
+							) }
+							icon={ <ColorFilterIcon fontSize="large" /> }
+							onAdd={ createMenuState.open }
+						/>
+					) }
+				</PanelBody>
+
+				<PanelFooter>
+					<Infotip
+						placement="right"
+						open={ !! serverError }
+						content={
+							serverError ? (
+								<Alert
+									severity="error"
+									action={
+										serverError.action ? (
+											<AlertAction onClick={ serverError.action.callback }>
+												{ serverError.action.label }
+											</AlertAction>
+										) : undefined
+									}
+								>
+									<AlertTitle>{ serverError.message }</AlertTitle>
+									{ serverError.action?.message }
+								</Alert>
+							) : null
+						}
+						arrow={ false }
+						slotProps={{
+							popper: {
+							  modifiers: [
+								{
+								  name: 'offset',
+								  options: { offset: [-10, 10] }
+								}
+							  ]
+							}
+						  }}
 					>
-						{ hasVariables && (
-							<VariablesManagerTable
-								menuActions={ menuActions }
-								variables={ variables }
-								onChange={ handleOnChange }
-								autoEditVariableId={ autoEditVariableId }
-								onAutoEditComplete={ handleAutoEditComplete }
-								onFieldError={ setHasValidationErrors }
-							/>
-						) }
-
-						{ ! hasVariables && searchValue && (
-							<NoSearchResults
-								searchValue={ searchValue }
-								onClear={ () => handleSearch( '' ) }
-								icon={ <ColorFilterIcon fontSize="large" /> }
-							/>
-						) }
-
-						{ ! hasVariables && ! searchValue && (
-							<EmptyState
-								title={ __( 'Create your first variable', 'elementor' ) }
-								message={ __(
-									'Variables are saved attributes that you can apply anywhere on your site.',
-									'elementor'
-								) }
-								icon={ <ColorFilterIcon fontSize="large" /> }
-								onAdd={ createMenuState.open }
-							/>
-						) }
-					</PanelBody>
-
-					<PanelFooter>
 						<Button
 							fullWidth
 							size="small"
 							color="global"
 							variant="contained"
-							disabled={ ! isDirty || hasValidationErrors || isSaving }
-							onClick={ handleSave }
+							disabled={ ! isDirty || hasValidationErrors || isSaving || !! serverError }
+							onClick={ handleSaveClick }
 							loading={ isSaving }
 						>
 							{ __( 'Save changes', 'elementor' ) }
 						</Button>
-					</PanelFooter>
-				</Panel>
+					</Infotip>
+				</PanelFooter>
+			</Panel>
 
-				{ deleteConfirmation && (
-					<DeleteConfirmationDialog
-						open
-						label={ deleteConfirmation.label }
-						onConfirm={ () => handleDeleteVariableWithConfirmation( deleteConfirmation.id ) }
-						closeDialog={ () => setDeleteConfirmation( null ) }
-					/>
-				) }
-			</ErrorBoundary>
+			{ deleteConfirmation && (
+				<DeleteConfirmationDialog
+					open
+					label={ deleteConfirmation.label }
+					onConfirm={ () => handleDeleteVariableWithConfirmation( deleteConfirmation.id ) }
+					closeDialog={ () => setDeleteConfirmation( null ) }
+				/>
+			) }
 
 			{ isSaveChangesDialogOpen && (
 				<SaveChangesDialog>
@@ -238,9 +314,11 @@ export function VariablesManagerPanel() {
 							confirm: {
 								label: __( 'Save', 'elementor' ),
 								action: async () => {
-									await handleSave();
+									const result = await handleSaveClick();
 									closeSaveChangesDialog();
-									closePanel();
+									if ( result?.success ) {
+										closePanel();
+									}
 								},
 							},
 						} }
@@ -250,14 +328,6 @@ export function VariablesManagerPanel() {
 		</ThemeProvider>
 	);
 }
-
-const ErrorBoundaryFallback = () => (
-	<Box role="alert" sx={ { minHeight: '100%', p: 2 } }>
-		<Alert severity="error" sx={ { mb: 2, maxWidth: 400, textAlign: 'center' } }>
-			<strong>{ __( 'Something went wrong', 'elementor' ) }</strong>
-		</Alert>
-	</Box>
-);
 
 const usePreventUnload = ( isDirty: boolean ) => {
 	useEffect( () => {
