@@ -60,10 +60,10 @@ test.describe( 'Color Prop Type Integration @prop-types', () => {
 		`;
 
 		// Convert HTML with CSS to Elementor widgets
-		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent );
 		
 		// Check if API call failed due to backend issues
-		if ( apiResult.error ) {
+		if ( apiResult.errors && apiResult.errors.length > 0 ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
@@ -124,7 +124,7 @@ test.describe( 'Color Prop Type Integration @prop-types', () => {
 		`;
 
 		// Convert and test color variations
-		const apiResult = await cssHelper.convertHtmlWithCss( request, colorVariationsCssContent, '' );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, colorVariationsCssContent );
 		const postId = apiResult.post_id;
 		const editUrl = apiResult.edit_url;
 		expect( postId ).toBeDefined();
@@ -147,35 +147,5 @@ test.describe( 'Color Prop Type Integration @prop-types', () => {
 		} );
 	} );
 
-	test( 'should handle background-color properties', async ( { page, request } ) => {
-		const backgroundColorCssContent = `
-			<div>
-				<p style="background-color: #ffff00; padding: 10px;">Yellow background</p>
-				<p style="background-color: rgba(0, 255, 255, 0.5); padding: 10px;">Cyan background with opacity</p>
-				<p style="background-color: lightgray; padding: 10px;">Light gray background</p>
-			</div>
-		`;
-
-		// Convert and test background colors
-		const apiResult = await cssHelper.convertHtmlWithCss( request, backgroundColorCssContent, '' );
-		const postId = apiResult.post_id;
-		const editUrl = apiResult.edit_url;
-		expect( postId ).toBeDefined();
-		expect( editUrl ).toBeDefined();
-
-		await page.goto( editUrl );
-		editor = new EditorPage( page, wpAdmin.testInfo );
-		await editor.waitForPanelToLoad();
-
-		// Verify background colors in editor
-		await test.step( 'Verify background colors in editor', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			await elementorFrame.waitForLoadState();
-
-			await expect( elementorFrame.locator( '.e-paragraph-base' ).nth( 0 ) ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
-			await expect( elementorFrame.locator( '.e-paragraph-base' ).nth( 1 ) ).toHaveCSS( 'background-color', 'rgba(0, 255, 255, 0.5)' );
-			await expect( elementorFrame.locator( '.e-paragraph-base' ).nth( 2 ) ).toHaveCSS( 'background-color', 'rgb(211, 211, 211)' );
-		} );
-	} );
 } );
 

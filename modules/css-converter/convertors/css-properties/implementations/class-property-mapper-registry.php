@@ -30,6 +30,8 @@ class Class_Property_Mapper_Registry {
 		// Load atomic property mappers
 		require_once __DIR__ . '/../properties/color-property-mapper.php';
 		require_once __DIR__ . '/../properties/background-color-property-mapper.php';
+		require_once __DIR__ . '/../properties/background-property-mapper.php';
+		require_once __DIR__ . '/../properties/flex-properties-mapper.php';
 		require_once __DIR__ . '/../properties/font-size-property-mapper.php';
 		require_once __DIR__ . '/../properties/margin-property-mapper.php';
 		require_once __DIR__ . '/../properties/atomic-padding-property-mapper.php';
@@ -44,6 +46,7 @@ class Class_Property_Mapper_Registry {
 		require_once __DIR__ . '/../properties/text-align-property-mapper.php';
 		require_once __DIR__ . '/../properties/font-weight-property-mapper.php';
 		require_once __DIR__ . '/../properties/border-width-property-mapper.php';
+		require_once __DIR__ . '/../properties/positioning-property-mapper.php';
 		
 		// Register atomic property mappers
 		$this->mappers['color'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Color_Property_Mapper();
@@ -110,6 +113,24 @@ class Class_Property_Mapper_Registry {
 		$border_width_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Border_Width_Property_Mapper();
 		foreach ( $border_width_mapper->get_supported_properties() as $property ) {
 			$this->mappers[ $property ] = $border_width_mapper;
+		}
+		
+		// Register comprehensive atomic positioning mapper for all positioning properties
+		$positioning_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Positioning_Property_Mapper();
+		foreach ( $positioning_mapper->get_supported_properties() as $property ) {
+			$this->mappers[ $property ] = $positioning_mapper;
+		}
+		
+		// Register comprehensive atomic background mapper for all background properties
+		$background_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Background_Property_Mapper();
+		foreach ( $background_mapper->get_supported_properties() as $property ) {
+			$this->mappers[ $property ] = $background_mapper;
+		}
+		
+		// Register comprehensive atomic flex properties mapper for all flex properties
+		$flex_properties_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Flex_Properties_Mapper();
+		foreach ( $flex_properties_mapper->get_supported_properties() as $property ) {
+			$this->mappers[ $property ] = $flex_properties_mapper;
 		}
 	}
 
