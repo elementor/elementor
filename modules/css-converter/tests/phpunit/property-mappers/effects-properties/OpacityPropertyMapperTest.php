@@ -205,3 +205,4 @@ class OpacityPropertyMapperTest extends TestCase {
 		$this->assertEquals( '%', $result['value']['value']['unit'], 'Opacity should always use percentage unit' );
 	}
 }
+

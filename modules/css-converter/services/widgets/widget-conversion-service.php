@@ -345,13 +345,13 @@ class Widget_Conversion_Service {
 			$value = $style_data['value'];
 			$important = $style_data['important'];
 			
-			// Use the property mapper to convert to atomic format
-			$converted = $this->property_conversion_service->convert_property_to_v4_atomic( $property, $value );
+			// Use the property mapper to convert to atomic format with property name mapping
+			$conversion_result = $this->property_conversion_service->convert_property_to_v4_atomic_with_name( $property, $value );
 			
-			if ( $converted ) {
+			if ( $conversion_result ) {
 				// Widget creator expects computed_styles as associative array: property_name => atomic_value
-				$property_name = $converted['property'];
-				$atomic_value = $converted['value'];
+				$property_name = $conversion_result['property_name'];
+				$atomic_value = $conversion_result['converted_value'];
 				
 				error_log( "Widget Conversion Service: Converting inline CSS {$property}:{$value} -> {$property_name}:" . wp_json_encode($atomic_value) );
 				

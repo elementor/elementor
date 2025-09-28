@@ -271,3 +271,4 @@ class WidthPropertyMapperTest extends AtomicWidgetComplianceTestCase {
         $this->assertEquals('max-width', $this->mapper->get_v4_property_name('max-width'));
     }
 }
+

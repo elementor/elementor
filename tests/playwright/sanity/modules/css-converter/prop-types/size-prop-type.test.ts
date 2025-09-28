@@ -86,8 +86,16 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 4 );
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
 			
-			// Assert that the CSS property has the value 'auto'
-			await expect( element ).toHaveCSS( 'width', 'auto' );
+			// For width: auto, check that it takes a reasonable width (at least 1000px)
+			// This indicates that auto is working and the element is taking full container width
+			const computedWidth = await element.evaluate( ( el ) => {
+				return window.getComputedStyle( el ).width;
+			} );
+			
+			expect( computedWidth ).toMatch( /^\d+(\.\d+)?px$/ );
+			
+			const widthValue = parseFloat( computedWidth );
+			expect( widthValue ).toBeGreaterThanOrEqual( 1000 ); // Should be at least 1000px for auto width
 		} );
 
 		await test.step( 'Publish page and verify all size styles on frontend', async () => {
@@ -112,8 +120,16 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 			await test.step( 'Verify width: auto on frontend', async () => {
 				const frontendElement = page.locator( '.e-paragraph-base' ).nth( 4 );
 				
-				// Assert that the CSS property has the value 'auto'
-				await expect( frontendElement ).toHaveCSS( 'width', 'auto' );
+				// For width: auto, check that it takes a reasonable width (at least 1000px)
+				// This indicates that auto is working and the element is taking full container width
+				const computedWidth = await frontendElement.evaluate( ( el ) => {
+					return window.getComputedStyle( el ).width;
+				} );
+				
+				expect( computedWidth ).toMatch( /^\d+(\.\d+)?px$/ );
+				
+				const widthValue = parseFloat( computedWidth );
+				expect( widthValue ).toBeGreaterThanOrEqual( 1000 ); // Should be at least 1000px for auto width
 			} );
 
 		} );

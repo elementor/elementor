@@ -11,15 +11,15 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
 		// Enable atomic widgets experiments to match manual testing environment
-		await wpAdmin.setExperiments( {
+		await wpAdminPage.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
 		} );
 
-		await wpAdmin.setExperiments( {
+		await wpAdminPage.setExperiments( {
 			e_nested_elements: 'active',
 		} );
 
@@ -29,8 +29,8 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
+		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -49,11 +49,11 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 
 		const combinedCssContent = `
 			<div style="position: relative; height: 400px;">
-				<p style="position: static;" data-test="position-static">Position static</p>
-				<p style="position: relative;" data-test="position-relative">Position relative</p>
-				<p style="position: absolute; top: 50px; left: 10px;" data-test="position-absolute">Position absolute</p>
-				<p style="position: fixed; top: 100px; left: 10px;" data-test="position-fixed">Position fixed</p>
-				<p style="position: sticky; top: 0;" data-test="position-sticky">Position sticky</p>
+				<p style="position: static;">Position static</p>
+				<p style="position: relative;">Position relative</p>
+				<p style="position: absolute; top: 50px; left: 10px;">Position absolute</p>
+				<p style="position: fixed; top: 100px; left: 10px;">Position fixed</p>
+				<p style="position: sticky; top: 0;">Position sticky</p>
 			</div>
 		`;
 
@@ -62,9 +62,14 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		expect( apiResult.post_id ).toBeDefined();
 
 		// Navigate to editor
-		editor = await wpAdmin.openNewPage();
-		await editor.closeNavigatorIfOpen();
-		await editor.loadTemplate( apiResult.post_id );
+		const postId = apiResult.post_id;
+		const editUrl = apiResult.edit_url;
+		expect( postId ).toBeDefined();
+		expect( editUrl ).toBeDefined();
+
+		await page.goto( editUrl );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
 
 		// Verify in editor
 		for ( const testCase of testCases ) {
@@ -88,8 +93,8 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 	test( 'should handle position with positioning properties', async ( { page, request } ) => {
 		const positioningCssContent = `
 			<div style="position: relative; height: 300px;">
-				<p style="position: absolute; top: 20px; left: 30px;" data-test="positioned-absolute">Positioned absolute</p>
-				<p style="position: relative; top: 10px; left: 15px;" data-test="positioned-relative">Positioned relative</p>
+				<p style="position: absolute; top: 20px; left: 30px;">Positioned absolute</p>
+				<p style="position: relative; top: 10px; left: 15px;">Positioned relative</p>
 			</div>
 		`;
 
@@ -97,15 +102,21 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		const apiResult = await cssHelper.convertHtmlWithCss( request, positioningCssContent, '' );
 		expect( apiResult.post_id ).toBeDefined();
 
-		editor = await wpAdmin.openNewPage();
-		await editor.closeNavigatorIfOpen();
-		await editor.loadTemplate( apiResult.post_id );
+		const postId = apiResult.post_id;
+		const editUrl = apiResult.edit_url;
+		expect( postId ).toBeDefined();
+		expect( editUrl ).toBeDefined();
+
+		await page.goto( editUrl );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
 
 		// Verify positioning in editor
 		const absoluteElement = editor.getPreviewFrame().locator( '.e-paragraph-base[data-test="positioned-absolute"]' );
 		const relativeElement = editor.getPreviewFrame().locator( '.e-paragraph-base[data-test="positioned-relative"]' );
-		
+
 		await expect( absoluteElement ).toHaveCSS( 'position', 'absolute' );
 		await expect( relativeElement ).toHaveCSS( 'position', 'relative' );
 	} );
 } );
+

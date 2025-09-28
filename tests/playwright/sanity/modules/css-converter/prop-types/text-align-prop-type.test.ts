@@ -11,15 +11,15 @@ test.describe( 'Text Align Prop Type Integration @prop-types', () => {
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
 		// Enable atomic widgets experiments to match manual testing environment
-		await wpAdmin.setExperiments( {
+		await wpAdminPage.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
 		} );
 
-		await wpAdmin.setExperiments( {
+		await wpAdminPage.setExperiments( {
 			e_nested_elements: 'active',
 		} );
 
@@ -29,8 +29,8 @@ test.describe( 'Text Align Prop Type Integration @prop-types', () => {
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
+		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -40,73 +40,97 @@ test.describe( 'Text Align Prop Type Integration @prop-types', () => {
 
 	test( 'should convert text-align properties and verify styling in editor and frontend', async ( { page, request } ) => {
 		const testCases = [
-			{ property: 'text-align', value: 'left', selector: '[data-test="text-align-left"]', expected: 'start' },
-			{ property: 'text-align', value: 'center', selector: '[data-test="text-align-center"]', expected: 'center' },
-			{ property: 'text-align', value: 'right', selector: '[data-test="text-align-right"]', expected: 'end' },
-			{ property: 'text-align', value: 'justify', selector: '[data-test="text-align-justify"]', expected: 'justify' },
-			{ property: 'text-align', value: 'start', selector: '[data-test="text-align-start"]', expected: 'start' },
-			{ property: 'text-align', value: 'end', selector: '[data-test="text-align-end"]', expected: 'end' },
+			{ index: 0, property: 'text-align', value: 'left', expected: 'start' },
+			{ index: 1, property: 'text-align', value: 'center', expected: 'center' },
+			{ index: 2, property: 'text-align', value: 'right', expected: 'end' },
+			{ index: 3, property: 'text-align', value: 'justify', expected: 'justify' },
+			{ index: 4, property: 'text-align', value: 'start', expected: 'start' },
+			{ index: 5, property: 'text-align', value: 'end', expected: 'end' },
 		];
 
 		const combinedCssContent = `
 			<div>
-				<p style="text-align: left; width: 300px; border: 1px solid #ccc;" data-test="text-align-left">Left aligned text content that should align to the left side of the container.</p>
-				<p style="text-align: center; width: 300px; border: 1px solid #ccc;" data-test="text-align-center">Center aligned text content that should be centered in the container.</p>
-				<p style="text-align: right; width: 300px; border: 1px solid #ccc;" data-test="text-align-right">Right aligned text content that should align to the right side of the container.</p>
-				<p style="text-align: justify; width: 300px; border: 1px solid #ccc;" data-test="text-align-justify">Justified text content that should be evenly distributed across the full width of the container with equal spacing.</p>
-				<p style="text-align: start; width: 300px; border: 1px solid #ccc;" data-test="text-align-start">Start aligned text content using logical property.</p>
-				<p style="text-align: end; width: 300px; border: 1px solid #ccc;" data-test="text-align-end">End aligned text content using logical property.</p>
+				<p style="text-align: left; width: 300px; border: 1px solid #ccc;">Left aligned text content that should align to the left side of the container.</p>
+				<p style="text-align: center; width: 300px; border: 1px solid #ccc;">Center aligned text content that should be centered in the container.</p>
+				<p style="text-align: right; width: 300px; border: 1px solid #ccc;">Right aligned text content that should align to the right side of the container.</p>
+				<p style="text-align: justify; width: 300px; border: 1px solid #ccc;">Justified text content that should be evenly distributed across the full width of the container with equal spacing.</p>
+				<p style="text-align: start; width: 300px; border: 1px solid #ccc;">Start aligned text content using logical property.</p>
+				<p style="text-align: end; width: 300px; border: 1px solid #ccc;">End aligned text content using logical property.</p>
 			</div>
 		`;
 
 		// Convert HTML with CSS to Elementor widgets
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		expect( apiResult.post_id ).toBeDefined();
+		const postId = apiResult.post_id;
+		const editUrl = apiResult.edit_url;
+		expect( postId ).toBeDefined();
+		expect( editUrl ).toBeDefined();
 
-		// Navigate to editor
-		editor = await wpAdmin.openNewPage();
-		await editor.closeNavigatorIfOpen();
-		await editor.loadTemplate( apiResult.post_id );
+		await page.goto( editUrl );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
 
 		// Verify in editor
 		for ( const testCase of testCases ) {
-			const element = editor.getPreviewFrame().locator( '.e-paragraph-base' ).locator( testCase.selector );
-			await expect( element ).toBeVisible();
-			await expect( element ).toHaveCSS( 'text-align', testCase.expected );
+			await test.step( `Verify ${ testCase.value } in editor`, async () => {
+				const elementorFrame = editor.getPreviewFrame();
+				await elementorFrame.waitForLoadState();
+
+				const element = elementorFrame.locator( '.e-paragraph-base' ).nth( testCase.index );
+				await element.waitFor( { state: 'visible', timeout: 10000 } );
+
+				await expect( element ).toHaveCSS( 'text-align', testCase.expected );
+			} );
 		}
 
 		// Save and navigate to frontend
-		await editor.saveAndReloadPage();
-		await page.goto( editor.getPreviewUrl() );
+		await test.step( 'Publish page and verify all text-align styles on frontend', async () => {
+			await editor.saveAndReloadPage();
 
-		// Verify on frontend
-		for ( const testCase of testCases ) {
-			const element = page.locator( '.e-paragraph-base' ).locator( testCase.selector );
-			await expect( element ).toBeVisible();
-			await expect( element ).toHaveCSS( 'text-align', testCase.expected );
-		}
+			const pageId = await editor.getPageId();
+			await page.goto( `/?p=${ pageId }` );
+			await page.waitForLoadState();
+
+			// Verify on frontend
+			for ( const testCase of testCases ) {
+				await test.step( `Verify ${ testCase.value } on frontend`, async () => {
+					const frontendElement = page.locator( '.e-paragraph-base' ).nth( testCase.index );
+
+					await expect( frontendElement ).toHaveCSS( 'text-align', testCase.expected );
+				} );
+			}
+		} );
 	} );
 
 	test( 'should handle text-align with different content lengths', async ( { page, request } ) => {
 		const contentVariationsCssContent = `
 			<div>
-				<p style="text-align: center; width: 400px; border: 1px solid #ccc;" data-test="short-center">Short</p>
-				<p style="text-align: justify; width: 400px; border: 1px solid #ccc;" data-test="long-justify">This is a very long paragraph that should demonstrate the justify text alignment behavior when there is enough content to wrap across multiple lines and show the justification effect properly.</p>
-				<p style="text-align: right; width: 400px; border: 1px solid #ccc;" data-test="medium-right">Medium length content for right alignment.</p>
+				<p style="text-align: center; width: 400px; border: 1px solid #ccc;">Short</p>
+				<p style="text-align: justify; width: 400px; border: 1px solid #ccc;">This is a very long paragraph that should demonstrate the justify text alignment behavior when there is enough content to wrap across multiple lines and show the justification effect properly.</p>
+				<p style="text-align: right; width: 400px; border: 1px solid #ccc;">Medium length content for right alignment.</p>
 			</div>
 		`;
 
 		// Convert and test content variations
 		const apiResult = await cssHelper.convertHtmlWithCss( request, contentVariationsCssContent, '' );
-		expect( apiResult.post_id ).toBeDefined();
+		const postId = apiResult.post_id;
+		const editUrl = apiResult.edit_url;
+		expect( postId ).toBeDefined();
+		expect( editUrl ).toBeDefined();
 
-		editor = await wpAdmin.openNewPage();
-		await editor.closeNavigatorIfOpen();
-		await editor.loadTemplate( apiResult.post_id );
+		await page.goto( editUrl );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
 
 		// Verify content variations in editor
-		await expect( editor.getPreviewFrame().locator( '.e-paragraph-base[data-test="short-center"]' ) ).toHaveCSS( 'text-align', 'center' );
-		await expect( editor.getPreviewFrame().locator( '.e-paragraph-base[data-test="long-justify"]' ) ).toHaveCSS( 'text-align', 'justify' );
-		await expect( editor.getPreviewFrame().locator( '.e-paragraph-base[data-test="medium-right"]' ) ).toHaveCSS( 'text-align', 'end' );
+		await test.step( 'Verify content variations in editor', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
+
+			await expect( elementorFrame.locator( '.e-paragraph-base' ).nth( 0 ) ).toHaveCSS( 'text-align', 'center' );
+			await expect( elementorFrame.locator( '.e-paragraph-base' ).nth( 1 ) ).toHaveCSS( 'text-align', 'justify' );
+			await expect( elementorFrame.locator( '.e-paragraph-base' ).nth( 2 ) ).toHaveCSS( 'text-align', 'end' );
+		} );
 	} );
 } );
+

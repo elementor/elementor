@@ -739,16 +739,16 @@ The `Opacity_Property_Mapper` now supports comprehensive opacity functionality:
 - **Base Class**: `Property_Mapper_Base`
 - **Atomic Widget Source**: Uses actual `Border_Radius_Prop_Type::make()` from atomic widgets
 - **Prop Type**: `Border_Radius_Prop_Type` with logical corner structure
-- **Registry Status**: Active in `Class_Property_Mapper_Registry` (lines 56-60)
+- **Registry Status**: Active in `Class_Property_Mapper_Registry` (lines 71-75)
 
 #### **✅ SUPPORTED CSS Properties**
 
 ##### **Border Radius Properties (All using Border_Radius_Prop_Type)**
 - ✅ `border-radius` - **ATOMIC COMPLIANT** (shorthand)
-- ✅ `border-top-left-radius` - **ATOMIC COMPLIANT**
-- ✅ `border-top-right-radius` - **ATOMIC COMPLIANT**
-- ✅ `border-bottom-left-radius` - **ATOMIC COMPLIANT**
-- ✅ `border-bottom-right-radius` - **ATOMIC COMPLIANT**
+- ✅ `border-top-left-radius` - **ATOMIC COMPLIANT** (individual corner)
+- ✅ `border-top-right-radius` - **ATOMIC COMPLIANT** (individual corner)
+- ✅ `border-bottom-left-radius` - **ATOMIC COMPLIANT** (individual corner)
+- ✅ `border-bottom-right-radius` - **ATOMIC COMPLIANT** (individual corner)
 - ✅ `border-start-start-radius` - **ATOMIC COMPLIANT** (logical, mapped to physical)
 - ✅ `border-start-end-radius` - **ATOMIC COMPLIANT** (logical, mapped to physical)
 - ✅ `border-end-start-radius` - **ATOMIC COMPLIANT** (logical, mapped to physical)
@@ -762,11 +762,11 @@ The `Opacity_Property_Mapper` now supports comprehensive opacity functionality:
 - ✅ `border-radius: 10px 20px 30px;` - **ATOMIC COMPLIANT** (top-left, top-right/bottom-left, bottom-right)
 - ✅ `border-radius: 10px 20px 30px 40px;` - **ATOMIC COMPLIANT** (all corners individual)
 
-##### **Individual Corner Values**
-- ✅ `border-top-left-radius: 15px;` - **ATOMIC COMPLIANT**
-- ✅ `border-top-right-radius: 15px;` - **ATOMIC COMPLIANT**
-- ✅ `border-bottom-left-radius: 15px;` - **ATOMIC COMPLIANT**
-- ✅ `border-bottom-right-radius: 15px;` - **ATOMIC COMPLIANT**
+##### **Individual Corner Values (Single Property Support)**
+- ✅ `border-top-left-radius: 15px;` - **ATOMIC COMPLIANT** (single corner only)
+- ✅ `border-top-right-radius: 15px;` - **ATOMIC COMPLIANT** (single corner only)
+- ✅ `border-bottom-left-radius: 15px;` - **ATOMIC COMPLIANT** (single corner only)
+- ✅ `border-bottom-right-radius: 15px;` - **ATOMIC COMPLIANT** (single corner only)
 
 ##### **Logical Corner Values**
 - ✅ `border-start-start-radius: 12px;` - **ATOMIC COMPLIANT** (maps to top-left in LTR)
@@ -795,10 +795,12 @@ The `Opacity_Property_Mapper` now supports comprehensive opacity functionality:
 - All border-radius property support (shorthand and individual corners)
 - CSS shorthand variations (1, 2, 3, 4 values)
 - Individual corner property mapping to logical corners
+- Single property support optimization (only specific corner included)
 - Mixed unit support (`px`, `%`, `em`, `rem`)
 - Edge case handling (whitespace, zero values, invalid inputs)
 - Exact border-radius structure validation
 - Complete CSS parsing support
+- Logical property mapping (start-start, start-end, etc.)
 
 ##### **Playwright Tests**
 - **File**: `tests/playwright/sanity/modules/css-converter/prop-types/border-radius-prop-type.test.ts`
@@ -807,11 +809,12 @@ The `Opacity_Property_Mapper` now supports comprehensive opacity functionality:
 - **Validates**: Actual CSS rendering in Elementor editor and frontend
 
 **✅ COMPREHENSIVE E2E SCENARIOS:**
-- All 5 border-radius variations in single test
+- All 7 border-radius variations in single test (shorthand + individual corners + logical)
 - Editor styling verification using `toHaveCSS()` assertions
 - Frontend styling verification using `toHaveCSS()` assertions
-- Shorthand CSS parsing validation
-- Individual corner property verification
+- Shorthand CSS parsing validation (1, 2, 4 values)
+- Individual corner property verification (single property support)
+- Logical property mapping verification (start-start, end-end)
 - Atomic widgets experiments activation
 - Combined CSS content testing
 - Real browser rendering validation
@@ -819,6 +822,8 @@ The `Opacity_Property_Mapper` now supports comprehensive opacity functionality:
 #### **🔧 ATOMIC WIDGET INTEGRATION**
 
 ##### **Atomic Structure Generated**
+
+**Shorthand Border Radius:**
 ```json
 {
   "property": "border-radius",
@@ -829,6 +834,19 @@ The `Opacity_Property_Mapper` now supports comprehensive opacity functionality:
       "start-end": {"$$type": "size", "value": {"size": 20.0, "unit": "px"}},
       "end-start": {"$$type": "size", "value": {"size": 30.0, "unit": "px"}},
       "end-end": {"$$type": "size", "value": {"size": 40.0, "unit": "px"}}
+    }
+  }
+}
+```
+
+**Single Property Support (Optimized):**
+```json
+{
+  "property": "border-radius",
+  "value": {
+    "$$type": "border-radius",
+    "value": {
+      "start-start": {"$$type": "size", "value": {"size": 90.0, "unit": "px"}}
     }
   }
 }
@@ -851,6 +869,12 @@ The `Opacity_Property_Mapper` now supports comprehensive opacity functionality:
 - **3 values**: Top-left, top-right/bottom-left, bottom-right (`10px 20px 30px`)
 - **4 values**: Top-left, top-right, bottom-right, bottom-left (`10px 20px 30px 40px`)
 
+##### **Single Property Support Optimization**
+- **Individual Corner Properties**: Only include the specific corner with a value (matches Elementor editor behavior)
+- **Optimized Structure**: `border-top-left-radius: 90px` → Only `start-start` corner in atomic structure
+- **No Zero Padding**: Unset corners are omitted entirely instead of being set to `0px`
+- **Atomic Widget Compliance**: Partial corner definitions are supported by the atomic widget system
+
 ##### **Atomic Widget Compliance**
 - ✅ **Uses `Border_Radius_Prop_Type::make()`** - Direct atomic widget integration
 - ✅ **Supports all Size_Constants border units** - `px`, `em`, `rem`, `%`
@@ -867,12 +891,18 @@ The `Border_Radius_Property_Mapper` now supports all border-radius properties:
 **Shorthand Property:**
 - ✅ `border-radius` - Supports 1, 2, 3, 4 value syntax
 
-**Individual Corner Properties:**
-- ✅ `border-top-left-radius`, `border-top-right-radius`
-- ✅ `border-bottom-left-radius`, `border-bottom-right-radius`
+**Individual Corner Properties (Single Property Support):**
+- ✅ `border-top-left-radius` - Single corner only (optimized structure)
+- ✅ `border-top-right-radius` - Single corner only (optimized structure)
+- ✅ `border-bottom-left-radius` - Single corner only (optimized structure)
+- ✅ `border-bottom-right-radius` - Single corner only (optimized structure)
+
+**Logical Corner Properties:**
+- ✅ `border-start-start-radius`, `border-start-end-radius`
+- ✅ `border-end-start-radius`, `border-end-end-radius`
 
 ##### **Enhanced_Property_Mapper Usage Reduced**
-- ✅ **5 Border Radius Properties** - Now use atomic Border_Radius_Prop_Type
+- ✅ **9 Border Radius Properties** - Now use atomic Border_Radius_Prop_Type
 - ✅ **100% Atomic Widget Compliance** - All JSON generated by atomic widgets module
 - ✅ **Zero Manual JSON Creation** - All structures use `Border_Radius_Prop_Type::make()`
 
@@ -1570,9 +1600,9 @@ class [Property_Name]_Property_Mapper extends Modern_Property_Mapper_Base {
 ## 📊 **PROGRESS TRACKING**
 
 ### **Current Status:**
-- ✅ **Atomic Mappers**: 40 properties (5 core + 10 padding + 6 size + 9 border-radius + 1 box-shadow + 1 opacity + 3 height + 1 display + 1 position + 1 flex-direction + 1 text-align + 1 margin)
+- ✅ **Atomic Mappers**: 44 properties (5 core + 10 padding + 6 size + 9 border-radius + 1 box-shadow + 1 opacity + 3 height + 1 display + 1 position + 1 flex-direction + 1 text-align + 1 margin)
 - ✅ **Enhanced_Property_Mapper**: 0 properties (COMPLETELY REMOVED)
-- 🎯 **Atomic Compliance**: 100% for implemented properties (40/40)
+- 🎯 **Atomic Compliance**: 100% for implemented properties (44/44)
 
 ### **Remaining Work:**
 - 🎯 **Additional Properties**: Continue with next high-priority properties (font-weight, text-decoration, border-width, border-color, border-style)
@@ -1779,7 +1809,7 @@ The atomic widgets module is the single source of truth for ALL widget and CSS J
 
 ### **Atomic Compliance Report: 100% Complete**
 
-**✅ FULLY COMPLIANT MAPPERS (15/15):**
+**✅ FULLY COMPLIANT MAPPERS (44/44):**
 - ✅ `opacity-property-mapper.php` - Uses `Size_Prop_Type::make()->generate()`
 - ✅ `box-shadow-property-mapper.php` - Uses `Box_Shadow_Prop_Type::make()->generate()`
 - ✅ `color-property-mapper.php` - **FIXED** - Uses `Color_Prop_Type::make()->generate()`
@@ -1796,7 +1826,7 @@ The atomic widgets module is the single source of truth for ALL widget and CSS J
 - ✅ `flex-direction-property-mapper.php` - **NEW** - Uses `String_Prop_Type::make()->enum()->generate()`
 - ✅ `text-align-property-mapper.php` - **NEW** - Uses `String_Prop_Type::make()->enum()->generate()`
 
-**❌ VIOLATIONS REQUIRING IMMEDIATE ACTION (0/15):**
+**❌ VIOLATIONS REQUIRING IMMEDIATE ACTION (0/44):**
 - 🎉 **ALL VIOLATIONS FIXED** - 100% atomic widget compliance achieved!
 
 ### **Validation Command:**

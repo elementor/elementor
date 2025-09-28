@@ -11,15 +11,15 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
 		// Enable atomic widgets experiments to match manual testing environment
-		await wpAdmin.setExperiments( {
+		await wpAdminPage.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
 		} );
 
-		await wpAdmin.setExperiments( {
+		await wpAdminPage.setExperiments( {
 			e_nested_elements: 'active',
 		} );
 
@@ -29,8 +29,8 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
+		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -48,22 +48,22 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 
 		const combinedCssContent = `
 			<div>
-				<div style="display: flex; flex-direction: row; border: 1px solid #ccc; margin: 10px;" data-test="flex-row">
+				<div style="display: flex; flex-direction: row; border: 1px solid #ccc; margin: 10px;">
 					<p>Item 1</p>
 					<p>Item 2</p>
 					<p>Item 3</p>
 				</div>
-				<div style="display: flex; flex-direction: row-reverse; border: 1px solid #ccc; margin: 10px;" data-test="flex-row-reverse">
+				<div style="display: flex; flex-direction: row-reverse; border: 1px solid #ccc; margin: 10px;">
 					<p>Item 1</p>
 					<p>Item 2</p>
 					<p>Item 3</p>
 				</div>
-				<div style="display: flex; flex-direction: column; border: 1px solid #ccc; margin: 10px;" data-test="flex-column">
+				<div style="display: flex; flex-direction: column; border: 1px solid #ccc; margin: 10px;">
 					<p>Item 1</p>
 					<p>Item 2</p>
 					<p>Item 3</p>
 				</div>
-				<div style="display: flex; flex-direction: column-reverse; border: 1px solid #ccc; margin: 10px;" data-test="flex-column-reverse">
+				<div style="display: flex; flex-direction: column-reverse; border: 1px solid #ccc; margin: 10px;">
 					<p>Item 1</p>
 					<p>Item 2</p>
 					<p>Item 3</p>
@@ -76,13 +76,18 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 		expect( apiResult.post_id ).toBeDefined();
 
 		// Navigate to editor
-		editor = await wpAdmin.openNewPage();
-		await editor.closeNavigatorIfOpen();
-		await editor.loadTemplate( apiResult.post_id );
+		const postId = apiResult.post_id;
+		const editUrl = apiResult.edit_url;
+		expect( postId ).toBeDefined();
+		expect( editUrl ).toBeDefined();
+
+		await page.goto( editUrl );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
 
 		// Verify in editor
 		for ( const testCase of testCases ) {
-			const element = editor.getPreviewFrame().locator( `[data-test="${testCase.selector.replace(/[\[\]"]/g, '').split('=')[1]}"]` );
+			const element = editor.getPreviewFrame().locator( `[data-test="${ testCase.selector.replace( /[\[\]"]/g, '' ).split( '=' )[ 1 ] }"]` );
 			await expect( element ).toBeVisible();
 			await expect( element ).toHaveCSS( 'flex-direction', testCase.expected );
 		}
@@ -93,7 +98,7 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 
 		// Verify on frontend
 		for ( const testCase of testCases ) {
-			const element = page.locator( `[data-test="${testCase.selector.replace(/[\[\]"]/g, '').split('=')[1]}"]` );
+			const element = page.locator( `[data-test="${ testCase.selector.replace( /[\[\]"]/g, '' ).split( '=' )[ 1 ] }"]` );
 			await expect( element ).toBeVisible();
 			await expect( element ).toHaveCSS( 'flex-direction', testCase.expected );
 		}
@@ -102,7 +107,7 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 	test( 'should handle flex-direction with flex containers', async ( { page, request } ) => {
 		const flexContainerCssContent = `
 			<div>
-				<div style="display: flex; flex-direction: column; height: 200px; justify-content: space-between;" data-test="flex-column-container">
+				<div style="display: flex; flex-direction: column; height: 200px; justify-content: space-between;">
 					<p style="background: #f0f0f0;">Header</p>
 					<p style="background: #e0e0e0;">Content</p>
 					<p style="background: #d0d0d0;">Footer</p>
@@ -114,9 +119,14 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 		const apiResult = await cssHelper.convertHtmlWithCss( request, flexContainerCssContent, '' );
 		expect( apiResult.post_id ).toBeDefined();
 
-		editor = await wpAdmin.openNewPage();
-		await editor.closeNavigatorIfOpen();
-		await editor.loadTemplate( apiResult.post_id );
+		const postId = apiResult.post_id;
+		const editUrl = apiResult.edit_url;
+		expect( postId ).toBeDefined();
+		expect( editUrl ).toBeDefined();
+
+		await page.goto( editUrl );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
 
 		// Verify flex container in editor
 		const flexContainer = editor.getPreviewFrame().locator( '[data-test="flex-column-container"]' );
@@ -125,3 +135,4 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 		await expect( flexContainer ).toHaveCSS( 'flex-direction', 'column' );
 	} );
 } );
+

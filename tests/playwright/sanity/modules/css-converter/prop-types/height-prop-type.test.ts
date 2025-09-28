@@ -11,15 +11,15 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
 		// Enable atomic widgets experiments to match manual testing environment
-		await wpAdmin.setExperiments( {
+		await wpAdminPage.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
 		} );
 
-		await wpAdmin.setExperiments( {
+		await wpAdminPage.setExperiments( {
 			e_nested_elements: 'active',
 		} );
 
@@ -29,8 +29,8 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
+		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -50,12 +50,12 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 
 		const combinedCssContent = `
 			<div style="display: flex; flex-direction: column;">
-				<p style="height: 200px;" data-test="height-px">Height 200px</p>
-				<p style="min-height: 100px;" data-test="min-height-px">Min height 100px</p>
-				<p style="max-height: 300px;" data-test="max-height-px">Max height 300px</p>
-				<p style="height: 50vh;" data-test="height-vh">Height 50vh</p>
-				<p style="height: 10em;" data-test="height-em">Height 10em</p>
-				<p style="height: auto;" data-test="height-auto">Height auto</p>
+				<p style="height: 200px;">Height 200px</p>
+				<p style="min-height: 100px;">Min height 100px</p>
+				<p style="max-height: 300px;">Max height 300px</p>
+				<p style="height: 50vh;">Height 50vh</p>
+				<p style="height: 10em;">Height 10em</p>
+				<p style="height: auto;">Height auto</p>
 			</div>
 		`;
 
@@ -64,20 +64,25 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 		expect( apiResult.post_id ).toBeDefined();
 
 		// Navigate to editor
-		editor = await wpAdmin.openNewPage();
-		await editor.closeNavigatorIfOpen();
-		await editor.loadTemplate( apiResult.post_id );
+		const postId = apiResult.post_id;
+		const editUrl = apiResult.edit_url;
+		expect( postId ).toBeDefined();
+		expect( editUrl ).toBeDefined();
+
+		await page.goto( editUrl );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
 
 		// Verify in editor
 		for ( const testCase of testCases ) {
 			const element = editor.getPreviewFrame().locator( '.e-paragraph-base' ).locator( testCase.selector );
 			await expect( element ).toBeVisible();
-			
-			if ( testCase.property === 'height' && testCase.value !== 'auto' ) {
+
+			if ( 'height' === testCase.property && testCase.value !== 'auto' ) {
 				await expect( element ).toHaveCSS( 'height', testCase.expected );
-			} else if ( testCase.property === 'min-height' ) {
+			} else if ( 'min-height' === testCase.property ) {
 				await expect( element ).toHaveCSS( 'min-height', testCase.expected );
-			} else if ( testCase.property === 'max-height' ) {
+			} else if ( 'max-height' === testCase.property ) {
 				await expect( element ).toHaveCSS( 'max-height', testCase.expected );
 			}
 		}
@@ -90,12 +95,12 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 		for ( const testCase of testCases ) {
 			const element = page.locator( '.e-paragraph-base' ).locator( testCase.selector );
 			await expect( element ).toBeVisible();
-			
-			if ( testCase.property === 'height' && testCase.value !== 'auto' ) {
+
+			if ( 'height' === testCase.property && testCase.value !== 'auto' ) {
 				await expect( element ).toHaveCSS( 'height', testCase.expected );
-			} else if ( testCase.property === 'min-height' ) {
+			} else if ( 'min-height' === testCase.property ) {
 				await expect( element ).toHaveCSS( 'min-height', testCase.expected );
-			} else if ( testCase.property === 'max-height' ) {
+			} else if ( 'max-height' === testCase.property ) {
 				await expect( element ).toHaveCSS( 'max-height', testCase.expected );
 			}
 		}
@@ -104,10 +109,10 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 	test( 'should handle height edge cases and special values', async ( { page, request } ) => {
 		const edgeCaseCssContent = `
 			<div style="display: flex; flex-direction: column;">
-				<p style="height: 0px;" data-test="height-zero">Height zero</p>
-				<p style="height: 1.5rem;" data-test="height-decimal">Height decimal</p>
-				<p style="min-height: 0;" data-test="min-height-zero">Min height zero</p>
-				<p style="max-height: 100%;" data-test="max-height-percent">Max height percentage</p>
+				<p style="height: 0px;">Height zero</p>
+				<p style="height: 1.5rem;">Height decimal</p>
+				<p style="min-height: 0;">Min height zero</p>
+				<p style="max-height: 100%;">Max height percentage</p>
 			</div>
 		`;
 
@@ -115,9 +120,14 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 		const apiResult = await cssHelper.convertHtmlWithCss( request, edgeCaseCssContent, '' );
 		expect( apiResult.post_id ).toBeDefined();
 
-		editor = await wpAdmin.openNewPage();
-		await editor.closeNavigatorIfOpen();
-		await editor.loadTemplate( apiResult.post_id );
+		const postId = apiResult.post_id;
+		const editUrl = apiResult.edit_url;
+		expect( postId ).toBeDefined();
+		expect( editUrl ).toBeDefined();
+
+		await page.goto( editUrl );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
 
 		// Verify edge cases in editor
 		await expect( editor.getPreviewFrame().locator( '.e-paragraph-base[data-test="height-zero"]' ) ).toHaveCSS( 'height', '0px' );
@@ -126,3 +136,4 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 		await expect( editor.getPreviewFrame().locator( '.e-paragraph-base[data-test="max-height-percent"]' ) ).toHaveCSS( 'max-height', '100%' );
 	} );
 } );
+
