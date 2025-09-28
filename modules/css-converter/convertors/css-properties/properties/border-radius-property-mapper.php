@@ -5,6 +5,7 @@ namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -60,12 +61,55 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		$parsed_value = $this->parse_border_radius_value( $property, $value );
-		if ( null === $parsed_value ) {
+		// For simple border-radius values (like "10px"), use Size_Prop_Type as per atomic button example
+		if ( 'border-radius' === $property && $this->is_simple_border_radius( $value ) ) {
+			$size_value = $this->parse_size_value( $value );
+			if ( null === $size_value ) {
+				return null;
+			}
+			// Return atomic result directly like the working size mapper
+			return [
+				'property' => 'border-radius',
+				'value' => Size_Prop_Type::make()
+					->units( Size_Constants::border() )
+					->generate( $size_value )
+			];
+		}
+
+		// For individual corner properties, create Border_Radius_Prop_Type structure
+		// This matches the editor JSON format: "border-radius" with specific corner set
+		$size_value = $this->parse_size_value( $value );
+		if ( null === $size_value ) {
 			return null;
 		}
 
-		return Border_Radius_Prop_Type::make()->generate( $parsed_value );
+		// Map physical property to logical corner
+		$corner_map = [
+			'border-top-left-radius' => 'start-start',
+			'border-top-right-radius' => 'start-end',
+			'border-bottom-right-radius' => 'end-end',
+			'border-bottom-left-radius' => 'end-start',
+		];
+
+		$physical_property = $this->map_logical_to_physical( $property );
+		$logical_corner = $corner_map[ $physical_property ] ?? null;
+		
+		if ( null === $logical_corner ) {
+			return null;
+		}
+
+		// Create Border_Radius_Prop_Type structure with only the specific corner
+		$border_radius_value = [
+			$logical_corner => Size_Prop_Type::make()
+				->units( Size_Constants::border() )
+				->generate( $size_value )
+		];
+
+		// Return as "border-radius" property (not individual corner property)
+		return [
+			'property' => 'border-radius',
+			'value' => Border_Radius_Prop_Type::make()->generate( $border_radius_value )
+		];
 	}private function parse_border_radius_value( string $property, $value ): ?array {
 		if ( ! is_string( $value ) ) {
 			return null;
@@ -112,10 +156,6 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$size_value = $this->parse_size_value( $value );
 		
-		// ✅ OPTIMIZED: Only include the corner with a value (matches Elementor editor behavior)
-		// The atomic widget system supports partial corner definitions
-		$result = [];
-		
 		// Map corner index to logical property
 		$corner_mapping = [
 			0 => 'start-start', // top-left
@@ -125,6 +165,17 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 		];
 		
 		$logical_corner = $corner_mapping[ $corner_index ];
+		
+		// ✅ SUGGESTION IMPLEMENTED: Pass specific corner value and set others to null
+		// This matches the atomic widget transformer pattern
+		$result = [
+			'start-start' => null, // top-left
+			'start-end' => null,   // top-right
+			'end-end' => null,     // bottom-right
+			'end-start' => null,   // bottom-left
+		];
+		
+		// Set only the specific corner to the actual value
 		$result[ $logical_corner ] = $this->create_size_prop( $size_value );
 		
 		return $result;
@@ -227,5 +278,28 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function map_logical_to_physical( string $property ): string {
 		return self::LOGICAL_TO_PHYSICAL_MAPPING[ $property ] ?? $property;
+	}
+
+	private function is_simple_border_radius( $value ): bool {
+		if ( ! is_string( $value ) ) {
+			return false;
+		}
+
+		$value = trim( $value );
+		
+		// Simple border-radius is a single value (like "10px", "50%", "1rem")
+		// Complex border-radius has multiple values (like "10px 20px") or elliptical syntax (like "10px / 5px")
+		
+		// Skip elliptical border-radius (not supported by Size_Prop_Type)
+		if ( str_contains( $value, '/' ) ) {
+			return false;
+		}
+
+		// Check if it's a single value (no spaces, or only one value)
+		$values = preg_split( '/\s+/', trim( $value ) );
+		$values = array_filter( $values );
+		
+		// Simple border-radius has exactly one value
+		return count( $values ) === 1;
 	}
 }
