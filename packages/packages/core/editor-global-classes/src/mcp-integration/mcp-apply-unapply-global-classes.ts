@@ -82,7 +82,10 @@ If the user want to unapply a class by it's name and not ID, please use the "lis
 `,
 		handler: async ( params ) => {
 			const { classId, elementId } = params;
-			doUnapplyClass( elementId, classId );
+			const ok = doUnapplyClass( elementId, classId );
+			if ( ! ok ) {
+				throw new Error( `Class ${ classId } is not applied to element ${ elementId }, cannot unapply it.` );
+			}
 			return `Class ${ classId } unapplied from element ${ elementId } successfully.`;
 		},
 	} );

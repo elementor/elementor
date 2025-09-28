@@ -21,9 +21,10 @@ export function doApplyClasses( elementId: string, classIds: StyleDefinitionID[]
 export function doUnapplyClass( elementId: string, classId: StyleDefinitionID, classesPropType = 'classes' ) {
 	const appliedClasses = getElementSetting< ClassesPropValue >( elementId, classesPropType )?.value || [];
 	if ( ! appliedClasses.includes( classId ) ) {
-		throw new Error( `Class ${ classId } is not applied to element ${ elementId }, cannot unapply it.` );
+		return false;
 	}
 
 	const updatedClassIds = appliedClasses.filter( ( id ) => id !== classId );
 	doApplyClasses( elementId, updatedClassIds, classesPropType );
+	return true;
 }
