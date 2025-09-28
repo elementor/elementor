@@ -237,12 +237,12 @@ class Widget_Star_Rating extends Widget_Base {
 					],
 				],
 				'classes_dictionary' => [
-					'left' => is_rtl() ? 'end' : 'start',
-					'right' => is_rtl() ? 'start' : 'end',
+					'left'  => $rtl ? 'end' : 'start',
+					'right' => $rtl ? 'start' : 'end',
 				],
 				'selectors_dictionary' => [
-					'left' => is_rtl() ? 'end' : 'start',
-					'right' => is_rtl() ? 'start' : 'end',
+					'left'  => $rtl ? 'end' : 'start',
+					'right' => $rtl ? 'start' : 'end',
 				],
 				'prefix_class' => 'elementor-star-rating%s--align-',
 				'selectors' => [
