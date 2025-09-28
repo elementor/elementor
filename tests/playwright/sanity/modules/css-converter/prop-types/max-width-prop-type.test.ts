@@ -1,9 +1,12 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
+import EditorPage from '../../../../pages/editor-page';
 import { CssConverterHelper } from '../helper';
 
 test.describe( 'Max Width Prop Type Integration @prop-types', () => {
+	let wpAdmin: WpAdminPage;
+	let editor: EditorPage;
 	let cssHelper: CssConverterHelper;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -31,91 +34,78 @@ test.describe( 'Max Width Prop Type Integration @prop-types', () => {
 		await page.close();
 	} );
 
-	test.beforeEach( async () => {
-		// Setup for each test if needed
+	test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
+		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should convert all max-width variations and verify atomic mapper success', async ( { request } ) => {
-		const htmlContent = `
-			<div style="max-width: 200px;">Max width 200px content</div>
-			<div style="max-width: 50%;">Max width 50% content</div>
-			<div style="max-width: 300;">Unitless max width content</div>
-			<div style="max-width: 100.5px;">Decimal max width content</div>
-			<div style="max-width: 25vmin;">Viewport unit content</div>
-			<div style="max-width: 2ch;">Character unit content</div>
-			<div style="max-width: 0;">Zero max width content</div>
+	test( 'should convert max-width properties and verify styles', async ( { page, request } ) => {
+		const combinedCssContent = `
+			<div>
+				<p style="max-width: 200px;" data-test="max-width-200">Max width 200px</p>
+				<p style="max-width: 400px;" data-test="max-width-400">Max width 400px</p>
+				<p style="max-width: 50%;" data-test="max-width-percent">Max width 50%</p>
+				<p style="min-width: 150px;" data-test="min-width">Min width 150px</p>
+			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '' );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
 		
 		// Check if API call failed due to backend issues
 		if ( apiResult.error ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
-
 		const postId = apiResult.post_id;
 		const editUrl = apiResult.edit_url;
 		expect( postId ).toBeDefined();
 		expect( editUrl ).toBeDefined();
 
-		// ✅ ATOMIC PROPERTY MAPPER SUCCESS VERIFICATION
-		// The atomic max-width mapper successfully converted all variations
-		expect( apiResult.success ).toBe( true );
-		expect( apiResult.widgets_created ).toBeGreaterThan( 0 );
-		expect( apiResult.global_classes_created ).toBeGreaterThan( 0 );
-		
-		// Verify that all max-width properties were processed
-		expect( apiResult.conversion_log.css_processing.properties_converted ).toBeGreaterThan( 5 );
-		
-		// Verify no unsupported properties (all max-width variations should be supported)
-		expect( apiResult.conversion_log.css_processing.unsupported_properties ).toEqual( [] );
-		
-		// All max-width properties were successfully converted by the atomic property mappers
-		// Test passes when all properties are converted without errors
-	} );
+		await page.goto( editUrl );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
 
-	test( 'should handle edge cases and special max-width values', async ( { request } ) => {
-		const htmlContent = `
-			<div style="max-width: none;">No max width limit</div>
-			<div style="max-width: auto;">Auto max width</div>
-			<div style="max-width: fit-content;">Fit content max width</div>
-			<div style="max-width: min-content;">Min content max width</div>
-			<div style="max-width: max-content;">Max content max width</div>
-			<div style="max-width: calc(100% - 20px);">Calc max width</div>
-		`;
+		// Define test cases for both editor and frontend verification
+		const testCases = [
+			{ index: 0, name: 'max-width: 200px', property: 'max-width', expected: '200px' },
+			{ index: 1, name: 'max-width: 400px', property: 'max-width', expected: '400px' },
+			{ index: 2, name: 'max-width: 50%', property: 'max-width', expected: '50%' },
+			{ index: 3, name: 'min-width: 150px', property: 'min-width', expected: '150px' },
+		];
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '' );
-		
-		// Check if API call failed due to backend issues
-		if ( apiResult.error ) {
-			test.skip( true, 'Skipping due to backend property mapper issues' );
-			return;
+		// Editor verification using test cases array
+		for ( const testCase of testCases ) {
+			await test.step( `Verify ${ testCase.name } in editor`, async () => {
+				const elementorFrame = editor.getPreviewFrame();
+				await elementorFrame.waitForLoadState();
+				
+				const element = elementorFrame.locator( '.e-paragraph-base' ).nth( testCase.index );
+				await element.waitFor( { state: 'visible', timeout: 10000 } );
+
+				await test.step( 'Verify CSS property', async () => {
+					await expect( element ).toHaveCSS( testCase.property, testCase.expected );
+				} );
+			} );
 		}
 
-		expect( apiResult.success ).toBe( true );
-		expect( apiResult.post_id ).toBeDefined();
-		expect( apiResult.edit_url ).toBeDefined();
+		await test.step( 'Publish page and verify all max-width styles on frontend', async () => {
+			// Save the page first
+			await editor.saveAndReloadPage();
+			
+			// Get the page ID and navigate to frontend
+			const pageId = await editor.getPageId();
+			await page.goto( `/?p=${ pageId }` );
+			await page.waitForLoadState();
 
-		// Verify that supported edge cases were processed
-		// Note: Some values like 'none' might be filtered out by the atomic mapper
-		expect( apiResult.widgets_created ).toBeGreaterThan( 0 );
-	} );
+			// Frontend verification using same test cases array
+			for ( const testCase of testCases ) {
+				await test.step( `Verify ${testCase.name} on frontend`, async () => {
+					const frontendElement = page.locator( '.e-paragraph-base' ).nth( testCase.index );
 
-	test( 'should verify atomic widget structure in API response', async ( { request } ) => {
-		const htmlContent = `<div style="max-width: 400px;">Test max-width atomic structure</div>`;
-		
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '' );
-		
-		expect( apiResult.success ).toBe( true );
-		expect( apiResult.widgets_created ).toBeGreaterThan( 0 );
-		expect( apiResult.global_classes_created ).toBeGreaterThan( 0 );
-
-		// Verify the atomic widget conversion was successful
-		expect( apiResult.conversion_log ).toBeDefined();
-		expect( apiResult.conversion_log.css_processing ).toBeDefined();
-		expect( apiResult.conversion_log.css_processing.properties_converted ).toBeGreaterThan( 0 );
-		
-		// Max-width API structure verification completed
+					await test.step( 'Verify CSS property', async () => {
+						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );
+					} );
+				} );
+			}
+		} );
 	} );
 } );

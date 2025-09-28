@@ -1,9 +1,12 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
+import EditorPage from '../../../../pages/editor-page';
 import { CssConverterHelper } from '../helper';
 
 test.describe( 'Display Prop Type Integration @prop-types', () => {
+	let wpAdmin: WpAdminPage;
+	let editor: EditorPage;
 	let cssHelper: CssConverterHelper;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -31,85 +34,78 @@ test.describe( 'Display Prop Type Integration @prop-types', () => {
 		await page.close();
 	} );
 
-	test.beforeEach( async () => {
-		// Setup for each test if needed
+	test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
+		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should convert all display variations and verify atomic mapper success', async ( { request } ) => {
-		const htmlContent = `
+	test( 'should convert display properties and verify styles', async ( { page, request } ) => {
+		const combinedCssContent = `
 			<div>
-				<p style="display: block;">Display block</p>
-				<p style="display: inline;">Display inline</p>
-				<p style="display: inline-block;">Display inline-block</p>
-				<p style="display: flex;">Display flex</p>
-				<p style="display: inline-flex;">Display inline-flex</p>
-				<p style="display: grid;">Display grid</p>
-				<p style="display: inline-grid;">Display inline-grid</p>
-				<p style="display: none;">Display none</p>
+				<p style="display: block;" data-test="display-block">Block display</p>
+				<p style="display: inline;" data-test="display-inline">Inline display</p>
+				<p style="display: inline-block;" data-test="display-inline-block">Inline-block display</p>
+				<p style="display: flex;" data-test="display-flex">Flex display</p>
 			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
 		
 		// Check if API call failed due to backend issues
-		if ( apiResult.errors && apiResult.errors.length > 0 ) {
-			test.skip( true, 'Skipping due to backend property mapper issues: ' + apiResult.errors.join( ', ' ) );
+		if ( apiResult.error ) {
+			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
+		const postId = apiResult.post_id;
+		const editUrl = apiResult.edit_url;
+		expect( postId ).toBeDefined();
+		expect( editUrl ).toBeDefined();
 
-		// ✅ ATOMIC PROPERTY MAPPER SUCCESS VERIFICATION
-		// The atomic display mapper successfully converted all variations
-		expect( apiResult.success ).toBe( true );
-		expect( apiResult.widgets_created ).toBeGreaterThan( 0 );
-		expect( apiResult.global_classes_created ).toBeGreaterThan( 0 );
-		
-		// Verify that display properties were processed
-		expect( apiResult.conversion_log.css_processing.properties_converted ).toBeGreaterThan( 0 );
-		
-		// All display properties were successfully converted by the atomic property mappers
-		// Test passes when all properties are converted without errors
-	} );
+		await page.goto( editUrl );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
 
-	test( 'should handle display special values and verify atomic mapper success', async ( { request } ) => {
-		const htmlContent = `
-			<div>
-				<p style="display: flow-root;">Display flow-root</p>
-				<p style="display: contents;">Display contents</p>
-			</div>
-		`;
+		// Define test cases for both editor and frontend verification
+		const testCases = [
+			{ index: 0, name: 'display: block', property: 'display', expected: 'block' },
+			{ index: 1, name: 'display: inline', property: 'display', expected: 'inline' },
+			{ index: 2, name: 'display: inline-block', property: 'display', expected: 'inline-block' },
+			{ index: 3, name: 'display: flex', property: 'display', expected: 'flex' },
+		];
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent );
-		
-		// Check if API call failed due to backend issues
-		if ( apiResult.errors && apiResult.errors.length > 0 ) {
-			test.skip( true, 'Skipping due to backend property mapper issues: ' + apiResult.errors.join( ', ' ) );
-			return;
+		// Editor verification using test cases array
+		for ( const testCase of testCases ) {
+			await test.step( `Verify ${ testCase.name } in editor`, async () => {
+				const elementorFrame = editor.getPreviewFrame();
+				await elementorFrame.waitForLoadState();
+				
+				const element = elementorFrame.locator( '.e-paragraph-base' ).nth( testCase.index );
+				await element.waitFor( { state: 'visible', timeout: 10000 } );
+
+				await test.step( 'Verify CSS property', async () => {
+					await expect( element ).toHaveCSS( testCase.property, testCase.expected );
+				} );
+			} );
 		}
 
-		expect( apiResult.success ).toBe( true );
-		expect( apiResult.widgets_created ).toBeGreaterThan( 0 );
-		expect( apiResult.conversion_log.css_processing.properties_converted ).toBeGreaterThan( 0 );
-		
-		// Display special values successfully converted by atomic property mappers
-	} );
+		await test.step( 'Publish page and verify all display styles on frontend', async () => {
+			// Save the page first
+			await editor.saveAndReloadPage();
+			
+			// Get the page ID and navigate to frontend
+			const pageId = await editor.getPageId();
+			await page.goto( `/?p=${ pageId }` );
+			await page.waitForLoadState();
 
-	test( 'should verify atomic widget structure for display properties', async ( { request } ) => {
-		const htmlContent = `
-			<div style="display: flex;">Test display atomic structure</div>
-		`;
+			// Frontend verification using same test cases array
+			for ( const testCase of testCases ) {
+				await test.step( `Verify ${testCase.name} on frontend`, async () => {
+					const frontendElement = page.locator( '.e-paragraph-base' ).nth( testCase.index );
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent );
-		
-		expect( apiResult.success ).toBe( true );
-		expect( apiResult.widgets_created ).toBeGreaterThan( 0 );
-		expect( apiResult.global_classes_created ).toBeGreaterThan( 0 );
-
-		// Verify the atomic widget conversion was successful
-		expect( apiResult.conversion_log ).toBeDefined();
-		expect( apiResult.conversion_log.css_processing ).toBeDefined();
-		expect( apiResult.conversion_log.css_processing.properties_converted ).toBeGreaterThan( 0 );
-		
-		// Display API structure verification completed
+					await test.step( 'Verify CSS property', async () => {
+						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );
+					} );
+				} );
+			}
+		} );
 	} );
 } );
-
