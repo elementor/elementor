@@ -47,6 +47,7 @@ class Class_Property_Mapper_Registry {
 		require_once __DIR__ . '/../properties/font-weight-property-mapper.php';
 		require_once __DIR__ . '/../properties/border-width-property-mapper.php';
 		require_once __DIR__ . '/../properties/positioning-property-mapper.php';
+		require_once __DIR__ . '/../properties/transform-property-mapper.php';
 		
 		// Register atomic property mappers
 		$this->mappers['color'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Color_Property_Mapper();
@@ -131,6 +132,12 @@ class Class_Property_Mapper_Registry {
 		$flex_properties_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Flex_Properties_Mapper();
 		foreach ( $flex_properties_mapper->get_supported_properties() as $property ) {
 			$this->mappers[ $property ] = $flex_properties_mapper;
+		}
+		
+		// Register comprehensive atomic transform mapper for all transform properties
+		$transform_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Transform_Property_Mapper();
+		foreach ( $transform_mapper->get_supported_properties() as $property ) {
+			$this->mappers[ $property ] = $transform_mapper;
 		}
 	}
 
