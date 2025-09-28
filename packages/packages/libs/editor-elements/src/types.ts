@@ -39,6 +39,19 @@ export type Control = {
 	};
 };
 
-export type ControlItem = ControlsSection | Control;
+export type ElementControl = {
+	type: 'element-control';
+	value: {
+		type: string;
+		label?: string;
+		props: Record< string, unknown >;
+		meta?: {
+			layout?: ControlLayout;
+			topDivider?: boolean;
+		};
+	};
+};
+
+export type ControlItem = ControlsSection | Control | ElementControl;
 
 export type ControlLayout = 'full' | 'two-columns' | 'custom';
