@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRef } from 'react';
 import { SearchIcon, XIcon } from '@elementor/icons';
-import { Box, IconButton, InputAdornment, TextField } from '@elementor/ui';
+import { Box, type BoxProps, IconButton, InputAdornment, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 const SIZE = 'tiny';
@@ -11,9 +11,9 @@ type Props = {
 	onSearch: ( search: string ) => void;
 	placeholder: string;
 	id?: string;
-};
+} & BoxProps;
 
-export const PopoverSearch = ( { value, onSearch, placeholder, id }: Props ) => {
+export const SearchField = ( { value, onSearch, placeholder, id, sx }: Props ) => {
 	const inputRef = useRef< HTMLInputElement | null >( null );
 
 	const handleClear = () => {
@@ -27,7 +27,7 @@ export const PopoverSearch = ( { value, onSearch, placeholder, id }: Props ) => 
 	};
 
 	return (
-		<Box sx={ { px: 2, pb: 1.5 } }>
+		<Box sx={ { px: 2, pb: 1.5, ...sx } }>
 			<TextField
 				// eslint-disable-next-line jsx-a11y/no-autofocus
 				autoFocus

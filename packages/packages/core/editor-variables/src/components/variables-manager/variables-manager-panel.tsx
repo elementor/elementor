@@ -8,13 +8,15 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
+import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { ColorFilterIcon, TrashIcon } from '@elementor/icons';
-import { Alert, Box, Button, CloseButton, Divider, ErrorBoundary, Stack } from '@elementor/ui';
+import { Alert, Box, Button, CloseButton, Divider, ErrorBoundary, Stack, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
+import { EmptyState } from '../ui/empty-state';
+import { NoSearchResults } from '../ui/no-search-results';
 import { useAutoEdit } from './hooks/use-auto-edit';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
 import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu';
@@ -38,16 +40,21 @@ export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 
+	const createMenuState = usePopupState( {
+		variant: 'popover',
+	} );
+
 	const {
 		variables,
-		ids,
 		isDirty,
 		hasValidationErrors,
-		setIds,
+		searchValue,
 		handleOnChange,
 		createVariable,
 		handleDeleteVariable,
 		handleSave,
+		isSaving,
+		handleSearch,
 		setHasValidationErrors,
 	} = useVariablesManagerState();
 
@@ -97,11 +104,17 @@ export function VariablesManagerPanel() {
 		},
 	];
 
+	const hasVariables = Object.values( variables ).some( ( variable ) => ! variable.deleted );
+
 	return (
 		<ThemeProvider>
 			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
 				<Panel>
-					<PanelHeader>
+					<PanelHeader
+						sx={ {
+							height: 'unset',
+						} }
+					>
 						<Stack width="100%" direction="column" alignItems="center">
 							<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
 								<Stack width="100%" direction="row" gap={ 1 }>
@@ -114,6 +127,7 @@ export function VariablesManagerPanel() {
 									<VariableManagerCreateMenu
 										onCreate={ handleCreateVariable }
 										variables={ variables }
+										menuState={ createMenuState }
 									/>
 									<CloseButton
 										aria-label="Close"
@@ -123,6 +137,17 @@ export function VariablesManagerPanel() {
 										} }
 									/>
 								</Stack>
+							</Stack>
+							<Stack width="100%" direction="row" gap={ 1 }>
+								<SearchField
+									sx={ {
+										display: 'flex',
+										flex: 1,
+									} }
+									placeholder={ __( 'Search', 'elementor' ) }
+									value={ searchValue }
+									onSearch={ handleSearch }
+								/>
 							</Stack>
 							<Divider sx={ { width: '100%' } } />
 						</Stack>
@@ -134,16 +159,36 @@ export function VariablesManagerPanel() {
 							height: '100%',
 						} }
 					>
-						<VariablesManagerTable
-							menuActions={ menuActions }
-							variables={ variables }
-							onChange={ handleOnChange }
-							ids={ ids }
-							onIdsChange={ setIds }
-							autoEditVariableId={ autoEditVariableId }
-							onAutoEditComplete={ handleAutoEditComplete }
-							onFieldError={ setHasValidationErrors }
-						/>
+						{ hasVariables && (
+							<VariablesManagerTable
+								menuActions={ menuActions }
+								variables={ variables }
+								onChange={ handleOnChange }
+								autoEditVariableId={ autoEditVariableId }
+								onAutoEditComplete={ handleAutoEditComplete }
+								onFieldError={ setHasValidationErrors }
+							/>
+						) }
+
+						{ ! hasVariables && searchValue && (
+							<NoSearchResults
+								searchValue={ searchValue }
+								onClear={ () => handleSearch( '' ) }
+								icon={ <ColorFilterIcon fontSize="large" /> }
+							/>
+						) }
+
+						{ ! hasVariables && ! searchValue && (
+							<EmptyState
+								title={ __( 'Create your first variable', 'elementor' ) }
+								message={ __(
+									'Variables are saved attributes that you can apply anywhere on your site.',
+									'elementor'
+								) }
+								icon={ <ColorFilterIcon fontSize="large" /> }
+								onAdd={ createMenuState.open }
+							/>
+						) }
 					</PanelBody>
 
 					<PanelFooter>
@@ -152,8 +197,9 @@ export function VariablesManagerPanel() {
 							size="small"
 							color="global"
 							variant="contained"
-							disabled={ ! isDirty || hasValidationErrors }
+							disabled={ ! isDirty || hasValidationErrors || isSaving }
 							onClick={ handleSave }
+							loading={ isSaving }
 						>
 							{ __( 'Save changes', 'elementor' ) }
 						</Button>
