@@ -1,3 +1,4 @@
+import { NumberPropValue } from '@elementor/editor-props';
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
 
 // Technically it shouldn't have a return type annotation, but for some
@@ -92,7 +93,29 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 		}
 
 		getContextMenuGroups() {
-			return super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
-		}
-	};
+			const filteredGroups = super.getContextMenuGroups().filter(group => group.name !== 'save');
+			const componentId = this.options?.model?.get('settings')?.get('component_id') as NumberPropValue
+			
+			if (!componentId?.value) {
+				return filteredGroups;
+			}
+
+			const { value: id } = componentId;
+			const newGroup = {
+				name: 'edit component',
+				actions: [
+					{
+						name: 'edit component',
+						icon: 'eicon-edit',
+						title: () => 'Edit Component',
+						isEnabled: () => true,
+						callback: () => {
+							legacyWindow.$e.run?.('editor/documents/switch',{ id })
+						}
+					}
+				]
+			}
+		return [...filteredGroups, newGroup]
+		};
+	}
 }

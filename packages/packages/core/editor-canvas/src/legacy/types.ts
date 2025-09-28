@@ -23,6 +23,9 @@ export type LegacyWindow = Window & {
 			},
 		];
 	};
+	$e: {
+		run: ( command: string, args: Record< string, unknown > ) => void;
+	}
 };
 
 export declare class ElementType {
@@ -64,6 +67,10 @@ export declare class ElementView {
 	triggerMethod( method: string ): void;
 
 	bindUIElements(): void;
+
+	options?: {
+		model: BackboneModel< ElementModel >;
+	};
 }
 
 type JQueryElement = {
@@ -89,5 +96,5 @@ type ToJSON< T > = {
 
 type ContextMenuGroup = {
 	name: string;
-	action: unknown[];
+	actions: unknown[];
 };
