@@ -109,8 +109,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
-	const EXPERIMENT_CUSTOM_CSS = 'atomic_custom_css';
 	const EXPERIMENT_NESTED = 'e_nested_elements';
+	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -192,19 +192,19 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		] );
 
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::EXPERIMENT_CUSTOM_CSS,
-			'title' => esc_html__( 'V4 Custom CSS', 'elementor' ),
-			'description' => esc_html__( 'Create endless custom styling.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
-
 		Plugin::$instance->experiments->add_feature([
 			'name' => self::EXPERIMENT_NESTED,
 			'title' => esc_html__( 'Nested Elements', 'elementor' ),
 			'description' => esc_html__( 'Enable nested elements.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_EDITOR_MCP,
+			'title' => esc_html__( 'Editor MCP for atomic widgets', 'elementor' ),
+			'description' => esc_html__( 'Editor MCP for atomic widgets.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -396,6 +396,14 @@ class Module extends BaseModule {
 		wp_register_script(
 			'elementor-youtube-handler',
 			$this->get_js_assets_url( 'youtube-handler' ),
+			[ $frontend_handlers_package_config['handle'] ],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
+			'elementor-tabs-handler',
+			$this->get_js_assets_url( 'tabs-handler' ),
 			[ $frontend_handlers_package_config['handle'] ],
 			ELEMENTOR_VERSION,
 			true

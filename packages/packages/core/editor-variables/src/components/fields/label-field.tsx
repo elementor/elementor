@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { WarningInfotip } from '@elementor/editor-ui';
 import { TextField, type TextFieldProps } from '@elementor/ui';
 
+import { type TVariablesList } from '../../storage';
 import { labelHint, validateLabel, VARIABLE_LABEL_MAX_LENGTH } from '../../utils/validations';
 function isLabelEqual( a: string, b: string ) {
 	return a.trim().toLowerCase() === b.trim().toLowerCase();
@@ -22,7 +23,7 @@ export const useLabelError = ( initialError?: LabelErrorProps ) => {
 	};
 };
 
-type LabelFieldProps = {
+export type LabelFieldProps = {
 	value: string;
 	error?: LabelErrorProps;
 	onChange: ( value: string ) => void;
@@ -32,6 +33,7 @@ type LabelFieldProps = {
 	focusOnShow?: boolean;
 	selectOnShow?: boolean;
 	showWarningInfotip?: boolean;
+	variables?: TVariablesList;
 };
 
 export const LabelField = ( {
@@ -44,15 +46,17 @@ export const LabelField = ( {
 	focusOnShow = false,
 	selectOnShow = false,
 	showWarningInfotip = false,
+	variables,
 }: LabelFieldProps ) => {
 	const [ label, setLabel ] = useState( value );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+
 	const fieldRef = useRef< HTMLElement >( null );
 
 	const handleChange = ( newValue: string ) => {
 		setLabel( newValue );
 
-		const errorMsg = validateLabel( newValue );
+		const errorMsg = validateLabel( newValue, variables );
 
 		setErrorMessage( errorMsg );
 		onErrorChange?.( errorMsg );
@@ -79,6 +83,7 @@ export const LabelField = ( {
 			inputProps={ {
 				maxLength: VARIABLE_LABEL_MAX_LENGTH,
 				...( selectOnShow && { onFocus: ( e: React.FocusEvent< HTMLInputElement > ) => e.target.select() } ),
+				'aria-label': 'Name',
 			} }
 			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus={ focusOnShow }

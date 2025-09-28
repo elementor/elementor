@@ -9,6 +9,8 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Tabs_Control;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,6 +44,8 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
+			'default-active-tab' => String_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
 
@@ -54,6 +58,12 @@ class Atomic_Tabs extends Atomic_Element_Base {
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
+					Tabs_Control::make()
+						->set_label( __( 'Menu items', 'elementor' ) )
+						->set_meta( [
+							'topDivider' => true,
+							'layout' => 'custom',
+						] ),
 				] ),
 		];
 	}
@@ -87,11 +97,33 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	}
 
 	protected function define_default_children() {
+		$default_tab_count = 3;
+		$tab_elements = [];
+		$tab_panel_elements = [];
+
+		foreach ( range( 1, $default_tab_count ) as $i ) {
+			$tab_elements[] = Atomic_Tab::generate()
+				->editor_settings( [
+					'title' => "Tab {$i}",
+				] )
+				->is_locked( true )
+				->build();
+
+			$tab_panel_elements[] = Atomic_Tab_Panel::generate()
+				->is_locked( true )
+				->editor_settings( [
+					'title' => "Tab {$i} panel",
+				] )
+				->build();
+		}
+
 		$tabs_list = Atomic_Tabs_List::generate()
+			->children( $tab_elements )
 			->is_locked( true )
 			->build();
 
 		$tabs_content = Atomic_Tabs_Content::generate()
+			->children( $tab_panel_elements )
 			->is_locked( true )
 			->build();
 
@@ -99,6 +131,16 @@ class Atomic_Tabs extends Atomic_Element_Base {
 			$tabs_list,
 			$tabs_content,
 		];
+	}
+
+	public function define_initial_attributes() {
+		return [
+			'data-e-type' => $this->get_type(),
+		];
+	}
+
+	public function get_script_depends() {
+		return [ 'elementor-tabs-handler' ];
 	}
 
 	protected function add_render_attributes() {
@@ -116,10 +158,14 @@ class Atomic_Tabs extends Atomic_Element_Base {
 			],
 		];
 
+		if ( ! empty( $settings['default-active-tab'] ) ) {
+			$attributes['data-active-tab'] = esc_attr( $settings['default-active-tab'] );
+		}
+
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );
 		}
 
-		$this->add_render_attribute( '_wrapper', array_merge( $attributes, $initial_attributes ) );
+		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
 	}
 }

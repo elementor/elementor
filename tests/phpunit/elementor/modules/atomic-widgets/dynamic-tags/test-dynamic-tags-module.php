@@ -148,6 +148,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 													'label' => 'Email',
 												],
 											],
+											'fallbackLabels' => null,
 											'placeholder' => '',
 										],
 										'meta' => null,
@@ -277,7 +278,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				$tag->add_control(
 					'unsupported-control',
 					[
-						'type' => 'choose',
+						'type' => 'code',
 					]
 				);
 			},

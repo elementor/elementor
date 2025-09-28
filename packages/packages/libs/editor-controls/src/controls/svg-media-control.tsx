@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import { imageSrcPropTypeUtil } from '@elementor/editor-props';
 import { UploadIcon } from '@elementor/icons';
-import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack, styled } from '@elementor/ui';
+import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack, styled, ThemeProvider } from '@elementor/ui';
 import { type OpenOptions, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../bound-prop-context';
+import { ConditionalControlInfotip } from '../components/conditional-control-infotip';
 import { EnableUnfilteredModal } from '../components/enable-unfiltered-modal';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
@@ -47,6 +49,8 @@ export const SvgMediaControl = createControl( () => {
 	const src = attachment?.url ?? url?.value ?? null;
 	const { data: allowSvgUpload } = useUnfilteredFilesUpload();
 	const [ unfilteredModalOpenState, setUnfilteredModalOpenState ] = useState( false );
+	const { canUser } = useCurrentUserCapabilities();
+	const canManageOptions = canUser( 'manage_options' );
 
 	const { open } = useWpMediaFrame( {
 		mediaTypes: [ 'svg' ],
@@ -77,6 +81,18 @@ export const SvgMediaControl = createControl( () => {
 		} else {
 			open( openOptions );
 		}
+	};
+
+	const infotipProps = {
+		title: __( "Sorry, you can't upload that file yet.", 'elementor' ),
+		description: (
+			<>
+				{ __( 'To upload them anyway, ask the site administrator to enable unfiltered', 'elementor' ) }
+				<br />
+				{ __( 'file uploads.', 'elementor' ) }
+			</>
+		),
+		isEnabled: ! canManageOptions,
 	};
 
 	return (
@@ -112,15 +128,22 @@ export const SvgMediaControl = createControl( () => {
 							>
 								{ __( 'Select SVG', 'elementor' ) }
 							</Button>
-							<Button
-								size="tiny"
-								variant="text"
-								color="inherit"
-								startIcon={ <UploadIcon /> }
-								onClick={ () => handleClick( MODE_UPLOAD ) }
-							>
-								{ __( 'Upload', 'elementor' ) }
-							</Button>
+							<ConditionalControlInfotip { ...infotipProps }>
+								<span>
+									<ThemeProvider colorScheme={ canManageOptions ? 'light' : 'dark' }>
+										<Button
+											size="tiny"
+											variant="text"
+											color="inherit"
+											startIcon={ <UploadIcon /> }
+											disabled={ canManageOptions ? false : true }
+											onClick={ () => canManageOptions && handleClick( MODE_UPLOAD ) }
+										>
+											{ __( 'Upload', 'elementor' ) }
+										</Button>
+									</ThemeProvider>
+								</span>
+							</ConditionalControlInfotip>
 						</Stack>
 					</CardOverlay>
 				</StyledCard>
