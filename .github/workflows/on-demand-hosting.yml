@@ -15,10 +15,9 @@ permissions:
   actions: read
 
 env:
-  SFTP_HOST: sftp.stg.elementor.cool
-  SFTP_PORT: 32022
-  SFTP_USERNAME: 01n1aNuz
-  SFTP_PASSWORD: oZs1NNveykGwRezl
+  WP_SITE_URL: https://soxkanfj.elementor.cloud
+  WP_USERNAME: playwrightuser
+  WP_PASSWORD: vwqt4D6Ss(&TLoDGSup01ed@
 
 jobs:
   build-plugin:
@@ -26,7 +25,7 @@ jobs:
     uses: ./.github/workflows/build.yml
 
   deploy-to-hosting:
-    name: Deploy to On Demand Hosting
+    name: Deploy to WordPress Site
     runs-on: ubuntu-22.04
     needs: [build-plugin]
     steps:
@@ -39,9 +38,9 @@ jobs:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
       
-      - name: Upload to SFTP server
+      - name: Install plugin via WordPress API
         run: |
-          echo "Deploying to site: https://${{ inputs.SITE_SUBDOMAIN }}.stg.elementor.cool"
+          echo "Deploying to WordPress site: $WP_SITE_URL"
           echo "Built artifact downloaded to ./build"
           
           # Package the artifact
@@ -49,69 +48,108 @@ jobs:
           zip -r ../elementor.zip .
           cd ..
           
-          # Install sshpass for SFTP authentication
-          sudo apt-get update && sudo apt-get install -y sshpass
+          # Get WordPress authentication token
+          echo "Authenticating with WordPress..."
+          AUTH_RESPONSE=$(curl -X POST "$WP_SITE_URL/wp-json/jwt-auth/v1/token" \
+            -H "Content-Type: application/json" \
+            -d "{\"username\":\"$WP_USERNAME\",\"password\":\"$WP_PASSWORD\"}" \
+            -s -w "%{http_code}")
           
-          # Upload to SFTP server
-          echo "Uploading elementor.zip to SFTP server..."
-          printf "cd /html/wp-content/uploads\nput elementor.zip\nquit\n" | sshpass -p "$SFTP_PASSWORD" sftp -P $SFTP_PORT -o StrictHostKeyChecking=no $SFTP_USERNAME@$SFTP_HOST
-          
-          echo ":white_check_mark: Plugin successfully uploaded to SFTP server"
-          echo ":file_folder: File: /html/wp-content/uploads/elementor.zip"
-          echo ":desktop_computer:  Host: $SFTP_HOST:$SFTP_PORT"
-          
-          
-          # Fetch site_id using subdomain
-          echo "Fetching site_id for subdomain: ${{ inputs.SITE_SUBDOMAIN }}"
-          SITE_RESPONSE=$(curl -X 'GET' \
-            'https://control-api.stg.elementor.link/v2/instances/subdomain/${{ inputs.SITE_SUBDOMAIN }}' \
-            -H 'accept: application/json' \
-            -H 'CF-Access-Client-Id: ${{ secrets.CF_CLIENT_ID }}' \
-            -H 'CF-Access-Client-Secret: ${{ secrets.CF_CLIENT_SECRET }}' \
-            -s)
-          
-          SITE_ID=$(echo $SITE_RESPONSE | jq -r '.site_id')
-          
-          if [ "$SITE_ID" != "null" ] && [ "$SITE_ID" != "" ]; then
-            echo ":white_check_mark: Site ID fetched successfully: $SITE_ID"
-          else
-            echo ":x: Failed to fetch site ID"
-            echo "Response: $SITE_RESPONSE"
-            exit 1
-          fi
-
-          # Install plugin via WP-CLI API
-          echo "Installing plugin on site: https://${{ inputs.SITE_SUBDOMAIN }}.stg.elementor.cool"
-          PLUGIN_URL="https://${{ inputs.SITE_SUBDOMAIN }}.stg.elementor.cool/wp-content/uploads/elementor.zip"
-          
-          API_RESPONSE=$(curl -X 'POST' \
-            "https://control-api.stg.elementor.link/v2/wp-cli/$SITE_ID" \
-            -H 'accept: application/json' \
-            -H 'Content-Type: application/json' \
-            -H 'CF-Access-Client-Id: ${{ secrets.CF_CLIENT_ID }}' \
-            -H 'CF-Access-Client-Secret: ${{ secrets.CF_CLIENT_SECRET }}' \
-            -d "{
-              \"command\": [
-                \"plugin\", \"install\", \"$PLUGIN_URL\", \"--activate\"
-              ]
-            }" -w "%{http_code}" -s)
-          
-          HTTP_CODE="${API_RESPONSE: -3}"
-          RESPONSE_BODY="${API_RESPONSE%???}"
+          HTTP_CODE="${AUTH_RESPONSE: -3}"
+          RESPONSE_BODY="${AUTH_RESPONSE%???}"
           
           if [ "$HTTP_CODE" -eq 200 ]; then
-            echo ":white_check_mark: Plugin successfully installed via WP-CLI API"
-            echo ":package: Plugin URL: $PLUGIN_URL"
-            
-            # Delete the zip file after successful installation
-            echo "Cleaning up: Deleting elementor.zip file via SFTP..."
-            printf "cd /html/wp-content/uploads\nrm elementor.zip\nquit\n" | sshpass -p "$SFTP_PASSWORD" sftp -P $SFTP_PORT -o StrictHostKeyChecking=no $SFTP_USERNAME@$SFTP_HOST
-            echo ":wastebasket:  Zip file successfully deleted via SFTP"
-            
-            echo ":rocket: Deployment completed successfully!"
+            TOKEN=$(echo $RESPONSE_BODY | jq -r '.token')
+            echo ":white_check_mark: WordPress authentication successful"
           else
-            echo ":x: Failed to install plugin via WP-CLI API"
-            echo "HTTP Code: $HTTP_CODE"
-            echo "Response: $RESPONSE_BODY"
+            echo ":information_source: JWT plugin not available, using basic auth"
+            TOKEN=""
+          fi
+          
+          # Upload plugin zip to WordPress media library
+          echo "Uploading elementor.zip to WordPress media library..."
+          if [ -n "$TOKEN" ]; then
+            UPLOAD_RESPONSE=$(curl -X POST "$WP_SITE_URL/wp-json/wp/v2/media" \
+              -H "Authorization: Bearer $TOKEN" \
+              -F "file=@elementor.zip" \
+              -s -w "%{http_code}")
+          else
+            UPLOAD_RESPONSE=$(curl -X POST "$WP_SITE_URL/wp-json/wp/v2/media" \
+              --user "$WP_USERNAME:$WP_PASSWORD" \
+              -F "file=@elementor.zip" \
+              -s -w "%{http_code}")
+          fi
+          
+          UPLOAD_HTTP_CODE="${UPLOAD_RESPONSE: -3}"
+          UPLOAD_BODY="${UPLOAD_RESPONSE%???}"
+          
+          if [ "$UPLOAD_HTTP_CODE" -eq 201 ]; then
+            MEDIA_URL=$(echo $UPLOAD_BODY | jq -r '.source_url')
+            MEDIA_ID=$(echo $UPLOAD_BODY | jq -r '.id')
+            echo ":white_check_mark: Plugin zip uploaded to WordPress media library"
+            echo ":package: Media URL: $MEDIA_URL"
+            echo ":id: Media ID: $MEDIA_ID"
+          else
+            echo ":x: Failed to upload plugin zip to WordPress"
+            echo "HTTP Code: $UPLOAD_HTTP_CODE"
+            echo "Response: $UPLOAD_BODY"
+            exit 1
+          fi
+          
+          # Install plugin using WP-CLI if available via REST API
+          echo "Installing plugin via WordPress..."
+          
+          # Try to use WP-CLI via REST API (if available)
+          if [ -n "$TOKEN" ]; then
+            INSTALL_RESPONSE=$(curl -X POST "$WP_SITE_URL/wp-json/wp-cli/v1/cli" \
+              -H "Authorization: Bearer $TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "{\"command\":\"plugin install $MEDIA_URL --activate\"}" \
+              -s -w "%{http_code}")
+          else
+            INSTALL_RESPONSE=$(curl -X POST "$WP_SITE_URL/wp-json/wp-cli/v1/cli" \
+              --user "$WP_USERNAME:$WP_PASSWORD" \
+              -H "Content-Type: application/json" \
+              -d "{\"command\":\"plugin install $MEDIA_URL --activate\"}" \
+              -s -w "%{http_code}")
+          fi
+          
+          INSTALL_HTTP_CODE="${INSTALL_RESPONSE: -3}"
+          INSTALL_BODY="${INSTALL_RESPONSE%???}"
+          
+          if [ "$INSTALL_HTTP_CODE" -eq 200 ]; then
+            echo ":white_check_mark: Plugin successfully installed and activated"
+            echo ":package: Plugin URL: $MEDIA_URL"
+            
+            # Clean up: Delete the uploaded zip file from media library
+            echo "Cleaning up: Deleting uploaded zip file from media library..."
+            if [ -n "$TOKEN" ]; then
+              DELETE_RESPONSE=$(curl -X DELETE "$WP_SITE_URL/wp-json/wp/v2/media/$MEDIA_ID?force=true" \
+                -H "Authorization: Bearer $TOKEN" \
+                -s -w "%{http_code}")
+            else
+              DELETE_RESPONSE=$(curl -X DELETE "$WP_SITE_URL/wp-json/wp/v2/media/$MEDIA_ID?force=true" \
+                --user "$WP_USERNAME:$WP_PASSWORD" \
+                -s -w "%{http_code}")
+            fi
+            
+            DELETE_HTTP_CODE="${DELETE_RESPONSE: -3}"
+            if [ "$DELETE_HTTP_CODE" -eq 200 ]; then
+              echo ":wastebasket: Zip file successfully deleted from media library"
+            else
+              echo ":warning: Could not delete zip file from media library (non-critical)"
+            fi
+            
+            echo ":rocket: Plugin deployment completed successfully!"
+          else
+            echo ":x: Failed to install plugin via WP-CLI"
+            echo "HTTP Code: $INSTALL_HTTP_CODE"
+            echo "Response: $INSTALL_BODY"
+            
+            # Fallback: Provide manual installation instructions
+            echo ":information_source: Manual installation may be required"
+            echo ":package: Plugin zip is available at: $MEDIA_URL"
+            echo ":gear: You can manually install this plugin from the WordPress admin dashboard"
+            
             exit 1
           fi
