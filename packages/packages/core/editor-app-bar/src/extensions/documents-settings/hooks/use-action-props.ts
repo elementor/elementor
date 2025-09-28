@@ -6,7 +6,7 @@ import {
 	__privateOpenRoute as openRoute,
 	__privateUseRouteStatus as useRouteStatus,
 } from '@elementor/editor-v1-adapters';
-import { SettingsIcon } from '@elementor/icons';
+import { FileSettingsIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
 import { type ExtendedWindow } from '../../../types';
@@ -25,7 +25,7 @@ export default function useActionProps() {
 
 	return {
 		title: ButtonTitle,
-		icon: SettingsIcon,
+		icon: FileSettingsIcon,
 		onClick: () => {
 			if ( ! document ) {
 				return;
