@@ -54,7 +54,6 @@ export function KitContentCustomizationDialog( {
 } ) {
 	const { customPostTypes } = useKitCustomizationCustomPostTypes( { data } );
 
-	const unselectedValues = useRef( data.analytics?.customization?.content || [] );
 	const alertRef = useRef( null );
 	const mediaFormatSectionRef = useRef( null );
 
@@ -251,19 +250,9 @@ export function KitContentCustomizationDialog( {
 					<ListSettingSection
 						settingKey="customPostTypes"
 						title={ __( 'Custom post types', 'elementor' ) }
-						onSettingChange={ ( selectedCustomPostTypes ) => {
-							const filteredUnselectedValues = unselectedValues.current.filter( ( value ) => ! customPostTypes.includes( value ) );
-							const isAllChecked = selectedCustomPostTypes.length === customPostTypes.length;
-
-							unselectedValues.current = isAllChecked
-								? filteredUnselectedValues.filter( ( value ) => value !== 'customPostTypes' )
-								: [
-									...filteredUnselectedValues,
-									...customPostTypes.filter( ( cpt ) => ! selectedCustomPostTypes.includes( cpt ) ).map( ( { value } ) => value ),
-									'customPostTypes',
-								];
-							handleSettingsChange( 'customPostTypes', selectedCustomPostTypes );
-						} }
+					onSettingChange={ ( selectedCustomPostTypes ) => {
+						handleSettingsChange( 'customPostTypes', selectedCustomPostTypes );
+					} }
 						settings={ settings.customPostTypes }
 						items={ customPostTypes }
 					/>

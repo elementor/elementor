@@ -1,6 +1,6 @@
 import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { SettingSection } from './customization-setting-section';
 import { KitCustomizationDialog } from './kit-customization-dialog';
@@ -42,7 +42,6 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 	const { isImport, contextData } = useContextDetection();
 
 	const initialState = getInitialState( contextData, isImport );
-	const unselectedValues = useRef( data.analytics?.customization?.settings || [] );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.settings ) {
@@ -77,10 +76,6 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 	}, [ open ] );
 
 	const handleToggleChange = ( settingKey, isChecked ) => {
-		unselectedValues.current = isChecked
-			? unselectedValues.current.filter( ( val ) => settingKey !== val )
-			: [ ...unselectedValues.current, settingKey ];
-
 		setSettings( ( prev ) => ( {
 			...prev,
 			[ settingKey ]: ! prev[ settingKey ],

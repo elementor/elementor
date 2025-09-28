@@ -28,10 +28,10 @@ const initialState = {
 	},
 	analytics: {
 		customization: {
-			settings: 'Not Customized',
-			templates: 'Not Customized',
-			content: 'Not Customized',
-			plugins: 'Not Customized',
+			settings: null,
+			templates: null,
+			content: null,
+			plugins: null,
 		},
 	},
 	showMediaFormatValidation: false,
