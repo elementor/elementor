@@ -23,11 +23,11 @@ import { transformValueForAnalytics } from '../utils/analytics-transformer';
 
 const transformAnalyticsData = ( payload ) => {
 	const transformed = {};
-	
+
 	for ( const [ key, value ] of Object.entries( payload ) ) {
 		transformed[ key ] = transformValueForAnalytics( key, value, [] );
 	}
-	
+
 	return transformed;
 };
 
@@ -96,7 +96,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 		return nonRequiredPlugins.some( ( pluginKey ) => plugins[ pluginKey ] ) && ! isAllSelected;
 	}, [ nonRequiredPlugins, plugins, isAllSelected ] );
 
-	const handleToggleChange = useCallback( ( settingKey, isChecked ) => {
+	const handleToggleChange = useCallback( ( settingKey ) => {
 		if ( isRequiredPlugin( settingKey ) ) {
 			return;
 		}
@@ -107,7 +107,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 		} ) );
 	}, [ isRequiredPlugin ] );
 
-	const handleSelectAll = useCallback( ( e, isChecked ) => {
+	const handleSelectAll = useCallback( () => {
 		const allNonRequiredSelected = nonRequiredPlugins.every( ( pluginKey ) => plugins[ pluginKey ] );
 		const newState = { ...plugins };
 		nonRequiredPlugins.forEach( ( pluginKey ) => {

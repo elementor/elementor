@@ -11,35 +11,31 @@ export const getTotalAvailableCount = ( key, optionsArray ) => {
 		map[ optionKey ] = options.length;
 		return map;
 	}, {} );
-	
+
 	return optionsMap[ key ] || 0;
 };
 
 export const transformValueForAnalytics = ( key, value, optionsArray ) => {
-	// Handle primitive types
-	if ( typeof value === 'string' || typeof value === 'boolean' ) {
+	if ( 'string' === typeof value || 'boolean' === typeof value ) {
 		return ANALYTICS_TRANSFORM_RULES[ ( typeof value ).toUpperCase() ]( value );
 	}
-	
-	// Handle nested objects with enabled property
-	if ( typeof value === 'object' && value !== null && ! Array.isArray( value ) && 'enabled' in value ) {
+
+	if ( 'object' === typeof value && value !== null && ! Array.isArray( value ) && 'enabled' in value ) {
 		return value.enabled;
 	}
-	
-	// Handle arrays
+
 	if ( Array.isArray( value ) ) {
-		if ( value.length === 0 ) {
+		if ( 0 === value.length ) {
 			return ANALYTICS_TRANSFORM_RULES.EMPTY_ARRAY();
 		}
-		
+
 		const totalAvailable = getTotalAvailableCount( key, optionsArray );
 		const isFullSelection = value.length === totalAvailable;
-		
-		return isFullSelection 
+
+		return isFullSelection
 			? ANALYTICS_TRANSFORM_RULES.FULL_ARRAY()
 			: ANALYTICS_TRANSFORM_RULES.PARTIAL_ARRAY();
 	}
-	
-	// Fallback for other types
+
 	return value;
 };

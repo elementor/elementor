@@ -11,11 +11,11 @@ import { transformValueForAnalytics } from '../utils/analytics-transformer';
 
 const transformAnalyticsData = ( payload ) => {
 	const transformed = {};
-	
+
 	for ( const [ key, value ] of Object.entries( payload ) ) {
 		transformed[ key ] = transformValueForAnalytics( key, value, [] );
 	}
-	
+
 	return transformed;
 };
 
@@ -75,7 +75,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		}
 	}, [ open ] );
 
-	const handleToggleChange = ( settingKey, isChecked ) => {
+	const handleToggleChange = ( settingKey ) => {
 		setSettings( ( prev ) => ( {
 			...prev,
 			[ settingKey ]: ! prev[ settingKey ],

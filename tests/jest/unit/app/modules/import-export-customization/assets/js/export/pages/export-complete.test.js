@@ -202,7 +202,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_post_type_count: 2,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -233,7 +233,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_post_type_count: 3,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -251,7 +251,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_post_type_count: 0,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -268,7 +268,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_post_type_count: 0,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -303,7 +303,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_post_type_count: 4,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -326,7 +326,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_export_customization_modals: mockCustomization,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -340,7 +340,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_export_customization_modals: undefined,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -350,12 +350,12 @@ describe( 'ExportComplete Component', () => {
 				version: '1.0',
 				content: {
 					page: {
-						'1': { title: 'Home Page' },
-						'2': { title: 'About Page' },
-						'3': { title: 'Contact Page' },
+						1: { title: 'Home Page' },
+						2: { title: 'About Page' },
+						3: { title: 'Contact Page' },
 					},
 					post: {
-						'4': { title: 'Blog Post 1' },
+						4: { title: 'Blog Post 1' },
 					},
 				},
 			};
@@ -366,7 +366,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_page_count: 3,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -376,8 +376,8 @@ describe( 'ExportComplete Component', () => {
 				version: '1.0',
 				'wp-content': {
 					page: {
-						'1': { title: 'Home Page' },
-						'2': { title: 'About Page' },
+						1: { title: 'Home Page' },
+						2: { title: 'About Page' },
 					},
 				},
 			};
@@ -388,7 +388,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_page_count: 2,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -398,13 +398,13 @@ describe( 'ExportComplete Component', () => {
 				version: '1.0',
 				content: {
 					page: {
-						'1': { title: 'Home Page' },
-						'2': { title: 'About Page' },
+						1: { title: 'Home Page' },
+						2: { title: 'About Page' },
 					},
 				},
 				'wp-content': {
 					page: {
-						'3': { title: 'Contact Page' },
+						3: { title: 'Contact Page' },
 					},
 				},
 			};
@@ -415,7 +415,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_page_count: 3,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -425,7 +425,7 @@ describe( 'ExportComplete Component', () => {
 				version: '1.0',
 				content: {
 					post: {
-						'1': { title: 'Blog Post' },
+						1: { title: 'Blog Post' },
 					},
 				},
 			};
@@ -436,7 +436,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_page_count: 0,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -446,12 +446,12 @@ describe( 'ExportComplete Component', () => {
 				version: '1.0',
 				content: {
 					post: {
-						'1': { title: 'Blog Post 1' },
-						'2': { title: 'Blog Post 2' },
-						'3': { title: 'Blog Post 3' },
+						1: { title: 'Blog Post 1' },
+						2: { title: 'Blog Post 2' },
+						3: { title: 'Blog Post 3' },
 					},
 					page: {
-						'4': { title: 'Home Page' },
+						4: { title: 'Home Page' },
 					},
 				},
 			};
@@ -462,7 +462,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_post_count: 3,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -472,8 +472,8 @@ describe( 'ExportComplete Component', () => {
 				version: '1.0',
 				'wp-content': {
 					post: {
-						'1': { title: 'Blog Post 1' },
-						'2': { title: 'Blog Post 2' },
+						1: { title: 'Blog Post 1' },
+						2: { title: 'Blog Post 2' },
 					},
 				},
 			};
@@ -484,7 +484,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_post_count: 2,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -494,14 +494,14 @@ describe( 'ExportComplete Component', () => {
 				version: '1.0',
 				content: {
 					post: {
-						'1': { title: 'Blog Post 1' },
-						'2': { title: 'Blog Post 2' },
+						1: { title: 'Blog Post 1' },
+						2: { title: 'Blog Post 2' },
 					},
 				},
 				'wp-content': {
 					post: {
-						'3': { title: 'Blog Post 3' },
-						'4': { title: 'Blog Post 4' },
+						3: { title: 'Blog Post 3' },
+						4: { title: 'Blog Post 4' },
 					},
 				},
 			};
@@ -512,7 +512,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_post_count: 4,
-					} )
+					} ),
 				);
 			} );
 		} );
@@ -522,7 +522,7 @@ describe( 'ExportComplete Component', () => {
 				version: '1.0',
 				content: {
 					page: {
-						'1': { title: 'Home Page' },
+						1: { title: 'Home Page' },
 					},
 				},
 			};
@@ -533,7 +533,7 @@ describe( 'ExportComplete Component', () => {
 				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						kit_post_count: 0,
-					} )
+					} ),
 				);
 			} );
 		} );

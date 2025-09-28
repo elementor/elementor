@@ -52,7 +52,7 @@ export default function ExportComplete() {
 	useEffect( () => {
 		if ( exportedData.manifest ) {
 			const contentCounts = getContentCounts();
-			
+
 			AppsEventTracking.sendExportKitCustomization( {
 				kit_export_content: includes.includes( 'content' ),
 				kit_export_templates: includes.includes( 'templates' ),
@@ -144,7 +144,7 @@ export default function ExportComplete() {
 	const getContentCounts = () => {
 		const content = exportedData?.manifest?.content;
 		const wpContent = exportedData?.manifest?.[ 'wp-content' ];
-		
+
 		const counts = {};
 
 		const countItems = ( [ docType, docs ] ) => {

@@ -14,13 +14,13 @@ const transformAnalyticsData = ( payload, customPostTypes ) => {
 	const optionsArray = [
 		{ key: 'customPostTypes', options: customPostTypes },
 	];
-	
+
 	const transformed = {};
-	
+
 	for ( const [ key, value ] of Object.entries( payload ) ) {
 		transformed[ key ] = transformValueForAnalytics( key, value, optionsArray );
 	}
-	
+
 	return transformed;
 };
 
@@ -250,9 +250,9 @@ export function KitContentCustomizationDialog( {
 					<ListSettingSection
 						settingKey="customPostTypes"
 						title={ __( 'Custom post types', 'elementor' ) }
-					onSettingChange={ ( selectedCustomPostTypes ) => {
-						handleSettingsChange( 'customPostTypes', selectedCustomPostTypes );
-					} }
+						onSettingChange={ ( selectedCustomPostTypes ) => {
+							handleSettingsChange( 'customPostTypes', selectedCustomPostTypes );
+						} }
 						settings={ settings.customPostTypes }
 						items={ customPostTypes }
 					/>
