@@ -4,7 +4,13 @@ namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Gradient_Color_Stop_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Stop_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -58,8 +64,11 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
-		return Background_Prop_Type::make()->generate( $background_data );
+		// ✅ BORDER-RADIUS PATTERN: Return as "background" property with atomic structure
+		return [
+			'property' => 'background',
+			'value' => Background_Prop_Type::make()->generate( $background_data )
+		];
 	}
 
 	private function parse_background_value( string $value ): ?array {
@@ -69,7 +78,7 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 		if ( $this->is_linear_gradient( $value ) ) {
 			$gradient_data = $this->parse_linear_gradient( $value );
 			if ( null !== $gradient_data ) {
-				$background_data['background-overlay'] = [ $gradient_data ];
+				$background_data['background-overlay'] = Background_Overlay_Prop_Type::make()->generate( [ $gradient_data ] );
 				return $background_data;
 			}
 		}
@@ -78,7 +87,7 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 		if ( $this->is_radial_gradient( $value ) ) {
 			$gradient_data = $this->parse_radial_gradient( $value );
 			if ( null !== $gradient_data ) {
-				$background_data['background-overlay'] = [ $gradient_data ];
+				$background_data['background-overlay'] = Background_Overlay_Prop_Type::make()->generate( [ $gradient_data ] );
 				return $background_data;
 			}
 		}
@@ -154,16 +163,14 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		$gradient_data = [
-			'$$type' => 'background-gradient-overlay',
-			'value' => [
-				'type' => 'linear',
-				'angle' => $this->extract_gradient_angle( $parts[0] ),
-				'stops' => $this->extract_gradient_stops( $parts ),
-			]
+		// ✅ EDITOR JSON PATTERN: Use proper atomic prop types for all fields
+		$gradient_value = [
+			'type' => String_Prop_Type::make()->generate( 'linear' ),
+			'angle' => Number_Prop_Type::make()->generate( $this->extract_gradient_angle( $parts[0] ) ),
+			'stops' => $this->extract_gradient_stops_atomic( $parts ),
 		];
 
-		return $gradient_data;
+		return Background_Gradient_Overlay_Prop_Type::make()->generate( $gradient_value );
 	}
 
 	private function parse_radial_gradient( string $value ): ?array {
@@ -179,16 +186,14 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		$gradient_data = [
-			'$$type' => 'background-gradient-overlay',
-			'value' => [
-				'type' => 'radial',
-				'positions' => $this->extract_radial_position( $parts[0] ),
-				'stops' => $this->extract_gradient_stops( $parts ),
-			]
+		// ✅ EDITOR JSON PATTERN: Use proper atomic prop types for all fields
+		$gradient_value = [
+			'type' => String_Prop_Type::make()->generate( 'radial' ),
+			'positions' => String_Prop_Type::make()->generate( $this->extract_radial_position( $parts[0] ) ),
+			'stops' => $this->extract_gradient_stops_atomic( $parts ),
 		];
 
-		return $gradient_data;
+		return Background_Gradient_Overlay_Prop_Type::make()->generate( $gradient_value );
 	}
 
 	private function parse_background_image( string $value ): ?array {
@@ -298,6 +303,24 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return 'center';
 	}
 
+	private function extract_gradient_stops_atomic( array $parts ): array {
+		$stops = [];
+
+		// Skip the first part if it's a direction/position
+		$start_index = $this->is_gradient_direction_or_position( $parts[0] ?? '' ) ? 1 : 0;
+
+		for ( $i = $start_index; $i < count( $parts ); $i++ ) {
+			$part = trim( $parts[ $i ] );
+			$stop_data = $this->parse_gradient_stop_atomic( $part, $i - $start_index, count( $parts ) - $start_index );
+			if ( null !== $stop_data ) {
+				$stops[] = $stop_data;
+			}
+		}
+
+		// ✅ EDITOR JSON PATTERN: Use Gradient_Color_Stop_Prop_Type for the array
+		return Gradient_Color_Stop_Prop_Type::make()->generate( $stops );
+	}
+
 	private function extract_gradient_stops( array $parts ): array {
 		$stops = [];
 
@@ -334,6 +357,33 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return false;
 	}
 
+	private function parse_gradient_stop_atomic( string $stop, int $index, int $total_stops ): ?array {
+		// Parse color stops like "red", "red 50%", "#ff0000 25%"
+		$parts = explode( ' ', trim( $stop ) );
+		
+		if ( empty( $parts ) ) {
+			return null;
+		}
+
+		$color = $parts[0];
+		$position_str = $parts[1] ?? null;
+
+		if ( ! $this->is_color_value( $color ) ) {
+			return null;
+		}
+
+		// ✅ EDITOR JSON PATTERN: Calculate offset as percentage (0-100)
+		$offset = $this->calculate_gradient_stop_offset( $position_str, $index, $total_stops );
+
+		// ✅ EDITOR JSON PATTERN: Use Color_Stop_Prop_Type with color and offset
+		$stop_value = [
+			'color' => Color_Prop_Type::make()->generate( $color ),
+			'offset' => Number_Prop_Type::make()->generate( $offset ),
+		];
+
+		return Color_Stop_Prop_Type::make()->generate( $stop_value );
+	}
+
 	private function parse_gradient_stop( string $stop ): ?array {
 		// Parse color stops like "red", "red 50%", "#ff0000 25%"
 		$parts = explode( ' ', trim( $stop ) );
@@ -361,5 +411,20 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		return $stop_data;
+	}
+
+	private function calculate_gradient_stop_offset( ?string $position_str, int $index, int $total_stops ): int {
+		// If explicit position is provided (e.g., "50%")
+		if ( null !== $position_str && preg_match( '/(\d+)%/', $position_str, $matches ) ) {
+			return (int) $matches[1];
+		}
+
+		// ✅ EDITOR JSON PATTERN: Auto-distribute stops evenly (0, 100 for 2 stops)
+		if ( $total_stops <= 1 ) {
+			return 0;
+		}
+
+		// Distribute evenly: first stop = 0%, last stop = 100%
+		return (int) round( ( $index / ( $total_stops - 1 ) ) * 100 );
 	}
 }

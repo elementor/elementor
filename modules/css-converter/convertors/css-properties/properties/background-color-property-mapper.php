@@ -3,6 +3,7 @@
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,8 +36,17 @@ class Background_Color_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
-		return Color_Prop_Type::make()->generate( $color_value );
+		// ✅ BORDER-RADIUS PATTERN: Map background-color to background property with color field
+		// This matches the atomic widget pattern where individual properties map to complex types
+		$background_data = [
+			'color' => Color_Prop_Type::make()->generate( $color_value )
+		];
+
+		// Return as "background" property (not "background-color")
+		return [
+			'property' => 'background',
+			'value' => Background_Prop_Type::make()->generate( $background_data )
+		];
 	}
 
 	public function get_supported_properties(): array {
