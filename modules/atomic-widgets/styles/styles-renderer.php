@@ -149,7 +149,9 @@ class Styles_Renderer {
 	}
 
 	private function custom_css_to_css_string( ?array $custom_css ): string {
-		return ! empty( $custom_css['raw'] )
+		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_CUSTOM_CSS );
+
+		return $is_feature_active && ! empty( $custom_css['raw'] )
 			? Utils::decode_string( $custom_css['raw'], '' ) . '\n'
 			: '';
 	}

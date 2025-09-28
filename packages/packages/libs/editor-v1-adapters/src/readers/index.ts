@@ -1,7 +1,7 @@
 import { type ExtendedWindow } from './types';
 
 export const EXPERIMENTAL_FEATURES = {
-	// Note: Add new experimental features here as needed
+	CUSTOM_CSS: 'atomic_custom_css',
 };
 
 export function isRouteActive( route: string ) {
