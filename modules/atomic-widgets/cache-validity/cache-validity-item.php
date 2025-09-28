@@ -2,13 +2,15 @@
 
 namespace Elementor\Modules\AtomicWidgets\CacheValidity;
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 
 class Cache_Validity_Item {
-	const CACHE_KEY_PREFIX = 'elementor_atomic_cache_validity-';
+	const CACHE_KEY_PREFIX = 'elementor_atomic_cache_validity__';
 
 	private string $root;
 
@@ -17,42 +19,48 @@ class Cache_Validity_Item {
 	}
 
 	public function get( array $keys ): ?array {
-		$data = $this->get_stored_data();
+		return $this->wrap_exception( function() use ( $keys ) {
+			$data = $this->get_stored_data();
 
-		$node = $this->get_node( $data, $keys );
+			$node = $this->get_node( $data, $keys );
 
-		if ( null === $node ) {
-			return null;
-		}
+			if ( null === $node ) {
+				return null;
+			}
 
-		return is_bool( $node ) ? [ 'state' => $node ] : $node;
+			return is_bool( $node ) ? [ 'state' => $node ] : $node;
+		} );
 	}
 
 	public function validate( array $keys, $meta = null ) {
-		$data = $this->get_stored_data();
+		return $this->wrap_exception( function() use ( $keys, $meta ) {
+			$data = $this->get_stored_data();
 
-		if ( empty( $keys ) ) {
-			$data['state'] = true;
-			$data['meta'] = $meta;
+			if ( empty( $keys ) ) {
+				$data['state'] = true;
+				$data['meta'] = $meta;
 
-			$this->update_stored_data( $data );
+				$this->update_stored_data( $data );
 
-			return;
-		}
+				return;
+			}
 
-		$this->validate_nested_node( $data, $keys, $meta );
+			$this->validate_nested_node( $data, $keys, $meta );
+		} );
 	}
 
 	public function invalidate( array $keys ) {
-		$data = $this->get_stored_data();
+		return $this->wrap_exception( function() use ( $keys ) {
+			$data = $this->get_stored_data();
 
-		if ( empty( $keys ) ) {
-			$this->delete_stored_data();
+			if ( empty( $keys ) ) {
+				$this->delete_stored_data();
 
-			return;
-		}
+				return;
+			}
 
-		$this->invalidate_nested_node( $data, $keys );
+			$this->invalidate_nested_node( $data, $keys );
+		} );
 	}
 
 	/**
@@ -226,7 +234,7 @@ class Cache_Validity_Item {
 	}
 
 	/**
-	 * @param string $data
+	 * @param array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} $data
 	 */
 	private function update_stored_data( $data ) {
 		update_option( self::CACHE_KEY_PREFIX . $this->root, $data, false );
@@ -234,5 +242,13 @@ class Cache_Validity_Item {
 
 	private function delete_stored_data() {
 		delete_option( self::CACHE_KEY_PREFIX . $this->root );
+	}
+
+	private function wrap_exception( callable $callback ) {
+		try {
+			return $callback();
+		} catch ( \Exception $e ) {
+			$this->delete_stored_data();
+		}
 	}
 }
