@@ -208,8 +208,8 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 
 		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return Layout_Direction_Prop_Type::make()->generate( [
-			'row' => $row_gap,
-			'column' => $column_gap,
+			'row' => Size_Prop_Type::make()->generate( $row_gap ),
+			'column' => Size_Prop_Type::make()->generate( $column_gap ),
 		] );
 	}
 
