@@ -1,3 +1,4 @@
+import { __privateUseRouteStatus as useRouteStatus } from '@elementor/editor-v1-adapters';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { ThemeBuilderIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
@@ -5,6 +6,8 @@ import { __ } from '@wordpress/i18n';
 import { type ActionProps, type ExtendedWindow } from '../../../types';
 
 export default function useActionProps(): ActionProps {
+	const { isBlocked } = useRouteStatus( 'app' );
+
 	return {
 		icon: ThemeBuilderIcon,
 		title: __( 'Theme Builder', 'elementor' ),
@@ -23,5 +26,6 @@ export default function useActionProps(): ActionProps {
 
 			runCommand( 'app/open' );
 		},
+		disabled: isBlocked,
 	};
 }
