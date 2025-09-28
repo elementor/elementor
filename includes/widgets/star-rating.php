@@ -209,8 +209,9 @@ class Widget_Star_Rating extends Widget_Base {
 			]
 		);
 
-		$start = is_rtl() ? 'right' : 'left';
-		$end = ! is_rtl() ? 'right' : 'left';
+		$rtl   = is_rtl();
+		$start = $rtl ? 'right' : 'left';
+		$end   = ! $rtl ? 'right' : 'left';
 
 		$this->add_responsive_control(
 			'align',
