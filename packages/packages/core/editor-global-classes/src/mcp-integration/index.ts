@@ -3,9 +3,15 @@ import { z } from '@elementor/schema';
 
 import { fetchCssClassUsage } from '../../service/css-class-usage-service';
 import { type CssClassUsageContent, type EnhancedCssClassUsageContent } from '../components/css-class-usage/types';
+import initMcpApplyUnapplyGlobalClasses from './mcp-apply-unapply-global-classes';
 
 export const initMcpIntegration = () => {
-	const { addTool } = getMCPByDomain( 'element_classes' );
+	const reg = getMCPByDomain( 'element_classes' );
+	initMcpApplyUnapplyGlobalClasses( reg );
+	reg.setMCPDescription(
+		'Tools for managing and applying Global CSS classes to elements within the Elementor editor.'
+	);
+	const { addTool } = reg;
 
 	const globalClassesUsageSchema = {
 		usages: z.array(

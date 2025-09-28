@@ -1,15 +1,9 @@
-import { getMCPByDomain } from '@elementor/editor-mcp';
+import { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from '@elementor/editor-editing-panel';
+import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { z } from '@elementor/schema';
 
-import { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from '../../apply-unapply-actions';
-
-const TOOL_NAME = 'element_classes';
-
-export const initMCPElementClasses = () => {
-	const server = getMCPByDomain( TOOL_NAME );
-	server.setMCPDescription( `Element Global Classes Management` );
-
+export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEntry ) {
 	server.addTool( {
 		name: 'list-all-global-classes',
 		description: `List all classes applied to a specific element
@@ -92,4 +86,4 @@ If the user want to unapply a class by it's name and not ID, please use the "lis
 			return `Class ${ classId } unapplied from element ${ elementId } successfully.`;
 		},
 	} );
-};
+}

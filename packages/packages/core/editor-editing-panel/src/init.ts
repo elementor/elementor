@@ -4,7 +4,6 @@ import { blockCommand } from '@elementor/editor-v1-adapters';
 
 import { EditingPanelHooks } from './components/editing-panel-hooks';
 import { init as initDynamics } from './dynamics/init';
-import { initMCPElementClasses } from './mcp/classes/init-element-classes-mcp';
 import { panel } from './panel';
 import { initResetStyleProps } from './reset-style-props';
 import { init as initStylesInheritance } from './styles-inheritance/init';
@@ -26,8 +25,6 @@ export function init() {
 	initStylesInheritance();
 
 	initResetStyleProps();
-
-	initMCPElementClasses();
 }
 
 const blockV1Panel = () => {
