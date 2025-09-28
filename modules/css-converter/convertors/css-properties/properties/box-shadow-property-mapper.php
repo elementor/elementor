@@ -157,24 +157,24 @@ class Box_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		$color = ! empty( $color_values ) ? $this->parse_color_value( $color_values[0] ) : 'rgba(0, 0, 0, 0.5)';
-		if ( null === $color ) {
+		$color = ! empty( $color_values ) ? trim( $color_values[0] ) : 'rgba(0, 0, 0, 0.5)';
+		if ( empty( $color ) ) {
 			$color = 'rgba(0, 0, 0, 0.5)';
 		}
 
 		$shadow_data = [
-			'hOffset' => Size_Prop_Type::make()->process_value( $h_offset ),
-			'vOffset' => Size_Prop_Type::make()->process_value( $v_offset ),
-			'blur' => Size_Prop_Type::make()->process_value( $blur ),
-			'spread' => Size_Prop_Type::make()->process_value( $spread ),
-			'color' => Color_Prop_Type::make()->process_value( $color ),
+			'hOffset' => Size_Prop_Type::generate( $h_offset ),
+			'vOffset' => Size_Prop_Type::generate( $v_offset ),
+			'blur' => Size_Prop_Type::generate( $blur ),
+			'spread' => Size_Prop_Type::generate( $spread ),
+			'color' => Color_Prop_Type::generate( $color ),
 		];
 
 		if ( $is_inset ) {
 			$shadow_data['position'] = 'inset';
 		}
 
-		return Shadow_Prop_Type::make()->process_value( $shadow_data );
+		return Shadow_Prop_Type::generate( $shadow_data );
 	}
 
 	private function tokenize_shadow_parts( string $shadow ): array {

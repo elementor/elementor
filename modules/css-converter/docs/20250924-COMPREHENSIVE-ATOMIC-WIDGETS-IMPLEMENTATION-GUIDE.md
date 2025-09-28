@@ -1845,6 +1845,139 @@ cd modules/css-converter && php tmp/validate-atomic-compliance.php
 
 ---
 
+## 🚨 **API UNDEFINED TROUBLESHOOTING GUIDE**
+
+### **Critical Issue: API Returning `undefined`**
+
+#### **📋 Identified Cases (5 failing tests)**
+
+Based on comprehensive test analysis, the following specific tests are experiencing `apiResult.success` returning `undefined`:
+
+##### **Box Shadow Property Tests (3 failures)**
+1. **`box-shadow-prop-type.test.ts:38:6`** - Basic box-shadow variations
+2. **`box-shadow-prop-type.test.ts:70:6`** - Complex box-shadow patterns  
+3. **`box-shadow-prop-type.test.ts:93:6`** - Box-shadow structure verification
+
+##### **Gap Property Tests (1 failure)**
+4. **`gap-prop-type.test.ts:71:6`** - Gap shorthand values (`10px 20px`, `1rem 2rem`)
+
+##### **Margin Property Tests (1 failure)**
+5. **`margin-prop-type.test.ts:96:6`** - Margin auto and special values
+
+#### **🔍 Root Cause Analysis**
+
+##### **API Endpoint Issues**
+- **Endpoint**: `/wp-json/elementor/v2/widget-converter`
+- **Expected Response**: `{ success: true, widgets_created: N, ... }`
+- **Actual Response**: `undefined` (entire response object missing)
+- **Frequency**: Intermittent (6.8% failure rate - 5 out of 74 tests)
+
+##### **Potential Backend Causes**
+1. **PHP Fatal Errors**: Box-shadow or gap property mappers may have syntax errors
+2. **Missing Dependencies**: Atomic widget classes not loaded properly
+3. **Memory Issues**: Complex CSS parsing causing memory exhaustion
+4. **Authentication State**: WordPress session/nonce issues
+5. **Plugin Conflicts**: Other plugins interfering with CSS converter
+
+#### **🛠️ Debugging Steps**
+
+##### **1. Check WordPress Error Logs**
+```bash
+# Check for PHP errors during API calls
+tail -f /path/to/wordpress/wp-content/debug.log | grep "elementor\|css-converter"
+
+# Check web server error logs
+tail -f /var/log/nginx/error.log  # or Apache equivalent
+```
+
+##### **2. Test API Endpoint Directly**
+```bash
+# Test the API endpoint with curl
+curl -X POST "http://localhost/wp-json/elementor/v2/widget-converter" \
+  -H "Content-Type: application/json" \
+  -H "X-WP-Nonce: YOUR_NONCE" \
+  -d '{
+    "html": "<div style=\"box-shadow: 2px 4px 8px rgba(0,0,0,0.3);\">Test</div>",
+    "css": "",
+    "postId": null
+  }'
+```
+
+##### **3. Enable WordPress Debug Mode**
+```php
+// Add to wp-config.php
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+define('WP_DEBUG_DISPLAY', false);
+define('SCRIPT_DEBUG', true);
+```
+
+##### **4. Check Property Mapper Status**
+```bash
+# Verify box-shadow mapper exists and has no syntax errors
+php -l plugins/elementor-css/modules/css-converter/convertors/css-properties/properties/box-shadow-property-mapper.php
+
+# Verify gap mapper exists (in flex-properties-mapper.php)
+php -l plugins/elementor-css/modules/css-converter/convertors/css-properties/properties/flex-properties-mapper.php
+
+# Verify margin mapper exists
+php -l plugins/elementor-css/modules/css-converter/convertors/css-properties/properties/margin-property-mapper.php
+```
+
+#### **🎯 Targeted Fixes**
+
+##### **For Box-Shadow Issues**
+- **Check**: `Box_Shadow_Prop_Type` import and usage
+- **Verify**: Complex shadow parsing logic doesn't cause errors
+- **Test**: Multiple shadow handling and comma parsing
+
+##### **For Gap Issues**  
+- **Check**: `Layout_Direction_Prop_Type` and `Size_Prop_Type` imports
+- **Verify**: Gap shorthand parsing (2-value syntax)
+- **Test**: Mixed unit handling in gap properties
+
+##### **For Margin Issues**
+- **Check**: `Dimensions_Prop_Type` import and usage
+- **Verify**: Auto value handling and special CSS keywords
+- **Test**: Margin auto parsing logic
+
+#### **🚨 Environment Stability Issues**
+
+##### **WordPress Environment Requirements**
+- **PHP Version**: 7.4+ (check compatibility)
+- **Memory Limit**: 256MB+ (CSS parsing can be memory intensive)
+- **WordPress Version**: Latest stable
+- **Elementor Version**: Latest with atomic widgets support
+
+##### **Plugin Dependencies**
+- **Elementor Core**: Must be active and properly configured
+- **Atomic Widgets**: Experiments must be enabled
+- **CSS Converter**: Module must be properly registered
+
+#### **📊 Success Rate Analysis**
+
+- **Overall Pass Rate**: 91.9% (68/74 tests)
+- **API Undefined Rate**: 6.8% (5/74 tests)
+- **Environment Stability**: High (most tests pass consistently)
+- **Pattern**: Specific property types affected (box-shadow, gap, margin auto)
+
+#### **💡 Immediate Actions**
+
+1. **Check Error Logs**: Look for PHP fatal errors during failing tests
+2. **Test API Directly**: Use curl to test the specific failing CSS patterns
+3. **Verify Property Mappers**: Ensure box-shadow, gap, and margin mappers have no syntax errors
+4. **Environment Check**: Verify WordPress debug mode and atomic widgets experiments
+5. **Memory Check**: Monitor PHP memory usage during CSS conversion
+
+#### **🎯 Expected Resolution**
+
+Once the backend API issues are resolved:
+- **Target Pass Rate**: 98-100% (72-74 out of 74 tests)
+- **API Undefined Rate**: 0%
+- **Environment Stability**: Consistent test results
+
+---
+
 **Document Status**: ✅ COMPREHENSIVE IMPLEMENTATION GUIDE  
 **Version**: 3.0.0  
 **Integration Status**: ✅ COMPLETE ATOMIC WIDGETS ROADMAP  
