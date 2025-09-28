@@ -446,7 +446,7 @@ class Widget_Star_Rating extends Widget_Base {
 		$rating_data = $this->get_rating();
 		$textual_rating = sprintf(
 			/* translators: 1: Rating value. 2: Rating scale. */
-			esc_attr__( 'Rated %1$s out of %2$s', 'elementor' ),
+			esc_html__( 'Rated %1$s out of %2$s', 'elementor' ),
 			$rating_data[0],
 			$rating_data[1]
 		);
@@ -477,7 +477,7 @@ class Widget_Star_Rating extends Widget_Base {
 			<?php endif; ?>
 			<div <?php $this->print_render_attribute_string( 'icon_wrapper' ); ?>>
 				<?php echo $this->render_stars( $icon ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-				<span itemprop="ratingValue" class="elementor-screen-only"><?php echo esc_html( $textual_rating );  ?></span>
+				<span itemprop="ratingValue" class="elementor-screen-only"><?php echo esc_html( $textual_rating ); ?></span>
 			</div>
 		</div>
 		<?php
@@ -531,7 +531,6 @@ class Widget_Star_Rating extends Widget_Base {
 
 			view.addRenderAttribute( 'iconWrapper', 'class', 'elementor-star-rating' );
 			view.addRenderAttribute( 'iconWrapper', 'itemtype', 'http://schema.org/Rating' );
-			view.addRenderAttribute( 'iconWrapper', 'aria-label', textualRating );
 			view.addRenderAttribute( 'iconWrapper', 'itemscope', '' );
 			view.addRenderAttribute( 'iconWrapper', 'itemprop', 'reviewRating' );
 
