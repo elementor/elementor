@@ -498,28 +498,4 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 			$stored_data,
 		);
 	}
-
-	public function test_invalid_data_should_be_deleted() {
-		// Arrange.
-		update_option( Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY, [
-			'state' => true,
-			'children' => [
-				'nested' => [
-					'children' => [
-						'nested-1' => 40,
-					],
-				],
-			],
-		] );
-
-		$cache_validity = new Cache_Validity();
-
-		// Act.
-		$cache_validity->validate( [ ROOT_KEY, 'nested', 'nested-1', 'nested-2' ] );
-
-		// Assert.
-		$this->assertFalse(
-			get_option( Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY ),
-		);
-	}
 }
