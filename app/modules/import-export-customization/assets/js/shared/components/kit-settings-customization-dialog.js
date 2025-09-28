@@ -7,6 +7,17 @@ import { KitCustomizationDialog } from './kit-customization-dialog';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import useContextDetection from '../hooks/use-context-detection';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
+import { transformValueForAnalytics } from '../utils/analytics-transformer';
+
+const transformAnalyticsData = ( payload ) => {
+	const transformed = {};
+	
+	for ( const [ key, value ] of Object.entries( payload ) ) {
+		transformed[ key ] = transformValueForAnalytics( key, value, [] );
+	}
+	
+	return transformed;
+};
 
 function getInitialState( contextData, isImport ) {
 	const data = contextData.data;
@@ -81,7 +92,10 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 			open={ open }
 			title={ __( 'Edit settings & configurations', 'elementor' ) }
 			handleClose={ handleClose }
-			handleSaveChanges={ () => handleSaveChanges( 'settings', settings, true, unselectedValues.current ) }
+			handleSaveChanges={ () => {
+				const transformedAnalytics = transformAnalyticsData( settings );
+				handleSaveChanges( 'settings', settings, true, transformedAnalytics );
+			} }
 		>
 			<Stack gap={ 2 }>
 				{ contextData?.isOldElementorVersion && (

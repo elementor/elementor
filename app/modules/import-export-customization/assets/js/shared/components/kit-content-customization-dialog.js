@@ -8,6 +8,21 @@ import { SettingSection } from './customization-setting-section';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { useKitCustomizationCustomPostTypes } from '../hooks/use-kit-customization-custom-post-types';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
+import { transformValueForAnalytics } from '../utils/analytics-transformer';
+
+const transformAnalyticsData = ( payload, customPostTypes ) => {
+	const optionsArray = [
+		{ key: 'customPostTypes', options: customPostTypes },
+	];
+	
+	const transformed = {};
+	
+	for ( const [ key, value ] of Object.entries( payload ) ) {
+		transformed[ key ] = transformValueForAnalytics( key, value, optionsArray );
+	}
+	
+	return transformed;
+};
 
 const MEDIA_FORMAT_OPTIONS = {
 	LINK: 'link',
@@ -217,7 +232,10 @@ export function KitContentCustomizationDialog( {
 			open={ open }
 			title={ __( 'Edit content', 'elementor' ) }
 			handleClose={ handleClose }
-			handleSaveChanges={ () => handleSaveChanges( 'content', settings, true, unselectedValues.current ) }
+			handleSaveChanges={ () => {
+				const transformedAnalytics = transformAnalyticsData( settings, customPostTypes );
+				handleSaveChanges( 'content', settings, true, transformedAnalytics );
+			} }
 		>
 			<Stack gap={ 2 }>
 				{ isOldElementorVersion && (

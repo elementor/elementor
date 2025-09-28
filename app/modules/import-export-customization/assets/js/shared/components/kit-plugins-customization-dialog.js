@@ -19,6 +19,17 @@ import PropTypes from 'prop-types';
 import useKitPlugins from '../hooks/use-kit-plugins';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
+import { transformValueForAnalytics } from '../utils/analytics-transformer';
+
+const transformAnalyticsData = ( payload ) => {
+	const transformed = {};
+	
+	for ( const [ key, value ] of Object.entries( payload ) ) {
+		transformed[ key ] = transformValueForAnalytics( key, value, [] );
+	}
+	
+	return transformed;
+};
 
 const REQUIRED_PLUGINS = [
 	'elementor/elementor',
@@ -292,7 +303,8 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 					onClick={ () => {
 						const pluginsSelection = getPluginsSelection();
 						const hasEnabledCustomization = Object.values( pluginsSelection ).some( Boolean );
-						handleSaveChanges( 'plugins', pluginsSelection, hasEnabledCustomization, unselectedValues.current );
+						const transformedAnalytics = transformAnalyticsData( pluginsSelection );
+						handleSaveChanges( 'plugins', pluginsSelection, hasEnabledCustomization, transformedAnalytics );
 						handleClose();
 					} }
 					variant="contained"
