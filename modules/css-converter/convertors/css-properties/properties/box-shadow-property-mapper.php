@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * ✅ FIXED: Pure atomic prop type return - Box_Shadow_Prop_Type::make()->process_value()
  * ✅ VERIFIED: All JSON creation handled by atomic widgets
  */
-class Box_Shadow_Property_Mapper extends Property_Mapper_Base {
+class Box_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private const SUPPORTED_PROPERTIES = [
 		'box-shadow',

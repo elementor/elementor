@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * ✅ ATOMIC-ONLY IMPLEMENTATION: Uses atomic prop types exclusively
  */
-class Atomic_Padding_Property_Mapper extends Property_Mapper_Base {
+class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private const SUPPORTED_PROPERTIES = [
 		'padding',

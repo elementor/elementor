@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * ✅ FIXED: Pure atomic prop type return - Size_Prop_Type::make()->generate()
  * ✅ VERIFIED: All JSON creation handled by atomic widgets
  */
-class Width_Property_Mapper extends Property_Mapper_Base {
+class Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private const SUPPORTED_PROPERTIES = [
 		'width',
@@ -49,18 +49,7 @@ class Width_Property_Mapper extends Property_Mapper_Base {
 
 		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return Size_Prop_Type::make()->generate( $parsed_value );
-	}
-
-	public function supports_v4_conversion( string $property, $value ): bool {
-		return $this->supports( $property ) && $this->is_valid_css_value( $value );
-	}
-
-	public function get_v4_property_name( string $property ): string {
-		return $property;
-	}
-
-
-	protected function parse_width_value( $value ): ?array {
+	}protected function parse_width_value( $value ): ?array {
 		if ( ! is_string( $value ) ) {
 			return null;
 		}

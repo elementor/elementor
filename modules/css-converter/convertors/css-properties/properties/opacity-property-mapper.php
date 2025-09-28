@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * ✅ FIXED: Pure atomic prop type return - Size_Prop_Type::make()->generate()
  * ✅ VERIFIED: All JSON creation handled by atomic widgets
  */
-class Opacity_Property_Mapper extends Property_Mapper_Base {
+class Opacity_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private const SUPPORTED_PROPERTIES = [
 		'opacity',

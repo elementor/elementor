@@ -43,7 +43,6 @@ class Class_Property_Mapper_Registry {
 		require_once __DIR__ . '/../properties/flex-direction-property-mapper.php';
 		require_once __DIR__ . '/../properties/text-align-property-mapper.php';
 		require_once __DIR__ . '/../properties/font-weight-property-mapper.php';
-		require_once __DIR__ . '/../properties/max-width-property-mapper.php';
 		require_once __DIR__ . '/../properties/border-width-property-mapper.php';
 		
 		// Register atomic property mappers
@@ -101,8 +100,11 @@ class Class_Property_Mapper_Registry {
 		// Register atomic font-weight mapper
 		$this->mappers['font-weight'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Font_Weight_Property_Mapper();
 		
-		// Register atomic max-width mapper
-		$this->mappers['max-width'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Max_Width_Property_Mapper();
+		// Register comprehensive atomic width mapper for all width/height properties (including max-width)
+		$width_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Width_Property_Mapper();
+		foreach ( $width_mapper->get_supported_properties() as $property ) {
+			$this->mappers[ $property ] = $width_mapper;
+		}
 		
 		// Register comprehensive atomic border-width mapper for all border-width properties
 		$border_width_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Border_Width_Property_Mapper();

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 
@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Border_Width_Property_Mapper extends Property_Mapper_Base {
+class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	public function get_supported_properties(): array {
 		return [ 

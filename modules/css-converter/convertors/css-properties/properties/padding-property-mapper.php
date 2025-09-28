@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 
@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - Supports CSS shorthand: 1, 2, 3, 4 value syntax
  * - Handles edge cases: auto, inherit, initial, unset
  */
-class Padding_Property_Mapper extends Property_Mapper_Base {
+class Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private const SUPPORTED_PROPERTIES = ['padding'];
 
@@ -58,18 +58,7 @@ class Padding_Property_Mapper extends Property_Mapper_Base {
 
 		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return Dimensions_Prop_Type::make()->generate( $parsed_dimensions );
-	}
-
-	public function supports_v4_conversion( string $property, $value ): bool {
-		return $this->supports_property( $property ) && $this->is_valid_css_value( $value );
-	}
-
-	public function get_v4_property_name( string $property ): string {
-		return $property;
-	}
-
-
-	private function parse_padding_dimensions( $value ): ?array {
+	}private function parse_padding_dimensions( $value ): ?array {
 		if ( ! is_string( $value ) ) {
 			return null;
 		}
@@ -100,7 +89,7 @@ class Padding_Property_Mapper extends Property_Mapper_Base {
 		return $this->create_dimensions_structure( $dimensions );
 	}
 
-	private function is_css_keyword( string $value ): bool {
+	protected function is_css_keyword( string $value ): bool {
 		$keywords = ['auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer'];
 		return in_array( strtolower( $value ), $keywords, true );
 	}

@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - Negative values: margin: -20px; margin-top: -10px;
  * - CSS keywords: auto, inherit, initial, unset, revert, revert-layer
  */
-class Margin_Property_Mapper extends Property_Mapper_Base {
+class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private const SUPPORTED_PROPERTIES = [
 		'margin',
@@ -88,7 +88,7 @@ class Margin_Property_Mapper extends Property_Mapper_Base {
 		}
 	}
 
-	private function is_css_keyword( string $value ): bool {
+	protected function is_css_keyword( string $value ): bool {
 		$keywords = ['auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer'];
 		return in_array( strtolower( $value ), $keywords, true );
 	}

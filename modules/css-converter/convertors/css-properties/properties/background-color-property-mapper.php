@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * 🎯 ATOMIC SOURCE: atomic widgets use Color_Prop_Type for background-color
  * ✅ ATOMIC-ONLY IMPLEMENTATION: Uses atomic prop types exclusively
  */
-class Background_Color_Property_Mapper extends Property_Mapper_Base {
+class Background_Color_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private const SUPPORTED_PROPERTIES = [
 		'background-color',

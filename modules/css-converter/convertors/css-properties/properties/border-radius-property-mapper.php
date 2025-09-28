@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 
@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - Elliptical syntax: border-radius: 50px / 20px (not supported by Border_Radius_Prop_Type)
  * - Complex elliptical: border-radius: 50px 20px / 10px 40px
  */
-class Border_Radius_Property_Mapper extends Property_Mapper_Base {
+class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private const SUPPORTED_PROPERTIES = [
 		'border-radius',
@@ -66,18 +66,7 @@ class Border_Radius_Property_Mapper extends Property_Mapper_Base {
 		}
 
 		return Border_Radius_Prop_Type::make()->generate( $parsed_value );
-	}
-
-	public function supports_v4_conversion( string $property, $value ): bool {
-		return $this->supports( $property ) && $this->is_valid_css_value( $value );
-	}
-
-	public function get_v4_property_name( string $property ): string {
-		return 'border-radius';
-	}
-
-
-	private function parse_border_radius_value( string $property, $value ): ?array {
+	}private function parse_border_radius_value( string $property, $value ): ?array {
 		if ( ! is_string( $value ) ) {
 			return null;
 		}

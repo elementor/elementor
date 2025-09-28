@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * ✅ IMPLEMENTATION: Pure atomic prop type return - String_Prop_Type::make()->enum()->generate()
  * ✅ VERIFIED: All JSON creation handled by atomic widgets
  */
-class Flex_Direction_Property_Mapper extends Property_Mapper_Base {
+class Flex_Direction_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private const SUPPORTED_PROPERTIES = [
 		'flex-direction',
