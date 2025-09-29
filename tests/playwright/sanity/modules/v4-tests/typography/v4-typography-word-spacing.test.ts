@@ -20,11 +20,14 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 	let driver: EditorDriver;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		await DriverFactory.setExperiments( browser, { e_atomic_elements: 'active' }, testInfo, apiRequests );
+		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests );
+		await driver.wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		await DriverFactory.resetExperiments( browser, testInfo, apiRequests );
+	test.afterAll( async () => {
+		if ( driver ) {
+			await driver.close();
+		}
 	} );
 
 	test.beforeEach( async () => {
