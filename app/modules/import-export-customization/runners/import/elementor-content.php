@@ -9,6 +9,7 @@ class Elementor_Content extends Import_Runner_Base {
 	const IMPORT_STATUS_SUCCEEDED = 'succeed';
 
 	const IMPORT_STATUS_FAILED = 'failed';
+	const MAX_PARENT_BACKFILL_ITERATIONS = 10;
 
 	private $show_page_on_front;
 
@@ -92,7 +93,6 @@ class Elementor_Content extends Import_Runner_Base {
 
 		foreach ( $posts_settings as $id => $post_settings ) {
 			try {
-
 				if ( 'page' === $post_type ) {
 					$data = [
 						'path' => $path,
@@ -162,10 +162,10 @@ class Elementor_Content extends Import_Runner_Base {
 			$post_attributes['post_excerpt'] = $post_settings['excerpt'];
 		}
 
-		$post_parent = $this->get_imported_parent_id( $post_settings );
+		$post_parent_id = $this->get_imported_parent_id( $post_settings );
 
-		if ( $post_parent ) {
-			$post_attributes['post_parent'] = $post_parent;
+		if ( $post_parent_id ) {
+			$post_attributes['post_parent'] = $post_parent_id;
 		}
 
 		$new_document = Plugin::$instance->documents->create(
@@ -191,8 +191,6 @@ class Elementor_Content extends Import_Runner_Base {
 
 		$new_post_id = $new_document->get_main_id();
 
-
-
 		if ( ! empty( $post_settings['terms'] ) ) {
 			$this->set_post_terms( $new_post_id, $post_settings['terms'], $imported_terms );
 		}
@@ -206,18 +204,18 @@ class Elementor_Content extends Import_Runner_Base {
 		return $new_post_id;
 	}
 
-	private function get_imported_parent_id( array $post_settings ) {
-		$post_parent = (int) ( $post_settings['post_parent'] ?? 0 );
+	private function get_imported_parent_id( array $post_settings ): int {
+		$post_parent_id = (int) ( $post_settings['post_parent'] ?? 0 );
 
-		if ( ! $post_parent ) {
+		if ( ! $post_parent_id ) {
 			return 0;
 		}
 
-		if ( isset( $this->processed_posts[ $post_parent ] ) ) {
-			return $this->processed_posts[ $post_parent ];
+		if ( isset( $this->processed_posts[ $post_parent_id ] ) ) {
+			return $this->processed_posts[ $post_parent_id ];
 		}
 
-		$this->post_orphans[ (int) $post_settings['id'] ] = $post_parent;
+		$this->post_orphans[ (int) $post_settings['id'] ] = $post_parent_id;
 		return 0;
 	}
 
@@ -265,35 +263,53 @@ class Elementor_Content extends Import_Runner_Base {
 	private function backfill_parents() {
 		global $wpdb;
 
-		$max_iterations = 10;
 		$iteration = 0;
 
-		while ( ! empty( $this->post_orphans ) && $iteration < $max_iterations ) {
+		while ( ! empty( $this->post_orphans ) && $iteration < self::MAX_PARENT_BACKFILL_ITERATIONS ) {
 			$iteration++;
 			$resolved_in_this_iteration = [];
 
-			foreach ( $this->post_orphans as $child_id => $parent_id ) {
-				$local_child_id = $this->processed_posts[ $child_id ] ?? null;
-				$local_parent_id = $this->processed_posts[ $parent_id ] ?? null;
+		foreach ( $this->post_orphans as $child_id => $parent_id ) {
+			$local_child_id = false;
+			$local_parent_id = false;
 
-				if ( $local_child_id && $local_parent_id ) {
-					$wpdb->update( $wpdb->posts, [ 'post_parent' => $local_parent_id ], [ 'ID' => $local_child_id ], '%d', '%d' );
-					clean_post_cache( $local_child_id );
-					$resolved_in_this_iteration[] = $child_id;
-				} elseif ( $local_child_id && ! $local_parent_id ) {
-					$wpdb->update( $wpdb->posts, [ 'post_parent' => 0 ], [ 'ID' => $local_child_id ], '%d', '%d' );
-					clean_post_cache( $local_child_id );
-					$resolved_in_this_iteration[] = $child_id;
-				}
+			if ( isset( $this->processed_posts[ $child_id ] ) ) {
+				$local_child_id = $this->processed_posts[ $child_id ];
 			}
 
-			foreach ( $resolved_in_this_iteration as $resolved_id ) {
-				unset( $this->post_orphans[ $resolved_id ] );
+			if ( isset( $this->processed_posts[ $parent_id ] ) ) {
+				$local_parent_id = $this->processed_posts[ $parent_id ];
 			}
+
+			if ( $local_child_id && $local_parent_id ) {
+				$this->update_post_parent( $local_child_id, $local_parent_id );
+				$resolved_in_this_iteration[] = $child_id;
+			}
+
+			if ( $local_child_id && ! $local_parent_id ) {
+				$this->update_post_parent( $local_child_id, 0 );
+				$resolved_in_this_iteration[] = $child_id;
+			}
+		}
+
+			$this->remove_resolved_orphans( $resolved_in_this_iteration );
 
 			if ( empty( $resolved_in_this_iteration ) ) {
 				break;
 			}
+		}
+	}
+
+	private function update_post_parent( $child_id, $parent_id ) {
+		global $wpdb;
+
+		$wpdb->update( $wpdb->posts, [ 'post_parent' => $parent_id ], [ 'ID' => $child_id ], '%d', '%d' );
+		clean_post_cache( $child_id );
+	}
+
+	private function remove_resolved_orphans( array $resolved_ids ) {
+		foreach ( $resolved_ids as $resolved_id ) {
+			unset( $this->post_orphans[ $resolved_id ] );
 		}
 	}
 }

@@ -1209,13 +1209,23 @@ class WP_Import extends \WP_Importer {
 			$resolved_in_this_iteration = [];
 
 			foreach ( $this->post_orphans as $child_id => $parent_id ) {
-				$local_child_id = $this->processed_posts[ $child_id ] ?? null;
-				$local_parent_id = $this->processed_posts[ $parent_id ] ?? null;
+				$local_child_id = false;
+				$local_parent_id = false;
+
+				if ( isset( $this->processed_posts[ $child_id ] ) ) {
+					$local_child_id = $this->processed_posts[ $child_id ];
+				}
+
+				if ( isset( $this->processed_posts[ $parent_id ] ) ) {
+					$local_parent_id = $this->processed_posts[ $parent_id ];
+				}
 
 				if ( $local_child_id && $local_parent_id ) {
 					$this->update_post_parent( $local_child_id, $local_parent_id );
 					$resolved_in_this_iteration[] = $child_id;
-				} elseif ( $local_child_id && ! $local_parent_id ) {
+				}
+
+				if ( $local_child_id && ! $local_parent_id ) {
 					$this->update_post_parent( $local_child_id, 0 );
 					$resolved_in_this_iteration[] = $child_id;
 				}
