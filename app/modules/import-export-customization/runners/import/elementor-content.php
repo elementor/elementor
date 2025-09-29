@@ -129,7 +129,7 @@ class Elementor_Content extends Import_Runner_Base {
 	public function read_and_import_post( $path, $id, $post_settings, $post_type, $imported_terms ) {
 		try {
 			$post_data = ImportExportUtils::read_json_file( $path . $id );
-			$import = $this->import_post( $post_settings, $post_data, $post_type, $imported_terms );
+			$import = $this->import_post( $post_settings, $post_data, $post_type, $imported_terms, $id );
 
 			if ( is_wp_error( $import ) ) {
 				$result = [
@@ -152,7 +152,7 @@ class Elementor_Content extends Import_Runner_Base {
 		return $result;
 	}
 
-	private function import_post( array $post_settings, array $post_data, $post_type, array $imported_terms ) {
+	private function import_post( array $post_settings, array $post_data, $post_type, array $imported_terms, int $original_post_id ) {
 		$post_attributes = [
 			'post_title' => $post_settings['title'],
 			'post_type' => $post_type,
@@ -163,7 +163,7 @@ class Elementor_Content extends Import_Runner_Base {
 			$post_attributes['post_excerpt'] = $post_settings['excerpt'];
 		}
 
-		$post_parent_id = $this->get_imported_parent_id( $post_settings, $id );
+		$post_parent_id = $this->get_imported_parent_id( $post_settings, $original_post_id );
 
 		if ( $post_parent_id ) {
 			$post_attributes['post_parent'] = $post_parent_id;
