@@ -2,7 +2,7 @@ import { getWidgetsCache } from '@elementor/editor-elements';
 import { __privateListenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { createDomRenderer } from '../renderers/create-dom-renderer';
-import { createElementType } from './create-element-type';
+import { createComponentType, createElementType } from './create-element-type';
 import { canBeTemplated, createTemplatedElementType } from './create-templated-element-type';
 import type { LegacyWindow } from './types';
 
@@ -18,9 +18,17 @@ export function initLegacyViews() {
 				return;
 			}
 
-			const ElementType = canBeTemplated( element )
-				? createTemplatedElementType( { type, renderer, element } )
-				: createElementType( type );
+			console.log( 'LOG::element', { element, type } );
+
+			let ElementType;
+
+			if ( type === 'component' ) {
+				ElementType = createComponentType;
+			} else {
+				ElementType = canBeTemplated( element )
+					? createTemplatedElementType( { type, renderer, element } )
+					: createElementType( type );
+			}
 
 			legacyWindow.elementor.elementsManager.registerElementType( new ElementType() );
 		} );
