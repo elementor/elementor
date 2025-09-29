@@ -9,8 +9,9 @@ const createAtomicTabsModel = () => {
 			const tabPanels = this.getChildrenByType( this.get( 'elements' ), 'e-tab-panel' );
 
 			const currentSettings = this.get( 'settings' ) || {};
-			currentSettings[ 'default-active-tab' ] = { $$type: 'string', value: tabs[ 0 ].id };
-
+			console.log( 'Current Settings before:', currentSettings );
+			currentSettings.defaultActiveTab = { $$type: 'string', value: tabs[ 0 ].id };
+			console.log( 'Current Settings after:', currentSettings );
 			this.set( 'settings', currentSettings );
 
 			// TODO: maybe move this part to a dedicated "afterDefaultChildrenSet" method

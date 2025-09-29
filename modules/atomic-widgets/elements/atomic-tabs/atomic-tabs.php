@@ -11,7 +11,6 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Tabs_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Context;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,7 +44,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'default-active-tab' => String_Prop_Type::make(),
+			'defaultActiveTab' => String_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
@@ -59,12 +58,12 @@ class Atomic_Tabs extends Atomic_Element_Base {
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
-					Tabs_Control::make()
-						->set_label( __( 'Menu items', 'elementor' ) )
-						->set_meta( [
-							'topDivider' => true,
-							'layout' => 'custom',
-						] ),
+					// Tabs_Control::make()
+					// 	->set_label( __( 'Menu items', 'elementor' ) )
+					// 	->set_meta( [
+					// 		'topDivider' => true,
+					// 		'layout' => 'custom',
+					// 	] ),
 				] ),
 		];
 	}
@@ -144,11 +143,11 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		return [ 'elementor-tabs-handler' ];
 	}
 
-	protected function set_context() {
-		$default_active_tab = $this->get_atomic_settings()['default-active-tab'];
+	protected function define_children_context() {
+		$default_active_tab = $this->get_atomic_settings()['defaultActiveTab'];
 
 		return [
-			'default-active-tab' => $default_active_tab,
+			'defaultActiveTab' => $default_active_tab,
 		];
 	}
 
@@ -167,8 +166,8 @@ class Atomic_Tabs extends Atomic_Element_Base {
 			],
 		];
 
-		if ( ! empty( $settings['default-active-tab'] ) ) {
-			$attributes['data-active-tab'] = esc_attr( $settings['default-active-tab'] );
+		if ( ! empty( $settings['defaultActiveTab'] ) ) {
+			$attributes['data-active-tab'] = esc_attr( $settings['defaultActiveTab'] );
 		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {

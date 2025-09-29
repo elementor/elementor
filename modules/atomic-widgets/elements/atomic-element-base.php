@@ -71,7 +71,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return [];
 	}
 
-	protected function set_context() {
+	protected function define_children_context() {
 		return [];
 	}
 
@@ -148,7 +148,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	public function print_content() {
 		add_filter( 'elementor/atomic/contexts', function( $contexts ) {
-			$contexts[ $this->get_id() ] = $this->set_context();
+			$contexts[ $this->get_type() ] = $this->define_children_context();
 			return $contexts;
 		} );
 
@@ -195,5 +195,22 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	public static function generate() {
 		return Element_Builder::make( static::get_type() );
+	}
+
+	protected function add_render_attributes() {
+		parent::add_render_attributes();
+		
+		$context = $this->define_children_context();
+		
+		if( empty( $context ) ) {
+			return;
+		}
+
+		// var_dump( $context );
+		// die;
+
+		$this->add_render_attribute( '_wrapper', [
+			'x-data' => wp_json_encode( $context ),
+		] );
 	}
 }

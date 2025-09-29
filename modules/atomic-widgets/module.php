@@ -418,5 +418,17 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		// Register Alpine.js initialization script
+		wp_register_script(
+			'elementor-alpine-init',
+			$this->get_js_assets_url( 'alpine-init' ),
+			[ $frontend_handlers_package_config['handle'] ],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		// Enqueue Alpine.js for atomic widgets
+		wp_enqueue_script( 'elementor-alpine-init' );
 	}
 }

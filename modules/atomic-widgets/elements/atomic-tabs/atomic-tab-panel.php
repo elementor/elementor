@@ -49,7 +49,6 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tab-id' => String_Prop_Type::make(),
-			'tabs-id' => String_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
@@ -114,7 +113,7 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 		$initial_attributes = $this->define_initial_attributes();
 
-		$default_active_tab = $this->get_context( $settings['tabs-id'] )['default-active-tab'];
+		$default_active_tab = $this->get_context( 'e-tabs' )['defaultActiveTab'];
 		$is_active = $default_active_tab === $settings['tab-id'];
 
 		$attributes = [
@@ -124,16 +123,15 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
+			':hidden' => "defaultActiveTab !== '{$settings['tab-id']}' ? true : false",
+			'hidden' => $is_active ? null : 'true',
+			'style' => $is_active ? null : 'display: none;',
+			':style' => "defaultActiveTab === '{$settings['tab-id']}' ? '' : 'display: none;'",
 		];
 
 		if ( ! empty( $settings['tab-id'] ) ) {
 			$attributes['data-tab-id'] = esc_attr( $settings['tab-id'] );
 			$attributes['aria-labelledby'] = esc_attr( $settings['tab-id'] );
-		}
-
-		if ( ! $is_active ) {
-			$attributes['hidden'] = 'true';
-			$attributes['style'] = 'display: none;';
 		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {

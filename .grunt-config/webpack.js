@@ -154,6 +154,7 @@ const frontendEntries = {
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
 	'youtube-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-youtube/youtube-handler.js' ),
 	'tabs-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/atomic-tabs-handler.js' ),
+	'alpine-init': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/alpine-init.js' ),
 };
 
 const externals = [
