@@ -26,7 +26,6 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 	return class extends legacyWindow.elementor.modules.elements.views.Widget {
 		// Dispatch `render` event so the overlay layer will be updated
 		onRender( ...args: unknown[] ) {
-			console.log( 'LOG::onRender' );
 			super.onRender( ...args );
 
 			this.#dispatchEvent( 'elementor/preview/atomic-widget/render' );
