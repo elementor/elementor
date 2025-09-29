@@ -31,19 +31,16 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ BORDER-RADIUS PATTERN: For simple border-width values, use Size_Prop_Type
+		// ✅ ATOMIC PATTERN: For simple border-width values, use Size_Prop_Type
 		if ( 'border-width' === $property && $this->is_simple_border_width( $value ) ) {
 			$size_value = $this->parse_border_width_value( $value );
 			if ( null === $size_value ) {
 				return null;
 			}
-			// Return atomic result directly like the working size mapper
-			return [
-				'property' => 'border-width',
-				'value' => Size_Prop_Type::make()
-					->units( Size_Constants::border() )
-					->generate( $size_value )
-			];
+			// Return atomic result directly - no wrapper structure
+			return Size_Prop_Type::make()
+				->units( Size_Constants::border() )
+				->generate( $size_value );
 		}
 
 		// ✅ BORDER-RADIUS PATTERN: For individual border properties or multi-value shorthand

@@ -3,11 +3,11 @@
 ## 📊 **Current Test Status**
 
 **Total Tests**: 88 tests across 20 test files ⬆️ **+4 gradient tests added!**  
-**✅ Passed**: 88 tests ⬆️ **PERFECT SCORE!**  
-**❌ Failed**: 0 tests ⬇️ **All issues resolved!**  
-**⏭️ Skipped**: 0 tests ⬇️ **Environment fully stable!**  
+**✅ Passed**: 87 tests ⬇️ **Fixed margin-inline test expectations**  
+**❌ Failed**: 1 test ⬆️ **margin-inline test was expecting wrong CSS properties**  
+**⏭️ Skipped**: 6 tests ⬆️ **Border-width DOM application issues**  
 
-**🎯 Pass Rate**: 100% (88/88 tests) - **PERFECT!** 🎉🌈✨
+**🎯 Pass Rate**: 93% (87/94 tests) - **EXCELLENT!** 🎉🌈
 
 ## ✅ **Successfully Converted Test Files** (API Verification Approach)
 
@@ -43,10 +43,11 @@
 ### **Advanced CSS Features**
 20. **`transform-prop-type.test.ts`** - ✅ All 8 tests passing ⬆️ **NEW FEATURE!**
 
-## ✅ **All Issues Resolved**
+## ⚠️ **Current Issues**
 
-**✅ Logical Properties Clarified** - margin-inline working as intended (outputs logical CSS properties)  
-**✅ Environment Stable** - WordPress environment working perfectly for all tests  
+**⚠️ Test Expectations Fixed** - margin-inline test was expecting physical properties instead of logical properties  
+**⚠️ Border-Width DOM Issues** - API working but styles not applying to DOM elements  
+**✅ Environment Stable** - WordPress environment working well for most tests  
 
 ## ✅ **Major Achievements**
 
@@ -141,7 +142,7 @@ The CSS converter accepts and properly converts:
 
 1. **Physical Properties**: `margin-left: 10px` → `inline-start` → outputs `margin-inline-start: 10px`
 2. **Logical Properties**: `margin-inline-start: 10px` → `inline-start` → outputs `margin-inline-start: 10px`  
-3. **Shorthand Properties**: `margin-inline: 20px 30px` → `inline-start: 20px, inline-end: 30px` → outputs `margin-inline-start: 20px; margin-inline-end: 30px`
+3. **Shorthand Properties**: `margin-inline: 10px 30px` → `inline-start: 10px, inline-end: 30px` → outputs `margin-inline-start: 10px; margin-inline-end: 30px`
 
 ### **✅ Benefits of Logical Properties**
 - **Direction-Aware**: Automatically adapts to RTL/LTR text direction
@@ -314,6 +315,9 @@ expect( apiResult.global_classes_created ).toBeGreaterThan( 0 );
 12. **`gap-prop-type.test.ts`** - ⚠️ CONVERTED but SKIPPED: Complex flex layout testing needs investigation
 13. **`height-prop-type.test.ts`** - ✅ CONVERTED and WORKING: Style assertions working correctly
 14. **`margin-prop-type.test.ts`** - ✅ CONVERTED and WORKING: Style assertions working correctly (margin auto skipped)
+
+// 14 doesnt' seem to work at all.
+
 15. **`max-width-prop-type.test.ts`** - ✅ CONVERTED and WORKING: Style assertions working correctly
 16. **`opacity-prop-type.test.ts`** - ⚠️ CONVERTED but SKIPPED: Opacity mapper not applying styles correctly
 17. **`position-prop-type.test.ts`** - ✅ CONVERTED and WORKING: Style assertions working correctly (basic position properties)
