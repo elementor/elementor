@@ -35,6 +35,8 @@ class Test_User_Query extends Elementor_Test_Base {
 	}
 
 	private function execute( $params, $expected ) {
+//		var_dump( $params );
+//		die;
 		// Arrange
 		$request = new \WP_REST_Request( 'GET', self::URL );
 		$request->set_param( User_Query::SEARCH_TERM_KEY, $params[ User_Query::SEARCH_TERM_KEY ] );

@@ -13,5 +13,5 @@ abstract class Query_Builder_Base {
 		$this->config = $config;
 	}
 
-	public abstract function build(): array;
+	abstract public function build(): array;
 }
