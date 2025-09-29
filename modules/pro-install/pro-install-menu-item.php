@@ -37,6 +37,7 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 
 	public function is_visible(): bool {
 		return false;
+		
 	}
 
 	public function render() {
