@@ -199,6 +199,22 @@ trait Post_Query {
 			],
 			[
 				'params' => $this->build_params( [
+					Post_Query_Class::INCLUDED_TYPE_KEY => [ 'movie' ],
+					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
+						'ID' => 'id',
+						'post_title' => 'label',
+					],
+					Post_Query_Class::SEARCH_TERM_KEY => 'a ',
+				] ),
+				'expected' => [
+					[
+						'label' => $this->posts[9]->post_title,
+						'id' => $this->posts[9]->ID,
+					],
+				],
+			],
+			[
+				'params' => $this->build_params( [
 					Post_Query_Class::EXCLUDED_TYPE_KEY => [],
 					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'id',
@@ -264,6 +280,56 @@ trait Post_Query {
 					[
 						'label' => $this->posts[7]->post_title,
 						'id' => $this->posts[7]->ID,
+					],
+				],
+			],
+			[
+				'params' => $this->build_params( [
+					Post_Query_Class::EXCLUDED_TYPE_KEY => [],
+					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
+						'ID' => 'id',
+						'post_title' => 'label',
+					],
+					Post_Query_Class::IS_PUBLIC_KEY => false,
+					Post_Query_Class::SEARCH_TERM_KEY => 'smart',
+				] ),
+				'expected' => [
+					[
+						'label' => $this->posts[8]->post_title,
+						'id' => $this->posts[8]->ID,
+					],
+				],
+			],
+			[
+				'params' => $this->build_params( [
+					Post_Query_Class::EXCLUDED_TYPE_KEY => [],
+					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
+						'ID' => 'id',
+						'post_title' => 'label',
+					],
+					Post_Query_Class::IS_PUBLIC_KEY => true,
+					Post_Query_Class::SEARCH_TERM_KEY => 'smart',
+				] ),
+				'expected' => [],
+			],
+			[
+				'params' => $this->build_params( [
+					Post_Query_Class::EXCLUDED_TYPE_KEY => [ 'elementor_library' ],
+					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
+						'ID' => 'id',
+						'post_title' => 'label',
+					],
+					Post_Query_Class::SEARCH_TERM_KEY => 'a ',
+					Post_Query_Class::ITEMS_COUNT_KEY => 2,
+				] ),
+				'expected' => [
+					[
+						'label' => $this->posts[4]->post_title,
+						'id' => $this->posts[4]->ID,
+					],
+					[
+						'label' => $this->posts[3]->post_title,
+						'id' => $this->posts[3]->ID,
 					],
 				],
 			],

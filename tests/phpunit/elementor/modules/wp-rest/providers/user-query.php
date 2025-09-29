@@ -111,6 +111,41 @@ trait User_Query {
 				] ),
 				'expected' => [],
 			],
+			[
+				'params' => $this->build_params( [
+					User_Query_Class::KEYS_CONVERSION_MAP_KEY => [
+						'ID' => 'my_id',
+						'display_name' => 'my_name',
+					],
+					User_Query_Class::SEARCH_TERM_KEY => 'ski'
+				] ),
+				'expected' => [
+					[
+						'my_id' => $this->users[0]->ID,
+						'my_name' => $this->users[0]->display_name,
+					],
+					[
+						'my_id' => $this->users[2]->ID,
+						'my_name' => $this->users[2]->display_name,
+					],
+				],
+			],
+			[
+				'params' => $this->build_params( [
+					User_Query_Class::KEYS_CONVERSION_MAP_KEY => [
+						'ID' => 'my_id',
+						'display_name' => 'my_name',
+					],
+					User_Query_Class::ITEMS_COUNT_KEY => 1,
+					User_Query_Class::SEARCH_TERM_KEY => 'ski'
+				] ),
+				'expected' => [
+					[
+						'my_id' => $this->users[0]->ID,
+						'my_name' => $this->users[0]->display_name,
+					],
+				],
+			],
 		];
 	}
 

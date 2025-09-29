@@ -43,6 +43,10 @@ class Test_Term_Query extends Elementor_Test_Base {
 		$request->set_param( Term_Query::KEYS_CONVERSION_MAP_KEY, $params[ Term_Query::KEYS_CONVERSION_MAP_KEY ] );
 		$request->set_header( Term_Query::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
 
+		if ( isset( $params[ Term_Query::ITEMS_COUNT_KEY ] ) ) {
+			$request->set_param( Term_Query::ITEMS_COUNT_KEY, $params[ Term_Query::ITEMS_COUNT_KEY ] );
+		}
+
 		// Act
 		$response = rest_get_server()->dispatch( $request );
 		$terms = $response->get_data()['data']['value'];

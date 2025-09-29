@@ -133,6 +133,25 @@ trait Term_Query {
 			[
 				'params' => $this->build_params( [
 					Term_Query_Class::EXCLUDED_TYPE_KEY => [],
+					Term_Query_Class::ITEMS_COUNT_KEY => 1,
+					Term_Query_Class::KEYS_CONVERSION_MAP_KEY => [
+						'term_id' => 'id',
+						'name' => 'label',
+						'taxonomy' => 'groupLabel',
+					],
+					Term_Query_Class::SEARCH_TERM_KEY => 'ea',
+				] ),
+				'expected' => [
+					[
+						'id' => $this->terms[4]->term_id,
+						'label' => $this->terms[4]->name,
+						'groupLabel' => get_taxonomy( $this->terms[4]->taxonomy )->label,
+					],
+				],
+			],
+			[
+				'params' => $this->build_params( [
+					Term_Query_Class::EXCLUDED_TYPE_KEY => [],
 					Term_Query_Class::INCLUDED_TYPE_KEY => [ 'misc' ],
 					Term_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'term_id' => 'id',

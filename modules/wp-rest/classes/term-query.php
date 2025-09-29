@@ -204,7 +204,6 @@ class Term_Query extends Base {
 			self::KEYS_CONVERSION_MAP_KEY,
 			self::META_QUERY_KEY,
 			self::TAX_QUERY_KEY,
-			self::IS_PUBLIC_KEY,
 			self::ITEMS_COUNT_KEY,
 		];
 	}
