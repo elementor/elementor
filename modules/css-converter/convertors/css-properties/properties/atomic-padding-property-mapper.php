@@ -53,6 +53,10 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return Dimensions_Prop_Type::make()->generate( $dimensions_data );
 	}
 
+	public function get_v4_property_name( string $property ): string {
+		return 'padding';
+	}
+
 	private function parse_padding_property( string $property, string $value ): ?array {
 		switch ( $property ) {
 			case 'padding':
