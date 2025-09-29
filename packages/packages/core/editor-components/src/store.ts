@@ -68,6 +68,6 @@ const selectCreateStatus = ( state: SliceState< typeof slice > ) => state[ SLICE
 
 export const selectComponents = createSelector( selectData, ( data: Component[] ) => data );
 export const selectLoadIsPending = createSelector( selectLoadStatus, ( status ) => status === 'pending' );
-export const selectLoadError = createSelector( selectLoadStatus, ( status ) => status === 'error' );
+export const selectLoadIsError = createSelector( selectLoadStatus, ( status ) => status === 'error' );
 export const selectCreateIsPending = createSelector( selectCreateStatus, ( status ) => status === 'pending' );
-export const selectCreateError = createSelector( selectCreateStatus, ( status ) => status === 'error' );
+export const selectCreateIsError = createSelector( selectCreateStatus, ( status ) => status === 'error' );

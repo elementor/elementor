@@ -132,8 +132,8 @@ const useFilteredComponents = () => {
 	const { searchValue } = useSearch();
 
 	return {
-		components: components?.filter(
-			( component ) => component?.name?.toLowerCase().includes( searchValue.toLowerCase() )
+		components: components.filter( ( component ) =>
+			component.name.toLowerCase().includes( searchValue.toLowerCase() )
 		),
 		isLoading,
 		searchValue,

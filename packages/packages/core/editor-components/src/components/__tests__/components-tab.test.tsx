@@ -1,5 +1,12 @@
+// Mock external dependencies
+jest.mock( '@elementor/editor-canvas', () => ( {
+	startDragElementFromPanel: jest.fn(),
+	endDragElementFromPanel: jest.fn(),
+} ) );
+
 import * as React from 'react';
 import { renderWithStore, renderWithTheme } from 'test-utils';
+import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -16,12 +23,6 @@ import { ComponentSearch } from '../components-tab/component-search';
 import { ComponentItem } from '../components-tab/components-item';
 import { ComponentsList } from '../components-tab/components-list';
 import { SearchProvider } from '../components-tab/search-provider';
-
-// Mock external dependencies
-jest.mock( '@elementor/editor-canvas', () => ( {
-	startDragElementFromPanel: jest.fn(),
-	endDragElementFromPanel: jest.fn(),
-} ) );
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	dropElement: jest.fn(),
@@ -104,7 +105,6 @@ describe( 'ComponentsTab', () => {
 
 		it( 'should render components list when components exist', () => {
 			// Arrange
-
 			act( () => {
 				dispatch( slice.actions.load( mockComponents ) );
 			} );
@@ -120,48 +120,11 @@ describe( 'ComponentsTab', () => {
 			// Assert
 			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Text Component' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should render components list with multiple components', () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
-			// Act
-			renderWithStore(
-				<SearchProvider localStorageKey="test-search">
-					<ComponentsList />
-				</SearchProvider>,
-				store
-			);
-
-			// Assert
 			expect( screen.getByText( 'Test Component 1' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Test Component 2' ) ).toBeInTheDocument();
 			expect(
 				screen.queryByText( 'Text that explains that there are no Components yet.' )
 			).not.toBeInTheDocument();
-		} );
-
-		it( 'should filter components based on search value', () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
-			// Act
-			renderWithStore(
-				<SearchProvider localStorageKey="test-search">
-					<ComponentsList />
-				</SearchProvider>,
-				store
-			);
-
-			// Assert - All components should be visible initially
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Text Component' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Image Component' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render component item with name and actions', () => {
@@ -192,7 +155,7 @@ describe( 'ComponentsTab', () => {
 			expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should render draggable component item', () => {
+		it( 'should render component item with draggable attributes and actions', () => {
 			// Arrange
 			const buttonComponent = mockComponents[ 0 ];
 
@@ -200,8 +163,11 @@ describe( 'ComponentsTab', () => {
 			renderWithTheme( <ComponentItem component={ buttonComponent } /> );
 
 			// Assert
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
+			const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
+			expect( componentItem ).toBeInTheDocument();
+			expect( componentItem ).toHaveAttribute( 'draggable', 'true' );
 			expect( screen.getByLabelText( 'More actions' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render search input with correct attributes and placeholder', () => {
