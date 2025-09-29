@@ -681,17 +681,13 @@ class Import {
 	 * @return array Custom post types names.
 	 */
 	private function get_default_settings_custom_post_types() {
-		if ( empty( $this->manifest['custom-post-type-title'] ) ) {
-			return [];
-		}
-
 		$excluded = [ 'page', 'nav_menu_item' ];
 
 		if ( empty( $this->manifest['content']['post'] ?? [] ) && empty( $this->manifest['wp-content']['post'] ?? [] ) ) {
 			$excluded[] = 'post';
 		}
 
-		$manifest_post_types = array_keys( $this->manifest['custom-post-type-title'] );
+		$manifest_post_types = array_keys( $this->manifest['custom-post-type-title'] ?? [] );
 
 		return array_merge( $manifest_post_types, Utils::get_builtin_wp_post_types( $excluded ) );
 	}
