@@ -772,7 +772,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 					'variable' => [
 						'id' => 'temp-fail',
 						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Conflicting Label',
+						'label' => 'This is a very long label that exceeds the maximum allowed length for variable labels in the system',
 						'value' => '#00FF00',
 					],
 				],

@@ -11,8 +11,9 @@ export const ERROR_MESSAGES = {
 	DUPLICATED_LABEL: __( 'This variable name already exists. Please choose a unique name.', 'elementor' ),
 	UNEXPECTED_ERROR: __( 'There was a glitch. Try saving your variable again.', 'elementor' ),
 	BATCH: {
-		// eslint-disable-next-line @wordpress/i18n-translator-comments
-		DUPLICATED_LABELS: ( count: number ) => sprintf( __( 'We found %d duplicated name.', 'elementor' ), count ),
+		DUPLICATED_LABELS: ( count: number, name: string ) =>
+			// eslint-disable-next-line @wordpress/i18n-translator-comments
+			sprintf( __( 'We found %1$d duplicated %2$s.', 'elementor' ), count, name ),
 		UNEXPECTED_ERROR: __( 'The save didn’t go through.', 'elementor' ),
 		DUPLICATED_LABEL_ACTION: __( 'Take me there', 'elementor' ),
 		DUPLICATED_LABEL_ACTION_MESSAGE: __( 'Please rename the variables.', 'elementor' ),
@@ -63,12 +64,12 @@ export const mapServerError = ( error: ErrorResponse ): MappedError | undefined 
 	if ( error?.response?.data?.code === 'batch_duplicated_label' ) {
 		const errorData = error?.response?.data?.data ?? {};
 		const count = Object.keys( errorData ).length;
-
+		const name = count === 1 ? 'name' : 'names';
 		const duplicatedIds = Object.keys( errorData );
 
 		return {
 			field: 'label',
-			message: ERROR_MESSAGES.BATCH.DUPLICATED_LABELS( count ),
+			message: ERROR_MESSAGES.BATCH.DUPLICATED_LABELS( count, name ),
 			action: {
 				label: ERROR_MESSAGES.BATCH.DUPLICATED_LABEL_ACTION,
 				message: ERROR_MESSAGES.BATCH.DUPLICATED_LABEL_ACTION_MESSAGE,
