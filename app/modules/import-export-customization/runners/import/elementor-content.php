@@ -208,14 +208,15 @@ class Elementor_Content extends Import_Runner_Base {
 	private function get_imported_parent_id( array $post_settings ): int {
 		$post_parent_id = (int) $post_settings['post_parent'] ?? 0;
 
+		if ( ! $post_parent_id ) {
+			return 0;
+		}
+
 		if ( isset( $this->processed_posts[ $post_parent_id ] ) ) {
 			return $this->processed_posts[ $post_parent_id ];
 		}
 
-		if ( $post_parent_id > 0 ) {
-			$this->post_orphans[ (int) $post_settings['id'] ] = $post_parent_id;
-		}
-
+		$this->post_orphans[ (int) $post_settings['id'] ] = $post_parent_id;
 		return 0;
 	}
 
@@ -253,7 +254,7 @@ class Elementor_Content extends Import_Runner_Base {
 
 
 	private function map_imported_post_id( $original_id, $import_result ) {
-		if ( $import_result['status'] !== static::IMPORT_STATUS_SUCCEEDED ) {
+		if ( static::IMPORT_STATUS_SUCCEEDED !== $import_result['status'] ) {
 			return;
 		}
 
