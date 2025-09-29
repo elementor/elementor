@@ -6,9 +6,9 @@ import { getComponentIds } from '../utils/get-component-ids';
 import { load } from './component-config';
 import { selectData, slice } from './components-styles-store';
 
-type InitialDocumentId = number;
+type ComponentId = number;
 
-export async function addComponentStyles( ids: InitialDocumentId[] ) {
+export async function addComponentStyles( ids: ComponentId[] ) {
 	if ( ids.length === 0 ) {
 		return;
 	}
