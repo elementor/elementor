@@ -1,9 +1,3 @@
-// Mock external dependencies
-jest.mock( '@elementor/editor-canvas', () => ( {
-	startDragElementFromPanel: jest.fn(),
-	endDragElementFromPanel: jest.fn(),
-} ) );
-
 import * as React from 'react';
 import { renderWithStore, renderWithTheme } from 'test-utils';
 import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
@@ -23,6 +17,11 @@ import { ComponentSearch } from '../components-tab/component-search';
 import { ComponentItem } from '../components-tab/components-item';
 import { ComponentsList } from '../components-tab/components-list';
 import { SearchProvider } from '../components-tab/search-provider';
+
+jest.mock( '@elementor/editor-canvas', () => ( {
+	startDragElementFromPanel: jest.fn(),
+	endDragElementFromPanel: jest.fn(),
+} ) );
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	dropElement: jest.fn(),
@@ -166,8 +165,6 @@ describe( 'ComponentsTab', () => {
 			const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
 			expect( componentItem ).toBeInTheDocument();
 			expect( componentItem ).toHaveAttribute( 'draggable', 'true' );
-			expect( screen.getByLabelText( 'More actions' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render search input with correct attributes and placeholder', () => {

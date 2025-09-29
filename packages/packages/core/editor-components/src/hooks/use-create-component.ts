@@ -7,7 +7,7 @@ import { createComponent } from '../thunks';
 export const useCreateComponent = () => {
 	const dispatch = useDispatch();
 	const isPending = useSelector( selectCreateIsPending );
-	const error = useSelector( selectCreateIsError );
+	const isError = useSelector( selectCreateIsError );
 
 	const createComponentAction = async ( payload: CreateComponentPayload ) => {
 		const result = await dispatch( createComponent( payload ) as unknown as AnyAction );
@@ -17,6 +17,6 @@ export const useCreateComponent = () => {
 	return {
 		createComponent: createComponentAction,
 		isPending,
-		error,
+		isError,
 	};
 };
