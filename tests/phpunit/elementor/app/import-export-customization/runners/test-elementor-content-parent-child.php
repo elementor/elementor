@@ -40,7 +40,7 @@ class Test_Elementor_Content_Parent_Child extends Elementor_Test_Base {
 		$property->setAccessible( true );
 		$property->setValue( $importer, [ 100 => 500 ] );
 
-		$result = $method->invoke( $importer, [ 'post_parent' => 100 ] );
+		$result = $method->invoke( $importer, [ 'id' => 200, 'post_parent' => 100 ] );
 
 		$this->assertEquals( 500, $result );
 	}
@@ -80,10 +80,12 @@ class Test_Elementor_Content_Parent_Child extends Elementor_Test_Base {
 		$importer = new Import_Elementor_Content();
 		$mock_posts_settings = [
 			$parent_page_id => [
+				'id' => $parent_page_id,
 				'title' => 'Works',
 				'doc_type' => 'wp-page',
 			],
 			$child_page_id => [
+				'id' => $child_page_id,
 				'title' => 'Air',
 				'doc_type' => 'wp-page',
 				'post_parent' => $parent_page_id,
