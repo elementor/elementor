@@ -169,7 +169,7 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 
 			<p><?php echo esc_html( $ctr_data['description'] ); ?></p>
 			<p class="elementor-box-action">
-				<a id="<?php echo $ctr_id;?>" class="button button-primary" href="<?php echo esc_url( $ctr_url ); ?>">
+				<a id="<?php echo esc_attr( $ctr_id ); ?>" class="button button-primary" href="<?php echo esc_url( $ctr_url ); ?>">
 					<?php echo esc_html( $ctr_data['button_text'] ); ?>
 				</a>
 			</p>
