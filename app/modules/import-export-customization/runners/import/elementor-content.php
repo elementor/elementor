@@ -10,7 +10,6 @@ class Elementor_Content extends Import_Runner_Base {
 
 	const IMPORT_STATUS_FAILED = 'failed';
 
-
 	private $show_page_on_front;
 
 	private $page_on_front_id;
@@ -281,5 +280,4 @@ class Elementor_Content extends Import_Runner_Base {
 			}
 		}
 	}
-
 }
