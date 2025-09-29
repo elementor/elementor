@@ -1368,19 +1368,4 @@ export default class EditorPage extends BasePage {
 		const vwAndPxValuesAreEqual = Math.abs( vwConvertedToPxUnit - elementWidthInPxUnit ) <= 1;
 		expect( vwAndPxValuesAreEqual ).toBeTruthy();
 	}
-
-	async setFontFamily( fontName: string, fontType: 'system' | 'google' ) {
-		await this.page.locator( 'label', { hasText: 'Font family' } ).click();
-		await this.page.locator( `[data-font-type="${ fontType }"]`, { hasText: fontName } ).click();
-	}
-
-	async setLetterSpacing( value: number, unit: string ) {
-		const letterSpacingInput = this.page.locator( 'label', { hasText: 'Letter Spacing' } ).locator( 'input[type="number"]' );
-		await letterSpacingInput.fill( value.toString() );
-
-		// Click the unit selector and choose the unit
-		const unitSelector = this.page.locator( 'label', { hasText: 'Letter Spacing' } ).locator( '.e-units-switcher' );
-		await unitSelector.click();
-		await this.page.locator( `[data-unit="${ unit }"]` ).click();
-	}
 }
