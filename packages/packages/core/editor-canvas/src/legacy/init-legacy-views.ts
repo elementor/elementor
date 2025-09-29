@@ -18,8 +18,6 @@ export function initLegacyViews() {
 				return;
 			}
 
-			console.log( 'LOG::element', { element, type } );
-
 			let ElementType;
 
 			if ( type === 'component' ) {
