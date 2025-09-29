@@ -249,7 +249,7 @@ class Module extends BaseModule {
 			<?php endif; ?>
 			<div class="tab-import-export-kit__box action-buttons">
 				<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
+					<a id="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['id'] ); ?>" href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
 						<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
 					</a>
 				<?php endif; ?>
