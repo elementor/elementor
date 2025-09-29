@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -24,24 +24,6 @@ const transformAnalyticsData = ( payload, customPostTypes ) => {
 	return transformed;
 };
 
-const MEDIA_FORMAT_OPTIONS = {
-	LINK: 'link',
-	CLOUD: 'cloud',
-};
-
-const MEDIA_FORMAT_CONFIG = [
-	{
-		value: MEDIA_FORMAT_OPTIONS.LINK,
-		title: __( 'Link to media', 'elementor' ),
-		description: __( 'Stores only the URLs. The export stays light, but files load only while the original site is online.', 'elementor' ),
-	},
-	{
-		value: MEDIA_FORMAT_OPTIONS.CLOUD,
-		title: __( 'Save media to the cloud', 'elementor' ),
-		description: __( 'All images and files are stored with the template. Keeps everything intact, but the file is larger.', 'elementor' ),
-	},
-];
-
 export function KitContentCustomizationDialog( {
 	open,
 	handleClose,
@@ -51,10 +33,6 @@ export function KitContentCustomizationDialog( {
 	isOldElementorVersion,
 } ) {
 	const { customPostTypes } = useKitCustomizationCustomPostTypes( { data } );
-
-	const unselectedValues = useRef( data.analytics?.customization?.content || [] );
-	const alertRef = useRef( null );
-	const mediaFormatSectionRef = useRef( null );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.content ) {
