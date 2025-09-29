@@ -26,7 +26,8 @@ const Row = React.forwardRef< HTMLDivElement, { label: string; children: React.R
 				alignItems="center"
 				flexWrap="nowrap"
 				ref={ ref }
-				aria-label={ `${ label } control` }>
+				aria-label={ `${ label } control` }
+			>
 				<Grid item xs={ 6 }>
 					<ControlLabel>{ label }</ControlLabel>
 				</Grid>
