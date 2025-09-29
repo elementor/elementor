@@ -816,7 +816,7 @@ class WP_Import extends \WP_Importer {
 						add_comment_meta( $inserted_comments[ $key ], wp_slash( $meta['key'] ), wp_slash_strings_only( $value ) );
 					}
 
-					$num_comments++;
+					++$num_comments;
 				}
 				unset( $newcomments, $inserted_comments, $post['comments'] );
 			}
@@ -1205,7 +1205,7 @@ class WP_Import extends \WP_Importer {
 		$iteration = 0;
 
 		while ( ! empty( $this->post_orphans ) && $iteration < self::MAX_PARENT_BACKFILL_ITERATIONS ) {
-			$iteration++;
+			++$iteration;
 			$resolved_in_this_iteration = [];
 
 			foreach ( $this->post_orphans as $child_id => $parent_id ) {
@@ -1226,7 +1226,7 @@ class WP_Import extends \WP_Importer {
 				}
 
 				if ( $local_child_id && ! $local_parent_id ) {
-					$this->update_post_parent( $local_child_id, 0 );
+					$this->make_post_top_level_when_parent_missing( $local_child_id );
 					$resolved_in_this_iteration[] = $child_id;
 				}
 			}
@@ -1255,6 +1255,10 @@ class WP_Import extends \WP_Importer {
 
 		$wpdb->update( $wpdb->posts, [ 'post_parent' => $parent_id ], [ 'ID' => $child_id ], '%d', '%d' );
 		clean_post_cache( $child_id );
+	}
+
+	private function make_post_top_level_when_parent_missing( $child_id ) {
+		$this->update_post_parent( $child_id, 0 );
 	}
 
 	private function remove_resolved_orphans( array $resolved_ids ) {

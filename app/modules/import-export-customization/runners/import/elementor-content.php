@@ -9,6 +9,7 @@ class Elementor_Content extends Import_Runner_Base {
 	const IMPORT_STATUS_SUCCEEDED = 'succeed';
 
 	const IMPORT_STATUS_FAILED = 'failed';
+
 	const MAX_PARENT_BACKFILL_ITERATIONS = 10;
 
 	private $show_page_on_front;
@@ -205,17 +206,16 @@ class Elementor_Content extends Import_Runner_Base {
 	}
 
 	private function get_imported_parent_id( array $post_settings ): int {
-		$post_parent_id = (int) ( $post_settings['post_parent'] ?? 0 );
-
-		if ( ! $post_parent_id ) {
-			return 0;
-		}
+		$post_parent_id = (int) $post_settings['post_parent'] ?? 0;
 
 		if ( isset( $this->processed_posts[ $post_parent_id ] ) ) {
 			return $this->processed_posts[ $post_parent_id ];
 		}
 
-		$this->post_orphans[ (int) $post_settings['id'] ] = $post_parent_id;
+		if ( $post_parent_id > 0 ) {
+			$this->post_orphans[ (int) $post_settings['id'] ] = $post_parent_id;
+		}
+
 		return 0;
 	}
 
@@ -266,31 +266,31 @@ class Elementor_Content extends Import_Runner_Base {
 		$iteration = 0;
 
 		while ( ! empty( $this->post_orphans ) && $iteration < self::MAX_PARENT_BACKFILL_ITERATIONS ) {
-			$iteration++;
+			++$iteration;
 			$resolved_in_this_iteration = [];
 
-		foreach ( $this->post_orphans as $child_id => $parent_id ) {
-			$local_child_id = false;
-			$local_parent_id = false;
+			foreach ( $this->post_orphans as $child_id => $parent_id ) {
+				$local_child_id = false;
+				$local_parent_id = false;
 
-			if ( isset( $this->processed_posts[ $child_id ] ) ) {
-				$local_child_id = $this->processed_posts[ $child_id ];
-			}
+				if ( isset( $this->processed_posts[ $child_id ] ) ) {
+					$local_child_id = $this->processed_posts[ $child_id ];
+				}
 
-			if ( isset( $this->processed_posts[ $parent_id ] ) ) {
-				$local_parent_id = $this->processed_posts[ $parent_id ];
-			}
+				if ( isset( $this->processed_posts[ $parent_id ] ) ) {
+					$local_parent_id = $this->processed_posts[ $parent_id ];
+				}
 
-			if ( $local_child_id && $local_parent_id ) {
-				$this->update_post_parent( $local_child_id, $local_parent_id );
-				$resolved_in_this_iteration[] = $child_id;
-			}
+				if ( $local_child_id && $local_parent_id ) {
+					$this->update_post_parent( $local_child_id, $local_parent_id );
+					$resolved_in_this_iteration[] = $child_id;
+				}
 
-			if ( $local_child_id && ! $local_parent_id ) {
-				$this->update_post_parent( $local_child_id, 0 );
-				$resolved_in_this_iteration[] = $child_id;
+				if ( $local_child_id && ! $local_parent_id ) {
+					$this->make_post_top_level_when_parent_missing( $local_child_id );
+					$resolved_in_this_iteration[] = $child_id;
+				}
 			}
-		}
 
 			$this->remove_resolved_orphans( $resolved_in_this_iteration );
 
@@ -311,5 +311,9 @@ class Elementor_Content extends Import_Runner_Base {
 		foreach ( $resolved_ids as $resolved_id ) {
 			unset( $this->post_orphans[ $resolved_id ] );
 		}
+	}
+
+	private function make_post_top_level_when_parent_missing( $child_id ) {
+		$this->update_post_parent( $child_id, 0 );
 	}
 }

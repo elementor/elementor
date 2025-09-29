@@ -108,7 +108,9 @@ class Elementor_Content extends Export_Runner_Base {
 				'terms' => $terms,
 			];
 
-			$this->add_parent_relationship_to_manifest( $post, $post_manifest_data );
+			if ( isset( $post->post_parent ) && $post->post_parent > 0 ) {
+				$manifest_data['post_parent'] = $post->post_parent;
+			}
 
 			if ( $post->ID === $this->page_on_front_id ) {
 				$post_manifest_data['show_on_front'] = true;
@@ -127,13 +129,6 @@ class Elementor_Content extends Export_Runner_Base {
 			'manifest_data' => $manifest_data,
 		];
 	}
-
-	private function add_parent_relationship_to_manifest( $post, &$manifest_data ) {
-		if ( isset( $post->post_parent ) && $post->post_parent > 0 ) {
-			$manifest_data['post_parent'] = $post->post_parent;
-		}
-	}
-
 
 	private function get_post_type_taxonomies( $post_type ) {
 		return get_object_taxonomies( $post_type );
