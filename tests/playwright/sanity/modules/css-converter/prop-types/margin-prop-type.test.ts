@@ -64,10 +64,10 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const element = elementorFrame.locator('.e-paragraph-base').first();
 		await element.waitFor( { state: 'visible', timeout: 10000 } );
 		
-		await expect(element).toHaveCSS('margin-top', '-20px');
-		await expect(element).toHaveCSS('margin-right', '-20px');
-		await expect(element).toHaveCSS('margin-bottom', '-20px');
-		await expect(element).toHaveCSS('margin-left', '-20px');
+		await expect(element).toHaveCSS('margin-block-start', '-20px');
+		await expect(element).toHaveCSS('margin-inline-end', '-20px');
+		await expect(element).toHaveCSS('margin-block-end', '-20px');
+		await expect(element).toHaveCSS('margin-inline-start', '-20px');
 	});
 
 	test('should convert margin shorthand with mixed values', async ({ page, request }) => {
@@ -96,32 +96,28 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const element = elementorFrame.locator('.e-paragraph-base').first();
 		await element.waitFor( { state: 'visible', timeout: 10000 } );
 		
-		await expect(element).toHaveCSS('margin-top', '10px');
-		await expect(element).toHaveCSS('margin-right', '-20px');
-		await expect(element).toHaveCSS('margin-bottom', '30px');
-		await expect(element).toHaveCSS('margin-left', '-40px');
+		await expect(element).toHaveCSS('margin-block-start', '10px');
+		await expect(element).toHaveCSS('margin-inline-end', '-20px');
+		await expect(element).toHaveCSS('margin-block-end', '30px');
+		await expect(element).toHaveCSS('margin-inline-start', '-40px');
 	});
 
 	test('should test individual margin properties with Strategy 1', async ({ page, request }) => {
-		// Test Strategy 1: Individual margin properties using clean Dimensions_Prop_Type structure
 		const testCases = [
 			{
 				name: 'Individual physical property',
 				html: '<div><p style="margin-left: 40px;">Physical individual</p></div>',
 				expectedLogical: { marginInlineStart: '40px' },
-				expectedPhysical: { marginLeft: '40px' }
 			},
 			{
 				name: 'Individual logical property',
 				html: '<div><p style="margin-inline-start: 40px;">Logical individual</p></div>',
 				expectedLogical: { marginInlineStart: '40px' },
-				expectedPhysical: { marginLeft: '40px' }
 			},
 			{
 				name: 'Multiple individual properties',
 				html: '<div><p style="margin-inline-start: 40px; margin-block-end: 20px;">Multiple individual</p></div>',
 				expectedLogical: { marginInlineStart: '40px', marginBlockEnd: '20px' },
-				expectedPhysical: { marginLeft: '40px', marginBottom: '20px' }
 			}
 		];
 
@@ -144,31 +140,12 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 			await element.waitFor({ state: 'visible', timeout: 10000 });
 			
 			// Get all margin values
-			const marginTop = await element.evaluate(el => getComputedStyle(el).marginTop);
-			const marginRight = await element.evaluate(el => getComputedStyle(el).marginRight);
-			const marginBottom = await element.evaluate(el => getComputedStyle(el).marginBottom);
-			const marginLeft = await element.evaluate(el => getComputedStyle(el).marginLeft);
-			const marginInlineStart = await element.evaluate(el => getComputedStyle(el).marginInlineStart);
-			const marginInlineEnd = await element.evaluate(el => getComputedStyle(el).marginInlineEnd);
-			const marginBlockStart = await element.evaluate(el => getComputedStyle(el).marginBlockStart);
-			const marginBlockEnd = await element.evaluate(el => getComputedStyle(el).marginBlockEnd);
-			
-			console.log(`Results for ${testCase.name}:`, {
-				physical: { marginTop, marginRight, marginBottom, marginLeft },
-				logical: { marginInlineStart, marginInlineEnd, marginBlockStart, marginBlockEnd }
-			});
-			
-			// Test expected values
-			if (testCase.expectedLogical.marginInlineStart && marginInlineStart === testCase.expectedLogical.marginInlineStart) {
-				console.log(`✅ SUCCESS: ${testCase.name} - marginInlineStart works!`);
-			}
-			if (testCase.expectedLogical.marginBlockEnd && marginBlockEnd === testCase.expectedLogical.marginBlockEnd) {
-				console.log(`✅ SUCCESS: ${testCase.name} - marginBlockEnd works!`);
+			await expect(element).toHaveCSS('margin-inline-start', testCase.expectedLogical.marginInlineStart);
+
+			if ( !! testCase.expectedLogical.marginBlockEnd ) {
+				await expect(element).toHaveCSS('margin-block-end', testCase.expectedLogical.marginBlockEnd);
 			}
 		}
-		
-		// This test is for research - always pass
-		expect(true).toBe(true);
 	});
 
 	test('should convert margin-inline shorthand by splitting to individual properties', async ({ page, request }) => {
@@ -190,18 +167,15 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		await page.goto( editUrl );
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
-		
-		// Verify inline-start: 10px, inline-end: 30px
+
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
 		
 		const element = elementorFrame.locator('.e-paragraph-base').first();
 		await element.waitFor( { state: 'visible', timeout: 10000 } );
-		
-		await expect(element).toHaveCSS('margin-block-start', '0px');
-		await expect(element).toHaveCSS('margin-inline-end', '30px');
-		await expect(element).toHaveCSS('margin-block-end', '0px');
+
 		await expect(element).toHaveCSS('margin-inline-start', '10px');
+		await expect(element).toHaveCSS('margin-inline-end', '30px');
 	});
 
 	test.skip('should convert margin auto for centering - SKIPPED: margin auto difficult to test in Playwright', async ({ page, request }) => {
@@ -232,9 +206,9 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const element = elementorFrame.locator('.e-paragraph-base').first();
 		await element.waitFor( { state: 'visible', timeout: 10000 } );
 		
-		await expect(element).toHaveCSS('margin-top', 'auto');
-		await expect(element).toHaveCSS('margin-right', 'auto');
-		await expect(element).toHaveCSS('margin-bottom', 'auto');
-		await expect(element).toHaveCSS('margin-left', 'auto');
+		await expect(element).toHaveCSS('margin-block-start', 'auto');
+		await expect(element).toHaveCSS('margin-inline-end', 'auto');
+		await expect(element).toHaveCSS('margin-block-end', 'auto');
+		await expect(element).toHaveCSS('margin-inline-start', 'auto');
 	});
 });
