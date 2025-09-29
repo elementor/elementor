@@ -18,7 +18,7 @@ function trackEditorEvent( eventName, eventData ) {
 }
 
 window.trackUpgradeNowClickEvent = function() {
-	trackEditorEvent( 'upgrade_subscription', {
+	trackEditorEvent( 'upgrade_now_click', {
 		app_type: 'editor',
 		location: 'Elementor WP-admin pages',
 		secondaryLocation: 'Connect account page',
@@ -26,19 +26,13 @@ window.trackUpgradeNowClickEvent = function() {
 	} );
 };
 
-window.trackConnectAccountEvent = function( event ) {
-	event.preventDefault();
-
+window.trackConnectAccountEvent = function() {
 	trackEditorEvent( 'connect_account', {
 		app_type: 'editor',
 		location: 'Elementor WP-admin pages',
 		secondaryLocation: 'Connect account page',
 		trigger: 'click',
 	} );
-
-	setTimeout( () => {
-		window.location.href = event.target.href;
-	}, 200 );
 };
 
 window.trackOpenConnectPageEvent = function() {
@@ -63,13 +57,12 @@ window.trackProInstallEvent = function() {
 document.addEventListener( 'DOMContentLoaded', () => {
 	window.trackOpenConnectPageEvent();
 
-	const upgradeButton = document.querySelector( '.elementor-pro-connect-promotion .elementor-box-action .button-upgrade' );
-
+	const upgradeButton = document.querySelector( '.button-upgrade' );
 	if ( upgradeButton ) {
 		upgradeButton.addEventListener( 'click', window.trackUpgradeNowClickEvent );
 	}
 
-	const connectButton = document.querySelector( '.elementor-license-box .button-primary[href*="elementor-connect"]' );
+	const connectButton = document.querySelector( '.elementor-license-box .button-primary[href*="elementor-connect-account"]' );
 	if ( connectButton ) {
 		connectButton.addEventListener( 'click', window.trackConnectAccountEvent );
 	}

@@ -53,10 +53,7 @@ export default function useConnectLinkConfig() {
 				$tempButton.elementorConnect( {
 					success: () => {
 						dispatchConnectClickEvent( 'accountConnected' );
-
-						setTimeout( () => {
-							extendedWindow.location.reload();
-						}, 200 );
+						extendedWindow.location.reload();
 					},
 				} );
 
