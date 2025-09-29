@@ -5,12 +5,11 @@ import { getUpdateUrl } from './utils';
 
 export default function useNavigateToDocument() {
 	return useCallback( async ( id: number ) => {
+		const url = getUpdateUrl( id );
 		await runCommand( 'editor/documents/switch', {
 			id,
 			setAsInitial: true,
 		} );
-		const url = getUpdateUrl( id );
-
 		history.replaceState( {}, '', url );
 	}, [] );
 }
