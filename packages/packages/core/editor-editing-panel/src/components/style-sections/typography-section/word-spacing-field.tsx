@@ -14,7 +14,7 @@ export const WordSpacingField = () => {
 	return (
 		<StylesField bind="word-spacing" propDisplayName={ WORD_SPACING_LABEL }>
 			<StylesFieldLayout label={ WORD_SPACING_LABEL } ref={ rowRef }>
-				<SizeControl anchorRef={ rowRef } />
+				<SizeControl anchorRef={ rowRef } min={ -Number.MAX_SAFE_INTEGER } />
 			</StylesFieldLayout>
 		</StylesField>
 	);
