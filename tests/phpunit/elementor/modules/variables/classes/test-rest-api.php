@@ -620,7 +620,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$response_data = $response->get_data();
 		$this->assertFalse( $response_data['success'] );
-		$this->assertEquals( 'atomic_operation_failed', $response_data['code'] );
+		$this->assertEquals( 'batch_duplicated_label', $response_data['code'] );
 		$this->assertEquals( 'Batch operation failed', $response_data['message'] );
 		$this->assertArrayHasKey( 'temp-fail', $response_data['data'] );
 		$this->assertEquals( 400, $response_data['data']['temp-fail']['status'] );
@@ -794,7 +794,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$response_data = $response->get_data();
 		$this->assertFalse( $response_data['success'] );
-		$this->assertEquals( 'atomic_operation_failed', $response_data['code'] );
+		$this->assertEquals( 'batch_duplicated_label', $response_data['code'] );
 
 		$this->assertArrayHasKey( 'temp-fail', $response_data['data'] );
 		$this->assertArrayHasKey( 'non-existent', $response_data['data'] );
