@@ -87,6 +87,7 @@ class Module extends BaseModule {
 			$file,
 			$raw_screen_shot,
 			$settings['include'],
+			$settings['customization']['content']['mediaFormat'] ?? 'link',
 		);
 
 		if ( is_wp_error( $kit ) ) {
