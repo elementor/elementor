@@ -42,12 +42,4 @@ export default class v4Panel extends BasePage {
 			await this.page.locator( `button[value="${ options.overflow }"]` ).click();
 		}
 	}
-
-	async setWidgetTextContent(
-		text: string,
-		inputName: 'Title' | 'Text' | 'Button text' = 'Title',
-	): Promise<void> {
-		await this.editor.openV2PanelTab( 'general' );
-		await this.page.locator( `[aria-label="${ inputName } control"]` ).locator( 'input' ).fill( text );
-	}
 }

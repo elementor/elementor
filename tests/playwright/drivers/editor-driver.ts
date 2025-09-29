@@ -22,7 +22,6 @@ export class EditorDriver {
 	private readonly pageInstance: Page;
 	private readonly wpAdminInstance: WpAdminPage;
 	private editorInstance: EditorPage;
-	private lastWidgetResult?: WidgetTestResult;
 
 	constructor( context: DriverContext ) {
 		this.browser = context.browser;
@@ -52,10 +51,6 @@ export class EditorDriver {
 
 	get page(): Page {
 		return this.pageInstance;
-	}
-
-	get lastWidget(): WidgetTestResult | undefined {
-		return this.lastWidgetResult;
 	}
 
 	async createNewPage( closeNavigator: boolean = false ): Promise<EditorDriver> {
