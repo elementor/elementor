@@ -51,38 +51,19 @@ export default function ExportComplete() {
 
 	useEffect( () => {
 		if ( exportedData.manifest ) {
-			let pages = '';
-
-			if ( includes.includes( 'pages' ) ) {
-				pages = analytics?.customization?.content?.includes( 'pages' ) ? 'partial' : 'all';
-			}
-
-			let postTypes = '';
-
-			if ( includes.includes( 'postTypes' ) ) {
-				postTypes = analytics?.customization?.content?.includes( 'customPostTypes' ) ? 'partial' : 'all';
-			}
-
-			let plugins = '';
-
-			if ( includes.includes( 'plugins' ) ) {
-				plugins = analytics?.customization?.plugins?.length ? 'partial' : 'all';
-			}
+			const contentCounts = getContentCounts();
 
 			AppsEventTracking.sendExportKitCustomization( {
 				kit_export_content: includes.includes( 'content' ),
 				kit_export_templates: includes.includes( 'templates' ),
 				kit_export_settings: includes.includes( 'settings' ),
 				kit_export_plugins: includes.includes( 'plugins' ),
-				kit_export_deselected: analytics?.customization,
+				kit_export_customization_modals: analytics?.customization,
 				kit_description: Boolean( kitInfo.description ),
-				kit_page_count: exportedData?.manifest?.content?.page ? Object.values( exportedData?.manifest?.content?.page ).length : 0,
-				kit_post_type_count: exportedData?.manifest?.content ? Object.keys( exportedData?.manifest?.content )
-					.filter( ( key ) => ! elementorAppConfig?.builtinWpPostTypes?.includes( key ) ).length : 0,
-				kit_post_count: exportedData?.manifest?.content?.post ? Object.values( exportedData?.manifest?.content?.post ).length : 0,
-				pages,
-				postTypes,
-				plugins,
+				kit_page_count: contentCounts.page || 0,
+				kit_post_count: contentCounts.post || 0,
+				kit_post_type_count: exportedData.manifest?.[ 'custom-post-type-title' ] ? Object.keys( exportedData.manifest?.[ 'custom-post-type-title' ] ).length : 0,
+				kit_source: kitInfo.source,
 			} );
 		}
 	}, [ includes, exportedData?.manifest, analytics?.customization, kitInfo.description ] );
@@ -160,32 +141,43 @@ export default function ExportComplete() {
 		return summaryParts.length > 0 ? summaryParts.join( ' | ' ) : __( 'No templates exported', 'elementor' );
 	};
 
+	const getContentCounts = () => {
+		const content = exportedData?.manifest?.content;
+		const wpContent = exportedData?.manifest?.[ 'wp-content' ];
+
+		const counts = {};
+
+		const countItems = ( [ docType, docs ] ) => {
+			const count = Object.keys( docs ).length;
+			if ( count > 0 ) {
+				counts[ docType ] = ( counts[ docType ] || 0 ) + count;
+			}
+		};
+
+		Object.entries( content || {} ).forEach( countItems );
+		Object.entries( wpContent || {} ).forEach( countItems );
+
+		return counts;
+	};
+
 	const getContentSummary = () => {
 		const content = exportedData?.manifest?.content;
 		const wpContent = exportedData?.manifest?.[ 'wp-content' ];
-		if ( ! content && ! wpContent ) {
+		const taxonomies = exportedData?.manifest?.taxonomies;
+
+		if ( ! content && ! wpContent && ! taxonomies ) {
 			return __( 'No content exported', 'elementor' );
 		}
 
 		const summaryTitles = elementorAppConfig[ 'import-export-customization' ]?.summaryTitles?.content || {};
+		const counts = getContentCounts();
 
 		const summaryPartsMap = {};
 
-		const getSummaryParts = ( [ docType, docs ] ) => {
+		Object.entries( counts ).forEach( ( [ docType, count ] ) => {
 			const label = summaryTitles[ docType ];
 			if ( ! label ) {
 				return;
-			}
-
-			let count = Object.keys( docs ).length;
-			if ( 0 === count ) {
-				return;
-			}
-
-			const existingPart = summaryPartsMap[ docType ];
-
-			if ( existingPart ) {
-				count += existingPart.count;
 			}
 
 			const title = count > 1 ? label.plural : label.single;
@@ -193,10 +185,24 @@ export default function ExportComplete() {
 				count,
 				title,
 			};
-		};
+		} );
 
-		Object.entries( content || {} ).forEach( getSummaryParts );
-		Object.entries( wpContent || {} ).forEach( getSummaryParts );
+		if ( Object.keys( taxonomies || {} ).length ) {
+			const allTaxonomiesSet = new Set();
+
+			Object.values( taxonomies ).forEach( ( postTypeTaxonomies ) => {
+				postTypeTaxonomies.forEach( ( taxonomy ) => {
+					allTaxonomiesSet.add( taxonomy.name );
+				} );
+			} );
+
+			if ( allTaxonomiesSet.size ) {
+				summaryPartsMap.taxonomies = {
+					count: allTaxonomiesSet.size,
+					title: __( 'Taxonomies', 'elementor' ),
+				};
+			}
+		}
 
 		const summaryParts = Object.values( summaryPartsMap ).map( ( { count, title } ) => `${ count } ${ title }` );
 
