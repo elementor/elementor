@@ -63,7 +63,8 @@ window.trackProInstallEvent = function() {
 document.addEventListener( 'DOMContentLoaded', () => {
 	window.trackOpenConnectPageEvent();
 
-	const upgradeButton = document.querySelector( '.elementor-pro-connect-promotion .button-upgrade[href*="go-pro-connect-account-screen"]' );
+	const upgradeButton = document.querySelector( '.elementor-pro-connect-promotion .elementor-box-action .button-upgrade' );
+
 	if ( upgradeButton ) {
 		upgradeButton.addEventListener( 'click', window.trackUpgradeNowClickEvent );
 	}
