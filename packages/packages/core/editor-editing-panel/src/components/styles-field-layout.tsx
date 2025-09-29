@@ -20,7 +20,7 @@ export const StylesFieldLayout = React.forwardRef< HTMLDivElement, StylesFieldLa
 const Row = React.forwardRef< HTMLDivElement, { label: string; children: React.ReactNode } >(
 	( { label, children }, ref ) => {
 		return (
-			<Grid container gap={ 2 } alignItems="center" flexWrap="nowrap" ref={ ref }>
+			<Grid container gap={ 2 } alignItems="center" flexWrap="nowrap" ref={ ref } aria-label={`${label} control`}>
 				<Grid item xs={ 6 }>
 					<ControlLabel>{ label }</ControlLabel>
 				</Grid>
