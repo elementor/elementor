@@ -194,7 +194,7 @@ export default function ImportComplete() {
 	}, [] );
 
 	useEffect( () => {
-		AppsEventTracking.sendExportKitCustomization( {
+		AppsEventTracking.sendImportKitCustomization( {
 			kit_source: data?.kitUploadParams?.source || 'file',
 			kit_import_content: includes.includes( 'content' ),
 			kit_import_templates: includes.includes( 'templates' ),

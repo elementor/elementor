@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -8,6 +8,21 @@ import { SettingSection } from './customization-setting-section';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { useKitCustomizationCustomPostTypes } from '../hooks/use-kit-customization-custom-post-types';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
+import { transformValueForAnalytics } from '../utils/analytics-transformer';
+
+const transformAnalyticsData = ( payload, customPostTypes ) => {
+	const optionsArray = [
+		{ key: 'customPostTypes', options: customPostTypes },
+	];
+
+	const transformed = {};
+
+	for ( const [ key, value ] of Object.entries( payload ) ) {
+		transformed[ key ] = transformValueForAnalytics( key, value, optionsArray );
+	}
+
+	return transformed;
+};
 
 export function KitContentCustomizationDialog( {
 	open,
@@ -18,8 +33,6 @@ export function KitContentCustomizationDialog( {
 	isOldElementorVersion,
 } ) {
 	const { customPostTypes } = useKitCustomizationCustomPostTypes( { data } );
-
-	const unselectedValues = useRef( data.analytics?.customization?.content || [] );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.content ) {
@@ -72,7 +85,10 @@ export function KitContentCustomizationDialog( {
 			open={ open }
 			title={ __( 'Edit content', 'elementor' ) }
 			handleClose={ handleClose }
-			handleSaveChanges={ () => handleSaveChanges( 'content', settings, true, unselectedValues.current ) }
+			handleSaveChanges={ () => {
+				const transformedAnalytics = transformAnalyticsData( settings, customPostTypes );
+				handleSaveChanges( 'content', settings, true, transformedAnalytics );
+			} }
 		>
 			<Stack gap={ 2 }>
 				{ isOldElementorVersion && (
@@ -89,16 +105,6 @@ export function KitContentCustomizationDialog( {
 						settingKey="customPostTypes"
 						title={ __( 'Custom post types', 'elementor' ) }
 						onSettingChange={ ( selectedCustomPostTypes ) => {
-							const filteredUnselectedValues = unselectedValues.current.filter( ( value ) => ! customPostTypes.includes( value ) );
-							const isAllChecked = selectedCustomPostTypes.length === customPostTypes.length;
-
-							unselectedValues.current = isAllChecked
-								? filteredUnselectedValues.filter( ( value ) => value !== 'customPostTypes' )
-								: [
-									...filteredUnselectedValues,
-									...customPostTypes.filter( ( cpt ) => ! selectedCustomPostTypes.includes( cpt ) ).map( ( { value } ) => value ),
-									'customPostTypes',
-								];
 							handleSettingsChange( 'customPostTypes', selectedCustomPostTypes );
 						} }
 						settings={ settings.customPostTypes }
