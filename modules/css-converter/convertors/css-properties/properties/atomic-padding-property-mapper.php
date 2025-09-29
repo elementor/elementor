@@ -4,6 +4,7 @@ namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -99,8 +100,77 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		return [
-			$logical_side => $parsed_size,
+			$logical_side => $this->create_size_prop( $parsed_size ),
 		];
+	}
+
+	private function create_size_prop( array $size_value ): array {
+		return Size_Prop_Type::make()->generate( $size_value );
+	}
+
+	protected function parse_shorthand_to_logical_properties( string $value ): ?array {
+		$values = preg_split( '/\s+/', trim( $value ) );
+		$count = count( $values );
+
+		switch ( $count ) {
+			case 1:
+				$parsed = $this->parse_size_value( $values[0] );
+				if ( null === $parsed ) {
+					return $this->handle_unparseable_shorthand();
+				}
+				$size_prop = $this->create_size_prop( $parsed );
+				return [
+					'block-start' => $size_prop,
+					'inline-end' => $size_prop,
+					'block-end' => $size_prop,
+					'inline-start' => $size_prop,
+				];
+
+			case 2:
+				$vertical = $this->parse_size_value( $values[0] );
+				$horizontal = $this->parse_size_value( $values[1] );
+				if ( null === $vertical || null === $horizontal ) {
+					return $this->handle_unparseable_shorthand();
+				}
+				return [
+					'block-start' => $this->create_size_prop( $vertical ),
+					'inline-end' => $this->create_size_prop( $horizontal ),
+					'block-end' => $this->create_size_prop( $vertical ),
+					'inline-start' => $this->create_size_prop( $horizontal ),
+				];
+
+			case 3:
+				$top = $this->parse_size_value( $values[0] );
+				$horizontal = $this->parse_size_value( $values[1] );
+				$bottom = $this->parse_size_value( $values[2] );
+				if ( null === $top || null === $horizontal || null === $bottom ) {
+					return $this->handle_unparseable_shorthand();
+				}
+				return [
+					'block-start' => $this->create_size_prop( $top ),
+					'inline-end' => $this->create_size_prop( $horizontal ),
+					'block-end' => $this->create_size_prop( $bottom ),
+					'inline-start' => $this->create_size_prop( $horizontal ),
+				];
+
+			case 4:
+				$block_start = $this->parse_size_value( $values[0] );
+				$inline_end = $this->parse_size_value( $values[1] );
+				$block_end = $this->parse_size_value( $values[2] );
+				$inline_start = $this->parse_size_value( $values[3] );
+				if ( null === $block_start || null === $inline_end || null === $block_end || null === $inline_start ) {
+					return $this->handle_unparseable_shorthand();
+				}
+				return [
+					'block-start' => $this->create_size_prop( $block_start ),
+					'inline-end' => $this->create_size_prop( $inline_end ),
+					'block-end' => $this->create_size_prop( $block_end ),
+					'inline-start' => $this->create_size_prop( $inline_start ),
+				];
+
+			default:
+				return $this->handle_invalid_shorthand();
+		}
 	}
 
 	private function parse_logical_shorthand( string $value, string $axis ): ?array {
@@ -113,9 +183,10 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 				return null;
 			}
 			
+			$size_prop = $this->create_size_prop( $parsed );
 			return [
-				$axis . '-start' => $parsed,
-				$axis . '-end' => $parsed,
+				$axis . '-start' => $size_prop,
+				$axis . '-end' => $size_prop,
 			];
 		}
 
@@ -127,8 +198,8 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 			}
 			
 			return [
-				$axis . '-start' => $start,
-				$axis . '-end' => $end,
+				$axis . '-start' => $this->create_size_prop( $start ),
+				$axis . '-end' => $this->create_size_prop( $end ),
 			];
 		}
 

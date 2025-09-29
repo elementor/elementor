@@ -39,7 +39,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 	} );
 
 	test('should convert negative margin values', async ({ page, request }) => {
-		const html = '<div style="margin: -20px;">Negative margin content</div>';
+		const html = '<div><p style="margin: -20px;">Negative margin content</p></div>';
 		
 		const apiResult = await cssHelper.convertHtmlWithCss(request, html);
 		
@@ -71,7 +71,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 	});
 
 	test('should convert margin shorthand with mixed values', async ({ page, request }) => {
-		const html = '<div style="margin: 10px -20px 30px -40px;">Mixed margin values</div>';
+		const html = '<div><p style="margin: 10px -20px 30px -40px;">Mixed margin values</p></div>';
 		
 		const apiResult = await cssHelper.convertHtmlWithCss(request, html);
 		
@@ -103,7 +103,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 	});
 
 	test('should convert margin-inline properties', async ({ page, request }) => {
-		const html = '<div style="margin-inline: 10px 30px;">Inline margin dual</div>';
+		const html = '<div><p style="margin-inline: 10px 30px;">Inline margin dual</p></div>';
 		
 		const apiResult = await cssHelper.convertHtmlWithCss(request, html);
 		

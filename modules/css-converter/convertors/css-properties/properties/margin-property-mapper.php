@@ -255,10 +255,14 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$result = [];
 		
 		foreach ( $dimensions as $logical_property => $size_data ) {
-			$result[ $logical_property ] = Size_Prop_Type::make()->generate( $size_data );
+			$result[ $logical_property ] = $this->create_size_prop( $size_data );
 		}
 
 		return $result;
+	}
+
+	private function create_size_prop( array $size_value ): array {
+		return Size_Prop_Type::make()->generate( $size_value );
 	}
 
 	protected function parse_size_value( string $value ): array {

@@ -106,7 +106,7 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$logical_property = $this->get_logical_property_name( $property );
 
 		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
-		return Size_Prop_Type::make()->generate( $parsed_size );
+		return $this->create_size_prop( $parsed_size );
 	}
 
 	private function map_shorthand_property( string $property, $value ): ?array {
@@ -125,7 +125,7 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
-		return Size_Prop_Type::make()->generate( $parsed_size );
+		return $this->create_size_prop( $parsed_size );
 	}
 
 	private function get_logical_property_name( string $property ): string {
@@ -221,5 +221,9 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 			'auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer'
 		];
 		return in_array( strtolower( $value ), $keywords, true );
+	}
+
+	private function create_size_prop( array $size_value ): array {
+		return Size_Prop_Type::make()->generate( $size_value );
 	}
 }
