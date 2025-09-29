@@ -51,15 +51,15 @@ export const FONT_SIZES = {
 };
 
 export const SPACING_VALUES = {
-	POSITIVE: [ 1, 2.5, 5 ],
-	NEGATIVE: [ -1, -2.5, -5 ],
+	POSITIVE: [ 1, 5.5 ],
+	NEGATIVE: [ -1, -5.5 ],
 	UNITS: [ 'px', 'em', 'rem', 'vw', 'vh', '%' ],
 };
 
 export async function setupWidgetWithTypography(
 	driver: EditorDriver,
 	widgetType: string,
-	options: { expandSection?: boolean } = {},
+	expandSection = true,
 ): Promise<{ containerId: string; widgetId: string }> {
 	const containerId = await driver.editor.addElement( { elType: 'container' }, 'document' );
 	const widgetId = await driver.editor.addWidget( { widgetType, container: containerId } );
@@ -67,7 +67,7 @@ export async function setupWidgetWithTypography(
 	await driver.editor.openV2PanelTab( 'style' );
 	await driver.editor.openV2Section( 'typography' );
 
-	if ( options.expandSection ) {
+	if ( expandSection ) {
 		await driver.editor.v4Panel.style.clickShowMore( STYLE_SECTIONS.TYPOGRAPHY );
 	}
 

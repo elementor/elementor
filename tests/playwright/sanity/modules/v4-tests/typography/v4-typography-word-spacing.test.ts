@@ -25,9 +25,7 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 	} );
 
 	test.afterAll( async () => {
-		if ( driver ) {
-			await driver.close();
-		}
+		await driver.wpAdmin.resetExperiments();
 	} );
 
 	test.beforeEach( async () => {
@@ -38,7 +36,7 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 		const widget = WIDGET_CONFIGS.HEADING;
 
 		await test.step( 'Verify word spacing control is present and functional', async () => {
-			await setupWidgetWithTypography( driver, widget.type, { expandSection: true } );
+			await setupWidgetWithTypography( driver, widget.type );
 
 			await driver.editor.v4Panel.style.setSpacingValue( 'Word spacing', 10, 'px' );
 			await verifySpacingEditor( driver, widget.selector, 10, 'px', 'wordSpacing' );
@@ -46,13 +44,11 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 
 		await test.step( 'Reset and test negative word spacing values', async () => {
 			await driver.createNewPage( true );
-			await setupWidgetWithTypography( driver, widget.type, { expandSection: true } );
+			await setupWidgetWithTypography( driver, widget.type );
 
 			for ( const value of WORD_SPACING_VALUES.NEGATIVE ) {
 				await driver.editor.v4Panel.style.setSpacingValue( 'Word spacing', value, 'px' );
-				// Elementor doesn't support negative word spacing values in UI
-				// So we verify that the value remains at normal (0) instead
-				await verifySpacingEditor( driver, widget.selector, 0, 'px', 'wordSpacing' );
+				await verifySpacingEditor( driver, widget.selector, value, 'px', 'wordSpacing' );
 			}
 		} );
 	} );
@@ -60,7 +56,7 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 	test( 'Word spacing for button', async () => {
 		await test.step( 'Test word spacing across different widget types', async () => {
 			const widget = WIDGET_CONFIGS.BUTTON;
-			await setupWidgetWithTypography( driver, widget.type, { expandSection: true } );
+			await setupWidgetWithTypography( driver, widget.type );
 
 			const testValue = 2.5;
 			const testUnit = 'px';
@@ -75,7 +71,7 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 			const testValue = 3;
 			const testUnit = 'px';
 
-			await setupWidgetWithTypography( driver, widget.type, { expandSection: true } );
+			await setupWidgetWithTypography( driver, widget.type );
 			await driver.editor.v4Panel.style.setSpacingValue( 'Word spacing', testValue, testUnit );
 
 			await verifySpacingEditor( driver, widget.selector, testValue, testUnit, 'wordSpacing' );
@@ -99,7 +95,7 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 	test( 'Word spacing with different units', async () => {
 		await test.step( 'Test word spacing with EM units', async () => {
 			const widget = WIDGET_CONFIGS.HEADING;
-			await setupWidgetWithTypography( driver, widget.type, { expandSection: true } );
+			await setupWidgetWithTypography( driver, widget.type );
 
 			await driver.editor.v4Panel.style.setSpacingValue( 'Word spacing', 3, 'em' );
 			await verifySpacingEditor( driver, widget.selector, 3, 'em', 'wordSpacing' );
@@ -108,7 +104,7 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 		await test.step( 'Test word spacing with REM units', async () => {
 			const widget = WIDGET_CONFIGS.BUTTON;
 			await driver.createNewPage( true );
-			await setupWidgetWithTypography( driver, widget.type, { expandSection: true } );
+			await setupWidgetWithTypography( driver, widget.type );
 
 			await driver.editor.v4Panel.style.setSpacingValue( 'Word spacing', 5, 'rem' );
 			await verifySpacingEditor( driver, widget.selector, 5, 'rem', 'wordSpacing' );
@@ -117,7 +113,7 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 		await test.step( 'Test word spacing with VW units', async () => {
 			const widget = WIDGET_CONFIGS.PARAGRAPH;
 			await driver.createNewPage( true );
-			await setupWidgetWithTypography( driver, widget.type, { expandSection: true } );
+			await setupWidgetWithTypography( driver, widget.type );
 
 			await driver.editor.v4Panel.style.setSpacingValue( 'Word spacing', 7, 'vw' );
 			await verifySpacingEditor( driver, widget.selector, 7, 'vw', 'wordSpacing' );
@@ -126,7 +122,7 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 		await test.step( 'Test word spacing with percentage units', async () => {
 			const widget = WIDGET_CONFIGS.HEADING;
 			await driver.createNewPage( true );
-			await setupWidgetWithTypography( driver, widget.type, { expandSection: true } );
+			await setupWidgetWithTypography( driver, widget.type );
 
 			await driver.editor.v4Panel.style.setSpacingValue( 'Word spacing', 100, '%' );
 			// Verify that it falls back to normal (0) since % is not supported
