@@ -250,7 +250,6 @@ class Elementor_Content extends Import_Runner_Base {
 		];
 	}
 
-
 	private function map_imported_post_id( $original_id, $import_result ) {
 		if ( static::IMPORT_STATUS_SUCCEEDED !== $import_result['status'] ) {
 			return;
@@ -270,6 +269,7 @@ class Elementor_Content extends Import_Runner_Base {
 			if ( isset( $this->processed_posts[ $child_id ] ) ) {
 				$local_child_id = $this->processed_posts[ $child_id ];
 			}
+
 			if ( isset( $this->processed_posts[ $parent_id ] ) ) {
 				$local_parent_id = $this->processed_posts[ $parent_id ];
 			}
