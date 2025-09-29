@@ -1244,11 +1244,9 @@ class WP_Import extends \WP_Importer {
 		foreach ( $this->menu_item_orphans as $child_id => $parent_id ) {
 			$local_child_id = 0;
 			$local_parent_id = 0;
-
 			if ( isset( $this->processed_menu_items[ $child_id ] ) ) {
 				$local_child_id = $this->processed_menu_items[ $child_id ];
 			}
-
 			if ( isset( $this->processed_menu_items[ $parent_id ] ) ) {
 				$local_parent_id = $this->processed_menu_items[ $parent_id ];
 			}
