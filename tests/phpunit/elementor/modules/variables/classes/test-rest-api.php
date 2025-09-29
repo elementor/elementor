@@ -777,11 +777,12 @@ class Test_Rest_Api extends Elementor_Test_Base {
 					],
 				],
 				[
-					'type' => 'update',
-					'id' => 'non-existent',
+					'type' => 'create',
 					'variable' => [
-						'label' => 'Updated',
-						'value' => '#0000FF',
+						'id' => 'temp-fail1',
+						'type' => Font_Variable_Prop_Type::get_key(),
+						'label' => 'something',
+						'value' => '',
 					],
 				],
 			],
