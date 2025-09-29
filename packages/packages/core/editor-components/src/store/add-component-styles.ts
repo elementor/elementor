@@ -13,25 +13,29 @@ export async function addComponentStyles( ids: ComponentId[] ) {
 		return;
 	}
 
-	const data = selectData( getState() );
+	const knownComponents = selectData( getState() );
 
-	const newDocumentsConfigs = await Promise.all(
-		ids.filter( ( id ) => ! data[ id ] ).map( async ( id ) => [ id, await load( id ) ] as const )
-	);
+	const newComponents = await loadComponents( ids.filter( ( id ) => ! knownComponents[ id ] ) );
 
+	addStyles( newComponents );
+
+	const componentIds = newComponents.flatMap( ( [ , data ] ) => getComponentIds( data.elements ?? [] ) );
+
+	if ( componentIds.length ) {
+		addComponentStyles( Array.from( new Set( componentIds ) ) );
+	}
+}
+
+async function loadComponents( ids: number[] ) {
+	return Promise.all( ids.map( async ( id ) => [ id, await load( id ) ] as const ) );
+}
+
+function addStyles( data: ( readonly [ ComponentId, V1ElementData ] )[] ) {
 	const styles = Object.fromEntries(
-		newDocumentsConfigs.map( ( [ id, config ] ) => [ id, extractStyles( config ) ] )
+		data.map( ( [ componentId, componentData ] ) => [ componentId, extractStyles( componentData ) ] )
 	);
 
 	dispatch( slice.actions.add( styles ) );
-
-	const otherComponentIds = newDocumentsConfigs.flatMap( ( [ , config ] ) =>
-		getComponentIds( config.elements ?? [] )
-	);
-
-	if ( otherComponentIds.length ) {
-		addComponentStyles( Array.from( new Set( otherComponentIds ) ) );
-	}
 }
 
 function extractStyles( element: V1ElementData ): Array< StyleDefinition > {

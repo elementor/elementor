@@ -51,7 +51,10 @@ describe( 'addComponentStyles', () => {
 
 	it( 'should handle document without components', async () => {
 		// Arrange
-		const documentWithoutComponents = createMockElementData( {} );
+		const DOC_ID = 1;
+		const documentWithoutComponents = createMockElementData( {
+			id: String( DOC_ID ),
+		} );
 
 		jest.mocked( load ).mockResolvedValue( documentWithoutComponents );
 
@@ -60,7 +63,7 @@ describe( 'addComponentStyles', () => {
 
 		// Assert
 		expect( load ).toHaveBeenCalledTimes( 1 );
-		expect( load ).toHaveBeenCalledWith( 1 );
+		expect( load ).toHaveBeenCalledWith( DOC_ID );
 	} );
 
 	it( 'should handle document with one component', async () => {
@@ -84,14 +87,10 @@ describe( 'addComponentStyles', () => {
 			elements: [ createMockComponentWidget( COMP_ID ) ],
 		} );
 
-		const responses = {
+		mockLoad( {
 			[ DOC_ID ]: documentWithOneComponent,
 			[ COMP_ID ]: componentContent,
-		};
-
-		jest.mocked( load ).mockImplementation( ( id ) =>
-			Promise.resolve( responses[ id as keyof typeof responses ] )
-		);
+		} );
 
 		// Act
 		addComponentStyles( [ DOC_ID ] );
@@ -148,15 +147,11 @@ describe( 'addComponentStyles', () => {
 			elements: [ createMockComponentWidget( COMP_ID ) ],
 		} );
 
-		const responses = {
+		mockLoad( {
 			[ DOC_ID ]: documentWithOneComponent,
 			[ COMP_ID ]: componentContent,
 			[ NESTED_COMP_ID ]: nestedComponentContent,
-		};
-
-		jest.mocked( load ).mockImplementation( ( id ) =>
-			Promise.resolve( responses[ id as keyof typeof responses ] )
-		);
+		} );
 
 		// Act
 		addComponentStyles( [ DOC_ID ] );
@@ -195,4 +190,8 @@ function createMockComponentWidget( componentId: number ): V1ElementData {
 			},
 		},
 	} );
+}
+
+function mockLoad( responses: Record< number, V1ElementData > ) {
+	jest.mocked( load ).mockImplementation( ( id ) => Promise.resolve( responses[ id as keyof typeof responses ] ) );
 }
