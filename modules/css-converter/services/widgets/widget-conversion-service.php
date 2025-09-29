@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\Modules\CssConverter\Services\Widgets;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -147,12 +148,8 @@ class Widget_Conversion_Service {
 		$conversion_log['css_processing'] = $css_processing_result['stats'];
 		
 		// Debug logging for CSS processing result
-		error_log( "Widget Conversion Service: CSS processing result keys = " . implode(', ', array_keys($css_processing_result)) );
 		if ( isset( $css_processing_result['global_classes'] ) ) {
-			error_log( "Widget Conversion Service: global_classes count = " . count($css_processing_result['global_classes']) );
-			error_log( "Widget Conversion Service: global_classes = " . wp_json_encode($css_processing_result['global_classes']) );
 		} else {
-			error_log( "Widget Conversion Service: global_classes key missing from CSS processing result" );
 		}
 
 		// Step 6: Apply CSS styles to widgets based on specificity
@@ -208,13 +205,11 @@ class Widget_Conversion_Service {
 		// Extract inline CSS from style attributes of parsed HTML elements
 		// Only create CSS rules if we're creating global classes
 		if ( ! empty( $elements ) && $create_global_classes ) {
-			error_log( "Widget Conversion Service: Creating CSS rules from inline styles (createGlobalClasses: true)" );
 			$inline_css = $this->extract_inline_css_from_elements( $elements );
 			if ( ! empty( $inline_css ) ) {
 				$all_css .= $inline_css . "\n";
 			}
 		} elseif ( ! empty( $elements ) && ! $create_global_classes ) {
-			error_log( "Widget Conversion Service: Skipping CSS rule creation from inline styles (createGlobalClasses: false)" );
 		}
 
 		// Fetch external CSS files using CSS processor
@@ -232,7 +227,6 @@ class Widget_Conversion_Service {
 
 		foreach ( $elements as &$element ) {
 			if ( ! empty( $element['inline_css'] ) ) {
-				error_log( "🔍 CSS-EXTRACTION DEBUG: Found inline CSS on element '{$element['tag']}': " . json_encode( array_keys( $element['inline_css'] ) ) );
 				
 				$element_counter++;
 				
@@ -245,7 +239,6 @@ class Widget_Conversion_Service {
 					$value = $style_data['value'];
 					$important = $style_data['important'] ? ' !important' : '';
 					$css_rules[] = "  {$property}: {$value}{$important};";
-					error_log( "🔍 CSS-EXTRACTION DEBUG: Processing CSS property='$property', value='$value'" );
 				}
 				
 				if ( ! empty( $css_rules ) ) {
@@ -253,10 +246,8 @@ class Widget_Conversion_Service {
 					
 					// Store the class name in the element for later reference
 					$element['generated_class'] = $class_name;
-					error_log( "✅ CSS-EXTRACTION DEBUG: Set generated_class '{$class_name}' on element with tag '{$element['tag']}'" );
 				}
 			} else {
-				error_log( "🔍 CSS-EXTRACTION DEBUG: No inline CSS found on element '{$element['tag']}'" );
 			}
 			
 			// Process child elements recursively
@@ -289,8 +280,6 @@ class Widget_Conversion_Service {
 		// Apply inline CSS directly to widgets when createGlobalClasses is false
 		// This bypasses the CSS rule matching and applies styles directly
 		
-		error_log( "Widget Conversion Service: INLINE STYLES METHOD CALLED - widgets count: " . count($widgets) . ", elements count: " . count($elements) );
-		error_log( "Widget Conversion Service: Applying inline styles directly to widgets" );
 		
 		// Apply inline styles recursively through the element/widget hierarchy
 		return $this->apply_inline_styles_recursive( $widgets, $elements );
@@ -298,18 +287,13 @@ class Widget_Conversion_Service {
 
 	private function apply_inline_styles_recursive( $widgets, $elements ) {
 		// Match widgets to elements by hierarchy position
-		error_log( "Widget Conversion Service: apply_inline_styles_recursive called with " . count($widgets) . " widgets and " . count($elements) . " elements" );
 		
 		foreach ( $widgets as $widget_index => &$widget ) {
-			error_log( "Widget Conversion Service: Processing widget {$widget_index}" );
 			
 			if ( isset( $elements[ $widget_index ] ) ) {
 				$element = $elements[ $widget_index ];
-				error_log( "Widget Conversion Service: Element {$widget_index} found, inline_css count: " . (isset($element['inline_css']) ? count($element['inline_css']) : 0) );
 				
 				if ( ! empty( $element['inline_css'] ) ) {
-					error_log( "Widget Conversion Service: Applying " . count( $element['inline_css'] ) . " inline styles to widget {$widget_index}" );
-					error_log( "Widget Conversion Service: Element inline_css: " . wp_json_encode($element['inline_css']) );
 					
 					// Convert inline CSS to computed styles format
 					$inline_computed_styles = $this->convert_inline_css_to_computed_styles( $element['inline_css'] );
@@ -323,7 +307,6 @@ class Widget_Conversion_Service {
 					$existing_computed = $widget['applied_styles']['computed_styles'] ?? [];
 					$widget['applied_styles']['computed_styles'] = array_merge( $existing_computed, $inline_computed_styles );
 					
-					error_log( "Widget Conversion Service: Widget {$widget_index} now has " . count( $widget['applied_styles']['computed_styles'] ) . " computed styles" );
 				}
 				
 				// Process children recursively
@@ -341,28 +324,155 @@ class Widget_Conversion_Service {
 		// Convert inline CSS array to the computed styles format expected by widget creator
 		$computed_styles = [];
 		
-		foreach ( $inline_css as $property => $style_data ) {
-			$value = $style_data['value'];
-			$important = $style_data['important'];
-			
-			// Use the property mapper to convert to atomic format with property name mapping
-			$conversion_result = $this->property_conversion_service->convert_property_to_v4_atomic_with_name( $property, $value );
-			
-			if ( $conversion_result ) {
-				// Widget creator expects computed_styles as associative array: property_name => atomic_value
-				$property_name = $conversion_result['property_name'];
-				$atomic_value = $conversion_result['converted_value'];
-				
-				error_log( "Widget Conversion Service: Converting inline CSS {$property}:{$value} -> {$property_name}:" . wp_json_encode($atomic_value) );
-				
-				$computed_styles[ $property_name ] = $atomic_value;
-				
-				// TODO: Handle important flag and source tracking if needed in the future
+		// ✅ DEBUG: Log grouped properties
+		$grouped_properties = $this->group_margin_properties( $inline_css );
+		
+		// ✅ BRILLIANT SUGGESTION: Pre-group margin properties before conversion
+		// This way we send all margin properties together instead of individually
+		foreach ( $grouped_properties as $property_group => $properties ) {
+			if ( 'margin' === $property_group ) {
+				// Handle grouped margin properties - convert them all together
+				$margin_result = $this->convert_grouped_margin_properties( $properties );
+				if ( $margin_result ) {
+					$computed_styles['margin'] = $margin_result;
+				}
+			} else {
+				// Handle individual non-margin properties as before
+				foreach ( $properties as $property => $style_data ) {
+					$value = $style_data['value'];
+					$important = $style_data['important'];
+					
+					$conversion_result = $this->property_conversion_service->convert_property_to_v4_atomic_with_name( $property, $value );
+					
+					if ( $conversion_result ) {
+						$property_name = $conversion_result['property_name'];
+						$atomic_value = $conversion_result['converted_value'];
+						$computed_styles[ $property_name ] = $atomic_value;
+					}
+				}
 			}
 		}
 		
-		error_log( "Widget Conversion Service: Final computed_styles: " . wp_json_encode($computed_styles) );
 		return $computed_styles;
+	}
+
+	/**
+	 * Group margin properties together for combined conversion
+	 */
+	private function group_margin_properties( $inline_css ): array {
+		$margin_properties = [
+			'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+			'margin-block', 'margin-block-start', 'margin-block-end',
+			'margin-inline', 'margin-inline-start', 'margin-inline-end'
+		];
+		
+		$grouped = [
+			'margin' => [],
+			'other' => []
+		];
+		
+		foreach ( $inline_css as $property => $style_data ) {
+			if ( in_array( $property, $margin_properties, true ) ) {
+				$grouped['margin'][ $property ] = $style_data;
+			} else {
+				$grouped['other'][ $property ] = $style_data;
+			}
+		}
+		
+		return $grouped;
+	}
+
+	/**
+	 * Convert grouped margin properties as a single combined operation
+	 */
+	private function convert_grouped_margin_properties( $margin_properties ): ?array {
+		if ( empty( $margin_properties ) ) {
+			return null;
+		}
+		$margin_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Margin_Property_Mapper();
+		$combined_dimensions = [];
+		foreach ( $margin_properties as $property => $style_data ) {
+			$value = $style_data['value'];
+			$logical_direction = $this->map_margin_property_to_logical_direction( $property );
+			if ( $logical_direction ) {
+				$size_data = $this->parse_margin_size_value( $value );
+				if ( $size_data ) {
+					$combined_dimensions[ $logical_direction ] = $size_data;
+				}
+			}
+		}
+		if ( empty( $combined_dimensions ) ) {
+			return null;
+		}
+		return $this->create_combined_dimensions_structure( $combined_dimensions );
+	}
+
+	/**
+	 * Map margin property to logical direction
+	 */
+	private function map_margin_property_to_logical_direction( string $property ): ?string {
+		$mapping = [
+			'margin-top' => 'block-start',
+			'margin-right' => 'inline-end',
+			'margin-bottom' => 'block-end',
+			'margin-left' => 'inline-start',
+			'margin-block-start' => 'block-start',
+			'margin-block-end' => 'block-end',
+			'margin-inline-start' => 'inline-start',
+			'margin-inline-end' => 'inline-end',
+		];
+		
+		return $mapping[ $property ] ?? null;
+	}
+
+	/**
+	 * Parse margin size value (simplified version of margin mapper logic)
+	 */
+	private function parse_margin_size_value( string $value ): ?array {
+		$value = trim( $value );
+		
+		if ( empty( $value ) ) {
+			return [ 'size' => 0.0, 'unit' => 'px' ];
+		}
+		
+		// Handle CSS keywords
+		$keywords = ['auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer'];
+		if ( in_array( strtolower( $value ), $keywords, true ) ) {
+			return [ 'size' => $value, 'unit' => 'custom' ];
+		}
+		
+		// Parse numeric value with unit
+		if ( preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax)?$/i', $value, $matches ) ) {
+			$size = (float) $matches[1];
+			$unit = $matches[2] ?? 'px';
+			return [ 'size' => $size, 'unit' => strtolower( $unit ) ];
+		}
+		
+		if ( '0' === $value ) {
+			return [ 'size' => 0.0, 'unit' => 'px' ];
+		}
+		
+		// Fallback for invalid values
+		return [ 'size' => 0.0, 'unit' => 'px' ];
+	}
+
+	/**
+	 * Create combined Dimensions_Prop_Type structure
+	 */
+	private function create_combined_dimensions_structure( array $dimensions ): array {
+		$result = [];
+		foreach ( $dimensions as $logical_property => $size_data ) {
+			if ( null !== $size_data ) {
+				$result[ $logical_property ] = [
+					'$$type' => 'size',
+					'value' => $size_data
+				];
+			}
+		}
+		return [
+			'$$type' => 'dimensions',
+			'value' => $result
+		];
 	}
 
 }

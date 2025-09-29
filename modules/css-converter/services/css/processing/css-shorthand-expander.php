@@ -164,8 +164,8 @@ class CSS_Shorthand_Expander {
 	}
 
 	/**
-	 * Expand margin-inline shorthand to physical properties
-	 * margin-inline: 10px 30px -> margin-left: 10px, margin-right: 30px
+	 * Expand margin-inline shorthand to logical properties
+	 * margin-inline: 10px 30px -> margin-inline-start: 10px, margin-inline-end: 30px
 	 */
 	private static function expand_margin_inline_shorthand( $value ): array {
 		if ( empty( $value ) || ! is_string( $value ) ) {
@@ -184,14 +184,14 @@ class CSS_Shorthand_Expander {
 		$end_value = $count > 1 ? $parts[1] : $start_value;
 
 		return [
-			'margin-left' => $start_value,   // inline-start -> left
-			'margin-right' => $end_value,    // inline-end -> right
+			'margin-inline-start' => $start_value,
+			'margin-inline-end' => $end_value,
 		];
 	}
 
 	/**
-	 * Expand margin-block shorthand to physical properties
-	 * margin-block: 10px 30px -> margin-top: 10px, margin-bottom: 30px
+	 * Expand margin-block shorthand to logical properties
+	 * margin-block: 10px 30px -> margin-block-start: 10px, margin-block-end: 30px
 	 */
 	private static function expand_margin_block_shorthand( $value ): array {
 		if ( empty( $value ) || ! is_string( $value ) ) {
@@ -210,8 +210,8 @@ class CSS_Shorthand_Expander {
 		$end_value = $count > 1 ? $parts[1] : $start_value;
 
 		return [
-			'margin-top' => $start_value,     // block-start -> top
-			'margin-bottom' => $end_value,    // block-end -> bottom
+			'margin-block-start' => $start_value,
+			'margin-block-end' => $end_value,
 		];
 	}
 }

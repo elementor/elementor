@@ -568,7 +568,12 @@ class Widget_Creator {
 								$property_key = $property_data['mapped_property'] ?? $property_data['original_property'] ?? 'unknown';
 								
 								// Add the converted property to props using the correct mapped key
-								$props[ $property_key ] = $converted;
+								// Check if we need to merge Dimensions_Prop_Type structures
+								if ( isset( $props[ $property_key ] ) && $this->is_dimensions_prop_type( $converted ) && $this->is_dimensions_prop_type( $props[ $property_key ] ) ) {
+									$props[ $property_key ] = $this->merge_dimensions_prop_types( $props[ $property_key ], $converted );
+								} else {
+									$props[ $property_key ] = $converted;
+								}
 							}
 						}
 					}
@@ -596,6 +601,26 @@ class Widget_Creator {
 					'custom_css' => null,
 				],
 			],
+		];
+	}
+
+	private function is_dimensions_prop_type( array $property ): bool {
+		return isset( $property['$$type'] ) && 'dimensions' === $property['$$type'];
+	}
+
+	private function merge_dimensions_prop_types( array $existing, array $new ): array {
+		if ( ! $this->is_dimensions_prop_type( $existing ) || ! $this->is_dimensions_prop_type( $new ) ) {
+			return $new;
+		}
+
+		$merged_value = array_merge(
+			$existing['value'] ?? [],
+			$new['value'] ?? []
+		);
+
+		return [
+			'$$type' => 'dimensions',
+			'value' => $merged_value
 		];
 	}
 

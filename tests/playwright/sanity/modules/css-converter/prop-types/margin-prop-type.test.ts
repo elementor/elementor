@@ -44,7 +44,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const apiResult = await cssHelper.convertHtmlWithCss(request, html);
 		
 		// Check if API call failed due to backend issues
-		if ( apiResult.error ) {
+		if ( apiResult.errors && apiResult.errors.length > 0 ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
@@ -76,7 +76,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const apiResult = await cssHelper.convertHtmlWithCss(request, html);
 		
 		// Check if API call failed due to backend issues
-		if ( apiResult.error ) {
+		if ( apiResult.errors && apiResult.errors.length > 0 ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
@@ -128,8 +128,8 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		for (const testCase of testCases) {
 			const apiResult = await cssHelper.convertHtmlWithCss(request, testCase.html);
 			
-			if (!apiResult || apiResult.error) {
-				console.log(`❌ API Error for ${testCase.name}:`, apiResult?.error || 'API returned null/undefined');
+			if (!apiResult || (apiResult.errors && apiResult.errors.length > 0)) {
+				console.log(`❌ API Error for ${testCase.name}:`, apiResult?.errors || 'API returned null/undefined');
 				continue;
 			}
 
@@ -178,7 +178,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const apiResult = await cssHelper.convertHtmlWithCss(request, html);
 		
 		// Check if API call failed due to backend issues
-		if ( apiResult.error ) {
+		if ( apiResult.errors && apiResult.errors.length > 0 ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
@@ -198,10 +198,10 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const element = elementorFrame.locator('.e-paragraph-base').first();
 		await element.waitFor( { state: 'visible', timeout: 10000 } );
 		
-		await expect(element).toHaveCSS('margin-top', '0px');
-		await expect(element).toHaveCSS('margin-right', '30px');
-		await expect(element).toHaveCSS('margin-bottom', '0px');
-		await expect(element).toHaveCSS('margin-left', '10px');
+		await expect(element).toHaveCSS('margin-block-start', '0px');
+		await expect(element).toHaveCSS('margin-inline-end', '30px');
+		await expect(element).toHaveCSS('margin-block-end', '0px');
+		await expect(element).toHaveCSS('margin-inline-start', '10px');
 	});
 
 	test.skip('should convert margin auto for centering - SKIPPED: margin auto difficult to test in Playwright', async ({ page, request }) => {
@@ -212,7 +212,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const apiResult = await cssHelper.convertHtmlWithCss(request, html);
 		
 		// Check if API call failed due to backend issues
-		if ( apiResult.error ) {
+		if ( apiResult.errors && apiResult.errors.length > 0 ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
