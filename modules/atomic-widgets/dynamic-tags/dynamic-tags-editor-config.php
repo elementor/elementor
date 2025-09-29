@@ -13,6 +13,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Number_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Query\Query_Builder;
+use Elementor\Modules\AtomicWidgets\Query\Query_Builder_Factory;
 use Elementor\Modules\WpRest\Base\Query as Query_Base;
 use Elementor\Modules\WpRest\Classes\Post_Query;
 use Elementor\Modules\WpRest\Classes\Term_Query;
@@ -320,7 +321,7 @@ class Dynamic_Tags_Editor_Config {
 
 		$query_config[ Query_Base::INCLUDED_TYPE_KEY ] = $included_types;
 		$query_config[ Query_Base::EXCLUDED_TYPE_KEY ] = $excluded_types;
-		$query_config[ Query_Builder::QUERY_TYPE_KEY ] = $query_type;
+		$query_config[ Query_Builder_Factory::ENDPOINT_KEY ] = $query_type;
 		$query_config[ Query_Base::META_QUERY_KEY ] = $control['autocomplete']['query']['meta_query'] ?? null;
 
 		$query_control = Query_Control::bind_to( $control['name'] );

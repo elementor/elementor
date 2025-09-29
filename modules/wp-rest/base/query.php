@@ -13,7 +13,7 @@ abstract class Query {
 	const NAMESPACE = 'elementor/v1';
 	const NONCE_KEY = 'x_wp_nonce';
 
-	const KEYS_CONVERSION_MAP_KEY = 'post_keys_conversion_map';
+	const KEYS_CONVERSION_MAP_KEY = 'keys_conversion_map';
 	const IS_PUBLIC_KEY = 'is_public';
 	const TAX_QUERY_KEY = 'tax_query';
 	const META_QUERY_KEY = 'meta_query';
@@ -46,7 +46,7 @@ abstract class Query {
 				'methods' => \WP_REST_Server::READABLE,
 				'permission_callback' => fn ( \WP_REST_Request $request ) => $this->validate_access_permission( $request ),
 				'args' => $this->get_endpoint_registration_args(),
-				'callback' => fn ( \WP_REST_Request $request ) => $this->route_wrapper( fn () => $this->get( $request ) ),
+				'callback' => fn ( \WP_REST_Request $request ) => $this->send( fn () => $this->get( $request ) ),
 			],
 		], $override_existing_endpoints );
 	}
@@ -110,7 +110,7 @@ abstract class Query {
 	 * @param callable $cb The route callback.
 	 * @return \WP_REST_Response | \WP_Error
 	 */
-	private function route_wrapper( callable $cb ) {
+	private function send( callable $cb ) {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {

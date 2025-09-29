@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Providers;
 
+use Elementor\Modules\AtomicWidgets\Query\Query_Builder_Factory;
 use Elementor\Modules\WpRest\Classes\Term_Query as Term_Query_Class;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -102,14 +103,15 @@ trait Term_Query {
 	public function data_provider_term_query() {
 		return [
 			[
-				'params' => array_merge( Term_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					Term_Query_Class::EXCLUDED_TYPE_KEY => [],
 					Term_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'term_id' => 'id',
 						'name' => 'label',
 						'taxonomy' => 'groupLabel',
 					],
-				] ), [ Term_Query_Class::SEARCH_TERM_KEY => 'ea' ] ),
+					Term_Query_Class::SEARCH_TERM_KEY => 'ea',
+				] ),
 				'expected' => [
 					[
 						'id' => $this->terms[4]->term_id,
@@ -129,7 +131,7 @@ trait Term_Query {
 				],
 			],
 			[
-				'params' => array_merge( Term_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					Term_Query_Class::EXCLUDED_TYPE_KEY => [],
 					Term_Query_Class::INCLUDED_TYPE_KEY => [ 'misc' ],
 					Term_Query_Class::KEYS_CONVERSION_MAP_KEY => [
@@ -137,7 +139,8 @@ trait Term_Query {
 						'name' => 'label',
 						'taxonomy' => 'groupLabel',
 					],
-				] ), [ Term_Query_Class::SEARCH_TERM_KEY => 're' ] ),
+					Term_Query_Class::SEARCH_TERM_KEY => 're',
+				] ),
 				'expected' => [
 					[
 						'id' => $this->terms[11]->term_id,
@@ -147,13 +150,14 @@ trait Term_Query {
 				],
 			],
 			[
-				'params' => array_merge( Term_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					Term_Query_Class::EXCLUDED_TYPE_KEY => [ 'genre', 'post_tag' ],
 					Term_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'term_id' => 'my_id',
 						'name' => 'my_name',
 					],
-				] ), [ Term_Query_Class::SEARCH_TERM_KEY => 'ea' ] ),
+					Term_Query_Class::SEARCH_TERM_KEY => 'ea',
+				] ),
 				'expected' => [
 					[
 						'my_id' => $this->terms[10]->term_id,
@@ -162,13 +166,14 @@ trait Term_Query {
 				],
 			],
 			[
-				'params' => array_merge( Term_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					Term_Query_Class::EXCLUDED_TYPE_KEY => [ 'misc', 'category' ],
 					Term_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'term_id' => 'my_id',
 						'name' => 'my_name',
 					],
-				] ), [ Term_Query_Class::SEARCH_TERM_KEY => 'co' ] ),
+					Term_Query_Class::SEARCH_TERM_KEY => 'co',
+				] ),
 				'expected' => [
 					[
 						'my_id' => $this->terms[4]->term_id,
@@ -177,22 +182,24 @@ trait Term_Query {
 				],
 			],
 			[
-				'params' => array_merge( Term_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					Term_Query_Class::EXCLUDED_TYPE_KEY => [ 'category', 'post_tag', 'genre', 'misc' ],
 					Term_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'term_id' => 'my_id',
 						'name' => 'my_name',
 					],
-				] ), [ Term_Query_Class::SEARCH_TERM_KEY => 'a ' ] ),
+					Term_Query_Class::SEARCH_TERM_KEY => 'a ',
+				] ),
 				'expected' => [],
 			],
 			[
-				'params' => array_merge( Term_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					Term_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'term_id' => 'my_id',
 						'name' => 'my_name',
 					],
-				] ), [ Term_Query_Class::SEARCH_TERM_KEY => $this->terms[7]->term_id ] ),
+					Term_Query_Class::SEARCH_TERM_KEY => $this->terms[7]->term_id,
+				] ),
 				'expected' => [
 					[
 						'my_id' => $this->terms[7]->term_id,
@@ -201,5 +208,14 @@ trait Term_Query {
 				],
 			],
 		];
+	}
+
+	private function build_params( $params ) {
+		$params[ Query_Builder_Factory::ENDPOINT_KEY ] = Term_Query_Class::ENDPOINT;
+
+		return array_merge(
+			Query_Builder_Factory::create( $params )->build()['params'],
+			[ Term_Query_Class::SEARCH_TERM_KEY => $params[ Term_Query_Class::SEARCH_TERM_KEY ] ],
+		);
 	}
 }

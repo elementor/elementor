@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Providers;
 
+use Elementor\Modules\AtomicWidgets\Query\Query_Builder_Factory;
 use Elementor\Modules\WpRest\Classes\User_Query as User_Query_Class;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -64,13 +65,14 @@ trait User_Query {
 	public function data_provider_user_query() {
 		return [
 			[
-				'params' => array_merge( User_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					User_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'id',
 						'display_name' => 'label',
 						'role' => 'groupLabel',
 					],
-				] ), [ User_Query_Class::SEARCH_TERM_KEY => 'ski' ] ),
+					User_Query_Class::SEARCH_TERM_KEY => 'ski',
+				] ),
 				'expected' => [
 					[
 						'id' => $this->users[0]->ID,
@@ -85,12 +87,13 @@ trait User_Query {
 				],
 			],
 			[
-				'params' => array_merge( User_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					User_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'my_id',
 						'display_name' => 'my_name',
 					],
-				] ), [ User_Query_Class::SEARCH_TERM_KEY => $this->users[1]->ID ] ),
+					User_Query_Class::SEARCH_TERM_KEY => $this->users[1]->ID
+				] ),
 				'expected' => [
 					[
 						'my_id' => $this->users[1]->ID,
@@ -99,14 +102,24 @@ trait User_Query {
 				],
 			],
 			[
-				'params' => array_merge( User_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					User_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'my_id',
 						'display_name' => 'my_name',
 					],
-				] ), [ User_Query_Class::SEARCH_TERM_KEY => 'tom' ] ),
+					User_Query_Class::SEARCH_TERM_KEY => 'tom'
+				] ),
 				'expected' => [],
 			],
 		];
+	}
+
+	private function build_params( $params ) {
+		$params[ Query_Builder_Factory::ENDPOINT_KEY ] = User_Query_Class::ENDPOINT;
+
+		return array_merge(
+			Query_Builder_Factory::create( $params )->build()['params'],
+			[ User_Query_Class::SEARCH_TERM_KEY => $params[ User_Query_Class::SEARCH_TERM_KEY ] ],
+		);
 	}
 }

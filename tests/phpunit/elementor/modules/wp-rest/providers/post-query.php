@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Providers;
 
+use Elementor\Modules\AtomicWidgets\Query\Query_Builder_Factory;
 use Elementor\Modules\WpRest\Classes\Post_Query as Post_Query_Class;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -117,12 +118,13 @@ trait Post_Query {
 	public function data_provider_post_query() {
 		return [
 			[
-				'params' => array_merge( Post_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'id',
 						'post_title' => 'label',
 					],
-				] ), [ Post_Query_Class::SEARCH_TERM_KEY => 'Us' ] ),
+					Post_Query_Class::SEARCH_TERM_KEY => 'Us',
+				] ),
 				'expected' => [
 					[
 						'id' => $this->posts[3]->ID,
@@ -135,13 +137,14 @@ trait Post_Query {
 				],
 			],
 			[
-				'params' => array_merge( Post_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					Post_Query_Class::EXCLUDED_TYPE_KEY => array_merge( Post_Query_Class::DEFAULT_FORBIDDEN_POST_TYPES, [ 'page', 'post' ] ),
 					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'post_id',
 						'post_title' => 'random_key',
 					],
-				] ), [ Post_Query_Class::SEARCH_TERM_KEY => 'X' ] ),
+					Post_Query_Class::SEARCH_TERM_KEY => 'X',
+				] ),
 				'expected' => [
 					[
 						'post_id' => $this->posts[6]->ID,
@@ -150,32 +153,35 @@ trait Post_Query {
 				],
 			],
 			[
-				'params' => array_merge( Post_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					Post_Query_Class::EXCLUDED_TYPE_KEY => array_merge( Post_Query_Class::DEFAULT_FORBIDDEN_POST_TYPES, [ 'page', 'post' ] ),
 					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'post_id',
 						'post_title' => 'random_key',
 					],
-				] ), [ Post_Query_Class::SEARCH_TERM_KEY => 'Privacy' ] ),
+					Post_Query_Class::SEARCH_TERM_KEY => 'Privacy',
+				] ),
 				'expected' => [],
 			],
 			[
-				'params' => array_merge( Post_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'post_id',
 						'post_title' => 'random_key',
 					],
-				] ), [ Post_Query_Class::SEARCH_TERM_KEY => 'Horror' ] ),
+					Post_Query_Class::SEARCH_TERM_KEY => 'Horror',
+				] ),
 				'expected' => [],
 			],
 			[
-				'params' => array_merge( Post_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					Post_Query_Class::EXCLUDED_TYPE_KEY => array_merge( Post_Query_Class::DEFAULT_FORBIDDEN_POST_TYPES, [ 'product', 'post' ] ),
 					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'id',
 						'post_title' => 'label',
 					],
-				] ), [ Post_Query_Class::SEARCH_TERM_KEY => 'a ' ] ),
+					Post_Query_Class::SEARCH_TERM_KEY => 'a ',
+				] ),
 				'expected' => [
 					[
 						'label' => $this->posts[9]->post_title,
@@ -192,7 +198,7 @@ trait Post_Query {
 				],
 			],
 			[
-				'params' => array_merge( Post_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					Post_Query_Class::EXCLUDED_TYPE_KEY => [],
 					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'id',
@@ -203,7 +209,8 @@ trait Post_Query {
 							'key' => 'very_special_key',
 						],
 					],
-				] ), [ Post_Query_Class::SEARCH_TERM_KEY => 'm' ] ),
+					Post_Query_Class::SEARCH_TERM_KEY => 'm',
+				] ),
 				'expected' => [
 					[
 						'id' => $this->posts[1]->ID,
@@ -216,7 +223,7 @@ trait Post_Query {
 				],
 			],
 			[
-				'params' => array_merge( Post_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					Post_Query_Class::EXCLUDED_TYPE_KEY => [],
 					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'id',
@@ -228,7 +235,8 @@ trait Post_Query {
 							'value' => 'very_special_value',
 						],
 					],
-				] ), [ Post_Query_Class::SEARCH_TERM_KEY => 'm' ] ),
+					Post_Query_Class::SEARCH_TERM_KEY => 'm',
+				] ),
 				'expected' => [
 					[
 						'label' => $this->posts[11]->post_title,
@@ -237,7 +245,7 @@ trait Post_Query {
 				],
 			],
 			[
-				'params' => array_merge( Post_Query_Class::build_query_params( [
+				'params' => $this->build_params( [
 					Post_Query_Class::EXCLUDED_TYPE_KEY => [],
 					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
 						'ID' => 'id',
@@ -250,7 +258,8 @@ trait Post_Query {
 							'terms' => [ $this->term->term_id ],
 						],
 					],
-				] ), [ Post_Query_Class::SEARCH_TERM_KEY => 'm ' ] ),
+					Post_Query_Class::SEARCH_TERM_KEY => 'm ',
+				] ),
 				'expected' => [
 					[
 						'label' => $this->posts[7]->post_title,
@@ -259,5 +268,14 @@ trait Post_Query {
 				],
 			],
 		];
+	}
+
+	private function build_params( $params ) {
+		$params[ Query_Builder_Factory::ENDPOINT_KEY ] = Post_Query_Class::ENDPOINT;
+
+		return array_merge(
+			Query_Builder_Factory::create( $params )->build()['params'],
+			[ Post_Query_Class::SEARCH_TERM_KEY => $params[ Post_Query_Class::SEARCH_TERM_KEY ] ],
+		);
 	}
 }
