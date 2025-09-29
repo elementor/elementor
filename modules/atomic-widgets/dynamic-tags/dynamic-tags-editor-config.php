@@ -152,7 +152,7 @@ class Dynamic_Tags_Editor_Config {
 			'textarea' => fn( $control ) => $this->convert_textarea_control_to_atomic( $control ),
 			'switcher' => fn( $control ) => $this->convert_switch_control_to_atomic( $control ),
 			'number'   => fn( $control ) => $this->convert_number_control_to_atomic( $control ),
-			'query'   => fn( $control ) => $this->convert_query_control_to_atomic( $control ),
+			'query'   => fn( $control ) => $this->convert_autocomplete_control_to_atomic( $control ),
 			'choose'   => fn( $control ) => $this->convert_choose_control_to_atomic( $control ),
 			'media'   => fn( $control ) => $this->convert_media_control_to_atomic( $control ),
 		];
@@ -277,12 +277,12 @@ class Dynamic_Tags_Editor_Config {
 			->set_label( $control['label'] );
 	}
 
-	private function convert_query_control_to_atomic( $control ) {
+	private function convert_autocomplete_control_to_atomic( $control ) {
 		$query_config = [];
 		$query_type = Post_Query::ENDPOINT;
 
 		switch ( true ) {
-			case $this->is_control_term_query( $control ):
+			case $this->is_querying_wp_terms( $control ):
 				$query_type = Term_Query::ENDPOINT;
 				$included_types = null;
 				$excluded_types = null;
@@ -293,13 +293,13 @@ class Dynamic_Tags_Editor_Config {
 				$excluded_types = [];
 				break;
 
-			case $this->is_control_attachment_query( $control ):
+			case $this->is_querying_wp_media( $control ):
 				$included_types = [ 'attachment' ];
 				$excluded_types = [];
 				$query_config[ Query_Base::IS_PUBLIC_KEY ] = false;
 				break;
 
-			case $this->is_control_user_query( $control ):
+			case $this->is_querying_wp_users( $control ):
 				$included_types = [ $control['autocomplete']['object'] ];
 				$excluded_types = null;
 				$query_type = User_Query::ENDPOINT;
@@ -311,18 +311,12 @@ class Dynamic_Tags_Editor_Config {
 				$excluded_types = null;
 		}
 
-		if ( isset( $control['autocomplete']['query']['posts_per_page'] ) ) {
-			$query_config[ Query_Base::ITEMS_COUNT_KEY ] = $control['autocomplete']['query']['posts_per_page'];
-		}
-
-		if ( isset( $control['autocomplete']['query']['post_status'] ) && in_array( 'private', $control['autocomplete']['query']['post_status'] ) ) {
-			$query_config[ Query_Base::IS_PUBLIC_KEY ] = false;
-		}
-
+		$query_config[ Query_Base::ITEMS_COUNT_KEY ] = $this->extract_item_count_from_control( $control );
+		$post_status[ Query_Base::IS_PUBLIC_KEY ] = $this->extract_post_status_from_control( $control );
 		$query_config[ Query_Base::INCLUDED_TYPE_KEY ] = $included_types;
 		$query_config[ Query_Base::EXCLUDED_TYPE_KEY ] = $excluded_types;
 		$query_config[ Query_Builder_Factory::ENDPOINT_KEY ] = $query_type;
-		$query_config[ Query_Base::META_QUERY_KEY ] = $control['autocomplete']['query']['meta_query'] ?? null;
+		$query_config[ Query_Base::META_QUERY_KEY ] = $this->extract_meta_query_from_control( $control );
 
 		$query_control = Query_Control::bind_to( $control['name'] );
 		$query_control->set_query_config( $query_config );
@@ -337,15 +331,15 @@ class Dynamic_Tags_Editor_Config {
 		return isset( $control['autocomplete']['object'] ) && 'library_template' === $control['autocomplete']['object'];
 	}
 
-	private function is_control_term_query( $control ): bool {
+	private function is_querying_wp_terms( $control ): bool {
 		return isset( $control['autocomplete']['object'] ) && in_array( $control['autocomplete']['object'], [ 'tax', 'taxonomy', 'term' ], true );
 	}
 
-	private function is_control_attachment_query( $control ): bool {
+	private function is_querying_wp_media( $control ): bool {
 		return isset( $control['autocomplete']['object'] ) && 'attachment' === $control['autocomplete']['object'];
 	}
 
-	private function is_control_user_query( $control ): bool {
+	private function is_querying_wp_users( $control ): bool {
 		global $wp_roles;
 		$roles = array_keys( $wp_roles->roles );
 
@@ -365,5 +359,25 @@ class Dynamic_Tags_Editor_Config {
 		return Image_Control::bind_to( $control['name'] )
 			->set_show_mode( 'media' )
 			->set_label( $control['label'] );
+	}
+
+	private function extract_post_status_from_control( $control ): ?bool {
+		$status = $control['autocomplete']['query']['post_status'] ?? null;
+
+		return isset( $status ) && in_array( 'private', $status )
+			? false
+			: null;
+	}
+
+	private function extract_item_count_from_control( $control ): ?int {
+		$count = $control['autocomplete']['query']['posts_per_page'] ?? null;
+
+		return isset( $count ) && is_numeric( $count )
+			? $count
+			: null;
+	}
+
+	private function extract_meta_query_from_control( $control ): ?array {
+		return $control['autocomplete']['query']['meta_query'] ?? null;
 	}
 }

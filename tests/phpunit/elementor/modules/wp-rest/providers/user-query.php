@@ -141,8 +141,8 @@ trait User_Query {
 				] ),
 				'expected' => [
 					[
-						'my_id' => $this->users[0]->ID,
-						'my_name' => $this->users[0]->display_name,
+						'my_id' => $this->users[2]->ID,
+						'my_name' => $this->users[2]->display_name,
 					],
 				],
 			],
