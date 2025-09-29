@@ -238,10 +238,15 @@ export default class ApiRequests {
 		return await response.json();
 	}
 
+	public async delete( request: APIRequestContext, entity: string, id: string ) {
+		return await this._delete( request, entity, id );
+	}
+
 	private async _delete( request: APIRequestContext, entity: string, id: string ) {
 		const response = await request.delete( `${ this.baseUrl }/index.php`, {
 			params: {
 				rest_route: `/wp/v2/${ entity }/${ id }`,
+				force: true,
 			},
 			headers: {
 				'X-WP-Nonce': this.nonce,
