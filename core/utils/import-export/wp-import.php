@@ -816,7 +816,7 @@ class WP_Import extends \WP_Importer {
 						add_comment_meta( $inserted_comments[ $key ], wp_slash( $meta['key'] ), wp_slash_strings_only( $value ) );
 					}
 
-					++$num_comments;
+					$num_comments++;
 				}
 				unset( $newcomments, $inserted_comments, $post['comments'] );
 			}
@@ -1240,9 +1240,18 @@ class WP_Import extends \WP_Importer {
 	}
 
 	private function backfill_menu_item_parents() {
+		// Find parents for menu item orphans.
 		foreach ( $this->menu_item_orphans as $child_id => $parent_id ) {
-			$local_child_id = $this->processed_menu_items[ $child_id ] ?? 0;
-			$local_parent_id = $this->processed_menu_items[ $parent_id ] ?? 0;
+			$local_child_id = 0;
+			$local_parent_id = 0;
+
+			if ( isset( $this->processed_menu_items[ $child_id ] ) ) {
+				$local_child_id = $this->processed_menu_items[ $child_id ];
+			}
+
+			if ( isset( $this->processed_menu_items[ $parent_id ] ) ) {
+				$local_parent_id = $this->processed_menu_items[ $parent_id ];
+			}
 
 			if ( $local_child_id && $local_parent_id ) {
 				update_post_meta( $local_child_id, '_menu_item_menu_item_parent', (int) $local_parent_id );
