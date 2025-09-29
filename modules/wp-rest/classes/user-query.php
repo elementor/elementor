@@ -12,19 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class User_Query extends Base {
 	const ENDPOINT = 'user';
 	const SEARCH_FILTER_ACCEPTED_ARGS = 1;
-
-	const CACHE_HIERARCHY_KEY = 'elementor_roles_hierarchy';
-
-	private static ?array $roles_hierarchy = null;
-
-	public function __construct() {
-		 add_action( 'add_role', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
-		 add_action( 'remove_role', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
-		 add_action( 'add_cap', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
-		 add_action( 'remove_cap', fn () => $this->arrange_roles_by_capabilities( true ), 10, 2 );
-
-		 $this->arrange_roles_by_capabilities();
-	}
 	/**
 	 * @param \WP_REST_Request $request
 	 * @return \WP_REST_Response
@@ -42,9 +29,6 @@ class User_Query extends Base {
 			], 200 );
 		}
 
-		$included_roles = $params[ self::INCLUDED_TYPE_KEY ];
-		$excluded_roles = $params[ self::EXCLUDED_TYPE_KEY ];
-
 		$keys_format_map = $params[ self::KEYS_CONVERSION_MAP_KEY ];
 
 		$requested_count = $params[ self::ITEMS_COUNT_KEY ] ?? 0;
@@ -54,8 +38,6 @@ class User_Query extends Base {
 		$query_args = [
 			'number' => $count,
 			'search' => "*$search_term*",
-			'role__in' => $this->get_propagated_role_list( $included_roles ),
-			'role__not_in' => $this->get_propagated_role_list( $excluded_roles ),
 		];
 
 		if ( ! empty( $params[ self::META_QUERY_KEY ] ) && is_array( $params[ self::META_QUERY_KEY ] ) ) {
@@ -123,20 +105,6 @@ class User_Query extends Base {
 	 */
 	protected function get_endpoint_registration_args(): array {
 		return [
-			self::INCLUDED_TYPE_KEY => [
-				'description' => 'User roles to include',
-				'type' => 'array',
-				'required' => false,
-				'default' => null,
-				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
-			],
-			self::EXCLUDED_TYPE_KEY => [
-				'description' => 'User roles to exclude',
-				'type' => 'array',
-				'required' => false,
-				'default' => null,
-				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
-			],
 			self::SEARCH_TERM_KEY => [
 				'description' => 'Posts to search',
 				'type' => 'string',
@@ -161,104 +129,19 @@ class User_Query extends Base {
 				'required' => false,
 				'default' => self::MAX_RESPONSE_COUNT,
 			],
-			self::META_QUERY_KEY => [
-				'description' => 'WP_Query meta_query array',
-				'type' => 'array',
-				'required' => false,
-				'default' => null,
-				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
-			],
 		];
 	}
 
-	private function get_propagated_role_list( $roles = [] ) {
-		if ( empty( $roles ) ) {
-			return [];
-		}
 
-		$this->arrange_roles_by_capabilities();
-		$computed_roles = [];
-
-		foreach ( $roles as $role ) {
-			$role_index = array_search( $role, self::$roles_hierarchy, true );
-
-			if ( false === $role_index || in_array( $role, $computed_roles, true ) ) {
-				continue;
-			}
-
-			$computed_roles = array_slice( self::$roles_hierarchy, 0, $role_index + 1 );
-		}
-
-		return $computed_roles;
-	}
 
 	protected static function get_allowed_param_keys(): array {
 		return [
-			self::EXCLUDED_TYPE_KEY,
-			self::INCLUDED_TYPE_KEY,
 			self::KEYS_CONVERSION_MAP_KEY,
-			self::META_QUERY_KEY,
 			self::ITEMS_COUNT_KEY,
 		];
 	}
 
 	protected static function get_keys_to_encode(): array {
-		return [
-			self::EXCLUDED_TYPE_KEY,
-			self::INCLUDED_TYPE_KEY,
-			self::KEYS_CONVERSION_MAP_KEY,
-			self::META_QUERY_KEY,
-		];
-	}
-
-	private function is_user_of_role( \WP_User $user, \WP_Role $role ) {
-		return Collection::make( $role->capabilities )->every( function( $enabled, $capability ) use ( $user ) {
-				return $user->has_cap( $capability ) || ( isset( $user->allcaps[ $capability ] ) && $user->allcaps[ $capability ] );
-		} );
-	}
-
-	private function arrange_roles_by_capabilities( $force = false ) {
-		$cached = $this->load_roles_hierarchy_from_cache();
-
-		if ( ! $force && ! empty( $cached ) ) {
-			self::$roles_hierarchy = $cached;
-
-			return;
-		}
-
-		global $wp_roles;
-		$roles = Collection::make( $wp_roles->roles )
-			->map( fn( $role, $slug ) => array_merge( (array) $role, [ 'slug' => $slug ] ) )
-			->all();
-
-		self::$roles_hierarchy = array_column( array_values( $roles ), 'slug' );
-
-		usort( self::$roles_hierarchy, function( $role_a_slug, $role_b_slug ) use ( $wp_roles ) {
-			$role_a = $wp_roles->role_objects[ $role_a_slug ];
-			$role_b = $wp_roles->role_objects[ $role_b_slug ];
-
-			$temp_user_a = new \WP_User();
-			$temp_user_b = new \WP_User();
-
-			$temp_user_a->set_role( $role_a_slug );
-			$temp_user_b->set_role( $role_b_slug );
-
-			$user_a_level = (int) $this->is_user_of_role( $temp_user_a, $role_b );
-			$user_b_level = (int) $this->is_user_of_role( $temp_user_b, $role_a );
-
-			return $user_b_level - $user_a_level;
-		} );
-
-		$this->save_roles_hierarchy_from_cache( $force );
-	}
-
-	private function load_roles_hierarchy_from_cache() {
-		return get_transient( self::CACHE_HIERARCHY_KEY ) ?? null;
-	}
-
-	private function save_roles_hierarchy_from_cache( $force ) {
-		if ( $force || ! empty( $this->load_roles_hierarchy_from_cache() ) ) {
-			set_transient( self::CACHE_HIERARCHY_KEY, self::$roles_hierarchy, DAY_IN_SECONDS );
-		}
+		return [ self::KEYS_CONVERSION_MAP_KEY ];
 	}
 }
