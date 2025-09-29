@@ -46,6 +46,7 @@ class Class_Property_Mapper_Registry {
 		require_once __DIR__ . '/../properties/text-align-property-mapper.php';
 		require_once __DIR__ . '/../properties/font-weight-property-mapper.php';
 		require_once __DIR__ . '/../properties/border-width-property-mapper.php';
+		require_once __DIR__ . '/../properties/border-property-mapper.php';
 		require_once __DIR__ . '/../properties/positioning-property-mapper.php';
 		require_once __DIR__ . '/../properties/transform-property-mapper.php';
 		
@@ -114,6 +115,12 @@ class Class_Property_Mapper_Registry {
 		$border_width_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Border_Width_Property_Mapper();
 		foreach ( $border_width_mapper->get_supported_properties() as $property ) {
 			$this->mappers[ $property ] = $border_width_mapper;
+		}
+		
+		// Register comprehensive atomic border shorthand mapper for all border shorthand properties
+		$border_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Border_Property_Mapper();
+		foreach ( $border_mapper->get_supported_properties() as $property ) {
+			$this->mappers[ $property ] = $border_mapper;
 		}
 		
 		// Register comprehensive atomic positioning mapper for all positioning properties

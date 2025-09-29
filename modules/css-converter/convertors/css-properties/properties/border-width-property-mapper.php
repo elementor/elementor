@@ -4,6 +4,7 @@ namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -22,10 +23,44 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	public function map_to_v4_atomic( string $property, $value ): ?array {
+		if ( ! $this->supports( $property ) ) {
+			return null;
+		}
+
 		if ( empty( $value ) || 'inherit' === $value || 'initial' === $value || 'unset' === $value ) {
 			return null;
 		}
 
+		// ✅ BORDER-RADIUS PATTERN: For simple border-width values, use Size_Prop_Type
+		if ( 'border-width' === $property && $this->is_simple_border_width( $value ) ) {
+			$size_value = $this->parse_border_width_value( $value );
+			if ( null === $size_value ) {
+				return null;
+			}
+			// Return atomic result directly like the working size mapper
+			return [
+				'property' => 'border-width',
+				'value' => Size_Prop_Type::make()
+					->units( Size_Constants::border() )
+					->generate( $size_value )
+			];
+		}
+
+		// ✅ BORDER-RADIUS PATTERN: For individual border properties or multi-value shorthand
+		return $this->handle_border_width_with_directions( $property, $value );
+	}
+
+	public function supports( string $property, $value = null ): bool {
+		return in_array( $property, $this->get_supported_properties(), true );
+	}
+
+	private function is_simple_border_width( string $value ): bool {
+		// Simple if it's a single value (not shorthand with multiple values)
+		$values = $this->parse_shorthand_values( $value );
+		return count( $values ) === 1;
+	}
+
+	private function handle_border_width_with_directions( string $property, $value ): ?array {
 		if ( 'border-width' === $property ) {
 			return $this->handle_shorthand_border_width( $value );
 		}
@@ -40,14 +75,7 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		if ( count( $values ) === 1 ) {
-			$parsed = $this->parse_border_width_value( $values[0] );
-			if ( null === $parsed ) {
-				return null;
-			}
-			return Size_Prop_Type::make()->generate( $parsed );
-		}
-
+		// ✅ BORDER-RADIUS PATTERN: Multi-value shorthand uses Border_Width_Prop_Type
 		$directional_values = $this->expand_shorthand_to_directional( $values );
 		$parsed_values = [];
 
@@ -56,10 +84,16 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 			if ( null === $parsed ) {
 				return null;
 			}
-			$parsed_values[ $direction ] = Size_Prop_Type::make()->generate( $parsed );
+			$parsed_values[ $direction ] = Size_Prop_Type::make()
+				->units( Size_Constants::border() )
+				->generate( $parsed );
 		}
 
-		return Border_Width_Prop_Type::make()->generate( $parsed_values );
+		// ✅ BORDER-RADIUS PATTERN: Return as "border-width" property
+		return [
+			'property' => 'border-width',
+			'value' => Border_Width_Prop_Type::make()->generate( $parsed_values )
+		];
 	}
 
 	private function handle_individual_border_width( string $property, $value ): ?array {
@@ -76,11 +110,23 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 			'border-left-width' => 'inline-start',
 		];
 
-		$direction = $direction_map[ $property ];
-		
-		return Border_Width_Prop_Type::make()->generate( [
-			$direction => Size_Prop_Type::make()->generate( $parsed )
-		]);
+		$direction = $direction_map[ $property ] ?? null;
+		if ( null === $direction ) {
+			return null;
+		}
+
+		// ✅ BORDER-RADIUS PATTERN: Individual properties create Border_Width_Prop_Type with specific direction
+		$border_width_value = [
+			$direction => Size_Prop_Type::make()
+				->units( Size_Constants::border() )
+				->generate( $parsed )
+		];
+
+		// ✅ BORDER-RADIUS PATTERN: Return as "border-width" property (not individual property name)
+		return [
+			'property' => 'border-width',
+			'value' => Border_Width_Prop_Type::make()->generate( $border_width_value )
+		];
 	}
 
 	private function parse_shorthand_values( $value ): array {
