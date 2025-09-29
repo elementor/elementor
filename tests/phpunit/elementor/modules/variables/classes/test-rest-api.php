@@ -779,7 +779,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				[
 					'type' => 'create',
 					'variable' => [
-						'id' => 'temp-fail1',
+						'id' => 'empty value',
 						'type' => Font_Variable_Prop_Type::get_key(),
 						'label' => 'something',
 						'value' => '',
@@ -798,9 +798,9 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 'batch_operation_failed', $response_data['code'] );
 
 		$this->assertArrayHasKey( 'temp-fail', $response_data['data'] );
-		$this->assertArrayHasKey( 'non-existent', $response_data['data'] );
+		$this->assertArrayHasKey( 'empty_value', $response_data['data'] );
 
 		$this->assertEquals( 400, $response_data['data']['temp-fail']['status'] );
-		$this->assertEquals( 404, $response_data['data']['non-existent']['status'] );
+		$this->assertEquals( 400, $response_data['data']['empty_value']['status'] );
 	}
 }
