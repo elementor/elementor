@@ -801,6 +801,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'empty_value', $response_data['data'] );
 
 		$this->assertEquals( 400, $response_data['data']['temp-fail']['status'] );
-		$this->assertEquals( 400, $response_data['data']['empty_value']['status'] );
+		$this->assertEquals( 500, $response_data['data']['empty_value']['status'] );
 	}
 }
