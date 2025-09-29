@@ -216,6 +216,27 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_styles_manager, [ $doc_id ] );
 	}
 
+	public function test_cache_invalidation_on_post_deletion() {
+		// Arrange.
+		( new Atomic_Widget_Styles() )->register_hooks();
+		$doc = $this->factory()->documents->create_and_get();
+		$id = $doc->get_id();
+
+		$cache_validity = new Cache_Validity();
+
+		// Act.
+		$cache_validity->validate( [ Atomic_Widget_Styles::STYLES_KEY, $id ] );
+
+		// Assert.
+		$this->assertTrue( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id ] ) );
+
+		// Act.
+		wp_delete_post( $id, true );
+
+		// Assert.
+		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id ] ) );
+	}
+
 	public function test_cache_invalidation_on_global_cache_clear() {
 		// Arrange.
 		( new Atomic_Widget_Styles() )->register_hooks();

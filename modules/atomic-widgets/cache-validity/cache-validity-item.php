@@ -51,13 +51,13 @@ class Cache_Validity_Item {
 
 	public function invalidate( array $keys ) {
 		return $this->wrap_exception( function() use ( $keys ) {
-			$data = $this->get_stored_data();
-
 			if ( empty( $keys ) ) {
 				$this->delete_stored_data();
 
 				return;
 			}
+
+			$data = $this->get_stored_data();
 
 			$this->invalidate_nested_node( $data, $keys );
 		} );
@@ -69,31 +69,37 @@ class Cache_Validity_Item {
 	 * @param mixed | null                                                                                      $meta
 	 */
 	private function validate_nested_node( array $data, array $keys, $meta = null ) {
-		$data = $this->get_data_with_placeholders( $data, $keys );
+		$data = $this->get_data_with_path( $data, $keys );
 
 		$last_key = array_pop( $keys );
+
+		// parent is guaranteed to be an array as we send the full $keys array to get_data_with_path
 		$parent = &$this->get_node( $data, $keys );
 
-		if ( ! isset( $parent['children'] ) ) {
-			$parent['children'] = [];
-		}
+		$old_node = &$parent['children'][ $last_key ];
 
-		$node = &$parent['children'][ $last_key ];
+		$has_children = is_array( $old_node ) && ! empty( $old_node['children'] );
 
-		if ( null !== $meta || ( is_array( $node ) && ! empty( $node['children'] ) ) ) {
-			if ( is_bool( $node ) ) {
-				$node = [ 'state' => $node ];
-				$parent['children'][ $last_key ] = $node;
-			}
-
-			$node['state'] = true;
-
-			if ( null !== $meta ) {
-				$node['meta'] = $meta;
-			}
-		} else {
+		if ( null === $meta && ! $has_children ) {
 			$parent['children'][ $last_key ] = true;
+
+			$this->update_stored_data( $data );
+			return;
 		}
+
+		$new_node = [
+			'state' => true,
+		];
+
+		if ( $has_children ) {
+			$new_node['children'] = $old_node['children'];
+		}
+
+		if ( null !== $meta ) {
+			$new_node['meta'] = $meta;
+		}
+
+		$parent['children'][ $last_key ] = $new_node;
 
 		$this->update_stored_data( $data );
 	}
@@ -111,57 +117,36 @@ class Cache_Validity_Item {
 			return;
 		}
 
-		if ( isset( $parent['children'] ) && count( $parent['children'] ) > 1 ) {
-			// if parent has more children - simply unset the invalidated node from the parent's children.
+		if ( count( $parent['children'] ) > 1 ) {
+			// if the parent has more children - simply unset the invalidated node
 			unset( $parent['children'][ $last_key ] );
 
 			$this->update_stored_data( $data );
 			return;
 		}
 
-		$data = $this->get_data_without_placeholders( $data, $keys, $last_key );
+		$data = $this->get_normalized_data( $data, $keys, $last_key );
 
 		$this->update_stored_data( $data );
 	}
 
-	private function get_data_without_placeholders( array $data, array $keys, string $last_key ) {
-		$remove_node = [
-			'key' => null,
-			'node' => null,
-		];
+	private function get_normalized_data( array $data, array $keys, string $last_key ) {
+		$redundant_root = &$this->find_redundant_path_root( $data, $keys, $last_key );
+		$parent = &$this->get_node( $data, $keys );
 
-		if ( ! isset( $data['children'] ) || $this->is_placeholder_node( $data ) ) {
-			$remove_node['node'] = &$data;
+		if ( $redundant_root['node'] && $redundant_root['key'] ) {
+			unset( $redundant_root['node']['children'][ $redundant_root['key'] ] );
+
+			return $data;
 		}
 
-		$current = &$data;
-		$parent = &$current;
+		if ( $redundant_root['node'] ) {
+			unset( $data['children'] );
 
-		while ( ! empty( $keys ) ) {
-			$key = array_shift( $keys );
-			$parent = &$current;
-			$current = &$current['children'][ $key ];
-
-			if ( isset( $current['children'] ) && $this->is_placeholder_node( $current ) && empty( $remove_node['node'] ) ) {
-				$remove_node = [
-					'key' => $key,
-					'node' => &$parent,
-				];
-			} elseif ( is_array( $current ) && ! $this->is_placeholder_node( $current ) ) {
-				$remove_node = [
-					'key' => null,
-					'node' => null,
-				];
-			}
+			return $data;
 		}
 
-		if ( $remove_node['node'] ) {
-			if ( $remove_node['key'] ) {
-				unset( $remove_node['node']['children'][ $remove_node['key'] ] );
-			} else {
-				unset( $data['children'] );
-			}
-		} elseif ( $parent ) {
+		if ( $parent ) {
 			unset( $parent['children'][ $last_key ] );
 		}
 
@@ -171,9 +156,44 @@ class Cache_Validity_Item {
 	/**
 	 * @param array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean $data
 	 * @param array<string>                                                                                     $keys
-	 * @return array<array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean | null>
+	 * @return array{key: string | null, node: array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | null}
 	 */
-	private function get_data_with_placeholders( array $data, array $keys ): ?array {
+	private function &find_redundant_path_root( array &$data, array $keys ) {
+		$root_node = [
+			'key' => null,
+			'node' => null,
+		];
+
+		$current = &$data;
+		$parent = &$current;
+
+		while ( ! empty( $keys ) ) {
+			$key = array_shift( $keys );
+			$parent = &$current;
+			$current = &$current['children'][ $key ];
+
+			if ( isset( $current['children'] ) && $this->is_redundant_node( $current ) && empty( $root_node['node'] ) ) {
+				$root_node = [
+					'key' => $key,
+					'node' => &$parent,
+				];
+			} elseif ( is_array( $current ) && ! $this->is_redundant_node( $current ) ) {
+				$root_node = [
+					'key' => null,
+					'node' => null,
+				];
+			}
+		}
+
+		return $root_node;
+	}
+
+	/**
+	 * @param array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean $data
+	 * @param array<string>                                                                                     $keys
+	 * @return array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean
+	 */
+	private function get_data_with_path( array $data, array $keys ): ?array {
 		$current = &$data;
 
 		while ( ! empty( $keys ) ) {
@@ -218,7 +238,7 @@ class Cache_Validity_Item {
 		return $current;
 	}
 
-	private function is_placeholder_node( $data ): bool {
+	private function is_redundant_node( $data ): bool {
 		if ( ! is_array( $data ) ) {
 			return false;
 		}
@@ -237,6 +257,7 @@ class Cache_Validity_Item {
 	 * @param array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} $data
 	 */
 	private function update_stored_data( $data ) {
+		// setting autoload with false to avoid unnecessary memory usage
 		update_option( self::CACHE_KEY_PREFIX . $this->root, $data, false );
 	}
 

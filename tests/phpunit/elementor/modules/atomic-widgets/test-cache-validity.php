@@ -494,6 +494,7 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$this->assertEquals(
 			[
 				'state' => false,
+				'children' => [],
 			],
 			$stored_data,
 		);
