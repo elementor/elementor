@@ -171,7 +171,12 @@ class Css_Property_Conversion_Service {
 					? $mapper->get_v4_property_name( $property )
 					: $property;
 				
-				$converted[ $v4_property_name ] = $result;
+				// ✅ CRITICAL FIX: Merge Dimensions_Prop_Type structures for multiple margin properties
+				if ( isset( $converted[ $v4_property_name ] ) && $this->is_dimensions_prop_type( $result ) && $this->is_dimensions_prop_type( $converted[ $v4_property_name ] ) ) {
+					$converted[ $v4_property_name ] = $this->merge_dimensions_prop_types( $converted[ $v4_property_name ], $result );
+				} else {
+					$converted[ $v4_property_name ] = $result;
+				}
 			}
 		}
 		
@@ -219,6 +224,34 @@ class Css_Property_Conversion_Service {
 			'properties_converted' => 0,
 			'properties_failed' => 0,
 			'unsupported_properties' => [],
+		];
+	}
+
+	/**
+	 * Check if a property result is a Dimensions_Prop_Type
+	 */
+	private function is_dimensions_prop_type( array $property ): bool {
+		return isset( $property['$$type'] ) && 'dimensions' === $property['$$type'];
+	}
+
+	/**
+	 * Merge two Dimensions_Prop_Type structures
+	 */
+	private function merge_dimensions_prop_types( array $existing, array $new ): array {
+		// Both should have the same $$type: 'dimensions'
+		if ( ! $this->is_dimensions_prop_type( $existing ) || ! $this->is_dimensions_prop_type( $new ) ) {
+			return $new; // Fallback to new if not both dimensions
+		}
+
+		// Merge the value arrays, with new values taking precedence
+		$merged_value = array_merge(
+			$existing['value'] ?? [],
+			$new['value'] ?? []
+		);
+
+		return [
+			'$$type' => 'dimensions',
+			'value' => $merged_value
 		];
 	}
 

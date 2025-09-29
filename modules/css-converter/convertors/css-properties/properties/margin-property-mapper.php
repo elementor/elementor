@@ -45,12 +45,7 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		$dimensions_data = $this->parse_margin_value( $property, $value );
-		if ( null === $dimensions_data ) {
-			return null;
-		}
-
-		return Dimensions_Prop_Type::make()->generate( $dimensions_data );
+		return $this->parse_margin_value( $property, $value );
 	}
 
 	public function get_supported_properties(): array {
@@ -59,6 +54,12 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	public function is_supported_property( string $property ): bool {
 		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
+	}
+
+	public function get_v4_property_name( string $property ): string {
+		// ✅ CRITICAL FIX: All individual margin properties should map to "margin" in atomic widgets
+		// This ensures the Dimensions_Prop_Type is recognized by the atomic widgets system
+		return 'margin';
 	}
 
 	private function parse_margin_value( string $property, $value ): ?array {
@@ -136,29 +137,35 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		$zero_size = [ 'size' => 0.0, 'unit' => 'px' ];
+		// ✅ SOLUTION: Create proper Dimensions_Prop_Type structure like margin shorthand does
+		// This works because Dimensions_Prop_Type DOES have a transformer (proven by margin: 10px working)
 		
-		if ( 'block' === $axis ) {
-			$start_value = $this->parse_size_value( $parts[0] );
-			$end_value = $count > 1 ? $this->parse_size_value( $parts[1] ) : $start_value;
+		$start_value = $this->parse_size_value( $parts[0] );
+		$end_value = $count > 1 ? $this->parse_size_value( $parts[1] ) : $start_value;
+		
+		if ( null === $start_value || null === $end_value ) {
+			return null;
+		}
 
+		$zero_size = [ 'size' => 0.0, 'unit' => 'px' ];
+
+		if ( 'inline' === $axis ) {
+			// margin-inline: 10px 30px -> inline-start: 10px, inline-end: 30px
 			return $this->create_dimensions_structure([
-				'block-start' => $start_value,
-				'inline-end' => $zero_size,
-				'block-end' => $end_value,
-				'inline-start' => $zero_size,
+				'block-start' => $zero_size,
+				'inline-end' => $end_value,    // right
+				'block-end' => $zero_size,
+				'inline-start' => $start_value, // left
 			]);
 		}
 
-		if ( 'inline' === $axis ) {
-			$start_value = $this->parse_size_value( $parts[0] );
-			$end_value = $count > 1 ? $this->parse_size_value( $parts[1] ) : $start_value;
-
+		if ( 'block' === $axis ) {
+			// margin-block: 10px 30px -> block-start: 10px, block-end: 30px
 			return $this->create_dimensions_structure([
-				'block-start' => $zero_size,
-				'inline-end' => $end_value,
-				'block-end' => $zero_size,
-				'inline-start' => $start_value,
+				'block-start' => $start_value,  // top
+				'inline-end' => $zero_size,
+				'block-end' => $end_value,      // bottom
+				'inline-start' => $zero_size,
 			]);
 		}
 
@@ -218,21 +225,17 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function parse_individual_margin( string $property, string $value ): ?array {
 		$size_data = $this->parse_size_value( $value );
-
-		$zero_size = [ 'size' => 0.0, 'unit' => 'px' ];
-		$logical_property = $this->map_physical_to_logical( $property );
-
-		$dimensions = [
-			'block-start' => $zero_size,
-			'inline-end' => $zero_size,
-			'block-end' => $zero_size,
-			'inline-start' => $zero_size,
-		];
-
-		if ( isset( $dimensions[ $logical_property ] ) ) {
-			$dimensions[ $logical_property ] = $size_data;
+		if ( null === $size_data ) {
+			return null;
 		}
 
+		$logical_direction = $this->map_physical_to_logical( $property );
+		
+		// ✅ STRATEGY 1: Create clean Dimensions_Prop_Type with only target direction
+		// Based on atomic widgets test evidence - null values are filtered out by Multi_Props_Transformer
+		$dimensions = [];
+		$dimensions[ $logical_direction ] = $size_data;
+		
 		return $this->create_dimensions_structure( $dimensions );
 	}
 
@@ -255,10 +258,13 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$result = [];
 		
 		foreach ( $dimensions as $logical_property => $size_data ) {
-			$result[ $logical_property ] = $this->create_size_prop( $size_data );
+			// ✅ CLEAN STRUCTURE: Only include non-null values
+			if ( null !== $size_data ) {
+				$result[ $logical_property ] = $this->create_size_prop( $size_data );
+			}
 		}
 
-		return $result;
+		return Dimensions_Prop_Type::make()->generate( $result );
 	}
 
 	private function create_size_prop( array $size_value ): array {

@@ -30,6 +30,9 @@ class CSS_Shorthand_Expander {
 			'border-right',
 			'border-bottom',
 			'border-left',
+			// ✅ NEW: Logical margin properties
+			'margin-inline',
+			'margin-block',
 		];
 
 		return in_array( $property, $shorthand_properties, true );
@@ -43,6 +46,10 @@ class CSS_Shorthand_Expander {
 			case 'border-bottom':
 			case 'border-left':
 				return self::expand_border_shorthand( $property, $value );
+			case 'margin-inline':
+				return self::expand_margin_inline_shorthand( $value );
+			case 'margin-block':
+				return self::expand_margin_block_shorthand( $value );
 			default:
 				return [ $property => $value ];
 		}
@@ -154,5 +161,57 @@ class CSS_Shorthand_Expander {
 			'gray', 'grey', 'orange', 'purple', 'pink', 'brown', 'transparent'
 		];
 		return in_array( strtolower( $value ), $named_colors, true );
+	}
+
+	/**
+	 * Expand margin-inline shorthand to physical properties
+	 * margin-inline: 10px 30px -> margin-left: 10px, margin-right: 30px
+	 */
+	private static function expand_margin_inline_shorthand( $value ): array {
+		if ( empty( $value ) || ! is_string( $value ) ) {
+			return [];
+		}
+
+		$parts = preg_split( '/\s+/', trim( $value ) );
+		$parts = array_filter( $parts );
+		$count = count( $parts );
+
+		if ( $count < 1 || $count > 2 ) {
+			return [];
+		}
+
+		$start_value = $parts[0];
+		$end_value = $count > 1 ? $parts[1] : $start_value;
+
+		return [
+			'margin-left' => $start_value,   // inline-start -> left
+			'margin-right' => $end_value,    // inline-end -> right
+		];
+	}
+
+	/**
+	 * Expand margin-block shorthand to physical properties
+	 * margin-block: 10px 30px -> margin-top: 10px, margin-bottom: 30px
+	 */
+	private static function expand_margin_block_shorthand( $value ): array {
+		if ( empty( $value ) || ! is_string( $value ) ) {
+			return [];
+		}
+
+		$parts = preg_split( '/\s+/', trim( $value ) );
+		$parts = array_filter( $parts );
+		$count = count( $parts );
+
+		if ( $count < 1 || $count > 2 ) {
+			return [];
+		}
+
+		$start_value = $parts[0];
+		$end_value = $count > 1 ? $parts[1] : $start_value;
+
+		return [
+			'margin-top' => $start_value,     // block-start -> top
+			'margin-bottom' => $end_value,    // block-end -> bottom
+		];
 	}
 }
