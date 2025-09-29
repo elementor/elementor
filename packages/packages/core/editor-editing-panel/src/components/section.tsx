@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { type PropsWithChildren, type ReactNode, useId, useRef } from 'react';
 import { Collapse, Divider, ListItemButton, ListItemText, Stack } from '@elementor/ui';
-import { SectionContent } from './section-content';
 
 import { SectionRefContext } from '../contexts/section-context';
 import { useStateByElement } from '../hooks/use-state-by-element';
@@ -54,7 +53,7 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 				unmountOnExit={ unmountOnExit }
 			>
 				<SectionRefContext.Provider value={ ref }>
-					<Stack ref={ ref } gap={ 2.5 } p={ 2 } aria-label={`${title} section content`}>
+					<Stack ref={ ref } gap={ 2.5 } p={ 2 } aria-label={ `${ title } section content` }>
 						{ children }
 					</Stack>
 				</SectionRefContext.Provider>
