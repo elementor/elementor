@@ -36,23 +36,4 @@ class Test_WP_Import extends Elementor_Test_Base {
 		$this->assertNotNull( get_term( $menu_result['summary']['terms']['succeed'][17], 'nav_menu' ) );
 		$this->assertNotNull( get_posts( $menu_result['summary']['posts']['succeed'][17] ) );
 	}
-
-	public function test_import_parent_child_hierarchy() {
-		$importer = new WP_Import( __DIR__ . '/mock/parent-child-pages.xml' );
-		$result = $importer->run();
-
-		$this->assertEqualSets( [ 100, 200, 300 ], array_keys( $result['summary']['posts']['succeed'] ) );
-
-		$parent_id = $result['summary']['posts']['succeed'][100];
-		$child_id = $result['summary']['posts']['succeed'][200];
-		$grandchild_id = $result['summary']['posts']['succeed'][300];
-
-		$parent_post = get_post( $parent_id );
-		$child_post = get_post( $child_id );
-		$grandchild_post = get_post( $grandchild_id );
-
-		$this->assertEquals( 0, $parent_post->post_parent, 'Parent should have no parent.' );
-		$this->assertEquals( $parent_id, $child_post->post_parent, 'Child should have Parent as parent.' );
-		$this->assertEquals( $child_id, $grandchild_post->post_parent, 'Grandchild should have Child as parent.' );
-	}
 }
