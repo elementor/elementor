@@ -84,7 +84,10 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 						'Content-Type': 'application/json',
 						'X-WP-Nonce': window.wpApiSettings?.nonce || '',
 					},
-					body: JSON.stringify( { media_urls: mediaUrls } ),
+					body: JSON.stringify( {
+						media_urls: mediaUrls,
+						kit: result.data.kit,
+					} ),
 				} );
 
 				const mediaResult = await mediaResponse.json();
@@ -95,8 +98,8 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 				}
 
 				exportedData.media = {
-					mapping: mediaResult.data.mapping,
-					zip_path: mediaResult.data.zip_path,
+					processed: true,
+					message: mediaResult?.data?.message || 'Media processed successfully',
 				};
 			}
 
