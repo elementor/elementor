@@ -206,7 +206,7 @@ class Elementor_Content extends Import_Runner_Base {
 	}
 
 	private function get_imported_parent_id( array $post_settings ): int {
-		$post_parent_id = (int) $post_settings['post_parent'] ?? 0;
+		$post_parent_id = (int) ( $post_settings['post_parent'] ?? 0 );
 
 		if ( ! $post_parent_id ) {
 			return 0;
