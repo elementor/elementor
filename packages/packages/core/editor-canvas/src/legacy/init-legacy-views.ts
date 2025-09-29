@@ -21,7 +21,7 @@ export function initLegacyViews() {
 			let ElementType;
 
 			if ( type === 'component' ) {
-				ElementType = createComponentType;
+				ElementType = createComponentType();
 			} else {
 				ElementType = canBeTemplated( element )
 					? createTemplatedElementType( { type, renderer, element } )
