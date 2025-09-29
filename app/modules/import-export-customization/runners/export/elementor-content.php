@@ -129,7 +129,7 @@ class Elementor_Content extends Export_Runner_Base {
 	}
 
 	private function add_parent_relationship_to_manifest( $post, &$manifest_data ) {
-		if ( $post->post_parent > 0 ) {
+		if ( isset( $post->post_parent ) && $post->post_parent > 0 ) {
 			$manifest_data['post_parent'] = $post->post_parent;
 		}
 	}

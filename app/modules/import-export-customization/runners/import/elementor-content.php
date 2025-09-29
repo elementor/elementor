@@ -18,9 +18,9 @@ class Elementor_Content extends Import_Runner_Base {
 
 	private $imported_data;
 
-	private $current_session_mappings = [];
+	private $processed_posts = [];
 
-	private $orphaned_posts = [];
+	private $post_orphans = [];
 
 	public function __construct() {
 		$this->init_page_on_front_data();
@@ -107,7 +107,6 @@ class Elementor_Content extends Import_Runner_Base {
 					if ( is_array( $import_result ) ) {
 						$result[ $import_result['status'] ][ $id ] = $import_result['result'];
 						$this->map_imported_post_id( $id, $import_result );
-
 						continue;
 					}
 				}
@@ -153,7 +152,6 @@ class Elementor_Content extends Import_Runner_Base {
 	}
 
 	private function import_post( array $post_settings, array $post_data, $post_type, array $imported_terms ) {
-		
 		$post_attributes = [
 			'post_title' => $post_settings['title'],
 			'post_type' => $post_type,
@@ -164,16 +162,8 @@ class Elementor_Content extends Import_Runner_Base {
 			$post_attributes['post_excerpt'] = $post_settings['excerpt'];
 		}
 
-		$post_parent = (int) ( $post_settings['post_parent'] ?? 0 );
-		if ( $post_parent ) {
-			if ( isset( $this->current_session_mappings[ $post_parent ] ) ) {
-				$post_parent = $this->current_session_mappings[ $post_parent ];
-			} else {
-				$this->orphaned_posts[ (int) $post_settings['id'] ] = $post_parent;
-				$post_parent = 0;
-			}
-		}
-		
+		$post_parent = $this->get_imported_parent_id( $post_settings );
+
 		if ( $post_parent ) {
 			$post_attributes['post_parent'] = $post_parent;
 		}
@@ -216,6 +206,21 @@ class Elementor_Content extends Import_Runner_Base {
 		return $new_post_id;
 	}
 
+	private function get_imported_parent_id( array $post_settings ) {
+		$post_parent = (int) ( $post_settings['post_parent'] ?? 0 );
+
+		if ( ! $post_parent ) {
+			return 0;
+		}
+
+		if ( isset( $this->processed_posts[ $post_parent ] ) ) {
+			return $this->processed_posts[ $post_parent ];
+		}
+
+		$this->post_orphans[ (int) $post_settings['id'] ] = $post_parent;
+		return 0;
+	}
+
 	private function set_post_terms( $post_id, array $terms, array $imported_terms ) {
 		foreach ( $terms as $term ) {
 			if ( ! isset( $imported_terms[ $term['term_id'] ] ) ) {
@@ -254,7 +259,7 @@ class Elementor_Content extends Import_Runner_Base {
 			return;
 		}
 
-		$this->current_session_mappings[ $original_id ] = $import_result['result'];
+		$this->processed_posts[ $original_id ] = $import_result['result'];
 	}
 
 	private function backfill_parents() {
@@ -263,13 +268,13 @@ class Elementor_Content extends Import_Runner_Base {
 		$max_iterations = 10;
 		$iteration = 0;
 
-		while ( ! empty( $this->orphaned_posts ) && $iteration < $max_iterations ) {
+		while ( ! empty( $this->post_orphans ) && $iteration < $max_iterations ) {
 			$iteration++;
 			$resolved_in_this_iteration = [];
 
-			foreach ( $this->orphaned_posts as $child_id => $parent_id ) {
-				$local_child_id = $this->current_session_mappings[ $child_id ] ?? null;
-				$local_parent_id = $this->current_session_mappings[ $parent_id ] ?? null;
+			foreach ( $this->post_orphans as $child_id => $parent_id ) {
+				$local_child_id = $this->processed_posts[ $child_id ] ?? null;
+				$local_parent_id = $this->processed_posts[ $parent_id ] ?? null;
 
 				if ( $local_child_id && $local_parent_id ) {
 					$wpdb->update( $wpdb->posts, [ 'post_parent' => $local_parent_id ], [ 'ID' => $local_child_id ], '%d', '%d' );
@@ -283,7 +288,7 @@ class Elementor_Content extends Import_Runner_Base {
 			}
 
 			foreach ( $resolved_in_this_iteration as $resolved_id ) {
-				unset( $this->orphaned_posts[ $resolved_id ] );
+				unset( $this->post_orphans[ $resolved_id ] );
 			}
 
 			if ( empty( $resolved_in_this_iteration ) ) {
