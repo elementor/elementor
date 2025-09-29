@@ -10,12 +10,11 @@ import {
 } from '@elementor/editor-panels';
 import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { ColorFilterIcon, TrashIcon } from '@elementor/icons';
+import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
 import {
 	Alert,
 	AlertAction,
 	AlertTitle,
-	Box,
 	Button,
 	CloseButton,
 	Divider,
@@ -25,7 +24,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type MappedError, mapServerError } from '../../utils/validations';
+import { type ErrorResponse, type MappedError, mapServerError } from '../../utils/validations';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
@@ -60,16 +59,16 @@ export function VariablesManagerPanel() {
 	const {
 		variables,
 		isDirty,
-		hasValidationErrors,
 		searchValue,
+		isSaveDisabled,
 		handleOnChange,
 		createVariable,
 		handleDeleteVariable,
 		handleSave,
 		isSaving,
 		handleSearch,
-		setHasValidationErrors,
 		setIsSaving,
+		setIsSaveDisabled,
 	} = useVariablesManagerState();
 
 	const { autoEditVariableId, startAutoEdit, handleAutoEditComplete } = useAutoEdit();
@@ -99,7 +98,6 @@ export function VariablesManagerPanel() {
 		[ createVariable, startAutoEdit ]
 	);
 
-
 	const handleSaveClick = async () => {
 		try {
 			setServerError( null );
@@ -108,18 +106,17 @@ export function VariablesManagerPanel() {
 			await handleSave();
 			return { success: true };
 		} catch ( error ) {
-			const mappedError = mapServerError( error as any );
+			const mappedError = mapServerError( error as ErrorResponse );
 			const duplicatedIds = mappedError?.action?.data?.duplicatedIds;
 
 			if ( mappedError && 'label' === mappedError.field ) {
 				if ( duplicatedIds && mappedError.action ) {
-					mappedError.action.callback = createNavigationCallback(
-						duplicatedIds,
-						startAutoEdit,
-						() => setServerError( null )
-					);
+					mappedError.action.callback = createNavigationCallback( duplicatedIds, startAutoEdit, () => {
+						setIsSaveDisabled( false );
+					} );
 				}
 				setServerError( mappedError );
+				setIsSaveDisabled( true );
 				resetNavigation();
 			}
 			return { success: false, error: mappedError };
@@ -210,7 +207,7 @@ export function VariablesManagerPanel() {
 							onChange={ handleOnChange }
 							autoEditVariableId={ autoEditVariableId }
 							onAutoEditComplete={ handleAutoEditComplete }
-							onFieldError={ setHasValidationErrors }
+							onFieldError={ setIsSaveDisabled }
 						/>
 					) }
 
@@ -250,6 +247,7 @@ export function VariablesManagerPanel() {
 											</AlertAction>
 										) : undefined
 									}
+									icon={ <AlertTriangleFilledIcon /> }
 								>
 									<AlertTitle>{ serverError.message }</AlertTitle>
 									{ serverError.action?.message }
@@ -257,23 +255,23 @@ export function VariablesManagerPanel() {
 							) : null
 						}
 						arrow={ false }
-						slotProps={{
+						slotProps={ {
 							popper: {
-							  modifiers: [
-								{
-								  name: 'offset',
-								  options: { offset: [-10, 10] }
-								}
-							  ]
-							}
-						  }}
+								modifiers: [
+									{
+										name: 'offset',
+										options: { offset: [ -10, 10 ] },
+									},
+								],
+							},
+						} }
 					>
 						<Button
 							fullWidth
 							size="small"
 							color="global"
 							variant="contained"
-							disabled={ ! isDirty || hasValidationErrors || isSaving || !! serverError }
+							disabled={ isSaveDisabled || ! isDirty || isSaving }
 							onClick={ handleSaveClick }
 							loading={ isSaving }
 						>

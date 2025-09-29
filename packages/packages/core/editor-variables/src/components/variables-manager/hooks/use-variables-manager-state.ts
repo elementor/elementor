@@ -10,8 +10,8 @@ import { filterBySearch } from '../../../utils/filter-by-search';
 export const useVariablesManagerState = () => {
 	const [ variables, setVariables ] = useState( () => getVariables( false ) );
 	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
+	const [ isSaveDisabled, setIsSaveDisabled ] = useState( false );
 	const [ isDirty, setIsDirty ] = useState( false );
-	const [ hasValidationErrors, setHasValidationErrors ] = useState( false );
 	const [ isSaving, setIsSaving ] = useState( false );
 	const [ searchValue, setSearchValue ] = useState( '' );
 
@@ -76,7 +76,7 @@ export const useVariablesManagerState = () => {
 		variables: filteredVariables(),
 		deletedVariables,
 		isDirty,
-		hasValidationErrors,
+		isSaveDisabled,
 		handleOnChange,
 		createVariable,
 		handleDeleteVariable,
@@ -84,7 +84,7 @@ export const useVariablesManagerState = () => {
 		isSaving,
 		handleSearch,
 		searchValue,
-		setHasValidationErrors,
 		setIsSaving,
+		setIsSaveDisabled,
 	};
 };

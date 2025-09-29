@@ -23,12 +23,12 @@ export const ERROR_MESSAGES = {
 export const VARIABLE_LABEL_MAX_LENGTH = 50;
 
 type BatchErrorData = {
-	[id: string]: {
+	[ id: string ]: {
 		status?: number;
 		message?: string;
 	};
 };
-type ErrorResponse = {
+export type ErrorResponse = {
 	response?: {
 		data?: {
 			code?: string;
