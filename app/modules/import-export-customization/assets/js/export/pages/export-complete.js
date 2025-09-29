@@ -163,7 +163,9 @@ export default function ExportComplete() {
 	const getContentSummary = () => {
 		const content = exportedData?.manifest?.content;
 		const wpContent = exportedData?.manifest?.[ 'wp-content' ];
-		if ( ! content && ! wpContent ) {
+		const taxonomies = exportedData?.manifest?.taxonomies;
+
+		if ( ! content && ! wpContent && ! taxonomies ) {
 			return __( 'No content exported', 'elementor' );
 		}
 
@@ -184,6 +186,23 @@ export default function ExportComplete() {
 				title,
 			};
 		} );
+
+		if ( Object.keys( taxonomies || {} ).length ) {
+			const allTaxonomiesSet = new Set();
+
+			Object.values( taxonomies ).forEach( ( postTypeTaxonomies ) => {
+				postTypeTaxonomies.forEach( ( taxonomy ) => {
+					allTaxonomiesSet.add( taxonomy.name );
+				} );
+			} );
+
+			if ( allTaxonomiesSet.size ) {
+				summaryPartsMap.taxonomies = {
+					count: allTaxonomiesSet.size,
+					title: __( 'Taxonomies', 'elementor' ),
+				};
+			}
+		}
 
 		const summaryParts = Object.values( summaryPartsMap ).map( ( { count, title } ) => `${ count } ${ title }` );
 
