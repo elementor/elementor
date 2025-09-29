@@ -26,19 +26,15 @@ window.trackUpgradeNowClickEvent = function() {
 	} );
 };
 
-window.trackConnectAccountEvent = function( event ) {
-	event.preventDefault();
-
-	trackEditorEvent( 'connect_account', {
-		app_type: 'editor',
-		location: 'Elementor WP-admin pages',
-		secondaryLocation: 'Connect account page',
-		trigger: 'click',
-	} );
-
-	setTimeout( () => {
-		window.location.href = event.target.href;
-	}, 200 );
+window.trackConnectAccountEvent = function() {
+	Promise.resolve(
+		trackEditorEvent( 'connect_account', {
+			app_type: 'editor',
+			location: 'Elementor WP-admin pages',
+			secondaryLocation: 'Connect account page',
+			trigger: 'click',
+		} ),
+	).catch( () => {} );
 };
 
 window.trackOpenConnectPageEvent = function() {
@@ -69,12 +65,12 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		upgradeButton.addEventListener( 'click', window.trackUpgradeNowClickEvent );
 	}
 
-	const connectButton = document.querySelector( '.elementor-license-box .button-primary[href*="elementor-connect"]' );
+	const connectButton = document.querySelector( '#elementor-connect-license' );
 	if ( connectButton ) {
 		connectButton.addEventListener( 'click', window.trackConnectAccountEvent );
 	}
 
-	const proInstallButton = document.querySelector( '.elementor-license-box .button-primary[href*="elementor_do_pro_install"]' );
+	const proInstallButton = document.querySelector( '#elementor-connect-install-pro' );
 	if ( proInstallButton ) {
 		proInstallButton.addEventListener( 'click', window.trackProInstallEvent );
 	}
