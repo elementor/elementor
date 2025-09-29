@@ -118,8 +118,7 @@ export default function ImportComplete() {
 	}, [ runnersState ] );
 
 	const getPluginsSummary = useCallback( () => {
-		const plugins = Array.isArray( runnersState?.plugins ) ? runnersState?.plugins : Object.values( runnersState?.plugins || {} );
-		return runnersState?.plugins ? plugins.join( ' | ' ) : __( 'No plugins imported', 'elementor' );
+		return runnersState?.plugins ? runnersState.plugins.join( ' | ' ) : __( 'No plugins imported', 'elementor' );
 	}, [ runnersState?.plugins ] );
 
 	const getSettingsSummary = useCallback( () => {
