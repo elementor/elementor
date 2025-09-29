@@ -14,11 +14,22 @@ import {
 	Link,
 } from '@elementor/ui';
 import { ExternalLinkIcon } from './icons';
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import useKitPlugins from '../hooks/use-kit-plugins';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
+import { transformValueForAnalytics } from '../utils/analytics-transformer';
+
+const transformAnalyticsData = ( payload ) => {
+	const transformed = {};
+
+	for ( const [ key, value ] of Object.entries( payload ) ) {
+		transformed[ key ] = transformValueForAnalytics( key, value, [] );
+	}
+
+	return transformed;
+};
 
 const REQUIRED_PLUGINS = [
 	'elementor/elementor',
@@ -42,7 +53,6 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 	const isLoading = isImport ? false : fetchIsLoading;
 
 	const [ plugins, setPlugins ] = useState( {} );
-	const unselectedValues = useRef( data.analytics?.customization?.plugins || [] );
 
 	const initialState = data?.includes?.includes( 'plugins' ) || false;
 
@@ -86,13 +96,10 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 		return nonRequiredPlugins.some( ( pluginKey ) => plugins[ pluginKey ] ) && ! isAllSelected;
 	}, [ nonRequiredPlugins, plugins, isAllSelected ] );
 
-	const handleToggleChange = useCallback( ( settingKey, isChecked ) => {
+	const handleToggleChange = useCallback( ( settingKey ) => {
 		if ( isRequiredPlugin( settingKey ) ) {
 			return;
 		}
-		unselectedValues.current = isChecked
-			? unselectedValues.current.filter( ( val ) => settingKey !== val )
-			: [ ...unselectedValues.current, settingKey ];
 
 		setPlugins( ( prev ) => ( {
 			...prev,
@@ -100,7 +107,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 		} ) );
 	}, [ isRequiredPlugin ] );
 
-	const handleSelectAll = useCallback( ( e, isChecked ) => {
+	const handleSelectAll = useCallback( () => {
 		const allNonRequiredSelected = nonRequiredPlugins.every( ( pluginKey ) => plugins[ pluginKey ] );
 		const newState = { ...plugins };
 		nonRequiredPlugins.forEach( ( pluginKey ) => {
@@ -112,10 +119,6 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 				newState[ pluginKey ] = true;
 			}
 		} );
-
-		unselectedValues.current = isChecked
-			? unselectedValues.current.filter( ( value ) => ! Object.keys( newState ).includes( value ) )
-			: [ 'plugins', ...nonRequiredPlugins ];
 
 		setPlugins( newState );
 	}, [ plugins, nonRequiredPlugins ] );
@@ -292,7 +295,8 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 					onClick={ () => {
 						const pluginsSelection = getPluginsSelection();
 						const hasEnabledCustomization = Object.values( pluginsSelection ).some( Boolean );
-						handleSaveChanges( 'plugins', pluginsSelection, hasEnabledCustomization, unselectedValues.current );
+						const transformedAnalytics = transformAnalyticsData( pluginsSelection );
+						handleSaveChanges( 'plugins', pluginsSelection, hasEnabledCustomization, transformedAnalytics );
 						handleClose();
 					} }
 					variant="contained"
