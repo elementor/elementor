@@ -33,10 +33,6 @@ export class Save extends $e.modules.CommandInternalBase {
 		console.log( '------------ elements ------------' );
 		console.log( elements );
 
-		// Filter
-
-
-
 		const successArgs = {
 			status,
 			oldStatus,
