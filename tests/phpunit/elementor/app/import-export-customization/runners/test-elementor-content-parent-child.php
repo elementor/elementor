@@ -40,7 +40,7 @@ class Test_Elementor_Content_Parent_Child extends Elementor_Test_Base {
 		$property->setAccessible( true );
 		$property->setValue( $importer, [ 100 => 500 ] );
 
-		$result = $method->invoke( $importer, [ 'id' => 200, 'post_parent' => 100 ] );
+		$result = $method->invoke( $importer, [ 'post_parent' => 100 ], 200 );
 
 		$this->assertEquals( 500, $result );
 	}

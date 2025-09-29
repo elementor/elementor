@@ -163,7 +163,7 @@ class Elementor_Content extends Import_Runner_Base {
 			$post_attributes['post_excerpt'] = $post_settings['excerpt'];
 		}
 
-		$post_parent_id = $this->get_imported_parent_id( $post_settings );
+		$post_parent_id = $this->get_imported_parent_id( $post_settings, $id );
 
 		if ( $post_parent_id ) {
 			$post_attributes['post_parent'] = $post_parent_id;
@@ -205,7 +205,7 @@ class Elementor_Content extends Import_Runner_Base {
 		return $new_post_id;
 	}
 
-	private function get_imported_parent_id( array $post_settings ): int {
+	private function get_imported_parent_id( array $post_settings, int $original_post_id ): int {
 		$post_parent_id = (int) ( $post_settings['post_parent'] ?? 0 );
 
 		if ( ! $post_parent_id ) {
@@ -216,7 +216,7 @@ class Elementor_Content extends Import_Runner_Base {
 			return $this->processed_posts[ $post_parent_id ];
 		}
 
-		$this->post_orphans[ (int) $post_settings['id'] ] = $post_parent_id;
+		$this->post_orphans[ $original_post_id ] = $post_parent_id;
 		return 0;
 	}
 

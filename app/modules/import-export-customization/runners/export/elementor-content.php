@@ -109,7 +109,7 @@ class Elementor_Content extends Export_Runner_Base {
 			];
 
 			if ( isset( $post->post_parent ) && $post->post_parent > 0 ) {
-				$manifest_data['post_parent'] = $post->post_parent;
+				$post_manifest_data['post_parent'] = $post->post_parent;
 			}
 
 			if ( $post->ID === $this->page_on_front_id ) {
