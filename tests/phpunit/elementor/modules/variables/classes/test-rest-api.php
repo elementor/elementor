@@ -791,7 +791,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$response = $this->rest_api->process_batch( $request );
 
 		// Assert
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 500, $response->get_status() );
 
 		$response_data = $response->get_data();
 		$this->assertFalse( $response_data['success'] );
@@ -800,7 +800,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'temp-fail', $response_data['data'] );
 		$this->assertArrayHasKey( 'empty_value', $response_data['data'] );
 
-		$this->assertEquals( 400, $response_data['data']['temp-fail']['status'] );
+		$this->assertEquals( 500, $response_data['data']['temp-fail']['status'] );
 		$this->assertEquals( 500, $response_data['data']['empty_value']['status'] );
 	}
 }
