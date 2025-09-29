@@ -17,7 +17,7 @@ class Query_Builder_Factory {
 		Post_Query::ENDPOINT => Post_Query_Builder::class,
 		Term_Query::ENDPOINT => Term_Query_Builder::class,
 		User_Query::ENDPOINT => User_Query_Builder::class,
-    ];
+	];
 
 	public static function create( ?array $config = [] ): Query_Builder_Base {
 		$endpoint = $config[ self::ENDPOINT_KEY ] ?? Post_Query::ENDPOINT;
