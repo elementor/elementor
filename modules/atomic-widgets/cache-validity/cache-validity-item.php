@@ -130,6 +130,12 @@ class Cache_Validity_Item {
 		$this->update_stored_data( $data );
 	}
 
+	/**
+	 * @param array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} $data
+	 * @param array<string>                                                                           $keys
+	 * @param string                                                                                  $last_key
+	 * @return array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>}
+	 */
 	private function get_normalized_data( array $data, array $keys, string $last_key ) {
 		$redundant_root = &$this->find_redundant_path_root( $data, $keys, $last_key );
 		$parent = &$this->get_node( $data, $keys );
@@ -191,7 +197,7 @@ class Cache_Validity_Item {
 	/**
 	 * @param array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean $data
 	 * @param array<string>                                                                                     $keys
-	 * @return array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean
+	 * @return array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>}
 	 */
 	private function get_data_with_path( array $data, array $keys ): ?array {
 		$current = &$data;
