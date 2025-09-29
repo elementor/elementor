@@ -1,14 +1,14 @@
 <?php
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Property_Mapper_Base;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Font_Weight_Property_Mapper extends Property_Mapper_Base {
+class Font_Weight_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	public function get_supported_properties(): array {
 		return [ 'font-weight' ];

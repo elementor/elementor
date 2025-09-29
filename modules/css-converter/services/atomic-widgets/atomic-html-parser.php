@@ -209,6 +209,10 @@ class Atomic_Html_Parser {
 			}
 		}
 		
+		// Expand shorthand properties
+		require_once __DIR__ . '/../css/processing/css-shorthand-expander.php';
+		$styles = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $styles );
+		
 		return $styles;
 	}
 	

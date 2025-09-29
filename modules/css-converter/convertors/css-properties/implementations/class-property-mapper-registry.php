@@ -46,7 +46,10 @@ class Class_Property_Mapper_Registry {
 		require_once __DIR__ . '/../properties/text-align-property-mapper.php';
 		require_once __DIR__ . '/../properties/font-weight-property-mapper.php';
 		require_once __DIR__ . '/../properties/border-width-property-mapper.php';
-		require_once __DIR__ . '/../properties/border-property-mapper.php';
+		require_once __DIR__ . '/../properties/border-color-property-mapper.php';
+		require_once __DIR__ . '/../properties/border-style-property-mapper.php';
+		// TODO: Re-enable after fixing issues
+		// require_once __DIR__ . '/../properties/border-property-mapper.php';
 		require_once __DIR__ . '/../properties/positioning-property-mapper.php';
 		require_once __DIR__ . '/../properties/transform-property-mapper.php';
 		
@@ -117,11 +120,24 @@ class Class_Property_Mapper_Registry {
 			$this->mappers[ $property ] = $border_width_mapper;
 		}
 		
-		// Register comprehensive atomic border shorthand mapper for all border shorthand properties
-		$border_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Border_Property_Mapper();
-		foreach ( $border_mapper->get_supported_properties() as $property ) {
-			$this->mappers[ $property ] = $border_mapper;
+		// Register comprehensive atomic border-color mapper for all border-color properties
+		$border_color_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Border_Color_Property_Mapper();
+		foreach ( $border_color_mapper->get_supported_properties() as $property ) {
+			$this->mappers[ $property ] = $border_color_mapper;
 		}
+		
+		// Register comprehensive atomic border-style mapper for all border-style properties
+		$border_style_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Border_Style_Property_Mapper();
+		foreach ( $border_style_mapper->get_supported_properties() as $property ) {
+			$this->mappers[ $property ] = $border_style_mapper;
+		}
+		
+		// Register comprehensive atomic border shorthand mapper for all border shorthand properties
+		// TODO: Re-enable after fixing issues
+		// $border_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Border_Property_Mapper();
+		// foreach ( $border_mapper->get_supported_properties() as $property ) {
+		// 	$this->mappers[ $property ] = $border_mapper;
+		// }
 		
 		// Register comprehensive atomic positioning mapper for all positioning properties
 		$positioning_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Positioning_Property_Mapper();

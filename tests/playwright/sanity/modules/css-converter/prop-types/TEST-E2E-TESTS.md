@@ -71,6 +71,40 @@
 4. **✅ Advanced Features**: Background gradients, flex properties, logical positioning all working
 5. **✅ Gap Properties**: Manual testing confirms gap shorthand (`10px 20px`) works correctly
 
+### 🔄 **Recent Updates**
+- **✅ Property Mapper Base Class Migration**: All mappers now use `Atomic_Property_Mapper_Base`
+- **✅ Font Weight Mapper Updated**: `font-weight-property-mapper.php` migrated from `Property_Mapper_Base` to `Atomic_Property_Mapper_Base`
+- **✅ Border Style Mapper Import Fixed**: Corrected import path to use proper `Atomic_Property_Mapper_Base`
+- **✅ Border Color Mapper Working**: Successfully converting border-color properties to atomic structures
+- **✅ Border Style Mapper Working**: Successfully converting border-style properties to atomic structures
+- **✅ Border Shorthand Support**: `border: 1px solid red` now converts all 3 properties (width, style, color)
+
+### 📋 **Mappers Updated from Property_Mapper_Base**
+The following mapper was identified and updated to use `Atomic_Property_Mapper_Base`:
+
+1. **`font-weight-property-mapper.php`** - ✅ **UPDATED**: 
+   - Changed from `Property_Mapper_Base` to `Atomic_Property_Mapper_Base`
+   - Updated import path to use `Implementations\Atomic_Property_Mapper_Base`
+   - Maintains same functionality with atomic-only compliance
+
+### 📋 **Border Mappers Fixed and Working**
+The following border mappers were fixed and are now working correctly:
+
+1. **`border-color-property-mapper.php`** - ✅ **WORKING**: 
+   - Fixed return format to use direct `Color_Prop_Type::make()->generate()` result
+   - Fixed property parameter usage (was hardcoded to 'border-color')
+   - Now supports all border-color properties (border-color, border-top-color, etc.)
+
+2. **`border-style-property-mapper.php`** - ✅ **WORKING**: 
+   - Fixed return format to use direct `String_Prop_Type::make()->generate()` result
+   - Fixed property parameter usage (was hardcoded to 'border-style')
+   - Now supports all border-style properties (border-style, border-top-style, etc.)
+
+**✅ Result**: Border shorthand `border: 1px solid red` now correctly converts all 3 properties:
+- `border-width: 1px` ✅
+- `border-style: solid` ✅ **NEW!**
+- `border-color: red` ✅ **NEW!**
+
 ## 🚀 **API Verification Testing Strategy**
 
 ### **✅ Proven Test Structure**

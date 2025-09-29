@@ -172,7 +172,25 @@ class Html_Parser {
 			}
 		}
 
-		return $styles;
+		// Expand shorthand properties
+		require_once __DIR__ . '/../processing/css-shorthand-expander.php';
+		$simple_styles = [];
+		foreach ( $styles as $property => $data ) {
+			$simple_styles[ $property ] = $data['value'];
+		}
+		$expanded_styles = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $simple_styles );
+		
+		// Convert back to the expected format
+		$final_styles = [];
+		foreach ( $expanded_styles as $property => $value ) {
+			$important = isset( $styles[ $property ] ) ? $styles[ $property ]['important'] : false;
+			$final_styles[ $property ] = [
+				'value' => $value,
+				'important' => $important,
+			];
+		}
+
+		return $final_styles;
 	}
 
 	public function extract_linked_css( $html ) {
