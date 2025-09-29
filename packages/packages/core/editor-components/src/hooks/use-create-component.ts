@@ -1,22 +1,13 @@
-import { __useDispatch as useDispatch, __useSelector as useSelector, type AnyAction } from '@elementor/store';
+import { useMutation, useQueryClient } from '@elementor/query';
 
-import { type CreateComponentPayload } from '../api';
-import { selectCreateIsError, selectCreateIsPending } from '../store';
-import { createComponent } from '../thunks';
+import { apiClient } from '../api';
+import { COMPONENTS_QUERY_KEY } from './use-components';
 
-export const useCreateComponent = () => {
-	const dispatch = useDispatch();
-	const isPending = useSelector( selectCreateIsPending );
-	const isError = useSelector( selectCreateIsError );
+export const useCreateComponentMutation = () => {
+	const queryClient = useQueryClient();
 
-	const createComponentAction = async ( payload: CreateComponentPayload ) => {
-		const result = await dispatch( createComponent( payload ) as unknown as AnyAction );
-		return result.payload;
-	};
-
-	return {
-		createComponent: createComponentAction,
-		isPending,
-		isError,
-	};
+	return useMutation( {
+		mutationFn: apiClient.create,
+		onSuccess: () => queryClient.invalidateQueries( { queryKey: [ COMPONENTS_QUERY_KEY ] } ),
+	} );
 };
