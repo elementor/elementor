@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { renderWithStore, renderWithTheme } from 'test-utils';
-import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
 import {
 	__createStore,
 	__dispatch as dispatch,
