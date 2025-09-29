@@ -1,7 +1,11 @@
 import { useCallback, useRef } from 'react';
 
 export interface UseDuplicateErrorNavigationReturn {
-	createNavigationCallback: ( duplicateIds: string[], onNavigate: ( id: string ) => void, onComplete: () => void ) => () => void;
+	createNavigationCallback: (
+		duplicateIds: string[],
+		onNavigate: ( id: string ) => void,
+		onComplete: () => void
+	) => () => void;
 	resetNavigation: () => void;
 }
 
@@ -17,7 +21,7 @@ export const useDuplicateErrorNavigation = (): UseDuplicateErrorNavigationReturn
 
 				const currentIndex = currentIndexRef.current;
 				const currentId = duplicateIds[ currentIndex ];
-				
+
 				if ( currentId ) {
 					onNavigate( currentId );
 
