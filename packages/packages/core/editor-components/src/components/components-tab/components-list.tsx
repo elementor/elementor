@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { EyeIcon } from '@elementor/icons';
+import { ComponentsIcon, EyeIcon } from '@elementor/icons';
 import { Box, Divider, Icon, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -24,7 +24,9 @@ export function ComponentsList() {
 
 	return (
 		<List sx={ { display: 'flex', flexDirection: 'column', gap: 1, px: 2 } }>
-			{ components?.map( ( component ) => <ComponentItem key={ component.id } component={ component } /> ) }
+			{ components.map( ( component ) => (
+				<ComponentItem key={ component.id } component={ component } />
+			) ) }
 		</List>
 	);
 }
@@ -80,7 +82,7 @@ const EmptySearchResult = () => {
 			overflow={ 'hidden' }
 			justifySelf={ 'center' }
 		>
-			<EyeIcon />
+			<ComponentsIcon />
 			<Box
 				sx={ {
 					width: '100%',
@@ -126,11 +128,11 @@ const EmptySearchResult = () => {
 };
 
 const useFilteredComponents = () => {
-	const { data: components, isLoading } = useComponents();
+	const { components, isLoading } = useComponents();
 	const { searchValue } = useSearch();
 
 	return {
-		components: components?.filter( ( component ) =>
+		components: components.filter( ( component ) =>
 			component.name.toLowerCase().includes( searchValue.toLowerCase() )
 		),
 		isLoading,
