@@ -15,7 +15,6 @@ class Link_Control extends Atomic_Control_Base {
 	private ?array $query_config = null;
 	private ?string $placeholder = null;
 	private ?string $aria_label = null;
-	private ?string $data_test_id = null;
 
 	public function get_type(): string {
 		return 'link';
