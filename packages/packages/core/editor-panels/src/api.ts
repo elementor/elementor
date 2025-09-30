@@ -1,11 +1,11 @@
 import { type ComponentType } from 'react';
+import { type Element, getSelectedElements, selectElement } from '@elementor/editor-elements';
 import { __privateUseRouteStatus as useRouteStatus, type UseRouteStatusOptions } from '@elementor/editor-v1-adapters';
 import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 
 import { injectIntoPanels } from './location';
 import { selectOpenId, slice } from './store';
 import { V2_PANEL } from './sync';
-import { getSelectedElements, selectElement, type Element } from '@elementor/editor-elements';
 
 export type PanelDeclaration< TOnOpenReturn = unknown > = {
 	id: string;
@@ -28,10 +28,15 @@ export function createPanel< TOnOpenReturn >( {
 		blockOnKitRoutes,
 	} );
 
-	const usePanelActions = createUseActions( id, usePanelStatus, {
-		onOpen,
-		onClose,
-	}, isOpenPreviousElement );
+	const usePanelActions = createUseActions(
+		id,
+		usePanelStatus,
+		{
+			onOpen,
+			onClose,
+		},
+		isOpenPreviousElement
+	);
 
 	return {
 		panel: {
