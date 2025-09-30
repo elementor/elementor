@@ -59,9 +59,9 @@ export const useVariablesManagerState = () => {
 			setVariables( updatedVariables );
 			setDeletedVariables( [] );
 			setIsDirty( false );
-			return { success: true };
 		}
-		return { success: false };
+
+		return { success: result.success };
 	}, [ variables ] );
 
 	const filteredVariables = () => {
