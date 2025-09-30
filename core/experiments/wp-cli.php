@@ -126,9 +126,9 @@ class Wp_Cli extends \WP_CLI_Command {
 			$default_state = isset( $feature['default'] ) ? $feature['default'] : Experiments_Manager::STATE_INACTIVE;
 
 			if ( $is_network ) {
-				$this->foreach_sites( 
+				$this->foreach_sites(
 					[ $this, 'update_experiment_state' ],
-					[ $experiment ], 
+					[ $experiment ],
 					$default_state,
 					$is_network,
 					"Experiment {$experiment} reset to default state ({$default_state})",
