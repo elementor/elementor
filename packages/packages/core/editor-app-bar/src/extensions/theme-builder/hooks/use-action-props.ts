@@ -1,7 +1,4 @@
-import {
-	__privateRunCommand as runCommand,
-	__privateUseRouteStatus as useRouteStatus,
-} from '@elementor/editor-v1-adapters';
+import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { ThemeBuilderIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
