@@ -108,6 +108,10 @@ class Elementor_Content extends Export_Runner_Base {
 				'terms' => $terms,
 			];
 
+			if ( isset( $post->post_parent ) && $post->post_parent > 0 ) {
+				$post_manifest_data['post_parent'] = $post->post_parent;
+			}
+
 			if ( $post->ID === $this->page_on_front_id ) {
 				$post_manifest_data['show_on_front'] = true;
 			}
