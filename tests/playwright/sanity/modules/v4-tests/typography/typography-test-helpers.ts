@@ -116,13 +116,16 @@ function parseSpacingValue( spacingStr: string ): number {
 	return parseFloat( numericPart );
 }
 
-export async function verifySpacingEditor(
-	driver: EditorDriver,
-	selector: string,
-	expectedValue: number,
-	expectedUnit: string,
-	cssProperty: 'letterSpacing' | 'wordSpacing',
-): Promise<void> {
+export async function verifySpacingEditor(params:
+	{
+		driver: EditorDriver,
+		selector: string,
+		expectedValue: number,
+		expectedUnit: string,
+		cssProperty: 'letterSpacing' | 'wordSpacing',
+	}): Promise<void> {
+	const { driver, selector, expectedValue, expectedUnit, cssProperty } = params;
+}
 	const frame = driver.editor.getPreviewFrame();
 	const element = frame.locator( selector );
 
