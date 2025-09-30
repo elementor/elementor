@@ -5,6 +5,7 @@ import { Box, IconButton, ListItemIcon, Tooltip, Typography } from '@elementor/u
 import { __ } from '@wordpress/i18n';
 
 const SIZE = 'tiny';
+const EDIT_LABEL = __( 'Edit variable', 'elementor' );
 
 export const MenuItemContent = < T, V extends string >( { item }: { item: VirtualizedItem< T, V > } ) => {
 	const onEdit = item.onEdit as ( ( value: V ) => void ) | undefined;
@@ -41,14 +42,14 @@ export const MenuItemContent = < T, V extends string >( { item }: { item: Virtua
 				) }
 			</Box>
 			{ !! onEdit && (
-				<Tooltip placement="top" title={ __( 'Edit variable', 'elementor' ) }>
+				<Tooltip placement="top" title={ EDIT_LABEL }>
 					<IconButton
 						sx={ { mx: 1, opacity: '0' } }
 						onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
 							e.stopPropagation();
 							onEdit( item.value );
 						} }
-						aria-label={ __( 'Edit variable', 'elementor' ) }
+						aria-label={ EDIT_LABEL }
 					>
 						<EditIcon color="action" fontSize={ SIZE } />
 					</IconButton>

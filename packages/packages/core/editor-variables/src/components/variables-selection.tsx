@@ -17,6 +17,8 @@ import { NoSearchResults } from './ui/no-search-results';
 import { VariablesStyledMenuList } from './ui/styled-menu-list';
 
 const SIZE = 'tiny';
+const CREATE_LABEL = __( 'Create variable', 'elementor' );
+const MANAGER_LABEL = __( 'Variable Manager', 'elementor' );
 
 type Props = {
 	closePopover: () => void;
@@ -61,13 +63,13 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 
 	if ( onAdd ) {
 		actions.push(
-			<Tooltip placement="top" title={ __( 'Create variable', 'elementor' ) }>
+			<Tooltip placement="top" title={ CREATE_LABEL }>
 				<IconButton
 					id="add-variable-button"
 					key="add"
 					size={ SIZE }
 					onClick={ onAddAndTrack }
-					aria-label={ __( 'Create variable', 'elementor' ) }
+					aria-label={ CREATE_LABEL }
 				>
 					<PlusIcon fontSize={ SIZE } />
 				</IconButton>
@@ -77,13 +79,13 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 
 	if ( onSettings ) {
 		actions.push(
-			<Tooltip placement="top" title={ __( 'Variable Manager', 'elementor' ) }>
+			<Tooltip placement="top" title={ MANAGER_LABEL }>
 				<IconButton
 					id="variables-manager-button"
 					key="settings"
 					size={ SIZE }
 					onClick={ onSettings }
-					aria-label={ __( 'Variable Manager', 'elementor' ) }
+					aria-label={ MANAGER_LABEL }
 				>
 					<SettingsIcon fontSize={ SIZE } />
 				</IconButton>

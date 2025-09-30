@@ -20,6 +20,7 @@ import { EDIT_CONFIRMATION_DIALOG_ID, EditConfirmationDialog } from './ui/edit-c
 import { FormField } from './ui/form-field';
 
 const SIZE = 'tiny';
+const DELETE_LABEL = __( 'Delete variable', 'elementor' );
 
 type Props = {
 	editId: string;
@@ -127,12 +128,12 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 
 	if ( userPermissions.canDelete() ) {
 		actions.push(
-			<Tooltip placement="top" title={ __( 'Delete variable', 'elementor' ) }>
+			<Tooltip placement="top" title={ DELETE_LABEL }>
 				<IconButton
 					key="delete"
 					size={ SIZE }
-					aria-label={ __( 'Delete variable', 'elementor' ) }
 					onClick={ handleDeleteConfirmation }
+					aria-label={ DELETE_LABEL }
 				>
 					<TrashIcon fontSize={ SIZE } />
 				</IconButton>
