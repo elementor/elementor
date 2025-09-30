@@ -1,6 +1,7 @@
+import { type V1ElementData } from '@elementor/editor-elements';
 import { __createAsyncThunk as createAsyncThunk } from '@elementor/store';
 
-import { apiClient, type CreateComponentPayload, type CreateComponentResponse } from './api';
+import { apiClient, type CreateComponentPayload, type CreateComponentResponse } from '../api';
 
 const createComponent = createAsyncThunk< CreateComponentResponse, CreateComponentPayload >(
 	'components/create',
@@ -15,4 +16,16 @@ const loadComponents = createAsyncThunk( 'components/load', async () => {
 	return response;
 } );
 
-export { createComponent, loadComponents };
+async function loadStyles( ids: number[] ): Promise< [ number, V1ElementData ][] > {
+	console.log( 'LOG:: loadStyles', ids );
+
+	const props = ids.map( async ( id ) => [ id, await apiClient.getConfig( id ) ] );
+	console.log( 'LOG:: props', props );
+
+	const data = await Promise.all( props );
+
+	console.log( 'LOG:: loadStyles', data );
+	return data;
+}
+
+export { createComponent, loadComponents, loadStyles };
