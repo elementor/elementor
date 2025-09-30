@@ -70,10 +70,22 @@ function createTemplatedElementViewClassDeclaration( {
 	templateKey,
 	baseStylesDictionary,
 }: CreateViewOptions ): typeof ElementView {
+	const legacyWindow = window as unknown as LegacyWindow;
+
 	const BaseView = createElementViewClassDeclaration();
 
 	return class extends BaseView {
 		#abortController: AbortController | null = null;
+
+		__renderChildren: () => void;
+
+		constructor( ...args: unknown[] ) {
+			super( ...args );
+
+			this.__renderChildren = this._renderChildren;
+
+			this._renderChildren = () => {};
+		}
 
 		getTemplateType() {
 			return 'twig';
@@ -99,22 +111,44 @@ function createTemplatedElementViewClassDeclaration( {
 						signal,
 					} );
 				} )
-				.then( ( resolvedSettings ) => {
+				.then( async ( settings ) => {
+					if ( settings?._children ) {
+						const collection = legacyWindow.elementor.createBackboneElementsCollection(
+							settings._children
+						);
+
+						this.collection = collection;
+					}
+
 					// Same as the Backend.
 					const context = {
 						id: this.model.get( 'id' ),
 						type,
-						settings: resolvedSettings,
+						settings,
 						base_styles: baseStylesDictionary,
+						children: '<template data-children-placeholder></template>',
 					};
 
 					return renderer.render( templateKey, context );
 				} )
-				.then( ( html ) => this.$el.html( html ) );
+				.then( ( html ) => this.$el.html( html ) )
+				.then( () => this.__renderChildren() );
 
 			await process.execute();
 
 			this.#afterRenderTemplate();
+		}
+
+		attachBuffer( collectionView: this, buffer: DocumentFragment ): void {
+			const childrenPlaceholder = collectionView.$el.find( '[data-children-placeholder]' ).get( 0 );
+
+			if ( ! childrenPlaceholder ) {
+				super.attachBuffer( collectionView, buffer );
+
+				return;
+			}
+
+			childrenPlaceholder.replaceWith( buffer );
 		}
 
 		// Emulating the original Marionette behavior.

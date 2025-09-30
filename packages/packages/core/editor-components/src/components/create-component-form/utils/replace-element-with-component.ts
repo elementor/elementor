@@ -1,5 +1,4 @@
 import { replaceElement, type V1Element } from '@elementor/editor-elements';
-import { numberPropTypeUtil } from '@elementor/editor-props';
 
 import { type Component } from '../../../types';
 
@@ -16,7 +15,10 @@ export const createComponentModel = ( component: Component ) => {
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
-			component_id: numberPropTypeUtil.create( component.id ),
+			_children: {
+				$$type: 'component-id',
+				value: component.id,
+			},
 		},
 		editor_settings: {
 			title: component.name,
