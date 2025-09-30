@@ -43,12 +43,12 @@ class Components_Repository {
 		return Components::make( $components );
 	}
 
-	public function create( string $name, array $content ) {
+	public function create( string $name, array $content, string $status ) {
 		$document = Plugin::$instance->documents->create(
 			Component_Document::get_type(),
 			[
 				'post_title' => $name,
-				'post_status' => 'publish',
+				'post_status' => $status,
 			]
 		);
 

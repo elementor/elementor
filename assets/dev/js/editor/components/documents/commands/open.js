@@ -26,19 +26,35 @@ export class Open extends $e.modules.CommandBase {
 			elementor.documents.invalidateCache();
 		}
 
+		if ( elementor.documents.documents[ id ] ) {
+			const config = elementor.documents.documents[ id ].config;
+
+			const loadingResult = this.loadDocument( { config, selector, setAsInitial, shouldScroll, shouldNavigateToDefaultRoute } );
+
+			this.removeLoadingClass( id );
+
+			return loadingResult;
+		}
+
 		return elementor.documents.request( id )
 			.then( ( config ) => {
-				elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );
-
-				// Tell the editor to load the document.
-				return $e.internal( 'editor/documents/load', { config, selector, setAsInitial, shouldScroll, shouldNavigateToDefaultRoute } );
+				return this.loadDocument( { config, selector, setAsInitial, shouldScroll, shouldNavigateToDefaultRoute } );
 			} )
 			.always( () => {
 				// TODO: move to $e.hooks.ui.
-				if ( elementor.loaded ) {
-					elementor.$previewContents.find( `.elementor-${ id }` ).removeClass( 'loading' );
-				}
+				this.removeLoadingClass( id );
 			} );
+	}
+
+	loadDocument( { config, selector, setAsInitial, shouldScroll, shouldNavigateToDefaultRoute } ) {
+		elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );
+		return $e.internal( 'editor/documents/load', { config, selector, setAsInitial, shouldScroll, shouldNavigateToDefaultRoute } );
+	}
+
+	removeLoadingClass( id ) {
+		if ( elementor.loaded ) {
+			elementor.$previewContents.find( `.elementor-${ id }` ).removeClass( 'loading' );
+		}
 	}
 }
 
