@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { EllipsisWithTooltip, type VirtualizedItem } from '@elementor/editor-ui';
 import { EditIcon } from '@elementor/icons';
-import { Box, IconButton, ListItemIcon, Typography } from '@elementor/ui';
+import { Box, IconButton, ListItemIcon, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 const SIZE = 'tiny';
@@ -41,16 +41,18 @@ export const MenuItemContent = < T, V extends string >( { item }: { item: Virtua
 				) }
 			</Box>
 			{ !! onEdit && (
-				<IconButton
-					sx={ { mx: 1, opacity: '0' } }
-					onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
-						e.stopPropagation();
-						onEdit( item.value );
-					} }
-					aria-label={ __( 'Edit', 'elementor' ) }
-				>
-					<EditIcon color="action" fontSize={ SIZE } />
-				</IconButton>
+				<Tooltip placement="top" title={ __( 'Edit variable', 'elementor' ) }>
+					<IconButton
+						sx={ { mx: 1, opacity: '0' } }
+						onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
+							e.stopPropagation();
+							onEdit( item.value );
+						} }
+						aria-label={ __( 'Edit variable', 'elementor' ) }
+					>
+						<EditIcon color="action" fontSize={ SIZE } />
+					</IconButton>
+				</Tooltip>
 			) }
 		</>
 	);

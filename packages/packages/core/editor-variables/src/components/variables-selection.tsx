@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader, PopoverMenuList, SearchField, type VirtualizedItem } from '@elementor/editor-ui';
 import { ColorFilterIcon, PlusIcon, SettingsIcon } from '@elementor/icons';
-import { Divider, IconButton } from '@elementor/ui';
+import { Divider, IconButton, Tooltip } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
 import { useVariableType } from '../context/variable-type-context';
@@ -61,17 +61,33 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 
 	if ( onAdd ) {
 		actions.push(
-			<IconButton id="add-variable-button" key="add" size={ SIZE } onClick={ onAddAndTrack }>
-				<PlusIcon fontSize={ SIZE } />
-			</IconButton>
+			<Tooltip placement="top" title={ __( 'Create variable', 'elementor' ) }>
+				<IconButton
+					id="add-variable-button"
+					key="add"
+					size={ SIZE }
+					onClick={ onAddAndTrack }
+					aria-label={ __( 'Create variable', 'elementor' ) }
+				>
+					<PlusIcon fontSize={ SIZE } />
+				</IconButton>
+			</Tooltip>
 		);
 	}
 
 	if ( onSettings ) {
 		actions.push(
-			<IconButton id="variables-manager-button" key="settings" size={ SIZE } onClick={ onSettings }>
-				<SettingsIcon fontSize={ SIZE } />
-			</IconButton>
+			<Tooltip placement="top" title={ __( 'Variable Manager', 'elementor' ) }>
+				<IconButton
+					id="variables-manager-button"
+					key="settings"
+					size={ SIZE }
+					onClick={ onSettings }
+					aria-label={ __( 'Variable Manager', 'elementor' ) }
+				>
+					<SettingsIcon fontSize={ SIZE } />
+				</IconButton>
+			</Tooltip>
 		);
 	}
 
