@@ -79,14 +79,11 @@ export async function verifyFontSizePreview(
 	selector: string,
 	expectedSize: string,
 ): Promise<void> {
-	const frame = driver.editor.getPreviewFrame();
-	const element = frame.locator( selector );
-
-	await expect( element ).toBeVisible( { timeout: timeouts.expect } );
+	const element = driver.editor.getPreviewFrame().locator( selector );
 	await expect( element ).toHaveCSS( 'font-size', `${ expectedSize }px`, { timeout: timeouts.expect } );
 }
 
-export async function verifyFontSizeWithPublishing(
+export async function verifyFontSizeOnFrontend(
 	driver: EditorDriver,
 	selector: string,
 	expectedSize: string,
@@ -125,8 +122,7 @@ export async function verifySpacingEditor( params:
 		cssProperty: 'letterSpacing' | 'wordSpacing',
 	} ): Promise<void> {
 	const { driver, selector, expectedValue, expectedUnit, cssProperty } = params;
-	const frame = driver.editor.getPreviewFrame();
-	const element = frame.locator( selector );
+	const element = driver.editor.getPreviewFrame().locator( selector );
 
 	await expect( async () => {
 		const computedStyles = await element.evaluate( ( el, property ) => {
@@ -155,18 +151,12 @@ export async function verifyFontEditor(
 	selector: string,
 	expectedFamily: string,
 ): Promise<void> {
-	const frame = driver.editor.getPreviewFrame();
-	if ( ! frame ) {
-		throw new Error( 'Preview frame is not available' );
-	}
-	const element = frame.locator( selector );
-	await expect( element ).toBeVisible( { timeout: timeouts.expect } );
-
+	const element = driver.editor.getPreviewFrame().locator( selector );
 	const computedFamily = await element.evaluate( ( e ) => window.getComputedStyle( e ).fontFamily );
 	expect( computedFamily.toLowerCase() ).toContain( expectedFamily.toLowerCase() );
 }
 
-export async function verifyFontFamilyWithPublishing(
+export async function verifyFontFamilyOnFrontend(
 	driver: EditorDriver,
 	selector: string,
 	expectedFamily: string,
