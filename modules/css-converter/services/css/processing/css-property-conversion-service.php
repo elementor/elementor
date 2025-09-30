@@ -171,9 +171,15 @@ class Css_Property_Conversion_Service {
 					? $mapper->get_v4_property_name( $property )
 					: $property;
 				
-				// ✅ CRITICAL FIX: Merge Dimensions_Prop_Type structures for multiple margin properties
-				if ( isset( $converted[ $v4_property_name ] ) && $this->is_dimensions_prop_type( $result ) && $this->is_dimensions_prop_type( $converted[ $v4_property_name ] ) ) {
-					$converted[ $v4_property_name ] = $this->merge_dimensions_prop_types( $converted[ $v4_property_name ], $result );
+				// ✅ CRITICAL FIX: Merge directional prop types for multiple properties
+				if ( isset( $converted[ $v4_property_name ] ) ) {
+					if ( $this->is_dimensions_prop_type( $result ) && $this->is_dimensions_prop_type( $converted[ $v4_property_name ] ) ) {
+						$converted[ $v4_property_name ] = $this->merge_dimensions_prop_types( $converted[ $v4_property_name ], $result );
+					} elseif ( $this->is_border_width_prop_type( $result ) && $this->is_border_width_prop_type( $converted[ $v4_property_name ] ) ) {
+						$converted[ $v4_property_name ] = $this->merge_border_width_prop_types( $converted[ $v4_property_name ], $result );
+					} else {
+						$converted[ $v4_property_name ] = $result;
+					}
 				} else {
 					$converted[ $v4_property_name ] = $result;
 				}
@@ -234,6 +240,10 @@ class Css_Property_Conversion_Service {
 		return isset( $property['$$type'] ) && 'dimensions' === $property['$$type'];
 	}
 
+	private function is_border_width_prop_type( array $property ): bool {
+		return isset( $property['$$type'] ) && 'border-width' === $property['$$type'];
+	}
+
 	/**
 	 * Merge two Dimensions_Prop_Type structures
 	 */
@@ -251,6 +261,27 @@ class Css_Property_Conversion_Service {
 
 		return [
 			'$$type' => 'dimensions',
+			'value' => $merged_value
+		];
+	}
+
+	/**
+	 * Merge two Border_Width_Prop_Type structures
+	 */
+	private function merge_border_width_prop_types( array $existing, array $new ): array {
+		// Both should have the same $$type: 'border-width'
+		if ( ! $this->is_border_width_prop_type( $existing ) || ! $this->is_border_width_prop_type( $new ) ) {
+			return $new; // Fallback to new if not both border-width
+		}
+
+		// Merge the value arrays, with new values taking precedence
+		$merged_value = array_merge(
+			$existing['value'] ?? [],
+			$new['value'] ?? []
+		);
+
+		return [
+			'$$type' => 'border-width',
 			'value' => $merged_value
 		];
 	}

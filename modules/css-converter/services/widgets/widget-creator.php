@@ -567,13 +567,19 @@ class Widget_Creator {
 								// ✅ FIXED: Use mapped property name (e.g., border-top-left-radius -> border-radius)
 								$property_key = $property_data['mapped_property'] ?? $property_data['original_property'] ?? 'unknown';
 								
-								// Add the converted property to props using the correct mapped key
-								// Check if we need to merge Dimensions_Prop_Type structures
-								if ( isset( $props[ $property_key ] ) && $this->is_dimensions_prop_type( $converted ) && $this->is_dimensions_prop_type( $props[ $property_key ] ) ) {
+							// Add the converted property to props using the correct mapped key
+							// Check if we need to merge directional prop type structures
+							if ( isset( $props[ $property_key ] ) ) {
+								if ( $this->is_dimensions_prop_type( $converted ) && $this->is_dimensions_prop_type( $props[ $property_key ] ) ) {
 									$props[ $property_key ] = $this->merge_dimensions_prop_types( $props[ $property_key ], $converted );
+								} elseif ( $this->is_border_width_prop_type( $converted ) && $this->is_border_width_prop_type( $props[ $property_key ] ) ) {
+									$props[ $property_key ] = $this->merge_border_width_prop_types( $props[ $property_key ], $converted );
 								} else {
 									$props[ $property_key ] = $converted;
 								}
+							} else {
+								$props[ $property_key ] = $converted;
+							}
 							}
 						}
 					}
@@ -608,6 +614,10 @@ class Widget_Creator {
 		return isset( $property['$$type'] ) && 'dimensions' === $property['$$type'];
 	}
 
+	private function is_border_width_prop_type( array $property ): bool {
+		return isset( $property['$$type'] ) && 'border-width' === $property['$$type'];
+	}
+
 	private function merge_dimensions_prop_types( array $existing, array $new ): array {
 		if ( ! $this->is_dimensions_prop_type( $existing ) || ! $this->is_dimensions_prop_type( $new ) ) {
 			return $new;
@@ -620,6 +630,22 @@ class Widget_Creator {
 
 		return [
 			'$$type' => 'dimensions',
+			'value' => $merged_value
+		];
+	}
+
+	private function merge_border_width_prop_types( array $existing, array $new ): array {
+		if ( ! $this->is_border_width_prop_type( $existing ) || ! $this->is_border_width_prop_type( $new ) ) {
+			return $new;
+		}
+
+		$merged_value = array_merge(
+			$existing['value'] ?? [],
+			$new['value'] ?? []
+		);
+
+		return [
+			'$$type' => 'border-width',
 			'value' => $merged_value
 		];
 	}

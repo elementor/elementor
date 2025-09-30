@@ -16,12 +16,12 @@ class CSS_Shorthand_Expander {
 				$longhand_properties = self::expand_shorthand( $property, $value );
 				$expanded = array_merge( $expanded, $longhand_properties );
 			} else {
-				$expanded[ $property ] = $value;
-			}
+			$expanded[ $property ] = $value;
 		}
-
-		return $expanded;
 	}
+
+	return $expanded;
+}
 
 	private static function is_shorthand_property( string $property ): bool {
 		$shorthand_properties = [
@@ -72,6 +72,16 @@ class CSS_Shorthand_Expander {
 			return [];
 		}
 
+		// ✅ ATOMIC WIDGETS WORKAROUND
+		// For directional borders (border-top, border-right, etc.), 
+		// we need to convert to full border shorthand because atomic widgets 
+		// don't support individual border-style/border-color properties
+		if ( 'border' !== $property ) {
+			// This is border-top, border-right, etc.
+			return self::expand_directional_border_to_full_border( $property, $parsed );
+		}
+
+		// Regular border shorthand expansion for 'border' property
 		$expanded = [];
 		$suffix = self::get_border_suffix( $property );
 
@@ -91,6 +101,52 @@ class CSS_Shorthand_Expander {
 		}
 
 		return $expanded;
+	}
+
+	private static function expand_directional_border_to_full_border( string $property, array $parsed ): array {
+		// Convert directional border (border-top: 5px solid blue) to full border properties
+		// that work with atomic widgets limitations:
+		// - border-width: 5px 0 0 0 (directional, supported by Border_Width_Prop_Type)
+		// - border-style: solid (shorthand, supported by String_Prop_Type)
+		// - border-color: blue (shorthand, supported by Color_Prop_Type)
+		
+		$expanded = [];
+		
+		if ( isset( $parsed['width'] ) ) {
+			$directional_width = self::create_directional_border_width( $property, $parsed['width'] );
+			$expanded['border-width'] = $directional_width;
+		}
+		
+		if ( isset( $parsed['style'] ) ) {
+			$expanded['border-style'] = $parsed['style']; // Use shorthand (supported)
+		}
+		
+		if ( isset( $parsed['color'] ) ) {
+			$expanded['border-color'] = $parsed['color']; // Use shorthand (supported)
+		}
+		
+		return $expanded;
+	}
+
+	private static function create_directional_border_width( string $property, string $width ): string {
+		// Convert directional border to 4-value border-width shorthand
+		// border-top: 5px → border-width: 5px 0 0 0
+		// border-right: 5px → border-width: 0 5px 0 0
+		// border-bottom: 5px → border-width: 0 0 5px 0
+		// border-left: 5px → border-width: 0 0 0 5px
+		
+		switch ( $property ) {
+			case 'border-top':
+				return "$width 0 0 0";
+			case 'border-right':
+				return "0 $width 0 0";
+			case 'border-bottom':
+				return "0 0 $width 0";
+			case 'border-left':
+				return "0 0 0 $width";
+			default:
+				return $width;
+		}
 	}
 
 	private static function get_border_suffix( string $property ): string {

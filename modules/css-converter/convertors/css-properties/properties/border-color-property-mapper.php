@@ -22,6 +22,12 @@ class Border_Color_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	public function map_to_v4_atomic( string $property, $value ): ?array {
+		// ❌ ATOMIC WIDGETS LIMITATION: Individual border-color properties not supported
+		// Only 'border-color' shorthand is supported in atomic widgets style schema
+		if ( in_array( $property, [ 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color' ], true ) ) {
+			return null; // Individual properties not supported by atomic widgets
+		}
+		
 		if ( empty( $value ) || ! is_string( $value ) ) {
 			return null;
 		}

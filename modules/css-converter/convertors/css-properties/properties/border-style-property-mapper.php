@@ -35,6 +35,12 @@ class Border_Style_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	public function map_to_v4_atomic( string $property, $value ): ?array {
+		// ❌ ATOMIC WIDGETS LIMITATION: Individual border-style properties not supported
+		// Only 'border-style' shorthand is supported in atomic widgets style schema
+		if ( in_array( $property, [ 'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style' ], true ) ) {
+			return null; // Individual properties not supported by atomic widgets
+		}
+		
 		if ( empty( $value ) || ! is_string( $value ) ) {
 			return null;
 		}

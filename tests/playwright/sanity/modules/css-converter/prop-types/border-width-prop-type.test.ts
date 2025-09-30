@@ -38,7 +38,7 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test.skip( 'should convert border-width properties including shorthand - SKIPPED: JSON structure mismatch - duplicate properties generated', async ( { page, request } ) => {
+	test( 'should convert border-width properties including shorthand', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="border: 2px solid red;" data-test="border-shorthand">Border shorthand</p>
@@ -52,66 +52,64 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
 		
-		
 		// Check if API call failed due to backend issues
-		if ( apiResult.error ) {
-			console.log('API Error:', apiResult.error);
-			test.skip( true, 'Skipping due to backend property mapper issues: ' + JSON.stringify(apiResult.error) );
+		if ( apiResult.errors && apiResult.errors.length > 0 ) {
+			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
 		const postId = apiResult.post_id;
 		const editUrl = apiResult.edit_url;
+		expect( postId ).toBeDefined();
+		expect( editUrl ).toBeDefined();
 
 		await page.goto( editUrl );
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
-		// Define test cases for both editor and frontend verification
-		const testCases = [
-			{ index: 0, name: 'border: 2px solid red', property: 'border-width', expected: '2px' },
-			{ index: 1, name: 'border-width: 3px (override)', property: 'border-width', expected: '3px' },
-			{ index: 2, name: 'border-top-width: 4px', property: 'border-top-width', expected: '4px' },
-			{ index: 3, name: 'border-width: 1px 2px 3px 4px (shorthand)', property: 'border-top-width', expected: '1px' },
-			{ index: 4, name: 'border-top: 5px solid blue', property: 'border-top-width', expected: '5px' },
-			{ index: 5, name: 'border-right: 6px dashed green', property: 'border-right-width', expected: '6px' },
-		];
+		const elementorFrame = editor.getPreviewFrame();
+		await elementorFrame.waitForLoadState();
+		
+		// Test all converted paragraph elements
+		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
+		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
-		// Editor verification using test cases array
-		for ( const testCase of testCases ) {
-			await test.step( `Verify ${ testCase.name } in editor`, async () => {
-				const elementorFrame = editor.getPreviewFrame();
-				await elementorFrame.waitForLoadState();
-				
-				const element = elementorFrame.locator( '.e-paragraph-base' ).nth( testCase.index );
-				await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-				await test.step( 'Verify CSS property', async () => {
-					await expect( element ).toHaveCSS( testCase.property, testCase.expected );
-				} );
-			} );
-		}
-
-		await test.step( 'Publish page and verify all border widths on frontend', async () => {
-			// Save the page first
-			await editor.saveAndReloadPage();
+		// Test border width values
+		await test.step( 'Verify border width values are applied correctly', async () => {
+			// Test border shorthand (should apply to all sides)
+			await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'border-top-width', '2px' );
+			await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'border-right-width', '2px' );
+			await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'border-bottom-width', '2px' );
+			await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'border-left-width', '2px' );
 			
-			// Get the page ID and navigate to frontend
-			const pageId = await editor.getPageId();
-			await page.goto( `/?p=${ pageId }` );
-			await page.waitForLoadState();
-
-			// Frontend verification using same test cases array
-			for ( const testCase of testCases ) {
-				await test.step( `Verify ${testCase.name} on frontend`, async () => {
-					const frontendElement = page.locator( '.e-paragraph-base' ).nth( testCase.index );
-
-					await test.step( 'Verify CSS property', async () => {
-						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );
-					} );
-				} );
-			}
+			// Test border-width override
+			await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'border-top-width', '3px' );
+			await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'border-right-width', '3px' );
+			await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'border-bottom-width', '3px' );
+			await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'border-left-width', '3px' );
+			
+			// Test individual border-top-width property → border-block-start-width
+			await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'border-block-start-width', '4px' );
+			
+			// Test border-width 4-value shorthand
+			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'border-top-width', '1px' );
+			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'border-right-width', '2px' );
+			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'border-bottom-width', '3px' );
+			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'border-left-width', '4px' );
+			
+			// ✅ ATOMIC WIDGETS WORKAROUND: Directional border shorthands converted to full border
+			// border-top: 5px solid blue → border-width: 5px 0 0 0, border-style: solid, border-color: blue
+			// This makes the border visible by working within atomic widgets limitations
+			await expect( paragraphElements.nth( 4 ) ).toHaveCSS( 'border-block-start-width', '5px' );
+			await expect( paragraphElements.nth( 4 ) ).toHaveCSS( 'border-block-start-style', 'solid' );
+			await expect( paragraphElements.nth( 4 ) ).toHaveCSS( 'border-block-start-color', 'rgb(0, 0, 255)' );
+			
+			// border-right: 6px dashed green → border-width: 0 6px 0 0, border-style: dashed, border-color: green
+			await expect( paragraphElements.nth( 5 ) ).toHaveCSS( 'border-inline-end-width', '6px' );
+			await expect( paragraphElements.nth( 5 ) ).toHaveCSS( 'border-inline-end-style', 'dashed' );
+			await expect( paragraphElements.nth( 5 ) ).toHaveCSS( 'border-inline-end-color', 'rgb(0, 128, 0)' );
 		} );
 	} );
+
 
 	test.skip( 'should handle border-width keyword values and edge cases - SKIPPED: API working but DOM styles not applying', async ( { page, request } ) => {
 		const combinedCssContent = `

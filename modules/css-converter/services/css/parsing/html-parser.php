@@ -178,6 +178,7 @@ class Html_Parser {
 		foreach ( $styles as $property => $data ) {
 			$simple_styles[ $property ] = $data['value'];
 		}
+		
 		$expanded_styles = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $simple_styles );
 		
 		// Convert back to the expected format
