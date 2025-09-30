@@ -71,6 +71,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return [];
 	}
 
+	protected function define_children_context() {
+		return [];
+	}
+
 	/**
 	 * Get Element keywords.
 	 *
@@ -142,6 +146,20 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
 
+	public function print_content() {
+		add_filter( 'elementor/atomic/contexts', function( $contexts ) {
+			$contexts[ $this->get_type() ] = $this->define_children_context();
+			return $contexts;
+		} );
+
+		parent::print_content();
+	}
+
+
+	protected function get_context( $key = null ) {
+		return apply_filters( 'elementor/atomic/contexts', [] )[ $key ] ?? [];
+	}
+
 	/**
 	 * Default before render for container elements.
 	 *
@@ -177,5 +195,19 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	public static function generate() {
 		return Element_Builder::make( static::get_type() );
+	}
+
+	protected function add_render_attributes() {
+		parent::add_render_attributes();
+		
+		$context = $this->define_children_context();
+		
+		if( empty( $context ) ) {
+			return;
+		}
+
+		$this->add_render_attribute( '_wrapper', [
+			'x-data' => wp_json_encode( $context ),
+		] );
 	}
 }

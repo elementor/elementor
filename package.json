@@ -145,6 +145,7 @@
     "write": "^2.0.0"
   },
   "dependencies": {
+    "@alpinejs/csp": "^3.15.0",
     "@elementor/icons": "1.53.0",
     "@elementor/ui": "1.36.14",
     "@reach/router": "1.3.4",

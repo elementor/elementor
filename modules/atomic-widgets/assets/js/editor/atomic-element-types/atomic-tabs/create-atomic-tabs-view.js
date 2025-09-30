@@ -6,7 +6,7 @@ const createAtomicTabsView = () => {
 			const defaultActiveTab = this.model.getSetting( 'default-active-tab' );
 
 			return defaultActiveTab?.value
-				? { 'data-active-tab': defaultActiveTab.value, ...super.attributes() }
+				? { 'x-data': `{ 'activeTab': '${ defaultActiveTab.value }' }`, ...super.attributes() }
 				: super.attributes();
 		}
 	};

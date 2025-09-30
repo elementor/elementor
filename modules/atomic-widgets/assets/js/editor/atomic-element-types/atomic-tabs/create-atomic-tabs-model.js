@@ -9,8 +9,9 @@ const createAtomicTabsModel = () => {
 			const tabPanels = this.getChildrenByType( this.get( 'elements' ), 'e-tab-panel' );
 
 			const currentSettings = this.get( 'settings' ) || {};
+			console.log( 'Current Settings before:', currentSettings );
 			currentSettings[ 'default-active-tab' ] = { $$type: 'string', value: tabs[ 0 ].id };
-
+			console.log( 'Current Settings after:', currentSettings );
 			this.set( 'settings', currentSettings );
 
 			// TODO: maybe move this part to a dedicated "afterDefaultChildrenSet" method
@@ -21,6 +22,7 @@ const createAtomicTabsModel = () => {
 				const tabPanel = tabPanels[ index ];
 				tabPanel.settings._cssid = { $$type: 'string', value: tabPanels[ index ].id };
 				tabPanel.settings[ 'tab-id' ] = { $$type: 'string', value: tab.id };
+				tabPanel.settings[ 'tabs-id' ] = { $$type: 'string', value: this.id };
 			} );
 		}
 
