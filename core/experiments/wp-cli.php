@@ -123,7 +123,7 @@ class Wp_Cli extends \WP_CLI_Command {
 				continue;
 			}
 
-			$default_state = isset( $feature['default'] ) ? $feature['default'] : Experiments_Manager::STATE_INACTIVE;
+			$default_state = isset( $feature['default'] ) ? $feature['default'] : Experiments_Manager::STATE_DEFAULT;
 
 			if ( $is_network ) {
 				$this->foreach_sites(
