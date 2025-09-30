@@ -86,6 +86,16 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return $this->map_individual_property( $property, $value );
 	}
 
+	public function get_v4_property_name( string $property ): string {
+		// Convert physical properties to logical properties for atomic widgets
+		if ( in_array( $property, [ 'top', 'right', 'bottom', 'left' ], true ) ) {
+			return $this->get_logical_property_name( $property );
+		}
+		
+		// For logical properties and shorthand, return as-is
+		return $property;
+	}
+
 	private function map_z_index_property( $value ): ?array {
 		$parsed_value = $this->parse_z_index_value( $value );
 		if ( null === $parsed_value ) {

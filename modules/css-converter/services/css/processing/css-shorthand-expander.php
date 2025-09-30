@@ -33,6 +33,9 @@ class CSS_Shorthand_Expander {
 			// ✅ NEW: Logical margin properties
 			'margin-inline',
 			'margin-block',
+			// ✅ NEW: Logical positioning properties
+			'inset-inline',
+			'inset-block',
 		];
 
 		return in_array( $property, $shorthand_properties, true );
@@ -50,6 +53,10 @@ class CSS_Shorthand_Expander {
 				return self::expand_margin_inline_shorthand( $value );
 			case 'margin-block':
 				return self::expand_margin_block_shorthand( $value );
+			case 'inset-inline':
+				return self::expand_inset_inline_shorthand( $value );
+			case 'inset-block':
+				return self::expand_inset_block_shorthand( $value );
 			default:
 				return [ $property => $value ];
 		}
@@ -212,6 +219,58 @@ class CSS_Shorthand_Expander {
 		return [
 			'margin-block-start' => $start_value,
 			'margin-block-end' => $end_value,
+		];
+	}
+
+	/**
+	 * Expand inset-inline shorthand to logical properties
+	 * inset-inline: 10px 30px -> inset-inline-start: 10px, inset-inline-end: 30px
+	 */
+	private static function expand_inset_inline_shorthand( $value ): array {
+		if ( empty( $value ) || ! is_string( $value ) ) {
+			return [];
+		}
+
+		$parts = preg_split( '/\s+/', trim( $value ) );
+		$parts = array_filter( $parts );
+		$count = count( $parts );
+
+		if ( $count < 1 || $count > 2 ) {
+			return [];
+		}
+
+		$start_value = $parts[0];
+		$end_value = $count > 1 ? $parts[1] : $start_value;
+
+		return [
+			'inset-inline-start' => $start_value,
+			'inset-inline-end' => $end_value,
+		];
+	}
+
+	/**
+	 * Expand inset-block shorthand to logical properties
+	 * inset-block: 10px 30px -> inset-block-start: 10px, inset-block-end: 30px
+	 */
+	private static function expand_inset_block_shorthand( $value ): array {
+		if ( empty( $value ) || ! is_string( $value ) ) {
+			return [];
+		}
+
+		$parts = preg_split( '/\s+/', trim( $value ) );
+		$parts = array_filter( $parts );
+		$count = count( $parts );
+
+		if ( $count < 1 || $count > 2 ) {
+			return [];
+		}
+
+		$start_value = $parts[0];
+		$end_value = $count > 1 ? $parts[1] : $start_value;
+
+		return [
+			'inset-block-start' => $start_value,
+			'inset-block-end' => $end_value,
 		];
 	}
 }
