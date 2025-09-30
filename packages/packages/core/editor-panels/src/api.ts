@@ -5,10 +5,12 @@ import { __useDispatch as useDispatch, __useSelector as useSelector } from '@ele
 import { injectIntoPanels } from './location';
 import { selectOpenId, slice } from './store';
 import { V2_PANEL } from './sync';
+import { getSelectedElements, selectElement, type Element } from '@elementor/editor-elements';
 
 export type PanelDeclaration< TOnOpenReturn = unknown > = {
 	id: string;
 	component: ComponentType;
+	isOpenPreviousElement?: boolean;
 } & UseActionsOptions< TOnOpenReturn > &
 	UseRouteStatusOptions;
 
@@ -19,6 +21,7 @@ export function createPanel< TOnOpenReturn >( {
 	onClose,
 	allowedEditModes,
 	blockOnKitRoutes,
+	isOpenPreviousElement = false,
 }: PanelDeclaration< TOnOpenReturn > ) {
 	const usePanelStatus = createUseStatus( id, {
 		allowedEditModes,
@@ -28,7 +31,7 @@ export function createPanel< TOnOpenReturn >( {
 	const usePanelActions = createUseActions( id, usePanelStatus, {
 		onOpen,
 		onClose,
-	} );
+	}, isOpenPreviousElement );
 
 	return {
 		panel: {
@@ -72,9 +75,11 @@ type UseActionsOptions< TOnOpenReturn > = {
 function createUseActions< TOnOpenReturn >(
 	id: PanelDeclaration[ 'id' ],
 	useStatus: UseStatus,
-	options: UseActionsOptions< TOnOpenReturn > = {}
+	options: UseActionsOptions< TOnOpenReturn > = {},
+	isOpenPreviousElement?: boolean
 ) {
 	let stateSnapshot: TOnOpenReturn | null = null;
+	let previousSelectedElement: Element | null = null;
 
 	return () => {
 		const dispatch = useDispatch();
@@ -84,6 +89,9 @@ function createUseActions< TOnOpenReturn >(
 			open: async () => {
 				if ( isBlocked ) {
 					return;
+				}
+				if ( isOpenPreviousElement ) {
+					previousSelectedElement = getSelectedElements()[ 0 ];
 				}
 
 				dispatch( slice.actions.open( id ) );
@@ -98,6 +106,11 @@ function createUseActions< TOnOpenReturn >(
 				dispatch( slice.actions.close( id ) );
 
 				options.onClose?.( stateSnapshot as TOnOpenReturn );
+
+				if ( previousSelectedElement ) {
+					selectElement( previousSelectedElement.id );
+					previousSelectedElement = null;
+				}
 			},
 		};
 	};
