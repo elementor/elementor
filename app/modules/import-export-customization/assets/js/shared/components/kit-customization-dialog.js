@@ -17,10 +17,16 @@ export function KitCustomizationDialog( {
 	children,
 	saveDisabled = false,
 } ) {
+	const handleDialogClose = ( _event, reason ) => {
+		if ( 'escapeKeyDown' === reason ) {
+			handleClose();
+		}
+	};
+
 	return (
 		<Dialog
 			open={ open }
-			onClose={ handleClose }
+			onClose={ handleDialogClose }
 			maxWidth="md"
 			fullWidth
 		>

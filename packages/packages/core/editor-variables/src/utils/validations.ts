@@ -1,4 +1,6 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+
+import { type TVariable, type TVariablesList } from '../storage';
 
 export const ERROR_MESSAGES = {
 	MISSING_VARIABLE_NAME: __( 'Give your variable a name.', 'elementor' ),
@@ -8,21 +10,47 @@ export const ERROR_MESSAGES = {
 	VARIABLE_LABEL_MAX_LENGTH: __( 'Keep names up to 50 characters.', 'elementor' ),
 	DUPLICATED_LABEL: __( 'This variable name already exists. Please choose a unique name.', 'elementor' ),
 	UNEXPECTED_ERROR: __( 'There was a glitch. Try saving your variable again.', 'elementor' ),
+	BATCH: {
+		DUPLICATED_LABELS: ( count: number, name: string ) =>
+			// eslint-disable-next-line @wordpress/i18n-translator-comments
+			sprintf( __( 'We found %1$d duplicated %2$s.', 'elementor' ), count, name ),
+		UNEXPECTED_ERROR: __( 'The save didn’t go through.', 'elementor' ),
+		DUPLICATED_LABEL_ACTION: __( 'Take me there', 'elementor' ),
+		DUPLICATED_LABEL_ACTION_MESSAGE: __( 'Please rename the variables.', 'elementor' ),
+		UNEXPECTED_ERROR_ACTION_MESSAGE: __( 'Try saving your variables again.', 'elementor' ),
+	},
 } as const;
 
 export const VARIABLE_LABEL_MAX_LENGTH = 50;
 
-type ErrorResponse = {
+type BatchErrorData = {
+	[ id: string ]: {
+		status?: number;
+		message?: string;
+	};
+};
+export type ErrorResponse = {
 	response?: {
 		data?: {
 			code?: string;
+			data?: BatchErrorData;
 		};
+	};
+};
+
+export type ErrorAction = {
+	label: string;
+	message?: string;
+	callback?: () => void;
+	data?: {
+		duplicatedIds?: string[];
 	};
 };
 
 export type MappedError = {
 	field: string;
 	message: string;
+	action?: ErrorAction;
 };
 
 export const mapServerError = ( error: ErrorResponse ): MappedError | undefined => {
@@ -33,10 +61,36 @@ export const mapServerError = ( error: ErrorResponse ): MappedError | undefined 
 		};
 	}
 
+	if ( error?.response?.data?.code === 'batch_duplicated_label' ) {
+		const errorData = error?.response?.data?.data ?? {};
+		const count = Object.keys( errorData ).length;
+		const name = count === 1 ? 'name' : 'names';
+		const duplicatedIds = Object.keys( errorData );
+
+		return {
+			field: 'label',
+			message: ERROR_MESSAGES.BATCH.DUPLICATED_LABELS( count, name ),
+			action: {
+				label: ERROR_MESSAGES.BATCH.DUPLICATED_LABEL_ACTION,
+				message: ERROR_MESSAGES.BATCH.DUPLICATED_LABEL_ACTION_MESSAGE,
+				data: {
+					duplicatedIds,
+				},
+			},
+		};
+	}
+
+	if ( error?.response?.data?.code === 'batch_operation_failed' ) {
+		return {
+			field: 'label',
+			message: ERROR_MESSAGES.BATCH.UNEXPECTED_ERROR,
+		};
+	}
+
 	return undefined;
 };
 
-export const validateLabel = ( name: string ): string => {
+export const validateLabel = ( name: string, variables?: TVariablesList ): string => {
 	if ( ! name.trim() ) {
 		return ERROR_MESSAGES.MISSING_VARIABLE_NAME;
 	}
@@ -53,6 +107,10 @@ export const validateLabel = ( name: string ): string => {
 
 	if ( VARIABLE_LABEL_MAX_LENGTH < name.length ) {
 		return ERROR_MESSAGES.VARIABLE_LABEL_MAX_LENGTH;
+	}
+
+	if ( Object.values( variables ?? {} ).some( ( variable: TVariable ) => variable.label === name ) ) {
+		return ERROR_MESSAGES.DUPLICATED_LABEL;
 	}
 
 	return '';
