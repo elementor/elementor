@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { __ } from '@wordpress/i18n';
 
 import { generateTempId } from '../../../batch-operations';
 import { getVariables } from '../../../hooks/use-prop-variables';
