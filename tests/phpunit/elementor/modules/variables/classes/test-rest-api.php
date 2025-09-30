@@ -768,21 +768,11 @@ class Test_Rest_Api extends Elementor_Test_Base {
 					],
 				],
 				[
-					'type' => 'create',
+					'type' => 'update',
+					'id' => 'non-existent',
 					'variable' => [
-						'id' => 'temp-fail',
-						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'This is a very long label that exceeds the maximum allowed length for variable labels in the system',
-						'value' => '#00FF00',
-					],
-				],
-				[
-					'type' => 'create',
-					'variable' => [
-						'id' => 'empty value',
-						'type' => Font_Variable_Prop_Type::get_key(),
-						'label' => 'something',
-						'value' => '',
+						'label' => 'Updated',
+						'value' => '#0000FF',
 					],
 				],
 			],
@@ -791,16 +781,14 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$response = $this->rest_api->process_batch( $request );
 
 		// Assert
-		$this->assertEquals( 500, $response->get_status() );
+		$this->assertEquals( 400, $response->get_status() );
 
 		$response_data = $response->get_data();
 		$this->assertFalse( $response_data['success'] );
-		$this->assertEquals( 'batch_operation_failed', $response_data['code'] );
+		$this->assertEquals( 'batch_variables_not_found', $response_data['code'] );
 
-		$this->assertArrayHasKey( 'temp-fail', $response_data['data'] );
-		$this->assertArrayHasKey( 'empty_value', $response_data['data'] );
+		$this->assertArrayHasKey( 'non-existent', $response_data['data'] );
 
-		$this->assertEquals( 500, $response_data['data']['temp-fail']['status'] );
-		$this->assertEquals( 500, $response_data['data']['empty_value']['status'] );
+		$this->assertEquals( 404, $response_data['data']['non-existent']['status'] );
 	}
 }

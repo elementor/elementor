@@ -576,7 +576,7 @@ class Rest_Api {
 
 		return [
 			'code' => 'batch_operation_failed',
-			'message' => __( 'Batch operation failed with unexpected errors', 'elementor' ),
+			'message' => __( 'Batch operation failed', 'elementor' ),
 			'filtered_errors' => $grouped_errors['unknown'] ?? [],
 		];
 	}
