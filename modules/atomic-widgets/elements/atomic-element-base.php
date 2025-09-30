@@ -206,9 +206,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 			return;
 		}
 
-		// var_dump( $context );
-		// die;
-
 		$this->add_render_attribute( '_wrapper', [
 			'x-data' => wp_json_encode( $context ),
 		] );

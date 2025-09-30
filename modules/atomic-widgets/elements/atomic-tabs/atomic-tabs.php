@@ -44,7 +44,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'defaultActiveTab' => String_Prop_Type::make(),
+			'default-active-tab' => String_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
@@ -58,12 +58,12 @@ class Atomic_Tabs extends Atomic_Element_Base {
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
-					// Tabs_Control::make()
-					// 	->set_label( __( 'Menu items', 'elementor' ) )
-					// 	->set_meta( [
-					// 		'topDivider' => true,
-					// 		'layout' => 'custom',
-					// 	] ),
+					Tabs_Control::make()
+						->set_label( __( 'Menu items', 'elementor' ) )
+						->set_meta( [
+							'topDivider' => true,
+							'layout' => 'custom',
+						] ),
 				] ),
 		];
 	}
@@ -144,10 +144,10 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	}
 
 	protected function define_children_context() {
-		$default_active_tab = $this->get_atomic_settings()['defaultActiveTab'];
+		$default_active_tab = $this->get_atomic_settings()['default-active-tab'];
 
 		return [
-			'defaultActiveTab' => $default_active_tab,
+			'activeTab' => $default_active_tab,
 		];
 	}
 
@@ -165,10 +165,6 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				...( $settings['classes'] ?? [] ),
 			],
 		];
-
-		if ( ! empty( $settings['defaultActiveTab'] ) ) {
-			$attributes['data-active-tab'] = esc_attr( $settings['defaultActiveTab'] );
-		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );

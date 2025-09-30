@@ -10,7 +10,7 @@ const createAtomicTabsModel = () => {
 
 			const currentSettings = this.get( 'settings' ) || {};
 			console.log( 'Current Settings before:', currentSettings );
-			currentSettings.defaultActiveTab = { $$type: 'string', value: tabs[ 0 ].id };
+			currentSettings[ 'default-active-tab' ] = { $$type: 'string', value: tabs[ 0 ].id };
 			console.log( 'Current Settings after:', currentSettings );
 			this.set( 'settings', currentSettings );
 

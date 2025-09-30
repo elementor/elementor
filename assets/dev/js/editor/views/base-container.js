@@ -63,7 +63,7 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( options.clone ) {
-			newItem = this.cloneItem( newItem );
+			newItem = this.cloneItem( newItem, options.cloneId );
 		}
 
 		if ( options.trigger ) {
@@ -215,14 +215,14 @@ module.exports = Marionette.CompositeView.extend( {
 		return 'add';
 	},
 
-	cloneItem( item ) {
+	cloneItem( item, id = null ) {
 		var self = this;
 
 		if ( item instanceof Backbone.Model ) {
 			return item.clone();
 		}
 
-		item.id = elementorCommon.helpers.getUniqueId();
+		item.id = id ?? elementorCommon.helpers.getUniqueId();
 
 		item.settings._element_id = '';
 

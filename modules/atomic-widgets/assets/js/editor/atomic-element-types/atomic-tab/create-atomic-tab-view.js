@@ -5,9 +5,17 @@ const createAtomicTabView = () => {
 		attributes() {
 			const tabPanelId = this.model.getSetting( 'tab-panel-id' );
 
-			return tabPanelId?.value
-				? { 'aria-controls': tabPanelId.value, ...super.attributes() }
-				: super.attributes();
+			const attributes = {
+				':tabindex': `activeTab === '${ this.model.id }' ? '0' : '-1'`,
+				':aria-selected': `activeTab === '${ this.model.id }' ? 'true' : 'false'`,
+				'x-on:click': `activeTab='${ this.model.id }'`,
+			};
+
+			if ( tabPanelId?.value ) {
+				attributes[ 'aria-controls' ] = tabPanelId.value;
+			}
+
+			return { ...attributes, ...super.attributes() };
 		}
 	};
 };
