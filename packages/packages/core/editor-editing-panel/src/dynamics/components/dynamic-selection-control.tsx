@@ -85,7 +85,7 @@ export const DynamicSelectionControl = () => {
 				} }
 				{ ...bindPopover( selectionPopoverState ) }
 			>
-				<PopoverBody data-testid="dynamic-tags-menu">
+				<PopoverBody aria-label={ __( 'Dynamic tags', 'elementor' ) }>
 					<DynamicSelection close={ selectionPopoverState.close } />
 				</PopoverBody>
 			</Popover>
@@ -107,8 +107,7 @@ export const DynamicSettingsPopover = ( { dynamicTag }: { dynamicTag: DynamicTag
 			<IconButton
 				size={ SIZE }
 				{ ...bindTrigger( popupState ) }
-				aria-label={ __( 'Settings', 'elementor' ) }
-				data-testid="dynamic-settings-button"
+				aria-label={ __( 'Dynamic settings', 'elementor' ) }
 			>
 				<SettingsIcon fontSize={ SIZE } />
 			</IconButton>
@@ -122,7 +121,7 @@ export const DynamicSettingsPopover = ( { dynamicTag }: { dynamicTag: DynamicTag
 				} }
 				{ ...bindPopover( popupState ) }
 			>
-				<PopoverBody data-testid="dynamic-settings-popover">
+				<PopoverBody aria-label={ __( 'Dynamic settings', 'elementor' ) }>
 					<PopoverHeader
 						title={ dynamicTag.label }
 						onClose={ popupState.close }

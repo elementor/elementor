@@ -18,10 +18,9 @@ type SelectControlProps = {
 	onChange?: ( newValue: string | null, previousValue: string | null | undefined ) => void;
 	MenuProps?: SelectProps[ 'MenuProps' ];
 	ariaLabel?: string;
-	dataTestId?: string;
 };
 export const SelectControl = createControl(
-	( { options, onChange, MenuProps, ariaLabel, dataTestId }: SelectControlProps ) => {
+	( { options, onChange, MenuProps, ariaLabel }: SelectControlProps ) => {
 		const { value, setValue, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
 		const handleChange = ( event: SelectChangeEvent< StringPropValue[ 'value' ] > ) => {
 			const newValue = event.target.value || null;
@@ -39,7 +38,6 @@ export const SelectControl = createControl(
 					size="tiny"
 					MenuProps={ MenuProps }
 					aria-label={ ariaLabel || placeholder }
-					data-testid={ dataTestId }
 					renderValue={ ( selectedValue: string | null ) => {
 						const findOptionByValue = ( searchValue: string | null ) =>
 							options.find( ( opt ) => opt.value === searchValue );
@@ -70,7 +68,6 @@ export const SelectControl = createControl(
 							key={ props.value }
 							{ ...props }
 							value={ props.value ?? '' }
-							data-testid={ dataTestId ? `${ dataTestId }-option-${ props.value }` : undefined }
 						>
 							{ label }
 						</MenuListItem>

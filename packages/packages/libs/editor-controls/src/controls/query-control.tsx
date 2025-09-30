@@ -28,7 +28,6 @@ type Props = {
 	placeholder?: string;
 	onSetValue?: ( value: DestinationProp | null ) => void;
 	ariaLabel?: string;
-	dataTestId?: string;
 };
 
 type Response = HttpResponse< { value: FlatOption[] | CategorizedOption[] } >;
@@ -44,7 +43,6 @@ export const QueryControl = createControl( ( props: Props ) => {
 		placeholder,
 		minInputLength = 2,
 		onSetValue,
-		dataTestId,
 		ariaLabel,
 	} = props || {};
 
@@ -125,7 +123,6 @@ export const QueryControl = createControl( ( props: Props ) => {
 				minInputLength={ minInputLength }
 				inputProps={ {
 					...( ariaLabel ? { 'aria-label': ariaLabel } : {} ),
-					...( dataTestId ? { 'data-testid': dataTestId } : {} ),
 				} }
 			/>
 		</ControlActions>
