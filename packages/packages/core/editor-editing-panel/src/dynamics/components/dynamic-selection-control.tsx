@@ -148,7 +148,7 @@ const DynamicSettings = ( { controls, tagName }: { controls: DynamicTag[ 'atomic
 		return (
 			<>
 				<Divider />
-				<Box data-testid="dynamic-settings-content">
+				<Box>
 					<ControlsItemsStack items={ singleTab.value.items } />
 				</Box>
 			</>
@@ -174,7 +174,6 @@ const DynamicSettings = ( { controls, tagName }: { controls: DynamicTag[ 'atomic
 				return (
 					<TabPanel
 						key={ index }
-						data-testid="dynamic-settings-content"
 						sx={ { flexGrow: 1, py: 0, overflowY: 'auto' } }
 						{ ...getTabPanelProps( index ) }
 					>
@@ -224,14 +223,12 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 					...( control.props?.MenuProps ?? {} ),
 					disablePortal: true,
 				},
-				dataTestId: `dynamic-${ String( control.bind ) }`,
 		  }
-		: { ...control.props, dataTestId: `dynamic-${ String( control.bind ) }` };
+		: { ...control.props };
 	const controlProps = {
 		...baseControlProps,
 		ariaLabel: control.label,
-		dataTestId: `dynamic-${ String( control.bind ) }`,
-	} as typeof baseControlProps & { ariaLabel?: string; dataTestId?: string };
+	} as typeof baseControlProps & { ariaLabel?: string };
 	const isSwitchControl = control.type === 'switch';
 	const layoutStyleProps =
 		layout === 'two-columns'
