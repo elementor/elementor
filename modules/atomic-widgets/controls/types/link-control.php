@@ -46,7 +46,6 @@ class Link_Control extends Atomic_Control_Base {
 			'queryOptions' => Query_Builder::create( $this->query_config )->build(),
 			'minInputLength' => $this->minimum_input_length,
 			'ariaLabel' => 'Link URL',
-			'dataTestId' => 'link-url',
 		];
 	}
 }
