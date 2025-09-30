@@ -86,16 +86,6 @@ class Wp_Cli extends \WP_CLI_Command {
 	}
 
 	/**
-	 * Experiment Status
-	 *
-	 * ## EXAMPLES
-	 *
-	 * 1. wp elementor experiments status container
-	 *      - This will return the status of Container experiment. (active/inactive)
-	 *
-	 * @param array $args
-	 */
-	/**
 	 * Reset experiments to their default states
 	 *
 	 * ## EXAMPLES
@@ -163,6 +153,16 @@ class Wp_Cli extends \WP_CLI_Command {
 		}
 	}
 
+	/**
+	 * Experiment Status
+	 *
+	 * ## EXAMPLES
+	 *
+	 * 1. wp elementor experiments status container
+	 *      - This will return the status of Container experiment. (active/inactive)
+	 *
+	 * @param array $args
+	 */
 	public function status( $args ) {
 		if ( empty( $args[0] ) ) {
 			\WP_CLI::error( 'Please specify an experiment.' );
