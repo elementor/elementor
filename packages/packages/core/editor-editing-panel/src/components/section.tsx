@@ -31,6 +31,7 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 			<ListItemButton
 				id={ labelId }
 				aria-controls={ contentId }
+				aria-label={ `${ title } section` }
 				onClick={ handleClick }
 				sx={ { '&:hover': { backgroundColor: 'transparent' } } }
 			>
@@ -52,7 +53,7 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 				unmountOnExit={ unmountOnExit }
 			>
 				<SectionRefContext.Provider value={ ref }>
-					<Stack ref={ ref } gap={ 2.5 } p={ 2 }>
+					<Stack ref={ ref } gap={ 2.5 } p={ 2 } aria-label={ `${ title } section content` }>
 						{ children }
 					</Stack>
 				</SectionRefContext.Provider>
