@@ -63,7 +63,8 @@ class Opacity_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$value = trim( (string) $value );
 
-		if ( empty( $value ) ) {
+		// ✅ CRITICAL FIX: Don't filter out '0' values - they are valid opacity values!
+		if ( '' === $value ) { // Only exclude truly empty strings, not '0'
 			return null;
 		}
 
