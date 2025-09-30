@@ -7,6 +7,8 @@ use Elementor\Modules\WpRest\Classes\Elementor_Post_Meta;
 use Elementor\Modules\WpRest\Classes\Elementor_Settings;
 use Elementor\Modules\WpRest\Classes\Elementor_User_Meta;
 use Elementor\Modules\WpRest\Classes\Post_Query;
+use Elementor\Modules\WpRest\Classes\Term_Query;
+use Elementor\Modules\WpRest\Classes\User_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -25,7 +27,9 @@ class Module extends BaseModule {
 			( new Elementor_Post_Meta() )->register();
 			( new Elementor_Settings() )->register();
 			( new Elementor_User_Meta() )->register();
-			( new Post_Query() )->register();
+			( new Post_Query() )->register( Post_Query::ENDPOINT );
+			( new Term_Query() )->register( Term_Query::ENDPOINT );
+			( new User_Query() )->register( User_Query::ENDPOINT );
 		} );
 	}
 }
