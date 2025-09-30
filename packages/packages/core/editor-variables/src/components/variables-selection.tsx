@@ -63,10 +63,9 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 
 	if ( onAdd ) {
 		actions.push(
-			<Tooltip placement="top" title={ CREATE_LABEL }>
+			<Tooltip key="add" placement="top" title={ CREATE_LABEL }>
 				<IconButton
 					id="add-variable-button"
-					key="add"
 					size={ SIZE }
 					onClick={ onAddAndTrack }
 					aria-label={ CREATE_LABEL }
@@ -79,10 +78,9 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 
 	if ( onSettings ) {
 		actions.push(
-			<Tooltip placement="top" title={ MANAGER_LABEL }>
+			<Tooltip key="settings" placement="top" title={ MANAGER_LABEL }>
 				<IconButton
 					id="variables-manager-button"
-					key="settings"
 					size={ SIZE }
 					onClick={ onSettings }
 					aria-label={ MANAGER_LABEL }

@@ -128,13 +128,8 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 
 	if ( userPermissions.canDelete() ) {
 		actions.push(
-			<Tooltip placement="top" title={ DELETE_LABEL }>
-				<IconButton
-					key="delete"
-					size={ SIZE }
-					onClick={ handleDeleteConfirmation }
-					aria-label={ DELETE_LABEL }
-				>
+			<Tooltip key="delete" placement="top" title={ DELETE_LABEL }>
+				<IconButton size={ SIZE } onClick={ handleDeleteConfirmation } aria-label={ DELETE_LABEL }>
 					<TrashIcon fontSize={ SIZE } />
 				</IconButton>
 			</Tooltip>

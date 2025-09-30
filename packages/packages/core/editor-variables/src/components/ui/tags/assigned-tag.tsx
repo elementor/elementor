@@ -15,13 +15,8 @@ export const AssignedTag = ( { startIcon, label, onUnlink, ...props }: VariableT
 
 	if ( onUnlink ) {
 		actions.push(
-			<Tooltip title={ UNLINK_LABEL } placement="bottom">
-				<IconButton
-					key="unlink"
-					size={ SIZE }
-					onClick={ onUnlink }
-					aria-label={ UNLINK_LABEL }
-				>
+			<Tooltip key="unlink" title={ UNLINK_LABEL } placement="bottom">
+				<IconButton size={ SIZE } onClick={ onUnlink } aria-label={ UNLINK_LABEL }>
 					<DetachIcon fontSize={ SIZE } />
 				</IconButton>
 			</Tooltip>
