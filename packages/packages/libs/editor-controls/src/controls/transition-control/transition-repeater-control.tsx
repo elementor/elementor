@@ -99,8 +99,32 @@ export const TransitionRepeaterControl = createControl(
 			[]
 		);
 
-		const { value } = useBoundProp( childArrayPropTypeUtil );
+		const { value, setValue } = useBoundProp( childArrayPropTypeUtil );
 		const disabledItems = useMemo( () => getDisabledItems( value ), [ value ] );
+
+		const allowedTransitionValues = useMemo( () => {
+			const set = new Set< string >();
+			transitionProperties.forEach( ( category ) => {
+				category.properties.forEach( ( property ) => set.add( property.value ) );
+			} );
+			return set;
+		}, [] );
+
+		useEffect( () => {
+			if ( ! value || value.length === 0 ) {
+				return;
+			}
+
+			const sanitized = value.filter( ( item ) => {
+				const selectionValue =
+					( item?.value?.selection?.value as { value?: { value?: string } } )?.value?.value ?? '';
+				return allowedTransitionValues.has( selectionValue );
+			} );
+
+			if ( sanitized.length !== value.length ) {
+				setValue( sanitized );
+			}
+		}, [ value, setValue, allowedTransitionValues ] );
 
 		useEffect( () => {
 			recentlyUsedListGetter().then( setRecentlyUsedList );
