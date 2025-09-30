@@ -118,6 +118,8 @@ class Atomic_Tab extends Atomic_Element_Base {
 
 		$is_active = $this->get_context( 'e-tabs' )['activeTab'] === $this->get_id();
 
+		$is_active = $this->get_context( 'e-tabs' )['activeTab'] === $this->get_id();
+
 		$attributes = [
 			'class' => [
 				'e-con',
