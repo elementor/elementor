@@ -1,3 +1,5 @@
+import type * as React from 'react';
+import { AlertTriangleFilledIcon, InfoCircleFilledIcon } from '@elementor/icons';
 import { __, sprintf } from '@wordpress/i18n';
 
 import { type TVariable, type TVariablesList } from '../storage';
@@ -39,7 +41,7 @@ export type ErrorResponse = {
 };
 
 export type ErrorAction = {
-	label: string;
+	label?: string;
 	message?: string;
 	callback?: () => void;
 	data?: {
@@ -51,6 +53,8 @@ export type MappedError = {
 	field: string;
 	message: string;
 	action?: ErrorAction;
+	severity?: 'error' | 'secondary';
+	IconComponent?: React.ElementType;
 };
 
 export const mapServerError = ( error: ErrorResponse ): MappedError | undefined => {
@@ -70,6 +74,8 @@ export const mapServerError = ( error: ErrorResponse ): MappedError | undefined 
 		return {
 			field: 'label',
 			message: ERROR_MESSAGES.BATCH.DUPLICATED_LABELS( count, name ),
+			severity: 'error',
+			IconComponent: AlertTriangleFilledIcon,
 			action: {
 				label: ERROR_MESSAGES.BATCH.DUPLICATED_LABEL_ACTION,
 				message: ERROR_MESSAGES.BATCH.DUPLICATED_LABEL_ACTION_MESSAGE,
@@ -84,6 +90,11 @@ export const mapServerError = ( error: ErrorResponse ): MappedError | undefined 
 		return {
 			field: 'label',
 			message: ERROR_MESSAGES.BATCH.UNEXPECTED_ERROR,
+			severity: 'secondary',
+			IconComponent: InfoCircleFilledIcon,
+			action: {
+				message: ERROR_MESSAGES.BATCH.UNEXPECTED_ERROR_ACTION_MESSAGE,
+			},
 		};
 	}
 
