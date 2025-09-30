@@ -229,60 +229,36 @@ class Import_Images {
 	 * @return false|array Imported image data, or false on failure.
 	 */
 	public function import_local_file( $local_file_path, $parent_post_id = null ) {
-		if ( ! file_exists( $local_file_path ) ) {
+		global $wp_filesystem;
+
+		if ( ! $wp_filesystem->exists( $local_file_path ) ) {
 			return false;
 		}
 
-		$filename = basename( $local_file_path );
-		$file_content = file_get_contents( $local_file_path );
-
-		if ( ! $file_content ) {
-			return false;
-		}
-
-		$upload = wp_upload_bits( $filename, null, $file_content );
-
-		if ( $upload['error'] ) {
-			return false;
-		}
-
-		$filetype = wp_check_filetype( $upload['file'] );
-
-		// If the file type is not recognized by WordPress, exit here to avoid creation of an empty attachment document.
-		if ( ! $filetype['ext'] ) {
-			return false;
-		}
-
-		$attachment_data = [
-			'post_title' => sanitize_file_name( pathinfo( $filename, PATHINFO_FILENAME ) ),
-			'post_content' => '',
-			'post_status' => 'inherit',
-			'post_mime_type' => $filetype['type'],
-			'guid' => $upload['url'],
-		];
-
-		$attachment_id = wp_insert_attachment( $attachment_data, $upload['file'], $parent_post_id );
-
-		if ( is_wp_error( $attachment_id ) ) {
-			return false;
+		if ( ! function_exists( 'media_handle_sideload' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/media.php';
 		}
 
 		if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/image.php';
 		}
 
-		if ( ! function_exists( 'wp_read_video_metadata' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/media.php';
-		}
+		$file_array = [
+			'name' => basename( $local_file_path ),
+			'tmp_name' => $local_file_path,
+		];
 
-		$attachment_metadata = wp_generate_attachment_metadata( $attachment_id, $upload['file'] );
-		wp_update_attachment_metadata( $attachment_id, $attachment_metadata );
+		$attachment_id = media_handle_sideload( $file_array, $parent_post_id );
+
+		if ( is_wp_error( $attachment_id ) ) {
+			return false;
+		}
 
 		apply_filters( 'elementor/template_library/import_images/new_attachment', $attachment_id );
 
 		return [
 			'id' => $attachment_id,
-			'url' => $upload['url'],
+			'url' => wp_get_attachment_url( $attachment_id ),
 		];
 	}
 
