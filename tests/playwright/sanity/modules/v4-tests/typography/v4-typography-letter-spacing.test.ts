@@ -1,11 +1,10 @@
 import { parallelTest as test } from '../../../../parallelTest';
 import { expect } from '@playwright/test';
 import {
-	WIDGET_CONFIGS,
-	SPACING_VALUES,
 	setupWidgetWithTypography,
 	verifySpacingEditor,
 } from './typography-test-helpers';
+import { WIDGET_CONFIGS, SPACING_VALUES, UNITS } from './typography-constants';
 import { DriverFactory } from '../../../../drivers/driver-factory';
 import type { EditorDriver } from '../../../../drivers/editor-driver';
 import { timeouts } from '../../../../config/timeouts';
@@ -37,14 +36,14 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 
 		await test.step( 'Verify letter spacing control is present and functional', async () => {
 			await setupWidgetWithTypography( driver, widget.type );
-			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 5, 'px' );
-			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 5, expectedUnit: 'px', cssProperty: 'letterSpacing' } );
+			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 5, UNITS.px );
+			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 5, expectedUnit: UNITS.px, cssProperty: 'letterSpacing' } );
 		} );
 
 		await test.step( 'Test positive letter spacing values', async () => {
 			for ( const value of LETTER_SPACING_VALUES.POSITIVE ) {
-				await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', value, 'px' );
-				await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: value, expectedUnit: 'px', cssProperty: 'letterSpacing' } );
+				await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', value, UNITS.px );
+				await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: value, expectedUnit: UNITS.px, cssProperty: 'letterSpacing' } );
 			}
 		} );
 	} );
@@ -93,8 +92,8 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			const widget = WIDGET_CONFIGS.HEADING;
 			await setupWidgetWithTypography( driver, widget.type );
 
-			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 2, 'em' );
-			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 2, expectedUnit: 'em', cssProperty: 'letterSpacing' } );
+			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 2, UNITS.em );
+			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 2, expectedUnit: UNITS.em, cssProperty: 'letterSpacing' } );
 		} );
 
 		await test.step( 'Test letter spacing with REM units', async () => {
@@ -102,8 +101,8 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			await driver.createNewPage( true );
 			await setupWidgetWithTypography( driver, widget.type );
 
-			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 3, 'rem' );
-			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 3, expectedUnit: 'rem', cssProperty: 'letterSpacing' } );
+			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 3, UNITS.rem );
+			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 3, expectedUnit: UNITS.rem, cssProperty: 'letterSpacing' } );
 		} );
 
 		await test.step( 'Test letter spacing with VW units', async () => {
@@ -111,8 +110,8 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			await driver.createNewPage( true );
 			await setupWidgetWithTypography( driver, widget.type );
 
-			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 4, 'vw' );
-			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 4, expectedUnit: 'vw', cssProperty: 'letterSpacing' } );
+			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 4, UNITS.vw );
+			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 4, expectedUnit: UNITS.vw, cssProperty: 'letterSpacing' } );
 		} );
 
 		await test.step( 'Test letter spacing with VH units', async () => {
@@ -120,8 +119,8 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			await driver.createNewPage( true );
 			await setupWidgetWithTypography( driver, widget.type );
 
-			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 1, 'vh' );
-			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 1, expectedUnit: 'vh', cssProperty: 'letterSpacing' } );
+			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 1, UNITS.vh );
+			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 1, expectedUnit: UNITS.vh, cssProperty: 'letterSpacing' } );
 		} );
 
 		await test.step( 'Test letter spacing with percentage units', async () => {
@@ -129,9 +128,9 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			await driver.createNewPage( true );
 			await setupWidgetWithTypography( driver, widget.type );
 
-			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 150, '%' );
+			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 150, UNITS.percent );
 			// Verify that it falls back to normal (0) since % is not supported
-			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 0, expectedUnit: 'px', cssProperty: 'letterSpacing' } );
+			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 0, expectedUnit: UNITS.px, cssProperty: 'letterSpacing' } );
 		} );
 	} );
 } );

@@ -1,3 +1,4 @@
+import { Unit } from '../../sanity/modules/v4-tests/typography/typography-constants';
 import BasePage from '../base-page';
 import { type Locator } from '@playwright/test';
 
@@ -45,7 +46,7 @@ export default class StyleTab extends BasePage {
 		await showMoreBtn.click();
 	}
 
-	async setSpacingValue( labelText: string, value: number, unit: string ): Promise<void> {
+	async setSpacingValue( labelText: string, value: number, unit: Unit ): Promise<void> {
 		const spacingInput = await this.getInputByLabel( labelText );
 		const unitButton = await this.getUnitButtonByLabel( labelText );
 

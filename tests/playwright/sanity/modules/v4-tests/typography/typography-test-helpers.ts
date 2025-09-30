@@ -4,58 +4,6 @@ import { timeouts } from '../../../../config/timeouts';
 import { STYLE_SECTIONS } from '../../../../pages/atomic-elements-panel/style-tab';
 import { convertToPixels } from '../../../../utils/unit-conversions';
 
-export const WIDGET_CONFIGS = {
-	HEADING: {
-		type: 'e-heading',
-		selector: '.e-heading-base',
-		defaultSize: '32px',
-	},
-	PARAGRAPH: {
-		type: 'e-paragraph',
-		selector: '.e-paragraph-base',
-		defaultSize: '16px',
-	},
-	BUTTON: {
-		type: 'e-button',
-		selector: '.e-button-base',
-		defaultSize: '15px',
-	},
-	E_HEADING: {
-		type: 'e-heading',
-		selector: '.e-heading-base',
-		defaultSize: '32px',
-	},
-	E_PARAGRAPH: {
-		type: 'e-paragraph',
-		selector: '.e-paragraph-base',
-		defaultSize: '16px',
-	},
-	E_BUTTON: {
-		type: 'e-button',
-		selector: '.e-button-base',
-		defaultSize: '15px',
-	},
-};
-
-export const FONT_FAMILIES = {
-	system: 'Arial',
-	systemAlt: 'Times New Roman',
-	google: 'Roboto',
-	trebuchet: 'Trebuchet MS',
-};
-
-export const FONT_SIZES = {
-	DESKTOP: '24',
-	TABLET: '18',
-	MOBILE: '16',
-};
-
-export const SPACING_VALUES = {
-	POSITIVE: [ 1, 5.5 ],
-	NEGATIVE: [ -1, -5.5 ],
-	UNITS: [ 'px', 'em', 'rem', 'vw', 'vh', '%' ],
-};
-
 export async function setupWidgetWithTypography(
 	driver: EditorDriver,
 	widgetType: string,
