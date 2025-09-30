@@ -27,7 +27,7 @@ class Test_Media_Mapper extends Elementor_Test_Base {
 		// Act
 		Media_Mapper::set_mapping( $mapping, $media_dir );
 
-		// Assert - Check that transient was created
+		// Assert
 		$stored_data = get_transient( Media_Mapper::TRANSIENT_KEY );
 		$this->assertIsArray( $stored_data );
 		$this->assertArrayHasKey( 'mapping', $stored_data );
@@ -44,7 +44,7 @@ class Test_Media_Mapper extends Elementor_Test_Base {
 		// Act
 		Media_Mapper::set_mapping( $empty_mapping, $media_dir );
 
-		// Assert - No transient should be created
+		// Assert
 		$stored_data = get_transient( Media_Mapper::TRANSIENT_KEY );
 		$this->assertFalse( $stored_data );
 	}
@@ -97,7 +97,6 @@ class Test_Media_Mapper extends Elementor_Test_Base {
 		$local_filename = 'missing.jpg';
 		$media_dir = '/tmp/nonexistent-dir';
 
-		// Set up the transient with a file that doesn't exist
 		set_transient( Media_Mapper::TRANSIENT_KEY, [
 			'mapping' => [ $original_url => $local_filename ],
 			'media_dir' => $media_dir,
@@ -106,7 +105,7 @@ class Test_Media_Mapper extends Elementor_Test_Base {
 		// Act
 		$result = Media_Mapper::get_local_file_path( $original_url );
 
-		// Assert - Should return original URL since local file doesn't exist
+		// Assert
 		$this->assertEquals( $original_url, $result );
 	}
 
