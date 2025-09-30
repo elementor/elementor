@@ -10,7 +10,7 @@ import { $eType, Device, WindowType, BackboneType, ElementorType, GapControl, Co
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
 import Breakpoints from '../assets/breakpoints';
 import { timeouts } from '../config/timeouts';
-import v4Panel from './editor/v4-elements-panel';
+import v4Panel from './atomic-elements-panel/v4-elements-panel';
 
 let $e: $eType;
 let elementor: ElementorType;
@@ -38,7 +38,7 @@ export default class EditorPage extends BasePage {
 	 */
 	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
-		this.v4Panel = new v4Panel( page, testInfo );
+		this.v4Panel = new v4Panel( page, testInfo, this );
 		this.previewFrame = this.getPreviewFrame();
 		this.postId = cleanPostId;
 	}
@@ -145,6 +145,11 @@ export default class EditorPage extends BasePage {
 					documents?: {
 						getCurrent(): {
 							editor: { isChanged: boolean };
+						};
+					};
+					config?: {
+						user?: {
+							capabilities?: string[];
 						};
 					};
 				};
@@ -985,7 +990,7 @@ export default class EditorPage extends BasePage {
 		await this.page.getByRole( 'menuitem', { name: 'View Page' } ).click();
 		const pageId = await this.getPageId();
 		await this.page.goto( `/?p=${ pageId }` );
-		await this.page.waitForLoadState();
+		await this.page.waitForLoadState( 'domcontentloaded', { timeout: timeouts.longAction } );
 	}
 
 	async viewPage() {
