@@ -38,7 +38,7 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test.skip( 'should convert flex-direction properties - SKIPPED: Complex flex layout testing needs investigation', async ( { page, request } ) => {
+	test( 'should convert flex-direction properties', async ( { page, request } ) => {
 		// This test is skipped because flex-direction testing with nested elements is complex
 		// The element selection and CSS application in atomic widgets needs investigation
 		// for proper flex container and flex-direction property testing

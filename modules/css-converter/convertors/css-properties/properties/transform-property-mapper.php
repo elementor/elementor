@@ -4,10 +4,12 @@ namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Functions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Move_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Scale_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Rotate_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Skew_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,26 +40,27 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private const TRANSFORM_FUNCTIONS = [
 		'translate' => 'move',
-		'translateX' => 'move',
-		'translateY' => 'move',
-		'translateZ' => 'move',
+		'translatex' => 'move',
+		'translatey' => 'move',
+		'translatez' => 'move',
 		'translate3d' => 'move',
 		'scale' => 'scale',
-		'scaleX' => 'scale',
-		'scaleY' => 'scale',
-		'scaleZ' => 'scale',
+		'scalex' => 'scale',
+		'scaley' => 'scale',
+		'scalez' => 'scale',
 		'scale3d' => 'scale',
 		'rotate' => 'rotate',
-		'rotateX' => 'rotate',
-		'rotateY' => 'rotate',
-		'rotateZ' => 'rotate',
+		'rotatex' => 'rotate',
+		'rotatey' => 'rotate',
+		'rotatez' => 'rotate',
 		'rotate3d' => 'rotate',
 		'skew' => 'skew',
-		'skewX' => 'skew',
-		'skewY' => 'skew',
+		'skewx' => 'skew',
+		'skewy' => 'skew',
 	];
 
 	public function map_to_v4_atomic( string $property, $value ): ?array {
+		error_log('🔴 LEVEL 5 - TRANSFORM MAPPER: Called with property = ' . $property . ', value = ' . $value);
 		if ( ! $this->is_supported_property( $property ) ) {
 			return null;
 		}
@@ -106,33 +109,48 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		return Transform_Prop_Type::make()->generate( [
-			'transform-functions' => $functions,
+		$result = Transform_Prop_Type::make()->generate( [
+			'transform-functions' => Transform_Functions_Prop_Type::make()->generate( $functions ),
 		] );
+		error_log('🔴 LEVEL 5 - TRANSFORM MAPPER: Returning result = ' . json_encode($result));
+		return $result;
 	}
 
 	private function parse_transform_functions( string $value ): array {
 		$functions = [];
 		
+		error_log('🔴 TRANSFORM MAPPER: Parsing transform functions from: ' . $value);
+		
 		// Match transform functions like translateX(10px), scale(1.5), rotate(45deg)
 		if ( preg_match_all( '/(\w+)\s*\(\s*([^)]+)\s*\)/i', $value, $matches, PREG_SET_ORDER ) ) {
+			error_log('🔴 TRANSFORM MAPPER: Regex matched ' . count($matches) . ' functions');
 			foreach ( $matches as $match ) {
 				$function_name = strtolower( $match[1] );
 				$function_args = trim( $match[2] );
 				
+				error_log('🔴 TRANSFORM MAPPER: Found function: ' . $function_name . '(' . $function_args . ')');
+				
 				if ( ! isset( self::TRANSFORM_FUNCTIONS[ $function_name ] ) ) {
+					error_log('🔴 TRANSFORM MAPPER: Function ' . $function_name . ' NOT in TRANSFORM_FUNCTIONS map');
 					continue;
 				}
 
 				$function_type = self::TRANSFORM_FUNCTIONS[ $function_name ];
+				error_log('🔴 TRANSFORM MAPPER: Function type: ' . $function_type);
 				$parsed_function = $this->parse_transform_function( $function_name, $function_args, $function_type );
 				
 				if ( null !== $parsed_function ) {
+					error_log('🔴 TRANSFORM MAPPER: Successfully parsed function');
 					$functions[] = $parsed_function;
+				} else {
+					error_log('🔴 TRANSFORM MAPPER: Failed to parse function - returned null');
 				}
 			}
+		} else {
+			error_log('🔴 TRANSFORM MAPPER: Regex did NOT match - no functions found');
 		}
 
+		error_log('🔴 TRANSFORM MAPPER: Returning ' . count($functions) . ' parsed functions');
 		return $functions;
 	}
 
@@ -159,26 +177,26 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		switch ( $function_name ) {
 			case 'translate':
-				$move_data['x'] = $this->parse_size_value( $values[0] ?? '0' );
-				$move_data['y'] = $this->parse_size_value( $values[1] ?? $values[0] ?? '0' );
+				$move_data['x'] = Size_Prop_Type::make()->generate( $this->parse_size_value( $values[0] ?? '0' ) );
+				$move_data['y'] = Size_Prop_Type::make()->generate( $this->parse_size_value( $values[1] ?? $values[0] ?? '0' ) );
 				break;
 			case 'translatex':
-				$move_data['x'] = $this->parse_size_value( $values[0] ?? '0' );
-				$move_data['y'] = $this->parse_size_value( '0' );
+				$move_data['x'] = Size_Prop_Type::make()->generate( $this->parse_size_value( $values[0] ?? '0' ) );
+				$move_data['y'] = Size_Prop_Type::make()->generate( $this->parse_size_value( '0' ) );
 				break;
 			case 'translatey':
-				$move_data['x'] = $this->parse_size_value( '0' );
-				$move_data['y'] = $this->parse_size_value( $values[0] ?? '0' );
+				$move_data['x'] = Size_Prop_Type::make()->generate( $this->parse_size_value( '0' ) );
+				$move_data['y'] = Size_Prop_Type::make()->generate( $this->parse_size_value( $values[0] ?? '0' ) );
 				break;
 			case 'translatez':
-				$move_data['x'] = $this->parse_size_value( '0' );
-				$move_data['y'] = $this->parse_size_value( '0' );
-				$move_data['z'] = $this->parse_size_value( $values[0] ?? '0' );
+				$move_data['x'] = Size_Prop_Type::make()->generate( $this->parse_size_value( '0' ) );
+				$move_data['y'] = Size_Prop_Type::make()->generate( $this->parse_size_value( '0' ) );
+				$move_data['z'] = Size_Prop_Type::make()->generate( $this->parse_size_value( $values[0] ?? '0' ) );
 				break;
 			case 'translate3d':
-				$move_data['x'] = $this->parse_size_value( $values[0] ?? '0' );
-				$move_data['y'] = $this->parse_size_value( $values[1] ?? '0' );
-				$move_data['z'] = $this->parse_size_value( $values[2] ?? '0' );
+				$move_data['x'] = Size_Prop_Type::make()->generate( $this->parse_size_value( $values[0] ?? '0' ) );
+				$move_data['y'] = Size_Prop_Type::make()->generate( $this->parse_size_value( $values[1] ?? '0' ) );
+				$move_data['z'] = Size_Prop_Type::make()->generate( $this->parse_size_value( $values[2] ?? '0' ) );
 				break;
 		}
 
@@ -234,20 +252,20 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		switch ( $function_name ) {
 			case 'rotate':
-				$rotate_data['z'] = $this->parse_angle_value( $values[0] ?? '0deg' );
+				$rotate_data['z'] = Size_Prop_Type::make()->generate( $this->parse_angle_value( $values[0] ?? '0deg' ) );
 				break;
 			case 'rotatex':
-				$rotate_data['x'] = $this->parse_angle_value( $values[0] ?? '0deg' );
+				$rotate_data['x'] = Size_Prop_Type::make()->generate( $this->parse_angle_value( $values[0] ?? '0deg' ) );
 				break;
 			case 'rotatey':
-				$rotate_data['y'] = $this->parse_angle_value( $values[0] ?? '0deg' );
+				$rotate_data['y'] = Size_Prop_Type::make()->generate( $this->parse_angle_value( $values[0] ?? '0deg' ) );
 				break;
 			case 'rotatez':
-				$rotate_data['z'] = $this->parse_angle_value( $values[0] ?? '0deg' );
+				$rotate_data['z'] = Size_Prop_Type::make()->generate( $this->parse_angle_value( $values[0] ?? '0deg' ) );
 				break;
 			case 'rotate3d':
 				// rotate3d(x, y, z, angle) - we'll use the angle for z-axis
-				$rotate_data['z'] = $this->parse_angle_value( $values[3] ?? '0deg' );
+				$rotate_data['z'] = Size_Prop_Type::make()->generate( $this->parse_angle_value( $values[3] ?? '0deg' ) );
 				break;
 		}
 
@@ -265,16 +283,16 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		switch ( $function_name ) {
 			case 'skew':
-				$skew_data['x'] = $this->parse_angle_value( $values[0] ?? '0deg' );
-				$skew_data['y'] = $this->parse_angle_value( $values[1] ?? '0deg' );
+				$skew_data['x'] = Size_Prop_Type::make()->generate( $this->parse_angle_value( $values[0] ?? '0deg' ) );
+				$skew_data['y'] = Size_Prop_Type::make()->generate( $this->parse_angle_value( $values[1] ?? '0deg' ) );
 				break;
 			case 'skewx':
-				$skew_data['x'] = $this->parse_angle_value( $values[0] ?? '0deg' );
-				$skew_data['y'] = $this->parse_angle_value( '0deg' );
+				$skew_data['x'] = Size_Prop_Type::make()->generate( $this->parse_angle_value( $values[0] ?? '0deg' ) );
+				$skew_data['y'] = Size_Prop_Type::make()->generate( $this->parse_angle_value( '0deg' ) );
 				break;
 			case 'skewy':
-				$skew_data['x'] = $this->parse_angle_value( '0deg' );
-				$skew_data['y'] = $this->parse_angle_value( $values[0] ?? '0deg' );
+				$skew_data['x'] = Size_Prop_Type::make()->generate( $this->parse_angle_value( '0deg' ) );
+				$skew_data['y'] = Size_Prop_Type::make()->generate( $this->parse_angle_value( $values[0] ?? '0deg' ) );
 				break;
 		}
 

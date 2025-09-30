@@ -516,9 +516,16 @@ class Css_Processor {
 		
 		// Add inline styles (highest specificity after !important)
 		if ( ! empty( $widget['inline_css'] ) ) {
+			error_log('🟡 LEVEL 3 - CSS PROCESSOR: Processing inline CSS, properties = ' . implode(', ', array_keys($widget['inline_css'])));
 			foreach ( $widget['inline_css'] as $property => $style_data ) {
+				if ($property === 'transform') {
+					error_log('🟡 LEVEL 3 - CSS PROCESSOR: Found transform in inline_css, value = ' . $style_data['value']);
+				}
 				// Convert inline CSS to atomic format
 				$converted_property = $this->convert_css_property( $property, $style_data['value'] );
+				if ($property === 'transform') {
+					error_log('🟡 LEVEL 3 - CSS PROCESSOR: Transform converted = ' . json_encode($converted_property));
+				}
 				
 				$all_styles[] = [
 					'property' => $property,

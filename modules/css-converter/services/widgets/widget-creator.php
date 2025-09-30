@@ -546,6 +546,7 @@ class Widget_Creator {
 	}
 	
 	private function get_global_class_properties( $global_class_names ) {
+		error_log('🟣 LEVEL 6 - WIDGET CREATOR: get_global_class_properties called with ' . count($global_class_names) . ' classes');
 		// Get the actual global class properties from the CSS processing result
 		// The global_class_names array contains class names like ['inline-element-1']
 		// We need to get the actual properties from the global classes
@@ -588,6 +589,10 @@ class Widget_Creator {
 		}
 		
 		error_log( 'Widget Creator: Extracted global class props: ' . wp_json_encode( $props ) );
+		error_log('🟣 LEVEL 6 - WIDGET CREATOR: Returning ' . count($props) . ' class properties');
+		if (isset($props['transform'])) {
+			error_log('🟣 LEVEL 6 - WIDGET CREATOR: Transform in final output = ' . json_encode($props['transform']));
+		}
 		return $props;
 	}
 	

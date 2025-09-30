@@ -144,6 +144,7 @@ class Html_Parser {
 	}
 
 	private function parse_inline_css( $css_string ) {
+		error_log('🟢 LEVEL 2 - HTML PARSER: Parsing inline CSS = ' . $css_string);
 		$styles = [];
 		$declarations = explode( ';', $css_string );
 
@@ -177,6 +178,9 @@ class Html_Parser {
 		$simple_styles = [];
 		foreach ( $styles as $property => $data ) {
 			$simple_styles[ $property ] = $data['value'];
+			if ($property === 'transform') {
+				error_log('🟢 LEVEL 2 - HTML PARSER: Found transform property, value = ' . $data['value']);
+			}
 		}
 		
 		$expanded_styles = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $simple_styles );

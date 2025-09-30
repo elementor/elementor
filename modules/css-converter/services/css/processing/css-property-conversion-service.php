@@ -72,6 +72,9 @@ class Css_Property_Conversion_Service {
 	 * @return array|null Converted property in v4 atomic format, or null if conversion failed
 	 */
 	public function convert_property_to_v4_atomic( string $property, $value ): ?array {
+		if ($property === 'transform') {
+			error_log('🟠 LEVEL 4 - CONVERSION SERVICE: Converting transform, value = ' . $value);
+		}
 		$mapper = $this->resolve_property_mapper_safely( $property, $value );
 		
 		if ( $this->can_convert_to_v4_atomic( $mapper ) ) {
@@ -118,6 +121,9 @@ class Css_Property_Conversion_Service {
 
 	private function attempt_v4_atomic_conversion( object $mapper, string $property, $value ): ?array {
 		$v4_result = $mapper->map_to_v4_atomic( $property, $value );
+		if ($property === 'transform') {
+			error_log('🟠 LEVEL 4 - CONVERSION SERVICE: Mapper result = ' . json_encode($v4_result));
+		}
 		
 		if ( $this->is_valid_v4_result( $v4_result ) ) {
 			$this->record_conversion_success();

@@ -58,7 +58,9 @@ class Atomic_Widgets_Route {
 	}
 
 	public function convert_html_to_widgets( \WP_REST_Request $request ): \WP_REST_Response {
+		error_log('🔵 LEVEL 1 - ENDPOINT: Request received');
 		$html = $request->get_param( 'html' );
+		error_log('🔵 LEVEL 1 - ENDPOINT: HTML = ' . substr($html, 0, 200));
 		$options = $request->get_param( 'options' ) ?: [];
 		$debug_mode = $request->get_param( 'debug' ) ?: false;
 		$performance_monitoring = $request->get_param( 'performance' ) ?: false;
