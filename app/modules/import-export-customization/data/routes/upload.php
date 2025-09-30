@@ -79,10 +79,6 @@ class Upload extends Base_Route {
 				return Response::error( $import_result->get_error_message(), 'upload_error' );
 			}
 
-			if ( ! empty( $import_result['media_file_name'] ) ) {
-				$this->setup_media_mapping( $import_result['media_file_name'] );
-			}
-
 			$uploaded_kit = $module->upload_kit( $import_result['file_name'], $import_result['referrer'], $kit_id );
 
 			$result = [
@@ -122,47 +118,6 @@ class Upload extends Base_Route {
 
 			return Response::error( $e->getMessage(), 'upload_error' );
 		}
-	}
-
-	private function setup_media_mapping( $media_zip_path ) {
-		\Elementor\TemplateLibrary\Classes\Media_Mapper::clear_mapping();
-
-		$media_dir = null;
-
-		if ( file_exists( $media_zip_path ) ) {
-			$media_dir = $this->extract_media_zip( $media_zip_path );
-		}
-
-		if ( $media_dir && file_exists( $media_dir . '/media-mapping.json' ) ) {
-			$media_mapping = json_decode( file_get_contents( $media_dir . '/media-mapping.json' ), true );
-
-			\Elementor\TemplateLibrary\Classes\Media_Mapper::set_mapping( $media_mapping, $media_dir );
-		}
-
-		Plugin::$instance->uploads_manager->remove_file_or_dir( $media_zip_path );
-
-		return $media_dir;
-	}
-
-	private function extract_media_zip( $zip_path ) {
-		if ( ! class_exists( '\ZipArchive' ) ) {
-			return null;
-		}
-
-		$zip = new \ZipArchive();
-		if ( $zip->open( $zip_path ) !== true ) {
-			return null;
-		}
-
-		$media_dir = dirname( $zip_path ) . '/media';
-		if ( ! $zip->extractTo( $media_dir ) ) {
-			$zip->close();
-			return null;
-		}
-
-		$zip->close();
-
-		return $media_dir;
 	}
 
 	protected function get_args(): array {
