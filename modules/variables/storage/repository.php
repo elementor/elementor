@@ -254,6 +254,7 @@ class Repository {
 				$operation_id = $this->get_operation_identifier( $operation, $index );
 				$errors[ $operation_id ] = [
 					'status' => $this->get_error_status_code( $e ),
+					'code' => $this->get_error_code( $e ),
 					'message' => $e->getMessage(),
 				];
 			}
@@ -265,6 +266,7 @@ class Repository {
 			foreach ( $errors as $operation_id => $error ) {
 				$error_details[ esc_html( $operation_id ) ] = [
 					'status' => (int) $error['status'],
+					'code' => $error['code'],
 					'message' => esc_html( $error['message'] ),
 				];
 			}
@@ -431,6 +433,22 @@ class Repository {
 		}
 
 		return 500;
+	}
+
+	private function get_error_code( Exception $e ): string {
+		if ( $e instanceof VariablesLimitReached ) {
+			return 'invalid_variable_limit_reached';
+		}
+
+		if ( $e instanceof DuplicatedLabel ) {
+			return 'duplicated_label';
+		}
+
+		if ( $e instanceof RecordNotFound ) {
+			return 'variable_not_found';
+		}
+
+		return 'unexpected_server_error';
 	}
 
 	private function save( array $db_record ) {
