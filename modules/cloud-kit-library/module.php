@@ -112,22 +112,15 @@ class Module extends BaseModule {
 			throw new \Error( ImportExportCustomization_Module::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
-		$data = [
+		return [
 			'file_name' => self::get_remote_kit_zip( $kit['downloadUrl'] ),
 			'referrer' => ImportExportCustomization_Module::REFERRER_CLOUD,
 			'file_url' => $kit['downloadUrl'],
 			'kit' => $kit,
 		];
-
-		if ( ! empty( $kit['mediaDownloadUrl'] ) ) {
-			$media_zip = self::get_remote_kit_zip( $kit['mediaDownloadUrl'], 'media.zip' );
-			$data['media_file_name'] = $media_zip;
-		}
-
-		return $data;
 	}
 
-	public static function get_remote_kit_zip( $url, $file_name = 'kit.zip' ) {
+	public static function get_remote_kit_zip( $url ) {
 		$remote_zip_request = wp_safe_remote_get( $url );
 
 		if ( is_wp_error( $remote_zip_request ) ) {
@@ -140,7 +133,7 @@ class Module extends BaseModule {
 			throw new \Error( ImportExportCustomization_Module::CLOUD_KIT_LIBRARY_ERROR_LOADING_RESOURCE ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
-		return Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], $file_name );
+		return Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
 	}
 
 	public static function get_app(): Cloud_Kits {
