@@ -25,7 +25,7 @@
 
 ### **Layout & Positioning**
 11. **`flex-direction-prop-type.test.ts`** - ✅ All 3 tests passing
-12. **`position-prop-type.test.ts`** - ✅ FIXED and WORKING: 4/4 tests passing (positioning properties + inset shorthand + physical offset properties)
+12. **`position-prop-type.test.ts`** - ✅ FIXED and WORKING: 4/4 tests passing (positioning properties + inset shorthand + physical offset properties + getComputedStyle removed)
 13. **`text-align-prop-type.test.ts`** - ✅ All 3 tests passing
 
 ### **Spacing & Dimensions**
@@ -319,10 +319,10 @@ expect( apiResult.global_classes_created ).toBeGreaterThan( 0 );
 // 14 doesnt' seem to work at all.
 
 15. **`max-width-prop-type.test.ts`** - ✅ CONVERTED and WORKING: Style assertions working correctly
-16. **`opacity-prop-type.test.ts`** - ⚠️ CONVERTED but SKIPPED: Opacity mapper not applying styles correctly
+16. **`opacity-prop-type.test.ts`** - ⚠️ CONVERTED but SKIPPED: Opacity mapper not being called - need investigation
 17. **`position-prop-type.test.ts`** - ✅ CONVERTED and WORKING: Style assertions working correctly (basic position properties)
 18. **`text-align-prop-type.test.ts`** - ✅ CONVERTED and WORKING: Style assertions working correctly (logical properties)
-19. **`transform-prop-type.test.ts`** - ⚠️ CONVERTED but SKIPPED: Transform mapper not applying styles correctly
+19. **`transform-prop-type.test.ts`** - ⚠️ CONVERTED but SKIPPED: Transform mapper not being called - need investigation
 
 ### **✅ WORKING TESTS (13 files) - Using Style Assertions**
 10. **`background-prop-type.test.ts`** - ✅ CONVERTED and WORKING: All 7 tests passing! (3 background-colors + 4 gradients: linear & radial) ⬆️ **GRADIENT BREAKTHROUGH!**

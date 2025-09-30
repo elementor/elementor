@@ -165,19 +165,13 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
-		// Test different units (physical properties) - units may be converted by browser
+		// Test different units (physical properties)
 		await test.step( 'Verify different units for physical properties', async () => {
-			// Get actual values since units may be converted by browser
-			const topValue = await paragraphElements.nth( 0 ).evaluate(el => getComputedStyle(el).insetBlockStart);
-			const rightValue = await paragraphElements.nth( 1 ).evaluate(el => getComputedStyle(el).insetInlineEnd);
-			const bottomValue = await paragraphElements.nth( 2 ).evaluate(el => getComputedStyle(el).insetBlockEnd);
-			const leftValue = await paragraphElements.nth( 3 ).evaluate(el => getComputedStyle(el).insetInlineStart);
-			
-			// Test with actual converted values
-			await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'inset-block-start', topValue );
-			await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'inset-inline-end', rightValue );
-			await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'inset-block-end', bottomValue );
-			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'inset-inline-start', leftValue );
+			// Test with expected converted values (browser converts em/rem/%/vh to px)
+			await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'inset-block-start', '32px' ); // 2em = 32px
+			await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'inset-inline-end', '48px' ); // 3rem = 48px
+			await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'inset-block-end', '1px' ); // 5% = 1px (small percentage)
+			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'inset-inline-start', '67.2px' ); // 10vh = 67.2px (viewport height)
 		} );
 
 		// Test negative values
@@ -186,19 +180,13 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 			await expect( paragraphElements.nth( 5 ) ).toHaveCSS( 'inset-inline-start', '-25px' );
 		} );
 
-		// Test logical properties with different units - units may be converted by browser
+		// Test logical properties with different units
 		await test.step( 'Verify logical properties with different units', async () => {
-			// Get actual values since units may be converted by browser
-			const blockStartValue = await paragraphElements.nth( 6 ).evaluate(el => getComputedStyle(el).insetBlockStart);
-			const inlineEndValue = await paragraphElements.nth( 7 ).evaluate(el => getComputedStyle(el).insetInlineEnd);
-			const blockEndValue = await paragraphElements.nth( 8 ).evaluate(el => getComputedStyle(el).insetBlockEnd);
-			const inlineStartValue = await paragraphElements.nth( 9 ).evaluate(el => getComputedStyle(el).insetInlineStart);
-			
-			// Test with actual converted values
-			await expect( paragraphElements.nth( 6 ) ).toHaveCSS( 'inset-block-start', blockStartValue );
-			await expect( paragraphElements.nth( 7 ) ).toHaveCSS( 'inset-inline-end', inlineEndValue );
-			await expect( paragraphElements.nth( 8 ) ).toHaveCSS( 'inset-block-end', blockEndValue );
-			await expect( paragraphElements.nth( 9 ) ).toHaveCSS( 'inset-inline-start', inlineStartValue );
+			// Test with expected converted values (browser converts em/rem/%/vh to px)
+			await expect( paragraphElements.nth( 6 ) ).toHaveCSS( 'inset-block-start', '32px' ); // 2em = 32px
+			await expect( paragraphElements.nth( 7 ) ).toHaveCSS( 'inset-inline-end', '48px' ); // 3rem = 48px
+			await expect( paragraphElements.nth( 8 ) ).toHaveCSS( 'inset-block-end', '1px' ); // 5% = 1px (small percentage)
+			await expect( paragraphElements.nth( 9 ) ).toHaveCSS( 'inset-inline-start', '67.2px' ); // 10vh = 67.2px (viewport height)
 		} );
 	} );
 
@@ -257,15 +245,12 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 			await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'inset-inline-end', '30px' );
 			
 			// inset-inline: 2em (single value with unit conversion)
-			const emValue = await paragraphElements.nth( 2 ).evaluate(el => getComputedStyle(el).insetInlineStart);
-			await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'inset-inline-start', emValue );
-			await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'inset-inline-end', emValue );
+			await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'inset-inline-start', '32px' ); // 2em = 32px
+			await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'inset-inline-end', '32px' );
 			
 			// inset-inline: 1rem 3rem (two values with unit conversion)
-			const remStartValue = await paragraphElements.nth( 3 ).evaluate(el => getComputedStyle(el).insetInlineStart);
-			const remEndValue = await paragraphElements.nth( 3 ).evaluate(el => getComputedStyle(el).insetInlineEnd);
-			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'inset-inline-start', remStartValue );
-			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'inset-inline-end', remEndValue );
+			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'inset-inline-start', '16px' ); // 1rem = 16px
+			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'inset-inline-end', '48px' ); // 3rem = 48px
 			
 			// inset-inline: -10px (negative single value)
 			await expect( paragraphElements.nth( 4 ) ).toHaveCSS( 'inset-inline-start', '-10px' );
@@ -287,15 +272,12 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 			await expect( paragraphElements.nth( 7 ) ).toHaveCSS( 'inset-block-end', '35px' );
 			
 			// inset-block: 1.5em (single value with unit conversion)
-			const emValue = await paragraphElements.nth( 8 ).evaluate(el => getComputedStyle(el).insetBlockStart);
-			await expect( paragraphElements.nth( 8 ) ).toHaveCSS( 'inset-block-start', emValue );
-			await expect( paragraphElements.nth( 8 ) ).toHaveCSS( 'inset-block-end', emValue );
+			await expect( paragraphElements.nth( 8 ) ).toHaveCSS( 'inset-block-start', '24px' ); // 1.5em = 24px
+			await expect( paragraphElements.nth( 8 ) ).toHaveCSS( 'inset-block-end', '24px' );
 			
 			// inset-block: 2rem 4rem (two values with unit conversion)
-			const remStartValue = await paragraphElements.nth( 9 ).evaluate(el => getComputedStyle(el).insetBlockStart);
-			const remEndValue = await paragraphElements.nth( 9 ).evaluate(el => getComputedStyle(el).insetBlockEnd);
-			await expect( paragraphElements.nth( 9 ) ).toHaveCSS( 'inset-block-start', remStartValue );
-			await expect( paragraphElements.nth( 9 ) ).toHaveCSS( 'inset-block-end', remEndValue );
+			await expect( paragraphElements.nth( 9 ) ).toHaveCSS( 'inset-block-start', '32px' ); // 2rem = 32px
+			await expect( paragraphElements.nth( 9 ) ).toHaveCSS( 'inset-block-end', '64px' ); // 4rem = 64px
 			
 			// inset-block: -20px (negative single value)
 			await expect( paragraphElements.nth( 10 ) ).toHaveCSS( 'inset-block-start', '-20px' );
@@ -318,7 +300,7 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		
+
 		// Check if API call failed due to backend issues
 		if ( apiResult.errors && apiResult.errors.length > 0 ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
@@ -353,6 +335,6 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 			
 			// left: 40px should become inset-inline-start: 40px
 			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'inset-inline-start', '40px' );
-		} );
+			} );
 	} );
 } );

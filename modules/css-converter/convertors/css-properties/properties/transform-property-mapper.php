@@ -84,6 +84,10 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
 	}
 
+	public function get_v4_property_name( string $property ): string {
+		return 'transform';
+	}
+
 	private function parse_transform_value( $value ): ?array {
 		if ( ! is_string( $value ) ) {
 			return null;
