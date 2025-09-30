@@ -62,7 +62,7 @@ export const useVariablesManagerState = () => {
 			setIsDirty( false );
 			return { success: true };
 		}
-		throw new Error( __( 'Failed to save variables. Please try again.', 'elementor' ) );
+		return { success: false };
 	}, [ variables ] );
 
 	const filteredVariables = () => {

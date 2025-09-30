@@ -9,7 +9,7 @@ export interface UseDuplicateErrorNavigationReturn {
 	resetNavigation: () => void;
 }
 
-export const useDuplicateErrorNavigation = (): UseDuplicateErrorNavigationReturn => {
+export const useErrorNavigation = (): UseDuplicateErrorNavigationReturn => {
 	const currentIndexRef = useRef( 0 );
 
 	const createNavigationCallback = useCallback(

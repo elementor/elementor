@@ -29,7 +29,7 @@ import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
 import { useAutoEdit } from './hooks/use-auto-edit';
-import { useDuplicateErrorNavigation } from './hooks/use-duplicate-error-navigation';
+import { useErrorNavigation } from './hooks/use-error-navigation';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
 import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu';
 import { VariablesManagerTable } from './variables-manager-table';
@@ -72,7 +72,7 @@ export function VariablesManagerPanel() {
 	} = useVariablesManagerState();
 
 	const { autoEditVariableId, startAutoEdit, handleAutoEditComplete } = useAutoEdit();
-	const { createNavigationCallback, resetNavigation } = useDuplicateErrorNavigation();
+	const { createNavigationCallback, resetNavigation } = useErrorNavigation();
 
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
 	const [ serverError, setServerError ] = useState< MappedError | null >( null );
@@ -103,8 +103,7 @@ export function VariablesManagerPanel() {
 			setServerError( null );
 			resetNavigation();
 
-			await handleSave();
-			return { success: true };
+			return await handleSave();
 		} catch ( error ) {
 			const mappedError = mapServerError( error as ErrorResponse );
 			const duplicatedIds = mappedError?.action?.data?.duplicatedIds;
