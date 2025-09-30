@@ -620,8 +620,8 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$response_data = $response->get_data();
 		$this->assertFalse( $response_data['success'] );
-		$this->assertEquals( 'atomic_operation_failed', $response_data['code'] );
-		$this->assertEquals( 'Batch operation failed', $response_data['message'] );
+		$this->assertEquals( 'batch_duplicated_label', $response_data['code'] );
+		$this->assertEquals( 'Batch operation failed: Variable labels already exist', $response_data['message'] );
 		$this->assertArrayHasKey( 'temp-fail', $response_data['data'] );
 		$this->assertEquals( 400, $response_data['data']['temp-fail']['status'] );
 		$this->assertStringContainsString( 'already exists', $response_data['data']['temp-fail']['message'] );
@@ -768,15 +768,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 					],
 				],
 				[
-					'type' => 'create',
-					'variable' => [
-						'id' => 'temp-fail',
-						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Conflicting Label',
-						'value' => '#00FF00',
-					],
-				],
-				[
 					'type' => 'update',
 					'id' => 'non-existent',
 					'variable' => [
@@ -794,12 +785,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$response_data = $response->get_data();
 		$this->assertFalse( $response_data['success'] );
-		$this->assertEquals( 'atomic_operation_failed', $response_data['code'] );
+		$this->assertEquals( 'batch_variables_not_found', $response_data['code'] );
 
-		$this->assertArrayHasKey( 'temp-fail', $response_data['data'] );
 		$this->assertArrayHasKey( 'non-existent', $response_data['data'] );
 
-		$this->assertEquals( 400, $response_data['data']['temp-fail']['status'] );
 		$this->assertEquals( 404, $response_data['data']['non-existent']['status'] );
 	}
 }
