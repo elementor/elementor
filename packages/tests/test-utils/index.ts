@@ -1,5 +1,6 @@
 export * from './create-dom-element';
 export * from './create-mock-http-response';
+export * from './create-mock-document-data';
 export * from './create-mock-element';
 export * from './create-mock-element-data';
 export * from './create-mock-element-with-children';

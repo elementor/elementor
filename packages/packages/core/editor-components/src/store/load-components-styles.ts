@@ -2,28 +2,38 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
+import { type Element } from '../types';
 import { getComponentIds } from '../utils/get-component-ids';
 import { load } from './component-config';
 import { selectData, slice } from './components-styles-store';
 
 type ComponentId = number;
 
-export async function addComponentStyles( ids: ComponentId[] ) {
-	if ( ids.length === 0 ) {
+export async function loadComponentsStyles( elements: Element[] ) {
+	const componentIds = Array.from( new Set( getComponentIds( elements ) ) );
+	
+	if ( ! componentIds.length ) {
+		return;
+	}
+	
+	const knownComponents = selectData( getState() );
+	const unknownComponentIds = componentIds.filter( ( id ) => ! knownComponents[ id ] );
+	
+	if ( ! unknownComponentIds.length ) {
 		return;
 	}
 
-	const knownComponents = selectData( getState() );
+	addComponentStyles( unknownComponentIds );
+}
 
-	const newComponents = await loadComponents( ids.filter( ( id ) => ! knownComponents[ id ] ) );
+export async function addComponentStyles( ids: ComponentId[] ) {
+	const newComponents = await loadComponents( ids );
 
 	addStyles( newComponents );
 
-	const componentIds = newComponents.flatMap( ( [ , data ] ) => getComponentIds( data.elements ?? [] ) );
-
-	if ( componentIds.length ) {
-		addComponentStyles( Array.from( new Set( componentIds ) ) );
-	}
+	Object.values( newComponents ).forEach( ( [ , data ] ) => {
+		loadComponentsStyles( data.elements as Element[] );
+	} );
 }
 
 async function loadComponents( ids: number[] ) {

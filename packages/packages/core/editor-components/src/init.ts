@@ -1,19 +1,18 @@
 import { injectIntoTop } from '@elementor/editor';
-import { getCurrentDocumentId } from '@elementor/editor-elements';
+import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
-import { __privateListenTo as listenTo, commandStartEvent, registerDataHook } from '@elementor/editor-v1-adapters';
+import { __privateListenTo as listenTo, commandStartEvent } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
 import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
-import { addComponentStyles } from './store/add-component-styles';
 import { componentsStylesProvider } from './store/components-styles-provider';
 import { slice } from './store/components-styles-store';
+import { loadComponentsStyles } from './store/load-components-styles';
 import { removeComponentStyles } from './store/remove-component-styles';
-import { type Element, type ExtendedWindow } from './types';
-import { getComponentIds } from './utils/get-component-ids';
+import { type Element } from './types';
 
 export function init() {
 	initStyles();
@@ -30,20 +29,13 @@ export function init() {
 	} );
 
 	listenTo( commandStartEvent( 'editor/documents/attach-preview' ), () => {
-		const id = getCurrentDocumentId();
+		const { id, config } = getV1CurrentDocument();
 
 		if ( id ) {
 			removeComponentStyles( id );
 		}
-	} );
 
-	registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
-		const extendedWindow = window as unknown as ExtendedWindow;
-		const elements = extendedWindow.elementor.documents.currentDocument.config.elements as Element[];
-
-		const componentIds = new Set( getComponentIds( elements ) );
-
-		await addComponentStyles( Array.from( componentIds ) );
+		loadComponentsStyles( ( config?.elements as Element[] ) ?? [] );
 	} );
 }
 
