@@ -173,7 +173,13 @@ export function findMatchingOption(
 }
 
 export function isCategorizedOptionPool( options: FlatOption[] | CategorizedOption[] ): options is CategorizedOption[] {
-	return options.every( ( option ) => 'groupLabel' in option );
+	if ( options.length <= 1 ) {
+		return false;
+	}
+
+	const uniqueGroupLabels = new Set( options.map( ( option ) => option.groupLabel ) );
+
+	return uniqueGroupLabels.size > 1; // should not categorize options if there is only one group
 }
 
 function factoryFilter< T extends FlatOption[] | CategorizedOption[] >(
