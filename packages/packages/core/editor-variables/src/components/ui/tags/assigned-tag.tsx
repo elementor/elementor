@@ -4,6 +4,7 @@ import { Box, IconButton, Stack, Tooltip, Typography, UnstableTag as Tag, type U
 import { __ } from '@wordpress/i18n';
 
 export const SIZE = 'tiny';
+const UNLINK_LABEL = __( 'Unlink variable', 'elementor' );
 
 interface VariableTagProps extends UnstableTagProps {
 	onUnlink?: () => void;
@@ -14,9 +15,11 @@ export const AssignedTag = ( { startIcon, label, onUnlink, ...props }: VariableT
 
 	if ( onUnlink ) {
 		actions.push(
-			<IconButton key="unlink" size={ SIZE } onClick={ onUnlink } aria-label={ __( 'Unlink', 'elementor' ) }>
-				<DetachIcon fontSize={ SIZE } />
-			</IconButton>
+			<Tooltip key="unlink" title={ UNLINK_LABEL } placement="bottom">
+				<IconButton size={ SIZE } onClick={ onUnlink } aria-label={ UNLINK_LABEL }>
+					<DetachIcon fontSize={ SIZE } />
+				</IconButton>
+			</Tooltip>
 		);
 	}
 
