@@ -509,14 +509,75 @@ class Rest_Api {
 
 	private function batch_error_response( Exception $e ) {
 		if ( $e instanceof BatchOperationFailed ) {
+			$error_details = $e->getErrorDetails();
+			$batch_error_context = $this->determine_batch_error_context( $error_details );
+
 			return new WP_REST_Response( [
 				'success' => false,
-				'code' => 'atomic_operation_failed',
-				'message' => __( 'Batch operation failed', 'elementor' ),
-				'data' => $e->getErrorDetails(),
+				'code' => $batch_error_context['code'],
+				'message' => $batch_error_context['message'],
+				'data' => $batch_error_context['filtered_errors'],
 			], self::HTTP_BAD_REQUEST );
 		}
 
 		return $this->error_response( $e );
+	}
+
+	private function determine_batch_error_context( array $error_details ) {
+		$error_config = [
+			'invalid_variable_limit_reached' => [
+				'batch_code' => 'batch_variables_limit_reached',
+				'batch_message' => __( 'Batch operation failed: Reached the maximum number of variables', 'elementor' ),
+				'status' => self::HTTP_BAD_REQUEST,
+				'message' => __( 'Reached the maximum number of variables', 'elementor' ),
+			],
+			'duplicated_label' => [
+				'batch_code' => 'batch_duplicated_label',
+				'batch_message' => __( 'Batch operation failed: Variable labels already exist', 'elementor' ),
+				'status' => self::HTTP_BAD_REQUEST,
+				'message' => __( 'Variable label already exists', 'elementor' ),
+			],
+			'variable_not_found' => [
+				'batch_code' => 'batch_variables_not_found',
+				'batch_message' => __( 'Batch operation failed: Variables not found', 'elementor' ),
+				'status' => self::HTTP_NOT_FOUND,
+				'message' => __( 'Variable not found', 'elementor' ),
+			],
+		];
+
+		$grouped_errors = [];
+
+		foreach ( $error_details as $id => $error_detail ) {
+			$error_code = $error_detail['code'] ?? '';
+
+			if ( isset( $error_config[ $error_code ] ) ) {
+				$config = $error_config[ $error_code ];
+				$grouped_errors[ $error_code ][ $id ] = [
+					'status' => $config['status'],
+					'message' => $config['message'],
+				];
+			} else {
+				$grouped_errors['unknown'][ $id ] = [
+					'status' => self::HTTP_SERVER_ERROR,
+					'message' => $error_detail['message'] ?? __( 'Unexpected error', 'elementor' ),
+				];
+			}
+		}
+
+		foreach ( $error_config as $error_code => $config ) {
+			if ( ! empty( $grouped_errors[ $error_code ] ) ) {
+				return [
+					'code' => $config['batch_code'],
+					'message' => $config['batch_message'],
+					'filtered_errors' => $grouped_errors[ $error_code ],
+				];
+			}
+		}
+
+		return [
+			'code' => 'batch_operation_failed',
+			'message' => __( 'Batch operation failed', 'elementor' ),
+			'filtered_errors' => $grouped_errors['unknown'] ?? [],
+		];
 	}
 }
