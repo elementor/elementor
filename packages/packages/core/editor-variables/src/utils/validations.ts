@@ -16,7 +16,7 @@ export const ERROR_MESSAGES = {
 		DUPLICATED_LABELS: ( count: number, name: string ) =>
 			// eslint-disable-next-line @wordpress/i18n-translator-comments
 			sprintf( __( 'We found %1$d duplicated %2$s.', 'elementor' ), count, name ),
-		UNEXPECTED_ERROR: __( 'The save didn’t go through.', 'elementor' ),
+		UNEXPECTED_ERROR: __( 'There was a glitch.', 'elementor' ),
 		DUPLICATED_LABEL_ACTION: __( 'Take me there', 'elementor' ),
 		DUPLICATED_LABEL_ACTION_MESSAGE: __( 'Please rename the variables.', 'elementor' ),
 		UNEXPECTED_ERROR_ACTION_MESSAGE: __( 'Try saving your variables again.', 'elementor' ),
