@@ -14,7 +14,7 @@ export const LetterSpacingField = () => {
 	return (
 		<StylesField bind="letter-spacing" propDisplayName={ LETTER_SPACING_LABEL }>
 			<StylesFieldLayout label={ LETTER_SPACING_LABEL } ref={ rowRef }>
-				<SizeControl anchorRef={ rowRef } />
+				<SizeControl anchorRef={ rowRef } min={ -Number.MAX_SAFE_INTEGER } />
 			</StylesFieldLayout>
 		</StylesField>
 	);
