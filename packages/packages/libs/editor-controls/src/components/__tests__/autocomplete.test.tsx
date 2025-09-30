@@ -19,6 +19,11 @@ const categorizedOptions: CategorizedOption[] = [
 	{ id: '4', label: 'Four', groupLabel: 'Group 2' },
 ];
 
+const singleCategoryOptions: CategorizedOption[] = [
+	{ id: '5', label: 'Five', groupLabel: 'Group 1' },
+	{ id: '6', label: 'Six', groupLabel: 'Group 1' },
+];
+
 const basicProps: AutocompleteProps = {
 	options: flatOptions,
 	onOptionChange: jest.fn(),
@@ -99,15 +104,41 @@ describe( 'Autocomplete', () => {
 
 		const input = screen.getByPlaceholderText( 'test' );
 		fireEvent.input( input, { target: { value: 'T' } } );
+		let group1 = screen.queryByText( 'Group 1' );
+		let group2 = screen.queryByText( 'Group 2' );
 
 		// Assert.
 		expect( categorizedOptions.filter( ( { label } ) => screen.queryByText( label ) ).length ).toBe( 1 );
+		expect( group1 ).toBeVisible();
+		expect( group2 ).not.toBeInTheDocument();
 
 		// Act.
 		fireEvent.input( input, { target: { value: 'F' } } );
 
+		group1 = screen.queryByText( 'Group 1' );
+		group2 = screen.queryByText( 'Group 2' );
 		// Assert.
 		expect( categorizedOptions.filter( ( { label } ) => screen.queryByText( label ) ).length ).toBe( 1 );
+	} );
+
+	it( 'should NOT group options when only one groupLabel is present', () => {
+		// Act.
+		renderWithTheme(
+			<Autocomplete
+				{ ...customValueProps }
+				options={ singleCategoryOptions }
+				placeholder={ 'test' }
+				minInputLength={ 0 }
+				value={ '' }
+			/>
+		);
+
+		const input = screen.getByPlaceholderText( 'test' );
+		fireEvent.input( input, { target: { value: 'F' } } );
+
+		// Assert.
+		const group1 = screen.queryByText( 'Group 1' );
+		expect( group1 ).not.toBeInTheDocument();
 	} );
 
 	it( 'should clear input when clicking on clear input button, allowCustomValues is off', () => {
