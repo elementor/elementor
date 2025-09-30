@@ -1,21 +1,23 @@
+import { Unit, UNITS } from '../sanity/modules/v4-tests/typography/typography-constants';
+
 interface ComputedStyles {
 	fontSize: number;
 	windowWidth: number;
 	windowHeight: number;
 }
 
-export function convertToPixels( value: number, unit: string, styles: ComputedStyles ): number {
-	if ( 'px' === unit ) {
+export function convertToPixels( value: number, unit: Unit, styles: ComputedStyles ): number {
+	if ( UNITS.px === unit ) {
 		return value;
 	}
 
 	const conversions = {
-		em: () => value * styles.fontSize,
-		rem: () => value * 16, // 1rem = 16px
-		vw: () => ( value * styles.windowWidth ) / 100,
-		vh: () => ( value * styles.windowHeight ) / 100,
-		'%': () => ( value * styles.fontSize ) / 100,
-	};
+		[ UNITS.em ]: () => value * styles.fontSize,
+		[ UNITS.rem ]: () => value * 16, // 1rem = 16px
+		[ UNITS.vw ]: () => ( value * styles.windowWidth ) / 100,
+		[ UNITS.vh ]: () => ( value * styles.windowHeight ) / 100,
+		[ UNITS.percent ]: () => ( value * styles.fontSize ) / 100,
+	} as const;
 
 	return conversions[ unit ]?.() ?? value;
 }
