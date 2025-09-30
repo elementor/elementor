@@ -148,9 +148,7 @@ const DynamicSettings = ( { controls, tagName }: { controls: DynamicTag[ 'atomic
 		return (
 			<>
 				<Divider />
-				<Box>
-					<ControlsItemsStack items={ singleTab.value.items } />
-				</Box>
+				<ControlsItemsStack items={ singleTab.value.items } />
 			</>
 		);
 	}

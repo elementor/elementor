@@ -7,7 +7,7 @@ import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 
 export const UrlControl = createControl(
-	( { placeholder, ariaLabel, dataTestId }: { placeholder?: string; ariaLabel?: string; dataTestId?: string } ) => {
+	( { placeholder, ariaLabel }: { placeholder?: string; ariaLabel?: string } ) => {
 		const { value, setValue, disabled } = useBoundProp( urlPropTypeUtil );
 		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => setValue( event.target.value );
 
@@ -22,7 +22,6 @@ export const UrlControl = createControl(
 					placeholder={ placeholder }
 					inputProps={ {
 						...( ariaLabel ? { 'aria-label': ariaLabel } : {} ),
-						...( dataTestId ? { 'data-testid': dataTestId } : {} ),
 					} }
 				/>
 			</ControlActions>
