@@ -15,7 +15,7 @@ class Textarea_Control extends Atomic_Control_Base {
 	}
 
 	public function set_placeholder( string $placeholder ): self {
-		$this->placeholder = $placeholder;
+		$this->placeholder = html_entity_decode( $placeholder );
 
 		return $this;
 	}
