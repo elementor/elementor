@@ -11,7 +11,9 @@
 	--e-contact-buttons-var-1-size-small: 26px;
 	--e-contact-buttons-var-1-size-medium: 28px;
 	--e-contact-buttons-var-1-size-large: 32px;
+}
 
+.elementor-widget-contact-buttons .e-contact-buttons-var-1 {
 	.e-contact-buttons {
 
 		&__contact {
@@ -110,5 +112,4 @@
 			}
 		}
 	}
-
 }
