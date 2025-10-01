@@ -34,7 +34,7 @@ export const WIDGET_CONFIGS = {
 export const FONT_FAMILIES = {
 	system: 'Arial',
 	systemAlt: 'Times New Roman',
-	google: 'Roboto',
+	google: 'Open Sans',
 	trebuchet: 'Trebuchet MS',
 };
 
