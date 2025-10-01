@@ -50,9 +50,10 @@ test.describe( 'Opacity Prop Type Integration @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		
+
 		// Check if API call failed due to backend issues
-		if ( apiResult.errors && apiResult.errors.length > 0 ) {
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
@@ -67,7 +68,7 @@ test.describe( 'Opacity Prop Type Integration @prop-types', () => {
 
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
-		
+
 		// Test all converted paragraph elements
 		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );

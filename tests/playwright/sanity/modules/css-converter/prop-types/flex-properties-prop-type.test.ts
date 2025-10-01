@@ -5,7 +5,6 @@ import EditorPage from '../../../../pages/editor-page';
 import { CssConverterHelper } from '../helper';
 
 test.describe( 'Flex Properties Prop Type Integration @prop-types', () => {
-	let wpAdmin: WpAdminPage;
 	let editor: EditorPage;
 	let cssHelper: CssConverterHelper;
 
@@ -49,17 +48,17 @@ test.describe( 'Flex Properties Prop Type Integration @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		
-		if ( apiResult.error ) {
-			test.skip( true, 'Skipping due to backend property mapper issues: ' + JSON.stringify(apiResult.error) );
+
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
+			test.skip( true, 'Skipping due to backend property mapper issues: ' + validation.skipReason );
 			return;
 		}
-		
+
 		const postId = apiResult.post_id;
 		const editUrl = apiResult.edit_url;
-		
-		if ( !postId || !editUrl ) {
-			console.log('Missing postId or editUrl - API call likely failed');
+
+		if ( ! postId || ! editUrl ) {
 			test.skip( true, 'Skipping due to missing postId or editUrl in API response' );
 			return;
 		}
@@ -75,24 +74,24 @@ test.describe( 'Flex Properties Prop Type Integration @prop-types', () => {
 		await test.step( 'Verify flex properties are applied correctly', async () => {
 			const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
 			await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
-			
+
 			await test.step( 'Verify flex container 1 properties', async () => {
 				await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'display', 'flex' );
 				await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'justify-content', 'center' );
 				await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'align-items', 'flex-start' );
 			} );
-			
+
 			await test.step( 'Verify flex container 2 properties', async () => {
 				await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'display', 'flex' );
 				await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'justify-content', 'space-between' );
 				await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'align-items', 'center' );
 			} );
-			
+
 			await test.step( 'Verify flex container 3 properties', async () => {
 				await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'display', 'flex' );
 				await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'flex-direction', 'column' );
 			} );
-			
+
 			await test.step( 'Verify flex container 4 properties', async () => {
 				await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'display', 'flex' );
 				await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'justify-content', 'flex-end' );

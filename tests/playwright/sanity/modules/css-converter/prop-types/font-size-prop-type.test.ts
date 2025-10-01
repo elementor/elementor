@@ -49,9 +49,10 @@ test.describe( 'Font Size Prop Type Integration @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		
+
 		// Check if API call failed due to backend issues
-		if ( apiResult.error ) {
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
@@ -69,7 +70,7 @@ test.describe( 'Font Size Prop Type Integration @prop-types', () => {
 			{ index: 0, name: 'font-size: 16px', property: 'font-size', expected: '16px' },
 			{ index: 1, name: 'font-size: 24px', property: 'font-size', expected: '24px' },
 			{ index: 2, name: 'font-size: 1.5rem', property: 'font-size', expected: '24px' }, // 1.5rem = 24px typically
-			{ index: 3, name: 'font-size: 2em', property: 'font-size', expectedPattern: /^\d+(\.\d+)?px$/ }, // em varies by parent
+			{ index: 3, name: 'font-size: 2em', property: 'font-size', expectedPattern: /^\d+(\.\d+)?px$/ }, // Em varies by parent
 		];
 
 		// Editor verification using test cases array
@@ -77,7 +78,7 @@ test.describe( 'Font Size Prop Type Integration @prop-types', () => {
 			await test.step( `Verify ${ testCase.name } in editor`, async () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
-				
+
 				const element = elementorFrame.locator( '.e-paragraph-base' ).nth( testCase.index );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
@@ -97,7 +98,7 @@ test.describe( 'Font Size Prop Type Integration @prop-types', () => {
 		await test.step( 'Publish page and verify all font-size styles on frontend', async () => {
 			// Save the page first
 			await editor.saveAndReloadPage();
-			
+
 			// Get the page ID and navigate to frontend
 			const pageId = await editor.getPageId();
 			await page.goto( `/?p=${ pageId }` );
@@ -105,7 +106,7 @@ test.describe( 'Font Size Prop Type Integration @prop-types', () => {
 
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
-				await test.step( `Verify ${testCase.name} on frontend`, async () => {
+				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
 					const frontendElement = page.locator( '.e-paragraph-base' ).nth( testCase.index );
 
 					await test.step( 'Verify CSS property', async () => {

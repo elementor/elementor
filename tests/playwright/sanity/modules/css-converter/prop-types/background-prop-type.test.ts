@@ -48,13 +48,12 @@ test.describe( 'Background Prop Type Integration @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		
+
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
 			test.skip( true, validation.skipReason );
 			return;
 		}
-		const postId = apiResult.post_id;
 		const editUrl = apiResult.edit_url;
 
 		await page.goto( editUrl );
@@ -73,7 +72,7 @@ test.describe( 'Background Prop Type Integration @prop-types', () => {
 			await test.step( `Verify ${ testCase.name } in editor`, async () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
-				
+
 				const element = elementorFrame.locator( '.e-paragraph-base' ).nth( testCase.index );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
@@ -86,7 +85,7 @@ test.describe( 'Background Prop Type Integration @prop-types', () => {
 		await test.step( 'Publish page and verify all background colors on frontend', async () => {
 			// Save the page first
 			await editor.saveAndReloadPage();
-			
+
 			// Get the page ID and navigate to frontend
 			const pageId = await editor.getPageId();
 			await page.goto( `/?p=${ pageId }` );
@@ -94,7 +93,7 @@ test.describe( 'Background Prop Type Integration @prop-types', () => {
 
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
-				await test.step( `Verify ${testCase.name} on frontend`, async () => {
+				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
 					const frontendElement = page.locator( '.e-paragraph-base' ).nth( testCase.index );
 
 					await test.step( 'Verify CSS property', async () => {
@@ -116,13 +115,12 @@ test.describe( 'Background Prop Type Integration @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		
+
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
 			test.skip( true, validation.skipReason );
 			return;
 		}
-		const postId = apiResult.post_id;
 		const editUrl = apiResult.edit_url;
 
 		await page.goto( editUrl );
@@ -131,29 +129,29 @@ test.describe( 'Background Prop Type Integration @prop-types', () => {
 
 		// Define test cases for gradient verification
 		const testCases = [
-			{ 
-				index: 0, 
-				name: 'linear-gradient(to right, red, blue)', 
+			{
+				index: 0,
+				name: 'linear-gradient(to right, red, blue)',
 				// Browser converts: to right → 90deg, red → rgb(255, 0, 0), blue → rgb(0, 0, 255)
-				expectedPattern: /linear-gradient\(90deg,\s*rgb\(255,\s*0,\s*0\).*rgb\(0,\s*0,\s*255\)/i 
+				expectedPattern: /linear-gradient\(90deg,\s*rgb\(255,\s*0,\s*0\).*rgb\(0,\s*0,\s*255\)/i,
 			},
-			{ 
-				index: 1, 
-				name: 'linear-gradient(45deg, #ff0000, #00ff00)', 
+			{
+				index: 1,
+				name: 'linear-gradient(45deg, #ff0000, #00ff00)',
 				// Browser converts: #ff0000 → rgb(255, 0, 0), #00ff00 → rgb(0, 255, 0)
-				expectedPattern: /linear-gradient\(45deg,\s*rgb\(255,\s*0,\s*0\).*rgb\(0,\s*255,\s*0\)/i 
+				expectedPattern: /linear-gradient\(45deg,\s*rgb\(255,\s*0,\s*0\).*rgb\(0,\s*255,\s*0\)/i,
 			},
-			{ 
-				index: 2, 
-				name: 'radial-gradient(circle, red, blue)', 
+			{
+				index: 2,
+				name: 'radial-gradient(circle, red, blue)',
 				// Browser converts: red → rgb(255, 0, 0), blue → rgb(0, 0, 255)
-				expectedPattern: /radial-gradient\(.*rgb\(255,\s*0,\s*0\).*rgb\(0,\s*0,\s*255\)/i 
+				expectedPattern: /radial-gradient\(.*rgb\(255,\s*0,\s*0\).*rgb\(0,\s*0,\s*255\)/i,
 			},
-			{ 
-				index: 3, 
-				name: 'radial-gradient(ellipse at center, #ff0000, #00ff00)', 
+			{
+				index: 3,
+				name: 'radial-gradient(ellipse at center, #ff0000, #00ff00)',
 				// Browser converts: #ff0000 → rgb(255, 0, 0), #00ff00 → rgb(0, 255, 0)
-				expectedPattern: /radial-gradient\(.*rgb\(255,\s*0,\s*0\).*rgb\(0,\s*255,\s*0\)/i 
+				expectedPattern: /radial-gradient\(.*rgb\(255,\s*0,\s*0\).*rgb\(0,\s*255,\s*0\)/i,
 			},
 		];
 
@@ -162,13 +160,13 @@ test.describe( 'Background Prop Type Integration @prop-types', () => {
 			await test.step( `Verify ${ testCase.name } in editor`, async () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
-				
+
 				const element = elementorFrame.locator( '.e-paragraph-base' ).nth( testCase.index );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify gradient is applied', async () => {
 					// For gradients, we check the background-image property
-					const backgroundImage = await element.evaluate( el => getComputedStyle(el).backgroundImage );
+					const backgroundImage = await element.evaluate( ( el ) => getComputedStyle( el ).backgroundImage );
 					expect( backgroundImage ).toMatch( testCase.expectedPattern );
 				} );
 			} );
@@ -177,7 +175,7 @@ test.describe( 'Background Prop Type Integration @prop-types', () => {
 		await test.step( 'Publish page and verify gradients on frontend', async () => {
 			// Save the page first
 			await editor.saveAndReloadPage();
-			
+
 			// Get the page ID and navigate to frontend
 			const pageId = await editor.getPageId();
 			await page.goto( `/?p=${ pageId }` );
@@ -185,11 +183,11 @@ test.describe( 'Background Prop Type Integration @prop-types', () => {
 
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
-				await test.step( `Verify ${testCase.name} on frontend`, async () => {
+				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
 					const frontendElement = page.locator( '.e-paragraph-base' ).nth( testCase.index );
 
 					await test.step( 'Verify gradient is applied', async () => {
-						const backgroundImage = await frontendElement.evaluate( el => getComputedStyle(el).backgroundImage );
+						const backgroundImage = await frontendElement.evaluate( ( el ) => getComputedStyle( el ).backgroundImage );
 						expect( backgroundImage ).toMatch( testCase.expectedPattern );
 					} );
 				} );

@@ -48,9 +48,10 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		
+
 		// Check if API call failed due to backend issues
-		if ( apiResult.error ) {
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
@@ -76,7 +77,7 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 			await test.step( `Verify ${ testCase.name } in editor`, async () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
-				
+
 				const element = elementorFrame.locator( '.e-paragraph-base' ).nth( testCase.index );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
@@ -84,7 +85,7 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 					const computedValue = await element.evaluate( ( el, prop ) => {
 						return window.getComputedStyle( el ).getPropertyValue( prop );
 					}, testCase.property );
-					
+
 					// Check that box-shadow is not 'none' and matches expected pattern
 					expect( computedValue ).not.toBe( 'none' );
 					if ( testCase.expectedPattern ) {
@@ -97,7 +98,7 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 		await test.step( 'Publish page and verify all box-shadow styles on frontend', async () => {
 			// Save the page first
 			await editor.saveAndReloadPage();
-			
+
 			// Get the page ID and navigate to frontend
 			const pageId = await editor.getPageId();
 			await page.goto( `/?p=${ pageId }` );
@@ -105,14 +106,14 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
-				await test.step( `Verify ${testCase.name} on frontend`, async () => {
+				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
 					const frontendElement = page.locator( '.e-paragraph-base' ).nth( testCase.index );
 
 					await test.step( 'Verify CSS property', async () => {
 						const computedValue = await frontendElement.evaluate( ( el, prop ) => {
 							return window.getComputedStyle( el ).getPropertyValue( prop );
 						}, testCase.property );
-						
+
 						// Check that box-shadow is not 'none' and matches expected pattern
 						expect( computedValue ).not.toBe( 'none' );
 						if ( testCase.expectedPattern ) {

@@ -5,7 +5,6 @@ import EditorPage from '../../../../pages/editor-page';
 import { CssConverterHelper } from '../helper';
 
 test.describe( 'Unitless Zero Support @prop-types', () => {
-	let wpAdmin: WpAdminPage;
 	let editor: EditorPage;
 	let cssHelper: CssConverterHelper;
 
@@ -34,16 +33,17 @@ test.describe( 'Unitless Zero Support @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '' );
-		
-		if ( apiResult.error ) {
+
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
 			test.skip( true, 'Skipping due to backend errors' );
 			return;
 		}
-		
+
 		const postId = apiResult.post_id;
 		const editUrl = apiResult.edit_url;
-		
-		if ( !postId || !editUrl ) {
+
+		if ( ! postId || ! editUrl ) {
 			test.skip( true, 'Missing postId or editUrl' );
 			return;
 		}
@@ -59,34 +59,27 @@ test.describe( 'Unitless Zero Support @prop-types', () => {
 		await test.step( 'Verify all unitless zero values are converted correctly', async () => {
 			const element = elementorFrame.locator( '.e-paragraph-base' ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
-			
+
 			// Margin
 			await expect( element ).toHaveCSS( 'margin-top', '0px' );
 			await expect( element ).toHaveCSS( 'margin-right', '0px' );
 			await expect( element ).toHaveCSS( 'margin-bottom', '0px' );
 			await expect( element ).toHaveCSS( 'margin-left', '0px' );
-			console.log('✅ margin: 0 → margin: 0px (all sides)');
-			
+
 			// Padding
 			await expect( element ).toHaveCSS( 'padding-top', '0px' );
 			await expect( element ).toHaveCSS( 'padding-right', '0px' );
 			await expect( element ).toHaveCSS( 'padding-bottom', '0px' );
 			await expect( element ).toHaveCSS( 'padding-left', '0px' );
-			console.log('✅ padding: 0 → padding: 0px (all sides)');
-			
+
 			// Gap
 			await expect( element ).toHaveCSS( 'gap', '0px' );
-			console.log('✅ gap: 0 → gap: 0px');
-			
+
 			// Border
 			await expect( element ).toHaveCSS( 'border-width', '0px' );
-			console.log('✅ border: 0 → border-width: 0px');
-			
+
 			// Display
 			await expect( element ).toHaveCSS( 'display', 'flex' );
-			console.log('✅ display: flex is working');
-			
-			console.log('\n🎉 ALL UNITLESS ZERO VALUES WORKING!');
 		} );
 	} );
 
@@ -102,19 +95,19 @@ test.describe( 'Unitless Zero Support @prop-types', () => {
 		];
 
 		for ( const testCase of testCases ) {
-			const htmlContent = `<div><p style="${testCase.property}: ${testCase.value};">Test</p></div>`;
-			
+			const htmlContent = `<div><p style="${ testCase.property }: ${ testCase.value };">Test</p></div>`;
+
 			const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '' );
-			
-			if ( apiResult.error ) {
-				console.log(`❌ Failed for ${testCase.property}: ${testCase.value}`);
+
+			const validation = cssHelper.validateApiResult( apiResult );
+			if ( validation.shouldSkip ) {
 				continue;
 			}
-			
+
 			const postId = apiResult.post_id;
 			const editUrl = apiResult.edit_url;
-			
-			if ( !postId || !editUrl ) {
+
+			if ( ! postId || ! editUrl ) {
 				continue;
 			}
 
@@ -125,12 +118,9 @@ test.describe( 'Unitless Zero Support @prop-types', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			const element = elementorFrame.locator( '.e-paragraph-base' ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
-			
-			await expect( element ).toHaveCSS( testCase.expected, testCase.expectedValue );
-			console.log(`✅ ${testCase.property}: ${testCase.value} → ${testCase.expected}: ${testCase.expectedValue}`);
-		}
 
-		console.log('\n🎉 ALL INDIVIDUAL UNITLESS ZERO PROPERTIES WORKING!');
+			await expect( element ).toHaveCSS( testCase.expected, testCase.expectedValue );
+		}
 	} );
 } );
 

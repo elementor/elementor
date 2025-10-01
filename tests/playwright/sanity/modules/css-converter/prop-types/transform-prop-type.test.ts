@@ -49,16 +49,15 @@ test.describe( 'Transform Prop Type Integration @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		
+
 		// Check if API call failed due to backend issues
-		if ( apiResult.errors && apiResult.errors.length > 0 ) {
-			test.skip( true, 'Skipping due to backend property mapper issues' );
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
+			test.skip( true, validation.skipReason );
 			return;
 		}
-		const postId = apiResult.post_id;
+
 		const editUrl = apiResult.edit_url;
-		expect( postId ).toBeDefined();
-		expect( editUrl ).toBeDefined();
 
 		await page.goto( editUrl );
 		editor = new EditorPage( page, wpAdmin.testInfo );
@@ -66,29 +65,48 @@ test.describe( 'Transform Prop Type Integration @prop-types', () => {
 
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
-		
+
 		// Test all converted paragraph elements
 		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
-		// Test transform values
-		await test.step( 'Verify transform values are applied correctly', async () => {
-			// Browser converts translateX/Y to matrix or translate3d format
-			const transform1 = await paragraphElements.nth( 0 ).evaluate( el => getComputedStyle( el ).transform );
-			expect( transform1 ).toContain( '10' ); // translateX(10px) → matrix or translate3d with 10px x-offset
-			
-			const transform2 = await paragraphElements.nth( 1 ).evaluate( el => getComputedStyle( el ).transform );
-			expect( transform2 ).toContain( '1.5' ); // scale(1.5)
-			
-			const transform3 = await paragraphElements.nth( 2 ).evaluate( el => getComputedStyle( el ).transform );
-			// rotate(45deg) becomes a matrix - just verify it's not 'none'
-			expect( transform3 ).not.toBe( 'none' );
-			
-			// Combined transforms
-			const combinedTransform = await paragraphElements.nth( 3 ).evaluate( el => getComputedStyle( el ).transform );
-			expect( combinedTransform ).not.toBe( 'none' );
-			// Verify it contains numeric values indicating transform is applied
-			expect( combinedTransform ).toMatch( /[\d.]+/ );
-		} );
+		// Define test cases for transform verification
+		const testCases = [
+			{
+				index: 0,
+				name: 'translateX(10px)',
+				// Browser converts translateX(10px) to matrix(1, 0, 0, 1, 10, 0)
+				expectedPattern: /matrix\(1,\s*0,\s*0,\s*1,\s*10,\s*0\)/,
+			},
+			{
+				index: 1,
+				name: 'scale(1.5)',
+				// Browser converts scale(1.5) to matrix(1.5, 0, 0, 1.5, 0, 0)
+				expectedPattern: /matrix\(1\.5,\s*0,\s*0,\s*1\.5,\s*0,\s*0\)/,
+			},
+			{
+				index: 2,
+				name: 'rotate(45deg)',
+				// Browser converts rotate(45deg) to matrix with cos/sin values
+				// 45deg = cos(45°) ≈ 0.707, sin(45°) ≈ 0.707
+				expectedPattern: /matrix\(0\.7071\d*,\s*0\.7071\d*,\s*-0\.7071\d*,\s*0\.7071\d*/,
+			},
+			{
+				index: 3,
+				name: 'translateY(20px) scale(0.8)',
+				// Combined transforms - just verify it's not 'none' and has matrix format
+				expectedPattern: /matrix\([^)]+\)/,
+			},
+		];
+
+		// Test transform values using toHaveCSS with regex patterns
+		for ( const testCase of testCases ) {
+			await test.step( `Verify ${ testCase.name } transform`, async () => {
+				const element = paragraphElements.nth( testCase.index );
+
+				// Use toHaveCSS with regex pattern for matrix values
+				await expect( element ).toHaveCSS( 'transform', testCase.expectedPattern );
+			} );
+		}
 	} );
 } );

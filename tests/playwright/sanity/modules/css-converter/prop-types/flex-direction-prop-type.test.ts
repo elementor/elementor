@@ -57,14 +57,13 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		
+
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
 			test.skip( true, validation.skipReason );
 			return;
 		}
 
-		const postId = apiResult.post_id;
 		const editUrl = apiResult.edit_url;
 
 		await page.goto( editUrl );
@@ -84,7 +83,7 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 			await test.step( `Verify ${ testCase.name } in editor`, async () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
-				
+
 				// Target the div containers (not paragraphs) since they have the flex-direction
 				const element = elementorFrame.locator( '.e-div-block' ).nth( testCase.index );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
@@ -103,7 +102,7 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 		await test.step( 'Publish page and verify all flex-direction styles on frontend', async () => {
 			// Save the page first
 			await editor.saveAndReloadPage();
-			
+
 			// Get the page ID and navigate to frontend
 			const pageId = await editor.getPageId();
 			await page.goto( `/?p=${ pageId }` );
@@ -111,7 +110,7 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
-				await test.step( `Verify ${testCase.name} on frontend`, async () => {
+				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
 					const frontendElement = page.locator( '.e-div-block' ).nth( testCase.index );
 
 					await test.step( 'Verify CSS property', async () => {

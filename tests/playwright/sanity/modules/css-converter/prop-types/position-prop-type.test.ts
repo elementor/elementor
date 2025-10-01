@@ -67,9 +67,10 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		
+
 		// Check if API call failed due to backend issues
-		if ( apiResult.errors && apiResult.errors.length > 0 ) {
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
@@ -84,7 +85,7 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
-		
+
 		// Test all converted paragraph elements
 		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
@@ -143,9 +144,10 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		
+
 		// Check if API call failed due to backend issues
-		if ( apiResult.errors && apiResult.errors.length > 0 ) {
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
@@ -160,7 +162,7 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
-		
+
 		// Test all converted paragraph elements
 		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
@@ -212,9 +214,10 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		
+
 		// Check if API call failed due to backend issues
-		if ( apiResult.errors && apiResult.errors.length > 0 ) {
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
@@ -229,61 +232,61 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
-		
+
 		// Test all converted paragraph elements
 		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 		// Test inset-inline variations
 		await test.step( 'Verify inset-inline shorthand properties', async () => {
-			// inset-inline: 20px (single value)
+			// Inset-inline: 20px (single value)
 			await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'inset-inline-start', '20px' );
 			await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'inset-inline-end', '20px' );
-			
-			// inset-inline: 10px 30px (two values)
+
+			// Inset-inline: 10px 30px (two values)
 			await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'inset-inline-start', '10px' );
 			await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'inset-inline-end', '30px' );
-			
-			// inset-inline: 2em (single value with unit conversion)
+
+			// Inset-inline: 2em (single value with unit conversion)
 			await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'inset-inline-start', '32px' ); // 2em = 32px
 			await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'inset-inline-end', '32px' );
-			
-			// inset-inline: 1rem 3rem (two values with unit conversion)
+
+			// Inset-inline: 1rem 3rem (two values with unit conversion)
 			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'inset-inline-start', '16px' ); // 1rem = 16px
 			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'inset-inline-end', '48px' ); // 3rem = 48px
-			
+
 			// inset-inline: -10px (negative single value)
 			await expect( paragraphElements.nth( 4 ) ).toHaveCSS( 'inset-inline-start', '-10px' );
 			await expect( paragraphElements.nth( 4 ) ).toHaveCSS( 'inset-inline-end', '-10px' );
-			
-			// inset-inline: -5px 15px (negative and positive values)
+
+			// Inset-inline: -5px 15px (negative and positive values)
 			await expect( paragraphElements.nth( 5 ) ).toHaveCSS( 'inset-inline-start', '-5px' );
 			await expect( paragraphElements.nth( 5 ) ).toHaveCSS( 'inset-inline-end', '15px' );
 		} );
 
 		// Test inset-block variations
 		await test.step( 'Verify inset-block shorthand properties', async () => {
-			// inset-block: 25px (single value)
+			// Inset-block: 25px (single value)
 			await expect( paragraphElements.nth( 6 ) ).toHaveCSS( 'inset-block-start', '25px' );
 			await expect( paragraphElements.nth( 6 ) ).toHaveCSS( 'inset-block-end', '25px' );
-			
-			// inset-block: 15px 35px (two values)
+
+			// Inset-block: 15px 35px (two values)
 			await expect( paragraphElements.nth( 7 ) ).toHaveCSS( 'inset-block-start', '15px' );
 			await expect( paragraphElements.nth( 7 ) ).toHaveCSS( 'inset-block-end', '35px' );
-			
-			// inset-block: 1.5em (single value with unit conversion)
+
+			// Inset-block: 1.5em (single value with unit conversion)
 			await expect( paragraphElements.nth( 8 ) ).toHaveCSS( 'inset-block-start', '24px' ); // 1.5em = 24px
 			await expect( paragraphElements.nth( 8 ) ).toHaveCSS( 'inset-block-end', '24px' );
-			
-			// inset-block: 2rem 4rem (two values with unit conversion)
+
+			// Inset-block: 2rem 4rem (two values with unit conversion)
 			await expect( paragraphElements.nth( 9 ) ).toHaveCSS( 'inset-block-start', '32px' ); // 2rem = 32px
 			await expect( paragraphElements.nth( 9 ) ).toHaveCSS( 'inset-block-end', '64px' ); // 4rem = 64px
-			
+
 			// inset-block: -20px (negative single value)
 			await expect( paragraphElements.nth( 10 ) ).toHaveCSS( 'inset-block-start', '-20px' );
 			await expect( paragraphElements.nth( 10 ) ).toHaveCSS( 'inset-block-end', '-20px' );
-			
-			// inset-block: -10px 20px (negative and positive values)
+
+			// Inset-block: -10px 20px (negative and positive values)
 			await expect( paragraphElements.nth( 11 ) ).toHaveCSS( 'inset-block-start', '-10px' );
 			await expect( paragraphElements.nth( 11 ) ).toHaveCSS( 'inset-block-end', '20px' );
 		} );
@@ -302,7 +305,8 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
 
 		// Check if API call failed due to backend issues
-		if ( apiResult.errors && apiResult.errors.length > 0 ) {
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
@@ -317,25 +321,25 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
-		
+
 		// Test all converted paragraph elements
 		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 		// Test physical positioning properties converted to logical properties
 		await test.step( 'Verify physical positioning properties converted to logical properties', async () => {
-			// top: 15px should become inset-block-start: 15px
+			// Top: 15px should become inset-block-start: 15px
 			await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'inset-block-start', '15px' );
-			
-			// right: 25px should become inset-inline-end: 25px
+
+			// Right: 25px should become inset-inline-end: 25px
 			await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'inset-inline-end', '25px' );
-			
-			// bottom: 30px should become inset-block-end: 30px
+
+			// Bottom: 30px should become inset-block-end: 30px
 			await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'inset-block-end', '30px' );
-			
-			// left: 40px should become inset-inline-start: 40px
+
+			// Left: 40px should become inset-inline-start: 40px
 			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'inset-inline-start', '40px' );
-			} );
+		} );
 	} );
 
 	test( 'should support unitless zero for all positioning properties', async ( { page, request } ) => {
@@ -365,9 +369,10 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		
+
 		// Check if API call failed due to backend issues
-		if ( apiResult.errors && apiResult.errors.length > 0 ) {
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
@@ -382,74 +387,59 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
-		
+
 		// Test all converted paragraph elements
 		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 		// Test physical positioning properties with unitless zero
 		await test.step( 'Verify physical positioning properties with unitless zero', async () => {
-			// top: 0 should become inset-block-start: 0px
+			// Top: 0 should become inset-block-start: 0px
 			await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'inset-block-start', '0px' );
-			console.log('✅ top: 0 → inset-block-start: 0px');
-			
-			// right: 0 should become inset-inline-end: 0px
+
+			// Right: 0 should become inset-inline-end: 0px
 			await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'inset-inline-end', '0px' );
-			console.log('✅ right: 0 → inset-inline-end: 0px');
-			
-			// bottom: 0 should become inset-block-end: 0px
+
+			// Bottom: 0 should become inset-block-end: 0px
 			await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'inset-block-end', '0px' );
-			console.log('✅ bottom: 0 → inset-block-end: 0px');
-			
-			// left: 0 should become inset-inline-start: 0px
+
+			// Left: 0 should become inset-inline-start: 0px
 			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'inset-inline-start', '0px' );
-			console.log('✅ left: 0 → inset-inline-start: 0px');
 		} );
 
 		// Test logical positioning properties with unitless zero
 		await test.step( 'Verify logical positioning properties with unitless zero', async () => {
 			await expect( paragraphElements.nth( 4 ) ).toHaveCSS( 'inset-block-start', '0px' );
-			console.log('✅ inset-block-start: 0 → inset-block-start: 0px');
-			
+
 			await expect( paragraphElements.nth( 5 ) ).toHaveCSS( 'inset-inline-end', '0px' );
-			console.log('✅ inset-inline-end: 0 → inset-inline-end: 0px');
-			
+
 			await expect( paragraphElements.nth( 6 ) ).toHaveCSS( 'inset-block-end', '0px' );
-			console.log('✅ inset-block-end: 0 → inset-block-end: 0px');
-			
+
 			await expect( paragraphElements.nth( 7 ) ).toHaveCSS( 'inset-inline-start', '0px' );
-			console.log('✅ inset-inline-start: 0 → inset-inline-start: 0px');
 		} );
 
 		// Test shorthand properties with unitless zero
 		await test.step( 'Verify shorthand positioning properties with unitless zero', async () => {
-			// inset-inline: 0 (single value)
+			// Inset-inline: 0 (single value)
 			await expect( paragraphElements.nth( 8 ) ).toHaveCSS( 'inset-inline-start', '0px' );
 			await expect( paragraphElements.nth( 8 ) ).toHaveCSS( 'inset-inline-end', '0px' );
-			console.log('✅ inset-inline: 0 → inset-inline-start: 0px, inset-inline-end: 0px');
-			
-			// inset-block: 0 (single value)
+
+			// Inset-block: 0 (single value)
 			await expect( paragraphElements.nth( 9 ) ).toHaveCSS( 'inset-block-start', '0px' );
 			await expect( paragraphElements.nth( 9 ) ).toHaveCSS( 'inset-block-end', '0px' );
-			console.log('✅ inset-block: 0 → inset-block-start: 0px, inset-block-end: 0px');
-			
-			// inset-inline: 0 0 (two values)
+
+			// Inset-inline: 0 0 (two values)
 			await expect( paragraphElements.nth( 10 ) ).toHaveCSS( 'inset-inline-start', '0px' );
 			await expect( paragraphElements.nth( 10 ) ).toHaveCSS( 'inset-inline-end', '0px' );
-			console.log('✅ inset-inline: 0 0 → inset-inline-start: 0px, inset-inline-end: 0px');
-			
-			// inset-block: 0 0 (two values)
+
+			// Inset-block: 0 0 (two values)
 			await expect( paragraphElements.nth( 11 ) ).toHaveCSS( 'inset-block-start', '0px' );
 			await expect( paragraphElements.nth( 11 ) ).toHaveCSS( 'inset-block-end', '0px' );
-			console.log('✅ inset-block: 0 0 → inset-block-start: 0px, inset-block-end: 0px');
 		} );
 
 		// Test z-index with unitless zero
 		await test.step( 'Verify z-index with unitless zero', async () => {
 			await expect( paragraphElements.nth( 12 ) ).toHaveCSS( 'z-index', 'auto' );
-			console.log('✅ z-index: 0 → z-index: auto (browser optimization)');
 		} );
-
-		console.log('\n🎉 ALL POSITIONING UNITLESS ZERO VALUES WORKING!');
 	} );
 } );

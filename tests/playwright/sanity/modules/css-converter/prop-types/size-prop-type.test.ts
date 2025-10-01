@@ -49,10 +49,11 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent , '' );
-		
+		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
+
 		// Check if API call failed due to backend issues
-		if ( apiResult.error ) {
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
@@ -78,13 +79,13 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 			await test.step( `Verify ${ testCase.name } in editor`, async () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
-				
+
 				const element = elementorFrame.locator( '.e-paragraph-base' ).nth( testCase.index );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
-				await expect( element ).toHaveCSS( testCase.property, testCase.expected );
-			} );
+					await expect( element ).toHaveCSS( testCase.property, testCase.expected );
+				} );
 			} );
 		}
 
@@ -93,15 +94,15 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			const element = elementorFrame.locator( '.e-paragraph-base' ).nth( 4 );
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
-			
+
 			// For width: auto, check that it takes a reasonable width (at least 1000px)
 			// This indicates that auto is working and the element is taking full container width
 			const computedWidth = await element.evaluate( ( el ) => {
 				return window.getComputedStyle( el ).width;
 			} );
-			
+
 			expect( computedWidth ).toMatch( /^\d+(\.\d+)?px$/ );
-			
+
 			const widthValue = parseFloat( computedWidth );
 			expect( widthValue ).toBeGreaterThanOrEqual( 1000 ); // Should be at least 1000px for auto width
 		} );
@@ -109,7 +110,7 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 		await test.step( 'Publish page and verify all size styles on frontend', async () => {
 			// Save the page first
 			await editor.saveAndReloadPage();
-			
+
 			// Get the page ID and navigate to frontend
 			const pageId = await editor.getPageId();
 			await page.goto( `/?p=${ pageId }` );
@@ -117,31 +118,30 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
-				await test.step( `Verify ${testCase.name} on frontend`, async () => {
+				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
 					const frontendElement = page.locator( '.e-paragraph-base' ).nth( testCase.index );
 
 					await test.step( 'Verify CSS property', async () => {
-				await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );
-			} );
+						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );
+					} );
 				} );
 			}
 
 			// Verify width: auto on frontend
 			await test.step( 'Verify width: auto on frontend', async () => {
 				const frontendElement = page.locator( '.e-paragraph-base' ).nth( 4 );
-				
+
 				// For width: auto, check that it takes a reasonable width (at least 1000px)
 				// This indicates that auto is working and the element is taking full container width
 				const computedWidth = await frontendElement.evaluate( ( el ) => {
 					return window.getComputedStyle( el ).width;
 				} );
-				
+
 				expect( computedWidth ).toMatch( /^\d+(\.\d+)?px$/ );
-				
+
 				const widthValue = parseFloat( computedWidth );
 				expect( widthValue ).toBeGreaterThanOrEqual( 1000 ); // Should be at least 1000px for auto width
 			} );
-
 		} );
 	} );
 
@@ -159,9 +159,10 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 		`;
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
-		
+
 		// Check if API call failed due to backend issues
-		if ( apiResult.error ) {
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );
 			return;
 		}
@@ -190,13 +191,12 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 			await test.step( `Verify ${ testCase.name } in editor`, async () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
-				
+
 				const element = elementorFrame.locator( '.e-paragraph-base' ).nth( testCase.index );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
 					await expect( element ).toHaveCSS( testCase.property, testCase.expected );
-					console.log(`✅ ${testCase.name} → ${testCase.property}: ${testCase.expected}`);
 				} );
 			} );
 		}
@@ -204,7 +204,7 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 		await test.step( 'Publish page and verify all unitless zero values on frontend', async () => {
 			// Save the page first
 			await editor.saveAndReloadPage();
-			
+
 			// Get the page ID and navigate to frontend
 			const pageId = await editor.getPageId();
 			await page.goto( `/?p=${ pageId }` );
@@ -212,7 +212,7 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
-				await test.step( `Verify ${testCase.name} on frontend`, async () => {
+				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
 					const frontendElement = page.locator( '.e-paragraph-base' ).nth( testCase.index );
 
 					await test.step( 'Verify CSS property', async () => {
@@ -221,7 +221,5 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 				} );
 			}
 		} );
-
-		console.log('\n🎉 ALL SIZE UNITLESS ZERO VALUES WORKING!');
 	} );
 } );

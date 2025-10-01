@@ -57,7 +57,8 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent );
 
-		if ( ! apiResult.success || ( apiResult.errors && apiResult.errors.length > 0 ) ) {
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
 			test.skip( true, 'Skipping due to backend padding property mapper issues' );
 			return;
 		}
@@ -70,39 +71,39 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 		await page.goto( editUrl );
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
-		
+
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
-		
+
 		// Test all converted paragraph elements
 		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
-		
+
 		// Test single value padding (first paragraph: padding: 20px)
 		const singleValueElement = paragraphElements.nth( 0 );
 		await expect( singleValueElement ).toHaveCSS( 'padding-block-start', '20px' );
 		await expect( singleValueElement ).toHaveCSS( 'padding-inline-end', '20px' );
 		await expect( singleValueElement ).toHaveCSS( 'padding-block-end', '20px' );
 		await expect( singleValueElement ).toHaveCSS( 'padding-inline-start', '20px' );
-		
+
 		// Test two values padding (second paragraph: padding: 20px 40px)
 		const twoValuesElement = paragraphElements.nth( 1 );
 		await expect( twoValuesElement ).toHaveCSS( 'padding-block-start', '20px' );
 		await expect( twoValuesElement ).toHaveCSS( 'padding-inline-end', '40px' );
 		await expect( twoValuesElement ).toHaveCSS( 'padding-block-end', '20px' );
 		await expect( twoValuesElement ).toHaveCSS( 'padding-inline-start', '40px' );
-		
+
 		// Test four values padding (third paragraph: padding: 20px 30px 0px 10px)
 		const fourValuesElement = paragraphElements.nth( 2 );
 		await expect( fourValuesElement ).toHaveCSS( 'padding-block-start', '20px' );
 		await expect( fourValuesElement ).toHaveCSS( 'padding-inline-end', '30px' );
 		await expect( fourValuesElement ).toHaveCSS( 'padding-block-end', '0px' );
 		await expect( fourValuesElement ).toHaveCSS( 'padding-inline-start', '10px' );
-		
+
 		// Test individual directional properties (fourth paragraph: padding-top: 20px)
 		const paddingTopElement = paragraphElements.nth( 3 );
 		await expect( paddingTopElement ).toHaveCSS( 'padding-block-start', '20px' );
-		
+
 		// Test padding-left (sixth paragraph: padding-left: 30px)
 		const paddingLeftElement = paragraphElements.nth( 5 );
 		await expect( paddingLeftElement ).toHaveCSS( 'padding-inline-start', '30px' );
