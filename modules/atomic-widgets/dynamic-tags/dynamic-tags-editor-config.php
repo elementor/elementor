@@ -155,6 +155,7 @@ class Dynamic_Tags_Editor_Config {
 			'query'   => fn( $control ) => $this->convert_autocomplete_control_to_atomic( $control ),
 			'choose'   => fn( $control ) => $this->convert_choose_control_to_atomic( $control ),
 			'media'   => fn( $control ) => $this->convert_media_control_to_atomic( $control ),
+			'date_time' => fn( $control ) => $this->convert_text_control_to_atomic( $control ),
 		];
 
 		if ( ! isset( $map[ $control['type'] ] ) ) {
