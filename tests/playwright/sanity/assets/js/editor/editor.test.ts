@@ -18,10 +18,11 @@ test.describe( 'Editor tests', () => {
 		const appBar = editor.page.locator( EditorSelectors.panels.topBar.wrapper );
 
 		// Act
+		await editor.closeNavigatorIfOpen();
 		await editor.openPageSettingsPanel();
 		await editor.setTextControlValue( 'post_title', 'Playwright Test Page' );
-
 		await appBar.getByRole( 'button', { name: 'Playwright Test Page' } ).waitFor();
+		await editor.openUserPreferencesPanel();
 		await editor.isUiStable( appBar, 5 );
 
 		// Assert

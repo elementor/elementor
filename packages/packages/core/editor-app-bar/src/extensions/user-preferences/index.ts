@@ -4,7 +4,8 @@ import useActionProps from './hooks/use-action-props';
 export function init() {
 	mainMenu.registerToggleAction( {
 		id: 'open-user-preferences',
-		priority: 30, // After history.
+		group: 'default',
+		priority: 30,
 		useProps: useActionProps,
 	} );
 }
