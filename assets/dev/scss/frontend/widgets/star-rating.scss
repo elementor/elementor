@@ -48,40 +48,32 @@
 
 @mixin star-rating-align($device) {
 
-	.elementor-star-rating {
+	.elementor-star-rating#{$device}--align {
 
-		&#{$device} {
+		&-start {
+			.elementor-star-rating__wrapper {
+				text-align: start;
+				justify-content: flex-start;
+			}
+		}
 
-			&--align {
+		&-end {
+			.elementor-star-rating__wrapper {
+				text-align: end;
+				justify-content: flex-end;
+			}
+		}
 
-				&-right {
+		&-center {
+			.elementor-star-rating__wrapper {
+				text-align: center;
+				justify-content: center;
+			}
+		}
 
-					.elementor-star-rating__wrapper {
-						text-align: right;
-						justify-content: getValueByDirection( flex-end, flex-start );
-					}
-				}
-
-				&-left {
-
-					.elementor-star-rating__wrapper {
-						text-align: left;
-						justify-content: getValueByDirection( flex-start, flex-end );
-					}
-				}
-
-				&-center {
-					.elementor-star-rating__wrapper {
-						text-align: center;
-						justify-content: center;
-					}
-				}
-
-				&-justify {
-					.elementor-star-rating__title {
-						margin-inline-end: auto;
-					}
-				}
+		&-justify {
+			.elementor-star-rating__title {
+				margin-inline-end: auto;
 			}
 		}
 	}
@@ -89,8 +81,24 @@
 
 @include star-rating-align('');
 
+@media (min-width: $screen-widescreen-min) {
+	@include star-rating-align(-widescreen);
+}
+
+@media (max-width: $screen-laptop-max) {
+	@include star-rating-align(-laptop);
+}
+
+@media (max-width: $screen-tablet-extra-max) {
+	@include star-rating-align(-tablet_extra);
+}
+
 @media (max-width: $screen-tablet-max) {
 	@include star-rating-align(-tablet);
+}
+
+@media (max-width: $screen-mobile-extra-max) {
+	@include star-rating-align(-mobile_extra);
 }
 
 @media (max-width: $screen-mobile-max) {
