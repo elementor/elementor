@@ -14,6 +14,7 @@ export const TextControl = createControl(
 		inputDisabled,
 		helperText,
 		sx,
+		ariaLabel,
 	}: {
 		placeholder?: string;
 		error?: boolean;
@@ -21,6 +22,7 @@ export const TextControl = createControl(
 		inputDisabled?: boolean;
 		helperText?: string;
 		sx?: SxProps;
+		ariaLabel?: string;
 	} ) => {
 		const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
 		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => setValue( event.target.value );
@@ -37,6 +39,9 @@ export const TextControl = createControl(
 					error={ error }
 					helperText={ helperText }
 					sx={ sx }
+					inputProps={ {
+						...( ariaLabel ? { 'aria-label': ariaLabel } : {} ),
+					} }
 				/>
 			</ControlActions>
 		);
