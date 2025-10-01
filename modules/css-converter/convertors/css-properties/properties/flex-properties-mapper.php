@@ -97,7 +97,7 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 
 		$value = trim( (string) $value );
 
-		if ( empty( $value ) ) {
+		if ( '' === $value ) {
 			return null;
 		}
 
@@ -209,9 +209,10 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		// For gap shorthand, we need to return it as a Layout_Direction_Prop_Type
 		// The Layout_Direction_Prop_Type transformer will convert this to row-gap and column-gap
+		// Each direction value must be a Size_Prop_Type structure
 		return Layout_Direction_Prop_Type::make()->generate( [
-			'row' => $row_gap,
-			'column' => $column_gap,
+			'row' => Size_Prop_Type::make()->generate( $row_gap ),
+			'column' => Size_Prop_Type::make()->generate( $column_gap ),
 		] );
 	}
 
@@ -313,7 +314,7 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 	protected function parse_size_value( string $value ): ?array {
 		$value = trim( $value );
 
-		if ( empty( $value ) ) {
+		if ( '' === $value ) {
 			return null;
 		}
 

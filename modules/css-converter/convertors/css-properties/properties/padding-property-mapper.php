@@ -65,7 +65,7 @@ class Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$value = trim( $value );
 		
-		if ( empty( $value ) ) {
+		if ( '' === $value ) {
 			return null;
 		}
 
@@ -178,7 +178,7 @@ class Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 	protected function parse_size_value( string $value ): array {
 		$value = trim( $value );
 		
-		if ( empty( $value ) ) {
+		if ( '' === $value ) {
 			return [
 				'size' => 0.0,
 				'unit' => 'px'

@@ -15,7 +15,7 @@ class CSS_Shorthand_Expander {
 			if ( self::is_shorthand_property( $property ) ) {
 				$longhand_properties = self::expand_shorthand( $property, $value );
 				$expanded = array_merge( $expanded, $longhand_properties );
-			} else {
+		} else {
 			$expanded[ $property ] = $value;
 		}
 	}
@@ -63,7 +63,7 @@ class CSS_Shorthand_Expander {
 	}
 
 	private static function expand_border_shorthand( string $property, $value ): array {
-		if ( empty( $value ) || ! is_string( $value ) ) {
+		if ( '' === $value || ! is_string( $value ) ) {
 			return [];
 		}
 
@@ -98,6 +98,20 @@ class CSS_Shorthand_Expander {
 		if ( isset( $parsed['color'] ) ) {
 			$color_property = 'border' . $suffix . '-color';
 			$expanded[ $color_property ] = $parsed['color'];
+		}
+
+		// 🎯 SPECIAL CASE: border: 0 should explicitly set ALL border properties to null values
+		if ( self::is_border_zero_case( $value ) ) {
+			// Ensure all three border properties are explicitly set for border: 0
+			if ( ! isset( $expanded[ 'border' . $suffix . '-width' ] ) ) {
+				$expanded[ 'border' . $suffix . '-width' ] = '0';
+			}
+			if ( ! isset( $expanded[ 'border' . $suffix . '-style' ] ) ) {
+				$expanded[ 'border' . $suffix . '-style' ] = 'none';
+			}
+			if ( ! isset( $expanded[ 'border' . $suffix . '-color' ] ) ) {
+				$expanded[ 'border' . $suffix . '-color' ] = 'transparent';
+			}
 		}
 
 		return $expanded;
@@ -177,7 +191,7 @@ class CSS_Shorthand_Expander {
 
 		foreach ( $parts as $part ) {
 			$part = trim( $part );
-			if ( empty( $part ) ) {
+			if ( '' === $part ) {
 				continue;
 			}
 
@@ -193,7 +207,18 @@ class CSS_Shorthand_Expander {
 		return $result;
 	}
 
+	private static function is_border_zero_case( string $value ): bool {
+		// Check if this is a "border: 0" case (unitless zero only)
+		$value = trim( $value );
+		return '0' === $value;
+	}
+
 	private static function is_border_width_value( string $value ): bool {
+		// CSS allows unitless zero
+		if ( '0' === $value ) {
+			return true;
+		}
+
 		if ( preg_match( '/^(\d*\.?\d+)(px|em|rem|%|vh|vw)$/i', $value ) ) {
 			return true;
 		}

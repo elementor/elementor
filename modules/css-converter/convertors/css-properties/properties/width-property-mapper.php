@@ -56,7 +56,7 @@ class Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$value = trim( $value );
 		
-		if ( empty( $value ) ) {
+		if ( '' === $value ) {
 			return null;
 		}
 

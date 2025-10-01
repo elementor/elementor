@@ -41,7 +41,7 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		if ( empty( $value ) || 'inherit' === $value || 'initial' === $value || 'unset' === $value ) {
+		if ( '' === $value || 'inherit' === $value || 'initial' === $value || 'unset' === $value ) {
 			return null;
 		}
 
@@ -117,7 +117,12 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function is_border_width_value( string $value ): bool {
-		// Check for numeric values with units or keywords
+		// Check for unitless zero (CSS allows 0 without unit)
+		if ( '0' === $value ) {
+			return true;
+		}
+
+		// Check for numeric values with units
 		if ( preg_match( '/^(\d*\.?\d+)(px|em|rem|%|vh|vw)$/i', $value ) ) {
 			return true;
 		}

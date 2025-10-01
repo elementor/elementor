@@ -27,7 +27,7 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		if ( empty( $value ) || 'inherit' === $value || 'initial' === $value || 'unset' === $value ) {
+		if ( '' === $value || 'inherit' === $value || 'initial' === $value || 'unset' === $value ) {
 			return null;
 		}
 

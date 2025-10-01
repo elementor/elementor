@@ -32,7 +32,7 @@ class Font_Size_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		if ( ! is_string( $value ) || empty( trim( $value ) ) ) {
+		if ( ! is_string( $value ) || '' === trim( $value ) ) {
 			return null;
 		}
 
@@ -55,7 +55,7 @@ class Font_Size_Property_Mapper extends Atomic_Property_Mapper_Base {
 	protected function parse_size_value( string $value ): array {
 		$value = trim( $value );
 
-		if ( empty( $value ) ) {
+		if ( '' === $value ) {
 			return [
 				'size' => 16,
 				'unit' => 'px',

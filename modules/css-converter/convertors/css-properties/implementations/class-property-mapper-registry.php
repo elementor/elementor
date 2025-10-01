@@ -48,8 +48,7 @@ class Class_Property_Mapper_Registry {
 		require_once __DIR__ . '/../properties/border-width-property-mapper.php';
 		require_once __DIR__ . '/../properties/border-color-property-mapper.php';
 		require_once __DIR__ . '/../properties/border-style-property-mapper.php';
-		// TODO: Re-enable after fixing issues
-		// require_once __DIR__ . '/../properties/border-property-mapper.php';
+		require_once __DIR__ . '/../properties/border-property-mapper.php';
 		require_once __DIR__ . '/../properties/positioning-property-mapper.php';
 		require_once __DIR__ . '/../properties/transform-property-mapper.php';
 		
@@ -133,11 +132,10 @@ class Class_Property_Mapper_Registry {
 		}
 		
 		// Register comprehensive atomic border shorthand mapper for all border shorthand properties
-		// TODO: Re-enable after fixing issues
-		// $border_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Border_Property_Mapper();
-		// foreach ( $border_mapper->get_supported_properties() as $property ) {
-		// 	$this->mappers[ $property ] = $border_mapper;
-		// }
+		$border_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Border_Property_Mapper();
+		foreach ( $border_mapper->get_supported_properties() as $property ) {
+			$this->mappers[ $property ] = $border_mapper;
+		}
 		
 		// Register comprehensive atomic positioning mapper for all positioning properties
 		$positioning_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Positioning_Property_Mapper();

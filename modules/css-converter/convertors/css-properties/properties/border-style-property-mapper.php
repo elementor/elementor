@@ -41,7 +41,7 @@ class Border_Style_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null; // Individual properties not supported by atomic widgets
 		}
 		
-		if ( empty( $value ) || ! is_string( $value ) ) {
+		if ( '' === $value || ! is_string( $value ) ) {
 			return null;
 		}
 
@@ -56,7 +56,7 @@ class Border_Style_Property_Mapper extends Atomic_Property_Mapper_Base {
 	private function parse_style_value( string $value ): ?string {
 		$value = trim( strtolower( $value ) );
 
-		if ( empty( $value ) ) {
+		if ( '' === $value ) {
 			return null;
 		}
 

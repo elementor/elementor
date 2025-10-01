@@ -93,6 +93,69 @@ This document tracks CSS features that are not currently supported due to atomic
 
 ---
 
+## 🔮 **DEFERRED FEATURES**
+
+### **Border-Width Keyword Values**
+
+#### **Not Yet Supported:**
+- `border-width: thin` (maps to 1px)
+- `border-width: medium` (maps to 3px - default)
+- `border-width: thick` (maps to 5px)
+
+#### **Current Status:**
+- All numeric border-width values work correctly
+- Keyword values (thin/medium/thick) not yet implemented
+- Requires simple keyword-to-px mapping in `Border_Width_Property_Mapper`
+
+#### **Future Implementation:**
+```php
+// In border-width-property-mapper.php
+private function parse_border_width_value( $value ): ?array {
+    // Handle keyword values
+    $keywords = [
+        'thin' => '1px',
+        'medium' => '3px',
+        'thick' => '5px',
+    ];
+    
+    if ( isset( $keywords[$value] ) ) {
+        $value = $keywords[$value];
+    }
+    
+    // Continue with existing logic...
+}
+```
+
+---
+
+### **Margin Auto for Centering**
+
+#### **Not Yet Supported:**
+- `margin: auto` - for centering elements
+- `margin-left: auto` - right alignment
+- `margin-right: auto` - left alignment
+- `margin-inline: auto` - horizontal centering
+
+#### **Testing Challenge:**
+- Playwright difficulty in testing auto margin behavior
+- Auto margins depend on parent container context
+- Centering behavior requires specific layout setup
+- Hard to assert computed values reliably
+
+#### **Current Workaround:**
+- Use explicit pixel/percentage values for margins
+- Test skipped due to Playwright testing complexity
+
+#### **Future Implementation Needs:**
+1. **CSS Parser Enhancement**: Support `auto` keyword for margin values
+2. **Atomic Widget Verification**: Check if `Dimensions_Prop_Type` supports `auto` values
+3. **Testing Strategy**: Develop reliable Playwright assertions for auto margin behavior
+4. **Edge Case Handling**: Handle mixed values (e.g., `margin: 10px auto`)
+
+---
+
+---
+
 ## 🎯 **ATOMIC-ONLY COMPLIANCE**
 
 All future implementations MUST:
