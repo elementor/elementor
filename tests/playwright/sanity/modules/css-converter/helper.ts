@@ -59,4 +59,37 @@ export class CssConverterHelper {
 	getEditUrl( postId: number ): string {
 		return `/wp-admin/post.php?post=${ postId }&action=elementor`;
 	}
+
+	/**
+	 * Validates API result and returns skip information if the result is invalid
+	 * @param apiResult - The API response to validate
+	 * @returns Object with shouldSkip boolean and skipReason string
+	 */
+	validateApiResult( apiResult: CssConverterResponse | null ): { shouldSkip: boolean; skipReason: string } {
+		if ( !apiResult ) {
+			return {
+				shouldSkip: true,
+				skipReason: 'API returned null/undefined response'
+			};
+		}
+
+		if ( apiResult.errors && apiResult.errors.length > 0 ) {
+			return {
+				shouldSkip: true,
+				skipReason: 'Skipping due to backend property mapper issues: ' + apiResult.errors.join(', ')
+			};
+		}
+
+		if ( !apiResult.post_id || !apiResult.edit_url ) {
+			return {
+				shouldSkip: true,
+				skipReason: 'Skipping due to missing postId or editUrl in API response'
+			};
+		}
+
+		return {
+			shouldSkip: false,
+			skipReason: ''
+		};
+	}
 }

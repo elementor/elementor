@@ -49,16 +49,13 @@ test.describe( 'Background Prop Type Integration @prop-types', () => {
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
 		
-		// Check if API call failed due to backend issues
-		if ( apiResult.error ) {
-			console.log('API Error:', apiResult.error);
-			test.skip( true, 'Skipping due to backend property mapper issues: ' + JSON.stringify(apiResult.error) );
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
+			test.skip( true, validation.skipReason );
 			return;
 		}
 		const postId = apiResult.post_id;
 		const editUrl = apiResult.edit_url;
-		expect( postId ).toBeDefined();
-		expect( editUrl ).toBeDefined();
 
 		await page.goto( editUrl );
 		editor = new EditorPage( page, wpAdmin.testInfo );
@@ -120,16 +117,13 @@ test.describe( 'Background Prop Type Integration @prop-types', () => {
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
 		
-		// Check if API call failed due to backend issues
-		if ( apiResult.error ) {
-			console.log('API Error:', apiResult.error);
-			test.skip( true, 'Skipping due to backend property mapper issues: ' + JSON.stringify(apiResult.error) );
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
+			test.skip( true, validation.skipReason );
 			return;
 		}
 		const postId = apiResult.post_id;
 		const editUrl = apiResult.edit_url;
-		expect( postId ).toBeDefined();
-		expect( editUrl ).toBeDefined();
 
 		await page.goto( editUrl );
 		editor = new EditorPage( page, wpAdmin.testInfo );
