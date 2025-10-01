@@ -8,9 +8,10 @@ import { createControl } from '../create-control';
 
 type Props = {
 	placeholder?: string;
+	ariaLabel?: string;
 };
 
-export const TextAreaControl = createControl( ( { placeholder }: Props ) => {
+export const TextAreaControl = createControl( ( { placeholder, ariaLabel }: Props ) => {
 	const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
@@ -28,6 +29,9 @@ export const TextAreaControl = createControl( ( { placeholder }: Props ) => {
 				value={ value ?? '' }
 				onChange={ handleChange }
 				placeholder={ placeholder }
+				inputProps={ {
+					...( ariaLabel ? { 'aria-label': ariaLabel } : {} ),
+				} }
 			/>
 		</ControlActions>
 	);
