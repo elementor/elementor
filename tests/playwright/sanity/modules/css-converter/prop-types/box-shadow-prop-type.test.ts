@@ -52,13 +52,11 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 		// Check if API call failed due to backend issues
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
-			test.skip( true, 'Skipping due to backend property mapper issues' );
+			test.skip( true, validation.skipReason );
 			return;
 		}
-		const postId = apiResult.post_id;
+		
 		const editUrl = apiResult.edit_url;
-		expect( postId ).toBeDefined();
-		expect( editUrl ).toBeDefined();
 
 		await page.goto( editUrl );
 		editor = new EditorPage( page, wpAdmin.testInfo );
@@ -67,9 +65,24 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 		// Define test cases for both editor and frontend verification
 		// Note: box-shadow values may be normalized by browsers
 		const testCases = [
-			{ index: 0, name: 'box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)', property: 'box-shadow', expectedPattern: /rgba?\(0, 0, 0, 0\.3\)/ },
-			{ index: 1, name: 'box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2)', property: 'box-shadow', expectedPattern: /rgba?\(0, 0, 0, 0\.2\)/ },
-			{ index: 2, name: 'box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.1)', property: 'box-shadow', expectedPattern: /rgba?\(0, 0, 0, 0\.1\).*inset/ },
+			{ 
+				index: 0, 
+				name: 'box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)', 
+				// Browser normalizes to: rgba(0, 0, 0, 0.3) 2px 2px 4px 0px
+				expectedPattern: /rgba?\(0,\s*0,\s*0,\s*0\.3\)\s+2px\s+2px\s+4px/
+			},
+			{ 
+				index: 1, 
+				name: 'box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2)', 
+				// Browser normalizes to: rgba(0, 0, 0, 0.2) 0px 4px 8px 0px
+				expectedPattern: /rgba?\(0,\s*0,\s*0,\s*0\.2\)\s+0px\s+4px\s+8px/
+			},
+			{ 
+				index: 2, 
+				name: 'box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.1)', 
+				// Browser normalizes to: rgba(0, 0, 0, 0.1) 2px 2px 4px 0px inset
+				expectedPattern: /rgba?\(0,\s*0,\s*0,\s*0\.1\)\s+2px\s+2px\s+4px.*inset/
+			},
 		];
 
 		// Editor verification using test cases array
@@ -82,15 +95,8 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
-					const computedValue = await element.evaluate( ( el, prop ) => {
-						return window.getComputedStyle( el ).getPropertyValue( prop );
-					}, testCase.property );
-
-					// Check that box-shadow is not 'none' and matches expected pattern
-					expect( computedValue ).not.toBe( 'none' );
-					if ( testCase.expectedPattern ) {
-						expect( computedValue ).toMatch( testCase.expectedPattern );
-					}
+					// Use toHaveCSS with regex pattern for box-shadow verification
+					await expect( element ).toHaveCSS( 'box-shadow', testCase.expectedPattern );
 				} );
 			} );
 		}
@@ -110,15 +116,8 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 					const frontendElement = page.locator( '.e-paragraph-base' ).nth( testCase.index );
 
 					await test.step( 'Verify CSS property', async () => {
-						const computedValue = await frontendElement.evaluate( ( el, prop ) => {
-							return window.getComputedStyle( el ).getPropertyValue( prop );
-						}, testCase.property );
-
-						// Check that box-shadow is not 'none' and matches expected pattern
-						expect( computedValue ).not.toBe( 'none' );
-						if ( testCase.expectedPattern ) {
-							expect( computedValue ).toMatch( testCase.expectedPattern );
-						}
+						// Use toHaveCSS with regex pattern for box-shadow verification
+						await expect( frontendElement ).toHaveCSS( 'box-shadow', testCase.expectedPattern );
 					} );
 				} );
 			}

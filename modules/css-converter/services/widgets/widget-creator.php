@@ -392,23 +392,24 @@ class Widget_Creator {
 		$formatted_settings = [];
 		
 		foreach ( $settings as $key => $value ) {
-			// Special formatting for specific fields
-			if ( 'tag' === $key && is_string( $value ) ) {
-				$formatted_settings[ $key ] = [
-					'$$type' => 'string',
-					'value' => $value,
-				];
-			} else {
-				$formatted_settings[ $key ] = $this->format_elementor_value( $value );
-			}
+			$formatted_settings[ $key ] = $this->format_elementor_value( $value );
 		}
 		
 		return $formatted_settings;
 	}
 
 	private function format_elementor_value( $value ) {
-		// Format values according to Elementor's expected structure
-		// Only specific fields need the $$type wrapper (like 'tag' for headings)
+		if ( is_string( $value ) ) {
+			return [
+				'$$type' => 'string',
+				'value' => $value,
+			];
+		}
+		
+		if ( is_array( $value ) && isset( $value['$$type'] ) ) {
+			return $value;
+		}
+		
 		return $value;
 	}
 

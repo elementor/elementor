@@ -143,12 +143,9 @@ class Widget_Mapper {
 	}
 
 	private function handle_paragraph( $element ) {
-		// Editor creates paragraph widgets with completely empty settings
-		// Paragraph content is handled through a different mechanism, not in settings
-		$settings = [];
-		
-		// Never add paragraph content to settings - it causes validation failures
-		// The content will be handled elsewhere in the Elementor system
+		$settings = [
+			'paragraph' => $element['content'] ?? '',
+		];
 		
 		return [
 			'widget_type' => 'e-paragraph',

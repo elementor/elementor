@@ -112,7 +112,10 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function parse_shorthand_margin( string $value ): ?array {
 		$parts = preg_split( '/\s+/', trim( $value ) );
-		$parts = array_filter( $parts );
+		$parts = array_filter( $parts, function( $part ) {
+			return '' !== trim( $part );
+		} );
+		$parts = array_values( $parts );
 		$count = count( $parts );
 
 		if ( $count < 1 || $count > 4 ) {
@@ -130,7 +133,10 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function parse_logical_shorthand( string $value, string $axis ): ?array {
 		$parts = preg_split( '/\s+/', trim( $value ) );
-		$parts = array_filter( $parts );
+		$parts = array_filter( $parts, function( $part ) {
+			return '' !== trim( $part );
+		} );
+		$parts = array_values( $parts );
 		$count = count( $parts );
 
 		if ( $count < 1 || $count > 2 ) {
@@ -177,7 +183,13 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		
 		switch ( $count ) {
 			case 1:
+				if ( ! isset( $parts[0] ) ) {
+					return null;
+				}
 				$all = $this->parse_size_value( $parts[0] );
+				if ( null === $all ) {
+					return null;
+				}
 				return [
 					'block-start' => $all,
 					'inline-end' => $all,
@@ -186,8 +198,14 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 				];
 
 			case 2:
+				if ( ! isset( $parts[0] ) || ! isset( $parts[1] ) ) {
+					return null;
+				}
 				$vertical = $this->parse_size_value( $parts[0] );
 				$horizontal = $this->parse_size_value( $parts[1] );
+				if ( null === $vertical || null === $horizontal ) {
+					return null;
+				}
 				return [
 					'block-start' => $vertical,
 					'inline-end' => $horizontal,
@@ -196,9 +214,15 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 				];
 
 			case 3:
+				if ( ! isset( $parts[0] ) || ! isset( $parts[1] ) || ! isset( $parts[2] ) ) {
+					return null;
+				}
 				$top = $this->parse_size_value( $parts[0] );
 				$horizontal = $this->parse_size_value( $parts[1] );
 				$bottom = $this->parse_size_value( $parts[2] );
+				if ( null === $top || null === $horizontal || null === $bottom ) {
+					return null;
+				}
 				return [
 					'block-start' => $top,
 					'inline-end' => $horizontal,
@@ -207,10 +231,16 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 				];
 
 			case 4:
+				if ( ! isset( $parts[0] ) || ! isset( $parts[1] ) || ! isset( $parts[2] ) || ! isset( $parts[3] ) ) {
+					return null;
+				}
 				$top = $this->parse_size_value( $parts[0] );
 				$right = $this->parse_size_value( $parts[1] );
 				$bottom = $this->parse_size_value( $parts[2] );
 				$left = $this->parse_size_value( $parts[3] );
+				if ( null === $top || null === $right || null === $bottom || null === $left ) {
+					return null;
+				}
 				return [
 					'block-start' => $top,
 					'inline-end' => $right,
@@ -271,7 +301,7 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return Size_Prop_Type::make()->generate( $size_value );
 	}
 
-	protected function parse_size_value( string $value ): array {
+	protected function parse_size_value( string $value ): ?array {
 		$value = trim( $value );
 		
 		if ( '' === $value ) {

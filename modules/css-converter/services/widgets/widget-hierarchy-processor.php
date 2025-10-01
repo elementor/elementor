@@ -192,9 +192,12 @@ class Widget_Hierarchy_Processor {
 				];
 				break;
 		case 'e-paragraph':
-			// Editor creates paragraph widgets with completely empty settings
-			// Paragraph content validation is failing, so match editor behavior exactly
-			$defaults = [];
+			$defaults = [
+				'paragraph' => $widget['settings']['paragraph'] ?? 'Type your paragraph here',
+				'classes' => [],
+				'link' => null,
+				'attributes' => null,
+			];
 			break;
 			case 'e-button':
 				$defaults = [
