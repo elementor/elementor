@@ -901,7 +901,7 @@ class OnboardingTracker {
 		}
 
 		mixpanel.track( '$experiment_started', {
-			'Experiment name': 'onboarding-a-b',
+			'Experiment name': 'Onboarding A/B',
 			'Variant name': variant,
 		} );
 
