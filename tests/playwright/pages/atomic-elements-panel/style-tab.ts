@@ -43,7 +43,6 @@ export default class StyleTab extends BasePage {
 		const content = this.page.locator( `[aria-label="${ sectionName } section content"]` );
 		const showMoreBtn = content.locator( '[aria-label="Show more"]' );
 
-		// Check if the "Show more" button exists before trying to click it
 		const isShowMoreVisible = await showMoreBtn.isVisible().catch( () => false );
 		if ( isShowMoreVisible ) {
 			await showMoreBtn.click();
@@ -61,59 +60,36 @@ export default class StyleTab extends BasePage {
 	async setFontFamily( fontName: string, fontType: 'system' | 'google' = 'system' ): Promise<void> {
 		const fontFamilyButton = this.page.locator( 'div.MuiGrid-container' ).filter( {
 			has: this.page.locator( 'label', { hasText: 'Font family' } ),
-		} ).locator( '[role="button"]' );
+		} ).getByRole( 'button' );
 
 		await fontFamilyButton.click();
-		await this.page.waitForSelector( '.MuiPopover-paper', { state: 'visible', timeout: timeouts.action } );
 
-		// Select the appropriate font category using the original selector pattern
 		const categorySelector = 'google' === fontType ? 'Google Fonts' : 'System';
-		const categoryButton = this.page.locator( '.MuiListSubheader-root', { hasText: categorySelector } );
-
+		const categoryButton = this.page.getByRole( 'button', { name: categorySelector } );
 		await categoryButton.click();
 
-		// For Google fonts, we need to search for the specific font
 		if ( 'google' === fontType ) {
-			// Wait for the search box to be available
-			const searchBox = this.page.locator( 'input[placeholder="Search"]' );
-			await searchBox.waitFor( { state: 'visible', timeout: timeouts.action } );
-
-			// Clear any existing search and type the font name
-			await searchBox.clear();
+			const searchBox = this.page.getByPlaceholder( 'Search' );
 			await searchBox.fill( fontName );
-
-			// Wait for the search results to load
-			await this.page.waitForTimeout( timeouts.short );
 		}
 
-		// Select the specific font using the original selector pattern
-		const fontOption = this.page.locator( '[role="option"]', { hasText: fontName } ).first();
-
-		// Wait for the font option to be visible (with longer timeout for Google fonts)
 		const timeout = 'google' === fontType ? timeouts.longAction : timeouts.action;
-		await fontOption.waitFor( { state: 'visible', timeout } );
-
-		await fontOption.click();
+		const fontOption = this.page.getByRole( 'option', { name: fontName } ).first();
+		await fontOption.click( { timeout } );
 	}
 
 	async setFontSize( size: number, unit: Unit ): Promise<void> {
 		const fontSizeInput = this.page.getByRole( 'spinbutton', { name: 'Font size' } );
-		await fontSizeInput.waitFor( { state: 'visible' } );
-
-		// Find the unit button - it's in the same input adornment container
-		const unitButton = fontSizeInput.locator( '..' ).locator( 'button', { hasText: /^(px|em|rem|vw|vh|%)$/ } ).first();
-		await unitButton.waitFor( { state: 'visible' } );
 
 		if ( 'px' !== unit ) {
+			const unitButton = fontSizeInput.locator( '..' ).getByRole( 'button' ).filter( { hasText: /^(px|em|rem|vw|vh|%)$/ } );
 			await unitButton.click();
-			const unitOption = this.page.getByRole( 'menuitem', { name: unit.toUpperCase(), exact: true } );
-			await unitOption.waitFor( { state: 'visible' } );
-			await unitOption.click();
-			// Wait for the unit button to update
-			await fontSizeInput.locator( '..' ).locator( `button:has-text("${ unit }")` ).first().waitFor( { state: 'visible' } );
+
+			await this.page.getByRole( 'menuitem', { name: unit.toUpperCase(), exact: true } ).click();
+			await fontSizeInput.locator( '..' ).getByRole( 'button', { name: unit } ).waitFor( { state: 'visible' } );
 		}
 
 		await fontSizeInput.fill( size.toString() );
-		await fontSizeInput.evaluate( ( el ) => ( el as HTMLElement ).blur() );
+		await fontSizeInput.blur();
 	}
 }
