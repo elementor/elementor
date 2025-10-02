@@ -113,7 +113,7 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		// Handle solid colors (fallback to background-color)
 		if ( $this->is_color_value( $value ) ) {
-			$background_data['color'] = $value;
+			$background_data['color'] = Color_Prop_Type::make()->generate( $value );
 			return $background_data;
 		}
 
