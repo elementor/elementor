@@ -882,8 +882,8 @@ class OnboardingTracker {
 		return variant;
 	}
 
-	sendExperimentStarted() {
-		console.log( '🧪 [AB Test] sendExperimentStarted called' );
+	sendExperimentStarted( retryCount = 0 ) {
+		console.log( '🧪 [AB Test] sendExperimentStarted called (attempt:', retryCount + 1, ')' );
 
 		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.EXPERIMENT_STARTED ) ) {
 			console.log( '🧪 [AB Test] Already sent - skipping' );
@@ -903,7 +903,15 @@ class OnboardingTracker {
 		}
 
 		if ( 'undefined' === typeof mixpanel ) {
-			console.log( '❌ [AB Test] Mixpanel not loaded' );
+			console.log( '⏳ [AB Test] Mixpanel not loaded yet, retrying...' );
+
+			if ( retryCount < 10 ) {
+				setTimeout( () => {
+					this.sendExperimentStarted( retryCount + 1 );
+				}, 500 );
+			} else {
+				console.log( '❌ [AB Test] Mixpanel failed to load after 10 retries (5 seconds)' );
+			}
 			return;
 		}
 
