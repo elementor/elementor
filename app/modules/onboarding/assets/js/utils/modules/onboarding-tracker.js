@@ -883,29 +883,40 @@ class OnboardingTracker {
 	}
 
 	sendExperimentStarted() {
+		console.log( '🧪 [AB Test] sendExperimentStarted called' );
+
 		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.EXPERIMENT_STARTED ) ) {
+			console.log( '🧪 [AB Test] Already sent - skipping' );
 			return;
 		}
 
 		let variant = this.getExperimentVariant();
+		console.log( '🧪 [AB Test] Current variant:', variant );
 
 		if ( ! variant ) {
 			variant = this.assignExperimentVariant();
+			console.log( '🧪 [AB Test] Assigned new variant:', variant );
 			if ( ! variant ) {
+				console.log( '🧪 [AB Test] Feature flag disabled - not assigning variant' );
 				return;
 			}
 		}
 
 		if ( 'undefined' === typeof mixpanel ) {
+			console.log( '❌ [AB Test] Mixpanel not loaded' );
 			return;
 		}
 
-		mixpanel.track( '$experiment_started', {
+		const eventData = {
 			'Experiment name': 'Onboarding A/B',
 			'Variant name': variant,
-		} );
+		};
+
+		console.log( '✅ [AB Test] Sending $experiment_started event:', eventData );
+		mixpanel.track( '$experiment_started', eventData );
 
 		StorageManager.setString( ONBOARDING_STORAGE_KEYS.EXPERIMENT_STARTED, 'true' );
+		console.log( '✅ [AB Test] Event sent and marked as complete' );
 	}
 }
 
