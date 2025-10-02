@@ -76,7 +76,7 @@ class Module extends BaseModule {
 			$this->get_js_assets_url( 'pro-install-events' ),
 			[ 'elementor-common' ],
 			ELEMENTOR_VERSION,
-			true
+			true,
 		];
 	}
 }
