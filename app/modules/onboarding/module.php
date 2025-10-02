@@ -38,6 +38,19 @@ class Module extends BaseModule {
 		return 'onboarding';
 	}
 
+	private function is_ab_test_enabled() {
+		// TODO: Change to false before production deployment
+		// Currently enabled for testing purposes
+		// Users will be randomly assigned to variant A or B on Step 2
+		// To disable: change true to false below
+		// To enable via filter: add_filter( 'elementor/onboarding/ab_test_enabled', '__return_true' );
+		return apply_filters( 'elementor/onboarding/ab_test_enabled', true );
+	}
+
+	private function get_ab_test_variant_override() {
+		return apply_filters( 'elementor/onboarding/ab_test_variant', null );
+	}
+
 	/**
 	 * Set Onboarding Settings
 	 *
@@ -121,6 +134,8 @@ class Module extends BaseModule {
 			],
 			'nonce' => wp_create_nonce( 'onboarding' ),
 			'experiment' => true,
+			'abTestEnabled' => $this->is_ab_test_enabled(),
+			'abVariant' => $this->get_ab_test_variant_override(),
 		] );
 	}
 

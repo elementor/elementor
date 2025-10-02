@@ -852,6 +852,61 @@ class OnboardingTracker {
 	clearAllOnboardingStorage() {
 		return PostOnboardingTracker.clearAllOnboardingStorage();
 	}
+
+	isAbTestEnabled() {
+		const phpEnabled = elementorAppConfig?.onboarding?.abTestEnabled || false;
+
+		if ( window.elementorAbTestOverride !== undefined ) {
+			return window.elementorAbTestOverride;
+		}
+
+		return phpEnabled;
+	}
+
+	getExperimentVariant() {
+		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.AB_TEST_VARIANT );
+		if ( stored ) {
+			return stored;
+		}
+
+		return elementorAppConfig?.onboarding?.abVariant || null;
+	}
+
+	assignExperimentVariant() {
+		if ( ! this.isAbTestEnabled() ) {
+			return null;
+		}
+
+		const variant = Math.random() < 0.5 ? 'A' : 'B';
+		StorageManager.setString( ONBOARDING_STORAGE_KEYS.AB_TEST_VARIANT, variant );
+		return variant;
+	}
+
+	sendExperimentStarted() {
+		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.EXPERIMENT_STARTED ) ) {
+			return;
+		}
+
+		let variant = this.getExperimentVariant();
+
+		if ( ! variant ) {
+			variant = this.assignExperimentVariant();
+			if ( ! variant ) {
+				return;
+			}
+		}
+
+		if ( 'undefined' === typeof mixpanel ) {
+			return;
+		}
+
+		mixpanel.track( '$experiment_started', {
+			'Experiment name': 'onboarding-a-b',
+			'Variant name': variant,
+		} );
+
+		StorageManager.setString( ONBOARDING_STORAGE_KEYS.EXPERIMENT_STARTED, 'true' );
+	}
 }
 
 const onboardingTracker = new OnboardingTracker();

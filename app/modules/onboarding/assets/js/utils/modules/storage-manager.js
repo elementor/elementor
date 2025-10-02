@@ -23,6 +23,8 @@ export const ONBOARDING_STORAGE_KEYS = {
 	PENDING_STEP1_END_STATE: 'elementor_onboarding_pending_step1_end_state',
 	PENDING_EXIT_BUTTON: 'elementor_onboarding_pending_exit_button',
 	PENDING_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
+	AB_TEST_VARIANT: 'elementor_onboarding_ab_variant',
+	EXPERIMENT_STARTED: 'elementor_onboarding_experiment_started',
 };
 
 export function getString( key ) {
@@ -120,6 +122,8 @@ export function clearAllOnboardingData() {
 		ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
 		ONBOARDING_STORAGE_KEYS.PENDING_EXIT_BUTTON,
 		ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
+		ONBOARDING_STORAGE_KEYS.AB_TEST_VARIANT,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT_STARTED,
 	];
 
 	clearMultiple( keysToRemove );

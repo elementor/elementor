@@ -44,6 +44,7 @@ export default function HelloTheme() {
 
 		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
 		OnboardingEventTracking.onStepLoad( 2 );
+		OnboardingEventTracking.sendExperimentStarted();
 	}, [] );
 
 	const resetScreenContent = () => {
