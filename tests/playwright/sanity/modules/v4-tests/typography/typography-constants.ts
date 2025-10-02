@@ -53,7 +53,8 @@ export const UNITS = {
 	percent: '%',
 } as const;
 
-export type Unit = keyof typeof UNITS;
+export type Unit = typeof UNITS[keyof typeof UNITS];
+export type UnitKey = keyof typeof UNITS;
 
 export const SPACING_VALUES = {
 	POSITIVE: [ 1, 5.5 ],

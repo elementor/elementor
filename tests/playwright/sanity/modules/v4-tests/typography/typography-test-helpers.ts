@@ -3,6 +3,7 @@ import { EditorDriver } from '../../../../drivers/editor-driver';
 import { timeouts } from '../../../../config/timeouts';
 import { STYLE_SECTIONS } from '../../../../pages/atomic-elements-panel/style-tab';
 import { convertToPixels } from '../../../../utils/unit-conversions';
+import { Unit } from './typography-constants';
 
 export async function setupWidgetWithTypography(
 	driver: EditorDriver,
@@ -34,14 +35,31 @@ export async function verifyFontSizePreview(
 export async function verifyFontSizeOnFrontend(
 	driver: EditorDriver,
 	selector: string,
-	expectedSize: string,
+	expectedSize: number,
+	expectedUnit: Unit,
 ): Promise<void> {
-	await verifyFontSizePreview( driver, selector, expectedSize );
+	await verifyFontSizeEditor( driver, selector, expectedSize, expectedUnit );
+
 	await driver.editor.publishAndViewPage();
 
 	const publishedElement = driver.page.locator( selector );
 	await expect( publishedElement ).toBeVisible( { timeout: timeouts.navigation } );
-	await expect( publishedElement ).toHaveCSS( 'font-size', `${ expectedSize }px`, { timeout: timeouts.expect } );
+
+	await expect( async () => {
+		const computedStyles = await publishedElement.evaluate( ( el ) => {
+			const styles = window.getComputedStyle( el );
+			const parentStyles = el.parentElement ? window.getComputedStyle( el.parentElement ) : null;
+			return {
+				fontSize: parseFloat( styles.fontSize ),
+				parentFontSize: parentStyles ? parseFloat( parentStyles.fontSize ) : 16,
+				windowWidth: window.innerWidth,
+				windowHeight: window.innerHeight,
+			};
+		} );
+
+		const expectedPixels = convertToPixels( expectedSize, expectedUnit, computedStyles );
+		expect( computedStyles.fontSize ).toBeCloseTo( expectedPixels, 0 );
+	} ).toPass( { timeout: timeouts.expect } );
 }
 
 function verifyZeroSpacing( spacingStr: string ): void {
@@ -66,7 +84,7 @@ export async function verifySpacingEditor( params:
 		driver: EditorDriver,
 		selector: string,
 		expectedValue: number,
-		expectedUnit: string,
+		expectedUnit: Unit,
 		cssProperty: 'letterSpacing' | 'wordSpacing',
 	} ): Promise<void> {
 	const { driver, selector, expectedValue, expectedUnit, cssProperty } = params;
@@ -78,6 +96,7 @@ export async function verifySpacingEditor( params:
 			return {
 				spacing: styles[ property ],
 				fontSize: parseFloat( styles.fontSize ),
+				parentFontSize: parseFloat( styles.fontSize ), // For spacing properties, em is relative to element's own font-size
 				windowWidth: window.innerWidth,
 				windowHeight: window.innerHeight,
 			};
@@ -118,3 +137,29 @@ export async function verifyFontFamilyOnFrontend(
 	const publishedComputedFamily = await publishedElement.evaluate( ( e ) => window.getComputedStyle( e ).fontFamily );
 	expect( publishedComputedFamily.toLowerCase() ).toContain( expectedFamily.toLowerCase() );
 }
+
+export async function verifyFontSizeEditor(
+	driver: EditorDriver,
+	selector: string,
+	expectedSize: number,
+	expectedUnit: Unit,
+): Promise<void> {
+	const element = driver.editor.getPreviewFrame().locator( selector );
+
+	await expect( async () => {
+		const computedStyles = await element.evaluate( ( el ) => {
+			const styles = window.getComputedStyle( el );
+			const parentStyles = el.parentElement ? window.getComputedStyle( el.parentElement ) : null;
+			return {
+				fontSize: parseFloat( styles.fontSize ),
+				parentFontSize: parentStyles ? parseFloat( parentStyles.fontSize ) : 16,
+				windowWidth: window.innerWidth,
+				windowHeight: window.innerHeight,
+			};
+		} );
+
+		const expectedPixels = convertToPixels( expectedSize, expectedUnit, computedStyles );
+		expect( computedStyles.fontSize ).toBeCloseTo( expectedPixels, 0 );
+	} ).toPass( { timeout: timeouts.expect } );
+}
+
