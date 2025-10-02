@@ -883,27 +883,20 @@ class OnboardingTracker {
 	}
 
 	sendExperimentStarted() {
-		console.log( '🧪 [AB Test] sendExperimentStarted called' );
-
 		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.EXPERIMENT_STARTED ) ) {
-			console.log( '🧪 [AB Test] Already sent - skipping' );
 			return;
 		}
 
 		let variant = this.getExperimentVariant();
-		console.log( '🧪 [AB Test] Current variant:', variant );
 
 		if ( ! variant ) {
 			variant = this.assignExperimentVariant();
-			console.log( '🧪 [AB Test] Assigned new variant:', variant );
 			if ( ! variant ) {
-				console.log( '🧪 [AB Test] Feature flag disabled - not assigning variant' );
 				return;
 			}
 		}
 
 		if ( ! EventDispatcher.canSendEvents() ) {
-			console.log( '❌ [AB Test] Events are disabled (can_send_events is false)' );
 			return;
 		}
 
@@ -912,11 +905,9 @@ class OnboardingTracker {
 			'Variant name': variant,
 		};
 
-		console.log( '✅ [AB Test] Sending $experiment_started event via EventDispatcher:', eventData );
 		EventDispatcher.dispatch( '$experiment_started', eventData );
 
 		StorageManager.setString( ONBOARDING_STORAGE_KEYS.EXPERIMENT_STARTED, 'true' );
-		console.log( '✅ [AB Test] Event sent and marked as complete' );
 	}
 }
 
