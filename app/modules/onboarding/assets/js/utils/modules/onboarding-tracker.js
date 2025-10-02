@@ -882,8 +882,8 @@ class OnboardingTracker {
 		return variant;
 	}
 
-	sendExperimentStarted( retryCount = 0 ) {
-		console.log( '🧪 [AB Test] sendExperimentStarted called (attempt:', retryCount + 1, ')' );
+	sendExperimentStarted() {
+		console.log( '🧪 [AB Test] sendExperimentStarted called' );
 
 		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.EXPERIMENT_STARTED ) ) {
 			console.log( '🧪 [AB Test] Already sent - skipping' );
@@ -902,16 +902,8 @@ class OnboardingTracker {
 			}
 		}
 
-		if ( 'undefined' === typeof mixpanel ) {
-			console.log( '⏳ [AB Test] Mixpanel not loaded yet, retrying...' );
-
-			if ( retryCount < 10 ) {
-				setTimeout( () => {
-					this.sendExperimentStarted( retryCount + 1 );
-				}, 500 );
-			} else {
-				console.log( '❌ [AB Test] Mixpanel failed to load after 10 retries (5 seconds)' );
-			}
+		if ( ! EventDispatcher.canSendEvents() ) {
+			console.log( '❌ [AB Test] Events are disabled (can_send_events is false)' );
 			return;
 		}
 
@@ -920,8 +912,8 @@ class OnboardingTracker {
 			'Variant name': variant,
 		};
 
-		console.log( '✅ [AB Test] Sending $experiment_started event:', eventData );
-		mixpanel.track( '$experiment_started', eventData );
+		console.log( '✅ [AB Test] Sending $experiment_started event via EventDispatcher:', eventData );
+		EventDispatcher.dispatch( '$experiment_started', eventData );
 
 		StorageManager.setString( ONBOARDING_STORAGE_KEYS.EXPERIMENT_STARTED, 'true' );
 		console.log( '✅ [AB Test] Event sent and marked as complete' );
