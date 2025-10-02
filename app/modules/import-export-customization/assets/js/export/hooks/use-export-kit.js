@@ -14,7 +14,7 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 	const [ exportedData, setExportedData ] = useState( null );
 	const navigate = useNavigate();
 
-	const processMedia = useCallback( async ( exportedData, mediaUrls, kit ) => {
+	const processMedia = useCallback( async ( exportData, mediaUrls, kit ) => {
 		setStatus( STATUS_PROCESSING_MEDIA );
 
 		const baseUrl = elementorAppConfig[ 'import-export-customization' ].restApiBaseUrl;
@@ -37,12 +37,12 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 			throw new ImportExportError( errorMessage, mediaResult?.data?.code );
 		}
 
-		exportedData.media = {
+		exportData.media = {
 			processed: true,
 			message: mediaResult?.data?.message || 'Media processed successfully',
 		};
 
-		return exportedData;
+		return exportData;
 	}, [] );
 
 	const deleteKit = useCallback( async ( kitId ) => {
@@ -52,9 +52,7 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 
 		try {
 			await $e.data.delete( 'cloud-kits/index', { id: kitId } );
-		} catch ( err ) {
-			console.error( 'Failed to delete kit:', err );
-		}
+		} catch {}
 	}, [] );
 
 	const retryMediaProcessing = useCallback( async () => {
@@ -64,10 +62,10 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 
 		try {
 			setError( null );
-			const updatedExportedData = await processMedia( 
-				exportedData.exportedData, 
-				exportedData.mediaUrls, 
-				exportedData.kit 
+			const updatedExportedData = await processMedia(
+				exportedData.exportedData,
+				exportedData.mediaUrls,
+				exportedData.kit,
 			);
 
 			dispatch( { type: 'SET_EXPORTED_DATA', payload: updatedExportedData } );
@@ -124,15 +122,15 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 			const isExportLocal = 'file' === kitInfo.source && result.data && result.data.file;
 			const isExportToCloud = 'cloud' === kitInfo.source && result.data && result.data.kit;
 
-			let exportedData = null;
+			let kitExportData = null;
 
 			if ( isExportLocal ) {
-				exportedData = {
+				kitExportData = {
 					file: result.data.file, // This is base64 encoded file data
 					manifest: result.data.manifest,
 				};
 			} else if ( isExportToCloud ) {
-				exportedData = {
+				kitExportData = {
 					kit: result.data.kit,
 					manifest: result.data.manifest,
 				};
@@ -141,17 +139,17 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 			}
 
 			setExportedData( {
-				exportedData,
+				exportedData: kitExportData,
 				mediaUrls: result.data.media_urls,
 				kit: result.data.kit,
 			} );
 
 			const mediaUrls = result.data.media_urls;
 			if ( mediaUrls && mediaUrls.length > 0 ) {
-				await processMedia( exportedData, mediaUrls, result.data.kit );
+				await processMedia( kitExportData, mediaUrls, result.data.kit );
 			}
 
-			dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
+			dispatch( { type: 'SET_EXPORTED_DATA', payload: kitExportData } );
 			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
 			navigate( '/export-customization/complete' );
 		} catch ( err ) {

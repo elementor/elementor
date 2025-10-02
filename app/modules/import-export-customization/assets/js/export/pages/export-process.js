@@ -39,8 +39,8 @@ export default function ExportProcess() {
 	);
 
 	const handleTryAgain = () => {
-		const isMediaError = error?.code === 'media-processing-error';
-		
+		const isMediaError = 'media-processing-error' === error?.code;
+
 		if ( isMediaError ) {
 			retryMediaProcessing();
 		} else {
@@ -49,10 +49,10 @@ export default function ExportProcess() {
 	};
 
 	const handleCloseError = () => {
-		const isMediaError = error?.code === 'media-processing-error';
-		
+		const isMediaError = 'media-processing-error' === error?.code;
+
 		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.PENDING } );
-		
+
 		if ( isMediaError && exportedData?.kit?.id ) {
 			deleteKit( exportedData.kit.id );
 		}
