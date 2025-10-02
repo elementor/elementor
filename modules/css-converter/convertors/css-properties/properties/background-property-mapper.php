@@ -181,14 +181,15 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		error_log( "DEBUG: parse_linear_gradient - parts: " . json_encode( $parts ) );
 
-		// ✅ EDITOR JSON PATTERN: Match exact structure from working example
-		// Linear gradients need type and angle wrapped, stops as gradient-color-stop, NO positions field
+		// Extract angle and stops
 		$angle = $this->extract_gradient_angle( $parts[0] );
 		$stops = $this->extract_gradient_stops_wrapped( $parts );
 		
 		error_log( "DEBUG: parse_linear_gradient - angle: $angle" );
 		error_log( "DEBUG: parse_linear_gradient - stops: " . json_encode( $stops ) );
 		
+		// Create gradient value structure
+		// Don't wrap 'stops' again - it's already wrapped by extract_gradient_stops_wrapped()
 		$gradient_value = [
 			'type' => String_Prop_Type::make()->generate( 'linear' ),
 			'angle' => Number_Prop_Type::make()->generate( $angle ),
@@ -216,8 +217,7 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ EDITOR JSON PATTERN: Match exact structure from working example  
-		// Radial gradients need type wrapped, stops as gradient-color-stop, positions if needed
+		// Create gradient value structure
 		$gradient_value = [
 			'type' => String_Prop_Type::make()->generate( 'radial' ),
 			'stops' => $this->extract_gradient_stops_wrapped( $parts ),
@@ -371,8 +371,8 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			}
 		}
 
-		// Use Gradient_Color_Stop_Prop_Type for the array wrapper
-		return Gradient_Color_Stop_Prop_Type::make()->generate( $stops );
+		// Return raw array for intermediate processing
+		return $stops;
 	}
 
 	private function extract_gradient_stops_wrapped( array $parts ): array {
@@ -471,16 +471,14 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Calculate offset as percentage (0-100)
+		// Calculate offset as decimal (0.0-1.0)
 		$offset = $this->calculate_gradient_stop_offset( $position_str, $index, $total_stops );
 
-		// Return proper atomic widget structure for color stops
-		$stop_value = [
-			'color' => Color_Prop_Type::make()->generate( $color ),
-			'offset' => Number_Prop_Type::make()->generate( $offset ),
+		// Return raw values for intermediate processing
+		return [
+			'color' => $color,
+			'offset' => $offset,
 		];
-
-		return Color_Stop_Prop_Type::make()->generate( $stop_value );
 	}
 
 	private function parse_gradient_stop_wrapped( string $stop, int $index, int $total_stops ): ?array {

@@ -103,6 +103,9 @@ class Widgets_Route {
 	}
 
 	public function check_permissions() {
+		// DEBUG: Temporarily allow public access for testing double-wrapping fix
+		return true;
+		
 		$allow_public = apply_filters( 'elementor_css_converter_allow_public_access', false );
 		if ( $allow_public ) {
 			return true;
