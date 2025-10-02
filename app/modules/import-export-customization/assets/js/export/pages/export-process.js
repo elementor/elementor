@@ -10,7 +10,7 @@ export default function ExportProcess() {
 	const { data, dispatch, isExporting, isPending } = useExportContext();
 	const { kitInfo, includes, customization } = data;
 
-	const { status, STATUS_PROCESSING, STATUS_PROCESSING_MEDIA, STATUS_ERROR, error, exportKit } = useExportKit( {
+	const { status, STATUS_PROCESSING, STATUS_PROCESSING_MEDIA, STATUS_ERROR, error, exportKit, retryMediaProcessing, deleteKit, exportedData } = useExportKit( {
 		includes,
 		kitInfo,
 		customization,
@@ -39,10 +39,23 @@ export default function ExportProcess() {
 	);
 
 	const handleTryAgain = () => {
-		exportKit();
+		const isMediaError = error?.code === 'media-processing-error';
+		
+		if ( isMediaError ) {
+			retryMediaProcessing();
+		} else {
+			exportKit();
+		}
 	};
+
 	const handleCloseError = () => {
+		const isMediaError = error?.code === 'media-processing-error';
+		
 		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.PENDING } );
+		
+		if ( isMediaError && exportedData?.kit?.id ) {
+			deleteKit( exportedData.kit.id );
+		}
 	};
 
 	return (

@@ -11,7 +11,73 @@ const STATUS_ERROR = 'error';
 export const useExportKit = ( { includes, kitInfo, customization, isExporting, dispatch } ) => {
 	const [ status, setStatus ] = useState( STATUS_PROCESSING );
 	const [ error, setError ] = useState( null );
+	const [ exportedData, setExportedData ] = useState( null );
 	const navigate = useNavigate();
+
+	const processMedia = useCallback( async ( exportedData, mediaUrls, kit ) => {
+		setStatus( STATUS_PROCESSING_MEDIA );
+
+		const baseUrl = elementorAppConfig[ 'import-export-customization' ].restApiBaseUrl;
+		const mediaResponse = await fetch( `${ baseUrl }/process-media`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': window.wpApiSettings?.nonce || '',
+			},
+			body: JSON.stringify( {
+				media_urls: mediaUrls,
+				kit,
+			} ),
+		} );
+
+		const mediaResult = await mediaResponse.json();
+
+		if ( ! mediaResponse.ok ) {
+			const errorMessage = mediaResult?.data?.message || `Media processing error! Code: ${ mediaResult?.data?.code }`;
+			throw new ImportExportError( errorMessage, mediaResult?.data?.code );
+		}
+
+		exportedData.media = {
+			processed: true,
+			message: mediaResult?.data?.message || 'Media processed successfully',
+		};
+
+		return exportedData;
+	}, [] );
+
+	const deleteKit = useCallback( async ( kitId ) => {
+		if ( ! kitId ) {
+			return;
+		}
+
+		try {
+			await $e.data.delete( 'cloud-kits/index', { id: kitId } );
+		} catch ( err ) {
+			console.error( 'Failed to delete kit:', err );
+		}
+	}, [] );
+
+	const retryMediaProcessing = useCallback( async () => {
+		if ( ! exportedData ) {
+			throw new ImportExportError( 'No export data available for media retry' );
+		}
+
+		try {
+			setError( null );
+			const updatedExportedData = await processMedia( 
+				exportedData.exportedData, 
+				exportedData.mediaUrls, 
+				exportedData.kit 
+			);
+
+			dispatch( { type: 'SET_EXPORTED_DATA', payload: updatedExportedData } );
+			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
+			navigate( '/export-customization/complete' );
+		} catch ( err ) {
+			setStatus( STATUS_ERROR );
+			setError( err instanceof ImportExportError ? err : new ImportExportError( err.message ) );
+		}
+	}, [ exportedData, processMedia, dispatch, navigate ] );
 
 	const exportKit = useCallback( async () => {
 		try {
@@ -74,33 +140,15 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 				throw new ImportExportError( 'Invalid response format from server' );
 			}
 
+			setExportedData( {
+				exportedData,
+				mediaUrls: result.data.media_urls,
+				kit: result.data.kit,
+			} );
+
 			const mediaUrls = result.data.media_urls;
 			if ( mediaUrls && mediaUrls.length > 0 ) {
-				setStatus( STATUS_PROCESSING_MEDIA );
-
-				const mediaResponse = await fetch( `${ baseUrl }/process-media`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'X-WP-Nonce': window.wpApiSettings?.nonce || '',
-					},
-					body: JSON.stringify( {
-						media_urls: mediaUrls,
-						kit: result.data.kit,
-					} ),
-				} );
-
-				const mediaResult = await mediaResponse.json();
-
-				if ( ! mediaResponse.ok ) {
-					const errorMessage = mediaResult?.data?.message || `Media processing error! Code: ${ mediaResult?.data?.code }`;
-					throw new ImportExportError( errorMessage, mediaResult?.data?.code );
-				}
-
-				exportedData.media = {
-					processed: true,
-					message: mediaResult?.data?.message || 'Media processed successfully',
-				};
+				await processMedia( exportedData, mediaUrls, result.data.kit );
 			}
 
 			dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
@@ -110,7 +158,7 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 			setStatus( STATUS_ERROR );
 			setError( err instanceof ImportExportError ? err : new ImportExportError( err.message ) );
 		}
-	}, [ includes, kitInfo, customization, dispatch, navigate ] );
+	}, [ includes, kitInfo, customization, dispatch, navigate, processMedia ] );
 
 	useEffect( () => {
 		if ( isExporting ) {
@@ -125,5 +173,8 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 		STATUS_ERROR,
 		error,
 		exportKit,
+		retryMediaProcessing,
+		deleteKit,
+		exportedData,
 	};
 };
