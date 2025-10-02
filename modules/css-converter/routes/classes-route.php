@@ -137,9 +137,14 @@ class Classes_Route {
 				'css_preview' => substr( $css, 0, 200 ) . ( strlen( $css ) > 200 ? '...' : '' ),
 			], 422 );
 		} catch ( \Throwable $e ) {
+			// Log the actual error for debugging
+			error_log( 'CSS Classes API - Unexpected error: ' . $e->getMessage() );
+			error_log( 'CSS Classes API - File: ' . $e->getFile() . ':' . $e->getLine() );
+			error_log( 'CSS Classes API - Stack trace: ' . $e->getTraceAsString() );
+			
 			return new WP_REST_Response( [
 				'error' => 'Unexpected error',
-				'details' => 'An unexpected error occurred during conversion',
+				'details' => 'An unexpected error occurred during conversion: ' . $e->getMessage(),
 				'logs' => [ 'css' => $css_path ],
 				'css_preview' => substr( $css, 0, 200 ) . ( strlen( $css ) > 200 ? '...' : '' ),
 			], 500 );

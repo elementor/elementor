@@ -58,6 +58,8 @@ class Module extends BaseModule {
 		
 		$this->load_required_dependencies();
 		$this->initialize_widgets_route();
+		$this->initialize_classes_route();
+		$this->initialize_variables_route();
 	}
 
 	private function can_initialize_routes(): bool {
@@ -103,6 +105,16 @@ class Module extends BaseModule {
 			'/services/widgets/widget-mapper.php',
 			'/services/widgets/widget-creator.php',
 			'/services/widgets/widget-conversion-service.php',
+			'/services/global-classes/class-conversion-service.php',
+			'/services/variables/variable-conversion-service.php',
+			'/convertors/variables/variable_convertor_interface.php',
+			'/convertors/variables/convertors/abstract_variable_convertor.php',
+			'/convertors/variables/convertors/color_hex_variable_convertor.php',
+			'/convertors/variables/convertors/color_rgb_variable_convertor.php',
+			'/convertors/variables/convertors/color_rgba_variable_convertor.php',
+			'/convertors/variables/convertors/length_size_viewport_variable_convertor.php',
+			'/convertors/variables/convertors/percentage_variable_convertor.php',
+			'/convertors/variables/variable_convertor_registry.php',
 		];
 	}
 
@@ -128,12 +140,50 @@ class Module extends BaseModule {
 		}
 	}
 
+	private function initialize_classes_route(): void {
+		$classes_route_file = __DIR__ . '/routes/classes-route.php';
+		
+		if ( ! file_exists( $classes_route_file ) ) {
+			$this->handle_classes_route_missing();
+			return;
+		}
+		
+		require_once $classes_route_file;
+		
+		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Classes_Route' ) ) {
+			$this->classes_route = new \Elementor\Modules\CssConverter\Routes\Classes_Route();
+		}
+	}
+
+	private function initialize_variables_route(): void {
+		$variables_route_file = __DIR__ . '/routes/variables-route.php';
+		
+		if ( ! file_exists( $variables_route_file ) ) {
+			$this->handle_variables_route_missing();
+			return;
+		}
+		
+		require_once $variables_route_file;
+		
+		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Variables_Route' ) ) {
+			$this->variables_route = new \Elementor\Modules\CssConverter\Routes\Variables_Route();
+		}
+	}
+
 	private function handle_initialization_failure(): void {
 		error_log( 'CSS Converter module: Cannot initialize - missing required directories or functions' );
 	}
 
 	private function handle_widgets_route_missing(): void {
 		error_log( 'CSS Converter module: Widgets route file not found' );
+	}
+
+	private function handle_classes_route_missing(): void {
+		error_log( 'CSS Converter module: Classes route file not found' );
+	}
+
+	private function handle_variables_route_missing(): void {
+		error_log( 'CSS Converter module: Variables route file not found' );
 	}
 
 	public function get_variables_route() {

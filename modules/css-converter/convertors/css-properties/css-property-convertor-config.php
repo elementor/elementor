@@ -34,7 +34,9 @@ class Css_Property_Convertor_Config {
 			'total_properties' => 50,
 			'system_version' => '2.0.0-bridge',
 			'integration_mode' => 'bridge_mode',
-			'legacy_compatibility' => true
+			'legacy_compatibility' => true,
+			'max_css_size' => 5 * 1024 * 1024, // 5MB
+			'log_directory' => 'logs'
 		];
 	}
 
@@ -88,5 +90,13 @@ class Css_Property_Convertor_Config {
 			'interaction_css_properties_count' => 5,
 			'animation_css_properties_count' => 5
 		];
+	}
+
+	public function get_max_css_size(): int {
+		return $this->config['max_css_size'] ?? 5 * 1024 * 1024; // 5MB default
+	}
+
+	public function get_log_directory(): string {
+		return $this->config['log_directory'] ?? 'logs';
 	}
 }

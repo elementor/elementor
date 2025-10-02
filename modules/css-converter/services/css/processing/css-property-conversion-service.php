@@ -50,6 +50,28 @@ class Css_Property_Conversion_Service {
 		return $this->property_mapper_registry->resolve( $property, $value );
 	}
 
+	private function can_convert_to_schema( ?object $mapper ): bool {
+		return null !== $mapper && method_exists( $mapper, 'convert_to_schema' );
+	}
+
+	private function attempt_schema_conversion( object $mapper, string $property, $value ): ?array {
+		if ( method_exists( $mapper, 'convert_to_schema' ) ) {
+			$schema_result = $mapper->convert_to_schema( $property, $value );
+			
+			if ( $this->is_valid_schema_result( $schema_result ) ) {
+				$this->record_conversion_success();
+				return $schema_result;
+			}
+		}
+		
+		$this->record_conversion_failure( $property, $value, 'Schema conversion failed' );
+		return null;
+	}
+
+	private function is_valid_schema_result( $result ): bool {
+		return ! empty( $result ) && is_array( $result );
+	}
+
 
 	private function record_conversion_success(): void {
 		$this->conversion_stats['properties_converted']++;

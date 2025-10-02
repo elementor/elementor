@@ -109,8 +109,8 @@ class Class_Conversion_Service {
 				$value = $this->resolve_css_variables( $value, $css_variables );
 			}
 
-			if ( $this->property_conversion_service->is_property_supported( $property, $value ) ) {
-				$mapped = $this->property_conversion_service->convert_property_to_schema( $property, $value );
+			if ( $this->property_conversion_service->supports_v4_conversion( $property, $value ) ) {
+				$mapped = $this->property_conversion_service->convert_property_to_v4_atomic( $property, $value );
 
 				if ( $mapped ) {
 					$schema_properties = array_merge( $schema_properties, [ $property => $mapped ] );

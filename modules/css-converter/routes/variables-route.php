@@ -177,7 +177,7 @@ class Variables_Route {
 			];
 		}
 
-		$converted = Variable_Conversion_Service::convert_to_editor_variables( $normalized );
+		$converted = \Elementor\Modules\CssConverter\Services\Variables\Variable_Conversion_Service::convert_to_editor_variables( $normalized );
 
 		$results = [
 			'success' => true,
@@ -282,10 +282,14 @@ class Variables_Route {
 	}
 
 	private function ensure_logs_directory(): string {
-		$logs_dir = __DIR__ . '/../logs';
+		// Use WordPress uploads directory for logs
+		$upload_dir = wp_upload_dir();
+		$logs_dir = $upload_dir['basedir'] . '/elementor-css-converter-logs';
+		
 		if ( ! file_exists( $logs_dir ) ) {
 			wp_mkdir_p( $logs_dir );
 		}
+		
 		return $logs_dir;
 	}
 

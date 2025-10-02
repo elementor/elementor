@@ -80,7 +80,7 @@ class Widgets_Route {
 						'createGlobalClasses' => [
 							'type' => 'boolean',
 							'default' => true,
-							'description' => 'Whether to create global classes from CSS classes',
+							'description' => 'Always creates optimized widget styles (deprecated: false option removed)',
 						],
 						'timeout' => [
 							'type' => 'integer',

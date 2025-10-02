@@ -133,9 +133,8 @@ class Widget_Conversion_Service {
 				$conversion_log['warnings'] = array_merge( $conversion_log['warnings'], $validation_issues );
 			}
 
-		// Step 3: Extract and process CSS
-		$create_global_classes = $options['createGlobalClasses'] ?? true;
-		$all_css = $this->extract_all_css( $html, $css_urls, $follow_imports, $elements, $create_global_classes );
+		// Step 3: Extract and process CSS (always using optimized global classes pipeline)
+		$all_css = $this->extract_all_css( $html, $css_urls, $follow_imports, $elements, true );
 		$conversion_log['css_size'] = strlen( $all_css );
 
 			// Step 4: Map HTML elements to widgets
@@ -155,11 +154,8 @@ class Widget_Conversion_Service {
 		// Step 6: Apply CSS styles to widgets based on specificity
 		$styled_widgets = $this->apply_css_to_widgets( $mapped_widgets, $css_processing_result );
 		
-		// Step 6.5: Apply inline styles directly to widgets when not using global classes
-		$create_global_classes = $options['createGlobalClasses'] ?? true;
-		if ( ! $create_global_classes ) {
-			$styled_widgets = $this->apply_inline_styles_to_widgets( $styled_widgets, $elements );
-		}
+		// Step 6.5: Inline styles are now always processed through the optimized global classes pipeline
+		// The createGlobalClasses: false option has been removed for better performance and consistency
 
 			// Step 7: Create Elementor widgets in draft mode (HVV requirement)
 			$creation_result = $this->widget_creator->create_widgets( $styled_widgets, $css_processing_result, $options );
@@ -276,48 +272,9 @@ class Widget_Conversion_Service {
 		return $widgets;
 	}
 
-	private function apply_inline_styles_to_widgets( $widgets, $elements ) {
-		// Apply inline CSS directly to widgets when createGlobalClasses is false
-		// This bypasses the CSS rule matching and applies styles directly
-		
-		
-		// Apply inline styles recursively through the element/widget hierarchy
-		return $this->apply_inline_styles_recursive( $widgets, $elements );
-	}
-
-	private function apply_inline_styles_recursive( $widgets, $elements ) {
-		// Match widgets to elements by hierarchy position
-		
-		foreach ( $widgets as $widget_index => &$widget ) {
-			
-			if ( isset( $elements[ $widget_index ] ) ) {
-				$element = $elements[ $widget_index ];
-				
-				if ( ! empty( $element['inline_css'] ) ) {
-					
-					// Convert inline CSS to computed styles format
-					$inline_computed_styles = $this->convert_inline_css_to_computed_styles( $element['inline_css'] );
-					
-					// Add to existing applied_styles or create new
-					if ( ! isset( $widget['applied_styles'] ) ) {
-						$widget['applied_styles'] = [];
-					}
-					
-					// Merge with existing computed styles (inline styles have high priority)
-					$existing_computed = $widget['applied_styles']['computed_styles'] ?? [];
-					$widget['applied_styles']['computed_styles'] = array_merge( $existing_computed, $inline_computed_styles );
-					
-				}
-				
-				// Process children recursively
-				if ( ! empty( $widget['children'] ) && ! empty( $element['children'] ) ) {
-					$widget['children'] = $this->apply_inline_styles_recursive( $widget['children'], $element['children'] );
-				}
-			}
-		}
-		
-		return $widgets;
-	}
+	// REMOVED: apply_inline_styles_to_widgets and apply_inline_styles_recursive methods
+	// These methods are no longer needed since createGlobalClasses: false option was removed
+	// All styling now goes through the optimized global classes pipeline
 
 
 	private function convert_inline_css_to_computed_styles( $inline_css ) {
