@@ -353,25 +353,17 @@ class Widget_Creator {
 		// V4 atomic widgets: Add classes array with proper $$type wrapper
 		$classes = [];
 
-		// Add global classes (applied_styles['global_classes'] contains class names array from CSS processor)
-		if ( ! empty( $applied_styles['global_classes'] ) ) {
-			// Generate a unique class ID for this widget that will be used in the styles section
+		// Determine if this widget needs a class ID for styling
+		$has_global_classes = ! empty( $applied_styles['global_classes'] );
+		$has_computed_styles = ! empty( $applied_styles['computed_styles'] ) || ! empty( $applied_styles['id_styles'] );
+		
+		if ( $has_global_classes || $has_computed_styles ) {
+			// Generate a single unique class ID for this widget (avoid duplicates)
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
 			}
 			
-			// Use the generated class ID instead of the global class names
-			$classes[] = $this->current_widget_class_id;
-		}
-
-		// Generate a single class ID for this widget that will be used consistently
-		$needs_class_id = ! empty( $applied_styles['computed_styles'] ) || ! empty( $applied_styles['id_styles'] );
-		
-		if ( $needs_class_id ) {
-			// Generate class ID only once and store it for consistent use
-			if ( empty( $this->current_widget_class_id ) ) {
-				$this->current_widget_class_id = $this->generate_unique_class_id();
-			}
+			// Add the class ID only once, regardless of whether it's for global classes or computed styles
 			$classes[] = $this->current_widget_class_id;
 		}
 

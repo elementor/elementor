@@ -61,19 +61,16 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// For simple border-radius values (like "10px"), use Size_Prop_Type as per atomic button example
+		// For simple border-radius values (like "10px"), use Size_Prop_Type directly
 		if ( 'border-radius' === $property && $this->is_simple_border_radius( $value ) ) {
 			$size_value = $this->parse_size_value( $value );
 			if ( null === $size_value ) {
 				return null;
 			}
-			// Return atomic result directly like the working size mapper
-			return [
-				'property' => 'border-radius',
-				'value' => Size_Prop_Type::make()
-					->units( Size_Constants::border() )
-					->generate( $size_value )
-			];
+			// Return atomic prop type result directly (no property wrapper)
+			return Size_Prop_Type::make()
+				->units( Size_Constants::border() )
+				->generate( $size_value );
 		}
 
 		// For individual corner properties, create Border_Radius_Prop_Type structure

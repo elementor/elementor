@@ -137,21 +137,41 @@ class Widget_Conversion_Service {
 		$all_css = $this->extract_all_css( $html, $css_urls, $follow_imports, $elements, true );
 		$conversion_log['css_size'] = strlen( $all_css );
 
-			// Step 4: Map HTML elements to widgets
-			$mapped_widgets = $this->widget_mapper->map_elements( $elements );
-			$mapping_stats = $this->widget_mapper->get_mapping_stats( $elements );
-			$conversion_log['mapping_stats'] = $mapping_stats;
+		// Step 4: Map HTML elements to widgets
+		error_log( "WIDGET_CONVERTER_DEBUG: Starting widget mapping for " . count( $elements ) . " elements" );
+		$mapped_widgets = $this->widget_mapper->map_elements( $elements );
+		$mapping_stats = $this->widget_mapper->get_mapping_stats( $elements );
+		$conversion_log['mapping_stats'] = $mapping_stats;
+		
+		// DEBUG: Log mapped widgets structure (can be removed in production)
+		// error_log( "WIDGET_CONVERTER_DEBUG: Mapped " . count( $mapped_widgets ) . " widgets" );
+		// foreach ( $mapped_widgets as $index => $widget ) {
+		//	$widget_type = $widget['widget_type'] ?? 'unknown';
+		//	$widget_id = $widget['attributes']['id'] ?? 'no-id';
+		//	$generated_class = $widget['generated_class'] ?? 'no-class';
+		//	error_log( "WIDGET_CONVERTER_DEBUG: Widget #{$index} - Type: {$widget_type}, ID: {$widget_id}, Generated Class: {$generated_class}" );
+		// }
 
 		// Step 5: Process CSS and create global classes (HVV: threshold = 1)
+		error_log( "WIDGET_CONVERTER_DEBUG: Processing CSS (" . strlen( $all_css ) . " characters)" );
+		error_log( "WIDGET_CONVERTER_DEBUG: CSS content preview:\n" . substr( $all_css, 0, 500 ) . ( strlen( $all_css ) > 500 ? '...' : '' ) );
+		
 		$css_processing_result = $this->css_processor->process_css_for_widgets( $all_css, $mapped_widgets );
 		$conversion_log['css_processing'] = $css_processing_result['stats'];
 		
 		// Debug logging for CSS processing result
+		error_log( "WIDGET_CONVERTER_DEBUG: CSS processing completed" );
+		error_log( "WIDGET_CONVERTER_DEBUG: Global classes found: " . count( $css_processing_result['global_classes'] ?? [] ) );
+		error_log( "WIDGET_CONVERTER_DEBUG: Widget styles found: " . count( $css_processing_result['widget_styles'] ?? [] ) );
+		
 		if ( isset( $css_processing_result['global_classes'] ) ) {
-		} else {
+			foreach ( $css_processing_result['global_classes'] as $class_name => $class_data ) {
+				error_log( "WIDGET_CONVERTER_DEBUG: Global class: {$class_name} with " . count( $class_data['properties'] ?? [] ) . " properties" );
+			}
 		}
 
 		// Step 6: Apply CSS styles to widgets based on specificity
+		error_log( "WIDGET_CONVERTER_DEBUG: Applying CSS styles to widgets" );
 		$styled_widgets = $this->apply_css_to_widgets( $mapped_widgets, $css_processing_result );
 		
 		// Step 6.5: Inline styles are now always processed through the optimized global classes pipeline
@@ -217,14 +237,24 @@ class Widget_Conversion_Service {
 		return $all_css;
 	}
 
-	private function extract_inline_css_from_elements( &$elements ) {
+	private function extract_inline_css_from_elements( &$elements, &$element_counter = null ) {
 		$inline_css = '';
-		$element_counter = 0;
+		
+		// Initialize counter if not passed from parent call
+		if ( null === $element_counter ) {
+			$element_counter = 0;
+		}
 
 		foreach ( $elements as &$element ) {
 			if ( ! empty( $element['inline_css'] ) ) {
 				
 				$element_counter++;
+				
+				// DEBUG: Log element details (can be removed in production)
+				$element_tag = $element['tag'] ?? 'unknown';
+				$element_id = $element['attributes']['id'] ?? 'no-id';
+				// error_log( "WIDGET_CONVERTER_DEBUG: Processing inline CSS for element #{$element_counter} - Tag: {$element_tag}, ID: {$element_id}" );
+				// error_log( "WIDGET_CONVERTER_DEBUG: Inline CSS properties: " . wp_json_encode( array_keys( $element['inline_css'] ) ) );
 				
 				// Create a unique class name for this element
 				$class_name = 'inline-element-' . $element_counter;
@@ -235,10 +265,17 @@ class Widget_Conversion_Service {
 					$value = $style_data['value'];
 					$important = $style_data['important'] ? ' !important' : '';
 					$css_rules[] = "  {$property}: {$value}{$important};";
+					
+					// DEBUG: Log each property conversion (can be removed in production)
+					// error_log( "WIDGET_CONVERTER_DEBUG: Converting property: {$property} = {$value}" . ( $important ? ' !important' : '' ) );
 				}
 				
 				if ( ! empty( $css_rules ) ) {
-					$inline_css .= ".{$class_name} {\n" . implode( "\n", $css_rules ) . "\n}\n\n";
+					$css_rule_block = ".{$class_name} {\n" . implode( "\n", $css_rules ) . "\n}\n\n";
+					$inline_css .= $css_rule_block;
+					
+					// DEBUG: Log generated CSS rule (can be removed in production)
+					// error_log( "WIDGET_CONVERTER_DEBUG: Generated CSS rule for {$class_name}:\n{$css_rule_block}" );
 					
 					// Store the class name in the element for later reference
 					$element['generated_class'] = $class_name;
@@ -246,9 +283,9 @@ class Widget_Conversion_Service {
 			} else {
 			}
 			
-			// Process child elements recursively
+			// Process child elements recursively, passing the counter by reference
 			if ( ! empty( $element['children'] ) ) {
-				$child_css = $this->extract_inline_css_from_elements( $element['children'] );
+				$child_css = $this->extract_inline_css_from_elements( $element['children'], $element_counter );
 				$inline_css .= $child_css;
 			}
 		}
@@ -260,8 +297,24 @@ class Widget_Conversion_Service {
 		// Apply CSS styles to widgets based on specificity priority
 		// HVV requirement: !important > inline > ID > class > element
 		
-		foreach ( $widgets as &$widget ) {
+		foreach ( $widgets as $index => &$widget ) {
+			$widget_type = $widget['widget_type'] ?? 'unknown';
+			$widget_id = $widget['attributes']['id'] ?? 'no-id';
+			$generated_class = $widget['generated_class'] ?? 'no-class';
+			
+			error_log( "WIDGET_CONVERTER_DEBUG: Applying styles to widget #{$index} - Type: {$widget_type}, ID: {$widget_id}, Generated Class: {$generated_class}" );
+			
 			$widget['applied_styles'] = $this->css_processor->apply_styles_to_widget( $widget, $css_processing_result );
+			
+			// DEBUG: Log applied styles summary
+			$applied = $widget['applied_styles'];
+			$computed_count = count( $applied['computed_styles'] ?? [] );
+			$global_classes_count = count( $applied['global_classes'] ?? [] );
+			error_log( "WIDGET_CONVERTER_DEBUG: Widget #{$index} received {$computed_count} computed styles and {$global_classes_count} global classes" );
+			
+			if ( ! empty( $applied['computed_styles'] ) ) {
+				error_log( "WIDGET_CONVERTER_DEBUG: Widget #{$index} computed styles: " . wp_json_encode( array_keys( $applied['computed_styles'] ) ) );
+			}
 			
 			// Recursively apply styles to nested children
 			if ( ! empty( $widget['children'] ) ) {

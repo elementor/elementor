@@ -186,7 +186,6 @@ class Widget_Hierarchy_Processor {
 					'text' => $widget['settings']['text'] ?? 'This is a title', // Keep both for compatibility
 					'tag' => $widget['settings']['tag'] ?? 'h2',
 					'level' => $widget['settings']['level'] ?? 2,
-					'classes' => [],
 					'link' => null,
 					'attributes' => null,
 				];
@@ -194,7 +193,6 @@ class Widget_Hierarchy_Processor {
 		case 'e-paragraph':
 			$defaults = [
 				'paragraph' => $widget['settings']['paragraph'] ?? 'Type your paragraph here',
-				'classes' => [],
 				'link' => null,
 				'attributes' => null,
 			];
@@ -202,7 +200,6 @@ class Widget_Hierarchy_Processor {
 			case 'e-button':
 				$defaults = [
 					'text' => $widget['settings']['text'] ?? 'Button',
-					'classes' => [],
 					'link' => [
 						'url' => $widget['attributes']['href'] ?? '#',
 						'is_external' => false,
@@ -217,7 +214,6 @@ class Widget_Hierarchy_Processor {
 						'url' => $widget['attributes']['src'] ?? '',
 						'alt' => $widget['attributes']['alt'] ?? '',
 					],
-					'classes' => [],
 					'attributes' => null,
 				];
 				break;
