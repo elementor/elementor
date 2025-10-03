@@ -1,8 +1,10 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
+import { settingsTransformersRegistry } from '@elementor/editor-canvas';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
+import { componentIdTransformer } from './component-id-transformer';
 import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { PopulateStore } from './populate-store';
@@ -26,4 +28,6 @@ export function init() {
 		id: 'components-populate-store',
 		component: PopulateStore,
 	} );
+
+	settingsTransformersRegistry.register( 'component-id', componentIdTransformer );
 }
