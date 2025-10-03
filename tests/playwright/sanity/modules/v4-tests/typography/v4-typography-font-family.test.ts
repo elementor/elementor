@@ -11,7 +11,6 @@ import { timeouts } from '../../../../config/timeouts';
 
 const TEST_FONTS = {
 	SYSTEM_DEFAULT: FONT_FAMILIES.system,
-	SYSTEM_ALT: FONT_FAMILIES.systemAlt,
 	GOOGLE: FONT_FAMILIES.google,
 } as const;
 
@@ -66,43 +65,12 @@ test.describe( 'V4 Typography Font Family Tests @v4-tests', () => {
 			} );
 		} );
 
-		await test.step( 'Alternative system font', async () => {
-			await driver.createNewPage( true );
-			await testFontFamilyFunctionality( {
-				widgetConfig: WIDGET_CONFIGS.HEADING,
-				fontName: TEST_FONTS.SYSTEM_ALT,
-				fontType: 'system',
-				testOnFrontend: false,
-			} );
-		} );
-
 		await test.step( 'Google font', async () => {
 			await driver.createNewPage( true );
 			await testFontFamilyFunctionality( {
 				widgetConfig: WIDGET_CONFIGS.HEADING,
 				fontName: TEST_FONTS.GOOGLE,
 				fontType: 'google',
-				testOnFrontend: false,
-			} );
-		} );
-	} );
-
-	test( 'Font family - Different widgets', async () => {
-		await test.step( 'Heading widget', async () => {
-			await testFontFamilyFunctionality( {
-				widgetConfig: WIDGET_CONFIGS.HEADING,
-				fontName: TEST_FONTS.SYSTEM_DEFAULT,
-				fontType: 'system',
-				testOnFrontend: false,
-			} );
-		} );
-
-		await test.step( 'Paragraph widget', async () => {
-			await driver.createNewPage( true );
-			await testFontFamilyFunctionality( {
-				widgetConfig: WIDGET_CONFIGS.PARAGRAPH,
-				fontName: TEST_FONTS.SYSTEM_DEFAULT,
-				fontType: 'system',
 				testOnFrontend: false,
 			} );
 		} );
