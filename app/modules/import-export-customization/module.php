@@ -45,8 +45,6 @@ class Module extends BaseModule {
 
 	const DOMDOCUMENT_MISSING = 'domdocument-missing';
 
-	const MEDIA_PROCESSING_ERROR = 'media-processing-error';
-
 	const OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS = 'elementor_import_sessions';
 
 	const OPTION_KEY_ELEMENTOR_REVERT_SESSIONS = 'elementor_revert_sessions';
