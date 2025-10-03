@@ -341,16 +341,24 @@ class Widget_Mapper {
 		// 2. The element doesn't already contain paragraph-like children (h1-h6, p, blockquote)
 		
 		$text_content = trim( $element['content'] ?? '' );
+		
 		if ( empty( $text_content ) ) {
 			return false;
 		}
 
-		// Check if any children are already text-based widgets
+		// Check if any children are already text-based widgets or contain text content
 		if ( ! empty( $element['children'] ) ) {
 			foreach ( $element['children'] as $child ) {
 				$child_tag = $child['tag'] ?? '';
+				$child_content = trim($child['content'] ?? '');
+				
 				// If there are already heading or paragraph elements, don't wrap the text
 				if ( in_array( $child_tag, [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote' ], true ) ) {
+					return false;
+				}
+				
+				// 🔧 FIX: If any child has text content, don't wrap parent text (it's aggregated from children)
+				if ( !empty($child_content) ) {
 					return false;
 				}
 			}
