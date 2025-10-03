@@ -5,12 +5,14 @@ import router from '@elementor/router';
 import { ContextProvider } from './context/context';
 import Account from './pages/account';
 import HelloTheme from './pages/hello-theme';
+import ThemeSelectionVariantB from './pages/theme-selection-variant-b';
 import SiteName from './pages/site-name';
 import SiteLogo from './pages/site-logo';
 import GoodToGo from './pages/good-to-go';
 import InstallPro from './pages/upload-and-install-pro';
 import ChooseFeatures from './pages/choose-features';
 import { OnboardingEventTracking } from './utils/onboarding-event-tracking';
+import VariantRouter from './utils/variant-router';
 
 export default function App() {
 	// Send an AJAX request to update the database option which makes sure the Onboarding process only runs once,
@@ -52,7 +54,7 @@ export default function App() {
 			<LocationProvider history={ router.appHistory }>
 				<Router>
 					<Account default />
-					<HelloTheme path="hello" />
+					<VariantRouter path="hello" componentA={ HelloTheme } componentB={ ThemeSelectionVariantB } />
 					<ChooseFeatures path="chooseFeatures" />
 					<SiteName path="siteName" />
 					<SiteLogo path="siteLogo" />
