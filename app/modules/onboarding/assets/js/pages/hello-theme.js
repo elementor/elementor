@@ -4,8 +4,9 @@ import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import Layout from '../components/layout/layout';
-import PageContentLayout from '../components/layout/page-content-layout';
-import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
+import ThemeSelectionContentA from '../components/theme-selection-content-a';
+import ThemeSelectionContentB from '../components/theme-selection-content-b';
+import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../utils/onboarding-event-tracking';
 
 export default function HelloTheme() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
@@ -270,27 +271,16 @@ export default function HelloTheme() {
 		}
 	}, [ activateHelloThemeAjaxState.status ] );
 
+	const variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.AB_TEST_VARIANT );
+	const ContentComponent = 'B' === variant ? ThemeSelectionContentB : ThemeSelectionContentA;
+
 	return (
 		<Layout pageId={ pageId } nextStep={ nextStep }>
-			<PageContentLayout
-				image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Hello_Biz.svg' }
-				title={ __( 'Every site starts with a theme.', 'elementor' ) }
+			<ContentComponent
 				actionButton={ actionButton }
 				skipButton={ skipButton }
 				noticeState={ noticeState }
-			>
-				<p>
-					{ __( 'Hello Biz by Elementor helps you launch your professional business website - fast.', 'elementor' ) }
-				</p>
-				{ ! elementorAppConfig.onboarding.experiment && <p>
-					{ __( 'Here\'s why:', 'elementor' ) }
-				</p> }
-				<ul className="e-onboarding__feature-list">
-					<li>{ __( 'Get online faster', 'elementor' ) }</li>
-					<li>{ __( 'Lightweight and fast loading', 'elementor' ) }</li>
-					<li>{ __( 'Great for SEO', 'elementor' ) }</li>
-				</ul>
-			</PageContentLayout>
+			/>
 			<div className="e-onboarding__footnote">
 				{ '* ' + __( 'You can switch your theme later on', 'elementor' ) }
 			</div>
