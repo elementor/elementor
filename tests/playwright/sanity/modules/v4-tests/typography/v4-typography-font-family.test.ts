@@ -108,7 +108,7 @@ test.describe( 'V4 Typography Font Family Tests @v4-tests', () => {
 		} );
 	} );
 
-	test.skip( 'Font family - Frontend verification', async () => {
+	test( 'Font family - Frontend verification', async () => {
 		await testFontFamilyFunctionality( {
 			widgetConfig: WIDGET_CONFIGS.HEADING,
 			fontName: TEST_FONTS.SYSTEM_DEFAULT,
