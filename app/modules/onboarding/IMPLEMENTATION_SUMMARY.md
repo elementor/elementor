@@ -20,20 +20,20 @@ Created a new API class that:
 ### 2. Modified: `module.php`
 Updated the onboarding module to:
 - Import `EditorAssetsAPI` class
-- Add private `$api` property to store API instance
+- Add private `$editor_assets_api` property to store API instance
 - Modified `is_ab_test_enabled()` to read from editor assets via API
-- Added `get_api()` method to initialize API with EditorAssetsAPI
-- Added `get_api_config()` to configure the editor assets URL and cache key
+- Added `get_editor_assets_api()` method to initialize API with EditorAssetsAPI
+- Added `get_editor_assets_api_config()` to configure the editor assets URL and cache key
 
 ## How It Works
 
 ### Data Flow
-1. `is_ab_test_enabled()` calls `get_api()`
-2. `get_api()` creates `EditorAssetsAPI` with configuration
+1. `is_ab_test_enabled()` calls `get_editor_assets_api()`
+2. `get_editor_assets_api()` creates `EditorAssetsAPI` with configuration
 3. `EditorAssetsAPI` fetches data from `https://assets.elementor.com/ab-testing/v1/ab-testing.json`
 4. Data is cached for **1 hour** (via `EditorAssetsAPI::get_assets_data()`)
 5. API extracts `coreOnboarding` value from first array item
-6. Result can be filtered via `elementor/onboarding/ab_test_enabled` filter
+6. Result is returned directly as boolean
 
 ### Configuration
 ```php
@@ -70,9 +70,6 @@ This implementation follows the same pattern as the `home` module:
 3. Extract relevant data from JSON response
 4. Provide typed methods for accessing specific configuration values
 
-## Filter Hooks
-- `elementor/onboarding/ab_testing_data` - Filter raw AB testing data before extraction
-- `elementor/onboarding/ab_test_enabled` - Filter final AB test enabled state
 
 ## Testing
 Verify integration by:

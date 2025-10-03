@@ -27,7 +27,7 @@ class Module extends BaseModule {
 	const VERSION = '1.0.0';
 	const ONBOARDING_OPTION = 'elementor_onboarded';
 
-	private ?API $api = null;
+	private ?API $editor_assets_api = null;
 
 	/**
 	 * Get name.
@@ -42,33 +42,31 @@ class Module extends BaseModule {
 	}
 
 	private function is_ab_test_enabled() {
-		$api = $this->get_api();
+		$editor_assets_api = $this->get_editor_assets_api();
 
-		if ( null === $api ) {
-			return apply_filters( 'elementor/onboarding/ab_test_enabled', false );
+		if ( null === $editor_assets_api ) {
+			return false;
 		}
 
-		$is_active_from_assets = $api->is_core_onboarding_enabled();
-
-		return apply_filters( 'elementor/onboarding/ab_test_enabled', $is_active_from_assets );
+		return $editor_assets_api->is_core_onboarding_enabled();
 	}
 
 	private function get_ab_test_variant_override() {
 		return apply_filters( 'elementor/onboarding/ab_test_variant', null );
 	}
 
-	private function get_api(): ?API {
-		if ( null !== $this->api ) {
-			return $this->api;
+	private function get_editor_assets_api(): ?API {
+		if ( null !== $this->editor_assets_api ) {
+			return $this->editor_assets_api;
 		}
 
-		$editor_assets_api = new EditorAssetsAPI( $this->get_api_config() );
-		$this->api = new API( $editor_assets_api );
+		$editor_assets_api_instance = new EditorAssetsAPI( $this->get_editor_assets_api_config() );
+		$this->editor_assets_api = new API( $editor_assets_api_instance );
 
-		return $this->api;
+		return $this->editor_assets_api;
 	}
 
-	private function get_api_config(): array {
+	private function get_editor_assets_api_config(): array {
 		return [
 			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/ab-testing/v1/ab-testing.json',
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_ab_testing_data',

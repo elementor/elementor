@@ -17,14 +17,14 @@
 | **Scope** | Onboarding events only | Modify event-dispatcher.js |
 | **Null Handling** | Send null | Better analytics filtering |
 | **Testing** | Manual with test plan | Comprehensive 5-test suite |
-| **Rollout** | Feature flag with hooks | Flexible, gradual rollout |
+| **Rollout** | Feature flag | Flexible, gradual rollout |
 
 ### Implementation Summary:
 - **5 files to modify** (storage-manager.js, event-dispatcher.js, onboarding-tracker.js, hello-theme.js, module.php)
 - **Estimated time**: 4-6 hours
 - **Risk level**: LOW
 - **Complexity**: Medium
-- **Feature flag**: `elementor/onboarding/ab_test_enabled` filter
+- **Feature flag**: PHP config via `abTestEnabled`
 
 ---
 
@@ -656,26 +656,26 @@ elementorAppConfig?.onboarding?.abTestEnabled
 **How should we roll this out?**
 Behind a feature flag. Create a function for this, where we can hook into some logic later.
 
-**✅ PERFECT! Feature flag with hooks is the professional approach.**
+**✅ PERFECT! Feature flag is the professional approach.**
 
-**Three-Layer Feature Flag Architecture:**
+**Two-Layer Feature Flag Architecture:**
 
-**Layer 1: PHP Feature Flag with Hooks**
+**Layer 1: PHP Feature Flag**
 ```php
 // In module.php
 private function is_ab_test_enabled() {
-    // Hook for custom logic - allows dynamic control
-    $enabled = apply_filters('elementor/onboarding/ab_test_enabled', false);
-    
-    // Alternative: Use Elementor experiments system
-    // $enabled = Plugin::$instance->experiments->is_feature_active('onboarding_ab_test');
-    
-    return $enabled;
+    $editor_assets_api = $this->get_editor_assets_api();
+
+    if ( null === $editor_assets_api ) {
+        return false;
+    }
+
+    return $editor_assets_api->is_core_onboarding_enabled();
 }
 
 private function get_ab_test_variant_override() {
-    // Hook for manual variant override (testing)
-    return apply_filters('elementor/onboarding/ab_test_variant', null);
+    // For manual variant override (testing) - can be expanded later
+    return null;
 }
 
 // In set_onboarding_settings() around line 72
@@ -690,10 +690,10 @@ Plugin::$instance->app->set_settings('onboarding', [
 ```javascript
 // In onboarding-tracker.js
 isAbTestEnabled() {
-    // Check PHP config first
+    // Check PHP config
     const phpEnabled = elementorAppConfig?.onboarding?.abTestEnabled || false;
     
-    // Allow window override for testing (Layer 3)
+    // Allow window override for testing
     if (window.elementorAbTestOverride !== undefined) {
         return window.elementorAbTestOverride;
     }
@@ -714,7 +714,7 @@ assignExperimentVariant() {
 }
 ```
 
-**Layer 3: Testing/Debug Overrides**
+**Testing/Debug Overrides:**
 ```javascript
 // In browser console for quick testing:
 
@@ -724,73 +724,41 @@ window.elementorAbTestOverride = true;
 // Disable experiment  
 window.elementorAbTestOverride = false;
 
-// Force specific variant (with PHP override)
+// Force specific variant (modify config)
 elementorAppConfig.onboarding.abVariant = 'A';
 
 // Reset
 delete window.elementorAbTestOverride;
 ```
 
-**Hook Usage Examples:**
-
-```php
-// Example 1: Enable for all users
-add_filter('elementor/onboarding/ab_test_enabled', '__return_true');
-
-// Example 2: Enable for 50% of users (percentage rollout)
-add_filter('elementor/onboarding/ab_test_enabled', function() {
-    return (rand(0, 100) < 50);
-});
-
-// Example 3: Enable for specific user IDs
-add_filter('elementor/onboarding/ab_test_enabled', function() {
-    $user_id = get_current_user_id();
-    $test_users = [1, 2, 3, 10, 25];
-    return in_array($user_id, $test_users);
-});
-
-// Example 4: Enable after specific date
-add_filter('elementor/onboarding/ab_test_enabled', function() {
-    return time() > strtotime('2025-03-01');
-});
-
-// Example 5: Force variant A for testing
-add_filter('elementor/onboarding/ab_test_variant', function() {
-    return 'A';
-});
-```
-
 **Rollout Stages:**
 
 ```
 Stage 1: Internal Testing (Week 1)
-  - Feature flag OFF by default
-  - Enable via filter for dev team only
-  - Test variants A & B thoroughly
+  - Feature flag OFF by default (editor assets API returns false)
+  - Test variants A & B thoroughly internally
 
 Stage 2: Soft Launch (Week 2)
-  - Enable for 10% of users via percentage filter
+  - Enable via editor assets API for small percentage
   - Monitor Mixpanel for issues
 
 Stage 3: Gradual Rollout (Week 3-4)
-  - Increase to 50%, then 100%
+  - Increase to 50%, then 100% via editor assets API
   - Monitor distribution and data quality
 
 Stage 4: Full Rollout
-  - Enable by default
-  - Remove filter or set to true
+  - Enable by default via editor assets API
 ```
 
 **Benefits of This Approach:**
-- ✅ **Flexible** - Can enable/disable without code deployment
-- ✅ **Testable** - Multiple override layers for testing
-- ✅ **Gradual** - Can roll out to percentage of users
-- ✅ **Targetable** - Can enable for specific users/conditions
-- ✅ **Emergency off** - Can disable instantly via filter
+- ✅ **Flexible** - Can enable/disable via editor assets API without code deployment
+- ✅ **Testable** - Override layers for testing
+- ✅ **Centralized** - Controlled via editor assets configuration
+- ✅ **Emergency off** - Can disable instantly via API update
 
-- [x] **A) Behind a feature flag with hooks - CONFIRMED**
-- [ ] B) Percentage-based rollout (Can add via filter)
-- [ ] C) Specific users/sites only (Can add via filter)
+- [x] **A) Behind a feature flag - CONFIRMED**
+- [ ] B) Percentage-based rollout (Via editor assets API)
+- [ ] C) Specific users/sites only (Via editor assets API)
 - [ ] D) Full rollout immediately
 
 ---
@@ -1022,10 +990,10 @@ Assuming all questions answered:
   - [ ] Add `OnboardingEventTracking.sendExperimentStarted()` call
   
 ### Phase 5: Feature Flag (PHP)
-- [ ] Modify `module.php`
-  - [ ] Add `is_ab_test_enabled()` method
-  - [ ] Add `get_ab_test_variant_override()` method
-  - [ ] Add to `set_onboarding_settings()`
+- [ ] Verify `module.php` has correct implementation
+  - [ ] Verify `is_ab_test_enabled()` method reads from API
+  - [ ] Verify `get_ab_test_variant_override()` method exists
+  - [ ] Verify `set_onboarding_settings()` includes both values
 
 ### Phase 6: Testing
 - [ ] Test 1: Variant A flow

@@ -13,8 +13,6 @@ class API {
 	public function get_ab_testing_data( $force_request = false ): array {
 		$assets_data = $this->editor_assets_api->get_assets_data( $force_request );
 
-		$assets_data = apply_filters( 'elementor/onboarding/ab_testing_data', $assets_data );
-
 		return $this->extract_ab_testing_config( $assets_data );
 	}
 
