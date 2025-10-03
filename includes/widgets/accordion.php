@@ -75,7 +75,7 @@ class Widget_Accordion extends Widget_Base {
 	}
 
 	protected function is_dynamic_content(): bool {
-		return true;
+		return false;
 	}
 
 	/**
