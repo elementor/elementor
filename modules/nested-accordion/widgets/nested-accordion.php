@@ -31,10 +31,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 	private $optimized_markup = null;
 	private $widget_container_selector = '';
 
-	protected function is_dynamic_content(): bool {
-		return true;
-	}
-
 	public function get_name() {
 		return 'nested-accordion';
 	}
@@ -326,7 +322,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			[
 				'type' => Controls_Manager::ALERT,
 				'alert_type' => 'info',
-				'content' => esc_html__( 'Google no longer supports the FAQ schema; however, it may still hold secondary value for AI and LLMs.', 'elementor' ),
+				'content' => esc_html__( 'Let Google know that this section contains an FAQ. Make sure to only use it only once per page', 'elementor' ),
 				'condition' => [
 					'faq_schema[value]' => 'yes',
 				],
