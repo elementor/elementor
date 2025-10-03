@@ -13,5 +13,4 @@ export {
 	ELEMENTS_STYLES_PROVIDER_KEY_PREFIX,
 	ELEMENTS_STYLES_RESERVED_LABEL,
 } from './providers/document-elements-styles-provider';
-
 export { init } from './init';

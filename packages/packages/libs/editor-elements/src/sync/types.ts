@@ -54,6 +54,10 @@ export type V1ElementModelProps = {
 	editor_settings?: V1ElementEditorSettingsProps;
 };
 
+export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
+	elements?: V1ElementData[];
+};
+
 export type V1ElementEditorSettingsProps = {
 	title?: string;
 };
