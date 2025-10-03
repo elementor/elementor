@@ -24,18 +24,29 @@ All supported CSS properties from ID selectors now work correctly in the `/wp-js
 - `services/atomic-widgets-v2/css-to-atomic-props-converter.php`
 - `services/widgets/widget-creator.php`
 
-### 2. **Text-Shadow** - ⚠️ Not Supported
-**Status**: Text-shadow is **not supported** by Elementor's Atomic Widgets style schema.
+### 2. **Text-Shadow** - ⚠️ Awaiting Atomic Widget Support
+**Status**: Text-shadow mapper is **ready and waiting** for Elementor's Atomic Widgets to add schema support.
+
+**Current State**:
+- ✅ **CSS Converter Ready**: Property mapper implemented and registered
+- ✅ **Correct Format**: Converts text-shadow to atomic format using `Shadow_Prop_Type`
+- ✅ **Database Storage**: Text-shadow values are saved in widget styles
+- ❌ **Schema Missing**: Atomic style schema doesn't include `text-shadow` property
+- ❌ **No Rendering**: Atomic widgets don't render text-shadow (schema limitation)
 
 **Explanation**:
 - The style schema (`plugins/elementor/modules/atomic-widgets/styles/style-schema.php`) only defines `box-shadow`, not `text-shadow`
-- While we created a text-shadow property mapper and it converts correctly to atomic format, the atomic widgets system cannot render it
-- This is a limitation of the atomic widgets themselves, not the CSS Converter
+- `Shadow_Prop_Type` exists and supports the correct structure for text shadows
+- Only a one-line addition to the schema is needed: `'text-shadow' => Shadow_Prop_Type::make()`
+- This is a limitation of the atomic widgets system, not the CSS Converter
 
-**Mapper Created**: `convertors/css-properties/properties/text-shadow-property-mapper.php`
-- The mapper exists and converts text-shadow to atomic format correctly
-- It's registered in the property mapper registry
-- However, the atomic style schema doesn't support rendering it
+**Mapper Location**: `convertors/css-properties/properties/text-shadow-property-mapper.php`
+- ✅ Mapper exists and converts correctly
+- ✅ Registered in property mapper registry
+- ✅ Uses correct atomic prop type structure
+- ⏳ Waiting for atomic schema update
+
+**Future Implementation**: Added to `docs/FUTURE.md` as **High Priority #1**
 
 ## Test Results
 

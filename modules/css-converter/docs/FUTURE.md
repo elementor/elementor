@@ -104,13 +104,52 @@ This document tracks CSS features that are not currently supported due to atomic
 
 ---
 
+### **Text Shadow Property**
+
+#### **Not Supported:**
+- `text-shadow: 2px 2px 4px rgba(0,0,0,0.3)` - Text shadow effects
+- All text-shadow variations (single and multiple shadows)
+
+#### **Atomic Widget Limitation:**
+- `Shadow_Prop_Type` exists in atomic widgets for box shadows
+- Atomic style schema (`style-schema.php`) only supports `box-shadow`, not `text-shadow`
+- No `text-shadow` property in typography props or effects props
+- The atomic widget renderer doesn't apply text-shadow styles
+
+#### **Current Status:**
+- ✅ Text-shadow property mapper exists in CSS Converter (`text-shadow-property-mapper.php`)
+- ✅ Mapper converts text-shadow to correct atomic format using `Shadow_Prop_Type`
+- ✅ Mapper is registered and will process text-shadow values
+- ❌ Atomic widgets cannot render text-shadow (schema limitation)
+- ❌ Text-shadow styles are saved to database but not applied by renderer
+
+#### **Future Implementation Requirements:**
+1. **Atomic Widget Schema Update**: Add `text-shadow` to `get_typography_props()` or `get_effects_props()` in `style-schema.php`
+2. **Use Existing Prop Type**: Reuse `Shadow_Prop_Type` (already supports the correct structure)
+3. **CSS Converter Ready**: Property mapper already implemented and waiting for atomic widget support
+4. **Renderer Update**: Ensure atomic widget renderer outputs text-shadow CSS
+
+#### **Implementation Example:**
+```php
+// In plugins/elementor/modules/atomic-widgets/styles/style-schema.php
+private static function get_typography_props() {
+    return [
+        // ... existing typography props
+        'text-shadow' => Shadow_Prop_Type::make(), // Add this line
+    ];
+}
+```
+
+---
+
 ## 📋 **IMPLEMENTATION PRIORITY**
 
 ### **High Priority (Atomic Widget Dependent)**
-1. **Pseudo-Classes (`:hover`, `:focus`, `:active`)** - High user demand for interactive states
-2. **Elliptical Border Radius** - Extends existing `Border_Radius_Prop_Type`
-3. **Grid Layout Properties** - High demand CSS feature
-4. **Advanced Box Shadow** - Multiple shadows, inset variations
+1. **Text Shadow** - ✅ Mapper ready, only needs schema update in atomic widgets
+2. **Pseudo-Classes (`:hover`, `:focus`, `:active`)** - High user demand for interactive states
+3. **Elliptical Border Radius** - Extends existing `Border_Radius_Prop_Type`
+4. **Grid Layout Properties** - High demand CSS feature
+5. **Advanced Box Shadow** - Multiple shadows, inset variations
 
 ### **Medium Priority**
 1. **Pseudo-Elements (`:before`, `:after`)** - Content generation and decoration

@@ -69,6 +69,70 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
+		await test.step( 'Extract all computed styles', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
+
+			const allStyles = await elementorFrame.evaluate( () => {
+				const getStyles = ( element: Element, label: string ) => {
+					const computed = window.getComputedStyle( element );
+					return {
+						label,
+						tag: element.tagName.toLowerCase(),
+						text: element.textContent?.substring( 0, 100 ) || '',
+						styles: {
+							backgroundColor: computed.backgroundColor,
+							backgroundImage: computed.backgroundImage,
+							color: computed.color,
+							fontSize: computed.fontSize,
+							fontWeight: computed.fontWeight,
+							padding: computed.padding,
+							margin: computed.margin,
+							textAlign: computed.textAlign,
+							lineHeight: computed.lineHeight,
+							boxShadow: computed.boxShadow,
+							borderRadius: computed.borderRadius,
+							border: computed.border,
+							textDecoration: computed.textDecoration,
+							textTransform: computed.textTransform,
+							letterSpacing: computed.letterSpacing,
+							textShadow: computed.textShadow,
+							width: computed.width,
+							maxWidth: computed.maxWidth,
+							minWidth: computed.minWidth,
+							minHeight: computed.minHeight,
+							display: computed.display,
+							flexDirection: computed.flexDirection,
+							justifyContent: computed.justifyContent,
+							alignItems: computed.alignItems,
+							gap: computed.gap,
+						},
+					};
+				};
+
+				const elements = Array.from( document.querySelectorAll( '.elementor-element' ) );
+				const headings = Array.from( document.querySelectorAll( '.e-heading-base' ) );
+				const paragraphs = Array.from( document.querySelectorAll( '.e-paragraph-base' ) );
+				const links = Array.from( document.querySelectorAll( 'a' ) ).filter( a => {
+					const parent = a.closest( '.elementor-element' );
+					return parent && a.textContent?.trim();
+				} );
+				const buttons = Array.from( document.querySelectorAll( '.e-button-base' ) );
+
+				return {
+					elements: elements.slice( 0, 10 ).map( ( el, i ) => getStyles( el, `Element ${ i + 1 }` ) ),
+					headings: headings.slice( 0, 3 ).map( ( el, i ) => getStyles( el, `Heading ${ i + 1 }` ) ),
+					paragraphs: paragraphs.slice( 0, 3 ).map( ( el, i ) => getStyles( el, `Paragraph ${ i + 1 }` ) ),
+					links: links.slice( 0, 12 ).map( ( el, i ) => getStyles( el, `Link ${ i + 1 }` ) ),
+					buttons: buttons.slice( 0, 3 ).map( ( el, i ) => getStyles( el, `Button ${ i + 1 }` ) ),
+				};
+			} );
+
+			console.log( '\n========== EXTRACTED STYLES ==========\n' );
+			console.log( JSON.stringify( allStyles, null, 2 ) );
+			console.log( '\n======================================\n' );
+		} );
+
 		await test.step( 'Verify ID selector styles (#header) are applied to widget', async () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
