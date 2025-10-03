@@ -200,13 +200,18 @@ class Widget_Hierarchy_Processor {
 			case 'e-button':
 				$defaults = [
 					'text' => $widget['settings']['text'] ?? 'Button',
-					'link' => [
+					'attributes' => null,
+				];
+				
+				// CRITICAL FIX: Only add default link if no link exists
+				// This preserves converted e-link → e-button link settings
+				if ( ! isset( $settings['link'] ) ) {
+					$defaults['link'] = [
 						'url' => $widget['attributes']['href'] ?? '#',
 						'is_external' => false,
 						'nofollow' => false,
-					],
-					'attributes' => null,
-				];
+					];
+				}
 				break;
 			case 'e-image':
 				$defaults = [

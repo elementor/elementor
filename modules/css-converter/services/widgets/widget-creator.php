@@ -266,6 +266,11 @@ class Widget_Creator {
 		// Base Elementor widget structure
 		$mapped_type = $this->map_to_elementor_widget_type( $widget_type );
 		
+		// CRITICAL FIX: Convert e-link settings to e-button link format
+		if ( 'e-link' === $widget_type && 'e-button' === $mapped_type ) {
+			$settings = $this->convert_link_settings_to_button_format( $settings );
+		}
+		
 		// Merge widget attributes into settings for Elementor v4 compatibility
 		$merged_settings = $this->merge_settings_with_styles( $settings, $applied_styles );
 		
@@ -324,6 +329,28 @@ class Widget_Creator {
 		];
 
 		return $mapping[ $widget_type ] ?? 'html'; // Fallback to HTML widget
+	}
+
+	private function convert_link_settings_to_button_format( $settings ) {
+		// Convert e-link settings format to e-button link format
+		$button_settings = $settings;
+		
+		// Convert link URL and target to button link format
+		if ( isset( $settings['url'] ) && ! empty( $settings['url'] ) && '#' !== $settings['url'] ) {
+			$button_settings['link'] = [
+				'$$type' => 'link',
+				'value' => [
+					'destination' => $settings['url'],
+					'target' => $settings['target'] ?? '_self',
+				],
+			];
+			
+			// Remove the old url/target properties
+			unset( $button_settings['url'] );
+			unset( $button_settings['target'] );
+		}
+		
+		return $button_settings;
 	}
 
 	private function merge_settings_with_styles( $settings, $applied_styles ) {

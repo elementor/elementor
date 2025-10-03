@@ -65,6 +65,11 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 		console.log( `✓ Created ${ apiResult.widgets_created } widgets` );
 		console.log( `✓ ID selectors processed: ${ ( apiResult.conversion_log as any )?.css_processing?.id_selectors_processed || 0 }` );
 
+		// DEBUG: Check API response structure
+		console.log( `\n🔍 API Response - Post ID: ${ apiResult.post_id }, Widgets Created: ${ apiResult.widgets_created }` );
+		console.log( `🔍 Edit URL: ${ apiResult.edit_url }` );
+		console.log( '' );
+
 		await page.goto( apiResult.edit_url );
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
