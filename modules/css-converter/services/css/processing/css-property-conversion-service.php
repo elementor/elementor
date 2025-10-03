@@ -121,10 +121,14 @@ class Css_Property_Conversion_Service {
 			$converted_value = $this->attempt_v4_atomic_conversion( $mapper, $property, $value );
 			
 			if ( $converted_value ) {
-				// Get the mapped property name (e.g., border-top-left-radius -> border-radius)
-				$mapped_property_name = method_exists( $mapper, 'get_v4_property_name' ) 
-					? $mapper->get_v4_property_name( $property )
-					: $property;
+				// Get the mapped property name (e.g., background-color -> background, border-top-left-radius -> border-radius)
+				// Support both method names for backwards compatibility
+				$mapped_property_name = $property;
+				if ( method_exists( $mapper, 'get_v4_property_name' ) ) {
+					$mapped_property_name = $mapper->get_v4_property_name( $property );
+				} elseif ( method_exists( $mapper, 'get_target_property_name' ) ) {
+					$mapped_property_name = $mapper->get_target_property_name( $property );
+				}
 				
 				return [
 					'property_name' => $mapped_property_name,

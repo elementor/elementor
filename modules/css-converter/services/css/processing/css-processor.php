@@ -260,12 +260,10 @@ class Css_Processor {
 					$mapped_property_name = $conversion_result['property_name'];
 					$converted_property = $conversion_result['converted_value'];
 					
-					// Debug logging
-					
 					$processing_result['global_classes'][ $class_name ]['properties'][] = [
 						'original_property' => $rule['property'],
 						'original_value' => $rule['value'],
-						'mapped_property' => $mapped_property_name,  // ✅ NEW: Store mapped property name
+						'mapped_property' => $mapped_property_name,
 						'converted_property' => $converted_property,
 						'important' => $rule['important'],
 					];

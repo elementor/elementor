@@ -69,6 +69,8 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
+                await page.pause();
+
 		await test.step( 'Extract all computed styles', async () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();

@@ -282,7 +282,7 @@ class Widget_Creator {
 				'elType' => 'e-div-block',
 				'settings' => $merged_settings,
 				'isInner' => false,
-				'styles' => $this->convert_styles_to_v4_format( $applied_styles ),
+				'styles' => $this->convert_styles_to_v4_format( $applied_styles, $widget_type, $attributes ),
 				'editor_settings' => [],
 				'version' => '0.0',
 			];
@@ -294,7 +294,7 @@ class Widget_Creator {
 				'widgetType' => $mapped_type,
 				'settings' => $merged_settings,
 				'isInner' => false,
-				'styles' => $this->convert_styles_to_v4_format( $applied_styles ),
+				'styles' => $this->convert_styles_to_v4_format( $applied_styles, $widget_type, $attributes ),
 				'editor_settings' => [],
 				'version' => '0.0',
 			];
@@ -392,15 +392,13 @@ class Widget_Creator {
 		return null;
 	}
 
-	private function convert_styles_to_v4_format( $applied_styles ) {
+	private function convert_styles_to_v4_format( $applied_styles, $widget_type = 'unknown', $attributes = [] ) {
 		// Convert CSS styles to Elementor v4 atomic widget styles format
 		$v4_styles = [];
 
-		// DEBUG: Log what we received
 		
 		// Process global classes first (convert to widget styles)
 		if ( ! empty( $applied_styles['global_classes'] ) ) {
-			
 			// Generate a unique class ID for this widget
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
@@ -413,14 +411,11 @@ class Widget_Creator {
 			if ( ! empty( $global_class_props ) ) {
 				$style_object = $this->create_v4_style_object_from_global_classes( $class_id, $global_class_props );
 				$v4_styles[ $class_id ] = $style_object;
-				error_log( 'Widget Creator: Added global class styles to v4_styles with class ID: ' . $class_id );
 			}
 		}
 		
 		// Process ID styles (highest specificity after !important and inline)
 		if ( ! empty( $applied_styles['id_styles'] ) ) {
-			error_log( 'Widget Creator: Processing ID styles: ' . count( $applied_styles['id_styles'] ) . ' styles found' );
-			
 			// Use the same class ID that was set in merge_settings_with_styles
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
@@ -429,16 +424,18 @@ class Widget_Creator {
 			
 			$id_style_object = $this->create_v4_style_object_from_id_styles( $id_class_id, $applied_styles['id_styles'] );
 			
-			error_log( 'Widget Creator: ID style object created with props: ' . wp_json_encode( $id_style_object['variants'][0]['props'] ?? [] ) );
-			
 			if ( ! empty( $id_style_object['variants'][0]['props'] ) ) {
-				$v4_styles[ $id_class_id ] = $id_style_object;
-				error_log( 'Widget Creator: ID styles added to v4_styles with class ID: ' . $id_class_id );
-			} else {
-				error_log( 'Widget Creator: ID style object has no props - not added to v4_styles' );
+				// CRITICAL FIX: Merge ID styles with existing class styles instead of overwriting!
+				if ( isset( $v4_styles[ $id_class_id ] ) ) {
+					// Merge ID props with existing class props
+					$existing_props = $v4_styles[ $id_class_id ]['variants'][0]['props'] ?? [];
+					$id_props = $id_style_object['variants'][0]['props'] ?? [];
+					$v4_styles[ $id_class_id ]['variants'][0]['props'] = array_merge( $existing_props, $id_props );
+				} else {
+					// No existing styles, just add ID styles
+					$v4_styles[ $id_class_id ] = $id_style_object;
+				}
 			}
-		} else {
-			error_log( 'Widget Creator: No ID styles found in applied_styles' );
 		}
 
 		// Process computed styles (from external CSS + inline styles)
@@ -523,7 +520,6 @@ class Widget_Creator {
 	}
 	
 	private function get_global_class_properties( $global_class_names ) {
-		error_log('🟣 LEVEL 6 - WIDGET CREATOR: get_global_class_properties called with ' . count($global_class_names) . ' classes');
 		// Get the actual global class properties from the CSS processing result
 		// The global_class_names array contains class names like ['inline-element-1']
 		// We need to get the actual properties from the global classes
@@ -542,7 +538,7 @@ class Widget_Creator {
 							if ( ! empty( $property_data['converted_property'] ) ) {
 								$converted = $property_data['converted_property'];
 								
-								// ✅ FIXED: Use mapped property name (e.g., border-top-left-radius -> border-radius)
+								// ✅ FIXED: Use mapped property name (e.g., border-top-left-radius -> border-radius, background-color -> background)
 								$property_key = $property_data['mapped_property'] ?? $property_data['original_property'] ?? 'unknown';
 								
 							// Add the converted property to props using the correct mapped key
@@ -565,11 +561,6 @@ class Widget_Creator {
 			}
 		}
 		
-		error_log( 'Widget Creator: Extracted global class props: ' . wp_json_encode( $props ) );
-		error_log('🟣 LEVEL 6 - WIDGET CREATOR: Returning ' . count($props) . ' class properties');
-		if (isset($props['transform'])) {
-			error_log('🟣 LEVEL 6 - WIDGET CREATOR: Transform in final output = ' . json_encode($props['transform']));
-		}
 		return $props;
 	}
 	
