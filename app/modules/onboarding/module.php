@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Plugin_Upgrader;
@@ -26,6 +27,8 @@ class Module extends BaseModule {
 	const VERSION = '1.0.0';
 	const ONBOARDING_OPTION = 'elementor_onboarded';
 
+	private ?API $api = null;
+
 	/**
 	 * Get name.
 	 *
@@ -39,16 +42,38 @@ class Module extends BaseModule {
 	}
 
 	private function is_ab_test_enabled() {
-		// TODO: Change to false before production deployment
-		// Currently enabled for testing purposes
-		// Users will be randomly assigned to variant A or B on Step 2
-		// To disable: change true to false below
-		// To enable via filter: add_filter( 'elementor/onboarding/ab_test_enabled', '__return_true' );
-		return apply_filters( 'elementor/onboarding/ab_test_enabled', true );
+		$api = $this->get_api();
+
+		if ( null === $api ) {
+			return apply_filters( 'elementor/onboarding/ab_test_enabled', false );
+		}
+
+		$is_active_from_assets = $api->is_step2_ab_testing_active();
+
+		return apply_filters( 'elementor/onboarding/ab_test_enabled', $is_active_from_assets );
 	}
 
 	private function get_ab_test_variant_override() {
 		return apply_filters( 'elementor/onboarding/ab_test_variant', null );
+	}
+
+	private function get_api(): ?API {
+		if ( null !== $this->api ) {
+			return $this->api;
+		}
+
+		$editor_assets_api = new EditorAssetsAPI( $this->get_api_config() );
+		$this->api = new API( $editor_assets_api );
+
+		return $this->api;
+	}
+
+	private function get_api_config(): array {
+		return [
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/onboarding/v1/onboarding.json',
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_onboarding_data',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'onboarding',
+		];
 	}
 
 	/**

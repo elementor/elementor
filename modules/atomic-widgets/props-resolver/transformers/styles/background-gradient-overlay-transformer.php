@@ -16,9 +16,6 @@ class Background_Gradient_Overlay_Transformer extends Transformer_Base {
 		$positions = $value['positions'];
 		$stops = $value['stops'];
 
-		// DEBUG: Log the gradient transformation
-		error_log( "BACKGROUND_GRADIENT_TRANSFORMER: type={$type}, angle={$angle}, stops={$stops}" );
-
 		if ( 'radial' === $type ) {
 			return sprintf( 'radial-gradient(circle at %s, %s)', $positions, $stops );
 		}
