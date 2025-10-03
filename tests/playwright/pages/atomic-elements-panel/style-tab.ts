@@ -60,8 +60,10 @@ export default class StyleTab extends BasePage {
 	async setFontFamily( fontName: string, fontType: 'system' | 'google' = 'system' ): Promise<void> {
 		this.page.getByRole( 'button', { name: 'Font family' } ).click();
 		const categorySelector = 'google' === fontType ? 'Google Fonts' : 'System';
+
 		this.page.locator( '.MuiListSubheader-root', { hasText: categorySelector } ).click();
 		this.page.locator( 'input[placeholder="Search"]' ).fill( fontName );
+
 		await this.page.waitForTimeout( timeouts.short );
 		this.page.locator( '[role="option"]', { hasText: fontName } ).first().click();
 	}
