@@ -71,7 +71,6 @@ export default class StyleTab extends BasePage {
 		await categoryButton.click();
 
 		if ( 'google' === fontType ) {
-			// Wait for the search box to be available
 			const searchBox = this.page.locator( 'input[placeholder="Search"]' );
 			await searchBox.waitFor( { state: 'visible', timeout: timeouts.action } );
 
