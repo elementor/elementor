@@ -199,19 +199,9 @@ class Cloud_Kits extends Library {
 	public function update_kit( $id, array $kit_data ) {
 		$endpoint = 'kits/' . $id;
 
-		$request = $this->http_request(
-			'PATCH',
-			$endpoint,
-			[
-				'body' => wp_json_encode( $kit_data ),
-				'headers' => [
-					'Content-Type' => 'application/json',
-				],
-			],
-			[
-				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
-			],
-		);
+		$request = $this->http_request( 'PATCH', $endpoint, [ 'body' => $kit_data ], [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
 
 		if ( is_wp_error( $request ) ) {
 			return false;

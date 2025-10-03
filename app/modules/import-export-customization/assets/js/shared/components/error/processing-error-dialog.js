@@ -149,17 +149,6 @@ export const messagesContent = {
 			</>
 		),
 	},
-	'media-processing-error': {
-		title: __( 'Couldn’t save media files to the cloud', 'elementor' ),
-		text: (
-			<>
-				{ __( 'We ran into a problem while saving your media files to the cloud. Please try again. If the issue persists, edit the Content section and choose "Link to media" to save it as a reference. ', 'elementor' ) }
-				<Link href="https://go.elementor.com/app-import-export-common-errors">
-					{ __( 'Learn more', 'elementor' ) }
-				</Link>
-			</>
-		),
-	},
 };
 
 export function ProcessingErrorDialog( {
@@ -184,7 +173,6 @@ export function ProcessingErrorDialog( {
 			'failed-to-fetch-quota',
 			'insufficient-quota',
 			'error-loading-resource',
-			'media-processing-error',
 		].includes( errorType );
 	};
 
