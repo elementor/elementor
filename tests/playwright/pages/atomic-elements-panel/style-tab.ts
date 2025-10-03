@@ -58,34 +58,12 @@ export default class StyleTab extends BasePage {
 	}
 
 	async setFontFamily( fontName: string, fontType: 'system' | 'google' = 'system' ): Promise<void> {
-		const fontFamilyButton = this.page.locator( 'div.MuiGrid-container' ).filter( {
-			has: this.page.locator( 'label', { hasText: 'Font family' } ),
-		} ).locator( '[role="button"]' );
-
-		await fontFamilyButton.click();
-		await this.page.waitForSelector( '.MuiPopover-paper', { state: 'visible', timeout: timeouts.action } );
-
+		this.page.getByRole( 'button', { name: 'Font family' } ).click();
 		const categorySelector = 'google' === fontType ? 'Google Fonts' : 'System';
-		const categoryButton = this.page.locator( '.MuiListSubheader-root', { hasText: categorySelector } );
-
-		await categoryButton.click();
-
-		if ( 'google' === fontType ) {
-			const searchBox = this.page.locator( 'input[placeholder="Search"]' );
-			await searchBox.waitFor( { state: 'visible', timeout: timeouts.action } );
-
-			await searchBox.clear();
-			await searchBox.fill( fontName );
-
-			await this.page.waitForTimeout( timeouts.short );
-		}
-
-		const fontOption = this.page.locator( '[role="option"]', { hasText: fontName } ).first();
-
-		const timeout = 'google' === fontType ? timeouts.longAction : timeouts.action;
-		await fontOption.waitFor( { state: 'visible', timeout } );
-
-		await fontOption.click();
+		this.page.locator( '.MuiListSubheader-root', { hasText: categorySelector } ).click();
+		this.page.locator( 'input[placeholder="Search"]' ).fill( fontName );
+		await this.page.waitForTimeout( timeouts.short );
+		this.page.locator( '[role="option"]', { hasText: fontName } ).first().click();
 	}
 
 	async setFontSize( size: number, unit: Unit ): Promise<void> {

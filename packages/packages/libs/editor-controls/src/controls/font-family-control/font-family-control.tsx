@@ -19,9 +19,10 @@ export type FontCategory = {
 type FontFamilyControlProps = {
 	fontFamilies: FontCategory[];
 	sectionWidth: number;
+	ariaLabel?: string;
 };
 
-export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }: FontFamilyControlProps ) => {
+export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth, ariaLabel }: FontFamilyControlProps ) => {
 	const { value: fontFamily, setValue: setFontFamily, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
 
 	const popoverState = usePopupState( { variant: 'popover' } );
@@ -45,6 +46,7 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 					{ ...bindTrigger( popoverState ) }
 					fullWidth
 					disabled={ disabled }
+					aria-label={ ariaLabel }
 					sx={
 						isShowingPlaceholder
 							? {
