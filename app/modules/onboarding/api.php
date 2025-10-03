@@ -10,27 +10,25 @@ class API {
 		$this->editor_assets_api = $editor_assets_api;
 	}
 
-	public function get_onboarding_data( $force_request = false ): array {
+	public function get_ab_testing_data( $force_request = false ): array {
 		$assets_data = $this->editor_assets_api->get_assets_data( $force_request );
 
-		$assets_data = apply_filters( 'elementor/onboarding/assets_data', $assets_data );
+		$assets_data = apply_filters( 'elementor/onboarding/ab_testing_data', $assets_data );
 
-		return $this->extract_onboarding_config( $assets_data );
+		return $this->extract_ab_testing_config( $assets_data );
 	}
 
-	private function extract_onboarding_config( array $json_data ): array {
+	private function extract_ab_testing_config( array $json_data ): array {
 		if ( empty( $json_data ) || ! is_array( $json_data ) ) {
 			return [];
 		}
 
-		$first_item = $json_data[0] ?? [];
-
-		return $first_item['AbTesting'] ?? [];
+		return $json_data[0] ?? [];
 	}
 
-	public function is_step2_ab_testing_active( $force_request = false ): bool {
-		$onboarding_data = $this->get_onboarding_data( $force_request );
+	public function is_core_onboarding_enabled( $force_request = false ): bool {
+		$ab_testing_data = $this->get_ab_testing_data( $force_request );
 
-		return $onboarding_data['step2AbTestingActive'] ?? false;
+		return $ab_testing_data['coreOnboarding'] ?? false;
 	}
 }

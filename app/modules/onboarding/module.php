@@ -48,7 +48,7 @@ class Module extends BaseModule {
 			return apply_filters( 'elementor/onboarding/ab_test_enabled', false );
 		}
 
-		$is_active_from_assets = $api->is_step2_ab_testing_active();
+		$is_active_from_assets = $api->is_core_onboarding_enabled();
 
 		return apply_filters( 'elementor/onboarding/ab_test_enabled', $is_active_from_assets );
 	}
@@ -70,9 +70,9 @@ class Module extends BaseModule {
 
 	private function get_api_config(): array {
 		return [
-			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/onboarding/v1/onboarding.json',
-			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_onboarding_data',
-			EditorAssetsAPI::ASSETS_DATA_KEY => 'onboarding',
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/ab-testing/v1/ab-testing.json',
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_ab_testing_data',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'ab-testing',
 		];
 	}
 
