@@ -113,6 +113,36 @@ export class CssConverterHelper {
 		return await apiResponse.json() as CssConverterResponse;
 	}
 
+	async convertFromUrl(
+		request: APIRequestContext,
+		url: string,
+		cssUrls: string[] = [],
+		followImports: boolean = false,
+		options: CssConverterOptions = {},
+	): Promise<CssConverterResponse> {
+		const defaultOptions: CssConverterOptions = {
+			postType: 'page',
+			createGlobalClasses: true,
+			...options,
+		};
+
+		const apiResponse = await request.post( '/wp-json/elementor/v2/widget-converter', {
+			headers: {
+				'X-DEV-TOKEN': this.devToken,
+				'Content-Type': 'application/json',
+			},
+			data: {
+				type: 'url',
+				content: url,
+				cssUrls,
+				followImports,
+				options: defaultOptions,
+			},
+		} );
+
+		return await apiResponse.json() as CssConverterResponse;
+	}
+
 	async convertCssToClasses(
 		request: APIRequestContext,
 		cssContent: string,

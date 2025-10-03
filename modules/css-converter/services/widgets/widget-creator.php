@@ -490,19 +490,25 @@ class Widget_Creator {
 		foreach ( $id_styles as $index => $id_style ) {
 			error_log( "Widget Creator: Processing ID style $index: " . wp_json_encode( $id_style ) );
 			
-			if ( isset( $id_style['converted_property'] ) ) {
+			if ( isset( $id_style['converted_property'] ) && isset( $id_style['property'] ) ) {
+				$property_name = $id_style['property'];
 				$converted = $id_style['converted_property'];
-				error_log( "Widget Creator: Converted property found: " . wp_json_encode( $converted ) );
+				error_log( "Widget Creator: Converted property found for {$property_name}: " . wp_json_encode( $converted ) );
 				
-				// Apply the converted property to the style object
-				if ( isset( $converted['property'] ) && isset( $converted['value'] ) ) {
-					$style_object['variants'][0]['props'][ $converted['property'] ] = $converted['value'];
-					error_log( "Widget Creator: Added prop {$converted['property']} to style object" );
+				if ( is_array( $converted ) && isset( $converted['$$type'] ) ) {
+					$target_property = $this->get_target_property_name( $property_name );
+					
+					if ( $target_property !== $property_name ) {
+						error_log( "Widget Creator: Remapping ID style {$property_name} to {$target_property}" );
+					}
+					
+					$style_object['variants'][0]['props'][ $target_property ] = $converted;
+					error_log( "Widget Creator: Added atomic prop {$target_property} to style object" );
 				} else {
-					error_log( "Widget Creator: Converted property missing 'property' or 'value' keys" );
+					error_log( "Widget Creator: Converted property is not in atomic format" );
 				}
 			} else {
-				error_log( "Widget Creator: No 'converted_property' found in ID style" );
+				error_log( "Widget Creator: Missing 'converted_property' or 'property' in ID style" );
 			}
 		}
 
@@ -651,11 +657,13 @@ class Widget_Creator {
 		$v4_props = [];
 
 		foreach ( $computed_styles as $property => $atomic_value ) {
-			// computed_styles already contains atomic format: property_name => atomic_value
-			// No need for additional conversion - just use the atomic value directly
 			if ( is_array( $atomic_value ) && isset( $atomic_value['$$type'] ) ) {
-				$v4_props[ $property ] = $atomic_value;
-				error_log( "Widget Creator: Adding atomic prop {$property}: " . wp_json_encode( $atomic_value ) );
+				$target_property = $this->get_target_property_name( $property );
+				$v4_props[ $target_property ] = $atomic_value;
+				if ( $target_property !== $property ) {
+					error_log( "Widget Creator: Remapping {$property} to {$target_property}" );
+				}
+				error_log( "Widget Creator: Adding atomic prop {$target_property}: " . wp_json_encode( $atomic_value ) );
 			} else {
 				error_log( "Widget Creator: Skipping non-atomic prop {$property}: " . wp_json_encode( $atomic_value ) );
 			}
@@ -663,6 +671,20 @@ class Widget_Creator {
 
 		error_log( "Widget Creator: Final v4_props: " . wp_json_encode( $v4_props ) );
 		return $v4_props;
+	}
+
+	private function get_target_property_name( string $property ): string {
+		$mapper = $this->property_mapper_registry->resolve( $property );
+		
+		error_log( "Widget Creator get_target_property_name: property={$property}, mapper=" . ( $mapper ? get_class( $mapper ) : 'null' ) );
+		
+		if ( $mapper && method_exists( $mapper, 'get_target_property_name' ) ) {
+			$target = $mapper->get_target_property_name( $property );
+			error_log( "Widget Creator get_target_property_name: {$property} -> {$target}" );
+			return $target;
+		}
+		
+		return $property;
 	}
 
 	private function convert_css_property_to_v4( $property, $value ) {

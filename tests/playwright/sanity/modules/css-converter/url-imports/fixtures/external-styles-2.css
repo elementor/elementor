@@ -1,0 +1,65 @@
+#header {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#links-section {
+    margin: 50px auto;
+    max-width: 900px;
+}
+
+#banner {
+    margin-top: 60px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.intro-section {
+    background-color: #ffffff;
+}
+
+.intro-paragraph {
+    font-size: 16px;
+}
+
+.links-container {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.link-item {
+    border-bottom: 1px solid #e9ecef;
+    padding: 10px 0;
+}
+
+.banner-title {
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.button-container {
+    margin-top: 20px;
+}
+
+.button {
+    min-width: 150px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.button-primary {
+    font-size: 18px;
+}
+
+.button-secondary {
+    padding: 14px 28px;
+    font-size: 16px;
+}
+

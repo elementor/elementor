@@ -166,9 +166,13 @@ class Atomic_Widgets_Orchestrator {
 		$widgets_with_styles = [];
 		$styles_integrated = 0;
 
+		error_log( 'Orchestrator: Processing ' . count( $widgets ) . ' widgets with ' . count( $widget_data_array ) . ' widget data entries' );
+
 		foreach ( $widgets as $index => $widget ) {
 			$widget_data = $widget_data_array[ $index ] ?? [];
 			$atomic_props = $widget_data['atomic_props'] ?? [];
+
+			error_log( 'Orchestrator: Widget ' . $index . ' has ' . count( $atomic_props ) . ' atomic props' );
 
 			if ( ! empty( $atomic_props ) ) {
 				$widget = $this->styles_integrator->integrate_styles_into_widget( $widget, $atomic_props );

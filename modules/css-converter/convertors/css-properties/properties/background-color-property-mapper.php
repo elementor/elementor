@@ -36,16 +36,15 @@ class Background_Color_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Map background-color to background property with color field
-		// This matches the atomic widget pattern where individual properties map to complex types
-		// Note: Background_Prop_Type validation requires all fields to have valid values or defaults
 		$background_data = [
 			'color' => $color_value,
-			// background-overlay and clip fields are optional - let prop type handle defaults
 		];
 
-		// Return atomic prop type result directly (no property wrapper)
 		return Background_Prop_Type::make()->generate( $background_data );
+	}
+
+	public function get_target_property_name( string $source_property ): string {
+		return 'background';
 	}
 
 	public function get_supported_properties(): array {

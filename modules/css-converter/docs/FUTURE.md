@@ -60,6 +60,36 @@ This document tracks CSS features that are not currently supported due to atomic
 
 ---
 
+### **Pseudo-Classes and Pseudo-Elements**
+
+#### **Not Supported:**
+- `:hover` - hover state styling
+- `:focus` - focus state styling
+- `:active` - active state styling
+- `:before` and `:after` - pseudo-elements
+- `:first-child`, `:last-child` - structural pseudo-classes
+- `:nth-child()` - complex selectors
+
+#### **Atomic Widget Limitation:**
+- Atomic widgets currently focus on base state styling only
+- No prop types exist for state-based or pseudo-element styling
+- State management handled separately in Elementor's style system
+- Pseudo-classes require selector context not available in atomic prop types
+
+#### **Future Implementation Requirements:**
+1. **Atomic Widget Enhancement**: Add state-based styling support to atomic widgets
+2. **New Prop Types**: Create `State_Styles_Prop_Type` for hover/focus/active states
+3. **CSS Parser Enhancement**: Parse pseudo-class selectors and group styles by state
+4. **Style System Integration**: Connect to Elementor's existing state management
+5. **Selector Context**: Maintain selector-to-state relationships during conversion
+
+#### **Workaround:**
+- Apply hover styles manually in Elementor editor's "Style" tab
+- Use Elementor's built-in hover state controls for widgets
+- State styling not preserved during HTML/CSS import
+
+---
+
 ### **Modern CSS Features**
 
 #### **Not Supported:**
@@ -77,19 +107,22 @@ This document tracks CSS features that are not currently supported due to atomic
 ## 📋 **IMPLEMENTATION PRIORITY**
 
 ### **High Priority (Atomic Widget Dependent)**
-1. **Elliptical Border Radius** - Extends existing `Border_Radius_Prop_Type`
-2. **Grid Layout Properties** - High demand CSS feature
-3. **Advanced Box Shadow** - Multiple shadows, inset variations
+1. **Pseudo-Classes (`:hover`, `:focus`, `:active`)** - High user demand for interactive states
+2. **Elliptical Border Radius** - Extends existing `Border_Radius_Prop_Type`
+3. **Grid Layout Properties** - High demand CSS feature
+4. **Advanced Box Shadow** - Multiple shadows, inset variations
 
 ### **Medium Priority**
-1. **3D Transforms** - Extends existing `Transform_Prop_Type`
-2. **Advanced Filters** - Extends existing filter support
-3. **Custom Properties** - CSS variables support
+1. **Pseudo-Elements (`:before`, `:after`)** - Content generation and decoration
+2. **3D Transforms** - Extends existing `Transform_Prop_Type`
+3. **Advanced Filters** - Extends existing filter support
+4. **Custom Properties** - CSS variables support
 
 ### **Low Priority**
-1. **Container Queries** - Requires global context changes
-2. **CSS Layers** - Architectural changes needed
-3. **CSS Nesting** - Parser complexity
+1. **Structural Pseudo-Classes** - `:first-child`, `:last-child`, `:nth-child()`
+2. **Container Queries** - Requires global context changes
+3. **CSS Layers** - Architectural changes needed
+4. **CSS Nesting** - Parser complexity
 
 ---
 

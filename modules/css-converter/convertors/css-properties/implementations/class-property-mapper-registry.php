@@ -51,6 +51,7 @@ class Class_Property_Mapper_Registry {
 		require_once __DIR__ . '/../properties/border-property-mapper.php';
 		require_once __DIR__ . '/../properties/positioning-property-mapper.php';
 		require_once __DIR__ . '/../properties/transform-property-mapper.php';
+		require_once __DIR__ . '/../properties/text-shadow-property-mapper.php';
 		
 		// Register atomic property mappers
 		$this->mappers['color'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Color_Property_Mapper();
@@ -160,6 +161,9 @@ class Class_Property_Mapper_Registry {
 		foreach ( $transform_mapper->get_supported_properties() as $property ) {
 			$this->mappers[ $property ] = $transform_mapper;
 		}
+		
+		// Register text-shadow mapper
+		$this->mappers['text-shadow'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Text_Shadow_Property_Mapper();
 	}
 
 	public function register( string $property, object $mapper ): void {

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flat Classes Test Page</title>
+    <link rel="stylesheet" href="external-styles-1.css">
+    <link rel="stylesheet" href="external-styles-2.css">
+    <style>
+        .page-header {
+            background-color: #2c3e50;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .header-title {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .intro-section {
+            max-width: 800px;
+            margin: 40px auto;
+        }
+        
+        .intro-paragraph {
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        
+        .links-container {
+            padding: 30px;
+            border-radius: 8px;
+        }
+        
+        .link-item {
+            margin: 12px 0;
+        }
+        
+        .banner-section {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .banner-title {
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <div id="header" class="page-header">
+        <h1 class="header-title" style="color: #ecf0f1;">Welcome to Our Test Page</h1>
+    </div>
+
+    <!-- Intro Text Section -->
+    <div class="intro-section" style="padding: 20px;">
+        <p class="intro-paragraph text-large" style="font-size: 18px; color: #34495e;">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </p>
+        <p class="intro-paragraph" style="color: #7f8c8d;">
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+    </div>
+
+    <!-- Hyperlinks Block -->
+    <div id="links-section" class="links-container bg-light">
+        <div class="link-item">
+            <a href="#" class="link link-primary" style="color: #3498db; font-weight: 600;">Link One - Important Resource</a>
+        </div>
+        <div class="link-item">
+            <p><a href="#" class="link link-secondary">Link Two - Additional Information</a></p>
+        </div>
+        <div class="link-item">
+            <a href="#" class="link link-accent" style="text-decoration: none;">Link Three - Special Feature</a>
+        </div>
+        <div class="link-item">
+            <p><a href="#" class="link">Link Four - Standard Link</a></p>
+        </div>
+        <div class="link-item">
+            <a href="#" class="link link-info" style="font-size: 16px;">Link Five - Information Center</a>
+        </div>
+        <div class="link-item">
+            <p><a href="#" class="link link-success">Link Six - Success Stories</a></p>
+        </div>
+        <div class="link-item">
+            <a href="#" class="link" style="padding: 5px 10px;">Link Seven - Support Portal</a>
+        </div>
+        <div class="link-item">
+            <p><a href="#" class="link link-warning">Link Eight - Important Notice</a></p>
+        </div>
+        <div class="link-item">
+            <a href="#" class="link link-danger">Link Nine - Critical Updates</a>
+        </div>
+        <div class="link-item">
+            <p><a href="#" class="link" style="color: #95a5a6; font-size: 14px;">Link Ten - Archive</a></p>
+        </div>
+    </div>
+
+    <!-- Banner Section with Title and Buttons -->
+    <section id="banner" class="banner-section bg-gradient">
+        <h2 class="banner-title text-bold" style="color: #2c3e50;">Ready to Get Started?</h2>
+        <div class="button-container">
+            <a href="#" class="button button-primary" style="background-color: #3498db; color: #ffffff; padding: 15px 30px; border-radius: 5px; text-decoration: none; font-weight: bold;">Get Started Now</a>
+            <a href="#" class="button button-secondary">Learn More</a>
+        </div>
+    </section>
+</body>
+</html>
+

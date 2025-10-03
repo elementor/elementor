@@ -34,11 +34,22 @@ class CSS_To_Atomic_Props_Converter {
 		foreach ( $css_properties as $property => $value ) {
 			$atomic_prop = $this->convert_css_to_atomic_prop( $property, $value );
 			if ( $atomic_prop ) {
-				$atomic_props[ $property ] = $atomic_prop;
+				$target_property = $this->get_target_property_name( $property );
+				$atomic_props[ $target_property ] = $atomic_prop;
 			}
 		}
 
 		return $atomic_props;
+	}
+
+	private function get_target_property_name( string $property ): string {
+		$mapper = $this->get_property_mapper( $property );
+		
+		if ( $mapper && method_exists( $mapper, 'get_target_property_name' ) ) {
+			return $mapper->get_target_property_name( $property );
+		}
+		
+		return $property;
 	}
 
 	public function is_supported_property( string $property ): bool {

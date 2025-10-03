@@ -9,10 +9,12 @@ class Atomic_Data_Parser {
 
 	private HTML_To_Atomic_Widget_Mapper $widget_mapper;
 	private CSS_To_Atomic_Props_Converter $props_converter;
+	private CSS_To_Atomic_Bridge $css_bridge;
 
 	public function __construct() {
 		$this->widget_mapper = new HTML_To_Atomic_Widget_Mapper();
 		$this->props_converter = new CSS_To_Atomic_Props_Converter();
+		$this->css_bridge = new CSS_To_Atomic_Bridge();
 	}
 
 	public function parse_html_for_atomic_widgets( string $html ): array {
@@ -20,22 +22,54 @@ class Atomic_Data_Parser {
 			return [];
 		}
 
-		$dom_elements = $this->parse_dom_structure( $html );
+		$dom = $this->create_dom( $html );
+		
+		$css_content = $this->extract_css_from_style_tags( $dom );
+		error_log( 'Atomic_Data_Parser: Extracted CSS content length: ' . strlen( $css_content ) );
+		
+		$dom_elements = $this->parse_dom_structure_from_dom( $dom );
 		if ( empty( $dom_elements ) ) {
 			return [];
 		}
 
-		return $this->convert_dom_elements_to_widget_data( $dom_elements );
+		error_log( 'Atomic_Data_Parser: Found ' . count( $dom_elements ) . ' DOM elements' );
+
+		$widget_data = $this->convert_dom_elements_to_widget_data( $dom_elements );
+
+		if ( ! empty( $css_content ) ) {
+			error_log( 'Atomic_Data_Parser: Applying CSS rules to ' . count( $widget_data ) . ' widgets' );
+			$widget_data = $this->css_bridge->apply_css_rules_to_widget_data( $widget_data, $css_content );
+		} else {
+			error_log( 'Atomic_Data_Parser: No CSS content to apply' );
+		}
+
+		return $widget_data;
 	}
 
-	private function parse_dom_structure( string $html ): array {
+	private function create_dom( string $html ): \DOMDocument {
 		$dom = new \DOMDocument();
+		libxml_use_internal_errors( true );
 		$dom->loadHTML( 
 			'<html><body>' . $html . '</body></html>', 
 			LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD 
 		);
+		libxml_clear_errors();
 
-		$xpath = new \DOMXPath( $dom );
+		return $dom;
+	}
+
+	private function extract_css_from_style_tags( \DOMDocument $dom ): string {
+		$css_content = '';
+		$style_tags = $dom->getElementsByTagName( 'style' );
+
+		foreach ( $style_tags as $style_tag ) {
+			$css_content .= $style_tag->textContent . "\n";
+		}
+
+		return trim( $css_content );
+	}
+
+	private function parse_dom_structure_from_dom( \DOMDocument $dom ): array {
 		$body = $dom->getElementsByTagName( 'body' )->item( 0 );
 
 		if ( ! $body ) {
@@ -53,6 +87,10 @@ class Atomic_Data_Parser {
 				continue;
 			}
 
+			if ( strtolower( $child->tagName ) === 'style' ) {
+				continue;
+			}
+
 			$element_data = $this->extract_element_data( $child );
 			if ( $element_data ) {
 				$elements[] = $element_data;
@@ -60,6 +98,10 @@ class Atomic_Data_Parser {
 		}
 
 		return $elements;
+	}
+
+	private function convert_dom_elements_to_widget_data( array $dom_elements ): array {
+		return $dom_elements;
 	}
 
 	private function extract_element_data( \DOMElement $element ): ?array {
@@ -179,4 +221,17 @@ class Atomic_Data_Parser {
 
 		return $children;
 	}
+
+	public function get_widget_mapper(): HTML_To_Atomic_Widget_Mapper {
+		return $this->widget_mapper;
+	}
+
+	public function get_props_converter(): CSS_To_Atomic_Props_Converter {
+		return $this->props_converter;
+	}
+
+	public function get_css_bridge(): CSS_To_Atomic_Bridge {
+		return $this->css_bridge;
+	}
 }
+
