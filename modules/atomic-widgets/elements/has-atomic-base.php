@@ -49,26 +49,18 @@ trait Has_Atomic_Base {
 				continue;
 			}
 
-			if ( $control instanceof Element_Control_Base ) {
-				$valid_controls[] = $control;
-				continue;
-			}
+			if ( ( $control instanceof Atomic_Control_Base ) ) {
+				$prop_name = $control->get_bind();
 
-			if ( ! ( $control instanceof Atomic_Control_Base ) ) {
-				Utils::safe_throw( 'Control must be an instance of `Atomic_Control_Base`.' );
-				continue;
-			}
-
-			$prop_name = $control->get_bind();
-
-			if ( ! $prop_name ) {
-				Utils::safe_throw( 'Control is missing a bound prop from the schema.' );
-				continue;
-			}
-
-			if ( ! array_key_exists( $prop_name, $schema ) ) {
-				Utils::safe_throw( "Prop `{$prop_name}` is not defined in the schema of `{$this->get_name()}`." );
-				continue;
+				if ( ! $prop_name ) {
+					Utils::safe_throw( 'Control is missing a bound prop from the schema.' );
+					continue;
+				}
+	
+				if ( ! array_key_exists( $prop_name, $schema ) ) {
+					Utils::safe_throw( "Prop `{$prop_name}` is not defined in the schema of `{$this->get_name()}`." );
+					continue;
+				}
 			}
 
 			$valid_controls[] = $control;
