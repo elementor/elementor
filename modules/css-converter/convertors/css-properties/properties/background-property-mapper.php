@@ -48,15 +48,12 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	public function map_to_v4_atomic( string $property, $value ): ?array {
-		error_log( "DEBUG: Background_Property_Mapper::map_to_v4_atomic called with property: $property, value: $value" );
 		
 		if ( ! $this->is_supported_property( $property ) ) {
-			error_log( "DEBUG: Background_Property_Mapper - property not supported: $property" );
 			return null;
 		}
 
 		if ( ! is_string( $value ) || empty( trim( $value ) ) ) {
-			error_log( "DEBUG: Background_Property_Mapper - invalid value type or empty" );
 			return null;
 		}
 
@@ -65,17 +62,11 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 		// Parse background value
 		$background_data = $this->parse_background_value( $value );
 		if ( null === $background_data ) {
-			error_log( "DEBUG: Background_Property_Mapper - parse_background_value returned null" );
 			return null;
 		}
 
-		error_log( "DEBUG: Background_Property_Mapper - background_data: " . json_encode( $background_data ) );
-
 		// Return atomic prop type result directly (no property wrapper)
-		$result = Background_Prop_Type::make()->generate( $background_data );
-		error_log( "DEBUG: Background_Property_Mapper - final result: " . json_encode( $result ) );
-		
-		return $result;
+		return Background_Prop_Type::make()->generate( $background_data );
 	}
 
 	private function parse_background_value( string $value ): ?array {
@@ -161,47 +152,32 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function parse_linear_gradient( string $value ): ?array {
-		error_log( "DEBUG: parse_linear_gradient called with value: $value" );
 		
 		// Extract gradient content
 		if ( ! preg_match( '/linear-gradient\s*\(\s*([^)]+)\s*\)/', $value, $matches ) ) {
-			error_log( "DEBUG: parse_linear_gradient - regex failed for: $value" );
 			return null;
 		}
 
 		$gradient_content = $matches[1];
-		error_log( "DEBUG: parse_linear_gradient - gradient_content: $gradient_content" );
 		
 		$parts = $this->split_gradient_parts( $gradient_content );
 
 		if ( empty( $parts ) ) {
-			error_log( "DEBUG: parse_linear_gradient - empty parts for content: $gradient_content" );
 			return null;
 		}
-
-		error_log( "DEBUG: parse_linear_gradient - parts: " . json_encode( $parts ) );
 
 		// Extract angle and stops
 		$angle = $this->extract_gradient_angle( $parts[0] );
 		$stops = $this->extract_gradient_stops_wrapped( $parts );
 		
-		error_log( "DEBUG: parse_linear_gradient - angle: $angle" );
-		error_log( "DEBUG: parse_linear_gradient - stops: " . json_encode( $stops ) );
-		
 		// Create gradient value structure
-		// Don't wrap 'stops' again - it's already wrapped by extract_gradient_stops_wrapped()
 		$gradient_value = [
 			'type' => String_Prop_Type::make()->generate( 'linear' ),
 			'angle' => Number_Prop_Type::make()->generate( $angle ),
 			'stops' => $stops,
 		];
-
-		error_log( "DEBUG: parse_linear_gradient - gradient_value before generate: " . json_encode( $gradient_value ) );
-
-		$result = Background_Gradient_Overlay_Prop_Type::make()->generate( $gradient_value );
-		error_log( "DEBUG: parse_linear_gradient - final result: " . json_encode( $result ) );
 		
-		return $result;
+		return Background_Gradient_Overlay_Prop_Type::make()->generate( $gradient_value );
 	}
 
 	private function parse_radial_gradient( string $value ): ?array {
@@ -540,15 +516,15 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	private function calculate_gradient_stop_offset( ?string $position_str, int $index, int $total_stops ): float {
 		// If explicit position is provided (e.g., "50%")
 		if ( null !== $position_str && preg_match( '/(\d+)%/', $position_str, $matches ) ) {
-			return (float) $matches[1] / 100; // Convert percentage to decimal (50% -> 0.5)
+			return (float) $matches[1]; // Keep as percentage value (50% -> 50)
 		}
 
-		// ✅ EDITOR JSON PATTERN: Auto-distribute stops evenly (0.0, 1.0 for 2 stops)
+		// ✅ ATOMIC WIDGET PATTERN: Auto-distribute stops evenly (0, 100 for 2 stops)
 		if ( $total_stops <= 1 ) {
 			return 0.0;
 		}
 
-		// Distribute evenly: first stop = 0.0, last stop = 1.0
-		return (float) ( $index / ( $total_stops - 1 ) );
+		// Distribute evenly: first stop = 0, last stop = 100
+		return (float) ( $index / ( $total_stops - 1 ) ) * 100;
 	}
 }

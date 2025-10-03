@@ -68,38 +68,28 @@ class Widget_Mapper {
 
 	public function map_element( $element ) {
 		$tag = $element['tag'];
-		
-		// DEBUG: Log element mapping (can be removed in production)
-		// error_log( "WIDGET_MAPPER_DEBUG: Mapping element tag='{$tag}'" );
-		
+
 		// Check if we have a mapping for this tag
 		if ( ! isset( $this->mapping_rules[ $tag ] ) ) {
-			error_log( "WIDGET_MAPPER_DEBUG: No mapping rule for tag '{$tag}'" );
 			return $this->handle_unsupported_element( $element );
 		}
 
 		$widget_type = $this->mapping_rules[ $tag ];
-		error_log( "WIDGET_MAPPER_DEBUG: Tag '{$tag}' maps to widget type '{$widget_type}'" );
-		
+
 		// Check if we have a handler for this widget type
 		if ( ! isset( $this->handlers[ $widget_type ] ) ) {
-			error_log( "WIDGET_MAPPER_DEBUG: No handler for widget type '{$widget_type}'" );
 			return $this->handle_unsupported_element( $element );
 		}
 
 		// Call the appropriate handler
 		$handler = $this->handlers[ $widget_type ];
 		$widget = call_user_func( $handler, $element );
-		
-		// DEBUG: Log final widget type
-		$final_widget_type = $widget['widget_type'] ?? 'unknown';
-		error_log( "WIDGET_MAPPER_DEBUG: Final widget type: '{$final_widget_type}'" );
-		
+
 		// Add generated class name to widget attributes if it exists
 		if ( ! empty( $element['generated_class'] ) ) {
 			$widget = $this->add_generated_class_to_widget( $widget, $element['generated_class'] );
 		}
-		
+
 		return $widget;
 	}
 
@@ -137,12 +127,20 @@ class Widget_Mapper {
 	private function handle_heading( $element ) {
 		$tag = $element['tag'];
 		$level = (int) substr( $tag, 1 ); // Extract number from h1, h2, etc.
+		$content = $element['content'] ?? '';
+
+		// 🔍 MAXIMUM DEBUG: Heading processing
+		error_log( "🔍 HEADING_HANDLER: === PROCESSING HEADING ===" );
+		error_log( "🔍 HEADING_HANDLER: Tag: '{$tag}', Level: {$level}" );
+		error_log( "🔍 HEADING_HANDLER: Content: '{$content}'" );
+		error_log( "🔍 HEADING_HANDLER: Content length: " . strlen($content) );
+		error_log( "🔍 HEADING_HANDLER: === END HEADING ===\n" );
 
 		return [
 			'widget_type' => 'e-heading',
 			'original_tag' => $tag,
 			'settings' => [
-				'text' => $element['content'],
+				'text' => $content,
 				'tag' => $tag,
 				'level' => $level,
 			],
@@ -153,13 +151,16 @@ class Widget_Mapper {
 	}
 
 	private function handle_paragraph( $element ) {
+		$content = $element['content'] ?? '';
+		$tag = $element['tag'];
+		
 		$settings = [
-			'paragraph' => $element['content'] ?? '',
+			'paragraph' => $content,
 		];
 		
 		return [
 			'widget_type' => 'e-paragraph',
-			'original_tag' => $element['tag'], // Preserve original tag (p, blockquote, etc.)
+			'original_tag' => $tag, // Preserve original tag (p, blockquote, etc.)
 			'settings' => $settings,
 			'attributes' => $element['attributes'],
 			'inline_css' => $element['inline_css'] ?? [],

@@ -52,19 +52,8 @@ class Widget_Creator {
 			}
 
 		// Step 2: Create Global Classes (HVV: threshold = 1)
-		error_log( "Widget Creator: create_global_classes = " . ($create_global_classes ? 'true' : 'false') );
-		error_log( "Widget Creator: css_processing_result keys = " . implode(', ', array_keys($css_processing_result)) );
-		if ( isset( $css_processing_result['global_classes'] ) ) {
-			error_log( "Widget Creator: global_classes count = " . count($css_processing_result['global_classes']) );
-		} else {
-			error_log( "Widget Creator: global_classes key missing from css_processing_result" );
-		}
-		
 		if ( $create_global_classes && ! empty( $css_processing_result['global_classes'] ) ) {
-			error_log( "Widget Creator: Creating global classes..." );
 			$this->create_global_classes( $css_processing_result['global_classes'] );
-		} else {
-			error_log( "Widget Creator: Skipping global classes creation" );
 		}
 
 			// Step 3: Create or get post
@@ -180,27 +169,18 @@ class Widget_Creator {
 				// ✅ NEW: Use mapped property name if available (e.g., border-top-left-radius -> border-radius)
 				$property_key = $property_data['mapped_property'] ?? $property_data['original_property'] ?? 'unknown';
 				
-				// Debug logging
-				error_log( "Widget Creator: Converting property to global class props: " . wp_json_encode( $converted ) );
-				error_log( "Widget Creator: Using property key: '$property_key'" );
 				
 				// Handle the property mapper format: ['property' => 'name', 'value' => [...]]
 				if ( is_array( $converted ) && isset( $converted['property'] ) && isset( $converted['value'] ) ) {
 					$atomic_value = $converted['value'];
-					
-					error_log( "Widget Creator: Setting props['{$property_key}'] = " . wp_json_encode( $atomic_value ) );
 					$props[ $property_key ] = $atomic_value;
 				} elseif ( is_array( $converted ) ) {
 					// ✅ FIXED: Use mapped property key instead of merging directly
-					error_log( "Widget Creator: Setting props['{$property_key}'] = " . wp_json_encode( $converted ) );
 					$props[ $property_key ] = $converted;
-				} else {
-					error_log( "Widget Creator: Unexpected converted property format: " . wp_json_encode( $converted ) );
 				}
 			}
 		}
 
-		error_log( "Widget Creator: Final props result: " . wp_json_encode( $props ) );
 		return $props;
 	}
 
@@ -417,11 +397,9 @@ class Widget_Creator {
 		$v4_styles = [];
 
 		// DEBUG: Log what we received
-		error_log( 'Widget Creator: convert_styles_to_v4_format called with: ' . wp_json_encode( array_keys( $applied_styles ) ) );
 		
 		// Process global classes first (convert to widget styles)
 		if ( ! empty( $applied_styles['global_classes'] ) ) {
-			error_log( 'Widget Creator: Processing global classes: ' . wp_json_encode( $applied_styles['global_classes'] ) );
 			
 			// Generate a unique class ID for this widget
 			if ( empty( $this->current_widget_class_id ) ) {

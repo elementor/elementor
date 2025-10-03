@@ -160,7 +160,6 @@ class Css_Processor {
 		);
 
 		// Debug: Log CSS rule categorization
-		error_log( "CSS Processor: Rule categorization - Selector: {$rule['selector']}, Category: {$categorized_rule['category']}, Target: {$categorized_rule['target']}, Specificity: {$categorized_rule['specificity']}" );
 
 		// Route to appropriate processing based on target type and category
 		switch ( $categorized_rule['target'] ) {
@@ -185,7 +184,6 @@ class Css_Processor {
 		// Extract ID from selector
 		if ( preg_match( '/#([a-zA-Z][\w-]*)/', $rule['selector'], $matches ) ) {
 			$id_name = $matches[1];
-			error_log( "CSS Processor: Processing ID selector rule for ID: {$id_name}, Property: {$rule['property']}, Value: {$rule['value']}" );
 			
 		$converted_property = $this->convert_css_property_safely( 
 			$rule['property'], 
@@ -263,8 +261,6 @@ class Css_Processor {
 					$converted_property = $conversion_result['converted_value'];
 					
 					// Debug logging
-					error_log( "CSS Processor: Converting {$rule['property']}:{$rule['value']} -> " . wp_json_encode( $converted_property ) );
-					error_log( "CSS Processor: Property name mapping: '{$rule['property']}' -> '$mapped_property_name'" );
 					
 					$processing_result['global_classes'][ $class_name ]['properties'][] = [
 						'original_property' => $rule['property'],
@@ -405,25 +401,17 @@ class Css_Processor {
 		$applied_classes = [];
 		$id_styles = [];
 
-		// DEBUG: Log widget info
+		// Get widget info
 		$widget_id = $widget['attributes']['id'] ?? 'no-id';
 		$widget_type = $widget['widget_type'] ?? 'unknown';
-		error_log( "CSS Processor: apply_styles_to_widget for {$widget_type} with ID: {$widget_id}" );
 		
 		// Apply ID-specific styles (highest specificity after !important and inline)
 		if ( ! empty( $widget['attributes']['id'] ) ) {
 			$widget_id = $widget['attributes']['id'];
-			error_log( "CSS Processor: Looking for ID styles for: {$widget_id}" );
-			error_log( "CSS Processor: Available ID styles: " . wp_json_encode( array_keys( $processing_result['id_styles'] ?? [] ) ) );
 			
 			if ( isset( $processing_result['id_styles'][ $widget_id ] ) ) {
 				$id_styles = $processing_result['id_styles'][ $widget_id ];
-				error_log( "CSS Processor: Found " . count( $id_styles ) . " ID styles for {$widget_id}" );
-			} else {
-				error_log( "CSS Processor: No ID styles found for {$widget_id}" );
 			}
-		} else {
-			error_log( "CSS Processor: Widget has no ID attribute" );
 		}
 
 		// Apply widget-specific styles (high specificity)
@@ -516,16 +504,9 @@ class Css_Processor {
 		
 		// Add inline styles (highest specificity after !important)
 		if ( ! empty( $widget['inline_css'] ) ) {
-			error_log('🟡 LEVEL 3 - CSS PROCESSOR: Processing inline CSS, properties = ' . implode(', ', array_keys($widget['inline_css'])));
 			foreach ( $widget['inline_css'] as $property => $style_data ) {
-				if ($property === 'transform') {
-					error_log('🟡 LEVEL 3 - CSS PROCESSOR: Found transform in inline_css, value = ' . $style_data['value']);
-				}
 				// Convert inline CSS to atomic format
 				$converted_property = $this->convert_css_property( $property, $style_data['value'] );
-				if ($property === 'transform') {
-					error_log('🟡 LEVEL 3 - CSS PROCESSOR: Transform converted = ' . json_encode($converted_property));
-				}
 				
 				$all_styles[] = [
 					'property' => $property,
