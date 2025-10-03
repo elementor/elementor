@@ -119,8 +119,11 @@ export async function verifyFontEditor(
 	expectedFamily: string,
 ): Promise<void> {
 	const element = driver.editor.getPreviewFrame().locator( selector );
-	const computedFamily = await element.evaluate( ( e ) => window.getComputedStyle( e ).fontFamily );
-	expect( computedFamily.toLowerCase() ).toContain( expectedFamily.toLowerCase() );
+
+	await expect( async () => {
+		const computedFamily = await element.evaluate( ( e ) => window.getComputedStyle( e ).fontFamily );
+		expect( computedFamily.toLowerCase() ).toContain( expectedFamily.toLowerCase() );
+	} ).toPass( { timeout: timeouts.expect } );
 }
 
 export async function verifyFontFamilyOnFrontend(
@@ -134,8 +137,11 @@ export async function verifyFontFamilyOnFrontend(
 
 	const publishedElement = driver.page.locator( selector );
 	await expect( publishedElement ).toBeVisible( { timeout: timeouts.navigation } );
-	const publishedComputedFamily = await publishedElement.evaluate( ( e ) => window.getComputedStyle( e ).fontFamily );
-	expect( publishedComputedFamily.toLowerCase() ).toContain( expectedFamily.toLowerCase() );
+
+	await expect( async () => {
+		const publishedComputedFamily = await publishedElement.evaluate( ( e ) => window.getComputedStyle( e ).fontFamily );
+		expect( publishedComputedFamily.toLowerCase() ).toContain( expectedFamily.toLowerCase() );
+	} ).toPass( { timeout: timeouts.expect } );
 }
 
 export async function verifyFontSizeEditor(
