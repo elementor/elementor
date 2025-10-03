@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { __privateUseRouteStatus as useRouteStatus } from '@elementor/editor-v1-adapters';
-import { __createStore, __registerSlice, __StoreProvider as StoreProvider } from '@elementor/store';
+import { __createStore, __deleteStore, __registerSlice, __StoreProvider as StoreProvider } from '@elementor/store';
 import { act, fireEvent, renderHook, screen } from '@testing-library/react';
 
 import { createPanel, type PanelDeclaration, registerPanel } from '../api';
@@ -10,6 +10,7 @@ import Panels from '../components/internal/panels';
 import { slice } from '../store';
 
 jest.mock( '@elementor/editor-v1-adapters' );
+jest.mock( '@elementor/editor-elements' );
 
 describe( 'panels api', () => {
 	beforeEach( () => {
@@ -171,6 +172,180 @@ describe( 'panels api', () => {
 
 		// Assert.
 		expect( onClose ).toHaveBeenCalledWith( state );
+	} );
+
+	describe( 'isOpenPreviousElement functionality', () => {
+		const MOCK_ELEMENT_ID = 'element-123';
+		const MOCK_SELECTED_ELEMENT = { id: MOCK_ELEMENT_ID };
+
+		beforeEach( () => {
+			const { getSelectedElements, selectElement } = require( '@elementor/editor-elements' );
+			getSelectedElements.mockReturnValue( [ MOCK_SELECTED_ELEMENT ] );
+			selectElement.mockClear();
+		} );
+
+		afterEach( () => {
+			__deleteStore();
+		} );
+
+		it( 'should store and restore previous element when isOpenPreviousElement is true', () => {
+			// Arrange.
+			const { getSelectedElements, selectElement } = require( '@elementor/editor-elements' );
+			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
+
+			__registerSlice( slice );
+			registerPanel( mockPanel.panel );
+
+			// Act.
+			const { open, close } = renderHook( () => mockPanel.usePanelActions(), {
+				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
+			} ).result.current;
+
+			act( () => {
+				open();
+			} );
+
+			// Assert.
+			expect( getSelectedElements ).toHaveBeenCalled();
+
+			// Act.
+			act( () => {
+				close();
+			} );
+
+			// Assert.
+			expect( selectElement ).toHaveBeenCalledWith( MOCK_ELEMENT_ID );
+		} );
+
+		it( 'should not store or restore previous element when isOpenPreviousElement is false', () => {
+			// Arrange.
+			const { getSelectedElements, selectElement } = require( '@elementor/editor-elements' );
+			const mockPanel = createMockPanel( { isOpenPreviousElement: false } );
+
+			__registerSlice( slice );
+			registerPanel( mockPanel.panel );
+
+			// Act.
+			const { open, close } = renderHook( () => mockPanel.usePanelActions(), {
+				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
+			} ).result.current;
+
+			act( () => {
+				open();
+				close();
+			} );
+
+			// Assert.
+			expect( getSelectedElements ).not.toHaveBeenCalled();
+			expect( selectElement ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should not store or restore previous element when isOpenPreviousElement is undefined (default)', () => {
+			// Arrange.
+			const { getSelectedElements, selectElement } = require( '@elementor/editor-elements' );
+			const mockPanel = createMockPanel();
+
+			__registerSlice( slice );
+			registerPanel( mockPanel.panel );
+
+			// Act.
+			const { open, close } = renderHook( () => mockPanel.usePanelActions(), {
+				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
+			} ).result.current;
+
+			act( () => {
+				open();
+				close();
+			} );
+
+			// Assert.
+			expect( getSelectedElements ).not.toHaveBeenCalled();
+			expect( selectElement ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should handle case when no element is selected during open', () => {
+			// Arrange.
+			const { getSelectedElements, selectElement } = require( '@elementor/editor-elements' );
+			getSelectedElements.mockReturnValue( [] );
+
+			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
+
+			__registerSlice( slice );
+			registerPanel( mockPanel.panel );
+
+			// Act.
+			const { open, close } = renderHook( () => mockPanel.usePanelActions(), {
+				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
+			} ).result.current;
+
+			act( () => {
+				open();
+				close();
+			} );
+
+			// Assert.
+			expect( getSelectedElements ).toHaveBeenCalled();
+			expect( selectElement ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should not restore element when panel is blocked during close', () => {
+			// Arrange.
+			const { getSelectedElements, selectElement } = require( '@elementor/editor-elements' );
+			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
+
+			__registerSlice( slice );
+			registerPanel( mockPanel.panel );
+
+			jest.mocked( useRouteStatus ).mockReturnValue( {
+				isActive: true,
+				isBlocked: true,
+			} );
+
+			// Act.
+			const { open, close } = renderHook( () => mockPanel.usePanelActions(), {
+				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
+			} ).result.current;
+			act( () => {
+				open();
+			} );
+			act( () => {
+				close();
+			} );
+
+			// Assert.
+			expect( getSelectedElements ).not.toHaveBeenCalled();
+			expect( selectElement ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should clear previous element reference after restoring', () => {
+			// Arrange.
+			const { getSelectedElements, selectElement } = require( '@elementor/editor-elements' );
+			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
+
+			__registerSlice( slice );
+			registerPanel( mockPanel.panel );
+
+			// Act.
+			const { open, close } = renderHook( () => mockPanel.usePanelActions(), {
+				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
+			} ).result.current;
+			act( () => {
+				open();
+				close();
+			} );
+
+			getSelectedElements.mockClear();
+			selectElement.mockClear();
+
+			act( () => {
+				open();
+				close();
+			} );
+
+			// Assert.
+			expect( getSelectedElements ).toHaveBeenCalled();
+			expect( selectElement ).toHaveBeenCalledWith( MOCK_ELEMENT_ID );
+		} );
 	} );
 } );
 
