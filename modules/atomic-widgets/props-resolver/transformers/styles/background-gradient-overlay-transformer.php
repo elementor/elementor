@@ -13,7 +13,7 @@ class Background_Gradient_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ): string {
 		$type = $value['type'];
 		$angle = $value['angle'];
-		$positions = $value['positions'];
+		$positions = $value['positions'] ?? '';
 		$stops = $value['stops'];
 
 		if ( 'radial' === $type ) {
