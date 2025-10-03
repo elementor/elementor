@@ -67,7 +67,7 @@ export default class StyleTab extends BasePage {
 	}
 
 	async setFontSize( size: number, unit: Unit ): Promise<void> {
-		const fontSizeInput = this.page.getByRole( 'spinbutton', { name: 'Font size' } );
+		const fontSizeInput = this.page.locator( '[aria-label="Font size"]' );
 
 		if ( 'px' !== unit ) {
 			const unitButton = fontSizeInput.locator( '..' ).getByRole( 'button' ).filter( { hasText: /^(px|em|rem|vw|vh|%)$/ } );
