@@ -89,5 +89,5 @@ export const FontFamilyControl = createControl(
 				</Popover>
 			</>
 		);
-	},
+	}
 );
