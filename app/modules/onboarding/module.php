@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Plugin_Upgrader;
@@ -26,6 +27,8 @@ class Module extends BaseModule {
 	const VERSION = '1.0.0';
 	const ONBOARDING_OPTION = 'elementor_onboarded';
 
+	private ?API $editor_assets_api = null;
+
 	/**
 	 * Get name.
 	 *
@@ -36,6 +39,39 @@ class Module extends BaseModule {
 	 */
 	public function get_name() {
 		return 'onboarding';
+	}
+
+	private function is_ab_test_enabled() {
+		$editor_assets_api = $this->get_editor_assets_api();
+
+		if ( null === $editor_assets_api ) {
+			return false;
+		}
+
+		return $editor_assets_api->is_core_onboarding_enabled();
+	}
+
+	private function get_ab_test_variant_override() {
+		return apply_filters( 'elementor/onboarding/ab_test_variant', null );
+	}
+
+	private function get_editor_assets_api(): ?API {
+		if ( null !== $this->editor_assets_api ) {
+			return $this->editor_assets_api;
+		}
+
+		$editor_assets_api_instance = new EditorAssetsAPI( $this->get_editor_assets_api_config() );
+		$this->editor_assets_api = new API( $editor_assets_api_instance );
+
+		return $this->editor_assets_api;
+	}
+
+	private function get_editor_assets_api_config(): array {
+		return [
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/ab-testing/v1/ab-testing.json',
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_ab_testing_data',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'ab-testing',
+		];
 	}
 
 	/**
@@ -121,6 +157,8 @@ class Module extends BaseModule {
 			],
 			'nonce' => wp_create_nonce( 'onboarding' ),
 			'experiment' => true,
+			'abTestEnabled' => $this->is_ab_test_enabled(),
+			'abVariant' => $this->get_ab_test_variant_override(),
 		] );
 	}
 

@@ -3,4 +3,110 @@
 	&__action-button-text {
 		margin-inline-start: 10px;
 	}
+
+	&__page-content:has(.e-onboarding__page-content-variant-b) {
+		flex-direction: column;
+	}
+
+	&__page-content-start:has(.e-onboarding__page-content-variant-b) {
+		align-self: center;
+		text-align: center;
+	}
+
+	&__page-content-variant-b {
+
+		.e-onboarding__page-content-section-title {
+			line-height: 40px;
+		}
+
+		.e-onboarding__theme-selection-description {
+			font-size: 18px;
+			font-weight: 400;
+			margin-bottom: 8px;
+			text-align: center;
+			color: #495157;
+		}
+
+		.e-onboarding__theme-selection-subtitle {
+			font-size: 14px;
+			font-weight: 400;
+			color: #6C7781;
+			text-align: center;
+			margin-bottom: 24px;
+		}
+
+		.e-onboarding__theme-cards {
+			display: flex;
+			gap: 16px;
+			justify-content: center;
+			flex-wrap: wrap;
+			margin-top: 24px;
+		}
+
+		.e-onboarding__theme-card {
+			background: #ffffff;
+			border: 1px solid #A9A9A9;
+			border-radius: 8px;
+			padding: 24px;
+			max-width: 300px;
+			min-width: 280px;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			display: flex;
+			flex-direction: column;
+
+			&:hover {
+				border-color: #6C7781;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+				transform: translateY(-2px);
+			}
+
+			&.e-onboarding__theme-card--selected {
+				border-color: #92003B;
+				border-width: 2px;
+				box-shadow: 0 4px 12px rgba(146, 0, 59, 0.15);
+				padding: 23px;
+
+				&:hover {
+					border-color: #92003B;
+					box-shadow: 0 6px 16px rgba(146, 0, 59, 0.25);
+				}
+			}
+		}
+
+		.e-onboarding__theme-card-illustration {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin-bottom: 20px;
+			min-height: 153px;
+			background: #F7F7F7;
+			border-radius: 4px;
+			padding: 16px;
+
+			svg {
+				max-width: 100%;
+				height: auto;
+			}
+		}
+
+		.e-onboarding__theme-card-content {
+			text-align: center;
+		}
+
+		.e-onboarding__theme-card-title {
+			font-size: 20px;
+			font-weight: 700;
+			margin-bottom: 8px;
+			color: #495157;
+		}
+
+		.e-onboarding__theme-card-description {
+			font-size: 16px;
+			font-weight: 400;
+			color: #6C7781;
+			line-height: 1.5;
+			margin: 0;
+		}
+	}
 }
