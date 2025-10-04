@@ -1,9 +1,11 @@
 import { useCallback } from 'react';
 import { useNavigate } from '@reach/router';
 import { Dialog } from '@elementor/app-ui';
+import { useTracking } from '../context/tracking-context';
 
 export default function ApplyKitDialog( props ) {
 	const navigate = useNavigate();
+	const tracking = useTracking();
 
 	const startImportProcess = useCallback( ( applyAll = false ) => {
 		let url = '';
@@ -24,8 +26,8 @@ export default function ApplyKitDialog( props ) {
 			}
 		}
 
-		navigate( url );
-	}, [ props.downloadLink, props.nonce ] );
+		tracking.trackKitdemoApplyAllOrCustomize( applyAll, () => navigate( url ) );
+	}, [ props.downloadLink, props.nonce, props.id, tracking, navigate ] );
 
 	return (
 		<Dialog

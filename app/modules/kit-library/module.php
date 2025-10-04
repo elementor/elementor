@@ -34,7 +34,7 @@ class Module extends BaseModule {
 		$menu->add_submenu( [
 			'page_title' => esc_html__( 'Website Templates', 'elementor' ),
 			'menu_title' => '<span id="e-admin-menu__kit-library">' . esc_html__( 'Website Templates', 'elementor' ) . '</span>',
-			'menu_slug' => Plugin::$instance->app->get_base_url() . '#/kit-library',
+			'menu_slug' => Plugin::$instance->app->get_base_url() . '&source=wp_db_templates_menu#/kit-library',
 			'index' => 40,
 		] );
 	}
@@ -44,7 +44,7 @@ class Module extends BaseModule {
 	 */
 	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register(
-			Plugin::$instance->app->get_base_url() . '#/kit-library',
+			Plugin::$instance->app->get_base_url() . '&source=wp_db_templates_menu#/kit-library',
 			new Kit_Library_Menu_Item()
 		);
 	}

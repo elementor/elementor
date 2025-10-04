@@ -37,9 +37,9 @@ export default function ImportKit() {
 
 		let path = 'admin.php?page=elementor-tools#tab-import-export-kit';
 		if ( 'cloud' === data?.kitUploadParams?.source ) {
-			path = 'admin.php?page=elementor-app#kit-library/cloud';
+			path = 'admin.php?page=elementor-app&source=kit_import#kit-library/cloud';
 		} else if ( 'kit-library' === data?.kitUploadParams?.source ) {
-			path = `admin.php?page=elementor-app#kit-library`;
+			path = `admin.php?page=elementor-app&source=kit_import#kit-library`;
 		}
 
 		window.top.location = elementorAppConfig.admin_url + path;
