@@ -32,16 +32,27 @@ class Box_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	public function map_to_v4_atomic( string $property, $value ): ?array {
 		if ( ! $this->is_supported_property( $property ) ) {
+			error_log( "DEBUG: Box_Shadow_Property_Mapper - Property '$property' not supported" );
 			return null;
 		}
+
+		error_log( "DEBUG: Box_Shadow_Property_Mapper - Processing value: '$value'" );
 
 		$shadows_data = $this->parse_box_shadow_value( $value );
 		if ( null === $shadows_data ) {
+			error_log( "DEBUG: Box_Shadow_Property_Mapper - Failed to parse value: '$value'" );
 			return null;
 		}
 
+		error_log( "DEBUG: Box_Shadow_Property_Mapper - Parsed shadows data: " . json_encode( $shadows_data ) );
+
 		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
-		return Box_Shadow_Prop_Type::make()->generate( $shadows_data );
+		$result = Box_Shadow_Prop_Type::make()->generate( $shadows_data );
+		
+		error_log( "DEBUG: Box_Shadow_Property_Mapper - Generated atomic result: " . json_encode( $result ) );
+		error_log( "INFO: Box_Shadow_Property_Mapper - box-shadow IS supported by atomic widgets (found in style-schema.php effects props)" );
+		
+		return $result;
 	}
 
 	public function get_supported_properties(): array {

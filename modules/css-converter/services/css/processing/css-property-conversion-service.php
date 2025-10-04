@@ -97,10 +97,27 @@ class Css_Property_Conversion_Service {
 		if ($property === 'transform') {
 			error_log('🟠 LEVEL 4 - CONVERSION SERVICE: Converting transform, value = ' . $value);
 		}
+		
+		// Add debugging for letter-spacing and text-transform
+		if ( in_array( $property, [ 'letter-spacing', 'text-transform' ], true ) ) {
+			error_log( "🔍 DEBUG: CSS_Property_Conversion_Service - Converting '$property' with value: '$value'" );
+			error_log( "🔍 DEBUG: CSS_Property_Conversion_Service - Value type: " . gettype( $value ) );
+		}
+		
 		$mapper = $this->resolve_property_mapper_safely( $property, $value );
 		
+		if ( in_array( $property, [ 'letter-spacing', 'text-transform' ], true ) ) {
+			error_log( "🔍 DEBUG: CSS_Property_Conversion_Service - Resolved mapper: " . ( $mapper ? get_class( $mapper ) : 'null' ) );
+		}
+		
 		if ( $this->can_convert_to_v4_atomic( $mapper ) ) {
-			return $this->attempt_v4_atomic_conversion( $mapper, $property, $value );
+			$result = $this->attempt_v4_atomic_conversion( $mapper, $property, $value );
+			
+			if ( in_array( $property, [ 'letter-spacing', 'text-transform' ], true ) ) {
+				error_log( "🔍 DEBUG: CSS_Property_Conversion_Service - Conversion result: " . json_encode( $result ) );
+			}
+			
+			return $result;
 		}
 		
 		$this->record_conversion_failure( $property, $value, 'No v4 mapper available' );

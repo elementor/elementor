@@ -52,6 +52,8 @@ class Class_Property_Mapper_Registry {
 		require_once __DIR__ . '/../properties/positioning-property-mapper.php';
 		require_once __DIR__ . '/../properties/transform-property-mapper.php';
 		require_once __DIR__ . '/../properties/text-shadow-property-mapper.php';
+		require_once __DIR__ . '/../properties/letter-spacing-property-mapper.php';
+		require_once __DIR__ . '/../properties/text-transform-property-mapper.php';
 		
 		// Register atomic property mappers
 		$this->mappers['color'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Color_Property_Mapper();
@@ -164,6 +166,13 @@ class Class_Property_Mapper_Registry {
 		
 		// Register text-shadow mapper
 		$this->mappers['text-shadow'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Text_Shadow_Property_Mapper();
+		
+		// Register letter-spacing mapper
+		$this->mappers['letter-spacing'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Letter_Spacing_Property_Mapper();
+		
+		// Register text-transform mapper
+		$this->mappers['text-transform'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Text_Transform_Property_Mapper();
+		
 	}
 
 	public function register( string $property, object $mapper ): void {

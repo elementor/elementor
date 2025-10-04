@@ -120,8 +120,10 @@ This document tracks CSS features that are not currently supported due to atomic
 - ✅ Text-shadow property mapper exists in CSS Converter (`text-shadow-property-mapper.php`)
 - ✅ Mapper converts text-shadow to correct atomic format using `Shadow_Prop_Type`
 - ✅ Mapper is registered and will process text-shadow values
-- ❌ Atomic widgets cannot render text-shadow (schema limitation)
-- ❌ Text-shadow styles are saved to database but not applied by renderer
+- ✅ **Debugging added** - Comprehensive logging to track text-shadow processing
+- ❌ **CONFIRMED**: Atomic widgets cannot render text-shadow (missing from `style-schema.php`)
+- ❌ **VERIFIED**: Text-shadow is NOT in `get_typography_props()` in atomic widgets
+- ❌ Text-shadow styles are processed but rejected by atomic widget renderer
 
 #### **Future Implementation Requirements:**
 1. **Atomic Widget Schema Update**: Add `text-shadow` to `get_typography_props()` or `get_effects_props()` in `style-schema.php`

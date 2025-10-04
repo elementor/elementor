@@ -10,6 +10,8 @@ use Elementor\Core\Base\Document;
 use Elementor\Modules\CssConverter\Services\Widgets\Widget_Hierarchy_Processor;
 use Elementor\Modules\CssConverter\Services\Widgets\Widget_Error_Handler;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 
 class Widget_Creator {
 	private $creation_stats;
@@ -274,10 +276,12 @@ class Widget_Creator {
 		// Merge widget attributes into settings for Elementor v4 compatibility
 		$merged_settings = $this->merge_settings_with_styles( $settings, $applied_styles );
 		
-		// Add widget attributes to settings (preserves HTML id, class, etc.)
-		// Only add attributes if they have meaningful content (not just style attributes)
+		// Add widget attributes to settings using atomic Attributes_Prop_Type
 		if ( ! empty( $attributes ) && ! $this->are_attributes_only_style( $attributes ) ) {
-			$merged_settings['attributes'] = $attributes;
+			$filtered_attributes = $this->filter_non_style_attributes( $attributes );
+			if ( ! empty( $filtered_attributes ) ) {
+				$merged_settings['attributes'] = $this->build_atomic_attributes( $filtered_attributes );
+			}
 		}
 		
 		if ( 'e-div-block' === $mapped_type ) {
@@ -383,6 +387,7 @@ class Widget_Creator {
 			];
 		}
 		// If no classes, don't add the classes property at all (matches editor behavior)
+
 
 		return $merged_settings;
 	}
@@ -569,17 +574,22 @@ class Widget_Creator {
 								$property_key = $property_data['mapped_property'] ?? $property_data['original_property'] ?? 'unknown';
 								
 							// Add the converted property to props using the correct mapped key
+							$atomic_value = $converted;
+							
+							// Restore original atomic property processing
+							// (Debugging will be added separately without breaking functionality)
+							
 							// Check if we need to merge directional prop type structures
 							if ( isset( $props[ $property_key ] ) ) {
-								if ( $this->is_dimensions_prop_type( $converted ) && $this->is_dimensions_prop_type( $props[ $property_key ] ) ) {
-									$props[ $property_key ] = $this->merge_dimensions_prop_types( $props[ $property_key ], $converted );
-								} elseif ( $this->is_border_width_prop_type( $converted ) && $this->is_border_width_prop_type( $props[ $property_key ] ) ) {
-									$props[ $property_key ] = $this->merge_border_width_prop_types( $props[ $property_key ], $converted );
+								if ( $this->is_dimensions_prop_type( $atomic_value ) && $this->is_dimensions_prop_type( $props[ $property_key ] ) ) {
+									$props[ $property_key ] = $this->merge_dimensions_prop_types( $props[ $property_key ], $atomic_value );
+								} elseif ( $this->is_border_width_prop_type( $atomic_value ) && $this->is_border_width_prop_type( $props[ $property_key ] ) ) {
+									$props[ $property_key ] = $this->merge_border_width_prop_types( $props[ $property_key ], $atomic_value );
 								} else {
-									$props[ $property_key ] = $converted;
+									$props[ $property_key ] = $atomic_value;
 								}
 							} else {
-								$props[ $property_key ] = $converted;
+								$props[ $property_key ] = $atomic_value;
 							}
 							}
 						}
@@ -610,12 +620,12 @@ class Widget_Creator {
 		];
 	}
 
-	private function is_dimensions_prop_type( array $property ): bool {
-		return isset( $property['$$type'] ) && 'dimensions' === $property['$$type'];
+	private function is_dimensions_prop_type( $property ): bool {
+		return is_array( $property ) && isset( $property['$$type'] ) && 'dimensions' === $property['$$type'];
 	}
 
-	private function is_border_width_prop_type( array $property ): bool {
-		return isset( $property['$$type'] ) && 'border-width' === $property['$$type'];
+	private function is_border_width_prop_type( $property ): bool {
+		return is_array( $property ) && isset( $property['$$type'] ) && 'border-width' === $property['$$type'];
 	}
 
 	private function merge_dimensions_prop_types( array $existing, array $new ): array {
@@ -892,4 +902,110 @@ class Widget_Creator {
 		
 		return true; // Only style attributes found
 	}
+
+	private function filter_non_style_attributes( array $attributes ): array {
+		$filtered = [];
+		foreach ( $attributes as $key => $value ) {
+			if ( in_array( $key, [ 'class', 'style' ], true ) ) {
+				continue;
+			}
+			$filtered[ $key ] = is_scalar( $value ) ? (string) $value : '';
+		}
+		return $filtered;
+	}
+
+	private function build_atomic_attributes( array $attributes ): array {
+		$items = [];
+		foreach ( $attributes as $key => $value ) {
+			// Only process valid attribute keys (non-numeric strings)
+			if ( is_string( $key ) && ! is_numeric( $key ) && ! empty( $key ) ) {
+				$items[] = Key_Value_Prop_Type::generate( [
+					'key' => (string) $key,
+					'value' => (string) $value,
+				] );
+			}
+		}
+		return Attributes_Prop_Type::generate( $items );
+	}
+	
+	private function fix_numeric_keyed_arrays( $array, $property_key ) {
+		if ( ! is_array( $array ) ) {
+			return $array;
+		}
+		
+		$keys = array_keys( $array );
+		$has_numeric_keys = array_filter( $keys, 'is_numeric' );
+		
+		// If no numeric keys, return as-is
+		if ( empty( $has_numeric_keys ) ) {
+			// Still recursively fix nested arrays
+			foreach ( $array as $key => $value ) {
+				if ( is_array( $value ) ) {
+					$array[ $key ] = $this->fix_numeric_keyed_arrays( $value, "$property_key.$key" );
+				}
+			}
+			return $array;
+		}
+		
+		// CRITICAL FIX: Handle specific atomic property types that use numeric-keyed arrays
+		return $this->convert_atomic_array_to_safe_structure( $array, $property_key );
+	}
+	
+	private function convert_atomic_array_to_safe_structure( $array, $property_key ) {
+		error_log( "🔧 FIXING: Converting numeric-keyed array for $property_key: " . json_encode( $array ) );
+		
+		// Handle box-shadow arrays: [shadow_object] -> DISABLE for now to test
+		if ( $this->is_box_shadow_array( $array ) ) {
+			error_log( "🔧 DISABLING box-shadow to test: " . json_encode( $array ) );
+			return null; // Temporarily disable box-shadow to isolate the issue
+		}
+		
+		// Handle other array types - convert to object with named keys
+		$fixed = [];
+		foreach ( $array as $index => $value ) {
+			$fixed[ "item_$index" ] = is_array( $value ) ? 
+				$this->fix_numeric_keyed_arrays( $value, "$property_key.item_$index" ) : 
+				$value;
+		}
+		
+		error_log( "🔧 FIXED generic array: " . json_encode( $fixed ) );
+		return $fixed;
+	}
+	
+	private function is_box_shadow_array( $array ) {
+		// Check if this is a box-shadow array: [{"$$type":"shadow",...}]
+		return is_array( $array ) && 
+			   isset( $array[0] ) && 
+			   is_array( $array[0] ) && 
+			   isset( $array[0]['$$type'] ) && 
+			   $array[0]['$$type'] === 'shadow';
+	}
+	
+	private function debug_final_settings_for_numeric_keys( $settings, $widget_type ) {
+		$this->deep_scan_for_numeric_keys( $settings, "final_settings_$widget_type" );
+	}
+	
+	private function deep_scan_for_numeric_keys( $data, $path ) {
+		if ( is_array( $data ) ) {
+			$keys = array_keys( $data );
+			$numeric_keys = array_filter( $keys, 'is_numeric' );
+			if ( ! empty( $numeric_keys ) ) {
+				error_log( "🚨 FINAL SCAN - NUMERIC KEYS in $path: " . json_encode( $numeric_keys ) );
+				error_log( "🚨 FINAL SCAN - Data: " . json_encode( $data ) );
+			}
+			
+			foreach ( $data as $key => $value ) {
+				if ( is_array( $value ) || is_object( $value ) ) {
+					$this->deep_scan_for_numeric_keys( $value, "$path.$key" );
+				}
+			}
+		} elseif ( is_object( $data ) ) {
+			foreach ( $data as $key => $value ) {
+				if ( is_array( $value ) || is_object( $value ) ) {
+					$this->deep_scan_for_numeric_keys( $value, "$path.$key" );
+				}
+			}
+		}
+	}
+	
 }

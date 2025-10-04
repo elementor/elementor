@@ -39,7 +39,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test.only( 'should apply inline and ID selector styles directly to widgets', async ( { page, request } ) => {
+	test( 'should apply inline and ID selector styles directly to widgets', async ( { page, request } ) => {
 		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
 		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
 		const css2Content = fs.readFileSync( css2Path, 'utf-8' );
@@ -74,71 +74,6 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
-                await page.pause();
-
-		await test.step( 'Extract all computed styles', async () => {
-			const elementorFrame = editor.getPreviewFrame();
-			await elementorFrame.waitForLoadState();
-
-			const allStyles = await elementorFrame.evaluate( () => {
-				const getStyles = ( element: Element, label: string ) => {
-					const computed = window.getComputedStyle( element );
-					return {
-						label,
-						tag: element.tagName.toLowerCase(),
-						text: element.textContent?.substring( 0, 100 ) || '',
-						styles: {
-							backgroundColor: computed.backgroundColor,
-							backgroundImage: computed.backgroundImage,
-							color: computed.color,
-							fontSize: computed.fontSize,
-							fontWeight: computed.fontWeight,
-							padding: computed.padding,
-							margin: computed.margin,
-							textAlign: computed.textAlign,
-							lineHeight: computed.lineHeight,
-							boxShadow: computed.boxShadow,
-							borderRadius: computed.borderRadius,
-							border: computed.border,
-							textDecoration: computed.textDecoration,
-							textTransform: computed.textTransform,
-							letterSpacing: computed.letterSpacing,
-							textShadow: computed.textShadow,
-							width: computed.width,
-							maxWidth: computed.maxWidth,
-							minWidth: computed.minWidth,
-							minHeight: computed.minHeight,
-							display: computed.display,
-							flexDirection: computed.flexDirection,
-							justifyContent: computed.justifyContent,
-							alignItems: computed.alignItems,
-							gap: computed.gap,
-						},
-					};
-				};
-
-				const elements = Array.from( document.querySelectorAll( '.elementor-element' ) );
-				const headings = Array.from( document.querySelectorAll( '.e-heading-base' ) );
-				const paragraphs = Array.from( document.querySelectorAll( '.e-paragraph-base' ) );
-				const links = Array.from( document.querySelectorAll( 'a' ) ).filter( a => {
-					const parent = a.closest( '.elementor-element' );
-					return parent && a.textContent?.trim();
-				} );
-				const buttons = Array.from( document.querySelectorAll( '.e-button-base' ) );
-
-				return {
-					elements: elements.slice( 0, 10 ).map( ( el, i ) => getStyles( el, `Element ${ i + 1 }` ) ),
-					headings: headings.slice( 0, 3 ).map( ( el, i ) => getStyles( el, `Heading ${ i + 1 }` ) ),
-					paragraphs: paragraphs.slice( 0, 3 ).map( ( el, i ) => getStyles( el, `Paragraph ${ i + 1 }` ) ),
-					links: links.slice( 0, 12 ).map( ( el, i ) => getStyles( el, `Link ${ i + 1 }` ) ),
-					buttons: buttons.slice( 0, 3 ).map( ( el, i ) => getStyles( el, `Button ${ i + 1 }` ) ),
-				};
-			} );
-
-			console.log( '\n========== EXTRACTED STYLES ==========\n' );
-			console.log( JSON.stringify( allStyles, null, 2 ) );
-			console.log( '\n======================================\n' );
-		} );
 
 		await test.step( 'Verify ID selector styles (#header) are applied to widget', async () => {
 			const elementorFrame = editor.getPreviewFrame();
@@ -220,5 +155,277 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 		console.log( '✓ Successfully processed HTML with multiple classes per element' );
 		console.log( `✓ Created ${ apiResult.widgets_created } widgets from multi-class elements` );
 		console.log( `✓ Created ${ apiResult.global_classes_created } global classes from flat CSS` );
+	} );
+
+	test( 'COMPREHENSIVE STYLING TEST - should apply ALL advanced text properties', async ( { page, request } ) => {
+		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
+		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
+		const css2Content = fs.readFileSync( css2Path, 'utf-8' );
+
+		htmlContent = htmlContent
+			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
+			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
+
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
+			createGlobalClasses: true,
+			preserveIds: true,
+		} );
+
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
+			test.skip( true, validation.skipReason );
+			return;
+		}
+
+		await page.goto( apiResult.edit_url );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
+
+		await test.step( 'CRITICAL: Verify letter-spacing from .text-bold class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
+
+			// Banner title has class="banner-title text-bold" with letter-spacing: 1px
+			const bannerTitle = elementorFrame.locator( '.e-heading-base' ).filter( { hasText: 'Ready to Get Started?' } );
+			await expect( bannerTitle ).toBeVisible();
+			
+			// THIS SHOULD FAIL if letter-spacing mapper is not working
+			await expect( bannerTitle ).toHaveCSS( 'letter-spacing', '1px' );
+			console.log( '✓ CRITICAL: letter-spacing: 1px applied from .text-bold class' );
+		} );
+
+		await test.step( 'CRITICAL: Verify text-transform from .banner-title class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			
+			// Banner title has text-transform: uppercase from external-styles-2.css
+			const bannerTitle = elementorFrame.locator( '.e-heading-base' ).filter( { hasText: 'Ready to Get Started?' } );
+			
+			// THIS SHOULD FAIL if text-transform mapper is not working
+			await expect( bannerTitle ).toHaveCSS( 'text-transform', 'uppercase' );
+			console.log( '✓ CRITICAL: text-transform: uppercase applied from .banner-title class' );
+		} );
+
+		await test.step( 'CRITICAL: Verify text-shadow from .banner-title class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			
+			// Banner title has text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2) from external-styles-2.css
+			const bannerTitle = elementorFrame.locator( '.e-heading-base' ).filter( { hasText: 'Ready to Get Started?' } );
+			
+			// THIS SHOULD FAIL if text-shadow is not supported by atomic widgets
+			await expect( bannerTitle ).toHaveCSS( 'text-shadow', 'rgba(0, 0, 0, 0.2) 2px 2px 4px' );
+			console.log( '✓ CRITICAL: text-shadow applied from .banner-title class' );
+		} );
+	} );
+
+	test( 'COMPREHENSIVE STYLING TEST - should apply ALL box-shadow properties', async ( { page, request } ) => {
+		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
+		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
+		const css2Content = fs.readFileSync( css2Path, 'utf-8' );
+
+		htmlContent = htmlContent
+			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
+			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
+
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
+			createGlobalClasses: true,
+			preserveIds: true,
+		} );
+
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
+			test.skip( true, validation.skipReason );
+			return;
+		}
+
+		await page.goto( apiResult.edit_url );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
+
+		await test.step( 'CRITICAL: Verify header box-shadow from #header ID selector', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
+
+			// Header has box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) from external-styles-2.css
+			const header = elementorFrame.locator( '.elementor-element' ).first();
+			
+			// THIS SHOULD PASS if box-shadow mapper is working
+			await expect( header ).toHaveCSS( 'box-shadow', 'rgba(0, 0, 0, 0.1) 0px 2px 8px 0px' );
+			console.log( '✓ CRITICAL: Header box-shadow applied from #header ID selector' );
+		} );
+
+		await test.step( 'CRITICAL: Verify links-container box-shadow from .links-container class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			
+			// Links section has box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) from external-styles-2.css
+			const linksContainer = elementorFrame.locator( '.elementor-element' ).filter( { has: elementorFrame.locator( 'a' ).first() } );
+			
+			// THIS SHOULD PASS if box-shadow mapper is working
+			await expect( linksContainer ).toHaveCSS( 'box-shadow', 'rgba(0, 0, 0, 0.12) 0px 1px 3px 0px' );
+			console.log( '✓ CRITICAL: Links container box-shadow applied from .links-container class' );
+		} );
+
+		await test.step( 'CRITICAL: Verify button box-shadow from .button-primary class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			
+			// Primary button has box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3) from external-styles-1.css
+			const primaryButton = elementorFrame.locator( 'a' ).filter( { hasText: 'Get Started Now' } );
+			
+			// THIS SHOULD PASS if box-shadow mapper is working
+			await expect( primaryButton ).toHaveCSS( 'box-shadow', 'rgba(52, 152, 219, 0.3) 0px 4px 6px 0px' );
+			console.log( '✓ CRITICAL: Primary button box-shadow applied from .button-primary class' );
+		} );
+	} );
+
+	test( 'COMPREHENSIVE STYLING TEST - should apply ALL border properties', async ( { page, request } ) => {
+		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
+		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
+		const css2Content = fs.readFileSync( css2Path, 'utf-8' );
+
+		htmlContent = htmlContent
+			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
+			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
+
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
+			createGlobalClasses: true,
+			preserveIds: true,
+		} );
+
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
+			test.skip( true, validation.skipReason );
+			return;
+		}
+
+		await page.goto( apiResult.edit_url );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
+
+		await test.step( 'CRITICAL: Verify border from .bg-light class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
+
+			// Links section has border: 1px solid #dee2e6 from .bg-light class in external-styles-1.css
+			const linksContainer = elementorFrame.locator( '.elementor-element' ).filter( { has: elementorFrame.locator( 'a' ).first() } );
+			
+			// THIS SHOULD FAIL if border mapper is not working properly
+			await expect( linksContainer ).toHaveCSS( 'border', '1px solid rgb(222, 226, 230)' );
+			console.log( '✓ CRITICAL: Links container border applied from .bg-light class' );
+		} );
+
+		await test.step( 'CRITICAL: Verify border-bottom from .link-item class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			
+			// Link items have border-bottom: 1px solid #e9ecef from external-styles-2.css
+			const linkItem = elementorFrame.locator( '.elementor-element' ).filter( { has: elementorFrame.locator( 'a' ).first() } );
+			
+			// THIS SHOULD FAIL if border-bottom mapper is not working
+			await expect( linkItem ).toHaveCSS( 'border-bottom', '1px solid rgb(233, 236, 239)' );
+			console.log( '✓ CRITICAL: Link item border-bottom applied from .link-item class' );
+		} );
+	} );
+
+	test( 'COMPREHENSIVE STYLING TEST - should apply ALL link colors and typography', async ( { page, request } ) => {
+		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
+		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
+		const css2Content = fs.readFileSync( css2Path, 'utf-8' );
+
+		htmlContent = htmlContent
+			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
+			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
+
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
+			createGlobalClasses: true,
+			preserveIds: true,
+		} );
+
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
+			test.skip( true, validation.skipReason );
+			return;
+		}
+
+		await page.goto( apiResult.edit_url );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
+
+		await test.step( 'CRITICAL: Verify .link-secondary color and typography', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
+
+			// Link Two has class="link link-secondary" with color: #16a085, font-size: 17px, font-weight: 500
+			const linkSecondary = elementorFrame.locator( 'a' ).filter( { hasText: 'Link Two - Additional Information' } );
+			await expect( linkSecondary ).toBeVisible();
+			
+			// THIS SHOULD PASS if color mappers are working
+			await expect( linkSecondary ).toHaveCSS( 'color', 'rgb(22, 160, 133)' ); // #16a085
+			await expect( linkSecondary ).toHaveCSS( 'font-size', '17px' );
+			await expect( linkSecondary ).toHaveCSS( 'font-weight', '500' );
+			console.log( '✓ CRITICAL: .link-secondary styling applied correctly' );
+		} );
+
+		await test.step( 'CRITICAL: Verify .link-accent color and typography', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			
+			// Link Three has class="link link-accent" with color: #e74c3c, font-weight: bold
+			const linkAccent = elementorFrame.locator( 'a' ).filter( { hasText: 'Link Three - Special Feature' } );
+			
+			await expect( linkAccent ).toHaveCSS( 'color', 'rgb(231, 76, 60)' ); // #e74c3c
+			await expect( linkAccent ).toHaveCSS( 'font-weight', '700' ); // bold
+			console.log( '✓ CRITICAL: .link-accent styling applied correctly' );
+		} );
+
+		await test.step( 'CRITICAL: Verify .link-danger color and typography', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			
+			// Link Nine has class="link link-danger" with color: #c0392b, font-size: 17px, font-weight: 700
+			const linkDanger = elementorFrame.locator( 'a' ).filter( { hasText: 'Link Nine - Critical Updates' } );
+			
+			await expect( linkDanger ).toHaveCSS( 'color', 'rgb(192, 57, 43)' ); // #c0392b
+			await expect( linkDanger ).toHaveCSS( 'font-size', '17px' );
+			await expect( linkDanger ).toHaveCSS( 'font-weight', '700' );
+			console.log( '✓ CRITICAL: .link-danger styling applied correctly' );
+		} );
+	} );
+
+	test( 'COMPREHENSIVE STYLING TEST - should apply ALL background properties', async ( { page, request } ) => {
+		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
+		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
+		const css2Content = fs.readFileSync( css2Path, 'utf-8' );
+
+		htmlContent = htmlContent
+			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
+			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
+
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
+			createGlobalClasses: true,
+			preserveIds: true,
+		} );
+
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
+			test.skip( true, validation.skipReason );
+			return;
+		}
+
+		await page.goto( apiResult.edit_url );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
+
+		await test.step( 'CRITICAL: Verify gradient background from .bg-gradient class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
+
+			// Banner section has class="banner-section bg-gradient" with linear-gradient background
+			const bannerSection = elementorFrame.locator( '.elementor-element' ).filter( { has: elementorFrame.locator( 'h2' ).filter( { hasText: 'Ready to Get Started?' } ) } );
+			await expect( bannerSection ).toBeVisible();
+			
+			// THIS SHOULD FAIL if gradient background mapper is not working
+			// background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+			const backgroundImage = await bannerSection.evaluate( ( el ) => getComputedStyle( el ).backgroundImage );
+			expect( backgroundImage ).toContain( 'linear-gradient' );
+			expect( backgroundImage ).toContain( 'rgb(102, 126, 234)' ); // #667eea
+			expect( backgroundImage ).toContain( 'rgb(118, 75, 162)' ); // #764ba2
+			console.log( '✓ CRITICAL: Gradient background applied from .bg-gradient class' );
+		} );
 	} );
 } );
