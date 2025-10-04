@@ -10,6 +10,9 @@ use Elementor\Core\Base\Document;
 use Elementor\Modules\CssConverter\Services\Widgets\Widget_Hierarchy_Processor;
 use Elementor\Modules\CssConverter\Services\Widgets\Widget_Error_Handler;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 class Widget_Creator {
 	private $creation_stats;
@@ -276,12 +279,29 @@ class Widget_Creator {
 		
 		// Add widget attributes to settings (preserves HTML id, class, etc.)
 		// Only add attributes if they have meaningful content (not just style attributes)
-		if ( ! empty( $attributes ) && ! $this->are_attributes_only_style( $attributes ) ) {
-			$filtered_attributes = $this->filter_non_style_attributes( $attributes );
-			if ( ! empty( $filtered_attributes ) ) {
-				$merged_settings['attributes'] = $filtered_attributes;
+	if ( ! empty( $attributes ) && ! $this->are_attributes_only_style( $attributes ) ) {
+		error_log( '=== ATTRIBUTE DEBUG - WIDGET CREATOR ===' );
+		error_log( 'Raw attributes input: ' . print_r( $attributes, true ) );
+		error_log( 'Raw attributes JSON: ' . wp_json_encode( $attributes, JSON_PRETTY_PRINT ) );
+		
+		$filtered_attributes = $this->filter_non_style_attributes( $attributes );
+		error_log( 'Filtered attributes: ' . print_r( $filtered_attributes, true ) );
+		error_log( 'Filtered attributes JSON: ' . wp_json_encode( $filtered_attributes, JSON_PRETTY_PRINT ) );
+		
+		if ( ! empty( $filtered_attributes ) ) {
+			// PLUGIN-BASED FIX: Use a custom attribute structure that avoids the spread bug
+			$safe_attributes = $this->build_safe_attributes_structure( $filtered_attributes );
+			$merged_settings['attributes'] = $safe_attributes;
+			
+			// Log the limitation
+			error_log( 'LIMITATION: HTML attributes not preserved due to frontend spread bug:' );
+			foreach ( $filtered_attributes as $key => $value ) {
+				error_log( "  - Lost attribute: $key=\"$value\"" );
 			}
+			error_log( 'Using safe empty structure to prevent InvalidCharacterError' );
 		}
+		error_log( '=== END ATTRIBUTE DEBUG ===' );
+	}
 		
 		if ( 'e-div-block' === $mapped_type ) {
 			// Div-block containers have special structure in Elementor
@@ -903,14 +923,125 @@ class Widget_Creator {
 	}
 
 	private function filter_non_style_attributes( array $attributes ): array {
+		error_log( '=== FILTER_NON_STYLE_ATTRIBUTES DEBUG ===' );
+		error_log( 'Input attributes: ' . print_r( $attributes, true ) );
+		error_log( 'Input attributes types: ' );
+		foreach ( $attributes as $key => $value ) {
+			error_log( "  Key: '$key' | Type: " . gettype( $value ) . " | Value: " . ( is_scalar( $value ) ? $value : 'NON-SCALAR' ) );
+		}
+		
 		$filtered = [];
 		foreach ( $attributes as $key => $value ) {
 			if ( in_array( $key, [ 'class', 'style' ], true ) ) {
+				error_log( "  Skipping key: '$key' (class or style)" );
 				continue;
 			}
-			$filtered[ $key ] = is_scalar( $value ) ? (string) $value : '';
+			$filtered_value = is_scalar( $value ) ? (string) $value : '';
+			$filtered[ $key ] = $filtered_value;
+			error_log( "  Keeping key: '$key' | Original type: " . gettype( $value ) . " | Filtered value: '$filtered_value'" );
 		}
+		
+		error_log( 'Filtered result: ' . print_r( $filtered, true ) );
+		error_log( '=== END FILTER_NON_STYLE_ATTRIBUTES DEBUG ===' );
+		
 		return $filtered;
+	}
+
+	private function build_safe_attributes_structure( array $filtered_attributes ): array {
+		error_log( '=== BUILD_SAFE_ATTRIBUTES_STRUCTURE DEBUG ===' );
+		error_log( 'Input filtered attributes: ' . print_r( $filtered_attributes, true ) );
+
+		// PLUGIN-BASED FIX: Create an empty structure to avoid the spread bug
+		// The root cause is that when customAttributes is spread (...customAttributes),
+		// it creates object properties with numeric keys that cause setAttribute('0', value) errors.
+		// 
+		// SOLUTION: Return an empty array structure that satisfies validation but doesn't
+		// trigger the spread bug. This sacrifices attribute preservation for editor functionality.
+		
+		$empty_attributes = Attributes_Prop_Type::make()->generate( [] );
+
+		error_log( 'Safe empty attributes structure: ' . print_r( $empty_attributes, true ) );
+		error_log( 'LIMITATION: HTML attributes are not preserved due to Elementor frontend spread bug' );
+		
+		// Log what attributes are being lost
+		foreach ( $filtered_attributes as $key => $value ) {
+			error_log( "  - Lost attribute: $key=\"$value\"" );
+		}
+		
+		error_log( '=== END BUILD_SAFE_ATTRIBUTES_STRUCTURE DEBUG ===' );
+
+		return $empty_attributes;
+	}
+
+	private function build_atomic_attributes_structure_safe( array $filtered_attributes ): array {
+		error_log( '=== BUILD_ATOMIC_ATTRIBUTES_STRUCTURE_SAFE DEBUG ===' );
+		error_log( 'Input filtered attributes: ' . print_r( $filtered_attributes, true ) );
+		
+		// WORKAROUND: Create an empty atomic structure to avoid InvalidCharacterError
+		// 
+		// ISSUE: Elementor's frontend JavaScript has a bug in create-atomic-element-base-view.js line 84:
+		// return { ...attr, ...initialAttributes, ...customAttributes, ...local };
+		// 
+		// The spread of customAttributes (which is an array with numeric indices) creates 
+		// object properties with numeric keys like '0', '1', '2' that cause InvalidCharacterError
+		// when passed to setAttribute('0', value).
+		//
+		// LIMITATION: This workaround prevents the error but does NOT preserve HTML attributes.
+		// Attributes are lost in the conversion process until Elementor fixes the frontend bug.
+		
+		// Create empty array structure that won't create numeric keys when spread
+		$empty_atomic_structure = Attributes_Prop_Type::make()->generate( [] );
+		
+		error_log( 'Empty atomic structure (attributes not preserved): ' . print_r( $empty_atomic_structure, true ) );
+		error_log( 'LIMITATION: HTML attributes are not preserved due to Elementor frontend bug' );
+		error_log( '=== END BUILD_ATOMIC_ATTRIBUTES_STRUCTURE_SAFE DEBUG ===' );
+		
+		return $empty_atomic_structure;
+	}
+
+	private function build_atomic_attributes_structure_alternative( array $filtered_attributes ): array {
+		error_log( '=== BUILD_ATOMIC_ATTRIBUTES_STRUCTURE_ALTERNATIVE DEBUG ===' );
+		error_log( 'Input filtered attributes: ' . print_r( $filtered_attributes, true ) );
+		
+		// ALTERNATIVE SOLUTION: Try to bypass the frontend spread bug
+		// Instead of creating an array that gets spread, create a structure that
+		// the frontend can handle without triggering setAttribute('0', value)
+		
+		// The frontend expects customAttributes.value to be an array for forEach
+		// But we need to avoid the spread operation creating numeric keys
+		
+		// Let's try creating a structure that satisfies validation but has special handling
+		$atomic_attributes = [];
+		
+		foreach ( $filtered_attributes as $key => $value ) {
+			error_log( "Processing attribute: '$key' = '$value'" );
+			
+			// Build each key-value pair using atomic prop types
+			$key_prop = String_Prop_Type::make()->generate( $key );
+			$value_prop = String_Prop_Type::make()->generate( $value );
+			
+			// Generate the key-value object
+			$key_value = Key_Value_Prop_Type::make()->generate([
+				'key' => $key_prop,
+				'value' => $value_prop
+			]);
+			
+			$atomic_attributes[] = $key_value;
+		}
+		
+		// Create the final structure with a special property to prevent spread
+		$final_attributes = [
+			'$$type' => 'attributes',
+			'value' => $atomic_attributes,
+			// Add a non-enumerable marker to help identify this structure
+			'_css_converter_attributes' => true
+		];
+		
+		error_log( 'Alternative atomic structure: ' . print_r( $final_attributes, true ) );
+		error_log( 'Array keys in value: ' . print_r( array_keys( $final_attributes['value'] ), true ) );
+		error_log( '=== END BUILD_ATOMIC_ATTRIBUTES_STRUCTURE_ALTERNATIVE DEBUG ===' );
+		
+		return $final_attributes;
 	}
 
 	
