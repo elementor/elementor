@@ -55,6 +55,8 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
+			console.log( '🔍 API Result Debug:', JSON.stringify( apiResult, null, 2 ) );
+			console.log( '🔍 Validation Skip Reason:', validation.skipReason );
 			test.skip( true, validation.skipReason );
 			return;
 		}
@@ -73,7 +75,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 		await page.goto( apiResult.edit_url );
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
-
+await page.pause();
 
 		await test.step( 'Verify ID selector styles (#header) are applied to widget', async () => {
 			const elementorFrame = editor.getPreviewFrame();
@@ -118,6 +120,8 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
+			console.log( '🔍 API Result Debug:', JSON.stringify( apiResult, null, 2 ) );
+			console.log( '🔍 Validation Skip Reason:', validation.skipReason );
 			test.skip( true, validation.skipReason );
 			return;
 		}
@@ -144,6 +148,8 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
+			console.log( '🔍 API Result Debug:', JSON.stringify( apiResult, null, 2 ) );
+			console.log( '🔍 Validation Skip Reason:', validation.skipReason );
 			test.skip( true, validation.skipReason );
 			return;
 		}
@@ -173,6 +179,8 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
+			console.log( '🔍 API Result Debug:', JSON.stringify( apiResult, null, 2 ) );
+			console.log( '🔍 Validation Skip Reason:', validation.skipReason );
 			test.skip( true, validation.skipReason );
 			return;
 		}
@@ -233,6 +241,8 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
+			console.log( '🔍 API Result Debug:', JSON.stringify( apiResult, null, 2 ) );
+			console.log( '🔍 Validation Skip Reason:', validation.skipReason );
 			test.skip( true, validation.skipReason );
 			return;
 		}
@@ -292,6 +302,8 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
+			console.log( '🔍 API Result Debug:', JSON.stringify( apiResult, null, 2 ) );
+			console.log( '🔍 Validation Skip Reason:', validation.skipReason );
 			test.skip( true, validation.skipReason );
 			return;
 		}
@@ -340,6 +352,8 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
+			console.log( '🔍 API Result Debug:', JSON.stringify( apiResult, null, 2 ) );
+			console.log( '🔍 Validation Skip Reason:', validation.skipReason );
 			test.skip( true, validation.skipReason );
 			return;
 		}
@@ -403,6 +417,8 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
+			console.log( '🔍 API Result Debug:', JSON.stringify( apiResult, null, 2 ) );
+			console.log( '🔍 Validation Skip Reason:', validation.skipReason );
 			test.skip( true, validation.skipReason );
 			return;
 		}
