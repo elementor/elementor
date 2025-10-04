@@ -51,6 +51,11 @@ class Component extends Atomic_Widget_Base {
 	protected function get_settings_controls(): array {
 		return [];
 	}
+	
+	protected function content_template() {
+		?>
+		<?php
+	}
 
 	protected function render(): void {
 		if ( null === $this->get_settings( 'component_id' ) ) {
