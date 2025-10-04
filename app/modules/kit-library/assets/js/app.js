@@ -9,6 +9,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { Router } from '@reach/router';
 import { SettingsProvider } from './context/settings-context';
 import { ConnectStateProvider } from './context/connect-state-context';
+import { TrackingProvider } from './context/tracking-context';
 
 const queryClient = new QueryClient( {
 	defaultOptions: {
@@ -24,15 +25,17 @@ function AppContent() {
 	return (
 		<SettingsProvider value={ elementorAppConfig[ 'kit-library' ] }>
 			<ConnectStateProvider>
-				<LastFilterProvider>
-					<Router>
-						<Index path="/" />
-						<Favorites path="/favorites" />
-						<Preview path="/preview/:id" />
-						<Overview path="/overview/:id" />
-						<Cloud path="/cloud" />
-					</Router>
-				</LastFilterProvider>
+				<TrackingProvider>
+					<LastFilterProvider>
+						<Router>
+							<Index path="/" />
+							<Favorites path="/favorites" />
+							<Preview path="/preview/:id" />
+							<Overview path="/overview/:id" />
+							<Cloud path="/cloud" />
+						</Router>
+					</LastFilterProvider>
+				</TrackingProvider>
 			</ConnectStateProvider>
 		</SettingsProvider>
 	);

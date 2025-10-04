@@ -10,6 +10,7 @@ import './overview-sidebar.scss';
 
 export default function OverviewSidebar( props ) {
 	const [ isInformationCollapseOpen, setIsInformationCollapseOpen ] = useState( true );
+
 	const eventTracking = ( command, section = null, kitName = null, tag = null, isCollapsed = null, eventType = 'click' ) => {
 		const action = isCollapsed && isCollapsed ? 'collapse' : 'expand';
 		if ( 'boolean' === typeof isCollapsed ) {

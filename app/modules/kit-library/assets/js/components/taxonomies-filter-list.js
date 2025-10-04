@@ -5,12 +5,14 @@ import { Checkbox, Text } from '@elementor/app-ui';
 import { sprintf } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { useTracking } from '../context/tracking-context';
 
 const MIN_TAGS_LENGTH_FOR_SEARCH_INPUT = 15;
 
 const TaxonomiesFilterList = ( props ) => {
 	const [ isOpen, setIsOpen ] = useState( props.taxonomiesByType.isOpenByDefault );
 	const [ search, setSearch ] = useState( '' );
+	const tracking = useTracking();
 
 	const taxonomies = useMemo( () => {
 		if ( ! search ) {
@@ -75,12 +77,25 @@ const TaxonomiesFilterList = ( props ) => {
 								checked={ !! props.selected[ taxonomy.type ]?.includes( taxonomy.id || taxonomy.text ) }
 								onChange={ ( e ) => {
 									const checked = e.target.checked;
+									const callback = () => {
+										props.onSelect( taxonomy.type, ( prev ) => {
+											return checked
+												? [ ...prev, taxonomy.id || taxonomy.text ]
+												: prev.filter( ( tagId ) => ! [ taxonomy.id, taxonomy.text ].includes( tagId ) );
+										} );
+									};
+
 									eventTracking( 'kit-library/filter', taxonomy.type, checked, taxonomy.text );
-									props.onSelect( taxonomy.type, ( prev ) => {
-										return checked
-											? [ ...prev, taxonomy.id || taxonomy.text ]
-											: prev.filter( ( tagId ) => ! [ taxonomy.id, taxonomy.text ].includes( tagId ) );
-									} );
+
+									if ( 'categories' === taxonomy.type && checked ) {
+										tracking.trackKitlibCategorySelected( taxonomy.text, callback );
+									} else if ( 'tags' === taxonomy.type && checked ) {
+										tracking.trackKitlibTagSelected( taxonomy.text, callback );
+									} else if ( 'subscription_plans' === taxonomy.type && checked ) {
+										tracking.trackKitlibPlanFilterSelected( taxonomy.text, callback );
+									} else {
+										callback();
+									}
 								} } />
 							{ taxonomy.text }
 						</label>
