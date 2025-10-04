@@ -3,6 +3,8 @@
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -28,7 +30,9 @@ class Letter_Spacing_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		return $this->create_atomic_size_value( $size_data );
+		return Size_Prop_Type::make()
+			->units( Size_Constants::typography() )
+			->generate( $size_data );
 	}
 
 	public function get_supported_properties(): array {
@@ -37,6 +41,10 @@ class Letter_Spacing_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	public function is_supported_property( string $property ): bool {
 		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
+	}
+
+	public function get_v4_property_name( string $property ): string {
+		return 'letter-spacing';
 	}
 
 	protected function parse_size_value( string $value ): ?array {

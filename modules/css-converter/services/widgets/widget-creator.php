@@ -10,8 +10,6 @@ use Elementor\Core\Base\Document;
 use Elementor\Modules\CssConverter\Services\Widgets\Widget_Hierarchy_Processor;
 use Elementor\Modules\CssConverter\Services\Widgets\Widget_Error_Handler;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory;
-use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 
 class Widget_Creator {
 	private $creation_stats;
@@ -276,11 +274,12 @@ class Widget_Creator {
 		// Merge widget attributes into settings for Elementor v4 compatibility
 		$merged_settings = $this->merge_settings_with_styles( $settings, $applied_styles );
 		
-		// Add widget attributes to settings using atomic Attributes_Prop_Type
+		// Add widget attributes to settings (preserves HTML id, class, etc.)
+		// Only add attributes if they have meaningful content (not just style attributes)
 		if ( ! empty( $attributes ) && ! $this->are_attributes_only_style( $attributes ) ) {
 			$filtered_attributes = $this->filter_non_style_attributes( $attributes );
 			if ( ! empty( $filtered_attributes ) ) {
-				$merged_settings['attributes'] = $this->build_atomic_attributes( $filtered_attributes );
+				$merged_settings['attributes'] = $filtered_attributes;
 			}
 		}
 		
@@ -914,19 +913,6 @@ class Widget_Creator {
 		return $filtered;
 	}
 
-	private function build_atomic_attributes( array $attributes ): array {
-		$items = [];
-		foreach ( $attributes as $key => $value ) {
-			// Only process valid attribute keys (non-numeric strings)
-			if ( is_string( $key ) && ! is_numeric( $key ) && ! empty( $key ) ) {
-				$items[] = Key_Value_Prop_Type::generate( [
-					'key' => (string) $key,
-					'value' => (string) $value,
-				] );
-			}
-		}
-		return Attributes_Prop_Type::generate( $items );
-	}
 	
 	private function fix_numeric_keyed_arrays( $array, $property_key ) {
 		if ( ! is_array( $array ) ) {

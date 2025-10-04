@@ -3,6 +3,7 @@
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -31,7 +32,9 @@ class Text_Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		return $this->create_atomic_string_value( $text_transform_value );
+		return String_Prop_Type::make()
+			->enum( self::VALID_VALUES )
+			->generate( $text_transform_value );
 	}
 
 	public function get_supported_properties(): array {
@@ -40,6 +43,10 @@ class Text_Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	public function is_supported_property( string $property ): bool {
 		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
+	}
+
+	public function get_v4_property_name( string $property ): string {
+		return 'text-transform';
 	}
 
 	private function parse_text_transform_value( $value ): ?string {
