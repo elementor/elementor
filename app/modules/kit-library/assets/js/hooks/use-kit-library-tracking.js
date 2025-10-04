@@ -37,235 +37,156 @@ export const useKitLibraryTracking = () => {
 		sessionEndedRef.current = false;
 	}, [] );
 
-	const trackKitlibOpened = useCallback( ( source, callback = null, trigger = null ) => {
-		updateActivity();
-		const properties = {
-			referrer_area: source,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
+	const addTriggerToProperties = useCallback( ( properties, trigger ) => {
+		if ( ! trigger ) {
+			return properties;
 		}
-		trackMixpanelEvent( 'kitlib_opened', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+
+		return {
+			...properties,
+			trigger: eventsConfig.triggers[ trigger ] || trigger,
+		};
+	}, [] );
+
+	const trackWithActivity = useCallback( ( eventName, properties, callback = null ) => {
+		updateActivity();
+		trackMixpanelEvent( eventName, properties, callback );
+	}, [ updateActivity, trackMixpanelEvent ] );
+
+	const trackKitlibOpened = useCallback( ( source, callback = null, trigger = null ) => {
+		const properties = addTriggerToProperties( { referrer_area: source }, trigger );
+		trackWithActivity( 'kitlib_opened', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitlibCategorySelected = useCallback( ( kitCategory, callback = null, trigger = 'click' ) => {
-		updateActivity();
-		const properties = {
-			kit_category: kitCategory,
-		};
-
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitlib_category_selected', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		const properties = addTriggerToProperties( { kit_category: kitCategory }, trigger );
+		trackWithActivity( 'kitlib_category_selected', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitlibTagSelected = useCallback( ( kitTag, callback = null, trigger = 'click' ) => {
-		updateActivity();
-		const properties = {
-			kit_tag: kitTag,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitlib_tag_selected', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		const properties = addTriggerToProperties( { kit_tag: kitTag }, trigger );
+		trackWithActivity( 'kitlib_tag_selected', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitlibPlanFilterSelected = useCallback( ( planType, callback = null, trigger = 'click' ) => {
-		updateActivity();
-		const properties = {
-			kit_plan_filter: planType,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitlib_plan_filter_selected', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		const properties = addTriggerToProperties( { kit_plan_filter: planType }, trigger );
+		trackWithActivity( 'kitlib_plan_filter_selected', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitlibSorterSelected = useCallback( ( sortType, callback = null, trigger = 'dropdownClick' ) => {
-		updateActivity();
-		const properties = {
-			kit_sorter: sortType,
-		};
-
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-
-		trackMixpanelEvent( 'kitlib_sorter_selected', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		const properties = addTriggerToProperties( { kit_sorter: sortType }, trigger );
+		trackWithActivity( 'kitlib_sorter_selected', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitlibSearchSubmitted = useCallback( ( searchTerm, resultsCount = null, callback = null, trigger = null ) => {
-		updateActivity();
-		const properties = {
+		const properties = addTriggerToProperties( {
 			kit_search_input: searchTerm,
 			kit_search_result_count: resultsCount,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitlib_search_submitted', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		}, trigger );
+		trackWithActivity( 'kitlib_search_submitted', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitlibFavoriteClicked = useCallback( ( kitId, title, callback = null, trigger = 'click' ) => {
-		updateActivity();
-		const properties = {
+		const properties = addTriggerToProperties( {
 			kit_id: kitId,
 			kit_title: title,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitlib_favorite_clicked', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		}, trigger );
+		trackWithActivity( 'kitlib_favorite_clicked', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitlibFavoriteTab = useCallback( ( callback = null, trigger = 'click' ) => {
-		updateActivity();
-		const properties = {
-			page_url: window.location.href,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitlib_favorite_tab', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		const properties = addTriggerToProperties( { page_url: window.location.href }, trigger );
+		trackWithActivity( 'kitlib_favorite_tab', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitdemoClicked = useCallback( ( kitId, title, position = null, plan = '', callback = null, trigger = 'click' ) => {
-		updateActivity();
-		const properties = {
+		const properties = addTriggerToProperties( {
 			kit_id: kitId,
 			kit_title: title,
 			kit_position: position,
 			requires_pro: plan,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitdemo_clicked', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		}, trigger );
+		trackWithActivity( 'kitdemo_clicked', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitdemoOpened = useCallback( ( kitId, title, loadTime = null, callback = null, trigger = 'pageLoaded' ) => {
-		updateActivity();
-		const properties = {
+		const properties = addTriggerToProperties( {
 			kit_id: kitId,
 			kit_title: title,
 			kit_load_time: loadTime,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitdemo_opened', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		}, trigger );
+		trackWithActivity( 'kitdemo_opened', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitdemoApplyClicked = useCallback( ( kitId, title, plan = '', callback = null, trigger = 'click' ) => {
-		updateActivity();
-		const properties = {
+		const properties = addTriggerToProperties( {
 			kit_id: kitId,
 			kit_title: title,
 			requires_pro: plan,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitdemo_apply_clicked', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		}, trigger );
+		trackWithActivity( 'kitdemo_apply_clicked', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitdemoApplyRemoveExisting = useCallback( ( userChoice, callback = null, trigger = null ) => {
-		updateActivity();
-		const properties = {
-			remove_existing_kit: userChoice,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitdemo_apply_remove_existing', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		const properties = addTriggerToProperties( { remove_existing_kit: userChoice }, trigger );
+		trackWithActivity( 'kitdemo_apply_remove_existing', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitdemoApplyAllOrCustomize = useCallback( ( userChoice, callback = null, trigger = 'click' ) => {
-		updateActivity();
-		const properties = {
-			apply_all: userChoice,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitdemo_apply_all_or_customize', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		const properties = addTriggerToProperties( { apply_all: userChoice }, trigger );
+		trackWithActivity( 'kitdemo_apply_all_or_customize', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitdemoApplyCompleted = useCallback( ( kitId, importTime = null, itemsImported = null, callback = null, trigger = null ) => {
-		updateActivity();
-		const properties = {
+		const properties = addTriggerToProperties( {
 			kit_id: kitId,
 			import_time: importTime,
 			items_imported: itemsImported,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitdemo_apply_completed', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		}, trigger );
+		trackWithActivity( 'kitdemo_apply_completed', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitdemoApplyFailed = useCallback( ( kitId, errorMessage = null, errorCode = null, callback = null, trigger = null ) => {
-		updateActivity();
-		const properties = {
+		const properties = addTriggerToProperties( {
 			kit_id: kitId,
 			error_message: errorMessage,
 			error_code: errorCode,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitdemo_apply_failed', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		}, trigger );
+		trackWithActivity( 'kitdemo_apply_failed', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitdemoDownloadClicked = useCallback( ( kitId, title, callback = null, trigger = 'click' ) => {
-		updateActivity();
-		const properties = {
+		const properties = addTriggerToProperties( {
 			kit_id: kitId,
 			kit_title: title,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitdemo_download_clicked', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		}, trigger );
+		trackWithActivity( 'kitdemo_download_clicked', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitdemoUpgradeClicked = useCallback( ( kitId, title, plan = '', callback = null, trigger = 'click' ) => {
-		updateActivity();
-		const properties = {
+		const properties = addTriggerToProperties( {
 			kit_id: kitId,
 			kit_title: title,
 			kit_demo_upgrade_plan: plan,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitdemo_upgrade_clicked', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		}, trigger );
+		trackWithActivity( 'kitdemo_upgrade_clicked', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitdemoOverviewClicked = useCallback( ( kitId, title, callback = null, trigger = 'click' ) => {
-		updateActivity();
-		const properties = {
+		const properties = addTriggerToProperties( {
 			kit_id: kitId,
 			kit_title: title,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitdemo_overview_clicked', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		}, trigger );
+		trackWithActivity( 'kitdemo_overview_clicked', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitdemoOverviewBack = useCallback( ( kitId, title, callback = null, trigger = 'click' ) => {
-		updateActivity();
-		const properties = {
+		const properties = addTriggerToProperties( {
 			kit_id: kitId,
 			kit_title: title,
-		};
-		if ( trigger ) {
-			properties.trigger = eventsConfig.triggers[ trigger ] || trigger;
-		}
-		trackMixpanelEvent( 'kitdemo_overview_back', properties, callback );
-	}, [ trackMixpanelEvent, updateActivity ] );
+		}, trigger );
+		trackWithActivity( 'kitdemo_overview_back', properties, callback );
+	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitlibSessionEnded = useCallback( ( reason = 'timeout' ) => {
 		if ( sessionEndedRef.current ) {
