@@ -7,6 +7,10 @@ export const useKitLibraryTracking = () => {
 	const sessionStartTime = useRef( Date.now() );
 	const lastActivityTime = useRef( Date.now() );
 	const sessionEndedRef = useRef( false );
+	const actionsCount = useRef( 0 );
+	const filtersCount = useRef( 0 );
+	const demoViews = useRef( 0 );
+	const kitApplied = useRef( false );
 
 	const { config = {} } = elementorCommon || {};
 	const { editor_events: editorEvents = {} } = config;
@@ -50,6 +54,7 @@ export const useKitLibraryTracking = () => {
 
 	const trackWithActivity = useCallback( ( eventName, properties, callback = null ) => {
 		updateActivity();
+		actionsCount.current += 1;
 		trackMixpanelEvent( eventName, properties, callback );
 	}, [ updateActivity, trackMixpanelEvent ] );
 
@@ -59,16 +64,19 @@ export const useKitLibraryTracking = () => {
 	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitlibCategorySelected = useCallback( ( kitCategory, callback = null, trigger = 'click' ) => {
+		filtersCount.current += 1;
 		const properties = addTriggerToProperties( { kit_category: kitCategory }, trigger );
 		trackWithActivity( 'kitlib_category_selected', properties, callback );
 	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitlibTagSelected = useCallback( ( kitTag, callback = null, trigger = 'click' ) => {
+		filtersCount.current += 1;
 		const properties = addTriggerToProperties( { kit_tag: kitTag }, trigger );
 		trackWithActivity( 'kitlib_tag_selected', properties, callback );
 	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitlibPlanFilterSelected = useCallback( ( planType, callback = null, trigger = 'click' ) => {
+		filtersCount.current += 1;
 		const properties = addTriggerToProperties( { kit_plan_filter: planType }, trigger );
 		trackWithActivity( 'kitlib_plan_filter_selected', properties, callback );
 	}, [ addTriggerToProperties, trackWithActivity ] );
@@ -110,6 +118,7 @@ export const useKitLibraryTracking = () => {
 	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitdemoOpened = useCallback( ( kitId, title, loadTime = null, callback = null, trigger = 'pageLoaded' ) => {
+		demoViews.current += 1;
 		const properties = addTriggerToProperties( {
 			kit_id: kitId,
 			kit_title: title,
@@ -119,6 +128,7 @@ export const useKitLibraryTracking = () => {
 	}, [ addTriggerToProperties, trackWithActivity ] );
 
 	const trackKitdemoApplyClicked = useCallback( ( kitId, title, plan = '', callback = null, trigger = 'click' ) => {
+		kitApplied.current = true;
 		const properties = addTriggerToProperties( {
 			kit_id: kitId,
 			kit_title: title,
@@ -190,15 +200,18 @@ export const useKitLibraryTracking = () => {
 
 	const trackKitlibSessionEnded = useCallback( ( reason = 'timeout' ) => {
 		if ( sessionEndedRef.current ) {
-			return; // Prevent duplicate session end events
+			return;
 		}
 
 		sessionEndedRef.current = true;
-		const sessionDuration = Date.now() - sessionStartTime.current;
 
 		trackMixpanelEvent( 'kitlib_session_ended', {
-			session_duration: sessionDuration,
-			reason, // 'timeout', 'page_unload', 'manual'
+			duration_ms: Date.now() - sessionStartTime.current,
+			actions_count: actionsCount.current,
+			filters_count: filtersCount.current,
+			demo_views: demoViews.current,
+			kit_applied: kitApplied.current,
+			reason,
 		} );
 	}, [ trackMixpanelEvent ] );
 
