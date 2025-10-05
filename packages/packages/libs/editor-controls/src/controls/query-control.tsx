@@ -27,6 +27,7 @@ type Props = {
 	minInputLength?: number;
 	placeholder?: string;
 	onSetValue?: ( value: DestinationProp | null ) => void;
+	ariaLabel?: string;
 };
 
 type Response = HttpResponse< { value: FlatOption[] | CategorizedOption[] } >;
@@ -42,6 +43,7 @@ export const QueryControl = createControl( ( props: Props ) => {
 		placeholder,
 		minInputLength = 2,
 		onSetValue,
+		ariaLabel,
 	} = props || {};
 
 	const normalizedPlaceholder = placeholder || __( 'Search', 'elementor' );
@@ -119,6 +121,10 @@ export const QueryControl = createControl( ( props: Props ) => {
 				onOptionChange={ onOptionChange }
 				onTextChange={ onTextChange }
 				minInputLength={ minInputLength }
+				disablePortal={ false }
+				inputProps={ {
+					...( ariaLabel ? { 'aria-label': ariaLabel } : {} ),
+				} }
 			/>
 		</ControlActions>
 	);
