@@ -126,7 +126,7 @@ export const TransitionRepeaterControl = createControl(
 			recentlyUsedListGetter().then( setRecentlyUsedList );
 		}, [ recentlyUsedListGetter ] );
 
-		const allPropertiesUsed = value.length === transitionProperties.length;
+		const allPropertiesUsed = value?.length === transitionProperties.length;
 
 		return (
 			<RepeatableControl
