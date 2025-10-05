@@ -32,7 +32,6 @@ export type Props = {
 	minInputLength?: number;
 	startAdornment?: React.ReactNode;
 	inputProps?: Record< string, unknown >;
-	disablePortal?: boolean;
 };
 
 export const Autocomplete = forwardRef( ( props: Props, ref ) => {
@@ -45,7 +44,6 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 		minInputLength = 2,
 		value = '',
 		startAdornment,
-		disablePortal = true,
 		...restProps
 	} = props;
 
@@ -68,8 +66,8 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 			{ ...restProps }
 			ref={ ref }
 			forcePopupIcon={ false }
-			disablePortal={ disablePortal }
 			disableClearable={ true } // Disabled component's auto clear icon to use our custom one instead
+			disablePortal={ true }
 			freeSolo={ allowCustomValues }
 			openOnFocus={ false }
 			open={ shouldOpen }

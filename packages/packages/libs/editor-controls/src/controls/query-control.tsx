@@ -121,7 +121,6 @@ export const QueryControl = createControl( ( props: Props ) => {
 				onOptionChange={ onOptionChange }
 				onTextChange={ onTextChange }
 				minInputLength={ minInputLength }
-				disablePortal={ false }
 				inputProps={ {
 					...( ariaLabel ? { 'aria-label': ariaLabel } : {} ),
 				} }
