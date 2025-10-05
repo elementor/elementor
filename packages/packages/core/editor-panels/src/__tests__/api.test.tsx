@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { __privateUseRouteStatus as useRouteStatus } from '@elementor/editor-v1-adapters';
+import { getSelectedElements, selectElement } from '@elementor/editor-elements';
 import { __createStore, __deleteStore, __registerSlice, __StoreProvider as StoreProvider } from '@elementor/store';
 import { act, fireEvent, renderHook, screen } from '@testing-library/react';
 
@@ -12,6 +13,13 @@ import { slice } from '../store';
 jest.mock( '@elementor/editor-v1-adapters' );
 jest.mock( '@elementor/editor-elements' );
 
+const MOCK_ELEMENT_ID = 'element-123';
+const MOCK_SELECTED_ELEMENT = { id: MOCK_ELEMENT_ID, type: 'widget' } as const;
+
+const mockedUseRouteStatus = jest.mocked( useRouteStatus );
+const mockedGetSelectedElements = jest.mocked( getSelectedElements );
+const mockedSelectElement = jest.mocked( selectElement );
+
 describe( 'panels api', () => {
 	beforeEach( () => {
 		// Setup for the environment.
@@ -21,7 +29,7 @@ describe( 'panels api', () => {
 			</div>
 		`;
 
-		jest.mocked( useRouteStatus ).mockReturnValue( {
+		mockedUseRouteStatus.mockReturnValue( {
 			isActive: false,
 			isBlocked: false,
 		} );
@@ -101,7 +109,7 @@ describe( 'panels api', () => {
 
 		registerPanel( mockPanel.panel );
 
-		jest.mocked( useRouteStatus ).mockReturnValue( {
+		mockedUseRouteStatus.mockReturnValue( {
 			isActive: false,
 			isBlocked: true,
 		} );
@@ -118,7 +126,7 @@ describe( 'panels api', () => {
 		let opened = false;
 		let closed = false;
 
-		jest.mocked( useRouteStatus ).mockReturnValue( {
+		mockedUseRouteStatus.mockReturnValue( {
 			isActive: true,
 			isBlocked: false,
 		} );
@@ -175,13 +183,9 @@ describe( 'panels api', () => {
 	} );
 
 	describe( 'isOpenPreviousElement functionality', () => {
-		const MOCK_ELEMENT_ID = 'element-123';
-		const MOCK_SELECTED_ELEMENT = { id: MOCK_ELEMENT_ID };
-
 		beforeEach( () => {
-			const { getSelectedElements, selectElement } = require( '@elementor/editor-elements' );
-			getSelectedElements.mockReturnValue( [ MOCK_SELECTED_ELEMENT ] );
-			selectElement.mockClear();
+			mockedGetSelectedElements.mockReturnValue( [ MOCK_SELECTED_ELEMENT ] );
+			mockedSelectElement.mockClear();
 		} );
 
 		afterEach( () => {
@@ -190,7 +194,6 @@ describe( 'panels api', () => {
 
 		it( 'should store and restore previous element when isOpenPreviousElement is true', () => {
 			// Arrange.
-			const { getSelectedElements, selectElement } = require( '@elementor/editor-elements' );
 			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
 
 			__registerSlice( slice );
@@ -206,7 +209,7 @@ describe( 'panels api', () => {
 			} );
 
 			// Assert.
-			expect( getSelectedElements ).toHaveBeenCalled();
+			expect( mockedGetSelectedElements ).toHaveBeenCalled();
 
 			// Act.
 			act( () => {
@@ -214,12 +217,11 @@ describe( 'panels api', () => {
 			} );
 
 			// Assert.
-			expect( selectElement ).toHaveBeenCalledWith( MOCK_ELEMENT_ID );
+			expect( mockedSelectElement ).toHaveBeenCalledWith( MOCK_ELEMENT_ID );
 		} );
 
 		it( 'should not store or restore previous element when isOpenPreviousElement is false', () => {
 			// Arrange.
-			const { getSelectedElements, selectElement } = require( '@elementor/editor-elements' );
 			const mockPanel = createMockPanel( { isOpenPreviousElement: false } );
 
 			__registerSlice( slice );
@@ -236,13 +238,12 @@ describe( 'panels api', () => {
 			} );
 
 			// Assert.
-			expect( getSelectedElements ).not.toHaveBeenCalled();
-			expect( selectElement ).not.toHaveBeenCalled();
+			expect( mockedGetSelectedElements ).not.toHaveBeenCalled();
+			expect( mockedSelectElement ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should not store or restore previous element when isOpenPreviousElement is undefined (default)', () => {
 			// Arrange.
-			const { getSelectedElements, selectElement } = require( '@elementor/editor-elements' );
 			const mockPanel = createMockPanel();
 
 			__registerSlice( slice );
@@ -259,14 +260,13 @@ describe( 'panels api', () => {
 			} );
 
 			// Assert.
-			expect( getSelectedElements ).not.toHaveBeenCalled();
-			expect( selectElement ).not.toHaveBeenCalled();
+			expect( mockedGetSelectedElements ).not.toHaveBeenCalled();
+			expect( mockedSelectElement ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should handle case when no element is selected during open', () => {
 			// Arrange.
-			const { getSelectedElements, selectElement } = require( '@elementor/editor-elements' );
-			getSelectedElements.mockReturnValue( [] );
+			mockedGetSelectedElements.mockReturnValue( [] );
 
 			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
 
@@ -284,19 +284,18 @@ describe( 'panels api', () => {
 			} );
 
 			// Assert.
-			expect( getSelectedElements ).toHaveBeenCalled();
-			expect( selectElement ).not.toHaveBeenCalled();
+			expect( mockedGetSelectedElements ).toHaveBeenCalled();
+			expect( mockedSelectElement ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should not restore element when panel is blocked during close', () => {
 			// Arrange.
-			const { getSelectedElements, selectElement } = require( '@elementor/editor-elements' );
 			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
 
 			__registerSlice( slice );
 			registerPanel( mockPanel.panel );
 
-			jest.mocked( useRouteStatus ).mockReturnValue( {
+			mockedUseRouteStatus.mockReturnValue( {
 				isActive: true,
 				isBlocked: true,
 			} );
@@ -313,13 +312,12 @@ describe( 'panels api', () => {
 			} );
 
 			// Assert.
-			expect( getSelectedElements ).not.toHaveBeenCalled();
-			expect( selectElement ).not.toHaveBeenCalled();
+			expect( mockedGetSelectedElements ).not.toHaveBeenCalled();
+			expect( mockedSelectElement ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should clear previous element reference after restoring', () => {
 			// Arrange.
-			const { getSelectedElements, selectElement } = require( '@elementor/editor-elements' );
 			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
 
 			__registerSlice( slice );
@@ -334,8 +332,8 @@ describe( 'panels api', () => {
 				close();
 			} );
 
-			getSelectedElements.mockClear();
-			selectElement.mockClear();
+			mockedGetSelectedElements.mockClear();
+			mockedSelectElement.mockClear();
 
 			act( () => {
 				open();
@@ -343,8 +341,8 @@ describe( 'panels api', () => {
 			} );
 
 			// Assert.
-			expect( getSelectedElements ).toHaveBeenCalled();
-			expect( selectElement ).toHaveBeenCalledWith( MOCK_ELEMENT_ID );
+			expect( mockedGetSelectedElements ).toHaveBeenCalled();
+			expect( mockedSelectElement ).toHaveBeenCalledWith( MOCK_ELEMENT_ID );
 		} );
 	} );
 } );
