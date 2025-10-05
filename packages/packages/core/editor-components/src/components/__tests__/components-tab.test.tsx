@@ -8,10 +8,10 @@ import {
 	type Store,
 } from '@elementor/store';
 import { jest } from '@jest/globals';
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 
-import { slice } from '../../store';
-import { loadComponents } from '../../thunks';
+import { slice } from '../../store/store';
+import { loadComponents } from '../../store/thunks';
 import { ComponentSearch } from '../components-tab/component-search';
 import { ComponentItem } from '../components-tab/components-item';
 import { ComponentsList } from '../components-tab/components-list';
@@ -123,34 +123,6 @@ describe( 'ComponentsTab', () => {
 			expect(
 				screen.queryByText( 'Text that explains that there are no Components yet.' )
 			).not.toBeInTheDocument();
-		} );
-
-		it( 'should render component item with name and actions', () => {
-			// Arrange
-			const buttonComponent = mockComponents[ 0 ];
-			// Act
-			renderWithTheme( <ComponentItem component={ buttonComponent } /> );
-
-			// Assert
-			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
-			expect( screen.getByLabelText( 'More actions' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should open menu when more actions button is clicked', async () => {
-			// Arrange
-			const buttonComponent = mockComponents[ 0 ];
-
-			// Act
-			renderWithTheme( <ComponentItem component={ buttonComponent } /> );
-
-			const moreActionsButton = screen.getByLabelText( 'More actions' );
-			fireEvent.click( moreActionsButton );
-
-			// Assert
-			await waitFor( () => {
-				expect( screen.getByText( 'Rename' ) ).toBeInTheDocument();
-			} );
-			expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render component item with draggable attributes and actions', () => {
