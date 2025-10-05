@@ -114,10 +114,12 @@ export function VariablesManagerPanel() {
 						setIsSaveDisabled( false );
 					} );
 				}
+
 				setServerError( mappedError );
 				setIsSaveDisabled( true );
 				resetNavigation();
 			}
+
 			return { success: false, error: mappedError };
 		} finally {
 			setIsSaving( false );
@@ -238,15 +240,29 @@ export function VariablesManagerPanel() {
 						content={
 							serverError ? (
 								<Alert
-									severity="error"
+									severity={ serverError.severity ?? 'error' }
 									action={
-										serverError.action ? (
+										serverError.action?.label ? (
 											<AlertAction onClick={ serverError.action.callback }>
 												{ serverError.action.label }
 											</AlertAction>
 										) : undefined
 									}
-									icon={ <AlertTriangleFilledIcon /> }
+									onClose={
+										! serverError.action?.label
+											? () => {
+													setServerError( null );
+													setIsSaveDisabled( false );
+											  }
+											: undefined
+									}
+									icon={
+										serverError.IconComponent ? (
+											<serverError.IconComponent />
+										) : (
+											<AlertTriangleFilledIcon />
+										)
+									}
 								>
 									<AlertTitle>{ serverError.message }</AlertTitle>
 									{ serverError.action?.message }
