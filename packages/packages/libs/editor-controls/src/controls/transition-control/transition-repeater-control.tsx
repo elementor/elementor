@@ -127,6 +127,7 @@ export const TransitionRepeaterControl = createControl(
 		}, [ recentlyUsedListGetter ] );
 
 		const allPropertiesUsed = value?.length === transitionProperties.length;
+		const isAddItemDisabled = ! currentStyleIsNormal || allPropertiesUsed;
 
 		return (
 			<RepeatableControl
@@ -140,7 +141,7 @@ export const TransitionRepeaterControl = createControl(
 				childControlConfig={ getChildControlConfig( recentlyUsedList, disabledItems ) }
 				propKey="transition"
 				addItemTooltipProps={ {
-					disabled: ! currentStyleIsNormal || allPropertiesUsed,
+					disabled: isAddItemDisabled,
 					enableTooltip: ! currentStyleIsNormal,
 					tooltipContent: disableAddItemTooltipContent,
 				} }
