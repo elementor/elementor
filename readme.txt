@@ -348,7 +348,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.32.4 - 2025-10-05
+= 3.32.4 - 2025-10-05 =
 * Tweak: Added notice for Load Google Fonts Locally feature to clarify behavior and setup
 
 = 3.32.3 - 2025-09-29 =
