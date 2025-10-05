@@ -102,25 +102,29 @@ export const TransitionRepeaterControl = createControl(
 		const { value, setValue } = useBoundProp( childArrayPropTypeUtil );
 		const disabledItems = useMemo( () => getDisabledItems( value ), [ value ] );
 
-		const allowedTransitionValues = useMemo(
-			() => transitionProperties.flatMap( ( category ) => category.properties.map( ( prop ) => prop.value ) ),
-			[]
-		);
+		const allowedTransitionSet = useMemo( () => {
+			const set = new Set< string >();
+			transitionProperties.forEach( ( category ) => {
+				category.properties.forEach( ( prop ) => set.add( prop.value ) );
+			} );
+			return set;
+		}, [] );
 
 		useEffect( () => {
 			if ( ! value || value.length === 0 ) {
 				return;
 			}
+
 			const sanitized = value.filter( ( item ) => {
 				const selectionValue =
 					( item?.value?.selection?.value as { value?: { value?: string } } )?.value?.value ?? '';
-				return allowedTransitionValues.includes( selectionValue );
+				return allowedTransitionSet.has( selectionValue );
 			} );
 
 			if ( sanitized.length !== value.length ) {
 				setValue( sanitized );
 			}
-		}, [ value, setValue, allowedTransitionValues ] );
+		}, [ value, setValue, allowedTransitionSet ] );
 
 		useEffect( () => {
 			recentlyUsedListGetter().then( setRecentlyUsedList );
@@ -128,7 +132,6 @@ export const TransitionRepeaterControl = createControl(
 
 		const allPropertiesUsed = value?.length === transitionProperties.length;
 		const isAddItemDisabled = ! currentStyleIsNormal || allPropertiesUsed;
-
 		return (
 			<RepeatableControl
 				label={ __( 'Transitions', 'elementor' ) }
