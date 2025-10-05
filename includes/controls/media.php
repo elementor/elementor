@@ -77,6 +77,17 @@ class Control_Media extends Control_Base_Multiple {
 			return $settings;
 		}
 
+		$local_file_path = \Elementor\TemplateLibrary\Classes\Media_Mapper::get_local_file_path( $settings['url'] );
+		$imported_attachment = false;
+
+		if ( $local_file_path !== $settings['url'] && file_exists( $local_file_path ) ) {
+			$imported_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import_local_file( $local_file_path );
+		}
+
+		if ( $imported_attachment ) {
+			return $imported_attachment;
+		}
+
 		$settings = Plugin::$instance->templates_manager->get_import_images_instance()->import( $settings );
 
 		if ( ! $settings ) {

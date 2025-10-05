@@ -17,8 +17,9 @@ type SelectControlProps = {
 	options: SelectOption[];
 	onChange?: ( newValue: string | null, previousValue: string | null | undefined ) => void;
 	MenuProps?: SelectProps[ 'MenuProps' ];
+	ariaLabel?: string;
 };
-export const SelectControl = createControl( ( { options, onChange, MenuProps }: SelectControlProps ) => {
+export const SelectControl = createControl( ( { options, onChange, MenuProps, ariaLabel }: SelectControlProps ) => {
 	const { value, setValue, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
 	const handleChange = ( event: SelectChangeEvent< StringPropValue[ 'value' ] > ) => {
 		const newValue = event.target.value || null;
@@ -35,6 +36,7 @@ export const SelectControl = createControl( ( { options, onChange, MenuProps }: 
 				displayEmpty
 				size="tiny"
 				MenuProps={ MenuProps }
+				aria-label={ ariaLabel || placeholder }
 				renderValue={ ( selectedValue: string | null ) => {
 					const findOptionByValue = ( searchValue: string | null ) =>
 						options.find( ( opt ) => opt.value === searchValue );
