@@ -286,7 +286,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 		} );
 	} );
 
-	test.only( 'COMPREHENSIVE STYLING TEST - should apply ALL border properties', async ( { page, request } ) => {
+	test( 'COMPREHENSIVE STYLING TEST - should apply ALL border properties', async ( { page, request } ) => {
 		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
 		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
 		const css2Content = fs.readFileSync( css2Path, 'utf-8' );

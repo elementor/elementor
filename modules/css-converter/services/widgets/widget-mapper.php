@@ -154,6 +154,45 @@ class Widget_Mapper {
 		$content = $element['content'] ?? '';
 		$tag = $element['tag'];
 		
+		// ✅ CRITICAL FIX: Check if paragraph has child elements (like <a> tags)
+		if ( ! empty( $element['children'] ) ) {
+			// If paragraph contains child elements, convert to div-block container
+			// This preserves anchor tags and other interactive elements
+			$children = $this->map_elements( $element['children'] );
+			
+			// Only add text content as a paragraph if there's meaningful text
+			// beyond what's already in the children
+			$child_text = $this->extract_text_from_children( $element['children'] );
+			$remaining_text = trim( str_replace( $child_text, '', $content ) );
+			
+			if ( ! empty( $remaining_text ) ) {
+				// Add remaining text as a paragraph widget
+				$text_paragraph = [
+					'widget_type' => 'e-paragraph',
+					'original_tag' => 'p',
+					'settings' => [
+						'paragraph' => $remaining_text,
+					],
+					'attributes' => [],
+					'inline_css' => [],
+					'children' => [],
+				];
+				array_unshift( $children, $text_paragraph );
+			}
+			
+			return [
+				'widget_type' => 'e-div-block',
+				'original_tag' => $tag,
+				'settings' => [
+					'tag' => $tag, // Preserve semantic meaning
+				],
+				'attributes' => $element['attributes'],
+				'inline_css' => $element['inline_css'] ?? [],
+				'children' => $children, // ✅ PRESERVE CHILD ELEMENTS
+			];
+		}
+		
+		// If no children, handle as regular paragraph
 		$settings = [
 			'paragraph' => $content,
 		];
@@ -164,7 +203,7 @@ class Widget_Mapper {
 			'settings' => $settings,
 			'attributes' => $element['attributes'],
 			'inline_css' => $element['inline_css'] ?? [],
-			'children' => [], // Paragraphs don't have widget children
+			'children' => [], // No children for text-only paragraphs
 		];
 	}
 
@@ -380,6 +419,14 @@ class Widget_Mapper {
 			'inline_css' => [], // No inline CSS for synthetic paragraphs
 			'children' => [], // Paragraphs don't have children
 		];
+	}
+
+	private function extract_text_from_children( $children ) {
+		$text = '';
+		foreach ( $children as $child ) {
+			$text .= ' ' . ( $child['content'] ?? '' );
+		}
+		return trim( $text );
 	}
 
 	private function determine_flex_direction( $element ) {
