@@ -23,11 +23,11 @@ export default function KitAlreadyAppliedDialog( props ) {
 			</> }
 			approveButtonText={ __( 'Remove existing', 'elementor' ) }
 			approveButtonColor="primary"
-			approveButtonOnClick={ tracking.trackKitdemoApplyRemoveExisting( true, () => {
+			approveButtonOnClick={ () => tracking.trackKitdemoApplyRemoveExisting( true, () => {
 				location.href = getRemoveKitUrl();
 			} ) }
 			dismissButtonText={ __( 'Apply anyway', 'elementor' ) }
-			dismissButtonOnClick={ tracking.trackKitdemoApplyRemoveExisting( false, props.dismissButtonOnClick ) }
+			dismissButtonOnClick={ () => tracking.trackKitdemoApplyRemoveExisting( false, props.dismissButtonOnClick ) }
 			onClose={ props.onClose }
 		/>
 	);
