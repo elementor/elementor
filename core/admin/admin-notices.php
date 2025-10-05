@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Notices extends Module {
 
-	
 	const DEFAULT_EXCLUDED_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
 	const LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID = 'local_google_fonts_disabled';
 
