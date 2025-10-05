@@ -113,7 +113,7 @@ describe( 'VariableControl', () => {
 		// Act
 		renderControl( <VariableControl />, props );
 
-		const unlinkButton = screen.getByLabelText( 'Unlink' );
+		const unlinkButton = screen.getByLabelText( 'Unlink variable' );
 		fireEvent.click( unlinkButton );
 
 		// Assert
