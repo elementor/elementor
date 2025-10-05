@@ -51,6 +51,11 @@ class Css_Processor {
 			return $processing_result;
 		}
 
+		// ✅ CRITICAL FIX: Expand shorthand properties in CSS text before parsing
+		// This ensures <style> block CSS shorthand (like border: 1px solid #dee2e6) gets expanded
+		// to individual properties (border-width, border-style, border-color) before rule processing
+		$css = $this->expand_css_shorthand_properties( $css );
+
 		$parsed_css = $this->parse_css_safely( $css );
 		
 		if ( $this->is_css_parsing_successful( $parsed_css ) ) {
@@ -714,7 +719,54 @@ class Css_Processor {
 	}
 
 	private function log_property_conversion_result( $converted_property ): void {
-		error_log( "CSS Processor: ID property conversion result: " . wp_json_encode( $converted_property ) );
+		
+	}
+
+	private function expand_css_shorthand_properties( string $css ): string {
+		// ✅ CRITICAL FIX: Expand CSS shorthand properties at the text level
+		// This processes <style> block CSS before it gets parsed into individual rules
+		require_once __DIR__ . '/css-shorthand-expander.php';
+		
+		error_log( "🔍 CSS-PROCESSOR DEBUG: Expanding shorthand in CSS text" );
+		
+		// Use regex to find CSS rules and expand shorthand properties within them
+		return preg_replace_callback(
+			'/([^{}]+)\s*\{([^}]+)\}/',
+			function( $matches ) {
+				$selector = trim( $matches[1] );
+				$declarations = trim( $matches[2] );
+				
+				// Parse declarations into property-value pairs
+				$properties = [];
+				$declaration_parts = explode( ';', $declarations );
+				
+				foreach ( $declaration_parts as $declaration ) {
+					$declaration = trim( $declaration );
+					if ( empty( $declaration ) ) {
+						continue;
+					}
+					
+					$parts = explode( ':', $declaration, 2 );
+					if ( count( $parts ) === 2 ) {
+						$property = trim( $parts[0] );
+						$value = trim( $parts[1] );
+						$properties[ $property ] = $value;
+					}
+				}
+				
+				// Expand shorthand properties
+				$expanded_properties = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $properties );
+				
+				// Rebuild CSS rule
+				$expanded_declarations = [];
+				foreach ( $expanded_properties as $property => $value ) {
+					$expanded_declarations[] = "{$property}: {$value}";
+				}
+				
+				return $selector . ' { ' . implode( '; ', $expanded_declarations ) . '; }';
+			},
+			$css
+		);
 	}
 
 	private function is_property_conversion_successful( $converted_property ): bool {

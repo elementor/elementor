@@ -159,10 +159,19 @@ class Css_Property_Conversion_Service {
 	 * @return array Array of converted properties
 	 */
 	public function convert_properties_to_v4_atomic( array $properties ): array {
+		// ✅ CRITICAL FIX: Expand shorthand properties before conversion
+		// This ensures class-based CSS shorthand (like border: 1px solid #dee2e6) gets expanded
+		// to individual properties (border-width, border-style, border-color) just like inline CSS
+		require_once __DIR__ . '/css-shorthand-expander.php';
+		
 		error_log( "🔍 CSS-SERVICE DEBUG: Starting convert_properties_to_v4_atomic with properties: " . json_encode( array_keys( $properties ) ) );
+		error_log( "🔍 SHORTHAND DEBUG: Input properties: " . json_encode( $properties ) );
+		$expanded_properties = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $properties );
+		error_log( "🔍 SHORTHAND DEBUG: Expanded properties: " . json_encode( $expanded_properties ) );
+		
 		$converted = [];
 		
-		foreach ( $properties as $property => $value ) {
+		foreach ( $expanded_properties as $property => $value ) {
 			error_log( "🔍 CSS-SERVICE DEBUG: Processing property='$property', value='$value'" );
 			
 			$mapper = $this->resolve_property_mapper_safely( $property, $value );

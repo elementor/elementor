@@ -29,9 +29,18 @@ class CSS_To_Atomic_Props_Converter {
 	}
 
 	public function convert_multiple_css_props( array $css_properties ): array {
+		// ✅ CRITICAL FIX: Expand shorthand properties before conversion
+		// This ensures class-based CSS shorthand (like border: 1px solid #dee2e6) gets expanded
+		// to individual properties (border-width, border-style, border-color) just like inline CSS
+		require_once __DIR__ . '/../css/processing/css-shorthand-expander.php';
+		
+		error_log( "🔍 ATOMIC-BRIDGE DEBUG: Input properties: " . json_encode( $css_properties ) );
+		$expanded_properties = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $css_properties );
+		error_log( "🔍 ATOMIC-BRIDGE DEBUG: Expanded properties: " . json_encode( $expanded_properties ) );
+		
 		$atomic_props = [];
 
-		foreach ( $css_properties as $property => $value ) {
+		foreach ( $expanded_properties as $property => $value ) {
 			$atomic_prop = $this->convert_css_to_atomic_prop( $property, $value );
 			if ( $atomic_prop ) {
 				$target_property = $this->get_target_property_name( $property );

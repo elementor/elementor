@@ -15,13 +15,13 @@ class CSS_Shorthand_Expander {
 			if ( self::is_shorthand_property( $property ) ) {
 				$longhand_properties = self::expand_shorthand( $property, $value );
 				$expanded = array_merge( $expanded, $longhand_properties );
-		} else {
-			$expanded[ $property ] = $value;
+			} else {
+				$expanded[ $property ] = $value;
+			}
 		}
-	}
 
-	return $expanded;
-}
+		return $expanded;
+	}
 
 	private static function is_shorthand_property( string $property ): bool {
 		$shorthand_properties = [

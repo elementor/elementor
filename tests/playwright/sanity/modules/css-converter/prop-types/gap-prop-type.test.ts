@@ -5,6 +5,7 @@ import EditorPage from '../../../../pages/editor-page';
 import { CssConverterHelper } from '../helper';
 
 test.describe( 'Gap Prop Type Integration @prop-types', () => {
+	let wpAdmin: WpAdminPage;
 	let editor: EditorPage;
 	let cssHelper: CssConverterHelper;
 
@@ -98,10 +99,10 @@ test.describe( 'Gap Prop Type Integration @prop-types', () => {
 
 			await test.step( 'Verify zero gap (unitless) - CRITICAL: Must output gap: 0px for specificity', async () => {
 				await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'display', 'flex' );
-				// CSS Specification: gap: 0px is equivalent to gap: normal (no gap)
-				// Browsers optimize gap: 0px to 'normal' in computed styles
-				// This is correct behavior - zero gap means no gap
-				await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'gap', 'normal' );
+				// CSS Specification: gap: 0 should output gap: 0px (not normalized to 'normal')
+				// This maintains CSS specificity and explicit zero values
+				// This is correct behavior - zero gap outputs as 0px
+				await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'gap', '0px' );
 			} );
 
 			await test.step( 'Verify zero gap (with unit) - Shows actual 0px value', async () => {
