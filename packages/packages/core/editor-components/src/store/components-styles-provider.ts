@@ -1,7 +1,7 @@
 import { createStylesProvider } from '@elementor/editor-styles-repository';
 import { __getState as getState, __subscribeWithSelector as subscribeWithSelector } from '@elementor/store';
 
-import { selectStyleDefinitionsData, SLICE_NAME } from './store';
+import { selectFlatStyles, SLICE_NAME } from './store';
 
 export const componentsStylesProvider = createStylesProvider( {
 	key: 'components-styles',
@@ -15,10 +15,10 @@ export const componentsStylesProvider = createStylesProvider( {
 		),
 	actions: {
 		all: () => {
-			return selectStyleDefinitionsData( getState() );
+			return selectFlatStyles( getState() );
 		},
 		get: ( id ) => {
-			return selectStyleDefinitionsData( getState() ).find( ( style ) => style.id === id ) ?? null;
+			return selectFlatStyles( getState() ).find( ( style ) => style.id === id ) ?? null;
 		},
 	},
 } );

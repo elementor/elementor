@@ -130,7 +130,7 @@ const EmptySearchResult = () => {
 const useFilteredComponents = () => {
 	const { components, isLoading } = useComponents();
 	const { searchValue } = useSearch();
-	console.log( { components } );
+
 	return {
 		components: components.filter( ( component ) =>
 			component.name.toLowerCase().includes( searchValue.toLowerCase() )

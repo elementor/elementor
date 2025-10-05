@@ -17,6 +17,12 @@ export type CreateComponentResponse = {
 	component_id: number;
 };
 
+export const getParams = ( id: number ) => ( {
+	action: 'get_document_config',
+	unique_id: `document-config-${ id }`,
+	data: { id },
+} );
+
 export const apiClient = {
 	get: () =>
 		httpService()
@@ -26,19 +32,6 @@ export const apiClient = {
 		httpService()
 			.post< HttpResponse< CreateComponentResponse > >( `${ BASE_URL }`, payload )
 			.then( ( res ) => res.data.data ),
-	getConfig: ( id: number ) => {
-		const test = ajax.load< { id: number }, V1ElementData >( getParams( id ) );
-		console.log( 'LOG:: getConfig', test );
-		return test;
-	},
+	getConfig: ( id: number ) => ajax.load< { id: number }, V1ElementData >( getParams( id ) ),
 	invalidateCache: ( id: number ) => ajax.invalidateCache< { id: number } >( getParams( id ) ),
 };
-
-function getParams( id: number ) {
-	console.log( 'LOG:: getParams', id );
-	return {
-		action: 'get_document_config',
-		unique_id: `document-config-${ id }`,
-		data: { id },
-	};
-}

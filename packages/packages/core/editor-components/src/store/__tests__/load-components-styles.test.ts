@@ -1,12 +1,13 @@
 import { createMockDocumentData, createMockElementData, createMockStyleDefinition } from 'test-utils';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { type StyleDefinition } from '@elementor/editor-styles';
+import { ajax } from '@elementor/editor-v1-adapters';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
-import { load } from '../component-config';
-import { selectData, SLICE_NAME } from '../components-styles-store';
+import { getParams } from '../../api';
+import { type Element } from '../../types';
 import { loadComponentsStyles } from '../load-components-styles';
-import { Element } from '../../types';
+import { selectStyles, SLICE_NAME } from '../store';
 
 jest.mock( '@elementor/store', () => ( {
 	...jest.requireActual( '@elementor/store' ),
@@ -14,9 +15,12 @@ jest.mock( '@elementor/store', () => ( {
 	__dispatch: jest.fn(),
 } ) );
 
-jest.mock( '../component-config', () => ( {
-	...jest.requireActual( '../component-config' ),
-	load: jest.fn(),
+jest.mock( '@elementor/editor-v1-adapters', () => ( {
+	...jest.requireActual( '@elementor/editor-v1-adapters' ),
+	ajax: {
+		load: jest.fn(),
+		invalidateCache: jest.fn(),
+	},
 } ) );
 
 const STYLE_1 = createMockStyleDefinition( {
@@ -108,7 +112,7 @@ describe( 'loadComponentsStyles', () => {
 				[ NESTED_COMP_ID ]: [ STYLE_2 ],
 			},
 		},
-	]
+	];
 
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -116,11 +120,11 @@ describe( 'loadComponentsStyles', () => {
 		mockStateData = {};
 
 		jest.mocked( getState ).mockImplementation( () => ( {
-			[ SLICE_NAME ]: { data: mockStateData },
+			[ SLICE_NAME ]: { styles: mockStateData },
 		} ) );
 
 		jest.mocked( dispatch ).mockImplementation( ( action ) => {
-			if ( action.type === `${ SLICE_NAME }/add` ) {
+			if ( action.type === `${ SLICE_NAME }/addStyles` ) {
 				mockStateData = { ...mockStateData, ...action.payload };
 			}
 		} );
@@ -128,35 +132,28 @@ describe( 'loadComponentsStyles', () => {
 		jest.useFakeTimers();
 	} );
 
-	it.each( items )(
-		'should handle $shouldHandle',
-		async ( {
-			documentElements,
-			data,
-			expected,
-		} ) => {
-			// Arrange
-			mockLoad( data );
+	it.each( items )( 'should handle $shouldHandle', async ( { documentElements, data, expected } ) => {
+		// Arrange
+		mockLoad( data );
 
-			const document = createMockDocumentData({ elements: documentElements });
-			const uniqueIds = new Set( Object.keys( data ));
+		const document = createMockDocumentData( { elements: documentElements } );
+		const uniqueIds = new Set( Object.keys( data ) );
 
-			// Act
-			await loadComponentsStyles( document.config.elements as Element[] ?? [] );
-			
-			// as it recursively calls itself, we need to run all timers
-			await jest.runAllTimersAsync();
+		// Act
+		await loadComponentsStyles( ( document.config.elements as Element[] ) ?? [] );
 
-			// Assert
-			expect( load ).toHaveBeenCalledTimes( uniqueIds.size );
+		// as it recursively calls itself, we need to run all timers
+		await jest.runAllTimersAsync();
 
-			uniqueIds.forEach( ( id ) => {
-				expect( load ).toHaveBeenCalledWith( Number( id ) );
-			} );
+		// Assert
+		expect( ajax.load ).toHaveBeenCalledTimes( uniqueIds.size );
 
-			expect( selectData( getState() ) ).toEqual( expected );
-		}
-	);
+		uniqueIds.forEach( ( id ) => {
+			expect( ajax.load ).toHaveBeenCalledWith( getParams( Number( id ) ) );
+		} );
+
+		expect( selectStyles( getState() ) ).toEqual( expected );
+	} );
 } );
 
 function createMockComponentWidget( componentId: number ): V1ElementData {
@@ -173,6 +170,9 @@ function createMockComponentWidget( componentId: number ): V1ElementData {
 	} );
 }
 
+type Params = { id: number };
 function mockLoad( responses: Record< number, V1ElementData > ) {
-	jest.mocked( load ).mockImplementation( ( id ) => Promise.resolve( responses[ id as keyof typeof responses ] ) );
+	jest.mocked( ajax.load< Params, V1ElementData > ).mockImplementation( ( { data } ) =>
+		Promise.resolve( responses[ data.id ] )
+	);
 }

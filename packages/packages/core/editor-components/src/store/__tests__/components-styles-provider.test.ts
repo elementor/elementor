@@ -2,7 +2,7 @@ import { createMockStyleDefinition } from 'test-utils';
 import { __getState as getState } from '@elementor/store';
 
 import { componentsStylesProvider } from '../components-styles-provider';
-import { SLICE_NAME } from '../components-styles-store';
+import { SLICE_NAME } from '../store';
 
 jest.mock( '@elementor/store', () => {
 	const actual = jest.requireActual( '@elementor/store' );
@@ -26,7 +26,7 @@ describe( 'componentsStylesProvider', () => {
 
 		jest.mocked( getState ).mockReturnValue( {
 			[ SLICE_NAME ]: {
-				data: {
+				styles: {
 					[ DOC_ID_1 ]: [ STYLE_1, STYLE_2 ],
 					[ DOC_ID_2 ]: [ STYLE_3 ],
 				},
