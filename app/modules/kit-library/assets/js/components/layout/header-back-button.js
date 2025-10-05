@@ -21,7 +21,7 @@ export default function HeaderBackButton( props ) {
 			);
 		},
 		tracking = useTracking();
-	console.log( props );
+
 	return (
 		<div className="e-kit-library__header-back-container">
 			<Button
