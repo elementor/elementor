@@ -550,6 +550,9 @@ abstract class Base extends Base_File {
 	 * @param array          $all_controls   All controls.
 	 */
 	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, ?array $all_controls = null ) {
+		$previous_use_style_controls = Performance::is_use_style_controls();
+		Performance::set_use_style_controls( true );
+
 		if ( ! $all_controls ) {
 			$all_controls = $controls_stack->get_controls();
 		}
@@ -591,6 +594,8 @@ abstract class Base extends Base_File {
 
 			$this->add_control_style_rules( $control, $parsed_dynamic_settings, $all_controls, $placeholders, $replacements );
 		}
+
+		Performance::set_use_style_controls( $previous_use_style_controls );
 	}
 
 	/**
