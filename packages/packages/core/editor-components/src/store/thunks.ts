@@ -1,4 +1,3 @@
-import { type V1ElementData } from '@elementor/editor-elements';
 import { __createAsyncThunk as createAsyncThunk } from '@elementor/store';
 
 import { apiClient, type CreateComponentPayload, type CreateComponentResponse } from '../api';

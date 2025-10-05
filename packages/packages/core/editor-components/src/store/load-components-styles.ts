@@ -2,10 +2,10 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
+import { apiClient } from '../api';
 import { type ComponentId, type Element } from '../types';
 import { getComponentIds } from '../utils/get-component-ids';
 import { selectStyles, slice } from './store';
-import { apiClient } from '../api';
 
 export async function loadComponentsStyles( elements: Element[] ) {
 	const componentIds = Array.from( new Set( getComponentIds( elements ) ) );
