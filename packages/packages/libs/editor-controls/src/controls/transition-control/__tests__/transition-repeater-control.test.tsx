@@ -29,27 +29,27 @@ const createTransitionPropType = () =>
 		kind: 'array',
 	} );
 
-jest.mock( '../data', () => ( {
-	initialTransitionValue: {
-		$$type: 'selection-size',
-		value: {
-			selection: {
-				$$type: 'key-value',
-				value: {
-					key: { $$type: 'string', value: 'All properties' },
-					value: { $$type: 'string', value: 'all' },
-				},
-			},
-			size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
-		},
-	},
-	transitionProperties: [
-		{
-			category: 'Basic',
-			properties: [ { label: 'All properties', value: 'all' } ],
-		},
-	],
-} ) );
+// jest.mock( '../data', () => ( {
+// 	initialTransitionValue: {
+// 		$$type: 'selection-size',
+// 		value: {
+// 			selection: {
+// 				$$type: 'key-value',
+// 				value: {
+// 					key: { $$type: 'string', value: 'All properties' },
+// 					value: { $$type: 'string', value: 'all' },
+// 				},
+// 			},
+// 			size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
+// 		},
+// 	},
+// 	transitionProperties: [
+// 		{
+// 			category: 'Basic',
+// 			properties: [ { label: 'All properties', value: 'all' } ],
+// 		},
+// 	],
+// } ) );
 
 describe( 'TransitionRepeaterControl', () => {
 	it( 'should render with default empty state', async () => {
@@ -183,14 +183,19 @@ describe( 'TransitionRepeaterControl', () => {
 
 		// Act
 		renderControl(
-			<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
+			<TransitionRepeaterControl
+				currentStyleState={ null }
+				recentlyUsedListGetter={ recentlyUsedGetter }
+				transitionProperties={ [
+					{ category: 'Basic', properties: [ { label: 'All properties', value: 'all' } ] },
+				] }
+			/>,
 			props
 		);
 
 		// Assert
 		await waitFor( () => {
 			const addButton = screen.getByLabelText( 'Add transitions item' );
-			// expect( addButton ).toBeInTheDocument();
 			expect( addButton ).toBeDisabled();
 		} );
 	} );
@@ -232,9 +237,15 @@ describe( 'TransitionRepeaterControl', () => {
 		const propType = createTransitionPropType();
 		const props = { setValue, value, bind: 'transition', propType };
 
+		const allowedProperties = [ { category: 'Basic', properties: [ { label: 'All properties', value: 'all' } ] } ];
+
 		// Act
 		renderControl(
-			<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
+			<TransitionRepeaterControl
+				currentStyleState={ null }
+				recentlyUsedListGetter={ recentlyUsedGetter }
+				transitionProperties={ allowedProperties }
+			/>,
 			props
 		);
 
