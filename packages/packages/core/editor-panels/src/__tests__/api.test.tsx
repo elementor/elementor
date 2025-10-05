@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
-import { __privateUseRouteStatus as useRouteStatus } from '@elementor/editor-v1-adapters';
 import { getSelectedElements, selectElement } from '@elementor/editor-elements';
+import { __privateUseRouteStatus as useRouteStatus } from '@elementor/editor-v1-adapters';
 import { __createStore, __deleteStore, __registerSlice, __StoreProvider as StoreProvider } from '@elementor/store';
 import { act, fireEvent, renderHook, screen } from '@testing-library/react';
 
