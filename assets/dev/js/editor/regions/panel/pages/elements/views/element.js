@@ -184,16 +184,16 @@ module.exports = Marionette.ItemView.extend( {
 
 		if ( elementorCommon.eventsManager ) {
 			const modelData = this.model.toJSON();
+			const elType = modelData.elType;
+			const widgetType = modelData.widgetType;
 			const elementName = 'widget' === elType ? widgetType : elType;
 
-			const eventData = {
+			elementorCommon.eventsManager.dispatchEvent( 'add_element', {
 				location: 'editor_panel',
 				element_name: elementName,
-				element_type: modelData.elType,
-				widget_type: modelData.widgetType,
-			};
-
-			elementorCommon.eventsManager.dispatchEvent( 'add_element', eventData );
+				element_type: elType,
+				widget_type: widgetType,
+			} );
 		}
 	},
 
