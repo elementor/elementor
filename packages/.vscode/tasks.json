@@ -1,0 +1,185 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Check Auto Run",
+      "type": "shell",
+      "command": "if [ \"${CURSOR_AUTO_RUN_TASKS:-true}\" = \"false\" ]; then echo '⚠️  Auto-run tasks are disabled. To enable them, set CURSOR_AUTO_RUN_TASKS=true in your environment.'; exit 1; fi",
+    },
+    {
+      "label": "turbo-repo:dev",
+      "dependsOrder": "sequence",
+      "dependsOn": ["Check Auto Run"],
+      "type": "npm",
+      "script": "dev",
+      "path": ".",
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "group": "dev-servers",
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true,
+        "echo": true,
+        "reveal": "always",
+        "focus": false
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "type": "shell",
+      "command": "npm run build",
+      "problemMatcher": [],
+      "label": "turbo-repo:build",
+      "detail": "Build all turbo-repo packages",
+      "group": "build"
+    },
+    {
+      "type": "shell",
+      "command": "npm run build:tools",
+      "problemMatcher": [],
+      "label": "turbo-repo:build:tools",
+      "detail": "Build only the tools packages",
+      "group": "build"
+    },
+    {
+      "type": "shell",
+      "command": "npm run test",
+      "problemMatcher": [],
+      "label": "turbo-repo:test",
+      "detail": "Run all turbo-repo tests",
+      "group": "test"
+    },
+    {
+      "type": "shell",
+      "command": "npm run test:coverage",
+      "problemMatcher": [],
+      "label": "turbo-repo:test:coverage",
+      "detail": "Run tests with coverage report",
+      "group": "test"
+    },
+    {
+      "type": "shell",
+      "command": "npm run lint",
+      "problemMatcher": [],
+      "label": "turbo-repo:lint",
+      "detail": "Run linting and type checking",
+      "group": "test"
+    },
+    {
+      "type": "shell",
+      "command": "npm run check-unused",
+      "problemMatcher": [],
+      "label": "turbo-repo:check-unused",
+      "detail": "Check for unused dependencies",
+      "group": "test"
+    },
+    {
+      "type": "shell",
+      "command": "npm run spell-check",
+      "problemMatcher": [],
+      "label": "turbo-repo:spell-check",
+      "detail": "Run spell checking",
+      "group": "test"
+    },
+    {
+      "type": "shell",
+      "command": "npm run format",
+      "problemMatcher": [],
+      "label": "turbo-repo:format",
+      "detail": "Format code with ESLint",
+      "group": "test"
+    },
+    {
+      "type": "shell",
+      "command": "npm run version",
+      "problemMatcher": [],
+      "label": "turbo-repo:version",
+      "detail": "Update package versions",
+      "group": "build"
+    },
+    {
+      "type": "shell",
+      "command": "npm run version:list",
+      "problemMatcher": [],
+      "label": "turbo-repo:version:list",
+      "detail": "List current package versions",
+      "group": "build"
+    },
+    {
+      "type": "shell",
+      "command": "npm run version:validate",
+      "problemMatcher": [],
+      "label": "turbo-repo:version:validate",
+      "detail": "Validate package versions",
+      "group": "build"
+    },
+    {
+      "type": "shell",
+      "command": "npm run version:bump",
+      "problemMatcher": [],
+      "label": "turbo-repo:version:bump",
+      "detail": "Bump package versions",
+      "group": "build"
+    },
+    {
+      "type": "shell",
+      "command": "npm run release",
+      "problemMatcher": [],
+      "label": "turbo-repo:release",
+      "detail": "Build and publish packages",
+      "group": "build"
+    },
+    {
+      "type": "shell",
+      "command": "npx jest packages/core/editor --verbose",
+      "problemMatcher": [],
+      "label": "turbo-repo:test:editor",
+      "detail": "Run tests for editor package",
+      "group": "test"
+    },
+    {
+      "type": "shell",
+      "command": "npx jest packages/libs/editor-controls --verbose",
+      "problemMatcher": [],
+      "label": "turbo-repo:test:controls",
+      "detail": "Run tests for editor-controls package",
+      "group": "test"
+    },
+    {
+      "type": "shell",
+      "command": "npx jest packages/libs/editor-elements --verbose",
+      "problemMatcher": [],
+      "label": "turbo-repo:test:elements",
+      "detail": "Run tests for editor-elements package",
+      "group": "test"
+    },
+    {
+      "type": "shell",
+      "command": "npx jest packages/tools --verbose",
+      "problemMatcher": [],
+      "label": "turbo-repo:test:tools",
+      "detail": "Run tests for tools packages",
+      "group": "test"
+    },
+    {
+      "type": "shell",
+      "command": "npx jest --watch",
+      "problemMatcher": [],
+      "label": "turbo-repo:test:watch",
+      "detail": "Run tests in watch mode",
+      "group": "test",
+      "isBackground": true
+    },
+    {
+      "type": "shell",
+      "command": "npx jest --debug",
+      "problemMatcher": [],
+      "label": "turbo-repo:test:debug",
+      "detail": "Run tests in debug mode",
+      "group": "test"
+    }
+  ]
+}
