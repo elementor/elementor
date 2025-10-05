@@ -1,19 +1,14 @@
-import { createElement } from './create-element';
+import { createElement, type Options } from './create-element';
 import { getContainer } from './get-container';
-import { type V1Element } from './types';
-
-type Options = {
-	useHistory?: boolean;
-	at?: number;
-	clone?: boolean;
-};
+import { type V1Element, type V1ElementSettingsProps } from './types';
 
 export type DuplicateElementParams = {
 	elementId: string;
 	options?: Options;
+	settings?: V1ElementSettingsProps;
 };
 
-export function duplicateElement( { elementId, options = {} }: DuplicateElementParams ): V1Element {
+export function duplicateElement( { elementId, options = {}, settings }: DuplicateElementParams ): V1Element {
 	const elementToDuplicate = getContainer( elementId );
 
 	if ( ! elementToDuplicate ) {
@@ -33,10 +28,17 @@ export function duplicateElement( { elementId, options = {} }: DuplicateElementP
 
 	return createElement( {
 		containerId: parentContainer.id,
-		model: elementModel,
+		model: {
+			...elementModel,
+			settings: {
+				...elementModel.settings,
+				...settings,
+			},
+		},
 		options: {
 			at: insertPosition,
 			...options,
+			clone: true,
 		},
 	} );
 }

@@ -3,10 +3,11 @@ import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-
 import { getContainer } from './get-container';
 import { type V1Element, type V1ElementModelProps, type V1ElementSettingsProps } from './types';
 
-type Options = {
+export type Options = {
 	useHistory?: boolean;
 	at?: number;
 	clone?: boolean;
+	cloneId?: string;
 };
 
 export type CreateElementParams = {
