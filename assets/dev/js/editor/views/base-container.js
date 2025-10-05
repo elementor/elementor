@@ -196,6 +196,19 @@ module.exports = Marionette.CompositeView.extend( {
 		args.options = options;
 
 		$e.run( 'preview/drop', args );
+
+		if ( elementorCommon.eventsManager && args.model ) {
+			const elementName = 'widget' === elType ? widgetType : elType;
+
+			const eventData = {
+				location: 'editor_panel',
+				element_name: elementName,
+				element_type: args.model.elType,
+				widget_type: args.model.widgetType,
+			};
+
+			elementorCommon.eventsManager.dispatchEvent( 'add_element', eventData );
+		}
 	},
 
 	getHistoryType( event ) {
