@@ -360,6 +360,23 @@ export default function createAtomicElementBaseView( type ) {
 
 						this.onDrop( event, { at: targetIndex } );
 
+						if ( elementorCommon.eventsManager ) {
+							const selectedElement = elementor.channels.panelElements.request( 'element:selected' );
+
+							if ( selectedElement ) {
+								const elementName = 'widget' === elType ? widgetType : elType;
+
+								const eventData = {
+									location: 'editor_panel',
+									element_name: elementName,
+									element_type: selectedElement.model.get( 'elType' ),
+									widget_type: wselectedElement.model.get( 'widgetType' ),
+								};
+
+								elementorCommon.eventsManager.dispatchEvent( 'add_element', eventData );
+							}
+						}
+
 						return;
 					}
 
