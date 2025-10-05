@@ -38,9 +38,7 @@ test.describe( 'Text Transform Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should convert text-transform properties and verify styles - EXPECTED TO FAIL', async ( { page, request } ) => {
-		console.log( '🔍 DEBUG: Starting text-transform prop type test' );
-		
+	test( 'should convert text-transform properties and verify styles', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<h1 style="text-transform: uppercase;" data-test="text-transform-uppercase">Uppercase Text</h1>
@@ -50,133 +48,81 @@ test.describe( 'Text Transform Prop Type Integration @prop-types', () => {
 			</div>
 		`;
 
-		console.log( '🔍 DEBUG: Converting HTML content with text-transform properties' );
-		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent );
 
-		console.log( '🔍 DEBUG: API Result:', {
-			success: apiResult.success,
-			post_id: apiResult.post_id,
-			widgets_created: apiResult.widgets_created,
-			global_classes_created: apiResult.global_classes_created
-		} );
-
-		// Check if API call failed due to backend issues
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
-			console.log( '🔍 DEBUG: Skipping test due to validation failure:', validation.skipReason );
 			test.skip( true, validation.skipReason );
 			return;
 		}
-		
-		const postId = apiResult.post_id;
-		const editUrl = apiResult.edit_url;
-		expect( postId ).toBeDefined();
-		expect( editUrl ).toBeDefined();
 
-		console.log( '🔍 DEBUG: Navigating to editor URL:', editUrl );
+		const editUrl = apiResult.edit_url;
+
 		await page.goto( editUrl );
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
-		console.log( '🔍 DEBUG: Editor loaded, starting style verification' );
-
-		// Define test cases - THESE ARE EXPECTED TO FAIL
 		const testCases = [
-			{ 
-				index: 0, 
-				name: 'text-transform: uppercase on h1', 
-				property: 'text-transform', 
+			{
+				index: 0,
+				name: 'text-transform: uppercase on h1',
+				property: 'text-transform',
 				expected: 'uppercase',
-				selector: '.e-heading-base'
+				selector: '.e-heading-base',
 			},
-			{ 
-				index: 1, 
-				name: 'text-transform: lowercase on h2', 
-				property: 'text-transform', 
+			{
+				index: 1,
+				name: 'text-transform: lowercase on h2',
+				property: 'text-transform',
 				expected: 'lowercase',
-				selector: '.e-heading-base'
+				selector: '.e-heading-base',
 			},
-			{ 
-				index: 0, 
-				name: 'text-transform: capitalize on p', 
-				property: 'text-transform', 
+			{
+				index: 0,
+				name: 'text-transform: capitalize on p',
+				property: 'text-transform',
 				expected: 'capitalize',
-				selector: '.e-paragraph-base'
+				selector: '.e-paragraph-base',
 			},
-			{ 
-				index: 1, 
-				name: 'text-transform: none on p', 
-				property: 'text-transform', 
+			{
+				index: 1,
+				name: 'text-transform: none on p',
+				property: 'text-transform',
 				expected: 'none',
-				selector: '.e-paragraph-base'
+				selector: '.e-paragraph-base',
 			},
 		];
 
-		// Editor verification - EXPECTED TO FAIL
 		for ( const testCase of testCases ) {
-			await test.step( `🚨 EXPECTED FAILURE: Verify ${ testCase.name } in editor`, async () => {
+			await test.step( `Verify ${ testCase.name } in editor`, async () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				console.log( `🔍 DEBUG: Testing ${ testCase.name } with selector ${ testCase.selector }` );
-				
 				const elements = elementorFrame.locator( testCase.selector );
 				const element = elements.nth( testCase.index );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
-				// Get actual computed style for debugging
-				const actualValue = await element.evaluate( ( el ) => {
-					return window.getComputedStyle( el ).textTransform;
-				} );
-
-				console.log( `🔍 DEBUG: ${ testCase.name } - Expected: ${ testCase.expected }, Actual: ${ actualValue }` );
-
-				// This assertion is EXPECTED TO FAIL
-				try {
+				await test.step( 'Verify CSS property', async () => {
 					await expect( element ).toHaveCSS( testCase.property, testCase.expected );
-					console.log( `✅ UNEXPECTED SUCCESS: ${ testCase.name } passed!` );
-				} catch ( error ) {
-					console.log( `❌ EXPECTED FAILURE: ${ testCase.name } failed as expected - ${ error.message }` );
-					// Re-throw to make test fail as expected
-					throw error;
-				}
+				} );
 			} );
 		}
 
-		await test.step( '🚨 EXPECTED FAILURE: Publish page and verify text-transform styles on frontend', async () => {
-			console.log( '🔍 DEBUG: Publishing page and testing frontend' );
-			
-			// Save the page first
+		await test.step( 'Publish page and verify text-transform styles on frontend', async () => {
 			await editor.saveAndReloadPage();
 
-			// Get the page ID and navigate to frontend
 			const pageId = await editor.getPageId();
-			console.log( '🔍 DEBUG: Navigating to frontend page ID:', pageId );
 			await page.goto( `/?p=${ pageId }` );
 			await page.waitForLoadState();
 
-			// Frontend verification - EXPECTED TO FAIL
 			for ( const testCase of testCases ) {
-				await test.step( `🚨 EXPECTED FAILURE: Verify ${ testCase.name } on frontend`, async () => {
+				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
 					const frontendElements = page.locator( testCase.selector );
 					const frontendElement = frontendElements.nth( testCase.index );
 
-					// Get actual computed style for debugging
-					const actualValue = await frontendElement.evaluate( ( el ) => {
-						return window.getComputedStyle( el ).textTransform;
-					} );
-
-					console.log( `🔍 DEBUG: Frontend ${ testCase.name } - Expected: ${ testCase.expected }, Actual: ${ actualValue }` );
-
-					// This assertion is EXPECTED TO FAIL
-					try {
+					await test.step( 'Verify CSS property', async () => {
 						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );
-						console.log( `✅ UNEXPECTED SUCCESS: Frontend ${ testCase.name } passed!` );
-					} catch ( error ) {
-						console.log( `❌ EXPECTED FAILURE: Frontend ${ testCase.name } failed as expected - ${ error.message }` );
-						// Re-throw to make test fail as expected
-						throw error;
-					}
+					} );
 				} );
 			}
 		} );
