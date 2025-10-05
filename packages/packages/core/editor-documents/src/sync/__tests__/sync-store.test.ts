@@ -1,4 +1,4 @@
-import { dispatchCommandAfter, dispatchCommandBefore, dispatchV1ReadyEvent } from 'test-utils';
+import { createMockDocumentData, dispatchCommandAfter, dispatchCommandBefore, dispatchV1ReadyEvent } from 'test-utils';
 import { __createStore, __registerSlice, type SliceState, type Store } from '@elementor/store';
 
 import { slice } from '../../store';
@@ -6,7 +6,7 @@ import { selectActiveDocument } from '../../store/selectors';
 import { type Document, type ExitTo, type ExtendedWindow, type V1Document } from '../../types';
 import { syncStore } from '../index';
 import { getV1DocumentPermalink, getV1DocumentsExitTo } from '../utils';
-import { makeDocumentsManager, makeMockV1Document } from './test-utils';
+import { makeDocumentsManager } from './test-utils';
 
 type WindowWithOptionalElementor = Omit< ExtendedWindow, 'elementor' > & {
 	elementor?: ExtendedWindow[ 'elementor' ];
@@ -30,7 +30,10 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 
 	it( 'should sync documents on V1 load', () => {
 		// Arrange.
-		mockV1DocumentsManager( [ makeMockV1Document( { id: 1 } ), makeMockV1Document( { id: 2 } ) ], 'this_post' );
+		mockV1DocumentsManager(
+			[ createMockDocumentData( { id: 1 } ), createMockDocumentData( { id: 2 } ) ],
+			'this_post'
+		);
 
 		// Act.
 		dispatchV1ReadyEvent();
@@ -105,7 +108,11 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 		},
 	] )( 'should sync active document on $type', ( { dispatchEvent } ) => {
 		// Arrange.
-		mockV1DocumentsManager( [ makeMockV1Document( { id: 1 } ), makeMockV1Document( { id: 2 } ) ], 'this_post', 2 );
+		mockV1DocumentsManager(
+			[ createMockDocumentData( { id: 1 } ), createMockDocumentData( { id: 2 } ) ],
+			'this_post',
+			2
+		);
 
 		// Act.
 		dispatchEvent();
@@ -154,8 +161,8 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 		'should sync host document when a new host is opened { openAsHost: $openAsHost }',
 		( { openAsHost, expectedHost } ) => {
 			// Arrange.
-			const mockDocument1 = makeMockV1Document( { id: 1 } );
-			const mockDocument2 = makeMockV1Document( { id: 2 } );
+			const mockDocument1 = createMockDocumentData( { id: 1 } );
+			const mockDocument2 = createMockDocumentData( { id: 2 } );
 
 			mockV1DocumentsManager( [ mockDocument1, mockDocument2 ], 'this_post', 1, 1 );
 
@@ -174,7 +181,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 
 	it( 'should sync saving state of a document on V1 load', () => {
 		// Arrange.
-		const mockDocument = makeMockV1Document();
+		const mockDocument = createMockDocumentData();
 
 		mockV1DocumentsManager( [
 			{
@@ -195,7 +202,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 
 	it( 'should sync saving state of a document on save', () => {
 		// Arrange.
-		mockV1DocumentsManager( [ makeMockV1Document() ] );
+		mockV1DocumentsManager( [ createMockDocumentData() ] );
 
 		// Populate the documents state.
 		dispatchV1ReadyEvent();
@@ -220,7 +227,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 
 	it( 'should sync draft saving state of a document on save', () => {
 		// Arrange.
-		mockV1DocumentsManager( [ makeMockV1Document() ] );
+		mockV1DocumentsManager( [ createMockDocumentData() ] );
 
 		// Populate the documents state.
 		dispatchV1ReadyEvent();
@@ -249,7 +256,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 
 	it( 'should sync dirty state of a document when it has an autosave', () => {
 		// Arrange.
-		const mockDocument = makeMockV1Document( { id: 1 } );
+		const mockDocument = createMockDocumentData( { id: 1 } );
 
 		mockV1DocumentsManager( [
 			{
@@ -272,7 +279,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 
 	it( 'should sync dirty state of a document on document change', () => {
 		// Arrange.
-		const mockDocument = makeMockV1Document();
+		const mockDocument = createMockDocumentData();
 
 		mockV1DocumentsManager( [ mockDocument ] );
 
@@ -302,7 +309,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 
 	it( "should not sync dirty state of a document when it's being saved", () => {
 		// Arrange.
-		const mockDocument = makeMockV1Document();
+		const mockDocument = createMockDocumentData();
 
 		mockV1DocumentsManager( [ mockDocument ] );
 
@@ -323,7 +330,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 	it( 'should sync document title on V1 setting change', () => {
 		// Arrange.
 		mockV1DocumentsManager( [
-			makeMockV1Document( {
+			createMockDocumentData( {
 				title: 'old title',
 			} ),
 		] );
@@ -333,7 +340,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 
 		// Act - simulate a change.
 		mockV1DocumentsManager( [
-			makeMockV1Document( {
+			createMockDocumentData( {
 				title: 'new title',
 			} ),
 		] );
@@ -353,7 +360,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 	it( 'should not sync document title when a non-related V1 setting has changed', () => {
 		// Arrange.
 		mockV1DocumentsManager( [
-			makeMockV1Document( {
+			createMockDocumentData( {
 				title: 'old title',
 			} ),
 		] );
@@ -378,7 +385,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 		// Arrange.
 		mockV1DocumentsManager(
 			[
-				makeMockV1Document( {
+				createMockDocumentData( {
 					id: 1,
 					status: 'draft',
 					title: 'test',
@@ -393,7 +400,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 		// Mock a change.
 		mockV1DocumentsManager(
 			[
-				makeMockV1Document( {
+				createMockDocumentData( {
 					id: 1,
 					status: 'publish',
 					title: 'test title changed',
@@ -422,7 +429,7 @@ describe( '@elementor/editor-documents - Sync Store', () => {
 		'should sync active document $ExitTo',
 		( exitTo ) => {
 			// Arrange.
-			const mockDocument = makeMockV1Document( { id: 1 } );
+			const mockDocument = createMockDocumentData( { id: 1 } );
 			mockV1DocumentsManager( [ mockDocument ], exitTo );
 
 			// Populate the documents state.
