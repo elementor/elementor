@@ -10,8 +10,8 @@ import {
 import { jest } from '@jest/globals';
 import { act, fireEvent, screen } from '@testing-library/react';
 
-import { slice } from '../../store';
-import { loadComponents } from '../../thunks';
+import { slice } from '../../store/store';
+import { loadComponents } from '../../store/thunks';
 import { ComponentSearch } from '../components-tab/component-search';
 import { ComponentItem } from '../components-tab/components-item';
 import { ComponentsList } from '../components-tab/components-list';
