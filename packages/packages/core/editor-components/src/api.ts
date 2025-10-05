@@ -32,6 +32,6 @@ export const apiClient = {
 		httpService()
 			.post< HttpResponse< CreateComponentResponse > >( `${ BASE_URL }`, payload )
 			.then( ( res ) => res.data.data ),
-	getConfig: ( id: number ) => ajax.load< { id: number }, V1ElementData >( getParams( id ) ),
-	invalidateCache: ( id: number ) => ajax.invalidateCache< { id: number } >( getParams( id ) ),
+	getComponentConfig: ( id: number ) => ajax.load< { id: number }, V1ElementData >( getParams( id ) ),
+	invalidateComponentConfigCache: ( id: number ) => ajax.invalidateCache< { id: number } >( getParams( id ) ),
 };

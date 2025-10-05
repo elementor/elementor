@@ -11,14 +11,15 @@ import { createComponent, loadComponents } from './thunks';
 type GetComponentResponse = Component[];
 
 type Status = 'idle' | 'pending' | 'error';
-export type ComponentsState = {
+
+type ComponentsState = {
 	data: Component[];
 	loadStatus: Status;
 	createStatus: Status;
 	styles: StylesDefinition;
 };
 
-export type StateWithInitialDocumentsStyles = SliceState< typeof slice >;
+type ComponentsSlice = SliceState< typeof slice >;
 
 export const initialState: ComponentsState = {
 	data: [],
@@ -38,7 +39,7 @@ export const slice = createSlice( {
 		load: ( state, { payload } ) => {
 			state.data = payload;
 		},
-		remove( state, { payload }: PayloadAction< { id: ComponentId } > ) {
+		removeStyles( state, { payload }: PayloadAction< { id: ComponentId } > ) {
 			const { [ payload.id ]: _, ...rest } = state.styles;
 
 			state.styles = rest;
@@ -74,15 +75,15 @@ export const slice = createSlice( {
 	},
 } );
 
-const selectData = ( state: StateWithInitialDocumentsStyles ) => state[ SLICE_NAME ].data;
-const selectLoadStatus = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].loadStatus;
-const selectCreateStatus = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].createStatus;
-const selectStylesDefinitions = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].styles ?? {};
+const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
+const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadStatus;
+const selectCreateStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].createStatus;
+const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 
 export const selectComponents = createSelector( selectData, ( data: Component[] ) => data );
 export const selectLoadIsPending = createSelector( selectLoadStatus, ( status ) => status === 'pending' );
 export const selectLoadIsError = createSelector( selectLoadStatus, ( status ) => status === 'error' );
 export const selectCreateIsPending = createSelector( selectCreateStatus, ( status ) => status === 'pending' );
 export const selectCreateIsError = createSelector( selectCreateStatus, ( status ) => status === 'error' );
-export const selectStyles = ( state: StateWithInitialDocumentsStyles ) => state[ SLICE_NAME ].styles ?? {};
+export const selectStyles = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 export const selectFlatStyles = createSelector( selectStylesDefinitions, ( data ) => Object.values( data ).flat() );

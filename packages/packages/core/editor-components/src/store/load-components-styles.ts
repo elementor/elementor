@@ -5,7 +5,7 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 import { type ComponentId, type Element } from '../types';
 import { getComponentIds } from '../utils/get-component-ids';
 import { selectStyles, slice } from './store';
-import { loadStyles } from './thunks';
+import { apiClient } from '../api';
 
 export async function loadComponentsStyles( elements: Element[] ) {
 	const componentIds = Array.from( new Set( getComponentIds( elements ) ) );
@@ -24,7 +24,7 @@ export async function loadComponentsStyles( elements: Element[] ) {
 	addComponentStyles( unknownComponentIds );
 }
 
-export async function addComponentStyles( ids: ComponentId[] ) {
+async function addComponentStyles( ids: ComponentId[] ) {
 	const newComponents = await loadStyles( ids );
 
 	addStyles( newComponents );
@@ -32,6 +32,10 @@ export async function addComponentStyles( ids: ComponentId[] ) {
 	Object.values( newComponents ).forEach( ( [ , data ] ) => {
 		loadComponentsStyles( data.elements as Element[] );
 	} );
+}
+
+async function loadStyles( ids: number[] ): Promise< [ number, V1ElementData ][] > {
+	return Promise.all( ids.map( async ( id ) => [ id, await apiClient.getComponentConfig( id ) ] ) );
 }
 
 function addStyles( data: ( readonly [ ComponentId, V1ElementData ] )[] ) {

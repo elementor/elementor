@@ -16,8 +16,4 @@ const loadComponents = createAsyncThunk( 'components/load', async () => {
 	return response;
 } );
 
-async function loadStyles( ids: number[] ): Promise< [ number, V1ElementData ][] > {
-	return Promise.all( ids.map( async ( id ) => [ id, await apiClient.getConfig( id ) ] ) );
-}
-
-export { createComponent, loadComponents, loadStyles };
+export { createComponent, loadComponents };
