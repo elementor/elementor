@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Controls\Types;
 
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
-use Elementor\Modules\AtomicWidgets\Query\Query_Builder;
+use Elementor\Modules\AtomicWidgets\Query\Query_Builder_Factory as Query_Builder;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -14,6 +14,7 @@ class Link_Control extends Atomic_Control_Base {
 	private int $minimum_input_length = 2;
 	private ?array $query_config = null;
 	private ?string $placeholder = null;
+	private ?string $aria_label = null;
 
 	public function get_type(): string {
 		return 'link';
@@ -41,8 +42,9 @@ class Link_Control extends Atomic_Control_Base {
 		return [
 			'allowCustomValues' => $this->allow_custom_values,
 			'placeholder' => $this->placeholder,
-			'queryOptions' => Query_Builder::build( $this->query_config ),
+			'queryOptions' => Query_Builder::create( $this->query_config )->build(),
 			'minInputLength' => $this->minimum_input_length,
+			'ariaLabel' => 'Link URL',
 		];
 	}
 }

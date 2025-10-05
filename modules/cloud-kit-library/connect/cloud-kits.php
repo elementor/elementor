@@ -77,7 +77,7 @@ class Cloud_Kits extends Library {
 		];
 	}
 
-	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes ) {
+	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes, string $media_format = 'link' ) {
 		$this->validate_quota();
 
 		$endpoint = 'kits';
@@ -93,6 +93,7 @@ class Cloud_Kits extends Library {
 				'title' => $title,
 				'description' => $description,
 				'includes' => wp_json_encode( $includes ),
+				'mediaFormat' => $media_format,
 			],
 			[
 				'previewFile' => [
@@ -114,7 +115,7 @@ class Cloud_Kits extends Library {
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
 
-		if ( empty( $response['id'] ) ) {
+		if ( is_wp_error( $response ) || empty( $response['id'] ) ) {
 			throw new \Exception( static::FAILED_TO_UPLOAD_KIT, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
@@ -133,7 +134,7 @@ class Cloud_Kits extends Library {
 		return $response;
 	}
 
-	private function upload_content_file( $upload_url, $content_file_data ) {
+	public function upload_content_file( $upload_url, $content_file_data ) {
 		$upload_response = wp_remote_request( $upload_url, [
 			'method' => 'PUT',
 			'body' => $content_file_data,
@@ -193,6 +194,30 @@ class Cloud_Kits extends Library {
 		$body .= "--{$boundary}--{$eol}";
 
 		return $body;
+	}
+
+	public function update_kit( $id, array $kit_data ) {
+		$endpoint = 'kits/' . $id;
+
+		$request = $this->http_request(
+			'PATCH',
+			$endpoint,
+			[
+				'body' => wp_json_encode( $kit_data ),
+				'headers' => [
+					'Content-Type' => 'application/json',
+				],
+			],
+			[
+				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+			],
+		);
+
+		if ( is_wp_error( $request ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	protected function init() {}

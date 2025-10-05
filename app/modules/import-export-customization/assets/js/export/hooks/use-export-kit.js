@@ -11,7 +11,71 @@ const STATUS_ERROR = 'error';
 export const useExportKit = ( { includes, kitInfo, customization, isExporting, dispatch } ) => {
 	const [ status, setStatus ] = useState( STATUS_PROCESSING );
 	const [ error, setError ] = useState( null );
+	const [ exportedData, setExportedData ] = useState( null );
 	const navigate = useNavigate();
+
+	const processMedia = useCallback( async ( exportData, mediaUrls, kit ) => {
+		setStatus( STATUS_PROCESSING_MEDIA );
+
+		const baseUrl = elementorAppConfig[ 'import-export-customization' ].restApiBaseUrl;
+		const mediaResponse = await fetch( `${ baseUrl }/process-media`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': window.wpApiSettings?.nonce || '',
+			},
+			body: JSON.stringify( {
+				media_urls: mediaUrls,
+				kit,
+			} ),
+		} );
+
+		const mediaResult = await mediaResponse.json();
+
+		if ( ! mediaResponse.ok ) {
+			const errorMessage = mediaResult?.data?.message || `Media processing error! Code: ${ mediaResult?.data?.code }`;
+			throw new ImportExportError( errorMessage, mediaResult?.data?.code );
+		}
+
+		exportData.media = {
+			processed: true,
+			message: mediaResult?.data?.message || 'Media processed successfully',
+		};
+
+		return exportData;
+	}, [] );
+
+	const deleteKit = useCallback( async ( kitId ) => {
+		if ( ! kitId ) {
+			return;
+		}
+
+		try {
+			await $e.data.delete( 'cloud-kits/index', { id: kitId } );
+		} catch {}
+	}, [] );
+
+	const retryMediaProcessing = useCallback( async () => {
+		if ( ! exportedData ) {
+			throw new ImportExportError( 'No export data available for media retry' );
+		}
+
+		try {
+			setError( null );
+			const updatedExportedData = await processMedia(
+				exportedData.exportedData,
+				exportedData.mediaUrls,
+				exportedData.kit,
+			);
+
+			dispatch( { type: 'SET_EXPORTED_DATA', payload: updatedExportedData } );
+			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
+			navigate( '/export-customization/complete' );
+		} catch ( err ) {
+			setStatus( STATUS_ERROR );
+			setError( err instanceof ImportExportError ? err : new ImportExportError( err.message ) );
+		}
+	}, [ exportedData, processMedia, dispatch, navigate ] );
 
 	const exportKit = useCallback( async () => {
 		try {
@@ -58,15 +122,15 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 			const isExportLocal = 'file' === kitInfo.source && result.data && result.data.file;
 			const isExportToCloud = 'cloud' === kitInfo.source && result.data && result.data.kit;
 
-			let exportedData = null;
+			let kitExportData = null;
 
 			if ( isExportLocal ) {
-				exportedData = {
+				kitExportData = {
 					file: result.data.file, // This is base64 encoded file data
 					manifest: result.data.manifest,
 				};
 			} else if ( isExportToCloud ) {
-				exportedData = {
+				kitExportData = {
 					kit: result.data.kit,
 					manifest: result.data.manifest,
 				};
@@ -74,40 +138,25 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 				throw new ImportExportError( 'Invalid response format from server' );
 			}
 
+			setExportedData( {
+				exportedData: kitExportData,
+				mediaUrls: result.data.media_urls,
+				kit: result.data.kit,
+			} );
+
 			const mediaUrls = result.data.media_urls;
 			if ( mediaUrls && mediaUrls.length > 0 ) {
-				setStatus( STATUS_PROCESSING_MEDIA );
-
-				const mediaResponse = await fetch( `${ baseUrl }/process-media`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'X-WP-Nonce': window.wpApiSettings?.nonce || '',
-					},
-					body: JSON.stringify( { media_urls: mediaUrls } ),
-				} );
-
-				const mediaResult = await mediaResponse.json();
-
-				if ( ! mediaResponse.ok ) {
-					const errorMessage = mediaResult?.data?.message || `Media processing error! Code: ${ mediaResult?.data?.code }`;
-					throw new ImportExportError( errorMessage, mediaResult?.data?.code );
-				}
-
-				exportedData.media = {
-					mapping: mediaResult.data.mapping,
-					zip_path: mediaResult.data.zip_path,
-				};
+				await processMedia( kitExportData, mediaUrls, result.data.kit );
 			}
 
-			dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
+			dispatch( { type: 'SET_EXPORTED_DATA', payload: kitExportData } );
 			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
 			navigate( '/export-customization/complete' );
 		} catch ( err ) {
 			setStatus( STATUS_ERROR );
 			setError( err instanceof ImportExportError ? err : new ImportExportError( err.message ) );
 		}
-	}, [ includes, kitInfo, customization, dispatch, navigate ] );
+	}, [ includes, kitInfo, customization, dispatch, navigate, processMedia ] );
 
 	useEffect( () => {
 		if ( isExporting ) {
@@ -122,5 +171,8 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 		STATUS_ERROR,
 		error,
 		exportKit,
+		retryMediaProcessing,
+		deleteKit,
+		exportedData,
 	};
 };

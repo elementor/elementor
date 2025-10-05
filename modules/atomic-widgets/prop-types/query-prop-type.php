@@ -22,4 +22,8 @@ class Query_Prop_Type extends Object_Prop_Type {
 			'label' => String_Prop_Type::make(),
 		];
 	}
+
+	public function get_default() {
+		return null;
+	}
 }
