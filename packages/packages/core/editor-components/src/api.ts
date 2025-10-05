@@ -32,6 +32,10 @@ export const apiClient = {
 		httpService()
 			.post< HttpResponse< CreateComponentResponse > >( `${ BASE_URL }`, payload )
 			.then( ( res ) => res.data.data ),
+	update: ( payload: any ) =>
+		httpService()
+			.post< HttpResponse< Map< number, number > > >( `${ BASE_URL }`, payload )
+			.then( ( res ) => res.data.data ),
 	getComponentConfig: ( id: number ) => ajax.load< { id: number }, V1ElementData >( getParams( id ) ),
 	invalidateComponentConfigCache: ( id: number ) => ajax.invalidateCache< { id: number } >( getParams( id ) ),
 };

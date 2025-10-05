@@ -21,3 +21,7 @@ export type Element = V1ElementModelProps & {
 		component_id?: NumberPropValue;
 	};
 };
+
+export type ExtendedWindow = Window & {
+	elementor: Record< string, unknown >;
+};
