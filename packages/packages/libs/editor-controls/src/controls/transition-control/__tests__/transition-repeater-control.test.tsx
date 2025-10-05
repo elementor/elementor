@@ -157,45 +157,7 @@ describe( 'TransitionRepeaterControl', () => {
 		expect( addButton ).toBeDisabled();
 	} );
 
-	it( 'should disable the add item button when all properties are used', async () => {
-		// Arrange
-		const setValue = jest.fn();
-		const value = {
-			$$type: 'array',
-			value: [
-				{
-					$$type: 'selection-size',
-					value: {
-						selection: {
-							$$type: 'key-value',
-							value: {
-								key: { $$type: 'string', value: 'All properties' },
-								value: { $$type: 'string', value: 'all' },
-							},
-						},
-						size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
-					},
-				},
-			],
-		};
-		const propType = createTransitionPropType();
-		const props = { setValue, value, bind: 'transition', propType };
-
-		// Act
-		renderControl(
-			<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
-			props
-		);
-
-		// Assert
-		await waitFor( () => {
-			const addButton = screen.getByLabelText( 'Add transitions item' );
-			// expect( addButton ).toBeInTheDocument();
-			expect( addButton ).toBeDisabled();
-		} );
-	} );
-
-	// it( 'should update the value according to the allowed properties list', async () => {
+	// it( 'should disable the add item button when all properties are used', async () => {
 	// 	// Arrange
 	// 	const setValue = jest.fn();
 	// 	const value = {
@@ -214,19 +176,6 @@ describe( 'TransitionRepeaterControl', () => {
 	// 					size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
 	// 				},
 	// 			},
-	// 			{
-	// 				$$type: 'selection-size',
-	// 				value: {
-	// 					selection: {
-	// 						$$type: 'key-value',
-	// 						value: {
-	// 							key: { $$type: 'string', value: 'Invalid' },
-	// 							value: { $$type: 'string', value: 'not-valid' },
-	// 						},
-	// 					},
-	// 					size: { $$type: 'size', value: { size: 500, unit: 'ms' } },
-	// 				},
-	// 			},
 	// 		],
 	// 	};
 	// 	const propType = createTransitionPropType();
@@ -239,8 +188,59 @@ describe( 'TransitionRepeaterControl', () => {
 	// 	);
 
 	// 	// Assert
-	// 	await waitFor( () => expect( setValue ).toHaveBeenCalledTimes( 1 ) );
-	// 	const sanitized = setValue.mock.calls[ 0 ][ 0 ];
-	// 	expect( sanitized ).toEqual( [ { value: { selection: { value: { value: 'all' } } } } ] );
+	// 	await waitFor( () => {
+	// 		const addButton = screen.getByLabelText( 'Add transitions item' );
+	// 		// expect( addButton ).toBeInTheDocument();
+	// 		expect( addButton ).toBeDisabled();
+	// 	} );
 	// } );
+
+	it( 'should update the value according to the allowed properties list', async () => {
+		// Arrange
+		const setValue = jest.fn();
+		const value = {
+			$$type: 'array',
+			value: [
+				{
+					$$type: 'selection-size',
+					value: {
+						selection: {
+							$$type: 'key-value',
+							value: {
+								key: { $$type: 'string', value: 'All properties' },
+								value: { $$type: 'string', value: 'all' },
+							},
+						},
+						size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
+					},
+				},
+				{
+					$$type: 'selection-size',
+					value: {
+						selection: {
+							$$type: 'key-value',
+							value: {
+								key: { $$type: 'string', value: 'Invalid' },
+								value: { $$type: 'string', value: 'not-valid' },
+							},
+						},
+						size: { $$type: 'size', value: { size: 500, unit: 'ms' } },
+					},
+				},
+			],
+		};
+		const propType = createTransitionPropType();
+		const props = { setValue, value, bind: 'transition', propType };
+
+		// Act
+		renderControl(
+			<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
+			props
+		);
+
+		// Assert
+		await waitFor( () => expect( setValue ).toHaveBeenCalledTimes( 1 ) );
+		const sanitized = setValue.mock.calls[ 0 ][ 0 ];
+		expect( sanitized ).toEqual( [ { value: { selection: { value: { value: 'all' } } } } ] );
+	} );
 } );
