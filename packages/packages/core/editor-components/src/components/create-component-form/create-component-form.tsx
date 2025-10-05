@@ -6,6 +6,7 @@ import { StarIcon } from '@elementor/icons';
 import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { type CreateComponentResponse } from '../../api';
 import { useComponents } from '../../hooks/use-components';
 import { useCreateComponent } from '../../hooks/use-create-component';
 import { type ComponentFormValues } from '../../types';
@@ -34,7 +35,8 @@ export function CreateComponentForm() {
 
 	const [ resultNotification, setResultNotification ] = useState< ResultNotification | null >( null );
 
-	const { createComponent, isPending } = useCreateComponent();
+	const { isPending } = useCreateComponent();
+
 	useEffect( () => {
 		const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
 
@@ -55,39 +57,159 @@ export function CreateComponentForm() {
 			throw new Error( `Can't save element as component: element not found` );
 		}
 
-		try {
-			const result = await createComponent( {
-				name: values.componentName,
-				content: [ element.element.model.toJSON( { remove: [ 'default' ] } ) ],
-			} );
+		const tempId = Date.now();
 
-			if ( ! element ) {
-				throw new Error( `Can't replace element with component: element not found` );
-			}
+		window.elementor.documents.addDocumentByConfig({
+			id: tempId,
+			type: 'elementor_component',
+			elements: [ element.element.model.toJSON( { remove: [ 'default' ] } ) ],
+			"container": "body",
+			"post_type_title": "Component",
+			"user": {
+				"can_publish": true,
+				"locked": false
+			},
+			revisions: {
+				"enabled": true,
+				"current_id": tempId
+			},
+			"settings": {
+				"name": "page",
+				"panelPage": {
+					"title": values.componentName
+				},
+				"controls": {},
+				"tabs": {
+					"settings": "Settings"
+				},
+				"settings": {
+					"post_title": values.componentName,
+					"post_status": "publish"
+				},
+				"cssWrapperSelector": ""
 
-			replaceElementWithComponent( element.element, {
-				id: result.component_id,
-				name: values.componentName,
-			} );
+			},
+			"panel": {
+				"title": "Component",
+				"widgets_settings": [],
+				"elements_categories": {
+					"favorites": {
+						"title": "Favorites",
+						"icon": "eicon-heart",
+						"sort": "a-z",
+						"hideIfEmpty": false,
+						"active": true
+					},
+					"v4-elements": {
+						"title": "Atomic Elements",
+						"hideIfEmpty": true,
+						"active": true,
+						"icon": "font"
+					},
+					"layout": {
+						"title": "Layout",
+						"hideIfEmpty": true,
+						"active": true,
+						"icon": "font"
+					},
+					"basic": {
+						"title": "Basic",
+						"icon": "eicon-font",
+						"active": true
+					},
+					"pro-elements": {
+						"title": "Pro",
+						"active": true,
+						"icon": "font"
+					},
+					"helloplus": {
+						"title": "Hello+",
+						"hideIfEmpty": true,
+						"active": true,
+						"icon": "font"
+					},
+					"general": {
+						"title": "General",
+						"icon": "eicon-font",
+						"active": true
+					},
+					"link-in-bio": {
+						"title": "Link In Bio",
+						"hideIfEmpty": true,
+						"active": true,
+						"icon": "font"
+					},
+					"theme-elements": {
+						"title": "Site",
+						"active": false,
+						"icon": "font"
+					},
+					"woocommerce-elements": {
+						"title": "WooCommerce",
+						"active": false,
+						"icon": "font"
+					},
+					"unlimited_elements": {
+						"title": "Unlimited Elements",
+						"icon": "uc-default-widget-icon ue-wi-svg",
+						"active": true
+					},
+					"uc_category_1": {
+						"title": "Creative Widgets",
+						"icon": "uc-default-widget-icon ue-wi-svg",
+						"active": true
+					},
+					"wordpress": {
+						"title": "WordPress",
+						"icon": "eicon-wordpress",
+						"active": false
+					}
+				},
+				"default_route": "panel/elements/categories",
+				"has_elements": true,
+				"support_kit": false,
+				"messages": {
+					"publish_notification": "Hurray! Your Component is live."
+				},
+				"show_navigator": true,
+				"allow_adding_widgets": true,
+				"show_copy_and_share": false,
+				"library_close_title": "Close",
+				"publish_button_title": "Publish",
+				"allow_closing_remote_library": true
+			},
+			"urls": {
+				"exit_to_dashboard": "http://hackathon-2025.local/wp-admin/post.php?post=1&action=edit",
+			},
+			"remoteLibrary": {
+				"type": "block",
+				"default_route": "templates/blocks",
+				"category": "elementor_component",
+				"autoImportSettings": false
+			},
+			"status": {
+				"value": "publish",
+				"label": "Published"
+			},
+		});
 
-			setResultNotification( {
-				show: true,
-				// Translators: %1$s: Component name, %2$s: Component ID
-				message: __( 'Component saved successfully as: %1$s (ID: %2$s)', 'elementor' )
-					.replace( '%1$s', values.componentName )
-					.replace( '%2$s', result.component_id.toString() ),
-				type: 'success',
-			} );
+		window.components.created.push( tempId );
 
-			resetAndClosePopup();
-		} catch {
-			const errorMessage = __( 'Failed to save component. Please try again.', 'elementor' );
-			setResultNotification( {
-				show: true,
-				message: errorMessage,
-				type: 'error',
-			} );
-		}
+		replaceElementWithComponent( element.element, {
+			id: tempId,
+			name: values.componentName,
+		} );
+
+		setResultNotification( {
+			show: true,
+			// Translators: %1$s: Component name, %2$s: Component ID
+			message: __( 'Component saved successfully as: %1$s (ID: %2$s)', 'elementor' )
+				.replace( '%1$s', values.componentName )
+				.replace( '%2$s', tempId.toString() ),
+			type: 'success',
+		} );
+
+		resetAndClosePopup();
 	};
 
 	const resetAndClosePopup = () => {

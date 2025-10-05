@@ -8,6 +8,7 @@ const BASE_URL = 'elementor/v1/components';
 export type CreateComponentPayload = {
 	name: string;
 	content: V1ElementModelProps[];
+	status: 'publish' | 'draft';
 };
 
 type GetComponentResponse = Array< Component >;

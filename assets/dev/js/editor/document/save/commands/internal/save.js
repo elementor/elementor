@@ -1,5 +1,5 @@
 export class Save extends $e.modules.CommandInternalBase {
-	apply( args ) {
+	async apply( args ) {
 		const { status = 'draft', force = false, onSuccess = null, document = elementor.documents.getCurrent() } = args;
 
 		if ( ! force && document.editor.isSaving ) {
@@ -20,6 +20,8 @@ export class Save extends $e.modules.CommandInternalBase {
 		document.editor.isChangedDuringSave = false;
 
 		settings.post_status = status;
+
+		await window.myCustomSave?.( { container, status } );
 
 		let elements = [];
 
