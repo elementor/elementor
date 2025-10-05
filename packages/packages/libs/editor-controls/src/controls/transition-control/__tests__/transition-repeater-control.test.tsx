@@ -29,27 +29,27 @@ const createTransitionPropType = () =>
 		kind: 'array',
 	} );
 
-jest.mock( '../data', () => ( {
-	initialTransitionValue: {
-		$$type: 'selection-size',
-		value: {
-			selection: {
-				$$type: 'key-value',
-				value: {
-					key: { $$type: 'string', value: 'All properties' },
-					value: { $$type: 'string', value: 'all' },
-				},
-			},
-			size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
-		},
-	},
-	transitionProperties: [
-		{
-			category: 'Basic',
-			properties: [ { label: 'All properties', value: 'all' } ],
-		},
-	],
-} ) );
+// jest.mock( '../data', () => ( {
+// 	initialTransitionValue: {
+// 		$$type: 'selection-size',
+// 		value: {
+// 			selection: {
+// 				$$type: 'key-value',
+// 				value: {
+// 					key: { $$type: 'string', value: 'All properties' },
+// 					value: { $$type: 'string', value: 'all' },
+// 				},
+// 			},
+// 			size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
+// 		},
+// 	},
+// 	transitionProperties: [
+// 		{
+// 			category: 'Basic',
+// 			properties: [ { label: 'All properties', value: 'all' } ],
+// 		},
+// 	],
+// } ) );
 
 describe( 'TransitionRepeaterControl', () => {
 	it( 'should render with default empty state', async () => {
