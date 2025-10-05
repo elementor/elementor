@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createArrayPropUtils, selectionSizePropTypeUtil, type SelectionSizePropValue } from '@elementor/editor-props';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import { InfoCircleFilledIcon } from '@elementor/icons';
@@ -102,23 +102,16 @@ export const TransitionRepeaterControl = createControl(
 		const { value, setValue } = useBoundProp( childArrayPropTypeUtil );
 		const disabledItems = useMemo( () => getDisabledItems( value ), [ value ] );
 
-		const allowedTransitionValues = useMemo( () => {
-			const set = new Set< string >();
-			transitionProperties.forEach( ( category ) => {
-				category.properties.forEach( ( property ) => set.add( property.value ) );
-			} );
-			return set;
-		}, [] );
+		const allowedTransitionValues = useMemo(
+			() => transitionProperties.flatMap( ( category ) => category.properties.map( ( prop ) => prop.value ) ),
+			[]
+		);
 
 		useEffect( () => {
-			if ( ! value || value.length === 0 ) {
-				return;
-			}
-
 			const sanitized = value.filter( ( item ) => {
 				const selectionValue =
 					( item?.value?.selection?.value as { value?: { value?: string } } )?.value?.value ?? '';
-				return allowedTransitionValues.has( selectionValue );
+				return allowedTransitionValues.includes( selectionValue );
 			} );
 
 			if ( sanitized.length !== value.length ) {
