@@ -69,11 +69,11 @@ class Cache_Validity_Item {
 	 * @param mixed | null                                                                                      $meta
 	 */
 	private function validate_nested_node( array $data, array $keys, $meta = null ) {
-		$data = $this->get_data_with_path( $data, $keys );
+		$data = $this->get_data_with_enforced_path( $data, $keys );
 
 		$last_key = array_pop( $keys );
 
-		// parent is guaranteed to be an array as we send the full $keys array to get_data_with_path
+		// parent is guaranteed to be an array as we send the full $keys array to get_data_with_enforced_path
 		$parent = &$this->get_node( $data, $keys );
 
 		$old_node = &$parent['children'][ $last_key ];
@@ -137,7 +137,7 @@ class Cache_Validity_Item {
 	 * @return array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>}
 	 */
 	private function get_normalized_data( array $data, array $keys, string $last_key ) {
-		$redundant_root = &$this->find_redundant_path_root( $data, $keys, $last_key );
+		$redundant_root = &$this->find_empty_parents_path_root( $data, $keys, $last_key );
 		$parent = &$this->get_node( $data, $keys );
 
 		if ( $redundant_root['node'] && $redundant_root['key'] ) {
@@ -164,7 +164,7 @@ class Cache_Validity_Item {
 	 * @param array<string>                                                                                     $keys
 	 * @return array{key: string | null, node: array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | null}
 	 */
-	private function &find_redundant_path_root( array &$data, array $keys ) {
+	private function &find_empty_parents_path_root( array &$data, array $keys ) {
 		$root_node = [
 			'key' => null,
 			'node' => null,
@@ -178,12 +178,12 @@ class Cache_Validity_Item {
 			$parent = &$current;
 			$current = &$current['children'][ $key ];
 
-			if ( isset( $current['children'] ) && $this->is_redundant_node( $current ) && empty( $root_node['node'] ) ) {
+			if ( $this->is_empty_parent( $current ) && empty( $root_node['node'] ) ) {
 				$root_node = [
 					'key' => $key,
 					'node' => &$parent,
 				];
-			} elseif ( is_array( $current ) && ! $this->is_redundant_node( $current ) ) {
+			} elseif ( is_array( $current ) && ! $this->is_empty_parent( $current ) ) {
 				$root_node = [
 					'key' => null,
 					'node' => null,
@@ -195,11 +195,13 @@ class Cache_Validity_Item {
 	}
 
 	/**
+	 * Retrieves the stored tree, guaranteed to have a path representation based on $keys
+	 *
 	 * @param array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | boolean $data
 	 * @param array<string>                                                                                     $keys
 	 * @return array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>}
 	 */
-	private function get_data_with_path( array $data, array $keys ): ?array {
+	private function get_data_with_enforced_path( array $data, array $keys ): ?array {
 		$current = &$data;
 
 		while ( ! empty( $keys ) ) {
@@ -244,7 +246,7 @@ class Cache_Validity_Item {
 		return $current;
 	}
 
-	private function is_redundant_node( $data ): bool {
+	private function is_empty_parent( $data ): bool {
 		if ( ! is_array( $data ) ) {
 			return false;
 		}
