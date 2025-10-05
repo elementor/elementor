@@ -133,10 +133,17 @@ class Html_To_Props_Mapper {
 			return $prop_type->get_default();
 		}
 		
+		// ✅ CRITICAL FIX: Use correct atomic widget link structure
+		// Based on manual button analysis: destination must be atomic URL object, not plain string
+		$target = $this->extract_link_target( $html_element );
+		$is_target_blank = ( '_blank' === $target ) ? true : null;
+		
 		return [
-			'destination' => esc_url_raw( $href ),
-			'target' => $this->extract_link_target( $html_element ),
-			'rel' => $this->extract_link_rel( $html_element ),
+			'destination' => [
+				'$$type' => 'url',
+				'value' => esc_url_raw( $href ),
+			],
+			'isTargetBlank' => $is_target_blank,
 		];
 	}
 	

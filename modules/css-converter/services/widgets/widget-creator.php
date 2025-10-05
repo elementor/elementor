@@ -330,11 +330,19 @@ class Widget_Creator {
 		
 		// Convert link URL and target to button link format
 		if ( isset( $settings['url'] ) && ! empty( $settings['url'] ) && '#' !== $settings['url'] ) {
+			// ✅ CRITICAL FIX: Use correct atomic widget link structure
+			// Based on manual button analysis: destination must be atomic URL object, not plain string
+			$target = $settings['target'] ?? '_self';
+			$is_target_blank = ( '_blank' === $target ) ? true : null;
+			
 			$button_settings['link'] = [
 				'$$type' => 'link',
 				'value' => [
-					'destination' => $settings['url'],
-					'target' => $settings['target'] ?? '_self',
+					'destination' => [
+						'$$type' => 'url',
+						'value' => $settings['url'],
+					],
+					'isTargetBlank' => $is_target_blank,
 				],
 			];
 			

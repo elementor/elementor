@@ -105,13 +105,19 @@ class Atomic_Widget_Settings_Preparer {
 	}
 
 	private function create_link_prop( string $url, array $attributes ): array {
+		// ✅ CRITICAL FIX: Use correct atomic widget link structure
+		// Based on manual button analysis: destination must be atomic URL object, not plain string
+		$target = $attributes['target'] ?? '_self';
+		$is_target_blank = ( '_blank' === $target ) ? true : null;
+		
 		return [
 			'$$type' => 'link',
 			'value' => [
-				'url' => $url,
-				'is_external' => $this->is_external_url( $url ),
-				'nofollow' => isset( $attributes['rel'] ) && strpos( $attributes['rel'], 'nofollow' ) !== false,
-				'custom_attributes' => $this->extract_custom_link_attributes( $attributes ),
+				'destination' => [
+					'$$type' => 'url',
+					'value' => $url,
+				],
+				'isTargetBlank' => $is_target_blank,
 			],
 		];
 	}
