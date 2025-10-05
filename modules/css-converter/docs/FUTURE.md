@@ -230,6 +230,60 @@ private function parse_border_width_value( $value ): ?array {
 
 ---
 
+### **HTML Attribute Styling Conversion**
+
+#### **Research Needed:**
+- Convert HTML attribute-based styling to atomic widget properties or global classes
+- Examples: `id="header"` → widget ID or global class, `data-*` → custom properties
+- Semantic attributes: `aria-*`, `role` → accessibility properties
+
+#### **Current Status:**
+- ✅ **DECISION**: HTML attributes are NOT processed in CSS converter (removed for simplicity)
+- ✅ **RATIONALE**: CSS IDs not needed (styling applied directly to widgets)
+- ✅ **RATIONALE**: Data attributes not needed (no JavaScript functionality added)
+- ❌ **LIMITATION**: Semantic attributes (aria-*, role) are lost during conversion
+
+#### **Research Areas:**
+1. **ID Attribute Conversion**: Research converting CSS `#id` selectors to:
+   - Atomic widget ID properties (if supported)
+   - Global classes with ID-based naming
+   - Custom CSS classes for targeting
+
+2. **Semantic Attribute Preservation**: Research preserving accessibility attributes:
+   - `aria-label`, `aria-describedby`, `role` attributes
+   - Integration with Elementor's accessibility features
+   - Atomic widget accessibility prop types
+
+3. **Data Attribute Conversion**: Research converting `data-*` attributes to:
+   - Custom properties in atomic widgets
+   - Global CSS custom properties (`--data-*`)
+   - Widget metadata for JavaScript hooks
+
+4. **Performance vs. Fidelity Trade-offs**: Research impact of attribute processing:
+   - Conversion speed with attribute processing
+   - Editor performance with preserved attributes
+   - Maintenance complexity vs. feature completeness
+
+#### **Implementation Considerations:**
+- **Atomic Widget Support**: Check if atomic widgets support custom attributes
+- **Global Classes Integration**: Use existing global classes system for attribute-based styling
+- **Accessibility Compliance**: Ensure semantic attributes are preserved for screen readers
+- **JavaScript Compatibility**: Consider data attributes for frontend interactions
+
+#### **Future Implementation Requirements:**
+1. **Atomic Widget Research**: Study `Attributes_Prop_Type` and custom attribute support
+2. **Global Classes Extension**: Extend global classes to handle ID-based styling
+3. **Accessibility Mapping**: Create semantic attribute to atomic property mappings
+4. **Performance Testing**: Measure impact of attribute processing on conversion speed
+5. **User Research**: Determine if attribute preservation is needed for real-world use cases
+
+#### **Priority:** Low (Research Phase)
+- Current CSS conversion works perfectly without attributes
+- Attribute preservation is a nice-to-have, not essential for CSS styling
+- Research needed to determine if the complexity is worth the benefits
+
+---
+
 ## 🎯 **ATOMIC-ONLY COMPLIANCE**
 
 All future implementations MUST:

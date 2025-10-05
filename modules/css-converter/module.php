@@ -30,8 +30,6 @@ class Module extends BaseModule {
 			$this->init_routes();
 		}
 		
-		// Enqueue frontend fixes for Elementor editor
-		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_frontend_fixes' ] );
 	}
 
 	private function is_test_environment(): bool {
@@ -205,13 +203,4 @@ class Module extends BaseModule {
 		$this->classes_route = $classes_route;
 	}
 
-	public function enqueue_frontend_fixes(): void {
-		wp_enqueue_script(
-			'elementor-css-frontend-fixes',
-			plugins_url( 'assets/js/frontend-fixes.js', __FILE__ ),
-			[ 'jquery', 'elementor-editor' ],
-			'1.0.0',
-			true
-		);
-	}
 }
