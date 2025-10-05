@@ -72,8 +72,9 @@
 		}
 
 		&-justify {
-			.elementor-star-rating__title {
-				margin-inline-end: auto;
+			.elementor-star-rating__wrapper {
+				text-align: justify;
+				justify-content: space-between;
 			}
 		}
 	}
