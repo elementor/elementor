@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createArrayPropUtils, selectionSizePropTypeUtil, type SelectionSizePropValue } from '@elementor/editor-props';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import { InfoCircleFilledIcon } from '@elementor/icons';
