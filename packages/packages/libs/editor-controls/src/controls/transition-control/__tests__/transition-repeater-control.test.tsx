@@ -157,43 +157,43 @@ describe( 'TransitionRepeaterControl', () => {
 		expect( addButton ).toBeDisabled();
 	} );
 
-	// it( 'should disable the add item button when all properties are used', async () => {
-	// 	// Arrange
-	// 	const setValue = jest.fn();
-	// 	const value = {
-	// 		$$type: 'array',
-	// 		value: [
-	// 			{
-	// 				$$type: 'selection-size',
-	// 				value: {
-	// 					selection: {
-	// 						$$type: 'key-value',
-	// 						value: {
-	// 							key: { $$type: 'string', value: 'All properties' },
-	// 							value: { $$type: 'string', value: 'all' },
-	// 						},
-	// 					},
-	// 					size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
-	// 				},
-	// 			},
-	// 		],
-	// 	};
-	// 	const propType = createTransitionPropType();
-	// 	const props = { setValue, value, bind: 'transition', propType };
+	it( 'should disable the add item button when all properties are used', async () => {
+		// Arrange
+		const setValue = jest.fn();
+		const value = {
+			$$type: 'array',
+			value: [
+				{
+					$$type: 'selection-size',
+					value: {
+						selection: {
+							$$type: 'key-value',
+							value: {
+								key: { $$type: 'string', value: 'All properties' },
+								value: { $$type: 'string', value: 'all' },
+							},
+						},
+						size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
+					},
+				},
+			],
+		};
+		const propType = createTransitionPropType();
+		const props = { setValue, value, bind: 'transition', propType };
 
-	// 	// Act
-	// 	renderControl(
-	// 		<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
-	// 		props
-	// 	);
+		// Act
+		renderControl(
+			<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
+			props
+		);
 
-	// 	// Assert
-	// 	await waitFor( () => {
-	// 		const addButton = screen.getByLabelText( 'Add transitions item' );
-	// 		// expect( addButton ).toBeInTheDocument();
-	// 		expect( addButton ).toBeDisabled();
-	// 	} );
-	// } );
+		// Assert
+		await waitFor( () => {
+			const addButton = screen.getByLabelText( 'Add transitions item' );
+			// expect( addButton ).toBeInTheDocument();
+			expect( addButton ).toBeDisabled();
+		} );
+	} );
 
 	// it( 'should update the value according to the allowed properties list', async () => {
 	// 	// Arrange
