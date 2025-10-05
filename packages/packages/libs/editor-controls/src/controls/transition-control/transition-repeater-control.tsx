@@ -108,6 +108,9 @@ export const TransitionRepeaterControl = createControl(
 		);
 
 		useEffect( () => {
+			if ( ! value || value.length === 0 ) {
+				return;
+			}
 			const sanitized = value.filter( ( item ) => {
 				const selectionValue =
 					( item?.value?.selection?.value as { value?: { value?: string } } )?.value?.value ?? '';
