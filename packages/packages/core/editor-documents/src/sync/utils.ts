@@ -73,3 +73,7 @@ export function normalizeV1Document( documentData: V1Document ): Document {
 export function setDocumentModifiedStatus( status: boolean ) {
 	runCommandSync( 'document/save/set-is-modified', { status }, { internal: true } );
 }
+
+export function getV1CurrentDocument(): V1Document {
+	return ( window as unknown as ExtendedWindow ).elementor?.documents?.getCurrent();
+}

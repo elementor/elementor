@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { apiClient } from '../../api';
-import { slice } from '../../store';
+import { slice } from '../../store/store';
 import { CreateComponentForm } from '../create-component-form/create-component-form';
 
 jest.mock( '@elementor/editor-elements' );
