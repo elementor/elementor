@@ -49,6 +49,15 @@ export default class StyleTab extends BasePage {
 		}
 	}
 
+	async openTypographySection( expandAdvancedSection = true ): Promise<void> {
+		await this.page.locator( '[aria-label="Style tab"]' ).click();
+		await this.page.locator( '[aria-label="Typography section"]' ).click();
+
+		if ( expandAdvancedSection ) {
+			await this.clickShowMore( STYLE_SECTIONS.TYPOGRAPHY );
+		}
+	}
+
 	async setSpacingValue( labelText: string, value: number, unit: Unit ): Promise<void> {
 		const spacingInput = await this.getInputByLabel( labelText );
 		const unitButton = await this.getUnitButtonByLabel( labelText );

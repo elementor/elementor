@@ -1,24 +1,18 @@
 import { expect } from '@playwright/test';
 import { EditorDriver } from '../../../../drivers/editor-driver';
 import { timeouts } from '../../../../config/timeouts';
-import { STYLE_SECTIONS } from '../../../../pages/atomic-elements-panel/style-tab';
 import { convertToPixels } from '../../../../utils/unit-conversions';
 import { Unit } from './typography-constants';
 
-export async function setupWidgetWithTypography(
+export async function addWidgetWithOpenTypographySection(
 	driver: EditorDriver,
 	widgetType: string,
-	expandSection = true,
+	expandAdvancedSection = true,
 ): Promise<{ containerId: string; widgetId: string }> {
 	const containerId = await driver.editor.addElement( { elType: 'container' }, 'document' );
 	const widgetId = await driver.editor.addWidget( { widgetType, container: containerId } );
 
-	await driver.editor.openV2PanelTab( 'style' );
-	await driver.editor.openV2Section( 'typography' );
-
-	if ( expandSection ) {
-		await driver.editor.v4Panel.style.clickShowMore( STYLE_SECTIONS.TYPOGRAPHY );
-	}
+	await driver.editor.v4Panel.style.openTypographySection( expandAdvancedSection );
 
 	return { containerId, widgetId };
 }

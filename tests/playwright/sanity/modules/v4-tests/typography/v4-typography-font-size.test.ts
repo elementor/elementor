@@ -1,6 +1,6 @@
 import { parallelTest as test } from '../../../../parallelTest';
 import { expect } from '@playwright/test';
-import { setupWidgetWithTypography, verifyFontSizeEditor, verifyFontSizeOnFrontend } from './typography-test-helpers';
+import { addWidgetWithOpenTypographySection, verifyFontSizeEditor, verifyFontSizeOnFrontend } from './typography-test-helpers';
 import { WIDGET_CONFIGS, FONT_SIZES, UNITS, type Unit } from './typography-constants';
 import { DriverFactory } from '../../../../drivers/driver-factory';
 import type { EditorDriver } from '../../../../drivers/editor-driver';
@@ -38,7 +38,7 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 	} ): Promise<void> {
 		const { widgetConfig, size, unit, testOnFrontend } = params;
 
-		await setupWidgetWithTypography( driver, widgetConfig.type );
+		await addWidgetWithOpenTypographySection( driver, widgetConfig.type );
 
 		const fontSizeLabel = driver.page.locator( 'label', { hasText: 'Font size' } );
 		await expect( fontSizeLabel ).toBeVisible( { timeout: timeouts.expect } );

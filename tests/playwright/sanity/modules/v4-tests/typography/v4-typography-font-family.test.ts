@@ -1,7 +1,7 @@
 import { parallelTest as test } from '../../../../parallelTest';
 import { expect } from '@playwright/test';
 import {
-	setupWidgetWithTypography,
+	addWidgetWithOpenTypographySection,
 	verifyFontFamilyOnFrontend,
 } from './typography-test-helpers';
 import { WIDGET_CONFIGS, FONT_FAMILIES } from './typography-constants';
@@ -38,7 +38,7 @@ test.describe( 'V4 Typography Font Family Tests @v4-tests', () => {
 	} ): Promise<void> {
 		const { widgetConfig, fontName, fontType, testOnFrontend } = params;
 
-		await setupWidgetWithTypography( driver, widgetConfig.type );
+		await addWidgetWithOpenTypographySection( driver, widgetConfig.type );
 
 		const fontFamilyLabel = driver.page.locator( 'label', { hasText: 'Font family' } );
 		await expect( fontFamilyLabel ).toBeVisible( { timeout: timeouts.expect } );
