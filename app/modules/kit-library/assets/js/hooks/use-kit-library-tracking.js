@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react';
 import eventsConfig from '../../../../../../core/common/modules/events-manager/assets/js/events-config';
 
-const SESSION_TIMEOUT = 30 * 60 * 1000;
+const SESSION_TIMEOUT_MINUTES = 30;
+const SESSION_TIMEOUT = SESSION_TIMEOUT_MINUTES * 60 * 1000;
 
 export const useKitLibraryTracking = () => {
 	const sessionStartTime = useRef( Date.now() );
@@ -22,17 +23,21 @@ export const useKitLibraryTracking = () => {
 	}, [] );
 
 	const trackMixpanelEvent = useCallback( ( eventName, properties = {}, callback = null ) => {
-		if ( ! canSendEvents || ! isEventsManagerAvailable() ) {
+		try {
+			if ( ! canSendEvents || ! isEventsManagerAvailable() ) {
+				if ( callback ) {
+					callback();
+				}
+				return;
+			}
+			elementorCommon.eventsManager.dispatchEvent( eventName, properties );
 			if ( callback ) {
 				callback();
 			}
-			return;
-		}
-
-		elementorCommon.eventsManager.dispatchEvent( eventName, properties );
-
-		if ( callback ) {
-			callback();
+		} catch ( error ) {
+			if ( callback ) {
+				callback();
+			}
 		}
 	}, [ canSendEvents, isEventsManagerAvailable ] );
 
