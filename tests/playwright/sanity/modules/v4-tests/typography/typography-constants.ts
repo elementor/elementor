@@ -34,7 +34,7 @@ export const WIDGET_CONFIGS = {
 export const FONT_FAMILIES = {
 	system: 'Arial',
 	systemAlt: 'Times New Roman',
-	google: 'Open Sans',
+	google: 'Roboto',
 	trebuchet: 'Trebuchet MS',
 };
 
@@ -53,8 +53,7 @@ export const UNITS = {
 	percent: '%',
 } as const;
 
-export type Unit = typeof UNITS[keyof typeof UNITS];
-export type UnitKey = keyof typeof UNITS;
+export type Unit = keyof typeof UNITS;
 
 export const SPACING_VALUES = {
 	POSITIVE: [ 1, 5.5 ],

@@ -22,7 +22,6 @@ type SizeInputProps = {
 	disabled?: boolean;
 	min?: number;
 	id?: string;
-	ariaLabel?: string;
 };
 
 export const SizeInput = ( {
@@ -40,7 +39,6 @@ export const SizeInput = ( {
 	disabled,
 	min,
 	id,
-	ariaLabel,
 }: SizeInputProps ) => {
 	const unitInputBufferRef = useRef( '' );
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
@@ -119,7 +117,7 @@ export const SizeInput = ( {
 					onKeyUp={ handleKeyUp }
 					onBlur={ onBlur }
 					InputProps={ InputProps }
-					inputProps={ { min, step: 'any', 'aria-label': ariaLabel } }
+					inputProps={ { min, step: 'any' } }
 					isPopoverOpen={ popupState.isOpen }
 					id={ id }
 				/>

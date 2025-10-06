@@ -20,11 +20,7 @@ export const FontFamilyField = () => {
 	return (
 		<StylesField bind="font-family" propDisplayName={ FONT_FAMILY_LABEL }>
 			<StylesFieldLayout label={ FONT_FAMILY_LABEL }>
-				<FontFamilyControl
-					fontFamilies={ fontFamilies }
-					sectionWidth={ sectionWidth }
-					ariaLabel={ FONT_FAMILY_LABEL }
-				/>
+				<FontFamilyControl fontFamilies={ fontFamilies } sectionWidth={ sectionWidth } />
 			</StylesFieldLayout>
 		</StylesField>
 	);
