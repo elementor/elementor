@@ -4,17 +4,6 @@
 		margin-inline-start: 10px;
 	}
 
-	&__page-content:has(.e-onboarding__page-content-theme-variant-b) {
-		flex-direction: column;
-		margin-block-end: 30px;
-	}
-
-	&__page-content-start:has(.e-onboarding__page-content-theme-variant-b) {
-		align-self: center;
-		text-align: center;
-		flex-basis: initial;
-	}
-
 	&__page-content-theme-variant-b {
 
 		.e-onboarding__page-content-section-title {
@@ -106,6 +95,17 @@
 			line-height: 1.5;
 			margin: 0;
 		}
+	}
+
+	&__page-content:has(.e-onboarding__page-content-theme-variant-b) {
+		flex-direction: column;
+		margin-block-end: 30px;
+	}
+
+	&__page-content-start:has(.e-onboarding__page-content-theme-variant-b) {
+		align-self: center;
+		text-align: center;
+		flex-basis: initial;
 	}
 
 	&__content:has(.e-onboarding__page-content-theme-variant-b) {
