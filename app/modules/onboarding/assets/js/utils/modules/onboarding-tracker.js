@@ -302,6 +302,20 @@ class OnboardingTracker {
 		}
 	}
 
+	sendThemeChoiceEvent( currentStep, themeValue ) {
+		if ( EventDispatcher.canSendEvents() ) {
+			elementorCommon.events.dispatchEvent( {
+				event: 'ab_201_theme_choice',
+				version: '',
+				details: {
+					placement: elementorAppConfig.onboarding.eventPlacement,
+					step: currentStep,
+					theme: themeValue,
+				},
+			} );
+		}
+	}
+
 	sendTopUpgrade( currentStep, upgradeClicked ) {
 		return this.sendEventOrStore( 'TOP_UPGRADE', { currentStep, upgradeClicked } );
 	}
