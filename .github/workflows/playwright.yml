@@ -4,9 +4,9 @@ on:
   pull_request:
     types: [ labeled, synchronize, opened, reopened ]
   push:
-    #branches:
-    #  - 'main'
-    #  - '3.[0-9][0-9]'
+    branches:
+      - 'main'
+      - '3.[0-9][0-9]'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -203,24 +203,19 @@ jobs:
         if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
         run: |
           if [[ "${{ github.event_name }}" == "schedule" ]]; then
-            BASE_MESSAGE="Elementor Core: Scheduled Playwright tests failed - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          BASE_MESSAGE="Elementor Core: Scheduled Playwright tests failed - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           else
             BASE_MESSAGE="Elementor Core: Playwright - ${{ github.event_name }} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           fi
 
           if [[ "${{ steps.create_revert_pr.outputs.status }}" == "created" ]]; then
-            REVERT_MESSAGE="\n\nYou can review revert of this commit here: [PR #${{ steps.create_revert_pr.outputs.pr_number }}](${{ steps.create_revert_pr.outputs.pr_url }})"
-            {
-              echo "message<<EOF"
-              echo "${BASE_MESSAGE}${REVERT_MESSAGE}"
-              echo "EOF"
-            } >> $GITHUB_OUTPUT
+            REVERT_MESSAGE="
+
+          You can review revert of this commit here: [PR #${{ steps.create_revert_pr.outputs.pr_number }}](${{ steps.create_revert_pr.outputs.pr_url }})"
+            echo "message=${BASE_MESSAGE}${REVERT_MESSAGE}" >> $GITHUB_OUTPUT
           else
-            {
-              echo "message<<EOF"
-              echo "${BASE_MESSAGE}"
-              echo "EOF"
-            } >> $GITHUB_OUTPUT
+            echo "message=${BASE_MESSAGE}" >> $GITHUB_OUTPUT
           fi
       - name: Generate a token
         id: generate-token
