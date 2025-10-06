@@ -50,8 +50,8 @@ export default class StyleTab extends BasePage {
 	}
 
 	async openTypographySection( expandAdvancedSection = true ): Promise<void> {
-		await this.page.locator( '[aria-label="Style tab"]' ).click();
-		await this.page.locator( '[aria-label="Typography section"]' ).click();
+		await editor.openV2PanelTab( 'style' );
+		await editor.openV2Section( 'typography' );
 
 		if ( expandAdvancedSection ) {
 			await this.clickShowMore( STYLE_SECTIONS.TYPOGRAPHY );
