@@ -822,6 +822,11 @@ export default class EditorPage extends BasePage {
 		await this.setTextareaControlValue( 'type-code', css );
 	}
 
+	async clickButton( buttonName: string, exact = false ): Promise<void> {
+		const button = this.page.getByRole( 'button', { name: buttonName, exact } );
+		await button.click();
+	}
+
 	/**
 	 * Click on a top bar item.
 	 *

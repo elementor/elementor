@@ -60,3 +60,37 @@ export const SPACING_VALUES = {
 	NEGATIVE: [ -1, -5.5 ],
 	UNITS: Object.values( UNITS ),
 };
+
+export const TYPOGRAPHY_DECORATIONS = {
+	UNDERLINE: {
+		buttonName: 'Underline',
+		cssProperty: 'text-decoration-line',
+		activeValue: 'underline',
+		inactiveValue: 'none',
+	},
+	ITALIC: {
+		buttonName: 'Italic',
+		cssProperty: 'font-style',
+		activeValue: 'italic',
+		inactiveValue: 'normal',
+	},
+	UPPERCASE: {
+		buttonName: 'Uppercase',
+		cssProperty: 'text-transform',
+		activeValue: 'uppercase',
+		inactiveValue: 'none',
+	},
+	RTL: {
+		buttonName: 'Right to left',
+		cssProperty: 'direction',
+		activeValue: 'rtl',
+		inactiveValue: 'ltr',
+	},
+	TEXT_STROKE: {
+		addButtonName: 'Add',
+		removeButtonName: 'Remove',
+		cssProperty: '-webkit-text-stroke-width',
+		defaultValue: '1px',
+		removedValue: '0px',
+	},
+} as const;

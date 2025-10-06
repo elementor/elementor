@@ -1,0 +1,27 @@
+import { expect } from '@playwright/test';
+import { timeouts } from '../config/timeouts';
+import type { EditorDriver } from '../drivers/editor-driver';
+
+export class EditorAssertions {
+	static async verifyCSSProperties(
+		driver: EditorDriver,
+		selector: string,
+		cssExpectations: Array<{ property: string; value: string }>,
+	): Promise<void> {
+		const element = driver.editor.getPreviewFrame().locator( selector );
+		for ( const { property, value } of cssExpectations ) {
+			await expect( element ).toHaveCSS( property, value, { timeout: timeouts.expect } );
+		}
+	}
+
+	static async verifyButtonsPressed(
+		driver: EditorDriver,
+		buttonExpectations: Array<{ buttonName: string; isPressed: boolean }>,
+	): Promise<void> {
+		for ( const { buttonName, isPressed } of buttonExpectations ) {
+			const button = driver.page.getByRole( 'button', { name: buttonName } );
+			await expect( button ).toHaveAttribute( 'aria-pressed', String( isPressed ) );
+		}
+	}
+}
+

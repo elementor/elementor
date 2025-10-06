@@ -3,6 +3,8 @@ import { EditorDriver } from '../../../../drivers/editor-driver';
 import { timeouts } from '../../../../config/timeouts';
 import { STYLE_SECTIONS } from '../../../../pages/atomic-elements-panel/style-tab';
 import { convertToPixels } from '../../../../utils/unit-conversions';
+import { EditorAssertions } from '../../../../pages/editor-assertions';
+import type { Unit } from './typography-constants';
 
 export async function setupWidgetWithTypography(
 	driver: EditorDriver,
@@ -66,7 +68,7 @@ export async function verifySpacingEditor( params:
 		driver: EditorDriver,
 		selector: string,
 		expectedValue: number,
-		expectedUnit: string,
+		expectedUnit: Unit,
 		cssProperty: 'letterSpacing' | 'wordSpacing',
 	} ): Promise<void> {
 	const { driver, selector, expectedValue, expectedUnit, cssProperty } = params;
@@ -118,3 +120,44 @@ export async function verifyFontFamilyOnFrontend(
 	const publishedComputedFamily = await publishedElement.evaluate( ( e ) => window.getComputedStyle( e ).fontFamily );
 	expect( publishedComputedFamily.toLowerCase() ).toContain( expectedFamily.toLowerCase() );
 }
+
+export async function clickTypographyButton(
+	driver: EditorDriver,
+	buttonName: string,
+	exact = false,
+): Promise<void> {
+	await driver.editor.clickButton( buttonName, exact );
+}
+
+export async function verifyTypographyCSS(
+	driver: EditorDriver,
+	selector: string,
+	cssProperty: string,
+	expectedValue: string,
+): Promise<void> {
+	await EditorAssertions.verifyCSSProperties( driver, selector, [ { property: cssProperty, value: expectedValue } ] );
+}
+
+export async function verifyMultipleTypographyCSS(
+	driver: EditorDriver,
+	selector: string,
+	cssExpectations: Array<{ property: string; value: string }>,
+): Promise<void> {
+	await EditorAssertions.verifyCSSProperties( driver, selector, cssExpectations );
+}
+
+export async function verifyButtonPressed(
+	driver: EditorDriver,
+	buttonName: string,
+	isPressed: boolean,
+): Promise<void> {
+	await EditorAssertions.verifyButtonsPressed( driver, [ { buttonName, isPressed } ] );
+}
+
+export async function verifyMultipleButtonsPressed(
+	driver: EditorDriver,
+	buttonExpectations: Array<{ buttonName: string; isPressed: boolean }>,
+): Promise<void> {
+	await EditorAssertions.verifyButtonsPressed( driver, buttonExpectations );
+}
+
