@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import { timeouts } from '../../../../config/timeouts';
-import { setupWidgetWithTypography } from './typography-test-helpers';
+import { addWidgetWithOpenTypographySection } from './typography-test-helpers';
 import { WIDGET_CONFIGS, TYPOGRAPHY_DECORATIONS } from './typography-constants';
 import { EditorAssertions } from '../../../../pages/editor-assertions';
 import { DriverFactory } from '../../../../drivers/driver-factory';
@@ -26,7 +26,7 @@ test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 	test( 'Line decoration functionality', async () => {
 		const widget = WIDGET_CONFIGS.HEADING;
 		const decoration = TYPOGRAPHY_DECORATIONS.UNDERLINE;
-		await setupWidgetWithTypography( driver, widget.type );
+		await addWidgetWithOpenTypographySection( driver, widget.type );
 
 		await driver.editor.clickButton( decoration.buttonName );
 
@@ -38,7 +38,7 @@ test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 	test( 'Text transform functionality', async () => {
 		const widget = WIDGET_CONFIGS.PARAGRAPH;
 		const decoration = TYPOGRAPHY_DECORATIONS.UPPERCASE;
-		await setupWidgetWithTypography( driver, widget.type );
+		await addWidgetWithOpenTypographySection( driver, widget.type );
 
 		await driver.editor.clickButton( decoration.buttonName );
 
@@ -50,7 +50,7 @@ test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 	test( 'Direction control functionality', async () => {
 		const widget = WIDGET_CONFIGS.BUTTON;
 		const decoration = TYPOGRAPHY_DECORATIONS.RTL;
-		await setupWidgetWithTypography( driver, widget.type );
+		await addWidgetWithOpenTypographySection( driver, widget.type );
 
 		await driver.editor.clickButton( decoration.buttonName );
 
@@ -62,7 +62,7 @@ test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 	test( 'Font style functionality', async () => {
 		const widget = WIDGET_CONFIGS.HEADING;
 		const decoration = TYPOGRAPHY_DECORATIONS.ITALIC;
-		await setupWidgetWithTypography( driver, widget.type );
+		await addWidgetWithOpenTypographySection( driver, widget.type );
 
 		await driver.editor.clickButton( decoration.buttonName );
 
@@ -74,7 +74,7 @@ test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 	test( 'Text stroke functionality', async () => {
 		const widget = WIDGET_CONFIGS.PARAGRAPH;
 		const decoration = TYPOGRAPHY_DECORATIONS.TEXT_STROKE;
-		await setupWidgetWithTypography( driver, widget.type );
+		await addWidgetWithOpenTypographySection( driver, widget.type );
 
 		await driver.editor.clickButton( decoration.addButtonName, true );
 
@@ -88,7 +88,7 @@ test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 		const { UNDERLINE, ITALIC, UPPERCASE, RTL, TEXT_STROKE } = TYPOGRAPHY_DECORATIONS;
 
 		await test.step( 'Apply multiple typography features', async () => {
-			await setupWidgetWithTypography( driver, widget.type );
+			await addWidgetWithOpenTypographySection( driver, widget.type );
 
 			await driver.editor.clickButton( UNDERLINE.buttonName );
 			await driver.editor.clickButton( ITALIC.buttonName );
