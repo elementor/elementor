@@ -7,7 +7,7 @@ import { EditorAssertions } from '../../../pages/editor-assertions';
 import { DriverFactory } from '../../../drivers/driver-factory';
 import type { EditorDriver } from '../../../drivers/editor-driver';
 
-test.describe( 'Atomic Widgets Advanced Typography @atomic-widgets', () => {
+test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 	let driver: EditorDriver;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
