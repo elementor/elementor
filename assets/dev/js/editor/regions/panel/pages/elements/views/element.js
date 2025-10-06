@@ -173,14 +173,29 @@ module.exports = Marionette.ItemView.extend( {
 			this.model.set( 'settings', this.model.get( 'custom' ).preset_settings );
 		}
 
+		const modelData = this.model.toJSON();
+
 		$e.run( 'preview/drop', {
 			container,
 			options: {
 				...options,
 				scrollIntoView: true,
 			},
-			model: this.model.toJSON(),
+			model: modelData,
 		} );
+
+		if ( elementorCommon?.eventsManager?.dispatchEvent ) {
+			const elType = modelData?.elType ?? '';
+			const widgetType = modelData?.widgetType ?? '';
+			const elementName = 'widget' === elType ? widgetType : elType;
+
+			elementorCommon.eventsManager.dispatchEvent( 'add_element', {
+				location: 'editor_panel',
+				element_name: elementName,
+				element_type: elType,
+				widget_type: widgetType,
+			} );
+		}
 	},
 
 	getSelectedElements() {
