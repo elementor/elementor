@@ -63,7 +63,6 @@ export const { panel, usePanelActions } = createPanel( {
 
 		unblockPanelInteractions();
 	},
-	isOpenPreviousElement: true,
 } );
 
 export function ClassManagerPanel() {
