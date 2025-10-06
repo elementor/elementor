@@ -411,34 +411,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open a tab inside an Editor panel for V2 widgets.
-	 *
-	 * @param {'style' | 'general'} sectionName - The section to open.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async openV2PanelTab( sectionName: 'style' | 'general' ): Promise<void> {
-		const selectorMap: Record< 'style' | 'general', string > = {
-			style: 'style',
-			general: 'settings',
-		};
-		const sectionButtonSelector = `#tab-0-${ selectorMap[ sectionName ] }`,
-			sectionContentSelector = `#tabpanel-0-${ selectorMap[ sectionName ] }`,
-			isOpenSection = await this.page.evaluate( ( selector ) => {
-				const sectionContentElement: HTMLElement = document.querySelector( selector );
-
-				return ! sectionContentElement?.hidden;
-			}, sectionContentSelector );
-
-		if ( isOpenSection ) {
-			return;
-		}
-
-		await this.page.locator( sectionButtonSelector ).click();
-		await this.page.locator( sectionContentSelector ).waitFor();
-	}
-
-	/**
 	 * Open a section in an active panel tab.
 	 *
 	 * @param {string} sectionId - The section to open.

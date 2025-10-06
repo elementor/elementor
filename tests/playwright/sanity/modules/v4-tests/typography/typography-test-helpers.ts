@@ -13,7 +13,8 @@ export async function addWidgetWithOpenTypographySection(
 	const containerId = await driver.editor.addElement( { elType: 'container' }, 'document' );
 	const widgetId = await driver.editor.addWidget( { widgetType, container: containerId } );
 
-	await driver.editor.v4Panel.style.openTypographySection( expandAdvancedSection );
+	await driver.editor.v4Panel.openTab( 'style' );
+	await driver.editor.v4Panel.style.openSection( 'Typography', expandAdvancedSection );
 
 	return { containerId, widgetId };
 }
