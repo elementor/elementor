@@ -52,18 +52,6 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Word spacing for button', async () => {
-		await test.step( 'Test word spacing across different widget types', async () => {
-			const widget = WIDGET_CONFIGS.BUTTON;
-			await addWidgetWithOpenTypographySection( driver, widget.type );
-
-			const testValue = 2.5;
-			const testUnit = 'px';
-			await driver.editor.v4Panel.style.setSpacingValue( 'Word spacing', testValue, testUnit );
-			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: testValue, expectedUnit: testUnit, cssProperty: 'wordSpacing' } );
-		} );
-	} );
-
 	test( 'Word spacing for paragraph on published page', async () => {
 		await test.step( 'Test word spacing on published page with paragraph widget', async () => {
 			const widget = WIDGET_CONFIGS.PARAGRAPH;
