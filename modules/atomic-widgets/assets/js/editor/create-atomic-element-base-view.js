@@ -73,7 +73,7 @@ export default function createAtomicElementBaseView( type ) {
 				const key = attribute.value?.key?.value;
 				const value = attribute.value?.value?.value;
 
-				if ( key && value ) {
+				if ( key && value && this.isValidAttributeName( key ) ) {
 					local[ key ] = value;
 				}
 			} );
@@ -141,7 +141,7 @@ export default function createAtomicElementBaseView( type ) {
 				attrs.forEach( ( attribute ) => {
 					const key = attribute?.value?.key?.value;
 					const value = attribute?.value?.value?.value;
-					if ( key && value ) {
+					if ( key && value && this.isValidAttributeName( key ) ) {
 						this.$el.attr( key, value );
 					}
 				} );
@@ -581,6 +581,30 @@ export default function createAtomicElementBaseView( type ) {
 
 		isFirstElementInStructure() {
 			return 0 === this.model.collection.indexOf( this.model );
+		},
+
+		isValidAttributeName( name ) {
+			console.log( 'OPTION1_FIX: Validating attribute name:', name );
+			
+			if ( ! name || typeof name !== 'string' ) {
+				console.log( 'OPTION1_FIX: Invalid - not a string:', name );
+				return false;
+			}
+
+			if ( /^\d+$/.test( name ) ) {
+				console.log( 'OPTION1_FIX: Invalid - numeric key detected:', name );
+				return false;
+			}
+
+			try {
+				const testElement = document.createElement( 'div' );
+				testElement.setAttribute( name, 'test' );
+				console.log( 'OPTION1_FIX: Valid attribute name:', name );
+				return true;
+			} catch ( error ) {
+				console.log( 'OPTION1_FIX: Invalid - setAttribute failed:', name, error );
+				return false;
+			}
 		},
 	} );
 
