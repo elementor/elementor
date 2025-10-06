@@ -1,0 +1,159 @@
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../parallelTest';
+import { timeouts } from '../../../../config/timeouts';
+import { setupWidgetWithTypography } from './typography-test-helpers';
+import { WIDGET_CONFIGS, TYPOGRAPHY_DECORATIONS } from './typography-constants';
+import { EditorAssertions } from '../../../../pages/editor-assertions';
+import { DriverFactory } from '../../../../drivers/driver-factory';
+import type { EditorDriver } from '../../../../drivers/editor-driver';
+
+test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
+	let driver: EditorDriver;
+
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests );
+		await driver.wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
+	} );
+
+	test.afterAll( async () => {
+		await driver.wpAdmin.resetExperiments();
+	} );
+
+	test.beforeEach( async () => {
+		await driver.createNewPage( true );
+	} );
+
+	test( 'Line decoration functionality', async () => {
+		const widget = WIDGET_CONFIGS.HEADING;
+		const decoration = TYPOGRAPHY_DECORATIONS.UNDERLINE;
+		await setupWidgetWithTypography( driver, widget.type );
+
+		await driver.editor.clickButton( decoration.buttonName );
+
+		await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
+			{ property: decoration.cssProperty, value: decoration.activeValue },
+		] );
+	} );
+
+	test( 'Text transform functionality', async () => {
+		const widget = WIDGET_CONFIGS.PARAGRAPH;
+		const decoration = TYPOGRAPHY_DECORATIONS.UPPERCASE;
+		await setupWidgetWithTypography( driver, widget.type );
+
+		await driver.editor.clickButton( decoration.buttonName );
+
+		await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
+			{ property: decoration.cssProperty, value: decoration.activeValue },
+		] );
+	} );
+
+	test( 'Direction control functionality', async () => {
+		const widget = WIDGET_CONFIGS.BUTTON;
+		const decoration = TYPOGRAPHY_DECORATIONS.RTL;
+		await setupWidgetWithTypography( driver, widget.type );
+
+		await driver.editor.clickButton( decoration.buttonName );
+
+		await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
+			{ property: decoration.cssProperty, value: decoration.activeValue },
+		] );
+	} );
+
+	test( 'Font style functionality', async () => {
+		const widget = WIDGET_CONFIGS.HEADING;
+		const decoration = TYPOGRAPHY_DECORATIONS.ITALIC;
+		await setupWidgetWithTypography( driver, widget.type );
+
+		await driver.editor.clickButton( decoration.buttonName );
+
+		await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
+			{ property: decoration.cssProperty, value: decoration.activeValue },
+		] );
+	} );
+
+	test( 'Text stroke functionality', async () => {
+		const widget = WIDGET_CONFIGS.PARAGRAPH;
+		const decoration = TYPOGRAPHY_DECORATIONS.TEXT_STROKE;
+		await setupWidgetWithTypography( driver, widget.type );
+
+		await driver.editor.clickButton( decoration.addButtonName, true );
+
+		await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
+			{ property: decoration.cssProperty, value: decoration.defaultValue },
+		] );
+	} );
+
+	test( 'Integration: Multiple typography features on single widget', async () => {
+		const widget = WIDGET_CONFIGS.HEADING;
+		const { UNDERLINE, ITALIC, UPPERCASE, RTL, TEXT_STROKE } = TYPOGRAPHY_DECORATIONS;
+
+		await test.step( 'Apply multiple typography features', async () => {
+			await setupWidgetWithTypography( driver, widget.type );
+
+			await driver.editor.clickButton( UNDERLINE.buttonName );
+			await driver.editor.clickButton( ITALIC.buttonName );
+			await driver.editor.clickButton( UPPERCASE.buttonName );
+			await driver.editor.clickButton( RTL.buttonName );
+			await driver.editor.clickButton( TEXT_STROKE.addButtonName, true );
+		} );
+
+		await test.step( 'Verify all features applied correctly', async () => {
+			await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
+				{ property: UNDERLINE.cssProperty, value: UNDERLINE.activeValue },
+				{ property: ITALIC.cssProperty, value: ITALIC.activeValue },
+				{ property: UPPERCASE.cssProperty, value: UPPERCASE.activeValue },
+				{ property: RTL.cssProperty, value: RTL.activeValue },
+				{ property: TEXT_STROKE.cssProperty, value: TEXT_STROKE.defaultValue },
+			] );
+
+			await EditorAssertions.verifyButtonsPressed( driver, [
+				{ buttonName: UNDERLINE.buttonName, isPressed: true },
+				{ buttonName: ITALIC.buttonName, isPressed: true },
+				{ buttonName: UPPERCASE.buttonName, isPressed: true },
+				{ buttonName: RTL.buttonName, isPressed: true },
+			] );
+
+			const removeStrokeButton = driver.page.getByRole( 'button', { name: TEXT_STROKE.removeButtonName } );
+			await expect( removeStrokeButton ).toBeVisible();
+		} );
+
+		await test.step( 'Toggle features off', async () => {
+			await driver.editor.clickButton( UNDERLINE.buttonName );
+			await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
+				{ property: UNDERLINE.cssProperty, value: UNDERLINE.inactiveValue },
+			] );
+			await EditorAssertions.verifyButtonsPressed( driver, [
+				{ buttonName: UNDERLINE.buttonName, isPressed: false },
+			] );
+
+			await driver.editor.clickButton( TEXT_STROKE.removeButtonName );
+			await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
+				{ property: TEXT_STROKE.cssProperty, value: TEXT_STROKE.removedValue },
+			] );
+		} );
+
+		await test.step( 'Verify remaining features still active', async () => {
+			await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
+				{ property: ITALIC.cssProperty, value: ITALIC.activeValue },
+				{ property: UPPERCASE.cssProperty, value: UPPERCASE.activeValue },
+				{ property: RTL.cssProperty, value: RTL.activeValue },
+			] );
+		} );
+
+		await test.step( 'Verify features persist on published page', async () => {
+			await driver.editor.publishAndViewPage();
+
+			const publishedElement = driver.page.locator( widget.selector );
+			await expect( publishedElement ).toBeVisible( { timeout: timeouts.expect } );
+
+			for ( const { property, value } of [
+				{ property: ITALIC.cssProperty, value: ITALIC.activeValue },
+				{ property: UPPERCASE.cssProperty, value: UPPERCASE.activeValue },
+				{ property: RTL.cssProperty, value: RTL.activeValue },
+			] ) {
+				await expect( publishedElement ).toHaveCSS( property, value, { timeout: timeouts.expect } );
+			}
+		} );
+	} );
+} );
+
