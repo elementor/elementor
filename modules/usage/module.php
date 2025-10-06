@@ -4,6 +4,9 @@ namespace Elementor\Modules\Usage;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Utils as Atomic_Utils;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -371,6 +374,57 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Add atomic widget controls.
+	 *
+	 * Process atomic widget settings and count changed controls.
+	 *
+	 * @param array $settings_controls
+	 * @param Atomic_Element_Base|Atomic_Widget_Base $element_instance
+	 * @param array &$element_ref
+	 *
+	 * @return int ($changed_controls_count).
+	 */
+	private function add_atomic_controls( $settings_controls, $element_instance, &$element_ref ): int {
+		$changed_controls_count = 0;
+
+		$props_schema = $element_instance->get_props_schema();
+
+		foreach ( $settings_controls as $prop_name => $prop_value ) {
+			if ( ! isset( $props_schema[ $prop_name ] ) ) {
+				continue;
+			}
+
+			$prop_type = $props_schema[ $prop_name ];
+
+			if ( $this->is_atomic_property_changed( $prop_value, $prop_type ) ) {
+				$this->increase_controls_count( $element_ref, 'content', 'settings', $prop_name, 1 );
+				++$changed_controls_count;
+			}
+		}
+
+		return $changed_controls_count;
+	}
+
+	/**
+	 * Check if atomic property value differs from default.
+	 *
+	 * @param mixed $prop_value
+	 * @param object $prop_type
+	 *
+	 * @return bool
+	 */
+	private function is_atomic_property_changed( $prop_value, $prop_type ) {
+		$value = ! empty( $prop_value['value'] ) ? $prop_value['value'] : $prop_value;
+		$default_value = $prop_type->get_default();
+
+		if ( empty( $value ) ) {
+			return false;
+		}
+
+		return $value !== $default_value;
+	}
+
+	/**
 	 * Add general controls.
 	 *
 	 * Extract general controls to element ref, return clean `$settings_control`.
@@ -529,8 +583,6 @@ class Module extends BaseModule {
 				return $element;
 			}
 
-			$element_controls = $element_instance->get_controls();
-
 			if ( isset( $element['settings'] ) ) {
 				$settings_controls = $element['settings'];
 				$element_ref = &$usage[ $type ];
@@ -538,9 +590,19 @@ class Module extends BaseModule {
 				// Add dynamic values.
 				$settings_controls = $this->add_general_controls( $settings_controls, $element_ref );
 
-				$changed_controls_count = $this->add_controls( $settings_controls, $element_controls, $element_ref );
+				$changed_controls_count = 0;
+				$total_controls_count = 0;
 
-				$percent = ! empty( $element_controls ) ? $changed_controls_count / ( count( $element_controls ) / 100 ) : 0;
+				if ( Atomic_Utils::is_atomic( $element_instance ) ) {
+					$changed_controls_count = $this->add_atomic_controls( $settings_controls, $element_instance, $element_ref );
+					$total_controls_count = count( $element_instance->get_props_schema() );
+				} else {
+					$element_controls = $element_instance->get_controls();
+					$changed_controls_count = $this->add_controls( $settings_controls, $element_controls, $element_ref );
+					$total_controls_count = count( $element_controls );
+				}
+
+				$percent = ! empty( $total_controls_count ) ? $changed_controls_count / ( $total_controls_count / 100 ) : 0;
 
 				$usage[ $type ] ['control_percent'] = (int) round( $percent );
 			}
