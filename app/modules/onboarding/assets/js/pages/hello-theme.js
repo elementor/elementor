@@ -14,6 +14,7 @@ export default function HelloTheme() {
 		// Allow navigating back to this screen if it was completed in the onboarding.
 		[ helloInstalledInOnboarding, setHelloInstalledInOnboarding ] = useState( false ),
 		[ isInstalling, setIsInstalling ] = useState( false ),
+		[ selectedTheme, setSelectedTheme ] = useState( 'hello-biz' ),
 		noticeStateSuccess = {
 			type: 'success',
 			icon: 'eicon-check-circle-o',
@@ -118,8 +119,13 @@ export default function HelloTheme() {
 
 		updateState( { isHelloThemeInstalled: true } );
 
+		const themeSlug = selectedTheme === 'hello-theme' ? 'hello-elementor' : 'hello-biz';
+
 		setActivateHelloThemeAjaxState( {
-			data: { action: 'elementor_activate_hello_theme' },
+			data: { 
+				action: 'elementor_activate_hello_theme',
+				theme_slug: themeSlug
+			},
 		} );
 	};
 
@@ -128,8 +134,10 @@ export default function HelloTheme() {
 			setIsInstalling( true );
 		}
 
+		const themeSlug = selectedTheme === 'hello-theme' ? 'hello-elementor' : 'hello-biz';
+
 		wp.updates.ajax( 'install-theme', {
-			slug: 'hello-biz',
+			slug: themeSlug,
 			success: () => activateHelloTheme(),
 			error: () => onErrorInstallHelloTheme(),
 		} );
@@ -144,6 +152,11 @@ export default function HelloTheme() {
 				step: state.currentStep,
 			},
 		} );
+	};
+
+	const handleThemeSelection = ( themeSlug ) => {
+		setSelectedTheme( themeSlug );
+		OnboardingEventTracking.trackStepAction( 2, `select_theme_${ themeSlug.replace( '-', '_' ) }` );
 	};
 
 	/**
@@ -280,6 +293,8 @@ export default function HelloTheme() {
 				actionButton={ actionButton }
 				skipButton={ skipButton }
 				noticeState={ noticeState }
+				selectedTheme={ selectedTheme }
+				onThemeSelect={ handleThemeSelection }
 			/>
 			<div className="e-onboarding__footnote">
 				{ '* ' + __( 'You can switch your theme later on', 'elementor' ) }

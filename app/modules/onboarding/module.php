@@ -363,7 +363,14 @@ class Module extends BaseModule {
 			return $this->get_permission_error_response();
 		}
 
-		switch_theme( 'hello-biz' );
+		$theme_slug = Utils::get_super_global_value( $_POST, 'theme_slug' ) ?? 'hello-biz';
+		
+		$allowed_themes = [ 'hello-elementor', 'hello-biz' ];
+		if ( ! in_array( $theme_slug, $allowed_themes, true ) ) {
+			$theme_slug = 'hello-biz';
+		}
+
+		switch_theme( $theme_slug );
 
 		return [
 			'status' => 'success',

@@ -53,6 +53,37 @@
 				border-color: #D004D4;
 				box-shadow: 0 6px 16px rgba(208, 4, 212, 0.25);
 			}
+
+			&--selected {
+				border-color: #D004D4;
+				box-shadow: 0 6px 16px rgba(208, 4, 212, 0.25);
+				transform: translateY(-2px);
+
+				&::after {
+					content: '';
+					position: absolute;
+					inset-block-start: 16px;
+					inset-inline-end: 16px;
+					width: 24px;
+					height: 24px;
+					background: #D004D4;
+					border-radius: 50%;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+
+				&::before {
+					content: '✓';
+					position: absolute;
+					inset-block-start: 20px;
+					inset-inline-end: 22px;
+					color: white;
+					font-size: 14px;
+					font-weight: bold;
+					z-index: 1;
+				}
+			}
 		}
 
 		.e-onboarding__theme-card-illustration {
