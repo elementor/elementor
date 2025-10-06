@@ -1,4 +1,5 @@
 import { type ComponentType } from 'react';
+import { type Element, getSelectedElements, selectElement } from '@elementor/editor-elements';
 import { __privateUseRouteStatus as useRouteStatus, type UseRouteStatusOptions } from '@elementor/editor-v1-adapters';
 import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 
@@ -9,6 +10,7 @@ import { V2_PANEL } from './sync';
 export type PanelDeclaration< TOnOpenReturn = unknown > = {
 	id: string;
 	component: ComponentType;
+	isOpenPreviousElement?: boolean;
 } & UseActionsOptions< TOnOpenReturn > &
 	UseRouteStatusOptions;
 
@@ -19,16 +21,22 @@ export function createPanel< TOnOpenReturn >( {
 	onClose,
 	allowedEditModes,
 	blockOnKitRoutes,
+	isOpenPreviousElement = false,
 }: PanelDeclaration< TOnOpenReturn > ) {
 	const usePanelStatus = createUseStatus( id, {
 		allowedEditModes,
 		blockOnKitRoutes,
 	} );
 
-	const usePanelActions = createUseActions( id, usePanelStatus, {
-		onOpen,
-		onClose,
-	} );
+	const usePanelActions = createUseActions(
+		id,
+		usePanelStatus,
+		{
+			onOpen,
+			onClose,
+		},
+		isOpenPreviousElement
+	);
 
 	return {
 		panel: {
@@ -72,9 +80,11 @@ type UseActionsOptions< TOnOpenReturn > = {
 function createUseActions< TOnOpenReturn >(
 	id: PanelDeclaration[ 'id' ],
 	useStatus: UseStatus,
-	options: UseActionsOptions< TOnOpenReturn > = {}
+	options: UseActionsOptions< TOnOpenReturn > = {},
+	isOpenPreviousElement?: boolean
 ) {
 	let stateSnapshot: TOnOpenReturn | null = null;
+	let previousSelectedElement: Element | null = null;
 
 	return () => {
 		const dispatch = useDispatch();
@@ -84,6 +94,9 @@ function createUseActions< TOnOpenReturn >(
 			open: async () => {
 				if ( isBlocked ) {
 					return;
+				}
+				if ( isOpenPreviousElement ) {
+					previousSelectedElement = getSelectedElements()[ 0 ];
 				}
 
 				dispatch( slice.actions.open( id ) );
@@ -98,6 +111,11 @@ function createUseActions< TOnOpenReturn >(
 				dispatch( slice.actions.close( id ) );
 
 				options.onClose?.( stateSnapshot as TOnOpenReturn );
+
+				if ( previousSelectedElement ) {
+					selectElement( previousSelectedElement.id );
+					previousSelectedElement = null;
+				}
 			},
 		};
 	};
