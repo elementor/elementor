@@ -2,7 +2,6 @@ import { expect } from '@playwright/test';
 import { EditorDriver } from '../../../../drivers/editor-driver';
 import { timeouts } from '../../../../config/timeouts';
 import { convertToPixels } from '../../../../utils/unit-conversions';
-import { EditorAssertions } from '../../../../pages/editor-assertions';
 import type { Unit } from './typography-constants';
 
 export async function addWidgetWithOpenTypographySection(
