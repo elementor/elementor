@@ -24,17 +24,10 @@ export const useKitLibraryTracking = () => {
 
 	const trackMixpanelEvent = useCallback( ( eventName, properties = {}, callback = null ) => {
 		try {
-			if ( ! canSendEvents || ! isEventsManagerAvailable() ) {
-				if ( callback ) {
-					callback();
-				}
-				return;
+			if ( canSendEvents && isEventsManagerAvailable() ) {
+				elementorCommon.eventsManager.dispatchEvent( eventName, properties );
 			}
-			elementorCommon.eventsManager.dispatchEvent( eventName, properties );
-			if ( callback ) {
-				callback();
-			}
-		} catch ( error ) {
+		} finally {
 			if ( callback ) {
 				callback();
 			}
