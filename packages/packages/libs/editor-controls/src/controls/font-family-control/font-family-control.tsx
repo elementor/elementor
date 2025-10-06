@@ -31,15 +31,15 @@ export const FontFamilyControl = createControl(
 			placeholder,
 		} = useBoundProp( stringPropTypeUtil );
 
-		const popoverState = usePopupState( { variant: 'popover' } );
-		const isShowingPlaceholder = ! fontFamily && placeholder;
+	const popoverState = usePopupState( { variant: 'popover' } );
+	const isShowingPlaceholder = ! fontFamily && placeholder;
 
-		const mapFontSubs = React.useMemo< Category[] >( () => {
-			return fontFamilies.map( ( { label, fonts } ) => ( {
-				label,
-				items: fonts,
-			} ) );
-		}, [ fontFamilies ] );
+	const mapFontSubs = React.useMemo< Category[] >( () => {
+		return fontFamilies.map( ( { label, fonts } ) => ( {
+			label,
+			items: fonts,
+		} ) );
+	}, [ fontFamilies ] );
 
 		return (
 			<>
