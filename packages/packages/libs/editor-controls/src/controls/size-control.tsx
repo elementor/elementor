@@ -42,7 +42,6 @@ type BaseSizeControlProps = {
 	min?: number;
 	enablePropTypeUnits?: boolean;
 	id?: string;
-	ariaLabel?: string;
 };
 
 type LengthSizeControlProps = BaseSizeControlProps &
@@ -93,7 +92,6 @@ export const SizeControl = createControl(
 		min = 0,
 		enablePropTypeUnits = false,
 		id,
-		ariaLabel,
 	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
 		const {
 			value: sizeValue,
@@ -224,7 +222,6 @@ export const SizeControl = createControl(
 					popupState={ popupState }
 					min={ min }
 					id={ id }
-					ariaLabel={ ariaLabel }
 				/>
 				{ anchorRef?.current && popupState.isOpen && (
 					<TextFieldPopover
