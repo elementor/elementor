@@ -9,6 +9,7 @@ use Elementor\Plugin;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\CssConverter\Services\Widgets\Widget_Hierarchy_Processor;
 use Elementor\Modules\CssConverter\Services\Widgets\Widget_Error_Handler;
+use Elementor\Modules\CssConverter\Services\Widgets\Widget_Class_Resolver;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory;
 
 class Widget_Creator {
@@ -19,8 +20,12 @@ class Widget_Creator {
 	private $current_widget_class_id;
 	private $property_mapper_registry;
 	private $current_css_processing_result;
+	private $use_zero_defaults;
+	private $widget_class_resolver;
 
-	public function __construct() {
+	public function __construct( $use_zero_defaults = false ) {
+		$this->use_zero_defaults = $use_zero_defaults;
+		$this->widget_class_resolver = new Widget_Class_Resolver( $use_zero_defaults );
 		$this->creation_stats = [
 			'widgets_created' => 0,
 			'widgets_failed' => 0,
@@ -43,7 +48,6 @@ class Widget_Creator {
 		
 		$post_id = $options['postId'] ?? null;
 		$post_type = $options['postType'] ?? 'page';
-		$create_global_classes = $options['createGlobalClasses'] ?? true;
 
 		try {
 			// Step 1: Process Variables (if any CSS variables were found)
@@ -52,7 +56,7 @@ class Widget_Creator {
 			}
 
 		// Step 2: Create Global Classes (HVV: threshold = 1)
-		if ( $create_global_classes && ! empty( $css_processing_result['global_classes'] ) ) {
+		if ( ! empty( $css_processing_result['global_classes'] ) ) {
 			$this->create_global_classes( $css_processing_result['global_classes'] );
 		}
 
@@ -354,9 +358,32 @@ class Widget_Creator {
 		return $button_settings;
 	}
 
+	private function apply_direct_element_styles_to_settings( $settings, $direct_element_styles ) {
+		// Apply direct element styles (from Approach 6) directly to widget settings
+		foreach ( $direct_element_styles as $style ) {
+			if ( ! empty( $style['converted_property'] ) ) {
+				$converted = $style['converted_property'];
+				
+				// Apply directly to widget settings (not styles array)
+				if ( isset( $converted['property'] ) && isset( $converted['value'] ) ) {
+					$settings[ $converted['property'] ] = $converted['value'];
+					
+					error_log( "Widget Creator: Applied direct element style {$converted['property']} to widget settings" );
+				}
+			}
+		}
+		
+		return $settings;
+	}
+
 	private function merge_settings_with_styles( $settings, $applied_styles ) {
 		// Format settings according to Elementor v4 atomic widget structure
 		$merged_settings = $this->format_elementor_settings( $settings );
+
+		// NEW: Apply direct element styles to widget settings (Approach 6)
+		if ( ! empty( $applied_styles['direct_element_styles'] ) ) {
+			$merged_settings = $this->apply_direct_element_styles_to_settings( $merged_settings, $applied_styles['direct_element_styles'] );
+		}
 
 		// V4 atomic widgets: Add classes array with proper $$type wrapper
 		$classes = [];

@@ -19,13 +19,15 @@ class Widget_Conversion_Service {
 	private $property_conversion_service;
 	private $css_processor;
 	private $widget_creator;
+	private $use_zero_defaults;
 
-	public function __construct() {
+	public function __construct( $use_zero_defaults = false ) {
+		$this->use_zero_defaults = $use_zero_defaults;
 		$this->html_parser = new Html_Parser();
 		$this->widget_mapper = new Widget_Mapper();
 		$this->property_conversion_service = new Css_Property_Conversion_Service();
 		$this->css_processor = new Css_Processor( $this->property_conversion_service );
-		$this->widget_creator = new Widget_Creator();
+		$this->widget_creator = new Widget_Creator( $use_zero_defaults );
 	}
 
 	public function convert_from_url( $url, $css_urls = [], $follow_imports = false, $options = [] ) {
@@ -118,6 +120,7 @@ class Widget_Conversion_Service {
 			'start_time' => microtime( true ),
 			'input_size' => strlen( $html ),
 			'css_urls_count' => count( $css_urls ),
+			'options' => array_merge( $options, [ 'useZeroDefaults' => $this->use_zero_defaults ] ),
 			'warnings' => [],
 			'errors' => [],
 		];

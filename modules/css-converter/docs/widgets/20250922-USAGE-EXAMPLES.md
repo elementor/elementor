@@ -444,7 +444,6 @@ const globalClassResult = await convertContent({
     type: 'css',
     content: buttonCss,
     options: {
-        createGlobalClasses: true,
         globalClassThreshold: 1 // Create global class for any usage
     }
 });
@@ -462,10 +461,7 @@ const htmlWithGlobalClasses = `
 
 const widgetResult = await convertContent({
     type: 'html',
-    content: htmlWithGlobalClasses,
-    options: {
-        createGlobalClasses: true // Will reuse existing global classes
-    }
+    content: htmlWithGlobalClasses
 });
 ```
 

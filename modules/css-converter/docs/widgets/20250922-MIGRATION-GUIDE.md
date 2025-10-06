@@ -61,10 +61,7 @@ const response = await fetch('/wp-json/elementor/v2/widget-converter', {
     method: 'POST',
     body: JSON.stringify({
         type: 'html',
-        content: '<div class="hero"><h1>Title</h1><button class="btn">Click</button></div>',
-        options: {
-            createGlobalClasses: true
-        }
+        content: '<div class="hero"><h1>Title</h1><button class="btn">Click</button></div>'
     })
 });
 
@@ -97,7 +94,6 @@ console.log(`Edit URL: ${result.edit_url}`);
     "postId": "number|null",
     "postType": "string",
     "preserveIds": "boolean",
-    "createGlobalClasses": "boolean",
     "timeout": "number",
     "globalClassThreshold": "number"
   }
@@ -415,8 +411,7 @@ const thresholdMapping = {
 function migrateThresholdParameter(oldOptions) {
     return {
         ...oldOptions,
-        globalClassThreshold: oldOptions.threshold || 1,
-        createGlobalClasses: true
+        globalClassThreshold: oldOptions.threshold || 1
     };
 }
 ```

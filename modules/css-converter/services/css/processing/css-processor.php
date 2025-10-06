@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Specificity_Calculator;
 use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Css\Reset_Selector_Analyzer;
 use Elementor\Modules\CssConverter\Parsers\CssParser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 
@@ -15,6 +16,7 @@ class Css_Processor {
 	private $property_conversion_service;
 	private $css_parser;
 	private $global_classes_repository;
+	private $reset_selector_analyzer;
 
 	public function __construct( $property_conversion_service = null ) {
 		$this->specificity_calculator = new Css_Specificity_Calculator();
@@ -24,19 +26,26 @@ class Css_Processor {
 		$this->css_parser = new CssParser();
 		
 		$this->initialize_global_classes_repository();
+		
+		$this->reset_selector_analyzer = new Reset_Selector_Analyzer( $this->specificity_calculator );
 	}
 
 	public function process_css_for_widgets( $css, $widgets ) {
+		error_log( "🔍 CSS-PROCESSOR DEBUG: Starting CSS processing with " . strlen( $css ) . " characters of CSS" );
+		error_log( "🔍 CSS-PROCESSOR DEBUG: CSS content preview: " . substr( $css, 0, 200 ) . "..." );
+		
 		$processing_result = [
 			'global_classes' => [],
 			'widget_styles' => [],
 			'element_styles' => [],
 			'id_styles' => [],  // New: ID selector styles
+			'direct_widget_styles' => [],  // New: Direct widget styles for simple element selectors
 			'stats' => [
 				'rules_processed' => 0,
 				'properties_converted' => 0,
 				'global_classes_created' => 0,
 				'id_selectors_processed' => 0,  // New: ID selector stats
+				'direct_widget_styles_applied' => 0,  // New: Direct widget styles stats
 				'unsupported_properties' => [],
 				'warnings' => [],
 			],
@@ -165,6 +174,7 @@ class Css_Processor {
 		);
 
 		// Debug: Log CSS rule categorization
+		error_log( "🔍 CSS-PROCESSOR DEBUG: Rule {$rule['selector']} {$rule['property']} categorized as target='{$categorized_rule['target']}', category='{$categorized_rule['category']}'" );
 
 		// Route to appropriate processing based on target type and category
 		switch ( $categorized_rule['target'] ) {
@@ -288,7 +298,35 @@ class Css_Processor {
 	}
 
 	private function process_element_style_rule( $rule, &$processing_result ) {
-		// Store element styles for potential application to widgets
+		$selector = $rule['selector'];
+		
+		error_log( "🔍 CSS-PROCESSOR DEBUG: Processing element rule: {$selector} {$rule['property']}: {$rule['value']}" );
+		
+		// NEW: Check if this is a simple element selector eligible for direct widget styling
+		if ( $this->reset_selector_analyzer->is_simple_element_selector( $selector ) ) {
+			error_log( "✅ CSS-PROCESSOR DEBUG: {$selector} is a simple element selector" );
+			// Check for conflicts with other CSS rules
+			$all_rules = $this->get_all_rules_from_processing_result( $processing_result );
+			$conflicts = $this->reset_selector_analyzer->detect_conflicts_for_selector( 
+				$selector, 
+				[ $rule ], 
+				$all_rules 
+			);
+			
+			if ( empty( $conflicts ) ) {
+				// No conflicts - mark for direct widget application
+				$this->apply_direct_widget_styling( $rule, $processing_result );
+				
+				error_log( "CSS Processor: Marked {$selector} {$rule['property']} for direct widget styling (no conflicts)" );
+				
+				// Skip adding to element_styles - will be applied directly to widgets
+				return;
+			} else {
+				error_log( "CSS Processor: {$selector} has conflicts - using standard element_styles approach" );
+			}
+		}
+		
+		// EXISTING: Standard element styles processing (fallback)
 		$processing_result['element_styles'][] = [
 			'selector' => $rule['selector'],
 			'property' => $rule['property'],
@@ -296,6 +334,45 @@ class Css_Processor {
 			'specificity' => $rule['specificity'],
 			'important' => $rule['important'],
 		];
+	}
+
+	private function apply_direct_widget_styling( $rule, &$processing_result ) {
+		$selector = $rule['selector'];
+		
+		// Convert CSS property to atomic widget format
+		$converted_property = $this->convert_css_property_safely( $rule['property'], $rule['value'] );
+		
+		if ( $this->is_property_conversion_successful( $converted_property ) ) {
+			if ( ! isset( $processing_result['direct_widget_styles'][ $selector ] ) ) {
+				$processing_result['direct_widget_styles'][ $selector ] = [];
+			}
+			
+			$processing_result['direct_widget_styles'][ $selector ][] = [
+				'property' => $rule['property'],
+				'value' => $rule['value'],
+				'converted_property' => $converted_property,
+				'specificity' => $rule['specificity'],
+				'important' => $rule['important'],
+				'source' => 'direct_element_reset',
+			];
+			
+			$processing_result['stats']['direct_widget_styles_applied']++;
+		} else {
+			// If conversion fails, fall back to element_styles
+			$processing_result['element_styles'][] = [
+				'selector' => $rule['selector'],
+				'property' => $rule['property'],
+				'value' => $rule['value'],
+				'specificity' => $rule['specificity'],
+				'important' => $rule['important'],
+			];
+		}
+	}
+	
+	private function get_all_rules_from_processing_result( $processing_result ) {
+		// This would need to be implemented to get all rules processed so far
+		// For now, return empty array - conflict detection will be conservative
+		return [];
 	}
 
 	private function convert_css_property( $property, $value ) {
@@ -403,10 +480,22 @@ class Css_Processor {
 		$widget_styles = [];
 		$applied_classes = [];
 		$id_styles = [];
+		$direct_element_styles = [];
 
 		// Get widget info
 		$widget_id = $widget['attributes']['id'] ?? 'no-id';
 		$widget_type = $widget['widget_type'] ?? 'unknown';
+		
+		// NEW: Apply direct element styles for simple element selectors (Approach 6)
+		if ( ! empty( $processing_result['direct_widget_styles'] ) ) {
+			$widget_tag = $widget['original_tag'] ?? null;
+			
+			if ( $widget_tag && isset( $processing_result['direct_widget_styles'][ $widget_tag ] ) ) {
+				$direct_element_styles = $processing_result['direct_widget_styles'][ $widget_tag ];
+				
+				error_log( "CSS Processor: Applying " . count( $direct_element_styles ) . " direct styles to {$widget_tag} widget" );
+			}
+		}
 		
 		// Apply ID-specific styles (highest specificity after !important and inline)
 		if ( ! empty( $widget['attributes']['id'] ) ) {
@@ -449,7 +538,8 @@ class Css_Processor {
 			'global_classes' => $applied_classes,
 			'element_styles' => $element_styles,
 			'id_styles' => $id_styles,  // New: ID-specific styles
-			'computed_styles' => $this->compute_final_styles( $widget_styles, $element_styles, $widget, $id_styles ),
+			'direct_element_styles' => $direct_element_styles,  // NEW: Direct element styles (Approach 6)
+			'computed_styles' => $this->compute_final_styles( $widget_styles, $element_styles, $widget, $id_styles, $direct_element_styles ),
 		];
 		
 		// DEBUG: Log what we're returning
@@ -488,9 +578,16 @@ class Css_Processor {
 		return false;
 	}
 
-	private function compute_final_styles( $widget_styles, $element_styles, $widget, $id_styles = [] ) {
-		// Merge all styles with proper specificity order: element < widget < ID
-		$all_styles = array_merge( $element_styles, $widget_styles );
+	private function compute_final_styles( $widget_styles, $element_styles, $widget, $id_styles = [], $direct_element_styles = [] ) {
+		// Priority order (lowest to highest):
+		// 1. Standard element_styles (specificity 1)
+		// 2. Direct element resets (specificity 1 but marked as direct)
+		// 3. Widget styles (classes, etc.)
+		// 4. ID styles
+		// 5. Inline styles
+		// 6. !important
+		
+		$all_styles = array_merge( $element_styles, $direct_element_styles, $widget_styles );
 		
 		// Add ID styles with their converted properties
 		foreach ( $id_styles as $id_style ) {

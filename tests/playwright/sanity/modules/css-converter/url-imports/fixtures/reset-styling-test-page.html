@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Styling Test Page - Zero Defaults + Approach 6</title>
+    
+    <!-- External CSS for reset styles -->
+    <link rel="stylesheet" href="reset-styles.css">
+    
+    <!-- Internal CSS with various selector types -->
+    <style>
+        /* Internal CSS - Class selectors */
+        .highlight {
+            color: #27ae60;
+            background-color: #f1c40f;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+        
+        .special-heading {
+            color: #e74c3c;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .card {
+            background-color: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .button-secondary {
+            background-color: #95a5a6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .text-large {
+            font-size: 18px;
+            line-height: 1.8;
+        }
+        
+        /* ID selectors */
+        #header {
+            background-color: #34495e;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        #footer {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        #special-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+        
+        /* Complex selectors that should conflict with simple element selectors */
+        .container h1 {
+            color: #2980b9;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .card p {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        #special-content h2 {
+            color: #f39c12;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Pseudo-class selectors */
+        .button-secondary:hover {
+            background-color: #7f8c8d;
+            transform: translateY(-1px);
+        }
+        
+        a:hover {
+            text-decoration: underline;
+            color: #e67e22;
+        }
+        
+        /* Multiple class selectors */
+        .highlight.special-heading {
+            background-color: #e74c3c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header section with ID styling -->
+    <header id="header">
+        <h1>Reset Styling Test Page</h1>
+        <p>Testing Zero Defaults + Approach 6 Implementation</p>
+    </header>
+
+    <div class="container">
+        <!-- Simple element selectors - should use Approach 6 (direct widget styling) -->
+        <section class="card">
+            <h1>Main Heading with Reset</h1>
+            <p>This paragraph has reset styling applied directly to the widget via Approach 6.</p>
+            <button>Reset Button</button>
+        </section>
+
+        <!-- Conflicting selectors - should fall back to standard approach -->
+        <section class="card">
+            <h1 class="special-heading">Conflicting Heading</h1>
+            <p>This paragraph is inside a .card container, so it has conflicting selectors (.card p vs p).</p>
+        </section>
+
+        <!-- Mixed styling types -->
+        <section class="card">
+            <h2>Secondary Heading</h2>
+            <p class="highlight">This paragraph has class styling that should work with zero defaults.</p>
+            <p class="text-large">This paragraph has both reset styles (from p selector) and class styles.</p>
+        </section>
+
+        <!-- Inline styling - highest specificity -->
+        <section class="card">
+            <h2 style="color: #9b59b6; font-size: 28px;">Inline Styled Heading</h2>
+            <p style="background-color: #1abc9c; color: white; padding: 10px;">This paragraph has inline styling that should override everything.</p>
+        </section>
+
+        <!-- ID selector with complex content -->
+        <section id="special-content">
+            <h2>Special Content Section</h2>
+            <p>This content is styled with ID selectors and should have the highest specificity after inline styles.</p>
+            <button class="button-secondary">Secondary Button</button>
+        </section>
+
+        <!-- Multiple styling combinations -->
+        <section class="card text-center">
+            <h3>Multiple Class Example</h3>
+            <p class="highlight special-heading">This element has multiple classes applied.</p>
+            <a href="#" style="color: #8e44ad; font-weight: bold;">Styled Link</a>
+        </section>
+
+        <!-- Testing element reset without conflicts -->
+        <section class="card">
+            <h4>Simple Reset Test</h4>
+            <p>Simple paragraph for reset testing.</p>
+            <h5>Another Simple Heading</h5>
+            <h6>Smallest Heading</h6>
+            <button>Another Reset Button</button>
+        </section>
+
+        <!-- Testing complex hierarchy -->
+        <div class="container">
+            <div class="card">
+                <h2>Nested Container Test</h2>
+                <p>This paragraph is nested and should test complex selector conflicts.</p>
+                <div>
+                    <span>Nested span element</span>
+                    <a href="#">Nested link</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer with ID styling -->
+    <footer id="footer">
+        <p>Footer content with ID styling</p>
+        <small>Small text element for testing</small>
+    </footer>
+</body>
+</html>

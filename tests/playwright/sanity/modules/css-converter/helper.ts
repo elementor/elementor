@@ -2,10 +2,11 @@ import { APIRequestContext } from '@playwright/test';
 
 export interface CssConverterOptions {
 	postType?: string;
-	createGlobalClasses?: boolean;
 	timeout?: number;
 	globalClassThreshold?: number;
 	preserveIds?: boolean;
+	useZeroDefaults?: boolean;
+	createGlobalClasses?: boolean;
 }
 
 export interface CssConverterRequest {
@@ -68,7 +69,6 @@ export class CssConverterHelper {
 	): Promise<CssConverterResponse> {
 		const defaultOptions: CssConverterOptions = {
 			postType: 'page',
-			createGlobalClasses: true,
 			...options,
 		};
 
@@ -94,7 +94,6 @@ export class CssConverterHelper {
 	): Promise<CssConverterResponse> {
 		const defaultOptions: CssConverterOptions = {
 			postType: 'page',
-			createGlobalClasses: true,
 			...options,
 		};
 
@@ -122,7 +121,6 @@ export class CssConverterHelper {
 	): Promise<CssConverterResponse> {
 		const defaultOptions: CssConverterOptions = {
 			postType: 'page',
-			createGlobalClasses: true,
 			...options,
 		};
 

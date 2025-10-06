@@ -299,7 +299,6 @@ private $supported_properties = ['color', 'font-size'];
   - `postId` (number|null): Post ID to update, null to create new
   - `postType` (string): Post type for new posts (default: "page")
   - `preserveIds` (boolean): Whether to preserve HTML element IDs
-  - `createGlobalClasses` (boolean): Whether to create global classes
   - `timeout` (number): Timeout in seconds (1-300, default: 30)
   - `globalClassThreshold` (number): Min usage count for global class (1-100, default: 1)
 
