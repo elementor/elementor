@@ -14,7 +14,6 @@ import { useMemo, useState } from 'react';
 import { useSettingsContext } from '../context/settings-context';
 import { isTierAtLeast, TIERS } from 'elementor-utils/tiers';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
-import { useTracking } from '../context/tracking-context';
 
 import './item-header.scss';
 
@@ -96,8 +95,6 @@ function useKitCallToActionButton(
 
 export default function ItemHeader( props ) {
 	const { updateSettings } = useSettingsContext();
-	const tracking = useTracking();
-
 	const resetConnect = () => {
 		const lc = elementorCommon?.config?.library_connect;
 		if ( ! lc ) {
@@ -162,13 +159,12 @@ export default function ItemHeader( props ) {
 		apply,
 		isApplyLoading,
 		onClick: () => {
-			appsEventTrackingDispatch( 'kit-library/apply-kit', {
+			return appsEventTrackingDispatch( 'kit-library/apply-kit', {
 				kit_name: props.model.title,
 				element_position: 'app_header',
 				page_source: props.pageId,
 				event_type: 'click',
 			} );
-			tracking.trackKitdemoApplyClicked( props.model.id, props.model.title, props.model.accessTier );
 		},
 	} );
 
@@ -186,10 +182,10 @@ export default function ItemHeader( props ) {
 					return;
 				}
 
-				tracking.trackKitdemoDownloadClicked( props.model.id, props.model.title, () => fetchDownloadLink( e ) );
+				fetchDownloadLink( e );
 			},
 		};
-	}, [ isDownloadLoading, fetchDownloadLink, tracking, props.model.id, props.model.title ] );
+	}, [ isDownloadLoading, fetchDownloadLink ] );
 
 	const buttons = useMemo(
 		() => [ downloadButton, applyButton, ...props.buttons ],
@@ -259,7 +255,7 @@ export default function ItemHeader( props ) {
 				/>
 			) }
 			<Header
-				startColumn={ <HeaderBackButton { ...kitData } kitId={ props.model.id } /> }
+				startColumn={ <HeaderBackButton { ...kitData } /> }
 				centerColumn={ props.centerColumn }
 				buttons={ buttons }
 				{ ...kitData }

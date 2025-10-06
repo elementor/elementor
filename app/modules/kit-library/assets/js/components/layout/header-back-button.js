@@ -2,7 +2,6 @@ import { Button } from '@elementor/app-ui';
 import { useLastFilterContext } from '../../context/last-filter-context';
 import { useNavigate } from '@reach/router';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
-import { useTracking } from '../../context/tracking-context';
 
 import './header-back-button.scss';
 
@@ -19,9 +18,7 @@ export default function HeaderBackButton( props ) {
 					event_type: eventType,
 				},
 			);
-		},
-		tracking = useTracking();
-
+		};
 	return (
 		<div className="e-kit-library__header-back-container">
 			<Button
@@ -30,7 +27,7 @@ export default function HeaderBackButton( props ) {
 				text={ __( 'Back to Library', 'elementor' ) }
 				onClick={ () => {
 					eventTracking( 'kit-library/back-to-library' );
-					tracking.trackKitdemoOverviewBack( props.kitId, props.kitName, () => navigate( wp.url.addQueryArgs( '/kit-library', lastFilter ) ) );
+					navigate( wp.url.addQueryArgs( '/kit-library', lastFilter ) );
 				} }
 			/>
 		</div>
@@ -40,5 +37,4 @@ export default function HeaderBackButton( props ) {
 HeaderBackButton.propTypes = {
 	pageId: PropTypes.string.isRequired,
 	kitName: PropTypes.string.isRequired,
-	kitId: PropTypes.string.isRequired,
 };

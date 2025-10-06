@@ -19,7 +19,6 @@ import { useCallback, useEffect } from 'react';
 import { useLastFilterContext } from '../../context/last-filter-context';
 import { useLocation } from '@reach/router';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
-import { useTracking } from '../../context/tracking-context';
 
 import './index.scss';
 
@@ -114,7 +113,6 @@ export default function Index( props ) {
 	} );
 
 	const menuItems = useMenuItems( props.path );
-	const tracking = useTracking();
 
 	const {
 		data,
@@ -130,14 +128,6 @@ export default function Index( props ) {
 	} = useKits( props.initialQueryParams );
 
 	useRouterQueryParams( queryParams, setQueryParams, [ 'ready', ...Object.keys( props.initialQueryParams ) ] );
-
-	useEffect( () => {
-		if ( ! queryParams.search ) {
-			return;
-		}
-
-		tracking.trackKitlibSearchSubmitted( queryParams.search, data.length );
-	}, [ queryParams.search, data.length, tracking ] );
 
 	const {
 		data: taxonomiesData,
@@ -161,30 +151,6 @@ export default function Index( props ) {
 			},
 		);
 	};
-
-	const options = [
-		{
-			label: __( 'Featured', 'elementor' ),
-			value: 'featuredIndex',
-			defaultOrder: 'asc',
-			orderDisabled: true,
-		},
-		{
-			label: __( 'New', 'elementor' ),
-			value: 'createdAt',
-			defaultOrder: 'desc',
-		},
-		{
-			label: __( 'Popular', 'elementor' ),
-			value: 'popularityIndex',
-			defaultOrder: 'desc',
-		},
-		{
-			label: __( 'Trending', 'elementor' ),
-			value: 'trendIndex',
-			defaultOrder: 'desc',
-		},
-	];
 
 	return (
 		<Layout
@@ -213,11 +179,12 @@ export default function Index( props ) {
 				<Grid container className="e-kit-library__index-layout-heading">
 					<Grid item className="e-kit-library__index-layout-heading-search">
 						<SearchInput
+							// eslint-disable-next-line @wordpress/i18n-ellipsis
 							placeholder={ __( 'Search all Website Templates...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => {
-								eventTracking( 'kit-library/kit-free-search', 'top_area_search', value, null, null, null, 'search' );
 								setQueryParams( ( prev ) => ( { ...prev, search: value } ) );
+								eventTracking( 'kit-library/kit-free-search', 'top_area_search', value, null, null, null, 'search' );
 							} }
 						/>
 						{ isFilterActive && <FilterIndicationText
@@ -232,17 +199,33 @@ export default function Index( props ) {
 						className="e-kit-library__index-layout-heading-sort"
 					>
 						<SortSelect
-							options={ options }
+							options={ [
+								{
+									label: __( 'Featured', 'elementor' ),
+									value: 'featuredIndex',
+									defaultOrder: 'asc',
+									orderDisabled: true,
+								},
+								{
+									label: __( 'New', 'elementor' ),
+									value: 'createdAt',
+									defaultOrder: 'desc',
+								},
+								{
+									label: __( 'Popular', 'elementor' ),
+									value: 'popularityIndex',
+									defaultOrder: 'desc',
+								},
+								{
+									label: __( 'Trending', 'elementor' ),
+									value: 'trendIndex',
+									defaultOrder: 'desc',
+								},
+							] }
 							value={ queryParams.order }
 							onChange={ ( order ) => setQueryParams( ( prev ) => ( { ...prev, order } ) ) }
-							onChangeSortDirection={ ( direction ) => {
-								eventTracking( 'kit-library/change-sort-direction', 'top_area_sort', null, direction );
-							} }
-							onChangeSortValue={ ( value ) => {
-								eventTracking( 'kit-library/change-sort-value', 'top_area_sort', null, null, value );
-								const label = options.find( ( option ) => option.value === value ).label;
-								tracking.trackKitlibSorterSelected( label );
-							} }
+							onChangeSortDirection={ ( direction ) => eventTracking( 'kit-library/change-sort-direction', 'top_area_sort', null, direction ) }
+							onChangeSortValue={ ( value ) => eventTracking( 'kit-library/change-sort-value', 'top_area_sort', null, null, value ) }
 							onSortSelectOpen={ () => eventTracking( 'kit-library/change-sort-type', 'top_area_sort', null, null, null, 'expand' ) }
 						/>
 					</Grid>
