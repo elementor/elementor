@@ -14,7 +14,7 @@ class ActionControlTracking {
 			return;
 		}
 
-		this.attachControlTracking();
+		this.attachDelegatedHandlers();
 	}
 
 	static isExcludedElement( element ) {
@@ -27,113 +27,54 @@ class ActionControlTracking {
 		return false;
 	}
 
-	static attachControlTracking() {
-		this.attachButtonTracking();
-		this.attachCheckboxTracking();
-		this.attachRadioTracking();
-		this.attachSelectTracking();
-		this.attachLinkTracking();
-		this.attachToggleTracking();
-	}
-
-	static attachButtonTracking() {
-		const buttons = document.querySelectorAll( 'button, input[type="submit"], input[type="button"], .button, .e-btn' );
-
-		buttons.forEach( ( button ) => {
-			if ( this.isExcludedElement( button ) ) {
+	static attachDelegatedHandlers() {
+		document.addEventListener( 'click', ( event ) => {
+			const base = event.target && 1 === event.target.nodeType ? event.target : event.target?.parentElement;
+			if ( ! base ) {
 				return;
 			}
 
-			button.addEventListener( 'click', ( event ) => {
-				this.trackControl( event.currentTarget, CONTROL_TYPES.BUTTON );
-			}, { capture: false } );
+			const button = base.closest( 'button, input[type="submit"], input[type="button"], .button, .e-btn' );
+			if ( button && ! this.isExcludedElement( button ) ) {
+				this.trackControl( button, CONTROL_TYPES.BUTTON );
+				return;
+			}
+
+			const link = base.closest( 'a' );
+			if ( link && ! this.isExcludedElement( link ) && ! this.isNavigationLink( link ) ) {
+				this.trackControl( link, CONTROL_TYPES.LINK );
+			}
+		}, { capture: false } );
+
+		document.addEventListener( 'change', ( event ) => {
+			const base = event.target && 1 === event.target.nodeType ? event.target : event.target?.parentElement;
+			if ( ! base ) {
+				return;
+			}
+
+			const toggle = base.closest( '.elementor-control-type-switcher input, [role="switch"], .toggle-control input' );
+			if ( toggle && ! this.isExcludedElement( toggle ) ) {
+				this.trackControl( toggle, CONTROL_TYPES.TOGGLE );
+				return;
+			}
+
+			const checkbox = base.closest( 'input[type="checkbox"]' );
+			if ( checkbox && ! this.isExcludedElement( checkbox ) ) {
+				this.trackControl( checkbox, CONTROL_TYPES.CHECKBOX );
+				return;
+			}
+
+			const radio = base.closest( 'input[type="radio"]' );
+			if ( radio && ! this.isExcludedElement( radio ) ) {
+				this.trackControl( radio, CONTROL_TYPES.RADIO );
+				return;
+			}
+
+			const select = base.closest( 'select' );
+			if ( select && ! this.isExcludedElement( select ) ) {
+				this.trackControl( select, CONTROL_TYPES.SELECT );
+			}
 		} );
-
-		this.observeNewControls( 'button, input[type="submit"], input[type="button"], .button, .e-btn', CONTROL_TYPES.BUTTON );
-	}
-
-	static attachCheckboxTracking() {
-		const checkboxes = document.querySelectorAll( 'input[type="checkbox"]' );
-
-		checkboxes.forEach( ( checkbox ) => {
-			if ( this.isExcludedElement( checkbox ) ) {
-				return;
-			}
-
-			checkbox.addEventListener( 'change', ( event ) => {
-				this.trackControl( event.currentTarget, CONTROL_TYPES.CHECKBOX );
-			} );
-		} );
-
-		this.observeNewControls( 'input[type="checkbox"]', CONTROL_TYPES.CHECKBOX, 'change' );
-	}
-
-	static attachRadioTracking() {
-		const radios = document.querySelectorAll( 'input[type="radio"]' );
-
-		radios.forEach( ( radio ) => {
-			if ( this.isExcludedElement( radio ) ) {
-				return;
-			}
-
-			radio.addEventListener( 'change', ( event ) => {
-				this.trackControl( event.currentTarget, CONTROL_TYPES.RADIO );
-			} );
-		} );
-
-		this.observeNewControls( 'input[type="radio"]', CONTROL_TYPES.RADIO, 'change' );
-	}
-
-	static attachSelectTracking() {
-		const selects = document.querySelectorAll( 'select' );
-
-		selects.forEach( ( select ) => {
-			if ( this.isExcludedElement( select ) ) {
-				return;
-			}
-
-			select.addEventListener( 'change', ( event ) => {
-				this.trackControl( event.currentTarget, CONTROL_TYPES.SELECT );
-			} );
-		} );
-
-		this.observeNewControls( 'select', CONTROL_TYPES.SELECT, 'change' );
-	}
-
-	static attachLinkTracking() {
-		const links = document.querySelectorAll( 'a' );
-
-		links.forEach( ( link ) => {
-			if ( this.isExcludedElement( link ) ) {
-				return;
-			}
-
-			if ( this.isNavigationLink( link ) ) {
-				return;
-			}
-
-			link.addEventListener( 'click', ( event ) => {
-				this.trackControl( event.currentTarget, CONTROL_TYPES.LINK );
-			}, { capture: false } );
-		} );
-
-		this.observeNewControls( 'a', CONTROL_TYPES.LINK );
-	}
-
-	static attachToggleTracking() {
-		const toggles = document.querySelectorAll( '.elementor-control-type-switcher input, [role="switch"], .toggle-control input' );
-
-		toggles.forEach( ( toggle ) => {
-			if ( this.isExcludedElement( toggle ) ) {
-				return;
-			}
-
-			toggle.addEventListener( 'change', ( event ) => {
-				this.trackControl( event.currentTarget, CONTROL_TYPES.TOGGLE );
-			} );
-		} );
-
-		this.observeNewControls( '.elementor-control-type-switcher input, [role="switch"], .toggle-control input', CONTROL_TYPES.TOGGLE, 'change' );
 	}
 
 	static isNavigationLink( link ) {
@@ -143,59 +84,17 @@ class ActionControlTracking {
 			return false;
 		}
 
-		if ( href.startsWith( '#' ) && ! href.includes( 'tab' ) ) {
-			return false;
+		if ( href.startsWith( '#' ) && href.includes( 'tab' ) ) {
+			return true;
 		}
 
 		if ( link.classList.contains( 'nav-tab' ) ) {
-			return false;
+			return true;
 		}
 
 		const isInNavigation = link.closest( '.wp-submenu, #adminmenu, .e-admin-top-bar, #wpadminbar' );
 
 		return !! isInNavigation;
-	}
-
-	static observeNewControls( selector, controlType, eventType = 'click' ) {
-		const observer = new MutationObserver( ( mutations ) => {
-			mutations.forEach( ( mutation ) => {
-				if ( 'childList' === mutation.type ) {
-					mutation.addedNodes.forEach( ( node ) => {
-						if ( 1 === node.nodeType ) {
-							let elements = [];
-
-							if ( node.matches && node.matches( selector ) ) {
-								elements.push( node );
-							}
-
-							if ( node.querySelectorAll ) {
-								const foundElements = node.querySelectorAll( selector );
-								elements = [ ...elements, ...foundElements ];
-							}
-
-							elements.forEach( ( element ) => {
-								if ( this.isExcludedElement( element ) ) {
-									return;
-								}
-
-								if ( CONTROL_TYPES.LINK === controlType && this.isNavigationLink( element ) ) {
-									return;
-								}
-
-								element.addEventListener( eventType, ( event ) => {
-									this.trackControl( event.currentTarget, controlType );
-								}, { capture: false } );
-							} );
-						}
-					} );
-				}
-			} );
-		} );
-
-		observer.observe( document.body, {
-			childList: true,
-			subtree: true,
-		} );
 	}
 
 	static trackControl( element, controlType ) {
