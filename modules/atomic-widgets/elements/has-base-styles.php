@@ -14,6 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Has_Base_Styles {
 	public function get_base_styles() {
+		if ( $this->should_disable_base_styles() ) {
+			return [];
+		}
+
 		$base_styles = $this->define_base_styles();
 		$style_definitions = [];
 
@@ -24,6 +28,10 @@ trait Has_Base_Styles {
 		}
 
 		return $style_definitions;
+	}
+
+	private function should_disable_base_styles(): bool {
+		return isset( $this->editor_settings['disable_base_styles'] ) && $this->editor_settings['disable_base_styles'];
 	}
 
 	public function get_base_styles_dictionary() {

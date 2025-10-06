@@ -122,7 +122,7 @@ class Widgets_Route {
 	}
 
 	public function handle_widget_conversion( WP_REST_Request $request ) {
-		error_log( "🔍 WIDGETS-ROUTE DEBUG: Starting widget conversion request" );
+		error_log( "🚀 WIDGETS-ROUTE: Widget conversion endpoint called!" );
 		
 		$type = $request->get_param( 'type' );
 		$content = $request->get_param( 'content' );

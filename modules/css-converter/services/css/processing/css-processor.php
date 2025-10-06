@@ -342,6 +342,8 @@ class Css_Processor {
 		// Convert CSS property to atomic widget format
 		$converted_property = $this->convert_css_property_safely( $rule['property'], $rule['value'] );
 		
+		error_log( "🔍 CSS-PROCESSOR DEBUG: Property conversion result for {$rule['property']}: " . json_encode( $converted_property ) );
+		
 		if ( $this->is_property_conversion_successful( $converted_property ) ) {
 			if ( ! isset( $processing_result['direct_widget_styles'][ $selector ] ) ) {
 				$processing_result['direct_widget_styles'][ $selector ] = [];
