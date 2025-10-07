@@ -3,7 +3,8 @@ import StorageManager, { ONBOARDING_STORAGE_KEYS } from './storage-manager.js';
 export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
 	HELLO_BIZ_CONTINUE: 'core_onboarding_s2_hellobiz',
-	THEME_CHOICE: 'ab_201_theme_choice',
+	THEME_CHOICE: 'core_onboarding_theme_choice',
+	THEME_CHOICE_VARIANT_B: 'ab_201_theme_choice',
 	CORE_ONBOARDING: 'core_onboarding',
 	CONNECT_STATUS: 'core_onboarding_connect_status',
 	STEP1_END_STATE: 'core_onboarding_s1_end_state',
@@ -66,11 +67,6 @@ export function dispatchIfAllowed( eventName, payload = {} ) {
 	return false;
 }
 
-function getAbTestVariant() {
-	const variant = StorageManager.getString( ONBOARDING_STORAGE_KEYS.AB_TEST_VARIANT );
-	return variant || null;
-}
-
 function getThemeSelectionVariant() {
 	const variant = StorageManager.getString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT );
 	return variant || null;
@@ -79,6 +75,18 @@ function getThemeSelectionVariant() {
 function getGoodToGoVariant() {
 	const variant = StorageManager.getString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT );
 	return variant || null;
+}
+
+function getVariantSpecificEventName( baseEventName, stepNumber ) {
+	if ( 2 === stepNumber && elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
+		const variant = getThemeSelectionVariant();
+		if ( 'B' === variant ) {
+			if ( ONBOARDING_EVENTS_MAP.THEME_CHOICE === baseEventName ) {
+				return ONBOARDING_EVENTS_MAP.THEME_CHOICE_VARIANT_B;
+			}
+		}
+	}
+	return baseEventName;
 }
 
 export function createEventPayload( basePayload = {} ) {
@@ -93,7 +101,6 @@ export function createStepEventPayload( stepNumber, stepName, additionalData = {
 	const basePayload = {
 		step_number: stepNumber,
 		step_name: stepName,
-		ab_test_variant: getAbTestVariant(),
 		...additionalData,
 	};
 
@@ -112,14 +119,19 @@ export function createEditorEventPayload( additionalData = {} ) {
 	return {
 		location: 'editor',
 		trigger: 'elementor_loaded',
-		ab_test_variant: getAbTestVariant(),
 		...additionalData,
 	};
 }
 
 export function dispatchStepEvent( eventName, stepNumber, stepName, additionalData = {} ) {
 	const payload = createStepEventPayload( stepNumber, stepName, additionalData );
-	return dispatch( eventName, payload );
+	const variantSpecificEventName = getVariantSpecificEventName( eventName, stepNumber );
+	return dispatch( variantSpecificEventName, payload );
+}
+
+export function dispatchVariantAwareEvent( eventName, payload, stepNumber = null ) {
+	const variantSpecificEventName = stepNumber ? getVariantSpecificEventName( eventName, stepNumber ) : eventName;
+	return dispatch( variantSpecificEventName, payload );
 }
 
 export function dispatchEditorEvent( eventName, additionalData = {} ) {
@@ -180,6 +192,7 @@ const EventDispatcher = {
 	createStepEventPayload,
 	createEditorEventPayload,
 	dispatchStepEvent,
+	dispatchVariantAwareEvent,
 	dispatchEditorEvent,
 	getClickEventName,
 	dispatchClickEvent,

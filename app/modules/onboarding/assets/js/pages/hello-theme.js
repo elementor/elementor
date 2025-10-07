@@ -46,7 +46,6 @@ export default function HelloTheme() {
 
 		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
 		OnboardingEventTracking.onStepLoad( 2 );
-		OnboardingEventTracking.sendExperimentStarted();
 	}, [ getStateObjectToUpdate, goToNextScreen, helloInstalledInOnboarding, pageId, state, updateState ] );
 
 	const resetScreenContent = () => {
@@ -288,7 +287,7 @@ export default function HelloTheme() {
 		}
 	}, [ activateHelloThemeAjaxState.status ] );
 
-	const variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.AB_TEST_VARIANT );
+	const variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT );
 	const ContentComponent = 'B' === variant ? ThemeSelectionContentB : ThemeSelectionContentA;
 
 	return (

@@ -12,7 +12,7 @@ export default function GoodToGo() {
 		OnboardingEventTracking.onStepLoad( 4 );
 	}, [] );
 
-	const variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.AB_TEST_VARIANT );
+	const variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT );
 	const ContentComponent = 'B' === variant ? GoodToGoContentB : GoodToGoContentA;
 	const skipButton = 'B' === variant ? {
 		text: __( 'Continue with blank canvas', 'elementor' ),

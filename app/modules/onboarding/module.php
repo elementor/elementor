@@ -41,15 +41,6 @@ class Module extends BaseModule {
 		return 'onboarding';
 	}
 
-	private function is_ab_test_enabled() {
-		$editor_assets_api = $this->get_editor_assets_api();
-
-		if ( null === $editor_assets_api ) {
-			return false;
-		}
-
-		return $editor_assets_api->is_core_onboarding_enabled();
-	}
 
 	private function is_theme_selection_experiment_enabled() {
 		$editor_assets_api = $this->get_editor_assets_api();
@@ -71,9 +62,6 @@ class Module extends BaseModule {
 		return $editor_assets_api->is_good_to_go_experiment_enabled();
 	}
 
-	private function get_ab_test_variant_override() {
-		return apply_filters( 'elementor/onboarding/ab_test_variant', null );
-	}
 
 	private function get_editor_assets_api(): ?API {
 		if ( null !== $this->editor_assets_api ) {
@@ -177,8 +165,6 @@ class Module extends BaseModule {
 			],
 			'nonce' => wp_create_nonce( 'onboarding' ),
 			'experiment' => true,
-			'abTestEnabled' => $this->is_ab_test_enabled(),
-			'abVariant' => $this->get_ab_test_variant_override(),
 			'themeSelectionExperimentEnabled' => $this->is_theme_selection_experiment_enabled(),
 			'goodToGoExperimentEnabled' => $this->is_good_to_go_experiment_enabled(),
 		] );

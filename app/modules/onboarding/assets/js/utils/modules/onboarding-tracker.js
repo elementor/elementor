@@ -890,15 +890,6 @@ class OnboardingTracker {
 		return elementorAppConfig?.onboarding?.goodToGoExperimentEnabled || false;
 	}
 
-	getExperimentVariant() {
-		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.AB_TEST_VARIANT );
-		if ( stored ) {
-			return stored;
-		}
-
-		return elementorAppConfig?.onboarding?.abVariant || null;
-	}
-
 	getThemeSelectionVariant() {
 		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT );
 		if ( stored ) {
@@ -915,16 +906,6 @@ class OnboardingTracker {
 		}
 
 		return null;
-	}
-
-	assignExperimentVariant() {
-		if ( ! this.isAbTestEnabled() ) {
-			return null;
-		}
-
-		const variant = Math.random() < 0.5 ? 'A' : 'B';
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.AB_TEST_VARIANT, variant );
-		return variant;
 	}
 
 	assignThemeSelectionVariant() {
@@ -945,34 +926,6 @@ class OnboardingTracker {
 		const variant = Math.random() < 0.5 ? 'A' : 'B';
 		StorageManager.setString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT, variant );
 		return variant;
-	}
-
-	sendExperimentStarted() {
-		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.EXPERIMENT_STARTED ) ) {
-			return;
-		}
-
-		let variant = this.getExperimentVariant();
-
-		if ( ! variant ) {
-			variant = this.assignExperimentVariant();
-			if ( ! variant ) {
-				return;
-			}
-		}
-
-		if ( ! EventDispatcher.canSendEvents() ) {
-			return;
-		}
-
-		const eventData = {
-			'Experiment name': 'Onboarding A/B',
-			'Variant name': variant,
-		};
-
-		EventDispatcher.dispatch( '$experiment_started', eventData );
-
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.EXPERIMENT_STARTED, 'true' );
 	}
 
 	sendThemeSelectionExperimentStarted() {
