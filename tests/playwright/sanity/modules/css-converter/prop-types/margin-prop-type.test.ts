@@ -126,7 +126,8 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		for ( const testCase of testCases ) {
 			const apiResult = await cssHelper.convertHtmlWithCss( request, testCase.html );
 
-			if ( ! apiResult || ( validation.shouldSkips && validation.shouldSkips.length > 0 ) ) {
+			const validation = cssHelper.validateApiResult( apiResult );
+			if ( validation.shouldSkip ) {
 				continue;
 			}
 
