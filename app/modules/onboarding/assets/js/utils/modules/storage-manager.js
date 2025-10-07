@@ -130,10 +130,6 @@ export function clearAllOnboardingData() {
 		ONBOARDING_STORAGE_KEYS.STEP2_START_TIME,
 		ONBOARDING_STORAGE_KEYS.STEP3_START_TIME,
 		ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
-		ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT,
-		ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED,
-		ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT,
-		ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED,
 	];
 
 	clearMultiple( keysToRemove );
@@ -142,6 +138,17 @@ export function clearAllOnboardingData() {
 		const clickDataKey = `elementor_onboarding_click_${ i }_data`;
 		remove( clickDataKey );
 	}
+}
+
+export function clearExperimentData() {
+	const experimentKeys = [
+		ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT,
+		ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED,
+		ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT,
+		ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED,
+	];
+
+	clearMultiple( experimentKeys );
 }
 
 export function getStepStartTime( stepNumber ) {
@@ -200,6 +207,7 @@ const StorageManager = {
 	exists,
 	clearMultiple,
 	clearAllOnboardingData,
+	clearExperimentData,
 	getStepStartTime,
 	setStepStartTime,
 	clearStepStartTime,
