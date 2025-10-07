@@ -13,20 +13,17 @@
 			line-height: 40px;
 		}
 
-		.e-onboarding__theme-selection-description {
+		.e-onboarding__theme-selection-description,
+		.e-onboarding__theme-selection-subtitle {
 			font-size: 18px;
 			font-weight: 400;
 			margin-block-end: 8px;
 			text-align: center;
-			color: #495157;
+			color: #3A3F45;
 		}
 
 		.e-onboarding__theme-selection-subtitle {
-			font-size: 14px;
-			font-weight: 400;
-			color: #6C7781;
-			text-align: center;
-			margin-block-end: 24px;
+			font-weight: 600;
 		}
 
 		.e-onboarding__theme-cards {
