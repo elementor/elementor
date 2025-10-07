@@ -308,20 +308,21 @@ class OnboardingTracker {
 		
 		if ( EventDispatcher.canSendEvents() ) {
 			// eslint-disable-next-line no-console
-			console.log( '[Tracker Debug] Dispatching ab_201_theme_choice event to elementorCommon.events' );
+			console.log( '[Tracker Debug] Dispatching ab_201_theme_choice event using EventDispatcher.dispatchStepEvent' );
 			
-			elementorCommon.events.dispatchEvent( {
-				event: 'ab_201_theme_choice',
-				version: '',
-				details: {
-					placement: elementorAppConfig.onboarding.eventPlacement,
-					step: currentStep,
+			const result = EventDispatcher.dispatchStepEvent(
+				ONBOARDING_EVENTS_MAP.THEME_CHOICE,
+				2,
+				ONBOARDING_STEP_NAMES.HELLO_BIZ,
+				{
+					location: 'plugin_onboarding',
+					trigger: 'theme_selected',
 					theme: themeValue,
 				},
-			} );
+			);
 			
 			// eslint-disable-next-line no-console
-			console.log( '[Tracker Debug] ab_201_theme_choice event dispatched successfully' );
+			console.log( '[Tracker Debug] ab_201_theme_choice event dispatched, result:', result );
 		} else {
 			// eslint-disable-next-line no-console
 			console.warn( '[Tracker Debug] ab_201_theme_choice event NOT sent - canSendEvents returned false' );
@@ -337,6 +338,7 @@ class OnboardingTracker {
 	}
 
 	initiateCoreOnboarding() {
+		StorageManager.clearAllOnboardingData();
 		TimingManager.clearStaleSessionData();
 		TimingManager.initializeOnboardingStartTime();
 	}

@@ -1,26 +1,22 @@
 import PropTypes from 'prop-types';
 import Grid from 'elementor-app/ui/grid/grid';
 import Card from './card';
-import FooterButtons from './layout/footer-buttons';
+import Button from './button';
 import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function GoodToGoContentB( { skipButton } ) {
 	const kitLibraryLink = elementorAppConfig.onboarding.urls.kitLibrary + '&referrer=onboarding';
 
-	const blankCanvasButton = {
-		...skipButton,
-		target: '_self',
-		action: ( event ) => {
-			OnboardingEventTracking.handleSiteStarterChoice( 'blank_canvas' );
+	const handleBlankCanvasClick = ( event ) => {
+		OnboardingEventTracking.handleSiteStarterChoice( 'blank_canvas' );
 
-			if ( skipButton.href ) {
-				event.preventDefault();
+		if ( skipButton.href ) {
+			event.preventDefault();
 
-				setTimeout( () => {
-					window.location.href = skipButton.href;
-				}, 100 );
-			}
-		},
+			setTimeout( () => {
+				window.location.href = skipButton.href;
+			}, 100 );
+		}
 	};
 
 	return (
@@ -54,7 +50,17 @@ export default function GoodToGoContentB( { skipButton } ) {
 					} }
 				/>
 			</Grid>
-			<FooterButtons skipButton={ blankCanvasButton } className="e-onboarding__good-to-go-footer" />
+			<Grid container alignItems="center" justify="space-between" className="e-onboarding__footer e-onboarding__good-to-go-footer">
+				<Button
+					buttonSettings={ {
+						text: skipButton.text,
+						href: skipButton.href,
+						target: '_self',
+						onClick: handleBlankCanvasClick,
+					} }
+					type="skip"
+				/>
+			</Grid>
 		</>
 	);
 }
