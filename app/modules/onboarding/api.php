@@ -24,12 +24,6 @@ class API {
 		return $json_data[0] ?? [];
 	}
 
-	public function is_core_onboarding_enabled( $force_request = false ): bool {
-		$ab_testing_data = $this->get_ab_testing_data( $force_request );
-
-		return $ab_testing_data['coreOnboarding'] ?? false;
-	}
-
 	public function is_theme_selection_experiment_enabled( $force_request = false ): bool {
 		$ab_testing_data = $this->get_ab_testing_data( $force_request );
 
