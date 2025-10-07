@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Mapper {
 	private $mapping_rules;
 	private $handlers;
+	private $element_id_counter = 0;
 
 	public function __construct() {
 		$this->init_mapping_rules();
@@ -112,32 +113,60 @@ class Widget_Mapper {
 	}
 
 	public function map_elements( $elements ) {
+		// Collect elements that should become widgets:
+		// 1. Elements with inline styles (highest priority)
+		// 2. Top-level elements that don't have inline-styled children
+		$widget_elements = $this->collect_widget_elements( $elements );
+		
 		$mapped_elements = [];
 
-		foreach ( $elements as $element ) {
+		foreach ( $widget_elements as $index => $element ) {
 			$mapped = $this->map_element( $element );
 			if ( $mapped ) {
 				$mapped_elements[] = $mapped;
+				
 			}
 		}
 
 		return $mapped_elements;
 	}
 
+	private function collect_widget_elements( $elements ) {
+		$widget_elements = [];
+		
+		// Original simple approach - just map top-level elements
+		foreach ( $elements as $element ) {
+			$tag = $element['tag'];
+			
+			// Check if this element is mappable
+			if ( isset( $this->mapping_rules[ $tag ] ) ) {
+				$widget_elements[] = $element;
+			}
+		}
+		
+		return $widget_elements;
+	}
+
+	private function generate_element_id( $element ): string {
+		$html_id = $element['attributes']['id'] ?? null;
+		if ( $html_id ) {
+			return 'element-' . $html_id;
+		}
+		
+		$this->element_id_counter++;
+		$tag = $element['tag'] ?? 'unknown';
+		return "element-{$tag}-{$this->element_id_counter}";
+	}
+
 	private function handle_heading( $element ) {
 		$tag = $element['tag'];
 		$level = (int) substr( $tag, 1 ); // Extract number from h1, h2, etc.
 		$content = $element['content'] ?? '';
-
-		// 🔍 MAXIMUM DEBUG: Heading processing
-		error_log( "🔍 HEADING_HANDLER: === PROCESSING HEADING ===" );
-		error_log( "🔍 HEADING_HANDLER: Tag: '{$tag}', Level: {$level}" );
-		error_log( "🔍 HEADING_HANDLER: Content: '{$content}'" );
-		error_log( "🔍 HEADING_HANDLER: Content length: " . strlen($content) );
-		error_log( "🔍 HEADING_HANDLER: === END HEADING ===\n" );
+		$element_id = $this->generate_element_id( $element );
 
 		return [
 			'widget_type' => 'e-heading',
+			'element_id' => $element_id,
 			'original_tag' => $tag,
 			'settings' => [
 				'text' => $content,
@@ -153,6 +182,7 @@ class Widget_Mapper {
 	private function handle_paragraph( $element ) {
 		$content = $element['content'] ?? '';
 		$tag = $element['tag'];
+		$element_id = $this->generate_element_id( $element );
 		
 		// ✅ CRITICAL FIX: Check if paragraph has child elements (like <a> tags)
 		if ( ! empty( $element['children'] ) ) {
@@ -169,6 +199,7 @@ class Widget_Mapper {
 				// Add remaining text as a paragraph widget
 				$text_paragraph = [
 					'widget_type' => 'e-paragraph',
+					'element_id' => $element_id . '-text',
 					'original_tag' => 'p',
 					'settings' => [
 						'paragraph' => $remaining_text,
@@ -182,6 +213,7 @@ class Widget_Mapper {
 			
 			return [
 				'widget_type' => 'e-div-block',
+				'element_id' => $element_id,
 				'original_tag' => $tag,
 				'settings' => [
 					'tag' => $tag, // Preserve semantic meaning
@@ -199,6 +231,7 @@ class Widget_Mapper {
 		
 		return [
 			'widget_type' => 'e-paragraph',
+			'element_id' => $element_id,
 			'original_tag' => $tag, // Preserve original tag (p, blockquote, etc.)
 			'settings' => $settings,
 			'attributes' => $element['attributes'],
@@ -208,10 +241,22 @@ class Widget_Mapper {
 	}
 
 	private function handle_div_block( $element ) {
+		$element_id = $this->generate_element_id( $element );
+		
 		// Map children recursively
 		$children = [];
 		if ( ! empty( $element['children'] ) ) {
+			error_log( "WIDGET_MAPPER_DEBUG: Div-block has " . count( $element['children'] ) . " children, mapping them..." );
 			$children = $this->map_elements( $element['children'] );
+			error_log( "WIDGET_MAPPER_DEBUG: Mapped " . count( $children ) . " child widgets" );
+			
+			// Debug log each child widget
+			foreach ( $children as $child_index => $child_widget ) {
+				$child_type = $child_widget['widget_type'] ?? 'unknown';
+				$child_element_id = $child_widget['element_id'] ?? 'no-id';
+				$child_inline_css_count = count( $child_widget['inline_css'] ?? [] );
+				error_log( "WIDGET_MAPPER_DEBUG:   Child #{$child_index} - Type: {$child_type}, Element ID: {$child_element_id}, Inline CSS properties: {$child_inline_css_count}" );
+			}
 		}
 
 		// Check if this div has text content that should be wrapped in a paragraph
@@ -233,6 +278,7 @@ class Widget_Mapper {
 
 		return [
 			'widget_type' => 'e-div-block',
+			'element_id' => $element_id,
 			'original_tag' => $element['tag'],
 			'settings' => $settings,
 			'attributes' => $element['attributes'],

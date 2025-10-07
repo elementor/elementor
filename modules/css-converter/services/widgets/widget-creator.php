@@ -266,7 +266,6 @@ class Widget_Creator {
 		// Base Elementor widget structure
 		$mapped_type = $this->map_to_elementor_widget_type( $widget_type );
 		
-		error_log( "🔍 WIDGET-CREATOR DEBUG: Mapped widget type {$widget_type} -> {$mapped_type}" );
 		
 		// CRITICAL FIX: Convert e-link settings to e-button link format
 		if ( 'e-link' === $widget_type && 'e-button' === $mapped_type ) {
@@ -276,7 +275,7 @@ class Widget_Creator {
 		// Merge widget settings with styles for Elementor v4 compatibility
 		$merged_settings = $this->merge_settings_with_styles( $settings, $applied_styles );
 		
-		error_log( "🔍 WIDGET-CREATOR DEBUG: Final merged settings for {$widget_type}: " . json_encode( $merged_settings ) );
+		
 		
 		if ( 'e-div-block' === $mapped_type ) {
 			// Div-block containers have special structure in Elementor
@@ -335,7 +334,6 @@ class Widget_Creator {
 
 		$mapped_type = $mapping[ $widget_type ] ?? 'html';
 		
-		error_log( "🔍 WIDGET-CREATOR DEBUG: Mapped {$widget_type} -> {$mapped_type} (zero_defaults: " . ( $this->use_zero_defaults ? 'true' : 'false' ) . ")" );
 
 		return $mapped_type;
 	}
@@ -381,21 +379,13 @@ class Widget_Creator {
 	}
 
 	private function merge_settings_with_styles( $settings, $applied_styles ) {
-		error_log( "🔍 WIDGET-CREATOR DEBUG: merge_settings_with_styles called" );
-		error_log( "🔍 WIDGET-CREATOR DEBUG: Initial settings: " . json_encode( $settings ) );
-		error_log( "🔍 WIDGET-CREATOR DEBUG: Applied styles keys: " . json_encode( array_keys( $applied_styles ) ) );
 		
 		// Format settings according to Elementor v4 atomic widget structure
 		$merged_settings = $this->format_elementor_settings( $settings );
-		error_log( "🔍 WIDGET-CREATOR DEBUG: After format_elementor_settings: " . json_encode( $merged_settings ) );
 
 		// NEW: Apply direct element styles to widget settings (Approach 6)
 		if ( ! empty( $applied_styles['direct_element_styles'] ) ) {
-			error_log( "🔍 WIDGET-CREATOR DEBUG: Found " . count( $applied_styles['direct_element_styles'] ) . " direct element styles" );
 			$merged_settings = $this->apply_direct_element_styles_to_settings( $merged_settings, $applied_styles['direct_element_styles'] );
-			error_log( "🔍 WIDGET-CREATOR DEBUG: After applying direct element styles: " . json_encode( $merged_settings ) );
-		} else {
-			error_log( "🔍 WIDGET-CREATOR DEBUG: No direct element styles found" );
 		}
 
 		// V4 atomic widgets: Add classes array with proper $$type wrapper
@@ -560,6 +550,7 @@ class Widget_Creator {
 			}
 		}
 
+
 		return $v4_styles;
 	}
 
@@ -630,23 +621,16 @@ class Widget_Creator {
 
 		// Convert direct element styles to atomic props format
 		foreach ( $direct_styles as $index => $direct_style ) {
-			error_log( "🔍 DIRECT-STYLE DEBUG $index: " . wp_json_encode( $direct_style ) );
 			
 			if ( isset( $direct_style['converted_property'] ) && isset( $direct_style['property'] ) ) {
 				$property_name = $direct_style['property'];
 				$converted = $direct_style['converted_property'];
 				
-				error_log( "🔍 DIRECT-STYLE: Property={$property_name}, Converted=" . wp_json_encode( $converted ) );
 				
 				if ( is_array( $converted ) && isset( $converted['$$type'] ) ) {
 					$target_property = $this->get_target_property_name( $property_name );
 					
-					error_log( "🔍 DIRECT-STYLE: Target property={$target_property}" );
-					
 					$style_object['variants'][0]['props'][ $target_property ] = $converted;
-					
-					error_log( "🔍 DIRECT-STYLE: Added {$target_property} to props array" );
-					error_log( "🔍 DIRECT-STYLE: Current props=" . wp_json_encode( $style_object['variants'][0]['props'] ) );
 				}
 			}
 		}

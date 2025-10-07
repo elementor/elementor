@@ -1,0 +1,69 @@
+/* External CSS File - Specificity Test */
+
+/* Element selector - Specificity: 1 */
+h1 {
+    color: black;
+    font-size: 20px;
+    margin: 10px;
+}
+
+h2 {
+    color: gray;
+    font-size: 18px;
+}
+
+p {
+    color: darkgray;
+    font-size: 14px;
+}
+
+/* Class selector - Specificity: 10 */
+.red-text {
+    color: red;
+    font-weight: 500;
+}
+
+.blue-text {
+    color: blue;
+    font-weight: 600;
+}
+
+.large-text {
+    font-size: 24px;
+}
+
+/* Descendant selector (element + class) - Specificity: 11 */
+.container h1 {
+    color: green;
+    font-size: 22px;
+}
+
+/* Multiple classes - Specificity: 20 */
+.red-text.large-text {
+    color: darkred;
+    font-size: 28px;
+}
+
+/* ID selector - Specificity: 100 */
+#special-heading {
+    color: purple;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+#unique-paragraph {
+    color: orange;
+    font-size: 16px;
+}
+
+/* ID + class - Specificity: 110 */
+#special-heading.highlighted {
+    color: magenta;
+    background-color: yellow;
+}
+
+/* ID + element - Specificity: 101 */
+#container h2 {
+    color: teal;
+    font-size: 26px;
+}

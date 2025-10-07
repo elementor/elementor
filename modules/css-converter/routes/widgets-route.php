@@ -24,9 +24,9 @@ class Widgets_Route {
 		add_action( 'rest_api_init', [ $this, 'register_route' ] );
 	}
 
-	private function get_conversion_service( $use_zero_defaults = false ) {
+	private function get_conversion_service() {
 		if ( null === $this->conversion_service ) {
-			$this->conversion_service = new Widget_Conversion_Service( $use_zero_defaults );
+			$this->conversion_service = new Widget_Conversion_Service();
 		}
 		return $this->conversion_service;
 	}
@@ -77,6 +77,16 @@ class Widgets_Route {
 							'default' => false,
 							'description' => 'Whether to preserve HTML element IDs',
 						],
+						'createGlobalClasses' => [
+							'type' => 'boolean',
+							'default' => true,
+							'description' => 'Always creates optimized widget styles (deprecated: false option removed)',
+						],
+						'useZeroDefaults' => [
+							'type' => 'boolean',
+							'default' => false,
+							'description' => 'Whether to disable atomic widget base styles (zero defaults)',
+						],
 						'timeout' => [
 							'type' => 'integer',
 							'default' => 30,
@@ -90,11 +100,6 @@ class Widgets_Route {
 							'minimum' => 1,
 							'maximum' => 100,
 							'description' => 'Minimum usage count to create global class (1-100)',
-						],
-						'useZeroDefaults' => [
-							'type' => 'boolean',
-							'default' => true,
-							'description' => 'Use zero default styling for atomic widgets (default: true for CSS converter)',
 						],
 					],
 				],
@@ -122,18 +127,32 @@ class Widgets_Route {
 	}
 
 	public function handle_widget_conversion( WP_REST_Request $request ) {
-		error_log( "🚀 WIDGETS-ROUTE: Widget conversion endpoint called!" );
+		error_log( "🔍 PHASE 2.1: API ENDPOINT DEBUG - Widget conversion called" );
 		
 		$type = $request->get_param( 'type' );
 		$content = $request->get_param( 'content' );
 		$css_urls = $request->get_param( 'cssUrls' ) ?: [];
 		$follow_imports = $request->get_param( 'followImports' ) ?: false;
 		$options = $request->get_param( 'options' ) ?: [];
-
-		// NEW: Get zero defaults option (default: true for CSS converter)
-		$use_zero_defaults = $options['useZeroDefaults'] ?? true;
 		
-		error_log( "🔍 WIDGETS-ROUTE DEBUG: type=$type, useZeroDefaults=" . ($use_zero_defaults ? 'true' : 'false') );
+		// PHASE 2.2: HTML Content Verification
+		error_log( "🔍 PHASE 2.2: HTML CONTENT ANALYSIS" );
+		error_log( "Request type: " . $type );
+		error_log( "Content length: " . strlen( $content ) );
+		error_log( "Content preview (first 500 chars): " . substr( $content, 0, 500 ) );
+		
+		// Check for inline styles in HTML
+		if ( 'html' === $type ) {
+			$inline_style_count = preg_match_all( '/style\s*=\s*["\'][^"\']*["\']/', $content );
+			error_log( "Inline style attributes found: " . $inline_style_count );
+			
+			if ( $inline_style_count > 0 ) {
+				preg_match_all( '/style\s*=\s*["\']([^"\']*)["\']/', $content, $matches );
+				foreach ( $matches[1] as $i => $style_content ) {
+					error_log( "Inline style #" . ($i + 1) . ": " . $style_content );
+				}
+			}
+		}
 
 		// Enhanced input validation using Request_Validator
 		$validation_error = $this->request_validator->validate_widget_conversion_request( $request );
@@ -142,7 +161,7 @@ class Widgets_Route {
 		}
 
 		try {
-			$service = $this->get_conversion_service( $use_zero_defaults );
+			$service = $this->get_conversion_service();
 			
 			// Process based on input type
 			switch ( $type ) {

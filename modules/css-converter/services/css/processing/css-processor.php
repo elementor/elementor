@@ -488,6 +488,9 @@ class Css_Processor {
 		$widget_id = $widget['attributes']['id'] ?? 'no-id';
 		$widget_type = $widget['widget_type'] ?? 'unknown';
 		
+		error_log( "CSS Processor: apply_styles_to_widget called for {$widget_type}" );
+		error_log( "CSS Processor: Widget has inline_css: " . ( empty( $widget['inline_css'] ) ? 'NO' : 'YES (' . count( $widget['inline_css'] ) . ' properties)' ) );
+		
 		// NEW: Apply direct element styles for simple element selectors (Approach 6)
 		if ( ! empty( $processing_result['direct_widget_styles'] ) ) {
 			$widget_tag = $widget['original_tag'] ?? null;
@@ -503,9 +506,18 @@ class Css_Processor {
 		if ( ! empty( $widget['attributes']['id'] ) ) {
 			$widget_id = $widget['attributes']['id'];
 			
+			// PHASE 1 DEBUG: ID style matching
+			error_log( "🔍 ID_MATCH: Widget {$widget_type} has ID '{$widget_id}'" );
+			
 			if ( isset( $processing_result['id_styles'][ $widget_id ] ) ) {
 				$id_styles = $processing_result['id_styles'][ $widget_id ];
+				error_log( "🔍 ID_MATCH: Found " . count( $id_styles ) . " ID styles for #{$widget_id}" );
+			} else {
+				error_log( "🔍 ID_MATCH: No ID styles found for #{$widget_id}" );
+				error_log( "🔍 ID_MATCH: Available ID styles: " . implode( ', ', array_keys( $processing_result['id_styles'] ) ) );
 			}
+		} else {
+			error_log( "🔍 ID_MATCH: Widget {$widget_type} has no ID attribute" );
 		}
 
 		// Apply widget-specific styles (high specificity)
@@ -535,13 +547,17 @@ class Css_Processor {
 			}
 		}
 
+		// DEBUG: Log applied classes before compute_final_styles
+		error_log( "CSS Processor: Applied classes for {$widget_type}: " . implode( ', ', $applied_classes ) );
+		error_log( "CSS Processor: Global classes available: " . implode( ', ', array_keys( $processing_result['global_classes'] ?? [] ) ) );
+		
 		$result = [
 			'widget_styles' => $widget_styles,
 			'global_classes' => $applied_classes,
 			'element_styles' => $element_styles,
 			'id_styles' => $id_styles,  // New: ID-specific styles
 			'direct_element_styles' => $direct_element_styles,  // NEW: Direct element styles (Approach 6)
-			'computed_styles' => $this->compute_final_styles( $widget_styles, $element_styles, $widget, $id_styles, $direct_element_styles ),
+			'computed_styles' => $this->compute_final_styles( $widget_styles, $element_styles, $widget, $id_styles, $direct_element_styles, $applied_classes, $processing_result ),
 		];
 		
 		// DEBUG: Log what we're returning
@@ -580,16 +596,47 @@ class Css_Processor {
 		return false;
 	}
 
-	private function compute_final_styles( $widget_styles, $element_styles, $widget, $id_styles = [], $direct_element_styles = [] ) {
+	private function compute_final_styles( $widget_styles, $element_styles, $widget, $id_styles = [], $direct_element_styles = [], $applied_classes = [], $processing_result = [] ) {
 		// Priority order (lowest to highest):
 		// 1. Standard element_styles (specificity 1)
 		// 2. Direct element resets (specificity 1 but marked as direct)
 		// 3. Widget styles (classes, etc.)
-		// 4. ID styles
-		// 5. Inline styles
-		// 6. !important
+		// 4. Class styles (specificity 10)
+		// 5. ID styles (specificity 100)
+		// 6. Inline styles (specificity 1000)
+		// 7. !important (specificity 10000)
+		
+		// DEBUG: Check what we received
+		error_log( "compute_final_styles: applied_classes type: " . gettype( $applied_classes ) . ", count: " . count( $applied_classes ) . ", value: " . var_export( $applied_classes, true ) );
 		
 		$all_styles = array_merge( $element_styles, $direct_element_styles, $widget_styles );
+		
+		// Add class styles with proper specificity
+		if ( ! empty( $applied_classes ) && ! empty( $processing_result['global_classes'] ) ) {
+			error_log( "CSS Processor: Processing class styles for classes: " . implode( ', ', $applied_classes ) );
+			foreach ( $applied_classes as $class_name ) {
+				if ( isset( $processing_result['global_classes'][ $class_name ]['properties'] ) ) {
+					$class_properties = $processing_result['global_classes'][ $class_name ]['properties'];
+					error_log( "CSS Processor: Found " . count( $class_properties ) . " properties for class '{$class_name}'" );
+					
+					foreach ( $class_properties as $class_style ) {
+						error_log( "CSS Processor: Adding class style - {$class_style['original_property']}: {$class_style['original_value']} (specificity: " . Css_Specificity_Calculator::CLASS_WEIGHT . ")" );
+						$all_styles[] = [
+							'property' => $class_style['original_property'],
+							'value' => $class_style['original_value'],
+							'specificity' => Css_Specificity_Calculator::CLASS_WEIGHT,
+							'important' => $class_style['important'] ?? false,
+							'source' => 'class',
+							'converted_property' => $class_style['converted_property'],
+						];
+					}
+				} else {
+					error_log( "CSS Processor: No properties found for class '{$class_name}'" );
+				}
+			}
+		} else {
+			error_log( "CSS Processor: No class styles to process (applied_classes: " . count( $applied_classes ) . ", global_classes: " . ( empty( $processing_result['global_classes'] ) ? 'empty' : 'has data' ) . ")" );
+		}
 		
 		// Add ID styles with their converted properties
 		foreach ( $id_styles as $id_style ) {
@@ -606,9 +653,12 @@ class Css_Processor {
 		
 		// Add inline styles (highest specificity after !important)
 		if ( ! empty( $widget['inline_css'] ) ) {
+			error_log( "CSS Processor: Found " . count( $widget['inline_css'] ) . " inline styles for widget" );
 			foreach ( $widget['inline_css'] as $property => $style_data ) {
 				// Convert inline CSS to atomic format
 				$converted_property = $this->convert_css_property( $property, $style_data['value'] );
+				
+				error_log( "CSS Processor: Processing inline style {$property}: {$style_data['value']}" );
 				
 				$all_styles[] = [
 					'property' => $property,
@@ -621,6 +671,8 @@ class Css_Processor {
 					'converted_property' => $converted_property,
 				];
 			}
+		} else {
+			error_log( "CSS Processor: No inline styles found for widget" );
 		}
 
 		// Group by property and find winning style for each
