@@ -17,10 +17,11 @@ export class EditorAssertions {
 	static async verifyButtonsPressed(
 		driver: EditorDriver,
 		buttonExpectations: Array<{ buttonName: string; isPressed: boolean }>,
+		timeout = timeouts.expect,
 	): Promise<void> {
 		for ( const { buttonName, isPressed } of buttonExpectations ) {
 			const button = driver.page.getByRole( 'button', { name: buttonName } );
-			await expect( button ).toHaveAttribute( 'aria-pressed', String( isPressed ) );
+			await expect( button ).toHaveAttribute( 'aria-pressed', String( isPressed ), { timeout } );
 		}
 	}
 }
