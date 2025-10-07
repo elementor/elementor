@@ -116,7 +116,7 @@ export default function ThemeSelectionContentB( { actionButton, skipButton, noti
 
 	const activateTheme = useCallback( ( themeSlug ) => {
 		const themeSlugForAPI = 'hello-theme' === themeSlug ? 'hello-elementor' : 'hello-biz';
-		
+
 		const formData = new FormData();
 		formData.append( '_nonce', elementorCommon.config.ajax.nonce );
 		formData.append( 'action', 'elementor_activate_hello_theme' );
@@ -126,26 +126,25 @@ export default function ThemeSelectionContentB( { actionButton, skipButton, noti
 			method: 'POST',
 			body: formData,
 		} )
-		.then( response => response.json() )
-		.then( data => {
-			resetInstallationState();
-			if ( data.success && onThemeInstallSuccess ) {
-				onThemeInstallSuccess();
-			} else if ( onThemeInstallError ) {
-				onThemeInstallError();
-			}
-		} )
-		.catch( () => {
-			resetInstallationState();
-			if ( onThemeInstallError ) {
-				onThemeInstallError();
-			}
-		} );
+			.then( ( response ) => response.json() )
+			.then( ( data ) => {
+				resetInstallationState();
+				if ( data.success && onThemeInstallSuccess ) {
+					onThemeInstallSuccess();
+				} else if ( onThemeInstallError ) {
+					onThemeInstallError();
+				}
+			} )
+			.catch( () => {
+				resetInstallationState();
+				if ( onThemeInstallError ) {
+					onThemeInstallError();
+				}
+			} );
 	}, [ onThemeInstallSuccess, onThemeInstallError, resetInstallationState ] );
 
 	const installTheme = useCallback( ( themeSlug ) => {
 		const themeSlugForAPI = 'hello-theme' === themeSlug ? 'hello-elementor' : 'hello-biz';
-		
 		wp.updates.ajax( 'install-theme', {
 			slug: themeSlugForAPI,
 			success: () => activateTheme( themeSlug ),
