@@ -17,9 +17,6 @@ export default function GoodToGo() {
 	const skipButton = 'B' === variant ? {
 		text: __( 'Continue with blank canvas', 'elementor' ),
 		href: elementorAppConfig.onboarding.urls.createNewPage,
-		onClick: () => {
-			OnboardingEventTracking.handleSiteStarterChoice( 'blank_canvas' );
-		},
 	} : {
 		text: __( 'Skip', 'elementor' ),
 		href: elementorAppConfig.onboarding.urls.createNewPage,

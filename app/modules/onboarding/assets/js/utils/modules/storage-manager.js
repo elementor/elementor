@@ -25,6 +25,10 @@ export const ONBOARDING_STORAGE_KEYS = {
 	PENDING_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
 	AB_TEST_VARIANT: 'elementor_onboarding_ab_variant',
 	EXPERIMENT_STARTED: 'elementor_onboarding_experiment_started',
+	THEME_SELECTION_VARIANT: 'elementor_onboarding_theme_selection_variant',
+	THEME_SELECTION_EXPERIMENT_STARTED: 'elementor_onboarding_theme_selection_experiment_started',
+	GOOD_TO_GO_VARIANT: 'elementor_onboarding_good_to_go_variant',
+	GOOD_TO_GO_EXPERIMENT_STARTED: 'elementor_onboarding_good_to_go_experiment_started',
 };
 
 export function getString( key ) {
@@ -130,6 +134,10 @@ export function clearAllOnboardingData() {
 		ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
 		ONBOARDING_STORAGE_KEYS.AB_TEST_VARIANT,
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT_STARTED,
+		ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT,
+		ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED,
+		ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT,
+		ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED,
 	];
 
 	clearMultiple( keysToRemove );

@@ -29,4 +29,16 @@ class API {
 
 		return $ab_testing_data['coreOnboarding'] ?? false;
 	}
+
+	public function is_theme_selection_experiment_enabled( $force_request = false ): bool {
+		$ab_testing_data = $this->get_ab_testing_data( $force_request );
+
+		return $ab_testing_data['coreOnboardingThemeSelection'] ?? false;
+	}
+
+	public function is_good_to_go_experiment_enabled( $force_request = false ): bool {
+		$ab_testing_data = $this->get_ab_testing_data( $force_request );
+
+		return $ab_testing_data['coreOnboardingGoodToGo'] ?? false;
+	}
 }

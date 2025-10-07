@@ -71,6 +71,16 @@ function getAbTestVariant() {
 	return variant || null;
 }
 
+function getThemeSelectionVariant() {
+	const variant = StorageManager.getString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT );
+	return variant || null;
+}
+
+function getGoodToGoVariant() {
+	const variant = StorageManager.getString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT );
+	return variant || null;
+}
+
 export function createEventPayload( basePayload = {} ) {
 	return {
 		location: 'plugin_onboarding',
@@ -80,12 +90,22 @@ export function createEventPayload( basePayload = {} ) {
 }
 
 export function createStepEventPayload( stepNumber, stepName, additionalData = {} ) {
-	return createEventPayload( {
+	const basePayload = {
 		step_number: stepNumber,
 		step_name: stepName,
 		ab_test_variant: getAbTestVariant(),
 		...additionalData,
-	} );
+	};
+
+	if ( 2 === stepNumber && elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
+		basePayload.theme_selection_variant = getThemeSelectionVariant();
+	}
+
+	if ( 4 === stepNumber && elementorAppConfig?.onboarding?.goodToGoExperimentEnabled ) {
+		basePayload.good_to_go_variant = getGoodToGoVariant();
+	}
+
+	return createEventPayload( basePayload );
 }
 
 export function createEditorEventPayload( additionalData = {} ) {

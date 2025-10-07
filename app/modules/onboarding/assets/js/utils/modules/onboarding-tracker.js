@@ -303,14 +303,8 @@ class OnboardingTracker {
 	}
 
 	sendThemeChoiceEvent( currentStep, themeValue ) {
-		// eslint-disable-next-line no-console
-		console.log( '[Tracker Debug] sendThemeChoiceEvent called. canSendEvents:', EventDispatcher.canSendEvents(), 'theme:', themeValue );
-		
 		if ( EventDispatcher.canSendEvents() ) {
-			// eslint-disable-next-line no-console
-			console.log( '[Tracker Debug] Dispatching ab_201_theme_choice event using EventDispatcher.dispatchStepEvent' );
-			
-			const result = EventDispatcher.dispatchStepEvent(
+			return EventDispatcher.dispatchStepEvent(
 				ONBOARDING_EVENTS_MAP.THEME_CHOICE,
 				2,
 				ONBOARDING_STEP_NAMES.HELLO_BIZ,
@@ -320,12 +314,6 @@ class OnboardingTracker {
 					theme: themeValue,
 				},
 			);
-			
-			// eslint-disable-next-line no-console
-			console.log( '[Tracker Debug] ab_201_theme_choice event dispatched, result:', result );
-		} else {
-			// eslint-disable-next-line no-console
-			console.warn( '[Tracker Debug] ab_201_theme_choice event NOT sent - canSendEvents returned false' );
 		}
 	}
 
@@ -847,14 +835,17 @@ class OnboardingTracker {
 	}
 
 	onStepLoad( currentStep ) {
-		TimingManager.trackStepStartTime( this.getStepNumber( currentStep ) );
+		const stepNumber = this.getStepNumber( currentStep );
+		TimingManager.trackStepStartTime( stepNumber );
 
-		if ( 2 === this.getStepNumber( currentStep ) || 'hello' === currentStep || 'hello_biz' === currentStep ) {
+		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
 			this.sendStoredStep1EventsOnStep2();
+			this.sendThemeSelectionExperimentStarted();
 		}
 
-		if ( 4 === this.getStepNumber( currentStep ) || 'goodToGo' === currentStep ) {
+		if ( 4 === stepNumber || 'goodToGo' === currentStep ) {
 			this.checkAndSendReturnToStep4();
+			this.sendGoodToGoExperimentStarted();
 		}
 	}
 
@@ -891,6 +882,14 @@ class OnboardingTracker {
 		return phpEnabled;
 	}
 
+	isThemeSelectionExperimentEnabled() {
+		return elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled || false;
+	}
+
+	isGoodToGoExperimentEnabled() {
+		return elementorAppConfig?.onboarding?.goodToGoExperimentEnabled || false;
+	}
+
 	getExperimentVariant() {
 		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.AB_TEST_VARIANT );
 		if ( stored ) {
@@ -900,6 +899,24 @@ class OnboardingTracker {
 		return elementorAppConfig?.onboarding?.abVariant || null;
 	}
 
+	getThemeSelectionVariant() {
+		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT );
+		if ( stored ) {
+			return stored;
+		}
+
+		return null;
+	}
+
+	getGoodToGoVariant() {
+		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT );
+		if ( stored ) {
+			return stored;
+		}
+
+		return null;
+	}
+
 	assignExperimentVariant() {
 		if ( ! this.isAbTestEnabled() ) {
 			return null;
@@ -907,6 +924,26 @@ class OnboardingTracker {
 
 		const variant = Math.random() < 0.5 ? 'A' : 'B';
 		StorageManager.setString( ONBOARDING_STORAGE_KEYS.AB_TEST_VARIANT, variant );
+		return variant;
+	}
+
+	assignThemeSelectionVariant() {
+		if ( ! this.isThemeSelectionExperimentEnabled() ) {
+			return null;
+		}
+
+		const variant = Math.random() < 0.5 ? 'A' : 'B';
+		StorageManager.setString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT, variant );
+		return variant;
+	}
+
+	assignGoodToGoVariant() {
+		if ( ! this.isGoodToGoExperimentEnabled() ) {
+			return null;
+		}
+
+		const variant = Math.random() < 0.5 ? 'A' : 'B';
+		StorageManager.setString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT, variant );
 		return variant;
 	}
 
@@ -936,6 +973,62 @@ class OnboardingTracker {
 		EventDispatcher.dispatch( '$experiment_started', eventData );
 
 		StorageManager.setString( ONBOARDING_STORAGE_KEYS.EXPERIMENT_STARTED, 'true' );
+	}
+
+	sendThemeSelectionExperimentStarted() {
+		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED ) ) {
+			return;
+		}
+
+		let variant = this.getThemeSelectionVariant();
+
+		if ( ! variant ) {
+			variant = this.assignThemeSelectionVariant();
+			if ( ! variant ) {
+				return;
+			}
+		}
+
+		if ( ! EventDispatcher.canSendEvents() ) {
+			return;
+		}
+
+		const eventData = {
+			'Experiment name': 'core_onboarding_theme_selection',
+			'Variant name': variant,
+		};
+
+		EventDispatcher.dispatch( '$experiment_started', eventData );
+
+		StorageManager.setString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED, 'true' );
+	}
+
+	sendGoodToGoExperimentStarted() {
+		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED ) ) {
+			return;
+		}
+
+		let variant = this.getGoodToGoVariant();
+
+		if ( ! variant ) {
+			variant = this.assignGoodToGoVariant();
+			if ( ! variant ) {
+				return;
+			}
+		}
+
+		if ( ! EventDispatcher.canSendEvents() ) {
+			return;
+		}
+
+		const eventData = {
+			'Experiment name': 'core_onboarding_good_to_go',
+			'Variant name': variant,
+		};
+
+		EventDispatcher.dispatch( '$experiment_started', eventData );
+
+		StorageManager.setString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED, 'true' );
 	}
 }
 

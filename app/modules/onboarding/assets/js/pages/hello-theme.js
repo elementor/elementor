@@ -89,9 +89,6 @@ export default function HelloTheme() {
 
 		setHelloInstalledInOnboarding( true );
 
-		// eslint-disable-next-line no-console
-		console.log( '[Theme Selection Debug] Before sendStepEndState, step2_actions in localStorage:', localStorage.getItem( ONBOARDING_STORAGE_KEYS.STEP2_ACTIONS ) );
-		
 		OnboardingEventTracking.sendStepEndState( 2 );
 		goToNextScreen();
 	}, [ getStateObjectToUpdate, goToNextScreen, noticeStateSuccess, state, updateState ] );
@@ -158,25 +155,12 @@ export default function HelloTheme() {
 	};
 
 	const handleThemeSelection = ( themeSlug ) => {
-		// eslint-disable-next-line no-console
-		console.log( '[Theme Selection Debug] handleThemeSelection called with:', themeSlug );
-		
 		setSelectedTheme( themeSlug );
 
 		const themeValue = 'hello-theme' === themeSlug ? 'hello' : 'hellobiz';
 		
-		// eslint-disable-next-line no-console
-		console.log( '[Theme Selection Debug] Tracking step action:', `select_theme_${ themeSlug.replace( '-', '_' ) }`, { theme: themeValue } );
-		
 		OnboardingEventTracking.trackStepAction( 2, `select_theme_${ themeSlug.replace( '-', '_' ) }`, { theme: themeValue } );
-		
-		// eslint-disable-next-line no-console
-		console.log( '[Theme Selection Debug] Sending ab_201_theme_choice event with theme:', themeValue );
-		
 		OnboardingEventTracking.sendThemeChoiceEvent( state.currentStep, themeValue );
-		
-		// eslint-disable-next-line no-console
-		console.log( '[Theme Selection Debug] All tracking complete for theme:', themeValue );
 	};
 
 	/**

@@ -164,9 +164,6 @@ export default function ThemeSelectionContentB( { actionButton, skipButton, noti
 	}, [ installTheme ] );
 
 	const handleThemeSelect = useCallback( ( themeSlug ) => {
-		// eslint-disable-next-line no-console
-		console.log( '[ContentB Debug] handleThemeSelect called with:', themeSlug, 'onThemeSelect exists:', !! onThemeSelect );
-		
 		if ( onThemeSelect ) {
 			onThemeSelect( themeSlug );
 		}
