@@ -22,12 +22,18 @@ class ScreenViewTracking {
 	}
 
 	static trackInitialPageView() {
-		setTimeout( () => {
+		const run = () => {
 			const screenData = this.getScreenData();
 			if ( screenData ) {
 				this.trackScreen( screenData.screenId, screenData.screenType );
 			}
-		}, 100 );
+		};
+
+		if ( 'loading' === document.readyState ) {
+			document.addEventListener( 'DOMContentLoaded', run, { once: true } );
+		} else {
+			run();
+		}
 	}
 
 	static getScreenData() {
@@ -107,17 +113,40 @@ class ScreenViewTracking {
 	}
 
 	static attachNavTabTracking() {
-		const navTabs = document.querySelectorAll( SCREEN_SELECTORS.NAV_TAB );
+		const wrapper = document.querySelector( SCREEN_SELECTORS.NAV_TAB_WRAPPER );
 
-		navTabs.forEach( ( tab ) => {
-			tab.addEventListener( 'click', () => {
-				setTimeout( () => {
+		if ( ! wrapper ) {
+			return;
+		}
+
+		const observer = new MutationObserver( ( mutations ) => {
+			for ( const mutation of mutations ) {
+				if ( 'childList' === mutation.type ) {
 					const screenData = this.getScreenData();
 					if ( screenData ) {
 						this.trackScreen( screenData.screenId, screenData.screenType );
 					}
-				}, 50 );
-			} );
+					break;
+				}
+
+				if ( 'attributes' === mutation.type && 'class' === mutation.attributeName ) {
+					const target = mutation.target;
+					if ( target && target.classList && target.classList.contains( 'nav-tab' ) ) {
+						const screenData = this.getScreenData();
+						if ( screenData ) {
+							this.trackScreen( screenData.screenId, screenData.screenType );
+						}
+						break;
+					}
+				}
+			}
+		} );
+
+		observer.observe( wrapper, {
+			attributes: true,
+			attributeFilter: [ 'class' ],
+			subtree: true,
+			childList: true,
 		} );
 	}
 
