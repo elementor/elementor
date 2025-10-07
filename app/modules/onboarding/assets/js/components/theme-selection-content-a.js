@@ -5,7 +5,7 @@ export default function ThemeSelectionContentA( { actionButton, skipButton, noti
 	return (
 		<PageContentLayout
 			image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Hello_Biz.svg' }
-			title={ __( 'Every site starts with a theme.', 'elementor' ) }
+			title={ __( 'Every site starts with a theme ABCD.', 'elementor' ) }
 			actionButton={ actionButton }
 			skipButton={ skipButton }
 			noticeState={ noticeState }
