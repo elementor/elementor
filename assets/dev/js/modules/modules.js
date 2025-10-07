@@ -7,7 +7,6 @@ import ForceMethodImplementation from './imports/force-method-implementation';
 import { createGetInitialState } from '../../../../app/modules/import-export-customization/assets/js/shared/utils/template-registry-helpers';
 import { customizationDialogsRegistry } from '../../../../app/modules/import-export-customization/assets/js/shared/registry/customization-dialogs';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
-import WpDashboardTracking from 'elementor-app/event-track/wp-dashboard-tracking';
 
 export default window.elementorModules = {
 	Module,
@@ -27,9 +26,5 @@ export default window.elementorModules = {
 
 	appsEventTracking: {
 		AppsEventTracking,
-	},
-
-	wpDashboardTracking: {
-		WpDashboardTracking,
 	},
 };
