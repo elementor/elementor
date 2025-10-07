@@ -41,7 +41,6 @@ class Module extends BaseModule {
 		return 'onboarding';
 	}
 
-
 	private function is_theme_selection_experiment_enabled() {
 		$editor_assets_api = $this->get_editor_assets_api();
 
@@ -61,7 +60,6 @@ class Module extends BaseModule {
 
 		return $editor_assets_api->is_good_to_go_experiment_enabled();
 	}
-
 
 	private function get_editor_assets_api(): ?API {
 		if ( null !== $this->editor_assets_api ) {

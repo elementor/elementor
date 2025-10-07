@@ -872,16 +872,6 @@ class OnboardingTracker {
 		return PostOnboardingTracker.clearAllOnboardingStorage();
 	}
 
-	isAbTestEnabled() {
-		const phpEnabled = elementorAppConfig?.onboarding?.abTestEnabled || false;
-
-		if ( window.elementorAbTestOverride !== undefined ) {
-			return window.elementorAbTestOverride;
-		}
-
-		return phpEnabled;
-	}
-
 	isThemeSelectionExperimentEnabled() {
 		return elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled || false;
 	}
