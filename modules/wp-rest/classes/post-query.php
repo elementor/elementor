@@ -69,6 +69,8 @@ class Post_Query extends Base {
 			'custom_search' => true,
 			'search_term' => $term,
 			'post_status' => $is_public_only ? 'publish' : 'any',
+			'orderby' => 'ID',
+			'order' => 'ASC',
 		];
 
 		if ( ! empty( $params[ self::META_QUERY_KEY ] ) && is_array( $params[ self::META_QUERY_KEY ] ) ) {
