@@ -164,10 +164,17 @@ export default function ThemeSelectionContentB( { actionButton, skipButton, noti
 	}, [ installTheme ] );
 
 	const handleThemeSelect = useCallback( ( themeSlug ) => {
+		// eslint-disable-next-line no-console
+		console.log( '[ContentB Debug] handleThemeSelect called with:', themeSlug, 'onThemeSelect exists:', !! onThemeSelect );
+		
 		if ( onThemeSelect ) {
 			onThemeSelect( themeSlug );
 		}
-		startThemeInstallation( themeSlug );
+		
+		// Delay installation to ensure tracking events are sent before navigation
+		setTimeout( () => {
+			startThemeInstallation( themeSlug );
+		}, 100 );
 	}, [ onThemeSelect, startThemeInstallation ] );
 
 	const themeData = getThemeData();

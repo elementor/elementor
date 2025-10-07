@@ -7,6 +7,22 @@ import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 export default function GoodToGoContentB( { skipButton } ) {
 	const kitLibraryLink = elementorAppConfig.onboarding.urls.kitLibrary + '&referrer=onboarding';
 
+	const blankCanvasButton = {
+		...skipButton,
+		target: '_self',
+		action: ( event ) => {
+			OnboardingEventTracking.handleSiteStarterChoice( 'blank_canvas' );
+
+			if ( skipButton.href ) {
+				event.preventDefault();
+
+				setTimeout( () => {
+					window.location.href = skipButton.href;
+				}, 100 );
+			}
+		},
+	};
+
 	return (
 		<>
 			<h1 className="e-onboarding__page-content-section-title">
@@ -38,7 +54,7 @@ export default function GoodToGoContentB( { skipButton } ) {
 					} }
 				/>
 			</Grid>
-			<FooterButtons skipButton={ { ...skipButton, target: '_self' } } className="e-onboarding__good-to-go-footer" />
+			<FooterButtons skipButton={ blankCanvasButton } className="e-onboarding__good-to-go-footer" />
 		</>
 	);
 }

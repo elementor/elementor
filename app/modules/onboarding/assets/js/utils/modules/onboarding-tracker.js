@@ -303,7 +303,13 @@ class OnboardingTracker {
 	}
 
 	sendThemeChoiceEvent( currentStep, themeValue ) {
+		// eslint-disable-next-line no-console
+		console.log( '[Tracker Debug] sendThemeChoiceEvent called. canSendEvents:', EventDispatcher.canSendEvents(), 'theme:', themeValue );
+		
 		if ( EventDispatcher.canSendEvents() ) {
+			// eslint-disable-next-line no-console
+			console.log( '[Tracker Debug] Dispatching ab_201_theme_choice event to elementorCommon.events' );
+			
 			elementorCommon.events.dispatchEvent( {
 				event: 'ab_201_theme_choice',
 				version: '',
@@ -313,6 +319,12 @@ class OnboardingTracker {
 					theme: themeValue,
 				},
 			} );
+			
+			// eslint-disable-next-line no-console
+			console.log( '[Tracker Debug] ab_201_theme_choice event dispatched successfully' );
+		} else {
+			// eslint-disable-next-line no-console
+			console.warn( '[Tracker Debug] ab_201_theme_choice event NOT sent - canSendEvents returned false' );
 		}
 	}
 
