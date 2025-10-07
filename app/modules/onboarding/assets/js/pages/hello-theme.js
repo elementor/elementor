@@ -14,7 +14,7 @@ export default function HelloTheme() {
 		// Allow navigating back to this screen if it was completed in the onboarding.
 		[ helloInstalledInOnboarding, setHelloInstalledInOnboarding ] = useState( false ),
 		[ isInstalling, setIsInstalling ] = useState( false ),
-		[ selectedTheme, setSelectedTheme ] = useState( 'hello-biz' ),
+		[ selectedTheme, setSelectedTheme ] = useState( null ),
 		noticeStateSuccess = {
 			type: 'success',
 			icon: 'eicon-check-circle-o',
@@ -298,6 +298,8 @@ export default function HelloTheme() {
 				noticeState={ noticeState }
 				selectedTheme={ selectedTheme }
 				onThemeSelect={ handleThemeSelection }
+				onThemeInstallSuccess={ onHelloThemeActivationSuccess }
+				onThemeInstallError={ onErrorInstallHelloTheme }
 			/>
 			<div className="e-onboarding__footnote">
 				{ '* ' + __( 'You can switch your theme later on', 'elementor' ) }

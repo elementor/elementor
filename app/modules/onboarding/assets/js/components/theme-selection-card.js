@@ -6,16 +6,17 @@ export default function ThemeSelectionCard( {
 	description,
 	illustration,
 	isSelected,
+	isLoading,
 	onSelect,
 } ) {
 	const handleClick = () => {
-		if ( onSelect ) {
+		if ( onSelect && ! isLoading ) {
 			onSelect( themeSlug );
 		}
 	};
 
 	const handleKeyDown = ( e ) => {
-		if ( ( 'Enter' === e.key || ' ' === e.key ) && onSelect ) {
+		if ( ( 'Enter' === e.key || ' ' === e.key ) && onSelect && ! isLoading ) {
 			e.preventDefault();
 			onSelect( themeSlug );
 		}
@@ -23,7 +24,7 @@ export default function ThemeSelectionCard( {
 
 	return (
 		<div
-			className={ `e-onboarding__theme-card ${ isSelected ? 'e-onboarding__theme-card--selected' : '' }` }
+			className={ `e-onboarding__theme-card ${ isSelected ? 'e-onboarding__theme-card--selected' : '' } ${ isLoading ? 'e-onboarding__theme-card--loading' : '' }` }
 			data-theme={ themeSlug }
 			onClick={ handleClick }
 			role="button"
@@ -54,5 +55,6 @@ ThemeSelectionCard.propTypes = {
 		className: PropTypes.string,
 	} ).isRequired,
 	isSelected: PropTypes.bool,
+	isLoading: PropTypes.bool,
 	onSelect: PropTypes.func,
 };
