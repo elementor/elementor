@@ -168,9 +168,7 @@ export default function ThemeSelectionContentB( { actionButton, skipButton, noti
 			onThemeSelect( themeSlug );
 		}
 
-		setTimeout( () => {
-			startThemeInstallation( themeSlug );
-		}, 100 );
+		startThemeInstallation( themeSlug );
 	}, [ onThemeSelect, startThemeInstallation ] );
 
 	const themeData = getThemeData();

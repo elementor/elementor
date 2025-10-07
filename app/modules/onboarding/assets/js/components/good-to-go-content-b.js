@@ -12,10 +12,7 @@ export default function GoodToGoContentB( { skipButton } ) {
 
 		if ( skipButton.href ) {
 			event.preventDefault();
-
-			setTimeout( () => {
-				window.location.href = skipButton.href;
-			}, 100 );
+			window.location.href = skipButton.href;
 		}
 	};
 
