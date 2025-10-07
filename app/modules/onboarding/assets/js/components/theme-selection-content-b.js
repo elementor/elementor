@@ -201,6 +201,9 @@ export default function ThemeSelectionContentB( { actionButton, skipButton, noti
 							isSelected={ selectedTheme === theme.slug }
 							isLoading={ isInstalling && installingTheme === theme.slug }
 							onSelect={ handleThemeSelect }
+							aria-label={ `Select ${ theme.title } theme: ${ theme.description }` }
+							role="button"
+							tabIndex={ 0 }
 						/>
 					) ) }
 				</div>

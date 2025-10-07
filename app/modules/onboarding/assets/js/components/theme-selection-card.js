@@ -8,6 +8,10 @@ export default function ThemeSelectionCard( {
 	isSelected,
 	isLoading,
 	onSelect,
+	'aria-label': ariaLabel,
+	role,
+	tabIndex,
+	onKeyDown,
 } ) {
 	const handleClick = () => {
 		if ( onSelect && ! isLoading ) {
@@ -22,14 +26,17 @@ export default function ThemeSelectionCard( {
 		}
 	};
 
+	const handleKeyDownEvent = onKeyDown || handleKeyDown;
+
 	return (
 		<div
 			className={ `e-onboarding__theme-card ${ isSelected ? 'e-onboarding__theme-card--selected' : '' } ${ isLoading ? 'e-onboarding__theme-card--loading' : '' }` }
 			data-theme={ themeSlug }
 			onClick={ handleClick }
-			role="button"
-			tabIndex={ 0 }
-			onKeyDown={ handleKeyDown }
+			role={ role || "button" }
+			tabIndex={ tabIndex !== undefined ? tabIndex : 0 }
+			onKeyDown={ handleKeyDownEvent }
+			aria-label={ ariaLabel }
 		>
 			<div className={ `e-onboarding__theme-card-illustration ${ illustration?.className || '' }` }>
 				{ illustration?.svg }
@@ -57,4 +64,8 @@ ThemeSelectionCard.propTypes = {
 	isSelected: PropTypes.bool,
 	isLoading: PropTypes.bool,
 	onSelect: PropTypes.func,
+	'aria-label': PropTypes.string,
+	role: PropTypes.string,
+	tabIndex: PropTypes.number,
+	onKeyDown: PropTypes.func,
 };
