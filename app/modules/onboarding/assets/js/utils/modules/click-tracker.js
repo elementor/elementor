@@ -369,6 +369,7 @@ class ClickTracker {
 		}
 		this.lastSelectClickTime = 0;
 		StorageManager.clearAllOnboardingData();
+		StorageManager.clearExperimentData();
 	}
 }
 
