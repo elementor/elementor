@@ -39,7 +39,7 @@ export default class StyleTab extends BasePage {
 		}
 	}
 
-	async clickShowMore( sectionName: string ): Promise<void> {
+	async clickShowMore( sectionName: StyleSection ): Promise<void> {
 		const content = this.page.locator( `[aria-label="${ sectionName } section content"]` );
 		const showMoreBtn = content.locator( '[aria-label="Show more"]' );
 
@@ -49,12 +49,21 @@ export default class StyleTab extends BasePage {
 		}
 	}
 
-	async openTypographySection( expandAdvancedSection = true ): Promise<void> {
-		await this.page.locator( '[aria-label="Style tab"]' ).click();
-		await this.page.locator( '[aria-label="Typography section"]' ).click();
+	async openSection( sectionId: StyleSection, expandAdvancedSection = true ): Promise<void> {
+		const sectionButton = this.page.locator( '.MuiButtonBase-root', { hasText: new RegExp( sectionId, 'i' ) } );
+		const contentSelector = await sectionButton.getAttribute( 'aria-controls' );
+		const isContentVisible = await this.page.evaluate( ( selector ) => {
+			return !! document.getElementById( selector );
+		}, contentSelector );
+
+		if ( isContentVisible ) {
+			return;
+		}
+
+		await sectionButton.click();
 
 		if ( expandAdvancedSection ) {
-			await this.clickShowMore( STYLE_SECTIONS.TYPOGRAPHY );
+			await this.clickShowMore( sectionId );
 		}
 	}
 
