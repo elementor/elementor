@@ -603,4 +603,3 @@ export default function createAtomicElementBaseView( type ) {
 
 	return AtomicElementView;
 }
-
