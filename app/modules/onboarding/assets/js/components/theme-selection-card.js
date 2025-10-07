@@ -33,7 +33,7 @@ export default function ThemeSelectionCard( {
 			className={ `e-onboarding__theme-card ${ isSelected ? 'e-onboarding__theme-card--selected' : '' } ${ isLoading ? 'e-onboarding__theme-card--loading' : '' }` }
 			data-theme={ themeSlug }
 			onClick={ handleClick }
-			role={ role || "button" }
+			role={ role || 'button' }
 			tabIndex={ tabIndex !== undefined ? tabIndex : 0 }
 			onKeyDown={ handleKeyDownEvent }
 			aria-label={ ariaLabel }
