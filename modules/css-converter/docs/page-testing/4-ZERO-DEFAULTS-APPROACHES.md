@@ -345,3 +345,4 @@ document.querySelector('.e-heading-base');  // ✅ Found!
 4. **Flexibility** - Can be used by other features
 
 The only trade-off is requiring a small modification to Elementor's atomic widgets module, but this benefits the entire Elementor ecosystem, not just the CSS converter.
+

@@ -20,6 +20,8 @@ class Widget_Creator {
 	private $property_mapper_registry;
 	private $current_css_processing_result;
 	private $use_zero_defaults;
+	private $current_widget_type;
+	private $current_unsupported_props = [];
 
 	public function __construct( $use_zero_defaults = false ) {
 		$this->use_zero_defaults = $use_zero_defaults;
@@ -258,6 +260,9 @@ class Widget_Creator {
 		
 		$widget_type = $widget['widget_type'];
 		$settings = $widget['settings'] ?? [];
+
+		// Set current widget type for atomic widget property support checking
+		$this->current_widget_type = $widget_type;
 		$applied_styles = $widget['applied_styles'] ?? [];
 
 		// Generate unique widget ID
@@ -394,8 +399,9 @@ class Widget_Creator {
 		// Determine if this widget needs a class ID for styling
 		$has_global_classes = ! empty( $applied_styles['global_classes'] );
 		$has_computed_styles = ! empty( $applied_styles['computed_styles'] ) || ! empty( $applied_styles['id_styles'] );
+		$has_unsupported_props = ! empty( $this->current_unsupported_props );
 		
-		if ( $has_global_classes || $has_computed_styles ) {
+		if ( $has_global_classes || $has_computed_styles || $has_unsupported_props ) {
 			// Generate a single unique class ID for this widget (avoid duplicates)
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
@@ -550,6 +556,48 @@ class Widget_Creator {
 			}
 		}
 
+		// Process unsupported properties (properties not supported by atomic widget)
+		if ( ! empty( $this->current_unsupported_props ) ) {
+			// Use the same class ID that was set earlier
+			if ( empty( $this->current_widget_class_id ) ) {
+				$this->current_widget_class_id = $this->generate_unique_class_id();
+			}
+			
+			$class_id = $this->current_widget_class_id;
+			
+			error_log( "Widget Creator: Processing " . count( $this->current_unsupported_props ) . " unsupported properties for CSS class generation" );
+			
+			// If we already have a style object, merge with it
+			if ( isset( $v4_styles[ $class_id ] ) ) {
+				// Merge unsupported props with existing props
+				$existing_props = $v4_styles[ $class_id ]['variants'][0]['props'] ?? [];
+				$v4_styles[ $class_id ]['variants'][0]['props'] = array_merge( $existing_props, $this->current_unsupported_props );
+				error_log( "Widget Creator: Merged unsupported props with existing styles for class {$class_id}" );
+			} else {
+				// Create new style object for unsupported properties
+				$style_object = [
+					'id' => $class_id,
+					'label' => 'local',
+					'type' => 'class',
+					'variants' => [
+						[
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+							'props' => $this->current_unsupported_props,
+							'custom_css' => null,
+						],
+					],
+				];
+				
+				$v4_styles[ $class_id ] = $style_object;
+				error_log( "Widget Creator: Created new style object for unsupported props with class {$class_id}" );
+			}
+			
+			// Clear unsupported props after processing
+			$this->current_unsupported_props = [];
+		}
 
 		return $v4_styles;
 	}
@@ -777,21 +825,42 @@ class Widget_Creator {
 
 	private function map_css_to_v4_props( $computed_styles ) {
 		$v4_props = [];
+		$unsupported_props = [];
 
 		foreach ( $computed_styles as $property => $atomic_value ) {
 			if ( is_array( $atomic_value ) && isset( $atomic_value['$$type'] ) ) {
 				$target_property = $this->get_target_property_name( $property );
-				$v4_props[ $target_property ] = $atomic_value;
-				if ( $target_property !== $property ) {
-					error_log( "Widget Creator: Remapping {$property} to {$target_property}" );
+				
+				// Check if the current widget type supports this property
+				if ( $this->atomic_widget_supports_property( $target_property ) ) {
+					$v4_props[ $target_property ] = $atomic_value;
+					if ( $target_property !== $property ) {
+						error_log( "Widget Creator: Remapping {$property} to {$target_property}" );
+					}
+					error_log( "Widget Creator: Adding atomic prop {$target_property}: " . wp_json_encode( $atomic_value ) );
+				} else {
+					// Property not supported by atomic widget - route to CSS classes
+					$unsupported_props[ $target_property ] = $atomic_value;
+					error_log( "Widget Creator: Property {$target_property} not supported by atomic widget - routing to CSS classes" );
 				}
-				error_log( "Widget Creator: Adding atomic prop {$target_property}: " . wp_json_encode( $atomic_value ) );
 			} else {
 				error_log( "Widget Creator: Skipping non-atomic prop {$property}: " . wp_json_encode( $atomic_value ) );
 			}
 		}
 
+		// Store unsupported properties for CSS class generation
+		if ( ! empty( $unsupported_props ) ) {
+			$this->current_unsupported_props = $unsupported_props;
+			
+			// Add unsupported properties to computed styles for CSS class generation
+			if ( ! isset( $computed_styles ) ) {
+				// If we're in map_css_to_v4_props, we need to trigger CSS class generation
+				// This will be handled in merge_settings_with_styles
+			}
+		}
+
 		error_log( "Widget Creator: Final v4_props: " . wp_json_encode( $v4_props ) );
+		error_log( "Widget Creator: Unsupported props for CSS classes: " . wp_json_encode( $unsupported_props ) );
 		return $v4_props;
 	}
 
@@ -807,6 +876,65 @@ class Widget_Creator {
 		}
 		
 		return $property;
+	}
+
+	private function atomic_widget_supports_property( string $property ): bool {
+		if ( empty( $this->current_widget_type ) ) {
+			return false;
+		}
+
+		// Get the atomic widget class for the current widget type
+		$atomic_widget_class = $this->get_atomic_widget_class( $this->current_widget_type );
+		if ( ! $atomic_widget_class ) {
+			return false;
+		}
+
+		// Get the prop schema from the atomic widget
+		$prop_schema = $this->get_atomic_widget_prop_schema( $atomic_widget_class );
+		if ( empty( $prop_schema ) ) {
+			return false;
+		}
+
+		// Check if the property is supported
+		$is_supported = array_key_exists( $property, $prop_schema );
+		error_log( "Widget Creator: Checking if {$this->current_widget_type} supports '{$property}': " . ( $is_supported ? 'YES' : 'NO' ) );
+		
+		return $is_supported;
+	}
+
+	private function get_atomic_widget_class( string $widget_type ): ?string {
+		// Map widget types to their atomic widget classes
+		$widget_class_map = [
+			'e-paragraph' => 'Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph',
+			'e-heading' => 'Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading',
+			'e-button' => 'Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button',
+			// Add more mappings as needed
+		];
+
+		return $widget_class_map[ $widget_type ] ?? null;
+	}
+
+	private function get_atomic_widget_prop_schema( string $atomic_widget_class ): array {
+		if ( ! class_exists( $atomic_widget_class ) ) {
+			return [];
+		}
+
+		try {
+			// Use reflection to access the protected method
+			$reflection = new \ReflectionClass( $atomic_widget_class );
+			if ( $reflection->hasMethod( 'define_props_schema' ) ) {
+				$method = $reflection->getMethod( 'define_props_schema' );
+				$method->setAccessible( true );
+				
+				// Create a temporary instance to call the method
+				$instance = $reflection->newInstanceWithoutConstructor();
+				return $method->invoke( $instance );
+			}
+		} catch ( \Exception $e ) {
+			error_log( "Widget Creator: Error getting prop schema for {$atomic_widget_class}: " . $e->getMessage() );
+		}
+
+		return [];
 	}
 
 	private function convert_css_property_to_v4( $property, $value ) {
