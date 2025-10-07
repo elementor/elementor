@@ -157,7 +157,7 @@ export default function HelloTheme() {
 		setSelectedTheme( themeSlug );
 
 		const themeValue = 'hello-theme' === themeSlug ? 'hello' : 'hellobiz';
-		
+
 		OnboardingEventTracking.trackStepAction( 2, `select_theme_${ themeSlug.replace( '-', '_' ) }`, { theme: themeValue } );
 		OnboardingEventTracking.sendThemeChoiceEvent( state.currentStep, themeValue );
 	};

@@ -11,7 +11,7 @@ export default function GoodToGo() {
 	useEffect( () => {
 		OnboardingEventTracking.checkAndSendReturnToStep4();
 		OnboardingEventTracking.onStepLoad( 4 );
-		
+
 		const storedVariant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT );
 		setVariant( storedVariant );
 	}, [] );

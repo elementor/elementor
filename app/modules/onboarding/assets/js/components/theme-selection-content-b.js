@@ -167,8 +167,7 @@ export default function ThemeSelectionContentB( { actionButton, skipButton, noti
 		if ( onThemeSelect ) {
 			onThemeSelect( themeSlug );
 		}
-		
-		// Delay installation to ensure tracking events are sent before navigation
+
 		setTimeout( () => {
 			startThemeInstallation( themeSlug );
 		}, 100 );
