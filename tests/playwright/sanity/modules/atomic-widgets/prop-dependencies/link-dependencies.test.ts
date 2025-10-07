@@ -38,7 +38,7 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 			const helper = new AtomicHelper( page, editor, wpAdmin );
 
 			await helper.addAtomicElement( elementType );
-			await editor.openV2PanelTab( 'general' );
+			await editor.v4Panel.openTab( 'general' );
 
 			await test.step( 'Check tag control is enabled', async () => {
 				expect( await helper.isHtmlTagControlDisabled() ).toBeFalsy();

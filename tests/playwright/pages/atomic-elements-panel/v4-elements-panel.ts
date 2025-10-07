@@ -42,4 +42,25 @@ export default class v4Panel extends BasePage {
 			await this.page.locator( `button[value="${ options.overflow }"]` ).click();
 		}
 	}
+
+	async openTab( sectionName: 'style' | 'general' ): Promise<void> {
+		const selectorMap: Record< 'style' | 'general', string > = {
+			style: 'style',
+			general: 'settings',
+		};
+		const sectionButtonSelector = `#tab-0-${ selectorMap[ sectionName ] }`,
+			sectionContentSelector = `#tabpanel-0-${ selectorMap[ sectionName ] }`,
+			isOpenSection = await this.page.evaluate( ( selector ) => {
+				const sectionContentElement: HTMLElement = document.querySelector( selector );
+
+				return ! sectionContentElement?.hidden;
+			}, sectionContentSelector );
+
+		if ( isOpenSection ) {
+			return;
+		}
+
+		await this.page.locator( sectionButtonSelector ).click();
+		await this.page.locator( sectionContentSelector ).waitFor();
+	}
 }
