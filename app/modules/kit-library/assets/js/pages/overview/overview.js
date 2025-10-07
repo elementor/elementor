@@ -34,11 +34,12 @@ function useHeaderButtons( id, kitName ) {
 						view_type_clicked: 'demo',
 					},
 				);
+
 				navigate( `/kit-library/preview/${ id }` );
 			},
 			includeHeaderBtnClass: false,
 		},
-	], [ id ] );
+	], [ id, kitName, navigate ] );
 }
 
 export default function Overview( props ) {
