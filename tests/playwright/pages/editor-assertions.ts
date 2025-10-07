@@ -7,10 +7,11 @@ export class EditorAssertions {
 		driver: EditorDriver,
 		selector: string,
 		cssExpectations: Array<{ property: string; value: string }>,
+		timeout = timeouts.expect,
 	): Promise<void> {
 		const element = driver.editor.getPreviewFrame().locator( selector );
 		for ( const { property, value } of cssExpectations ) {
-			await expect( element ).toHaveCSS( property, value, { timeout: timeouts.expect } );
+			await expect( element ).toHaveCSS( property, value, { timeout } );
 		}
 	}
 
