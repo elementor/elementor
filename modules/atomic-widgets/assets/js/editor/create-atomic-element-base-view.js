@@ -73,7 +73,7 @@ export default function createAtomicElementBaseView( type ) {
 				const key = attribute.value?.key?.value;
 				const value = attribute.value?.value?.value;
 
-				if ( key && value && this.isValidAttributeName( key ) ) {
+				if ( key && value ) {
 					local[ key ] = value;
 				}
 			} );
@@ -141,7 +141,7 @@ export default function createAtomicElementBaseView( type ) {
 				attrs.forEach( ( attribute ) => {
 					const key = attribute?.value?.key?.value;
 					const value = attribute?.value?.value?.value;
-					if ( key && value && this.isValidAttributeName( key ) ) {
+					if ( key && value ) {
 						this.$el.attr( key, value );
 					}
 				} );
@@ -359,6 +359,23 @@ export default function createAtomicElementBaseView( type ) {
 						}
 
 						this.onDrop( event, { at: targetIndex } );
+
+						if ( elementorCommon?.eventsManager?.dispatchEvent ) {
+							const selectedElement = elementor.channels.panelElements.request( 'element:selected' );
+
+							if ( selectedElement ) {
+								const elType = selectedElement.model?.get( 'elType' ) ?? '';
+								const widgetType = selectedElement.model?.get( 'widgetType' ) ?? '';
+								const elementName = 'widget' === elType ? widgetType : elType;
+
+								elementorCommon.eventsManager.dispatchEvent( 'add_element', {
+									location: 'editor_panel',
+									element_name: elementName,
+									element_type: elType,
+									widget_type: widgetType,
+								} );
+							}
+						}
 
 						return;
 					}
@@ -582,32 +599,7 @@ export default function createAtomicElementBaseView( type ) {
 		isFirstElementInStructure() {
 			return 0 === this.model.collection.indexOf( this.model );
 		},
-
-		isValidAttributeName( name ) {
-			console.log( 'OPTION1_FIX: Validating attribute name:', name );
-			
-			if ( ! name || typeof name !== 'string' ) {
-				console.log( 'OPTION1_FIX: Invalid - not a string:', name );
-				return false;
-			}
-
-			if ( /^\d+$/.test( name ) ) {
-				console.log( 'OPTION1_FIX: Invalid - numeric key detected:', name );
-				return false;
-			}
-
-			try {
-				const testElement = document.createElement( 'div' );
-				testElement.setAttribute( name, 'test' );
-				console.log( 'OPTION1_FIX: Valid attribute name:', name );
-				return true;
-			} catch ( error ) {
-				console.log( 'OPTION1_FIX: Invalid - setAttribute failed:', name, error );
-				return false;
-			}
-		},
 	} );
 
 	return AtomicElementView;
 }
-

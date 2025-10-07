@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 
-export default function ThemeSelectionCard( { 
-	themeSlug, 
-	title, 
-	description, 
-	illustration, 
-	isSelected, 
-	onSelect 
+export default function ThemeSelectionCard( {
+	themeSlug,
+	title,
+	description,
+	illustration,
+	isSelected,
+	onSelect,
 } ) {
 	const handleClick = () => {
 		if ( onSelect ) {
@@ -15,14 +15,14 @@ export default function ThemeSelectionCard( {
 	};
 
 	const handleKeyDown = ( e ) => {
-		if ( ( e.key === 'Enter' || e.key === ' ' ) && onSelect ) {
+		if ( ( 'Enter' === e.key || ' ' === e.key ) && onSelect ) {
 			e.preventDefault();
 			onSelect( themeSlug );
 		}
 	};
 
 	return (
-		<div 
+		<div
 			className={ `e-onboarding__theme-card ${ isSelected ? 'e-onboarding__theme-card--selected' : '' }` }
 			data-theme={ themeSlug }
 			onClick={ handleClick }

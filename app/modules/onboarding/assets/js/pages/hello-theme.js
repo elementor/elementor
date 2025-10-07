@@ -47,7 +47,7 @@ export default function HelloTheme() {
 		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
 		OnboardingEventTracking.onStepLoad( 2 );
 		OnboardingEventTracking.sendExperimentStarted();
-	}, [] );
+	}, [ getStateObjectToUpdate, goToNextScreen, helloInstalledInOnboarding, pageId, state, updateState ] );
 
 	const resetScreenContent = () => {
 		// Clear any active timeouts for changing the action button text during installation.
@@ -91,7 +91,7 @@ export default function HelloTheme() {
 
 		OnboardingEventTracking.sendStepEndState( 2 );
 		goToNextScreen();
-	}, [] );
+	}, [ getStateObjectToUpdate, goToNextScreen, noticeStateSuccess, state, updateState ] );
 
 	const onErrorInstallHelloTheme = () => {
 		elementorCommon.events.dispatchEvent( {
@@ -119,12 +119,12 @@ export default function HelloTheme() {
 
 		updateState( { isHelloThemeInstalled: true } );
 
-		const themeSlug = selectedTheme === 'hello-theme' ? 'hello-elementor' : 'hello-biz';
+		const themeSlug = 'hello-theme' === selectedTheme ? 'hello-elementor' : 'hello-biz';
 
 		setActivateHelloThemeAjaxState( {
-			data: { 
+			data: {
 				action: 'elementor_activate_hello_theme',
-				theme_slug: themeSlug
+				theme_slug: themeSlug,
 			},
 		} );
 	};
@@ -134,7 +134,7 @@ export default function HelloTheme() {
 			setIsInstalling( true );
 		}
 
-		const themeSlug = selectedTheme === 'hello-theme' ? 'hello-elementor' : 'hello-biz';
+		const themeSlug = 'hello-theme' === selectedTheme ? 'hello-elementor' : 'hello-biz';
 
 		wp.updates.ajax( 'install-theme', {
 			slug: themeSlug,
@@ -156,8 +156,8 @@ export default function HelloTheme() {
 
 	const handleThemeSelection = ( themeSlug ) => {
 		setSelectedTheme( themeSlug );
-		
-		const themeValue = themeSlug === 'hello-theme' ? 'hello' : 'hellobiz';
+
+		const themeValue = 'hello-theme' === themeSlug ? 'hello' : 'hellobiz';
 		OnboardingEventTracking.trackStepAction( 2, `select_theme_${ themeSlug.replace( '-', '_' ) }`, { theme: themeValue } );
 		OnboardingEventTracking.sendThemeChoiceEvent( state.currentStep, themeValue );
 	};
