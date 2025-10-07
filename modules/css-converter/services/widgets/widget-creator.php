@@ -265,6 +265,12 @@ class Widget_Creator {
 		$this->current_widget_type = $widget_type;
 		$applied_styles = $widget['applied_styles'] ?? [];
 
+		// Pre-process computed styles to identify unsupported properties BEFORE merging settings
+		if ( ! empty( $applied_styles['computed_styles'] ) ) {
+			error_log( "Widget Creator: Pre-processing computed styles to identify unsupported properties" );
+			$this->map_css_to_v4_props( $applied_styles['computed_styles'] );
+		}
+
 		// Generate unique widget ID
 		$widget_id = wp_generate_uuid4();
 
@@ -401,14 +407,21 @@ class Widget_Creator {
 		$has_computed_styles = ! empty( $applied_styles['computed_styles'] ) || ! empty( $applied_styles['id_styles'] );
 		$has_unsupported_props = ! empty( $this->current_unsupported_props );
 		
+		error_log( "Widget Creator merge_settings_with_styles: has_global_classes={$has_global_classes}, has_computed_styles={$has_computed_styles}, has_unsupported_props={$has_unsupported_props}" );
+		error_log( "Widget Creator merge_settings_with_styles: current_unsupported_props=" . wp_json_encode( $this->current_unsupported_props ) );
+		
 		if ( $has_global_classes || $has_computed_styles || $has_unsupported_props ) {
 			// Generate a single unique class ID for this widget (avoid duplicates)
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
 			}
 			
+			error_log( "Widget Creator merge_settings_with_styles: Generated class ID: {$this->current_widget_class_id}" );
+			
 			// Add the class ID only once, regardless of whether it's for global classes or computed styles
 			$classes[] = $this->current_widget_class_id;
+			
+			error_log( "Widget Creator merge_settings_with_styles: Classes after adding ID: " . wp_json_encode( $classes ) );
 		}
 
 		// Add classes to settings with proper v4 atomic widget format
@@ -418,10 +431,13 @@ class Widget_Creator {
 				'$$type' => 'classes',
 				'value' => $classes,
 			];
+			error_log( "Widget Creator merge_settings_with_styles: Added classes to merged_settings: " . wp_json_encode( $merged_settings['classes'] ) );
+		} else {
+			error_log( "Widget Creator merge_settings_with_styles: No classes to add" );
 		}
 		// If no classes, don't add the classes property at all (matches editor behavior)
 
-
+		error_log( "Widget Creator merge_settings_with_styles: Final merged_settings keys: " . wp_json_encode( array_keys( $merged_settings ) ) );
 		return $merged_settings;
 	}
 
@@ -585,22 +601,66 @@ class Widget_Creator {
 								'breakpoint' => 'desktop',
 								'state' => null,
 							],
-							'props' => $this->current_unsupported_props,
-							'custom_css' => null,
+							'props' => $this->current_unsupported_props, // Only atomic format, no custom_css
 						],
 					],
 				];
 				
 				$v4_styles[ $class_id ] = $style_object;
 				error_log( "Widget Creator: Created new style object for unsupported props with class {$class_id}" );
+				error_log( "Widget Creator: Style object structure: " . wp_json_encode( $style_object ) );
 			}
 			
 			// Clear unsupported props after processing
 			$this->current_unsupported_props = [];
 		}
 
+		error_log( "Widget Creator convert_styles_to_v4_format: Final v4_styles count: " . count( $v4_styles ) );
+		error_log( "Widget Creator convert_styles_to_v4_format: Final v4_styles: " . wp_json_encode( $v4_styles ) );
 		return $v4_styles;
 	}
+
+	private function convert_atomic_props_to_css_props( $atomic_props ) {
+		$css_props = [];
+		
+		foreach ( $atomic_props as $property => $atomic_value ) {
+			if ( is_array( $atomic_value ) && isset( $atomic_value['$$type'] ) ) {
+				if ( 'dimensions' === $atomic_value['$$type'] ) {
+					// Convert atomic dimensions format to individual CSS properties
+					$dimensions = $atomic_value['value'] ?? [];
+					
+					// TEMPORARY: Map atomic dimension keys to physical CSS properties for testing
+					$dimension_map = [
+						'block-start' => $property . '-top',
+						'inline-end' => $property . '-right', 
+						'block-end' => $property . '-bottom',
+						'inline-start' => $property . '-left',
+					];
+					
+					foreach ( $dimension_map as $atomic_key => $css_property ) {
+						if ( isset( $dimensions[ $atomic_key ] ) ) {
+							$size_value = $dimensions[ $atomic_key ];
+							if ( is_array( $size_value ) && isset( $size_value['value'] ) ) {
+								$size = $size_value['value']['size'] ?? 0;
+								$unit = $size_value['value']['unit'] ?? 'px';
+								$css_props[ $css_property ] = $size . $unit;
+							}
+						}
+					}
+				} else {
+					// For other atomic types, keep as-is for now
+					$css_props[ $property ] = $atomic_value;
+				}
+			} else {
+				// Non-atomic values, keep as-is
+				$css_props[ $property ] = $atomic_value;
+			}
+		}
+		
+		error_log( "Widget Creator: Converted atomic props to CSS props: " . wp_json_encode( $css_props ) );
+		return $css_props;
+	}
+
 
 	private function create_v4_style_object_from_id_styles( $class_id, $id_styles ) {
 		// Create v4 atomic style object from ID styles

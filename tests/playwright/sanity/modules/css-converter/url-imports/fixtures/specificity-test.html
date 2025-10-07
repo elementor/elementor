@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Specificity Test</title>
+    
+    <!-- External CSS - Specificity baseline -->
+    <link rel="stylesheet" href="specificity-test.css">
+    
+    <!-- Internal CSS - Should override external CSS with same specificity -->
+    <style>
+        /* Element selector - Specificity: 1 (same as external, but later in cascade) */
+        h1 {
+            color: navy;
+        }
+        
+        /* Class selector - Specificity: 10 */
+        .internal-class {
+            color: brown;
+            font-style: italic;
+        }
+        
+        /* ID selector - Specificity: 100 */
+        #internal-id {
+            color: crimson;
+            text-decoration: underline;
+        }
+        
+        /* Multiple classes - Specificity: 20 */
+        .internal-class.emphasized {
+            color: darkgreen;
+            font-weight: bold;
+        }
+        
+        /* Important declaration - Specificity: 10000 + base */
+        .important-class {
+            color: gold !important;
+            font-size: 20px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Test 1: Element selector only (Specificity: 1) -->
+        <h1 data-test="element-only">Element Selector Only</h1>
+        <!-- Expected: navy (from internal <style>, overrides external black) -->
+        
+        <!-- Test 2: Element + Class (Specificity: 10 > 1) -->
+        <h1 class="red-text" data-test="element-with-class">Element with Class</h1>
+        <!-- Expected: red (class wins over element) -->
+        
+        <!-- Test 3: Element + Multiple Classes (Specificity: 20 > 10 > 1) -->
+        <h1 class="red-text large-text" data-test="element-with-multiple-classes">Element with Multiple Classes</h1>
+        <!-- Expected: darkred from .red-text.large-text (specificity 20) -->
+        
+        <!-- Test 4: Element + ID (Specificity: 100 > 10 > 1) -->
+        <h1 id="special-heading" class="red-text" data-test="element-with-id-and-class">Element with ID and Class</h1>
+        <!-- Expected: purple (ID wins over class and element) -->
+        
+        <!-- Test 5: Element + ID + Class (Specificity: 110 > 100) -->
+        <h1 id="special-heading" class="highlighted" data-test="element-with-id-and-specific-class">Element with ID and Specific Class</h1>
+        <!-- Expected: magenta (ID + class combination wins) -->
+        
+        <!-- Test 6: Inline style (Specificity: 1000) -->
+        <h1 class="red-text" id="special-heading" style="color: lime; font-size: 36px;" data-test="inline-style">Inline Style</h1>
+        <!-- Expected: lime (inline style wins over ID, class, and element) -->
+        
+        <!-- Test 7: Inline style + !important in CSS (Specificity: 10000 + 10 > 1000) -->
+        <h1 class="important-class" style="color: pink; font-size: 30px;" data-test="important-vs-inline">Important vs Inline</h1>
+        <!-- Expected: gold (CSS !important wins over inline style) -->
+        
+        <!-- Test 8: Descendant selector (Specificity: 11) -->
+        <div class="container">
+            <h1 data-test="descendant-selector">Descendant Selector</h1>
+            <!-- Expected: green (from .container h1, specificity 11 > 1) -->
+        </div>
+        
+        <!-- Test 9: ID + Element descendant (Specificity: 101) -->
+        <div id="container">
+            <h2 data-test="id-element-descendant">ID + Element Descendant</h2>
+            <!-- Expected: teal (from #container h2, specificity 101) -->
+        </div>
+        
+        <!-- Test 10: Class from internal style (Specificity: 10) -->
+        <p class="internal-class" data-test="internal-class">Internal Class Selector</p>
+        <!-- Expected: brown (from internal <style>) -->
+        
+        <!-- Test 11: ID from internal style (Specificity: 100) -->
+        <p id="internal-id" data-test="internal-id">Internal ID Selector</p>
+        <!-- Expected: crimson (from internal <style>) -->
+        
+        <!-- Test 12: Multiple classes from internal style (Specificity: 20) -->
+        <p class="internal-class emphasized" data-test="internal-multiple-classes">Internal Multiple Classes</p>
+        <!-- Expected: darkgreen (from .internal-class.emphasized, specificity 20) -->
+        
+        <!-- Test 13: External ID vs Internal Class (Specificity: 100 > 10) -->
+        <p id="unique-paragraph" class="internal-class" data-test="id-vs-class">External ID vs Internal Class</p>
+        <!-- Expected: orange (ID from external CSS wins over class from internal CSS) -->
+        
+        <!-- Test 14: Inline style with single property -->
+        <p style="color: hotpink;" data-test="inline-single-property">Inline Single Property</p>
+        <!-- Expected: hotpink (inline style, specificity 1000) -->
+        
+        <!-- Test 15: Inline style with multiple properties -->
+        <p style="color: turquoise; font-size: 18px; font-weight: bold;" data-test="inline-multiple-properties">Inline Multiple Properties</p>
+        <!-- Expected: turquoise, 18px, bold (all from inline style) -->
+        
+        <!-- Test 16: Mixed specificity - element, class, ID, inline -->
+        <h2 id="mixed-specificity" class="blue-text" style="font-size: 28px;" data-test="mixed-specificity">Mixed Specificity</h2>
+        <!-- Expected: gray (element), but overridden by blue (class), but font-size from inline (28px) -->
+        
+        <!-- Test 17: Cascade order - same specificity -->
+        <h1 class="red-text blue-text" data-test="cascade-order">Cascade Order Test</h1>
+        <!-- Expected: blue (later in cascade, same specificity 10) -->
+        
+        <!-- Test 18: No styles applied (baseline) -->
+        <h3 data-test="no-styles">No Styles Applied</h3>
+        <!-- Expected: browser defaults -->
+        
+        <!-- Test 19: Inline !important (Specificity: 11000) -->
+        <p style="color: violet !important; font-size: 22px !important;" data-test="inline-important">Inline Important</p>
+        <!-- Expected: violet, 22px (inline !important, highest specificity) -->
+        
+        <!-- Test 20: Complex combination -->
+        <div class="container">
+            <h1 id="special-heading" class="red-text large-text" style="margin: 20px;" data-test="complex-combination">Complex Combination</h1>
+            <!-- Expected: 
+                - color: purple (from #special-heading, specificity 100)
+                - font-size: 32px (from #special-heading, specificity 100)
+                - margin: 20px (from inline style, specificity 1000)
+            -->
+        </div>
+    </div>
+</body>
+</html>
