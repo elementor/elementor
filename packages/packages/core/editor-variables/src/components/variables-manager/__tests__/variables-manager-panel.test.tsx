@@ -182,7 +182,7 @@ describe( 'VariablesManagerPanel', () => {
 			alignItems: 'center',
 			gap: 0.5,
 		} );
-		expect( title ).toHaveTextContent( 'Variable Manager' );
+		expect( title ).toHaveTextContent( 'Variables Manager' );
 	} );
 
 	it( 'should pass variables and menu actions to table', () => {
