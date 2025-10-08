@@ -24,7 +24,7 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 		test( `repeater control ${ control } stability`, async () => {
 			const editor = await wpAdmin.openNewPage();
 			await editor.addWidget( { widgetType: 'e-heading' } );
-			await editor.openV2PanelTab( 'style' );
+			await editor.v4Panel.openTab( 'style' );
 			await editor.openV2Section( 'effects' );
 
 			const controlRepeaterAdditionButton = editor.page.getByRole( 'button', { name: `Add ${ control } item` } );
