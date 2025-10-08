@@ -3,7 +3,6 @@
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Parsers\Size_Value_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
@@ -49,15 +48,28 @@ class Letter_Spacing_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	protected function parse_size_value( string $value ): ?array {
-		if ( $this->is_normal_letter_spacing( $value ) ) {
+		$value = trim( $value );
+
+		if ( '' === $value || 'normal' === $value ) {
 			return null;
 		}
-		
-		return Size_Value_Parser::parse( $value );
-	}
 
-	private function is_normal_letter_spacing( string $value ): bool {
-		$trimmed_value = trim( $value );
-		return '' === $trimmed_value || 'normal' === $trimmed_value;
+		// Parse numeric value with unit
+		if ( preg_match( '/^(\d*\.?\d+)(px|em|rem|%|vw|vh)$/', $value, $matches ) ) {
+			return [
+				'size' => (float) $matches[1],
+				'unit' => $matches[2]
+			];
+		}
+
+		// Handle unitless values (assume px)
+		if ( is_numeric( $value ) ) {
+			return [
+				'size' => (float) $value,
+				'unit' => 'px'
+			];
+		}
+
+		return null;
 	}
 }

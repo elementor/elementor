@@ -3,7 +3,6 @@
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Parsers\Size_Value_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -313,35 +312,40 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	protected function parse_size_value( string $value ): ?array {
-		$parsed = Size_Value_Parser::parse( $value );
-		
-		if ( null !== $parsed ) {
-			return $this->handle_flex_unit_support( $parsed, $value );
+		$value = trim( $value );
+
+		if ( '' === $value ) {
+			return null;
 		}
-		
-		return null;
-	}
 
-	private function handle_flex_unit_support( array $parsed, string $original_value ): array {
-		if ( $this->is_flex_unit_value( $original_value ) ) {
-			return $this->parse_flex_unit_value( $original_value );
-		}
-		
-		return $parsed;
-	}
-
-	private function is_flex_unit_value( string $value ): bool {
-		return (bool) preg_match( '/fr$/i', trim( $value ) );
-	}
-
-	private function parse_flex_unit_value( string $value ): array {
-		if ( preg_match( '/^(-?\d*\.?\d+)fr$/i', trim( $value ), $matches ) ) {
+		// Handle CSS keywords
+		$keywords = ['auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer'];
+		if ( in_array( strtolower( $value ), $keywords, true ) ) {
 			return [
-				'size' => (float) $matches[1],
-				'unit' => 'fr',
+				'size' => $value,
+				'unit' => 'custom',
 			];
 		}
-		
-		return Size_Value_Parser::create_zero();
+
+		// Handle numeric values with units
+		if ( preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax|fr)?$/i', $value, $matches ) ) {
+			$size = (float) $matches[1];
+			$unit = $matches[2] ?? 'px';
+
+			return [
+				'size' => $size,
+				'unit' => strtolower( $unit ),
+			];
+		}
+
+		// Handle unitless zero
+		if ( '0' === $value ) {
+			return [
+				'size' => 0.0,
+				'unit' => 'px',
+			];
+		}
+
+		return null;
 	}
 }

@@ -3,6 +3,7 @@
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Contracts\Property_Mapper_Interface;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Parsers\Size_Value_Parser;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -68,30 +69,12 @@ abstract class Atomic_Property_Mapper_Base implements Property_Mapper_Interface 
 	}
 
 	protected function parse_size_value( string $value ): ?array {
-		$value = trim( $value );
+		$parsed = Size_Value_Parser::parse( $value );
 		
-		if ( empty( $value ) ) {
-			return $this->create_zero_size_value();
+		if ( null !== $parsed ) {
+			return $parsed;
 		}
-
-		if ( $this->is_css_keyword( $value ) ) {
-			return $this->create_keyword_size_value( $value );
-		}
-
-		if ( preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax)?$/i', $value, $matches ) ) {
-			$size = (float) $matches[1];
-			$unit = $matches[2] ?? 'px';
-			
-			return [
-				'size' => $size,
-				'unit' => strtolower( $unit )
-			];
-		}
-
-		if ( '0' === $value ) {
-			return $this->create_zero_size_value();
-		}
-
+		
 		return $this->handle_unparseable_size_value();
 	}
 

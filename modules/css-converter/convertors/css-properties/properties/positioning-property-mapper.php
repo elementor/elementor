@@ -3,6 +3,7 @@
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Parsers\Size_Value_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 
@@ -179,40 +180,7 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		$value = trim( $value );
-
-		if ( '' === $value ) {
-			return null;
-		}
-
-		// Handle CSS keywords
-		if ( $this->is_css_keyword( $value ) ) {
-			return [
-				'size' => $value,
-				'unit' => 'custom'
-			];
-		}
-
-		// Parse numeric value with unit
-		if ( preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax)?$/i', $value, $matches ) ) {
-			$size = (float) $matches[1];
-			$unit = $matches[2] ?? 'px';
-			
-			return [
-				'size' => $size,
-				'unit' => strtolower( $unit )
-			];
-		}
-
-		// Handle unitless zero
-		if ( '0' === $value ) {
-			return [
-				'size' => 0.0,
-				'unit' => 'px'
-			];
-		}
-
-		return null;
+		return Size_Value_Parser::parse( $value );
 	}
 
 	private function parse_shorthand_values( string $value ): array {

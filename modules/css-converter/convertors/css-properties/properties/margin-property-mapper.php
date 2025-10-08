@@ -3,6 +3,7 @@
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Parsers\Size_Value_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 
@@ -315,43 +316,12 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	protected function parse_size_value( string $value ): ?array {
-		$value = trim( $value );
+		$parsed = Size_Value_Parser::parse( $value );
 		
-		if ( '' === $value ) {
-			return [
-				'size' => 0.0,
-				'unit' => 'px'
-			];
+		if ( null !== $parsed ) {
+			return $parsed;
 		}
-
-		if ( $this->is_css_keyword( $value ) ) {
-			return [
-				'size' => $value,
-				'unit' => 'custom'
-			];
-		}
-
-		if ( preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax)?$/i', $value, $matches ) ) {
-			$size = (float) $matches[1];
-			$unit = $matches[2] ?? 'px';
-			
-			return [
-				'size' => $size,
-				'unit' => strtolower( $unit )
-			];
-		}
-
-		if ( '0' === $value ) {
-			return [
-				'size' => 0.0,
-				'unit' => 'px'
-			];
-		}
-
-		// Fallback for invalid values
-		return [
-			'size' => 0.0,
-			'unit' => 'px'
-		];
+		
+		return Size_Value_Parser::create_zero();
 	}
 }

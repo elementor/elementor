@@ -3,7 +3,6 @@
 namespace Elementor\Modules\CssConverter\Convertors\CssProperties\Properties;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Atomic_Property_Mapper_Base;
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Parsers\Size_Value_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Functions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Move_Prop_Type;
@@ -351,12 +350,36 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	protected function parse_size_value( string $value ): array {
-		$parsed = Size_Value_Parser::parse( $value );
+		$value = trim( $value );
 		
-		if ( null !== $parsed ) {
-			return $parsed;
+		if ( '' === $value ) {
+			return [
+				'size' => 0.0,
+				'unit' => 'px'
+			];
 		}
-		
-		return Size_Value_Parser::create_zero();
+
+		if ( preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax)?$/i', $value, $matches ) ) {
+			$size = (float) $matches[1];
+			$unit = strtolower( $matches[2] ?? 'px' );
+			
+			return [
+				'size' => $size,
+				'unit' => $unit
+			];
+		}
+
+		if ( '0' === $value ) {
+			return [
+				'size' => 0.0,
+				'unit' => 'px'
+			];
+		}
+
+		// Fallback for invalid values
+		return [
+			'size' => 0.0,
+			'unit' => 'px'
+		];
 	}
 }
