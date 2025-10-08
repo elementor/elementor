@@ -816,6 +816,22 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Click on a top bar menu item.
+	 *
+	 * @param {string} menuLabel - Optional. The label of the top bar menu item.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async clickTopBarMenuItem( menuLabel?: string ): Promise<void> {
+		await this.clickTopBarItem( TopBarSelectors.elementorLogo );
+		await this.page.waitForTimeout( 100 );
+
+		if ( menuLabel ) {
+			await this.page.getByRole( 'menuitem', { name: menuLabel } ).click();
+		}
+	}
+
+	/**
 	 * Open the elements/widgets panel.
 	 *
 	 * @return {Promise<void>}
@@ -831,7 +847,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openPageSettingsPanel(): Promise<void> {
-		await this.clickTopBarItem( TopBarSelectors.documentSettings );
+		await this.clickTopBarItem( TopBarSelectors.pageSettings );
 		await this.page.locator( EditorSelectors.panels.pageSettings.wrapper ).waitFor();
 	}
 
@@ -843,12 +859,23 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openSiteSettings( innerPanel?: string ): Promise<void> {
-		await this.clickTopBarItem( TopBarSelectors.siteSettings );
+		await this.clickTopBarMenuItem( 'Site Settings' );
 		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
 
 		if ( innerPanel ) {
-			await this.page.locator( `.elementor-panel-menu-item-${ innerPanel }` ).click();
+			await this.openSiteSettingsInnerPanel( innerPanel );
 		}
+	}
+
+	/**
+	 * Open inner panel section on Site Settings panel.
+	 *
+	 * @param { string } innerPanelSection - The inner section to open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	private async openSiteSettingsInnerPanel( innerPanelSection: string ): Promise<void> {
+		await this.page.locator( `.elementor-panel-menu-item.elementor-panel-menu-item-${ innerPanelSection }` ).click();
 	}
 
 	/**
@@ -857,9 +884,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openUserPreferencesPanel(): Promise<void> {
-		await this.clickTopBarItem( TopBarSelectors.elementorLogo );
-		await this.page.waitForTimeout( 100 );
-		await this.page.getByRole( 'menuitem', { name: 'User Preferences' } ).click();
+		await this.clickTopBarMenuItem( 'User Preferences' );
 		await this.page.locator( EditorSelectors.panels.userPreferences.wrapper ).waitFor();
 	}
 
