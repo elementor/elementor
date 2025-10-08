@@ -297,4 +297,10 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 		// Assert.
 		$this->assertFalse( $result );
 	}
+
+	public function test_image_prop_type__has_default_size() {
+		$shape = Image_Prop_Type::make()->get_shape();
+
+		$this->assertEquals( $shape['size']->get_default(), 'large'  );
+	}
 }
