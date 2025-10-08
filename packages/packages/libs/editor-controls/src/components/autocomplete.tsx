@@ -31,6 +31,8 @@ export type Props = {
 	placeholder?: string;
 	minInputLength?: number;
 	startAdornment?: React.ReactNode;
+	inputProps?: Record< string, unknown >;
+	disablePortal?: boolean;
 };
 
 export const Autocomplete = forwardRef( ( props: Props, ref ) => {
@@ -43,6 +45,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 		minInputLength = 2,
 		value = '',
 		startAdornment,
+		disablePortal = true,
 		...restProps
 	} = props;
 
@@ -65,8 +68,8 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 			{ ...restProps }
 			ref={ ref }
 			forcePopupIcon={ false }
+			disablePortal={ disablePortal }
 			disableClearable={ true } // Disabled component's auto clear icon to use our custom one instead
-			disablePortal={ true }
 			freeSolo={ allowCustomValues }
 			openOnFocus={ false }
 			open={ shouldOpen }
@@ -97,6 +100,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 					placeholder={ placeholder }
 					hasSelectedValue={ isValueFromOptions }
 					startAdornment={ startAdornment }
+					extraInputProps={ restProps.inputProps }
 				/>
 			) }
 		/>
@@ -110,6 +114,7 @@ const TextInput = ( {
 	handleChange,
 	hasSelectedValue,
 	startAdornment,
+	extraInputProps,
 }: {
 	params: AutocompleteRenderInputParams;
 	allowClear: boolean;
@@ -117,6 +122,7 @@ const TextInput = ( {
 	placeholder: string;
 	hasSelectedValue: boolean;
 	startAdornment?: React.ReactNode;
+	extraInputProps?: Record< string, unknown >;
 } ) => {
 	const onChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		handleChange( event.target.value );
@@ -127,6 +133,7 @@ const TextInput = ( {
 			{ ...params }
 			placeholder={ placeholder }
 			onChange={ onChange }
+			inputProps={ { ...( params.inputProps ?? {} ), ...( extraInputProps ?? {} ) } }
 			sx={ {
 				'& .MuiInputBase-input': {
 					cursor: hasSelectedValue ? 'default' : undefined,

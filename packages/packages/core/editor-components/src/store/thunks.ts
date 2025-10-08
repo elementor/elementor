@@ -1,6 +1,6 @@
 import { __createAsyncThunk as createAsyncThunk } from '@elementor/store';
 
-import { apiClient, type CreateComponentPayload, type CreateComponentResponse } from './api';
+import { apiClient, type CreateComponentPayload, type CreateComponentResponse } from '../api';
 
 const createComponent = createAsyncThunk< CreateComponentResponse, CreateComponentPayload >(
 	'components/create',
