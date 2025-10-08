@@ -1,4 +1,4 @@
-import { TestInfo, type Page } from '@playwright/test'; 
+import { TestInfo, type Page } from '@playwright/test';
 import EditorSelectors from '../../../../selectors/editor-selectors';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import ApiRequests from '../../../../assets/api-requests';
