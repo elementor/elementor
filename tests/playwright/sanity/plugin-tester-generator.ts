@@ -43,7 +43,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'happy-elementor-addons', installSource: 'cli', hasInstallationPage: true },
 	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
 	{ pluginName: 'akismet', installSource: 'api' },
-	// { pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true },
+	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'hello-plus', installSource: 'cli' },
 	{ pluginName: 'template-kit-import', installSource: 'api' },
 	{ pluginName: 'template-kit-export', installSource: 'api' },
@@ -95,6 +95,10 @@ export const generatePluginTests = ( testType: string ) => {
 				if ( 'the-plus-addons-for-elementor-page-builder' === plugin.pluginName ) {
 					const plusAddonTemplateModal = new ImportTemplatesModal( page );
 					await plusAddonTemplateModal.skipTemplatesImportIfVisible();
+				}
+
+				if ( 'wordpress-seo' === plugin.pluginName ) {
+					await page.locator( '[data-widget_type="progress.default"]' ).first().click();
 				}
 
 				await editor.closeNavigatorIfOpen();
