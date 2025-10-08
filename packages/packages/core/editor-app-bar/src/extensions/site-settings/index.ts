@@ -1,6 +1,6 @@
 import { injectIntoTop } from '@elementor/editor';
 
-import { mainMenu } from '../../locations';
+import { toolsMenu } from '../../locations';
 import PortalledPrimaryAction from './components/portalled-primary-action';
 import useActionProps from './hooks/use-action-props';
 
@@ -11,10 +11,9 @@ export function init() {
 		component: PortalledPrimaryAction,
 	} );
 
-	mainMenu.registerToggleAction( {
+	toolsMenu.registerToggleAction( {
 		id: 'toggle-site-settings',
-		group: 'default',
-		priority: 1,
+		priority: 2,
 		useProps: useActionProps,
 	} );
 }

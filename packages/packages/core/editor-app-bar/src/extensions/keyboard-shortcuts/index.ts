@@ -5,7 +5,7 @@ export function init() {
 	mainMenu.registerAction( {
 		id: 'open-keyboard-shortcuts',
 		group: 'default',
-		priority: 40,
+		priority: 40, // After user preferences.
 		useProps: useActionProps,
 	} );
 }

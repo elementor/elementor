@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
+import TopBarSelectors from '../../../../../../../../../selectors/top-bar-selectors';
 import EditorPage from '../../../../../../../../../pages/editor-page';
 
 test( 'Exit to user preference sanity test', async ( { page, apiRequests }, testInfo ) => {
@@ -11,7 +12,8 @@ test( 'Exit to user preference sanity test', async ( { page, apiRequests }, test
 	// Exit to `dashboard`
 	await editor.openUserPreferencesPanel();
 	await editor.setSelectControlValue( 'exit_to', 'dashboard' );
-	await editor.clickTopBarMenuItem();
+	await editor.clickTopBarItem( TopBarSelectors.elementorLogo );
+	await page.waitForTimeout( 100 );
 	exitHref = await page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
 	await page.press( 'body', 'Escape' );
 	expect( exitHref ).toContain( '/wp-admin/' );
@@ -19,7 +21,8 @@ test( 'Exit to user preference sanity test', async ( { page, apiRequests }, test
 	// Exit to `this_post`
 	await editor.openUserPreferencesPanel();
 	await setExitTo( editor, 'this_post' );
-	await editor.clickTopBarMenuItem();
+	await editor.clickTopBarItem( TopBarSelectors.elementorLogo );
+	await page.waitForTimeout( 100 );
 	exitHref = await page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
 	await page.press( 'body', 'Escape' );
 	expect( exitHref ).toContain( '/wp-admin/post.php?post=' );
@@ -27,7 +30,8 @@ test( 'Exit to user preference sanity test', async ( { page, apiRequests }, test
 	// Exit to `all_posts`
 	await editor.openUserPreferencesPanel();
 	await setExitTo( editor, 'all_posts' );
-	await editor.clickTopBarMenuItem();
+	await editor.clickTopBarItem( TopBarSelectors.elementorLogo );
+	await page.waitForTimeout( 100 );
 	exitHref = await page.locator( 'body a', { hasText: 'Exit to WordPress' } ).getAttribute( 'href' );
 	await page.press( 'body', 'Escape' );
 	expect( exitHref ).toContain( '/wp-admin/edit.php?post_type=' );

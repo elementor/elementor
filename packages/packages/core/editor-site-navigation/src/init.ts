@@ -25,7 +25,7 @@ function registerTopBarMenuItems() {
 function registerButton() {
 	toolsMenu.registerToggleAction( {
 		id: 'toggle-site-navigation-panel',
-		priority: 20,
+		priority: 2,
 		useProps: useToggleButtonProps,
 	} );
 }

@@ -1,10 +1,10 @@
-import { utilitiesMenu } from '../../locations';
+import { toolsMenu } from '../../locations';
 import useActionProps from './hooks/use-action-props';
 
 export function init() {
-	utilitiesMenu.registerToggleAction( {
+	toolsMenu.registerToggleAction( {
 		id: 'toggle-structure-view',
-		priority: 25,
+		priority: 3,
 		useProps: useActionProps,
 	} );
 }
