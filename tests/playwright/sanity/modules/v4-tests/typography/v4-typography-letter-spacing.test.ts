@@ -1,7 +1,7 @@
 import { parallelTest as test } from '../../../../parallelTest';
 import { expect } from '@playwright/test';
 import {
-	setupWidgetWithTypography,
+	addWidgetWithOpenTypographySection,
 	verifySpacingEditor,
 } from './typography-test-helpers';
 import { WIDGET_CONFIGS, SPACING_VALUES, UNITS } from './typography-constants';
@@ -35,7 +35,7 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 		const widget = WIDGET_CONFIGS.HEADING;
 
 		await test.step( 'Verify letter spacing control is present and functional', async () => {
-			await setupWidgetWithTypography( driver, widget.type );
+			await addWidgetWithOpenTypographySection( driver, widget.type );
 			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 5, UNITS.px );
 			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 5, expectedUnit: UNITS.px, cssProperty: 'letterSpacing' } );
 		} );
@@ -51,7 +51,7 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 	test( 'Letter spacing for button', async () => {
 		await test.step( 'Test letter spacing across different widget types', async () => {
 			const widget = WIDGET_CONFIGS.BUTTON;
-			await setupWidgetWithTypography( driver, widget.type );
+			await addWidgetWithOpenTypographySection( driver, widget.type );
 
 			const testValue = 1.5;
 			const testUnit = 'px';
@@ -66,7 +66,7 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			const testValue = -2;
 			const testUnit = 'px';
 
-			await setupWidgetWithTypography( driver, widget.type );
+			await addWidgetWithOpenTypographySection( driver, widget.type );
 			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', testValue, testUnit );
 
 			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: testValue, expectedUnit: testUnit, cssProperty: 'letterSpacing' } );
@@ -90,7 +90,7 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 	test( 'Letter spacing with different units', async () => {
 		await test.step( 'Test letter spacing with EM units', async () => {
 			const widget = WIDGET_CONFIGS.HEADING;
-			await setupWidgetWithTypography( driver, widget.type );
+			await addWidgetWithOpenTypographySection( driver, widget.type );
 
 			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 2, UNITS.em );
 			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 2, expectedUnit: UNITS.em, cssProperty: 'letterSpacing' } );
@@ -99,7 +99,7 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 		await test.step( 'Test letter spacing with REM units', async () => {
 			const widget = WIDGET_CONFIGS.BUTTON;
 			await driver.createNewPage( true );
-			await setupWidgetWithTypography( driver, widget.type );
+			await addWidgetWithOpenTypographySection( driver, widget.type );
 
 			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 3, UNITS.rem );
 			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 3, expectedUnit: UNITS.rem, cssProperty: 'letterSpacing' } );
@@ -108,7 +108,7 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 		await test.step( 'Test letter spacing with VW units', async () => {
 			const widget = WIDGET_CONFIGS.PARAGRAPH;
 			await driver.createNewPage( true );
-			await setupWidgetWithTypography( driver, widget.type );
+			await addWidgetWithOpenTypographySection( driver, widget.type );
 
 			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 4, UNITS.vw );
 			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 4, expectedUnit: UNITS.vw, cssProperty: 'letterSpacing' } );
@@ -117,7 +117,7 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 		await test.step( 'Test letter spacing with VH units', async () => {
 			const widget = WIDGET_CONFIGS.HEADING;
 			await driver.createNewPage( true );
-			await setupWidgetWithTypography( driver, widget.type );
+			await addWidgetWithOpenTypographySection( driver, widget.type );
 
 			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 1, UNITS.vh );
 			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 1, expectedUnit: UNITS.vh, cssProperty: 'letterSpacing' } );
@@ -126,7 +126,7 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 		await test.step( 'Test letter spacing with percentage units', async () => {
 			const widget = WIDGET_CONFIGS.BUTTON;
 			await driver.createNewPage( true );
-			await setupWidgetWithTypography( driver, widget.type );
+			await addWidgetWithOpenTypographySection( driver, widget.type );
 
 			await driver.editor.v4Panel.style.setSpacingValue( 'Letter spacing', 150, UNITS.percent );
 			// Verify that it falls back to normal (0) since % is not supported

@@ -14,9 +14,12 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 
 	private string $page_url;
 
-	public function __construct( Connect $connect ) {
+	private array $script_config;
+
+	public function __construct( Connect $connect, array $script_config ) {
 		$this->connect = $connect;
 		$this->page_url = admin_url( 'admin.php?page=elementor-connect-account' );
+		$this->script_config = $script_config;
 	}
 
 	public function get_label(): string {
@@ -196,12 +199,6 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	private function enqueue_scripts() {
-		wp_enqueue_script(
-			'elementor-pro-install-events',
-			ELEMENTOR_URL . 'modules/pro-install/assets/js/pro-install-events.js',
-			[ 'elementor-common' ],
-			ELEMENTOR_VERSION,
-			true
-		);
+		wp_enqueue_script( ...$this->script_config );
 	}
 }

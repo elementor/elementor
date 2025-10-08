@@ -27,9 +27,9 @@ export default function PageHeader( { title = __( 'Export', 'elementor' ) } ) {
 		let path = 'admin.php?page=elementor-tools#tab-import-export-kit';
 		if ( isImport ) {
 			if ( 'cloud' === contextData?.data?.kitUploadParams?.source ) {
-				path = 'admin.php?page=elementor-app#kit-library/cloud';
+				path = 'admin.php?page=elementor-app&source=kit_import#kit-library/cloud';
 			} else if ( 'kit-library' === contextData?.data?.kitUploadParams?.source ) {
-				path = `admin.php?page=elementor-app#kit-library`;
+				path = `admin.php?page=elementor-app&source=kit_import#kit-library`;
 			}
 		}
 		window.top.location = elementorAppConfig.admin_url + path;
