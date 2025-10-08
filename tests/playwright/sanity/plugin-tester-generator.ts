@@ -98,6 +98,7 @@ export const generatePluginTests = ( testType: string ) => {
 				}
 
 				await editor.closeNavigatorIfOpen();
+				await editor.page.waitForLoadState( 'domcontentloaded' );
 
 				await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
 			} finally {
