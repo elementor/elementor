@@ -116,7 +116,7 @@ const ItemLabel = ( { value }: { value: TabItem } ) => {
 	return (
 		<Stack sx={ { minHeight: 20 } } direction="row" alignItems="center" gap={ 1.5 }>
 			<span>{ elementTitle }</span>
-			<SettingsField bind={ 'default-active-tab' } propDisplayName={ __( 'Tabs', 'elementor' ) }>
+			<SettingsField bind="default-active-tab" propDisplayName={ __( 'Tabs', 'elementor' ) }>
 				<ItemDefaultTab value={ value } />
 			</SettingsField>
 		</Stack>
@@ -144,7 +144,7 @@ const ItemContent = ( { value }: { value: TabItem } ) => {
 	return (
 		<Stack p={ 2 } gap={ 1.5 }>
 			<TabLabelControl elementId={ value.id } />
-			<SettingsField bind={ 'default-active-tab' } propDisplayName={ __( 'Tabs', 'elementor' ) }>
+			<SettingsField bind="default-active-tab" propDisplayName={ __( 'Tabs', 'elementor' ) }>
 				<DefaultTabControl elementId={ value.id } />
 			</SettingsField>
 		</Stack>
