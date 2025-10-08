@@ -62,6 +62,12 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return 'margin';
 	}
 
+	public function get_target_property_name( string $property ): string {
+		// ✅ CRITICAL FIX: Use the same logic as get_v4_property_name
+		// This ensures individual properties like 'margin-left' are stored as 'margin'
+		return $this->get_v4_property_name( $property );
+	}
+
 	private function parse_margin_value( string $property, $value ): ?array {
 		if ( ! is_string( $value ) ) {
 			return null;
@@ -261,10 +267,14 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$logical_direction = $this->map_physical_to_logical( $property );
 		
-		// ✅ STRATEGY 1: Create clean Dimensions_Prop_Type with only target direction
-		// Based on atomic widgets test evidence - null values are filtered out by Multi_Props_Transformer
-		$dimensions = [];
-		$dimensions[ $logical_direction ] = $size_data;
+		// ✅ EDITOR PATTERN MATCH: Use sparse dimensions with nulls like the working editor example
+		// The editor creates: {"block-start": null, "block-end": {...}, "inline-start": null, "inline-end": {...}}
+		$dimensions = [
+			'block-start' => $logical_direction === 'block-start' ? $size_data : null,
+			'block-end' => $logical_direction === 'block-end' ? $size_data : null,
+			'inline-start' => $logical_direction === 'inline-start' ? $size_data : null,
+			'inline-end' => $logical_direction === 'inline-end' ? $size_data : null,
+		];
 		
 		return $this->create_dimensions_structure( $dimensions );
 	}
@@ -288,9 +298,12 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$result = [];
 		
 		foreach ( $dimensions as $logical_property => $size_data ) {
-			// ✅ CLEAN STRUCTURE: Only include non-null values
+			// ✅ EDITOR PATTERN MATCH: Include null values like the working editor example
+			// The editor structure includes: "block-start": null, "inline-start": null
 			if ( null !== $size_data ) {
 				$result[ $logical_property ] = $this->create_size_prop( $size_data );
+			} else {
+				$result[ $logical_property ] = null;
 			}
 		}
 

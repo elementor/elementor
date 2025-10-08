@@ -26,7 +26,9 @@ class Widgets_Route {
 
 	private function get_conversion_service() {
 		if ( null === $this->conversion_service ) {
+			error_log( "🚨 LEVEL 1 DEBUG: Creating new Widget_Conversion_Service" );
 			$this->conversion_service = new Widget_Conversion_Service();
+			error_log( "🚨 LEVEL 1 DEBUG: Widget_Conversion_Service created successfully" );
 		}
 		return $this->conversion_service;
 	}
@@ -108,6 +110,7 @@ class Widgets_Route {
 	}
 
 	public function check_permissions() {
+		error_log( "🚨 LEVEL 1 DEBUG: PERMISSIONS CHECK CALLED - Route is being accessed" );
 		// DEBUG: Temporarily allow public access for testing double-wrapping fix
 		return true;
 		
@@ -127,7 +130,9 @@ class Widgets_Route {
 	}
 
 	public function handle_widget_conversion( WP_REST_Request $request ) {
-		error_log( "🔍 PHASE 2.1: API ENDPOINT DEBUG - Widget conversion called" );
+		error_log( "🚨 LEVEL 1 DEBUG: API ENDPOINT - Widget conversion called" );
+		error_log( "🚨 LEVEL 1 DEBUG: Request method: " . $_SERVER['REQUEST_METHOD'] );
+		error_log( "🚨 LEVEL 1 DEBUG: Request URI: " . $_SERVER['REQUEST_URI'] );
 		
 		$type = $request->get_param( 'type' );
 		$content = $request->get_param( 'content' );
@@ -162,6 +167,7 @@ class Widgets_Route {
 
 		try {
 			$service = $this->get_conversion_service();
+			error_log( "🚨 LEVEL 1 DEBUG: Service instantiated: " . get_class( $service ) );
 			
 			// Process based on input type
 			switch ( $type ) {

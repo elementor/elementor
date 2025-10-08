@@ -206,6 +206,18 @@ class Css_Property_Conversion_Service {
 						$result 
 					);
 					error_log( "✅ CSS-SERVICE DEBUG: Merged result: " . json_encode( $converted[ $v4_property_name ] ) );
+				}
+				// ✅ CRITICAL FIX: Handle margin merging to prevent overwriting (same as border-radius)
+				elseif ( 'margin' === $v4_property_name && isset( $converted[ $v4_property_name ] ) ) {
+					error_log( "🔄 CSS-SERVICE DEBUG: MARGIN COLLISION DETECTED! Merging margin values" );
+					error_log( "🔄 CSS-SERVICE DEBUG: Existing margin: " . json_encode( $converted[ $v4_property_name ] ) );
+					error_log( "🔄 CSS-SERVICE DEBUG: New margin: " . json_encode( $result ) );
+					
+					$converted[ $v4_property_name ] = $this->merge_dimensions_values( 
+						$converted[ $v4_property_name ], 
+						$result 
+					);
+					error_log( "✅ CSS-SERVICE DEBUG: Merged margin result: " . json_encode( $converted[ $v4_property_name ] ) );
 				} else {
 					$converted[ $v4_property_name ] = $result;
 					error_log( "✅ CSS-SERVICE DEBUG: Stored as converted['$v4_property_name']" );
@@ -215,6 +227,34 @@ class Css_Property_Conversion_Service {
 		
 		error_log( "🎯 CSS-SERVICE DEBUG: Final converted properties: " . json_encode( array_keys( $converted ) ) );
 		return $converted;
+	}
+
+	/**
+	 * Merge two dimensions atomic structures (margin, padding)
+	 */
+	private function merge_dimensions_values( array $existing, array $new ): array {
+		// Both should be dimensions type with value containing directional properties
+		if ( ! isset( $existing['$$type'] ) || $existing['$$type'] !== 'dimensions' ||
+		     ! isset( $new['$$type'] ) || $new['$$type'] !== 'dimensions' ) {
+			error_log( "❌ CSS-SERVICE DEBUG: Cannot merge - not both dimensions type" );
+			return $new; // Fallback to new value
+		}
+		
+		$merged_value = $existing['value'] ?? [];
+		$new_value = $new['value'] ?? [];
+		
+		// Merge directional values, with new values taking precedence
+		foreach ( $new_value as $direction => $size_data ) {
+			if ( null !== $size_data ) {
+				$merged_value[ $direction ] = $size_data;
+				error_log( "✅ CSS-SERVICE DEBUG: Merged direction '$direction': " . json_encode( $size_data ) );
+			}
+		}
+		
+		return [
+			'$$type' => 'dimensions',
+			'value' => $merged_value
+		];
 	}
 
 	/**

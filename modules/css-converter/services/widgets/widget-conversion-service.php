@@ -127,6 +127,9 @@ class Widget_Conversion_Service {
 	}
 
 	public function convert_from_html( $html, $css_urls = [], $follow_imports = false, $options = [] ) {
+		error_log( "🚨 API CONVERSION: convert_from_html called with HTML length: " . strlen( $html ) );
+		error_log( "🚨 API CONVERSION: HTML preview: " . substr( $html, 0, 200 ) );
+		
 		if ( isset( $options['useZeroDefaults'] ) ) {
 			$this->use_zero_defaults = (bool) $options['useZeroDefaults'];
 			$this->widget_creator = new Widget_Creator( $this->use_zero_defaults );
@@ -606,8 +609,21 @@ class Widget_Conversion_Service {
 			
 			error_log( "UNIFIED_CONVERTER: Converting resolved style {$property}: " . wp_json_encode( $atomic_value ) );
 			
-			// Widget Creator expects atomic values directly, not wrapped in metadata
-			$computed_styles[ $property ] = $atomic_value;
+			// 🚨 CRITICAL FIX: Extract atomic structure and use correct property name
+			if ( is_array( $atomic_value ) ) {
+				// Check if atomic_value is wrapped (e.g., {"margin": {"$$type": "dimensions", ...}})
+				foreach ( $atomic_value as $wrapped_property => $wrapped_value ) {
+					if ( is_array( $wrapped_value ) && isset( $wrapped_value['$$type'] ) ) {
+						// Use the wrapped property name (e.g., "margin") instead of original (e.g., "margin-left")
+						$computed_styles[ $wrapped_property ] = $wrapped_value;
+						error_log( "🚨 STYLES FIX: Unwrapped {$property} -> {$wrapped_property}: " . wp_json_encode( $wrapped_value ) );
+						break; // Only process the first wrapped property
+					}
+				}
+			} else {
+				// Non-wrapped atomic value, use as-is
+				$computed_styles[ $property ] = $atomic_value;
+			}
 		}
 
 		return [

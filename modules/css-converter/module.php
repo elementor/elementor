@@ -127,9 +127,11 @@ class Module extends BaseModule {
 	}
 
 	private function initialize_widgets_route(): void {
+		error_log( "🚨 LEVEL 1 DEBUG: Initializing widgets route" );
 		$widgets_route_file = __DIR__ . '/routes/widgets-route.php';
 		
 		if ( ! file_exists( $widgets_route_file ) ) {
+			error_log( "🚨 LEVEL 1 DEBUG: Widgets route file missing" );
 			$this->handle_widgets_route_missing();
 			return;
 		}
@@ -137,7 +139,11 @@ class Module extends BaseModule {
 		require_once $widgets_route_file;
 		
 		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Widgets_Route' ) ) {
+			error_log( "🚨 LEVEL 1 DEBUG: Creating Widgets_Route instance" );
 			$this->widgets_route = new \Elementor\Modules\CssConverter\Routes\Widgets_Route();
+			error_log( "🚨 LEVEL 1 DEBUG: Widgets_Route instance created successfully" );
+		} else {
+			error_log( "🚨 LEVEL 1 DEBUG: Widgets_Route class not found" );
 		}
 	}
 

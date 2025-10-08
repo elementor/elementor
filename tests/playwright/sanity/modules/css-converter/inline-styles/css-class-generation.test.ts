@@ -29,7 +29,7 @@ test.describe( 'CSS Class Generation @inline-styles @critical', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdminPage.resetExperiments();
+		// await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 

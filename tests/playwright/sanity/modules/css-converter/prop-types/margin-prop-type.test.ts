@@ -30,7 +30,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdminPage.resetExperiments();
+		// await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -46,7 +46,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		// Check if API call failed due to backend issues
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
-			test.skip( true, 'Skipping due to backend property mapper issues' );
+			test.skip( true, 'API validation failed' );
 			return;
 		}
 		const postId = apiResult.post_id;
@@ -79,7 +79,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		// Check if API call failed due to backend issues
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
-			test.skip( true, 'Skipping due to backend property mapper issues' );
+			test.skip( true, 'API validation failed' );
 			return;
 		}
 		const postId = apiResult.post_id;
@@ -130,6 +130,9 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 			if ( validation.shouldSkip ) {
 				continue;
 			}
+			
+			// Debug: Log the API result to see what widgets were created
+			console.log( 'API Result for', testCase.name, ':', JSON.stringify( apiResult, null, 2 ) );
 
 			await page.goto( apiResult.edit_url );
 			editor = new EditorPage( page, wpAdmin.testInfo );
@@ -137,15 +140,38 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
+			
+			// Wait longer for the editor to fully load
+			await page.waitForTimeout( 3000 );
 
 			const element = elementorFrame.locator( '.e-paragraph-base' ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
-			// Get all margin values
-			await expect( element ).toHaveCSS( 'margin-inline-start', testCase.expectedLogical.marginInlineStart );
-
-			if ( !! testCase.expectedLogical.marginBlockEnd ) {
-				await expect( element ).toHaveCSS( 'margin-block-end', testCase.expectedLogical.marginBlockEnd );
+			// Verify that inline CSS has been converted to atomic properties
+			// The final widget should have NO inline CSS - only atomic properties
+			
+			// 1. Check that the element has NO inline style attribute
+			const hasInlineStyle = await element.evaluate( ( el ) => el.hasAttribute( 'style' ) );
+			expect( hasInlineStyle ).toBe( false );
+			
+			// 2. Verify the margin is applied via atomic styling (not inline CSS)
+			const computedStyles = await element.evaluate( ( el ) => {
+				const styles = window.getComputedStyle( el );
+				return {
+					marginInlineStart: styles.marginInlineStart,
+					marginBlockEnd: styles.marginBlockEnd,
+					hasInlineStyle: el.hasAttribute( 'style' )
+				};
+			});
+			
+			console.log( 'Computed styles:', computedStyles );
+			
+			// 3. Verify no inline CSS and margin is applied
+			expect( computedStyles.hasInlineStyle ).toBe( false );
+			expect( computedStyles.marginInlineStart ).toBe( testCase.expectedLogical.marginInlineStart );
+			
+			if ( testCase.expectedLogical.marginBlockEnd ) {
+				expect( computedStyles.marginBlockEnd ).toBe( testCase.expectedLogical.marginBlockEnd );
 			}
 		}
 	} );
@@ -159,7 +185,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		// Check if API call failed due to backend issues
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
-			test.skip( true, 'Skipping due to backend property mapper issues' );
+			test.skip( true, 'API validation failed' );
 			return;
 		}
 		const postId = apiResult.post_id;
@@ -191,7 +217,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		// Check if API call failed due to backend issues
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
-			test.skip( true, 'Skipping due to backend property mapper issues' );
+			test.skip( true, 'API validation failed' );
 			return;
 		}
 		const postId = apiResult.post_id;

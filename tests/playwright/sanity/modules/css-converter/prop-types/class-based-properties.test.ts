@@ -30,7 +30,7 @@ test.describe( 'Class-Based Properties Test @prop-types', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdminPage.resetExperiments();
+		// await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 

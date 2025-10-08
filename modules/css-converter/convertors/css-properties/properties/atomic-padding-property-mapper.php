@@ -130,8 +130,13 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
+		// ✅ EDITOR PATTERN MATCH: Create complete dimensions with nulls like editor
+		// Editor creates: {"block-start": null, "block-end": {...}, "inline-start": null, "inline-end": {...}}
 		return [
-			$logical_side => $this->create_size_prop( $parsed_size ),
+			'block-start' => $logical_side === 'block-start' ? $this->create_size_prop( $parsed_size ) : null,
+			'block-end' => $logical_side === 'block-end' ? $this->create_size_prop( $parsed_size ) : null,
+			'inline-start' => $logical_side === 'inline-start' ? $this->create_size_prop( $parsed_size ) : null,
+			'inline-end' => $logical_side === 'inline-end' ? $this->create_size_prop( $parsed_size ) : null,
 		];
 	}
 

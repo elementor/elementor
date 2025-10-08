@@ -549,6 +549,7 @@ class Widget_Creator {
 
 		// Process computed styles (from external CSS + inline styles)
 		if ( ! empty( $applied_styles['computed_styles'] ) ) {
+			error_log( "🚨 STYLES FIX: Processing computed styles for widget styles" );
 			// Use the same class ID that was set earlier
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
@@ -888,8 +889,12 @@ class Widget_Creator {
 		$unsupported_props = [];
 
 		foreach ( $computed_styles as $property => $atomic_value ) {
+			error_log( "🚨 WIDGET CREATOR DEBUG: Processing property={$property}, atomic_value=" . wp_json_encode( $atomic_value ) );
+			
 			if ( is_array( $atomic_value ) && isset( $atomic_value['$$type'] ) ) {
+				error_log( "🚨 WIDGET CREATOR DEBUG: Property {$property} is atomic, calling get_target_property_name" );
 				$target_property = $this->get_target_property_name( $property );
+				error_log( "🚨 WIDGET CREATOR DEBUG: Target property for {$property} is {$target_property}" );
 				
 				// Check if the current widget type supports this property
 				if ( $this->atomic_widget_supports_property( $target_property ) ) {

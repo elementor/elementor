@@ -16,16 +16,22 @@ class CSS_To_Atomic_Props_Converter {
 	}
 
 	public function convert_css_to_atomic_prop( string $property, $value ): ?array {
+		error_log( "🚨 ROOT CAUSE DEBUG: convert_css_to_atomic_prop called: {$property} = {$value}" );
+		
 		if ( empty( $property ) || $value === null || $value === '' ) {
+			error_log( "🚨 ROOT CAUSE DEBUG: Property rejected - empty or null" );
 			return null;
 		}
 
 		$mapper = $this->get_property_mapper( $property );
 		if ( ! $mapper ) {
+			error_log( "🚨 ROOT CAUSE DEBUG: No mapper found for property: {$property}" );
 			return null;
 		}
 
-		return $mapper->map_to_v4_atomic( $property, $value );
+		$result = $mapper->map_to_v4_atomic( $property, $value );
+		error_log( "🚨 ROOT CAUSE DEBUG: Mapper result: " . json_encode( $result ) );
+		return $result;
 	}
 
 	public function convert_multiple_css_props( array $css_properties ): array {
@@ -34,20 +40,42 @@ class CSS_To_Atomic_Props_Converter {
 		// to individual properties (border-width, border-style, border-color) just like inline CSS
 		require_once __DIR__ . '/../css/processing/css-shorthand-expander.php';
 		
-		error_log( "🔍 ATOMIC-BRIDGE DEBUG: Input properties: " . json_encode( $css_properties ) );
+		error_log( "🚨 ROOT CAUSE DEBUG: convert_multiple_css_props called with: " . json_encode( $css_properties ) );
 		$expanded_properties = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $css_properties );
-		error_log( "🔍 ATOMIC-BRIDGE DEBUG: Expanded properties: " . json_encode( $expanded_properties ) );
+		error_log( "🚨 ROOT CAUSE DEBUG: Expanded properties: " . json_encode( $expanded_properties ) );
 		
 		$atomic_props = [];
 
 		foreach ( $expanded_properties as $property => $value ) {
+			error_log( "🚨 ROOT CAUSE DEBUG: Processing property: {$property} = {$value}" );
+			
 			$atomic_prop = $this->convert_css_to_atomic_prop( $property, $value );
 			if ( $atomic_prop ) {
 				$target_property = $this->get_target_property_name( $property );
-				$atomic_props[ $target_property ] = $atomic_prop;
+				error_log( "🚨 ROOT CAUSE DEBUG: Target property: {$target_property}" );
+				error_log( "🚨 ROOT CAUSE DEBUG: Atomic prop: " . json_encode( $atomic_prop ) );
+				
+				// ✅ CRITICAL FIX: Merge dimensions properties instead of overwriting
+				if ( isset( $atomic_props[ $target_property ] ) && $this->is_dimensions_property( $atomic_prop ) ) {
+					error_log( "🚨 ROOT CAUSE DEBUG: COLLISION DETECTED! Merging with existing property" );
+					error_log( "🚨 ROOT CAUSE DEBUG: Existing: " . json_encode( $atomic_props[ $target_property ] ) );
+					
+					$atomic_props[ $target_property ] = $this->merge_dimensions_properties( 
+						$atomic_props[ $target_property ], 
+						$atomic_prop 
+					);
+					
+					error_log( "🚨 ROOT CAUSE DEBUG: Merged result: " . json_encode( $atomic_props[ $target_property ] ) );
+				} else {
+					error_log( "🚨 ROOT CAUSE DEBUG: No collision, storing as: {$target_property}" );
+					$atomic_props[ $target_property ] = $atomic_prop;
+				}
+			} else {
+				error_log( "🚨 ROOT CAUSE DEBUG: Property {$property} conversion failed" );
 			}
 		}
 
+		error_log( "🚨 ROOT CAUSE DEBUG: Final atomic_props: " . json_encode( $atomic_props ) );
 		return $atomic_props;
 	}
 
@@ -80,6 +108,38 @@ class CSS_To_Atomic_Props_Converter {
 
 	private function get_property_mapper( string $property ) {
 		return $this->property_mapper_factory->get_mapper( $property );
+	}
+
+	private function is_dimensions_property( array $atomic_prop ): bool {
+		return isset( $atomic_prop['$$type'] ) && $atomic_prop['$$type'] === 'dimensions';
+	}
+
+	private function merge_dimensions_properties( array $existing, array $new ): array {
+		// Both properties should be dimensions type
+		if ( ! $this->is_dimensions_property( $existing ) || ! $this->is_dimensions_property( $new ) ) {
+			return $new; // Fallback to overwrite if not dimensions
+		}
+
+		$merged_value = $existing['value'] ?? [];
+		$new_value = $new['value'] ?? [];
+
+		// Merge the directional values, preserving existing values and adding new ones
+		foreach ( ['block-start', 'block-end', 'inline-start', 'inline-end'] as $direction ) {
+			if ( isset( $new_value[ $direction ] ) && $new_value[ $direction ] !== null ) {
+				// New value takes precedence
+				$merged_value[ $direction ] = $new_value[ $direction ];
+			}
+			// Keep existing value if no new value provided
+			// Ensure all directions are present (with null if not set)
+			if ( ! isset( $merged_value[ $direction ] ) ) {
+				$merged_value[ $direction ] = null;
+			}
+		}
+
+		return [
+			'$$type' => 'dimensions',
+			'value' => $merged_value
+		];
 	}
 
 	private function validate_atomic_prop_structure( array $atomic_prop ): bool {

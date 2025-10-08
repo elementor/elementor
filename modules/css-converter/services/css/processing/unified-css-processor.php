@@ -26,7 +26,9 @@ class Unified_Css_Processor {
 	}
 
 	public function process_css_and_widgets( string $css, array $widgets ): array {
-		error_log( "Unified CSS Processor: Starting unified processing" );
+		error_log( "🚨 UNIFIED PROCESSOR: Starting unified processing" );
+		error_log( "🚨 UNIFIED PROCESSOR: CSS length: " . strlen( $css ) );
+		error_log( "🚨 UNIFIED PROCESSOR: Widgets count: " . count( $widgets ) );
 		
 		// Phase 1: COLLECT all styles (no widget creation yet)
 		$this->unified_style_manager->reset();
@@ -121,16 +123,40 @@ class Unified_Css_Processor {
 			
 			// Collect inline styles for this widget
 			if ( $element_id && ! empty( $inline_css ) ) {
-				error_log( "UNIFIED_CSS_PROCESSOR: ✅ Collecting inline styles for element {$element_id}" );
+				error_log( "🚨 INLINE CSS PATH 2: Unified CSS Processor collecting for element {$element_id}" );
+				error_log( "🚨 INLINE CSS PATH 2: Properties: " . json_encode( array_keys( $inline_css ) ) );
 				
-				// Convert inline CSS properties to atomic format and collect them
+				// ✅ CRITICAL FIX: Process inline CSS as batch to handle property key collisions
+				// Collect all inline properties first
+				$inline_properties = [];
+				foreach ( $inline_css as $property => $property_data ) {
+					$value = $property_data['value'] ?? $property_data;
+					$inline_properties[ $property ] = $value;
+				}
+				
+				error_log( "🚨 UNIFIED BATCH FIX: Collected properties for batch: " . json_encode( $inline_properties ) );
+				
+				// Process all properties as batch using collision detection
+				$batch_converted = $this->convert_properties_batch( $inline_properties );
+				
+				error_log( "🚨 UNIFIED BATCH FIX: Batch conversion result: " . json_encode( $batch_converted ) );
+				
+				// Store each converted property with proper collision handling
 				foreach ( $inline_css as $property => $property_data ) {
 					$value = $property_data['value'] ?? $property_data;
 					$important = $property_data['important'] ?? false;
 					
-					error_log( "UNIFIED_CSS_PROCESSOR: Converting inline property: {$property} = {$value}" );
-					$converted = $this->convert_property_if_needed( $property, $value );
-					error_log( "UNIFIED_CSS_PROCESSOR: Converted inline property result: " . wp_json_encode( $converted ) );
+					// Find the converted property in batch results
+					$converted = null;
+					foreach ( $batch_converted as $atomic_property => $atomic_value ) {
+						if ( $this->is_property_source_unified( $property, $atomic_property ) ) {
+							$converted = [ $atomic_property => $atomic_value ];
+							break;
+						}
+					}
+					
+					error_log( "🚨 UNIFIED BATCH FIX: Converting {$property} = {$value}" );
+					error_log( "🚨 UNIFIED BATCH FIX: Converted: " . wp_json_encode( $converted ) );
 					
 					// Store the converted property in the unified style manager
 					$this->unified_style_manager->collect_inline_styles( $element_id, [
@@ -149,6 +175,29 @@ class Unified_Css_Processor {
 				$this->collect_inline_styles_recursively( $widget['children'] );
 			}
 		}
+	}
+
+	private function convert_properties_batch( array $properties ): array {
+		// Use the same batch conversion service that has collision detection
+		if ( ! $this->property_converter ) {
+			return [];
+		}
+		
+		return $this->property_converter->convert_properties_to_v4_atomic( $properties );
+	}
+	
+	private function is_property_source_unified( string $css_property, string $atomic_property ): bool {
+		// For margin properties, all individual margin properties map to 'margin' atomic property
+		if ( 'margin' === $atomic_property && in_array( $css_property, [
+			'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+			'margin-block-start', 'margin-block-end', 'margin-inline-start', 'margin-inline-end',
+			'margin-block', 'margin-inline'
+		], true ) ) {
+			return true;
+		}
+		
+		// For other properties, check if CSS property matches atomic property
+		return $css_property === $atomic_property;
 	}
 
 	private function resolve_styles_recursively( array $widgets ): array {
