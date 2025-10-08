@@ -16,7 +16,6 @@ export class Switch extends $e.modules.CommandBase {
 			mode,
 			onClose,
 			selector: args.selector,
-			targetDocumentId: id,
 		} )
 			.then( () => {
 				return $e.run( 'editor/documents/open', { id, shouldScroll, shouldNavigateToDefaultRoute, selector: args.selector, setAsInitial } );
