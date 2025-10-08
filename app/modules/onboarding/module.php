@@ -51,13 +51,6 @@ class Module extends BaseModule {
 		return $editor_assets_api->is_experiment_enabled( $experiment_key );
 	}
 
-	private function is_theme_selection_experiment_enabled() {
-		return $this->is_experiment_enabled( 'coreOnboardingThemeSelection' );
-	}
-
-	private function is_good_to_go_experiment_enabled() {
-		return $this->is_experiment_enabled( 'coreOnboardingGoodToGo' );
-	}
 
 	private function get_editor_assets_api(): ?API {
 		if ( null !== $this->editor_assets_api ) {
@@ -161,8 +154,8 @@ class Module extends BaseModule {
 			],
 			'nonce' => wp_create_nonce( 'onboarding' ),
 			'experiment' => true,
-			'themeSelectionExperimentEnabled' => $this->is_theme_selection_experiment_enabled(),
-			'goodToGoExperimentEnabled' => $this->is_good_to_go_experiment_enabled(),
+			'themeSelectionExperimentEnabled' => $this->is_experiment_enabled( 'offerThemeChoicesHelloBiz201' ),
+			'goodToGoExperimentEnabled' => $this->is_experiment_enabled( 'reduceHierarchyBlankOption402' ),
 		] );
 	}
 
