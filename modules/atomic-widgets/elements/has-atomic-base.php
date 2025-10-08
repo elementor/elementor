@@ -56,7 +56,7 @@ trait Has_Atomic_Base {
 					Utils::safe_throw( 'Control is missing a bound prop from the schema.' );
 					continue;
 				}
-	
+
 				if ( ! array_key_exists( $prop_name, $schema ) ) {
 					Utils::safe_throw( "Prop `{$prop_name}` is not defined in the schema of `{$this->get_name()}`." );
 					continue;
