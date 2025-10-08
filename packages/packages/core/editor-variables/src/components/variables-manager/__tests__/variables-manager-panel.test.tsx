@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from 'react'; 
 import { useDialog } from '@elementor/editor-ui';
 import { type BoxProps, type ButtonProps, type IconButtonProps, type StackProps } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
