@@ -162,7 +162,7 @@ export function VariablesManagerPanel() {
 							<Stack width="100%" direction="row" gap={ 1 }>
 								<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
 									<ColorFilterIcon fontSize="inherit" />
-									{ __( 'Variables Manager', 'elementor' ) }
+									{ __( 'Variable Manager', 'elementor' ) }
 								</PanelHeaderTitle>
 							</Stack>
 							<Stack direction="row" gap={ 0.5 } alignItems="center">
