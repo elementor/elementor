@@ -147,6 +147,7 @@ describe( 'Reset Style Props Tests', () => {
 
 		it( 'should handle JSON.stringify errors gracefully', () => {
 			// circular reference to force stringify error
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const circular: any = {};
 			circular.self = circular;
 
