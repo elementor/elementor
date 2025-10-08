@@ -102,6 +102,9 @@ export const saveAndExitVariableManager = async ( page: Page, shouldSave: boolea
 		await page.waitForRequest( ( response ) => response.url().includes( 'list' ) && null === response.failure() );
 	}
 	await page.locator( '#elementor-panel' ).getByRole( 'button', { name: 'Close' } ).click();
+	if ( await page.locator( '#save-changes-dialog' ).isVisible() ) {
+		await page.locator( '[aria-labelledby="save-changes-dialog"]' ).getByRole( 'button', { name: /Save/ } ).click();
+	}
 };
 
 export const deleteAllVariables = async ( page: Page ) => {
