@@ -97,10 +97,6 @@ export const generatePluginTests = ( testType: string ) => {
 					await plusAddonTemplateModal.skipTemplatesImportIfVisible();
 				}
 
-				if ( 'wordpress-seo' === plugin.pluginName ) {
-					await page.locator( '[data-widget_type="progress.default"]' ).first().click();
-				}
-
 				await editor.closeNavigatorIfOpen();
 
 				await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
