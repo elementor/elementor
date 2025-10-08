@@ -4,9 +4,9 @@
  */
 
 import { init as initConnect } from './connect';
-import { init as initDocumentsIndicator } from './documents-indicator';
 import { init as initDocumentsPreview } from './documents-preview';
 import { init as initDocumentsSave } from './documents-save';
+import { init as initDocumentsSettings } from './documents-settings';
 import { init as initElements } from './elements';
 import { init as initFinder } from './finder';
 import { init as initHelp } from './help';
@@ -20,9 +20,9 @@ import { init as initUserPreferences } from './user-preferences';
 import { init as initWordpress } from './wordpress';
 
 export function init() {
-	initDocumentsIndicator();
 	initDocumentsPreview();
 	initDocumentsSave();
+	initDocumentsSettings();
 	initElements();
 	initFinder();
 	initHelp();
