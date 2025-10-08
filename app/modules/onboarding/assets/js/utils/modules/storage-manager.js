@@ -23,6 +23,10 @@ export const ONBOARDING_STORAGE_KEYS = {
 	PENDING_STEP1_END_STATE: 'elementor_onboarding_pending_step1_end_state',
 	PENDING_EXIT_BUTTON: 'elementor_onboarding_pending_exit_button',
 	PENDING_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
+	THEME_SELECTION_VARIANT: 'elementor_onboarding_theme_selection_variant',
+	THEME_SELECTION_EXPERIMENT_STARTED: 'elementor_onboarding_theme_selection_experiment_started',
+	GOOD_TO_GO_VARIANT: 'elementor_onboarding_good_to_go_variant',
+	GOOD_TO_GO_EXPERIMENT_STARTED: 'elementor_onboarding_good_to_go_experiment_started',
 };
 
 export function getString( key ) {
@@ -116,10 +120,16 @@ export function clearAllOnboardingData() {
 		ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS,
 		ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT,
 		ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
+		ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK,
 		ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS,
 		ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
+		ONBOARDING_STORAGE_KEYS.PENDING_STEP1_END_STATE,
 		ONBOARDING_STORAGE_KEYS.PENDING_EXIT_BUTTON,
+		ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_MOUSEOVER,
 		ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
+		ONBOARDING_STORAGE_KEYS.STEP2_START_TIME,
+		ONBOARDING_STORAGE_KEYS.STEP3_START_TIME,
+		ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
 	];
 
 	clearMultiple( keysToRemove );
@@ -128,6 +138,17 @@ export function clearAllOnboardingData() {
 		const clickDataKey = `elementor_onboarding_click_${ i }_data`;
 		remove( clickDataKey );
 	}
+}
+
+export function clearExperimentData() {
+	const experimentKeys = [
+		ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT,
+		ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED,
+		ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT,
+		ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED,
+	];
+
+	clearMultiple( experimentKeys );
 }
 
 export function getStepStartTime( stepNumber ) {
@@ -186,6 +207,7 @@ const StorageManager = {
 	exists,
 	clearMultiple,
 	clearAllOnboardingData,
+	clearExperimentData,
 	getStepStartTime,
 	setStepStartTime,
 	clearStepStartTime,
