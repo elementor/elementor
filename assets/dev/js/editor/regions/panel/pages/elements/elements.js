@@ -258,7 +258,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			return;
 		}
 
-		this.search.currentView.ui.input.focus();
+		this.search.currentView.ui.input.trigger( 'focus' );
 	},
 
 	onChildviewChildrenRender() {
