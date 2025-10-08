@@ -41,24 +41,22 @@ class Module extends BaseModule {
 		return 'onboarding';
 	}
 
-	private function is_theme_selection_experiment_enabled() {
+	private function is_experiment_enabled( string $experiment_key ) {
 		$editor_assets_api = $this->get_editor_assets_api();
 
 		if ( null === $editor_assets_api ) {
 			return false;
 		}
 
-		return $editor_assets_api->is_theme_selection_experiment_enabled();
+		return $editor_assets_api->is_experiment_enabled( $experiment_key );
+	}
+
+	private function is_theme_selection_experiment_enabled() {
+		return $this->is_experiment_enabled( 'coreOnboardingThemeSelection' );
 	}
 
 	private function is_good_to_go_experiment_enabled() {
-		$editor_assets_api = $this->get_editor_assets_api();
-
-		if ( null === $editor_assets_api ) {
-			return false;
-		}
-
-		return $editor_assets_api->is_good_to_go_experiment_enabled();
+		return $this->is_experiment_enabled( 'coreOnboardingGoodToGo' );
 	}
 
 	private function get_editor_assets_api(): ?API {

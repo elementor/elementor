@@ -24,15 +24,17 @@ class API {
 		return $json_data[0] ?? [];
 	}
 
-	public function is_theme_selection_experiment_enabled( $force_request = false ): bool {
+	public function is_experiment_enabled( string $experiment_key, $force_request = false ): bool {
 		$ab_testing_data = $this->get_ab_testing_data( $force_request );
 
-		return $ab_testing_data['coreOnboardingThemeSelection'] ?? false;
+		return $ab_testing_data[ $experiment_key ] ?? false;
+	}
+
+	public function is_theme_selection_experiment_enabled( $force_request = false ): bool {
+		return $this->is_experiment_enabled( 'coreOnboardingThemeSelection', $force_request );
 	}
 
 	public function is_good_to_go_experiment_enabled( $force_request = false ): bool {
-		$ab_testing_data = $this->get_ab_testing_data( $force_request );
-
-		return $ab_testing_data['coreOnboardingGoodToGo'] ?? false;
+		return $this->is_experiment_enabled( 'coreOnboardingGoodToGo', $force_request );
 	}
 }
