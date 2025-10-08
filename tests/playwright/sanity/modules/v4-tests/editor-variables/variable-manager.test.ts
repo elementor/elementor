@@ -44,7 +44,7 @@ test.describe( 'Variable Manager @v4-tests', () => {
 	test( 'Color variable screenshot test', async ( ) => {
 		await addColorVariable( page );
 		await openVariableManager( page, 'Typography', 'text-color' );
-		await expect( page ).toHaveScreenshot( 'color-variable-screenshot.png' );
+		await expect( page.locator( '#elementor-panel' ) ).toHaveScreenshot( 'color-variable-screenshot.png' );
 	} );
 
 	test( 'Variable name validation error displays and clears in the manager', async () => {
