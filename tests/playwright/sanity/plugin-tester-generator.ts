@@ -98,7 +98,7 @@ export const generatePluginTests = ( testType: string ) => {
 				}
 
 				if ( 'wordpress-seo' === plugin.pluginName ) {
-					const gotItButton = this.page.locator( '#yoast-introduction-editor-v2 .dialog-buttons-ok' );
+					const gotItButton = editor.page.locator( '#yoast-introduction-editor-v2 .dialog-buttons-ok' );
 
 					if (await gotItButton.isVisible()) {
 						await gotItButton.click();
