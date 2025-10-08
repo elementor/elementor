@@ -30,6 +30,9 @@ class Module extends BaseModule {
 			$this->init_routes();
 		}
 		
+		// Add global hook for CSS converter base styles override
+		add_action( 'wp_head', [ $this, 'maybe_inject_base_styles_override' ], 999 );
+		
 	}
 
 	private function is_test_environment(): bool {
@@ -207,6 +210,80 @@ class Module extends BaseModule {
 
 	public function set_classes_route( $classes_route ): void {
 		$this->classes_route = $classes_route;
+	}
+
+	public function maybe_inject_base_styles_override() {
+		error_log( "🔥 MODULE: maybe_inject_base_styles_override called" );
+		
+		// Check if CSS converter zero defaults is active
+		$zero_defaults_active = get_option( 'elementor_css_converter_zero_defaults_active', false );
+		if ( ! $zero_defaults_active ) {
+			error_log( "🔥 MODULE: CSS converter zero defaults not active, skipping" );
+			return;
+		}
+		
+		error_log( "🔥 MODULE: CSS converter zero defaults is active, checking for widgets" );
+		
+		// Get current post ID
+		$post_id = get_the_ID();
+		if ( ! $post_id ) {
+			error_log( "🔥 MODULE: No post ID found, skipping CSS override" );
+			return;
+		}
+		
+		error_log( "🔥 MODULE: Checking post " . $post_id . " for CSS converter widgets" );
+		
+		// Check if this page has CSS converter widgets
+		if ( ! $this->page_has_css_converter_widgets( $post_id ) ) {
+			error_log( "🔥 MODULE: No CSS converter widgets found, skipping CSS override" );
+			return;
+		}
+		
+		error_log( "🔥 MODULE: CSS converter widgets found, injecting override CSS" );
+		
+		// Inject CSS to override atomic widget base styles
+		echo '<style id="css-converter-module-base-styles-override">';
+		echo '/* CSS Converter Module: Override atomic widget base styles */';
+		echo 'body .elementor .elementor-widget .e-paragraph { margin-top: 16px !important; margin-bottom: 16px !important; }';
+		echo 'body .elementor .elementor-widget .e-heading { margin-top: 21px !important; margin-bottom: 21px !important; }';
+		echo 'body .elementor .elementor-widget .e-paragraph p { margin-top: 16px !important; margin-bottom: 16px !important; }';
+		echo 'body .elementor .elementor-widget .e-heading h1, body .elementor .elementor-widget .e-heading h2 { margin-top: 21px !important; margin-bottom: 21px !important; }';
+		echo '</style>';
+		
+		error_log( "🔥 MODULE: CSS override injected successfully" );
+		
+		// Clear the flag after use to avoid affecting other pages
+		delete_option( 'elementor_css_converter_zero_defaults_active' );
+		error_log( "🔥 MODULE: Cleared CSS converter zero defaults flag" );
+	}
+
+	private function page_has_css_converter_widgets( int $post_id ): bool {
+		$document = \Elementor\Plugin::$instance->documents->get( $post_id );
+		if ( ! $document ) {
+			return false;
+		}
+		
+		$elements_data = $document->get_elements_data();
+		return $this->traverse_elements_for_css_converter_widgets( $elements_data );
+	}
+
+	private function traverse_elements_for_css_converter_widgets( array $elements_data ): bool {
+		foreach ( $elements_data as $element_data ) {
+			// Check if this element has CSS converter flag
+			if ( isset( $element_data['editor_settings']['css_converter_widget'] ) && $element_data['editor_settings']['css_converter_widget'] ) {
+				error_log( "🔥 MODULE: Found CSS converter widget: " . ( $element_data['widgetType'] ?? 'unknown' ) );
+				return true;
+			}
+			
+			// Recursively check child elements
+			if ( isset( $element_data['elements'] ) && is_array( $element_data['elements'] ) ) {
+				if ( $this->traverse_elements_for_css_converter_widgets( $element_data['elements'] ) ) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 
 }

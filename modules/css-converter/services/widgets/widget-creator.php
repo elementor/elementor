@@ -24,6 +24,8 @@ class Widget_Creator {
 	private $current_unsupported_props = [];
 
 	public function __construct( $use_zero_defaults = false ) {
+		error_log( "🔥 WIDGET_CREATOR: __construct called with use_zero_defaults = " . var_export( $use_zero_defaults, true ) );
+		
 		$this->use_zero_defaults = $use_zero_defaults;
 		$this->creation_stats = [
 			'widgets_created' => 0,
@@ -37,6 +39,93 @@ class Widget_Creator {
 		$this->hierarchy_processor = new Widget_Hierarchy_Processor();
 		$this->error_handler = new Widget_Error_Handler();
 		$this->property_mapper_registry = Class_Property_Mapper_Factory::get_registry();
+		
+		// Hook into atomic widgets base styles filter when zero defaults are enabled
+		if ( $this->use_zero_defaults ) {
+			error_log( "🔥 WIDGET_CREATOR: Adding filter for disable-base-styles" );
+			add_filter( 'elementor/atomic-widgets/disable-base-styles', [ $this, 'disable_base_styles_for_css_converter_widgets' ], 10, 3 );
+			
+			// Also add CSS override for base styles as a fallback
+			add_action( 'wp_head', [ $this, 'inject_base_styles_override_css' ], 999 );
+			error_log( "🔥 WIDGET_CREATOR: Added CSS override action for base styles" );
+		} else {
+			error_log( "🔥 WIDGET_CREATOR: NOT adding filter because use_zero_defaults is false" );
+		}
+	}
+
+	public function disable_base_styles_for_css_converter_widgets( $disable, $widget_name, $widget_data ) {
+		error_log( "🔥 FILTER CALLED: disable_base_styles_for_css_converter_widgets" );
+		error_log( "🔥 FILTER: widget_name = " . $widget_name );
+		error_log( "🔥 FILTER: disable (input) = " . var_export( $disable, true ) );
+		error_log( "🔥 FILTER: widget_data = " . json_encode( $widget_data ) );
+		
+		// Check if this widget was created by the CSS converter
+		if ( isset( $widget_data['editor_settings']['css_converter_widget'] ) && $widget_data['editor_settings']['css_converter_widget'] ) {
+			error_log( "🔥 FILTER: This IS a CSS converter widget - DISABLING base styles" );
+			return true; // Disable base styles for CSS converter widgets
+		}
+		
+		error_log( "🔥 FILTER: This is NOT a CSS converter widget - keeping original value" );
+		return $disable; // Keep original value for other widgets
+	}
+
+	public function inject_base_styles_override_css() {
+		error_log( "🔥 CSS_OVERRIDE: inject_base_styles_override_css called" );
+		
+		// Get current post ID
+		$post_id = get_the_ID();
+		if ( ! $post_id ) {
+			error_log( "🔥 CSS_OVERRIDE: No post ID found, skipping CSS override" );
+			return;
+		}
+		
+		error_log( "🔥 CSS_OVERRIDE: Checking post " . $post_id . " for CSS converter widgets" );
+		
+		// Check if this page has CSS converter widgets
+		if ( ! $this->page_has_css_converter_widgets( $post_id ) ) {
+			error_log( "🔥 CSS_OVERRIDE: No CSS converter widgets found, skipping CSS override" );
+			return;
+		}
+		
+		error_log( "🔥 CSS_OVERRIDE: CSS converter widgets found, injecting override CSS" );
+		
+		// Inject CSS to override atomic widget base styles
+		echo '<style id="css-converter-base-styles-override">';
+		echo '/* CSS Converter: Override atomic widget base styles */';
+		echo '.elementor .e-paragraph { margin: revert !important; }';
+		echo '.elementor .e-heading { margin: revert !important; }';
+		echo '</style>';
+		
+		error_log( "🔥 CSS_OVERRIDE: CSS override injected successfully" );
+	}
+
+	private function page_has_css_converter_widgets( int $post_id ): bool {
+		$document = \Elementor\Plugin::$instance->documents->get( $post_id );
+		if ( ! $document ) {
+			return false;
+		}
+		
+		$elements_data = $document->get_elements_data();
+		return $this->traverse_elements_for_css_converter_widgets( $elements_data );
+	}
+
+	private function traverse_elements_for_css_converter_widgets( array $elements_data ): bool {
+		foreach ( $elements_data as $element_data ) {
+			// Check if this element has CSS converter flag
+			if ( isset( $element_data['editor_settings']['css_converter_widget'] ) && $element_data['editor_settings']['css_converter_widget'] ) {
+				error_log( "🔥 CSS_OVERRIDE: Found CSS converter widget: " . ( $element_data['widgetType'] ?? 'unknown' ) );
+				return true;
+			}
+			
+			// Recursively check child elements
+			if ( isset( $element_data['elements'] ) && is_array( $element_data['elements'] ) ) {
+				if ( $this->traverse_elements_for_css_converter_widgets( $element_data['elements'] ) ) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 
 	public function create_widgets( $styled_widgets, $css_processing_result, $options = [] ) {
@@ -326,6 +415,10 @@ class Widget_Creator {
 			// Ensure elements array exists (required by Elementor)
 			$elementor_widget['elements'] = [];
 		}
+
+		error_log( "🔥 WIDGET_CREATOR: Created widget with type: " . $mapped_type );
+		error_log( "🔥 WIDGET_CREATOR: disable_base_styles = " . ( $this->use_zero_defaults ? 'true' : 'false' ) );
+		error_log( "🔥 WIDGET_CREATOR: editor_settings = " . json_encode( $elementor_widget['editor_settings'] ?? [] ) );
 
 		return $elementor_widget;
 	}

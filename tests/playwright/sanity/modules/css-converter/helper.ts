@@ -6,6 +6,7 @@ export interface CssConverterOptions {
 	timeout?: number;
 	globalClassThreshold?: number;
 	preserveIds?: boolean;
+	useZeroDefaults?: boolean;
 }
 
 export interface CssConverterRequest {
@@ -69,6 +70,7 @@ export class CssConverterHelper {
 		const defaultOptions: CssConverterOptions = {
 			postType: 'page',
 			createGlobalClasses: true,
+			useZeroDefaults: true,
 			...options,
 		};
 
@@ -95,6 +97,7 @@ export class CssConverterHelper {
 		const defaultOptions: CssConverterOptions = {
 			postType: 'page',
 			createGlobalClasses: true,
+			useZeroDefaults: true,
 			...options,
 		};
 
@@ -123,6 +126,7 @@ export class CssConverterHelper {
 		const defaultOptions: CssConverterOptions = {
 			postType: 'page',
 			createGlobalClasses: true,
+			useZeroDefaults: true,
 			...options,
 		};
 

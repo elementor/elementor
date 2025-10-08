@@ -34,7 +34,9 @@ class Widgets_Route {
 	}
 
 	public function register_route() {
-		register_rest_route( 'elementor/v2', '/widget-converter', [
+		error_log( "🔥 STEP 1: Registering widget-converter route at /elementor/v2/widget-converter" );
+		
+		$registered = register_rest_route( 'elementor/v2', '/widget-converter', [
 			'methods' => 'POST',
 			'callback' => [ $this, 'handle_widget_conversion' ],
 			'permission_callback' => [ $this, 'check_permissions' ],
@@ -86,7 +88,7 @@ class Widgets_Route {
 						],
 						'useZeroDefaults' => [
 							'type' => 'boolean',
-							'default' => false,
+							'default' => true,
 							'description' => 'Whether to disable atomic widget base styles (zero defaults)',
 						],
 						'timeout' => [
@@ -107,9 +109,15 @@ class Widgets_Route {
 				],
 			],
 		] );
+		
+		error_log( "🔥 STEP 1: Route registration result = " . var_export( $registered, true ) );
 	}
 
 	public function check_permissions() {
+		error_log( "🔥 STEP 2: check_permissions called" );
+		error_log( "🔥 STEP 2: current_user_can('edit_posts') = " . var_export( current_user_can( 'edit_posts' ), true ) );
+		error_log( "🔥 STEP 2: is_user_logged_in() = " . var_export( is_user_logged_in(), true ) );
+		
 		error_log( "🚨 LEVEL 1 DEBUG: PERMISSIONS CHECK CALLED - Route is being accessed" );
 		// DEBUG: Temporarily allow public access for testing double-wrapping fix
 		return true;
@@ -130,15 +138,21 @@ class Widgets_Route {
 	}
 
 	public function handle_widget_conversion( WP_REST_Request $request ) {
-		error_log( "🚨 LEVEL 1 DEBUG: API ENDPOINT - Widget conversion called" );
-		error_log( "🚨 LEVEL 1 DEBUG: Request method: " . $_SERVER['REQUEST_METHOD'] );
-		error_log( "🚨 LEVEL 1 DEBUG: Request URI: " . $_SERVER['REQUEST_URI'] );
+		error_log( "🔥 STEP 3: handle_widget_conversion called" );
+		error_log( "🔥 STEP 3: Request method = " . $_SERVER['REQUEST_METHOD'] );
+		error_log( "🔥 STEP 3: Request URI = " . $_SERVER['REQUEST_URI'] );
+		error_log( "🔥 STEP 3: All params = " . json_encode( $request->get_params() ) );
 		
 		$type = $request->get_param( 'type' );
+		error_log( "🔥 STEP 3: Type parameter = " . var_export( $type, true ) );
 		$content = $request->get_param( 'content' );
 		$css_urls = $request->get_param( 'cssUrls' ) ?: [];
 		$follow_imports = $request->get_param( 'followImports' ) ?: false;
 		$options = $request->get_param( 'options' ) ?: [];
+		
+		error_log( "🔥 STEP 3: Content length = " . strlen( $content ) );
+		error_log( "🔥 STEP 3: Options = " . json_encode( $options ) );
+		error_log( "🔥 STEP 3: useZeroDefaults in options = " . var_export( isset( $options['useZeroDefaults'] ) ? $options['useZeroDefaults'] : 'not set', true ) );
 		
 		// PHASE 2.2: HTML Content Verification
 		error_log( "🔍 PHASE 2.2: HTML CONTENT ANALYSIS" );

@@ -10,7 +10,7 @@ class Size_Value_Parser {
 	
 	private const CSS_KEYWORDS = [ 'auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer' ];
 	
-	private const SIZE_WITH_OPTIONAL_UNIT_PATTERN = '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax)?$/i';
+	private const SIZE_WITH_OPTIONAL_UNIT_PATTERN = '/^(-?\d+\.?\d*|-?\d*\.\d+)(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax)?$/i';
 	
 	private const NUMERIC_GROUP_INDEX = 1;
 	private const UNIT_GROUP_INDEX = 2;

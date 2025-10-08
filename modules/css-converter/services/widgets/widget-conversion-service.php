@@ -39,6 +39,12 @@ class Widget_Conversion_Service {
 		);
 		
 		$this->widget_creator = new Widget_Creator( $use_zero_defaults );
+		
+		// Add global CSS override for base styles when zero defaults are enabled
+		if ( $use_zero_defaults ) {
+			error_log( "🔥 CONVERSION_SERVICE: Enabling CSS converter base styles override" );
+			$this->enable_css_converter_base_styles_override();
+		}
 	}
 
 	public function convert_from_url( $url, $css_urls = [], $follow_imports = false, $options = [] ) {
@@ -127,12 +133,24 @@ class Widget_Conversion_Service {
 	}
 
 	public function convert_from_html( $html, $css_urls = [], $follow_imports = false, $options = [] ) {
-		error_log( "🚨 API CONVERSION: convert_from_html called with HTML length: " . strlen( $html ) );
-		error_log( "🚨 API CONVERSION: HTML preview: " . substr( $html, 0, 200 ) );
+		error_log( "🔥 CONVERSION_SERVICE: convert_from_html called" );
+		error_log( "🔥 CONVERSION_SERVICE: HTML length = " . strlen( $html ) );
+		error_log( "🔥 CONVERSION_SERVICE: options = " . json_encode( $options ) );
+		error_log( "🔥 CONVERSION_SERVICE: Current use_zero_defaults = " . var_export( $this->use_zero_defaults, true ) );
 		
 		if ( isset( $options['useZeroDefaults'] ) ) {
 			$this->use_zero_defaults = (bool) $options['useZeroDefaults'];
+			error_log( "🔥 CONVERSION_SERVICE: Updated use_zero_defaults to " . var_export( $this->use_zero_defaults, true ) );
 			$this->widget_creator = new Widget_Creator( $this->use_zero_defaults );
+			error_log( "🔥 CONVERSION_SERVICE: Created new Widget_Creator with use_zero_defaults = " . var_export( $this->use_zero_defaults, true ) );
+			
+			// Add global CSS override for base styles when zero defaults are enabled
+			if ( $this->use_zero_defaults ) {
+				error_log( "🔥 CONVERSION_SERVICE: Enabling CSS converter base styles override (updated)" );
+				$this->enable_css_converter_base_styles_override();
+			}
+		} else {
+			error_log( "🔥 CONVERSION_SERVICE: useZeroDefaults NOT in options, using default = " . var_export( $this->use_zero_defaults, true ) );
 		}
 		
 		$conversion_log = [
@@ -634,6 +652,84 @@ class Widget_Conversion_Service {
 			'id_styles' => [],
 			'direct_element_styles' => [],
 		];
+	}
+
+	private function enable_css_converter_base_styles_override() {
+		// Set a global flag that CSS converter is active with zero defaults
+		update_option( 'elementor_css_converter_zero_defaults_active', true );
+		error_log( "🔥 CONVERSION_SERVICE: Set global flag for CSS converter zero defaults" );
+		
+		// Invalidate atomic widget base styles cache to force regeneration
+		$this->invalidate_atomic_base_styles_cache();
+		error_log( "🔥 CONVERSION_SERVICE: Invalidated atomic widget base styles cache" );
+	}
+
+	private function invalidate_atomic_base_styles_cache() {
+		// Use the same cache invalidation mechanism as Elementor core
+		$cache_validity = new \Elementor\Modules\AtomicWidgets\Cache_Validity();
+		$cache_validity->invalidate( [ 'base' ] );
+		
+		// Also trigger the core cache clear action to ensure all caches are cleared
+		do_action( 'elementor/core/files/clear_cache' );
+	}
+
+	public function inject_global_base_styles_override() {
+		error_log( "🔥 GLOBAL_CSS_OVERRIDE: inject_global_base_styles_override called" );
+		
+		// Get current post ID
+		$post_id = get_the_ID();
+		if ( ! $post_id ) {
+			error_log( "🔥 GLOBAL_CSS_OVERRIDE: No post ID found, skipping CSS override" );
+			return;
+		}
+		
+		error_log( "🔥 GLOBAL_CSS_OVERRIDE: Checking post " . $post_id . " for CSS converter widgets" );
+		
+		// Check if this page has CSS converter widgets
+		if ( ! $this->page_has_css_converter_widgets( $post_id ) ) {
+			error_log( "🔥 GLOBAL_CSS_OVERRIDE: No CSS converter widgets found, skipping CSS override" );
+			return;
+		}
+		
+		error_log( "🔥 GLOBAL_CSS_OVERRIDE: CSS converter widgets found, injecting override CSS" );
+		
+		// Inject CSS to override atomic widget base styles
+		echo '<style id="css-converter-global-base-styles-override">';
+		echo '/* CSS Converter: Override atomic widget base styles globally */';
+		echo '.elementor .e-paragraph { margin: revert !important; }';
+		echo '.elementor .e-heading { margin: revert !important; }';
+		echo '</style>';
+		
+		error_log( "🔥 GLOBAL_CSS_OVERRIDE: CSS override injected successfully" );
+	}
+
+	private function page_has_css_converter_widgets( int $post_id ): bool {
+		$document = \Elementor\Plugin::$instance->documents->get( $post_id );
+		if ( ! $document ) {
+			return false;
+		}
+		
+		$elements_data = $document->get_elements_data();
+		return $this->traverse_elements_for_css_converter_widgets( $elements_data );
+	}
+
+	private function traverse_elements_for_css_converter_widgets( array $elements_data ): bool {
+		foreach ( $elements_data as $element_data ) {
+			// Check if this element has CSS converter flag
+			if ( isset( $element_data['editor_settings']['css_converter_widget'] ) && $element_data['editor_settings']['css_converter_widget'] ) {
+				error_log( "🔥 GLOBAL_CSS_OVERRIDE: Found CSS converter widget: " . ( $element_data['widgetType'] ?? 'unknown' ) );
+				return true;
+			}
+			
+			// Recursively check child elements
+			if ( isset( $element_data['elements'] ) && is_array( $element_data['elements'] ) ) {
+				if ( $this->traverse_elements_for_css_converter_widgets( $element_data['elements'] ) ) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 
 }

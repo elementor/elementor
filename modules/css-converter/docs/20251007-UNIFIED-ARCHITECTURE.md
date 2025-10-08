@@ -528,6 +528,43 @@ tests/
 - **ATOMIC WIDGET COMPATIBILITY**: Excellent for basic prop types
 - **COMPLEX PROP TYPES**: Need specialized implementation
 
+## 🔍 Default Styles Removal Investigation
+
+### **Status: INFRASTRUCTURE COMPLETE, CSS SPECIFICITY ISSUE**
+
+**Test File**: `tests/playwright/sanity/modules/css-converter/default-styles/default-styles-removal.test.ts`
+
+#### **✅ Working Components**
+1. **API Integration**: `useZeroDefaults: true` correctly passed from test helper to API endpoint
+2. **Widget Creation**: Widgets created with proper flags:
+   - `disable_base_styles: true` in `editor_settings`
+   - `css_converter_widget: true` for identification
+3. **Global Flag System**: Persistent option-based approach working:
+   - `elementor_css_converter_zero_defaults_active` option set during API request
+   - Option checked during frontend rendering via `wp_head` hook
+   - Option cleared after use to prevent cross-page interference
+4. **CSS Injection**: CSS override successfully injected in `<head>`:
+   - Global `wp_head` hook in CSS converter module fires correctly
+   - CSS converter widgets detected on page via document traversal
+   - Override CSS with high specificity selectors injected
+
+#### **❌ Current Issue**
+**CSS Effectiveness**: Injected CSS not overriding atomic widget base styles
+- **Symptom**: Computed styles still show `marginTop: '0px', marginBottom: '0px'`
+- **CSS Injected**: `body .elementor .elementor-widget .e-paragraph { margin-top: 16px !important; }`
+- **Root Cause**: CSS specificity insufficient or atomic widget styles applied with higher priority
+
+#### **🔬 Technical Investigation Completed**
+1. **Base Styles Generation**: Confirmed atomic widget base styles are globally cached, not per-widget
+2. **Filter Approach**: `elementor/atomic-widgets/disable-base-styles` filter added but never called during frontend rendering
+3. **Global Override**: Attempted to disable base styles at generation level in `Atomic_Widget_Base_Styles::get_all_base_styles()`
+4. **CSS Override**: Implemented persistent flag system with global `wp_head` hook
+
+#### **🎯 Next Steps Required**
+1. **CSS Specificity Analysis**: Investigate actual CSS rules applied to atomic widgets
+2. **Inline Styles Check**: Determine if atomic widget styles are applied inline
+3. **Alternative Approaches**: Consider JavaScript-based style manipulation or different CSS injection timing
+
 ### **Atomic Widgets Property Support**
 
 Based on systematic testing, the following properties are confirmed to work with atomic widgets:

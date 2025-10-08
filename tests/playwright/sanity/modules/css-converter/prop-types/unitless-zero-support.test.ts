@@ -7,6 +7,7 @@ import { CssConverterHelper } from '../helper';
 test.describe( 'Unitless Zero Support @prop-types', () => {
 	let editor: EditorPage;
 	let cssHelper: CssConverterHelper;
+	let wpAdmin: WpAdminPage;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
@@ -97,7 +98,7 @@ test.describe( 'Unitless Zero Support @prop-types', () => {
 		for ( const testCase of testCases ) {
 			const htmlContent = `<div><p style="${ testCase.property }: ${ testCase.value };">Test</p></div>`;
 
-			const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '' );
+			const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent );
 
 			const validation = cssHelper.validateApiResult( apiResult );
 			if ( validation.shouldSkip ) {
@@ -117,7 +118,6 @@ test.describe( 'Unitless Zero Support @prop-types', () => {
 
 			const elementorFrame = editor.getPreviewFrame();
 			const element = elementorFrame.locator( '.e-paragraph-base' ).first();
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 			await expect( element ).toHaveCSS( testCase.expected, testCase.expectedValue );
 		}
