@@ -105,11 +105,11 @@ export function createStepEventPayload( stepNumber, stepName, additionalData = {
 	};
 
 	if ( stepNumber >= 2 && elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
-		basePayload.theme_selection_variant = getThemeSelectionVariant();
+		basePayload['201-variant'] = getThemeSelectionVariant();
 	}
 
 	if ( stepNumber >= 4 && elementorAppConfig?.onboarding?.goodToGoExperimentEnabled ) {
-		basePayload.good_to_go_variant = getGoodToGoVariant();
+		basePayload['402-variant'] = getGoodToGoVariant();
 	}
 
 	return createEventPayload( basePayload );
@@ -125,14 +125,14 @@ export function createEditorEventPayload( additionalData = {} ) {
 	if ( elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
 		const themeVariant = getThemeSelectionVariant();
 		if ( themeVariant ) {
-			basePayload.theme_selection_variant = themeVariant;
+			basePayload['201-variant'] = themeVariant;
 		}
 	}
 
 	if ( elementorAppConfig?.onboarding?.goodToGoExperimentEnabled ) {
 		const goodToGoVariant = getGoodToGoVariant();
 		if ( goodToGoVariant ) {
-			basePayload.good_to_go_variant = goodToGoVariant;
+			basePayload['402-variant'] = goodToGoVariant;
 		}
 	}
 
