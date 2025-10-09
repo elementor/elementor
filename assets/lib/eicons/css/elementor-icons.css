@@ -1,7 +1,7 @@
 @font-face {
   font-family: "eicons";
-  src: url("../fonts/eicons.eot?5.44.0");
-  src: url("../fonts/eicons.eot?5.44.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.44.0") format("woff2"), url("../fonts/eicons.woff?5.44.0") format("woff"), url("../fonts/eicons.ttf?5.44.0") format("truetype"), url("../fonts/eicons.svg?5.44.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.45.0");
+  src: url("../fonts/eicons.eot?5.45.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.45.0") format("woff2"), url("../fonts/eicons.woff?5.45.0") format("woff"), url("../fonts/eicons.ttf?5.45.0") format("truetype"), url("../fonts/eicons.svg?5.45.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -1989,6 +1989,22 @@
 
 .eicon-contact:before {
   content: "\ebd2";
+}
+
+.eicon-layout:before {
+  content: "\ebd8";
+}
+
+.eicon-components:before {
+  content: "\ebd9";
+}
+
+.eicon-tab-content:before {
+  content: "\ebda";
+}
+
+.eicon-tab-menu:before {
+  content: "\ebdb";
 }
 
 .eicon-eye:before {
