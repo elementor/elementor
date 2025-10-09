@@ -6,7 +6,6 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Files\Uploads_Manager;
-use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Plugin_Upgrader;
@@ -27,8 +26,6 @@ class Module extends BaseModule {
 	const VERSION = '1.0.0';
 	const ONBOARDING_OPTION = 'elementor_onboarded';
 
-	private ?API $editor_assets_api = null;
-
 	/**
 	 * Get name.
 	 *
@@ -39,45 +36,6 @@ class Module extends BaseModule {
 	 */
 	public function get_name() {
 		return 'onboarding';
-	}
-
-	private function is_theme_selection_experiment_enabled() {
-		$editor_assets_api = $this->get_editor_assets_api();
-
-		if ( null === $editor_assets_api ) {
-			return false;
-		}
-
-		return $editor_assets_api->is_theme_selection_experiment_enabled();
-	}
-
-	private function is_good_to_go_experiment_enabled() {
-		$editor_assets_api = $this->get_editor_assets_api();
-
-		if ( null === $editor_assets_api ) {
-			return false;
-		}
-
-		return $editor_assets_api->is_good_to_go_experiment_enabled();
-	}
-
-	private function get_editor_assets_api(): ?API {
-		if ( null !== $this->editor_assets_api ) {
-			return $this->editor_assets_api;
-		}
-
-		$editor_assets_api_instance = new EditorAssetsAPI( $this->get_editor_assets_api_config() );
-		$this->editor_assets_api = new API( $editor_assets_api_instance );
-
-		return $this->editor_assets_api;
-	}
-
-	private function get_editor_assets_api_config(): array {
-		return [
-			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/ab-testing/v1/ab-testing.json',
-			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_ab_testing_data',
-			EditorAssetsAPI::ASSETS_DATA_KEY => 'ab-testing',
-		];
 	}
 
 	/**
@@ -163,8 +121,6 @@ class Module extends BaseModule {
 			],
 			'nonce' => wp_create_nonce( 'onboarding' ),
 			'experiment' => true,
-			'themeSelectionExperimentEnabled' => $this->is_theme_selection_experiment_enabled(),
-			'goodToGoExperimentEnabled' => $this->is_good_to_go_experiment_enabled(),
 		] );
 	}
 
@@ -369,13 +325,7 @@ class Module extends BaseModule {
 			return $this->get_permission_error_response();
 		}
 
-		$theme_slug = Utils::get_super_global_value( $_POST, 'theme_slug' ) ?? 'hello-biz'; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$allowed_themes = [ 'hello-elementor', 'hello-biz' ];
-		if ( ! in_array( $theme_slug, $allowed_themes, true ) ) {
-			$theme_slug = 'hello-biz';
-		}
-
-		switch_theme( $theme_slug );
+		switch_theme( 'hello-biz' );
 
 		return [
 			'status' => 'success',

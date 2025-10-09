@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import PropTypes from 'prop-types';
 import { OnboardingContext } from '../../context/context';
 import Grid from 'elementor-app/ui/grid/grid';
 import Notice from '../notice';
@@ -29,11 +28,9 @@ export default function PageContentLayout( props ) {
 						{ props.children }
 					</div>
 				</div>
-				{ props.image && (
-					<div className="e-onboarding__page-content-end">
-						<img src={ props.image } alt="Information" />
-					</div>
-				) }
+				<div className="e-onboarding__page-content-end">
+					<img src={ props.image } alt="Information" />
+				</div>
 			</Grid>
 			{ props.noticeState &&
 				<div className="e-onboarding__notice-container">

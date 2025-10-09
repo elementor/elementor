@@ -34,13 +34,6 @@
 		}
 	}
 
-	&__content:has(.e-onboarding__cards-grid--good-to-go-variant-b) {
-		.e-onboarding__page-content-section-title {
-			max-width: 440px;
-			justify-self: center;
-		}
-	}
-
 	&__good-to-go-footer {
 		justify-content: end;
 	}
