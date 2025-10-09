@@ -31,9 +31,8 @@ import {
 } from '@elementor/editor-props';
 
 import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../errors';
-import { TabsControl } from './element-controls/tabs-control/tabs-control';
 
-type ControlRegistry = Record<
+export type ControlRegistry = Record<
 	string,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	{ component: ControlComponent; layout: ControlLayout; propTypeUtil?: PropTypeUtil< string, any > }
@@ -107,6 +106,3 @@ class ControlsRegistry {
 }
 
 export const controlsRegistry = new ControlsRegistry( controlTypes );
-
-// @ts-expect-error - we need to create a new control type and registry for the element controls
-controlsRegistry.register( 'tabs', TabsControl, 'full', undefined );
