@@ -563,9 +563,19 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		getBaseClass() {
+			const editorSettings = this.model.get( 'editor_settings' ) || {};
+			const elType = this.model.get( 'elType' );
+			const widgetType = this.model.get( 'widgetType' );
 			const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
+			const baseClass = Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
+			
+			// Check for CSS converter widget flag in editor_settings
+			if ( editorSettings.css_converter_widget || editorSettings.disable_base_styles ) {
+				console.log( `🚫 CSS converter widget detected, returning empty base class` );
+				return ''; // No base class for CSS converter widgets
+			}
 
-			return Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
+			return baseClass;
 		},
 
 		isOverflowHidden() {
