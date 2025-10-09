@@ -77,6 +77,11 @@ function getGoodToGoVariant() {
 	return variant || null;
 }
 
+function getEmphasizeConnectBenefitsVariant() {
+	const variant = StorageManager.getString( ONBOARDING_STORAGE_KEYS.EMPHASIZE_CONNECT_BENEFITS_VARIANT );
+	return variant || null;
+}
+
 function getVariantSpecificEventName( baseEventName, stepNumber ) {
 	if ( 2 === stepNumber && elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
 		const variant = getThemeSelectionVariant();
@@ -104,6 +109,10 @@ export function createStepEventPayload( stepNumber, stepName, additionalData = {
 		...additionalData,
 	};
 
+	if ( stepNumber >= 1 && elementorAppConfig?.onboarding?.emphasizeConnectBenefits101 ) {
+		basePayload[ '101_variant' ] = getEmphasizeConnectBenefitsVariant();
+	}
+
 	if ( stepNumber >= 2 && elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
 		basePayload[ '201_variant' ] = getThemeSelectionVariant();
 	}
@@ -121,6 +130,13 @@ export function createEditorEventPayload( additionalData = {} ) {
 		trigger: 'elementor_loaded',
 		...additionalData,
 	};
+
+	if ( elementorAppConfig?.onboarding?.emphasizeConnectBenefits101 ) {
+		const emphasizeConnectVariant = getEmphasizeConnectBenefitsVariant();
+		if ( emphasizeConnectVariant ) {
+			basePayload[ '101_variant' ] = emphasizeConnectVariant;
+		}
+	}
 
 	if ( elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
 		const themeVariant = getThemeSelectionVariant();

@@ -838,6 +838,10 @@ class OnboardingTracker {
 		const stepNumber = this.getStepNumber( currentStep );
 		TimingManager.trackStepStartTime( stepNumber );
 
+		if ( 1 === stepNumber || 'account' === currentStep ) {
+			this.sendEmphasizeConnectBenefitsExperimentStarted();
+		}
+
 		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
 			this.sendStoredStep1EventsOnStep2();
 			this.sendThemeSelectionExperimentStarted();
@@ -972,6 +976,53 @@ class OnboardingTracker {
 		EventDispatcher.dispatch( '$experiment_started', eventData );
 
 		StorageManager.setString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED, 'true' );
+	}
+
+	isEmphasizeConnectBenefitsExperimentEnabled() {
+		return elementorAppConfig?.onboarding?.emphasizeConnectBenefits101 || false;
+	}
+
+	getEmphasizeConnectBenefitsVariant() {
+		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.EMPHASIZE_CONNECT_BENEFITS_VARIANT );
+		return stored || null;
+	}
+
+	assignEmphasizeConnectBenefitsVariant() {
+		if ( ! this.isEmphasizeConnectBenefitsExperimentEnabled() ) {
+			return null;
+		}
+
+		const variant = Math.random() < 0.5 ? 'A' : 'B';
+		StorageManager.setString( ONBOARDING_STORAGE_KEYS.EMPHASIZE_CONNECT_BENEFITS_VARIANT, variant );
+		return variant;
+	}
+
+	sendEmphasizeConnectBenefitsExperimentStarted() {
+		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.EMPHASIZE_CONNECT_BENEFITS_EXPERIMENT_STARTED ) ) {
+			return;
+		}
+
+		let variant = this.getEmphasizeConnectBenefitsVariant();
+
+		if ( ! variant ) {
+			variant = this.assignEmphasizeConnectBenefitsVariant();
+			if ( ! variant ) {
+				return;
+			}
+		}
+
+		if ( ! EventDispatcher.canSendEvents() ) {
+			return;
+		}
+
+		const eventData = {
+			'Experiment name': '101 - Emphasize connect benefits',
+			'Variant name': variant,
+		};
+
+		EventDispatcher.dispatch( '$experiment_started', eventData );
+
+		StorageManager.setString( ONBOARDING_STORAGE_KEYS.EMPHASIZE_CONNECT_BENEFITS_EXPERIMENT_STARTED, 'true' );
 	}
 }
 
