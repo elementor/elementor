@@ -178,4 +178,364 @@ describe( 'ExportComplete Component', () => {
 			} );
 		} );
 	} );
+
+	describe( 'Analytics Tracking', () => {
+		it( 'should track kit_post_type_count with custom post types', async () => {
+			mockExportContext.data.exportedData.manifest = {
+				version: '1.0',
+				content: { page: {}, post: {} },
+				'custom-post-type-title': {
+					product: {
+						name: 'product',
+						label: 'Products',
+					},
+					event: {
+						name: 'event',
+						label: 'Events',
+					},
+				},
+			};
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_post_type_count: 2,
+					} ),
+				);
+			} );
+		} );
+
+		it( 'should track kit_post_type_count with all post types', async () => {
+			mockExportContext.data.exportedData.manifest = {
+				version: '1.0',
+				content: { page: {}, post: {} },
+				'custom-post-type-title': {
+					product: {
+						name: 'product',
+						label: 'Products',
+					},
+					post: {
+						name: 'post',
+						label: 'Posts',
+					},
+					page: {
+						name: 'page',
+						label: 'Pages',
+					},
+				},
+			};
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_post_type_count: 3,
+					} ),
+				);
+			} );
+		} );
+
+		it( 'should track kit_post_type_count as 0 when custom-post-type-title is empty', async () => {
+			mockExportContext.data.exportedData.manifest = {
+				version: '1.0',
+				content: { page: {}, post: {} },
+				'custom-post-type-title': {},
+			};
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_post_type_count: 0,
+					} ),
+				);
+			} );
+		} );
+
+		it( 'should track kit_post_type_count as 0 when custom-post-type-title is missing', async () => {
+			mockExportContext.data.exportedData.manifest = {
+				version: '1.0',
+				content: { page: {}, post: {} },
+			};
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_post_type_count: 0,
+					} ),
+				);
+			} );
+		} );
+
+		it( 'should track kit_post_type_count with multiple post types', async () => {
+			mockExportContext.data.exportedData.manifest = {
+				version: '1.0',
+				content: { page: {}, post: {} },
+				'custom-post-type-title': {
+					product: {
+						name: 'product',
+						label: 'Products',
+					},
+					post: {
+						name: 'post',
+						label: 'Posts',
+					},
+					nav_menu_item: {
+						name: 'nav_menu_item',
+						label: 'Navigation Menu Items',
+					},
+					event: {
+						name: 'event',
+						label: 'Events',
+					},
+				},
+			};
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_post_type_count: 4,
+					} ),
+				);
+			} );
+		} );
+
+		it( 'should track kit_export_customization_modals from analytics data', async () => {
+			const mockCustomization = {
+				settings: 'Customized',
+				templates: 'Not Customized',
+				content: 'Customized',
+				plugins: 'Not Customized',
+			};
+
+			mockExportContext.data.analytics = {
+				customization: mockCustomization,
+			};
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_export_customization_modals: mockCustomization,
+					} ),
+				);
+			} );
+		} );
+
+		it( 'should track kit_export_customization_modals as undefined when analytics is missing', async () => {
+			mockExportContext.data.analytics = undefined;
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_export_customization_modals: undefined,
+					} ),
+				);
+			} );
+		} );
+
+		it( 'should track kit_page_count from content manifest', async () => {
+			mockExportContext.data.exportedData.manifest = {
+				version: '1.0',
+				content: {
+					page: {
+						1: { title: 'Home Page' },
+						2: { title: 'About Page' },
+						3: { title: 'Contact Page' },
+					},
+					post: {
+						4: { title: 'Blog Post 1' },
+					},
+				},
+			};
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_page_count: 3,
+					} ),
+				);
+			} );
+		} );
+
+		it( 'should track kit_page_count from wp-content manifest', async () => {
+			mockExportContext.data.exportedData.manifest = {
+				version: '1.0',
+				'wp-content': {
+					page: {
+						1: { title: 'Home Page' },
+						2: { title: 'About Page' },
+					},
+				},
+			};
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_page_count: 2,
+					} ),
+				);
+			} );
+		} );
+
+		it( 'should track kit_page_count combining content and wp-content', async () => {
+			mockExportContext.data.exportedData.manifest = {
+				version: '1.0',
+				content: {
+					page: {
+						1: { title: 'Home Page' },
+						2: { title: 'About Page' },
+					},
+				},
+				'wp-content': {
+					page: {
+						3: { title: 'Contact Page' },
+					},
+				},
+			};
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_page_count: 3,
+					} ),
+				);
+			} );
+		} );
+
+		it( 'should track kit_page_count as 0 when no pages exist', async () => {
+			mockExportContext.data.exportedData.manifest = {
+				version: '1.0',
+				content: {
+					post: {
+						1: { title: 'Blog Post' },
+					},
+				},
+			};
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_page_count: 0,
+					} ),
+				);
+			} );
+		} );
+
+		it( 'should track kit_post_count from content manifest', async () => {
+			mockExportContext.data.exportedData.manifest = {
+				version: '1.0',
+				content: {
+					post: {
+						1: { title: 'Blog Post 1' },
+						2: { title: 'Blog Post 2' },
+						3: { title: 'Blog Post 3' },
+					},
+					page: {
+						4: { title: 'Home Page' },
+					},
+				},
+			};
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_post_count: 3,
+					} ),
+				);
+			} );
+		} );
+
+		it( 'should track kit_post_count from wp-content manifest', async () => {
+			mockExportContext.data.exportedData.manifest = {
+				version: '1.0',
+				'wp-content': {
+					post: {
+						1: { title: 'Blog Post 1' },
+						2: { title: 'Blog Post 2' },
+					},
+				},
+			};
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_post_count: 2,
+					} ),
+				);
+			} );
+		} );
+
+		it( 'should track kit_post_count combining content and wp-content', async () => {
+			mockExportContext.data.exportedData.manifest = {
+				version: '1.0',
+				content: {
+					post: {
+						1: { title: 'Blog Post 1' },
+						2: { title: 'Blog Post 2' },
+					},
+				},
+				'wp-content': {
+					post: {
+						3: { title: 'Blog Post 3' },
+						4: { title: 'Blog Post 4' },
+					},
+				},
+			};
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_post_count: 4,
+					} ),
+				);
+			} );
+		} );
+
+		it( 'should track kit_post_count as 0 when no posts exist', async () => {
+			mockExportContext.data.exportedData.manifest = {
+				version: '1.0',
+				content: {
+					page: {
+						1: { title: 'Home Page' },
+					},
+				},
+			};
+
+			render( <ExportComplete /> );
+
+			await waitFor( () => {
+				expect( mockSendExportKitCustomization ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						kit_post_count: 0,
+					} ),
+				);
+			} );
+		} );
+	} );
 } );

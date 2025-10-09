@@ -1,28 +1,42 @@
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useCallback } from 'react';
 import { OnboardingContext } from '../context/context';
+import { OnboardingEventTracking } from './onboarding-event-tracking';
 
 export default function Connect( props ) {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext );
+	const { buttonRef, successCallback, errorCallback } = props;
 
-	const connectSuccessCallback = ( event, data ) => {
+	const handleCoreConnectionLogic = useCallback( ( event, data ) => {
+		const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
+
+		OnboardingEventTracking.updateLibraryConnectConfig( data );
+
+		if ( isTrackingOptedInConnect ) {
+			elementorCommon.config.editor_events.can_send_events = true;
+			OnboardingEventTracking.sendConnectionSuccessEvents( data );
+		}
+	}, [] );
+
+	const defaultConnectSuccessCallback = useCallback( () => {
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', 'account', 'completed' );
-
-		elementorCommon.config.library_connect.is_connected = true;
-		elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
-		elementorCommon.config.library_connect.current_access_tier = data.access_tier;
-		elementorCommon.config.library_connect.plan_type = data.plan_type;
-
 		stateToUpdate.isLibraryConnected = true;
-
 		updateState( stateToUpdate );
-	};
+	}, [ state, getStateObjectToUpdate, updateState ] );
 
 	useEffect( () => {
-		jQuery( props.buttonRef.current ).elementorConnect( {
-			success: ( event, data ) => props.successCallback ? props.successCallback( event, data ) : connectSuccessCallback( event, data ),
+		jQuery( buttonRef.current ).elementorConnect( {
+			success: ( event, data ) => {
+				handleCoreConnectionLogic( event, data );
+
+				if ( successCallback ) {
+					successCallback( event, data );
+				} else {
+					defaultConnectSuccessCallback();
+				}
+			},
 			error: () => {
-				if ( props.errorCallback ) {
-					props.errorCallback();
+				if ( errorCallback ) {
+					errorCallback();
 				}
 			},
 			popup: {
@@ -30,7 +44,7 @@ export default function Connect( props ) {
 				height: 534,
 			},
 		} );
-	}, [] );
+	}, [ buttonRef, successCallback, errorCallback, handleCoreConnectionLogic, defaultConnectSuccessCallback ] );
 
 	return null;
 }

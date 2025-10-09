@@ -51,7 +51,7 @@ describe( '<DynamicSettingsPopover />', () => {
 		renderWithTheme( <DynamicSettingsPopover dynamicTag={ dynamicTag } /> );
 
 		// Assert.
-		expect( screen.queryByRole( 'button', { name: 'Settings' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Dynamic settings' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should render settings popover button if the dynamic tag has controls', () => {
@@ -81,7 +81,7 @@ describe( '<DynamicSettingsPopover />', () => {
 		renderWithTheme( <DynamicSettingsPopover dynamicTag={ dynamicTag } /> );
 
 		// Assert.
-		expect( screen.getByRole( 'button', { name: 'Settings' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Dynamic settings' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should open the settings popover when the settings button is clicked, and show its tabs and controls', () => {
@@ -131,7 +131,7 @@ describe( '<DynamicSettingsPopover />', () => {
 				<DynamicSettingsPopover dynamicTag={ dynamicTag } />
 			</ElementProvider>
 		);
-		fireEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Dynamic settings' } ) );
 
 		// Assert.
 		expect( screen.getByText( 'Advanced' ) ).toBeInTheDocument();
@@ -183,7 +183,7 @@ describe( '<DynamicSettingsPopover />', () => {
 				<DynamicSettingsPopover dynamicTag={ dynamicTag } />
 			</ElementProvider>
 		);
-		fireEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Dynamic settings' } ) );
 
 		// Assert.
 		expect( screen.queryByText( 'Before' ) ).not.toBeInTheDocument();

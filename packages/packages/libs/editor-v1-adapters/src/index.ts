@@ -29,6 +29,8 @@ export type * from './listeners';
 
 export { isRouteActive as __privateIsRouteActive, isExperimentActive, EXPERIMENTAL_FEATURES } from './readers';
 
+export { ajax } from './ajax';
+
 export { undoable } from './undoable';
 
 export type { HistoryItem, WindowWithHistoryManager } from './undoable/get-history-manager';

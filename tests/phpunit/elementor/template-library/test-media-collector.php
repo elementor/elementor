@@ -66,13 +66,11 @@ class Test_Media_Collector extends Elementor_Test_Base {
         $this->assertFalse( $method->invokeArgs( $this->media_collector, [ $external_url ] ) );
     }
 
-    public function test_returns_null_for_empty_zip() {
-        $this->media_collector->start_processing();
+	public function test_returns_null_for_empty_zip() {
+		$this->media_collector->start_processing();
 
-        $result = $this->media_collector->create_media_zip();
+		$result = $this->media_collector->create_media_zip();
 
-        $this->assertIsArray( $result['mapping'] );
-        $this->assertEmpty( $result['mapping'] );
-        $this->assertNull( $result['zip_path'] );
+        $this->assertNull( $result );
     }
 }

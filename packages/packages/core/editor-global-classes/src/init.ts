@@ -13,6 +13,7 @@ import { panel } from './components/class-manager/class-manager-panel';
 import { ConvertLocalClassToGlobalClass } from './components/convert-local-class-to-global-class';
 import { PopulateStore } from './components/populate-store';
 import { GLOBAL_CLASSES_PROVIDER_KEY, globalClassesStylesProvider } from './global-classes-styles-provider';
+import { initMcpIntegration } from './mcp-integration';
 import { slice } from './store';
 import { SyncWithDocumentSave } from './sync-with-document';
 
@@ -46,4 +47,6 @@ export function init() {
 		name: 'global',
 		getThemeColor: ( theme ) => theme.palette.global.dark,
 	} );
+
+	initMcpIntegration();
 }

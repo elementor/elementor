@@ -45,6 +45,8 @@ class Module extends BaseModule {
 
 	const DOMDOCUMENT_MISSING = 'domdocument-missing';
 
+	const MEDIA_PROCESSING_ERROR = 'media-processing-error';
+
 	const OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS = 'elementor_import_sessions';
 
 	const OPTION_KEY_ELEMENTOR_REVERT_SESSIONS = 'elementor_revert_sessions';
@@ -251,7 +253,7 @@ class Module extends BaseModule {
 			<?php endif; ?>
 			<div class="tab-import-export-kit__box action-buttons">
 				<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
+					<a id="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['id'] ); ?>" href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
 						<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
 					</a>
 				<?php endif; ?>

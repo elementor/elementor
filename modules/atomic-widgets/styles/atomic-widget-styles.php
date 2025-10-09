@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Base\Document;
-use Elementor\Modules\AtomicWidgets\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
@@ -23,6 +23,11 @@ class Atomic_Widget_Styles {
 		add_action(
 			'elementor/core/files/clear_cache',
 			fn() => $this->invalidate_cache(),
+		);
+
+		add_action(
+			'deleted_post',
+			fn( $post_id ) => $this->invalidate_cache( [ $post_id ] )
 		);
 	}
 

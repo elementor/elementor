@@ -438,7 +438,10 @@ describe( 'KitContentCustomizationDialog Component', () => {
 					mediaFormat: 'link',
 				},
 				true,
-				[],
+				{
+					customPostTypes: 'All',
+					mediaFormat: 'link',
+				},
 			);
 			expect( mockHandleClose ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -571,7 +574,9 @@ describe( 'KitContentCustomizationDialog Component', () => {
 					mediaFormat: 'link',
 				} ),
 				true,
-				[],
+				expect.objectContaining( {
+					mediaFormat: 'link',
+				} ),
 			);
 		} );
 
@@ -642,7 +647,9 @@ describe( 'KitContentCustomizationDialog Component', () => {
 					mediaFormat: 'cloud',
 				} ),
 				true,
-				[],
+				expect.objectContaining( {
+					mediaFormat: 'cloud',
+				} ),
 			);
 		} );
 	} );

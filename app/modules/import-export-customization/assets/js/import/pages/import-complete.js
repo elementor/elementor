@@ -118,7 +118,8 @@ export default function ImportComplete() {
 	}, [ runnersState ] );
 
 	const getPluginsSummary = useCallback( () => {
-		return runnersState?.plugins ? runnersState.plugins.join( ' | ' ) : __( 'No plugins imported', 'elementor' );
+		const plugins = Array.isArray( runnersState?.plugins ) ? runnersState?.plugins : Object.values( runnersState?.plugins || {} );
+		return runnersState?.plugins ? plugins.join( ' | ' ) : __( 'No plugins imported', 'elementor' );
 	}, [ runnersState?.plugins ] );
 
 	const getSettingsSummary = useCallback( () => {
@@ -193,7 +194,7 @@ export default function ImportComplete() {
 	}, [] );
 
 	useEffect( () => {
-		AppsEventTracking.sendExportKitCustomization( {
+		AppsEventTracking.sendImportKitCustomization( {
 			kit_source: data?.kitUploadParams?.source || 'file',
 			kit_import_content: includes.includes( 'content' ),
 			kit_import_templates: includes.includes( 'templates' ),
