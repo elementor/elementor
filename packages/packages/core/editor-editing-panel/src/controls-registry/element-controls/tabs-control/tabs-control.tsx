@@ -7,7 +7,9 @@ import {
 	useBoundProp,
 } from '@elementor/editor-controls';
 import {
+	type Element,
 	getElementEditorSettings,
+	getElementType,
 	updateElementEditorSettings,
 	useElementChildren,
 	useElementEditorSettings,
@@ -17,7 +19,7 @@ import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, Chip, Infotip, type InfotipProps, Stack, Switch, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useElement } from '../../../contexts/element-context';
+import { ElementProvider, useElement } from '../../../contexts/element-context';
 import { SettingsField } from '../../settings-field';
 import { getElementByType } from '../get-element-by-type';
 import {
@@ -89,25 +91,38 @@ export const TabsControl = ( { label }: { label: string } ) => {
 	};
 
 	return (
-		<Repeater
-			addToBottom
-			showToggle={ false }
-			openOnAdd={ false }
-			values={ repeaterValues }
-			setValues={ setValue }
-			label={ label }
-			itemSettings={ {
-				initialValues: { title: 'Tab' },
-				Label: ItemLabel,
-				Content: ItemContent,
-				Icon: () => null,
-			} }
-		/>
+		<SettingsField bind={ 'default-active-tab' } propDisplayName={ __( 'Tabs', 'elementor' ) }>
+			<Repeater
+				addToBottom
+				showToggle={ false }
+				openOnAdd={ false }
+				values={ repeaterValues }
+				setValues={ setValue }
+				label={ label }
+				itemSettings={ {
+					initialValues: { title: 'Tab' },
+					Label: ( props ) => (
+						<ElementItem { ...props }>
+							<ItemLabel value={ props.value } />
+						</ElementItem>
+					),
+					Content: ( props ) => (
+						<ElementItem { ...props }>
+							<ItemContent />
+						</ElementItem>
+					),
+					Icon: () => null,
+				} }
+			/>
+		</SettingsField>
 	);
 };
 
 const ItemLabel = ( { value }: { value: TabItem } ) => {
 	const id = value.id ?? '';
+	const { value: defaultItem } = useBoundProp( stringPropTypeUtil );
+
+	const isDefault = defaultItem === id;
 
 	const editorSettings = useElementEditorSettings( id );
 
@@ -116,112 +131,96 @@ const ItemLabel = ( { value }: { value: TabItem } ) => {
 	return (
 		<Stack sx={ { minHeight: 20 } } direction="row" alignItems="center" gap={ 1.5 }>
 			<span>{ elementTitle }</span>
-			<SettingsField bind="default-active-tab" propDisplayName={ __( 'Tabs', 'elementor' ) }>
-				<ItemDefaultTab value={ value } />
-			</SettingsField>
+			{ isDefault && <Chip size="tiny" shape="rounded" label={ __( 'Default', 'elementor' ) } /> }
 		</Stack>
 	);
 };
 
-const ItemDefaultTab = ( { value }: { value: TabItem } ) => {
-	const id = value.id ?? '';
-	const { value: defaultItem } = useBoundProp( stringPropTypeUtil );
+const ItemContent = () => {
+	const { element } = useElement();
 
-	const isDefault = defaultItem === id;
-
-	if ( ! isDefault ) {
-		return null;
-	}
-
-	return <Chip size="tiny" shape="rounded" label={ __( 'Default', 'elementor' ) } />;
-};
-
-const ItemContent = ( { value }: { value: TabItem } ) => {
-	if ( ! value.id ) {
-		return null;
-	}
-
-	return (
-		<Stack p={ 2 } gap={ 1.5 }>
-			<TabLabelControl elementId={ value.id } />
-			<SettingsField bind="default-active-tab" propDisplayName={ __( 'Tabs', 'elementor' ) }>
-				<DefaultTabControl elementId={ value.id } />
-			</SettingsField>
-		</Stack>
-	);
-};
-
-const DefaultTabControl = ( { elementId }: { elementId: string } ) => {
-	const { value, setValue } = useBoundProp( stringPropTypeUtil );
-
-	const isDefault = value === elementId;
-
-	return (
-		<Stack direction="row" alignItems="center" justifyContent="space-between" gap={ 2 }>
-			<ControlFormLabel>{ __( 'Set as default tab', 'elementor' ) }</ControlFormLabel>
-			<ConditionalTooltip showTooltip={ isDefault } placement="right">
-				<Switch
-					size="small"
-					checked={ isDefault }
-					disabled={ isDefault }
-					onChange={ ( { target }: React.ChangeEvent< HTMLInputElement > ) => {
-						setValue( target.checked ? elementId : null );
-					} }
-					inputProps={ {
-						...( isDefault ? { style: { opacity: 0, cursor: 'not-allowed' } } : {} ),
-					} }
-				/>
-			</ConditionalTooltip>
-		</Stack>
-	);
-};
-
-const TabLabelControl = ( { elementId }: { elementId: string } ) => {
-	const editorSettings = useElementEditorSettings( elementId );
+	const editorSettings = useElementEditorSettings( element.id );
 
 	const label = editorSettings?.title ?? '';
 
+	const { value: defaultItem, setValue: setDefaultItem } = useBoundProp( stringPropTypeUtil );
+
+	const isDefault = defaultItem === element.id;
+
 	return (
-		<Stack gap={ 1 }>
-			<ControlFormLabel>{ __( 'Tab name', 'elementor' ) }</ControlFormLabel>
-			<TextField
-				size="tiny"
-				value={ label }
-				onChange={ ( { target }: React.ChangeEvent< HTMLInputElement > ) => {
-					updateElementEditorSettings( {
-						elementId,
-						settings: { title: target.value },
-					} );
-				} }
-			/>
+		<Stack p={ 2 } gap={ 1.5 }>
+			<Stack gap={ 1 }>
+				<ControlFormLabel>{ __( 'Tab name', 'elementor' ) }</ControlFormLabel>
+				<TextField
+					size="tiny"
+					value={ label }
+					onChange={ ( { target }: React.ChangeEvent< HTMLInputElement > ) => {
+						updateElementEditorSettings( {
+							elementId: element.id,
+							settings: { title: target.value },
+						} );
+					} }
+				/>
+			</Stack>
+			<Stack direction="row" alignItems="center" justifyContent="space-between" gap={ 2 }>
+				<ControlFormLabel>{ __( 'Set as default tab', 'elementor' ) }</ControlFormLabel>
+				<ConditionalTooltip showTooltip={ isDefault } content={ tooltipContent } placement="right">
+					<Switch
+						size="small"
+						checked={ isDefault }
+						disabled={ isDefault }
+						onChange={ ( { target }: React.ChangeEvent< HTMLInputElement > ) => {
+							setDefaultItem( target.checked ? element.id : null );
+						} }
+						inputProps={ {
+							...( isDefault ? { style: { opacity: 0, cursor: 'not-allowed' } } : {} ),
+						} }
+					/>
+				</ConditionalTooltip>
+			</Stack>
 		</Stack>
 	);
 };
+
+const ElementItem = ( { children, value }: { children: React.ReactNode; value: TabItem } ) => {
+	const elementType = getElementType( TAB_ELEMENT_TYPE );
+
+	if ( ! elementType ) {
+		return null;
+	}
+
+	const element: Element = {
+		id: value.id ?? '',
+		type: elementType.key,
+	};
+
+	return (
+		<ElementProvider element={ element } elementType={ elementType }>
+			{ children }
+		</ElementProvider>
+	);
+};
+
+const tooltipContent = (
+	<Alert color="secondary" icon={ <InfoCircleFilledIcon fontSize="tiny" /> } size="small" sx={ { width: 288 } }>
+		<Typography variant="body2">
+			{ __( 'To change the default tab, simply set another tab as default.', 'elementor' ) }
+		</Typography>
+	</Alert>
+);
 
 export const ConditionalTooltip = ( {
 	showTooltip,
 	children,
-}: Omit< InfotipProps, 'content' > & { showTooltip: boolean } ) => {
+	content,
+	...props
+}: InfotipProps & { showTooltip: boolean } ) => {
 	if ( ! showTooltip ) {
 		return children;
 	}
 
 	return (
-		<Infotip
-			arrow={ false }
-			content={
-				<Alert
-					color="secondary"
-					icon={ <InfoCircleFilledIcon fontSize="tiny" /> }
-					size="small"
-					sx={ { width: 288 } }
-				>
-					<Typography variant="body2">
-						{ __( 'To change the default tab, simply set another tab as default.', 'elementor' ) }
-					</Typography>
-				</Alert>
-			}
-		>
+		<Infotip content={ content } arrow={ false } { ...props }>
 			<span>{ children }</span>
 		</Infotip>
 	);
