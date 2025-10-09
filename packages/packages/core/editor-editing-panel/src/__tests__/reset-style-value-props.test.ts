@@ -95,11 +95,11 @@ describe( 'Reset Style Props Tests', () => {
 			expect( result.current.visible ).toBe( false );
 		} );
 
-		it( 'should show reset button when path is part of repeater', () => {
+		it( 'should show reset button when path is part of supported repeater', () => {
 			( useBoundProp as jest.Mock ).mockReturnValue( {
 				value: 'some-value',
 				setValue: jest.fn(),
-				path: [ 'style', 'color', '2', 'deep' ],
+				path: [ 'background', 'color', '2', 'deep' ],
 				bind: 'color',
 			} );
 

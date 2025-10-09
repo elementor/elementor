@@ -24,7 +24,11 @@ export function useResetStyleValueProps() {
 
 	// TODO: Once all repeaters support reset remove this condition
 	const isInRepeater = path?.some( ( key ) => ! isNaN( Number( key ) ) );
-	const showInRepeater = isInRepeater && REPEATERS_SUPPORTED_FOR_RESET.includes( path[ 0 ] );
+	const repeaterName = path?.[ 0 ];
+
+	const isRepeaterSupported = REPEATERS_SUPPORTED_FOR_RESET.includes( repeaterName );
+
+	const shouldShowRepeater = ! isInRepeater || isRepeaterSupported;
 
 	const getResetValue = () => {
 		if ( propType?.default !== null && propType?.default !== undefined ) {
@@ -35,7 +39,7 @@ export function useResetStyleValueProps() {
 	};
 
 	return {
-		visible: isStyle && hasValue && showInRepeater && ! areValuesEqual( value, propType?.default ),
+		visible: isStyle && hasValue && shouldShowRepeater && ! areValuesEqual( value, propType?.default ),
 		title: __( 'Clear', 'elementor' ),
 		icon: BrushBigIcon,
 		onClick: () => setValue( getResetValue() ),
