@@ -58,7 +58,6 @@ class PostOnboardingTracker {
 
 	clearAllOnboardingStorage() {
 		StorageManager.clearAllOnboardingData();
-		StorageManager.clearExperimentData();
 	}
 }
 
