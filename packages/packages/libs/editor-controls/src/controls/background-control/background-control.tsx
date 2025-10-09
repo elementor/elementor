@@ -11,7 +11,7 @@ import { SelectControl } from '../select-control';
 import { BackgroundOverlayRepeaterControl } from './background-overlay/background-overlay-repeater-control';
 
 const clipOptions = [
-	{ label: __( 'Border edges', 'elementor' ), value: 'border-box' },
+	{ label: __( 'Full element', 'elementor' ), value: 'border-box' },
 	{ label: __( 'Padding edges', 'elementor' ), value: 'padding-box' },
 	{ label: __( 'Content edges', 'elementor' ), value: 'content-box' },
 	{ label: __( 'Text', 'elementor' ), value: 'text' },
