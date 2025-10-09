@@ -7,7 +7,6 @@ import { CssConverterHelper } from '../helper';
 test.describe( 'Unitless Zero Support @prop-types', () => {
 	let editor: EditorPage;
 	let cssHelper: CssConverterHelper;
-	let wpAdmin: WpAdminPage;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
@@ -21,8 +20,7 @@ test.describe( 'Unitless Zero Support @prop-types', () => {
 		await page.close();
 	} );
 
-	test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
-		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	test.beforeEach( async () => {
 		cssHelper = new CssConverterHelper();
 	} );
 
@@ -58,7 +56,7 @@ test.describe( 'Unitless Zero Support @prop-types', () => {
 
 		const elementorFrame = editor.getPreviewFrame();
 		await test.step( 'Verify all unitless zero values are converted correctly', async () => {
-			const element = elementorFrame.locator( '.e-paragraph-base' ).first();
+			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 			// Margin
@@ -117,7 +115,7 @@ test.describe( 'Unitless Zero Support @prop-types', () => {
 			await editor.waitForPanelToLoad();
 
 			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base' ).first();
+			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
 
 			await expect( element ).toHaveCSS( testCase.expected, testCase.expectedValue );
 		}

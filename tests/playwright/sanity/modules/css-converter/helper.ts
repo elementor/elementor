@@ -70,8 +70,13 @@ export class CssConverterHelper {
 		const defaultOptions: CssConverterOptions = {
 			postType: 'page',
 			createGlobalClasses: true,
-			useZeroDefaults: true,
 			...options,
+		};
+
+		const payload = {
+			type: 'html',
+			content: cssContent,
+			options: defaultOptions,
 		};
 
 		const apiResponse = await request.post( '/wp-json/elementor/v2/widget-converter', {
@@ -79,14 +84,13 @@ export class CssConverterHelper {
 				'X-DEV-TOKEN': this.devToken,
 				'Content-Type': 'application/json',
 			},
-			data: {
-				type: 'html',
-				content: cssContent,
-				options: defaultOptions,
-			},
+			data: payload,
 		} );
 
-		return await apiResponse.json() as CssConverterResponse;
+		
+		const responseJson = await apiResponse.json() as CssConverterResponse;
+		
+		return responseJson;
 	}
 
 	async convertCssOnly(
@@ -97,7 +101,6 @@ export class CssConverterHelper {
 		const defaultOptions: CssConverterOptions = {
 			postType: 'page',
 			createGlobalClasses: true,
-			useZeroDefaults: true,
 			...options,
 		};
 
@@ -126,7 +129,6 @@ export class CssConverterHelper {
 		const defaultOptions: CssConverterOptions = {
 			postType: 'page',
 			createGlobalClasses: true,
-			useZeroDefaults: true,
 			...options,
 		};
 

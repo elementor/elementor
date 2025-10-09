@@ -72,7 +72,7 @@ test.describe( 'Flex Properties Prop Type Integration @prop-types', () => {
 
 		const elementorFrame = editor.getPreviewFrame();
 		await test.step( 'Verify flex properties are applied correctly', async () => {
-			const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
+			const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
 			await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 			await test.step( 'Verify flex container 1 properties', async () => {

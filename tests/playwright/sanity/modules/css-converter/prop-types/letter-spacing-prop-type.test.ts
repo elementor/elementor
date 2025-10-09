@@ -39,7 +39,6 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 	} );
 
 	test( 'should convert letter-spacing properties and verify styles - EXPECTED TO FAIL', async ( { page, request } ) => {
-		console.log( '🔍 DEBUG: Starting letter-spacing prop type test' );
 		
 		const combinedCssContent = `
 			<div>
@@ -52,10 +51,8 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 			</div>
 		`;
 
-		console.log( '🔍 DEBUG: Converting HTML content with letter-spacing properties' );
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
 
-		console.log( '🔍 DEBUG: API Result:', {
 			success: apiResult.success,
 			post_id: apiResult.post_id,
 			widgets_created: apiResult.widgets_created,
@@ -65,7 +62,6 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 		// Check if API call failed due to backend issues
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
-			console.log( '🔍 DEBUG: Skipping test due to validation failure:', validation.skipReason );
 			test.skip( true, validation.skipReason );
 			return;
 		}
@@ -75,12 +71,10 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 		expect( postId ).toBeDefined();
 		expect( editUrl ).toBeDefined();
 
-		console.log( '🔍 DEBUG: Navigating to editor URL:', editUrl );
 		await page.goto( editUrl );
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
-		console.log( '🔍 DEBUG: Editor loaded, starting style verification' );
 
 		// Define test cases - THESE ARE EXPECTED TO FAIL
 		const testCases = [
@@ -89,35 +83,35 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 				name: 'letter-spacing: 1px on h1', 
 				property: 'letter-spacing', 
 				expected: '1px',
-				selector: '.e-heading-base'
+				selector: '.e-heading-base-converted'
 			},
 			{ 
 				index: 1, 
 				name: 'letter-spacing: 2px on h2', 
 				property: 'letter-spacing', 
 				expected: '2px',
-				selector: '.e-heading-base'
+				selector: '.e-heading-base-converted'
 			},
 			{ 
 				index: 0, 
 				name: 'letter-spacing: 0.5px on p', 
 				property: 'letter-spacing', 
 				expected: '0.5px',
-				selector: '.e-paragraph-base'
+				selector: '.e-paragraph-base-converted'
 			},
 			{ 
 				index: 1, 
 				name: 'letter-spacing: 1.5px on p', 
 				property: 'letter-spacing', 
 				expected: '1.5px',
-				selector: '.e-paragraph-base'
+				selector: '.e-paragraph-base-converted'
 			},
 			{ 
 				index: 2, 
 				name: 'letter-spacing: 0.1em on p', 
 				property: 'letter-spacing', 
 				expected: '0.1em',
-				selector: '.e-paragraph-base'
+				selector: '.e-paragraph-base-converted'
 			},
 		];
 
@@ -127,7 +121,6 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				console.log( `🔍 DEBUG: Testing ${ testCase.name } with selector ${ testCase.selector }` );
 				
 				const elements = elementorFrame.locator( testCase.selector );
 				const element = elements.nth( testCase.index );
@@ -138,14 +131,11 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 					return window.getComputedStyle( el ).letterSpacing;
 				} );
 
-				console.log( `🔍 DEBUG: ${ testCase.name } - Expected: ${ testCase.expected }, Actual: ${ actualValue }` );
 
 				// This assertion is EXPECTED TO FAIL
 				try {
 					await expect( element ).toHaveCSS( testCase.property, testCase.expected );
-					console.log( `✅ UNEXPECTED SUCCESS: ${ testCase.name } passed!` );
 				} catch ( error ) {
-					console.log( `❌ EXPECTED FAILURE: ${ testCase.name } failed as expected - ${ error.message }` );
 					// Re-throw to make test fail as expected
 					throw error;
 				}
@@ -153,14 +143,12 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 		}
 
 		await test.step( '🚨 EXPECTED FAILURE: Publish page and verify letter-spacing styles on frontend', async () => {
-			console.log( '🔍 DEBUG: Publishing page and testing frontend' );
 			
 			// Save the page first
 			await editor.saveAndReloadPage();
 
 			// Get the page ID and navigate to frontend
 			const pageId = await editor.getPageId();
-			console.log( '🔍 DEBUG: Navigating to frontend page ID:', pageId );
 			await page.goto( `/?p=${ pageId }` );
 			await page.waitForLoadState();
 
@@ -175,14 +163,11 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 						return window.getComputedStyle( el ).letterSpacing;
 					} );
 
-					console.log( `🔍 DEBUG: Frontend ${ testCase.name } - Expected: ${ testCase.expected }, Actual: ${ actualValue }` );
 
 					// This assertion is EXPECTED TO FAIL
 					try {
 						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );
-						console.log( `✅ UNEXPECTED SUCCESS: Frontend ${ testCase.name } passed!` );
 					} catch ( error ) {
-						console.log( `❌ EXPECTED FAILURE: Frontend ${ testCase.name } failed as expected - ${ error.message }` );
 						// Re-throw to make test fail as expected
 						throw error;
 					}

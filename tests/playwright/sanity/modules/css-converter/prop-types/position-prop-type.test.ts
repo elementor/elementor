@@ -87,7 +87,7 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		await elementorFrame.waitForLoadState();
 
 		// Test all converted paragraph elements
-		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
+		const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 		// Test position values
@@ -164,7 +164,7 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		await elementorFrame.waitForLoadState();
 
 		// Test all converted paragraph elements
-		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
+		const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 		// Test different units (physical properties)
@@ -234,7 +234,7 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		await elementorFrame.waitForLoadState();
 
 		// Test all converted paragraph elements
-		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
+		const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 		// Test inset-inline variations
@@ -323,7 +323,7 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		await elementorFrame.waitForLoadState();
 
 		// Test all converted paragraph elements
-		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
+		const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 		// Test physical positioning properties converted to logical properties
@@ -389,7 +389,7 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		await elementorFrame.waitForLoadState();
 
 		// Test all converted paragraph elements
-		const paragraphElements = elementorFrame.locator( '.e-paragraph-base' );
+		const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 		// Test physical positioning properties with unitless zero

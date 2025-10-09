@@ -69,7 +69,7 @@ test.describe( 'CSS ID Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.e-heading-base',
+				selector: '.e-heading-base-converted',
 				name: 'title',
 				properties: {
 					'background-color': 'rgb(67, 184, 184)',
@@ -80,7 +80,7 @@ test.describe( 'CSS ID Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.e-paragraph-base',
+				selector: '.e-paragraph-base-converted',
 				name: 'subtitle',
 				properties: {
 					color: 'rgb(224, 230, 237)',
