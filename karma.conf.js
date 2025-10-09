@@ -60,7 +60,6 @@ module.exports = function( config ) {
 			'assets/lib/imagesloaded/imagesloaded.min.js',
 			'assets/dev/js/editor/utils/jquery-serialize-object.js',
 			'assets/dev/js/editor/utils/jquery-html5-dnd.js',
-			'assets/lib/jquery-hover-intent/jquery-hover-intent.min.js',
 
 			// Editor.
 			'assets/js/editor-modules.min.js',
