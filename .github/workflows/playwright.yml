@@ -110,21 +110,26 @@ jobs:
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
+      - name: Create temporary config with PHP version
+        run: |
+          # Create temporary config with the PHP version from get-php-version job
+          jq --arg php "${{ needs.get-php-version.outputs.php-version }}" '.phpVersion = $php' tests/playwright/.playwright-wp-lite-env.json > .playwright-wp-lite-env-temp.json
+          echo "Created temporary config with PHP ${{ needs.get-php-version.outputs.php-version }}"
       - name: Install WordPress environment
         run: |
           # Use npm script with config file
-          CONFIG_FILE=${{ needs.get-php-version.outputs.config-file }} npm run start-local-server
+          CONFIG_FILE=.playwright-wp-lite-env-temp.json npm run start-local-server
       - name: Update wordpress to nightly build
         if: ${{ github.event_name == 'schedule' }}
-        run: npx wp-lite-env cli --config=${{ needs.get-php-version.outputs.config-file }} --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
+        run: npx wp-lite-env cli --config=.playwright-wp-lite-env-temp.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
       - name: Setup test data
         run: |
           # Use npm script with config file
-          CONFIG_FILE=${{ needs.get-php-version.outputs.config-file }} npm run test:setup:playwright
+          CONFIG_FILE=.playwright-wp-lite-env-temp.json npm run test:setup:playwright
       - name: WordPress debug information
         run: |
-          npx wp-lite-env cli --config=${{ needs.get-php-version.outputs.config-file }} --port=8888 --command="wp core version"
-          npx wp-lite-env cli --config=${{ needs.get-php-version.outputs.config-file }} --port=8888 --command="wp --info"
+          npx wp-lite-env cli --config=.playwright-wp-lite-env-temp.json --port=8888 --command="wp core version"
+          npx wp-lite-env cli --config=.playwright-wp-lite-env-temp.json --port=8888 --command="wp --info"
       - name: Install playwright/test
         run: |
           npx playwright install chromium
@@ -181,18 +186,23 @@ jobs:
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
+      - name: Create temporary config with PHP version
+        run: |
+          # Create temporary config with the PHP version from get-php-version job
+          jq --arg php "${{ needs.get-php-version.outputs.php-version }}" '.phpVersion = $php' tests/playwright/.playwright-wp-lite-env.json > .playwright-wp-lite-env-temp.json
+          echo "Created temporary config with PHP ${{ needs.get-php-version.outputs.php-version }}"
       - name: Install WordPress environment
         run: |
           # Use npm script with config file
-          CONFIG_FILE=${{ needs.get-php-version.outputs.config-file }} npm run start-local-server
+          CONFIG_FILE=.playwright-wp-lite-env-temp.json npm run start-local-server
       - name: Setup test data
         run: |
           # Use npm script with config file
-          CONFIG_FILE=${{ needs.get-php-version.outputs.config-file }} npm run test:setup:playwright
+          CONFIG_FILE=.playwright-wp-lite-env-temp.json npm run test:setup:playwright
       - name: WordPress debug information
         run: |
-          npx wp-lite-env cli --config=${{ needs.get-php-version.outputs.config-file }} --port=8888 --command="wp core version"
-          npx wp-lite-env cli --config=${{ needs.get-php-version.outputs.config-file }} --port=8888 --command="wp --info"
+          npx wp-lite-env cli --config=.playwright-wp-lite-env-temp.json --port=8888 --command="wp core version"
+          npx wp-lite-env cli --config=.playwright-wp-lite-env-temp.json --port=8888 --command="wp --info"
       - name: Install playwright/test
         run: |
           npx playwright install chromium
