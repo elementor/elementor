@@ -307,8 +307,8 @@ describe( 'CreateComponentForm', () => {
 						elType: 'widget',
 						widgetType: 'e-component',
 						settings: {
-							component_id: {
-								$$type: 'number',
+							_children: {
+								$$type: 'component-id',
 								value: mockComponentId,
 							},
 						},

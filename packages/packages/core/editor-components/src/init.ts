@@ -1,4 +1,5 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
+import { settingsTransformersRegistry } from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
@@ -6,6 +7,7 @@ import { __privateListenTo as listenTo, commandStartEvent } from '@elementor/edi
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
+import { componentIdTransformer } from './component-id-transformer';
 import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { PopulateStore } from './populate-store';
@@ -34,6 +36,7 @@ export function init() {
 		id: 'components-populate-store',
 		component: PopulateStore,
 	} );
+
 	listenTo( commandStartEvent( 'editor/documents/attach-preview' ), () => {
 		const { id, config } = getV1CurrentDocument();
 
@@ -43,4 +46,6 @@ export function init() {
 
 		loadComponentsStyles( ( config?.elements as Element[] ) ?? [] );
 	} );
+
+	settingsTransformersRegistry.register( 'component-id', componentIdTransformer );
 }

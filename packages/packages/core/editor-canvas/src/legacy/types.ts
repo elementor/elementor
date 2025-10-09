@@ -2,6 +2,8 @@ import { type Props } from '@elementor/editor-props';
 
 export type LegacyWindow = Window & {
 	elementor: {
+		createBackboneElementsCollection: ( children: unknown ) => BackboneCollection< ElementModel >;
+
 		modules: {
 			elements: {
 				types: {
@@ -36,6 +38,10 @@ export declare class ElementView {
 
 	model: BackboneModel< ElementModel >;
 
+	collection: BackboneCollection< ElementModel >;
+
+	constructor( ...args: unknown[] );
+
 	onRender( ...args: unknown[] ): void;
 
 	onDestroy( ...args: unknown[] ): void;
@@ -61,6 +67,10 @@ export declare class ElementView {
 
 	_renderTemplate(): void;
 
+	_renderChildren(): void;
+
+	attachBuffer( collectionView: this, buffer: DocumentFragment ): void;
+
 	triggerMethod( method: string ): void;
 
 	bindUIElements(): void;
@@ -75,6 +85,10 @@ type JQueryElement = {
 type BackboneModel< Model extends object > = {
 	get: < T extends keyof Model >( key: T ) => Model[ T ];
 	toJSON: () => ToJSON< Model >;
+};
+
+type BackboneCollection< Model extends object > = {
+	models: BackboneModel< Model >[];
 };
 
 type ElementModel = {
