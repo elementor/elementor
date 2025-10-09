@@ -104,23 +104,39 @@ export function createStepEventPayload( stepNumber, stepName, additionalData = {
 		...additionalData,
 	};
 
-	if ( 2 === stepNumber && elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
-		basePayload.theme_selection_variant = getThemeSelectionVariant();
+	if ( stepNumber >= 2 && elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
+		basePayload[ '201_variant' ] = getThemeSelectionVariant();
 	}
 
-	if ( 4 === stepNumber && elementorAppConfig?.onboarding?.goodToGoExperimentEnabled ) {
-		basePayload.good_to_go_variant = getGoodToGoVariant();
+	if ( stepNumber >= 4 && elementorAppConfig?.onboarding?.goodToGoExperimentEnabled ) {
+		basePayload[ '402_variant' ] = getGoodToGoVariant();
 	}
 
 	return createEventPayload( basePayload );
 }
 
 export function createEditorEventPayload( additionalData = {} ) {
-	return {
+	const basePayload = {
 		location: 'editor',
 		trigger: 'elementor_loaded',
 		...additionalData,
 	};
+
+	if ( elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
+		const themeVariant = getThemeSelectionVariant();
+		if ( themeVariant ) {
+			basePayload[ '201_variant' ] = themeVariant;
+		}
+	}
+
+	if ( elementorAppConfig?.onboarding?.goodToGoExperimentEnabled ) {
+		const goodToGoVariant = getGoodToGoVariant();
+		if ( goodToGoVariant ) {
+			basePayload[ '402_variant' ] = goodToGoVariant;
+		}
+	}
+
+	return basePayload;
 }
 
 export function dispatchStepEvent( eventName, stepNumber, stepName, additionalData = {} ) {
