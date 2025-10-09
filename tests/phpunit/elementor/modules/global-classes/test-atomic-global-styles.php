@@ -3,7 +3,7 @@
 namespace Elementor\Testing\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Atomic_Global_Styles;
@@ -49,7 +49,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 							'color' => [
 								'$$type' => 'color',
 								'value' => 'blue',
-							]
+							],
 						],
 					],
 				],
@@ -99,7 +99,6 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 					return true;
 				} )
 			);
-
 
 		// Act.
 		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ 0 ] );
@@ -245,7 +244,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		$cache_validity->validate( [ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_FRONTEND ] );
 		$cache_validity->validate( [ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_PREVIEW ] );
 
-		do_action('elementor/core/files/clear_cache' );
+		do_action( 'elementor/core/files/clear_cache' );
 
 		// Assert.
 		$this->assertFalse( $cache_validity->is_valid(
