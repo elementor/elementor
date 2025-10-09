@@ -179,6 +179,15 @@ trait Has_Atomic_Base {
 			$editor_data['title'] = sanitize_text_field( $data['title'] );
 		}
 
+		// Preserve CSS converter flags
+		if ( isset( $data['css_converter_widget'] ) ) {
+			$editor_data['css_converter_widget'] = (bool) $data['css_converter_widget'];
+		}
+
+		if ( isset( $data['disable_base_styles'] ) ) {
+			$editor_data['disable_base_styles'] = (bool) $data['disable_base_styles'];
+		}
+
 		return $editor_data;
 	}
 
