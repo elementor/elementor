@@ -26,9 +26,6 @@ class Unified_Css_Processor {
 	}
 
 	public function process_css_and_widgets( string $css, array $widgets ): array {
-		error_log( "🚨 UNIFIED PROCESSOR: Starting unified processing" );
-		error_log( "🚨 UNIFIED PROCESSOR: CSS length: " . strlen( $css ) );
-		error_log( "🚨 UNIFIED PROCESSOR: Widgets count: " . count( $widgets ) );
 		
 		// Phase 1: COLLECT all styles (no widget creation yet)
 		$this->unified_style_manager->reset();
@@ -123,8 +120,6 @@ class Unified_Css_Processor {
 			
 			// Collect inline styles for this widget
 			if ( $element_id && ! empty( $inline_css ) ) {
-				error_log( "🚨 INLINE CSS PATH 2: Unified CSS Processor collecting for element {$element_id}" );
-				error_log( "🚨 INLINE CSS PATH 2: Properties: " . json_encode( array_keys( $inline_css ) ) );
 				
 				// ✅ CRITICAL FIX: Process inline CSS as batch to handle property key collisions
 				// Collect all inline properties first
@@ -134,12 +129,10 @@ class Unified_Css_Processor {
 					$inline_properties[ $property ] = $value;
 				}
 				
-				error_log( "🚨 UNIFIED BATCH FIX: Collected properties for batch: " . json_encode( $inline_properties ) );
 				
 				// Process all properties as batch using collision detection
 				$batch_converted = $this->convert_properties_batch( $inline_properties );
 				
-				error_log( "🚨 UNIFIED BATCH FIX: Batch conversion result: " . json_encode( $batch_converted ) );
 				
 				// Store each converted property with proper collision handling
 				foreach ( $inline_css as $property => $property_data ) {
@@ -155,8 +148,6 @@ class Unified_Css_Processor {
 						}
 					}
 					
-					error_log( "🚨 UNIFIED BATCH FIX: Converting {$property} = {$value}" );
-					error_log( "🚨 UNIFIED BATCH FIX: Converted: " . wp_json_encode( $converted ) );
 					
 					// Store the converted property in the unified style manager
 					$this->unified_style_manager->collect_inline_styles( $element_id, [

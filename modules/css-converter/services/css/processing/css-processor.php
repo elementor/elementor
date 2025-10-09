@@ -653,8 +653,6 @@ class Css_Processor {
 		
 		// Add inline styles (highest specificity after !important)
 		if ( ! empty( $widget['inline_css'] ) ) {
-			error_log( "🚨 INLINE CSS BATCH FIX: CSS Processor found " . count( $widget['inline_css'] ) . " inline styles" );
-			error_log( "🚨 INLINE CSS BATCH FIX: Properties: " . json_encode( array_keys( $widget['inline_css'] ) ) );
 			
 			// ✅ CRITICAL FIX: Process inline CSS as batch to handle property key collisions
 			// Collect all inline properties first
@@ -663,12 +661,10 @@ class Css_Processor {
 				$inline_properties[ $property ] = $style_data['value'];
 			}
 			
-			error_log( "🚨 INLINE CSS BATCH FIX: Collected properties for batch: " . json_encode( $inline_properties ) );
 			
 			// Process all properties as batch using collision detection
 			$batch_converted = $this->property_conversion_service->convert_properties_to_v4_atomic( $inline_properties );
 			
-			error_log( "🚨 INLINE CSS BATCH FIX: Batch conversion result: " . json_encode( $batch_converted ) );
 			
 			// Add each converted property to styles with proper specificity
 			foreach ( $widget['inline_css'] as $property => $style_data ) {
@@ -682,8 +678,6 @@ class Css_Processor {
 					}
 				}
 				
-				error_log( "🚨 INLINE CSS BATCH FIX: Processing {$property}: {$style_data['value']}" );
-				error_log( "🚨 INLINE CSS BATCH FIX: Converted: " . json_encode( $converted_property ) );
 				
 				$all_styles[] = [
 					'property' => $property,

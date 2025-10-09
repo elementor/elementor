@@ -385,16 +385,13 @@ class Widget_Mapper {
 		$has_children = ! empty( $element['children'] );
 		
 		// DEBUG: Log conversion decision (can be removed in production)
-		// error_log( "DIV_TO_PARAGRAPH_DEBUG: Element tag={$element['tag']}, content='{$text_content}', has_children=" . ( $has_children ? 'yes' : 'no' ) );
 		
 		if ( empty( $text_content ) ) {
-			// error_log( "DIV_TO_PARAGRAPH_DEBUG: No text content, keeping as div" );
 			return false;
 		}
 
 		// Only convert if there are no child elements - this is text-only content
 		$should_convert = empty( $element['children'] );
-		// error_log( "DIV_TO_PARAGRAPH_DEBUG: Should convert to paragraph: " . ( $should_convert ? 'YES' : 'NO' ) );
 		
 		return $should_convert;
 	}
@@ -403,7 +400,6 @@ class Widget_Mapper {
 		// Converts a text-only div directly to an e-paragraph widget
 		// Preserves all styling (CSS classes, attributes, inline styles)
 		// DEBUG: Log conversion (can be removed in production)
-		// error_log( "DIV_TO_PARAGRAPH_DEBUG: Converting div to paragraph widget with content: '" . trim( $element['content'] ) . "'" );
 		
 		return [
 			'widget_type' => 'e-paragraph',

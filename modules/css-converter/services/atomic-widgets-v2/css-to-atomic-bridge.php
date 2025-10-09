@@ -218,12 +218,10 @@ class CSS_To_Atomic_Bridge {
 			$simple_properties[ $property ] = $style['value'];
 		}
 		
-		error_log( "🚨 ROOT CAUSE FIX: Converting properties via batch method: " . json_encode( $simple_properties ) );
 		
 		// Use the batch conversion method that handles collisions
 		$atomic_props = $this->props_converter->convert_multiple_css_props( $simple_properties );
 		
-		error_log( "🚨 ROOT CAUSE FIX: Batch conversion result: " . json_encode( $atomic_props ) );
 		
 		return $atomic_props;
 	}

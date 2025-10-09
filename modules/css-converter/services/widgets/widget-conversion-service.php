@@ -42,7 +42,6 @@ class Widget_Conversion_Service {
 		
 		// Add global CSS override for base styles when zero defaults are enabled
 		if ( $use_zero_defaults ) {
-			error_log( "🔥 CONVERSION_SERVICE: Enabling CSS converter base styles override" );
 			$this->enable_css_converter_base_styles_override();
 		}
 	}
@@ -133,31 +132,15 @@ class Widget_Conversion_Service {
 	}
 
 	public function convert_from_html( $html, $css_urls = [], $follow_imports = false, $options = [] ) {
-		error_log( "🔥 CONVERSION_SERVICE: convert_from_html called" );
-		error_log( "🔥 CONVERSION_SERVICE: HTML length = " . strlen( $html ) );
-		error_log( "🔥 CONVERSION_SERVICE: options = " . json_encode( $options ) );
-		error_log( "🔥 CONVERSION_SERVICE: Current use_zero_defaults = " . var_export( $this->use_zero_defaults, true ) );
-		
-		if ( isset( $options['useZeroDefaults'] ) ) {
-			$this->use_zero_defaults = (bool) $options['useZeroDefaults'];
-			error_log( "🔥 CONVERSION_SERVICE: Updated use_zero_defaults to " . var_export( $this->use_zero_defaults, true ) );
-			$this->widget_creator = new Widget_Creator( $this->use_zero_defaults );
-			error_log( "🔥 CONVERSION_SERVICE: Created new Widget_Creator with use_zero_defaults = " . var_export( $this->use_zero_defaults, true ) );
-			
-			// Add global CSS override for base styles when zero defaults are enabled
-			if ( $this->use_zero_defaults ) {
-				error_log( "🔥 CONVERSION_SERVICE: Enabling CSS converter base styles override (updated)" );
-				$this->enable_css_converter_base_styles_override();
-			}
-		} else {
-			error_log( "🔥 CONVERSION_SERVICE: useZeroDefaults NOT in options, using default = " . var_export( $this->use_zero_defaults, true ) );
-		}
+		// CSS converter always uses converted widgets with zero defaults
+		$this->use_zero_defaults = true;
+		$this->widget_creator = new Widget_Creator( $this->use_zero_defaults );
 		
 		$conversion_log = [
 			'start_time' => microtime( true ),
 			'input_size' => strlen( $html ),
 			'css_urls_count' => count( $css_urls ),
-			'options' => array_merge( $options, [ 'useZeroDefaults' => $this->use_zero_defaults ] ),
+			'options' => $options,
 			'warnings' => [],
 			'errors' => [],
 		];
@@ -202,7 +185,6 @@ class Widget_Conversion_Service {
 		$conversion_log['mapping_stats'] = $mapping_stats;
 		
 		// DEBUG: Log mapped widgets structure (can be removed in production)
-		// error_log( "WIDGET_CONVERTER_DEBUG: Mapped " . count( $mapped_widgets ) . " widgets" );
 		// foreach ( $mapped_widgets as $index => $widget ) {
 		//	$widget_type = $widget['widget_type'] ?? 'unknown';
 		//	$widget_id = $widget['attributes']['id'] ?? 'no-id';
@@ -306,8 +288,6 @@ class Widget_Conversion_Service {
 				// DEBUG: Log element details (can be removed in production)
 				$element_tag = $element['tag'] ?? 'unknown';
 				$element_id = $element['attributes']['id'] ?? 'no-id';
-				// error_log( "WIDGET_CONVERTER_DEBUG: Processing inline CSS for element #{$element_counter} - Tag: {$element_tag}, ID: {$element_id}" );
-				// error_log( "WIDGET_CONVERTER_DEBUG: Inline CSS properties: " . wp_json_encode( array_keys( $element['inline_css'] ) ) );
 				
 				// Create a unique class name for this element
 				$class_name = 'inline-element-' . $element_counter;
@@ -320,7 +300,6 @@ class Widget_Conversion_Service {
 					$css_rules[] = "  {$property}: {$value}{$important};";
 					
 					// DEBUG: Log each property conversion (can be removed in production)
-					// error_log( "WIDGET_CONVERTER_DEBUG: Converting property: {$property} = {$value}" . ( $important ? ' !important' : '' ) );
 				}
 				
 				if ( ! empty( $css_rules ) ) {
@@ -328,7 +307,6 @@ class Widget_Conversion_Service {
 					$inline_css .= $css_rule_block;
 					
 					// DEBUG: Log generated CSS rule (can be removed in production)
-					// error_log( "WIDGET_CONVERTER_DEBUG: Generated CSS rule for {$class_name}:\n{$css_rule_block}" );
 					
 					// Store the class name in the element for later reference
 					$element['generated_class'] = $class_name;
@@ -634,7 +612,6 @@ class Widget_Conversion_Service {
 					if ( is_array( $wrapped_value ) && isset( $wrapped_value['$$type'] ) ) {
 						// Use the wrapped property name (e.g., "margin") instead of original (e.g., "margin-left")
 						$computed_styles[ $wrapped_property ] = $wrapped_value;
-						error_log( "🚨 STYLES FIX: Unwrapped {$property} -> {$wrapped_property}: " . wp_json_encode( $wrapped_value ) );
 						break; // Only process the first wrapped property
 					}
 				}
@@ -657,11 +634,9 @@ class Widget_Conversion_Service {
 	private function enable_css_converter_base_styles_override() {
 		// Set a global flag that CSS converter is active with zero defaults
 		update_option( 'elementor_css_converter_zero_defaults_active', true );
-		error_log( "🔥 CONVERSION_SERVICE: Set global flag for CSS converter zero defaults" );
 		
 		// Invalidate atomic widget base styles cache to force regeneration
 		$this->invalidate_atomic_base_styles_cache();
-		error_log( "🔥 CONVERSION_SERVICE: Invalidated atomic widget base styles cache" );
 	}
 
 	private function invalidate_atomic_base_styles_cache() {
@@ -674,24 +649,19 @@ class Widget_Conversion_Service {
 	}
 
 	public function inject_global_base_styles_override() {
-		error_log( "🔥 GLOBAL_CSS_OVERRIDE: inject_global_base_styles_override called" );
 		
 		// Get current post ID
 		$post_id = get_the_ID();
 		if ( ! $post_id ) {
-			error_log( "🔥 GLOBAL_CSS_OVERRIDE: No post ID found, skipping CSS override" );
 			return;
 		}
 		
-		error_log( "🔥 GLOBAL_CSS_OVERRIDE: Checking post " . $post_id . " for CSS converter widgets" );
 		
 		// Check if this page has CSS converter widgets
 		if ( ! $this->page_has_css_converter_widgets( $post_id ) ) {
-			error_log( "🔥 GLOBAL_CSS_OVERRIDE: No CSS converter widgets found, skipping CSS override" );
 			return;
 		}
 		
-		error_log( "🔥 GLOBAL_CSS_OVERRIDE: CSS converter widgets found, injecting override CSS" );
 		
 		// Inject CSS to override atomic widget base styles
 		echo '<style id="css-converter-global-base-styles-override">';
@@ -700,7 +670,6 @@ class Widget_Conversion_Service {
 		echo '.elementor .e-heading { margin: revert !important; }';
 		echo '</style>';
 		
-		error_log( "🔥 GLOBAL_CSS_OVERRIDE: CSS override injected successfully" );
 	}
 
 	private function page_has_css_converter_widgets( int $post_id ): bool {
@@ -717,7 +686,6 @@ class Widget_Conversion_Service {
 		foreach ( $elements_data as $element_data ) {
 			// Check if this element has CSS converter flag
 			if ( isset( $element_data['editor_settings']['css_converter_widget'] ) && $element_data['editor_settings']['css_converter_widget'] ) {
-				error_log( "🔥 GLOBAL_CSS_OVERRIDE: Found CSS converter widget: " . ( $element_data['widgetType'] ?? 'unknown' ) );
 				return true;
 			}
 			
