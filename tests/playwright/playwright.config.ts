@@ -39,7 +39,7 @@ export default defineConfig( {
 		launchOptions: {
 			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
 		},
-		headless: false,
+		headless: true,
 		ignoreHTTPSErrors: true,
 		actionTimeout: timeouts.action,
 		navigationTimeout: timeouts.navigation,
