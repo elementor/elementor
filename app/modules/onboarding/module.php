@@ -41,25 +41,16 @@ class Module extends BaseModule {
 		return 'onboarding';
 	}
 
-	private function is_theme_selection_experiment_enabled() {
+	private function is_experiment_enabled( string $experiment_key ) {
 		$editor_assets_api = $this->get_editor_assets_api();
 
 		if ( null === $editor_assets_api ) {
 			return false;
 		}
 
-		return $editor_assets_api->is_theme_selection_experiment_enabled();
+		return $editor_assets_api->is_experiment_enabled( $experiment_key );
 	}
 
-	private function is_good_to_go_experiment_enabled() {
-		$editor_assets_api = $this->get_editor_assets_api();
-
-		if ( null === $editor_assets_api ) {
-			return false;
-		}
-
-		return $editor_assets_api->is_good_to_go_experiment_enabled();
-	}
 
 	private function get_editor_assets_api(): ?API {
 		if ( null !== $this->editor_assets_api ) {
@@ -163,8 +154,8 @@ class Module extends BaseModule {
 			],
 			'nonce' => wp_create_nonce( 'onboarding' ),
 			'experiment' => true,
-			'themeSelectionExperimentEnabled' => $this->is_theme_selection_experiment_enabled(),
-			'goodToGoExperimentEnabled' => $this->is_good_to_go_experiment_enabled(),
+			'themeSelectionExperimentEnabled' => $this->is_experiment_enabled( 'offerThemeChoicesHelloBiz201' ),
+			'goodToGoExperimentEnabled' => $this->is_experiment_enabled( 'reduceHierarchyBlankOption402' ),
 		] );
 	}
 
