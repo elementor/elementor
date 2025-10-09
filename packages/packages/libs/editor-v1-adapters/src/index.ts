@@ -37,5 +37,5 @@ export type { HistoryItem, WindowWithHistoryManager } from './undoable/get-histo
 
 export { useEditMode, changeEditMode, type EditMode } from './edit-mode';
 
-export { registerDataHook } from './data-hooks/register-data-hook';
+export { registerDataHook , type Args} from './data-hooks/register-data-hook';
 export { blockCommand } from './data-hooks/block-command';

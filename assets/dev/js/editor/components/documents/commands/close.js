@@ -6,7 +6,7 @@ export class Close extends $e.modules.CommandBase {
 	async apply( args ) {
 		const { id, mode, onClose } = args,
 			document = elementor.documents.get( id );
-
+		console.log( 'LOG::apply', { args } );
 		// Already closed.
 		if ( 'closed' === document.editor.status ) {
 			return jQuery.Deferred().resolve();

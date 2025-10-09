@@ -16,12 +16,20 @@ import { slice } from './store/store';
 import { type Element } from './types';
 import { createComponentType, TYPE } from './inject-element-view';
 import { registerElementType } from '@elementor/editor-canvas';
+import { registerDataHook } from '@elementor/editor-v1-adapters';
+import { Args } from '@elementor/editor-v1-adapters/src/data-hooks/register-data-hook';
 
 export function init() {
 	stylesRepository.register(componentsStylesProvider);
 	registerSlice(slice);
 	registerElementType(TYPE, createComponentType);
-
+	registerDataHook('dependency', 'editor/documents/close', (args: Args) => {
+		const document = getV1CurrentDocument();
+		if ( document.config.type === 'elementor_component' ) {
+			args.mode = 'autosave';
+		}
+		return true;
+	} );
 
 	injectTab( {
 		id: 'components',
