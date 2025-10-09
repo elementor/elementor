@@ -11,7 +11,7 @@ import { TransformOriginControl } from './transform-base-controls/transform-orig
 
 const SIZE = 'tiny';
 
-export const TransformBaseControl = ( {
+export const TransformSettingsControl = ( {
 	popupState,
 	anchorRef,
 }: {
@@ -38,7 +38,7 @@ export const TransformBaseControl = ( {
 			{ ...popupProps }
 		>
 			<PopoverHeader
-				title={ __( 'Base Transform', 'elementor' ) }
+				title={ __( 'Transform settings', 'elementor' ) }
 				onClose={ popupState.close }
 				icon={ <AdjustmentsIcon fontSize={ SIZE } /> }
 			/>
