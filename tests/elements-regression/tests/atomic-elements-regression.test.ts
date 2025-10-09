@@ -58,6 +58,16 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 			await helper.doHoverScreenshot( { widgetType, hoverSelector, isPublished: true } );
 			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: true, widgetType } );
 			await helper.doResponsiveScreenshot( { device: 'tablet', isPublished: true, widgetType } );
+
+			// Hard refresh the page and take screenshots to compare with pre-refresh state
+			await page.reload( { waitUntil: 'domcontentloaded' } );
+			await editor.waitForIframeToLoaded( widgetType, true );
+			await editor.removeWpAdminBar();
+			await page.setViewportSize( { width: 1920, height: 1080 } );
+			await helper.doScreenshot( widgetType, true );
+			await helper.doHoverScreenshot( { widgetType, hoverSelector, isPublished: true } );
+			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: true, widgetType } );
+			await helper.doResponsiveScreenshot( { device: 'tablet', isPublished: true, widgetType } );
 		} );
 	}
 } );
