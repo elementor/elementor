@@ -69,11 +69,11 @@ class Cache_Validity_Item {
 	 * @param mixed | null                                                                                      $meta
 	 */
 	private function validate_nested_node( array $data, array $keys, $meta = null ) {
-		$data = $this->get_data_with_enforced_path( $data, $keys );
+		$data = $this->ensure_path( $data, $keys );
 
 		$last_key = array_pop( $keys );
 
-		// parent is guaranteed to be an array as we send the full $keys array to get_data_with_enforced_path
+		// parent is guaranteed to be an array as we send the full $keys array to ensure_path
 		$parent = &$this->get_node( $data, $keys );
 
 		$old_node = &$parent['children'][ $last_key ];
@@ -117,15 +117,15 @@ class Cache_Validity_Item {
 			return;
 		}
 
-		if ( count( $parent['children'] ) > 1 ) {
-			// if the parent has more children - simply unset the invalidated node
-			unset( $parent['children'][ $last_key ] );
+		if ( count( $parent['children'] ) === 1 ) {
+			// if the invalidated node is the parent's o nly child - normalize the data
+			$data = $this->get_normalized_data( $data, $keys, $last_key );
 
 			$this->update_stored_data( $data );
 			return;
 		}
 
-		$data = $this->get_normalized_data( $data, $keys, $last_key );
+		unset( $parent['children'][ $last_key ] );
 
 		$this->update_stored_data( $data );
 	}
@@ -137,16 +137,16 @@ class Cache_Validity_Item {
 	 * @return array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>}
 	 */
 	private function get_normalized_data( array $data, array $keys, string $last_key ) {
-		$redundant_root = &$this->find_empty_parents_path_root( $data, $keys, $last_key );
+		$obsolete_root_params = &$this->find_empty_parents_path_root( $data, $keys, $last_key );
 		$parent = &$this->get_node( $data, $keys );
 
-		if ( $redundant_root['node'] && $redundant_root['key'] ) {
-			unset( $redundant_root['node']['children'][ $redundant_root['key'] ] );
+		if ( $obsolete_root_params['node'] && $obsolete_root_params['key'] ) {
+			unset( $obsolete_root_params['node']['children'][ $obsolete_root_params['key'] ] );
 
 			return $data;
 		}
 
-		if ( $redundant_root['node'] ) {
+		if ( $obsolete_root_params['node'] ) {
 			unset( $data['children'] );
 
 			return $data;
@@ -201,7 +201,7 @@ class Cache_Validity_Item {
 	 * @param array<string>                                                                                     $keys
 	 * @return array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>}
 	 */
-	private function get_data_with_enforced_path( array $data, array $keys ): ?array {
+	private function ensure_path( array $data, array $keys ): ?array {
 		$current = &$data;
 
 		while ( ! empty( $keys ) ) {
