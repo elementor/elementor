@@ -2,9 +2,20 @@ import { getWidgetsCache } from '@elementor/editor-elements';
 import { __privateListenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { createDomRenderer } from '../renderers/create-dom-renderer';
-import { createComponentType, createElementType } from './create-element-type';
+import { 
+	 createElementType } from './create-element-type';
 import { canBeTemplated, createTemplatedElementType } from './create-templated-element-type';
 import type { LegacyWindow } from './types';
+
+
+type RegisterElementType = {
+	[key: string]: any;
+}
+export const registeredElementTypes: RegisterElementType = {}
+
+export function registerElementType(type: string, componentClass: any) {
+	registeredElementTypes[type] = componentClass;
+}
 
 export function initLegacyViews() {
 	__privateListenTo( v1ReadyEvent(), () => {
@@ -17,17 +28,16 @@ export function initLegacyViews() {
 			if ( ! element.atomic ) {
 				return;
 			}
-
-			let ElementType;
-
-			if ( type === 'component' ) {
-				ElementType = createComponentType();
-			} else {
-				ElementType = canBeTemplated( element )
-					? createTemplatedElementType( { type, renderer, element } )
-					: createElementType( type );
+			
+			if (registeredElementTypes[type]) {
+				const registeredElementTypeClass = registeredElementTypes[type]();
+				legacyWindow.elementor.elementsManager.registerElementType(new registeredElementTypeClass());
+				return;
 			}
-
+			
+			const ElementType = canBeTemplated( element )
+				? createTemplatedElementType( { type, renderer, element } )
+				: createElementType( type );
 			legacyWindow.elementor.elementsManager.registerElementType( new ElementType() );
 		} );
 	} );

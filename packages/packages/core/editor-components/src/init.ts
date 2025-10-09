@@ -14,10 +14,14 @@ import { loadComponentsStyles } from './store/load-components-styles';
 import { removeComponentStyles } from './store/remove-component-styles';
 import { slice } from './store/store';
 import { type Element } from './types';
+import { createComponentType, TYPE } from './inject-element-view';
+import { registerElementType } from '@elementor/editor-canvas';
 
 export function init() {
-	stylesRepository.register( componentsStylesProvider );
-	registerSlice( slice );
+	stylesRepository.register(componentsStylesProvider);
+	registerSlice(slice);
+	registerElementType(TYPE, createComponentType);
+
 
 	injectTab( {
 		id: 'components',
@@ -33,7 +37,8 @@ export function init() {
 	injectIntoLogic( {
 		id: 'components-populate-store',
 		component: PopulateStore,
-	} );
+	});
+	
 	listenTo( commandStartEvent( 'editor/documents/attach-preview' ), () => {
 		const { id, config } = getV1CurrentDocument();
 
