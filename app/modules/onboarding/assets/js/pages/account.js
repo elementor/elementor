@@ -223,20 +223,23 @@ export default function Account() {
 			nextStep={ nextStep }
 			className={ 'B' === variant ? 'e-onboarding-variant-b' : '' }
 		>
-			<ContentComponent
-				actionButton={ actionButton }
-				skipButton={ skipButton }
-				noticeState={ noticeState }
-				pageTexts={ pageTexts }
-				state={ state }
-				connectSuccessCallback={ connectSuccessCallback }
-				connectFailureCallback={ connectFailureCallback }
-				connectReadyCallback={ connectReadyCallback }
-				alreadyHaveAccountLinkRef={ alreadyHaveAccountLinkRef }
-				OnboardingEventTracking={ OnboardingEventTracking }
-				handleConnectClick={ handleConnectClick }
-				handleGuestClick={ handleGuestClick }
-			/>
+		<ContentComponent
+			actionButton={ actionButton }
+			skipButton={ skipButton }
+			noticeState={ noticeState }
+			pageTexts={ pageTexts }
+			state={ state }
+			connectSuccessCallback={ connectSuccessCallback }
+			connectFailureCallback={ connectFailureCallback }
+			connectReadyCallback={ connectReadyCallback }
+			alreadyHaveAccountLinkRef={ alreadyHaveAccountLinkRef }
+			OnboardingEventTracking={ OnboardingEventTracking }
+			updateState={ updateState }
+			getStateObjectToUpdate={ getStateObjectToUpdate }
+			navigate={ navigate }
+			nextStep={ nextStep }
+			pageId={ pageId }
+		/>
 			{
 				! state.isLibraryConnected && 'B' !== variant && (
 					<div className="e-onboarding__footnote">

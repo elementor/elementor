@@ -22,6 +22,7 @@ export const ONBOARDING_EVENTS_MAP = {
 	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
 	CREATE_ACCOUNT_STATUS: 'core_onboarding_create_account_status',
 	STEP1_CLICKED_CONNECT: 'core_onboarding_s1_clicked_connect',
+	AB_101_START_AS_FREE_USER: 'ab_101_start_as_free_user',
 };
 
 export const ONBOARDING_STEP_NAMES = {

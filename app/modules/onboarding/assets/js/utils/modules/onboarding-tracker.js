@@ -103,6 +103,19 @@ class OnboardingTracker {
 					action_step: eventData.currentStep,
 				} ),
 			},
+			AB_101_START_AS_FREE_USER: {
+				eventName: ONBOARDING_EVENTS_MAP.AB_101_START_AS_FREE_USER,
+				storageKey: ONBOARDING_STORAGE_KEYS.PENDING_AB_101_START_AS_FREE_USER,
+				basePayload: {
+					location: 'plugin_onboarding',
+					trigger: 'continue_as_guest_clicked',
+				},
+				payloadBuilder: ( eventData ) => ( {
+					action_step: eventData.currentStep,
+				} ),
+				stepOverride: 1,
+				stepNameOverride: ONBOARDING_STEP_NAMES.CONNECT,
+			},
 		};
 	}
 

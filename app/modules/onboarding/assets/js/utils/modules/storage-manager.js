@@ -22,6 +22,7 @@ export const ONBOARDING_STORAGE_KEYS = {
 	PENDING_STEP1_CLICKED_CONNECT: 'elementor_onboarding_pending_step1_clicked_connect',
 	PENDING_STEP1_END_STATE: 'elementor_onboarding_pending_step1_end_state',
 	PENDING_EXIT_BUTTON: 'elementor_onboarding_pending_exit_button',
+	PENDING_AB_101_START_AS_FREE_USER: 'elementor_onboarding_pending_ab_101_start_as_free_user',
 	PENDING_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
 	EMPHASIZE_CONNECT_BENEFITS_VARIANT: 'elementor_onboarding_emphasize_connect_benefits_variant',
 	EMPHASIZE_CONNECT_BENEFITS_EXPERIMENT_STARTED: 'elementor_onboarding_emphasize_connect_benefits_experiment_started',

@@ -1,10 +1,20 @@
 .e-onboarding-variant-b {
 
-        .e-app__header,
         .e-app__footer,
         .e-onboarding__steps,
-        .e-onboarding__skip-button {
+        .e-onboarding__skip-button,
+        .e-onboarding__progress-bar {
                 display: none !important;
+        }
+
+        .e-app__header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                background: white;
+                box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.04);
         }
 
         .e-app__content {
@@ -15,11 +25,18 @@
                 padding: 0;
         }
 
+        .e-onboarding__content {
+                display: flex;
+                align-items: center;
+                padding-block: 7rem;
+        }
+
         .e-onboarding__page-content {
                 max-width: 598px;
-                width: 100%;
+                width: 598px;
                 text-align: center;
-                padding: 20px;
+                padding: 0;
+                margin: 0 auto;
         }
 
         .e-onboarding-variant-b-content-layout {
@@ -36,11 +53,13 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 20px;
+        gap: 0px;
         font-family: 'DM Sans', sans-serif;
+        width: 598px;
+        margin: 0 auto;
 
         .e-onboarding-variant-b-icon {
-                margin-bottom: 20px;
+                margin-bottom: 40px;
 
                 svg {
                         width: 104px;
@@ -55,15 +74,20 @@
                 line-height: 1.3;
                 color: #0c0d0e;
                 margin: 0 0 6px 0;
+                width: 100%;
+                text-align: center;
         }
 
         .e-onboarding-variant-b-description {
+                font-family: 'DM Sans', sans-serif;
                 font-size: 18px;
                 font-weight: 400;
                 line-height: 1.5;
                 color: #3a3f45;
                 letter-spacing: -0.18px;
                 margin: 0 0 40px 0;
+                width: 100%;
+                text-align: center;
         }
 
         .e-onboarding-variant-b-buttons {
@@ -71,12 +95,17 @@
                 flex-direction: column;
                 gap: 12px;
                 width: 264px;
+                align-items: center;
+                margin-top: 20px;
         }
 
         .e-onboarding-variant-b-button {
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 height: 48px;
                 padding: 14px 16px;
-                border-radius: 4px;
+                border-radius: 0;
                 border: none;
                 font-family: 'DM Sans', sans-serif;
                 font-weight: 500;
@@ -86,6 +115,9 @@
                 cursor: pointer;
                 transition: all 0.2s ease;
                 white-space: nowrap;
+                width: 100%;
+                text-decoration: none;
+                box-sizing: border-box;
 
                 &--primary {
                         background: #f3bafd;
@@ -121,31 +153,51 @@
         .e-onboarding-variant-b {
                 .e-onboarding__page-content {
                         padding: 20px;
+                        width: calc(100% - 40px);
+                        max-width: 598px;
                 }
 
                 .e-onboarding-variant-b-content {
-                        .e-onboarding-variant-b-title {
-                                font-size: 36px;
-                        }
+                        width: 100%;
+                }
 
-                        .e-onboarding-variant-b-buttons {
-                                width: 100%;
-                                max-width: 300px;
-                        }
+                .e-onboarding-variant-b-title {
+                        font-size: 36px;
+                }
+
+                .e-onboarding-variant-b-buttons {
+                        width: 100%;
+                        max-width: 300px;
                 }
         }
 }
 
 @media (max-width: 480px) {
         .e-onboarding-variant-b {
-                .e-onboarding-variant-b-content {
-                        .e-onboarding-variant-b-title {
-                                font-size: 28px;
-                        }
+                .e-onboarding__page-content {
+                        padding: 15px;
+                        width: calc(100% - 30px);
+                }
 
-                        .e-onboarding-variant-b-description {
-                                font-size: 16px;
-                        }
+                .e-onboarding__content {
+                        padding-block: 2rem;
+                        align-items: flex-start;
+                }
+
+                .e-onboarding-variant-b-content {
+                        width: 100%;
+                }
+
+                .e-onboarding-variant-b-title {
+                        font-size: 28px;
+                }
+
+                .e-onboarding-variant-b-description {
+                        font-size: 16px;
+                }
+
+                .e-onboarding-variant-b-buttons {
+                        width: 100%;
                 }
         }
 }
