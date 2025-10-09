@@ -1,5 +1,13 @@
 == Changelog ==
 
+= 3.32.4 - 2025-10-05 =
+* Tweak: Added notice for Load Google Fonts Locally feature to clarify behavior and setup
+
+= 3.32.3 - 2025-09-29 =
+
+* Fix: Custom post types are imported even when unselected in Website Templates import
+* Fix: Taxonomy queries not connected properly to widgets in Website Templates import
+
 = 3.32.2 - 2025-09-18 =
 
 * Tweak: Improved compatibility for 3rd-party plugins serving templates

@@ -6,9 +6,8 @@ import { StarIcon } from '@elementor/icons';
 import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type CreateComponentResponse } from '../../api';
 import { useComponents } from '../../hooks/use-components';
-import { useCreateComponentMutation } from '../../hooks/use-create-component';
+import { useCreateComponent } from '../../hooks/use-create-component';
 import { type ComponentFormValues } from '../../types';
 import { useForm } from './hooks/use-form';
 import { createBaseComponentSchema, createSubmitComponentSchema } from './utils/component-form-schema';
@@ -35,8 +34,7 @@ export function CreateComponentForm() {
 
 	const [ resultNotification, setResultNotification ] = useState< ResultNotification | null >( null );
 
-	const { mutate: createComponent, isPending } = useCreateComponentMutation();
-
+	const { createComponent, isPending } = useCreateComponent();
 	useEffect( () => {
 		const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
 
@@ -57,43 +55,39 @@ export function CreateComponentForm() {
 			throw new Error( `Can't save element as component: element not found` );
 		}
 
-		createComponent(
-			{
+		try {
+			const result = await createComponent( {
 				name: values.componentName,
 				content: [ element.element.model.toJSON( { remove: [ 'default' ] } ) ],
-			},
-			{
-				onSuccess: ( result: CreateComponentResponse ) => {
-					if ( ! element ) {
-						throw new Error( `Can't replace element with component: element not found` );
-					}
+			} );
 
-					replaceElementWithComponent( element.element, {
-						id: result.component_id,
-						name: values.componentName,
-					} );
-
-					setResultNotification( {
-						show: true,
-						// Translators: %1$s: Component name, %2$s: Component ID
-						message: __( 'Component saved successfully as: %1$s (ID: %2$s)', 'elementor' )
-							.replace( '%1$s', values.componentName )
-							.replace( '%2$s', result.component_id.toString() ),
-						type: 'success',
-					} );
-
-					resetAndClosePopup();
-				},
-				onError: () => {
-					const errorMessage = __( 'Failed to save component. Please try again.', 'elementor' );
-					setResultNotification( {
-						show: true,
-						message: errorMessage,
-						type: 'error',
-					} );
-				},
+			if ( ! element ) {
+				throw new Error( `Can't replace element with component: element not found` );
 			}
-		);
+
+			replaceElementWithComponent( element.element, {
+				id: result.component_id,
+				name: values.componentName,
+			} );
+
+			setResultNotification( {
+				show: true,
+				// Translators: %1$s: Component name, %2$s: Component ID
+				message: __( 'Component saved successfully as: %1$s (ID: %2$s)', 'elementor' )
+					.replace( '%1$s', values.componentName )
+					.replace( '%2$s', result.component_id.toString() ),
+				type: 'success',
+			} );
+
+			resetAndClosePopup();
+		} catch {
+			const errorMessage = __( 'Failed to save component. Please try again.', 'elementor' );
+			setResultNotification( {
+				show: true,
+				message: errorMessage,
+				type: 'error',
+			} );
+		}
 	};
 
 	const resetAndClosePopup = () => {
@@ -146,7 +140,7 @@ const Form = ( {
 } ) => {
 	const { values, errors, isValid, handleChange, validateForm } = useForm< ComponentFormValues >( initialValues );
 
-	const { data: components } = useComponents();
+	const { components } = useComponents();
 
 	const existingComponentNames = useMemo( () => {
 		return components?.map( ( component ) => component.name ) ?? [];

@@ -72,7 +72,7 @@ export const detachVariable = async ( page: Page, styleSectionSelector: string, 
 };
 
 export const openVariableManager = async ( page: Page, styleSectionSelector: string, controlToAccessFrom: string ) => {
-	if ( await page.getByText( 'Variable Manager' ).isVisible() ) {
+	if ( await page.getByText( 'Variables Manager' ).isVisible() ) {
 		return;
 	}
 	await page.locator( 'header' ).getByRole( 'button', { name: 'Add Element' } ).click();
@@ -97,11 +97,15 @@ export const deleteVariable = async ( page: Page, variableName: string ) => {
 };
 
 export const saveAndExitVariableManager = async ( page: Page, shouldSave: boolean ) => {
-	if ( shouldSave ) {
+	const isSaveEnabled = await page.locator( '#elementor-panel' ).getByRole( 'button', { name: /Save/ } ).isEnabled();
+	if ( shouldSave || isSaveEnabled ) {
 		await page.locator( '#elementor-panel' ).getByRole( 'button', { name: /Save/ } ).click();
 		await page.waitForRequest( ( response ) => response.url().includes( 'list' ) && null === response.failure() );
 	}
 	await page.locator( '#elementor-panel' ).getByRole( 'button', { name: 'Close' } ).click();
+	if ( await page.locator( '#save-changes-dialog' ).isVisible() ) {
+		await page.locator( '[aria-labelledby="save-changes-dialog"]' ).getByRole( 'button', { name: /Save/ } ).click();
+	}
 };
 
 export const deleteAllVariables = async ( page: Page ) => {
