@@ -156,6 +156,7 @@ class Module extends BaseModule {
 			'experiment' => true,
 			'themeSelectionExperimentEnabled' => $this->is_experiment_enabled( 'offerThemeChoicesHelloBiz201' ),
 			'goodToGoExperimentEnabled' => $this->is_experiment_enabled( 'reduceHierarchyBlankOption402' ),
+			'onboardingStartsWithLogin103' => $this->is_experiment_enabled( 'onboardingStartsWithLogin103' ),
 		] );
 	}
 

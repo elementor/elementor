@@ -10,6 +10,7 @@ import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
 		[ noticeState, setNoticeState ] = useState( null ),
+		[ shouldAutoOpenPopup, setShouldAutoOpenPopup ] = useState( false ),
 		nextStep = getNextStep(),
 		navigate = useNavigate(),
 		pageId = 'account',
@@ -28,6 +29,11 @@ export default function Account() {
 					is_library_connected: state?.isLibraryConnected || false,
 				},
 			);
+
+			// Set flag to auto-open popup once Connect component is ready, but only if experiment is enabled
+			if ( elementorAppConfig.onboarding.onboardingStartsWithLogin103 ) {
+				setShouldAutoOpenPopup( true );
+			}
 		}
 
 		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
@@ -140,6 +146,13 @@ export default function Account() {
 		};
 	}
 
+	const connectReadyCallback = () => {
+		if ( shouldAutoOpenPopup && actionButtonRef.current ) {
+			actionButtonRef.current.click();
+			setShouldAutoOpenPopup( false );
+		}
+	};
+
 	const connectSuccessCallback = () => {
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
 
@@ -213,6 +226,7 @@ export default function Account() {
 					buttonRef={ actionButton.ref }
 					successCallback={ ( event, data ) => connectSuccessCallback( event, data ) }
 					errorCallback={ connectFailureCallback }
+					readyCallback={ connectReadyCallback }
 				/> }
 				<span>
 					{ pageTexts.firstLine }
