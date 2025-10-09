@@ -214,7 +214,7 @@ export default function Account() {
 		navigate( 'onboarding/' + nextStep );
 	};
 
-	const variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EMPHASIZE_CONNECT_BENEFITS_VARIANT );
+	const variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT );
 	const ContentComponent = 'B' === variant ? AccountContentB : AccountContentA;
 
 	return (

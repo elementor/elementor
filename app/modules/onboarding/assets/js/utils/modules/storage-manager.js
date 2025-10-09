@@ -24,12 +24,12 @@ export const ONBOARDING_STORAGE_KEYS = {
 	PENDING_EXIT_BUTTON: 'elementor_onboarding_pending_exit_button',
 	PENDING_AB_101_START_AS_FREE_USER: 'elementor_onboarding_pending_ab_101_start_as_free_user',
 	PENDING_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
-	EMPHASIZE_CONNECT_BENEFITS_VARIANT: 'elementor_onboarding_emphasize_connect_benefits_variant',
-	EMPHASIZE_CONNECT_BENEFITS_EXPERIMENT_STARTED: 'elementor_onboarding_emphasize_connect_benefits_experiment_started',
-	THEME_SELECTION_VARIANT: 'elementor_onboarding_theme_selection_variant',
-	THEME_SELECTION_EXPERIMENT_STARTED: 'elementor_onboarding_theme_selection_experiment_started',
-	GOOD_TO_GO_VARIANT: 'elementor_onboarding_good_to_go_variant',
-	GOOD_TO_GO_EXPERIMENT_STARTED: 'elementor_onboarding_good_to_go_experiment_started',
+	EXPERIMENT101_VARIANT: 'elementor_onboarding_experiment101_variant',
+	EXPERIMENT101_STARTED: 'elementor_onboarding_experiment101_started',
+	EXPERIMENT201_VARIANT: 'elementor_onboarding_experiment201_variant',
+	EXPERIMENT201_STARTED: 'elementor_onboarding_experiment201_started',
+	EXPERIMENT402_VARIANT: 'elementor_onboarding_experiment402_variant',
+	EXPERIMENT402_STARTED: 'elementor_onboarding_experiment402_started',
 };
 
 export function getString( key ) {
@@ -145,10 +145,10 @@ export function clearAllOnboardingData() {
 
 export function clearExperimentData() {
 	const experimentKeys = [
-		ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT,
-		ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED,
-		ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT,
-		ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT402_STARTED,
 	];
 
 	clearMultiple( experimentKeys );

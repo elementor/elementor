@@ -4,7 +4,6 @@ export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
 	HELLO_BIZ_CONTINUE: 'core_onboarding_s2_hellobiz',
 	THEME_CHOICE: 'core_onboarding_theme_choice',
-	THEME_CHOICE_VARIANT_B: 'ab_201_theme_choice',
 	CORE_ONBOARDING: 'core_onboarding',
 	CONNECT_STATUS: 'core_onboarding_connect_status',
 	STEP1_END_STATE: 'core_onboarding_s1_end_state',
@@ -68,31 +67,43 @@ export function dispatchIfAllowed( eventName, payload = {} ) {
 	return false;
 }
 
-function getThemeSelectionVariant() {
-	const variant = StorageManager.getString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT );
-	return variant || null;
+function getExperimentConfigs() {
+	return {
+		101: {
+			variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT,
+			enabledKey: 'isExperiment101Enabled',
+			minStep: 1,
+			payloadKey: '101_variant',
+		},
+		201: {
+			variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
+			enabledKey: 'isExperiment201Enabled',
+			minStep: 2,
+			payloadKey: '201_variant',
+		},
+		402: {
+			variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT,
+			enabledKey: 'isExperiment402Enabled',
+			minStep: 4,
+			payloadKey: '402_variant',
+		},
+	};
 }
 
-function getGoodToGoVariant() {
-	const variant = StorageManager.getString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT );
-	return variant || null;
-}
-
-function getEmphasizeConnectBenefitsVariant() {
-	const variant = StorageManager.getString( ONBOARDING_STORAGE_KEYS.EMPHASIZE_CONNECT_BENEFITS_VARIANT );
-	return variant || null;
-}
-
-function getVariantSpecificEventName( baseEventName, stepNumber ) {
-	if ( 2 === stepNumber && elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
-		const variant = getThemeSelectionVariant();
-		if ( 'B' === variant ) {
-			if ( ONBOARDING_EVENTS_MAP.THEME_CHOICE === baseEventName ) {
-				return ONBOARDING_EVENTS_MAP.THEME_CHOICE_VARIANT_B;
-			}
-		}
+function getExperimentVariant( experimentId ) {
+	const config = getExperimentConfigs()[ experimentId ];
+	if ( ! config ) {
+		return null;
 	}
-	return baseEventName;
+	return StorageManager.getString( config.variantKey ) || null;
+}
+
+function isExperimentEnabled( experimentId ) {
+	const config = getExperimentConfigs()[ experimentId ];
+	if ( ! config ) {
+		return false;
+	}
+	return elementorAppConfig?.onboarding?.[ config.enabledKey ] || false;
 }
 
 export function createEventPayload( basePayload = {} ) {
@@ -110,17 +121,13 @@ export function createStepEventPayload( stepNumber, stepName, additionalData = {
 		...additionalData,
 	};
 
-	if ( stepNumber >= 1 && elementorAppConfig?.onboarding?.emphasizeConnectBenefits101 ) {
-		basePayload[ '101_variant' ] = getEmphasizeConnectBenefitsVariant();
-	}
-
-	if ( stepNumber >= 2 && elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
-		basePayload[ '201_variant' ] = getThemeSelectionVariant();
-	}
-
-	if ( stepNumber >= 4 && elementorAppConfig?.onboarding?.goodToGoExperimentEnabled ) {
-		basePayload[ '402_variant' ] = getGoodToGoVariant();
-	}
+	const experiments = getExperimentConfigs();
+	Object.keys( experiments ).forEach( ( experimentId ) => {
+		const config = experiments[ experimentId ];
+		if ( stepNumber >= config.minStep && isExperimentEnabled( parseInt( experimentId, 10 ) ) ) {
+			basePayload[ config.payloadKey ] = getExperimentVariant( parseInt( experimentId, 10 ) );
+		}
+	} );
 
 	return createEventPayload( basePayload );
 }
@@ -132,39 +139,27 @@ export function createEditorEventPayload( additionalData = {} ) {
 		...additionalData,
 	};
 
-	if ( elementorAppConfig?.onboarding?.emphasizeConnectBenefits101 ) {
-		const emphasizeConnectVariant = getEmphasizeConnectBenefitsVariant();
-		if ( emphasizeConnectVariant ) {
-			basePayload[ '101_variant' ] = emphasizeConnectVariant;
+	const experiments = getExperimentConfigs();
+	Object.keys( experiments ).forEach( ( experimentId ) => {
+		const config = experiments[ experimentId ];
+		if ( isExperimentEnabled( parseInt( experimentId, 10 ) ) ) {
+			const variant = getExperimentVariant( parseInt( experimentId, 10 ) );
+			if ( variant ) {
+				basePayload[ config.payloadKey ] = variant;
+			}
 		}
-	}
-
-	if ( elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
-		const themeVariant = getThemeSelectionVariant();
-		if ( themeVariant ) {
-			basePayload[ '201_variant' ] = themeVariant;
-		}
-	}
-
-	if ( elementorAppConfig?.onboarding?.goodToGoExperimentEnabled ) {
-		const goodToGoVariant = getGoodToGoVariant();
-		if ( goodToGoVariant ) {
-			basePayload[ '402_variant' ] = goodToGoVariant;
-		}
-	}
+	} );
 
 	return basePayload;
 }
 
 export function dispatchStepEvent( eventName, stepNumber, stepName, additionalData = {} ) {
 	const payload = createStepEventPayload( stepNumber, stepName, additionalData );
-	const variantSpecificEventName = getVariantSpecificEventName( eventName, stepNumber );
-	return dispatch( variantSpecificEventName, payload );
+	return dispatch( eventName, payload );
 }
 
 export function dispatchVariantAwareEvent( eventName, payload, stepNumber = null ) {
-	const variantSpecificEventName = stepNumber ? getVariantSpecificEventName( eventName, stepNumber ) : eventName;
-	return dispatch( variantSpecificEventName, payload );
+	return dispatch( eventName, payload );
 }
 
 export function dispatchEditorEvent( eventName, additionalData = {} ) {

@@ -852,17 +852,17 @@ class OnboardingTracker {
 		TimingManager.trackStepStartTime( stepNumber );
 
 		if ( 1 === stepNumber || 'account' === currentStep ) {
-			this.sendEmphasizeConnectBenefitsExperimentStarted();
+			this.sendExperimentStarted( 101 );
 		}
 
 		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
 			this.sendStoredStep1EventsOnStep2();
-			this.sendThemeSelectionExperimentStarted();
+			this.sendExperimentStarted( 201 );
 		}
 
 		if ( 4 === stepNumber || 'goodToGo' === currentStep ) {
 			this.checkAndSendReturnToStep4();
-			this.sendGoodToGoExperimentStarted();
+			this.sendExperimentStarted( 402 );
 		}
 	}
 
@@ -889,61 +889,70 @@ class OnboardingTracker {
 		return PostOnboardingTracker.clearAllOnboardingStorage();
 	}
 
-	isThemeSelectionExperimentEnabled() {
-		return elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled || false;
+	getExperimentConfigs() {
+		return {
+			101: {
+				name: '101 - Emphasize connect benefits',
+				enabledKey: 'isExperiment101Enabled',
+				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT,
+				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_STARTED,
+			},
+			201: {
+				name: '201 - Offer theme choices: hello, biz',
+				enabledKey: 'isExperiment201Enabled',
+				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
+				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED,
+			},
+			402: {
+				name: '402 - Reduce hierarchy of blank option',
+				enabledKey: 'isExperiment402Enabled',
+				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT,
+				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT402_STARTED,
+			},
+		};
 	}
 
-	isGoodToGoExperimentEnabled() {
-		return elementorAppConfig?.onboarding?.goodToGoExperimentEnabled || false;
-	}
-
-	getThemeSelectionVariant() {
-		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT );
-		if ( stored ) {
-			return stored;
+	isExperimentEnabled( experimentId ) {
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config ) {
+			return false;
 		}
-
-		return null;
+		return elementorAppConfig?.onboarding?.[ config.enabledKey ] || false;
 	}
 
-	getGoodToGoVariant() {
-		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT );
-		if ( stored ) {
-			return stored;
+	getExperimentVariant( experimentId ) {
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config ) {
+			return null;
 		}
-
-		return null;
+		return StorageManager.getString( config.variantKey ) || null;
 	}
 
-	assignThemeSelectionVariant() {
-		if ( ! this.isThemeSelectionExperimentEnabled() ) {
+	assignExperimentVariant( experimentId ) {
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config || ! this.isExperimentEnabled( experimentId ) ) {
 			return null;
 		}
 
 		const variant = Math.random() < 0.5 ? 'A' : 'B';
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT, variant );
+		StorageManager.setString( config.variantKey, variant );
 		return variant;
 	}
 
-	assignGoodToGoVariant() {
-		if ( ! this.isGoodToGoExperimentEnabled() ) {
-			return null;
-		}
-
-		const variant = Math.random() < 0.5 ? 'A' : 'B';
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT, variant );
-		return variant;
-	}
-
-	sendThemeSelectionExperimentStarted() {
-		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED ) ) {
+	sendExperimentStarted( experimentId ) {
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config ) {
 			return;
 		}
 
-		let variant = this.getThemeSelectionVariant();
+		if ( StorageManager.exists( config.startedKey ) ) {
+			return;
+		}
+
+		let variant = this.getExperimentVariant( experimentId );
 
 		if ( ! variant ) {
-			variant = this.assignThemeSelectionVariant();
+			variant = this.assignExperimentVariant( experimentId );
 			if ( ! variant ) {
 				return;
 			}
@@ -954,89 +963,15 @@ class OnboardingTracker {
 		}
 
 		const eventData = {
-			'Experiment name': '201 - Offer theme choices: hello, biz',
+			'Experiment name': config.name,
 			'Variant name': variant,
 		};
 
 		EventDispatcher.dispatch( '$experiment_started', eventData );
 
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED, 'true' );
+		StorageManager.setString( config.startedKey, 'true' );
 	}
 
-	sendGoodToGoExperimentStarted() {
-		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED ) ) {
-			return;
-		}
-
-		let variant = this.getGoodToGoVariant();
-
-		if ( ! variant ) {
-			variant = this.assignGoodToGoVariant();
-			if ( ! variant ) {
-				return;
-			}
-		}
-
-		if ( ! EventDispatcher.canSendEvents() ) {
-			return;
-		}
-
-		const eventData = {
-			'Experiment name': '402 - Reduce hierarchy of blank option',
-			'Variant name': variant,
-		};
-
-		EventDispatcher.dispatch( '$experiment_started', eventData );
-
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED, 'true' );
-	}
-
-	isEmphasizeConnectBenefitsExperimentEnabled() {
-		return elementorAppConfig?.onboarding?.emphasizeConnectBenefits101 || false;
-	}
-
-	getEmphasizeConnectBenefitsVariant() {
-		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.EMPHASIZE_CONNECT_BENEFITS_VARIANT );
-		return stored || null;
-	}
-
-	assignEmphasizeConnectBenefitsVariant() {
-		if ( ! this.isEmphasizeConnectBenefitsExperimentEnabled() ) {
-			return null;
-		}
-
-		const variant = Math.random() < 0.5 ? 'A' : 'B';
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.EMPHASIZE_CONNECT_BENEFITS_VARIANT, variant );
-		return variant;
-	}
-
-	sendEmphasizeConnectBenefitsExperimentStarted() {
-		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.EMPHASIZE_CONNECT_BENEFITS_EXPERIMENT_STARTED ) ) {
-			return;
-		}
-
-		let variant = this.getEmphasizeConnectBenefitsVariant();
-
-		if ( ! variant ) {
-			variant = this.assignEmphasizeConnectBenefitsVariant();
-			if ( ! variant ) {
-				return;
-			}
-		}
-
-		if ( ! EventDispatcher.canSendEvents() ) {
-			return;
-		}
-
-		const eventData = {
-			'Experiment name': '101 - Emphasize connect benefits',
-			'Variant name': variant,
-		};
-
-		EventDispatcher.dispatch( '$experiment_started', eventData );
-
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.EMPHASIZE_CONNECT_BENEFITS_EXPERIMENT_STARTED, 'true' );
-	}
 }
 
 const onboardingTracker = new OnboardingTracker();
