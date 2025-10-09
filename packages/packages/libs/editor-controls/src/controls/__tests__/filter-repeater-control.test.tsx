@@ -106,7 +106,7 @@ describe( 'FilterRepeaterControl', () => {
 
 		// Assert.
 		const btn = screen.getAllByRole( 'button' )[ 0 ];
-		expect( screen.getByText( 'Backdrop Filters' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Backdrop filters' ) ).toBeInTheDocument();
 		expect( btn ).toHaveAttribute( 'aria-label', 'Add backdrop filter item' );
 	} );
 
