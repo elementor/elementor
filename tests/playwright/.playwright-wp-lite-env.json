@@ -1,6 +1,6 @@
 {
 	"core": "6.8",
-	"phpVersion": "8.1",
+	"phpVersion": "8.4",
 	"plugins": {
 		"elementor": "./build"
 	},
