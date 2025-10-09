@@ -937,7 +937,7 @@ class OnboardingTracker {
 		}
 
 		const eventData = {
-			'Experiment name': '201 - Offer theme choices: hello, biz',
+			'Experiment name': 'core_onboarding_theme_selection',
 			'Variant name': variant,
 		};
 
@@ -965,7 +965,7 @@ class OnboardingTracker {
 		}
 
 		const eventData = {
-			'Experiment name': '402 - Reduce hierarchy of blank option',
+			'Experiment name': 'core_onboarding_good_to_go',
 			'Variant name': variant,
 		};
 
