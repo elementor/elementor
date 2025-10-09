@@ -29,5 +29,4 @@ class API {
 
 		return $ab_testing_data['coreOnboarding'][ $experiment_key ] ?? false;
 	}
-
 }
