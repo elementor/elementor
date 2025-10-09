@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Plugin;
 
 class Module extends BaseModule {
 	private $variables_route;
@@ -29,9 +30,6 @@ class Module extends BaseModule {
 		if ( ! $this->is_test_environment() && ! $variables_route && ! $classes_route && ! $widgets_route ) {
 			$this->init_routes();
 		}
-		
-		// Add global hook for CSS converter base styles override
-		add_action( 'wp_head', [ $this, 'maybe_inject_base_styles_override' ], 999 );
 		
 	}
 
@@ -130,11 +128,9 @@ class Module extends BaseModule {
 	}
 
 	private function initialize_widgets_route(): void {
-		error_log( "🚨 LEVEL 1 DEBUG: Initializing widgets route" );
 		$widgets_route_file = __DIR__ . '/routes/widgets-route.php';
 		
 		if ( ! file_exists( $widgets_route_file ) ) {
-			error_log( "🚨 LEVEL 1 DEBUG: Widgets route file missing" );
 			$this->handle_widgets_route_missing();
 			return;
 		}
@@ -142,11 +138,7 @@ class Module extends BaseModule {
 		require_once $widgets_route_file;
 		
 		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Widgets_Route' ) ) {
-			error_log( "🚨 LEVEL 1 DEBUG: Creating Widgets_Route instance" );
 			$this->widgets_route = new \Elementor\Modules\CssConverter\Routes\Widgets_Route();
-			error_log( "🚨 LEVEL 1 DEBUG: Widgets_Route instance created successfully" );
-		} else {
-			error_log( "🚨 LEVEL 1 DEBUG: Widgets_Route class not found" );
 		}
 	}
 
@@ -212,51 +204,6 @@ class Module extends BaseModule {
 		$this->classes_route = $classes_route;
 	}
 
-	public function maybe_inject_base_styles_override() {
-		error_log( "🔥 MODULE: maybe_inject_base_styles_override called" );
-		
-		// Check if CSS converter zero defaults is active
-		$zero_defaults_active = get_option( 'elementor_css_converter_zero_defaults_active', false );
-		if ( ! $zero_defaults_active ) {
-			error_log( "🔥 MODULE: CSS converter zero defaults not active, skipping" );
-			return;
-		}
-		
-		error_log( "🔥 MODULE: CSS converter zero defaults is active, checking for widgets" );
-		
-		// Get current post ID
-		$post_id = get_the_ID();
-		if ( ! $post_id ) {
-			error_log( "🔥 MODULE: No post ID found, skipping CSS override" );
-			return;
-		}
-		
-		error_log( "🔥 MODULE: Checking post " . $post_id . " for CSS converter widgets" );
-		
-		// Check if this page has CSS converter widgets
-		if ( ! $this->page_has_css_converter_widgets( $post_id ) ) {
-			error_log( "🔥 MODULE: No CSS converter widgets found, skipping CSS override" );
-			return;
-		}
-		
-		error_log( "🔥 MODULE: CSS converter widgets found, injecting override CSS" );
-		
-		// Inject CSS to override atomic widget base styles
-		echo '<style id="css-converter-module-base-styles-override">';
-		echo '/* CSS Converter Module: Override atomic widget base styles */';
-		echo 'body .elementor .elementor-widget .e-paragraph { margin-top: 16px !important; margin-bottom: 16px !important; }';
-		echo 'body .elementor .elementor-widget .e-heading { margin-top: 21px !important; margin-bottom: 21px !important; }';
-		echo 'body .elementor .elementor-widget .e-paragraph p { margin-top: 16px !important; margin-bottom: 16px !important; }';
-		echo 'body .elementor .elementor-widget .e-heading h1, body .elementor .elementor-widget .e-heading h2 { margin-top: 21px !important; margin-bottom: 21px !important; }';
-		echo '</style>';
-		
-		error_log( "🔥 MODULE: CSS override injected successfully" );
-		
-		// Clear the flag after use to avoid affecting other pages
-		delete_option( 'elementor_css_converter_zero_defaults_active' );
-		error_log( "🔥 MODULE: Cleared CSS converter zero defaults flag" );
-	}
-
 	private function page_has_css_converter_widgets( int $post_id ): bool {
 		$document = \Elementor\Plugin::$instance->documents->get( $post_id );
 		if ( ! $document ) {
@@ -271,7 +218,6 @@ class Module extends BaseModule {
 		foreach ( $elements_data as $element_data ) {
 			// Check if this element has CSS converter flag
 			if ( isset( $element_data['editor_settings']['css_converter_widget'] ) && $element_data['editor_settings']['css_converter_widget'] ) {
-				error_log( "🔥 MODULE: Found CSS converter widget: " . ( $element_data['widgetType'] ?? 'unknown' ) );
 				return true;
 			}
 			
@@ -285,5 +231,4 @@ class Module extends BaseModule {
 		
 		return false;
 	}
-
 }

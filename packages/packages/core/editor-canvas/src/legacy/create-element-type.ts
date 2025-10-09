@@ -22,53 +22,38 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 	const legacyWindow = window as unknown as LegacyWindow;
 
 	return class extends legacyWindow.elementor.modules.elements.views.Widget {
-		// Dispatch `render` event so the overlay layer will be updated
 		onRender( ...args: unknown[] ) {
 			super.onRender( ...args );
-
-			this.#dispatchEvent( 'elementor/preview/atomic-widget/render' );
-			this.#dispatchPreviewEvent( 'elementor/element/render' );
+			this.#notifyOverlayLayerOfRender();
 		}
 
-		// Dispatch `destroy` event so the overlay layer will be updated
 		onDestroy( ...args: unknown[] ) {
 			super.onDestroy( ...args );
-
-			this.#dispatchEvent( 'elementor/preview/atomic-widget/destroy' );
-			this.#dispatchPreviewEvent( 'elementor/element/destroy' );
+			this.#notifyOverlayLayerOfDestroy();
 		}
 
 		attributes() {
 			return {
 				...super.attributes(),
-
-				// Mark the widget as atomic, so external APIs (such as the overlay layer) can reference it.
-				'data-atomic': '',
-
-				// Make the wrapper is non-existent in terms of CSS to mimic the frontend DOM tree.
-				style: 'display: contents !important;',
+				...this.#getAtomicWidgetAttributes(),
 			};
 		}
 
-		// Removes behaviors that are not needed for atomic widgets (that are implemented in the overlay layer).
 		behaviors() {
 			const disabledBehaviors = [ 'InlineEditing', 'Draggable', 'Resizable' ];
-
-			const behaviorsAsEntries = Object.entries( super.behaviors() ).filter(
+			const parentBehaviors = super.behaviors();
+			const behaviorsAsEntries = Object.entries( parentBehaviors ).filter(
 				( [ key ] ) => ! disabledBehaviors.includes( key )
 			);
-
 			return Object.fromEntries( behaviorsAsEntries );
 		}
 
-		// Change the drag handle because the $el is not the draggable element (`display: contents`).
 		getDomElement() {
-			return this.$el.find( ':first-child' );
+			return this.#getFirstChildAsDragHandle();
 		}
 
-		// Remove the overlay, so we can use the new overlay layer.
 		getHandlesOverlay() {
-			return null;
+			return this.#disableDefaultOverlay();
 		}
 
 		#dispatchEvent( eventType: string ) {
@@ -94,5 +79,47 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 		getContextMenuGroups() {
 			return super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
 		}
+
+		className() {
+			const editorSettings = ( this.model as any ).get( 'editor_settings' ) || {};
+			const isCssConverterWidget = editorSettings.css_converter_widget || editorSettings.disable_base_styles;
+			
+			if ( isCssConverterWidget ) {
+				const originalClasses = ( this as any ).constructor.__super__.className.call( this );
+				const widgetType = ( this.model as any ).get( 'widgetType' ) || ( this.model as any ).get( 'elType' );
+				const baseClassPattern = new RegExp( `\\b${widgetType}-base\\b`, 'g' );
+				return originalClasses.replace( baseClassPattern, '' ).trim();
+			}
+			
+			return ( this as any ).constructor.__super__.className.call( this );
+		}
+
+		#notifyOverlayLayerOfRender() {
+			this.#dispatchEvent( 'elementor/preview/atomic-widget/render' );
+			this.#dispatchPreviewEvent( 'elementor/element/render' );
+		}
+
+		#notifyOverlayLayerOfDestroy() {
+			this.#dispatchEvent( 'elementor/preview/atomic-widget/destroy' );
+			this.#dispatchPreviewEvent( 'elementor/element/destroy' );
+		}
+
+		#getAtomicWidgetAttributes() {
+			return {
+				'data-atomic': '',
+				style: 'display: contents !important;',
+			};
+		}
+
+
+		#getFirstChildAsDragHandle() {
+			return this.$el.find( ':first-child' );
+		}
+
+		#disableDefaultOverlay() {
+			return null;
+		}
+
+
 	};
 }

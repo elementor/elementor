@@ -100,12 +100,18 @@ function createTemplatedElementViewClassDeclaration( {
 					} );
 				} )
 				.then( ( resolvedSettings ) => {
+					const editorSettings = this.model.get( 'editor_settings' ) || {};
+					const isCssConverterWidget = editorSettings.css_converter_widget || editorSettings.disable_base_styles;
+					
+					// Override base_styles for CSS converter widgets
+					const finalBaseStyles = isCssConverterWidget ? {} : baseStylesDictionary;
+					
 					// Same as the Backend.
 					const context = {
 						id: this.model.get( 'id' ),
 						type,
 						settings: resolvedSettings,
-						base_styles: baseStylesDictionary,
+						base_styles: finalBaseStyles,
 					};
 
 					return renderer.render( templateKey, context );
