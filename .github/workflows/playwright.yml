@@ -42,7 +42,7 @@ jobs:
     name: Build plugin
     uses: ./.github/workflows/build.yml
   Playwright:
-    name: Playwright test - ${{ matrix.shardIndex }} on PHP ${{ matrix.php_version }}
+    name: Playwright test - ${{ matrix.shardIndex }} on PHP ${{ github.event_name == 'schedule' && '8.4' || '8.1' }}
     runs-on: ubuntu-22.04
     needs: [build-plugin]
     if: github.event.inputs.tag == '' && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests'))
@@ -51,7 +51,6 @@ jobs:
       matrix:
         shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
         shardTotal: [ 10 ]
-        php_version: ${{ github.event_name == 'schedule' && '8.4' || '8.1' }}
         include:
         - shardIndex: "v4-tests"
         - shardIndex: "elements-regression"
@@ -83,9 +82,15 @@ jobs:
           unzip hello-elementor
       - name: Create dynamic config for PHP version
         run: |
-          # Create temporary config with matrix PHP version
-          jq --arg php "${{ matrix.php_version }}" '.phpVersion = $php' tests/playwright/.playwright-wp-lite-env.json > .playwright-wp-lite-env-temp.json
-          echo "Using PHP ${{ matrix.php_version }} for ${{ github.event_name }} trigger"
+          # Create temporary config with conditional PHP version
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
+            PHP_VERSION="8.4"
+          else
+            PHP_VERSION="8.1"
+          fi
+          
+          jq --arg php "$PHP_VERSION" '.phpVersion = $php' tests/playwright/.playwright-wp-lite-env.json > .playwright-wp-lite-env-temp.json
+          echo "Using PHP $PHP_VERSION for ${{ github.event_name }} trigger"
       - name: Install WordPress environment
         run: |
           # Use temporary config with correct PHP version
@@ -134,13 +139,10 @@ jobs:
           if-no-files-found: ignore
           retention-days: 2
   PlaywrightWithTag:
-    name: Playwright test - tagged tests on PHP ${{ matrix.php_version }}
+    name: Playwright test - tagged tests on PHP 8.1
     runs-on: ubuntu-22.04
     needs: [ build-plugin ]
     if: ${{ github.event.inputs.tag }}
-    strategy:
-      matrix:
-        php_version: ${{ github.event_name == 'schedule' && '8.4' || '8.1' }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -161,14 +163,14 @@ jobs:
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
-      - name: Create dynamic config for PHP version
+      - name: Create config for PHP 8.1
         run: |
-          # Create temporary config with matrix PHP version
-          jq --arg php "${{ matrix.php_version }}" '.phpVersion = $php' tests/playwright/.playwright-wp-lite-env.json > .playwright-wp-lite-env-temp.json
-          echo "Using PHP ${{ matrix.php_version }} for ${{ github.event_name }} trigger"
+          # Create temporary config with PHP 8.1 for manual testing
+          jq --arg php "8.1" '.phpVersion = $php' tests/playwright/.playwright-wp-lite-env.json > .playwright-wp-lite-env-temp.json
+          echo "Using PHP 8.1 for manual testing"
       - name: Install WordPress environment
         run: |
-          # Use temporary config with correct PHP version
+          # Use temporary config with PHP 8.1
           npx wp-lite-env start --config=./.playwright-wp-lite-env-temp.json --port=8888
           npx wp-lite-env start --config=./.playwright-wp-lite-env-temp.json --port=8889
       - name: Setup test data
