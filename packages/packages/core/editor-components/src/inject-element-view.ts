@@ -1,6 +1,11 @@
-import { NumberPropValue } from "@elementor/editor-props";
-import { createElementViewClassDeclaration, ElementType, ElementView, LegacyWindow } from "@elementor/editor-canvas";
-import { __ } from "@wordpress/i18n";
+import {
+	createElementViewClassDeclaration,
+	type ElementType,
+	type ElementView,
+	type LegacyWindow,
+} from '@elementor/editor-canvas';
+import { type NumberPropValue } from '@elementor/editor-props';
+import { __ } from '@wordpress/i18n';
 
 export const TYPE = 'e-component';
 
@@ -37,10 +42,14 @@ export function createComponentViewClassDeclaration(): typeof ElementView {
 					{
 						name: 'edit component',
 						icon: 'eicon-edit',
-						title: () => __('Edit Component', 'elementor'),
+						title: () => __( 'Edit Component', 'elementor' ),
 						isEnabled: () => true,
 						callback: () => {
-							this.legacyWindow.$e.run?.( 'editor/documents/switch', { id, mode: 'autosave' , nextAction: 'autosave' } );
+							this.legacyWindow.$e.run?.( 'editor/documents/switch', {
+								id,
+								mode: 'autosave',
+								nextAction: 'autosave',
+							} );
 						},
 					},
 				],
@@ -51,11 +60,15 @@ export function createComponentViewClassDeclaration(): typeof ElementView {
 		bindUIElements() {
 			const componentId = this.options?.model?.get( 'settings' )?.get( 'component_id' ) as NumberPropValue;
 			if ( componentId?.value ) {
-				const component = this.$el.get( 0 ).querySelector( `.${TYPE}` );
+				const component = this.$el.get( 0 ).querySelector( `.${ TYPE }` );
 				component?.addEventListener( 'dblclick', () => {
-					this.legacyWindow.$e.run?.( 'editor/documents/switch', { id: componentId.value, mode: 'autosave', nextAction: 'autosave' } );
+					this.legacyWindow.$e.run?.( 'editor/documents/switch', {
+						id: componentId.value,
+						mode: 'autosave',
+						nextAction: 'autosave',
+					} );
 				} );
 			}
-    }
-  }
+		}
+	};
 }

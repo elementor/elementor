@@ -1,4 +1,3 @@
-
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
 
 // Technically it shouldn't have a return type annotation, but for some
