@@ -37,14 +37,31 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  get-php-version:
+    runs-on: ubuntu-22.04
+    outputs:
+      php-version: ${{ steps.get-php-version.outputs.php-version }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Get PHP version from config
+        id: get-php-version
+        run: |
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
+            PHP_VERSION="8.4"
+          else
+            PHP_VERSION="8.1"
+          fi
+          echo "php-version=$PHP_VERSION" >> $GITHUB_OUTPUT
+          echo "Using PHP $PHP_VERSION for ${{ github.event_name }} trigger"
   build-plugin:
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     name: Build plugin
     uses: ./.github/workflows/build.yml
   Playwright:
-    name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.1
+    name: Playwright test - ${{ matrix.shardIndex }} on PHP ${{ needs.get-php-version.outputs.php-version }}
     runs-on: ubuntu-22.04
-    needs: [build-plugin]
+    needs: [build-plugin, get-php-version]
     if: github.event.inputs.tag == '' && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests'))
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
@@ -82,7 +99,14 @@ jobs:
           unzip hello-elementor
       - name: Install WordPress environment
         run: |
-          npm run start-local-server
+          # Override PHP version based on trigger
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
+            npx wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --php-version=8.4
+            npx wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889 --php-version=8.4
+          else
+            npx wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --php-version=8.1
+            npx wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889 --php-version=8.1
+          fi
       - name: Update wordpress to nightly build
         if: ${{ github.event_name == 'schedule' }}
         run: npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
@@ -124,9 +148,9 @@ jobs:
           if-no-files-found: ignore
           retention-days: 2
   PlaywrightWithTag:
-    name: Playwright test - tagged tests on PHP 8.1
+    name: Playwright test - tagged tests on PHP ${{ needs.get-php-version.outputs.php-version }}
     runs-on: ubuntu-22.04
-    needs: [ build-plugin ]
+    needs: [ build-plugin, get-php-version ]
     if: ${{ github.event.inputs.tag }}
     steps:
       - name: Checkout source code
@@ -150,7 +174,14 @@ jobs:
           unzip hello-elementor
       - name: Install WordPress environment
         run: |
-          npm run start-local-server
+          # Override PHP version based on trigger
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
+            npx wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --php-version=8.4
+            npx wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889 --php-version=8.4
+          else
+            npx wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --php-version=8.1
+            npx wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889 --php-version=8.1
+          fi
       - name: Setup test data
         run: npm run test:setup:playwright
       - name: WordPress debug information
