@@ -1,13 +1,14 @@
 import { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { OnboardingContext } from '../../context/context';
+import { ONBOARDING_STORAGE_KEYS } from '../../utils/onboarding-event-tracking';
 
 export default function ProgressBarItem( props ) {
 	const { state } = useContext( OnboardingContext ),
 		stepCompleted = 'completed' === state.steps[ props.id ],
 		stepSkipped = 'skipped' === state.steps[ props.id ];
 
-	const isExperiment101VariantB = localStorage.getItem( 'elementor_onboarding_experiment101_variant' ) === 'B';
+	const isExperiment101VariantB = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT ) === 'B';
 
 	let itemClasses = 'e-onboarding__progress-bar-item';
 
