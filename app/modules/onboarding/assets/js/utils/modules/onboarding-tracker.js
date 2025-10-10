@@ -302,7 +302,12 @@ class OnboardingTracker {
 	}
 
 	sendHelloBizContinue( stepNumber ) {
+		console.log( `[Onboarding Debug] sendHelloBizContinue: stepNumber: ${stepNumber}` );
+		console.log( `[Onboarding Debug] sendHelloBizContinue: canSendEvents: ${EventDispatcher.canSendEvents()}` );
+		
 		if ( EventDispatcher.canSendEvents() ) {
+			console.log( `[Onboarding Debug] sendHelloBizContinue: Dispatching event ${ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE} with stepNumber: ${stepNumber}, stepName: ${ONBOARDING_STEP_NAMES.HELLO_BIZ}` );
+			
 			return EventDispatcher.dispatchStepEvent(
 				ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE,
 				stepNumber,
@@ -312,6 +317,8 @@ class OnboardingTracker {
 					trigger: eventsConfig.triggers.click,
 				},
 			);
+		} else {
+			console.log( `[Onboarding Debug] sendHelloBizContinue: Cannot send events - canSendEvents() returned false` );
 		}
 	}
 
@@ -641,9 +648,13 @@ class OnboardingTracker {
 	}
 
 	sendConnectionSuccessEvents( data ) {
+		console.log( '[Onboarding] sendConnectionSuccessEvents called with data:', data );
+		
 		this.sendCoreOnboardingInitiated();
 		this.sendAppropriateStatusEvent( 'success', data );
 		this.sendAllStoredEvents();
+		
+		console.log( '[Onboarding] sendConnectionSuccessEvents completed' );
 	}
 
 	sendConnectionFailureEvents() {
@@ -670,6 +681,8 @@ class OnboardingTracker {
 	}
 
 	sendAllStoredEvents() {
+		console.log( '[Onboarding] sendAllStoredEvents called' );
+		
 		this.sendStoredExperimentData();
 		this.sendStoredEvent( 'SKIP' );
 		this.sendStoredEvent( 'TOP_UPGRADE' );
@@ -680,11 +693,18 @@ class OnboardingTracker {
 		this.sendStoredEvent( 'STEP1_END_STATE' );
 		this.sendStoredEvent( 'EXIT_BUTTON' );
 		this.sendStoredEvent( 'AB_101_START_AS_FREE_USER' );
+		
+		console.log( '[Onboarding] sendAllStoredEvents completed' );
 	}
 
 	sendStoredEventsIfConnected() {
-		if ( EventDispatcher.canSendEvents() ) {
+		const canSend = EventDispatcher.canSendEvents();
+		console.log( '[Onboarding] sendStoredEventsIfConnected called, canSendEvents:', canSend );
+		
+		if ( canSend ) {
 			this.sendAllStoredEvents();
+		} else {
+			console.log( '[Onboarding] Cannot send events yet, stored events remain in localStorage' );
 		}
 	}
 
@@ -915,19 +935,26 @@ class OnboardingTracker {
 	}
 
 	onStepLoad( currentStep ) {
+		console.log( `[Onboarding] onStepLoad called with currentStep:`, currentStep );
+		
 		const stepNumber = this.getStepNumber( currentStep );
+		console.log( `[Onboarding] Step number:`, stepNumber );
+		
 		TimingManager.trackStepStartTime( stepNumber );
 
 		if ( 1 === stepNumber || 'account' === currentStep ) {
+			console.log( '[Onboarding] Step 1 detected, starting experiment 101' );
 			this.sendExperimentStarted( 101 );
 		}
 
 		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
+			console.log( '[Onboarding] Step 2 detected, sending stored step 1 events and starting experiment 201' );
 			this.sendStoredStep1EventsOnStep2();
 			this.sendExperimentStarted( 201 );
 		}
 
 		if ( 4 === stepNumber || 'goodToGo' === currentStep ) {
+			console.log( '[Onboarding] Step 4 detected, checking return to step 4 and starting experiment 402' );
 			this.checkAndSendReturnToStep4();
 			this.sendExperimentStarted( 402 );
 		}
@@ -983,45 +1010,87 @@ class OnboardingTracker {
 	isExperimentEnabled( experimentId ) {
 		const config = this.getExperimentConfigs()[ experimentId ];
 		if ( ! config ) {
+			console.warn( `[Experiment ${experimentId}] No config found in isExperimentEnabled` );
 			return false;
 		}
-		return elementorAppConfig?.onboarding?.[ config.enabledKey ] || false;
+		
+		const isEnabled = elementorAppConfig?.onboarding?.[ config.enabledKey ] || false;
+		console.log( `[Experiment ${experimentId}] isExperimentEnabled check:`, {
+			enabledKey: config.enabledKey,
+			isEnabled,
+			elementorAppConfig: elementorAppConfig?.onboarding,
+		} );
+		
+		return isEnabled;
 	}
 
 	getExperimentVariant( experimentId ) {
 		const config = this.getExperimentConfigs()[ experimentId ];
 		if ( ! config ) {
+			console.warn( `[Experiment ${experimentId}] No config found in getExperimentVariant` );
 			return null;
 		}
-		return StorageManager.getString( config.variantKey ) || null;
+		
+		const variant = StorageManager.getString( config.variantKey ) || null;
+		console.log( `[Experiment ${experimentId}] getExperimentVariant:`, {
+			variantKey: config.variantKey,
+			variant,
+		} );
+		
+		return variant;
 	}
 
 	assignExperimentVariant( experimentId ) {
+		console.log( `[Experiment ${experimentId}] assignExperimentVariant called` );
+		
 		const config = this.getExperimentConfigs()[ experimentId ];
-		if ( ! config || ! this.isExperimentEnabled( experimentId ) ) {
+		if ( ! config ) {
+			console.warn( `[Experiment ${experimentId}] No config found in assignExperimentVariant` );
+			return null;
+		}
+		
+		const isEnabled = this.isExperimentEnabled( experimentId );
+		if ( ! isEnabled ) {
+			console.warn( `[Experiment ${experimentId}] Experiment not enabled, cannot assign variant` );
 			return null;
 		}
 
 		const variant = Math.random() < 0.5 ? 'A' : 'B';
+		console.log( `[Experiment ${experimentId}] Assigning variant:`, variant );
+		
 		StorageManager.setString( config.variantKey, variant );
+		console.log( `[Experiment ${experimentId}] Variant stored in localStorage (key: ${config.variantKey})` );
+		
+		const verification = StorageManager.getString( config.variantKey );
+		console.log( `[Experiment ${experimentId}] Verification - variant retrieved:`, verification );
+		
 		return variant;
 	}
 
 	sendExperimentStarted( experimentId ) {
+		console.log( `[Experiment ${experimentId}] sendExperimentStarted called` );
+		
 		const config = this.getExperimentConfigs()[ experimentId ];
 		if ( ! config ) {
+			console.warn( `[Experiment ${experimentId}] No config found` );
 			return;
 		}
 
+		console.log( `[Experiment ${experimentId}] Config:`, config );
+
 		if ( StorageManager.exists( config.startedKey ) ) {
+			console.log( `[Experiment ${experimentId}] Already started (key: ${config.startedKey})` );
 			return;
 		}
 
 		let variant = this.getExperimentVariant( experimentId );
+		console.log( `[Experiment ${experimentId}] Existing variant:`, variant );
 
 		if ( ! variant ) {
 			variant = this.assignExperimentVariant( experimentId );
+			console.log( `[Experiment ${experimentId}] Assigned new variant:`, variant );
 			if ( ! variant ) {
+				console.warn( `[Experiment ${experimentId}] Failed to assign variant` );
 				return;
 			}
 		}
@@ -1031,17 +1100,26 @@ class OnboardingTracker {
 			'Variant name': variant,
 		};
 
-		if ( EventDispatcher.canSendEvents() ) {
+		const canSend = EventDispatcher.canSendEvents();
+		console.log( `[Experiment ${experimentId}] Can send events:`, canSend );
+
+		if ( canSend ) {
+			console.log( `[Experiment ${experimentId}] Sending event immediately`, eventData );
 			EventDispatcher.dispatch( '$experiment_started', eventData );
 			StorageManager.setString( config.startedKey, 'true' );
+			console.log( `[Experiment ${experimentId}] Event sent and marked as started` );
 		} else {
+			console.log( `[Experiment ${experimentId}] Storing for later`, eventData );
 			this.storeExperimentDataForLater( experimentId, eventData );
 		}
 	}
 
 	storeExperimentDataForLater( experimentId, eventData ) {
+		console.log( `[Experiment ${experimentId}] storeExperimentDataForLater called` );
+		
 		const config = this.getExperimentConfigs()[ experimentId ];
 		if ( ! config ) {
+			console.warn( `[Experiment ${experimentId}] No config found in storeExperimentDataForLater` );
 			return;
 		}
 
@@ -1052,24 +1130,45 @@ class OnboardingTracker {
 			startedKey: config.startedKey,
 		};
 
+		console.log( `[Experiment ${experimentId}] Experiment entry to store:`, experimentEntry );
+
 		const existingExperiments = StorageManager.getArray( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
+		console.log( `[Experiment ${experimentId}] Existing experiments in storage (before):`, existingExperiments );
+		
 		existingExperiments.push( experimentEntry );
-		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA, existingExperiments );
+		
+		const saveResult = StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA, existingExperiments );
+		console.log( `[Experiment ${experimentId}] Save result:`, saveResult );
+		console.log( `[Experiment ${experimentId}] Experiments in storage (after):`, existingExperiments );
+		
+		const verification = StorageManager.getArray( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
+		console.log( `[Experiment ${experimentId}] Verification - retrieved from storage:`, verification );
 	}
 
 	sendStoredExperimentData() {
+		console.log( '[Experiments] sendStoredExperimentData called' );
+		
 		const storedExperiments = StorageManager.getArray( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
+		console.log( '[Experiments] Stored experiments retrieved:', storedExperiments );
 
 		if ( 0 === storedExperiments.length ) {
+			console.log( '[Experiments] No stored experiments to send' );
 			return;
 		}
 
+		console.log( `[Experiments] Sending ${storedExperiments.length} stored experiments` );
+
 		storedExperiments.forEach( ( experiment ) => {
-			EventDispatcher.dispatch( '$experiment_started', experiment.eventData );
+			console.log( `[Experiment ${experiment.experimentId}] Dispatching stored experiment:`, experiment.eventData );
+			const dispatchResult = EventDispatcher.dispatch( '$experiment_started', experiment.eventData );
+			console.log( `[Experiment ${experiment.experimentId}] Dispatch result:`, dispatchResult );
+			
 			StorageManager.setString( experiment.startedKey, 'true' );
+			console.log( `[Experiment ${experiment.experimentId}] Marked as started (key: ${experiment.startedKey})` );
 		} );
 
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
+		console.log( '[Experiments] Cleared pending experiment data from storage' );
 	}
 }
 

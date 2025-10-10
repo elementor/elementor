@@ -34,7 +34,11 @@ export const ONBOARDING_STORAGE_KEYS = {
 };
 
 export function getString( key ) {
-	return localStorage.getItem( key );
+	const value = localStorage.getItem( key );
+	if ( key.includes( 'experiment' ) ) {
+		console.log( `[Storage Debug] getString: key: ${key}, value: ${value}` );
+	}
+	return value;
 }
 
 export function setString( key, value ) {
@@ -62,15 +66,23 @@ export function setObject( key, value ) {
 	try {
 		const jsonString = JSON.stringify( value );
 		setString( key, jsonString );
+		console.log( `[Storage] setObject success - key: ${key}`, value );
 		return true;
 	} catch ( error ) {
+		console.error( `[Storage] setObject failed - key: ${key}`, error );
 		return false;
 	}
 }
 
 export function getArray( key ) {
 	const storedArray = getObject( key );
-	return Array.isArray( storedArray ) ? storedArray : [];
+	const result = Array.isArray( storedArray ) ? storedArray : [];
+	
+	if ( key === ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA ) {
+		console.log( `[Storage] getArray - key: ${key}, result:`, result );
+	}
+	
+	return result;
 }
 
 export function appendToArray( key, item ) {
