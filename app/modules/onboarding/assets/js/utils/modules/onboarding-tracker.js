@@ -884,6 +884,7 @@ class OnboardingTracker {
 		}
 
 		this.sendStoredEvent( 'STEP1_END_STATE' );
+		this.sendStoredEventsIfConnected();
 	}
 
 	setupPostOnboardingClickTracking() {

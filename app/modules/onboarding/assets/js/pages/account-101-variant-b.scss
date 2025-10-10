@@ -149,6 +149,15 @@
         }
 }
 
+@media (min-width: 1024px) {
+        .e-onboarding101-variant-b {
+
+                .e-onboarding__content {
+                        min-height: 600px;
+                }
+        }
+}
+
 @media (max-width: 768px) {
         .e-onboarding101-variant-b {
                 .e-onboarding__page-content {

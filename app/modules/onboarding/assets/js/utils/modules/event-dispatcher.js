@@ -142,11 +142,9 @@ export function createEditorEventPayload( additionalData = {} ) {
 	const experiments = getExperimentConfigs();
 	Object.keys( experiments ).forEach( ( experimentId ) => {
 		const config = experiments[ experimentId ];
-		if ( isExperimentEnabled( parseInt( experimentId, 10 ) ) ) {
-			const variant = getExperimentVariant( parseInt( experimentId, 10 ) );
-			if ( variant ) {
-				basePayload[ config.payloadKey ] = variant;
-			}
+		const variant = getExperimentVariant( parseInt( experimentId, 10 ) );
+		if ( variant ) {
+			basePayload[ config.payloadKey ] = variant;
 		}
 	} );
 
