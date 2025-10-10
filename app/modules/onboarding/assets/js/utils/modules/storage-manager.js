@@ -150,14 +150,13 @@ export function clearAllOnboardingData() {
 		ONBOARDING_STORAGE_KEYS.PENDING_EXIT_BUTTON,
 		ONBOARDING_STORAGE_KEYS.PENDING_AB_101_START_AS_FREE_USER,
 		ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_MOUSEOVER,
-		ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA,
 		ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
 		ONBOARDING_STORAGE_KEYS.STEP2_START_TIME,
 		ONBOARDING_STORAGE_KEYS.STEP3_START_TIME,
 		ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
 	];
 
-	console.warn( '[Storage Debug] Keys to remove (includes PENDING_EXPERIMENT_DATA):', keysToRemove.length );
+	console.warn( '[Storage Debug] Keys to remove (PENDING_EXPERIMENT_DATA excluded):', keysToRemove.length );
 
 	clearMultiple( keysToRemove );
 
@@ -168,7 +167,7 @@ export function clearAllOnboardingData() {
 }
 
 export function clearExperimentData() {
-	console.warn( '[Storage Debug] 🚨 clearExperimentData called!' );
+	console.warn( '[Storage Debug] 🚨 clearExperimentData called - ONLY use for manual cleanup!' );
 	console.trace( '[Storage Debug] clearExperimentData stack trace:' );
 	
 	const experimentKeys = [
@@ -181,7 +180,7 @@ export function clearExperimentData() {
 		ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA,
 	];
 
-	console.warn( '[Storage Debug] Clearing experiment keys (includes PENDING_EXPERIMENT_DATA):', experimentKeys );
+	console.warn( '[Storage Debug] Clearing ALL experiment keys (includes PENDING_EXPERIMENT_DATA - may lose unsent data!):', experimentKeys );
 
 	clearMultiple( experimentKeys );
 }
