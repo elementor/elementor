@@ -22,15 +22,23 @@ export const ONBOARDING_STORAGE_KEYS = {
 	PENDING_STEP1_CLICKED_CONNECT: 'elementor_onboarding_pending_step1_clicked_connect',
 	PENDING_STEP1_END_STATE: 'elementor_onboarding_pending_step1_end_state',
 	PENDING_EXIT_BUTTON: 'elementor_onboarding_pending_exit_button',
+	PENDING_AB_101_START_AS_FREE_USER: 'elementor_onboarding_pending_ab_101_start_as_free_user',
 	PENDING_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
-	THEME_SELECTION_VARIANT: 'elementor_onboarding_theme_selection_variant',
-	THEME_SELECTION_EXPERIMENT_STARTED: 'elementor_onboarding_theme_selection_experiment_started',
-	GOOD_TO_GO_VARIANT: 'elementor_onboarding_good_to_go_variant',
-	GOOD_TO_GO_EXPERIMENT_STARTED: 'elementor_onboarding_good_to_go_experiment_started',
+	EXPERIMENT101_VARIANT: 'elementor_onboarding_experiment101_variant',
+	EXPERIMENT101_STARTED: 'elementor_onboarding_experiment101_started',
+	EXPERIMENT201_VARIANT: 'elementor_onboarding_experiment201_variant',
+	EXPERIMENT201_STARTED: 'elementor_onboarding_experiment201_started',
+	EXPERIMENT402_VARIANT: 'elementor_onboarding_experiment402_variant',
+	EXPERIMENT402_STARTED: 'elementor_onboarding_experiment402_started',
+	PENDING_EXPERIMENT_DATA: 'elementor_onboarding_pending_experiment_data',
 };
 
 export function getString( key ) {
-	return localStorage.getItem( key );
+	const value = localStorage.getItem( key );
+	if ( key.includes( 'experiment' ) ) {
+		console.log( `[Storage Debug] getString: key: ${key}, value: ${value}` );
+	}
+	return value;
 }
 
 export function setString( key, value ) {
@@ -38,6 +46,10 @@ export function setString( key, value ) {
 }
 
 export function remove( key ) {
+	if ( key.includes( 'experiment' ) ) {
+		console.warn( `[Storage Debug] REMOVE called for: ${key}` );
+		console.trace( '[Storage Debug] Remove stack trace:' );
+	}
 	localStorage.removeItem( key );
 }
 
@@ -58,15 +70,23 @@ export function setObject( key, value ) {
 	try {
 		const jsonString = JSON.stringify( value );
 		setString( key, jsonString );
+		console.log( `[Storage] setObject success - key: ${key}`, value );
 		return true;
 	} catch ( error ) {
+		console.error( `[Storage] setObject failed - key: ${key}`, error );
 		return false;
 	}
 }
 
 export function getArray( key ) {
 	const storedArray = getObject( key );
-	return Array.isArray( storedArray ) ? storedArray : [];
+	const result = Array.isArray( storedArray ) ? storedArray : [];
+	
+	if ( key === ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA ) {
+		console.log( `[Storage] getArray - key: ${key}, result:`, result );
+	}
+	
+	return result;
 }
 
 export function appendToArray( key, item ) {
@@ -105,6 +125,9 @@ export function clearMultiple( keys ) {
 }
 
 export function clearAllOnboardingData() {
+	console.warn( '[Storage Debug] 🚨 clearAllOnboardingData called!' );
+	console.trace( '[Storage Debug] clearAllOnboardingData stack trace:' );
+	
 	const keysToRemove = [
 		ONBOARDING_STORAGE_KEYS.START_TIME,
 		ONBOARDING_STORAGE_KEYS.INITIATED,
@@ -125,12 +148,15 @@ export function clearAllOnboardingData() {
 		ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
 		ONBOARDING_STORAGE_KEYS.PENDING_STEP1_END_STATE,
 		ONBOARDING_STORAGE_KEYS.PENDING_EXIT_BUTTON,
+		ONBOARDING_STORAGE_KEYS.PENDING_AB_101_START_AS_FREE_USER,
 		ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_MOUSEOVER,
 		ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
 		ONBOARDING_STORAGE_KEYS.STEP2_START_TIME,
 		ONBOARDING_STORAGE_KEYS.STEP3_START_TIME,
 		ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
 	];
+
+	console.warn( '[Storage Debug] Keys to remove (PENDING_EXPERIMENT_DATA excluded):', keysToRemove.length );
 
 	clearMultiple( keysToRemove );
 
@@ -141,12 +167,20 @@ export function clearAllOnboardingData() {
 }
 
 export function clearExperimentData() {
+	console.warn( '[Storage Debug] 🚨 clearExperimentData called - ONLY use for manual cleanup!' );
+	console.trace( '[Storage Debug] clearExperimentData stack trace:' );
+	
 	const experimentKeys = [
-		ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT,
-		ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED,
-		ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT,
-		ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT101_STARTED,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT402_STARTED,
+		ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA,
 	];
+
+	console.warn( '[Storage Debug] Clearing ALL experiment keys (includes PENDING_EXPERIMENT_DATA - may lose unsent data!):', experimentKeys );
 
 	clearMultiple( experimentKeys );
 }

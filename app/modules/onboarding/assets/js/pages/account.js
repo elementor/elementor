@@ -3,9 +3,10 @@ import { useNavigate } from '@reach/router';
 import { OnboardingContext } from '../context/context';
 import Connect from '../utils/connect';
 import Layout from '../components/layout/layout';
-import PageContentLayout from '../components/layout/page-content-layout';
+import AccountContentA from '../components/account-content-a';
+import AccountContentB from '../components/account-content-b';
 import { safeDispatchEvent } from '../utils/utils';
-import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
+import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../utils/onboarding-event-tracking';
 
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
@@ -86,7 +87,7 @@ export default function Account() {
 				__( 'Unlock tools that streamline your workflow and site setup', 'elementor' ),
 			],
 		} : {
-			firstLine: __( 'To get the most out of Elementor, we’ll connect your account.', 'elementor' ) +
+			firstLine: __( 'To get the most out of Elementor, we\'ll connect your account.', 'elementor' ) +
 			' ' + __( 'Then you can:', 'elementor' ),
 			listItems: [
 				__( 'Choose from countless professional templates', 'elementor' ),
@@ -103,7 +104,7 @@ export default function Account() {
 	};
 
 	if ( state.isLibraryConnected ) {
-		actionButton.text = __( 'Let’s do it', 'elementor' );
+		actionButton.text = __( 'Let\'s do it', 'elementor' );
 
 		actionButton.onClick = () => {
 			elementorCommon.events.dispatchEvent( {
@@ -175,6 +176,7 @@ export default function Account() {
 
 		return elementorAppConfig.onboarding.experiment ? 'chooseFeatures' : 'siteName';
 	}
+
 	const connectFailureCallback = () => {
 		elementorCommon.events.dispatchEvent( {
 			event: 'indication prompt',
@@ -198,33 +200,31 @@ export default function Account() {
 		navigate( 'onboarding/' + nextStep );
 	};
 
+	const experiment101Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT );
+	const ContentComponent = 'B' === experiment101Variant ? AccountContentB : AccountContentA;
+
 	return (
-		<Layout pageId={ pageId } nextStep={ nextStep }>
-			<PageContentLayout
-				image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Account.svg' }
-				title={ elementorAppConfig.onboarding.experiment ? __( 'You\'re here!', 'elementor' ) : __( 'You\'re here! Let\'s set things up.', 'elementor' ) }
-				secondLineTitle={ elementorAppConfig.onboarding.experiment ? __( ' Let\'s get connected.', 'elementor' ) : '' }
+		<Layout
+			pageId={ pageId }
+			nextStep={ nextStep }
+			className={ 'B' === experiment101Variant ? 'e-onboarding101-variant-b' : '' }
+		>
+			<ContentComponent
 				actionButton={ actionButton }
 				skipButton={ skipButton }
 				noticeState={ noticeState }
-			>
-				{ actionButton.ref && ! state.isLibraryConnected &&
-				<Connect
-					buttonRef={ actionButton.ref }
-					successCallback={ ( event, data ) => connectSuccessCallback( event, data ) }
-					errorCallback={ connectFailureCallback }
-				/> }
-				<span>
-					{ pageTexts.firstLine }
-				</span>
-				<ul>
-					{ pageTexts.listItems.map( ( listItem, index ) => {
-						return <li key={ 'listItem' + index }>{ listItem }</li>;
-					} ) }
-				</ul>
-			</PageContentLayout>
+				pageTexts={ pageTexts }
+				state={ state }
+				connectSuccessCallback={ connectSuccessCallback }
+				connectFailureCallback={ connectFailureCallback }
+				updateState={ updateState }
+				getStateObjectToUpdate={ getStateObjectToUpdate }
+				navigate={ navigate }
+				nextStep={ nextStep }
+				pageId={ pageId }
+			/>
 			{
-				! state.isLibraryConnected && (
+				! state.isLibraryConnected && 'B' !== experiment101Variant && (
 					<div className="e-onboarding__footnote">
 						<p>
 							{ __( 'Already have an account?', 'elementor' ) + ' ' }

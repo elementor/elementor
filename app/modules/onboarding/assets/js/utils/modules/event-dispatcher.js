@@ -4,7 +4,6 @@ export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
 	HELLO_BIZ_CONTINUE: 'core_onboarding_s2_hellobiz',
 	THEME_CHOICE: 'core_onboarding_theme_choice',
-	THEME_CHOICE_VARIANT_B: 'ab_201_theme_choice',
 	CORE_ONBOARDING: 'core_onboarding',
 	CONNECT_STATUS: 'core_onboarding_connect_status',
 	STEP1_END_STATE: 'core_onboarding_s1_end_state',
@@ -22,6 +21,7 @@ export const ONBOARDING_EVENTS_MAP = {
 	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
 	CREATE_ACCOUNT_STATUS: 'core_onboarding_create_account_status',
 	STEP1_CLICKED_CONNECT: 'core_onboarding_s1_clicked_connect',
+	AB_101_START_AS_FREE_USER: 'ab_101_start_as_free_user',
 };
 
 export const ONBOARDING_STEP_NAMES = {
@@ -35,7 +35,12 @@ export const ONBOARDING_STEP_NAMES = {
 };
 
 export function canSendEvents() {
-	return elementorCommon?.config?.editor_events?.can_send_events || false;
+	const canSend = elementorCommon?.config?.editor_events?.can_send_events || false;
+	console.log( '[EventDispatcher] canSendEvents check:', {
+		canSend,
+		editorEventsConfig: elementorCommon?.config?.editor_events,
+	} );
+	return canSend;
 }
 
 export function isEventsManagerAvailable() {
@@ -44,18 +49,25 @@ export function isEventsManagerAvailable() {
 }
 
 export function dispatch( eventName, payload = {} ) {
+	console.log( `[EventDispatcher] dispatch called - event: ${eventName}`, payload );
+	
 	if ( ! isEventsManagerAvailable() ) {
+		console.warn( '[EventDispatcher] Events manager not available' );
 		return false;
 	}
 
 	if ( ! canSendEvents() ) {
+		console.warn( '[EventDispatcher] Cannot send events (disabled)' );
 		return false;
 	}
 
 	try {
+		console.log( `[EventDispatcher] Dispatching event: ${eventName}` );
 		const result = elementorCommon.eventsManager.dispatchEvent( eventName, payload );
+		console.log( `[EventDispatcher] Event dispatched successfully: ${eventName}, result:`, result );
 		return result;
 	} catch ( error ) {
+		console.error( `[EventDispatcher] Failed to dispatch event: ${eventName}`, error );
 		return false;
 	}
 }
@@ -67,26 +79,50 @@ export function dispatchIfAllowed( eventName, payload = {} ) {
 	return false;
 }
 
-function getThemeSelectionVariant() {
-	const variant = StorageManager.getString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT );
-	return variant || null;
+function getExperimentConfigs() {
+	return {
+		101: {
+			variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT,
+			enabledKey: 'isExperiment101Enabled',
+			minStep: 1,
+			payloadKey: '101_variant',
+		},
+		201: {
+			variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
+			enabledKey: 'isExperiment201Enabled',
+			minStep: 2,
+			payloadKey: '201_variant',
+		},
+		402: {
+			variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT,
+			enabledKey: 'isExperiment402Enabled',
+			minStep: 4,
+			payloadKey: '402_variant',
+		},
+	};
 }
 
-function getGoodToGoVariant() {
-	const variant = StorageManager.getString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT );
-	return variant || null;
-}
-
-function getVariantSpecificEventName( baseEventName, stepNumber ) {
-	if ( 2 === stepNumber && elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
-		const variant = getThemeSelectionVariant();
-		if ( 'B' === variant ) {
-			if ( ONBOARDING_EVENTS_MAP.THEME_CHOICE === baseEventName ) {
-				return ONBOARDING_EVENTS_MAP.THEME_CHOICE_VARIANT_B;
-			}
-		}
+function getExperimentVariant( experimentId ) {
+	const config = getExperimentConfigs()[ experimentId ];
+	if ( ! config ) {
+		console.log( `[Onboarding Debug] getExperimentVariant: No config found for experiment ${experimentId}` );
+		return null;
 	}
-	return baseEventName;
+	const variant = StorageManager.getString( config.variantKey ) || null;
+	console.log( `[Onboarding Debug] getExperimentVariant: Experiment ${experimentId}, variantKey: ${config.variantKey}, variant: ${variant}` );
+	return variant;
+}
+
+function isExperimentEnabled( experimentId ) {
+	const config = getExperimentConfigs()[ experimentId ];
+	if ( ! config ) {
+		console.log( `[Onboarding Debug] isExperimentEnabled: No config found for experiment ${experimentId}` );
+		return false;
+	}
+	const isEnabled = elementorAppConfig?.onboarding?.[ config.enabledKey ] || false;
+	console.log( `[Onboarding Debug] isExperimentEnabled: Experiment ${experimentId}, enabledKey: ${config.enabledKey}, isEnabled: ${isEnabled}` );
+	console.log( `[Onboarding Debug] isExperimentEnabled: elementorAppConfig.onboarding:`, elementorAppConfig?.onboarding );
+	return isEnabled;
 }
 
 export function createEventPayload( basePayload = {} ) {
@@ -98,20 +134,34 @@ export function createEventPayload( basePayload = {} ) {
 }
 
 export function createStepEventPayload( stepNumber, stepName, additionalData = {} ) {
+	console.log( `[Onboarding Debug] createStepEventPayload: stepNumber: ${stepNumber}, stepName: ${stepName}` );
+	
 	const basePayload = {
 		step_number: stepNumber,
 		step_name: stepName,
 		...additionalData,
 	};
 
-	if ( stepNumber >= 2 && elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
-		basePayload[ '201_variant' ] = getThemeSelectionVariant();
-	}
+	const experiments = getExperimentConfigs();
+	console.log( `[Onboarding Debug] createStepEventPayload: Processing experiments:`, experiments );
+	
+	Object.keys( experiments ).forEach( ( experimentId ) => {
+		const config = experiments[ experimentId ];
+		const stepMeetsMinimum = stepNumber >= config.minStep;
+		const experimentEnabled = isExperimentEnabled( parseInt( experimentId, 10 ) );
+		
+		console.log( `[Onboarding Debug] createStepEventPayload: Experiment ${experimentId} - stepNumber: ${stepNumber}, minStep: ${config.minStep}, stepMeetsMinimum: ${stepMeetsMinimum}, experimentEnabled: ${experimentEnabled}` );
+		
+		if ( stepMeetsMinimum && experimentEnabled ) {
+			const variant = getExperimentVariant( parseInt( experimentId, 10 ) );
+			basePayload[ config.payloadKey ] = variant;
+			console.log( `[Onboarding Debug] createStepEventPayload: Added ${config.payloadKey}: ${variant} to payload` );
+		} else {
+			console.log( `[Onboarding Debug] createStepEventPayload: Skipped experiment ${experimentId} - stepMeetsMinimum: ${stepMeetsMinimum}, experimentEnabled: ${experimentEnabled}` );
+		}
+	} );
 
-	if ( stepNumber >= 4 && elementorAppConfig?.onboarding?.goodToGoExperimentEnabled ) {
-		basePayload[ '402_variant' ] = getGoodToGoVariant();
-	}
-
+	console.log( `[Onboarding Debug] createStepEventPayload: Final basePayload:`, basePayload );
 	return createEventPayload( basePayload );
 }
 
@@ -122,32 +172,25 @@ export function createEditorEventPayload( additionalData = {} ) {
 		...additionalData,
 	};
 
-	if ( elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
-		const themeVariant = getThemeSelectionVariant();
-		if ( themeVariant ) {
-			basePayload[ '201_variant' ] = themeVariant;
+	const experiments = getExperimentConfigs();
+	Object.keys( experiments ).forEach( ( experimentId ) => {
+		const config = experiments[ experimentId ];
+		const variant = getExperimentVariant( parseInt( experimentId, 10 ) );
+		if ( variant ) {
+			basePayload[ config.payloadKey ] = variant;
 		}
-	}
-
-	if ( elementorAppConfig?.onboarding?.goodToGoExperimentEnabled ) {
-		const goodToGoVariant = getGoodToGoVariant();
-		if ( goodToGoVariant ) {
-			basePayload[ '402_variant' ] = goodToGoVariant;
-		}
-	}
+	} );
 
 	return basePayload;
 }
 
 export function dispatchStepEvent( eventName, stepNumber, stepName, additionalData = {} ) {
 	const payload = createStepEventPayload( stepNumber, stepName, additionalData );
-	const variantSpecificEventName = getVariantSpecificEventName( eventName, stepNumber );
-	return dispatch( variantSpecificEventName, payload );
+	return dispatch( eventName, payload );
 }
 
-export function dispatchVariantAwareEvent( eventName, payload, stepNumber = null ) {
-	const variantSpecificEventName = stepNumber ? getVariantSpecificEventName( eventName, stepNumber ) : eventName;
-	return dispatch( variantSpecificEventName, payload );
+export function dispatchVariantAwareEvent( eventName, payload ) {
+	return dispatch( eventName, payload );
 }
 
 export function dispatchEditorEvent( eventName, additionalData = {} ) {

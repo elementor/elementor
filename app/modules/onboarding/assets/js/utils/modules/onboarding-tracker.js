@@ -103,6 +103,19 @@ class OnboardingTracker {
 					action_step: eventData.currentStep,
 				} ),
 			},
+			AB_101_START_AS_FREE_USER: {
+				eventName: ONBOARDING_EVENTS_MAP.AB_101_START_AS_FREE_USER,
+				storageKey: ONBOARDING_STORAGE_KEYS.PENDING_AB_101_START_AS_FREE_USER,
+				basePayload: {
+					location: 'plugin_onboarding',
+					trigger: 'continue_as_guest_clicked',
+				},
+				payloadBuilder: ( eventData ) => ( {
+					action_step: eventData.currentStep,
+				} ),
+				stepOverride: 1,
+				stepNameOverride: ONBOARDING_STEP_NAMES.CONNECT,
+			},
 		};
 	}
 
@@ -289,16 +302,27 @@ class OnboardingTracker {
 	}
 
 	sendHelloBizContinue( stepNumber ) {
+		console.log( `[Onboarding Debug] sendHelloBizContinue: stepNumber: ${stepNumber}` );
+		console.log( `[Onboarding Debug] sendHelloBizContinue: canSendEvents: ${EventDispatcher.canSendEvents()}` );
+		
+		// Convert step name to step number if needed
+		const numericStepNumber = this.mapPageIdToStepNumber( stepNumber ) || stepNumber;
+		console.log( `[Onboarding Debug] sendHelloBizContinue: Converted stepNumber from ${stepNumber} to ${numericStepNumber}` );
+		
 		if ( EventDispatcher.canSendEvents() ) {
+			console.log( `[Onboarding Debug] sendHelloBizContinue: Dispatching event ${ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE} with stepNumber: ${numericStepNumber}, stepName: ${ONBOARDING_STEP_NAMES.HELLO_BIZ}` );
+			
 			return EventDispatcher.dispatchStepEvent(
 				ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE,
-				stepNumber,
+				numericStepNumber,
 				ONBOARDING_STEP_NAMES.HELLO_BIZ,
 				{
 					location: 'plugin_onboarding',
 					trigger: eventsConfig.triggers.click,
 				},
 			);
+		} else {
+			console.log( `[Onboarding Debug] sendHelloBizContinue: Cannot send events - canSendEvents() returned false` );
 		}
 	}
 
@@ -326,6 +350,9 @@ class OnboardingTracker {
 	}
 
 	initiateCoreOnboarding() {
+		console.warn( '[Onboarding] 🚨 initiateCoreOnboarding called - WILL CLEAR ALL DATA!' );
+		console.trace( '[Onboarding] initiateCoreOnboarding stack trace:' );
+		
 		StorageManager.clearAllOnboardingData();
 		TimingManager.clearStaleSessionData();
 		TimingManager.initializeOnboardingStartTime();
@@ -350,6 +377,51 @@ class OnboardingTracker {
 	}
 
 	storeSiteStarterChoice( siteStarter ) {
+		const existingChoice = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
+
+		if ( this.isReturnScenario( existingChoice, siteStarter ) ) {
+			this.sendReturnEventAndUpdateChoice( existingChoice, siteStarter );
+		} else {
+			this.storeInitialChoice( siteStarter );
+		}
+	}
+
+	isReturnScenario( existingChoice, siteStarter ) {
+		return existingChoice && existingChoice.site_starter !== siteStarter;
+	}
+
+	sendReturnEventAndUpdateChoice( existingChoice, siteStarter ) {
+		const returnEventPayload = this.createReturnEventPayload( existingChoice, siteStarter );
+		this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
+		this.updateChoiceWithReturnTracking( existingChoice, siteStarter );
+	}
+
+	createReturnEventPayload( existingChoice, siteStarter ) {
+		return EventDispatcher.createStepEventPayload(
+			4,
+			ONBOARDING_STEP_NAMES.SITE_STARTER,
+			{
+				location: 'plugin_onboarding',
+				trigger: 'user_returns_to_onboarding',
+				return_to_onboarding: existingChoice.site_starter,
+				original_choice_timestamp: existingChoice.timestamp,
+				new_choice: siteStarter,
+			},
+		);
+	}
+
+	updateChoiceWithReturnTracking( existingChoice, siteStarter ) {
+		const choiceData = {
+			site_starter: siteStarter,
+			original_choice: existingChoice.site_starter,
+			timestamp: TimingManager.getCurrentTime(),
+			return_event_sent: true,
+		};
+
+		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
+	}
+
+	storeInitialChoice( siteStarter ) {
 		const choiceData = {
 			site_starter: siteStarter,
 			timestamp: TimingManager.getCurrentTime(),
@@ -365,23 +437,36 @@ class OnboardingTracker {
 			return;
 		}
 
-		if ( ! choiceData.return_event_sent ) {
-			const returnEventPayload = EventDispatcher.createStepEventPayload(
-				4,
-				ONBOARDING_STEP_NAMES.SITE_STARTER,
-				{
-					location: 'plugin_onboarding',
-					trigger: 'user_returns_to_onboarding',
-					return_to_onboarding: choiceData.site_starter,
-					original_choice_timestamp: choiceData.timestamp,
-				},
-			);
-
+		if ( this.shouldSendReturnEvent( choiceData ) ) {
+			const returnEventPayload = this.createReturnEventPayloadFromStoredData( choiceData );
 			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
-
-			choiceData.return_event_sent = true;
-			StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
+			this.markReturnEventAsSent( choiceData );
 		}
+	}
+
+	shouldSendReturnEvent( choiceData ) {
+		return ! choiceData.return_event_sent &&
+			choiceData.original_choice &&
+			choiceData.original_choice !== choiceData.site_starter;
+	}
+
+	createReturnEventPayloadFromStoredData( choiceData ) {
+		return EventDispatcher.createStepEventPayload(
+			4,
+			ONBOARDING_STEP_NAMES.SITE_STARTER,
+			{
+				location: 'plugin_onboarding',
+				trigger: 'user_returns_to_onboarding',
+				return_to_onboarding: choiceData.original_choice,
+				original_choice_timestamp: choiceData.timestamp,
+				new_choice: choiceData.site_starter,
+			},
+		);
+	}
+
+	markReturnEventAsSent( choiceData ) {
+		choiceData.return_event_sent = true;
+		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
 	}
 
 	handleSiteStarterChoice( siteStarter ) {
@@ -469,6 +554,7 @@ class OnboardingTracker {
 			this.dispatchEvent( eventName, eventData );
 			StorageManager.remove( storageKey );
 			TimingManager.clearStepStartTime( stepNumber );
+			this.sendStoredEventsIfConnected();
 		} else if ( 1 === stepNumber ) {
 			this.storeStep1EndStateForLater( eventData, storageKey );
 		} else {
@@ -569,9 +655,13 @@ class OnboardingTracker {
 	}
 
 	sendConnectionSuccessEvents( data ) {
+		console.log( '[Onboarding] sendConnectionSuccessEvents called with data:', data );
+		
 		this.sendCoreOnboardingInitiated();
 		this.sendAppropriateStatusEvent( 'success', data );
 		this.sendAllStoredEvents();
+		
+		console.log( '[Onboarding] sendConnectionSuccessEvents completed' );
 	}
 
 	sendConnectionFailureEvents() {
@@ -598,6 +688,9 @@ class OnboardingTracker {
 	}
 
 	sendAllStoredEvents() {
+		console.log( '[Onboarding] sendAllStoredEvents called' );
+		
+		this.sendStoredExperimentData();
 		this.sendStoredEvent( 'SKIP' );
 		this.sendStoredEvent( 'TOP_UPGRADE' );
 		this.sendStoredEvent( 'CREATE_MY_ACCOUNT' );
@@ -606,6 +699,20 @@ class OnboardingTracker {
 		this.sendStoredEvent( 'STEP1_CLICKED_CONNECT' );
 		this.sendStoredEvent( 'STEP1_END_STATE' );
 		this.sendStoredEvent( 'EXIT_BUTTON' );
+		this.sendStoredEvent( 'AB_101_START_AS_FREE_USER' );
+		
+		console.log( '[Onboarding] sendAllStoredEvents completed' );
+	}
+
+	sendStoredEventsIfConnected() {
+		const canSend = EventDispatcher.canSendEvents();
+		console.log( '[Onboarding] sendStoredEventsIfConnected called, canSendEvents:', canSend );
+		
+		if ( canSend ) {
+			this.sendAllStoredEvents();
+		} else {
+			console.log( '[Onboarding] Cannot send events yet, stored events remain in localStorage' );
+		}
 	}
 
 	handleStep4CardClick() {
@@ -835,17 +942,28 @@ class OnboardingTracker {
 	}
 
 	onStepLoad( currentStep ) {
+		console.log( `[Onboarding] onStepLoad called with currentStep:`, currentStep );
+		
 		const stepNumber = this.getStepNumber( currentStep );
+		console.log( `[Onboarding] Step number:`, stepNumber );
+		
 		TimingManager.trackStepStartTime( stepNumber );
 
+		if ( 1 === stepNumber || 'account' === currentStep ) {
+			console.log( '[Onboarding] Step 1 detected, starting experiment 101' );
+			this.sendExperimentStarted( 101 );
+		}
+
 		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
+			console.log( '[Onboarding] Step 2 detected, sending stored step 1 events and starting experiment 201' );
 			this.sendStoredStep1EventsOnStep2();
-			this.sendThemeSelectionExperimentStarted();
+			this.sendExperimentStarted( 201 );
 		}
 
 		if ( 4 === stepNumber || 'goodToGo' === currentStep ) {
+			console.log( '[Onboarding] Step 4 detected, checking return to step 4 and starting experiment 402' );
 			this.checkAndSendReturnToStep4();
-			this.sendGoodToGoExperimentStarted();
+			this.sendExperimentStarted( 402 );
 		}
 	}
 
@@ -858,6 +976,7 @@ class OnboardingTracker {
 		}
 
 		this.sendStoredEvent( 'STEP1_END_STATE' );
+		this.sendStoredEventsIfConnected();
 	}
 
 	setupPostOnboardingClickTracking() {
@@ -869,109 +988,196 @@ class OnboardingTracker {
 	}
 
 	clearAllOnboardingStorage() {
+		console.warn( '[Onboarding] 🚨 clearAllOnboardingStorage called!' );
+		console.trace( '[Onboarding] clearAllOnboardingStorage stack trace:' );
 		return PostOnboardingTracker.clearAllOnboardingStorage();
 	}
 
-	isThemeSelectionExperimentEnabled() {
-		return elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled || false;
+	getExperimentConfigs() {
+		return {
+			101: {
+				name: '101 - Emphasize connect benefits',
+				enabledKey: 'isExperiment101Enabled',
+				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT,
+				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_STARTED,
+			},
+			201: {
+				name: '201 - Offer theme choices: hello, biz',
+				enabledKey: 'isExperiment201Enabled',
+				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
+				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED,
+			},
+			402: {
+				name: '402 - Reduce hierarchy of blank option',
+				enabledKey: 'isExperiment402Enabled',
+				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT,
+				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT402_STARTED,
+			},
+		};
 	}
 
-	isGoodToGoExperimentEnabled() {
-		return elementorAppConfig?.onboarding?.goodToGoExperimentEnabled || false;
-	}
-
-	getThemeSelectionVariant() {
-		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT );
-		if ( stored ) {
-			return stored;
+	isExperimentEnabled( experimentId ) {
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config ) {
+			console.warn( `[Experiment ${experimentId}] No config found in isExperimentEnabled` );
+			return false;
 		}
-
-		return null;
+		
+		const isEnabled = elementorAppConfig?.onboarding?.[ config.enabledKey ] || false;
+		console.log( `[Experiment ${experimentId}] isExperimentEnabled check:`, {
+			enabledKey: config.enabledKey,
+			isEnabled,
+			elementorAppConfig: elementorAppConfig?.onboarding,
+		} );
+		
+		return isEnabled;
 	}
 
-	getGoodToGoVariant() {
-		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT );
-		if ( stored ) {
-			return stored;
+	getExperimentVariant( experimentId ) {
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config ) {
+			console.warn( `[Experiment ${experimentId}] No config found in getExperimentVariant` );
+			return null;
 		}
-
-		return null;
+		
+		const variant = StorageManager.getString( config.variantKey ) || null;
+		console.log( `[Experiment ${experimentId}] getExperimentVariant:`, {
+			variantKey: config.variantKey,
+			variant,
+		} );
+		
+		return variant;
 	}
 
-	assignThemeSelectionVariant() {
-		if ( ! this.isThemeSelectionExperimentEnabled() ) {
+	assignExperimentVariant( experimentId ) {
+		console.log( `[Experiment ${experimentId}] assignExperimentVariant called` );
+		
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config ) {
+			console.warn( `[Experiment ${experimentId}] No config found in assignExperimentVariant` );
+			return null;
+		}
+		
+		const isEnabled = this.isExperimentEnabled( experimentId );
+		if ( ! isEnabled ) {
+			console.warn( `[Experiment ${experimentId}] Experiment not enabled, cannot assign variant` );
 			return null;
 		}
 
 		const variant = Math.random() < 0.5 ? 'A' : 'B';
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT, variant );
+		console.log( `[Experiment ${experimentId}] Assigning variant:`, variant );
+		
+		StorageManager.setString( config.variantKey, variant );
+		console.log( `[Experiment ${experimentId}] Variant stored in localStorage (key: ${config.variantKey})` );
+		
+		const verification = StorageManager.getString( config.variantKey );
+		console.log( `[Experiment ${experimentId}] Verification - variant retrieved:`, verification );
+		
 		return variant;
 	}
 
-	assignGoodToGoVariant() {
-		if ( ! this.isGoodToGoExperimentEnabled() ) {
-			return null;
-		}
-
-		const variant = Math.random() < 0.5 ? 'A' : 'B';
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT, variant );
-		return variant;
-	}
-
-	sendThemeSelectionExperimentStarted() {
-		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED ) ) {
+	sendExperimentStarted( experimentId ) {
+		console.log( `[Experiment ${experimentId}] sendExperimentStarted called` );
+		
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config ) {
+			console.warn( `[Experiment ${experimentId}] No config found` );
 			return;
 		}
 
-		let variant = this.getThemeSelectionVariant();
+		console.log( `[Experiment ${experimentId}] Config:`, config );
+
+		if ( StorageManager.exists( config.startedKey ) ) {
+			console.log( `[Experiment ${experimentId}] Already started (key: ${config.startedKey})` );
+			return;
+		}
+
+		let variant = this.getExperimentVariant( experimentId );
+		console.log( `[Experiment ${experimentId}] Existing variant:`, variant );
 
 		if ( ! variant ) {
-			variant = this.assignThemeSelectionVariant();
+			variant = this.assignExperimentVariant( experimentId );
+			console.log( `[Experiment ${experimentId}] Assigned new variant:`, variant );
 			if ( ! variant ) {
+				console.warn( `[Experiment ${experimentId}] Failed to assign variant` );
 				return;
 			}
 		}
 
-		if ( ! EventDispatcher.canSendEvents() ) {
-			return;
-		}
-
 		const eventData = {
-			'Experiment name': '201 - Offer theme choices: hello, biz',
+			'Experiment name': config.name,
 			'Variant name': variant,
 		};
 
-		EventDispatcher.dispatch( '$experiment_started', eventData );
+		const canSend = EventDispatcher.canSendEvents();
+		console.log( `[Experiment ${experimentId}] Can send events:`, canSend );
 
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED, 'true' );
+		if ( canSend ) {
+			console.log( `[Experiment ${experimentId}] Sending event immediately`, eventData );
+			EventDispatcher.dispatch( '$experiment_started', eventData );
+			StorageManager.setString( config.startedKey, 'true' );
+			console.log( `[Experiment ${experimentId}] Event sent and marked as started` );
+		} else {
+			console.log( `[Experiment ${experimentId}] Storing for later`, eventData );
+			this.storeExperimentDataForLater( experimentId, eventData );
+		}
 	}
 
-	sendGoodToGoExperimentStarted() {
-		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED ) ) {
+	storeExperimentDataForLater( experimentId, eventData ) {
+		console.log( `[Experiment ${experimentId}] storeExperimentDataForLater called` );
+		
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config ) {
+			console.warn( `[Experiment ${experimentId}] No config found in storeExperimentDataForLater` );
 			return;
 		}
 
-		let variant = this.getGoodToGoVariant();
-
-		if ( ! variant ) {
-			variant = this.assignGoodToGoVariant();
-			if ( ! variant ) {
-				return;
-			}
-		}
-
-		if ( ! EventDispatcher.canSendEvents() ) {
-			return;
-		}
-
-		const eventData = {
-			'Experiment name': '402 - Reduce hierarchy of blank option',
-			'Variant name': variant,
+		const experimentEntry = {
+			experimentId,
+			eventData,
+			timestamp: TimingManager.getCurrentTime(),
+			startedKey: config.startedKey,
 		};
 
-		EventDispatcher.dispatch( '$experiment_started', eventData );
+		console.log( `[Experiment ${experimentId}] Experiment entry to store:`, experimentEntry );
 
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED, 'true' );
+		const existingExperiments = StorageManager.getArray( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
+		console.log( `[Experiment ${experimentId}] Existing experiments in storage (before):`, existingExperiments );
+		
+		existingExperiments.push( experimentEntry );
+		
+		const saveResult = StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA, existingExperiments );
+		console.log( `[Experiment ${experimentId}] Save result:`, saveResult );
+		console.log( `[Experiment ${experimentId}] Experiments in storage (after):`, existingExperiments );
+		
+		const verification = StorageManager.getArray( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
+		console.log( `[Experiment ${experimentId}] Verification - retrieved from storage:`, verification );
+	}
+
+	sendStoredExperimentData() {
+		console.log( '[Experiments] sendStoredExperimentData called' );
+		
+		const storedExperiments = StorageManager.getArray( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
+		console.log( '[Experiments] Stored experiments retrieved:', storedExperiments );
+
+		if ( 0 === storedExperiments.length ) {
+			console.log( '[Experiments] No stored experiments to send' );
+			return;
+		}
+
+		console.log( `[Experiments] Sending ${storedExperiments.length} stored experiments` );
+
+		storedExperiments.forEach( ( experiment ) => {
+			console.log( `[Experiment ${experiment.experimentId}] Dispatching stored experiment:`, experiment.eventData );
+			const dispatchResult = EventDispatcher.dispatch( '$experiment_started', experiment.eventData );
+			console.log( `[Experiment ${experiment.experimentId}] Dispatch result:`, dispatchResult );
+			
+			StorageManager.setString( experiment.startedKey, 'true' );
+			console.log( `[Experiment ${experiment.experimentId}] Marked as started (key: ${experiment.startedKey})` );
+		} );
+
+		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
+		console.log( '[Experiments] Cleared pending experiment data from storage' );
 	}
 }
 
