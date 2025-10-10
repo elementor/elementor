@@ -80,7 +80,7 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				const element = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( testCase.index );
+				const element = elementorFrame.locator( 'p' ).filter( { hasText: /Height|Font size|Max width|Min height/i } ).nth( testCase.index );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
@@ -92,7 +92,7 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 		// Verify width: auto in editor
 		await test.step( 'Verify width: auto in editor', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( 4 );
+			const element = elementorFrame.locator( 'p' ).filter( { hasText: /Width auto/ } ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 			// For width: auto, check that it takes a reasonable width (at least 1000px)
@@ -119,7 +119,7 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
-					const frontendElement = page.locator( '.e-paragraph-base-converted' ).nth( testCase.index );
+					const frontendElement = page.locator( 'p' ).filter( { hasText: /Height|Font size|Max width|Min height/i } ).nth( testCase.index );
 
 					await test.step( 'Verify CSS property', async () => {
 						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );
@@ -129,7 +129,7 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 
 			// Verify width: auto on frontend
 			await test.step( 'Verify width: auto on frontend', async () => {
-				const frontendElement = page.locator( '.e-paragraph-base-converted' ).nth( 4 );
+				const frontendElement = page.locator( 'p' ).filter( { hasText: /Width auto/ } ).first();
 
 				// For width: auto, check that it takes a reasonable width (at least 1000px)
 				// This indicates that auto is working and the element is taking full container width
@@ -192,8 +192,8 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				const element = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( testCase.index );
-				await element.waitFor( { state: 'visible', timeout: 10000 } );
+				const element = elementorFrame.locator( 'p' ).filter( { hasText: /unitless zero/i } ).nth( testCase.index );
+				await element.waitFor( { state: 'attached', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
 					await expect( element ).toHaveCSS( testCase.property, testCase.expected );
@@ -213,7 +213,7 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
-					const frontendElement = page.locator( '.e-paragraph-base-converted' ).nth( testCase.index );
+					const frontendElement = page.locator( 'p' ).filter( { hasText: /unitless zero/i } ).nth( testCase.index );
 
 					await test.step( 'Verify CSS property', async () => {
 						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );

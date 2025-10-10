@@ -62,7 +62,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
 
-		const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+		const element = elementorFrame.locator( 'p' ).filter( { hasText: /Negative margin/ } ).first();
 		await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 		await expect( element ).toHaveCSS( 'margin-block-start', '-20px' );
@@ -95,7 +95,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
 
-		const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+		const element = elementorFrame.locator( 'p' ).filter( { hasText: /Mixed margin/ } ).first();
 		await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 		await expect( element ).toHaveCSS( 'margin-block-start', '10px' );
@@ -143,7 +143,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 			// Wait longer for the editor to fully load
 			await page.waitForTimeout( 3000 );
 
-			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+			const element = elementorFrame.locator( 'p' ).filter( { hasText: /individual/i } ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 			// Verify that inline CSS has been converted to atomic properties
@@ -198,7 +198,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
 
-		const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+		const element = elementorFrame.locator( 'p' ).filter( { hasText: /Inline margin/ } ).first();
 		await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 		await expect( element ).toHaveCSS( 'margin-inline-start', '10px' );
@@ -231,7 +231,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
 
-		const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+		const element = elementorFrame.locator( 'div' ).filter( { hasText: /Auto margin/ } ).first();
 		await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 		await expect( element ).toHaveCSS( 'margin-block-start', 'auto' );

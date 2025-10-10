@@ -68,28 +68,32 @@ test.describe( 'Text Transform Prop Type Integration @prop-types', () => {
 				name: 'text-transform: uppercase on h1',
 				property: 'text-transform',
 				expected: 'uppercase',
-				selector: '.e-heading-base-converted',
+				selector: 'h1, h2',
+				filter: /Uppercase Text/,
 			},
 			{
 				index: 1,
 				name: 'text-transform: lowercase on h2',
 				property: 'text-transform',
 				expected: 'lowercase',
-				selector: '.e-heading-base-converted',
+				selector: 'h1, h2',
+				filter: /Lowercase Text/,
 			},
 			{
 				index: 0,
 				name: 'text-transform: capitalize on p',
 				property: 'text-transform',
 				expected: 'capitalize',
-				selector: '.e-paragraph-base-converted',
+				selector: 'p',
+				filter: /capitalize text/,
 			},
 			{
 				index: 1,
 				name: 'text-transform: none on p',
 				property: 'text-transform',
 				expected: 'none',
-				selector: '.e-paragraph-base-converted',
+				selector: 'p',
+				filter: /None Transform/,
 			},
 		];
 
@@ -98,8 +102,7 @@ test.describe( 'Text Transform Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				const elements = elementorFrame.locator( testCase.selector );
-				const element = elements.nth( testCase.index );
+				const element = elementorFrame.locator( testCase.selector ).filter( { hasText: testCase.filter } ).first();
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
