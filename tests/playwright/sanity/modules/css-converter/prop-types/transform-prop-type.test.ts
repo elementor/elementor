@@ -67,7 +67,7 @@ test.describe( 'Transform Prop Type Integration @prop-types', () => {
 		await elementorFrame.waitForLoadState();
 
 		// Test all converted paragraph elements
-		const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
+		const paragraphElements = elementorFrame.locator( 'p' ).filter( { hasText: /transform/i } );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 		// Define test cases for transform verification

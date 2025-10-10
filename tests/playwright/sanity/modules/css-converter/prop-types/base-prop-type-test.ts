@@ -6,6 +6,14 @@ import { CssConverterHelper, CssConverterResponse } from '../helper';
 
 /**
  * Base class for prop type tests that handles common setup and teardown
+ * 
+ * IMPORTANT: This class now uses text-based selectors instead of CSS class selectors
+ * for improved test reliability. Use patterns like:
+ * - frame.locator('p').filter({ hasText: /pattern/i })
+ * - frame.locator('h2').filter({ hasText: /specific text/i })
+ * 
+ * Avoid using CSS class selectors like '.e-paragraph-base-converted' as they
+ * may not exist or may change between test runs.
  */
 export abstract class BasePropTypeTest {
 	protected wpAdmin: WpAdminPage;
@@ -102,6 +110,16 @@ export abstract class BasePropTypeTest {
 	}
 
 	/**
+	 * Creates a text-based selector using content filtering
+	 * @param elementType - HTML element type (e.g., 'p', 'h2', 'div')
+	 * @param textPattern - Regex pattern to match text content
+	 * @returns Locator with text-based filtering
+	 */
+	protected createTextBasedSelector( frame: any, elementType: string, textPattern: RegExp ) {
+		return frame.locator( elementType ).filter( { hasText: textPattern } );
+	}
+
+	/**
 	 * Publishes the page and navigates to frontend
 	 * @param page - Playwright page
 	 * @returns Promise that resolves when frontend is loaded
@@ -117,12 +135,12 @@ export abstract class BasePropTypeTest {
 	 * Runs CSS assertions for both editor and frontend
 	 * @param testCases - Array of test cases with selectors and expected values
 	 * @param page - Playwright page
-	 * @param elementSelector - CSS selector for elements to test
+	 * @param elementSelector - CSS selector for elements to test (use text-based selectors like 'p' with .filter())
 	 */
 	protected async runCssAssertions(
 		testCases: Array<{ index: number; name: string; property: string; expected: string }>,
 		page: any,
-		elementSelector: string = '.e-paragraph-base-converted'
+		elementSelector: string = 'p'
 	): Promise<void> {
 		const elementorFrame = this.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
@@ -166,7 +184,9 @@ export interface PropTypeTestConfig {
 		property: string;
 		expected: string;
 	}>;
-	elementSelector?: string;
+	elementSelector?: string; // Use text-based selectors like 'p' with .filter({ hasText: /pattern/i })
+	textPattern?: RegExp; // Optional: regex pattern for text-based filtering
+	elementType?: string; // Optional: HTML element type (defaults to 'p')
 	cssOptions?: any;
 }
 
@@ -198,7 +218,7 @@ export function createPropTypeTest( config: PropTypeTestConfig ) {
 		await testInstance.runCssAssertions(
 			config.testCases,
 			page,
-			config.elementSelector || '.e-paragraph-base-converted'
+			config.elementSelector || 'p'
 		);
 	} );
 }

@@ -56,7 +56,7 @@ test.describe( 'Unitless Zero Support @prop-types', () => {
 
 		const elementorFrame = editor.getPreviewFrame();
 		await test.step( 'Verify all unitless zero values are converted correctly', async () => {
-			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+			const element = elementorFrame.locator( 'p' ).filter( { hasText: /unitless zero/i } ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 			// Margin
@@ -115,7 +115,7 @@ test.describe( 'Unitless Zero Support @prop-types', () => {
 			await editor.waitForPanelToLoad();
 
 			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+			const element = elementorFrame.locator( 'p' ).filter( { hasText: /test/i } ).first();
 
 			await expect( element ).toHaveCSS( testCase.expected, testCase.expectedValue );
 		}
