@@ -187,9 +187,11 @@ jobs:
       - name: Install playwright/test
         run: |
           npx playwright install chromium
-      - name: Run Playwright tests
-        run: |
-          npm run test:playwright -- --grep="${{ inputs.tag }}"
+          - name: Run Playwright tests
+          env:
+            TEST_TAG: ${{ inputs.tag }}
+          run: |
+            npm run test:playwright -- --grep="$TEST_TAG"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

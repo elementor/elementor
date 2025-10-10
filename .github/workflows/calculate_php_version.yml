@@ -16,7 +16,7 @@ jobs:
       - name: Determine PHP version based on event
         id: set_version
         run: |
-          if [ "${{ github.event_name }}" == "schedule" ]; then
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
             echo "VERSION=8.4" >> $GITHUB_OUTPUT
           else
             echo "VERSION=8.1" >> $GITHUB_OUTPUT
