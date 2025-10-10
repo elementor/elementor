@@ -612,6 +612,7 @@ class OnboardingTracker {
 	}
 
 	sendAllStoredEvents() {
+		this.sendStoredExperimentData();
 		this.sendStoredEvent( 'SKIP' );
 		this.sendStoredEvent( 'TOP_UPGRADE' );
 		this.sendStoredEvent( 'CREATE_MY_ACCOUNT' );
@@ -620,6 +621,7 @@ class OnboardingTracker {
 		this.sendStoredEvent( 'STEP1_CLICKED_CONNECT' );
 		this.sendStoredEvent( 'STEP1_END_STATE' );
 		this.sendStoredEvent( 'EXIT_BUTTON' );
+		this.sendStoredEvent( 'AB_101_START_AS_FREE_USER' );
 	}
 
 	sendStoredEventsIfConnected() {
@@ -965,18 +967,50 @@ class OnboardingTracker {
 			}
 		}
 
-		if ( ! EventDispatcher.canSendEvents() ) {
-			return;
-		}
-
 		const eventData = {
 			'Experiment name': config.name,
 			'Variant name': variant,
 		};
 
-		EventDispatcher.dispatch( '$experiment_started', eventData );
+		if ( EventDispatcher.canSendEvents() ) {
+			EventDispatcher.dispatch( '$experiment_started', eventData );
+			StorageManager.setString( config.startedKey, 'true' );
+		} else {
+			this.storeExperimentDataForLater( experimentId, eventData );
+		}
+	}
 
-		StorageManager.setString( config.startedKey, 'true' );
+	storeExperimentDataForLater( experimentId, eventData ) {
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config ) {
+			return;
+		}
+
+		const experimentEntry = {
+			experimentId,
+			eventData,
+			timestamp: TimingManager.getCurrentTime(),
+			startedKey: config.startedKey,
+		};
+
+		const existingExperiments = StorageManager.getArray( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
+		existingExperiments.push( experimentEntry );
+		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA, existingExperiments );
+	}
+
+	sendStoredExperimentData() {
+		const storedExperiments = StorageManager.getArray( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
+		
+		if ( 0 === storedExperiments.length ) {
+			return;
+		}
+
+		storedExperiments.forEach( ( experiment ) => {
+			EventDispatcher.dispatch( '$experiment_started', experiment.eventData );
+			StorageManager.setString( experiment.startedKey, 'true' );
+		} );
+
+		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
 	}
 }
 
