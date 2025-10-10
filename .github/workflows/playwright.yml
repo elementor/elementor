@@ -26,6 +26,14 @@ on:
         tag:
           description: 'Provide @tag or a keyword'
           required: false
+        browser:
+          description: 'Browser to run tagged tests on'
+          required: false
+          type: choice
+          options:
+          - chromium
+          - firefox
+          default: 'chromium'
 
 permissions:
   contents: write
@@ -41,14 +49,32 @@ jobs:
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     name: Build plugin
     uses: ./.github/workflows/build.yml
+
+  setup:
+    name: Determine Test Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Determine test matrix
+        id: set-matrix
+        run: |
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            echo 'matrix={"php-version": ["8.4"], "browser": ["chromium", "firefox"]}' >> $GITHUB_OUTPUT
+          else
+            echo 'matrix={"php-version": ["8.1"], "browser": ["chromium"]}' >> $GITHUB_OUTPUT
+          fi
+
   Playwright:
-    name: Playwright test - ${{ matrix.shardIndex }} on PHP (Dynamic)
+    name: Playwright - ${{ matrix.shardIndex }} on PHP ${{ matrix.php-version }} with ${{ matrix.browser }} # >>> ИЗМЕНЕНО <<<
     runs-on: ubuntu-22.04
-    needs: [build-plugin]
+    needs: [build-plugin, setup] # >>> ИЗМЕНЕНО <<<
     if: github.event.inputs.tag == '' && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests'))
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
+        php-version: ${{ fromJson(needs.setup.outputs.matrix).php-version }}
+        browser: ${{ fromJson(needs.setup.outputs.matrix).browser }}
         shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
         shardTotal: [ 10 ]
         include:
@@ -59,16 +85,6 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
-      - name: Determine PHP version
-        id: set-php-version
-        run: |
-          if [ "${{ github.event_name }}" == "schedule" ]; then
-            echo "PHP_VERSION=8.4" >> $GITHUB_ENV
-          else
-            echo "PHP_VERSION=8.1" >> $GITHUB_ENV
-          fi
-
       - name: Cache Docker images.
         uses: ScribeMD/docker-cache@0.5.0
         with:
@@ -79,8 +95,7 @@ jobs:
           node-version: 20.x
           cache: 'npm'
       - name: Install dependencies
-        run: |
-          npm run prepare-environment:ci
+        run: npm run prepare-environment:ci
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -90,16 +105,12 @@ jobs:
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
-
       - name: Update PHP version in config
         run: |
-          jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
-          echo "PHP version set to:"
-          cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
-
+          jq --arg php_version "${{ matrix.php-version }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+          echo "PHP version set to ${{ matrix.php-version }}"
       - name: Install WordPress environment
-        run: |
-          npm run start-local-server
+        run: npm run start-local-server
       - name: Update wordpress to nightly build
         if: ${{ github.event_name == 'schedule' }}
         run: npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
@@ -109,63 +120,50 @@ jobs:
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
-      - name: Install playwright/test
-        run: |
-          npx playwright install chromium
+      - name: Install playwright browsers
+        run: npx playwright install ${{ matrix.browser }}
       - name: Run Playwright tests
-        if: ${{
-          matrix.shardIndex != 'elements-regression' &&
-          matrix.shardIndex != 'plugin_tester_container' &&
-          matrix.shardIndex != 'plugin_tester_section' &&
-          matrix.shardIndex != 'v4-tests'
-          }}
-        run: |
-          npm run test:playwright -- --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        if: matrix.shardIndex != 'elements-regression' && matrix.shardIndex != 'plugin_tester_container' && matrix.shardIndex != 'plugin_tester_section' && matrix.shardIndex != 'v4-tests'
+        run: npm run test:playwright -- --project=${{ matrix.browser }} --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run v4 tests
-        if: ${{ matrix.shardIndex == 'v4-tests' }}
-        run: npm run test:playwright -- --grep="@v4-tests"
+        if: matrix.shardIndex == 'v4-tests'
+        run: npm run test:playwright -- --project=${{ matrix.browser }} --grep="@v4-tests"
       - name: Run Playwright Plugin Container tests
-        if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
-        run: npm run test:playwright -- --grep="@plugin_tester_container"
+        if: matrix.shardIndex == 'plugin_tester_container'
+        run: npm run test:playwright -- --project=${{ matrix.browser }} --grep="@plugin_tester_container"
       - name: Run Playwright Plugin Container tests
-        if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
-        run: npm run test:playwright -- --grep="@plugin_tester_section"
+        if: matrix.shardIndex == 'plugin_tester_section'
+        run: npm run test:playwright -- --project=${{ matrix.browser }} --grep="@plugin_tester_section"
       - name: Run element regression tests
-        if: ${{ matrix.shardIndex == 'elements-regression' }}
-        run: npm run test:playwright:elements-regression
+        if: matrix.shardIndex == 'elements-regression'
+        run: npm run test:playwright:elements-regression -- --project=${{ matrix.browser }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-test-results-${{ matrix.shardIndex }}
+          name: playwright-test-results-${{ matrix.browser }}-${{ matrix.php-version }}-${{ matrix.shardIndex }}
           path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
+
   PlaywrightWithTag:
-    name: Playwright test - tagged tests on PHP (Dynamic)
+    name: Playwright - Tagged tests on PHP (Dynamic) with ${{ inputs.browser }}
     runs-on: ubuntu-22.04
     needs: [ build-plugin ]
     if: ${{ github.event.inputs.tag }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
       - name: Determine PHP version
         id: set-php-version
         run: |
-          if [ "${{ github.event_name }}" == "schedule" ]; then
-            echo "PHP_VERSION=8.4" >> $GITHUB_ENV
-          else
-            echo "PHP_VERSION=8.1" >> $GITHUB_ENV
-          fi
-
+          echo "PHP_VERSION=8.1" >> $GITHUB_ENV
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
           cache: 'npm'
       - name: Install dependencies
-        run: |
-          npm run prepare-environment:ci
+        run: npm run prepare-environment:ci
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -175,40 +173,34 @@ jobs:
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
-
       - name: Update PHP version in config
         run: |
           jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
           echo "PHP version set to:"
           cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
-
       - name: Install WordPress environment
-        run: |
-          npm run start-local-server
+        run: npm run start-local-server
       - name: Setup test data
         run: npm run test:setup:playwright
       - name: WordPress debug information
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
-      - name: Install playwright/test
-        run: |
-          npx playwright install chromium
+      - name: Install playwright browsers
+        run: npx playwright install ${{ inputs.browser }}
       - name: Run Playwright tests
-        run: |
-          npm run test:playwright -- --grep="${{ inputs.tag }}"
+        run: npm run test:playwright -- --project=${{ inputs.browser }} --grep="${{ inputs.tag }}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-test-results-tagged-tests
+          name: playwright-test-results-tagged-tests-${{ inputs.browser }}
           path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
 
-
   test-result:
     needs: [ Playwright, PlaywrightWithTag ]
-    if: always() && (needs.Playwright.result != 'skipped')
+    if: always() && (needs.Playwright.result != 'skipped' || needs.PlaywrightWithTag.result != 'skipped')
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
     steps:
@@ -312,4 +304,3 @@ jobs:
       - name: Check Playwright matrix status
         if: ${{ (needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped') || (needs.PlaywrightWithTag.result != 'success' && needs.PlaywrightWithTag.result != 'skipped') }}
         run: exit 1
-        
