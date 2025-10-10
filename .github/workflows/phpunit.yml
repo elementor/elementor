@@ -3,6 +3,7 @@ name: PHPUnit
 on:
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'
+  workflow_dispatch:
   pull_request:
     paths-ignore:
       - '**.md'
@@ -50,7 +51,7 @@ jobs:
 
   test_schedule:
     uses: ./.github/workflows/phpunit-test-runner.yml
-    if: ${{ github.event_name == 'schedule' }}
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     with:
       job_name: PHPUnit (Nightly)
       wordpress_versions: '["latest", "6.7", "6.6", "nightly"]'
@@ -67,7 +68,7 @@ jobs:
       - name: Check nightly test status
         run: echo "Nightly Test status is - ${{ needs.test_schedule.result }}"
       - name: Send slack message
-        if: ${{ needs.test_schedule.result == 'failure' && github.event_name == 'schedule' }}
+        if: ${{ needs.test_schedule.result == 'failure' && github.event_name == 'workflow_dispatch' }}
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
