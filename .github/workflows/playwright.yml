@@ -33,6 +33,7 @@ on:
           options:
           - chromium
           - firefox
+          - webkit
           default: 'chromium'
 
 permissions:
@@ -60,13 +61,15 @@ jobs:
         id: set-matrix
         run: |
           if [ "${{ github.event_name }}" == "schedule" ]; then
-            echo 'matrix={"php-version": ["8.4"], "browser": ["chromium", "firefox"]}' >> $GITHUB_OUTPUT
+            # For schedule: PHP 8.4, browsers chromium and firefox
+            echo 'matrix={"php-version": ["php8.4"], "browser": ["chromium", "firefox"]}' >> $GITHUB_OUTPUT
           else
-            echo 'matrix={"php-version": ["8.1"], "browser": ["chromium"]}' >> $GITHUB_OUTPUT
+            # For other events: PHP 8.1, chromium only
+            echo 'matrix={"php-version": ["php8.1"], "browser": ["chromium"]}' >> $GITHUB_OUTPUT
           fi
 
   Playwright:
-    name: Playwright - ${{ matrix.shardIndex }} on PHP ${{ matrix.php-version }} with ${{ matrix.browser }} # >>> ИЗМЕНЕНО <<<
+    name: Playwright - ${{ matrix.shardIndex }} on PHP ${{ matrix.php-version }} with ${{ matrix.browser }}
     runs-on: ubuntu-22.04
     needs: [build-plugin, setup]
     if: github.event.inputs.tag == '' && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests'))
@@ -156,7 +159,8 @@ jobs:
       - name: Determine PHP version
         id: set-php-version
         run: |
-          echo "PHP_VERSION=8.1" >> $GITHUB_ENV
+          # For manual runs always use 8.1, but can be changed
+          echo "PHP_VERSION=php8.1" >> $GITHUB_ENV
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
