@@ -1,28 +1,16 @@
 import { Grid } from '@elementor/app-ui';
 import HeaderButtons from '../../../../../../assets/js/layout/header-buttons';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function Header( props ) {
-	const eventTracking = ( command, source = 'home page', kitName = null, eventType = 'click' ) => appsEventTrackingDispatch(
-			command,
-			{
-				page_source: source,
-				element_position: 'app_header',
-				kit_name: kitName,
-				event_type: eventType,
-			},
-		),
-		onClose = () => {
-			eventTracking( 'kit-library/close', props?.pageId, props?.kitName );
-			window.top.location = elementorAppConfig.admin_url;
-		};
+	const onClose = () => {
+		window.top.location = elementorAppConfig.admin_url;
+	};
 
 	return (
 		<Grid container alignItems="center" justify="space-between" className="eps-app__header">
 			{ props.startColumn || <a
 				className="eps-app__logo-title-wrapper"
 				href="#/kit-library"
-				onClick={ () => eventTracking( 'kit-library/logo' ) }
 			>
 				<i className="eps-app__logo eicon-elementor" />
 				<h1 className="eps-app__title">{ __( 'Website Templates', 'elementor' ) }</h1>
