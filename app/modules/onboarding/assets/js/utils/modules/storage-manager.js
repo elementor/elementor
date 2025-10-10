@@ -46,6 +46,10 @@ export function setString( key, value ) {
 }
 
 export function remove( key ) {
+	if ( key.includes( 'experiment' ) ) {
+		console.warn( `[Storage Debug] REMOVE called for: ${key}` );
+		console.trace( '[Storage Debug] Remove stack trace:' );
+	}
 	localStorage.removeItem( key );
 }
 
@@ -121,6 +125,9 @@ export function clearMultiple( keys ) {
 }
 
 export function clearAllOnboardingData() {
+	console.warn( '[Storage Debug] 🚨 clearAllOnboardingData called!' );
+	console.trace( '[Storage Debug] clearAllOnboardingData stack trace:' );
+	
 	const keysToRemove = [
 		ONBOARDING_STORAGE_KEYS.START_TIME,
 		ONBOARDING_STORAGE_KEYS.INITIATED,
@@ -150,6 +157,8 @@ export function clearAllOnboardingData() {
 		ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
 	];
 
+	console.warn( '[Storage Debug] Keys to remove (includes PENDING_EXPERIMENT_DATA):', keysToRemove.length );
+
 	clearMultiple( keysToRemove );
 
 	for ( let i = 1; i <= 4; i++ ) {
@@ -159,6 +168,9 @@ export function clearAllOnboardingData() {
 }
 
 export function clearExperimentData() {
+	console.warn( '[Storage Debug] 🚨 clearExperimentData called!' );
+	console.trace( '[Storage Debug] clearExperimentData stack trace:' );
+	
 	const experimentKeys = [
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT,
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT101_STARTED,
@@ -168,6 +180,8 @@ export function clearExperimentData() {
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT402_STARTED,
 		ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA,
 	];
+
+	console.warn( '[Storage Debug] Clearing experiment keys (includes PENDING_EXPERIMENT_DATA):', experimentKeys );
 
 	clearMultiple( experimentKeys );
 }

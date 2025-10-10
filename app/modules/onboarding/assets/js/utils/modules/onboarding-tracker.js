@@ -305,12 +305,16 @@ class OnboardingTracker {
 		console.log( `[Onboarding Debug] sendHelloBizContinue: stepNumber: ${stepNumber}` );
 		console.log( `[Onboarding Debug] sendHelloBizContinue: canSendEvents: ${EventDispatcher.canSendEvents()}` );
 		
+		// Convert step name to step number if needed
+		const numericStepNumber = this.mapPageIdToStepNumber( stepNumber ) || stepNumber;
+		console.log( `[Onboarding Debug] sendHelloBizContinue: Converted stepNumber from ${stepNumber} to ${numericStepNumber}` );
+		
 		if ( EventDispatcher.canSendEvents() ) {
-			console.log( `[Onboarding Debug] sendHelloBizContinue: Dispatching event ${ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE} with stepNumber: ${stepNumber}, stepName: ${ONBOARDING_STEP_NAMES.HELLO_BIZ}` );
+			console.log( `[Onboarding Debug] sendHelloBizContinue: Dispatching event ${ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE} with stepNumber: ${numericStepNumber}, stepName: ${ONBOARDING_STEP_NAMES.HELLO_BIZ}` );
 			
 			return EventDispatcher.dispatchStepEvent(
 				ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE,
-				stepNumber,
+				numericStepNumber,
 				ONBOARDING_STEP_NAMES.HELLO_BIZ,
 				{
 					location: 'plugin_onboarding',
@@ -346,6 +350,9 @@ class OnboardingTracker {
 	}
 
 	initiateCoreOnboarding() {
+		console.warn( '[Onboarding] 🚨 initiateCoreOnboarding called - WILL CLEAR ALL DATA!' );
+		console.trace( '[Onboarding] initiateCoreOnboarding stack trace:' );
+		
 		StorageManager.clearAllOnboardingData();
 		TimingManager.clearStaleSessionData();
 		TimingManager.initializeOnboardingStartTime();
@@ -981,6 +988,8 @@ class OnboardingTracker {
 	}
 
 	clearAllOnboardingStorage() {
+		console.warn( '[Onboarding] 🚨 clearAllOnboardingStorage called!' );
+		console.trace( '[Onboarding] clearAllOnboardingStorage stack trace:' );
 		return PostOnboardingTracker.clearAllOnboardingStorage();
 	}
 
