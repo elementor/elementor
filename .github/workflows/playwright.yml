@@ -187,11 +187,11 @@ jobs:
       - name: Install playwright/test
         run: |
           npx playwright install chromium
-      - name: Run Playwright tests
-        env:
-          TEST_TAG: ${{ inputs.tag }}
-        run: |
-          npm run test:playwright -- --grep="$TEST_TAG"
+          - name: Run Playwright tests
+          env:
+            TEST_TAG: ${{ inputs.tag }}
+          run: |
+            npm run test:playwright -- --grep="$TEST_TAG"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -283,7 +283,7 @@ jobs:
           SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
           PAYLOAD: |
             {
-              "text": "${{ steps.revert_message.outputs.message }}",
+              "text": "${{ steps.revert_message.outputs.message }}"
               "blocks": [
                 {
                   "type": "section",
