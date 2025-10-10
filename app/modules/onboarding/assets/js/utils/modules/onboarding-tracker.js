@@ -1001,7 +1001,7 @@ class OnboardingTracker {
 
 	sendStoredExperimentData() {
 		const storedExperiments = StorageManager.getArray( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
-		
+
 		if ( 0 === storedExperiments.length ) {
 			return;
 		}
