@@ -41,11 +41,32 @@ jobs:
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     name: Build plugin
     uses: ./.github/workflows/build.yml
+
+  setup:
+    name: Determine PHP Version
+    runs-on: ubuntu-latest
+    outputs:
+      display_version: ${{ steps.set-version.outputs.display_version }}
+      docker_version: ${{ steps.set-version.outputs.docker_version }}
+    steps:
+      - name: Determine PHP version for the run
+        id: set-version
+        run: |
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            echo "display_version=8.4" >> $GITHUB_OUTPUT
+            echo "docker_version=php8.4" >> $GITHUB_OUTPUT
+          else
+            echo "display_version=8.4" >> $GITHUB_OUTPUT
+            echo "docker_version=php8.4" >> $GITHUB_OUTPUT
+          fi
+
   Playwright:
-    name: Playwright test - ${{ matrix.shardIndex }} on PHP "${{ env.PHP_VERSION }}"
+    name: Playwright test - ${{ matrix.shardIndex }} on PHP ${{ needs.setup.outputs.display_version }}
     runs-on: ubuntu-22.04
-    needs: [build-plugin]
+    needs: [build-plugin, setup]
     if: github.event.inputs.tag == '' && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests'))
+    env:
+      PHP_VERSION: ${{ needs.setup.outputs.docker_version }}
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
@@ -59,16 +80,6 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
-      - name: Determine PHP version
-        id: set-php-version
-        run: |
-          if [ "${{ github.event_name }}" == "schedule" ]; then
-            echo "PHP_VERSION=8.4" >> $GITHUB_ENV
-          else
-            echo "PHP_VERSION=8.4" >> $GITHUB_ENV
-          fi
-
       - name: Cache Docker images.
         uses: ScribeMD/docker-cache@0.5.0
         with:
@@ -90,13 +101,10 @@ jobs:
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
-
       - name: Update PHP version in config
         run: |
           jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
-          echo "PHP version set to:"
-          cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
-
+          echo "PHP version set to: ${{ env.PHP_VERSION }}"
       - name: Install WordPress environment
         run: |
           npm run start-local-server
@@ -140,24 +148,17 @@ jobs:
           path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
+
   PlaywrightWithTag:
-    name: Playwright test - tagged tests on PHP (Dynamic)
+    name: Playwright test - tagged tests on PHP ${{ needs.setup.outputs.display_version }}
     runs-on: ubuntu-22.04
-    needs: [ build-plugin ]
+    needs: [ build-plugin, setup ]
     if: ${{ github.event.inputs.tag }}
+    env:
+      PHP_VERSION: ${{ needs.setup.outputs.docker_version }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
-      - name: Determine PHP version
-        id: set-php-version
-        run: |
-          if [ "${{ github.event_name }}" == "schedule" ]; then
-            echo "PHP_VERSION=8.4" >> $GITHUB_ENV
-          else
-            echo "PHP_VERSION=8.1" >> $GITHUB_ENV
-          fi
-
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
@@ -175,13 +176,10 @@ jobs:
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
-
       - name: Update PHP version in config
         run: |
           jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
-          echo "PHP version set to:"
-          cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
-
+          echo "PHP version set to: ${{ env.PHP_VERSION }}"
       - name: Install WordPress environment
         run: |
           npm run start-local-server
@@ -312,3 +310,4 @@ jobs:
       - name: Check Playwright matrix status
         if: ${{ (needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped') || (needs.PlaywrightWithTag.result != 'success' && needs.PlaywrightWithTag.result != 'skipped') }}
         run: exit 1
+
