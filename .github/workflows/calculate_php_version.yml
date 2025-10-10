@@ -1,5 +1,7 @@
 name: Calculate PHP Version
-
+permissions:
+  contents: read
+  
 on:
   workflow_call:
     outputs:
