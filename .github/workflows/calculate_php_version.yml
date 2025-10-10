@@ -1,0 +1,23 @@
+name: Calculate PHP Version
+
+on:
+  workflow_call:
+    outputs:
+      php_version:
+        description: "The dynamically determined PHP version (e.g., '8.1' or '8.4')"
+        value: ${{ jobs.calculate.outputs.version }}
+
+jobs:
+  calculate:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.set_version.outputs.VERSION }}
+    steps:
+      - name: Determine PHP version based on event
+        id: set_version
+        run: |
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            echo "VERSION=8.4" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=8.1" >> $GITHUB_OUTPUT
+          fi

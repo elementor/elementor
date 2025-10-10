@@ -36,18 +36,20 @@ concurrency:
   group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
-env:
-  PHP_VERSION: ${{ github.event_name == 'workflow_dispatch' && '8.4' || '8.1' }}
-
 jobs:
+  get-php-version:
+    name: Calculate PHP Version
+    uses: ./.github/workflows/calculate_php_version.yml
+
   build-plugin:
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     name: Build plugin
     uses: ./.github/workflows/build.yml
+  
   Playwright:
-    name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ github.event_name == 'schedule' && '8.4' || '8.1' }})
+    name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
-    needs: [build-plugin]
+    needs: [build-plugin, get-php-version]
     if: github.event.inputs.tag == '' && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests'))
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
@@ -62,6 +64,9 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+
+      - name: Set PHP_VERSION environment variable
+        run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
 
       - name: Cache Docker images.
         uses: ScribeMD/docker-cache@0.5.0
@@ -135,13 +140,16 @@ jobs:
           if-no-files-found: ignore
           retention-days: 2
   PlaywrightWithTag:
-    name: Playwright test - tagged tests on PHP (${{ github.event_name == 'schedule' && '8.4' || '8.1' }})
+    name: Playwright test - tagged tests on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
-    needs: [ build-plugin ]
+    needs: [ build-plugin, get-php-version ]
     if: ${{ github.event.inputs.tag }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+
+      - name: Set PHP_VERSION environment variable
+        run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
 
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
@@ -273,7 +281,7 @@ jobs:
           SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
           PAYLOAD: |
             {
-              "text": "${{ steps.revert_message.outputs.message }}",
+              "text": "${{ steps.revert_message.outputs.message }}"
               "blocks": [
                 {
                   "type": "section",
