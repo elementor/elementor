@@ -187,6 +187,16 @@ class Unified_Css_Processor {
 			return true;
 		}
 		
+		// For border-radius properties, all individual border-radius properties map to 'border-radius' atomic property
+		if ( 'border-radius' === $atomic_property && in_array( $css_property, [
+			'border-radius', 'border-top-left-radius', 'border-top-right-radius', 
+			'border-bottom-left-radius', 'border-bottom-right-radius',
+			'border-start-start-radius', 'border-start-end-radius', 
+			'border-end-start-radius', 'border-end-end-radius'
+		], true ) ) {
+			return true;
+		}
+		
 		// For other properties, check if CSS property matches atomic property
 		return $css_property === $atomic_property;
 	}

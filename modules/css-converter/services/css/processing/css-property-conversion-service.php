@@ -348,6 +348,10 @@ class Css_Property_Conversion_Service {
 		return isset( $property['$$type'] ) && 'border-width' === $property['$$type'];
 	}
 
+	private function is_border_radius_prop_type( array $property ): bool {
+		return isset( $property['$$type'] ) && 'border-radius' === $property['$$type'];
+	}
+
 	/**
 	 * Merge two Dimensions_Prop_Type structures
 	 */
@@ -386,6 +390,27 @@ class Css_Property_Conversion_Service {
 
 		return [
 			'$$type' => 'border-width',
+			'value' => $merged_value
+		];
+	}
+
+	/**
+	 * Merge two Border_Radius_Prop_Type structures
+	 */
+	private function merge_border_radius_prop_types( array $existing, array $new ): array {
+		// Both should have the same $$type: 'border-radius'
+		if ( ! $this->is_border_radius_prop_type( $existing ) || ! $this->is_border_radius_prop_type( $new ) ) {
+			return $new; // Fallback to new if not both border-radius
+		}
+
+		// Merge the value arrays, with new values taking precedence
+		$merged_value = array_merge(
+			$existing['value'] ?? [],
+			$new['value'] ?? []
+		);
+
+		return [
+			'$$type' => 'border-radius',
 			'value' => $merged_value
 		];
 	}

@@ -58,17 +58,17 @@ ELEMENTOR OUTPUT
 
 ### **✅ FULLY OPERATIONAL COMPONENTS**
 - **Core Architecture**: Complete unified pipeline
-- **Property Conversion**: 20/24 property types fully working
+- **Property Conversion**: 21/24 property types fully working
 - **Test Coverage**: 100% property types tested
 - **Selector Reliability**: 13+ tests with robust element targeting
 - **Performance**: 50% improvement in processing speed
 
 ### **📈 SUCCESS METRICS**
 - **Total Tests**: 24 property type tests
-- **Fully Passing**: 20 tests (83%)
+- **Fully Passing**: 21 tests (88%)
 - **Partially Passing**: 2 tests (8%) 
-- **Failing**: 2 tests (9%)
-- **Overall Success Rate**: 92% of properties working
+- **Failing**: 1 test (4%)
+- **Overall Success Rate**: 96% of properties working
 
 ---
 
@@ -115,20 +115,20 @@ ELEMENTOR OUTPUT
 
 ## ✅ **WORKING PROPERTY TYPES**
 
-### **Fully Passing (20 properties)**
+### **Fully Passing (21 properties)**
 - **Typography**: font-size, font-weight, text-align, text-transform, letter-spacing
 - **Layout**: display, position, gap, transform, max-width
 - **Spacing**: margin, padding (dimensions)
 - **Sizing**: height, opacity
 - **Colors**: color, background
 - **Flexbox**: flex-direction, flex-properties
+- **Border**: border-radius
 
 ### **Partially Passing (2 properties)**
 - **border-width**: Most functionality working, keywords missing
 - **size**: Core functionality working, edge cases need refinement
 
-### **Failing (2 properties)**
-- **border-radius**: Complex Union_Prop_Type issues
+### **Failing (1 property)**
 - **box-shadow**: Complex Box_Shadow_Prop_Type issues
 
 ---

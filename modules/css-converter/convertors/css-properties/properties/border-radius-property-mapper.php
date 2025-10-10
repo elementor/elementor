@@ -56,58 +56,42 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return self::SUPPORTED_PROPERTIES;
 	}
 
+	public function get_v4_property_name( string $property ): string {
+		// ✅ CRITICAL FIX: All individual border-radius properties should map to "border-radius" in atomic widgets
+		// This ensures the Border_Radius_Prop_Type is recognized by the atomic widgets system
+		return 'border-radius';
+	}
+
+	public function get_target_property_name( string $property ): string {
+		// ✅ CRITICAL FIX: Use the same logic as get_v4_property_name
+		// This ensures individual properties like 'border-top-left-radius' are stored as 'border-radius'
+		return $this->get_v4_property_name( $property );
+	}
+
+
 	public function map_to_v4_atomic( string $property, $value ): ?array {
 		if ( ! $this->supports( $property ) ) {
 			return null;
 		}
 
-		// For simple border-radius values (like "10px"), use Size_Prop_Type directly
-		if ( 'border-radius' === $property && $this->is_simple_border_radius( $value ) ) {
-			$size_value = $this->parse_size_value( $value );
-			if ( null === $size_value ) {
-				return null;
-			}
-			// Return atomic prop type result directly (no property wrapper)
-			return Size_Prop_Type::make()
-				->units( Size_Constants::border() )
-				->generate( $size_value );
+		// Parse the border-radius value based on property type
+		if ( 'border-radius' === $property ) {
+			// Handle shorthand border-radius property
+			$border_radius_value = $this->parse_shorthand_border_radius( $value );
+		} else {
+			// Handle individual corner properties
+			$border_radius_value = $this->convert_individual_corner_to_shorthand( $property, $value );
 		}
 
-		// For individual corner properties, create Border_Radius_Prop_Type structure
-		// This matches the editor JSON format: "border-radius" with specific corner set
-		$size_value = $this->parse_size_value( $value );
-		if ( null === $size_value ) {
+		if ( null === $border_radius_value ) {
 			return null;
 		}
 
-		// Map physical property to logical corner
-		$corner_map = [
-			'border-top-left-radius' => 'start-start',
-			'border-top-right-radius' => 'start-end',
-			'border-bottom-right-radius' => 'end-end',
-			'border-bottom-left-radius' => 'end-start',
-		];
+		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
+		return Border_Radius_Prop_Type::make()->generate( $border_radius_value );
+	}
 
-		$physical_property = $this->map_logical_to_physical( $property );
-		$logical_corner = $corner_map[ $physical_property ] ?? null;
-		
-		if ( null === $logical_corner ) {
-			return null;
-		}
-
-		// Create Border_Radius_Prop_Type structure with only the specific corner
-		$border_radius_value = [
-			$logical_corner => Size_Prop_Type::make()
-				->units( Size_Constants::border() )
-				->generate( $size_value )
-		];
-
-		// Return as "border-radius" property (not individual corner property)
-		return [
-			'property' => 'border-radius',
-			'value' => Border_Radius_Prop_Type::make()->generate( $border_radius_value )
-		];
-	}private function parse_border_radius_value( string $property, $value ): ?array {
+	private function parse_border_radius_value( string $property, $value ): ?array {
 		if ( ! is_string( $value ) ) {
 			return null;
 		}
@@ -263,7 +247,9 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function create_size_prop( array $size_value ): array {
-		return Size_Prop_Type::make()->generate( $size_value );
+		return Size_Prop_Type::make()
+			->units( Size_Constants::border() )
+			->generate( $size_value );
 	}
 
 	private function create_zero_size(): array {
@@ -275,28 +261,5 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function map_logical_to_physical( string $property ): string {
 		return self::LOGICAL_TO_PHYSICAL_MAPPING[ $property ] ?? $property;
-	}
-
-	private function is_simple_border_radius( $value ): bool {
-		if ( ! is_string( $value ) ) {
-			return false;
-		}
-
-		$value = trim( $value );
-		
-		// Simple border-radius is a single value (like "10px", "50%", "1rem")
-		// Complex border-radius has multiple values (like "10px 20px") or elliptical syntax (like "10px / 5px")
-		
-		// Skip elliptical border-radius (not supported by Size_Prop_Type)
-		if ( str_contains( $value, '/' ) ) {
-			return false;
-		}
-
-		// Check if it's a single value (no spaces, or only one value)
-		$values = preg_split( '/\s+/', trim( $value ) );
-		$values = array_filter( $values );
-		
-		// Simple border-radius has exactly one value
-		return count( $values ) === 1;
 	}
 }
