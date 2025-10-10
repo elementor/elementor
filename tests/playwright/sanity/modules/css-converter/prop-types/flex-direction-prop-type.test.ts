@@ -71,11 +71,12 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 		await editor.waitForPanelToLoad();
 
 		// Define test cases for flex-direction verification
+		// Note: CSS converter creates parent container at index 0, flex containers at indices 1-4
 		const testCases = [
-			{ index: 0, name: 'flex-direction: row', property: 'flex-direction', expected: 'row' },
-			{ index: 1, name: 'flex-direction: column', property: 'flex-direction', expected: 'column' },
-			{ index: 2, name: 'flex-direction: row-reverse', property: 'flex-direction', expected: 'row-reverse' },
-			{ index: 3, name: 'flex-direction: column-reverse', property: 'flex-direction', expected: 'column-reverse' },
+			{ index: 1, name: 'flex-direction: row', property: 'flex-direction', expected: 'row' },
+			{ index: 2, name: 'flex-direction: column', property: 'flex-direction', expected: 'column' },
+			{ index: 3, name: 'flex-direction: row-reverse', property: 'flex-direction', expected: 'row-reverse' },
+			{ index: 4, name: 'flex-direction: column-reverse', property: 'flex-direction', expected: 'column-reverse' },
 		];
 
 		// Editor verification using test cases array
@@ -84,8 +85,8 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				// Target the div containers (not paragraphs) since they have the flex-direction
-				const element = elementorFrame.locator( '.e-div-block' ).nth( testCase.index );
+				// Target the div containers using .e-con class (used by both e-div-block and e-flexbox)
+				const element = elementorFrame.locator( '.e-con' ).nth( testCase.index );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
@@ -111,7 +112,7 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
-					const frontendElement = page.locator( '.e-div-block' ).nth( testCase.index );
+					const frontendElement = page.locator( '.e-con' ).nth( testCase.index );
 
 					await test.step( 'Verify CSS property', async () => {
 						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );
