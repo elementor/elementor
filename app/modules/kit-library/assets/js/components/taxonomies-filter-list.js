@@ -4,7 +4,6 @@ import SearchInput from './search-input';
 import { Checkbox, Text } from '@elementor/app-ui';
 import { sprintf } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import { useTracking } from '../context/tracking-context';
 
 const MIN_TAGS_LENGTH_FOR_SEARCH_INPUT = 15;
@@ -26,30 +25,12 @@ const TaxonomiesFilterList = ( props ) => {
 		);
 	}, [ props.taxonomiesByType.data, search ] );
 
-	const eventTracking = ( command, section, action, item ) => {
-		const category = props.category && ( '/favorites' === props.category ? 'favorites' : 'all kits' );
-		appsEventTrackingDispatch(
-			command,
-			{
-				page_source: 'home page',
-				element_location: 'app_sidebar',
-				category,
-				section,
-				item,
-				action: action ? 'checked' : 'unchecked',
-			},
-		);
-	};
-
 	return (
 		<Collapse
 			className="e-kit-library__tags-filter-list"
 			title={ props.taxonomiesByType.label }
 			isOpen={ isOpen }
 			onChange={ setIsOpen }
-			onClick={ ( collapseState, title ) => {
-				props.onCollapseChange?.( collapseState, title );
-			} }
 		>
 			{
 				props.taxonomiesByType.data.length >= MIN_TAGS_LENGTH_FOR_SEARCH_INPUT &&
@@ -61,9 +42,6 @@ const TaxonomiesFilterList = ( props ) => {
 						value={ search }
 						onChange={ ( searchTerm ) => {
 							setSearch( searchTerm );
-							if ( searchTerm ) {
-								props.onChange?.( searchTerm );
-							}
 						} }
 					/>
 			}
@@ -84,8 +62,6 @@ const TaxonomiesFilterList = ( props ) => {
 												: prev.filter( ( tagId ) => ! [ taxonomy.id, taxonomy.text ].includes( tagId ) );
 										} );
 									};
-
-									eventTracking( 'kit-library/filter', taxonomy.type, checked, taxonomy.text );
 
 									if ( 'categories' === taxonomy.type && checked ) {
 										tracking.trackKitlibCategorySelected( taxonomy.text, callback );
