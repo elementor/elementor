@@ -363,6 +363,51 @@ class OnboardingTracker {
 	}
 
 	storeSiteStarterChoice( siteStarter ) {
+		const existingChoice = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
+
+		if ( this.isReturnScenario( existingChoice, siteStarter ) ) {
+			this.sendReturnEventAndUpdateChoice( existingChoice, siteStarter );
+		} else {
+			this.storeInitialChoice( siteStarter );
+		}
+	}
+
+	isReturnScenario( existingChoice, siteStarter ) {
+		return existingChoice && existingChoice.site_starter !== siteStarter;
+	}
+
+	sendReturnEventAndUpdateChoice( existingChoice, siteStarter ) {
+		const returnEventPayload = this.createReturnEventPayload( existingChoice, siteStarter );
+		this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
+		this.updateChoiceWithReturnTracking( existingChoice, siteStarter );
+	}
+
+	createReturnEventPayload( existingChoice, siteStarter ) {
+		return EventDispatcher.createStepEventPayload(
+			4,
+			ONBOARDING_STEP_NAMES.SITE_STARTER,
+			{
+				location: 'plugin_onboarding',
+				trigger: 'user_returns_to_onboarding',
+				return_to_onboarding: existingChoice.site_starter,
+				original_choice_timestamp: existingChoice.timestamp,
+				new_choice: siteStarter,
+			},
+		);
+	}
+
+	updateChoiceWithReturnTracking( existingChoice, siteStarter ) {
+		const choiceData = {
+			site_starter: siteStarter,
+			original_choice: existingChoice.site_starter,
+			timestamp: TimingManager.getCurrentTime(),
+			return_event_sent: true,
+		};
+
+		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
+	}
+
+	storeInitialChoice( siteStarter ) {
 		const choiceData = {
 			site_starter: siteStarter,
 			timestamp: TimingManager.getCurrentTime(),
@@ -378,23 +423,36 @@ class OnboardingTracker {
 			return;
 		}
 
-		if ( ! choiceData.return_event_sent ) {
-			const returnEventPayload = EventDispatcher.createStepEventPayload(
-				4,
-				ONBOARDING_STEP_NAMES.SITE_STARTER,
-				{
-					location: 'plugin_onboarding',
-					trigger: 'user_returns_to_onboarding',
-					return_to_onboarding: choiceData.site_starter,
-					original_choice_timestamp: choiceData.timestamp,
-				},
-			);
-
+		if ( this.shouldSendReturnEvent( choiceData ) ) {
+			const returnEventPayload = this.createReturnEventPayloadFromStoredData( choiceData );
 			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
-
-			choiceData.return_event_sent = true;
-			StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
+			this.markReturnEventAsSent( choiceData );
 		}
+	}
+
+	shouldSendReturnEvent( choiceData ) {
+		return ! choiceData.return_event_sent && 
+			choiceData.original_choice && 
+			choiceData.original_choice !== choiceData.site_starter;
+	}
+
+	createReturnEventPayloadFromStoredData( choiceData ) {
+		return EventDispatcher.createStepEventPayload(
+			4,
+			ONBOARDING_STEP_NAMES.SITE_STARTER,
+			{
+				location: 'plugin_onboarding',
+				trigger: 'user_returns_to_onboarding',
+				return_to_onboarding: choiceData.original_choice,
+				original_choice_timestamp: choiceData.timestamp,
+				new_choice: choiceData.site_starter,
+			},
+		);
+	}
+
+	markReturnEventAsSent( choiceData ) {
+		choiceData.return_event_sent = true;
+		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
 	}
 
 	handleSiteStarterChoice( siteStarter ) {
