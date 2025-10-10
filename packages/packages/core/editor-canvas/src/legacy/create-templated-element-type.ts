@@ -100,9 +100,7 @@ function createTemplatedElementViewClassDeclaration( {
 					} );
 				} )
 				.then( ( resolvedSettings ) => {
-					const isCssConverterWidget = this.isCssConverterWidget();
-
-					const finalBaseStyles = this.getBaseStylesForWidget( isCssConverterWidget, baseStylesDictionary );
+					const finalBaseStyles = this.getBaseStylesForWidget( baseStylesDictionary );
 
 					// Same as the Backend.
 					const context = {
@@ -123,10 +121,11 @@ function createTemplatedElementViewClassDeclaration( {
 
 		isCssConverterWidget(): boolean {
 			const editorSettings = this.model.get( 'editor_settings' ) || {};
-			return editorSettings.css_converter_widget;
+			return !! editorSettings?.css_converter_widget;
 		}
 
-		getBaseStylesForWidget( isCssConverterWidget: boolean, baseStylesDictionary: Record< string, string > ): Record< string, string > {
+		getBaseStylesForWidget( baseStylesDictionary: Record< string, string > ): Record< string, string > {
+			const isCssConverterWidget = this.isCssConverterWidget();
 			return isCssConverterWidget ? {} : baseStylesDictionary;
 		}
 

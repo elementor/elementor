@@ -96,20 +96,20 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 		}
 
 		className() {
+			return this.preventBaseClassInCssConvertedWidget();
+		}
+
+		preventBaseClassInCssConvertedWidget(): string {
 			const editorSettings = this.model.get( 'editor_settings' ) || {};
 			const isCssConverterWidget = editorSettings.css_converter_widget;
 			
-			if ( isCssConverterWidget ) {
-				return this.removeBaseClassFromCssConverterWidget();
+			if ( ! isCssConverterWidget ) {
+				return super.className();
 			}
 			
-			return super.className();
-		}
-	
-		removeBaseClassFromCssConverterWidget(): string {
 			const originalClasses = super.className();
 			const widgetType = this.model.get( 'widgetType' ) || this.model.get( 'elType' );
-			const baseClassName = `${widgetType}-base`;
+			const baseClassName = `${ widgetType }-base`;
 			
 			return originalClasses
 				.split( ' ' )

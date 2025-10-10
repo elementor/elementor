@@ -51,29 +51,7 @@ trait Has_Base_Styles {
 	}
 
 	private function is_css_converter_widget(): bool {
-		if ( ! empty( $this->editor_settings['css_converter_widget'] ) ) {
-			return true;
-		}
-
-		try {
-			$settings = $this->get_atomic_settings();
-			$classes = $settings['classes'] ?? [];
-
-			if ( is_array( $classes ) ) {
-				foreach ( $classes as $class ) {
-					if ( is_string( $class ) && preg_match( '/^e-[a-f0-9]{7}-[a-f0-9]{7}$/', $class ) ) {
-						return true;
-					}
-				}
-			}
-
-			if ( $this->version === '0.0' && ! empty( $settings['classes'] ) ) {
-				return true;
-			}
-		} catch ( \Throwable $e ) {
-		}
-
-		return false;
+		return ! empty( $this->editor_settings['css_converter_widget'] );
 	}
 
 	/**
