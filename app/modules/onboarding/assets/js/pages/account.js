@@ -200,7 +200,6 @@ export default function Account() {
 		navigate( 'onboarding/' + nextStep );
 	};
 
-
 	const experiment101Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT );
 	const ContentComponent = 'B' === experiment101Variant ? AccountContentB : AccountContentA;
 
