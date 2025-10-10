@@ -94,10 +94,10 @@ class Atomic_Styles_Manager {
 			// (the corresponding css files cache validity includes also the file's breakpoint in the cache keys array)
 			if ( ! $this->cache_validity->is_valid( $cache_keys ) ) {
 				Style_Fonts::make( $style_key )->clear();
-			}
 
-			// We should validate it after this iteration
-			$this->cache_validity->validate( $cache_keys );
+				// We should validate it after this iteration
+				$this->cache_validity->validate( $cache_keys, uniqid() );
+			}
 		}
 	}
 
@@ -109,6 +109,8 @@ class Atomic_Styles_Manager {
 			foreach ( $styles_by_key as $style_key => $style_params ) {
 				$cache_keys = $style_params['cache_keys'];
 				$render_css = fn() => $this->render_css_by_breakpoints( $style_params['get_styles'], $style_key, $breakpoint_key, $group_by_breakpoint_memo );
+
+				$version = $this->cache_validity->get_meta( $cache_keys );
 
 				$breakpoint_media = $this->get_breakpoint_media( $breakpoint_key );
 
@@ -135,6 +137,7 @@ class Atomic_Styles_Manager {
 					$style_file->get_handle(),
 					$style_file->get_url(),
 					[],
+					$version,
 					$style_file->get_media()
 				);
 			}

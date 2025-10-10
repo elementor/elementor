@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
+use Elementor\Modules\AtomicWidgets\Cache_Validity;
 use Elementor\Plugin;
 use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -143,8 +144,20 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 
 		// Assert
 		global $wp_styles;
-		$this->assertArrayHasKey( $this->test_style_key . '-desktop', $wp_styles->registered );
-		$this->assertArrayHasKey( $this->test_style_key . '-mobile', $wp_styles->registered );
+
+		$desktop_style = $wp_styles->registered[ $this->test_style_key . '-desktop' ];
+		$mobile_style = $wp_styles->registered[ $this->test_style_key . '-mobile' ];
+
+		$cache_validity = new Cache_Validity();
+		$version = $cache_validity->get_meta( [ $this->test_style_key ] );
+
+		$this->assertNotEmpty( $desktop_style );
+		$this->assertNotEmpty( $mobile_style );
+		$this->assertEquals( 'all', $desktop_style->args );
+		$this->assertEquals( '(max-width:767px)', $mobile_style->args );
+		$this->assertEquals( $version, $desktop_style->ver );
+		$this->assertEquals( $version, $mobile_style->ver );
+
 		$this->assertContains( 'Poppins', Plugin::$instance->frontend->fonts_to_enqueue );
 	}
 
@@ -199,10 +212,28 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		// Assert
 		global $wp_styles;
 
-		$this->assertArrayHasKey( $this->test_style_key . '-desktop', $wp_styles->registered );
-		$this->assertArrayHasKey( $this->test_style_key . '-mobile', $wp_styles->registered );
-		$this->assertArrayHasKey( $this->test_additional_style_key . '-tablet', $wp_styles->registered );
-		$this->assertArrayHasKey( $this->test_additional_style_key . '-desktop', $wp_styles->registered );
+		$style_desktop = $wp_styles->registered[ $this->test_style_key . '-desktop' ];
+		$style_mobile = $wp_styles->registered[ $this->test_style_key . '-mobile' ];
+		$additional_style_tablet = $wp_styles->registered[ $this->test_additional_style_key . '-tablet' ];
+		$additional_style_desktop = $wp_styles->registered[ $this->test_additional_style_key . '-desktop' ];
+
+		$cache_validity = new Cache_Validity();
+		$style_version = $cache_validity->get_meta( [ $this->test_style_key ] );
+		$additional_style_version = $cache_validity->get_meta( [ $this->test_additional_style_key ] );
+
+		$this->assertNotEmpty( $style_desktop );
+		$this->assertNotEmpty( $style_mobile );
+		$this->assertNotEmpty( $additional_style_tablet );
+		$this->assertNotEmpty( $additional_style_desktop );
+
+		$this->assertEquals( 'all', $style_desktop->args );
+		$this->assertEquals( '(max-width:767px)', $style_mobile->args );
+		$this->assertEquals( 'all', $additional_style_desktop->args );
+		$this->assertEquals( '(max-width:1024px)', $additional_style_tablet->args );
+		$this->assertEquals( $style_version, $style_desktop->ver );
+		$this->assertEquals( $style_version, $style_mobile->ver );
+		$this->assertEquals( $additional_style_version, $additional_style_desktop->ver );
+		$this->assertEquals( $additional_style_version, $additional_style_tablet->ver );
 	}
 
 	public function test_enqueue__calls_get_styles_once_for_each_key_with_multiple_breakpoints() {
