@@ -7,6 +7,7 @@ import { CssConverterHelper } from '../helper';
 test.describe( 'Flex Properties Prop Type Integration @prop-types', () => {
 	let editor: EditorPage;
 	let cssHelper: CssConverterHelper;
+	let wpAdmin: WpAdminPage;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
@@ -72,7 +73,9 @@ test.describe( 'Flex Properties Prop Type Integration @prop-types', () => {
 
 		const elementorFrame = editor.getPreviewFrame();
 		await test.step( 'Verify flex properties are applied correctly', async () => {
-			const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
+			// Target paragraph elements with flex properties (similar to flex-direction test approach)
+			// Note: CSS converter creates paragraph elements with flex properties applied via CSS classes
+			const paragraphElements = elementorFrame.locator( 'p' ).filter( { hasText: /Flex container/ } );
 			await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 			await test.step( 'Verify flex container 1 properties', async () => {
