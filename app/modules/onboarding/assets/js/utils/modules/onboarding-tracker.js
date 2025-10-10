@@ -302,6 +302,21 @@ class OnboardingTracker {
 		}
 	}
 
+	sendThemeChoiceEvent( currentStep, themeValue ) {
+		if ( EventDispatcher.canSendEvents() ) {
+			return EventDispatcher.dispatchStepEvent(
+				ONBOARDING_EVENTS_MAP.THEME_CHOICE,
+				2,
+				ONBOARDING_STEP_NAMES.HELLO_BIZ,
+				{
+					location: 'plugin_onboarding',
+					trigger: 'theme_selected',
+					theme: themeValue,
+				},
+			);
+		}
+	}
+
 	sendTopUpgrade( currentStep, upgradeClicked ) {
 		return this.sendEventOrStore( 'TOP_UPGRADE', { currentStep, upgradeClicked } );
 	}
@@ -311,6 +326,7 @@ class OnboardingTracker {
 	}
 
 	initiateCoreOnboarding() {
+		StorageManager.clearAllOnboardingData();
 		TimingManager.clearStaleSessionData();
 		TimingManager.initializeOnboardingStartTime();
 	}
@@ -819,14 +835,17 @@ class OnboardingTracker {
 	}
 
 	onStepLoad( currentStep ) {
-		TimingManager.trackStepStartTime( this.getStepNumber( currentStep ) );
+		const stepNumber = this.getStepNumber( currentStep );
+		TimingManager.trackStepStartTime( stepNumber );
 
-		if ( 2 === this.getStepNumber( currentStep ) || 'hello' === currentStep || 'hello_biz' === currentStep ) {
+		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
 			this.sendStoredStep1EventsOnStep2();
+			this.sendThemeSelectionExperimentStarted();
 		}
 
-		if ( 4 === this.getStepNumber( currentStep ) || 'goodToGo' === currentStep ) {
+		if ( 4 === stepNumber || 'goodToGo' === currentStep ) {
 			this.checkAndSendReturnToStep4();
+			this.sendGoodToGoExperimentStarted();
 		}
 	}
 
@@ -851,6 +870,108 @@ class OnboardingTracker {
 
 	clearAllOnboardingStorage() {
 		return PostOnboardingTracker.clearAllOnboardingStorage();
+	}
+
+	isThemeSelectionExperimentEnabled() {
+		return elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled || false;
+	}
+
+	isGoodToGoExperimentEnabled() {
+		return elementorAppConfig?.onboarding?.goodToGoExperimentEnabled || false;
+	}
+
+	getThemeSelectionVariant() {
+		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT );
+		if ( stored ) {
+			return stored;
+		}
+
+		return null;
+	}
+
+	getGoodToGoVariant() {
+		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT );
+		if ( stored ) {
+			return stored;
+		}
+
+		return null;
+	}
+
+	assignThemeSelectionVariant() {
+		if ( ! this.isThemeSelectionExperimentEnabled() ) {
+			return null;
+		}
+
+		const variant = Math.random() < 0.5 ? 'A' : 'B';
+		StorageManager.setString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT, variant );
+		return variant;
+	}
+
+	assignGoodToGoVariant() {
+		if ( ! this.isGoodToGoExperimentEnabled() ) {
+			return null;
+		}
+
+		const variant = Math.random() < 0.5 ? 'A' : 'B';
+		StorageManager.setString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT, variant );
+		return variant;
+	}
+
+	sendThemeSelectionExperimentStarted() {
+		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED ) ) {
+			return;
+		}
+
+		let variant = this.getThemeSelectionVariant();
+
+		if ( ! variant ) {
+			variant = this.assignThemeSelectionVariant();
+			if ( ! variant ) {
+				return;
+			}
+		}
+
+		if ( ! EventDispatcher.canSendEvents() ) {
+			return;
+		}
+
+		const eventData = {
+			'Experiment name': '201 - Offer theme choices: hello, biz',
+			'Variant name': variant,
+		};
+
+		EventDispatcher.dispatch( '$experiment_started', eventData );
+
+		StorageManager.setString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED, 'true' );
+	}
+
+	sendGoodToGoExperimentStarted() {
+		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED ) ) {
+			return;
+		}
+
+		let variant = this.getGoodToGoVariant();
+
+		if ( ! variant ) {
+			variant = this.assignGoodToGoVariant();
+			if ( ! variant ) {
+				return;
+			}
+		}
+
+		if ( ! EventDispatcher.canSendEvents() ) {
+			return;
+		}
+
+		const eventData = {
+			'Experiment name': '402 - Reduce hierarchy of blank option',
+			'Variant name': variant,
+		};
+
+		EventDispatcher.dispatch( '$experiment_started', eventData );
+
+		StorageManager.setString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED, 'true' );
 	}
 }
 

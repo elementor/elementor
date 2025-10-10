@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { EditorDriver } from '../../../../drivers/editor-driver';
 import { timeouts } from '../../../../config/timeouts';
 import { convertToPixels } from '../../../../utils/unit-conversions';
-import { Unit } from './typography-constants';
+import type { Unit } from './typography-constants';
 
 export async function addWidgetWithOpenTypographySection(
 	driver: EditorDriver,
@@ -12,7 +12,8 @@ export async function addWidgetWithOpenTypographySection(
 	const containerId = await driver.editor.addElement( { elType: 'container' }, 'document' );
 	const widgetId = await driver.editor.addWidget( { widgetType, container: containerId } );
 
-	await driver.editor.v4Panel.style.openTypographySection( expandAdvancedSection );
+	await driver.editor.v4Panel.openTab( 'style' );
+	await driver.editor.v4Panel.style.openSection( 'Typography', expandAdvancedSection );
 
 	return { containerId, widgetId };
 }

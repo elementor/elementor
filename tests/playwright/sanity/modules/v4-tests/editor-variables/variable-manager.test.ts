@@ -27,6 +27,18 @@ test.describe( 'Variable Manager @v4-tests', () => {
 		await context.close();
 	} );
 
+	test( 'Empty state', async () => {
+		await test.step( 'Display empty state message when no variables exist', async () => {
+			await openVariableManager( page, 'Typography', 'text-color' );
+			await expect( page.getByText( 'Create your first variable' ) ).toBeVisible();
+		} );
+
+		await test.step( 'Show create menu when create button is clicked', async () => {
+			await page.getByRole( 'button', { name: 'Create a variable' } ).click();
+			await expect( page.getByTestId( 'variable-manager-create-menu' ) ).toBeVisible();
+		} );
+	} );
+
 	test( 'Font Variable exists after creating in panel', async ( ) => {
 		const addedFontVariable = await addFontVariable( page );
 		await openVariableManager( page, 'Typography', 'font-family' );
@@ -44,7 +56,7 @@ test.describe( 'Variable Manager @v4-tests', () => {
 	test( 'Color variable screenshot test', async ( ) => {
 		await addColorVariable( page );
 		await openVariableManager( page, 'Typography', 'text-color' );
-		await expect( page ).toHaveScreenshot( 'color-variable-screenshot.png' );
+		await expect( page.locator( '#elementor-panel' ) ).toHaveScreenshot( 'color-variable-screenshot.png' );
 	} );
 
 	test( 'Variable name validation error displays and clears in the manager', async () => {
@@ -59,18 +71,6 @@ test.describe( 'Variable Manager @v4-tests', () => {
 		await test.step( 'Clear validation error when input is fixed', async () => {
 			await nameField.fill( 'valid-variable-name' );
 			await expect( page.getByText( 'Give your variable a name.' ) ).not.toBeVisible();
-		} );
-	} );
-
-	test( 'Empty state', async () => {
-		await test.step( 'Display empty state message when no variables exist', async () => {
-			await openVariableManager( page, 'Typography', 'text-color' );
-			await expect( page.getByText( 'Create your first variable' ) ).toBeVisible();
-		} );
-
-		await test.step( 'Show create menu when create button is clicked', async () => {
-			await page.getByRole( 'button', { name: 'Create a variable' } ).click();
-			await expect( page.getByTestId( 'variable-manager-create-menu' ) ).toBeVisible();
 		} );
 	} );
 } );
