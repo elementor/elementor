@@ -209,28 +209,39 @@ class Widget_Star_Rating extends Widget_Base {
 			]
 		);
 
+		$start = is_rtl() ? 'right' : 'left';
+		$end = ! is_rtl() ? 'right' : 'left';
+
 		$this->add_responsive_control(
 			'align',
 			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
-						'icon' => 'eicon-text-align-left',
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => "eicon-text-align-$start",
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
-						'icon' => 'eicon-text-align-right',
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => "eicon-text-align-$end",
 					],
 					'justify' => [
 						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
+				],
+				'classes_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
+				],
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
 				],
 				'prefix_class' => 'elementor-star-rating%s--align-',
 				'selectors' => [
