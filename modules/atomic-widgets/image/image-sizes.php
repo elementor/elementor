@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Image_Sizes {
+	const DEFAULT_SIZE = 'large';
 
 	public static function get_keys() {
 		return array_map(
