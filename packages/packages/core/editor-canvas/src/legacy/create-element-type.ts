@@ -1,3 +1,5 @@
+import { type NumberPropValue } from '@elementor/editor-props';
+
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
 
 // Technically it shouldn't have a return type annotation, but for some
@@ -92,7 +94,97 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 		}
 
 		getContextMenuGroups() {
-			return super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
+			const filteredGroups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
+			const componentId = this.options?.model?.get( 'settings' )?.get( 'component_id' ) as NumberPropValue;
+
+			if ( ! componentId?.value ) {
+				return filteredGroups;
+			}
+
+			const { value: id } = componentId;
+			const newGroup = {
+				name: 'edit component',
+				actions: [
+					{
+						name: 'edit component',
+						icon: 'eicon-edit',
+						title: () => 'Edit Component',
+						isEnabled: () => true,
+						callback: () => {
+							legacyWindow.$e.run?.( 'editor/documents/switch', { id } );
+						},
+					},
+				],
+			};
+			return [ ...filteredGroups, newGroup ];
+		}
+
+		bindUIElements() {
+			const componentId = this.options?.model?.get( 'settings' )?.get( 'component_id' ) as NumberPropValue;
+
+			if ( componentId?.value ) {
+				const component = this.$el.get( 0 ).querySelector( '.e-component' );
+				component?.addEventListener( 'dblclick', () => {
+					legacyWindow.$e.run?.( 'editor/documents/switch', { id: componentId.value } );
+				} );
+			}
+			super.bindUIElements();
+		}
+	};
+}
+
+export function createComponentType(): typeof ElementType {
+	const legacyWindow = window as unknown as LegacyWindow;
+
+	return class extends legacyWindow.elementor.modules.elements.types.Widget {
+		getType() {
+			return 'component';
+		}
+
+		getView() {
+			return createComponentViewClassDeclaration();
+		}
+	};
+}
+
+export function createComponentViewClassDeclaration(): typeof ElementView {
+	return class extends createElementViewClassDeclaration() {
+		legacyWindow = window as unknown as LegacyWindow;
+
+		getContextMenuGroups() {
+			const filteredGroups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
+			const componentId = this.options?.model?.get( 'settings' )?.get( 'component_id' ) as NumberPropValue;
+
+			if ( ! componentId?.value ) {
+				return filteredGroups;
+			}
+
+			const { value: id } = componentId;
+			const newGroup = {
+				name: 'edit component',
+				actions: [
+					{
+						name: 'edit component',
+						icon: 'eicon-edit',
+						title: () => 'Edit Component',
+						isEnabled: () => true,
+						callback: () => {
+							this.legacyWindow.$e.run?.( 'editor/documents/switch', { id } );
+						},
+					},
+				],
+			};
+			return [ ...filteredGroups, newGroup ];
+		}
+
+		bindUIElements() {
+			const componentId = this.options?.model?.get( 'settings' )?.get( 'component_id' ) as NumberPropValue;
+			if ( componentId?.value ) {
+				const component = this.$el.get( 0 ).querySelector( '.e-component' );
+				component?.addEventListener( 'dblclick', () => {
+					this.legacyWindow.$e.run?.( 'editor/documents/switch', { id: componentId.value } );
+				} );
+			}
 		}
 	};
 }
