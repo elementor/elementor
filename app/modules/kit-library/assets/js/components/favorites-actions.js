@@ -1,6 +1,5 @@
 import { useKitFavoritesMutations } from '../hooks/use-kit-favorites-mutations';
 import { Button } from '@elementor/app-ui';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import { useTracking } from '../context/tracking-context';
 
 import './favorites-actions.scss';
@@ -11,25 +10,10 @@ export default function FavoritesActions( props ) {
 
 	const loadingClasses = isLoading ? 'e-kit-library__kit-favorite-actions--loading' : '';
 
-	const eventTracking = ( kitName, source, action, gridLocation = null, searchTerm = null ) => {
-		appsEventTrackingDispatch(
-			'kit-library/favorite-icon',
-			{
-				grid_location: gridLocation,
-				search_term: searchTerm,
-				kit_name: kitName,
-				page_source: source && ( '/' === source ? 'home page' : 'overview' ),
-				element_location: source && 'overview' === source ? 'app_sidebar' : null,
-				action,
-			},
-		);
-	};
-
 	const handleRemoveFromFavorites = () => {
 		if ( isLoading ) {
 			return;
 		}
-		eventTracking( props?.name, props?.source, 'uncheck' );
 		tracking.trackKitlibFavoriteClicked(
 			props.id,
 			props?.name,
@@ -41,7 +25,6 @@ export default function FavoritesActions( props ) {
 		if ( isLoading ) {
 			return;
 		}
-		eventTracking( props?.name, props?.source, 'check', props?.index, props?.queryParams );
 		tracking.trackKitlibFavoriteClicked(
 			props.id,
 			props?.name,
