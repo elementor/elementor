@@ -21,18 +21,18 @@ export default function FilterIndicationText( props ) {
 				{ selectedTaxonomies.length > 0 && (
 					<>
 						{ selectedTaxonomies.map( ( taxonomy ) => (
-								<Badge key={ taxonomy } className="e-kit-library__filter-indication-badge">
-									{ NewPlanTexts[ taxonomy ] || taxonomy }
-									<Button
-										text={ __( 'Remove', 'elementor' ) }
-										hideText={ true }
-										icon="eicon-editor-close"
-										className="e-kit-library__filter-indication-badge-remove"
-										onClick={ () => {
-											props.onRemoveTag( taxonomy );
-										} }
-									/>
-								</Badge>
+							<Badge key={ taxonomy } className="e-kit-library__filter-indication-badge">
+								{ NewPlanTexts[ taxonomy ] || taxonomy }
+								<Button
+									text={ __( 'Remove', 'elementor' ) }
+									hideText={ true }
+									icon="eicon-editor-close"
+									className="e-kit-library__filter-indication-badge-remove"
+									onClick={ () => {
+										props.onRemoveTag( taxonomy );
+									} }
+								/>
+							</Badge>
 						) ) }
 					</>
 				) }

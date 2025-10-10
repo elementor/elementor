@@ -2,7 +2,7 @@ import { Text, Button } from '@elementor/app-ui';
 
 import './envato-promotion.scss';
 
-export default function EnvatoPromotion( props ) {
+export default function EnvatoPromotion() {
 	return (
 		<Text className="e-kit-library-promotion" variant="xl">
 			{ __( 'Looking for more Website Templates?', 'elementor' ) } { ' ' }
@@ -17,6 +17,3 @@ export default function EnvatoPromotion( props ) {
 		</Text>
 	);
 }
-EnvatoPromotion.propTypes = {
-	category: PropTypes.string,
-};
