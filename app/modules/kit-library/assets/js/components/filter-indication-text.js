@@ -2,23 +2,12 @@ import useSelectedTaxonomies from '../hooks/use-selected-taxonomies';
 import Badge from './badge';
 import { sprintf, _n } from '@wordpress/i18n';
 import { Text, Button, Grid } from '@elementor/app-ui';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './filter-indication-text.scss';
 import { NewPlanTexts } from '../models/taxonomy-transformer';
 
 export default function FilterIndicationText( props ) {
 	const selectedTaxonomies = useSelectedTaxonomies( props.queryParams.taxonomies );
-	const eventTracking = ( taxonomy, eventType = 'click' ) => {
-		appsEventTrackingDispatch(
-			'kit-library/clear-filter',
-			{
-				tag: taxonomy,
-				page_source: 'home page',
-				event_type: eventType,
-			},
-		);
-	};
 
 	return (
 		<Grid container className="e-kit-library__filter-indication">
@@ -32,19 +21,18 @@ export default function FilterIndicationText( props ) {
 				{ selectedTaxonomies.length > 0 && (
 					<>
 						{ selectedTaxonomies.map( ( taxonomy ) => (
-							<Badge key={ taxonomy } className="e-kit-library__filter-indication-badge">
-								{ NewPlanTexts[ taxonomy ] || taxonomy }
-								<Button
-									text={ __( 'Remove', 'elementor' ) }
-									hideText={ true }
-									icon="eicon-editor-close"
-									className="e-kit-library__filter-indication-badge-remove"
-									onClick={ () => {
-										eventTracking( taxonomy );
-										props.onRemoveTag( taxonomy );
-									} }
-								/>
-							</Badge>
+								<Badge key={ taxonomy } className="e-kit-library__filter-indication-badge">
+									{ NewPlanTexts[ taxonomy ] || taxonomy }
+									<Button
+										text={ __( 'Remove', 'elementor' ) }
+										hideText={ true }
+										icon="eicon-editor-close"
+										className="e-kit-library__filter-indication-badge-remove"
+										onClick={ () => {
+											props.onRemoveTag( taxonomy );
+										} }
+									/>
+								</Badge>
 						) ) }
 					</>
 				) }
@@ -55,7 +43,6 @@ export default function FilterIndicationText( props ) {
 				text={ __( 'Clear all', 'elementor' ) }
 				variant="underlined"
 				onClick={ () => {
-					eventTracking( 'all' );
 					props.onClear();
 				} }
 			/>
