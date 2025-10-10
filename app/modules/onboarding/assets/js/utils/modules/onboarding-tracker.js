@@ -431,8 +431,8 @@ class OnboardingTracker {
 	}
 
 	shouldSendReturnEvent( choiceData ) {
-		return ! choiceData.return_event_sent && 
-			choiceData.original_choice && 
+		return ! choiceData.return_event_sent &&
+			choiceData.original_choice &&
 			choiceData.original_choice !== choiceData.site_starter;
 	}
 
