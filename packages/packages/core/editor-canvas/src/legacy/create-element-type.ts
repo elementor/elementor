@@ -22,38 +22,53 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 	const legacyWindow = window as unknown as LegacyWindow;
 
 	return class extends legacyWindow.elementor.modules.elements.views.Widget {
+		// Dispatch `render` event so the overlay layer will be updated
 		onRender( ...args: unknown[] ) {
 			super.onRender( ...args );
-			this.#notifyOverlayLayerOfRender();
+
+			this.#dispatchEvent( 'elementor/preview/atomic-widget/render' );
+			this.#dispatchPreviewEvent( 'elementor/element/render' );
 		}
 
+		// Dispatch `destroy` event so the overlay layer will be updated
 		onDestroy( ...args: unknown[] ) {
 			super.onDestroy( ...args );
-			this.#notifyOverlayLayerOfDestroy();
+
+			this.#dispatchEvent( 'elementor/preview/atomic-widget/destroy' );
+			this.#dispatchPreviewEvent( 'elementor/element/destroy' );
 		}
 
 		attributes() {
 			return {
 				...super.attributes(),
-				...this.#getAtomicWidgetAttributes(),
+
+				// Mark the widget as atomic, so external APIs (such as the overlay layer) can reference it.
+				'data-atomic': '',
+
+				// Make the wrapper is non-existent in terms of CSS to mimic the frontend DOM tree.
+				style: 'display: contents !important;',
 			};
 		}
 
+		// Removes behaviors that are not needed for atomic widgets (that are implemented in the overlay layer).
 		behaviors() {
 			const disabledBehaviors = [ 'InlineEditing', 'Draggable', 'Resizable' ];
-			const parentBehaviors = super.behaviors();
-			const behaviorsAsEntries = Object.entries( parentBehaviors ).filter(
+
+			const behaviorsAsEntries = Object.entries( super.behaviors() ).filter(
 				( [ key ] ) => ! disabledBehaviors.includes( key )
 			);
+
 			return Object.fromEntries( behaviorsAsEntries );
 		}
 
+		// Change the drag handle because the $el is not the draggable element (`display: contents`).
 		getDomElement() {
-			return this.#getFirstChildAsDragHandle();
+			return this.$el.find( ':first-child' );
 		}
 
+		// Remove the overlay, so we can use the new overlay layer.
 		getHandlesOverlay() {
-			return this.#disableDefaultOverlay();
+			return null;
 		}
 
 		#dispatchEvent( eventType: string ) {
@@ -88,38 +103,11 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 				const originalClasses = ( this as any ).constructor.__super__.className.call( this );
 				const widgetType = ( this.model as any ).get( 'widgetType' ) || ( this.model as any ).get( 'elType' );
 				const baseClassPattern = new RegExp( `\\b${widgetType}-base\\b`, 'g' );
+				
 				return originalClasses.replace( baseClassPattern, '' ).trim();
 			}
 			
 			return ( this as any ).constructor.__super__.className.call( this );
 		}
-
-		#notifyOverlayLayerOfRender() {
-			this.#dispatchEvent( 'elementor/preview/atomic-widget/render' );
-			this.#dispatchPreviewEvent( 'elementor/element/render' );
-		}
-
-		#notifyOverlayLayerOfDestroy() {
-			this.#dispatchEvent( 'elementor/preview/atomic-widget/destroy' );
-			this.#dispatchPreviewEvent( 'elementor/element/destroy' );
-		}
-
-		#getAtomicWidgetAttributes() {
-			return {
-				'data-atomic': '',
-				style: 'display: contents !important;',
-			};
-		}
-
-
-		#getFirstChildAsDragHandle() {
-			return this.$el.find( ':first-child' );
-		}
-
-		#disableDefaultOverlay() {
-			return null;
-		}
-
-
 	};
 }
