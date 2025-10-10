@@ -1,7 +1,7 @@
 name: Calculate PHP Version
 permissions:
   contents: read
-  
+
 on:
   workflow_call:
     outputs:
@@ -18,7 +18,7 @@ jobs:
       - name: Determine PHP version based on event
         id: set_version
         run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
+          if [ "${{ github.event_name }}" == "schedule" ]; then
             echo "VERSION=8.4" >> $GITHUB_OUTPUT
           else
             echo "VERSION=8.1" >> $GITHUB_OUTPUT
