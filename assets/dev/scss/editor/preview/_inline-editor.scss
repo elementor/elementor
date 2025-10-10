@@ -15,19 +15,19 @@
 		z-index: $editor-layer;
 
 		&:after {
-			top: 100%;
 			content: '';
 			position: absolute;
 			border: 6px solid transparent;
 			border-block-start-color: $editor-dark;
-			left: 50%;
+			inset-block-start: 100%;
+			inset-inline-start: 50%;
 			transform: translateX(-50%);
 		}
 
 		&-below {
 
 			&:after {
-				top: 0;
+				inset-block-start: 0;
 				transform: translateX(-50%) translateY(-100%) rotate(180deg);
 			}
 		}
@@ -59,7 +59,7 @@
 			&:before {
 				content: '';
 				position: absolute;
-				@include start(0);
+				inset-inline-start: 0;
 				height: 60%;
 				width: 1px;
 				background-color: $editor-darker;

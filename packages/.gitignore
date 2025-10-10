@@ -1,0 +1,22 @@
+packages/**/dist/
+coverage/
+node_modules/
+log/
+*.log
+*.map
+**/.env
+
+CLAUDE.md
+
+.turbo/
+.cspell/
+
+# IDEs and editors
+.vscode/
+!vscode/extensions.json
+.idea/
+
+# other
+Thumbs.db
+*.DS_Store
+.cursor/

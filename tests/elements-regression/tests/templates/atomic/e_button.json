@@ -1,0 +1,191 @@
+{
+  "content": [
+    {
+      "id": "25953006",
+      "settings": [],
+      "elements": [
+        {
+          "id": "28fdd576",
+          "settings": {
+            "classes": {
+              "$$type": "classes",
+              "value": ["e-28fdd576-c6296f2"]
+            },
+            "text": {
+              "$$type": "string",
+              "value": "I have a shadow"
+            }
+          },
+          "elements": [],
+          "isInner": false,
+          "widgetType": "e-button",
+          "elType": "widget",
+          "styles": {
+            "e-28fdd576-c6296f2": {
+              "id": "e-28fdd576-c6296f2",
+              "label": "local",
+              "type": "class",
+              "variants": [
+                {
+                  "meta": {
+                    "breakpoint": "desktop",
+                    "state": null
+                  },
+                  "props": {
+                    "width": {
+                      "$$type": "size",
+                      "value": {
+                        "size": 300,
+                        "unit": "px"
+                      }
+                    },
+                    "font-family": {
+                      "$$type": "string",
+                      "value": "Aldrich"
+                    },
+                    "padding": {
+                      "$$type": "size",
+                      "value": {
+                        "size": 10,
+                        "unit": "px"
+                      }
+                    },
+                    "margin": {
+                      "$$type": "size",
+                      "value": {
+                        "size": 30,
+                        "unit": "px"
+                      }
+                    },
+                    "border-radius": {
+                      "$$type": "size",
+                      "value": {
+                        "size": 15,
+                        "unit": "px"
+                      }
+                    },
+                    "border-width": {
+                      "$$type": "size",
+                      "value": {
+                        "size": 5,
+                        "unit": "px"
+                      }
+                    },
+                    "border-color": {
+                      "$$type": "color",
+                      "value": "#ff6cd0"
+                    },
+                    "border-style": {
+                      "$$type": "string",
+                      "value": "solid"
+                    },
+                    "background": {
+                      "$$type": "background",
+                      "value": {
+                        "color": {
+                          "$$type": "color",
+                          "value": "#6bd4f0"
+                        }
+                      }
+                    },
+                    "box-shadow": {
+                      "$$type": "box-shadow",
+                      "value": [
+                        {
+                          "$$type": "shadow",
+                          "value": {
+                            "hOffset": {
+                              "$$type": "size",
+                              "value": {
+                                "size": 0,
+                                "unit": "px"
+                              }
+                            },
+                            "vOffset": {
+                              "$$type": "size",
+                              "value": {
+                                "size": 0,
+                                "unit": "px"
+                              }
+                            },
+                            "blur": {
+                              "$$type": "size",
+                              "value": {
+                                "size": 10,
+                                "unit": "px"
+                              }
+                            },
+                            "spread": {
+                              "$$type": "size",
+                              "value": {
+                                "size": 0,
+                                "unit": "px"
+                              }
+                            },
+                            "color": {
+                              "$$type": "color",
+                              "value": "rgba(0, 0, 0, 1)"
+                            }
+                          }
+                        },
+                        {
+                          "$$type": "shadow",
+                          "value": {
+                            "hOffset": {
+                              "$$type": "size",
+                              "value": {
+                                "size": 4,
+                                "unit": "px"
+                              }
+                            },
+                            "vOffset": {
+                              "$$type": "size",
+                              "value": {
+                                "size": 6,
+                                "unit": "px"
+                              }
+                            },
+                            "blur": {
+                              "$$type": "size",
+                              "value": {
+                                "size": 10,
+                                "unit": "px"
+                              }
+                            },
+                            "spread": {
+                              "$$type": "size",
+                              "value": {
+                                "size": 5,
+                                "unit": "px"
+                              }
+                            },
+                            "color": {
+                              "$$type": "color",
+                              "value": "rgba(0, 0, 0, 1)"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "align-self": {
+                      "$$type": "string",
+                      "value": "center"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "editor_settings": [],
+          "version": "0.0"
+        }
+      ],
+      "isInner": false,
+      "elType": "container"
+    }
+  ],
+  "page_settings": [],
+  "version": "0.4",
+  "title": "e-button-template",
+  "type": "page"
+}

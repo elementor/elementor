@@ -1,9 +1,11 @@
-import { useRef, useContext, useState } from 'react';
+import { useRef, useContext, useState, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 import { OnboardingContext } from '../context/context';
 import Connect from '../utils/connect';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
+import { safeDispatchEvent } from '../utils/utils';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
@@ -14,11 +16,48 @@ export default function Account() {
 		actionButtonRef = useRef(),
 		alreadyHaveAccountLinkRef = useRef();
 
+	useEffect( () => {
+		if ( ! state.isLibraryConnected ) {
+			safeDispatchEvent(
+				'view_account_setup',
+				{
+					location: 'plugin_onboarding',
+					trigger: elementorCommon.eventsManager?.config?.triggers?.pageLoaded || 'page_loaded',
+					step_number: 1,
+					step_name: 'account_setup',
+					is_library_connected: state?.isLibraryConnected || false,
+				},
+			);
+		}
+
+		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
+		OnboardingEventTracking.onStepLoad( 1 );
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
 	let skipButton;
 
 	if ( 'completed' !== state.steps[ pageId ] ) {
 		skipButton = {
-			text: __( 'Skip', 'elementor' ),
+			text: __( 'Skip setup', 'elementor' ),
+			action: () => {
+				OnboardingEventTracking.trackStepAction( 1, 'skip' );
+				OnboardingEventTracking.sendEventOrStore( 'SKIP', { currentStep: 1 } );
+				OnboardingEventTracking.sendStepEndState( 1 );
+
+				safeDispatchEvent(
+					'skip_setup',
+					{
+						location: 'plugin_onboarding',
+						trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
+						step_number: 1,
+						step_name: 'account_setup',
+					},
+				);
+
+				updateState( getStateObjectToUpdate( state, 'steps', pageId, 'skipped' ) );
+				navigate( 'onboarding/' + nextStep );
+			},
 		};
 	}
 
@@ -40,8 +79,12 @@ export default function Account() {
 		};
 	} else {
 		pageTexts = elementorAppConfig.onboarding.experiment ? {
-			firstLine: __( 'Once you connect your Elementor account, you can choose from dozens of professional templates and manage your site with the My Elementor dashboard.', 'elementor' ),
-			listItems: [],
+			firstLine: <>{ __( 'To get the most of Elementor, we\'ll connect your account.', 'elementor' ) }  <br /> { __( 'Then you can:', 'elementor' ) }</>,
+			listItems: [
+				__( 'Access dozens of professionally designed templates', 'elementor' ),
+				__( 'Manage all your sites from the My Elementor dashboard', 'elementor' ),
+				__( 'Unlock tools that streamline your workflow and site setup', 'elementor' ),
+			],
 		} : {
 			firstLine: __( 'To get the most out of Elementor, we’ll connect your account.', 'elementor' ) +
 			' ' + __( 'Then you can:', 'elementor' ),
@@ -77,29 +120,30 @@ export default function Account() {
 			navigate( 'onboarding/' + nextStep );
 		};
 	} else {
-		actionButton.text = __( 'Create my account', 'elementor' );
+		actionButton.text = __( 'Start setup', 'elementor' );
 		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
-			elementorCommon.events.dispatchEvent( {
-				event: 'create account',
-				version: '',
-				details: {
-					placement: elementorAppConfig.onboarding.eventPlacement,
-					source: 'cta',
+			OnboardingEventTracking.trackStepAction( 1, 'create' );
+			OnboardingEventTracking.sendEventOrStore( 'CREATE_MY_ACCOUNT', { currentStep: 1, createAccountClicked: 'main_cta' } );
+
+			safeDispatchEvent(
+				'new_account_connect',
+				{
+					location: 'plugin_onboarding',
+					trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
+					step_number: 1,
+					step_name: 'account_setup',
+					button_text: 'Start setup',
 				},
-			} );
+			);
 		};
 	}
 
-	const connectSuccessCallback = ( data ) => {
+	const connectSuccessCallback = () => {
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
 
 		stateToUpdate.isLibraryConnected = true;
-
-		elementorCommon.config.library_connect.is_connected = true;
-		elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
-		elementorCommon.config.library_connect.current_access_tier = data.access_tier;
 
 		updateState( stateToUpdate );
 
@@ -120,6 +164,7 @@ export default function Account() {
 			message: 'Alrighty - your account is connected.',
 		} );
 
+		OnboardingEventTracking.sendStepEndState( 1 );
 		navigate( 'onboarding/' + nextStep );
 	};
 
@@ -141,6 +186,8 @@ export default function Account() {
 				action: 'connect account',
 			},
 		} );
+
+		OnboardingEventTracking.sendConnectionFailureEvents();
 
 		setNoticeState( {
 			type: 'error',
@@ -164,7 +211,7 @@ export default function Account() {
 				{ actionButton.ref && ! state.isLibraryConnected &&
 				<Connect
 					buttonRef={ actionButton.ref }
-					successCallback={ ( data ) => connectSuccessCallback( data ) }
+					successCallback={ ( event, data ) => connectSuccessCallback( event, data ) }
 					errorCallback={ connectFailureCallback }
 				/> }
 				<span>
@@ -180,21 +227,27 @@ export default function Account() {
 				! state.isLibraryConnected && (
 					<div className="e-onboarding__footnote">
 						<p>
-							{ __( 'Already have one?', 'elementor' ) + ' ' }
+							{ __( 'Already have an account?', 'elementor' ) + ' ' }
 							<a
 								ref={ alreadyHaveAccountLinkRef }
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
 								onClick={ () => {
-									elementorCommon.events.dispatchEvent( {
-										event: 'connect account',
-										version: '',
-										details: {
-											placement: elementorAppConfig.onboarding.eventPlacement,
+									OnboardingEventTracking.trackStepAction( 1, 'connect' );
+									OnboardingEventTracking.sendEventOrStore( 'STEP1_CLICKED_CONNECT', { currentStep: state.currentStep } );
+
+									safeDispatchEvent(
+										'existing_account_connect',
+										{
+											location: 'plugin_onboarding',
+											trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
+											step_number: 1,
+											step_name: 'account_setup',
+											button_text: 'Click here to connect',
 										},
-									} );
+									);
 								} }
 							>
-								{ __( 'Connect your account', 'elementor' ) }
+								{ __( 'Click here to connect', 'elementor' ) }
 							</a>
 						</p>
 						<Connect

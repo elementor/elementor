@@ -47,7 +47,7 @@ class Dynamic_CSS extends Post_Local_Cache {
 	 * @since 2.0.13
 	 * @access public
 	 *
-	 * @param int $post_id Post ID.
+	 * @param int      $post_id Post ID.
 	 * @param Post_CSS $post_css_file
 	 */
 	public function __construct( $post_id, Post_CSS $post_css_file ) {
@@ -101,7 +101,7 @@ class Dynamic_CSS extends Post_Local_Cache {
 	 * @since 2.0.13
 	 * @access public
 	 */
-	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
+	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, ?array $all_controls = null ) {
 		$dynamic_settings = $controls_stack->get_settings( '__dynamic__' );
 
 		if ( ! empty( $dynamic_settings ) ) {

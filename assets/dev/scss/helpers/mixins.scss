@@ -4,6 +4,16 @@
 // Mixins
 //
 
+// Direction based value function
+@function getValueByDirection($value-for-left, $value-for-right) {
+
+	@if ($direction == rtl) {
+		@return $value-for-right;
+	}
+
+	@return $value-for-left;
+}
+
 // Simple PX to REM units converter
 @function pxToRem($size) {
 	@return math.div( $size, 16px ) * 1rem;
@@ -210,6 +220,10 @@
 	&.e-danger {
 		background-color: var(--e-a-btn-bg-danger);
 
+		&.color-white {
+			color: var(--e-a-color-white);
+		}
+
 		&:hover,
 		&:focus {
 			background-color: var(--e-a-btn-bg-danger-hover);
@@ -229,9 +243,9 @@
 
 @mixin absolute-center {
 	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	inset-block-start: 50%;
+	inset-inline-start: 50%;
+	transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
 }
 
 @mixin checkers-background($checker-size, $color: var(--e-a-border-color-bold)) {

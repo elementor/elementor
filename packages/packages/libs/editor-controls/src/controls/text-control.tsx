@@ -1,0 +1,49 @@
+import * as React from 'react';
+import { stringPropTypeUtil } from '@elementor/editor-props';
+import { type SxProps, TextField } from '@elementor/ui';
+
+import { useBoundProp } from '../bound-prop-context';
+import ControlActions from '../control-actions/control-actions';
+import { createControl } from '../create-control';
+
+export const TextControl = createControl(
+	( {
+		placeholder,
+		error,
+		inputValue,
+		inputDisabled,
+		helperText,
+		sx,
+		ariaLabel,
+	}: {
+		placeholder?: string;
+		error?: boolean;
+		inputValue?: string;
+		inputDisabled?: boolean;
+		helperText?: string;
+		sx?: SxProps;
+		ariaLabel?: string;
+	} ) => {
+		const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
+		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => setValue( event.target.value );
+
+		return (
+			<ControlActions>
+				<TextField
+					size="tiny"
+					fullWidth
+					disabled={ inputDisabled ?? disabled }
+					value={ inputValue ?? value ?? '' }
+					onChange={ handleChange }
+					placeholder={ placeholder }
+					error={ error }
+					helperText={ helperText }
+					sx={ sx }
+					inputProps={ {
+						...( ariaLabel ? { 'aria-label': ariaLabel } : {} ),
+					} }
+				/>
+			</ControlActions>
+		);
+	}
+);

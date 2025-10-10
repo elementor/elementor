@@ -3,7 +3,7 @@
 //
 .elementor-alert {
 	padding: 15px;
-	border-left: 5px solid transparent;
+	border-inline-start: 5px solid transparent;
 	position: relative;
 	text-align: start;
 
@@ -18,8 +18,8 @@
 
 	button.elementor-alert-dismiss {
 		position: absolute;
-		@include end(var(--dismiss-icon-horizontal-position, 10px));
-		top: var(--dismiss-icon-vertical-position, 10px);
+		inset-inline-end: var(--dismiss-icon-horizontal-position, 10px);
+		inset-block-start: var(--dismiss-icon-vertical-position, 10px);
 		padding: 3px;
 		font-size: var(--dismiss-icon-size, 20px);
 		line-height: 1;
@@ -85,8 +85,8 @@
 		padding: 10px;
 
 		button.elementor-alert-dismiss {
-			right: 7px;
-			top: 7px;
+			inset-inline-end: 7px;
+			inset-block-start: 7px;
 		}
 	}
 }

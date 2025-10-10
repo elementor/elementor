@@ -24,5 +24,7 @@ class PanelChip {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'editor-v4-opt-in-alphachip', 'elementor' );
 	}
 }

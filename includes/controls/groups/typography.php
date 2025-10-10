@@ -212,7 +212,7 @@ class Group_Control_Typography extends Group_Control_Base {
 				],
 			],
 			'responsive' => true,
-			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+			'size_units' => [ 'px', 'em', 'rem', 'lh', 'rlh', 'custom' ],
 			'selector_value' => 'line-height: {{SIZE}}{{UNIT}}',
 		];
 

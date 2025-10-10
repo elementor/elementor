@@ -60,3 +60,11 @@ export const setSelectedFeatureList = ( { checked, id, text, selectedFeatures, s
 		} );
 	}
 };
+
+export const safeDispatchEvent = ( eventName, eventData ) => {
+	try {
+		elementorCommon?.eventsManager?.dispatchEvent?.( eventName, eventData );
+	} catch ( error ) {
+		// Silently fail - don't let tracking break the user experience
+	}
+};

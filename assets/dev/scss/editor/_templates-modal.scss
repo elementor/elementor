@@ -19,6 +19,13 @@ $remote-templates-items-space: 30px;
 		overflow-y: scroll;
 	}
 
+	&:has(#elementor-template-library-save-template) {
+
+		.dialog-message {
+			overflow-y: hidden;
+		}
+	}
+
 	.e-back-to-editor {
 		color: var(--e-a-color-txt);
 		text-decoration: underline;
@@ -56,6 +63,14 @@ $remote-templates-items-space: 30px;
 	}
 }
 
+#elementor-template-library-header-tools {
+
+	&.e-hidden-disabled {
+		opacity: 0;
+		visibility: hidden;
+	}
+}
+
 #elementor-template-library-header-preview-insert-wrapper {
 	cursor: default;
 	padding: 0 10px;
@@ -66,6 +81,7 @@ $remote-templates-items-space: 30px;
 }
 
 #elementor-template-library-header-preview-back {
+	gap: 10px;
 	padding-block: 16.5px 15px;
 	padding-inline: 0 16.5px;
 	border-inline-end: var(--e-a-border);
@@ -77,12 +93,8 @@ $remote-templates-items-space: 30px;
 	}
 
 	i {
-		padding-inline-end: 10px;
 		font-size: 18px;
-
-		&:before {
-			content: getValueByDirection( '\e87e', '\e87d' );
-		}
+		scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
 	}
 }
 
@@ -130,7 +142,7 @@ $remote-templates-items-space: 30px;
 
 				i {
 					font-size: 14px;
-					margin-left: 5px;
+					margin-inline-start: 5px;
 				}
 			}
 
@@ -296,7 +308,7 @@ $remote-templates-items-space: 30px;
 	.elementor-template-library-filter-toolbar-side-actions {
 		display: flex;
 		align-items: center;
-		gap: 10px;
+		gap: 8px;
 
 		.elementor-template-library-action-item {
 			cursor: pointer;
@@ -313,7 +325,7 @@ $remote-templates-items-space: 30px;
 		.divider {
 			width: 1px;
 			height: 20px;
-			background-color: var(--e-a-border);
+			background-color: var(--e-a-border-color);
 		}
 	}
 
@@ -362,7 +374,7 @@ $remote-templates-items-space: 30px;
 				border: var(--e-a-border);
 				border-radius: 3px;
 
-				&:hover {
+				&:not([data-status="locked"]):hover {
 					.elementor-template-library-template-preview {
 						display: flex;
 					}
@@ -384,11 +396,11 @@ $remote-templates-items-space: 30px;
 					height: 100px;
 					position: relative;
 					border-radius: 3px;
-					margin-bottom: 4px;
+					margin-block-end: 4px;
 					overflow: hidden;
 
 					img {
-						object-fit: cover;
+						object-fit: contain;
 						width: 100%;
 						height: 100%;
 					}
@@ -406,9 +418,7 @@ $remote-templates-items-space: 30px;
 
 				.elementor-template-library-template-name {
 					font-size: 11px;
-					white-space: nowrap;
-					text-overflow: ellipsis;
-					overflow: hidden;
+					@include ellipsis;
 				}
 
 				.elementor-template-library-card-footer {
@@ -440,10 +450,8 @@ $remote-templates-items-space: 30px;
 							flex-direction: column;
 							justify-content: center;
 							width: 65%;
-							white-space: nowrap;
-							text-overflow: ellipsis;
-							overflow: hidden;
 							align-items: start;
+							@include ellipsis;
 						}
 					}
 				}
@@ -513,12 +521,18 @@ $remote-templates-items-space: 30px;
 	#elementor-template-library-navigation-container {
 		display: flex;
 		flex: 1;
+		@include ellipsis;
 
 		.elementor-template-library-navigation-container {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
 			gap: 15px;
+			@include ellipsis;
+
+			> span {
+				@include ellipsis;
+			}
 
 			.elementor-template-library-navigation-back-button {
 				padding-inline-start: 8px;
@@ -543,11 +557,11 @@ $remote-templates-items-space: 30px;
 
 		input[type=checkbox] {
 			position: relative;
-			top: 3px;
+			inset-block-start: 3px;
 		}
 
 		input[type=checkbox]:checked {
-			top: 0px;
+			inset-block-start: 0px;
 		}
 	}
 
@@ -709,7 +723,7 @@ label.elementor-template-library-order-label {
 #elementor-template-library-create-new-folder-dialog {
 
 	.elementor-create-folder-template-dialog__p {
-		margin-bottom: 10px;
+		margin-block-end: 10px;
 	}
 }
 
@@ -719,12 +733,12 @@ label.elementor-template-library-order-label {
 
 	i {
 		position: absolute;
-		top: 50%;
-		@include end(0);
+		inset-block-start: 50%;
+		inset-inline-end: 0;
 		transform: translateY(-50%);
 
 		&.eicon-loading.eicon-animation-spin {
-			top: 25%;
+			inset-block-start: 25%;
 		}
 	}
 }
@@ -782,8 +796,8 @@ label.elementor-template-library-order-label {
 			position: absolute;
 			text-transform: uppercase;
 			line-height: 1;
-			top: 5px;
-			@include end(5px);
+			inset-block-start: 5px;
+			inset-inline-end: 5px;
 			padding: 3px 5px;
 			font-size: 8px;
 			border-radius: 2px;
@@ -804,8 +818,8 @@ label.elementor-template-library-order-label {
 		.elementor-template-library-template-footer {
 			position: absolute;
 			width: 100%;
-			bottom: 0;
-			@include start(0);
+			inset-block-end: 0;
+			inset-inline-start: 0;
 			padding: 10px;
 			background-color: var(--e-a-bg-default);
 			transition: transform .5s;
@@ -999,8 +1013,8 @@ label.elementor-template-library-order-label {
 		background-color: var(--e-a-bg-default);
 		border-radius:  var(--e-a-border-radius);
 		box-shadow: 1px 3px 11px rgba(0,0,0,0.3);
-		top: 100%;
-		@include end(0);
+		inset-block-start: 100%;
+		inset-inline-end: 0;
 		z-index: 1;
 
 		> div {
@@ -1010,6 +1024,16 @@ label.elementor-template-library-order-label {
 			display: flex;
 			align-items: center;
 			gap: 8px;
+
+			&.disabled {
+				cursor: not-allowed;
+				color: var(--e-a-color-txt-disabled);
+
+				a {
+					color: var(--e-a-color-txt-disabled);
+					cursor: not-allowed;
+				}
+			}
 		}
 
 		a {
@@ -1033,7 +1057,7 @@ label.elementor-template-library-order-label {
 		cursor: pointer;
 
 		i {
-			font-size: 16px;
+			font-size: 20px;
 		}
 	}
 }
@@ -1098,14 +1122,17 @@ label.elementor-template-library-order-label {
 	}
 
 	.elementor-template-library-template-insert {
+		&.disabled {
+			color: $e-pink-100;
+			&:hover,
+			&:focus {
+				cursor: not-allowed;
+			}
+		}
 
 		i {
 			margin-inline-end: 3px;
 		}
-	}
-
-	.elementor-template-library-template-control-title {
-		margin-inline-start: 6px;
 	}
 }
 
@@ -1115,7 +1142,7 @@ label.elementor-template-library-order-label {
 
 	iframe {
 		height: 150%;
-		transform: scale(0.666) translateX(getValueByDirection(-25%, 25%)) translateY(-25%);
+		transform: scale(0.666) translateX(calc(-25% * var(--direction-multiplier))) translateY(-25%);
 
 		@media (max-width: $library_screen_breakpoint) {
 			width: 1440px;
@@ -1133,7 +1160,11 @@ label.elementor-template-library-order-label {
 	line-height: 1;
 
 	i {
-		font-size: 105px;
+		font-size: 85px;
+
+		&.eicon-library-upload {
+			font-size: 65px;
+		}
 	}
 
 	img {
@@ -1219,6 +1250,19 @@ label.elementor-template-library-order-label {
 			}
 		}
 
+		.ellipsis-container {
+			display: inline;
+			background: var(--e-a-bg-hover);
+			padding: 0 2px 1px;
+			border-radius: 2px;
+			vertical-align: bottom;
+			cursor: pointer;
+
+			&:hover {
+				background: var(--e-a-bg-active);
+			}
+		}
+
 		&.promotion,
 		&.max-capacity {
 
@@ -1228,13 +1272,13 @@ label.elementor-template-library-order-label {
 				display: inline;
 			}
 
-			.eicon-ellipsis-h,
+			.ellipsis-container,
 			#cloud,
 			.cloud label {
 				pointer-events: none;
 			}
 
-			.eicon-ellipsis-h,
+			.ellipsis-container,
 			.divider {
 				display: none;
 			}
@@ -1277,10 +1321,11 @@ label.elementor-template-library-order-label {
 			padding: 15px;
 			height: auto;
 			gap: 10px;
+			position: relative;
 
 			input[type=checkbox]:checked {
 				background: $gray;
-				top: -3px;
+				inset-block-start: -3px;
 				position: relative;
 			}
 		}
@@ -1289,8 +1334,23 @@ label.elementor-template-library-order-label {
 			position: relative;
   			display: inline-block;
 
+			&.cloud,
+			&.local {
+				@include ellipsis;
+				line-height: 27px;
+			}
+
+			#cloud,
+			#local {
+				position: relative;
+				inset-block-start: 2px;
+
+				&:checked {
+					inset-block-start: -2px;
+				}
+			}
+
 			.eicon-ellipsis-h {
-				cursor: pointer;
 				vertical-align: bottom;
 			}
 
@@ -1302,7 +1362,7 @@ label.elementor-template-library-order-label {
 
 			.selected-folder {
 				display: none;
-				margin-inline: 5px;
+				margin-inline-end: 5px;
 
 				&-text {
 					text-decoration: underline;
@@ -1327,11 +1387,18 @@ label.elementor-template-library-order-label {
 		.cloud-folder-selection-dropdown {
 			display: none;
 			position: absolute;
+			inset-block-start: 40px;
 			background-color: var(--e-a-bg-default);
-			min-width: 182px;
+			min-width: 187px;
 			overflow: auto;
 			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 			z-index: 1;
+			border-radius: 2px;
+			max-width: 450px;
+
+			li {
+				@include ellipsis;
+			}
 
 			.eicon-loading {
 				margin: 15px;
@@ -1374,11 +1441,16 @@ label.elementor-template-library-order-label {
 
 			.no-results {
 				text-align: center;
-				font-size: 11px;
-				width: 75%;
+				font-size: 13px;
+				width: 155px;
 				margin: 0 auto;
-				padding-block: 20px;
+				padding-block: 15px;
 				pointer-events: none;
+
+				i {
+					font-size: 24px;
+					padding-block-end: 10px;
+				}
 			}
 		}
 
@@ -1510,9 +1582,9 @@ label.elementor-template-library-order-label {
 
 .elementor-template-library-blank-footer {
 	position: absolute;
-	bottom: 70px;
-	left: 50%;
-	transform: translateX(-50%);
+	inset-block-end: 70px;
+	inset-inline-start: 50%;
+	transform: translateX(calc(-50% * var(--direction-multiplier)));
 	font-style: italic;
 	color: var(--e-a-color-txt-muted);
 
@@ -1582,7 +1654,7 @@ label.elementor-template-library-order-label {
 	&:after {
 		content: '';
 		position: absolute;
-		@include end(46%);
+		inset-inline-end: 46%;
 		transform: scaleX(0.7);
 		border: 10px solid transparent;
 	}
@@ -1596,8 +1668,8 @@ label.elementor-template-library-order-label {
 	}
 
 	&:after {
-		top: 100%;
-		border-top-color: var(--e-a-bg-default);
+		inset-block-start: 100%;
+		border-block-start-color: var(--e-a-bg-default);
 	}
 }
 
@@ -1609,7 +1681,7 @@ label.elementor-template-library-order-label {
 	}
 
 	&:after {
-		bottom: 100%;
-		border-bottom-color: var(--e-a-bg-default);
+		inset-block-end: 100%;
+		border-block-end-color: var(--e-a-bg-default);
 	}
 }

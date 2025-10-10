@@ -3,6 +3,7 @@ import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
 
 import Button from './button';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function SkipButton( props ) {
 	const { button, className } = props,
@@ -24,8 +25,18 @@ export default function SkipButton( props ) {
 	// Make sure the 'action' prop doesn't get printed on the button markup which causes an error.
 	delete button.action;
 
-	// If the button is a link, no onClick functionality should be added.
-	button.onClick = () => {
+	// Handle both href and non-href skip buttons properly
+	button.onClick = ( event ) => {
+		const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+
+		OnboardingEventTracking.trackStepAction( stepNumber, 'skipped' );
+		OnboardingEventTracking.sendStepEndState( stepNumber );
+		OnboardingEventTracking.sendEventOrStore( 'SKIP', { currentStep: stepNumber } );
+
+		if ( 4 === stepNumber ) {
+			OnboardingEventTracking.storeExitEventForLater( 'step4_skip_button', stepNumber );
+		}
+
 		elementorCommon.events.dispatchEvent( {
 			event: 'skip',
 			version: '',
@@ -35,7 +46,13 @@ export default function SkipButton( props ) {
 			},
 		} );
 
-		if ( ! button.href ) {
+		if ( button.href ) {
+			event.preventDefault();
+
+			setTimeout( () => {
+				window.location.href = button.href;
+			}, 100 );
+		} else {
 			action();
 		}
 	};

@@ -144,11 +144,11 @@
 		.elementor-controls-popover {
 			align-self: end;
 			margin-block-start: 35px;
-			top: 0;
+			inset-block-start: 0;
 			width: 100%;
 
 			&:before {
-				@include end(5px);
+				inset-inline-end: 5px;
 			}
 
 			.elementor-control {

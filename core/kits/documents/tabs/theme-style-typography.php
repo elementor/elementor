@@ -75,7 +75,7 @@ class Theme_Style_Typography extends Tab_Base {
 				'label' => esc_html__( 'Paragraph Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
-					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} p' => 'margin-block-end: {{SIZE}}{{UNIT}}',
 				],
 				'range' => [
 					'px' => [

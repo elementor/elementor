@@ -3,9 +3,9 @@ namespace Elementor;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Collection;
-use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Force_Locale;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
@@ -63,6 +63,7 @@ class Widgets_Manager {
 			Atomic_Paragraph::class,
 			Atomic_Button::class,
 			Atomic_Svg::class,
+			Atomic_Divider::class,
 		],
 	];
 
@@ -385,7 +386,7 @@ class Widgets_Manager {
 	}
 
 	/**
-	 * @throws \Exception Exception.
+	 * @throws \Exception If current user don't have permissions to edit the post.
 	 */
 	public function ajax_get_widget_types_controls_config( array $data ) {
 		Plugin::$instance->documents->check_permissions( $data['editor_post_id'] );
@@ -493,7 +494,7 @@ class Widgets_Manager {
 	 * @param array $request Ajax request.
 	 *
 	 * @return bool|string Rendered widget form.
-	 * @throws \Exception If there is an error processing the request.
+	 * @throws \Exception If current user don't have permissions to edit the post.
 	 */
 	public function ajax_get_wp_widget_form( $request ) {
 		Plugin::$instance->documents->check_permissions( $request['editor_post_id'] );

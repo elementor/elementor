@@ -11,13 +11,15 @@ import SearchInput from '../../components/search-input';
 import SortSelect from '../../components/sort-select';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
 import useKits, { defaultQueryParams } from '../../hooks/use-kits';
+import useMenuItems from '../../hooks/use-menu-items';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import useTaxonomies from '../../hooks/use-taxonomies';
 import { Grid } from '@elementor/app-ui';
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useLastFilterContext } from '../../context/last-filter-context';
 import { useLocation } from '@reach/router';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { useTracking } from '../../context/tracking-context';
 
 import './index.scss';
 
@@ -49,35 +51,6 @@ function useTaxonomiesSelection( setQueryParams ) {
 	} ), [ setQueryParams ] );
 
 	return [ selectTaxonomy, unselectTaxonomy ];
-}
-
-/**
- * Generate the menu items for the index page.
- *
- * @param {string} path
- * @return {Array} menu items
- */
-function useMenuItems( path ) {
-	return useMemo( () => {
-		const page = path.replace( '/', '' );
-
-		return [
-			{
-				label: __( 'All Website Kits', 'elementor' ),
-				icon: 'eicon-filter',
-				isActive: ! page,
-				url: '/kit-library',
-				trackEventData: { command: 'kit-library/select-organizing-category', category: 'all' },
-			},
-			{
-				label: __( 'Favorites', 'elementor' ),
-				icon: 'eicon-heart-o',
-				isActive: 'favorites' === page,
-				url: '/kit-library/favorites',
-				trackEventData: { command: 'kit-library/select-organizing-category', category: 'favorites' },
-			},
-		];
-	}, [ path ] );
 }
 
 /**
@@ -137,10 +110,11 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 
 export default function Index( props ) {
 	usePageTitle( {
-		title: __( 'Kit Library', 'elementor' ),
+		title: __( 'Website Templates', 'elementor' ),
 	} );
 
 	const menuItems = useMenuItems( props.path );
+	const tracking = useTracking();
 
 	const {
 		data,
@@ -156,6 +130,14 @@ export default function Index( props ) {
 	} = useKits( props.initialQueryParams );
 
 	useRouterQueryParams( queryParams, setQueryParams, [ 'ready', ...Object.keys( props.initialQueryParams ) ] );
+
+	useEffect( () => {
+		if ( ! queryParams.search ) {
+			return;
+		}
+
+		tracking.trackKitlibSearchSubmitted( queryParams.search, data.length );
+	}, [ queryParams.search, data.length, tracking ] );
 
 	const {
 		data: taxonomiesData,
@@ -179,6 +161,30 @@ export default function Index( props ) {
 			},
 		);
 	};
+
+	const options = [
+		{
+			label: __( 'Featured', 'elementor' ),
+			value: 'featuredIndex',
+			defaultOrder: 'asc',
+			orderDisabled: true,
+		},
+		{
+			label: __( 'New', 'elementor' ),
+			value: 'createdAt',
+			defaultOrder: 'desc',
+		},
+		{
+			label: __( 'Popular', 'elementor' ),
+			value: 'popularityIndex',
+			defaultOrder: 'desc',
+		},
+		{
+			label: __( 'Trending', 'elementor' ),
+			value: 'trendIndex',
+			defaultOrder: 'desc',
+		},
+	];
 
 	return (
 		<Layout
@@ -207,12 +213,11 @@ export default function Index( props ) {
 				<Grid container className="e-kit-library__index-layout-heading">
 					<Grid item className="e-kit-library__index-layout-heading-search">
 						<SearchInput
-							// eslint-disable-next-line @wordpress/i18n-ellipsis
-							placeholder={ __( 'Search all Website Kits...', 'elementor' ) }
+							placeholder={ __( 'Search all Website Templates...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => {
-								setQueryParams( ( prev ) => ( { ...prev, search: value } ) );
 								eventTracking( 'kit-library/kit-free-search', 'top_area_search', value, null, null, null, 'search' );
+								setQueryParams( ( prev ) => ( { ...prev, search: value } ) );
 							} }
 						/>
 						{ isFilterActive && <FilterIndicationText
@@ -227,33 +232,17 @@ export default function Index( props ) {
 						className="e-kit-library__index-layout-heading-sort"
 					>
 						<SortSelect
-							options={ [
-								{
-									label: __( 'Featured', 'elementor' ),
-									value: 'featuredIndex',
-									defaultOrder: 'asc',
-									orderDisabled: true,
-								},
-								{
-									label: __( 'New', 'elementor' ),
-									value: 'createdAt',
-									defaultOrder: 'desc',
-								},
-								{
-									label: __( 'Popular', 'elementor' ),
-									value: 'popularityIndex',
-									defaultOrder: 'desc',
-								},
-								{
-									label: __( 'Trending', 'elementor' ),
-									value: 'trendIndex',
-									defaultOrder: 'desc',
-								},
-							] }
+							options={ options }
 							value={ queryParams.order }
 							onChange={ ( order ) => setQueryParams( ( prev ) => ( { ...prev, order } ) ) }
-							onChangeSortDirection={ ( direction ) => eventTracking( 'kit-library/change-sort-direction', 'top_area_sort', null, direction ) }
-							onChangeSortValue={ ( value ) => eventTracking( 'kit-library/change-sort-value', 'top_area_sort', null, null, value ) }
+							onChangeSortDirection={ ( direction ) => {
+								eventTracking( 'kit-library/change-sort-direction', 'top_area_sort', null, direction );
+							} }
+							onChangeSortValue={ ( value ) => {
+								eventTracking( 'kit-library/change-sort-value', 'top_area_sort', null, null, value );
+								const label = options.find( ( option ) => option.value === value ).label;
+								tracking.trackKitlibSorterSelected( label );
+							} }
 							onSortSelectOpen={ () => eventTracking( 'kit-library/change-sort-type', 'top_area_sort', null, null, null, 'expand' ) }
 						/>
 					</Grid>

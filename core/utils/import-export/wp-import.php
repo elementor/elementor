@@ -31,6 +31,10 @@ if ( ! class_exists( 'WP_Importer' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wp_import_cleanup' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/import.php';
+}
+
 class WP_Import extends \WP_Importer {
 	const DEFAULT_BUMP_REQUEST_TIMEOUT = 60;
 	const DEFAULT_ALLOW_CREATE_USERS = true;
@@ -265,7 +269,7 @@ class WP_Import extends \WP_Importer {
 
 		$this->version = $import_data['version'];
 		$this->set_authors_from_import( $import_data );
-		$this->posts = $import_data['posts'];
+		$this->posts = $this->filter_import_posts( $import_data['posts'] );
 		$this->terms = $import_data['terms'];
 		$this->base_url = esc_url( $import_data['base_url'] );
 		$this->base_blog_url = esc_url( $import_data['base_blog_url'] );
@@ -277,6 +281,22 @@ class WP_Import extends \WP_Importer {
 		do_action( 'import_start' );
 
 		return true;
+	}
+
+	private function filter_import_posts( array $posts ): array {
+		if ( isset( $this->args['include'] ) ) {
+			$filtered_posts = [];
+
+			foreach ( $posts as $post ) {
+				if ( in_array( $post['post_id'], $this->args['include'], true ) ) {
+					$filtered_posts[] = $post;
+				}
+			}
+
+			return $filtered_posts;
+		}
+
+		return $posts;
 	}
 
 	/**
@@ -1332,6 +1352,34 @@ class WP_Import extends \WP_Importer {
 	 * @param $args
 	 */
 	public function __construct( $file, $args = [] ) {
+		if ( ! function_exists( 'wp_tempnam' ) || ! function_exists( 'wp_upload_dir' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		if ( ! function_exists( 'wp_insert_term' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/taxonomy.php';
+		}
+
+		if ( ! function_exists( 'wp_insert_attachment' ) || ! function_exists( 'wp_update_attachment_metadata' ) || ! function_exists( 'wp_generate_attachment_metadata' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/image.php';
+		}
+
+		if ( ! function_exists( 'wp_update_nav_menu_item' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/nav-menu.php';
+		}
+
+		if ( ! function_exists( 'wp_create_user' ) || ! function_exists( 'wp_insert_user' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/user.php';
+		}
+
+		if ( ! function_exists( 'wp_import_cleanup' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/import.php';
+		}
+
+		if ( ! function_exists( 'stick_post' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/post.php';
+		}
+
 		$this->requested_file_path = $file;
 		$this->args = $args;
 

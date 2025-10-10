@@ -2,28 +2,10 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
-import { clickTabByPosition, setupExperiments, setBackgroundVideoUrl, isTabTitleVisible } from './helper';
+import { clickTabByPosition, setBackgroundVideoUrl, isTabTitleVisible } from './helper';
 import _path from 'path';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await setupExperiments( wpAdmin );
-
-		await page.close();
-	} );
-
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-
-		await page.close();
-	} );
-
 	test( 'Check none breakpoint', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -32,7 +14,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			frame = editor.getPreviewFrame();
 
 		await test.step( 'Add nested tabs and select none as breakpoint', async () => {
-			await editor.addWidget( 'nested-tabs', container );
+			await editor.addWidget( { widgetType: 'nested-tabs', container } );
 			await editor.openSection( 'section_tabs_responsive' );
 			await editor.setSelectControlValue( 'breakpoint_selector', 'none' );
 		} );
@@ -53,7 +35,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 
 		const contentContainerOne = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=0` ),
 			contentContainerOneId = await contentContainerOne.getAttribute( 'data-id' ),
@@ -97,7 +79,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			frame = editor.getPreviewFrame();
 
 		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 
 		await test.step( 'Set scrolling settings', async () => {
 			await editor.openSection( 'section_tabs_responsive' );
@@ -199,7 +181,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			frame = editor.getPreviewFrame();
 
 		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 
 		await test.step( 'Set scrolling settings', async () => {
 			await editor.openSection( 'section_tabs_responsive' );
@@ -266,7 +248,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame();
 		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 		// Act
 		await editor.setChooseControlValue( 'tabs_direction', 'eicon-h-align-left' );
 		await editor.setChooseControlValue( 'tabs_justify_vertical', 'eicon-align-stretch-v' );
@@ -287,7 +269,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame();
 		// Add widget.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 		// Act
 		await editor.setChooseControlValue( 'tabs_direction', 'eicon-v-align-top' );
 		await editor.setChooseControlValue( 'tabs_justify_horizontal', 'eicon-align-stretch-h' );

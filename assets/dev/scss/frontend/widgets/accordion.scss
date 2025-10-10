@@ -15,7 +15,7 @@
 		border: 1px solid $gray-light;
 
 		+ .elementor-accordion-item {
-			border-top: none;
+			border-block-start: none;
 		}
 	}
 
@@ -71,7 +71,7 @@
 	.elementor-tab-content {
 		display: none;
 		padding: 15px 20px;
-		border-top: 1px solid $gray-light;
+		border-block-start: 1px solid $gray-light;
 	}
 
 }

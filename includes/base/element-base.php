@@ -452,7 +452,9 @@ abstract class Element_Base extends Controls_Stack {
 		$element_type = $this->get_type();
 
 		if ( $this->should_render_shortcode() ) {
-			echo '[elementor-element data="' . esc_attr( base64_encode( wp_json_encode( $this->get_raw_data() ) ) ) . '"]';
+			$unique_id = apply_filters( 'elementor/element_cache/unique_id', '' );
+
+			echo '[elementor-element k="' . esc_attr( $unique_id ) . '" data="' . esc_attr( base64_encode( wp_json_encode( $this->get_raw_data() ) ) ) . '"]';
 			return;
 		}
 
@@ -1578,7 +1580,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @param array      $data Optional. Element data. Default is an empty array.
 	 * @param array|null $args Optional. Element default arguments. Default is null.
 	 **/
-	public function __construct( array $data = [], array $args = null ) {
+	public function __construct( array $data = [], ?array $args = null ) {
 		if ( $data ) {
 			$this->is_type_instance = false;
 		} elseif ( $args ) {

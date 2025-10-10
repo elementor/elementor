@@ -207,6 +207,9 @@ class Widget_Progress extends Widget_Base {
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'return_value' => 'show',
 				'default' => 'show',
+				'condition' => [
+					'percent!' => '',
+				],
 			]
 		);
 
@@ -232,6 +235,68 @@ class Widget_Progress extends Widget_Base {
 			[
 				'label' => esc_html__( 'Progress Bar', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'title_heading',
+			[
+				'label' => esc_html__( 'Title', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'condition' => [
+					'title!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'title_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-title' => 'color: {{VALUE}};',
+				],
+				'global' => [
+					'default' => Global_Colors::COLOR_PRIMARY,
+				],
+				'condition' => [
+					'title!' => '',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'typography',
+				'selector' => '{{WRAPPER}} .elementor-title',
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
+				],
+				'condition' => [
+					'title!' => '',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_shadow',
+				'selector' => '{{WRAPPER}} .elementor-title',
+				'condition' => [
+					'title!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'percentage_heading',
+			[
+				'label' => esc_html__( 'Percentage', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
 			]
 		);
 
@@ -290,6 +355,9 @@ class Widget_Progress extends Widget_Base {
 				'label' => esc_html__( 'Inner Text', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
+				'condition' => [
+					'inner_text!' => '',
+				],
 			]
 		);
 
@@ -300,6 +368,9 @@ class Widget_Progress extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-bar' => 'color: {{VALUE}};',
+				],
+				'condition' => [
+					'inner_text!' => '',
 				],
 			]
 		);
@@ -312,6 +383,9 @@ class Widget_Progress extends Widget_Base {
 				'exclude' => [
 					'line_height',
 				],
+				'condition' => [
+					'inner_text!' => '',
+				],
 			]
 		);
 
@@ -320,49 +394,9 @@ class Widget_Progress extends Widget_Base {
 			[
 				'name' => 'bar_inner_shadow',
 				'selector' => '{{WRAPPER}} .elementor-progress-bar',
-			]
-		);
-
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_title',
-			[
-				'label' => esc_html__( 'Title Style', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'title_color',
-			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .elementor-title' => 'color: {{VALUE}};',
+				'condition' => [
+					'inner_text!' => '',
 				],
-				'global' => [
-					'default' => Global_Colors::COLOR_PRIMARY,
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'typography',
-				'selector' => '{{WRAPPER}} .elementor-title',
-				'global' => [
-					'default' => Global_Typography::TYPOGRAPHY_TEXT,
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Text_Shadow::get_type(),
-			[
-				'name' => 'title_shadow',
-				'selector' => '{{WRAPPER}} .elementor-title',
 			]
 		);
 

@@ -268,7 +268,7 @@
 		};
 
 		const maybeAddFlexRowClass = function( container ) {
-			if ( ! container ) {
+			if ( ! container || container.classList.contains( 'e-grid' ) ) {
 				return;
 			}
 
@@ -331,8 +331,14 @@
 		};
 
 		const insertGridRowPlaceholder = function() {
-			elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
-			insertPlaceholderInsideElement();
+			const { hasLogicalWrapper, placeholderTarget } = placeholderContext;
+
+			// If we want to use horizontal placeholders inside V3, then we should remove these 3 lines of the code.
+			if ( ! hasLogicalWrapper ) {
+				elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
+			}
+
+			insertPlaceholderInsideElement( placeholderTarget );
 		};
 
 		const insertFlexRowPlaceholder = function() {

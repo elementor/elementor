@@ -45,24 +45,6 @@ module.exports = {
 					},
 				},
 			},
-			container: {
-				widget: null,
-				container: null,
-				'e-div-block': null,
-				'e-flexbox': null,
-			},
-			'e-div-block': {
-				widget: null,
-				'e-div-block': null,
-				container: null,
-				'e-flexbox': null,
-			},
-			'e-flexbox': {
-				widget: null,
-				'e-div-block': null,
-				container: null,
-				'e-flexbox': null,
-			},
 		},
 	},
 
@@ -295,11 +277,11 @@ module.exports = {
 
 				enqueueOptions.crossOrigin = true;
 
-				if ( elementorCommon.config.experimentalFeatures?.e_local_google_fonts && 'preview' === target ) {
+				if ( 'preview' === target ) {
 					elementorCommon.ajax.addRequest( 'enqueue_google_fonts', {
 						data: { font_name: font },
 						unique_id: 'enqueue_google_fonts_' + font,
-					} );
+					}, true );
 				}
 
 				break;
@@ -712,7 +694,7 @@ module.exports = {
 	 * @return {string} the tag, if it is valid, otherwise, 'div'
 	 */
 	validateHTMLTag( tag ) {
-		return allowedHTMLWrapperTags.includes( tag.toLowerCase() ) ? tag : 'div';
+		return allowedHTMLWrapperTags.includes( tag?.toLowerCase() ) ? tag : 'div';
 	},
 
 	convertSizeToFrString( size ) {
@@ -772,9 +754,25 @@ module.exports = {
 		return this.getAtomicElementTypes().includes( elType );
 	},
 
-	isAtomicWidget( model ) {
+	getWidgetCache( model ) {
 		const elementType = 'widget' === model.get( 'elType' ) ? model.get( 'widgetType' ) : model.get( 'elType' );
 
-		return !! elementor.widgetsCache[ elementType ]?.atomic_controls;
+		return elementor.widgetsCache[ elementType ];
+	},
+
+	isAtomicWidget( model ) {
+		const widgetCache = this.getWidgetCache( model );
+
+		return !! widgetCache?.atomic_props_schema;
+	},
+
+	getAtomicWidgetBaseStyles( model ) {
+		if ( ! this.isAtomicWidget( model ) ) {
+			return;
+		}
+
+		const widgetCache = this.getWidgetCache( model );
+
+		return widgetCache.base_styles;
 	},
 };

@@ -1,7 +1,7 @@
 .e-notice-bar {
 	position: absolute;
 	width: 100%;
-	bottom: 0;
+	inset-block-end: 0;
 	display: flex;
 	align-items: center;
 	height: 40px;

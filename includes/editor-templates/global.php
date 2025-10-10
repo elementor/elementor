@@ -18,13 +18,13 @@ function echo_select_your_structure_title() {
 <script type="text/template" id="tmpl-elementor-add-section">
 	<# if ( $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) { #>
 	<div class="elementor-add-section-inner">
-		<button type="button" class="elementor-add-section-close" title="<?php echo esc_attr__( 'Close', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Close', 'elementor' ); ?>">
+		<button type="button" class="elementor-add-section-close" data-tooltip="<?php echo esc_attr__( 'Close', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Close', 'elementor' ); ?>">
 			<i class="eicon-close" aria-hidden="true"></i>
 		</button>
 		<?php
 		$experiments_manager = Plugin::$instance->experiments;
 		if ( $experiments_manager->is_feature_active( 'container' ) ) { ?>
-			<button type="button" class="elementor-add-section-back" title="<?php echo esc_attr__( 'Back', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Back', 'elementor' ); ?>">
+			<button type="button" class="elementor-add-section-back" data-tooltip="<?php echo esc_attr__( 'Back', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Back', 'elementor' ); ?>">
 				<i class="eicon-chevron-left" aria-hidden="true"></i>
 			</button>
 		<?php } ?>
@@ -35,14 +35,14 @@ function echo_select_your_structure_title() {
 
 				$button_title = ( $experiments_manager->is_feature_active( 'container' ) ) ? $add_container_title : $add_section_title;
 			?>
-			<button type="button" class="elementor-add-section-area-button elementor-add-section-button" title="<?php echo esc_attr( $button_title ); ?>" aria-label="<?php echo esc_attr( $button_title ); ?>">
+			<button type="button" class="elementor-add-section-area-button elementor-add-section-button" data-tooltip="<?php echo esc_attr( $button_title ); ?>" aria-label="<?php echo esc_attr( $button_title ); ?>">
 				<i class="eicon-plus" aria-hidden="true"></i>
 			</button>
 			<# if ( 'loop-item' !== elementor.documents.getCurrent()?.config?.type || elementorCommon.config.experimentalFeatures[ 'container' ] ) {
 				const additionalClass = 'loop-item' === elementor.documents.getCurrent()?.config?.type && elementor.documents.getCurrent()?.config?.settings?.settings?.source?.includes( 'taxonomy' )
 					? 'elementor-edit-hidden'
 					: ''; #>
-				<button type="button" class="{{ additionalClass }} elementor-add-section-area-button elementor-add-template-button" title="<?php echo esc_attr__( 'Add Template', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Add Template', 'elementor' ); ?>">
+				<button type="button" class="{{ additionalClass }} elementor-add-section-area-button elementor-add-template-button" data-tooltip="<?php echo esc_attr__( 'Add Template', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Add Template', 'elementor' ); ?>">
 					<i class="eicon-folder" aria-hidden="true"></i>
 				</button>
 			<# } #>

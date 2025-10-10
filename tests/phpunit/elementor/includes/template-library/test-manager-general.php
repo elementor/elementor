@@ -347,7 +347,18 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			]
 		];
 
-		set_transient( 'elementor_remote_templates_data_' . ELEMENTOR_VERSION, $templates );
+		add_filter( 'pre_http_request', function () use ( $templates ) {
+			return [
+				'headers' => [],
+				'response' => [
+					'code' => 200,
+					'message' => 'OK',
+				],
+				'cookies' => [],
+				'filename' => '',
+				'body' => wp_json_encode( $templates ),
+			];
+		}, 10, 3 );
 
 		$document = $this->factory()->documents->create_and_get([
 			'type' => 'page',

@@ -960,14 +960,6 @@ class Element_Section extends Element_Base {
 
 		$this->start_controls_tabs( 'tabs_shape_dividers' );
 
-		$shapes_options = [
-			'' => esc_html__( 'None', 'elementor' ),
-		];
-
-		foreach ( Shapes::get_shapes() as $shape_name => $shape_props ) {
-			$shapes_options[ $shape_name ] = $shape_props['title'];
-		}
-
 		foreach ( [
 			'top' => esc_html__( 'Top', 'elementor' ),
 			'bottom' => esc_html__( 'Bottom', 'elementor' ),
@@ -985,8 +977,10 @@ class Element_Section extends Element_Base {
 				$base_control_key,
 				[
 					'label' => esc_html__( 'Type', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'options' => $shapes_options,
+					'type' => Controls_Manager::VISUAL_CHOICE,
+					'label_block' => true,
+					'columns' => 2,
+					'options' => Shapes::get_shapes(),
 					'render_type' => 'none',
 					'frontend_available' => true,
 					'assets' => [
@@ -1440,7 +1434,13 @@ class Element_Section extends Element_Base {
 				videoAttributes += ' loop';
 			}
 
-			view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
+			view.addRenderAttribute(
+				'background-video-container',
+				{
+					'class': 'elementor-background-video-container',
+					'aria-hidden': 'true',
+				}
+			);
 
 			if ( ! settings.background_play_on_mobile ) {
 				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-mobile' );
@@ -1478,7 +1478,13 @@ class Element_Section extends Element_Base {
 				if ( $settings['background_video_link'] ) :
 					$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
 
-					$this->add_render_attribute( 'background-video-container', 'class', 'elementor-background-video-container' );
+					$this->add_render_attribute(
+						'background-video-container',
+						[
+							'class' => 'elementor-background-video-container',
+							'aria-hidden' => 'true',
+						]
+					);
 
 					if ( ! $settings['background_play_on_mobile'] ) {
 						$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-mobile' );

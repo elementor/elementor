@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<StyleRenderer /> should render styles and links in portal when container is available 1`] = `
+<div
+  data-testid="portal"
+>
+  <style>
+    .test { color: red; }
+  </style>
+  <style>
+    .test2 { color: blue; }
+  </style>
+  <link
+    data-e-removed="true"
+    href="style1.css"
+    id="link1"
+    rel="stylesheet"
+  />
+  <link
+    data-e-removed="true"
+    href="style2.css"
+    id="link2"
+    rel="stylesheet"
+  />
+</div>
+`;

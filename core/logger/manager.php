@@ -154,8 +154,8 @@ class Manager extends BaseModule {
 		wp_send_json_success();
 	}
 
-	public function register_logger( $name, $class ) {
-		$this->loggers[ $name ] = $class;
+	public function register_logger( $name, $class_name ) {
+		$this->loggers[ $name ] = $class_name;
 	}
 
 	public function set_default_logger( $name ) {

@@ -70,6 +70,7 @@ const FormMedia = ( {
 		initialImageType: additionalOptions?.defaultImageType || '',
 		hasSubscription,
 		usagePercentage,
+		hideBackButton: additionalOptions?.hideBackButton,
 	};
 
 	const globalActions = {
@@ -91,7 +92,7 @@ const FormMedia = ( {
 	return (
 		<>
 			<PromptDialog id="e-form-media" onClose={ () => onCloseIntent() } maxWidth="lg" { ...DialogProps }>
-				<PromptDialog.Header onClose={ () => onCloseIntent() }>
+				<PromptDialog.Header onClose={ () => onCloseIntent() } hideAiBetaLogo={ additionalOptions?.hideAiBetaLogo }>
 					{ ! additionalOptions.withoutHistory && <PromptHistory /> }
 
 					{ maybeRenderUpgradeChip() }

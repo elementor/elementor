@@ -239,7 +239,9 @@ class Manager {
 	 * @return array Library data.
 	 */
 	public function get_library_data( array $args ) {
-		$library_data = Api::get_library_data( ! empty( $args['sync'] ) );
+		$force_update = ! empty( $args['sync'] );
+
+		$library_data = Api::get_library_data( $force_update );
 
 		if ( empty( $library_data ) ) {
 			return $library_data;
@@ -249,12 +251,19 @@ class Manager {
 		Plugin::$instance->documents->get_document_types();
 
 		$filter_sources = ! empty( $args['filter_sources'] ) ? $args['filter_sources'] : [];
-		$force_update = ! empty( $args['sync'] );
 
-		return [
+		$full_library_data = [
 			'templates' => $this->get_templates( $filter_sources, $force_update ),
 			'config' => $library_data['types_data'],
 		];
+
+		/**
+		 * Filter the full library data.
+		 *
+		 * @since 3.32.2
+		 * @param-out $full_library_data - 'templates' and 'config' data ('config' holds the list of categories).
+		 */
+		return apply_filters( 'elementor/library/full-data', $full_library_data );
 	}
 
 	/**
@@ -832,11 +841,8 @@ class Manager {
 		$sources = [
 			'local',
 			'remote',
+			'cloud',
 		];
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
-			$sources[] = 'cloud';
-		}
 
 		foreach ( $sources as $source_filename ) {
 			$class_name = ucwords( $source_filename );
@@ -859,7 +865,7 @@ class Manager {
 	 * @param array  $data
 	 *
 	 * @return mixed
-	 * @throws \Exception If the user has no permission or the post is not found.
+	 * @throws \Exception If current user has no permission or the post is not found.
 	 */
 	private function handle_ajax_request( $ajax_request, array $data ) {
 		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
@@ -882,11 +888,11 @@ class Manager {
 			throw new \Exception( esc_html( $result->get_error_message() ) );
 		}
 
-		return $result; // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		return $result;
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws \Exception If template import fails, file validation errors occur, or processing encounters issues.
 	 */
 	public function save_template_screenshot( $data ): string {
 		$validate_args = $this->ensure_args( [ 'template_id', 'screenshot' ], $data );
@@ -901,7 +907,7 @@ class Manager {
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws \Exception If template processing fails or data validation errors occur.
 	 */
 	public function template_screenshot_failed( $data ): string {
 		$validate_args = $this->ensure_args( [ 'template_id' ], $data );
@@ -1156,7 +1162,7 @@ class Manager {
 			: $this->format_args_for_bulk_action_from_cloud( $args );
 
 		if ( $source->supports_quota() && ! $this->is_action_to_same_source( $args ) ) {
-			$is_quota_valid  = $source->validate_quota( $bulk_args );
+			$is_quota_valid = $source->validate_quota( $bulk_args );
 
 			if ( is_wp_error( $is_quota_valid ) ) {
 				return $is_quota_valid;
@@ -1263,7 +1269,7 @@ class Manager {
 			: $this->format_args_for_bulk_action_from_cloud( $args );
 
 		if ( $source->supports_quota() && ! $this->is_action_to_same_source( $args ) ) {
-			$is_quota_valid  = $source->validate_quota( $bulk_args );
+			$is_quota_valid = $source->validate_quota( $bulk_args );
 
 			if ( is_wp_error( $is_quota_valid ) ) {
 				return $is_quota_valid;

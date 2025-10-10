@@ -295,6 +295,7 @@ class Preview extends App {
 		Plugin::$instance->frontend->register_scripts();
 
 		Plugin::$instance->widgets_manager->enqueue_widgets_scripts();
+		Plugin::$instance->elements_manager->enqueue_elements_scripts();
 
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 

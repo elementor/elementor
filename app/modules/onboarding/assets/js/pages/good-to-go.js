@@ -1,56 +1,33 @@
-import Grid from 'elementor-app/ui/grid/grid';
+import { useEffect, useState } from 'react';
 import Layout from '../components/layout/layout';
-import Card from '../components/card';
-import FooterButtons from '../components/layout/footer-buttons';
+import GoodToGoContentA from '../components/good-to-go-content-a';
+import GoodToGoContentB from '../components/good-to-go-content-b';
+import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../utils/onboarding-event-tracking';
 
 export default function GoodToGo() {
-	const pageId = 'goodToGo',
-		skipButton = {
-			text: __( 'Skip', 'elementor' ),
-			href: elementorAppConfig.onboarding.urls.createNewPage,
-		},
-		kitLibraryLink = elementorAppConfig.onboarding.urls.kitLibrary + '&referrer=onboarding';
+	const pageId = 'goodToGo';
+	const [ variant, setVariant ] = useState( null );
+
+	useEffect( () => {
+		OnboardingEventTracking.checkAndSendReturnToStep4();
+		OnboardingEventTracking.onStepLoad( 4 );
+
+		const storedVariant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT );
+		setVariant( storedVariant );
+	}, [] );
+
+	const ContentComponent = 'B' === variant ? GoodToGoContentB : GoodToGoContentA;
+	const skipButton = 'B' === variant ? {
+		text: __( 'Continue with blank canvas', 'elementor' ),
+		href: elementorAppConfig.onboarding.urls.createNewPage,
+	} : {
+		text: __( 'Skip', 'elementor' ),
+		href: elementorAppConfig.onboarding.urls.createNewPage,
+	};
 
 	return (
 		<Layout pageId={ pageId }>
-			<h1 className="e-onboarding__page-content-section-title">
-				{ elementorAppConfig.onboarding.experiment
-					? __( 'Welcome aboard! What\'s next?', 'elementor' )
-					: __( 'That\'s a wrap! What\'s next?', 'elementor' ) }
-			</h1>
-			<div className="e-onboarding__page-content-section-text">
-				{ __( 'There are three ways to get started with Elementor:', 'elementor' ) }
-			</div>
-			<Grid container alignItems="center" justify="space-between" className="e-onboarding__cards-grid e-onboarding__page-content">
-				<Card
-					name="blank"
-					image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Blank_Canvas.svg' }
-					imageAlt={ __( 'Click here to create a new page and open it in Elementor Editor', 'elementor' ) }
-					text={ __( 'Edit a blank canvas with the Elementor Editor', 'elementor' ) }
-					link={ elementorAppConfig.onboarding.urls.createNewPage }
-				/>
-				<Card
-					name="template"
-					image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Library.svg' }
-					imageAlt={ __( 'Click here to go to Elementor\'s Kit Library', 'elementor' ) }
-					text={ __( 'Choose a professionally-designed template or import your own', 'elementor' ) }
-					link={ kitLibraryLink }
-					clickAction={ () => {
-						// The location is reloaded to make sure the Kit Library's state is re-created.
-						location.href = kitLibraryLink;
-						location.reload();
-					} }
-				/>
-				<Card
-					name="site-planner"
-					image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Site_Planner.svg' }
-					imageAlt={ __( 'Click here to go to Elementor\'s Site Planner', 'elementor' ) }
-					text={ __( 'Create a professional site in minutes using AI', 'elementor' ) }
-					link={ elementorAppConfig.onboarding.urls.sitePlanner }
-					target="_blank"
-				/>
-			</Grid>
-			<FooterButtons skipButton={ { ...skipButton, target: '_self' } } className="e-onboarding__good-to-go-footer" />
+			<ContentComponent skipButton={ skipButton } />
 		</Layout>
 	);
 }

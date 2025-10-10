@@ -17,7 +17,7 @@ test.describe( 'General Settings', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpAdmin.gotoDashboard();
+		await wpAdmin.openWordPressDashboard();
 		await validateGettingStartedLinkCount( wpAdmin, 0 );
 		await validateGettingStartedPage( wpAdmin );
 	} );
@@ -25,8 +25,8 @@ test.describe( 'General Settings', () => {
 	test( 'Is visible if home is not active (default for hosting users)', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
 		await wpAdmin.setExperiments( { home_screen: false } );
+
 		// We need to navigate away
 		await validateGettingStartedPage( wpAdmin );
 		await validateGettingStartedLinkCount( wpAdmin, 1 );

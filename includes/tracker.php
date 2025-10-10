@@ -33,6 +33,8 @@ class Tracker {
 
 	private static $notice_shown = false;
 
+	const LAST_TERMS_UPDATED = '2025-07-07';
+
 	/**
 	 * Init.
 	 *
@@ -45,6 +47,8 @@ class Tracker {
 	public static function init() {
 		add_action( 'elementor/tracker/send_event', [ __CLASS__, 'send_tracking_data' ] );
 		add_action( 'admin_init', [ __CLASS__, 'handle_tracker_actions' ] );
+
+		add_action( 'update_option_elementor_allow_tracking', [ __CLASS__, 'set_last_update_time' ] );
 	}
 
 	/**
@@ -68,6 +72,8 @@ class Tracker {
 				'opt_in_send_tracking_data',
 			] );
 		}
+
+		self::set_last_update_time();
 
 		if ( empty( $new_value ) ) {
 			$new_value = 'no';
@@ -171,6 +177,29 @@ class Tracker {
 		return 'yes' === get_option( 'elementor_allow_tracking', 'no' );
 	}
 
+	public static function get_last_update_time() {
+		return get_option( 'elementor_allow_tracking_last_update', false );
+	}
+
+	public static function set_last_update_time(): void {
+		update_option( 'elementor_allow_tracking_last_update', gmdate( 'U' ) );
+	}
+
+	public static function has_terms_changed( $terms_updated = self::LAST_TERMS_UPDATED ): bool {
+		if ( ! self::is_allow_track() ) {
+			return false;
+		}
+
+		$last_update_time = self::get_last_update_time();
+		if ( $last_update_time ) {
+			$terms_updated_timestamp = strtotime( $terms_updated . ' UTC' );
+
+			return $last_update_time < $terms_updated_timestamp;
+		}
+
+		return true;
+	}
+
 	/**
 	 * Handle tracker actions.
 	 *
@@ -215,6 +244,8 @@ class Tracker {
 	public static function set_opt_in( $value ) {
 		if ( $value ) {
 			update_option( 'elementor_allow_tracking', 'yes' );
+			self::set_last_update_time();
+
 			self::send_tracking_data( true );
 		} else {
 			update_option( 'elementor_allow_tracking', 'no' );

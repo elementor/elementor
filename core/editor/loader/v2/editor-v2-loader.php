@@ -20,11 +20,12 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 * Packages that should only be registered, unless some other asset depends on them.
 	 */
 	const LIBS = [
+		'mixpanel',
 		'editor-responsive',
 		'editor-ui',
 		'editor-v1-adapters',
 		self::ENV_PACKAGE,
-		'http',
+		'http-client',
 		'icons',
 		'locations',
 		'menus',
@@ -36,12 +37,15 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'ui',
 		'utils',
 		'wp-media',
+		'editor-current-user',
 	];
 
 	const EXTENSIONS = [
 		'editor-documents',
 		'editor-notifications',
 		'editor-panels',
+		'editor-elements-panel',
+		'editor-mcp',
 	];
 
 	/**
@@ -134,7 +138,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 
 		if ( $env_config ) {
 			$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [
-				'@elementor/http' => [
+				'@elementor/http-client' => [
 					'base_url' => rest_url(),
 					'headers' => [
 						'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ),

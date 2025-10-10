@@ -18,14 +18,14 @@ export default function EnvatoPromotion( props ) {
 
 	return (
 		<Text className="e-kit-library-promotion" variant="xl">
-			{ __( 'Looking for more Kits?', 'elementor' ) } { ' ' }
+			{ __( 'Looking for more Website Templates?', 'elementor' ) } { ' ' }
 			<Button
 				variant="underlined"
 				color="link"
 				url="https://go.elementor.com/app-envato-kits/"
 				target="_blank"
 				rel="noreferrer"
-				text={ __( 'Check out Elementor Template Kits on ThemeForest', 'elementor' ) }
+				text={ __( 'Check out Elementor Website Templates on ThemeForest', 'elementor' ) }
 				onClick={ () => eventTracking( 'kit-library/check-kits-on-theme-forest' ) }
 			/>
 		</Text>

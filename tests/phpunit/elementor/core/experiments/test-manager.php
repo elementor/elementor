@@ -673,7 +673,26 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_sort_allowed_options_by_dependencies() {
-		// Arrange.
+		// Backup current filters and admin state
+		global $wp_filter, $current_screen;
+		$filters_backup = isset( $wp_filter['allowed_options'] ) ? $wp_filter['allowed_options'] : null;
+		$screen_backup = $current_screen;
+		
+		// Set admin context to ensure the filter is registered
+		set_current_screen( 'dashboard' );
+		
+		// Remove all existing filters on allowed_options to ensure clean state
+		remove_all_filters( 'allowed_options' );
+		
+		// Re-register the experiments manager's filter using reflection to access private method
+		$experiments = $this->experiments;
+		add_filter( 'allowed_options', function ( $allowed_options ) use ( $experiments ) {
+			$reflection = new \ReflectionMethod( $experiments, 'sort_allowed_options_by_dependencies' );
+			$reflection->setAccessible( true );
+			return $reflection->invoke( $experiments, $allowed_options );
+		}, 11 );
+		
+		// Arrange
 		$this->experiments->add_feature( [
 			'name' => 'test_A',
 		] );
@@ -699,7 +718,7 @@ class Test_Manager extends Elementor_Test_Base {
 			'dependencies' => [ 'test_A' ],
 		] );
 
-		// Act.
+		// Act
 		$result = apply_filters(
 			'allowed_options',
 			[
@@ -718,7 +737,7 @@ class Test_Manager extends Elementor_Test_Base {
 			]
 		);
 
-		// Assert.
+		// Assert
 		$this->assertEqualSets(
 			[
 				'not-elementor' => [
@@ -737,12 +756,18 @@ class Test_Manager extends Elementor_Test_Base {
 			$result
 		);
 
-		// Teardown.
+		// Cleanup - Remove test features
 		$this->experiments->remove_feature( 'test_A' );
 		$this->experiments->remove_feature( 'test_B' );
 		$this->experiments->remove_feature( 'test_C' );
 		$this->experiments->remove_feature( 'test_D' );
 		$this->experiments->remove_feature( 'test_E' );
+		
+		// Restore original filters and admin state
+		if ( $filters_backup ) {
+			$wp_filter['allowed_options'] = $filters_backup;
+		}
+		$current_screen = $screen_backup;
 	}
 
 	private function add_test_feature( array $args = [] ) {

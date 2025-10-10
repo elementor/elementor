@@ -5,8 +5,8 @@
 // Widget - Overlay Settings
 .elementor-editor-widget-settings {
 	z-index: $second-layer;
-	top: -1px;
-	@include end(-1px);
+	inset-block-start: -1px;
+	inset-inline-end: -1px;
 	flex-direction: row-reverse;
 	border-start-start-radius: 0;
 	border-start-end-radius: 0;

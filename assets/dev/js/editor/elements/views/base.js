@@ -1,5 +1,6 @@
 import environment from 'elementor-common/utils/environment';
 import ElementTypeNotFound from 'elementor-editor/errors/element-type-not-found';
+import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -278,16 +279,22 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getHandlesOverlay() {
-		const elementType = this.getElementType(),
-			$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
-			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
+		const elementType = this.getElementType();
+		if ( ! elementor.userCan( 'design' ) && elementType !== 'widget' ) {
+			return;
+		}
+
+		const isElement = getAllElementTypes().includes( elementType );
+		const	$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
+			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings ${ isElement ? 'elementor-editor-element-overlay-settings' : '' }` } ),
 			editButtonsEnabled = elementor.getPreferences( 'edit_buttons' ),
 			elementData = elementor.getElementData( this.model );
 
 		let editButtons = this.getEditButtons();
+		const shouldShowEditButtons = editButtonsEnabled || 'widget' === elementType;
 
-		// We should only allow external modification to edit buttons if the user enabled edit buttons.
-		if ( editButtonsEnabled ) {
+		// We should only allow external modification to edit buttons if the user enabled edit buttons or it's a widget.
+		if ( shouldShowEditButtons ) {
 			/**
 			 * Filter edit buttons.
 			 *
@@ -1054,6 +1061,19 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	handleAnchorClick( event ) {
+		const anchor = event.target.closest( 'a' );
+		const hash =
+			anchor?.getAttribute( 'href' ) ||
+			this.model?.get( 'settings' )?.get( 'link' )?.url ||
+			'';
+		if ( hash && hash.startsWith( '#' ) && ! hash.includes( 'elementor-action' ) ) {
+			const scrollTargetElem = event.target?.ownerDocument.querySelector( hash );
+
+			if ( scrollTargetElem ) {
+				scrollTargetElem.scrollIntoView();
+			}
+		}
+
 		if ( elementor.helpers.isElementAtomic( this.getContainer().id ) ) {
 			event.preventDefault();
 		}

@@ -38,6 +38,7 @@ class Module extends BaseModule {
 			return;
 		}
 
+		( new Atomic_Widgets_Opt_In() )->init();
 		( new OptInPage( $this ) )->init();
 
 		if ( ! $this->is_atomic_experiment_active() ) {

@@ -48,7 +48,7 @@ class Control_Choose extends Base_Data_Control {
 				<div class="elementor-choices">
 					<# _.each( data.options, function( options, value ) { #>
 					<input id="<?php $this->print_control_uid( $control_uid_input_type ); ?>" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="{{ value }}">
-					<label class="elementor-choices-label elementor-control-unit-1 tooltip-target" for="<?php $this->print_control_uid( $control_uid_input_type ); ?>" data-tooltip="{{ options.title }}" title="{{ options.title }}">
+					<label class="elementor-choices-label elementor-control-unit-1 tooltip-target" for="<?php $this->print_control_uid( $control_uid_input_type ); ?>" data-tooltip="{{ options.title }}">
 						<i class="{{ options.icon }}" aria-hidden="true"></i>
 						<span class="elementor-screen-only">{{{ options.title }}}</span>
 					</label>

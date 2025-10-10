@@ -130,10 +130,10 @@
 				position: absolute;
 				height: 13px;
 				width: 13px;
-				top: 3px;
-				bottom: 0;
-				@include start(8px);
-				@include end(0);
+				inset-block-start: 3px;
+				inset-block-end: 0;
+				inset-inline-start: 8px;
+				inset-inline-end: 0;
 				border-radius: 50%;
 				z-index: -1;
 			}

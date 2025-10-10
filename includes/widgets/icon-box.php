@@ -251,6 +251,10 @@ class Widget_Icon_Box extends Widget_Base {
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
 					],
+					'bottom' => [
+						'title' => esc_html__( 'Bottom', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
 				],
 				'prefix_class' => 'elementor%s-position-',
 				'condition' => [
@@ -279,10 +283,17 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'default' => 'top',
-				'toggle' => false,
-				'prefix_class' => 'elementor-vertical-align-',
+				'selectors_dictionary' => [
+					'top' => 'start',
+					'middle' => 'center',
+					'bottom' => 'end',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'align-items: {{VALUE}};',
+				],
 				'condition' => [
-					'position!' => 'top',
+					'selected_icon[value]!' => '',
+					'position' => [ 'left', 'right' ],
 				],
 			]
 		);
@@ -366,7 +377,7 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-title' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-box-title' => 'margin-block-end: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -843,14 +854,14 @@ class Widget_Icon_Box extends Widget_Base {
 				<?php if ( ! Utils::is_empty( $settings['title_text'] ) ) : ?>
 					<<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?> class="elementor-icon-box-title">
 						<<?php Utils::print_validated_html_tag( $html_tag ); ?> <?php $this->print_render_attribute_string( 'link' ); ?> <?php $this->print_render_attribute_string( 'title_text' ); ?>>
-							<?php $this->print_unescaped_setting( 'title_text' ); ?>
+							<?php echo wp_kses_post( $settings['title_text'] ); ?>
 						</<?php Utils::print_validated_html_tag( $html_tag ); ?>>
 					</<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?>>
 				<?php endif; ?>
 
 				<?php if ( ! Utils::is_empty( $settings['description_text'] ) ) : ?>
 					<p <?php $this->print_render_attribute_string( 'description_text' ); ?>>
-						<?php $this->print_unescaped_setting( 'description_text' ); ?>
+						<?php echo wp_kses_post( $settings['description_text'] ); ?>
 					</p>
 				<?php endif; ?>
 
@@ -880,7 +891,7 @@ class Widget_Icon_Box extends Widget_Base {
 			return;
 		}
 
-		var hasLink = settings.link.url,
+		var hasLink = settings.link?.url,
 			htmlTag = hasLink ? 'a' : 'span',
 			iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 			migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
@@ -893,7 +904,7 @@ class Widget_Icon_Box extends Widget_Base {
 		}
 
 		if ( hasLink ) {
-			view.addRenderAttribute( 'link', 'href', elementor.helpers.sanitizeUrl( settings.link.url ) );
+			view.addRenderAttribute( 'link', 'href', elementor.helpers.sanitizeUrl( settings.link?.url ) );
 			view.addRenderAttribute( 'icon', 'tabindex', '-1' );
 			if ( '' !== settings.title_text ) {
 				view.addRenderAttribute( 'icon', 'aria-label', settings.title_text );

@@ -16,10 +16,6 @@
 	--e-link-in-bio-gutter-block-start: 38px;
 	--e-link-in-bio-gutter-inline: 40px;
 
-	@supports (height: 100dvh) {
-		--e-link-in-bio-full-height: 100dvh;
-	}
-
 	// Identity config - Cover
 	--e-link-in-bio-identity-image-cover-border-bottom-width: 0;
 	--e-link-in-bio-identity-image-cover-border-color: transparent;
@@ -88,6 +84,10 @@
 	padding: var(--e-link-in-bio-gutter-block-start) var(--e-link-in-bio-gutter-inline) var(--e-link-in-bio-gutter-block-end);
 	position: relative;
 	width: var(--e-link-in-bio-container-width);
+
+	@supports (height: 100dvh) {
+		--e-link-in-bio-full-height: 100dvh;
+	}
 
 	&.has-border {
 		--e-link-in-bio-border-style: solid;

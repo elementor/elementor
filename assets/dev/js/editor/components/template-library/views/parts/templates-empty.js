@@ -49,8 +49,8 @@ const TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 				button: `<a class="e-back-to-editor">${ __( 'Back to editor', 'elementor' ) }</a>`,
 			},
 			cloudFolderEmpty: {
-				title: __( 'Nothing to see here… yet', 'elementor' ),
-				message: __( 'Once you add or move templates into this folder, you’ll have quick access to all', 'elementor' ) + '<br>' + __( 'them—right where you need them.', 'elementor' ),
+				title: __( 'No templates to show here, yet', 'elementor' ),
+				message: __( 'Once you save some templates to this folder, you can use them on any website you’re working on.', 'elementor' ),
 				icon: this.getEmptyFolderIcon(),
 				button: `<a class="e-back-to-editor">${ __( 'Back to editor', 'elementor' ) }</a>`,
 			},

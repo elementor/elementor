@@ -21,20 +21,14 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 			return {
 				'data-template_id': data.template_id,
 				'data-type': data.type,
+				'data-status': data.status,
 			};
 		}
 	},
 
 	ui() {
 		return _.extend( TemplateLibraryTemplateLocalView.prototype.ui.apply( this, arguments ), {
-			toggleMore: '.elementor-template-library-template-more-toggle',
 			previewImg: '.elementor-template-library-template-thumbnail img',
-		} );
-	},
-
-	events() {
-		return _.extend( TemplateLibraryTemplateLocalView.prototype.events.apply( this, arguments ), {
-			'click @ui.toggleMore': 'onToggleMoreClick',
 		} );
 	},
 
@@ -68,7 +62,26 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 	},
 
 	updatePreviewImgStyle() {
-		this.ui.previewImg.css( 'object-fit', 'contain' );
+		const img = this.ui.previewImg[ 0 ];
+
+		if ( ! img ) {
+			return;
+		}
+
+		const applyObjectFit = () => {
+			const objectFit = img.naturalHeight > 2000 ? 'cover' : 'contain';
+
+			if ( 'cover' === objectFit ) {
+				this.ui.previewImg.css( 'object-fit', 'cover' );
+				this.ui.previewImg.css( 'object-position', 'top' );
+			}
+		};
+
+		if ( img.complete && img.naturalHeight > 0 ) {
+			applyObjectFit();
+		} else {
+			img.onload = applyObjectFit;
+		}
 	},
 
 	shouldGeneratePreview() {
@@ -132,7 +145,12 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 
 	handleItemDoubleClick() {
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
-			$e.route( 'library/view-folder', { model: this.model } );
+			$e.route( 'library/view-folder', {
+				model: this.model,
+				onAfter: () => {
+					elementor.templates.resetBulkActionBar();
+				},
+			} );
 		}
 	},
 
@@ -140,9 +158,9 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		const itemIsSelected = this.$el.hasClass( 'bulk-selected-item' );
 
 		if ( itemIsSelected ) {
-			elementor.templates.removeBulkSelectionItem( this.model.get( 'template_id' ) );
+			elementor.templates.removeBulkSelectionItem( this.model.get( 'template_id' ), this.model.get( 'type' ) );
 		} else {
-			elementor.templates.addBulkSelectionItem( this.model.get( 'template_id' ) );
+			elementor.templates.addBulkSelectionItem( this.model.get( 'template_id' ), this.model.get( 'type' ) );
 		}
 
 		this.$el.toggleClass( 'bulk-selected-item' );

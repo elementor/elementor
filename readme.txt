@@ -1,8 +1,8 @@
 === Elementor Website Builder - More Than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
-Requires at least: 6.5
-Tested up to: 6.7
+Requires at least: 6.6
+Tested up to: 6.8
 Requires PHP: 7.4
 Stable tag: 3.12.1
 License: GPLv3
@@ -348,49 +348,50 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.28.4 - 2025-04-22 =
+= 3.32.4 - 2025-10-05 =
+* Tweak: Added notice for Load Google Fonts Locally feature to clarify behavior and setup
 
-* Tweak: Added Site Planner as an option in the onboarding wizard
-* Tweak: Changed the default theme to Hello Biz in the onboarding wizard
-* Tweak: Added inline editing support for controls using multiple repeaters
+= 3.32.3 - 2025-09-29 =
 
-= 3.28.3 - 2025-04-01 =
+* Fix: Custom post types are imported even when unselected in Website Templates import
+* Fix: Taxonomy queries not connected properly to widgets in Website Templates import
 
-* Tweak: Added Isolate object tool to Elementor AI image editing capabilities
-* Fix: Third dropdown in template display conditions not working in Theme Builder ([#30729](https://github.com/elementor/elementor/issues/30729), [#30732](https://github.com/elementor/elementor/issues/30732))
+= 3.32.2 - 2025-09-18 =
 
-= 3.28.2 - 2025-03-30 =
+* Tweak: Improved compatibility for 3rd-party plugins serving templates
+* Fix: Structure Panel indicators not visible in RTL layouts
+* Fix: Issues with loading Google Fonts when enabling or disabling Load Google Fonts Locally option ([#32795](https://github.com/elementor/elementor/issues/32795))
+* Fix: Background videos not displaying correctly on RTL websites
 
-* New: Generate logo with AI
-* Tweak: Adjusted supported attributes and elements in SVG files ([#29340](https://github.com/elementor/elementor/issues/29340), [#30132](https://github.com/elementor/elementor/issues/30132))
-* Fix: "Create a page" button is not working in Elementor Home
-* Fix: Icons in Button widgets are not vertically aligned when changing the text line-height ([#30606](https://github.com/elementor/elementor/issues/30606))
+= 3.32.1 - 2025-09-16 =
 
-= 3.28.1 - 2025-03-23 =
+* Tweak: Disabled Load Google Fonts locally on all sites by default
+* Tweak: Moved the Load Google Fonts locally option to the Performance tab as a feature
+* Fix: Column editing handles appear outside the editing overlay
+* Fix: Full width containers not aligned to the center
+* Fix: Editor stuck on loading when using an Image Box widget with a link ([#32756](https://github.com/elementor/elementor/issues/32756))
 
-* Fix: Font URL is not updating after domain change when "Load Google Fonts Locally" feature is activated
+= 3.32.0 - 2025-09-15 =
 
-= 3.28.0 - 2025-03-17 =
-
-* New: Added a Clear Files & Data button to the WordPress frontend admin bar for quick and easy cache clearing ([#21642](https://github.com/elementor/elementor/issues/21642))
-* Tweak: Added a note clarifying that the Image Resolution control doesn't support dynamic background images ([#21359](https://github.com/elementor/elementor/issues/21359), [#22055](https://github.com/elementor/elementor/issues/22055))
-* Tweak: Added hover state Box Shadow controls to Button widget ([#4859](https://github.com/elementor/elementor/issues/4859), [#30210](https://github.com/elementor/elementor/issues/30210), [#17509](https://github.com/elementor/elementor/issues/17509))
-* Tweak: Renamed "Regenerate CSS & Data" to "Elementor Cache" in Elementor Tools for better clarity
-* Tweak: Hide Landing Page feature when no landing page posts exist on the site
-* Tweak: Promoted Load Google Fonts Locally feature to Stable status and enabled it by default for all websites
-* Tweak: Improved rendering functionality when updating CSS ID control to enhance editing performance in Accordion widget
-* Tweak: Improved rendering functionality when updating CSS ID control to enhance editing performance in Tabs widget
-* Tweak: Removed unused deprecated methods from `elementorCommon.helpers`
-* Tweak: Optimized style loading for the Text Editor widget by applying styles at the control level ensuring Drop Cap styles load only when enabled
-* Tweak: Updated Drop Cap controls to use CSS logical properties in Text Editor widget
-* Tweak: Updated minimum required WordPress version to 6.5
-* Tweak: Removed Modest Branding control from Video widget
-* Tweak: Promoted Optimized Markup feature to Beta status
-* Tweak: Added link color controls in Text Editor widget
-* Tweak: Applied hover color on focus for keyboard users in the Heading widget
-* Fix: Button icon alignment breaks when Inline Font Icons feature is activated ([#16077](https://github.com/elementor/elementor/issues/16077), [#16511](https://github.com/elementor/elementor/issues/16511), [#17692](https://github.com/elementor/elementor/issues/17692), [#17922](https://github.com/elementor/elementor/issues/17922), [#19253](https://github.com/elementor/elementor/issues/19253), [#19370](https://github.com/elementor/elementor/issues/19370), [#21236](https://github.com/elementor/elementor/issues/21236), [#21844](https://github.com/elementor/elementor/issues/21844), [#28080](https://github.com/elementor/elementor/issues/28080))
-* Fix: Editor fails to load in some edge cases when ACF Term fields are used as Dynamic Tags ([#29160](https://github.com/elementor/elementor/issues/29160))
-* Fix: Improved sanitization of titles to ensure consistent handling for Admin users in the Heading widget
-* Fix: Hover link color transition duration is not being applied in Heading widget
+* New: Introducing Transform controls to move, scale, rotate, and skew elements with 2D and 3D support - Editor V4
+* New: Introducing Transitions to control how elements animate between states - Editor V4
+* New: Added filter and sort options in Class Manager - Editor V4
+* New: Introducing advanced import and export customization for Website Templates, with selective import of themes, experiments, custom assets, and content
+* Tweak: Added option to convert local styles into a reusable Global Class - Editor V4
+* Tweak: Variables now update live on the canvas while editing a variable - Editor V4
+* Tweak: Updated custom unit UI and improved functionality - Editor V4
+* Tweak: Enabled typing negative values in style fields - Editor V4
+* Tweak: Added Bottom position option on layout setting in Icon Box widget
+* Tweak: Reduced API-Info size for better performance
+* Tweak: Added option for connected users to install Elementor Pro via the Connect Account tab
+* Tweak: Enabled ZIP download of Website Templates from the library
+* Tweak: Merged Cloud Library feature into version
+* Tweak: Optimized compiled CSS output for background videos
+* Tweak: Merged Element Caching feature and moved to Performance tab
+* Fix: Reaching the Global Class limit prevented page saving - Editor V4 ([#32277](https://github.com/elementor/elementor/issues/32277))
+* Fix: PHP 8.4 deprecation notices when running with `WP_DEBUG` enabled
+* Fix: Indications popover not displaying correctly in repeaters for Background Overlay - Editor V4
+* Fix: Reduced-motion preferences are not applied to entrance and exit animations
+* Fix: Added required PHP and WordPress versions to the plugin header
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

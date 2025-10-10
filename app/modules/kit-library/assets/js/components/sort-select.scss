@@ -25,9 +25,8 @@
 			content: "\e8ad";
 			font-family: eicons;
 			position: absolute;
-			@include end( spacing( 10 ) );
-			top: 0;
-			bottom: 0;
+			inset-inline-end: spacing( 10 );
+			inset-block: 0;
 			color: tints(500);
 			display: flex;
 			align-items: center;

@@ -70,8 +70,8 @@
 
 			span {
 				position: absolute;
-				top: 10px;
-				@include end(10px);
+				inset-block-start: 10px;
+				inset-inline-end: 10px;
 				width: 21px;
 				height: 21px;
 				color: var(--e-a-color-white);

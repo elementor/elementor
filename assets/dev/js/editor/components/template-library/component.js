@@ -71,13 +71,10 @@ export default class Component extends ComponentModalBase {
 
 				this.manager.layout.showConnectView( args );
 			},
-		};
-
-		if ( elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ) {
-			defaultRoutes[ 'view-folder' ] = ( args ) => {
+			'view-folder': ( args ) => {
 				this.manager.layout.showFolderView( args );
-			};
-		}
+			},
+		};
 
 		return defaultRoutes;
 	}
@@ -161,6 +158,11 @@ export default class Component extends ComponentModalBase {
 				model: callbackParams.model,
 				data,
 				options: callbackParams.importOptions,
+				onAfter: () => {
+					this.manager.eventManager.sendTemplateInsertedEvent( {
+						library_type: callbackParams.model.get( 'source' ) ?? 'local',
+					} );
+				},
 			} );
 		} );
 	}
@@ -223,6 +225,12 @@ export default class Component extends ComponentModalBase {
 					$e.run( 'library/insert-template', {
 						model,
 						withPageSettings: true,
+						onAfter: () => {
+							elementor.templates.eventManager.sendInsertApplySettingsEvent( {
+								apply_modal_result: 'apply',
+								library_type: model.get( 'source' ),
+							} );
+						},
 					} );
 				};
 
@@ -230,6 +238,12 @@ export default class Component extends ComponentModalBase {
 					$e.run( 'library/insert-template', {
 						model,
 						withPageSettings: false,
+						onAfter: () => {
+							elementor.templates.eventManager.sendInsertApplySettingsEvent( {
+								apply_modal_result: `don't apply`,
+								library_type: model.get( 'source' ),
+							} );
+						},
 					} );
 				};
 

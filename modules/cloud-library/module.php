@@ -28,29 +28,50 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_experiment();
+		$this->register_experiments();
 
-		if ( Plugin::$instance->experiments->is_feature_active( $this->get_name() ) ) {
-			$this->register_app();
+		$this->register_app();
 
-			add_action( 'elementor/init', function () {
-				$this->set_cloud_library_settings();
-			}, 12 /** After the initiation of the connect cloud library */ );
+		add_action( 'elementor/init', function () {
+			$this->set_cloud_library_settings();
+		}, 12 /** After the initiation of the connect cloud library */ );
 
-			add_filter( 'elementor/editor/localize_settings', function ( $settings ) {
-				return $this->localize_settings( $settings );
-			}, 11 /** After Elementor Core */ );
+		add_filter( 'elementor/editor/localize_settings', function ( $settings ) {
+			return $this->localize_settings( $settings );
+		}, 11 /** After Elementor Core */ );
 
-			add_filter( 'elementor/render_mode/module', function( $module_name ) {
-				$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
+		add_filter( 'elementor/render_mode/module', function( $module_name ) {
+			$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
 
-				if ( $render_mode_manager && $render_mode_manager->get_current() instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
+			if ( $render_mode_manager ) {
+				$current_render_mode = $render_mode_manager->get_current();
+
+				if ( $current_render_mode instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
 					return 'cloud-library';
 				}
+			}
 
-				return $module_name;
-			}, 12);
+			return $module_name;
+		}, 12);
+
+		if ( $this->is_screenshot_proxy_mode( $_GET ) ) { // phpcs:ignore -- Checking nonce inside the method.
+			echo $this->get_proxy_data( htmlspecialchars( $_GET['href'] ) ); // phpcs:ignore -- Nonce was checked on the above method
+			die;
 		}
+	}
+
+	public function get_proxy_data( $url ) {
+		$response = wp_safe_remote_get( $url );
+
+		if ( is_wp_error( $response ) ) {
+			return '';
+		}
+
+		$content_type = wp_remote_retrieve_headers( $response )->offsetGet( 'content-type' );
+
+		header( 'content-type: ' . $content_type );
+
+		return wp_remote_retrieve_body( $response );
 	}
 
 	public function localize_settings( $settings ) {
@@ -63,13 +84,18 @@ class Module extends BaseModule {
 		return $settings;
 	}
 
-	private function register_experiment() {
+	private function register_experiments() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => $this->get_name(),
-			'title' => esc_html__( 'Cloud Templates', 'elementor' ),
-			'description' => esc_html__( 'Enable Cloud Templates.', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
+			'title' => esc_html__( 'Cloud Library', 'elementor' ),
+			'release_status' => ExperimentsManager::RELEASE_STATUS_STABLE,
 			'default' => ExperimentsManager::STATE_ACTIVE,
+			'hidden' => true,
+			'mutable' => false,
+			'new_site' => [
+				'always_active' => true,
+				'minimum_installation_version' => '3.32.0',
+			],
 		] );
 	}
 
@@ -91,7 +117,7 @@ class Module extends BaseModule {
 	/**
 	 * @param Render_Mode_Manager $manager
 	 *
-	 * @throws \Exception
+	 * @throws \Exception If render mode registration fails.
 	 */
 	public function register_render_mode( Render_Mode_Manager $manager ) {
 		$manager->register_render_mode( Render_Mode_Preview::class );
@@ -120,9 +146,9 @@ class Module extends BaseModule {
 				'utm_content' => 'cloud-library',
 				'source' => 'cloud-library',
 			] ) ),
-			'library_connect_title' => esc_html__( 'Connect to your Elementor account', 'elementor' ),
-			'library_connect_sub_title' => esc_html__( 'Then you can find all your templates in one convenient library.', 'elementor' ),
-			'library_connect_button_text' => esc_html__( 'Connect', 'elementor' ),
+			'library_connect_title_copy' => esc_html__( 'Connect to your Elementor account', 'elementor' ),
+			'library_connect_sub_title_copy' => esc_html__( 'Then you can find all your templates in one convenient library.', 'elementor' ),
+			'library_connect_button_copy' => esc_html__( 'Connect', 'elementor' ),
 		] );
 	}
 
@@ -151,9 +177,49 @@ class Module extends BaseModule {
 	private function print_thumbnail_preview_callback() {
 		$doc = Plugin::$instance->documents->get_current();
 
-		// PHPCS - should not be escaped.
-		echo Plugin::$instance->frontend->get_builder_content_for_display( $doc->get_main_id(), true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		if ( ! $doc ) {
+			$render_mode = Plugin::$instance->frontend->render_mode_manager->get_current();
+			if ( $render_mode instanceof Render_Mode_Preview ) {
+				$doc = $render_mode->get_document();
+			}
+		}
 
-		wp_delete_post( $doc->get_main_id(), true );
+		if ( ! $doc ) {
+			echo '<div class="elementor-alert elementor-alert-danger">' . esc_html__( 'Document not found for preview.', 'elementor' ) . '</div>';
+			return;
+		}
+
+		Plugin::$instance->documents->switch_to_document( $doc );
+
+		$content = $doc->get_content( true );
+
+		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+
+	protected function is_screenshot_proxy_mode( array $query_params ) {
+		$is_proxy = isset( $query_params['screenshot_proxy'] );
+
+		if ( $is_proxy ) {
+			if ( ! wp_verify_nonce( $query_params['nonce'], 'screenshot-proxy' ) ) {
+				// WP >= 6.2-alpha
+				if ( class_exists( '\WpOrg\Requests\Exception\Http\Status403' ) ) {
+					throw new \WpOrg\Requests\Exception\Http\Status403();
+				} else {
+					throw new \Requests_Exception_HTTP_403();
+				}
+			}
+
+			if ( ! $query_params['href'] ) {
+				// WP >= 6.2-alpha
+				if ( class_exists( '\WpOrg\Requests\Exception\Http\Status400' ) ) {
+					throw new \WpOrg\Requests\Exception\Http\Status400();
+				} else {
+					throw new \Requests_Exception_HTTP_400();
+				}
+			}
+		}
+
+		return $is_proxy;
 	}
 }

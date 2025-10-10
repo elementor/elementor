@@ -384,6 +384,66 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'image_height',
+			[
+				'label' => esc_html__( 'Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-img img' => 'height: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'image_object_fit',
+			[
+				'label' => esc_html__( 'Object Fit', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => esc_html__( 'Default', 'elementor' ),
+					'fill' => esc_html__( 'Fill', 'elementor' ),
+					'cover' => esc_html__( 'Cover', 'elementor' ),
+					'contain' => esc_html__( 'Contain', 'elementor' ),
+					'scale-down' => esc_html__( 'Scale Down', 'elementor' ),
+				],
+				'condition' => [
+					'image_height[size]!' => '',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-img img' => 'object-fit: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'image_object_position',
+			[
+				'label' => esc_html__( 'Object Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'center center' => esc_html__( 'Center Center', 'elementor' ),
+					'center left' => esc_html__( 'Center Left', 'elementor' ),
+					'center right' => esc_html__( 'Center Right', 'elementor' ),
+					'top center' => esc_html__( 'Top Center', 'elementor' ),
+					'top left' => esc_html__( 'Top Left', 'elementor' ),
+					'top right' => esc_html__( 'Top Right', 'elementor' ),
+					'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
+					'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
+					'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
+				],
+				'default' => 'center center',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-img img' => 'object-position: {{VALUE}};',
+				],
+				'condition' => [
+					'image_height[size]!' => '',
+					'image_object_fit' => [ 'cover', 'contain', 'scale-down' ],
+				],
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
@@ -399,10 +459,25 @@ class Widget_Image_Box extends Widget_Base {
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
-				'separator' => 'after',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-img img' => 'border-radius: {{SIZE}}{{UNIT}};',
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'image_box_shadow',
+				'selector' => '{{WRAPPER}} .elementor-image-box-img img',
+			]
+		);
+
+		$this->add_control(
+			'separator_panel_style',
+			[
+				'type' => Controls_Manager::DIVIDER,
+				'style' => 'thick',
 			]
 		);
 
@@ -680,8 +755,11 @@ class Widget_Image_Box extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
+		$description_text = wp_kses_post( $settings['description_text'] );
+		$title_text = wp_kses_post( $settings['title_text'] );
+
 		$has_image = ! empty( $settings['image']['url'] );
-		$has_content = ! Utils::is_empty( $settings['title_text'] ) || ! Utils::is_empty( $settings['description_text'] );
+		$has_content = ! Utils::is_empty( $title_text ) || ! Utils::is_empty( $description_text );
 
 		if ( ! $has_image && ! $has_content ) {
 			return;
@@ -707,26 +785,25 @@ class Widget_Image_Box extends Widget_Base {
 		if ( $has_content ) {
 			$html .= '<div class="elementor-image-box-content">';
 
-			if ( ! Utils::is_empty( $settings['title_text'] ) ) {
+			if ( ! Utils::is_empty( $title_text ) ) {
+				$title_html = $title_text;
 				$this->add_render_attribute( 'title_text', 'class', 'elementor-image-box-title' );
 
 				$this->add_inline_editing_attributes( 'title_text', 'none' );
 
-				$title_html = $settings['title_text'];
-
 				if ( ! empty( $settings['link']['url'] ) ) {
-					$title_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $title_html . '</a>';
+					$title_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $title_text . '</a>';
 				}
 
 				$html .= sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $settings['title_size'] ), $this->get_render_attribute_string( 'title_text' ), $title_html );
 			}
 
-			if ( ! Utils::is_empty( $settings['description_text'] ) ) {
+			if ( ! Utils::is_empty( $description_text ) ) {
 				$this->add_render_attribute( 'description_text', 'class', 'elementor-image-box-description' );
 
 				$this->add_inline_editing_attributes( 'description_text' );
 
-				$html .= sprintf( '<p %1$s>%2$s</p>', $this->get_render_attribute_string( 'description_text' ), $settings['description_text'] );
+				$html .= sprintf( '<p %1$s>%2$s</p>', $this->get_render_attribute_string( 'description_text' ), $description_text );
 			}
 
 			$html .= '</div>';
@@ -748,8 +825,11 @@ class Widget_Image_Box extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
+		const titleText = elementor.helpers.sanitize( settings.title_text, { ALLOW_DATA_ATTR: false } )
+		const descriptionText = elementor.helpers.sanitize( settings.description_text, { ALLOW_DATA_ATTR: false } )
+
 		var hasImage = !! settings.image.url;
-		var hasContent = !! ( settings.title_text || settings.description_text );
+		var hasContent = !! ( titleText || descriptionText );
 
 		if ( ! hasImage && ! hasContent ) {
 			return;
@@ -770,8 +850,8 @@ class Widget_Image_Box extends Widget_Base {
 
 			var imageHtml = '<img src="' + _.escape( image_url ) + '" class="elementor-animation-' + _.escape( settings.hover_animation ) + '" />';
 
-			if ( settings.link.url ) {
-				imageHtml = '<a href="' + elementor.helpers.sanitizeUrl( settings.link.url ) + '" tabindex="-1">' + imageHtml + '</a>';
+			if ( settings.link?.url ) {
+				imageHtml = '<a href="' + elementor.helpers.sanitizeUrl( settings.link?.url ) + '" tabindex="-1">' + imageHtml + '</a>';
 			}
 
 			html += '<figure class="elementor-image-box-img">' + imageHtml + '</figure>';
@@ -780,27 +860,26 @@ class Widget_Image_Box extends Widget_Base {
 		if ( hasContent ) {
 			html += '<div class="elementor-image-box-content">';
 
-			if ( settings.title_text ) {
-				var title_html = elementor.helpers.sanitize( settings.title_text ),
-					titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size );
+			if ( titleText ) {
+				var titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size );
 
-				if ( settings.link.url ) {
-					title_html = '<a href="' + elementor.helpers.sanitizeUrl( settings.link.url ) + '">' + title_html + '</a>';
+				if ( settings.link?.url ) {
+					title_html = '<a href="' + elementor.helpers.sanitizeUrl( settings.link?.url ) + '">' + titleText + '</a>';
 				}
 
 				view.addRenderAttribute( 'title_text', 'class', 'elementor-image-box-title' );
 
 				view.addInlineEditingAttributes( 'title_text', 'none' );
 
-				html += '<' + titleSizeTag  + ' ' + view.getRenderAttributeString( 'title_text' ) + '>' + title_html + '</' + titleSizeTag  + '>';
+				html += '<' + titleSizeTag  + ' ' + view.getRenderAttributeString( 'title_text' ) + '>' + titleText + '</' + titleSizeTag  + '>';
 			}
 
-			if ( settings.description_text ) {
+			if ( descriptionText ) {
 				view.addRenderAttribute( 'description_text', 'class', 'elementor-image-box-description' );
 
 				view.addInlineEditingAttributes( 'description_text' );
 
-				html += '<p ' + view.getRenderAttributeString( 'description_text' ) + '>' + settings.description_text + '</p>';
+				html += '<p ' + view.getRenderAttributeString( 'description_text' ) + '>' + descriptionText + '</p>';
 			}
 
 			html += '</div>';

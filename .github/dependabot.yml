@@ -16,6 +16,6 @@ updates:
     labels:
       - "dependencies"
     groups:
-      elementor-packages:
+      packages:
         patterns:
           - "@elementor/*"

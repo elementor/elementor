@@ -70,6 +70,7 @@ class Cloud_Library extends Library {
 			'type' => $template_data['templateType'],
 			'subType' => $template_data['type'],
 			'title' => $template_data['title'],
+			'status' => $template_data['status'],
 			'author' => $template_data['authorEmail'],
 			'human_date' => date_i18n( get_option( 'date_format' ), strtotime( $template_data['createdAt'] ) ),
 			'export_link' => $this->get_export_link( $template_data['id'] ),
@@ -137,6 +138,7 @@ class Cloud_Library extends Library {
 				'Content-Type' => 'application/json',
 			],
 			'body' => wp_json_encode( $data ),
+			'timeout' => 120,
 		];
 
 		return $this->http_request( 'POST', 'resources/bulk', $resource, [
@@ -190,6 +192,7 @@ class Cloud_Library extends Library {
 
 		$response = $this->http_request( 'PATCH', $endpoint, $payload, [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+			'timeout' => 120,
 		]);
 
 		if ( is_wp_error( $response ) || empty( $response['preview_url'] ) ) {
@@ -333,6 +336,10 @@ class Cloud_Library extends Library {
 	 * @return array|\WP_Error
 	 */
 	public function get_quota() {
+		if ( ! $this->is_connected() ) {
+			return new \WP_Error( 'not_connected', esc_html__( 'Not connected', 'elementor' ) );
+		}
+
 		return $this->http_request( 'GET', 'quota', [], [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );

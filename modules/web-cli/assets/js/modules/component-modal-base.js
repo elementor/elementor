@@ -40,7 +40,13 @@ export default class ComponentModalBase extends ComponentBase {
 			return false;
 		}
 
-		this.layout.getModal().hide();
+		const close = elementor.hooks.applyFilters(
+			'component/modal/close',
+			this.layout.getModal().hide.bind( this.layout.getModal() ),
+			this,
+		);
+
+		close();
 
 		return true;
 	}

@@ -22,6 +22,7 @@ class Module extends BaseModule {
 	const DOCUMENT_TYPE = 'landing-page';
 	const CPT = 'e-landing-page';
 	const ADMIN_PAGE_SLUG = 'edit.php?post_type=' . self::CPT;
+	const ACTIVATION_KEY = 'elementor_landing_pages_activation';
 
 	private $has_pages = null;
 	private $trashed_posts;
@@ -54,17 +55,28 @@ class Module extends BaseModule {
 		] );
 	}
 
+	/**
+	 * Should activate landing pages
+	 *
+	 * Checks whether the Landing Pages should be activated.
+	 *
+	 * If the activation key set to `1` in wp_options, the Landing Pages feature should be active. Otherwise not.
+	 * This is a backwards compatibility for websites that had Landing Pages, therefore couldn't be deactivated.
+	 * When deleting posts in Landing Pages CPT, Elementor checks again whether this feature should be activated.
+	 *
+	 * @since 3.31.0
+	 */
 	private function should_activate_landing_pages() {
-		if ( '1' === get_option( 'elementor_landing_pages_activation' ) ) {
+		if ( '1' === get_option( self::ACTIVATION_KEY ) ) {
 			return true;
 		}
 
 		if ( $this->has_landing_pages() ) {
-			update_option( 'elementor_landing_pages_activation', '1' );
+			update_option( self::ACTIVATION_KEY, '1' );
 			return true;
 		}
 
-		update_option( 'elementor_landing_pages_activation', '0' );
+		update_option( self::ACTIVATION_KEY, '0' );
 		return false;
 	}
 
@@ -493,6 +505,11 @@ class Module extends BaseModule {
 			$cpts[] = self::CPT;
 
 			return $cpts;
+		} );
+
+		// When deleting posts in Landing Page CPT, force Elementor to check again whether this feature should be activated.
+		add_action( 'deleted_post_' . self::CPT, function () {
+			delete_option( self::ACTIVATION_KEY );
 		} );
 
 		// In the Landing Pages Admin Table page - Overwrite Template type column header title.

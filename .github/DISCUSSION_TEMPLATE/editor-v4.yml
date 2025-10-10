@@ -1,0 +1,59 @@
+labels: ["product/editor-v4"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              # 🧪 Editor V4 Discussion Form
+              <br>
+
+              👋 **Welcome, and thank you for helping shape the future of Elementor!**
+
+              We're thrilled to have you here testing **Editor V4** - a major evolution of the Elementor Editor, rebuilt to improve performance, responsiveness, and your overall workflow.
+
+              **This space is for sharing your thoughts, insights, and suggestions about Editor V4's features. Your feedback is incredibly valuable and helps guide the direction of the product during its development.**
+
+              Want to learn more about Editor V4? **[Visit our Editor V4 landing page](https://elemn.to/editor-v4)**, it will be updated regularly!
+              <br>
+
+              ## 🧭 Guidelines
+
+              Before getting started, please take a moment to review our **[Contribution Guidelines](https://elemn.to/gh-contributing)** and **[Code of Conduct](https://elemn.to/gh-code-of-conduct)**. These help us keep this space organized, respectful, and inclusive for everyone.
+              <br>
+
+              > [!IMPORTANT]
+              > ### 🧪 This space is dedicated to <ins>discussing the Editor V4</ins>, its features, and progress.
+              > 
+              > If you're here to report a bug in the **Editor V4**, please use the **[🐛 Editor V4 Bug Report form](https://elemn.to/editor-v4-new-issue)** instead. 
+              > 
+              > ℹ️ Keep in mind **the Editor V4 is still a work in progress** - it may not include all existing features from Elementor V3, is subject to change or instability, and should not be used on production websites.
+              >
+              > ⚠️ _**Discussions that are unrelated to the Editor V4 may be closed without further action.**_ <br>_**Be kind. Keep this space positive, respectful, and welcoming.**_
+              <br>
+
+              ## 💡 Help Us Keep Editor V4 Discussions Organized
+
+              - 🔍 **[Search for existing Editor V4 discussions](https://elemn.to/editor-v4-feedback)**. <br>Someone may have already started a thread on the same topic. Add your thoughts there to keep conversations centralized.
+
+              - ✒️ **Use a clear and descriptive title.** <br>A good title helps others quickly understand what your post is about, and participate on the discussion instead of creating a new one.
+
+              - ☝️ **Stick to one topic per discussion thread.** <br>This makes it easier to track feedback and follow up on specific subjects.
+    - type: textarea
+      id: description
+      validations:
+          required: true
+      attributes:
+          label: "Description"
+          description: "Please share your thoughts, feedback, or questions about the Editor V4 below."
+          placeholder: "Start a discussion about the Editor V4..."
+    - type: markdown
+      attributes:
+          value: |
+              <br>
+    - type: checkboxes
+      id: final_agreement
+      attributes:
+          label: "Agreement"
+          description: "By filling out this form, you confirm that you have read the guidelines outlined above, and you agree your discussion may be closed without warning if it doesn't meet them."
+          options:
+              - label: "I confirm I have read and followed the Editor V4 Discussion Form guidelines, and agree this discussion may be closed without warning."
+                required: true

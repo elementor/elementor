@@ -69,7 +69,7 @@ describe( 'Import Export Admin Test', () => {
 		// Confirmation Widget
 		expect( window.elementorCommon.dialogsManager.createWidget ).toHaveBeenCalledTimes( 1 );
 		expect( window.elementorCommon.lastWidgetHeaderMessage ).toEqual( 'Are you sure?' );
-		expect( window.elementorCommon.lastWidgetMessage ).toEqual( 'Removing Kit Title will permanently delete changes made to the Kit\'s content and site settings' );
+		expect( window.elementorCommon.lastWidgetMessage ).toEqual( 'Removing Kit Title will permanently delete changes made to the Websites Template\'s content and site settings' );
 
 		// Simulate reload
 		window.dispatchEvent( new Event( 'load' ) );
@@ -115,7 +115,7 @@ describe( 'Import Export Admin Test', () => {
 		// Confirmation Widget
 		expect( window.elementorCommon.dialogsManager.createWidget ).toHaveBeenCalledTimes( 1 );
 		expect( window.elementorCommon.lastWidgetHeaderMessage ).toEqual( 'Are you sure?' );
-		expect( window.elementorCommon.lastWidgetMessage ).toEqual( 'Removing Kit Title will permanently delete changes made to the Kit\'s content and site settings' );
+		expect( window.elementorCommon.lastWidgetMessage ).toEqual( 'Removing Kit Title will permanently delete changes made to the Websites Template\'s content and site settings' );
 
 		// Simulate reload
 		window.dispatchEvent( new Event( 'load' ) );
@@ -123,6 +123,6 @@ describe( 'Import Export Admin Test', () => {
 		// Kit deleted dialog
 		expect( window.elementorCommon.dialogsManager.createWidget ).toHaveBeenCalledTimes( 2 );
 		expect( window.elementorCommon.lastWidgetHeaderMessage ).toEqual( 'Active Kit Name was successfully deleted' );
-		expect( window.elementorCommon.lastWidgetMessage ).toEqual( 'Try a different Kit or build your site from scratch.' );
+		expect( window.elementorCommon.lastWidgetMessage ).toEqual( 'Try a different Website Template or build your site from scratch.' );
 	} );
 } );

@@ -1,8 +1,8 @@
 .e-kit-library__preview {
 	&-loader {
 		position: absolute;
-		top: 0;
-		@include start(0);
+		inset-block-start: 0;
+		inset-inline-start: 0;
 		z-index: $ground-layer;
 	}
 
