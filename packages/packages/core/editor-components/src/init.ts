@@ -3,8 +3,7 @@ import { registerElementType } from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
-import { __privateListenTo as listenTo, commandStartEvent } from '@elementor/editor-v1-adapters';
-import { type Args, registerDataHook } from '@elementor/editor-v1-adapters';
+import { __privateListenTo as listenTo, commandStartEvent, registerDataHook } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
@@ -18,13 +17,15 @@ import { removeComponentStyles } from './store/remove-component-styles';
 import { slice } from './store/store';
 import { type Element } from './types';
 
+const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
+
 export function init() {
 	stylesRepository.register( componentsStylesProvider );
 	registerSlice( slice );
 	registerElementType( TYPE, createComponentType );
-	registerDataHook( 'dependency', 'editor/documents/close', ( args: Args ) => {
+	registerDataHook( 'dependency', 'editor/documents/close', ( args ) => {
 		const document = getV1CurrentDocument();
-		if ( document.config.type === 'elementor_component' ) {
+		if ( document.config.type === COMPONENT_DOCUMENT_TYPE ) {
 			args.mode = 'autosave';
 		}
 		return true;

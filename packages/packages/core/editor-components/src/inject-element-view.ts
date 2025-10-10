@@ -27,9 +27,13 @@ export function createComponentViewClassDeclaration(): typeof ElementView {
 	return class extends createElementViewClassDeclaration() {
 		legacyWindow = window as unknown as LegacyWindow;
 
+		getComponentId() {
+			return this.options?.model?.get( 'settings' )?.get( 'component_id' ) as NumberPropValue;
+		}
+
 		getContextMenuGroups() {
 			const filteredGroups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
-			const componentId = this.options?.model?.get( 'settings' )?.get( 'component_id' ) as NumberPropValue;
+			const componentId = this.getComponentId();
 
 			if ( ! componentId?.value ) {
 				return filteredGroups;
@@ -48,7 +52,6 @@ export function createComponentViewClassDeclaration(): typeof ElementView {
 							this.legacyWindow.$e.run?.( 'editor/documents/switch', {
 								id,
 								mode: 'autosave',
-								nextAction: 'autosave',
 							} );
 						},
 					},
@@ -57,17 +60,19 @@ export function createComponentViewClassDeclaration(): typeof ElementView {
 			return [ ...filteredGroups, newGroup ];
 		}
 
+		switchDocument() {
+			this.legacyWindow.$e.run?.( 'editor/documents/switch', {
+				id: this.getComponentId().value,
+				mode: 'autosave',
+				nextAction: 'autosave',
+			} );
+		}
+
 		bindUIElements() {
-			const componentId = this.options?.model?.get( 'settings' )?.get( 'component_id' ) as NumberPropValue;
+			const componentId = this.getComponentId();
 			if ( componentId?.value ) {
 				const component = this.$el.get( 0 ).querySelector( `.${ TYPE }` );
-				component?.addEventListener( 'dblclick', () => {
-					this.legacyWindow.$e.run?.( 'editor/documents/switch', {
-						id: componentId.value,
-						mode: 'autosave',
-						nextAction: 'autosave',
-					} );
-				} );
+				component?.addEventListener( 'dblclick', this.switchDocument );
 			}
 		}
 	};
