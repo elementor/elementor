@@ -359,6 +359,23 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertSame( $schema, $test_schema );
 	}
 
+	public function test_get_atomic_controls__throws_when_control_is_invalid() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [],
+			'controls' => [
+				new \stdClass(),
+			],
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Control must be an instance of `Atomic_Control_Base`.' );
+
+		// Act.
+		$widget->get_atomic_controls();
+	}
+
 	public function test_get_atomic_controls__throws_when_control_inside_a_section_is_not_in_schema() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
