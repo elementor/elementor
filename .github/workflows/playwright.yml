@@ -68,7 +68,7 @@ jobs:
   Playwright:
     name: Playwright - ${{ matrix.shardIndex }} on PHP ${{ matrix.php-version }} with ${{ matrix.browser }} # >>> ИЗМЕНЕНО <<<
     runs-on: ubuntu-22.04
-    needs: [build-plugin, setup] # >>> ИЗМЕНЕНО <<<
+    needs: [build-plugin, setup]
     if: github.event.inputs.tag == '' && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests'))
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
