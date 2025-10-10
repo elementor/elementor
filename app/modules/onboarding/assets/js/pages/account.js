@@ -11,7 +11,6 @@ import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../utils/onboa
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
 		[ noticeState, setNoticeState ] = useState( null ),
-		[ shouldAutoOpenPopup, setShouldAutoOpenPopup ] = useState( false ),
 		nextStep = getNextStep(),
 		navigate = useNavigate(),
 		pageId = 'account',
@@ -30,11 +29,6 @@ export default function Account() {
 					is_library_connected: state?.isLibraryConnected || false,
 				},
 			);
-
-			// Set flag to auto-open popup once Connect component is ready, but only if experiment is enabled
-			if ( elementorAppConfig.onboarding.onboardingStartsWithLogin103 ) {
-				setShouldAutoOpenPopup( true );
-			}
 		}
 
 		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
@@ -147,14 +141,6 @@ export default function Account() {
 		};
 	}
 
-
-	const connectReadyCallback = () => {
-		if ( shouldAutoOpenPopup && actionButtonRef.current ) {
-			actionButtonRef.current.click();
-			setShouldAutoOpenPopup( false );
-		}
-	};
-
 	const connectSuccessCallback = () => {
 		const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
 
@@ -214,34 +200,36 @@ export default function Account() {
 		navigate( 'onboarding/' + nextStep );
 	};
 
-	const variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT );
-	const ContentComponent = 'B' === variant ? AccountContentB : AccountContentA;
+	const connectReadyCallback = () => {
+		// Ready callback implementation
+	};
+
+	const experiment101Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT );
+	const ContentComponent = 'B' === experiment101Variant ? AccountContentB : AccountContentA;
 
 	return (
-		<Layout 
-			pageId={ pageId } 
-			nextStep={ nextStep }
-			className={ 'B' === variant ? 'e-onboarding-variant-b' : '' }
-		>
-		<ContentComponent
-			actionButton={ actionButton }
-			skipButton={ skipButton }
-			noticeState={ noticeState }
-			pageTexts={ pageTexts }
-			state={ state }
-			connectSuccessCallback={ connectSuccessCallback }
-			connectFailureCallback={ connectFailureCallback }
-			connectReadyCallback={ connectReadyCallback }
-			alreadyHaveAccountLinkRef={ alreadyHaveAccountLinkRef }
-			OnboardingEventTracking={ OnboardingEventTracking }
-			updateState={ updateState }
-			getStateObjectToUpdate={ getStateObjectToUpdate }
-			navigate={ navigate }
-			nextStep={ nextStep }
+		<Layout
 			pageId={ pageId }
-		/>
+			nextStep={ nextStep }
+			className={ 'B' === experiment101Variant ? 'e-onboarding101-variant-b' : '' }
+		>
+			<ContentComponent
+				actionButton={ actionButton }
+				skipButton={ skipButton }
+				noticeState={ noticeState }
+				pageTexts={ pageTexts }
+				state={ state }
+				connectSuccessCallback={ connectSuccessCallback }
+				connectFailureCallback={ connectFailureCallback }
+				connectReadyCallback={ connectReadyCallback }
+				updateState={ updateState }
+				getStateObjectToUpdate={ getStateObjectToUpdate }
+				navigate={ navigate }
+				nextStep={ nextStep }
+				pageId={ pageId }
+			/>
 			{
-				! state.isLibraryConnected && 'B' !== variant && (
+				! state.isLibraryConnected && 'B' !== experiment101Variant && (
 					<div className="e-onboarding__footnote">
 						<p>
 							{ __( 'Already have an account?', 'elementor' ) + ' ' }

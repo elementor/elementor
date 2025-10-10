@@ -8,7 +8,7 @@ export default function ProgressBarItem( props ) {
 		stepCompleted = 'completed' === state.steps[ props.id ],
 		stepSkipped = 'skipped' === state.steps[ props.id ];
 
-	const isExperiment101VariantB = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT ) === 'B';
+	const isExperiment101VariantB = 'B' === localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT );
 
 	let itemClasses = 'e-onboarding__progress-bar-item';
 

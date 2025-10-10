@@ -971,7 +971,6 @@ class OnboardingTracker {
 
 		StorageManager.setString( config.startedKey, 'true' );
 	}
-
 }
 
 const onboardingTracker = new OnboardingTracker();

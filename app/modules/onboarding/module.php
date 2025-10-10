@@ -154,10 +154,9 @@ class Module extends BaseModule {
 			],
 			'nonce' => wp_create_nonce( 'onboarding' ),
 			'experiment' => true,
+			'isExperiment101Enabled' => $this->is_experiment_enabled( 'emphasizeConnectBenefits101' ),
 			'isExperiment201Enabled' => $this->is_experiment_enabled( 'offerThemeChoicesHelloBiz201' ),
 			'isExperiment402Enabled' => $this->is_experiment_enabled( 'reduceHierarchyBlankOption402' ),
-			'isExperiment103Enabled' => $this->is_experiment_enabled( 'onboardingStartsWithLogin103' ),
-			'isExperiment101Enabled' => $this->is_experiment_enabled( 'emphasizeConnectBenefits101' ),
 		] );
 	}
 

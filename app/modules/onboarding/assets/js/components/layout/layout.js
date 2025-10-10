@@ -159,7 +159,7 @@ export default function Layout( props ) {
 
 	return (
 		<div className="eps-app__lightbox">
-			<div className={ containerClasses.join(' ') }>
+			<div className={ containerClasses.join( ' ' ) }>
 				{ ! state.isLibraryConnected &&
 					<Connect
 						buttonRef={ createAccountButton.elRef }

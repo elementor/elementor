@@ -5,7 +5,7 @@ import { OnboardingEventTracking } from './onboarding-event-tracking';
 
 export default function Connect( props ) {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext );
-	const { buttonRef, successCallback, errorCallback, readyCallback } = props;
+	const { buttonRef, successCallback, errorCallback } = props;
 
 	const handleCoreConnectionLogic = useCallback( ( event, data ) => {
 		const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
@@ -45,12 +45,7 @@ export default function Connect( props ) {
 				height: 534,
 			},
 		} );
-
-		// Notify that the connect component is ready
-		if ( readyCallback ) {
-			readyCallback();
-		}
-	}, [ buttonRef, successCallback, errorCallback, readyCallback, handleCoreConnectionLogic, defaultConnectSuccessCallback ] );
+	}, [ buttonRef, successCallback, errorCallback, handleCoreConnectionLogic, defaultConnectSuccessCallback ] );
 
 	return null;
 }
@@ -59,5 +54,4 @@ Connect.propTypes = {
 	buttonRef: PropTypes.object.isRequired,
 	successCallback: PropTypes.func,
 	errorCallback: PropTypes.func,
-	readyCallback: PropTypes.func,
 };
