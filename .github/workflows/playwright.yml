@@ -36,9 +36,8 @@ concurrency:
   group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
-# ЕДИНСТВЕННЫЙ ИСТОЧНИК ИСТИНЫ для логики версии PHP в ШАГАХ (steps).
 env:
-  PHP_VERSION: ${{ github.event_name == 'schedule' && '8.4' || '8.1' }}
+  PHP_VERSION: ${{ github.event_name == 'workflow_dispatch' && '8.4' || '8.1' }}
 
 jobs:
   build-plugin:
@@ -46,7 +45,6 @@ jobs:
     name: Build plugin
     uses: ./.github/workflows/build.yml
   Playwright:
-    # ИСПРАВЛЕНИЕ: Используем выражение напрямую, так как парсер не распознает 'env' в поле 'name'.
     name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ github.event_name == 'schedule' && '8.4' || '8.1' }})
     runs-on: ubuntu-22.04
     needs: [build-plugin]
@@ -64,12 +62,6 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
-      - name: Log PHP version
-        id: set-php-version
-        run: |
-          # Внутри шага переменная env.PHP_VERSION доступна и используется
-          echo "Determined PHP version: ${{ env.PHP_VERSION }}"
 
       - name: Cache Docker images.
         uses: ScribeMD/docker-cache@0.5.0
@@ -95,7 +87,6 @@ jobs:
 
       - name: Update PHP version in config
         run: |
-          # Используем глобальную переменную env.PHP_VERSION для конфигурации
           jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
           echo "PHP version set to:"
           cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
@@ -144,7 +135,6 @@ jobs:
           if-no-files-found: ignore
           retention-days: 2
   PlaywrightWithTag:
-    # ИСПРАВЛЕНИЕ: Используем выражение напрямую, так как парсер не распознает 'env' в поле 'name'.
     name: Playwright test - tagged tests on PHP (${{ github.event_name == 'schedule' && '8.4' || '8.1' }})
     runs-on: ubuntu-22.04
     needs: [ build-plugin ]
@@ -152,12 +142,6 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
-      - name: Log PHP version
-        id: set-php-version
-        run: |
-          # Внутри шага переменная env.PHP_VERSION доступна и используется
-          echo "Determined PHP version: ${{ env.PHP_VERSION }}"
 
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
