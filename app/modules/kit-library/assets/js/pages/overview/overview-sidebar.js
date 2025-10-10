@@ -4,30 +4,11 @@ import FavoritesActions from '../../components/favorites-actions';
 import Kit from '../../models/kit';
 import { Heading, CardImage, Text } from '@elementor/app-ui';
 import { useState } from 'react';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './overview-sidebar.scss';
 
 export default function OverviewSidebar( props ) {
 	const [ isInformationCollapseOpen, setIsInformationCollapseOpen ] = useState( true );
-
-	const eventTracking = ( command, section = null, kitName = null, tag = null, isCollapsed = null, eventType = 'click' ) => {
-		const action = isCollapsed && isCollapsed ? 'collapse' : 'expand';
-		if ( 'boolean' === typeof isCollapsed ) {
-			command = `kit-library/${ action }`;
-		}
-		appsEventTrackingDispatch(
-			command,
-			{
-				page_source: 'overview',
-				element_location: 'app_sidebar',
-				kit_name: kitName,
-				tag,
-				section,
-				event_type: eventType,
-			},
-		);
-	};
 
 	return (
 		<div className="e-kit-library__item-sidebar">
@@ -56,9 +37,6 @@ export default function OverviewSidebar( props ) {
 					onChange={ setIsInformationCollapseOpen }
 					title={ __( 'WHAT\'S INSIDE', 'elementor' ) }
 					className="e-kit-library__item-sidebar-collapse-info"
-					onClick={ ( collapseState, title ) => {
-						eventTracking( null, title, null, null, collapseState );
-					} }
 				>
 					{
 						props.groupedKitContent.map( ( contentType ) => {
