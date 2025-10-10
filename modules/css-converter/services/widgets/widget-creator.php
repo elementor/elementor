@@ -367,7 +367,6 @@ class Widget_Creator {
 				'isInner' => false,
 				'styles' => $this->convert_styles_to_v4_format( $applied_styles, $widget_type ),
 				'editor_settings' => [
-					'disable_base_styles' => $this->use_zero_defaults,
 					'css_converter_widget' => true,
 				],
 				'version' => '0.0',
@@ -381,7 +380,6 @@ class Widget_Creator {
 				'isInner' => false,
 				'styles' => $this->convert_styles_to_v4_format( $applied_styles, $widget_type ),
 				'editor_settings' => [
-					'disable_base_styles' => $this->use_zero_defaults,
 					'css_converter_widget' => true,
 				],
 				'version' => '0.0',

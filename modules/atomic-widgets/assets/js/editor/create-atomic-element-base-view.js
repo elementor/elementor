@@ -563,19 +563,17 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 	getBaseClass() {
-		const editorSettings = this.model.get( 'editor_settings' ) || {};
-		const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
-		const baseClass = Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
-		
-		if ( this.isCssConverterWidget( editorSettings ) ) {
+		if ( this.isCssConverterWidget() ) {
 			return '';
 		}
 
-		return baseClass;
+		const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
+		return Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
 	},
 
-	isCssConverterWidget( editorSettings ) {
-		return editorSettings.css_converter_widget || editorSettings.disable_base_styles;
+	isCssConverterWidget() {
+		const editorSettings = this.model.get( 'editor_settings' ) || {};
+		return editorSettings.css_converter_widget;
 	},
 
 		isOverflowHidden() {

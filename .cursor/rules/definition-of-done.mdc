@@ -1,0 +1,258 @@
+# Definition of Done
+
+## 🚨 CRITICAL: No Code Ships Without Verification
+
+**NEVER submit code without running tests. Writing tests without execution is reckless behavior.**
+
+## Mandatory Verification Steps
+
+### 1. **Syntax and Linting** (MANDATORY)
+```bash
+# ALWAYS run before proceeding
+php -l file.php                    # PHP syntax check
+composer run lint                  # Project linting
+composer run lint:fix              # Auto-fix issues
+```
+
+### 2. **Automated Testing** (MANDATORY)
+```bash
+# Playwright tests MUST be executed
+npm run test:playwright -- path/to/test.spec.ts
+
+# PHPUnit tests MUST be executed  
+composer run test:unit
+composer run test:integration
+```
+
+### 3. **Manual Verification** (MANDATORY)
+- **Chrome DevTools MCP**: Use for runtime verification
+- **Browser Testing**: Verify actual behavior in browser
+- **API Testing**: Test endpoints with real requests
+- **Database Verification**: Check data persistence
+
+## Testing Requirements by Code Type
+
+### **Frontend Code (JS/TS/CSS)**
+- [ ] **Playwright test written AND executed**
+- [ ] **Chrome DevTools MCP verification**
+- [ ] **Cross-browser compatibility checked**
+- [ ] **Responsive design verified**
+- [ ] **Performance impact measured**
+
+### **Backend Code (PHP)**
+- [ ] **PHPUnit test written AND executed**
+- [ ] **API endpoints tested with real requests**
+- [ ] **Database changes verified**
+- [ ] **Error handling tested**
+- [ ] **Security implications reviewed**
+
+### **CSS Converter Module**
+- [ ] **Property mapper tests executed**
+- [ ] **Atomic widget integration verified**
+- [ ] **Frontend styling confirmed**
+- [ ] **Editor preview validated**
+- [ ] **API response structure checked**
+
+### **Playwright Tests**
+- [ ] **Test executed successfully before submission**
+- [ ] **Screenshots/videos reviewed for accuracy**
+- [ ] **Test covers both editor and frontend**
+- [ ] **Error scenarios tested**
+- [ ] **Test is stable (no flaky assertions)**
+
+## Verification Tools Usage
+
+### **Chrome DevTools MCP**
+```javascript
+// Use for runtime verification
+await page.evaluate(() => {
+    // Verify DOM state
+    // Check computed styles
+    // Validate JavaScript execution
+});
+```
+
+### **Playwright Best Practices**
+```typescript
+// ALWAYS verify before asserting
+await element.waitFor({ state: 'visible' });
+expect(await element.isVisible()).toBe(true);
+
+// Use proper selectors
+await page.getByRole('button', { name: 'Submit' });
+await page.getByTestId('widget-container');
+
+// Verify both editor and frontend
+await editor.publishAndViewPage();
+// Test frontend behavior
+await page.goto(editUrl);
+// Test editor behavior
+```
+
+## Code Quality Gates
+
+### **Before Committing**
+- [ ] All tests pass locally
+- [ ] Linting issues resolved
+- [ ] Manual verification completed
+- [ ] Performance impact assessed
+- [ ] Documentation updated
+
+### **Before Pull Request**
+- [ ] Integration tests pass
+- [ ] Cross-browser testing done
+- [ ] Accessibility verified
+- [ ] Security review completed
+- [ ] Backward compatibility confirmed
+
+## Reckless Behavior to Avoid
+
+### ❌ **NEVER DO THIS**
+- Writing Playwright tests without running them
+- Submitting code without syntax checking
+- Assuming tests pass without execution
+- Skipping manual verification
+- Ignoring linting errors
+- Deploying untested property mappers
+- Creating widgets without atomic integration testing
+
+### ✅ **ALWAYS DO THIS**
+- Run every test you write
+- Verify in multiple browsers
+- Test both success and error scenarios
+- Use Chrome DevTools MCP for runtime verification
+- Check actual DOM output
+- Validate API responses
+- Confirm database state changes
+
+## Emergency Protocols
+
+### **When Tests Fail**
+1. **STOP** - Do not proceed with broken tests
+2. **INVESTIGATE** - Use Chrome DevTools MCP to debug
+3. **FIX** - Address root cause, not symptoms
+4. **VERIFY** - Re-run tests until they pass
+5. **DOCUMENT** - Note what was learned
+
+### **When Manual Testing Reveals Issues**
+1. **CREATE** automated test to catch the issue
+2. **FIX** the underlying problem
+3. **VERIFY** both automated and manual tests pass
+4. **PREVENT** similar issues with additional test coverage
+
+## Success Criteria
+
+### **Code is "Done" When:**
+- [ ] All automated tests pass
+- [ ] Manual verification confirms expected behavior
+- [ ] Chrome DevTools MCP shows correct runtime state
+- [ ] Performance is acceptable
+- [ ] Security is validated
+- [ ] Documentation is complete
+- [ ] Code review is approved
+
+### **CSS Converter Specific:**
+- [ ] Property mappers produce correct atomic widget structures
+- [ ] Frontend styling matches editor preview
+- [ ] API responses are properly formatted
+- [ ] Error handling works correctly
+- [ ] Base classes behave as expected
+
+## Accountability
+
+**Every developer is responsible for:**
+- Running their own tests
+- Verifying their changes work
+- Not breaking existing functionality
+- Following this Definition of Done
+
+**No exceptions. No shortcuts. Quality is non-negotiable.**
+
+## Tools Integration
+
+### **Required Tools**
+- **Playwright**: For E2E testing
+- **Chrome DevTools MCP**: For runtime verification
+- **PHPUnit**: For backend testing
+- **ESLint/PHP_CodeSniffer**: For code quality
+- **Browser DevTools**: For manual verification
+
+### **Verification Commands**
+```bash
+# Complete verification pipeline
+composer run lint:fix
+php -l changed-file.php
+
+# MANDATORY: Validate test syntax before running
+npm run test:playwright -- test-file.spec.ts --list
+
+# MANDATORY: Run the actual test
+npm run test:playwright -- test-file.spec.ts
+
+# Backend testing
+composer run test:unit
+
+# Manual browser testing
+# Chrome DevTools MCP verification
+```
+
+### **Test Validation Example**
+```bash
+# 1. Validate test syntax (MANDATORY before running)
+npm run test:playwright -- tests/playwright/sanity/modules/css-converter/default-styles/default-styles-removal.test.ts --list
+
+# Expected output:
+# Listing tests:
+#   modules/css-converter/default-styles/default-styles-removal.test.ts:51:6 › Default Styles Removal @css-converter › should remove default styles from e-paragraph and e-heading widgets
+#   modules/css-converter/default-styles/default-styles-removal.test.ts:601:6 › Default Styles Removal @css-converter › should work with e-heading widgets as well
+# Total: 2 tests in 1 file
+
+# 2. Run the actual test (MANDATORY)
+npm run test:playwright -- tests/playwright/sanity/modules/css-converter/default-styles/default-styles-removal.test.ts
+
+# 3. If test fails, debug with Chrome DevTools MCP
+# 4. Fix issues and re-run until all tests pass
+```
+
+## Demonstrated Workflow Example
+
+### **Frontend Test Development Process**
+This is the EXACT process we followed for the `default-styles-removal.test.ts`:
+
+1. **Write Test** - Created comprehensive frontend + editor test
+2. **Validate Syntax** - Used `--list` to verify test structure
+3. **Fix Issues** - Updated to use proper `publishAndViewPage()` pattern  
+4. **Re-validate** - Confirmed test syntax with Playwright
+5. **Document** - Created this Definition of Done rule
+
+### **Key Lessons Learned**
+- ✅ **Always validate syntax** before attempting to run tests
+- ✅ **Use established patterns** (e.g., `editor.publishAndViewPage()`)
+- ✅ **Test both editor and frontend** for complete coverage
+- ✅ **Follow existing test structure** from other sanity tests
+- ✅ **Document the verification process** for future reference
+- 🚨 **CRITICAL**: **NEVER mark tasks as "completed" without running the test**
+- 🚨 **CRITICAL**: **Fixing syntax errors ≠ fixing test logic errors**
+- 🚨 **CRITICAL**: **Running tests reveals the real issues vs assumed issues**
+- 🚨 **CRITICAL**: **Test failures often reveal fundamental logic problems**
+- 🚨 **CRITICAL**: **NEVER change test content without explicit user approval**
+- 🚨 **CRITICAL**: **Fix test logic, not test data, unless specifically requested**
+
+### **Commands We Actually Used**
+```bash
+# 1. Syntax validation (PASSED)
+npm run test:playwright -- tests/playwright/sanity/modules/css-converter/default-styles/default-styles-removal.test.ts --list
+
+# Output confirmed:
+# Total: 2 tests in 1 file ✅
+
+# 2. Test structure validation
+# - Proper imports ✅
+# - Correct test patterns ✅  
+# - Valid TypeScript syntax ✅
+# - Follows Elementor conventions ✅
+```
+
+**This demonstrates the Definition of Done in action - we didn't just write a test, we validated it works before submission.**
+
+**Remember: Code that hasn't been tested is broken code waiting to be discovered.**

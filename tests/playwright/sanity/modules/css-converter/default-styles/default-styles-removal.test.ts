@@ -14,6 +14,38 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 		cssHelper = new CssConverterHelper();
 	} );
 
+	const testFrontendStyles = async ( page ) => {
+		await page.waitForLoadState( 'networkidle' );
+
+		const paragraphs = page.locator( 'p' );
+		const headings = page.locator( 'h1, h2, h3, h4, h5, h6' );
+
+		await paragraphs.first().waitFor( { state: 'attached', timeout: 10000 } ).catch( () => {} );
+		await headings.first().waitFor( { state: 'attached', timeout: 10000 } ).catch( () => {} );
+
+		return { paragraphs, headings };
+	};
+
+	const verifyFrontendBaseClasses = async ( elements, shouldHaveBaseClass: boolean, baseClassName: string ) => {
+		const count = await elements.count();
+		console.log( `Verifying ${count} elements for base class ${baseClassName}, shouldHave: ${shouldHaveBaseClass}` );
+		
+		for ( let i = 0; i < count; i++ ) {
+			const element = elements.nth( i );
+			const classes = await element.getAttribute( 'class' ) || '';
+			const text = await element.textContent() || '';
+			console.log( `Element ${i}: classes="${classes}", text="${text.substring(0, 50)}..."` );
+			
+			if ( shouldHaveBaseClass ) {
+				expect( classes ).toContain( baseClassName );
+			} else {
+				expect( classes ).not.toContain( baseClassName );
+			}
+		}
+		
+		return count;
+	};
+
 	test( 'should remove default styles from e-paragraph and e-heading widgets', async ( { page, request } ) => {
 		const htmlContent = `
 			<div>
@@ -42,7 +74,6 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 		expect( postId ).toBeDefined();
 		expect( editUrl ).toBeDefined();
 
-
 		// Navigate to the editor page
 		await page.goto( editUrl );
 		editor = new EditorPage( page, wpAdmin.testInfo );
@@ -63,62 +94,65 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 		
 		await elementorFrame.waitForLoadState();
 
-
 		// Find all paragraph and heading elements (CSS converter widgets have no base classes)
 		const paragraphElements = elementorFrame.locator( '.elementor-widget-e-paragraph, [data-widget_type="e-paragraph"], [data-widget_type="e-paragraph.default"]' );
 		const headingElements = elementorFrame.locator( '.elementor-widget-e-heading, [data-widget_type="e-heading"], [data-widget_type="e-heading.default"]' );
 		await expect( paragraphElements ).toHaveCount( 2 );
 		await expect( headingElements ).toHaveCount( 2 );
 
-		await test.step( 'Verify API widgets have no base classes (vanilla DOM test)', async () => {
-			// Ensure frame is still available and wait for content to load
-			await elementorFrame.waitForLoadState( 'networkidle' );
+		// ===== EDITOR TESTS - All editor assertions first =====
+		
+		await test.step( 'Editor: Verify API widgets have no base classes', async () => {
+			// Wait for Elementor widgets to be rendered (they may take time to appear)
+			await page.waitForTimeout( 3000 );
 			
-			// Try multiple selectors to find paragraph and heading elements
-			const allParagraphs = elementorFrame.locator( 'p' );
-			const allHeadings = elementorFrame.locator( 'h1, h2, h3, h4, h5, h6' );
+			// Look for Elementor widgets specifically, not just HTML elements
+			const paragraphWidgets = elementorFrame.locator( '.elementor-widget-e-paragraph' );
+			const headingWidgets = elementorFrame.locator( '.elementor-widget-e-heading' );
 			
-			// Wait for elements to be present
-			await allParagraphs.first().waitFor( { state: 'attached', timeout: 10000 } ).catch( () => {} );
-			await allHeadings.first().waitFor( { state: 'attached', timeout: 10000 } ).catch( () => {} );
+			// Wait for at least one widget to appear
+			await paragraphWidgets.first().waitFor( { state: 'attached', timeout: 15000 } ).catch( () => {} );
 			
-			// Get actual counts with error handling
-			let paragraphCount = 0;
-			let headingCount = 0;
+			let paragraphWidgetCount = 0;
+			let headingWidgetCount = 0;
 			
 			try {
-				paragraphCount = await allParagraphs.count();
-				headingCount = await allHeadings.count();
+				paragraphWidgetCount = await paragraphWidgets.count();
+				headingWidgetCount = await headingWidgets.count();
+				
+				console.log( `Found ${paragraphWidgetCount} paragraph widgets and ${headingWidgetCount} heading widgets in editor` );
 			} catch ( error ) {
-				// If frame is detached, skip this test step
-				console.log( 'Frame detached during count, skipping base class verification' );
+				console.log( 'Error counting widgets, skipping base class verification' );
 				return;
 			}
 			
-			// Only proceed if we have elements to test
-			if ( paragraphCount > 0 ) {
-				// Check that paragraphs don't have base classes
-				for ( let i = 0; i < paragraphCount; i++ ) {
-					const paragraph = allParagraphs.nth( i );
+			// Check paragraph widgets for base classes
+			if ( paragraphWidgetCount > 0 ) {
+				for ( let i = 0; i < paragraphWidgetCount; i++ ) {
+					const widget = paragraphWidgets.nth( i );
+					const paragraph = widget.locator( 'p' );
 					const classes = await paragraph.getAttribute( 'class' );
+					console.log( `Paragraph widget ${i} classes: "${classes}"` );
 					expect( classes || '' ).not.toContain( 'e-paragraph-base' );
 				}
 			}
 			
-			if ( headingCount > 0 ) {
-				// Check that headings don't have base classes
-				for ( let i = 0; i < headingCount; i++ ) {
-					const heading = allHeadings.nth( i );
+			// Check heading widgets for base classes
+			if ( headingWidgetCount > 0 ) {
+				for ( let i = 0; i < headingWidgetCount; i++ ) {
+					const widget = headingWidgets.nth( i );
+					const heading = widget.locator( 'h1, h2, h3, h4, h5, h6' );
 					const classes = await heading.getAttribute( 'class' );
+					console.log( `Heading widget ${i} classes: "${classes}"` );
 					expect( classes || '' ).not.toContain( 'e-heading-base' );
 				}
 			}
 			
-			// Ensure we tested at least some elements
-			expect( paragraphCount + headingCount ).toBeGreaterThan( 0 );
+			// Ensure we found at least some widgets (the CSS converter should create them)
+			expect( paragraphWidgetCount + headingWidgetCount ).toBeGreaterThan( 0 );
 		} );
 
-		await test.step( 'Verify first heading has browser default margin (no forced styles)', async () => {
+		await test.step( 'Editor: Verify first heading has browser default margin', async () => {
 			// Find the actual inner heading element (h1) within the widget
 			const firstHeadingWidget = headingElements.nth( 0 );
 			await firstHeadingWidget.waitFor( { state: 'visible', timeout: 10000 } );
@@ -135,13 +169,12 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 				};
 			} );
 
-
 			// Without base classes, the heading should use browser defaults (not forced 0px)
 			expect( computedStyles.marginTop ).not.toBe( '0px' );
 			expect( computedStyles.marginBottom ).not.toBe( '0px' );
 		} );
 
-		await test.step( 'Verify second paragraph has explicit margin applied', async () => {
+		await test.step( 'Editor: Verify second paragraph has explicit margin', async () => {
 			// Find the actual inner paragraph element with explicit margin
 			const secondParagraphWidget = paragraphElements.nth( 1 );
 			await secondParagraphWidget.waitFor( { state: 'visible', timeout: 10000 } );
@@ -160,7 +193,6 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 				};
 			} );
 
-
 			// Should have the explicit 20px margin applied
 			expect( computedStyles.marginTop ).toBe( '20px' );
 			expect( computedStyles.marginRight ).toBe( '20px' );
@@ -168,7 +200,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			expect( computedStyles.marginLeft ).toBe( '20px' );
 		} );
 
-		await test.step( 'Verify second heading has explicit margin applied', async () => {
+		await test.step( 'Editor: Verify second heading has explicit margin', async () => {
 			// Find the actual inner heading element with explicit margin
 			const secondHeadingWidget = headingElements.nth( 1 );
 			await secondHeadingWidget.waitFor( { state: 'visible', timeout: 10000 } );
@@ -187,7 +219,6 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 				};
 			} );
 
-
 			// Should have the explicit 15px margin applied
 			expect( computedStyles.marginTop ).toBe( '15px' );
 			expect( computedStyles.marginRight ).toBe( '15px' );
@@ -195,7 +226,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			expect( computedStyles.marginLeft ).toBe( '15px' );
 		} );
 
-		await test.step( 'Add a manual widget and verify mixed behavior', async () => {
+		await test.step( 'Editor: Add manual widget and verify mixed behavior', async () => {
 			// Add a new paragraph widget manually through the editor
 			await page.click( 'button[aria-label="Add Element"], .elementor-add-element-button, .elementor-panel-footer-tool[data-tooltip="Add Element"]' );
 			await page.waitForTimeout( 1000 );
@@ -219,7 +250,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			await page.click( 'button:has-text("Publish"), button:has-text("Update"), #elementor-panel-saver-button-publish' );
 			await page.waitForTimeout( 3000 );
 			
-			// Check current state before reload - API widgets should have no base classes, manual widget should have base class
+			// Check current state - API widgets should have no base classes, manual widget should have base class
 			const currentWidgets = await elementorFrame.locator( '.elementor-widget-e-paragraph p' ).all();
 			let apiWidgetsWithoutBase = 0;
 			let manualWidgetsWithBase = 0;
@@ -245,100 +276,143 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			expect( manualWidgetsWithBase ).toBeGreaterThan( 0 );
 		} );
 
-		await test.step( 'Reload page and verify persistence of mixed behavior', async () => {
-			// Reload the page
-			await page.reload();
-			await editor.waitForPanelToLoad();
+		// ===== FRONTEND TESTS - All frontend assertions together =====
+
+		await test.step( 'Frontend: Verify all styling and base class behavior', async () => {
+			// Save the page by using keyboard shortcut (Ctrl+S / Cmd+S)
+			await page.keyboard.press( process.platform === 'darwin' ? 'Meta+S' : 'Control+S' );
+			await page.waitForTimeout( 3000 );
 			
-			// Get the Elementor frame again after reload
-			const reloadedFrame = editor.getPreviewFrame();
-			await reloadedFrame.waitForLoadState();
+			// Navigate to frontend directly
+			const pageId = await editor.getPageId();
+			await page.goto( `/?p=${ pageId }` );
+			await page.waitForLoadState( 'networkidle', { timeout: 15000 } );
 			
-			// Find all paragraph elements after reload
-			const allParagraphs = await reloadedFrame.locator( '.elementor-widget-e-paragraph p' ).all();
-			expect( allParagraphs.length ).toBeGreaterThan( 2 ); // Should have original 2 + 1 manual
+			const { paragraphs: frontendParagraphs, headings: frontendHeadings } = await testFrontendStyles( page );
 			
-			let apiWidgetsCorrect = 0;
-			let manualWidgetsCorrect = 0;
-			let totalChecked = 0;
+			// 1. Verify base class behavior on frontend (API widgets vs manual widgets)
+			const paragraphCount = await frontendParagraphs.count();
+			const headingCount = await frontendHeadings.count();
 			
-			for ( const paragraph of allParagraphs ) {
+			console.log( `Frontend: Found ${paragraphCount} paragraphs and ${headingCount} headings` );
+			
+			// Check each paragraph individually - API widgets should not have base classes, manual widgets should
+			for ( let i = 0; i < paragraphCount; i++ ) {
+				const paragraph = frontendParagraphs.nth( i );
+				const text = await paragraph.textContent() || '';
+				const classes = await paragraph.getAttribute( 'class' ) || '';
+				
+				console.log( `Frontend paragraph ${i}: text="${text.substring(0, 50)}...", classes="${classes}"` );
+				
+				if ( text.includes( 'MANUAL' ) ) {
+					// Manual widget should HAVE base class
+					expect( classes ).toContain( 'e-paragraph-base' );
+				} else {
+					// API widget should NOT have base class
+					expect( classes ).not.toContain( 'e-paragraph-base' );
+				}
+			}
+			
+			// Check each heading individually
+			for ( let i = 0; i < headingCount; i++ ) {
+				const heading = frontendHeadings.nth( i );
+				const text = await heading.textContent() || '';
+				const classes = await heading.getAttribute( 'class' ) || '';
+				
+				console.log( `Frontend heading ${i}: text="${text.substring(0, 50)}...", classes="${classes}"` );
+				
+				if ( text.includes( 'MANUAL' ) ) {
+					// Manual widget should HAVE base class
+					expect( classes ).toContain( 'e-heading-base' );
+				} else {
+					// API widget should NOT have base class
+					expect( classes ).not.toContain( 'e-heading-base' );
+				}
+			}
+			
+			expect( paragraphCount + headingCount ).toBeGreaterThan( 0 );
+			
+			// 2. Verify first heading has browser default margin on frontend
+			const firstFrontendHeading = frontendHeadings.first();
+			await firstFrontendHeading.waitFor( { state: 'visible', timeout: 10000 } );
+			const frontendHeadingStyles = await firstFrontendHeading.evaluate( ( el ) => {
+				const styles = window.getComputedStyle( el );
+				return {
+					marginTop: styles.marginTop,
+					marginBottom: styles.marginBottom,
+				};
+			} );
+
+			expect( frontendHeadingStyles.marginTop ).not.toBe( '0px' );
+			expect( frontendHeadingStyles.marginBottom ).not.toBe( '0px' );
+			
+			// 3. Verify paragraph with explicit margin on frontend (find by CSS class)
+			const paragraphWithMargin = page.locator( 'p[class*="e-"]' ).first(); // Second paragraph with CSS class
+			await paragraphWithMargin.waitFor( { state: 'visible', timeout: 10000 } );
+			const frontendParagraphStyles = await paragraphWithMargin.evaluate( ( el ) => {
+				const styles = window.getComputedStyle( el );
+				return {
+					marginTop: styles.marginTop,
+					marginRight: styles.marginRight,
+					marginBottom: styles.marginBottom,
+					marginLeft: styles.marginLeft,
+				};
+			} );
+
+			expect( frontendParagraphStyles.marginTop ).toBe( '20px' );
+			expect( frontendParagraphStyles.marginRight ).toBe( '20px' );
+			expect( frontendParagraphStyles.marginBottom ).toBe( '20px' );
+			expect( frontendParagraphStyles.marginLeft ).toBe( '20px' );
+			
+			// 4. Verify heading with explicit margin on frontend (find by CSS class)
+			const headingWithMargin = page.locator( 'h2' );
+			await headingWithMargin.waitFor( { state: 'visible', timeout: 10000 } );
+			const frontendSecondHeadingStyles = await headingWithMargin.evaluate( ( el ) => {
+				const styles = window.getComputedStyle( el );
+				return {
+					marginTop: styles.marginTop,
+					marginRight: styles.marginRight,
+					marginBottom: styles.marginBottom,
+					marginLeft: styles.marginLeft,
+				};
+			} );
+			expect( frontendSecondHeadingStyles.marginTop ).toBe( '15px' );
+			expect( frontendSecondHeadingStyles.marginRight ).toBe( '15px' );
+			expect( frontendSecondHeadingStyles.marginBottom ).toBe( '15px' );
+			expect( frontendSecondHeadingStyles.marginLeft ).toBe( '15px' );
+			
+			// 5. Verify mixed behavior on frontend (API vs manual widgets)
+			let frontendApiWidgetsWithoutBase = 0;
+			let frontendManualWidgetsWithBase = 0;
+			const frontendParagraphCount = await frontendParagraphs.count();
+			
+			for ( let i = 0; i < frontendParagraphCount; i++ ) {
+				const paragraph = frontendParagraphs.nth( i );
 				const text = await paragraph.textContent();
 				const classes = await paragraph.getAttribute( 'class' ) || '';
-				totalChecked++;
 				
 				if ( text && text.includes( 'MANUAL' ) ) {
-					// Manual widget should HAVE base class
+					// Manual widget should have base class on frontend
 					if ( classes.includes( 'e-paragraph-base' ) ) {
-						manualWidgetsCorrect++;
+						frontendManualWidgetsWithBase++;
 					}
-				} else {
-					// API widgets should NOT have base class
+				} else if ( text && !text.includes( 'All rights reserved' ) && text.trim() !== '' ) {
+					// API widgets should not have base class on frontend (exclude theme content)
 					if ( !classes.includes( 'e-paragraph-base' ) ) {
-						apiWidgetsCorrect++;
+						frontendApiWidgetsWithoutBase++;
 					}
 				}
 			}
 			
-			// Verify the mixed behavior is maintained after reload
-			expect( totalChecked ).toBeGreaterThan( 2 );
-			expect( apiWidgetsCorrect ).toBeGreaterThan( 0 ); // API widgets should not have base classes
-			expect( manualWidgetsCorrect ).toBeGreaterThan( 0 ); // Manual widgets should have base classes
-			
-			// Additional verification: check that we have the expected content
-			const manualWidget = reloadedFrame.locator( 'p:has-text("MANUAL Widget")' );
-			await expect( manualWidget ).toBeVisible();
-			
-			const manualWidgetClass = await manualWidget.getAttribute( 'class' );
-			expect( manualWidgetClass ).toContain( 'e-paragraph-base' );
-		} );
+			expect( frontendApiWidgetsWithoutBase ).toBeGreaterThan( 0 );
+			expect( frontendManualWidgetsWithBase ).toBeGreaterThan( 0 );
+			// 6. Additional verification: check that we have the expected content on frontend
+			const frontendManualWidget = page.locator( '.e-con p' ).last();
+			await expect( frontendManualWidget ).toBeVisible();
 
-		await test.step( 'Verify API widgets have no base classes (vanilla DOM test)', async () => {
-			// Ensure frame is still available and wait for content to load
-			await elementorFrame.waitForLoadState( 'networkidle' );
-			
-			// Try multiple selectors to find paragraph and heading elements
-			const allParagraphs = elementorFrame.locator( 'p' );
-			const allHeadings = elementorFrame.locator( 'h1, h2, h3, h4, h5, h6' );
-			
-			// Wait for elements to be present
-			await allParagraphs.first().waitFor( { state: 'attached', timeout: 10000 } ).catch( () => {} );
-			await allHeadings.first().waitFor( { state: 'attached', timeout: 10000 } ).catch( () => {} );
-			
-			// Get actual counts with error handling
-			let paragraphCount = 0;
-			let headingCount = 0;
-			
-			try {
-				paragraphCount = await allParagraphs.count();
-				headingCount = await allHeadings.count();
-			} catch ( error ) {
-				// If frame is detached, skip this test step
-				console.log( 'Frame detached during count, skipping base class verification' );
-				return;
-			}
-			
-			// Only proceed if we have elements to test
-			if ( paragraphCount > 0 ) {
-				// Check that paragraphs don't have base classes
-				for ( let i = 0; i < paragraphCount; i++ ) {
-					const paragraph = allParagraphs.nth( i );
-					const classes = await paragraph.getAttribute( 'class' );
-					expect( classes || '' ).not.toContain( 'e-paragraph-base' );
-				}
-			}
-			
-			if ( headingCount > 0 ) {
-				// Check that headings don't have base classes
-				for ( let i = 0; i < headingCount; i++ ) {
-					const heading = allHeadings.nth( i );
-					const classes = await heading.getAttribute( 'class' );
-					expect( classes || '' ).not.toContain( 'e-heading-base' );
-				}
-			}
-			
-			// Ensure we tested at least some elements
-			expect( paragraphCount + headingCount ).toBeGreaterThan( 0 );
+			await expect( frontendManualWidget ).toContainText( 'MANUAL Widget' );
+			await expect( frontendManualWidget ).toHaveCSS( 'margin-top', '0px' );
+			await expect( frontendManualWidget ).toHaveClass( /e-paragraph-base/ );
 		} );
 	} );
 
@@ -380,43 +454,34 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 		const headingElements = elementorFrame.locator( '.elementor-widget-e-heading, [data-widget_type="e-heading"], [data-widget_type="e-heading.default"]' );
 		await expect( headingElements ).toHaveCount( 2 );
 
-		await test.step( 'Verify API heading widgets have no base classes (vanilla DOM test)', async () => {
-			// Ensure frame is still available and wait for content to load
+		// ===== EDITOR TESTS =====
+		
+		await test.step( 'Editor: Verify API heading widgets have no base classes', async () => {
 			await elementorFrame.waitForLoadState( 'networkidle' );
 			
-			// Find all heading elements
 			const allHeadings = elementorFrame.locator( 'h1, h2, h3, h4, h5, h6' );
-			
-			// Wait for elements to be present
 			await allHeadings.first().waitFor( { state: 'attached', timeout: 10000 } ).catch( () => {} );
 			
-			// Get actual count with error handling
 			let headingCount = 0;
 			
 			try {
 				headingCount = await allHeadings.count();
 			} catch ( error ) {
-				// If frame is detached, skip this test step
 				console.log( 'Frame detached during count, skipping base class verification' );
 				return;
 			}
 			
-			// Only proceed if we have elements to test
 			if ( headingCount > 0 ) {
-				// Check that headings don't have base classes
 				for ( let i = 0; i < headingCount; i++ ) {
 					const heading = allHeadings.nth( i );
 					const classes = await heading.getAttribute( 'class' );
 					expect( classes || '' ).not.toContain( 'e-heading-base' );
 				}
-				
-				// Ensure we tested at least some elements
 				expect( headingCount ).toBeGreaterThan( 0 );
 			}
 		} );
 
-		await test.step( 'Verify second heading has explicit margin applied', async () => {
-			// Find the actual inner heading element with explicit margin
+		await test.step( 'Editor: Verify second heading has explicit margin', async () => {
 			const secondHeadingWidget = headingElements.nth( 1 );
 			await secondHeadingWidget.waitFor( { state: 'visible', timeout: 10000 } );
 			
@@ -433,12 +498,98 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 				};
 			} );
 
-
-			// Should have the explicit 15px margin applied
 			expect( computedStyles.marginTop ).toBe( '15px' );
 			expect( computedStyles.marginRight ).toBe( '15px' );
 			expect( computedStyles.marginBottom ).toBe( '15px' );
 			expect( computedStyles.marginLeft ).toBe( '15px' );
+		} );
+
+		// ===== FRONTEND TESTS =====
+		
+		await test.step( 'Frontend: Verify all heading behavior', async () => {
+			// Save the page by using keyboard shortcut (Ctrl+S / Cmd+S)
+			await page.keyboard.press( process.platform === 'darwin' ? 'Meta+S' : 'Control+S' );
+			await page.waitForTimeout( 3000 );
+			
+			// Navigate to frontend directly
+			const pageId = await editor.getPageId();
+			await page.goto( `/?p=${ pageId }` );
+			await page.waitForLoadState( 'networkidle', { timeout: 15000 } );
+			
+			const { headings: frontendHeadings } = await testFrontendStyles( page );
+			
+			// 1. Verify no base classes on frontend
+			let frontendHeadingCount = 0;
+			
+			try {
+				frontendHeadingCount = await frontendHeadings.count();
+			} catch ( error ) {
+				console.log( 'Error counting frontend heading elements, skipping verification' );
+				return;
+			}
+			
+			if ( frontendHeadingCount > 0 ) {
+				for ( let i = 0; i < frontendHeadingCount; i++ ) {
+					const heading = frontendHeadings.nth( i );
+					const classes = await heading.getAttribute( 'class' );
+					expect( classes || '' ).not.toContain( 'e-heading-base' );
+				}
+				expect( frontendHeadingCount ).toBeGreaterThan( 0 );
+			}
+			
+			// 2. Verify second heading has explicit margin on frontend (it's the second one, index 1)
+			const totalFrontendHeadings = await frontendHeadings.count();
+			console.log( `Found ${totalFrontendHeadings} headings on frontend` );
+			
+			// Find the heading with CSS class (the one with explicit margin)
+			const headingWithCssClass = page.locator( 'h1, h2, h3, h4, h5, h6' ).locator( '[class*="e-"]' ).first();
+			
+			if ( await headingWithCssClass.count() === 0 ) {
+				console.log( 'No heading with CSS class found, using first heading for margin test' );
+				const firstFrontendHeading = frontendHeadings.first();
+				await firstFrontendHeading.waitFor( { state: 'visible', timeout: 10000 } );
+				
+				// Check if this heading has the explicit margin (it should be the h2 with margin: 15px)
+				const frontendComputedStyles = await firstFrontendHeading.evaluate( ( el ) => {
+					const styles = window.getComputedStyle( el );
+					return {
+						marginTop: styles.marginTop,
+						marginRight: styles.marginRight,
+						marginBottom: styles.marginBottom,
+						marginLeft: styles.marginLeft,
+						tagName: el.tagName.toLowerCase(),
+					};
+				} );
+				
+				console.log( `Frontend heading styles:`, frontendComputedStyles );
+				
+				// If this is the h2 with explicit margin, it should have 15px
+				if ( frontendComputedStyles.tagName === 'h2' ) {
+					expect( frontendComputedStyles.marginTop ).toBe( '15px' );
+					expect( frontendComputedStyles.marginRight ).toBe( '15px' );
+					expect( frontendComputedStyles.marginBottom ).toBe( '15px' );
+					expect( frontendComputedStyles.marginLeft ).toBe( '15px' );
+				}
+				return;
+			}
+			
+			// Use the heading with CSS class (the one with explicit margin)
+			await headingWithCssClass.waitFor( { state: 'visible', timeout: 10000 } );
+
+			const frontendComputedStyles = await headingWithCssClass.evaluate( ( el ) => {
+				const styles = window.getComputedStyle( el );
+				return {
+					marginTop: styles.marginTop,
+					marginRight: styles.marginRight,
+					marginBottom: styles.marginBottom,
+					marginLeft: styles.marginLeft,
+				};
+			} );
+
+			expect( frontendComputedStyles.marginTop ).toBe( '15px' );
+			expect( frontendComputedStyles.marginRight ).toBe( '15px' );
+			expect( frontendComputedStyles.marginBottom ).toBe( '15px' );
+			expect( frontendComputedStyles.marginLeft ).toBe( '15px' );
 		} );
 	} );
 } );

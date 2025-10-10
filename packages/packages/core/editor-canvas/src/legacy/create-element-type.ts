@@ -96,18 +96,26 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 		}
 
 		className() {
-			const editorSettings = ( this.model as any ).get( 'editor_settings' ) || {};
-			const isCssConverterWidget = editorSettings.css_converter_widget || editorSettings.disable_base_styles;
+			const editorSettings = this.model.get( 'editor_settings' ) || {};
+			const isCssConverterWidget = editorSettings.css_converter_widget;
 			
 			if ( isCssConverterWidget ) {
-				const originalClasses = ( this as any ).constructor.__super__.className.call( this );
-				const widgetType = ( this.model as any ).get( 'widgetType' ) || ( this.model as any ).get( 'elType' );
-				const baseClassPattern = new RegExp( `\\b${widgetType}-base\\b`, 'g' );
-				
-				return originalClasses.replace( baseClassPattern, '' ).trim();
+				return this.removeBaseClassFromCssConverterWidget();
 			}
 			
-			return ( this as any ).constructor.__super__.className.call( this );
+			return super.className();
+		}
+	
+		removeBaseClassFromCssConverterWidget(): string {
+			const originalClasses = super.className();
+			const widgetType = this.model.get( 'widgetType' ) || this.model.get( 'elType' );
+			const baseClassName = `${widgetType}-base`;
+			
+			return originalClasses
+				.split( ' ' )
+				.filter( className => className !== baseClassName )
+				.join( ' ' )
+				.trim();
 		}
 	};
 }
