@@ -13,7 +13,6 @@ import { Dialog } from '@elementor/app-ui';
 import { useMemo, useState } from 'react';
 import { useSettingsContext } from '../context/settings-context';
 import { isTierAtLeast, TIERS } from 'elementor-utils/tiers';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import { useTracking } from '../context/tracking-context';
 
 import './item-header.scss';
@@ -162,12 +161,6 @@ export default function ItemHeader( props ) {
 		apply,
 		isApplyLoading,
 		onClick: () => {
-			appsEventTrackingDispatch( 'kit-library/apply-kit', {
-				kit_name: props.model.title,
-				element_position: 'app_header',
-				page_source: props.pageId,
-				event_type: 'click',
-			} );
 			tracking.trackKitdemoApplyClicked( props.model.id, props.model.title, props.model.accessTier );
 		},
 	} );
