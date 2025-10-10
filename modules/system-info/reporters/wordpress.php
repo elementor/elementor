@@ -51,7 +51,6 @@ class WordPress extends Base {
 			'permalink_structure' => 'Permalink Structure',
 			'language' => 'Language',
 			'timezone' => 'Timezone',
-			'admin_email' => 'Admin Email',
 			'debug_mode' => 'Debug Mode',
 		];
 	}
