@@ -179,12 +179,12 @@ trait Has_Atomic_Base {
 			$editor_data['title'] = sanitize_text_field( $data['title'] );
 		}
 
-		$editor_data = $this->preserve_css_converter_flags( $editor_data, $data );
+		$editor_data = $this->preserve_css_converter_flag( $editor_data, $data );
 
 		return $editor_data;
 	}
 
-	private function preserve_css_converter_flags( array $editor_data, array $data ): array {
+	private function preserve_css_converter_flag( array $editor_data, array $data ): array {
 		if ( isset( $data['css_converter_widget'] ) ) {
 			$editor_data['css_converter_widget'] = (bool) $data['css_converter_widget'];
 		}

@@ -100,14 +100,12 @@ function createTemplatedElementViewClassDeclaration( {
 					} );
 				} )
 				.then( ( resolvedSettings ) => {
-					const finalBaseStyles = this.getBaseStylesForWidget( baseStylesDictionary );
-
 					// Same as the Backend.
 					const context = {
 						id: this.model.get( 'id' ),
 						type,
 						settings: resolvedSettings,
-						base_styles: finalBaseStyles,
+						base_styles: this.isCssConverterWidget() ? {} : baseStylesDictionary,
 					};
 
 					return renderer.render( templateKey, context );
@@ -122,11 +120,6 @@ function createTemplatedElementViewClassDeclaration( {
 		isCssConverterWidget(): boolean {
 			const editorSettings = this.model.get( 'editor_settings' ) || {};
 			return !! editorSettings?.css_converter_widget;
-		}
-
-		getBaseStylesForWidget( baseStylesDictionary: Record< string, string > ): Record< string, string > {
-			const isCssConverterWidget = this.isCssConverterWidget();
-			return isCssConverterWidget ? {} : baseStylesDictionary;
 		}
 
 		// Emulating the original Marionette behavior.
