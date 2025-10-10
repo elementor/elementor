@@ -482,6 +482,7 @@ class OnboardingTracker {
 			this.dispatchEvent( eventName, eventData );
 			StorageManager.remove( storageKey );
 			TimingManager.clearStepStartTime( stepNumber );
+			this.sendStoredEventsIfConnected();
 		} else if ( 1 === stepNumber ) {
 			this.storeStep1EndStateForLater( eventData, storageKey );
 		} else {
@@ -619,6 +620,12 @@ class OnboardingTracker {
 		this.sendStoredEvent( 'STEP1_CLICKED_CONNECT' );
 		this.sendStoredEvent( 'STEP1_END_STATE' );
 		this.sendStoredEvent( 'EXIT_BUTTON' );
+	}
+
+	sendStoredEventsIfConnected() {
+		if ( EventDispatcher.canSendEvents() ) {
+			this.sendAllStoredEvents();
+		}
 	}
 
 	handleStep4CardClick() {

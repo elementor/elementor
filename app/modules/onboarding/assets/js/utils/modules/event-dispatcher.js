@@ -158,7 +158,7 @@ export function dispatchStepEvent( eventName, stepNumber, stepName, additionalDa
 	return dispatch( eventName, payload );
 }
 
-export function dispatchVariantAwareEvent( eventName, payload, stepNumber = null ) {
+export function dispatchVariantAwareEvent( eventName, payload ) {
 	return dispatch( eventName, payload );
 }
 

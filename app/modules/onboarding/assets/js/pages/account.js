@@ -200,9 +200,6 @@ export default function Account() {
 		navigate( 'onboarding/' + nextStep );
 	};
 
-	const connectReadyCallback = () => {
-		// Ready callback implementation
-	};
 
 	const experiment101Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT );
 	const ContentComponent = 'B' === experiment101Variant ? AccountContentB : AccountContentA;
@@ -221,7 +218,6 @@ export default function Account() {
 				state={ state }
 				connectSuccessCallback={ connectSuccessCallback }
 				connectFailureCallback={ connectFailureCallback }
-				connectReadyCallback={ connectReadyCallback }
 				updateState={ updateState }
 				getStateObjectToUpdate={ getStateObjectToUpdate }
 				navigate={ navigate }

@@ -10,7 +10,6 @@ export default function AccountContentA( {
 	state,
 	connectSuccessCallback,
 	connectFailureCallback,
-	connectReadyCallback,
 } ) {
 	return (
 		<PageContentLayout
@@ -26,7 +25,6 @@ export default function AccountContentA( {
 				buttonRef={ actionButton.ref }
 				successCallback={ ( event, data ) => connectSuccessCallback( event, data ) }
 				errorCallback={ connectFailureCallback }
-				readyCallback={ connectReadyCallback }
 			/> }
 			<span>
 				{ pageTexts.firstLine }
@@ -55,5 +53,4 @@ AccountContentA.propTypes = {
 	} ).isRequired,
 	connectSuccessCallback: PropTypes.func.isRequired,
 	connectFailureCallback: PropTypes.func.isRequired,
-	connectReadyCallback: PropTypes.func.isRequired,
 };

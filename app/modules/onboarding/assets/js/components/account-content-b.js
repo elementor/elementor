@@ -7,7 +7,6 @@ export default function AccountContentB( {
 	state,
 	connectSuccessCallback,
 	connectFailureCallback,
-	connectReadyCallback,
 	updateState,
 	getStateObjectToUpdate,
 	navigate,
@@ -66,7 +65,6 @@ export default function AccountContentB( {
 					buttonRef={ actionButtonRef }
 					successCallback={ ( event, data ) => connectSuccessCallback( event, data ) }
 					errorCallback={ connectFailureCallback }
-					readyCallback={ connectReadyCallback }
 				/>
 			}
 		</div>
@@ -79,7 +77,6 @@ AccountContentB.propTypes = {
 	} ).isRequired,
 	connectSuccessCallback: PropTypes.func.isRequired,
 	connectFailureCallback: PropTypes.func.isRequired,
-	connectReadyCallback: PropTypes.func.isRequired,
 	updateState: PropTypes.func.isRequired,
 	getStateObjectToUpdate: PropTypes.func.isRequired,
 	navigate: PropTypes.func.isRequired,
