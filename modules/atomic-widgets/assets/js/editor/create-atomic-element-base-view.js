@@ -562,21 +562,21 @@ export default function createAtomicElementBaseView( type ) {
 			return [ base, ...classes ].join( ' ' );
 		},
 
-		getBaseClass() {
-			const editorSettings = this.model.get( 'editor_settings' ) || {};
-			const elType = this.model.get( 'elType' );
-			const widgetType = this.model.get( 'widgetType' );
-			const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
-			const baseClass = Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
-			
-			// Check for CSS converter widget flag in editor_settings
-			if ( editorSettings.css_converter_widget || editorSettings.disable_base_styles ) {
-				console.log( `🚫 CSS converter widget detected, returning empty base class` );
-				return ''; // No base class for CSS converter widgets
-			}
+	getBaseClass() {
+		const editorSettings = this.model.get( 'editor_settings' ) || {};
+		const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
+		const baseClass = Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
+		
+		if ( this.isCssConverterWidget( editorSettings ) ) {
+			return '';
+		}
 
-			return baseClass;
-		},
+		return baseClass;
+	},
+
+	isCssConverterWidget( editorSettings ) {
+		return editorSettings.css_converter_widget || editorSettings.disable_base_styles;
+	},
 
 		isOverflowHidden() {
 			const elementStyles = window.getComputedStyle( this.el );

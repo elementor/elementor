@@ -103,8 +103,7 @@ function createTemplatedElementViewClassDeclaration( {
 					const editorSettings = this.model.get( 'editor_settings' ) || {};
 					const isCssConverterWidget = editorSettings.css_converter_widget || editorSettings.disable_base_styles;
 					
-					// Override base_styles for CSS converter widgets
-					const finalBaseStyles = isCssConverterWidget ? {} : baseStylesDictionary;
+					const finalBaseStyles = this.getBaseStylesForWidget( isCssConverterWidget, baseStylesDictionary );
 					
 					// Same as the Backend.
 					const context = {
@@ -121,6 +120,10 @@ function createTemplatedElementViewClassDeclaration( {
 			await process.execute();
 
 			this.#afterRenderTemplate();
+		}
+
+		getBaseStylesForWidget( isCssConverterWidget: boolean, baseStylesDictionary: Record< string, string > ): Record< string, string > {
+			return isCssConverterWidget ? {} : baseStylesDictionary;
 		}
 
 		// Emulating the original Marionette behavior.

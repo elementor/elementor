@@ -12,8 +12,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
@@ -54,10 +52,6 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 			'link' => Link_Prop_Type::make(),
 
 			'attributes' => Attributes_Prop_Type::make(),
-
-			'margin' => Union_Prop_Type::make()
-				->add_prop_type( Dimensions_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() ),
 		];
 
 		return $props;
