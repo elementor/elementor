@@ -11,9 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Widget_JSON_Generator {
+	// TODO: DELETE - This generator uses the deprecated Atomic_Widget_Service
 	private $atomic_widget_service;
 
 	public function __construct( Atomic_Widget_Service $atomic_widget_service = null ) {
+		// TODO: DELETE - Replace with v2 CSS_To_Atomic_Props_Converter
 		$this->atomic_widget_service = $atomic_widget_service ?: new Atomic_Widget_Service();
 	}
 

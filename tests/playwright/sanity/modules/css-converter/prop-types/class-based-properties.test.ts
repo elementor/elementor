@@ -59,6 +59,7 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
 
+		console.log( 'API Result:', {
 			success: apiResult.success,
 			post_id: apiResult.post_id,
 			widgets_created: apiResult.widgets_created,

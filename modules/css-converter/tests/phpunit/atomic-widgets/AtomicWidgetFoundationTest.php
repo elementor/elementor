@@ -15,6 +15,8 @@ class AtomicWidgetFoundationTest extends TestCase {
 	private $json_generator;
 
 	protected function setUp(): void {
+		// TODO: DELETE - This test uses deprecated Atomic_Widget_Service
+		// Should be updated to test v2 CSS_To_Atomic_Props_Converter instead
 		$this->atomic_service = new Atomic_Widget_Service();
 		$this->json_generator = new Widget_JSON_Generator( $this->atomic_service );
 	}

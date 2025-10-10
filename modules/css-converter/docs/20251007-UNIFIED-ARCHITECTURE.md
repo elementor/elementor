@@ -744,6 +744,67 @@ $specificity_calculator = new Css_Specificity_Calculator([
    - Style application now happens through centralized manager
    - Property conversion integrated into collection phase
 
+#### **🚨 CRITICAL: Legacy Service Deprecation**
+
+**Deprecated Service**: `atomic-widget-service.php` (v1 architecture)
+**Replacement**: `CSS_To_Atomic_Props_Converter` + Property Mappers (v2 architecture)
+
+#### **Property Types Requiring Migration from Legacy Service**
+
+The following properties are currently handled by the deprecated `atomic-widget-service.php` and need dedicated v2 property mappers:
+
+##### **✅ MIGRATED (v2 Property Mappers Exist)**
+- ✅ **font-size** → `font-size-property-mapper.php`
+- ✅ **width** → `width-property-mapper.php` 
+- ✅ **height** → `height-property-mapper.php`
+- ✅ **color** → `color-property-mapper.php`
+- ✅ **background-color** → `background-color-property-mapper.php`
+- ✅ **margin** → `margin-property-mapper.php`
+- ✅ **padding** → `padding-property-mapper.php` + `atomic-padding-property-mapper.php`
+- ✅ **box-shadow** → `box-shadow-property-mapper.php`
+- ✅ **border-radius** → `border-radius-property-mapper.php`
+- ✅ **display** → `display-property-mapper.php`
+- ✅ **position** → `position-property-mapper.php`
+- ✅ **flex-direction** → `flex-direction-property-mapper.php`
+- ✅ **text-align** → `text-align-property-mapper.php`
+- ✅ **opacity** → `opacity-property-mapper.php`
+- ✅ **transform** → `transform-property-mapper.php`
+- ✅ **text-transform** → `text-transform-property-mapper.php`
+- ✅ **font-weight** → `font-weight-property-mapper.php`
+- ✅ **letter-spacing** → `letter-spacing-property-mapper.php`
+
+##### **⚠️ PARTIALLY MIGRATED (Need Updates)**
+- ⚠️ **positioning properties** → `positioning-property-mapper.php` (needs v2 architecture fix)
+- ⚠️ **text-shadow** → `text-shadow-property-mapper.php` (exists but may need validation)
+
+##### **❌ NOT MIGRATED (Still Depend on Legacy Service)**
+- ❌ **max-width** → No dedicated mapper (falls back to legacy service)
+- ❌ **min-width** → No dedicated mapper (falls back to legacy service)
+- ❌ **align-items** → No dedicated mapper (falls back to legacy service)
+- ❌ **z-index** → Handled by positioning mapper but may need separate mapper
+
+##### **🔄 MIGRATION PRIORITY**
+1. **HIGH PRIORITY**: max-width, min-width (commonly used size properties)
+2. **MEDIUM PRIORITY**: align-items (flexbox property)
+3. **LOW PRIORITY**: z-index (already handled by positioning mapper)
+
+#### **Legacy Service Removal Plan**
+
+**Phase 1**: Create missing v2 property mappers
+- Create `max-width-property-mapper.php`
+- Create `min-width-property-mapper.php` 
+- Create `align-items-property-mapper.php`
+
+**Phase 2**: Fix existing mappers
+- Fix `positioning-property-mapper.php` to use correct v2 architecture
+- Validate `text-shadow-property-mapper.php` implementation
+
+**Phase 3**: Remove legacy service
+- Delete `atomic-widget-service.php`
+- Remove `atomic-widgets-orchestrator.php` 
+- Remove `widget-json-generator.php`
+- Update tests to use v2 architecture only
+
 #### **Backward Compatibility**
 - ✅ **REST API**: No changes to public API endpoints
 - ✅ **Widget Creator**: Existing interface maintained
@@ -751,9 +812,10 @@ $specificity_calculator = new Css_Specificity_Calculator([
 - ✅ **Atomic Widgets**: Full compatibility maintained
 
 #### **Migration Steps**
-1. **No action required** - Migration is automatic
-2. **Custom integrations**: Update to use new `Widget_Conversion_Service` methods
-3. **Testing**: Verify custom property mappers work with unified approach
+1. **Create missing property mappers** for max-width, min-width, align-items
+2. **Fix positioning mapper** to use correct v2 architecture
+3. **Test all property conversions** work with v2 system
+4. **Remove legacy service** once all properties are migrated
 
 ---
 

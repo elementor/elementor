@@ -97,13 +97,18 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return $property;
 	}
 
+	public function get_target_property_name( string $property ): string {
+		// CRITICAL FIX: CSS_To_Atomic_Props_Converter calls this method
+		return $this->get_v4_property_name( $property );
+	}
+
 	private function map_z_index_property( $value ): ?array {
 		$parsed_value = $this->parse_z_index_value( $value );
 		if ( null === $parsed_value ) {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
+		// ✅ ATOMIC-ONLY COMPLIANCE: Return atomic prop type directly (v2 architecture)
 		return Number_Prop_Type::make()->generate( $parsed_value );
 	}
 
@@ -113,17 +118,14 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Convert physical properties to logical properties for atomic widgets
-		$logical_property = $this->get_logical_property_name( $property );
-
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
-		return $this->create_size_prop( $parsed_size );
+		// ✅ ATOMIC-ONLY COMPLIANCE: Return atomic prop type directly (v2 architecture)
+		return Size_Prop_Type::make()->generate( $parsed_size );
 	}
 
 	private function map_shorthand_property( string $property, $value ): ?array {
-		// For shorthand properties, we need to return multiple atomic properties
-		// This is a limitation - atomic widgets expect individual properties
-		// For now, we'll handle the first value only
+		// ✅ CRITICAL FIX: Shorthand properties should be handled by CSS_Shorthand_Expander
+		// This method should not be called for shorthand properties if the expander is working correctly
+		// For now, handle the first value only as a fallback
 		$parts = $this->parse_shorthand_values( $value );
 		if ( empty( $parts ) ) {
 			return null;
@@ -135,8 +137,9 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
-		return $this->create_size_prop( $parsed_size );
+		// ✅ ATOMIC-ONLY COMPLIANCE: Return atomic prop type directly (v2 architecture)
+		// Note: This is a fallback - CSS_Shorthand_Expander should handle shorthand expansion
+		return Size_Prop_Type::make()->generate( $parsed_size );
 	}
 
 	private function get_logical_property_name( string $property ): string {
@@ -160,14 +163,19 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Handle CSS keywords
+		// Handle 'auto' keyword - browser default for z-index
+		if ( 'auto' === strtolower( $value ) ) {
+			return 0; // Browser treats auto as 0 for z-index
+		}
+
+		// Handle other CSS keywords
 		if ( $this->is_css_keyword( $value ) ) {
-			// For z-index, keywords like 'auto' should return null
+			// For z-index, other keywords should return null
 			// as atomic widgets expect numeric values
 			return null;
 		}
 
-		// Parse numeric value
+		// Parse numeric value (including negative values)
 		if ( is_numeric( $value ) ) {
 			return (int) $value;
 		}
@@ -201,7 +209,5 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return in_array( strtolower( $value ), $keywords, true );
 	}
 
-	private function create_size_prop( array $size_value ): array {
-		return Size_Prop_Type::make()->generate( $size_value );
-	}
+
 }

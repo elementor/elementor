@@ -9,6 +9,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * @deprecated This is the older atomic widget service that has been superseded by the v2 architecture.
+ * 
+ * TODO: DELETE THIS FILE - This service should be removed as it's been replaced by:
+ * - CSS_To_Atomic_Props_Converter (services/atomic-widgets-v2/css-to-atomic-props-converter.php)
+ * - The newer v2 conversion pipeline
+ * 
+ * The positioning properties fix applied here (lines 104-107) demonstrates the issue with this
+ * older service - it has hardcoded switch statements that need manual updates for new properties.
+ * The v2 architecture uses the proper property mapper system instead.
+ * 
+ * This file is kept temporarily for backward compatibility but should be deleted once all
+ * references are migrated to the v2 system.
+ */
 class Atomic_Widget_Service {
 	private $prop_type_registry;
 	private $supported_prop_types;

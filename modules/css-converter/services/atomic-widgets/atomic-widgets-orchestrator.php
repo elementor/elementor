@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Widgets_Orchestrator {
+	// TODO: DELETE - This orchestrator uses the deprecated Atomic_Widget_Service
+	// Should be replaced with v2 architecture components
 	private $atomic_widget_service;
 	private $widget_json_generator;
 	private $conversion_statistics;
@@ -18,6 +20,7 @@ class Atomic_Widgets_Orchestrator {
 		Atomic_Widget_Service $atomic_widget_service = null,
 		Widget_JSON_Generator $widget_json_generator = null
 	) {
+		// TODO: DELETE - Replace with v2 CSS_To_Atomic_Props_Converter
 		$this->atomic_widget_service = $atomic_widget_service ?: new Atomic_Widget_Service();
 		$this->widget_json_generator = $widget_json_generator ?: new Widget_JSON_Generator( $this->atomic_widget_service );
 		$this->reset_statistics();

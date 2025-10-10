@@ -34,8 +34,14 @@ class CSS_Shorthand_Expander {
 			'margin-inline',
 			'margin-block',
 			// ✅ NEW: Logical positioning properties
+			'inset',
 			'inset-inline',
 			'inset-block',
+			// ✅ NEW: Physical positioning properties (need conversion to logical)
+			'top',
+			'right',
+			'bottom',
+			'left',
 		];
 
 		return in_array( $property, $shorthand_properties, true );
@@ -53,10 +59,20 @@ class CSS_Shorthand_Expander {
 				return self::expand_margin_inline_shorthand( $value );
 			case 'margin-block':
 				return self::expand_margin_block_shorthand( $value );
+			case 'inset':
+				return self::expand_inset_shorthand( $value );
 			case 'inset-inline':
 				return self::expand_inset_inline_shorthand( $value );
 			case 'inset-block':
 				return self::expand_inset_block_shorthand( $value );
+			case 'top':
+				return [ 'inset-block-start' => $value ];
+			case 'right':
+				return [ 'inset-inline-end' => $value ];
+			case 'bottom':
+				return [ 'inset-block-end' => $value ];
+			case 'left':
+				return [ 'inset-inline-start' => $value ];
 			default:
 				return [ $property => $value ];
 		}
@@ -256,12 +272,17 @@ class CSS_Shorthand_Expander {
 	 * margin-inline: 10px 30px -> margin-inline-start: 10px, margin-inline-end: 30px
 	 */
 	private static function expand_margin_inline_shorthand( $value ): array {
-		if ( empty( $value ) || ! is_string( $value ) ) {
+		// ✅ CRITICAL FIX: Don't use empty() as it treats '0' as empty!
+		if ( ! is_string( $value ) || '' === trim( $value ) ) {
 			return [];
 		}
 
 		$parts = preg_split( '/\s+/', trim( $value ) );
-		$parts = array_filter( $parts );
+		// ✅ CRITICAL FIX: Don't use array_filter() as it removes '0' values!
+		$parts = array_filter( $parts, function( $part ) {
+			return '' !== trim( $part );
+		} );
+		$parts = array_values( $parts );
 		$count = count( $parts );
 
 		if ( $count < 1 || $count > 2 ) {
@@ -282,12 +303,17 @@ class CSS_Shorthand_Expander {
 	 * margin-block: 10px 30px -> margin-block-start: 10px, margin-block-end: 30px
 	 */
 	private static function expand_margin_block_shorthand( $value ): array {
-		if ( empty( $value ) || ! is_string( $value ) ) {
+		// ✅ CRITICAL FIX: Don't use empty() as it treats '0' as empty!
+		if ( ! is_string( $value ) || '' === trim( $value ) ) {
 			return [];
 		}
 
 		$parts = preg_split( '/\s+/', trim( $value ) );
-		$parts = array_filter( $parts );
+		// ✅ CRITICAL FIX: Don't use array_filter() as it removes '0' values!
+		$parts = array_filter( $parts, function( $part ) {
+			return '' !== trim( $part );
+		} );
+		$parts = array_values( $parts );
 		$count = count( $parts );
 
 		if ( $count < 1 || $count > 2 ) {
@@ -308,12 +334,17 @@ class CSS_Shorthand_Expander {
 	 * inset-inline: 10px 30px -> inset-inline-start: 10px, inset-inline-end: 30px
 	 */
 	private static function expand_inset_inline_shorthand( $value ): array {
-		if ( empty( $value ) || ! is_string( $value ) ) {
+		// ✅ CRITICAL FIX: Don't use empty() as it treats '0' as empty!
+		if ( ! is_string( $value ) || '' === trim( $value ) ) {
 			return [];
 		}
 
 		$parts = preg_split( '/\s+/', trim( $value ) );
-		$parts = array_filter( $parts );
+		// ✅ CRITICAL FIX: Don't use array_filter() as it removes '0' values!
+		$parts = array_filter( $parts, function( $part ) {
+			return '' !== trim( $part );
+		} );
+		$parts = array_values( $parts );
 		$count = count( $parts );
 
 		if ( $count < 1 || $count > 2 ) {
@@ -330,16 +361,95 @@ class CSS_Shorthand_Expander {
 	}
 
 	/**
-	 * Expand inset-block shorthand to logical properties
-	 * inset-block: 10px 30px -> inset-block-start: 10px, inset-block-end: 30px
+	 * Expand inset shorthand to all 4 logical properties
+	 * inset: 20px -> all 4 sides: 20px
+	 * inset: 10px 20px -> block: 10px, inline: 20px
+	 * inset: 10px 20px 30px -> block-start: 10px, inline: 20px, block-end: 30px
+	 * inset: 10px 20px 30px 40px -> block-start: 10px, inline-end: 20px, block-end: 30px, inline-start: 40px
 	 */
-	private static function expand_inset_block_shorthand( $value ): array {
-		if ( empty( $value ) || ! is_string( $value ) ) {
+	private static function expand_inset_shorthand( $value ): array {
+		// ✅ CRITICAL FIX: Don't use empty() as it treats '0' as empty!
+		if ( ! is_string( $value ) || '' === trim( $value ) ) {
 			return [];
 		}
 
 		$parts = preg_split( '/\s+/', trim( $value ) );
-		$parts = array_filter( $parts );
+		// ✅ CRITICAL FIX: Don't use array_filter() as it removes '0' values!
+		// Filter out only truly empty strings, not '0'
+		$parts = array_filter( $parts, function( $part ) {
+			return '' !== trim( $part );
+		} );
+		$parts = array_values( $parts ); // Re-index array
+		$count = count( $parts );
+
+		if ( $count < 1 || $count > 4 ) {
+			return [];
+		}
+
+		switch ( $count ) {
+			case 1:
+				// All 4 sides same
+				$all_value = $parts[0];
+				return [
+					'inset-block-start' => $all_value,
+					'inset-inline-end' => $all_value,
+					'inset-block-end' => $all_value,
+					'inset-inline-start' => $all_value,
+				];
+
+			case 2:
+				// Vertical (block) and horizontal (inline)
+				$block_value = $parts[0];
+				$inline_value = $parts[1];
+				return [
+					'inset-block-start' => $block_value,
+					'inset-inline-end' => $inline_value,
+					'inset-block-end' => $block_value,
+					'inset-inline-start' => $inline_value,
+				];
+
+			case 3:
+				// Top, horizontal, bottom
+				$block_start = $parts[0];
+				$inline_value = $parts[1];
+				$block_end = $parts[2];
+				return [
+					'inset-block-start' => $block_start,
+					'inset-inline-end' => $inline_value,
+					'inset-block-end' => $block_end,
+					'inset-inline-start' => $inline_value,
+				];
+
+			case 4:
+				// All 4 sides: top, right, bottom, left
+				return [
+					'inset-block-start' => $parts[0],
+					'inset-inline-end' => $parts[1],
+					'inset-block-end' => $parts[2],
+					'inset-inline-start' => $parts[3],
+				];
+
+			default:
+				return [];
+		}
+	}
+
+	/**
+	 * Expand inset-block shorthand to logical properties
+	 * inset-block: 10px 30px -> inset-block-start: 10px, inset-block-end: 30px
+	 */
+	private static function expand_inset_block_shorthand( $value ): array {
+		// ✅ CRITICAL FIX: Don't use empty() as it treats '0' as empty!
+		if ( ! is_string( $value ) || '' === trim( $value ) ) {
+			return [];
+		}
+
+		$parts = preg_split( '/\s+/', trim( $value ) );
+		// ✅ CRITICAL FIX: Don't use array_filter() as it removes '0' values!
+		$parts = array_filter( $parts, function( $part ) {
+			return '' !== trim( $part );
+		} );
+		$parts = array_values( $parts );
 		$count = count( $parts );
 
 		if ( $count < 1 || $count > 2 ) {
