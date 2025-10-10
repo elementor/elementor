@@ -18,7 +18,6 @@ import { Grid } from '@elementor/app-ui';
 import { useCallback, useEffect } from 'react';
 import { useLastFilterContext } from '../../context/last-filter-context';
 import { useLocation } from '@reach/router';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import { useTracking } from '../../context/tracking-context';
 
 import './index.scss';
@@ -147,21 +146,6 @@ export default function Index( props ) {
 
 	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setQueryParams );
 
-	const eventTracking = ( command, elementPosition, search = null, direction = null, sortType = null, action = null, eventType = 'click' ) => {
-		appsEventTrackingDispatch(
-			command,
-			{
-				page_source: 'home page',
-				element_position: elementPosition,
-				search_term: search,
-				sort_direction: direction,
-				sort_type: sortType,
-				event_type: eventType,
-				action,
-			},
-		);
-	};
-
 	const options = [
 		{
 			label: __( 'Featured', 'elementor' ),
@@ -216,7 +200,6 @@ export default function Index( props ) {
 							placeholder={ __( 'Search all Website Templates...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => {
-								eventTracking( 'kit-library/kit-free-search', 'top_area_search', value, null, null, null, 'search' );
 								setQueryParams( ( prev ) => ( { ...prev, search: value } ) );
 							} }
 						/>
@@ -235,15 +218,10 @@ export default function Index( props ) {
 							options={ options }
 							value={ queryParams.order }
 							onChange={ ( order ) => setQueryParams( ( prev ) => ( { ...prev, order } ) ) }
-							onChangeSortDirection={ ( direction ) => {
-								eventTracking( 'kit-library/change-sort-direction', 'top_area_sort', null, direction );
-							} }
 							onChangeSortValue={ ( value ) => {
-								eventTracking( 'kit-library/change-sort-value', 'top_area_sort', null, null, value );
 								const label = options.find( ( option ) => option.value === value ).label;
 								tracking.trackKitlibSorterSelected( label );
 							} }
-							onSortSelectOpen={ () => eventTracking( 'kit-library/change-sort-type', 'top_area_sort', null, null, null, 'expand' ) }
 						/>
 					</Grid>
 				</Grid>
