@@ -218,12 +218,10 @@ export default function Index( props ) {
 							options={ options }
 							value={ queryParams.order }
 							onChange={ ( order ) => setQueryParams( ( prev ) => ( { ...prev, order } ) ) }
-							onChangeSortDirection={ () => {} }
 							onChangeSortValue={ ( value ) => {
 								const label = options.find( ( option ) => option.value === value ).label;
 								tracking.trackKitlibSorterSelected( label );
 							} }
-							onSortSelectOpen={ () => {} }
 						/>
 					</Grid>
 				</Grid>
