@@ -2,8 +2,12 @@
 
 namespace Elementor\Modules\Components;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
+use Elementor\Core\Utils\Collection;
+use Elementor\Modules\Components\Documents\Component;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -34,7 +38,7 @@ class Components_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn() => $this->route_wrapper( fn() => $this->get_components() ),
-				'permission_callback' => fn() => is_user_logged_in(),
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 			],
 		] );
 
@@ -42,7 +46,45 @@ class Components_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn() => $this->route_wrapper( fn() => $this->get_styles() ),
-				'permission_callback' => fn() => is_user_logged_in(),
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
+			[
+				'methods' => 'PUT',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->save_components( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'changes' => [
+						'type' => 'object',
+						'required' => true,
+						'properties' => [
+							'added' => [
+								'type' => 'array',
+								'items' => [
+									'type' => 'number',
+								],
+							],
+							'deleted' => [
+								'type' => 'array',
+								'items' => [
+									'type' => 'number',
+								],
+							],
+							'modified' => [
+								'type' => 'array',
+								'items' => [
+									'type' => 'number',
+								],
+							],
+						],
+					],
+					'data' => [
+						'type' => 'object',
+						'required' => true,
+					],
+				],
 			],
 		] );
 
@@ -71,7 +113,7 @@ class Components_REST_API {
 	private function get_components() {
 		$components = $this->get_repository()->all();
 
-		$components_list = $components->get_components()->map( fn( $component ) => [
+		$components_list = $components->map( fn( $component ) => [
 			'id' => $component['id'],
 			'name' => $component['name'],
 		])->all();
@@ -83,15 +125,165 @@ class Components_REST_API {
 		$components = $this->get_repository()->all();
 
 		$styles = [];
-		$components->get_components()->each( function( $component ) use ( &$styles ) {
+		$components->each( function( $component ) use ( &$styles ) {
 			$styles[ $component['id'] ] = $component['styles'];
 		} );
 
 		return Response_Builder::make( $styles )->build();
 	}
+
+	private function save_components( \WP_REST_Request $request ) {
+		$changes = $request->get_param( 'changes' ) ?? [];
+		$data = $request->get_param( 'data' ) ?? [];
+
+		$components = $this->get_repository()->all();
+
+		$added = $changes['added'];
+		$deleted = $changes['deleted'];
+		$modified = $changes['modified'];
+
+		$count = $components->count() + count( $added ) - count( $deleted );
+
+		if ( $count > static::MAX_COMPONENTS ) {
+			return Error_Builder::make( 'components_limit_exceeded' )
+				->set_status( 400 )
+				->set_message( sprintf(
+					/* translators: %d: maximum components limit. */
+					__( 'Components limit exceeded. Maximum allowed: %d', 'elementor' ),
+					static::MAX_COMPONENTS
+				) )
+				->build();
+		}
+
+		$items_to_save = Collection::make( $data )
+			->only( array_merge( $added, $modified ) );
+
+		$components_to_save = $components
+			->except( $deleted )
+			->merge( $items_to_save );
+
+		$existing_names = $components
+			->except( $deleted )
+			->map( fn( $component ) => $component['name'] )
+			->all();
+
+		$errors = $components_to_save->reduce( function ( $errors, $component ) use ( $existing_names ) {
+			$name = trim( sanitize_text_field( $component['name'] ) );
+
+			if ( strlen( $name ) < 2 ) {
+				$errors[] = __( 'Component name too short. Minimum length is 2 characters.', 'elementor' );
+			}
+
+			if ( strlen( $name ) > 50 ) {
+				$errors[] = __( 'Component name too long. Maximum length is 50 characters.', 'elementor' );
+			}
+
+			if ( in_array( $name, $existing_names, true ) ) {
+				$errors[] = sprintf(
+					/* translators: %s: component name. */
+					__( 'Duplicated component name: %s', 'elementor' ),
+					$name
+				);
+			}
+
+			return $errors;
+		}, [] );
+
+		if ( ! empty( $errors ) ) {
+			return Error_Builder::make( 'invalid_names' )
+				->set_status( 400 )
+				->set_message( 'Invalid component names: ' . implode( ', ', $errors ) )
+				->build();
+		}
+
+		foreach ( $deleted as $component_id ) {
+			$document = Plugin::$instance->documents->get( $component_id );
+
+			if ( ! $document ) {
+				throw new \Exception( 'Component not found' );
+			}
+
+			if ( ! $document->is_built_with_elementor() ) {
+				throw new \Exception( 'Not Built With Elementor' );
+			}
+
+			if ( ! ( $document instanceof Component ) ) {
+				throw new \Exception( 'Invalid component document type' );
+			}
+
+			if ( ! $document->is_editable_by_current_user() ) {
+				throw new \Exception( 'Not Editable By User' );
+			}
+
+			wp_delete_post( $component_id, true );
+		}
+
+		foreach ( array_merge( $added, $modified ) as $component_id ) {
+			if ( ! in_array(
+				$data[ $component_id ]['status'],
+				[ Document::STATUS_PUBLISH, Document::STATUS_AUTOSAVE, Document::STATUS_DRAFT ],
+				true
+			) ) {
+				throw new \Exception( 'Invalid Status' );
+			}
+
+			$status = $data[ $component_id ]['status'];
+
+			$document = Plugin::$instance->documents->get( $component_id );
+
+			if ( ! $document ) {
+				if ( ! in_array( $status, [ Document::STATUS_PUBLISH, Document::STATUS_DRAFT ], true ) ) {
+					throw new \Exception( 'Invalid Status for new component' );
+				}
+
+				$document = Plugin::$instance->documents->create(
+					Component::get_type(),
+					[
+						'post_status' => $status,
+						'post_title' => $data[ $component_id ]['title'],
+					]
+				);
+			}
+
+			if ( ! $document->is_built_with_elementor() ) {
+				throw new \Exception( 'Not Built With Elementor' );
+			}
+
+			if ( ! ( $document instanceof Component ) ) {
+				throw new \Exception( 'Invalid component document type' );
+			}
+
+			if ( ! $document->is_editable_by_current_user() ) {
+				throw new \Exception( 'Not Editable By User' );
+			}
+
+			if (
+				Document::STATUS_AUTOSAVE === $status &&
+				$document->get_post()->post_status === Document::STATUS_PUBLISH
+			) {
+				// If the post is a draft - save the `autosave` to the original draft.
+				// Allow a revision only if the original post is already published.
+				$document = $document->get_autosave( 0, true );
+			}
+
+			$data = [
+				'settings' => [
+					'post_status' => $status,
+					'post_title' => $data[ $component_id ]['title'],
+				],
+				'elements' => $data[ $component_id ]['elements'],
+			];
+
+			$document->save( $data );
+		}
+
+		return Response_Builder::make()->no_content()->build();
+	}
+
 	private function create_component( \WP_REST_Request $request ) {
 		$components = $this->get_repository()->all();
-		$components_count = $components->get_components()->count();
+
+		$components_count = $components->count();
 
 		if ( $components_count >= static::MAX_COMPONENTS ) {
 			return Error_Builder::make( 'components_limit_exceeded' )
@@ -106,7 +298,7 @@ class Components_REST_API {
 
 		$parser = Components_Parser::make();
 
-		$name_result = $parser->parse_name( $request->get_param( 'name' ), $components->get_components()->map( fn( $component ) => $component['name'] )->all() );
+		$name_result = $parser->parse_name( $request->get_param( 'name' ), $components->map( fn( $component ) => $component['name'] )->all() );
 
 		if ( ! $name_result->is_valid() ) {
 			return Error_Builder::make( 'invalid_name' )
