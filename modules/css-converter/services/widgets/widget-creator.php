@@ -626,21 +626,32 @@ class Widget_Creator {
 		}
 
 		if ( ! empty( $applied_styles['computed_styles'] ) ) {
+			error_log( "🎨 WIDGET_CREATOR: Processing computed_styles for {$widget_type}" );
+			error_log( "📋 WIDGET_CREATOR: Computed style keys: " . implode( ', ', array_keys( $applied_styles['computed_styles'] ) ) );
+			
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
 			}
 			
 			$class_id = $this->current_widget_class_id;
+			error_log( "🔑 WIDGET_CREATOR: Using class ID: {$class_id}" );
 			
 			if ( isset( $v4_styles[ $class_id ] ) ) {
+				error_log( "🔄 WIDGET_CREATOR: Merging with existing style object" );
 				$computed_props = $this->map_css_to_v4_props( $applied_styles['computed_styles'] );
 				$existing_props = $v4_styles[ $class_id ]['variants'][0]['props'] ?? [];
 				$v4_styles[ $class_id ]['variants'][0]['props'] = array_merge( $existing_props, $computed_props );
 			} else {
+				error_log( "✨ WIDGET_CREATOR: Creating new style object" );
 				$style_object = $this->create_v4_style_object( $class_id, $applied_styles['computed_styles'] );
+				
+				error_log( "📊 WIDGET_CREATOR: Style object props count: " . count( $style_object['variants'][0]['props'] ?? [] ) );
 				
 				if ( ! empty( $style_object['variants'][0]['props'] ) ) {
 					$v4_styles[ $class_id ] = $style_object;
+					error_log( "✅ WIDGET_CREATOR: Style object added to v4_styles" );
+				} else {
+					error_log( "⚠️ WIDGET_CREATOR: Style object has NO props, not added!" );
 				}
 			}
 		}
@@ -960,6 +971,10 @@ class Widget_Creator {
 			return false;
 		}
 
+		if ( 'e-div-block' === $this->current_widget_type || 'e-flexbox' === $this->current_widget_type || 'e-heading' === $this->current_widget_type || 'e-paragraph' === $this->current_widget_type ) {
+			return true;
+		}
+
 		$atomic_widget_class = $this->get_atomic_widget_class( $this->current_widget_type );
 		if ( ! $atomic_widget_class ) {
 			return false;
@@ -980,6 +995,7 @@ class Widget_Creator {
 			'e-paragraph' => 'Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph',
 			'e-heading' => 'Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading',
 			'e-button' => 'Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button',
+			'e-div-block' => 'Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block',
 		];
 
 		return $widget_class_map[ $widget_type ] ?? null;

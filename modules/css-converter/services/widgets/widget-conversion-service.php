@@ -284,7 +284,7 @@ class Widget_Conversion_Service {
 				'edit_url' => $creation_result['edit_url'],
 				'conversion_log' => $conversion_log,
 				'warnings' => $conversion_log['warnings'],
-				'errors' => $creation_result['errors'],
+				'errors' => $creation_result['errors'] ?? [],
 			];
 
 		} catch ( \Exception $e ) {
@@ -609,10 +609,26 @@ class Widget_Conversion_Service {
 		$prepared_widgets = [];
 		
 		foreach ( $widgets as $widget ) {
+			$widget_type = $widget['widget_type'] ?? 'unknown';
+			$widget_classes = $widget['attributes']['class'] ?? '';
 			$resolved_styles = $widget['resolved_styles'] ?? [];
+			
+			error_log( "🔧 PREPARE_WIDGET: Processing {$widget_type} with classes '{$widget_classes}'" );
+			error_log( "🔧 PREPARE_WIDGET: Resolved styles count: " . count( $resolved_styles ) );
+			
+			if ( ! empty( $resolved_styles ) ) {
+				error_log( "📋 PREPARE_WIDGET: Resolved style keys: " . implode( ', ', array_keys( $resolved_styles ) ) );
+			} else {
+				error_log( "⚠️ PREPARE_WIDGET: No resolved styles for {$widget_type}!" );
+			}
 			
 			// Convert resolved styles to applied format
 			$applied_styles = $this->convert_resolved_styles_to_applied_format( $resolved_styles );
+			
+			error_log( "✅ PREPARE_WIDGET: Converted to applied format, computed_styles count: " . count( $applied_styles['computed_styles'] ?? [] ) );
+			if ( ! empty( $applied_styles['computed_styles'] ) ) {
+				error_log( "📋 PREPARE_WIDGET: Computed style keys: " . implode( ', ', array_keys( $applied_styles['computed_styles'] ) ) );
+			}
 			
 			// Add applied styles to widget (Widget Creator expects them under 'applied_styles' key)
 			$prepared_widget = $widget;
@@ -659,34 +675,31 @@ class Widget_Conversion_Service {
 	}
 
 	private function convert_resolved_styles_to_applied_format( array $resolved_styles ): array {
-		// Convert the resolved styles back to the format expected by the existing widget creator
 		$computed_styles = [];
 		
 		foreach ( $resolved_styles as $property => $winning_style ) {
-			// Use the converted atomic format directly if available, otherwise fall back to raw value
 			$atomic_value = $winning_style['converted_property'] ?? $winning_style['value'];
 			
 			error_log( "UNIFIED_CONVERTER: Converting resolved style {$property}: " . wp_json_encode( $atomic_value ) );
 			
-			// 🚨 CRITICAL FIX: Extract atomic structure and use correct property name
-			if ( is_array( $atomic_value ) ) {
-				// Check if atomic_value is wrapped (e.g., {"margin": {"$$type": "dimensions", ...}})
+			if ( is_array( $atomic_value ) && isset( $atomic_value['$$type'] ) ) {
+				$computed_styles[ $property ] = $atomic_value;
+				
+			} elseif ( is_array( $atomic_value ) ) {
 				foreach ( $atomic_value as $wrapped_property => $wrapped_value ) {
 					if ( is_array( $wrapped_value ) && isset( $wrapped_value['$$type'] ) ) {
-						// Use the wrapped property name (e.g., "margin") instead of original (e.g., "margin-left")
 						$computed_styles[ $wrapped_property ] = $wrapped_value;
-						break; // Only process the first wrapped property
+						break;
 					}
 				}
 			} else {
-				// Non-wrapped atomic value, use as-is
 				$computed_styles[ $property ] = $atomic_value;
 			}
 		}
 
 		return [
 			'computed_styles' => $computed_styles,
-			'global_classes' => [], // No global classes in unified approach
+			'global_classes' => [],
 			'element_styles' => [],
 			'widget_styles' => [],
 			'id_styles' => [],

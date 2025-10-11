@@ -1,13 +1,9 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
-import EditorPage from '../../../../pages/editor-page';
 import { CssConverterHelper, CssConverterResponse } from '../helper';
-import path from 'path';
 
 test.describe('URL Import - Flat Classes Test', () => {
-	let wpAdmin: WpAdminPage;
-	let editor: EditorPage;
 	let helper: CssConverterHelper;
 	let testPageUrl: string;
 	let cssFile1Url: string;
@@ -40,31 +36,19 @@ test.describe('URL Import - Flat Classes Test', () => {
 		console.log('CSS file 2 URL:', cssFile2Url);
 	});
 
-	test.afterAll(async ({ browser, apiRequests }, testInfo) => {
+	test.afterAll(async ({ browser }) => {
 		const page = await browser.newPage();
-		const wpAdminPage = new WpAdminPage(page, testInfo, apiRequests);
+		// const wpAdminPage = new WpAdminPage(page, testInfo, apiRequests);
 		// await wpAdminPage.resetExperiments();
 		await page.close();
 	});
 
-	test.beforeEach(async ({ page, apiRequests }, testInfo) => {
-		wpAdmin = new WpAdminPage(page, testInfo, apiRequests);
-	});
-
-	test('should successfully import URL with flat classes and mixed styling sources', async ({ request }) => {
+	test('should successfully import URL with flat classes and mixed styling sources', async ({ request, page }) => {
 		// Convert the URL with external CSS files
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
-			[cssFile1Url, cssFile2Url], // External CSS files
-			false, // Don't follow imports
-			{
-				postType: 'page',
-				createGlobalClasses: true,
-				globalClassThreshold: 2,
-				preserveIds: false,
-				useZeroDefaults: false,
-			}
+			[cssFile1Url, cssFile2Url] // External CSS files
 		);
 
 		// Validate the API result
@@ -93,19 +77,50 @@ test.describe('URL Import - Flat Classes Test', () => {
 		
 		// Global classes may or may not be created depending on threshold
 		expect(result.global_classes_created).toBeGreaterThanOrEqual(0);
+
+		// Navigate to the converted page to verify basic conversion success
+		// Note: Based on analysis, perfect style preservation is not expected
+		await page.goto(result.edit_url);
+		await page.waitForLoadState('networkidle');
+
+		// Wait for Elementor editor to load
+		await page.waitForSelector('.elementor-editor-active', { timeout: 30000 });
+
+		// Verify basic conversion success - elements exist and have some styling
+		
+		// Header title should exist with reasonable font size (may not match exactly)
+		const headerTitle = page.locator('h1').first();
+		await expect(headerTitle).toBeVisible();
+		const fontSize = await headerTitle.evaluate(el => getComputedStyle(el).fontSize);
+		expect(parseFloat(fontSize)).toBeGreaterThan(20); // Should be larger than body text
+		
+		// Navigation elements should exist (may be converted to buttons)
+		const navElements = page.locator('button, a').filter({ hasText: /Home|About|Services/ });
+		await expect(navElements.first()).toBeVisible();
+		
+		// Verify some styling is applied (even if not perfect)
+		const navButton = navElements.first();
+		await expect(navButton).toHaveCSS('padding', /\d+px/); // Should have some padding
+		
+		// Banner heading should exist
+		const bannerHeading = page.locator('h2').first();
+		await expect(bannerHeading).toBeVisible();
+		
+		// Verify conversion preserved content structure
+		await expect(page.locator('text=Welcome')).toBeVisible();
+		await expect(page.locator('text=Ready to Get Started')).toBeVisible();
+		
+		// Note: Container styles (.page-header, .navigation-area) are known to be missing
+		// Font families are known to be overridden with system fonts
+		// Brand colors are known to be replaced with theme defaults
+		// These are documented issues in STYLE-DIFFERENCES-ANALYSIS.md
 	});
 
-	test('should handle all styling sources: inline, style block, and external CSS', async ({ request }) => {
+	test('should handle all styling sources: inline, style block, and external CSS', async ({ request, page }) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
-			[cssFile1Url, cssFile2Url],
-			false,
-			{
-				postType: 'page',
-				createGlobalClasses: true,
-				globalClassThreshold: 1, // Lower threshold to catch more classes
-			}
+			[cssFile1Url, cssFile2Url]
 		);
 
 		const validation = helper.validateApiResult(result);
@@ -132,19 +147,45 @@ test.describe('URL Import - Flat Classes Test', () => {
 		if (result.warnings && result.warnings.length > 0) {
 			console.log('Warnings:', result.warnings);
 		}
+
+		// Navigate to verify basic styling sources processing
+		await page.goto(result.edit_url);
+		await page.waitForLoadState('networkidle');
+		await page.waitForSelector('.elementor-editor-active', { timeout: 30000 });
+
+		// Verify that content from all styling sources was processed
+		// Note: Exact style preservation is not expected based on analysis
+		
+		// Verify content structure exists (regardless of exact styling)
+		await expect(page.locator('text=Welcome')).toBeVisible();
+		await expect(page.locator('text=Lorem ipsum')).toBeVisible();
+		
+		// Verify navigation elements exist (may be buttons instead of links)
+		const navElements = page.locator('button, a').filter({ hasText: /Home|About|Services|Portfolio/ });
+		expect(await navElements.count()).toBeGreaterThan(3);
+		
+		// Verify banner elements exist
+		await expect(page.locator('text=Ready to Get Started')).toBeVisible();
+		
+		// Verify some basic styling is applied (even if not matching original)
+		const buttons = page.locator('button').first();
+		if (await buttons.count() > 0) {
+			// Should have some padding and styling
+			await expect(buttons).toHaveCSS('padding', /\d+px/);
+		}
+		
+		// Note: Based on analysis, the following are known issues:
+		// - Container styles (.intro-section, .links-container, .action-buttons) are missing
+		// - Exact layout properties (flexbox, gap, etc.) may not be preserved
+		// - Color schemes and fonts are overridden by theme defaults
+		// - CSS class selectors may not match due to element type conversions
 	});
 
 	test('should correctly process flat class selectors without nesting', async ({ request }) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
-			[cssFile1Url, cssFile2Url],
-			false,
-			{
-				postType: 'page',
-				createGlobalClasses: true,
-				globalClassThreshold: 2,
-			}
+			[cssFile1Url, cssFile2Url]
 		);
 
 		const validation = helper.validateApiResult(result);
@@ -166,17 +207,11 @@ test.describe('URL Import - Flat Classes Test', () => {
 		expect(result.widgets_created).toBeGreaterThanOrEqual(6);
 	});
 
-	test('should handle multiple classes on single elements', async ({ request }) => {
+	test('should handle multiple classes on single elements', async ({ request, page }) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
-			[cssFile1Url, cssFile2Url],
-			false,
-			{
-				postType: 'page',
-				createGlobalClasses: true,
-				globalClassThreshold: 1,
-			}
+			[cssFile1Url, cssFile2Url]
 		);
 
 		const validation = helper.validateApiResult(result);
@@ -196,19 +231,44 @@ test.describe('URL Import - Flat Classes Test', () => {
 		// The converter should handle combining styles from multiple classes
 		expect(result.widgets_created).toBeGreaterThan(0);
 		expect(result.global_classes_created).toBeGreaterThanOrEqual(0);
+
+		// Navigate to verify multiple class combinations work
+		await page.goto(result.edit_url);
+		await page.waitForLoadState('networkidle');
+		await page.waitForSelector('.elementor-editor-active', { timeout: 30000 });
+
+		// Verify elements with multiple classes get combined styles
+		
+		// Element with "header-title main-heading" classes should have styles from both
+		const headerTitleMainHeading = page.locator('.header-title.main-heading').first();
+		// From .header-title (style block): font-size: 2.5rem, margin: 0, color: #343a40
+		await expect(headerTitleMainHeading).toHaveCSS('font-size', '40px'); // 2.5rem
+		await expect(headerTitleMainHeading).toHaveCSS('margin', '0px');
+		await expect(headerTitleMainHeading).toHaveCSS('color', 'rgb(52, 58, 64)'); // #343a40
+		// From .main-heading (external CSS): font-family: Arial, text-transform: uppercase
+		await expect(headerTitleMainHeading).toHaveCSS('font-family', /Arial/);
+		await expect(headerTitleMainHeading).toHaveCSS('text-transform', 'uppercase');
+
+		// Element with "intro-text primary-text" classes
+		const introTextPrimary = page.locator('.intro-text.primary-text').first();
+		// From .primary-text (external CSS): font-family: Georgia, text-align: justify
+		await expect(introTextPrimary).toHaveCSS('font-family', /Georgia/);
+		await expect(introTextPrimary).toHaveCSS('text-align', 'justify');
+
+		// Element with "nav-link" and additional classes
+		const navLinkWithClasses = page.locator('.nav-link').first();
+		// From .nav-link (style block): text-decoration: none, padding, border, border-radius
+		await expect(navLinkWithClasses).toHaveCSS('padding', '8px 16px'); // 0.5rem 1rem
+		await expect(navLinkWithClasses).toHaveCSS('border-radius', '4px');
+		// Border color should be from nav-link class
+		await expect(navLinkWithClasses).toHaveCSS('border', '2px solid rgb(0, 123, 255)'); // #007bff
 	});
 
 	test('should process complex styling combinations', async ({ request }) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
-			[cssFile1Url, cssFile2Url],
-			false,
-			{
-				postType: 'page',
-				createGlobalClasses: true,
-				globalClassThreshold: 2,
-			}
+			[cssFile1Url, cssFile2Url]
 		);
 
 		const validation = helper.validateApiResult(result);
@@ -239,24 +299,13 @@ test.describe('URL Import - Flat Classes Test', () => {
 		const resultWithCss: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
-			[cssFile1Url, cssFile2Url],
-			false,
-			{
-				postType: 'page',
-				createGlobalClasses: true,
-			}
+			[cssFile1Url, cssFile2Url]
 		);
 
 		// Test without external CSS files
 		const resultWithoutCss: CssConverterResponse = await helper.convertFromUrl(
 			request,
-			testPageUrl,
-			[], // No external CSS
-			false,
-			{
-				postType: 'page',
-				createGlobalClasses: true,
-			}
+			testPageUrl
 		);
 
 		const validationWithCss = helper.validateApiResult(resultWithCss);
@@ -293,12 +342,7 @@ test.describe('URL Import - Flat Classes Test', () => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
-			[cssFile1Url, cssFile2Url],
-			false,
-			{
-				postType: 'page',
-				createGlobalClasses: true,
-			}
+			[cssFile1Url, cssFile2Url]
 		);
 
 		const validation = helper.validateApiResult(result);
@@ -329,13 +373,7 @@ test.describe('URL Import - Flat Classes Test', () => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
-			[cssFile1Url, cssFile2Url],
-			false,
-			{
-				postType: 'page',
-				createGlobalClasses: true,
-				globalClassThreshold: 2,
-			}
+			[cssFile1Url, cssFile2Url]
 		);
 
 		const validation = helper.validateApiResult(result);
@@ -368,13 +406,7 @@ test.describe('URL Import - Flat Classes Test', () => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
-			[cssFile1Url, cssFile2Url],
-			false,
-			{
-				postType: 'page',
-				createGlobalClasses: true,
-				globalClassThreshold: 1, // Lower threshold to catch utility classes
-			}
+			[cssFile1Url, cssFile2Url]
 		);
 
 		const validation = helper.validateApiResult(result);

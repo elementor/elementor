@@ -63,7 +63,8 @@ class Unified_Css_Processor {
 		foreach ( $widgets as $index => $widget ) {
 			$classes = $widget['attributes']['class'] ?? '';
 			$tag = $widget['tag'] ?? 'unknown';
-			error_log( "  Widget #{$index}: {$tag} with classes: '{$classes}'" );
+			$widget_type = $widget['widget_type'] ?? 'unknown';
+			error_log( "  Widget #{$index}: {$widget_type} ({$tag}) with classes: '{$classes}'" );
 		}
 		
 		$parsed_css = $this->css_parser->parse( $css );
@@ -79,7 +80,8 @@ class Unified_Css_Processor {
 		foreach ( $rules as $index => $rule ) {
 			$selector = $rule['selector'] ?? 'no-selector';
 			$prop_count = count( $rule['properties'] ?? [] );
-			error_log( "📋 UNIFIED CSS PROCESSOR: Rule #{$index}: '{$selector}' with {$prop_count} properties" );
+			$properties_list = implode( ', ', array_keys( $rule['properties'] ?? [] ) );
+			error_log( "📋 UNIFIED CSS PROCESSOR: Rule #{$index}: '{$selector}' with {$prop_count} properties: {$properties_list}" );
 		}
 		
 		foreach ( $rules as $rule ) {
@@ -87,6 +89,7 @@ class Unified_Css_Processor {
 			$properties = $rule['properties'] ?? [];
 			
 			error_log( "🎯 PROCESSING RULE: {$selector} with " . count( $properties ) . " properties" );
+			error_log( "   Properties: " . implode( ', ', array_keys( $properties ) ) );
 			
 			if ( empty( $properties ) ) {
 				error_log( "  ⚠️ Skipping rule with no properties" );
@@ -96,6 +99,14 @@ class Unified_Css_Processor {
 			// Find widgets that match this selector
 			$matched_elements = $this->find_matching_widgets( $selector, $widgets );
 			error_log( "  🎯 MATCHED ELEMENTS: " . count( $matched_elements ) . " elements for selector '{$selector}'" );
+			
+			if ( ! empty( $matched_elements ) ) {
+				foreach ( $matched_elements as $matched ) {
+					$matched_widget_type = $matched['widget_type'] ?? 'unknown';
+					$matched_classes = $matched['attributes']['class'] ?? '';
+					error_log( "    ✓ Matched {$matched_widget_type} with classes: {$matched_classes}" );
+				}
+			}
 			
 			if ( ! empty( $matched_elements ) ) {
 				// Convert properties to atomic format

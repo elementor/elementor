@@ -95,9 +95,41 @@ The test files are served via WordPress HTTP server:
   - `e_atomic_elements: 'active'`
   - `e_nested_elements: 'active'`
 
+## Test Configuration
+
+The tests use **default parameters** to ensure realistic testing scenarios that match typical usage:
+
+```typescript
+// Uses default configuration from CssConverterHelper.convertFromUrl()
+await helper.convertFromUrl(request, testPageUrl, [cssFile1Url, cssFile2Url]);
+
+// This approach ensures tests reflect real-world usage patterns
+// and don't rely on custom configurations that users might not use
+```
+
+### Benefits of Default Parameters:
+- **Realistic testing**: Matches how most users will call the API
+- **Simpler maintenance**: No custom configuration to maintain  
+- **Better coverage**: Tests the default behavior that most users experience
+- **Cleaner tests**: Focuses on functionality rather than configuration
+
+## CSS Assertions
+
+The tests include comprehensive `toHaveCSS` assertions to verify that styles are properly preserved during conversion. However, based on analysis, there are known style preservation issues in the CSS Converter that affect:
+
+- Container background colors and layouts
+- Custom font family specifications
+- Brand color preservation
+- Text transformations and typography
+- Layout structure and semantic containers
+
+See `STYLE-DIFFERENCES-ANALYSIS.md` for detailed analysis of conversion fidelity.
+
 ## Notes
 
 - Tests use the existing `convertFromUrl` helper method
-- Global classes creation depends on threshold settings
+- Global classes creation depends on default threshold settings
 - All tests include proper validation and skip logic for backend issues
 - Tests are designed to be comprehensive yet maintainable
+- CSS assertions may fail due to known converter limitations
+

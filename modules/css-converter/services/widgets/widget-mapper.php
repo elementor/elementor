@@ -134,7 +134,13 @@ class Widget_Mapper {
 	private function collect_widget_elements( $elements ) {
 		$widget_elements = [];
 		
-		// Original simple approach - just map top-level elements
+		// Recursively collect ALL mappable elements from the entire HTML tree
+		$this->collect_elements_recursively( $elements, $widget_elements );
+		
+		return $widget_elements;
+	}
+	
+	private function collect_elements_recursively( $elements, &$widget_elements ) {
 		foreach ( $elements as $element ) {
 			$tag = $element['tag'];
 			
@@ -142,9 +148,12 @@ class Widget_Mapper {
 			if ( isset( $this->mapping_rules[ $tag ] ) ) {
 				$widget_elements[] = $element;
 			}
+			
+			// Recursively process child elements
+			if ( ! empty( $element['children'] ) ) {
+				$this->collect_elements_recursively( $element['children'], $widget_elements );
+			}
 		}
-		
-		return $widget_elements;
 	}
 
 	private function generate_element_id( $element ): string {
