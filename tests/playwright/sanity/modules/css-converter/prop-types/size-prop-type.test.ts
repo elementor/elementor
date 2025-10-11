@@ -145,7 +145,7 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 		} );
 	} );
 
-	test.skip( 'should support unitless zero for all size properties', async ( { page, request } ) => {
+	test( 'should support unitless zero for all size properties', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="max-width: 0;" data-test="max-width-zero">Max width unitless zero</p>
