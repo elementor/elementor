@@ -27,9 +27,8 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 		cssHelper = new CssConverterHelper();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+	test.afterAll( async ( { browser } ) => {
 		const page = await browser.newPage();
-		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 		// await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
@@ -38,7 +37,7 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test.skip( 'should convert height properties and verify styles', async ( { page, request } ) => {
+	test( 'should convert height properties and verify styles', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="height: 50px;" data-test="height-50">Height 50px</p>
@@ -48,7 +47,7 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent );
 
 		// Check if API call failed due to backend issues
 		const validation = cssHelper.validateApiResult( apiResult );
@@ -67,10 +66,10 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 
 		// Define test cases for both editor and frontend verification
 		const testCases = [
-			{ index: 0, name: 'height: 50px', property: 'height', expected: '50px' },
-			{ index: 1, name: 'height: 100px', property: 'height', expected: '100px' },
-			{ index: 2, name: 'height: 5rem', property: 'height', expected: '80px' }, // 5rem = 80px typically
-			{ index: 3, name: 'min-height: 80px', property: 'min-height', expected: '80px' },
+			{ textContent: 'Height 50px', name: 'height: 50px', property: 'height', expected: '50px' },
+			{ textContent: 'Height 100px', name: 'height: 100px', property: 'height', expected: '100px' },
+			{ textContent: 'Height 5rem', name: 'height: 5rem', property: 'height', expected: '80px' }, // 5rem = 80px typically
+			{ textContent: 'Min height 80px', name: 'min-height: 80px', property: 'min-height', expected: '80px' },
 		];
 
 		// Editor verification using test cases array
@@ -79,7 +78,8 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				const element = elementorFrame.locator( 'p' ).filter( { hasText: /Height/ } ).nth( testCase.index );
+				// Use specific text content to identify each element uniquely
+				const element = elementorFrame.locator( 'p' ).filter( { hasText: testCase.textContent } );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
@@ -100,7 +100,8 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
-					const frontendElement = page.locator( 'p' ).filter( { hasText: /Height/ } ).nth( testCase.index );
+					// Use specific text content to identify each element uniquely
+					const frontendElement = page.locator( 'p' ).filter( { hasText: testCase.textContent } );
 
 					await test.step( 'Verify CSS property', async () => {
 						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );

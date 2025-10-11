@@ -27,9 +27,8 @@ test.describe( 'Text Transform Prop Type Integration @prop-types', () => {
 		cssHelper = new CssConverterHelper();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+	test.afterAll( async ( { browser } ) => {
 		const page = await browser.newPage();
-		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 		// await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
@@ -38,7 +37,7 @@ test.describe( 'Text Transform Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test.skip( 'should convert text-transform properties and verify styles', async ( { page, request } ) => {
+	test( 'should convert text-transform properties and verify styles', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<h1 style="text-transform: uppercase;" data-test="text-transform-uppercase">Uppercase Text</h1>
@@ -64,36 +63,28 @@ test.describe( 'Text Transform Prop Type Integration @prop-types', () => {
 
 		const testCases = [
 			{
-				index: 0,
+				textContent: 'Uppercase Text',
 				name: 'text-transform: uppercase on h1',
 				property: 'text-transform',
 				expected: 'uppercase',
-				selector: 'h1, h2',
-				filter: /Uppercase Text/,
 			},
 			{
-				index: 1,
+				textContent: 'Lowercase Text',
 				name: 'text-transform: lowercase on h2',
 				property: 'text-transform',
 				expected: 'lowercase',
-				selector: 'h1, h2',
-				filter: /Lowercase Text/,
 			},
 			{
-				index: 0,
+				textContent: 'capitalize text',
 				name: 'text-transform: capitalize on p',
 				property: 'text-transform',
 				expected: 'capitalize',
-				selector: 'p',
-				filter: /capitalize text/,
 			},
 			{
-				index: 1,
+				textContent: 'None Transform',
 				name: 'text-transform: none on p',
 				property: 'text-transform',
 				expected: 'none',
-				selector: 'p',
-				filter: /None Transform/,
 			},
 		];
 
@@ -102,7 +93,8 @@ test.describe( 'Text Transform Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				const element = elementorFrame.locator( testCase.selector ).filter( { hasText: testCase.filter } ).first();
+				// Use specific text content to identify each element uniquely
+				const element = elementorFrame.locator( 'h1, h2, p' ).filter( { hasText: testCase.textContent } );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
@@ -120,8 +112,8 @@ test.describe( 'Text Transform Prop Type Integration @prop-types', () => {
 
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
-					const frontendElements = page.locator( testCase.selector );
-					const frontendElement = frontendElements.nth( testCase.index );
+					// Use specific text content to identify each element uniquely
+					const frontendElement = page.locator( 'h1, h2, p' ).filter( { hasText: testCase.textContent } );
 
 					await test.step( 'Verify CSS property', async () => {
 						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );

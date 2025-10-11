@@ -27,9 +27,8 @@ test.describe( 'Font Weight Prop Type Integration @prop-types', () => {
 		cssHelper = new CssConverterHelper();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+	test.afterAll( async ( { browser } ) => {
 		const page = await browser.newPage();
-		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 		// await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
@@ -38,7 +37,7 @@ test.describe( 'Font Weight Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test.skip( 'should convert font-weight properties and verify styles', async ( { page, request } ) => {
+	test( 'should convert font-weight properties and verify styles', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="font-weight: normal;" data-test="font-weight-normal">Normal weight</p>
@@ -48,7 +47,7 @@ test.describe( 'Font Weight Prop Type Integration @prop-types', () => {
 			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent );
 
 		// Check if API call failed due to backend issues
 		const validation = cssHelper.validateApiResult( apiResult );
@@ -67,10 +66,10 @@ test.describe( 'Font Weight Prop Type Integration @prop-types', () => {
 
 		// Define test cases for both editor and frontend verification
 		const testCases = [
-			{ index: 0, name: 'font-weight: normal', property: 'font-weight', expected: '400' },
-			{ index: 1, name: 'font-weight: bold', property: 'font-weight', expected: '700' },
-			{ index: 2, name: 'font-weight: 400', property: 'font-weight', expected: '400' },
-			{ index: 3, name: 'font-weight: 700', property: 'font-weight', expected: '700' },
+			{ textContent: 'Normal weight', name: 'font-weight: normal', property: 'font-weight', expected: '400' },
+			{ textContent: 'Bold weight', name: 'font-weight: bold', property: 'font-weight', expected: '700' },
+			{ textContent: 'Weight 400', name: 'font-weight: 400', property: 'font-weight', expected: '400' },
+			{ textContent: 'Weight 700', name: 'font-weight: 700', property: 'font-weight', expected: '700' },
 		];
 
 		// Editor verification using test cases array
@@ -79,7 +78,8 @@ test.describe( 'Font Weight Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				const element = elementorFrame.locator( 'p' ).filter( { hasText: /weight/ } ).nth( testCase.index );
+				// Use specific text content to identify each element uniquely
+				const element = elementorFrame.locator( 'p' ).filter( { hasText: testCase.textContent } );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
@@ -100,7 +100,8 @@ test.describe( 'Font Weight Prop Type Integration @prop-types', () => {
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
-					const frontendElement = page.locator( 'p' ).filter( { hasText: /weight/ } ).nth( testCase.index );
+					// Use specific text content to identify each element uniquely
+					const frontendElement = page.locator( 'p' ).filter( { hasText: testCase.textContent } );
 
 					await test.step( 'Verify CSS property', async () => {
 						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );
