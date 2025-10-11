@@ -403,7 +403,10 @@ class Css_Processor {
 	}
 
 	private function create_global_classes( &$processing_result ) {
+		error_log( "CSS_PROCESSOR_DEBUG: create_global_classes called with " . count( $processing_result['global_classes'] ?? [] ) . " classes: " . wp_json_encode( array_keys( $processing_result['global_classes'] ?? [] ) ) );
+		
 		if ( ! $this->global_classes_repository ) {
+			error_log( "CSS_PROCESSOR_DEBUG: Global classes repository not available" );
 			$processing_result['stats']['warnings'][] = [
 				'type' => 'global_classes_unavailable',
 				'message' => 'Global Classes Repository not available',
@@ -412,6 +415,7 @@ class Css_Processor {
 		}
 
 		foreach ( $processing_result['global_classes'] as $class_name => $class_data ) {
+			error_log( "CSS_PROCESSOR_DEBUG: Processing global class '{$class_name}' with data: " . wp_json_encode( $class_data ) );
 			try {
 				// Get current global classes
 				$current_global_classes = $this->global_classes_repository->all();

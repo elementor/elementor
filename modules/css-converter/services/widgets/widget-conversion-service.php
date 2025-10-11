@@ -85,7 +85,10 @@ class Widget_Conversion_Service {
 			$css_urls = $this->html_parser->extract_linked_css( $html );
 		}
 
-		return $this->convert_from_html( $html, $css_urls, $follow_imports, $options );
+		error_log( "CONVERT_FROM_URL: Calling convert_from_html with " . strlen( $html ) . " chars of HTML" );
+		$result = $this->convert_from_html( $html, $css_urls, $follow_imports, $options );
+		error_log( "CONVERT_FROM_URL: Result - Global classes: " . ( $result['global_classes_created'] ?? 0 ) );
+		return $result;
 	}
 
 	// TODO: DELETE ENTIRE METHOD - Legacy method using old CSS processor
@@ -245,15 +248,25 @@ class Widget_Conversion_Service {
 		error_log( "UNIFIED_CONVERTER: Widgets have resolved styles, skipping separate CSS application" );
 		$styled_widgets = $resolved_widgets;
 		
+		// Store the resolved widgets for global class generation
+		$widgets_with_resolved_styles_for_global_classes = $resolved_widgets;
+		
 		// Step 6.5: Inline styles are now always processed through the optimized global classes pipeline
 		// The createGlobalClasses: false option has been removed for better performance and consistency
 
 			// Step 7: Create Elementor widgets with resolved styles (unified approach)
 			error_log( "🔍 STEP 7: Starting widget creation" );
 			error_log( "📋 STEP 7: Styled widgets to create: " . count( $styled_widgets ) );
+			error_log( "🚀 STEP 7: About to call create_widgets_with_resolved_styles" );
+			error_log( "🚀 STEP 7: Passing " . count( $styled_widgets ) . " styled widgets" );
 			
-			$creation_result = $this->create_widgets_with_resolved_styles( $styled_widgets, $options );
+			$creation_result = $this->create_widgets_with_resolved_styles( $widgets_with_resolved_styles_for_global_classes, $options );
+			error_log( "🚀 STEP 7: create_widgets_with_resolved_styles returned" );
+			error_log( "🚀 STEP 7: Creation result keys: " . implode( ', ', array_keys( $creation_result ) ) );
+			error_log( "🚀 STEP 7: Creation result global_classes_created: " . ( $creation_result['global_classes_created'] ?? 'NOT_SET' ) );
 			$conversion_log['widget_creation'] = $creation_result['stats'];
+			
+			error_log( "CONVERT_FROM_HTML: Widget creation result - Global classes: " . ( $creation_result['global_classes_created'] ?? 0 ) );
 			
 			error_log( "✅ STEP 7: Widget creation completed" );
 			// Fix count() error - ensure widgets_created is an array
@@ -275,7 +288,7 @@ class Widget_Conversion_Service {
 			$conversion_log['end_time'] = microtime( true );
 			$conversion_log['total_time'] = $conversion_log['end_time'] - $conversion_log['start_time'];
 
-			return [
+			$final_result = [
 				'success' => true,
 				'widgets_created' => $creation_result['widgets_created'],
 				'global_classes_created' => $creation_result['global_classes_created'],
@@ -286,6 +299,9 @@ class Widget_Conversion_Service {
 				'warnings' => $conversion_log['warnings'],
 				'errors' => $creation_result['errors'] ?? [],
 			];
+			
+			error_log( "CONVERT_FROM_HTML: Final result - Global classes: " . ( $final_result['global_classes_created'] ?? 0 ) );
+			return $final_result;
 
 		} catch ( \Exception $e ) {
 			$conversion_log['errors'][] = [
@@ -587,12 +603,33 @@ class Widget_Conversion_Service {
 
 		// Extract CSS from external files
 		if ( ! empty( $css_urls ) ) {
-			// Use existing CSS fetching logic
 			foreach ( $css_urls as $url ) {
 				try {
-					$css_content = file_get_contents( $url );
-					if ( $css_content !== false ) {
-						$all_css .= $css_content . "\n";
+					// Convert relative URLs to full HTTP URLs
+					$full_url = $this->resolve_css_url( $url );
+					error_log( "UNIFIED_CONVERTER: Fetching CSS from {$url} -> {$full_url}" );
+					
+					$response = wp_remote_get( $full_url, [
+						'timeout' => 30,
+						'headers' => [
+							'Accept' => 'text/css,*/*;q=0.1',
+							'User-Agent' => 'Elementor Widget Converter/1.0',
+						],
+					] );
+
+					if ( is_wp_error( $response ) ) {
+						throw new \Exception( 'Failed to fetch CSS: ' . $response->get_error_message() );
+					}
+
+					$status_code = wp_remote_retrieve_response_code( $response );
+					if ( $status_code !== 200 ) {
+						throw new \Exception( 'HTTP error: ' . $status_code );
+					}
+
+					$css_content = wp_remote_retrieve_body( $response );
+					if ( $css_content ) {
+						$all_css .= "/* CSS from: {$full_url} */\n" . $css_content . "\n\n";
+						error_log( "UNIFIED_CONVERTER: Successfully fetched " . strlen( $css_content ) . " characters from {$full_url}" );
 					}
 				} catch ( \Exception $e ) {
 					error_log( "UNIFIED_CONVERTER: Failed to fetch CSS from {$url}: " . $e->getMessage() );
@@ -603,6 +640,21 @@ class Widget_Conversion_Service {
 		error_log( "UNIFIED_CONVERTER: Extracted CSS - Style tags: " . count( $matches[1] ) . ", External URLs: " . count( $css_urls ) );
 
 		return $all_css;
+	}
+
+	private function resolve_css_url( string $url ): string {
+		// If already a full URL, return as is
+		if ( strpos( $url, 'http' ) === 0 ) {
+			return $url;
+		}
+
+		// Convert relative URL to full HTTP URL
+		$base_url = home_url();
+		
+		// Remove leading slash if present to avoid double slashes
+		$url = ltrim( $url, '/' );
+		
+		return trailingslashit( $base_url ) . $url;
 	}
 
 	private function prepare_widgets_recursively( array $widgets ): array {
@@ -649,11 +701,17 @@ class Widget_Conversion_Service {
 	}
 
 	private function create_widgets_with_resolved_styles( array $widgets_with_resolved_styles, array $options ): array {
+		error_log( "🔥 LEVEL3: create_widgets_with_resolved_styles ENTRY - " . count( $widgets_with_resolved_styles ) . " widgets" );
+		
 		// Convert widgets with resolved styles to the format expected by existing widget creator
 		$styled_widgets = $this->prepare_widgets_recursively( $widgets_with_resolved_styles );
+		error_log( "🔥 LEVEL3: Prepared " . count( $styled_widgets ) . " styled widgets" );
 		
 		// Generate global classes from CSS selector styles
+		error_log( "🔥 LEVEL3: About to generate global classes from " . count( $widgets_with_resolved_styles ) . " widgets" );
 		$global_classes = $this->generate_global_classes_from_resolved_styles( $widgets_with_resolved_styles );
+		error_log( "🔥 LEVEL3: Generated " . count( $global_classes ) . " global classes" );
+		error_log( "🔥 LEVEL3: Global classes keys: " . ( empty( $global_classes ) ? 'EMPTY' : implode( ', ', array_keys( $global_classes ) ) ) );
 		
 		// Create CSS processing result with generated global classes
 		$css_processing_result = [
@@ -671,7 +729,10 @@ class Widget_Conversion_Service {
 		
 		
 		// Use the existing widget creator
-		return $this->widget_creator->create_widgets( $styled_widgets, $css_processing_result, $options );
+		error_log( "🔥 LEVEL3: About to call widget_creator->create_widgets with " . count( $global_classes ) . " global classes" );
+		$result = $this->widget_creator->create_widgets( $styled_widgets, $css_processing_result, $options );
+		error_log( "🔥 LEVEL3: Widget creator returned - Global classes created: " . ( $result['global_classes_created'] ?? 'NOT_SET' ) );
+		return $result;
 	}
 
 	private function convert_resolved_styles_to_applied_format( array $resolved_styles ): array {
@@ -812,17 +873,23 @@ class Widget_Conversion_Service {
 	}
 	
 	private function generate_global_classes_from_resolved_styles( array $widgets_with_resolved_styles ): array {
+		error_log( "🔥 LEVEL4: GENERATE_GLOBAL_CLASSES ENTRY - " . count( $widgets_with_resolved_styles ) . " widgets" );
 		$global_classes = [];
 		$css_selector_styles = [];
 		
 		// Collect all CSS selector styles from all widgets
-		foreach ( $widgets_with_resolved_styles as $widget ) {
+		foreach ( $widgets_with_resolved_styles as $widget_index => $widget ) {
 			$resolved_styles = $widget['resolved_styles'] ?? [];
+			error_log( "GLOBAL_CLASS_GENERATION: Widget #{$widget_index} has " . count( $resolved_styles ) . " resolved styles" );
 			
 			foreach ( $resolved_styles as $property => $winning_style ) {
+				$source = $winning_style['source'] ?? 'no-source';
+				error_log( "GLOBAL_CLASS_GENERATION: Property '{$property}' has source '{$source}'" );
+				
 				// Only create global classes for CSS selector styles (not inline styles)
 				if ( isset( $winning_style['source'] ) && $winning_style['source'] === 'css-selector' ) {
 					$selector = $winning_style['selector'] ?? 'unknown-selector';
+					error_log( "GLOBAL_CLASS_GENERATION: Found CSS selector style - Property: {$property}, Selector: {$selector}" );
 					
 					if ( ! isset( $css_selector_styles[ $selector ] ) ) {
 						$css_selector_styles[ $selector ] = [];
@@ -860,6 +927,7 @@ class Widget_Conversion_Service {
 			
 		}
 		
+		error_log( "GLOBAL_CLASS_GENERATION: Generated " . count( $global_classes ) . " global classes: " . wp_json_encode( array_keys( $global_classes ) ) );
 		return $global_classes;
 	}
 	

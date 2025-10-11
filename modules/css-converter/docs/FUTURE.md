@@ -30,6 +30,25 @@
 - **Impact**: Low - edge cases rarely used
 - **Effort**: Medium - requires comprehensive testing
 
+#### **Flex Shorthand Property**
+- **Status**: Not implemented
+- **Missing**: `flex` shorthand property support (e.g., `flex: 0 0 auto`)
+- **Impact**: Medium - commonly used in flexbox layouts
+- **Effort**: Medium - requires parsing flex shorthand into flex-grow, flex-shrink, flex-basis
+- **Implementation**:
+  ```php
+  // Parse: flex: 0 0 auto
+  // Into: flex-grow: 0, flex-shrink: 0, flex-basis: auto
+  private function parse_flex_shorthand( string $value ): array {
+      $parts = preg_split( '/\s+/', trim( $value ) );
+      return [
+          'flex-grow' => $parts[0] ?? '0',
+          'flex-shrink' => $parts[1] ?? '1',
+          'flex-basis' => $parts[2] ?? 'auto',
+      ];
+  }
+  ```
+
 ---
 
 ## 🚀 **Advanced Features**
@@ -54,6 +73,19 @@
 ---
 
 ## 🛠️ **Developer Experience**
+
+### **API Endpoint Modernization**
+- **Status**: Needs improvement
+- **Task**: Update CSS Converter API endpoints to match global-classes-rest-api.php styling
+- **Key improvements needed**:
+  - Use arrow functions for callbacks (`fn() =>` syntax)
+  - Implement route_wrapper for consistent error handling
+  - Use Response_Builder and Error_Builder for all responses
+  - Add comprehensive parameter validation with enums
+  - Use constants for API namespace and base paths
+  - Improve separation of concerns in route handlers
+- **Reference**: `/plugins/elementor-css/modules/global-classes/global-classes-rest-api.php`
+- **Benefit**: Consistent code style across modules, better error handling, improved maintainability
 
 ### **Visual Debugger**
 - **Feature**: Visual CSS conversion debugger

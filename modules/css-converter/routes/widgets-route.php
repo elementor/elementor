@@ -171,7 +171,10 @@ class Widgets_Route {
 			switch ( $type ) {
 				case 'url':
 					error_log( "🔗 API ROUTE: Processing URL conversion" );
+					error_log( "🔗 API ROUTE: URL: " . $content );
 					$result = $service->convert_from_url( $content, $css_urls, $follow_imports, $options );
+					error_log( "🔗 API ROUTE: Conversion result - Global classes: " . ( $result['global_classes_created'] ?? 0 ) );
+					error_log( "🔗 API ROUTE: Full result keys: " . implode( ', ', array_keys( $result ) ) );
 					break;
 				case 'html':
 					error_log( "📄 API ROUTE: Processing HTML conversion" );

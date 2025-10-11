@@ -30,7 +30,7 @@ test.describe( 'Flex Properties Prop Type Integration @prop-types', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// await wpAdminPage.resetExperiments();
+		// Await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -99,6 +99,63 @@ test.describe( 'Flex Properties Prop Type Integration @prop-types', () => {
 				await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'display', 'flex' );
 				await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'justify-content', 'flex-end' );
 				await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'align-items', 'flex-end' );
+			} );
+		} );
+	} );
+
+	test.skip( 'should convert flex shorthand property (FUTURE)', async ( { page, request }, testInfo ) => {
+		const flexShorthandHtml = `
+			<div>
+				<p style="flex: 0 0 auto;">Flex shorthand: 0 0 auto</p>
+				<p style="flex: 1 1 0;">Flex shorthand: 1 1 0</p>
+				<p style="flex: 2;">Flex shorthand: 2</p>
+			</div>
+		`;
+
+		const apiResult = await cssHelper.convertHtmlWithCss( request, flexShorthandHtml, '' );
+
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
+			test.skip( true, 'Skipping due to backend property mapper issues: ' + validation.skipReason );
+			return;
+		}
+
+		const postId = apiResult.post_id;
+		const editUrl = apiResult.edit_url;
+
+		if ( ! postId || ! editUrl ) {
+			test.skip( true, 'Skipping due to missing postId or editUrl in API response' );
+			return;
+		}
+
+		await page.goto( editUrl );
+		editor = new EditorPage( page, testInfo );
+
+		await test.step( 'Wait for Elementor editor to load', async () => {
+			await editor.waitForPanelToLoad();
+		} );
+
+		const elementorFrame = editor.getPreviewFrame();
+		await test.step( 'Verify flex shorthand is converted correctly', async () => {
+			const paragraphElements = elementorFrame.locator( 'p' ).filter( { hasText: /Flex shorthand/ } );
+			await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
+
+			await test.step( 'Verify flex: 0 0 auto', async () => {
+				await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'flex-grow', '0' );
+				await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'flex-shrink', '0' );
+				await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'flex-basis', 'auto' );
+			} );
+
+			await test.step( 'Verify flex: 1 1 0', async () => {
+				await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'flex-grow', '1' );
+				await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'flex-shrink', '1' );
+				await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'flex-basis', '0px' );
+			} );
+
+			await test.step( 'Verify flex: 2 (shorthand with single value)', async () => {
+				await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'flex-grow', '2' );
+				await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'flex-shrink', '1' );
+				await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'flex-basis', '0px' );
 			} );
 		} );
 	} );

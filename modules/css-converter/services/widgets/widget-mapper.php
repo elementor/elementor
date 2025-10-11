@@ -113,47 +113,16 @@ class Widget_Mapper {
 	}
 
 	public function map_elements( $elements ) {
-		// Collect elements that should become widgets:
-		// 1. Elements with inline styles (highest priority)
-		// 2. Top-level elements that don't have inline-styled children
-		$widget_elements = $this->collect_widget_elements( $elements );
-		
 		$mapped_elements = [];
 
-		foreach ( $widget_elements as $index => $element ) {
+		foreach ( $elements as $element ) {
 			$mapped = $this->map_element( $element );
 			if ( $mapped ) {
 				$mapped_elements[] = $mapped;
-				
 			}
 		}
 
 		return $mapped_elements;
-	}
-
-	private function collect_widget_elements( $elements ) {
-		$widget_elements = [];
-		
-		// Recursively collect ALL mappable elements from the entire HTML tree
-		$this->collect_elements_recursively( $elements, $widget_elements );
-		
-		return $widget_elements;
-	}
-	
-	private function collect_elements_recursively( $elements, &$widget_elements ) {
-		foreach ( $elements as $element ) {
-			$tag = $element['tag'];
-			
-			// Check if this element is mappable
-			if ( isset( $this->mapping_rules[ $tag ] ) ) {
-				$widget_elements[] = $element;
-			}
-			
-			// Recursively process child elements
-			if ( ! empty( $element['children'] ) ) {
-				$this->collect_elements_recursively( $element['children'], $widget_elements );
-			}
-		}
 	}
 
 	private function generate_element_id( $element ): string {
@@ -297,6 +266,8 @@ class Widget_Mapper {
 	}
 
 	private function handle_flexbox( $element ) {
+		$element_id = $this->generate_element_id( $element );
+		
 		// Map children recursively
 		$children = [];
 		if ( ! empty( $element['children'] ) ) {
@@ -308,6 +279,7 @@ class Widget_Mapper {
 
 		return [
 			'widget_type' => 'e-flexbox',
+			'element_id' => $element_id,
 			'original_tag' => $element['tag'],
 			'settings' => [
 				'direction' => $direction,
@@ -324,9 +296,11 @@ class Widget_Mapper {
 	private function handle_link( $element ) {
 		$href = $element['attributes']['href'] ?? '#';
 		$target = $element['attributes']['target'] ?? '_self';
+		$element_id = $this->generate_element_id( $element );
 
 		return [
 			'widget_type' => 'e-link',
+			'element_id' => $element_id,
 			'original_tag' => 'a',
 			'settings' => [
 				'text' => $element['content'],
@@ -341,9 +315,11 @@ class Widget_Mapper {
 
 	private function handle_button( $element ) {
 		$type = $element['attributes']['type'] ?? 'button';
+		$element_id = $this->generate_element_id( $element );
 		
 		return [
 			'widget_type' => 'e-button',
+			'element_id' => $element_id,
 			'original_tag' => 'button',
 			'settings' => [
 				'text' => $element['content'],
@@ -360,9 +336,11 @@ class Widget_Mapper {
 		$alt = $element['attributes']['alt'] ?? '';
 		$width = $element['attributes']['width'] ?? '';
 		$height = $element['attributes']['height'] ?? '';
+		$element_id = $this->generate_element_id( $element );
 
 		return [
 			'widget_type' => 'e-image',
+			'element_id' => $element_id,
 			'original_tag' => 'img',
 			'settings' => [
 				'src' => $src,

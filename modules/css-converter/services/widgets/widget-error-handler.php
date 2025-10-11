@@ -217,8 +217,17 @@ class Widget_Error_Handler {
 	}
 
 	private function inline_styles_fallback( $error_data, $context ) {
-		// Fallback to inline styles when global class creation fails
+		// COMMENTED OUT BY USER REQUEST - 2025-10-11
+		// User is hesitant about fallback mechanism
+		// Fallback to inline styles when global class creation fails is DISABLED
 		
+		error_log( "⚠️ FALLBACK DISABLED: inline_styles_fallback called but is commented out per user request" );
+		error_log( "   Error: " . ( $error_data['message'] ?? 'unknown' ) );
+		
+		// Return original widget without fallback modification
+		return $context['widget'] ?? null;
+		
+		/* ORIGINAL CODE COMMENTED OUT:
 		$widget = $context['widget'] ?? null;
 		$css_styles = $context['css_styles'] ?? [];
 		
@@ -240,6 +249,7 @@ class Widget_Error_Handler {
 		], $context );
 		
 		return $widget;
+		*/
 	}
 
 	private function flatten_hierarchy( $error_data, $context ) {
