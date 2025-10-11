@@ -47,9 +47,9 @@ This document tracks Playwright tests that are intentionally skipped due to feat
 #### **5. Size Property Unitless Zero**
 - **File**: `size-prop-type.test.ts`
 - **Test**: `should support unitless zero for all size properties`
-- **Reason**: Comprehensive unitless zero support across all size properties
-- **Status**: ✅ **KEEP SKIPPED** - Edge case handling
-- **Future.md Reference**: ❌ **NEEDS DOCUMENTATION**
+- **Reason**: ~~Comprehensive unitless zero support across all size properties~~ **RESOLVED**
+- **Status**: ✅ **TEST NOW PASSES** - Size_Value_Parser handles unitless zero correctly
+- **Action Taken**: Unskipped test - it passes with current Size_Value_Parser implementation
 
 ---
 
@@ -58,9 +58,14 @@ This document tracks Playwright tests that are intentionally skipped due to feat
 #### **6. Text Align Properties**
 - **File**: `text-align-prop-type.test.ts`
 - **Test**: `should convert text-align properties and verify styles`
-- **Reason**: Unknown - needs investigation
-- **Status**: ⚠️ **INVESTIGATE** - May be fixable
-- **Action Required**: Unskip and test to determine if it's a real failure
+- **Reason**: **PLAYWRIGHT SELECTOR ISSUE** - Not a conversion problem!
+- **Status**: ✅ **CONVERSION WORKS** - API creates all widgets correctly with proper text-align styles
+- **Investigation Result**: 
+  - ✅ Property mapper exists and works correctly
+  - ✅ API successfully creates 4 paragraph widgets with correct text-align CSS
+  - ✅ All text-align values applied: start, center, end, justify
+  - ❌ Playwright test selector `.filter({ hasText: /aligned text/i }).nth(3)` fails to find 4th element
+- **Action Required**: Fix Playwright test selector logic, not the conversion pipeline
 
 #### **7. Text Transform Properties**
 - **File**: `text-transform-prop-type.test.ts`

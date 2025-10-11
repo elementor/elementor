@@ -27,10 +27,9 @@ test.describe( 'Text Align Prop Type Integration @prop-types', () => {
 		cssHelper = new CssConverterHelper();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+	test.afterAll( async ( { browser } ) => {
 		const page = await browser.newPage();
-		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// await wpAdminPage.resetExperiments();
+		// Await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -38,7 +37,7 @@ test.describe( 'Text Align Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test.skip( 'should convert text-align properties and verify styles', async ( { page, request } ) => {
+	test( 'should convert text-align properties and verify styles', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="text-align: left;" data-test="text-align-left">Left aligned text</p>
@@ -48,7 +47,7 @@ test.describe( 'Text Align Prop Type Integration @prop-types', () => {
 			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent );
 
 		// Check if API call failed due to backend issues
 		const validation = cssHelper.validateApiResult( apiResult );
@@ -68,10 +67,10 @@ test.describe( 'Text Align Prop Type Integration @prop-types', () => {
 		// Define test cases for both editor and frontend verification
 		// Note: left/right are converted to logical properties (start/end)
 		const testCases = [
-			{ index: 0, name: 'text-align: left', property: 'text-align', expected: 'start' },
-			{ index: 1, name: 'text-align: center', property: 'text-align', expected: 'center' },
-			{ index: 2, name: 'text-align: right', property: 'text-align', expected: 'end' },
-			{ index: 3, name: 'text-align: justify', property: 'text-align', expected: 'justify' },
+			{ dataTest: 'text-align-left', textContent: 'Left aligned text', name: 'text-align: left', property: 'text-align', expected: 'start' },
+			{ dataTest: 'text-align-center', textContent: 'Center aligned text', name: 'text-align: center', property: 'text-align', expected: 'center' },
+			{ dataTest: 'text-align-right', textContent: 'Right aligned text', name: 'text-align: right', property: 'text-align', expected: 'end' },
+			{ dataTest: 'text-align-justify', textContent: 'Justified text that should be justified across the full width of the container', name: 'text-align: justify', property: 'text-align', expected: 'justify' },
 		];
 
 		// Editor verification using test cases array
@@ -80,7 +79,8 @@ test.describe( 'Text Align Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				const element = elementorFrame.locator( 'p' ).filter( { hasText: /aligned text/i } ).nth( testCase.index );
+				// Use specific text content to identify each element uniquely
+				const element = elementorFrame.locator( 'p' ).filter( { hasText: testCase.textContent } );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
@@ -101,7 +101,8 @@ test.describe( 'Text Align Prop Type Integration @prop-types', () => {
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
-					const frontendElement = page.locator( 'p' ).filter( { hasText: /aligned text/i } ).nth( testCase.index );
+					// Use specific text content to identify each element uniquely
+					const frontendElement = page.locator( 'p' ).filter( { hasText: testCase.textContent } );
 
 					await test.step( 'Verify CSS property', async () => {
 						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );
