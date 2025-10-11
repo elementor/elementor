@@ -1,0 +1,259 @@
+<?php
+namespace Elementor\Modules\CssConverter\Services\Css\Processing;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Unified_Style_Manager {
+	private $collected_styles = [];
+	private $specificity_calculator;
+	private $property_converter;
+
+	public function __construct( 
+		Css_Specificity_Calculator $specificity_calculator,
+		$property_converter = null
+	) {
+		$this->specificity_calculator = $specificity_calculator;
+		$this->property_converter = $property_converter;
+	}
+
+	public function reset() {
+		$this->collected_styles = [];
+	}
+
+	public function collect_inline_styles( string $element_id, array $inline_styles ) {
+		foreach ( $inline_styles as $property => $style_data ) {
+			$this->collected_styles[] = [
+				'source' => 'inline',
+				'element_id' => $element_id,
+				'property' => $property,
+				'value' => $style_data['value'],
+				'important' => $style_data['important'] ?? false,
+				'converted_property' => $style_data['converted_property'] ?? null,
+				'specificity' => $this->calculate_inline_specificity( $style_data['important'] ?? false ),
+				'order' => count( $this->collected_styles ),
+			];
+		}
+		
+		error_log( "Unified Style Manager: Collected " . count( $inline_styles ) . " inline styles for element {$element_id}" );
+	}
+
+	public function collect_css_selector_styles( string $selector, array $properties, array $matched_elements = [] ) {
+		$base_specificity = $this->specificity_calculator->calculate_specificity( $selector );
+		
+		foreach ( $properties as $property_data ) {
+			foreach ( $matched_elements as $element_id ) {
+				$this->collected_styles[] = [
+					'source' => 'css-selector',
+					'selector' => $selector,
+					'element_id' => $element_id,
+					'property' => $property_data['original_property'] ?? $property_data['property'],
+					'value' => $property_data['original_value'] ?? $property_data['value'],
+					'important' => $property_data['important'] ?? false,
+					'specificity' => $this->calculate_css_specificity( $selector, $property_data['important'] ?? false ),
+					'converted_property' => $property_data['converted_property'] ?? null,
+					'order' => count( $this->collected_styles ),
+				];
+			}
+		}
+		
+		error_log( "Unified Style Manager: Collected " . count( $properties ) . " CSS selector styles from '{$selector}' for " . count( $matched_elements ) . " elements" );
+	}
+
+	public function collect_id_styles( string $id, array $properties, string $element_id ) {
+		foreach ( $properties as $property_data ) {
+			$this->collected_styles[] = [
+				'source' => 'id',
+				'id' => $id,
+				'element_id' => $element_id,
+				'property' => $property_data['property'],
+				'value' => $property_data['value'],
+				'important' => $property_data['important'] ?? false,
+				'specificity' => $this->calculate_id_specificity( $property_data['important'] ?? false ),
+				'converted_property' => $property_data['converted_property'] ?? null,
+				'order' => count( $this->collected_styles ),
+			];
+		}
+		
+		error_log( "Unified Style Manager: Collected " . count( $properties ) . " ID styles for #{$id} (element {$element_id})" );
+	}
+
+	public function collect_element_styles( string $element_type, array $properties, string $element_id ) {
+		foreach ( $properties as $property_data ) {
+			$this->collected_styles[] = [
+				'source' => 'element',
+				'element_type' => $element_type,
+				'element_id' => $element_id,
+				'property' => $property_data['property'],
+				'value' => $property_data['value'],
+				'important' => $property_data['important'] ?? false,
+				'specificity' => $this->calculate_element_specificity( $property_data['important'] ?? false ),
+				'converted_property' => $property_data['converted_property'] ?? null,
+				'order' => count( $this->collected_styles ),
+			];
+		}
+		
+		error_log( "Unified Style Manager: Collected " . count( $properties ) . " element styles for {$element_type} (element {$element_id})" );
+	}
+
+	public function resolve_styles_for_widget( array $widget ): array {
+		$widget_id = $this->get_widget_identifier( $widget );
+		
+		// Get all styles that apply to this widget
+		$applicable_styles = $this->filter_styles_for_widget( $widget );
+		
+		error_log( "Unified Style Manager: Found " . count( $applicable_styles ) . " applicable styles for widget {$widget_id}" );
+		
+		// Group by property
+		$by_property = $this->group_by_property( $applicable_styles );
+		
+		// For each property, find the winning style based on specificity
+		$winning_styles = [];
+		foreach ( $by_property as $property => $styles ) {
+			$winning_style = $this->find_winning_style( $styles );
+			if ( $winning_style ) {
+				$winning_styles[ $property ] = $winning_style;
+				error_log( "Unified Style Manager: Property '{$property}' won by {$winning_style['source']} (specificity: {$winning_style['specificity']}, value: {$winning_style['value']})" );
+			}
+		}
+		
+		return $winning_styles;
+	}
+
+	public function get_debug_info(): array {
+		$stats = [
+			'total_styles' => count( $this->collected_styles ),
+			'by_source' => [],
+			'by_property' => [],
+		];
+		
+		foreach ( $this->collected_styles as $style ) {
+			$source = $style['source'];
+			$property = $style['property'];
+			
+			$stats['by_source'][ $source ] = ( $stats['by_source'][ $source ] ?? 0 ) + 1;
+			$stats['by_property'][ $property ] = ( $stats['by_property'][ $property ] ?? 0 ) + 1;
+		}
+		
+		return $stats;
+	}
+
+	private function calculate_inline_specificity( bool $important ): int {
+		$specificity = Css_Specificity_Calculator::INLINE_WEIGHT;
+		if ( $important ) {
+			$specificity += Css_Specificity_Calculator::IMPORTANT_WEIGHT;
+		}
+		return $specificity;
+	}
+
+	private function calculate_css_specificity( string $selector, bool $important ): int {
+		$specificity = $this->specificity_calculator->calculate_specificity( $selector );
+		if ( $important ) {
+			$specificity += Css_Specificity_Calculator::IMPORTANT_WEIGHT;
+		}
+		return $specificity;
+	}
+
+	private function calculate_id_specificity( bool $important ): int {
+		$specificity = Css_Specificity_Calculator::ID_WEIGHT;
+		if ( $important ) {
+			$specificity += Css_Specificity_Calculator::IMPORTANT_WEIGHT;
+		}
+		return $specificity;
+	}
+
+	private function calculate_element_specificity( bool $important ): int {
+		$specificity = Css_Specificity_Calculator::ELEMENT_WEIGHT;
+		if ( $important ) {
+			$specificity += Css_Specificity_Calculator::IMPORTANT_WEIGHT;
+		}
+		return $specificity;
+	}
+
+	private function get_widget_identifier( array $widget ): string {
+		$widget_type = $widget['widget_type'] ?? 'unknown';
+		$widget_id = $widget['attributes']['id'] ?? 'no-id';
+		$element_id = $widget['element_id'] ?? 'no-element-id';
+		
+		return "{$widget_type}#{$element_id}";
+	}
+
+	private function filter_styles_for_widget( array $widget ): array {
+		$widget_id = $this->get_widget_identifier( $widget );
+		$element_id = $widget['element_id'] ?? null;
+		$html_id = $widget['attributes']['id'] ?? null;
+		$classes = $widget['attributes']['class'] ?? '';
+		$element_type = $widget['tag'] ?? $widget['widget_type'] ?? 'unknown';
+		
+		$applicable_styles = [];
+		
+		foreach ( $this->collected_styles as $style ) {
+			$applies = false;
+			
+			switch ( $style['source'] ) {
+				case 'inline':
+					$applies = ( $style['element_id'] === $element_id );
+					break;
+					
+				case 'id':
+					$applies = ( $html_id && $style['id'] === $html_id );
+					break;
+					
+				case 'css-selector':
+					$applies = ( $style['element_id'] === $element_id );
+					break;
+					
+				case 'element':
+					$applies = ( $style['element_type'] === $element_type );
+					break;
+			}
+			
+			if ( $applies ) {
+				$applicable_styles[] = $style;
+			}
+		}
+		
+		return $applicable_styles;
+	}
+
+	private function group_by_property( array $styles ): array {
+		$grouped = [];
+		
+		foreach ( $styles as $style ) {
+			$property = $style['property'];
+			if ( ! isset( $grouped[ $property ] ) ) {
+				$grouped[ $property ] = [];
+			}
+			$grouped[ $property ][] = $style;
+		}
+		
+		return $grouped;
+	}
+
+	private function find_winning_style( array $styles ): ?array {
+		if ( empty( $styles ) ) {
+			return null;
+		}
+		
+		// Sort by specificity (highest first), then by order (latest first)
+		usort( $styles, function( $a, $b ) {
+			if ( $a['specificity'] !== $b['specificity'] ) {
+				return $b['specificity'] - $a['specificity']; // Higher specificity wins
+			}
+			return $b['order'] - $a['order']; // Later in cascade wins
+		});
+		
+		$winner = $styles[0];
+		
+		// Debug log the competition
+		if ( count( $styles ) > 1 ) {
+			$competitors = array_map( function( $style ) {
+				return "{$style['source']}({$style['specificity']})";
+			}, $styles );
+			error_log( "Unified Style Manager: Property '{$winner['property']}' competition: " . implode( ' vs ', $competitors ) . " → {$winner['source']} wins" );
+		}
+		
+		return $winner;
+	}
+}

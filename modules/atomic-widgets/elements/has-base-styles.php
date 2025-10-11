@@ -14,6 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Has_Base_Styles {
 	public function get_base_styles() {
+		if ( $this->is_css_converter_widget() ) {
+			return [];
+		}
+
 		$base_styles = $this->define_base_styles();
 		$style_definitions = [];
 
@@ -27,6 +31,10 @@ trait Has_Base_Styles {
 	}
 
 	public function get_base_styles_dictionary() {
+		if ( $this->is_css_converter_widget() ) {
+			return [];
+		}
+
 		$result = [];
 
 		$base_styles = array_keys( $this->define_base_styles() );
@@ -40,6 +48,10 @@ trait Has_Base_Styles {
 
 	private function generate_base_style_id( string $key ): string {
 		return static::get_element_type() . '-' . $key;
+	}
+
+	private function is_css_converter_widget(): bool {
+		return ! empty( $this->editor_settings['css_converter_widget'] );
 	}
 
 	/**
