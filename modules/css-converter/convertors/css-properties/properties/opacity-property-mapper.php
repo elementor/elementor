@@ -38,12 +38,12 @@ class Opacity_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
-		// ✅ FIXED: Use percentage units with percentage values (0-100 range)
+		// ✅ ATTEMPT: Follow schema exactly - use percentage units as defined
 		return Size_Prop_Type::make()
-			->units( [ Size_Constants::UNIT_PERCENT ] )
+			->units( Size_Constants::opacity() )
 			->default_unit( Size_Constants::UNIT_PERCENT )
 			->generate( [
-				'size' => $opacity_data['size'] * 100, // Convert 0.5 to 50
+				'size' => $opacity_data['size'] * 100, // Convert to percentage (0.5 -> 50%)
 				'unit' => Size_Constants::UNIT_PERCENT
 			] );
 	}

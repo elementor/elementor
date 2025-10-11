@@ -38,7 +38,7 @@ test.describe( 'Opacity Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test.skip( 'should convert opacity properties', async ( { page, request } ) => {
+	test( 'should convert opacity properties', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="opacity: 1;">Full opacity</p>
@@ -49,7 +49,7 @@ test.describe( 'Opacity Prop Type Integration @prop-types', () => {
 			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent );
 
 		// Check if API call failed due to backend issues
 		const validation = cssHelper.validateApiResult( apiResult );
@@ -69,17 +69,22 @@ test.describe( 'Opacity Prop Type Integration @prop-types', () => {
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
 
-		// Test all converted paragraph elements
-		const paragraphElements = elementorFrame.locator( 'p' ).filter( { hasText: /opacity/ } );
-		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
+		// Define test cases for specific text content selectors
+		const testCases = [
+			{ textContent: 'Full opacity', expected: '1' },
+			{ textContent: 'Half opacity', expected: '0.5' },
+			{ textContent: 'Transparent', expected: '0' },
+			{ textContent: 'Three quarters opacity', expected: '0.75' },
+			{ textContent: 'Quarter opacity', expected: '0.25' },
+		];
 
-		// Test opacity values
+		// Test opacity values using specific text content selectors
 		await test.step( 'Verify opacity values are applied correctly', async () => {
-			await expect( paragraphElements.nth( 0 ) ).toHaveCSS( 'opacity', '1' );
-			await expect( paragraphElements.nth( 1 ) ).toHaveCSS( 'opacity', '0.5' );
-			await expect( paragraphElements.nth( 2 ) ).toHaveCSS( 'opacity', '0' );
-			await expect( paragraphElements.nth( 3 ) ).toHaveCSS( 'opacity', '0.75' );
-			await expect( paragraphElements.nth( 4 ) ).toHaveCSS( 'opacity', '0.25' );
+			for ( const testCase of testCases ) {
+				const element = elementorFrame.locator( 'p' ).filter( { hasText: testCase.textContent } );
+				await element.waitFor( { state: 'visible', timeout: 10000 } );
+				await expect( element ).toHaveCSS( 'opacity', testCase.expected );
+			}
 		} );
 	} );
 } );
