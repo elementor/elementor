@@ -62,15 +62,6 @@ class Widget_Error_Handler {
 			$this->error_stats['fatal_errors']++;
 		}
 		
-		// Log to WordPress error log if enabled
-		if ( WP_DEBUG_LOG ) {
-			error_log( sprintf(
-				'[Elementor Widget Converter] %s: %s (Context: %s)',
-				$error_type,
-				$error_entry['message'],
-				wp_json_encode( $context )
-			) );
-		}
 		
 		// Attempt recovery if possible
 		if ( $error_entry['recoverable'] && $error_entry['recovery_strategy'] ) {
@@ -92,14 +83,6 @@ class Widget_Error_Handler {
 		$this->warning_log[] = $warning_entry;
 		$this->error_stats['total_warnings']++;
 		
-		// Log warning if debug mode is enabled
-		if ( WP_DEBUG ) {
-			error_log( sprintf(
-				'[Elementor Widget Converter Warning] %s: %s',
-				$warning_type,
-				$warning_entry['message']
-			) );
-		}
 	}
 
 	private function determine_error_severity( $error_type ) {
@@ -221,8 +204,6 @@ class Widget_Error_Handler {
 		// User is hesitant about fallback mechanism
 		// Fallback to inline styles when global class creation fails is DISABLED
 		
-		error_log( "⚠️ FALLBACK DISABLED: inline_styles_fallback called but is commented out per user request" );
-		error_log( "   Error: " . ( $error_data['message'] ?? 'unknown' ) );
 		
 		// Return original widget without fallback modification
 		return $context['widget'] ?? null;

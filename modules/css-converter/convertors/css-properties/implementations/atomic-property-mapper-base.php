@@ -16,16 +16,13 @@ abstract class Atomic_Property_Mapper_Base implements Property_Mapper_Interface 
 	}
 
 	protected function create_atomic_size_value( string $property, array $parsed_size ): array {
-		error_log( "🔍 DEBUG: Atomic_Property_Mapper_Base::create_atomic_size_value - Property: '$property', Parsed: " . json_encode( $parsed_size ) );
 		
 		$atomic_value = \Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type::generate( $parsed_size );
-		error_log( "🔍 DEBUG: Atomic_Property_Mapper_Base::create_atomic_size_value - Generated atomic value: " . json_encode( $atomic_value ) );
 		
 		$result = [
 			'property' => $property,
 			'value' => $atomic_value
 		];
-		error_log( "🔍 DEBUG: Atomic_Property_Mapper_Base::create_atomic_size_value - Final result: " . json_encode( $result ) );
 		
 		return $result;
 	}
@@ -54,16 +51,14 @@ abstract class Atomic_Property_Mapper_Base implements Property_Mapper_Interface 
 	}
 
 	protected function create_atomic_string_value( string $property, string $value ): array {
-		error_log( "🔍 DEBUG: Atomic_Property_Mapper_Base::create_atomic_string_value - Property: '$property', Value: '$value'" );
+		;
 		
 		$atomic_value = \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type::generate( $value );
-		error_log( "🔍 DEBUG: Atomic_Property_Mapper_Base::create_atomic_string_value - Generated atomic value: " . json_encode( $atomic_value ) );
 		
 		$result = [
 			'property' => $property,
 			'value' => $atomic_value
 		];
-		error_log( "🔍 DEBUG: Atomic_Property_Mapper_Base::create_atomic_string_value - Final result: " . json_encode( $result ) );
 		
 		return $result;
 	}

@@ -148,9 +148,6 @@ class Widget_Creator {
 	}
 
 	public function create_widgets( $styled_widgets, $css_processing_result, $options = [] ) {
-		error_log( "🔥 LEVEL6: WIDGET_CREATOR ENTRY - " . count( $styled_widgets ) . " widgets" );
-		error_log( "🔥 LEVEL6: CSS processing result keys: " . implode( ', ', array_keys( $css_processing_result ) ) );
-		error_log( "🔥 LEVEL6: Global classes in CSS result: " . count( $css_processing_result['global_classes'] ?? [] ) );
 		
 		$this->current_css_processing_result = $css_processing_result;
 		
@@ -163,10 +160,7 @@ class Widget_Creator {
 			}
 
 		if ( ! empty( $css_processing_result['global_classes'] ) ) {
-			error_log( "GLOBAL_CLASS_DEBUG: Found " . count( $css_processing_result['global_classes'] ) . " global classes to create: " . wp_json_encode( array_keys( $css_processing_result['global_classes'] ) ) );
 			$this->create_global_classes( $css_processing_result['global_classes'] );
-		} else {
-			error_log( "GLOBAL_CLASS_DEBUG: No global classes found in CSS processing result" );
 		}
 
 			$post_id = $this->ensure_post_exists( $post_id, $post_type );
@@ -217,15 +211,11 @@ class Widget_Creator {
 	}
 
 	private function create_global_classes( $global_classes ) {
-		error_log( "🔥 LEVEL7: CREATE_GLOBAL_CLASSES ENTRY - " . count( $global_classes ) . " classes to create" );
 		foreach ( $global_classes as $class_name => $class_data ) {
-			error_log( "🔥 LEVEL7: Creating global class '{$class_name}'" );
 			try {
 				$this->create_single_global_class( $class_name, $class_data );
-				error_log( "🔥 LEVEL7: Successfully created global class '{$class_name}'" );
 				$this->creation_stats['global_classes_created']++;
 			} catch ( \Exception $e ) {
-				error_log( "🔥 LEVEL7: Failed to create global class '{$class_name}': " . $e->getMessage() );
 				$this->creation_stats['warnings'][] = [
 					'type' => 'global_class_creation_failed',
 					'class_name' => $class_name,
@@ -233,22 +223,18 @@ class Widget_Creator {
 				];
 			}
 		}
-		error_log( "🔥 LEVEL7: CREATE_GLOBAL_CLASSES COMPLETE - " . $this->creation_stats['global_classes_created'] . " classes created" );
 	}
 
 	private function create_single_global_class( $class_name, $class_data ) {
-		error_log( "GLOBAL_CLASS_DEBUG: Creating global class '{$class_name}' with data: " . wp_json_encode( $class_data ) );
 		
 		if ( ! class_exists( 'Elementor\Modules\GlobalClasses\Global_Classes_Repository' ) ) {
 			throw new \Exception( 'Global Classes Repository not available' );
 		}
 
 		$props = $this->convert_properties_to_global_class_props( $class_data['properties'] ?? [] );
-		error_log( "GLOBAL_CLASS_DEBUG: Converted props for '{$class_name}': " . wp_json_encode( $props ) );
 		
 		// Skip if no valid properties were converted
 		if ( empty( $props ) ) {
-			error_log( "GLOBAL_CLASS_DEBUG: Skipping '{$class_name}' - no valid props converted" );
 			return;
 		}
 
@@ -273,7 +259,6 @@ class Widget_Creator {
 		try {
 			// Use a simpler approach - directly update the kit meta
 			$kit = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
-			error_log( "GLOBAL_CLASS_DEBUG: Kit object: " . ( $kit ? get_class( $kit ) . " ID: " . $kit->get_id() : 'NULL' ) );
 			$meta_key = '_elementor_global_classes';
 			
 			// Get current global classes data
@@ -281,8 +266,6 @@ class Widget_Creator {
 			$items = $current_data['items'] ?? [];
 			$order = $current_data['order'] ?? [];
 			
-			error_log( "GLOBAL_CLASS_DEBUG: Current global classes count: " . count( $items ) );
-			error_log( "GLOBAL_CLASS_DEBUG: Attempting to add class '{$class_name}'" );
 			
 			// Add our new class
 			$class_id = $global_class_data['id'];
@@ -300,24 +283,19 @@ class Widget_Creator {
 			];
 			
 			// Save to database
-			error_log( "GLOBAL_CLASS_DEBUG: Attempting to save '{$class_name}' to kit meta" );
-			error_log( "GLOBAL_CLASS_DEBUG: Updated data size: " . strlen( wp_json_encode( $updated_data ) ) . " bytes" );
-			error_log( "GLOBAL_CLASS_DEBUG: Total items after update: " . count( $updated_data['items'] ) );
 			$success = $kit->update_json_meta( $meta_key, $updated_data );
-			error_log( "GLOBAL_CLASS_DEBUG: Kit meta update result for '{$class_name}': " . ( $success ? 'SUCCESS' : 'FAILED' ) );
 			
 			if ( ! $success ) {
-				error_log( "GLOBAL_CLASS_DEBUG: Kit update failed - checking WordPress errors" );
 				global $wpdb;
 				if ( $wpdb->last_error ) {
-					error_log( "GLOBAL_CLASS_DEBUG: WordPress DB error: " . $wpdb->last_error );
+					// Database error occurred
 				}
 			}
 			
 			if ( $success ) {
 				// Trigger cache invalidation for global classes with correct parameters
 				do_action( 'elementor/global_classes/update', 'frontend', $updated_data, $current_data );
-				error_log( "GLOBAL_CLASS_DEBUG: Successfully created global class '{$class_name}'" );
+				;
 			} else {
 				throw new \Exception( "Failed to update kit meta for global class '{$class_name}'" );
 			}
@@ -657,32 +635,25 @@ class Widget_Creator {
 		}
 
 		if ( ! empty( $applied_styles['computed_styles'] ) ) {
-			error_log( "🎨 WIDGET_CREATOR: Processing computed_styles for {$widget_type}" );
-			error_log( "📋 WIDGET_CREATOR: Computed style keys: " . implode( ', ', array_keys( $applied_styles['computed_styles'] ) ) );
 			
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
 			}
 			
 			$class_id = $this->current_widget_class_id;
-			error_log( "🔑 WIDGET_CREATOR: Using class ID: {$class_id}" );
 			
 			if ( isset( $v4_styles[ $class_id ] ) ) {
-				error_log( "🔄 WIDGET_CREATOR: Merging with existing style object" );
 				$computed_props = $this->map_css_to_v4_props( $applied_styles['computed_styles'] );
 				$existing_props = $v4_styles[ $class_id ]['variants'][0]['props'] ?? [];
 				$v4_styles[ $class_id ]['variants'][0]['props'] = array_merge( $existing_props, $computed_props );
 			} else {
-				error_log( "✨ WIDGET_CREATOR: Creating new style object" );
 				$style_object = $this->create_v4_style_object( $class_id, $applied_styles['computed_styles'] );
 				
-				error_log( "📊 WIDGET_CREATOR: Style object props count: " . count( $style_object['variants'][0]['props'] ?? [] ) );
 				
 				if ( ! empty( $style_object['variants'][0]['props'] ) ) {
 					$v4_styles[ $class_id ] = $style_object;
-					error_log( "✅ WIDGET_CREATOR: Style object added to v4_styles" );
+					;
 				} else {
-					error_log( "⚠️ WIDGET_CREATOR: Style object has NO props, not added!" );
 				}
 			}
 		}

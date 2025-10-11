@@ -106,9 +106,7 @@ class Widget_Mapper {
 			// Append to existing class attribute
 			$widget['attributes']['class'] .= ' ' . $generated_class;
 		}
-		
-		error_log( "Widget Mapper: Added generated class '{$generated_class}' to widget. Final class attribute: '{$widget['attributes']['class']}'" );
-		
+
 		return $widget;
 	}
 
@@ -224,16 +222,16 @@ class Widget_Mapper {
 		// Map children recursively
 		$children = [];
 		if ( ! empty( $element['children'] ) ) {
-			error_log( "WIDGET_MAPPER_DEBUG: Div-block has " . count( $element['children'] ) . " children, mapping them..." );
+			;
 			$children = $this->map_elements( $element['children'] );
-			error_log( "WIDGET_MAPPER_DEBUG: Mapped " . count( $children ) . " child widgets" );
+			;
 			
 			// Debug log each child widget
 			foreach ( $children as $child_index => $child_widget ) {
 				$child_type = $child_widget['widget_type'] ?? 'unknown';
 				$child_element_id = $child_widget['element_id'] ?? 'no-id';
 				$child_inline_css_count = count( $child_widget['inline_css'] ?? [] );
-				error_log( "WIDGET_MAPPER_DEBUG:   Child #{$child_index} - Type: {$child_type}, Element ID: {$child_element_id}, Inline CSS properties: {$child_inline_css_count}" );
+				;
 			}
 		}
 

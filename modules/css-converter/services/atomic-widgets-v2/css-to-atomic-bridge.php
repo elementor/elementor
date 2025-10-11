@@ -158,7 +158,6 @@ class CSS_To_Atomic_Bridge {
 				$atomic_props
 			);
 			
-			error_log( 'CSS_To_Atomic_Bridge: Added ' . count( $atomic_props ) . ' atomic props to widget' );
 		}
 
 		return $widget_data;

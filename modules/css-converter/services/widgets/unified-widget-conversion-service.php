@@ -44,32 +44,27 @@ class Unified_Widget_Conversion_Service {
 		];
 
 		try {
-			error_log( "Unified Widget Conversion: Starting conversion with unified approach" );
 
 			// Phase 1: Parse HTML structure (NO inline CSS conversion)
 			$parsed_elements = $this->html_parser->parse_html( $html );
 			$conversion_log['parsed_elements'] = count( $parsed_elements );
 			
-			error_log( "Unified Widget Conversion: Parsed " . count( $parsed_elements ) . " HTML elements" );
 
 			// Phase 2: Map HTML elements to widgets (NO style processing)
 			$mapped_widgets = $this->widget_mapper->map_elements_to_widgets( $parsed_elements );
 			$conversion_log['mapped_widgets'] = count( $mapped_widgets );
 			
-			error_log( "Unified Widget Conversion: Mapped " . count( $mapped_widgets ) . " widgets" );
 
 			// Phase 3: Extract ALL CSS (from style tags, external files, NO inline conversion)
 			$all_css = $this->extract_css_only( $html, $css_urls, $follow_imports );
 			$conversion_log['css_size'] = strlen( $all_css );
 			
-			error_log( "Unified Widget Conversion: Extracted " . strlen( $all_css ) . " characters of CSS" );
 
 			// Phase 4: UNIFIED processing - collect all styles, resolve conflicts
 			$processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets );
 			$resolved_widgets = $processing_result['widgets'];
 			$conversion_log['css_processing'] = $processing_result['stats'];
 			
-			error_log( "Unified Widget Conversion: Unified processing complete" );
 
 			// Phase 5: Create Elementor widgets ONCE with resolved styles
 			$elementor_widgets = [];
@@ -89,7 +84,6 @@ class Unified_Widget_Conversion_Service {
 			$conversion_log['widgets_created'] = count( $elementor_widgets );
 			$conversion_log['global_classes_created'] = count( $global_classes );
 			
-			error_log( "Unified Widget Conversion: Created " . count( $elementor_widgets ) . " Elementor widgets" );
 
 			// Phase 6: Finalize
 			$conversion_log['end_time'] = microtime( true );
@@ -104,7 +98,6 @@ class Unified_Widget_Conversion_Service {
 			];
 
 		} catch ( \Exception $e ) {
-			error_log( "Unified Widget Conversion: Error - " . $e->getMessage() );
 			
 			return [
 				'success' => false,
@@ -133,12 +126,10 @@ class Unified_Widget_Conversion_Service {
 						$all_css .= $css_content . "\n";
 					}
 				} catch ( \Exception $e ) {
-					error_log( "Unified Widget Conversion: Failed to fetch CSS from {$url}: " . $e->getMessage() );
 				}
 			}
 		}
 
-		error_log( "Unified Widget Conversion: Extracted CSS - Style tags: " . count( $matches[1] ) . ", External URLs: " . count( $css_urls ) );
 
 		return $all_css;
 	}
@@ -148,13 +139,9 @@ class Unified_Widget_Conversion_Service {
 		$widget_classes = $widget['attributes']['class'] ?? '';
 		$resolved_styles = $widget['resolved_styles'] ?? [];
 		
-		error_log( "🎨 CREATE_WIDGET: Creating {$widget_type} with classes '{$widget_classes}'" );
-		error_log( "🎨 CREATE_WIDGET: Resolved styles count: " . count( $resolved_styles ) );
 		
 		if ( empty( $resolved_styles ) ) {
-			error_log( "⚠️ CREATE_WIDGET: Widget {$widget_type} has NO resolved styles!" );
 		} else {
-			error_log( "📋 CREATE_WIDGET: Resolved style properties: " . implode( ', ', array_keys( $resolved_styles ) ) );
 			
 			// Log each resolved style in detail
 			foreach ( $resolved_styles as $property => $style_data ) {
@@ -162,7 +149,6 @@ class Unified_Widget_Conversion_Service {
 				$specificity = $style_data['specificity'] ?? 0;
 				$value = $style_data['value'] ?? 'no-value';
 				$converted = isset( $style_data['converted_property'] ) ? 'YES' : 'NO';
-				error_log( "  ✓ {$property}: {$value} (source: {$source}, specificity: {$specificity}, converted: {$converted})" );
 			}
 		}
 
@@ -170,9 +156,7 @@ class Unified_Widget_Conversion_Service {
 			// Convert resolved styles to the format expected by widget creator
 			$applied_styles = $this->convert_resolved_styles_to_applied_format( $resolved_styles );
 			
-			error_log( "🔄 CREATE_WIDGET: Converted to applied format, computed_styles count: " . count( $applied_styles['computed_styles'] ?? [] ) );
 			if ( ! empty( $applied_styles['computed_styles'] ) ) {
-				error_log( "📋 CREATE_WIDGET: Computed style properties: " . implode( ', ', array_keys( $applied_styles['computed_styles'] ) ) );
 			}
 			
 			// Create the widget using existing widget creator
@@ -183,19 +167,16 @@ class Unified_Widget_Conversion_Service {
 			);
 
 			if ( $elementor_widget ) {
-				error_log( "✅ CREATE_WIDGET: Successfully created {$widget_type} widget" );
+				;
 				
 				return [
 					'widget' => $elementor_widget,
 					'global_classes' => [], // Global classes handled differently in unified approach
 				];
 			} else {
-				error_log( "❌ CREATE_WIDGET: Widget creator returned null for {$widget_type}" );
 			}
 
 		} catch ( \Exception $e ) {
-			error_log( "❌ CREATE_WIDGET: Failed to create widget {$widget_type}: " . $e->getMessage() );
-			error_log( "❌ CREATE_WIDGET: Exception trace: " . $e->getTraceAsString() );
 		}
 
 		return null;

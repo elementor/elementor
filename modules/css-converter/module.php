@@ -173,19 +173,15 @@ class Module extends BaseModule {
 	}
 
 	private function handle_initialization_failure(): void {
-		error_log( 'CSS Converter module: Cannot initialize - missing required directories or functions' );
 	}
 
 	private function handle_widgets_route_missing(): void {
-		error_log( 'CSS Converter module: Widgets route file not found' );
 	}
 
 	private function handle_classes_route_missing(): void {
-		error_log( 'CSS Converter module: Classes route file not found' );
 	}
 
 	private function handle_variables_route_missing(): void {
-		error_log( 'CSS Converter module: Variables route file not found' );
 	}
 
 	public function get_variables_route() {

@@ -164,31 +164,26 @@ class Css_Property_Conversion_Service {
 		// to individual properties (border-width, border-style, border-color) just like inline CSS
 		require_once __DIR__ . '/css-shorthand-expander.php';
 		
-		error_log( "🔍 CSS-SERVICE DEBUG: Starting convert_properties_to_v4_atomic with properties: " . json_encode( array_keys( $properties ) ) );
-		error_log( "🔍 SHORTHAND DEBUG: Input properties: " . json_encode( $properties ) );
 		$expanded_properties = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $properties );
-		error_log( "🔍 SHORTHAND DEBUG: Expanded properties: " . json_encode( $expanded_properties ) );
 		
 		$converted = [];
 		
 		foreach ( $expanded_properties as $property => $value ) {
-			error_log( "🔍 CSS-SERVICE DEBUG: Processing property='$property', value='$value'" );
+			;
 			
 			$mapper = $this->resolve_property_mapper_safely( $property, $value );
 			if ( ! $mapper ) {
-				error_log( "❌ CSS-SERVICE DEBUG: No mapper found for property='$property'" );
+				;
 				continue;
 			}
 			
-			error_log( "✅ CSS-SERVICE DEBUG: Mapper found: " . get_class( $mapper ) );
 			
 			$result = $this->convert_property_to_v4_atomic( $property, $value );
 			if ( ! $result ) {
-				error_log( "❌ CSS-SERVICE DEBUG: Conversion failed for property='$property', value='$value'" );
+				;
 				continue;
 			}
 			
-			error_log( "✅ CSS-SERVICE DEBUG: Conversion result: " . json_encode( $result ) );
 			
 			if ( $result && $mapper ) {
 				// ✅ ATOMIC-COMPLIANT: Use mapper's property name method
@@ -196,36 +191,31 @@ class Css_Property_Conversion_Service {
 					? $mapper->get_v4_property_name( $property )
 					: $property;
 				
-				error_log( "✅ CSS-SERVICE DEBUG: V4 property name: '$property' -> '$v4_property_name'" );
+				;
 				
 				// Handle border-radius merging to prevent overwriting
 				if ( 'border-radius' === $v4_property_name && isset( $converted[ $v4_property_name ] ) ) {
-					error_log( "🔄 CSS-SERVICE DEBUG: Merging border-radius values (collision detected)" );
+					;
 					$converted[ $v4_property_name ] = $this->merge_border_radius_values( 
 						$converted[ $v4_property_name ], 
 						$result 
 					);
-					error_log( "✅ CSS-SERVICE DEBUG: Merged result: " . json_encode( $converted[ $v4_property_name ] ) );
 				}
 				// ✅ CRITICAL FIX: Handle margin merging to prevent overwriting (same as border-radius)
 				elseif ( 'margin' === $v4_property_name && isset( $converted[ $v4_property_name ] ) ) {
-					error_log( "🔄 CSS-SERVICE DEBUG: MARGIN COLLISION DETECTED! Merging margin values" );
-					error_log( "🔄 CSS-SERVICE DEBUG: Existing margin: " . json_encode( $converted[ $v4_property_name ] ) );
-					error_log( "🔄 CSS-SERVICE DEBUG: New margin: " . json_encode( $result ) );
+					;
 					
 					$converted[ $v4_property_name ] = $this->merge_dimensions_values( 
 						$converted[ $v4_property_name ], 
 						$result 
 					);
-					error_log( "✅ CSS-SERVICE DEBUG: Merged margin result: " . json_encode( $converted[ $v4_property_name ] ) );
 				} else {
 					$converted[ $v4_property_name ] = $result;
-					error_log( "✅ CSS-SERVICE DEBUG: Stored as converted['$v4_property_name']" );
+					;
 				}
 			}
 		}
 		
-		error_log( "🎯 CSS-SERVICE DEBUG: Final converted properties: " . json_encode( array_keys( $converted ) ) );
 		return $converted;
 	}
 
@@ -236,7 +226,7 @@ class Css_Property_Conversion_Service {
 		// Both should be dimensions type with value containing directional properties
 		if ( ! isset( $existing['$$type'] ) || $existing['$$type'] !== 'dimensions' ||
 		     ! isset( $new['$$type'] ) || $new['$$type'] !== 'dimensions' ) {
-			error_log( "❌ CSS-SERVICE DEBUG: Cannot merge - not both dimensions type" );
+			;
 			return $new; // Fallback to new value
 		}
 		
@@ -247,7 +237,6 @@ class Css_Property_Conversion_Service {
 		foreach ( $new_value as $direction => $size_data ) {
 			if ( null !== $size_data ) {
 				$merged_value[ $direction ] = $size_data;
-				error_log( "✅ CSS-SERVICE DEBUG: Merged direction '$direction': " . json_encode( $size_data ) );
 			}
 		}
 		

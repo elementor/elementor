@@ -31,8 +31,6 @@ class Css_Processor {
 	}
 
 	public function process_css_for_widgets( $css, $widgets ) {
-		error_log( "🔍 CSS-PROCESSOR DEBUG: Starting CSS processing with " . strlen( $css ) . " characters of CSS" );
-		error_log( "🔍 CSS-PROCESSOR DEBUG: CSS content preview: " . substr( $css, 0, 200 ) . "..." );
 		
 		$processing_result = [
 			'global_classes' => [],
@@ -174,7 +172,6 @@ class Css_Processor {
 		);
 
 		// Debug: Log CSS rule categorization
-		error_log( "🔍 CSS-PROCESSOR DEBUG: Rule {$rule['selector']} {$rule['property']} categorized as target='{$categorized_rule['target']}', category='{$categorized_rule['category']}'" );
 
 		// Route to appropriate processing based on target type and category
 		switch ( $categorized_rule['target'] ) {
@@ -300,11 +297,9 @@ class Css_Processor {
 	private function process_element_style_rule( $rule, &$processing_result ) {
 		$selector = $rule['selector'];
 		
-		error_log( "🔍 CSS-PROCESSOR DEBUG: Processing element rule: {$selector} {$rule['property']}: {$rule['value']}" );
 		
 		// NEW: Check if this is a simple element selector eligible for direct widget styling
 		if ( $this->reset_selector_analyzer->is_simple_element_selector( $selector ) ) {
-			error_log( "✅ CSS-PROCESSOR DEBUG: {$selector} is a simple element selector" );
 			// Check for conflicts with other CSS rules
 			$all_rules = $this->get_all_rules_from_processing_result( $processing_result );
 			$conflicts = $this->reset_selector_analyzer->detect_conflicts_for_selector( 
@@ -317,12 +312,10 @@ class Css_Processor {
 				// No conflicts - mark for direct widget application
 				$this->apply_direct_widget_styling( $rule, $processing_result );
 				
-				error_log( "CSS Processor: Marked {$selector} {$rule['property']} for direct widget styling (no conflicts)" );
 				
 				// Skip adding to element_styles - will be applied directly to widgets
 				return;
 			} else {
-				error_log( "CSS Processor: {$selector} has conflicts - using standard element_styles approach" );
 			}
 		}
 		
@@ -342,7 +335,6 @@ class Css_Processor {
 		// Convert CSS property to atomic widget format
 		$converted_property = $this->convert_css_property_safely( $rule['property'], $rule['value'] );
 		
-		error_log( "🔍 CSS-PROCESSOR DEBUG: Property conversion result for {$rule['property']}: " . json_encode( $converted_property ) );
 		
 		if ( $this->is_property_conversion_successful( $converted_property ) ) {
 			if ( ! isset( $processing_result['direct_widget_styles'][ $selector ] ) ) {
@@ -403,10 +395,8 @@ class Css_Processor {
 	}
 
 	private function create_global_classes( &$processing_result ) {
-		error_log( "CSS_PROCESSOR_DEBUG: create_global_classes called with " . count( $processing_result['global_classes'] ?? [] ) . " classes: " . wp_json_encode( array_keys( $processing_result['global_classes'] ?? [] ) ) );
 		
 		if ( ! $this->global_classes_repository ) {
-			error_log( "CSS_PROCESSOR_DEBUG: Global classes repository not available" );
 			$processing_result['stats']['warnings'][] = [
 				'type' => 'global_classes_unavailable',
 				'message' => 'Global Classes Repository not available',
@@ -415,7 +405,6 @@ class Css_Processor {
 		}
 
 		foreach ( $processing_result['global_classes'] as $class_name => $class_data ) {
-			error_log( "CSS_PROCESSOR_DEBUG: Processing global class '{$class_name}' with data: " . wp_json_encode( $class_data ) );
 			try {
 				// Get current global classes
 				$current_global_classes = $this->global_classes_repository->all();
@@ -492,8 +481,6 @@ class Css_Processor {
 		$widget_id = $widget['attributes']['id'] ?? 'no-id';
 		$widget_type = $widget['widget_type'] ?? 'unknown';
 		
-		error_log( "CSS Processor: apply_styles_to_widget called for {$widget_type}" );
-		error_log( "CSS Processor: Widget has inline_css: " . ( empty( $widget['inline_css'] ) ? 'NO' : 'YES (' . count( $widget['inline_css'] ) . ' properties)' ) );
 		
 		// NEW: Apply direct element styles for simple element selectors (Approach 6)
 		if ( ! empty( $processing_result['direct_widget_styles'] ) ) {
@@ -502,7 +489,6 @@ class Css_Processor {
 			if ( $widget_tag && isset( $processing_result['direct_widget_styles'][ $widget_tag ] ) ) {
 				$direct_element_styles = $processing_result['direct_widget_styles'][ $widget_tag ];
 				
-				error_log( "CSS Processor: Applying " . count( $direct_element_styles ) . " direct styles to {$widget_tag} widget" );
 			}
 		}
 		
@@ -511,17 +497,12 @@ class Css_Processor {
 			$widget_id = $widget['attributes']['id'];
 			
 			// PHASE 1 DEBUG: ID style matching
-			error_log( "🔍 ID_MATCH: Widget {$widget_type} has ID '{$widget_id}'" );
 			
 			if ( isset( $processing_result['id_styles'][ $widget_id ] ) ) {
 				$id_styles = $processing_result['id_styles'][ $widget_id ];
-				error_log( "🔍 ID_MATCH: Found " . count( $id_styles ) . " ID styles for #{$widget_id}" );
 			} else {
-				error_log( "🔍 ID_MATCH: No ID styles found for #{$widget_id}" );
-				error_log( "🔍 ID_MATCH: Available ID styles: " . implode( ', ', array_keys( $processing_result['id_styles'] ) ) );
 			}
 		} else {
-			error_log( "🔍 ID_MATCH: Widget {$widget_type} has no ID attribute" );
 		}
 
 		// Apply widget-specific styles (high specificity)
@@ -552,8 +533,6 @@ class Css_Processor {
 		}
 
 		// DEBUG: Log applied classes before compute_final_styles
-		error_log( "CSS Processor: Applied classes for {$widget_type}: " . implode( ', ', $applied_classes ) );
-		error_log( "CSS Processor: Global classes available: " . implode( ', ', array_keys( $processing_result['global_classes'] ?? [] ) ) );
 		
 		$result = [
 			'widget_styles' => $widget_styles,
@@ -565,7 +544,6 @@ class Css_Processor {
 		];
 		
 		// DEBUG: Log what we're returning
-		error_log( "CSS Processor: Returning applied styles with " . count( $id_styles ) . " ID styles for {$widget_type} ({$widget_id})" );
 		
 		return $result;
 	}
@@ -611,20 +589,16 @@ class Css_Processor {
 		// 7. !important (specificity 10000)
 		
 		// DEBUG: Check what we received
-		error_log( "compute_final_styles: applied_classes type: " . gettype( $applied_classes ) . ", count: " . count( $applied_classes ) . ", value: " . var_export( $applied_classes, true ) );
 		
 		$all_styles = array_merge( $element_styles, $direct_element_styles, $widget_styles );
 		
 		// Add class styles with proper specificity
 		if ( ! empty( $applied_classes ) && ! empty( $processing_result['global_classes'] ) ) {
-			error_log( "CSS Processor: Processing class styles for classes: " . implode( ', ', $applied_classes ) );
 			foreach ( $applied_classes as $class_name ) {
 				if ( isset( $processing_result['global_classes'][ $class_name ]['properties'] ) ) {
 					$class_properties = $processing_result['global_classes'][ $class_name ]['properties'];
-					error_log( "CSS Processor: Found " . count( $class_properties ) . " properties for class '{$class_name}'" );
 					
 					foreach ( $class_properties as $class_style ) {
-						error_log( "CSS Processor: Adding class style - {$class_style['original_property']}: {$class_style['original_value']} (specificity: " . Css_Specificity_Calculator::CLASS_WEIGHT . ")" );
 						$all_styles[] = [
 							'property' => $class_style['original_property'],
 							'value' => $class_style['original_value'],
@@ -635,11 +609,9 @@ class Css_Processor {
 						];
 					}
 				} else {
-					error_log( "CSS Processor: No properties found for class '{$class_name}'" );
 				}
 			}
 		} else {
-			error_log( "CSS Processor: No class styles to process (applied_classes: " . count( $applied_classes ) . ", global_classes: " . ( empty( $processing_result['global_classes'] ) ? 'empty' : 'has data' ) . ")" );
 		}
 		
 		// Add ID styles with their converted properties
@@ -695,7 +667,6 @@ class Css_Processor {
 				];
 			}
 		} else {
-			error_log( "CSS Processor: No inline styles found for widget" );
 		}
 
 		// Group by property and find winning style for each
@@ -847,7 +818,6 @@ class Css_Processor {
 	}
 
 	private function handle_service_creation_failure(): void {
-		error_log( 'CSS Processor: Failed to create property conversion service - class not available' );
 	}
 
 	private function initialize_global_classes_repository(): void {
@@ -915,7 +885,6 @@ class Css_Processor {
 		// This processes <style> block CSS before it gets parsed into individual rules
 		require_once __DIR__ . '/css-shorthand-expander.php';
 		
-		error_log( "🔍 CSS-PROCESSOR DEBUG: Expanding shorthand in CSS text" );
 		
 		// Use regex to find CSS rules and expand shorthand properties within them
 		return preg_replace_callback(

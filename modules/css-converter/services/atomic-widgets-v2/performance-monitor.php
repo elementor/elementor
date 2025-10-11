@@ -229,10 +229,8 @@ class Performance_Monitor {
 		$summary = $this->get_performance_summary();
 		$warnings = $this->get_performance_warnings();
 
-		error_log( 'Atomic Widgets Performance Summary: ' . wp_json_encode( $summary ) );
 
 		if ( ! empty( $warnings ) ) {
-			error_log( 'Atomic Widgets Performance Warnings: ' . wp_json_encode( $warnings ) );
 		}
 	}
 }

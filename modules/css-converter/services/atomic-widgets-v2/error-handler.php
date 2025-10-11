@@ -27,7 +27,6 @@ class Error_Handler {
 		$this->errors[] = $error;
 
 		if ( $this->debug_mode ) {
-			error_log( "Atomic Widgets Error [{$context}]: {$message}" );
 		}
 	}
 
@@ -42,7 +41,6 @@ class Error_Handler {
 		$this->warnings[] = $warning;
 
 		if ( $this->debug_mode ) {
-			error_log( "Atomic Widgets Warning [{$context}]: {$message}" );
 		}
 	}
 
@@ -159,7 +157,6 @@ class Error_Handler {
 			'timestamp' => date( 'Y-m-d H:i:s' ),
 		];
 
-		error_log( 'Atomic Widgets Conversion Attempt: ' . wp_json_encode( $log_data ) );
 	}
 
 	public function log_conversion_result( array $result ): void {
@@ -179,7 +176,6 @@ class Error_Handler {
 			$log_data['stats'] = $result['stats'];
 		}
 
-		error_log( 'Atomic Widgets Conversion Result: ' . wp_json_encode( $log_data ) );
 	}
 
 	public function create_error_response( string $primary_error = '' ): array {

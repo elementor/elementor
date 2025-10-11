@@ -40,7 +40,6 @@ class Widget_Conversion_Reporter {
 		
 		// Log warning if debug mode is enabled (following class import pattern)
 		if ( WP_DEBUG ) {
-			error_log( sprintf( '[Elementor Widget Converter Warning] %s', $message ) );
 		}
 	}
 

@@ -61,30 +61,23 @@ class Css_Property_Conversion_Service {
 		// ✅ CRITICAL FIX: Expand shorthand properties before conversion
 		require_once __DIR__ . '/css-shorthand-expander.php';
 		
-		error_log( "🔍 CSS-SERVICE DEBUG: Starting convert_properties_to_v4_atomic with properties: " . json_encode( array_keys( $properties ) ) );
 		$expanded_properties = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $properties );
-		error_log( "🔍 CSS-SERVICE DEBUG: Expanded properties: " . json_encode( $expanded_properties ) );
 		
 		$converted = [];
 		
 		foreach ( $expanded_properties as $property => $value ) {
-			error_log( "🔍 CSS-SERVICE DEBUG: Processing property='$property', value='$value'" );
 			
 			$mapper = $this->resolve_property_mapper_safely( $property, $value );
 			if ( ! $mapper ) {
-				error_log( "❌ CSS-SERVICE DEBUG: No mapper found for property='$property'" );
 				continue;
 			}
 			
-			error_log( "✅ CSS-SERVICE DEBUG: Mapper found: " . get_class( $mapper ) );
 			
 			$result = $this->convert_property_to_v4_atomic( $property, $value );
 			if ( ! $result ) {
-				error_log( "❌ CSS-SERVICE DEBUG: Conversion failed for property='$property', value='$value'" );
 				continue;
 			}
 			
-			error_log( "✅ CSS-SERVICE DEBUG: Conversion result: " . json_encode( $result ) );
 			
 			if ( $result && $mapper ) {
 				// Get the v4 property name
@@ -92,31 +85,22 @@ class Css_Property_Conversion_Service {
 					? $mapper->get_v4_property_name( $property )
 					: $property;
 				
-				error_log( "✅ CSS-SERVICE DEBUG: V4 property name: '$property' -> '$v4_property_name'" );
 				
 				// ✅ CRITICAL FIX: Handle margin merging to prevent overwriting
 				if ( 'margin' === $v4_property_name && isset( $converted[ $v4_property_name ] ) ) {
-					error_log( "🔄 CSS-SERVICE DEBUG: MARGIN COLLISION DETECTED! Merging margin values" );
-					error_log( "🔄 CSS-SERVICE DEBUG: Existing margin: " . json_encode( $converted[ $v4_property_name ] ) );
-					error_log( "🔄 CSS-SERVICE DEBUG: New margin: " . json_encode( $result ) );
 					
 					$converted[ $v4_property_name ] = $this->merge_dimensions_values( 
 						$converted[ $v4_property_name ], 
 						$result 
 					);
-					error_log( "✅ CSS-SERVICE DEBUG: Merged margin result: " . json_encode( $converted[ $v4_property_name ] ) );
 				} else {
 					$converted[ $v4_property_name ] = $result;
-					error_log( "✅ CSS-SERVICE DEBUG: Stored as converted['$v4_property_name']" );
 				}
 			}
 		}
 		
-		error_log( "🎯 CSS-SERVICE DEBUG: Final converted properties: " . json_encode( array_keys( $converted ) ) );
 		return $converted;
 	}
-
-
 	/**
 	 * Merge two dimensions atomic structures (margin, padding)
 	 */
@@ -124,7 +108,6 @@ class Css_Property_Conversion_Service {
 		// Both should be dimensions type with value containing directional properties
 		if ( ! isset( $existing['$$type'] ) || $existing['$$type'] !== 'dimensions' ||
 		     ! isset( $new['$$type'] ) || $new['$$type'] !== 'dimensions' ) {
-			error_log( "❌ CSS-SERVICE DEBUG: Cannot merge - not both dimensions type" );
 			return $new; // Fallback to new value
 		}
 		
@@ -135,7 +118,6 @@ class Css_Property_Conversion_Service {
 		foreach ( $new_value as $direction => $size_data ) {
 			if ( null !== $size_data ) {
 				$merged_value[ $direction ] = $size_data;
-				error_log( "✅ CSS-SERVICE DEBUG: Merged direction '$direction': " . json_encode( $size_data ) );
 			}
 		}
 		
@@ -162,8 +144,6 @@ class Css_Property_Conversion_Service {
 	private function is_valid_schema_result( $result ): bool {
 		return ! empty( $result ) && is_array( $result );
 	}
-
-
 	private function record_conversion_success(): void {
 		$this->conversion_stats['properties_converted']++;
 	}
@@ -186,26 +166,21 @@ class Css_Property_Conversion_Service {
 	 */
 	public function convert_property_to_v4_atomic( string $property, $value ): ?array {
 		if ($property === 'transform') {
-			error_log('🟠 LEVEL 4 - CONVERSION SERVICE: Converting transform, value = ' . $value);
 		}
 		
 		// Add debugging for letter-spacing and text-transform
 		if ( in_array( $property, [ 'letter-spacing', 'text-transform' ], true ) ) {
-			error_log( "🔍 DEBUG: CSS_Property_Conversion_Service - Converting '$property' with value: '$value'" );
-			error_log( "🔍 DEBUG: CSS_Property_Conversion_Service - Value type: " . gettype( $value ) );
 		}
 		
 		$mapper = $this->resolve_property_mapper_safely( $property, $value );
 		
 		if ( in_array( $property, [ 'letter-spacing', 'text-transform' ], true ) ) {
-			error_log( "🔍 DEBUG: CSS_Property_Conversion_Service - Resolved mapper: " . ( $mapper ? get_class( $mapper ) : 'null' ) );
 		}
 		
 		if ( $this->can_convert_to_v4_atomic( $mapper ) ) {
 			$result = $this->attempt_v4_atomic_conversion( $mapper, $property, $value );
 			
 			if ( in_array( $property, [ 'letter-spacing', 'text-transform' ], true ) ) {
-				error_log( "🔍 DEBUG: CSS_Property_Conversion_Service - Conversion result: " . json_encode( $result ) );
 			}
 			
 			return $result;
@@ -256,7 +231,6 @@ class Css_Property_Conversion_Service {
 	private function attempt_v4_atomic_conversion( object $mapper, string $property, $value ): ?array {
 		$v4_result = $mapper->map_to_v4_atomic( $property, $value );
 		if ($property === 'transform') {
-			error_log('🟠 LEVEL 4 - CONVERSION SERVICE: Mapper result = ' . json_encode($v4_result));
 		}
 		
 		if ( $this->is_valid_v4_result( $v4_result ) ) {
@@ -291,8 +265,6 @@ class Css_Property_Conversion_Service {
 		
 		return $converted;
 	}
-
-
 	/**
 	 * Check if a CSS property is supported for conversion
 	 *

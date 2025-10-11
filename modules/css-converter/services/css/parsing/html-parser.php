@@ -98,9 +98,7 @@ class Html_Parser {
 
 		// Extract CSS from style attribute
 		if ( ! empty( $data['attributes']['style'] ) ) {
-			error_log( "HTML PARSER: Found inline style on {$tag_name}: " . $data['attributes']['style'] );
 			$data['inline_css'] = $this->parse_inline_css( $data['attributes']['style'] );
-			error_log( "HTML PARSER: Extracted " . count( $data['inline_css'] ) . " inline CSS properties" );
 		} else {
 			$data['inline_css'] = [];
 		}
@@ -148,7 +146,6 @@ class Html_Parser {
 	}
 
 	private function parse_inline_css( $css_string ) {
-		error_log('🟢 HTML PARSER: Parsing inline CSS = ' . $css_string);
 		$styles = [];
 		$declarations = explode( ';', $css_string );
 
@@ -183,7 +180,6 @@ class Html_Parser {
 		foreach ( $styles as $property => $data ) {
 			$simple_styles[ $property ] = $data['value'];
 			if ($property === 'transform') {
-				error_log('🟢 LEVEL 2 - HTML PARSER: Found transform property, value = ' . $data['value']);
 			}
 		}
 		

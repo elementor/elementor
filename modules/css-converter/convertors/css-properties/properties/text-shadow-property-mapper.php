@@ -16,18 +16,15 @@ class Text_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	public function map_to_v4_atomic( string $property, $value ): ?array {
 		if ( ! $this->is_supported_property( $property ) ) {
-			error_log( "DEBUG: Text_Shadow_Property_Mapper - Property '$property' not supported" );
 			return null;
 		}
 
 		if ( ! is_string( $value ) || 'none' === trim( $value ) ) {
-			error_log( "DEBUG: Text_Shadow_Property_Mapper - Invalid value: " . var_export( $value, true ) );
 			return null;
 		}
 
 		$parsed = $this->parse_text_shadow( $value );
 		if ( ! $parsed ) {
-			error_log( "DEBUG: Text_Shadow_Property_Mapper - Failed to parse value: '$value'" );
 			return null;
 		}
 
@@ -53,8 +50,6 @@ class Text_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 			]
 		];
 
-		error_log( "DEBUG: Text_Shadow_Property_Mapper - Successfully mapped '$value' to: " . json_encode( $result ) );
-		error_log( "WARNING: Text_Shadow_Property_Mapper - text-shadow is NOT supported by atomic widgets (missing from style-schema.php)" );
 		
 		return $result;
 	}
@@ -137,4 +132,3 @@ class Text_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return $named_colors[ strtolower( $value ) ] ?? '#000000';
 	}
 }
-

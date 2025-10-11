@@ -74,7 +74,6 @@ class Atomic_Widget_JSON_Creator {
 				->build();
 				
 		} catch ( \Exception $e ) {
-			error_log( "Failed to create widget '{$widget_type}': " . $e->getMessage() );
 			return null;
 		}
 	}
@@ -98,7 +97,6 @@ class Atomic_Widget_JSON_Creator {
 				->build();
 				
 		} catch ( \Exception $e ) {
-			error_log( "Failed to create container '{$widget_type}': " . $e->getMessage() );
 			return null;
 		}
 	}
@@ -156,7 +154,6 @@ class Atomic_Widget_JSON_Creator {
 		try {
 			return $widget_class::define_props_schema();
 		} catch ( \Exception $e ) {
-			error_log( "Failed to get schema for '{$widget_class}': " . $e->getMessage() );
 			return null;
 		}
 	}
@@ -180,7 +177,6 @@ class Atomic_Widget_JSON_Creator {
 			try {
 				return $prop_type->validate( $prop_value );
 			} catch ( \Exception $e ) {
-				error_log( "Prop validation failed: " . $e->getMessage() );
 				return false;
 			}
 		}

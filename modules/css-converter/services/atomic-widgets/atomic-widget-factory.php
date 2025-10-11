@@ -91,12 +91,6 @@ class Atomic_Widget_Factory {
 				$validated[ $prop_name ] = $prop_type->sanitize( $value );
 			} else {
 				$validated[ $prop_name ] = $prop_type->get_default();
-				
-				error_log( sprintf(
-					'CSS Converter: Invalid prop value for %s, using default. Value: %s',
-					$prop_name,
-					is_scalar( $value ) ? $value : json_encode( $value )
-				) );
 			}
 		}
 		

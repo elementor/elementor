@@ -31,7 +31,6 @@ class Atomic_Widget_Hierarchy_Processor {
 	
 	private function process_single_widget( array $widget ): ?array {
 		if ( $this->has_circular_reference( $widget ) ) {
-			error_log( "CSS Converter: Circular reference detected for widget: " . ( $widget['id'] ?? 'unknown' ) );
 			return null;
 		}
 		

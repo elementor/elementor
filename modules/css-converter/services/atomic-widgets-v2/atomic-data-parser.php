@@ -25,22 +25,18 @@ class Atomic_Data_Parser {
 		$dom = $this->create_dom( $html );
 		
 		$css_content = $this->extract_css_from_style_tags( $dom );
-		error_log( 'Atomic_Data_Parser: Extracted CSS content length: ' . strlen( $css_content ) );
 		
 		$dom_elements = $this->parse_dom_structure_from_dom( $dom );
 		if ( empty( $dom_elements ) ) {
 			return [];
 		}
 
-		error_log( 'Atomic_Data_Parser: Found ' . count( $dom_elements ) . ' DOM elements' );
 
 		$widget_data = $this->convert_dom_elements_to_widget_data( $dom_elements );
 
 		if ( ! empty( $css_content ) ) {
-			error_log( 'Atomic_Data_Parser: Applying CSS rules to ' . count( $widget_data ) . ' widgets' );
 			$widget_data = $this->css_bridge->apply_css_rules_to_widget_data( $widget_data, $css_content );
 		} else {
-			error_log( 'Atomic_Data_Parser: No CSS content to apply' );
 		}
 
 		return $widget_data;

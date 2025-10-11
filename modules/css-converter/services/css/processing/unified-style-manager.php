@@ -36,7 +36,6 @@ class Unified_Style_Manager {
 			];
 		}
 		
-		error_log( "Unified Style Manager: Collected " . count( $inline_styles ) . " inline styles for element {$element_id}" );
 	}
 
 	public function collect_css_selector_styles( string $selector, array $properties, array $matched_elements = [] ) {
@@ -58,7 +57,6 @@ class Unified_Style_Manager {
 			}
 		}
 		
-		error_log( "Unified Style Manager: Collected " . count( $properties ) . " CSS selector styles from '{$selector}' for " . count( $matched_elements ) . " elements" );
 	}
 
 	public function collect_id_styles( string $id, array $properties, string $element_id ) {
@@ -76,7 +74,6 @@ class Unified_Style_Manager {
 			];
 		}
 		
-		error_log( "Unified Style Manager: Collected " . count( $properties ) . " ID styles for #{$id} (element {$element_id})" );
 	}
 
 	public function collect_element_styles( string $element_type, array $properties, string $element_id ) {
@@ -94,7 +91,6 @@ class Unified_Style_Manager {
 			];
 		}
 		
-		error_log( "Unified Style Manager: Collected " . count( $properties ) . " element styles for {$element_type} (element {$element_id})" );
 	}
 
 	public function resolve_styles_for_widget( array $widget ): array {
@@ -103,7 +99,6 @@ class Unified_Style_Manager {
 		// Get all styles that apply to this widget
 		$applicable_styles = $this->filter_styles_for_widget( $widget );
 		
-		error_log( "Unified Style Manager: Found " . count( $applicable_styles ) . " applicable styles for widget {$widget_id}" );
 		
 		// Group by property
 		$by_property = $this->group_by_property( $applicable_styles );
@@ -114,7 +109,6 @@ class Unified_Style_Manager {
 			$winning_style = $this->find_winning_style( $styles );
 			if ( $winning_style ) {
 				$winning_styles[ $property ] = $winning_style;
-				error_log( "Unified Style Manager: Property '{$property}' won by {$winning_style['source']} (specificity: {$winning_style['specificity']}, value: {$winning_style['value']})" );
 			}
 		}
 		
@@ -251,7 +245,6 @@ class Unified_Style_Manager {
 			$competitors = array_map( function( $style ) {
 				return "{$style['source']}({$style['specificity']})";
 			}, $styles );
-			error_log( "Unified Style Manager: Property '{$winner['property']}' competition: " . implode( ' vs ', $competitors ) . " → {$winner['source']} wins" );
 		}
 		
 		return $winner;

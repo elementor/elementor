@@ -138,9 +138,6 @@ class Classes_Route {
 			], 422 );
 		} catch ( \Throwable $e ) {
 			// Log the actual error for debugging
-			error_log( 'CSS Classes API - Unexpected error: ' . $e->getMessage() );
-			error_log( 'CSS Classes API - File: ' . $e->getFile() . ':' . $e->getLine() );
-			error_log( 'CSS Classes API - Stack trace: ' . $e->getTraceAsString() );
 			
 			return new WP_REST_Response( [
 				'error' => 'Unexpected error',

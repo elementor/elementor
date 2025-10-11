@@ -61,7 +61,6 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 	];
 
 	public function map_to_v4_atomic( string $property, $value ): ?array {
-		error_log('🔴 LEVEL 5 - TRANSFORM MAPPER: Called with property = ' . $property . ', value = ' . $value);
 		if ( ! $this->is_supported_property( $property ) ) {
 			return null;
 		}
@@ -113,45 +112,35 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$result = Transform_Prop_Type::make()->generate( [
 			'transform-functions' => Transform_Functions_Prop_Type::make()->generate( $functions ),
 		] );
-		error_log('🔴 LEVEL 5 - TRANSFORM MAPPER: Returning result = ' . json_encode($result));
 		return $result;
 	}
 
 	private function parse_transform_functions( string $value ): array {
 		$functions = [];
 		
-		error_log('🔴 TRANSFORM MAPPER: Parsing transform functions from: ' . $value);
 		
 		// Match transform functions like translateX(10px), scale(1.5), rotate(45deg)
 		if ( preg_match_all( '/(\w+)\s*\(\s*([^)]+)\s*\)/i', $value, $matches, PREG_SET_ORDER ) ) {
-			error_log('🔴 TRANSFORM MAPPER: Regex matched ' . count($matches) . ' functions');
 			foreach ( $matches as $match ) {
 				$function_name = strtolower( $match[1] );
 				$function_args = trim( $match[2] );
 				
-				error_log('🔴 TRANSFORM MAPPER: Found function: ' . $function_name . '(' . $function_args . ')');
 				
 				if ( ! isset( self::TRANSFORM_FUNCTIONS[ $function_name ] ) ) {
-					error_log('🔴 TRANSFORM MAPPER: Function ' . $function_name . ' NOT in TRANSFORM_FUNCTIONS map');
 					continue;
 				}
 
 				$function_type = self::TRANSFORM_FUNCTIONS[ $function_name ];
-				error_log('🔴 TRANSFORM MAPPER: Function type: ' . $function_type);
 				$parsed_function = $this->parse_transform_function( $function_name, $function_args, $function_type );
 				
 				if ( null !== $parsed_function ) {
-					error_log('🔴 TRANSFORM MAPPER: Successfully parsed function');
 					$functions[] = $parsed_function;
 				} else {
-					error_log('🔴 TRANSFORM MAPPER: Failed to parse function - returned null');
 				}
 			}
 		} else {
-			error_log('🔴 TRANSFORM MAPPER: Regex did NOT match - no functions found');
 		}
 
-		error_log('🔴 TRANSFORM MAPPER: Returning ' . count($functions) . ' parsed functions');
 		return $functions;
 	}
 
