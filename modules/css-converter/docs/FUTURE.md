@@ -49,6 +49,15 @@
   }
   ```
 
+#### **Font Family Custom Mapping**
+- **Status**: Low priority - acceptable behavior
+- **Issue**: System fonts override custom font specifications (Arial, Helvetica, Georgia)
+- **Impact**: Low - system fonts provide excellent fallback and consistent experience
+- **Current Behavior**: Elementor applies system font stack: `-apple-system, system-ui, "Segoe UI", Roboto...`
+- **Expected Behavior**: Preserve custom font-family declarations from CSS
+- **Effort**: Medium - requires font-family property mapper integration
+- **Decision**: ACCEPTABLE - System fonts are a reasonable default. Custom fonts can be added later if user demand warrants it.
+
 ---
 
 ## 🚀 **Advanced Features**
