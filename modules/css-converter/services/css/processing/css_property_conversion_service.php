@@ -201,17 +201,19 @@ class Css_Property_Conversion_Service {
 						$result 
 					);
 				}
-				// ✅ CRITICAL FIX: Handle margin merging to prevent overwriting (same as border-radius)
 				elseif ( 'margin' === $v4_property_name && isset( $converted[ $v4_property_name ] ) ) {
-					;
-					
+					$converted[ $v4_property_name ] = $this->merge_dimensions_values( 
+						$converted[ $v4_property_name ], 
+						$result 
+					);
+				}
+				elseif ( 'padding' === $v4_property_name && isset( $converted[ $v4_property_name ] ) ) {
 					$converted[ $v4_property_name ] = $this->merge_dimensions_values( 
 						$converted[ $v4_property_name ], 
 						$result 
 					);
 				} else {
 					$converted[ $v4_property_name ] = $result;
-					;
 				}
 			}
 		}

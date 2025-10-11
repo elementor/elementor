@@ -254,6 +254,10 @@ class Unified_Css_Processor {
 			return true;
 		}
 
+		if ( $this->is_padding_property_mapping( $css_property, $atomic_property ) ) {
+			return true;
+		}
+
 		if ( $this->is_border_radius_property_mapping( $css_property, $atomic_property ) ) {
 			return true;
 		}
@@ -275,6 +279,24 @@ class Unified_Css_Processor {
 				'margin-inline-end',
 				'margin-block',
 				'margin-inline',
+			], true
+		);
+	}
+
+	private function is_padding_property_mapping( string $css_property, string $atomic_property ): bool {
+		return 'padding' === $atomic_property && in_array(
+			$css_property, [
+				'padding',
+				'padding-top',
+				'padding-right',
+				'padding-bottom',
+				'padding-left',
+				'padding-block-start',
+				'padding-block-end',
+				'padding-inline-start',
+				'padding-inline-end',
+				'padding-block',
+				'padding-inline',
 			], true
 		);
 	}

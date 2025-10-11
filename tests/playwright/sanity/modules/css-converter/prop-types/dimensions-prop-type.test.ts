@@ -44,7 +44,7 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 				<p style="padding: 20px;">Single value padding</p>
 				<p style="padding: 20px 40px;">Two values padding</p>
 				<p style="padding: 20px 30px 0px 10px;">Four values padding</p>
-				<p style="padding-top: 20px;">Padding top</p>
+				<p style="margin-top: 40px;padding-top: 20px;">Padding top & Margin top</p>
 				<p style="padding-block-start: 30px;">Padding block start</p>
 				<p style="padding-left: 30px;">Padding left</p>
 				<p style="padding-inline-start: 40px;">Padding inline start</p>
@@ -105,8 +105,9 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 				]
 			},
 			{
-				textContent: 'Padding top',
+				textContent: 'Padding top & Margin top',
 				tests: [
+					{ property: 'margin-block-start', expected: '40px' },
 					{ property: 'padding-block-start', expected: '20px' },
 				]
 			},

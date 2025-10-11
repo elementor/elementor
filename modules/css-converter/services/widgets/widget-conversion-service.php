@@ -272,59 +272,48 @@ class Widget_Conversion_Service {
 
 
 	private function convert_inline_css_to_computed_styles( $inline_css ) {
-		// Convert inline CSS array to the computed styles format expected by widget creator
 		$computed_styles = [];
 		
-		// ✅ DEBUG: Log grouped properties
-		$grouped_properties = $this->group_margin_properties( $inline_css );
-		
-		// ✅ BRILLIANT SUGGESTION: Pre-group margin properties before conversion
-		// This way we send all margin properties together instead of individually
-		foreach ( $grouped_properties as $property_group => $properties ) {
-			if ( 'margin' === $property_group ) {
-				// Handle grouped margin properties - convert them all together
-				$margin_result = $this->convert_grouped_margin_properties( $properties );
-				if ( $margin_result ) {
-					$computed_styles['margin'] = $margin_result;
-				}
-			} else {
-				// Handle individual non-margin properties as before
-				foreach ( $properties as $property => $style_data ) {
-					$value = $style_data['value'];
-					$important = $style_data['important'];
-					
-					$conversion_result = $this->property_conversion_service->convert_property_to_v4_atomic_with_name( $property, $value );
-					
-					if ( $conversion_result ) {
-						$property_name = $conversion_result['property_name'];
-						$atomic_value = $conversion_result['converted_value'];
-						$computed_styles[ $property_name ] = $atomic_value;
-					}
-				}
+		foreach ( $inline_css as $property => $style_data ) {
+			$value = $style_data['value'];
+			$important = $style_data['important'];
+			
+			$conversion_result = $this->property_conversion_service->convert_property_to_v4_atomic_with_name( $property, $value );
+			
+			if ( $conversion_result ) {
+				$property_name = $conversion_result['property_name'];
+				$atomic_value = $conversion_result['converted_value'];
+				$computed_styles[ $property_name ] = $atomic_value;
 			}
 		}
 		
 		return $computed_styles;
 	}
 
-	/**
-	 * Group margin properties together for combined conversion
-	 */
-	private function group_margin_properties( $inline_css ): array {
+	private function group_dimensions_properties( $inline_css ): array {
 		$margin_properties = [
 			'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
 			'margin-block', 'margin-block-start', 'margin-block-end',
 			'margin-inline', 'margin-inline-start', 'margin-inline-end'
 		];
 		
+		$padding_properties = [
+			'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+			'padding-block', 'padding-block-start', 'padding-block-end',
+			'padding-inline', 'padding-inline-start', 'padding-inline-end'
+		];
+		
 		$grouped = [
 			'margin' => [],
+			'padding' => [],
 			'other' => []
 		];
 		
 		foreach ( $inline_css as $property => $style_data ) {
 			if ( in_array( $property, $margin_properties, true ) ) {
 				$grouped['margin'][ $property ] = $style_data;
+			} elseif ( in_array( $property, $padding_properties, true ) ) {
+				$grouped['padding'][ $property ] = $style_data;
 			} else {
 				$grouped['other'][ $property ] = $style_data;
 			}
@@ -333,35 +322,33 @@ class Widget_Conversion_Service {
 		return $grouped;
 	}
 
-	/**
-	 * Convert grouped margin properties as a single combined operation
-	 */
-	private function convert_grouped_margin_properties( $margin_properties ): ?array {
-		if ( empty( $margin_properties ) ) {
+	private function convert_grouped_dimensions_properties( $properties, string $property_type ): ?array {
+		if ( empty( $properties ) ) {
 			return null;
 		}
-		$margin_mapper = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Margin_Property_Mapper();
+		
 		$combined_dimensions = [];
-		foreach ( $margin_properties as $property => $style_data ) {
+		
+		foreach ( $properties as $property => $style_data ) {
 			$value = $style_data['value'];
-			$logical_direction = $this->map_margin_property_to_logical_direction( $property );
+			$logical_direction = $this->map_dimensions_property_to_logical_direction( $property );
+			
 			if ( $logical_direction ) {
-				$size_data = $this->parse_margin_size_value( $value );
+				$size_data = $this->parse_dimensions_size_value( $value );
 				if ( $size_data ) {
 					$combined_dimensions[ $logical_direction ] = $size_data;
 				}
 			}
 		}
+		
 		if ( empty( $combined_dimensions ) ) {
 			return null;
 		}
+		
 		return $this->create_combined_dimensions_structure( $combined_dimensions );
 	}
 
-	/**
-	 * Map margin property to logical direction
-	 */
-	private function map_margin_property_to_logical_direction( string $property ): ?string {
+	private function map_dimensions_property_to_logical_direction( string $property ): ?string {
 		$mapping = [
 			'margin-top' => 'block-start',
 			'margin-right' => 'inline-end',
@@ -371,28 +358,31 @@ class Widget_Conversion_Service {
 			'margin-block-end' => 'block-end',
 			'margin-inline-start' => 'inline-start',
 			'margin-inline-end' => 'inline-end',
+			'padding-top' => 'block-start',
+			'padding-right' => 'inline-end',
+			'padding-bottom' => 'block-end',
+			'padding-left' => 'inline-start',
+			'padding-block-start' => 'block-start',
+			'padding-block-end' => 'block-end',
+			'padding-inline-start' => 'inline-start',
+			'padding-inline-end' => 'inline-end',
 		];
 		
 		return $mapping[ $property ] ?? null;
 	}
 
-	/**
-	 * Parse margin size value (simplified version of margin mapper logic)
-	 */
-	private function parse_margin_size_value( string $value ): ?array {
+	private function parse_dimensions_size_value( string $value ): ?array {
 		$value = trim( $value );
 		
 		if ( empty( $value ) ) {
 			return [ 'size' => 0.0, 'unit' => 'px' ];
 		}
 		
-		// Handle CSS keywords
 		$keywords = ['auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer'];
 		if ( in_array( strtolower( $value ), $keywords, true ) ) {
 			return [ 'size' => $value, 'unit' => 'custom' ];
 		}
 		
-		// Parse numeric value with unit
 		if ( preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax)?$/i', $value, $matches ) ) {
 			$size = (float) $matches[1];
 			$unit = $matches[2] ?? 'px';
@@ -403,7 +393,6 @@ class Widget_Conversion_Service {
 			return [ 'size' => 0.0, 'unit' => 'px' ];
 		}
 		
-		// Fallback for invalid values
 		return [ 'size' => 0.0, 'unit' => 'px' ];
 	}
 
