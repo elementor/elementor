@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Modules\CssConverter\Services\Css\Parsing\Html_Parser;
 use Elementor\Modules\CssConverter\Services\Widgets\Widget_Mapper;
 use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service;
-use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Processor;
 use Elementor\Modules\CssConverter\Services\Css\Processing\Unified_Css_Processor;
 use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Specificity_Calculator;
 use Elementor\Modules\CssConverter\Services\Widgets\Widget_Creator;
@@ -19,7 +18,6 @@ class Widget_Conversion_Service {
 	private $html_parser;
 	private $widget_mapper;
 	private $property_conversion_service;
-	private $css_processor;
 	private $unified_css_processor;
 	private $widget_creator;
 	private $use_zero_defaults;
@@ -30,9 +28,6 @@ class Widget_Conversion_Service {
 		$this->widget_mapper = new Widget_Mapper();
 		$this->property_conversion_service = new Css_Property_Conversion_Service();
 		
-		// TODO: DELETE - Old CSS processor for legacy methods only
-		// This should be removed once convert_from_css() and legacy methods are deleted
-		$this->css_processor = new Css_Processor( $this->property_conversion_service );
 		
 		// Initialize unified CSS processor with required dependencies
 		$css_parser = new \Elementor\Modules\CssConverter\Parsers\CssParser();
@@ -88,60 +83,6 @@ class Widget_Conversion_Service {
 		return $this->convert_from_html( $html, $css_urls, $follow_imports, $options );
 	}
 
-	// TODO: DELETE ENTIRE METHOD - Legacy method using old CSS processor
-	// This method should be removed in favor of convert_from_html() which uses unified approach
-	public function convert_from_css( $css, $css_urls = [], $follow_imports = false, $options = [] ) {
-		// For CSS-only conversion, we create a minimal HTML structure
-		// This allows us to process CSS rules and create global classes
-		
-		$conversion_log = [
-			'start_time' => microtime( true ),
-			'input_size' => strlen( $css ),
-			'css_urls_count' => count( $css_urls ),
-			'warnings' => [],
-			'errors' => [],
-		];
-
-		try {
-			// Fetch additional CSS from URLs if provided
-			$all_css = $css;
-			if ( ! empty( $css_urls ) ) {
-				// TODO: DELETE - Old CSS processor usage, replace with unified approach
-				$css_fetch_result = $this->css_processor->fetch_css_from_urls( $css_urls, $follow_imports );
-				$all_css .= "\n" . $css_fetch_result['css'];
-			}
-			
-			$conversion_log['css_size'] = strlen( $all_css );
-
-			// TODO: DELETE - Old CSS processor usage, replace with unified approach
-			// Process CSS and create global classes (HVV: threshold = 1)
-			$css_processing_result = $this->css_processor->process_css_for_widgets( $all_css, [] );
-			$conversion_log['css_processing'] = $css_processing_result['stats'];
-
-			$conversion_log['end_time'] = microtime( true );
-			$conversion_log['total_time'] = $conversion_log['end_time'] - $conversion_log['start_time'];
-
-			return [
-				'success' => true,
-				'widgets_created' => [], // No widgets created for CSS-only conversion
-				'global_classes_created' => $css_processing_result['global_classes'],
-				'css_rules_processed' => count( $css_processing_result['widget_styles'] ?? [] ) + count( $css_processing_result['element_styles'] ?? [] ),
-				'conversion_log' => $conversion_log,
-				'warnings' => $conversion_log['warnings'],
-			];
-
-		} catch ( \Exception $e ) {
-			$conversion_log['errors'][] = [
-				'message' => $e->getMessage(),
-				'trace' => $e->getTraceAsString(),
-			];
-
-			throw new Class_Conversion_Exception( 
-				'CSS conversion failed: ' . $e->getMessage(),
-				$conversion_log
-			);
-		}
-	}
 
 	public function convert_from_html( $html, $css_urls = [], $follow_imports = false, $options = [] ) {
 		// CSS converter always uses converted widgets with zero defaults
@@ -263,10 +204,9 @@ class Widget_Conversion_Service {
 		} elseif ( ! empty( $elements ) && ! $create_global_classes ) {
 		}
 
-		// TODO: DELETE - Old CSS processor usage, replace with unified approach
-		// Fetch external CSS files using CSS processor
+		// Fetch external CSS files using unified processor
 		if ( ! empty( $css_urls ) ) {
-			$css_fetch_result = $this->css_processor->fetch_css_from_urls( $css_urls, $follow_imports );
+			$css_fetch_result = $this->unified_css_processor->fetch_css_from_urls( $css_urls, $follow_imports );
 			$all_css .= $css_fetch_result['css'];
 		}
 
@@ -325,24 +265,6 @@ class Widget_Conversion_Service {
 		return $inline_css;
 	}
 
-	// TODO: DELETE ENTIRE METHOD - Legacy method using old CSS processor
-	// This method should be removed as unified approach handles style application internally
-	private function apply_css_to_widgets( $widgets, $css_processing_result ) {
-		// Apply CSS styles to widgets based on specificity priority
-		// HVV requirement: !important > inline > ID > class > element
-		
-		foreach ( $widgets as $index => &$widget ) {
-			// TODO: DELETE - Old CSS processor usage, replace with unified approach
-			$widget['applied_styles'] = $this->css_processor->apply_styles_to_widget( $widget, $css_processing_result );
-			
-			// Recursively apply styles to nested children
-			if ( ! empty( $widget['children'] ) ) {
-				$widget['children'] = $this->apply_css_to_widgets( $widget['children'], $css_processing_result );
-			}
-		}
-
-		return $widgets;
-	}
 
 	// REMOVED: apply_inline_styles_to_widgets and apply_inline_styles_recursive methods
 	// These methods are no longer needed since createGlobalClasses: false option was removed

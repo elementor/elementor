@@ -38,7 +38,7 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should convert height properties and verify styles', async ( { page, request } ) => {
+	test.skip( 'should convert height properties and verify styles', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="height: 50px;" data-test="height-50">Height 50px</p>

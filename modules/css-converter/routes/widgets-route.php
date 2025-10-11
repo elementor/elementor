@@ -165,7 +165,9 @@ class Widgets_Route {
 					$result = $service->convert_from_html( $content, $css_urls, $follow_imports, $options );
 					break;
 				case 'css':
-					$result = $service->convert_from_css( $content, $css_urls, $follow_imports, $options );
+					// Convert CSS-only input to HTML with embedded CSS for unified processing
+					$minimal_html = '<html><head><style>' . $content . '</style></head><body><div class="css-converter-wrapper"></div></body></html>';
+					$result = $service->convert_from_html( $minimal_html, $css_urls, $follow_imports, $options );
 					break;
 				default:
 					return new WP_REST_Response( [ 'error' => 'Invalid input type' ], 400 );

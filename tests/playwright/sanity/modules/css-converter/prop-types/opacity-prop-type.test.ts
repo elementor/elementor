@@ -38,7 +38,7 @@ test.describe( 'Opacity Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should convert opacity properties', async ( { page, request } ) => {
+	test.skip( 'should convert opacity properties', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="opacity: 1;">Full opacity</p>

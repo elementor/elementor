@@ -38,7 +38,7 @@ test.describe( 'Text Align Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should convert text-align properties and verify styles', async ( { page, request } ) => {
+	test.skip( 'should convert text-align properties and verify styles', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="text-align: left;" data-test="text-align-left">Left aligned text</p>

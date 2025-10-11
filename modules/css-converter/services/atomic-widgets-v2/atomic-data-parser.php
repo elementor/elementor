@@ -9,12 +9,10 @@ class Atomic_Data_Parser {
 
 	private HTML_To_Atomic_Widget_Mapper $widget_mapper;
 	private CSS_To_Atomic_Props_Converter $props_converter;
-	private CSS_To_Atomic_Bridge $css_bridge;
 
 	public function __construct() {
 		$this->widget_mapper = new HTML_To_Atomic_Widget_Mapper();
 		$this->props_converter = new CSS_To_Atomic_Props_Converter();
-		$this->css_bridge = new CSS_To_Atomic_Bridge();
 	}
 
 	public function parse_html_for_atomic_widgets( string $html ): array {
@@ -34,10 +32,7 @@ class Atomic_Data_Parser {
 
 		$widget_data = $this->convert_dom_elements_to_widget_data( $dom_elements );
 
-		if ( ! empty( $css_content ) ) {
-			$widget_data = $this->css_bridge->apply_css_rules_to_widget_data( $widget_data, $css_content );
-		} else {
-		}
+		// CSS bridge functionality removed - deprecated service
 
 		return $widget_data;
 	}
@@ -226,8 +221,5 @@ class Atomic_Data_Parser {
 		return $this->props_converter;
 	}
 
-	public function get_css_bridge(): CSS_To_Atomic_Bridge {
-		return $this->css_bridge;
-	}
 }
 

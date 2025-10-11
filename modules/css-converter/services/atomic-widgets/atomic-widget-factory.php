@@ -23,11 +23,9 @@ class Atomic_Widget_Factory {
 	];
 	
 	private Html_To_Props_Mapper $props_mapper;
-	private Widget_Json_Generator $json_generator;
 	
 	public function __construct() {
 		$this->props_mapper = new Html_To_Props_Mapper();
-		$this->json_generator = new Widget_Json_Generator();
 	}
 	
 	public function create_widget( string $widget_type, array $html_element ): ?array {
@@ -48,7 +46,7 @@ class Atomic_Widget_Factory {
 		$props = $this->props_mapper->map_html_to_props( $html_element, $props_schema );
 		$validated_props = $this->validate_and_sanitize_props( $props, $props_schema );
 		
-		return $this->json_generator->generate_widget_json( 
+		return $this->generate_widget_json( 
 			$widget_type, 
 			$validated_props, 
 			$html_element 
@@ -109,5 +107,17 @@ class Atomic_Widget_Factory {
 		}
 		
 		return $atomic_widget_class::define_props_schema();
+	}
+
+	private function generate_widget_json( string $widget_type, array $validated_props, array $html_element ): array {
+		return [
+			'widgetType' => $widget_type,
+			'props' => $validated_props,
+			'metadata' => [
+				'source_tag' => $html_element['tag'] ?? 'div',
+				'source_classes' => $html_element['classes'] ?? [],
+				'source_id' => $html_element['id'] ?? null,
+			],
+		];
 	}
 }

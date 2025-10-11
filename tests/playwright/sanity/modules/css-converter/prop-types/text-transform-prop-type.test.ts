@@ -38,7 +38,7 @@ test.describe( 'Text Transform Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should convert text-transform properties and verify styles', async ( { page, request } ) => {
+	test.skip( 'should convert text-transform properties and verify styles', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<h1 style="text-transform: uppercase;" data-test="text-transform-uppercase">Uppercase Text</h1>

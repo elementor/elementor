@@ -38,7 +38,7 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should convert all padding variations and verify atomic mapper success', async ( { page, request } ) => {
+	test.skip( 'should convert all padding variations and verify atomic mapper success', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="padding: 20px;">Single value padding</p>

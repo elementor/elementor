@@ -15,6 +15,7 @@
 - **Missing**: CSS keyword values (`thin`, `medium`, `thick`)
 - **Impact**: Low - most users use numeric values
 - **Effort**: Low - simple keyword-to-numeric mapping
+- **Test Status**: Skipped in `border-width-prop-type.test.ts` - keyword values not yet supported
 - **Implementation**:
   ```php
   private const BORDER_WIDTH_KEYWORDS = [
@@ -23,6 +24,15 @@
       'thick' => ['size' => 5, 'unit' => 'px'],
   ];
   ```
+
+#### **Margin Auto Support**
+- **Status**: Not implemented
+- **Missing**: `margin: auto` for centering elements
+- **Impact**: Medium - commonly used for horizontal centering
+- **Effort**: High - complex layout context dependency
+- **Challenge**: Auto margins depend on container width and layout context which varies
+- **Implementation**: Requires sophisticated layout analysis or alternative centering approaches
+- **Test Status**: Skipped in `margin-prop-type.test.ts` due to testing complexity
 
 #### **Size Property Edge Cases**
 - **Status**: Core functionality complete
@@ -35,6 +45,7 @@
 - **Missing**: `flex` shorthand property support (e.g., `flex: 0 0 auto`)
 - **Impact**: Medium - commonly used in flexbox layouts
 - **Effort**: Medium - requires parsing flex shorthand into flex-grow, flex-shrink, flex-basis
+- **Test Status**: Skipped in `flex-properties-prop-type.test.ts` - shorthand parsing not implemented
 - **Implementation**:
   ```php
   // Parse: flex: 0 0 auto

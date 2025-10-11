@@ -506,4 +506,120 @@ class Unified_Css_Processor {
 			'important' => $important,
 		];
 	}
+
+	public function fetch_css_from_urls( array $css_urls, bool $follow_imports = false ): array {
+		$all_css = '';
+		$fetched_urls = [];
+		$errors = [];
+
+		foreach ( $css_urls as $url ) {
+			try {
+				$css_content = $this->fetch_single_css_url( $url );
+				if ( $css_content ) {
+					$all_css .= "/* CSS from: {$url} */\n" . $css_content . "\n\n";
+					$fetched_urls[] = $url;
+
+					// Follow @import statements if requested
+					if ( $follow_imports ) {
+						$import_urls = $this->extract_import_urls( $css_content, $url );
+						foreach ( $import_urls as $import_url ) {
+							if ( ! in_array( $import_url, $fetched_urls, true ) ) {
+								$import_css = $this->fetch_single_css_url( $import_url );
+								if ( $import_css ) {
+									$all_css .= "/* CSS from import: {$import_url} */\n" . $import_css . "\n\n";
+									$fetched_urls[] = $import_url;
+								}
+							}
+						}
+					}
+				}
+			} catch ( \Exception $e ) {
+				$errors[] = [
+					'url' => $url,
+					'error' => $e->getMessage(),
+				];
+			}
+		}
+
+		return [
+			'css' => $all_css,
+			'fetched_urls' => $fetched_urls,
+			'errors' => $errors,
+		];
+	}
+
+	private function fetch_single_css_url( string $url ): string {
+		$timeout = apply_filters( 'elementor_widget_converter_timeout', 30 );
+		
+		$response = wp_remote_get( $url, [
+			'timeout' => $timeout,
+			'headers' => [
+				'Accept' => 'text/css,*/*;q=0.1',
+				'User-Agent' => 'Elementor Widget Converter/1.0',
+			],
+		] );
+
+		if ( is_wp_error( $response ) ) {
+			throw new \Exception( 'Failed to fetch CSS from URL: ' . $response->get_error_message() );
+		}
+
+		$response_code = wp_remote_retrieve_response_code( $response );
+		if ( $response_code !== 200 ) {
+			throw new \Exception( "HTTP {$response_code} error when fetching CSS from URL" );
+		}
+
+		$css_content = wp_remote_retrieve_body( $response );
+		if ( empty( $css_content ) ) {
+			throw new \Exception( 'Empty CSS content received from URL' );
+		}
+
+		return $css_content;
+	}
+
+	private function extract_import_urls( string $css_content, string $base_url ): array {
+		$import_urls = [];
+		
+		// Match @import statements
+		if ( preg_match_all( '/@import\s+(?:url\()?["\']?([^"\'()]+)["\']?\)?[^;]*;/i', $css_content, $matches ) ) {
+			foreach ( $matches[1] as $import_url ) {
+				$import_url = trim( $import_url );
+				
+				// Convert relative URLs to absolute
+				if ( ! filter_var( $import_url, FILTER_VALIDATE_URL ) ) {
+					$import_url = $this->resolve_relative_url( $import_url, $base_url );
+				}
+				
+				if ( filter_var( $import_url, FILTER_VALIDATE_URL ) ) {
+					$import_urls[] = $import_url;
+				}
+			}
+		}
+		
+		return $import_urls;
+	}
+
+	private function resolve_relative_url( string $relative_url, string $base_url ): string {
+		$base_parts = parse_url( $base_url );
+		if ( ! $base_parts ) {
+			return $relative_url;
+		}
+
+		// Handle protocol-relative URLs
+		if ( strpos( $relative_url, '//' ) === 0 ) {
+			return ( $base_parts['scheme'] ?? 'https' ) . ':' . $relative_url;
+		}
+
+		// Handle absolute paths
+		if ( strpos( $relative_url, '/' ) === 0 ) {
+			return ( $base_parts['scheme'] ?? 'https' ) . '://' . $base_parts['host'] . $relative_url;
+		}
+
+		// Handle relative paths
+		$base_path = dirname( $base_parts['path'] ?? '' );
+		if ( $base_path === '.' ) {
+			$base_path = '';
+		}
+
+		return ( $base_parts['scheme'] ?? 'https' ) . '://' . $base_parts['host'] . $base_path . '/' . $relative_url;
+	}
 }

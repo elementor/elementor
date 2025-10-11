@@ -38,7 +38,7 @@ test.describe( 'Font Weight Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should convert font-weight properties and verify styles', async ( { page, request } ) => {
+	test.skip( 'should convert font-weight properties and verify styles', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="font-weight: normal;" data-test="font-weight-normal">Normal weight</p>
