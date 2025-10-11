@@ -56,35 +56,17 @@ class Unified_Css_Processor {
 	}
 
 	private function log_css_parsing_start( string $css, array $widgets ): void {
-		error_log( '🔍 UNIFIED CSS PROCESSOR: Parsing CSS (' . strlen( $css ) . ' characters)' );
-		error_log( '📝 CSS CONTENT: ' . substr( $css, 0, 500 ) . '...' );
-		error_log( '🎯 WIDGETS TO MATCH: ' . count( $widgets ) . ' widgets' );
-
-		foreach ( $widgets as $index => $widget ) {
-			$classes = $widget['attributes']['class'] ?? '';
-			$tag = $widget['tag'] ?? 'unknown';
-			$widget_type = $widget['widget_type'] ?? 'unknown';
-			error_log( "  Widget #{$index}: {$widget_type} ({$tag}) with classes: '{$classes}'" );
-		}
+		// Debug logging removed for performance
 	}
 
 	private function parse_css_and_extract_rules( string $css ): array {
 		$parsed_css = $this->css_parser->parse( $css );
 		$document = $parsed_css->get_document();
-
-		error_log( '🔍 UNIFIED CSS PROCESSOR: Extracting rules from parsed document' );
 		return $this->extract_rules_from_document( $document );
 	}
 
 	private function log_extracted_rules( array $rules ): void {
-		error_log( '✅ UNIFIED CSS PROCESSOR: Found ' . count( $rules ) . ' CSS rules' );
-
-		foreach ( $rules as $index => $rule ) {
-			$selector = $rule['selector'] ?? 'no-selector';
-			$prop_count = count( $rule['properties'] ?? [] );
-			$properties_list = implode( ', ', array_keys( $rule['properties'] ?? [] ) );
-			error_log( "📋 UNIFIED CSS PROCESSOR: Rule #{$index}: '{$selector}' with {$prop_count} properties: {$properties_list}" );
-		}
+		// Debug logging removed for performance
 	}
 
 	private function process_css_rules_for_widgets( array $rules, array $widgets ): void {
@@ -95,7 +77,6 @@ class Unified_Css_Processor {
 			$this->log_rule_processing( $selector, $properties );
 
 			if ( empty( $properties ) ) {
-				error_log( '  ⚠️ Skipping rule with no properties' );
 				continue;
 			}
 
@@ -109,20 +90,11 @@ class Unified_Css_Processor {
 	}
 
 	private function log_rule_processing( string $selector, array $properties ): void {
-		error_log( "🎯 PROCESSING RULE: {$selector} with " . count( $properties ) . ' properties' );
-		error_log( '   Properties: ' . implode( ', ', array_keys( $properties ) ) );
+		// Debug logging removed for performance
 	}
 
 	private function log_matched_elements( string $selector, array $matched_elements ): void {
-		error_log( '  🎯 MATCHED ELEMENTS: ' . count( $matched_elements ) . " elements for selector '{$selector}'" );
-
-		if ( ! empty( $matched_elements ) ) {
-			foreach ( $matched_elements as $matched ) {
-				$matched_widget_type = $matched['widget_type'] ?? 'unknown';
-				$matched_classes = $matched['attributes']['class'] ?? '';
-				error_log( "    ✓ Matched {$matched_widget_type} with classes: {$matched_classes}" );
-			}
-		}
+		// Debug logging removed for performance
 	}
 
 	private function process_matched_rule( string $selector, array $properties, array $matched_elements ): void {
@@ -182,9 +154,7 @@ class Unified_Css_Processor {
 			];
 		}
 
-		error_log( '🔧 BORDER FIX: Expanded ' . count( $properties ) . ' properties to ' . count( $result ) . ' properties' );
-		error_log( '   Original: ' . implode( ', ', array_column( $properties, 'property' ) ) );
-		error_log( '   Expanded: ' . implode( ', ', array_column( $result, 'property' ) ) );
+		// Debug logging removed for performance
 
 		return $result;
 	}
@@ -196,11 +166,11 @@ class Unified_Css_Processor {
 	}
 
 	private function log_inline_style_collection_start( array $widgets ): void {
-		error_log( 'UNIFIED_CSS_PROCESSOR: Collecting inline styles from ' . count( $widgets ) . ' widgets' );
+		// Debug logging removed for performance
 	}
 
 	private function log_inline_style_collection_complete(): void {
-		error_log( 'UNIFIED_CSS_PROCESSOR: Finished collecting inline styles' );
+		// Debug logging removed for performance
 	}
 
 	private function collect_inline_styles_recursively( array $widgets ) {
@@ -219,8 +189,7 @@ class Unified_Css_Processor {
 	}
 
 	private function log_widget_inline_processing( ?string $element_id, array $inline_css ): void {
-		error_log( 'UNIFIED_CSS_PROCESSOR: Processing widget element_id: ' . var_export( $element_id, true ) . ', inline_css properties: ' . count( $inline_css ) );
-		error_log( 'UNIFIED_CSS_PROCESSOR: Inline CSS structure: ' . var_export( $inline_css, true ) );
+		// Debug logging removed for performance
 	}
 
 	private function process_widget_inline_styles( string $element_id, array $inline_css ): void {
@@ -268,7 +237,6 @@ class Unified_Css_Processor {
 
 	private function process_child_widgets_recursively( array $widget, ?string $element_id ): void {
 		if ( ! empty( $widget['children'] ) ) {
-			error_log( "UNIFIED_CSS_PROCESSOR: Widget {$element_id} has " . count( $widget['children'] ) . ' children, processing recursively...' );
 			$this->collect_inline_styles_recursively( $widget['children'] );
 		}
 	}
@@ -333,17 +301,12 @@ class Unified_Css_Processor {
 		foreach ( $widgets as $widget ) {
 			$widget_id = $this->get_widget_identifier( $widget );
 
-			error_log( "UNIFIED_CSS_PROCESSOR: Resolving styles for widget {$widget_id}" );
-
 			// Resolve styles for this widget
 			$resolved_styles = $this->unified_style_manager->resolve_styles_for_widget( $widget );
 			$widget['resolved_styles'] = $resolved_styles;
 
-			error_log( "UNIFIED_CSS_PROCESSOR: ✅ Widget {$widget_id} resolved with " . count( $resolved_styles ) . ' winning styles' );
-
 			// Recursively resolve styles for child widgets
 			if ( ! empty( $widget['children'] ) ) {
-				error_log( "UNIFIED_CSS_PROCESSOR: Widget {$widget_id} has " . count( $widget['children'] ) . ' children, resolving styles recursively...' );
 				$widget['children'] = $this->resolve_styles_recursively( $widget['children'] );
 			}
 
@@ -365,38 +328,27 @@ class Unified_Css_Processor {
 	}
 
 	private function log_id_style_collection_ready( string $html_id ): void {
-		error_log( "Unified CSS Processor: Widget has ID '{$html_id}' - ready for ID style collection" );
+		// Debug logging removed for performance
 	}
 
 	private function find_matching_widgets( string $selector, array $widgets ): array {
 		$matched_elements = [];
 
-		error_log( "🔍 FIND_MATCHING_WIDGETS: Searching for selector '{$selector}' in " . count( $widgets ) . ' widgets' );
-
 		foreach ( $widgets as $widget ) {
-			$widget_type = $widget['widget_type'] ?? 'unknown';
 			$element_id = $widget['element_id'] ?? null;
-			$classes = $widget['attributes']['class'] ?? '';
-
-			error_log( "  📦 Checking widget: {$widget_type}, element_id: " . ( $element_id ?? 'MISSING' ) . ", classes: '{$classes}'" );
 
 			if ( $this->selector_matches_widget( $selector, $widget ) ) {
 				if ( $element_id ) {
 					$matched_elements[] = $element_id;
-					error_log( "    ✅ MATCHED! Added element_id: {$element_id}" );
-				} else {
-					error_log( "    ⚠️ MATCHED but NO element_id! Widget: {$widget_type}" );
 				}
 			}
 
 			if ( ! empty( $widget['children'] ) ) {
-				error_log( "  🔄 RECURSING into nested children of {$widget_type}" );
 				$nested_matches = $this->find_matching_widgets( $selector, $widget['children'] );
 				$matched_elements = array_merge( $matched_elements, $nested_matches );
 			}
 		}
 
-		error_log( '🎯 FIND_MATCHING_WIDGETS: Found ' . count( $matched_elements ) . ' matches: ' . implode( ', ', $matched_elements ) );
 		return $matched_elements;
 	}
 
@@ -427,7 +379,7 @@ class Unified_Css_Processor {
 	}
 
 	private function log_selector_matching_attempt( string $selector, string $element_type, string $classes ): void {
-		error_log( "    🔍 MATCHING: selector '{$selector}' against element '{$element_type}' with classes '{$classes}'" );
+		// Debug logging removed for performance
 	}
 
 	private function is_element_selector_match( string $selector, string $element_type ): bool {
@@ -454,7 +406,7 @@ class Unified_Css_Processor {
 	}
 
 	private function log_class_match_result( string $class_from_selector, array $widget_classes, bool $is_match ): void {
-		error_log( "      📋 CLASS MATCH: Looking for '{$class_from_selector}' in [" . implode( ', ', $widget_classes ) . '] = ' . ( $is_match ? 'MATCH' : 'NO MATCH' ) );
+		// Debug logging removed for performance
 	}
 
 	private function is_combined_selector_match( string $selector, string $element_type, string $classes ): bool {
@@ -485,7 +437,7 @@ class Unified_Css_Processor {
 	}
 
 	private function log_property_conversion_failure( string $property, \Exception $e ): void {
-		error_log( "Unified CSS Processor: Property conversion failed for {$property}: {$e->getMessage()}" );
+		// Debug logging removed for performance
 	}
 
 	private function get_widget_identifier( array $widget ): string {
