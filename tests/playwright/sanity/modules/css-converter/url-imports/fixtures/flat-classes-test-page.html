@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Flat Classes Test Page</title>
+        <link rel="stylesheet" href="styles-layout.css">
+        <link rel="stylesheet" href="styles-components.css">
+        <style>
+                /* Style block styles */
+                .page-header {
+                        background-color: #f8f9fa;
+                        padding: 2rem;
+                        text-align: center;
+                        border-bottom: 3px solid #dee2e6;
+                }
+
+                .header-title {
+                        font-size: 2.5rem;
+                        margin: 0;
+                        color: #343a40;
+                }
+
+                .intro-section {
+                        max-width: 800px;
+                        margin: 2rem auto;
+                        padding: 0 1rem;
+                }
+
+                .links-container {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 1rem;
+                        justify-content: center;
+                        margin: 2rem 0;
+                }
+
+                .nav-link {
+                        text-decoration: none;
+                        padding: 0.5rem 1rem;
+                        border: 2px solid #007bff;
+                        border-radius: 4px;
+                        transition: all 0.3s ease;
+                }
+        </style>
+</head>
+
+<body>
+        <!-- Header Section -->
+        <div class="page-header header-container">
+                <h1 class="header-title main-heading" style="font-weight: 700; letter-spacing: 1px;">Welcome to Our Test
+                        Page</h1>
+        </div>
+
+        <!-- Intro Text -->
+        <div class="intro-section content-wrapper">
+                <p class="intro-text primary-text" style="font-size: 1.2rem; line-height: 1.6; color: #6c757d;">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua.
+                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat.
+                </p>
+                <p class="intro-text secondary-text">
+                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                        pariatur.
+                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim
+                        id est laborum.
+                </p>
+        </div>
+
+        <!-- Hyperlinks Block -->
+        <div class="links-section navigation-area">
+                <div class="links-container nav-wrapper">
+                        <p class="link-item nav-item">
+                                <a href="#" class="nav-link primary-link"
+                                        style="color: #007bff; background-color: #ffffff;">Home</a>
+                        </p>
+                        <p class="link-item nav-item">
+                                <a href="#" class="nav-link secondary-link">About Us</a>
+                        </p>
+                        <p class="link-item nav-item">
+                                <a href="#" class="nav-link tertiary-link"
+                                        style="color: #28a745; border-color: #28a745;">Services</a>
+                        </p>
+                        <p class="link-item nav-item">
+                                <a href="#" class="nav-link quaternary-link">Portfolio</a>
+                        </p>
+                        <p class="link-item nav-item">
+                                <a href="#" class="nav-link quinary-link"
+                                        style="background-color: #ffc107; color: #212529; border-color: #ffc107;">Blog</a>
+                        </p>
+                        <p class="link-item nav-item">
+                                <a href="#" class="nav-link senary-link">Resources</a>
+                        </p>
+                        <p class="link-item nav-item">
+                                <a href="#" class="nav-link septenary-link"
+                                        style="color: #dc3545; border-color: #dc3545;">Contact</a>
+                        </p>
+                        <p class="link-item nav-item">
+                                <a href="#" class="nav-link octonary-link">FAQ</a>
+                        </p>
+                        <p class="link-item nav-item">
+                                <a href="#" class="nav-link nonary-link"
+                                        style="background-color: #6f42c1; color: #ffffff; border-color: #6f42c1;">Support</a>
+                        </p>
+                        <p class="link-item nav-item">
+                                <a href="#" class="nav-link denary-link">Login</a>
+                        </p>
+                </div>
+        </div>
+
+        <!-- Banner Section -->
+        <section class="banner-section hero-area"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 4rem 2rem; text-align: center; margin-top: 3rem;">
+                <h2 class="banner-title hero-heading"
+                        style="color: #ffffff; font-size: 3rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                        Ready to Get Started?
+                </h2>
+                <p class="banner-subtitle hero-text"
+                        style="color: #f8f9fa; font-size: 1.3rem; margin-bottom: 2rem; opacity: 0.9;">
+                        Join thousands of satisfied customers today
+                </p>
+                <div class="banner-buttons action-buttons">
+                        <a href="#" class="banner-button primary-button cta-button"
+                                style="background-color: #ffffff; color: #667eea; padding: 1rem 2rem; margin: 0 1rem; text-decoration: none; border-radius: 50px; font-weight: 600; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                                Get Started Now
+                        </a>
+                        <a href="#" class="banner-button secondary-button info-button">
+                                Learn More
+                        </a>
+                </div>
+        </section>
+
+        <!-- Additional Content for Testing -->
+        <div class="footer-section bottom-area"
+                style="margin-top: 3rem; padding: 2rem; background-color: #343a40; color: #ffffff; text-align: center;">
+                <p class="footer-text copyright-text" style="margin: 0; opacity: 0.8;">
+                        © 2024 Test Company. All rights reserved.
+                </p>
+        </div>
+</body>
+
+</html>

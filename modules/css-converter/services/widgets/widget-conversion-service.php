@@ -19,6 +19,7 @@ class Widget_Conversion_Service {
 	private $html_parser;
 	private $widget_mapper;
 	private $property_conversion_service;
+	private $css_processor;
 	private $unified_css_processor;
 	private $widget_creator;
 	private $use_zero_defaults;
@@ -28,6 +29,10 @@ class Widget_Conversion_Service {
 		$this->html_parser = new Html_Parser();
 		$this->widget_mapper = new Widget_Mapper();
 		$this->property_conversion_service = new Css_Property_Conversion_Service();
+		
+		// TODO: DELETE - Old CSS processor for legacy methods only
+		// This should be removed once convert_from_css() and legacy methods are deleted
+		$this->css_processor = new Css_Processor( $this->property_conversion_service );
 		
 		// Initialize unified CSS processor with required dependencies
 		$css_parser = new \Elementor\Modules\CssConverter\Parsers\CssParser();
@@ -44,6 +49,9 @@ class Widget_Conversion_Service {
 		if ( $use_zero_defaults ) {
 			$this->enable_css_converter_base_styles_override();
 		}
+		
+		// CRITICAL FIX: Register CSS injection hooks to preserve original CSS from style blocks
+		$this->register_css_injection_hooks();
 	}
 
 	public function convert_from_url( $url, $css_urls = [], $follow_imports = false, $options = [] ) {
@@ -80,6 +88,8 @@ class Widget_Conversion_Service {
 		return $this->convert_from_html( $html, $css_urls, $follow_imports, $options );
 	}
 
+	// TODO: DELETE ENTIRE METHOD - Legacy method using old CSS processor
+	// This method should be removed in favor of convert_from_html() which uses unified approach
 	public function convert_from_css( $css, $css_urls = [], $follow_imports = false, $options = [] ) {
 		// For CSS-only conversion, we create a minimal HTML structure
 		// This allows us to process CSS rules and create global classes
@@ -96,12 +106,14 @@ class Widget_Conversion_Service {
 			// Fetch additional CSS from URLs if provided
 			$all_css = $css;
 			if ( ! empty( $css_urls ) ) {
+				// TODO: DELETE - Old CSS processor usage, replace with unified approach
 				$css_fetch_result = $this->css_processor->fetch_css_from_urls( $css_urls, $follow_imports );
 				$all_css .= "\n" . $css_fetch_result['css'];
 			}
 			
 			$conversion_log['css_size'] = strlen( $all_css );
 
+			// TODO: DELETE - Old CSS processor usage, replace with unified approach
 			// Process CSS and create global classes (HVV: threshold = 1)
 			$css_processing_result = $this->css_processor->process_css_for_widgets( $all_css, [] );
 			$conversion_log['css_processing'] = $css_processing_result['stats'];
@@ -147,11 +159,13 @@ class Widget_Conversion_Service {
 
 		try {
 		// Step 1: Parse HTML
+		
 		$elements = $this->html_parser->parse( $html );
 		$conversion_log['parsed_elements'] = count( $elements );
 		
+		
 		// DEBUG: Log parsed element structure
-		error_log( "WIDGET_CONVERTER_DEBUG: HTML Parser returned " . count( $elements ) . " top-level elements" );
+		error_log( "🔍 STEP 1: Detailed element analysis:" );
 		foreach ( $elements as $index => $element ) {
 			$tag = $element['tag'] ?? 'unknown';
 			$has_inline_css = ! empty( $element['inline_css'] );
@@ -175,14 +189,35 @@ class Widget_Conversion_Service {
 			}
 
 		// Step 3: Extract CSS only (NO inline style conversion - unified approach handles this)
+		error_log( "🔍 STEP 3: Starting CSS extraction" );
+		error_log( "📋 STEP 3: CSS URLs to process: " . count( $css_urls ) );
+		
 		$all_css = $this->extract_css_only( $html, $css_urls, $follow_imports );
 		$conversion_log['css_size'] = strlen( $all_css );
+		
+		error_log( "✅ STEP 3: CSS extraction completed" );
+		error_log( "📊 STEP 3: Total CSS extracted: " . strlen( $all_css ) . " characters" );
+		error_log( "📝 STEP 3: CSS content preview (first 500 chars): " . substr( $all_css, 0, 500 ) );
 
 		// Step 4: Map HTML elements to widgets
-		error_log( "WIDGET_CONVERTER_DEBUG: Starting widget mapping for " . count( $elements ) . " elements" );
+		error_log( "🔍 STEP 4: Starting widget mapping" );
+		error_log( "📋 STEP 4: Elements to map: " . count( $elements ) );
+		
 		$mapped_widgets = $this->widget_mapper->map_elements( $elements );
 		$mapping_stats = $this->widget_mapper->get_mapping_stats( $elements );
 		$conversion_log['mapping_stats'] = $mapping_stats;
+		
+		error_log( "✅ STEP 4: Widget mapping completed" );
+		error_log( "📊 STEP 4: Widgets created: " . count( $mapped_widgets ) );
+		error_log( "📊 STEP 4: Mapping stats: " . json_encode( $mapping_stats ) );
+		
+		// Log each mapped widget with its classes
+		foreach ( $mapped_widgets as $index => $widget ) {
+			$widget_type = $widget['widget_type'] ?? 'unknown';
+			$classes = $widget['attributes']['class'] ?? '';
+			$element_id = $widget['element_id'] ?? 'no-id';
+			error_log( "🎯 STEP 4: Widget #{$index} - Type: {$widget_type}, ID: {$element_id}, Classes: '{$classes}'" );
+		}
 		
 		// DEBUG: Log mapped widgets structure (can be removed in production)
 		// foreach ( $mapped_widgets as $index => $widget ) {
@@ -193,8 +228,9 @@ class Widget_Conversion_Service {
 		// }
 
 		// Step 5: UNIFIED CSS Processing - eliminates competition between pipelines
-		error_log( "UNIFIED_CONVERTER: Starting unified CSS processing (" . strlen( $all_css ) . " characters)" );
-		error_log( "UNIFIED_CONVERTER: Processing " . count( $mapped_widgets ) . " widgets with unified approach" );
+		error_log( "🚀 UNIFIED_CONVERTER: Starting unified CSS processing (" . strlen( $all_css ) . " characters)" );
+		error_log( "🎯 UNIFIED_CONVERTER: Processing " . count( $mapped_widgets ) . " widgets with unified approach" );
+		error_log( "📝 UNIFIED_CONVERTER: CSS Content: " . substr( $all_css, 0, 200 ) . "..." );
 		
 		$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets );
 		$resolved_widgets = $unified_processing_result['widgets'];
@@ -213,8 +249,28 @@ class Widget_Conversion_Service {
 		// The createGlobalClasses: false option has been removed for better performance and consistency
 
 			// Step 7: Create Elementor widgets with resolved styles (unified approach)
+			error_log( "🔍 STEP 7: Starting widget creation" );
+			error_log( "📋 STEP 7: Styled widgets to create: " . count( $styled_widgets ) );
+			
 			$creation_result = $this->create_widgets_with_resolved_styles( $styled_widgets, $options );
 			$conversion_log['widget_creation'] = $creation_result['stats'];
+			
+			error_log( "✅ STEP 7: Widget creation completed" );
+			// Fix count() error - ensure widgets_created is an array
+			$widgets_created = $creation_result['widgets_created'] ?? [];
+			
+			// Debug the actual type and value
+			error_log( "🔍 DEBUG: widgets_created type: " . gettype( $widgets_created ) );
+			error_log( "🔍 DEBUG: widgets_created value: " . json_encode( $widgets_created ) );
+			
+			$widgets_count = is_array( $widgets_created ) ? count( $widgets_created ) : (int) $widgets_created;
+			
+			error_log( "📊 STEP 7: Creation result: " . json_encode( [
+				'widgets_created' => $widgets_count,
+				'global_classes_created' => $creation_result['global_classes_created'] ?? 0,
+				'variables_created' => $creation_result['variables_created'] ?? 0,
+				'post_id' => $creation_result['post_id'] ?? null
+			] ) );
 
 			$conversion_log['end_time'] = microtime( true );
 			$conversion_log['total_time'] = $conversion_log['end_time'] - $conversion_log['start_time'];
@@ -263,6 +319,7 @@ class Widget_Conversion_Service {
 		} elseif ( ! empty( $elements ) && ! $create_global_classes ) {
 		}
 
+		// TODO: DELETE - Old CSS processor usage, replace with unified approach
 		// Fetch external CSS files using CSS processor
 		if ( ! empty( $css_urls ) ) {
 			$css_fetch_result = $this->css_processor->fetch_css_from_urls( $css_urls, $follow_imports );
@@ -324,6 +381,8 @@ class Widget_Conversion_Service {
 		return $inline_css;
 	}
 
+	// TODO: DELETE ENTIRE METHOD - Legacy method using old CSS processor
+	// This method should be removed as unified approach handles style application internally
 	private function apply_css_to_widgets( $widgets, $css_processing_result ) {
 		// Apply CSS styles to widgets based on specificity priority
 		// HVV requirement: !important > inline > ID > class > element
@@ -335,6 +394,7 @@ class Widget_Conversion_Service {
 			
 			error_log( "WIDGET_CONVERTER_DEBUG: Applying styles to widget #{$index} - Type: {$widget_type}, ID: {$widget_id}, Generated Class: {$generated_class}" );
 			
+			// TODO: DELETE - Old CSS processor usage, replace with unified approach
 			$widget['applied_styles'] = $this->css_processor->apply_styles_to_widget( $widget, $css_processing_result );
 			
 			// DEBUG: Log applied styles summary
@@ -576,22 +636,25 @@ class Widget_Conversion_Service {
 		// Convert widgets with resolved styles to the format expected by existing widget creator
 		$styled_widgets = $this->prepare_widgets_recursively( $widgets_with_resolved_styles );
 		
-		// Create a fake CSS processing result for the existing widget creator
+		// Generate global classes from CSS selector styles
+		$global_classes = $this->generate_global_classes_from_resolved_styles( $widgets_with_resolved_styles );
+		
+		// Create CSS processing result with generated global classes
 		$css_processing_result = [
-			'global_classes' => [],
+			'global_classes' => $global_classes,
 			'widget_styles' => [],
 			'element_styles' => [],
 			'id_styles' => [],
 			'direct_widget_styles' => [],
 			'stats' => [
-				'rules_processed' => 0,
-				'properties_converted' => 0,
-				'global_classes_created' => 0,
+				'rules_processed' => count( $global_classes ),
+				'properties_converted' => $this->count_properties_in_global_classes( $global_classes ),
+				'global_classes_created' => count( $global_classes ),
 			],
 		];
 		
+		
 		// Use the existing widget creator
-		error_log( "UNIFIED_CONVERTER: Creating widgets using existing widget creator" );
 		return $this->widget_creator->create_widgets( $styled_widgets, $css_processing_result, $options );
 	}
 
@@ -698,6 +761,103 @@ class Widget_Conversion_Service {
 		}
 		
 		return false;
+	}
+
+	// CRITICAL FIX: CSS injection mechanism to preserve original CSS from style blocks
+	private function register_css_injection_hooks() {
+		add_action( 'wp_head', [ $this, 'inject_preserved_css_styles' ], 998 );
+		add_action( 'elementor/editor/wp_head', [ $this, 'inject_preserved_css_styles' ], 998 );
+		add_action( 'elementor/preview/enqueue_styles', [ $this, 'inject_preserved_css_styles' ], 998 );
+	}
+
+	public function inject_preserved_css_styles() {
+		$post_id = get_the_ID();
+		if ( ! $post_id ) {
+			return;
+		}
+
+		// Get preserved CSS for this post
+		$preserved_css = get_post_meta( $post_id, '_css_converter_preserved_css', true );
+		if ( empty( $preserved_css ) ) {
+			return;
+		}
+
+		// Inject the preserved CSS
+		echo '<style id="css-converter-preserved-styles">';
+		echo '/* CSS Converter: Preserved CSS from original style blocks */';
+		echo "\n" . $preserved_css . "\n";
+		echo '</style>';
+		
+		error_log( "CSS Converter: Injected " . strlen( $preserved_css ) . " characters of preserved CSS for post {$post_id}" );
+	}
+
+	private function store_preserved_css( int $post_id, string $css ) {
+		if ( ! empty( $css ) ) {
+			update_post_meta( $post_id, '_css_converter_preserved_css', $css );
+			error_log( "CSS Converter: Stored " . strlen( $css ) . " characters of preserved CSS for post {$post_id}" );
+		}
+	}
+	
+	private function generate_global_classes_from_resolved_styles( array $widgets_with_resolved_styles ): array {
+		$global_classes = [];
+		$css_selector_styles = [];
+		
+		// Collect all CSS selector styles from all widgets
+		foreach ( $widgets_with_resolved_styles as $widget ) {
+			$resolved_styles = $widget['resolved_styles'] ?? [];
+			
+			foreach ( $resolved_styles as $property => $winning_style ) {
+				// Only create global classes for CSS selector styles (not inline styles)
+				if ( isset( $winning_style['source'] ) && $winning_style['source'] === 'css-selector' ) {
+					$selector = $winning_style['selector'] ?? 'unknown-selector';
+					
+					if ( ! isset( $css_selector_styles[ $selector ] ) ) {
+						$css_selector_styles[ $selector ] = [];
+					}
+					
+					// Store the complete winning style data for proper conversion
+					$css_selector_styles[ $selector ][ $property ] = $winning_style;
+				}
+			}
+		}
+		
+		// Convert CSS selector styles to global classes in the format expected by Widget Creator
+		foreach ( $css_selector_styles as $selector => $properties ) {
+			// Generate class name from selector (e.g., ".text-bold" -> "text-bold")
+			$class_name = ltrim( $selector, '.' );
+			
+			// Convert to the format expected by Widget Creator (see lines 761-781 in widget-creator.php)
+			$formatted_properties = [];
+			foreach ( $properties as $property => $winning_style ) {
+				$atomic_value = $winning_style['converted_property'] ?? $winning_style['value'];
+				
+				$formatted_properties[] = [
+					'converted_property' => $atomic_value,
+					'mapped_property' => $property,
+					'original_property' => $property,
+					'selector' => $selector,
+					'source' => 'css-selector'
+				];
+			}
+			
+			$global_classes[ $class_name ] = [
+				'properties' => $formatted_properties,
+				'selector' => $selector,
+			];
+			
+		}
+		
+		return $global_classes;
+	}
+	
+	private function count_properties_in_global_classes( array $global_classes ): int {
+		$total_properties = 0;
+		
+		foreach ( $global_classes as $class_data ) {
+			$total_properties += count( $class_data['properties'] ?? [] );
+		}
+		
+		return $total_properties;
 	}
 
 }

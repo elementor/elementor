@@ -159,34 +159,58 @@ class Widgets_Route {
 		}
 
 		try {
+			error_log( "🚀 API ROUTE: Starting widget conversion" );
+			error_log( "📋 API ROUTE: Type: {$type}, Content length: " . strlen( $content ) );
+			error_log( "📋 API ROUTE: CSS URLs: " . count( $css_urls ) );
+			error_log( "📋 API ROUTE: Options: " . json_encode( $options ) );
+			
 			$service = $this->get_conversion_service();
+			error_log( "✅ API ROUTE: Conversion service created" );
 			
 			// Process based on input type
 			switch ( $type ) {
 				case 'url':
+					error_log( "🔗 API ROUTE: Processing URL conversion" );
 					$result = $service->convert_from_url( $content, $css_urls, $follow_imports, $options );
 					break;
 				case 'html':
+					error_log( "📄 API ROUTE: Processing HTML conversion" );
+					error_log( "📝 API ROUTE: HTML Content (first 300 chars): " . substr( $content, 0, 300 ) );
 					$result = $service->convert_from_html( $content, $css_urls, $follow_imports, $options );
 					break;
 				case 'css':
+					error_log( "🎨 API ROUTE: Processing CSS conversion" );
 					$result = $service->convert_from_css( $content, $css_urls, $follow_imports, $options );
 					break;
 				default:
+					error_log( "❌ API ROUTE: Invalid input type: {$type}" );
 					return new WP_REST_Response( [ 'error' => 'Invalid input type' ], 400 );
 			}
 
+			error_log( "✅ API ROUTE: Conversion completed successfully" );
+			error_log( "📊 API ROUTE: Result summary - Success: " . ( $result['success'] ? 'true' : 'false' ) );
+			error_log( "📊 API ROUTE: Widgets created: " . ( $result['widgets_created'] ?? 0 ) );
+			error_log( "📊 API ROUTE: Global classes created: " . ( $result['global_classes_created'] ?? 0 ) );
+			
 			return new WP_REST_Response( $result, 200 );
 
 		} catch ( Class_Conversion_Exception $e ) {
+			error_log( "❌ API ROUTE: Class_Conversion_Exception - " . $e->getMessage() );
+			error_log( "❌ API ROUTE: Exception trace: " . $e->getTraceAsString() );
 			return new WP_REST_Response( [
 				'error' => 'Conversion failed',
 				'message' => $e->getMessage(),
+				'debug' => 'Class_Conversion_Exception caught'
 			], 400 );
 		} catch ( \Exception $e ) {
+			error_log( "❌ API ROUTE: General Exception - " . $e->getMessage() );
+			error_log( "❌ API ROUTE: Exception class: " . get_class( $e ) );
+			error_log( "❌ API ROUTE: Exception file: " . $e->getFile() . ":" . $e->getLine() );
+			error_log( "❌ API ROUTE: Exception trace: " . $e->getTraceAsString() );
 			return new WP_REST_Response( [
 				'error' => 'Internal server error',
 				'message' => $e->getMessage(),
+				'debug' => 'General exception caught: ' . get_class( $e )
 			], 500 );
 		}
 	}

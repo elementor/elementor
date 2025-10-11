@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reset Styles Test Page</title>
+        <link rel="stylesheet" href="/wp-content/uploads/test-fixtures/reset-normalize.css">
+        <link rel="stylesheet" href="/wp-content/uploads/test-fixtures/reset-custom.css">
+        <style>
+                /* CSS Reset Styles in Style Block */
+
+                /* Universal reset */
+                * {
+                        margin: 0;
+                        padding: 0;
+                        box-sizing: border-box;
+                }
+
+                /* Body reset */
+                body {
+                        background-color: #f0f8ff;
+                        color: #2c3e50;
+                        font-family: 'Georgia', serif;
+                        font-size: 18px;
+                        line-height: 1.6;
+                        margin: 0;
+                        padding: 20px;
+                }
+
+                /* Heading resets */
+                h1 {
+                        font-size: 2.5rem;
+                        font-weight: 700;
+                        color: #e74c3c;
+                        margin-bottom: 1rem;
+                        line-height: 1.2;
+                }
+
+                h2 {
+                        font-size: 2rem;
+                        font-weight: 600;
+                        color: #3498db;
+                        margin-bottom: 0.8rem;
+                        line-height: 1.3;
+                }
+
+                h3 {
+                        font-size: 1.5rem;
+                        font-weight: 500;
+                        color: #27ae60;
+                        margin-bottom: 0.6rem;
+                }
+
+                h4 {
+                        font-size: 1.25rem;
+                        font-weight: 500;
+                        color: #f39c12;
+                        margin-bottom: 0.5rem;
+                }
+
+                h5 {
+                        font-size: 1.1rem;
+                        font-weight: 400;
+                        color: #9b59b6;
+                        margin-bottom: 0.4rem;
+                }
+
+                h6 {
+                        font-size: 1rem;
+                        font-weight: 400;
+                        color: #34495e;
+                        margin-bottom: 0.3rem;
+                }
+
+                /* Paragraph reset */
+                p {
+                        font-size: 1rem;
+                        line-height: 1.8;
+                        margin-bottom: 1rem;
+                        color: #2c3e50;
+                }
+
+                /* Link reset */
+                a {
+                        color: #e67e22;
+                        text-decoration: underline;
+                        font-weight: 500;
+                }
+
+                /* Button reset */
+                button {
+                        background-color: #95a5a6;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        font-size: 1rem;
+                        border-radius: 4px;
+                        cursor: pointer;
+                }
+
+                /* List reset */
+                ul,
+                ol {
+                        margin: 0 0 1rem 2rem;
+                        padding: 0;
+                }
+
+                li {
+                        margin-bottom: 0.5rem;
+                }
+
+                /* Image reset */
+                img {
+                        max-width: 100%;
+                        height: auto;
+                        display: block;
+                }
+
+                /* Table reset */
+                table {
+                        border-collapse: collapse;
+                        width: 100%;
+                        margin-bottom: 1rem;
+                }
+
+                th,
+                td {
+                        border: 1px solid #bdc3c7;
+                        padding: 8px;
+                        text-align: left;
+                }
+
+                th {
+                        background-color: #ecf0f1;
+                        font-weight: 600;
+                }
+        </style>
+</head>
+
+<body>
+        <!-- Test various HTML elements that should inherit reset styles -->
+
+        <h1>Main Heading (H1) - Should be Red, 2.5rem</h1>
+        <p>This paragraph should inherit the body font settings: Georgia serif, 18px base, line-height 1.6, and dark
+                blue color.</p>
+
+        <h2>Secondary Heading (H2) - Should be Blue, 2rem</h2>
+        <p>Another paragraph to test consistent paragraph styling across the page. This should maintain the same font
+                and spacing as the first paragraph.</p>
+
+        <h3>Tertiary Heading (H3) - Should be Green, 1.5rem</h3>
+        <p>Testing <a href="#">link styles</a> within paragraphs. Links should be orange with underline and medium font
+                weight.</p>
+
+        <h4>Quaternary Heading (H4) - Should be Orange, 1.25rem</h4>
+        <ul>
+                <li>List item one - should have proper spacing</li>
+                <li>List item two - should inherit text styles</li>
+                <li>List item three - with <a href="#">embedded link</a></li>
+        </ul>
+
+        <h5>Quinary Heading (H5) - Should be Purple, 1.1rem</h5>
+        <ol>
+                <li>Ordered list item one</li>
+                <li>Ordered list item two</li>
+                <li>Ordered list item three</li>
+        </ol>
+
+        <h6>Senary Heading (H6) - Should be Dark Gray, 1rem</h6>
+        <p>Final paragraph with <button>Reset Button</button> to test button reset styles.</p>
+
+        <!-- Test elements with specific styling -->
+        <div style="margin-top: 2rem; padding: 1rem; border: 2px solid #3498db;">
+                <h2>Section with Inline Styles</h2>
+                <p style="color: #e74c3c; font-weight: bold;">This paragraph has inline styles that should override
+                        reset styles.</p>
+                <p>But this paragraph should still use the reset styles from the style block.</p>
+        </div>
+
+        <!-- Test table elements -->
+        <table style="margin-top: 2rem;">
+                <thead>
+                        <tr>
+                                <th>Header 1</th>
+                                <th>Header 2</th>
+                                <th>Header 3</th>
+                        </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                                <td>Cell 1</td>
+                                <td>Cell 2</td>
+                                <td>Cell 3</td>
+                        </tr>
+                        <tr>
+                                <td>Cell 4</td>
+                                <td>Cell 5</td>
+                                <td>Cell 6</td>
+                        </tr>
+                </tbody>
+        </table>
+
+        <!-- Test nested elements -->
+        <div style="background-color: #ecf0f1; padding: 1rem; margin-top: 2rem;">
+                <h3>Nested Content</h3>
+                <p>This content is nested inside a div but should still inherit the reset styles properly.</p>
+                <div style="padding-left: 2rem;">
+                        <h4>Deeply Nested Heading</h4>
+                        <p>Even more deeply nested content should maintain consistent styling.</p>
+                </div>
+        </div>
+
+        <!-- Test multiple button styles -->
+        <div style="margin-top: 2rem;">
+                <button>Default Reset Button</button>
+                <button style="background-color: #e74c3c; margin-left: 1rem;">Custom Red Button</button>
+                <button style="background-color: #27ae60; color: white; margin-left: 1rem;">Custom Green Button</button>
+        </div>
+
+        <!-- Test various link contexts -->
+        <div style="margin-top: 2rem;">
+                <p>Links in different contexts:</p>
+                <ul>
+                        <li><a href="#">Link in list item</a></li>
+                        <li>Text with <a href="#">inline link</a> in list</li>
+                </ul>
+                <p>Standalone <a href="#">paragraph link</a> for comparison.</p>
+        </div>
+</body>
+
+</html>

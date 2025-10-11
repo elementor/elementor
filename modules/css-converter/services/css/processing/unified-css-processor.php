@@ -40,13 +40,10 @@ class Unified_Css_Processor {
 		$this->collect_id_styles_from_widgets( $widgets );
 		
 		// Phase 2: RESOLVE styles for each widget RECURSIVELY
-		error_log( "UNIFIED_CSS_PROCESSOR: Starting recursive style resolution for " . count( $widgets ) . " top-level widgets" );
 		$resolved_widgets = $this->resolve_styles_recursively( $widgets );
 		
 		// Debug info
 		$debug_info = $this->unified_style_manager->get_debug_info();
-		error_log( "Unified CSS Processor: Processing complete. Total styles: {$debug_info['total_styles']}" );
-		error_log( "Unified CSS Processor: By source: " . wp_json_encode( $debug_info['by_source'] ) );
 		
 		return [
 			'widgets' => $resolved_widgets,
@@ -59,24 +56,46 @@ class Unified_Css_Processor {
 			return;
 		}
 		
-		error_log( "Unified CSS Processor: Parsing CSS (" . strlen( $css ) . " characters)" );
+		error_log( "🔍 UNIFIED CSS PROCESSOR: Parsing CSS (" . strlen( $css ) . " characters)" );
+		error_log( "📝 CSS CONTENT: " . substr( $css, 0, 500 ) . "..." );
+		error_log( "🎯 WIDGETS TO MATCH: " . count( $widgets ) . " widgets" );
+		
+		foreach ( $widgets as $index => $widget ) {
+			$classes = $widget['attributes']['class'] ?? '';
+			$tag = $widget['tag'] ?? 'unknown';
+			error_log( "  Widget #{$index}: {$tag} with classes: '{$classes}'" );
+		}
 		
 		$parsed_css = $this->css_parser->parse( $css );
 		$document = $parsed_css->get_document();
 		
 		// Extract rules from the parsed CSS document
+		error_log( "🔍 UNIFIED CSS PROCESSOR: Extracting rules from parsed document" );
 		$rules = $this->extract_rules_from_document( $document );
+		
+		error_log( "✅ UNIFIED CSS PROCESSOR: Found " . count( $rules ) . " CSS rules" );
+		
+		// Log each rule for debugging
+		foreach ( $rules as $index => $rule ) {
+			$selector = $rule['selector'] ?? 'no-selector';
+			$prop_count = count( $rule['properties'] ?? [] );
+			error_log( "📋 UNIFIED CSS PROCESSOR: Rule #{$index}: '{$selector}' with {$prop_count} properties" );
+		}
 		
 		foreach ( $rules as $rule ) {
 			$selector = $rule['selector'];
 			$properties = $rule['properties'] ?? [];
 			
+			error_log( "🎯 PROCESSING RULE: {$selector} with " . count( $properties ) . " properties" );
+			
 			if ( empty( $properties ) ) {
+				error_log( "  ⚠️ Skipping rule with no properties" );
 				continue;
 			}
 			
 			// Find widgets that match this selector
 			$matched_elements = $this->find_matching_widgets( $selector, $widgets );
+			error_log( "  🎯 MATCHED ELEMENTS: " . count( $matched_elements ) . " elements for selector '{$selector}'" );
 			
 			if ( ! empty( $matched_elements ) ) {
 				// Convert properties to atomic format
@@ -262,6 +281,8 @@ class Unified_Css_Processor {
 		$html_id = $widget['attributes']['id'] ?? '';
 		$classes = $widget['attributes']['class'] ?? '';
 		
+		error_log( "    🔍 MATCHING: selector '{$selector}' against element '{$element_type}' with classes '{$classes}'" );
+		
 		// Simple selector matching (can be enhanced)
 		
 		// Element selector (e.g., "h1")
@@ -279,7 +300,9 @@ class Unified_Css_Processor {
 		if ( strpos( $selector, '.' ) === 0 ) {
 			$class_from_selector = substr( $selector, 1 );
 			$widget_classes = explode( ' ', $classes );
-			return in_array( $class_from_selector, $widget_classes, true );
+			$match = in_array( $class_from_selector, $widget_classes, true );
+			error_log( "      📋 CLASS MATCH: Looking for '{$class_from_selector}' in [" . implode( ', ', $widget_classes ) . "] = " . ( $match ? 'MATCH' : 'NO MATCH' ) );
+			return $match;
 		}
 		
 		// Combined selectors (e.g., "h1.special-heading")
@@ -320,23 +343,26 @@ class Unified_Css_Processor {
 	private function extract_rules_from_document( $document ): array {
 		$rules = [];
 		
-		// Extract rules from the Sabberworm CSS parser document
-		// This is a simplified extraction - in a full implementation,
-		// we would need to handle nested rules, media queries, etc.
+		// Get all rule sets from the document
+		$all_rule_sets = $document->getAllRuleSets();
 		
-		foreach ( $document->getAllRuleSets() as $rule_set ) {
+		foreach ( $all_rule_sets as $index => $rule_set ) {
 			$selectors = $rule_set->getSelectors();
 			$declarations = $rule_set->getRules();
 			
-			foreach ( $selectors as $selector ) {
+			foreach ( $selectors as $selector_index => $selector ) {
 				$selector_string = (string) $selector;
+				
 				$properties = [];
 				
-				foreach ( $declarations as $declaration ) {
-					if ( method_exists( $declaration, 'getProperty' ) && method_exists( $declaration, 'getValue' ) ) {
-						$property = $declaration->getProperty();
+				foreach ( $declarations as $decl_index => $declaration ) {
+					
+					// Use Sabberworm API methods
+					if ( method_exists( $declaration, 'getRule' ) && method_exists( $declaration, 'getValue' ) ) {
+						$property = $declaration->getRule();
 						$value = (string) $declaration->getValue();
 						$important = method_exists( $declaration, 'getIsImportant' ) ? $declaration->getIsImportant() : false;
+						
 						
 						$properties[] = [
 							'property' => $property,
@@ -347,10 +373,11 @@ class Unified_Css_Processor {
 				}
 				
 				if ( ! empty( $properties ) ) {
-					$rules[] = [
+					$rule = [
 						'selector' => $selector_string,
 						'properties' => $properties,
 					];
+					$rules[] = $rule;
 				}
 			}
 		}

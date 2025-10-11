@@ -1,12 +1,15 @@
 <?php
 namespace Elementor\Modules\CssConverter\Services\AtomicWidgetsV2;
 
+// TODO: DELETE - This bridge uses old CSS processor, replace with unified approach
 use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Processor;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// TODO: DELETE ENTIRE CLASS - This bridge uses old CSS processor
+// Replace with unified approach integration
 class CSS_To_Atomic_Bridge {
 
 	private Css_Processor $css_processor;

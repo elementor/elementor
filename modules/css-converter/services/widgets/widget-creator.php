@@ -20,6 +20,7 @@ class Widget_Creator {
 	private $current_css_processing_result;
 	private $use_zero_defaults;
 	private $current_widget_type;
+	private $current_widget; // CRITICAL FIX: Store current widget for class preservation
 	private $current_unsupported_props = [];
 
 	public function __construct( $use_zero_defaults = true ) {
@@ -230,6 +231,13 @@ class Widget_Creator {
 			throw new \Exception( 'Global Classes Repository not available' );
 		}
 
+		$props = $this->convert_properties_to_global_class_props( $class_data['properties'] ?? [] );
+		
+		// Skip if no valid properties were converted
+		if ( empty( $props ) ) {
+			return;
+		}
+
 		$global_class_data = [
 			'id' => sanitize_title( $class_name ),
 			'label' => $class_name,
@@ -240,12 +248,52 @@ class Widget_Creator {
 						'breakpoint' => 'desktop',
 						'state' => null,
 					],
-					'props' => $this->convert_properties_to_global_class_props( $class_data['properties'] ?? [] ),
+					'props' => $props,
 					'custom_css' => null,
 				],
 			],
 		];
 
+
+		// Save the global class to the database
+		try {
+			// Use a simpler approach - directly update the kit meta
+			$kit = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
+			$meta_key = '_elementor_global_classes';
+			
+			// Get current global classes data
+			$current_data = $kit->get_json_meta( $meta_key ) ?: ['items' => [], 'order' => []];
+			$items = $current_data['items'] ?? [];
+			$order = $current_data['order'] ?? [];
+			
+			// Add our new class
+			$class_id = $global_class_data['id'];
+			$items[ $class_id ] = $global_class_data;
+			
+			// Add to order if not already present
+			if ( ! in_array( $class_id, $order ) ) {
+				$order[] = $class_id;
+			}
+			
+			// Prepare updated data
+			$updated_data = [
+				'items' => $items,
+				'order' => $order,
+			];
+			
+			// Save to database
+			$success = $kit->update_json_meta( $meta_key, $updated_data );
+			
+			if ( $success ) {
+				// Trigger cache invalidation for global classes with correct parameters
+				do_action( 'elementor/global_classes/update', 'frontend', $updated_data, $current_data );
+			} else {
+				throw new \Exception( "Failed to update kit meta for global class '{$class_name}'" );
+			}
+			
+		} catch ( \Exception $e ) {
+			throw new \Exception( "Failed to save global class '{$class_name}': " . $e->getMessage() );
+		}
 	}
 
 	private function convert_properties_to_global_class_props( $properties ) {
@@ -340,6 +388,7 @@ class Widget_Creator {
 		$settings = $widget['settings'] ?? [];
 
 		$this->current_widget_type = $widget_type;
+		$this->current_widget = $widget; // CRITICAL FIX: Set current widget for class preservation
 		$applied_styles = $widget['applied_styles'] ?? [];
 
 		if ( ! empty( $applied_styles['computed_styles'] ) ) {
@@ -451,6 +500,17 @@ class Widget_Creator {
 		}
 
 		$classes = [];
+
+		// CRITICAL FIX: Preserve original CSS classes from HTML
+		if ( ! empty( $this->current_widget['attributes']['class'] ) ) {
+			$original_classes = explode( ' ', $this->current_widget['attributes']['class'] );
+			foreach ( $original_classes as $original_class ) {
+				$original_class = trim( $original_class );
+				if ( ! empty( $original_class ) ) {
+					$classes[] = $original_class;
+				}
+			}
+		}
 
 		$has_global_classes = ! empty( $applied_styles['global_classes'] );
 		$has_computed_styles = ! empty( $applied_styles['computed_styles'] ) || ! empty( $applied_styles['id_styles'] );
