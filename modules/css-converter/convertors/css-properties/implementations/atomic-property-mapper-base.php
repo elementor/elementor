@@ -16,7 +16,6 @@ abstract class Atomic_Property_Mapper_Base implements Property_Mapper_Interface 
 	}
 
 	protected function create_atomic_size_value( string $property, array $parsed_size ): array {
-		
 		$atomic_value = \Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type::generate( $parsed_size );
 		
 		$result = [
@@ -51,8 +50,6 @@ abstract class Atomic_Property_Mapper_Base implements Property_Mapper_Interface 
 	}
 
 	protected function create_atomic_string_value( string $property, string $value ): array {
-		;
-		
 		$atomic_value = \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type::generate( $value );
 		
 		$result = [
@@ -141,7 +138,6 @@ abstract class Atomic_Property_Mapper_Base implements Property_Mapper_Interface 
 				return $this->handle_invalid_shorthand();
 		}
 	}
-
 
 	abstract public function get_supported_properties(): array;
 

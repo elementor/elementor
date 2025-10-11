@@ -38,7 +38,7 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test.skip( 'should convert all padding variations and verify atomic mapper success', async ( { page, request } ) => {
+	test( 'should convert all padding variations and verify atomic mapper success', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="padding: 20px;">Single value padding</p>
@@ -75,37 +75,59 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
 
-		// Test all converted paragraph elements
-		const paragraphElements = elementorFrame.locator( 'p' ).filter( { hasText: /padding/i } );
-		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
+		// Define test cases with specific text content selectors
+		const testCases = [
+			{
+				textContent: 'Single value padding',
+				tests: [
+					{ property: 'padding-block-start', expected: '20px' },
+					{ property: 'padding-inline-end', expected: '20px' },
+					{ property: 'padding-block-end', expected: '20px' },
+					{ property: 'padding-inline-start', expected: '20px' },
+				]
+			},
+			{
+				textContent: 'Two values padding',
+				tests: [
+					{ property: 'padding-block-start', expected: '20px' },
+					{ property: 'padding-inline-end', expected: '40px' },
+					{ property: 'padding-block-end', expected: '20px' },
+					{ property: 'padding-inline-start', expected: '40px' },
+				]
+			},
+			{
+				textContent: 'Four values padding',
+				tests: [
+					{ property: 'padding-block-start', expected: '20px' },
+					{ property: 'padding-inline-end', expected: '30px' },
+					{ property: 'padding-block-end', expected: '0px' },
+					{ property: 'padding-inline-start', expected: '10px' },
+				]
+			},
+			{
+				textContent: 'Padding top',
+				tests: [
+					{ property: 'padding-block-start', expected: '20px' },
+				]
+			},
+			{
+				textContent: 'Padding left',
+				tests: [
+					{ property: 'padding-inline-start', expected: '30px' },
+				]
+			},
+		];
 
-		// Test single value padding (first paragraph: padding: 20px)
-		const singleValueElement = paragraphElements.nth( 0 );
-		await expect( singleValueElement ).toHaveCSS( 'padding-block-start', '20px' );
-		await expect( singleValueElement ).toHaveCSS( 'padding-inline-end', '20px' );
-		await expect( singleValueElement ).toHaveCSS( 'padding-block-end', '20px' );
-		await expect( singleValueElement ).toHaveCSS( 'padding-inline-start', '20px' );
-
-		// Test two values padding (second paragraph: padding: 20px 40px)
-		const twoValuesElement = paragraphElements.nth( 1 );
-		await expect( twoValuesElement ).toHaveCSS( 'padding-block-start', '20px' );
-		await expect( twoValuesElement ).toHaveCSS( 'padding-inline-end', '40px' );
-		await expect( twoValuesElement ).toHaveCSS( 'padding-block-end', '20px' );
-		await expect( twoValuesElement ).toHaveCSS( 'padding-inline-start', '40px' );
-
-		// Test four values padding (third paragraph: padding: 20px 30px 0px 10px)
-		const fourValuesElement = paragraphElements.nth( 2 );
-		await expect( fourValuesElement ).toHaveCSS( 'padding-block-start', '20px' );
-		await expect( fourValuesElement ).toHaveCSS( 'padding-inline-end', '30px' );
-		await expect( fourValuesElement ).toHaveCSS( 'padding-block-end', '0px' );
-		await expect( fourValuesElement ).toHaveCSS( 'padding-inline-start', '10px' );
-
-		// Test individual directional properties (fourth paragraph: padding-top: 20px)
-		const paddingTopElement = paragraphElements.nth( 3 );
-		await expect( paddingTopElement ).toHaveCSS( 'padding-block-start', '20px' );
-
-		// Test padding-left (sixth paragraph: padding-left: 30px)
-		const paddingLeftElement = paragraphElements.nth( 5 );
-		await expect( paddingLeftElement ).toHaveCSS( 'padding-inline-start', '30px' );
+		// Test padding values using specific text content selectors
+		for ( const testCase of testCases ) {
+			await test.step( `Verify ${ testCase.textContent }`, async () => {
+				const element = elementorFrame.locator( 'p' ).filter( { hasText: testCase.textContent } );
+				await element.waitFor( { state: 'visible', timeout: 10000 } );
+				
+				for ( const cssTest of testCase.tests ) {
+					await expect( element ).toHaveCSS( cssTest.property, cssTest.expected );
+				}
+			} );
+		}
 	} );
 } );
