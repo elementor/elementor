@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
-import { getSelectedElements, selectElement } from '@elementor/editor-elements';
-import { __privateUseRouteStatus as useRouteStatus } from '@elementor/editor-v1-adapters';
+import { type V1Element } from '@elementor/editor-elements';
+import {
+	__privateRunCommand as runCommand,
+	__privateUseRouteStatus as useRouteStatus,
+} from '@elementor/editor-v1-adapters';
 import { __createStore, __deleteStore, __registerSlice, __StoreProvider as StoreProvider } from '@elementor/store';
 import { act, fireEvent, renderHook, screen } from '@testing-library/react';
 
@@ -11,14 +14,25 @@ import Panels from '../components/internal/panels';
 import { slice } from '../store';
 
 jest.mock( '@elementor/editor-v1-adapters' );
-jest.mock( '@elementor/editor-elements' );
 
 const MOCK_ELEMENT_ID = 'element-123';
-const MOCK_SELECTED_ELEMENT = { id: MOCK_ELEMENT_ID, type: 'widget' } as const;
+const MOCK_CONTAINER = { id: MOCK_ELEMENT_ID };
 
 const mockedUseRouteStatus = jest.mocked( useRouteStatus );
-const mockedGetSelectedElements = jest.mocked( getSelectedElements );
-const mockedSelectElement = jest.mocked( selectElement );
+const getElementsFnGetter =
+	( id = MOCK_ELEMENT_ID ) =>
+	() => {
+		return [ { model: { get: () => id } } ] as unknown as V1Element[];
+	};
+const mockedGetSelectedElements = jest.fn();
+const mockedGetContainer = jest.fn();
+global.window.elementor = {
+	selection: {
+		getElements: mockedGetSelectedElements,
+	},
+	getContainer: mockedGetContainer,
+};
+const mockedRunCommand = jest.mocked( runCommand );
 
 describe( 'panels api', () => {
 	beforeEach( () => {
@@ -184,8 +198,9 @@ describe( 'panels api', () => {
 
 	describe( 'isOpenPreviousElement functionality', () => {
 		beforeEach( () => {
-			mockedGetSelectedElements.mockReturnValue( [ MOCK_SELECTED_ELEMENT ] );
-			mockedSelectElement.mockClear();
+			mockedGetSelectedElements.mockReturnValue( getElementsFnGetter()() );
+			mockedGetContainer.mockReturnValue( MOCK_CONTAINER );
+			mockedRunCommand.mockClear();
 		} );
 
 		afterEach( () => {
@@ -217,7 +232,9 @@ describe( 'panels api', () => {
 			} );
 
 			// Assert.
-			expect( mockedSelectElement ).toHaveBeenCalledWith( MOCK_ELEMENT_ID );
+			expect( mockedRunCommand ).toHaveBeenCalledWith( 'document/elements/select', {
+				container: MOCK_CONTAINER,
+			} );
 		} );
 
 		it( 'should not store or restore previous element when isOpenPreviousElement is false', () => {
@@ -239,7 +256,7 @@ describe( 'panels api', () => {
 
 			// Assert.
 			expect( mockedGetSelectedElements ).not.toHaveBeenCalled();
-			expect( mockedSelectElement ).not.toHaveBeenCalled();
+			expect( mockedRunCommand ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should not store or restore previous element when isOpenPreviousElement is undefined (default)', () => {
@@ -261,7 +278,7 @@ describe( 'panels api', () => {
 
 			// Assert.
 			expect( mockedGetSelectedElements ).not.toHaveBeenCalled();
-			expect( mockedSelectElement ).not.toHaveBeenCalled();
+			expect( mockedRunCommand ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should handle case when no element is selected during open', () => {
@@ -285,7 +302,7 @@ describe( 'panels api', () => {
 
 			// Assert.
 			expect( mockedGetSelectedElements ).toHaveBeenCalled();
-			expect( mockedSelectElement ).not.toHaveBeenCalled();
+			expect( mockedRunCommand ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should not restore element when panel is blocked during close', () => {
@@ -313,7 +330,7 @@ describe( 'panels api', () => {
 
 			// Assert.
 			expect( mockedGetSelectedElements ).not.toHaveBeenCalled();
-			expect( mockedSelectElement ).not.toHaveBeenCalled();
+			expect( mockedRunCommand ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should clear previous element reference after restoring', () => {
@@ -333,7 +350,7 @@ describe( 'panels api', () => {
 			} );
 
 			mockedGetSelectedElements.mockClear();
-			mockedSelectElement.mockClear();
+			mockedRunCommand.mockClear();
 
 			act( () => {
 				open();
@@ -342,7 +359,9 @@ describe( 'panels api', () => {
 
 			// Assert.
 			expect( mockedGetSelectedElements ).toHaveBeenCalled();
-			expect( mockedSelectElement ).toHaveBeenCalledWith( MOCK_ELEMENT_ID );
+			expect( mockedRunCommand ).toHaveBeenCalledWith( 'document/elements/select', {
+				container: MOCK_CONTAINER,
+			} );
 		} );
 	} );
 } );
