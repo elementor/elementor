@@ -1,6 +1,9 @@
 import { type ComponentType } from 'react';
-import { type Element, getSelectedElements, selectElement } from '@elementor/editor-elements';
-import { __privateUseRouteStatus as useRouteStatus, type UseRouteStatusOptions } from '@elementor/editor-v1-adapters';
+import {
+	__privateRunCommand as runCommand,
+	__privateUseRouteStatus as useRouteStatus,
+	type UseRouteStatusOptions,
+} from '@elementor/editor-v1-adapters';
 import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 
 import { injectIntoPanels } from './location';
@@ -84,7 +87,7 @@ function createUseActions< TOnOpenReturn >(
 	isOpenPreviousElement?: boolean
 ) {
 	let stateSnapshot: TOnOpenReturn | null = null;
-	let previousSelectedElement: Element | null = null;
+	let previousSelectedElement: string | null = null;
 
 	return () => {
 		const dispatch = useDispatch();
@@ -96,7 +99,8 @@ function createUseActions< TOnOpenReturn >(
 					return;
 				}
 				if ( isOpenPreviousElement ) {
-					previousSelectedElement = getSelectedElements()[ 0 ];
+					previousSelectedElement =
+						window.elementor?.selection?.getElements?.()[ 0 ]?.model.get( 'id' ) ?? null;
 				}
 
 				dispatch( slice.actions.open( id ) );
@@ -113,7 +117,10 @@ function createUseActions< TOnOpenReturn >(
 				options.onClose?.( stateSnapshot as TOnOpenReturn );
 
 				if ( previousSelectedElement ) {
-					selectElement( previousSelectedElement.id );
+					try {
+						const container = window.elementor?.getContainer?.( previousSelectedElement );
+						runCommand( 'document/elements/select', { container } );
+					} catch {}
 					previousSelectedElement = null;
 				}
 			},
