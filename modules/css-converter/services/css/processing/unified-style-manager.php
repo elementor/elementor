@@ -93,6 +93,23 @@ class Unified_Style_Manager {
 		
 	}
 
+	public function collect_direct_element_styles( string $element_id, string $selector, array $properties ) {
+		foreach ( $properties as $property => $property_data ) {
+			$this->collected_styles[] = [
+				'source' => 'direct-element',
+				'selector' => $selector,
+				'element_id' => $element_id,
+				'property' => $property,
+				'value' => $property_data['value'],
+				'important' => $property_data['important'] ?? false,
+				'specificity' => $this->calculate_direct_element_specificity( $property_data['important'] ?? false ),
+				'converted_property' => $property_data['converted_property'] ?? null,
+				'order' => count( $this->collected_styles ),
+			];
+		}
+		
+	}
+
 	public function resolve_styles_for_widget( array $widget ): array {
 		$widget_id = $this->get_widget_identifier( $widget );
 		
@@ -159,6 +176,16 @@ class Unified_Style_Manager {
 
 	private function calculate_element_specificity( bool $important ): int {
 		$specificity = Css_Specificity_Calculator::ELEMENT_WEIGHT;
+		if ( $important ) {
+			$specificity += Css_Specificity_Calculator::IMPORTANT_WEIGHT;
+		}
+		return $specificity;
+	}
+
+	private function calculate_direct_element_specificity( bool $important ): int {
+		// Direct element styles have slightly higher priority than standard element styles
+		// but lower than class styles (ELEMENT_WEIGHT = 1, CLASS_WEIGHT = 10)
+		$specificity = Css_Specificity_Calculator::ELEMENT_WEIGHT + 1;
 		if ( $important ) {
 			$specificity += Css_Specificity_Calculator::IMPORTANT_WEIGHT;
 		}

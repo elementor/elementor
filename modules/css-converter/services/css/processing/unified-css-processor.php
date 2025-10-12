@@ -5,12 +5,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Elementor\Modules\CssConverter\Services\Css\Reset_Selector_Analyzer;
+
 class Unified_Css_Processor {
 
 	private $css_parser;
 	private $property_converter;
 	private $specificity_calculator;
 	private $unified_style_manager;
+	private $reset_selector_analyzer;
 
 	public function __construct(
 		$css_parser,
@@ -24,13 +27,18 @@ class Unified_Css_Processor {
 			$specificity_calculator,
 			$property_converter
 		);
+		$this->reset_selector_analyzer = new Reset_Selector_Analyzer( $specificity_calculator );
 	}
 
 	public function process_css_and_widgets( string $css, array $widgets ): array {
+		error_log( "🔥 MAX DEBUG: process_css_and_widgets called with " . strlen($css) . " chars CSS and " . count($widgets) . " widgets" );
+		
 		$this->collect_all_styles_from_sources( $css, $widgets );
 		$resolved_widgets = $this->resolve_styles_recursively( $widgets );
 		$debug_info = $this->unified_style_manager->get_debug_info();
 
+		error_log( "🔥 MAX DEBUG: process_css_and_widgets completed, returning " . count($resolved_widgets) . " resolved widgets" );
+		
 		return [
 			'widgets' => $resolved_widgets,
 			'stats' => $debug_info,
@@ -46,12 +54,41 @@ class Unified_Css_Processor {
 
 	private function collect_css_styles( string $css, array $widgets ) {
 		if ( empty( $css ) ) {
+			error_log( "🔥 FULL MAX DEBUG: No CSS provided, skipping" );
 			return;
 		}
 
+		error_log( "🔥 FULL MAX DEBUG: Starting CSS processing with " . strlen($css) . " chars of CSS" );
+		
+		// Check if CSS contains h1 selectors
+		if ( strpos($css, 'h1') !== false ) {
+			error_log( "🔥 FULL MAX DEBUG: CSS CONTAINS h1 selectors!" );
+			$h1_matches = [];
+			preg_match_all('/h1\s*\{[^}]*\}/', $css, $h1_matches);
+			error_log( "🔥 FULL MAX DEBUG: Found " . count($h1_matches[0]) . " h1 CSS blocks" );
+			foreach ( $h1_matches[0] as $i => $match ) {
+				error_log( "🔥 FULL MAX DEBUG: h1 block {$i}: " . substr($match, 0, 100) . "..." );
+			}
+		}
+		
 		$this->log_css_parsing_start( $css, $widgets );
 		$rules = $this->parse_css_and_extract_rules( $css );
+		
+		// Debug: Check if h1 rules made it through parsing
+		$h1_rules_found = 0;
+		foreach ( $rules as $rule ) {
+			if ( isset($rule['selector']) && $rule['selector'] === 'h1' ) {
+				$h1_rules_found++;
+				error_log( "🔥 FULL MAX DEBUG: Found h1 rule in parsed rules with " . count($rule['properties'] ?? []) . " properties" );
+			}
+		}
+		error_log( "🔥 FULL MAX DEBUG: Total h1 rules after parsing: {$h1_rules_found} out of " . count($rules) . " total rules" );
+		
 		$this->log_extracted_rules( $rules );
+		
+		// APPROACH 6: Analyze simple element selectors for direct widget styling
+		$this->analyze_and_apply_direct_element_styles( $rules, $widgets );
+		
 		$this->process_css_rules_for_widgets( $rules, $widgets );
 	}
 
@@ -67,6 +104,171 @@ class Unified_Css_Processor {
 
 	private function log_extracted_rules( array $rules ): void {
 		// Debug logging removed for performance
+	}
+
+	private function analyze_and_apply_direct_element_styles( array $rules, array $widgets ): void {
+		error_log( "🔥 MAX DEBUG: analyze_and_apply_direct_element_styles called with " . count($rules) . " rules and " . count($widgets) . " widgets" );
+		
+		// Log first few rules to see what we're working with
+		for ( $i = 0; $i < min(3, count($rules)); $i++ ) {
+			$rule = $rules[$i];
+			$selector = $rule['selector'] ?? 'no-selector';
+			$prop_count = count($rule['properties'] ?? []);
+			error_log( "🔥 MAX DEBUG: Rule {$i}: selector='{$selector}', properties={$prop_count}" );
+		}
+		
+		// Convert rules to format expected by Reset_Selector_Analyzer
+		$analyzer_rules = $this->convert_rules_for_analyzer( $rules );
+		error_log( "🔥 MAX DEBUG: Converted to " . count($analyzer_rules) . " analyzer rules" );
+		
+		// Analyze conflicts for simple element selectors
+		$conflict_map = $this->reset_selector_analyzer->analyze_element_selector_conflicts( $analyzer_rules );
+		error_log( "🔥 MAX DEBUG: Found " . count( $conflict_map ) . " element selectors in conflict map" );
+		
+		// Apply non-conflicting element styles directly to widgets
+		$simple_selectors_found = 0;
+		$applied_count = 0;
+		$skipped_count = 0;
+		
+		foreach ( $analyzer_rules as $rule ) {
+			$selector = $rule['selector'];
+			
+			error_log( "🔥 MAX DEBUG: Checking rule with selector '{$selector}'" );
+			
+			if ( $this->reset_selector_analyzer->is_simple_element_selector( $selector ) ) {
+				$simple_selectors_found++;
+				$conflicts = $conflict_map[ $selector ] ?? [];
+				
+				error_log( "🔥 MAX DEBUG: '{$selector}' is a simple element selector with " . count($conflicts) . " conflicts" );
+				
+				if ( empty( $conflicts ) ) {
+					error_log( "🔥 MAX DEBUG: Applying direct styles for element selector: {$selector}" );
+					$this->apply_direct_element_styles_to_widgets( $rule, $widgets );
+					$applied_count++;
+				} else {
+					error_log( "🔥 MAX DEBUG: Skipping {$selector} - has " . count( $conflicts ) . " conflicts" );
+					$skipped_count++;
+				}
+			} else {
+				error_log( "🔥 MAX DEBUG: '{$selector}' is NOT a simple element selector" );
+			}
+		}
+		
+		error_log( "🔥 MAX DEBUG: analyze_and_apply_direct_element_styles completed - found {$simple_selectors_found} simple selectors, applied {$applied_count}, skipped {$skipped_count}" );
+	}
+
+	private function convert_rules_for_analyzer( array $rules ): array {
+		$analyzer_rules = [];
+		
+		error_log( "🔥 MAX DEBUG: convert_rules_for_analyzer processing " . count($rules) . " rules" );
+		
+		foreach ( $rules as $rule ) {
+			$selector = $rule['selector'];
+			$properties = $rule['properties'] ?? [];
+			
+			if ( $selector === 'h1' || strpos($selector, 'h1') !== false ) {
+				error_log( "🔥 MAX DEBUG: Found rule with h1 selector: '{$selector}' with " . count($properties) . " properties" );
+			}
+			
+			// Convert each property to analyzer format
+			foreach ( $properties as $property_data ) {
+				$analyzer_rules[] = [
+					'selector' => $selector,
+					'property' => $property_data['property'],
+					'value' => $property_data['value'],
+					'important' => $property_data['important'] ?? false,
+				];
+			}
+		}
+		
+		return $analyzer_rules;
+	}
+
+	private function apply_direct_element_styles_to_widgets( array $rule, array $widgets ): void {
+		$selector = $rule['selector'];
+		$property = $rule['property'];
+		$value = $rule['value'];
+		$important = $rule['important'] ?? false;
+		
+		error_log( "🔥 MAX DEBUG: apply_direct_element_styles_to_widgets called for {$selector} with {$property}: {$value}" );
+		
+		// Find widgets that match this element selector
+		$matching_widgets = $this->find_widgets_by_element_type( $selector, $widgets );
+		
+		error_log( "🔥 MAX DEBUG: Found " . count( $matching_widgets ) . " widgets matching {$selector}" );
+		
+		foreach ( $matching_widgets as $widget_id ) {
+			// Convert CSS property to atomic widget format
+			$converted_property = $this->convert_property_if_needed( $property, $value );
+			
+			error_log( "🔥 MAX DEBUG: Widget {$widget_id} - converting {$property}: {$value} -> " . wp_json_encode($converted_property) );
+			
+			if ( $converted_property ) {
+				// Apply directly to widget as direct element style (higher priority than standard element styles)
+				$this->unified_style_manager->collect_direct_element_styles(
+					$widget_id,
+					$selector,
+					[
+						$property => [
+							'value' => $value,
+							'important' => $important,
+							'converted_property' => $converted_property,
+							'source' => 'direct_element_reset',
+						],
+					]
+				);
+				
+				error_log( "CSS Processor: Applied {$property}: {$value} directly to widget {$widget_id}" );
+			} else {
+				error_log( "CSS Processor: Could not convert {$property}: {$value} for widget {$widget_id}" );
+			}
+		}
+	}
+
+	private function find_widgets_by_element_type( string $element_selector, array $widgets ): array {
+		$matching_widget_ids = [];
+		
+		error_log( "🔥 MAX DEBUG: find_widgets_by_element_type searching for '{$element_selector}' in " . count($widgets) . " widgets" );
+		
+		// Map HTML element selectors to atomic widget types
+		$element_to_widget_map = [
+			'h1' => 'e-heading',
+			'h2' => 'e-heading', 
+			'h3' => 'e-heading',
+			'h4' => 'e-heading',
+			'h5' => 'e-heading',
+			'h6' => 'e-heading',
+			'p' => 'e-paragraph',
+			'a' => 'e-button',
+			'button' => 'e-button',
+			'div' => 'e-div-block',
+			'span' => 'e-div-block',
+		];
+		
+		$target_widget_type = $element_to_widget_map[ $element_selector ] ?? $element_selector;
+		error_log( "🔥 MAX DEBUG: Mapped selector '{$element_selector}' to widget type '{$target_widget_type}'" );
+		
+		foreach ( $widgets as $widget ) {
+			$widget_tag = $widget['tag'] ?? $widget['widget_type'] ?? '';
+			$element_id = $widget['element_id'] ?? null;
+			$widget_type = $widget['widget_type'] ?? 'unknown';
+			
+			error_log( "🔥 MAX DEBUG: Checking widget {$element_id} (type: {$widget_type}, tag: {$widget_tag}) against target type '{$target_widget_type}'" );
+			
+			// Check if widget type matches the mapped target type
+			if ( $element_id && $widget_type === $target_widget_type ) {
+				$matching_widget_ids[] = $element_id;
+				error_log( "🔥 MAX DEBUG: MATCH! Widget {$element_id} (type: {$widget_type}) matches target type '{$target_widget_type}'" );
+			}
+			
+			// Recursively check child widgets
+			if ( ! empty( $widget['children'] ) ) {
+				$child_matches = $this->find_widgets_by_element_type( $element_selector, $widget['children'] );
+				$matching_widget_ids = array_merge( $matching_widget_ids, $child_matches );
+			}
+		}
+		
+		return $matching_widget_ids;
 	}
 
 	private function process_css_rules_for_widgets( array $rules, array $widgets ): void {

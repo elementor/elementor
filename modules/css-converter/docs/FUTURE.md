@@ -8,6 +8,14 @@
 
 ## 🔮 **Future Enhancements**
 
+### **CSS Pseudo-Classes and Pseudo-Elements**
+- **Status**: Not implemented in direct widget styling
+- **Scope**: `:hover`, `:focus`, `:active`, `:visited`, `:first-child`, `:last-child`, `:nth-child()`, `:before`, `:after`, `:not()`, `:is()`, `:where()`
+- **Impact**: Medium - affects interactive and dynamic styling
+- **Reason**: Atomic widgets don't support pseudo-class styling in direct widget properties
+- **Approach**: Fall back to CSS files or global classes for proper cascade behavior
+- **Note**: For reset styles implementation (Approach 6), pseudo-classes will use standard CSS processing rather than direct widget styling
+
 ### **Property Type Improvements**
 
 #### **Border-Width Keywords Support**

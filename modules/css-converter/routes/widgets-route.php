@@ -125,6 +125,7 @@ class Widgets_Route {
 	}
 
 	public function handle_widget_conversion( WP_REST_Request $request ) {
+		error_log( "🔥 MAX DEBUG: handle_widget_conversion called!" );
 		
 		$type = $request->get_param( 'type' );
 		$content = $request->get_param( 'content' );

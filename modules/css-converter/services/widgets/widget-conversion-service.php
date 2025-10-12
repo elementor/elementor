@@ -39,17 +39,11 @@ class Widget_Conversion_Service {
 		);
 		
 		$this->widget_creator = new Widget_Creator( $use_zero_defaults );
-		
-		// Add global CSS override for base styles when zero defaults are enabled
-		if ( $use_zero_defaults ) {
-			$this->enable_css_converter_base_styles_override();
-		}
-		
-		// CRITICAL FIX: Register CSS injection hooks to preserve original CSS from style blocks
-		$this->register_css_injection_hooks();
 	}
 
 	public function convert_from_url( $url, $css_urls = [], $follow_imports = false, $options = [] ) {
+		error_log( "🔥 MAX DEBUG: convert_from_url called with URL: {$url}" );
+		
 		// Fetch HTML from URL with timeout (HVV: 30s default)
 		$timeout = apply_filters( 'elementor_widget_converter_timeout', 30 );
 		
@@ -131,9 +125,11 @@ class Widget_Conversion_Service {
 		// }
 
 		// Step 5: UNIFIED CSS Processing - eliminates competition between pipelines
-		// Debug logging removed for performance
+		error_log( "🔥 MAX DEBUG: About to call unified CSS processor with " . strlen($all_css) . " chars CSS and " . count($mapped_widgets) . " widgets" );
 		
 		$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets );
+		
+		error_log( "🔥 MAX DEBUG: Unified CSS processor returned: " . wp_json_encode(array_keys($unified_processing_result)) );
 		$resolved_widgets = $unified_processing_result['widgets'];
 		$conversion_log['css_processing'] = $unified_processing_result['stats'];
 		
@@ -557,109 +553,6 @@ class Widget_Conversion_Service {
 			'id_styles' => [],
 			'direct_element_styles' => [],
 		];
-	}
-
-	private function enable_css_converter_base_styles_override() {
-		// Set a global flag that CSS converter is active with zero defaults
-		update_option( 'elementor_css_converter_zero_defaults_active', true );
-		
-		// Invalidate atomic widget base styles cache to force regeneration
-		$this->invalidate_atomic_base_styles_cache();
-	}
-
-	private function invalidate_atomic_base_styles_cache() {
-		// Use the same cache invalidation mechanism as Elementor core
-		$cache_validity = new \Elementor\Modules\AtomicWidgets\Cache_Validity();
-		$cache_validity->invalidate( [ 'base' ] );
-		
-		// Also trigger the core cache clear action to ensure all caches are cleared
-		do_action( 'elementor/core/files/clear_cache' );
-	}
-
-	public function inject_global_base_styles_override() {
-		
-		// Get current post ID
-		$post_id = get_the_ID();
-		if ( ! $post_id ) {
-			return;
-		}
-		
-		
-		// Check if this page has CSS converter widgets
-		if ( ! $this->page_has_css_converter_widgets( $post_id ) ) {
-			return;
-		}
-		
-		
-		// Inject CSS to override atomic widget base styles
-		echo '<style id="css-converter-global-base-styles-override">';
-		echo '/* CSS Converter: Override atomic widget base styles globally */';
-		echo '.elementor .e-paragraph { margin: revert !important; }';
-		echo '.elementor .e-heading { margin: revert !important; }';
-		echo '</style>';
-		
-	}
-
-	private function page_has_css_converter_widgets( int $post_id ): bool {
-		$document = \Elementor\Plugin::$instance->documents->get( $post_id );
-		if ( ! $document ) {
-			return false;
-		}
-		
-		$elements_data = $document->get_elements_data();
-		return $this->traverse_elements_for_css_converter_widgets( $elements_data );
-	}
-
-	private function traverse_elements_for_css_converter_widgets( array $elements_data ): bool {
-		foreach ( $elements_data as $element_data ) {
-			// Check if this element has CSS converter flag
-			if ( isset( $element_data['editor_settings']['css_converter_widget'] ) && $element_data['editor_settings']['css_converter_widget'] ) {
-				return true;
-			}
-			
-			// Recursively check child elements
-			if ( isset( $element_data['elements'] ) && is_array( $element_data['elements'] ) ) {
-				if ( $this->traverse_elements_for_css_converter_widgets( $element_data['elements'] ) ) {
-					return true;
-				}
-			}
-		}
-		
-		return false;
-	}
-
-	// CRITICAL FIX: CSS injection mechanism to preserve original CSS from style blocks
-	private function register_css_injection_hooks() {
-		add_action( 'wp_head', [ $this, 'inject_preserved_css_styles' ], 998 );
-		add_action( 'elementor/editor/wp_head', [ $this, 'inject_preserved_css_styles' ], 998 );
-		add_action( 'elementor/preview/enqueue_styles', [ $this, 'inject_preserved_css_styles' ], 998 );
-	}
-
-	public function inject_preserved_css_styles() {
-		$post_id = get_the_ID();
-		if ( ! $post_id ) {
-			return;
-		}
-
-		// Get preserved CSS for this post
-		$preserved_css = get_post_meta( $post_id, '_css_converter_preserved_css', true );
-		if ( empty( $preserved_css ) ) {
-			return;
-		}
-
-		// Inject the preserved CSS
-		echo '<style id="css-converter-preserved-styles">';
-		echo '/* CSS Converter: Preserved CSS from original style blocks */';
-		echo "\n" . $preserved_css . "\n";
-		echo '</style>';
-		
-		// Debug logging removed for performance
-	}
-
-	private function store_preserved_css( int $post_id, string $css ) {
-		if ( ! empty( $css ) ) {
-			update_post_meta( $post_id, '_css_converter_preserved_css', $css );
-		}
 	}
 	
 	private function generate_global_classes_from_resolved_styles( array $widgets_with_resolved_styles ): array {

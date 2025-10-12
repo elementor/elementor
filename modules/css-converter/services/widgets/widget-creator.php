@@ -635,25 +635,33 @@ class Widget_Creator {
 		}
 
 		if ( ! empty( $applied_styles['computed_styles'] ) ) {
+			error_log( "🔥 WIDGET CREATOR: Processing computed_styles with " . count($applied_styles['computed_styles']) . " properties" );
+			foreach ( $applied_styles['computed_styles'] as $prop => $value ) {
+				error_log( "🔥 WIDGET CREATOR: computed_style {$prop} = " . wp_json_encode($value) );
+			}
 			
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
 			}
 			
 			$class_id = $this->current_widget_class_id;
+			error_log( "🔥 WIDGET CREATOR: Using class_id: {$class_id}" );
 			
 			if ( isset( $v4_styles[ $class_id ] ) ) {
 				$computed_props = $this->map_css_to_v4_props( $applied_styles['computed_styles'] );
 				$existing_props = $v4_styles[ $class_id ]['variants'][0]['props'] ?? [];
 				$v4_styles[ $class_id ]['variants'][0]['props'] = array_merge( $existing_props, $computed_props );
+				error_log( "🔥 WIDGET CREATOR: Merged computed props with existing props" );
 			} else {
 				$style_object = $this->create_v4_style_object( $class_id, $applied_styles['computed_styles'] );
 				
+				error_log( "🔥 WIDGET CREATOR: Created style object: " . wp_json_encode($style_object) );
 				
 				if ( ! empty( $style_object['variants'][0]['props'] ) ) {
 					$v4_styles[ $class_id ] = $style_object;
-					;
+					error_log( "🔥 WIDGET CREATOR: Added style object to v4_styles" );
 				} else {
+					error_log( "🔥 WIDGET CREATOR: Style object has no props, skipping" );
 				}
 			}
 		}
