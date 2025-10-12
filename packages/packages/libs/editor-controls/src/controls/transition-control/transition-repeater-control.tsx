@@ -124,7 +124,8 @@ export const TransitionRepeaterControl = createControl(
 			if ( sanitized.length !== value.length ) {
 				setValue( sanitized );
 			}
-		}, [ value, setValue, allowedTransitionSet ] );
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [ allowedTransitionSet ] );
 
 		useEffect( () => {
 			recentlyUsedListGetter().then( setRecentlyUsedList );
