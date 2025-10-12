@@ -9,6 +9,7 @@ use Elementor\Plugin;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\CssConverter\Services\Widgets\Widget_Hierarchy_Processor;
 use Elementor\Modules\CssConverter\Services\Widgets\Widget_Error_Handler;
+use Elementor\Modules\CssConverter\Services\Widgets\Atomic_Widget_Data_Formatter;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory;
 
 class Widget_Creator {
@@ -22,12 +23,13 @@ class Widget_Creator {
 	private $current_widget_type;
 	private $current_widget; // CRITICAL FIX: Store current widget for class preservation
 	private $current_unsupported_props = [];
+	private $data_formatter;
 
 	public function __construct( $use_zero_defaults = true ) {
 		$this->use_zero_defaults = $use_zero_defaults;
 		$this->initialize_creation_stats();
 		$this->initialize_dependencies();
-		$this->register_css_override_hooks();
+		$this->data_formatter = Atomic_Widget_Data_Formatter::make();
 	}
 
 	private function initialize_creation_stats() {
@@ -47,27 +49,6 @@ class Widget_Creator {
 		$this->property_mapper_registry = Class_Property_Mapper_Factory::get_registry();
 	}
 
-	private function register_css_override_hooks() {
-		if ( $this->use_zero_defaults ) {
-			$this->register_base_styles_override_hooks();
-			$this->register_css_converter_specific_override_hooks();
-		}
-	}
-
-	private function register_base_styles_override_hooks() {
-		add_action( 'wp_head', [ $this, 'inject_base_styles_override_css' ], 999 );
-		add_action( 'elementor/editor/wp_head', [ $this, 'inject_base_styles_override_css' ], 999 );
-		add_action( 'elementor/preview/enqueue_styles', [ $this, 'inject_base_styles_override_css' ], 999 );
-	}
-
-	private function register_css_converter_specific_override_hooks() {
-		add_action( 'wp_head', [ $this, 'inject_css_converter_specific_overrides' ], 1000 );
-		add_action( 'elementor/editor/wp_head', [ $this, 'inject_css_converter_specific_overrides' ], 1000 );
-		add_action( 'elementor/preview/enqueue_styles', [ $this, 'inject_css_converter_specific_overrides' ], 1000 );
-	}
-
-	public function inject_base_styles_override_css() {
-	}
 	private function post_has_css_converter_widgets_of_type( int $post_id, string $element_type ): bool {
 		$cached_types = $this->get_cached_css_converter_widget_types( $post_id );
 		
@@ -159,9 +140,9 @@ class Widget_Creator {
 				$this->process_css_variables( $css_processing_result['css_variables'] );
 			}
 
-		if ( ! empty( $css_processing_result['global_classes'] ) ) {
-			$this->create_global_classes( $css_processing_result['global_classes'] );
-		}
+			if ( ! empty( $css_processing_result['global_classes'] ) ) {
+				$this->create_global_classes( $css_processing_result['global_classes'] );
+			}
 
 			$post_id = $this->ensure_post_exists( $post_id, $post_type );
 
@@ -233,8 +214,7 @@ class Widget_Creator {
 
 		$props = $this->convert_properties_to_global_class_props( $class_data['properties'] ?? [] );
 		
-		// Skip if no valid properties were converted
-		if ( empty( $props ) ) {
+		if ( $this->should_skip_global_class_creation_due_to_no_valid_properties( $props ) ) {
 			return;
 		}
 
@@ -254,55 +234,7 @@ class Widget_Creator {
 			],
 		];
 
-
-		// Save the global class to the database
-		try {
-			// Use a simpler approach - directly update the kit meta
-			$kit = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
-			$meta_key = '_elementor_global_classes';
-			
-			// Get current global classes data
-			$current_data = $kit->get_json_meta( $meta_key ) ?: ['items' => [], 'order' => []];
-			$items = $current_data['items'] ?? [];
-			$order = $current_data['order'] ?? [];
-			
-			
-			// Add our new class
-			$class_id = $global_class_data['id'];
-			$items[ $class_id ] = $global_class_data;
-			
-			// Add to order if not already present
-			if ( ! in_array( $class_id, $order ) ) {
-				$order[] = $class_id;
-			}
-			
-			// Prepare updated data
-			$updated_data = [
-				'items' => $items,
-				'order' => $order,
-			];
-			
-			// Save to database
-			$success = $kit->update_json_meta( $meta_key, $updated_data );
-			
-			if ( ! $success ) {
-				global $wpdb;
-				if ( $wpdb->last_error ) {
-					// Database error occurred
-				}
-			}
-			
-			if ( $success ) {
-				// Trigger cache invalidation for global classes with correct parameters
-				do_action( 'elementor/global_classes/update', 'frontend', $updated_data, $current_data );
-				;
-			} else {
-				throw new \Exception( "Failed to update kit meta for global class '{$class_name}'" );
-			}
-			
-		} catch ( \Exception $e ) {
-			throw new \Exception( "Failed to save global class '{$class_name}': " . $e->getMessage() );
-		}
+		$this->save_global_class_to_database( $global_class_data, $class_name );
 	}
 
 	private function convert_properties_to_global_class_props( $properties ) {
@@ -391,6 +323,66 @@ class Widget_Creator {
 	}
 
 	private function convert_widget_to_elementor_format( $widget ) {
+		if ( $this->widget_uses_new_unified_approach( $widget ) ) {
+			return $this->convert_widget_with_resolved_styles_to_elementor_format( $widget );
+		}
+		
+		return $this->fallback_to_legacy_applied_styles_approach( $widget );
+	}
+
+	private function convert_widget_with_resolved_styles_to_elementor_format( $widget ) {
+		$widget_type = $widget['widget_type'];
+		$settings = $widget['settings'] ?? [];
+		$resolved_styles = $widget['resolved_styles'] ?? [];
+
+		$widget_id = wp_generate_uuid4();
+		$mapped_type = $this->map_to_elementor_widget_type( $widget_type );
+		
+		$formatted_widget_data = $this->create_widget_data_using_new_data_formatter( $resolved_styles, $widget );
+		
+		if ( $this->requires_link_to_button_conversion( $widget_type, $mapped_type ) ) {
+			$settings = $this->convert_link_settings_to_button_format( $settings );
+		}
+		
+		$final_settings = $this->merge_settings_without_style_merging( $settings, $formatted_widget_data['settings'] );
+		
+		if ( 'e-div-block' === $mapped_type ) {
+			$elementor_widget = [
+				'id' => $widget_id,
+				'elType' => 'e-div-block',
+				'settings' => $final_settings,
+				'isInner' => false,
+				'styles' => $formatted_widget_data['styles'],
+				'editor_settings' => [
+					'css_converter_widget' => true,
+				],
+				'version' => '0.0',
+			];
+		} else {
+			$elementor_widget = [
+				'id' => $widget_id,
+				'elType' => 'widget',
+				'widgetType' => $mapped_type,
+				'settings' => $final_settings,
+				'isInner' => false,
+				'styles' => $formatted_widget_data['styles'],
+				'editor_settings' => [
+					'css_converter_widget' => true,
+				],
+				'version' => '0.0',
+			];
+		}
+
+		if ( ! empty( $widget['elements'] ) ) {
+			$elementor_widget['elements'] = $this->convert_widgets_to_elementor_format( $widget['elements'] );
+		} else {
+			$elementor_widget['elements'] = [];
+		}
+
+		return $elementor_widget;
+	}
+
+	private function convert_widget_with_applied_styles_to_elementor_format( $widget ) {
 		$this->current_widget_class_id = null;
 		
 		$widget_type = $widget['widget_type'];
@@ -405,17 +397,13 @@ class Widget_Creator {
 		}
 
 		$widget_id = wp_generate_uuid4();
-
 		$mapped_type = $this->map_to_elementor_widget_type( $widget_type );
-		
 		
 		if ( 'e-link' === $widget_type && 'e-button' === $mapped_type ) {
 			$settings = $this->convert_link_settings_to_button_format( $settings );
 		}
 		
 		$merged_settings = $this->merge_settings_with_styles( $settings, $applied_styles );
-		
-		
 		
 		if ( 'e-div-block' === $mapped_type ) {
 			$elementor_widget = [
@@ -441,8 +429,8 @@ class Widget_Creator {
 					'css_converter_widget' => true,
 				],
 				'version' => '0.0',
-		];
-	}
+			];
+		}
 
 		if ( ! empty( $widget['elements'] ) ) {
 			$elementor_widget['elements'] = $this->convert_widgets_to_elementor_format( $widget['elements'] );
@@ -452,6 +440,7 @@ class Widget_Creator {
 
 		return $elementor_widget;
 	}
+
 	private function map_to_elementor_widget_type( $widget_type ) {
 		$mapping = [
 			'e-heading' => 'e-heading',
@@ -496,7 +485,6 @@ class Widget_Creator {
 
 	private function apply_direct_element_styles_to_settings( $settings, $direct_element_styles ) {
 		
-		
 		return $settings;
 	}
 
@@ -510,16 +498,8 @@ class Widget_Creator {
 
 		$classes = [];
 
-		// CRITICAL FIX: Preserve original CSS classes from HTML
-		if ( ! empty( $this->current_widget['attributes']['class'] ) ) {
-			$original_classes = explode( ' ', $this->current_widget['attributes']['class'] );
-			foreach ( $original_classes as $original_class ) {
-				$original_class = trim( $original_class );
-				if ( ! empty( $original_class ) ) {
-					$classes[] = $original_class;
-				}
-			}
-		}
+		// NOTE: CSS classes from HTML attributes are now handled by Atomic_Widget_Data_Formatter
+		// to avoid duplication. This Widget_Creator only handles generated classes.
 
 		$has_global_classes = ! empty( $applied_styles['global_classes'] );
 		$has_computed_styles = ! empty( $applied_styles['computed_styles'] ) || ! empty( $applied_styles['id_styles'] );
@@ -635,9 +615,7 @@ class Widget_Creator {
 		}
 
 		if ( ! empty( $applied_styles['computed_styles'] ) ) {
-			error_log( "🔥 WIDGET CREATOR: Processing computed_styles with " . count($applied_styles['computed_styles']) . " properties" );
 			foreach ( $applied_styles['computed_styles'] as $prop => $value ) {
-				error_log( "🔥 WIDGET CREATOR: computed_style {$prop} = " . wp_json_encode($value) );
 			}
 			
 			if ( empty( $this->current_widget_class_id ) ) {
@@ -645,23 +623,17 @@ class Widget_Creator {
 			}
 			
 			$class_id = $this->current_widget_class_id;
-			error_log( "🔥 WIDGET CREATOR: Using class_id: {$class_id}" );
 			
 			if ( isset( $v4_styles[ $class_id ] ) ) {
 				$computed_props = $this->map_css_to_v4_props( $applied_styles['computed_styles'] );
 				$existing_props = $v4_styles[ $class_id ]['variants'][0]['props'] ?? [];
 				$v4_styles[ $class_id ]['variants'][0]['props'] = array_merge( $existing_props, $computed_props );
-				error_log( "🔥 WIDGET CREATOR: Merged computed props with existing props" );
 			} else {
 				$style_object = $this->create_v4_style_object( $class_id, $applied_styles['computed_styles'] );
 				
-				error_log( "🔥 WIDGET CREATOR: Created style object: " . wp_json_encode($style_object) );
 				
 				if ( ! empty( $style_object['variants'][0]['props'] ) ) {
 					$v4_styles[ $class_id ] = $style_object;
-					error_log( "🔥 WIDGET CREATOR: Added style object to v4_styles" );
-				} else {
-					error_log( "🔥 WIDGET CREATOR: Style object has no props, skipping" );
 				}
 			}
 		}
@@ -829,23 +801,20 @@ class Widget_Creator {
 						foreach ( $global_class['properties'] as $property_data ) {
 							if ( ! empty( $property_data['converted_property'] ) ) {
 								$converted = $property_data['converted_property'];
-								
 								$property_key = $property_data['mapped_property'] ?? $property_data['original_property'] ?? 'unknown';
+								$atomic_value = $converted;
 								
-							$atomic_value = $converted;
-							
-							
-							if ( isset( $props[ $property_key ] ) ) {
-								if ( $this->is_dimensions_prop_type( $atomic_value ) && $this->is_dimensions_prop_type( $props[ $property_key ] ) ) {
-									$props[ $property_key ] = $this->merge_dimensions_prop_types( $props[ $property_key ], $atomic_value );
-								} elseif ( $this->is_border_width_prop_type( $atomic_value ) && $this->is_border_width_prop_type( $props[ $property_key ] ) ) {
-									$props[ $property_key ] = $this->merge_border_width_prop_types( $props[ $property_key ], $atomic_value );
+								if ( isset( $props[ $property_key ] ) ) {
+									if ( $this->is_dimensions_prop_type( $atomic_value ) && $this->is_dimensions_prop_type( $props[ $property_key ] ) ) {
+										$props[ $property_key ] = $this->merge_dimensions_prop_types( $props[ $property_key ], $atomic_value );
+									} elseif ( $this->is_border_width_prop_type( $atomic_value ) && $this->is_border_width_prop_type( $props[ $property_key ] ) ) {
+										$props[ $property_key ] = $this->merge_border_width_prop_types( $props[ $property_key ], $atomic_value );
+									} else {
+										$props[ $property_key ] = $atomic_value;
+									}
 								} else {
 									$props[ $property_key ] = $atomic_value;
 								}
-							} else {
-								$props[ $property_key ] = $atomic_value;
-							}
 							}
 						}
 					}
@@ -950,7 +919,6 @@ class Widget_Creator {
 				} else {
 					$unsupported_props[ $target_property ] = $atomic_value;
 				}
-			} else {
 			}
 		}
 
@@ -966,13 +934,12 @@ class Widget_Creator {
 
 	private function get_target_property_name( string $property ): string {
 		$mapper = $this->property_mapper_registry->resolve( $property );
-		
-		
+
 		if ( $mapper && method_exists( $mapper, 'get_target_property_name' ) ) {
 			$target = $mapper->get_target_property_name( $property );
 			return $target;
 		}
-		
+
 		return $property;
 	}
 
@@ -1129,7 +1096,6 @@ class Widget_Creator {
 			$post_id = $document->get_main_id();
 			
 			update_post_meta( $post_id, '_elementor_data', wp_json_encode( $elementor_elements ) );
-			
 			update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
 			update_post_meta( $post_id, '_elementor_template_type', 'wp-post' );
 			update_post_meta( $post_id, '_elementor_version', '3.33.0' );
@@ -1229,9 +1195,7 @@ class Widget_Creator {
 		if ( is_array( $data ) ) {
 			$keys = array_keys( $data );
 			$numeric_keys = array_filter( $keys, 'is_numeric' );
-			if ( ! empty( $numeric_keys ) ) {
-			}
-			
+
 			foreach ( $data as $key => $value ) {
 				if ( is_array( $value ) || is_object( $value ) ) {
 					$this->deep_scan_for_numeric_keys( $value, "$path.$key" );
@@ -1246,42 +1210,97 @@ class Widget_Creator {
 		}
 	}
 
-	public function inject_css_converter_specific_overrides() {
-		
-		$post_id = get_the_ID();
-		if ( ! $post_id ) {
-			return;
-		}
-		
-		
-		if ( ! $this->page_has_css_converter_widgets( $post_id ) ) {
-			return;
-		}
-		
-		
-		echo '<style id="css-converter-specific-overrides">';
-		echo '/* CSS Converter: Target widgets with CSS converter class patterns */';
-		
-		echo '.elementor [class*="e-"][class*="-"]:not(.e-paragraph-base):not(.e-heading-base) { ';
-		echo '  /* Override base styles for CSS converter widgets */ ';
-		echo '  margin: revert !important; ';
-		echo '  padding: revert !important; ';
-		echo '} ';
-		
-		echo '.elementor [class*="e-"][class*="-"][class*="-"]:not([class*="base"]) { ';
-		echo '  /* Target CSS converter widgets with specific patterns */ ';
-		echo '  margin: revert !important; ';
-		echo '  padding: revert !important; ';
-		echo '} ';
-		
-		echo '.elementor [data-css-converter="true"] .e-paragraph-base, ';
-		echo '.elementor [data-css-converter="true"] .e-heading-base { ';
-		echo '  margin: revert !important; ';
-		echo '  padding: revert !important; ';
-		echo '} ';
-		
-		echo '</style>';
-		
+
+	private function should_skip_global_class_creation_due_to_no_valid_properties( array $props ): bool {
+		return empty( $props );
 	}
-	
+
+	private function widget_uses_new_unified_approach( array $widget ): bool {
+		return isset( $widget['resolved_styles'] );
+	}
+
+	private function fallback_to_legacy_applied_styles_approach( array $widget ): array {
+		return $this->convert_widget_with_applied_styles_to_elementor_format( $widget );
+	}
+
+	private function create_widget_data_using_new_data_formatter( array $resolved_styles, array $widget ): array {
+		return $this->data_formatter->format_widget_data( $resolved_styles, $widget );
+	}
+
+	private function requires_link_to_button_conversion( string $widget_type, string $mapped_type ): bool {
+		return 'e-link' === $widget_type && 'e-button' === $mapped_type;
+	}
+
+	private function merge_settings_without_style_merging( array $settings, array $formatted_settings ): array {
+		return array_merge( $settings, $formatted_settings );
+	}
+
+	private function get_active_elementor_kit() {
+		return \Elementor\Plugin::$instance->kits_manager->get_active_kit();
+	}
+
+	private function get_current_global_classes_data( $kit, string $meta_key ): array {
+		return $kit->get_json_meta( $meta_key ) ?: ['items' => [], 'order' => []];
+	}
+
+	private function class_not_in_order( string $class_id, array $order ): bool {
+		return ! in_array( $class_id, $order );
+	}
+
+	private function prepare_updated_global_classes_data( array $items, array $order ): array {
+		return [
+			'items' => $items,
+			'order' => $order,
+		];
+	}
+
+	private function save_global_classes_to_database( $kit, string $meta_key, array $updated_data ): bool {
+		return $kit->update_json_meta( $meta_key, $updated_data );
+	}
+
+	private function handle_database_error_if_occurred(): void {
+		global $wpdb;
+		if ( $wpdb->last_error ) {
+			// Database error handling is intentionally minimal for now
+		}
+	}
+
+	private function trigger_cache_invalidation_for_global_classes( array $updated_data, array $current_data ): void {
+		do_action( 'elementor/global_classes/update', 'frontend', $updated_data, $current_data );
+	}
+
+	private function save_global_class_to_database( array $global_class_data, string $class_name ): void {
+		try {
+			$kit = $this->get_active_elementor_kit();
+			$meta_key = '_elementor_global_classes';
+			
+			$current_data = $this->get_current_global_classes_data( $kit, $meta_key );
+			$items = $current_data['items'] ?? [];
+			$order = $current_data['order'] ?? [];
+			
+			$class_id = $global_class_data['id'];
+			$items[ $class_id ] = $global_class_data;
+			
+			if ( $this->class_not_in_order( $class_id, $order ) ) {
+				$order[] = $class_id;
+			}
+			
+			$updated_data = $this->prepare_updated_global_classes_data( $items, $order );
+			
+			$success = $this->save_global_classes_to_database( $kit, $meta_key, $updated_data );
+			
+			if ( ! $success ) {
+				$this->handle_database_error_if_occurred();
+			}
+			
+			if ( $success ) {
+				$this->trigger_cache_invalidation_for_global_classes( $updated_data, $current_data );
+			} else {
+				throw new \Exception( "Failed to update kit meta for global class '{$class_name}'" );
+			}
+			
+		} catch ( \Exception $e ) {
+			throw new \Exception( "Failed to save global class '{$class_name}': " . $e->getMessage() );
+		}
+	}
 }

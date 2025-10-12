@@ -13,6 +13,7 @@ use Elementor\Modules\CssConverter\Services\Css\Processing\Unified_Css_Processor
 use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Specificity_Calculator;
 use Elementor\Modules\CssConverter\Services\Widgets\Widget_Creator;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
+use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 
 class Widget_Conversion_Service {
 	private $html_parser;
@@ -29,23 +30,14 @@ class Widget_Conversion_Service {
 		$this->property_conversion_service = new Css_Property_Conversion_Service();
 		
 		
-		// Initialize unified CSS processor with required dependencies
-		$css_parser = new \Elementor\Modules\CssConverter\Parsers\CssParser();
-		$specificity_calculator = new Css_Specificity_Calculator();
-		$this->unified_css_processor = new Unified_Css_Processor(
-			$css_parser,
-			$this->property_conversion_service,
-			$specificity_calculator
-		);
+		$this->initialize_unified_css_processor_with_required_dependencies();
 		
 		$this->widget_creator = new Widget_Creator( $use_zero_defaults );
 	}
 
 	public function convert_from_url( $url, $css_urls = [], $follow_imports = false, $options = [] ) {
-		error_log( "🔥 MAX DEBUG: convert_from_url called with URL: {$url}" );
 		
-		// Fetch HTML from URL with timeout (HVV: 30s default)
-		$timeout = apply_filters( 'elementor_widget_converter_timeout', 30 );
+		$timeout = $this->get_html_fetch_timeout_with_filter_support();
 		
 		$response = wp_remote_get( $url, [
 			'timeout' => $timeout,
@@ -69,9 +61,8 @@ class Widget_Conversion_Service {
 
 		$html = wp_remote_retrieve_body( $response );
 		
-		// Extract CSS URLs from HTML if not provided
 		if ( empty( $css_urls ) ) {
-			$css_urls = $this->html_parser->extract_linked_css( $html );
+			$css_urls = $this->extract_css_urls_from_html_if_not_provided( $html );
 		}
 
 		return $this->convert_from_html( $html, $css_urls, $follow_imports, $options );
@@ -79,9 +70,7 @@ class Widget_Conversion_Service {
 
 
 	public function convert_from_html( $html, $css_urls = [], $follow_imports = false, $options = [] ) {
-		// CSS converter always uses converted widgets with zero defaults
-		$this->use_zero_defaults = true;
-		$this->widget_creator = new Widget_Creator( $this->use_zero_defaults );
+		$this->configure_css_converter_to_use_zero_defaults();
 		
 		$conversion_log = [
 			'start_time' => microtime( true ),
@@ -93,61 +82,48 @@ class Widget_Conversion_Service {
 		];
 
 		try {
-		// Step 1: Parse HTML
-		
-		$elements = $this->html_parser->parse( $html );
+		$elements = $this->parse_html_elements_from_input( $html );
 		$conversion_log['parsed_elements'] = count( $elements );
 		
 		
-		// Debug logging removed for performance
+		$this->skip_debug_logging_for_performance();
 
-			// Step 2: Validate HTML structure (HVV: max 20 levels depth)
-			$validation_issues = $this->html_parser->validate_html_structure( $elements, 20 );
+			$validation_issues = $this->validate_html_structure_with_max_depth_limit( $elements );
 			if ( ! empty( $validation_issues ) ) {
 				$conversion_log['warnings'] = array_merge( $conversion_log['warnings'], $validation_issues );
 			}
 
-		// Step 3: Extract CSS only (NO inline style conversion - unified approach handles this)
-		$all_css = $this->extract_css_only( $html, $css_urls, $follow_imports );
+		$all_css = $this->extract_all_css_including_inline_styles( $html, $css_urls, $follow_imports, $elements );
 		$conversion_log['css_size'] = strlen( $all_css );
 
-		// Step 4: Map HTML elements to widgets
-		$mapped_widgets = $this->widget_mapper->map_elements( $elements );
+		$mapped_widgets = $this->map_html_elements_to_widgets( $elements );
 		$mapping_stats = $this->widget_mapper->get_mapping_stats( $elements );
 		$conversion_log['mapping_stats'] = $mapping_stats;
 		
-		// DEBUG: Log mapped widgets structure (can be removed in production)
-		// foreach ( $mapped_widgets as $index => $widget ) {
-		//	$widget_type = $widget['widget_type'] ?? 'unknown';
-		//	$widget_id = $widget['attributes']['id'] ?? 'no-id';
-		//	$generated_class = $widget['generated_class'] ?? 'no-class';
-		//	;
-		// }
 
-		// Step 5: UNIFIED CSS Processing - eliminates competition between pipelines
-		error_log( "🔥 MAX DEBUG: About to call unified CSS processor with " . strlen($all_css) . " chars CSS and " . count($mapped_widgets) . " widgets" );
+		$unified_processing_result = $this->process_css_and_widgets_with_unified_approach( $all_css, $mapped_widgets );
 		
-		$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets );
-		
-		error_log( "🔥 MAX DEBUG: Unified CSS processor returned: " . wp_json_encode(array_keys($unified_processing_result)) );
 		$resolved_widgets = $unified_processing_result['widgets'];
+		$css_class_rules = $unified_processing_result['css_class_rules'] ?? [];
 		$conversion_log['css_processing'] = $unified_processing_result['stats'];
 		
-		// Debug logging for unified processing result
-		// Step 6: Widgets now have resolved styles - no separate CSS application needed
-		$styled_widgets = $resolved_widgets;
 		
-		// Store the resolved widgets for global class generation
+		$this->skip_debug_logging_for_performance();
+		$styled_widgets = $this->prepare_widgets_with_resolved_styles_for_creation( $resolved_widgets );
+		
 		$widgets_with_resolved_styles_for_global_classes = $resolved_widgets;
 		
-		// Step 6.5: Inline styles are now always processed through the optimized global classes pipeline
-		// The createGlobalClasses: false option has been removed for better performance and consistency
+		$global_classes = $this->generate_global_classes_from_css_class_rules( $css_class_rules );
+		
+		if ( ! empty( $global_classes ) ) {
+			$this->store_global_classes_in_kit_meta_instead_of_widget_data( $global_classes, $options );
+		}
+		
+		$this->ensure_inline_styles_use_optimized_global_classes_pipeline();
 
-			// Step 7: Create Elementor widgets with resolved styles (unified approach)
-			$creation_result = $this->create_widgets_with_resolved_styles( $widgets_with_resolved_styles_for_global_classes, $options );
+			$creation_result = $this->create_widgets_with_resolved_styles( $widgets_with_resolved_styles_for_global_classes, $options, $global_classes );
 			$conversion_log['widget_creation'] = $creation_result['stats'];
-			// Fix count() error - ensure widgets_created is an array
-			$widgets_created = $creation_result['widgets_created'] ?? [];
+			$widgets_created = $this->ensure_widgets_created_is_array_to_fix_count_error( $creation_result );
 			
 			$widgets_count = is_array( $widgets_created ) ? count( $widgets_created ) : (int) $widgets_created;
 
@@ -184,25 +160,23 @@ class Widget_Conversion_Service {
 	private function extract_all_css( $html, $css_urls, $follow_imports, &$elements = [], $create_global_classes = true ) {
 		$all_css = '';
 
-		// Extract inline CSS from <style> tags using regex to avoid DOM parsing issues
-		preg_match_all( '/<style[^>]*>(.*?)<\/style>/is', $html, $matches );
+		$matches = [];
+		$this->extract_inline_css_from_style_tags_using_regex_to_avoid_dom_parsing_issues( $html, $matches );
 		foreach ( $matches[1] as $css_content ) {
 			$all_css .= trim( $css_content ) . "\n";
 		}
 
-		// Extract inline CSS from style attributes of parsed HTML elements
-		// Only create CSS rules if we're creating global classes
 		if ( ! empty( $elements ) && $create_global_classes ) {
-			$inline_css = $this->extract_inline_css_from_elements( $elements );
+			$inline_css = $this->extract_inline_css_from_style_attributes_of_parsed_elements( $elements );
 			if ( ! empty( $inline_css ) ) {
 				$all_css .= $inline_css . "\n";
 			}
 		} elseif ( ! empty( $elements ) && ! $create_global_classes ) {
+			$this->skip_css_rule_creation_when_not_creating_global_classes();
 		}
 
-		// Fetch external CSS files using unified processor
 		if ( ! empty( $css_urls ) ) {
-			$css_fetch_result = $this->unified_css_processor->fetch_css_from_urls( $css_urls, $follow_imports );
+			$css_fetch_result = $this->fetch_external_css_files_using_unified_processor( $css_urls, $follow_imports );
 			$all_css .= $css_fetch_result['css'];
 		}
 
@@ -212,9 +186,8 @@ class Widget_Conversion_Service {
 	private function extract_inline_css_from_elements( &$elements, &$element_counter = null ) {
 		$inline_css = '';
 		
-		// Initialize counter if not passed from parent call
 		if ( null === $element_counter ) {
-			$element_counter = 0;
+			$element_counter = $this->initialize_element_counter_if_not_passed_from_parent_call();
 		}
 
 		foreach ( $elements as &$element ) {
@@ -222,38 +195,30 @@ class Widget_Conversion_Service {
 				
 				$element_counter++;
 				
-				// DEBUG: Log element details (can be removed in production)
-				$element_tag = $element['tag'] ?? 'unknown';
-				$element_id = $element['attributes']['id'] ?? 'no-id';
+				$element_tag = $this->get_element_tag_for_debug_logging( $element );
+				$element_id = $this->get_element_id_for_debug_logging( $element );
 				
-				// Create a unique class name for this element
-				$class_name = 'inline-element-' . $element_counter;
+				$class_name = $this->create_unique_class_name_for_element( $element_counter );
 				
-				// Convert inline CSS to CSS rule
-				$css_rules = [];
-				foreach ( $element['inline_css'] as $property => $style_data ) {
-					$value = $style_data['value'];
-					$important = $style_data['important'] ? ' !important' : '';
-					$css_rules[] = "  {$property}: {$value}{$important};";
-					
-					// DEBUG: Log each property conversion (can be removed in production)
-				}
+				$css_rules = $this->convert_inline_css_to_css_rule_format( $element );
 				
 				if ( ! empty( $css_rules ) ) {
 					$css_rule_block = ".{$class_name} {\n" . implode( "\n", $css_rules ) . "\n}\n\n";
 					$inline_css .= $css_rule_block;
 					
-					// DEBUG: Log generated CSS rule (can be removed in production)
+					$this->skip_debug_logging_for_performance();
 					
-					// Store the class name in the element for later reference
-					$element['generated_class'] = $class_name;
+					$this->store_generated_class_name_in_element_for_later_reference( $element, $class_name );
+					
+					$this->apply_generated_class_to_html_element_preserving_original_classes( $element, $class_name );
+					
 				}
 			} else {
+				$this->skip_processing_element_without_inline_css();
 			}
 			
-			// Process child elements recursively, passing the counter by reference
 			if ( ! empty( $element['children'] ) ) {
-				$child_css = $this->extract_inline_css_from_elements( $element['children'], $element_counter );
+				$child_css = $this->process_child_elements_recursively_passing_counter_by_reference( $element, $element_counter );
 				$inline_css .= $child_css;
 			}
 		}
@@ -262,9 +227,10 @@ class Widget_Conversion_Service {
 	}
 
 
-	// REMOVED: apply_inline_styles_to_widgets and apply_inline_styles_recursive methods
-	// These methods are no longer needed since createGlobalClasses: false option was removed
-	// All styling now goes through the optimized global classes pipeline
+	private function note_removed_methods_no_longer_needed_due_to_optimized_global_classes_pipeline(): void {
+		// Intentionally empty - apply_inline_styles_to_widgets and apply_inline_styles_recursive methods removed
+		// All styling now goes through the optimized global classes pipeline
+	}
 
 
 	private function convert_inline_css_to_computed_styles( $inline_css ) {
@@ -414,18 +380,15 @@ class Widget_Conversion_Service {
 	private function extract_css_only( string $html, array $css_urls, bool $follow_imports ): string {
 		$all_css = '';
 
-		// Extract CSS from <style> tags only (NO inline style conversion)
-		preg_match_all( '/<style[^>]*>(.*?)<\/style>/is', $html, $matches );
+		$this->extract_css_from_style_tags_only_without_inline_style_conversion( $html, $matches );
 		foreach ( $matches[1] as $css_content ) {
 			$all_css .= trim( $css_content ) . "\n";
 		}
 
-		// Extract CSS from external files
 		if ( ! empty( $css_urls ) ) {
 			foreach ( $css_urls as $url ) {
 				try {
-					// Convert relative URLs to full HTTP URLs
-					$full_url = $this->resolve_css_url( $url );
+					$full_url = $this->convert_relative_urls_to_full_http_urls( $url );
 					
 					$response = wp_remote_get( $full_url, [
 						'timeout' => 30,
@@ -449,27 +412,24 @@ class Widget_Conversion_Service {
 						$all_css .= "/* CSS from: {$full_url} */\n" . $css_content . "\n\n";
 					}
 				} catch ( \Exception $e ) {
-					// Error handling without logging for performance
+					$this->handle_css_fetch_errors_without_logging_for_performance();
 				}
 			}
 		}
 
-		// Debug logging removed for performance
+		$this->skip_debug_logging_for_performance();
 
 		return $all_css;
 	}
 
 	private function resolve_css_url( string $url ): string {
-		// If already a full URL, return as is
-		if ( strpos( $url, 'http' ) === 0 ) {
+		if ( $this->is_already_full_url( $url ) ) {
 			return $url;
 		}
 
-		// Convert relative URL to full HTTP URL
-		$base_url = home_url();
+		$base_url = $this->convert_relative_url_to_full_http_url();
 		
-		// Remove leading slash if present to avoid double slashes
-		$url = ltrim( $url, '/' );
+		$url = $this->remove_leading_slash_to_avoid_double_slashes( $url );
 		
 		return trailingslashit( $base_url ) . $url;
 	}
@@ -487,6 +447,10 @@ class Widget_Conversion_Service {
 			$prepared_widget = $widget;
 			$prepared_widget['applied_styles'] = $applied_styles;
 			
+			// CRITICAL FIX: Remove resolved_styles to ensure widgets use the legacy applied_styles path
+			// This prevents duplicate class extraction between Atomic_Widget_Data_Formatter and merge_settings_with_styles
+			unset( $prepared_widget['resolved_styles'] );
+			
 			// Recursively prepare child widgets
 			if ( ! empty( $widget['children'] ) ) {
 				$prepared_widget['children'] = $this->prepare_widgets_recursively( $widget['children'] );
@@ -498,12 +462,15 @@ class Widget_Conversion_Service {
 		return $prepared_widgets;
 	}
 
-	private function create_widgets_with_resolved_styles( array $widgets_with_resolved_styles, array $options ): array {
+	private function create_widgets_with_resolved_styles( array $widgets_with_resolved_styles, array $options, array $global_classes = null ): array {
 		// Convert widgets with resolved styles to the format expected by existing widget creator
 		$styled_widgets = $this->prepare_widgets_recursively( $widgets_with_resolved_styles );
 		
-		// Generate global classes from CSS selector styles
-		$global_classes = $this->generate_global_classes_from_resolved_styles( $widgets_with_resolved_styles );
+		// Use pre-generated global classes if provided, otherwise generate from resolved styles (legacy fallback)
+		if ( $global_classes === null ) {
+			$global_classes = $this->generate_global_classes_from_resolved_styles( $widgets_with_resolved_styles );
+		}
+		
 		
 		// Create CSS processing result with generated global classes
 		$css_processing_result = [
@@ -555,6 +522,46 @@ class Widget_Conversion_Service {
 		];
 	}
 	
+	private function generate_global_classes_from_css_rules( array $css_class_rules ): array {
+		$global_classes = [];
+		
+		
+		foreach ( $css_class_rules as $rule ) {
+			$selector = $rule['selector'] ?? '';
+			$properties = $rule['properties'] ?? [];
+			
+			if ( empty( $selector ) || empty( $properties ) ) {
+				continue;
+			}
+			
+			
+			// Convert CSS class selector to global class format
+			$class_name = ltrim( $selector, '.' ); // Remove the dot
+			
+			// Convert properties to the format expected by Widget Creator
+			$converted_properties = [];
+			foreach ( $properties as $property ) {
+				$prop_name = $property['property'] ?? '';
+				$prop_value = $property['value'] ?? '';
+				
+				if ( ! empty( $prop_name ) && ! empty( $prop_value ) ) {
+					$converted_properties[ $prop_name ] = $prop_value;
+				}
+			}
+			
+			if ( ! empty( $converted_properties ) ) {
+				$global_classes[ $class_name ] = [
+					'selector' => $selector,
+					'properties' => $converted_properties,
+					'source' => 'css-class-rule',
+				];
+				
+			}
+		}
+		
+		return $global_classes;
+	}
+
 	private function generate_global_classes_from_resolved_styles( array $widgets_with_resolved_styles ): array {
 		$global_classes = [];
 		$css_selector_styles = [];
@@ -609,6 +616,95 @@ class Widget_Conversion_Service {
 		return $global_classes;
 	}
 	
+	private function store_global_classes_in_kit( array $global_classes, array $options ): void {
+		if ( empty( $global_classes ) ) {
+			return;
+		}
+		
+		
+		try {
+			// Check if Elementor Plugin is available
+			if ( ! defined( 'ELEMENTOR_VERSION' ) || ! \Elementor\Plugin::$instance ) {
+				return;
+			}
+			
+			// Check if kits manager is available
+			if ( ! \Elementor\Plugin::$instance->kits_manager ) {
+				return;
+			}
+			
+			// Get the active kit
+			$active_kit = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
+			if ( ! $active_kit ) {
+				return;
+			}
+			
+			
+			$repository = Global_Classes_Repository::make();
+			
+			// Determine context: preview for editor, frontend for published pages
+			$is_preview = isset( $options['context'] ) && $options['context'] === 'preview';
+			if ( ! $is_preview ) {
+				// Check if we're in the editor or preview mode
+				$is_preview = is_preview() || ( defined( 'ELEMENTOR_VERSION' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
+			}
+			
+			$context = $is_preview ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+			$repository->context( $context );
+			
+			
+			// Get existing global classes from Kit
+			$existing = $repository->all();
+			$existing_items = $existing->get_items()->all();
+			$existing_order = $existing->get_order()->all();
+			
+			
+			// CRITICAL FIX: Convert global classes to proper Elementor atomic format with 'variants' structure
+			$formatted_global_classes = [];
+			foreach ( $global_classes as $class_id => $class_data ) {
+				// Convert CSS Converter format to Elementor atomic format
+				$styles = $class_data['styles'] ?? $class_data;
+				$properties = $styles['properties'] ?? [];
+				
+				// Convert CSS properties to atomic props format
+				$atomic_props = [];
+				foreach ( $properties as $property => $value ) {
+					$atomic_props[ $property ] = $this->convert_css_property_to_atomic_format( $property, $value );
+				}
+				
+				$formatted_global_classes[ $class_id ] = [
+					'id' => $class_id,
+					'label' => $class_id, // Use class ID as label for CSS Converter generated classes
+					'type' => 'class', // CRITICAL FIX: Add the missing type field that atomic system expects
+					'variants' => [
+						[
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+							'props' => $atomic_props,
+							'custom_css' => null,
+						],
+					],
+				];
+			}
+			
+			// Merge CSS Converter classes with existing classes
+			$updated_items = array_merge( $existing_items, $formatted_global_classes );
+			$updated_order = array_merge( $existing_order, array_keys( $formatted_global_classes ) );
+			
+			// Remove duplicates from order and re-index to ensure proper array (not associative)
+			$updated_order = array_values( array_unique( $updated_order ) );
+			
+			
+			// Store in Kit meta - this will trigger cache invalidation automatically
+			$repository->put( $updated_items, $updated_order );
+			
+			
+		} catch ( \Exception $e ) {
+		}
+	}
+
 	private function count_properties_in_global_classes( array $global_classes ): int {
 		$total_properties = 0;
 		
@@ -617,6 +713,271 @@ class Widget_Conversion_Service {
 		}
 		
 		return $total_properties;
+	}
+
+	private function convert_css_property_to_atomic_format( string $property, $value ) {
+		// Convert CSS properties to atomic format based on the atomic styles schema
+		switch ( $property ) {
+			case 'background':
+				return $this->convert_background_to_atomic_format( $value );
+			
+			case 'color':
+				return $this->convert_color_to_atomic_format( $value );
+			
+			case 'font-size':
+			case 'width':
+			case 'height':
+			case 'margin':
+			case 'padding':
+				return $this->convert_size_to_atomic_format( $value );
+			
+			default:
+				// For unsupported properties, return as string and let atomic system handle it
+				return $value;
+		}
+	}
+
+	private function convert_background_to_atomic_format( $value ) {
+		// Handle different background types
+		if ( is_string( $value ) ) {
+			// Check if it's a gradient
+			if ( strpos( $value, 'gradient' ) !== false ) {
+				// For now, store gradients as custom CSS since atomic format is complex
+				return [
+					'custom_css' => $value
+				];
+			}
+			
+			// Check if it's a color
+			if ( $this->is_color_value( $value ) ) {
+				return [
+					'color' => [
+						'$$type' => 'color',
+						'value' => $this->normalize_color_value( $value )
+					]
+				];
+			}
+		}
+		
+		// Fallback to custom CSS
+		return [
+			'custom_css' => $value
+		];
+	}
+
+	private function convert_color_to_atomic_format( $value ) {
+		return [
+			'$$type' => 'color',
+			'value' => $this->normalize_color_value( $value )
+		];
+	}
+
+	private function convert_size_to_atomic_format( $value ) {
+		$parsed = $this->parse_size_value( $value );
+		if ( $parsed ) {
+			return [
+				'$$type' => 'size',
+				'value' => [
+					'size' => $parsed['size'],
+					'unit' => $parsed['unit']
+				]
+			];
+		}
+		
+		return $value; // Fallback to original value
+	}
+
+	private function is_color_value( $value ) {
+		// Simple color detection
+		return preg_match( '/^#[0-9a-f]{3,6}$/i', $value ) || 
+		       preg_match( '/^rgb\(/', $value ) || 
+		       preg_match( '/^rgba\(/', $value ) ||
+		       in_array( strtolower( $value ), [ 'red', 'blue', 'green', 'black', 'white', 'transparent' ] );
+	}
+
+	private function normalize_color_value( $value ) {
+		// Convert color names to hex values
+		$color_map = [
+			'red' => '#ff0000',
+			'blue' => '#0000ff',
+			'green' => '#008000',
+			'black' => '#000000',
+			'white' => '#ffffff',
+			'transparent' => 'transparent'
+		];
+		
+		$lower_value = strtolower( $value );
+		if ( isset( $color_map[ $lower_value ] ) ) {
+			return $color_map[ $lower_value ];
+		}
+		
+		return $value; // Return as-is for hex, rgb, rgba values
+	}
+
+	private function parse_size_value( $value ) {
+		// Parse size values like "16px", "1em", "100%"
+		if ( preg_match( '/^(\d*\.?\d+)(px|em|rem|%|vh|vw|auto)$/', $value, $matches ) ) {
+			return [
+				'size' => floatval( $matches[1] ),
+				'unit' => $matches[2]
+			];
+		}
+		
+		return null;
+	}
+
+	private function initialize_unified_css_processor_with_required_dependencies(): void {
+		$css_parser = new \Elementor\Modules\CssConverter\Parsers\CssParser();
+		$specificity_calculator = new Css_Specificity_Calculator();
+		$this->unified_css_processor = new Unified_Css_Processor(
+			$css_parser,
+			$this->property_conversion_service,
+			$specificity_calculator
+		);
+	}
+
+	private function get_html_fetch_timeout_with_filter_support(): int {
+		return apply_filters( 'elementor_widget_converter_timeout', 30 );
+	}
+
+	private function extract_css_urls_from_html_if_not_provided( string $html ): array {
+		return $this->html_parser->extract_linked_css( $html );
+	}
+
+	private function configure_css_converter_to_use_zero_defaults(): void {
+		$this->use_zero_defaults = true;
+		$this->widget_creator = new Widget_Creator( $this->use_zero_defaults );
+	}
+
+	private function parse_html_elements_from_input( string $html ): array {
+		return $this->html_parser->parse( $html );
+	}
+
+	private function validate_html_structure_with_max_depth_limit( array $elements ): array {
+		return $this->html_parser->validate_html_structure( $elements, 20 );
+	}
+
+	private function extract_all_css_including_inline_styles( string $html, array $css_urls, bool $follow_imports, array &$elements ): string {
+		return $this->extract_all_css( $html, $css_urls, $follow_imports, $elements, true );
+	}
+
+	private function map_html_elements_to_widgets( array $elements ): array {
+		return $this->widget_mapper->map_elements( $elements );
+	}
+
+	private function process_css_and_widgets_with_unified_approach( string $all_css, array $mapped_widgets ): array {
+		return $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets );
+	}
+
+	private function prepare_widgets_with_resolved_styles_for_creation( array $resolved_widgets ): array {
+		return $resolved_widgets;
+	}
+
+	private function generate_global_classes_from_css_class_rules( array $css_class_rules ): array {
+		return $this->generate_global_classes_from_css_rules( $css_class_rules );
+	}
+
+	private function store_global_classes_in_kit_meta_instead_of_widget_data( array $global_classes, array $options ): void {
+		$this->store_global_classes_in_kit( $global_classes, $options );
+	}
+
+	private function ensure_inline_styles_use_optimized_global_classes_pipeline(): void {
+		// Intentionally empty - inline styles now always use optimized global classes pipeline
+	}
+
+	private function ensure_widgets_created_is_array_to_fix_count_error( array $creation_result ) {
+		return $creation_result['widgets_created'] ?? 0;
+	}
+
+	private function extract_inline_css_from_style_tags_using_regex_to_avoid_dom_parsing_issues( string $html, array &$matches ): void {
+		preg_match_all( '/<style[^>]*>(.*?)<\/style>/is', $html, $matches );
+	}
+
+	private function extract_inline_css_from_style_attributes_of_parsed_elements( array &$elements ): string {
+		return $this->extract_inline_css_from_elements( $elements );
+	}
+
+	private function skip_css_rule_creation_when_not_creating_global_classes(): void {
+		// Intentionally empty - skipping CSS rule creation when not creating global classes
+	}
+
+	private function fetch_external_css_files_using_unified_processor( array $css_urls, bool $follow_imports ): array {
+		return $this->unified_css_processor->fetch_css_from_urls( $css_urls, $follow_imports );
+	}
+
+	private function initialize_element_counter_if_not_passed_from_parent_call(): int {
+		return 0;
+	}
+
+	private function get_element_tag_for_debug_logging( array $element ): string {
+		return $element['tag'] ?? 'unknown';
+	}
+
+	private function get_element_id_for_debug_logging( array $element ): string {
+		return $element['attributes']['id'] ?? 'no-id';
+	}
+
+	private function create_unique_class_name_for_element( int $element_counter ): string {
+		return 'inline-element-' . $element_counter;
+	}
+
+	private function convert_inline_css_to_css_rule_format( array $element ): array {
+		$css_rules = [];
+		foreach ( $element['inline_css'] as $property => $style_data ) {
+			$value = $style_data['value'];
+			$important = $style_data['important'] ? ' !important' : '';
+			$css_rules[] = "  {$property}: {$value}{$important};";
+		}
+		return $css_rules;
+	}
+
+	private function store_generated_class_name_in_element_for_later_reference( array &$element, string $class_name ): void {
+		$element['generated_class'] = $class_name;
+	}
+
+	private function apply_generated_class_to_html_element_preserving_original_classes( array &$element, string $class_name ): void {
+		$existing_classes = $element['attributes']['class'] ?? '';
+		if ( ! empty( $existing_classes ) ) {
+			$element['attributes']['class'] = $existing_classes . ' ' . $class_name;
+		} else {
+			$element['attributes']['class'] = $class_name;
+		}
+	}
+
+	private function skip_processing_element_without_inline_css(): void {
+		// Intentionally empty - skipping element without inline CSS
+	}
+
+	private function process_child_elements_recursively_passing_counter_by_reference( array $element, int &$element_counter ): string {
+		return $this->extract_inline_css_from_elements( $element['children'], $element_counter );
+	}
+
+	private function extract_css_from_style_tags_only_without_inline_style_conversion( string $html, array &$matches ): void {
+		preg_match_all( '/<style[^>]*>(.*?)<\/style>/is', $html, $matches );
+	}
+
+	private function convert_relative_urls_to_full_http_urls( string $url ): string {
+		return $this->resolve_css_url( $url );
+	}
+
+	private function handle_css_fetch_errors_without_logging_for_performance(): void {
+		// Intentionally empty - error handling without logging for performance
+	}
+
+	private function is_already_full_url( string $url ): bool {
+		return strpos( $url, 'http' ) === 0;
+	}
+
+	private function convert_relative_url_to_full_http_url(): string {
+		return home_url();
+	}
+
+	private function remove_leading_slash_to_avoid_double_slashes( string $url ): string {
+		return ltrim( $url, '/' );
+	}
+
+	private function skip_debug_logging_for_performance(): void {
+		// Intentionally empty - debug logging removed for performance optimization
 	}
 
 }

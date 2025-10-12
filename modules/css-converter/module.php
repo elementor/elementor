@@ -59,6 +59,7 @@ class Module extends BaseModule {
 		}
 		
 		$this->load_required_dependencies();
+		$this->skip_global_styles_service_initialization_due_to_kit_meta_storage();
 		$this->initialize_widgets_route();
 		$this->initialize_classes_route();
 		$this->initialize_variables_route();
@@ -125,6 +126,11 @@ class Module extends BaseModule {
 		if ( file_exists( $file_path ) ) {
 			require_once $file_path;
 		}
+	}
+
+	private function skip_global_styles_service_initialization_due_to_kit_meta_storage(): void {
+		// Intentionally empty - CSS_Converter_Global_Styles service was removed
+		// Global classes are now stored directly in Kit meta via Global_Classes_Repository
 	}
 
 	private function initialize_widgets_route(): void {
