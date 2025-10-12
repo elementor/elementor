@@ -1,4 +1,4 @@
-import { __privateUseListenTo as useListenTo, commandEndEvent, windowEvent } from '@elementor/editor-v1-adapters'; 
+import { __privateUseListenTo as useListenTo, commandEndEvent, windowEvent } from '@elementor/editor-v1-adapters';
 
 export function useComputedStyle( elementId: string | null ) {
 	return useListenTo(
