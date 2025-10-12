@@ -68,12 +68,16 @@ export function createComponentViewClassDeclaration(): typeof ElementView {
 			} );
 		}
 
-		bindUIElements() {
-			const componentId = this.getComponentId();
-			if ( componentId?.value ) {
-				const component = this.$el.get( 0 ).querySelector( `.${ TYPE }` );
-				component?.addEventListener( 'dblclick', this.switchDocument );
-			}
+		ui() {
+			return {
+				doubleClick: '.e-component:not(:has(.elementor-edit-area))',
+			};
+		}
+
+		events() {
+			return {
+				'dblclick @ui.doubleClick': this.switchDocument,
+			};
 		}
 	};
 }
