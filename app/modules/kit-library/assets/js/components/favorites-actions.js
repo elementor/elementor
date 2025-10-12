@@ -1,24 +1,34 @@
 import { useKitFavoritesMutations } from '../hooks/use-kit-favorites-mutations';
 import { Button } from '@elementor/app-ui';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { useTracking } from '../context/tracking-context';
 
 import './favorites-actions.scss';
 
 export default function FavoritesActions( props ) {
 	const { addToFavorites, removeFromFavorites, isLoading } = useKitFavoritesMutations();
+	const tracking = useTracking();
 
 	const loadingClasses = isLoading ? 'e-kit-library__kit-favorite-actions--loading' : '';
-	const eventTracking = ( kitName, source, action, gridLocation = null, searchTerm = null ) => {
-		appsEventTrackingDispatch(
-			'kit-library/favorite-icon',
-			{
-				grid_location: gridLocation,
-				search_term: searchTerm,
-				kit_name: kitName,
-				page_source: source && ( '/' === source ? 'home page' : 'overview' ),
-				element_location: source && 'overview' === source ? 'app_sidebar' : null,
-				action,
-			},
+
+	const handleRemoveFromFavorites = () => {
+		if ( isLoading ) {
+			return;
+		}
+		tracking.trackKitlibFavoriteClicked(
+			props.id,
+			props?.name,
+			() => removeFromFavorites.mutate( props.id ),
+		);
+	};
+
+	const handleAddToFavorites = () => {
+		if ( isLoading ) {
+			return;
+		}
+		tracking.trackKitlibFavoriteClicked(
+			props.id,
+			props?.name,
+			() => addToFavorites.mutate( props.id ),
 		);
 	};
 
@@ -30,11 +40,7 @@ export default function FavoritesActions( props ) {
 					hideText={ true }
 					icon="eicon-heart"
 					className={ `e-kit-library__kit-favorite-actions e-kit-library__kit-favorite-actions--active ${ loadingClasses }` }
-					onClick={ () => {
-						// eslint-disable-next-line no-unused-expressions
-						! isLoading && removeFromFavorites.mutate( props.id );
-						eventTracking( props?.name, props?.source, 'uncheck' );
-					} }
+					onClick={ handleRemoveFromFavorites }
 				/>
 			) : (
 				<Button
@@ -42,11 +48,7 @@ export default function FavoritesActions( props ) {
 					hideText={ true }
 					icon="eicon-heart-o"
 					className={ `e-kit-library__kit-favorite-actions ${ loadingClasses }` }
-					onClick={ () => {
-						// eslint-disable-next-line no-unused-expressions
-						! isLoading && addToFavorites.mutate( props.id );
-						eventTracking( props?.name, props?.source, 'check', props?.index, props?.queryParams );
-					} }
+					onClick={ handleAddToFavorites }
 				/>
 			)
 	);
