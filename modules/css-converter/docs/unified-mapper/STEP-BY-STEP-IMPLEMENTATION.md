@@ -51,22 +51,40 @@
 
 ---
 
-### **Step 2: Test Replacing create_v4_style_object()** ⏸️ PENDING
+### **Step 2: Unify Style Object Creation** ⏸️ PENDING → 🔄 REVISED
 
-**Problem**: This method duplicates atomic widgets' CSS generation
+**Problem**: Non-unified style generation - 4 different methods for the SAME output format!
 
-**Research Questions**:
-- Can atomic widgets generate CSS from `styles` data directly?
-- Is this method still needed for data formatting?
-- What breaks if we remove it?
+**Current (WRONG)**:
+```php
+❌ create_v4_style_object()                      // Inline styles
+❌ create_v4_style_object_from_id_styles()       // ID styles
+❌ create_v4_style_object_from_direct_styles()   // Reset/direct styles
+❌ create_v4_style_object_from_global_classes()  // Global classes
+```
+
+**Target (CORRECT)**:
+```php
+✅ Atomic_Widget_Data_Formatter::format_widget_data()  // ALL widget styles (unified!)
+✅ Atomic_Widget_Data_Formatter::format_global_class()  // Global classes (reusable)
+```
+
+**Key Insight (HVV)**:
+> "ID styles and direct element styles should at the end all be applied to the widget directly. On the CSS input side this is different, but on the style generation side, this should be identical."
+
+**Implementation Plan**:
+1. Create `Atomic_Widget_Data_Formatter` class
+2. Implement `format_widget_data()` - ONE method for ALL widget styles
+3. Replace 4 methods with 1 unified method
+4. Test with Playwright
 
 **Testing**:
-- Run: All Playwright tests
-- **Expected**: Tests should pass or identify what's needed
+- Run: All Playwright tests after unification
+- **Expected**: All tests pass (no regression)
 
 **Documentation Updates**:
-- Update: All .md files with findings
-- Document: What atomic widgets need vs. what this method does
+- Update: All .md files with unified approach
+- Document: How unified formatting works
 
 ---
 
