@@ -104,10 +104,14 @@ class OnboardingTracker {
 					location: 'plugin_onboarding',
 					trigger: 'user_action',
 				},
-				payloadBuilder: ( eventData ) => ( {
-					action_step: eventData.currentStep,
-					exit_type: eventData.exitType || 'x_button',
-				} ),
+				payloadBuilder: ( eventData ) => {
+					const stepNumber = this.getStepNumber( eventData.currentStep );
+					const stepName = this.getStepName( stepNumber );
+					return {
+						action_step: `${ stepNumber }/${ stepName }`,
+						exit_type: eventData.exitType || 'x_button',
+					};
+				},
 				excludeFields: [ 'trigger', 'step_number' ],
 			},
 			AB_101_START_AS_FREE_USER: {
@@ -315,6 +319,10 @@ class OnboardingTracker {
 
 	sendUpgradeNowStep3( selectedFeatures, currentStep ) {
 		const proFeaturesChecked = this.extractSelectedFeatureKeys( selectedFeatures );
+		
+		this.trackStepAction( currentStep, 'upgrade_now_s3', {
+			pro_features_checked: proFeaturesChecked,
+		} );
 
 		return EventDispatcher.dispatchStepEvent(
 			ONBOARDING_EVENTS_MAP.UPGRADE_NOW_S3,
@@ -328,18 +336,42 @@ class OnboardingTracker {
 	}
 
 	extractSelectedFeatureKeys( selectedFeatures ) {
-		if ( ! selectedFeatures || ! Array.isArray( selectedFeatures ) ) {
+		if ( ! selectedFeatures || typeof selectedFeatures !== 'object' ) {
 			return [];
 		}
 
+		if ( Array.isArray( selectedFeatures ) ) {
+			return this.extractFromLegacyArrayFormat( selectedFeatures );
+		}
+
+		return this.extractFromObjectFormat( selectedFeatures );
+	}
+
+	extractFromLegacyArrayFormat( selectedFeatures ) {
 		return selectedFeatures
 			.filter( ( feature ) => feature && feature.is_checked )
 			.map( ( feature ) => feature.key )
 			.filter( ( key ) => key );
 	}
 
+	extractFromObjectFormat( selectedFeatures ) {
+		const allFeatures = [];
+		
+		if ( Array.isArray( selectedFeatures.essential ) ) {
+			allFeatures.push( ...selectedFeatures.essential );
+		}
+		
+		if ( Array.isArray( selectedFeatures.advanced ) ) {
+			allFeatures.push( ...selectedFeatures.advanced );
+		}
+		
+		return allFeatures;
+	}
+
 	sendHelloBizContinue( stepNumber ) {
 		const numericStepNumber = this.mapPageIdToStepNumber( stepNumber ) || stepNumber;
+		
+		this.trackStepAction( numericStepNumber, 'hello_biz_continue' );
 
 		if ( EventDispatcher.canSendEvents() ) {
 			return EventDispatcher.dispatchStepEvent(
@@ -354,6 +386,10 @@ class OnboardingTracker {
 	}
 
 	sendThemeChoiceEvent( currentStep, themeValue ) {
+		this.trackStepAction( 2, 'theme_choice', {
+			theme: themeValue,
+		} );
+		
 		if ( EventDispatcher.canSendEvents() ) {
 			const payload = EventDispatcher.createStepEventPayload(
 				2,
@@ -369,6 +405,13 @@ class OnboardingTracker {
 	}
 
 	sendTopUpgrade( currentStep, upgradeClicked ) {
+		const stepNumber = this.getStepNumber( currentStep );
+		if ( stepNumber ) {
+			this.trackStepAction( stepNumber, 'top_upgrade', {
+				upgrade_clicked: upgradeClicked,
+			} );
+		}
+		
 		return this.sendEventOrStore( 'TOP_UPGRADE', { currentStep, upgradeClicked } );
 	}
 
@@ -504,7 +547,9 @@ class OnboardingTracker {
 	sendExitButtonEvent( currentStep ) {
 		const stepNumber = this.getStepNumber( currentStep );
 
-		this.trackStepAction( stepNumber, 'exit_button' );
+		this.trackStepAction( stepNumber, 'exit:x_button', {
+			exit_type: 'x_button',
+		} );
 		this.sendStepEndState( stepNumber );
 
 		return this.sendEventOrStore( 'EXIT', {
@@ -534,12 +579,18 @@ class OnboardingTracker {
 	}
 
 	trackStepActionInternal( stepNumber, action, storageKey, additionalData = {} ) {
-		// Always store the action, regardless of global timing availability
-		const existingActions = StorageManager.getArray( storageKey );
+		const stepConfig = this.getStepConfig( stepNumber );
+		const actualStorageKey = storageKey || ( stepConfig ? stepConfig.storageKey : null );
+		
+		if ( ! actualStorageKey ) {
+			return;
+		}
+		
+		const existingActions = StorageManager.getArray( actualStorageKey );
 		const actionData = { action, timestamp: TimingManager.getCurrentTime(), ...additionalData };
 
 		existingActions.push( actionData );
-		StorageManager.setObject( storageKey, existingActions );
+		StorageManager.setObject( actualStorageKey, existingActions );
 	}
 
 	sendStepEndStateInternal( stepNumber, storageKey, eventName, stepName, endStateProperty ) {
@@ -559,13 +610,7 @@ class OnboardingTracker {
 		} );
 
 		eventData = TimingManager.addTimingToEventData( eventData, stepNumber );
-		const filteredActions = actions.filter( ( action ) =>
-			'upgrade_hover' !== action.action &&
-			'upgrade_topbar' !== action.action &&
-			'upgrade_now' !== action.action &&
-			'upgrade_already_pro' !== action.action,
-		);
-		eventData[ endStateProperty ] = filteredActions;
+		eventData[ endStateProperty ] = actions;
 
 		if ( EventDispatcher.canSendEvents() ) {
 			this.sendHoverEventsFromStepActions( actions, stepNumber );
@@ -831,6 +876,19 @@ class OnboardingTracker {
 
 	sendUpgradeClickEvent( buttonElement, currentStep ) {
 		const upgradeClickedValue = this.determineUpgradeClickedValue( buttonElement );
+		const stepNumber = this.getStepNumber( currentStep );
+		
+		if ( stepNumber ) {
+			this.trackStepAction( stepNumber, `upgrade_topbar:${ upgradeClickedValue }`, {
+				upgrade_clicked: upgradeClickedValue,
+				click_timestamp: TimingManager.getCurrentTime(),
+			} );
+			
+			if ( this.pendingHoverActions && this.pendingHoverActions[ stepNumber ] ) {
+				delete this.pendingHoverActions[ stepNumber ];
+			}
+		}
+		
 		this.sendEventOrStore( 'TOP_UPGRADE', { currentStep, upgradeClicked: upgradeClickedValue } );
 	}
 
@@ -841,25 +899,26 @@ class OnboardingTracker {
 		}
 
 		const upgradeHoverValue = this.determineUpgradeClickedValue( buttonElement );
-
-		this.trackStepAction( stepNumber, 'upgrade_hover', {
+		
+		if ( ! this.pendingHoverActions ) {
+			this.pendingHoverActions = {};
+		}
+		
+		this.pendingHoverActions[ stepNumber ] = {
 			upgrade_hovered: upgradeHoverValue,
 			hover_timestamp: TimingManager.getCurrentTime(),
-		} );
+		};
 	}
 
 	sendHoverEventsFromStepActions( actions, stepNumber ) {
-		const hoverActions = actions.filter( ( action ) => 'upgrade_hover' === action.action );
-
-		if ( 0 === hoverActions.length ) {
+		if ( ! this.pendingHoverActions || ! this.pendingHoverActions[ stepNumber ] ) {
 			return;
 		}
 
 		const hasUpgradeClickInActions = actions.some( ( action ) =>
-			'upgrade_topbar' === action.action ||
-			'upgrade_tooltip' === action.action ||
-			'upgrade_now' === action.action ||
-			'upgrade_already_pro' === action.action,
+			action.action &&
+			action.action.startsWith( 'upgrade_topbar:' ) &&
+			! action.action.includes( ':no_click' ),
 		);
 
 		const hasStoredClickEvent = this.hasExistingUpgradeClickEvent( stepNumber );
@@ -869,14 +928,24 @@ class OnboardingTracker {
 			return;
 		}
 
-		hoverActions.forEach( ( hoverAction ) => {
-			this.sendEventOrStore( 'TOP_UPGRADE', {
-				currentStep: stepNumber,
-				upgradeClicked: 'no_click',
-				upgradeHovered: hoverAction.upgrade_hovered,
-				hoverTimestamp: hoverAction.hover_timestamp,
-			} );
+		const hoverData = this.pendingHoverActions[ stepNumber ];
+		const stepConfig = this.getStepConfig( stepNumber );
+		
+		if ( stepConfig ) {
+			this.trackStepActionInternal( stepNumber, `upgrade_topbar:no_click:${ hoverData.upgrade_hovered }`, {
+				upgrade_hovered: hoverData.upgrade_hovered,
+				hover_timestamp: hoverData.hover_timestamp,
+			}, stepConfig.storageKey );
+		}
+		
+		this.sendEventOrStore( 'TOP_UPGRADE', {
+			currentStep: stepNumber,
+			upgradeClicked: 'no_click',
+			upgradeHovered: hoverData.upgrade_hovered,
+			hoverTimestamp: hoverData.hover_timestamp,
 		} );
+		
+		delete this.pendingHoverActions[ stepNumber ];
 	}
 
 	markUpgradeClickSent( stepNumber ) {
