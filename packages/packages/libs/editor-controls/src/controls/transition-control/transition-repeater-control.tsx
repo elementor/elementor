@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../../bound-prop-context';
 import { createControl } from '../../create-control';
-import { useProLicenseStatus } from '../../hooks/use-pro-license-active';
+import { useProLicenseStatus } from '../../hooks/use-pro-license-status';
 import { RepeatableControl } from '../repeatable-control';
 import { SelectionSizeControl } from '../selection-size-control';
 import { ALL_PROPERTIES_VALUE, initialTransitionValue, transitionProperties } from './data';
