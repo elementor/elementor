@@ -77,42 +77,42 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 		await editor.waitForPanelToLoad();
 
 
-		// Define test cases for letter-spacing properties
+		// Define test cases for letter-spacing properties - target by text content to avoid page elements
 		const testCases = [
 			{ 
-				index: 0, 
 				name: 'letter-spacing: 1px on h1', 
 				property: 'letter-spacing', 
 				expected: '1px',
-				selector: '.e-con h1, .e-con h2'
+				selector: 'h1',
+				text: 'Letter spacing 1px'
 			},
 			{ 
-				index: 1, 
 				name: 'letter-spacing: 2px on h2', 
 				property: 'letter-spacing', 
 				expected: '2px',
-				selector: '.e-con h1, .e-con h2'
+				selector: 'h2',
+				text: 'Letter spacing 2px'
 			},
 			{ 
-				index: 0, 
 				name: 'letter-spacing: 0.5px on p', 
 				property: 'letter-spacing', 
 				expected: '0.5px',
-				selector: '.e-con p'
+				selector: 'p',
+				text: 'Letter spacing 0.5px'
 			},
 			{ 
-				index: 1, 
 				name: 'letter-spacing: 1.5px on p', 
 				property: 'letter-spacing', 
 				expected: '1.5px',
-				selector: '.e-con p'
+				selector: 'p',
+				text: 'Letter spacing 1.5px'
 			},
 			{ 
-				index: 2, 
 				name: 'letter-spacing: 0.1em on p', 
 				property: 'letter-spacing', 
 				expected: '1.6px', // 0.1em at 16px font size = 1.6px
-				selector: '.e-con p'
+				selector: 'p',
+				text: 'Letter spacing 0.1em'
 			},
 		];
 
@@ -122,9 +122,8 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				
-				const elements = elementorFrame.locator( testCase.selector );
-				const element = elements.nth( testCase.index );
+				// Target converted widget by text content to avoid page elements
+				const element = elementorFrame.locator( testCase.selector ).filter({ hasText: testCase.text });
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				// Get actual computed style for debugging
@@ -132,6 +131,7 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 					return window.getComputedStyle( el ).letterSpacing;
 				} );
 
+				console.log( `${ testCase.name }: expected ${ testCase.expected }, actual ${ actualValue }` );
 
 				// Verify the letter-spacing CSS property
 				await expect( element ).toHaveCSS( testCase.property, testCase.expected );
@@ -151,14 +151,15 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 			// Frontend verification
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
-					const frontendElements = page.locator( testCase.selector );
-					const frontendElement = frontendElements.nth( testCase.index );
+					// Target converted widget by text content to avoid page elements
+					const frontendElement = page.locator( testCase.selector ).filter({ hasText: testCase.text });
 
 					// Get actual computed style for debugging
 					const actualValue = await frontendElement.evaluate( ( el ) => {
 						return window.getComputedStyle( el ).letterSpacing;
 					} );
 
+					console.log( `Frontend ${ testCase.name }: expected ${ testCase.expected }, actual ${ actualValue }` );
 
 					// Verify the letter-spacing CSS property on frontend
 					await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );

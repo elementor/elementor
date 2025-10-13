@@ -119,7 +119,7 @@ class Unified_Css_Processor {
 		foreach ( $analyzer_rules as $rule ) {
 			$selector = $rule['selector'];
 
-			if ( $this->reset_selector_analyzer->is_simple_element_selector( $selector ) ) {
+			if ( $this->reset_style_detector->is_simple_element_selector( $selector ) ) {
 				++$simple_selectors_found;
 				$conflicts = $conflict_map[ $selector ] ?? [];
 

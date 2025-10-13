@@ -38,16 +38,16 @@ test.describe('Word Spacing Prop Type Conversion @prop-types', () => {
 		wpAdmin = new WpAdminPage(page, testInfo, apiRequests);
 	});
 
-	test('should convert word-spacing with different units correctly', async ({ page, request }) => {
+	test('should convert word-spacing with different units correctly', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h2 style="word-spacing: 2px;">Pixel Word Spacing</h2>
 				<p style="word-spacing: 0.5em;">Em Word Spacing</p>
-				<span style="word-spacing: 1rem;">Rem Word Spacing</span>
+				<div style="word-spacing: 1rem;">Rem Word Spacing</div>
 			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent, '');
+		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent);
 
 		const validation = cssHelper.validateApiResult(apiResult);
 		if (validation.shouldSkip) {
@@ -57,36 +57,35 @@ test.describe('Word Spacing Prop Type Conversion @prop-types', () => {
 		const editUrl = apiResult.edit_url;
 
 		await page.goto(editUrl);
-		await page.waitForLoadState('networkidle');
+		editor = new EditorPage(page, testInfo);
+		await editor.waitForPanelToLoad();
 
 		const previewFrame = page.frameLocator('#elementor-preview-iframe');
 
-		// Test pixel word-spacing
-		const heading = previewFrame.locator('h2').first();
+		// Test pixel word-spacing - target converted widget by text content
+		const heading = previewFrame.locator('h2').filter({ hasText: 'Pixel Word Spacing' });
 		await expect(heading).toHaveCSS('word-spacing', '2px');
 
-		// Test em word-spacing (browser may compute to pixel value)
-		const paragraph = previewFrame.locator('p').first();
+		// Test em word-spacing (browser may compute to pixel value) - target the actual widget content
+		const paragraph = previewFrame.locator('p').filter({ hasText: 'Em Word Spacing' }).first();
 		const paragraphWordSpacing = await paragraph.evaluate(el => getComputedStyle(el).wordSpacing);
 		// Should be either em value or computed pixel value
 		expect(paragraphWordSpacing === '0.5em' || parseFloat(paragraphWordSpacing) > 0).toBeTruthy();
 
-		// Test rem word-spacing - span may be converted to other element
-		const elements = previewFrame.locator('*').filter({ hasText: 'Rem Word Spacing' });
-		if (await elements.count() > 0) {
-			const spanWordSpacing = await elements.first().evaluate(el => getComputedStyle(el).wordSpacing);
-			expect(spanWordSpacing === '1rem' || parseFloat(spanWordSpacing) > 0).toBeTruthy();
-		}
+		// Test rem word-spacing - div elements are converted to div-block widgets, target the actual widget content
+		const divElement = previewFrame.locator('div[data-widget_type="e-div-block"] div, div.e-con > div').filter({ hasText: 'Rem Word Spacing' }).first();
+		const divWordSpacing = await divElement.evaluate(el => getComputedStyle(el).wordSpacing);
+		expect(divWordSpacing === '1rem' || parseFloat(divWordSpacing) > 0).toBeTruthy();
 	});
 
-	test('should handle normal keyword correctly', async ({ page, request }) => {
+	test('should handle normal keyword correctly', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h2 style="word-spacing: normal;">Normal Word Spacing</h2>
 			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent, '');
+		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent);
 
 		const validation = cssHelper.validateApiResult(apiResult);
 		if (validation.shouldSkip) {
@@ -96,25 +95,26 @@ test.describe('Word Spacing Prop Type Conversion @prop-types', () => {
 		const editUrl = apiResult.edit_url;
 
 		await page.goto(editUrl);
-		await page.waitForLoadState('networkidle');
+		editor = new EditorPage(page, testInfo);
+		await editor.waitForPanelToLoad();
 
 		const previewFrame = page.frameLocator('#elementor-preview-iframe');
 
 		// Test normal keyword (should convert to 0px)
-		const heading = previewFrame.locator('h2').first();
+		const heading = previewFrame.locator('h2').filter({ hasText: 'Normal Word Spacing' });
 		await expect(heading).toHaveCSS('word-spacing', '0px');
 	});
 
-	test('should handle positive and negative values', async ({ page, request }) => {
+	test('should handle positive and negative values', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h2 style="word-spacing: 5px;">Positive Word Spacing</h2>
 				<p style="word-spacing: -2px;">Negative Word Spacing</p>
-				<span style="word-spacing: 0px;">Zero Word Spacing</span>
+				<div style="word-spacing: 0px;">Zero Word Spacing</div>
 			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent, '');
+		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent);
 
 		const validation = cssHelper.validateApiResult(apiResult);
 		if (validation.shouldSkip) {
@@ -124,27 +124,25 @@ test.describe('Word Spacing Prop Type Conversion @prop-types', () => {
 		const editUrl = apiResult.edit_url;
 
 		await page.goto(editUrl);
-		await page.waitForLoadState('networkidle');
+		editor = new EditorPage(page, testInfo);
+		await editor.waitForPanelToLoad();
 
 		const previewFrame = page.frameLocator('#elementor-preview-iframe');
 
 		// Test positive word-spacing
-		const heading = previewFrame.locator('h2').first();
+		const heading = previewFrame.locator('h2').filter({ hasText: 'Positive Word Spacing' });
 		await expect(heading).toHaveCSS('word-spacing', '5px');
 
 		// Test negative word-spacing
-		const paragraph = previewFrame.locator('p').first();
+		const paragraph = previewFrame.locator('p').filter({ hasText: 'Negative Word Spacing' });
 		await expect(paragraph).toHaveCSS('word-spacing', '-2px');
 
-		// Test zero word-spacing - span may be converted to other element
-		const elements = previewFrame.locator('*').filter({ hasText: 'Zero Word Spacing' });
-		if (await elements.count() > 0) {
-			const spanWordSpacing = await elements.first().evaluate(el => getComputedStyle(el).wordSpacing);
-			expect(spanWordSpacing).toBe('0px');
-		}
+		// Test zero word-spacing - div elements are converted to div-block widgets, target the actual widget content
+		const divElement = previewFrame.locator('div[data-widget_type="e-div-block"] div, div.e-con > div').filter({ hasText: 'Zero Word Spacing' }).first();
+		await expect(divElement).toHaveCSS('word-spacing', '0px');
 	});
 
-	test('should preserve word-spacing with other typography properties', async ({ page, request }) => {
+	test('should preserve word-spacing with other typography properties', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h2 style="word-spacing: 3px; color: #333; font-weight: bold;">Spaced Bold Dark</h2>
@@ -152,7 +150,7 @@ test.describe('Word Spacing Prop Type Conversion @prop-types', () => {
 			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent, '');
+		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent);
 
 		const validation = cssHelper.validateApiResult(apiResult);
 		if (validation.shouldSkip) {
@@ -162,32 +160,33 @@ test.describe('Word Spacing Prop Type Conversion @prop-types', () => {
 		const editUrl = apiResult.edit_url;
 
 		await page.goto(editUrl);
-		await page.waitForLoadState('networkidle');
+		editor = new EditorPage(page, testInfo);
+		await editor.waitForPanelToLoad();
 
 		const previewFrame = page.frameLocator('#elementor-preview-iframe');
 
 		// Test word-spacing is preserved alongside other properties
-		const heading = previewFrame.locator('h2').first();
+		const heading = previewFrame.locator('h2').filter({ hasText: 'Spaced Bold Dark' });
 		await expect(heading).toHaveCSS('word-spacing', '3px');
 		await expect(heading).toHaveCSS('color', 'rgb(51, 51, 51)');
 		await expect(heading).toHaveCSS('font-weight', '700'); // bold
 
-		const paragraph = previewFrame.locator('p').first();
+		const paragraph = previewFrame.locator('p').filter({ hasText: 'Spaced Justified Text' });
 		await expect(paragraph).toHaveCSS('word-spacing', '1px');
 		await expect(paragraph).toHaveCSS('font-size', '16px');
 		await expect(paragraph).toHaveCSS('text-align', 'justify');
 	});
 
-	test('should handle invalid values gracefully', async ({ page, request }) => {
+	test('should handle invalid values gracefully', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h2 style="word-spacing: invalid-value;">Invalid Word Spacing</h2>
 				<p style="word-spacing: auto;">Auto (Invalid for word-spacing)</p>
-				<span style="word-spacing: inherit;">Inherit Word Spacing</span>
+				<div style="word-spacing: inherit;">Inherit Word Spacing</div>
 			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent, '');
+		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent);
 
 		const validation = cssHelper.validateApiResult(apiResult);
 		if (validation.shouldSkip) {
@@ -197,41 +196,40 @@ test.describe('Word Spacing Prop Type Conversion @prop-types', () => {
 		const editUrl = apiResult.edit_url;
 
 		await page.goto(editUrl);
-		await page.waitForLoadState('networkidle');
+		editor = new EditorPage(page, testInfo);
+		await editor.waitForPanelToLoad();
 
 		const previewFrame = page.frameLocator('#elementor-preview-iframe');
 
 		// Invalid values should fall back to browser defaults or be ignored
 		// The mapper should return null for invalid values, so no atomic prop is applied
-		const heading = previewFrame.locator('h2').first();
+		const heading = previewFrame.locator('h2').filter({ hasText: 'Invalid Word Spacing' });
 		const headingWordSpacing = await heading.evaluate(el => getComputedStyle(el).wordSpacing);
 		// Should use browser default (typically 0px or normal)
 		expect(['0px', 'normal']).toContain(headingWordSpacing);
 
-		const paragraph = previewFrame.locator('p').first();
+		const paragraph = previewFrame.locator('p').filter({ hasText: 'Auto (Invalid for word-spacing)' });
 		const paragraphWordSpacing = await paragraph.evaluate(el => getComputedStyle(el).wordSpacing);
 		// Should use browser default
 		expect(['0px', 'normal']).toContain(paragraphWordSpacing);
 
-		// Inherit should use parent or browser default - span may be converted to other element
-		const elements = previewFrame.locator('*').filter({ hasText: 'Inherit Word Spacing' });
-		if (await elements.count() > 0) {
-			const spanWordSpacing = await elements.first().evaluate(el => getComputedStyle(el).wordSpacing);
-			// Inherit values should resolve to some valid value
-			expect(spanWordSpacing).toBeDefined();
-		}
+		// Inherit should use parent or browser default - div elements are converted to div-block widgets, target the actual widget content
+		const divElement = previewFrame.locator('div[data-widget_type="e-div-block"] div, div.e-con > div').filter({ hasText: 'Inherit Word Spacing' }).first();
+		const divWordSpacing = await divElement.evaluate(el => getComputedStyle(el).wordSpacing);
+		// Inherit values should resolve to some valid value
+		expect(divWordSpacing).toBeDefined();
 	});
 
-	test('should work with different text content and lengths', async ({ page, request }) => {
+	test('should work with different text content and lengths', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h2 style="word-spacing: 4px;">Short text</h2>
 				<p style="word-spacing: 2px;">This is a longer paragraph with multiple words to test word spacing behavior across different content lengths and word counts.</p>
-				<span style="word-spacing: 1px;">Medium length text content</span>
+				<div style="word-spacing: 1px;">Medium length text content</div>
 			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent, '');
+		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent);
 
 		const validation = cssHelper.validateApiResult(apiResult);
 		if (validation.shouldSkip) {
@@ -241,26 +239,24 @@ test.describe('Word Spacing Prop Type Conversion @prop-types', () => {
 		const editUrl = apiResult.edit_url;
 
 		await page.goto(editUrl);
-		await page.waitForLoadState('networkidle');
+		editor = new EditorPage(page, testInfo);
+		await editor.waitForPanelToLoad();
 
 		const previewFrame = page.frameLocator('#elementor-preview-iframe');
 
 		// Test word-spacing applies to different content lengths
-		const heading = previewFrame.locator('h2').first();
+		const heading = previewFrame.locator('h2').filter({ hasText: 'Short text' });
 		await expect(heading).toHaveCSS('word-spacing', '4px');
 
-		const paragraph = previewFrame.locator('p').first();
+		const paragraph = previewFrame.locator('p').filter({ hasText: 'This is a longer paragraph' });
 		await expect(paragraph).toHaveCSS('word-spacing', '2px');
 
-		// Test medium length content - span may be converted to other element
-		const elements = previewFrame.locator('*').filter({ hasText: 'Medium length text content' });
-		if (await elements.count() > 0) {
-			const spanWordSpacing = await elements.first().evaluate(el => getComputedStyle(el).wordSpacing);
-			expect(spanWordSpacing).toBe('1px');
-		}
+		// Test medium length content - div elements are converted to div-block widgets, target the actual widget content
+		const divElement = previewFrame.locator('div[data-widget_type="e-div-block"] div, div.e-con > div').filter({ hasText: 'Medium length text content' }).first();
+		await expect(divElement).toHaveCSS('word-spacing', '1px');
 	});
 
-	test('should convert different element types with word-spacing', async ({ page, request }) => {
+	test('should convert different element types with word-spacing', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h1 style="word-spacing: 3px;">Spaced H1 Heading</h1>
@@ -272,7 +268,7 @@ test.describe('Word Spacing Prop Type Conversion @prop-types', () => {
 			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent, '');
+		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent);
 
 		const validation = cssHelper.validateApiResult(apiResult);
 		if (validation.shouldSkip) {
@@ -282,21 +278,23 @@ test.describe('Word Spacing Prop Type Conversion @prop-types', () => {
 		const editUrl = apiResult.edit_url;
 
 		await page.goto(editUrl);
-		await page.waitForLoadState('networkidle');
+		editor = new EditorPage(page, testInfo);
+		await editor.waitForPanelToLoad();
 
 		const previewFrame = page.frameLocator('#elementor-preview-iframe');
 
 		// Test each element type with different word-spacing values
-		const h1 = previewFrame.locator('h1').first();
+		const h1 = previewFrame.locator('h1').filter({ hasText: 'Spaced H1 Heading' });
 		await expect(h1).toHaveCSS('word-spacing', '3px');
 
-		const h2 = previewFrame.locator('h2').first();
+		const h2 = previewFrame.locator('h2').filter({ hasText: 'Spaced H2 Heading' });
 		await expect(h2).toHaveCSS('word-spacing', '2px');
 
-		const paragraph = previewFrame.locator('p').first();
+		const paragraph = previewFrame.locator('p').filter({ hasText: 'Spaced paragraph text' });
 		await expect(paragraph).toHaveCSS('word-spacing', '1px');
 
-		const blockquote = previewFrame.locator('blockquote').first();
+		// blockquote elements are converted to e-paragraph widgets, so look for p elements
+		const blockquote = previewFrame.locator('p').filter({ hasText: 'Spaced blockquote content' });
 		await expect(blockquote).toHaveCSS('word-spacing', '4px');
 
 		// Note: em and strong elements may be converted to other elements
@@ -314,16 +312,16 @@ test.describe('Word Spacing Prop Type Conversion @prop-types', () => {
 		}
 	});
 
-	test('should handle extreme values correctly', async ({ page, request }) => {
+	test('should handle extreme values correctly', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h2 style="word-spacing: 50px;">Very Large Spacing</h2>
 				<p style="word-spacing: -10px;">Very Negative Spacing</p>
-				<span style="word-spacing: 0.1px;">Very Small Spacing</span>
+				<div style="word-spacing: 0.1px;">Very Small Spacing</div>
 			</div>
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent, '');
+		const apiResult = await cssHelper.convertHtmlWithCss(request, htmlContent);
 
 		const validation = cssHelper.validateApiResult(apiResult);
 		if (validation.shouldSkip) {
@@ -333,22 +331,20 @@ test.describe('Word Spacing Prop Type Conversion @prop-types', () => {
 		const editUrl = apiResult.edit_url;
 
 		await page.goto(editUrl);
-		await page.waitForLoadState('networkidle');
+		editor = new EditorPage(page, testInfo);
+		await editor.waitForPanelToLoad();
 
 		const previewFrame = page.frameLocator('#elementor-preview-iframe');
 
 		// Test extreme values are preserved
-		const heading = previewFrame.locator('h2').first();
+		const heading = previewFrame.locator('h2').filter({ hasText: 'Very Large Spacing' });
 		await expect(heading).toHaveCSS('word-spacing', '50px');
 
-		const paragraph = previewFrame.locator('p').first();
+		const paragraph = previewFrame.locator('p').filter({ hasText: 'Very Negative Spacing' });
 		await expect(paragraph).toHaveCSS('word-spacing', '-10px');
 
-		// Test very small spacing - span may be converted to other element
-		const elements = previewFrame.locator('*').filter({ hasText: 'Very Small Spacing' });
-		if (await elements.count() > 0) {
-			const spanWordSpacing = await elements.first().evaluate(el => getComputedStyle(el).wordSpacing);
-			expect(spanWordSpacing).toBe('0.1px');
-		}
+		// Test very small spacing - div elements are converted to div-block widgets, target the actual widget content
+		const divElement = previewFrame.locator('div[data-widget_type="e-div-block"] div, div.e-con > div').filter({ hasText: 'Very Small Spacing' }).first();
+		await expect(divElement).toHaveCSS('word-spacing', '0.1px');
 	});
 });

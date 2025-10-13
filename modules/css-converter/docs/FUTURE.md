@@ -16,6 +16,155 @@
 - **Approach**: Fall back to CSS files or global classes for proper cascade behavior
 - **Note**: For reset styles implementation (Approach 6), pseudo-classes will use standard CSS processing rather than direct widget styling
 
+### **HTML Element Mapping Improvements**
+
+#### **Span Element Text Content Support**
+- **Status**: Partially implemented - spans are converted to flexbox widgets
+- **Issue**: Span elements with text content are mapped to `e-flexbox` instead of text widgets
+- **Impact**: Medium - affects inline text styling and semantic structure
+- **Problem**: Flexbox widgets don't handle text content as effectively as paragraph/heading widgets
+- **Current Behavior**: `<span>Text</span>` → `e-flexbox` widget (container)
+- **Expected Behavior**: `<span>Text</span>` → `e-paragraph` widget (text)
+- **Effort**: Medium - requires logic to detect text-only spans vs container spans
+- **Implementation**:
+  ```php
+  // In widget-mapper.php, update span handling:
+  private function should_convert_span_to_paragraph( $element ) {
+      $text_content = trim( $element['content'] ?? '' );
+      $has_children = ! empty( $element['children'] );
+      
+      // Convert text-only spans to paragraphs for better text handling
+      return ! empty( $text_content ) && ! $has_children;
+  }
+  ```
+- **Test Impact**: Tests using `<span>` for text content should use `<div>` or `<p>` instead
+- **Workaround**: Use `<div>` elements for text content that needs container-like behavior
+
+#### **Blockquote Semantic Mapping Issues**
+- **Status**: Implemented but semantically incorrect
+- **Issue**: `<blockquote>` elements are mapped to `e-paragraph` widgets, losing semantic meaning
+- **Impact**: Medium - affects content semantics and accessibility
+- **Problem**: Blockquotes have specific semantic meaning (quoted content) that paragraphs don't convey
+- **Current Behavior**: `<blockquote>Quote</blockquote>` → `e-paragraph` widget
+- **Expected Behavior**: `<blockquote>Quote</blockquote>` → dedicated `e-blockquote` widget or enhanced `e-paragraph` with quote styling
+- **Test Impact**: Tests expecting `blockquote` elements should look for `p` elements instead
+- **Effort**: High - requires new atomic widget or enhanced paragraph widget with quote semantics
+- **Implementation Options**:
+  ```php
+  // Option 1: Create dedicated blockquote widget
+  'blockquote' => 'e-blockquote',
+  
+  // Option 2: Enhanced paragraph with quote styling
+  private function handle_blockquote( $element ) {
+      $paragraph_widget = $this->handle_paragraph( $element );
+      $paragraph_widget['settings']['quote_style'] = true;
+      $paragraph_widget['settings']['semantic_tag'] = 'blockquote';
+      return $paragraph_widget;
+  }
+  ```
+
+#### **Inline Text Elements Mapping Inconsistencies**
+- **Status**: Partially implemented - inconsistent mapping strategies
+- **Issue**: Inline text elements (`em`, `strong`, `code`, `kbd`, `mark`) are not consistently mapped
+- **Impact**: Medium - affects text formatting and semantic structure
+- **Problem**: Some inline elements are converted, others are ignored, leading to inconsistent behavior
+- **Current Behavior**: 
+  - `<em>` → May be converted to container widgets or ignored
+  - `<strong>` → May be converted to container widgets or ignored
+  - `<code>`, `<kbd>`, `<mark>` → Not explicitly mapped
+- **Expected Behavior**: Consistent handling with preserved semantic meaning
+- **Test Impact**: Tests using inline text elements should use generic selectors or check by text content
+- **Effort**: High - requires comprehensive inline element strategy
+- **Implementation Strategy**:
+  ```php
+  // Inline elements that should preserve text semantics
+  private $inline_text_elements = [
+      'em' => 'e-paragraph', // with italic styling
+      'strong' => 'e-paragraph', // with bold styling
+      'code' => 'e-paragraph', // with monospace styling
+      'kbd' => 'e-paragraph', // with keyboard styling
+      'mark' => 'e-paragraph', // with highlight styling
+  ];
+  
+  private function handle_inline_text_element( $element, $semantic_type ) {
+      $paragraph_widget = $this->handle_paragraph( $element );
+      $paragraph_widget['settings']['semantic_type'] = $semantic_type;
+      return $paragraph_widget;
+  }
+  ```
+
+#### **List Elements Not Supported**
+- **Status**: Not implemented
+- **Issue**: `<ul>`, `<ol>`, `<li>` elements are not mapped to any widgets
+- **Impact**: High - lists are common HTML structures
+- **Problem**: No atomic widgets exist for list structures
+- **Current Behavior**: `<ul><li>Item</li></ul>` → Unsupported, likely skipped
+- **Expected Behavior**: Convert to appropriate list widgets or flexbox containers with list styling
+- **Effort**: High - requires new atomic widgets or complex container mapping
+- **Dependency**: Requires atomic widget support for list structures
+- **Workaround**: Use `<div>` elements with custom styling for list-like structures
+
+#### **Table Elements Not Supported**
+- **Status**: Not implemented
+- **Issue**: `<table>`, `<tr>`, `<td>`, `<th>` elements are not mapped
+- **Impact**: High - tables are important for data presentation
+- **Problem**: No atomic widgets exist for table structures
+- **Current Behavior**: Table elements → Unsupported, likely skipped
+- **Expected Behavior**: Convert to appropriate table widgets or grid containers
+- **Effort**: Very High - requires comprehensive table widget system
+- **Dependency**: Requires atomic widget support for table structures
+- **Workaround**: Use CSS Grid or Flexbox layouts for table-like structures
+
+#### **Form Elements Limited Support**
+- **Status**: Partially implemented - only basic elements supported
+- **Issue**: Complex form elements (`<select>`, `<textarea>`, `<fieldset>`, `<legend>`) not mapped
+- **Impact**: Medium - affects form conversion capabilities
+- **Current Support**: `<button>` → `e-button` widget
+- **Missing Elements**: 
+  - `<select>` → No dropdown widget
+  - `<textarea>` → No textarea widget
+  - `<fieldset>` → No fieldset container
+  - `<legend>` → No legend text widget
+  - `<label>` → No label widget
+- **Effort**: High - requires multiple new atomic widgets
+- **Dependency**: Requires atomic widget support for form elements
+
+#### **HTML Element Mapping Summary**
+
+**Currently Supported Elements:**
+```php
+// From widget-mapper.php - Current mapping rules
+$mapping_rules = [
+    // ✅ Well-supported text elements
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6' => 'e-heading',
+    'p' => 'e-paragraph',
+    
+    // ✅ Well-supported container elements  
+    'div', 'section', 'article', 'aside', 'header', 'footer', 'main', 'nav' => 'e-div-block',
+    
+    // ✅ Well-supported interactive elements
+    'a' => 'e-link',
+    'button' => 'e-button',
+    
+    // ✅ Well-supported media elements
+    'img' => 'e-image',
+    
+    // ⚠️ Problematic mappings (documented above)
+    'span' => 'e-flexbox', // Should be e-paragraph for text content
+    'blockquote' => 'e-paragraph', // Loses semantic meaning
+];
+```
+
+**Testing Implications:**
+- **✅ Safe to test**: `h1-h6`, `p`, `div`, `a`, `button`, `img`
+- **⚠️ Test with caution**: `span` (use `div` instead), `blockquote` (look for `p` elements)
+- **❌ Avoid in tests**: `ul/ol/li`, `table/tr/td`, `select/textarea`, `em/strong/code`
+
+**Development Priority:**
+1. **High Priority**: List elements (`ul`, `ol`, `li`) - very common in HTML
+2. **Medium Priority**: Semantic text elements (`blockquote`, `em`, `strong`) - affects accessibility
+3. **Low Priority**: Table elements, form elements - less common in typical conversions
+
 ### **Property Type Improvements**
 
 #### **Border-Width Keywords Support**
