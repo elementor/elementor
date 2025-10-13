@@ -11,9 +11,6 @@ class Site_Settings extends Export_Runner_Base {
 		'themeStyleSettings',
 		'generalSettings',
 		'experiments',
-		'customCode',
-		'customIcons',
-		'customFonts',
 	];
 
 	public static function get_name(): string {
