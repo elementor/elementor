@@ -34,11 +34,7 @@ export const ONBOARDING_STORAGE_KEYS = {
 };
 
 export function getString( key ) {
-	const value = localStorage.getItem( key );
-	if ( key.includes( 'experiment' ) ) {
-		console.log( `[Storage Debug] getString: key: ${key}, value: ${value}` );
-	}
-	return value;
+	return localStorage.getItem( key );
 }
 
 export function setString( key, value ) {
@@ -46,10 +42,6 @@ export function setString( key, value ) {
 }
 
 export function remove( key ) {
-	if ( key.includes( 'experiment' ) ) {
-		console.warn( `[Storage Debug] REMOVE called for: ${key}` );
-		console.trace( '[Storage Debug] Remove stack trace:' );
-	}
 	localStorage.removeItem( key );
 }
 
@@ -70,23 +62,15 @@ export function setObject( key, value ) {
 	try {
 		const jsonString = JSON.stringify( value );
 		setString( key, jsonString );
-		console.log( `[Storage] setObject success - key: ${key}`, value );
 		return true;
 	} catch ( error ) {
-		console.error( `[Storage] setObject failed - key: ${key}`, error );
 		return false;
 	}
 }
 
 export function getArray( key ) {
 	const storedArray = getObject( key );
-	const result = Array.isArray( storedArray ) ? storedArray : [];
-	
-	if ( key === ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA ) {
-		console.log( `[Storage] getArray - key: ${key}, result:`, result );
-	}
-	
-	return result;
+	return Array.isArray( storedArray ) ? storedArray : [];
 }
 
 export function appendToArray( key, item ) {
@@ -125,9 +109,6 @@ export function clearMultiple( keys ) {
 }
 
 export function clearAllOnboardingData() {
-	console.warn( '[Storage Debug] 🚨 clearAllOnboardingData called!' );
-	console.trace( '[Storage Debug] clearAllOnboardingData stack trace:' );
-	
 	const keysToRemove = [
 		ONBOARDING_STORAGE_KEYS.START_TIME,
 		ONBOARDING_STORAGE_KEYS.INITIATED,
@@ -156,8 +137,6 @@ export function clearAllOnboardingData() {
 		ONBOARDING_STORAGE_KEYS.STEP4_START_TIME,
 	];
 
-	console.warn( '[Storage Debug] Keys to remove (PENDING_EXPERIMENT_DATA excluded):', keysToRemove.length );
-
 	clearMultiple( keysToRemove );
 
 	for ( let i = 1; i <= 4; i++ ) {
@@ -167,9 +146,6 @@ export function clearAllOnboardingData() {
 }
 
 export function clearExperimentData() {
-	console.warn( '[Storage Debug] 🚨 clearExperimentData called - ONLY use for manual cleanup!' );
-	console.trace( '[Storage Debug] clearExperimentData stack trace:' );
-	
 	const experimentKeys = [
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT,
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT101_STARTED,
@@ -179,8 +155,6 @@ export function clearExperimentData() {
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT402_STARTED,
 		ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA,
 	];
-
-	console.warn( '[Storage Debug] Clearing ALL experiment keys (includes PENDING_EXPERIMENT_DATA - may lose unsent data!):', experimentKeys );
 
 	clearMultiple( experimentKeys );
 }

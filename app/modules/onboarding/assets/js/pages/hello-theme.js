@@ -36,19 +36,6 @@ export default function HelloTheme() {
 	 * and skipped.
 	 */
 	useEffect( () => {
-		console.log( `[Onboarding Debug] Hello Theme Page Load: state.currentStep: ${state.currentStep}` );
-		console.log( `[Onboarding Debug] Hello Theme Page Load: pageId: ${pageId}` );
-		console.log( `[Onboarding Debug] Hello Theme Page Load: elementorAppConfig.onboarding:`, elementorAppConfig?.onboarding );
-		
-		// Log all experiment-related localStorage values
-		console.log( `[Onboarding Debug] LocalStorage Experiment Values:` );
-		console.log( `  - EXPERIMENT101_VARIANT: ${localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT )}` );
-		console.log( `  - EXPERIMENT101_STARTED: ${localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT101_STARTED )}` );
-		console.log( `  - EXPERIMENT201_VARIANT: ${localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT )}` );
-		console.log( `  - EXPERIMENT201_STARTED: ${localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED )}` );
-		console.log( `  - EXPERIMENT402_VARIANT: ${localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT )}` );
-		console.log( `  - EXPERIMENT402_STARTED: ${localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT402_STARTED )}` );
-		
 		if ( ! helloInstalledInOnboarding && state.isHelloThemeActivated ) {
 			const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, 'completed' );
 
@@ -197,9 +184,6 @@ export default function HelloTheme() {
 		};
 	} else {
 		actionButton.onClick = () => {
-			console.log( `[Onboarding Debug] Hello Theme Continue Button: state.currentStep: ${state.currentStep}` );
-			console.log( `[Onboarding Debug] Hello Theme Continue Button: Full state:`, state );
-			
 			OnboardingEventTracking.trackStepAction( 2, 'continue_hello_biz' );
 			OnboardingEventTracking.sendHelloBizContinue( state.currentStep );
 			sendNextButtonEvent();

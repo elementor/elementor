@@ -35,12 +35,7 @@ export const ONBOARDING_STEP_NAMES = {
 };
 
 export function canSendEvents() {
-	const canSend = elementorCommon?.config?.editor_events?.can_send_events || false;
-	console.log( '[EventDispatcher] canSendEvents check:', {
-		canSend,
-		editorEventsConfig: elementorCommon?.config?.editor_events,
-	} );
-	return canSend;
+	return elementorCommon?.config?.editor_events?.can_send_events || false;
 }
 
 export function isEventsManagerAvailable() {
@@ -49,25 +44,18 @@ export function isEventsManagerAvailable() {
 }
 
 export function dispatch( eventName, payload = {} ) {
-	console.log( `[EventDispatcher] dispatch called - event: ${eventName}`, payload );
-	
 	if ( ! isEventsManagerAvailable() ) {
-		console.warn( '[EventDispatcher] Events manager not available' );
 		return false;
 	}
 
 	if ( ! canSendEvents() ) {
-		console.warn( '[EventDispatcher] Cannot send events (disabled)' );
 		return false;
 	}
 
 	try {
-		console.log( `[EventDispatcher] Dispatching event: ${eventName}` );
 		const result = elementorCommon.eventsManager.dispatchEvent( eventName, payload );
-		console.log( `[EventDispatcher] Event dispatched successfully: ${eventName}, result:`, result );
 		return result;
 	} catch ( error ) {
-		console.error( `[EventDispatcher] Failed to dispatch event: ${eventName}`, error );
 		return false;
 	}
 }
@@ -105,24 +93,17 @@ function getExperimentConfigs() {
 function getExperimentVariant( experimentId ) {
 	const config = getExperimentConfigs()[ experimentId ];
 	if ( ! config ) {
-		console.log( `[Onboarding Debug] getExperimentVariant: No config found for experiment ${experimentId}` );
 		return null;
 	}
-	const variant = StorageManager.getString( config.variantKey ) || null;
-	console.log( `[Onboarding Debug] getExperimentVariant: Experiment ${experimentId}, variantKey: ${config.variantKey}, variant: ${variant}` );
-	return variant;
+	return StorageManager.getString( config.variantKey ) || null;
 }
 
 function isExperimentEnabled( experimentId ) {
 	const config = getExperimentConfigs()[ experimentId ];
 	if ( ! config ) {
-		console.log( `[Onboarding Debug] isExperimentEnabled: No config found for experiment ${experimentId}` );
 		return false;
 	}
-	const isEnabled = elementorAppConfig?.onboarding?.[ config.enabledKey ] || false;
-	console.log( `[Onboarding Debug] isExperimentEnabled: Experiment ${experimentId}, enabledKey: ${config.enabledKey}, isEnabled: ${isEnabled}` );
-	console.log( `[Onboarding Debug] isExperimentEnabled: elementorAppConfig.onboarding:`, elementorAppConfig?.onboarding );
-	return isEnabled;
+	return elementorAppConfig?.onboarding?.[ config.enabledKey ] || false;
 }
 
 export function createEventPayload( basePayload = {} ) {
@@ -134,8 +115,6 @@ export function createEventPayload( basePayload = {} ) {
 }
 
 export function createStepEventPayload( stepNumber, stepName, additionalData = {} ) {
-	console.log( `[Onboarding Debug] createStepEventPayload: stepNumber: ${stepNumber}, stepName: ${stepName}` );
-	
 	const basePayload = {
 		step_number: stepNumber,
 		step_name: stepName,
@@ -143,25 +122,13 @@ export function createStepEventPayload( stepNumber, stepName, additionalData = {
 	};
 
 	const experiments = getExperimentConfigs();
-	console.log( `[Onboarding Debug] createStepEventPayload: Processing experiments:`, experiments );
-	
 	Object.keys( experiments ).forEach( ( experimentId ) => {
 		const config = experiments[ experimentId ];
-		const stepMeetsMinimum = stepNumber >= config.minStep;
-		const experimentEnabled = isExperimentEnabled( parseInt( experimentId, 10 ) );
-		
-		console.log( `[Onboarding Debug] createStepEventPayload: Experiment ${experimentId} - stepNumber: ${stepNumber}, minStep: ${config.minStep}, stepMeetsMinimum: ${stepMeetsMinimum}, experimentEnabled: ${experimentEnabled}` );
-		
-		if ( stepMeetsMinimum && experimentEnabled ) {
-			const variant = getExperimentVariant( parseInt( experimentId, 10 ) );
-			basePayload[ config.payloadKey ] = variant;
-			console.log( `[Onboarding Debug] createStepEventPayload: Added ${config.payloadKey}: ${variant} to payload` );
-		} else {
-			console.log( `[Onboarding Debug] createStepEventPayload: Skipped experiment ${experimentId} - stepMeetsMinimum: ${stepMeetsMinimum}, experimentEnabled: ${experimentEnabled}` );
+		if ( stepNumber >= config.minStep && isExperimentEnabled( parseInt( experimentId, 10 ) ) ) {
+			basePayload[ config.payloadKey ] = getExperimentVariant( parseInt( experimentId, 10 ) );
 		}
 	} );
 
-	console.log( `[Onboarding Debug] createStepEventPayload: Final basePayload:`, basePayload );
 	return createEventPayload( basePayload );
 }
 
