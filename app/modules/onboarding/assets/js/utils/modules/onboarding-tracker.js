@@ -94,15 +94,16 @@ class OnboardingTracker {
 				isRawPayload: true,
 				payloadBuilder: ( eventData ) => eventData,
 			},
-			EXIT_BUTTON: {
-				eventName: ONBOARDING_EVENTS_MAP.EXIT_BUTTON,
-				storageKey: ONBOARDING_STORAGE_KEYS.PENDING_EXIT_BUTTON,
+			EXIT: {
+				eventName: ONBOARDING_EVENTS_MAP.EXIT,
+				storageKey: ONBOARDING_STORAGE_KEYS.PENDING_EXIT,
 				basePayload: {
 					location: 'plugin_onboarding',
-					trigger: 'exit_button_clicked',
+					trigger: 'user_action',
 				},
 				payloadBuilder: ( eventData ) => ( {
 					action_step: eventData.currentStep,
+					exit_type: eventData.exitType || 'x_button',
 				} ),
 			},
 			AB_101_START_AS_FREE_USER: {
@@ -477,14 +478,6 @@ class OnboardingTracker {
 		this.sendStepEndState( 4 );
 	}
 
-	storeExitEventForLater( exitType, currentStep ) {
-		const exitData = {
-			exitType,
-			currentStep,
-			timestamp: TimingManager.getCurrentTime(),
-		};
-		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_EXIT, exitData );
-	}
 
 	checkAndSendEditorLoadedFromOnboarding() {
 		return PostOnboardingTracker.checkAndSendEditorLoadedFromOnboarding();
@@ -496,7 +489,10 @@ class OnboardingTracker {
 		this.trackStepAction( stepNumber, 'exit_button' );
 		this.sendStepEndState( stepNumber );
 
-		return this.sendEventOrStore( 'EXIT_BUTTON', { currentStep } );
+		return this.sendEventOrStore( 'EXIT', { 
+			currentStep,
+			exitType: 'x_button' 
+		} );
 	}
 
 	trackStepAction( stepNumber, action, additionalData = {} ) {
@@ -698,7 +694,7 @@ class OnboardingTracker {
 		this.sendStoredEvent( 'CONNECT_STATUS' );
 		this.sendStoredEvent( 'STEP1_CLICKED_CONNECT' );
 		this.sendStoredEvent( 'STEP1_END_STATE' );
-		this.sendStoredEvent( 'EXIT_BUTTON' );
+		this.sendStoredEvent( 'EXIT' );
 		this.sendStoredEvent( 'AB_101_START_AS_FREE_USER' );
 	}
 
