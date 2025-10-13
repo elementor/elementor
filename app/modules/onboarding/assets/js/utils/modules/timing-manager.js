@@ -75,7 +75,6 @@ export function createTimeSpentData( stepNumber = null ) {
 
 	if ( totalTimeData ) {
 		result.time_spent = formatTimeForEvent( totalTimeData.timeSpent );
-		result.total_onboarding_time_seconds = totalTimeData.timeSpent;
 		result.onboarding_start_time = totalTimeData.startTime;
 	}
 
