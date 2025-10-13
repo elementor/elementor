@@ -287,7 +287,7 @@ export default function HelloTheme() {
 		}
 	}, [ activateHelloThemeAjaxState.status ] );
 
-	const variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT );
+	const variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT );
 	const ContentComponent = 'B' === variant ? ThemeSelectionContentB : ThemeSelectionContentA;
 
 	return (
