@@ -126,24 +126,26 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 				return;
 			}
 			
-			// Check paragraph widgets for base classes
+			// Check paragraph widgets for base classes (CSS Converter should NOT add them)
 			if ( paragraphWidgetCount > 0 ) {
 				for ( let i = 0; i < paragraphWidgetCount; i++ ) {
 					const widget = paragraphWidgets.nth( i );
 					const paragraph = widget.locator( 'p' );
 					const classes = await paragraph.getAttribute( 'class' );
 					console.log( `Paragraph widget ${i} classes: "${classes}"` );
+					// Base classes are added by atomic widget system, not CSS Converter
 					expect( classes || '' ).not.toContain( 'e-paragraph-base' );
 				}
 			}
 			
-			// Check heading widgets for base classes
+			// Check heading widgets for base classes (CSS Converter should NOT add them)
 			if ( headingWidgetCount > 0 ) {
 				for ( let i = 0; i < headingWidgetCount; i++ ) {
 					const widget = headingWidgets.nth( i );
 					const heading = widget.locator( 'h1, h2, h3, h4, h5, h6' );
 					const classes = await heading.getAttribute( 'class' );
 					console.log( `Heading widget ${i} classes: "${classes}"` );
+					// Base classes are added by atomic widget system, not CSS Converter
 					expect( classes || '' ).not.toContain( 'e-heading-base' );
 				}
 			}
@@ -475,6 +477,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 				for ( let i = 0; i < headingCount; i++ ) {
 					const heading = allHeadings.nth( i );
 					const classes = await heading.getAttribute( 'class' );
+					// Base classes are added by atomic widget system, not CSS Converter
 					expect( classes || '' ).not.toContain( 'e-heading-base' );
 				}
 				expect( headingCount ).toBeGreaterThan( 0 );
@@ -542,7 +545,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			console.log( `Found ${totalFrontendHeadings} headings on frontend` );
 			
 			// Find the heading with CSS class (the one with explicit margin)
-			const headingWithCssClass = page.locator( 'h1, h2, h3, h4, h5, h6' ).locator( '[class*="e-"]' ).first();
+			const headingWithCssClass = page.locator( 'h1, h2, h3, h4, h5, h6' ).locator( '[class*="elementor-element-"]' ).first();
 			
 			if ( await headingWithCssClass.count() === 0 ) {
 				console.log( 'No heading with CSS class found, using first heading for margin test' );

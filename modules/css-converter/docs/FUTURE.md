@@ -68,14 +68,27 @@
   }
   ```
 
-#### **Font Family Custom Mapping**
-- **Status**: Low priority - acceptable behavior
-- **Issue**: System fonts override custom font specifications (Arial, Helvetica, Georgia)
-- **Impact**: Low - system fonts provide excellent fallback and consistent experience
-- **Current Behavior**: Elementor applies system font stack: `-apple-system, system-ui, "Segoe UI", Roboto...`
-- **Expected Behavior**: Preserve custom font-family declarations from CSS
-- **Effort**: Medium - requires font-family property mapper integration
-- **Decision**: ACCEPTABLE - System fonts are a reasonable default. Custom fonts can be added later if user demand warrants it.
+#### **Font Family Property Mapper**
+- **Status**: Future implementation - moved from Step 4 scope
+- **Missing**: Complete font-family property mapper with font stack support
+- **Impact**: Medium - affects typography customization
+- **Requirements**:
+  - Support CSS font stacks: `"Arial, sans-serif"`
+  - Handle quoted font names: `"Times New Roman", serif`
+  - Support web fonts: `"Open Sans", Arial, sans-serif`
+  - Validate against common font families
+  - Handle generic families: `serif`, `sans-serif`, `monospace`, `cursive`, `fantasy`
+- **Expected Structure**:
+  ```php
+  [
+      '$$type' => 'string',
+      'value' => 'Arial, sans-serif'
+  ]
+  ```
+- **Implementation**: Font_Family_Property_Mapper extending Atomic_Property_Mapper_Base
+- **Testing**: font-family-prop-type.test.ts with font stack validation
+- **Effort**: Medium - requires font stack parsing and validation
+- **Decision**: Moved to future scope to focus on core typography properties first
 
 ---
 
@@ -130,6 +143,32 @@
 - **Lazy Loading**: On-demand mapper loading
 - **Batch Processing**: Improved batch conversion performance
 
+#### **Class Generation Optimization** (Moved from Step 4)
+- **Status**: Future enhancement - not current priority
+- **Scope**: Cache generated class IDs to avoid regeneration for identical styles
+- **Implementation**: 
+  ```php
+  class Atomic_Widget_Data_Formatter {
+      private $class_id_cache = [];
+      
+      private function get_cached_class_id( array $resolved_styles ): ?string {
+          $style_hash = md5( serialize( $resolved_styles ) );
+          return $this->class_id_cache[ $style_hash ] ?? null;
+      }
+  }
+  ```
+- **Benefits**: Reduce duplicate class generation for repeated styles
+- **Effort**: Medium - requires cache invalidation strategy
+
+#### **Conversion Pipeline Optimization** (Moved from Step 4)
+- **Status**: Future enhancement - not current priority
+- **Scope**: 
+  - Parallel processing for independent widget conversions
+  - Stream processing for very large HTML documents
+  - Early termination for unsupported elements
+- **Benefits**: Improved performance for large pages (100+ elements)
+- **Effort**: High - requires significant architectural changes
+
 ---
 
 ## 📚 **Documentation**
@@ -156,6 +195,41 @@
 - **Feature**: Automated testing with random CSS values
 - **Benefit**: Find edge cases and improve robustness
 - **Implementation**: Property value generators
+
+### **Enhanced Error Handling** (Moved from Step 4)
+- **Status**: Future enhancement - current error handling is sufficient for POC
+- **Scope**:
+  - Pre-conversion validation of HTML structure
+  - Post-conversion validation of atomic widget data
+  - Graceful degradation for unsupported features
+  - Detailed error messages with context
+  - Warning system for non-critical issues
+  - Debug mode with extensive logging
+- **Implementation**:
+  ```php
+  class Conversion_Validator {
+      public function validate_atomic_widget_data( array $widget_data ): Validation_Result {
+          $errors = [];
+          $warnings = [];
+          
+          // Validate required fields
+          if ( empty( $widget_data['widgetType'] ) ) {
+              $errors[] = 'Missing required field: widgetType';
+          }
+          
+          // Validate atomic prop format
+          foreach ( $widget_data['settings'] ?? [] as $key => $value ) {
+              if ( ! $this->is_valid_atomic_prop( $value ) ) {
+                  $warnings[] = "Setting '$key' may not be in correct atomic format";
+              }
+          }
+          
+          return new Validation_Result( $errors, $warnings );
+      }
+  }
+  ```
+- **Benefits**: Better error reporting and debugging capabilities
+- **Effort**: Medium - requires comprehensive validation framework
 
 ---
 

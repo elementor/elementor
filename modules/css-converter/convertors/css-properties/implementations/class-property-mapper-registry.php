@@ -173,6 +173,18 @@ class Class_Property_Mapper_Registry {
 		// Register text-transform mapper
 		$this->mappers['text-transform'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Text_Transform_Property_Mapper();
 		
+		// Register line-height mapper
+		$this->mappers['line-height'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Line_Height_Property_Mapper();
+		
+		// Register text-decoration mapper
+		$this->mappers['text-decoration'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Text_Decoration_Property_Mapper();
+		
+		// Register font-style mapper
+		$this->mappers['font-style'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Font_Style_Property_Mapper();
+		
+		// Register word-spacing mapper
+		$this->mappers['word-spacing'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Word_Spacing_Property_Mapper();
+		
 	}
 
 	public function register( string $property, object $mapper ): void {

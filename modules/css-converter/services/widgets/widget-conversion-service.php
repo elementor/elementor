@@ -228,8 +228,6 @@ class Widget_Conversion_Service {
 
 
 	private function note_removed_methods_no_longer_needed_due_to_optimized_global_classes_pipeline(): void {
-		// Intentionally empty - apply_inline_styles_to_widgets and apply_inline_styles_recursive methods removed
-		// All styling now goes through the optimized global classes pipeline
 	}
 
 
@@ -440,37 +438,28 @@ class Widget_Conversion_Service {
 		foreach ( $widgets as $widget ) {
 			$resolved_styles = $widget['resolved_styles'] ?? [];
 			
-			// Convert resolved styles to applied format
 			$applied_styles = $this->convert_resolved_styles_to_applied_format( $resolved_styles );
 			
-			// Add applied styles to widget (Widget Creator expects them under 'applied_styles' key)
-			$prepared_widget = $widget;
-			$prepared_widget['applied_styles'] = $applied_styles;
-			
-			// UNIFIED APPROACH: Keep resolved_styles for unified widget creation via Atomic_Widget_Data_Formatter
-			
-			// Recursively prepare child widgets
-			if ( ! empty( $widget['children'] ) ) {
-				$prepared_widget['children'] = $this->prepare_widgets_recursively( $widget['children'] );
-			}
-			
-			$prepared_widgets[] = $prepared_widget;
+		$prepared_widget = $widget;
+		$prepared_widget['applied_styles'] = $applied_styles;
+		
+		if ( ! empty( $widget['children'] ) ) {
+			$prepared_widget['children'] = $this->prepare_widgets_recursively( $widget['children'] );
+		}
+		
+		$prepared_widgets[] = $prepared_widget;
 		}
 		
 		return $prepared_widgets;
 	}
 
 	private function create_widgets_with_resolved_styles( array $widgets_with_resolved_styles, array $options, array $global_classes = null ): array {
-		// Convert widgets with resolved styles to the format expected by existing widget creator
 		$styled_widgets = $this->prepare_widgets_recursively( $widgets_with_resolved_styles );
 		
-		// Use pre-generated global classes if provided, otherwise generate from resolved styles (legacy fallback)
 		if ( $global_classes === null ) {
 			$global_classes = $this->generate_global_classes_from_resolved_styles( $widgets_with_resolved_styles );
 		}
 		
-		
-		// Create CSS processing result with generated global classes
 		$css_processing_result = [
 			'global_classes' => $global_classes,
 			'widget_styles' => [],
@@ -485,7 +474,6 @@ class Widget_Conversion_Service {
 		];
 		
 		
-		// Use the existing widget creator
 		return $this->widget_creator->create_widgets( $styled_widgets, $css_processing_result, $options );
 	}
 
@@ -532,11 +520,10 @@ class Widget_Conversion_Service {
 				continue;
 			}
 			
+				
+			$class_name = ltrim( $selector, '.' );
 			
-			// Convert CSS class selector to global class format
-			$class_name = ltrim( $selector, '.' ); // Remove the dot
-			
-			// Convert properties to the format expected by Widget Creator
+			$converted_properties = [];
 			$converted_properties = [];
 			foreach ( $properties as $property ) {
 				$prop_name = $property['property'] ?? '';
@@ -564,14 +551,12 @@ class Widget_Conversion_Service {
 		$global_classes = [];
 		$css_selector_styles = [];
 		
-		// Collect all CSS selector styles from all widgets
 		foreach ( $widgets_with_resolved_styles as $widget_index => $widget ) {
 			$resolved_styles = $widget['resolved_styles'] ?? [];
 			
 			foreach ( $resolved_styles as $property => $winning_style ) {
 				$source = $winning_style['source'] ?? 'no-source';
 				
-				// Only create global classes for CSS selector styles (not inline styles)
 				if ( isset( $winning_style['source'] ) && $winning_style['source'] === 'css-selector' ) {
 					$selector = $winning_style['selector'] ?? 'unknown-selector';
 					
@@ -579,18 +564,15 @@ class Widget_Conversion_Service {
 						$css_selector_styles[ $selector ] = [];
 					}
 					
-					// Store the complete winning style data for proper conversion
 					$css_selector_styles[ $selector ][ $property ] = $winning_style;
 				}
 			}
 		}
 		
-		// Convert CSS selector styles to global classes in the format expected by Widget Creator
 		foreach ( $css_selector_styles as $selector => $properties ) {
-			// Generate class name from selector (e.g., ".text-bold" -> "text-bold")
 			$class_name = ltrim( $selector, '.' );
 			
-			// Convert to the format expected by Widget Creator (see lines 761-781 in widget-creator.php)
+			$formatted_properties = [];
 			$formatted_properties = [];
 			foreach ( $properties as $property => $winning_style ) {
 				$atomic_value = $winning_style['converted_property'] ?? $winning_style['value'];
@@ -621,17 +603,14 @@ class Widget_Conversion_Service {
 		
 		
 		try {
-			// Check if Elementor Plugin is available
 			if ( ! defined( 'ELEMENTOR_VERSION' ) || ! \Elementor\Plugin::$instance ) {
 				return;
 			}
 			
-			// Check if kits manager is available
 			if ( ! \Elementor\Plugin::$instance->kits_manager ) {
 				return;
 			}
 			
-			// Get the active kit
 			$active_kit = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
 			if ( ! $active_kit ) {
 				return;
@@ -640,10 +619,8 @@ class Widget_Conversion_Service {
 			
 			$repository = Global_Classes_Repository::make();
 			
-			// Determine context: preview for editor, frontend for published pages
 			$is_preview = isset( $options['context'] ) && $options['context'] === 'preview';
 			if ( ! $is_preview ) {
-				// Check if we're in the editor or preview mode
 				$is_preview = is_preview() || ( defined( 'ELEMENTOR_VERSION' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
 			}
 			
@@ -651,20 +628,16 @@ class Widget_Conversion_Service {
 			$repository->context( $context );
 			
 			
-			// Get existing global classes from Kit
 			$existing = $repository->all();
 			$existing_items = $existing->get_items()->all();
 			$existing_order = $existing->get_order()->all();
 			
-			
-			// CRITICAL FIX: Convert global classes to proper Elementor atomic format with 'variants' structure
 			$formatted_global_classes = [];
 			foreach ( $global_classes as $class_id => $class_data ) {
-				// Convert CSS Converter format to Elementor atomic format
 				$styles = $class_data['styles'] ?? $class_data;
 				$properties = $styles['properties'] ?? [];
 				
-				// Convert CSS properties to atomic props format
+				$atomic_props = [];
 				$atomic_props = [];
 				foreach ( $properties as $property => $value ) {
 					$atomic_props[ $property ] = $this->convert_css_property_to_atomic_format( $property, $value );
@@ -672,8 +645,8 @@ class Widget_Conversion_Service {
 				
 				$formatted_global_classes[ $class_id ] = [
 					'id' => $class_id,
-					'label' => $class_id, // Use class ID as label for CSS Converter generated classes
-					'type' => 'class', // CRITICAL FIX: Add the missing type field that atomic system expects
+					'label' => $class_id,
+					'type' => 'class',
 					'variants' => [
 						[
 							'meta' => [
@@ -687,15 +660,11 @@ class Widget_Conversion_Service {
 				];
 			}
 			
-			// Merge CSS Converter classes with existing classes
 			$updated_items = array_merge( $existing_items, $formatted_global_classes );
 			$updated_order = array_merge( $existing_order, array_keys( $formatted_global_classes ) );
 			
-			// Remove duplicates from order and re-index to ensure proper array (not associative)
 			$updated_order = array_values( array_unique( $updated_order ) );
 			
-			
-			// Store in Kit meta - this will trigger cache invalidation automatically
 			$repository->put( $updated_items, $updated_order );
 			
 			
@@ -714,7 +683,6 @@ class Widget_Conversion_Service {
 	}
 
 	private function convert_css_property_to_atomic_format( string $property, $value ) {
-		// Convert CSS properties to atomic format based on the atomic styles schema
 		switch ( $property ) {
 			case 'background':
 				return $this->convert_background_to_atomic_format( $value );
@@ -731,23 +699,18 @@ class Widget_Conversion_Service {
 				return $this->convert_size_to_atomic_format( $value );
 			
 			default:
-				// For unsupported properties, return as string and let atomic system handle it
 				return $value;
 		}
 	}
 
 	private function convert_background_to_atomic_format( $value ) {
-		// Handle different background types
 		if ( is_string( $value ) ) {
-			// Check if it's a gradient
 			if ( strpos( $value, 'gradient' ) !== false ) {
-				// For now, store gradients as custom CSS since atomic format is complex
 				return [
 					'custom_css' => $value
 				];
 			}
 			
-			// Check if it's a color
 			if ( $this->is_color_value( $value ) ) {
 				return [
 					'color' => [
@@ -758,7 +721,6 @@ class Widget_Conversion_Service {
 			}
 		}
 		
-		// Fallback to custom CSS
 		return [
 			'custom_css' => $value
 		];
@@ -783,11 +745,10 @@ class Widget_Conversion_Service {
 			];
 		}
 		
-		return $value; // Fallback to original value
+		return $value;
 	}
 
 	private function is_color_value( $value ) {
-		// Simple color detection
 		return preg_match( '/^#[0-9a-f]{3,6}$/i', $value ) || 
 		       preg_match( '/^rgb\(/', $value ) || 
 		       preg_match( '/^rgba\(/', $value ) ||
@@ -795,7 +756,6 @@ class Widget_Conversion_Service {
 	}
 
 	private function normalize_color_value( $value ) {
-		// Convert color names to hex values
 		$color_map = [
 			'red' => '#ff0000',
 			'blue' => '#0000ff',
@@ -810,11 +770,10 @@ class Widget_Conversion_Service {
 			return $color_map[ $lower_value ];
 		}
 		
-		return $value; // Return as-is for hex, rgb, rgba values
+		return $value;
 	}
 
 	private function parse_size_value( $value ) {
-		// Parse size values like "16px", "1em", "100%"
 		if ( preg_match( '/^(\d*\.?\d+)(px|em|rem|%|vh|vw|auto)$/', $value, $matches ) ) {
 			return [
 				'size' => floatval( $matches[1] ),
@@ -857,8 +816,6 @@ class Widget_Conversion_Service {
 	}
 
 	private function extract_all_css_including_inline_styles( string $html, array $css_urls, bool $follow_imports, array &$elements ): string {
-		// CRITICAL FIX: Don't extract inline styles as CSS classes when using unified processor
-		// The unified processor handles inline styles directly via collect_inline_styles_from_widgets
 		return $this->extract_all_css( $html, $css_urls, $follow_imports, $elements, false );
 	}
 
@@ -883,7 +840,6 @@ class Widget_Conversion_Service {
 	}
 
 	private function ensure_inline_styles_use_optimized_global_classes_pipeline(): void {
-		// Intentionally empty - inline styles now always use optimized global classes pipeline
 	}
 
 	private function ensure_widgets_created_is_array_to_fix_count_error( array $creation_result ) {
@@ -899,7 +855,6 @@ class Widget_Conversion_Service {
 	}
 
 	private function skip_css_rule_creation_when_not_creating_global_classes(): void {
-		// Intentionally empty - skipping CSS rule creation when not creating global classes
 	}
 
 	private function fetch_external_css_files_using_unified_processor( array $css_urls, bool $follow_imports ): array {
@@ -946,7 +901,6 @@ class Widget_Conversion_Service {
 	}
 
 	private function skip_processing_element_without_inline_css(): void {
-		// Intentionally empty - skipping element without inline CSS
 	}
 
 	private function process_child_elements_recursively_passing_counter_by_reference( array $element, int &$element_counter ): string {
@@ -962,7 +916,6 @@ class Widget_Conversion_Service {
 	}
 
 	private function handle_css_fetch_errors_without_logging_for_performance(): void {
-		// Intentionally empty - error handling without logging for performance
 	}
 
 	private function is_already_full_url( string $url ): bool {
@@ -978,7 +931,6 @@ class Widget_Conversion_Service {
 	}
 
 	private function skip_debug_logging_for_performance(): void {
-		// Intentionally empty - debug logging removed for performance optimization
 	}
 
 }

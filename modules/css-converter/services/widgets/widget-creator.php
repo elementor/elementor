@@ -436,9 +436,6 @@ class Widget_Creator {
 
 		$classes = [];
 
-		// NOTE: CSS classes from HTML attributes are now handled by Atomic_Widget_Data_Formatter
-		// to avoid duplication. This Widget_Creator only handles generated classes.
-
 		$has_global_classes = ! empty( $applied_styles['global_classes'] );
 		$has_computed_styles = ! empty( $applied_styles['computed_styles'] ) || ! empty( $applied_styles['id_styles'] );
 		$has_unsupported_props = ! empty( $this->current_unsupported_props );
@@ -1192,7 +1189,6 @@ class Widget_Creator {
 	private function handle_database_error_if_occurred(): void {
 		global $wpdb;
 		if ( $wpdb->last_error ) {
-			// Database error handling is intentionally minimal for now
 		}
 	}
 

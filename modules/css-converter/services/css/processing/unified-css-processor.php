@@ -58,7 +58,6 @@ class Unified_Css_Processor {
 		}
 
 		
-		// Check if CSS contains h1 selectors
 		if ( strpos($css, 'h1') !== false ) {
 			$h1_matches = [];
 			preg_match_all('/h1\s*\{[^}]*\}/', $css, $h1_matches);
@@ -69,7 +68,6 @@ class Unified_Css_Processor {
 		$this->log_css_parsing_start( $css, $widgets );
 		$rules = $this->parse_css_and_extract_rules( $css );
 		
-		// Debug: Check if h1 rules made it through parsing
 		$h1_rules_found = 0;
 		foreach ( $rules as $rule ) {
 			if ( isset($rule['selector']) && $rule['selector'] === 'h1' ) {
@@ -79,14 +77,12 @@ class Unified_Css_Processor {
 		
 		$this->log_extracted_rules( $rules );
 		
-		// APPROACH 6: Analyze simple element selectors for direct widget styling
 		$this->analyze_and_apply_direct_element_styles( $rules, $widgets );
 		
 		$this->process_css_rules_for_widgets( $rules, $widgets );
 	}
 
 	private function log_css_parsing_start( string $css, array $widgets ): void {
-		// Debug logging removed for performance
 	}
 
 	private function parse_css_and_extract_rules( string $css ): array {
@@ -168,7 +164,6 @@ class Unified_Css_Processor {
 		$important = $rule['important'] ?? false;
 		
 		
-		// Find widgets that match this element selector
 		$matching_widgets = $this->find_widgets_by_element_type( $selector, $widgets );
 		
 		
@@ -460,11 +455,9 @@ class Unified_Css_Processor {
 		foreach ( $widgets as $widget ) {
 			$widget_id = $this->get_widget_identifier( $widget );
 
-			// Resolve styles for this widget
 			$resolved_styles = $this->unified_style_manager->resolve_styles_for_widget( $widget );
 			$widget['resolved_styles'] = $resolved_styles;
 
-			// Recursively resolve styles for child widgets
 			if ( ! empty( $widget['children'] ) ) {
 				$widget['children'] = $this->resolve_styles_recursively( $widget['children'] );
 			}
@@ -600,11 +593,9 @@ class Unified_Css_Processor {
 	}
 
 	private function skip_debug_logging_for_performance(): void {
-		// Intentionally empty - debug logging removed for performance optimization
 	}
 
 	private function log_sample_rules_for_debugging( array $rules ): void {
-		// Intentionally empty - debug logging removed for performance optimization
 	}
 
 	private function analyze_element_selector_conflicts_for_direct_styling( array $analyzer_rules ): array {
@@ -738,7 +729,6 @@ class Unified_Css_Processor {
 					$all_css .= "/* CSS from: {$url} */\n" . $css_content . "\n\n";
 					$fetched_urls[] = $url;
 
-					// Follow @import statements if requested
 					if ( $follow_imports ) {
 						$import_urls = $this->extract_import_urls( $css_content, $url );
 						foreach ( $import_urls as $import_url ) {
@@ -798,12 +788,10 @@ class Unified_Css_Processor {
 	private function extract_import_urls( string $css_content, string $base_url ): array {
 		$import_urls = [];
 		
-		// Match @import statements
 		if ( preg_match_all( '/@import\s+(?:url\()?["\']?([^"\'()]+)["\']?\)?[^;]*;/i', $css_content, $matches ) ) {
 			foreach ( $matches[1] as $import_url ) {
 				$import_url = trim( $import_url );
 				
-				// Convert relative URLs to absolute
 				if ( ! filter_var( $import_url, FILTER_VALIDATE_URL ) ) {
 					$import_url = $this->resolve_relative_url( $import_url, $base_url );
 				}
@@ -823,17 +811,14 @@ class Unified_Css_Processor {
 			return $relative_url;
 		}
 
-		// Handle protocol-relative URLs
 		if ( strpos( $relative_url, '//' ) === 0 ) {
 			return ( $base_parts['scheme'] ?? 'https' ) . ':' . $relative_url;
 		}
 
-		// Handle absolute paths
 		if ( strpos( $relative_url, '/' ) === 0 ) {
 			return ( $base_parts['scheme'] ?? 'https' ) . '://' . $base_parts['host'] . $relative_url;
 		}
 
-		// Handle relative paths
 		$base_path = dirname( $base_parts['path'] ?? '' );
 		if ( $base_path === '.' ) {
 			$base_path = '';
@@ -857,7 +842,6 @@ class Unified_Css_Processor {
 			$selector = $rule['selector'] ?? '';
 			$properties = $rule['properties'] ?? [];
 			
-			// Check if this is a CSS class selector (starts with .)
 			if ( strpos( $selector, '.' ) === 0 && ! empty( $properties ) ) {
 				$css_class_rules[] = [
 					'selector' => $selector,
