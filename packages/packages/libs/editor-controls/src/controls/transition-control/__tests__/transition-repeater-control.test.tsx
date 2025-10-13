@@ -2,8 +2,12 @@ import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
 import { screen, waitFor } from '@testing-library/react';
 
+import { useProLicenseStatus } from '../../../hooks/use-pro-license-status';
 import { TransitionRepeaterControl } from '../transition-repeater-control';
 
+jest.mock( '../../../hooks/use-pro-license-status', () => ( {
+	useProLicenseStatus: jest.fn( () => ( { active: true, expired: false } ) ),
+} ) );
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
 	getSelectedElements: jest.fn( () => [
@@ -311,5 +315,65 @@ describe( 'TransitionRepeaterControl', () => {
 				},
 			],
 		} );
+	} );
+} );
+
+describe( 'TransitionRepeaterControl - License gating', () => {
+	const propType = createTransitionPropType();
+	const baseProps = { setValue: jest.fn(), value: { $$type: 'transition', value: [] }, bind: 'transition', propType };
+	const mockUseProLicenseStatus = useProLicenseStatus as jest.MockedFunction< typeof useProLicenseStatus >;
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockUseProLicenseStatus.mockReturnValue( { active: true, expired: false } );
+	} );
+
+	it( 'should disable Add button when license is expired and All properties already selected', async () => {
+		// Arrange
+		mockUseProLicenseStatus.mockReturnValue( { active: false, expired: true } );
+
+		const value = {
+			$$type: 'transition',
+			value: [
+				{
+					$$type: 'selection-size',
+					value: {
+						selection: {
+							$$type: 'key-value',
+							value: {
+								key: { $$type: 'string', value: 'All properties' },
+								value: { $$type: 'string', value: 'all' },
+							},
+						},
+						size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
+					},
+				},
+			],
+		};
+
+		// Act
+		renderControl(
+			<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
+			{ ...baseProps, value }
+		);
+
+		// Assert
+		const addButton = await screen.findByLabelText( 'Add transitions item' );
+		expect( addButton ).toBeDisabled();
+	} );
+
+	it( 'should keep Add button enabled when license is expired but All properties not selected', async () => {
+		// Arrange
+		mockUseProLicenseStatus.mockReturnValue( { active: false, expired: true } );
+
+		// Act
+		renderControl(
+			<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
+			baseProps
+		);
+
+		// Assert
+		const addButton = await screen.findByLabelText( 'Add transitions item' );
+		expect( addButton ).toBeEnabled();
 	} );
 } );
