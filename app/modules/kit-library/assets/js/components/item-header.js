@@ -30,7 +30,7 @@ import './item-header.scss';
  */
 function useKitCallToActionButton(
 	model,
-	{ apply, isApplyLoading, onConnect, onClick },
+	{ apply, isApplyLoading, onConnect, onClick, onUpgrade },
 ) {
 	const { type, subscriptionPlan } = useKitCallToAction( model.accessTier );
 	const promotionUrl = useAddKitPromotionUTM(
@@ -67,6 +67,9 @@ function useKitCallToActionButton(
 				size: 'sm',
 				url: promotionUrl,
 				target: '_blank',
+				onClick: ( e ) => {
+					onUpgrade?.( e );
+				},
 				includeHeaderBtnClass: false,
 			};
 		}
@@ -156,12 +159,17 @@ export default function ItemHeader( props ) {
 			onError: handleKitError,
 		} );
 
+	const { type: callToActionType, subscriptionPlan } = useKitCallToAction( props.model.accessTier );
+
 	const applyButton = useKitCallToActionButton( props.model, {
 		onConnect: () => setIsConnectDialogOpen( true ),
 		apply,
 		isApplyLoading,
 		onClick: () => {
 			tracking.trackKitdemoApplyClicked( props.model.id, props.model.title, props.model.accessTier );
+		},
+		onUpgrade: () => {
+			tracking.trackKitdemoUpgradeClicked( props.model.id, props.model.title, subscriptionPlan );
 		},
 	} );
 

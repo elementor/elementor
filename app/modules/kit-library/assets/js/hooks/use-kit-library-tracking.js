@@ -92,10 +92,11 @@ export const useKitLibraryTracking = () => {
 		trackWithActivity( 'kitlib_search_submitted', properties, callback );
 	}, [ addTriggerToProperties, trackWithActivity ] );
 
-	const trackKitlibFavoriteClicked = useCallback( ( kitId, title, callback = null, trigger = 'click' ) => {
+	const trackKitlibFavoriteClicked = useCallback( ( kitId, title, favorited, callback = null, trigger = 'click' ) => {
 		const properties = addTriggerToProperties( {
 			kit_id: kitId,
 			kit_title: title,
+			kit_fav_status: favorited,
 		}, trigger );
 		trackWithActivity( 'kitlib_favorite_clicked', properties, callback );
 	}, [ addTriggerToProperties, trackWithActivity ] );
