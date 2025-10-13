@@ -320,10 +320,6 @@ class OnboardingTracker {
 	sendUpgradeNowStep3( selectedFeatures, currentStep ) {
 		const proFeaturesChecked = this.extractSelectedFeatureKeys( selectedFeatures );
 
-		this.trackStepAction( currentStep, 'upgrade_now_s3', {
-			pro_features_checked: proFeaturesChecked,
-		} );
-
 		return EventDispatcher.dispatchStepEvent(
 			ONBOARDING_EVENTS_MAP.UPGRADE_NOW_S3,
 			currentStep,
