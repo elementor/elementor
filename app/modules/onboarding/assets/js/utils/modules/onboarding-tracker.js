@@ -23,20 +23,22 @@ class OnboardingTracker {
 					action_step: eventData.currentStep,
 					skip_timestamp: eventData.timestamp,
 				} ),
+				excludeFields: [ 'step_number', 'trigger' ],
 			},
-			TOP_UPGRADE: {
-				eventName: ONBOARDING_EVENTS_MAP.TOP_UPGRADE,
-				storageKey: ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
-				isArray: true,
-				basePayload: {
-					location: 'plugin_onboarding',
-					trigger: 'upgrade_interaction',
-				},
-				payloadBuilder: ( eventData ) => ( {
-					action_step: eventData.currentStep,
-					upgrade_clicked: eventData.upgradeClicked,
-				} ),
+		TOP_UPGRADE: {
+			eventName: ONBOARDING_EVENTS_MAP.TOP_UPGRADE,
+			storageKey: ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
+			isArray: true,
+			basePayload: {
+				location: 'plugin_onboarding',
+				trigger: 'upgrade_interaction',
 			},
+			payloadBuilder: ( eventData ) => ( {
+				action_step: eventData.currentStep,
+				upgrade_clicked: eventData.upgradeClicked,
+			} ),
+			excludeFields: [ 'event_timestamp', 'upgrade_location' ],
+		},
 			CREATE_MY_ACCOUNT: {
 				eventName: ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT,
 				storageKey: ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT,
@@ -196,6 +198,12 @@ class OnboardingTracker {
 			},
 		);
 
+		if ( config.excludeFields ) {
+			config.excludeFields.forEach( ( field ) => {
+				delete eventPayload[ field ];
+			} );
+		}
+
 		return this.dispatchEvent( config.eventName, eventPayload );
 	}
 
@@ -250,6 +258,12 @@ class OnboardingTracker {
 					...config.payloadBuilder( eventData ),
 				},
 			);
+
+			if ( config.excludeFields ) {
+				config.excludeFields.forEach( ( field ) => {
+					delete eventPayload[ field ];
+				} );
+			}
 
 			this.dispatchEvent( config.eventName, eventPayload );
 		};
