@@ -152,14 +152,9 @@ export default function Layout( props ) {
 		} );
 	}
 
-	const containerClasses = [ 'eps-app', 'e-onboarding' ];
-	if ( props.className ) {
-		containerClasses.push( props.className );
-	}
-
 	return (
 		<div className="eps-app__lightbox">
-			<div className={ containerClasses.join( ' ' ) }>
+			<div className={ `eps-app e-onboarding ${ props.className || '' }` }>
 				{ ! state.isLibraryConnected &&
 					<Connect
 						buttonRef={ createAccountButton.elRef }
