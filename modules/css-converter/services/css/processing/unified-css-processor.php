@@ -35,11 +35,13 @@ class Unified_Css_Processor {
 		$this->collect_all_styles_from_sources( $css, $widgets );
 		$resolved_widgets = $this->resolve_styles_recursively( $widgets );
 		$debug_info = $this->unified_style_manager->get_debug_info();
+		$css_class_rules = $this->extract_css_class_rules_for_global_classes( $css );
 
 		
 		return [
 			'widgets' => $resolved_widgets,
 			'stats' => $debug_info,
+			'css_class_rules' => $css_class_rules,
 		];
 	}
 
@@ -838,5 +840,32 @@ class Unified_Css_Processor {
 		}
 
 		return ( $base_parts['scheme'] ?? 'https' ) . '://' . $base_parts['host'] . $base_path . '/' . $relative_url;
+	}
+
+	private function extract_css_class_rules_for_global_classes( string $css ): array {
+		if ( empty( $css ) ) {
+			return [];
+		}
+
+		$parsed_css = $this->css_parser->parse( $css );
+		$document = $parsed_css->get_document();
+		$all_rules = $this->extract_rules_from_document( $document );
+		
+		$css_class_rules = [];
+		
+		foreach ( $all_rules as $rule ) {
+			$selector = $rule['selector'] ?? '';
+			$properties = $rule['properties'] ?? [];
+			
+			// Check if this is a CSS class selector (starts with .)
+			if ( strpos( $selector, '.' ) === 0 && ! empty( $properties ) ) {
+				$css_class_rules[] = [
+					'selector' => $selector,
+					'properties' => $properties,
+				];
+			}
+		}
+		
+		return $css_class_rules;
 	}
 }
