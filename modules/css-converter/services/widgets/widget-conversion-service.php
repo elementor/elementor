@@ -447,9 +447,7 @@ class Widget_Conversion_Service {
 			$prepared_widget = $widget;
 			$prepared_widget['applied_styles'] = $applied_styles;
 			
-			// CRITICAL FIX: Remove resolved_styles to ensure widgets use the legacy applied_styles path
-			// This prevents duplicate class extraction between Atomic_Widget_Data_Formatter and merge_settings_with_styles
-			unset( $prepared_widget['resolved_styles'] );
+			// UNIFIED APPROACH: Keep resolved_styles for unified widget creation via Atomic_Widget_Data_Formatter
 			
 			// Recursively prepare child widgets
 			if ( ! empty( $widget['children'] ) ) {
@@ -721,6 +719,7 @@ class Widget_Conversion_Service {
 			case 'background':
 				return $this->convert_background_to_atomic_format( $value );
 			
+			case 'background-color':
 			case 'color':
 				return $this->convert_color_to_atomic_format( $value );
 			
@@ -858,7 +857,9 @@ class Widget_Conversion_Service {
 	}
 
 	private function extract_all_css_including_inline_styles( string $html, array $css_urls, bool $follow_imports, array &$elements ): string {
-		return $this->extract_all_css( $html, $css_urls, $follow_imports, $elements, true );
+		// CRITICAL FIX: Don't extract inline styles as CSS classes when using unified processor
+		// The unified processor handles inline styles directly via collect_inline_styles_from_widgets
+		return $this->extract_all_css( $html, $css_urls, $follow_imports, $elements, false );
 	}
 
 	private function map_html_elements_to_widgets( array $elements ): array {

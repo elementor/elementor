@@ -323,11 +323,7 @@ class Widget_Creator {
 	}
 
 	private function convert_widget_to_elementor_format( $widget ) {
-		if ( $this->widget_uses_new_unified_approach( $widget ) ) {
-			return $this->convert_widget_with_resolved_styles_to_elementor_format( $widget );
-		}
-		
-		return $this->fallback_to_legacy_applied_styles_approach( $widget );
+		return $this->convert_widget_with_resolved_styles_to_elementor_format( $widget );
 	}
 
 	private function convert_widget_with_resolved_styles_to_elementor_format( $widget ) {
@@ -338,14 +334,14 @@ class Widget_Creator {
 		$widget_id = wp_generate_uuid4();
 		$mapped_type = $this->map_to_elementor_widget_type( $widget_type );
 		
-		$formatted_widget_data = $this->create_widget_data_using_new_data_formatter( $resolved_styles, $widget );
+		$formatted_widget_data = $this->create_widget_data_using_new_data_formatter( $resolved_styles, $widget, $widget_id );
 		
 		if ( $this->requires_link_to_button_conversion( $widget_type, $mapped_type ) ) {
 			$settings = $this->convert_link_settings_to_button_format( $settings );
 		}
 		
 		$final_settings = $this->merge_settings_without_style_merging( $settings, $formatted_widget_data['settings'] );
-		
+
 		if ( 'e-div-block' === $mapped_type ) {
 			$elementor_widget = [
 				'id' => $widget_id,
@@ -382,64 +378,6 @@ class Widget_Creator {
 		return $elementor_widget;
 	}
 
-	private function convert_widget_with_applied_styles_to_elementor_format( $widget ) {
-		$this->current_widget_class_id = null;
-		
-		$widget_type = $widget['widget_type'];
-		$settings = $widget['settings'] ?? [];
-
-		$this->current_widget_type = $widget_type;
-		$this->current_widget = $widget; // CRITICAL FIX: Set current widget for class preservation
-		$applied_styles = $widget['applied_styles'] ?? [];
-
-		if ( ! empty( $applied_styles['computed_styles'] ) ) {
-			$this->map_css_to_v4_props( $applied_styles['computed_styles'] );
-		}
-
-		$widget_id = wp_generate_uuid4();
-		$mapped_type = $this->map_to_elementor_widget_type( $widget_type );
-		
-		if ( 'e-link' === $widget_type && 'e-button' === $mapped_type ) {
-			$settings = $this->convert_link_settings_to_button_format( $settings );
-		}
-		
-		$merged_settings = $this->merge_settings_with_styles( $settings, $applied_styles );
-		
-		if ( 'e-div-block' === $mapped_type ) {
-			$elementor_widget = [
-				'id' => $widget_id,
-				'elType' => 'e-div-block',
-				'settings' => $merged_settings,
-				'isInner' => false,
-				'styles' => $this->convert_styles_to_v4_format( $applied_styles, $widget_type ),
-				'editor_settings' => [
-					'css_converter_widget' => true,
-				],
-				'version' => '0.0',
-			];
-		} else {
-			$elementor_widget = [
-				'id' => $widget_id,
-				'elType' => 'widget',
-				'widgetType' => $mapped_type,
-				'settings' => $merged_settings,
-				'isInner' => false,
-				'styles' => $this->convert_styles_to_v4_format( $applied_styles, $widget_type ),
-				'editor_settings' => [
-					'css_converter_widget' => true,
-				],
-				'version' => '0.0',
-			];
-		}
-
-		if ( ! empty( $widget['elements'] ) ) {
-			$elementor_widget['elements'] = $this->convert_widgets_to_elementor_format( $widget['elements'] );
-		} else {
-			$elementor_widget['elements'] = [];
-		}
-
-		return $elementor_widget;
-	}
 
 	private function map_to_elementor_widget_type( $widget_type ) {
 		$mapping = [
@@ -1215,16 +1153,9 @@ class Widget_Creator {
 		return empty( $props );
 	}
 
-	private function widget_uses_new_unified_approach( array $widget ): bool {
-		return isset( $widget['resolved_styles'] );
-	}
 
-	private function fallback_to_legacy_applied_styles_approach( array $widget ): array {
-		return $this->convert_widget_with_applied_styles_to_elementor_format( $widget );
-	}
-
-	private function create_widget_data_using_new_data_formatter( array $resolved_styles, array $widget ): array {
-		return $this->data_formatter->format_widget_data( $resolved_styles, $widget );
+	private function create_widget_data_using_new_data_formatter( array $resolved_styles, array $widget, string $widget_id ): array {
+		return $this->data_formatter->format_widget_data( $resolved_styles, $widget, $widget_id );
 	}
 
 	private function requires_link_to_button_conversion( string $widget_type, string $mapped_type ): bool {
