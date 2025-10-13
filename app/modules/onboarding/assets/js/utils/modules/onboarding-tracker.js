@@ -540,6 +540,31 @@ class OnboardingTracker {
 		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
 	}
 
+	shouldSendReturnEvent( choiceData ) {
+		return ! choiceData.return_event_sent &&
+			choiceData.original_choice &&
+			choiceData.original_choice !== choiceData.site_starter;
+	}
+
+	createReturnEventPayloadFromStoredData( choiceData ) {
+		return EventDispatcher.createStepEventPayload(
+			4,
+			ONBOARDING_STEP_NAMES.SITE_STARTER,
+			{
+				location: 'plugin_onboarding',
+				trigger: 'user_returns_to_onboarding',
+				return_to_onboarding: choiceData.original_choice,
+				original_choice_timestamp: choiceData.timestamp,
+				new_choice: choiceData.site_starter,
+			},
+		);
+	}
+
+	markReturnEventAsSent( choiceData ) {
+		choiceData.return_event_sent = true;
+		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
+	}
+
 	handleSiteStarterChoice( siteStarter ) {
 		TimingManager.trackStepStartTime( 4 );
 		this.storeSiteStarterChoice( siteStarter );
