@@ -142,6 +142,9 @@ export function clearAllOnboardingData() {
 	for ( let i = 1; i <= 4; i++ ) {
 		const clickDataKey = `elementor_onboarding_click_${ i }_data`;
 		remove( clickDataKey );
+
+		const endStateSentKey = `step${ i }_end_state_sent`;
+		remove( endStateSentKey );
 	}
 }
 

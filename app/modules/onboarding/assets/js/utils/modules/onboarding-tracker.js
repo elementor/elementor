@@ -523,6 +523,11 @@ class OnboardingTracker {
 			return;
 		}
 
+		const endStateSentKey = `step${ stepNumber }_end_state_sent`;
+		if ( StorageManager.exists( endStateSentKey ) ) {
+			return;
+		}
+
 		let eventData = EventDispatcher.createStepEventPayload( stepNumber, stepName, {
 			location: 'plugin_onboarding',
 			trigger: 'user_redirects_out_of_step',
@@ -541,6 +546,7 @@ class OnboardingTracker {
 			this.sendHoverEventsFromStepActions( actions, stepNumber );
 			this.dispatchEvent( eventName, eventData );
 			StorageManager.remove( storageKey );
+			StorageManager.setString( endStateSentKey, 'true' );
 			TimingManager.clearStepStartTime( stepNumber );
 			this.sendStoredEventsIfConnected();
 		} else if ( 1 === stepNumber ) {
@@ -549,6 +555,7 @@ class OnboardingTracker {
 			this.sendHoverEventsFromStepActions( actions, stepNumber );
 			this.dispatchEvent( eventName, eventData );
 			StorageManager.remove( storageKey );
+			StorageManager.setString( endStateSentKey, 'true' );
 			TimingManager.clearStepStartTime( stepNumber );
 		}
 	}
