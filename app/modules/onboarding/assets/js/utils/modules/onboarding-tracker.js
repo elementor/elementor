@@ -307,7 +307,6 @@ class OnboardingTracker {
 			ONBOARDING_STEP_NAMES.PRO_FEATURES,
 			{
 				location: 'plugin_onboarding',
-				trigger: eventsConfig.triggers.click,
 				pro_features_checked: proFeaturesChecked,
 			},
 		);
@@ -334,7 +333,6 @@ class OnboardingTracker {
 				ONBOARDING_STEP_NAMES.HELLO_BIZ,
 				{
 					location: 'plugin_onboarding',
-					trigger: eventsConfig.triggers.click,
 				},
 			);
 		}
