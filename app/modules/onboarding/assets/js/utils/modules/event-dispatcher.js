@@ -173,6 +173,22 @@ export function getClickEventName( clickCount ) {
 	return eventMap[ clickCount ] || null;
 }
 
+export function formatClickAction( title, selector ) {
+	if ( ! title && ! selector ) {
+		return '';
+	}
+	
+	if ( ! title ) {
+		return selector;
+	}
+	
+	if ( ! selector ) {
+		return title;
+	}
+	
+	return `${ title } / ${ selector }`;
+}
+
 export function dispatchClickEvent( clickCount, clickData, siteStarterChoice = null ) {
 	const eventName = getClickEventName( clickCount );
 	if ( ! eventName ) {
@@ -184,8 +200,8 @@ export function dispatchClickEvent( clickCount, clickData, siteStarterChoice = n
 		editor_loaded_from_onboarding_source: siteStarterChoice,
 	} );
 
-	eventData[ `post_onboarding_${ clickNumber }_click_action_title` ] = clickData.title;
-	eventData[ `post_onboarding_${ clickNumber }_click_action_selector` ] = clickData.selector;
+	const formattedAction = formatClickAction( clickData.title, clickData.selector );
+	eventData[ `post_onboarding_${ clickNumber }_click_action` ] = formattedAction;
 
 	return dispatch( eventName, eventData );
 }
