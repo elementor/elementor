@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../../bound-prop-context';
 import { createControl } from '../../create-control';
+import { useProLicenseStatus } from '../../hooks/use-pro-license-active';
 import { RepeatableControl } from '../repeatable-control';
 import { SelectionSizeControl } from '../selection-size-control';
 import { ALL_PROPERTIES_VALUE, initialTransitionValue, transitionProperties } from './data';
@@ -102,22 +103,23 @@ export const TransitionRepeaterControl = createControl(
 		const { value } = useBoundProp( childArrayPropTypeUtil );
 		const disabledItems = useMemo( () => getDisabledItems( value ), [ value ] );
 
-		const isExpiredLike = useMemo( () => {
-			const win = window as unknown as { elementorPro?: { config?: { isActive?: boolean } } };
-			const isProActive = win?.elementorPro?.config?.isActive === true;
-			return ! isProActive;
-		}, [] );
+		const license = useProLicenseStatus();
+		const isLicenseExpired = license.expired;
 
 		const isAllSelected = useMemo( () => {
 			if ( ! Array.isArray( value ) ) {
 				return false;
 			}
+
 			return value.some( ( item ) => {
 				const sel = item.value?.selection;
-				if ( typeof sel?.value === 'string' ) {
+				if ( sel?.$$type === 'string' ) {
 					return sel.value === ALL_PROPERTIES_VALUE;
 				}
-				return sel?.value?.value?.value === ALL_PROPERTIES_VALUE;
+				if ( sel?.$$type === 'key-value' ) {
+					return sel.value?.value?.value === ALL_PROPERTIES_VALUE;
+				}
+				return false;
 			} );
 		}, [ value ] );
 
@@ -136,11 +138,14 @@ export const TransitionRepeaterControl = createControl(
 				initialValues={ initialTransitionValue }
 				childControlConfig={ {
 					...getChildControlConfig( recentlyUsedList, disabledItems ),
-					props: { ...getSelectionSizeProps( recentlyUsedList, disabledItems ), sizeDisabled: isExpiredLike },
+					props: {
+						...getSelectionSizeProps( recentlyUsedList, disabledItems ),
+						sizeDisabled: isLicenseExpired,
+					},
 				} }
 				propKey="transition"
 				addItemTooltipProps={ {
-					disabled: ! currentStyleIsNormal || ( isExpiredLike && isAllSelected ),
+					disabled: ! currentStyleIsNormal || ( isLicenseExpired && isAllSelected ),
 					enableTooltip: ! currentStyleIsNormal,
 					tooltipContent: disableAddItemTooltipContent,
 				} }
