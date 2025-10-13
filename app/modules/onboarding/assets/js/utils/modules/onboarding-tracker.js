@@ -24,20 +24,20 @@ class OnboardingTracker {
 				} ),
 				excludeFields: [ 'step_number', 'trigger' ],
 			},
-		TOP_UPGRADE: {
-			eventName: ONBOARDING_EVENTS_MAP.TOP_UPGRADE,
-			storageKey: ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
-			isArray: true,
-			basePayload: {
-				location: 'plugin_onboarding',
-				trigger: 'upgrade_interaction',
+			TOP_UPGRADE: {
+				eventName: ONBOARDING_EVENTS_MAP.TOP_UPGRADE,
+				storageKey: ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
+				isArray: true,
+				basePayload: {
+					location: 'plugin_onboarding',
+					trigger: 'upgrade_interaction',
+				},
+				payloadBuilder: ( eventData ) => ( {
+					action_step: eventData.currentStep,
+					upgrade_clicked: eventData.upgradeClicked,
+				} ),
+				excludeFields: [ 'event_timestamp', 'upgrade_location', 'trigger' ],
 			},
-			payloadBuilder: ( eventData ) => ( {
-				action_step: eventData.currentStep,
-				upgrade_clicked: eventData.upgradeClicked,
-			} ),
-			excludeFields: [ 'event_timestamp', 'upgrade_location', 'trigger' ],
-		},
 			CREATE_MY_ACCOUNT: {
 				eventName: ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT,
 				storageKey: ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT,
@@ -384,8 +384,6 @@ class OnboardingTracker {
 
 	sendCoreOnboardingInitiated() {
 		const startTime = TimingManager.initializeOnboardingStartTime();
-		const currentTime = TimingManager.getCurrentTime();
-		const totalOnboardingTime = Math.round( ( currentTime - startTime ) / 1000 );
 
 		const eventData = {
 			location: 'plugin_onboarding',
@@ -499,7 +497,6 @@ class OnboardingTracker {
 		this.sendStepEndState( 4 );
 	}
 
-
 	checkAndSendEditorLoadedFromOnboarding() {
 		return PostOnboardingTracker.checkAndSendEditorLoadedFromOnboarding();
 	}
@@ -510,9 +507,9 @@ class OnboardingTracker {
 		this.trackStepAction( stepNumber, 'exit_button' );
 		this.sendStepEndState( stepNumber );
 
-		return this.sendEventOrStore( 'EXIT', { 
+		return this.sendEventOrStore( 'EXIT', {
 			currentStep,
-			exitType: 'x_button' 
+			exitType: 'x_button',
 		} );
 	}
 

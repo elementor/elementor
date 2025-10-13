@@ -177,15 +177,15 @@ export function formatClickAction( title, selector ) {
 	if ( ! title && ! selector ) {
 		return '';
 	}
-	
+
 	if ( ! title ) {
 		return selector;
 	}
-	
+
 	if ( ! selector ) {
 		return title;
 	}
-	
+
 	return `${ title } / ${ selector }`;
 }
 
