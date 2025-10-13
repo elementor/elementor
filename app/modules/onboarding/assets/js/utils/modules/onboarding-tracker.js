@@ -303,7 +303,7 @@ class OnboardingTracker {
 
 	sendHelloBizContinue( stepNumber ) {
 		const numericStepNumber = this.mapPageIdToStepNumber( stepNumber ) || stepNumber;
-		
+
 		if ( EventDispatcher.canSendEvents() ) {
 			return EventDispatcher.dispatchStepEvent(
 				ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE,
@@ -918,7 +918,7 @@ class OnboardingTracker {
 
 	onStepLoad( currentStep ) {
 		const stepNumber = this.getStepNumber( currentStep );
-		
+
 		TimingManager.trackStepStartTime( stepNumber );
 
 		if ( 1 === stepNumber || 'account' === currentStep ) {
