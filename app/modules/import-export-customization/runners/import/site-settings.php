@@ -16,6 +16,9 @@ class Site_Settings extends Import_Runner_Base {
 		'themeStyleSettings',
 		'generalSettings',
 		'experiments',
+		'customCode',
+		'customIcons',
+		'customFonts',
 	];
 
 	/**
