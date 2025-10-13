@@ -143,16 +143,16 @@ export default function Cloud( {
 					</Grid>
 					<Grid item className="e-kit-library__index-layout-heading-quota">
 						{ ! isLoadingQuota && quotaData?.storage && (
-							<QuotaBar 
-								used={ quotaData.storage.currentUsage } 
-								total={ quotaData.storage.threshold } 
+							<QuotaBar
+								used={ quotaData.storage.currentUsage }
+								total={ quotaData.storage.threshold }
 								unit={ quotaData.storage.unit }
 							/>
 						) }
 					</Grid>
 				</Grid>
 				{ ! isLoadingQuota && quotaData?.storage && (
-					<QuotaNotification 
+					<QuotaNotification
 						usagePercentage={ Math.min( ( quotaData.storage.currentUsage / quotaData.storage.threshold ) * 100, 100 ) }
 					/>
 				) }

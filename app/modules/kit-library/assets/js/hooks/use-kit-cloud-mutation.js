@@ -7,11 +7,11 @@ export function useKitCloudMutations() {
 
 	const remove = useMutation(
 		( id ) => $e.data.delete( 'cloud-kits/index', { id } ),
-		{ 
+		{
 			onSuccess: () => {
 				queryClient.invalidateQueries( kitsKey );
 				queryClient.invalidateQueries( quotaKey );
-			}
+			},
 		},
 	);
 

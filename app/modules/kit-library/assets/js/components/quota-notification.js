@@ -6,14 +6,15 @@ const QUOTA_NOTIFICATION_CLASSNAME = 'e-kit-library__quota-notification';
 
 export default function QuotaNotification( { usagePercentage, onDismiss } ) {
 	const getNotificationState = () => {
-		if ( usagePercentage >= 100 ) return 'alert';
-		if ( usagePercentage >= 80 ) return 'warning';
+		if ( usagePercentage >= 100 ) { return 'alert' };
+		if ( usagePercentage >= 80 ) { return 'warning' };
+
 		return null;
 	};
 
 	const getNotificationContent = () => {
 		const state = getNotificationState();
-		
+
 		if ( 'alert' === state ) {
 			return {
 				icon: 'eicon-alert',
@@ -28,8 +29,8 @@ export default function QuotaNotification( { usagePercentage, onDismiss } ) {
 						text: __( 'Upgrade now', 'elementor' ),
 						href: 'https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/',
 						type: 'link'
-					}
-				]
+					},
+				],
 			};
 		}
 
@@ -47,8 +48,8 @@ export default function QuotaNotification( { usagePercentage, onDismiss } ) {
 						text: __( 'Upgrade now', 'elementor' ),
 						href: 'https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/',
 						type: 'link'
-					}
-				]
+					},
+				],
 			};
 		}
 

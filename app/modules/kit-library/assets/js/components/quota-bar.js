@@ -26,10 +26,21 @@ export default function QuotaBar( { used = 0, total = 15, unit = 'GB', label = '
 	const usagePercentage = Math.min( ( displayValues.used / displayValues.total ) * 100, 100 );
 
 	const getUsageState = () => {
-		if ( usagePercentage === 0 ) return 'empty';
-		if ( usagePercentage >= 100 ) return 'alert';
-		if ( usagePercentage >= 80 ) return 'warning';
-		return 'normal';
+		const USAGE_THRESHOLDS = [
+			{ threshold: 0, state: 'empty' },
+			{ threshold: 80, state: 'warning' },
+			{ threshold: 100, state: 'alert' },
+		];
+
+		if ( 0 === usagePercentage ) {
+			return 'empty';
+		}
+
+		const matchingThreshold = USAGE_THRESHOLDS
+			.reverse()
+			.find( ( { threshold } ) => usagePercentage >= threshold );
+
+		return matchingThreshold ? matchingThreshold.state : 'normal';
 	};
 
 	const getProgressBarClass = () => {
@@ -70,7 +81,7 @@ export default function QuotaBar( { used = 0, total = 15, unit = 'GB', label = '
 					</Text>
 				</div>
 				<div className={ getProgressContainerClass() }>
-					<div 
+					<div
 						className={ getProgressBarClass() }
 						style={ { width: `${ usagePercentage }%` } }
 					/>
@@ -78,7 +89,7 @@ export default function QuotaBar( { used = 0, total = 15, unit = 'GB', label = '
 				{ shouldShowUpgradeMessage() && (
 					<div className={ `${ QUOTA_BAR_CLASSNAME }__upgrade-message` }>
 						<Text variant="xs" tag="span">
-							{ __( 'To get more space', 'elementor' ) } 
+							{ __( 'To get more space', 'elementor' ) }
 						</Text>
 						<a
 							className={ `${ QUOTA_BAR_CLASSNAME }__upgrade-link` }
