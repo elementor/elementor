@@ -62,6 +62,7 @@ class Controller extends Base_Controller {
 		] );
 
 		$this->register_endpoint( new Endpoints\Eligibility( $this ) );
+		$this->register_endpoint( new Endpoints\Quota( $this ) );
 	}
 
 	public function get_permission_callback( $request ) {

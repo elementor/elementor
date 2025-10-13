@@ -4,9 +4,12 @@ import IndexHeader from '../index/index-header';
 import IndexSidebar from '../index/index-sidebar';
 import KitListCloud from '../../components/kit-list-cloud';
 import Layout from '../../components/layout';
+import QuotaBar from '../../components/quota-bar';
+import QuotaNotification from '../../components/quota-notification';
 import SearchInput from '../../components/search-input';
 import useCloudKits from '../../hooks/use-cloud-kits';
 import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
+import useCloudKitsQuota from 'elementor-app/hooks/use-cloud-kits-quota';
 import useMenuItems from '../../hooks/use-menu-items';
 import useConnectState from '../../hooks/use-connect-state';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
@@ -44,6 +47,10 @@ export default function Cloud( {
 	} = useCloudKits();
 
 	const { data: cloudKitsData, isLoading: isCheckingEligibility, refetch: refetchEligibility } = useCloudKitsEligibility( {
+		enabled: isConnected,
+	} );
+
+	const { data: quotaData, isLoading: isLoadingQuota } = useCloudKitsQuota( {
 		enabled: isConnected,
 	} );
 
@@ -134,7 +141,21 @@ export default function Cloud( {
 							} }
 						/>
 					</Grid>
+					<Grid item className="e-kit-library__index-layout-heading-quota">
+						{ ! isLoadingQuota && quotaData?.storage && (
+							<QuotaBar 
+								used={ quotaData.storage.currentUsage } 
+								total={ quotaData.storage.threshold } 
+								unit={ quotaData.storage.unit }
+							/>
+						) }
+					</Grid>
 				</Grid>
+				{ ! isLoadingQuota && quotaData?.storage && (
+					<QuotaNotification 
+						usagePercentage={ Math.min( ( quotaData.storage.currentUsage / quotaData.storage.threshold ) * 100, 100 ) }
+					/>
+				) }
 				<Content className="e-kit-library__index-layout-main">
 					<>
 						{
