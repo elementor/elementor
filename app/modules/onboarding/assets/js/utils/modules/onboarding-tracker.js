@@ -351,14 +351,11 @@ class OnboardingTracker {
 		const currentTime = TimingManager.getCurrentTime();
 		const totalOnboardingTime = Math.round( ( currentTime - startTime ) / 1000 );
 
-		const eventData = TimingManager.addTimingToEventData( {
+		const eventData = {
 			location: 'plugin_onboarding',
-			trigger: 'core_onboarding_initiated',
-			step_number: 1,
 			step_name: ONBOARDING_STEP_NAMES.ONBOARDING_START,
 			onboarding_start_time: startTime,
-			total_onboarding_time_seconds: totalOnboardingTime,
-		} );
+		};
 
 		this.dispatchEvent( ONBOARDING_EVENTS_MAP.CORE_ONBOARDING, eventData );
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.INITIATED );
