@@ -204,8 +204,11 @@ export const useKitLibraryTracking = () => {
 
 		sessionEndedRef.current = true;
 
+		const durationMs = Date.now() - sessionStartTime.current;
+		const durationSeconds = Math.round( durationMs / 1000 );
+
 		trackMixpanelEvent( 'kitlib_session_ended', {
-			duration_ms: Date.now() - sessionStartTime.current,
+			duration_s: durationSeconds,
 			actions_count: actionsCount.current,
 			filters_count: filtersCount.current,
 			demo_views: demoViews.current,
