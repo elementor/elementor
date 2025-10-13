@@ -128,6 +128,19 @@ class OnboardingTracker {
 				stepNameOverride: ONBOARDING_STEP_NAMES.CONNECT,
 				excludeFields: [ 'trigger', 'step_number' ],
 			},
+			AB_101_START_AS_FREE_USER: {
+				eventName: ONBOARDING_EVENTS_MAP.AB_101_START_AS_FREE_USER,
+				storageKey: ONBOARDING_STORAGE_KEYS.PENDING_AB_101_START_AS_FREE_USER,
+				basePayload: {
+					location: 'plugin_onboarding',
+					trigger: 'continue_as_guest_clicked',
+				},
+				payloadBuilder: ( eventData ) => ( {
+					action_step: eventData.currentStep,
+				} ),
+				stepOverride: 1,
+				stepNameOverride: ONBOARDING_STEP_NAMES.CONNECT,
+			},
 		};
 	}
 
@@ -500,6 +513,31 @@ class OnboardingTracker {
 			this.dispatchEventWithoutTrigger( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
 			this.markReturnEventAsSent( choiceData );
 		}
+	}
+
+	shouldSendReturnEvent( choiceData ) {
+		return ! choiceData.return_event_sent &&
+			choiceData.original_choice &&
+			choiceData.original_choice !== choiceData.site_starter;
+	}
+
+	createReturnEventPayloadFromStoredData( choiceData ) {
+		return EventDispatcher.createStepEventPayload(
+			4,
+			ONBOARDING_STEP_NAMES.SITE_STARTER,
+			{
+				location: 'plugin_onboarding',
+				trigger: 'user_returns_to_onboarding',
+				return_to_onboarding: choiceData.original_choice,
+				original_choice_timestamp: choiceData.timestamp,
+				new_choice: choiceData.site_starter,
+			},
+		);
+	}
+
+	markReturnEventAsSent( choiceData ) {
+		choiceData.return_event_sent = true;
+		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
 	}
 
 	shouldSendReturnEvent( choiceData ) {
