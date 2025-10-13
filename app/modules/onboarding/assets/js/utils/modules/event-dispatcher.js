@@ -109,7 +109,6 @@ function isExperimentEnabled( experimentId ) {
 export function createEventPayload( basePayload = {} ) {
 	return {
 		location: 'plugin_onboarding',
-		trigger: 'user_action',
 		...basePayload,
 	};
 }
@@ -135,7 +134,6 @@ export function createStepEventPayload( stepNumber, stepName, additionalData = {
 export function createEditorEventPayload( additionalData = {} ) {
 	const basePayload = {
 		location: 'editor',
-		trigger: 'elementor_loaded',
 		...additionalData,
 	};
 

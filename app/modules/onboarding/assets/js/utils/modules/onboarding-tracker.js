@@ -17,7 +17,6 @@ class OnboardingTracker {
 				storageKey: ONBOARDING_STORAGE_KEYS.PENDING_SKIP,
 				basePayload: {
 					location: 'plugin_onboarding',
-					trigger: 'skip_clicked',
 				},
 				payloadBuilder: ( eventData ) => ( {
 					action_step: eventData.currentStep,
@@ -37,7 +36,7 @@ class OnboardingTracker {
 				action_step: eventData.currentStep,
 				upgrade_clicked: eventData.upgradeClicked,
 			} ),
-			excludeFields: [ 'event_timestamp', 'upgrade_location' ],
+			excludeFields: [ 'event_timestamp', 'upgrade_location', 'trigger' ],
 		},
 			CREATE_MY_ACCOUNT: {
 				eventName: ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT,
@@ -50,6 +49,7 @@ class OnboardingTracker {
 					action_step: eventData.currentStep,
 					create_account_clicked: this.validateCreateAccountClicked( eventData.createAccountClicked ),
 				} ),
+				excludeFields: [ 'trigger' ],
 			},
 			CREATE_ACCOUNT_STATUS: {
 				eventName: ONBOARDING_EVENTS_MAP.CREATE_ACCOUNT_STATUS,
@@ -61,6 +61,7 @@ class OnboardingTracker {
 				payloadBuilder: ( eventData ) => ( {
 					onboarding_create_account_status: eventData.status,
 				} ),
+				excludeFields: [ 'trigger' ],
 			},
 			CONNECT_STATUS: {
 				eventName: ONBOARDING_EVENTS_MAP.CONNECT_STATUS,
@@ -76,6 +77,7 @@ class OnboardingTracker {
 				} ),
 				stepOverride: 1,
 				stepNameOverride: ONBOARDING_STEP_NAMES.CONNECT,
+				excludeFields: [ 'trigger' ],
 			},
 			STEP1_CLICKED_CONNECT: {
 				eventName: ONBOARDING_EVENTS_MAP.STEP1_CLICKED_CONNECT,
@@ -87,6 +89,7 @@ class OnboardingTracker {
 				payloadBuilder: () => ( {} ),
 				stepOverride: 1,
 				stepNameOverride: ONBOARDING_STEP_NAMES.CONNECT,
+				excludeFields: [ 'trigger' ],
 			},
 			STEP1_END_STATE: {
 				eventName: ONBOARDING_EVENTS_MAP.STEP1_END_STATE,
@@ -105,6 +108,7 @@ class OnboardingTracker {
 					action_step: eventData.currentStep,
 					exit_type: eventData.exitType || 'x_button',
 				} ),
+				excludeFields: [ 'trigger' ],
 			},
 			AB_101_START_AS_FREE_USER: {
 				eventName: ONBOARDING_EVENTS_MAP.AB_101_START_AS_FREE_USER,
@@ -118,6 +122,7 @@ class OnboardingTracker {
 				} ),
 				stepOverride: 1,
 				stepNameOverride: ONBOARDING_STEP_NAMES.CONNECT,
+				excludeFields: [ 'trigger' ],
 			},
 		};
 	}
@@ -163,6 +168,12 @@ class OnboardingTracker {
 
 	dispatchEvent( eventName, payload ) {
 		return EventDispatcher.dispatch( eventName, payload );
+	}
+
+	dispatchEventWithoutTrigger( eventName, payload ) {
+		const cleanPayload = { ...payload };
+		delete cleanPayload.trigger;
+		return EventDispatcher.dispatch( eventName, cleanPayload );
 	}
 
 	sendEventOrStore( eventType, eventData ) {
@@ -340,8 +351,7 @@ class OnboardingTracker {
 
 	sendThemeChoiceEvent( currentStep, themeValue ) {
 		if ( EventDispatcher.canSendEvents() ) {
-			return EventDispatcher.dispatchStepEvent(
-				ONBOARDING_EVENTS_MAP.THEME_CHOICE,
+			const payload = EventDispatcher.createStepEventPayload(
 				2,
 				ONBOARDING_STEP_NAMES.HELLO_BIZ,
 				{
@@ -350,6 +360,7 @@ class OnboardingTracker {
 					theme: themeValue,
 				},
 			);
+			return this.dispatchEventWithoutTrigger( ONBOARDING_EVENTS_MAP.THEME_CHOICE, payload );
 		}
 	}
 
@@ -398,7 +409,7 @@ class OnboardingTracker {
 
 	sendReturnEventAndUpdateChoice( existingChoice, siteStarter ) {
 		const returnEventPayload = this.createReturnEventPayload( existingChoice, siteStarter );
-		this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
+		this.dispatchEventWithoutTrigger( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
 		this.updateChoiceWithReturnTracking( existingChoice, siteStarter );
 	}
 
@@ -445,7 +456,7 @@ class OnboardingTracker {
 
 		if ( this.shouldSendReturnEvent( choiceData ) ) {
 			const returnEventPayload = this.createReturnEventPayloadFromStoredData( choiceData );
-			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
+			this.dispatchEventWithoutTrigger( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
 			this.markReturnEventAsSent( choiceData );
 		}
 	}
@@ -557,7 +568,7 @@ class OnboardingTracker {
 
 		if ( EventDispatcher.canSendEvents() ) {
 			this.sendHoverEventsFromStepActions( actions, stepNumber );
-			this.dispatchEvent( eventName, eventData );
+			this.dispatchEventWithoutTrigger( eventName, eventData );
 			StorageManager.remove( storageKey );
 			StorageManager.setString( endStateSentKey, 'true' );
 			TimingManager.clearStepStartTime( stepNumber );
@@ -566,7 +577,7 @@ class OnboardingTracker {
 			this.storeStep1EndStateForLater( eventData, storageKey );
 		} else {
 			this.sendHoverEventsFromStepActions( actions, stepNumber );
-			this.dispatchEvent( eventName, eventData );
+			this.dispatchEventWithoutTrigger( eventName, eventData );
 			StorageManager.remove( storageKey );
 			StorageManager.setString( endStateSentKey, 'true' );
 			TimingManager.clearStepStartTime( stepNumber );
