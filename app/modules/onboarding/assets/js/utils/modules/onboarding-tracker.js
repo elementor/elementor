@@ -36,7 +36,7 @@ class OnboardingTracker {
 					action_step: eventData.currentStep,
 					upgrade_clicked: eventData.upgradeClicked,
 				} ),
-				excludeFields: [ 'event_timestamp', 'upgrade_location', 'trigger' ],
+				excludeFields: [ 'event_timestamp', 'upgrade_location', 'trigger', 'step_number' ],
 			},
 			CREATE_MY_ACCOUNT: {
 				eventName: ONBOARDING_EVENTS_MAP.CREATE_MY_ACCOUNT,
@@ -49,7 +49,7 @@ class OnboardingTracker {
 					action_step: eventData.currentStep,
 					create_account_clicked: this.validateCreateAccountClicked( eventData.createAccountClicked ),
 				} ),
-				excludeFields: [ 'trigger' ],
+				excludeFields: [ 'trigger', 'step_number' ],
 			},
 			CREATE_ACCOUNT_STATUS: {
 				eventName: ONBOARDING_EVENTS_MAP.CREATE_ACCOUNT_STATUS,
@@ -108,7 +108,7 @@ class OnboardingTracker {
 					action_step: eventData.currentStep,
 					exit_type: eventData.exitType || 'x_button',
 				} ),
-				excludeFields: [ 'trigger' ],
+				excludeFields: [ 'trigger', 'step_number' ],
 			},
 			AB_101_START_AS_FREE_USER: {
 				eventName: ONBOARDING_EVENTS_MAP.AB_101_START_AS_FREE_USER,
@@ -122,7 +122,7 @@ class OnboardingTracker {
 				} ),
 				stepOverride: 1,
 				stepNameOverride: ONBOARDING_STEP_NAMES.CONNECT,
-				excludeFields: [ 'trigger' ],
+				excludeFields: [ 'trigger', 'step_number' ],
 			},
 		};
 	}
