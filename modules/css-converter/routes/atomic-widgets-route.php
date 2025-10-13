@@ -77,7 +77,7 @@ class Atomic_Widgets_Route {
 
 		try {
 			$orchestrator = new Atomic_Widgets_Orchestrator( $debug_mode, $performance_monitoring );
-			
+
 			if ( $validation ) {
 				$result = $orchestrator->convert_with_validation( $html, $options );
 			} else {
@@ -293,16 +293,56 @@ class Atomic_Widgets_Route {
 	public function sanitize_html( string $html ): string {
 		// Basic HTML sanitization - remove dangerous elements but preserve structure
 		$allowed_tags = [
-			'div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-			'a', 'button', 'img', 'section', 'article', 'header', 'footer',
-			'main', 'aside', 'nav', 'ul', 'ol', 'li', 'blockquote',
-			'strong', 'em', 'b', 'i', 'u', 'small', 'mark', 'del', 'ins',
-			'sub', 'sup', 'code', 'pre',
+			'div',
+			'span',
+			'p',
+			'h1',
+			'h2',
+			'h3',
+			'h4',
+			'h5',
+			'h6',
+			'a',
+			'button',
+			'img',
+			'section',
+			'article',
+			'header',
+			'footer',
+			'main',
+			'aside',
+			'nav',
+			'ul',
+			'ol',
+			'li',
+			'blockquote',
+			'strong',
+			'em',
+			'b',
+			'i',
+			'u',
+			'small',
+			'mark',
+			'del',
+			'ins',
+			'sub',
+			'sup',
+			'code',
+			'pre',
 		];
 
 		$allowed_attributes = [
-			'style', 'class', 'id', 'href', 'target', 'src', 'alt',
-			'width', 'height', 'title', 'data-*',
+			'style',
+			'class',
+			'id',
+			'href',
+			'target',
+			'src',
+			'alt',
+			'width',
+			'height',
+			'title',
+			'data-*',
 		];
 
 		// Use wp_kses for sanitization
@@ -346,7 +386,7 @@ class Atomic_Widgets_Route {
 
 	public function get_full_route_url( string $endpoint = '' ): string {
 		$base_url = rest_url( self::ROUTE_NAMESPACE . '/' . self::ROUTE_BASE );
-		
+
 		if ( ! empty( $endpoint ) ) {
 			$base_url .= '/' . ltrim( $endpoint, '/' );
 		}

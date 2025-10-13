@@ -13,26 +13,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Border Shorthand Property Mapper
- * 
+ *
  * 🎯 ATOMIC SOURCE VERIFICATION:
  * - Atomic Widget: atomic-heading.php uses Size_Prop_Type for border-width, Color_Prop_Type for border-color
  * - Prop Type: Size_Prop_Type for width, Color_Prop_Type for color, String_Prop_Type for style
  * - Expected Structure: Multiple atomic properties (border-width, border-color, border-style)
  * - Validation Rules: Parse shorthand into individual components
- * 
+ *
  * 🚫 FALLBACK STATUS: NONE - This mapper has zero fallbacks
- * 
+ *
  * ✅ COMPLIANCE: 100% atomic widget based
  */
 class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	public function get_supported_properties(): array {
-		return [ 
+		return [
 			'border',
 			'border-top',
 			'border-right',
 			'border-bottom',
-			'border-left'
+			'border-left',
 		];
 	}
 
@@ -90,7 +90,7 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 	private function parse_border_shorthand( string $value ): ?array {
 		$value = trim( $value );
 		$parts = preg_split( '/\s+/', $value );
-		
+
 		if ( empty( $parts ) ) {
 			return null;
 		}
@@ -133,9 +133,17 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function is_border_style_value( string $value ): bool {
-		$styles = [ 
-			'none', 'hidden', 'dotted', 'dashed', 'solid', 
-			'double', 'groove', 'ridge', 'inset', 'outset' 
+		$styles = [
+			'none',
+			'hidden',
+			'dotted',
+			'dashed',
+			'solid',
+			'double',
+			'groove',
+			'ridge',
+			'inset',
+			'outset',
 		];
 		return in_array( strtolower( $value ), $styles, true );
 	}
@@ -153,8 +161,21 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		// Check for named colors (basic set)
 		$named_colors = [
-			'black', 'white', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta',
-			'gray', 'grey', 'orange', 'purple', 'pink', 'brown', 'transparent'
+			'black',
+			'white',
+			'red',
+			'green',
+			'blue',
+			'yellow',
+			'cyan',
+			'magenta',
+			'gray',
+			'grey',
+			'orange',
+			'purple',
+			'pink',
+			'brown',
+			'transparent',
 		];
 		return in_array( strtolower( $value ), $named_colors, true );
 	}
@@ -173,7 +194,7 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 			'property' => 'border-width',
 			'value' => Size_Prop_Type::make()
 				->units( Size_Constants::border() )
-				->generate( $parsed_width )
+				->generate( $parsed_width ),
 		];
 	}
 
@@ -183,7 +204,7 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 		// ✅ STRUCTURE: Matches atomic widget exactly
 		return [
 			'property' => 'border-color',
-			'value' => Color_Prop_Type::make()->generate( $color_value )
+			'value' => Color_Prop_Type::make()->generate( $color_value ),
 		];
 	}
 
@@ -193,7 +214,7 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 		// ✅ STRUCTURE: Matches atomic widget exactly
 		return [
 			'property' => 'border-style',
-			'value' => String_Prop_Type::make()->generate( $style_value )
+			'value' => String_Prop_Type::make()->generate( $style_value ),
 		];
 	}
 
@@ -201,9 +222,18 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$value = trim( $value );
 
 		$keyword_values = [
-			'thin' => [ 'size' => 1, 'unit' => 'px' ],
-			'medium' => [ 'size' => 3, 'unit' => 'px' ],
-			'thick' => [ 'size' => 5, 'unit' => 'px' ],
+			'thin' => [
+				'size' => 1,
+				'unit' => 'px',
+			],
+			'medium' => [
+				'size' => 3,
+				'unit' => 'px',
+			],
+			'thick' => [
+				'size' => 5,
+				'unit' => 'px',
+			],
 		];
 
 		if ( isset( $keyword_values[ $value ] ) ) {
@@ -226,11 +256,11 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		if ( is_numeric( $value ) ) {
 			$numeric_value = (float) $value;
-			
+
 			if ( $numeric_value < 0 ) {
 				return null;
 			}
-			
+
 			return [
 				'size' => $numeric_value,
 				'unit' => 'px',

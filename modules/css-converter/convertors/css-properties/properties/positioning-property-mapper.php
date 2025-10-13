@@ -36,13 +36,13 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 	private const SUPPORTED_PROPERTIES = [
 		// Physical positioning properties
 		'top',
-		'right', 
+		'right',
 		'bottom',
 		'left',
 		// Logical positioning properties (CSS Logical Properties Level 1)
 		'inset-block-start',
 		'inset-inline-end',
-		'inset-block-end', 
+		'inset-block-end',
 		'inset-inline-start',
 		// Shorthand logical properties
 		'inset',
@@ -92,7 +92,7 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 		if ( in_array( $property, [ 'top', 'right', 'bottom', 'left' ], true ) ) {
 			return $this->get_logical_property_name( $property );
 		}
-		
+
 		// For logical properties and shorthand, return as-is
 		return $property;
 	}
@@ -204,10 +204,13 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	protected function is_css_keyword( string $value ): bool {
 		$keywords = [
-			'auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer'
+			'auto',
+			'inherit',
+			'initial',
+			'unset',
+			'revert',
+			'revert-layer',
 		];
 		return in_array( strtolower( $value ), $keywords, true );
 	}
-
-
 }

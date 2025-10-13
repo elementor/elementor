@@ -42,7 +42,7 @@ class Performance_Monitor {
 
 		$end_time = microtime( true );
 		$end_memory = memory_get_usage( true );
-		
+
 		$duration = $end_time - $this->timers[ $name ]['start'];
 		$memory_used = $end_memory - $this->timers[ $name ]['memory_start'];
 
@@ -84,7 +84,7 @@ class Performance_Monitor {
 
 	public function get_performance_summary(): array {
 		if ( ! $this->enabled ) {
-			return ['monitoring_disabled' => true];
+			return [ 'monitoring_disabled' => true ];
 		}
 
 		$total_duration = 0;
@@ -140,7 +140,7 @@ class Performance_Monitor {
 
 	public function benchmark_operation( string $name, callable $operation ) {
 		$this->start_timer( $name );
-		
+
 		try {
 			$result = $operation();
 			$this->end_timer( $name );
@@ -199,11 +199,11 @@ class Performance_Monitor {
 
 		foreach ( $this->metrics as $name => $metric ) {
 			if ( $metric['duration'] > $thresholds['slow_operation'] ) {
-				$warnings[] = "Operation '{$name}' took " . round( $metric['duration'] * 1000, 2 ) . "ms (slow)";
+				$warnings[] = "Operation '{$name}' took " . round( $metric['duration'] * 1000, 2 ) . 'ms (slow)';
 			}
 
 			if ( $metric['memory_used'] > $thresholds['memory_intensive'] ) {
-				$warnings[] = "Operation '{$name}' used " . $this->format_bytes( $metric['memory_used'] ) . " (memory intensive)";
+				$warnings[] = "Operation '{$name}' used " . $this->format_bytes( $metric['memory_used'] ) . ' (memory intensive)';
 			}
 		}
 
@@ -211,7 +211,7 @@ class Performance_Monitor {
 	}
 
 	private function format_bytes( int $bytes ): string {
-		$units = ['B', 'KB', 'MB', 'GB'];
+		$units = [ 'B', 'KB', 'MB', 'GB' ];
 		$bytes = max( $bytes, 0 );
 		$pow = floor( ( $bytes ? log( $bytes ) : 0 ) / log( 1024 ) );
 		$pow = min( $pow, count( $units ) - 1 );
@@ -229,9 +229,7 @@ class Performance_Monitor {
 		$summary = $this->get_performance_summary();
 		$warnings = $this->get_performance_warnings();
 
-
 		if ( ! empty( $warnings ) ) {
 		}
 	}
 }
-

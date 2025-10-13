@@ -9,32 +9,50 @@ class HTML_To_Atomic_Widget_Mapper {
 
 	private array $widget_mapping = [
 		// Text Elements
-		'h1' => ['type' => 'e-heading', 'level' => 1],
-		'h2' => ['type' => 'e-heading', 'level' => 2],
-		'h3' => ['type' => 'e-heading', 'level' => 3],
-		'h4' => ['type' => 'e-heading', 'level' => 4],
-		'h5' => ['type' => 'e-heading', 'level' => 5],
-		'h6' => ['type' => 'e-heading', 'level' => 6],
-		'p' => ['type' => 'e-paragraph'],
-		'blockquote' => ['type' => 'e-paragraph'],
-		
+		'h1' => [
+			'type' => 'e-heading',
+			'level' => 1,
+		],
+		'h2' => [
+			'type' => 'e-heading',
+			'level' => 2,
+		],
+		'h3' => [
+			'type' => 'e-heading',
+			'level' => 3,
+		],
+		'h4' => [
+			'type' => 'e-heading',
+			'level' => 4,
+		],
+		'h5' => [
+			'type' => 'e-heading',
+			'level' => 5,
+		],
+		'h6' => [
+			'type' => 'e-heading',
+			'level' => 6,
+		],
+		'p' => [ 'type' => 'e-paragraph' ],
+		'blockquote' => [ 'type' => 'e-paragraph' ],
+
 		// Interactive Elements
-		'button' => ['type' => 'e-button'],
-		'a' => ['type' => 'e-button'], // Link buttons
-		
+		'button' => [ 'type' => 'e-button' ],
+		'a' => [ 'type' => 'e-button' ], // Link buttons
+
 		// Media Elements
-		'img' => ['type' => 'e-image'],
-		
+		'img' => [ 'type' => 'e-image' ],
+
 		// Container Elements
-		'div' => ['type' => 'e-flexbox'],
-		'section' => ['type' => 'e-flexbox'],
-		'article' => ['type' => 'e-flexbox'],
-		'header' => ['type' => 'e-flexbox'],
-		'footer' => ['type' => 'e-flexbox'],
-		'main' => ['type' => 'e-flexbox'],
-		'aside' => ['type' => 'e-flexbox'],
-		'span' => ['type' => 'e-flexbox'],
-		'nav' => ['type' => 'e-flexbox'],
+		'div' => [ 'type' => 'e-flexbox' ],
+		'section' => [ 'type' => 'e-flexbox' ],
+		'article' => [ 'type' => 'e-flexbox' ],
+		'header' => [ 'type' => 'e-flexbox' ],
+		'footer' => [ 'type' => 'e-flexbox' ],
+		'main' => [ 'type' => 'e-flexbox' ],
+		'aside' => [ 'type' => 'e-flexbox' ],
+		'span' => [ 'type' => 'e-flexbox' ],
+		'nav' => [ 'type' => 'e-flexbox' ],
 	];
 
 	public function get_widget_config( string $html_tag ): ?array {
@@ -55,7 +73,7 @@ class HTML_To_Atomic_Widget_Mapper {
 
 	public function get_widget_types(): array {
 		$widget_types = [];
-		
+
 		foreach ( $this->widget_mapping as $config ) {
 			$widget_types[] = $config['type'];
 		}
@@ -94,7 +112,10 @@ class HTML_To_Atomic_Widget_Mapper {
 			'wrap' => 'nowrap',
 			'justify_content' => 'flex-start',
 			'align_items' => 'stretch',
-			'gap' => ['column' => '0', 'row' => '0'],
+			'gap' => [
+				'column' => '0',
+				'row' => '0',
+			],
 		];
 	}
 }

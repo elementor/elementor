@@ -14,18 +14,19 @@ class Transition_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 		'transition-property',
 		'transition-duration',
 		'transition-timing-function',
-		'transition-delay'
+		'transition-delay',
 	];
 
 	protected $atomic_prop_type = 'transition';
 
 	protected $supported_css_units = [
-		's', 'ms'
+		's',
+		'ms',
 	];
 
 	public function map_css_to_atomic( string $css_value ): ?array {
 		$css_value = trim( $css_value );
-		
+
 		if ( empty( $css_value ) || 'none' === $css_value ) {
 			return null;
 		}
@@ -61,9 +62,9 @@ class Transition_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 			$char = $css_value[ $i ];
 
 			if ( '(' === $char ) {
-				$paren_depth++;
+				++$paren_depth;
 			} elseif ( ')' === $char ) {
-				$paren_depth--;
+				--$paren_depth;
 			} elseif ( ',' === $char && 0 === $paren_depth ) {
 				$transitions[] = $current_transition;
 				$current_transition = '';
@@ -83,9 +84,15 @@ class Transition_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 	private function parse_single_transition( string $transition_string ): ?array {
 		$parts = preg_split( '/\s+/', $transition_string );
 		$property = 'all';
-		$duration = [ 'value' => 0.0, 'unit' => 's' ];
+		$duration = [
+			'value' => 0.0,
+			'unit' => 's',
+		];
 		$timing_function = 'ease';
-		$delay = [ 'value' => 0.0, 'unit' => 's' ];
+		$delay = [
+			'value' => 0.0,
+			'unit' => 's',
+		];
 
 		foreach ( $parts as $part ) {
 			if ( $this->is_time_value( $part ) ) {
@@ -103,10 +110,22 @@ class Transition_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 		}
 
 		return [
-			'property' => [ '$$type' => 'string', 'value' => $property ],
-			'duration' => [ '$$type' => 'time', 'value' => $duration ],
-			'timing-function' => [ '$$type' => 'string', 'value' => $timing_function ],
-			'delay' => [ '$$type' => 'time', 'value' => $delay ],
+			'property' => [
+				'$$type' => 'string',
+				'value' => $property,
+			],
+			'duration' => [
+				'$$type' => 'time',
+				'value' => $duration,
+			],
+			'timing-function' => [
+				'$$type' => 'string',
+				'value' => $timing_function,
+			],
+			'delay' => [
+				'$$type' => 'time',
+				'value' => $delay,
+			],
 		];
 	}
 
@@ -116,21 +135,33 @@ class Transition_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 		switch ( $current_property ) {
 			case 'transition-property':
 				return $this->create_atomic_prop( [
-					'property' => [ '$$type' => 'string', 'value' => $css_value ]
+					'property' => [
+						'$$type' => 'string',
+						'value' => $css_value,
+					],
 				] );
 			case 'transition-duration':
 				$duration = $this->parse_time_value( $css_value );
 				return $this->create_atomic_prop( [
-					'duration' => [ '$$type' => 'time', 'value' => $duration ]
+					'duration' => [
+						'$$type' => 'time',
+						'value' => $duration,
+					],
 				] );
 			case 'transition-timing-function':
 				return $this->create_atomic_prop( [
-					'timing-function' => [ '$$type' => 'string', 'value' => $css_value ]
+					'timing-function' => [
+						'$$type' => 'string',
+						'value' => $css_value,
+					],
 				] );
 			case 'transition-delay':
 				$delay = $this->parse_time_value( $css_value );
 				return $this->create_atomic_prop( [
-					'delay' => [ '$$type' => 'time', 'value' => $delay ]
+					'delay' => [
+						'$$type' => 'time',
+						'value' => $delay,
+					],
 				] );
 		}
 
@@ -151,32 +182,52 @@ class Transition_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 				$unit = 's';
 			}
 
-			return [ 'value' => $value, 'unit' => $unit ];
+			return [
+				'value' => $value,
+				'unit' => $unit,
+			];
 		}
 
-		return [ 'value' => 0.0, 'unit' => 's' ];
+		return [
+			'value' => 0.0,
+			'unit' => 's',
+		];
 	}
 
 	private function is_timing_function( string $value ): bool {
 		$timing_functions = [
-			'ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear',
-			'step-start', 'step-end'
+			'ease',
+			'ease-in',
+			'ease-out',
+			'ease-in-out',
+			'linear',
+			'step-start',
+			'step-end',
 		];
 
-		return in_array( $value, $timing_functions, true ) || 
-			   false !== strpos( $value, 'cubic-bezier(' ) ||
-			   false !== strpos( $value, 'steps(' );
+		return in_array( $value, $timing_functions, true ) ||
+				false !== strpos( $value, 'cubic-bezier(' ) ||
+				false !== strpos( $value, 'steps(' );
 	}
 
 	private function is_css_property( string $value ): bool {
 		$common_properties = [
-			'all', 'opacity', 'transform', 'color', 'background-color',
-			'width', 'height', 'margin', 'padding', 'border', 'font-size'
+			'all',
+			'opacity',
+			'transform',
+			'color',
+			'background-color',
+			'width',
+			'height',
+			'margin',
+			'padding',
+			'border',
+			'font-size',
 		];
 
-		return in_array( $value, $common_properties, true ) || 
-			   ! $this->is_time_value( $value ) && 
-			   ! $this->is_timing_function( $value );
+		return in_array( $value, $common_properties, true ) ||
+				! $this->is_time_value( $value ) &&
+				! $this->is_timing_function( $value );
 	}
 
 	private function get_current_property(): string {

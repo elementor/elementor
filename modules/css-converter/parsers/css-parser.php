@@ -19,7 +19,7 @@ class CssParser {
 	public function __construct( array $options = [] ) {
 		// Ensure Sabberworm CSS Parser autoloader is registered
 		$this->ensure_sabberworm_autoloader();
-		
+
 		$this->charset = $options['charset'] ?? 'utf-8';
 		$this->settings = Settings::create()
 			->withDefaultCharset( $this->charset )
@@ -29,16 +29,15 @@ class CssParser {
 
 	private function ensure_sabberworm_autoloader() {
 		// 🔍 MAX DEBUG: Check if Sabberworm classes are already available
-		
+
 		if ( class_exists( 'Sabberworm\CSS\Parser' ) ) {
 			return;
 		}
-		
 
 		// Load the autoloader if classes are not available
 		// First try the standard Elementor path
 		$autoloader_path = ELEMENTOR_PATH . 'includes/libraries/sabberworm-css-parser/bootstrap.php';
-		
+
 		// If that doesn't exist, try the elementor-css plugin path (for custom installations)
 		if ( ! file_exists( $autoloader_path ) ) {
 			$elementor_css_path = WP_PLUGIN_DIR . '/elementor-css/includes/libraries/sabberworm-css-parser/bootstrap.php';
@@ -46,7 +45,7 @@ class CssParser {
 				$autoloader_path = $elementor_css_path;
 			}
 		}
-		
+
 		// If still not found, try relative to current module (for elementor-css plugin)
 		if ( ! file_exists( $autoloader_path ) ) {
 			// From parsers/css-parser.php: __DIR__ = parsers/, up 3 = plugins/elementor-css/
@@ -55,7 +54,7 @@ class CssParser {
 				$autoloader_path = $relative_path;
 			}
 		}
-		
+
 		// Last resort: try direct path for elementor-css plugin
 		if ( ! file_exists( $autoloader_path ) ) {
 			$direct_path = '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/plugins/elementor-css/includes/libraries/sabberworm-css-parser/bootstrap.php';
@@ -63,10 +62,10 @@ class CssParser {
 				$autoloader_path = $direct_path;
 			}
 		}
-		
+
 		if ( file_exists( $autoloader_path ) ) {
 			require_once $autoloader_path;
-			
+
 			// Verify the class is now available
 			if ( class_exists( 'Sabberworm\CSS\Parser' ) ) {
 			} else {
@@ -76,7 +75,7 @@ class CssParser {
 	}
 
 	public function parse( string $css ): ParsedCss {
-		
+
 		if ( empty( trim( $css ) ) ) {
 			// ✅ GRACEFUL HANDLING: Return empty ParsedCss instead of throwing exception
 			// This allows HTML without CSS to be processed successfully
@@ -84,17 +83,16 @@ class CssParser {
 			return new ParsedCss( $empty_document, '' );
 		}
 
-		
 		try {
 			// Check if Parser class exists before trying to instantiate
 			if ( ! class_exists( 'Sabberworm\CSS\Parser' ) ) {
-				throw new \Exception( "Sabberworm CSS Parser library not loaded" );
+				throw new \Exception( 'Sabberworm CSS Parser library not loaded' );
 			}
-			
+
 			$parser = new Parser( $css, $this->settings );
-			
+
 			$document = $parser->parse();
-			
+
 			return new ParsedCss( $document, $css );
 		} catch ( \Exception $e ) {
 			throw new CssParseException( 'Failed to parse CSS: ' . $e->getMessage(), 0 );
@@ -113,7 +111,7 @@ class CssParser {
 				if ( ! $this->is_root_selector( $selector_string ) ) {
 					return;
 				}
-				
+
 				foreach ( $css_node->getRules() as $rule ) {
 					$property = $rule->getRule();
 					if ( $this->is_css_variable( $property ) ) {
@@ -144,7 +142,7 @@ class CssParser {
 		$trimmed = trim( $selector );
 		return ':root' === $trimmed || 'html' === $trimmed;
 	}
-	
+
 	private function is_css_variable( string $property ): bool {
 		return 0 === strpos( $property, '--' );
 	}
@@ -165,7 +163,7 @@ class CssParser {
 	private function process_declaration_block_for_classes( $css_node, &$classes ) {
 		foreach ( $css_node->getSelectors() as $selector ) {
 			$selector_string = $selector->getSelector();
-			
+
 			if ( $this->is_simple_class_selector( $selector_string ) ) {
 				$this->extract_properties_from_class( $css_node, $selector_string, $classes );
 			}
@@ -174,7 +172,7 @@ class CssParser {
 
 	private function extract_properties_from_class( $css_node, $selector_string, &$classes ) {
 		$properties = [];
-		
+
 		foreach ( $css_node->getRules() as $rule ) {
 			$property = $rule->getRule();
 			$value = (string) $rule->getValue();

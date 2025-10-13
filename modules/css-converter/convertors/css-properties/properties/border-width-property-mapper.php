@@ -13,12 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	public function get_supported_properties(): array {
-		return [ 
+		return [
 			'border-width',
 			'border-top-width',
-			'border-right-width', 
+			'border-right-width',
 			'border-bottom-width',
-			'border-left-width'
+			'border-left-width',
 		];
 	}
 
@@ -72,14 +72,14 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 			'border-top-width',
 			'border-right-width',
 			'border-bottom-width',
-			'border-left-width'
+			'border-left-width',
 		], true );
 	}
 
 	private function handle_individual_border_width_property( string $property, $value ): ?array {
 		// ✅ ATOMIC SOURCE: Border_Width_Prop_Type from atomic widgets tests
 		// Uses directional values with null for unused directions (filtered out by transformer)
-		
+
 		$parsed = $this->parse_border_width_value( $value );
 		if ( null === $parsed ) {
 			return null;
@@ -100,10 +100,13 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		// ✅ CRITICAL FIX: Create Border_Width_Prop_Type structure with generated Size_Prop_Type structures
 		// ALL directions REQUIRED - use 0px for unused directions
-		$zero_size = ['size' => 0, 'unit' => 'px'];
+		$zero_size = [
+			'size' => 0,
+			'unit' => 'px',
+		];
 		$zero_size_prop = Size_Prop_Type::make()->units( Size_Constants::border() )->generate( $zero_size );
 		$parsed_size_prop = Size_Prop_Type::make()->units( Size_Constants::border() )->generate( $parsed );
-		
+
 		$border_width_value = [
 			'block-start' => 'block-start' === $direction ? $parsed_size_prop : $zero_size_prop,
 			'block-end' => 'block-end' === $direction ? $parsed_size_prop : $zero_size_prop,
@@ -125,7 +128,7 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function handle_shorthand_border_width( $value ): ?array {
 		$values = $this->parse_shorthand_values( $value );
-		
+
 		if ( empty( $values ) ) {
 			return null;
 		}
@@ -151,14 +154,14 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function handle_individual_border_width( string $property, $value ): ?array {
 		$parsed = $this->parse_border_width_value( $value );
-		
+
 		if ( null === $parsed ) {
 			return null;
 		}
 
 		$direction_map = [
 			'border-top-width' => 'block-start',
-			'border-right-width' => 'inline-end', 
+			'border-right-width' => 'inline-end',
 			'border-bottom-width' => 'block-end',
 			'border-left-width' => 'inline-start',
 		];
@@ -170,7 +173,10 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		// ✅ BORDER_WIDTH_PATTERN: Individual properties create Border_Width_Prop_Type with ALL directions
 		// ALL directions REQUIRED - use 0px for unused directions
-		$zero_size = ['size' => 0, 'unit' => 'px'];
+		$zero_size = [
+			'size' => 0,
+			'unit' => 'px',
+		];
 		$border_width_value = [
 			'block-start' => 'block-start' === $direction ? $parsed : $zero_size,
 			'block-end' => 'block-end' === $direction ? $parsed : $zero_size,
@@ -185,7 +191,7 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 	private function parse_shorthand_values( $value ): array {
 		$value = trim( $value );
 		$values = preg_split( '/\s+/', $value );
-		
+
 		$parsed_values = [];
 		foreach ( $values as $val ) {
 			$val = trim( $val );
@@ -194,13 +200,13 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 				$parsed_values[] = $val;
 			}
 		}
-		
+
 		return $parsed_values;
 	}
 
 	private function expand_shorthand_to_directional( array $values ): array {
 		$count = count( $values );
-		
+
 		switch ( $count ) {
 			case 1:
 				return [
@@ -239,9 +245,18 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$value = trim( $value );
 
 		$keyword_values = [
-			'thin' => [ 'size' => 1, 'unit' => 'px' ],
-			'medium' => [ 'size' => 3, 'unit' => 'px' ],
-			'thick' => [ 'size' => 5, 'unit' => 'px' ],
+			'thin' => [
+				'size' => 1,
+				'unit' => 'px',
+			],
+			'medium' => [
+				'size' => 3,
+				'unit' => 'px',
+			],
+			'thick' => [
+				'size' => 5,
+				'unit' => 'px',
+			],
 		];
 
 		if ( isset( $keyword_values[ $value ] ) ) {
@@ -264,11 +279,11 @@ class Border_Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		if ( is_numeric( $value ) ) {
 			$numeric_value = (float) $value;
-			
+
 			if ( $numeric_value < 0 ) {
 				return null;
 			}
-			
+
 			return [
 				'size' => $numeric_value,
 				'unit' => 'px',

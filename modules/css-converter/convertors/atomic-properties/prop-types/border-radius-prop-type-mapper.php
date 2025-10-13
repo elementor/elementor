@@ -14,13 +14,16 @@ class Border_Radius_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 		'border-top-left-radius',
 		'border-top-right-radius',
 		'border-bottom-right-radius',
-		'border-bottom-left-radius'
+		'border-bottom-left-radius',
 	];
 
 	protected $atomic_prop_type = 'border-radius';
 
 	protected $supported_css_units = [
-		'px', 'em', 'rem', '%'
+		'px',
+		'em',
+		'rem',
+		'%',
 	];
 
 	public function map_css_to_atomic( string $css_value ): ?array {
@@ -42,7 +45,7 @@ class Border_Radius_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 	private function create_size_prop( array $size_data ): array {
 		return [
 			'$$type' => 'size',
-			'value' => $size_data
+			'value' => $size_data,
 		];
 	}
 

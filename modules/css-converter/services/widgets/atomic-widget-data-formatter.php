@@ -15,15 +15,15 @@ class Atomic_Widget_Data_Formatter {
 		// Generate atomic-style widget ID (7-char hex)
 		$atomic_widget_id = $this->generate_atomic_widget_id();
 		$class_id = $this->create_atomic_style_class_name( $atomic_widget_id );
-		
+
 		$atomic_props = $this->extract_atomic_props_from_resolved_styles( $resolved_styles );
-		
+
 		$css_classes = $this->extract_css_classes_from_widget( $widget );
-		
+
 		// Note: Base classes (e.g., e-heading-base) are added automatically by atomic widget Twig templates
 		// CSS Converter should only add generated style classes and user-defined classes
 		$widget_type = $widget['widget_type'] ?? 'e-div-block';
-		
+
 		if ( empty( $atomic_props ) && empty( $css_classes ) ) {
 			return [
 				'widgetType' => $widget_type,
@@ -33,7 +33,7 @@ class Atomic_Widget_Data_Formatter {
 		}
 
 		$style_definition = $this->create_unified_style_definition( $class_id, $atomic_props );
-		
+
 		// Add the generated style class to css_classes so it gets applied to HTML
 		if ( ! empty( $atomic_props ) ) {
 			$css_classes[] = $class_id;
@@ -49,7 +49,7 @@ class Atomic_Widget_Data_Formatter {
 	}
 
 	public function format_global_class_data( string $class_name, array $atomic_props ): array {
-		
+
 		return [
 			'id' => $class_name,
 			'label' => $class_name,
@@ -73,7 +73,7 @@ class Atomic_Widget_Data_Formatter {
 		foreach ( $resolved_styles as $property => $style_data ) {
 			if ( isset( $style_data['converted_property'] ) && is_array( $style_data['converted_property'] ) ) {
 				$converted_property = $style_data['converted_property'];
-				
+
 				// CRITICAL FIX: converted_property contains property name as key, atomic format as value
 				foreach ( $converted_property as $prop_name => $atomic_format ) {
 					if ( isset( $atomic_format['$$type'] ) ) {
@@ -107,22 +107,22 @@ class Atomic_Widget_Data_Formatter {
 
 	private function extract_css_classes_from_widget( array $widget ): array {
 		$classes = [];
-		
+
 		$classes = $this->extract_css_classes_from_widget_attributes( $widget, $classes );
-		
+
 		return $classes;
 	}
 
 	private function format_widget_settings( array $widget, array $css_classes ): array {
 		$settings = $widget['settings'] ?? [];
-		
+
 		// Convert raw settings values to atomic prop format
 		$formatted_settings = $this->convert_settings_to_atomic_format( $settings );
-		
+
 		if ( ! empty( $css_classes ) ) {
 			$formatted_settings['classes'] = $this->format_css_classes_in_atomic_format( $css_classes );
 		}
-		
+
 		return $formatted_settings;
 	}
 
@@ -161,7 +161,7 @@ class Atomic_Widget_Data_Formatter {
 		if ( ! empty( $widget['attributes']['class'] ) ) {
 			$class_string = $widget['attributes']['class'];
 			$class_array = explode( ' ', $class_string );
-			
+
 			foreach ( $class_array as $class ) {
 				$class = trim( $class );
 				if ( ! empty( $class ) ) {
@@ -169,24 +169,24 @@ class Atomic_Widget_Data_Formatter {
 				}
 			}
 		}
-		
+
 		return $classes;
 	}
 
 	private function format_css_classes_in_atomic_format( array $css_classes ): array {
 		return [
 			'$$type' => 'classes',
-			'value' => array_values( $css_classes )
+			'value' => array_values( $css_classes ),
 		];
 	}
 
 	private function convert_settings_to_atomic_format( array $settings ): array {
 		$formatted_settings = [];
-		
+
 		foreach ( $settings as $key => $value ) {
 			$formatted_settings[ $key ] = $this->convert_value_to_atomic_format( $value );
 		}
-		
+
 		return $formatted_settings;
 	}
 
@@ -195,7 +195,7 @@ class Atomic_Widget_Data_Formatter {
 		if ( is_array( $value ) && isset( $value['$$type'] ) ) {
 			return $value;
 		}
-		
+
 		// Convert strings to atomic string format
 		if ( is_string( $value ) ) {
 			return [
@@ -203,7 +203,7 @@ class Atomic_Widget_Data_Formatter {
 				'value' => $value,
 			];
 		}
-		
+
 		// Convert numbers to atomic number format (for level, etc.)
 		if ( is_numeric( $value ) ) {
 			return [
@@ -211,7 +211,7 @@ class Atomic_Widget_Data_Formatter {
 				'value' => (int) $value,
 			];
 		}
-		
+
 		// For null, boolean, or other types, return as-is
 		return $value;
 	}

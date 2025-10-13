@@ -117,22 +117,20 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function parse_transform_functions( string $value ): array {
 		$functions = [];
-		
-		
+
 		// Match transform functions like translateX(10px), scale(1.5), rotate(45deg)
 		if ( preg_match_all( '/(\w+)\s*\(\s*([^)]+)\s*\)/i', $value, $matches, PREG_SET_ORDER ) ) {
 			foreach ( $matches as $match ) {
 				$function_name = strtolower( $match[1] );
 				$function_args = trim( $match[2] );
-				
-				
+
 				if ( ! isset( self::TRANSFORM_FUNCTIONS[ $function_name ] ) ) {
 					continue;
 				}
 
 				$function_type = self::TRANSFORM_FUNCTIONS[ $function_name ];
 				$parsed_function = $this->parse_transform_function( $function_name, $function_args, $function_type );
-				
+
 				if ( null !== $parsed_function ) {
 					$functions[] = $parsed_function;
 				} else {
@@ -163,7 +161,11 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$values = preg_split( '/[,\s]+/', trim( $args ) );
 		$values = array_filter( $values );
 
-		$move_data = [ 'x' => null, 'y' => null, 'z' => null ];
+		$move_data = [
+			'x' => null,
+			'y' => null,
+			'z' => null,
+		];
 
 		switch ( $function_name ) {
 			case 'translate':
@@ -200,7 +202,11 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$values = preg_split( '/[,\s]+/', trim( $args ) );
 		$values = array_filter( $values );
 
-		$scale_data = [ 'x' => null, 'y' => null, 'z' => null ];
+		$scale_data = [
+			'x' => null,
+			'y' => null,
+			'z' => null,
+		];
 
 		switch ( $function_name ) {
 			case 'scale':
@@ -238,7 +244,11 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$values = preg_split( '/[,\s]+/', trim( $args ) );
 		$values = array_filter( $values );
 
-		$rotate_data = [ 'x' => null, 'y' => null, 'z' => null ];
+		$rotate_data = [
+			'x' => null,
+			'y' => null,
+			'z' => null,
+		];
 
 		switch ( $function_name ) {
 			case 'rotate':
@@ -269,7 +279,10 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$values = preg_split( '/[,\s]+/', trim( $args ) );
 		$values = array_filter( $values );
 
-		$skew_data = [ 'x' => null, 'y' => null ];
+		$skew_data = [
+			'x' => null,
+			'y' => null,
+		];
 
 		switch ( $function_name ) {
 			case 'skew':
@@ -321,31 +334,31 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function parse_angle_value( string $value ): array {
 		$value = trim( $value );
-		
+
 		if ( preg_match( '/^(-?\d*\.?\d+)(deg|rad|grad|turn)?$/i', $value, $matches ) ) {
 			$size = (float) $matches[1];
 			$unit = strtolower( $matches[2] ?? 'deg' );
-			
+
 			return [
 				'size' => $size,
-				'unit' => $unit
+				'unit' => $unit,
 			];
 		}
 
 		// Default to 0 degrees
 		return [
 			'size' => 0.0,
-			'unit' => 'deg'
+			'unit' => 'deg',
 		];
 	}
 
 	protected function parse_size_value( string $value ): array {
 		$parsed = Size_Value_Parser::parse( $value );
-		
+
 		if ( null !== $parsed ) {
 			return $parsed;
 		}
-		
+
 		return Size_Value_Parser::create_zero();
 	}
 }

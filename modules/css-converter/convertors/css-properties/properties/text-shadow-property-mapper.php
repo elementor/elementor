@@ -33,24 +33,23 @@ class Text_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 			'value' => [
 				'hOffset' => [
 					'$$type' => 'size',
-					'value' => $parsed['h_offset']
+					'value' => $parsed['h_offset'],
 				],
 				'vOffset' => [
 					'$$type' => 'size',
-					'value' => $parsed['v_offset']
+					'value' => $parsed['v_offset'],
 				],
 				'blur' => [
 					'$$type' => 'size',
-					'value' => $parsed['blur']
+					'value' => $parsed['blur'],
 				],
 				'color' => [
 					'$$type' => 'color',
-					'value' => $parsed['color']
+					'value' => $parsed['color'],
 				],
-			]
+			],
 		];
 
-		
 		return $result;
 	}
 
@@ -64,14 +63,17 @@ class Text_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function parse_text_shadow( string $value ): ?array {
 		$pattern = '/^(-?\d+(?:\.\d+)?(?:px|em|rem|%|vh|vw)?)\s+(-?\d+(?:\.\d+)?(?:px|em|rem|%|vh|vw)?)\s*(?:(-?\d+(?:\.\d+)?(?:px|em|rem|%|vh|vw)?)\s*)?(.*)$/';
-		
+
 		if ( ! preg_match( $pattern, trim( $value ), $matches ) ) {
 			return null;
 		}
 
 		$h_offset = $this->parse_single_size( $matches[1] );
 		$v_offset = $this->parse_single_size( $matches[2] );
-		$blur = ! empty( $matches[3] ) ? $this->parse_single_size( $matches[3] ) : [ 'size' => 0.0, 'unit' => 'px' ];
+		$blur = ! empty( $matches[3] ) ? $this->parse_single_size( $matches[3] ) : [
+			'size' => 0.0,
+			'unit' => 'px',
+		];
 		$color_string = ! empty( $matches[4] ) ? trim( $matches[4] ) : '#000000';
 
 		if ( ! $h_offset || ! $v_offset ) {
@@ -84,13 +86,13 @@ class Text_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 			'h_offset' => $h_offset,
 			'v_offset' => $v_offset,
 			'blur' => $blur,
-			'color' => $color
+			'color' => $color,
 		];
 	}
 
 	private function parse_single_size( string $value ): ?array {
 		$value = trim( $value );
-		
+
 		$pattern = '/^(-?\d+(?:\.\d+)?)(px|em|rem|%|vh|vw)?$/';
 		if ( ! preg_match( $pattern, $value, $matches ) ) {
 			return null;
@@ -98,7 +100,7 @@ class Text_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		return [
 			'size' => (float) $matches[1],
-			'unit' => $matches[2] ?? 'px'
+			'unit' => $matches[2] ?? 'px',
 		];
 	}
 

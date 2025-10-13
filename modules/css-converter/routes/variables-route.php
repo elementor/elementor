@@ -46,7 +46,7 @@ class Variables_Route {
 		// $dev_token = defined( 'ELEMENTOR_CSS_CONVERTER_DEV_TOKEN' ) ? ELEMENTOR_CSS_CONVERTER_DEV_TOKEN : null;
 		// $header_token = isset( $_SERVER['HTTP_X_DEV_TOKEN'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_DEV_TOKEN'] ) ) : null;
 		// if ( $dev_token && $header_token && hash_equals( (string) $dev_token, $header_token ) ) {
-		// 	return true;
+		// return true;
 		// }
 		// return current_user_can( 'manage_options' );
 	}
@@ -285,11 +285,11 @@ class Variables_Route {
 		// Use WordPress uploads directory for logs
 		$upload_dir = wp_upload_dir();
 		$logs_dir = $upload_dir['basedir'] . '/elementor-css-converter-logs';
-		
+
 		if ( ! file_exists( $logs_dir ) ) {
 			wp_mkdir_p( $logs_dir );
 		}
-		
+
 		return $logs_dir;
 	}
 

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Background_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 	protected $supported_properties = [
 		'background',
-		'background-image'
+		'background-image',
 	];
 
 	protected $atomic_prop_type = 'background';
@@ -20,7 +20,7 @@ class Background_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 
 	public function map_css_to_atomic( string $css_value ): ?array {
 		$css_value = trim( $css_value );
-		
+
 		if ( empty( $css_value ) || 'none' === $css_value ) {
 			return null;
 		}
@@ -40,8 +40,8 @@ class Background_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 				return [
 					'color' => [
 						'$$type' => 'color',
-						'value' => $color
-					]
+						'value' => $color,
+					],
 				];
 			}
 		}
@@ -52,9 +52,9 @@ class Background_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 					'$$type' => 'image',
 					'value' => [
 						'url' => $this->extract_url_from_css( $css_value ),
-						'id' => null
-					]
-				]
+						'id' => null,
+					],
+				],
 			];
 		}
 
@@ -65,10 +65,10 @@ class Background_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 					'value' => [
 						[
 							'$$type' => 'background-gradient-overlay',
-							'value' => $this->parse_gradient_value( $css_value )
-						]
-					]
-				]
+							'value' => $this->parse_gradient_value( $css_value ),
+						],
+					],
+				],
 			];
 		}
 
@@ -107,12 +107,12 @@ class Background_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 			'type' => 'linear',
 			'angle' => [
 				'$$type' => 'number',
-				'value' => 0
+				'value' => 0,
 			],
 			'stops' => [
 				'$$type' => 'gradient-color-stop',
-				'value' => []
-			]
+				'value' => [],
+			],
 		];
 	}
 
@@ -135,13 +135,13 @@ class Background_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 						'value' => [
 							'color' => [
 								'$$type' => 'color',
-								'value' => $color
+								'value' => $color,
 							],
 							'offset' => [
 								'$$type' => 'number',
-								'value' => $position ?? 0
-							]
-						]
+								'value' => $position ?? 0,
+							],
+						],
 					];
 				}
 			}
@@ -151,12 +151,12 @@ class Background_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 			'type' => 'linear',
 			'angle' => [
 				'$$type' => 'number',
-				'value' => $angle
+				'value' => $angle,
 			],
 			'stops' => [
 				'$$type' => 'gradient-color-stop',
-				'value' => $stops
-			]
+				'value' => $stops,
+			],
 		];
 	}
 
@@ -165,12 +165,12 @@ class Background_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 			'type' => 'radial',
 			'angle' => [
 				'$$type' => 'number',
-				'value' => 0
+				'value' => 0,
 			],
 			'stops' => [
 				'$$type' => 'gradient-color-stop',
-				'value' => []
-			]
+				'value' => [],
+			],
 		];
 	}
 }

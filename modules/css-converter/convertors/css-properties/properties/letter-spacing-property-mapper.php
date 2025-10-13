@@ -52,7 +52,7 @@ class Letter_Spacing_Property_Mapper extends Atomic_Property_Mapper_Base {
 		if ( $this->is_normal_letter_spacing( $value ) ) {
 			return null;
 		}
-		
+
 		return Size_Value_Parser::parse( $value );
 	}
 

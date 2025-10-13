@@ -42,7 +42,7 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 		'border-start-start-radius',
 		'border-start-end-radius',
 		'border-end-start-radius',
-		'border-end-end-radius'
+		'border-end-end-radius',
 	];
 
 	private const LOGICAL_TO_PHYSICAL_MAPPING = [
@@ -97,7 +97,7 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		$value = trim( $value );
-		
+
 		if ( empty( $value ) ) {
 			return null;
 		}
@@ -119,10 +119,10 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 	private function convert_individual_corner_to_shorthand( string $property, string $value ): ?array {
 		// Convert individual corner properties to shorthand format
 		// e.g., border-top-left-radius: 90px → border-radius: 90px 0px 0px 0px
-		
+
 		// Map logical properties to physical properties first
 		$physical_property = $this->map_logical_to_physical( $property );
-		
+
 		$corner_map = [
 			'border-top-left-radius' => 0,     // top-left is first in shorthand
 			'border-top-right-radius' => 1,    // top-right is second
@@ -136,7 +136,7 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		$size_value = $this->parse_size_value( $value );
-		
+
 		// Map corner index to logical property
 		$corner_mapping = [
 			0 => 'start-start', // top-left
@@ -144,9 +144,9 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 			2 => 'end-end',     // bottom-right
 			3 => 'end-start',   // bottom-left
 		];
-		
+
 		$logical_corner = $corner_mapping[ $corner_index ];
-		
+
 		// ✅ SUGGESTION IMPLEMENTED: Pass specific corner value and set others to null
 		// This matches the atomic widget transformer pattern
 		$result = [
@@ -155,17 +155,17 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 			'end-end' => null,     // bottom-right
 			'end-start' => null,   // bottom-left
 		];
-		
+
 		// Set only the specific corner to the actual value
 		$result[ $logical_corner ] = $this->create_size_prop( $size_value );
-		
+
 		return $result;
 	}
 
 	private function parse_individual_corner( string $property, string $value ): ?array {
 		// Map logical properties to physical properties first
 		$physical_property = $this->map_logical_to_physical( $property );
-		
+
 		$corner_map = [
 			'border-top-left-radius' => 'start-start',
 			'border-top-right-radius' => 'start-end',
@@ -179,12 +179,12 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		$size_value = $this->parse_size_value( $value );
-		
+
 		// ✅ OPTIMIZED: Only include the corner with a value (matches Elementor editor behavior)
 		// The atomic widget system supports partial corner definitions
 		$result = [];
 		$result[ $logical_corner ] = $this->create_size_prop( $size_value );
-		
+
 		return $result;
 	}
 
@@ -255,7 +255,7 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 	private function create_zero_size(): array {
 		return Size_Prop_Type::make()->generate( [
 			'size' => 0.0,
-			'unit' => 'px'
+			'unit' => 'px',
 		] );
 	}
 

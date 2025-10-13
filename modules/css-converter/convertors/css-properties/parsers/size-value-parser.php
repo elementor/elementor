@@ -7,20 +7,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Size_Value_Parser {
-	
+
 	private const CSS_KEYWORDS = [ 'auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer' ];
-	
+
 	private const SIZE_WITH_OPTIONAL_UNIT_PATTERN = '/^(-?\d+\.?\d*|-?\d*\.\d+)(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax)?$/i';
-	
+
 	private const NUMERIC_GROUP_INDEX = 1;
 	private const UNIT_GROUP_INDEX = 2;
-	
+
 	private const DEFAULT_UNIT = 'px';
 	private const KEYWORD_UNIT = 'custom';
 
 	public static function parse( string $value ): ?array {
 		$trimmed_value = trim( $value );
-		
+
 		if ( self::is_empty_value( $trimmed_value ) ) {
 			return null;
 		}
@@ -60,7 +60,7 @@ class Size_Value_Parser {
 	private static function create_numeric_size( array $regex_matches ): array {
 		$numeric_value = self::extract_numeric_value( $regex_matches );
 		$unit = self::extract_unit_or_default( $regex_matches );
-		
+
 		return self::create_size_structure( $numeric_value, $unit );
 	}
 
@@ -76,8 +76,7 @@ class Size_Value_Parser {
 	private static function create_size_structure( $size, string $unit ): array {
 		return [
 			'size' => $size,
-			'unit' => $unit
+			'unit' => $unit,
 		];
 	}
 }
-

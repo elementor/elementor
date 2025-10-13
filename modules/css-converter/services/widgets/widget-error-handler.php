@@ -21,7 +21,7 @@ class Widget_Error_Handler {
 			'fatal_errors' => 0,
 			'fallback_widgets_created' => 0,
 		];
-		
+
 		$this->recovery_strategies = [
 			'widget_creation_failed' => 'create_html_fallback',
 			'css_processing_failed' => 'skip_styling_continue',
@@ -33,7 +33,7 @@ class Widget_Error_Handler {
 
 	public function handle_error( $error_type, $error_data, $context = [] ) {
 		// HVV Requirement: "Please advise us" + "just report it" strategy
-		
+
 		$error_entry = [
 			'type' => $error_type,
 			'message' => $error_data['message'] ?? 'Unknown error',
@@ -43,7 +43,7 @@ class Widget_Error_Handler {
 			'recoverable' => $this->is_error_recoverable( $error_type ),
 			'recovery_strategy' => $this->recovery_strategies[ $error_type ] ?? null,
 		];
-		
+
 		// Add detailed error information
 		if ( isset( $error_data['exception'] ) && $error_data['exception'] instanceof \Exception ) {
 			$error_entry['exception_message'] = $error_data['exception']->getMessage();
@@ -51,23 +51,22 @@ class Widget_Error_Handler {
 			$error_entry['file'] = $error_data['exception']->getFile();
 			$error_entry['line'] = $error_data['exception']->getLine();
 		}
-		
+
 		// Log error
 		$this->error_log[] = $error_entry;
-		$this->error_stats['total_errors']++;
-		
+		++$this->error_stats['total_errors'];
+
 		if ( $error_entry['recoverable'] ) {
-			$this->error_stats['recoverable_errors']++;
+			++$this->error_stats['recoverable_errors'];
 		} else {
-			$this->error_stats['fatal_errors']++;
+			++$this->error_stats['fatal_errors'];
 		}
-		
-		
+
 		// Attempt recovery if possible
 		if ( $error_entry['recoverable'] && $error_entry['recovery_strategy'] ) {
 			return $this->attempt_recovery( $error_entry, $error_data, $context );
 		}
-		
+
 		return null;
 	}
 
@@ -79,10 +78,9 @@ class Widget_Error_Handler {
 			'timestamp' => current_time( 'mysql' ),
 			'severity' => 'warning',
 		];
-		
+
 		$this->warning_log[] = $warning_entry;
-		$this->error_stats['total_warnings']++;
-		
+		++$this->error_stats['total_warnings'];
 	}
 
 	private function determine_error_severity( $error_type ) {
@@ -97,7 +95,7 @@ class Widget_Error_Handler {
 			'css_parsing_failed' => 'medium',
 			'validation_failed' => 'medium',
 		];
-		
+
 		return $severity_map[ $error_type ] ?? 'medium';
 	}
 
@@ -109,13 +107,13 @@ class Widget_Error_Handler {
 			'hierarchy_error',
 			'post_creation_failed',
 		];
-		
+
 		return in_array( $error_type, $recoverable_errors, true );
 	}
 
 	private function attempt_recovery( $error_entry, $error_data, $context ) {
 		$strategy = $error_entry['recovery_strategy'];
-		
+
 		try {
 			switch ( $strategy ) {
 				case 'create_html_fallback':
@@ -138,21 +136,21 @@ class Widget_Error_Handler {
 				'recovery_strategy' => $strategy,
 				'exception' => $recovery_exception,
 			], $context );
-			
+
 			return null;
 		}
 	}
 
 	private function create_html_fallback_widget( $error_data, $context ) {
 		// HVV Strategy: Create HTML widget fallback for unconvertible elements
-		
+
 		$widget = $context['widget'] ?? null;
 		if ( ! $widget ) {
 			throw new \Exception( 'No widget data available for HTML fallback' );
 		}
-		
+
 		$html_content = $this->reconstruct_original_html( $widget );
-		
+
 		$fallback_widget = [
 			'id' => wp_generate_uuid4(),
 			'elType' => 'widget',
@@ -168,34 +166,34 @@ class Widget_Error_Handler {
 				'created_at' => current_time( 'mysql' ),
 			],
 		];
-		
-		$this->error_stats['fallback_widgets_created']++;
-		
+
+		++$this->error_stats['fallback_widgets_created'];
+
 		$this->handle_warning( 'fallback_widget_created', [
 			'message' => 'Created HTML fallback widget due to conversion failure',
 			'original_widget_type' => $widget['widget_type'] ?? 'unknown',
 		], $context );
-		
+
 		return $fallback_widget;
 	}
 
 	private function skip_styling_continue( $error_data, $context ) {
 		// Skip CSS styling but continue with widget structure
-		
+
 		$widget = $context['widget'] ?? null;
 		if ( ! $widget ) {
 			throw new \Exception( 'No widget data available for styling skip' );
 		}
-		
+
 		// Remove styling information but keep structure
 		unset( $widget['applied_styles'] );
 		unset( $widget['computed_styles'] );
-		
+
 		$this->handle_warning( 'styling_skipped', [
 			'message' => 'CSS styling skipped due to processing error',
 			'widget_type' => $widget['widget_type'] ?? 'unknown',
 		], $context );
-		
+
 		return $widget;
 	}
 
@@ -203,66 +201,66 @@ class Widget_Error_Handler {
 		// COMMENTED OUT BY USER REQUEST - 2025-10-11
 		// User is hesitant about fallback mechanism
 		// Fallback to inline styles when global class creation fails is DISABLED
-		
-		
+
 		// Return original widget without fallback modification
 		return $context['widget'] ?? null;
-		
-		/* ORIGINAL CODE COMMENTED OUT:
+
+		/*
+		ORIGINAL CODE COMMENTED OUT:
 		$widget = $context['widget'] ?? null;
 		$css_styles = $context['css_styles'] ?? [];
-		
+
 		if ( ! $widget || empty( $css_styles ) ) {
 			throw new \Exception( 'Insufficient data for inline styles fallback' );
 		}
-		
+
 		// Convert CSS styles to inline style attribute
 		$inline_styles = [];
 		foreach ( $css_styles as $property => $value ) {
 			$inline_styles[] = "{$property}: {$value}";
 		}
-		
+
 		$widget['settings']['_element_css_inline'] = implode( '; ', $inline_styles );
-		
+
 		$this->handle_warning( 'inline_styles_fallback', [
 			'message' => 'Using inline styles fallback due to global class creation failure',
 			'properties_count' => count( $css_styles ),
 		], $context );
-		
+
 		return $widget;
 		*/
 	}
 
 	private function flatten_hierarchy( $error_data, $context ) {
 		// Flatten widget hierarchy when hierarchy processing fails
-		
+
 		$widgets = $context['widgets'] ?? [];
 		if ( empty( $widgets ) ) {
 			throw new \Exception( 'No widgets available for hierarchy flattening' );
 		}
-		
+
 		$flattened_widgets = $this->flatten_widget_tree( $widgets );
-		
+
 		$this->handle_warning( 'hierarchy_flattened', [
 			'message' => 'Widget hierarchy flattened due to processing error',
 			'original_count' => count( $widgets ),
 			'flattened_count' => count( $flattened_widgets ),
 		], $context );
-		
+
 		return $flattened_widgets;
 	}
 
 	private function retry_with_defaults( $error_data, $context ) {
 		// Retry operation with default/safe values
-		
+
 		$operation = $context['operation'] ?? 'unknown';
 		$defaults = $this->get_safe_defaults( $operation );
-		
+
 		$this->handle_warning( 'retrying_with_defaults', [
 			'message' => "Retrying {$operation} with default values",
 			'defaults_applied' => array_keys( $defaults ),
 		], $context );
-		
+
 		return $defaults;
 	}
 
@@ -271,21 +269,21 @@ class Widget_Error_Handler {
 		$tag = $element_data['tag'] ?? 'div';
 		$attributes = $element_data['attributes'] ?? [];
 		$content = $element_data['content'] ?? '';
-		
+
 		// Build attributes string
 		$attr_string = '';
 		foreach ( $attributes as $attr => $value ) {
 			$attr_string .= ' ' . esc_attr( $attr ) . '="' . esc_attr( $value ) . '"';
 		}
-		
+
 		// Add fallback indicator
 		$attr_string .= ' data-elementor-converter-fallback="true"';
-		
+
 		// Handle self-closing tags
 		if ( in_array( $tag, [ 'img', 'br', 'hr', 'input', 'meta', 'link' ], true ) ) {
 			return "<{$tag}{$attr_string} />";
 		}
-		
+
 		// Handle children if present
 		$child_html = '';
 		if ( ! empty( $widget['children'] ) ) {
@@ -293,9 +291,9 @@ class Widget_Error_Handler {
 				$child_html .= $this->reconstruct_original_html( $child );
 			}
 		}
-		
+
 		$full_content = $content . $child_html;
-		
+
 		return "<{$tag}{$attr_string}>{$full_content}</{$tag}>";
 	}
 
@@ -305,13 +303,13 @@ class Widget_Error_Handler {
 			$flat_widget = $widget;
 			unset( $flat_widget['children'] ); // Remove hierarchy
 			$flattened[] = $flat_widget;
-			
+
 			// Recursively flatten children
 			if ( ! empty( $widget['children'] ) ) {
 				$this->flatten_widget_tree( $widget['children'], $flattened );
 			}
 		}
-		
+
 		return $flattened;
 	}
 
@@ -334,13 +332,13 @@ class Widget_Error_Handler {
 				'type' => 'class',
 			],
 		];
-		
+
 		return $defaults[ $operation ] ?? [];
 	}
 
 	public function generate_error_report() {
 		// Generate comprehensive error report for user notification
-		
+
 		$report = [
 			'summary' => [
 				'total_errors' => $this->error_stats['total_errors'],
@@ -355,7 +353,7 @@ class Widget_Error_Handler {
 			'recommendations' => $this->generate_recommendations(),
 			'recovery_actions_taken' => $this->get_recovery_actions_taken(),
 		];
-		
+
 		return $report;
 	}
 
@@ -364,7 +362,7 @@ class Widget_Error_Handler {
 		if ( 0 === $total_operations ) {
 			return 100;
 		}
-		
+
 		$successful_operations = $this->error_stats['recoverable_errors'];
 		return round( ( $successful_operations / $total_operations ) * 100, 2 );
 	}
@@ -395,10 +393,10 @@ class Widget_Error_Handler {
 
 	private function generate_recommendations() {
 		$recommendations = [];
-		
+
 		// Analyze error patterns and generate recommendations
 		$error_types = array_keys( $this->group_errors_by_type() );
-		
+
 		foreach ( $error_types as $error_type ) {
 			switch ( $error_type ) {
 				case 'widget_creation_failed':
@@ -415,13 +413,13 @@ class Widget_Error_Handler {
 					break;
 			}
 		}
-		
+
 		return array_unique( $recommendations );
 	}
 
 	private function get_recovery_actions_taken() {
 		$actions = [];
-		
+
 		foreach ( $this->error_log as $error ) {
 			if ( $error['recoverable'] && $error['recovery_strategy'] ) {
 				$actions[] = [
@@ -431,7 +429,7 @@ class Widget_Error_Handler {
 				];
 			}
 		}
-		
+
 		return $actions;
 	}
 

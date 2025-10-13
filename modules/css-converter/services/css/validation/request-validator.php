@@ -19,55 +19,55 @@ class Request_Validator {
 
 	public function validate_widget_conversion_request( WP_REST_Request $request ) {
 		$errors = [];
-		
+
 		// Validate required parameters
 		$required_validation = $this->validate_required_parameters( $request );
 		if ( $required_validation ) {
 			return $required_validation;
 		}
-		
+
 		// Validate parameter types and formats
 		$type_validation = $this->validate_parameter_types( $request );
 		if ( $type_validation ) {
 			return $type_validation;
 		}
-		
+
 		// Validate content size limits
 		$size_validation = $this->validate_content_size( $request );
 		if ( $size_validation ) {
 			return $size_validation;
 		}
-		
+
 		// Validate security constraints
 		$security_validation = $this->validate_security_constraints( $request );
 		if ( $security_validation ) {
 			return $security_validation;
 		}
-		
+
 		// Validate URL constraints
 		$url_validation = $this->validate_url_constraints( $request );
 		if ( $url_validation ) {
 			return $url_validation;
 		}
-		
+
 		// Validate nesting depth limits
 		$depth_validation = $this->validate_nesting_depth( $request );
 		if ( $depth_validation ) {
 			return $depth_validation;
 		}
-		
+
 		// Validate options object
 		$options_validation = $this->validate_options( $request );
 		if ( $options_validation ) {
 			return $options_validation;
 		}
-		
+
 		return null; // No validation errors
 	}
 
 	private function validate_required_parameters( WP_REST_Request $request ) {
 		$required_params = [ 'type', 'content' ];
-		
+
 		foreach ( $required_params as $param ) {
 			$value = $request->get_param( $param );
 			if ( empty( $value ) && '0' !== $value ) {
@@ -78,7 +78,7 @@ class Request_Validator {
 				], 400 );
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -87,7 +87,7 @@ class Request_Validator {
 		$content = $request->get_param( 'content' );
 		$css_urls = $request->get_param( 'cssUrls' );
 		$follow_imports = $request->get_param( 'followImports' );
-		
+
 		// Validate type enum
 		if ( ! in_array( $type, [ 'url', 'html', 'css' ], true ) ) {
 			return new WP_REST_Response( [
@@ -97,7 +97,7 @@ class Request_Validator {
 				'value' => $type,
 			], 400 );
 		}
-		
+
 		// Validate content is string
 		if ( ! is_string( $content ) ) {
 			return new WP_REST_Response( [
@@ -106,7 +106,7 @@ class Request_Validator {
 				'parameter' => 'content',
 			], 400 );
 		}
-		
+
 		// Validate cssUrls is array if provided
 		if ( null !== $css_urls && ! is_array( $css_urls ) ) {
 			return new WP_REST_Response( [
@@ -115,7 +115,7 @@ class Request_Validator {
 				'parameter' => 'cssUrls',
 			], 400 );
 		}
-		
+
 		// Validate followImports is boolean if provided
 		if ( null !== $follow_imports && ! is_bool( $follow_imports ) ) {
 			return new WP_REST_Response( [
@@ -124,41 +124,41 @@ class Request_Validator {
 				'parameter' => 'followImports',
 			], 400 );
 		}
-		
+
 		return null;
 	}
 
 	private function validate_content_size( WP_REST_Request $request ) {
 		$type = $request->get_param( 'type' );
 		$content = $request->get_param( 'content' );
-		
+
 		$content_size = strlen( $content );
 		$limits = $this->security_config['size_limits'];
-		
+
 		$max_size = $limits[ $type ] ?? $limits['default'];
-		
+
 		if ( $content_size > $max_size ) {
 			return new WP_REST_Response( [
 				'error' => 'content_too_large',
-				'message' => sprintf( 
-					'Content size (%s) exceeds maximum allowed for %s content (%s)', 
-					size_format( $content_size ), 
+				'message' => sprintf(
+					'Content size (%s) exceeds maximum allowed for %s content (%s)',
+					size_format( $content_size ),
 					$type,
-					size_format( $max_size ) 
+					size_format( $max_size )
 				),
 				'content_size' => $content_size,
 				'max_size' => $max_size,
 				'type' => $type,
 			], 413 );
 		}
-		
+
 		return null;
 	}
 
 	private function validate_security_constraints( WP_REST_Request $request ) {
 		$type = $request->get_param( 'type' );
 		$content = $request->get_param( 'content' );
-		
+
 		// HTML security validation
 		if ( 'html' === $type ) {
 			$html_violations = $this->check_html_security_violations( $content );
@@ -170,7 +170,7 @@ class Request_Validator {
 				], 400 );
 			}
 		}
-		
+
 		// CSS security validation
 		if ( 'css' === $type || 'html' === $type ) {
 			$css_violations = $this->check_css_security_violations( $content );
@@ -182,7 +182,7 @@ class Request_Validator {
 				], 400 );
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -190,7 +190,7 @@ class Request_Validator {
 		$type = $request->get_param( 'type' );
 		$content = $request->get_param( 'content' );
 		$css_urls = $request->get_param( 'cssUrls' ) ?: [];
-		
+
 		// URL type validation
 		if ( 'url' === $type ) {
 			$url_validation = $this->validate_single_url( $content );
@@ -198,7 +198,7 @@ class Request_Validator {
 				return $url_validation;
 			}
 		}
-		
+
 		// CSS URLs validation
 		foreach ( $css_urls as $index => $url ) {
 			$url_validation = $this->validate_single_url( $url, "cssUrls[{$index}]" );
@@ -206,7 +206,7 @@ class Request_Validator {
 				return $url_validation;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -220,7 +220,7 @@ class Request_Validator {
 				'url' => $url,
 			], 400 );
 		}
-		
+
 		// Protocol validation (http/https only)
 		$parsed_url = wp_parse_url( $url );
 		if ( ! in_array( $parsed_url['scheme'] ?? '', [ 'http', 'https' ], true ) ) {
@@ -232,20 +232,20 @@ class Request_Validator {
 				'scheme' => $parsed_url['scheme'] ?? 'unknown',
 			], 400 );
 		}
-		
+
 		// Domain restrictions (if configured)
 		$allowed_domains = $this->security_config['allowed_domains'];
 		if ( ! empty( $allowed_domains ) ) {
 			$domain = $parsed_url['host'] ?? '';
 			$domain_allowed = false;
-			
+
 			foreach ( $allowed_domains as $allowed_domain ) {
 				if ( $domain === $allowed_domain || str_ends_with( $domain, '.' . $allowed_domain ) ) {
 					$domain_allowed = true;
 					break;
 				}
 			}
-			
+
 			if ( ! $domain_allowed ) {
 				return new WP_REST_Response( [
 					'error' => 'domain_not_allowed',
@@ -257,18 +257,18 @@ class Request_Validator {
 				], 403 );
 			}
 		}
-		
+
 		return null;
 	}
 
 	private function validate_nesting_depth( WP_REST_Request $request ) {
 		$type = $request->get_param( 'type' );
 		$content = $request->get_param( 'content' );
-		
+
 		if ( 'html' === $type ) {
 			$max_depth = $this->security_config['max_nesting_depth'];
 			$actual_depth = $this->calculate_html_nesting_depth( $content );
-			
+
 			if ( $actual_depth > $max_depth ) {
 				return new WP_REST_Response( [
 					'error' => 'nesting_too_deep',
@@ -278,17 +278,17 @@ class Request_Validator {
 				], 400 );
 			}
 		}
-		
+
 		return null;
 	}
 
 	private function validate_options( WP_REST_Request $request ) {
 		$options = $request->get_param( 'options' );
-		
+
 		if ( null === $options ) {
 			return null;
 		}
-		
+
 		if ( ! is_array( $options ) ) {
 			return new WP_REST_Response( [
 				'error' => 'invalid_parameter_type',
@@ -296,7 +296,7 @@ class Request_Validator {
 				'parameter' => 'options',
 			], 400 );
 		}
-		
+
 		// Validate individual option fields
 		$option_validations = [
 			'postId' => 'validate_post_id_option',
@@ -306,7 +306,7 @@ class Request_Validator {
 			'timeout' => 'validate_timeout_option',
 			'globalClassThreshold' => 'validate_threshold_option',
 		];
-		
+
 		foreach ( $option_validations as $option_key => $validation_method ) {
 			if ( isset( $options[ $option_key ] ) ) {
 				$validation_result = $this->$validation_method( $options[ $option_key ], $option_key );
@@ -315,7 +315,7 @@ class Request_Validator {
 				}
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -328,7 +328,7 @@ class Request_Validator {
 				'value' => $value,
 			], 400 );
 		}
-		
+
 		// Verify post exists if ID provided
 		if ( is_int( $value ) && ! get_post( $value ) ) {
 			return new WP_REST_Response( [
@@ -338,7 +338,7 @@ class Request_Validator {
 				'post_id' => $value,
 			], 404 );
 		}
-		
+
 		return null;
 	}
 
@@ -351,7 +351,7 @@ class Request_Validator {
 				'value' => $value,
 			], 400 );
 		}
-		
+
 		// Verify post type exists
 		if ( ! post_type_exists( $value ) ) {
 			return new WP_REST_Response( [
@@ -361,7 +361,7 @@ class Request_Validator {
 				'post_type' => $value,
 			], 400 );
 		}
-		
+
 		return null;
 	}
 
@@ -374,7 +374,7 @@ class Request_Validator {
 				'value' => $value,
 			], 400 );
 		}
-		
+
 		return null;
 	}
 
@@ -389,7 +389,7 @@ class Request_Validator {
 				'max' => 300,
 			], 400 );
 		}
-		
+
 		return null;
 	}
 
@@ -404,14 +404,14 @@ class Request_Validator {
 				'max' => 100,
 			], 400 );
 		}
-		
+
 		return null;
 	}
 
 	private function check_html_security_violations( $html ) {
 		$violations = [];
 		$dangerous_patterns = $this->security_config['html_security_patterns'];
-		
+
 		foreach ( $dangerous_patterns as $pattern_name => $pattern ) {
 			if ( preg_match( $pattern, $html ) ) {
 				$violations[] = [
@@ -421,14 +421,14 @@ class Request_Validator {
 				];
 			}
 		}
-		
+
 		return $violations;
 	}
 
 	private function check_css_security_violations( $content ) {
 		$violations = [];
 		$dangerous_patterns = $this->security_config['css_security_patterns'];
-		
+
 		foreach ( $dangerous_patterns as $pattern_name => $pattern ) {
 			if ( preg_match( $pattern, $content ) ) {
 				$violations[] = [
@@ -438,7 +438,7 @@ class Request_Validator {
 				];
 			}
 		}
-		
+
 		return $violations;
 	}
 
@@ -446,13 +446,13 @@ class Request_Validator {
 		// Simple depth calculation using DOM parsing
 		$dom = new \DOMDocument();
 		$dom->loadHTML( $html, \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD );
-		
+
 		return $this->get_max_element_depth( $dom->documentElement );
 	}
 
 	private function get_max_element_depth( $element, $current_depth = 0 ) {
 		$max_depth = $current_depth;
-		
+
 		if ( $element->hasChildNodes() ) {
 			foreach ( $element->childNodes as $child ) {
 				if ( $child->nodeType === XML_ELEMENT_NODE ) {
@@ -461,7 +461,7 @@ class Request_Validator {
 				}
 			}
 		}
-		
+
 		return $max_depth;
 	}
 
@@ -475,7 +475,7 @@ class Request_Validator {
 			'css_expressions' => 'CSS expressions are not allowed for security reasons',
 			'css_imports' => 'CSS @import with suspicious URLs are not allowed',
 		];
-		
+
 		return $descriptions[ $pattern_name ] ?? 'Security violation detected';
 	}
 

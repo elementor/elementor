@@ -32,7 +32,7 @@ class Widgets_Route {
 	}
 
 	public function register_route() {
-		
+
 		$registered = register_rest_route( 'elementor/v2', '/widget-converter', [
 			'methods' => 'POST',
 			'callback' => [ $this, 'handle_widget_conversion' ],
@@ -78,12 +78,12 @@ class Widgets_Route {
 							'default' => false,
 							'description' => 'Whether to preserve HTML element IDs',
 						],
-					'createGlobalClasses' => [
-						'type' => 'boolean',
-						'default' => true,
-						'description' => 'Always creates optimized widget styles (deprecated: false option removed)',
-					],
-					'timeout' => [
+						'createGlobalClasses' => [
+							'type' => 'boolean',
+							'default' => true,
+							'description' => 'Always creates optimized widget styles (deprecated: false option removed)',
+						],
+						'timeout' => [
 							'type' => 'integer',
 							'default' => 30,
 							'minimum' => 1,
@@ -101,14 +101,13 @@ class Widgets_Route {
 				],
 			],
 		] );
-		
 	}
 
 	public function check_permissions() {
-		
+
 		// DEBUG: Temporarily allow public access for testing double-wrapping fix
 		return true;
-		
+
 		$allow_public = apply_filters( 'elementor_css_converter_allow_public_access', false );
 		if ( $allow_public ) {
 			return true;
@@ -125,21 +124,20 @@ class Widgets_Route {
 	}
 
 	public function handle_widget_conversion( WP_REST_Request $request ) {
-		error_log( "🔥 MAX DEBUG: handle_widget_conversion called!" );
-		
+		error_log( '🔥 MAX DEBUG: handle_widget_conversion called!' );
+
 		$type = $request->get_param( 'type' );
 		$content = $request->get_param( 'content' );
 		$css_urls = $request->get_param( 'cssUrls' ) ?: [];
 		$follow_imports = $request->get_param( 'followImports' ) ?: false;
 		$options = $request->get_param( 'options' ) ?: [];
-		
-		
+
 		// PHASE 2.2: HTML Content Verification
-		
+
 		// Check for inline styles in HTML
 		if ( 'html' === $type ) {
 			$inline_style_count = preg_match_all( '/style\s*=\s*["\'][^"\']*["\']/', $content );
-			
+
 			if ( $inline_style_count > 0 ) {
 				preg_match_all( '/style\s*=\s*["\']([^"\']*)["\']/', $content, $matches );
 				foreach ( $matches[1] as $i => $style_content ) {
@@ -154,9 +152,9 @@ class Widgets_Route {
 		}
 
 		try {
-			
+
 			$service = $this->get_conversion_service();
-			
+
 			// Process based on input type
 			switch ( $type ) {
 				case 'url':
@@ -174,20 +172,19 @@ class Widgets_Route {
 					return new WP_REST_Response( [ 'error' => 'Invalid input type' ], 400 );
 			}
 
-			
 			return new WP_REST_Response( $result, 200 );
 
 		} catch ( Class_Conversion_Exception $e ) {
 			return new WP_REST_Response( [
 				'error' => 'Conversion failed',
 				'message' => $e->getMessage(),
-				'debug' => 'Class_Conversion_Exception caught'
+				'debug' => 'Class_Conversion_Exception caught',
 			], 400 );
 		} catch ( \Exception $e ) {
 			return new WP_REST_Response( [
 				'error' => 'Internal server error',
 				'message' => $e->getMessage(),
-				'debug' => 'General exception caught: ' . get_class( $e )
+				'debug' => 'General exception caught: ' . get_class( $e ),
 			], 500 );
 		}
 	}
@@ -213,9 +210,9 @@ class Widgets_Route {
 		if ( $content_size > $max_size ) {
 			return new WP_REST_Response( [
 				'error' => 'Content too large',
-				'message' => sprintf( 'Content size (%s) exceeds maximum allowed (%s)', 
-					size_format( $content_size ), 
-					size_format( $max_size ) 
+				'message' => sprintf( 'Content size (%s) exceeds maximum allowed (%s)',
+					size_format( $content_size ),
+					size_format( $max_size )
 				),
 			], 413 );
 		}

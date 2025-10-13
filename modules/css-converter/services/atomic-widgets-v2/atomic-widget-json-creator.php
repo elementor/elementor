@@ -66,13 +66,13 @@ class Atomic_Widget_JSON_Creator {
 
 		try {
 			$widget_builder = \Elementor\Modules\AtomicWidgets\Elements\Widget_Builder::make( $widget_type );
-			
+
 			return $widget_builder
 				->settings( $settings )
 				->is_locked( false )
 				->editor_settings( [] )
 				->build();
-				
+
 		} catch ( \Exception $e ) {
 			return null;
 		}
@@ -88,14 +88,14 @@ class Atomic_Widget_JSON_Creator {
 
 		try {
 			$element_builder = \Elementor\Modules\AtomicWidgets\Elements\Element_Builder::make( $widget_type );
-			
+
 			return $element_builder
 				->settings( $settings )
 				->children( $child_widgets )
 				->is_locked( false )
 				->editor_settings( [] )
 				->build();
-				
+
 		} catch ( \Exception $e ) {
 			return null;
 		}
@@ -116,7 +116,7 @@ class Atomic_Widget_JSON_Creator {
 
 	private function is_atomic_widgets_available(): bool {
 		return class_exists( 'Elementor\\Modules\\AtomicWidgets\\Elements\\Widget_Builder' ) &&
-			   class_exists( 'Elementor\\Modules\\AtomicWidgets\\Elements\\Element_Builder' );
+				class_exists( 'Elementor\\Modules\\AtomicWidgets\\Elements\\Element_Builder' );
 	}
 
 	public function validate_widget_against_schema( array $widget, string $widget_type ): bool {
@@ -142,7 +142,7 @@ class Atomic_Widget_JSON_Creator {
 		];
 
 		$class_name = $class_map[ $widget_type ] ?? null;
-		
+
 		return $class_name && class_exists( $class_name ) ? $class_name : null;
 	}
 

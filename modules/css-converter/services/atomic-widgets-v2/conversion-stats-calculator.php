@@ -81,7 +81,7 @@ class Conversion_Stats_Calculator {
 
 		foreach ( $elements as $element ) {
 			if ( ! empty( $element['widget_type'] ) ) {
-				$count++;
+				++$count;
 			}
 
 			if ( ! empty( $element['children'] ) ) {
@@ -97,7 +97,7 @@ class Conversion_Stats_Calculator {
 
 		foreach ( $elements as $element ) {
 			if ( empty( $element['widget_type'] ) ) {
-				$count++;
+				++$count;
 			}
 
 			if ( ! empty( $element['children'] ) ) {
@@ -193,7 +193,7 @@ class Conversion_Stats_Calculator {
 
 		foreach ( $widgets as $widget ) {
 			$prop_count = 0;
-			
+
 			if ( ! empty( $widget['styles'] ) ) {
 				foreach ( $widget['styles'] as $style ) {
 					if ( ! empty( $style['variants'] ) ) {
@@ -205,11 +205,11 @@ class Conversion_Stats_Calculator {
 			}
 
 			if ( $prop_count <= 2 ) {
-				$complexity_stats['simple_widgets']++;
+				++$complexity_stats['simple_widgets'];
 			} elseif ( $prop_count <= 5 ) {
-				$complexity_stats['medium_widgets']++;
+				++$complexity_stats['medium_widgets'];
 			} else {
-				$complexity_stats['complex_widgets']++;
+				++$complexity_stats['complex_widgets'];
 			}
 
 			if ( ! empty( $widget['elements'] ) ) {
@@ -233,7 +233,7 @@ class Conversion_Stats_Calculator {
 			if ( ! empty( $widget['elements'] ) ) {
 				$child_analysis = $this->analyze_nesting_depth( $widget['elements'], $current_depth + 1 );
 				$max_depth = max( $max_depth, $child_analysis['max_depth'] );
-				
+
 				foreach ( $child_analysis['depth_distribution'] as $depth => $count ) {
 					$depth_distribution[ $depth ] = ( $depth_distribution[ $depth ] ?? 0 ) + $count;
 				}

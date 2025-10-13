@@ -21,7 +21,7 @@ class String_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 		'font-weight',
 		'font-style',
 		'overflow',
-		'visibility'
+		'visibility',
 	];
 
 	protected $atomic_prop_type = 'string';
@@ -30,7 +30,7 @@ class String_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 
 	public function map_css_to_atomic( string $css_value ): ?array {
 		$css_value = trim( $css_value );
-		
+
 		if ( empty( $css_value ) ) {
 			return null;
 		}

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Css_Specificity_Calculator {
-	
+
 	const IMPORTANT_WEIGHT = 10000;
 	const INLINE_WEIGHT = 1000;
 	const ID_WEIGHT = 100;
@@ -35,7 +35,7 @@ class Css_Specificity_Calculator {
 
 	private function parse_selector_specificity( $selector ) {
 		$specificity = 0;
-		
+
 		// Clean up selector - remove pseudo-elements and pseudo-classes for basic calculation
 		$clean_selector = $this->clean_selector( $selector );
 
@@ -61,10 +61,10 @@ class Css_Specificity_Calculator {
 		// Remove strings and comments that might contain selector-like patterns
 		$selector = preg_replace( '/["\'][^"\']*["\']/', '', $selector );
 		$selector = preg_replace( '/\/\*.*?\*\//', '', $selector );
-		
+
 		// Remove pseudo-element content for cleaner parsing
 		$selector = preg_replace( '/::?[a-zA-Z][\w-]*(\([^)]*\))?/', '', $selector );
-		
+
 		return trim( $selector );
 	}
 
@@ -85,7 +85,7 @@ class Css_Specificity_Calculator {
 
 			// If there's something left and it's not a pseudo-class/element, it's an element
 			if ( ! empty( $element_part ) && ! preg_match( '/^:/', $element_part ) ) {
-				$element_count++;
+				++$element_count;
 			}
 		}
 
@@ -115,8 +115,8 @@ class Css_Specificity_Calculator {
 			$order = $style['order'] ?? 0;
 
 			// Higher specificity wins, or later order if specificity is equal
-			if ( $specificity > $highest_specificity || 
-				 ( $specificity === $highest_specificity && $order > $latest_order ) ) {
+			if ( $specificity > $highest_specificity ||
+				( $specificity === $highest_specificity && $order > $latest_order ) ) {
 				$winning_style = $style;
 				$highest_specificity = $specificity;
 				$latest_order = $order;
@@ -128,10 +128,10 @@ class Css_Specificity_Calculator {
 
 	public function categorize_css_rule( $selector, $property, $value, $is_important = false ) {
 		$specificity = $this->calculate_specificity( $selector, $is_important );
-		
+
 		// Determine rule category based on selector type
 		$category = $this->determine_rule_category( $selector );
-		
+
 		return [
 			'selector' => $selector,
 			'property' => $property,
@@ -256,7 +256,7 @@ class Css_Specificity_Calculator {
 
 	public function format_specificity( $specificity ) {
 		$breakdown = $this->get_specificity_breakdown( $specificity );
-		
+
 		$parts = [];
 		if ( $breakdown['important'] ) {
 			$parts[] = '!important';
@@ -264,19 +264,19 @@ class Css_Specificity_Calculator {
 		if ( $breakdown['inline'] ) {
 			$parts[] = 'inline';
 		}
-		
-		$specificity_notation = sprintf( 
-			'(%d,%d,%d,%d)', 
+
+		$specificity_notation = sprintf(
+			'(%d,%d,%d,%d)',
 			$breakdown['important'],
-			$breakdown['ids'], 
-			$breakdown['classes'], 
-			$breakdown['elements'] 
+			$breakdown['ids'],
+			$breakdown['classes'],
+			$breakdown['elements']
 		);
-		
+
 		if ( ! empty( $parts ) ) {
 			return implode( ' + ', $parts ) . ' ' . $specificity_notation;
 		}
-		
+
 		return $specificity_notation;
 	}
 }

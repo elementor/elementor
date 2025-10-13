@@ -20,7 +20,7 @@ class Font_Weight_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		$normalized_value = $this->normalize_font_weight_value( $value );
-		
+
 		if ( null === $normalized_value ) {
 			return null;
 		}
@@ -32,8 +32,19 @@ class Font_Weight_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$value = trim( strtolower( $value ) );
 
 		$valid_values = [
-			'100', '200', '300', '400', '500', '600', '700', '800', '900',
-			'normal', 'bold', 'bolder', 'lighter'
+			'100',
+			'200',
+			'300',
+			'400',
+			'500',
+			'600',
+			'700',
+			'800',
+			'900',
+			'normal',
+			'bold',
+			'bolder',
+			'lighter',
 		];
 
 		if ( in_array( $value, $valid_values, true ) ) {
@@ -61,19 +72,19 @@ class Font_Weight_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		if ( is_numeric( $value ) ) {
 			$numeric_value = (int) $value;
-			
+
 			if ( $numeric_value >= 100 && $numeric_value <= 900 && $numeric_value % 100 === 0 ) {
 				return (string) $numeric_value;
 			}
-			
+
 			if ( $numeric_value < 100 ) {
 				return '100';
 			}
-			
+
 			if ( $numeric_value > 900 ) {
 				return '900';
 			}
-			
+
 			$rounded = round( $numeric_value / 100 ) * 100;
 			return (string) max( 100, min( 900, $rounded ) );
 		}

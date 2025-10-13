@@ -97,16 +97,16 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	protected function is_css_keyword( string $value ): bool {
-		$keywords = ['auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer'];
+		$keywords = [ 'auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer' ];
 		return in_array( strtolower( $value ), $keywords, true );
 	}
 
 	private function handle_css_keyword( string $value ): array {
 		$keyword = strtolower( $value );
-		
+
 		$keyword_size = [
 			'size' => $keyword,
-			'unit' => 'custom'
+			'unit' => 'custom',
 		];
 
 		return $this->create_dimensions_structure([
@@ -130,7 +130,7 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		$dimensions = $this->map_shorthand_to_logical_properties( $parts );
-		
+
 		if ( null === $dimensions ) {
 			return null;
 		}
@@ -152,15 +152,18 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		// ✅ SOLUTION: Create proper Dimensions_Prop_Type structure like margin shorthand does
 		// This works because Dimensions_Prop_Type DOES have a transformer (proven by margin: 10px working)
-		
+
 		$start_value = $this->parse_size_value( $parts[0] );
 		$end_value = $count > 1 ? $this->parse_size_value( $parts[1] ) : $start_value;
-		
+
 		if ( null === $start_value || null === $end_value ) {
 			return null;
 		}
 
-		$zero_size = [ 'size' => 0.0, 'unit' => 'px' ];
+		$zero_size = [
+			'size' => 0.0,
+			'unit' => 'px',
+		];
 
 		if ( 'inline' === $axis ) {
 			// margin-inline: 10px 30px -> inline-start: 10px, inline-end: 30px
@@ -187,7 +190,7 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function map_shorthand_to_logical_properties( array $parts ): ?array {
 		$count = count( $parts );
-		
+
 		switch ( $count ) {
 			case 1:
 				if ( ! isset( $parts[0] ) ) {
@@ -267,7 +270,7 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		$logical_direction = $this->map_physical_to_logical( $property );
-		
+
 		// ✅ EDITOR PATTERN MATCH: Use sparse dimensions with nulls like the working editor example
 		// The editor creates: {"block-start": null, "block-end": {...}, "inline-start": null, "inline-end": {...}}
 		$dimensions = [
@@ -276,7 +279,7 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 			'inline-start' => $logical_direction === 'inline-start' ? $size_data : null,
 			'inline-end' => $logical_direction === 'inline-end' ? $size_data : null,
 		];
-		
+
 		return $this->create_dimensions_structure( $dimensions );
 	}
 
@@ -297,7 +300,7 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function create_dimensions_structure( array $dimensions ): array {
 		$result = [];
-		
+
 		foreach ( $dimensions as $logical_property => $size_data ) {
 			// ✅ EDITOR PATTERN MATCH: Include null values like the working editor example
 			// The editor structure includes: "block-start": null, "inline-start": null
@@ -317,11 +320,11 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	protected function parse_size_value( string $value ): ?array {
 		$parsed = Size_Value_Parser::parse( $value );
-		
+
 		if ( null !== $parsed ) {
 			return $parsed;
 		}
-		
+
 		return Size_Value_Parser::create_zero();
 	}
 }

@@ -120,7 +120,7 @@ class Widget_Styles_Integrator {
 	}
 
 	private function validate_single_style_definition( array $style_definition ): bool {
-		$required_fields = ['id', 'label', 'type', 'variants'];
+		$required_fields = [ 'id', 'label', 'type', 'variants' ];
 
 		foreach ( $required_fields as $field ) {
 			if ( ! isset( $style_definition[ $field ] ) ) {
@@ -143,7 +143,7 @@ class Widget_Styles_Integrator {
 	}
 
 	private function validate_variant_structure( array $variant ): bool {
-		$required_fields = ['meta', 'props'];
+		$required_fields = [ 'meta', 'props' ];
 
 		foreach ( $required_fields as $field ) {
 			if ( ! isset( $variant[ $field ] ) ) {

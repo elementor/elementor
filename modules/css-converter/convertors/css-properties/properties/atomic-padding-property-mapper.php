@@ -49,7 +49,7 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 		if ( null === $dimensions_data ) {
 			return null;
 		}
-		
+
 		// ✅ ATOMIC-ONLY COMPLIANCE: All properties use Dimensions_Prop_Type
 		return Dimensions_Prop_Type::make()->generate( $dimensions_data );
 	}
@@ -75,7 +75,7 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 			'padding-inline-start',
 			'padding-inline-end',
 		];
-		
+
 		return in_array( $property, $individual_properties, true );
 	}
 
@@ -88,37 +88,37 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 		switch ( $property ) {
 			case 'padding':
 				return $this->parse_shorthand_to_logical_properties( $value );
-			
+
 			case 'padding-top':
 				return $this->parse_individual_padding( 'block-start', $value );
-			
+
 			case 'padding-right':
 				return $this->parse_individual_padding( 'inline-end', $value );
-			
+
 			case 'padding-bottom':
 				return $this->parse_individual_padding( 'block-end', $value );
-			
+
 			case 'padding-left':
 				return $this->parse_individual_padding( 'inline-start', $value );
-			
+
 			case 'padding-block-start':
 				return $this->parse_individual_padding( 'block-start', $value );
-			
+
 			case 'padding-block-end':
 				return $this->parse_individual_padding( 'block-end', $value );
-			
+
 			case 'padding-inline-start':
 				return $this->parse_individual_padding( 'inline-start', $value );
-			
+
 			case 'padding-inline-end':
 				return $this->parse_individual_padding( 'inline-end', $value );
-			
+
 			case 'padding-block':
 				return $this->parse_logical_shorthand( $value, 'block' );
-			
+
 			case 'padding-inline':
 				return $this->parse_logical_shorthand( $value, 'inline' );
-			
+
 			default:
 				return null;
 		}
@@ -218,7 +218,7 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 			if ( null === $parsed ) {
 				return null;
 			}
-			
+
 			$size_prop = $this->create_size_prop( $parsed );
 			return [
 				$axis . '-start' => $size_prop,
@@ -232,7 +232,7 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 			if ( null === $start || null === $end ) {
 				return null;
 			}
-			
+
 			return [
 				$axis . '-start' => $this->create_size_prop( $start ),
 				$axis . '-end' => $this->create_size_prop( $end ),

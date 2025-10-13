@@ -27,7 +27,7 @@ class Border_Color_Property_Mapper extends Atomic_Property_Mapper_Base {
 		if ( in_array( $property, [ 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color' ], true ) ) {
 			return null; // Individual properties not supported by atomic widgets
 		}
-		
+
 		if ( empty( $value ) || ! is_string( $value ) ) {
 			return null;
 		}
@@ -68,9 +68,29 @@ class Border_Color_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		$named_colors = [
-			'red', 'green', 'blue', 'white', 'black', 'yellow', 'cyan', 'magenta',
-			'silver', 'gray', 'maroon', 'olive', 'lime', 'aqua', 'teal', 'navy',
-			'fuchsia', 'purple', 'orange', 'pink', 'brown', 'gold', 'violet'
+			'red',
+			'green',
+			'blue',
+			'white',
+			'black',
+			'yellow',
+			'cyan',
+			'magenta',
+			'silver',
+			'gray',
+			'maroon',
+			'olive',
+			'lime',
+			'aqua',
+			'teal',
+			'navy',
+			'fuchsia',
+			'purple',
+			'orange',
+			'pink',
+			'brown',
+			'gold',
+			'violet',
 		];
 
 		if ( in_array( strtolower( $value ), $named_colors, true ) ) {

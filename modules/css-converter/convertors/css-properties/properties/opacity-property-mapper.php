@@ -44,7 +44,7 @@ class Opacity_Property_Mapper extends Atomic_Property_Mapper_Base {
 			->default_unit( Size_Constants::UNIT_PERCENT )
 			->generate( [
 				'size' => $opacity_data['size'] * 100, // Convert to percentage (0.5 -> 50%)
-				'unit' => Size_Constants::UNIT_PERCENT
+				'unit' => Size_Constants::UNIT_PERCENT,
 			] );
 	}
 
@@ -76,7 +76,7 @@ class Opacity_Property_Mapper extends Atomic_Property_Mapper_Base {
 			$numeric_value = (float) rtrim( $value, '%' );
 			return [
 				'size' => $numeric_value,
-				'unit' => '%'
+				'unit' => '%',
 			];
 		}
 
@@ -89,7 +89,7 @@ class Opacity_Property_Mapper extends Atomic_Property_Mapper_Base {
 		// ✅ FIXED: Keep decimal values as decimals with % unit for atomic widget compatibility
 		return [
 			'size' => $numeric_value,
-			'unit' => '%'
+			'unit' => '%',
 		];
 	}
 }

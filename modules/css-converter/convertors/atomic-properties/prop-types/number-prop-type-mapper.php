@@ -15,7 +15,7 @@ class Number_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 		'order',
 		'flex-grow',
 		'flex-shrink',
-		'line-height'
+		'line-height',
 	];
 
 	protected $atomic_prop_type = 'number';
@@ -24,13 +24,13 @@ class Number_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 
 	public function map_css_to_atomic( string $css_value ): ?array {
 		$css_value = trim( $css_value );
-		
+
 		if ( ! is_numeric( $css_value ) ) {
 			return null;
 		}
 
 		$numeric_value = (float) $css_value;
-		
+
 		return $this->create_atomic_prop( $numeric_value );
 	}
 }

@@ -19,36 +19,36 @@ class Atomic_Widget_Class_Generator {
 		$prefix = $this->get_widget_prefix( $widget_type );
 		$hash1 = substr( md5( uniqid( '', true ) ), 0, 8 );
 		$hash2 = substr( md5( microtime( true ) . mt_rand() ), 0, 7 );
-		
+
 		return "{$prefix}-{$hash1}-{$hash2}";
 	}
 
 	public function generate_multiple_class_ids( array $widget_types ): array {
 		$class_ids = [];
-		
+
 		foreach ( $widget_types as $widget_type ) {
 			$class_ids[] = $this->generate_class_id( $widget_type );
 		}
-		
+
 		return $class_ids;
 	}
 
 	public function generate_unique_class_id( array $existing_ids, string $widget_type = '' ): string {
 		$max_attempts = 100;
 		$attempts = 0;
-		
+
 		do {
 			$class_id = $this->generate_class_id( $widget_type );
-			$attempts++;
+			++$attempts;
 		} while ( in_array( $class_id, $existing_ids, true ) && $attempts < $max_attempts );
-		
+
 		if ( $attempts >= $max_attempts ) {
 			// Fallback with timestamp to ensure uniqueness
 			$timestamp = time();
 			$prefix = $this->get_widget_prefix( $widget_type );
 			$class_id = "{$prefix}-{$timestamp}-" . substr( md5( uniqid( '', true ) ), 0, 8 );
 		}
-		
+
 		return $class_id;
 	}
 
@@ -66,16 +66,16 @@ class Atomic_Widget_Class_Generator {
 		if ( ! $this->is_valid_class_id( $class_id ) ) {
 			return null;
 		}
-		
+
 		$prefix = substr( $class_id, 0, strpos( $class_id, '-' ) );
-		
+
 		// Find widget type by prefix
 		foreach ( $this->widget_prefixes as $widget_type => $widget_prefix ) {
 			if ( $widget_prefix === $prefix ) {
 				return $widget_type;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -93,18 +93,18 @@ class Atomic_Widget_Class_Generator {
 
 	public function generate_class_id_batch( int $count, string $widget_type = '' ): array {
 		$class_ids = [];
-		
+
 		for ( $i = 0; $i < $count; $i++ ) {
 			$class_ids[] = $this->generate_class_id( $widget_type );
 		}
-		
+
 		return $class_ids;
 	}
 
 	public function ensure_unique_class_ids( array $class_ids ): array {
 		$unique_ids = [];
 		$seen_ids = [];
-		
+
 		foreach ( $class_ids as $class_id ) {
 			if ( ! in_array( $class_id, $seen_ids, true ) ) {
 				$unique_ids[] = $class_id;
@@ -117,7 +117,7 @@ class Atomic_Widget_Class_Generator {
 				$seen_ids[] = $new_id;
 			}
 		}
-		
+
 		return $unique_ids;
 	}
 }

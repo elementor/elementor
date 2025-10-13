@@ -20,13 +20,23 @@ class Size_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 		'top',
 		'right',
 		'bottom',
-		'left'
+		'left',
 	];
 
 	protected $atomic_prop_type = 'size';
 
 	protected $supported_css_units = [
-		'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax', 'ch', 'ex', 'auto'
+		'px',
+		'em',
+		'rem',
+		'%',
+		'vh',
+		'vw',
+		'vmin',
+		'vmax',
+		'ch',
+		'ex',
+		'auto',
 	];
 
 	public function map_css_to_atomic( string $css_value ): ?array {

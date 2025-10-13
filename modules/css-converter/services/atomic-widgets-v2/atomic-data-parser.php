@@ -21,14 +21,13 @@ class Atomic_Data_Parser {
 		}
 
 		$dom = $this->create_dom( $html );
-		
+
 		$css_content = $this->extract_css_from_style_tags( $dom );
-		
+
 		$dom_elements = $this->parse_dom_structure_from_dom( $dom );
 		if ( empty( $dom_elements ) ) {
 			return [];
 		}
-
 
 		$widget_data = $this->convert_dom_elements_to_widget_data( $dom_elements );
 
@@ -40,9 +39,9 @@ class Atomic_Data_Parser {
 	private function create_dom( string $html ): \DOMDocument {
 		$dom = new \DOMDocument();
 		libxml_use_internal_errors( true );
-		$dom->loadHTML( 
-			'<html><body>' . $html . '</body></html>', 
-			LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD 
+		$dom->loadHTML(
+			'<html><body>' . $html . '</body></html>',
+			LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
 		);
 		libxml_clear_errors();
 
@@ -180,7 +179,19 @@ class Atomic_Data_Parser {
 
 	private function is_inline_element( string $tag_name ): bool {
 		$inline_elements = [
-			'span', 'strong', 'em', 'b', 'i', 'u', 'small', 'mark', 'del', 'ins', 'sub', 'sup', 'code'
+			'span',
+			'strong',
+			'em',
+			'b',
+			'i',
+			'u',
+			'small',
+			'mark',
+			'del',
+			'ins',
+			'sub',
+			'sup',
+			'code',
 		];
 
 		return in_array( strtolower( $tag_name ), $inline_elements, true );
@@ -220,6 +231,4 @@ class Atomic_Data_Parser {
 	public function get_props_converter(): CSS_To_Atomic_Props_Converter {
 		return $this->props_converter;
 	}
-
 }
-

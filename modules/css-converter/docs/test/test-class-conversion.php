@@ -2,7 +2,7 @@
 /**
  * Comprehensive test file for CSS Class Conversion functionality
  * This file can be run via WP-CLI or included in a test environment
- * 
+ *
  * Usage:
  * - Via WP-CLI: wp eval-file docs/test/test-class-conversion.php
  * - Via browser: Access this file directly (if ABSPATH is defined)
@@ -115,12 +115,12 @@ function test_css_class_conversion() {
 
 		echo "Conversion Results:\n";
 		echo "==================\n";
-		echo "Total classes found: " . $result['stats']['total_classes_found'] . "\n";
-		echo "Classes converted: " . $result['stats']['classes_converted'] . "\n";
-		echo "Classes skipped: " . $result['stats']['classes_skipped'] . "\n";
-		echo "Properties converted: " . $result['stats']['properties_converted'] . "\n";
-		echo "Properties skipped: " . $result['stats']['properties_skipped'] . "\n";
-		echo "Variables converted: " . $result['stats']['variables_converted'] . "\n";
+		echo 'Total classes found: ' . $result['stats']['total_classes_found'] . "\n";
+		echo 'Classes converted: ' . $result['stats']['classes_converted'] . "\n";
+		echo 'Classes skipped: ' . $result['stats']['classes_skipped'] . "\n";
+		echo 'Properties converted: ' . $result['stats']['properties_converted'] . "\n";
+		echo 'Properties skipped: ' . $result['stats']['properties_skipped'] . "\n";
+		echo 'Variables converted: ' . $result['stats']['variables_converted'] . "\n";
 
 		echo "\nConverted Classes:\n";
 		foreach ( $result['converted_classes'] as $class ) {
@@ -143,7 +143,7 @@ function test_css_class_conversion() {
 		echo "\nTest completed successfully!\n";
 
 	} catch ( Exception $e ) {
-		echo "Error: " . $e->getMessage() . "\n";
+		echo 'Error: ' . $e->getMessage() . "\n";
 	}
 }
 
@@ -158,7 +158,7 @@ function test_edge_cases() {
 		$result = $service->convert_css_to_global_classes( '' );
 		echo "✗ Empty CSS should throw exception\n";
 	} catch ( Exception $e ) {
-		echo "✓ Empty CSS properly handled: " . $e->getMessage() . "\n";
+		echo '✓ Empty CSS properly handled: ' . $e->getMessage() . "\n";
 	}
 
 	// Test invalid CSS
@@ -166,16 +166,16 @@ function test_edge_cases() {
 		$result = $service->convert_css_to_global_classes( '.invalid { color: ; }' );
 		echo "✓ Invalid CSS handled gracefully\n";
 	} catch ( Exception $e ) {
-		echo "✓ Invalid CSS exception: " . $e->getMessage() . "\n";
+		echo '✓ Invalid CSS exception: ' . $e->getMessage() . "\n";
 	}
 
 	// Test CSS with no classes
 	$result = $service->convert_css_to_global_classes( 'body { color: red; } #header { color: blue; }' );
-	echo "✓ No classes found: " . $result['stats']['total_classes_found'] . " classes\n";
+	echo '✓ No classes found: ' . $result['stats']['total_classes_found'] . " classes\n";
 
 	// Test class with no supported properties
 	$result = $service->convert_css_to_global_classes( '.empty { margin: 10px; padding: 5px; }' );
-	echo "✓ No supported properties: " . $result['stats']['classes_skipped'] . " skipped\n";
+	echo '✓ No supported properties: ' . $result['stats']['classes_skipped'] . " skipped\n";
 
 	echo "\n";
 }

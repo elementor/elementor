@@ -33,9 +33,9 @@ class Class_Conversion_Service {
 		try {
 			$parsed = $this->css_parser->parse( $css );
 			$classes = $this->css_parser->extract_classes( $parsed );
-			
+
 			return $this->process_classes( $classes );
-			
+
 		} catch ( CssParseException $e ) {
 			throw new Class_Conversion_Exception( 'Failed to parse CSS: ' . $e->getMessage() );
 		}
@@ -53,8 +53,8 @@ class Class_Conversion_Service {
 				'classes_skipped' => 0,
 				'properties_converted' => 0,
 				'properties_skipped' => 0,
-				'variables_converted' => 0
-			]
+				'variables_converted' => 0,
+			],
 		];
 
 		$existing_class_names = $this->get_existing_global_class_names();
@@ -69,9 +69,9 @@ class Class_Conversion_Service {
 				$this->add_warning( "Skipped duplicate class: {$css_class['selector']}" );
 				$results['skipped_classes'][] = [
 					'selector' => $css_class['selector'],
-					'reason' => 'duplicate'
+					'reason' => 'duplicate',
 				];
-				$results['stats']['classes_skipped']++;
+				++$results['stats']['classes_skipped'];
 				continue;
 			}
 
@@ -79,15 +79,15 @@ class Class_Conversion_Service {
 
 			if ( ! empty( $converted['variants'][0]['props'] ) ) {
 				$results['converted_classes'][] = $converted;
-				$results['stats']['classes_converted']++;
+				++$results['stats']['classes_converted'];
 				$existing_class_names[] = $class_name;
 				$seen_labels[] = $label;
 			} else {
 				$results['skipped_classes'][] = [
 					'selector' => $css_class['selector'],
-					'reason' => 'no_supported_properties'
+					'reason' => 'no_supported_properties',
 				];
-				$results['stats']['classes_skipped']++;
+				++$results['stats']['classes_skipped'];
 			}
 		}
 
@@ -101,7 +101,10 @@ class Class_Conversion_Service {
 
 		foreach ( $css_class['properties'] as $property => $value ) {
 			if ( 0 === strpos( $property, '--' ) ) {
-				$css_variables[] = [ 'name' => $property, 'value' => $value ];
+				$css_variables[] = [
+					'name' => $property,
+					'value' => $value,
+				];
 				continue;
 			}
 
@@ -114,14 +117,14 @@ class Class_Conversion_Service {
 
 				if ( $mapped ) {
 					$schema_properties = array_merge( $schema_properties, [ $property => $mapped ] );
-					$stats['properties_converted']++;
+					++$stats['properties_converted'];
 				} else {
 					$this->add_warning( "Failed to map property: {$property} with value: {$value}" );
-					$stats['properties_skipped']++;
+					++$stats['properties_skipped'];
 				}
 			} else {
 				$this->add_warning( "Skipped unsupported property: {$property} in {$css_class['selector']}" );
-				$stats['properties_skipped']++;
+				++$stats['properties_skipped'];
 			}
 		}
 
@@ -161,13 +164,13 @@ class Class_Conversion_Service {
 				}
 			}
 		}
-		
+
 		return $value;
 	}
 
 	private function get_existing_global_class_names(): array {
 		static $cached_names = null;
-		
+
 		if ( null === $cached_names ) {
 			try {
 				$repository = Global_Classes_Repository::make();
@@ -177,7 +180,7 @@ class Class_Conversion_Service {
 				$cached_names = [];
 			}
 		}
-		
+
 		return $cached_names;
 	}
 
@@ -204,13 +207,13 @@ class Class_Conversion_Service {
 	private function generate_class_id( string $selector ): string {
 		$class_name = $this->extract_class_name( $selector );
 		$existing_ids = $this->get_existing_global_class_names();
-		
+
 		// Generate ID with g- prefix and hash like Elementor's native system
 		do {
 			$hash = substr( dechex( mt_rand() ), 0, 7 );
 			$id = 'g-' . $hash;
 		} while ( in_array( $id, $existing_ids, true ) );
-		
+
 		return $id;
 	}
 

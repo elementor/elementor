@@ -10,18 +10,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Transform_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 	protected $supported_properties = [
-		'transform'
+		'transform',
 	];
 
 	protected $atomic_prop_type = 'transform';
 
 	protected $supported_css_units = [
-		'px', 'em', 'rem', '%', 'deg', 'rad', 'turn'
+		'px',
+		'em',
+		'rem',
+		'%',
+		'deg',
+		'rad',
+		'turn',
 	];
 
 	public function map_css_to_atomic( string $css_value ): ?array {
 		$css_value = trim( $css_value );
-		
+
 		if ( empty( $css_value ) || 'none' === $css_value ) {
 			return null;
 		}
@@ -37,7 +43,7 @@ class Transform_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 	private function parse_transform_functions( string $css_value ): array {
 		$transforms = [];
 		$pattern = '/(\w+)\s*\([^)]+\)/';
-		
+
 		if ( ! preg_match_all( $pattern, $css_value, $matches, PREG_SET_ORDER ) ) {
 			return [];
 		}
@@ -90,7 +96,10 @@ class Transform_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 	}
 
 	private function create_translate_transform( string $function, array $values ): array {
-		$x = $y = $z = [ 'size' => 0.0, 'unit' => 'px' ];
+		$x = $y = $z = [
+			'size' => 0.0,
+			'unit' => 'px',
+		];
 
 		if ( 'translateX' === $function && ! empty( $values[0] ) ) {
 			$x = $this->parse_size_value( $values[0] );
@@ -119,9 +128,18 @@ class Transform_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 
 		return [
 			'type' => 'translate',
-			'x' => [ '$$type' => 'size', 'value' => $x ],
-			'y' => [ '$$type' => 'size', 'value' => $y ],
-			'z' => [ '$$type' => 'size', 'value' => $z ],
+			'x' => [
+				'$$type' => 'size',
+				'value' => $x,
+			],
+			'y' => [
+				'$$type' => 'size',
+				'value' => $y,
+			],
+			'z' => [
+				'$$type' => 'size',
+				'value' => $z,
+			],
 		];
 	}
 
@@ -155,9 +173,18 @@ class Transform_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 
 		return [
 			'type' => 'scale',
-			'x' => [ '$$type' => 'number', 'value' => $x ],
-			'y' => [ '$$type' => 'number', 'value' => $y ],
-			'z' => [ '$$type' => 'number', 'value' => $z ],
+			'x' => [
+				'$$type' => 'number',
+				'value' => $x,
+			],
+			'y' => [
+				'$$type' => 'number',
+				'value' => $y,
+			],
+			'z' => [
+				'$$type' => 'number',
+				'value' => $z,
+			],
 		];
 	}
 
@@ -186,10 +213,22 @@ class Transform_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 
 		return [
 			'type' => 'rotate',
-			'x' => [ '$$type' => 'number', 'value' => $x ],
-			'y' => [ '$$type' => 'number', 'value' => $y ],
-			'z' => [ '$$type' => 'number', 'value' => $z ],
-			'angle' => [ '$$type' => 'number', 'value' => $angle ],
+			'x' => [
+				'$$type' => 'number',
+				'value' => $x,
+			],
+			'y' => [
+				'$$type' => 'number',
+				'value' => $y,
+			],
+			'z' => [
+				'$$type' => 'number',
+				'value' => $z,
+			],
+			'angle' => [
+				'$$type' => 'number',
+				'value' => $angle,
+			],
 		];
 	}
 
@@ -211,8 +250,14 @@ class Transform_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 
 		return [
 			'type' => 'skew',
-			'x' => [ '$$type' => 'number', 'value' => $x ],
-			'y' => [ '$$type' => 'number', 'value' => $y ],
+			'x' => [
+				'$$type' => 'number',
+				'value' => $x,
+			],
+			'y' => [
+				'$$type' => 'number',
+				'value' => $y,
+			],
 		];
 	}
 

@@ -40,8 +40,7 @@ class Box_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		$result = Box_Shadow_Prop_Type::make()->generate( $shadows_data );
-		
-		
+
 		return $result;
 	}
 
@@ -89,10 +88,10 @@ class Box_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 			$char = $chars[ $i ];
 
 			if ( '(' === $char ) {
-				$paren_depth++;
+				++$paren_depth;
 				$in_function = true;
 			} elseif ( ')' === $char ) {
-				$paren_depth--;
+				--$paren_depth;
 				if ( 0 === $paren_depth ) {
 					$in_function = false;
 				}
@@ -151,8 +150,14 @@ class Box_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		$blur = isset( $size_values[2] ) ? $this->parse_size_value( $size_values[2] ) : [ 'size' => 0.0, 'unit' => 'px' ];
-		$spread = isset( $size_values[3] ) ? $this->parse_size_value( $size_values[3] ) : [ 'size' => 0.0, 'unit' => 'px' ];
+		$blur = isset( $size_values[2] ) ? $this->parse_size_value( $size_values[2] ) : [
+			'size' => 0.0,
+			'unit' => 'px',
+		];
+		$spread = isset( $size_values[3] ) ? $this->parse_size_value( $size_values[3] ) : [
+			'size' => 0.0,
+			'unit' => 'px',
+		];
 
 		if ( null === $blur || null === $spread ) {
 			return null;
@@ -188,9 +193,9 @@ class Box_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 			$char = $chars[ $i ];
 
 			if ( '(' === $char ) {
-				$paren_depth++;
+				++$paren_depth;
 			} elseif ( ')' === $char ) {
-				$paren_depth--;
+				--$paren_depth;
 			} elseif ( ' ' === $char && 0 === $paren_depth ) {
 				if ( ! empty( trim( $current_part ) ) ) {
 					$parts[] = trim( $current_part );
@@ -221,10 +226,29 @@ class Box_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		$named_colors = [
-			'transparent', 'black', 'white', 'red', 'green', 'blue', 'yellow',
-			'cyan', 'magenta', 'gray', 'grey', 'orange', 'purple', 'pink',
-			'brown', 'navy', 'teal', 'lime', 'olive', 'maroon', 'silver',
-			'aqua', 'fuchsia'
+			'transparent',
+			'black',
+			'white',
+			'red',
+			'green',
+			'blue',
+			'yellow',
+			'cyan',
+			'magenta',
+			'gray',
+			'grey',
+			'orange',
+			'purple',
+			'pink',
+			'brown',
+			'navy',
+			'teal',
+			'lime',
+			'olive',
+			'maroon',
+			'silver',
+			'aqua',
+			'fuchsia',
 		];
 
 		return in_array( strtolower( $value ), $named_colors, true );

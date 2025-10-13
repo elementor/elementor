@@ -13,7 +13,7 @@ class Class_Property_Mapper_Factory {
 		if ( null === self::$registry ) {
 			self::$registry = new Class_Property_Mapper_Registry();
 		}
-		
+
 		return self::$registry;
 	}
 
@@ -34,7 +34,7 @@ class Class_Property_Mapper_Factory {
 		if ( null !== $mapper && method_exists( $mapper, 'map_to_v4_atomic' ) ) {
 			return $mapper->map_to_v4_atomic( $property, $value );
 		}
-		
+
 		return null;
 	}
 

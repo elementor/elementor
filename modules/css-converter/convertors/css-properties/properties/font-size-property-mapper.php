@@ -55,11 +55,11 @@ class Font_Size_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	protected function parse_size_value( string $value ): array {
 		$parsed = Size_Value_Parser::parse( $value );
-		
+
 		if ( null !== $parsed ) {
 			return $parsed;
 		}
-		
+
 		return $this->create_default_font_size();
 	}
 

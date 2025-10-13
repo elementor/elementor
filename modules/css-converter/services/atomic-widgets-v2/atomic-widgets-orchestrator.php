@@ -37,10 +37,10 @@ class Atomic_Widgets_Orchestrator {
 
 		// Check atomic widgets availability
 		if ( ! $this->is_atomic_widgets_available() ) {
-			$this->error_handler->add_error( 
-				'Atomic Widgets Module is not available', 
+			$this->error_handler->add_error(
+				'Atomic Widgets Module is not available',
 				'atomic_widgets_unavailable',
-				['required_classes' => ['Widget_Builder', 'Element_Builder']]
+				[ 'required_classes' => [ 'Widget_Builder', 'Element_Builder' ] ]
 			);
 			return $this->build_error_result();
 		}
@@ -83,12 +83,15 @@ class Atomic_Widgets_Orchestrator {
 
 	public function convert_html_to_global_classes( string $html, array $options = [] ): array {
 		$conversion_result = $this->convert_html_to_atomic_widgets( $html, $options );
-		
+
 		if ( ! $conversion_result['success'] ) {
 			return [
 				'success' => false,
 				'error' => $conversion_result['error'] ?? 'Conversion failed',
-				'global_classes' => ['items' => [], 'order' => []],
+				'global_classes' => [
+					'items' => [],
+					'order' => [],
+				],
 			];
 		}
 
@@ -104,20 +107,20 @@ class Atomic_Widgets_Orchestrator {
 
 	private function parse_html_with_error_handling( string $html ): array {
 		$widget_data_array = $this->data_parser->parse_html_for_atomic_widgets( $html );
-		
+
 		if ( empty( $widget_data_array ) ) {
-			$this->error_handler->add_error( 
-				'HTML parsing failed or no supported elements found', 
+			$this->error_handler->add_error(
+				'HTML parsing failed or no supported elements found',
 				'html_parsing_failed',
-				['html_length' => strlen( $html )]
+				[ 'html_length' => strlen( $html ) ]
 			);
 			return [];
 		}
 
-		$this->error_handler->add_warning( 
-			"Parsed {count} elements from HTML", 
+		$this->error_handler->add_warning(
+			'Parsed {count} elements from HTML',
 			'html_parsing',
-			['element_count' => count( $widget_data_array )]
+			[ 'element_count' => count( $widget_data_array ) ]
 		);
 
 		return $widget_data_array;
@@ -129,11 +132,11 @@ class Atomic_Widgets_Orchestrator {
 
 		foreach ( $widget_data_array as $index => $widget_data ) {
 			$widget = $this->json_creator->create_widget_json( $widget_data );
-			
+
 			if ( $widget ) {
 				$widgets[] = $widget;
 			} else {
-				$failed_count++;
+				++$failed_count;
 				$this->error_handler->add_warning(
 					"Failed to create widget for element {$index}",
 					'widget_creation_failed',
@@ -147,7 +150,7 @@ class Atomic_Widgets_Orchestrator {
 
 		if ( $failed_count > 0 ) {
 			$this->error_handler->add_warning(
-				"Failed to create {$failed_count} out of " . count( $widget_data_array ) . " widgets",
+				"Failed to create {$failed_count} out of " . count( $widget_data_array ) . ' widgets',
 				'widget_creation_summary'
 			);
 		}
@@ -166,22 +169,20 @@ class Atomic_Widgets_Orchestrator {
 		$widgets_with_styles = [];
 		$styles_integrated = 0;
 
-
 		foreach ( $widgets as $index => $widget ) {
 			$widget_data = $widget_data_array[ $index ] ?? [];
 			$atomic_props = $widget_data['atomic_props'] ?? [];
 
-
 			if ( ! empty( $atomic_props ) ) {
 				$widget = $this->styles_integrator->integrate_styles_into_widget( $widget, $atomic_props );
-				$styles_integrated++;
+				++$styles_integrated;
 			}
 
 			$widgets_with_styles[] = $widget;
 		}
 
 		$this->error_handler->add_warning(
-			"Integrated styles for {$styles_integrated} out of " . count( $widgets ) . " widgets",
+			"Integrated styles for {$styles_integrated} out of " . count( $widgets ) . ' widgets',
 			'styles_integration'
 		);
 
@@ -192,7 +193,7 @@ class Atomic_Widgets_Orchestrator {
 		$result = $this->error_handler->create_error_response();
 		$result['stats'] = $this->stats_calculator->get_empty_stats();
 		$result['performance'] = $this->performance_monitor->get_performance_summary();
-		
+
 		return $result;
 	}
 
@@ -224,10 +225,10 @@ class Atomic_Widgets_Orchestrator {
 		}
 
 		if ( $result['success'] ) {
-			return isset( $result['widgets'] ) && 
-				   is_array( $result['widgets'] ) && 
-				   isset( $result['stats'] ) && 
-				   is_array( $result['stats'] );
+			return isset( $result['widgets'] ) &&
+					is_array( $result['widgets'] ) &&
+					isset( $result['stats'] ) &&
+					is_array( $result['stats'] );
 		} else {
 			return isset( $result['error'] ) && is_string( $result['error'] );
 		}
@@ -243,7 +244,7 @@ class Atomic_Widgets_Orchestrator {
 
 	public function is_atomic_widgets_available(): bool {
 		return class_exists( 'Elementor\\Modules\\AtomicWidgets\\Elements\\Widget_Builder' ) &&
-			   class_exists( 'Elementor\\Modules\\AtomicWidgets\\Elements\\Element_Builder' );
+				class_exists( 'Elementor\\Modules\\AtomicWidgets\\Elements\\Element_Builder' );
 	}
 
 	public function get_conversion_capabilities(): array {
@@ -305,7 +306,7 @@ class Atomic_Widgets_Orchestrator {
 
 	public function convert_with_validation( string $html, array $options = [] ): array {
 		$result = $this->convert_html_to_atomic_widgets( $html, $options );
-		
+
 		// Additional validation
 		if ( $result['success'] ) {
 			$validation_errors = $this->validate_widgets( $result['widgets'] );
@@ -322,7 +323,7 @@ class Atomic_Widgets_Orchestrator {
 
 		foreach ( $widgets as $index => $widget ) {
 			$widget_type = $widget['widgetType'] ?? $widget['elType'] ?? '';
-			
+
 			if ( ! $this->json_creator->is_widget_type_supported( $widget_type ) ) {
 				$validation_errors[] = "Widget {$index}: Unsupported widget type '{$widget_type}'";
 				continue;
@@ -351,8 +352,8 @@ class Atomic_Widgets_Orchestrator {
 	}
 
 	private function validate_widget_structure( array $widget ): bool {
-		$required_fields = ['elType', 'settings'];
-		
+		$required_fields = [ 'elType', 'settings' ];
+
 		foreach ( $required_fields as $field ) {
 			if ( ! isset( $widget[ $field ] ) ) {
 				return false;

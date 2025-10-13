@@ -56,27 +56,63 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 
 	// Enum values from atomic widgets style-schema.php
 	private const JUSTIFY_CONTENT_VALUES = [
-		'center', 'start', 'end', 'flex-start', 'flex-end', 'left', 'right',
-		'normal', 'space-between', 'space-around', 'space-evenly', 'stretch'
+		'center',
+		'start',
+		'end',
+		'flex-start',
+		'flex-end',
+		'left',
+		'right',
+		'normal',
+		'space-between',
+		'space-around',
+		'space-evenly',
+		'stretch',
 	];
 
 	private const ALIGN_ITEMS_VALUES = [
-		'normal', 'stretch', 'center', 'start', 'end', 'flex-start', 'flex-end',
-		'self-start', 'self-end', 'anchor-center'
+		'normal',
+		'stretch',
+		'center',
+		'start',
+		'end',
+		'flex-start',
+		'flex-end',
+		'self-start',
+		'self-end',
+		'anchor-center',
 	];
 
 	private const ALIGN_CONTENT_VALUES = [
-		'center', 'start', 'end', 'space-between', 'space-around', 'space-evenly'
+		'center',
+		'start',
+		'end',
+		'space-between',
+		'space-around',
+		'space-evenly',
 	];
 
 	private const ALIGN_SELF_VALUES = [
-		'auto', 'normal', 'center', 'start', 'end', 'self-start', 'self-end',
-		'flex-start', 'flex-end', 'anchor-center', 'baseline', 'first baseline',
-		'last baseline', 'stretch'
+		'auto',
+		'normal',
+		'center',
+		'start',
+		'end',
+		'self-start',
+		'self-end',
+		'flex-start',
+		'flex-end',
+		'anchor-center',
+		'baseline',
+		'first baseline',
+		'last baseline',
+		'stretch',
 	];
 
 	private const FLEX_WRAP_VALUES = [
-		'wrap', 'nowrap', 'wrap-reverse'
+		'wrap',
+		'nowrap',
+		'wrap-reverse',
 	];
 
 	public function get_supported_properties(): array {
@@ -220,12 +256,15 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 	private function map_flex_shorthand( string $value ): ?array {
 		// Handle flex shorthand: "flex-grow flex-shrink flex-basis"
 		// Common values: "1", "1 0 auto", "none", "auto", "initial"
-		
+
 		if ( 'none' === $value ) {
 			return Flex_Prop_Type::make()->generate( [
 				'flexGrow' => 0,
 				'flexShrink' => 0,
-				'flexBasis' => ['size' => 'auto', 'unit' => 'custom'],
+				'flexBasis' => [
+					'size' => 'auto',
+					'unit' => 'custom',
+				],
 			] );
 		}
 
@@ -233,7 +272,10 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 			return Flex_Prop_Type::make()->generate( [
 				'flexGrow' => 1,
 				'flexShrink' => 1,
-				'flexBasis' => ['size' => 'auto', 'unit' => 'custom'],
+				'flexBasis' => [
+					'size' => 'auto',
+					'unit' => 'custom',
+				],
 			] );
 		}
 
@@ -241,7 +283,10 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 			return Flex_Prop_Type::make()->generate( [
 				'flexGrow' => 0,
 				'flexShrink' => 1,
-				'flexBasis' => ['size' => 'auto', 'unit' => 'custom'],
+				'flexBasis' => [
+					'size' => 'auto',
+					'unit' => 'custom',
+				],
 			] );
 		}
 
@@ -255,7 +300,10 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 
 		$flex_grow = 0;
 		$flex_shrink = 1;
-		$flex_basis = ['size' => 'auto', 'unit' => 'custom'];
+		$flex_basis = [
+			'size' => 'auto',
+			'unit' => 'custom',
+		];
 
 		// Single numeric value (flex-grow)
 		if ( 1 === count( $parts ) && is_numeric( $parts[0] ) ) {
@@ -314,11 +362,11 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 
 	protected function parse_size_value( string $value ): ?array {
 		$parsed = Size_Value_Parser::parse( $value );
-		
+
 		if ( null !== $parsed ) {
 			return $this->handle_flex_unit_support( $parsed, $value );
 		}
-		
+
 		return null;
 	}
 
@@ -326,7 +374,7 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 		if ( $this->is_flex_unit_value( $original_value ) ) {
 			return $this->parse_flex_unit_value( $original_value );
 		}
-		
+
 		return $parsed;
 	}
 
@@ -341,7 +389,7 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 				'unit' => 'fr',
 			];
 		}
-		
+
 		return Size_Value_Parser::create_zero();
 	}
 }

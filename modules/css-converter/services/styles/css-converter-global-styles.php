@@ -12,18 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * CSS Converter Global Styles
- * 
+ *
  * Integrates CSS Converter generated global classes with Elementor's atomic widgets CSS system.
  * Uses the official elementor/atomic-widgets/styles/register hook for proper CSS injection.
  */
 class CSS_Converter_Global_Styles {
 	const STYLES_KEY = 'css-converter-global';
-	
+
 	/**
 	 * @var array Pending global classes to be registered with atomic system
 	 */
 	private static array $pending_global_classes = [];
-	
+
 	/**
 	 * @var bool Whether hooks have been registered
 	 */
@@ -47,26 +47,26 @@ class CSS_Converter_Global_Styles {
 		if ( self::$hooks_registered ) {
 			return;
 		}
-		
+
 		// Extract global classes from widget data before atomic system processes styles
 		add_action(
 			'elementor/post/render',
 			[ $this, 'extract_global_classes_from_post' ],
 			5 // Priority 5: Before atomic system processes post
 		);
-		
+
 		add_action(
 			'elementor/atomic-widgets/styles/register',
 			[ $this, 'register_styles' ],
 			25, // Priority 25: After global classes (20), before local styles (30)
 			2
 		);
-		
+
 		add_action(
 			'elementor/core/files/clear_cache',
 			[ $this, 'invalidate_cache' ]
 		);
-		
+
 		self::$hooks_registered = true;
 	}
 
@@ -74,40 +74,40 @@ class CSS_Converter_Global_Styles {
 	 * Extract global classes from post widget data
 	 */
 	public function extract_global_classes_from_post( int $post_id ): void {
-		
+
 		$document = \Elementor\Plugin::$instance->documents->get( $post_id );
 		if ( ! $document ) {
 			return;
 		}
-		
+
 		$elements_data = $document->get_elements_data();
 		$global_classes = $this->traverse_elements_for_global_classes( $elements_data );
-		
+
 		if ( ! empty( $global_classes ) ) {
 			self::add_global_classes( $global_classes );
 		} else {
 		}
 	}
-	
+
 	/**
 	 * Traverse elements to extract global classes from CSS Converter widgets
 	 */
 	private function traverse_elements_for_global_classes( array $elements_data ): array {
 		$global_classes = [];
-		
+
 		foreach ( $elements_data as $element_data ) {
 			// Check if this element has CSS Converter global classes
 			if ( ! empty( $element_data['css_converter_global_classes'] ) ) {
 				$global_classes = array_merge( $global_classes, $element_data['css_converter_global_classes'] );
 			}
-			
+
 			// Recursively check child elements
 			if ( ! empty( $element_data['elements'] ) && is_array( $element_data['elements'] ) ) {
 				$child_classes = $this->traverse_elements_for_global_classes( $element_data['elements'] );
 				$global_classes = array_merge( $global_classes, $child_classes );
 			}
 		}
-		
+
 		return $global_classes;
 	}
 
@@ -119,7 +119,6 @@ class CSS_Converter_Global_Styles {
 			return;
 		}
 
-
 		$get_styles = function() {
 			return $this->convert_to_atomic_format( self::$pending_global_classes );
 		};
@@ -129,7 +128,6 @@ class CSS_Converter_Global_Styles {
 			$get_styles,
 			[ 'css-converter', 'global-classes' ]
 		);
-
 	}
 
 	/**
@@ -202,4 +200,3 @@ class CSS_Converter_Global_Styles {
 		return count( self::$pending_global_classes );
 	}
 }
-

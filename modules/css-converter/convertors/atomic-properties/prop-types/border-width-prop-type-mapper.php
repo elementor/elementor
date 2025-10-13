@@ -14,13 +14,16 @@ class Border_Width_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 		'border-top-width',
 		'border-right-width',
 		'border-bottom-width',
-		'border-left-width'
+		'border-left-width',
 	];
 
 	protected $atomic_prop_type = 'border-width';
 
 	protected $supported_css_units = [
-		'px', 'em', 'rem', '%'
+		'px',
+		'em',
+		'rem',
+		'%',
 	];
 
 	public function map_css_to_atomic( string $css_value ): ?array {
@@ -55,7 +58,7 @@ class Border_Width_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 	private function create_size_prop( array $size_data ): array {
 		return [
 			'$$type' => 'size',
-			'value' => $size_data
+			'value' => $size_data,
 		];
 	}
 

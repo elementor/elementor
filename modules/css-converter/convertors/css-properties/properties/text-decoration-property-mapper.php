@@ -79,7 +79,7 @@ class Text_Decoration_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function extract_decoration_line( string $value ): string {
 		$decoration_from_parts = $this->find_decoration_in_shorthand_parts( $value );
-		
+
 		if ( null !== $decoration_from_parts ) {
 			return $decoration_from_parts;
 		}

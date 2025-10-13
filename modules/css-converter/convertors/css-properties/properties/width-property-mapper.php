@@ -30,7 +30,7 @@ class Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 		'min-width',
 		'min-height',
 		'max-width',
-		'max-height'
+		'max-height',
 	];
 
 	public function get_supported_properties(): array {
@@ -55,14 +55,17 @@ class Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		$value = trim( $value );
-		
+
 		if ( '' === $value ) {
 			return null;
 		}
 
 		// Handle special CSS values
 		$special_values = [
-			'auto' => ['size' => '', 'unit' => 'auto'],
+			'auto' => [
+				'size' => '',
+				'unit' => 'auto',
+			],
 			'inherit' => null, // Not supported by atomic widgets
 			'initial' => null, // Not supported by atomic widgets
 			'unset' => null,   // Not supported by atomic widgets
@@ -75,12 +78,18 @@ class Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		// Handle fit-content(), min-content, max-content
 		if ( preg_match( '/^(fit-content|min-content|max-content)/i', $value ) ) {
-			return ['size' => $value, 'unit' => 'custom'];
+			return [
+				'size' => $value,
+				'unit' => 'custom',
+			];
 		}
 
 		// Handle calc() expressions
 		if ( preg_match( '/^calc\(/i', $value ) ) {
-			return ['size' => $value, 'unit' => 'custom'];
+			return [
+				'size' => $value,
+				'unit' => 'custom',
+			];
 		}
 
 		// Use base class size parsing for standard values

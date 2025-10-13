@@ -20,21 +20,21 @@ class Css_Property_Convertor_Config {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
-		
+
 		return self::$instance;
 	}
 
 	private function init_config_from_atomic_system(): void {
 		$supported_properties = Atomic_Prop_Mapper_Factory::get_all_supported_css_properties();
 		$capabilities = Atomic_Prop_Mapper_Factory::get_conversion_capability_statistics();
-		
+
 		$this->config = [
 			'supported_properties' => $supported_properties,
 			'total_mappers' => $capabilities['total_atomic_prop_mappers'],
 			'total_properties' => $capabilities['total_convertible_css_properties'],
 			'system_version' => '2.0.0-atomic',
 			'integration_mode' => 'atomic_widgets',
-			'legacy_compatibility' => true
+			'legacy_compatibility' => true,
 		];
 	}
 

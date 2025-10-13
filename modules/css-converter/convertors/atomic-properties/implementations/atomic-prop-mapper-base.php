@@ -42,28 +42,31 @@ abstract class Atomic_Prop_Mapper_Base implements Atomic_Prop_Mapper_Interface {
 	protected function create_atomic_prop( $value ): array {
 		return [
 			'$$type' => $this->get_atomic_prop_type(),
-			'value' => $value
+			'value' => $value,
 		];
 	}
 
 	protected function parse_size_value( string $css_value ): ?array {
 		$css_value = trim( $css_value );
-		
+
 		if ( 'auto' === $css_value ) {
-			return [ 'size' => '', 'unit' => 'auto' ];
+			return [
+				'size' => '',
+				'unit' => 'auto',
+			];
 		}
 
 		if ( preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|vmin|vmax|ch|ex)$/i', $css_value, $matches ) ) {
 			return [
 				'size' => (float) $matches[1],
-				'unit' => strtolower( $matches[2] )
+				'unit' => strtolower( $matches[2] ),
 			];
 		}
 
 		if ( is_numeric( $css_value ) ) {
 			return [
 				'size' => (float) $css_value,
-				'unit' => 'px'
+				'unit' => 'px',
 			];
 		}
 
@@ -72,7 +75,7 @@ abstract class Atomic_Prop_Mapper_Base implements Atomic_Prop_Mapper_Interface {
 
 	protected function normalize_color_value( string $css_value ): ?string {
 		$css_value = trim( $css_value );
-		
+
 		if ( preg_match( '/^#([a-f0-9]{3}|[a-f0-9]{6})$/i', $css_value ) ) {
 			return strtolower( $css_value );
 		}
@@ -86,8 +89,17 @@ abstract class Atomic_Prop_Mapper_Base implements Atomic_Prop_Mapper_Interface {
 		}
 
 		$named_colors = [
-			'transparent', 'black', 'white', 'red', 'green', 'blue',
-			'yellow', 'cyan', 'magenta', 'gray', 'grey'
+			'transparent',
+			'black',
+			'white',
+			'red',
+			'green',
+			'blue',
+			'yellow',
+			'cyan',
+			'magenta',
+			'gray',
+			'grey',
 		];
 
 		if ( in_array( strtolower( $css_value ), $named_colors, true ) ) {

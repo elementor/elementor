@@ -10,18 +10,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Shadow_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 	protected $supported_properties = [
-		'text-shadow'
+		'text-shadow',
 	];
 
 	protected $atomic_prop_type = 'shadow';
 
 	protected $supported_css_units = [
-		'px', 'em', 'rem', '%', 'vh', 'vw'
+		'px',
+		'em',
+		'rem',
+		'%',
+		'vh',
+		'vw',
 	];
 
 	public function map_css_to_atomic( string $css_value ): ?array {
 		$css_value = trim( $css_value );
-		
+
 		if ( 'none' === $css_value ) {
 			return null;
 		}
@@ -34,19 +39,19 @@ class Shadow_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 		$shadow_value = [
 			'hOffset' => [
 				'$$type' => 'size',
-				'value' => $parsed['h_offset']
+				'value' => $parsed['h_offset'],
 			],
 			'vOffset' => [
 				'$$type' => 'size',
-				'value' => $parsed['v_offset']
+				'value' => $parsed['v_offset'],
 			],
 			'blur' => [
 				'$$type' => 'size',
-				'value' => $parsed['blur']
+				'value' => $parsed['blur'],
 			],
 			'color' => [
 				'$$type' => 'color',
-				'value' => $parsed['color']
+				'value' => $parsed['color'],
 			],
 		];
 
@@ -55,14 +60,17 @@ class Shadow_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 
 	private function parse_text_shadow_value( string $css_value ): ?array {
 		$pattern = '/^(-?\d+(?:\.\d+)?(?:px|em|rem|%|vh|vw)?)\s+(-?\d+(?:\.\d+)?(?:px|em|rem|%|vh|vw)?)\s*(?:(-?\d+(?:\.\d+)?(?:px|em|rem|%|vh|vw)?)\s*)?(.*)$/';
-		
+
 		if ( ! preg_match( $pattern, $css_value, $matches ) ) {
 			return null;
 		}
 
 		$h_offset = $this->parse_size_value( $matches[1] );
 		$v_offset = $this->parse_size_value( $matches[2] );
-		$blur = ! empty( $matches[3] ) ? $this->parse_size_value( $matches[3] ) : [ 'size' => 0.0, 'unit' => 'px' ];
+		$blur = ! empty( $matches[3] ) ? $this->parse_size_value( $matches[3] ) : [
+			'size' => 0.0,
+			'unit' => 'px',
+		];
 		$color_string = ! empty( $matches[4] ) ? trim( $matches[4] ) : '#000000';
 
 		if ( null === $h_offset || null === $v_offset ) {
@@ -78,7 +86,7 @@ class Shadow_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 			'h_offset' => $h_offset,
 			'v_offset' => $v_offset,
 			'blur' => $blur,
-			'color' => $color
+			'color' => $color,
 		];
 	}
 }

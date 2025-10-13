@@ -5,15 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\CssConverter\Services\Css\Reset_Selector_Analyzer;
-
 class Unified_Css_Processor {
 
 	private $css_parser;
 	private $property_converter;
 	private $specificity_calculator;
 	private $unified_style_manager;
-	private $reset_selector_analyzer;
+	private $reset_style_detector;
 
 	public function __construct(
 		$css_parser,
@@ -27,21 +25,27 @@ class Unified_Css_Processor {
 			$specificity_calculator,
 			$property_converter
 		);
-		$this->reset_selector_analyzer = new Reset_Selector_Analyzer( $specificity_calculator );
+		$this->reset_style_detector = new Reset_Style_Detector( $specificity_calculator );
 	}
 
 	public function process_css_and_widgets( string $css, array $widgets ): array {
-		
+
 		$this->collect_all_styles_from_sources( $css, $widgets );
 		$resolved_widgets = $this->resolve_styles_recursively( $widgets );
 		$debug_info = $this->unified_style_manager->get_debug_info();
 		$css_class_rules = $this->extract_css_class_rules_for_global_classes( $css );
 
-		
+		// Get reset styles information
+		$reset_styles_stats = $this->unified_style_manager->get_reset_styles_stats();
+		$complex_reset_styles = $this->unified_style_manager->get_complex_reset_styles();
+
 		return [
 			'widgets' => $resolved_widgets,
 			'stats' => $debug_info,
 			'css_class_rules' => $css_class_rules,
+			'reset_styles_detected' => $reset_styles_stats['reset_element_styles'] > 0 || $reset_styles_stats['reset_complex_styles'] > 0,
+			'reset_styles_stats' => $reset_styles_stats,
+			'complex_reset_styles' => $complex_reset_styles,
 		];
 	}
 
@@ -50,6 +54,7 @@ class Unified_Css_Processor {
 		$this->collect_css_styles( $css, $widgets );
 		$this->collect_inline_styles_from_widgets( $widgets );
 		$this->collect_id_styles_from_widgets( $widgets );
+		$this->collect_reset_styles( $css, $widgets );
 	}
 
 	private function collect_css_styles( string $css, array $widgets ) {
@@ -57,28 +62,27 @@ class Unified_Css_Processor {
 			return;
 		}
 
-		
-		if ( strpos($css, 'h1') !== false ) {
+		if ( strpos( $css, 'h1' ) !== false ) {
 			$h1_matches = [];
-			preg_match_all('/h1\s*\{[^}]*\}/', $css, $h1_matches);
+			preg_match_all( '/h1\s*\{[^}]*\}/', $css, $h1_matches );
 			foreach ( $h1_matches[0] as $i => $match ) {
 			}
 		}
-		
+
 		$this->log_css_parsing_start( $css, $widgets );
 		$rules = $this->parse_css_and_extract_rules( $css );
-		
+
 		$h1_rules_found = 0;
 		foreach ( $rules as $rule ) {
-			if ( isset($rule['selector']) && $rule['selector'] === 'h1' ) {
-				$h1_rules_found++;
+			if ( isset( $rule['selector'] ) && $rule['selector'] === 'h1' ) {
+				++$h1_rules_found;
 			}
 		}
-		
+
 		$this->log_extracted_rules( $rules );
-		
+
 		$this->analyze_and_apply_direct_element_styles( $rules, $widgets );
-		
+
 		$this->process_css_rules_for_widgets( $rules, $widgets );
 	}
 
@@ -96,54 +100,50 @@ class Unified_Css_Processor {
 	}
 
 	private function analyze_and_apply_direct_element_styles( array $rules, array $widgets ): void {
-		
+
 		$this->log_sample_rules_for_debugging( $rules );
-		for ( $i = 0; $i < min(3, count($rules)); $i++ ) {
-			$rule = $rules[$i];
+		for ( $i = 0; $i < min( 3, count( $rules ) ); $i++ ) {
+			$rule = $rules[ $i ];
 			$selector = $rule['selector'] ?? 'no-selector';
-			$prop_count = count($rule['properties'] ?? []);
+			$prop_count = count( $rule['properties'] ?? [] );
 		}
-		
+
 		$analyzer_rules = $this->convert_rules_to_analyzer_format( $rules );
-		
+
 		$conflict_map = $this->analyze_element_selector_conflicts_for_direct_styling( $analyzer_rules );
-		
+
 		$simple_selectors_found = 0;
 		$applied_count = 0;
 		$skipped_count = 0;
-		
+
 		foreach ( $analyzer_rules as $rule ) {
 			$selector = $rule['selector'];
-			
-			
+
 			if ( $this->reset_selector_analyzer->is_simple_element_selector( $selector ) ) {
-				$simple_selectors_found++;
+				++$simple_selectors_found;
 				$conflicts = $conflict_map[ $selector ] ?? [];
-				
-				
+
 				if ( empty( $conflicts ) ) {
 					$this->apply_direct_element_styles_to_widgets( $rule, $widgets );
-					$applied_count++;
+					++$applied_count;
 				} else {
-					$skipped_count++;
+					++$skipped_count;
 				}
 			} else {
 			}
 		}
-		
 	}
 
 	private function convert_rules_to_analyzer_format( array $rules ): array {
 		$analyzer_rules = [];
-		
-		
+
 		foreach ( $rules as $rule ) {
 			$selector = $rule['selector'];
 			$properties = $rule['properties'] ?? [];
-			
-			if ( $selector === 'h1' || strpos($selector, 'h1') !== false ) {
+
+			if ( $selector === 'h1' || strpos( $selector, 'h1' ) !== false ) {
 			}
-			
+
 			foreach ( $properties as $property_data ) {
 				$analyzer_rules[] = [
 					'selector' => $selector,
@@ -153,7 +153,7 @@ class Unified_Css_Processor {
 				];
 			}
 		}
-		
+
 		return $analyzer_rules;
 	}
 
@@ -162,15 +162,12 @@ class Unified_Css_Processor {
 		$property = $rule['property'];
 		$value = $rule['value'];
 		$important = $rule['important'] ?? false;
-		
-		
+
 		$matching_widgets = $this->find_widgets_by_element_type( $selector, $widgets );
-		
-		
+
 		foreach ( $matching_widgets as $widget_id ) {
 			$converted_property = $this->convert_css_property_to_atomic_widget_format( $property, $value );
-			
-			
+
 			if ( $converted_property ) {
 				$this->apply_direct_element_style_with_higher_priority(
 					$widget_id,
@@ -184,7 +181,7 @@ class Unified_Css_Processor {
 						],
 					]
 				);
-				
+
 			} else {
 			}
 		}
@@ -192,28 +189,26 @@ class Unified_Css_Processor {
 
 	private function find_widgets_by_element_type( string $element_selector, array $widgets ): array {
 		$matching_widget_ids = [];
-		
-		
+
 		$element_to_widget_map = $this->get_html_element_to_atomic_widget_mapping();
-		
+
 		$target_widget_type = $element_to_widget_map[ $element_selector ] ?? $element_selector;
-		
+
 		foreach ( $widgets as $widget ) {
 			$widget_tag = $widget['tag'] ?? $widget['widget_type'] ?? '';
 			$element_id = $widget['element_id'] ?? null;
 			$widget_type = $widget['widget_type'] ?? 'unknown';
-			
-			
+
 			if ( $element_id && $widget_type === $target_widget_type ) {
 				$matching_widget_ids[] = $element_id;
 			}
-			
+
 			if ( ! empty( $widget['children'] ) ) {
 				$child_matches = $this->find_widgets_by_element_type( $element_selector, $widget['children'] );
 				$matching_widget_ids = array_merge( $matching_widget_ids, $child_matches );
 			}
 		}
-		
+
 		return $matching_widget_ids;
 	}
 
@@ -598,8 +593,144 @@ class Unified_Css_Processor {
 	private function log_sample_rules_for_debugging( array $rules ): void {
 	}
 
+	/**
+	 * Collect reset styles using the new Reset_Style_Detector
+	 *
+	 * This method implements the unified-atomic mapper approach for reset styles:
+	 * 1. Extract element selector rules from CSS
+	 * 2. Analyze conflicts using Reset_Style_Detector
+	 * 3. Apply simple element selectors directly to widgets
+	 * 4. Mark complex selectors for CSS file generation
+	 */
+	private function collect_reset_styles( string $css, array $widgets ): void {
+		if ( empty( $css ) ) {
+			return;
+		}
+
+		// Parse CSS and extract all rules
+		$all_rules = $this->parse_css_and_extract_rules( $css );
+
+		// Extract element selector rules using Reset_Style_Detector
+		$element_rules = $this->reset_style_detector->extract_element_selector_rules( $all_rules );
+
+		if ( empty( $element_rules ) ) {
+			return;
+		}
+
+		// Analyze conflicts for all element selectors
+		$conflict_analysis = $this->reset_style_detector->analyze_element_selector_conflicts(
+			$element_rules,
+			$all_rules
+		);
+
+		// Process each element selector
+		foreach ( $element_rules as $selector => $rules ) {
+			$this->process_element_selector_reset_styles( $selector, $rules, $conflict_analysis, $widgets );
+		}
+	}
+
+	/**
+	 * Process reset styles for a specific element selector
+	 */
+	private function process_element_selector_reset_styles(
+		string $selector,
+		array $rules,
+		array $conflict_analysis,
+		array $widgets
+	): void {
+		// Check if this selector can be applied directly to widgets
+		$can_apply_directly = $this->reset_style_detector->can_apply_directly_to_widgets(
+			$selector,
+			$conflict_analysis
+		);
+
+		if ( $can_apply_directly ) {
+			// Apply directly to widgets via unified style manager
+			$this->apply_reset_styles_directly_to_widgets( $selector, $rules, $widgets );
+		} else {
+			// Mark for CSS file generation
+			$this->collect_complex_reset_styles_for_css_file(
+				$selector,
+				$rules,
+				$conflict_analysis[ $selector ] ?? []
+			);
+		}
+	}
+
+	/**
+	 * Apply reset styles directly to matching widgets
+	 */
+	private function apply_reset_styles_directly_to_widgets(
+		string $selector,
+		array $rules,
+		array $widgets
+	): void {
+		// Find widgets that match this element selector
+		$matching_widgets = $this->find_widgets_by_element_type( $selector, $widgets );
+
+		if ( empty( $matching_widgets ) ) {
+			return;
+		}
+
+		// Convert rules to properties format
+		$properties = [];
+		foreach ( $rules as $rule ) {
+			foreach ( $rule['properties'] ?? [] as $property_data ) {
+				// Convert property to atomic format if possible
+				$converted = $this->convert_property_if_needed(
+					$property_data['property'],
+					$property_data['value']
+				);
+
+				$properties[] = [
+					'property' => $property_data['property'],
+					'value' => $property_data['value'],
+					'important' => $property_data['important'] ?? false,
+					'converted_property' => $converted,
+				];
+			}
+		}
+
+		// Collect via unified style manager
+		$this->unified_style_manager->collect_reset_styles(
+			$selector,
+			$properties,
+			$matching_widgets,
+			true // can_apply_directly = true
+		);
+	}
+
+	/**
+	 * Collect complex reset styles for CSS file generation
+	 */
+	private function collect_complex_reset_styles_for_css_file(
+		string $selector,
+		array $rules,
+		array $conflicts
+	): void {
+		// Convert rules to properties format
+		$properties = [];
+		foreach ( $rules as $rule ) {
+			foreach ( $rule['properties'] ?? [] as $property_data ) {
+				$properties[] = [
+					'property' => $property_data['property'],
+					'value' => $property_data['value'],
+					'important' => $property_data['important'] ?? false,
+				];
+			}
+		}
+
+		// Collect via unified style manager for CSS file generation
+		$this->unified_style_manager->collect_complex_reset_styles(
+			$selector,
+			$properties,
+			$conflicts
+		);
+	}
+
 	private function analyze_element_selector_conflicts_for_direct_styling( array $analyzer_rules ): array {
-		return $this->reset_selector_analyzer->analyze_element_selector_conflicts( $analyzer_rules );
+		// Legacy method - now handled by collect_reset_styles
+		return [];
 	}
 
 	private function convert_css_property_to_atomic_widget_format( string $property, string $value ) {
@@ -613,7 +744,7 @@ class Unified_Css_Processor {
 	private function get_html_element_to_atomic_widget_mapping(): array {
 		return [
 			'h1' => 'e-heading',
-			'h2' => 'e-heading', 
+			'h2' => 'e-heading',
 			'h3' => 'e-heading',
 			'h4' => 'e-heading',
 			'h5' => 'e-heading',
@@ -759,7 +890,7 @@ class Unified_Css_Processor {
 
 	private function fetch_single_css_url( string $url ): string {
 		$timeout = apply_filters( 'elementor_widget_converter_timeout', 30 );
-		
+
 		$response = wp_remote_get( $url, [
 			'timeout' => $timeout,
 			'headers' => [
@@ -787,21 +918,21 @@ class Unified_Css_Processor {
 
 	private function extract_import_urls( string $css_content, string $base_url ): array {
 		$import_urls = [];
-		
+
 		if ( preg_match_all( '/@import\s+(?:url\()?["\']?([^"\'()]+)["\']?\)?[^;]*;/i', $css_content, $matches ) ) {
 			foreach ( $matches[1] as $import_url ) {
 				$import_url = trim( $import_url );
-				
+
 				if ( ! filter_var( $import_url, FILTER_VALIDATE_URL ) ) {
 					$import_url = $this->resolve_relative_url( $import_url, $base_url );
 				}
-				
+
 				if ( filter_var( $import_url, FILTER_VALIDATE_URL ) ) {
 					$import_urls[] = $import_url;
 				}
 			}
 		}
-		
+
 		return $import_urls;
 	}
 
@@ -835,13 +966,13 @@ class Unified_Css_Processor {
 		$parsed_css = $this->css_parser->parse( $css );
 		$document = $parsed_css->get_document();
 		$all_rules = $this->extract_rules_from_document( $document );
-		
+
 		$css_class_rules = [];
-		
+
 		foreach ( $all_rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
 			$properties = $rule['properties'] ?? [];
-			
+
 			if ( strpos( $selector, '.' ) === 0 && ! empty( $properties ) ) {
 				$css_class_rules[] = [
 					'selector' => $selector,
@@ -849,7 +980,7 @@ class Unified_Css_Processor {
 				];
 			}
 		}
-		
+
 		return $css_class_rules;
 	}
 }

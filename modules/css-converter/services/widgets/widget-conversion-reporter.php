@@ -35,9 +35,9 @@ class Widget_Conversion_Reporter {
 			'timestamp' => current_time( 'mysql' ),
 			'context' => $context,
 		];
-		
+
 		$this->warnings[] = $warning;
-		
+
 		// Log warning if debug mode is enabled (following class import pattern)
 		if ( WP_DEBUG ) {
 		}
@@ -81,7 +81,7 @@ class Widget_Conversion_Reporter {
 		if ( $reason ) {
 			$message .= " ({$reason})";
 		}
-		
+
 		$this->add_warning( $message, [
 			'type' => 'unsupported_property',
 			'property' => $property,
@@ -89,39 +89,39 @@ class Widget_Conversion_Reporter {
 			'selector' => $selector,
 			'reason' => $reason,
 		] );
-		
+
 		$this->update_stats( 'properties_skipped' );
 		$this->update_stats( 'unsupported_properties' );
 	}
 
 	public function report_widget_creation_failure( $widget_type, $element_tag, $reason ) {
 		$message = "Failed to create {$widget_type} widget from {$element_tag} element: {$reason}";
-		
+
 		$this->add_warning( $message, [
 			'type' => 'widget_creation_failure',
 			'widget_type' => $widget_type,
 			'element_tag' => $element_tag,
 			'reason' => $reason,
 		] );
-		
+
 		$this->update_stats( 'widgets_failed' );
 	}
 
 	public function report_fallback_widget_created( $original_type, $element_tag ) {
 		$message = "Created HTML fallback widget for unsupported {$original_type} ({$element_tag})";
-		
+
 		$this->add_warning( $message, [
 			'type' => 'fallback_widget_created',
 			'original_type' => $original_type,
 			'element_tag' => $element_tag,
 		] );
-		
+
 		$this->update_stats( 'fallback_widgets_created' );
 	}
 
 	public function report_css_processing_failure( $css_rule, $reason ) {
 		$message = "Failed to process CSS rule '{$css_rule}': {$reason}";
-		
+
 		$this->add_warning( $message, [
 			'type' => 'css_processing_failure',
 			'css_rule' => $css_rule,
@@ -134,14 +134,14 @@ class Widget_Conversion_Reporter {
 			'class_name' => $class_name,
 			'properties_count' => $properties_count,
 		] );
-		
+
 		$this->update_stats( 'global_classes_created' );
 	}
 
 	public function report_duplicate_class_skipped( $class_name ) {
 		// Following class import pattern for duplicate classes
 		$message = "Skipped duplicate class: {$class_name}";
-		
+
 		$this->add_warning( $message, [
 			'type' => 'duplicate_class_skipped',
 			'class_name' => $class_name,
@@ -150,7 +150,7 @@ class Widget_Conversion_Reporter {
 
 	public function report_html_validation_issue( $issue_type, $details ) {
 		$message = "HTML validation issue: {$issue_type}";
-		
+
 		$this->add_warning( $message, [
 			'type' => 'html_validation_issue',
 			'issue_type' => $issue_type,
@@ -160,7 +160,7 @@ class Widget_Conversion_Reporter {
 
 	public function report_css_security_violation( $violation_type, $pattern ) {
 		$message = "CSS security violation: {$violation_type}";
-		
+
 		$this->add_warning( $message, [
 			'type' => 'css_security_violation',
 			'violation_type' => $violation_type,
@@ -170,10 +170,10 @@ class Widget_Conversion_Reporter {
 
 	public function generate_conversion_summary() {
 		// Generate comprehensive conversion summary similar to class import
-		
+
 		$success_rate = $this->calculate_success_rate();
 		$processing_time = $this->calculate_processing_time();
-		
+
 		$summary = [
 			'success' => $this->conversion_stats['widgets_failed'] === 0,
 			'stats' => $this->conversion_stats,
@@ -184,7 +184,7 @@ class Widget_Conversion_Reporter {
 			'summary_text' => $this->generate_summary_text(),
 			'recommendations' => $this->generate_recommendations(),
 		];
-		
+
 		// Add detailed breakdown
 		$summary['breakdown'] = [
 			'elements' => [
@@ -205,7 +205,7 @@ class Widget_Conversion_Reporter {
 				'global_classes_created' => $this->conversion_stats['global_classes_created'],
 			],
 		];
-		
+
 		return $summary;
 	}
 
@@ -213,19 +213,19 @@ class Widget_Conversion_Reporter {
 		// Group warnings by type for better reporting
 		$grouped_warnings = [];
 		$warning_counts = [];
-		
+
 		foreach ( $this->warnings as $warning ) {
 			$type = $warning['context']['type'] ?? 'general';
-			
+
 			if ( ! isset( $grouped_warnings[ $type ] ) ) {
 				$grouped_warnings[ $type ] = [];
 				$warning_counts[ $type ] = 0;
 			}
-			
+
 			$grouped_warnings[ $type ][] = $warning;
-			$warning_counts[ $type ]++;
+			++$warning_counts[ $type ];
 		}
-		
+
 		return [
 			'total_warnings' => count( $this->warnings ),
 			'warnings_by_type' => $grouped_warnings,
@@ -239,7 +239,7 @@ class Widget_Conversion_Reporter {
 		if ( 0 === $total_operations ) {
 			return 100;
 		}
-		
+
 		$successful_operations = $this->conversion_stats['elements_converted'];
 		return round( ( $successful_operations / $total_operations ) * 100, 2 );
 	}
@@ -249,7 +249,7 @@ class Widget_Conversion_Reporter {
 		if ( 0 === $total_elements ) {
 			return 100;
 		}
-		
+
 		$converted_elements = $this->conversion_stats['elements_converted'];
 		return round( ( $converted_elements / $total_elements ) * 100, 2 );
 	}
@@ -258,67 +258,67 @@ class Widget_Conversion_Reporter {
 		if ( empty( $this->processing_log ) ) {
 			return 0;
 		}
-		
+
 		$start_time = $this->processing_log[0]['timestamp'];
 		$end_time = end( $this->processing_log )['timestamp'];
-		
+
 		return round( $end_time - $start_time, 3 );
 	}
 
 	private function generate_summary_text() {
 		$stats = $this->conversion_stats;
 		$warnings_count = count( $this->warnings );
-		
+
 		if ( 0 === $stats['total_elements'] ) {
 			return 'No elements found to convert.';
 		}
-		
+
 		$summary_parts = [];
-		
+
 		// Elements summary
 		if ( $stats['elements_converted'] > 0 ) {
-			$summary_parts[] = sprintf( 
+			$summary_parts[] = sprintf(
 				'Successfully converted %d of %d elements (%s%%)',
 				$stats['elements_converted'],
 				$stats['total_elements'],
 				$this->calculate_element_success_rate()
 			);
 		}
-		
+
 		// Widgets summary
 		if ( $stats['widgets_created'] > 0 ) {
 			$summary_parts[] = sprintf( 'Created %d widgets', $stats['widgets_created'] );
 		}
-		
+
 		// Global classes summary
 		if ( $stats['global_classes_created'] > 0 ) {
 			$summary_parts[] = sprintf( 'Created %d global classes', $stats['global_classes_created'] );
 		}
-		
+
 		// Warnings summary
 		if ( $warnings_count > 0 ) {
 			$summary_parts[] = sprintf( '%d warnings generated', $warnings_count );
 		}
-		
+
 		// Fallbacks summary
 		if ( $stats['fallback_widgets_created'] > 0 ) {
 			$summary_parts[] = sprintf( '%d fallback widgets created', $stats['fallback_widgets_created'] );
 		}
-		
+
 		return implode( '. ', $summary_parts ) . '.';
 	}
 
 	private function generate_recommendations() {
 		$recommendations = [];
 		$stats = $this->conversion_stats;
-		
+
 		// Analyze warning patterns and generate recommendations
 		$warning_types = [];
 		foreach ( $this->warnings as $warning ) {
 			$type = $warning['context']['type'] ?? 'general';
 			$warning_types[ $type ] = ( $warning_types[ $type ] ?? 0 ) + 1;
 		}
-		
+
 		// Unsupported properties recommendation
 		if ( $stats['properties_skipped'] > 0 ) {
 			$recommendations[] = sprintf(
@@ -326,7 +326,7 @@ class Widget_Conversion_Reporter {
 				$stats['properties_skipped']
 			);
 		}
-		
+
 		// Widget creation failures recommendation
 		if ( $stats['widgets_failed'] > 0 ) {
 			$recommendations[] = sprintf(
@@ -334,7 +334,7 @@ class Widget_Conversion_Reporter {
 				$stats['widgets_failed']
 			);
 		}
-		
+
 		// Fallback widgets recommendation
 		if ( $stats['fallback_widgets_created'] > 0 ) {
 			$recommendations[] = sprintf(
@@ -342,17 +342,17 @@ class Widget_Conversion_Reporter {
 				$stats['fallback_widgets_created']
 			);
 		}
-		
+
 		// High warning count recommendation
 		if ( count( $this->warnings ) > 10 ) {
 			$recommendations[] = 'High number of warnings detected. Consider reviewing HTML/CSS structure for better compatibility.';
 		}
-		
+
 		// Low success rate recommendation
 		if ( $this->calculate_success_rate() < 80 ) {
 			$recommendations[] = 'Low conversion success rate. Consider using more standard HTML elements and CSS properties.';
 		}
-		
+
 		return $recommendations;
 	}
 
@@ -407,7 +407,7 @@ class Widget_Conversion_Reporter {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -416,9 +416,9 @@ class Widget_Conversion_Reporter {
 		$element_success_rate = $this->calculate_element_success_rate();
 		$warning_penalty = min( count( $this->warnings ) * 2, 30 ); // Max 30 point penalty
 		$fallback_penalty = $this->conversion_stats['fallback_widgets_created'] * 5; // 5 points per fallback
-		
+
 		$quality_score = max( 0, $element_success_rate - $warning_penalty - $fallback_penalty );
-		
+
 		return round( $quality_score, 1 );
 	}
 }

@@ -89,8 +89,8 @@ class CSS_Shorthand_Expander {
 		}
 
 		// ✅ ATOMIC WIDGETS WORKAROUND
-		// For directional borders (border-top, border-right, etc.), 
-		// we need to convert to full border shorthand because atomic widgets 
+		// For directional borders (border-top, border-right, etc.),
+		// we need to convert to full border shorthand because atomic widgets
 		// don't support individual border-style/border-color properties
 		if ( 'border' !== $property ) {
 			// This is border-top, border-right, etc.
@@ -139,22 +139,22 @@ class CSS_Shorthand_Expander {
 		// - border-width: 5px 0 0 0 (directional, supported by Border_Width_Prop_Type)
 		// - border-style: solid (shorthand, supported by String_Prop_Type)
 		// - border-color: blue (shorthand, supported by Color_Prop_Type)
-		
+
 		$expanded = [];
-		
+
 		if ( isset( $parsed['width'] ) ) {
 			$directional_width = self::create_directional_border_width( $property, $parsed['width'] );
 			$expanded['border-width'] = $directional_width;
 		}
-		
+
 		if ( isset( $parsed['style'] ) ) {
 			$expanded['border-style'] = $parsed['style']; // Use shorthand (supported)
 		}
-		
+
 		if ( isset( $parsed['color'] ) ) {
 			$expanded['border-color'] = $parsed['color']; // Use shorthand (supported)
 		}
-		
+
 		return $expanded;
 	}
 
@@ -164,7 +164,7 @@ class CSS_Shorthand_Expander {
 		// border-right: 5px → border-width: 0 5px 0 0
 		// border-bottom: 5px → border-width: 0 0 5px 0
 		// border-left: 5px → border-width: 0 0 0 5px
-		
+
 		switch ( $property ) {
 			case 'border-top':
 				return "$width 0 0 0";
@@ -198,7 +198,7 @@ class CSS_Shorthand_Expander {
 	private static function parse_border_shorthand( string $value ): array {
 		$value = trim( $value );
 		$parts = preg_split( '/\s+/', $value );
-		
+
 		if ( empty( $parts ) ) {
 			return [];
 		}
@@ -244,9 +244,17 @@ class CSS_Shorthand_Expander {
 	}
 
 	private static function is_border_style_value( string $value ): bool {
-		$styles = [ 
-			'none', 'hidden', 'dotted', 'dashed', 'solid', 
-			'double', 'groove', 'ridge', 'inset', 'outset' 
+		$styles = [
+			'none',
+			'hidden',
+			'dotted',
+			'dashed',
+			'solid',
+			'double',
+			'groove',
+			'ridge',
+			'inset',
+			'outset',
 		];
 		return in_array( strtolower( $value ), $styles, true );
 	}
@@ -261,8 +269,21 @@ class CSS_Shorthand_Expander {
 		}
 
 		$named_colors = [
-			'black', 'white', 'red', 'green', 'blue', 'yellow', 'cyan', 'magenta',
-			'gray', 'grey', 'orange', 'purple', 'pink', 'brown', 'transparent'
+			'black',
+			'white',
+			'red',
+			'green',
+			'blue',
+			'yellow',
+			'cyan',
+			'magenta',
+			'gray',
+			'grey',
+			'orange',
+			'purple',
+			'pink',
+			'brown',
+			'transparent',
 		];
 		return in_array( strtolower( $value ), $named_colors, true );
 	}

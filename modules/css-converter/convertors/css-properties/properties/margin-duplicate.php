@@ -50,7 +50,7 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		if ( null === $dimensions_data ) {
 			return null;
 		}
-		
+
 		// ✅ ATOMIC-ONLY COMPLIANCE: All properties use Dimensions_Prop_Type
 		return Dimensions_Prop_Type::make()->generate( $dimensions_data );
 	}
@@ -91,53 +91,53 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		switch ( $property ) {
 			case 'margin':
 				return $this->parse_shorthand_to_logical_properties( $value );
-			
+
 			case 'margin-top':
 				return $this->parse_individual_margin( 'block-start', $value );
-			
+
 			case 'margin-right':
 				return $this->parse_individual_margin( 'inline-end', $value );
-			
+
 			case 'margin-bottom':
 				return $this->parse_individual_margin( 'block-end', $value );
-			
+
 			case 'margin-left':
 				return $this->parse_individual_margin( 'inline-start', $value );
-			
+
 			case 'margin-block-start':
 				return $this->parse_individual_margin( 'block-start', $value );
-			
+
 			case 'margin-block-end':
 				return $this->parse_individual_margin( 'block-end', $value );
-			
+
 			case 'margin-inline-start':
 				return $this->parse_individual_margin( 'inline-start', $value );
-			
+
 			case 'margin-inline-end':
 				return $this->parse_individual_margin( 'inline-end', $value );
-			
+
 			case 'margin-block':
 				return $this->parse_logical_shorthand( $value, 'block' );
-			
+
 			case 'margin-inline':
 				return $this->parse_logical_shorthand( $value, 'inline' );
-			
+
 			default:
 				return null;
 		}
 	}
 
 	protected function is_css_keyword( string $value ): bool {
-		$keywords = ['auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer'];
+		$keywords = [ 'auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer' ];
 		return in_array( strtolower( $value ), $keywords, true );
 	}
 
 	private function handle_css_keyword( string $value ): array {
 		$keyword = strtolower( $value );
-		
+
 		$keyword_size = [
 			'size' => $keyword,
-			'unit' => 'custom'
+			'unit' => 'custom',
 		];
 
 		$size_prop = $this->create_size_prop( $keyword_size );
@@ -162,7 +162,7 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		$dimensions = $this->map_shorthand_to_logical_properties( $parts );
-		
+
 		if ( null === $dimensions ) {
 			return null;
 		}
@@ -185,7 +185,7 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 			if ( null === $parsed ) {
 				return null;
 			}
-			
+
 			$size_prop = $this->create_size_prop( $parsed );
 			return [
 				$axis . '-start' => $size_prop,
@@ -199,7 +199,7 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 			if ( null === $start || null === $end ) {
 				return null;
 			}
-			
+
 			return [
 				$axis . '-start' => $this->create_size_prop( $start ),
 				$axis . '-end' => $this->create_size_prop( $end ),
@@ -211,7 +211,7 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function map_shorthand_to_logical_properties( array $parts ): ?array {
 		$count = count( $parts );
-		
+
 		switch ( $count ) {
 			case 1:
 				if ( ! isset( $parts[0] ) ) {
@@ -301,5 +301,4 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		// ✅ MARGIN SCHEMA COMPATIBILITY: Ensure size prop is compatible with margin's unrestricted units
 		return Size_Prop_Type::make()->generate( $size_value );
 	}
-
 }

@@ -18,17 +18,33 @@ class Css_Property_Convertor_Config {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
-		
+
 		return self::$instance;
 	}
 
 	private function init_basic_config(): void {
 		$this->config = [
 			'supported_properties' => [
-				'color', 'background-color', 'font-size', 'margin', 'padding',
-				'border-radius', 'box-shadow', 'text-shadow', 'transform', 'transition',
-				'opacity', 'z-index', 'width', 'height', 'display', 'position',
-				'flex-direction', 'align-items', 'justify-content', 'gap'
+				'color',
+				'background-color',
+				'font-size',
+				'margin',
+				'padding',
+				'border-radius',
+				'box-shadow',
+				'text-shadow',
+				'transform',
+				'transition',
+				'opacity',
+				'z-index',
+				'width',
+				'height',
+				'display',
+				'position',
+				'flex-direction',
+				'align-items',
+				'justify-content',
+				'gap',
 			],
 			'total_mappers' => 14,
 			'total_properties' => 50,
@@ -36,7 +52,7 @@ class Css_Property_Convertor_Config {
 			'integration_mode' => 'bridge_mode',
 			'legacy_compatibility' => true,
 			'max_css_size' => 5 * 1024 * 1024, // 5MB
-			'log_directory' => 'logs'
+			'log_directory' => 'logs',
 		];
 	}
 
@@ -72,14 +88,14 @@ class Css_Property_Convertor_Config {
 		// Basic conversion without atomic dependencies
 		return [
 			'$$type' => 'string',
-			'value' => $value
+			'value' => $value,
 		];
 	}
 
 	public function get_conversion_statistics(): array {
 		return [
 			'total_atomic_prop_mappers' => $this->config['total_mappers'],
-			'total_convertible_css_properties' => $this->config['total_properties']
+			'total_convertible_css_properties' => $this->config['total_properties'],
 		];
 	}
 
@@ -88,7 +104,7 @@ class Css_Property_Convertor_Config {
 			'layout_css_properties_count' => 15,
 			'visual_css_properties_count' => 10,
 			'interaction_css_properties_count' => 5,
-			'animation_css_properties_count' => 5
+			'animation_css_properties_count' => 5,
 		];
 	}
 

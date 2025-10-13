@@ -81,7 +81,7 @@ class Css_Specificity_Manager {
 			}
 
 			$class_styles = $global_classes_data[ $class_name ];
-			
+
 			foreach ( $class_styles as $style ) {
 				$all_styles[] = [
 					'property' => $style['property'],
@@ -143,7 +143,7 @@ class Css_Specificity_Manager {
 			$all_styles[] = [
 				'property' => $property,
 				'value' => $style_data['value'],
-				'specificity' => $style_data['important'] ? 
+				'specificity' => $style_data['important'] ?
 					Css_Specificity_Calculator::IMPORTANT_WEIGHT + Css_Specificity_Calculator::INLINE_WEIGHT :
 					Css_Specificity_Calculator::INLINE_WEIGHT,
 				'important' => $style_data['important'],
@@ -155,7 +155,7 @@ class Css_Specificity_Manager {
 
 	public function compute_winning_styles( array $all_styles ): array {
 		$grouped_styles = $this->group_styles_by_property( $all_styles );
-		
+
 		$computed_styles = [];
 		foreach ( $grouped_styles as $property => $styles ) {
 			$winning_style = $this->specificity_calculator->get_winning_style( $styles );
@@ -169,14 +169,14 @@ class Css_Specificity_Manager {
 
 	private function group_styles_by_property( array $all_styles ): array {
 		$grouped_styles = [];
-		
+
 		foreach ( $all_styles as $index => $style ) {
 			$property = $style['original_property'] ?? $style['property'];
-			
+
 			if ( ! isset( $grouped_styles[ $property ] ) ) {
 				$grouped_styles[ $property ] = [];
 			}
-			
+
 			$style['order'] = $index;
 			$grouped_styles[ $property ][] = $style;
 		}

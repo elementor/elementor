@@ -8,15 +8,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * 🎯 ATOMIC-ONLY MAPPER FACTORY
- * 
+ *
  * This factory ONLY creates atomic-compliant property mappers.
  * It validates that all mappers use atomic prop types directly.
- * 
+ *
  * ✅ ATOMIC-ONLY ENFORCEMENT:
  * - Validates mapper returns are atomic prop type results
  * - Blocks any manual JSON creation patterns
  * - Ensures 100% atomic compliance
- * 
+ *
  * 🚫 PREVENTS:
  * - Manual JSON creation: ['property' => ..., 'value' => ...]
  * - Non-atomic returns: ['$$type' => ..., 'value' => ...] (manual)
@@ -53,11 +53,11 @@ class Atomic_Only_Mapper_Factory {
 
 		// Test with sample values to ensure atomic returns
 		$test_cases = [
-			['color', '#ff0000'],
-			['font-size', '16px'],
-			['padding', '10px'],
-			['width', '100px'],
-			['opacity', '0.5'],
+			[ 'color', '#ff0000' ],
+			[ 'font-size', '16px' ],
+			[ 'padding', '10px' ],
+			[ 'width', '100px' ],
+			[ 'opacity', '0.5' ],
 		];
 
 		foreach ( $test_cases as [$property, $value] ) {
@@ -66,7 +66,7 @@ class Atomic_Only_Mapper_Factory {
 			}
 
 			$result = $mapper->map_to_v4_atomic( $property, $value );
-			
+
 			if ( null === $result ) {
 				continue; // Null is acceptable for unsupported values
 			}
@@ -85,7 +85,7 @@ class Atomic_Only_Mapper_Factory {
 			throw new \Exception(
 				"ATOMIC-ONLY VIOLATION: Mapper {$mapper_class} returned invalid structure for {$property}. " .
 				"Must return atomic prop type result with $$type and value. " .
-				"Use Size_Prop_Type::make()->generate(), Color_Prop_Type::make()->generate(), etc."
+				'Use Size_Prop_Type::make()->generate(), Color_Prop_Type::make()->generate(), etc.'
 			);
 		}
 
@@ -94,19 +94,24 @@ class Atomic_Only_Mapper_Factory {
 			throw new \Exception(
 				"ATOMIC-ONLY VIOLATION: Mapper {$mapper_class} returned manual JSON structure for {$property}. " .
 				"Found 'property' key which indicates manual JSON creation. " .
-				"Return atomic prop type result directly: Size_Prop_Type::make()->generate()"
+				'Return atomic prop type result directly: Size_Prop_Type::make()->generate()'
 			);
 		}
 
 		// Validate known atomic types
 		$valid_atomic_types = [
-			'size', 'color', 'dimensions', 'border-radius', 'box-shadow', 'string'
+			'size',
+			'color',
+			'dimensions',
+			'border-radius',
+			'box-shadow',
+			'string',
 		];
 
 		if ( ! in_array( $result['$$type'], $valid_atomic_types, true ) ) {
 			throw new \Exception(
 				"ATOMIC-ONLY VIOLATION: Mapper {$mapper_class} returned unknown $$type '{$result['$$type']}' for {$property}. " .
-				"Use valid atomic prop types: " . implode( ', ', $valid_atomic_types )
+				'Use valid atomic prop types: ' . implode( ', ', $valid_atomic_types )
 			);
 		}
 	}

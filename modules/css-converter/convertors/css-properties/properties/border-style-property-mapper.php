@@ -40,7 +40,7 @@ class Border_Style_Property_Mapper extends Atomic_Property_Mapper_Base {
 		if ( in_array( $property, [ 'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style' ], true ) ) {
 			return null; // Individual properties not supported by atomic widgets
 		}
-		
+
 		if ( '' === $value || ! is_string( $value ) ) {
 			return null;
 		}

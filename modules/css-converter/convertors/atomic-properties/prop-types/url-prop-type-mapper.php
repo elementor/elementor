@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Url_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 	protected $supported_properties = [
-		'background-image'
+		'background-image',
 	];
 
 	protected $atomic_prop_type = 'url';
@@ -19,7 +19,7 @@ class Url_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 
 	public function map_css_to_atomic( string $css_value ): ?array {
 		$css_value = trim( $css_value );
-		
+
 		if ( empty( $css_value ) || 'none' === $css_value ) {
 			return null;
 		}

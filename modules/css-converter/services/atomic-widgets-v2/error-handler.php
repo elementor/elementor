@@ -156,7 +156,6 @@ class Error_Handler {
 			'options' => $options,
 			'timestamp' => date( 'Y-m-d H:i:s' ),
 		];
-
 	}
 
 	public function log_conversion_result( array $result ): void {
@@ -175,12 +174,11 @@ class Error_Handler {
 		if ( ! empty( $result['stats'] ) ) {
 			$log_data['stats'] = $result['stats'];
 		}
-
 	}
 
 	public function create_error_response( string $primary_error = '' ): array {
 		$error_message = $primary_error ?: 'Conversion failed';
-		
+
 		if ( $this->has_errors() ) {
 			$last_error = $this->get_last_error();
 			$error_message = $last_error['message'] ?? $error_message;
@@ -207,4 +205,3 @@ class Error_Handler {
 		return $this->debug_mode;
 	}
 }
-

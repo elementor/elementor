@@ -65,7 +65,7 @@ class Classes_Route {
 		// $dev_token = defined( 'ELEMENTOR_CSS_CONVERTER_DEV_TOKEN' ) ? ELEMENTOR_CSS_CONVERTER_DEV_TOKEN : null;
 		// $header_token = isset( $_SERVER['HTTP_X_DEV_TOKEN'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_DEV_TOKEN'] ) ) : null;
 		// if ( $dev_token && $header_token && hash_equals( (string) $dev_token, $header_token ) ) {
-		// 	return true;
+		// return true;
 		// }
 		// return current_user_can( 'manage_options' );
 	}
@@ -124,12 +124,12 @@ class Classes_Route {
 
 		} catch ( Class_Conversion_Exception $e ) {
 			$error_details = $e->getMessage();
-			
+
 			// Provide more helpful error messages for common CSS syntax issues
 			if ( strpos( $error_details, 'Failed to parse CSS' ) !== false ) {
 				$error_details .= '. Common issues: missing semicolons, unmatched braces, invalid selectors.';
 			}
-			
+
 			return new WP_REST_Response( [
 				'error' => 'Conversion failed',
 				'details' => $error_details,
@@ -138,7 +138,7 @@ class Classes_Route {
 			], 422 );
 		} catch ( \Throwable $e ) {
 			// Log the actual error for debugging
-			
+
 			return new WP_REST_Response( [
 				'error' => 'Unexpected error',
 				'details' => 'An unexpected error occurred during conversion: ' . $e->getMessage(),
@@ -295,7 +295,7 @@ class Classes_Route {
 
 	private function validate_request( WP_REST_Request $request ): ?WP_REST_Response {
 		$css = $request->get_param( 'css' );
-		
+
 		// Check CSS size limit
 		if ( is_string( $css ) && strlen( $css ) > $this->config->get_max_css_size() ) {
 			return new WP_REST_Response( [

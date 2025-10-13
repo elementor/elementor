@@ -49,11 +49,11 @@ class Height_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	protected function parse_size_value( string $value ): array {
 		$parsed = Size_Value_Parser::parse( $value );
-		
+
 		if ( null !== $parsed ) {
 			return $this->normalize_height_value( $parsed );
 		}
-		
+
 		return Size_Value_Parser::create_zero();
 	}
 
@@ -61,10 +61,10 @@ class Height_Property_Mapper extends Atomic_Property_Mapper_Base {
 		if ( 'custom' === $parsed['unit'] && '' === $parsed['size'] ) {
 			return [
 				'size' => '',
-				'unit' => 'auto'
+				'unit' => 'auto',
 			];
 		}
-		
+
 		return $parsed;
 	}
 }

@@ -16,7 +16,7 @@ class CSS_To_Atomic_Props_Converter {
 	}
 
 	public function convert_css_to_atomic_prop( string $property, $value ): ?array {
-		
+
 		if ( empty( $property ) || $value === null || $value === '' ) {
 			return null;
 		}
@@ -35,25 +35,25 @@ class CSS_To_Atomic_Props_Converter {
 		// This ensures class-based CSS shorthand (like border: 1px solid #dee2e6) gets expanded
 		// to individual properties (border-width, border-style, border-color) just like inline CSS
 		require_once __DIR__ . '/../css/processing/css-shorthand-expander.php';
-		
+
 		$expanded_properties = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $css_properties );
-		
+
 		$atomic_props = [];
 
 		foreach ( $expanded_properties as $property => $value ) {
-			
+
 			$atomic_prop = $this->convert_css_to_atomic_prop( $property, $value );
 			if ( $atomic_prop ) {
 				$target_property = $this->get_target_property_name( $property );
-				
+
 				// ✅ CRITICAL FIX: Merge dimensions properties instead of overwriting
 				if ( isset( $atomic_props[ $target_property ] ) && $this->is_dimensions_property( $atomic_prop ) ) {
-					
-					$atomic_props[ $target_property ] = $this->merge_dimensions_properties( 
-						$atomic_props[ $target_property ], 
-						$atomic_prop 
+
+					$atomic_props[ $target_property ] = $this->merge_dimensions_properties(
+						$atomic_props[ $target_property ],
+						$atomic_prop
 					);
-					
+
 				} else {
 					$atomic_props[ $target_property ] = $atomic_prop;
 				}
@@ -66,11 +66,11 @@ class CSS_To_Atomic_Props_Converter {
 
 	private function get_target_property_name( string $property ): string {
 		$mapper = $this->get_property_mapper( $property );
-		
+
 		if ( $mapper && method_exists( $mapper, 'get_target_property_name' ) ) {
 			return $mapper->get_target_property_name( $property );
 		}
-		
+
 		return $property;
 	}
 
@@ -109,7 +109,7 @@ class CSS_To_Atomic_Props_Converter {
 		$new_value = $new['value'] ?? [];
 
 		// Merge the directional values, preserving existing values and adding new ones
-		foreach ( ['block-start', 'block-end', 'inline-start', 'inline-end'] as $direction ) {
+		foreach ( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ] as $direction ) {
 			if ( isset( $new_value[ $direction ] ) && $new_value[ $direction ] !== null ) {
 				// New value takes precedence
 				$merged_value[ $direction ] = $new_value[ $direction ];
@@ -123,7 +123,7 @@ class CSS_To_Atomic_Props_Converter {
 
 		return [
 			'$$type' => 'dimensions',
-			'value' => $merged_value
+			'value' => $merged_value,
 		];
 	}
 
@@ -156,10 +156,10 @@ class CSS_To_Atomic_Props_Converter {
 			return false;
 		}
 
-		return isset( $value['size'] ) && 
-			   isset( $value['unit'] ) && 
-			   is_numeric( $value['size'] ) && 
-			   is_string( $value['unit'] );
+		return isset( $value['size'] ) &&
+				isset( $value['unit'] ) &&
+				is_numeric( $value['size'] ) &&
+				is_string( $value['unit'] );
 	}
 
 	private function validate_color_prop( $value ): bool {
@@ -171,8 +171,8 @@ class CSS_To_Atomic_Props_Converter {
 			return false;
 		}
 
-		$logical_properties = ['block-start', 'inline-end', 'block-end', 'inline-start'];
-		
+		$logical_properties = [ 'block-start', 'inline-end', 'block-end', 'inline-start' ];
+
 		foreach ( $logical_properties as $prop ) {
 			if ( isset( $value[ $prop ] ) ) {
 				if ( ! $this->validate_nested_atomic_prop( $value[ $prop ], 'size' ) ) {
@@ -213,8 +213,8 @@ class CSS_To_Atomic_Props_Converter {
 			return false;
 		}
 
-		$corner_properties = ['start-start', 'start-end', 'end-start', 'end-end'];
-		
+		$corner_properties = [ 'start-start', 'start-end', 'end-start', 'end-end' ];
+
 		foreach ( $corner_properties as $corner ) {
 			if ( isset( $value[ $corner ] ) ) {
 				if ( ! $this->validate_nested_atomic_prop( $value[ $corner ], 'size' ) ) {

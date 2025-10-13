@@ -25,11 +25,11 @@ class Widget_Mapper {
 			'h4' => 'e-heading',
 			'h5' => 'e-heading',
 			'h6' => 'e-heading',
-			
+
 			// Text elements
 			'p' => 'e-paragraph',
 			'blockquote' => 'e-paragraph', // Treat blockquote as paragraph with special styling
-			
+
 			// Container elements - use div-block for simple containers
 			'div' => 'e-div-block',
 			'section' => 'e-div-block',
@@ -39,14 +39,14 @@ class Widget_Mapper {
 			'footer' => 'e-div-block',
 			'main' => 'e-div-block',
 			'nav' => 'e-div-block',
-			
+
 			// Interactive elements
 			'a' => 'e-link',
 			'button' => 'e-button',
-			
+
 			// Media elements
 			'img' => 'e-image',
-			
+
 			// Inline elements that can be converted to flexbox
 			'span' => 'e-flexbox',
 		];
@@ -99,7 +99,7 @@ class Widget_Mapper {
 		if ( ! isset( $widget['attributes'] ) ) {
 			$widget['attributes'] = [];
 		}
-		
+
 		if ( ! isset( $widget['attributes']['class'] ) ) {
 			$widget['attributes']['class'] = $generated_class;
 		} else {
@@ -128,8 +128,8 @@ class Widget_Mapper {
 		if ( $html_id ) {
 			return 'element-' . $html_id;
 		}
-		
-		$this->element_id_counter++;
+
+		++$this->element_id_counter;
 		$tag = $element['tag'] ?? 'unknown';
 		return "element-{$tag}-{$this->element_id_counter}";
 	}
@@ -159,18 +159,18 @@ class Widget_Mapper {
 		$content = $element['content'] ?? '';
 		$tag = $element['tag'];
 		$element_id = $this->generate_element_id( $element );
-		
+
 		// ✅ CRITICAL FIX: Check if paragraph has child elements (like <a> tags)
 		if ( ! empty( $element['children'] ) ) {
 			// If paragraph contains child elements, convert to div-block container
 			// This preserves anchor tags and other interactive elements
 			$children = $this->map_elements( $element['children'] );
-			
+
 			// Only add text content as a paragraph if there's meaningful text
 			// beyond what's already in the children
 			$child_text = $this->extract_text_from_children( $element['children'] );
 			$remaining_text = trim( str_replace( $child_text, '', $content ) );
-			
+
 			if ( ! empty( $remaining_text ) ) {
 				// Add remaining text as a paragraph widget
 				$text_paragraph = [
@@ -186,7 +186,7 @@ class Widget_Mapper {
 				];
 				array_unshift( $children, $text_paragraph );
 			}
-			
+
 			return [
 				'widget_type' => 'e-div-block',
 				'element_id' => $element_id,
@@ -199,12 +199,12 @@ class Widget_Mapper {
 				'children' => $children, // ✅ PRESERVE CHILD ELEMENTS
 			];
 		}
-		
+
 		// If no children, handle as regular paragraph
 		$settings = [
 			'paragraph' => $content,
 		];
-		
+
 		return [
 			'widget_type' => 'e-paragraph',
 			'element_id' => $element_id,
@@ -218,20 +218,17 @@ class Widget_Mapper {
 
 	private function handle_div_block( $element ) {
 		$element_id = $this->generate_element_id( $element );
-		
+
 		// Map children recursively
 		$children = [];
 		if ( ! empty( $element['children'] ) ) {
-			;
 			$children = $this->map_elements( $element['children'] );
-			;
-			
+
 			// Debug log each child widget
 			foreach ( $children as $child_index => $child_widget ) {
 				$child_type = $child_widget['widget_type'] ?? 'unknown';
 				$child_element_id = $child_widget['element_id'] ?? 'no-id';
 				$child_inline_css_count = count( $child_widget['inline_css'] ?? [] );
-				;
 			}
 		}
 
@@ -246,7 +243,7 @@ class Widget_Mapper {
 
 		// Only add settings that differ from defaults
 		$settings = [];
-		
+
 		// e-div-block defaults to 'div', so only add tag if it's different
 		if ( $element['tag'] !== 'div' ) {
 			$settings['tag'] = $element['tag'];
@@ -265,7 +262,7 @@ class Widget_Mapper {
 
 	private function handle_flexbox( $element ) {
 		$element_id = $this->generate_element_id( $element );
-		
+
 		// Map children recursively
 		$children = [];
 		if ( ! empty( $element['children'] ) ) {
@@ -314,7 +311,7 @@ class Widget_Mapper {
 	private function handle_button( $element ) {
 		$type = $element['attributes']['type'] ?? 'button';
 		$element_id = $this->generate_element_id( $element );
-		
+
 		return [
 			'widget_type' => 'e-button',
 			'element_id' => $element_id,
@@ -365,19 +362,19 @@ class Widget_Mapper {
 		// Convert to paragraph if:
 		// 1. The element has meaningful text content (not just whitespace)
 		// 2. The element has NO child elements (text-only content)
-		
+
 		$text_content = trim( $element['content'] ?? '' );
 		$has_children = ! empty( $element['children'] );
-		
+
 		// DEBUG: Log conversion decision (can be removed in production)
-		
+
 		if ( empty( $text_content ) ) {
 			return false;
 		}
 
 		// Only convert if there are no child elements - this is text-only content
 		$should_convert = empty( $element['children'] );
-		
+
 		return $should_convert;
 	}
 
@@ -385,7 +382,7 @@ class Widget_Mapper {
 		// Converts a text-only div directly to an e-paragraph widget
 		// Preserves all styling (CSS classes, attributes, inline styles)
 		// DEBUG: Log conversion (can be removed in production)
-		
+
 		return [
 			'widget_type' => 'e-paragraph',
 			'original_tag' => $element['tag'], // Preserve original tag for reference
@@ -405,9 +402,9 @@ class Widget_Mapper {
 		// Only wrap text if:
 		// 1. The element has meaningful text content (not just whitespace)
 		// 2. The element doesn't already contain paragraph-like children (h1-h6, p, blockquote)
-		
+
 		$text_content = trim( $element['content'] ?? '' );
-		
+
 		if ( empty( $text_content ) ) {
 			return false;
 		}
@@ -416,15 +413,15 @@ class Widget_Mapper {
 		if ( ! empty( $element['children'] ) ) {
 			foreach ( $element['children'] as $child ) {
 				$child_tag = $child['tag'] ?? '';
-				$child_content = trim($child['content'] ?? '');
-				
+				$child_content = trim( $child['content'] ?? '' );
+
 				// If there are already heading or paragraph elements, don't wrap the text
 				if ( in_array( $child_tag, [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote' ], true ) ) {
 					return false;
 				}
-				
+
 				// 🔧 FIX: If any child has text content, don't wrap parent text (it's aggregated from children)
-				if ( !empty($child_content) ) {
+				if ( ! empty( $child_content ) ) {
 					return false;
 				}
 			}
@@ -463,8 +460,8 @@ class Widget_Mapper {
 		}
 
 		// Check for display: flex and other flex properties
-		if ( ! empty( $element['inline_css']['display'] ) && 
-			 $element['inline_css']['display']['value'] === 'flex' ) {
+		if ( ! empty( $element['inline_css']['display'] ) &&
+			$element['inline_css']['display']['value'] === 'flex' ) {
 			// Default to row for explicit flex containers
 			return 'row';
 		}
@@ -507,15 +504,15 @@ class Widget_Mapper {
 
 	private function collect_mapping_stats( $elements, &$stats ) {
 		foreach ( $elements as $element ) {
-			$stats['total_elements']++;
-			
+			++$stats['total_elements'];
+
 			$tag = $element['tag'];
 			if ( $this->is_supported( $tag ) ) {
-				$stats['supported_elements']++;
+				++$stats['supported_elements'];
 				$widget_type = $this->get_widget_type_for_tag( $tag );
 				$stats['widget_types'][ $widget_type ] = ( $stats['widget_types'][ $widget_type ] ?? 0 ) + 1;
 			} else {
-				$stats['unsupported_elements']++;
+				++$stats['unsupported_elements'];
 				$stats['unsupported_tags'][] = $tag;
 			}
 

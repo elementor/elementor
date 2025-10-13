@@ -106,7 +106,7 @@ class Atomic_Prop_Mapper_Factory {
 			'total_atomic_prop_mappers' => count( self::$atomic_prop_type_mappers ),
 			'total_convertible_css_properties' => count( self::$css_property_to_mapper_registry ),
 			'atomic_prop_types_coverage' => [],
-			'css_properties_per_atomic_type' => []
+			'css_properties_per_atomic_type' => [],
 		];
 
 		foreach ( self::$atomic_prop_type_mappers as $atomic_prop_type => $atomic_prop_mapper ) {
@@ -135,7 +135,7 @@ class Atomic_Prop_Mapper_Factory {
 
 		foreach ( self::$atomic_prop_type_mappers as $atomic_prop_type => $atomic_prop_mapper ) {
 			$css_properties_count = count( $atomic_prop_mapper->get_supported_properties() );
-			
+
 			if ( in_array( $atomic_prop_type, $layout_atomic_types, true ) ) {
 				$layout_css_properties_count += $css_properties_count;
 			} elseif ( in_array( $atomic_prop_type, $visual_atomic_types, true ) ) {
@@ -157,7 +157,7 @@ class Atomic_Prop_Mapper_Factory {
 			'animation_mappers_count' => count( array_intersect( array_keys( self::$atomic_prop_type_mappers ), $animation_atomic_types ) ),
 			'animation_css_properties_count' => $animation_css_properties_count,
 			'total_atomic_prop_mappers' => count( self::$atomic_prop_type_mappers ),
-			'total_convertible_css_properties' => count( self::$css_property_to_mapper_registry )
+			'total_convertible_css_properties' => count( self::$css_property_to_mapper_registry ),
 		];
 	}
 

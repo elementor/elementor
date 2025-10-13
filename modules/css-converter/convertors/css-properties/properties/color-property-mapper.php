@@ -71,10 +71,29 @@ class Color_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		$named_colors = [
-			'transparent', 'black', 'white', 'red', 'green', 'blue', 'yellow',
-			'cyan', 'magenta', 'gray', 'grey', 'orange', 'purple', 'pink',
-			'brown', 'navy', 'teal', 'lime', 'olive', 'maroon', 'silver',
-			'aqua', 'fuchsia'
+			'transparent',
+			'black',
+			'white',
+			'red',
+			'green',
+			'blue',
+			'yellow',
+			'cyan',
+			'magenta',
+			'gray',
+			'grey',
+			'orange',
+			'purple',
+			'pink',
+			'brown',
+			'navy',
+			'teal',
+			'lime',
+			'olive',
+			'maroon',
+			'silver',
+			'aqua',
+			'fuchsia',
 		];
 
 		return in_array( strtolower( $value ), $named_colors, true );

@@ -17,7 +17,7 @@ class Html_Parser {
 		$this->dom = new DOMDocument();
 		$this->dom->preserveWhiteSpace = false;
 		$this->dom->formatOutput = false;
-		
+
 		// Suppress errors for malformed HTML
 		libxml_use_internal_errors( true );
 	}
@@ -25,25 +25,25 @@ class Html_Parser {
 	public function parse( $html ) {
 		// Clean up HTML and add proper encoding
 		$html = $this->prepare_html( $html );
-		
+
 		// Load HTML with error recovery
 		$success = $this->dom->loadHTML( $html, \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD );
-		
+
 		if ( ! $success ) {
 			$errors = libxml_get_errors();
 			$error_messages = array_map( function( $error ) {
 				return trim( $error->message );
 			}, $errors );
-			
+
 			throw new \Exception( 'HTML parsing failed: ' . implode( ', ', $error_messages ) );
 		}
 
 		$this->xpath = new DOMXPath( $this->dom );
-		
+
 		// Extract body content or use entire document
 		$body = $this->dom->getElementsByTagName( 'body' )->item( 0 );
 		$root = $body ?: $this->dom->documentElement;
-		
+
 		return $this->extract_elements( $root );
 	}
 
@@ -82,7 +82,7 @@ class Html_Parser {
 
 	private function extract_element_data( DOMElement $element ) {
 		$tag_name = strtolower( $element->tagName );
-		
+
 		// Skip script and style tags
 		if ( in_array( $tag_name, [ 'script', 'style', 'meta', 'link', 'title' ], true ) ) {
 			return null;
@@ -120,7 +120,7 @@ class Html_Parser {
 
 	private function extract_text_content( DOMElement $element ) {
 		$text = '';
-		
+
 		foreach ( $element->childNodes as $child ) {
 			if ( $child->nodeType === XML_TEXT_NODE ) {
 				$text .= trim( $child->textContent );
@@ -138,7 +138,7 @@ class Html_Parser {
 		$parent = $element->parentNode;
 
 		while ( $parent && $parent->nodeType === XML_ELEMENT_NODE ) {
-			$depth++;
+			++$depth;
 			$parent = $parent->parentNode;
 		}
 
@@ -159,7 +159,7 @@ class Html_Parser {
 			if ( count( $parts ) === 2 ) {
 				$property = trim( $parts[0] );
 				$value = trim( $parts[1] );
-				
+
 				// Check for !important
 				$important = false;
 				if ( strpos( $value, '!important' ) !== false ) {
@@ -179,12 +179,12 @@ class Html_Parser {
 		$simple_styles = [];
 		foreach ( $styles as $property => $data ) {
 			$simple_styles[ $property ] = $data['value'];
-			if ($property === 'transform') {
+			if ( $property === 'transform' ) {
 			}
 		}
-		
+
 		$expanded_styles = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $simple_styles );
-		
+
 		// Convert back to the expected format
 		$final_styles = [];
 		foreach ( $expanded_styles as $property => $value ) {
@@ -200,12 +200,12 @@ class Html_Parser {
 
 	public function extract_linked_css( $html ) {
 		$css_urls = [];
-		
+
 		// Parse HTML to find linked stylesheets
 		$temp_dom = new DOMDocument();
 		libxml_use_internal_errors( true );
 		$temp_dom->loadHTML( $html, \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD );
-		
+
 		$links = $temp_dom->getElementsByTagName( 'link' );
 		foreach ( $links as $link ) {
 			if ( $link->getAttribute( 'rel' ) === 'stylesheet' && $link->getAttribute( 'href' ) ) {

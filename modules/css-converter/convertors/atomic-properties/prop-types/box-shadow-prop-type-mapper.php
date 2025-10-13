@@ -10,18 +10,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Box_Shadow_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 	protected $supported_properties = [
-		'box-shadow'
+		'box-shadow',
 	];
 
 	protected $atomic_prop_type = 'box-shadow';
 
 	protected $supported_css_units = [
-		'px', 'em', 'rem', '%', 'vh', 'vw'
+		'px',
+		'em',
+		'rem',
+		'%',
+		'vh',
+		'vw',
 	];
 
 	public function map_css_to_atomic( string $css_value ): ?array {
 		$css_value = trim( $css_value );
-		
+
 		if ( 'none' === $css_value ) {
 			return $this->create_atomic_prop( [] );
 		}
@@ -45,26 +50,26 @@ class Box_Shadow_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 			'value' => [
 				'hOffset' => [
 					'$$type' => 'size',
-					'value' => $shadow_data['h_offset']
+					'value' => $shadow_data['h_offset'],
 				],
 				'vOffset' => [
 					'$$type' => 'size',
-					'value' => $shadow_data['v_offset']
+					'value' => $shadow_data['v_offset'],
 				],
 				'blur' => [
 					'$$type' => 'size',
-					'value' => $shadow_data['blur']
+					'value' => $shadow_data['blur'],
 				],
 				'spread' => [
 					'$$type' => 'size',
-					'value' => $shadow_data['spread']
+					'value' => $shadow_data['spread'],
 				],
 				'color' => [
 					'$$type' => 'color',
-					'value' => $shadow_data['color']
+					'value' => $shadow_data['color'],
 				],
-				'position' => $shadow_data['inset'] ? 'inset' : null
-			]
+				'position' => $shadow_data['inset'] ? 'inset' : null,
+			],
 		];
 	}
 
@@ -93,9 +98,9 @@ class Box_Shadow_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 			$char = $css_value[ $i ];
 
 			if ( '(' === $char ) {
-				$paren_depth++;
+				++$paren_depth;
 			} elseif ( ')' === $char ) {
-				$paren_depth--;
+				--$paren_depth;
 			} elseif ( ',' === $char && 0 === $paren_depth ) {
 				$shadows[] = $current_shadow;
 				$current_shadow = '';
@@ -127,8 +132,14 @@ class Box_Shadow_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 
 		$h_offset = $this->parse_size_value( $matches[1] );
 		$v_offset = $this->parse_size_value( $matches[2] );
-		$blur = ! empty( $matches[3] ) ? $this->parse_size_value( $matches[3] ) : [ 'size' => 0.0, 'unit' => 'px' ];
-		$spread = ! empty( $matches[4] ) ? $this->parse_size_value( $matches[4] ) : [ 'size' => 0.0, 'unit' => 'px' ];
+		$blur = ! empty( $matches[3] ) ? $this->parse_size_value( $matches[3] ) : [
+			'size' => 0.0,
+			'unit' => 'px',
+		];
+		$spread = ! empty( $matches[4] ) ? $this->parse_size_value( $matches[4] ) : [
+			'size' => 0.0,
+			'unit' => 'px',
+		];
 		$color_string = ! empty( $matches[5] ) ? trim( $matches[5] ) : '#000000';
 
 		if ( null === $h_offset || null === $v_offset ) {
@@ -146,7 +157,7 @@ class Box_Shadow_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 			'blur' => $blur,
 			'spread' => $spread,
 			'color' => $color,
-			'inset' => $inset
+			'inset' => $inset,
 		];
 	}
 }

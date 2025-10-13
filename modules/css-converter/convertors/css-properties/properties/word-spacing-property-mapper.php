@@ -64,11 +64,11 @@ class Word_Spacing_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function parse_value_with_units_or_default( string $value ): array {
 		$parsed = Size_Value_Parser::parse( $value );
-		
+
 		if ( null !== $parsed ) {
 			return $parsed;
 		}
-		
+
 		return $this->create_default_word_spacing();
 	}
 

@@ -10,19 +10,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Atomic_Property_Mapper_Base implements Property_Mapper_Interface {
-	
+
 	public function supports( string $property, $value = null ): bool {
 		return in_array( $property, $this->get_supported_properties(), true );
 	}
 
 	protected function create_atomic_size_value( string $property, array $parsed_size ): array {
 		$atomic_value = \Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type::generate( $parsed_size );
-		
+
 		$result = [
 			'property' => $property,
-			'value' => $atomic_value
+			'value' => $atomic_value,
 		];
-		
+
 		return $result;
 	}
 
@@ -33,40 +33,40 @@ abstract class Atomic_Property_Mapper_Base implements Property_Mapper_Interface 
 		}
 
 		$atomic_value = \Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type::generate( $atomic_dimensions );
-		
+
 		return [
 			'property' => $property,
-			'value' => $atomic_value
+			'value' => $atomic_value,
 		];
 	}
 
 	protected function create_atomic_color_value( string $property, string $color ): array {
 		$atomic_value = \Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type::generate( $color );
-		
+
 		return [
 			'property' => $property,
-			'value' => $atomic_value
+			'value' => $atomic_value,
 		];
 	}
 
 	protected function create_atomic_string_value( string $property, string $value ): array {
 		$atomic_value = \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type::generate( $value );
-		
+
 		$result = [
 			'property' => $property,
-			'value' => $atomic_value
+			'value' => $atomic_value,
 		];
-		
+
 		return $result;
 	}
 
 	protected function parse_size_value( string $value ): ?array {
 		$parsed = Size_Value_Parser::parse( $value );
-		
+
 		if ( null !== $parsed ) {
 			return $parsed;
 		}
-		
+
 		return $this->handle_unparseable_size_value();
 	}
 
@@ -144,14 +144,14 @@ abstract class Atomic_Property_Mapper_Base implements Property_Mapper_Interface 
 	private function create_zero_size_value(): array {
 		return [
 			'size' => 0.0,
-			'unit' => 'px'
+			'unit' => 'px',
 		];
 	}
 
 	private function create_keyword_size_value( string $value ): array {
 		return [
 			'size' => $value,
-			'unit' => 'custom'
+			'unit' => 'custom',
 		];
 	}
 

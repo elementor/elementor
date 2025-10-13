@@ -51,14 +51,14 @@ class Widget_Creator {
 
 	private function post_has_css_converter_widgets_of_type( int $post_id, string $element_type ): bool {
 		$cached_types = $this->get_cached_css_converter_widget_types( $post_id );
-		
+
 		if ( is_array( $cached_types ) ) {
 			return in_array( $element_type, $cached_types, true );
 		}
-		
+
 		$widget_types = $this->extract_css_converter_widget_types_from_post( $post_id );
 		$this->cache_css_converter_widget_types( $post_id, $widget_types );
-		
+
 		return in_array( $element_type, $widget_types, true );
 	}
 
@@ -68,31 +68,31 @@ class Widget_Creator {
 
 	private function extract_css_converter_widget_types_from_post( int $post_id ): array {
 		$post_data = $this->get_elementor_post_data( $post_id );
-		
+
 		if ( empty( $post_data ) ) {
 			return [];
 		}
-		
+
 		return $this->collect_css_converter_widget_types_from_elements( $post_data );
 	}
 
 	private function get_elementor_post_data( int $post_id ) {
 		$post_data = get_post_meta( $post_id, '_elementor_data', true );
-		
+
 		if ( empty( $post_data ) ) {
 			return null;
 		}
-		
+
 		if ( is_string( $post_data ) ) {
 			$post_data = json_decode( $post_data, true );
 		}
-		
+
 		return is_array( $post_data ) ? $post_data : null;
 	}
 
 	private function collect_css_converter_widget_types_from_elements( array $post_data ): array {
 		$widget_types = [];
-		
+
 		$this->traverse_elements( $post_data, function( $element ) use ( &$widget_types ) {
 			if ( $this->is_css_converter_widget_element( $element ) ) {
 				$widget_type = $this->extract_widget_type_from_element( $element );
@@ -101,13 +101,13 @@ class Widget_Creator {
 				}
 			}
 		} );
-		
+
 		return array_unique( $widget_types );
 	}
 
 	private function is_css_converter_widget_element( array $element ): bool {
-		return isset( $element['editor_settings']['css_converter_widget'] ) && 
-			   $element['editor_settings']['css_converter_widget'];
+		return isset( $element['editor_settings']['css_converter_widget'] ) &&
+				$element['editor_settings']['css_converter_widget'];
 	}
 
 	private function extract_widget_type_from_element( array $element ): ?string {
@@ -121,7 +121,7 @@ class Widget_Creator {
 	private function traverse_elements( array $elements, callable $callback ) {
 		foreach ( $elements as $element ) {
 			$callback( $element );
-			
+
 			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
 				$this->traverse_elements( $element['elements'], $callback );
 			}
@@ -129,9 +129,9 @@ class Widget_Creator {
 	}
 
 	public function create_widgets( $styled_widgets, $css_processing_result, $options = [] ) {
-		
+
 		$this->current_css_processing_result = $css_processing_result;
-		
+
 		$post_id = $options['postId'] ?? null;
 		$post_type = $options['postType'] ?? 'page';
 
@@ -153,7 +153,7 @@ class Widget_Creator {
 
 			$this->save_to_document( $document, $elementor_elements );
 			$this->merge_hierarchy_stats( $hierarchy_result['stats'] );
-			
+
 			return [
 				'success' => true,
 				'post_id' => $post_id,
@@ -181,7 +181,7 @@ class Widget_Creator {
 	private function process_css_variables( $css_variables ) {
 		try {
 			foreach ( $css_variables as $variable ) {
-				$this->creation_stats['variables_created']++;
+				++$this->creation_stats['variables_created'];
 			}
 		} catch ( \Exception $e ) {
 			$this->creation_stats['warnings'][] = [
@@ -195,7 +195,7 @@ class Widget_Creator {
 		foreach ( $global_classes as $class_name => $class_data ) {
 			try {
 				$this->create_single_global_class( $class_name, $class_data );
-				$this->creation_stats['global_classes_created']++;
+				++$this->creation_stats['global_classes_created'];
 			} catch ( \Exception $e ) {
 				$this->creation_stats['warnings'][] = [
 					'type' => 'global_class_creation_failed',
@@ -207,13 +207,13 @@ class Widget_Creator {
 	}
 
 	private function create_single_global_class( $class_name, $class_data ) {
-		
+
 		if ( ! class_exists( 'Elementor\Modules\GlobalClasses\Global_Classes_Repository' ) ) {
 			throw new \Exception( 'Global Classes Repository not available' );
 		}
 
 		$props = $this->convert_properties_to_global_class_props( $class_data['properties'] ?? [] );
-		
+
 		if ( $this->should_skip_global_class_creation_due_to_no_valid_properties( $props ) ) {
 			return;
 		}
@@ -239,14 +239,13 @@ class Widget_Creator {
 
 	private function convert_properties_to_global_class_props( $properties ) {
 		$props = [];
-		
+
 		foreach ( $properties as $property_data ) {
 			if ( ! empty( $property_data['converted_property'] ) ) {
 				$converted = $property_data['converted_property'];
-				
+
 				$property_key = $property_data['mapped_property'] ?? $property_data['original_property'] ?? 'unknown';
-				
-				
+
 				if ( is_array( $converted ) && isset( $converted['property'] ) && isset( $converted['value'] ) ) {
 					$atomic_value = $converted['value'];
 					$props[ $property_key ] = $atomic_value;
@@ -295,7 +294,7 @@ class Widget_Creator {
 		}
 
 		$document = Plugin::$instance->documents->get( $post_id );
-		
+
 		if ( ! $document ) {
 			throw new \Exception( "Failed to get Elementor document for post {$post_id}" );
 		}
@@ -310,7 +309,7 @@ class Widget_Creator {
 			try {
 				$elementor_widget = $this->convert_widget_to_elementor_format( $widget );
 				$elementor_elements[] = $elementor_widget;
-				$this->creation_stats['widgets_created']++;
+				++$this->creation_stats['widgets_created'];
 			} catch ( \Exception $e ) {
 				$fallback_widget = $this->handle_widget_creation_failure( $widget, $e );
 				if ( $fallback_widget ) {
@@ -333,13 +332,13 @@ class Widget_Creator {
 
 		$widget_id = wp_generate_uuid4();
 		$mapped_type = $this->map_to_elementor_widget_type( $widget_type );
-		
+
 		$formatted_widget_data = $this->create_widget_data_using_new_data_formatter( $resolved_styles, $widget, $widget_id );
-		
+
 		if ( $this->requires_link_to_button_conversion( $widget_type, $mapped_type ) ) {
 			$settings = $this->convert_link_settings_to_button_format( $settings );
 		}
-		
+
 		$final_settings = $this->merge_settings_without_style_merging( $settings, $formatted_widget_data['settings'] );
 
 		if ( 'e-div-block' === $mapped_type ) {
@@ -391,18 +390,17 @@ class Widget_Creator {
 		];
 
 		$mapped_type = $mapping[ $widget_type ] ?? 'html';
-		
 
 		return $mapped_type;
 	}
 
 	private function convert_link_settings_to_button_format( $settings ) {
 		$button_settings = $settings;
-		
+
 		if ( isset( $settings['url'] ) && ! empty( $settings['url'] ) && '#' !== $settings['url'] ) {
 			$target = $settings['target'] ?? '_self';
 			$is_target_blank = ( '_blank' === $target ) ? true : null;
-			
+
 			$button_settings['link'] = [
 				'$$type' => 'link',
 				'value' => [
@@ -413,21 +411,21 @@ class Widget_Creator {
 					'isTargetBlank' => $is_target_blank,
 				],
 			];
-			
+
 			unset( $button_settings['url'] );
 			unset( $button_settings['target'] );
 		}
-		
+
 		return $button_settings;
 	}
 
 	private function apply_direct_element_styles_to_settings( $settings, $direct_element_styles ) {
-		
+
 		return $settings;
 	}
 
 	private function merge_settings_with_styles( $settings, $applied_styles ) {
-		
+
 		$merged_settings = $this->format_elementor_settings( $settings );
 
 		if ( ! empty( $applied_styles['direct_element_styles'] ) ) {
@@ -439,16 +437,14 @@ class Widget_Creator {
 		$has_global_classes = ! empty( $applied_styles['global_classes'] );
 		$has_computed_styles = ! empty( $applied_styles['computed_styles'] ) || ! empty( $applied_styles['id_styles'] );
 		$has_unsupported_props = ! empty( $this->current_unsupported_props );
-		
-		
+
 		if ( $has_global_classes || $has_computed_styles || $has_unsupported_props ) {
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
 			}
-			
-			
+
 			$classes[] = $this->current_widget_class_id;
-			
+
 		}
 
 		if ( ! empty( $classes ) ) {
@@ -464,11 +460,11 @@ class Widget_Creator {
 
 	private function format_elementor_settings( $settings ) {
 		$formatted_settings = [];
-		
+
 		foreach ( $settings as $key => $value ) {
 			$formatted_settings[ $key ] = $this->format_elementor_value( $value );
 		}
-		
+
 		return $formatted_settings;
 	}
 
@@ -479,11 +475,11 @@ class Widget_Creator {
 				'value' => $value,
 			];
 		}
-		
+
 		if ( is_array( $value ) && isset( $value['$$type'] ) ) {
 			return $value;
 		}
-		
+
 		return $value;
 	}
 
@@ -494,29 +490,28 @@ class Widget_Creator {
 	private function convert_styles_to_v4_format( $applied_styles, $widget_type = 'unknown' ) {
 		$v4_styles = [];
 
-		
 		if ( ! empty( $applied_styles['global_classes'] ) ) {
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
 			}
 			$class_id = $this->current_widget_class_id;
-			
+
 			$global_class_props = $this->get_global_class_properties( $applied_styles['global_classes'] );
-			
+
 			if ( ! empty( $global_class_props ) ) {
 				$style_object = $this->create_v4_style_object_from_global_classes( $class_id, $global_class_props );
 				$v4_styles[ $class_id ] = $style_object;
 			}
 		}
-		
+
 		if ( ! empty( $applied_styles['id_styles'] ) ) {
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
 			}
 			$id_class_id = $this->current_widget_class_id;
-			
+
 			$id_style_object = $this->create_v4_style_object_from_id_styles( $id_class_id, $applied_styles['id_styles'] );
-			
+
 			if ( ! empty( $id_style_object['variants'][0]['props'] ) ) {
 				if ( isset( $v4_styles[ $id_class_id ] ) ) {
 					$existing_props = $v4_styles[ $id_class_id ]['variants'][0]['props'] ?? [];
@@ -533,18 +528,18 @@ class Widget_Creator {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
 			}
 			$direct_class_id = $this->current_widget_class_id;
-			
+
 			$direct_style_object = $this->create_v4_style_object_from_direct_styles( $direct_class_id, $applied_styles['direct_element_styles'] );
-			
+
 			if ( ! empty( $direct_style_object['variants'][0]['props'] ) ) {
 				if ( isset( $v4_styles[ $direct_class_id ] ) ) {
 					$existing_props = $v4_styles[ $direct_class_id ]['variants'][0]['props'] ?? [];
 					$direct_props = $direct_style_object['variants'][0]['props'] ?? [];
 					$v4_styles[ $direct_class_id ]['variants'][0]['props'] = array_merge( $existing_props, $direct_props );
-					
+
 				} else {
 					$v4_styles[ $direct_class_id ] = $direct_style_object;
-					
+
 				}
 			}
 		}
@@ -552,21 +547,20 @@ class Widget_Creator {
 		if ( ! empty( $applied_styles['computed_styles'] ) ) {
 			foreach ( $applied_styles['computed_styles'] as $prop => $value ) {
 			}
-			
+
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
 			}
-			
+
 			$class_id = $this->current_widget_class_id;
-			
+
 			if ( isset( $v4_styles[ $class_id ] ) ) {
 				$computed_props = $this->map_css_to_v4_props( $applied_styles['computed_styles'] );
 				$existing_props = $v4_styles[ $class_id ]['variants'][0]['props'] ?? [];
 				$v4_styles[ $class_id ]['variants'][0]['props'] = array_merge( $existing_props, $computed_props );
 			} else {
 				$style_object = $this->create_v4_style_object( $class_id, $applied_styles['computed_styles'] );
-				
-				
+
 				if ( ! empty( $style_object['variants'][0]['props'] ) ) {
 					$v4_styles[ $class_id ] = $style_object;
 				}
@@ -577,10 +571,9 @@ class Widget_Creator {
 			if ( empty( $this->current_widget_class_id ) ) {
 				$this->current_widget_class_id = $this->generate_unique_class_id();
 			}
-			
+
 			$class_id = $this->current_widget_class_id;
-			
-			
+
 			if ( isset( $v4_styles[ $class_id ] ) ) {
 				$existing_props = $v4_styles[ $class_id ]['variants'][0]['props'] ?? [];
 				$v4_styles[ $class_id ]['variants'][0]['props'] = array_merge( $existing_props, $this->current_unsupported_props );
@@ -599,10 +592,10 @@ class Widget_Creator {
 						],
 					],
 				];
-				
+
 				$v4_styles[ $class_id ] = $style_object;
 			}
-			
+
 			$this->current_unsupported_props = [];
 		}
 
@@ -611,19 +604,19 @@ class Widget_Creator {
 
 	private function convert_atomic_props_to_css_props( $atomic_props ) {
 		$css_props = [];
-		
+
 		foreach ( $atomic_props as $property => $atomic_value ) {
 			if ( is_array( $atomic_value ) && isset( $atomic_value['$$type'] ) ) {
 				if ( 'dimensions' === $atomic_value['$$type'] ) {
 					$dimensions = $atomic_value['value'] ?? [];
-					
+
 					$dimension_map = [
 						'block-start' => $property . '-top',
-						'inline-end' => $property . '-right', 
+						'inline-end' => $property . '-right',
 						'block-end' => $property . '-bottom',
 						'inline-start' => $property . '-left',
 					];
-					
+
 					foreach ( $dimension_map as $atomic_key => $css_property ) {
 						if ( isset( $dimensions[ $atomic_key ] ) ) {
 							$size_value = $dimensions[ $atomic_key ];
@@ -641,7 +634,7 @@ class Widget_Creator {
 				$css_props[ $property ] = $atomic_value;
 			}
 		}
-		
+
 		return $css_props;
 	}
 	private function create_v4_style_object_from_id_styles( $class_id, $id_styles ) {
@@ -661,17 +654,17 @@ class Widget_Creator {
 		];
 
 		foreach ( $id_styles as $index => $id_style ) {
-			
+
 			if ( isset( $id_style['converted_property'] ) && isset( $id_style['property'] ) ) {
 				$property_name = $id_style['property'];
 				$converted = $id_style['converted_property'];
-				
+
 				if ( is_array( $converted ) && isset( $converted['$$type'] ) ) {
 					$target_property = $this->get_target_property_name( $property_name );
-					
+
 					if ( $target_property !== $property_name ) {
 					}
-					
+
 					$style_object['variants'][0]['props'][ $target_property ] = $converted;
 				} else {
 				}
@@ -700,15 +693,14 @@ class Widget_Creator {
 		];
 
 		foreach ( $direct_styles as $index => $direct_style ) {
-			
+
 			if ( isset( $direct_style['converted_property'] ) && isset( $direct_style['property'] ) ) {
 				$property_name = $direct_style['property'];
 				$converted = $direct_style['converted_property'];
-				
-				
+
 				if ( is_array( $converted ) && isset( $converted['$$type'] ) ) {
 					$target_property = $this->get_target_property_name( $property_name );
-					
+
 					$style_object['variants'][0]['props'][ $target_property ] = $converted;
 				}
 			}
@@ -722,23 +714,23 @@ class Widget_Creator {
 		$hash = substr( md5( microtime() . wp_rand() ), 0, 7 );
 		return "e-{$widget_id}-{$hash}";
 	}
-	
+
 	private function get_global_class_properties( $global_class_names ) {
-		
+
 		$props = [];
-		
+
 		if ( ! empty( $this->current_css_processing_result['global_classes'] ) ) {
 			foreach ( $global_class_names as $class_name ) {
 				if ( isset( $this->current_css_processing_result['global_classes'][ $class_name ] ) ) {
 					$global_class = $this->current_css_processing_result['global_classes'][ $class_name ];
-					
+
 					if ( ! empty( $global_class['properties'] ) ) {
 						foreach ( $global_class['properties'] as $property_data ) {
 							if ( ! empty( $property_data['converted_property'] ) ) {
 								$converted = $property_data['converted_property'];
 								$property_key = $property_data['mapped_property'] ?? $property_data['original_property'] ?? 'unknown';
 								$atomic_value = $converted;
-								
+
 								if ( isset( $props[ $property_key ] ) ) {
 									if ( $this->is_dimensions_prop_type( $atomic_value ) && $this->is_dimensions_prop_type( $props[ $property_key ] ) ) {
 										$props[ $property_key ] = $this->merge_dimensions_prop_types( $props[ $property_key ], $atomic_value );
@@ -756,10 +748,10 @@ class Widget_Creator {
 				}
 			}
 		}
-		
+
 		return $props;
 	}
-	
+
 	private function create_v4_style_object_from_global_classes( $class_id, $props ) {
 		return [
 			'id' => $class_id,
@@ -798,7 +790,7 @@ class Widget_Creator {
 
 		return [
 			'$$type' => 'dimensions',
-			'value' => $merged_value
+			'value' => $merged_value,
 		];
 	}
 
@@ -814,7 +806,7 @@ class Widget_Creator {
 
 		return [
 			'$$type' => 'border-width',
-			'value' => $merged_value
+			'value' => $merged_value,
 		];
 	}
 
@@ -843,10 +835,10 @@ class Widget_Creator {
 		$unsupported_props = [];
 
 		foreach ( $computed_styles as $property => $atomic_value ) {
-			
+
 			if ( is_array( $atomic_value ) && isset( $atomic_value['$$type'] ) ) {
 				$target_property = $this->get_target_property_name( $property );
-				
+
 				if ( $this->atomic_widget_supports_property( $target_property ) ) {
 					$v4_props[ $target_property ] = $atomic_value;
 					if ( $target_property !== $property ) {
@@ -859,7 +851,7 @@ class Widget_Creator {
 
 		if ( ! empty( $unsupported_props ) ) {
 			$this->current_unsupported_props = $unsupported_props;
-			
+
 			if ( ! isset( $computed_styles ) ) {
 			}
 		}
@@ -898,7 +890,7 @@ class Widget_Creator {
 		}
 
 		$is_supported = array_key_exists( $property, $prop_schema );
-		
+
 		return $is_supported;
 	}
 
@@ -923,7 +915,7 @@ class Widget_Creator {
 			if ( $reflection->hasMethod( 'define_props_schema' ) ) {
 				$method = $reflection->getMethod( 'define_props_schema' );
 				$method->setAccessible( true );
-				
+
 				$instance = $reflection->newInstanceWithoutConstructor();
 				return $method->invoke( $instance );
 			}
@@ -940,13 +932,13 @@ class Widget_Creator {
 				'value' => $value,
 			];
 		}
-		
+
 		if ( ! is_string( $value ) ) {
 			return null;
 		}
-		
+
 		$mapper = $this->property_mapper_registry->resolve( $property, $value );
-		
+
 		if ( $mapper && method_exists( $mapper, 'map_to_v4_atomic' ) ) {
 			$atomic_result = $mapper->map_to_v4_atomic( $property, $value );
 			if ( $atomic_result ) {
@@ -956,7 +948,7 @@ class Widget_Creator {
 				];
 			}
 		}
-		
+
 		return null;
 	}
 	private function process_widget_children( $children ) {
@@ -966,7 +958,7 @@ class Widget_Creator {
 			try {
 				$elementor_child = $this->convert_widget_to_elementor_format( $child );
 				$elementor_children[] = $elementor_child;
-				$this->creation_stats['widgets_created']++;
+				++$this->creation_stats['widgets_created'];
 			} catch ( \Exception $e ) {
 				$this->handle_widget_creation_failure( $child, $e );
 			}
@@ -976,22 +968,22 @@ class Widget_Creator {
 	}
 
 	private function handle_widget_creation_failure( $widget, $exception ) {
-		$this->creation_stats['widgets_failed']++;
-		
+		++$this->creation_stats['widgets_failed'];
+
 		$error_data = [
 			'message' => $exception->getMessage(),
 			'exception' => $exception,
 		];
-		
+
 		$context = [
 			'widget' => $widget,
 			'operation' => 'widget_creation',
 		];
 
 		$fallback_widget = $this->error_handler->handle_error( 'widget_creation_failed', $error_data, $context );
-		
+
 		if ( $fallback_widget ) {
-			$this->creation_stats['widgets_created']++;
+			++$this->creation_stats['widgets_created'];
 			return $fallback_widget;
 		}
 
@@ -1029,12 +1021,12 @@ class Widget_Creator {
 
 		try {
 			$post_id = $document->get_main_id();
-			
+
 			update_post_meta( $post_id, '_elementor_data', wp_json_encode( $elementor_elements ) );
 			update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
 			update_post_meta( $post_id, '_elementor_template_type', 'wp-post' );
 			update_post_meta( $post_id, '_elementor_version', '3.33.0' );
-			
+
 			$document->save( [
 				'elements' => $elementor_elements,
 			] );
@@ -1082,10 +1074,10 @@ class Widget_Creator {
 		if ( ! is_array( $array ) ) {
 			return $array;
 		}
-		
+
 		$keys = array_keys( $array );
 		$has_numeric_keys = array_filter( $keys, 'is_numeric' );
-		
+
 		if ( empty( $has_numeric_keys ) ) {
 			foreach ( $array as $key => $value ) {
 				if ( is_array( $value ) ) {
@@ -1094,38 +1086,38 @@ class Widget_Creator {
 			}
 			return $array;
 		}
-		
+
 		return $this->convert_atomic_array_to_safe_structure( $array, $property_key );
 	}
-	
+
 	private function convert_atomic_array_to_safe_structure( $array, $property_key ) {
-		
+
 		if ( $this->is_box_shadow_array( $array ) ) {
 			return null;
 		}
-		
+
 		$fixed = [];
 		foreach ( $array as $index => $value ) {
-			$fixed[ "item_$index" ] = is_array( $value ) ? 
-				$this->fix_numeric_keyed_arrays( $value, "$property_key.item_$index" ) : 
+			$fixed[ "item_$index" ] = is_array( $value ) ?
+				$this->fix_numeric_keyed_arrays( $value, "$property_key.item_$index" ) :
 				$value;
 		}
-		
+
 		return $fixed;
 	}
-	
+
 	private function is_box_shadow_array( $array ) {
-		return is_array( $array ) && 
-			   isset( $array[0] ) && 
-			   is_array( $array[0] ) && 
-			   isset( $array[0]['$$type'] ) && 
-			   $array[0]['$$type'] === 'shadow';
+		return is_array( $array ) &&
+				isset( $array[0] ) &&
+				is_array( $array[0] ) &&
+				isset( $array[0]['$$type'] ) &&
+				$array[0]['$$type'] === 'shadow';
 	}
-	
+
 	private function debug_final_settings_for_numeric_keys( $settings, $widget_type ) {
 		$this->deep_scan_for_numeric_keys( $settings, "final_settings_$widget_type" );
 	}
-	
+
 	private function deep_scan_for_numeric_keys( $data, $path ) {
 		if ( is_array( $data ) ) {
 			$keys = array_keys( $data );
@@ -1168,7 +1160,10 @@ class Widget_Creator {
 	}
 
 	private function get_current_global_classes_data( $kit, string $meta_key ): array {
-		return $kit->get_json_meta( $meta_key ) ?: ['items' => [], 'order' => []];
+		return $kit->get_json_meta( $meta_key ) ?: [
+			'items' => [],
+			'order' => [],
+		];
 	}
 
 	private function class_not_in_order( string $class_id, array $order ): bool {
@@ -1200,32 +1195,31 @@ class Widget_Creator {
 		try {
 			$kit = $this->get_active_elementor_kit();
 			$meta_key = '_elementor_global_classes';
-			
+
 			$current_data = $this->get_current_global_classes_data( $kit, $meta_key );
 			$items = $current_data['items'] ?? [];
 			$order = $current_data['order'] ?? [];
-			
+
 			$class_id = $global_class_data['id'];
 			$items[ $class_id ] = $global_class_data;
-			
+
 			if ( $this->class_not_in_order( $class_id, $order ) ) {
 				$order[] = $class_id;
 			}
-			
+
 			$updated_data = $this->prepare_updated_global_classes_data( $items, $order );
-			
+
 			$success = $this->save_global_classes_to_database( $kit, $meta_key, $updated_data );
-			
+
 			if ( ! $success ) {
 				$this->handle_database_error_if_occurred();
 			}
-			
+
 			if ( $success ) {
 				$this->trigger_cache_invalidation_for_global_classes( $updated_data, $current_data );
 			} else {
 				throw new \Exception( "Failed to update kit meta for global class '{$class_name}'" );
 			}
-			
 		} catch ( \Exception $e ) {
 			throw new \Exception( "Failed to save global class '{$class_name}': " . $e->getMessage() );
 		}

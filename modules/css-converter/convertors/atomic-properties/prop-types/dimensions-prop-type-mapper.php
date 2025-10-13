@@ -11,13 +11,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Dimensions_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 	protected $supported_properties = [
 		'margin',
-		'padding'
+		'padding',
 	];
 
 	protected $atomic_prop_type = 'dimensions';
 
 	protected $supported_css_units = [
-		'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax', 'ch', 'ex', 'auto'
+		'px',
+		'em',
+		'rem',
+		'%',
+		'vh',
+		'vw',
+		'vmin',
+		'vmax',
+		'ch',
+		'ex',
+		'auto',
 	];
 
 	public function map_css_to_atomic( string $css_value ): ?array {
@@ -39,7 +49,7 @@ class Dimensions_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 	private function create_size_prop( array $size_data ): array {
 		return [
 			'$$type' => 'size',
-			'value' => $size_data
+			'value' => $size_data,
 		];
 	}
 }

@@ -6,13 +6,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Conversion_Result_Builder {
-	
+
 	private Conversion_Stats_Calculator $stats_calculator;
-	
+
 	public function __construct() {
 		$this->stats_calculator = new Conversion_Stats_Calculator();
 	}
-	
+
 	public function build_success_result( array $widgets, array $parsed_elements ): array {
 		return [
 			'success' => true,
@@ -21,7 +21,7 @@ class Conversion_Result_Builder {
 			'error' => null,
 		];
 	}
-	
+
 	public function build_empty_result(): array {
 		return [
 			'success' => false,
@@ -30,7 +30,7 @@ class Conversion_Result_Builder {
 			'error' => 'Empty HTML provided',
 		];
 	}
-	
+
 	public function build_parsing_failed_result(): array {
 		return [
 			'success' => false,
@@ -39,7 +39,7 @@ class Conversion_Result_Builder {
 			'error' => 'HTML parsing failed',
 		];
 	}
-	
+
 	public function build_widget_creation_failed_result(): array {
 		return [
 			'success' => false,
@@ -48,7 +48,7 @@ class Conversion_Result_Builder {
 			'error' => 'Widget creation failed',
 		];
 	}
-	
+
 	private function get_empty_stats(): array {
 		return [
 			'total_elements_parsed' => 0,

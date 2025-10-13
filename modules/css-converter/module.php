@@ -22,15 +22,14 @@ class Module extends BaseModule {
 		$this->variables_route = $variables_route;
 		$this->classes_route = $classes_route;
 		$this->widgets_route = $widgets_route;
-		
+
 		// Reset property mapper registry to ensure fresh instances
 		$this->reset_property_mapper_registry();
-		
+
 		// Only initialize routes in non-test environments
 		if ( ! $this->is_test_environment() && ! $variables_route && ! $classes_route && ! $widgets_route ) {
 			$this->init_routes();
 		}
-		
 	}
 
 	private function is_test_environment(): bool {
@@ -57,7 +56,7 @@ class Module extends BaseModule {
 			$this->handle_initialization_failure();
 			return;
 		}
-		
+
 		$this->load_required_dependencies();
 		$this->skip_global_styles_service_initialization_due_to_kit_meta_storage();
 		$this->initialize_widgets_route();
@@ -71,19 +70,19 @@ class Module extends BaseModule {
 
 	private function has_required_directories(): bool {
 		$required_dirs = [ 'exceptions', 'parsers', 'convertors', 'services', 'routes' ];
-		
+
 		foreach ( $required_dirs as $dir ) {
 			if ( ! is_dir( __DIR__ . '/' . $dir ) ) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
 	private function load_required_dependencies(): void {
 		$required_files = $this->get_required_files();
-		
+
 		foreach ( $required_files as $file ) {
 			$this->load_file_if_exists( $file );
 		}
@@ -135,14 +134,14 @@ class Module extends BaseModule {
 
 	private function initialize_widgets_route(): void {
 		$widgets_route_file = __DIR__ . '/routes/widgets-route.php';
-		
+
 		if ( ! file_exists( $widgets_route_file ) ) {
 			$this->handle_widgets_route_missing();
 			return;
 		}
-		
+
 		require_once $widgets_route_file;
-		
+
 		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Widgets_Route' ) ) {
 			$this->widgets_route = new \Elementor\Modules\CssConverter\Routes\Widgets_Route();
 		}
@@ -150,14 +149,14 @@ class Module extends BaseModule {
 
 	private function initialize_classes_route(): void {
 		$classes_route_file = __DIR__ . '/routes/classes-route.php';
-		
+
 		if ( ! file_exists( $classes_route_file ) ) {
 			$this->handle_classes_route_missing();
 			return;
 		}
-		
+
 		require_once $classes_route_file;
-		
+
 		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Classes_Route' ) ) {
 			$this->classes_route = new \Elementor\Modules\CssConverter\Routes\Classes_Route();
 		}
@@ -165,14 +164,14 @@ class Module extends BaseModule {
 
 	private function initialize_variables_route(): void {
 		$variables_route_file = __DIR__ . '/routes/variables-route.php';
-		
+
 		if ( ! file_exists( $variables_route_file ) ) {
 			$this->handle_variables_route_missing();
 			return;
 		}
-		
+
 		require_once $variables_route_file;
-		
+
 		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Variables_Route' ) ) {
 			$this->variables_route = new \Elementor\Modules\CssConverter\Routes\Variables_Route();
 		}
@@ -211,7 +210,7 @@ class Module extends BaseModule {
 		if ( ! $document ) {
 			return false;
 		}
-		
+
 		$elements_data = $document->get_elements_data();
 		return $this->traverse_elements_for_css_converter_widgets( $elements_data );
 	}
@@ -222,7 +221,7 @@ class Module extends BaseModule {
 			if ( isset( $element_data['editor_settings']['css_converter_widget'] ) && $element_data['editor_settings']['css_converter_widget'] ) {
 				return true;
 			}
-			
+
 			// Recursively check child elements
 			if ( isset( $element_data['elements'] ) && is_array( $element_data['elements'] ) ) {
 				if ( $this->traverse_elements_for_css_converter_widgets( $element_data['elements'] ) ) {
@@ -230,7 +229,7 @@ class Module extends BaseModule {
 				}
 			}
 		}
-		
+
 		return false;
 	}
 }

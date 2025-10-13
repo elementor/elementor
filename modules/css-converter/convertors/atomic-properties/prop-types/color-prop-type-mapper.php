@@ -16,7 +16,7 @@ class Color_Prop_Type_Mapper extends Atomic_Prop_Mapper_Base {
 		'border-top-color',
 		'border-right-color',
 		'border-bottom-color',
-		'border-left-color'
+		'border-left-color',
 	];
 
 	protected $atomic_prop_type = 'color';

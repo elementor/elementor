@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 
-	private const SUPPORTED_PROPERTIES = ['padding'];
+	private const SUPPORTED_PROPERTIES = [ 'padding' ];
 
 	public function get_supported_properties(): array {
 		return self::SUPPORTED_PROPERTIES;
@@ -65,7 +65,7 @@ class Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		$value = trim( $value );
-		
+
 		if ( '' === $value ) {
 			return null;
 		}
@@ -82,7 +82,7 @@ class Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		$dimensions = $this->map_shorthand_to_logical_properties( $parts );
-		
+
 		if ( null === $dimensions ) {
 			return null;
 		}
@@ -91,7 +91,7 @@ class Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	protected function is_css_keyword( string $value ): bool {
-		$keywords = ['auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer'];
+		$keywords = [ 'auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer' ];
 		return in_array( strtolower( $value ), $keywords, true );
 	}
 
@@ -101,10 +101,10 @@ class Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function handle_css_keyword( string $value ): ?array {
 		$keyword = strtolower( $value );
-		
+
 		$keyword_size = [
 			'size' => $keyword,
-			'unit' => 'custom'
+			'unit' => 'custom',
 		];
 
 		return [
@@ -117,7 +117,7 @@ class Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function map_shorthand_to_logical_properties( array $parts ): ?array {
 		$count = count( $parts );
-		
+
 		switch ( $count ) {
 			case 1:
 				$all = $this->parse_size_value( $parts[0] );
@@ -168,7 +168,7 @@ class Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function create_dimensions_structure( array $dimensions ): array {
 		$result = [];
-		
+
 		foreach ( $dimensions as $logical_property => $size_data ) {
 			$result[ $logical_property ] = Size_Prop_Type::make()->generate( $size_data );
 		}
@@ -178,11 +178,11 @@ class Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	protected function parse_size_value( string $value ): array {
 		$parsed = Size_Value_Parser::parse( $value );
-		
+
 		if ( null !== $parsed ) {
 			return $parsed;
 		}
-		
+
 		return Size_Value_Parser::create_zero();
 	}
 }
