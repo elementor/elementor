@@ -52,8 +52,13 @@ export function getObject( key ) {
 	}
 
 	try {
-		return JSON.parse( storedString );
+		const parsed = JSON.parse( storedString );
+		if ( parsed && 'object' === typeof parsed ) {
+			return parsed;
+		}
+		return null;
 	} catch ( error ) {
+		remove( key );
 		return null;
 	}
 }

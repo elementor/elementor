@@ -48,7 +48,7 @@ class OnboardingTracker {
 				},
 				payloadBuilder: ( eventData ) => ( {
 					action_step: eventData.currentStep,
-					create_account_clicked: eventData.createAccountClicked,
+					create_account_clicked: this.validateCreateAccountClicked( eventData.createAccountClicked ),
 				} ),
 			},
 			CREATE_ACCOUNT_STATUS: {
@@ -70,7 +70,7 @@ class OnboardingTracker {
 					trigger: 'connect_flow_returns_status',
 				},
 				payloadBuilder: ( eventData ) => ( {
-					onboarding_connect_status: eventData.status,
+					onboarding_connect_status: this.validateConnectStatus( eventData.status ),
 					tracking_opted_in: eventData.trackingOptedIn,
 					user_tier: eventData.userTier,
 				} ),
@@ -240,6 +240,14 @@ class OnboardingTracker {
 
 		if ( ! storedData || ( config.isArray && 0 === storedData.length ) ) {
 			return;
+		}
+
+		if ( 'CONNECT_STATUS' === eventType && storedData && ! storedData.status ) {
+			storedData.status = 'fail';
+		}
+
+		if ( 'CREATE_MY_ACCOUNT' === eventType && storedData && ! storedData.createAccountClicked ) {
+			storedData.createAccountClicked = 'main_cta';
 		}
 
 		const processEvent = ( eventData ) => {
@@ -664,6 +672,20 @@ class OnboardingTracker {
 
 	sendConnectionFailureEvents() {
 		this.sendAppropriateStatusEvent( 'fail' );
+	}
+
+	validateConnectStatus( status ) {
+		if ( 'success' === status || 'fail' === status ) {
+			return status;
+		}
+		return 'fail';
+	}
+
+	validateCreateAccountClicked( clickedValue ) {
+		if ( 'topbar' === clickedValue || 'main_cta' === clickedValue ) {
+			return clickedValue;
+		}
+		return 'main_cta';
 	}
 
 	sendAppropriateStatusEvent( status, data = null ) {
