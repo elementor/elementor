@@ -103,6 +103,19 @@ class OnboardingTracker {
 					action_step: eventData.currentStep,
 				} ),
 			},
+			AB_101_START_AS_FREE_USER: {
+				eventName: ONBOARDING_EVENTS_MAP.AB_101_START_AS_FREE_USER,
+				storageKey: ONBOARDING_STORAGE_KEYS.PENDING_AB_101_START_AS_FREE_USER,
+				basePayload: {
+					location: 'plugin_onboarding',
+					trigger: 'continue_as_guest_clicked',
+				},
+				payloadBuilder: ( eventData ) => ( {
+					action_step: eventData.currentStep,
+				} ),
+				stepOverride: 1,
+				stepNameOverride: ONBOARDING_STEP_NAMES.CONNECT,
+			},
 		};
 	}
 
@@ -289,10 +302,12 @@ class OnboardingTracker {
 	}
 
 	sendHelloBizContinue( stepNumber ) {
+		const numericStepNumber = this.mapPageIdToStepNumber( stepNumber ) || stepNumber;
+
 		if ( EventDispatcher.canSendEvents() ) {
 			return EventDispatcher.dispatchStepEvent(
 				ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE,
-				stepNumber,
+				numericStepNumber,
 				ONBOARDING_STEP_NAMES.HELLO_BIZ,
 				{
 					location: 'plugin_onboarding',
@@ -350,6 +365,51 @@ class OnboardingTracker {
 	}
 
 	storeSiteStarterChoice( siteStarter ) {
+		const existingChoice = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
+
+		if ( this.isReturnScenario( existingChoice, siteStarter ) ) {
+			this.sendReturnEventAndUpdateChoice( existingChoice, siteStarter );
+		} else {
+			this.storeInitialChoice( siteStarter );
+		}
+	}
+
+	isReturnScenario( existingChoice, siteStarter ) {
+		return existingChoice && existingChoice.site_starter !== siteStarter;
+	}
+
+	sendReturnEventAndUpdateChoice( existingChoice, siteStarter ) {
+		const returnEventPayload = this.createReturnEventPayload( existingChoice, siteStarter );
+		this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
+		this.updateChoiceWithReturnTracking( existingChoice, siteStarter );
+	}
+
+	createReturnEventPayload( existingChoice, siteStarter ) {
+		return EventDispatcher.createStepEventPayload(
+			4,
+			ONBOARDING_STEP_NAMES.SITE_STARTER,
+			{
+				location: 'plugin_onboarding',
+				trigger: 'user_returns_to_onboarding',
+				return_to_onboarding: existingChoice.site_starter,
+				original_choice_timestamp: existingChoice.timestamp,
+				new_choice: siteStarter,
+			},
+		);
+	}
+
+	updateChoiceWithReturnTracking( existingChoice, siteStarter ) {
+		const choiceData = {
+			site_starter: siteStarter,
+			original_choice: existingChoice.site_starter,
+			timestamp: TimingManager.getCurrentTime(),
+			return_event_sent: true,
+		};
+
+		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
+	}
+
+	storeInitialChoice( siteStarter ) {
 		const choiceData = {
 			site_starter: siteStarter,
 			timestamp: TimingManager.getCurrentTime(),
@@ -365,23 +425,36 @@ class OnboardingTracker {
 			return;
 		}
 
-		if ( ! choiceData.return_event_sent ) {
-			const returnEventPayload = EventDispatcher.createStepEventPayload(
-				4,
-				ONBOARDING_STEP_NAMES.SITE_STARTER,
-				{
-					location: 'plugin_onboarding',
-					trigger: 'user_returns_to_onboarding',
-					return_to_onboarding: choiceData.site_starter,
-					original_choice_timestamp: choiceData.timestamp,
-				},
-			);
-
+		if ( this.shouldSendReturnEvent( choiceData ) ) {
+			const returnEventPayload = this.createReturnEventPayloadFromStoredData( choiceData );
 			this.dispatchEvent( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
-
-			choiceData.return_event_sent = true;
-			StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
+			this.markReturnEventAsSent( choiceData );
 		}
+	}
+
+	shouldSendReturnEvent( choiceData ) {
+		return ! choiceData.return_event_sent &&
+			choiceData.original_choice &&
+			choiceData.original_choice !== choiceData.site_starter;
+	}
+
+	createReturnEventPayloadFromStoredData( choiceData ) {
+		return EventDispatcher.createStepEventPayload(
+			4,
+			ONBOARDING_STEP_NAMES.SITE_STARTER,
+			{
+				location: 'plugin_onboarding',
+				trigger: 'user_returns_to_onboarding',
+				return_to_onboarding: choiceData.original_choice,
+				original_choice_timestamp: choiceData.timestamp,
+				new_choice: choiceData.site_starter,
+			},
+		);
+	}
+
+	markReturnEventAsSent( choiceData ) {
+		choiceData.return_event_sent = true;
+		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
 	}
 
 	handleSiteStarterChoice( siteStarter ) {
@@ -469,6 +542,7 @@ class OnboardingTracker {
 			this.dispatchEvent( eventName, eventData );
 			StorageManager.remove( storageKey );
 			TimingManager.clearStepStartTime( stepNumber );
+			this.sendStoredEventsIfConnected();
 		} else if ( 1 === stepNumber ) {
 			this.storeStep1EndStateForLater( eventData, storageKey );
 		} else {
@@ -598,6 +672,7 @@ class OnboardingTracker {
 	}
 
 	sendAllStoredEvents() {
+		this.sendStoredExperimentData();
 		this.sendStoredEvent( 'SKIP' );
 		this.sendStoredEvent( 'TOP_UPGRADE' );
 		this.sendStoredEvent( 'CREATE_MY_ACCOUNT' );
@@ -606,6 +681,13 @@ class OnboardingTracker {
 		this.sendStoredEvent( 'STEP1_CLICKED_CONNECT' );
 		this.sendStoredEvent( 'STEP1_END_STATE' );
 		this.sendStoredEvent( 'EXIT_BUTTON' );
+		this.sendStoredEvent( 'AB_101_START_AS_FREE_USER' );
+	}
+
+	sendStoredEventsIfConnected() {
+		if ( EventDispatcher.canSendEvents() ) {
+			this.sendAllStoredEvents();
+		}
 	}
 
 	handleStep4CardClick() {
@@ -836,16 +918,21 @@ class OnboardingTracker {
 
 	onStepLoad( currentStep ) {
 		const stepNumber = this.getStepNumber( currentStep );
+
 		TimingManager.trackStepStartTime( stepNumber );
+
+		if ( 1 === stepNumber || 'account' === currentStep ) {
+			this.sendExperimentStarted( 101 );
+		}
 
 		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
 			this.sendStoredStep1EventsOnStep2();
-			this.sendThemeSelectionExperimentStarted();
+			this.sendExperimentStarted( 201 );
 		}
 
 		if ( 4 === stepNumber || 'goodToGo' === currentStep ) {
 			this.checkAndSendReturnToStep4();
-			this.sendGoodToGoExperimentStarted();
+			this.sendExperimentStarted( 402 );
 		}
 	}
 
@@ -858,6 +945,7 @@ class OnboardingTracker {
 		}
 
 		this.sendStoredEvent( 'STEP1_END_STATE' );
+		this.sendStoredEventsIfConnected();
 	}
 
 	setupPostOnboardingClickTracking() {
@@ -872,106 +960,119 @@ class OnboardingTracker {
 		return PostOnboardingTracker.clearAllOnboardingStorage();
 	}
 
-	isThemeSelectionExperimentEnabled() {
-		return elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled || false;
+	getExperimentConfigs() {
+		return {
+			101: {
+				name: '101 - Emphasize connect benefits',
+				enabledKey: 'isExperiment101Enabled',
+				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT,
+				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_STARTED,
+			},
+			201: {
+				name: '201 - Offer theme choices: hello, biz',
+				enabledKey: 'isExperiment201Enabled',
+				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
+				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED,
+			},
+			402: {
+				name: '402 - Reduce hierarchy of blank option',
+				enabledKey: 'isExperiment402Enabled',
+				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT,
+				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT402_STARTED,
+			},
+		};
 	}
 
-	isGoodToGoExperimentEnabled() {
-		return elementorAppConfig?.onboarding?.goodToGoExperimentEnabled || false;
-	}
-
-	getThemeSelectionVariant() {
-		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT );
-		if ( stored ) {
-			return stored;
+	isExperimentEnabled( experimentId ) {
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config ) {
+			return false;
 		}
-
-		return null;
+		return elementorAppConfig?.onboarding?.[ config.enabledKey ] || false;
 	}
 
-	getGoodToGoVariant() {
-		const stored = StorageManager.getString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT );
-		if ( stored ) {
-			return stored;
+	getExperimentVariant( experimentId ) {
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config ) {
+			return null;
 		}
-
-		return null;
+		return StorageManager.getString( config.variantKey ) || null;
 	}
 
-	assignThemeSelectionVariant() {
-		if ( ! this.isThemeSelectionExperimentEnabled() ) {
+	assignExperimentVariant( experimentId ) {
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config || ! this.isExperimentEnabled( experimentId ) ) {
 			return null;
 		}
 
 		const variant = Math.random() < 0.5 ? 'A' : 'B';
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT, variant );
+		StorageManager.setString( config.variantKey, variant );
 		return variant;
 	}
 
-	assignGoodToGoVariant() {
-		if ( ! this.isGoodToGoExperimentEnabled() ) {
-			return null;
-		}
-
-		const variant = Math.random() < 0.5 ? 'A' : 'B';
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT, variant );
-		return variant;
-	}
-
-	sendThemeSelectionExperimentStarted() {
-		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED ) ) {
+	sendExperimentStarted( experimentId ) {
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config ) {
 			return;
 		}
 
-		let variant = this.getThemeSelectionVariant();
+		if ( StorageManager.exists( config.startedKey ) ) {
+			return;
+		}
+
+		let variant = this.getExperimentVariant( experimentId );
 
 		if ( ! variant ) {
-			variant = this.assignThemeSelectionVariant();
+			variant = this.assignExperimentVariant( experimentId );
 			if ( ! variant ) {
 				return;
 			}
 		}
 
-		if ( ! EventDispatcher.canSendEvents() ) {
-			return;
-		}
-
 		const eventData = {
-			'Experiment name': 'core_onboarding_theme_selection',
+			'Experiment name': config.name,
 			'Variant name': variant,
 		};
 
-		EventDispatcher.dispatch( '$experiment_started', eventData );
-
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED, 'true' );
+		if ( EventDispatcher.canSendEvents() ) {
+			EventDispatcher.dispatch( '$experiment_started', eventData );
+			StorageManager.setString( config.startedKey, 'true' );
+		} else {
+			this.storeExperimentDataForLater( experimentId, eventData );
+		}
 	}
 
-	sendGoodToGoExperimentStarted() {
-		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED ) ) {
+	storeExperimentDataForLater( experimentId, eventData ) {
+		const config = this.getExperimentConfigs()[ experimentId ];
+		if ( ! config ) {
 			return;
 		}
 
-		let variant = this.getGoodToGoVariant();
-
-		if ( ! variant ) {
-			variant = this.assignGoodToGoVariant();
-			if ( ! variant ) {
-				return;
-			}
-		}
-
-		if ( ! EventDispatcher.canSendEvents() ) {
-			return;
-		}
-
-		const eventData = {
-			'Experiment name': 'core_onboarding_good_to_go',
-			'Variant name': variant,
+		const experimentEntry = {
+			experimentId,
+			eventData,
+			timestamp: TimingManager.getCurrentTime(),
+			startedKey: config.startedKey,
 		};
 
-		EventDispatcher.dispatch( '$experiment_started', eventData );
+		const existingExperiments = StorageManager.getArray( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
+		existingExperiments.push( experimentEntry );
+		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA, existingExperiments );
+	}
 
-		StorageManager.setString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED, 'true' );
+	sendStoredExperimentData() {
+		const storedExperiments = StorageManager.getArray( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
+
+		if ( 0 === storedExperiments.length ) {
+			return;
+		}
+
+		storedExperiments.forEach( ( experiment ) => {
+			EventDispatcher.dispatch( '$experiment_started', experiment.eventData );
+			StorageManager.setString( experiment.startedKey, 'true' );
+		} );
+
+		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
 	}
 }
 
