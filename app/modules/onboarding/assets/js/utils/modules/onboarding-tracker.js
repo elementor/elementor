@@ -59,7 +59,7 @@ class OnboardingTracker {
 					trigger: 'create_flow_returns_status',
 				},
 				payloadBuilder: ( eventData ) => ( {
-					onboarding_create_account_status: eventData.status,
+					onboarding_create_account_status: this.validateCreateAccountStatus( eventData.status ),
 				} ),
 				excludeFields: [ 'trigger' ],
 			},
@@ -254,6 +254,10 @@ class OnboardingTracker {
 		}
 
 		if ( 'CONNECT_STATUS' === eventType && storedData && ! storedData.status ) {
+			storedData.status = 'fail';
+		}
+
+		if ( 'CREATE_ACCOUNT_STATUS' === eventType && storedData && ! storedData.status ) {
 			storedData.status = 'fail';
 		}
 
@@ -684,6 +688,13 @@ class OnboardingTracker {
 	}
 
 	validateConnectStatus( status ) {
+		if ( 'success' === status || 'fail' === status ) {
+			return status;
+		}
+		return 'fail';
+	}
+
+	validateCreateAccountStatus( status ) {
 		if ( 'success' === status || 'fail' === status ) {
 			return status;
 		}
