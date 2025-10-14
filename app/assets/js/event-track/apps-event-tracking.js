@@ -88,7 +88,7 @@ export class AppsEventTracking {
 		const isError = !! error;
 		if ( isError ) {
 			this.dispatchEvent( EVENTS_MAP.KITDEMO_APPLY_FAILED, {
-				error_title: error?.message || 'Unknown error'
+				error_title: error?.message || 'Unknown error',
 				kit_id: id,
 				kit_title: title,
 			} );
