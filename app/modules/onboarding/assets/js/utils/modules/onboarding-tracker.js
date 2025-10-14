@@ -499,6 +499,7 @@ class OnboardingTracker {
 			const returnEventPayload = this.createReturnEventPayloadFromStoredData( choiceData );
 			this.dispatchEventWithoutTrigger( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
 			this.markReturnEventAsSent( choiceData );
+			this.resetStep4EndStateTracking();
 		}
 	}
 
@@ -525,6 +526,14 @@ class OnboardingTracker {
 	markReturnEventAsSent( choiceData ) {
 		choiceData.return_event_sent = true;
 		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
+	}
+
+	resetStep4EndStateTracking() {
+		const STEP4_NUMBER = 4;
+		const endStateSentKey = `step${ STEP4_NUMBER }_end_state_sent`;
+		
+		StorageManager.remove( endStateSentKey );
+		StorageManager.remove( ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS );
 	}
 
 	handleSiteStarterChoice( siteStarter ) {
