@@ -505,12 +505,10 @@ class OnboardingTracker {
 	}
 
 	resetStep4EndStateTracking() {
-		const STEP4_NUMBER = 4;
-		const endStateSentKey = `step${ STEP4_NUMBER }_end_state_sent`;
-		StorageManager.remove( endStateSentKey );
+		StorageManager.remove( ONBOARDING_STORAGE_KEYS.STEP4_END_STATE_SENT );
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS );
 
-		this.trackStepAction( STEP4_NUMBER, 'returned_to_step4', {
+		this.trackStepAction( 4, 'returned_to_step4', {
 			return_detected: true,
 			timestamp: TimingManager.getCurrentTime(),
 		} );
@@ -603,13 +601,23 @@ class OnboardingTracker {
 		StorageManager.setObject( actualStorageKey, existingActions );
 	}
 
+	getEndStateSentKey( stepNumber ) {
+		const endStateKeys = {
+			1: ONBOARDING_STORAGE_KEYS.STEP1_END_STATE_SENT,
+			2: ONBOARDING_STORAGE_KEYS.STEP2_END_STATE_SENT,
+			3: ONBOARDING_STORAGE_KEYS.STEP3_END_STATE_SENT,
+			4: ONBOARDING_STORAGE_KEYS.STEP4_END_STATE_SENT,
+		};
+		return endStateKeys[ stepNumber ];
+	}
+
 	sendStepEndStateInternal( stepNumber, storageKey, eventName, stepName, endStateProperty ) {
 		const actions = StorageManager.getArray( storageKey );
 		if ( 0 === actions.length ) {
 			return;
 		}
 
-		const endStateSentKey = `step${ stepNumber }_end_state_sent`;
+		const endStateSentKey = this.getEndStateSentKey( stepNumber );
 		if ( StorageManager.exists( endStateSentKey ) ) {
 			return;
 		}
