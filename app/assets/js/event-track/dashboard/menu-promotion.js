@@ -1,42 +1,48 @@
 import WpDashboardTracking from '../wp-dashboard-tracking';
+import BaseTracking from './base-tracking';
 
 const PROMO_MENU_ITEMS = {
 	go_elementor_pro: 'Upgrade',
 };
 
-class MenuPromotionTracking {
+class MenuPromotionTracking extends BaseTracking {
 	static init() {
 		this.attachDelegatedTracking();
 	}
 
 	static attachDelegatedTracking() {
-		document.addEventListener( 'click', ( event ) => {
-			const target = event.target;
+		this.addEventListenerTracked(
+			document,
+			'click',
+			( event ) => {
+				const target = event.target;
 
-			if ( ! target ) {
-				return;
-			}
+				if ( ! target ) {
+					return;
+				}
 
-			const link = target.closest( 'a' );
+				const link = target.closest( 'a' );
 
-			if ( ! link ) {
-				return;
-			}
+				if ( ! link ) {
+					return;
+				}
 
-			const href = link.getAttribute( 'href' );
+				const href = link.getAttribute( 'href' );
 
-			if ( ! href ) {
-				return;
-			}
+				if ( ! href ) {
+					return;
+				}
 
-			const menuItemKey = this.extractPromoMenuKey( href );
+				const menuItemKey = this.extractPromoMenuKey( href );
 
-			if ( ! menuItemKey ) {
-				return;
-			}
+				if ( ! menuItemKey ) {
+					return;
+				}
 
-			this.handleMenuPromoClick( link, menuItemKey );
-		}, { capture: true } );
+				this.handleMenuPromoClick( link, menuItemKey );
+			},
+			{ capture: true },
+		);
 	}
 
 	static extractPromoMenuKey( href ) {

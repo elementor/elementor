@@ -202,6 +202,13 @@ export default class WpDashboardTracking {
 			clearInterval( this.activityCheckInterval );
 		}
 
+		NavigationTracking.destroy();
+		TopBarTracking.destroy();
+		ScreenViewTracking.destroy();
+		ActionControlTracking.destroy();
+		PromotionTracking.destroy();
+		MenuPromotionTracking.destroy();
+
 		this.initialized = false;
 	}
 }
@@ -214,4 +221,8 @@ window.addEventListener( 'elementor/admin/init', () => {
 	ActionControlTracking.init();
 	PromotionTracking.init();
 	MenuPromotionTracking.init();
+} );
+
+window.addEventListener( 'beforeunload', () => {
+	WpDashboardTracking.destroy();
 } );

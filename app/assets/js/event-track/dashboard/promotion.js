@@ -1,4 +1,5 @@
 import WpDashboardTracking from '../wp-dashboard-tracking';
+import BaseTracking from './base-tracking';
 
 const PROMO_SELECTORS = {
 	PROMO_PAGE: '.e-feature-promotion, .elementor-settings-form-page',
@@ -7,33 +8,38 @@ const PROMO_SELECTORS = {
 	TITLE: 'h3',
 };
 
-class PromotionTracking {
+class PromotionTracking extends BaseTracking {
 	static init() {
 		this.attachDelegatedTracking();
 	}
 
 	static attachDelegatedTracking() {
-		document.addEventListener( 'click', ( event ) => {
-			const target = event.target;
+		this.addEventListenerTracked(
+			document,
+			'click',
+			( event ) => {
+				const target = event.target;
 
-			if ( ! target ) {
-				return;
-			}
+				if ( ! target ) {
+					return;
+				}
 
-			const button = target.closest( `a${ PROMO_SELECTORS.CTA_BUTTON }` );
+				const button = target.closest( `a${ PROMO_SELECTORS.CTA_BUTTON }` );
 
-			if ( ! button ) {
-				return;
-			}
+				if ( ! button ) {
+					return;
+				}
 
-			const promoPage = button.closest( `${ PROMO_SELECTORS.PROMO_PAGE }, ${ PROMO_SELECTORS.PROMO_BLANK_STATE }` );
+				const promoPage = button.closest( `${ PROMO_SELECTORS.PROMO_PAGE }, ${ PROMO_SELECTORS.PROMO_BLANK_STATE }` );
 
-			if ( ! promoPage ) {
-				return;
-			}
+				if ( ! promoPage ) {
+					return;
+				}
 
-			this.handlePromoClick( button, promoPage );
-		}, { capture: true } );
+				this.handlePromoClick( button, promoPage );
+			},
+			{ capture: true },
+		);
 	}
 
 	static handlePromoClick( button, promoPage ) {

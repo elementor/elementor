@@ -1,5 +1,6 @@
 import WpDashboardTracking, { SCREEN_TYPES } from '../wp-dashboard-tracking';
 import { DashboardUtils } from './utils';
+import BaseTracking from './base-tracking';
 
 const SCREEN_SELECTORS = {
 	NAV_TAB_WRAPPER: '.nav-tab-wrapper',
@@ -16,7 +17,7 @@ const TRACKED_MODALS = [
 	SCREEN_SELECTORS.TEMPLATE_DIALOG_MODAL,
 ];
 
-class ScreenViewTracking {
+class ScreenViewTracking extends BaseTracking {
 	static trackedScreens = new Set();
 
 	static init() {
@@ -26,6 +27,11 @@ class ScreenViewTracking {
 
 		this.trackInitialPageView();
 		this.attachTabChangeTracking();
+	}
+
+	static destroy() {
+		super.destroy();
+		this.trackedScreens.clear();
 	}
 
 	static trackInitialPageView() {
@@ -162,47 +168,59 @@ class ScreenViewTracking {
 			return;
 		}
 
-		const observer = new MutationObserver( ( mutations ) => {
-			for ( const mutation of mutations ) {
-				if ( 'childList' === mutation.type ) {
-					const screenData = this.getScreenData();
-					if ( screenData ) {
-						this.trackScreen( screenData.screenId, screenData.screenType );
-					}
-					break;
-				}
-
-				if ( 'attributes' === mutation.type && 'class' === mutation.attributeName ) {
-					const target = mutation.target;
-					if ( target && target.classList && target.classList.contains( 'nav-tab' ) ) {
+		this.addObserver(
+			wrapper,
+			{
+				attributes: true,
+				attributeFilter: [ 'class' ],
+				subtree: true,
+				childList: true,
+			},
+			( mutations ) => {
+				for ( const mutation of mutations ) {
+					if ( 'childList' === mutation.type ) {
 						const screenData = this.getScreenData();
 						if ( screenData ) {
 							this.trackScreen( screenData.screenId, screenData.screenType );
 						}
 						break;
 					}
-				}
-			}
-		} );
 
-		observer.observe( wrapper, {
-			attributes: true,
-			attributeFilter: [ 'class' ],
-			subtree: true,
-			childList: true,
-		} );
+					if ( 'attributes' === mutation.type && 'class' === mutation.attributeName ) {
+						const target = mutation.target;
+						if ( target && target.classList && target.classList.contains( 'nav-tab' ) ) {
+							const screenData = this.getScreenData();
+							if ( screenData ) {
+								this.trackScreen( screenData.screenId, screenData.screenType );
+							}
+							break;
+						}
+					}
+				}
+			},
+		);
 	}
 
 	static attachHashChangeTracking() {
-		window.addEventListener( 'hashchange', () => {
-			const screenData = this.getScreenData();
-			if ( screenData ) {
-				this.trackScreen( screenData.screenId, screenData.screenType );
-			}
-		} );
+		this.addEventListenerTracked(
+			window,
+			'hashchange',
+			() => {
+				const screenData = this.getScreenData();
+				if ( screenData ) {
+					this.trackScreen( screenData.screenId, screenData.screenType );
+				}
+			},
+		);
 	}
 
 	static attachSettingsTabTracking() {
+		const settingsPages = document.querySelectorAll( SCREEN_SELECTORS.SETTINGS_FORM_PAGE );
+
+		if ( 0 === settingsPages.length ) {
+			return;
+		}
+
 		const observer = new MutationObserver( () => {
 			const screenData = this.getScreenData();
 			if ( screenData ) {
@@ -210,34 +228,37 @@ class ScreenViewTracking {
 			}
 		} );
 
-		const settingsPages = document.querySelectorAll( SCREEN_SELECTORS.SETTINGS_FORM_PAGE );
 		settingsPages.forEach( ( page ) => {
 			observer.observe( page, {
 				attributes: true,
 				attributeFilter: [ 'class' ],
 			} );
 		} );
+
+		this.observers.push( observer );
 	}
 
 	static attachModalTracking() {
-		const observer = new MutationObserver( ( mutations ) => {
-			for ( const mutation of mutations ) {
-				if ( 'childList' === mutation.type ) {
-					TRACKED_MODALS.forEach( ( modalSelector ) => {
-						const modal = document.querySelector( modalSelector );
-						if ( modal && this.isModalVisible( modal ) ) {
-							const modalId = modalSelector.replace( '#', '' );
-							this.trackScreen( modalId, SCREEN_TYPES.POPUP );
-						}
-					} );
+		this.addObserver(
+			document.body,
+			{
+				childList: true,
+				subtree: true,
+			},
+			( mutations ) => {
+				for ( const mutation of mutations ) {
+					if ( 'childList' === mutation.type ) {
+						TRACKED_MODALS.forEach( ( modalSelector ) => {
+							const modal = document.querySelector( modalSelector );
+							if ( modal && this.isModalVisible( modal ) ) {
+								const modalId = modalSelector.replace( '#', '' );
+								this.trackScreen( modalId, SCREEN_TYPES.POPUP );
+							}
+						} );
+					}
 				}
-			}
-		} );
-
-		observer.observe( document.body, {
-			childList: true,
-			subtree: true,
-		} );
+			},
+		);
 	}
 
 	static isModalVisible( element ) {
