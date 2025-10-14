@@ -9,7 +9,7 @@ export const DashboardUtils = {
 
 		const postType = urlParams.get( 'post_type' );
 
-		if ( 'elementor_library' === postType || 'e-floating-buttons' === postType ) {
+		if ( 'elementor_library' === postType ) {
 			return true;
 		}
 

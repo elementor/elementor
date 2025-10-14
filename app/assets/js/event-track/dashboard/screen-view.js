@@ -1,6 +1,5 @@
 import WpDashboardTracking, { SCREEN_TYPES } from '../wp-dashboard-tracking';
 import { DashboardUtils } from './utils';
-import BaseTracking from './base-tracking';
 
 const SCREEN_SELECTORS = {
 	NAV_TAB_WRAPPER: '.nav-tab-wrapper',
@@ -8,16 +7,9 @@ const SCREEN_SELECTORS = {
 	NAV_TAB_ACTIVE: '.nav-tab-active',
 	SETTINGS_FORM_PAGE: '.elementor-settings-form-page',
 	SETTINGS_FORM_PAGE_ACTIVE: '.elementor-settings-form-page.elementor-active',
-	FLOATING_ELEMENTS_MODAL: '#elementor-new-floating-elements-modal',
-	TEMPLATE_DIALOG_MODAL: '#elementor-new-template-dialog-content',
 };
 
-const TRACKED_MODALS = [
-	SCREEN_SELECTORS.FLOATING_ELEMENTS_MODAL,
-	SCREEN_SELECTORS.TEMPLATE_DIALOG_MODAL,
-];
-
-class ScreenViewTracking extends BaseTracking {
+class ScreenViewTracking {
 	static trackedScreens = new Set();
 
 	static init() {
@@ -27,11 +19,6 @@ class ScreenViewTracking extends BaseTracking {
 
 		this.trackInitialPageView();
 		this.attachTabChangeTracking();
-	}
-
-	static destroy() {
-		super.destroy();
-		this.trackedScreens.clear();
 	}
 
 	static trackInitialPageView() {
@@ -56,7 +43,7 @@ class ScreenViewTracking extends BaseTracking {
 		const hash = window.location.hash;
 
 		let screenId = '';
-		let screenType = SCREEN_TYPES.TOP_LEVEL_PAGE;
+		let screenType = SCREEN_TYPES.APP_SCREEN;
 
 		if ( page ) {
 			screenId = page;
@@ -66,17 +53,10 @@ class ScreenViewTracking extends BaseTracking {
 			screenId = this.getScreenIdFromBody();
 		}
 
-		if ( this.isElementorAppPage() ) {
-			const appScreenData = this.getAppScreenData( hash );
-			if ( appScreenData ) {
-				return appScreenData;
-			}
-		}
-
 		const hasNavTabs = document.querySelector( SCREEN_SELECTORS.NAV_TAB_WRAPPER );
 		const hasSettingsTabs = document.querySelectorAll( SCREEN_SELECTORS.SETTINGS_FORM_PAGE ).length > 1;
 
-		if ( hasNavTabs || hasSettingsTabs || ( hash && ! this.isElementorAppPage() ) ) {
+		if ( hasNavTabs || hasSettingsTabs || hash ) {
 			screenType = SCREEN_TYPES.TAB;
 
 			if ( hash ) {
@@ -109,34 +89,6 @@ class ScreenViewTracking extends BaseTracking {
 		return { screenId, screenType };
 	}
 
-	static isElementorAppPage() {
-		const urlParams = new URLSearchParams( window.location.search );
-		return 'elementor-app' === urlParams.get( 'page' );
-	}
-
-	static getAppScreenData( hash ) {
-		if ( ! hash ) {
-			return null;
-		}
-
-		const cleanHash = hash.replace( /^#/, '' );
-
-		if ( ! cleanHash.startsWith( '/' ) ) {
-			return null;
-		}
-
-		const pathParts = cleanHash.split( '/' ).filter( Boolean );
-
-		if ( 0 === pathParts.length ) {
-			return null;
-		}
-
-		const screenId = pathParts.join( '/' );
-		const screenType = SCREEN_TYPES.APP_SCREEN;
-
-		return { screenId, screenType };
-	}
-
 	static getScreenIdFromBody() {
 		const body = document.body;
 		const bodyClasses = body.className.split( ' ' );
@@ -158,7 +110,6 @@ class ScreenViewTracking extends BaseTracking {
 		this.attachNavTabTracking();
 		this.attachHashChangeTracking();
 		this.attachSettingsTabTracking();
-		this.attachModalTracking();
 	}
 
 	static attachNavTabTracking() {
@@ -168,59 +119,47 @@ class ScreenViewTracking extends BaseTracking {
 			return;
 		}
 
-		this.addObserver(
-			wrapper,
-			{
-				attributes: true,
-				attributeFilter: [ 'class' ],
-				subtree: true,
-				childList: true,
-			},
-			( mutations ) => {
-				for ( const mutation of mutations ) {
-					if ( 'childList' === mutation.type ) {
+		const observer = new MutationObserver( ( mutations ) => {
+			for ( const mutation of mutations ) {
+				if ( 'childList' === mutation.type ) {
+					const screenData = this.getScreenData();
+					if ( screenData ) {
+						this.trackScreen( screenData.screenId, screenData.screenType );
+					}
+					break;
+				}
+
+				if ( 'attributes' === mutation.type && 'class' === mutation.attributeName ) {
+					const target = mutation.target;
+					if ( target && target.classList && target.classList.contains( 'nav-tab' ) ) {
 						const screenData = this.getScreenData();
 						if ( screenData ) {
 							this.trackScreen( screenData.screenId, screenData.screenType );
 						}
 						break;
 					}
-
-					if ( 'attributes' === mutation.type && 'class' === mutation.attributeName ) {
-						const target = mutation.target;
-						if ( target && target.classList && target.classList.contains( 'nav-tab' ) ) {
-							const screenData = this.getScreenData();
-							if ( screenData ) {
-								this.trackScreen( screenData.screenId, screenData.screenType );
-							}
-							break;
-						}
-					}
 				}
-			},
-		);
+			}
+		} );
+
+		observer.observe( wrapper, {
+			attributes: true,
+			attributeFilter: [ 'class' ],
+			subtree: true,
+			childList: true,
+		} );
 	}
 
 	static attachHashChangeTracking() {
-		this.addEventListenerTracked(
-			window,
-			'hashchange',
-			() => {
-				const screenData = this.getScreenData();
-				if ( screenData ) {
-					this.trackScreen( screenData.screenId, screenData.screenType );
-				}
-			},
-		);
+		window.addEventListener( 'hashchange', () => {
+			const screenData = this.getScreenData();
+			if ( screenData ) {
+				this.trackScreen( screenData.screenId, screenData.screenType );
+			}
+		} );
 	}
 
 	static attachSettingsTabTracking() {
-		const settingsPages = document.querySelectorAll( SCREEN_SELECTORS.SETTINGS_FORM_PAGE );
-
-		if ( 0 === settingsPages.length ) {
-			return;
-		}
-
 		const observer = new MutationObserver( () => {
 			const screenData = this.getScreenData();
 			if ( screenData ) {
@@ -228,49 +167,16 @@ class ScreenViewTracking extends BaseTracking {
 			}
 		} );
 
+		const settingsPages = document.querySelectorAll( SCREEN_SELECTORS.SETTINGS_FORM_PAGE );
 		settingsPages.forEach( ( page ) => {
 			observer.observe( page, {
 				attributes: true,
 				attributeFilter: [ 'class' ],
 			} );
 		} );
-
-		this.observers.push( observer );
 	}
 
-	static attachModalTracking() {
-		this.addObserver(
-			document.body,
-			{
-				childList: true,
-				subtree: true,
-			},
-			( mutations ) => {
-				for ( const mutation of mutations ) {
-					if ( 'childList' === mutation.type ) {
-						TRACKED_MODALS.forEach( ( modalSelector ) => {
-							const modal = document.querySelector( modalSelector );
-							if ( modal && this.isModalVisible( modal ) ) {
-								const modalId = modalSelector.replace( '#', '' );
-								this.trackScreen( modalId, SCREEN_TYPES.POPUP );
-							}
-						} );
-					}
-				}
-			},
-		);
-	}
-
-	static isModalVisible( element ) {
-		if ( ! element ) {
-			return false;
-		}
-
-		const style = window.getComputedStyle( element );
-		return 'none' !== style.display && 0 !== parseFloat( style.opacity );
-	}
-
-	static trackScreen( screenId, screenType = SCREEN_TYPES.TOP_LEVEL_PAGE ) {
+	static trackScreen( screenId, screenType = SCREEN_TYPES.APP_SCREEN ) {
 		const trackingKey = `${ screenId }-${ screenType }`;
 
 		if ( this.trackedScreens.has( trackingKey ) ) {

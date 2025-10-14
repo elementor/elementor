@@ -2,7 +2,6 @@ import { Box, Paper, Stack } from '@elementor/ui';
 import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
 import YoutubeIcon from '../icons/youtube-icon';
-import { trackPromoClick, getHomeScreenPath } from '../utils/promo-tracking';
 
 const TopSection = ( { ...props } ) => {
 	const { topData, buttonCtaUrl } = props;
@@ -23,14 +22,6 @@ const TopSection = ( { ...props } ) => {
 
 	const ctaButtonTitle = buttonCtaTitle ?? buttonCreatePageTitle;
 
-	const handleCtaClick = () => {
-		trackPromoClick( ctaButtonTitle, buttonCtaUrl, getHomeScreenPath( 'top_section' ) );
-	};
-
-	const handleWatchClick = () => {
-		trackPromoClick( buttonWatchTitle, buttonWatchURL, getHomeScreenPath( 'top_section' ) );
-	};
-
 	return (
 		<Paper elevation={ 0 } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', py: { xs: 3, md: 3 }, px: { xs: 3, md: 4 }, gap: { xs: 2, sm: 3, lg: 22 } } }>
 			<Stack gap={ 3 } justifyContent="center">
@@ -39,27 +30,8 @@ const TopSection = ( { ...props } ) => {
 					<Typography variant="body2" color="secondary">{ description }</Typography>
 				</Box>
 				<Box sx={ { display: 'flex', gap: 1 } }>
-					<Button
-						data-testid="e-create-button"
-						variant="contained"
-						size="small"
-						href={ buttonCtaUrl }
-						target="_blank"
-						onClick={ handleCtaClick }
-					>
-						{ ctaButtonTitle }
-					</Button>
-					<Button
-						variant="outlined"
-						color="secondary"
-						size="small"
-						startIcon={ <YoutubeIcon /> }
-						href={ buttonWatchURL }
-						target="_blank"
-						onClick={ handleWatchClick }
-					>
-						{ buttonWatchTitle }
-					</Button>
+					<Button data-testid="e-create-button" variant="contained" size="small" href={ buttonCtaUrl } target="_blank">{ ctaButtonTitle }</Button>
+					<Button variant="outlined" color="secondary" size="small" startIcon={ <YoutubeIcon /> } href={ buttonWatchURL } target="_blank">{ buttonWatchTitle }</Button>
 				</Box>
 			</Stack>
 			<Box component="iframe"

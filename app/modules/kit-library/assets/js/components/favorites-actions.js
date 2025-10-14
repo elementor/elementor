@@ -17,7 +17,6 @@ export default function FavoritesActions( props ) {
 		tracking.trackKitlibFavoriteClicked(
 			props.id,
 			props?.name,
-			false,
 			() => removeFromFavorites.mutate( props.id ),
 		);
 	};
@@ -29,7 +28,6 @@ export default function FavoritesActions( props ) {
 		tracking.trackKitlibFavoriteClicked(
 			props.id,
 			props?.name,
-			true,
 			() => addToFavorites.mutate( props.id ),
 		);
 	};
