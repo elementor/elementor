@@ -101,7 +101,7 @@ export class AppsEventTracking {
 		}
 
 		return this.dispatchEvent( EVENTS_MAP.KIT_IMPORT_STATUS, {
-			kit_import_status: isError,
+			kit_import_status: ! isError,
 			...( isError && { kit_import_error: error.message } ),
 		} );
 	}
