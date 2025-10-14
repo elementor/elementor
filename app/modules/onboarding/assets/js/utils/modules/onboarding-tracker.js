@@ -884,7 +884,7 @@ class OnboardingTracker {
 		const stepNumber = this.getStepNumber( currentStep );
 
 		if ( stepNumber ) {
-			this.trackStepAction( stepNumber, `upgrade_topbar:${ upgradeClickedValue }`, {
+			this.trackStepAction( stepNumber, 'upgrade_topbar', {
 				upgrade_clicked: upgradeClickedValue,
 				click_timestamp: TimingManager.getCurrentTime(),
 			} );
@@ -922,8 +922,7 @@ class OnboardingTracker {
 
 		const hasUpgradeClickInActions = actions.some( ( action ) =>
 			action.action &&
-			action.action.startsWith( 'upgrade_topbar:' ) &&
-			! action.action.includes( ':no_click' ),
+			'upgrade_topbar' === action.action,
 		);
 
 		const hasStoredClickEvent = this.hasExistingUpgradeClickEvent( stepNumber );
