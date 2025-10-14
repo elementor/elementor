@@ -170,7 +170,7 @@ export const messagesContent = {
 				</Link>
 			</>
 		),
-	}
+	},
 };
 
 export function ProcessingErrorDialog( {
