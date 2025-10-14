@@ -531,7 +531,7 @@ class OnboardingTracker {
 	resetStep4EndStateTracking() {
 		const STEP4_NUMBER = 4;
 		const endStateSentKey = `step${ STEP4_NUMBER }_end_state_sent`;
-		
+
 		StorageManager.remove( endStateSentKey );
 		StorageManager.remove( ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS );
 	}
