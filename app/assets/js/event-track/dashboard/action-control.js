@@ -36,6 +36,8 @@ class ActionControlTracking extends BaseTracking {
 	}
 
 	static attachDelegatedHandlers() {
+		const FILTER_BUTTON_IDS = [ 'search-submit', 'post-query-submit' ];
+
 		this.addEventListenerTracked(
 			document,
 			'click',
@@ -47,12 +49,11 @@ class ActionControlTracking extends BaseTracking {
 
 				const button = base.closest( 'button, input[type="submit"], input[type="button"], .button, .e-btn' );
 				if ( button && ! this.isExcludedElement( button ) ) {
-					const FILTER_BUTTON_IDS = [ 'search-submit', 'post-query-submit' ];
-
 					if ( FILTER_BUTTON_IDS.includes( button.id ) ) {
 						this.trackControl( button, CONTROL_TYPES.FILTER );
 						return;
 					}
+
 					this.trackControl( button, CONTROL_TYPES.BUTTON );
 					return;
 				}

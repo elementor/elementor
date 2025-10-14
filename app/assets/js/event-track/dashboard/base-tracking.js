@@ -1,8 +1,17 @@
 class BaseTracking {
-	static observers = [];
-	static eventListeners = [];
+	static ensureOwnArrays() {
+		if ( ! Object.prototype.hasOwnProperty.call( this, 'observers' ) ) {
+			this.observers = [];
+		}
+
+		if ( ! Object.prototype.hasOwnProperty.call( this, 'eventListeners' ) ) {
+			this.eventListeners = [];
+		}
+	}
 
 	static destroy() {
+		this.ensureOwnArrays();
+
 		this.observers.forEach( ( observer ) => observer.disconnect() );
 		this.observers = [];
 
@@ -13,6 +22,8 @@ class BaseTracking {
 	}
 
 	static addObserver( target, options, callback ) {
+		this.ensureOwnArrays();
+
 		const observer = new MutationObserver( callback );
 		observer.observe( target, options );
 		this.observers.push( observer );
@@ -20,6 +31,8 @@ class BaseTracking {
 	}
 
 	static addEventListenerTracked( target, type, handler, options = {} ) {
+		this.ensureOwnArrays();
+
 		target.addEventListener( type, handler, options );
 		this.eventListeners.push( { target, type, handler, options } );
 	}
