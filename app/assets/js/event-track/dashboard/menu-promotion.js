@@ -2,11 +2,6 @@ import WpDashboardTracking from '../wp-dashboard-tracking';
 
 const PROMO_MENU_ITEMS = {
 	go_elementor_pro: 'Upgrade',
-	elementor_custom_fonts: 'Custom Fonts',
-	elementor_custom_icons: 'Custom Icons',
-	elementor_custom_code: 'Custom Code',
-	popup_templates: 'Popups',
-	'e-form-submissions': 'Form Submissions',
 };
 
 class MenuPromotionTracking {

@@ -20,9 +20,7 @@ class ScreenViewTracking {
 	static trackedScreens = new Set();
 
 	static init() {
-		console.log( 'ScreenViewTracking init' );
 		if ( ! DashboardUtils.isElementorPage() ) {
-			console.log( 'not elementor page' );
 			return;
 		}
 
