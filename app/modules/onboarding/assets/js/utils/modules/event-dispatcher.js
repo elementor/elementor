@@ -1,4 +1,3 @@
-import StorageManager, { ONBOARDING_STORAGE_KEYS } from './storage-manager.js';
 
 export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
@@ -65,42 +64,6 @@ export function dispatchIfAllowed( eventName, payload = {} ) {
 		return dispatch( eventName, payload );
 	}
 	return false;
-}
-
-function getExperimentConfigs() {
-	return {
-		101: {
-			variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT,
-			enabledKey: 'isExperiment101Enabled',
-			minStep: 1,
-		},
-		201: {
-			variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
-			enabledKey: 'isExperiment201Enabled',
-			minStep: 2,
-		},
-		402: {
-			variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT,
-			enabledKey: 'isExperiment402Enabled',
-			minStep: 4,
-		},
-	};
-}
-
-function getExperimentVariant( experimentId ) {
-	const config = getExperimentConfigs()[ experimentId ];
-	if ( ! config ) {
-		return null;
-	}
-	return StorageManager.getString( config.variantKey ) || null;
-}
-
-function isExperimentEnabled( experimentId ) {
-	const config = getExperimentConfigs()[ experimentId ];
-	if ( ! config ) {
-		return false;
-	}
-	return elementorAppConfig?.onboarding?.[ config.enabledKey ] || false;
 }
 
 export function createEventPayload( basePayload = {} ) {
