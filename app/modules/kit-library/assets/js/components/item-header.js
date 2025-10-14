@@ -26,7 +26,7 @@ import './item-header.scss';
  * @param {Function} root0.onConnect
  * @param {Function} root0.onClick
  * @param {boolean}  root0.isApplyLoading
- * @param            root0.onUpgrade
+ * @param {Function} root0.onUpgrade
  * @return {Object} result
  */
 function useKitCallToActionButton(
