@@ -60,10 +60,7 @@ export default function QuotaBar( { used = 0, total = 15, unit = 'GB', label = '
 
 	const getUsageText = () => {
 		const state = getUsageState();
-		if ( 'warning' === state ) {
-			return `${ label }: ${ Math.round( usagePercentage ) }%`;
-		}
-		if ( 'alert' === state ) {
+		if ( 'warning' === state || 'alert' === state ) {
 			return `${ label }: ${ Math.round( usagePercentage ) }%`;
 		}
 		return label;
