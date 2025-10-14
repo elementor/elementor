@@ -15,7 +15,7 @@ export const ONBOARDING_EVENTS_MAP = {
 	POST_ONBOARDING_1ST_CLICK: 'post_onboarding_1st_click',
 	POST_ONBOARDING_2ND_CLICK: 'post_onboarding_2nd_click',
 	POST_ONBOARDING_3RD_CLICK: 'post_onboarding_3rd_click',
-	EXIT_BUTTON: 'core_onboarding_exit_button',
+	EXIT: 'core_onboarding_exit',
 	SKIP: 'core_onboarding_skip',
 	TOP_UPGRADE: 'core_onboarding_top_upgrade',
 	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
@@ -109,7 +109,6 @@ function isExperimentEnabled( experimentId ) {
 export function createEventPayload( basePayload = {} ) {
 	return {
 		location: 'plugin_onboarding',
-		trigger: 'user_action',
 		...basePayload,
 	};
 }
@@ -135,7 +134,6 @@ export function createStepEventPayload( stepNumber, stepName, additionalData = {
 export function createEditorEventPayload( additionalData = {} ) {
 	const basePayload = {
 		location: 'editor',
-		trigger: 'elementor_loaded',
 		...additionalData,
 	};
 
@@ -175,6 +173,22 @@ export function getClickEventName( clickCount ) {
 	return eventMap[ clickCount ] || null;
 }
 
+export function formatClickAction( title, selector ) {
+	if ( ! title && ! selector ) {
+		return '';
+	}
+
+	if ( ! title ) {
+		return selector;
+	}
+
+	if ( ! selector ) {
+		return title;
+	}
+
+	return `${ title } / ${ selector }`;
+}
+
 export function dispatchClickEvent( clickCount, clickData, siteStarterChoice = null ) {
 	const eventName = getClickEventName( clickCount );
 	if ( ! eventName ) {
@@ -186,8 +200,8 @@ export function dispatchClickEvent( clickCount, clickData, siteStarterChoice = n
 		editor_loaded_from_onboarding_source: siteStarterChoice,
 	} );
 
-	eventData[ `post_onboarding_${ clickNumber }_click_action_title` ] = clickData.title;
-	eventData[ `post_onboarding_${ clickNumber }_click_action_selector` ] = clickData.selector;
+	const formattedAction = formatClickAction( clickData.title, clickData.selector );
+	eventData[ `post_onboarding_${ clickNumber }_click_action` ] = formattedAction;
 
 	return dispatch( eventName, eventData );
 }
