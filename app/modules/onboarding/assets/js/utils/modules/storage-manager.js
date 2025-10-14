@@ -31,6 +31,10 @@ export const ONBOARDING_STORAGE_KEYS = {
 	EXPERIMENT402_VARIANT: 'elementor_onboarding_experiment402_variant',
 	EXPERIMENT402_STARTED: 'elementor_onboarding_experiment402_started',
 	PENDING_EXPERIMENT_DATA: 'elementor_onboarding_pending_experiment_data',
+	STEP1_END_STATE_SENT: 'step1_end_state_sent',
+	STEP2_END_STATE_SENT: 'step2_end_state_sent',
+	STEP3_END_STATE_SENT: 'step3_end_state_sent',
+	STEP4_END_STATE_SENT: 'step4_end_state_sent',
 };
 
 export function getString( key ) {
@@ -147,10 +151,12 @@ export function clearAllOnboardingData() {
 	for ( let i = 1; i <= 4; i++ ) {
 		const clickDataKey = `elementor_onboarding_click_${ i }_data`;
 		remove( clickDataKey );
-
-		const endStateSentKey = `step${ i }_end_state_sent`;
-		remove( endStateSentKey );
 	}
+
+	remove( ONBOARDING_STORAGE_KEYS.STEP1_END_STATE_SENT );
+	remove( ONBOARDING_STORAGE_KEYS.STEP2_END_STATE_SENT );
+	remove( ONBOARDING_STORAGE_KEYS.STEP3_END_STATE_SENT );
+	remove( ONBOARDING_STORAGE_KEYS.STEP4_END_STATE_SENT );
 }
 
 export function clearExperimentData() {
