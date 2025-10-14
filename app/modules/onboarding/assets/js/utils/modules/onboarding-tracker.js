@@ -1100,7 +1100,7 @@ class OnboardingTracker {
 				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_STARTED,
 			},
 			201: {
-				name: '201 - Offer theme choices: hello, biz',
+				name: '201exp',
 				enabledKey: 'isExperiment201Enabled',
 				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
 				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED,
