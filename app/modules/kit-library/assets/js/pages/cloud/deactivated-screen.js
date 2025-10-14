@@ -39,7 +39,7 @@ export default function DeactivatedScreen( {
 							{ __( 'Your library has been deactivated', 'elementor' ) }
 						</Heading>
 						<Text variant="xl" className="e-kit-library__error-screen-description">
-							{ __( 'Your subscription is currently deactivate, but you still have a 90 day window to keep all your templates safe. Upgrade within this time to continue enjoying them without interruption.', 'elementor' ) }
+							{ __( 'Your subscription is currently deactivated, but you still have a 90 day window to keep all your templates safe. Upgrade within this time to continue enjoying them without interruption.', 'elementor' ) }
 						</Text>
 						<Button
 							text={ __( 'Upgrade now', 'elementor' ) }
