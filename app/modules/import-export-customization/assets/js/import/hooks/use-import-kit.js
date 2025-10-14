@@ -72,7 +72,7 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 			const endTime = Date.now();
 			const millisecondsToSeconds = 1000;
 			const importDuration = ( endTime - startTime ) / millisecondsToSeconds;
-			setDuration( importDuration );
+			setDuration( Number(importDuration.toFixed(2)) );
 		}
 
 		setImportStatus( IMPORT_PROCESSING_STATUS.DONE );
