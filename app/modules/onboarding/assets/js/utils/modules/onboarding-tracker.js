@@ -499,8 +499,9 @@ class OnboardingTracker {
 			const returnEventPayload = this.createReturnEventPayloadFromStoredData( choiceData );
 			this.dispatchEventWithoutTrigger( ONBOARDING_EVENTS_MAP.STEP4_RETURN_STEP4, returnEventPayload );
 			this.markReturnEventAsSent( choiceData );
-			this.resetStep4EndStateTracking();
 		}
+
+		this.resetStep4EndStateTracking();
 	}
 
 	resetStep4EndStateTracking() {
