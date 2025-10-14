@@ -503,6 +503,18 @@ class OnboardingTracker {
 		}
 	}
 
+	resetStep4EndStateTracking() {
+		const STEP4_NUMBER = 4;
+		const endStateSentKey = `step${ STEP4_NUMBER }_end_state_sent`;
+		StorageManager.remove( endStateSentKey );
+		StorageManager.remove( ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS );
+
+		this.trackStepAction( STEP4_NUMBER, 'returned_to_step4', {
+			return_detected: true,
+			timestamp: TimingManager.getCurrentTime(),
+		} );
+	}
+
 	shouldSendReturnEvent( choiceData ) {
 		return ! choiceData.return_event_sent &&
 			choiceData.original_choice &&
@@ -526,14 +538,6 @@ class OnboardingTracker {
 	markReturnEventAsSent( choiceData ) {
 		choiceData.return_event_sent = true;
 		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE, choiceData );
-	}
-
-	resetStep4EndStateTracking() {
-		const STEP4_NUMBER = 4;
-		const endStateSentKey = `step${ STEP4_NUMBER }_end_state_sent`;
-
-		StorageManager.remove( endStateSentKey );
-		StorageManager.remove( ONBOARDING_STORAGE_KEYS.STEP4_ACTIONS );
 	}
 
 	handleSiteStarterChoice( siteStarter ) {
