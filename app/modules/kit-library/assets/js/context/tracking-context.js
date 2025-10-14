@@ -11,7 +11,7 @@ export const TrackingProvider = ( { children } ) => {
 		const urlParams = new URLSearchParams( window.location.search );
 		const source = urlParams.get( 'source' ) || 'direct';
 		tracking.trackKitlibOpened( source );
-	} );
+	}, [] );
 
 	return (
 		<TrackingContext.Provider value={ tracking }>
