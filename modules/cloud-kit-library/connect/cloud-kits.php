@@ -43,18 +43,6 @@ class Cloud_Kits extends Library {
 			return new \WP_Error( 'not_connected', esc_html__( 'Not connected', 'elementor' ) );
 		}
 
-		return [
-			'threshold' => 100,
-			'currentUsage' => 10,
-			'subscriptionId' => '1234567890',
-			'storage' => [
-				'threshold' => 16106127360,
-				'currentUsage' => 16106127360, // 12884901888, 16106127360
-				'unit' => 'B',
-				'subscriptionId' => '1234567890',
-			],
-		];
-
 		return $this->http_request( 'GET', 'quota/kits', [], [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
