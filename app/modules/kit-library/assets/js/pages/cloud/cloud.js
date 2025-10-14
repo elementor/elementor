@@ -15,10 +15,12 @@ import useConnectState from '../../hooks/use-connect-state';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { Grid } from '@elementor/app-ui';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
+import { isCloudKitsDeactivated } from '../../utils';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import ConnectScreen from './connect-screen';
 import UpgradeScreen from './upgrade-screen';
+import DeactivatedScreen from './deactivated-screen';
 import FullPageLoader from './full-page-loader';
 
 import '../index/index.scss';
@@ -55,6 +57,7 @@ export default function Cloud( {
 	} );
 
 	const isCloudKitsAvailable = cloudKitsData?.is_eligible || false;
+	const isDeactivated = quotaData && isCloudKitsDeactivated( quotaData );
 
 	const exportUrl = elementorCommon?.config?.experimentalFeatures?.[ 'import-export-customization' ] ? elementorAppConfig.base_url + '#/export-customization' : elementorAppConfig.base_url + '#/export';
 
@@ -97,6 +100,16 @@ export default function Cloud( {
 	if ( shouldShowLoading ) {
 		return (
 			<FullPageLoader
+				menuItems={ menuItems }
+				forceRefetch={ forceRefetch }
+				isFetching={ isFetching }
+			/>
+		);
+	}
+
+	if ( isDeactivated && ! shouldShowLoading ) {
+		return (
+			<DeactivatedScreen
 				menuItems={ menuItems }
 				forceRefetch={ forceRefetch }
 				isFetching={ isFetching }
