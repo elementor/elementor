@@ -40,6 +40,8 @@ class Process_Media extends Base_Route {
 			$media_collector = new \Elementor\TemplateLibrary\Classes\Media_Collector();
 			$zip_path = $media_collector->process_media_collection( $media_urls );
 
+			$cloud_kit_library_app->validate_storage_quota( filesize( $zip_path ) );
+
 			if ( ! $zip_path ) {
 				throw new \Error( 'Failed to process media' );
 			}
@@ -68,6 +70,10 @@ class Process_Media extends Base_Route {
 
 			if ( $module->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
 				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
+			}
+
+			if ( $e->getMessage() === $cloud_kit_library_app::INSUFFICIENT_STORAGE_QUOTA ) {
+				return Response::error( $cloud_kit_library_app::INSUFFICIENT_STORAGE_QUOTA, $e->getMessage() );
 			}
 
 			return Response::error( ImportExportCustomizationModule::MEDIA_PROCESSING_ERROR, $e->getMessage() );
