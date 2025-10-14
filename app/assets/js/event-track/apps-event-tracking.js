@@ -87,7 +87,7 @@ export class AppsEventTracking {
 	static sendKitImportStatus( error = null, id = '', title = '', duration = '' ) {
 		const isError = !! error;
 		if ( isError ) {
-			this.dispatchEvent( EVENTS_MAP.KIT_IMPORT_FAILED, {
+			this.dispatchEvent( EVENTS_MAP.KITDEMO_APPLY_FAILED, {
 				error_title: error.message,
 				kit_id: id,
 				kit_title: title,
