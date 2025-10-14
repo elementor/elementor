@@ -7,12 +7,11 @@ const TrackingContext = createContext();
 export const TrackingProvider = ( { children } ) => {
 	const tracking = useKitLibraryTracking();
 
-	// Track library opened when the provider mounts
 	useEffect( () => {
 		const urlParams = new URLSearchParams( window.location.search );
 		const source = urlParams.get( 'source' ) || 'direct';
 		tracking.trackKitlibOpened( source );
-	}, [] );
+	} );
 
 	return (
 		<TrackingContext.Provider value={ tracking }>

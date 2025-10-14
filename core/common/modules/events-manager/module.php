@@ -28,7 +28,7 @@ class Module extends BaseModule {
 			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 
 		$settings = [
-			'can_send_events' => $can_send_events,
+			'can_send_events' => true,
 			'elementor_version' => ELEMENTOR_VERSION,
 			'site_url' => hash( 'sha256', get_site_url() ),
 			'wp_version' => get_bloginfo( 'version' ),

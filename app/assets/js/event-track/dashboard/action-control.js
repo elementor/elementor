@@ -6,6 +6,9 @@ const EXCLUDED_SELECTORS = {
 	TOP_BAR: '.e-admin-top-bar',
 	WP_ADMIN_BAR: '#wpadminbar',
 	SUBMENU: '.wp-submenu',
+	PROMO_PAGE: '.e-feature-promotion',
+	PROMO_BLANK_STATE: '.elementor-blank_state',
+	HOME_SCREEN: '#e-home-screen',
 };
 
 class ActionControlTracking {
@@ -24,6 +27,10 @@ class ActionControlTracking {
 			}
 		}
 
+		if ( element.classList.contains( 'go-pro' ) ) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -36,6 +43,12 @@ class ActionControlTracking {
 
 			const button = base.closest( 'button, input[type="submit"], input[type="button"], .button, .e-btn' );
 			if ( button && ! this.isExcludedElement( button ) ) {
+				const FILTER_BUTTON_IDS = [ 'search-submit', 'post-query-submit' ];
+
+				if ( FILTER_BUTTON_IDS.includes( button.id ) ) {
+					this.trackControl( button, CONTROL_TYPES.FILTER );
+					return;
+				}
 				this.trackControl( button, CONTROL_TYPES.BUTTON );
 				return;
 			}
@@ -52,7 +65,7 @@ class ActionControlTracking {
 				return;
 			}
 
-			const toggle = base.closest( '.elementor-control-type-switcher input, [role="switch"], .toggle-control input' );
+			const toggle = base.closest( '.components-form-toggle, .elementor-control-type-switcher input, [role="switch"], .toggle-control input' );
 			if ( toggle && ! this.isExcludedElement( toggle ) ) {
 				this.trackControl( toggle, CONTROL_TYPES.TOGGLE );
 				return;
