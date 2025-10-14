@@ -40,9 +40,28 @@ Apply to widget directly. Don't create a class.
 
 # Flatten Nested CSS Classes - PRD
 
-**Version**: 1.0  
-**Status**: Draft - Awaiting Clarification  
-**Last Updated**: 2025-10-13  
+**Version**: 1.1  
+**Status**: ✅ **Ready for Implementation** - Prerequisites Complete  
+**Last Updated**: 2025-10-14  
+
+---
+
+## ✅ **PREREQUISITES COMPLETED**
+
+### **Global Class Handling Architecture**
+**Status**: ✅ **COMPLETED - SUCCESS** (2025-10-14)
+
+The global class system foundation has been successfully implemented:
+
+1. ✅ **Widget Creator Integration**: Global classes correctly applied to widgets
+2. ✅ **CSS Generation**: Classes stored in Kit meta AND CSS generated properly  
+3. ✅ **Atomic Format**: Proper atomic property format using `String_Prop_Type`, `Size_Prop_Type`, etc.
+4. ✅ **Dual-Format Architecture**: Simple format for widget creator, atomic format for Kit storage
+
+**Verification**: Playwright test `class-based-properties.test.ts` passing  
+**Files**: `PRD-GLOBAL-CLASS-HANDLING-UNIFIED-SERVICE.md` (completed)
+
+**✅ READY**: Can now proceed with nested class flattening implementation
 
 ---
 
@@ -63,6 +82,15 @@ This document defines requirements for converting nested CSS selectors into flat
 
 ## 📐 Conversion Patterns
 
+### **🎯 Updated Flattening Logic: Context-First Naming**
+
+| Original Selector | Flattened (context-first) | Notes |
+|---|---|---|
+| `.first .second .third` | `.third--first-second` | Core pattern |
+| `.first > .second .third` | `.third--first-second` | Direct-child doesn't change naming |
+| `.first .second .third h1` | `.h1--first-second-third` | The styled element is h1 |
+| `.first .second .third h1.title` | `.title--first-second-third` | Use class name, not tag, as base |
+
 ### Pattern 1: Descendant Selector (Space)
 **CSS Input**:
 ```css
@@ -71,11 +99,11 @@ This document defines requirements for converting nested CSS selectors into flat
 
 **Convert to**:
 ```css
-.second-first
+.second--first
 ```
 (as one class)
 
-**Rule**: Last class name appears first in generated name
+**Rule**: Target element first, context after double-dash separator
 
 **Questions**:
 - Why last-first ordering? (Technical requirement or convention?)
@@ -95,10 +123,10 @@ HVV: convention. Not configurable.
 
 **Convert to**:
 ```css
-.second-first
+.second--first
 ```
 
-**Rule**: Identical to descendant selector output
+**Rule**: Identical to descendant selector output, direct-child doesn't change naming
 
 **Questions**:
 - Should we preserve semantic difference between descendant (space) and child (>) selectors?
@@ -118,10 +146,10 @@ HVV: No difference. No metadata. Specificity: very important. I believe we can h
 
 **Convert to**:
 ```css
-.third-first-second
+.third--first-second
 ```
 
-**Rule**: The last class always first
+**Rule**: Target class first, context classes after double-dash
 
 **Questions**:
 - What's the maximum chain depth to support?
@@ -138,15 +166,15 @@ HVV: Maximum chain: let's say 3 levels. If more levels: apply style to the widge
 ### Pattern 4: Classes with Pseudo-Elements
 **CSS Input**:
 ```css
-.first > .second .third::first-class
+.first > .second .third::first-line
 ```
 
 **Convert to**:
 ```css
-.third-first-second::first-class
+.third--first-second::first-line
 ```
 
-**Rule**: Flatten classes, preserve pseudo-element
+**Rule**: Flatten classes with context-first naming, preserve pseudo-element
 
 **Note**: Study if you can create pseudo classes. > Alternatively add as a research question to `5-PSEUDO-ELEMENTS.md`
 
@@ -187,10 +215,10 @@ HVV: Let's keep this as a separate task.
 
 **Convert to**:
 ```css
-.h1-second-first
+.h1--first-second
 ```
 
-**Rule**: The last property and class always first
+**Rule**: Element becomes target, context classes after double-dash
 
 **Questions**:
 - Should element names always be included in class names? HVV: Yes.
@@ -202,7 +230,27 @@ HVV: Let's keep this as a separate task.
 
 ---
 
-### Pattern 6: Multiple Element Chain
+### Pattern 6: Mixed Element and Class Selectors
+**CSS Input**:
+```css
+.first .second .third h1.title
+```
+
+**Convert to**:
+```css
+.title--first-second-third
+```
+
+**Rule**: Class name takes precedence over element tag as target
+
+**Questions**:
+- Should class always take precedence over element? HVV: Yes.
+- How do we handle multiple classes on the same element? HVV: Use the last class as target.
+- What about element with ID and class? HVV: Class takes precedence.
+
+---
+
+### Pattern 7: Multiple Element Chain
 **CSS Input**:
 ```css
 .first > .second h1 p
@@ -670,14 +718,15 @@ Pattern 4 requires pseudo-element support but marked as "study if you can create
 
 | # | Input | Output | Status | Blocker? |
 |---|-------|--------|--------|----------|
-| 1 | `.first .second` | `.second-first` | ✅ Defined | No |
-| 2 | `.first > .second` | `.second-first` | ✅ Defined | No |
-| 3 | `.first > .second .third` | `.third-first-second` | ✅ Defined | No |
-| 4 | `.first > .second .third::first-class` | `.third-first-second::first-class` | ⚠️ Research | Maybe |
-| 5 | `.first > .second h1` | `.h1-second-first` | ✅ Defined | No |
-| 6 | `.first > .second h1 p` | Direct Application | ❌ Unclear | **YES** |
-| 7 | `.first > .second #abc` | Direct Application | ❌ Unclear | **YES** |
-| 8 | `.first > .second #abc p` | Direct Application | ❌ Unclear | **YES** |
+| 1 | `.first .second` | `.second--first` | ✅ Defined | No |
+| 2 | `.first > .second` | `.second--first` | ✅ Defined | No |
+| 3 | `.first > .second .third` | `.third--first-second` | ✅ Defined | No |
+| 4 | `.first > .second .third::first-line` | `.third--first-second::first-line` | ⚠️ Research | Maybe |
+| 5 | `.first > .second h1` | `.h1--first-second` | ✅ Defined | No |
+| 6 | `.first .second .third h1.title` | `.title--first-second-third` | ✅ Defined | No |
+| 7 | `.first > .second h1 p` | Direct Application | ❌ Unclear | **YES** |
+| 8 | `.first > .second #abc` | Direct Application | ❌ Unclear | **YES** |
+| 9 | `.first > .second #abc p` | Direct Application | ❌ Unclear | **YES** |
 
 ---
 
@@ -712,6 +761,78 @@ Pattern 4 requires pseudo-element support but marked as "study if you can create
 6. **Direct application**: Study docs - apply as global classes or widget styles ✅
 7. **Atomic widgets**: Don't support nested classes ✅
 8. **Implementation**: Works same as unnested classes ✅
+
+### 🎯 **HTML MODIFICATION REQUIREMENTS** (Critical Update):
+
+#### **Core Principle**: 
+- **Global classes are created** with flattened names (e.g., `.second--first`)
+- **HTML class names are CHANGED** to flattened names
+- **Class attributes are REMOVED** from elements if they have no styles
+- **HTML elements are NEVER REMOVED** - only class attributes
+- **HTML structure is PRESERVED** - only classes change
+
+#### **Example Flow**:
+**Input HTML + CSS**:
+```html
+<div class="first">
+  <p class="second">Test Content</p>
+</div>
+
+<style>
+.first .second { color: red; font-size: 16px; }
+</style>
+```
+
+**Expected Output**:
+```html
+<div>  <!-- Element kept, .first class REMOVED (no styles) -->
+  <p class="second--first">Test Content</p>  <!-- Class name CHANGED -->
+</div>
+```
+
+**Generated Global Class**:
+```css
+.elementor .second--first {  /* NOT .g-second--first */
+  color: red;
+  font-size: 16px;
+}
+```
+
+#### **Class Attribute Rules**:
+1. **If wrapper has styles** (e.g., `.first { color: red; }`):
+   - **Keep wrapper element** in HTML
+   - **Keep the class** on the wrapper: `class="first"`
+   - Example: `<div class="first"><p class="second--first">...</p></div>`
+
+2. **If wrapper has NO styles** (e.g., only `.first .second` exists):
+   - **Keep wrapper element** in HTML
+   - **Remove the class attribute** from wrapper
+   - Example: `<div><p class="second--first">...</p></div>`
+
+3. **If wrapper exists only for nesting** (no CSS at all):
+   - **Keep wrapper element** in HTML
+   - **Remove all class attributes** that have no styles
+   - Example: `<div><p class="second--first">...</p></div>`
+
+#### **Critical Rules**:
+- ✅ **ALWAYS keep HTML elements** - never remove `<div>`, `<p>`, etc.
+- ✅ **ONLY remove class attributes** if the class has no CSS rules
+- ✅ **Global class names are the flattened names** (e.g., `.second--first`, NOT `.g-second--first`)
+- ✅ **HTML structure is preserved** - only class names change
+
+#### **Implementation Requirements**:
+- [x] Global class creation ✅ WORKING
+- [x] CSS rule flattening ✅ WORKING  
+- [x] Original nested rule skipping ✅ WORKING
+- [ ] **HTML class name modification** ❌ NOT IMPLEMENTED
+- [ ] **Wrapper element removal** ❌ NOT IMPLEMENTED
+- [ ] **Widget class attribute updates** ❌ NOT IMPLEMENTED
+
+#### **Where to Implement**:
+1. **Widget Mapper**: Modify `map_element()` to apply flattened class names
+2. **HTML Parser**: Add logic to detect and remove empty wrapper elements
+3. **Unified CSS Processor**: Pass flattened class mapping to widget mapper
+4. **Widget Creation**: Ensure widgets receive flattened class names
 
 ### 📚 Module Context Understanding:
 
@@ -1680,13 +1801,14 @@ return $sorted_items;
    - Implement Pattern 4 if feasible
    - Update `5-PSEUDO-ELEMENTS.md` with findings
 
-#### **🔴 CRITICAL DEPENDENCY (Phase 3)**
+#### **✅ COMPLETED (Phase 3)**
 
-7. **Fix Atomic_Global_Styles** ⚠️ **REQUIRED FOR FLATTENING**
-   - Make it actually use the order array when fetching items
-   - Ensure CSS generation respects specificity order
-   - Test that later classes override earlier ones
-   - **WITHOUT THIS FIX**: Flattening will break CSS cascade!
+7. **Fix Atomic_Global_Styles** ✅ **COMPLETED**
+   - ✅ Added `get_items_sorted_by_order()` method to `Global_Classes`
+   - ✅ Updated `register_styles()` to use sorted method
+   - ✅ Updated `transform_classes_names()` to use sorted method
+   - ✅ CSS generation now respects user drag-and-drop order
+   - ✅ **FOUNDATION READY**: Flattening can now preserve CSS cascade!
 
 8. **Comprehensive Testing** ⏳
    - Visual regression tests
@@ -1727,10 +1849,10 @@ return $sorted_items;
 
 ### 🎯 **Immediate Next Steps**
 
-1. **🚨 CRITICAL DECISION**: Choose implementation approach:
-   - **Option A**: Fix `Atomic_Global_Styles` order array issue FIRST, then add flattening
-   - **Option B**: Implement both fixes together (more complex)
-   - **Option C**: Implement flattening without order fix (❌ **NOT RECOMMENDED** - breaks CSS cascade)
+1. **✅ FOUNDATION COMPLETE**: Order array issue has been fixed!
+   - **✅ COMPLETED**: `Atomic_Global_Styles` now respects order array
+   - **✅ READY**: Solid foundation for nested class flattening
+   - **🎯 NEXT**: Implement nested class flattening with specificity preservation
 
 2. **Understand Impact**: The order array bug affects **existing global classes UI**:
    - Users can drag-and-drop classes but it has NO effect
@@ -1745,11 +1867,11 @@ return $sorted_items;
    - **If Option A**: Start with `Atomic_Global_Styles` fix, then add flattening
    - **If Option B**: Design both fixes together, implement as one feature
 
-### 🚨 **CRITICAL INSIGHT**
+### ✅ **CRITICAL ISSUE RESOLVED**
 
-**We discovered a major bug**: The global classes drag-and-drop UI is **completely broken** because `Atomic_Global_Styles` ignores the order array. This affects **all existing users** of global classes, not just our nested flattening feature.
+**We discovered and FIXED a major bug**: The global classes drag-and-drop UI was **completely broken** because `Atomic_Global_Styles` ignored the order array. This affected **all existing users** of global classes, not just our nested flattening feature.
 
-**Recommendation**: Fix the order array issue **first** as it's a standalone bug that improves the existing user experience, then add nested flattening on top of the working foundation.
+**✅ FIXED**: Order array issue has been resolved! The drag-and-drop functionality now works correctly, providing a solid foundation for nested flattening.
 
 ---
 

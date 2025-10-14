@@ -12,6 +12,8 @@ class Unified_Css_Processor {
 	private $specificity_calculator;
 	private $unified_style_manager;
 	private $reset_style_detector;
+	private $flattening_service;
+	private $html_class_modifier;
 
 	public function __construct(
 		$css_parser,
@@ -26,12 +28,66 @@ class Unified_Css_Processor {
 			$property_converter
 		);
 		$this->reset_style_detector = new Reset_Style_Detector( $specificity_calculator );
+		$this->initialize_flattening_service();
+		$this->initialize_html_class_modifier();
+	}
+
+	private function initialize_flattening_service(): void {
+		require_once __DIR__ . '/../nested-selector-parser.php';
+		require_once __DIR__ . '/../flattened-class-name-generator.php';
+		require_once __DIR__ . '/../nested-selector-flattening-service.php';
+		
+		$this->flattening_service = new \Elementor\Modules\CssConverter\Services\Css\Nested_Selector_Flattening_Service();
+	}
+
+	private function initialize_html_class_modifier(): void {
+		require_once __DIR__ . '/../css-class-usage-tracker.php';
+		require_once __DIR__ . '/../nested-class-mapping-service.php';
+		require_once __DIR__ . '/../html-class-modifier-service.php';
+		
+		$this->html_class_modifier = new \Elementor\Modules\CssConverter\Services\Css\Html_Class_Modifier_Service();
 	}
 
 	public function process_css_and_widgets( string $css, array $widgets ): array {
 
-		$this->collect_all_styles_from_sources( $css, $widgets );
-		$resolved_widgets = $this->resolve_styles_recursively( $widgets );
+		// ═══════════════════════════════════════════════════════════
+		// PASS 1: CSS ANALYSIS & FLATTENING
+		// ═══════════════════════════════════════════════════════════
+		
+		// Step 1.1: Parse CSS rules
+		$css_rules = $this->parse_css_and_extract_rules( $css );
+		
+		// Step 1.2: Flatten ALL nested selectors FIRST
+		$flattening_results = $this->flatten_all_nested_selectors( $css_rules );
+		
+		// Step 1.3: Initialize HTML modifier with complete flattening data
+		$this->html_class_modifier->initialize_with_flattening_results(
+			$flattening_results['class_mappings'],
+			$flattening_results['classes_with_direct_styles'],
+			$flattening_results['classes_only_in_nested']
+		);
+		
+		// ═══════════════════════════════════════════════════════════
+		// PASS 2: HTML MODIFICATION & STYLE RESOLUTION
+		// ═══════════════════════════════════════════════════════════
+		
+		// Step 2.1: Apply HTML class modifications to ALL widgets (including nested ones)
+		$widgets_with_modified_classes = $this->apply_html_class_modifications( $widgets );
+		
+		// Step 2.2: Process styles using flattened rules
+		$this->collect_all_styles_from_sources_with_flattened_rules( 
+			$css, 
+			$widgets_with_modified_classes,
+			$flattening_results['flattened_rules']
+		);
+		
+		// Step 2.3: Resolve styles recursively
+		$resolved_widgets = $this->resolve_styles_recursively( $widgets_with_modified_classes );
+		
+		// ═══════════════════════════════════════════════════════════
+		// PASS 3: PREPARE OUTPUT
+		// ═══════════════════════════════════════════════════════════
+		
 		$debug_info = $this->unified_style_manager->get_debug_info();
 		$css_class_rules = $this->extract_css_class_rules_for_global_classes( $css );
 
@@ -39,13 +95,20 @@ class Unified_Css_Processor {
 		$reset_styles_stats = $this->unified_style_manager->get_reset_styles_stats();
 		$complex_reset_styles = $this->unified_style_manager->get_complex_reset_styles();
 
+		// Get HTML class modification summary
+		$html_modification_summary = $this->html_class_modifier->get_modification_summary();
+
+
 		return [
 			'widgets' => $resolved_widgets,
 			'stats' => $debug_info,
 			'css_class_rules' => $css_class_rules,
+			'flattened_classes' => $flattening_results['flattened_classes'],
+			'flattened_classes_count' => count( $flattening_results['flattened_classes'] ),
 			'reset_styles_detected' => $reset_styles_stats['reset_element_styles'] > 0 || $reset_styles_stats['reset_complex_styles'] > 0,
 			'reset_styles_stats' => $reset_styles_stats,
 			'complex_reset_styles' => $complex_reset_styles,
+			'html_class_modifications' => $html_modification_summary,
 		];
 	}
 
@@ -55,6 +118,34 @@ class Unified_Css_Processor {
 		$this->collect_inline_styles_from_widgets( $widgets );
 		$this->collect_id_styles_from_widgets( $widgets );
 		$this->collect_reset_styles( $css, $widgets );
+	}
+
+	private function collect_all_styles_from_sources_with_flattened_rules( 
+		string $css, 
+		array $widgets, 
+		array $flattened_rules 
+	): void {
+		$this->unified_style_manager->reset();
+		$this->collect_css_styles_from_flattened_rules( $flattened_rules, $widgets );
+		$this->collect_inline_styles_from_widgets( $widgets );
+		$this->collect_id_styles_from_widgets( $widgets );
+		$this->collect_reset_styles( $css, $widgets );
+	}
+
+	private function collect_css_styles_from_flattened_rules( array $flattened_rules, array $widgets ): void {
+		if ( empty( $flattened_rules ) ) {
+			return;
+		}
+
+		$this->log_css_parsing_start_from_rules( $flattened_rules, $widgets );
+
+		$this->analyze_and_apply_direct_element_styles( $flattened_rules, $widgets );
+
+		$this->process_css_rules_for_widgets( $flattened_rules, $widgets );
+	}
+
+	private function log_css_parsing_start_from_rules( array $rules, array $widgets ): void {
+		// Skip debug logging for performance
 	}
 
 	private function collect_css_styles( string $css, array $widgets ) {
@@ -223,13 +314,48 @@ class Unified_Css_Processor {
 				continue;
 			}
 
-			$matched_elements = $this->find_matching_widgets( $selector, $widgets );
-			$this->log_matched_elements( $selector, $matched_elements );
+			// Apply nested selector flattening for Pattern 1
+			$processed_rule = $this->apply_nested_selector_flattening( $rule );
+			
+			// Skip processing original nested rules that have been flattened
+			if ( $this->rule_was_flattened( $rule, $processed_rule ) ) {
+				// Original nested rule has been flattened into a global class
+				// Skip processing to prevent duplicate CSS output
+				continue;
+			}
+			
+			$processed_selector = $processed_rule['selector'];
+			$processed_properties = $processed_rule['properties'];
+
+			$matched_elements = $this->find_matching_widgets( $processed_selector, $widgets );
+			$this->log_matched_elements( $processed_selector, $matched_elements );
 
 			if ( ! empty( $matched_elements ) ) {
-				$this->process_matched_rule( $selector, $properties, $matched_elements );
+				$this->process_matched_rule( $processed_selector, $processed_properties, $matched_elements );
 			}
 		}
+	}
+
+	private function apply_nested_selector_flattening( array $rule ): array {
+		$selector = $rule['selector'] ?? '';
+		
+		if ( $this->flattening_service->should_flatten_selector( $selector ) ) {
+			return $this->flattening_service->flatten_css_rule( $rule );
+		}
+		
+		return $rule;
+	}
+
+	private function rule_was_flattened( array $original_rule, array $processed_rule ): bool {
+		// Check if the rule was flattened by comparing selectors and flattened flag
+		$original_selector = $original_rule['selector'] ?? '';
+		$processed_selector = $processed_rule['selector'] ?? '';
+		$was_flattened = $processed_rule['flattened'] ?? false;
+		
+		// Rule was flattened if:
+		// 1. The flattened flag is set to true
+		// 2. The selector has changed (original nested vs flattened global class)
+		return $was_flattened && $original_selector !== $processed_selector;
 	}
 
 	private function log_rule_processing( string $selector, array $properties ): void {
@@ -983,4 +1109,232 @@ class Unified_Css_Processor {
 
 		return $css_class_rules;
 	}
+
+	private function apply_html_class_modifications( array $widgets ): array {
+		// Flatten the widget tree to get all widgets
+		$flattened_widgets = $this->flatten_widget_tree( $widgets );
+		
+		// Apply HTML modifications to all flattened widgets
+		$modified_flat_widgets = [];
+		foreach ( $flattened_widgets as $widget ) {
+			$modified_widget = $this->html_class_modifier->modify_element_classes( $widget );
+			$modified_flat_widgets[] = $modified_widget;
+		}
+		
+		// Reconstruct the original tree structure with modified widgets
+		return $this->reconstruct_widget_tree( $widgets, $modified_flat_widgets );
+	}
+
+	private function apply_html_class_modifications_recursively( array $element ): array {
+		// Modify classes for this element
+		$modified_element = $this->html_class_modifier->modify_element_classes( $element );
+		
+		// Recursively modify child elements
+		if ( isset( $modified_element['elements'] ) && is_array( $modified_element['elements'] ) ) {
+			$modified_children = [];
+			foreach ( $modified_element['elements'] as $child ) {
+				$modified_children[] = $this->apply_html_class_modifications_recursively( $child );
+			}
+			$modified_element['elements'] = $modified_children;
+		}
+		
+		return $modified_element;
+	}
+
+	private function flatten_widget_tree( array $widgets ): array {
+		$flattened_widgets = [];
+		
+		foreach ( $widgets as $widget ) {
+			$this->flatten_widget_recursively( $widget, $flattened_widgets );
+		}
+		
+		return $flattened_widgets;
+	}
+
+	private function flatten_widget_recursively( array $widget, array &$flattened_widgets ): void {
+		// Add the current widget to the flattened list
+		$flattened_widgets[] = $widget;
+		
+		// Recursively process child widgets if they exist
+		if ( isset( $widget['elements'] ) && is_array( $widget['elements'] ) ) {
+			foreach ( $widget['elements'] as $child_widget ) {
+				$this->flatten_widget_recursively( $child_widget, $flattened_widgets );
+			}
+		}
+		
+		// Also check for 'children' key (alternative structure)
+		if ( isset( $widget['children'] ) && is_array( $widget['children'] ) ) {
+			foreach ( $widget['children'] as $child_widget ) {
+				$this->flatten_widget_recursively( $child_widget, $flattened_widgets );
+			}
+		}
+	}
+
+	private function reconstruct_widget_tree( array $original_widgets, array $modified_flat_widgets ): array {
+		$widget_index = 0;
+		$reconstructed_widgets = [];
+		
+		foreach ( $original_widgets as $original_widget ) {
+			$reconstructed_widget = $this->reconstruct_widget_recursively( 
+				$original_widget, 
+				$modified_flat_widgets, 
+				$widget_index 
+			);
+			$reconstructed_widgets[] = $reconstructed_widget;
+		}
+		
+		return $reconstructed_widgets;
+	}
+
+	private function reconstruct_widget_recursively( array $original_widget, array $modified_flat_widgets, int &$widget_index ): array {
+		// Get the modified version of this widget
+		$modified_widget = $modified_flat_widgets[ $widget_index ] ?? $original_widget;
+		$widget_index++;
+		
+		// Reconstruct child widgets if they exist
+		if ( isset( $original_widget['elements'] ) && is_array( $original_widget['elements'] ) ) {
+			$modified_children = [];
+			foreach ( $original_widget['elements'] as $child_widget ) {
+				$modified_children[] = $this->reconstruct_widget_recursively( 
+					$child_widget, 
+					$modified_flat_widgets, 
+					$widget_index 
+				);
+			}
+			$modified_widget['elements'] = $modified_children;
+		}
+		
+		// Also handle 'children' key (alternative structure)
+		if ( isset( $original_widget['children'] ) && is_array( $original_widget['children'] ) ) {
+			$modified_children = [];
+			foreach ( $original_widget['children'] as $child_widget ) {
+				$modified_children[] = $this->reconstruct_widget_recursively( 
+					$child_widget, 
+					$modified_flat_widgets, 
+					$widget_index 
+				);
+			}
+			$modified_widget['children'] = $modified_children;
+		}
+		
+		return $modified_widget;
+	}
+
+	private function flatten_all_nested_selectors( array $css_rules ): array {
+		$flattened_rules = [];
+		$class_mappings = [];
+		$classes_with_direct_styles = [];
+		$classes_only_in_nested = [];
+		
+		foreach ( $css_rules as $rule ) {
+			$selector = $rule['selector'] ?? '';
+			
+			if ( empty( $selector ) ) {
+				$flattened_rules[] = $rule;
+				continue;
+			}
+			
+			// Track classes with direct styles (e.g., ".first { ... }")
+			if ( $this->is_direct_class_selector( $selector ) ) {
+				$class_name = $this->extract_class_name_from_selector( $selector );
+				if ( $class_name ) {
+					$classes_with_direct_styles[] = $class_name;
+				}
+			}
+			
+			// Flatten nested selectors
+			if ( $this->flattening_service->should_flatten_selector( $selector ) ) {
+				$flattened_rule = $this->flattening_service->flatten_css_rule( $rule );
+				$flattened_rules[] = $flattened_rule;
+				
+				// Build class mapping from nested selector
+				$parsed = $this->parse_nested_selector_for_mapping( $selector );
+				if ( $parsed && ! empty( $parsed['target_class'] ) && ! empty( $flattened_rule['global_class_id'] ) ) {
+					$class_mappings[ $parsed['target_class'] ] = $flattened_rule['global_class_id'];
+					$classes_only_in_nested[] = $parsed['target_class'];
+				}
+				
+				// CRITICAL FIX: Do NOT add the original nested rule to flattened_rules
+				// The original rule should be replaced by the flattened rule, not kept alongside it
+			} else {
+				$flattened_rules[] = $rule;  // Keep as-is
+			}
+		}
+		
+		// Remove duplicates and exclude classes that have direct styles
+		$classes_only_in_nested = array_diff(
+			array_unique( $classes_only_in_nested ),
+			$classes_with_direct_styles
+		);
+		
+		return [
+			'flattened_rules' => $flattened_rules,
+			'class_mappings' => $class_mappings,
+			'classes_with_direct_styles' => array_unique( $classes_with_direct_styles ),
+			'classes_only_in_nested' => array_values( $classes_only_in_nested ),
+			'flattened_classes' => $this->flattening_service->get_flattened_classes_for_global_storage(),
+		];
+	}
+
+	private function is_direct_class_selector( string $selector ): bool {
+		// Check if selector is a simple class selector like ".first" or ".active"
+		// Should NOT match nested selectors like ".first .second"
+		$trimmed = trim( $selector );
+		return preg_match( '/^\.[\w-]+$/', $trimmed ) === 1;
+	}
+
+	private function extract_class_name_from_selector( string $selector ): ?string {
+		$trimmed = trim( $selector );
+		if ( preg_match( '/^\.([a-zA-Z0-9_-]+)$/', $trimmed, $matches ) ) {
+			return $matches[1];
+		}
+		return null;
+	}
+
+	private function parse_nested_selector_for_mapping( string $selector ): ?array {
+		// Use existing nested selector parser to get target class
+		require_once __DIR__ . '/../nested-selector-parser.php';
+		$parser = new \Elementor\Modules\CssConverter\Services\Css\Nested_Selector_Parser();
+		
+		$parsed = $parser->parse_nested_selector( $selector );
+		if ( ! $parsed || $parsed['type'] === 'simple' ) {
+			return null;
+		}
+		
+		$target = $parsed['target'] ?? '';
+		$target_class = $this->extract_target_class_from_parsed_target( $target );
+		
+		return [
+			'target_class' => $target_class,
+			'context' => $parsed['context'] ?? [],
+			'type' => $parsed['type'] ?? 'unknown',
+		];
+	}
+
+	private function extract_target_class_from_parsed_target( string $target ): ?string {
+		// Examples:
+		// ".second" -> "second"
+		// "h1.title" -> "title" 
+		// "h1" -> null (element selector, not class)
+		
+		$target = trim( $target );
+		
+		// If it starts with a dot, it's a class selector
+		if ( strpos( $target, '.' ) === 0 ) {
+			if ( preg_match( '/^\.([a-zA-Z0-9_-]+)/', $target, $matches ) ) {
+				return $matches[1];
+			}
+		}
+		
+		// If it contains a dot, it might be an element with a class (e.g., h1.title)
+		if ( strpos( $target, '.' ) !== false ) {
+			if ( preg_match( '/\.([a-zA-Z0-9_-]+)$/', $target, $matches ) ) {
+				return $matches[1];
+			}
+		}
+		
+		// Element selector only (e.g., "h1") - no class to extract
+		return null;
+	}
 }
+

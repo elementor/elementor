@@ -59,6 +59,7 @@ class Module extends BaseModule {
 
 		$this->load_required_dependencies();
 		$this->skip_global_styles_service_initialization_due_to_kit_meta_storage();
+		$this->initialize_global_classes_override();
 		$this->initialize_widgets_route();
 		$this->initialize_classes_route();
 		$this->initialize_variables_route();
@@ -130,6 +131,21 @@ class Module extends BaseModule {
 	private function skip_global_styles_service_initialization_due_to_kit_meta_storage(): void {
 		// Intentionally empty - CSS_Converter_Global_Styles service was removed
 		// Global classes are now stored directly in Kit meta via Global_Classes_Repository
+	}
+
+	private function initialize_global_classes_override(): void {
+		$override_service_file = __DIR__ . '/services/styles/css-converter-global-classes-override.php';
+
+		if ( ! file_exists( $override_service_file ) ) {
+			return;
+		}
+
+		require_once $override_service_file;
+
+		if ( class_exists( '\Elementor\Modules\CssConverter\Services\Styles\CSS_Converter_Global_Classes_Override' ) ) {
+			$override_service = \Elementor\Modules\CssConverter\Services\Styles\CSS_Converter_Global_Classes_Override::make();
+			$override_service->register_hooks();
+		}
 	}
 
 	private function initialize_widgets_route(): void {

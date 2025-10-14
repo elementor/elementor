@@ -7,14 +7,16 @@ This directory contains comprehensive tests for the CSS Converter's URL import f
 ### Files Created
 
 1. **`flat-classes-url-import.test.ts`** - Main test suite with 9 comprehensive tests
-2. **`fixtures/flat-classes-test-page.html`** - Test HTML page with flat classes and mixed styling
-3. **`fixtures/styles-layout.css`** - External CSS file with layout and structure styles
-4. **`fixtures/styles-components.css`** - External CSS file with component and visual styles
+2. **`specificity-ordering.test.ts`** - Test suite for CSS specificity-based ordering functionality
+3. **`fixtures/flat-classes-test-page.html`** - Test HTML page with flat classes and mixed styling
+4. **`fixtures/styles-layout.css`** - External CSS file with layout and structure styles
+5. **`fixtures/styles-components.css`** - External CSS file with component and visual styles
 
 ### Test Coverage
 
 The test suite covers:
 
+#### Flat Classes URL Import (`flat-classes-url-import.test.ts`)
 1. **URL Import Functionality** - Tests that the widget-converter endpoint can successfully import HTML from HTTP URLs
 2. **Mixed Styling Sources** - Validates handling of:
    - Inline styles (style attributes)
@@ -27,6 +29,14 @@ The test suite covers:
 7. **Widget Type Creation** - Verifies appropriate widget types are created for different HTML elements
 8. **Styling Hierarchy** - Ensures visual hierarchy is preserved with flat classes
 9. **Utility Classes** - Tests CSS utility class handling
+
+#### Specificity-Based Ordering (`specificity-ordering.test.ts`)
+1. **CSS Specificity Calculation** - Tests that CSS selectors are correctly analyzed for specificity
+2. **Automatic Ordering** - Verifies that global classes are ordered by specificity (lowest to highest)
+3. **User Order Preservation** - Ensures manual reordering takes precedence over automatic specificity ordering
+4. **Mixed Class Types** - Tests interaction between CSS Converter classes and regular global classes
+5. **Nested Selector Flattening** - Validates that nested selectors maintain proper cascade order when flattened
+6. **CSS Generation Order** - Confirms that the final CSS output respects the specificity-based ordering
 
 ### Test Page Features
 

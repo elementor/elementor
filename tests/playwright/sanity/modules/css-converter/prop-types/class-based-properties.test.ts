@@ -50,42 +50,31 @@ test.describe( 'Class-based Properties Test @prop-types', () => {
 			
 		`;
 
-		console.log( '🚀 STARTING CSS CONVERSION with createGlobalClasses: true' );
-		console.log( '📝 HTML Content:', htmlContent );
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
 			createGlobalClasses: true,
 		} );
 
-		console.log( '📊 FULL API RESULT:', JSON.stringify( apiResult, null, 2 ) );
-
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
-			console.log( '⏭️ SKIPPING TEST:', validation.skipReason );
 			test.skip( true, validation.skipReason );
 			return;
 		}
 
-		console.log( '✅ API VALIDATION PASSED' );
 		expect( apiResult.success ).toBe( true );
 		expect( apiResult.post_id ).toBeDefined();
 		expect( apiResult.edit_url ).toBeDefined();
 
-		console.log( '🌐 NAVIGATING TO:', apiResult.edit_url );
 
 		await page.goto( apiResult.edit_url );
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
-		console.log( '🎭 WAITING FOR ELEMENTOR FRAME TO LOAD' );
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
 
-		console.log( '🔍 SEARCHING FOR H2 ELEMENT' );
 		const heading = elementorFrame.locator( 'h2' ).filter( { hasText: /Ready to Get Started/i } );
 		await heading.waitFor( { state: 'visible', timeout: 10000 } );
-
-		console.log( '✅ H2 ELEMENT FOUND' );
 
 		// MAXIMUM DEBUG: Get ALL possible information
 		const maxDebugInfo = await heading.evaluate( ( el ) => {
@@ -158,17 +147,6 @@ test.describe( 'Class-based Properties Test @prop-types', () => {
 				}) )
 			};
 		} );
-		
-		console.log( '🔍 MAXIMUM DEBUG INFO:' );
-		console.log( JSON.stringify( maxDebugInfo, null, 2 ) );
-		
-		console.log( '📊 API RESULT SUMMARY:', JSON.stringify( {
-			success: apiResult.success,
-			post_id: apiResult.post_id,
-			widgets_created: apiResult.widgets_created?.length || 0,
-			global_classes_created: apiResult.global_classes_created || 0,
-			edit_url: apiResult.edit_url
-		}, null, 2 ) );
 
 		await expect( heading ).toHaveCSS( 'letter-spacing', '1px' );
 		await expect( heading ).toHaveCSS( 'text-transform', 'uppercase' );

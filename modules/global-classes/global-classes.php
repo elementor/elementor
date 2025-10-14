@@ -31,4 +31,27 @@ class Global_Classes {
 			'order' => $this->get_order()->all(),
 		];
 	}
+
+	public function get_items_sorted_by_order() {
+		$items = $this->get_items();
+		$order = $this->get_order();
+
+		if ( $order->is_empty() ) {
+			return $items;
+		}
+
+		$sorted_items_array = [];
+
+		foreach ( $order->all() as $item_id ) {
+			$item = $items->get( $item_id );
+			if ( null !== $item ) {
+				$sorted_items_array[ $item_id ] = $item;
+			}
+		}
+
+		$remaining_items = $items->except( $order->all() );
+		$sorted_items = Collection::make( $sorted_items_array )->merge( $remaining_items );
+
+		return $sorted_items;
+	}
 }

@@ -1,0 +1,168 @@
+# Page snapshot
+
+```yaml
+- heading "Edit \"Elementor Widget Conversion – 2025-10-14 07:24:07\" with Elementor" [level=1]
+- banner:
+  - button "Elementor Logo":
+    - img "Elementor Logo"
+  - button "Add Element" [pressed]
+  - button "Post Settings"
+  - button "History"
+  - button "Pages"
+  - separator
+  - button "Elementor Widget Conversion - 2025-10-14 07:24:07": Elementor Widget Conversion - 2025-10-14 07:24:07 (Draft)
+  - separator
+  - tablist "Switch Device":
+    - tab "Desktop" [selected]
+    - tab "Tablet Portrait (up to 1024px)"
+    - tab "Mobile Portrait (up to 767px)"
+  - separator
+  - button "What's New"
+  - button "Finder"
+  - button "Structure" [pressed]
+  - button "Preview Changes"
+  - group:
+    - button "Publish"
+    - button "Save Options"
+- complementary "Elements":
+  - heading "Elements" [level=2]
+  - main:
+    - button "Widgets"
+    - button "Globals"
+    - button "Components"
+    - search:
+      - text: "Search Widget:"
+      - searchbox "Search Widget:"
+    - button "Atomic Elements Alpha "
+    - button " Div block"
+    - button " Flexbox"
+    - button " Atomic Tabs"
+    - button " Heading"
+    - button " Image"
+    - button " Paragraph"
+    - button " SVG"
+    - button " Button"
+    - button " YouTube"
+    - button " Divider"
+    - button "Layout"
+    - button "Container"
+    - button "Grid"
+    - button "Basic"
+    - button "Heading"
+    - button "Image"
+    - button "Text Editor"
+    - button "Video"
+    - button "Button"
+    - button "Divider"
+    - button "Spacer"
+    - button "Google Maps"
+    - button "Icon"
+    - button "Pro  Upgrade":
+      - text: Pro
+      - link " Upgrade":
+        - /url: https://go.elementor.com/go-pro-section-pro-widget-panel/
+    - button " Search"
+    - button " Posts"
+    - button " Portfolio"
+    - button " Menu"
+    - button " Form"
+    - button " Loop Grid"
+    - button " Loop Carousel"
+    - button " Gallery"
+    - button " Animated Headline"
+    - button " Price List"
+    - button " Price Table"
+    - button " Flip Box"
+    - button " Call to Action"
+    - button " Media Carousel"
+    - button " Carousel"
+    - button " Off-Canvas"
+    - button " Countdown"
+    - button " Share Buttons"
+    - button " Blockquote"
+    - button " Lottie"
+    - button " Hotspot"
+    - button " PayPal Button"
+    - button " Code Highlight"
+    - button " Video Playlist"
+    - button " Template"
+    - button " Stripe Button"
+    - button " Progress Tracker"
+    - button " Nav Menu"
+    - button " Table of Contents"
+    - button " Login"
+    - button " Slides"
+    - button " Testimonial Carousel"
+    - button " Reviews"
+    - button " Facebook Button"
+    - button " Facebook Comments"
+    - button " Facebook Embed"
+    - button " Facebook Page"
+    - button "General"
+    - button "Tabs"
+    - button "Accordion"
+    - button "Image Box"
+    - button "Icon Box"
+    - button "Image Carousel"
+    - button " Ally Accessibility"
+    - button "Basic Gallery"
+    - button "Icon List"
+    - button "Counter"
+    - button "Progress Bar"
+    - button "Testimonial"
+    - button "Social Icons"
+    - button "Alert"
+    - button "SoundCloud"
+    - button "Shortcode"
+    - button "HTML"
+    - button "Menu Anchor"
+    - button "Sidebar"
+    - button "Read More"
+    - button "Rating"
+    - button "Text Path"
+    - button "Link In Bio"
+    - button "Minimalist"
+    - button " Classic"
+    - button " Showcase"
+    - button " Links"
+    - button " Services"
+    - button " Portfolio"
+    - button " Business Card"
+    - button "Site  Upgrade":
+      - text: Site
+      - link " Upgrade":
+        - /url: https://go.elementor.com/go-pro-section-site-widget-panel/
+    - button "Single  Upgrade":
+      - text: Single
+      - link " Upgrade":
+        - /url: https://go.elementor.com/go-pro-section-single-widget-panel/
+    - button "WooCommerce  Upgrade":
+      - text: WooCommerce
+      - link " Upgrade":
+        - /url: https://go.elementor.com/go-pro-section-woocommerce-widget-panel/
+    - button "WordPress"
+    - img "Upgrade"
+    - text: Get more with Elementor Pro
+    - link "Upgrade Now":
+      - /url: https://go.elementor.com/pro-widgets/
+    - img "Upgrade"
+    - text: Access all Pro widgets.
+    - link "Upgrade Now":
+      - /url: https://go.elementor.com/go-pro-sticky-widget-panel/
+  - text: Hide Panel (⌘ + P)
+- main "Preview":
+  - text:  Unleash the full power of Elementor's features and web creation tools.
+  - link "Upgrade Now":
+    - /url: https://go.elementor.com/go-pro-editor-notice-bar/
+  - text: 
+  - iframe
+- complementary "Structure":
+  - button "Expand all elements"
+  - button ""
+  - heading "Structure" [level=2]
+  - button "Close structure"
+  - text: Show/hide inner elements Div block Access all Pro widgets.
+  - link "Upgrade Now":
+    - /url: https://go.elementor.com/go-pro-structure-panel/
+  - text: Resize structure
+```

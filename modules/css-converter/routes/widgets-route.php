@@ -5,7 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\CssConverter\Services\Widgets\Widget_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Widgets\Unified_Widget_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Css\Parsing\Html_Parser;
+use Elementor\Modules\CssConverter\Services\Widgets\Widget_Mapper;
+use Elementor\Modules\CssConverter\Services\Css\Processing\Unified_Css_Processor;
+use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Specificity_Calculator;
+use Elementor\Modules\CssConverter\Services\Widgets\Widget_Creator;
 use Elementor\Modules\CssConverter\Services\Css\Validation\Request_Validator;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Css_Property_Convertor_Config;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
@@ -26,7 +32,23 @@ class Widgets_Route {
 
 	private function get_conversion_service() {
 		if ( null === $this->conversion_service ) {
-			$this->conversion_service = new Widget_Conversion_Service();
+			// Initialize dependencies for Unified_Css_Processor
+			$css_parser = new \Elementor\Modules\CssConverter\Parsers\CssParser();
+			$property_conversion_service = new Css_Property_Conversion_Service();
+			$specificity_calculator = new Css_Specificity_Calculator();
+			
+			// Use Unified_Widget_Conversion_Service for proper flattened classes integration
+			$this->conversion_service = new Unified_Widget_Conversion_Service(
+				new Html_Parser(),
+				new Widget_Mapper(),
+				new Unified_Css_Processor(
+					$css_parser,
+					$property_conversion_service,
+					$specificity_calculator
+				),
+				new Widget_Creator(),
+				false
+			);
 		}
 		return $this->conversion_service;
 	}

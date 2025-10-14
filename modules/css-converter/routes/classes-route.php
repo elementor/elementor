@@ -164,7 +164,9 @@ class Classes_Route {
 			foreach ( $classes as $class ) {
 				// Only add if it doesn't already exist
 				if ( ! isset( $updated_items[ $class['id'] ] ) ) {
-					$updated_items[ $class['id'] ] = $class;
+					// Add specificity metadata for CSS Converter classes
+					$class_with_specificity = $this->add_specificity_metadata( $class );
+					$updated_items[ $class['id'] ] = $class_with_specificity;
 					$updated_order[] = $class['id'];
 					$added_ids[] = $class['id'];
 				}
@@ -257,6 +259,27 @@ class Classes_Route {
 			return substr( $css, 3 );
 		}
 		return $css;
+	}
+
+	private function add_specificity_metadata( array $class ): array {
+		// Add CSS Converter specificity metadata
+		$original_selector = $class['original_selector'] ?? '';
+		$specificity = $this->calculate_css_specificity( $original_selector );
+		
+		$class['css_converter_specificity'] = $specificity;
+		$class['css_converter_original_selector'] = $original_selector;
+		
+		return $class;
+	}
+
+	private function calculate_css_specificity( string $selector ): int {
+		if ( empty( $selector ) ) {
+			return 0;
+		}
+		
+		// Use existing CSS Converter specificity calculator
+		$calculator = new \Elementor\Modules\CssConverter\Services\Css\Css_Specificity_Calculator();
+		return $calculator->calculate_specificity( $selector );
 	}
 
 	private function fetch_css_from_url( string $url ) {

@@ -434,6 +434,17 @@ class Widget_Creator {
 
 		$classes = [];
 
+		// CRITICAL FIX: Preserve original CSS classes from HTML (including flattened classes)
+		if ( ! empty( $this->current_widget['attributes']['class'] ) ) {
+			$original_classes = explode( ' ', $this->current_widget['attributes']['class'] );
+			foreach ( $original_classes as $original_class ) {
+				$original_class = trim( $original_class );
+				if ( ! empty( $original_class ) ) {
+					$classes[] = $original_class;
+				}
+			}
+		}
+
 		$has_global_classes = ! empty( $applied_styles['global_classes'] );
 		$has_computed_styles = ! empty( $applied_styles['computed_styles'] ) || ! empty( $applied_styles['id_styles'] );
 		$has_unsupported_props = ! empty( $this->current_unsupported_props );
