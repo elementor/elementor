@@ -160,7 +160,7 @@ export default function ItemHeader( props ) {
 			onError: handleKitError,
 		} );
 
-	const { type: callToActionType, subscriptionPlan } = useKitCallToAction( props.model.accessTier );
+	const { subscriptionPlan } = useKitCallToAction( props.model.accessTier );
 
 	const applyButton = useKitCallToActionButton( props.model, {
 		onConnect: () => setIsConnectDialogOpen( true ),
