@@ -31,10 +31,10 @@ export const ONBOARDING_STORAGE_KEYS = {
 	EXPERIMENT402_VARIANT: 'elementor_onboarding_experiment402_variant',
 	EXPERIMENT402_STARTED: 'elementor_onboarding_experiment402_started',
 	PENDING_EXPERIMENT_DATA: 'elementor_onboarding_pending_experiment_data',
-	STEP1_END_STATE_SENT: 'step1_end_state_sent',
-	STEP2_END_STATE_SENT: 'step2_end_state_sent',
-	STEP3_END_STATE_SENT: 'step3_end_state_sent',
-	STEP4_END_STATE_SENT: 'step4_end_state_sent',
+	STEP1_END_STATE_SENT: 'elementor_onboarding_step1_end_state_sent',
+	STEP2_END_STATE_SENT: 'elementor_onboarding_step2_end_state_sent',
+	STEP3_END_STATE_SENT: 'elementor_onboarding_step3_end_state_sent',
+	STEP4_END_STATE_SENT: 'elementor_onboarding_step4_end_state_sent',
 };
 
 export function getString( key ) {
