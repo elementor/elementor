@@ -1,4 +1,3 @@
-import StorageManager, { ONBOARDING_STORAGE_KEYS } from './storage-manager.js';
 
 export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
@@ -67,45 +66,6 @@ export function dispatchIfAllowed( eventName, payload = {} ) {
 	return false;
 }
 
-function getExperimentConfigs() {
-	return {
-		101: {
-			variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT,
-			enabledKey: 'isExperiment101Enabled',
-			minStep: 1,
-			payloadKey: '101_variant',
-		},
-		201: {
-			variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
-			enabledKey: 'isExperiment201Enabled',
-			minStep: 2,
-			payloadKey: '201_variant',
-		},
-		402: {
-			variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT,
-			enabledKey: 'isExperiment402Enabled',
-			minStep: 4,
-			payloadKey: '402_variant',
-		},
-	};
-}
-
-function getExperimentVariant( experimentId ) {
-	const config = getExperimentConfigs()[ experimentId ];
-	if ( ! config ) {
-		return null;
-	}
-	return StorageManager.getString( config.variantKey ) || null;
-}
-
-function isExperimentEnabled( experimentId ) {
-	const config = getExperimentConfigs()[ experimentId ];
-	if ( ! config ) {
-		return false;
-	}
-	return elementorAppConfig?.onboarding?.[ config.enabledKey ] || false;
-}
-
 export function createEventPayload( basePayload = {} ) {
 	return {
 		location: 'plugin_onboarding',
@@ -120,14 +80,6 @@ export function createStepEventPayload( stepNumber, stepName, additionalData = {
 		...additionalData,
 	};
 
-	const experiments = getExperimentConfigs();
-	Object.keys( experiments ).forEach( ( experimentId ) => {
-		const config = experiments[ experimentId ];
-		if ( stepNumber >= config.minStep && isExperimentEnabled( parseInt( experimentId, 10 ) ) ) {
-			basePayload[ config.payloadKey ] = getExperimentVariant( parseInt( experimentId, 10 ) );
-		}
-	} );
-
 	return createEventPayload( basePayload );
 }
 
@@ -136,15 +88,6 @@ export function createEditorEventPayload( additionalData = {} ) {
 		location: 'editor',
 		...additionalData,
 	};
-
-	const experiments = getExperimentConfigs();
-	Object.keys( experiments ).forEach( ( experimentId ) => {
-		const config = experiments[ experimentId ];
-		const variant = getExperimentVariant( parseInt( experimentId, 10 ) );
-		if ( variant ) {
-			basePayload[ config.payloadKey ] = variant;
-		}
-	} );
 
 	return basePayload;
 }
