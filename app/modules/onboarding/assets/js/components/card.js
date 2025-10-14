@@ -1,5 +1,14 @@
-export default function Card( { image, imageAlt, text, link, clickAction, target = '_self' } ) {
+export default function Card( { image, imageAlt, text, link, name, clickAction, target = '_self' } ) {
 	const onClick = () => {
+		elementorCommon.events.dispatchEvent( {
+			event: 'starting canvas click',
+			version: '',
+			details: {
+				placement: elementorAppConfig.onboarding.eventPlacement,
+				selection: name,
+			},
+		} );
+
 		if ( clickAction ) {
 			clickAction();
 		}
@@ -18,6 +27,7 @@ Card.propTypes = {
 	imageAlt: PropTypes.string.isRequired,
 	text: PropTypes.string.isRequired,
 	link: PropTypes.string.isRequired,
+	name: PropTypes.string.isRequired,
 	clickAction: PropTypes.func,
 	target: PropTypes.string,
 };

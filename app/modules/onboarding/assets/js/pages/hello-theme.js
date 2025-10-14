@@ -176,7 +176,7 @@ export default function HelloTheme() {
 
 	if ( state.isHelloThemeActivated ) {
 		actionButton.onClick = () => {
-			OnboardingEventTracking.sendHelloBizContinue( state.currentStep );
+			OnboardingEventTracking.trackStepAction( 2, 'continue_hello_biz' );
 			sendNextButtonEvent();
 
 			OnboardingEventTracking.sendStepEndState( 2 );
@@ -184,6 +184,7 @@ export default function HelloTheme() {
 		};
 	} else {
 		actionButton.onClick = () => {
+			OnboardingEventTracking.trackStepAction( 2, 'continue_hello_biz' );
 			OnboardingEventTracking.sendHelloBizContinue( state.currentStep );
 			sendNextButtonEvent();
 

@@ -75,6 +75,7 @@ export function createTimeSpentData( stepNumber = null ) {
 
 	if ( totalTimeData ) {
 		result.time_spent = formatTimeForEvent( totalTimeData.timeSpent );
+		result.total_onboarding_time_seconds = totalTimeData.timeSpent;
 		result.onboarding_start_time = totalTimeData.startTime;
 	}
 
@@ -136,7 +137,7 @@ export function clearStaleSessionData() {
 		ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_NO_CLICK,
 		ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
 		ONBOARDING_STORAGE_KEYS.PENDING_STEP1_END_STATE,
-		ONBOARDING_STORAGE_KEYS.PENDING_EXIT,
+		ONBOARDING_STORAGE_KEYS.PENDING_EXIT_BUTTON,
 		ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_MOUSEOVER,
 	];
 
