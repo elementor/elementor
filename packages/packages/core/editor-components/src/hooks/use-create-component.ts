@@ -1,8 +1,8 @@
 import { __useDispatch as useDispatch, __useSelector as useSelector, type AnyAction } from '@elementor/store';
 
 import { type CreateComponentPayload } from '../api';
-import { selectCreateIsError, selectCreateIsPending } from '../store';
-import { createComponent } from '../thunks';
+import { selectCreateIsError, selectCreateIsPending } from '../store/store';
+import { createComponent } from '../store/thunks';
 
 export const useCreateComponent = () => {
 	const dispatch = useDispatch();

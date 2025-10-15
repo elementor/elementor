@@ -37,7 +37,7 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-tabs';
+		return 'eicon-layout';
 	}
 
 	public function should_show_in_panel() {

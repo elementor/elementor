@@ -4,13 +4,6 @@ import EditorSelectors from '../../../../selectors/editor-selectors';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
 test.describe( 'Editor tests', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await page.close();
-	} );
-
 	test( 'Check that app-bar exists', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -18,10 +11,11 @@ test.describe( 'Editor tests', () => {
 		const appBar = editor.page.locator( EditorSelectors.panels.topBar.wrapper );
 
 		// Act
+		await editor.closeNavigatorIfOpen();
 		await editor.openPageSettingsPanel();
 		await editor.setTextControlValue( 'post_title', 'Playwright Test Page' );
-
 		await appBar.getByRole( 'button', { name: 'Playwright Test Page' } ).waitFor();
+		await editor.openUserPreferencesPanel();
 		await editor.isUiStable( appBar, 5 );
 
 		// Assert

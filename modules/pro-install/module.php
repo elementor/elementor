@@ -34,7 +34,10 @@ class Module extends BaseModule {
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 			$admin_menu->register(
 				'elementor-connect-account',
-				new Pro_Install_Menu_Item( $this->get_connect_app() )
+				new Pro_Install_Menu_Item(
+					$this->get_connect_app(),
+					$this->get_pro_install_page_assets(),
+				)
 			);
 		}, 116 );
 	}
@@ -65,5 +68,15 @@ class Module extends BaseModule {
 		}
 
 		wp_safe_redirect( admin_url( 'admin.php?page=elementor-license' ) );
+	}
+
+	private function get_pro_install_page_assets(): array {
+		return [
+			'elementor-pro-install-events',
+			$this->get_js_assets_url( 'pro-install-events' ),
+			[ 'elementor-common' ],
+			ELEMENTOR_VERSION,
+			true,
+		];
 	}
 }
