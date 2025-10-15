@@ -4,7 +4,6 @@ export class RevertKitHandler {
 	static API_PATH = 'revert';
 	static DIALOG_ID = 'e-revert-kit-deleted-dialog';
 	static URL_PARAM_REFERRER_KIT = 'referrer_kit';
-	static SESSION_ID_KEY = 'session_id';
 	static CACHE_KEYS = {
 		REFERRER_KIT_ID: 'referrerKitId',
 		ACTIVE_KIT_NAME: 'activeKitName',
