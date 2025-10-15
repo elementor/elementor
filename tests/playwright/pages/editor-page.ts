@@ -411,34 +411,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open a tab inside an Editor panel for V2 widgets.
-	 *
-	 * @param {'style' | 'general'} sectionName - The section to open.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async openV2PanelTab( sectionName: 'style' | 'general' ): Promise<void> {
-		const selectorMap: Record< 'style' | 'general', string > = {
-			style: 'style',
-			general: 'settings',
-		};
-		const sectionButtonSelector = `#tab-0-${ selectorMap[ sectionName ] }`,
-			sectionContentSelector = `#tabpanel-0-${ selectorMap[ sectionName ] }`,
-			isOpenSection = await this.page.evaluate( ( selector ) => {
-				const sectionContentElement: HTMLElement = document.querySelector( selector );
-
-				return ! sectionContentElement?.hidden;
-			}, sectionContentSelector );
-
-		if ( isOpenSection ) {
-			return;
-		}
-
-		await this.page.locator( sectionButtonSelector ).click();
-		await this.page.locator( sectionContentSelector ).waitFor();
-	}
-
-	/**
 	 * Open a section in an active panel tab.
 	 *
 	 * @param {string} sectionId - The section to open.
@@ -822,6 +794,11 @@ export default class EditorPage extends BasePage {
 		await this.setTextareaControlValue( 'type-code', css );
 	}
 
+	async clickButton( buttonName: string, exact = false ): Promise<void> {
+		const button = this.page.getByRole( 'button', { name: buttonName, exact } );
+		await button.click();
+	}
+
 	/**
 	 * Click on a top bar item.
 	 *
@@ -835,6 +812,22 @@ export default class EditorPage extends BasePage {
 			await topbarLocator.getByRole( 'button', { name: selector.attributeValue } ).click();
 		} else {
 			await topbarLocator.locator( `button[${ selector.attribute }="${ selector.attributeValue }"]` ).click();
+		}
+	}
+
+	/**
+	 * Click on a top bar menu item.
+	 *
+	 * @param {string} menuLabel - Optional. The label of the top bar menu item.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async clickTopBarMenuItem( menuLabel?: string ): Promise<void> {
+		await this.clickTopBarItem( TopBarSelectors.elementorLogo );
+		await this.page.waitForTimeout( 100 );
+
+		if ( menuLabel ) {
+			await this.page.getByRole( 'menuitem', { name: menuLabel } ).click();
 		}
 	}
 
@@ -854,7 +847,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openPageSettingsPanel(): Promise<void> {
-		await this.clickTopBarItem( TopBarSelectors.documentSettings );
+		await this.clickTopBarItem( TopBarSelectors.pageSettings );
 		await this.page.locator( EditorSelectors.panels.pageSettings.wrapper ).waitFor();
 	}
 
@@ -866,12 +859,23 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openSiteSettings( innerPanel?: string ): Promise<void> {
-		await this.clickTopBarItem( TopBarSelectors.siteSettings );
+		await this.clickTopBarMenuItem( 'Site Settings' );
 		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
 
 		if ( innerPanel ) {
-			await this.page.locator( `.elementor-panel-menu-item-${ innerPanel }` ).click();
+			await this.openSiteSettingsInnerPanel( innerPanel );
 		}
+	}
+
+	/**
+	 * Open inner panel section on Site Settings panel.
+	 *
+	 * @param { string } innerPanelSection - The inner section to open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	private async openSiteSettingsInnerPanel( innerPanelSection: string ): Promise<void> {
+		await this.page.locator( `.elementor-panel-menu-item.elementor-panel-menu-item-${ innerPanelSection }` ).click();
 	}
 
 	/**
@@ -880,9 +884,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openUserPreferencesPanel(): Promise<void> {
-		await this.clickTopBarItem( TopBarSelectors.elementorLogo );
-		await this.page.waitForTimeout( 100 );
-		await this.page.getByRole( 'menuitem', { name: 'User Preferences' } ).click();
+		await this.clickTopBarMenuItem( 'User Preferences' );
 		await this.page.locator( EditorSelectors.panels.userPreferences.wrapper ).waitFor();
 	}
 
