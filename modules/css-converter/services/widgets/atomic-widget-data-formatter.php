@@ -12,13 +12,19 @@ class Atomic_Widget_Data_Formatter {
 	}
 
 	public function format_widget_data( array $resolved_styles, array $widget, string $widget_id ): array {
+		error_log( '🔥 MAX_DEBUG: format_widget_data - resolved_styles: ' . wp_json_encode( $resolved_styles ) );
+		
 		// Generate atomic-style widget ID (7-char hex)
 		$atomic_widget_id = $this->generate_atomic_widget_id();
 		$class_id = $this->create_atomic_style_class_name( $atomic_widget_id );
 
 		$atomic_props = $this->extract_atomic_props_from_resolved_styles( $resolved_styles );
+		
+		error_log( '🔥 MAX_DEBUG: Extracted atomic props: ' . wp_json_encode( $atomic_props ) );
 
 		$css_classes = $this->extract_css_classes_from_widget( $widget );
+		
+		error_log( '🔥 MAX_DEBUG: CSS classes: ' . wp_json_encode( $css_classes ) );
 
 		// Note: Base classes (e.g., e-heading-base) are added automatically by atomic widget Twig templates
 		// CSS Converter should only add generated style classes and user-defined classes
@@ -70,19 +76,38 @@ class Atomic_Widget_Data_Formatter {
 	private function extract_atomic_props_from_resolved_styles( array $resolved_styles ): array {
 		$atomic_props = [];
 
+		error_log( '🔥 MAX_DEBUG: extract_atomic_props - processing ' . count( $resolved_styles ) . ' resolved styles' );
+
 		foreach ( $resolved_styles as $property => $style_data ) {
+			error_log( '🔥 MAX_DEBUG: Processing property: ' . $property );
+			error_log( '🔥 MAX_DEBUG: Style data: ' . wp_json_encode( $style_data ) );
+			
 			if ( isset( $style_data['converted_property'] ) && is_array( $style_data['converted_property'] ) ) {
 				$converted_property = $style_data['converted_property'];
+				error_log( '🔥 MAX_DEBUG: Converted property: ' . wp_json_encode( $converted_property ) );
 
-				// CRITICAL FIX: converted_property contains property name as key, atomic format as value
-				foreach ( $converted_property as $prop_name => $atomic_format ) {
-					if ( isset( $atomic_format['$$type'] ) ) {
-						$target_property = $this->get_target_property_name( $prop_name );
-						$atomic_props[ $target_property ] = $atomic_format;
+				// Check if this is a single atomic property object (has $$type)
+				if ( isset( $converted_property['$$type'] ) ) {
+					$target_property = $this->get_target_property_name( $property );
+					$atomic_props[ $target_property ] = $converted_property;
+					error_log( '🔥 MAX_DEBUG: Added atomic prop - target: ' . $target_property );
+				} else {
+					error_log( '🔥 MAX_DEBUG: Using legacy format processing' );
+					// Legacy format: converted_property contains property name as key, atomic format as value
+					foreach ( $converted_property as $prop_name => $atomic_format ) {
+						if ( isset( $atomic_format['$$type'] ) ) {
+							$target_property = $this->get_target_property_name( $prop_name );
+							$atomic_props[ $target_property ] = $atomic_format;
+							error_log( '🔥 MAX_DEBUG: Added legacy atomic prop - target: ' . $target_property );
+						}
 					}
 				}
+			} else {
+				error_log( '🔥 MAX_DEBUG: No converted_property or not array' );
 			}
 		}
+		
+		error_log( '🔥 MAX_DEBUG: Final atomic props count: ' . count( $atomic_props ) );
 		return $atomic_props;
 	}
 

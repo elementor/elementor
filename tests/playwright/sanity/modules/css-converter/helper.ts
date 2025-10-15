@@ -64,7 +64,8 @@ export class CssConverterHelper {
 
 	async convertHtmlWithCss(
 		request: APIRequestContext,
-		cssContent: string,
+		htmlContent: string,
+		cssContent?: string,
 		options: CssConverterOptions = {},
 	): Promise<CssConverterResponse> {
 		const defaultOptions: CssConverterOptions = {
@@ -73,9 +74,15 @@ export class CssConverterHelper {
 			...options,
 		};
 
+		// If cssContent is provided, wrap HTML and CSS in style tags
+		let content = htmlContent;
+		if ( cssContent ) {
+			content = `${htmlContent}<style>${cssContent}</style>`;
+		}
+
 		const payload = {
 			type: 'html',
-			content: cssContent,
+			content: content,
 			options: defaultOptions,
 		};
 

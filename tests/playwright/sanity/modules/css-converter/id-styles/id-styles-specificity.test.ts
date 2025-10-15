@@ -66,8 +66,7 @@ test.describe( 'ID Styles Specificity @id-styles @specificity', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const heading = elementorFrame.locator( '#title' ).first();
-			await heading.waitFor( { state: 'visible', timeout: 10000 } );
+			const heading = elementorFrame.locator( '.elementor-widget-e-heading h1' ).first();
 
 			await expect( heading ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
 		} );
@@ -98,9 +97,11 @@ test.describe( 'ID Styles Specificity @id-styles @specificity', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const text = elementorFrame.locator( '#text' ).first();
+			// Find widget by text content (P tag might be e-paragraph or wrapped differently)
+			const text = elementorFrame.locator( '[data-element_type] p' ).first();
 			await text.waitFor( { state: 'visible', timeout: 10000 } );
 
+			// Inline style should win with specificity 1000
 			await expect( text ).toHaveCSS( 'color', 'rgb(0, 128, 0)' );
 		} );
 	} );
@@ -133,9 +134,11 @@ test.describe( 'ID Styles Specificity @id-styles @specificity', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const container = elementorFrame.locator( '#container' ).first();
+			// Find the div widget (not the inner p tag)
+			const container = elementorFrame.locator( '[data-element_type="e-div-block"]' ).first();
 			await container.waitFor( { state: 'visible', timeout: 10000 } );
 
+			// #container.box should win with higher specificity (100+10=110)
 			await expect( container ).toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
 		} );
 	} );
@@ -172,9 +175,11 @@ test.describe( 'ID Styles Specificity @id-styles @specificity', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const inner = elementorFrame.locator( '#inner' ).first();
-			await inner.waitFor( { state: 'visible', timeout: 10000 } );
+			const divWidgets = elementorFrame.locator( '[data-element_type="e-div-block"]' );
+			await divWidgets.first().waitFor( { state: 'visible', timeout: 10000 } );
 
+			// The inner div (second widget) should have #outer #inner selector styles
+			const inner = divWidgets.nth(1);
 			await expect( inner ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
 		} );
 	} );
@@ -207,9 +212,10 @@ test.describe( 'ID Styles Specificity @id-styles @specificity', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const text = elementorFrame.locator( '#text' ).first();
+			const text = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).first();
 			await text.waitFor( { state: 'visible', timeout: 10000 } );
 
+			// p with !important should win over #text (10000+10 > 100)
 			await expect( text ).toHaveCSS( 'color', 'rgb(0, 0, 255)' );
 		} );
 	} );
@@ -239,10 +245,12 @@ test.describe( 'ID Styles Specificity @id-styles @specificity', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const text = elementorFrame.locator( '#text' ).first();
+			const text = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).first();
 			await text.waitFor( { state: 'visible', timeout: 10000 } );
 
+			// #text with !important should win over inline style (10000+100 > 1000)
 			await expect( text ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
 		} );
 	} );
+
 } );

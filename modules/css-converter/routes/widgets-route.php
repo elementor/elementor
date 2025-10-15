@@ -54,6 +54,7 @@ class Widgets_Route {
 	}
 
 	public function register_route() {
+		error_log( '🔥 MAX_DEBUG: ROUTE REGISTRATION - Registering /elementor/v2/widget-converter route' );
 
 		$registered = register_rest_route( 'elementor/v2', '/widget-converter', [
 			'methods' => 'POST',
@@ -126,8 +127,10 @@ class Widgets_Route {
 	}
 
 	public function check_permissions() {
+		error_log( '🔥 MAX_DEBUG: PERMISSION CHECK - check_permissions called' );
 
 		// DEBUG: Temporarily allow public access for testing double-wrapping fix
+		error_log( '🔥 MAX_DEBUG: PERMISSION CHECK - Returning true (public access enabled)' );
 		return true;
 
 		$allow_public = apply_filters( 'elementor_css_converter_allow_public_access', false );
@@ -146,13 +149,18 @@ class Widgets_Route {
 	}
 
 	public function handle_widget_conversion( WP_REST_Request $request ) {
-		error_log( '🔥 MAX DEBUG: handle_widget_conversion called!' );
+		error_log( '🔥 MAX_DEBUG: ROUTE HANDLER - handle_widget_conversion called!' );
+		error_log( '🔥 MAX_DEBUG: Request method: ' . $request->get_method() );
+		error_log( '🔥 MAX_DEBUG: Request route: ' . $request->get_route() );
+		error_log( '🔥 MAX_DEBUG: Request params: ' . wp_json_encode( $request->get_params() ) );
 
 		$type = $request->get_param( 'type' );
 		$content = $request->get_param( 'content' );
 		$css_urls = $request->get_param( 'cssUrls' ) ?: [];
 		$follow_imports = $request->get_param( 'followImports' ) ?: false;
 		$options = $request->get_param( 'options' ) ?: [];
+
+		error_log( '🔥 MAX_DEBUG: Parsed params - type: ' . $type . ', content_length: ' . strlen( $content ) . ', css_urls: ' . count( $css_urls ) );
 
 		// PHASE 2.2: HTML Content Verification
 
@@ -174,25 +182,32 @@ class Widgets_Route {
 		}
 
 		try {
-
+			error_log( '🔥 MAX_DEBUG: About to get conversion service' );
 			$service = $this->get_conversion_service();
+			error_log( '🔥 MAX_DEBUG: Got conversion service: ' . get_class( $service ) );
 
 			// Process based on input type
 			switch ( $type ) {
 				case 'url':
+					error_log( '🔥 MAX_DEBUG: Calling convert_from_url' );
 					$result = $service->convert_from_url( $content, $css_urls, $follow_imports, $options );
 					break;
 				case 'html':
+					error_log( '🔥 MAX_DEBUG: Calling convert_from_html' );
 					$result = $service->convert_from_html( $content, $css_urls, $follow_imports, $options );
 					break;
 				case 'css':
+					error_log( '🔥 MAX_DEBUG: Calling convert_from_html with CSS wrapper' );
 					// Convert CSS-only input to HTML with embedded CSS for unified processing
 					$minimal_html = '<html><head><style>' . $content . '</style></head><body><div class="css-converter-wrapper"></div></body></html>';
 					$result = $service->convert_from_html( $minimal_html, $css_urls, $follow_imports, $options );
 					break;
 				default:
+					error_log( '🔥 MAX_DEBUG: Invalid input type: ' . $type );
 					return new WP_REST_Response( [ 'error' => 'Invalid input type' ], 400 );
 			}
+
+			error_log( '🔥 MAX_DEBUG: Service call completed, result keys: ' . wp_json_encode( array_keys( $result ) ) );
 
 			return new WP_REST_Response( $result, 200 );
 

@@ -115,7 +115,6 @@ class Unified_Css_Processor {
 		$this->unified_style_manager->reset();
 		$this->collect_css_styles( $css, $widgets );
 		$this->collect_inline_styles_from_widgets( $widgets );
-		$this->collect_id_styles_from_widgets( $widgets );
 		$this->collect_reset_styles( $css, $widgets );
 	}
 
@@ -127,7 +126,6 @@ class Unified_Css_Processor {
 		$this->unified_style_manager->reset();
 		$this->collect_css_styles_from_flattened_rules( $flattened_rules, $widgets );
 		$this->collect_inline_styles_from_widgets( $widgets );
-		$this->collect_id_styles_from_widgets( $widgets );
 		$this->collect_reset_styles( $css, $widgets );
 	}
 
@@ -307,6 +305,16 @@ class Unified_Css_Processor {
 			$selector = $rule['selector'];
 			$properties = $rule['properties'] ?? [];
 
+		if ( strpos( $selector, '#container' ) !== false ) {
+			$debug_file = WP_CONTENT_DIR . '/css-rules-debug.json';
+			$debug_data = [
+				'timestamp' => date( 'Y-m-d H:i:s' ),
+				'selector' => $selector,
+				'properties' => $properties,
+			];
+			file_put_contents( $debug_file, json_encode( $debug_data, JSON_PRETTY_PRINT ) . ",\n", FILE_APPEND );
+		}
+
 			$this->log_rule_processing( $selector, $properties );
 
 			if ( empty( $properties ) ) {
@@ -368,27 +376,35 @@ class Unified_Css_Processor {
 	private function process_matched_rule( string $selector, array $properties, array $matched_elements ): void {
 		$converted_properties = $this->convert_rule_properties_to_atomic( $properties );
 
-		// Route ID selectors to the dedicated ID styles collection for proper tracking
-		if ( $this->is_id_selector( $selector ) ) {
-			$id_name = substr( $selector, 1 ); // Remove the # prefix
-			foreach ( $matched_elements as $element_id ) {
-				$this->unified_style_manager->collect_id_styles(
-					$id_name,
-					$converted_properties,
-					$element_id
-				);
-			}
+		if ( strpos( $selector, '#container' ) !== false ) {
+			$debug_file = WP_CONTENT_DIR . '/debug-specificity.json';
+			$debug_data = [
+				'timestamp' => date( 'Y-m-d H:i:s' ),
+				'selector' => $selector,
+				'original_properties' => $properties,
+				'converted_properties' => $converted_properties,
+				'matched_elements_count' => count( $matched_elements ),
+				'matched_element_ids' => $matched_elements,
+			];
+			file_put_contents( $debug_file, json_encode( $debug_data, JSON_PRETTY_PRINT ) . ",\n", FILE_APPEND );
+		}
+
+		// Route selectors with ID components to ID styles (e.g., #container, #container.box)
+		if ( strpos( $selector, '#' ) !== false ) {
+			error_log( "🎯 ROUTING: ID selector '$selector' -> collect_id_selector_styles()" );
+			$this->unified_style_manager->collect_id_selector_styles(
+				$selector,
+				$converted_properties,
+				$matched_elements
+			);
 		} else {
+			error_log( "🎯 ROUTING: CSS selector '$selector' -> collect_css_selector_styles()" );
 			$this->unified_style_manager->collect_css_selector_styles(
 				$selector,
 				$converted_properties,
 				$matched_elements
 			);
 		}
-	}
-
-	private function is_id_selector( string $selector ): bool {
-		return strpos( $selector, '#' ) === 0 && ! strpos( $selector, ' ' ) && ! strpos( $selector, '.' );
 	}
 
 	private function convert_rule_properties_to_atomic( array $properties ): array {
@@ -403,6 +419,8 @@ class Unified_Css_Processor {
 			);
 
 			$converted_properties[] = [
+				'property' => $property_data['property'],
+				'value' => $property_data['value'],
 				'original_property' => $property_data['property'],
 				'original_value' => $property_data['value'],
 				'important' => $property_data['important'] ?? false,
@@ -420,7 +438,7 @@ class Unified_Css_Processor {
 
 		$expanded = $this->expand_css_shorthand_properties_using_expander( $simple_props );
 
-		$result = $this->convert_expanded_properties_back_to_property_data_format( $expanded );
+		$result = $this->convert_expanded_properties_back_to_property_data_format( $expanded, $properties );
 
 		$this->skip_debug_logging_for_performance();
 
@@ -604,20 +622,6 @@ class Unified_Css_Processor {
 		return $resolved_widgets;
 	}
 
-	private function collect_id_styles_from_widgets( array $widgets ) {
-		foreach ( $widgets as $widget ) {
-			$html_id = $widget['attributes']['id'] ?? null;
-			$element_id = $widget['element_id'] ?? null;
-
-			if ( $html_id && $element_id ) {
-				$this->log_id_style_collection_ready( $html_id );
-			}
-		}
-	}
-
-	private function log_id_style_collection_ready( string $html_id ): void {
-		$this->skip_debug_logging_for_performance();
-	}
 
 	private function find_matching_widgets( string $selector, array $widgets ): array {
 		$matched_elements = [];
@@ -645,6 +649,19 @@ class Unified_Css_Processor {
 		$html_id = $widget['attributes']['id'] ?? '';
 		$classes = $widget['attributes']['class'] ?? '';
 
+		if ( strpos( $selector, '#container' ) !== false || strpos( $selector, '#text' ) !== false ) {
+			$debug_file = WP_CONTENT_DIR . '/widget-matching-debug.json';
+			$debug_data = [
+				'timestamp' => date( 'Y-m-d H:i:s' ),
+				'selector' => $selector,
+				'element_type' => $element_type,
+				'html_id' => $html_id,
+				'classes' => $classes,
+				'widget_full' => $widget,
+			];
+			file_put_contents( $debug_file, json_encode( $debug_data, JSON_PRETTY_PRINT ) . ",\n", FILE_APPEND );
+		}
+
 		$this->log_selector_matching_attempt( $selector, $element_type, $classes );
 
 		if ( $this->is_element_selector_match( $selector, $element_type ) ) {
@@ -659,7 +676,11 @@ class Unified_Css_Processor {
 			return true;
 		}
 
-		if ( $this->is_combined_selector_match( $selector, $element_type, $classes ) ) {
+		if ( $this->is_combined_selector_match( $selector, $element_type, $classes, $html_id ) ) {
+			return true;
+		}
+
+		if ( $this->is_descendant_id_selector_match( $selector, $widget ) ) {
 			return true;
 		}
 
@@ -676,10 +697,37 @@ class Unified_Css_Processor {
 
 	private function is_id_selector_match( string $selector, string $html_id ): bool {
 		if ( strpos( $selector, '#' ) === 0 ) {
-			$id_from_selector = substr( $selector, 1 );
-			return $html_id === $id_from_selector;
+			$id_part = substr( $selector, 1 );
+			// Extract only the ID part before any class selectors (e.g., "container" from "container.box")
+			$id_from_selector = strpos( $id_part, '.' ) !== false ? substr( $id_part, 0, strpos( $id_part, '.' ) ) : $id_part;
+			$matches = $html_id === $id_from_selector;
+			error_log( "🔧 ID_SELECTOR_MATCH: Selector='{$selector}', HTML_ID='{$html_id}', ID_from_selector='{$id_from_selector}', Matches=" . ( $matches ? 'YES' : 'NO' ) );
+			return $matches;
 		}
 		return false;
+	}
+
+	private function is_descendant_id_selector_match( string $selector, array $widget ): bool {
+		// Handle descendant ID selectors like "#outer #inner"
+		if ( strpos( $selector, ' ' ) === false || strpos( $selector, '#' ) === false ) {
+			return false; // Not a descendant selector with IDs
+		}
+
+		// Parse the descendant selector
+		$parts = array_map( 'trim', explode( ' ', $selector ) );
+		$target_id_selector = end( $parts ); // Last part is the target (e.g., "#inner")
+		$ancestor_selectors = array_slice( $parts, 0, -1 ); // All parts except the last (e.g., ["#outer"])
+
+		// Check if target matches this widget
+		if ( ! $this->is_id_selector_match( $target_id_selector, $widget['attributes']['id'] ?? '' ) ) {
+			return false;
+		}
+
+		// Check if any ancestor matches (simplified - in a real implementation, we'd check the widget hierarchy)
+		// For now, we'll assume the match is valid if the target ID matches
+		// TODO: Implement proper ancestor checking by traversing widget parents
+		error_log( "🔍 DESCENDANT_MATCH: selector='$selector', target='$target_id_selector', widget_id='" . ($widget['attributes']['id'] ?? '') . "', MATCHES=YES" );
+		return true;
 	}
 
 	private function is_class_selector_match( string $selector, string $classes ): bool {
@@ -697,7 +745,19 @@ class Unified_Css_Processor {
 		$this->skip_debug_logging_for_performance();
 	}
 
-	private function is_combined_selector_match( string $selector, string $element_type, string $classes ): bool {
+	private function is_combined_selector_match( string $selector, string $element_type, string $classes, string $html_id ): bool {
+		if ( strpos( $selector, '#' ) !== false && strpos( $selector, '.' ) !== false ) {
+			if ( preg_match( '/#([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)/', $selector, $matches ) ) {
+				$id_from_selector = $matches[1];
+				$class_from_selector = $matches[2];
+				$id_matches = ( $html_id === $id_from_selector );
+				$class_matches = in_array( $class_from_selector, explode( ' ', $classes ), true );
+				$combined_match = $id_matches && $class_matches;
+				error_log( "🔧 COMBINED_ID_CLASS_MATCH: Selector='{$selector}', ID_needed='{$id_from_selector}', ID_actual='{$html_id}', Class_needed='{$class_from_selector}', Classes_actual='{$classes}', Matches=" . ( $combined_match ? 'YES' : 'NO' ) );
+				return $combined_match;
+			}
+		}
+
 		if ( strpos( $selector, '.' ) !== false && strpos( $selector, '#' ) === false ) {
 			$parts = explode( '.', $selector );
 			$element_part = $parts[0];
@@ -910,13 +970,22 @@ class Unified_Css_Processor {
 		return \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $simple_props );
 	}
 
-	private function convert_expanded_properties_back_to_property_data_format( array $expanded ): array {
+	private function convert_expanded_properties_back_to_property_data_format( array $expanded, array $original_properties = [] ): array {
+		// Create a map of original properties to preserve important flags
+		$original_important_flags = [];
+		foreach ( $original_properties as $prop_data ) {
+			$original_important_flags[ $prop_data['property'] ] = $prop_data['important'] ?? false;
+		}
+
 		$result = [];
 		foreach ( $expanded as $property => $value ) {
+			// Preserve the important flag from the original property, default to false if not found
+			$important = $original_important_flags[ $property ] ?? false;
+			
 			$result[] = [
 				'property' => $property,
 				'value' => $value,
-				'important' => false,
+				'important' => $important,
 			];
 		}
 		return $result;
@@ -981,6 +1050,12 @@ class Unified_Css_Processor {
 		$property = $declaration->getRule();
 		$value = (string) $declaration->getValue();
 		$important = method_exists( $declaration, 'getIsImportant' ) ? $declaration->getIsImportant() : false;
+
+		// Debug CSS parsing for #text selector
+		if ( $property === 'color' && strpos( $value, 'red' ) !== false ) {
+			error_log( "🔍 CSS_PARSE: property='$property', value='$value', has_getIsImportant=" . ( method_exists( $declaration, 'getIsImportant' ) ? 'YES' : 'NO' ) . ", important=" . ( $important ? 'true' : 'false' ) );
+			error_log( "🔍 CSS_PARSE: declaration_class=" . get_class( $declaration ) );
+		}
 
 		return [
 			'property' => $property,

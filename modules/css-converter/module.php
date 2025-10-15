@@ -18,6 +18,7 @@ class Module extends BaseModule {
 	}
 
 	public function __construct( $variables_route = null, $classes_route = null, $widgets_route = null ) {
+		error_log( '🔥 MAX_DEBUG: CSS_CONVERTER_MODULE - Constructor called' );
 		parent::__construct();
 		$this->variables_route = $variables_route;
 		$this->classes_route = $classes_route;
@@ -28,7 +29,10 @@ class Module extends BaseModule {
 
 		// Only initialize routes in non-test environments
 		if ( ! $this->is_test_environment() && ! $variables_route && ! $classes_route && ! $widgets_route ) {
+			error_log( '🔥 MAX_DEBUG: CSS_CONVERTER_MODULE - Initializing routes' );
 			$this->init_routes();
+		} else {
+			error_log( '🔥 MAX_DEBUG: CSS_CONVERTER_MODULE - Skipping route initialization (test env or routes provided)' );
 		}
 	}
 
@@ -159,7 +163,11 @@ class Module extends BaseModule {
 		require_once $widgets_route_file;
 
 		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Widgets_Route' ) ) {
+			error_log( '🔥 MAX_DEBUG: MODULE - Creating Widgets_Route instance' );
 			$this->widgets_route = new \Elementor\Modules\CssConverter\Routes\Widgets_Route();
+			error_log( '🔥 MAX_DEBUG: MODULE - Widgets_Route instance created successfully' );
+		} else {
+			error_log( '🔥 MAX_DEBUG: MODULE - ERROR: Widgets_Route class not found!' );
 		}
 	}
 

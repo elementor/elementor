@@ -135,6 +135,8 @@ class Widget_Creator {
 		$post_id = $options['postId'] ?? null;
 		$post_type = $options['postType'] ?? 'page';
 
+		error_log( "🔥 MAX_DEBUG: create_widgets called - widgets_count=" . count( $styled_widgets ) . ", post_id={$post_id}" );
+
 		try {
 			if ( ! empty( $css_processing_result['css_variables'] ) ) {
 				$this->process_css_variables( $css_processing_result['css_variables'] );
@@ -330,10 +332,16 @@ class Widget_Creator {
 		$settings = $widget['settings'] ?? [];
 		$resolved_styles = $widget['resolved_styles'] ?? [];
 
+		error_log( '🔥 WIDGET_TYPE_DEBUG: Input widget_type: ' . $widget_type );
+
 		$widget_id = wp_generate_uuid4();
 		$mapped_type = $this->map_to_elementor_widget_type( $widget_type );
+		
+		error_log( '🔥 WIDGET_TYPE_DEBUG: Mapped to: ' . $mapped_type );
 
 		$formatted_widget_data = $this->create_widget_data_using_new_data_formatter( $resolved_styles, $widget, $widget_id );
+		
+		error_log( '🔥 MAX_DEBUG: Formatted widget data: ' . wp_json_encode( $formatted_widget_data ) );
 
 		if ( $this->requires_link_to_button_conversion( $widget_type, $mapped_type ) ) {
 			$settings = $this->convert_link_settings_to_button_format( $settings );
@@ -1033,6 +1041,9 @@ class Widget_Creator {
 		try {
 			$post_id = $document->get_main_id();
 
+			error_log( "🔥 MAX_DEBUG: save_to_document - post_id={$post_id}, elements_count=" . count( $elementor_elements ) );
+			error_log( "🔥 MAX_DEBUG: elementor_elements=" . wp_json_encode( $elementor_elements ) );
+
 			update_post_meta( $post_id, '_elementor_data', wp_json_encode( $elementor_elements ) );
 			update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
 			update_post_meta( $post_id, '_elementor_template_type', 'wp-post' );
@@ -1041,7 +1052,10 @@ class Widget_Creator {
 			$document->save( [
 				'elements' => $elementor_elements,
 			] );
+
+			error_log( "🔥 MAX_DEBUG: save_to_document completed successfully" );
 		} catch ( \Exception $e ) {
+			error_log( "🔥 MAX_DEBUG: save_to_document FAILED: " . $e->getMessage() );
 			throw new \Exception( 'Failed to save elements to document: ' . $e->getMessage() );
 		}
 	}
@@ -1155,7 +1169,14 @@ class Widget_Creator {
 
 
 	private function create_widget_data_using_new_data_formatter( array $resolved_styles, array $widget, string $widget_id ): array {
-		return $this->data_formatter->format_widget_data( $resolved_styles, $widget, $widget_id );
+		error_log( '🔥 MAX_DEBUG: create_widget_data_using_new_data_formatter - resolved_styles count: ' . count( $resolved_styles ) );
+		error_log( '🔥 MAX_DEBUG: Calling data_formatter->format_widget_data' );
+		
+		$result = $this->data_formatter->format_widget_data( $resolved_styles, $widget, $widget_id );
+		
+		error_log( '🔥 MAX_DEBUG: Data formatter result: ' . wp_json_encode( $result ) );
+		
+		return $result;
 	}
 
 	private function requires_link_to_button_conversion( string $widget_type, string $mapped_type ): bool {

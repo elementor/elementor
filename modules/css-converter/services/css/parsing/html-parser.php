@@ -272,6 +272,10 @@ class Html_Parser {
 	}
 
 	private function wrap_text_content_in_paragraphs( $element ) {
+		if ( isset( $element['attributes']['class'] ) && strpos( $element['attributes']['class'], 'box' ) !== false ) {
+			error_log( "🔍 HTML_PARSER: wrap_text_content_in_paragraphs - Element has class: " . $element['attributes']['class'] );
+		}
+		
 		$text_wrapping_tags = [ 'div', 'span', 'section', 'article', 'aside', 'header', 'footer', 'main', 'nav' ];
 		
 		// Only process elements that should have their text wrapped
@@ -314,10 +318,11 @@ class Html_Parser {
 			$element['attributes'] = $this->remove_flattened_classes( $element['attributes'] ?? [] );
 		} elseif ( $has_direct_text && ! $has_children ) {
 			// Element has only text content - wrap it in a paragraph
-			// CRITICAL FIX: Transfer ALL classes to paragraph so flattened classes get applied to the text element
+			// Transfer flattened classes to paragraph, but keep original classes on parent for ID+class selector matching
+			$paragraph_attributes = $this->extract_flattened_classes( $element['attributes'] ?? [] );
 			$paragraph_element = [
 				'tag' => 'p',
-				'attributes' => $element['attributes'] ?? [], // Transfer ALL classes to paragraph
+				'attributes' => $paragraph_attributes, // Only transfer flattened classes
 				'content' => trim( $element['content'] ),
 				'children' => [],
 				'depth' => $element['depth'] + 1,
@@ -327,8 +332,8 @@ class Html_Parser {
 			$element['children'] = [ $paragraph_element ];
 			$element['content'] = '';
 			
-			// CRITICAL FIX: Remove ALL classes from parent since they're now on the paragraph
-			$element['attributes'] = $this->remove_all_classes( $element['attributes'] ?? [] );
+			// Remove flattened classes from parent but keep original classes (including those needed for #id.class matching)
+			$element['attributes'] = $this->remove_flattened_classes( $element['attributes'] ?? [] );
 		} elseif ( $has_children ) {
 			// Element has only children - process them recursively
 			$element['children'] = $this->preprocess_elements_for_text_wrapping( $element['children'] );

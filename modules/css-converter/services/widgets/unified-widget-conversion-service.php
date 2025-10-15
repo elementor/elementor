@@ -34,6 +34,7 @@ class Unified_Widget_Conversion_Service {
 	}
 
 	public function convert_from_html( $html, $css_urls = [], $follow_imports = false, $options = [] ): array {
+		error_log( "🔥 MAX_DEBUG: Unified_Widget_Conversion_Service->convert_from_html called!" );
 		$this->use_zero_defaults = true;
 		$this->widget_creator = new Widget_Creator( $this->use_zero_defaults );
 
@@ -166,7 +167,7 @@ class Unified_Widget_Conversion_Service {
 							$import_response = wp_remote_get( $absolute_import_url, [
 								'timeout' => 30,
 								'sslverify' => false,
-			] );
+							] );
 
 							if ( ! is_wp_error( $import_response ) ) {
 								$external_css .= wp_remote_retrieve_body( $import_response ) . "\n";
@@ -236,7 +237,7 @@ class Unified_Widget_Conversion_Service {
 
 	private function convert_css_properties_to_atomic_format( array $properties ): array {
 		$atomic_props = [];
-		
+
 		foreach ( $properties as $property_data ) {
 			// Handle both formats: simple array and property objects
 			if ( is_array( $property_data ) && isset( $property_data['property'] ) ) {
@@ -248,13 +249,13 @@ class Unified_Widget_Conversion_Service {
 				$value = current( $properties );
 				next( $properties );
 			}
-			
+
 			$atomic_prop = $this->convert_single_css_property_to_atomic_format( $property, $value );
 			if ( $atomic_prop ) {
 				$atomic_props[ $property ] = $atomic_prop;
 			}
 		}
-		
+
 		return $atomic_props;
 	}
 
@@ -263,7 +264,7 @@ class Unified_Widget_Conversion_Service {
 			case 'color':
 			case 'background-color':
 				return Color_Prop_Type::make()->generate( $value );
-			
+
 			case 'font-size':
 			case 'letter-spacing':
 			case 'margin':
@@ -273,18 +274,18 @@ class Unified_Widget_Conversion_Service {
 			case 'margin-right':
 				$size_data = $this->parse_size_value( $value );
 				return Size_Prop_Type::make()->generate( $size_data );
-			
+
 			case 'font-weight':
 				return String_Prop_Type::make()->generate( (string) $value );
-			
+
 			case 'text-transform':
 			case 'text-decoration':
 			case 'font-style':
 				return String_Prop_Type::make()->generate( $value );
-			
+
 			case 'text-shadow':
 				return String_Prop_Type::make()->generate( $value );
-			
+
 			default:
 				return String_Prop_Type::make()->generate( $value );
 		}
@@ -293,7 +294,7 @@ class Unified_Widget_Conversion_Service {
 	private function parse_size_value( string $value ): array {
 		$size = (int) filter_var( $value, FILTER_SANITIZE_NUMBER_INT );
 		$unit = preg_replace( '/[0-9]/', '', $value ) ?: 'px';
-		
+
 		return [
 			'size' => $size,
 			'unit' => $unit,
@@ -406,12 +407,15 @@ class Unified_Widget_Conversion_Service {
 		update_post_meta( $post_id, '_elementor_template_type', 'wp-page' );
 		update_post_meta( $post_id, '_elementor_version', ELEMENTOR_VERSION );
 
+		// Extract resolved styles from widgets by source type for widget_creator compatibility
+		$extracted_styles = $this->extract_styles_by_source_from_widgets( $widgets );
+
 		$css_processing_result = [
 			'global_classes' => $global_classes,
-			'widget_styles' => [],
-			'element_styles' => [],
-			'id_styles' => [],
-			'direct_widget_styles' => [],
+			'widget_styles' => $extracted_styles['css_selector_styles'],
+			'element_styles' => $extracted_styles['element_styles'],
+			'id_styles' => $extracted_styles['id_styles'],
+			'direct_widget_styles' => $extracted_styles['inline_styles'],
 			'stats' => [
 				'rules_processed' => count( $global_classes ),
 				'properties_converted' => $this->count_properties_in_global_classes( $global_classes ),
@@ -419,8 +423,10 @@ class Unified_Widget_Conversion_Service {
 			],
 		];
 
+		error_log( "🔥 MAX_DEBUG: About to call widget_creator->create_widgets with " . count( $widgets ) . " widgets" );
 		$creation_result = $this->widget_creator->create_widgets( $widgets, $css_processing_result, $options );
-		
+		error_log( "🔥 MAX_DEBUG: widget_creator->create_widgets completed" );
+
 		if ( isset( $creation_result['post_id'] ) && $creation_result['post_id'] ) {
 			$post_id = $creation_result['post_id'];
 		}
@@ -437,5 +443,55 @@ class Unified_Widget_Conversion_Service {
 			'stats' => $creation_result['stats'] ?? [],
 		];
 	}
-}
 
+	private function extract_styles_by_source_from_widgets( array $widgets ): array {
+		$id_styles = [];
+		$inline_styles = [];
+		$css_selector_styles = [];
+		$element_styles = [];
+
+		foreach ( $widgets as $widget ) {
+			if ( empty( $widget['resolved_styles'] ) ) {
+				continue;
+			}
+
+			foreach ( $widget['resolved_styles'] as $property => $style_data ) {
+				$source = $style_data['source'] ?? 'unknown';
+
+				// Group styles by their source type for widget_creator compatibility
+				switch ( $source ) {
+					case 'id':
+						$id_styles[] = $style_data;
+						break;
+					case 'inline':
+						$inline_styles[] = $style_data;
+						break;
+					case 'css-selector':
+					case 'class':
+						$css_selector_styles[] = $style_data;
+						break;
+					case 'element':
+						$element_styles[] = $style_data;
+						break;
+				}
+			}
+
+			// Process child widgets recursively
+			if ( ! empty( $widget['children'] ) ) {
+				$child_styles = $this->extract_styles_by_source_from_widgets( $widget['children'] );
+				$id_styles = array_merge( $id_styles, $child_styles['id_styles'] );
+				$inline_styles = array_merge( $inline_styles, $child_styles['inline_styles'] );
+				$css_selector_styles = array_merge( $css_selector_styles, $child_styles['css_selector_styles'] );
+				$element_styles = array_merge( $element_styles, $child_styles['element_styles'] );
+			}
+		}
+
+		return [
+			'id_styles' => $id_styles,
+			'inline_styles' => $inline_styles,
+			'css_selector_styles' => $css_selector_styles,
+			'element_styles' => $element_styles,
+		];
+	}
+
+}

@@ -14,8 +14,8 @@ class Html_Class_Modifier_Service {
 		Css_Class_Usage_Tracker $usage_tracker = null,
 		Nested_Class_Mapping_Service $mapping_service = null
 	) {
-		$this->usage_tracker = $usage_tracker ?: Css_Class_Usage_Tracker::make();
-		$this->mapping_service = $mapping_service ?: Nested_Class_Mapping_Service::make();
+		$this->usage_tracker = $usage_tracker ?? Css_Class_Usage_Tracker::make();
+		$this->mapping_service = $mapping_service ?? Nested_Class_Mapping_Service::make();
 	}
 
 	public static function make(): self {

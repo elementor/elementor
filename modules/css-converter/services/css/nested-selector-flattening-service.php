@@ -24,6 +24,11 @@ class Nested_Selector_Flattening_Service {
 	}
 
 	public function should_flatten_selector( string $selector ): bool {
+		// Never flatten selectors containing ID components - they need proper specificity calculation
+		if ( strpos( $selector, '#' ) !== false ) {
+			return false;
+		}
+		
 		return $this->parser->is_nested_selector( $selector );
 	}
 
