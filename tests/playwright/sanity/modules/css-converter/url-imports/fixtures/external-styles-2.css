@@ -1,0 +1,260 @@
+/* Component and Visual Styles - External CSS File 2 */
+
+/* ID Selectors */
+#header {
+        background-color: #2c3e50;
+        padding: 40px 20px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Text Styling Classes */
+.text-bold {
+        font-weight: 700;
+        letter-spacing: 1px;
+}
+
+.banner-title {
+        text-transform: uppercase;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Container Classes */
+.links-container {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        padding: 1rem;
+        border-radius: 4px;
+}
+
+.link-item {
+        border-bottom: 1px solid #e9ecef;
+        padding: 0.5rem 0;
+}
+
+/* Link Classes with specific colors */
+.link {
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        display: inline-block;
+        transition: all 0.3s ease;
+}
+
+.link-secondary {
+        color: #16a085;
+        font-size: 17px;
+        font-weight: 500;
+}
+
+.link-accent {
+        color: #e74c3c;
+        font-weight: bold;
+}
+
+.link-danger {
+        color: #c0392b;
+        font-size: 17px;
+        font-weight: 700;
+}
+
+/* Gradient Background */
+.bg-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.main-heading {
+        font-family: 'Arial', sans-serif;
+        text-transform: uppercase;
+}
+
+.primary-text {
+        font-family: 'Georgia', serif;
+        text-align: justify;
+}
+
+.secondary-text {
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        margin-top: 1rem;
+}
+
+.secondary-link {
+        color: #6c757d;
+        background-color: #e9ecef;
+}
+
+.tertiary-link {
+        font-weight: 500;
+}
+
+.quaternary-link {
+        color: #fd7e14;
+        border-color: #fd7e14;
+        background-color: #fff3cd;
+}
+
+.quinary-link {
+        font-weight: 600;
+        text-transform: uppercase;
+}
+
+.senary-link {
+        color: #20c997;
+        border-color: #20c997;
+        background-color: #d1ecf1;
+}
+
+.septenary-link {
+        font-weight: 500;
+        background-color: #f8d7da;
+}
+
+.octonary-link {
+        color: #6610f2;
+        border-color: #6610f2;
+        background-color: #e2e3f0;
+}
+
+.nonary-link {
+        font-weight: 700;
+        text-transform: lowercase;
+}
+
+.denary-link {
+        color: #e83e8c;
+        border-color: #e83e8c;
+        background-color: #f7e6ed;
+}
+
+.hero-heading {
+        font-family: 'Helvetica', sans-serif;
+        font-weight: 800;
+}
+
+.hero-text {
+        font-style: italic;
+}
+
+.secondary-button {
+        background-color: transparent;
+        color: #ffffff;
+        padding: 1rem 2rem;
+        margin: 0 1rem;
+        text-decoration: none;
+        border: 2px solid #ffffff;
+        border-radius: 50px;
+        font-weight: 600;
+        display: inline-block;
+        transition: all 0.3s ease;
+}
+
+.info-button {
+        opacity: 0.9;
+}
+
+.copyright-text {
+        font-size: 0.9rem;
+        font-style: italic;
+}
+
+/* Color Utilities */
+.color-primary {
+        color: #007bff;
+}
+
+.color-secondary {
+        color: #6c757d;
+}
+
+.color-success {
+        color: #28a745;
+}
+
+.color-danger {
+        color: #dc3545;
+}
+
+.color-warning {
+        color: #ffc107;
+}
+
+.color-info {
+        color: #17a2b8;
+}
+
+/* Background Color Utilities */
+.bg-primary {
+        background-color: #007bff;
+}
+
+.bg-secondary {
+        background-color: #6c757d;
+}
+
+.bg-light {
+        background-color: #f8f9fa;
+}
+
+.bg-dark {
+        background-color: #343a40;
+}
+
+/* Typography Utilities */
+.text-bold {
+        font-weight: 700;
+}
+
+.text-italic {
+        font-style: italic;
+}
+
+.text-uppercase {
+        text-transform: uppercase;
+}
+
+.text-lowercase {
+        text-transform: lowercase;
+}
+
+.text-center {
+        text-align: center;
+}
+
+.text-left {
+        text-align: left;
+}
+
+.text-right {
+        text-align: right;
+}
+
+/* Border Utilities */
+.border-solid {
+        border: 1px solid #dee2e6;
+}
+
+.border-dashed {
+        border: 1px dashed #dee2e6;
+}
+
+.border-rounded {
+        border-radius: 0.25rem;
+}
+
+.border-circle {
+        border-radius: 50%;
+}
+
+/* Shadow Utilities */
+.shadow-small {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.shadow-medium {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-large {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}

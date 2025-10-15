@@ -250,16 +250,26 @@ class Unified_Style_Manager {
 			'by_property' => [],
 		];
 
+		$id_selectors_processed = 0;
+
 		foreach ( $this->collected_styles as $style ) {
 			$source = $style['source'];
 			$property = $style['property'];
 
 			$stats['by_source'][ $source ] = ( $stats['by_source'][ $source ] ?? 0 ) + 1;
 			$stats['by_property'][ $property ] = ( $stats['by_property'][ $property ] ?? 0 ) + 1;
+
+			// Count ID selectors
+			if ( 'id' === $source ) {
+				++$id_selectors_processed;
+			}
 		}
 
 		// Add reset styles statistics
 		$stats['reset_styles'] = $this->get_reset_styles_stats();
+
+		// Add ID selectors count for test compatibility
+		$stats['id_selectors_processed'] = $id_selectors_processed;
 
 		return $stats;
 	}

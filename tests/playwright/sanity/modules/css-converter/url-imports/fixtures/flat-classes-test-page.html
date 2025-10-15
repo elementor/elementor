@@ -5,8 +5,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Flat Classes Test Page</title>
-        <link rel="stylesheet" href="styles-layout.css">
-        <link rel="stylesheet" href="styles-components.css">
+        <link rel="stylesheet" href="external-styles-1.css">
+        <link rel="stylesheet" href="external-styles-2.css">
         <style>
                 /* Style block styles */
                 .page-header {
@@ -48,8 +48,9 @@
 
 <body>
         <!-- Header Section -->
-        <div class="page-header header-container">
-                <h1 class="header-title main-heading" style="font-weight: 700; letter-spacing: 1px;">Welcome to Our Test
+        <div id="header" class="page-header header-container">
+                <h1 class="header-title main-heading" style="color: #ecf0f1; font-size: 48px; font-weight: 700;">Welcome
+                        to Our Test
                         Page</h1>
         </div>
 
@@ -70,51 +71,46 @@
         </div>
 
         <!-- Hyperlinks Block -->
-        <div class="links-section navigation-area">
+        <div class="links-section navigation-area bg-light">
                 <div class="links-container nav-wrapper">
                         <p class="link-item nav-item">
-                                <a href="#" class="nav-link primary-link"
-                                        style="color: #007bff; background-color: #ffffff;">Home</a>
+                                <a href="#" class="link link-primary">Link One - Home</a>
                         </p>
                         <p class="link-item nav-item">
-                                <a href="#" class="nav-link secondary-link">About Us</a>
+                                <a href="#" class="link link-secondary">Link Two - Additional Information</a>
                         </p>
                         <p class="link-item nav-item">
-                                <a href="#" class="nav-link tertiary-link"
-                                        style="color: #28a745; border-color: #28a745;">Services</a>
+                                <a href="#" class="link link-accent">Link Three - Special Feature</a>
                         </p>
                         <p class="link-item nav-item">
-                                <a href="#" class="nav-link quaternary-link">Portfolio</a>
+                                <a href="#" class="link link-info">Link Four - Resources</a>
                         </p>
                         <p class="link-item nav-item">
-                                <a href="#" class="nav-link quinary-link"
-                                        style="background-color: #ffc107; color: #212529; border-color: #ffc107;">Blog</a>
+                                <a href="#" class="link link-warning">Link Five - Important Notice</a>
                         </p>
                         <p class="link-item nav-item">
-                                <a href="#" class="nav-link senary-link">Resources</a>
+                                <a href="#" class="link link-success">Link Six - Success Stories</a>
                         </p>
                         <p class="link-item nav-item">
-                                <a href="#" class="nav-link septenary-link"
-                                        style="color: #dc3545; border-color: #dc3545;">Contact</a>
+                                <a href="#" class="link link-light">Link Seven - Documentation</a>
                         </p>
                         <p class="link-item nav-item">
-                                <a href="#" class="nav-link octonary-link">FAQ</a>
+                                <a href="#" class="link link-dark">Link Eight - Support Center</a>
                         </p>
                         <p class="link-item nav-item">
-                                <a href="#" class="nav-link nonary-link"
-                                        style="background-color: #6f42c1; color: #ffffff; border-color: #6f42c1;">Support</a>
+                                <a href="#" class="link link-danger">Link Nine - Critical Updates</a>
                         </p>
                         <p class="link-item nav-item">
-                                <a href="#" class="nav-link denary-link">Login</a>
+                                <a href="#" class="link link-muted">Link Ten - Archive</a>
                         </p>
                 </div>
         </div>
 
         <!-- Banner Section -->
-        <section class="banner-section hero-area"
-                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 4rem 2rem; text-align: center; margin-top: 3rem;">
-                <h2 class="banner-title hero-heading"
-                        style="color: #ffffff; font-size: 3rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+        <section class="banner-section bg-gradient hero-area"
+                style="padding: 4rem 2rem; text-align: center; margin-top: 3rem;">
+                <h2 class="banner-title text-bold hero-heading"
+                        style="color: #ffffff; font-size: 3rem; margin-bottom: 1rem;">
                         Ready to Get Started?
                 </h2>
                 <p class="banner-subtitle hero-text"
@@ -122,8 +118,7 @@
                         Join thousands of satisfied customers today
                 </p>
                 <div class="banner-buttons action-buttons">
-                        <a href="#" class="banner-button primary-button cta-button"
-                                style="background-color: #ffffff; color: #667eea; padding: 1rem 2rem; margin: 0 1rem; text-decoration: none; border-radius: 50px; font-weight: 600; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                        <a href="#" class="button-primary cta-button">
                                 Get Started Now
                         </a>
                         <a href="#" class="banner-button secondary-button info-button">
@@ -142,4 +137,3 @@
 </body>
 
 </html>
-

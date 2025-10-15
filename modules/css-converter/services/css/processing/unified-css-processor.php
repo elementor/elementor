@@ -368,11 +368,27 @@ class Unified_Css_Processor {
 	private function process_matched_rule( string $selector, array $properties, array $matched_elements ): void {
 		$converted_properties = $this->convert_rule_properties_to_atomic( $properties );
 
-		$this->unified_style_manager->collect_css_selector_styles(
-			$selector,
-			$converted_properties,
-			$matched_elements
-		);
+		// Route ID selectors to the dedicated ID styles collection for proper tracking
+		if ( $this->is_id_selector( $selector ) ) {
+			$id_name = substr( $selector, 1 ); // Remove the # prefix
+			foreach ( $matched_elements as $element_id ) {
+				$this->unified_style_manager->collect_id_styles(
+					$id_name,
+					$converted_properties,
+					$element_id
+				);
+			}
+		} else {
+			$this->unified_style_manager->collect_css_selector_styles(
+				$selector,
+				$converted_properties,
+				$matched_elements
+			);
+		}
+	}
+
+	private function is_id_selector( string $selector ): bool {
+		return strpos( $selector, '#' ) === 0 && ! strpos( $selector, ' ' ) && ! strpos( $selector, '.' );
 	}
 
 	private function convert_rule_properties_to_atomic( array $properties ): array {

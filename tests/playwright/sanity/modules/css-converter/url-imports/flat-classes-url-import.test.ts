@@ -2,13 +2,18 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
-import { CssConverterHelper, CssConverterResponse } from '../helper';
+import { CssConverterHelper } from '../helper';
+import * as path from 'path';
+import * as fs from 'fs';
 
-test.describe( 'URL Import - Flat Classes Test', () => {
-	let helper: CssConverterHelper;
-	let testPageUrl: string;
-	let cssFile1Url: string;
-	let cssFile2Url: string;
+test.describe( 'HTML Import with Flat Classes @url-imports', () => {
+	let wpAdmin: WpAdminPage;
+	let editor: EditorPage;
+	let cssHelper: CssConverterHelper;
+	const fixturesPath = path.join( __dirname, 'fixtures' );
+	const htmlFilePath = path.join( fixturesPath, 'flat-classes-test-page.html' );
+	const css1Path = path.join( fixturesPath, 'external-styles-1.css' );
+	const css2Path = path.join( fixturesPath, 'external-styles-2.css' );
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
@@ -19,429 +24,408 @@ test.describe( 'URL Import - Flat Classes Test', () => {
 			e_atomic_elements: 'active',
 		} );
 
-		await wpAdminPage.setExperiments( {
-			e_nested_elements: 'active',
+		await page.close();
+		cssHelper = new CssConverterHelper();
+	} );
+
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const page = await browser.newPage();
+		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdminPage.resetExperiments();
+		await page.close();
+	} );
+
+	test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
+		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	} );
+
+	test( 'should apply inline and ID selector styles directly to widgets', async ( { page, request } ) => {
+		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
+		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
+		const css2Content = fs.readFileSync( css2Path, 'utf-8' );
+
+		htmlContent = htmlContent
+			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
+			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
+
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
+			createGlobalClasses: true,
+			preserveIds: true,
 		} );
 
-		await page.close();
-		helper = new CssConverterHelper();
-
-		// Use HTTP URLs served by WordPress
-		const baseUrl = process.env.BASE_URL || 'http://elementor.local';
-		testPageUrl = `${ baseUrl }/wp-content/uploads/test-fixtures/flat-classes-test-page.html`;
-		cssFile1Url = `${ baseUrl }/wp-content/uploads/test-fixtures/styles-layout.css`;
-		cssFile2Url = `${ baseUrl }/wp-content/uploads/test-fixtures/styles-components.css`;
-
-		console.log( 'Test page URL:', testPageUrl );
-		console.log( 'CSS file 1 URL:', cssFile1Url );
-		console.log( 'CSS file 2 URL:', cssFile2Url );
-	} );
-
-	test.afterAll( async ( { browser } ) => {
-		const page = await browser.newPage();
-		// Const wpAdminPage = new WpAdminPage(page, testInfo, apiRequests);
-		// await wpAdminPage.resetExperiments();
-		await page.close();
-	} );
-
-	test( 'should successfully import URL with flat classes and mixed styling sources', async ( { request, page }, testInfo ) => {
-		// Convert the URL with external CSS files
-		const result: CssConverterResponse = await helper.convertFromUrl(
-			request,
-			testPageUrl,
-			[ cssFile1Url, cssFile2Url ], // External CSS files
-		);
-
-		// Validate the API result
-		const validation = helper.validateApiResult( result );
+		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
 			test.skip( true, validation.skipReason );
 			return;
 		}
 
-		// Basic API response validation
-		expect( result.success ).toBe( true );
-		expect( result.post_id ).toBeGreaterThan( 0 );
-		expect( result.edit_url ).toBeTruthy();
-		expect( result.widgets_created ).toBeGreaterThan( 0 );
+		expect( apiResult.success ).toBe( true );
+		expect( ( apiResult.conversion_log as any )?.css_processing?.id_selectors_processed ).toBeGreaterThan( 0 );
 
-		// Log conversion statistics
-		console.log( 'Conversion Results:' );
-		console.log( `- Widgets created: ${ result.widgets_created }` );
-		console.log( `- Global classes created: ${ result.global_classes_created }` );
-		console.log( `- Variables created: ${ result.variables_created }` );
-		console.log( `- Post ID: ${ result.post_id }` );
-		console.log( `- Edit URL: ${ result.edit_url }` );
+		console.log( `✓ Created ${ apiResult.widgets_created } widgets` );
+		console.log( `✓ ID selectors processed: ${ ( apiResult.conversion_log as any )?.css_processing?.id_selectors_processed || 0 }` );
 
-		// Expect multiple widgets to be created from our complex page
-		expect( result.widgets_created ).toBeGreaterThanOrEqual( 5 );
+		// DEBUG: Check API response structure
+		console.log( `\n🔍 API Response - Post ID: ${ apiResult.post_id }, Widgets Created: ${ apiResult.widgets_created }` );
+		console.log( `🔍 Edit URL: ${ apiResult.edit_url }` );
+		console.log( '' );
 
-		// Global classes may or may not be created depending on threshold
-		expect( result.global_classes_created ).toBeGreaterThanOrEqual( 0 );
-
-		// Navigate to the converted page to verify basic conversion success
-		// Note: Based on analysis, perfect style preservation is not expected
-		await page.goto( result.edit_url );
-		const editor = new EditorPage( page, testInfo );
+		await page.goto( apiResult.edit_url );
+		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
-		// Get preview frame for checking elements
-		const elementorFrame = editor.getPreviewFrame();
 
-		// Verify basic conversion success - elements exist and have some styling
+		await test.step( 'Verify ID selector styles (#header) are applied to widget', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
 
-		// Header title from converted content should exist with reasonable font size
-		const headerTitle = elementorFrame.locator( 'h1' ).filter( { hasText: 'Welcome' } );
-		await expect( headerTitle ).toBeVisible();
-		const fontSize = await headerTitle.evaluate( ( el ) => getComputedStyle( el ).fontSize );
-		expect( parseFloat( fontSize ) ).toBeGreaterThan( 20 ); // Should be larger than body text
+			const elements = elementorFrame.locator( '.elementor-element' );
+			await expect( elements.first() ).toBeVisible( { timeout: 10000 } );
 
-		// Navigation elements should exist (may be converted to buttons)
-		const navElements = elementorFrame.locator( 'button, a' ).filter( { hasText: /Home|About|Services/ } );
-		await expect( navElements.first() ).toBeVisible();
+			const header = elements.first();
+			await expect( header ).toHaveCSS( 'background-color', 'rgb(44, 62, 80)' );
+			await expect( header ).toHaveCSS( 'padding', '40px 20px' );
+			await expect( header ).toHaveCSS( 'text-align', 'center' );
 
-		// Verify some styling is applied (even if not perfect)
-		const navButton = navElements.first();
-		await expect( navButton ).toHaveCSS( 'padding', /\d+px/ ); // Should have some padding
+			console.log( '✓ ID selector styles (#header) applied and verified in widget' );
+		} );
 
-		// Banner heading from converted content should exist
-		const bannerHeading = elementorFrame.locator( 'h2' ).filter( { hasText: 'Ready to Get Started' } );
-		await expect( bannerHeading ).toBeVisible();
+		await test.step( 'Verify inline styles are applied to widgets', async () => {
+			const elementorFrame = editor.getPreviewFrame();
 
-		// Verify conversion preserved content structure
-		await expect( elementorFrame.locator( 'text=Welcome' ) ).toBeVisible();
-		await expect( elementorFrame.locator( 'text=Ready to Get Started' ) ).toBeVisible();
+			const heading = elementorFrame.locator( '.e-heading-base' ).first();
+			await expect( heading ).toBeVisible();
+			await expect( heading ).toHaveCSS( 'color', 'rgb(236, 240, 241)' );
+			await expect( heading ).toHaveCSS( 'font-size', '48px' );
+			await expect( heading ).toHaveCSS( 'font-weight', '700' );
 
-		// Note: Container styles (.page-header, .navigation-area) are known to be missing
-		// Font families are known to be overridden with system fonts
-		// Brand colors are known to be replaced with theme defaults
-		// These are documented issues in STYLE-DIFFERENCES-ANALYSIS.md
+			console.log( '✓ Inline styles applied and verified in widget' );
+		} );
 	} );
 
-	test( 'should handle all styling sources: inline, style block, and external CSS', async ( { request, page }, testInfo ) => {
-		const result: CssConverterResponse = await helper.convertFromUrl(
-			request,
-			testPageUrl,
-			[ cssFile1Url, cssFile2Url ],
-		);
+	test( 'should verify global classes creation from flat classes', async ( { request } ) => {
+		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
+		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
+		const css2Content = fs.readFileSync( css2Path, 'utf-8' );
 
-		const validation = helper.validateApiResult( result );
+		htmlContent = htmlContent
+			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
+			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
+
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
+			createGlobalClasses: true,
+		} );
+
+		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
 			test.skip( true, validation.skipReason );
 			return;
 		}
 
-		expect( result.success ).toBe( true );
+		expect( apiResult.success ).toBe( true );
+		expect( apiResult.global_classes_created ).toBeGreaterThan( 0 );
 
-		// Test that we successfully processed styles from all sources:
-		// 1. Inline styles (style attributes)
-		// 2. Style block (in <head>)
-		// 3. External CSS files (linked stylesheets)
+		console.log( `✓ Test verified: ${ apiResult.global_classes_created } global classes created from flat CSS classes` );
+		console.log( `✓ Widgets created: ${ apiResult.widgets_created }` );
+	} );
 
-		// We should have created widgets for elements with different styling sources
-		expect( result.widgets_created ).toBeGreaterThanOrEqual( 8 );
+	test( 'should create widgets from elements with multiple classes', async ( { request } ) => {
+		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
+		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
+		const css2Content = fs.readFileSync( css2Path, 'utf-8' );
 
-		// Log detailed conversion information
-		if ( result.conversion_log ) {
-			console.log( 'Conversion log available:', typeof result.conversion_log );
+		htmlContent = htmlContent
+			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
+			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
+
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
+			createGlobalClasses: true,
+		} );
+
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
+			test.skip( true, validation.skipReason );
+			return;
 		}
 
-		if ( result.warnings && result.warnings.length > 0 ) {
-			console.log( 'Warnings:', result.warnings );
+		expect( apiResult.success ).toBe( true );
+		expect( apiResult.widgets_created ).toBeGreaterThan( 20 );
+		expect( apiResult.global_classes_created ).toBeGreaterThan( 20 );
+
+		console.log( '✓ Successfully processed HTML with multiple classes per element' );
+		console.log( `✓ Created ${ apiResult.widgets_created } widgets from multi-class elements` );
+		console.log( `✓ Created ${ apiResult.global_classes_created } global classes from flat CSS` );
+	} );
+
+	test( 'COMPREHENSIVE STYLING TEST - should apply ALL advanced text properties', async ( { page, request } ) => {
+		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
+		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
+		const css2Content = fs.readFileSync( css2Path, 'utf-8' );
+
+		htmlContent = htmlContent
+			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
+			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
+
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
+			createGlobalClasses: true,
+			preserveIds: true,
+		} );
+
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
+			test.skip( true, validation.skipReason );
+			return;
 		}
 
-		// Navigate to verify basic styling sources processing
-		await page.goto( result.edit_url );
-		const editor = new EditorPage( page, testInfo );
+		await page.goto( apiResult.edit_url );
+		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
-		// Get preview frame for checking elements
-		const elementorFrame = editor.getPreviewFrame();
+		await test.step( 'CRITICAL: Verify letter-spacing from .text-bold class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
 
-		// Verify that content from all styling sources was processed
-		// Note: Exact style preservation is not expected based on analysis
+			// Banner title has class="banner-title text-bold" with letter-spacing: 1px
+			const bannerTitle = elementorFrame.locator( '.e-heading-base' ).filter( { hasText: 'Ready to Get Started?' } );
+			await expect( bannerTitle ).toBeVisible();
+			
+			// THIS SHOULD FAIL if letter-spacing mapper is not working
+			await expect( bannerTitle ).toHaveCSS( 'letter-spacing', '1px' );
+			console.log( '✓ CRITICAL: letter-spacing: 1px applied from .text-bold class' );
+		} );
 
-		// Verify content structure exists (regardless of exact styling)
-		await expect( elementorFrame.locator( 'text=Welcome' ) ).toBeVisible();
-		await expect( elementorFrame.locator( 'text=Lorem ipsum' ) ).toBeVisible();
+		await test.step( 'CRITICAL: Verify text-transform from .banner-title class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			
+			// Banner title has text-transform: uppercase from external-styles-2.css
+			const bannerTitle = elementorFrame.locator( '.e-heading-base' ).filter( { hasText: 'Ready to Get Started?' } );
+			
+			// THIS SHOULD FAIL if text-transform mapper is not working
+			await expect( bannerTitle ).toHaveCSS( 'text-transform', 'uppercase' );
+			console.log( '✓ CRITICAL: text-transform: uppercase applied from .banner-title class' );
+		} );
 
-		// Verify navigation elements exist (may be buttons instead of links)
-		const navElements = elementorFrame.locator( 'button, a' ).filter( { hasText: /Home|About|Services|Portfolio/ } );
-		expect( await navElements.count() ).toBeGreaterThan( 3 );
-
-		// Verify banner elements exist
-		await expect( elementorFrame.locator( 'text=Ready to Get Started' ) ).toBeVisible();
-
-		// Verify some basic styling is applied (even if not matching original)
-		const buttons = elementorFrame.locator( 'button' ).first();
-		if ( await buttons.count() > 0 ) {
-			// Should have some padding and styling
-			await expect( buttons ).toHaveCSS( 'padding', /\d+px/ );
-		}
-
-		// Note: Based on analysis, the following are known issues:
-		// - Container styles (.intro-section, .links-container, .action-buttons) are missing
-		// - Exact layout properties (flexbox, gap, etc.) may not be preserved
-		// - Color schemes and fonts are overridden by theme defaults
-		// - CSS class selectors may not match due to element type conversions
+		await test.step( 'CRITICAL: Verify text-shadow from .banner-title class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			
+			// Banner title has text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2) from external-styles-2.css
+			const bannerTitle = elementorFrame.locator( '.e-heading-base' ).filter( { hasText: 'Ready to Get Started?' } );
+			
+			// THIS SHOULD FAIL if text-shadow is not supported by atomic widgets
+			await expect( bannerTitle ).toHaveCSS( 'text-shadow', 'rgba(0, 0, 0, 0.2) 2px 2px 4px' );
+			console.log( '✓ CRITICAL: text-shadow applied from .banner-title class' );
+		} );
 	} );
 
-	test( 'should correctly process flat class selectors without nesting', async ( { request } ) => {
-		const result: CssConverterResponse = await helper.convertFromUrl(
-			request,
-			testPageUrl,
-			[ cssFile1Url, cssFile2Url ],
-		);
+	test( 'COMPREHENSIVE STYLING TEST - should apply ALL box-shadow properties', async ( { page, request } ) => {
+		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
+		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
+		const css2Content = fs.readFileSync( css2Path, 'utf-8' );
 
-		const validation = helper.validateApiResult( result );
+		htmlContent = htmlContent
+			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
+			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
+
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
+			createGlobalClasses: true,
+			preserveIds: true,
+		} );
+
+		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
 			test.skip( true, validation.skipReason );
 			return;
 		}
 
-		expect( result.success ).toBe( true );
-
-		// Our test page uses only flat classes (no nested selectors like .parent .child)
-		// All classes are single-level: .page-header, .header-title, .nav-link, etc.
-		// The converter should handle these correctly
-
-		// Verify we created global classes from repeated flat classes (may be 0 if threshold not met)
-		expect( result.global_classes_created ).toBeGreaterThanOrEqual( 0 );
-
-		// Verify we created multiple widgets from elements with flat classes
-		expect( result.widgets_created ).toBeGreaterThanOrEqual( 6 );
-	} );
-
-	test( 'should handle multiple classes on single elements', async ( { request, page }, testInfo ) => {
-		const result: CssConverterResponse = await helper.convertFromUrl(
-			request,
-			testPageUrl,
-			[ cssFile1Url, cssFile2Url ],
-		);
-
-		const validation = helper.validateApiResult( result );
-		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
-			return;
-		}
-
-		expect( result.success ).toBe( true );
-
-		// Our HTML uses multiple classes per element:
-		// class="header-title main-heading"
-		// class="intro-text primary-text"
-		// class="nav-link primary-link"
-		// etc.
-
-		// The converter should handle combining styles from multiple classes
-		expect( result.widgets_created ).toBeGreaterThan( 0 );
-		expect( result.global_classes_created ).toBeGreaterThanOrEqual( 0 );
-
-		// Navigate to verify multiple class combinations work
-		await page.goto( result.edit_url );
-		const editor = new EditorPage( page, testInfo );
+		await page.goto( apiResult.edit_url );
+		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
-		// Get preview frame for checking elements
-		const elementorFrame = editor.getPreviewFrame();
+		await test.step( 'CRITICAL: Verify header box-shadow from #header ID selector', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
 
-		// Verify elements with multiple classes get combined styles
-		// NOTE: CSS class preservation may not work - checking by element type instead
+			// Header has box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) from external-styles-2.css
+			const header = elementorFrame.locator( '.elementor-element' ).first();
+			
+			// THIS SHOULD PASS if box-shadow mapper is working
+			await expect( header ).toHaveCSS( 'box-shadow', 'rgba(0, 0, 0, 0.1) 0px 2px 8px 0px' );
+			console.log( '✓ CRITICAL: Header box-shadow applied from #header ID selector' );
+		} );
 
-		// Find the h1 from converted content (not the WordPress post title)
-		const headerTitle = elementorFrame.locator( 'h1' ).filter( { hasText: 'Welcome' } );
-		await expect( headerTitle ).toBeVisible();
-		// From .header-title (style block): font-size: 2.5rem, margin: 0, color: #343a40
-		await expect( headerTitle ).toHaveCSS( 'font-size', '40px' ); // 2.5rem
-		// NOTE: margin may not be preserved exactly due to container structure changes
-		await expect( headerTitle ).toHaveCSS( 'color', 'rgb(52, 58, 64)' ); // #343a40
-		// From .main-heading (external CSS): font-family: Arial, text-transform: uppercase
-		// ⏭️ FUTURE: Font-family (system fonts override - documented in FUTURE.md)
-		// await expect(headerTitle).toHaveCSS('font-family', /Arial/);
-		await expect( headerTitle ).toHaveCSS( 'text-transform', 'uppercase' );
+		await test.step( 'CRITICAL: Verify links-container box-shadow from .links-container class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			
+			// Links section has box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) from external-styles-2.css
+			const linksContainer = elementorFrame.locator( '.elementor-element' ).filter( { has: elementorFrame.locator( 'a' ).first() } );
+			
+			// THIS SHOULD PASS if box-shadow mapper is working
+			await expect( linksContainer ).toHaveCSS( 'box-shadow', 'rgba(0, 0, 0, 0.12) 0px 1px 3px 0px' );
+			console.log( '✓ CRITICAL: Links container box-shadow applied from .links-container class' );
+		} );
 
-		// Find paragraphs for intro-text primary-text
-		const paragraphs = elementorFrame.locator( 'p' );
-		if ( await paragraphs.count() > 0 ) {
-			const firstParagraph = paragraphs.first();
-			// ⏭️ FUTURE: Font-family (system fonts override - documented in FUTURE.md)
-			// await expect(firstParagraph).toHaveCSS('font-family', /Georgia/);
-			// Text-align may work if properly mapped
-			await expect( firstParagraph ).toHaveCSS( 'text-align', /left|justify/ );
-		}
-
-		// Find navigation links/buttons
-		const navElements = elementorFrame.locator( 'button, a' ).filter( { hasText: /Home|About|Services/ } );
-		if ( await navElements.count() > 0 ) {
-			const navElement = navElements.first();
-			// From .nav-link (style block): text-decoration: none, padding, border, border-radius
-			await expect( navElement ).toHaveCSS( 'padding', '8px 16px' ); // 0.5rem 1rem
-			await expect( navElement ).toHaveCSS( 'border-radius', /\d+px/ );
-			// ❌ EXPECTED TO FAIL: Border color (known issue - maps to wrong color)
-			await expect(navElement).toHaveCSS('border', '2px solid rgb(0, 123, 255)'); // #007bff
-		}
+		await test.step( 'CRITICAL: Verify button box-shadow from .button-primary class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			
+			// Primary button has box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3) from external-styles-1.css
+			const primaryButton = elementorFrame.locator( 'a' ).filter( { hasText: 'Get Started Now' } );
+			
+			// THIS SHOULD PASS if box-shadow mapper is working
+			await expect( primaryButton ).toHaveCSS( 'box-shadow', 'rgba(52, 152, 219, 0.3) 0px 4px 6px 0px' );
+			console.log( '✓ CRITICAL: Primary button box-shadow applied from .button-primary class' );
+		} );
 	} );
 
-	test( 'should process complex styling combinations', async ( { request } ) => {
-		const result: CssConverterResponse = await helper.convertFromUrl(
-			request,
-			testPageUrl,
-			[ cssFile1Url, cssFile2Url ],
-		);
+	test( 'COMPREHENSIVE STYLING TEST - should apply ALL border properties', async ( { page, request } ) => {
+		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
+		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
+		const css2Content = fs.readFileSync( css2Path, 'utf-8' );
 
-		const validation = helper.validateApiResult( result );
+		htmlContent = htmlContent
+			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
+			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
+
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
+			createGlobalClasses: true,
+			preserveIds: true,
+		} );
+
+		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
 			test.skip( true, validation.skipReason );
 			return;
 		}
 
-		expect( result.success ).toBe( true );
+		await page.goto( apiResult.edit_url );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
 
-		// Our test page includes complex styling:
-		// - Gradient backgrounds
-		// - Box shadows
-		// - Flexbox layouts
-		// - Typography variations
-		// - Color combinations
-		// - Spacing utilities
+		await test.step( 'CRITICAL: Verify border from .bg-light class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
 
-		// Verify the converter handled complex CSS properties
-		expect( result.widgets_created ).toBeGreaterThanOrEqual( 5 );
+			// Links section has border: 1px solid #dee2e6 from .bg-light class in external-styles-1.css
+			const linksContainer = elementorFrame.locator( '.elementor-element' ).filter( { has: elementorFrame.locator( 'a' ).first() } );
+			
+			// THIS SHOULD FAIL if border mapper is not working properly
+			await expect( linksContainer ).toHaveCSS( 'border', '1px solid rgb(222, 226, 230)' );
+			console.log( '✓ CRITICAL: Links container border applied from .bg-light class' );
+		} );
 
-		// Should create some global classes from repeated patterns
-		expect( result.global_classes_created ).toBeGreaterThanOrEqual( 0 );
+		await test.step( 'CRITICAL: Verify border-bottom from .link-item class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			
+			// Link items have border-bottom: 1px solid #e9ecef from external-styles-2.css
+			const linkItem = elementorFrame.locator( '.elementor-element' ).filter( { has: elementorFrame.locator( 'a' ).first() } );
+			
+			// THIS SHOULD FAIL if border-bottom mapper is not working
+			await expect( linkItem ).toHaveCSS( 'border-bottom', '1px solid rgb(233, 236, 239)' );
+			console.log( '✓ CRITICAL: Link item border-bottom applied from .link-item class' );
+		} );
 	} );
 
-	test( 'should handle CSS from external files correctly', async ( { request } ) => {
-		// Test with external CSS files
-		const resultWithCss: CssConverterResponse = await helper.convertFromUrl(
-			request,
-			testPageUrl,
-			[ cssFile1Url, cssFile2Url ],
-		);
+	test( 'COMPREHENSIVE STYLING TEST - should apply ALL link colors and typography', async ( { page, request } ) => {
+		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
+		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
+		const css2Content = fs.readFileSync( css2Path, 'utf-8' );
 
-		// Test without external CSS files
-		const resultWithoutCss: CssConverterResponse = await helper.convertFromUrl(
-			request,
-			testPageUrl,
-		);
+		htmlContent = htmlContent
+			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
+			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
 
-		const validationWithCss = helper.validateApiResult( resultWithCss );
-		const validationWithoutCss = helper.validateApiResult( resultWithoutCss );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
+			createGlobalClasses: true,
+			preserveIds: true,
+		} );
 
-		if ( validationWithCss.shouldSkip ) {
-			test.skip( true, `With CSS: ${ validationWithCss.skipReason }` );
-			return;
-		}
-
-		if ( validationWithoutCss.shouldSkip ) {
-			test.skip( true, `Without CSS: ${ validationWithoutCss.skipReason }` );
-			return;
-		}
-
-		expect( resultWithCss.success ).toBe( true );
-		expect( resultWithoutCss.success ).toBe( true );
-
-		// With external CSS, we should get more widgets/classes due to additional styling
-		console.log( 'With external CSS:' );
-		console.log( `- Widgets: ${ resultWithCss.widgets_created }` );
-		console.log( `- Global classes: ${ resultWithCss.global_classes_created }` );
-
-		console.log( 'Without external CSS:' );
-		console.log( `- Widgets: ${ resultWithoutCss.widgets_created }` );
-		console.log( `- Global classes: ${ resultWithoutCss.global_classes_created }` );
-
-		// External CSS should contribute to the conversion
-		// (Though the exact numbers may vary based on how styles are processed)
-		expect( resultWithCss.widgets_created ).toBeGreaterThanOrEqual( resultWithoutCss.widgets_created );
-	} );
-
-	test( 'should create appropriate widget types for different HTML elements', async ( { request } ) => {
-		const result: CssConverterResponse = await helper.convertFromUrl(
-			request,
-			testPageUrl,
-			[ cssFile1Url, cssFile2Url ],
-		);
-
-		const validation = helper.validateApiResult( result );
+		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
 			test.skip( true, validation.skipReason );
 			return;
 		}
 
-		expect( result.success ).toBe( true );
+		await page.goto( apiResult.edit_url );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
 
-		// Our test page contains various HTML elements:
-		// - <h1> (header title)
-		// - <h2> (banner title)
-		// - <p> (paragraphs and link containers)
-		// - <a> (links and buttons)
-		// - <div> (containers and sections)
-		// - <section> (banner)
+		await test.step( 'CRITICAL: Verify .link-secondary color and typography', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
 
-		// The converter should create appropriate widgets for these elements
-		expect( result.widgets_created ).toBeGreaterThanOrEqual( 8 );
+			// Link Two has class="link link-secondary" with color: #16a085, font-size: 17px, font-weight: 500
+			const linkSecondary = elementorFrame.locator( 'a' ).filter( { hasText: 'Link Two - Additional Information' } );
+			await expect( linkSecondary ).toBeVisible();
+			
+			// THIS SHOULD PASS if color mappers are working
+			await expect( linkSecondary ).toHaveCSS( 'color', 'rgb(22, 160, 133)' ); // #16a085
+			await expect( linkSecondary ).toHaveCSS( 'font-size', '17px' );
+			await expect( linkSecondary ).toHaveCSS( 'font-weight', '500' );
+			console.log( '✓ CRITICAL: .link-secondary styling applied correctly' );
+		} );
 
-		// Should handle the mix of semantic and generic elements
-		expect( result.post_id ).toBeGreaterThan( 0 );
-		expect( result.edit_url ).toContain( 'elementor' );
+		await test.step( 'CRITICAL: Verify .link-accent color and typography', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			
+			// Link Three has class="link link-accent" with color: #e74c3c, font-weight: bold
+			const linkAccent = elementorFrame.locator( 'a' ).filter( { hasText: 'Link Three - Special Feature' } );
+			
+			await expect( linkAccent ).toHaveCSS( 'color', 'rgb(231, 76, 60)' ); // #e74c3c
+			await expect( linkAccent ).toHaveCSS( 'font-weight', '700' ); // bold
+			console.log( '✓ CRITICAL: .link-accent styling applied correctly' );
+		} );
+
+		await test.step( 'CRITICAL: Verify .link-danger color and typography', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			
+			// Link Nine has class="link link-danger" with color: #c0392b, font-size: 17px, font-weight: 700
+			const linkDanger = elementorFrame.locator( 'a' ).filter( { hasText: 'Link Nine - Critical Updates' } );
+			
+			await expect( linkDanger ).toHaveCSS( 'color', 'rgb(192, 57, 43)' ); // #c0392b
+			await expect( linkDanger ).toHaveCSS( 'font-size', '17px' );
+			await expect( linkDanger ).toHaveCSS( 'font-weight', '700' );
+			console.log( '✓ CRITICAL: .link-danger styling applied correctly' );
+		} );
 	} );
 
-	test( 'should preserve styling hierarchy with flat classes', async ( { request } ) => {
-		const result: CssConverterResponse = await helper.convertFromUrl(
-			request,
-			testPageUrl,
-			[ cssFile1Url, cssFile2Url ],
-		);
+	test( 'COMPREHENSIVE STYLING TEST - should apply ALL background properties', async ( { page, request } ) => {
+		let htmlContent = fs.readFileSync( htmlFilePath, 'utf-8' );
+		const css1Content = fs.readFileSync( css1Path, 'utf-8' );
+		const css2Content = fs.readFileSync( css2Path, 'utf-8' );
 
-		const validation = helper.validateApiResult( result );
+		htmlContent = htmlContent
+			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
+			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
+
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
+			createGlobalClasses: true,
+			preserveIds: true,
+		} );
+
+		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
 			test.skip( true, validation.skipReason );
 			return;
 		}
 
-		expect( result.success ).toBe( true );
+		await page.goto( apiResult.edit_url );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
 
-		// Even with flat classes (no CSS nesting), the converter should:
-		// 1. Maintain the visual hierarchy of the page
-		// 2. Preserve styling relationships
-		// 3. Create appropriate widget structure
+		await test.step( 'CRITICAL: Verify gradient background from .bg-gradient class', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
 
-		expect( result.widgets_created ).toBeGreaterThan( 0 );
-		expect( result.post_id ).toBeGreaterThan( 0 );
-
-		// Log final results
-		console.log( 'Final conversion summary:' );
-		console.log( `- Success: ${ result.success }` );
-		console.log( `- Widgets created: ${ result.widgets_created }` );
-		console.log( `- Global classes: ${ result.global_classes_created }` );
-		console.log( `- Variables: ${ result.variables_created }` );
-		console.log( `- Errors: ${ result.errors?.length || 0 }` );
-		console.log( `- Warnings: ${ result.warnings?.length || 0 }` );
-	} );
-
-	test( 'should handle CSS utility classes correctly', async ( { request } ) => {
-		const result: CssConverterResponse = await helper.convertFromUrl(
-			request,
-			testPageUrl,
-			[ cssFile1Url, cssFile2Url ],
-		);
-
-		const validation = helper.validateApiResult( result );
-		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
-			return;
-		}
-
-		expect( result.success ).toBe( true );
-
-		// Our external CSS includes utility classes:
-		// .color-primary, .bg-light, .text-center, .border-rounded, etc.
-		// These should be processed correctly even if not used in the HTML
-
-		expect( result.widgets_created ).toBeGreaterThan( 0 );
-
-		// Utility classes might contribute to global classes if used multiple times
-		expect( result.global_classes_created ).toBeGreaterThanOrEqual( 0 );
+			// Banner section has class="banner-section bg-gradient" with linear-gradient background
+			const bannerSection = elementorFrame.locator( '.elementor-element' ).filter( { has: elementorFrame.locator( 'h2' ).filter( { hasText: 'Ready to Get Started?' } ) } );
+			await expect( bannerSection ).toBeVisible();
+			
+			// THIS SHOULD FAIL if gradient background mapper is not working
+			// background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+			const backgroundImage = await bannerSection.evaluate( ( el ) => getComputedStyle( el ).backgroundImage );
+			expect( backgroundImage ).toContain( 'linear-gradient' );
+			expect( backgroundImage ).toContain( 'rgb(102, 126, 234)' ); // #667eea
+			expect( backgroundImage ).toContain( 'rgb(118, 75, 162)' ); // #764ba2
+			console.log( '✓ CRITICAL: Gradient background applied from .bg-gradient class' );
+		} );
 	} );
 } );
