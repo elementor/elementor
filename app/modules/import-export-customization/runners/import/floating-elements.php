@@ -13,6 +13,8 @@ class Floating_Elements extends Import_Runner_Base {
 
 	const CONDITIONS_CACHE_META_KEY = 'elementor_pro_theme_builder_conditions';
 
+	private $posts_cache = [];
+
 	public static function get_name(): string {
 		return 'floating-elements';
 	}
@@ -34,11 +36,15 @@ class Floating_Elements extends Import_Runner_Base {
 		$imported_post_ids = [];
 
 		foreach ( $posts_settings as $id => $post_settings ) {
-			$imported_post_ids[] = $this->import_floating_element_metadata(
-				$id,
-				$path,
-				$imported_floating_elements
-			);
+			try {
+				$imported_post_ids[] = $this->import_floating_element_metadata(
+					$id,
+					$path,
+					$imported_floating_elements
+				);
+			} catch ( \Exception $e ) {
+				continue;
+			}
 		}
 
 		$this->set_display_conditions_cache( $imported_post_ids );
@@ -64,7 +70,12 @@ class Floating_Elements extends Import_Runner_Base {
 		$imported_post_id = $imported_floating_elements[ $id ] ?? null;
 
 		if ( ! $imported_post_id ) {
-			return;
+			throw new \Exception(
+				sprintf(
+					esc_html__( 'Imported post ID not found for floating element: %s', 'elementor' ),
+					esc_html( $id )
+				)
+			);
 		}
 
 		if ( str_starts_with( $widget_type, 'floating-bars' ) ) {
@@ -76,18 +87,22 @@ class Floating_Elements extends Import_Runner_Base {
 			);
 		}
 
-		$posts = get_posts( [
-			'post_type' => FloatingButtonsModule::CPT_FLOATING_BUTTONS,
-			'posts_per_page' => -1,
-			'post_status' => 'publish',
-			'fields' => 'ids',
-			'no_found_rows' => true,
-			'update_post_term_cache' => false,
-			'update_post_meta_cache' => false,
-			'meta_query' => Floating_Buttons::get_meta_query_for_floating_buttons(
-				$floating_element_type
-			),
-		] );
+		if ( ! isset( $this->posts_cache[ $floating_element_type ] ) ) {
+			$this->posts_cache[ $floating_element_type ] = get_posts( [
+				'post_type' => FloatingButtonsModule::CPT_FLOATING_BUTTONS,
+				'posts_per_page' => -1,
+				'post_status' => 'publish',
+				'fields' => 'ids',
+				'no_found_rows' => true,
+				'update_post_term_cache' => false,
+				'update_post_meta_cache' => false,
+				'meta_query' => Floating_Buttons::get_meta_query_for_floating_buttons(
+					$floating_element_type
+				),
+			] );
+		}
+
+		$posts = $this->posts_cache[ $floating_element_type ];
 
 		foreach ( $posts as $post_id ) {
 			delete_post_meta( $post_id, '_elementor_conditions' );
