@@ -15,7 +15,7 @@ import {
 	Button,
 	Popover,
 } from '@elementor/app-ui';
-import { AppsEventTracking, appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { KIT_SOURCE_MAP } from '../../../../import-export/assets/js/hooks/use-kit';
 
 import './kit-list-item.scss';
@@ -98,7 +98,6 @@ const KitListCloudItem = ( props ) => {
 
 		AppsEventTracking.sendKitCloudLibraryDelete( props.model.id );
 
-		eventTracking( 'kit-library/cloud-delete' );
 		props.onDelete();
 	};
 
@@ -136,16 +135,6 @@ const KitListCloudItem = ( props ) => {
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
 					<CardOverlay>
 						<Grid container direction="column" className="e-kit-library__kit-item-cloud-overlay">
-<<<<<<< HEAD
-							<Button
-								className="eps-button e-kit-library__kit-item-cloud-overlay-import-button eps-button--primary eps-button--sm eps-button--contained"
-								text={ __( 'Apply', 'elementor' ) }
-								icon="eicon-library-download"
-								onClick={ () => {
-									eventTracking( 'kit-library/cloud-import' );
-
-									AppsEventTracking.sendKitCloudLibraryApply( props.model.id );
-=======
 							{ isLocked ? (
 								<i className="eicon-lock" aria-hidden="true"></i>
 							) : (
@@ -155,7 +144,6 @@ const KitListCloudItem = ( props ) => {
 									icon="eicon-library-download"
 									onClick={ () => {
 										AppsEventTracking.sendKitCloudLibraryApply( props.model.id );
->>>>>>> 5286471c5d (Tweak: Add size-based quota on the Cloud Kits [ED-21094] (#33082))
 
 										const url = elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ]
 											? `import-customization?referrer=${ KIT_SOURCE_MAP.CLOUD }&id=${ props.model.id }`
