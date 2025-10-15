@@ -103,7 +103,7 @@ abstract class Endpoint {
 	 * @param string $endpoint_class
 	 *
 	 * @return \Elementor\Data\Base\SubEndpoint
-	 * @throws \Exception If invalid endpoint.
+	 * @throws \Exception If invalid sub endpoint registered.
 	 */
 	protected function register_sub_endpoint( $route, $endpoint_class ) {
 		$endpoint_instance = new $endpoint_class( $route, $this );
@@ -135,9 +135,9 @@ abstract class Endpoint {
 	 *
 	 * All reset requests from the client should pass this function.
 	 *
-	 * @param string $methods
+	 * @param string           $methods
 	 * @param \WP_REST_Request $request
-	 * @param bool $is_multi
+	 * @param bool             $is_multi
 	 *
 	 * @return mixed|\WP_Error|\WP_HTTP_Response|\WP_REST_Response
 	 * @throws \Exception If invalid method.
@@ -189,7 +189,7 @@ abstract class Endpoint {
 	/**
 	 * Retrieves one item from the collection.
 	 *
-	 * @param string $id
+	 * @param string           $id
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
@@ -214,7 +214,7 @@ abstract class Endpoint {
 	/**
 	 * Creates one item.
 	 *
-	 * @param string $id id of request item.
+	 * @param string           $id id of request item.
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
@@ -237,7 +237,7 @@ abstract class Endpoint {
 	/**
 	 * Updates one item.
 	 *
-	 * @param string $id id of request item.
+	 * @param string           $id id of request item.
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
@@ -260,7 +260,7 @@ abstract class Endpoint {
 	/**
 	 * Delete one item.
 	 *
-	 * @param string $id id of request item.
+	 * @param string           $id id of request item.
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
@@ -324,8 +324,8 @@ abstract class Endpoint {
 	 *
 	 * @param string $route
 	 * @param string $methods
-	 * @param null $callback
-	 * @param array $args
+	 * @param null   $callback
+	 * @param array  $args
 	 *
 	 * @return bool
 	 * @throws \Exception If invalid method.

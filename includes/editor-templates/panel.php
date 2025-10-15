@@ -52,8 +52,8 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 <script type="text/template" id="tmpl-elementor-exit-dialog">
 	<div><?php echo esc_html__( 'Now you can choose where you want to go on the site from the following options', 'elementor' ); ?></div>
 	<div>
-		<!-- translators: 1: Opening HTML <a> tag, 2: closing HTML <a> tag. -->
 		<?php printf(
+			/* translators: 1: Opening HTML <a> tag, 2: closing HTML <a> tag. */
 			esc_html__( 'Any time you can change the settings in %1$sUser Preferences%2$s', 'elementor' ),
 			'<a id="user-preferences">',
 			'</a>'
@@ -74,7 +74,12 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
-	<button id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php echo esc_attr__( 'Settings', 'elementor' ); ?>" aria-label="<?php printf( esc_attr__( '%s Settings', 'elementor' ), esc_attr( $document::get_title() ) ); ?>">
+	<button id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php echo esc_attr__( 'Settings', 'elementor' ); ?>" aria-label="<?php
+	printf(
+		/* translators: %s: Document title. */
+		esc_attr__( '%s Settings', 'elementor' ),
+		esc_attr( $document::get_title() )
+	); ?>">
 		<i class="eicon-cog" aria-hidden="true"></i>
 	</button>
 	<# if ( $e.components.get( 'document/elements' ).utils.showNavigator() ) { #>

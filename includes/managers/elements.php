@@ -67,7 +67,7 @@ class Elements_Manager {
 	 * @return Element_Base|null Element instance if element created, or null
 	 *                           otherwise.
 	 */
-	public function create_element_instance( array $element_data, array $element_args = [], Element_Base $element_type = null ) {
+	public function create_element_instance( array $element_data, array $element_args = [], ?Element_Base $element_type = null ) {
 		if ( null === $element_type ) {
 			if ( 'widget' === $element_data['elType'] ) {
 				$element_type = Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
@@ -357,6 +357,12 @@ class Elements_Manager {
 	public function enqueue_elements_styles() {
 		foreach ( $this->get_element_types() as $element ) {
 			$element->enqueue_styles();
+		}
+	}
+
+	public function enqueue_elements_scripts() {
+		foreach ( $this->get_element_types() as $element ) {
+			$element->enqueue_scripts();
 		}
 	}
 

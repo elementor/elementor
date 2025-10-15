@@ -14,7 +14,7 @@ export const FontSizeField = () => {
 	return (
 		<StylesField bind="font-size" propDisplayName={ FONT_SIZE_LABEL }>
 			<StylesFieldLayout label={ FONT_SIZE_LABEL } ref={ rowRef }>
-				<SizeControl anchorRef={ rowRef } />
+				<SizeControl anchorRef={ rowRef } ariaLabel={ FONT_SIZE_LABEL } />
 			</StylesFieldLayout>
 		</StylesField>
 	);

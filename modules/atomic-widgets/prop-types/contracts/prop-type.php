@@ -15,9 +15,9 @@ interface Prop_Type extends \JsonSerializable {
 	public function validate( $value ): bool;
 	public function sanitize( $value );
 	public function get_meta(): array;
-	public function get_meta_item( string $key, $default = null );
+	public function get_meta_item( string $key, $default_value = null );
 	public function get_settings(): array;
-	public function get_setting( string $key, $default = null );
+	public function get_setting( string $key, $default_value = null );
 	public function set_dependencies( ?array $dependencies ): self;
 	public function get_dependencies(): ?array;
 }

@@ -3,7 +3,6 @@ import { ModalProvider, Heading, Text, Button } from '@elementor/app-ui';
 import { useMemo, useState, useRef } from 'react';
 import { useNavigate } from '@reach/router';
 import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './index-header.scss';
 
@@ -11,22 +10,6 @@ export default function IndexHeader( props ) {
 	const navigate = useNavigate();
 	const [ isInfoModalOpen, setIsInfoModalOpen ] = useState( false );
 	const importRef = useRef();
-	const eventTracking = ( command, element = null, eventType = 'click', modalType = null ) => {
-		appsEventTrackingDispatch(
-			command,
-			{
-				element,
-				event_type: eventType,
-				page_source: 'home page',
-				element_position: 'app_header',
-				modal_type: modalType,
-			},
-		);
-	};
-	const onClose = ( e ) => {
-		const element = e.target.classList.contains( 'eps-modal__overlay' ) ? 'overlay' : 'x';
-		eventTracking( 'kit-library/modal-close', element, null, 'info' );
-	};
 	const shouldShowImportButton = elementorAppConfig.user.is_administrator || ( elementorAppConfig.user.restrictions?.includes( 'json-upload' ) ?? false );
 	const buttons = useMemo( () => [
 		{
@@ -35,7 +18,6 @@ export default function IndexHeader( props ) {
 			hideText: true,
 			icon: 'eicon-info-circle-o',
 			onClick: () => {
-				eventTracking( 'kit-library/seek-more-info' );
 				setIsInfoModalOpen( true );
 			},
 		},
@@ -45,7 +27,6 @@ export default function IndexHeader( props ) {
 			hideText: true,
 			icon: `eicon-sync ${ props.isFetching ? 'eicon-animation-spin' : '' }`,
 			onClick: () => {
-				eventTracking( 'kit-library/refetch' );
 				props.refetch();
 			},
 		},
@@ -56,11 +37,10 @@ export default function IndexHeader( props ) {
 			icon: 'eicon-upload-circle-o',
 			elRef: importRef,
 			onClick: () => {
-				eventTracking( 'kit-library/kit-import' );
 				navigate( '/import?referrer=kit-library' );
 			},
 		},
-	], [ props.isFetching, props.refetch, shouldShowImportButton ] );
+	], [ props.isFetching, props.refetch, shouldShowImportButton, navigate ] );
 
 	return (
 		<>
@@ -74,8 +54,6 @@ export default function IndexHeader( props ) {
 			<ModalProvider title={ __( 'Welcome to the Library', 'elementor' ) }
 				show={ isInfoModalOpen }
 				setShow={ setIsInfoModalOpen }
-				onOpen={ () => eventTracking( 'kit-library/modal-open', null, 'load', 'info' ) }
-				onClose={ ( e ) => onClose( e ) }
 			>
 				<div className="e-kit-library-header-info-modal-container">
 					<Heading tag="h3" variant="h3">{ __( 'What\'s a Website Template?', 'elementor' ) }</Heading>
@@ -98,9 +76,6 @@ export default function IndexHeader( props ) {
 							rel="noreferrer"
 							text={ __( 'Learn more', 'elementor' ) }
 							color="link"
-							onClick={ () => {
-								eventTracking( 'kit-library/seek-more-info', 'text link', null, 'info' );
-							} }
 						/>{ ' ' }
 						{ __( 'about using templates', 'elementor' ) }
 					</Text>

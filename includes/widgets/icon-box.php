@@ -251,6 +251,10 @@ class Widget_Icon_Box extends Widget_Base {
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
 					],
+					'bottom' => [
+						'title' => esc_html__( 'Bottom', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
 				],
 				'prefix_class' => 'elementor%s-position-',
 				'condition' => [
@@ -887,7 +891,7 @@ class Widget_Icon_Box extends Widget_Base {
 			return;
 		}
 
-		var hasLink = settings.link.url,
+		var hasLink = settings.link?.url,
 			htmlTag = hasLink ? 'a' : 'span',
 			iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 			migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
@@ -900,7 +904,7 @@ class Widget_Icon_Box extends Widget_Base {
 		}
 
 		if ( hasLink ) {
-			view.addRenderAttribute( 'link', 'href', elementor.helpers.sanitizeUrl( settings.link.url ) );
+			view.addRenderAttribute( 'link', 'href', elementor.helpers.sanitizeUrl( settings.link?.url ) );
 			view.addRenderAttribute( 'icon', 'tabindex', '-1' );
 			if ( '' !== settings.title_text ) {
 				view.addRenderAttribute( 'icon', 'aria-label', settings.title_text );

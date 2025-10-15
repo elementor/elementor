@@ -1,5 +1,6 @@
 import { useReducer, useContext, createContext } from 'react';
 import PropTypes from 'prop-types';
+import { isVersionLessThan } from '../utils/version-utils';
 
 export const IMPORT_STATUS = {
 	PENDING: 'PENDING',
@@ -7,6 +8,10 @@ export const IMPORT_STATUS = {
 	CUSTOMIZING: 'CUSTOMIZING',
 	IMPORTING: 'IMPORTING',
 	COMPLETED: 'COMPLETED',
+};
+
+export const ACTION_TYPE = {
+	APPLY_ALL: 'apply-all',
 };
 
 const importReducer = ( state, { type, payload } ) => {
@@ -21,6 +26,8 @@ const importReducer = ( state, { type, payload } ) => {
 			return { ...state, importedData: payload };
 		case 'SET_KIT_UPLOAD_PARAMS':
 			return { ...state, kitUploadParams: payload };
+		case 'SET_ACTION_TYPE':
+			return { ...state, actionType: payload };
 		case 'SET_RUNNERS_STATE':
 			return {
 				...state,
@@ -73,6 +80,7 @@ const initialState = {
 	uploadedData: null,
 	importedData: null,
 	kitUploadParams: null,
+	actionType: null,
 	plugins: [],
 	includes: [ 'plugins' ],
 	importStatus: IMPORT_STATUS.PENDING,
@@ -87,6 +95,9 @@ const initialState = {
 export default function ImportContextProvider( props ) {
 	const [ data, dispatch ] = useReducer( importReducer, initialState );
 
+	const isOldExport = isVersionLessThan( data.uploadedData?.manifest?.version, elementorAppConfig[ 'import-export-customization' ].manifestVersion );
+	const isOldElementorVersion = isVersionLessThan( elementorAppConfig[ 'import-export-customization' ].elementorVersion, data.uploadedData?.manifest?.elementor_version );
+
 	return (
 		<ImportContext.Provider value={ {
 			data,
@@ -96,6 +107,8 @@ export default function ImportContextProvider( props ) {
 			isCustomizing: data.importStatus === IMPORT_STATUS.CUSTOMIZING,
 			isProcessing: data.importStatus === IMPORT_STATUS.IMPORTING,
 			isCompleted: data.importStatus === IMPORT_STATUS.COMPLETED,
+			isOldExport,
+			isOldElementorVersion,
 		} }>
 			{ props.children }
 		</ImportContext.Provider>
@@ -115,4 +128,3 @@ export function useImportContext() {
 
 	return context;
 }
-

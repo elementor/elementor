@@ -11,6 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Cloud_Kits extends Library {
 	const THRESHOLD_UNLIMITED = -1;
 	const FAILED_TO_FETCH_QUOTA_KEY = 'failed-to-fetch-quota';
+
+	const FAILED_TO_UPLOAD_KIT = 'cloud-upload-failed';
+
 	const INSUFFICIENT_QUOTA_KEY = 'insufficient-quota';
 
 	public function get_title() {
@@ -34,6 +37,10 @@ class Cloud_Kits extends Library {
 	 * @return array|\WP_Error
 	 */
 	public function get_quota() {
+		if ( ! $this->is_connected() ) {
+			return new \WP_Error( 'not_connected', esc_html__( 'Not connected', 'elementor' ) );
+		}
+
 		return $this->http_request( 'GET', 'quota/kits', [], [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
@@ -70,7 +77,7 @@ class Cloud_Kits extends Library {
 		];
 	}
 
-	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes ) {
+	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes, string $media_format = 'link' ) {
 		$this->validate_quota();
 
 		$endpoint = 'kits';
@@ -86,6 +93,7 @@ class Cloud_Kits extends Library {
 				'title' => $title,
 				'description' => $description,
 				'includes' => wp_json_encode( $includes ),
+				'mediaFormat' => $media_format,
 			],
 			[
 				'previewFile' => [
@@ -107,29 +115,26 @@ class Cloud_Kits extends Library {
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
 
-		if ( empty( $response['id'] ) ) {
-			$error_message = esc_html__( 'Failed to create kit: Invalid response', 'elementor' );
-			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		if ( is_wp_error( $response ) || empty( $response['id'] ) ) {
+			throw new \Exception( static::FAILED_TO_UPLOAD_KIT, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		if ( empty( $response['uploadUrl'] ) ) {
 			$this->delete_kit( $response['id'] );
-			$error_message = esc_html__( 'Failed to create kit: No upload URL provided', 'elementor' );
-			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \Exception( static::FAILED_TO_UPLOAD_KIT, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$upload_success = $this->upload_content_file( $response['uploadUrl'], $content_file_data );
 
 		if ( ! $upload_success ) {
 			$this->delete_kit( $response['id'] );
-			$error_message = esc_html__( 'Failed to create kit: Content upload failed', 'elementor' );
-			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \Exception( static::FAILED_TO_UPLOAD_KIT, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		return $response;
 	}
 
-	private function upload_content_file( $upload_url, $content_file_data ) {
+	public function upload_content_file( $upload_url, $content_file_data ) {
 		$upload_response = wp_remote_request( $upload_url, [
 			'method' => 'PUT',
 			'body' => $content_file_data,
@@ -189,6 +194,30 @@ class Cloud_Kits extends Library {
 		$body .= "--{$boundary}--{$eol}";
 
 		return $body;
+	}
+
+	public function update_kit( $id, array $kit_data ) {
+		$endpoint = 'kits/' . $id;
+
+		$request = $this->http_request(
+			'PATCH',
+			$endpoint,
+			[
+				'body' => wp_json_encode( $kit_data ),
+				'headers' => [
+					'Content-Type' => 'application/json',
+				],
+			],
+			[
+				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+			],
+		);
+
+		if ( is_wp_error( $request ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	protected function init() {}

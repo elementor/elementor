@@ -21,9 +21,13 @@
 	}
 }
 
-// Respect reduced motion preference in animations
+// Respect reduced motion preference in animations and transitions
 @media (prefers-reduced-motion: reduce) {
 	.animated {
 		animation: none !important;
+	}
+	html * {
+		transition-duration: 0s !important;
+		transition-delay: 0s !important;
 	}
 }

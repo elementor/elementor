@@ -5,7 +5,7 @@ import { Backdrop, Infotip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { MissingVariableAlert } from '../missing-variable-alert';
-import { MissingTag } from '../tags/missing-tag';
+import { WarningVariableTag } from '../tags/warning-variable-tag';
 
 export const MissingVariable = () => {
 	const { setValue } = useBoundProp();
@@ -37,7 +37,7 @@ export const MissingVariable = () => {
 					},
 				} }
 			>
-				<MissingTag label={ __( 'Missing variable', 'elementor' ) } onClick={ toggleInfotip } />
+				<WarningVariableTag label={ __( 'Missing variable', 'elementor' ) } onClick={ toggleInfotip } />
 			</Infotip>
 		</>
 	);

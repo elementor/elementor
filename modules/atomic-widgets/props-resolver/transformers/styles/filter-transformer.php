@@ -27,6 +27,6 @@ class Filter_Transformer extends Transformer_Base {
 			return "drop-shadow({$x_axis} {$y_axis} {$blur} {$color})";
 		}
 
-		return $func . '(' . $args . ')';
+		return $func . '(' . $args['size'] . ')';
 	}
 }

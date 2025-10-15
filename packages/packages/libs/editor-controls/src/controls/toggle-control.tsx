@@ -5,6 +5,7 @@ import { type ToggleButtonProps } from '@elementor/ui';
 import { useBoundProp } from '../bound-prop-context';
 import { ControlToggleButtonGroup, type ToggleButtonGroupItem } from '../components/control-toggle-button-group';
 import { createControl } from '../create-control';
+import { convertToggleOptionsToAtomic, type DynamicToggleOption } from '../utils/convert-toggle-options-to-atomic';
 
 export type ToggleControlProps< T extends PropValue > = {
 	options: Array< ToggleButtonGroupItem< T > & { exclusive?: boolean } >;
@@ -12,6 +13,7 @@ export type ToggleControlProps< T extends PropValue > = {
 	size?: ToggleButtonProps[ 'size' ];
 	exclusive?: boolean;
 	maxItems?: number;
+	convertOptions?: boolean;
 };
 
 export const ToggleControl = createControl(
@@ -21,10 +23,17 @@ export const ToggleControl = createControl(
 		size = 'tiny',
 		exclusive = true,
 		maxItems,
+		convertOptions = false,
 	}: ToggleControlProps< StringPropValue[ 'value' ] > ) => {
 		const { value, setValue, placeholder, disabled } = useBoundProp( stringPropTypeUtil );
 
-		const exclusiveValues = options.filter( ( option ) => option.exclusive ).map( ( option ) => option.value );
+		const processedOptions = convertOptions
+			? convertToggleOptionsToAtomic( options as DynamicToggleOption[] )
+			: ( options as Array< ToggleButtonGroupItem< StringPropValue[ 'value' ] > & { exclusive?: boolean } > );
+
+		const exclusiveValues = processedOptions
+			.filter( ( option ) => option.exclusive )
+			.map( ( option ) => option.value );
 
 		const handleNonExclusiveToggle = ( selectedValues: StringPropValue[ 'value' ][] ) => {
 			const newSelectedValue = selectedValues[ selectedValues.length - 1 ];
@@ -38,7 +47,7 @@ export const ToggleControl = createControl(
 		};
 
 		const toggleButtonGroupProps = {
-			items: options,
+			items: processedOptions,
 			maxItems,
 			fullWidth,
 			size,

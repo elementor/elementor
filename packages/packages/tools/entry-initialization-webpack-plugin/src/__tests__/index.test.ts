@@ -68,7 +68,7 @@ describe( 'EntryInitializationWebpackPlugin', () => {
 		expect.assertions( 5 );
 
 		// Act.
-		compiler.run( ( err, stats ) => {
+		compiler?.run( ( err, stats ) => {
 			// Assert.
 			expect( err ).toBe( null );
 			expect( stats?.hasErrors() ).toBe( false );

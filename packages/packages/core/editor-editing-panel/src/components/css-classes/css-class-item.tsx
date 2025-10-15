@@ -51,7 +51,8 @@ export function CssClassItem( props: CssClassItemProps ) {
 	const { userCan } = useUserStylesCapability();
 
 	const [ convertedFromLocalId, , clearConvertedFromLocalId ] = useSessionStorage(
-		`last-converted-class-generated-name`
+		'last-converted-class-generated-name',
+		'app'
 	);
 
 	const {
@@ -81,7 +82,7 @@ export function CssClassItem( props: CssClassItemProps ) {
 		}
 		// eslint-disable-next-line react-compiler/react-compiler
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ id ] );
+	}, [ id, convertedFromLocalId ] );
 
 	return (
 		<ThemeProvider palette="default">

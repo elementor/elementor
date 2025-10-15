@@ -123,7 +123,7 @@ describe( '@elementor/extract-i18n-wordpress-expressions-webpack-plugin', () => 
 		} );
 
 		// Act.
-		compiler.run( ( err, stats ) => {
+		compiler?.run( ( err, stats ) => {
 			// Assert.
 			expect( err ).toBe( null );
 			expect( stats?.hasErrors() ).toBe( false );

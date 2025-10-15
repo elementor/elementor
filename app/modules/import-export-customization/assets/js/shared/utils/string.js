@@ -1,5 +1,6 @@
-export function camelToDash( str ) {
+export function formatToTitleCase( str ) {
 	return str
-		.replace( /([a-z0-9])([A-Z])/g, '$1-$2' )
-		.toLowerCase();
+		.replace( /([A-Z])/g, ' $1' )
+		.replace( /^./, ( s ) => s.toUpperCase() )
+		.trim();
 }

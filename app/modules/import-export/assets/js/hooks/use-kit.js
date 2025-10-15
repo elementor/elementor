@@ -162,6 +162,7 @@ export default function useKit() {
 
 			setKitState( ( prevState ) => ( { ...prevState, ...newState } ) );
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ ajaxState.status ] );
 
 	return {

@@ -16,19 +16,19 @@ export function KitCustomizationDialog( {
 	handleSaveChanges,
 	children,
 	saveDisabled = false,
-	minHeight = '600px',
 } ) {
+	const handleDialogClose = ( _event, reason ) => {
+		if ( 'escapeKeyDown' === reason ) {
+			handleClose();
+		}
+	};
+
 	return (
 		<Dialog
 			open={ open }
-			onClose={ handleClose }
+			onClose={ handleDialogClose }
 			maxWidth="md"
 			fullWidth
-			PaperProps={ {
-				sx: {
-					minHeight,
-				},
-			} }
 		>
 			<DialogHeader onClose={ handleClose }>
 				<DialogTitle>
@@ -70,5 +70,4 @@ KitCustomizationDialog.propTypes = {
 	children: PropTypes.node.isRequired,
 	title: PropTypes.string.isRequired,
 	saveDisabled: PropTypes.bool,
-	minHeight: PropTypes.string,
 };

@@ -120,7 +120,7 @@ describe( 'SelectionSizeControl', () => {
 		renderControl( <SelectionSizeControl { ...TEST_PROPS } />, props );
 
 		const sizeInput = screen.getByRole( 'spinbutton' );
-		fireEvent.change( sizeInput, { target: { value: '50' } } );
+		fireEvent.input( sizeInput, { target: { value: '50' } } );
 
 		// Assert
 		expect( setValue ).toHaveBeenCalledWith( {

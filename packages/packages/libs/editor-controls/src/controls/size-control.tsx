@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type RefObject, useEffect, useState } from 'react';
-import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
+import { type PropType, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { usePopupState } from '@elementor/ui';
 
@@ -39,6 +39,10 @@ type BaseSizeControlProps = {
 	extendedOptions?: ExtendedOption[];
 	disableCustom?: boolean;
 	anchorRef?: RefObject< HTMLDivElement | null >;
+	min?: number;
+	enablePropTypeUnits?: boolean;
+	id?: string;
+	ariaLabel?: string;
 };
 
 type LengthSizeControlProps = BaseSizeControlProps &
@@ -86,6 +90,10 @@ export const SizeControl = createControl(
 		anchorRef,
 		extendedOptions,
 		disableCustom,
+		min = 0,
+		enablePropTypeUnits = false,
+		id,
+		ariaLabel,
 	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
 		const {
 			value: sizeValue,
@@ -93,18 +101,20 @@ export const SizeControl = createControl(
 			disabled,
 			restoreValue,
 			placeholder: externalPlaceholder,
+			propType,
 		} = useBoundProp( sizePropTypeUtil );
 		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
-		const actualUnits = units ?? [ ...defaultUnits[ variant ] ];
 		const [ internalState, setInternalState ] = useState( createStateFromSizeProp( sizeValue, actualDefaultUnit ) );
 		const activeBreakpoint = useActiveBreakpoint();
+		const actualUnits = resolveUnits( propType, enablePropTypeUnits, variant, units );
 
 		const actualExtendedOptions = useSizeExtendedOptions( extendedOptions || [], disableCustom ?? false );
 		const popupState = usePopupState( { variant: 'popover' } );
 
 		const [ state, setState ] = useSyncExternalState( {
 			external: internalState,
-			setExternal: ( newState: State | null ) => setSizeValue( extractValueFromState( newState ) ),
+			setExternal: ( newState: State | null, options, meta ) =>
+				setSizeValue( extractValueFromState( newState ), options, meta ),
 			persistWhen: ( newState ) => {
 				if ( ! newState?.unit ) {
 					return false;
@@ -135,7 +145,8 @@ export const SizeControl = createControl(
 		};
 
 		const handleSizeChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-			const { value: size } = event.target;
+			const size = event.target.value;
+			const isInputValid = event.target.validity.valid;
 
 			if ( controlUnit === 'auto' ) {
 				setState( ( prev ) => ( { ...prev, unit: controlUnit } ) );
@@ -143,11 +154,15 @@ export const SizeControl = createControl(
 				return;
 			}
 
-			setState( ( prev ) => ( {
-				...prev,
-				[ controlUnit === 'custom' ? 'custom' : 'numeric' ]: formatSize( size, controlUnit ),
-				unit: controlUnit,
-			} ) );
+			setState(
+				( prev ) => ( {
+					...prev,
+					[ controlUnit === 'custom' ? 'custom' : 'numeric' ]: formatSize( size, controlUnit ),
+					unit: controlUnit,
+				} ),
+				undefined,
+				{ validation: () => isInputValid }
+			);
 		};
 
 		const onInputClick = ( event: React.MouseEvent ) => {
@@ -207,8 +222,11 @@ export const SizeControl = createControl(
 					onBlur={ restoreValue }
 					onClick={ onInputClick }
 					popupState={ popupState }
+					min={ min }
+					id={ id }
+					ariaLabel={ ariaLabel }
 				/>
-				{ anchorRef?.current && (
+				{ anchorRef?.current && popupState.isOpen && (
 					<TextFieldPopover
 						popupState={ popupState }
 						anchorRef={ anchorRef }
@@ -221,6 +239,21 @@ export const SizeControl = createControl(
 		);
 	}
 );
+
+function resolveUnits(
+	propType: PropType,
+	enablePropTypeUnits: boolean,
+	variant: SizeVariant,
+	externalUnits?: Unit[]
+) {
+	const fallback = [ ...defaultUnits[ variant ] ];
+
+	if ( ! enablePropTypeUnits ) {
+		return externalUnits ?? fallback;
+	}
+
+	return ( propType.settings?.available_units as Unit[] ) ?? fallback;
+}
 
 function formatSize< TSize extends string | number >( size: TSize, unit: Unit | ExtendedOption ): TSize {
 	if ( isUnitExtendedOption( unit ) ) {

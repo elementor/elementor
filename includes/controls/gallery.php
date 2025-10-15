@@ -32,6 +32,16 @@ class Control_Gallery extends Base_Data_Control {
 		return 'gallery';
 	}
 
+	public function on_export( $settings ) {
+		foreach ( $settings as $attachment ) {
+			if ( ! empty( $attachment['url'] ) ) {
+				do_action( 'elementor/templates/collect_media_url', $attachment['url'], $attachment );
+			}
+		}
+
+		return $settings;
+	}
+
 	/**
 	 * Import gallery images.
 	 *
@@ -51,7 +61,18 @@ class Control_Gallery extends Base_Data_Control {
 				continue;
 			}
 
-			$attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $attachment );
+			$local_file_path = \Elementor\TemplateLibrary\Classes\Media_Mapper::get_local_file_path( $attachment['url'] );
+			$imported_attachment = false;
+
+			if ( $local_file_path !== $attachment['url'] && file_exists( $local_file_path ) ) {
+				$imported_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import_local_file( $local_file_path );
+			}
+
+			if ( ! $imported_attachment ) {
+				$imported_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $attachment );
+			}
+
+			$attachment = $imported_attachment;
 		}
 
 		// Filter out attachments that don't exist

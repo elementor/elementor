@@ -218,4 +218,28 @@ describe( 'KeyValueControl', () => {
 		// Assert
 		expect( valueInput ).toBeDisabled();
 	} );
+
+	it( 'should escape HTML characters when escapeHtml is true', () => {
+		// Arrange
+		const props = {
+			...baseProps,
+			value: {
+				$$type: 'key-value',
+				value: {
+					key: { $$type: 'string', value: '<script>alert("test")</script>' },
+					value: { $$type: 'string', value: 'Value & "quotes" \'test\' > end' },
+				},
+			},
+		};
+
+		// Act
+		renderControl( <KeyValueControl escapeHtml={ true } />, props );
+
+		// Assert
+		const keyInput = screen.getAllByRole( 'textbox' )[ 0 ];
+		const valueInput = screen.getAllByRole( 'textbox' )[ 1 ];
+
+		expect( keyInput ).toHaveValue( '&lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt;' );
+		expect( valueInput ).toHaveValue( 'Value &amp; &quot;quotes&quot; &#39;test&#39; &gt; end' );
+	} );
 } );

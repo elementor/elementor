@@ -2,6 +2,7 @@ import { Box, Paper, Stack, TextField } from '@elementor/ui';
 import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
 import { useState } from 'react';
+import { trackPromoClick, getHomeScreenPath } from '../utils/promo-tracking';
 
 const CreateWithAIBanner = ( { ...props } ) => {
 	const { createWithAIData } = props;
@@ -43,7 +44,9 @@ const CreateWithAIBanner = ( { ...props } ) => {
 		if ( ! inputValue ) {
 			return;
 		}
-		window.open( getButtonHref(), '_blank' );
+		const destination = getButtonHref();
+		trackPromoClick( title, destination, getHomeScreenPath( 'ai_banner' ) );
+		window.open( destination, '_blank' );
 		setInputValue( '' );
 	};
 

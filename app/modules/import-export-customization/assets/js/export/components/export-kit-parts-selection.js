@@ -1,9 +1,12 @@
 import { useExportContext } from '../context/export-context';
 import { KitPartsSelection } from '../../shared/components';
 import kitContentData from '../../shared/kit-content-data';
+import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 
 export default function ExportKitPartsSelection() {
 	const { data, dispatch } = useExportContext();
+	const { data: cloudKitsData } = useCloudKitsEligibility();
+	const isCloudKitsEligible = cloudKitsData?.is_eligible || false;
 
 	const handleCheckboxChange = ( itemType ) => {
 		const isChecked = data.includes.includes( itemType );
@@ -17,9 +20,7 @@ export default function ExportKitPartsSelection() {
 		dispatch( { type: actionType, payload: itemType } );
 	};
 
-	const handleSaveCustomization = ( key, payload, excludedValues ) => {
-		const hasEnabledPart = Object.values( payload ).some( ( value ) => value );
-
+	const handleSaveCustomization = ( key, payload, hasEnabledCustomization, excludedValues ) => {
 		dispatch( {
 			type: 'SET_CUSTOMIZATION',
 			payload: {
@@ -36,10 +37,14 @@ export default function ExportKitPartsSelection() {
 			},
 		} );
 
-		if ( hasEnabledPart ) {
+		if ( hasEnabledCustomization ) {
 			dispatch( { type: 'ADD_INCLUDE', payload: key } );
 		} else {
 			dispatch( { type: 'REMOVE_INCLUDE', payload: key } );
+		}
+
+		if ( data.showMediaFormatValidation ) {
+			dispatch( { type: 'SET_MEDIA_FORMAT_VALIDATION', payload: false } );
 		}
 	};
 
@@ -48,6 +53,8 @@ export default function ExportKitPartsSelection() {
 			data={ data }
 			onCheckboxChange={ handleCheckboxChange }
 			handleSaveCustomization={ handleSaveCustomization }
+			isCloudKitsEligible={ isCloudKitsEligible }
+			showMediaFormatValidation={ data.showMediaFormatValidation }
 		/>
 	);
 }

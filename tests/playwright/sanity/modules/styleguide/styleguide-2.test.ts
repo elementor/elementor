@@ -1,17 +1,9 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
 import { getInSettingsTab } from './styleguide.helper';
 
 test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 	const fontsContentText = 'The five boxing wizards jump quickly.';
-
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await page.close();
-	} );
 
 	test( 'Change font title', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.

@@ -72,7 +72,7 @@ class Global_Classes_Cleanup {
 			}
 
 			$element_data['settings'][ $prop->get_key() ]['value'] = Collection::make( $current_classes['value'] )
-				->filter( fn( $class ) => ! in_array( $class, $deleted_classes_ids, true ) )
+				->filter( fn( $class_name ) => ! in_array( $class_name, $deleted_classes_ids, true ) )
 				->values();
 		}
 

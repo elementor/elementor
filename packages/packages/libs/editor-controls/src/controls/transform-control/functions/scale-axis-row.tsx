@@ -9,12 +9,12 @@ import { NumberControl } from '../../number-control';
 
 type ScaleAxisRowProps = {
 	label: string;
-	bindValue: 'x' | 'y' | 'z';
+	bind: 'x' | 'y' | 'z';
 	startIcon: React.ReactNode;
 	anchorRef?: RefObject< HTMLDivElement | null >;
 };
 
-export const ScaleAxisRow = ( { label, bindValue, startIcon, anchorRef }: ScaleAxisRowProps ) => {
+export const ScaleAxisRow = ( { label, bind, startIcon, anchorRef }: ScaleAxisRowProps ) => {
 	return (
 		<Grid item xs={ 12 }>
 			<PopoverGridContainer ref={ anchorRef }>
@@ -22,7 +22,7 @@ export const ScaleAxisRow = ( { label, bindValue, startIcon, anchorRef }: ScaleA
 					<ControlLabel>{ label }</ControlLabel>
 				</Grid>
 				<Grid item xs={ 6 }>
-					<PropKeyProvider bind={ bindValue }>
+					<PropKeyProvider bind={ bind }>
 						<NumberControl step={ 0.1 } placeholder="1" startIcon={ startIcon } />
 					</PropKeyProvider>
 				</Grid>

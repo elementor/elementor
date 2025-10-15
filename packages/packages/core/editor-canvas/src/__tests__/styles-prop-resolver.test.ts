@@ -9,18 +9,22 @@ import {
 	backgroundImageSizeScalePropTypeUtil,
 	backgroundOverlayPropTypeUtil,
 	backgroundPropTypeUtil,
+	blurFilterPropTypeUtil,
 	borderRadiusPropTypeUtil,
 	borderWidthPropTypeUtil,
 	boxShadowPropTypeUtil,
 	colorPropTypeUtil,
 	colorStopPropTypeUtil,
+	colorToneFilterPropTypeUtil,
 	cssFilterFunctionPropUtil,
 	dimensionsPropTypeUtil,
 	filterPropTypeUtil,
 	gradientColorStopPropTypeUtil,
+	hueRotateFilterPropTypeUtil,
 	imageAttachmentIdPropType,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
+	intensityFilterPropTypeUtil,
 	layoutDirectionPropTypeUtil,
 	numberPropTypeUtil,
 	type Props,
@@ -50,70 +54,102 @@ type Payload = {
 const filters = filterPropTypeUtil.create( [
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'blur' ),
-		args: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
+		args: blurFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
+		} ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'brightness' ),
-		args: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
+		args: intensityFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
+		} ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'contrast' ),
-		args: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
+		args: intensityFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
+		} ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'grayscale' ),
-		args: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
+		args: colorToneFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
+		} ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'invert' ),
-		args: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
+		args: colorToneFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
+		} ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'sepia' ),
-		args: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
+		args: colorToneFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
+		} ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'saturate' ),
-		args: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
+		args: intensityFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
+		} ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'hue-rotate' ),
-		args: sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
+		args: hueRotateFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
+		} ),
 	} ),
 ] );
 
 const backDropFilters = backdropFilterPropTypeUtil.create( [
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'blur' ),
-		args: sizePropTypeUtil.create( { size: 2, unit: 'rem' } ),
+		args: blurFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 2, unit: 'rem' } ),
+		} ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'brightness' ),
-		args: sizePropTypeUtil.create( { size: 80, unit: '%' } ),
+		args: intensityFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 80, unit: '%' } ),
+		} ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'contrast' ),
-		args: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
+		args: intensityFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
+		} ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'grayscale' ),
-		args: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
+		args: colorToneFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
+		} ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'invert' ),
-		args: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
+		args: colorToneFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
+		} ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'sepia' ),
-		args: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
+		args: colorToneFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
+		} ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'saturate' ),
-		args: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
+		args: intensityFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
+		} ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'hue-rotate' ),
-		args: sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
+		args: hueRotateFilterPropTypeUtil.create( {
+			size: sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
+		} ),
 	} ),
 ] );
 
@@ -280,6 +316,7 @@ describe( 'styles prop resolver', () => {
 			props: {
 				background: backgroundPropTypeUtil.create( {
 					color: colorPropTypeUtil.create( '#000' ),
+					clip: stringPropTypeUtil.create( 'text' ),
 					'background-overlay': backgroundOverlayPropTypeUtil.create( [
 						backgroundColorOverlayPropTypeUtil.create( {
 							color: colorPropTypeUtil.create( 'blue' ),
@@ -334,12 +371,22 @@ describe( 'styles prop resolver', () => {
 			},
 			expected: {
 				'background-color': '#000',
+				'background-clip': 'text',
 				'background-attachment': 'scroll,scroll,scroll,fixed',
 				'background-image':
 					'linear-gradient(blue, blue),linear-gradient(yellow, yellow),url(thumbnail-image-url-123),url(medium_large-image-url-123)',
 				'background-position': '0% 0%,0% 0%,0% 0%,200px 30px',
 				'background-repeat': 'repeat,repeat,repeat,repeat-x',
 				'background-size': 'auto auto,auto auto,1400px auto,auto',
+			},
+		},
+		{
+			name: 'mix-blend-mode',
+			props: {
+				'mix-blend-mode': stringPropTypeUtil.create( 'multiply' ),
+			},
+			expected: {
+				'mix-blend-mode': 'multiply',
 			},
 		},
 		{
@@ -524,6 +571,7 @@ describe( 'styles prop resolver', () => {
 			props: {
 				background: backgroundPropTypeUtil.create( {
 					color: colorPropTypeUtil.create( '#000' ),
+					clip: stringPropTypeUtil.create( 'border-box' ),
 					'background-overlay': backgroundOverlayPropTypeUtil.create( [
 						backgroundImageOverlayPropTypeUtil.create( {
 							image: imagePropTypeUtil.create( {
@@ -545,6 +593,7 @@ describe( 'styles prop resolver', () => {
 			},
 			expected: {
 				'background-color': '#000',
+				'background-clip': 'border-box',
 				'background-image': 'url(original-image-url-123)',
 				'background-repeat': 'repeat',
 				'background-size': '1400px auto',

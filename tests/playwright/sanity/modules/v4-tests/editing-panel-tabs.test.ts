@@ -44,7 +44,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		await panel.isVisible();
 
 		await editor.addWidget( { widgetType: atomicWidget.name } );
-		await editor.openV2PanelTab( 'style' );
+		await editor.v4Panel.openTab( 'style' );
 		await editor.openV2Section( 'size' );
 		await editor.openV2Section( 'typography' );
 
@@ -75,7 +75,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	sections.forEach( ( section ) => {
 		test( `expand ${ section } section and compare screenshot`, async () => {
 			await editor.addWidget( { widgetType: atomicWidget.name } );
-			await editor.openV2PanelTab( 'style' );
+			await editor.v4Panel.openTab( 'style' );
 			await editor.openV2Section( section );
 
 			await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( `expanded-${ section }-section.png` );
@@ -115,14 +115,14 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 
 	test( 'should display the last open sections when returning to style tab', async () => {
 		await editor.addWidget( { widgetType: atomicWidget.name } );
-		await editor.openV2PanelTab( 'style' );
+		await editor.v4Panel.openTab( 'style' );
 
 		const sectionsToOpen: SectionType[] = [ 'typography', 'spacing' ];
 		await openSections( sectionsToOpen );
 		await verifySectionsOpen( sectionsToOpen );
 
-		await editor.openV2PanelTab( 'general' );
-		await editor.openV2PanelTab( 'style' );
+		await editor.v4Panel.openTab( 'general' );
+		await editor.v4Panel.openTab( 'style' );
 
 		const sectionsStillOpen: boolean[] = [];
 		for ( const section of sectionsToOpen ) {

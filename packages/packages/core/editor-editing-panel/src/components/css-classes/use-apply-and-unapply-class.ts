@@ -1,12 +1,11 @@
 import { useCallback, useMemo } from 'react';
-import { setDocumentModifiedStatus } from '@elementor/editor-documents';
-import { getElementLabel, getElementSetting, updateElementSettings } from '@elementor/editor-elements';
-import { classesPropTypeUtil, type ClassesPropValue } from '@elementor/editor-props';
+import { getElementLabel } from '@elementor/editor-elements';
 import { type StyleDefinitionID } from '@elementor/editor-styles';
 import { useGetStylesRepositoryCreateAction } from '@elementor/editor-styles-repository';
 import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
+import { doApplyClasses, doGetAppliedClasses } from '../../apply-unapply-actions';
 import { useClassesProp } from '../../contexts/classes-prop-context';
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
@@ -194,17 +193,10 @@ function useClasses() {
 
 	return useMemo( () => {
 		const setClasses = ( ids: StyleDefinitionID[] ) => {
-			updateElementSettings( {
-				id: element.id,
-				props: { [ currentClassesProp ]: classesPropTypeUtil.create( ids ) },
-				withHistory: false,
-			} );
-
-			setDocumentModifiedStatus( true );
+			doApplyClasses( element.id, ids, currentClassesProp );
 		};
 
-		const getAppliedClasses = () =>
-			getElementSetting< ClassesPropValue >( element.id, currentClassesProp )?.value || [];
+		const getAppliedClasses = () => doGetAppliedClasses( element.id, currentClassesProp ) || [];
 
 		return { setClasses, getAppliedClasses };
 	}, [ currentClassesProp, element.id ] );

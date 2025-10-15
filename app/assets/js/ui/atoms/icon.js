@@ -1,8 +1,11 @@
-export default function Icon( props ) {
+import { forwardRef } from 'react';
+
+const Icon = forwardRef( ( props, ref ) => {
+	const { className, ...rest } = props;
 	return (
-		<i className={ `eps-icon ${ props.className }` } />
+		<i ref={ ref } className={ `eps-icon ${ className }` } { ...rest } />
 	);
-}
+} );
 
 Icon.propTypes = {
 	className: PropTypes.string.isRequired,
@@ -11,3 +14,5 @@ Icon.propTypes = {
 Icon.defaultProps = {
 	className: '',
 };
+
+export default Icon;

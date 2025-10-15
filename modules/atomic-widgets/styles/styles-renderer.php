@@ -22,7 +22,7 @@ class Styles_Renderer {
 
 	/**
 	 * @param array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}> $breakpoints
-	 * @param string $selector_prefix
+	 * @param string                                                                          $selector_prefix
 	 */
 	private function __construct( array $breakpoints, string $selector_prefix = self::DEFAULT_SELECTOR_PREFIX ) {
 		$this->breakpoints = $breakpoints;
@@ -149,9 +149,7 @@ class Styles_Renderer {
 	}
 
 	private function custom_css_to_css_string( ?array $custom_css ): string {
-		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_CUSTOM_CSS );
-
-		return $is_feature_active && ! empty( $custom_css['raw'] )
+		return ! empty( $custom_css['raw'] )
 			? Utils::decode_string( $custom_css['raw'], '' ) . '\n'
 			: '';
 	}

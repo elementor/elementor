@@ -2,10 +2,13 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import ImportProcess from 'elementor/app/modules/import-export-customization/assets/js/import/pages/import-process';
 import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
+import useContextDetection from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection';
 
 const mockUseImportContext = jest.fn();
 const mockUseImportKit = jest.fn();
 const mockNavigate = jest.fn();
+
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection' );
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import/context/import-context', () => ( {
 	useImportContext: () => mockUseImportContext(),
@@ -34,7 +37,14 @@ jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
 describe( 'ImportProcess Page', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		global.elementorAppConfig = { base_url: 'http://localhost' };
+		useContextDetection.mockImplementation( () => ( {
+			isImport: true,
+			contextData: { data: { kitUploadParams: { source: 'cloud' } } },
+		} ) );
+		global.elementorAppConfig = {
+			base_url: 'http://localhost',
+			pages_url: 'http://localhost',
+		};
 		global.elementorCommon = {
 			eventsManager: {
 				config: eventsConfig,
@@ -77,12 +87,15 @@ describe( 'ImportProcess Page', () => {
 
 	it( 'renders ImportError when error is present', () => {
 		// Arrange
-		setup( { status: 'IN_PROGRESS', error: { message: 'Failed!' } } );
+		setup( {
+			status: 'IN_PROGRESS',
+			error: { code: 'general', message: 'Failed' },
+		} );
 		// Act
 		render( <ImportProcess /> );
 		// Assert
-		expect( screen.getByTestId( 'import-error' ) ).toBeTruthy();
-		expect( screen.getByText( 'Failed!' ) ).toBeTruthy();
+		expect( screen.getByTestId( 'error-dialog' ) ).toBeTruthy();
+		expect( screen.getByText( 'We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact' ) ).toBeTruthy();
 	} );
 
 	it( 'navigates to /import-customization/complete when status is DONE and no error (first useEffect)', () => {

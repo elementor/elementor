@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { createMockPropType, renderField } from 'test-utils';
+import { useBoundProp } from '@elementor/editor-controls';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { useStylesFields } from '../../../../hooks/use-styles-fields';
@@ -22,6 +23,7 @@ jest.mock( '@elementor/editor-controls', () => {
 		useControlActions: () => ( {
 			items: [],
 		} ),
+		useBoundProp: jest.fn(),
 	};
 } );
 
@@ -35,8 +37,20 @@ describe( '<FlexOrderField />', () => {
 	const buttonValues = [
 		{ $$type: 'number', value: FIRST_DEFAULT_VALUE },
 		{ $$type: 'number', value: LAST_DEFAULT_VALUE },
-		null,
+		{ $$type: 'number', value: null },
 	];
+
+	beforeEach( () => {
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			bind: 'order',
+			value: null,
+			propType: createMockPropType( { kind: 'plain' } ),
+			path: [ 'order' ],
+			restoreValue: jest.fn(),
+			placeholder: null,
+			setValue: jest.fn(),
+		} );
+	} );
 
 	it( 'should affect css order property on button change', () => {
 		// Arrange.
@@ -188,5 +202,36 @@ describe( '<FlexOrderField />', () => {
 		// Assert.
 		expect( customButton ).toHaveClass( 'Mui-selected' );
 		expect( customControlLabel ).toBeVisible();
+	} );
+
+	it( 'should render placeholder value if it is set', () => {
+		// Arrange.
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			placeholder: { $$type: 'number', value: 20 },
+			bind: 'order',
+			value: null,
+			propType: createMockPropType( { kind: 'plain' } ),
+			path: [ 'order' ],
+			restoreValue: jest.fn(),
+			setValue: jest.fn(),
+		} );
+
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: null,
+			setValues: jest.fn(),
+			canEdit: true,
+		} );
+
+		// Act.
+		renderFlexOrderField();
+
+		const customButton = screen.getByLabelText( 'Custom' );
+		const customControlLabel = screen.getByText( 'Custom order' );
+		const customControlInput = screen.getByRole( 'spinbutton' );
+
+		// Assert.
+		expect( customButton ).toBeVisible();
+		expect( customControlLabel ).toBeVisible();
+		expect( customControlInput ).toHaveAttribute( 'placeholder', '20' );
 	} );
 } );

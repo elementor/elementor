@@ -1,21 +1,19 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 
-use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
-use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
-use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
-use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Plugin;
-use Elementor\Utils;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Html_Tag_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -33,7 +31,7 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Div Block', 'elementor' );
+		return esc_html__( 'Div block', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -49,22 +47,23 @@ class Div_Block extends Atomic_Element_Base {
 			->where( [
 				'operator' => 'not_exist',
 				'path' => [ 'link', 'destination' ],
+				'newValue' => [
+					'$$type' => 'string',
+					'value' => 'a',
+				],
 			] )
-		->get();
+			->get();
 
-		$props = [
+		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tag' => String_Prop_Type::make()
-				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a' ] )
 				->default( 'div' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
-
-			'attributes' => Key_Value_Array_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make(),
 		];
-
-		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
@@ -72,102 +71,49 @@ class Div_Block extends Atomic_Element_Base {
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
-				->set_items( $this->get_settings_controls() ),
-		];
-	}
-
-	protected function get_settings_controls(): array {
-		return [
-			Select_Control::bind_to( 'tag' )
-				->set_options( [
-					[
-						'value' => 'div',
-						'label' => 'Div',
-					],
-					[
-						'value' => 'header',
-						'label' => 'Header',
-					],
-					[
-						'value' => 'section',
-						'label' => 'Section',
-					],
-					[
-						'value' => 'article',
-						'label' => 'Article',
-					],
-					[
-						'value' => 'aside',
-						'label' => 'Aside',
-					],
-					[
-						'value' => 'footer',
-						'label' => 'Footer',
-					],
-				])
-				->set_label( esc_html__( 'HTML Tag', 'elementor' ) ),
-			Link_Control::bind_to( 'link' )
-				->set_label( __( 'Link', 'elementor' ) )
-				->set_meta( [
-					'topDivider' => true,
+				->set_items( [
+					Html_Tag_Control::bind_to( 'tag' )
+						->set_options( [
+							[
+								'value' => 'div',
+								'label' => 'Div',
+							],
+							[
+								'value' => 'header',
+								'label' => 'Header',
+							],
+							[
+								'value' => 'section',
+								'label' => 'Section',
+							],
+							[
+								'value' => 'article',
+								'label' => 'Article',
+							],
+							[
+								'value' => 'aside',
+								'label' => 'Aside',
+							],
+							[
+								'value' => 'footer',
+								'label' => 'Footer',
+							],
+						])
+						->set_fallback_labels( [
+							'a' => 'a (link)',
+						] )
+						->set_label( esc_html__( 'HTML Tag', 'elementor' ) ),
+					Link_Control::bind_to( 'link' )
+						->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
+						->set_label( __( 'Link', 'elementor' ) )
+						->set_meta( [
+							'topDivider' => true,
+						] ),
+					Text_Control::bind_to( '_cssid' )
+						->set_label( __( 'ID', 'elementor' ) )
+						->set_meta( $this->get_css_id_control_meta() ),
 				] ),
-			Text_Control::bind_to( '_cssid' )
-				->set_label( __( 'ID', 'elementor' ) )
-				->set_meta( $this->get_css_id_control_meta() ),
 		];
-	}
-
-	protected function _get_default_child_type( array $element_data ) {
-		$el_types = array_keys( Plugin::$instance->elements_manager->get_element_types() );
-
-		if ( in_array( $element_data['elType'], $el_types, true ) ) {
-			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
-		}
-
-		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
-	}
-
-	protected function content_template() {
-		?>
-		<?php
-	}
-
-	public function before_render() {
-		?>
-		<<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' );
-		$this->print_custom_attributes(); ?>>
-		<?php
-	}
-
-	public function after_render() {
-		?>
-		</<?php $this->print_html_tag(); ?>>
-		<?php
-	}
-
-	private function print_custom_attributes() {
-		$settings = $this->get_atomic_settings();
-		$attributes = $settings['attributes'];
-		if ( ! empty( $attributes ) && is_string( $attributes ) ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo ' ' . $attributes;
-		}
-	}
-
-	/**
-	 * Print safe HTML tag for the element based on the element settings.
-	 *
-	 * @return void
-	 */
-	protected function print_html_tag() {
-		$html_tag = $this->get_html_tag();
-		Utils::print_validated_html_tag( $html_tag );
-	}
-
-	protected function get_html_tag(): string {
-		$settings = $this->get_atomic_settings();
-
-		return ! empty( $settings['link']['href'] ) ? 'a' : ( $settings['tag'] ?? 'div' );
 	}
 
 	protected function define_base_styles(): array {
@@ -202,10 +148,12 @@ class Div_Block extends Atomic_Element_Base {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
+		$initial_attributes = $this->define_initial_attributes();
 
 		$attributes = [
 			'class' => [
 				'e-con',
+				'e-atomic-element',
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
@@ -219,6 +167,6 @@ class Div_Block extends Atomic_Element_Base {
 			$attributes = array_merge( $attributes, $settings['link'] );
 		}
 
-		$this->add_render_attribute( '_wrapper', $attributes );
+		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
 	}
 }

@@ -7,7 +7,7 @@ import { useStylesInheritanceChain } from '../contexts/styles-inheritance-contex
 import { useStylesField } from '../hooks/use-styles-field';
 import { StylesInheritanceIndicator } from '../styles-inheritance/components/styles-inheritance-indicator';
 import { ConditionalField } from './conditional-field';
-import { createTopLevelOjectType } from './create-top-level-object-type';
+import { createTopLevelObjectType } from './create-top-level-object-type';
 
 export type StylesFieldProps = {
 	bind: PropKey;
@@ -23,7 +23,7 @@ export const StylesField = ( { bind, propDisplayName, children }: StylesFieldPro
 
 	const { value, canEdit, ...fields } = useStylesField( bind, { history: { propDisplayName } } );
 
-	const propType = createTopLevelOjectType( { schema: stylesSchema } );
+	const propType = createTopLevelObjectType( { schema: stylesSchema } );
 
 	const [ actualValue ] = stylesInheritanceChain;
 

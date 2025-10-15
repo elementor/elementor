@@ -47,16 +47,28 @@ const items: ToggleButtonGroupItem< GroupItem >[] = [
 ];
 
 export const FlexSizeField = () => {
+	return (
+		<UiProviders>
+			<SectionContent>
+				<StylesField bind="flex" propDisplayName={ FLEX_SIZE_LABEL }>
+					<FlexSizeFieldContent />
+				</StylesField>
+			</SectionContent>
+		</UiProviders>
+	);
+};
+
+const FlexSizeFieldContent = () => {
 	const { value, setValue, canEdit } = useStylesField< FlexPropValue >( 'flex', {
 		history: { propDisplayName: FLEX_SIZE_LABEL },
 	} );
 
-	const flexValue = value as FlexPropValue | null;
-	const grow = flexValue?.value?.flexGrow?.value || null;
-	const shrink = flexValue?.value?.flexShrink?.value || null;
-	const basis = flexValue?.value?.flexBasis?.value || null;
+	const { placeholder } = useBoundProp();
 
-	const currentGroup = useMemo( () => getActiveGroup( { grow, shrink, basis } ), [ grow, shrink, basis ] );
+	const flexValues = extractFlexValues( value );
+
+	const currentGroup = useMemo( () => getActiveGroup( flexValues ), [ flexValues ] );
+
 	const [ activeGroup, setActiveGroup ] = useState( currentGroup );
 	const [ customLocked, setCustomLocked ] = useState( false );
 
@@ -76,30 +88,39 @@ export const FlexSizeField = () => {
 		setActiveGroup( group );
 		setCustomLocked( group === 'custom' );
 
-		const newFlexValue = createFlexValueForGroup( group, flexValue );
+		const newFlexValue = createFlexValueForGroup( group, value );
 
 		setValue( newFlexValue as FlexPropValue );
 	};
 
+	const groupPlaceholder = getActiveGroup( extractFlexValues( placeholder as FlexPropValue | null ) );
+
+	const isCustomVisible = 'custom' === activeGroup || 'custom' === groupPlaceholder;
+
 	return (
-		<UiProviders>
-			<SectionContent>
-				<StylesField bind="flex" propDisplayName={ FLEX_SIZE_LABEL }>
-					<StylesFieldLayout label={ FLEX_SIZE_LABEL }>
-						<ControlToggleButtonGroup
-							value={ activeGroup }
-							onChange={ onChangeGroup }
-							disabled={ ! canEdit }
-							items={ items }
-							exclusive={ true }
-						/>
-					</StylesFieldLayout>
-					{ 'custom' === activeGroup && <FlexCustomField /> }
-				</StylesField>
-			</SectionContent>
-		</UiProviders>
+		<>
+			<StylesFieldLayout label={ FLEX_SIZE_LABEL }>
+				<ControlToggleButtonGroup
+					value={ activeGroup ?? null }
+					placeholder={ groupPlaceholder ?? null }
+					onChange={ onChangeGroup }
+					disabled={ ! canEdit }
+					items={ items }
+					exclusive={ true }
+				/>
+			</StylesFieldLayout>
+			{ isCustomVisible && <FlexCustomField /> }
+		</>
 	);
 };
+
+function extractFlexValues( source: FlexPropValue | null ) {
+	return {
+		grow: source?.value?.flexGrow?.value ?? null,
+		shrink: source?.value?.flexShrink?.value ?? null,
+		basis: source?.value?.flexBasis?.value ?? null,
+	};
+}
 
 const createFlexValueForGroup = ( group: GroupItem | null, flexValue: FlexPropValue | null ): FlexPropValue | null => {
 	if ( ! group ) {

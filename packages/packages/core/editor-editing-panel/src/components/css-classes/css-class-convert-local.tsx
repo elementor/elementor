@@ -30,7 +30,7 @@ export const CssClassConvert = ( props: OwnProps ) => {
 	const elementId = element.id;
 	const currentClassesProp = useClassesProp();
 	const { setId: setActiveId } = useStyle();
-	const [ , saveValue ] = useSessionStorage( `last-converted-class-generated-name` );
+	const [ , saveValue ] = useSessionStorage( 'last-converted-class-generated-name', 'app' );
 
 	const successCallback = ( newId: string ) => {
 		if ( ! props.styleDef ) {

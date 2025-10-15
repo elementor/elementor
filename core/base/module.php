@@ -297,7 +297,7 @@ abstract class Module extends Base_Object {
 	 *
 	 * @access public
 	 *
-	 * @param string $file_name
+	 * @param string  $file_name
 	 * @param boolean $has_custom_breakpoints
 	 *
 	 * @return string frontend file URL

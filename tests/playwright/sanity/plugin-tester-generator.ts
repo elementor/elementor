@@ -18,7 +18,6 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'connect-polylang-elementor', installSource: 'api' },
 	{ pluginName: 'dynamic-visibility-for-elementor', installSource: 'api' },
 	{ pluginName: 'elementskit-lite', installSource: 'api' },
-	{ pluginName: 'envato-elements', installSource: 'cli' },
 	{ pluginName: 'exclusive-addons-for-elementor', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'header-footer-elementor', installSource: 'api' },
 	{ pluginName: 'jeg-elementor-kit', installSource: 'cli' },
@@ -46,6 +45,8 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'akismet', installSource: 'api' },
 	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'hello-plus', installSource: 'cli' },
+	{ pluginName: 'template-kit-import', installSource: 'api' },
+	{ pluginName: 'template-kit-export', installSource: 'api' },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
@@ -94,6 +95,14 @@ export const generatePluginTests = ( testType: string ) => {
 				if ( 'the-plus-addons-for-elementor-page-builder' === plugin.pluginName ) {
 					const plusAddonTemplateModal = new ImportTemplatesModal( page );
 					await plusAddonTemplateModal.skipTemplatesImportIfVisible();
+				}
+
+				if ( 'wordpress-seo' === plugin.pluginName ) {
+					const gotItButton = editor.page.locator( '#yoast-introduction-editor-v2 .dialog-buttons-ok' );
+
+					if ( await gotItButton.isVisible() ) {
+						await gotItButton.click();
+					}
 				}
 
 				await editor.closeNavigatorIfOpen();

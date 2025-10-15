@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
+import { type CreateOptions } from '@elementor/editor-props';
+
+import { type SetValueMeta } from '../bound-prop-context';
 
 type UseInternalStateOptions< TValue > = {
 	external: TValue | null;
-	setExternal: ( value: TValue | null ) => void;
+	setExternal: ( value: TValue | null, options?: CreateOptions, meta?: SetValueMeta ) => void;
 	persistWhen: ( value: TValue | null ) => boolean;
 	fallback: ( value: TValue | null ) => TValue;
 };
@@ -40,12 +43,12 @@ export const useSyncExternalState = < TValue, >( {
 
 	type SetterFunc = ( value: TValue ) => TValue;
 
-	const setInternalValue = ( setter: SetterFunc | TValue ) => {
+	const setInternalValue = ( setter: SetterFunc | TValue, options?: CreateOptions, meta?: SetValueMeta ) => {
 		const setterFn = ( typeof setter === 'function' ? setter : () => setter ) as SetterFunc;
 		const updated = setterFn( internal );
 
 		setInternal( updated );
-		setExternal( toExternal( updated ) );
+		setExternal( toExternal( updated ), options, meta );
 	};
 
 	return [ internal, setInternalValue ] as const;

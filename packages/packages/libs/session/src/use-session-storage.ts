@@ -3,8 +3,9 @@ import { useContext, useEffect, useState } from 'react';
 import { getSessionStorageItem, removeSessionStorageItem, setSessionStorageItem } from './session-storage';
 import { Context } from './session-storage-context';
 
-export const useSessionStorage = < T >( key: string ) => {
-	const prefix = useContext( Context )?.prefix ?? '';
+export const useSessionStorage = < T >( key: string, customPrefix?: string ) => {
+	const contextPrefix = useContext( Context )?.prefix ?? '';
+	const prefix = customPrefix ? customPrefix : contextPrefix;
 	const prefixedKey = `${ prefix }/${ key }`;
 
 	const [ value, setValue ] = useState< T | null >();

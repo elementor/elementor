@@ -1,11 +1,11 @@
 import * as React from 'react';
-import type { TransformItemPropValue } from '@elementor/editor-props';
+import type { TransformFunctionsItemPropValue } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { defaultValues, TransformFunctionKeys } from './initial-values';
 
-const transformMoveValue = ( value: TransformItemPropValue[ 'value' ] ) =>
+const transformMoveValue = ( value: TransformFunctionsItemPropValue[ 'value' ] ) =>
 	Object.values( value )
 		.map( ( axis ) => {
 			const size = axis?.value?.size ?? defaultValues.move.size;
@@ -15,12 +15,12 @@ const transformMoveValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 		} )
 		.join( ', ' );
 
-const transformScaleValue = ( value: TransformItemPropValue[ 'value' ] ) =>
+const transformScaleValue = ( value: TransformFunctionsItemPropValue[ 'value' ] ) =>
 	Object.values( value )
 		.map( ( axis ) => axis?.value || defaultValues.scale )
 		.join( ', ' );
 
-const transformRotateValue = ( value: TransformItemPropValue[ 'value' ] ) =>
+const transformRotateValue = ( value: TransformFunctionsItemPropValue[ 'value' ] ) =>
 	Object.values( value )
 		.map( ( axis ) => {
 			const size = axis?.value?.size ?? defaultValues.rotate.size;
@@ -29,7 +29,7 @@ const transformRotateValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 			return `${ size }${ unit }`;
 		} )
 		.join( ', ' );
-const transformSkewValue = ( value: TransformItemPropValue[ 'value' ] ) =>
+const transformSkewValue = ( value: TransformFunctionsItemPropValue[ 'value' ] ) =>
 	Object.values( value )
 		.map( ( axis ) => {
 			const size = axis?.value?.size ?? defaultValues.skew.size;
@@ -39,7 +39,7 @@ const transformSkewValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 		} )
 		.join( ', ' );
 
-export const TransformLabel = ( props: { value: TransformItemPropValue } ) => {
+export const TransformLabel = ( props: { value: TransformFunctionsItemPropValue } ) => {
 	const { $$type, value } = props.value;
 	switch ( $$type ) {
 		case TransformFunctionKeys.move:

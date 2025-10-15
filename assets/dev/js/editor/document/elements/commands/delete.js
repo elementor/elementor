@@ -35,7 +35,7 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
-			if ( this.isHistoryActive() ) {
+			if ( this.isHistoryActive() && this.history ) {
 				$e.internal( 'document/history/log-sub-item', {
 					container,
 					type: 'sub-remove',

@@ -18,6 +18,7 @@ export type DependencyTerm = {
 	operator: DependencyOperator;
 	path: string[];
 	value: PropValue;
+	newValue?: TransformablePropValue< string >;
 };
 
 export type Dependency = {

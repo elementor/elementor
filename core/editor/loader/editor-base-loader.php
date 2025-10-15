@@ -102,17 +102,17 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 
 		wp_register_script(
 			'ace',
-			'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js',
+			'https://cdn.jsdelivr.net/npm/ace-builds@1.43.2/src-min-noconflict/ace.min.js',
 			[],
-			'1.2.5',
+			'1.43.2',
 			true
 		);
 
 		wp_register_script(
 			'ace-language-tools',
-			'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ext-language_tools.js',
+			'https://cdn.jsdelivr.net/npm/ace-builds@1.43.2/src-min-noconflict/ext-language_tools.js',
 			[ 'ace' ],
-			'1.2.5',
+			'1.43.2',
 			true
 		);
 

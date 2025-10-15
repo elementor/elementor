@@ -137,16 +137,16 @@ class Documents_Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param string $type  Document type name.
-	 * @param string $class The name of the class that registers the document type.
-	 *                      Full name with the namespace.
+	 * @param string $type       Document type name.
+	 * @param string $class_name The name of the class that registers the document type.
+	 *                           Full name with the namespace.
 	 *
 	 * @return Documents_Manager The updated document manager instance.
 	 */
-	public function register_document_type( $type, $class ) {
-		$this->types[ $type ] = $class;
+	public function register_document_type( $type, $class_name ) {
+		$this->types[ $type ] = $class_name;
 
-		$cpt = $class::get_property( 'cpt' );
+		$cpt = $class_name::get_property( 'cpt' );
 
 		if ( $cpt ) {
 			foreach ( $cpt as $post_type ) {
@@ -154,7 +154,7 @@ class Documents_Manager {
 			}
 		}
 
-		if ( $class::get_property( 'register_type' ) ) {
+		if ( $class_name::get_property( 'register_type' ) ) {
 			Source_Local::add_template_type( $type );
 		}
 

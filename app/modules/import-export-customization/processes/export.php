@@ -124,11 +124,22 @@ class Export {
 			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
 		];
 
+		$media_collector = null;
+		if ( $this->should_collect_media( $data ) ) {
+			$media_collector = new \Elementor\TemplateLibrary\Classes\Media_Collector();
+			$media_collector->start_collection();
+		}
+
 		foreach ( $this->runners as $runner ) {
 			if ( $runner->should_export( $data ) ) {
 				$export_result = $runner->export( $data );
 				$this->handle_export_result( $export_result );
 			}
+		}
+
+		$media_urls = null;
+		if ( $media_collector ) {
+			$media_urls = $media_collector->get_collected_urls();
 		}
 
 		$this->add_json_file( 'manifest', $this->manifest_data );
@@ -139,6 +150,7 @@ class Export {
 		return [
 			'manifest' => $this->manifest_data,
 			'file_name' => $zip_file_name,
+			'media_urls' => $media_urls,
 		];
 	}
 
@@ -167,8 +179,8 @@ class Export {
 		}
 	}
 
-	public function settings_include( $include ) {
-		$this->settings_include = $include;
+	public function settings_include( $settings_include ) {
+		$this->settings_include = $settings_include;
 	}
 
 	public function get_settings_include() {
@@ -254,7 +266,9 @@ class Export {
 		return [
 			'settings' => null,
 			'templates' => null,
-			'content' => null,
+			'content' => [
+				'mediaFormat' => 'link',
+			],
 			'plugins' => null,
 		];
 	}
@@ -271,6 +285,8 @@ class Export {
 
 	/**
 	 * Init the zip archive.
+	 *
+	 * @throws \Error If export process fails, file creation errors occur, or data serialization fails.
 	 */
 	private function init_zip_archive() {
 		if ( ! class_exists( '\ZipArchive' ) ) {
@@ -345,8 +361,8 @@ class Export {
 	 * Add json file to the zip archive.
 	 *
 	 * @param string $path The relative path to the file.
-	 * @param array $content The content of the file.
-	 * @param int $json_flags
+	 * @param array  $content The content of the file.
+	 * @param int    $json_flags
 	 */
 	private function add_json_file( $path, array $content, $json_flags = 0 ) {
 		if ( ! Str::ends_with( $path, '.json' ) ) {
@@ -364,5 +380,12 @@ class Export {
 	 */
 	private function add_file( $file, $content ) {
 		$this->zip->addFromString( $file, $content );
+	}
+
+	private function should_collect_media( $data ) {
+		return (
+			isset( $data['customization']['content']['mediaFormat'] ) &&
+			'cloud' === $data['customization']['content']['mediaFormat']
+		);
 	}
 }

@@ -35,9 +35,19 @@ const INIT_CHECKED_FILTERS: CheckedFilters = {
 
 export const SearchAndFilterProvider = ( { children }: React.PropsWithChildren ) => {
 	const [ filters, setFilters ] = React.useState< CheckedFilters >( INIT_CHECKED_FILTERS );
+
+	const getInitialSearchValue = () => {
+		const storedValue = localStorage.getItem( 'elementor-global-classes-search' );
+		if ( storedValue ) {
+			localStorage.removeItem( 'elementor-global-classes-search' );
+			return storedValue;
+		}
+		return '';
+	};
+
 	const { debouncedValue, inputValue, handleChange } = useDebounceState( {
 		delay: 300,
-		initialValue: '',
+		initialValue: getInitialSearchValue(),
 	} );
 
 	const onClearSearch = () => {

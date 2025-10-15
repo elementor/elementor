@@ -15,7 +15,7 @@ import {
 	Button,
 	Popover,
 } from '@elementor/app-ui';
-import { AppsEventTracking, appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { KIT_SOURCE_MAP } from '../../../../import-export/assets/js/hooks/use-kit';
 
 import './kit-list-item.scss';
@@ -91,23 +91,11 @@ const KitListCloudItem = ( props ) => {
 
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
 
-	const eventTracking = ( command ) => {
-		appsEventTrackingDispatch(
-			command,
-			{
-				kit_name: props.model.title,
-				grid_location: props.index,
-				page_source: 'cloud',
-			},
-		);
-	};
-
 	const handleDelete = () => {
 		setIsPopoverOpen( false );
 
 		AppsEventTracking.sendKitCloudLibraryDelete( props.model.id );
 
-		eventTracking( 'kit-library/cloud-delete' );
 		props.onDelete();
 	};
 
@@ -149,8 +137,6 @@ const KitListCloudItem = ( props ) => {
 								text={ __( 'Apply', 'elementor' ) }
 								icon="eicon-library-download"
 								onClick={ () => {
-									eventTracking( 'kit-library/cloud-import' );
-
 									AppsEventTracking.sendKitCloudLibraryApply( props.model.id );
 
 									const url = elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ]

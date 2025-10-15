@@ -24,7 +24,7 @@ class Document_Usage {
 	 * @param ElementorDocument $document The Elementor document object.
 	 */
 	public function __construct( ElementorDocument $document ) {
-		$this->document      = $document;
+		$this->document = $document;
 	}
 
 	/**

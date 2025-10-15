@@ -18,9 +18,6 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	initialize() {
 		elementorModules.common.views.modal.Layout.prototype.initialize.apply( this, arguments );
 
-		const lookupControlIdPrefix = 'elementor-new-template__form__';
-		const templateTypeSelectId = `${ lookupControlIdPrefix }template-type`;
-
 		this.showLogo();
 
 		this.showContentView();
@@ -30,8 +27,23 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.lockProBehavior = new LockPro( this.elements );
 		this.lockProBehavior.bindEvents();
 
+		this.setupDynamicControlsVisibility();
+	},
+
+	setupDynamicControlsVisibility() {
+		// eslint-disable-next-line camelcase
+		const isFormControlsDefined = 'undefined' !== typeof elementor_new_template_form_controls;
+
+		if ( ! isFormControlsDefined ) {
+			return;
+		}
+
+		const CONTROL_ID_PREFIX = 'elementor-new-template__form__';
+		const templateTypeSelectId = `${ CONTROL_ID_PREFIX }template-type`;
+
 		const dynamicControlsVisibilityListener = () => {
-			elementorAdmin.templateControls.setDynamicControlsVisibility( lookupControlIdPrefix, elementor_new_template_form_controls );
+			// eslint-disable-next-line camelcase
+			elementorAdmin.templateControls.setDynamicControlsVisibility( CONTROL_ID_PREFIX, elementor_new_template_form_controls );
 		};
 
 		this.getModal().onShow = () => {

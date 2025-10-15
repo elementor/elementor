@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
-import { __privateUseRouteStatus as useRouteStatus } from '@elementor/editor-v1-adapters';
-import { __createStore, __registerSlice, __StoreProvider as StoreProvider } from '@elementor/store';
+import { type V1Element } from '@elementor/editor-elements';
+import {
+	__privateRunCommand as runCommand,
+	__privateUseRouteStatus as useRouteStatus,
+} from '@elementor/editor-v1-adapters';
+import { __createStore, __deleteStore, __registerSlice, __StoreProvider as StoreProvider } from '@elementor/store';
 import { act, fireEvent, renderHook, screen } from '@testing-library/react';
 
 import { createPanel, type PanelDeclaration, registerPanel } from '../api';
@@ -10,6 +14,25 @@ import Panels from '../components/internal/panels';
 import { slice } from '../store';
 
 jest.mock( '@elementor/editor-v1-adapters' );
+
+const MOCK_ELEMENT_ID = 'element-123';
+const MOCK_CONTAINER = { id: MOCK_ELEMENT_ID };
+
+const mockedUseRouteStatus = jest.mocked( useRouteStatus );
+const getElementsFnGetter =
+	( id = MOCK_ELEMENT_ID ) =>
+	() => {
+		return [ { model: { get: () => id } } ] as unknown as V1Element[];
+	};
+const mockedGetSelectedElements = jest.fn();
+const mockedGetContainer = jest.fn();
+global.window.elementor = {
+	selection: {
+		getElements: mockedGetSelectedElements,
+	},
+	getContainer: mockedGetContainer,
+};
+const mockedRunCommand = jest.mocked( runCommand );
 
 describe( 'panels api', () => {
 	beforeEach( () => {
@@ -20,7 +43,7 @@ describe( 'panels api', () => {
 			</div>
 		`;
 
-		jest.mocked( useRouteStatus ).mockReturnValue( {
+		mockedUseRouteStatus.mockReturnValue( {
 			isActive: false,
 			isBlocked: false,
 		} );
@@ -100,7 +123,7 @@ describe( 'panels api', () => {
 
 		registerPanel( mockPanel.panel );
 
-		jest.mocked( useRouteStatus ).mockReturnValue( {
+		mockedUseRouteStatus.mockReturnValue( {
 			isActive: false,
 			isBlocked: true,
 		} );
@@ -117,7 +140,7 @@ describe( 'panels api', () => {
 		let opened = false;
 		let closed = false;
 
-		jest.mocked( useRouteStatus ).mockReturnValue( {
+		mockedUseRouteStatus.mockReturnValue( {
 			isActive: true,
 			isBlocked: false,
 		} );
@@ -171,6 +194,175 @@ describe( 'panels api', () => {
 
 		// Assert.
 		expect( onClose ).toHaveBeenCalledWith( state );
+	} );
+
+	describe( 'isOpenPreviousElement functionality', () => {
+		beforeEach( () => {
+			mockedGetSelectedElements.mockReturnValue( getElementsFnGetter()() );
+			mockedGetContainer.mockReturnValue( MOCK_CONTAINER );
+			mockedRunCommand.mockClear();
+		} );
+
+		afterEach( () => {
+			__deleteStore();
+		} );
+
+		it( 'should store and restore previous element when isOpenPreviousElement is true', () => {
+			// Arrange.
+			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
+
+			__registerSlice( slice );
+			registerPanel( mockPanel.panel );
+
+			// Act.
+			const { open, close } = renderHook( () => mockPanel.usePanelActions(), {
+				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
+			} ).result.current;
+
+			act( () => {
+				open();
+			} );
+
+			// Assert.
+			expect( mockedGetSelectedElements ).toHaveBeenCalled();
+
+			// Act.
+			act( () => {
+				close();
+			} );
+
+			// Assert.
+			expect( mockedRunCommand ).toHaveBeenCalledWith( 'document/elements/select', {
+				container: MOCK_CONTAINER,
+			} );
+		} );
+
+		it( 'should not store or restore previous element when isOpenPreviousElement is false', () => {
+			// Arrange.
+			const mockPanel = createMockPanel( { isOpenPreviousElement: false } );
+
+			__registerSlice( slice );
+			registerPanel( mockPanel.panel );
+
+			// Act.
+			const { open, close } = renderHook( () => mockPanel.usePanelActions(), {
+				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
+			} ).result.current;
+
+			act( () => {
+				open();
+				close();
+			} );
+
+			// Assert.
+			expect( mockedGetSelectedElements ).not.toHaveBeenCalled();
+			expect( mockedRunCommand ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should not store or restore previous element when isOpenPreviousElement is undefined (default)', () => {
+			// Arrange.
+			const mockPanel = createMockPanel();
+
+			__registerSlice( slice );
+			registerPanel( mockPanel.panel );
+
+			// Act.
+			const { open, close } = renderHook( () => mockPanel.usePanelActions(), {
+				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
+			} ).result.current;
+
+			act( () => {
+				open();
+				close();
+			} );
+
+			// Assert.
+			expect( mockedGetSelectedElements ).not.toHaveBeenCalled();
+			expect( mockedRunCommand ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should handle case when no element is selected during open', () => {
+			// Arrange.
+			mockedGetSelectedElements.mockReturnValue( [] );
+
+			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
+
+			__registerSlice( slice );
+			registerPanel( mockPanel.panel );
+
+			// Act.
+			const { open, close } = renderHook( () => mockPanel.usePanelActions(), {
+				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
+			} ).result.current;
+
+			act( () => {
+				open();
+				close();
+			} );
+
+			// Assert.
+			expect( mockedGetSelectedElements ).toHaveBeenCalled();
+			expect( mockedRunCommand ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should not restore element when panel is blocked during close', () => {
+			// Arrange.
+			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
+
+			__registerSlice( slice );
+			registerPanel( mockPanel.panel );
+
+			mockedUseRouteStatus.mockReturnValue( {
+				isActive: true,
+				isBlocked: true,
+			} );
+
+			// Act.
+			const { open, close } = renderHook( () => mockPanel.usePanelActions(), {
+				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
+			} ).result.current;
+			act( () => {
+				open();
+			} );
+			act( () => {
+				close();
+			} );
+
+			// Assert.
+			expect( mockedGetSelectedElements ).not.toHaveBeenCalled();
+			expect( mockedRunCommand ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should clear previous element reference after restoring', () => {
+			// Arrange.
+			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
+
+			__registerSlice( slice );
+			registerPanel( mockPanel.panel );
+
+			// Act.
+			const { open, close } = renderHook( () => mockPanel.usePanelActions(), {
+				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
+			} ).result.current;
+			act( () => {
+				open();
+				close();
+			} );
+
+			mockedGetSelectedElements.mockClear();
+			mockedRunCommand.mockClear();
+
+			act( () => {
+				open();
+				close();
+			} );
+
+			// Assert.
+			expect( mockedGetSelectedElements ).toHaveBeenCalled();
+			expect( mockedRunCommand ).toHaveBeenCalledWith( 'document/elements/select', {
+				container: MOCK_CONTAINER,
+			} );
+		} );
 	} );
 } );
 

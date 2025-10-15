@@ -1352,7 +1352,7 @@ class Source_Local extends Source_Base {
 		if ( empty( $current_type ) ) {
 			$counts = (array) wp_count_posts( self::CPT );
 			unset( $counts['auto-draft'] );
-			$count  = array_sum( $counts );
+			$count = array_sum( $counts );
 
 			if ( 0 < $count ) {
 				return;
@@ -1705,7 +1705,7 @@ class Source_Local extends Source_Base {
 		return $posts_columns;
 	}
 
-	public function get_current_tab_group( $default = '' ) {
+	public function get_current_tab_group() {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 		$current_tabs_group = Utils::get_super_global_value( $_REQUEST, 'tabs_group' ) ?? '';
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.

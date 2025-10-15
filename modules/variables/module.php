@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const MODULE_NAME = 'e-variables';
 	const EXPERIMENT_NAME = 'e_variables';
-	const EXPERIMENT_SETTINGS_NAME = 'e_variables_settings';
+	const EXPERIMENT_MANAGER_NAME = 'e_variables_manager';
 
 	private Variable_Types_Registry $variable_types_registry;
 
@@ -53,9 +53,9 @@ class Module extends BaseModule {
 
 	private function register_features() {
 		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_SETTINGS_NAME,
-			'title' => esc_html__( 'Variables Settings', 'elementor' ),
-			'description' => esc_html__( 'Enable variables settings. (For this feature to work - Variables must be active)', 'elementor' ),
+			'name' => self::EXPERIMENT_MANAGER_NAME,
+			'title' => esc_html__( 'Variables Manager', 'elementor' ),
+			'description' => esc_html__( 'Enable variables manager. (For this feature to work - Variables must be active)', 'elementor' ),
 			'hidden' => true,
 			'default' => ExperimentsManager::STATE_INACTIVE,
 			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,

@@ -3,112 +3,46 @@
 namespace Elementor\Modules\WpRest\Classes;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
+use Elementor\Modules\WpRest\Base\Query as Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Post_Query {
-	const MAX_RESPONSE_COUNT = 100;
-	const NAMESPACE = 'elementor/v1';
+class Post_Query extends Base {
 	const ENDPOINT = 'post';
-
-	const EXCLUDED_POST_TYPE_KEYS = 'excluded_post_types';
-	const SEARCH_TERM_KEY = 'term';
-	const POST_KEYS_CONVERSION_MAP = 'post_keys_conversion_map';
-	const MAX_COUNT_KEY = 'max_count';
-	const NONCE_KEY = 'x_wp_nonce';
-
-	const FORBIDDEN_POST_TYPES = [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment' ];
-
-	public function register( bool $override_existing_endpoints = false ): void {
-		register_rest_route( self::NAMESPACE, self::ENDPOINT, [
-			[
-				'methods' => \WP_REST_Server::READABLE,
-				'permission_callback' => fn ( \WP_REST_Request $request ) => $this->validate_access_permission( $request ),
-				'args' => $this->get_endpoint_registration_args(),
-				'sanitize_callback' => 'esc_attr',
-				'callback' => fn ( \WP_REST_Request $request ) => $this->route_wrapper( fn() => $this->get_posts( $request ) ),
-			],
-		], $override_existing_endpoints );
-	}
+	const SEARCH_FILTER_ACCEPTED_ARGS = 2;
+	const DEFAULT_FORBIDDEN_POST_TYPES = [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment', 'revision', 'nav_menu_item', 'custom_css', 'customize_changeset' ];
 
 	/**
-	 * @param $args array{
-	 *     excluded_post_types: array,
-	 *     post_keys_conversion_map: array,
-	 *     max_count: int,
-	 * } The query parameters
-	 * @return array The query parameters.
-	 */
-	public static function build_query_params( array $args ): array {
-		$allowed_keys = [ self::EXCLUDED_POST_TYPE_KEYS, self::POST_KEYS_CONVERSION_MAP, self::MAX_COUNT_KEY ];
-		$keys_to_encode = [ self::EXCLUDED_POST_TYPE_KEYS, self::POST_KEYS_CONVERSION_MAP ];
-
-		$params = [];
-
-		foreach ( $args as $key => $value ) {
-			if ( ! in_array( $key, $allowed_keys, true ) || ! isset( $value ) ) {
-				continue;
-			}
-
-			if ( ! in_array( $key, $keys_to_encode, true ) ) {
-				$params[ $key ] = $value;
-				continue;
-			}
-
-			$params[ $key ] = wp_json_encode( $value );
-		}
-
-		return $params;
-	}
-
-	private function validate_access_permission( $request ): bool {
-		$nonce = $request->get_header( self::NONCE_KEY );
-
-		return current_user_can( 'edit_posts' ) && wp_verify_nonce( $nonce, 'wp_rest' );
-	}
-
-	/**
-	 * @param string $search_term The original search query.
+	 * @param string    $search_term The original search query.
 	 * @param \WP_Query $wp_query The WP_Query instance.
 	 * @return string Modified search query.
 	 */
-	public function customize_search( string $search_term, \WP_Query $wp_query ) {
+	public function customize_post_query( string $search_term, \WP_Query $wp_query ) {
 		$term = $wp_query->get( 'search_term' ) ?? '';
 		$is_custom_search = $wp_query->get( 'custom_search' ) ?? false;
 
 		if ( $is_custom_search && ! empty( $term ) ) {
+			$escaped = esc_sql( $term );
 			$search_term .= ' AND (';
-			$search_term .= "post_title LIKE '%" . esc_sql( $term ) . "%' ";
-			$search_term .= "OR ID LIKE '%" . esc_sql( $term ) . "%')";
+			$search_term .= "post_title LIKE '%{$escaped}%'";
+			if ( ctype_digit( $term ) ) {
+				$search_term .= ' OR ID = ' . intval( $term );
+			} else {
+				$search_term .= " OR ID LIKE '%{$escaped}%'";
+			}
+			$search_term .= ')';
 		}
 
 		return $search_term;
 	}
 
 	/**
-	 * @param callable $cb The route callback.
-	 * @return \WP_REST_Response | \WP_Error
-	 */
-	private function route_wrapper( callable $cb ) {
-		try {
-			$response = $cb();
-		} catch ( \Exception $e ) {
-			return Error_Builder::make( $e->getCode() )
-				->set_message( $e->getMessage() )
-				->build();
-		}
-
-		return $response;
-	}
-
-	/**
 	 * @param \WP_REST_Request $request
 	 * @return \WP_REST_Response
 	 */
-	private function get_posts( \WP_REST_Request $request ) {
+	protected function get( \WP_REST_Request $request ) {
 		$params = $request->get_params();
 		$term = trim( $params[ self::SEARCH_TERM_KEY ] ?? '' );
 
@@ -121,42 +55,54 @@ class Post_Query {
 			], 200 );
 		}
 
-		$excluded_types = array_merge( self::FORBIDDEN_POST_TYPES, $params[ self::EXCLUDED_POST_TYPE_KEYS ] ?? [] );
-		$keys_format_map = $params[ self::POST_KEYS_CONVERSION_MAP ];
-		$requested_count = $params[ self::MAX_COUNT_KEY ] ?? 0;
+		$keys_format_map = $params[ self::KEYS_CONVERSION_MAP_KEY ];
+		$requested_count = $params[ self::ITEMS_COUNT_KEY ] ?? 0;
 		$validated_count = max( $requested_count, 1 );
-		$max_count = min( $validated_count, self::MAX_RESPONSE_COUNT );
-		$post_types = new Collection( get_post_types( [ 'public' => true ], 'object' ) );
+		$post_count = min( $validated_count, self::MAX_RESPONSE_COUNT );
+		$is_public_only = $params[ self::IS_PUBLIC_KEY ] ?? true;
+		$post_types = $this->get_post_types_from_params( $params );
 
-		$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types ) {
-			return ! in_array( $post_type->name, $excluded_types, true );
-		} );
-
-		$post_type_slugs = $post_types->map( function ( $post_type ) {
-			return $post_type->name;
-		} );
-
-		$this->add_filter_to_customize_query();
-
-		$posts = new Collection( get_posts( [
-			'post_type' => $post_type_slugs->all(),
-			'numberposts' => $max_count,
+		$query_args = [
+			'post_type' => array_keys( $post_types ),
+			'numberposts' => $post_count,
 			'suppress_filters' => false,
 			'custom_search' => true,
 			'search_term' => $term,
-		] ) );
+			'post_status' => $is_public_only ? 'publish' : 'any',
+			'orderby' => 'ID',
+			'order' => 'ASC',
+		];
 
+		if ( ! empty( $params[ self::META_QUERY_KEY ] ) && is_array( $params[ self::META_QUERY_KEY ] ) ) {
+			$query_args['meta_query'] = $params[ self::META_QUERY_KEY ];
+		}
+
+		if ( ! empty( $params[ self::TAX_QUERY_KEY ] ) && is_array( $params[ self::TAX_QUERY_KEY ] ) ) {
+			$query_args['tax_query'] = $params[ self::TAX_QUERY_KEY ];
+		}
+
+		$this->add_filter_to_customize_query();
+		$posts = new Collection( get_posts( $query_args ) );
 		$this->remove_filter_to_customize_query();
+
+		$post_type_labels = ( new Collection( $post_types ) )
+			->map( function ( $pt ) {
+				return $pt->label;
+			} )
+			->all();
 
 		return new \WP_REST_Response( [
 			'success' => true,
 			'data' => [
 				'value' => $posts
-					->map( function ( $post ) use ( $keys_format_map, $post_types ) {
+					->map( function ( $post ) use ( $keys_format_map, $post_type_labels ) {
 						$post_object = (array) $post;
 
 						if ( isset( $post_object['post_type'] ) ) {
-							$post_object['post_type'] = $post_types->get( ( $post_object['post_type'] ) )->label;
+							$pt_name = $post_object['post_type'];
+							if ( isset( $post_type_labels[ $pt_name ] ) ) {
+								$post_object['post_type'] = $post_type_labels[ $pt_name ];
+							}
 						}
 
 						return $this->translate_keys( $post_object, $keys_format_map );
@@ -170,33 +116,37 @@ class Post_Query {
 	 * @return void
 	 */
 	private function add_filter_to_customize_query() {
-		$priority = 10;
-		$accepted_args = 2;
+		$priority = self::SEARCH_FILTER_PRIORITY;
+		$accepted_args = self::SEARCH_FILTER_ACCEPTED_ARGS;
 
-		add_filter( 'posts_search', [ $this, 'customize_search' ], $priority, $accepted_args );
+		add_filter( 'posts_search', [ $this, 'customize_post_query' ], $priority, $accepted_args );
 	}
 
 	/**
 	 * @return void
 	 */
 	private function remove_filter_to_customize_query() {
-		$priority = 10;
-		$accepted_args = 2;
+		$priority = self::SEARCH_FILTER_PRIORITY;
+		$accepted_args = self::SEARCH_FILTER_ACCEPTED_ARGS;
 
-		remove_filter( 'posts_search', [ $this, 'customize_search' ], $priority, $accepted_args );
+		remove_filter( 'posts_search', [ $this, 'customize_post_query' ], $priority, $accepted_args );
 	}
 
-	/**
-	 * @return array
-	 */
-	private function get_endpoint_registration_args() {
+	protected function get_endpoint_registration_args(): array {
 		return [
-			self::EXCLUDED_POST_TYPE_KEYS => [
-				'description' => 'Post type to exclude',
-				'type' => [ 'array', 'string' ],
+			self::INCLUDED_TYPE_KEY => [
+				'description' => 'Included post types',
+				'type' => 'array',
 				'required' => false,
-				'default' => self::FORBIDDEN_POST_TYPES,
-				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
+				'default' => null,
+				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
+			],
+			self::EXCLUDED_TYPE_KEY => [
+				'description' => 'Post type to exclude',
+				'type' => 'array',
+				'required' => false,
+				'default' => self::DEFAULT_FORBIDDEN_POST_TYPES,
+				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
 			],
 			self::SEARCH_TERM_KEY => [
 				'description' => 'Posts to search',
@@ -205,58 +155,81 @@ class Post_Query {
 				'default' => '',
 				'sanitize_callback' => 'sanitize_text_field',
 			],
-			self::POST_KEYS_CONVERSION_MAP => [
+			self::KEYS_CONVERSION_MAP_KEY => [
 				'description' => 'Specify keys to extract and convert, i.e. ["key_1" => "new_key_1"].',
-				'type' => [ 'array', 'string' ],
+				'type' => 'array',
 				'required' => false,
-				'default' => [],
-				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
+				'default' => [
+					'ID' => 'id',
+					'post_title' => 'label',
+					'post_type' => 'groupLabel',
+				],
+				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
 			],
-			self::MAX_COUNT_KEY => [
-				'description' => 'Max count of returned items',
-				'type' => 'number',
+			self::ITEMS_COUNT_KEY => [
+				'description' => 'Posts per page',
+				'type' => 'integer',
 				'required' => false,
 				'default' => self::MAX_RESPONSE_COUNT,
+			],
+			self::IS_PUBLIC_KEY => [
+				'description' => 'Whether to include only public post types',
+				'type' => 'boolean',
+				'required' => false,
+				'default' => true,
+			],
+			self::META_QUERY_KEY => [
+				'description' => 'WP_Query meta_query array',
+				'type' => 'array',
+				'required' => false,
+				'default' => null,
+				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
+			],
+			self::TAX_QUERY_KEY => [
+				'description' => 'WP_Query tax_query array',
+				'type' => 'array',
+				'required' => false,
+				'default' => null,
+				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
 			],
 		];
 	}
 
-	/**
-	 * @param Array<string>|string $input The input data, expected to be an array or JSON-encoded string.
-	 * @return array The sanitized array of strings.
-	 */
-	private function sanitize_string_array( $input ) {
-		if ( ! is_array( $input ) ) {
-			$input = json_decode( sanitize_text_field( $input ) ) ?? [];
-		}
-
-		$array = new Collection( json_decode( json_encode( $input ), true ) );
-
-		return $array
-			->map( 'sanitize_text_field' )
-			->all();
+	protected static function get_allowed_param_keys(): array {
+		return [
+			self::EXCLUDED_TYPE_KEY,
+			self::INCLUDED_TYPE_KEY,
+			self::KEYS_CONVERSION_MAP_KEY,
+			self::META_QUERY_KEY,
+			self::TAX_QUERY_KEY,
+			self::IS_PUBLIC_KEY,
+			self::ITEMS_COUNT_KEY,
+		];
 	}
 
-	/**
-	 * @param array $item The input array with original keys.
-	 * @param array $dictionary An associative array mapping old keys to new keys.
-	 * @return array The array with translated keys.
-	 */
-	private function translate_keys( array $item, array $dictionary ): array {
-		if ( empty( $dictionary ) ) {
-			return $item;
-		}
+	protected static function get_keys_to_encode(): array {
+		return [
+			self::EXCLUDED_TYPE_KEY,
+			self::INCLUDED_TYPE_KEY,
+			self::KEYS_CONVERSION_MAP_KEY,
+			self::META_QUERY_KEY,
+			self::TAX_QUERY_KEY,
+		];
+	}
 
-		$replaced = [];
+	private function get_post_types_from_params( $params ) {
+		$included_types = $params[ self::INCLUDED_TYPE_KEY ];
+		$excluded_types = $params[ self::EXCLUDED_TYPE_KEY ];
+		$post_type_query_args = [
+			'public' => true,
+		];
 
-		foreach ( $item as $key => $value ) {
-			if ( ! isset( $dictionary[ $key ] ) ) {
-				continue;
-			}
+		$post_types = get_post_types( $post_type_query_args, 'objects' );
 
-			$replaced[ $dictionary[ $key ] ] = $value;
-		}
-
-		return $replaced;
+		return Collection::make( $post_types )
+				->filter( function ( $slug, $post_type ) use ( $included_types, $excluded_types ) {
+					return ( empty( $included_types ) || in_array( $post_type, $included_types ) ) &&
+						( empty( $excluded_types ) || ! in_array( $post_type, $excluded_types ) );
+				} )->all();
 	}
 }

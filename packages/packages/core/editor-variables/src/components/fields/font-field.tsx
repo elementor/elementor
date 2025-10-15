@@ -68,12 +68,13 @@ export const FontField = ( { value, onChange, onValidationChange }: FontFieldPro
 				{ ...bindPopover( fontPopoverState ) }
 			>
 				<ItemSelector
+					id="font-family-variables-selector"
 					itemsList={ mapFontSubs }
 					selectedItem={ fontFamily }
 					onItemChange={ handleFontFamilyChange }
 					onClose={ fontPopoverState.close }
 					sectionWidth={ sectionWidth }
-					title={ __( 'Font Family', 'elementor' ) }
+					title={ __( 'Font family', 'elementor' ) }
 					itemStyle={ ( item ) => ( { fontFamily: item.value } ) }
 					onDebounce={ enqueueFont }
 					icon={ TextIcon as React.ElementType< { fontSize: string } > }
