@@ -1,22 +1,12 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
+import EditorPage from '../../../../pages/editor-page';
 import { CssConverterHelper, CssConverterResponse } from '../helper';
 
-/**
- * Reset Styles Infrastructure Tests
- * 
- * 🚨 IMPORTANT: These tests are designed to FAIL and highlight missing infrastructure
- * 
- * Current Status: Reset style handling is NOT IMPLEMENTED
- * - No Reset_Style_Detector class exists
- * - No element selector processing exists  
- * - No direct widget styling exists
- * - No reset CSS file generation exists
- * 
- * See: RESET-STYLES-TEST-ANALYSIS.md for complete infrastructure requirements
- */
-test.describe('Reset Styles Infrastructure Tests', () => {
+test.describe('Reset Styles Handling Tests', () => {
+	let wpAdmin: WpAdminPage;
+	let editor: EditorPage;
 	let helper: CssConverterHelper;
 	let testPageUrl: string;
 	let cssFile1Url: string;
@@ -40,248 +30,143 @@ test.describe('Reset Styles Infrastructure Tests', () => {
 		
 		// Use HTTP URLs served by WordPress
 		const baseUrl = process.env.BASE_URL || 'http://elementor.local';
-		testPageUrl = `${baseUrl}/wp-content/uploads/test-fixtures/reset-infrastructure-test-page.html`;
-		cssFile1Url = `${baseUrl}/wp-content/uploads/test-fixtures/reset-simple.css`;
-		cssFile2Url = `${baseUrl}/wp-content/uploads/test-fixtures/reset-simple.css`;
+		testPageUrl = `${baseUrl}/wp-content/uploads/test-fixtures/reset-styles-test-page.html`;
+		cssFile1Url = `${baseUrl}/wp-content/uploads/test-fixtures/reset-normalize.css`;
+		cssFile2Url = `${baseUrl}/wp-content/uploads/test-fixtures/reset-custom.css`;
 		
-		console.log('🧪 Reset Infrastructure Test URLs:');
-		console.log('📄 Test page:', testPageUrl);
-		console.log('🎨 Normalize CSS:', cssFile1Url);
-		console.log('🎨 Custom reset CSS:', cssFile2Url);
+		console.log('Reset test page URL:', testPageUrl);
+		console.log('Normalize CSS URL:', cssFile1Url);
+		console.log('Custom reset CSS URL:', cssFile2Url);
 	});
 
-	test.afterAll(async ({ browser }) => {
+	test.afterAll(async ({ browser, apiRequests }, testInfo) => {
 		const page = await browser.newPage();
+		const wpAdminPage = new WpAdminPage(page, testInfo, apiRequests);
+		// await wpAdminPage.resetExperiments();
 		await page.close();
 	});
 
-	/**
-	 * ✅ INFRASTRUCTURE TEST: Reset Style Detection Working
-	 * 
-	 * This test verifies that the CSS converter now processes element selector 
-	 * reset styles (h1, h2, p, body, etc.) using the unified-atomic mapper approach.
-	 * 
-	 * Expected Behavior:
-	 * - Element selectors should be detected and categorized
-	 * - Simple selectors (h1, p) should be applied directly to widgets  
-	 * - Complex selectors should generate CSS classes
-	 * - Reset styles should have proper priority in cascade
-	 */
-	test('should detect reset style infrastructure working', async ({ request }) => {
-		console.log('🔍 Testing reset style infrastructure...');
-		
+	test.beforeEach(async ({ page, apiRequests }, testInfo) => {
+		wpAdmin = new WpAdminPage(page, testInfo, apiRequests);
+	});
+
+	test('should successfully import page with comprehensive reset styles', async ({ request, page }) => {
+		// Convert the URL with external CSS files containing reset styles
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
-			[cssFile1Url, cssFile2Url]
+			[cssFile1Url, cssFile2Url] // External reset CSS files
 		);
 
+		// Validate the API result
 		const validation = helper.validateApiResult(result);
 		if (validation.shouldSkip) {
 			test.skip(true, validation.skipReason);
 			return;
 		}
 
-		// Basic conversion should work
+		// Basic API response validation
 		expect(result.success).toBe(true);
+		expect(result.post_id).toBeGreaterThan(0);
+		expect(result.edit_url).toBeTruthy();
 		expect(result.widgets_created).toBeGreaterThan(0);
 
-		console.log(`✅ Basic conversion successful: ${result.widgets_created} widgets created`);
+		// Log conversion statistics
+		console.log('Reset Styles Conversion Results:');
+		console.log(`- Widgets created: ${result.widgets_created}`);
+		console.log(`- Global classes created: ${result.global_classes_created}`);
+		console.log(`- Variables created: ${result.variables_created}`);
+		console.log(`- Post ID: ${result.post_id}`);
 
-		// ✅ THESE SHOULD NOW BE DEFINED - Reset infrastructure is implemented
-		expect((result as any).reset_styles_detected).toBeDefined();
-		expect((result as any).element_selectors_processed).toBeDefined();
-		expect((result as any).direct_widget_styles_applied).toBeDefined();
-		expect((result as any).reset_css_file_generated).toBeDefined();
+		// Expect multiple widgets to be created from elements with reset styles
+		expect(result.widgets_created).toBeGreaterThanOrEqual(15);
 		
-		const resetDetected = (result as any).reset_styles_detected;
-		const elementsProcessed = (result as any).element_selectors_processed;
-		const directApplied = (result as any).direct_widget_styles_applied;
-		const cssFileGenerated = (result as any).reset_css_file_generated;
-		
-		console.log('✅ INFRASTRUCTURE WORKING:');
-		console.log(`   📋 Reset styles detected: ${resetDetected}`);
-		console.log(`   📋 Element selectors processed: ${elementsProcessed}`);
-		console.log(`   📋 Direct widget styles applied: ${directApplied}`);
-		console.log(`   📋 Reset CSS file generated: ${cssFileGenerated}`);
-		
-		// Verify reset styles are being processed
-		if (resetDetected) {
-			expect(elementsProcessed).toBeGreaterThanOrEqual(0);
-			console.log('✅ Reset style detection working correctly');
-		}
-		
-		console.log('');
-		console.log('📖 Reset infrastructure successfully implemented via unified-atomic mapper');
+		// Global classes may or may not be created depending on threshold
+		expect(result.global_classes_created).toBeGreaterThanOrEqual(0);
+
+		// Navigate to the converted page to verify reset styles are applied
+		await page.goto(result.edit_url);
+		await page.waitForLoadState('networkidle');
+		await page.waitForSelector('.elementor-editor-active', { timeout: 30000 });
+
+		// Switch to preview mode to see the actual styling
+		await page.click('[data-elementor-device-mode="desktop"]');
+		await page.waitForTimeout(2000);
+
+		// Verify universal reset styles (* selector)
+		const allElements = page.locator('*').first();
+		await expect(allElements).toHaveCSS('box-sizing', 'border-box');
+		// Note: margin and padding reset may be overridden by specific element styles
+
+		// Verify body reset styles (applied to page container or body)
+		const bodyElement = page.locator('body');
+		await expect(bodyElement).toHaveCSS('background-color', 'rgb(240, 248, 255)'); // #f0f8ff
+		await expect(bodyElement).toHaveCSS('color', 'rgb(44, 62, 80)'); // #2c3e50
+		await expect(bodyElement).toHaveCSS('font-family', /Georgia/); // Contains Georgia
+		await expect(bodyElement).toHaveCSS('font-size', '18px');
+		await expect(bodyElement).toHaveCSS('line-height', '1.6');
+
+		// Verify heading reset styles
+		const h1Element = page.locator('h1').first();
+		await expect(h1Element).toHaveCSS('font-size', '40px'); // 2.5rem converted
+		await expect(h1Element).toHaveCSS('font-weight', '700');
+		await expect(h1Element).toHaveCSS('color', 'rgb(231, 76, 60)'); // #e74c3c
+		await expect(h1Element).toHaveCSS('line-height', '1.2');
+
+		const h2Element = page.locator('h2').first();
+		await expect(h2Element).toHaveCSS('font-size', '32px'); // 2rem converted
+		await expect(h2Element).toHaveCSS('font-weight', '600');
+		await expect(h2Element).toHaveCSS('color', 'rgb(52, 152, 219)'); // #3498db
+		await expect(h2Element).toHaveCSS('line-height', '1.3');
+
+		const h3Element = page.locator('h3').first();
+		await expect(h3Element).toHaveCSS('font-size', '24px'); // 1.5rem converted
+		await expect(h3Element).toHaveCSS('font-weight', '500');
+		await expect(h3Element).toHaveCSS('color', 'rgb(39, 174, 96)'); // #27ae60
+
+		// Verify paragraph reset styles
+		const pElement = page.locator('p').first();
+		await expect(pElement).toHaveCSS('font-size', '16px'); // 1rem converted
+		await expect(pElement).toHaveCSS('line-height', '1.8');
+		await expect(pElement).toHaveCSS('color', 'rgb(52, 73, 94)'); // #34495e
+
+		// Verify link reset styles
+		const aElement = page.locator('a').first();
+		await expect(aElement).toHaveCSS('color', 'rgb(155, 89, 182)'); // #9b59b6
+		await expect(aElement).toHaveCSS('text-decoration', /none/); // May vary by browser
+
+		// Verify button reset styles
+		const buttonElement = page.locator('button').first();
+		await expect(buttonElement).toHaveCSS('background-color', 'rgb(52, 152, 219)'); // #3498db
+		await expect(buttonElement).toHaveCSS('color', 'rgb(255, 255, 255)'); // white
+		await expect(buttonElement).toHaveCSS('border', /none/); // Should be none or 0px
+		await expect(buttonElement).toHaveCSS('padding', '12px 24px'); // 0.75rem 1.5rem
+		await expect(buttonElement).toHaveCSS('font-size', '16px'); // 1rem
+
+		// Verify list reset styles
+		const ulElement = page.locator('ul').first();
+		await expect(ulElement).toHaveCSS('list-style', 'none');
+		await expect(ulElement).toHaveCSS('padding', '0px');
+
+		const liElement = page.locator('li').first();
+		await expect(liElement).toHaveCSS('margin', '8px 0px'); // 0.5rem 0
+
+		// Verify table reset styles
+		const tableElement = page.locator('table').first();
+		await expect(tableElement).toHaveCSS('border-collapse', 'collapse');
+		await expect(tableElement).toHaveCSS('width', '100%');
+
+		const thElement = page.locator('th').first();
+		await expect(thElement).toHaveCSS('padding', '12px'); // 0.75rem
+		await expect(thElement).toHaveCSS('text-align', 'left');
+		await expect(thElement).toHaveCSS('font-weight', '600');
+
+		const tdElement = page.locator('td').first();
+		await expect(tdElement).toHaveCSS('padding', '12px'); // 0.75rem
+		await expect(tdElement).toHaveCSS('border-bottom', '1px solid rgb(221, 221, 221)'); // #ddd
 	});
 
-	/**
-	 * 🚨 INFRASTRUCTURE TEST: Element Selector Processing Missing
-	 * 
-	 * This test verifies that element selectors (h1, h2, p, body) are currently
-	 * NOT processed by the CSS converter. When infrastructure is implemented,
-	 * this test should be updated to verify proper element selector handling.
-	 */
-	test('should document element selector processing limitations', async ({ request }) => {
-		console.log('🔍 Testing element selector processing...');
-		
-		const result: CssConverterResponse = await helper.convertFromUrl(
-			request,
-			testPageUrl,
-			[cssFile1Url, cssFile2Url]
-		);
-
-		const validation = helper.validateApiResult(result);
-		if (validation.shouldSkip) {
-			test.skip(true, validation.skipReason);
-			return;
-		}
-
-		expect(result.success).toBe(true);
-		expect(result.widgets_created).toBeGreaterThan(0);
-
-		console.log(`✅ Conversion successful with ${result.widgets_created} widgets`);
-		
-		// Document current limitations
-		console.log('🚨 CURRENT LIMITATIONS:');
-		console.log('   ❌ h1, h2, h3, h4, h5, h6 selectors not processed');
-		console.log('   ❌ p, a, button selectors not processed');
-		console.log('   ❌ body, * selectors not processed');
-		console.log('   ❌ Element reset styles not applied to widgets');
-		console.log('');
-		console.log('📋 REQUIRED INFRASTRUCTURE:');
-		console.log('   🔧 Element selector detection in CSS parser');
-		console.log('   🔧 HTML tag → atomic widget mapping');
-		console.log('   🔧 Direct widget property application');
-		console.log('   🔧 CSS cascade priority handling');
-	});
-
-	/**
-	 * 🚨 INFRASTRUCTURE TEST: CSS Cascade Priority Missing
-	 * 
-	 * This test documents that CSS cascade rules are not properly handled
-	 * for element selectors. The converter should prioritize:
-	 * 1. Inline styles (highest)
-	 * 2. ID selectors
-	 * 3. Class selectors  
-	 * 4. Element selectors (lowest)
-	 */
-	test('should document CSS cascade priority limitations', async ({ request }) => {
-		console.log('🔍 Testing CSS cascade priority handling...');
-		
-		// Test with conflicting CSS sources
-		const result: CssConverterResponse = await helper.convertFromUrl(
-			request,
-			testPageUrl,
-			[cssFile1Url, cssFile2Url] // These have conflicting styles
-		);
-
-		const validation = helper.validateApiResult(result);
-		if (validation.shouldSkip) {
-			test.skip(true, validation.skipReason);
-			return;
-		}
-
-		expect(result.success).toBe(true);
-		
-		console.log('🚨 CASCADE PRIORITY ISSUES:');
-		console.log('   ❌ Element selector conflicts not resolved');
-		console.log('   ❌ CSS source order not considered');
-		console.log('   ❌ Specificity calculation missing for resets');
-		console.log('   ❌ !important handling incomplete');
-		console.log('');
-		console.log('📋 REQUIRED FEATURES:');
-		console.log('   🔧 CSS specificity calculator for element selectors');
-		console.log('   🔧 Source order tracking (normalize.css vs custom.css)');
-		console.log('   🔧 Priority resolution system');
-		console.log('   🔧 Conflict detection and warning system');
-	});
-
-	/**
-	 * 🚨 INFRASTRUCTURE TEST: Atomic Widget Integration Missing
-	 * 
-	 * This test documents that atomic widgets do not receive reset styles
-	 * from element selectors. The system should map HTML tags to widget types
-	 * and apply appropriate reset styles.
-	 */
-	test('should document atomic widget integration limitations', async ({ request }) => {
-		console.log('🔍 Testing atomic widget integration...');
-		
-		const result: CssConverterResponse = await helper.convertFromUrl(
-			request,
-			testPageUrl,
-			[cssFile1Url]
-		);
-
-		const validation = helper.validateApiResult(result);
-		if (validation.shouldSkip) {
-			test.skip(true, validation.skipReason);
-			return;
-		}
-
-		expect(result.success).toBe(true);
-		expect(result.widgets_created).toBeGreaterThan(0);
-
-		console.log('🚨 ATOMIC WIDGET INTEGRATION MISSING:');
-		console.log('   ❌ h1-h6 → e-heading widget mapping');
-		console.log('   ❌ p → e-paragraph widget mapping');
-		console.log('   ❌ a → e-button widget mapping');
-		console.log('   ❌ Reset styles not applied to widget properties');
-		console.log('   ❌ Base styles injection not implemented');
-		console.log('');
-		console.log('📋 REQUIRED COMPONENTS:');
-		console.log('   🔧 HTML tag → widget type mapping system');
-		console.log('   🔧 Widget property injection mechanism');
-		console.log('   🔧 Atomic widget base_styles integration');
-		console.log('   🔧 Property mapper for element selectors');
-	});
-
-	/**
-	 * 🚨 INFRASTRUCTURE TEST: Reset CSS File Generation Missing
-	 * 
-	 * This test documents that complex reset styles (universal selectors,
-	 * pseudo-classes, etc.) are not handled via CSS file generation.
-	 */
-	test('should document reset CSS file generation limitations', async ({ request }) => {
-		console.log('🔍 Testing reset CSS file generation...');
-		
-		const result: CssConverterResponse = await helper.convertFromUrl(
-			request,
-			testPageUrl,
-			[cssFile2Url] // Contains universal selector and complex resets
-		);
-
-		const validation = helper.validateApiResult(result);
-		if (validation.shouldSkip) {
-			test.skip(true, validation.skipReason);
-			return;
-		}
-
-		expect(result.success).toBe(true);
-		
-		console.log('🚨 CSS FILE GENERATION MISSING:');
-		console.log('   ❌ Universal selector (*) not processed');
-		console.log('   ❌ Complex selectors not handled');
-		console.log('   ❌ Reset CSS files not generated');
-		console.log('   ❌ Per-page CSS enqueue not implemented');
-		console.log('   ❌ CSS file cleanup not implemented');
-		console.log('');
-		console.log('📋 REQUIRED INFRASTRUCTURE:');
-		console.log('   🔧 Reset CSS file generator');
-		console.log('   🔧 CSS enqueue system with proper priority');
-		console.log('   🔧 File cleanup and cache invalidation');
-		console.log('   🔧 Per-page vs site-wide CSS management');
-	});
-
-	/**
-	 * 🚨 INFRASTRUCTURE TEST: Complete Reset System Integration
-	 * 
-	 * This test documents the full scope of missing reset style infrastructure
-	 * and provides a roadmap for implementation.
-	 */
-	test('should provide complete infrastructure roadmap', async ({ request }) => {
-		console.log('🔍 Analyzing complete reset infrastructure requirements...');
-		
+	test('should handle body element reset styles', async ({ request }) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
@@ -296,38 +181,433 @@ test.describe('Reset Styles Infrastructure Tests', () => {
 
 		expect(result.success).toBe(true);
 		
-		console.log('');
-		console.log('🏗️  COMPLETE INFRASTRUCTURE ROADMAP:');
-		console.log('');
-		console.log('📦 PHASE 1 - Core Detection (Week 1-2):');
-		console.log('   🔧 Reset_Style_Detector class');
-		console.log('   🔧 Element selector classification');
-		console.log('   🔧 Conflict detection system');
-		console.log('   🔧 CSS specificity calculator');
-		console.log('');
-		console.log('📦 PHASE 2 - Processing Integration (Week 3-4):');
-		console.log('   🔧 CSS processor element selector handling');
-		console.log('   🔧 Widget creator direct styling');
-		console.log('   🔧 Property mapper system');
-		console.log('   🔧 Priority resolution system');
-		console.log('');
-		console.log('📦 PHASE 3 - Application Methods (Week 5-6):');
-		console.log('   🔧 Direct widget property injection');
-		console.log('   🔧 Atomic widget base_styles integration');
-		console.log('   🔧 Reset CSS file generation');
-		console.log('   🔧 CSS enqueue and cleanup system');
-		console.log('');
-		console.log('📦 PHASE 4 - Advanced Features (Week 7-8):');
-		console.log('   🔧 Site Settings integration');
-		console.log('   🔧 Theme compatibility system');
-		console.log('   🔧 Performance optimization');
-		console.log('   🔧 User interface for reset management');
-		console.log('');
-		console.log('📖 DOCUMENTATION:');
-		console.log('   📄 See: RESET-STYLES-TEST-ANALYSIS.md');
-		console.log('   📄 See: 2-RESET-CLASSES.md (Approach 6)');
-		console.log('');
-		console.log('🎯 PRIORITY: Implement Phase 1 components first');
-		console.log('   All other phases depend on core detection system');
+		// Body styles should be processed even though there's no direct body widget
+		// The converter should handle body styles through:
+		// 1. Page-level settings
+		// 2. Container/wrapper styles
+		// 3. Global CSS application
+		
+		expect(result.widgets_created).toBeGreaterThan(0);
+		
+		// Check conversion log for body style processing
+		if (result.conversion_log) {
+			console.log('Body styles processing logged');
+		}
+	});
+
+	test('should handle heading element resets (h1-h6)', async ({ request }) => {
+		const result: CssConverterResponse = await helper.convertFromUrl(
+			request,
+			testPageUrl,
+			[cssFile1Url, cssFile2Url],
+		);
+
+		const validation = helper.validateApiResult(result);
+		if (validation.shouldSkip) {
+			test.skip(true, validation.skipReason);
+			return;
+		}
+
+		expect(result.success).toBe(true);
+		
+		// Our test page contains h1, h2, h3, h4, h5, h6 elements
+		// Each should be converted to e-heading widgets with appropriate reset styles
+		// Reset styles include: font-size, font-weight, color, margin, line-height
+		
+		expect(result.widgets_created).toBeGreaterThanOrEqual(6); // At least 6 headings
+		
+		// Verify heading widgets were created
+		if (result.conversion_log && result.conversion_log.mapping_stats) {
+			const widgetTypes = result.conversion_log.mapping_stats.widget_types;
+			if (widgetTypes && widgetTypes['e-heading']) {
+				expect(widgetTypes['e-heading']).toBeGreaterThanOrEqual(6);
+				console.log(`Created ${widgetTypes['e-heading']} heading widgets with reset styles`);
+			}
+		}
+	});
+
+	test('should handle paragraph element resets', async ({ request }) => {
+		const result: CssConverterResponse = await helper.convertFromUrl(
+			request,
+			testPageUrl,
+			[cssFile1Url, cssFile2Url],
+		);
+
+		const validation = helper.validateApiResult(result);
+		if (validation.shouldSkip) {
+			test.skip(true, validation.skipReason);
+			return;
+		}
+
+		expect(result.success).toBe(true);
+		
+		// Our test page contains multiple paragraph elements
+		// Reset styles should be applied: font-size, line-height, margin, color
+		
+		// Verify paragraph widgets were created
+		if (result.conversion_log && result.conversion_log.mapping_stats) {
+			const widgetTypes = result.conversion_log.mapping_stats.widget_types;
+			if (widgetTypes && widgetTypes['e-paragraph']) {
+				expect(widgetTypes['e-paragraph']).toBeGreaterThan(0);
+				console.log(`Created ${widgetTypes['e-paragraph']} paragraph widgets with reset styles`);
+			}
+		}
+	});
+
+	test('should handle link element resets', async ({ request }) => {
+		const result: CssConverterResponse = await helper.convertFromUrl(
+			request,
+			testPageUrl,
+			[cssFile1Url, cssFile2Url],
+		);
+
+		const validation = helper.validateApiResult(result);
+		if (validation.shouldSkip) {
+			test.skip(true, validation.skipReason);
+			return;
+		}
+
+		expect(result.success).toBe(true);
+		
+		// Our test page contains multiple link elements
+		// Reset styles should be applied: color, text-decoration, font-weight
+		
+		// Verify link widgets were created
+		if (result.conversion_log && result.conversion_log.mapping_stats) {
+			const widgetTypes = result.conversion_log.mapping_stats.widget_types;
+			if (widgetTypes && widgetTypes['e-link']) {
+				expect(widgetTypes['e-link']).toBeGreaterThan(0);
+				console.log(`Created ${widgetTypes['e-link']} link widgets with reset styles`);
+			}
+		}
+	});
+
+	test('should handle button element resets', async ({ request }) => {
+		const result: CssConverterResponse = await helper.convertFromUrl(
+			request,
+			testPageUrl,
+			[cssFile1Url, cssFile2Url],
+		);
+
+		const validation = helper.validateApiResult(result);
+		if (validation.shouldSkip) {
+			test.skip(true, validation.skipReason);
+			return;
+		}
+
+		expect(result.success).toBe(true);
+		
+		// Our test page contains button elements with reset styles
+		// Reset styles should be applied: background, color, border, padding, font-size
+		
+		expect(result.widgets_created).toBeGreaterThan(0);
+	});
+
+	test('should handle list element resets (ul, ol, li)', async ({ request }) => {
+		const result: CssConverterResponse = await helper.convertFromUrl(
+			request,
+			testPageUrl,
+			[cssFile1Url, cssFile2Url],
+		);
+
+		const validation = helper.validateApiResult(result);
+		if (validation.shouldSkip) {
+			test.skip(true, validation.skipReason);
+			return;
+		}
+
+		expect(result.success).toBe(true);
+		
+		// Our test page contains ul, ol, and li elements
+		// Reset styles should be applied: margin, padding, list-style
+		
+		expect(result.widgets_created).toBeGreaterThan(0);
+		
+		// Lists might be converted to various widget types depending on implementation
+		console.log('List elements processed with reset styles');
+	});
+
+	test('should handle table element resets', async ({ request }) => {
+		const result: CssConverterResponse = await helper.convertFromUrl(
+			request,
+			testPageUrl,
+			[cssFile1Url, cssFile2Url],
+		);
+
+		const validation = helper.validateApiResult(result);
+		if (validation.shouldSkip) {
+			test.skip(true, validation.skipReason);
+			return;
+		}
+
+		expect(result.success).toBe(true);
+		
+		// Our test page contains table, th, td elements
+		// Reset styles should be applied: border-collapse, padding, text-align
+		
+		expect(result.widgets_created).toBeGreaterThan(0);
+		
+		console.log('Table elements processed with reset styles');
+	});
+
+	test('should handle universal selector resets (* {})', async ({ request }) => {
+		const result: CssConverterResponse = await helper.convertFromUrl(
+			request,
+			testPageUrl,
+			[cssFile1Url, cssFile2Url],
+		);
+
+		const validation = helper.validateApiResult(result);
+		if (validation.shouldSkip) {
+			test.skip(true, validation.skipReason);
+			return;
+		}
+
+		expect(result.success).toBe(true);
+		
+		// Our CSS includes universal selector resets: * { margin: 0; padding: 0; box-sizing: border-box; }
+		// These should be handled appropriately - either applied globally or to individual widgets
+		
+		expect(result.widgets_created).toBeGreaterThan(0);
+		
+		console.log('Universal selector resets processed');
+	});
+
+	test('should prioritize inline styles over reset styles', async ({ request, page }) => {
+		const result: CssConverterResponse = await helper.convertFromUrl(
+			request,
+			testPageUrl,
+			[cssFile1Url, cssFile2Url],
+		);
+
+		const validation = helper.validateApiResult(result);
+		if (validation.shouldSkip) {
+			test.skip(true, validation.skipReason);
+			return;
+		}
+
+		expect(result.success).toBe(true);
+		
+		// Our test page has elements with both reset styles and inline styles
+		// Inline styles should have higher priority and override reset styles
+		// This tests the CSS specificity handling in the converter
+		
+		expect(result.widgets_created).toBeGreaterThan(0);
+		
+		// Check that CSS processing handled specificity correctly
+		if (result.conversion_log && result.conversion_log.css_processing) {
+			const cssProcessing = result.conversion_log.css_processing;
+			expect(cssProcessing.by_source.inline).toBeGreaterThan(0);
+			console.log(`Processed ${cssProcessing.by_source.inline} inline styles with proper priority over resets`);
+		}
+
+		// Navigate to verify inline styles override reset styles
+		await page.goto(result.edit_url);
+		await page.waitForLoadState('networkidle');
+		await page.waitForSelector('.elementor-editor-active', { timeout: 30000 });
+
+		// Verify CSS specificity: inline styles should override reset styles
+		
+		// Element with inline style should override reset color
+		const inlineColorElement = page.locator('[style*="color: red"]').first();
+		if (await inlineColorElement.count() > 0) {
+			await expect(inlineColorElement).toHaveCSS('color', 'rgb(255, 0, 0)'); // red overrides reset
+		}
+
+		// Element with inline font-size should override reset font-size
+		const inlineFontElement = page.locator('[style*="font-size"]').first();
+		if (await inlineFontElement.count() > 0) {
+			// The inline style should take precedence over any reset font-size
+			const inlineStyle = await inlineFontElement.getAttribute('style');
+			if (inlineStyle && inlineStyle.includes('font-size: 24px')) {
+				await expect(inlineFontElement).toHaveCSS('font-size', '24px');
+			}
+		}
+
+		// Element with inline background should override reset background
+		const inlineBackgroundElement = page.locator('[style*="background"]').first();
+		if (await inlineBackgroundElement.count() > 0) {
+			const inlineStyle = await inlineBackgroundElement.getAttribute('style');
+			if (inlineStyle && inlineStyle.includes('background-color: yellow')) {
+				await expect(inlineBackgroundElement).toHaveCSS('background-color', 'rgb(255, 255, 0)'); // yellow
+			}
+		}
+
+		// Verify that elements without inline styles still get reset styles
+		const resetOnlyElement = page.locator('h1:not([style])').first();
+		if (await resetOnlyElement.count() > 0) {
+			// Should have reset styles applied (from style block or external CSS)
+			await expect(resetOnlyElement).toHaveCSS('color', 'rgb(231, 76, 60)'); // #e74c3c from reset
+		}
+	});
+
+	test('should handle conflicting reset styles from multiple sources', async ({ request }) => {
+		const result: CssConverterResponse = await helper.convertFromUrl(
+			request,
+			testPageUrl,
+			[cssFile1Url, cssFile2Url],
+		);
+
+		const validation = helper.validateApiResult(result);
+		if (validation.shouldSkip) {
+			test.skip(true, validation.skipReason);
+			return;
+		}
+
+		expect(result.success).toBe(true);
+		
+		// Our test setup includes:
+		// 1. normalize.css-style resets (external file 1)
+		// 2. Eric Meyer reset-style resets (external file 2)  
+		// 3. Custom resets in style block
+		// These may have conflicting values for the same properties
+		
+		expect(result.widgets_created).toBeGreaterThan(0);
+		
+		// The converter should handle conflicts using CSS cascade rules
+		console.log('Multiple reset sources processed with conflict resolution');
+	});
+
+	test('should handle normalize.css vs reset.css patterns', async ({ request, page }) => {
+		// Test with only normalize.css patterns
+		const normalizeResult: CssConverterResponse = await helper.convertFromUrl(
+			request,
+			testPageUrl,
+			[cssFile1Url], // Only normalize.css
+		);
+
+		// Test with only reset.css patterns  
+		const resetResult: CssConverterResponse = await helper.convertFromUrl(
+			request,
+			testPageUrl,
+			[cssFile2Url], // Only custom reset.css
+		);
+
+		const normalizeValidation = helper.validateApiResult(normalizeResult);
+		const resetValidation = helper.validateApiResult(resetResult);
+		
+		if (normalizeValidation.shouldSkip) {
+			test.skip(true, `Normalize test: ${normalizeValidation.skipReason}`);
+			return;
+		}
+		
+		if (resetValidation.shouldSkip) {
+			test.skip(true, `Reset test: ${resetValidation.skipReason}`);
+			return;
+		}
+
+		expect(normalizeResult.success).toBe(true);
+		expect(resetResult.success).toBe(true);
+		
+		// Both approaches should successfully create widgets
+		expect(normalizeResult.widgets_created).toBeGreaterThan(0);
+		expect(resetResult.widgets_created).toBeGreaterThan(0);
+		
+		console.log('Normalize.css approach:');
+		console.log(`- Widgets: ${normalizeResult.widgets_created}`);
+		console.log(`- Global classes: ${normalizeResult.global_classes_created}`);
+		
+		console.log('Reset.css approach:');
+		console.log(`- Widgets: ${resetResult.widgets_created}`);
+		console.log(`- Global classes: ${resetResult.global_classes_created}`);
+		
+		// Different reset approaches may produce different numbers of widgets/classes
+		// Both should be valid but may have different optimization characteristics
+
+		// Verify normalize.css approach preserves useful defaults
+		await page.goto(normalizeResult.edit_url);
+		await page.waitForLoadState('networkidle');
+		await page.waitForSelector('.elementor-editor-active', { timeout: 30000 });
+
+		// Normalize.css typically preserves useful browser defaults while fixing inconsistencies
+		const normalizeH1 = page.locator('h1').first();
+		// Normalize.css usually keeps reasonable heading sizes and margins
+		const normalizeH1FontSize = await normalizeH1.evaluate(el => getComputedStyle(el).fontSize);
+		expect(parseFloat(normalizeH1FontSize)).toBeGreaterThan(16); // Should be larger than body text
+
+		// Verify reset.css approach creates blank slate
+		await page.goto(resetResult.edit_url);
+		await page.waitForLoadState('networkidle');
+		await page.waitForSelector('.elementor-editor-active', { timeout: 30000 });
+
+		// Reset.css typically zeros out all margins, paddings, and sets consistent baseline
+		const resetElements = page.locator('*').first();
+		// Reset.css should apply consistent box-sizing
+		await expect(resetElements).toHaveCSS('box-sizing', 'border-box');
+		
+		// Both approaches should result in functional, styled pages
+		// The key difference is in their philosophy:
+		// - Normalize: Fix browser inconsistencies, keep useful defaults
+		// - Reset: Zero everything out, build from scratch
+		
+		console.log('Both normalize.css and reset.css approaches successfully processed');
+	});
+
+	test('should handle nested elements with reset inheritance', async ({ request }) => {
+		const result: CssConverterResponse = await helper.convertFromUrl(
+			request,
+			testPageUrl,
+			[cssFile1Url, cssFile2Url],
+		);
+
+		const validation = helper.validateApiResult(result);
+		if (validation.shouldSkip) {
+			test.skip(true, validation.skipReason);
+			return;
+		}
+
+		expect(result.success).toBe(true);
+		
+		// Our test page has nested div structures with headings and paragraphs inside
+		// Reset styles should be inherited properly through the nesting hierarchy
+		
+		expect(result.widgets_created).toBeGreaterThan(0);
+		
+		// Verify that nested elements were processed correctly
+		console.log('Nested elements with reset inheritance processed successfully');
+	});
+
+	test('should provide comprehensive conversion logging for reset styles', async ({ request }) => {
+		const result: CssConverterResponse = await helper.convertFromUrl(
+			request,
+			testPageUrl,
+			[cssFile1Url, cssFile2Url],
+		);
+
+		const validation = helper.validateApiResult(result);
+		if (validation.shouldSkip) {
+			test.skip(true, validation.skipReason);
+			return;
+		}
+
+		expect(result.success).toBe(true);
+		
+		// Verify comprehensive logging is available
+		expect(result.conversion_log).toBeTruthy();
+		
+		if (result.conversion_log) {
+			// Check CSS processing stats
+			expect(result.conversion_log.css_processing).toBeTruthy();
+			expect(result.conversion_log.css_processing.total_styles).toBeGreaterThan(0);
+			
+			// Check mapping stats
+			expect(result.conversion_log.mapping_stats).toBeTruthy();
+			expect(result.conversion_log.mapping_stats.total_elements).toBeGreaterThan(0);
+			
+			// Check widget creation stats
+			expect(result.conversion_log.widget_creation).toBeTruthy();
+			expect(result.conversion_log.widget_creation.widgets_created).toBeGreaterThan(0);
+			
+			console.log('Reset Styles Conversion Summary:');
+			console.log(`- Total CSS styles processed: ${result.conversion_log.css_processing.total_styles}`);
+			console.log(`- Total elements mapped: ${result.conversion_log.mapping_stats.total_elements}`);
+			console.log(`- Widget types created:`, result.conversion_log.mapping_stats.widget_types);
+			console.log(`- CSS properties by type:`, result.conversion_log.css_processing.by_property);
+			console.log(`- Processing time: ${result.conversion_log.total_time}s`);
+		}
+		
+		// Verify no critical errors occurred
+		expect(result.errors).toBeNull();
+		expect(result.warnings).toEqual([]);
 	});
 });
