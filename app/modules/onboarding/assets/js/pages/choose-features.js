@@ -20,10 +20,6 @@ export default function ChooseFeatures() {
 			href: elementorAppConfig.onboarding.urls.upgrade,
 			target: '_blank',
 			onClick: () => {
-				OnboardingEventTracking.trackStepAction( 3, 'pro_features_checked', {
-					features: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
-				} );
-
 				OnboardingEventTracking.trackStepAction( 3, 'upgrade_now', {
 					pro_features_checked: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
 				} );
@@ -59,10 +55,6 @@ export default function ChooseFeatures() {
 		skipButton = {
 			text: __( 'Skip', 'elementor' ),
 			action: () => {
-				OnboardingEventTracking.trackStepAction( 3, 'pro_features_checked', {
-					features: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
-				} );
-
 				OnboardingEventTracking.trackStepAction( 3, 'skipped' );
 
 				setAjax( {
