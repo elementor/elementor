@@ -102,4 +102,3 @@ class Floating_Elements extends Import_Runner_Base {
 		return $imported_post_id;
 	}
 }
-

@@ -62,4 +62,3 @@ class Woocommerce_Settings extends Import_Runner_Base {
 		];
 	}
 }
-

@@ -25,4 +25,3 @@ class Woocommerce_Settings extends Revert_Runner_Base {
 		}
 	}
 }
-
