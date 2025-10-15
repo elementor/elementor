@@ -4,7 +4,16 @@ import { __privateListenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 import { createDomRenderer } from '../renderers/create-dom-renderer';
 import { createElementType } from './create-element-type';
 import { canBeTemplated, createTemplatedElementType } from './create-templated-element-type';
-import type { LegacyWindow } from './types';
+import type { ElementType, LegacyWindow } from './types';
+
+type ElementLegacyType = {
+	[ key: string ]: () => typeof ElementType;
+};
+export const elementsLegacyTypes: ElementLegacyType = {};
+
+export function registerElementType( type: string, componentClass: () => typeof ElementType ) {
+	elementsLegacyTypes[ type ] = componentClass;
+}
 
 export function initLegacyViews() {
 	__privateListenTo( v1ReadyEvent(), () => {
@@ -15,6 +24,12 @@ export function initLegacyViews() {
 
 		Object.entries( config ).forEach( ( [ type, element ] ) => {
 			if ( ! element.atomic ) {
+				return;
+			}
+
+			if ( elementsLegacyTypes[ type ] ) {
+				const registeredElementTypeClass = elementsLegacyTypes[ type ]();
+				legacyWindow.elementor.elementsManager.registerElementType( new registeredElementTypeClass() );
 				return;
 			}
 
