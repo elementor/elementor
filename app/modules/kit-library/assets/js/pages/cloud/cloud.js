@@ -14,12 +14,8 @@ import useMenuItems from '../../hooks/use-menu-items';
 import useConnectState from '../../hooks/use-connect-state';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { Grid } from '@elementor/app-ui';
-<<<<<<< HEAD
-import { AppsEventTracking, appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
-=======
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { isCloudKitsDeactivated } from '../../utils';
->>>>>>> 5286471c5d (Tweak: Add size-based quota on the Cloud Kits [ED-21094] (#33082))
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import ConnectScreen from './connect-screen';
@@ -66,21 +62,6 @@ export default function Cloud( {
 	const exportUrl = elementorCommon?.config?.experimentalFeatures?.[ 'import-export-customization' ] ? elementorAppConfig.base_url + '#/export-customization' : elementorAppConfig.base_url + '#/export';
 
 	const menuItems = useMenuItems( path );
-
-	const eventTracking = ( command, elementPosition, search = null, direction = null, sortType = null, action = null, eventType = 'click' ) => {
-		appsEventTrackingDispatch(
-			command,
-			{
-				page_source: 'cloud page',
-				element_position: elementPosition,
-				search_term: search,
-				sort_direction: direction,
-				sort_type: sortType,
-				event_type: eventType,
-				action,
-			},
-		);
-	};
 
 	const onConnectSuccess = () => {
 		refetchEligibility();
@@ -170,7 +151,6 @@ export default function Cloud( {
 							value={ queryParams.search }
 							onChange={ ( value ) => {
 								setQueryParams( ( prev ) => ( { ...prev, search: value } ) );
-								eventTracking( 'kit-library/kit-free-search', 'top_area_search', value, null, null, null, 'search' );
 							} }
 						/>
 					</Grid>
