@@ -151,12 +151,12 @@ abstract class Atomic_Element_Base extends Element_Base {
 	public function print_content() {
 		$filter = function( $contexts ) {
 			$element_context = $this->define_children_context();
-			
+
 			// Store context with element ID for proper scoping
 			if ( ! empty( $element_context ) ) {
 				$contexts[ $this->get_type() ][ $this->get_id() ] = $element_context;
 			}
-			
+
 			return $contexts;
 		};
 
@@ -169,20 +169,20 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 
-	protected function get_context( $key = null) {
+	protected function get_context( $key = null ) {
 		$all_contexts = apply_filters( 'elementor/atomic/contexts', [] );
-		
+
 		if ( ! isset( $all_contexts[ $key ] ) ) {
 			return [];
 		}
-		
+
 		$type_contexts = $all_contexts[ $key ];
-		
+
 		// Return the most recently added context (last in the array)
 		if ( is_array( $type_contexts ) && ! empty( $type_contexts ) ) {
 			return end( $type_contexts );
 		}
-		
+
 		return [];
 	}
 
