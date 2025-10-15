@@ -1,10 +1,17 @@
+import { useState } from 'react';
 import { Text } from '@elementor/app-ui';
 import PropTypes from 'prop-types';
 import './quota-notification.scss';
 
 const QUOTA_NOTIFICATION_CLASSNAME = 'e-kit-library__quota-notification';
 
-export default function QuotaNotification( { usagePercentage, onDismiss } ) {
+export default function QuotaNotification( { usagePercentage } ) {
+	const [ isDismissed, setIsDismissed ] = useState( false );
+
+	const handleDismiss = () => {
+		setIsDismissed( true );
+	};
+
 	const getNotificationState = () => {
 		if ( usagePercentage >= 100 ) {
 			return 'alert';
@@ -63,7 +70,7 @@ export default function QuotaNotification( { usagePercentage, onDismiss } ) {
 	const state = getNotificationState();
 	const content = getNotificationContent();
 
-	if ( ! state || ! content ) {
+	if ( ! state || ! content || isDismissed ) {
 		return null;
 	}
 
@@ -90,20 +97,17 @@ export default function QuotaNotification( { usagePercentage, onDismiss } ) {
 					) ) }
 				</div>
 			</div>
-			{ onDismiss && (
-				<button
-					className={ `${ QUOTA_NOTIFICATION_CLASSNAME }__dismiss` }
-					onClick={ onDismiss }
-					aria-label={ __( 'Dismiss notification', 'elementor' ) }
-				>
-					<i className="eicon-close" />
-				</button>
-			) }
+			<button
+				className={ `${ QUOTA_NOTIFICATION_CLASSNAME }__dismiss` }
+				onClick={ handleDismiss }
+				aria-label={ __( 'Dismiss notification', 'elementor' ) }
+			>
+				<i className="eicon-close" />
+			</button>
 		</div>
 	);
 }
 
 QuotaNotification.propTypes = {
 	usagePercentage: PropTypes.number.isRequired,
-	onDismiss: PropTypes.func,
 };
