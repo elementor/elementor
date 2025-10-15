@@ -94,261 +94,189 @@
 
 console.log('🚀 atomic-motion-effects.js loaded');
 
-// Check immediately what's available
-console.log('🔍 Immediate check:');
-console.log('typeof animate:', typeof animate);
-console.log('window.animate:', window.animate);
-
-// Wait for DOM and all scripts to load
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('📄 DOM loaded, checking again:');
-    console.log('typeof animate:', typeof animate);
-    console.log('window.animate:', window.animate);
-    
-    setTimeout(checkAndStart, 1000);
-});
-
-window.addEventListener('load', function() {
-    console.log('🌍 Window loaded, final check:');
-    console.log('typeof animate:', typeof animate);
-    console.log('window.animate:', window.animate);
-    
-    checkAndStart();
-});
-
-function checkAndStart() {
-    console.log('🧪 checkAndStart called');
-    
-    if (typeof animate !== 'undefined') {
-        console.log('✅ Motion.js animate function found!');
-        startAnimations();
-    } else {
-        console.log('❌ Motion.js animate function not found');
-        // List all global functions that might be related
-        const globals = Object.keys(window).filter(key => 
-            key.includes('motion') || key.includes('animate') || key.includes('Motion')
-        );
-        console.log('🔍 Related globals found:', globals);
-
-        console.log('🔍 Checking the Motion global:', window.Motion);
-if (window.Motion) {
-    console.log('Motion properties:', Object.keys(window.Motion));
-    if (window.Motion.animate) {
-        console.log('✅ Found Motion.animate!');
-        window.animate = window.Motion.animate;
-        startAnimations();
-        return;
+// Motion Effects Handler for new repeater data structure
+class MotionEffectsHandler {
+    constructor() {
+        this.init();
     }
-}
+
+    init() {
+        console.log('🎬 MotionEffectsHandler initializing...');
         
-        // Try fallback animation
-        startFallbackAnimations();
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.processMotionEffects());
+        } else {
+            this.processMotionEffects();
+        }
     }
-}
 
-function startAnimations() {
-    console.log('🎬 Starting Motion.js animations');
-    
-    const elements = document.querySelectorAll('h1, h2, h3, .elementor-widget-e-heading');
-    console.log(`Found ${elements.length} elements to animate`);
-    
-    elements.forEach((element, index) => {
-        if (index < 3) {
-            console.log(`🎯 Animating element ${index}:`, element.tagName);
-            
-            try {
-                const animation = animate(element, {
-                    opacity: [0.5, 1],
-                    transform: ['translateY(20px)', 'translateY(0px)']
-                }, {
-                    duration: 1,
-                    delay: index * 0.2
-                });
-                
-                console.log(`✅ Animation ${index} successful:`, animation);
-            } catch (error) {
-                console.error(`❌ Animation ${index} failed:`, error);
-            }
-        }
-    });
-}
-
-function startFallbackAnimations() {
-    console.log('🔧 Starting fallback Web Animations API');
-    
-    const elements = document.querySelectorAll('h1, h2, h3, .elementor-widget-e-heading');
-    console.log(`Found ${elements.length} elements for fallback animation`);
-    
-    elements.forEach((element, index) => {
-        if (index < 3) {
-            try {
-                const animation = element.animate([
-                    { opacity: 0.5, transform: 'translateY(20px)' },
-                    { opacity: 1, transform: 'translateY(0px)' }
-                ], {
-                    duration: 1000,
-                    delay: index * 200,
-                    fill: 'forwards'
-                });
-                
-                console.log(`✅ Fallback animation ${index} created`);
-                animation.play();
-                
-            } catch (error) {
-                console.error(`❌ Fallback animation ${index} failed:`, error);
-            }
-        }
-    });
-}
-
-console.log('📝 Script setup complete');
-
-function startMotionAnimations(animateFunc) {
-    console.log('🎬 Starting Motion.js animations');
-    
-    // Focus specifically on atomic e-heading widgets
-    const eHeadings = document.querySelectorAll('.elementor-widget-e-heading');
-    const regularHeadings = document.querySelectorAll('h1, h2, h3:not(.elementor-widget-e-heading h1, .elementor-widget-e-heading h2, .elementor-widget-e-heading h3)');
-    
-    console.log(`🎯 Found ${eHeadings.length} e-heading atomic widgets`);
-    console.log(`📝 Found ${regularHeadings.length} regular headings`);
-    
-    // Animate e-heading widgets with dramatic effects
-    eHeadings.forEach((element, index) => {
-        console.log(`🚀 Creating dramatic scroll animation for e-heading ${index}:`, element);
+    processMotionEffects() {
+        console.log('🔍 Processing motion effects...');
         
-        try {
-            if (window.Motion.scroll) {
-                console.log('🌊 Using Motion.js scroll for e-heading');
+        // Find all elements with motion effects data
+        const elementsWithMotionEffects = document.querySelectorAll('[data-motion-effects]');
+        console.log(`📊 Found ${elementsWithMotionEffects.length} elements with motion effects data`);
+        
+        elementsWithMotionEffects.forEach((element, index) => {
+            try {
+                const motionEffectsData = JSON.parse(element.dataset.motionEffects);
+                console.log(`🎯 Processing element ${index}:`, motionEffectsData);
                 
-                // Create dramatic scroll-triggered animation for atomic widgets
-                window.Motion.scroll(
-                    animateFunc(element, {
-                        opacity: [0, 1, 0],
-                        y: [-100, 0, 100],
-                        scale: [0.7, 1.2, 0.7],
-                        rotate: [-10, 0, 10],
-                        backgroundColor: ["#ff6b6b", "#4ecdc4", "#45b7d1", "#96ceb4", "#feca57"]
-                    }),
-                    {
-                        target: element,
-                        offset: ["start end", "start start", "center center", "end end", "end start"]
-                    }
-                );
-                
-                console.log(`✅ Dramatic e-heading scroll animation ${index} created`);
-                
-                // Also add a secondary animation for the text inside
-                const headingText = element.querySelector('h1, h2, h3, h4, h5, h6, .elementor-heading-title');
-                if (headingText) {
-                    window.Motion.scroll(
-                        animateFunc(headingText, {
-                            color: ["#333", "#ff0000", "#00ff00", "#0000ff", "#ff00ff"],
-                            textShadow: [
-                                "0 0 0px rgba(0,0,0,0)",
-                                "2px 2px 4px rgba(0,0,0,0.3)",
-                                "4px 4px 8px rgba(0,0,0,0.5)",
-                                "2px 2px 4px rgba(0,0,0,0.3)",
-                                "0 0 0px rgba(0,0,0,0)"
-                            ]
-                        }),
-                        {
-                            target: element,
-                            offset: ["start end", "start center", "center center", "end center", "end start"]
-                        }
-                    );
-                    
-                    console.log(`✅ Text effects added for e-heading ${index}`);
+                if (Array.isArray(motionEffectsData) && motionEffectsData.length > 0) {
+                    this.applyMotionEffects(element, motionEffectsData);
                 }
-                
-            } else {
-                console.log('📱 Using fallback for e-heading');
-                createDramaticFallback(element, index);
-            }
-            
-        } catch (error) {
-            console.error(`❌ E-heading animation ${index} failed:`, error);
-            createDramaticFallback(element, index);
+            } catch (error) {
+                console.error(`❌ Error parsing motion effects for element ${index}:`, error);
         }
-    });
-    
-    // Add data attributes to e-headings for debugging
-    eHeadings.forEach((element, index) => {
-        element.setAttribute('data-motion-debug', `e-heading-${index}`);
-        element.style.transition = 'all 0.3s ease'; // Smooth transitions
     });
 }
 
-function createDramaticFallback(element, index) {
-    console.log(`🎭 Creating dramatic fallback for e-heading ${index}`);
+    applyMotionEffects(element, motionEffects) {
+        console.log('🎭 Applying motion effects:', motionEffects);
+        
+        motionEffects.forEach((effect, index) => {
+            console.log(`🎬 Applying effect ${index}:`, effect);
+            
+            // Validate effect structure
+            if (!this.isValidMotionEffect(effect)) {
+                console.warn(`⚠️ Invalid motion effect at index ${index}:`, effect);
+                return;
+            }
+            
+            // Apply the effect based on trigger
+            if (effect.trigger === 'scroll-into-view') {
+                this.createScrollIntoViewEffect(element, effect);
+            } else if (effect.trigger === 'scroll-out-of-view') {
+                this.createScrollOutOfViewEffect(element, effect);
+            }
+        });
+    }
+
+    isValidMotionEffect(effect) {
+        const requiredFields = ['trigger', 'animation', 'type', 'direction'];
+        return requiredFields.every(field => effect.hasOwnProperty(field));
+    }
+
+    createScrollIntoViewEffect(element, effect) {
+        console.log('🌊 Creating scroll into view effect:', effect);
     
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                console.log(`🎬 E-heading ${index} in view - triggering dramatic animation`);
-                
-                const animation = element.animate([
-                    { 
-                        opacity: 0,
-                        transform: 'translateY(-50px) scale(0.8) rotate(-5deg)',
-                        backgroundColor: '#ff6b6b',
-                        color: '#ffffff'
-                    },
-                    { 
-                        opacity: 1,
-                        transform: 'translateY(0px) scale(1.1) rotate(0deg)',
-                        backgroundColor: '#4ecdc4',
-                        color: '#333333'
-                    },
-                    { 
-                        opacity: 1,
-                        transform: 'translateY(0px) scale(1) rotate(0deg)',
-                        backgroundColor: 'transparent',
-                        color: 'inherit'
-                    }
-                ], {
-                    duration: 2000,
-                    delay: index * 200,
-                    fill: 'forwards',
-                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
-                });
-                
-                animation.play();
-                console.log(`✅ Dramatic fallback animation ${index} playing`);
-                
-            } else {
-                console.log(`👁️ E-heading ${index} out of view`);
+                    console.log('👁️ Element in view, triggering animation:', effect);
+                    this.triggerAnimation(element, effect);
+                    observer.unobserve(element); // Only trigger once
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '50px'
+        });
+        
+        observer.observe(element);
+    }
+
+    createScrollOutOfViewEffect(element, effect) {
+        console.log('🌊 Creating scroll out of view effect:', effect);
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    console.log('👁️ Element out of view, triggering animation:', effect);
+                    this.triggerAnimation(element, effect);
             }
         });
     }, {
-        threshold: 0.3,
-        rootMargin: '100px'
+            threshold: 0.1,
+            rootMargin: '50px'
     });
     
     observer.observe(element);
 }
 
-// Test function specifically for e-headings
-function testEHeadingEffects() {
-    console.log('🧪 Testing e-heading specific effects');
-    
-    const eHeadings = document.querySelectorAll('.elementor-widget-e-heading');
-    console.log(`🎯 Testing ${eHeadings.length} e-heading widgets`);
-    
-    eHeadings.forEach((element, index) => {
-        // Add visual indicators
-        element.style.border = '2px solid #ff6b6b';
-        element.style.padding = '10px';
-        element.style.margin = '20px 0';
+    triggerAnimation(element, effect) {
+        console.log('🎬 Triggering animation:', effect);
         
-        console.log(`📍 E-heading ${index}:`, {
-            element: element,
-            classes: element.className,
-            text: element.textContent?.substring(0, 50) + '...',
-            position: element.getBoundingClientRect()
-        });
-    });
+        // Create animation based on effect properties
+        const animationConfig = this.getAnimationConfig(effect);
+        
+        if (window.Motion && window.Motion.animate) {
+            // Use Motion.js if available
+            try {
+                window.Motion.animate(element, animationConfig.keyframes, animationConfig.options);
+                console.log('✅ Motion.js animation applied');
+            } catch (error) {
+                console.error('❌ Motion.js animation failed:', error);
+                this.applyFallbackAnimation(element, animationConfig);
+            }
+        } else {
+            // Use fallback Web Animations API
+            this.applyFallbackAnimation(element, animationConfig);
+        }
+    }
+
+    getAnimationConfig(effect) {
+        const { animation, type, direction } = effect;
+        
+        let keyframes = [];
+        let options = {
+            duration: 1000,
+            easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+            fill: 'forwards'
+        };
+        
+        // Define keyframes based on animation type and direction
+        if (animation === 'fade') {
+            keyframes = type === 'in' 
+                ? [{ opacity: 0 }, { opacity: 1 }]
+                : [{ opacity: 1 }, { opacity: 0 }];
+        } else if (animation === 'scale') {
+            keyframes = type === 'in'
+                ? [{ transform: 'scale(0.8)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }]
+                : [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(0.8)', opacity: 0 }];
+        } else if (animation === 'slide') {
+            const translateValue = this.getSlideDirection(direction, type);
+            keyframes = type === 'in'
+                ? [{ transform: translateValue, opacity: 0 }, { transform: 'translate(0, 0)', opacity: 1 }]
+                : [{ transform: 'translate(0, 0)', opacity: 1 }, { transform: translateValue, opacity: 0 }];
+        }
+        
+        return { keyframes, options };
+    }
+
+    getSlideDirection(direction, type) {
+        const distance = '50px';
+        const multiplier = type === 'in' ? -1 : 1;
+        
+        switch (direction) {
+            case 'up':
+                return `translate(0, ${multiplier * parseInt(distance)}px)`;
+            case 'down':
+                return `translate(0, ${multiplier * -parseInt(distance)}px)`;
+            case 'left':
+                return `translate(${multiplier * parseInt(distance)}px, 0)`;
+            case 'right':
+                return `translate(${multiplier * -parseInt(distance)}px, 0)`;
+            default:
+                return `translate(0, ${multiplier * parseInt(distance)}px)`;
+        }
+    }
+
+    applyFallbackAnimation(element, animationConfig) {
+        console.log('🔧 Applying fallback animation');
+        
+        try {
+            const animation = element.animate(animationConfig.keyframes, animationConfig.options);
+            animation.play();
+            console.log('✅ Fallback animation applied');
+        } catch (error) {
+            console.error('❌ Fallback animation failed:', error);
+        }
+    }
 }
 
-// Run the e-heading test
-setTimeout(testEHeadingEffects, 3000);
+// Initialize the motion effects handler
+new MotionEffectsHandler();
+
+console.log('📝 Motion Effects Handler initialized');

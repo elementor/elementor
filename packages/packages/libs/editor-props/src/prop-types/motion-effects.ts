@@ -1,11 +1,11 @@
-import { type z } from '@elementor/schema';
+import { z } from '@elementor/schema';
 
 import { createPropUtils } from '../utils/create-prop-utils';
-import { unknownChildrenSchema } from './utils';
+import { motionEffectPropTypeUtil } from './motion-effect';
 
 export const motionEffectsPropTypeUtil = createPropUtils(
 	'motion-effects',
-	unknownChildrenSchema
+	z.array(motionEffectPropTypeUtil.schema)
 );
 
 export type MotionEffectsPropValue = z.infer<typeof motionEffectsPropTypeUtil.schema>; 

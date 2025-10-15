@@ -41,4 +41,5 @@ export * from './filter-prop-types/filter';
 export * from './filter-prop-types/backdrop-filter';
 export * from './filter-prop-types/drop-shadow-filter';
 export * from './motion-effects';
+export * from './motion-effect';
 
