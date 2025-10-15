@@ -48,9 +48,7 @@ class Cloud_Kits extends Library {
 		] );
 	}
 
-	public function validate_quota() {
-		$quota = $this->get_quota();
-
+	public function validate_quota( $quota ) {
 		if ( is_wp_error( $quota ) ) {
 			throw new \Error( static::FAILED_TO_FETCH_QUOTA_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
@@ -63,9 +61,7 @@ class Cloud_Kits extends Library {
 		}
 	}
 
-	public function validate_storage_quota( $intended_usage ) {
-		$quota = $this->get_quota();
-
+	public function validate_storage_quota( $intended_usage, $quota ) {
 		if ( is_wp_error( $quota ) ) {
 			throw new \Error( static::FAILED_TO_FETCH_QUOTA_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
@@ -94,8 +90,9 @@ class Cloud_Kits extends Library {
 	}
 
 	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes, string $media_format = 'link', $file_size = 0 ) {
-		$this->validate_quota();
-		$this->validate_storage_quota( $file_size );
+		$quota = $this->get_quota();
+		$this->validate_quota( $quota );
+		$this->validate_storage_quota( $file_size, $quota );
 
 		$endpoint = 'kits';
 

@@ -49,7 +49,8 @@ class Process_Media extends Base_Route {
 			$zip_path = $media_collector->process_media_collection( $media_urls );
 
 			if ( $cloud_kit_library_app ) {
-				$cloud_kit_library_app->validate_storage_quota( filesize( $zip_path ) );
+				$quota = $cloud_kit_library_app->get_quota();
+				$cloud_kit_library_app->validate_storage_quota( filesize( $zip_path ), $quota );
 			}
 
 			if ( ! $zip_path ) {
