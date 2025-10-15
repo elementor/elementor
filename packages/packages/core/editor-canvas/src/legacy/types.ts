@@ -23,9 +23,6 @@ export type LegacyWindow = Window & {
 			},
 		];
 	};
-	$e: {
-		run: ( command: string, args: Record< string, unknown > ) => void;
-	};
 };
 
 export declare class ElementType {

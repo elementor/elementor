@@ -5,6 +5,7 @@ import {
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
 import { type NumberPropValue } from '@elementor/editor-props';
+import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 export const TYPE = 'e-component';
@@ -33,13 +34,12 @@ export function createComponentViewClassDeclaration(): typeof ElementView {
 
 		getContextMenuGroups() {
 			const filteredGroups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
-			const componentId = this.getComponentId();
+			const componentId = this.getComponentId().value;
 
-			if ( ! componentId?.value ) {
+			if ( ! componentId ) {
 				return filteredGroups;
 			}
 
-			const { value: id } = componentId;
 			const newGroup = {
 				name: 'edit component',
 				actions: [
@@ -48,12 +48,7 @@ export function createComponentViewClassDeclaration(): typeof ElementView {
 						icon: 'eicon-edit',
 						title: () => __( 'Edit Component', 'elementor' ),
 						isEnabled: () => true,
-						callback: () => {
-							this.legacyWindow.$e.run?.( 'editor/documents/switch', {
-								id,
-								mode: 'autosave',
-							} );
-						},
+						callback: () => this.switchDocument(),
 					},
 				],
 			};
@@ -61,10 +56,9 @@ export function createComponentViewClassDeclaration(): typeof ElementView {
 		}
 
 		switchDocument() {
-			this.legacyWindow.$e.run?.( 'editor/documents/switch', {
+			runCommand( 'editor/documents/switch', {
 				id: this.getComponentId().value,
 				mode: 'autosave',
-				nextAction: 'autosave',
 			} );
 		}
 
