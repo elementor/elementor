@@ -52,7 +52,7 @@ class Woocommerce_Settings extends Import_Runner_Base {
 			}
 		}
 
-		return [ 'woocommerce-settings' => $imported ];
+		return [ static::get_name() => $imported ];
 	}
 
 	public function get_import_session_metadata(): array {
