@@ -82,7 +82,7 @@ export class RevertKitHandler {
 					headerMessage: __( 'Are you sure?', 'elementor' ),
 					/* Translators: %s: Kit name */
 					message: __(
-						"Removing %s will permanently delete changes made to the Websites Template's content and site settings",
+						"Removing %s will permanently delete changes made to the Website Template's content and site settings",
 						'elementor',
 					).replace( '%s', activeKitName ),
 					strings: {
