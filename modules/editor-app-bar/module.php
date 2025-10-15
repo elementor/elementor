@@ -16,6 +16,9 @@ class Module extends BaseModule {
 		'editor-v2-app-bar-overrides',
 	];
 
+	const POPUP_DISMISSED_OPTION = '_elementor_structure_popup_dismissed';
+
+
 	public function get_name() {
 		return 'editor-app-bar';
 	}
@@ -29,6 +32,40 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/editor/v2/scripts/enqueue', fn() => $this->dequeue_scripts() );
 		add_action( 'elementor/editor/v2/styles/enqueue', fn() => $this->dequeue_styles() );
+		
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'maybe_enqueue_structure_popup' ] );
+    	add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+	}
+
+	/**
+	 * Register AJAX actions for structure popup
+	 */
+	public function register_ajax_actions( $ajax ) {
+		$ajax->register_ajax_action( 'structure_popup_dismiss', [ $this, 'ajax_dismiss_structure_popup' ] );
+	}
+
+	/**
+	 * AJAX handler to dismiss structure popup
+	 */
+	public function ajax_dismiss_structure_popup( $data ) {
+		$user_id = get_current_user_id();
+		
+		if ( ! $user_id ) {
+			throw new \Exception( 'User not authenticated' );
+		}
+
+		// Mark popup as dismissed for current version
+		update_user_meta( $user_id, self::STRUCTURE_POPUP_DISMISSED_OPTION, true );
+
+		return [
+			'success' => true,
+			'message' => 'Structure popup dismissed successfully',
+		];
+	}
+
+	public function maybe_enqueue_structure_popup(): void {
+		wp_localize_script( 'elementor-editor', 'elementorShowInfotip', [ 'shouldShow' => '1' ] );
+
 	}
 
 	private function add_packages( $packages ) {
