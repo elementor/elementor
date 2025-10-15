@@ -72,6 +72,7 @@ class Floating_Elements extends Import_Runner_Base {
 		if ( ! $imported_post_id ) {
 			throw new \Exception(
 				sprintf(
+					/* translators: %s: Floating element ID */
 					esc_html__( 'Imported post ID not found for floating element: %s', 'elementor' ),
 					esc_html( $id )
 				)
