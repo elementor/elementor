@@ -196,6 +196,7 @@ class Test_Revert extends Elementor_Test_Base {
 				'kit_title' => 'Test Kit',
 				'kit_name' => 'test-kit',
 				'kit_thumbnail' => '',
+				'kit_source' => 'local',
 				'start_timestamp' => time(),
 				'source' => 'local',
 			],
