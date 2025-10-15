@@ -45,8 +45,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 		// Convert HTML with CSS using CSS Converter API
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
-			cssContent,
-			{ createGlobalClasses: true },
+			cssContent
 		);
 
 		// Verify conversion was successful
@@ -110,8 +109,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
-			cssContent,
-			{ createGlobalClasses: true },
+			cssContent
 		);
 
 		expect( result.success ).toBe( true );
@@ -175,8 +173,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
-			cssContent,
-			{ createGlobalClasses: true },
+			cssContent
 		);
 
 		expect( result.success ).toBe( true );
@@ -256,8 +253,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
-			cssContent,
-			{ createGlobalClasses: true },
+			cssContent
 		);
 
 		expect( result.success ).toBe( true );
@@ -332,8 +328,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
-			cssContent,
-			{ createGlobalClasses: true },
+			cssContent
 		);
 
 		expect( result.success ).toBe( true );
@@ -370,8 +365,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
-			cssContent,
-			{ createGlobalClasses: true },
+			cssContent
 		);
 
 		expect( result.success ).toBe( true );
