@@ -66,6 +66,9 @@ jobs:
     runs-on: ubuntu-22.04
     name: PHPUnit - Test Results
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Check stable test status
         run: echo "Stable Test status is - ${{ needs.test_pr_group.result }}"
       - name: Check nightly test status
