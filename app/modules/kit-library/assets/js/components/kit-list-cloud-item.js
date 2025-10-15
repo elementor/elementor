@@ -91,6 +91,7 @@ const KitListCloudItem = ( props ) => {
 
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
 
+<<<<<<< HEAD
 	const eventTracking = ( command ) => {
 		appsEventTrackingDispatch(
 			command,
@@ -101,6 +102,9 @@ const KitListCloudItem = ( props ) => {
 			},
 		);
 	};
+=======
+	const isLocked = 'locked' === props.model?.status;
+>>>>>>> 5286471c5d (Tweak: Add size-based quota on the Cloud Kits [ED-21094] (#33082))
 
 	const handleDelete = () => {
 		setIsPopoverOpen( false );
@@ -112,7 +116,7 @@ const KitListCloudItem = ( props ) => {
 	};
 
 	return (
-		<Card className="e-kit-library__kit-item">
+		<Card className={ `e-kit-library__kit-item ${ isLocked ? 'e-kit-library__kit-item--locked' : '' }` }>
 			<CardHeader
 				className="e-kit-library__kit-item-header"
 			>
@@ -122,6 +126,7 @@ const KitListCloudItem = ( props ) => {
 					variant="h5"
 					className="eps-card__headline"
 				>
+					{ isLocked && <i className="eicon-lock e-kit-library__kit-item-lock-icon" aria-hidden="true"></i> }
 					{ props.model.title }
 				</Heading>
 				<Button
@@ -144,6 +149,7 @@ const KitListCloudItem = ( props ) => {
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
 					<CardOverlay>
 						<Grid container direction="column" className="e-kit-library__kit-item-cloud-overlay">
+<<<<<<< HEAD
 							<Button
 								className="eps-button e-kit-library__kit-item-cloud-overlay-import-button eps-button--primary eps-button--sm eps-button--contained"
 								text={ __( 'Apply', 'elementor' ) }
@@ -152,14 +158,26 @@ const KitListCloudItem = ( props ) => {
 									eventTracking( 'kit-library/cloud-import' );
 
 									AppsEventTracking.sendKitCloudLibraryApply( props.model.id );
+=======
+							{ isLocked ? (
+								<i className="eicon-lock" aria-hidden="true"></i>
+							) : (
+								<Button
+									className="eps-button e-kit-library__kit-item-cloud-overlay-import-button eps-button--primary eps-button--sm eps-button--contained"
+									text={ __( 'Apply', 'elementor' ) }
+									icon="eicon-library-download"
+									onClick={ () => {
+										AppsEventTracking.sendKitCloudLibraryApply( props.model.id );
+>>>>>>> 5286471c5d (Tweak: Add size-based quota on the Cloud Kits [ED-21094] (#33082))
 
-									const url = elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ]
-										? `import-customization?referrer=${ KIT_SOURCE_MAP.CLOUD }&id=${ props.model.id }`
-										: `import?referrer=kit-library&source=${ KIT_SOURCE_MAP.CLOUD }&kit_id=${ props.model.id }`;
+										const url = elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ]
+											? `import-customization?referrer=${ KIT_SOURCE_MAP.CLOUD }&id=${ props.model.id }`
+											: `import?referrer=kit-library&source=${ KIT_SOURCE_MAP.CLOUD }&kit_id=${ props.model.id }`;
 
-									navigate( url, { replace: true } );
-								} }
-							/>
+										navigate( url, { replace: true } );
+									} }
+								/>
+							) }
 						</Grid>
 					</CardOverlay>
 				</CardImage>
