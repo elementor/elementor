@@ -91,20 +91,7 @@ const KitListCloudItem = ( props ) => {
 
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
 
-<<<<<<< HEAD
-	const eventTracking = ( command ) => {
-		appsEventTrackingDispatch(
-			command,
-			{
-				kit_name: props.model.title,
-				grid_location: props.index,
-				page_source: 'cloud',
-			},
-		);
-	};
-=======
 	const isLocked = 'locked' === props.model?.status;
->>>>>>> 5286471c5d (Tweak: Add size-based quota on the Cloud Kits [ED-21094] (#33082))
 
 	const handleDelete = () => {
 		setIsPopoverOpen( false );
