@@ -1102,19 +1102,19 @@ class OnboardingTracker {
 	getExperimentConfigs() {
 		return {
 			101: {
-				name: '101 - Emphasize connect benefits',
+				name: 'core_onboarding_experiment101',
 				enabledKey: 'isExperiment101Enabled',
 				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT,
 				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT101_STARTED,
 			},
 			201: {
-				name: '201 - Offer theme choices: hello, biz',
+				name: 'core_onboarding_experiment201',
 				enabledKey: 'isExperiment201Enabled',
 				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
 				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED,
 			},
 			402: {
-				name: '402 - Reduce hierarchy of blank option',
+				name: 'core_onboarding_experiment402',
 				enabledKey: 'isExperiment402Enabled',
 				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT,
 				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT402_STARTED,
