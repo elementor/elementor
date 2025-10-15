@@ -152,9 +152,11 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$filter = function( $contexts ) {
 			$element_context = $this->define_children_context();
 
-			// Store context with element ID for proper scoping
 			if ( ! empty( $element_context ) ) {
-				$contexts[ $this->get_type() ][ $this->get_id() ] = $element_context;
+				if ( ! isset( $contexts[ $this->get_type() ] ) ) {
+					$contexts[ $this->get_type() ] = [];
+				}
+				$contexts[ $this->get_type() ][] = $element_context;
 			}
 
 			return $contexts;
