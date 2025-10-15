@@ -29,7 +29,7 @@ class Component extends Atomic_Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-star';
+		return 'eicon-components';
 	}
 
 	protected static function define_props_schema(): array {
