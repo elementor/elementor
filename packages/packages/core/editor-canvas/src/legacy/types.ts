@@ -74,6 +74,10 @@ export declare class ElementView {
 	triggerMethod( method: string ): void;
 
 	bindUIElements(): void;
+
+	options?: {
+		model: BackboneModel< ElementModel >;
+	};
 }
 
 type JQueryElement = {
@@ -103,5 +107,5 @@ type ToJSON< T > = {
 
 type ContextMenuGroup = {
 	name: string;
-	action: unknown[];
+	actions: unknown[];
 };

@@ -1,0 +1,92 @@
+.e-kit-library__quota-bar {
+	display: flex;
+	align-items: center;
+
+	&__container {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		min-width: 230px;
+	}
+
+	&__header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	&__label {
+		color: $e-gray-900;
+		font-weight: 400;
+		white-space: nowrap;
+		font-size: 12px;
+	}
+
+	&__progress-container {
+		width: 100%;
+		height: 4px;
+		overflow: hidden;
+		position: relative;
+
+		&--empty {
+			background-color: $e-pink-300;
+		}
+
+		&--normal {
+			background-color: $e-pink-300;
+		}
+
+		&--warning {
+			background-color: lighten($e-warning, 30%);
+		}
+
+		&--alert {
+			background: $e-accent;
+		}
+	}
+
+	&__progress-bar {
+		height: 100%;
+		transition: width 0.3s ease;
+
+		&--empty {
+			background: transparent;
+		}
+
+		&--normal {
+			background: $e-pink-800;
+		}
+
+		&--warning {
+			background: $e-warning;
+		}
+
+		&--alert {
+			background: $e-accent;
+		}
+	}
+
+	&__upgrade-message {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
+
+	&__upgrade-link {
+		color: $e-accent;
+		text-decoration: underline;
+		cursor: pointer;
+		font-size: 12px;
+		font-weight: 400;
+
+		&:hover {
+			opacity: 0.8;
+		}
+	}
+
+	&__count {
+		color: #69727D;
+		white-space: nowrap;
+		font-size: 12px;
+	}
+}
