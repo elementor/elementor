@@ -66,7 +66,11 @@ class Cloud_Kits extends Library {
 			throw new \Error( static::FAILED_TO_FETCH_QUOTA_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
-		$has_quota = ! empty( $quota['storage']['currentUsage'] ) && $quota['storage']['currentUsage'] + $intended_usage < $quota['storage']['threshold'];
+		if ( empty( $quota['storage']['currentUsage'] ) ) {
+			return;
+		}
+
+		$has_quota = $quota['storage']['currentUsage'] + $intended_usage < $quota['storage']['threshold'];
 
 		if ( ! $has_quota ) {
 			throw new \Error( static::INSUFFICIENT_STORAGE_QUOTA ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
