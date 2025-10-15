@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContext, useState } from 'react';
+import { createContext, useMemo, useState } from 'react';
 import { type PropTypeUtil } from '@elementor/editor-props';
 import { type PopupState, usePopupState } from '@elementor/ui';
 
@@ -63,21 +63,18 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		persistWhen: () => true,
 	} );
 
-	const [ itemsWithKeys, setItemsWithKeys ] = useState< ItemWithKey< T >[] >( () => {
-		return items?.map( ( item ) => ( { key: generateUniqueKey(), item } ) ) ?? [];
+	const [ uniqueKeys, setUniqueKeys ] = useState( () => {
+		return items?.map( ( _, index ) => index ) ?? [];
 	} );
 
-	React.useEffect( () => {
-		setItemsWithKeys( ( prevItemsWithKeys ) => {
-			const newItemsWithKeys =
-				items?.map( ( item ) => {
-					const existingItem = prevItemsWithKeys.find( ( i ) => i.item === item );
-					return existingItem || { key: generateUniqueKey(), item };
-				} ) ?? [];
-
-			return newItemsWithKeys;
-		} );
-	}, [ items ] );
+	const itemsWithKeys = useMemo( () => {
+		uniqueKeys
+			.map( ( key, index ) => ( {
+				key,
+				item: items[ index ],
+			} ) )
+			.filter( ( { item } ) => item !== undefined );
+	}, [ uniqueKeys, items ] );
 
 	const handleSetItems = ( newItemsWithKeys: ItemWithKey< T >[] ) => {
 		setItems( newItemsWithKeys.map( ( { item } ) => item ) );
@@ -92,10 +89,13 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	const addItem = ( ev: React.MouseEvent, config?: AddItem< T > ) => {
 		const item = config?.item ?? { ...initial };
 		const newIndex = config?.index ?? items.length;
+		const newKey = generateUniqueKey();
 		const newItems = [ ...items ];
 
 		newItems.splice( newIndex, 0, item );
 		setItems( newItems );
+
+		setUniqueKeys( [ ...uniqueKeys.slice( 0, newIndex ), newKey, ...uniqueKeys.slice( newIndex ) ] );
 
 		setOpenItemIndex( newIndex );
 		popoverState.open( rowRef ?? ev );
@@ -109,6 +109,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		const itemToRemove = items[ index ];
 
 		setItems( items.filter( ( _, pos ) => pos !== index ) );
+		setUniqueKeys( uniqueKeys.filter( ( _, pos ) => pos !== index ) );
 
 		eventBus.emit( `${ propTypeUtil.key }-item-removed`, {
 			itemValue: itemToRemove?.value,
