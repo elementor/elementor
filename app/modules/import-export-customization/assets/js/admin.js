@@ -69,9 +69,7 @@ class Admin {
 
 		AppsEventTracking.sendImportExportAdminAction( 'Revert' );
 
-		if ( this.revertHandler ) {
-			this.revertHandler.revertKit();
-		}
+		this.revertHandler?.revertKit();
 	}
 
 	onExportButtonClick() {

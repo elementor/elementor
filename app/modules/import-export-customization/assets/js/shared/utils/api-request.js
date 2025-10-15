@@ -1,13 +1,5 @@
 import { ImportExportError } from '../error/import-export-error';
 
-/**
- * Shared API request utility for import-export-customization module
- * Follows the same pattern as React hooks but for non-React contexts
- * @param {Object}               root0        - Request configuration
- * @param {Object|FormData|null} root0.data   - Request payload data
- * @param {string}               root0.path   - API endpoint path
- * @param {string}               root0.method - HTTP method
- */
 export async function apiRequest( { data = null, path, method = 'POST' } ) {
 	const baseUrl =
 		elementorAppConfig[ 'import-export-customization' ].restApiBaseUrl;

@@ -294,6 +294,7 @@ class Module extends BaseModule {
 	 * @return string
 	 */
 	private function get_referrer_kit_id_from_request(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Called from nonce-verified contexts or REST API with its own authentication
 		return sanitize_key( $_GET['referrer_kit'] ?? '' );
 	}
 
@@ -440,13 +441,7 @@ class Module extends BaseModule {
 		return $this->export->run();
 	}
 
-	/**
-	 * Handle revert kit request.
-	 *
-	 * @param string|null $session_id Optional session ID (currently unused, only supports last session)
-	 * @return array Revert result with completion status and referrer kit information
-	 */
-	public function revert_last_imported_kit( $session_id = null ): array {
+	public function revert_last_imported_kit(): array {
 		$this->revert = new Revert();
 		$this->revert->register_default_runners();
 
@@ -472,19 +467,6 @@ class Module extends BaseModule {
 			'referrer_kit_id' => $referrer_kit_id,
 			'show_referrer_dialog' => ! empty( $referrer_kit_id ),
 		];
-	}
-
-
-	/**
-	 * Handle revert last imported kit ajax request.
-	 */
-	public function handle_revert_last_imported_kit() {
-		check_admin_referer( 'elementor_revert_kit' );
-
-		$this->revert_last_imported_kit();
-
-		wp_safe_redirect( admin_url( 'admin.php?page=' . Tools::PAGE_ID . '#tab-import-export-kit' ) );
-		die;
 	}
 
 	/**

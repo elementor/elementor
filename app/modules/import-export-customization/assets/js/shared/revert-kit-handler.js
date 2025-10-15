@@ -38,13 +38,8 @@ export class RevertKitHandler {
 		}
 	}
 
-	async callRevertAPI( sessionId = null ) {
-		const requestData = sessionId
-			? { [ RevertKitHandler.SESSION_ID_KEY ]: sessionId }
-			: {};
-
+	async callRevertAPI() {
 		const result = await apiRequest( {
-			data: requestData,
 			path: RevertKitHandler.API_PATH,
 		} );
 

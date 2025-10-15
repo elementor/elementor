@@ -26,9 +26,7 @@ class Revert extends Base_Route {
 		$module = Plugin::$instance->app->get_component( 'import-export-customization' );
 
 		try {
-			$session_id = $request->get_param( 'session_id' );
-
-			$revert_result = $module->revert_last_imported_kit( $session_id );
+			$revert_result = $module->revert_last_imported_kit();
 
 			Plugin::$instance->logger->get_logger()->info( 'Kit revert completed via REST API' );
 
@@ -50,12 +48,6 @@ class Revert extends Base_Route {
 	}
 
 	protected function get_args(): array {
-		return [
-			'session_id' => [
-				'type' => 'string',
-				'description' => 'Optional session ID for revert operations (currently only supports last session)',
-				'required' => false,
-			],
-		];
+		return [];
 	}
 }
