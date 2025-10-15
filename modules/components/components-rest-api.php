@@ -7,6 +7,9 @@ use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Components\Documents\Component;
+use Elementor\Modules\Components\SaveAction\Save_Components_Action;
+use Elementor\Modules\Components\SaveAction\Save_Components_DTO;
+use Elementor\Modules\Components\SaveAction\Save_Components_Validator;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -83,6 +86,28 @@ class Components_REST_API {
 					'data' => [
 						'type' => 'object',
 						'required' => true,
+						'additionalProperties' => [
+							'type' => 'object',
+							'properties' => [
+								'title' => [
+									'type' => 'string',
+									'minLength' => 2,
+									'maxLength' => 50,
+									'sanitize_callback' => 'sanitize_text_field',
+								],
+								'status' => [
+									'type' => 'string',
+									'enum' => [ Document::STATUS_PUBLISH, Document::STATUS_DRAFT, Document::STATUS_AUTOSAVE ],
+								],
+								'elements' => [
+									'type' => 'array',
+									'items' => [
+										'type' => 'object',
+									],
+								],
+							],
+							'required' => [ 'title', 'status', 'elements' ],
+						],
 					],
 				],
 			],
@@ -133,6 +158,29 @@ class Components_REST_API {
 	}
 
 	private function save_components( \WP_REST_Request $request ) {
+		// TODO: Bring all the components.
+		get_posts( [
+
+		] );
+		$current = Collection::make();
+
+		$dto = Save_Components_DTO::from_request( $request );
+
+		$result = Save_Components_Validator::make( $current )->validate( $dto );
+
+		if ( ! $result['success'] ) {
+			return Error_Builder::make( 'components_validation_failed' )
+				->set_status( 400 )
+				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
+				->build();
+		}
+
+		Save_Components_Action::make()->execute( $dto );
+
+		return Response_Builder::make()->no_content()->build();
+	}
+
+	private function save_components2( \WP_REST_Request $request ) {
 		$changes = $request->get_param( 'changes' ) ?? [];
 		$data = $request->get_param( 'data' ) ?? [];
 
@@ -200,7 +248,7 @@ class Components_REST_API {
 			$document = Plugin::$instance->documents->get( $component_id );
 
 			if ( ! $document ) {
-				throw new \Exception( 'Component not found' );
+				continue;
 			}
 
 			if ( ! $document->is_built_with_elementor() ) {
