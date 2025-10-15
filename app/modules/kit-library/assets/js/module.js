@@ -3,6 +3,7 @@ import router from '@elementor/router';
 import TaxonomiesComponent from './data/taxonomies/component';
 import KitLibraryComponent from './e-component';
 import CloudKitsComponent from './data/cloud-kits/component';
+import App from './app';
 
 export default class KitLibrary {
 	constructor() {
@@ -17,7 +18,7 @@ export default class KitLibrary {
 
 		router.addRoute( {
 			path: '/kit-library/*',
-			component: React.lazy( () => import( /* webpackChunkName: 'kit-library' */ './app' ) ),
+			component: App,
 		} );
 	}
 
