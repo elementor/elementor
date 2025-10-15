@@ -67,14 +67,16 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		return items?.map( ( _, index ) => index ) ?? [];
 	} );
 
-	const itemsWithKeys = useMemo( () => {
-		uniqueKeys
-			.map( ( key, index ) => ( {
-				key,
-				item: items[ index ],
-			} ) )
-			.filter( ( { item } ) => item !== undefined );
-	}, [ uniqueKeys, items ] );
+	const itemsWithKeys = useMemo(
+		() =>
+			uniqueKeys
+				.map( ( key, index ) => ( {
+					key,
+					item: items[ index ],
+				} ) )
+				.filter( ( { item } ) => item !== undefined ),
+		[ uniqueKeys, items ]
+	);
 
 	const handleSetItems = ( newItemsWithKeys: ItemWithKey< T >[] ) => {
 		setItems( newItemsWithKeys.map( ( { item } ) => item ) );
