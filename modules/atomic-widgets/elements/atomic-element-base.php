@@ -18,6 +18,8 @@ abstract class Atomic_Element_Base extends Element_Base {
 	protected $version = '0.0';
 	protected $styles = [];
 	protected $editor_settings = [];
+	protected $context_filter_stack = [];
+
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -147,18 +149,41 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 	public function print_content() {
-		add_filter( 'elementor/atomic/contexts', function( $contexts ) {
-			$contexts[ $this->get_type() ] = $this->define_children_context();
-
+		$filter = function( $contexts ) {
+			$element_context = $this->define_children_context();
+			
+			// Store context with element ID for proper scoping
+			if ( ! empty( $element_context ) ) {
+				$contexts[ $this->get_type() ][ $this->get_id() ] = $element_context;
+			}
+			
 			return $contexts;
-		} );
+		};
+
+		$this->context_filter_stack[] = $filter;
+		add_filter( 'elementor/atomic/contexts', $filter );
 
 		parent::print_content();
+
+		remove_filter( 'elementor/atomic/contexts', array_pop( $this->context_filter_stack ) );
 	}
 
 
-	protected function get_context( $key = null ) {
-		return apply_filters( 'elementor/atomic/contexts', [] )[ $key ] ?? [];
+	protected function get_context( $key = null) {
+		$all_contexts = apply_filters( 'elementor/atomic/contexts', [] );
+		
+		if ( ! isset( $all_contexts[ $key ] ) ) {
+			return [];
+		}
+		
+		$type_contexts = $all_contexts[ $key ];
+		
+		// Return the most recently added context (last in the array)
+		if ( is_array( $type_contexts ) && ! empty( $type_contexts ) ) {
+			return end( $type_contexts );
+		}
+		
+		return [];
 	}
 
 	/**
