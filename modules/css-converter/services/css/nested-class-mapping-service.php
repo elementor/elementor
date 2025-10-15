@@ -93,7 +93,7 @@ class Nested_Class_Mapping_Service {
 			return null;
 		}
 
-		// Return the flattened class name directly (it's a string, not an array)
+		// Return the flattened class name directly (string value)
 		return $this->class_mappings[ $original_class ];
 	}
 

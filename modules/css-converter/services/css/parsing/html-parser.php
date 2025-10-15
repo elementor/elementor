@@ -44,7 +44,10 @@ class Html_Parser {
 		$body = $this->dom->getElementsByTagName( 'body' )->item( 0 );
 		$root = $body ?: $this->dom->documentElement;
 
-		return $this->extract_elements( $root );
+		$elements = $this->extract_elements( $root );
+		
+		// Preprocess elements to wrap text content in paragraph tags
+		return $this->preprocess_elements_for_text_wrapping( $elements );
 	}
 
 	private function prepare_html( $html ) {
@@ -124,10 +127,10 @@ class Html_Parser {
 		foreach ( $element->childNodes as $child ) {
 			if ( $child->nodeType === XML_TEXT_NODE ) {
 				$text .= trim( $child->textContent );
-			} elseif ( $child->nodeType === XML_ELEMENT_NODE ) {
-				// Recursively extract text from nested elements
-				$text .= ' ' . $this->extract_text_content( $child );
 			}
+			// CRITICAL FIX: Don't recursively extract text from nested elements
+			// This prevents parent elements from getting text content that belongs to their children
+			// Only extract direct text nodes that are immediate children of this element
 		}
 
 		return trim( $text );
@@ -256,5 +259,140 @@ class Html_Parser {
 
 	public function clear_errors() {
 		libxml_clear_errors();
+	}
+
+	private function preprocess_elements_for_text_wrapping( $elements ) {
+		$processed_elements = [];
+		
+		foreach ( $elements as $element ) {
+			$processed_elements[] = $this->wrap_text_content_in_paragraphs( $element );
+		}
+		
+		return $processed_elements;
+	}
+
+	private function wrap_text_content_in_paragraphs( $element ) {
+		$text_wrapping_tags = [ 'div', 'span', 'section', 'article', 'aside', 'header', 'footer', 'main', 'nav' ];
+		
+		// Only process elements that should have their text wrapped
+		if ( ! in_array( $element['tag'], $text_wrapping_tags, true ) ) {
+			// Recursively process children for other elements
+			if ( ! empty( $element['children'] ) ) {
+				$element['children'] = $this->preprocess_elements_for_text_wrapping( $element['children'] );
+			}
+			return $element;
+		}
+		
+		// Check if element has direct text content (not just from children)
+		$has_direct_text = ! empty( trim( $element['content'] ) );
+		$has_children = ! empty( $element['children'] );
+		
+		// If element has both text content and children, wrap the text in a paragraph
+		if ( $has_direct_text && $has_children ) {
+			// Create a paragraph element for the text content
+			// CRITICAL FIX: Only transfer flattened classes to paragraph, keep original classes on parent
+			$flattened_classes = $this->extract_flattened_classes( $element['attributes'] ?? [] );
+			$paragraph_element = [
+				'tag' => 'p',
+				'attributes' => $flattened_classes, // Only transfer flattened classes to paragraph
+				'content' => trim( $element['content'] ),
+				'children' => [],
+				'depth' => $element['depth'] + 1,
+				'inline_css' => [], // Don't transfer inline CSS - keep it on the parent div
+			];
+			
+			// Process existing children recursively
+			$processed_children = $this->preprocess_elements_for_text_wrapping( $element['children'] );
+			
+			// Add paragraph as first child, followed by existing children
+			$element['children'] = array_merge( [ $paragraph_element ], $processed_children );
+			
+			// Clear the direct text content since it's now in the paragraph
+			$element['content'] = '';
+			
+			// CRITICAL FIX: Remove flattened classes from parent but keep original classes
+			$element['attributes'] = $this->remove_flattened_classes( $element['attributes'] ?? [] );
+		} elseif ( $has_direct_text && ! $has_children ) {
+			// Element has only text content - wrap it in a paragraph
+			// CRITICAL FIX: Transfer ALL classes to paragraph so flattened classes get applied to the text element
+			$paragraph_element = [
+				'tag' => 'p',
+				'attributes' => $element['attributes'] ?? [], // Transfer ALL classes to paragraph
+				'content' => trim( $element['content'] ),
+				'children' => [],
+				'depth' => $element['depth'] + 1,
+				'inline_css' => [], // Don't transfer inline CSS - keep it on the parent div
+			];
+			
+			$element['children'] = [ $paragraph_element ];
+			$element['content'] = '';
+			
+			// CRITICAL FIX: Remove ALL classes from parent since they're now on the paragraph
+			$element['attributes'] = $this->remove_all_classes( $element['attributes'] ?? [] );
+		} elseif ( $has_children ) {
+			// Element has only children - process them recursively
+			$element['children'] = $this->preprocess_elements_for_text_wrapping( $element['children'] );
+		}
+		
+		return $element;
+	}
+
+	private function extract_flattened_classes( $attributes ) {
+		// Extract only flattened classes (classes containing '--') from attributes
+		if ( empty( $attributes['class'] ) ) {
+			return [];
+		}
+
+		$classes = explode( ' ', $attributes['class'] );
+		$flattened_classes = [];
+
+		foreach ( $classes as $class ) {
+			$class = trim( $class );
+			// Flattened classes contain '--' (e.g., 'third--first-second')
+			if ( ! empty( $class ) && strpos( $class, '--' ) !== false ) {
+				$flattened_classes[] = $class;
+			}
+		}
+
+		if ( empty( $flattened_classes ) ) {
+			return [];
+		}
+
+		return [ 'class' => implode( ' ', $flattened_classes ) ];
+	}
+
+	private function remove_flattened_classes( $attributes ) {
+		// Remove flattened classes (classes containing '--') from attributes, keep original classes
+		if ( empty( $attributes['class'] ) ) {
+			return $attributes;
+		}
+
+		$classes = explode( ' ', $attributes['class'] );
+		$original_classes = [];
+
+		foreach ( $classes as $class ) {
+			$class = trim( $class );
+			// Keep classes that don't contain '--' (original classes like 'first', 'second', 'third')
+			if ( ! empty( $class ) && strpos( $class, '--' ) === false ) {
+				$original_classes[] = $class;
+			}
+		}
+
+		if ( empty( $original_classes ) ) {
+			// If no original classes remain, remove the class attribute entirely
+			unset( $attributes['class'] );
+		} else {
+			$attributes['class'] = implode( ' ', $original_classes );
+		}
+
+		return $attributes;
+	}
+
+	private function remove_all_classes( $attributes ) {
+		// Remove all classes from attributes
+		if ( isset( $attributes['class'] ) ) {
+			unset( $attributes['class'] );
+		}
+		return $attributes;
 	}
 }

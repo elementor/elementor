@@ -67,8 +67,8 @@ test.describe( 'Pattern 1: Nested Selector Flattening (.first .second → .secon
 		const previewFrame = page.frameLocator( '#elementor-preview-iframe' );
 
 		// Find the p element that should have the flattened class applied
-		// The original HTML has <p class="second"> which should get the flattened class
-		const paragraphElement = previewFrame.locator( 'p' ).first();
+		// Find the paragraph element with the flattened class applied
+		const paragraphElement = previewFrame.locator( '[class*="second--first"]' ).first();
 
 		// Verify the element exists and is visible
 		await expect( paragraphElement ).toBeVisible();
@@ -123,8 +123,8 @@ test.describe( 'Pattern 1: Nested Selector Flattening (.first .second → .secon
 		// Get the preview frame
 		const previewFrame = page.frameLocator( '#elementor-preview-iframe' );
 
-		// Find the p element that should have the flattened class applied
-		const paragraphElement = previewFrame.locator( 'p' ).first();
+		// Find the paragraph element with the flattened class applied
+		const paragraphElement = previewFrame.locator( '[class*="second--first"]' ).first();
 
 		// Verify the element exists and is visible
 		await expect( paragraphElement ).toBeVisible();
