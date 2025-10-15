@@ -289,6 +289,15 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Get referrer kit ID from current request
+	 *
+	 * @return string
+	 */
+	private function get_referrer_kit_id_from_request(): string {
+		return sanitize_key( $_GET['referrer_kit'] ?? '' );
+	}
+
+	/**
 	 * Render the last kit thumbnail if exists
 	 *
 	 * @param $last_imported_kit
@@ -432,15 +441,37 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Handle revert kit ajax request.
+	 * Handle revert kit request.
+	 *
+	 * @param string|null $session_id Optional session ID (currently unused, only supports last session)
+	 * @return array Revert result with completion status and referrer kit information
 	 */
-	public function revert_last_imported_kit() {
+	public function revert_last_imported_kit( $session_id = null ): array {
 		$this->revert = new Revert();
 		$this->revert->register_default_runners();
+
+		$import_sessions = Revert::get_import_sessions();
+
+		if ( empty( $import_sessions ) ) {
+			return [
+				'revert_completed' => false,
+				'message' => 'No import sessions available to revert.',
+				'referrer_kit_id' => $this->get_referrer_kit_id_from_request(),
+				'show_referrer_dialog' => false,
+			];
+		}
 
 		do_action( 'elementor/import-export-customization/revert-kit', $this->revert );
 
 		$this->revert->run();
+
+		$referrer_kit_id = $this->get_referrer_kit_id_from_request();
+
+		return [
+			'revert_completed' => true,
+			'referrer_kit_id' => $referrer_kit_id,
+			'show_referrer_dialog' => ! empty( $referrer_kit_id ),
+		];
 	}
 
 
@@ -460,8 +491,6 @@ class Module extends BaseModule {
 	 * Register appropriate actions.
 	 */
 	private function register_actions() {
-		add_action( 'admin_post_elementor_revert_kit', [ $this, 'handle_revert_last_imported_kit' ] );
-
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 
 		$page_id = Tools::PAGE_ID;

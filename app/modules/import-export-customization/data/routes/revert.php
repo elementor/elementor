@@ -1,0 +1,61 @@
+<?php
+namespace Elementor\App\Modules\ImportExportCustomization\Data\Routes;
+
+use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
+use Elementor\Plugin;
+use Elementor\App\Modules\ImportExportCustomization\Data\Response;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+class Revert extends Base_Route {
+
+	protected function get_route(): string {
+		return 'revert';
+	}
+
+	protected function get_method(): string {
+		return \WP_REST_Server::CREATABLE;
+	}
+
+	protected function callback( $request ): \WP_REST_Response {
+		/**
+		 * @var $module ImportExportCustomizationModule
+		 */
+		$module = Plugin::$instance->app->get_component( 'import-export-customization' );
+
+		try {
+			$session_id = $request->get_param( 'session_id' );
+
+			$revert_result = $module->revert_last_imported_kit( $session_id );
+
+			Plugin::$instance->logger->get_logger()->info( 'Kit revert completed via REST API' );
+
+			return Response::success( $revert_result );
+
+		} catch ( \Error $e ) {
+			Plugin::$instance->logger->get_logger()->error( $e->getMessage(), [
+				'meta' => [
+					'trace' => $e->getTraceAsString(),
+				],
+			] );
+
+			if ( $module->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
+				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
+			}
+
+			return Response::error( $e->getMessage(), 'revert_error' );
+		}
+	}
+
+	protected function get_args(): array {
+		return [
+			'session_id' => [
+				'type' => 'string',
+				'description' => 'Optional session ID for revert operations (currently only supports last session)',
+				'required' => false,
+			],
+		];
+	}
+}
