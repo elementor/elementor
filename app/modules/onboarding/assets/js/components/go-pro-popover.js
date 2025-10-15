@@ -95,7 +95,6 @@ export default function GoProPopover( props ) {
 			}
 
 			const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
-			OnboardingEventTracking.trackStepAction( stepNumber, 'upgrade_now' );
 			OnboardingEventTracking.cancelDelayedNoClickEvent();
 
 			if ( stepNumber ) {

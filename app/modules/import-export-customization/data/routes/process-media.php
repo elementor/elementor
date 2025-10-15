@@ -27,10 +27,12 @@ class Process_Media extends Base_Route {
 		 */
 		$module = Plugin::$instance->app->get_component( 'import-export-customization' );
 
-		try {
-			$media_urls = $request->get_param( 'media_urls' );
-			$kit = $request->get_param( 'kit' );
+		$cloud_kit_library_app = CloudKitLibrary::get_app();
 
+		$media_urls = $request->get_param( 'media_urls' );
+		$kit = $request->get_param( 'kit' );
+
+		try {
 			if ( empty( $media_urls ) || ! is_array( $media_urls ) ) {
 				throw new \Error( 'Invalid media URLs provided' );
 			}
@@ -44,13 +46,9 @@ class Process_Media extends Base_Route {
 
 			$zip_file = ElementorUtils::file_get_contents( $zip_path );
 
-			$cloud_kit_library_app = CloudKitLibrary::get_app();
-
 			$upload_success = $cloud_kit_library_app->upload_content_file( $kit['mediaUploadUrl'], $zip_file );
 
-			if ( ! $upload_success ) {
-				$cloud_kit_library_app->update_kit( $kit['id'], [ 'mediaFileId' => null ] );
-			}
+			$cloud_kit_library_app->update_kit( $kit['id'], [ 'mediaFileId' => $upload_success ? $kit['mediaFileId'] : null ] );
 
 			$media_collector->cleanup();
 
@@ -66,11 +64,13 @@ class Process_Media extends Base_Route {
 				],
 			] );
 
+			$cloud_kit_library_app->update_kit( $kit['id'], [ 'mediaFileId' => null ] );
+
 			if ( $module->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
 				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
 			}
 
-			return Response::error( $e->getMessage(), 'media_processing_error' );
+			return Response::error( ImportExportCustomizationModule::MEDIA_PROCESSING_ERROR, $e->getMessage() );
 		}
 	}
 
