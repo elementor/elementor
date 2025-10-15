@@ -35,14 +35,11 @@ trait Has_Template {
 				$renderer->register( $name, $path );
 			}
 
-			$settings = $this->get_atomic_settings();
-
 			$context = [
 				'id' => $this->get_id(),
 				'type' => $this->get_name(),
-				'settings' => $settings,
+				'settings' => $this->get_atomic_settings(),
 				'base_styles' => $this->get_base_styles_dictionary(),
-				'children' => $settings['_children'] ?? '',
 			];
 
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

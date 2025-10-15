@@ -7,8 +7,8 @@ export const getComponentIds = ( elements: V1ElementData[] ) => {
 
 		const type = element.widgetType || element.elType;
 
-		if ( type === 'e-component' && element.settings?._children && isTransformable( element.settings?._children ) ) {
-			ids.push( element.settings._children.value );
+		if ( type === 'e-component' && element.settings?.component && isTransformable( element.settings?.component ) ) {
+			ids.push( element.settings.component.value );
 		}
 
 		if ( element.elements ) {

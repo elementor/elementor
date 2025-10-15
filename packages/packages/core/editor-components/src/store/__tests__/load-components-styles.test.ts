@@ -162,7 +162,7 @@ function createMockComponentWidget( componentId: number ): V1ElementData {
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
-			_children: {
+			component: {
 				$$type: 'component-id',
 				value: componentId,
 			},

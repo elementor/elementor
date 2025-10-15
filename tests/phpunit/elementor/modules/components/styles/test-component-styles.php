@@ -69,7 +69,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-some-widget',
 				'settings' => [
-					'_children' => [
+					'component' => [
 						'$$type' => 'component-id',
 						'value' => '50',
 					],
@@ -81,7 +81,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'_children' => [
+					'component' => [
 						'$$type' => 'component-id',
 						'value' => '180',
 					],
@@ -93,7 +93,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'_children' => [
+					'component' => [
 						'$$type' => 'component-id',
 						'value' => '180',
 					],
@@ -105,7 +105,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'_children' => [
+					'component' => [
 						'$$type' => 'component-id',
 						'value' => '250',
 					],
@@ -135,9 +135,9 @@ class Test_Component_Styles extends Elementor_Test_Base {
 			[
 				'id' => 'e-some-widget-1',
 				'elType' => 'widget',
-				'widgetType' => '_children',
+				'widgetType' => 'e-component',
 				'settings' => [
-					'post_id' => [
+					'component' => [
 						'$$type' => 'component-id',
 						'value' => '180',
 					],
@@ -166,7 +166,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'_children' => [
+					'component' => [
 						'$$type' => 'component-id',
 						'value' => '180',
 					],

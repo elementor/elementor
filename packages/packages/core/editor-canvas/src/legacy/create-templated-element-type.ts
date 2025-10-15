@@ -112,12 +112,10 @@ function createTemplatedElementViewClassDeclaration( {
 					} );
 				} )
 				.then( async ( settings ) => {
-					if ( settings?._children ) {
-						const collection = legacyWindow.elementor.createBackboneElementsCollection(
-							settings._children
-						);
+					if ( settings?.component ) {
+						this.collection = legacyWindow.elementor.createBackboneElementsCollection( settings.component );
 
-						this.collection = collection;
+						settings.component = '<template data-children-placeholder></template>';
 					}
 
 					// Same as the Backend.
@@ -126,7 +124,6 @@ function createTemplatedElementViewClassDeclaration( {
 						type,
 						settings,
 						base_styles: baseStylesDictionary,
-						children: '<template data-children-placeholder></template>',
 					};
 
 					return renderer.render( templateKey, context );

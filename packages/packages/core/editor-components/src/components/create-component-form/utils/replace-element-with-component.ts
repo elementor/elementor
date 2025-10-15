@@ -15,7 +15,7 @@ export const createComponentModel = ( component: Component ) => {
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
-			_children: {
+			component: {
 				$$type: 'component-id',
 				value: component.id,
 			},

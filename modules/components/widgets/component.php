@@ -34,7 +34,7 @@ class Component extends Atomic_Widget_Base {
 
 	protected static function define_props_schema(): array {
 		return [
-			'_children' => Component_Id_Prop_Type::make(),
+			'component' => Component_Id_Prop_Type::make(),
 		];
 	}
 

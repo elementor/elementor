@@ -39,8 +39,8 @@ class Component_Styles {
 
 		$components = $this->get_components_from_post( $post_id );
 		$component_ids = Collection::make( $components )
-			->filter( fn( $component ) => isset( $component['settings']['_children']['value'] ) )
-			->map( fn( $component ) => $component['settings']['_children']['value'] )
+			->filter( fn( $component ) => isset( $component['settings']['component']['value'] ) )
+			->map( fn( $component ) => $component['settings']['component']['value'] )
 			->unique()
 			->all();
 
