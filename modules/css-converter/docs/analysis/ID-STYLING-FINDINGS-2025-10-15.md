@@ -617,3 +617,6 @@ public function map_element_to_widget( array $element ): array {
 **Author**: AI Assistant (Cursor)  
 **Priority**: P0 - Critical Bug Fix Required
 
+
+
+
