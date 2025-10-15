@@ -104,6 +104,7 @@ describe( 'TransitionRepeaterControl', () => {
 		);
 
 		let addButton = null;
+
 		// Assert
 		await waitFor( () => {
 			addButton = screen.getByLabelText( 'Add transitions item' );
