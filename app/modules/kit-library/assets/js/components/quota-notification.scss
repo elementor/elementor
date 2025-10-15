@@ -29,11 +29,11 @@
 		flex-shrink: 0;
 
 		&.eicon-warning-full {
-			color: #BB5B1D;
+			color: $e-warning;
 		}
 
 		&.eicon-alert {
-			color: #DC2626;
+			color: $e-danger;
 		}
 	}
 
