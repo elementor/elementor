@@ -36,7 +36,7 @@ const FILTER_CONFIG: Record< string, Config > = {
 	},
 	'backdrop-filter': {
 		propTypeUtil: backdropFilterPropTypeUtil,
-		label: __( 'Backdrop Filters', 'elementor' ),
+		label: __( 'Backdrop filters', 'elementor' ),
 	},
 } as const;
 

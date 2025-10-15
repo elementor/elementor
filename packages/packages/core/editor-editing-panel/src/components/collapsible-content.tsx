@@ -44,6 +44,7 @@ export const CollapsibleContent = ( { children, defaultOpen = false, titleEnd = 
 					onClick={ handleToggle }
 					endIcon={ <CollapseIcon open={ open } /> }
 					sx={ { my: 0.5 } }
+					aria-label={ open ? 'Show less' : 'Show more' }
 				>
 					{ open ? __( 'Show less', 'elementor' ) : __( 'Show more', 'elementor' ) }
 				</Button>
