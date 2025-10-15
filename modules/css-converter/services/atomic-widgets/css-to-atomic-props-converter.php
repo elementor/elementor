@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\CssConverter\Services\AtomicWidgetsV2;
+namespace Elementor\Modules\CssConverter\Services\AtomicWidgets;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Property_Mapper_Factory;
 

@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\CssConverter\Tests\AtomicWidgetsV2;
+namespace Elementor\Modules\CssConverter\Tests\AtomicWidgets;
 
 use PHPUnit\Framework\TestCase;
 

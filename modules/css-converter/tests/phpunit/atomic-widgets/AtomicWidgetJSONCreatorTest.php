@@ -1,7 +1,7 @@
 <?php
-namespace Elementor\Modules\CssConverter\Tests\AtomicWidgetsV2;
+namespace Elementor\Modules\CssConverter\Tests\AtomicWidgets;
 
-use Elementor\Modules\CssConverter\Services\AtomicWidgetsV2\Atomic_Widget_JSON_Creator;
+use Elementor\Modules\CssConverter\Services\AtomicWidgets\Atomic_Widget_JSON_Creator;
 
 class AtomicWidgetJSONCreatorTest extends AtomicWidgetV2TestCase {
 

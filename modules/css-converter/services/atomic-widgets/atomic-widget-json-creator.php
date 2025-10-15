@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\CssConverter\Services\AtomicWidgetsV2;
+namespace Elementor\Modules\CssConverter\Services\AtomicWidgets;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -66,15 +66,14 @@ class Atomic_Widget_JSON_Creator {
 
 		try {
 			$widget_builder = \Elementor\Modules\AtomicWidgets\Elements\Widget_Builder::make( $widget_type );
-			
+
 			return $widget_builder
 				->settings( $settings )
 				->is_locked( false )
 				->editor_settings( [] )
 				->build();
-				
+
 		} catch ( \Exception $e ) {
-			error_log( "Failed to create widget '{$widget_type}': " . $e->getMessage() );
 			return null;
 		}
 	}
@@ -89,16 +88,15 @@ class Atomic_Widget_JSON_Creator {
 
 		try {
 			$element_builder = \Elementor\Modules\AtomicWidgets\Elements\Element_Builder::make( $widget_type );
-			
+
 			return $element_builder
 				->settings( $settings )
 				->children( $child_widgets )
 				->is_locked( false )
 				->editor_settings( [] )
 				->build();
-				
+
 		} catch ( \Exception $e ) {
-			error_log( "Failed to create container '{$widget_type}': " . $e->getMessage() );
 			return null;
 		}
 	}
@@ -118,7 +116,7 @@ class Atomic_Widget_JSON_Creator {
 
 	private function is_atomic_widgets_available(): bool {
 		return class_exists( 'Elementor\\Modules\\AtomicWidgets\\Elements\\Widget_Builder' ) &&
-			   class_exists( 'Elementor\\Modules\\AtomicWidgets\\Elements\\Element_Builder' );
+				class_exists( 'Elementor\\Modules\\AtomicWidgets\\Elements\\Element_Builder' );
 	}
 
 	public function validate_widget_against_schema( array $widget, string $widget_type ): bool {
@@ -144,7 +142,7 @@ class Atomic_Widget_JSON_Creator {
 		];
 
 		$class_name = $class_map[ $widget_type ] ?? null;
-		
+
 		return $class_name && class_exists( $class_name ) ? $class_name : null;
 	}
 
@@ -156,7 +154,6 @@ class Atomic_Widget_JSON_Creator {
 		try {
 			return $widget_class::define_props_schema();
 		} catch ( \Exception $e ) {
-			error_log( "Failed to get schema for '{$widget_class}': " . $e->getMessage() );
 			return null;
 		}
 	}
@@ -180,7 +177,6 @@ class Atomic_Widget_JSON_Creator {
 			try {
 				return $prop_type->validate( $prop_value );
 			} catch ( \Exception $e ) {
-				error_log( "Prop validation failed: " . $e->getMessage() );
 				return false;
 			}
 		}

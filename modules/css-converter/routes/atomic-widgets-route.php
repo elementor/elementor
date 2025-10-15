@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\CssConverter\Routes;
 
-use Elementor\Modules\CssConverter\Services\AtomicWidgetsV2\Atomic_Widgets_Orchestrator;
+use Elementor\Modules\CssConverter\Services\AtomicWidgets\Atomic_Widgets_Orchestrator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -1,7 +1,7 @@
 <?php
-namespace Elementor\Modules\CssConverter\Tests\AtomicWidgetsV2;
+namespace Elementor\Modules\CssConverter\Tests\AtomicWidgets;
 
-use Elementor\Modules\CssConverter\Services\AtomicWidgetsV2\Atomic_Data_Parser;
+use Elementor\Modules\CssConverter\Services\AtomicWidgets\Atomic_Data_Parser;
 
 class AtomicDataParserTest extends AtomicWidgetV2TestCase {
 
