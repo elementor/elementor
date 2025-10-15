@@ -450,7 +450,7 @@ class Module extends BaseModule {
 		if ( empty( $import_sessions ) ) {
 			return [
 				'revert_completed' => false,
-				'message' => 'No import sessions available to revert.',
+				'message' => __( 'No import sessions available to revert.', 'elementor' ),
 				'referrer_kit_id' => $this->get_referrer_kit_id_from_request(),
 				'show_referrer_dialog' => false,
 			];
