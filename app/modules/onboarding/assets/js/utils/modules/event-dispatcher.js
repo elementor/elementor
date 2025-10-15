@@ -1,10 +1,8 @@
-import StorageManager, { ONBOARDING_STORAGE_KEYS } from './storage-manager.js';
 
 export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
 	HELLO_BIZ_CONTINUE: 'core_onboarding_s2_hellobiz',
 	THEME_CHOICE: 'core_onboarding_theme_choice',
-	THEME_CHOICE_VARIANT_B: 'ab_201_theme_choice',
 	CORE_ONBOARDING: 'core_onboarding',
 	CONNECT_STATUS: 'core_onboarding_connect_status',
 	STEP1_END_STATE: 'core_onboarding_s1_end_state',
@@ -16,12 +14,13 @@ export const ONBOARDING_EVENTS_MAP = {
 	POST_ONBOARDING_1ST_CLICK: 'post_onboarding_1st_click',
 	POST_ONBOARDING_2ND_CLICK: 'post_onboarding_2nd_click',
 	POST_ONBOARDING_3RD_CLICK: 'post_onboarding_3rd_click',
-	EXIT_BUTTON: 'core_onboarding_exit_button',
+	EXIT: 'core_onboarding_exit',
 	SKIP: 'core_onboarding_skip',
 	TOP_UPGRADE: 'core_onboarding_top_upgrade',
 	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
 	CREATE_ACCOUNT_STATUS: 'core_onboarding_create_account_status',
 	STEP1_CLICKED_CONNECT: 'core_onboarding_s1_clicked_connect',
+	AB_101_START_AS_FREE_USER: 'ab_101_start_as_free_user',
 };
 
 export const ONBOARDING_STEP_NAMES = {
@@ -67,32 +66,9 @@ export function dispatchIfAllowed( eventName, payload = {} ) {
 	return false;
 }
 
-function getThemeSelectionVariant() {
-	const variant = StorageManager.getString( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT );
-	return variant || null;
-}
-
-function getGoodToGoVariant() {
-	const variant = StorageManager.getString( ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT );
-	return variant || null;
-}
-
-function getVariantSpecificEventName( baseEventName, stepNumber ) {
-	if ( 2 === stepNumber && elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
-		const variant = getThemeSelectionVariant();
-		if ( 'B' === variant ) {
-			if ( ONBOARDING_EVENTS_MAP.THEME_CHOICE === baseEventName ) {
-				return ONBOARDING_EVENTS_MAP.THEME_CHOICE_VARIANT_B;
-			}
-		}
-	}
-	return baseEventName;
-}
-
 export function createEventPayload( basePayload = {} ) {
 	return {
 		location: 'plugin_onboarding',
-		trigger: 'user_action',
 		...basePayload,
 	};
 }
@@ -104,50 +80,25 @@ export function createStepEventPayload( stepNumber, stepName, additionalData = {
 		...additionalData,
 	};
 
-	if ( stepNumber >= 2 && elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
-		basePayload[ '201_variant' ] = getThemeSelectionVariant();
-	}
-
-	if ( stepNumber >= 4 && elementorAppConfig?.onboarding?.goodToGoExperimentEnabled ) {
-		basePayload[ '402_variant' ] = getGoodToGoVariant();
-	}
-
 	return createEventPayload( basePayload );
 }
 
 export function createEditorEventPayload( additionalData = {} ) {
 	const basePayload = {
 		location: 'editor',
-		trigger: 'elementor_loaded',
 		...additionalData,
 	};
-
-	if ( elementorAppConfig?.onboarding?.themeSelectionExperimentEnabled ) {
-		const themeVariant = getThemeSelectionVariant();
-		if ( themeVariant ) {
-			basePayload[ '201_variant' ] = themeVariant;
-		}
-	}
-
-	if ( elementorAppConfig?.onboarding?.goodToGoExperimentEnabled ) {
-		const goodToGoVariant = getGoodToGoVariant();
-		if ( goodToGoVariant ) {
-			basePayload[ '402_variant' ] = goodToGoVariant;
-		}
-	}
 
 	return basePayload;
 }
 
 export function dispatchStepEvent( eventName, stepNumber, stepName, additionalData = {} ) {
 	const payload = createStepEventPayload( stepNumber, stepName, additionalData );
-	const variantSpecificEventName = getVariantSpecificEventName( eventName, stepNumber );
-	return dispatch( variantSpecificEventName, payload );
+	return dispatch( eventName, payload );
 }
 
-export function dispatchVariantAwareEvent( eventName, payload, stepNumber = null ) {
-	const variantSpecificEventName = stepNumber ? getVariantSpecificEventName( eventName, stepNumber ) : eventName;
-	return dispatch( variantSpecificEventName, payload );
+export function dispatchVariantAwareEvent( eventName, payload ) {
+	return dispatch( eventName, payload );
 }
 
 export function dispatchEditorEvent( eventName, additionalData = {} ) {
@@ -165,6 +116,22 @@ export function getClickEventName( clickCount ) {
 	return eventMap[ clickCount ] || null;
 }
 
+export function formatClickAction( title, selector ) {
+	if ( ! title && ! selector ) {
+		return '';
+	}
+
+	if ( ! title ) {
+		return selector;
+	}
+
+	if ( ! selector ) {
+		return title;
+	}
+
+	return `${ title } / ${ selector }`;
+}
+
 export function dispatchClickEvent( clickCount, clickData, siteStarterChoice = null ) {
 	const eventName = getClickEventName( clickCount );
 	if ( ! eventName ) {
@@ -176,8 +143,8 @@ export function dispatchClickEvent( clickCount, clickData, siteStarterChoice = n
 		editor_loaded_from_onboarding_source: siteStarterChoice,
 	} );
 
-	eventData[ `post_onboarding_${ clickNumber }_click_action_title` ] = clickData.title;
-	eventData[ `post_onboarding_${ clickNumber }_click_action_selector` ] = clickData.selector;
+	const formattedAction = formatClickAction( clickData.title, clickData.selector );
+	eventData[ `post_onboarding_${ clickNumber }_click_action` ] = formattedAction;
 
 	return dispatch( eventName, eventData );
 }

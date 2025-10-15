@@ -1,4 +1,5 @@
 import WpDashboardTracking, { NAV_AREAS } from '../wp-dashboard-tracking';
+import BaseTracking from './base-tracking';
 
 const ELEMENTOR_MENU_SELECTORS = {
 	ELEMENTOR_TOP_LEVEL: 'li#toplevel_page_elementor',
@@ -10,7 +11,7 @@ const ELEMENTOR_MENU_SELECTORS = {
 	SUBMENU_ITEM_TOP_LEVEL: '.wp-has-submenu',
 };
 
-class NavigationTracking {
+class NavigationTracking extends BaseTracking {
 	static init() {
 		this.attachElementorMenuTracking();
 		this.attachTemplatesMenuTracking();
@@ -41,18 +42,26 @@ class NavigationTracking {
 		const submenuContainer = menuElement.querySelector( ELEMENTOR_MENU_SELECTORS.SUBMENU_CONTAINER );
 
 		if ( topLevelLink ) {
-			topLevelLink.addEventListener( 'click', ( event ) => {
-				this.handleTopLevelClick( event );
-			} );
+			this.addEventListenerTracked(
+				topLevelLink,
+				'click',
+				( event ) => {
+					this.handleTopLevelClick( event );
+				},
+			);
 		}
 
 		if ( submenuContainer ) {
 			const submenuItems = submenuContainer.querySelectorAll( 'li a' );
 
 			submenuItems.forEach( ( submenuItem ) => {
-				submenuItem.addEventListener( 'click', ( event ) => {
-					this.handleSubmenuClick( event, menuName );
-				} );
+				this.addEventListenerTracked(
+					submenuItem,
+					'click',
+					( event ) => {
+						this.handleSubmenuClick( event, menuName );
+					},
+				);
 			} );
 
 			this.observeSubmenuChanges( submenuContainer, menuName );
@@ -60,27 +69,33 @@ class NavigationTracking {
 	}
 
 	static observeSubmenuChanges( submenuContainer, menuName ) {
-		const observer = new MutationObserver( ( mutations ) => {
-			mutations.forEach( ( mutation ) => {
-				if ( 'childList' === mutation.type ) {
-					mutation.addedNodes.forEach( ( node ) => {
-						if ( 1 === node.nodeType && 'LI' === node.tagName ) {
-							const link = node.querySelector( 'a' );
-							if ( link ) {
-								link.addEventListener( 'click', ( event ) => {
-									this.handleSubmenuClick( event, menuName );
-								} );
+		this.addObserver(
+			submenuContainer,
+			{
+				childList: true,
+				subtree: false,
+			},
+			( mutations ) => {
+				mutations.forEach( ( mutation ) => {
+					if ( 'childList' === mutation.type ) {
+						mutation.addedNodes.forEach( ( node ) => {
+							if ( 1 === node.nodeType && 'LI' === node.tagName ) {
+								const link = node.querySelector( 'a' );
+								if ( link ) {
+									this.addEventListenerTracked(
+										link,
+										'click',
+										( event ) => {
+											this.handleSubmenuClick( event, menuName );
+										},
+									);
+								}
 							}
-						}
-					} );
-				}
-			} );
-		} );
-
-		observer.observe( submenuContainer, {
-			childList: true,
-			subtree: false,
-		} );
+						} );
+					}
+				} );
+			},
+		);
 	}
 
 	static handleTopLevelClick( event ) {
