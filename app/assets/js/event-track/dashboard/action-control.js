@@ -1,14 +1,18 @@
 import WpDashboardTracking, { CONTROL_TYPES } from '../wp-dashboard-tracking';
 import { DashboardUtils } from './utils';
+import BaseTracking from './base-tracking';
 
 const EXCLUDED_SELECTORS = {
 	ADMIN_MENU: '#adminmenu',
 	TOP_BAR: '.e-admin-top-bar',
 	WP_ADMIN_BAR: '#wpadminbar',
 	SUBMENU: '.wp-submenu',
+	PROMO_PAGE: '.e-feature-promotion',
+	PROMO_BLANK_STATE: '.elementor-blank_state',
+	HOME_SCREEN: '#e-home-screen',
 };
 
-class ActionControlTracking {
+class ActionControlTracking extends BaseTracking {
 	static init() {
 		if ( ! DashboardUtils.isElementorPage() ) {
 			return;
@@ -24,57 +28,77 @@ class ActionControlTracking {
 			}
 		}
 
+		if ( element.classList.contains( 'go-pro' ) ) {
+			return true;
+		}
+
 		return false;
 	}
 
 	static attachDelegatedHandlers() {
-		document.addEventListener( 'click', ( event ) => {
-			const base = event.target && 1 === event.target.nodeType ? event.target : event.target?.parentElement;
-			if ( ! base ) {
-				return;
-			}
+		const FILTER_BUTTON_IDS = [ 'search-submit', 'post-query-submit' ];
 
-			const button = base.closest( 'button, input[type="submit"], input[type="button"], .button, .e-btn' );
-			if ( button && ! this.isExcludedElement( button ) ) {
-				this.trackControl( button, CONTROL_TYPES.BUTTON );
-				return;
-			}
+		this.addEventListenerTracked(
+			document,
+			'click',
+			( event ) => {
+				const base = event.target && 1 === event.target.nodeType ? event.target : event.target?.parentElement;
+				if ( ! base ) {
+					return;
+				}
 
-			const link = base.closest( 'a' );
-			if ( link && ! this.isExcludedElement( link ) && ! this.isNavigationLink( link ) ) {
-				this.trackControl( link, CONTROL_TYPES.LINK );
-			}
-		}, { capture: false } );
+				const button = base.closest( 'button, input[type="submit"], input[type="button"], .button, .e-btn' );
+				if ( button && ! this.isExcludedElement( button ) ) {
+					if ( FILTER_BUTTON_IDS.includes( button.id ) ) {
+						this.trackControl( button, CONTROL_TYPES.FILTER );
+						return;
+					}
 
-		document.addEventListener( 'change', ( event ) => {
-			const base = event.target && 1 === event.target.nodeType ? event.target : event.target?.parentElement;
-			if ( ! base ) {
-				return;
-			}
+					this.trackControl( button, CONTROL_TYPES.BUTTON );
+					return;
+				}
 
-			const toggle = base.closest( '.elementor-control-type-switcher input, [role="switch"], .toggle-control input' );
-			if ( toggle && ! this.isExcludedElement( toggle ) ) {
-				this.trackControl( toggle, CONTROL_TYPES.TOGGLE );
-				return;
-			}
+				const link = base.closest( 'a' );
+				if ( link && ! this.isExcludedElement( link ) && ! this.isNavigationLink( link ) ) {
+					this.trackControl( link, CONTROL_TYPES.LINK );
+				}
+			},
+			{ capture: false },
+		);
 
-			const checkbox = base.closest( 'input[type="checkbox"]' );
-			if ( checkbox && ! this.isExcludedElement( checkbox ) ) {
-				this.trackControl( checkbox, CONTROL_TYPES.CHECKBOX );
-				return;
-			}
+		this.addEventListenerTracked(
+			document,
+			'change',
+			( event ) => {
+				const base = event.target && 1 === event.target.nodeType ? event.target : event.target?.parentElement;
+				if ( ! base ) {
+					return;
+				}
 
-			const radio = base.closest( 'input[type="radio"]' );
-			if ( radio && ! this.isExcludedElement( radio ) ) {
-				this.trackControl( radio, CONTROL_TYPES.RADIO );
-				return;
-			}
+				const toggle = base.closest( '.components-form-toggle, .elementor-control-type-switcher input, [role="switch"], .toggle-control input' );
+				if ( toggle && ! this.isExcludedElement( toggle ) ) {
+					this.trackControl( toggle, CONTROL_TYPES.TOGGLE );
+					return;
+				}
 
-			const select = base.closest( 'select' );
-			if ( select && ! this.isExcludedElement( select ) ) {
-				this.trackControl( select, CONTROL_TYPES.SELECT );
-			}
-		} );
+				const checkbox = base.closest( 'input[type="checkbox"]' );
+				if ( checkbox && ! this.isExcludedElement( checkbox ) ) {
+					this.trackControl( checkbox, CONTROL_TYPES.CHECKBOX );
+					return;
+				}
+
+				const radio = base.closest( 'input[type="radio"]' );
+				if ( radio && ! this.isExcludedElement( radio ) ) {
+					this.trackControl( radio, CONTROL_TYPES.RADIO );
+					return;
+				}
+
+				const select = base.closest( 'select' );
+				if ( select && ! this.isExcludedElement( select ) ) {
+					this.trackControl( select, CONTROL_TYPES.SELECT );
+				}
+			},
+		);
 	}
 
 	static isNavigationLink( link ) {

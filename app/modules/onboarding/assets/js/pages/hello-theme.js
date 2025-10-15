@@ -176,7 +176,7 @@ export default function HelloTheme() {
 
 	if ( state.isHelloThemeActivated ) {
 		actionButton.onClick = () => {
-			OnboardingEventTracking.trackStepAction( 2, 'continue_hello_biz' );
+			OnboardingEventTracking.sendHelloBizContinue( state.currentStep );
 			sendNextButtonEvent();
 
 			OnboardingEventTracking.sendStepEndState( 2 );
@@ -184,7 +184,6 @@ export default function HelloTheme() {
 		};
 	} else {
 		actionButton.onClick = () => {
-			OnboardingEventTracking.trackStepAction( 2, 'continue_hello_biz' );
 			OnboardingEventTracking.sendHelloBizContinue( state.currentStep );
 			sendNextButtonEvent();
 
@@ -287,7 +286,7 @@ export default function HelloTheme() {
 		}
 	}, [ activateHelloThemeAjaxState.status ] );
 
-	const variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT );
+	const variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT );
 	const ContentComponent = 'B' === variant ? ThemeSelectionContentB : ThemeSelectionContentA;
 
 	return (
