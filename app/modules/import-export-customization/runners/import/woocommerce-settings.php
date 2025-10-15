@@ -34,7 +34,7 @@ class Woocommerce_Settings extends Import_Runner_Base {
 	public function import( array $data, array $imported_data ) {
 		$new_site_settings = $data['site_settings']['settings'];
 
-		$pages = $imported_data['content']['page']['succeed'];
+		$pages = $imported_data['content']['page']['succeed'] ?? [];
 
 		$imported = false;
 
