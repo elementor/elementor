@@ -79,6 +79,10 @@ const messagesContent = {
 		title: __( 'Couldn’t fetch quota', 'elementor' ),
 		text: __( 'Failed to fetch quota.', 'elementor' ),
 	},
+	'insufficient-storage-quota': {
+		title: __( 'Couldn’t Export the Website Template', 'elementor' ),
+		text: __( 'The export failed because it will pass the maximum Website Templates storage you have available.', 'elementor' ),
+	},
 };
 
 export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton, onModalClose, onError, onLearnMore } ) {
