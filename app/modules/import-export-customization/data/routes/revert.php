@@ -39,7 +39,9 @@ class Revert extends Base_Route {
 				],
 			] );
 
-			if ( $module->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
+			$frame = $e->getTrace()[0] ?? [];
+			$class = $frame['class'] ?? '';
+			if ( $module->is_third_party_class( $class ) ) {
 				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
 			}
 
