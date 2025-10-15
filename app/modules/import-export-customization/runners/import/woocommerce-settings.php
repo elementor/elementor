@@ -12,7 +12,7 @@ class Woocommerce_Settings extends Import_Runner_Base {
 		'woocommerce_checkout_page_id',
 		'woocommerce_myaccount_page_id',
 		'woocommerce_terms_page_id',
-		'woocommerce_purchase_summary_page_id',
+		'elementor_woocommerce_purchase_summary_page_id',
 		'woocommerce_shop_page_id',
 	];
 
