@@ -104,8 +104,9 @@ class Atomic_Tab extends Atomic_Element_Base {
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 		$initial_attributes = $this->define_initial_attributes();
+		$activeTab = $this->get_context( 'e-tabs' )['activeTab'] ?? null;
 
-		$is_active = $this->get_context( 'e-tabs' )['activeTab'] === $this->get_id();
+		$is_active = $activeTab === $this->get_id();
 
 		$attributes = [
 			'class' => [
