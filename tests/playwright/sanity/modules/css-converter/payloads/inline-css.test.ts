@@ -61,8 +61,8 @@ test.describe( 'Inline CSS Payload Integration @payloads', () => {
 
 		const testCases = [
 			{ selector: '.elementor-element:first-child', name: 'container', properties: { color: 'rgb(255, 107, 107)', 'font-size': '24px', padding: '20px', 'background-color': 'rgb(248, 249, 250)' } },
-			{ selector: '.e-heading-base-converted', name: 'heading', properties: { color: 'rgb(44, 62, 80)', 'font-weight': '700', 'text-align': 'center' } },
-			{ selector: '.e-paragraph-base-converted', name: 'paragraph', properties: { 'font-size': '16px', 'line-height': '1.6', margin: '10px 0px' } },
+			{ selector: '.elementor-widget-e-heading :is(h1, h2, h3, h4)', name: 'heading', properties: { color: 'rgb(44, 62, 80)', 'font-weight': '700', 'text-align': 'center' } },
+			{ selector: '.elementor-widget-e-paragraph p', name: 'paragraph', properties: { 'font-size': '16px', 'line-height': '1.6', margin: '10px 0px' } },
 		];
 
 		for ( const testCase of testCases ) {
@@ -142,8 +142,8 @@ test.describe( 'Inline CSS Payload Integration @payloads', () => {
 			await elementorFrame.waitForLoadState();
 
 			await expect( elementorFrame.locator( '.elementor-element' ).first() ).toBeVisible();
-			await expect( elementorFrame.locator( '.e-heading-base-converted' ) ).toBeVisible();
-			await expect( elementorFrame.locator( '.e-paragraph-base-converted' ) ).toBeVisible();
+			await expect( elementorFrame.locator( '.elementor-widget-e-heading :is(h1, h2, h3, h4)' ) ).toBeVisible();
+			await expect( elementorFrame.locator( '.elementor-widget-e-paragraph p' ) ).toBeVisible();
 
 			// Take screenshot of widget converter result
 			await expect( elementorFrame.locator( '.elementor-element' ).first() ).toHaveScreenshot( 'dual-api-widget-converter.png' );

@@ -48,10 +48,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
 			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
-			createGlobalClasses: true,
-			preserveIds: true,
-		} );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent );
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
@@ -62,18 +59,9 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 		expect( apiResult.success ).toBe( true );
 		expect( ( apiResult.conversion_log as any )?.css_processing?.id_selectors_processed ).toBeGreaterThan( 0 );
 
-		console.log( `✓ Created ${ apiResult.widgets_created } widgets` );
-		console.log( `✓ ID selectors processed: ${ ( apiResult.conversion_log as any )?.css_processing?.id_selectors_processed || 0 }` );
-
-		// DEBUG: Check API response structure
-		console.log( `\n🔍 API Response - Post ID: ${ apiResult.post_id }, Widgets Created: ${ apiResult.widgets_created }` );
-		console.log( `🔍 Edit URL: ${ apiResult.edit_url }` );
-		console.log( '' );
-
 		await page.goto( apiResult.edit_url );
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
-
 
 		await test.step( 'Verify ID selector styles (#header) are applied to widget', async () => {
 			const elementorFrame = editor.getPreviewFrame();
@@ -86,20 +74,16 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			await expect( header ).toHaveCSS( 'background-color', 'rgb(44, 62, 80)' );
 			await expect( header ).toHaveCSS( 'padding', '40px 20px' );
 			await expect( header ).toHaveCSS( 'text-align', 'center' );
-
-			console.log( '✓ ID selector styles (#header) applied and verified in widget' );
 		} );
 
 		await test.step( 'Verify inline styles are applied to widgets', async () => {
 			const elementorFrame = editor.getPreviewFrame();
 
-			const heading = elementorFrame.locator( '.e-heading-base' ).first();
+			const heading = elementorFrame.locator( '.elementor-element h1' ).first();
 			await expect( heading ).toBeVisible();
 			await expect( heading ).toHaveCSS( 'color', 'rgb(236, 240, 241)' );
 			await expect( heading ).toHaveCSS( 'font-size', '48px' );
 			await expect( heading ).toHaveCSS( 'font-weight', '700' );
-
-			console.log( '✓ Inline styles applied and verified in widget' );
 		} );
 	} );
 
@@ -112,9 +96,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
 			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
-			createGlobalClasses: true,
-		} );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent );
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
@@ -138,9 +120,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
 			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
-			createGlobalClasses: true,
-		} );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent );
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
@@ -166,10 +146,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
 			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
-			createGlobalClasses: true,
-			preserveIds: true,
-		} );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent );
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
@@ -226,10 +203,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
 			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
-			createGlobalClasses: true,
-			preserveIds: true,
-		} );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent );
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
@@ -285,10 +259,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
 			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
-			createGlobalClasses: true,
-			preserveIds: true,
-		} );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent );
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
@@ -333,10 +304,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
 			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
-			createGlobalClasses: true,
-			preserveIds: true,
-		} );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent );
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
@@ -396,10 +364,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			.replace( '<link rel="stylesheet" href="external-styles-1.css">', `<style>${ css1Content }</style>` )
 			.replace( '<link rel="stylesheet" href="external-styles-2.css">', `<style>${ css2Content }</style>` );
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
-			createGlobalClasses: true,
-			preserveIds: true,
-		} );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent );
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {

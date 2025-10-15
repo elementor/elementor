@@ -69,7 +69,7 @@ test.describe( 'CSS ID Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.e-heading-base-converted',
+				selector: '.elementor-widget-e-heading :is(h1, h2, h3, h4)',
 				name: 'title',
 				properties: {
 					'background-color': 'rgb(67, 184, 184)',
@@ -80,7 +80,7 @@ test.describe( 'CSS ID Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.e-paragraph-base-converted',
+				selector: '.elementor-widget-e-paragraph p',
 				name: 'subtitle',
 				properties: {
 					color: 'rgb(224, 230, 237)',

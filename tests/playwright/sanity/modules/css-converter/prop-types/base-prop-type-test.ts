@@ -12,7 +12,7 @@ import { CssConverterHelper, CssConverterResponse } from '../helper';
  * - frame.locator('p').filter({ hasText: /pattern/i })
  * - frame.locator('h2').filter({ hasText: /specific text/i })
  * 
- * Avoid using CSS class selectors like '.e-paragraph-base-converted' as they
+ * Avoid using CSS class selectors like '.elementor-widget-e-paragraph p' as they
  * may not exist or may change between test runs.
  */
 export abstract class BasePropTypeTest {
