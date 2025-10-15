@@ -38,7 +38,7 @@ test.describe('Text Decoration Prop Type Conversion @prop-types', () => {
 		wpAdmin = new WpAdminPage(page, testInfo, apiRequests);
 	});
 
-	test('should convert basic text-decoration values correctly', async ({ page, request }) => {
+	test('should convert basic text-decoration values correctly', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h2 style="text-decoration: underline;">Underlined Heading</h2>
@@ -83,7 +83,7 @@ test.describe('Text Decoration Prop Type Conversion @prop-types', () => {
 		}
 	});
 
-	test('should handle text-decoration shorthand correctly', async ({ page, request }) => {
+	test('should handle text-decoration shorthand correctly', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h2 style="text-decoration: underline solid red;">Styled Underline</h2>
@@ -119,7 +119,7 @@ test.describe('Text Decoration Prop Type Conversion @prop-types', () => {
 		await expect(divElement).toHaveCSS('text-decoration-line', 'overline');
 	});
 
-	test('should handle multiple text-decoration lines', async ({ page, request }) => {
+	test('should handle multiple text-decoration lines', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h2 style="text-decoration: underline overline;">Multiple Decorations</h2>
@@ -148,7 +148,7 @@ test.describe('Text Decoration Prop Type Conversion @prop-types', () => {
 		expect(['underline', 'overline', 'underline overline']).toContain(decorationLine);
 	});
 
-	test('should preserve text-decoration with other typography properties', async ({ page, request }) => {
+	test('should preserve text-decoration with other typography properties', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h2 style="text-decoration: underline; color: #ff0000; font-weight: bold;">Underlined Bold Red</h2>
@@ -183,7 +183,7 @@ test.describe('Text Decoration Prop Type Conversion @prop-types', () => {
 		await expect(paragraph).toHaveCSS('text-align', 'center');
 	});
 
-	test('should handle invalid and edge case values', async ({ page, request }) => {
+	test('should handle invalid and edge case values', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h2 style="text-decoration: invalid-value;">Invalid Decoration</h2>
@@ -228,7 +228,7 @@ test.describe('Text Decoration Prop Type Conversion @prop-types', () => {
 		}
 	});
 
-	test('should convert different element types with text-decoration', async ({ page, request }) => {
+	test('should convert different element types with text-decoration', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h1 style="text-decoration: underline;">Underlined H1</h1>
@@ -284,7 +284,7 @@ test.describe('Text Decoration Prop Type Conversion @prop-types', () => {
 		}
 	});
 
-	test('should handle complex shorthand with multiple properties', async ({ page, request }) => {
+	test('should handle complex shorthand with multiple properties', async ({ page, request }, testInfo) => {
 		const htmlContent = `
 			<div>
 				<h2 style="text-decoration: underline wavy red 2px;">Complex Underline</h2>
