@@ -57,15 +57,30 @@ class Module extends BaseModule {
 	}
 
 	public function maybe_enqueue_structure_popup(): void {
-		$user_id = get_current_user_id();
 
-		if ( ! $user_id ||
-		! $this->is_existing_user_upgraded_to_target_version( self::STRUCTURE_POPUP_TARGET_VERSION ) ||
-		get_user_meta( $user_id, self::POPUP_DISMISSED_OPTION, true ) ) {
+		if ( ! $this->should_show_structure_popup_for_current_user() ) {
 			return;
 		}
 
 		wp_localize_script( 'elementor-editor', 'elementorShowInfotip', [ 'shouldShow' => '1' ] );
+	}
+
+	private function should_show_structure_popup_for_current_user(): bool {
+		$user_id = get_current_user_id();
+
+		if ( ! $user_id ) {
+			return false;
+		}
+
+		if ( ! $this->is_existing_user_upgraded_to_target_version( self::STRUCTURE_POPUP_TARGET_VERSION ) ) {
+			return false;
+		}
+
+		if ( get_user_meta( $user_id, self::POPUP_DISMISSED_OPTION, true ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	private function is_existing_user_upgraded_to_target_version( string $target_version ): bool {
