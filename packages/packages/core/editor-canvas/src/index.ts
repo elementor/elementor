@@ -8,4 +8,6 @@ export { createPropsResolver, type PropsResolver } from './renderers/create-prop
 export { startDragElementFromPanel, endDragElementFromPanel } from './sync/drag-element-from-panel';
 export { registerElementType } from './legacy/init-legacy-views';
 export { createElementViewClassDeclaration } from './legacy/create-element-type';
+export { getCanvasIframeDocument } from './sync/get-canvas-iframe-document';
+
 export * from './legacy/types';

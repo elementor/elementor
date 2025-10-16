@@ -81,6 +81,12 @@ const selectCreateStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].cre
 const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 
 export const selectComponents = createSelector( selectData, ( data: Component[] ) => data );
+export const selectComponentsObject = createSelector( selectData, ( data: Component[] ) =>
+	data.reduce< Record< ComponentId, Component > >( ( acc, component ) => {
+		acc[ component.id ] = component;
+		return acc;
+	}, {} )
+);
 export const selectLoadIsPending = createSelector( selectLoadStatus, ( status ) => status === 'pending' );
 export const selectLoadIsError = createSelector( selectLoadStatus, ( status ) => status === 'error' );
 export const selectCreateIsPending = createSelector( selectCreateStatus, ( status ) => status === 'pending' );

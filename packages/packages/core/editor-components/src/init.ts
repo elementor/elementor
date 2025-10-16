@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 
 import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
+import { EditComponent } from './components/edit-component/edit-component';
 import { createComponentType, TYPE } from './inject-element-view';
 import { PopulateStore } from './populate-store';
 import { componentsStylesProvider } from './store/components-styles-provider';
@@ -46,6 +47,12 @@ export function init() {
 		id: 'components-populate-store',
 		component: PopulateStore,
 	} );
+
+	injectIntoTop( {
+		id: 'edit-component',
+		component: EditComponent,
+	} );
+
 	listenTo( commandStartEvent( 'editor/documents/attach-preview' ), () => {
 		const { id, config } = getV1CurrentDocument();
 
