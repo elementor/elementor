@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Components;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 
@@ -63,6 +64,10 @@ class Components_REST_API {
 							'type' => 'object',
 						],
 					],
+					'status' => [
+									'type' => 'string',
+									'enum' => [ Document::STATUS_PUBLISH, Document::STATUS_DRAFT, Document::STATUS_AUTOSAVE ],
+								],
 				],
 			],
 		] );
@@ -118,9 +123,10 @@ class Components_REST_API {
 		$name = $name_result->unwrap();
 		// The content is validated & sanitized in the document save process.
 		$content = $request->get_param( 'content' );
+		$status = $request->get_param( 'status' );
 
 		try {
-			$component_id = $this->get_repository()->create( $name, $content );
+			$component_id = $this->get_repository()->create( $name, $content, $status );
 
 			return Response_Builder::make( [ 'component_id' => $component_id ] )->set_status( 201 )->build();
 		} catch ( \Exception $e ) {

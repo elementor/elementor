@@ -3,7 +3,8 @@ import { numberPropTypeUtil, type TransformablePropValue } from '@elementor/edit
 import { __getState as getState, __dispatch as dispatch } from '@elementor/store';
 
 import { apiClient } from '../api';
-import { selectUnpublishedComponents, slice } from '../store/store';
+import { selectUnpublishedComponents, slice, UnpublishedComponent } from '../store/store';
+import { DocumentStatus } from '../types';
 
 type Container = {
 	model: {
@@ -13,9 +14,7 @@ type Container = {
 	};
 };
 
-type Status = 'draft' | 'autosave' | 'publish';
-
-export const beforeSave = async ( { container, status }: { container: Container; status: Status } ) => {
+export const beforeSave = async ( { container, status }: { container: Container; status: DocumentStatus } ) => {
 	const unpublishedComponents = selectUnpublishedComponents( getState() );
 
 	if ( ! unpublishedComponents.length ) {
@@ -23,7 +22,7 @@ export const beforeSave = async ( { container, status }: { container: Container;
 	}
 
 	try {
-		const tempIdToComponentId = await apiClient.update( { unpublishedComponents, status } );
+		const tempIdToComponentId = await createComponents( unpublishedComponents, status  );
 
 		const elements = container.model.get( 'elements' ).toJSON();
 		updateComponentInstances( elements, tempIdToComponentId );
@@ -37,6 +36,22 @@ export const beforeSave = async ( { container, status }: { container: Container;
 		throw new Error( `Failed to publish components and update component instances: ${ error }` );
 	}
 };
+
+async function createComponents( components: UnpublishedComponent[], status: DocumentStatus ): Promise< Map< number, number > > {
+	const tempIdToComponentId = new Map< number, number >();
+
+	const promises = components.map( ( component ) => {
+		return apiClient.create( { name: component.name, content: component.content, status } ).then(
+			( response ) => {
+				tempIdToComponentId.set( component.id, response.component_id );
+			}
+		);
+	} );
+	
+	await Promise.all( promises );
+
+	return tempIdToComponentId;
+}
 
 function updateComponentInstances( elements: V1ElementData[], tempIdToComponentId: Map< number, number > ): void {
 	elements.forEach( ( element ) => {

@@ -7,11 +7,12 @@ import {
 
 import { type Component, type ComponentId, type StylesDefinition } from '../types';
 import { createComponent, loadComponents } from './thunks';
+import { V1ElementData } from '@elementor/editor-elements';
 
 type GetComponentResponse = Component[];
 
-type UnpublishedComponent = Component & {
-	content: Element[];
+export type UnpublishedComponent = Component & {
+	content: V1ElementData[];
 };
 
 type Status = 'idle' | 'pending' | 'error';

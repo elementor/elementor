@@ -33,7 +33,7 @@ export function init() {
 		return true;
 	} );
 
-	( window as unknown as ExtendedWindow ).elementor.__beforeSave = beforeSave;
+	( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;
 
 	injectTab( {
 		id: 'components',

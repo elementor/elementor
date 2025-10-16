@@ -22,7 +22,7 @@ export class Save extends $e.modules.CommandInternalBase {
 		settings.post_status = status;
 
 		if ( elementorCommon.config.experimentalFeatures?.e_components ) {
-			await elementor.__beforeSave?.( { container, status } );
+			await elementorCommon.__beforeSave?.( { container, status } );
 		}
 
 		let elements = [];

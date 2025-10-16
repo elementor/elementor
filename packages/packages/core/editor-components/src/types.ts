@@ -15,6 +15,8 @@ export type Component = {
 	name: string;
 };
 
+export type DocumentStatus = 'publish' | 'draft' | 'autosave';
+
 export type Element = V1ElementModelProps & {
 	elements?: Element[];
 	settings?: V1ElementSettingsProps & {
@@ -23,5 +25,5 @@ export type Element = V1ElementModelProps & {
 };
 
 export type ExtendedWindow = Window & {
-	elementor: Record< string, unknown >;
+	elementorCommon: Record< string, unknown >;
 };
