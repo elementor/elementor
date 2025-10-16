@@ -28,13 +28,11 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 
 	const verifyFrontendBaseClasses = async ( elements, shouldHaveBaseClass: boolean, baseClassName: string ) => {
 		const count = await elements.count();
-		console.log( `Verifying ${count} elements for base class ${baseClassName}, shouldHave: ${shouldHaveBaseClass}` );
 		
 		for ( let i = 0; i < count; i++ ) {
 			const element = elements.nth( i );
 			const classes = await element.getAttribute( 'class' ) || '';
 			const text = await element.textContent() || '';
-			console.log( `Element ${i}: classes="${classes}", text="${text.substring(0, 50)}..."` );
 			
 			if ( shouldHaveBaseClass ) {
 				expect( classes ).toContain( baseClassName );
@@ -120,9 +118,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 				paragraphWidgetCount = await paragraphWidgets.count();
 				headingWidgetCount = await headingWidgets.count();
 				
-				console.log( `Found ${paragraphWidgetCount} paragraph widgets and ${headingWidgetCount} heading widgets in editor` );
 			} catch ( error ) {
-				console.log( 'Error counting widgets, skipping base class verification' );
 				return;
 			}
 			
@@ -132,7 +128,6 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 					const widget = paragraphWidgets.nth( i );
 					const paragraph = widget.locator( 'p' );
 					const classes = await paragraph.getAttribute( 'class' );
-					console.log( `Paragraph widget ${i} classes: "${classes}"` );
 					// Base classes are added by atomic widget system, not CSS Converter
 					expect( classes || '' ).not.toContain( 'e-paragraph-base' );
 				}
@@ -144,7 +139,6 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 					const widget = headingWidgets.nth( i );
 					const heading = widget.locator( 'h1, h2, h3, h4, h5, h6' );
 					const classes = await heading.getAttribute( 'class' );
-					console.log( `Heading widget ${i} classes: "${classes}"` );
 					// Base classes are added by atomic widget system, not CSS Converter
 					expect( classes || '' ).not.toContain( 'e-heading-base' );
 				}
@@ -296,7 +290,6 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			const paragraphCount = await frontendParagraphs.count();
 			const headingCount = await frontendHeadings.count();
 			
-			console.log( `Frontend: Found ${paragraphCount} paragraphs and ${headingCount} headings` );
 			
 			// Check each paragraph individually - API widgets should not have base classes, manual widgets should
 			for ( let i = 0; i < paragraphCount; i++ ) {
@@ -304,7 +297,6 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 				const text = await paragraph.textContent() || '';
 				const classes = await paragraph.getAttribute( 'class' ) || '';
 				
-				console.log( `Frontend paragraph ${i}: text="${text.substring(0, 50)}...", classes="${classes}"` );
 				
 				if ( text.includes( 'MANUAL' ) ) {
 					// Manual widget should HAVE base class
@@ -321,7 +313,6 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 				const text = await heading.textContent() || '';
 				const classes = await heading.getAttribute( 'class' ) || '';
 				
-				console.log( `Frontend heading ${i}: text="${text.substring(0, 50)}...", classes="${classes}"` );
 				
 				if ( text.includes( 'MANUAL' ) ) {
 					// Manual widget should HAVE base class
@@ -469,7 +460,6 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			try {
 				headingCount = await allHeadings.count();
 			} catch ( error ) {
-				console.log( 'Frame detached during count, skipping base class verification' );
 				return;
 			}
 			
@@ -527,7 +517,6 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			try {
 				frontendHeadingCount = await frontendHeadings.count();
 			} catch ( error ) {
-				console.log( 'Error counting frontend heading elements, skipping verification' );
 				return;
 			}
 			
@@ -542,13 +531,11 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			
 			// 2. Verify second heading has explicit margin on frontend (it's the second one, index 1)
 			const totalFrontendHeadings = await frontendHeadings.count();
-			console.log( `Found ${totalFrontendHeadings} headings on frontend` );
 			
 			// Find the heading with CSS class (the one with explicit margin)
 			const headingWithCssClass = page.locator( 'h1, h2, h3, h4, h5, h6' ).locator( '[class*="elementor-element-"]' ).first();
 			
 			if ( await headingWithCssClass.count() === 0 ) {
-				console.log( 'No heading with CSS class found, using first heading for margin test' );
 				const firstFrontendHeading = frontendHeadings.first();
 				await firstFrontendHeading.waitFor( { state: 'visible', timeout: 10000 } );
 				
@@ -564,7 +551,6 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 					};
 				} );
 				
-				console.log( `Frontend heading styles:`, frontendComputedStyles );
 				
 				// If this is the h2 with explicit margin, it should have 15px
 				if ( frontendComputedStyles.tagName === 'h2' ) {

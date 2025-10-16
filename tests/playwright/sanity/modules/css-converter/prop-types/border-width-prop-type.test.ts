@@ -217,7 +217,6 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 			await test.step( `Verify ${ testCase.name } in editor`, async () => {
 				// Skip the 0.5rem test case (index 2) as requested
 				if ( testCase.index === 2 ) {
-					console.log( `⏭️ SKIPPING: ${testCase.name} - 0.5rem assertion skipped as requested` );
 					return;
 				}
 
@@ -247,7 +246,6 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
 					// Skip the 0.5rem test case (index 2) as requested
 					if ( testCase.index === 2 ) {
-						console.log( `⏭️ SKIPPING FRONTEND: ${testCase.name} - 0.5rem assertion skipped as requested` );
 						return;
 					}
 
@@ -497,7 +495,6 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 				};
 			} );
 
-			console.log( '🔍 ATOMIC WIDGET DEBUG INFO:', JSON.stringify( debugInfo, null, 2 ) );
 
 			// ✅ ASSERTION 1: Element should have atomic widget class
 			expect( debugInfo.atomicClass ).toBeTruthy();
@@ -521,12 +518,6 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 		} );
 
 		await test.step( 'Verify API response contains correct atomic widget structure', async () => {
-			// 🎯 EVEN BETTER: Check the actual API response structure
-			console.log( '🔍 API RESULT:', JSON.stringify( {
-				success: apiResult.success,
-				widgets_created: apiResult.widgets_created,
-				post_id: apiResult.post_id
-			}, null, 2 ) );
 
 			// The API should have successfully created widgets
 			expect( apiResult.success ).toBe( true );

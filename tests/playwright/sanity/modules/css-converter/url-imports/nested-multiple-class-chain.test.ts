@@ -394,9 +394,6 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 
 		if ( ! hasContent ) {
 			// No widgets were created - this reveals an issue with mixed content processing
-			console.log( 'STUDY RESULT: Mixed content structure did not create widgets' );
-			console.log( 'HTML structure: <div class="first">Text string<div class="second"><div>Another string</div></div></div>' );
-			console.log( 'Issue: Mixed content (text + child elements) may not be properly handled by widget conversion' );
 			
 			// This is actually valuable information - the system doesn't handle mixed content well
 			// We should document this behavior rather than fail the test
@@ -407,25 +404,20 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 		// If widgets were created, study the paragraph structure
 		const allParagraphs = previewFrame.locator( 'p' );
 		const paragraphCount = await allParagraphs.count();
-		console.log( `STUDY RESULT: Found ${paragraphCount} paragraph elements` );
 
 		// Look for our specific text content
 		const textStringExists = await previewFrame.locator( 'text=Text string' ).count() > 0;
 		const anotherStringExists = await previewFrame.locator( 'text=Another string' ).count() > 0;
 		
-		console.log( `STUDY RESULT: "Text string" found: ${textStringExists}` );
-		console.log( `STUDY RESULT: "Another string" found: ${anotherStringExists}` );
 
 		if ( textStringExists ) {
 			const textStringParagraph = previewFrame.locator( 'p' ).filter({ hasText: 'Text string' }).first();
 			const textStringClass = await textStringParagraph.getAttribute( 'class' );
-			console.log( `STUDY RESULT: "Text string" paragraph class: "${textStringClass}"` );
 		}
 
 		if ( anotherStringExists ) {
 			const anotherStringParagraph = previewFrame.locator( 'p' ).filter({ hasText: 'Another string' }).first();
 			const anotherStringClass = await anotherStringParagraph.getAttribute( 'class' );
-			console.log( `STUDY RESULT: "Another string" paragraph class: "${anotherStringClass}"` );
 		}
 
 		// Verify the DOM structure understanding:

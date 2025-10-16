@@ -131,7 +131,6 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 				continue;
 			}
 			
-			// Debug: Log the API result to see what widgets were created
 
 			await page.goto( apiResult.edit_url );
 			editor = new EditorPage( page, wpAdmin.testInfo );

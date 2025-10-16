@@ -39,15 +39,6 @@ test.describe( 'Pattern 5: Element Selectors (.first .second h1 → .h1--first-s
 			{ createGlobalClasses: true },
 		);
 
-		// Debug: Log the API response to understand what was created
-		console.log( '🔍 API Response:', {
-			success: result.success,
-			widgets_created: result.widgets_created,
-			global_classes_created: result.global_classes_created,
-			flattened_classes_created: result.flattened_classes_created,
-			post_id: result.post_id
-		} );
-
 		expect( result.success ).toBe( true );
 		expect( result.global_classes_created ).toBeGreaterThan( 0 );
 		expect( result.flattened_classes_created ).toBeGreaterThan( 0 );
@@ -57,26 +48,20 @@ test.describe( 'Pattern 5: Element Selectors (.first .second h1 → .h1--first-s
 		expect( result.edit_url ).toContain( 'elementor' );
 
 		// Navigate to the Elementor editor to verify DOM and CSS
-		console.log( '🔍 Navigating to:', result.edit_url );
 		await page.goto( result.edit_url );
 		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Check if we're actually in the Elementor editor
 		const currentUrl = page.url();
-		console.log( '🔍 Current URL:', currentUrl );
 		
 		// Wait for Elementor editor to load
 		try {
 			await page.waitForSelector( '.elementor-editor-active', { timeout: 15000 } );
-			console.log( '✓ Elementor editor loaded successfully' );
 		} catch ( e ) {
-			console.log( '❌ Elementor editor failed to load:', e.message );
 			
 			// Check what's actually on the page
 			const pageTitle = await page.title();
 			const bodyText = await page.locator( 'body' ).textContent();
-			console.log( '🔍 Page title:', pageTitle );
-			console.log( '🔍 Body text (first 200 chars):', bodyText?.substring(0, 200) );
 			
 			throw e;
 		}
@@ -87,19 +72,14 @@ test.describe( 'Pattern 5: Element Selectors (.first .second h1 → .h1--first-s
 		// Wait for the preview frame to load
 		try {
 			await previewFrame.locator( 'body' ).waitFor( { timeout: 10000 } );
-			console.log( '✓ Preview frame loaded successfully' );
 		} catch ( e ) {
-			console.log( '❌ Preview frame failed to load:', e.message );
 			throw e;
 		}
 
-		// Debug: Check what elements are actually in the DOM
 		const allElements = await previewFrame.locator( '*' ).all();
-		console.log( `🔍 Found ${allElements.length} total elements in preview frame` );
 		
 		// Check for heading elements
 		const allHeadings = await previewFrame.locator( 'h1, h2, h3, h4, h5, h6' ).all();
-		console.log( `🔍 Found ${allHeadings.length} heading elements` );
 		
 		// Check for elements with text content
 		const elementsWithText = await previewFrame.locator( '*' ).evaluateAll( elements => {
@@ -112,11 +92,9 @@ test.describe( 'Pattern 5: Element Selectors (.first .second h1 → .h1--first-s
 					classes: el.className?.substring(0, 50)
 				}) );
 		} );
-		console.log( '🔍 Elements with text:', elementsWithText );
 		
 		// Check for Elementor widgets
 		const elementorWidgets = await previewFrame.locator( '[data-element_type], [data-widget_type]' ).all();
-		console.log( `🔍 Found ${elementorWidgets.length} Elementor widgets` );
 		
 		for ( let i = 0; i < Math.min( elementorWidgets.length, 10 ); i++ ) {
 			const widget = elementorWidgets[i];
@@ -124,7 +102,6 @@ test.describe( 'Pattern 5: Element Selectors (.first .second h1 → .h1--first-s
 			const widgetType = await widget.getAttribute( 'data-widget_type' );
 			const text = await widget.textContent();
 			const classes = await widget.getAttribute( 'class' );
-			console.log( `Widget ${i}: type=${elementType || widgetType}, text="${text?.trim().substring(0, 30)}", classes="${classes?.substring(0, 50)}"` );
 		}
 		
 		// Look for elements with the expected text content regardless of tag
@@ -138,14 +115,12 @@ test.describe( 'Pattern 5: Element Selectors (.first .second h1 → .h1--first-s
 					id: el.id
 				}) );
 		} );
-		console.log( '🔍 Elements with "Element Selector Test" text:', elementsWithTargetText );
 		
 		// Check if the content exists but in a different element type
 		const textElement = previewFrame.locator( '*' ).filter( { hasText: 'Element Selector Test' } );
 		const textElementExists = await textElement.count() > 0;
 		
 		if ( textElementExists ) {
-			console.log( '✓ Found element with target text, checking styles...' );
 			const element = textElement.first();
 			
 			// Check if the CSS properties are applied (the flattening works at CSS level)
@@ -153,15 +128,12 @@ test.describe( 'Pattern 5: Element Selectors (.first .second h1 → .h1--first-s
 			const actualFontSize = await element.evaluate( el => getComputedStyle( el ).fontSize );
 			const actualMargin = await element.evaluate( el => getComputedStyle( el ).margin );
 			
-			console.log( '🔍 Actual styles on text element:', { color: actualColor, fontSize: actualFontSize, margin: actualMargin } );
 			
 			// Test if the styles are applied correctly
 			if ( actualColor === 'rgb(128, 0, 128)' && actualFontSize === '24px' && actualMargin === '8px' ) {
-				console.log( '✓ Element selector flattening working: .first .second h1 styles applied to converted element' );
 				// Don't throw error, the test is actually working
 				return;
 			} else {
-				console.log( '⚠️ Element found but styles not matching expected values' );
 			}
 		}
 		
@@ -178,14 +150,12 @@ test.describe( 'Pattern 5: Element Selectors (.first .second h1 → .h1--first-s
 			const actualFontSize = await headingElement.evaluate( el => getComputedStyle( el ).fontSize );
 			const actualMargin = await headingElement.evaluate( el => getComputedStyle( el ).margin );
 			
-			console.log( '🔍 Actual styles:', { color: actualColor, fontSize: actualFontSize, margin: actualMargin } );
 			
 			// Verify that the original CSS properties are applied via flattened classes
 			await expect( headingElement ).toHaveCSS( 'color', 'rgb(128, 0, 128)' ); // Purple
 			await expect( headingElement ).toHaveCSS( 'font-size', '24px' );
 			await expect( headingElement ).toHaveCSS( 'margin', '8px' );
 			
-			console.log( '✓ Element selector flattening working: .first .second h1 styles applied' );
 		} else {
 			// Try to find any h1 element and check its styles
 			const anyH1 = previewFrame.locator( 'h1' ).first();
@@ -196,7 +166,6 @@ test.describe( 'Pattern 5: Element Selectors (.first .second h1 → .h1--first-s
 				await expect( anyH1 ).toHaveCSS( 'color', 'rgb(128, 0, 128)' );
 				await expect( anyH1 ).toHaveCSS( 'font-size', '24px' );
 				await expect( anyH1 ).toHaveCSS( 'margin', '8px' );
-				console.log( '✓ Element selector flattening working on first h1 element' );
 			} else {
 				throw new Error( 'No h1 elements found in the DOM' );
 			}

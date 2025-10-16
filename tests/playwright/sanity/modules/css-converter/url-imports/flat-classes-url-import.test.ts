@@ -450,7 +450,6 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			
 			
 			
-			// Debug: Check .elementor-element that contain h2 with specific text
 			const bannerSections = elementorFrame.locator( '.elementor-element' ).filter( { has: elementorFrame.locator( 'h2' ).filter( { hasText: 'Ready to Get Started?' } ) } );
 			const bannerSectionCount = await bannerSections.count();
 			

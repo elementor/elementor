@@ -53,13 +53,6 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
 
-		console.log( 'API Result:', {
-			success: apiResult.success,
-			post_id: apiResult.post_id,
-			widgets_created: apiResult.widgets_created,
-			global_classes_created: apiResult.global_classes_created
-		} );
-
 		// Check if API call failed due to backend issues
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
@@ -131,7 +124,6 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 					return window.getComputedStyle( el ).letterSpacing;
 				} );
 
-				console.log( `${ testCase.name }: expected ${ testCase.expected }, actual ${ actualValue }` );
 
 				// Verify the letter-spacing CSS property
 				await expect( element ).toHaveCSS( testCase.property, testCase.expected );
@@ -159,7 +151,6 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 						return window.getComputedStyle( el ).letterSpacing;
 					} );
 
-					console.log( `Frontend ${ testCase.name }: expected ${ testCase.expected }, actual ${ actualValue }` );
 
 					// Verify the letter-spacing CSS property on frontend
 					await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );

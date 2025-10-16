@@ -34,9 +34,6 @@ test.describe('Reset Styles Handling Tests', () => {
 		cssFile1Url = `${baseUrl}/wp-content/uploads/test-fixtures/reset-normalize.css`;
 		cssFile2Url = `${baseUrl}/wp-content/uploads/test-fixtures/reset-custom.css`;
 		
-		console.log('Reset test page URL:', testPageUrl);
-		console.log('Normalize CSS URL:', cssFile1Url);
-		console.log('Custom reset CSS URL:', cssFile2Url);
 	});
 
 	test.afterAll(async ({ browser, apiRequests }, testInfo) => {
@@ -72,11 +69,6 @@ test.describe('Reset Styles Handling Tests', () => {
 		expect(result.widgets_created).toBeGreaterThan(0);
 
 		// Log conversion statistics
-		console.log('Reset Styles Conversion Results:');
-		console.log(`- Widgets created: ${result.widgets_created}`);
-		console.log(`- Global classes created: ${result.global_classes_created}`);
-		console.log(`- Variables created: ${result.variables_created}`);
-		console.log(`- Post ID: ${result.post_id}`);
 
 		// Expect multiple widgets to be created from elements with reset styles
 		expect(result.widgets_created).toBeGreaterThanOrEqual(15);
@@ -191,7 +183,6 @@ test.describe('Reset Styles Handling Tests', () => {
 		
 		// Check conversion log for body style processing
 		if (result.conversion_log) {
-			console.log('Body styles processing logged');
 		}
 	});
 
@@ -221,7 +212,6 @@ test.describe('Reset Styles Handling Tests', () => {
 			const widgetTypes = result.conversion_log.mapping_stats.widget_types;
 			if (widgetTypes && widgetTypes['e-heading']) {
 				expect(widgetTypes['e-heading']).toBeGreaterThanOrEqual(6);
-				console.log(`Created ${widgetTypes['e-heading']} heading widgets with reset styles`);
 			}
 		}
 	});
@@ -249,7 +239,6 @@ test.describe('Reset Styles Handling Tests', () => {
 			const widgetTypes = result.conversion_log.mapping_stats.widget_types;
 			if (widgetTypes && widgetTypes['e-paragraph']) {
 				expect(widgetTypes['e-paragraph']).toBeGreaterThan(0);
-				console.log(`Created ${widgetTypes['e-paragraph']} paragraph widgets with reset styles`);
 			}
 		}
 	});
@@ -277,7 +266,6 @@ test.describe('Reset Styles Handling Tests', () => {
 			const widgetTypes = result.conversion_log.mapping_stats.widget_types;
 			if (widgetTypes && widgetTypes['e-link']) {
 				expect(widgetTypes['e-link']).toBeGreaterThan(0);
-				console.log(`Created ${widgetTypes['e-link']} link widgets with reset styles`);
 			}
 		}
 	});
@@ -324,7 +312,6 @@ test.describe('Reset Styles Handling Tests', () => {
 		expect(result.widgets_created).toBeGreaterThan(0);
 		
 		// Lists might be converted to various widget types depending on implementation
-		console.log('List elements processed with reset styles');
 	});
 
 	test('should handle table element resets', async ({ request }) => {
@@ -347,7 +334,6 @@ test.describe('Reset Styles Handling Tests', () => {
 		
 		expect(result.widgets_created).toBeGreaterThan(0);
 		
-		console.log('Table elements processed with reset styles');
 	});
 
 	test('should handle universal selector resets (* {})', async ({ request }) => {
@@ -370,7 +356,6 @@ test.describe('Reset Styles Handling Tests', () => {
 		
 		expect(result.widgets_created).toBeGreaterThan(0);
 		
-		console.log('Universal selector resets processed');
 	});
 
 	test('should prioritize inline styles over reset styles', async ({ request, page }) => {
@@ -398,7 +383,6 @@ test.describe('Reset Styles Handling Tests', () => {
 		if (result.conversion_log && result.conversion_log.css_processing) {
 			const cssProcessing = result.conversion_log.css_processing;
 			expect(cssProcessing.by_source.inline).toBeGreaterThan(0);
-			console.log(`Processed ${cssProcessing.by_source.inline} inline styles with proper priority over resets`);
 		}
 
 		// Navigate to verify inline styles override reset styles
@@ -465,7 +449,6 @@ test.describe('Reset Styles Handling Tests', () => {
 		expect(result.widgets_created).toBeGreaterThan(0);
 		
 		// The converter should handle conflicts using CSS cascade rules
-		console.log('Multiple reset sources processed with conflict resolution');
 	});
 
 	test('should handle normalize.css vs reset.css patterns', async ({ request, page }) => {
@@ -503,13 +486,7 @@ test.describe('Reset Styles Handling Tests', () => {
 		expect(normalizeResult.widgets_created).toBeGreaterThan(0);
 		expect(resetResult.widgets_created).toBeGreaterThan(0);
 		
-		console.log('Normalize.css approach:');
-		console.log(`- Widgets: ${normalizeResult.widgets_created}`);
-		console.log(`- Global classes: ${normalizeResult.global_classes_created}`);
 		
-		console.log('Reset.css approach:');
-		console.log(`- Widgets: ${resetResult.widgets_created}`);
-		console.log(`- Global classes: ${resetResult.global_classes_created}`);
 		
 		// Different reset approaches may produce different numbers of widgets/classes
 		// Both should be valid but may have different optimization characteristics
@@ -540,7 +517,6 @@ test.describe('Reset Styles Handling Tests', () => {
 		// - Normalize: Fix browser inconsistencies, keep useful defaults
 		// - Reset: Zero everything out, build from scratch
 		
-		console.log('Both normalize.css and reset.css approaches successfully processed');
 	});
 
 	test('should handle nested elements with reset inheritance', async ({ request }) => {
@@ -564,7 +540,6 @@ test.describe('Reset Styles Handling Tests', () => {
 		expect(result.widgets_created).toBeGreaterThan(0);
 		
 		// Verify that nested elements were processed correctly
-		console.log('Nested elements with reset inheritance processed successfully');
 	});
 
 	test('should provide comprehensive conversion logging for reset styles', async ({ request }) => {
@@ -598,12 +573,6 @@ test.describe('Reset Styles Handling Tests', () => {
 			expect(result.conversion_log.widget_creation).toBeTruthy();
 			expect(result.conversion_log.widget_creation.widgets_created).toBeGreaterThan(0);
 			
-			console.log('Reset Styles Conversion Summary:');
-			console.log(`- Total CSS styles processed: ${result.conversion_log.css_processing.total_styles}`);
-			console.log(`- Total elements mapped: ${result.conversion_log.mapping_stats.total_elements}`);
-			console.log(`- Widget types created:`, result.conversion_log.mapping_stats.widget_types);
-			console.log(`- CSS properties by type:`, result.conversion_log.css_processing.by_property);
-			console.log(`- Processing time: ${result.conversion_log.total_time}s`);
 		}
 		
 		// Verify no critical errors occurred
