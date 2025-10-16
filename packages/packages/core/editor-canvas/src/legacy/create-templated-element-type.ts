@@ -30,7 +30,7 @@ export function createTemplatedElementType( {
 		}
 
 		getView() {
-			return createTemplatedElementViewClassDeclaration( {
+			return createTemplatedElementView( {
 				type,
 				renderer,
 				element,
@@ -48,7 +48,7 @@ export function canBeTemplated( element: Partial< TemplatedElementConfig > ): el
 	);
 }
 
-export function createTemplatedElementViewClassDeclaration( {
+export function createTemplatedElementView( {
 	type,
 	renderer,
 	element,
@@ -76,6 +76,8 @@ export function createTemplatedElementViewClassDeclaration( {
 		constructor( ...args: unknown[] ) {
 			super( ...args );
 
+			// This override blocks the regular usage of `_renderChildren` method,
+			// and assigns it to another method which will be called later in the `_renderTemplate` method.
 			this.__renderChildren = this._renderChildren;
 
 			this._renderChildren = () => {};
@@ -106,7 +108,7 @@ export function createTemplatedElementViewClassDeclaration( {
 					} );
 				} )
 				.then( ( settings ) => {
-					return this.onSettingsResolve( settings );
+					return this.afterSettingsResolve( settings );
 				} )
 				.then( async ( settings ) => {
 					// Same as the Backend.
@@ -127,7 +129,7 @@ export function createTemplatedElementViewClassDeclaration( {
 			this.#afterRenderTemplate();
 		}
 
-		onSettingsResolve( settings: { [ key: string ]: unknown } ) {
+		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
 			return settings;
 		}
 

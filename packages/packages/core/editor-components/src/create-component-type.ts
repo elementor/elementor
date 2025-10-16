@@ -1,6 +1,6 @@
 import {
 	type CreateTemplatedElementTypeOptions,
-	createTemplatedElementViewClassDeclaration,
+	createTemplatedElementView,
 	type ElementType,
 	type ElementView,
 	type LegacyWindow,
@@ -20,16 +20,16 @@ export function createComponentType( options: CreateTemplatedElementTypeOptions 
 		}
 
 		getView() {
-			return createComponentViewClassDeclaration( options );
+			return createComponentView( options );
 		}
 	};
 }
 
-export function createComponentViewClassDeclaration( options: CreateTemplatedElementTypeOptions ): typeof ElementView {
-	return class extends createTemplatedElementViewClassDeclaration( options ) {
+function createComponentView( options: CreateTemplatedElementTypeOptions ): typeof ElementView {
+	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow;
 
-		onSettingsResolve( settings: { [ key: string ]: unknown } ) {
+		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
 			if ( settings.component ) {
 				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection( settings.component );
 

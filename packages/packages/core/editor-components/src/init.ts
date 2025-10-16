@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { componentIdTransformer } from './component-id-transformer';
 import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
-import { createComponentType, TYPE } from './inject-element-view';
+import { createComponentType, TYPE } from './create-component-type';
 import { PopulateStore } from './populate-store';
 import { componentsStylesProvider } from './store/components-styles-provider';
 import { loadComponentsStyles } from './store/load-components-styles';

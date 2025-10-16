@@ -8,7 +8,7 @@ export { createPropsResolver, type PropsResolver } from './renderers/create-prop
 export { startDragElementFromPanel, endDragElementFromPanel } from './sync/drag-element-from-panel';
 export { registerElementType } from './legacy/init-legacy-views';
 export {
-	createTemplatedElementViewClassDeclaration,
+	createTemplatedElementView,
 	type CreateTemplatedElementTypeOptions,
 } from './legacy/create-templated-element-type';
 export * from './legacy/types';
