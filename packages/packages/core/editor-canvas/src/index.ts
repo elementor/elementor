@@ -7,7 +7,9 @@ export { createTransformersRegistry } from './transformers/create-transformers-r
 export { createPropsResolver, type PropsResolver } from './renderers/create-props-resolver';
 export { startDragElementFromPanel, endDragElementFromPanel } from './sync/drag-element-from-panel';
 export { registerElementType } from './legacy/init-legacy-views';
-export { createElementViewClassDeclaration } from './legacy/create-element-type';
+export {
+	createTemplatedElementView,
+	type CreateTemplatedElementTypeOptions,
+} from './legacy/create-templated-element-type';
 export { getCanvasIframeDocument } from './sync/get-canvas-iframe-document';
-
 export * from './legacy/types';
