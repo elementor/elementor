@@ -160,6 +160,17 @@ export const messagesContent = {
 			</>
 		),
 	},
+	'insufficient-storage-quota': {
+		title: __( 'Couldn’t Export the Website Template', 'elementor' ),
+		text: (
+			<>
+				{ __( 'The export failed because it will pass the maximum Website Templates storage you have available. ', 'elementor' ) }
+				<Link href="https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/" >
+					{ __( 'Upgrade now', 'elementor' ) }
+				</Link>
+			</>
+		),
+	},
 };
 
 export function ProcessingErrorDialog( {
