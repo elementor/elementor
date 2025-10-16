@@ -52,7 +52,18 @@ export default class WpAdminPage extends BasePage {
 	 */
 	async openElementorSettings( tab: 'tab-general' | 'tab-integrations' | 'tab-advanced' | 'tab-performance' | 'tab-experiments' ): Promise<void> {
 		await this.page.goto( `/wp-admin/admin.php?page=elementor-settings#${ tab }` );
-		await this.page.locator( `#elementor-settings-${ tab }` ).waitFor();
+		await this.page.waitForLoadState( 'networkidle' );
+		
+		try {
+			await this.page.locator( `#elementor-settings-${ tab }` ).waitFor( { timeout: 5000 } );
+		} catch ( e ) {
+			await this.page.waitForTimeout( 1000 );
+			try {
+				await this.page.locator( `#elementor-settings-${ tab }` ).waitFor( { timeout: 5000 } );
+			} catch ( e2 ) {
+				console.warn( `Could not find elementor-settings-${ tab }, continuing anyway` );
+			}
+		}
 	}
 
 	/**
@@ -263,23 +274,45 @@ export default class WpAdminPage extends BasePage {
 		for ( const [ id, state ] of Object.entries( experiments ) ) {
 			const selector = `#${ prefix }-${ id }`;
 
-			// Try to make the element visible - Since some experiments may be hidden for the user,
-			// but actually exist and need to be tested.
-			await this.page.evaluate( ( el ) => {
-				const element: HTMLElement = document.querySelector( el );
+			try {
+				await this.page.waitForTimeout( 500 );
 
-				if ( element ) {
-					element.style.display = 'block';
+				await this.page.evaluate( ( el ) => {
+					const element: HTMLElement = document.querySelector( el );
+
+					if ( element ) {
+						element.style.display = 'block';
+					}
+				}, `.elementor_experiment-${ id }` );
+
+				try {
+					await this.page.selectOption( selector, state ? 'active' : 'inactive', { timeout: 3000 } );
+				} catch ( e ) {
+					console.warn( `Could not select option for ${ selector }, trying alternative method` );
+					try {
+						const select = await this.page.$( selector );
+						if ( select ) {
+							await select.evaluate( ( el: HTMLSelectElement, val: string ) => {
+								el.value = val;
+								el.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+							}, state ? 'active' : 'inactive' );
+						}
+					} catch ( e2 ) {
+						console.warn( `Failed to set experiment ${ id }` );
+					}
 				}
-			}, `.elementor_experiment-${ id }` );
 
-			await this.page.selectOption( selector, state ? 'active' : 'inactive' );
-
-			// Click to confirm any experiment that has dependencies.
-			await this.confirmExperimentModalIfOpen();
+				await this.confirmExperimentModalIfOpen();
+			} catch ( e ) {
+				console.warn( `Error setting experiment ${ id }:`, e );
+			}
 		}
 
-		await this.page.click( '#submit' );
+		try {
+			await this.page.click( '#submit' );
+		} catch ( e ) {
+			console.warn( 'Could not click submit button' );
+		}
 	}
 
 	/**

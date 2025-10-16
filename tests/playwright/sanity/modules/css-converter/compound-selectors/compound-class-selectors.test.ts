@@ -13,6 +13,7 @@ test.describe( 'Compound Class Selectors @compound-selectors', () => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
+		// Enable atomic widgets experiments to match manual testing environment
 		await wpAdminPage.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
