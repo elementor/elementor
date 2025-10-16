@@ -443,3 +443,490 @@ This implementation mirrors the **@1-AVOID-CLASS-DUPLICATION.md** pattern:
 ✓ Same deduplication logic (maximize reuse)
 
 The only difference: Variables compare by **value**, classes compare by **styling properties**.
+
+---
+
+## 12. Implementation Pseudocode
+
+### Core Algorithm
+
+```
+function extract_and_rename_variables(css_rules):
+  root_variables = {}
+  all_variables = {}
+  variable_mapping = {}
+  
+  for each rule in css_rules:
+    if rule.selector == ":root":
+      for each declaration in rule.declarations:
+        if is_css_variable(declaration):
+          root_variables[declaration.name] = declaration.value
+          all_variables[declaration.name] = declaration.value
+  
+  for each rule in css_rules:
+    if rule.selector != ":root":
+      for each declaration in rule.declarations:
+        if is_css_variable(declaration):
+          var_name = declaration.name
+          var_value = normalize(declaration.value)
+          
+          if var_name not in root_variables:
+            all_variables[var_name] = var_value
+            variable_mapping[rule.selector + " " + var_name] = var_name
+          else:
+            root_value = normalize(root_variables[var_name])
+            
+            if root_value == var_value:
+              variable_mapping[rule.selector + " " + var_name] = var_name
+            else:
+              new_name = find_next_available_suffix(var_name, all_variables)
+              all_variables[new_name] = var_value
+              variable_mapping[rule.selector + " " + var_name] = new_name
+  
+  update_var_references_in_rules(css_rules, variable_mapping)
+  
+  return {
+    "variables": all_variables,
+    "mapping": variable_mapping
+  }
+```
+
+### Helper: Find Next Available Suffix
+
+```
+function find_next_available_suffix(base_name, existing_variables):
+  suffix = 1
+  
+  while true:
+    candidate = base_name + "-" + suffix
+    if candidate not in existing_variables:
+      return candidate
+    suffix++
+```
+
+### Helper: Update Variable References
+
+```
+function update_var_references_in_rules(css_rules, variable_mapping):
+  for each rule in css_rules:
+    scope_identifier = rule.selector
+    
+    for each declaration in rule.declarations:
+      for each var_reference in declaration.value:
+        if var_reference matches pattern var(--variable-name):
+          var_name = extract_variable_name(var_reference)
+          scope_key = scope_identifier + " " + var_name
+          
+          if scope_key in variable_mapping:
+            new_var_name = variable_mapping[scope_key]
+            declaration.value = declaration.value.replace(
+              var_reference,
+              "var(" + new_var_name + ")"
+            )
+```
+
+---
+
+## 13. Real-World Example: Complex Theme System
+
+### Scenario
+A design system with multiple theme variants, each with conditional variables:
+
+**Input CSS:**
+```css
+:root {
+  --primary: #007bff;
+  --secondary: #6c757d;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #0d6efd;
+    --secondary: #adb5bd;
+  }
+}
+
+.theme-brand {
+  --primary: #ff6b35;
+  --secondary: #ffd700;
+  --spacing-xs: 2px;
+}
+
+.theme-corporate {
+  --primary: #1a472a;
+  --secondary: #ffffff;
+  --spacing-xs: 6px;
+}
+
+.card {
+  --spacing-md: 20px;
+}
+
+@supports (display: grid) {
+  .layout {
+    --spacing-md: 12px;
+  }
+}
+```
+
+### Processing Steps
+
+**Step 1: Extract base :root (not in media query)**
+```json
+{
+  "--primary": "#007bff",
+  "--secondary": "#6c757d",
+  "--spacing-xs": "4px",
+  "--spacing-sm": "8px",
+  "--spacing-md": "16px"
+}
+```
+
+**Step 2: Process media query :root**
+```
+@media dark mode --primary: #0d6efd (different) → --primary-1
+@media dark mode --secondary: #adb5bd (different) → --secondary-1
+```
+
+**Step 3: Process .theme-brand**
+```
+--primary: #ff6b35 (different from #007bff) → --primary-2
+--secondary: #ffd700 (different from #6c757d) → --secondary-2
+--spacing-xs: 2px (different from 4px) → --spacing-xs-1
+```
+
+**Step 4: Process .theme-corporate**
+```
+--primary: #1a472a (different from all previous) → --primary-3
+--secondary: #ffffff (different from all previous) → --secondary-3
+--spacing-xs: 6px (different from all previous) → --spacing-xs-2
+```
+
+**Step 5: Process .card**
+```
+--spacing-md: 20px (different from 16px) → --spacing-md-1
+```
+
+**Step 6: Process @supports .layout**
+```
+--spacing-md: 12px (different from 16px and 20px) → --spacing-md-2
+```
+
+### Final Output
+
+```json
+{
+  "variables": {
+    "--primary": "#007bff",
+    "--primary-1": "#0d6efd",
+    "--primary-2": "#ff6b35",
+    "--primary-3": "#1a472a",
+    "--secondary": "#6c757d",
+    "--secondary-1": "#adb5bd",
+    "--secondary-2": "#ffd700",
+    "--secondary-3": "#ffffff",
+    "--spacing-xs": "4px",
+    "--spacing-xs-1": "2px",
+    "--spacing-xs-2": "6px",
+    "--spacing-sm": "8px",
+    "--spacing-md": "16px",
+    "--spacing-md-1": "20px",
+    "--spacing-md-2": "12px"
+  },
+  "variable_mapping": {
+    ":root --primary": "--primary",
+    "@media dark --primary": "--primary-1",
+    ".theme-brand --primary": "--primary-2",
+    ".theme-corporate --primary": "--primary-3",
+    ":root --secondary": "--secondary",
+    "@media dark --secondary": "--secondary-1",
+    ".theme-brand --secondary": "--secondary-2",
+    ".theme-corporate --secondary": "--secondary-3",
+    ":root --spacing-xs": "--spacing-xs",
+    ".theme-brand --spacing-xs": "--spacing-xs-1",
+    ".theme-corporate --spacing-xs": "--spacing-xs-2",
+    ":root --spacing-sm": "--spacing-sm",
+    ":root --spacing-md": "--spacing-md",
+    ".card --spacing-md": "--spacing-md-1",
+    "@supports --spacing-md": "--spacing-md-2"
+  }
+}
+```
+
+---
+
+## 14. Common Pitfalls & Solutions
+
+### Pitfall 1: Not Normalizing Values
+
+**Problem:**
+```css
+:root {
+  --color: #0077ff;  /* 7-digit hex */
+}
+
+.theme {
+  --color: #007fff;  /* 6-digit equivalent */
+}
+```
+
+**Wrong**: Treat as different values → create `--color-1`
+**Correct**: Normalize both to RGB/HSL, compare, reuse `--color`
+
+**Solution**: Always normalize values to canonical form:
+- `#0077ff` → `rgb(0, 119, 255)`
+- `#007fff` → `rgb(0, 127, 255)` (actually different, create suffix)
+
+### Pitfall 2: Whitespace Sensitivity
+
+**Problem:**
+```css
+--spacing: 16px;
+--spacing: 16 px;  /* Extra space */
+```
+
+**Wrong**: Treat as different
+**Correct**: Normalize whitespace before comparison
+
+**Solution**: Strip and normalize all whitespace:
+```
+value.trim().replace(/\s+/g, ' ')
+```
+
+### Pitfall 3: calc() Expressions Not Resolved
+
+**Problem:**
+```css
+:root {
+  --unit: 1px;
+  --spacing: calc(16 * var(--unit));
+}
+
+.component {
+  --spacing: 16px;
+}
+```
+
+**Wrong**: Compare `calc(...)` literally against `16px` (different)
+**Correct**: Only compare when fully resolvable
+
+**Solution**: Attempt resolution; if failed, treat as fundamentally different:
+```
+if both_values_resolvable:
+  compare_computed_values()
+else:
+  treat_as_different()
+```
+
+### Pitfall 4: Not Updating var() References
+
+**Problem:**
+```css
+.theme {
+  --color: #ff0000;
+  background: var(--color);  /* Still references old name! */
+}
+```
+
+After renaming to `--color-1`, this becomes broken.
+
+**Solution**: Always update var() references when renaming:
+```css
+.theme {
+  --color-1: #ff0000;
+  background: var(--color-1);  /* Updated */
+}
+```
+
+### Pitfall 5: Ignoring Custom Properties in Shorthand
+
+**Problem:**
+```css
+--border: 1px solid var(--border-color);
+```
+
+Custom properties inside shorthand functions are missed.
+
+**Solution**: Parse all declaration values recursively for var() calls.
+
+### Pitfall 6: Scope Precedence Not Considered
+
+**Problem:**
+```css
+:root {
+  --size: 16px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --size: 14px;
+  }
+}
+
+.widget {
+  --size: 12px;
+}
+```
+
+Unclear which takes precedence without considering CSS specificity.
+
+**Solution**: Process by scope precedence order:
+1. Base :root (no media queries, no @supports)
+2. Media queries (treat as separate scope)
+3. Feature queries @supports
+4. Class/element selectors
+5. Nested selectors (deepest first)
+
+---
+
+## 15. Troubleshooting Guide
+
+### Issue: Suffix Numbers Not Sequential
+
+**Symptom**: Variables named `--color`, `--color-2`, `--color-5` (missing -1, -3, -4)
+
+**Cause**: Collision detection not properly checking for duplicates across scopes
+
+**Fix**: Ensure `find_next_available_suffix()` checks ALL existing variables:
+```
+for suffix = 1 to infinity:
+  if (base + "-" + suffix) not in all_variables:
+    return base + "-" + suffix
+```
+
+### Issue: Variable References Not Updated
+
+**Symptom**: CSS output has `var(--color)` but variable was renamed to `--color-1`
+
+**Cause**: Scope tracking not matching when updating references
+
+**Fix**: Ensure exact scope matching in variable_mapping:
+- Store scope as `"selector_selector_selector"` or unique identifier
+- Match exact scope when updating references
+- Handle compound selectors: `.a, .b` → process separately
+
+### Issue: Duplicate Variable Names in Output
+
+**Symptom**: Same variable name appears multiple times in extracted output
+
+**Cause**: Not deduplating identical name+value pairs
+
+**Fix**: Use Set/Map keyed by `name:value` before generating output:
+```
+variable_map = new Map()
+for each scope:
+  for each variable:
+    key = variable.name + ":" + normalize(variable.value)
+    if not in map:
+      map[key] = find_available_name(variable.name)
+```
+
+### Issue: Media Query Variables Not Handled
+
+**Symptom**: Variables inside `@media` blocks ignored or causing conflicts
+
+**Cause**: Media query scope not recognized as separate from global :root
+
+**Fix**: Treat media query-scoped :root as distinct:
+```
+@media (max-width: 768px) {
+  :root {
+    --size: 14px;
+  }
+}
+```
+Scope identifier: `"@media (max-width: 768px) :root"` (not just `":root"`)
+
+### Issue: Performance Degradation on Large Stylesheets
+
+**Symptom**: Extraction taking >1 second on 50KB+ CSS
+
+**Cause**: Inefficient loop nesting or repeated string operations
+
+**Fix**: Use hash maps for O(1) lookups:
+```
+// DON'T: Loop through all variables for each new variable
+for each new_var:
+  for each existing_var:
+    if new_var.name == existing_var.name:
+      ...
+
+// DO: Use Map for O(1) lookup
+variable_map[variable.name] = existing_var
+```
+
+---
+
+## 16. Implementation Checklist
+
+Use this checklist when implementing nested variable extraction:
+
+### Phase 1: Basic Infrastructure
+- [ ] Parse CSS rules and extract declarations
+- [ ] Identify CSS variables (starts with `--`)
+- [ ] Create data structure for storing variables (Map/Object)
+- [ ] Implement scope identifier generation (selector string)
+
+### Phase 2: Root Variables
+- [ ] Locate `:root` selector
+- [ ] Extract all variables from `:root` (no media queries)
+- [ ] Store base variables in map
+- [ ] Normalize values (whitespace, color formats)
+
+### Phase 3: Scope Detection
+- [ ] Scan all non-:root selectors
+- [ ] Identify variables in each scope
+- [ ] Handle media queries as separate scopes
+- [ ] Handle @supports as separate scopes
+- [ ] Handle compound selectors (`.a, .b`)
+
+### Phase 4: Comparison & Deduplication
+- [ ] Implement value comparison (normalize first)
+- [ ] Check if variable name already exists
+- [ ] Compare values if name matches
+- [ ] Decide: reuse or create suffix
+
+### Phase 5: Suffix Management
+- [ ] Implement `find_next_available_suffix()`
+- [ ] Handle collision detection
+- [ ] Generate unique suffix numbers
+- [ ] Track all used suffixes for each base name
+
+### Phase 6: Reference Updates
+- [ ] Find all `var(--name)` references
+- [ ] Update to new variable name after rename
+- [ ] Handle nested var() calls
+- [ ] Handle var() in shorthand properties
+
+### Phase 7: Output Generation
+- [ ] Compile final variables map
+- [ ] Generate variable_mapping (scope → final name)
+- [ ] Generate scope_references (variable → scopes)
+- [ ] Format as JSON
+
+### Phase 8: Validation
+- [ ] Check for duplicate variable names
+- [ ] Verify all references updated
+- [ ] Test with complex stylesheets
+- [ ] Verify performance on large CSS
+- [ ] Test edge cases (media queries, keyframes, etc.)
+
+### Phase 9: Testing
+- [ ] Unit tests for each helper function
+- [ ] Integration tests with real stylesheets
+- [ ] Edge case tests (nesting, collisions, etc.)
+- [ ] Performance benchmarks
+- [ ] Regression tests
+
+---
+
+## 17. Next Steps & Related Documentation
+
+- **@1-AVOID-CLASS-DUPLICATION.md**: Class deduplication pattern (mirror implementation)
+- **@2-CLASS-SELECTOR-MAPPING.md**: How classes map to widget selectors
+- **@3-CSS-PROPERTY-MAPPING.md**: How CSS properties map to Elementor controls
+- **Integration Guide**: How to integrate variable extraction with class creation workflow
+- **API Documentation**: HTTP endpoint structure for variable extraction API

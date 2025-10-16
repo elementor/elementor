@@ -105,6 +105,12 @@ class CssParser {
 		return $variables;
 	}
 
+	public function extract_variables_with_nesting( ParsedCss $parsed ): array {
+		$raw_variables = [];
+		$this->extract_variables_with_scope_recursive( $parsed->get_document(), $raw_variables, '' );
+		return $raw_variables;
+	}
+
 	private function extract_variables_recursive( $css_node, &$variables ) {
 		if ( $css_node instanceof \Sabberworm\CSS\RuleSet\DeclarationBlock ) {
 			$this->process_declaration_block( $css_node, function( $selector_string, $css_node ) use ( &$variables ) {
@@ -127,6 +133,45 @@ class CssParser {
 			});
 		}
 		$this->process_node_contents_recursively( $css_node, 'extract_variables_recursive', $variables );
+	}
+
+	private function extract_variables_with_scope_recursive( $css_node, &$variables, string $scope_prefix ) {
+		if ( $css_node instanceof \Sabberworm\CSS\AtRuleBlockList ) {
+			$at_rule = $css_node->getAtRule();
+			$new_scope = trim( $scope_prefix . ' ' . $at_rule->__toString() );
+			$this->extract_variables_with_scope_recursive_contents( $css_node, $variables, $new_scope );
+		} elseif ( $css_node instanceof \Sabberworm\CSS\RuleSet\DeclarationBlock ) {
+			$this->process_declaration_block( $css_node, function( $selector_string, $css_node ) use ( &$variables, $scope_prefix ) {
+				$full_scope = trim( $scope_prefix . ' ' . $selector_string );
+				foreach ( $css_node->getRules() as $rule ) {
+					$property = $rule->getRule();
+					if ( $this->is_css_variable( $property ) ) {
+						$value = (string) $rule->getValue();
+						$var_key = $property . '::' . md5( $full_scope );
+						$variables[ $var_key ] = [
+							'name' => $property,
+							'value' => $value,
+							'scope' => $full_scope,
+							'original_block' => $css_node->render( \Sabberworm\CSS\OutputFormat::create() ),
+						];
+					}
+				}
+			});
+		}
+
+		if ( method_exists( $css_node, 'getContents' ) ) {
+			foreach ( $css_node->getContents() as $content ) {
+				$this->extract_variables_with_scope_recursive( $content, $variables, $scope_prefix );
+			}
+		}
+	}
+
+	private function extract_variables_with_scope_recursive_contents( $css_node, &$variables, string $scope ) {
+		if ( method_exists( $css_node, 'getContents' ) ) {
+			foreach ( $css_node->getContents() as $content ) {
+				$this->extract_variables_with_scope_recursive( $content, $variables, $scope );
+			}
+		}
 	}
 
 	private function process_node_contents_recursively( $css_node, $method_name, &$collection ) {
