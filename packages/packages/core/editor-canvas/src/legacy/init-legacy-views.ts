@@ -3,16 +3,23 @@ import { __privateListenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { createDomRenderer } from '../renderers/create-dom-renderer';
 import { createElementType } from './create-element-type';
-import { canBeTemplated, createTemplatedElementType } from './create-templated-element-type';
+import {
+	canBeTemplated,
+	createTemplatedElementType,
+	type CreateTemplatedElementTypeOptions,
+} from './create-templated-element-type';
 import type { ElementType, LegacyWindow } from './types';
 
 type ElementLegacyType = {
-	[ key: string ]: () => typeof ElementType;
+	[ key: string ]: ( options: CreateTemplatedElementTypeOptions ) => typeof ElementType;
 };
 export const elementsLegacyTypes: ElementLegacyType = {};
 
-export function registerElementType( type: string, componentClass: () => typeof ElementType ) {
-	elementsLegacyTypes[ type ] = componentClass;
+export function registerElementType(
+	type: string,
+	elementTypeGenerator: ElementLegacyType[ keyof ElementLegacyType ]
+) {
+	elementsLegacyTypes[ type ] = elementTypeGenerator;
 }
 
 export function initLegacyViews() {
@@ -27,15 +34,15 @@ export function initLegacyViews() {
 				return;
 			}
 
-			if ( elementsLegacyTypes[ type ] ) {
-				const registeredElementTypeClass = elementsLegacyTypes[ type ]();
-				legacyWindow.elementor.elementsManager.registerElementType( new registeredElementTypeClass() );
-				return;
-			}
+			let ElementType;
 
-			const ElementType = canBeTemplated( element )
-				? createTemplatedElementType( { type, renderer, element } )
-				: createElementType( type );
+			if ( !! elementsLegacyTypes[ type ] && canBeTemplated( element ) ) {
+				ElementType = elementsLegacyTypes[ type ]( { type, renderer, element } );
+			} else if ( canBeTemplated( element ) ) {
+				ElementType = createTemplatedElementType( { type, renderer, element } );
+			} else {
+				ElementType = createElementType( type );
+			}
 
 			legacyWindow.elementor.elementsManager.registerElementType( new ElementType() );
 		} );
