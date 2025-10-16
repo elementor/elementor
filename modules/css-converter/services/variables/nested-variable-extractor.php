@@ -63,10 +63,11 @@ class Nested_Variable_Extractor {
 
 		foreach ( $raw_variables as $var_name => $var_data ) {
 			$scope = $var_data['scope'] ?? '';
+			$actual_name = $var_data['name'] ?? '';
 
 			if ( $this->is_root_scope( $scope ) && ! $this->is_media_query_scope( $scope ) ) {
-				$root_vars[ $var_name ] = [
-					'name' => $var_name,
+				$root_vars[ $actual_name ] = [
+					'name' => $actual_name,
 					'value' => $var_data['value'] ?? '',
 					'scope' => $scope,
 					'original_block' => $var_data['original_block'] ?? '',
@@ -82,26 +83,27 @@ class Nested_Variable_Extractor {
 
 		foreach ( $raw_variables as $var_name => $var_data ) {
 			$scope = $var_data['scope'] ?? '';
+			$actual_name = $var_data['name'] ?? '';
 
 			if ( $this->is_root_scope( $scope ) && $this->is_media_query_scope( $scope ) ) {
-				if ( ! isset( $nested[ $var_name ] ) ) {
-					$nested[ $var_name ] = [];
+				if ( ! isset( $nested[ $actual_name ] ) ) {
+					$nested[ $actual_name ] = [];
 				}
 
 				$normalized_value = $this->value_normalizer->normalize( $var_data['value'] ?? '' );
-				$nested[ $var_name ][ $scope ] = [
+				$nested[ $actual_name ][ $scope ] = [
 					'scope' => $scope,
 					'value' => $var_data['value'] ?? '',
 					'normalized_value' => $normalized_value,
 					'original_block' => $var_data['original_block'] ?? '',
 				];
 			} elseif ( ! $this->is_root_scope( $scope ) ) {
-				if ( ! isset( $nested[ $var_name ] ) ) {
-					$nested[ $var_name ] = [];
+				if ( ! isset( $nested[ $actual_name ] ) ) {
+					$nested[ $actual_name ] = [];
 				}
 
 				$normalized_value = $this->value_normalizer->normalize( $var_data['value'] ?? '' );
-				$nested[ $var_name ][ $scope ] = [
+				$nested[ $actual_name ][ $scope ] = [
 					'scope' => $scope,
 					'value' => $var_data['value'] ?? '',
 					'normalized_value' => $normalized_value,

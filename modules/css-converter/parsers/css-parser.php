@@ -143,11 +143,13 @@ class CssParser {
 		} elseif ( $css_node instanceof \Sabberworm\CSS\RuleSet\DeclarationBlock ) {
 			$this->process_declaration_block( $css_node, function( $selector_string, $css_node ) use ( &$variables, $scope_prefix ) {
 				$full_scope = trim( $scope_prefix . ' ' . $selector_string );
+
 				foreach ( $css_node->getRules() as $rule ) {
 					$property = $rule->getRule();
 					if ( $this->is_css_variable( $property ) ) {
 						$value = (string) $rule->getValue();
 						$var_key = $property . '::' . md5( $full_scope );
+
 						$variables[ $var_key ] = [
 							'name' => $property,
 							'value' => $value,
@@ -190,6 +192,31 @@ class CssParser {
 
 	private function is_css_variable( string $property ): bool {
 		return 0 === strpos( $property, '--' );
+	}
+
+	private function process_declaration_block( $css_node, callable $callback ) {
+		if ( ! $css_node instanceof \Sabberworm\CSS\RuleSet\DeclarationBlock ) {
+			return;
+		}
+
+		$selectors = $css_node->getSelectors();
+		if ( ! $selectors ) {
+			return;
+		}
+
+		// getSelectors() returns an array of selector objects
+		if ( is_array( $selectors ) ) {
+			foreach ( $selectors as $selector ) {
+				$selector_string = $selector->__toString();
+				$callback( $selector_string, $css_node );
+			}
+		} else {
+			// If it's a SelectorList object, get its selectors
+			foreach ( $selectors->getSelectors() as $selector ) {
+				$selector_string = $selector->__toString();
+				$callback( $selector_string, $css_node );
+			}
+		}
 	}
 
 	public function extract_classes( ParsedCss $parsed ): array {

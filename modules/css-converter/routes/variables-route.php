@@ -12,6 +12,7 @@ use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Plugin;
 use WP_REST_Request;
 use WP_REST_Response;
+use Elementor\Modules\CssConverter\Services\Variables\Css_Value_Normalizer;
 
 class Variables_Route {
 	private $parser;
@@ -120,7 +121,16 @@ class Variables_Route {
 
 		try {
 			$parsed = $parser->parse( $css );
-			$raw = $parser->extract_variables( $parsed );
+
+			try {
+				$scoped_variables = $parser->extract_variables_with_nesting( $parsed );
+			} catch ( \Throwable $e ) {
+				error_log( '!!! EXTRACTION ERROR: ' . $e->getMessage() );
+				error_log( $e->getTraceAsString() );
+				$scoped_variables = [];
+			}
+
+			$raw = $this->extract_and_rename_nested_variables( $scoped_variables );
 		} catch ( CssParseException $e ) {
 			$fallback = $this->fallback_extract_css_variables( $css );
 			if ( empty( $fallback ) ) {
@@ -311,7 +321,7 @@ class Variables_Route {
 		$existing = isset( $db_record['data'] ) && is_array( $db_record['data'] ) ? $db_record['data'] : [];
 		$label_to_id = [];
 		$label_to_value = [];
-		
+
 		foreach ( $existing as $id => $item ) {
 			if ( isset( $item['deleted'] ) && $item['deleted'] ) {
 				continue;
@@ -350,7 +360,7 @@ class Variables_Route {
 			}
 
 			$lower_label = strtolower( $label );
-			
+
 			try {
 				if ( 'update' === $update_mode ) {
 					if ( isset( $label_to_id[ $lower_label ] ) ) {
@@ -376,7 +386,7 @@ class Variables_Route {
 						$label_to_id,
 						$label_to_value
 					);
-					
+
 					if ( 'reused' === $result['action'] ) {
 						$reused_variables[] = [
 							'original_name' => $name,
@@ -385,12 +395,12 @@ class Variables_Route {
 						];
 						++$reused;
 					} elseif ( 'created' === $result['action'] ) {
-						$created++;
+						++$created;
 						$label_to_id[ strtolower( $result['label'] ) ] = $result['id'];
 						$label_to_value[ strtolower( $result['label'] ) ] = $value;
 					}
 				}
-				
+
 				if ( 'update' !== $update_mode || ! isset( $label_to_id[ $lower_label ] ) ) {
 					$db_record = $repository->load();
 					$existing = isset( $db_record['data'] ) && is_array( $db_record['data'] ) ? $db_record['data'] : [];
@@ -439,7 +449,7 @@ class Variables_Route {
 
 	private function find_or_create_variable_with_suffix( $repository, string $base_label, string $value, string $type, array &$label_to_id, array &$label_to_value ): array {
 		$variants = $this->get_all_variable_variants( $base_label, $label_to_id, $label_to_value );
-		
+
 		foreach ( $variants as $variant_label => $variant_value ) {
 			if ( $variant_value === $value ) {
 				return [
@@ -452,7 +462,7 @@ class Variables_Route {
 
 		$next_suffix = $this->find_next_variable_suffix( $base_label, array_keys( $variants ) );
 		$new_label = $this->apply_variable_suffix( $base_label, $next_suffix );
-		
+
 		$created_id = $repository->create( [
 			'type' => $type,
 			'label' => $new_label,
@@ -554,5 +564,79 @@ class Variables_Route {
 
 	private function format_variable_label( string $css_var_name ): string {
 		return ltrim( $css_var_name, '-' );
+	}
+
+	private function extract_and_rename_nested_variables( array $scoped_variables ): array {
+		$by_name = [];
+
+		foreach ( $scoped_variables as $var_data ) {
+			$name = $var_data['name'] ?? '';
+			if ( '' === $name ) {
+				continue;
+			}
+
+			if ( ! isset( $by_name[ $name ] ) ) {
+				$by_name[ $name ] = [];
+			}
+
+			$by_name[ $name ][] = $var_data;
+		}
+
+		$result = [];
+		$value_normalizer = new Css_Value_Normalizer();
+		$all_existing_names = array_keys( $by_name );
+
+		foreach ( $by_name as $var_name => $instances ) {
+			$value_to_suffix = [];
+			$suffix_counter = 0;
+
+			foreach ( $instances as $instance ) {
+				$value = $instance['value'] ?? '';
+				$normalized = $value_normalizer->normalize( $value );
+
+				if ( ! isset( $value_to_suffix[ $normalized ] ) ) {
+					$value_to_suffix[ $normalized ] = $suffix_counter;
+					++$suffix_counter;
+				}
+			}
+
+			foreach ( $value_to_suffix as $normalized => $suffix ) {
+				$final_name = 0 === $suffix ? $var_name : $var_name . '-' . $suffix;
+
+				if ( isset( $result[ $final_name ] ) ) {
+					$collision_suffix = $suffix + 1;
+					while ( isset( $result[ $var_name . '-' . $collision_suffix ] ) || in_array( $var_name . '-' . $collision_suffix, $all_existing_names, true ) ) {
+						++$collision_suffix;
+					}
+					$final_name = $var_name . '-' . $collision_suffix;
+				} elseif ( 0 !== $suffix && in_array( $final_name, $all_existing_names, true ) ) {
+					$collision_suffix = $suffix + 1;
+					while ( isset( $result[ $var_name . '-' . $collision_suffix ] ) || in_array( $var_name . '-' . $collision_suffix, $all_existing_names, true ) ) {
+						++$collision_suffix;
+					}
+					$final_name = $var_name . '-' . $collision_suffix;
+				}
+
+				$value_entry = null;
+				foreach ( $instances as $instance ) {
+					$test_normalized = $value_normalizer->normalize( $instance['value'] ?? '' );
+					if ( $test_normalized === $normalized ) {
+						$value_entry = $instance;
+						break;
+					}
+				}
+
+				if ( $value_entry ) {
+					$result[ $final_name ] = [
+						'name' => $final_name,
+						'value' => $value_entry['value'] ?? '',
+						'scope' => $value_entry['scope'] ?? '',
+						'original_block' => $value_entry['original_block'] ?? null,
+					];
+				}
+			}
+		}
+
+		return array_values( $result );
 	}
 }
