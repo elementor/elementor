@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\Render_Context;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -18,7 +19,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 	protected $version = '0.0';
 	protected $styles = [];
 	protected $editor_settings = [];
-	protected $context_filter_stack = [];
 
 
 	public function __construct( $data = [], $args = null ) {
@@ -73,7 +73,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return [];
 	}
 
-	protected function define_children_context() {
+	protected function define_render_context(): array {
 		return [];
 	}
 
@@ -149,43 +149,21 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 	public function print_content() {
-		$filter = function( $contexts ) {
-			$element_context = $this->define_children_context();
+		$element_context = $this->define_render_context();
 
-			if ( ! empty( $element_context ) ) {
-				if ( ! isset( $contexts[ $this->get_type() ] ) ) {
-					$contexts[ $this->get_type() ] = [];
-				}
-				$contexts[ $this->get_type() ][] = $element_context;
-			}
-
-			return $contexts;
-		};
-
-		$this->context_filter_stack[] = $filter;
-		add_filter( 'elementor/atomic/contexts', $filter );
+		if ( ! empty( $element_context ) ) {
+			Render_Context::push( static::class, $element_context );
+		}
 
 		parent::print_content();
 
-		remove_filter( 'elementor/atomic/contexts', array_pop( $this->context_filter_stack ) );
+		if ( ! empty( $element_context ) ) {
+			Render_Context::pop( static::class );
+		}
 	}
 
-
-	protected function get_context( $key = null ) {
-		$all_contexts = apply_filters( 'elementor/atomic/contexts', [] );
-
-		if ( ! isset( $all_contexts[ $key ] ) ) {
-			return [];
-		}
-
-		$type_contexts = $all_contexts[ $key ];
-
-		// Return the most recently added context (last in the array)
-		if ( is_array( $type_contexts ) && ! empty( $type_contexts ) ) {
-			return end( $type_contexts );
-		}
-
-		return [];
+	protected function get_context( string $key ) {
+		return Render_Context::get( $key );
 	}
 
 	/**

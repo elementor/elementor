@@ -143,8 +143,8 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		return [ 'elementor-tabs-handler' ];
 	}
 
-	protected function define_children_context() {
-		$default_active_tab = $this->get_atomic_settings()['default-active-tab'];
+	protected function define_render_context(): array {
+		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
 
 		return [
 			'activeTab' => $default_active_tab,
