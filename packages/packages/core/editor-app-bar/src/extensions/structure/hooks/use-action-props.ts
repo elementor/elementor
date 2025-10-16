@@ -2,10 +2,10 @@ import {
 	__privateRunCommand as runCommand,
 	__privateUseRouteStatus as useRouteStatus,
 } from '@elementor/editor-v1-adapters';
-import { StructureIconWithPopup } from './structure-icon-with-popup';
 import { __ } from '@wordpress/i18n';
 
 import { type ExtendedWindow, type ToggleActionProps } from '../../../types';
+import { StructureIconWithPopup } from './structure-icon-with-popup';
 
 export default function useActionProps(): ToggleActionProps {
 	const { isActive, isBlocked } = useRouteStatus( 'navigator' );

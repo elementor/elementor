@@ -14,7 +14,7 @@ export type ExtendedWindow = Window & {
 		};
 
 		ajax?: {
-			addRequest: ( action: string, options?: any ) => Promise< any >;
+			addRequest: ( action: string, options?: Record< string, unknown > ) => Promise< unknown >;
 		};
 
 		config: {
