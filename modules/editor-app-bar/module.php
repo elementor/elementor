@@ -37,16 +37,10 @@ class Module extends BaseModule {
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 
-	/**
-	 * Register AJAX actions for structure popup
-	 */
 	public function register_ajax_actions( $ajax ) {
 		$ajax->register_ajax_action( 'structure_popup_dismiss', [ $this, 'ajax_dismiss_structure_popup' ] );
 	}
 
-	/**
-	 * AJAX handler to dismiss structure popup
-	 */
 	public function ajax_dismiss_structure_popup( $data ) {
 		$user_id = get_current_user_id();
 
@@ -65,24 +59,16 @@ class Module extends BaseModule {
 	public function maybe_enqueue_structure_popup(): void {
 		$user_id = get_current_user_id();
 
-		if ( ! $user_id ) {
-			return;
-		}
-
-		if ( ! $this->is_existing_user_upgraded_to_version( self::STRUCTURE_POPUP_TARGET_VERSION ) ) {
-			return;
-		}
-
-		$popup_dismissed = get_user_meta( $user_id, self::POPUP_DISMISSED_OPTION, true );
-
-		if ( $popup_dismissed ) {
+		if ( ! $user_id ||
+		! $this->is_existing_user_upgraded_to_target_version( self::STRUCTURE_POPUP_TARGET_VERSION ) ||
+		get_user_meta( $user_id, self::POPUP_DISMISSED_OPTION, true ) ) {
 			return;
 		}
 
 		wp_localize_script( 'elementor-editor', 'elementorShowInfotip', [ 'shouldShow' => '1' ] );
 	}
 
-	private function is_existing_user_upgraded_to_version( string $target_version ): bool {
+	private function is_existing_user_upgraded_to_target_version( string $target_version ): bool {
 
 		if ( version_compare( ELEMENTOR_VERSION, $target_version, '<' ) ) {
 			return false;
@@ -90,17 +76,8 @@ class Module extends BaseModule {
 
 		$installs_history = \Elementor\Core\Upgrade\Manager::get_installs_history();
 
-		if ( empty( $installs_history ) ) {
-			return false;
-		}
-
-		$first_installed_version = array_key_first( $installs_history );
-
-		if ( version_compare( $first_installed_version, $target_version, '>=' ) ) {
-			return false;
-		}
-
-		return true;
+		return ! empty( $installs_history ) &&
+			version_compare( array_key_first( $installs_history ), $target_version, '<' );
 	}
 
 	private function add_packages( $packages ) {
