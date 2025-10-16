@@ -199,6 +199,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'name' => 'New Test Component',
 			'content' => $this->mock_component_1_content,
+			'status' => 'publish',
 		] );
 
 		$response = rest_do_request( $request );
@@ -235,6 +236,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'name' => '  <script>alert("xss")</script>Sanitized Component  ',
 			'content' => $this->mock_component_1_content,
+			'status' => 'publish',
 		] );
 
 		$response = rest_do_request( $request );
@@ -256,6 +258,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'name' => 'Test Component',
 			'content' => [ $this->mock_component_1_content ],
+			'status' => 'publish',
 		] );
 
 		$response = rest_do_request( $request );
@@ -272,6 +275,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
 		$request->set_body_params( [
 			'content' => [ $this->mock_component_2_content ],
+			'status' => 'publish',
 		] );
 
 		$response = rest_do_request( $request );
@@ -290,6 +294,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
 		$request->set_body_params( [
 			'name' => 'Test Component',
+			'status' => 'publish',
 		] );
 
 		$response = rest_do_request( $request );
@@ -313,6 +318,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'name' => 'Test Component 50',
 			'content' => $this->mock_component_1_content,
+			'status' => 'publish',
 		] );
 
 		// Act - create the 50th component
@@ -330,6 +336,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'name' => 'Test Component 51',
 			'content' => $this->mock_component_1_content,
+			'status' => 'publish',
 		] );
 
 		$response = rest_do_request( $request );
@@ -349,6 +356,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'name' => 'a  ',
 			'content' => [ $this->mock_component_1_content ],
+			'status' => 'publish',
 		] );
 
 		$response = rest_do_request( $request );
@@ -368,6 +376,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'name' => 'a'.str_repeat('a', 51),
 			'content' => [ $this->mock_component_1_content ],
+			'status' => 'publish',
 		] );
 
 		$response = rest_do_request( $request );
@@ -388,6 +397,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'name' => 'Test Component',
 			'content' => [ $this->mock_component_1_content ],
+			'status' => 'publish',
 		] );
 
 		$response = rest_do_request( $request );
@@ -407,6 +417,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'name' => 123,
 			'content' => [ $this->mock_component_2_content ],
+			'status' => 'publish',
 		] );
 
 		$response = rest_do_request( $request );
@@ -426,6 +437,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'name' => 'Test Component',
 			'content' => 'not-an-array',
+			'status' => 'publish',
 		] );
 
 		$response = rest_do_request( $request );
@@ -445,6 +457,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'name' => 'Invalid Test Component',
 			'content' => $this->mock_invalid_component_content,
+			'status' => 'publish',
 		] );
 
 		$response = rest_do_request( $request );
@@ -469,6 +482,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'name' => 'Test Component',
 			'content' => [ $this->mock_component_1_content ],
+			'status' => 'publish',
 		] );
 
 		$response = rest_do_request( $request );

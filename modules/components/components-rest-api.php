@@ -65,9 +65,9 @@ class Components_REST_API {
 						],
 					],
 					'status' => [
-									'type' => 'string',
-									'enum' => [ Document::STATUS_PUBLISH, Document::STATUS_DRAFT, Document::STATUS_AUTOSAVE ],
-								],
+						'type' => 'string',
+						'enum' => [ Document::STATUS_PUBLISH, Document::STATUS_DRAFT, Document::STATUS_AUTOSAVE ],
+					],
 				],
 			],
 		] );
