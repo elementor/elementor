@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/css-selector-utils.php';
+
 class Css_Class_Usage_Tracker {
 
 	private $class_usage_map = [];
@@ -40,17 +42,7 @@ class Css_Class_Usage_Tracker {
 	}
 
 	private function is_nested_selector( string $selector ): bool {
-		// Pattern 1: Descendant selector (space)
-		if ( preg_match( '/\s(?![^()]*\)|[^\[]*\]|[^"]*")/', $selector ) ) {
-			return true;
-		}
-		
-		// Pattern 2: Child selector (>)
-		if ( preg_match( '/>(?![^()]*\)|[^\[]*\]|[^"]*")/', $selector ) ) {
-			return true;
-		}
-		
-		return false;
+		return Css_Selector_Utils::is_nested_selector( $selector );
 	}
 
 	private function track_nested_selector( string $selector ): void {
@@ -94,14 +86,7 @@ class Css_Class_Usage_Tracker {
 	}
 
 	private function extract_class_names_from_selector( string $selector ): array {
-		$class_names = [];
-		
-		// Match all class selectors (.classname)
-		if ( preg_match_all( '/\.([a-zA-Z0-9_-]+)/', $selector, $matches ) ) {
-			$class_names = $matches[1]; // Get captured groups (class names without dots)
-		}
-		
-		return array_unique( $class_names );
+		return Css_Selector_Utils::extract_all_class_names( $selector );
 	}
 
 	public function should_keep_class( string $class_name ): bool {

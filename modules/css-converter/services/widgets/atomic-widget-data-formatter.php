@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/../css/css-converter-config.php';
+
 class Atomic_Widget_Data_Formatter {
 
 	public static function make(): self {
@@ -171,15 +173,7 @@ class Atomic_Widget_Data_Formatter {
 
 
 	private function get_target_property_name( string $property ): string {
-		$property_map = [
-			'background-color' => 'background',
-			'border-top-left-radius' => 'border-radius',
-			'border-top-right-radius' => 'border-radius',
-			'border-bottom-left-radius' => 'border-radius',
-			'border-bottom-right-radius' => 'border-radius',
-		];
-
-		return $property_map[ $property ] ?? $property;
+		return \Elementor\Modules\CssConverter\Services\Css\Css_Converter_Config::get_mapped_property_name( $property );
 	}
 
 	private function extract_css_classes_from_widget_attributes( array $widget, array $classes ): array {

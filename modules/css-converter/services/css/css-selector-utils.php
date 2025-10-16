@@ -5,46 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/css-converter-config.php';
+
 class Css_Selector_Utils {
-	const HTML_ELEMENTS = [
-		'div',
-		'span',
-		'p',
-		'h1',
-		'h2',
-		'h3',
-		'h4',
-		'h5',
-		'h6',
-		'a',
-		'img',
-		'ul',
-		'ol',
-		'li',
-		'nav',
-		'header',
-		'footer',
-		'section',
-		'article',
-		'aside',
-		'main',
-		'button',
-		'input',
-		'form',
-		'table',
-		'tr',
-		'td',
-		'th',
-		'tbody',
-		'thead',
-		'strong',
-		'em',
-		'b',
-		'i',
-		'small',
-		'code',
-		'pre',
-	];
 
 	public static function is_element_tag( string $part ): bool {
 		$part = trim( $part );
@@ -53,9 +16,10 @@ class Css_Selector_Utils {
 			return false;
 		}
 
-		if ( preg_match( '/^([a-z][a-z0-9]*)$/i', $part, $matches ) ) {
+		$pattern = Css_Converter_Config::get_regex_pattern( 'element_tag' );
+		if ( preg_match( $pattern, $part, $matches ) ) {
 			$element = strtolower( $matches[1] );
-			return in_array( $element, self::HTML_ELEMENTS, true );
+			return Css_Converter_Config::is_supported_html_element( $element );
 		}
 
 		return false;
@@ -63,27 +27,42 @@ class Css_Selector_Utils {
 
 	public static function extract_class_name( string $selector ): ?string {
 		$trimmed = trim( $selector );
-		if ( preg_match( '/^\.([a-zA-Z0-9_-]+)$/', $trimmed, $matches ) ) {
+		$pattern = Css_Converter_Config::get_regex_pattern( 'class_selector' );
+		if ( preg_match( $pattern, $trimmed, $matches ) ) {
 			return $matches[1];
 		}
 		return null;
 	}
 
 	public static function extract_all_class_names( string $selector ): array {
-		if ( preg_match_all( '/\.([a-zA-Z0-9_-]+)/', $selector, $matches ) ) {
+		$pattern = Css_Converter_Config::get_regex_pattern( 'all_class_names' );
+		if ( preg_match_all( $pattern, $selector, $matches ) ) {
 			return $matches[1];
 		}
 		return [];
 	}
 
 	public static function is_nested_selector( string $selector ): bool {
-		if ( preg_match( '/\s(?![^()]*\)|[^\[]*\]|[^"]*")/', $selector ) ) {
+		$descendant_pattern = Css_Converter_Config::get_regex_pattern( 'nested_descendant' );
+		$child_pattern = Css_Converter_Config::get_regex_pattern( 'nested_child' );
+
+		if ( preg_match( $descendant_pattern, $selector ) ) {
 			return true;
 		}
-		if ( preg_match( '/>(?![^()]*\)|[^\[]*\]|[^"]*")/', $selector ) ) {
+		if ( preg_match( $child_pattern, $selector ) ) {
 			return true;
 		}
 		return false;
+	}
+
+	public static function has_descendant_selector( string $selector ): bool {
+		$pattern = Css_Converter_Config::get_regex_pattern( 'nested_descendant' );
+		return preg_match( $pattern, $selector ) === 1;
+	}
+
+	public static function has_child_selector( string $selector ): bool {
+		$pattern = Css_Converter_Config::get_regex_pattern( 'nested_child' );
+		return preg_match( $pattern, $selector ) === 1;
 	}
 
 	public static function clean_selector_part( string $part ): string {
@@ -91,5 +70,77 @@ class Css_Selector_Utils {
 		$part = ltrim( $part, '.' );
 		$part = preg_replace( '/[^a-zA-Z0-9_-]/', '', $part );
 		return $part;
+	}
+
+	public static function extract_class_name_from_target( string $target ): string {
+		$target = trim( $target );
+
+		$class_name = self::extract_first_class_from_selector( $target );
+		if ( ! empty( $class_name ) ) {
+			return $class_name;
+		}
+
+		$element_name = self::extract_element_from_selector( $target );
+		if ( ! empty( $element_name ) ) {
+			return $element_name;
+		}
+
+		return '';
+	}
+
+	public static function extract_target_class_from_parsed_target( string $target ): ?string {
+		$target = trim( $target );
+
+		if ( 0 === strpos( $target, '.' ) ) {
+			$pattern = Css_Converter_Config::get_regex_pattern( 'class_name_extraction' );
+			if ( preg_match( $pattern, $target, $matches ) ) {
+				return $matches[1];
+			}
+		}
+
+		if ( false !== strpos( $target, '.' ) ) {
+			$pattern = Css_Converter_Config::get_regex_pattern( 'class_from_element_selector' );
+			if ( preg_match( $pattern, $target, $matches ) ) {
+				return $matches[1];
+			}
+		}
+
+		$pattern = Css_Converter_Config::get_regex_pattern( 'element_from_selector' );
+		if ( preg_match( $pattern, $target, $matches ) ) {
+			return $matches[1];
+		}
+
+		return null;
+	}
+
+	public static function extract_class_name_from_selector( string $selector ): ?string {
+		$trimmed = trim( $selector );
+		$pattern = Css_Converter_Config::get_regex_pattern( 'class_selector' );
+		if ( preg_match( $pattern, $trimmed, $matches ) ) {
+			return $matches[1];
+		}
+		return null;
+	}
+
+	private static function extract_first_class_from_selector( string $target ): string {
+		if ( 0 !== strpos( $target, '.' ) ) {
+			return '';
+		}
+
+		$pattern = Css_Converter_Config::get_regex_pattern( 'class_name_extraction' );
+		if ( preg_match( $pattern, $target, $matches ) ) {
+			return $matches[1];
+		}
+
+		return '';
+	}
+
+	private static function extract_element_from_selector( string $target ): string {
+		$pattern = Css_Converter_Config::get_regex_pattern( 'element_from_selector' );
+		if ( preg_match( $pattern, $target, $matches ) ) {
+			return $matches[1];
+		}
+
+		return '';
 	}
 }

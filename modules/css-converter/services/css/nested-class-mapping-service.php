@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/css-selector-utils.php';
+
 class Nested_Class_Mapping_Service {
 
 	private $class_mappings = [];
@@ -59,39 +61,7 @@ class Nested_Class_Mapping_Service {
 	}
 
 	private function extract_class_name_from_target( string $target ): string {
-		$target = trim( $target );
-
-		$class_name = $this->extract_first_class_from_selector( $target );
-		if ( ! empty( $class_name ) ) {
-			return $class_name;
-		}
-
-		$element_name = $this->extract_element_from_selector( $target );
-		if ( ! empty( $element_name ) ) {
-			return $element_name;
-		}
-
-		return '';
-	}
-
-	private function extract_first_class_from_selector( string $target ): string {
-		if ( 0 !== strpos( $target, '.' ) ) {
-			return '';
-		}
-
-		if ( preg_match( '/^\.([a-zA-Z0-9_-]+)/', $target, $matches ) ) {
-			return $matches[1];
-		}
-
-		return '';
-	}
-
-	private function extract_element_from_selector( string $target ): string {
-		if ( preg_match( '/^([a-zA-Z][a-zA-Z0-9]*)\b/', $target, $matches ) ) {
-			return $matches[1];
-		}
-
-		return '';
+		return Css_Selector_Utils::extract_class_name_from_target( $target );
 	}
 
 	private function should_skip_flattened_class_generation( string $flattened_class_name ): bool {

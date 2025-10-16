@@ -20,19 +20,7 @@ class Nested_Selector_Parser {
 	}
 
 	public function is_nested_selector( string $selector ): bool {
-		$selector = trim( $selector );
-
-		// Pattern 1: Descendant selector (space)
-		if ( $this->has_descendant_selector( $selector ) ) {
-			return true;
-		}
-
-		// Pattern 2: Child selector (>)
-		if ( $this->has_child_selector( $selector ) ) {
-			return true;
-		}
-
-		return false;
+		return Css_Selector_Utils::is_nested_selector( $selector );
 	}
 
 	public function parse_nested_selector( string $selector ): ?array {
@@ -58,12 +46,11 @@ class Nested_Selector_Parser {
 	}
 
 	private function has_descendant_selector( string $selector ): bool {
-		// Check for space-separated selectors (but not child selectors)
-		return preg_match( '/\s+/', $selector ) && ! $this->has_child_selector( $selector );
+		return Css_Selector_Utils::has_descendant_selector( $selector );
 	}
 
 	private function has_child_selector( string $selector ): bool {
-		return strpos( $selector, '>' ) !== false;
+		return Css_Selector_Utils::has_child_selector( $selector );
 	}
 
 	private function extract_selector_parts( string $selector ): array {

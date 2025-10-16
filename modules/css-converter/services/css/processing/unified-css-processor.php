@@ -1391,11 +1391,7 @@ class Unified_Css_Processor {
 	}
 
 	private function extract_class_name_from_selector( string $selector ): ?string {
-		$trimmed = trim( $selector );
-		if ( preg_match( '/^\.([a-zA-Z0-9_-]+)$/', $trimmed, $matches ) ) {
-			return $matches[1];
-		}
-		return null;
+		return \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::extract_class_name_from_selector( $selector );
 	}
 
 	private function parse_nested_selector_for_mapping( string $selector ): ?array {
@@ -1419,33 +1415,7 @@ class Unified_Css_Processor {
 	}
 
 	private function extract_target_class_from_parsed_target( string $target ): ?string {
-		// Examples:
-		// ".second" -> "second"
-		// "h1.title" -> "title"
-		// "h1" -> "h1" (Pattern 5: Element selectors are valid targets)
-
-		$target = trim( $target );
-
-		// If it starts with a dot, it's a class selector
-		if ( strpos( $target, '.' ) === 0 ) {
-			if ( preg_match( '/^\.([a-zA-Z0-9_-]+)/', $target, $matches ) ) {
-				return $matches[1];
-			}
-		}
-
-		// If it contains a dot, it might be an element with a class (e.g., h1.title)
-		if ( strpos( $target, '.' ) !== false ) {
-			if ( preg_match( '/\.([a-zA-Z0-9_-]+)$/', $target, $matches ) ) {
-				return $matches[1];
-			}
-		}
-
-		// Pattern 5: Element selector only (e.g., "h1") - return element name as target class
-		if ( preg_match( '/^([a-zA-Z][a-zA-Z0-9]*)\b/', $target, $matches ) ) {
-			return $matches[1];
-		}
-
-		return null;
+		return \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::extract_target_class_from_parsed_target( $target );
 	}
 
 	private function is_element_tag( string $part ): bool {
