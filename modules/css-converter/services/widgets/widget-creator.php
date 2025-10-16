@@ -432,51 +432,6 @@ class Widget_Creator {
 		return $settings;
 	}
 
-	private function merge_settings_with_styles( $settings, $applied_styles ) {
-
-		$merged_settings = $this->format_elementor_settings( $settings );
-
-		if ( ! empty( $applied_styles['direct_element_styles'] ) ) {
-			$merged_settings = $this->apply_direct_element_styles_to_settings( $merged_settings, $applied_styles['direct_element_styles'] );
-		}
-
-		$classes = [];
-
-		// CRITICAL FIX: Preserve original CSS classes from HTML (including flattened classes)
-		if ( ! empty( $this->current_widget['attributes']['class'] ) ) {
-			$original_classes = explode( ' ', $this->current_widget['attributes']['class'] );
-			foreach ( $original_classes as $original_class ) {
-				$original_class = trim( $original_class );
-				if ( ! empty( $original_class ) ) {
-					$classes[] = $original_class;
-				}
-			}
-		}
-
-		$has_global_classes = ! empty( $applied_styles['global_classes'] );
-		$has_computed_styles = ! empty( $applied_styles['computed_styles'] ) || ! empty( $applied_styles['id_styles'] );
-		$has_unsupported_props = ! empty( $this->current_unsupported_props );
-
-		if ( $has_global_classes || $has_computed_styles || $has_unsupported_props ) {
-			if ( empty( $this->current_widget_class_id ) ) {
-				$this->current_widget_class_id = $this->generate_unique_class_id();
-			}
-
-			$classes[] = $this->current_widget_class_id;
-
-		}
-
-		if ( ! empty( $classes ) ) {
-			$merged_settings['classes'] = [
-				'$$type' => 'classes',
-				'value' => $classes,
-			];
-		} else {
-		}
-
-		return $merged_settings;
-	}
-
 	private function format_elementor_settings( $settings ) {
 		$formatted_settings = [];
 
@@ -504,121 +459,6 @@ class Widget_Creator {
 
 	private function map_css_property_to_elementor_setting( $css_property ) {
 		return null;
-	}
-
-	private function convert_styles_to_v4_format( $applied_styles, $widget_type = 'unknown' ) {
-		$v4_styles = [];
-
-		if ( ! empty( $applied_styles['global_classes'] ) ) {
-			if ( empty( $this->current_widget_class_id ) ) {
-				$this->current_widget_class_id = $this->generate_unique_class_id();
-			}
-			$class_id = $this->current_widget_class_id;
-
-			$global_class_props = $this->get_global_class_properties( $applied_styles['global_classes'] );
-
-			if ( ! empty( $global_class_props ) ) {
-				$style_object = $this->create_v4_style_object_from_global_classes( $class_id, $global_class_props );
-				$v4_styles[ $class_id ] = $style_object;
-			}
-		}
-
-		if ( ! empty( $applied_styles['id_styles'] ) ) {
-			if ( empty( $this->current_widget_class_id ) ) {
-				$this->current_widget_class_id = $this->generate_unique_class_id();
-			}
-			$id_class_id = $this->current_widget_class_id;
-
-			$id_style_object = $this->create_v4_style_object_from_id_styles( $id_class_id, $applied_styles['id_styles'] );
-
-			if ( ! empty( $id_style_object['variants'][0]['props'] ) ) {
-				if ( isset( $v4_styles[ $id_class_id ] ) ) {
-					$existing_props = $v4_styles[ $id_class_id ]['variants'][0]['props'] ?? [];
-					$id_props = $id_style_object['variants'][0]['props'] ?? [];
-					$v4_styles[ $id_class_id ]['variants'][0]['props'] = array_merge( $existing_props, $id_props );
-				} else {
-					$v4_styles[ $id_class_id ] = $id_style_object;
-				}
-			}
-		}
-
-		if ( ! empty( $applied_styles['direct_element_styles'] ) ) {
-			if ( empty( $this->current_widget_class_id ) ) {
-				$this->current_widget_class_id = $this->generate_unique_class_id();
-			}
-			$direct_class_id = $this->current_widget_class_id;
-
-			$direct_style_object = $this->create_v4_style_object_from_direct_styles( $direct_class_id, $applied_styles['direct_element_styles'] );
-
-			if ( ! empty( $direct_style_object['variants'][0]['props'] ) ) {
-				if ( isset( $v4_styles[ $direct_class_id ] ) ) {
-					$existing_props = $v4_styles[ $direct_class_id ]['variants'][0]['props'] ?? [];
-					$direct_props = $direct_style_object['variants'][0]['props'] ?? [];
-					$v4_styles[ $direct_class_id ]['variants'][0]['props'] = array_merge( $existing_props, $direct_props );
-
-				} else {
-					$v4_styles[ $direct_class_id ] = $direct_style_object;
-
-				}
-			}
-		}
-
-		if ( ! empty( $applied_styles['computed_styles'] ) ) {
-			foreach ( $applied_styles['computed_styles'] as $prop => $value ) {
-			}
-
-			if ( empty( $this->current_widget_class_id ) ) {
-				$this->current_widget_class_id = $this->generate_unique_class_id();
-			}
-
-			$class_id = $this->current_widget_class_id;
-
-			if ( isset( $v4_styles[ $class_id ] ) ) {
-				$computed_props = $this->map_css_to_v4_props( $applied_styles['computed_styles'] );
-				$existing_props = $v4_styles[ $class_id ]['variants'][0]['props'] ?? [];
-				$v4_styles[ $class_id ]['variants'][0]['props'] = array_merge( $existing_props, $computed_props );
-			} else {
-				$style_object = $this->create_v4_style_object( $class_id, $applied_styles['computed_styles'] );
-
-				if ( ! empty( $style_object['variants'][0]['props'] ) ) {
-					$v4_styles[ $class_id ] = $style_object;
-				}
-			}
-		}
-
-		if ( ! empty( $this->current_unsupported_props ) ) {
-			if ( empty( $this->current_widget_class_id ) ) {
-				$this->current_widget_class_id = $this->generate_unique_class_id();
-			}
-
-			$class_id = $this->current_widget_class_id;
-
-			if ( isset( $v4_styles[ $class_id ] ) ) {
-				$existing_props = $v4_styles[ $class_id ]['variants'][0]['props'] ?? [];
-				$v4_styles[ $class_id ]['variants'][0]['props'] = array_merge( $existing_props, $this->current_unsupported_props );
-			} else {
-				$style_object = [
-					'id' => $class_id,
-					'label' => 'local',
-					'type' => 'class',
-					'variants' => [
-						[
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => null,
-							],
-							'props' => $this->current_unsupported_props,
-						],
-					],
-				];
-
-				$v4_styles[ $class_id ] = $style_object;
-			}
-
-			$this->current_unsupported_props = [];
-		}
-
-		return $v4_styles;
 	}
 
 	private function convert_atomic_props_to_css_props( $atomic_props ) {
@@ -655,77 +495,6 @@ class Widget_Creator {
 		}
 
 		return $css_props;
-	}
-	private function create_v4_style_object_from_id_styles( $class_id, $id_styles ) {
-		$style_object = [
-			'id' => $class_id,
-			'label' => 'local',
-			'type' => 'class',
-			'variants' => [
-				[
-					'meta' => [
-						'breakpoint' => 'desktop',
-						'state' => null,
-					],
-					'props' => [],
-				],
-			],
-		];
-
-		foreach ( $id_styles as $index => $id_style ) {
-
-			if ( isset( $id_style['converted_property'] ) && isset( $id_style['property'] ) ) {
-				$property_name = $id_style['property'];
-				$converted = $id_style['converted_property'];
-
-				if ( is_array( $converted ) && isset( $converted['$$type'] ) ) {
-					$target_property = $this->get_target_property_name( $property_name );
-
-					if ( $target_property !== $property_name ) {
-					}
-
-					$style_object['variants'][0]['props'][ $target_property ] = $converted;
-				} else {
-				}
-			} else {
-			}
-		}
-
-		return $style_object;
-	}
-
-	private function create_v4_style_object_from_direct_styles( $class_id, $direct_styles ) {
-		$style_object = [
-			'id' => $class_id,
-			'label' => 'local',
-			'type' => 'class',
-			'variants' => [
-				[
-					'meta' => [
-						'breakpoint' => 'desktop',
-						'state' => null,
-					],
-					'props' => [],
-					'custom_css' => '',
-				],
-			],
-		];
-
-		foreach ( $direct_styles as $index => $direct_style ) {
-
-			if ( isset( $direct_style['converted_property'] ) && isset( $direct_style['property'] ) ) {
-				$property_name = $direct_style['property'];
-				$converted = $direct_style['converted_property'];
-
-				if ( is_array( $converted ) && isset( $converted['$$type'] ) ) {
-					$target_property = $this->get_target_property_name( $property_name );
-
-					$style_object['variants'][0]['props'][ $target_property ] = $converted;
-				}
-			}
-		}
-
-		return $style_object;
 	}
 
 	private function generate_unique_class_id() {
@@ -771,24 +540,6 @@ class Widget_Creator {
 		return $props;
 	}
 
-	private function create_v4_style_object_from_global_classes( $class_id, $props ) {
-		return [
-			'id' => $class_id,
-			'label' => 'local',
-			'type' => 'class',
-			'variants' => [
-				[
-					'meta' => [
-						'breakpoint' => 'desktop',
-						'state' => null,
-					],
-					'props' => $props,
-					'custom_css' => null,
-				],
-			],
-		];
-	}
-
 	private function is_dimensions_prop_type( $property ): bool {
 		return is_array( $property ) && isset( $property['$$type'] ) && 'dimensions' === $property['$$type'];
 	}
@@ -827,26 +578,6 @@ class Widget_Creator {
 			'$$type' => 'border-width',
 			'value' => $merged_value,
 		];
-	}
-
-	private function create_v4_style_object( $class_id, $computed_styles ) {
-		$style_object = [
-			'id' => $class_id,
-			'label' => 'local',
-			'type' => 'class',
-			'variants' => [
-				[
-					'meta' => [
-						'breakpoint' => 'desktop',
-						'state' => null,
-					],
-					'props' => $this->map_css_to_v4_props( $computed_styles ),
-					'custom_css' => null,
-				],
-			],
-		];
-
-		return $style_object;
 	}
 
 	private function map_css_to_v4_props( $computed_styles ) {

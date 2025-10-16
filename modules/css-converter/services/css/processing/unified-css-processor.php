@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/../css-selector-utils.php';
+
 class Unified_Css_Processor {
 
 	private $css_parser;
@@ -1447,57 +1449,6 @@ class Unified_Css_Processor {
 	}
 
 	private function is_element_tag( string $part ): bool {
-		// Check if this is a pure HTML element tag (not a class or ID)
-		// Common HTML elements that can be used in CSS selectors
-		$html_elements = [
-			'div',
-			'span',
-			'p',
-			'h1',
-			'h2',
-			'h3',
-			'h4',
-			'h5',
-			'h6',
-			'a',
-			'img',
-			'ul',
-			'ol',
-			'li',
-			'nav',
-			'header',
-			'footer',
-			'section',
-			'article',
-			'aside',
-			'main',
-			'button',
-			'input',
-			'form',
-			'table',
-			'tr',
-			'td',
-			'th',
-			'tbody',
-			'thead',
-			'strong',
-			'em',
-			'b',
-			'i',
-			'small',
-			'code',
-			'pre',
-		];
-
-		$part = trim( $part );
-
-		// Must not start with . or # (not a class or ID)
-		if ( strpos( $part, '.' ) === 0 || strpos( $part, '#' ) === 0 ) {
-			return false;
-		}
-
-		// Must be a known HTML element and contain only valid tag characters
-		return in_array( strtolower( $part ), $html_elements, true ) &&
-				preg_match( '/^[a-zA-Z][a-zA-Z0-9]*$/', $part );
+		return \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::is_element_tag( $part );
 	}
 }
