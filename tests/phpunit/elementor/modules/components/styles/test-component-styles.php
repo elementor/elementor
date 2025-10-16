@@ -137,7 +137,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'component' => [
+					'post_id' => [
 						'$$type' => 'component-id',
 						'value' => '180',
 					],
