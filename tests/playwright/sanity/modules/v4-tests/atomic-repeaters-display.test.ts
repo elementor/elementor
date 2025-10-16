@@ -28,9 +28,19 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 			await editor.openV2Section( 'effects' );
 
 			const controlRepeaterAdditionButton = editor.page.getByRole( 'button', { name: `Add ${ control } item` } );
+			const inputUnitButton = editor.page.locator( 'button', { hasText: /^(px|ms)$/ } ).last();
+			const customSizeButton = editor.page.locator( '.MuiPaper-root ul li .MuiListItemText-root svg' );
+			const customSizeInput = editor.page.locator( '.MuiPaper-root .MuiPaper-root .MuiPaper-root input[type="text"]' );
 
 			await controlRepeaterAdditionButton.click();
-			await editor.page.locator( '.MuiBackdrop-root' ).click();
+			await inputUnitButton.click();
+			await customSizeButton.click();
+			await customSizeInput.fill( 'My milkshake brings all the boys to the yard' );
+
+			await expect( customSizeInput ).toHaveValue( 'My milkshake brings all the boys to the yard' );
+
+			await customSizeInput.clear();
+			await editor.page.locator( '.MuiBackdrop-root' ).last().click();
 
 			const parentDiv = controlRepeaterAdditionButton.locator( '../../..' );
 			const controlName = control.trim().toLowerCase().replace( /\s+/g, '-' );
