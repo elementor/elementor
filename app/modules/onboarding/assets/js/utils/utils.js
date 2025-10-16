@@ -79,17 +79,17 @@ const getTrackingExperimentName = ( internalName ) => {
 
 const getActiveExperiment = () => {
 	const experimentConfigs = OnboardingEventTracking.getExperimentConfigs();
-	
+
 	for ( const experimentId in experimentConfigs ) {
 		const config = experimentConfigs[ experimentId ];
 		const isEnabled = elementorAppConfig?.onboarding?.[ config.enabledKey ] || false;
-		
+
 		if ( isEnabled ) {
 			const variant = localStorage.getItem( config.variantKey );
 			if ( variant ) {
 				return {
 					name: getTrackingExperimentName( config.name ),
-					variant: variant,
+					variant,
 				};
 			}
 		}
@@ -108,7 +108,7 @@ export const addExperimentTrackingToUrl = ( url ) => {
 	}
 
 	const separator = url.includes( '?' ) ? '&' : '?';
-	const trackingParams = `e_na=${encodeURIComponent( activeExperiment.name )}&e_va=${encodeURIComponent( activeExperiment.variant )}`;
-	
+	const trackingParams = `e_na=${ encodeURIComponent( activeExperiment.name ) }&e_va=${ encodeURIComponent( activeExperiment.variant ) }`;
+
 	return url + separator + trackingParams;
 };
