@@ -32,7 +32,7 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/editor/v2/scripts/enqueue', fn() => $this->dequeue_scripts() );
 		add_action( 'elementor/editor/v2/styles/enqueue', fn() => $this->dequeue_styles() );
-		
+
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'maybe_enqueue_structure_popup' ] );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
@@ -49,7 +49,7 @@ class Module extends BaseModule {
 	 */
 	public function ajax_dismiss_structure_popup( $data ) {
 		$user_id = get_current_user_id();
-		
+
 		if ( ! $user_id ) {
 			throw new \Exception( 'User not authenticated' );
 		}
@@ -63,43 +63,43 @@ class Module extends BaseModule {
 	}
 
 	public function maybe_enqueue_structure_popup(): void {
-    $user_id = get_current_user_id();
-    
-    if ( ! $user_id ) {
-        return;
-    }
+		$user_id = get_current_user_id();
 
-	if ( ! $this->is_existing_user_upgraded_to_version( self::STRUCTURE_POPUP_TARGET_VERSION ) ) {
-        return;
-    }
-    
-	$popup_dismissed = get_user_meta( $user_id, self::POPUP_DISMISSED_OPTION, true );
-    
-    if ( $popup_dismissed ) {
-        return;
-    }
+		if ( ! $user_id ) {
+			return;
+		}
 
-    wp_localize_script( 'elementor-editor', 'elementorShowInfotip', [ 'shouldShow' => '1' ] );
-}
+		if ( ! $this->is_existing_user_upgraded_to_version( self::STRUCTURE_POPUP_TARGET_VERSION ) ) {
+			return;
+		}
+
+		$popup_dismissed = get_user_meta( $user_id, self::POPUP_DISMISSED_OPTION, true );
+
+		if ( $popup_dismissed ) {
+			return;
+		}
+
+		wp_localize_script( 'elementor-editor', 'elementorShowInfotip', [ 'shouldShow' => '1' ] );
+	}
 
 	private function is_existing_user_upgraded_to_version( string $target_version ): bool {
 
 		if ( version_compare( ELEMENTOR_VERSION, $target_version, '<' ) ) {
 			return false;
 		}
-		
+
 		$installs_history = \Elementor\Core\Upgrade\Manager::get_installs_history();
-		
+
 		if ( empty( $installs_history ) ) {
 			return false;
 		}
-		
+
 		$first_installed_version = array_key_first( $installs_history );
-		
+
 		if ( version_compare( $first_installed_version, $target_version, '>=' ) ) {
-			return false; 
+			return false;
 		}
-		
+
 		return true;
 	}
 
