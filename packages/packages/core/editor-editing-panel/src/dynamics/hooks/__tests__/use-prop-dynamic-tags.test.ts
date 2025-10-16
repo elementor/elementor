@@ -34,8 +34,8 @@ describe( 'usePropDynamicTags', () => {
 		mockPropType( null );
 
 		jest.mocked( getAtomicDynamicTags ).mockReturnValue( {
-			tags: mockAtomicDynamicTags( [ { categories: [ 'string' ], name: 'only-string' } ] ),
-			groups: {},
+			tags: mockAtomicDynamicTags( [ { categories: [ 'string' ], name: 'only-string', group: 'group1' } ] ),
+			groups: { group1: { title: 'Group 1' } },
 		} );
 
 		// Act.
@@ -48,8 +48,8 @@ describe( 'usePropDynamicTags', () => {
 	it( 'should return an empty array when the additional_types list is empty', () => {
 		// Arrange
 		jest.mocked( getAtomicDynamicTags ).mockReturnValue( {
-			tags: mockAtomicDynamicTags( [ { categories: [ 'string' ], name: 'only-string' } ] ),
-			groups: {},
+			tags: mockAtomicDynamicTags( [ { categories: [ 'string' ], name: 'only-string', group: 'group1' } ] ),
+			groups: { group1: { title: 'Group 1' } },
 		} );
 
 		mockPropType( { kind: 'plain', key: 'string' } );
@@ -64,10 +64,10 @@ describe( 'usePropDynamicTags', () => {
 	it( 'should return an array of dynamic tags that match the tag categories', () => {
 		// Arrange
 		const tags = mockAtomicDynamicTags( [
-			{ categories: [ 'url' ], name: 'only-url' },
-			{ categories: [ 'string' ], name: 'only-string' },
-			{ categories: [ 'url', 'string' ], name: 'url-and-string' },
-			{ categories: [ 'number' ], name: 'only-number' },
+			{ categories: [ 'url' ], name: 'only-url', group: 'group1' },
+			{ categories: [ 'string' ], name: 'only-string', group: 'group1' },
+			{ categories: [ 'url', 'string' ], name: 'url-and-string', group: 'group1' },
+			{ categories: [ 'number' ], name: 'only-number', group: 'group2' },
 		] );
 
 		mockPropType( {
@@ -82,7 +82,10 @@ describe( 'usePropDynamicTags', () => {
 			},
 		} );
 
-		jest.mocked( getAtomicDynamicTags ).mockReturnValue( { tags, groups: {} } );
+		jest.mocked( getAtomicDynamicTags ).mockReturnValue( {
+			tags,
+			groups: { group1: { title: 'Group 1' }, group2: { title: 'Group 2' } },
+		} );
 
 		// Act.
 		const { result, rerender } = renderHook( usePropDynamicTags );
@@ -91,7 +94,10 @@ describe( 'usePropDynamicTags', () => {
 		expect( result.current ).toEqual( [ tags[ 'only-url' ], tags[ 'only-string' ], tags[ 'url-and-string' ] ] );
 
 		// Arrange.
-		jest.mocked( getAtomicDynamicTags ).mockReturnValue( { tags, groups: {} } );
+		jest.mocked( getAtomicDynamicTags ).mockReturnValue( {
+			tags,
+			groups: { group1: { title: 'Group 1' }, group2: { title: 'Group 2' } },
+		} );
 
 		mockPropType( {
 			kind: 'union',
@@ -124,8 +130,8 @@ describe( 'usePropDynamicTags', () => {
 		} );
 
 		jest.mocked( getAtomicDynamicTags ).mockReturnValue( {
-			tags: mockAtomicDynamicTags( [ { categories: [ 'string' ], name: 'only-string' } ] ),
-			groups: {},
+			tags: mockAtomicDynamicTags( [ { categories: [ 'string' ], name: 'only-string', group: 'group1' } ] ),
+			groups: { group1: { title: 'Group 1' } },
 		} );
 
 		// Act.
@@ -149,13 +155,13 @@ const mockPropType = ( params: Partial< PropType > ) => {
 	} );
 };
 
-const mockAtomicDynamicTags = ( tags: Pick< DynamicTag, 'name' | 'categories' >[] ) => {
+const mockAtomicDynamicTags = ( tags: Pick< DynamicTag, 'name' | 'categories' | 'group' >[] ) => {
 	return tags.reduce< DynamicTags >(
-		( acc, { name, categories } ) => ( {
+		( acc, { name, categories, group } ) => ( {
 			...acc,
 			[ name ]: {
 				name,
-				group: '',
+				group,
 				categories,
 				label: '',
 				atomic_controls: [],
