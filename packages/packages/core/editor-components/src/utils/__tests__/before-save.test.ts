@@ -1,8 +1,8 @@
 import { updateElementSettings, type V1ElementData } from '@elementor/editor-elements';
-import { __createStore, __dispatch, __registerSlice, __getState as getState } from '@elementor/store';
+import { __createStore, __dispatch, __getState as getState, __registerSlice } from '@elementor/store';
 
 import { apiClient } from '../../api';
-import { selectComponents, selectUnpublishedComponents, slice } from '../../store/store';
+import { selectUnpublishedComponents, slice } from '../../store/store';
 import { beforeSave } from '../before-save';
 
 jest.mock( '@elementor/editor-elements' );
@@ -42,8 +42,8 @@ describe( 'beforeSave', () => {
 			} )
 		);
 
-		mockCreateComponents.mockImplementation( (payload) => {
-			switch (payload.name) {
+		mockCreateComponents.mockImplementation( ( payload ) => {
+			switch ( payload.name ) {
 				case 'Test Component 1':
 					return Promise.resolve( { component_id: 1111 } );
 				case 'Test Component 2':
@@ -64,7 +64,7 @@ describe( 'beforeSave', () => {
 			await beforeSave( { container, status: 'draft' } );
 
 			// Assert
-			  expect(mockCreateComponents).not.toHaveBeenCalled();
+			expect( mockCreateComponents ).not.toHaveBeenCalled();
 			expect( mockUpdateElementSettings ).not.toHaveBeenCalled();
 		} );
 	} );
@@ -121,18 +121,20 @@ describe( 'beforeSave', () => {
 			expect( mockUpdateElementSettings ).toHaveBeenCalledWith( {
 				id: 'element-1_component-with-temp-id',
 				props: {
-					component_id: expect.objectContaining( {
+					component: {
+						$$type: 'component-id',
 						value: 1111,
-					} ),
+					},
 				},
 				withHistory: false,
 			} );
 			expect( mockUpdateElementSettings ).toHaveBeenCalledWith( {
 				id: 'element-3_component-with-temp-id',
 				props: {
-					component_id: expect.objectContaining( {
+					component: {
+						$$type: 'component-id',
 						value: 3333,
-					} ),
+					},
 				},
 				withHistory: false,
 			} );
@@ -232,7 +234,7 @@ const mockComponent1Content: V1ElementData[] = [
 				value: 'Click Me!',
 			},
 		},
-	}
+	},
 ];
 
 const mockComponent2Content: V1ElementData[] = [
@@ -246,7 +248,7 @@ const mockComponent2Content: V1ElementData[] = [
 				value: 'This is a heading',
 			},
 		},
-	}
+	},
 ];
 
 const mockPageElements: V1ElementData[] = [
@@ -255,8 +257,8 @@ const mockPageElements: V1ElementData[] = [
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
-			component_id: {
-				$$type: 'number',
+			component: {
+				$$type: 'component-id',
 				value: 1000,
 			},
 		},
@@ -270,8 +272,8 @@ const mockPageElements: V1ElementData[] = [
 				elType: 'widget',
 				widgetType: 'e-component',
 				settings: {
-					component_id: {
-						$$type: 'number',
+					component: {
+						$$type: 'component-id',
 						value: 3000,
 					},
 				},
@@ -294,8 +296,8 @@ const mockPageElements: V1ElementData[] = [
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
-			component_id: {
-				$$type: 'number',
+			component: {
+				$$type: 'component-id',
 				value: 4444,
 			},
 		},

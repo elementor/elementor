@@ -1,8 +1,8 @@
-import { type V1ElementData, type V1ElementModelProps } from '@elementor/editor-elements';
+import { type V1ElementData } from '@elementor/editor-elements';
 import { ajax } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 
-import { DocumentStatus, type Component } from './types';
+import { type Component, type DocumentStatus } from './types';
 
 const BASE_URL = 'elementor/v1/components';
 
