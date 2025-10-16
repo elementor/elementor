@@ -7,6 +7,7 @@ import Button from './button';
 import { useCallback, useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
+import { addExperimentTrackingToUrl } from '../utils/utils';
 
 export default function GoProPopover( props ) {
 	const { state, updateState } = useContext( OnboardingContext );
@@ -80,7 +81,7 @@ export default function GoProPopover( props ) {
 		text: elementorAppConfig.onboarding.experiment ? __( 'Upgrade now', 'elementor' ) : __( 'Upgrade Now', 'elementor' ),
 		className: 'e-onboarding__go-pro-cta',
 		target: '_blank',
-		href: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
+		href: addExperimentTrackingToUrl( 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion ),
 		tabIndex: 0,
 		elRef: ( buttonElement ) => {
 			if ( ! buttonElement ) {

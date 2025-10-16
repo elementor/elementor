@@ -6,6 +6,7 @@ import DropZone from '../../../../../assets/js/organisms/drop-zone';
 import Notice from '../components/notice';
 import { OnboardingContext } from '../context/context';
 import ElementorLoading from 'elementor-app/molecules/elementor-loading';
+import { addExperimentTrackingToUrl } from '../utils/utils';
 
 export default function UploadAndInstallPro() {
 	usePageTitle( { title: __( 'Upload and Install Elementor Pro', 'elementor' ) } );
@@ -117,7 +118,7 @@ export default function UploadAndInstallPro() {
 				<div className="e-onboarding__upload-pro-get-file">
 					{ __( 'Don\'t know where to get the file from?', 'elementor' ) + ' ' }
 					{ /* eslint-disable-next-line react/jsx-no-target-blank */ }
-					<a onClick={ () => onProUploadHelpLinkClick() } href={ 'https://my.elementor.com/subscriptions/' + elementorAppConfig.onboarding.utms.downloadPro } target="_blank">
+					<a onClick={ () => onProUploadHelpLinkClick() } href={ addExperimentTrackingToUrl( 'https://my.elementor.com/subscriptions/' + elementorAppConfig.onboarding.utms.downloadPro ) } target="_blank">
 						{ __( 'Click here', 'elementor' ) }
 					</a>
 				</div>
