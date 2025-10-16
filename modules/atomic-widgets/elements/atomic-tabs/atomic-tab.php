@@ -28,7 +28,7 @@ class Atomic_Tab extends Atomic_Element_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tab', 'elementor' );
+		return esc_html__( 'Tab trigger', 'elementor' );
 	}
 
 	public function get_keywords() {
