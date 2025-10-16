@@ -4,7 +4,7 @@ import { StructureIcon } from '@elementor/icons';
 import { Button, Card, CardActions, CardContent, Infotip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type ExtendedWindow, type ToggleActionProps } from '../../../types';
+import { type ExtendedWindow } from '../../../types';
 
 const extendedWindow = window as unknown as ExtendedWindow;
 
@@ -12,9 +12,7 @@ const StructurePopupContent = ( { onClose }: { onClose: () => void } ) => {
 	const handleDismiss = async () => {
 		onClose();
 
-		extendedWindow.elementorCommon?.ajax?.addRequest?.( 'structure_popup_dismiss' ).catch( ( error ) => {
-			console.error( 'Failed to dismiss structure popup:', error );
-		} );
+		extendedWindow.elementorCommon?.ajax?.addRequest?.( 'structure_popup_dismiss' ).catch( () => {} );
 	};
 
 	return (
