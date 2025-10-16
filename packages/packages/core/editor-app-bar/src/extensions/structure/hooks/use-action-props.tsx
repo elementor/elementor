@@ -1,103 +1,87 @@
+import * as React from 'react';
+import { useEffect, useState } from 'react';
 import {
 	__privateRunCommand as runCommand,
 	__privateUseRouteStatus as useRouteStatus,
 } from '@elementor/editor-v1-adapters';
 import { StructureIcon } from '@elementor/icons';
+import { Button, Card, CardActions, CardContent, CardHeader, Infotip, Link, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-
-import * as React from 'react';
-import { useState, useEffect } from 'react';
-import { Card, CardContent, Typography, CardActions, Button, CardHeader, Link, ThemeProvider } from '@elementor/ui';
-import { Infotip } from '@elementor/ui';
 
 import { type ExtendedWindow, type ToggleActionProps } from '../../../types';
 
-// Declare global types for our data
-declare global {
-	interface Window {
-		elementorShowInfotip?: {
-			show: string;
-		};
-		elementorCommon?: {
-			ajax?: {
-				addRequest: (action: string, options?: any) => Promise<any>;
-			};
-		};
-	}
-}
+const extendedWindow = window as unknown as ExtendedWindow;
 
-const StructurePopupContent = ({ onClose }: { onClose: () => void }) => {
+const StructurePopupContent = ( { onClose }: { onClose: () => void } ) => {
 	const handleDismiss = async () => {
-		try {
-			// Use Elementor's AJAX system - simple and effective
-			await window.elementorCommon?.ajax?.addRequest('structure_popup_dismiss');
-			onClose();
-		} catch (error) {
-			console.error('Failed to dismiss structure popup:', error);
-			onClose(); // Close anyway to avoid blocking user
-		}
+		onClose();
+
+		extendedWindow.elementorCommon?.ajax?.addRequest?.( 'structure_popup_dismiss' ).catch( ( error ) => {
+			console.error( 'Failed to dismiss structure popup:', error );
+		} );
 	};
 
 	return (
-		<ThemeProvider colorScheme="light">
-<Card elevation={ 0 } sx={ { maxWidth: 300 } }>
-	<CardHeader title={ __( 'Refreshed Top Bar layout!', 'elementor' ) } />
-	<CardContent>
-		<Typography variant="body2">{ __( 'The Top Bar layout has been updated to make navigation faster and improve workflows.', 'elementor' ) } <Link color="info.main" href={ __( 'Learn more', 'elementor' ) } target="_blank">{ __( 'Learn more about the changes', 'elementor' ) }</Link></Typography>
-	</CardContent>
-	<CardActions>
-		<Button size="small" variant="contained" onClick={ handleDismiss }>{ __( 'Got it', 'elementor' ) }</Button>
-	</CardActions>
-</Card>
-</ThemeProvider>
-	)
-		
-		
-	
+		<Card elevation={ 0 } sx={ { maxWidth: 300 } }>
+			<CardContent>
+				<Typography variant="subtitle2" sx={ { mb: 2 } }>
+					{ __( 'Refreshed Top Bar layout!', 'elementor' ) }
+				</Typography>
+				<Typography variant="body2">
+					{ __( 'We’ve fine-tuned the Top Bar to make navigation faster and smoother.', 'elementor' ) }
+				</Typography>
+			</CardContent>
+			<CardActions sx={ { pt: 0 } }>
+				<Button
+					size="small"
+					color="secondary"
+					href="https://go.elementor.com/editor-top-bar-learn/"
+					target="_blank"
+				>
+					{ __( 'Learn More', 'elementor' ) }
+				</Button>
+				<Button size="small" variant="contained" onClick={ handleDismiss }>
+					{ __( 'Got it', 'elementor' ) }
+				</Button>
+			</CardActions>
+		</Card>
+	);
 };
 
 const StructureIconWithPopup = () => {
-	const [showPopup, setShowPopup] = useState(true);
+	const [ showPopup, setShowPopup ] = useState( false );
 
-	// useEffect(() => {
-	// 	// Check if popup should show - similar to topbar-icon.js logic
-	// 	if (window.elementorShowInfotip?.show === '1') {
-	// 		// Show popup after a short delay to ensure UI is ready
-	// 		const timer = setTimeout(() => {
-	// 			setShowPopup(true);
-	// 		}, 1500);
-			
-	// 		return () => clearTimeout(timer);
-	// 	}
-	// }, []);
+	useEffect( () => {
+		if ( extendedWindow.elementorShowInfotip?.shouldShow === '1' ) {
+			setShowPopup( true );
+		}
+	}, [] );
 
 	const handleClosePopup = () => {
-		setShowPopup(false);
+		setShowPopup( false );
 	};
 
-	// If show condition is not met, just return the regular icon
-	// if (window.elementorShowInfotip?.show !== '1') {
-	// 	return <StructureIcon />;
-	// }
+	if ( extendedWindow.elementorShowInfotip?.shouldShow !== '1' ) {
+		return <StructureIcon />;
+	}
 
 	return (
-		<ThemeProvider colorScheme="light">
 		<Infotip
 			placement="bottom"
-			content={<StructurePopupContent onClose={handleClosePopup} />}
-			open={showPopup}
-			PopperProps={{
+			arrow={ false }
+			content={ <StructurePopupContent onClose={ handleClosePopup } /> }
+			open={ showPopup }
+			PopperProps={ {
 				modifiers: [
 					{
 						name: 'offset',
-						options: { offset: [-16, 12] },
+						options: { offset: [ -16, 12 ] },
 					},
 				],
-			}}
+			} }
 		>
 			<StructureIcon />
 		</Infotip>
-		</ThemeProvider>
 	);
 };
 

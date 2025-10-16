@@ -17,7 +17,7 @@ class Module extends BaseModule {
 	];
 
 	const POPUP_DISMISSED_OPTION = '_elementor_structure_popup_dismissed';
-
+	const STRUCTURE_POPUP_TARGET_VERSION = '3.33.0';
 
 	public function get_name() {
 		return 'editor-app-bar';
@@ -34,7 +34,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/v2/styles/enqueue', fn() => $this->dequeue_styles() );
 		
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'maybe_enqueue_structure_popup' ] );
-    	add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 
 	/**
@@ -54,8 +54,7 @@ class Module extends BaseModule {
 			throw new \Exception( 'User not authenticated' );
 		}
 
-		// Mark popup as dismissed for current version
-		update_user_meta( $user_id, self::STRUCTURE_POPUP_DISMISSED_OPTION, true );
+		update_user_meta( $user_id, self::POPUP_DISMISSED_OPTION, true );
 
 		return [
 			'success' => true,
@@ -64,8 +63,44 @@ class Module extends BaseModule {
 	}
 
 	public function maybe_enqueue_structure_popup(): void {
-		wp_localize_script( 'elementor-editor', 'elementorShowInfotip', [ 'shouldShow' => '1' ] );
+    $user_id = get_current_user_id();
+    
+    if ( ! $user_id ) {
+        return;
+    }
 
+	if ( ! $this->is_existing_user_upgraded_to_version( self::STRUCTURE_POPUP_TARGET_VERSION ) ) {
+        return;
+    }
+    
+	$popup_dismissed = get_user_meta( $user_id, self::POPUP_DISMISSED_OPTION, true );
+    
+    if ( $popup_dismissed ) {
+        return;
+    }
+
+    wp_localize_script( 'elementor-editor', 'elementorShowInfotip', [ 'shouldShow' => '1' ] );
+}
+
+	private function is_existing_user_upgraded_to_version( string $target_version ): bool {
+
+		if ( version_compare( ELEMENTOR_VERSION, $target_version, '<' ) ) {
+			return false;
+		}
+		
+		$installs_history = \Elementor\Core\Upgrade\Manager::get_installs_history();
+		
+		if ( empty( $installs_history ) ) {
+			return false;
+		}
+		
+		$first_installed_version = array_key_first( $installs_history );
+		
+		if ( version_compare( $first_installed_version, $target_version, '>=' ) ) {
+			return false; 
+		}
+		
+		return true;
 	}
 
 	private function add_packages( $packages ) {

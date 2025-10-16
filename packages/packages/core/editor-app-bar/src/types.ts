@@ -12,12 +12,22 @@ export type ExtendedWindow = Window & {
 				};
 			};
 		};
+
+		ajax?: {
+			addRequest: ( action: string, options?: any ) => Promise< any >;
+		};
+
 		config: {
 			library_connect: {
 				is_connected: boolean;
 			};
 		};
 	};
+
+	elementorShowInfotip?: {
+		shouldShow: string;
+	};
+
 	elementor: {
 		helpers: {
 			hasPro: () => boolean;
