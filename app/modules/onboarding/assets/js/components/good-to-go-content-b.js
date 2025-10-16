@@ -41,7 +41,7 @@ export default function GoodToGoContentB( { skipButton } ) {
 					image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Site_Planner.svg' }
 					imageAlt={ __( 'Click here to go to Elementor\'s Site Planner', 'elementor' ) }
 					text={ __( 'Create a professional site in minutes using AI', 'elementor' ) }
-					link={ addExperimentTrackingToUrl( elementorAppConfig.onboarding.urls.sitePlanner ) }
+					link={ addExperimentTrackingToUrl( elementorAppConfig.onboarding.urls.sitePlanner, 'site-planner-step4' ) }
 					target="_blank"
 					clickAction={ () => {
 						OnboardingEventTracking.handleSiteStarterChoice( 'site_planner' );

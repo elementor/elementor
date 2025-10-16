@@ -81,7 +81,7 @@ export default function GoProPopover( props ) {
 		text: elementorAppConfig.onboarding.experiment ? __( 'Upgrade now', 'elementor' ) : __( 'Upgrade Now', 'elementor' ),
 		className: 'e-onboarding__go-pro-cta',
 		target: '_blank',
-		href: addExperimentTrackingToUrl( 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion ),
+		href: addExperimentTrackingToUrl( 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar-dropdown&utm_term=' + elementorAppConfig.onboarding.onboardingVersion, 'upgrade-popover' ),
 		tabIndex: 0,
 		elRef: ( buttonElement ) => {
 			if ( ! buttonElement ) {

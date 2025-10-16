@@ -17,7 +17,7 @@ export default function ChooseFeatures() {
 		{ state, handleAction } = useButtonAction( pageId, nextStep ),
 		actionButton = {
 			text: __( 'Upgrade Now', 'elementor' ),
-			href: addExperimentTrackingToUrl( elementorAppConfig.onboarding.urls.upgrade ),
+			href: addExperimentTrackingToUrl( elementorAppConfig.onboarding.urls.upgrade, 'upgrade-step3' ),
 			target: '_blank',
 			onClick: () => {
 				OnboardingEventTracking.trackStepAction( 3, 'upgrade_now', {

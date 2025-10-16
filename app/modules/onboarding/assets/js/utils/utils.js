@@ -97,7 +97,7 @@ const getActiveExperiment = () => {
 	return null;
 };
 
-export const addExperimentTrackingToUrl = ( url ) => {
+export const addExperimentTrackingToUrl = ( url, buttonName = null ) => {
 	if ( ! url || typeof url !== 'string' ) {
 		return url;
 	}
@@ -108,7 +108,11 @@ export const addExperimentTrackingToUrl = ( url ) => {
 	}
 
 	const separator = url.includes( '?' ) ? '&' : '?';
-	const trackingParams = `e_na=${ encodeURIComponent( activeExperiment.name ) }&e_va=${ encodeURIComponent( activeExperiment.variant ) }`;
+	let trackingParams = `e_na=${ encodeURIComponent( activeExperiment.name ) }&e_va=${ encodeURIComponent( activeExperiment.variant ) }`;
+
+	if ( buttonName ) {
+		trackingParams += `&e_bu=${ encodeURIComponent( buttonName ) }`;
+	}
 
 	return url + separator + trackingParams;
 };
