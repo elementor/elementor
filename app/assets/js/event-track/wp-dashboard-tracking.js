@@ -2,6 +2,8 @@ import NavigationTracking from './dashboard/navigation';
 import TopBarTracking from './dashboard/top-bar';
 import ScreenViewTracking from './dashboard/screen-view';
 import ActionControlTracking from './dashboard/action-control';
+import PromotionTracking from './dashboard/promotion';
+import MenuPromotionTracking from './dashboard/menu-promotion';
 
 const SESSION_TIMEOUT_MINUTES = 30;
 const MINUTE_MS = 60 * 1000;
@@ -28,6 +30,7 @@ export const SCREEN_TYPES = {
 	TAB: 'tab',
 	POPUP: 'popup',
 	APP_SCREEN: 'app_screen',
+	TOP_LEVEL_PAGE: 'top_level_page',
 };
 
 export default class WpDashboardTracking {
@@ -121,9 +124,7 @@ export default class WpDashboardTracking {
 
 	static formatDuration( milliseconds ) {
 		const totalSeconds = Math.floor( milliseconds / 1000 );
-		const minutes = Math.floor( totalSeconds / 60 );
-		const seconds = totalSeconds % 60;
-		return `${ minutes }:${ seconds.toString().padStart( 2, '0' ) }`;
+		return Number( ( totalSeconds / 60 ).toFixed( 2 ) );
 	}
 
 	static trackNavClicked( itemId, rootItem = null, area = NAV_AREAS.LEFT_MENU ) {
@@ -200,6 +201,14 @@ export default class WpDashboardTracking {
 		if ( this.activityCheckInterval ) {
 			clearInterval( this.activityCheckInterval );
 		}
+
+		NavigationTracking.destroy();
+		TopBarTracking.destroy();
+		ScreenViewTracking.destroy();
+		ActionControlTracking.destroy();
+		PromotionTracking.destroy();
+		MenuPromotionTracking.destroy();
+
 		this.initialized = false;
 	}
 }
@@ -210,4 +219,10 @@ window.addEventListener( 'elementor/admin/init', () => {
 	TopBarTracking.init();
 	ScreenViewTracking.init();
 	ActionControlTracking.init();
+	PromotionTracking.init();
+	MenuPromotionTracking.init();
+} );
+
+window.addEventListener( 'beforeunload', () => {
+	WpDashboardTracking.destroy();
 } );
