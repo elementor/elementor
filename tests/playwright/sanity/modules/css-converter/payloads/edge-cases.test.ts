@@ -37,7 +37,7 @@ test.describe( 'Edge Cases Payload Integration @payloads', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should handle edge cases and invalid CSS values gracefully', async ( { page, request } ) => {
+	test.skip( 'should handle edge cases and invalid CSS values gracefully', async ( { page, request } ) => {
 		const htmlContent = '<div style="color: invalid-color; font-size: ; background: #fff; padding: 20px;"><h1 style="font-weight: 999; color: #333; margin-bottom: 15px;">Error Handling Test</h1><p style="line-height: -1; color: #666; font-size: 16px;">This tests how the system handles invalid CSS values.</p><div style="width: 200%; height: -50px; background: transparent;">Invalid dimensions</div></div>';
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '', {

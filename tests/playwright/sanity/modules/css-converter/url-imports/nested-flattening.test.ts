@@ -44,6 +44,7 @@ test.describe( 'Pattern 1: Nested Selector Flattening (.first .second → .secon
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
 			cssContent,
+			'',
 			{ createGlobalClasses: true },
 		);
 
@@ -102,6 +103,7 @@ test.describe( 'Pattern 1: Nested Selector Flattening (.first .second → .secon
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
 			cssContent,
+			'',
 			{ createGlobalClasses: true },
 		);
 
@@ -172,6 +174,7 @@ test.describe( 'Pattern 1: Nested Selector Flattening (.first .second → .secon
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
 			cssContent,
+			'',
 			{ createGlobalClasses: true },
 		);
 
@@ -239,6 +242,7 @@ test.describe( 'Pattern 1: Nested Selector Flattening (.first .second → .secon
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
 			cssContent,
+			'',
 			{ createGlobalClasses: true },
 		);
 
@@ -291,6 +295,7 @@ test.describe( 'Pattern 1: Nested Selector Flattening (.first .second → .secon
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
 			cssContent,
+			'',
 			{ createGlobalClasses: true },
 		);
 

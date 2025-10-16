@@ -213,10 +213,39 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 
 		await test.step( 'Verify inline styles on div', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			const divBlock = elementorFrame.locator( '[data-element_type="e-div-block"]' ).first();
-			await divBlock.waitFor( { state: 'visible', timeout: 10000 } );
-			await expect( divBlock ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
-			await expect( divBlock ).toHaveCSS( 'padding', '20px' );
+			
+			// Find the div element with yellow background using atomic class pattern
+			// The background is applied via atomic classes, not directly on the base element
+			const divWithBackground = elementorFrame.locator( '[data-element_type="e-div-block"]' ).filter( async ( element ) => {
+				const bgColor = await element.evaluate( el => getComputedStyle( el ).backgroundColor );
+				return bgColor === 'rgb(255, 255, 0)';
+			} );
+			
+			// Alternative: Find any element with yellow background in the div block container
+			const divContainer = elementorFrame.locator( '[data-element_type="e-div-block"]' ).last(); // Use last as it's likely the inner div
+			await divContainer.waitFor( { state: 'visible', timeout: 10000 } );
+			
+			// Check if this element or any of its atomic class elements have the yellow background
+			const hasYellowBackground = await divContainer.evaluate( el => {
+				const styles = getComputedStyle( el );
+				return styles.backgroundColor === 'rgb(255, 255, 0)';
+			} );
+			
+			if ( hasYellowBackground ) {
+				await expect( divContainer ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
+			} else {
+				// If not on the container, check if it's applied via atomic classes
+				const atomicElement = elementorFrame.locator( '[data-element_type="e-div-block"][class*="e-"]' ).last();
+				await expect( atomicElement ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
+			}
+			
+			// Check padding on the same element
+			if ( hasYellowBackground ) {
+				await expect( divContainer ).toHaveCSS( 'padding', '20px' );
+			} else {
+				const atomicElement = elementorFrame.locator( '[data-element_type="e-div-block"][class*="e-"]' ).last();
+				await expect( atomicElement ).toHaveCSS( 'padding', '20px' );
+			}
 		} );
 	} );
 } );

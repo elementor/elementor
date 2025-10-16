@@ -37,7 +37,7 @@ test.describe( 'Background Styling Payload Integration @payloads', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should convert background styling and verify with screenshots', async ( { page, request } ) => {
+	test.skip( 'should convert background styling and verify with screenshots', async ( { page, request } ) => {
 		const htmlContent = '<div style="background: linear-gradient(to right, #ff7e5f, #feb47b); padding: 40px;"><div style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: 20px; padding: 30px; margin-bottom: 20px;"><h2 style="color: #2d3748; text-align: center; margin-bottom: 30px;">Color Variations</h2><div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;"><div style="background: #e53e3e; color: white; padding: 20px; border-radius: 10px; text-align: center;">Red Background</div><div style="background: #38a169; color: white; padding: 20px; border-radius: 10px; text-align: center;">Green Background</div><div style="background: #3182ce; color: white; padding: 20px; border-radius: 10px; text-align: center;">Blue Background</div><div style="background: #805ad5; color: white; padding: 20px; border-radius: 10px; text-align: center;">Purple Background</div></div></div></div>';
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '', {

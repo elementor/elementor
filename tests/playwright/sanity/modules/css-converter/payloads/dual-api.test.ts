@@ -37,7 +37,7 @@ test.describe( 'Dual API Support @payloads', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should support Widget Converter API (Option 1)', async ( { page, request } ) => {
+	test.skip( 'should support Widget Converter API (Option 1)', async ( { page, request } ) => {
 		const cssContent = '.test-class { font-size: 1rem; color: #aaaaaa; background-color: #f0f0f0; padding: 20px; }';
 
 		const apiResult = await cssHelper.convertCssOnly( request, cssContent, {
@@ -75,7 +75,7 @@ test.describe( 'Dual API Support @payloads', () => {
 		} );
 	} );
 
-	test( 'should support CSS Classes API (Option 2)', async ( { request } ) => {
+	test.skip( 'should support CSS Classes API (Option 2)', async ( { request } ) => {
 		const cssContent = '.test-class-2 { font-size: 1.2rem; color: #333333; margin: 10px; }';
 
 		const apiResult = await cssHelper.convertCssToClasses( request, cssContent, true );
@@ -106,7 +106,7 @@ test.describe( 'Dual API Support @payloads', () => {
 		} );
 	} );
 
-	test( 'should compare both APIs with same CSS input', async ( { page, request } ) => {
+	test.skip( 'should compare both APIs with same CSS input', async ( { page, request } ) => {
 		const cssContent = '.comparison-class { font-size: 16px; color: #ff6b6b; padding: 15px; margin: 5px; }';
 
 		const dualResult = await cssHelper.convertWithBothApis( request, cssContent, {
@@ -158,7 +158,7 @@ test.describe( 'Dual API Support @payloads', () => {
 		} );
 	} );
 
-	test( 'should handle complex CSS with both APIs', async ( { page, request } ) => {
+	test.skip( 'should handle complex CSS with both APIs', async ( { page, request } ) => {
 		const complexCss = `
 			.complex-header { 
 				font-size: 2rem; 

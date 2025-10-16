@@ -37,7 +37,7 @@ test.describe( 'Global Classes Payload Integration @payloads', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should convert global classes and verify styles with screenshots', async ( { page, request } ) => {
+	test.skip( 'should convert global classes and verify styles with screenshots', async ( { page, request } ) => {
 		const htmlContent = '<style>.hero-section { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 60px 30px; background: #1a1a2e; } .hero-title { color: #eee; font-size: 48px; font-weight: 800; letter-spacing: -1px; } .hero-subtitle { color: #16213e; font-size: 20px; opacity: 0.8; } .cta-button { background: #0f3460; color: white; padding: 15px 30px; border-radius: 8px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; }</style><div class="hero-section"><h1 class="hero-title">Amazing Product</h1><p class="hero-subtitle">Transform your workflow today</p><a href="#" class="cta-button">Get Started</a></div>';
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '', {

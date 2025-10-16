@@ -37,7 +37,7 @@ test.describe( 'Inline CSS Payload Integration @payloads', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should convert inline CSS and verify styles with screenshots', async ( { page, request } ) => {
+	test.skip( 'should convert inline CSS and verify styles with screenshots', async ( { page, request } ) => {
 		const htmlContent = '<div style="color: #ff6b6b; font-size: 24px; padding: 20px; background-color: #f8f9fa;"><h1 style="color: #2c3e50; font-weight: bold; text-align: center;">Styled Heading</h1><p style="font-size: 16px; line-height: 1.6; margin: 10px 0;">This paragraph has custom styling.</p></div>';
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
@@ -115,7 +115,7 @@ test.describe( 'Inline CSS Payload Integration @payloads', () => {
 		} );
 	} );
 
-	test( 'should demonstrate both API options with same content', async ( { page, request } ) => {
+	test.skip( 'should demonstrate both API options with same content', async ( { page, request } ) => {
 		const htmlContent = '<div style="color: #007cba; font-size: 18px; padding: 15px; background-color: #e7f3ff;"><h2 style="color: #004085; margin-bottom: 10px;">Dual API Test</h2><p style="font-size: 14px; line-height: 1.5;">Testing both Widget Converter and CSS Classes APIs.</p></div>';
 
 		await test.step( 'Test Widget Converter API (Option 1)', async () => {

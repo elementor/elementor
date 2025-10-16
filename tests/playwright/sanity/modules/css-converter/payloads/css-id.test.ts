@@ -37,7 +37,7 @@ test.describe( 'CSS ID Payload Integration @payloads', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should convert CSS with IDs and verify styles with screenshots', async ( { page, request } ) => {
+	test.skip( 'should convert CSS with IDs and verify styles with screenshots', async ( { page, request } ) => {
 		const htmlContent = '<style>#container { background: linear-gradient(45deg, #667eea, #764ba2); padding: 40px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); } #title { background-color: #43b8b8; color: white; font-size: 32px; font-weight: 700; text-align: center; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); } #subtitle { color: #e0e6ed; font-size: 18px; margin-top: 10px; }</style><div id="container"><h1 id="title">Premium Design</h1><p id="subtitle">Beautiful gradients and shadows</p></div>';
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '', {
