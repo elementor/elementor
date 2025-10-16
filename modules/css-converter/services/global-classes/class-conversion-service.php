@@ -21,12 +21,14 @@ class Class_Conversion_Service {
 	private $property_conversion_service;
 	private $config;
 	private $warnings = [];
+	private $duplicate_detector;
 
-	public function __construct( $css_parser = null, $variable_conversion_service = null, $property_conversion_service = null, $config = null ) {
-		$this->css_parser = $css_parser ?: new CssParser();
-		$this->variable_conversion_service = $variable_conversion_service ?: new Variable_Conversion_Service();
-		$this->property_conversion_service = $property_conversion_service ?: new Css_Property_Conversion_Service();
-		$this->config = $config ?: Css_Property_Convertor_Config::get_instance();
+	public function __construct( $css_parser = null, $variable_conversion_service = null, $property_conversion_service = null, $config = null, $duplicate_detector = null ) {
+		$this->css_parser = $css_parser ? $css_parser : new CssParser();
+		$this->variable_conversion_service = $variable_conversion_service ? $variable_conversion_service : new Variable_Conversion_Service();
+		$this->property_conversion_service = $property_conversion_service ? $property_conversion_service : new Css_Property_Conversion_Service();
+		$this->config = $config ? $config : Css_Property_Convertor_Config::get_instance();
+		$this->duplicate_detector = $duplicate_detector ? $duplicate_detector : new Duplicate_Detection_Service();
 	}
 
 	public function convert_css_to_global_classes( string $css ): array {
@@ -44,12 +46,14 @@ class Class_Conversion_Service {
 	private function process_classes( array $classes ): array {
 		$results = [
 			'converted_classes' => [],
+			'reused_classes' => [],
 			'skipped_classes' => [],
 			'css_variables' => [],
 			'warnings' => [],
 			'stats' => [
 				'total_classes_found' => count( $classes ),
 				'classes_converted' => 0,
+				'classes_reused' => 0,
 				'classes_skipped' => 0,
 				'properties_converted' => 0,
 				'properties_skipped' => 0,
@@ -57,42 +61,55 @@ class Class_Conversion_Service {
 			],
 		];
 
-		$existing_class_names = $this->get_existing_global_class_names();
-		$existing_labels = $this->get_existing_global_class_labels();
-		$seen_labels = [];
+		$existing_classes_cache = $this->get_existing_classes_for_cache();
 
 		foreach ( $classes as $css_class ) {
-			$class_name = $this->extract_class_name( $css_class['selector'] );
-			$label = $this->generate_class_label( $css_class['selector'] );
-
-			if ( in_array( $label, $existing_labels, true ) || in_array( $label, $seen_labels, true ) ) {
-				$this->add_warning( "Skipped duplicate class: {$css_class['selector']}" );
-				$results['skipped_classes'][] = [
-					'selector' => $css_class['selector'],
-					'reason' => 'duplicate',
-				];
-				++$results['stats']['classes_skipped'];
-				continue;
-			}
-
 			$converted = $this->convert_single_class( $css_class, $results['stats'] );
 
-			if ( ! empty( $converted['variants'][0]['props'] ) ) {
-				$results['converted_classes'][] = $converted;
-				++$results['stats']['classes_converted'];
-				$existing_class_names[] = $class_name;
-				$seen_labels[] = $label;
-			} else {
+			if ( empty( $converted['variants'][0]['props'] ) ) {
 				$results['skipped_classes'][] = [
 					'selector' => $css_class['selector'],
 					'reason' => 'no_supported_properties',
 				];
 				++$results['stats']['classes_skipped'];
+				continue;
+			}
+
+			$detection_result = $this->duplicate_detector->find_or_create_class(
+				$converted,
+				$existing_classes_cache
+			);
+
+			if ( 'reused' === $detection_result['action'] ) {
+				$results['reused_classes'][] = [
+					'original_selector' => $css_class['selector'],
+					'matched_class_id' => $detection_result['class_id'],
+					'matched_class_label' => $detection_result['class_label'],
+				];
+				++$results['stats']['classes_reused'];
+			} else {
+				$results['converted_classes'][] = $detection_result['class_data'];
+				++$results['stats']['classes_converted'];
+
+				$existing_classes_cache[ $detection_result['class_data']['id'] ] = $detection_result['class_data'];
 			}
 		}
 
 		$results['warnings'] = $this->warnings;
+		$results['performance'] = $this->duplicate_detector->get_performance_stats();
+
 		return $results;
+	}
+
+	private function get_existing_classes_for_cache(): array {
+		try {
+			$repository = Global_Classes_Repository::make();
+			$classes = $repository->all();
+			return $classes->get_items()->all();
+		} catch ( \Exception $e ) {
+			$this->add_warning( 'Failed to fetch existing classes for duplicate detection: ' . $e->getMessage() );
+			return [];
+		}
 	}
 
 	private function convert_single_class( array $css_class, array &$stats ): array {
@@ -134,7 +151,7 @@ class Class_Conversion_Service {
 		}
 
 		return [
-			'id' => $this->generate_class_id( $css_class['selector'] ),
+			'id' => $this->generate_class_id(),
 			'type' => 'class',
 			'label' => $this->generate_class_label( $css_class['selector'] ),
 			'variants' => [
@@ -168,53 +185,25 @@ class Class_Conversion_Service {
 		return $value;
 	}
 
-	private function get_existing_global_class_names(): array {
-		static $cached_names = null;
 
-		if ( null === $cached_names ) {
-			try {
-				$repository = Global_Classes_Repository::make();
-				$classes = $repository->all();
-				$cached_names = array_keys( $classes->get_items()->all() );
-			} catch ( \Exception $e ) {
-				$cached_names = [];
-			}
-		}
-
-		return $cached_names;
-	}
-
-	private function get_existing_global_class_labels(): array {
-		static $cached_labels = null;
-		if ( null === $cached_labels ) {
-			$cached_labels = [];
-			try {
-				$repository = Global_Classes_Repository::make();
-				$classes = $repository->all();
-				$items = $classes->get_items()->all();
-				foreach ( $items as $item ) {
-					if ( isset( $item['label'] ) && is_string( $item['label'] ) ) {
-						$cached_labels[] = $item['label'];
-					}
-				}
-			} catch ( \Exception $e ) {
-				$cached_labels = [];
-			}
-		}
-		return $cached_labels;
-	}
-
-	private function generate_class_id( string $selector ): string {
-		$class_name = $this->extract_class_name( $selector );
-		$existing_ids = $this->get_existing_global_class_names();
-
-		// Generate ID with g- prefix and hash like Elementor's native system
+	private function generate_class_id(): string {
 		do {
-			$hash = substr( dechex( mt_rand() ), 0, 7 );
+			$hash = substr( dechex( wp_rand() ), 0, 7 );
 			$id = 'g-' . $hash;
-		} while ( in_array( $id, $existing_ids, true ) );
+		} while ( $this->class_id_exists( $id ) );
 
 		return $id;
+	}
+
+	private function class_id_exists( string $id ): bool {
+		try {
+			$repository = Global_Classes_Repository::make();
+			$classes = $repository->all();
+			$existing_ids = array_keys( $classes->get_items()->all() );
+			return in_array( $id, $existing_ids, true );
+		} catch ( \Exception $e ) {
+			return false;
+		}
 	}
 
 	private function generate_class_label( string $selector ): string {

@@ -53,6 +53,29 @@ class Classes_Route {
 				],
 			],
 		] );
+
+		register_rest_route( 'elementor/v2', '/css-converter/classes/reset', [
+			'methods' => 'POST',
+			'callback' => [ $this, 'handle_reset_classes' ],
+			'permission_callback' => [ $this, 'check_permissions' ],
+		] );
+	}
+
+	public function handle_reset_classes() {
+		try {
+			$repository = Global_Classes_Repository::make();
+			$repository->put( [], [] );
+
+			return new WP_REST_Response( [
+				'success' => true,
+				'message' => 'Global classes repository cleared',
+			], 200 );
+		} catch ( \Exception $e ) {
+			return new WP_REST_Response( [
+				'success' => false,
+				'error' => $e->getMessage(),
+			], 500 );
+		}
 	}
 
 	public function check_permissions() {

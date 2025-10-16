@@ -33,6 +33,14 @@ class Variables_Route {
 			'methods' => 'POST',
 			'callback' => [ $this, 'handle_variables_import' ],
 			'permission_callback' => [ $this, 'check_permissions' ],
+			'args' => [
+				'update_mode' => [
+					'type' => 'string',
+					'default' => 'create_new',
+					'enum' => [ 'create_new', 'update' ],
+					'description' => 'How to handle existing variables: create_new (incremental naming like classes) or update (legacy update-in-place)',
+				],
+			],
 		] );
 	}
 
@@ -79,6 +87,7 @@ class Variables_Route {
 	public function handle_variables_import( WP_REST_Request $request ) {
 		$url = $request->get_param( 'url' );
 		$css = $request->get_param( 'css' );
+		$update_mode = $request->get_param( 'update_mode' ) ?? 'create_new';
 
 		if ( $this->is_invalid_url_or_css( $url, $css ) ) {
 			return new WP_REST_Response( [ 'error' => 'Missing url or css' ], 400 );
@@ -194,7 +203,7 @@ class Variables_Route {
 			],
 		];
 
-		$stored_variables = $this->save_editor_variables( $converted );
+		$stored_variables = $this->save_editor_variables( $converted, $update_mode );
 
 		$results['stored_variables'] = $stored_variables;
 
@@ -293,30 +302,34 @@ class Variables_Route {
 		return $logs_dir;
 	}
 
-	private function save_editor_variables( array $variables ): array {
+	private function save_editor_variables( array $variables, string $update_mode = 'create_new' ): array {
 		$repository = new Variables_Repository(
 			Plugin::$instance->kits_manager->get_active_kit()
 		);
 
-		// Build an index of existing variables by lowercase label for quick lookups.
 		$db_record = $repository->load();
 		$existing = isset( $db_record['data'] ) && is_array( $db_record['data'] ) ? $db_record['data'] : [];
 		$label_to_id = [];
+		$label_to_value = [];
+		
 		foreach ( $existing as $id => $item ) {
 			if ( isset( $item['deleted'] ) && $item['deleted'] ) {
 				continue;
 			}
 			if ( isset( $item['label'] ) && is_string( $item['label'] ) ) {
-				$label_to_id[ strtolower( $item['label'] ) ] = $id;
+				$lower_label = strtolower( $item['label'] );
+				$label_to_id[ $lower_label ] = $id;
+				$label_to_value[ $lower_label ] = $item['value'] ?? '';
 			}
 		}
 
 		$created = 0;
 		$updated = 0;
+		$reused = 0;
 		$errors = [];
+		$reused_variables = [];
 
 		foreach ( $variables as $variable ) {
-			// Expecting shape: [ 'id' => string, 'type' => string, 'value' => string, 'name' => string ]
 			$name = isset( $variable['name'] ) ? (string) $variable['name'] : '';
 			$value = isset( $variable['value'] ) ? (string) $variable['value'] : '';
 			$type = isset( $variable['type'] ) ? (string) $variable['type'] : '';
@@ -337,29 +350,60 @@ class Variables_Route {
 			}
 
 			$lower_label = strtolower( $label );
+			
 			try {
-				if ( isset( $label_to_id[ $lower_label ] ) ) {
-					$repository->update( $label_to_id[ $lower_label ], [
-						'label' => $label,
-						'value' => $value,
-					] );
-					++$updated;
+				if ( 'update' === $update_mode ) {
+					if ( isset( $label_to_id[ $lower_label ] ) ) {
+						$repository->update( $label_to_id[ $lower_label ], [
+							'label' => $label,
+							'value' => $value,
+						] );
+						++$updated;
+					} else {
+						$repository->create( [
+							'type' => $mapped_type,
+							'label' => $label,
+							'value' => $value,
+						] );
+						++$created;
+					}
 				} else {
-					$repository->create( [
-						'type' => $mapped_type,
-						'label' => $label,
-						'value' => $value,
-					] );
-					++$created;
-					// Refresh mapping to include the just-created label for subsequent iterations.
+					$result = $this->find_or_create_variable_with_suffix(
+						$repository,
+						$label,
+						$value,
+						$mapped_type,
+						$label_to_id,
+						$label_to_value
+					);
+					
+					if ( 'reused' === $result['action'] ) {
+						$reused_variables[] = [
+							'original_name' => $name,
+							'matched_id' => $result['id'],
+							'matched_label' => $result['label'],
+						];
+						++$reused;
+					} elseif ( 'created' === $result['action'] ) {
+						$created++;
+						$label_to_id[ strtolower( $result['label'] ) ] = $result['id'];
+						$label_to_value[ strtolower( $result['label'] ) ] = $value;
+					}
+				}
+				
+				if ( 'update' !== $update_mode || ! isset( $label_to_id[ $lower_label ] ) ) {
 					$db_record = $repository->load();
 					$existing = isset( $db_record['data'] ) && is_array( $db_record['data'] ) ? $db_record['data'] : [];
+					$label_to_id = [];
+					$label_to_value = [];
 					foreach ( $existing as $id => $item ) {
 						if ( isset( $item['deleted'] ) && $item['deleted'] ) {
 							continue;
 						}
 						if ( isset( $item['label'] ) && is_string( $item['label'] ) ) {
-							$label_to_id[ strtolower( $item['label'] ) ] = $id;
+							$lower = strtolower( $item['label'] );
+							$label_to_id[ $lower ] = $id;
+							$label_to_value[ $lower ] = $item['value'] ?? '';
 						}
 					}
 				}
@@ -372,16 +416,123 @@ class Variables_Route {
 			}
 		}
 
-		// Clear CSS cache so new variables take effect in generated styles.
 		if ( isset( Plugin::$instance->files_manager ) ) {
 			Plugin::$instance->files_manager->clear_cache();
 		}
 
-		return [
+		$result = [
 			'created' => $created,
 			'updated' => $updated,
 			'errors' => $errors,
+			'update_mode' => $update_mode,
 		];
+
+		if ( 'create_new' === $update_mode ) {
+			$result['reused'] = $reused;
+			if ( ! empty( $reused_variables ) ) {
+				$result['reused_variables'] = $reused_variables;
+			}
+		}
+
+		return $result;
+	}
+
+	private function find_or_create_variable_with_suffix( $repository, string $base_label, string $value, string $type, array &$label_to_id, array &$label_to_value ): array {
+		$variants = $this->get_all_variable_variants( $base_label, $label_to_id, $label_to_value );
+		
+		foreach ( $variants as $variant_label => $variant_value ) {
+			if ( $variant_value === $value ) {
+				return [
+					'action' => 'reused',
+					'id' => $label_to_id[ strtolower( $variant_label ) ],
+					'label' => $variant_label,
+				];
+			}
+		}
+
+		$next_suffix = $this->find_next_variable_suffix( $base_label, array_keys( $variants ) );
+		$new_label = $this->apply_variable_suffix( $base_label, $next_suffix );
+		
+		$created_id = $repository->create( [
+			'type' => $type,
+			'label' => $new_label,
+			'value' => $value,
+		] );
+
+		return [
+			'action' => 'created',
+			'id' => $created_id,
+			'label' => $new_label,
+		];
+	}
+
+	private function get_all_variable_variants( string $base_label, array $label_to_id, array $label_to_value ): array {
+		$variants = [];
+		$base_lower = strtolower( $base_label );
+
+		foreach ( $label_to_id as $label_lower => $id ) {
+			$label = array_search( $id, array_map( 'strtolower', array_flip( $label_to_id ) ), true );
+			if ( false === $label ) {
+				continue;
+			}
+
+			if ( str_starts_with( $label_lower, $base_lower ) ) {
+				$suffix_part = substr( $label_lower, strlen( $base_lower ) );
+				if ( '' === $suffix_part || ( str_starts_with( $suffix_part, '-' ) && is_numeric( substr( $suffix_part, 1 ) ) ) ) {
+					foreach ( $label_to_id as $lbl_lower => $var_id ) {
+						if ( $lbl_lower === $label_lower ) {
+							foreach ( $label_to_value as $val_label_lower => $val ) {
+								if ( $val_label_lower === $label_lower ) {
+									$original_label = '';
+									foreach ( array_keys( $label_to_id ) as $original ) {
+										if ( strtolower( $original ) === $label_lower ) {
+											$original_label = $original;
+											break;
+										}
+									}
+									if ( $original_label ) {
+										$variants[ $original_label ] = $val;
+									}
+									break;
+								}
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		return $variants;
+	}
+
+	private function find_next_variable_suffix( string $base_label, array $variant_labels ): int {
+		if ( empty( $variant_labels ) ) {
+			return 1;
+		}
+
+		$max_suffix = 0;
+		foreach ( $variant_labels as $label ) {
+			if ( $label === $base_label ) {
+				continue;
+			}
+
+			if ( 1 === preg_match( '/^' . preg_quote( $base_label, '/' ) . '-(\d+)$/', $label, $matches ) ) {
+				$suffix = (int) $matches[1];
+				if ( $suffix > $max_suffix ) {
+					$max_suffix = $suffix;
+				}
+			}
+		}
+
+		return $max_suffix + 1;
+	}
+
+	private function apply_variable_suffix( string $base_label, int $suffix ): string {
+		if ( 0 === $suffix ) {
+			return $base_label;
+		}
+		return $base_label . '-' . $suffix;
 	}
 
 	private function map_converted_type_to_repository_type( string $converted_type ): ?string {

@@ -56,10 +56,28 @@ export interface DualApiTestResult {
 }
 
 export class CssConverterHelper {
-	private readonly devToken: string;
+	public readonly devToken: string;
+	private readonly RATE_LIMIT_DELAY_MS = 7000;
 
 	constructor( devToken?: string ) {
 		this.devToken = devToken || process.env.ELEMENTOR_CSS_CONVERTER_DEV_TOKEN || 'my-dev-token';
+	}
+
+	async waitForRateLimit(): Promise<void> {
+		await new Promise(resolve => setTimeout(resolve, this.RATE_LIMIT_DELAY_MS));
+	}
+
+	async resetGlobalClasses( request: APIRequestContext ): Promise<void> {
+		try {
+			await request.post( '/wp-json/elementor/v2/css-converter/classes/reset', {
+				headers: {
+					'X-DEV-TOKEN': this.devToken,
+					'Content-Type': 'application/json',
+				},
+			} );
+		} catch ( e ) {
+			console.log( 'Reset endpoint not available, continuing...' );
+		}
 	}
 
 	async convertHtmlWithCss(
@@ -173,6 +191,25 @@ export class CssConverterHelper {
 		} );
 
 		return await apiResponse.json() as CssClassesResponse;
+	}
+
+	async convertCssVariables(
+		request: APIRequestContext,
+		cssContent: string,
+		updateMode: string = 'create_new',
+	): Promise<any> {
+		const apiResponse = await request.post( '/wp-json/elementor/v2/css-converter/variables', {
+			headers: {
+				'X-DEV-TOKEN': this.devToken,
+				'Content-Type': 'application/json',
+			},
+			data: {
+				css: cssContent,
+				update_mode: updateMode,
+			},
+		} );
+
+		return await apiResponse.json();
 	}
 
 	async convertWithBothApis(
