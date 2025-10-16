@@ -1,5 +1,5 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
-import { registerElementType } from '@elementor/editor-canvas';
+import { registerElementType, settingsTransformersRegistry } from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
@@ -7,9 +7,10 @@ import { __privateListenTo as listenTo, commandStartEvent, registerDataHook } fr
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
+import { componentIdTransformer } from './component-id-transformer';
 import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
-import { createComponentType, TYPE } from './inject-element-view';
+import { createComponentType, TYPE } from './create-component-type';
 import { PopulateStore } from './populate-store';
 import { componentsStylesProvider } from './store/components-styles-provider';
 import { loadComponentsStyles } from './store/load-components-styles';
@@ -46,6 +47,7 @@ export function init() {
 		id: 'components-populate-store',
 		component: PopulateStore,
 	} );
+
 	listenTo( commandStartEvent( 'editor/documents/attach-preview' ), () => {
 		const { id, config } = getV1CurrentDocument();
 
@@ -55,4 +57,6 @@ export function init() {
 
 		loadComponentsStyles( ( config?.elements as Element[] ) ?? [] );
 	} );
+
+	settingsTransformersRegistry.register( 'component-id', componentIdTransformer );
 }
