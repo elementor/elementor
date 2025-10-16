@@ -949,11 +949,11 @@ class OnboardingTracker {
 		const stepConfig = this.getStepConfig( stepNumber );
 
 		if ( stepConfig ) {
-			this.trackStepActionInternal( stepNumber, 'upgrade_topbar', {
+			this.trackStepActionInternal( stepNumber, 'upgrade_topbar', stepConfig.storageKey, {
 				upgrade_clicked: 'no_click',
 				upgrade_hovered: hoverData.upgrade_hovered,
 				hover_timestamp: hoverData.hover_timestamp,
-			}, stepConfig.storageKey );
+			} );
 		}
 
 		this.sendEventOrStore( 'TOP_UPGRADE', {
