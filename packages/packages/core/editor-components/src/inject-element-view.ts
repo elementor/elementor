@@ -1,5 +1,6 @@
 import {
-	createElementViewClassDeclaration,
+	type CreateTemplatedElementTypeOptions,
+	createTemplatedElementViewClassDeclaration,
 	type ElementType,
 	type ElementView,
 	type LegacyWindow,
@@ -10,31 +11,53 @@ import { __ } from '@wordpress/i18n';
 
 export const TYPE = 'e-component';
 
-export function createComponentType(): typeof ElementType {
+export function createComponentType( options: CreateTemplatedElementTypeOptions ): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
 
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
 		getType() {
-			return TYPE;
+			return options.type;
 		}
 
 		getView() {
-			return createComponentViewClassDeclaration();
+			return createComponentViewClassDeclaration( options );
 		}
 	};
 }
 
-export function createComponentViewClassDeclaration(): typeof ElementView {
-	return class extends createElementViewClassDeclaration() {
+export function createComponentViewClassDeclaration( options: CreateTemplatedElementTypeOptions ): typeof ElementView {
+	return class extends createTemplatedElementViewClassDeclaration( options ) {
 		legacyWindow = window as unknown as LegacyWindow;
 
+		onSettingsResolve( settings: { [ key: string ]: unknown } ) {
+			if ( settings.component ) {
+				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection( settings.component );
+
+				settings.component = '<template data-children-placeholder></template>';
+			}
+
+			return settings;
+		}
+
+		attachBuffer( collectionView: this, buffer: DocumentFragment ): void {
+			const childrenPlaceholder = collectionView.$el.find( '[data-children-placeholder]' ).get( 0 );
+
+			if ( ! childrenPlaceholder ) {
+				super.attachBuffer( collectionView, buffer );
+
+				return;
+			}
+
+			childrenPlaceholder.replaceWith( buffer );
+		}
+
 		getComponentId() {
-			return this.options?.model?.get( 'settings' )?.get( 'component_id' ) as NumberPropValue;
+			return this.options?.model?.get( 'settings' )?.get( 'component' ) as NumberPropValue;
 		}
 
 		getContextMenuGroups() {
 			const filteredGroups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
-			const componentId = this.getComponentId().value;
+			const componentId = this.getComponentId()?.value;
 
 			if ( ! componentId ) {
 				return filteredGroups;
@@ -58,18 +81,21 @@ export function createComponentViewClassDeclaration(): typeof ElementView {
 		switchDocument() {
 			runCommand( 'editor/documents/switch', {
 				id: this.getComponentId().value,
+				selector: `[data-id="${ this.model.get( 'id' ) }"]`,
 				mode: 'autosave',
 			} );
 		}
 
 		ui() {
 			return {
+				...super.ui(),
 				doubleClick: '.e-component:not(:has(.elementor-edit-area))',
 			};
 		}
 
 		events() {
 			return {
+				...super.events(),
 				'dblclick @ui.doubleClick': this.switchDocument,
 			};
 		}

@@ -78,6 +78,10 @@ export declare class ElementView {
 	options?: {
 		model: BackboneModel< ElementModel >;
 	};
+
+	ui(): Record< string, unknown >;
+
+	events(): Record< string, unknown >;
 }
 
 type JQueryElement = {
