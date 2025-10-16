@@ -11,12 +11,12 @@ class Nested_Class_Mapping_Service {
 	private $parser;
 	private $name_generator;
 
-	public function __construct( 
+	public function __construct(
 		Nested_Selector_Parser $parser = null,
 		Flattened_Class_Name_Generator $name_generator = null
 	) {
-		$this->parser = $parser ?: Nested_Selector_Parser::make();
-		$this->name_generator = $name_generator ?: Flattened_Class_Name_Generator::make();
+		$this->parser = null !== $parser ? $parser : Nested_Selector_Parser::make();
+		$this->name_generator = null !== $name_generator ? $name_generator : Flattened_Class_Name_Generator::make();
 	}
 
 	public static function make(): self {
@@ -44,16 +44,67 @@ class Nested_Class_Mapping_Service {
 		$target = $parsed_selector['target'];
 		$original_selector = $parsed_selector['original_selector'];
 
-		// Extract the target class name (remove . prefix)
 		$target_class = $this->extract_class_name_from_target( $target );
 		if ( empty( $target_class ) ) {
 			return;
 		}
 
-		// Generate flattened class name
 		$flattened_class_name = $this->name_generator->generate_flattened_class_name( $parsed_selector );
 
-		// Store the mapping
+		if ( $this->should_skip_flattened_class_generation( $flattened_class_name ) ) {
+			return;
+		}
+
+		$this->store_class_mapping( $target_class, $flattened_class_name, $original_selector, $target, $parsed_selector );
+	}
+
+	private function extract_class_name_from_target( string $target ): string {
+		$target = trim( $target );
+
+		$class_name = $this->extract_first_class_from_selector( $target );
+		if ( ! empty( $class_name ) ) {
+			return $class_name;
+		}
+
+		$element_name = $this->extract_element_from_selector( $target );
+		if ( ! empty( $element_name ) ) {
+			return $element_name;
+		}
+
+		return '';
+	}
+
+	private function extract_first_class_from_selector( string $target ): string {
+		if ( 0 !== strpos( $target, '.' ) ) {
+			return '';
+		}
+
+		if ( preg_match( '/^\.([a-zA-Z0-9_-]+)/', $target, $matches ) ) {
+			return $matches[1];
+		}
+
+		return '';
+	}
+
+	private function extract_element_from_selector( string $target ): string {
+		if ( preg_match( '/^([a-zA-Z][a-zA-Z0-9]*)\b/', $target, $matches ) ) {
+			return $matches[1];
+		}
+
+		return '';
+	}
+
+	private function should_skip_flattened_class_generation( string $flattened_class_name ): bool {
+		return empty( $flattened_class_name );
+	}
+
+	private function store_class_mapping(
+		string $target_class,
+		string $flattened_class_name,
+		string $original_selector,
+		string $target,
+		array $parsed_selector
+	): void {
 		$this->class_mappings[ $target_class ] = [
 			'original_class' => $target_class,
 			'flattened_class' => $flattened_class_name,
@@ -64,37 +115,26 @@ class Nested_Class_Mapping_Service {
 		];
 	}
 
-	private function extract_class_name_from_target( string $target ): string {
-		// Handle various target formats:
-		// .second -> second
-		// h1 -> h1 (element selector)
-		// .second.active -> second (first class)
-		
-		$target = trim( $target );
-		
-		// If it starts with a dot, it's a class selector
-		if ( strpos( $target, '.' ) === 0 ) {
-			// Extract first class name
-			if ( preg_match( '/^\.([a-zA-Z0-9_-]+)/', $target, $matches ) ) {
-				return $matches[1];
-			}
-		}
-		
-		// If it's an element selector (h1, p, div, etc.)
-		if ( preg_match( '/^([a-zA-Z][a-zA-Z0-9]*)\b/', $target, $matches ) ) {
-			return $matches[1];
-		}
-		
-		return '';
-	}
-
 	public function get_flattened_class_name( string $original_class ): ?string {
 		if ( ! isset( $this->class_mappings[ $original_class ] ) ) {
 			return null;
 		}
 
-		// Return the flattened class name directly (string value)
-		return $this->class_mappings[ $original_class ];
+		$mapping = $this->class_mappings[ $original_class ];
+
+		return $this->extract_flattened_class_from_mapping( $mapping );
+	}
+
+	private function extract_flattened_class_from_mapping( $mapping ): ?string {
+		if ( is_array( $mapping ) ) {
+			return $mapping['flattened_class'] ?? null;
+		}
+
+		if ( is_string( $mapping ) ) {
+			return $mapping;
+		}
+
+		return null;
 	}
 
 	public function has_mapping_for_class( string $class_name ): bool {
@@ -114,8 +154,14 @@ class Nested_Class_Mapping_Service {
 	}
 
 	public function get_flattened_classes(): array {
-		// Return the flattened class names (values) from the mappings
-		return array_values( $this->class_mappings );
+		$flattened_classes = [];
+		foreach ( $this->class_mappings as $mapping ) {
+			$flattened_class = $this->extract_flattened_class_from_mapping( $mapping );
+			if ( null !== $flattened_class ) {
+				$flattened_classes[] = $flattened_class;
+			}
+		}
+		return $flattened_classes;
 	}
 
 	public function get_mapping_summary(): array {
@@ -131,7 +177,6 @@ class Nested_Class_Mapping_Service {
 	}
 
 	public function initialize_with_mappings( array $class_mappings ): void {
-		// Direct initialization with pre-computed mappings
 		$this->class_mappings = $class_mappings;
 	}
 }
