@@ -9,6 +9,7 @@ class Html_Class_Modifier_Service {
 
 	private $usage_tracker;
 	private $mapping_service;
+	private $compound_mappings = [];
 
 	public function __construct(
 		Css_Class_Usage_Tracker $usage_tracker = null,
@@ -36,7 +37,6 @@ class Html_Class_Modifier_Service {
 		array $classes_with_direct_styles,
 		array $classes_only_in_nested
 	): void {
-		// Direct initialization with pre-computed flattening results
 		$this->usage_tracker->initialize_with_class_lists(
 			$classes_with_direct_styles,
 			$classes_only_in_nested
@@ -44,11 +44,14 @@ class Html_Class_Modifier_Service {
 		$this->mapping_service->initialize_with_mappings( $class_mappings );
 	}
 
+	public function initialize_with_compound_results( array $compound_mappings ): void {
+		$this->compound_mappings = $compound_mappings;
+	}
+
 	public function modify_element_classes( array $element ): array {
 		$original_classes = $this->extract_classes_from_element( $element );
 		$modified_classes = [];
 
-		// Process existing class attributes
 		foreach ( $original_classes as $class_name ) {
 			$modified_class = $this->process_single_class( $class_name );
 			if ( null !== $modified_class ) {
@@ -56,11 +59,9 @@ class Html_Class_Modifier_Service {
 			}
 		}
 
-		// Check if element tag has a flattened mapping (Pattern 5: Element Selectors)
 		$element_tag = $element['original_tag'] ?? $element['tag'] ?? '';
 
 		if ( ! empty( $element_tag ) ) {
-			// CRITICAL FIX: Check for element tag mapping using pseudo-class format
 			$element_pseudo_class = '.' . $element_tag;
 			if ( $this->mapping_service->has_mapping_for_class( $element_pseudo_class ) ) {
 				$flattened_element_class = $this->mapping_service->get_flattened_class_name( $element_pseudo_class );
@@ -69,6 +70,9 @@ class Html_Class_Modifier_Service {
 				}
 			}
 		}
+
+		$compound_classes = $this->apply_compound_classes( $modified_classes );
+		$modified_classes = array_merge( $modified_classes, $compound_classes );
 
 		return $this->update_element_with_classes( $element, $modified_classes );
 	}
@@ -141,5 +145,33 @@ class Html_Class_Modifier_Service {
 
 	public function has_mapping_for_class( string $class_name ): bool {
 		return $this->mapping_service->has_mapping_for_class( $class_name );
+	}
+
+	private function apply_compound_classes( array $widget_classes ): array {
+		$compound_classes_to_add = [];
+
+		foreach ( $this->compound_mappings as $flattened_name => $compound_info ) {
+			$required_classes = $compound_info['requires'] ?? [];
+
+			if ( empty( $required_classes ) ) {
+				continue;
+			}
+
+			if ( $this->check_compound_requirements( $widget_classes, $required_classes ) ) {
+				$compound_classes_to_add[] = $flattened_name;
+			}
+		}
+
+		return $compound_classes_to_add;
+	}
+
+	private function check_compound_requirements( array $widget_classes, array $required_classes ): bool {
+		foreach ( $required_classes as $required_class ) {
+			if ( ! in_array( $required_class, $widget_classes, true ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

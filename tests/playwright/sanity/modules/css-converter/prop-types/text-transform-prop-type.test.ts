@@ -29,7 +29,7 @@ test.describe( 'Text Transform Prop Type Integration @prop-types', () => {
 
 	test.afterAll( async ( { browser } ) => {
 		const page = await browser.newPage();
-		// await wpAdminPage.resetExperiments();
+		// Await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 

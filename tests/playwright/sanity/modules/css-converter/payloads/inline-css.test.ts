@@ -29,7 +29,7 @@ test.describe( 'Inline CSS Payload Integration @payloads', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// await wpAdminPage.resetExperiments();
+		// Await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -180,10 +180,9 @@ test.describe( 'Inline CSS Payload Integration @payloads', () => {
 
 			if ( classesResult.classes && classesResult.classes.length > 0 ) {
 				// Verify class structure
-				const firstClass = classesResult.classes[0];
+				const firstClass = classesResult.classes[ 0 ];
 				expect( firstClass ).toHaveProperty( 'name' );
 				expect( firstClass ).toHaveProperty( 'properties' );
-				
 			}
 		} );
 
@@ -196,10 +195,9 @@ test.describe( 'Inline CSS Payload Integration @payloads', () => {
 			} );
 
 			const validation = cssHelper.validateDualApiResult( dualResult );
-			if ( !validation.shouldSkip ) {
+			if ( ! validation.shouldSkip ) {
 				expect( dualResult.widgetConverter?.success ).toBe( true );
 				expect( dualResult.cssClasses?.success ).toBe( true );
-
 			}
 		} );
 	} );

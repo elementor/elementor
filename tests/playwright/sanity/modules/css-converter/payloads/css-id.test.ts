@@ -29,7 +29,7 @@ test.describe( 'CSS ID Payload Integration @payloads', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// await wpAdminPage.resetExperiments();
+		// Await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 

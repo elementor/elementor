@@ -34,7 +34,7 @@ class Unified_Widget_Conversion_Service {
 	}
 
 	public function convert_from_html( $html, $css_urls = [], $follow_imports = false, $options = [] ): array {
-		error_log( "🔥 MAX_DEBUG: Unified_Widget_Conversion_Service->convert_from_html called!" );
+		error_log( '🔥 MAX_DEBUG: Unified_Widget_Conversion_Service->convert_from_html called!' );
 		$this->use_zero_defaults = true;
 		$this->widget_creator = new Widget_Creator( $this->use_zero_defaults );
 
@@ -84,11 +84,14 @@ class Unified_Widget_Conversion_Service {
 				$global_classes = array_merge( $global_classes, $flattened_classes );
 			}
 
+			$compound_classes = $unified_processing_result['compound_classes'] ?? [];
+			$compound_classes_created = $unified_processing_result['compound_classes_created'] ?? 0;
+
 			if ( ! empty( $global_classes ) ) {
 				$this->store_global_classes_in_kit( $global_classes, $options );
 			}
 
-			$creation_result = $this->create_widgets_with_resolved_styles( $widgets_with_resolved_styles_for_global_classes, $options, $global_classes );
+			$creation_result = $this->create_widgets_with_resolved_styles( $widgets_with_resolved_styles_for_global_classes, $options, $global_classes, $compound_classes, $compound_classes_created );
 			$conversion_log['widget_creation'] = $creation_result['stats'];
 			$widgets_created = $creation_result['widgets_created'] ?? 0;
 
@@ -102,6 +105,8 @@ class Unified_Widget_Conversion_Service {
 				'widgets_created' => $creation_result['widgets_created'],
 				'global_classes_created' => $creation_result['global_classes_created'],
 				'variables_created' => $creation_result['variables_created'],
+				'compound_classes_created' => $creation_result['compound_classes_created'] ?? 0,
+				'compound_classes' => $creation_result['compound_classes'] ?? [],
 				'post_id' => $creation_result['post_id'],
 				'edit_url' => $creation_result['edit_url'],
 				'conversion_log' => $conversion_log,
@@ -379,7 +384,7 @@ class Unified_Widget_Conversion_Service {
 		}
 	}
 
-	private function create_widgets_with_resolved_styles( array $widgets, array $options, array $global_classes ): array {
+	private function create_widgets_with_resolved_styles( array $widgets, array $options, array $global_classes, array $compound_classes = [], int $compound_classes_created = 0 ): array {
 		$post_id = $options['postId'] ?? null;
 		$post_type = $options['postType'] ?? 'page';
 
@@ -396,6 +401,8 @@ class Unified_Widget_Conversion_Service {
 				'widgets_created' => 0,
 				'global_classes_created' => count( $global_classes ),
 				'variables_created' => 0,
+				'compound_classes_created' => $compound_classes_created,
+				'compound_classes' => $compound_classes,
 				'post_id' => 0,
 				'edit_url' => '',
 				'errors' => [ 'Failed to create post' ],
@@ -423,9 +430,9 @@ class Unified_Widget_Conversion_Service {
 			],
 		];
 
-		error_log( "🔥 MAX_DEBUG: About to call widget_creator->create_widgets with " . count( $widgets ) . " widgets" );
+		error_log( '🔥 MAX_DEBUG: About to call widget_creator->create_widgets with ' . count( $widgets ) . ' widgets' );
 		$creation_result = $this->widget_creator->create_widgets( $widgets, $css_processing_result, $options );
-		error_log( "🔥 MAX_DEBUG: widget_creator->create_widgets completed" );
+		error_log( '🔥 MAX_DEBUG: widget_creator->create_widgets completed' );
 
 		if ( isset( $creation_result['post_id'] ) && $creation_result['post_id'] ) {
 			$post_id = $creation_result['post_id'];
@@ -437,6 +444,8 @@ class Unified_Widget_Conversion_Service {
 			'widgets_created' => $creation_result['widgets_created'] ?? 0,
 			'global_classes_created' => $creation_result['global_classes_created'] ?? count( $global_classes ),
 			'variables_created' => $creation_result['variables_created'] ?? 0,
+			'compound_classes_created' => $compound_classes_created,
+			'compound_classes' => $compound_classes,
 			'post_id' => $creation_result['post_id'] ?? $post_id,
 			'edit_url' => $creation_result['edit_url'] ?? admin_url( 'post.php?post=' . $post_id . '&action=elementor' ),
 			'errors' => $creation_result['errors'] ?? [],
@@ -493,5 +502,4 @@ class Unified_Widget_Conversion_Service {
 			'element_styles' => $element_styles,
 		];
 	}
-
 }

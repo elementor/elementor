@@ -45,7 +45,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 		// Convert HTML with CSS using CSS Converter API
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
-			cssContent
+			cssContent,
 		);
 
 		// Verify conversion was successful
@@ -77,7 +77,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 		await expect( elementWithFlattenedClass ).toHaveClass( /third--first-second/ );
 
 		// Find the paragraph element with the text content
-		const paragraphElement = previewFrame.locator( 'p' ).filter({ hasText: 'Three Level Content' }).first();
+		const paragraphElement = previewFrame.locator( 'p' ).filter( { hasText: 'Three Level Content' } ).first();
 		await expect( paragraphElement ).toBeVisible();
 
 		// Verify that the original CSS properties are preserved in the flattened class
@@ -109,7 +109,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
-			cssContent
+			cssContent,
 		);
 
 		expect( result.success ).toBe( true );
@@ -130,7 +130,6 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 		// Get the preview frame
 		const previewFrame = page.frameLocator( '#elementor-preview-iframe' );
 
-
 		// Find the element with flattened class (container element)
 		const elementWithFlattenedClass = previewFrame.locator( '[class*="third--first-second"]' ).first();
 
@@ -140,7 +139,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 		await expect( elementWithFlattenedClass ).toHaveClass( /third--first-second/ );
 
 		// Verify the text content is present (in the inner paragraph element)
-		const textElement = previewFrame.locator( 'p' ).filter({ hasText: 'Mixed Selector Content' }).first();
+		const textElement = previewFrame.locator( 'p' ).filter( { hasText: 'Mixed Selector Content' } ).first();
 		await expect( textElement ).toBeVisible();
 
 		// Verify that the original CSS properties are preserved in the flattened class
@@ -173,7 +172,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
-			cssContent
+			cssContent,
 		);
 
 		expect( result.success ).toBe( true );
@@ -203,7 +202,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 		await expect( elementWithFlattenedClass ).toHaveClass( /link--container-header-nav/ );
 
 		// Verify the text content is present (in the inner paragraph element)
-		const textElement = previewFrame.locator( 'p' ).filter({ hasText: 'Deep Nested Link' }).first();
+		const textElement = previewFrame.locator( 'p' ).filter( { hasText: 'Deep Nested Link' } ).first();
 		await expect( textElement ).toBeVisible();
 
 		// Verify that the original CSS properties are preserved in the flattened class
@@ -253,7 +252,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
-			cssContent
+			cssContent,
 		);
 
 		expect( result.success ).toBe( true );
@@ -297,7 +296,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 		await expect( socialElement ).toHaveCSS( 'font-size', '12px' );
 
 		// Verify text content is present (div elements get text wrapped)
-		const socialTextElement = previewFrame.locator( 'p' ).filter({ hasText: 'Social Link' }).first();
+		const socialTextElement = previewFrame.locator( 'p' ).filter( { hasText: 'Social Link' } ).first();
 		await expect( socialTextElement ).toBeVisible();
 
 		// Multiple Pattern 3 selectors should each be flattened:
@@ -328,7 +327,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
-			cssContent
+			cssContent,
 		);
 
 		expect( result.success ).toBe( true );
@@ -336,7 +335,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 		// According to documentation: "Maximum chain: let's say 3 levels. If more levels: apply style to the widget directly"
 		// This test verifies the behavior with 5-level nesting
 		// The exact behavior (flatten vs direct application) depends on implementation
-		
+
 		// Verify successful conversion
 		expect( result.post_id ).toBeGreaterThan( 0 );
 		expect( result.edit_url ).toContain( 'elementor' );
@@ -365,7 +364,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 
 		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
 			request,
-			cssContent
+			cssContent,
 		);
 
 		expect( result.success ).toBe( true );
@@ -390,11 +389,11 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 
 		// First, check if any widgets were actually created
 		const dragWidgetHere = previewFrame.locator( 'text=Drag widget here' );
-		const hasContent = await dragWidgetHere.count() === 0;
+		const hasContent = 0 === await dragWidgetHere.count();
 
 		if ( ! hasContent ) {
 			// No widgets were created - this reveals an issue with mixed content processing
-			
+
 			// This is actually valuable information - the system doesn't handle mixed content well
 			// We should document this behavior rather than fail the test
 			expect( hasContent ).toBe( false ); // Document that no content was created
@@ -408,15 +407,14 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 		// Look for our specific text content
 		const textStringExists = await previewFrame.locator( 'text=Text string' ).count() > 0;
 		const anotherStringExists = await previewFrame.locator( 'text=Another string' ).count() > 0;
-		
 
 		if ( textStringExists ) {
-			const textStringParagraph = previewFrame.locator( 'p' ).filter({ hasText: 'Text string' }).first();
+			const textStringParagraph = previewFrame.locator( 'p' ).filter( { hasText: 'Text string' } ).first();
 			const textStringClass = await textStringParagraph.getAttribute( 'class' );
 		}
 
 		if ( anotherStringExists ) {
-			const anotherStringParagraph = previewFrame.locator( 'p' ).filter({ hasText: 'Another string' }).first();
+			const anotherStringParagraph = previewFrame.locator( 'p' ).filter( { hasText: 'Another string' } ).first();
 			const anotherStringClass = await anotherStringParagraph.getAttribute( 'class' );
 		}
 

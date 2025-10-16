@@ -28,19 +28,19 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 
 	const verifyFrontendBaseClasses = async ( elements, shouldHaveBaseClass: boolean, baseClassName: string ) => {
 		const count = await elements.count();
-		
+
 		for ( let i = 0; i < count; i++ ) {
 			const element = elements.nth( i );
 			const classes = await element.getAttribute( 'class' ) || '';
 			const text = await element.textContent() || '';
-			
+
 			if ( shouldHaveBaseClass ) {
 				expect( classes ).toContain( baseClassName );
 			} else {
 				expect( classes ).not.toContain( baseClassName );
 			}
 		}
-		
+
 		return count;
 	};
 
@@ -53,11 +53,11 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 				<h2 style="margin: 15px;">This heading has explicit margin</h2>
 			</div>
 		`;
-		
+
 		// Test with converted widgets (zero defaults always enabled)
-		const apiResult = await cssHelper.convertHtmlWithCss( 
-			request, 
-			htmlContent
+		const apiResult = await cssHelper.convertHtmlWithCss(
+			request,
+			htmlContent,
 		);
 
 		// Check if API call succeeded
@@ -85,11 +85,11 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			elementorFrame = editor.getPreviewFrame();
 			retries++;
 		}
-		
+
 		if ( ! elementorFrame ) {
 			throw new Error( 'Elementor frame not available after 5 retries' );
 		}
-		
+
 		await elementorFrame.waitForLoadState();
 
 		// Find all paragraph and heading elements (CSS converter widgets have no base classes)
@@ -99,29 +99,28 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 		await expect( headingElements ).toHaveCount( 2 );
 
 		// ===== EDITOR TESTS - All editor assertions first =====
-		
+
 		await test.step( 'Editor: Verify API widgets have no base classes', async () => {
 			// Wait for Elementor widgets to be rendered (they may take time to appear)
 			await page.waitForTimeout( 3000 );
-			
+
 			// Look for Elementor widgets specifically, not just HTML elements
 			const paragraphWidgets = elementorFrame.locator( '.elementor-widget-e-paragraph' );
 			const headingWidgets = elementorFrame.locator( '.elementor-widget-e-heading' );
-			
+
 			// Wait for at least one widget to appear
 			await paragraphWidgets.first().waitFor( { state: 'attached', timeout: 15000 } ).catch( () => {} );
-			
+
 			let paragraphWidgetCount = 0;
 			let headingWidgetCount = 0;
-			
+
 			try {
 				paragraphWidgetCount = await paragraphWidgets.count();
 				headingWidgetCount = await headingWidgets.count();
-				
 			} catch ( error ) {
 				return;
 			}
-			
+
 			// Check paragraph widgets for base classes (CSS Converter should NOT add them)
 			if ( paragraphWidgetCount > 0 ) {
 				for ( let i = 0; i < paragraphWidgetCount; i++ ) {
@@ -132,7 +131,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 					expect( classes || '' ).not.toContain( 'e-paragraph-base' );
 				}
 			}
-			
+
 			// Check heading widgets for base classes (CSS Converter should NOT add them)
 			if ( headingWidgetCount > 0 ) {
 				for ( let i = 0; i < headingWidgetCount; i++ ) {
@@ -143,7 +142,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 					expect( classes || '' ).not.toContain( 'e-heading-base' );
 				}
 			}
-			
+
 			// Ensure we found at least some widgets (the CSS converter should create them)
 			expect( paragraphWidgetCount + headingWidgetCount ).toBeGreaterThan( 0 );
 		} );
@@ -152,7 +151,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			// Find the actual inner heading element (h1) within the widget
 			const firstHeadingWidget = headingElements.nth( 0 );
 			await firstHeadingWidget.waitFor( { state: 'visible', timeout: 10000 } );
-			
+
 			const innerHeading = firstHeadingWidget.locator( 'h1, h2, h3, h4, h5, h6' ).first();
 			await innerHeading.waitFor( { state: 'visible', timeout: 10000 } );
 
@@ -174,7 +173,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			// Find the actual inner paragraph element with explicit margin
 			const secondParagraphWidget = paragraphElements.nth( 1 );
 			await secondParagraphWidget.waitFor( { state: 'visible', timeout: 10000 } );
-			
+
 			const innerParagraph = secondParagraphWidget.locator( 'p' ).first();
 			await innerParagraph.waitFor( { state: 'visible', timeout: 10000 } );
 
@@ -200,7 +199,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			// Find the actual inner heading element with explicit margin
 			const secondHeadingWidget = headingElements.nth( 1 );
 			await secondHeadingWidget.waitFor( { state: 'visible', timeout: 10000 } );
-			
+
 			const innerHeading = secondHeadingWidget.locator( 'h1, h2, h3, h4, h5, h6' ).first();
 			await innerHeading.waitFor( { state: 'visible', timeout: 10000 } );
 
@@ -226,35 +225,35 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			// Add a new paragraph widget manually through the editor
 			await page.click( 'button[aria-label="Add Element"], .elementor-add-element-button, .elementor-panel-footer-tool[data-tooltip="Add Element"]' );
 			await page.waitForTimeout( 1000 );
-			
+
 			// Look for the paragraph widget in the elements panel
 			const paragraphButton = page.locator( 'button:has-text("Paragraph"), .elementor-element-wrapper:has-text("Paragraph"), [data-tooltip="Paragraph"]' ).first();
 			await paragraphButton.waitFor( { state: 'visible', timeout: 10000 } );
 			await paragraphButton.click();
-			
+
 			// Wait for the widget to be added
 			await page.waitForTimeout( 2000 );
-			
+
 			// Edit the paragraph content to identify it
 			const paragraphTextbox = page.locator( 'textarea[placeholder*="paragraph"], .elementor-control-type-textarea textarea, #elementor-control-default-paragraph' ).first();
 			if ( await paragraphTextbox.isVisible() ) {
 				await paragraphTextbox.fill( 'MANUAL Widget - should HAVE base class' );
 				await page.waitForTimeout( 1000 );
 			}
-			
+
 			// Save the page
 			await page.click( 'button:has-text("Publish"), button:has-text("Update"), #elementor-panel-saver-button-publish' );
 			await page.waitForTimeout( 3000 );
-			
+
 			// Check current state - API widgets should have no base classes, manual widget should have base class
 			const currentWidgets = await elementorFrame.locator( '.elementor-widget-e-paragraph p' ).all();
 			let apiWidgetsWithoutBase = 0;
 			let manualWidgetsWithBase = 0;
-			
+
 			for ( const widget of currentWidgets ) {
 				const text = await widget.textContent();
 				const classes = await widget.getAttribute( 'class' ) || '';
-				
+
 				if ( text && text.includes( 'MANUAL' ) ) {
 					// Manual widget should have base class
 					if ( classes.includes( 'e-paragraph-base' ) ) {
@@ -262,12 +261,12 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 					}
 				} else {
 					// API widgets should not have base class
-					if ( !classes.includes( 'e-paragraph-base' ) ) {
+					if ( ! classes.includes( 'e-paragraph-base' ) ) {
 						apiWidgetsWithoutBase++;
 					}
 				}
 			}
-			
+
 			expect( apiWidgetsWithoutBase ).toBeGreaterThan( 0 );
 			expect( manualWidgetsWithBase ).toBeGreaterThan( 0 );
 		} );
@@ -276,28 +275,26 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 
 		await test.step( 'Frontend: Verify all styling and base class behavior', async () => {
 			// Save the page by using keyboard shortcut (Ctrl+S / Cmd+S)
-			await page.keyboard.press( process.platform === 'darwin' ? 'Meta+S' : 'Control+S' );
+			await page.keyboard.press( 'darwin' === process.platform ? 'Meta+S' : 'Control+S' );
 			await page.waitForTimeout( 3000 );
-			
+
 			// Navigate to frontend directly
 			const pageId = await editor.getPageId();
 			await page.goto( `/?p=${ pageId }` );
 			await page.waitForLoadState( 'networkidle', { timeout: 15000 } );
-			
+
 			const { paragraphs: frontendParagraphs, headings: frontendHeadings } = await testFrontendStyles( page );
-			
+
 			// 1. Verify base class behavior on frontend (API widgets vs manual widgets)
 			const paragraphCount = await frontendParagraphs.count();
 			const headingCount = await frontendHeadings.count();
-			
-			
+
 			// Check each paragraph individually - API widgets should not have base classes, manual widgets should
 			for ( let i = 0; i < paragraphCount; i++ ) {
 				const paragraph = frontendParagraphs.nth( i );
 				const text = await paragraph.textContent() || '';
 				const classes = await paragraph.getAttribute( 'class' ) || '';
-				
-				
+
 				if ( text.includes( 'MANUAL' ) ) {
 					// Manual widget should HAVE base class
 					expect( classes ).toContain( 'e-paragraph-base' );
@@ -306,14 +303,13 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 					expect( classes ).not.toContain( 'e-paragraph-base' );
 				}
 			}
-			
+
 			// Check each heading individually
 			for ( let i = 0; i < headingCount; i++ ) {
 				const heading = frontendHeadings.nth( i );
 				const text = await heading.textContent() || '';
 				const classes = await heading.getAttribute( 'class' ) || '';
-				
-				
+
 				if ( text.includes( 'MANUAL' ) ) {
 					// Manual widget should HAVE base class
 					expect( classes ).toContain( 'e-heading-base' );
@@ -322,9 +318,9 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 					expect( classes ).not.toContain( 'e-heading-base' );
 				}
 			}
-			
+
 			expect( paragraphCount + headingCount ).toBeGreaterThan( 0 );
-			
+
 			// 2. Verify first heading has browser default margin on frontend
 			const firstFrontendHeading = frontendHeadings.first();
 			await firstFrontendHeading.waitFor( { state: 'visible', timeout: 10000 } );
@@ -338,7 +334,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 
 			expect( frontendHeadingStyles.marginTop ).not.toBe( '0px' );
 			expect( frontendHeadingStyles.marginBottom ).not.toBe( '0px' );
-			
+
 			// 3. Verify paragraph with explicit margin on frontend (find by CSS class)
 			const paragraphWithMargin = page.locator( 'p[class*="e-"]' ).first(); // Second paragraph with CSS class
 			await paragraphWithMargin.waitFor( { state: 'visible', timeout: 10000 } );
@@ -356,7 +352,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			expect( frontendParagraphStyles.marginRight ).toBe( '20px' );
 			expect( frontendParagraphStyles.marginBottom ).toBe( '20px' );
 			expect( frontendParagraphStyles.marginLeft ).toBe( '20px' );
-			
+
 			// 4. Verify heading with explicit margin on frontend (find by CSS class)
 			const headingWithMargin = page.locator( 'h2' );
 			await headingWithMargin.waitFor( { state: 'visible', timeout: 10000 } );
@@ -373,30 +369,30 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 			expect( frontendSecondHeadingStyles.marginRight ).toBe( '15px' );
 			expect( frontendSecondHeadingStyles.marginBottom ).toBe( '15px' );
 			expect( frontendSecondHeadingStyles.marginLeft ).toBe( '15px' );
-			
+
 			// 5. Verify mixed behavior on frontend (API vs manual widgets)
 			let frontendApiWidgetsWithoutBase = 0;
 			let frontendManualWidgetsWithBase = 0;
 			const frontendParagraphCount = await frontendParagraphs.count();
-			
+
 			for ( let i = 0; i < frontendParagraphCount; i++ ) {
 				const paragraph = frontendParagraphs.nth( i );
 				const text = await paragraph.textContent();
 				const classes = await paragraph.getAttribute( 'class' ) || '';
-				
+
 				if ( text && text.includes( 'MANUAL' ) ) {
 					// Manual widget should have base class on frontend
 					if ( classes.includes( 'e-paragraph-base' ) ) {
 						frontendManualWidgetsWithBase++;
 					}
-				} else if ( text && !text.includes( 'All rights reserved' ) && text.trim() !== '' ) {
+				} else if ( text && ! text.includes( 'All rights reserved' ) && text.trim() !== '' ) {
 					// API widgets should not have base class on frontend (exclude theme content)
-					if ( !classes.includes( 'e-paragraph-base' ) ) {
+					if ( ! classes.includes( 'e-paragraph-base' ) ) {
 						frontendApiWidgetsWithoutBase++;
 					}
 				}
 			}
-			
+
 			expect( frontendApiWidgetsWithoutBase ).toBeGreaterThan( 0 );
 			expect( frontendManualWidgetsWithBase ).toBeGreaterThan( 0 );
 			// 6. Additional verification: check that we have the expected content on frontend
@@ -418,9 +414,9 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 		`;
 
 		// Test with converted widgets (zero defaults always enabled)
-		const apiResult = await cssHelper.convertHtmlWithCss( 
-			request, 
-			htmlContent
+		const apiResult = await cssHelper.convertHtmlWithCss(
+			request,
+			htmlContent,
 		);
 
 		// Check if API call succeeded
@@ -448,21 +444,21 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 		await expect( headingElements ).toHaveCount( 2 );
 
 		// ===== EDITOR TESTS =====
-		
+
 		await test.step( 'Editor: Verify API heading widgets have no base classes', async () => {
 			await elementorFrame.waitForLoadState( 'networkidle' );
-			
+
 			const allHeadings = elementorFrame.locator( 'h1, h2, h3, h4, h5, h6' );
 			await allHeadings.first().waitFor( { state: 'attached', timeout: 10000 } ).catch( () => {} );
-			
+
 			let headingCount = 0;
-			
+
 			try {
 				headingCount = await allHeadings.count();
 			} catch ( error ) {
 				return;
 			}
-			
+
 			if ( headingCount > 0 ) {
 				for ( let i = 0; i < headingCount; i++ ) {
 					const heading = allHeadings.nth( i );
@@ -477,7 +473,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 		await test.step( 'Editor: Verify second heading has explicit margin', async () => {
 			const secondHeadingWidget = headingElements.nth( 1 );
 			await secondHeadingWidget.waitFor( { state: 'visible', timeout: 10000 } );
-			
+
 			const innerHeading = secondHeadingWidget.locator( 'h1, h2, h3, h4, h5, h6' ).first();
 			await innerHeading.waitFor( { state: 'visible', timeout: 10000 } );
 
@@ -498,28 +494,28 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 		} );
 
 		// ===== FRONTEND TESTS =====
-		
+
 		await test.step( 'Frontend: Verify all heading behavior', async () => {
 			// Save the page by using keyboard shortcut (Ctrl+S / Cmd+S)
-			await page.keyboard.press( process.platform === 'darwin' ? 'Meta+S' : 'Control+S' );
+			await page.keyboard.press( 'darwin' === process.platform ? 'Meta+S' : 'Control+S' );
 			await page.waitForTimeout( 3000 );
-			
+
 			// Navigate to frontend directly
 			const pageId = await editor.getPageId();
 			await page.goto( `/?p=${ pageId }` );
 			await page.waitForLoadState( 'networkidle', { timeout: 15000 } );
-			
+
 			const { headings: frontendHeadings } = await testFrontendStyles( page );
-			
+
 			// 1. Verify no base classes on frontend
 			let frontendHeadingCount = 0;
-			
+
 			try {
 				frontendHeadingCount = await frontendHeadings.count();
 			} catch ( error ) {
 				return;
 			}
-			
+
 			if ( frontendHeadingCount > 0 ) {
 				for ( let i = 0; i < frontendHeadingCount; i++ ) {
 					const heading = frontendHeadings.nth( i );
@@ -528,17 +524,17 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 				}
 				expect( frontendHeadingCount ).toBeGreaterThan( 0 );
 			}
-			
+
 			// 2. Verify second heading has explicit margin on frontend (it's the second one, index 1)
 			const totalFrontendHeadings = await frontendHeadings.count();
-			
+
 			// Find the heading with CSS class (the one with explicit margin)
 			const headingWithCssClass = page.locator( 'h1, h2, h3, h4, h5, h6' ).locator( '[class*="elementor-element-"]' ).first();
-			
-			if ( await headingWithCssClass.count() === 0 ) {
+
+			if ( 0 === await headingWithCssClass.count() ) {
 				const firstFrontendHeading = frontendHeadings.first();
 				await firstFrontendHeading.waitFor( { state: 'visible', timeout: 10000 } );
-				
+
 				// Check if this heading has the explicit margin (it should be the h2 with margin: 15px)
 				const frontendComputedStyles = await firstFrontendHeading.evaluate( ( el ) => {
 					const styles = window.getComputedStyle( el );
@@ -550,10 +546,9 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 						tagName: el.tagName.toLowerCase(),
 					};
 				} );
-				
-				
+
 				// If this is the h2 with explicit margin, it should have 15px
-				if ( frontendComputedStyles.tagName === 'h2' ) {
+				if ( 'h2' === frontendComputedStyles.tagName ) {
 					expect( frontendComputedStyles.marginTop ).toBe( '15px' );
 					expect( frontendComputedStyles.marginRight ).toBe( '15px' );
 					expect( frontendComputedStyles.marginBottom ).toBe( '15px' );
@@ -561,7 +556,7 @@ test.describe( 'Default Styles Removal @css-converter', () => {
 				}
 				return;
 			}
-			
+
 			// Use the heading with CSS class (the one with explicit margin)
 			await headingWithCssClass.waitFor( { state: 'visible', timeout: 10000 } );
 

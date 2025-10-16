@@ -30,7 +30,7 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// await wpAdminPage.resetExperiments();
+		// Await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -58,7 +58,7 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 			test.skip( true, validation.skipReason );
 			return;
 		}
-		
+
 		const editUrl = apiResult.edit_url;
 
 		await page.goto( editUrl );
@@ -127,7 +127,7 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 			test.skip( true, validation.skipReason );
 			return;
 		}
-		
+
 		const editUrl = apiResult.edit_url;
 
 		await page.goto( editUrl );
@@ -197,7 +197,7 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 			test.skip( true, validation.skipReason );
 			return;
 		}
-		
+
 		const editUrl = apiResult.edit_url;
 
 		await page.goto( editUrl );
@@ -216,7 +216,7 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 		for ( const testCase of testCases ) {
 			await test.step( `Verify ${ testCase.name } in editor`, async () => {
 				// Skip the 0.5rem test case (index 2) as requested
-				if ( testCase.index === 2 ) {
+				if ( 2 === testCase.index ) {
 					return;
 				}
 
@@ -245,7 +245,7 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
 					// Skip the 0.5rem test case (index 2) as requested
-					if ( testCase.index === 2 ) {
+					if ( 2 === testCase.index ) {
 						return;
 					}
 
@@ -468,33 +468,32 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 			// 🎯 BETTER APPROACH: Check the actual CSS converter output
 			const debugInfo = await element.evaluate( ( el ) => {
 				const styles = window.getComputedStyle( el );
-				
+
 				// Get all border-related computed styles
 				const borderInfo = {
 					borderTopWidth: styles.borderTopWidth,
-					borderRightWidth: styles.borderRightWidth, 
+					borderRightWidth: styles.borderRightWidth,
 					borderBottomWidth: styles.borderBottomWidth,
 					borderLeftWidth: styles.borderLeftWidth,
 					borderWidth: styles.borderWidth,
 					borderTopStyle: styles.borderTopStyle,
 					borderTopColor: styles.borderTopColor,
 					fontSize: styles.fontSize, // This affects rem calculation
-					rootFontSize: window.getComputedStyle( document.documentElement ).fontSize
+					rootFontSize: window.getComputedStyle( document.documentElement ).fontSize,
 				};
 
 				// Get element classes to identify atomic widget type
 				const classes = Array.from( el.classList );
-				const atomicClass = classes.find( cls => cls.startsWith( 'e-' ) );
+				const atomicClass = classes.find( ( cls ) => cls.startsWith( 'e-' ) );
 
 				return {
 					borderInfo,
 					atomicClass,
 					allClasses: classes,
 					elementTag: el.tagName.toLowerCase(),
-					textContent: el.textContent?.trim()
+					textContent: el.textContent?.trim(),
 				};
 			} );
-
 
 			// ✅ ASSERTION 1: Element should have atomic widget class
 			expect( debugInfo.atomicClass ).toBeTruthy();
@@ -514,16 +513,14 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 
 			// ✅ ASSERTION 4: Border style and color should be applied
 			expect( debugInfo.borderInfo.borderTopStyle ).toBe( 'solid' );
-			expect( debugInfo.borderInfo.borderTopColor ).toBe( 'rgb(0, 0, 255)' ); // blue
+			expect( debugInfo.borderInfo.borderTopColor ).toBe( 'rgb(0, 0, 255)' ); // Blue
 		} );
 
 		await test.step( 'Verify API response contains correct atomic widget structure', async () => {
-
 			// The API should have successfully created widgets
 			expect( apiResult.success ).toBe( true );
 			expect( apiResult.widgets_created ).toBeGreaterThan( 0 );
 		} );
 	} );
 } );
-
 

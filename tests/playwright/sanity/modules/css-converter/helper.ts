@@ -22,6 +22,16 @@ export interface CssConverterResponse {
 	widgets_created: number;
 	global_classes_created: number;
 	variables_created: number;
+	compound_classes_created?: number;
+	compound_classes?: Record<string, {
+		id: string;
+		label: string;
+		type: string;
+		requires: string[];
+		specificity: number;
+		original_selector: string;
+		variants: unknown[];
+	}>;
 	post_id: number;
 	edit_url: string;
 	conversion_log: unknown;
@@ -64,7 +74,7 @@ export class CssConverterHelper {
 	}
 
 	async waitForRateLimit(): Promise<void> {
-		await new Promise(resolve => setTimeout(resolve, this.RATE_LIMIT_DELAY_MS));
+		await new Promise( ( resolve ) => setTimeout( resolve, this.RATE_LIMIT_DELAY_MS ) );
 	}
 
 	async resetGlobalClasses( request: APIRequestContext ): Promise<void> {
@@ -95,12 +105,12 @@ export class CssConverterHelper {
 		// If cssContent is provided, wrap HTML and CSS in style tags
 		let content = htmlContent;
 		if ( cssContent ) {
-			content = `${htmlContent}<style>${cssContent}</style>`;
+			content = `${ htmlContent }<style>${ cssContent }</style>`;
 		}
 
 		const payload = {
 			type: 'html',
-			content: content,
+			content,
 			options: defaultOptions,
 		};
 
@@ -112,9 +122,8 @@ export class CssConverterHelper {
 			data: payload,
 		} );
 
-		
 		const responseJson = await apiResponse.json() as CssConverterResponse;
-		
+
 		return responseJson;
 	}
 
@@ -234,79 +243,79 @@ export class CssConverterHelper {
 	/**
 	 * Validates API result and returns skip information if the result is invalid
 	 * @param apiResult - The API response to validate
-	 * @returns Object with shouldSkip boolean and skipReason string
+	 * @return Object with shouldSkip boolean and skipReason string
 	 */
 	validateApiResult( apiResult: CssConverterResponse | null ): { shouldSkip: boolean; skipReason: string } {
-		if ( !apiResult ) {
+		if ( ! apiResult ) {
 			return {
 				shouldSkip: true,
-				skipReason: 'API returned null/undefined response'
+				skipReason: 'API returned null/undefined response',
 			};
 		}
 
 		if ( apiResult.errors && apiResult.errors.length > 0 ) {
 			return {
 				shouldSkip: true,
-				skipReason: 'Skipping due to backend property mapper issues: ' + apiResult.errors.join(', ')
+				skipReason: 'Skipping due to backend property mapper issues: ' + apiResult.errors.join( ', ' ),
 			};
 		}
 
-		if ( !apiResult.post_id || !apiResult.edit_url ) {
+		if ( ! apiResult.post_id || ! apiResult.edit_url ) {
 			return {
 				shouldSkip: true,
-				skipReason: 'Skipping due to missing postId or editUrl in API response'
+				skipReason: 'Skipping due to missing postId or editUrl in API response',
 			};
 		}
 
 		return {
 			shouldSkip: false,
-			skipReason: ''
+			skipReason: '',
 		};
 	}
 
 	/**
 	 * Validates CSS Classes API result
 	 * @param apiResult - The CSS Classes API response to validate
-	 * @returns Object with shouldSkip boolean and skipReason string
+	 * @return Object with shouldSkip boolean and skipReason string
 	 */
 	validateCssClassesResult( apiResult: CssClassesResponse | null ): { shouldSkip: boolean; skipReason: string } {
-		if ( !apiResult ) {
+		if ( ! apiResult ) {
 			return {
 				shouldSkip: true,
-				skipReason: 'CSS Classes API returned null/undefined response'
+				skipReason: 'CSS Classes API returned null/undefined response',
 			};
 		}
 
 		if ( apiResult.errors && apiResult.errors.length > 0 ) {
 			return {
 				shouldSkip: true,
-				skipReason: 'Skipping due to CSS Classes API errors: ' + apiResult.errors.join(', ')
+				skipReason: 'Skipping due to CSS Classes API errors: ' + apiResult.errors.join( ', ' ),
 			};
 		}
 
-		if ( !apiResult.success ) {
+		if ( ! apiResult.success ) {
 			return {
 				shouldSkip: true,
-				skipReason: 'CSS Classes API returned success: false'
+				skipReason: 'CSS Classes API returned success: false',
 			};
 		}
 
 		return {
 			shouldSkip: false,
-			skipReason: ''
+			skipReason: '',
 		};
 	}
 
 	/**
 	 * Validates dual API test result
 	 * @param dualResult - The dual API test result to validate
-	 * @returns Object with shouldSkip boolean and skipReason string
+	 * @return Object with shouldSkip boolean and skipReason string
 	 */
 	validateDualApiResult( dualResult: DualApiTestResult | null ): { shouldSkip: boolean; skipReason: string } {
-		if ( !dualResult ) {
+		if ( ! dualResult ) {
 			return {
 				shouldSkip: true,
-				skipReason: 'Dual API test returned null/undefined response'
+				skipReason: 'Dual API test returned null/undefined response',
 			};
 		}
 
@@ -315,7 +324,7 @@ export class CssConverterHelper {
 			if ( widgetValidation.shouldSkip ) {
 				return {
 					shouldSkip: true,
-					skipReason: 'Widget Converter validation failed: ' + widgetValidation.skipReason
+					skipReason: 'Widget Converter validation failed: ' + widgetValidation.skipReason,
 				};
 			}
 		}
@@ -325,14 +334,14 @@ export class CssConverterHelper {
 			if ( classesValidation.shouldSkip ) {
 				return {
 					shouldSkip: true,
-					skipReason: 'CSS Classes validation failed: ' + classesValidation.skipReason
+					skipReason: 'CSS Classes validation failed: ' + classesValidation.skipReason,
 				};
 			}
 		}
 
 		return {
 			shouldSkip: false,
-			skipReason: ''
+			skipReason: '',
 		};
 	}
 }

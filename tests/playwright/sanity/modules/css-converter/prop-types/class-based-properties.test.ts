@@ -50,7 +50,6 @@ test.describe( 'Class-based Properties Test @prop-types', () => {
 			
 		`;
 
-
 		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
 			createGlobalClasses: true,
 		} );
@@ -65,7 +64,6 @@ test.describe( 'Class-based Properties Test @prop-types', () => {
 		expect( apiResult.post_id ).toBeDefined();
 		expect( apiResult.edit_url ).toBeDefined();
 
-
 		await page.goto( apiResult.edit_url );
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
@@ -79,7 +77,7 @@ test.describe( 'Class-based Properties Test @prop-types', () => {
 		// MAXIMUM DEBUG: Get ALL possible information
 		const maxDebugInfo = await heading.evaluate( ( el ) => {
 			const styles = window.getComputedStyle( el );
-			
+
 			// Get all applied CSS rules
 			const appliedRules = [];
 			try {
@@ -91,7 +89,7 @@ test.describe( 'Class-based Properties Test @prop-types', () => {
 							if ( rule.selectorText && el.matches && el.matches( rule.selectorText ) ) {
 								appliedRules.push( {
 									selector: rule.selectorText,
-									cssText: rule.cssText
+									cssText: rule.cssText,
 								} );
 							}
 						}
@@ -110,13 +108,13 @@ test.describe( 'Class-based Properties Test @prop-types', () => {
 				textContent: el.textContent?.trim(),
 				inlineStyle: el.getAttribute( 'style' ),
 				id: el.id,
-				
+
 				// All attributes
 				attributes: Array.from( el.attributes ).reduce( ( acc, attr ) => {
 					acc[ attr.name ] = attr.value;
 					return acc;
 				}, {} ),
-				
+
 				// Computed styles (all relevant properties)
 				computedStyles: {
 					letterSpacing: styles.letterSpacing,
@@ -127,24 +125,24 @@ test.describe( 'Class-based Properties Test @prop-types', () => {
 					marginBottom: styles.marginBottom,
 					textShadow: styles.textShadow,
 					display: styles.display,
-					fontFamily: styles.fontFamily
+					fontFamily: styles.fontFamily,
 				},
-				
+
 				// Applied CSS rules
-				appliedRules: appliedRules,
-				
+				appliedRules,
+
 				// Parent element info
 				parentElement: el.parentElement ? {
 					tagName: el.parentElement.tagName,
 					className: el.parentElement.className,
-					id: el.parentElement.id
+					id: el.parentElement.id,
 				} : null,
-				
+
 				// Document head styles
-				headStyles: Array.from( document.head.querySelectorAll( 'style' ) ).map( style => ({
+				headStyles: Array.from( document.head.querySelectorAll( 'style' ) ).map( ( style ) => ( {
 					content: style.textContent?.substring( 0, 500 ) + '...',
-					length: style.textContent?.length || 0
-				}) )
+					length: style.textContent?.length || 0,
+				} ) ),
 			};
 		} );
 

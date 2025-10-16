@@ -29,7 +29,7 @@ test.describe( 'Dual API Support @payloads', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// await wpAdminPage.resetExperiments();
+		// Await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -98,7 +98,7 @@ test.describe( 'Dual API Support @payloads', () => {
 
 		await test.step( 'Verify created classes structure', async () => {
 			if ( apiResult.classes && apiResult.classes.length > 0 ) {
-				const firstClass = apiResult.classes[0];
+				const firstClass = apiResult.classes[ 0 ];
 				expect( firstClass ).toHaveProperty( 'name' );
 				expect( firstClass ).toHaveProperty( 'id' );
 				expect( firstClass ).toHaveProperty( 'properties' );
@@ -186,7 +186,7 @@ test.describe( 'Dual API Support @payloads', () => {
 			} );
 
 			const validation = cssHelper.validateApiResult( widgetResult );
-			if ( !validation.shouldSkip ) {
+			if ( ! validation.shouldSkip ) {
 				expect( widgetResult.success ).toBe( true );
 				expect( widgetResult.global_classes_created ).toBeGreaterThanOrEqual( 0 );
 
@@ -207,14 +207,14 @@ test.describe( 'Dual API Support @payloads', () => {
 			const classesResult = await cssHelper.convertCssToClasses( request, complexCss, true );
 
 			const validation = cssHelper.validateCssClassesResult( classesResult );
-			if ( !validation.shouldSkip ) {
+			if ( ! validation.shouldSkip ) {
 				expect( classesResult.success ).toBe( true );
 				expect( classesResult.global_classes_created ).toBeGreaterThanOrEqual( 0 );
 
 				if ( classesResult.classes && classesResult.classes.length > 0 ) {
 					// Verify that complex properties are captured
-					const hasComplexProperties = classesResult.classes.some( cls => 
-						cls.properties && Object.keys( cls.properties ).length > 3
+					const hasComplexProperties = classesResult.classes.some( ( cls ) =>
+						cls.properties && Object.keys( cls.properties ).length > 3,
 					);
 					expect( hasComplexProperties ).toBe( true );
 				}

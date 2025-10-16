@@ -30,7 +30,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 
 	test.afterAll( async ( { browser } ) => {
 		const page = await browser.newPage();
-		// await wpAdminPage.resetExperiments();
+		// Await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -105,7 +105,6 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 
 		expect( apiResult.success ).toBe( true );
 		expect( apiResult.global_classes_created ).toBeGreaterThan( 0 );
-
 	} );
 
 	test( 'should create widgets from elements with multiple classes', async ( { request } ) => {
@@ -128,7 +127,6 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 		expect( apiResult.success ).toBe( true );
 		expect( apiResult.widgets_created ).toBeGreaterThan( 20 );
 		expect( apiResult.global_classes_created ).toBeGreaterThan( 20 );
-
 	} );
 
 	test( 'COMPREHENSIVE STYLING TEST - should apply ALL advanced text properties', async ( { page, request } ) => {
@@ -156,16 +154,14 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			
-
 			// Try multiple selector strategies for the banner title
 			const titleSelectors = [
 				'.e-heading-base',
 				'[data-widget_type="e-heading"] h1, [data-widget_type="e-heading"] h2, [data-widget_type="e-heading"] h3',
 				'.elementor-widget-e-heading h1, .elementor-widget-e-heading h2, .elementor-widget-e-heading h3',
-				'h1, h2, h3'
+				'h1, h2, h3',
 			];
-			
+
 			let bannerTitle = null;
 			for ( const selector of titleSelectors ) {
 				const elements = await elementorFrame.locator( selector ).filter( { hasText: 'Ready to Get Started?' } ).all();
@@ -174,8 +170,8 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 					break;
 				}
 			}
-			
-			if ( !bannerTitle ) {
+
+			if ( ! bannerTitle ) {
 				// Try without text filter
 				for ( const selector of titleSelectors ) {
 					const elements = await elementorFrame.locator( selector ).all();
@@ -185,39 +181,39 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 					}
 				}
 			}
-			
-			if ( !bannerTitle ) {
+
+			if ( ! bannerTitle ) {
 				throw new Error( 'Could not find banner title element with any selector strategy' );
 			}
-			
+
 			await expect( bannerTitle ).toBeVisible();
-			
+
 			// Check actual letter-spacing
-			
+
 			// THIS SHOULD FAIL if letter-spacing mapper is not working
 			await expect( bannerTitle ).toHaveCSS( 'letter-spacing', '1px' );
 		} );
 
 		await test.step( 'CRITICAL: Verify text-transform from .banner-title class', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			
+
 			// Banner title has text-transform: uppercase from external-styles-2.css
 			const bannerTitle = elementorFrame.locator( '.elementor-widget-e-heading h1, .elementor-widget-e-heading h2, .elementor-widget-e-heading h3' ).filter( { hasText: 'Ready to Get Started?' } ).first();
-			
+
 			// THIS SHOULD FAIL if text-transform mapper is not working
 			await expect( bannerTitle ).toHaveCSS( 'text-transform', 'uppercase' );
 		} );
 
 		await test.step( 'CRITICAL: Verify text-shadow from .banner-title class', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			
+
 			// Banner title has text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2) from external-styles-2.css
 			const bannerTitle = elementorFrame.locator( '.elementor-widget-e-heading h1, .elementor-widget-e-heading h2, .elementor-widget-e-heading h3' ).filter( { hasText: 'Ready to Get Started?' } ).first();
-			
+
 			// Check if text-shadow is supported by atomic widgets
-			const actualTextShadow = await bannerTitle.evaluate( el => getComputedStyle( el ).textShadow );
-			
-			if ( actualTextShadow === 'none' ) {
+			const actualTextShadow = await bannerTitle.evaluate( ( el ) => getComputedStyle( el ).textShadow );
+
+			if ( 'none' === actualTextShadow ) {
 			} else {
 				await expect( bannerTitle ).toHaveCSS( 'text-shadow', 'rgba(0, 0, 0, 0.2) 2px 2px 4px' );
 			}
@@ -251,45 +247,45 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 
 			// Header has box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) from external-styles-2.css
 			const header = elementorFrame.locator( '.elementor-element' ).first();
-			
+
 			// Check actual box-shadow format first
-			const actualBoxShadow = await header.evaluate( el => getComputedStyle( el ).boxShadow );
-			
+			const actualBoxShadow = await header.evaluate( ( el ) => getComputedStyle( el ).boxShadow );
+
 			// THIS SHOULD PASS if box-shadow mapper is working
 			// Note: Different browsers may format box-shadow differently
 			const expectedFormats = [
 				'rgba(0, 0, 0, 0.1) 0px 2px 8px 0px',
 				'rgba(0, 0, 0, 0.1) 2px 8px 0px 0px',
 				'rgb(0, 0, 0, 0.1) 0px 2px 8px 0px',
-				'rgb(0, 0, 0, 0.1) 2px 8px 0px 0px'
+				'rgb(0, 0, 0, 0.1) 2px 8px 0px 0px',
 			];
-			
-			const matchesExpected = expectedFormats.some( format => actualBoxShadow === format );
+
+			const matchesExpected = expectedFormats.some( ( format ) => actualBoxShadow === format );
 			if ( matchesExpected ) {
 				// Header box-shadow is applied correctly
 			} else {
 				// Try the most common format
-				await expect( header ).toHaveCSS( 'box-shadow', actualBoxShadow.includes('0px 2px 8px 0px') ? 'rgba(0, 0, 0, 0.1) 0px 2px 8px 0px' : 'rgba(0, 0, 0, 0.1) 2px 8px 0px 0px' );
+				await expect( header ).toHaveCSS( 'box-shadow', actualBoxShadow.includes( '0px 2px 8px 0px' ) ? 'rgba(0, 0, 0, 0.1) 0px 2px 8px 0px' : 'rgba(0, 0, 0, 0.1) 2px 8px 0px 0px' );
 			}
 		} );
 
 		await test.step( 'CRITICAL: Verify links-container box-shadow from .links-container class', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			
+
 			// Links section has box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) from external-styles-2.css
 			// Find the specific .elementor-element that has the links-container class
 			const linksContainer = elementorFrame.locator( '.elementor-element.links-container' ).first();
-			
+
 			// THIS SHOULD PASS if box-shadow mapper is working
 			await expect( linksContainer ).toHaveCSS( 'box-shadow', 'rgba(0, 0, 0, 0.12) 1px 3px 0px 0px' );
 		} );
 
 		await test.step( 'CRITICAL: Verify button box-shadow from .button-primary class', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			
+
 			// Primary button has box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3) from external-styles-1.css
 			const primaryButton = elementorFrame.locator( 'a' ).filter( { hasText: 'Get Started Now' } );
-			
+
 			// THIS SHOULD PASS if box-shadow mapper is working
 			await expect( primaryButton ).toHaveCSS( 'box-shadow', 'rgba(52, 152, 219, 0.3) 4px 6px 0px 0px' );
 		} );
@@ -320,31 +316,28 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-
 			// Try to find element with the expected border
-			const expectedBorderElement = await elementorFrame.locator( '*' ).evaluateAll( elements => {
-				return elements.find( el => {
+			const expectedBorderElement = await elementorFrame.locator( '*' ).evaluateAll( ( elements ) => {
+				return elements.find( ( el ) => {
 					const border = getComputedStyle( el ).border;
 					return border.includes( '1px solid' ) && border.includes( 'rgb(222, 226, 230)' );
 				} );
 			} );
-			
+
 			if ( expectedBorderElement ) {
-				
-				
 				// Try different elements until we find one with the right border
 				const allElements = await elementorFrame.locator( '.elementor-element' ).all();
 				let foundBorderElement = null;
-				
+
 				for ( let i = 0; i < Math.min( allElements.length, 5 ); i++ ) {
-					const element = allElements[i];
-					const border = await element.evaluate( el => getComputedStyle( el ).border );
+					const element = allElements[ i ];
+					const border = await element.evaluate( ( el ) => getComputedStyle( el ).border );
 					if ( border.includes( '1px solid' ) && border.includes( 'rgb(222, 226, 230)' ) ) {
 						foundBorderElement = element;
 						break;
 					}
 				}
-				
+
 				if ( foundBorderElement ) {
 					await expect( foundBorderElement ).toHaveCSS( 'border', '1px solid rgb(222, 226, 230)' );
 				} else {
@@ -355,11 +348,11 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 
 		await test.step( 'CRITICAL: Verify border-bottom from .link-item class', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			
+
 			// Link items have border-bottom: 1px solid #e9ecef from external-styles-2.css
 			// Find .elementor-element that has the link-item class
 			const linkItem = elementorFrame.locator( '.elementor-element.link-item' ).first();
-			
+
 			// THIS SHOULD PASS if border-bottom mapper is working
 			// #e9ecef converts to rgb(233, 236, 239)
 			await expect( linkItem ).toHaveCSS( 'border-bottom', '1px solid rgb(233, 236, 239)' );
@@ -393,7 +386,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 
 			// Link Two has class="link link-secondary" with color: #16a085, font-size: 17px, font-weight: 500
 			const linkSecondary = elementorFrame.locator( 'a' ).filter( { hasText: 'Link Two' } );
-			
+
 			// THIS SHOULD PASS if color mappers are working
 			await expect( linkSecondary ).toHaveCSS( 'color', 'rgb(22, 160, 133)' ); // #16a085
 			await expect( linkSecondary ).toHaveCSS( 'font-size', '17px' );
@@ -402,20 +395,20 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 
 		await test.step( 'CRITICAL: Verify .link-accent color and typography', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			
+
 			// Link Three has class="link link-accent" with color: #e74c3c, font-weight: bold
 			const linkAccent = elementorFrame.locator( 'a' ).filter( { hasText: 'Link Three' } );
-			
+
 			await expect( linkAccent ).toHaveCSS( 'color', 'rgb(231, 76, 60)' ); // #e74c3c
-			await expect( linkAccent ).toHaveCSS( 'font-weight', '700' ); // bold
+			await expect( linkAccent ).toHaveCSS( 'font-weight', '700' ); // Bold
 		} );
 
 		await test.step( 'CRITICAL: Verify .link-danger color and typography', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			
+
 			// Link Nine has class="link link-danger" with color: #c0392b, font-size: 17px, font-weight: 700
 			const linkDanger = elementorFrame.locator( 'a' ).filter( { hasText: 'Link Nine' } );
-			
+
 			await expect( linkDanger ).toHaveCSS( 'color', 'rgb(192, 57, 43)' ); // #c0392b
 			await expect( linkDanger ).toHaveCSS( 'font-size', '17px' );
 			await expect( linkDanger ).toHaveCSS( 'font-weight', '700' );
@@ -447,12 +440,9 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			
-			
-			
 			const bannerSections = elementorFrame.locator( '.elementor-element' ).filter( { has: elementorFrame.locator( 'h2' ).filter( { hasText: 'Ready to Get Started?' } ) } );
 			const bannerSectionCount = await bannerSections.count();
-			
+
 			// Handle strict mode violation by using .first() or .last()
 			let bannerSection = null;
 			if ( bannerSectionCount > 0 ) {
@@ -460,27 +450,27 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 				bannerSection = bannerSections.first();
 			} else {
 				// Fallback: Find any element with gradient background using evaluateAll
-				const elementsWithGradient = await elementorFrame.locator( '*' ).evaluateAll( elements => {
-					return elements.filter( el => {
+				const elementsWithGradient = await elementorFrame.locator( '*' ).evaluateAll( ( elements ) => {
+					return elements.filter( ( el ) => {
 						const backgroundImage = getComputedStyle( el ).backgroundImage;
 						return backgroundImage && backgroundImage.includes( 'linear-gradient' );
 					} );
 				} );
-				
+
 				if ( elementsWithGradient.length > 0 ) {
 					// Use the first element found
-					bannerSection = elementorFrame.locator( `[data-id="${elementsWithGradient[0].getAttribute('data-id')}"]` ).first();
+					bannerSection = elementorFrame.locator( `[data-id="${ elementsWithGradient[ 0 ].getAttribute( 'data-id' ) }"]` ).first();
 				}
 			}
-			
+
 			if ( bannerSection ) {
 				const backgroundImage = await bannerSection.evaluate( ( el ) => getComputedStyle( el ).backgroundImage );
-				
+
 				// Check if gradient background is applied
 				if ( backgroundImage && backgroundImage.includes( 'linear-gradient' ) ) {
 					const hasExpectedColors = backgroundImage.includes( 'rgb(102, 126, 234)' ) || backgroundImage.includes( '102, 126, 234' );
 					const hasExpectedColors2 = backgroundImage.includes( 'rgb(118, 75, 162)' ) || backgroundImage.includes( '118, 75, 162' );
-					
+
 					if ( hasExpectedColors && hasExpectedColors2 ) {
 					} else {
 					}

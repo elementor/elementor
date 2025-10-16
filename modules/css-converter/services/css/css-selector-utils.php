@@ -65,6 +65,37 @@ class Css_Selector_Utils {
 		return preg_match( $pattern, $selector ) === 1;
 	}
 
+	public static function is_compound_class_selector( string $selector ): bool {
+		$trimmed = trim( $selector );
+		$pattern = Css_Converter_Config::get_regex_pattern( 'compound_class' );
+		return preg_match( $pattern, $trimmed ) === 1;
+	}
+
+	public static function extract_compound_classes( string $selector ): array {
+		$selector = trim( $selector );
+		if ( empty( $selector ) || 0 !== strpos( $selector, '.' ) ) {
+			return [];
+		}
+		$selector = substr( $selector, 1 );
+		$classes = explode( '.', $selector );
+		$filtered_classes = array_filter( array_map( 'trim', $classes ) );
+
+		$max_classes = Css_Converter_Config::MAX_COMPOUND_CLASSES;
+		return array_slice( $filtered_classes, 0, $max_classes );
+	}
+
+	public static function build_compound_flattened_name( array $classes ): string {
+		$sorted_classes = $classes;
+		sort( $sorted_classes );
+		return implode( '-and-', $sorted_classes );
+	}
+
+	public static function calculate_compound_specificity( array $classes ): int {
+		$class_count = count( $classes );
+		$specificity_per_class = 10;
+		return $class_count * $specificity_per_class;
+	}
+
 	public static function clean_selector_part( string $part ): string {
 		$part = trim( $part );
 		$part = ltrim( $part, '.' );

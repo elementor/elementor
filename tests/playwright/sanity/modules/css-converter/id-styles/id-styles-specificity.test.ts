@@ -29,7 +29,7 @@ test.describe( 'ID Styles Specificity @id-styles @specificity', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// await wpAdminPage.resetExperiments();
+		// Await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -179,7 +179,7 @@ test.describe( 'ID Styles Specificity @id-styles @specificity', () => {
 			await divWidgets.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 			// The inner div (second widget) should have #outer #inner selector styles
-			const inner = divWidgets.nth(1);
+			const inner = divWidgets.nth( 1 );
 			await expect( inner ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
 		} );
 	} );
@@ -215,7 +215,7 @@ test.describe( 'ID Styles Specificity @id-styles @specificity', () => {
 			const text = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).first();
 			await text.waitFor( { state: 'visible', timeout: 10000 } );
 
-			// p with !important should win over #text (10000+10 > 100)
+			// P with !important should win over #text (10000+10 > 100)
 			await expect( text ).toHaveCSS( 'color', 'rgb(0, 0, 255)' );
 		} );
 	} );
@@ -252,5 +252,4 @@ test.describe( 'ID Styles Specificity @id-styles @specificity', () => {
 			await expect( text ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
 		} );
 	} );
-
 } );

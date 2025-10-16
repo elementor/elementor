@@ -30,7 +30,7 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// await wpAdminPage.resetExperiments();
+		// Await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -84,7 +84,7 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 					{ property: 'padding-inline-end', expected: '20px' },
 					{ property: 'padding-block-end', expected: '20px' },
 					{ property: 'padding-inline-start', expected: '20px' },
-				]
+				],
 			},
 			{
 				textContent: 'Two values padding',
@@ -93,7 +93,7 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 					{ property: 'padding-inline-end', expected: '40px' },
 					{ property: 'padding-block-end', expected: '20px' },
 					{ property: 'padding-inline-start', expected: '40px' },
-				]
+				],
 			},
 			{
 				textContent: 'Four values padding',
@@ -102,20 +102,20 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 					{ property: 'padding-inline-end', expected: '30px' },
 					{ property: 'padding-block-end', expected: '0px' },
 					{ property: 'padding-inline-start', expected: '10px' },
-				]
+				],
 			},
 			{
 				textContent: 'Padding top & Margin top',
 				tests: [
 					{ property: 'margin-block-start', expected: '40px' },
 					{ property: 'padding-block-start', expected: '20px' },
-				]
+				],
 			},
 			{
 				textContent: 'Padding left',
 				tests: [
 					{ property: 'padding-inline-start', expected: '30px' },
-				]
+				],
 			},
 		];
 
@@ -124,7 +124,7 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 			await test.step( `Verify ${ testCase.textContent }`, async () => {
 				const element = elementorFrame.locator( 'p' ).filter( { hasText: testCase.textContent } );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
-				
+
 				for ( const cssTest of testCase.tests ) {
 					await expect( element ).toHaveCSS( cssTest.property, cssTest.expected );
 				}

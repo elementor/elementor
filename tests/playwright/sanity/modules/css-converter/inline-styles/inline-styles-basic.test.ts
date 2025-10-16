@@ -29,7 +29,7 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// await wpAdminPage.resetExperiments();
+		// Await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -213,24 +213,24 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 
 		await test.step( 'Verify inline styles on div', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			
+
 			// Find the div element with yellow background using atomic class pattern
 			// The background is applied via atomic classes, not directly on the base element
 			const divWithBackground = elementorFrame.locator( '[data-element_type="e-div-block"]' ).filter( async ( element ) => {
-				const bgColor = await element.evaluate( el => getComputedStyle( el ).backgroundColor );
-				return bgColor === 'rgb(255, 255, 0)';
+				const bgColor = await element.evaluate( ( el ) => getComputedStyle( el ).backgroundColor );
+				return 'rgb(255, 255, 0)' === bgColor;
 			} );
-			
+
 			// Alternative: Find any element with yellow background in the div block container
 			const divContainer = elementorFrame.locator( '[data-element_type="e-div-block"]' ).last(); // Use last as it's likely the inner div
 			await divContainer.waitFor( { state: 'visible', timeout: 10000 } );
-			
+
 			// Check if this element or any of its atomic class elements have the yellow background
-			const hasYellowBackground = await divContainer.evaluate( el => {
+			const hasYellowBackground = await divContainer.evaluate( ( el ) => {
 				const styles = getComputedStyle( el );
-				return styles.backgroundColor === 'rgb(255, 255, 0)';
+				return 'rgb(255, 255, 0)' === styles.backgroundColor;
 			} );
-			
+
 			if ( hasYellowBackground ) {
 				await expect( divContainer ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
 			} else {
@@ -238,7 +238,7 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 				const atomicElement = elementorFrame.locator( '[data-element_type="e-div-block"][class*="e-"]' ).last();
 				await expect( atomicElement ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
 			}
-			
+
 			// Check padding on the same element
 			if ( hasYellowBackground ) {
 				await expect( divContainer ).toHaveCSS( 'padding', '20px' );

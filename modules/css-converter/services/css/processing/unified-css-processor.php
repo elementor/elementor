@@ -62,11 +62,19 @@ class Unified_Css_Processor {
 		// Step 1.2: Flatten ALL nested selectors FIRST
 		$flattening_results = $this->flatten_all_nested_selectors( $css_rules );
 
-		// Step 1.3: Initialize HTML modifier with complete flattening data
+		// Step 1.3: Process compound selectors (NEW)
+		$compound_results = $this->process_compound_selectors( $css_rules );
+
+		// Step 1.4: Initialize HTML modifier with complete flattening data
 		$this->html_class_modifier->initialize_with_flattening_results(
 			$flattening_results['class_mappings'],
 			$flattening_results['classes_with_direct_styles'],
 			$flattening_results['classes_only_in_nested']
+		);
+
+		// Step 1.5: Initialize HTML modifier with compound selector data
+		$this->html_class_modifier->initialize_with_compound_results(
+			$compound_results['compound_mappings']
 		);
 
 		// ═══════════════════════════════════════════════════════════
@@ -106,6 +114,8 @@ class Unified_Css_Processor {
 			'css_class_rules' => $css_class_rules,
 			'flattened_classes' => $flattening_results['flattened_classes'],
 			'flattened_classes_count' => count( $flattening_results['flattened_classes'] ),
+			'compound_classes' => $compound_results['compound_global_classes'] ?? [],
+			'compound_classes_created' => count( $compound_results['compound_global_classes'] ?? [] ),
 			'reset_styles_detected' => $reset_styles_stats['reset_element_styles'] > 0 || $reset_styles_stats['reset_complex_styles'] > 0,
 			'reset_styles_stats' => $reset_styles_stats,
 			'complex_reset_styles' => $complex_reset_styles,
@@ -307,15 +317,15 @@ class Unified_Css_Processor {
 			$selector = $rule['selector'];
 			$properties = $rule['properties'] ?? [];
 
-		if ( strpos( $selector, '#container' ) !== false ) {
-			$debug_file = WP_CONTENT_DIR . '/css-rules-debug.json';
-			$debug_data = [
-				'timestamp' => date( 'Y-m-d H:i:s' ),
-				'selector' => $selector,
-				'properties' => $properties,
-			];
-			file_put_contents( $debug_file, json_encode( $debug_data, JSON_PRETTY_PRINT ) . ",\n", FILE_APPEND );
-		}
+			if ( strpos( $selector, '#container' ) !== false ) {
+				$debug_file = WP_CONTENT_DIR . '/css-rules-debug.json';
+				$debug_data = [
+					'timestamp' => date( 'Y-m-d H:i:s' ),
+					'selector' => $selector,
+					'properties' => $properties,
+				];
+				file_put_contents( $debug_file, json_encode( $debug_data, JSON_PRETTY_PRINT ) . ",\n", FILE_APPEND );
+			}
 
 			$this->log_rule_processing( $selector, $properties );
 
@@ -728,7 +738,7 @@ class Unified_Css_Processor {
 		// Check if any ancestor matches (simplified - in a real implementation, we'd check the widget hierarchy)
 		// For now, we'll assume the match is valid if the target ID matches
 		// TODO: Implement proper ancestor checking by traversing widget parents
-		error_log( "🔍 DESCENDANT_MATCH: selector='$selector', target='$target_id_selector', widget_id='" . ($widget['attributes']['id'] ?? '') . "', MATCHES=YES" );
+		error_log( "🔍 DESCENDANT_MATCH: selector='$selector', target='$target_id_selector', widget_id='" . ( $widget['attributes']['id'] ?? '' ) . "', MATCHES=YES" );
 		return true;
 	}
 
@@ -983,7 +993,7 @@ class Unified_Css_Processor {
 		foreach ( $expanded as $property => $value ) {
 			// Preserve the important flag from the original property, default to false if not found
 			$important = $original_important_flags[ $property ] ?? false;
-			
+
 			$result[] = [
 				'property' => $property,
 				'value' => $value,
@@ -1055,8 +1065,8 @@ class Unified_Css_Processor {
 
 		// Debug CSS parsing for #text selector
 		if ( $property === 'color' && strpos( $value, 'red' ) !== false ) {
-			error_log( "🔍 CSS_PARSE: property='$property', value='$value', has_getIsImportant=" . ( method_exists( $declaration, 'getIsImportant' ) ? 'YES' : 'NO' ) . ", important=" . ( $important ? 'true' : 'false' ) );
-			error_log( "🔍 CSS_PARSE: declaration_class=" . get_class( $declaration ) );
+			error_log( "🔍 CSS_PARSE: property='$property', value='$value', has_getIsImportant=" . ( method_exists( $declaration, 'getIsImportant' ) ? 'YES' : 'NO' ) . ', important=' . ( $important ? 'true' : 'false' ) );
+			error_log( '🔍 CSS_PARSE: declaration_class=' . get_class( $declaration ) );
 		}
 
 		return [
@@ -1400,7 +1410,7 @@ class Unified_Css_Processor {
 		$parser = new \Elementor\Modules\CssConverter\Services\Css\Nested_Selector_Parser();
 
 		$parsed = $parser->parse_nested_selector( $selector );
-		if ( ! $parsed || $parsed['type'] === 'simple' ) {
+		if ( ! $parsed || 'simple' === $parsed['type'] ) {
 			return null;
 		}
 
@@ -1420,5 +1430,114 @@ class Unified_Css_Processor {
 
 	private function is_element_tag( string $part ): bool {
 		return \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::is_element_tag( $part );
+	}
+
+	private function process_compound_selectors( array $css_rules ): array {
+		$compound_global_classes = [];
+		$compound_mappings = [];
+
+		foreach ( $css_rules as $rule ) {
+			$selector = $rule['selector'] ?? '';
+
+			if ( empty( $selector ) ) {
+				continue;
+			}
+
+			if ( ! \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::is_compound_class_selector( $selector ) ) {
+				continue;
+			}
+
+			$classes = \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::extract_compound_classes( $selector );
+			if ( count( $classes ) < 2 ) {
+				continue;
+			}
+
+			$sorted_classes = $classes;
+			sort( $sorted_classes );
+
+			$flattened_name = \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::build_compound_flattened_name( $classes );
+			$specificity = \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::calculate_compound_specificity( $classes );
+
+			$converted_properties = $this->convert_rule_properties_to_atomic( $rule['properties'] ?? [] );
+
+			$global_class_data = $this->create_global_class_from_compound(
+				$flattened_name,
+				$selector,
+				$sorted_classes,
+				$specificity,
+				$converted_properties
+			);
+
+			$compound_global_classes[ $flattened_name ] = $global_class_data;
+
+			$compound_mappings[ $flattened_name ] = [
+				'requires' => $sorted_classes,
+				'specificity' => $specificity,
+				'flattened_class' => $flattened_name,
+			];
+		}
+
+		return [
+			'compound_global_classes' => $compound_global_classes,
+			'compound_mappings' => $compound_mappings,
+		];
+	}
+
+	private function create_global_class_from_compound(
+		string $flattened_name,
+		string $original_selector,
+		array $required_classes,
+		int $specificity,
+		array $converted_properties
+	): array {
+		$atomic_props = [];
+
+		foreach ( $converted_properties as $prop_data ) {
+			$converted = $prop_data['converted_property'] ?? null;
+			if ( $converted && is_array( $converted ) ) {
+				foreach ( $converted as $atomic_prop_name => $atomic_prop_value ) {
+					$atomic_props[ $atomic_prop_name ] = [
+						'$$type' => $this->determine_atomic_type( $atomic_prop_name ),
+						'value' => $atomic_prop_value,
+					];
+				}
+			}
+		}
+
+		return [
+			'id' => 'g-' . substr( md5( $original_selector ), 0, 8 ),
+			'label' => $flattened_name,
+			'type' => 'class',
+			'original_selector' => $original_selector,
+			'requires' => $required_classes,
+			'specificity' => $specificity,
+			'variants' => [
+				[
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+					'props' => $atomic_props,
+				],
+			],
+		];
+	}
+
+	private function determine_atomic_type( string $prop_name ): string {
+		$type_map = [
+			'color' => 'color',
+			'background' => 'background',
+			'font-size' => 'font-size',
+			'padding' => 'padding',
+			'margin' => 'margin',
+			'border-width' => 'border-width',
+			'border-color' => 'border-color',
+			'border-style' => 'border-style',
+			'border-radius' => 'border-radius',
+			'width' => 'size',
+			'height' => 'size',
+		];
+
+		return $type_map[ $prop_name ] ?? 'text';
 	}
 }

@@ -30,7 +30,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// await wpAdminPage.resetExperiments();
+		// Await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -130,7 +130,6 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 			if ( validation.shouldSkip ) {
 				continue;
 			}
-			
 
 			await page.goto( apiResult.edit_url );
 			editor = new EditorPage( page, wpAdmin.testInfo );
@@ -138,7 +137,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
-			
+
 			// Wait longer for the editor to fully load
 			await page.waitForTimeout( 3000 );
 
@@ -147,26 +146,25 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 
 			// Verify that inline CSS has been converted to atomic properties
 			// The final widget should have NO inline CSS - only atomic properties
-			
+
 			// 1. Check that the element has NO inline style attribute
 			const hasInlineStyle = await element.evaluate( ( el ) => el.hasAttribute( 'style' ) );
 			expect( hasInlineStyle ).toBe( false );
-			
+
 			// 2. Verify the margin is applied via atomic styling (not inline CSS)
 			const computedStyles = await element.evaluate( ( el ) => {
 				const styles = window.getComputedStyle( el );
 				return {
 					marginInlineStart: styles.marginInlineStart,
 					marginBlockEnd: styles.marginBlockEnd,
-					hasInlineStyle: el.hasAttribute( 'style' )
+					hasInlineStyle: el.hasAttribute( 'style' ),
 				};
-			});
-			
-			
+			} );
+
 			// 3. Verify no inline CSS and margin is applied
 			expect( computedStyles.hasInlineStyle ).toBe( false );
 			expect( computedStyles.marginInlineStart ).toBe( testCase.expectedLogical.marginInlineStart );
-			
+
 			if ( testCase.expectedLogical.marginBlockEnd ) {
 				expect( computedStyles.marginBlockEnd ).toBe( testCase.expectedLogical.marginBlockEnd );
 			}

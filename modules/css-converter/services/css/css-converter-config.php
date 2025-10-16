@@ -88,6 +88,7 @@ class Css_Converter_Config {
 		'class_from_element_selector' => '/\.([a-zA-Z0-9_-]+)$/',
 		'nested_descendant' => '/\s(?![^()]*\)|[^\[]*\]|[^"]*")/',
 		'nested_child' => '/>(?![^()]*\)|[^\[]*\]|[^"]*")/',
+		'compound_class' => '/^\.([a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)+)$/',
 	];
 
 	const ATOMIC_WIDGET_TYPES = [
@@ -120,6 +121,8 @@ class Css_Converter_Config {
 		'end-start',
 		'end-end',
 	];
+
+	const MAX_COMPOUND_CLASSES = 2;
 
 	public static function get_html_elements(): array {
 		return self::HTML_ELEMENTS;

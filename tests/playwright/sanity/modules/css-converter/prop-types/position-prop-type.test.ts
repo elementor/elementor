@@ -30,7 +30,7 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// await wpAdminPage.resetExperiments();
+		// Await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -118,7 +118,7 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		await test.step( 'Verify z-index values', async () => {
 			await expect( paragraphElements.nth( 12 ) ).toHaveCSS( 'z-index', '100' );
 			await expect( paragraphElements.nth( 13 ) ).toHaveCSS( 'z-index', '-50' );
-			await expect( paragraphElements.nth( 14 ) ).toHaveCSS( 'z-index', '0' ); // z-index: 0 should remain '0' in computed styles
+			await expect( paragraphElements.nth( 14 ) ).toHaveCSS( 'z-index', '0' ); // Z-index: 0 should remain '0' in computed styles
 		} );
 	} );
 
@@ -170,20 +170,20 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		// Test different units (physical properties)
 		await test.step( 'Verify different units for physical properties', async () => {
 			// Test that CSS properties are applied correctly (validate unit conversion happened)
-			const topEmValue = await paragraphElements.nth( 0 ).evaluate( el => getComputedStyle( el ).getPropertyValue( 'inset-block-start' ) );
-			const rightRemValue = await paragraphElements.nth( 1 ).evaluate( el => getComputedStyle( el ).getPropertyValue( 'inset-inline-end' ) );
-			const bottomPercentValue = await paragraphElements.nth( 2 ).evaluate( el => getComputedStyle( el ).getPropertyValue( 'inset-block-end' ) );
-			const leftVhValue = await paragraphElements.nth( 3 ).evaluate( el => getComputedStyle( el ).getPropertyValue( 'inset-inline-start' ) );
+			const topEmValue = await paragraphElements.nth( 0 ).evaluate( ( el ) => getComputedStyle( el ).getPropertyValue( 'inset-block-start' ) );
+			const rightRemValue = await paragraphElements.nth( 1 ).evaluate( ( el ) => getComputedStyle( el ).getPropertyValue( 'inset-inline-end' ) );
+			const bottomPercentValue = await paragraphElements.nth( 2 ).evaluate( ( el ) => getComputedStyle( el ).getPropertyValue( 'inset-block-end' ) );
+			const leftVhValue = await paragraphElements.nth( 3 ).evaluate( ( el ) => getComputedStyle( el ).getPropertyValue( 'inset-inline-start' ) );
 
 			// Validate that units were converted to pixels and values are reasonable
 			expect( topEmValue ).toMatch( /^\d+(\.\d+)?px$/ ); // Should be converted to px
 			expect( parseFloat( topEmValue ) ).toBeGreaterThan( 20 ); // 2em should be > 20px
-			
-			expect( rightRemValue ).toMatch( /^\d+(\.\d+)?px$/ ); // Should be converted to px  
+
+			expect( rightRemValue ).toMatch( /^\d+(\.\d+)?px$/ ); // Should be converted to px
 			expect( parseFloat( rightRemValue ) ).toBeGreaterThan( 30 ); // 3rem should be > 30px
-			
+
 			expect( bottomPercentValue ).toBe( '0px' ); // 5% of 0 height container = 0px
-			
+
 			expect( leftVhValue ).toMatch( /^\d+(\.\d+)?px$/ ); // Should be converted to px
 			expect( parseFloat( leftVhValue ) ).toBeGreaterThan( 50 ); // 10vh should be > 50px
 		} );
@@ -197,20 +197,20 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 		// Test logical properties with different units
 		await test.step( 'Verify logical properties with different units', async () => {
 			// Test that CSS logical properties are applied correctly (validate unit conversion happened)
-			const logicalTopEmValue = await paragraphElements.nth( 6 ).evaluate( el => getComputedStyle( el ).getPropertyValue( 'inset-block-start' ) );
-			const logicalRightRemValue = await paragraphElements.nth( 7 ).evaluate( el => getComputedStyle( el ).getPropertyValue( 'inset-inline-end' ) );
-			const logicalBottomPercentValue = await paragraphElements.nth( 8 ).evaluate( el => getComputedStyle( el ).getPropertyValue( 'inset-block-end' ) );
-			const logicalLeftVhValue = await paragraphElements.nth( 9 ).evaluate( el => getComputedStyle( el ).getPropertyValue( 'inset-inline-start' ) );
+			const logicalTopEmValue = await paragraphElements.nth( 6 ).evaluate( ( el ) => getComputedStyle( el ).getPropertyValue( 'inset-block-start' ) );
+			const logicalRightRemValue = await paragraphElements.nth( 7 ).evaluate( ( el ) => getComputedStyle( el ).getPropertyValue( 'inset-inline-end' ) );
+			const logicalBottomPercentValue = await paragraphElements.nth( 8 ).evaluate( ( el ) => getComputedStyle( el ).getPropertyValue( 'inset-block-end' ) );
+			const logicalLeftVhValue = await paragraphElements.nth( 9 ).evaluate( ( el ) => getComputedStyle( el ).getPropertyValue( 'inset-inline-start' ) );
 
 			// Validate that units were converted to pixels and values are reasonable
 			expect( logicalTopEmValue ).toMatch( /^\d+(\.\d+)?px$/ ); // Should be converted to px
 			expect( parseFloat( logicalTopEmValue ) ).toBeGreaterThan( 20 ); // 2em should be > 20px
-			
-			expect( logicalRightRemValue ).toMatch( /^\d+(\.\d+)?px$/ ); // Should be converted to px  
+
+			expect( logicalRightRemValue ).toMatch( /^\d+(\.\d+)?px$/ ); // Should be converted to px
 			expect( parseFloat( logicalRightRemValue ) ).toBeGreaterThan( 30 ); // 3rem should be > 30px
-			
+
 			expect( logicalBottomPercentValue ).toBe( '0px' ); // 5% of 0 height container = 0px
-			
+
 			expect( logicalLeftVhValue ).toMatch( /^\d+(\.\d+)?px$/ ); // Should be converted to px
 			expect( parseFloat( logicalLeftVhValue ) ).toBeGreaterThan( 50 ); // 10vh should be > 50px
 		} );
@@ -517,7 +517,7 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 
 		// Test z-index with unitless zero
 		await test.step( 'Verify z-index with unitless zero', async () => {
-			await expect( paragraphElements.nth( 13 ) ).toHaveCSS( 'z-index', '0' ); // z-index: 0 should remain '0' in computed styles
+			await expect( paragraphElements.nth( 13 ) ).toHaveCSS( 'z-index', '0' ); // Z-index: 0 should remain '0' in computed styles
 		} );
 	} );
 } );

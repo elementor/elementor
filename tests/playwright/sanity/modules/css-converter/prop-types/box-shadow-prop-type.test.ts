@@ -30,7 +30,7 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// await wpAdminPage.resetExperiments();
+		// Await wpAdminPage.resetExperiments();
 		await page.close();
 	} );
 
@@ -55,7 +55,7 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 			test.skip( true, validation.skipReason );
 			return;
 		}
-		
+
 		const editUrl = apiResult.edit_url;
 
 		await page.goto( editUrl );
@@ -65,23 +65,23 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 		// Define test cases for both editor and frontend verification
 		// Note: box-shadow values may be normalized by browsers
 		const testCases = [
-			{ 
-				index: 0, 
-				name: 'box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)', 
+			{
+				index: 0,
+				name: 'box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)',
 				// Browser normalizes to: rgba(0, 0, 0, 0.3) 2px 2px 4px 0px
-				expectedPattern: /rgba?\(0,\s*0,\s*0,\s*0\.3\)\s+2px\s+2px\s+4px\s+0px/
+				expectedPattern: /rgba?\(0,\s*0,\s*0,\s*0\.3\)\s+2px\s+2px\s+4px\s+0px/,
 			},
-			{ 
-				index: 1, 
-				name: 'box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2)', 
+			{
+				index: 1,
+				name: 'box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2)',
 				// Browser normalizes to: rgba(0, 0, 0, 0.2) 4px 8px 0px 0px
-				expectedPattern: /rgba?\(0,\s*0,\s*0,\s*0\.2\)\s+4px\s+8px\s+0px\s+0px/
+				expectedPattern: /rgba?\(0,\s*0,\s*0,\s*0\.2\)\s+4px\s+8px\s+0px\s+0px/,
 			},
-			{ 
-				index: 2, 
-				name: 'box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.1)', 
+			{
+				index: 2,
+				name: 'box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.1)',
 				// Browser normalizes to: rgba(0, 0, 0, 0.1) 2px 2px 4px 0px inset
-				expectedPattern: /rgba?\(0,\s*0,\s*0,\s*0\.1\)\s+2px\s+2px\s+4px\s+0px.*inset/
+				expectedPattern: /rgba?\(0,\s*0,\s*0,\s*0\.1\)\s+2px\s+2px\s+4px\s+0px.*inset/,
 			},
 		];
 
