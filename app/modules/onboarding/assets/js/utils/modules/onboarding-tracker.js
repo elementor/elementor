@@ -612,13 +612,16 @@ class OnboardingTracker {
 	}
 
 	sendStepEndStateInternal( stepNumber, storageKey, eventName, stepName, endStateProperty ) {
-		const actions = StorageManager.getArray( storageKey );
-		if ( 0 === actions.length ) {
+		const endStateSentKey = this.getEndStateSentKey( stepNumber );
+		if ( StorageManager.exists( endStateSentKey ) ) {
 			return;
 		}
 
-		const endStateSentKey = this.getEndStateSentKey( stepNumber );
-		if ( StorageManager.exists( endStateSentKey ) ) {
+		const initialActions = StorageManager.getArray( storageKey );
+		this.sendHoverEventsFromStepActions( initialActions, stepNumber );
+
+		const actions = StorageManager.getArray( storageKey );
+		if ( 0 === actions.length ) {
 			return;
 		}
 
@@ -631,7 +634,6 @@ class OnboardingTracker {
 		eventData[ endStateProperty ] = actions;
 
 		if ( EventDispatcher.canSendEvents() ) {
-			this.sendHoverEventsFromStepActions( actions, stepNumber );
 			this.dispatchEventWithoutTrigger( eventName, eventData );
 			StorageManager.remove( storageKey );
 			StorageManager.setString( endStateSentKey, 'true' );
@@ -640,7 +642,6 @@ class OnboardingTracker {
 		} else if ( 1 === stepNumber ) {
 			this.storeStep1EndStateForLater( eventData, storageKey );
 		} else {
-			this.sendHoverEventsFromStepActions( actions, stepNumber );
 			this.dispatchEventWithoutTrigger( eventName, eventData );
 			StorageManager.remove( storageKey );
 			StorageManager.setString( endStateSentKey, 'true' );
