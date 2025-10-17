@@ -99,7 +99,7 @@ module.exports = ControlSelect2View.extend( {
 		helpers.getFontsByGroups = function( groups ) {
 			var filteredFonts = {};
 
-			_.each( fonts, function( fontType, fontName ) {
+			Object.entries( fonts ).forEach( function( [ fontName, fontType ] ) {
 				if ( ( _.isArray( groups ) && _.contains( groups, fontType ) ) || fontType === groups ) {
 					filteredFonts[ fontName ] = fontName;
 				}

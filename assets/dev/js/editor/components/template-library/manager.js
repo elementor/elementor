@@ -1113,7 +1113,7 @@ const TemplateLibraryManager = function() {
 		if ( 'object' === typeof errorMessage ) {
 			var message = '';
 
-			_.each( errorMessage, function( error ) {
+			errorMessage.forEach( function( error ) {
 				if ( ! error?.message ) {
 					return;
 				}

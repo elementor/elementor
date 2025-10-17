@@ -984,9 +984,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 				itemTitleIconActive = '' === settings.accordion_item_title_icon_active.value
 					? itemTitleIcon
 					: elementor.helpers.renderIcon( view, settings['accordion_item_title_icon_active'], { 'aria-hidden': true }, 'i', 'object' );
-			#>
 
-				<# _.each( settings['items'], function( item, index ) {
+				settings['items'].forEach( function( item, index ) {
 				const itemCount = index + 1,
 					itemUid = elementUid + index,
 					itemTitleTextKey = 'item-title-text-' + itemUid,

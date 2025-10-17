@@ -560,7 +560,7 @@ BaseElementView = BaseContainer.extend( {
 			classControls = settings.getClassControls();
 
 		// Remove all previous classes
-		_.each( classControls, ( control ) => {
+		classControls.forEach( ( control ) => {
 			let previousClassValue = settings.previous( control.name );
 
 			if ( control.classes_dictionary ) {
@@ -573,7 +573,7 @@ BaseElementView = BaseContainer.extend( {
 		} );
 
 		// Add new classes
-		_.each( classControls, ( control ) => {
+		classControls.forEach( ( control ) => {
 			const value = settings.attributes[ control.name ];
 			let classValue = value;
 
@@ -655,7 +655,7 @@ BaseElementView = BaseContainer.extend( {
 			let isContentChanged = ! hasChanged,
 				isRenderRequired = ! hasChanged;
 
-			_.each( settings.changedAttributes(), ( settingValue, settingKey ) => {
+			Object.entries( settings.changedAttributes() ).forEach( ( [ settingKey, settingValue ] ) => {
 				if ( '_column_size' === settingKey ) {
 					isRenderRequired = true;
 					return;

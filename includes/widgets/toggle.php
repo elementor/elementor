@@ -692,7 +692,7 @@ class Widget_Toggle extends Widget_Base {
 					migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
 					titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_html_tag );
 
-				_.each( settings.tabs, function( item, index ) {
+				settings.tabs.forEach( function( item, index ) {
 					var tabCount = index + 1,
 						tabTitleKey = view.getRepeaterSettingKey( 'tab_title', 'tabs', index ),
 						tabContentKey = view.getRepeaterSettingKey( 'tab_content', 'tabs', index );

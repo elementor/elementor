@@ -214,7 +214,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		this.getControlsCSS().stylesheet.empty();
 
-		_.each( model.changed, function( value, key ) {
+		Object.entries( model.changed ).forEach( function( [ key, value ] ) {
 			if ( self.changeCallbacks[ key ] ) {
 				self.changeCallbacks[ key ].call( self, value );
 			}

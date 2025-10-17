@@ -64,11 +64,11 @@ class Control_Font extends Base_Data_Control {
 			<div class="elementor-control-input-wrapper elementor-control-unit-5">
 				<select id="<?php $this->print_control_uid(); ?>" class="elementor-control-font-family" data-setting="{{ data.name }}">
 					<option value=""><?php echo esc_html__( 'Default', 'elementor' ); ?></option>
-					<# _.each( data.groups, function( group_label, group_name ) {
+					<# Object.entries( data.groups ).forEach( function( [ group_name, group_label ] ) { #>
 						var groupFonts = getFontsByGroups( group_name );
 						if ( ! _.isEmpty( groupFonts ) ) { #>
 						<optgroup label="{{ group_label }}">
-							<# _.each( groupFonts, function( fontType, fontName ) { #>
+							<# Object.entries( groupFonts ).forEach( function( [ fontName, fontType ] ) { #>
 								<option value="{{ fontName }}">{{{ fontName }}}</option>
 							<# } ); #>
 						</optgroup>

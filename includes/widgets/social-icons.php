@@ -694,7 +694,7 @@ class Widget_Social_Icons extends Widget_Base {
 		var iconsHTML = {};
 		#>
 		<div {{{ view.getRenderAttributeString( 'wrapper' ) }}}>
-			<# _.each( settings.social_icon_list, function( item, index ) {
+			<# settings.social_icon_list.forEach( function( item, index ) {
 				var link = item.link ? item.link.url : '',
 					migrated = elementor.helpers.isIconMigrated( item, 'social_icon' );
 					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social, false, migrated );

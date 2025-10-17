@@ -108,7 +108,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 			from = null;
 		}
 
-		_.each( buttonsToMove, function( afterButton, button ) {
+		Object.entries( buttonsToMove ).forEach( function( [ button, afterButton ] ) {
 			var afterButtonIndex = to.indexOf( afterButton );
 
 			if ( from ) {

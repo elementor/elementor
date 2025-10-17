@@ -249,7 +249,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		const defaults = {};
 
 		// Get default fields.
-		_.each( this.model.get( 'fields' ), ( field ) => {
+		this.model.get( 'fields' ).forEach( ( field ) => {
 			defaults[ field.name ] = field.default;
 		} );
 

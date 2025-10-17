@@ -23,7 +23,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 		var attrs = data || {},
 			defaults = {};
 
-		_.each( self.controls, function( control ) {
+		Object.values( self.controls ).forEach( function( control ) {
 			// Check features since they does not exist in tests.
 			var isUIControl = control.features && -1 !== control.features.indexOf( 'ui' );
 
@@ -100,7 +100,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 	handleRepeaterData( attrs ) {
 		const self = this;
 
-		_.each( this.controls, function( field ) {
+		Object.values( this.controls ).forEach( function( field ) {
 			if ( field.is_repeater ) {
 				// TODO: Apply defaults on each field in repeater fields
 				if ( ! ( attrs[ field.name ] instanceof Backbone.Collection ) ) {
@@ -407,7 +407,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 		delete data.elType;
 		delete data.isInner;
 
-		_.each( data, function( attribute, key ) {
+		Object.entries( data ).forEach( function( [key, attribute] ) {
 			if ( attribute && attribute.toJSON ) {
 				data[ key ] = attribute.toJSON();
 			}
