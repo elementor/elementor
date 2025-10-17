@@ -8,9 +8,10 @@ import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../../bound-prop-context';
 import { createControl } from '../../create-control';
+import { useProLicenseStatus } from '../../hooks/use-pro-license-status';
 import { RepeatableControl } from '../repeatable-control';
 import { SelectionSizeControl } from '../selection-size-control';
-import { initialTransitionValue, transitionProperties } from './data';
+import { ALL_PROPERTIES_VALUE, initialTransitionValue, transitionProperties } from './data';
 import { subscribeToTransitionEvent } from './trainsition-events';
 import { TransitionSelector } from './transition-selector';
 
@@ -102,6 +103,26 @@ export const TransitionRepeaterControl = createControl(
 		const { value, setValue } = useBoundProp( childArrayPropTypeUtil );
 		const disabledItems = useMemo( () => getDisabledItems( value ), [ value ] );
 
+		const license = useProLicenseStatus();
+		const isLicenseExpired = license.expired;
+
+		const isAllSelected = useMemo( () => {
+			if ( ! Array.isArray( value ) ) {
+				return false;
+			}
+
+			return value.some( ( item ) => {
+				const sel = item.value?.selection;
+				if ( sel?.$$type === 'string' ) {
+					return sel.value === ALL_PROPERTIES_VALUE;
+				}
+				if ( sel?.$$type === 'key-value' ) {
+					return sel.value?.value?.value === ALL_PROPERTIES_VALUE;
+				}
+				return false;
+			} );
+		}, [ value ] );
+
 		const allowedTransitionSet = useMemo( () => {
 			const set = new Set< string >();
 			transitionProperties.forEach( ( category ) => {
@@ -142,10 +163,16 @@ export const TransitionRepeaterControl = createControl(
 				showDuplicate={ false }
 				showToggle={ true }
 				initialValues={ initialTransitionValue }
-				childControlConfig={ getChildControlConfig( recentlyUsedList, disabledItems ) }
+				childControlConfig={ {
+					...getChildControlConfig( recentlyUsedList, disabledItems ),
+					props: {
+						...getSelectionSizeProps( recentlyUsedList, disabledItems ),
+						sizeDisabled: isLicenseExpired,
+					},
+				} }
 				propKey="transition"
 				addItemTooltipProps={ {
-					disabled: isAddItemDisabled,
+					disabled: isAddItemDisabled || ( isLicenseExpired && isAllSelected ),
 					enableTooltip: ! currentStyleIsNormal,
 					tooltipContent: disableAddItemTooltipContent,
 				} }
