@@ -95,17 +95,95 @@ describe( 'Reset Style Props Tests', () => {
 			expect( result.current.visible ).toBe( false );
 		} );
 
-		it( 'should not show reset button when path is part of repeater', () => {
+		it( 'should show reset button when path is part of supported repeater', () => {
 			( useBoundProp as jest.Mock ).mockReturnValue( {
 				value: 'some-value',
 				setValue: jest.fn(),
-				path: [ 'style', 'color', '2', 'deep' ],
+				path: [ 'background', 'color', '2', 'deep' ],
 				bind: 'color',
 			} );
 
 			const { result } = renderHook( () => useResetStyleValueProps() );
 
+			expect( result.current.visible ).toBe( true );
+		} );
+
+		it( 'should use propType.default as reset value when defined', () => {
+			const setValueMock = jest.fn();
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: 'custom-value',
+				setValue: setValueMock,
+				propType: { default: 'default-value' },
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+			result.current.onClick();
+
+			expect( setValueMock ).toHaveBeenCalledWith( 'default-value' );
+		} );
+
+		it( 'should not show reset button when value equals default', () => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: 'same',
+				setValue: jest.fn(),
+				propType: { default: 'same' },
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+
 			expect( result.current.visible ).toBe( false );
+		} );
+
+		it( 'should show reset button when default exists but value differs', () => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: 'different',
+				setValue: jest.fn(),
+				propType: { default: 'default' },
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+			expect( result.current.visible ).toBe( true );
+		} );
+
+		it( 'should handle JSON.stringify errors gracefully', () => {
+			// circular reference to force stringify error
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const circular: any = {};
+			circular.self = circular;
+
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: circular,
+				setValue: jest.fn(),
+				propType: { default: {} },
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+			expect( result.current.visible ).toBe( true );
+		} );
+
+		it( 'should correctly detect equality for nested objects', () => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: { color: 'red', font: { size: 12 } },
+				setValue: jest.fn(),
+				propType: { default: { color: 'red', font: { size: 12 } } },
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+			expect( result.current.visible ).toBe( false );
+		} );
+
+		it( 'should reset to null when propType.default is undefined', () => {
+			const setValueMock = jest.fn();
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: 'some-style-value',
+				setValue: setValueMock,
+				propType: { default: undefined },
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+			result.current.onClick();
+
+			expect( setValueMock ).toHaveBeenCalledWith( null );
 		} );
 	} );
 } );
