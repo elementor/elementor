@@ -26,7 +26,7 @@ ControlGapItemView = ControlDimensionsView.extend( {
 		var values = this.getControlValue();
 
 		if ( 'object' === typeof key ) {
-			Object.entries( key ).forEach( function( [ internalKey, internalValue ] ) {
+			Object.entries( key ).forEach( ( [ internalKey, internalValue ] ) => {
 				values[ internalKey ] = internalValue;
 			} );
 		} else {

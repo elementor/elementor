@@ -72,7 +72,7 @@ class Control_Select2 extends Base_Data_Control {
 			<div class="elementor-control-input-wrapper elementor-control-unit-5">
 				<# var multiple = ( data.multiple ) ? 'multiple' : ''; #>
 				<select id="<?php $this->print_control_uid(); ?>" class="elementor-select2" type="select2" {{ multiple }} data-setting="{{ data.name }}">
-					<# Object.entries( data.options ).forEach( function( [ option_value, option_title ] ) {
+					<# Object.entries( data.options ).forEach( ( [ option_value, option_title ] ) => {
 						var value = data.controlValue;
 						if ( typeof value == 'string' ) {
 							var selected = ( option_value === value ) ? 'selected' : '';

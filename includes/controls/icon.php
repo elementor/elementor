@@ -875,7 +875,7 @@ class Control_Icon extends Base_Data_Control {
 			<div class="elementor-control-input-wrapper">
 				<select id="<?php $this->print_control_uid(); ?>" class="elementor-control-icon" data-setting="{{ data.name }}" data-placeholder="<?php echo esc_attr__( 'Select Icon', 'elementor' ); ?>">
 					<option value=""><?php echo esc_html__( 'Select Icon', 'elementor' ); ?></option>
-					<# Object.entries( data.options ).forEach( function( [ option_value, option_title ] ) { #>
+					<# Object.entries( data.options ).forEach( ( [ option_value, option_title ] ) => { #>
 					<option value="{{ option_value }}">{{{ option_title }}}</option>
 					<# } ); #>
 				</select>

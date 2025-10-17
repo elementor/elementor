@@ -1240,7 +1240,7 @@ class NestedTabs extends Widget_Nested_Base {
 		<div class="e-n-tabs" data-widget-number="{{ elementUid }}" aria-label="<?php echo esc_html__( 'Tabs. Open items with Enter or Space, close with Escape and navigate using the Arrow keys.', 'elementor' ); ?>">
 			<# if ( settings['tabs'] ) { #>
 			<div class="e-n-tabs-heading" role="tablist">
-				<# settings['tabs'].forEach( function( item, index ) {
+				<# settings['tabs'].forEach( ( item, index ) => {
 					const tabIndex = index,
 						hoverAnimationSetting = settings['hover_animation'],
 						hoverAnimationClass = hoverAnimationSetting

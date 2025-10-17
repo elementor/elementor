@@ -265,7 +265,7 @@ ElementModel = BaseElementModel.extend( {
 		// Call parent's toJSON method
 		var data = Backbone.Model.prototype.toJSON.call( this );
 
-		Object.entries( data ).forEach( function( [ key, attribute ] ) {
+		Object.entries( data ).forEach( ( [ key, attribute ] ) => {
 			if ( attribute && attribute.toJSON ) {
 				data[ key ] = attribute.toJSON( options );
 			}
@@ -296,7 +296,7 @@ ElementModel = BaseElementModel.extend( {
 			elements = this.get( 'elements' );
 
 		if ( undefined !== elements ) {
-			_.clone( elements.models ).forEach( function( model ) {
+			_.clone( elements.models ).forEach( ( model ) => {
 				model.destroy();
 			} );
 		}

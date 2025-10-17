@@ -18,7 +18,7 @@ presetsFactory = {
 		var clonedPreset = structuredClone( preset ),
 			presetDictionary = this.getPresetsDictionary();
 
-		clonedPreset.forEach( function( unitValue, unitIndex ) {
+		clonedPreset.forEach( ( unitValue, unitIndex ) => {
 			if ( presetDictionary[ unitValue ] ) {
 				clonedPreset[ unitIndex ] = presetDictionary[ unitValue ];
 			}

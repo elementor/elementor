@@ -13,7 +13,7 @@ InnerTabsBehavior = Marionette.Behavior.extend( {
 				return 'tabs' === view.model.get( 'type' );
 			} );
 
-		tabsWrappers.forEach( function( view ) {
+		tabsWrappers.forEach( ( view ) => {
 			view.$el.find( '.elementor-control-content' ).remove();
 
 			var tabsId = view.model.get( 'name' ),
@@ -21,7 +21,7 @@ InnerTabsBehavior = Marionette.Behavior.extend( {
 					return ( 'tab' === childView.model.get( 'type' ) && childView.model.get( 'tabs_wrapper' ) === tabsId );
 				} );
 
-			tabs.forEach( function( childView, index ) {
+			tabs.forEach( ( childView, index ) => {
 				view._addChildView( childView );
 
 				var tabId = childView.model.get( 'name' ),
@@ -32,7 +32,7 @@ InnerTabsBehavior = Marionette.Behavior.extend( {
 				if ( 0 === index ) {
 					childView.$el.addClass( activeClass );
 				} else {
-					controlsUnderTab.forEach( function( controlView ) {
+					controlsUnderTab.forEach( ( controlView ) => {
 						controlView.$el.addClass( closedClass );
 					} );
 				}
@@ -47,17 +47,17 @@ InnerTabsBehavior = Marionette.Behavior.extend( {
 			childrenUnderTab = this.view.children.filter( function( view ) {
 				return ( 'tab' !== view.model.get( 'type' ) && childView.model.get( 'tabs_wrapper' ) === view.model.get( 'tabs_wrapper' ) );
 			} ),
-			siblingTabs = this.view.children.filter( function( view ) {
+			siblingTabs = this.view.children.filter( ( view ) => {
 				return ( 'tab' === view.model.get( 'type' ) && childView.model.get( 'tabs_wrapper' ) === view.model.get( 'tabs_wrapper' ) );
 			} );
 
-		siblingTabs.forEach( function( view ) {
+		siblingTabs.forEach( ( view ) => {
 			view.$el.removeClass( activeClass );
 		} );
 
 		childView.$el.addClass( activeClass );
 
-		childrenUnderTab.forEach( function( view ) {
+		childrenUnderTab.forEach( ( view ) => {
 			if ( view.model.get( 'inner_tab' ) === tabClicked ) {
 				view.$el.removeClass( closedClass );
 			} else {

@@ -26,7 +26,7 @@ class Control_Visual_Choice extends Base_Data_Control {
 			<div class="elementor-control-input-wrapper">
 				<div class="elementor-visual-choice-choices" style="--elementor-visual-choice-columns: {{ data.columns }};">
 					<#
-					Object.entries( data.options ).forEach( function( [ value, options ] ) {
+					Object.entries( data.options ).forEach( ( [ value, options ] ) => {
 						choiceType = options.type || 'image';
 					#>
 					<div class="elementor-visual-choice-element elementor-visual-choice-element-{{ choiceType }}" style="--elementor-visual-choice-span: {{ data.toggle ? '1' : '0' }};">

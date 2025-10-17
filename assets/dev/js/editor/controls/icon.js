@@ -16,7 +16,7 @@ ControlIconView = ControlSelect2View.extend( {
 		if ( include ) {
 			var filteredIcons = {};
 
-			include.forEach( function( iconKey ) {
+			include.forEach( ( iconKey ) => {
 				filteredIcons[ iconKey ] = icons[ iconKey ];
 			} );
 
@@ -26,7 +26,7 @@ ControlIconView = ControlSelect2View.extend( {
 
 		const exclude = this.model.get( 'exclude' );
 		if ( exclude ) {
-			exclude.forEach( function( iconKey ) {
+			exclude.forEach( ( iconKey ) => {
 				delete icons[ iconKey ];
 			} );
 		}

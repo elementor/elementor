@@ -668,7 +668,7 @@ class Widget_Accordion extends Widget_Base {
 					iconActiveHTML = elementor.helpers.renderIcon( view, settings.selected_active_icon, {}, 'i' , 'object' ),
 					migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
 
-				settings.tabs.forEach( function( item, index ) {
+				settings.tabs.forEach( ( item, index ) => {
 					var tabCount = index + 1,
 						tabTitleKey = view.getRepeaterSettingKey( 'tab_title', 'tabs', index ),
 						tabContentKey = view.getRepeaterSettingKey( 'tab_content', 'tabs', index );

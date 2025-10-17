@@ -153,7 +153,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		var categories = {};
 
 		this.elementsCollection.each( function( element ) {
-			element.get( 'categories' ).forEach( function( category ) {
+			element.get( 'categories' ).forEach( ( category ) => {
 				if ( ! categories[ category ] ) {
 					categories[ category ] = [];
 				}
@@ -164,7 +164,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		var categoriesCollection = new PanelElementsCategoriesCollection();
 
-		Object.entries( elementor.config.document.panel.elements_categories ).forEach( function( [ categoryName, categoryConfig ] ) {
+		Object.entries( elementor.config.document.panel.elements_categories ).forEach( ( [ categoryName, categoryConfig ] ) => {
 			// Set defaults.
 			if ( 'undefined' === typeof categoryConfig.active ) {
 				categoryConfig.active = true;

@@ -67,7 +67,7 @@ class Control_Select extends Base_Data_Control {
 				<select id="<?php $this->print_control_uid(); ?>" data-setting="{{ data.name }}">
 				<#
 					var printOptions = function( options ) {
-						Object.entries( options ).forEach( function( [ option_value, option_title ] ) { #>
+						Object.entries( options ).forEach( ( [ option_value, option_title ] ) => { #>
 						<?php // If the option title is array of title & icon. ?>
 							<option value="{{ option_value }}">{{{ option_title?.title || option_title }}}</option>
 						<# } );

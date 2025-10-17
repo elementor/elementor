@@ -8,7 +8,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 			$inputs = this.$( '[data-setting]' ),
 			self = this;
 
-		Object.entries( values ).forEach( function( [key, value] ) {
+		Object.entries( values ).forEach( ( [ key, value ] ) => {
 			var $input = $inputs.filter( function() {
 				return key === this.dataset.setting;
 			} );
@@ -59,7 +59,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 		var values = this.getControlValue();
 
 		if ( 'object' === typeof key ) {
-			Object.entries( key ).forEach( function( [internalKey, internalValue] ) {
+			Object.entries( key ).forEach( ( [ internalKey, internalValue ] ) => {
 				values[ internalKey ] = internalValue;
 			} );
 		} else {

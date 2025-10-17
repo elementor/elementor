@@ -18,7 +18,7 @@ module.exports = elementorModules.Module.extend( {
 	initSettings() {
 		var self = this;
 
-		Object.entries( elementor.config.settings ).forEach( function( [ name, config ] ) {
+		Object.entries( elementor.config.settings ).forEach( ( [ name, config ] ) => {
 			var Manager = self.modules[ name ] || self.modules.base;
 
 			self[ name ] = new Manager( config );

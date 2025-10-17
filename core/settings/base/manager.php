@@ -275,7 +275,7 @@ abstract class Manager {
 
 		if ( Object.values( tabs ).length > 1 ) { #>
 			<div class="elementor-panel-navigation">
-				<# Object.entries( tabs ).forEach( function( [ tabSlug, tabTitle ] ) {
+				<# Object.entries( tabs ).forEach( ( [ tabSlug, tabTitle ] ) => {
 					$e.bc.ensureTab( 'panel/<?php
 						// PHPCS - the variable $name does not contain a user input value.
 						echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

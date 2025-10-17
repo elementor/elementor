@@ -586,7 +586,7 @@ class Widget_Tabs extends Widget_Base {
 			<# if ( settings.tabs ) {
 				var elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
 				<div class="elementor-tabs-wrapper" role="tablist">
-					<# settings.tabs.forEach( function( item, index ) {
+					<# settings.tabs.forEach( ( item, index ) => {
 						var tabCount = index + 1,
 							tabUid = elementUid + tabCount,
 							tabTitleKey = 'tab-title-' + tabUid;
@@ -605,7 +605,7 @@ class Widget_Tabs extends Widget_Base {
 					<# } ); #>
 				</div>
 				<div class="elementor-tabs-content-wrapper">
-					<# settings.tabs.forEach( function( item, index ) {
+					<# settings.tabs.forEach( ( item, index ) => {
 						var tabCount = index + 1,
 							tabContentKey = view.getRepeaterSettingKey( 'tab_content', 'tabs',index );
 

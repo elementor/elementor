@@ -130,7 +130,7 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 				<span class="elementor-screen-only"><?php echo esc_html__( 'Switch units', 'elementor' ); ?></span>
 			</div>
 			<div class="e-units-choices">
-				<# data.size_units.forEach( function( unit ) { #>
+				<# data.size_units.forEach( ( unit ) => { #>
 				<input id="elementor-choose-{{ data._cid + data.name + unit }}" type="radio" name="elementor-choose-{{ data.name + data._cid }}" data-setting="unit" value="{{ unit }}">
 				<label class="elementor-units-choices-label" for="elementor-choose-{{ data._cid + data.name + unit }}" data-choose="{{{ unit }}}">
 					<# if ( 'custom' === unit ) { #>
