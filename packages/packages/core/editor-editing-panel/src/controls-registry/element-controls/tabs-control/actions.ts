@@ -6,7 +6,6 @@ import {
 	getElementSetting,
 	moveElements,
 	removeElements,
-	updateElementSettings,
 } from '@elementor/editor-elements';
 import { stringPropTypeUtil, type StringPropValue } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
@@ -29,30 +28,23 @@ export const duplicateItem = ( { items }: { items: ItemActionPayload< TabItem > 
 			throw new Error( 'Original panel ID is required for duplication' );
 		}
 
-		duplicateElements( {
-			elementIds: [ tabId, tabPanelId ],
-			title: __( 'Duplicate Tab', 'elementor' ),
-			onCreate: ( duplicatedElements ) => {
-				const tab = duplicatedElements.find( ( element ) => element.originalElementId === tabId );
-				const tabPanel = duplicatedElements.find( ( element ) => element.originalElementId === tabPanelId );
+		const newTabPanelId = generateElementId();
+		const newTabId = generateElementId();
 
-				if ( tabPanel && tab ) {
-					updateElementSettings( {
-						withHistory: false,
-						id: tab.id,
-						props: {
-							'tab-panel-id': stringPropTypeUtil.create( tabPanel.id ),
-						},
-					} );
-					updateElementSettings( {
-						withHistory: false,
-						id: tabPanel.id,
-						props: {
-							'tab-id': stringPropTypeUtil.create( tab.id ),
-						},
-					} );
-				}
-			},
+		duplicateElements( {
+			title: __( 'Duplicate Tab', 'elementor' ),
+			elements: [
+				{
+					id: tabId,
+					cloneId: newTabId,
+					settings: { 'tab-panel-id': stringPropTypeUtil.create( newTabPanelId ) },
+				},
+				{
+					id: tabPanelId,
+					cloneId: newTabPanelId,
+					settings: { 'tab-id': stringPropTypeUtil.create( newTabId ) },
+				},
+			],
 		} );
 	} );
 };
