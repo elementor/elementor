@@ -465,13 +465,13 @@ class Widget_Icon extends Widget_Base {
 
 		?>
 		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
-			<<?php Utils::print_unescaped_internal_string( $icon_tag . ' ' . $this->get_render_attribute_string( 'icon-wrapper' ) ); ?>>
+			<<?php Utils::print_validated_html_tag( $icon_tag ); ?> <?php $this->print_render_attribute_string( 'icon-wrapper' ); ?>>
 			<?php if ( $is_new || $migrated ) :
 				Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
 			else : ?>
 				<i <?php $this->print_render_attribute_string( 'icon' ); ?>></i>
 			<?php endif; ?>
-			</<?php Utils::print_unescaped_internal_string( $icon_tag ); ?>>
+			</<?php Utils::print_validated_html_tag( $icon_tag ); ?>>
 		</div>
 		<?php
 	}
@@ -491,13 +491,15 @@ class Widget_Icon extends Widget_Base {
 			return;
 		}
 
+		let iconTag = 'div';
+
 		if ( settings.link?.url ) {
 			view.addRenderAttribute( 'link_url', 'href', elementor.helpers.sanitizeUrl( settings.link?.url ) );
+			iconTag = 'a';
 		}
 
 		const iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
-			migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
-			iconTag = settings.link?.url ? 'a' : 'div';
+			migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
 
 		view.addRenderAttribute( 'icon', 'class', 'elementor-icon' );
 
