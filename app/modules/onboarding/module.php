@@ -27,6 +27,10 @@ class Module extends BaseModule {
 	const VERSION = '1.0.0';
 	const ONBOARDING_OPTION = 'elementor_onboarded';
 
+	const EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS = 'emphasizeConnectBenefits101';
+	const EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ = 'offerThemeChoicesHelloBiz201';
+	const EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION = 'reduceHierarchyBlankOption402';
+
 	private ?API $editor_assets_api = null;
 
 	/**
@@ -154,9 +158,14 @@ class Module extends BaseModule {
 			],
 			'nonce' => wp_create_nonce( 'onboarding' ),
 			'experiment' => true,
-			'isExperiment101Enabled' => $this->is_experiment_enabled( 'emphasizeConnectBenefits101' ),
-			'isExperiment201Enabled' => $this->is_experiment_enabled( 'offerThemeChoicesHelloBiz201' ),
-			'isExperiment402Enabled' => $this->is_experiment_enabled( 'reduceHierarchyBlankOption402' ),
+			'isExperiment101Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS ),
+			'isExperiment201Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ ),
+			'isExperiment402Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION ),
+			'experimentNames' => [
+				'101' => self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS,
+				'201' => self::EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ,
+				'402' => self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION,
+			],
 		] );
 	}
 
