@@ -264,3 +264,4 @@ If connecting to wrong server:
 - `../../../../../docs/implementation/NESTED-VARIABLES-IMPLEMENTATION.md` - Implementation guide
 - `../../../../../services/variables/README.md` - Service documentation
 - `../../../../../docs/page-testing/1-NESTED-VARIABLES.md` - Specification
+

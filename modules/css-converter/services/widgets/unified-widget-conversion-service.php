@@ -183,7 +183,7 @@ class Unified_Widget_Conversion_Service {
 			}
 		}
 
-		return $inline_css . $external_css;
+		return $external_css . $inline_css;
 	}
 
 	private function resolve_relative_url( string $relative_url, string $base_url ): string {
@@ -419,7 +419,7 @@ class Unified_Widget_Conversion_Service {
 
 		$css_processing_result = [
 			'global_classes' => $global_classes,
-			'widget_styles' => $extracted_styles['css_selector_styles'],
+			'widget_styles' => array_merge( $extracted_styles['css_selector_styles'], $extracted_styles['reset_element_styles'] ),
 			'element_styles' => $extracted_styles['element_styles'],
 			'id_styles' => $extracted_styles['id_styles'],
 			'direct_widget_styles' => $extracted_styles['inline_styles'],
@@ -458,6 +458,7 @@ class Unified_Widget_Conversion_Service {
 		$inline_styles = [];
 		$css_selector_styles = [];
 		$element_styles = [];
+		$reset_element_styles = [];
 
 		foreach ( $widgets as $widget ) {
 			if ( empty( $widget['resolved_styles'] ) ) {
@@ -482,6 +483,9 @@ class Unified_Widget_Conversion_Service {
 					case 'element':
 						$element_styles[] = $style_data;
 						break;
+					case 'reset-element':
+						$reset_element_styles[] = $style_data;
+						break;
 				}
 			}
 
@@ -492,6 +496,7 @@ class Unified_Widget_Conversion_Service {
 				$inline_styles = array_merge( $inline_styles, $child_styles['inline_styles'] );
 				$css_selector_styles = array_merge( $css_selector_styles, $child_styles['css_selector_styles'] );
 				$element_styles = array_merge( $element_styles, $child_styles['element_styles'] );
+				$reset_element_styles = array_merge( $reset_element_styles, $child_styles['reset_element_styles'] ?? [] );
 			}
 		}
 
@@ -500,6 +505,7 @@ class Unified_Widget_Conversion_Service {
 			'inline_styles' => $inline_styles,
 			'css_selector_styles' => $css_selector_styles,
 			'element_styles' => $element_styles,
+			'reset_element_styles' => $reset_element_styles,
 		];
 	}
 }

@@ -196,3 +196,4 @@ Test file: `tests/phpunit/services/variables/nested-variable-extractor-test.php`
 
 - `../../../docs/page-testing/1-NESTED-VARIABLES.md` - Comprehensive specification
 - `../../../docs/implementation/NESTED-VARIABLES-IMPLEMENTATION.md` - Implementation guide
+

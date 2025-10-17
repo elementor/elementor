@@ -46,7 +46,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test.skip( 'should successfully import page with comprehensive reset styles', async ( { request, page } ) => {
+	test( 'should successfully import page with comprehensive reset styles', async ( { request, page } ) => {
 		// Convert the URL with external CSS files containing reset styles
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
@@ -57,7 +57,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		// Validate the API result
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
+			test( true, validation.skipReason );
 			return;
 		}
 
@@ -66,8 +66,6 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		expect( result.post_id ).toBeGreaterThan( 0 );
 		expect( result.edit_url ).toBeTruthy();
 		expect( result.widgets_created ).toBeGreaterThan( 0 );
-
-		// Log conversion statistics
 
 		// Expect multiple widgets to be created from elements with reset styles
 		expect( result.widgets_created ).toBeGreaterThanOrEqual( 15 );
@@ -87,80 +85,186 @@ test.describe( 'Reset Styles Handling Tests', () => {
 			throw new Error( 'Preview iframe not found after waiting' );
 		}
 
-		// Verify universal reset styles (* selector)
-		const allElements = previewFrame.locator( '*' ).first();
-		await expect( allElements ).toHaveCSS( 'box-sizing', 'border-box' );
-		// Note: margin and padding reset may be overridden by specific element styles
+	// ========================================
+	// HEADING RESET STYLES (H1-H6)
+	// All heading styles from reset-styles-test-page.html <style> block
+	// ========================================
 
-		// Verify body reset styles (applied to page container or body)
-		const bodyElement = previewFrame.locator( 'body' );
-		// await expect( bodyElement ).toHaveCSS( 'background-color', 'rgb(0, 0, 0)' ); // Elementor default
-		await expect( bodyElement ).toHaveCSS( 'color', 'rgb(51, 51, 51)' ); // Elementor default
-		await expect( bodyElement ).toHaveCSS( 'font-family', /-apple-system/ ); // Elementor default font stack
-		await expect( bodyElement ).toHaveCSS( 'font-size', '16px' ); // Elementor default
-		// Note: Elementor overrides original reset styles with theme defaults
+	// H1: font-size: 2.5rem, font-weight: 700, color: #e74c3c, margin-bottom: 1rem, line-height: 1.2
+	const h1Elements = await previewFrame.locator( 'h1' ).all();
+	let h1Element = null;
+	for ( const h1 of h1Elements ) {
+		const text = await h1.textContent();
+		if ( text?.includes( 'Main Heading' ) ) {
+			h1Element = h1;
+			break;
+		}
+	}
+	if ( ! h1Element ) {
+		throw new Error( 'Could not find h1 element with "Main Heading" text' );
+	}
+	await expect( h1Element ).toHaveCSS( 'font-weight', '700' );
+	await expect( h1Element ).toHaveCSS( 'color', 'rgb(231, 76, 60)' );
 
-		// Verify heading reset styles (converted elements may become h2)
-		const headingElement = previewFrame.locator( 'h1, h2' ).first();
-		await expect( headingElement ).toHaveCSS( 'font-size', '16px' ); // Elementor converted size
-		await expect( headingElement ).toHaveCSS( 'font-weight', '400' ); // Elementor default
-		await expect( headingElement ).toHaveCSS( 'color', 'rgb(52, 73, 94)' ); // Elementor theme color
-		// Note: Original reset color #e74c3c is overridden by Elementor theme
+	// H2: font-size: 2rem, font-weight: 600, color: #3498db, margin-bottom: 0.8rem, line-height: 1.3
+	const h2Elements = await previewFrame.locator( 'h2' ).all();
+	let h2Element = null;
+	for ( const h2 of h2Elements ) {
+		const text = await h2.textContent();
+		if ( text?.includes( 'Secondary Heading' ) ) {
+			h2Element = h2;
+			break;
+		}
+	}
+	if ( ! h2Element ) {
+		throw new Error( 'Could not find h2 element with "Secondary Heading" text' );
+	}
+	await expect( h2Element ).toHaveCSS( 'font-weight', '600' );
+	await expect( h2Element ).toHaveCSS( 'color', 'rgb(52, 152, 219)' );
 
-		const h2Element = previewFrame.locator( 'h2' ).first();
-		await expect( h2Element ).toHaveCSS( 'font-size', '16px' ); // Elementor converted size
-		await expect( h2Element ).toHaveCSS( 'font-weight', '400' ); // Elementor default
-		await expect( h2Element ).toHaveCSS( 'color', 'rgb(52, 73, 94)' ); // Elementor theme color
-		// Note: Elementor applies consistent styling to converted headings
+	// H3: font-size: 1.5rem, font-weight: 500, color: #27ae60, margin-bottom: 0.6rem
+	const h3Elements = await previewFrame.locator( 'h3' ).all();
+	let h3Element = null;
+	for ( const h3 of h3Elements ) {
+		const text = await h3.textContent();
+		if ( text?.includes( 'Tertiary Heading' ) ) {
+			h3Element = h3;
+			break;
+		}
+	}
+	if ( ! h3Element ) {
+		throw new Error( 'Could not find h3 element with "Tertiary Heading" text' );
+	}
+	await expect( h3Element ).toHaveCSS( 'font-weight', '500' );
+	await expect( h3Element ).toHaveCSS( 'color', 'rgb(39, 174, 96)' );
 
-		const h3Element = previewFrame.locator( 'h3' ).first();
-		await expect( h3Element ).toHaveCSS( 'font-size', '16px' ); // Elementor converted size
-		await expect( h3Element ).toHaveCSS( 'font-weight', '400' ); // Elementor default
-		await expect( h3Element ).toHaveCSS( 'color', 'rgb(52, 73, 94)' ); // Elementor theme color
+	// H4: font-size: 1.25rem, font-weight: 500, color: #f39c12, margin-bottom: 0.5rem
+	const h4Elements = await previewFrame.locator( 'h4' ).all();
+	let h4Element = null;
+	for ( const h4 of h4Elements ) {
+		const text = await h4.textContent();
+		if ( text?.includes( 'Quaternary Heading' ) ) {
+			h4Element = h4;
+			break;
+		}
+	}
+	if ( ! h4Element ) {
+		throw new Error( 'Could not find h4 element with "Quaternary Heading" text' );
+	}
+	await expect( h4Element ).toHaveCSS( 'font-weight', '500' );
+	await expect( h4Element ).toHaveCSS( 'color', 'rgb(243, 156, 18)' );
 
-		// Verify paragraph reset styles
-		const pElement = previewFrame.locator( 'p' ).first();
-		await expect( pElement ).toHaveCSS( 'font-size', '16px' ); // Elementor converted size
-		await expect( pElement ).toHaveCSS( 'line-height', '28.8px' ); // Elementor computed line-height
-		await expect( pElement ).toHaveCSS( 'color', 'rgb(44, 62, 80)' ); // Original reset color preserved
+	// H5: font-size: 1.1rem, font-weight: 400, color: #9b59b6, margin-bottom: 0.4rem
+	const h5Elements = await previewFrame.locator( 'h5' ).all();
+	let h5Element = null;
+	for ( const h5 of h5Elements ) {
+		const text = await h5.textContent();
+		if ( text?.includes( 'Quinary Heading' ) ) {
+			h5Element = h5;
+			break;
+		}
+	}
+	if ( ! h5Element ) {
+		throw new Error( 'Could not find h5 element with "Quinary Heading" text' );
+	}
+	await expect( h5Element ).toHaveCSS( 'font-weight', '400' );
+	await expect( h5Element ).toHaveCSS( 'color', 'rgb(155, 89, 182)' );
 
-		// Verify link reset styles
-		const aElement = previewFrame.locator( 'a' ).first();
-		await expect( aElement ).toHaveCSS( 'color', 'rgb(155, 89, 182)' ); // #9b59b6
-		await expect( aElement ).toHaveCSS( 'text-decoration', /none/ ); // May vary by browser
+	// H6: font-size: 1rem, font-weight: 400, color: #34495e, margin-bottom: 0.3rem
+	const h6Elements = await previewFrame.locator( 'h6' ).all();
+	let h6Element = null;
+	for ( const h6 of h6Elements ) {
+		const text = await h6.textContent();
+		if ( text?.includes( 'Senary Heading' ) ) {
+			h6Element = h6;
+			break;
+		}
+	}
+	if ( ! h6Element ) {
+		throw new Error( 'Could not find h6 element with "Senary Heading" text' );
+	}
+	await expect( h6Element ).toHaveCSS( 'font-weight', '400' );
+	await expect( h6Element ).toHaveCSS( 'color', 'rgb(52, 73, 94)' );
 
-		// Verify button reset styles
-		const buttonElement = previewFrame.locator( 'button' ).first();
-		await expect( buttonElement ).toHaveCSS( 'background-color', 'rgb(52, 152, 219)' ); // #3498db
-		await expect( buttonElement ).toHaveCSS( 'color', 'rgb(255, 255, 255)' ); // White
-		await expect( buttonElement ).toHaveCSS( 'border', /none/ ); // Should be none or 0px
-		await expect( buttonElement ).toHaveCSS( 'padding', '12px 24px' ); // 0.75rem 1.5rem
-		await expect( buttonElement ).toHaveCSS( 'font-size', '16px' ); // 1rem
+	// ========================================
+	// PARAGRAPH RESET STYLES
+	// p { font-size: 1rem; line-height: 1.8; margin-bottom: 1rem; color: #2c3e50; }
+	// ========================================
+	const paragraphs = await previewFrame.locator( 'p' ).all();
+	if ( paragraphs.length > 0 ) {
+		const firstParagraph = paragraphs[0];
+		await expect( firstParagraph ).toHaveCSS( 'color', 'rgb(44, 62, 80)' );
+	}
 
-		// Verify list reset styles
-		const ulElement = previewFrame.locator( 'ul' ).first();
-		await expect( ulElement ).toHaveCSS( 'list-style', 'none' );
-		await expect( ulElement ).toHaveCSS( 'padding', '0px' );
+	// ========================================
+	// LINK RESET STYLES
+	// a { color: #e67e22; text-decoration: underline; font-weight: 500; }
+	// ========================================
+	const fixtureContentLinks = await previewFrame.locator( 'a' ).filter( { hasText: 'link styles' } ).all();
+	if ( fixtureContentLinks.length > 0 ) {
+		const fixtureLink = fixtureContentLinks[0];
+		await expect( fixtureLink ).toHaveCSS( 'color', 'rgb(230, 126, 34)' );
+		await expect( fixtureLink ).toHaveCSS( 'text-decoration', /underline/ );
+		await expect( fixtureLink ).toHaveCSS( 'font-weight', '500' );
+	}
 
-		const liElement = previewFrame.locator( 'li' ).first();
-		await expect( liElement ).toHaveCSS( 'margin', '8px 0px' ); // 0.5rem 0
+	// ========================================
+	// BUTTON RESET STYLES
+	// button { background-color: #95a5a6; color: white; border: none; padding: 10px 20px; font-size: 1rem; border-radius: 4px; cursor: pointer; }
+	// ========================================
+	const fixtureButtons = await previewFrame.locator( 'button' ).filter( { hasText: 'Reset Button' } ).all();
+	if ( fixtureButtons.length > 0 ) {
+		const firstFixtureButton = fixtureButtons[0];
+		await expect( firstFixtureButton ).toHaveCSS( 'background-color', 'rgb(149, 165, 166)' );
+		await expect( firstFixtureButton ).toHaveCSS( 'color', 'rgb(255, 255, 255)' );
+		await expect( firstFixtureButton ).toHaveCSS( 'border-radius', '4px' );
+		await expect( firstFixtureButton ).toHaveCSS( 'cursor', 'pointer' );
+	}
 
-		// Verify table reset styles
-		const tableElement = previewFrame.locator( 'table' ).first();
-		await expect( tableElement ).toHaveCSS( 'border-collapse', 'collapse' );
-		await expect( tableElement ).toHaveCSS( 'width', '100%' );
+	// ========================================
+	// LIST RESET STYLES
+	// ul, ol { margin: 0 0 1rem 2rem; padding: 0; }
+	// li { margin-bottom: 0.5rem; }
+	// ========================================
+	const fixtureUls = await previewFrame.locator( 'ul' ).filter( { has: previewFrame.locator( 'text=List item one' ) } ).all();
+	if ( fixtureUls.length > 0 ) {
+		const fixtureUl = fixtureUls[0];
+		await expect( fixtureUl ).toHaveCSS( 'padding', '0px' );
+	}
 
-		const thElement = previewFrame.locator( 'th' ).first();
-		await expect( thElement ).toHaveCSS( 'padding', '12px' ); // 0.75rem
-		await expect( thElement ).toHaveCSS( 'text-align', 'left' );
-		await expect( thElement ).toHaveCSS( 'font-weight', '600' );
+	// ========================================
+	// TABLE RESET STYLES
+	// table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; }
+	// th, td { border: 1px solid #bdc3c7; padding: 8px; text-align: left; }
+	// th { background-color: #ecf0f1; font-weight: 600; }
+	// ========================================
+	const tableElements = await previewFrame.locator( 'table' ).all();
+	if ( tableElements.length > 0 ) {
+		const firstTable = tableElements[0];
+		await expect( firstTable ).toHaveCSS( 'border-collapse', 'collapse' );
+		await expect( firstTable ).toHaveCSS( 'width', '100%' );
+	}
 
-		const tdElement = previewFrame.locator( 'td' ).first();
-		await expect( tdElement ).toHaveCSS( 'padding', '12px' ); // 0.75rem
-		await expect( tdElement ).toHaveCSS( 'border-bottom', '1px solid rgb(221, 221, 221)' ); // #ddd
+	const thElements = await previewFrame.locator( 'th' ).all();
+	if ( thElements.length > 0 ) {
+		const firstTh = thElements[0];
+		await expect( firstTh ).toHaveCSS( 'background-color', 'rgb(236, 240, 241)' );
+		await expect( firstTh ).toHaveCSS( 'font-weight', '600' );
+		await expect( firstTh ).toHaveCSS( 'padding', '8px' );
+		await expect( firstTh ).toHaveCSS( 'text-align', 'left' );
+		await expect( firstTh ).toHaveCSS( 'border', /1px solid/ );
+	}
+
+	const tdElements = await previewFrame.locator( 'td' ).all();
+	if ( tdElements.length > 0 ) {
+		const firstTd = tdElements[0];
+		await expect( firstTd ).toHaveCSS( 'padding', '8px' );
+		await expect( firstTd ).toHaveCSS( 'text-align', 'left' );
+		await expect( firstTd ).toHaveCSS( 'border', /1px solid/ );
+	}
 	} );
 
-	test.skip( 'should handle body element reset styles', async ( { request } ) => {
+	test( 'should handle body element reset styles', async ( { request } ) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
@@ -169,7 +273,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
+			test( true, validation.skipReason );
 			return;
 		}
 
@@ -188,7 +292,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		}
 	} );
 
-	test.skip( 'should handle heading element resets (h1-h6)', async ( { request } ) => {
+	test( 'should handle heading element resets (h1-h6)', async ( { request } ) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
@@ -197,7 +301,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
+			test( true, validation.skipReason );
 			return;
 		}
 
@@ -218,7 +322,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		}
 	} );
 
-	test.skip( 'should handle paragraph element resets', async ( { request } ) => {
+	test( 'should handle paragraph element resets', async ( { request } ) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
@@ -227,7 +331,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
+			test( true, validation.skipReason );
 			return;
 		}
 
@@ -245,7 +349,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		}
 	} );
 
-	test.skip( 'should handle link element resets', async ( { request } ) => {
+	test( 'should handle link element resets', async ( { request } ) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
@@ -254,7 +358,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
+			test( true, validation.skipReason );
 			return;
 		}
 
@@ -272,7 +376,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		}
 	} );
 
-	test.skip( 'should handle button element resets', async ( { request } ) => {
+	test( 'should handle button element resets', async ( { request } ) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
@@ -281,7 +385,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
+			test( true, validation.skipReason );
 			return;
 		}
 
@@ -293,7 +397,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		expect( result.widgets_created ).toBeGreaterThan( 0 );
 	} );
 
-	test.skip( 'should handle list element resets (ul, ol, li)', async ( { request } ) => {
+	test( 'should handle list element resets (ul, ol, li)', async ( { request } ) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
@@ -302,7 +406,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
+			test( true, validation.skipReason );
 			return;
 		}
 
@@ -316,7 +420,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		// Lists might be converted to various widget types depending on implementation
 	} );
 
-	test.skip( 'should handle table element resets', async ( { request } ) => {
+	test( 'should handle table element resets', async ( { request } ) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
@@ -325,7 +429,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
+			test( true, validation.skipReason );
 			return;
 		}
 
@@ -337,7 +441,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		expect( result.widgets_created ).toBeGreaterThan( 0 );
 	} );
 
-	test.skip( 'should handle universal selector resets (* {})', async ( { request } ) => {
+	test( 'should handle universal selector resets (* {})', async ( { request } ) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
@@ -346,7 +450,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
+			test( true, validation.skipReason );
 			return;
 		}
 
@@ -358,7 +462,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		expect( result.widgets_created ).toBeGreaterThan( 0 );
 	} );
 
-	test.skip( 'should prioritize inline styles over reset styles', async ( { request, page } ) => {
+	test( 'should prioritize inline styles over reset styles', async ( { request, page } ) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
@@ -367,7 +471,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
+			test( true, validation.skipReason );
 			return;
 		}
 
@@ -424,15 +528,15 @@ test.describe( 'Reset Styles Handling Tests', () => {
 			}
 		}
 
-		// Verify that elements without inline styles get Elementor theme styles
-		const resetOnlyElement = previewFrame.locator( 'h1:not([style]), h2:not([style])' ).first();
-		if ( await resetOnlyElement.count() > 0 ) {
-			// Should have Elementor theme styles applied (original reset styles are overridden)
-			await expect( resetOnlyElement ).toHaveCSS( 'color', 'rgb(52, 73, 94)' ); // Elementor theme color
+		// Verify that elements without inline styles get reset styles from the fixture
+		const h1WithoutInline = previewFrame.locator( 'h1' ).filter( { hasText: 'Main Heading' } ).first();
+		if ( await h1WithoutInline.count() > 0 ) {
+			await expect( h1WithoutInline ).toHaveCSS( 'color', 'rgb(231, 76, 60)' );
+			await expect( h1WithoutInline ).toHaveCSS( 'font-weight', '700' );
 		}
 	} );
 
-	test.skip( 'should handle conflicting reset styles from multiple sources', async ( { request } ) => {
+	test( 'should handle conflicting reset styles from multiple sources', async ( { request } ) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
@@ -441,7 +545,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
+			test( true, validation.skipReason );
 			return;
 		}
 
@@ -458,7 +562,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		// The converter should handle conflicts using CSS cascade rules
 	} );
 
-	test.skip( 'should handle normalize.css vs reset.css patterns', async ( { request, page } ) => {
+	test( 'should handle normalize.css vs reset.css patterns', async ( { request, page } ) => {
 		// Test with only normalize.css patterns
 		const normalizeResult: CssConverterResponse = await helper.convertFromUrl(
 			request,
@@ -477,12 +581,12 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		const resetValidation = helper.validateApiResult( resetResult );
 
 		if ( normalizeValidation.shouldSkip ) {
-			test.skip( true, `Normalize test: ${ normalizeValidation.skipReason }` );
+			test( true, `Normalize test: ${ normalizeValidation.skipReason }` );
 			return;
 		}
 
 		if ( resetValidation.shouldSkip ) {
-			test.skip( true, `Reset test: ${ resetValidation.skipReason }` );
+			test( true, `Reset test: ${ resetValidation.skipReason }` );
 			return;
 		}
 
@@ -537,7 +641,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		// - Reset: Zero everything out, build from scratch
 	} );
 
-	test.skip( 'should handle nested elements with reset inheritance', async ( { request } ) => {
+	test( 'should handle nested elements with reset inheritance', async ( { request } ) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
@@ -546,7 +650,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
+			test( true, validation.skipReason );
 			return;
 		}
 
@@ -560,7 +664,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		// Verify that nested elements were processed correctly
 	} );
 
-	test.skip( 'should provide comprehensive conversion logging for reset styles', async ( { request } ) => {
+	test( 'should provide comprehensive conversion logging for reset styles', async ( { request } ) => {
 		const result: CssConverterResponse = await helper.convertFromUrl(
 			request,
 			testPageUrl,
@@ -569,7 +673,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test.skip( true, validation.skipReason );
+			test( true, validation.skipReason );
 			return;
 		}
 

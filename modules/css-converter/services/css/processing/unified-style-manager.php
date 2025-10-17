@@ -213,6 +213,8 @@ class Unified_Style_Manager {
 				];
 			}
 		}
+
+		error_log( '✅ COLLECT: Total collected styles now: ' . count( $this->collected_styles ) );
 	}
 
 	/**
@@ -580,10 +582,10 @@ class Unified_Style_Manager {
 					$applies = ( $style['element_type'] === $element_type );
 					break;
 
-				case 'reset-element':
-					// Reset element styles apply to widgets that match the element selector
-					$applies = ( $style['element_id'] === $element_id );
-					break;
+			case 'reset-element':
+				// Reset element styles apply to widgets that match the element selector
+				$applies = ( $style['element_id'] === $element_id );
+				break;
 
 				case 'reset-complex':
 					// Complex reset styles don't apply directly to widgets
@@ -621,14 +623,6 @@ class Unified_Style_Manager {
 	private function find_winning_style( array $styles ): ?array {
 		if ( empty( $styles ) ) {
 			return null;
-		}
-
-		// Debug styles competition for #text selector
-		if ( ! empty( $styles ) && strpos( $styles[0]['selector'] ?? '', '#text' ) !== false ) {
-			error_log( "🏆 STYLE_COMPETITION: " . count( $styles ) . " styles competing for property '" . ( $styles[0]['property'] ?? 'unknown' ) . "'" );
-			foreach ( $styles as $i => $style ) {
-				error_log( "  [$i] source='{$style['source']}', selector='{$style['selector']}', value='{$style['value']}', specificity={$style['specificity']}, important=" . ( $style['important'] ? 'true' : 'false' ) );
-			}
 		}
 
 		// Sort by specificity (highest first), then by order (latest first)

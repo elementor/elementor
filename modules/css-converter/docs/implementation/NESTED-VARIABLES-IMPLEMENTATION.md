@@ -277,3 +277,4 @@ Possible extensions:
 3. Custom property fallback handling
 4. Animation keyframe variables
 5. CSS Grid custom property handling
+

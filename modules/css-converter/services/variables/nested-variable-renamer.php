@@ -57,3 +57,4 @@ class Nested_Variable_Renamer {
 		return null !== $this->extract_suffix_number( $variable_name, $base_name );
 	}
 }
+

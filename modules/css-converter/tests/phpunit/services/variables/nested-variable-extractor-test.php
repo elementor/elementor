@@ -277,3 +277,4 @@ class Nested_Variable_Extractor_Test extends TestCase {
 		$this->assertArrayHasKey( '--primary-3', $result['variables'] );
 	}
 }
+

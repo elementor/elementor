@@ -200,38 +200,8 @@ class Unified_Css_Processor {
 	}
 
 	private function analyze_and_apply_direct_element_styles( array $rules, array $widgets ): void {
-
-		$this->log_sample_rules_for_debugging( $rules );
-		for ( $i = 0; $i < min( 3, count( $rules ) ); $i++ ) {
-			$rule = $rules[ $i ];
-			$selector = $rule['selector'] ?? 'no-selector';
-			$prop_count = count( $rule['properties'] ?? [] );
-		}
-
-		$analyzer_rules = $this->convert_rules_to_analyzer_format( $rules );
-
-		$conflict_map = $this->analyze_element_selector_conflicts_for_direct_styling( $analyzer_rules );
-
-		$simple_selectors_found = 0;
-		$applied_count = 0;
-		$skipped_count = 0;
-
-		foreach ( $analyzer_rules as $rule ) {
-			$selector = $rule['selector'];
-
-			if ( $this->reset_style_detector->is_simple_element_selector( $selector ) ) {
-				++$simple_selectors_found;
-				$conflicts = $conflict_map[ $selector ] ?? [];
-
-				if ( empty( $conflicts ) ) {
-					$this->apply_direct_element_styles_to_widgets( $rule, $widgets );
-					++$applied_count;
-				} else {
-					++$skipped_count;
-				}
-			} else {
-			}
-		}
+		// Element selector styles are now handled exclusively by collect_reset_styles
+		// to ensure proper CSS cascade order (external CSS first, then internal styles)
 	}
 
 	private function convert_rules_to_analyzer_format( array $rules ): array {
@@ -294,13 +264,25 @@ class Unified_Css_Processor {
 
 		$target_widget_type = $element_to_widget_map[ $element_selector ] ?? $element_selector;
 
+		error_log( "🔍 WIDGET: Looking for '{$element_selector}' → widget type '{$target_widget_type}'" );
+
 		foreach ( $widgets as $widget ) {
 			$widget_tag = $widget['tag'] ?? $widget['widget_type'] ?? '';
 			$element_id = $widget['element_id'] ?? null;
 			$widget_type = $widget['widget_type'] ?? 'unknown';
 
-			if ( $element_id && $widget_type === $target_widget_type ) {
+			$html_tag_from_element_id = '';
+			if ( $element_id && preg_match( '/^element-([a-z0-9]+)-\d+$/', $element_id, $matches ) ) {
+				$html_tag_from_element_id = $matches[1];
+			}
+
+			$widget_type_matches = ( $widget_type === $target_widget_type );
+			$tag_matches = ( $html_tag_from_element_id === $element_selector ) || ( $widget_tag === $element_selector );
+			$is_match = $element_id && $widget_type_matches && $tag_matches;
+
+			if ( $is_match ) {
 				$matching_widget_ids[] = $element_id;
+				error_log( "🔍 WIDGET: ✓ Matched widget {$element_id} type {$widget_type} html_tag {$html_tag_from_element_id}" );
 			}
 
 			if ( ! empty( $widget['children'] ) ) {
@@ -308,6 +290,8 @@ class Unified_Css_Processor {
 				$matching_widget_ids = array_merge( $matching_widget_ids, $child_matches );
 			}
 		}
+
+		error_log( "🔍 WIDGET: Found " . count( $matching_widget_ids ) . " matching widgets for '{$element_selector}'" );
 
 		return $matching_widget_ids;
 	}
@@ -820,24 +804,23 @@ class Unified_Css_Processor {
 			return;
 		}
 
-		// Parse CSS and extract all rules
 		$all_rules = $this->parse_css_and_extract_rules( $css );
 
-		// Extract element selector rules using Reset_Style_Detector
 		$element_rules = $this->reset_style_detector->extract_element_selector_rules( $all_rules );
 
 		if ( empty( $element_rules ) ) {
 			return;
 		}
 
-		// Analyze conflicts for all element selectors
+		error_log( '🔍 RESET: Found ' . count( $element_rules ) . ' element selectors' );
+
 		$conflict_analysis = $this->reset_style_detector->analyze_element_selector_conflicts(
 			$element_rules,
 			$all_rules
 		);
 
-		// Process each element selector
 		foreach ( $element_rules as $selector => $rules ) {
+			error_log( "🔍 RESET: Processing selector '{$selector}' with " . count( $rules ) . ' rules' );
 			$this->process_element_selector_reset_styles( $selector, $rules, $conflict_analysis, $widgets );
 		}
 	}
@@ -878,39 +861,56 @@ class Unified_Css_Processor {
 		array $rules,
 		array $widgets
 	): void {
-		// Find widgets that match this element selector
 		$matching_widgets = $this->find_widgets_by_element_type( $selector, $widgets );
 
 		if ( empty( $matching_widgets ) ) {
+			error_log( "🔍 APPLY: No matching widgets for '{$selector}'" );
 			return;
 		}
 
-		// Convert rules to properties format
+		error_log( "🔍 APPLY: Applying reset styles for '{$selector}' to " . count( $matching_widgets ) . ' widgets' );
+
 		$properties = [];
 		foreach ( $rules as $rule ) {
-			foreach ( $rule['properties'] ?? [] as $property_data ) {
-				// Convert property to atomic format if possible
+			if ( isset( $rule['properties'] ) && is_array( $rule['properties'] ) ) {
+				foreach ( $rule['properties'] as $property_data ) {
+					$converted = $this->convert_property_if_needed(
+						$property_data['property'] ?? '',
+						$property_data['value'] ?? ''
+					);
+
+					$properties[] = [
+						'property' => $property_data['property'] ?? '',
+						'value' => $property_data['value'] ?? '',
+						'important' => $property_data['important'] ?? false,
+						'converted_property' => $converted,
+					];
+				}
+			} elseif ( isset( $rule['property'] ) && isset( $rule['value'] ) ) {
 				$converted = $this->convert_property_if_needed(
-					$property_data['property'],
-					$property_data['value']
+					$rule['property'],
+					$rule['value']
 				);
 
 				$properties[] = [
-					'property' => $property_data['property'],
-					'value' => $property_data['value'],
-					'important' => $property_data['important'] ?? false,
+					'property' => $rule['property'],
+					'value' => $rule['value'],
+					'important' => $rule['important'] ?? false,
 					'converted_property' => $converted,
 				];
 			}
 		}
 
-		// Collect via unified style manager
+		error_log( "🔍 APPLY: Collected " . count( $properties ) . ' properties' );
+
 		$this->unified_style_manager->collect_reset_styles(
 			$selector,
 			$properties,
 			$matching_widgets,
-			true // can_apply_directly = true
+			true
 		);
+
+		error_log( "🔍 APPLY: Reset styles sent to unified_style_manager for '{$selector}'" );
 	}
 
 	/**
@@ -963,10 +963,21 @@ class Unified_Css_Processor {
 			'h5' => 'e-heading',
 			'h6' => 'e-heading',
 			'p' => 'e-paragraph',
+			'span' => 'e-paragraph',
 			'a' => 'e-button',
 			'button' => 'e-button',
-			'div' => 'e-div-block',
-			'span' => 'e-div-block',
+			'div' => 'e-flexbox',
+			'section' => 'e-flexbox',
+			'article' => 'e-flexbox',
+			'aside' => 'e-flexbox',
+			'header' => 'e-flexbox',
+			'footer' => 'e-flexbox',
+			'main' => 'e-flexbox',
+			'nav' => 'e-flexbox',
+			'img' => 'e-image',
+			'ul' => 'e-flexbox',
+			'ol' => 'e-flexbox',
+			'li' => 'e-paragraph',
 		];
 	}
 
