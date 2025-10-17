@@ -289,6 +289,16 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Get referrer kit ID from current request
+	 *
+	 * @return string
+	 */
+	private function get_referrer_kit_id_from_request(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Called from nonce-verified contexts or REST API with its own authentication
+		return sanitize_key( $_GET['referrer_kit'] ?? '' );
+	}
+
+	/**
 	 * Render the last kit thumbnail if exists
 	 *
 	 * @param $last_imported_kit
@@ -431,37 +441,38 @@ class Module extends BaseModule {
 		return $this->export->run();
 	}
 
-	/**
-	 * Handle revert kit ajax request.
-	 */
-	public function revert_last_imported_kit() {
+	public function revert_last_imported_kit(): array {
 		$this->revert = new Revert();
 		$this->revert->register_default_runners();
+
+		$import_sessions = Revert::get_import_sessions();
+
+		if ( empty( $import_sessions ) ) {
+			return [
+				'revert_completed' => false,
+				'message' => __( 'No import sessions available to revert.', 'elementor' ),
+				'referrer_kit_id' => $this->get_referrer_kit_id_from_request(),
+				'show_referrer_dialog' => false,
+			];
+		}
 
 		do_action( 'elementor/import-export-customization/revert-kit', $this->revert );
 
 		$this->revert->run();
-	}
 
+		$referrer_kit_id = $this->get_referrer_kit_id_from_request();
 
-	/**
-	 * Handle revert last imported kit ajax request.
-	 */
-	public function handle_revert_last_imported_kit() {
-		check_admin_referer( 'elementor_revert_kit' );
-
-		$this->revert_last_imported_kit();
-
-		wp_safe_redirect( admin_url( 'admin.php?page=' . Tools::PAGE_ID . '#tab-import-export-kit' ) );
-		die;
+		return [
+			'revert_completed' => true,
+			'referrer_kit_id' => $referrer_kit_id,
+			'show_referrer_dialog' => ! empty( $referrer_kit_id ),
+		];
 	}
 
 	/**
 	 * Register appropriate actions.
 	 */
 	private function register_actions() {
-		add_action( 'admin_post_elementor_revert_kit', [ $this, 'handle_revert_last_imported_kit' ] );
-
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 
 		$page_id = Tools::PAGE_ID;
