@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\Render_Context;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -18,6 +19,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	protected $version = '0.0';
 	protected $styles = [];
 	protected $editor_settings = [];
+
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -68,6 +70,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 	protected function define_initial_attributes() {
+		return [];
+	}
+
+	protected function define_render_context(): array {
 		return [];
 	}
 
@@ -140,6 +146,24 @@ abstract class Atomic_Element_Base extends Element_Base {
 		}
 
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
+	}
+
+	public function print_content() {
+		$element_context = $this->define_render_context();
+
+		if ( ! empty( $element_context ) ) {
+			Render_Context::push( static::class, $element_context );
+		}
+
+		parent::print_content();
+
+		if ( ! empty( $element_context ) ) {
+			Render_Context::pop( static::class );
+		}
+	}
+
+	protected function get_context( string $key ) {
+		return Render_Context::get( $key );
 	}
 
 	/**

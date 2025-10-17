@@ -104,6 +104,9 @@ class Atomic_Tab extends Atomic_Element_Base {
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 		$initial_attributes = $this->define_initial_attributes();
+		$active_tab = $this->get_context( 'e-tabs' )['activeTab'] ?? null;
+
+		$is_active = $active_tab === $this->get_id();
 
 		$attributes = [
 			'class' => [
@@ -112,6 +115,8 @@ class Atomic_Tab extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
+			'tabindex' => $is_active ? '0' : '-1',
+			'aria-selected' => $is_active ? 'true' : 'false',
 		];
 
 		if ( ! empty( $settings['tab-panel-id'] ) ) {
