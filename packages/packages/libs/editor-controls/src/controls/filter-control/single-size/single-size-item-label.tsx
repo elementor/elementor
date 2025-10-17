@@ -3,6 +3,7 @@ import type { FilterItemPropValue, SizePropValue } from '@elementor/editor-props
 import { Box } from '@elementor/ui';
 
 import { lengthUnits } from '../../../utils/size-control';
+import { CUSTOM_SIZE_LABEL } from '../../size-control';
 import { type FilterFunction } from '../configs';
 import { useFilterConfig } from '../context/filter-config-context';
 
@@ -24,7 +25,7 @@ export const SingleSizeItemLabel = ( { value }: { value: FilterItemPropValue } )
 	return (
 		<Box component="span">
 			{ label }
-			{ unit !== 'custom' ? ` ${ size ?? 0 }${ unit ?? defaultUnit }` : size }
+			{ ' ' + ( unit !== 'custom' ? `${ size ?? 0 }${ unit ?? defaultUnit }` : size || CUSTOM_SIZE_LABEL ) }
 		</Box>
 	);
 };

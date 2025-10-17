@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { createArrayPropUtils } from '@elementor/editor-props';
+import { createArrayPropUtils, type SizePropValue } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 
 import { PropProvider, useBoundProp } from '../bound-prop-context';
@@ -21,6 +21,7 @@ import {
 	RepeatableControlContext,
 	useRepeatableControlContext,
 } from '../hooks/use-repeatable-control-context';
+import { CUSTOM_SIZE_LABEL } from './size-control';
 
 type RepeatableControlProps = {
 	label: string;
@@ -131,7 +132,7 @@ const interpolate = ( template: string, data: Record< string, unknown > ) => {
 		const value = getNestedValue( data, path );
 
 		if ( typeof value === 'object' && value !== null && ! Array.isArray( value ) ) {
-			if ( value.name ) {
+			if ( 'name' in value && value.name ) {
 				return value.name as string;
 			}
 
@@ -147,12 +148,32 @@ const interpolate = ( template: string, data: Record< string, unknown > ) => {
 };
 
 const getNestedValue = ( obj: Record< string, unknown >, path: string ) => {
-	return path.split( '.' ).reduce( ( current: Record< string, unknown >, key ) => {
-		if ( current && typeof current === 'object' ) {
-			return current[ key ] as Record< string, unknown >;
+	let parentObj: Record< string, unknown > = {};
+	const pathKeys = path.split( '.' );
+	const key = pathKeys.slice( -1 )[ 0 ];
+
+	let value: unknown = pathKeys.reduce( ( current: Record< string, unknown >, currentKey, currentIndex ) => {
+		if ( currentIndex === pathKeys.length - 2 ) {
+			parentObj = current;
 		}
+
+		if ( current && typeof current === 'object' ) {
+			return current[ currentKey ] as Record< string, unknown >;
+		}
+
 		return {};
 	}, obj );
+
+	value = !! value ? value : '';
+	const propType = parentObj?.$$type;
+	const propValue = parentObj?.value as SizePropValue[ 'value' ];
+	const doesValueRepresentCustomSize = key === 'unit' && propType === 'size' && propValue?.unit === 'custom';
+
+	if ( ! doesValueRepresentCustomSize ) {
+		return value;
+	}
+
+	return propValue?.size ? '' : CUSTOM_SIZE_LABEL;
 };
 
 const isEmptyValue = ( val: unknown ) => {

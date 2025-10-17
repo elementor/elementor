@@ -53,6 +53,7 @@ export const DropShadowItemContent = ( { anchorEl }: { anchorEl?: HTMLElement | 
 									anchorRef={ rowRefs[ item.rowIndex ] }
 									enablePropTypeUnits
 									defaultUnit="px"
+									isRepeaterControl
 								/>
 							) }
 						</Grid>
