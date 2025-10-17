@@ -29,13 +29,14 @@ export default function QuotaNotification( { usagePercentage } ) {
 		if ( 'alert' === state ) {
 			return {
 				icon: 'eicon-alert',
-				message: __( 'Website template storage is full. Get more space by ', 'elementor' ),
+				message: (
+					<>
+						<strong>{ __( 'Website template storage is full.', 'elementor' ) }</strong>
+						{ ' ' }
+						{ __( 'Get more space ', 'elementor' ) }
+					</>
+				),
 				actions: [
-					{
-						text: __( 'Cleaning up space', 'elementor' ),
-						href: '#',
-						type: 'link',
-					},
 					{
 						text: __( 'Upgrade now', 'elementor' ),
 						href: 'https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/',
@@ -48,13 +49,15 @@ export default function QuotaNotification( { usagePercentage } ) {
 		if ( 'warning' === state ) {
 			return {
 				icon: 'eicon-warning-full',
-				message: `${ __( 'Website template storage is', 'elementor' ) } ${ Math.round( usagePercentage ) }% ${ __( 'full. Get more space by ', 'elementor' ) }`,
+				// translators: %s: usage percentage
+				message: (
+					<>
+						<strong>{ sprintf( __( 'Website template storage is %s%% full.', 'elementor' ), Math.round( usagePercentage ) ) }</strong>
+						{ ' ' }
+						{ __( 'Get more space ', 'elementor' ) }
+					</>
+				),
 				actions: [
-					{
-						text: __( 'Cleaning up space', 'elementor' ),
-						href: '#',
-						type: 'link',
-					},
 					{
 						text: __( 'Upgrade now', 'elementor' ),
 						href: 'https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/',
@@ -79,12 +82,12 @@ export default function QuotaNotification( { usagePercentage } ) {
 			<div className={ `${ QUOTA_NOTIFICATION_CLASSNAME }__content` }>
 				<i className={ `${ QUOTA_NOTIFICATION_CLASSNAME }__icon ${ content.icon }` } />
 				<div className={ `${ QUOTA_NOTIFICATION_CLASSNAME }__message` }>
-					<Text variant="xs" tag="span">
+					<Text tag="span">
 						{ content.message }
 					</Text>
 					{ content.actions.map( ( action, index ) => (
 						<span key={ index }>
-							{ index > 0 && <Text variant="xs" tag="span"> { __( 'or', 'elementor' ) } </Text> }
+							{ index > 0 && <Text tag="span"> { __( 'or', 'elementor' ) } </Text> }
 							<a
 								className={ `${ QUOTA_NOTIFICATION_CLASSNAME }__action-link` }
 								href={ action.href }
