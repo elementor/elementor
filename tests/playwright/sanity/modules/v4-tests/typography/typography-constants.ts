@@ -34,7 +34,7 @@ export const WIDGET_CONFIGS = {
 export const FONT_FAMILIES = {
 	system: 'Arial',
 	systemAlt: 'Times New Roman',
-	google: 'Roboto',
+	google: 'Open Sans',
 	trebuchet: 'Trebuchet MS',
 };
 
@@ -53,10 +53,45 @@ export const UNITS = {
 	percent: '%',
 } as const;
 
-export type Unit = keyof typeof UNITS;
+export type Unit = typeof UNITS[keyof typeof UNITS];
+export type UnitKey = keyof typeof UNITS;
 
 export const SPACING_VALUES = {
 	POSITIVE: [ 1, 5.5 ],
 	NEGATIVE: [ -1, -5.5 ],
 	UNITS: Object.values( UNITS ),
 };
+
+export const TYPOGRAPHY_DECORATIONS = {
+	UNDERLINE: {
+		buttonName: 'Underline',
+		cssProperty: 'text-decoration-line',
+		activeValue: 'underline',
+		inactiveValue: 'none',
+	},
+	ITALIC: {
+		buttonName: 'Italic',
+		cssProperty: 'font-style',
+		activeValue: 'italic',
+		inactiveValue: 'normal',
+	},
+	UPPERCASE: {
+		buttonName: 'Uppercase',
+		cssProperty: 'text-transform',
+		activeValue: 'uppercase',
+		inactiveValue: 'none',
+	},
+	RTL: {
+		buttonName: 'Right to left',
+		cssProperty: 'direction',
+		activeValue: 'rtl',
+		inactiveValue: 'ltr',
+	},
+	TEXT_STROKE: {
+		addButtonName: 'Add',
+		removeButtonName: 'Remove',
+		cssProperty: '-webkit-text-stroke-width',
+		defaultValue: '1px',
+		removedValue: '0px',
+	},
+} as const;

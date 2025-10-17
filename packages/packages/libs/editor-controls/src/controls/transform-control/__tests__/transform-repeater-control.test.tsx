@@ -21,6 +21,8 @@ type DimensionPropValue< T extends string[] > = {
 	};
 };
 
+const TRANSFORM_SETTINGS_BUTTON_NAME = 'Transform settings';
+
 describe( 'TransformRepeaterControl', () => {
 	const sizePropType = createMockPropType( {
 		kind: 'object',
@@ -293,7 +295,7 @@ describe( 'TransformRepeaterControl', () => {
 		// Act.
 		renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType } );
 
-		const transformBaseTriggerButton = screen.getByRole( 'button', { name: 'Base Transform' } );
+		const transformBaseTriggerButton = screen.getByRole( 'button', { name: TRANSFORM_SETTINGS_BUTTON_NAME } );
 
 		// Assert.
 		expect( transformBaseTriggerButton ).toBeInTheDocument();
@@ -316,7 +318,7 @@ describe( 'TransformRepeaterControl', () => {
 
 		// Act.
 		renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType } );
-		fireEvent.click( screen.getByRole( 'button', { name: 'Base Transform' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: TRANSFORM_SETTINGS_BUTTON_NAME } ) );
 
 		const inputs = screen.getAllByDisplayValue( /\d*/ );
 
@@ -351,7 +353,7 @@ describe( 'TransformRepeaterControl', () => {
 
 				// Act.
 				renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType, setValue } );
-				fireEvent.click( screen.getByRole( 'button', { name: 'Base Transform' } ) );
+				fireEvent.click( screen.getByRole( 'button', { name: TRANSFORM_SETTINGS_BUTTON_NAME } ) );
 
 				const inputs = screen.getAllByDisplayValue( /\d*/ );
 

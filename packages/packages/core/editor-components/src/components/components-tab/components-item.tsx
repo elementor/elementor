@@ -1,21 +1,8 @@
 import * as React from 'react';
 import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
 import { dropElement, type DropElementParams } from '@elementor/editor-elements';
-import { MenuListItem } from '@elementor/editor-ui';
-import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
-import {
-	bindMenu,
-	bindTrigger,
-	Box,
-	IconButton,
-	ListItemButton,
-	ListItemIcon,
-	ListItemText,
-	Menu,
-	Typography,
-	usePopupState,
-} from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { ComponentsIcon } from '@elementor/icons';
+import { Box, ListItemButton, ListItemIcon, ListItemText, Typography } from '@elementor/ui';
 
 import { type Component } from '../../types';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
@@ -23,11 +10,6 @@ import { createComponentModel } from '../create-component-form/utils/replace-ele
 
 export const ComponentItem = ( { component }: { component: Component } ) => {
 	const componentModel = createComponentModel( { id: component.id, name: component.name } );
-
-	const popupState = usePopupState( {
-		variant: 'popover',
-		disableAutoFocus: true,
-	} );
 
 	const handleClick = () => {
 		addComponentToPage( componentModel );
@@ -53,35 +35,6 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 					}
 				/>
 			</Box>
-			<IconButton size="tiny" aria-label="More actions" { ...bindTrigger( popupState ) }>
-				<DotsVerticalIcon fontSize="tiny" />
-			</IconButton>
-			<Menu
-				{ ...bindMenu( popupState ) }
-				anchorOrigin={ {
-					vertical: 'bottom',
-					horizontal: 'right',
-				} }
-				transformOrigin={ {
-					vertical: 'top',
-					horizontal: 'right',
-				} }
-			>
-				<MenuListItem sx={ { minWidth: '160px' } }>
-					<Typography variant="caption" sx={ { color: 'text.primary' } }>
-						{ __( 'Rename', 'elementor' ) }
-					</Typography>
-				</MenuListItem>
-				<MenuListItem
-					onClick={ () => {
-						popupState.close();
-					} }
-				>
-					<Typography variant="caption" sx={ { color: 'error.light' } }>
-						{ __( 'Delete', 'elementor' ) }
-					</Typography>
-				</MenuListItem>
-			</Menu>
 		</ListItemButton>
 	);
 };

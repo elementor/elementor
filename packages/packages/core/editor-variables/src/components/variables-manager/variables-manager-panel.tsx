@@ -46,6 +46,7 @@ export const { panel, usePanelActions } = createPanel( {
 	onClose: () => {
 		changeEditMode( 'edit' );
 	},
+	isOpenPreviousElement: true,
 } );
 
 export function VariablesManagerPanel() {
@@ -114,10 +115,12 @@ export function VariablesManagerPanel() {
 						setIsSaveDisabled( false );
 					} );
 				}
+
 				setServerError( mappedError );
 				setIsSaveDisabled( true );
 				resetNavigation();
 			}
+
 			return { success: false, error: mappedError };
 		} finally {
 			setIsSaving( false );
@@ -160,7 +163,7 @@ export function VariablesManagerPanel() {
 							<Stack width="100%" direction="row" gap={ 1 }>
 								<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
 									<ColorFilterIcon fontSize="inherit" />
-									{ __( 'Variable Manager', 'elementor' ) }
+									{ __( 'Variables Manager', 'elementor' ) }
 								</PanelHeaderTitle>
 							</Stack>
 							<Stack direction="row" gap={ 0.5 } alignItems="center">
@@ -238,15 +241,29 @@ export function VariablesManagerPanel() {
 						content={
 							serverError ? (
 								<Alert
-									severity="error"
+									severity={ serverError.severity ?? 'error' }
 									action={
-										serverError.action ? (
+										serverError.action?.label ? (
 											<AlertAction onClick={ serverError.action.callback }>
 												{ serverError.action.label }
 											</AlertAction>
 										) : undefined
 									}
-									icon={ <AlertTriangleFilledIcon /> }
+									onClose={
+										! serverError.action?.label
+											? () => {
+													setServerError( null );
+													setIsSaveDisabled( false );
+											  }
+											: undefined
+									}
+									icon={
+										serverError.IconComponent ? (
+											<serverError.IconComponent />
+										) : (
+											<AlertTriangleFilledIcon />
+										)
+									}
 								>
 									<AlertTitle>{ serverError.message }</AlertTitle>
 									{ serverError.action?.message }

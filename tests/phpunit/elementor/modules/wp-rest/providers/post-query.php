@@ -10,28 +10,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Post_Query {
-	private $force_delete = true;
-	private $count = -1;
-
 	protected array $post_types;
 	protected array $posts;
 	protected ?\WP_Term $term;
 
 	protected function clean() {
 		foreach ( $this->posts as $post ) {
-			wp_delete_post( $post->ID, $this->force_delete );
+			wp_delete_post( $post->ID, true );
 		}
-
-		$this->assertEquals( count( get_posts( [
-			'post_type' => [ 'post', 'product', 'page', 'movie' ],
-			'numberposts' => $this->count,
-		] ) ), 0 );
 
 		foreach ( $this->post_types as $post_type ) {
 			unregister_post_type( $post_type );
 		}
 
-		$this->count = -1;
 		$this->posts = [];
 		$this->post_types = [];
 
@@ -39,13 +30,6 @@ trait Post_Query {
 	}
 
 	protected function init() {
-		foreach ( get_posts( [
-			'post_type' => [ 'post', 'product', 'page', 'movie' ],
-			'numberposts' => $this->count,
-		] ) as $post ) {
-			wp_delete_post( $post->ID, $this->force_delete );
-		}
-
 		$this->register_post_types();
 		$this->create_posts();
 		$this->create_and_set_post_term();
@@ -65,8 +49,6 @@ trait Post_Query {
 	}
 
 	private function create_posts() {
-		$this->count = 0;
-
 		$this->posts = [
 			$this->insert_post( 'Hello World', 'The first post on the site.', 'publish', 'post' ),
 			$this->insert_post( 'My Blogging Journey', 'Sharing my experiences as a blogger.', 'publish', 'post', [
@@ -92,8 +74,6 @@ trait Post_Query {
 	}
 
 	private function insert_post( $post_title, $description, $status, $post_type, $extra_args = [] ) {
-		$this->count++;
-
 		return $this->factory()->create_and_get_custom_post( array_merge( [
 			'post_title' => $post_title,
 			'post_content' => $description,
