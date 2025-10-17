@@ -49,4 +49,16 @@ class Test_Str extends Elementor_Test_Base {
 		$this->assertTrue( Str::ends_with( $str1, 'str' ) );
 		$this->assertFalse( Str::ends_with( $str2, 'str' ) );
 	}
+
+	public function test_very_long_url() {
+		// Arrange.
+		$url = 'https://www.example-url.some.com/very-long-subfolder-with-many-awesome-things-inside-this-subfolder/';
+		$expected = $url;
+
+		// Act.
+		$encoded_url = Str::encode_idn_url( $url );
+
+		// Assert.
+		$this->assertEquals( $expected, $encoded_url );
+	}
 }
