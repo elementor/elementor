@@ -226,10 +226,19 @@ class Unified_Css_Processor {
 	private function prepare_properties_for_collection( array $properties ): array {
 		$converted_properties = [];
 		foreach ( $properties as $property => $value ) {
+			$property_name = $value['property'] ?? $property;
+			$property_value = $value['value'] ?? $value;
+			$important = $value['important'] ?? false;
+
+			$converted = $this->convert_property_if_needed( $property_name, $property_value );
+
 			$converted_properties[] = [
-				'property' => $property,
-				'value' => $value,
-				'important' => false, // Element styles are not !important by default
+				'property' => $property_name,
+				'value' => $property_value,
+				'original_property' => $property_name,
+				'original_value' => $property_value,
+				'important' => $important,
+				'converted_property' => $converted,
 			];
 		}
 		return $converted_properties;
