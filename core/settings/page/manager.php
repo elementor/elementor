@@ -178,7 +178,7 @@ class Manager extends CSS_Manager {
 
 		if ( Object.values( tabs ).length > 1 ) { #>
 		<div class="elementor-panel-navigation">
-			<# Object.entries( tabs ).forEach( ( [ tabSlug, tabTitle ] ) => {
+			<# Object.entries( tabs ).forEach( function( [ tabSlug, tabTitle ] ) {
 			$e.bc.ensureTab( 'panel/page-settings', tabSlug ); #>
 			<button class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
 				<span>{{{ tabTitle }}}</span>

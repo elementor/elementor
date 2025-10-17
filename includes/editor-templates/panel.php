@@ -151,7 +151,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 
 <script type="text/template" id="tmpl-editor-content">
 	<div class="elementor-panel-navigation">
-		<# Object.entries( elementData.tabs_controls ).forEach( ( [ tabSlug, tabTitle ] ) => {
+		<# Object.entries( elementData.tabs_controls ).forEach( function( [ tabSlug, tabTitle ] ) {
 			if ( 'content' !== tabSlug && ! elementor.userCan( 'design' ) ) {
 				return;
 			}
@@ -272,7 +272,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 
 			var devices = responsive.devices || devicesForDisplay;
 
-			devices.forEach( ( device ) => {
+			devices.forEach( function( device ) {
 				// The 'Desktop' label is made accessible via the global config because it needs to be translated.
 				var deviceLabel = 'desktop' === device ? '<?php esc_html_e( 'Desktop', 'elementor' ); ?>' : activeBreakpoints[ device ].label,
 					tooltipDir = "<?php echo is_rtl() ? 'e' : 'w'; ?>";
