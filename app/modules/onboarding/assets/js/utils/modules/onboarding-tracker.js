@@ -612,6 +612,9 @@ class OnboardingTracker {
 	}
 
 	sendStepEndStateInternal( stepNumber, storageKey, eventName, stepName, endStateProperty ) {
+		const initialActions = StorageManager.getArray( storageKey );
+		this.sendHoverEventsFromStepActions( initialActions, stepNumber );
+
 		const actions = StorageManager.getArray( storageKey );
 		if ( 0 === actions.length ) {
 			return;
@@ -631,7 +634,6 @@ class OnboardingTracker {
 		eventData[ endStateProperty ] = actions;
 
 		if ( EventDispatcher.canSendEvents() ) {
-			this.sendHoverEventsFromStepActions( actions, stepNumber );
 			this.dispatchEventWithoutTrigger( eventName, eventData );
 			StorageManager.remove( storageKey );
 			StorageManager.setString( endStateSentKey, 'true' );
@@ -640,7 +642,6 @@ class OnboardingTracker {
 		} else if ( 1 === stepNumber ) {
 			this.storeStep1EndStateForLater( eventData, storageKey );
 		} else {
-			this.sendHoverEventsFromStepActions( actions, stepNumber );
 			this.dispatchEventWithoutTrigger( eventName, eventData );
 			StorageManager.remove( storageKey );
 			StorageManager.setString( endStateSentKey, 'true' );
@@ -897,10 +898,35 @@ class OnboardingTracker {
 		const stepNumber = this.getStepNumber( currentStep );
 
 		if ( stepNumber ) {
-			this.trackStepAction( stepNumber, 'upgrade_topbar', {
+			const stepConfig = this.getStepConfig( stepNumber );
+			const hoverData = this.pendingHoverActions && this.pendingHoverActions[ stepNumber ];
+
+			if ( stepConfig ) {
+				const actualStorageKey = stepConfig.storageKey;
+				const existingActions = StorageManager.getArray( actualStorageKey );
+
+				const noClickIndex = existingActions.findIndex( ( action ) =>
+					'upgrade_topbar' === action.action &&
+					'no_click' === action.upgrade_clicked,
+				);
+
+				if ( noClickIndex !== -1 ) {
+					existingActions.splice( noClickIndex, 1 );
+					StorageManager.setObject( actualStorageKey, existingActions );
+				}
+			}
+
+			const actionData = {
 				upgrade_clicked: upgradeClickedValue,
 				click_timestamp: TimingManager.getCurrentTime(),
-			} );
+			};
+
+			if ( hoverData ) {
+				actionData.upgrade_hovered = hoverData.upgrade_hovered;
+				actionData.hover_timestamp = hoverData.hover_timestamp;
+			}
+
+			this.trackStepAction( stepNumber, 'upgrade_topbar', actionData );
 
 			if ( this.pendingHoverActions && this.pendingHoverActions[ stepNumber ] ) {
 				delete this.pendingHoverActions[ stepNumber ];
@@ -933,7 +959,7 @@ class OnboardingTracker {
 			return;
 		}
 
-		const hasUpgradeClickInActions = actions.some( ( action ) =>
+		const hasUpgradeTopbarInActions = actions.some( ( action ) =>
 			action.action &&
 			'upgrade_topbar' === action.action,
 		);
@@ -941,7 +967,7 @@ class OnboardingTracker {
 		const hasStoredClickEvent = this.hasExistingUpgradeClickEvent( stepNumber );
 		const hasClickBeenSent = this.hasUpgradeClickBeenSent( stepNumber );
 
-		if ( hasUpgradeClickInActions || hasStoredClickEvent || hasClickBeenSent ) {
+		if ( hasUpgradeTopbarInActions || hasStoredClickEvent || hasClickBeenSent ) {
 			return;
 		}
 
@@ -949,10 +975,11 @@ class OnboardingTracker {
 		const stepConfig = this.getStepConfig( stepNumber );
 
 		if ( stepConfig ) {
-			this.trackStepActionInternal( stepNumber, `upgrade_topbar:no_click:${ hoverData.upgrade_hovered }`, {
+			this.trackStepActionInternal( stepNumber, 'upgrade_topbar', stepConfig.storageKey, {
+				upgrade_clicked: 'no_click',
 				upgrade_hovered: hoverData.upgrade_hovered,
 				hover_timestamp: hoverData.hover_timestamp,
-			}, stepConfig.storageKey );
+			} );
 		}
 
 		this.sendEventOrStore( 'TOP_UPGRADE', {
