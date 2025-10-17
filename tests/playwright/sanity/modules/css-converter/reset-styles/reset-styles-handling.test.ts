@@ -57,7 +57,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		// Validate the API result
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test( true, validation.skipReason );
+			test.skip( true, validation.skipReason );
 			return;
 		}
 
@@ -273,7 +273,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test( true, validation.skipReason );
+			test.skip( true, validation.skipReason );
 			return;
 		}
 
@@ -301,7 +301,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test( true, validation.skipReason );
+			test.skip( true, validation.skipReason );
 			return;
 		}
 
@@ -331,7 +331,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test( true, validation.skipReason );
+			test.skip( true, validation.skipReason );
 			return;
 		}
 
@@ -358,7 +358,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test( true, validation.skipReason );
+			test.skip( true, validation.skipReason );
 			return;
 		}
 
@@ -385,7 +385,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test( true, validation.skipReason );
+			test.skip( true, validation.skipReason );
 			return;
 		}
 
@@ -406,7 +406,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test( true, validation.skipReason );
+			test.skip( true, validation.skipReason );
 			return;
 		}
 
@@ -429,7 +429,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test( true, validation.skipReason );
+			test.skip( true, validation.skipReason );
 			return;
 		}
 
@@ -450,7 +450,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test( true, validation.skipReason );
+			test.skip( true, validation.skipReason );
 			return;
 		}
 
@@ -471,7 +471,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test( true, validation.skipReason );
+			test.skip( true, validation.skipReason );
 			return;
 		}
 
@@ -545,7 +545,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test( true, validation.skipReason );
+			test.skip( true, validation.skipReason );
 			return;
 		}
 
@@ -650,7 +650,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test( true, validation.skipReason );
+			test.skip( true, validation.skipReason );
 			return;
 		}
 
@@ -673,7 +673,7 @@ test.describe( 'Reset Styles Handling Tests', () => {
 
 		const validation = helper.validateApiResult( result );
 		if ( validation.shouldSkip ) {
-			test( true, validation.skipReason );
+			test.skip( true, validation.skipReason );
 			return;
 		}
 

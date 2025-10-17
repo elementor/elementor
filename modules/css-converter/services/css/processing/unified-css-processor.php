@@ -199,9 +199,102 @@ class Unified_Css_Processor {
 		$this->skip_debug_logging_for_performance();
 	}
 
+	private function is_simple_element_selector( string $selector ): bool {
+		// Check if selector is a simple element selector (p, h1, div, etc.)
+		return preg_match( '/^[a-zA-Z][a-zA-Z0-9]*$/', trim( $selector ) );
+	}
+
+	private function infer_html_tag_from_widget_type( string $widget_type, array $widget ): string {
+		// Map widget types to HTML tags
+		$widget_to_tag_map = [
+			'e-paragraph' => 'p',
+			'e-heading' => $this->infer_heading_tag_from_widget( $widget ),
+			'e-div-block' => 'div',
+			'e-flexbox' => 'div',
+		];
+
+		return $widget_to_tag_map[ $widget_type ] ?? '';
+	}
+
+	private function infer_heading_tag_from_widget( array $widget ): string {
+		// Try to infer heading tag from widget settings or default to h1
+		$settings = $widget['settings'] ?? [];
+		$tag = $settings['tag'] ?? 'h1';
+		return in_array( $tag, [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] ) ? $tag : 'h1';
+	}
+
+	private function prepare_properties_for_collection( array $properties ): array {
+		$converted_properties = [];
+		foreach ( $properties as $property => $value ) {
+			$converted_properties[] = [
+				'property' => $property,
+				'value' => $value,
+				'important' => false, // Element styles are not !important by default
+			];
+		}
+		return $converted_properties;
+	}
+
 	private function analyze_and_apply_direct_element_styles( array $rules, array $widgets ): void {
-		// Element selector styles are now handled exclusively by collect_reset_styles
-		// to ensure proper CSS cascade order (external CSS first, then internal styles)
+		foreach ( $rules as $rule ) {
+			$selector = $rule['selector'] ?? '';
+			$properties = $rule['properties'] ?? [];
+
+			// Skip if not a simple element selector (p, h1, div, etc.)
+			if ( ! $this->is_simple_element_selector( $selector ) ) {
+				continue;
+			}
+
+			// Collect element styles for all widgets of this type
+			$element_type = $selector;
+
+			foreach ( $widgets as $widget ) {
+				$widget_tag = $widget['tag'] ?? '';
+				$widget_type = $widget['widget_type'] ?? '';
+				$element_id = $widget['element_id'] ?? null;
+
+				// Extract HTML tag from element_id patterns:
+				// Pattern 1: "element-p-1" (no HTML ID) -> "p"
+				// Pattern 2: "element-text" (has HTML ID) -> check widget metadata
+				$html_tag_from_element_id = '';
+				if ( $element_id ) {
+					if ( preg_match( '/^element-([a-z0-9]+)-\d+$/', $element_id, $matches ) ) {
+						// Pattern 1: element-{tag}-{number}
+						$html_tag_from_element_id = $matches[1];
+					} elseif ( preg_match( '/^element-([a-z0-9_-]+)$/', $element_id ) ) {
+						// Pattern 2: element-{html_id} - need to infer tag from widget type
+						$html_tag_from_element_id = $this->infer_html_tag_from_widget_type( $widget_type, $widget );
+					}
+				}
+
+				// Check if this widget matches the element type by tag OR element_id
+				$tag_matches = ( $widget_tag === $element_type ) || ( $html_tag_from_element_id === $element_type );
+
+				if ( $tag_matches && $element_id ) {
+					// Skip if widget has inline styles that would conflict
+					$widget_has_inline_styles = ! empty( $widget['attributes']['style'] ?? '' );
+					if ( $widget_has_inline_styles ) {
+						error_log( "🔍 ELEMENT_SKIP: Skipping element style for {$element_id} ({$element_type}) because it has inline styles" );
+						continue;
+					}
+
+					$converted_properties = $this->prepare_properties_for_collection( $properties );
+					// Use widget_type for element_type so filtering works correctly
+					$this->unified_style_manager->collect_element_styles(
+						$widget_type, // Use widget type (e-paragraph) instead of HTML tag (p)
+						$converted_properties,
+						$element_id
+					);
+
+					error_log( "🔍 ELEMENT_COLLECT: Collected element styles for {$element_id} widget_type={$widget_type}, selector={$element_type}, properties=" . count( $converted_properties ) );
+				}
+
+				// Process children recursively
+				if ( ! empty( $widget['children'] ) ) {
+					$this->analyze_and_apply_direct_element_styles( [ $rule ], $widget['children'] );
+				}
+			}
+		}
 	}
 
 	private function convert_rules_to_analyzer_format( array $rules ): array {
@@ -291,7 +384,7 @@ class Unified_Css_Processor {
 			}
 		}
 
-		error_log( "🔍 WIDGET: Found " . count( $matching_widget_ids ) . " matching widgets for '{$element_selector}'" );
+		error_log( '🔍 WIDGET: Found ' . count( $matching_widget_ids ) . " matching widgets for '{$element_selector}'" );
 
 		return $matching_widget_ids;
 	}
@@ -901,7 +994,7 @@ class Unified_Css_Processor {
 			}
 		}
 
-		error_log( "🔍 APPLY: Collected " . count( $properties ) . ' properties' );
+		error_log( '🔍 APPLY: Collected ' . count( $properties ) . ' properties' );
 
 		$this->unified_style_manager->collect_reset_styles(
 			$selector,

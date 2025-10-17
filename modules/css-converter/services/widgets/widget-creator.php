@@ -135,7 +135,7 @@ class Widget_Creator {
 		$post_id = $options['postId'] ?? null;
 		$post_type = $options['postType'] ?? 'page';
 
-		error_log( "🔥 MAX_DEBUG: create_widgets called - widgets_count=" . count( $styled_widgets ) . ", post_id={$post_id}" );
+		error_log( '🔥 MAX_DEBUG: create_widgets called - widgets_count=' . count( $styled_widgets ) . ", post_id={$post_id}" );
 
 		try {
 			if ( ! empty( $css_processing_result['css_variables'] ) ) {
@@ -336,11 +336,11 @@ class Widget_Creator {
 
 		$widget_id = wp_generate_uuid4();
 		$mapped_type = $this->map_to_elementor_widget_type( $widget_type );
-		
+
 		error_log( '🔥 WIDGET_TYPE_DEBUG: Mapped to: ' . $mapped_type );
 
 		$formatted_widget_data = $this->create_widget_data_using_new_data_formatter( $resolved_styles, $widget, $widget_id );
-		
+
 		error_log( '🔥 MAX_DEBUG: Formatted widget data: ' . wp_json_encode( $formatted_widget_data ) );
 
 		if ( $this->requires_link_to_button_conversion( $widget_type, $mapped_type ) ) {
@@ -380,6 +380,16 @@ class Widget_Creator {
 			$elementor_widget['elements'] = $this->convert_widgets_to_elementor_format( $widget['elements'] );
 		} else {
 			$elementor_widget['elements'] = [];
+		}
+
+		// Debug final widget structure for flex widgets
+		if ( $mapped_type === 'e-div-block' && ! empty( $formatted_widget_data['styles'] ) ) {
+			foreach ( $formatted_widget_data['styles'] as $style_id => $style_def ) {
+				if ( isset( $style_def['variants'][0]['props']['display'] ) ) {
+					error_log( "🔍 FINAL_WIDGET: id={$widget_id}, styles_count=" . count( $formatted_widget_data['styles'] ) . ', display=' . wp_json_encode( $style_def['variants'][0]['props']['display'] ) );
+					error_log( '🔍 FINAL_WIDGET_FULL: ' . wp_json_encode( $elementor_widget ) );
+				}
+			}
 		}
 
 		return $elementor_widget;
@@ -773,7 +783,7 @@ class Widget_Creator {
 			$post_id = $document->get_main_id();
 
 			error_log( "🔥 MAX_DEBUG: save_to_document - post_id={$post_id}, elements_count=" . count( $elementor_elements ) );
-			error_log( "🔥 MAX_DEBUG: elementor_elements=" . wp_json_encode( $elementor_elements ) );
+			error_log( '🔥 MAX_DEBUG: elementor_elements=' . wp_json_encode( $elementor_elements ) );
 
 			update_post_meta( $post_id, '_elementor_data', wp_json_encode( $elementor_elements ) );
 			update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
@@ -784,9 +794,9 @@ class Widget_Creator {
 				'elements' => $elementor_elements,
 			] );
 
-			error_log( "🔥 MAX_DEBUG: save_to_document completed successfully" );
+			error_log( '🔥 MAX_DEBUG: save_to_document completed successfully' );
 		} catch ( \Exception $e ) {
-			error_log( "🔥 MAX_DEBUG: save_to_document FAILED: " . $e->getMessage() );
+			error_log( '🔥 MAX_DEBUG: save_to_document FAILED: ' . $e->getMessage() );
 			throw new \Exception( 'Failed to save elements to document: ' . $e->getMessage() );
 		}
 	}
@@ -902,11 +912,11 @@ class Widget_Creator {
 	private function create_widget_data_using_new_data_formatter( array $resolved_styles, array $widget, string $widget_id ): array {
 		error_log( '🔥 MAX_DEBUG: create_widget_data_using_new_data_formatter - resolved_styles count: ' . count( $resolved_styles ) );
 		error_log( '🔥 MAX_DEBUG: Calling data_formatter->format_widget_data' );
-		
+
 		$result = $this->data_formatter->format_widget_data( $resolved_styles, $widget, $widget_id );
-		
+
 		error_log( '🔥 MAX_DEBUG: Data formatter result: ' . wp_json_encode( $result ) );
-		
+
 		return $result;
 	}
 

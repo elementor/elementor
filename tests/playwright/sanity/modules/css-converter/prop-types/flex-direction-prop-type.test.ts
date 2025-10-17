@@ -86,7 +86,7 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 				await elementorFrame.waitForLoadState();
 
 				// Target the div containers using .e-con class (used by both e-div-block and e-flexbox)
-				const element = elementorFrame.locator( '.e-con' ).nth( testCase.index );
+				const element = elementorFrame.locator( '.e-con' ).nth( testCase.index + 1 );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
@@ -112,7 +112,7 @@ test.describe( 'Flex Direction Prop Type Integration @prop-types', () => {
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
-					const frontendElement = page.locator( '.e-con' ).nth( testCase.index );
+					const frontendElement = page.locator( '.e-con' ).nth( testCase.index + 1 );
 
 					await test.step( 'Verify CSS property', async () => {
 						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );

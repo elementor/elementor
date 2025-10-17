@@ -60,12 +60,19 @@ class Unified_Style_Manager {
 
 		// Keep backward compatibility with old array format
 		foreach ( $inline_styles as $property => $style_data ) {
+			$important = $style_data['important'] ?? false;
+
+			// Debug display and flex properties
+			if ( in_array( $property, [ 'display', 'flex-direction' ] ) ) {
+				error_log( "🔍 COLLECT_INLINE: element_id='$element_id', property='$property', value='{$style_data['value']}', important=" . ( $important ? 'TRUE' : 'FALSE' ) );
+			}
+
 			$this->collected_styles[] = [
 				'source' => 'inline',
 				'element_id' => $element_id,
 				'property' => $property,
 				'value' => $style_data['value'],
-				'important' => $style_data['important'] ?? false,
+				'important' => $important,
 				'converted_property' => $style_data['converted_property'] ?? null,
 				'specificity' => $this->calculate_inline_specificity( $style_data['important'] ?? false ),
 				'order' => count( $this->collected_styles ),
@@ -94,9 +101,9 @@ class Unified_Style_Manager {
 	}
 
 	public function collect_id_selector_styles( string $selector, array $properties, array $matched_elements = [] ) {
-		error_log( "🔥 COLLECT_ID_SELECTOR: selector='$selector', properties=" . count( $properties ) . ", elements=" . count( $matched_elements ) );
+		error_log( "🔥 COLLECT_ID_SELECTOR: selector='$selector', properties=" . count( $properties ) . ', elements=' . count( $matched_elements ) );
 		if ( strpos( $selector, '#text' ) !== false ) {
-			error_log( "🔍 PROPERTY_DATA: " . json_encode( $properties ) );
+			error_log( '🔍 PROPERTY_DATA: ' . json_encode( $properties ) );
 		}
 		foreach ( $properties as $property_data ) {
 			foreach ( $matched_elements as $element_id ) {
@@ -146,14 +153,22 @@ class Unified_Style_Manager {
 
 	public function collect_element_styles( string $element_type, array $properties, string $element_id ) {
 		foreach ( $properties as $property_data ) {
+			$important = $property_data['important'] ?? false;
+			$specificity = $this->calculate_element_specificity( $important );
+
+			// Debug display and flex properties
+			if ( in_array( $property_data['property'], [ 'display', 'flex-direction' ] ) ) {
+				error_log( "🔍 COLLECT_ELEMENT: element_type='$element_type', element_id='$element_id', property='{$property_data['property']}', value='{$property_data['value']}', important=" . ( $important ? 'TRUE' : 'FALSE' ) . ", specificity=$specificity" );
+			}
+
 			$this->collected_styles[] = [
 				'source' => 'element',
 				'element_type' => $element_type,
 				'element_id' => $element_id,
 				'property' => $property_data['property'],
 				'value' => $property_data['value'],
-				'important' => $property_data['important'] ?? false,
-				'specificity' => $this->calculate_element_specificity( $property_data['important'] ?? false ),
+				'important' => $important,
+				'specificity' => $specificity,
 				'converted_property' => $property_data['converted_property'] ?? null,
 				'order' => count( $this->collected_styles ),
 			];
@@ -258,14 +273,14 @@ class Unified_Style_Manager {
 	public function resolve_styles_for_widget( array $widget ): array {
 		// Use pure resolution with new Style objects
 		$pure_resolved = $this->resolve_styles_for_widget_pure( $widget );
-		
+
 		// Also use legacy resolution for backward compatibility
 		$legacy_resolved = $this->resolve_styles_for_widget_legacy( $widget );
-		
+
 		// For now, return legacy resolution but log pure resolution for comparison
 		error_log( '🔥 PURE_RESOLUTION: ' . wp_json_encode( array_keys( $pure_resolved ) ) );
 		error_log( '🔥 LEGACY_RESOLUTION: ' . wp_json_encode( array_keys( $legacy_resolved ) ) );
-		
+
 		return $legacy_resolved;
 	}
 
@@ -304,6 +319,18 @@ class Unified_Style_Manager {
 			$winning_style = $this->find_winning_style( $styles );
 			if ( $winning_style ) {
 				$winning_styles[ $property ] = $winning_style;
+			}
+		}
+
+		// Debug resolved styles for flex widgets
+		$widget_type = $widget['widget_type'] ?? '';
+		$element_id = $widget['element_id'] ?? '';
+		if ( $widget_type === 'e-flexbox' || $widget_type === 'e-div-block' ) {
+			$display_resolved = $winning_styles['display'] ?? null;
+			$flex_resolved = $winning_styles['flex-direction'] ?? null;
+
+			if ( $display_resolved || $flex_resolved ) {
+				error_log( "🔍 WINNING_STYLES: element_id='$element_id', display=" . ( $display_resolved ? "'{$display_resolved['value']}' (source={$display_resolved['source']}, spec={$display_resolved['specificity']})" : 'NULL' ) . ', flex-direction=' . ( $flex_resolved ? "'{$flex_resolved['value']}'" : 'NULL' ) );
 			}
 		}
 
@@ -503,7 +530,7 @@ class Unified_Style_Manager {
 
 		$property = ! empty( $styles ) ? $styles[0]->get_property() : 'unknown';
 		if ( 'background-color' === $property || 'background_color' === $property ) {
-			error_log( "  🏆 WINNER_SELECTION: Comparing " . count( $styles ) . " styles for $property" );
+			error_log( '  🏆 WINNER_SELECTION: Comparing ' . count( $styles ) . " styles for $property" );
 			foreach ( $styles as $idx => $style ) {
 				$selector = method_exists( $style, 'get_selector' ) ? $style->get_selector() : 'N/A';
 				error_log( "    [$idx] selector='$selector' specificity={$style->get_specificity()} order={$style->get_order()} value={$style->get_value()}" );
@@ -551,7 +578,14 @@ class Unified_Style_Manager {
 		$element_id = $widget['element_id'] ?? null;
 		$html_id = $widget['attributes']['id'] ?? null;
 		$classes = $widget['attributes']['class'] ?? '';
-		$element_type = $widget['tag'] ?? $widget['widget_type'] ?? 'unknown';
+		$widget_type = $widget['widget_type'] ?? '';
+		$widget_tag = $widget['tag'] ?? '';
+		$element_type = $widget_type ?: ( $widget_tag ?: 'unknown' );
+
+		// Debug for flex widgets
+		if ( $widget_type === 'e-flexbox' || $widget_type === 'e-div-block' ) {
+			error_log( "🔍 FILTER_WIDGET: element_id='$element_id', widget_type='$widget_type', widget_tag='$widget_tag', element_type='$element_type'" );
+		}
 
 		$applicable_styles = [];
 
@@ -561,6 +595,11 @@ class Unified_Style_Manager {
 			switch ( $style['source'] ) {
 				case 'inline':
 					$applies = ( $style['element_id'] === $element_id );
+
+					// Debug inline styles for flex widgets
+					if ( ( $widget_type === 'e-flexbox' || $widget_type === 'e-div-block' ) && in_array( $style['property'], [ 'display', 'flex-direction' ] ) ) {
+						error_log( "🔍 FILTER_INLINE: style_element_id='{$style['element_id']}', widget_element_id='$element_id', property='{$style['property']}', value='{$style['value']}', applies=" . ( $applies ? 'YES' : 'NO' ) );
+					}
 					break;
 
 				case 'id':
@@ -580,12 +619,17 @@ class Unified_Style_Manager {
 
 				case 'element':
 					$applies = ( $style['element_type'] === $element_type );
+
+					// Debug element styles for flex widgets
+					if ( ( $widget_type === 'e-flexbox' || $widget_type === 'e-div-block' ) && in_array( $style['property'], [ 'display', 'flex-direction' ] ) ) {
+						error_log( "🔍 FILTER_ELEMENT: style_element_type='{$style['element_type']}', widget_element_type='$element_type', property='{$style['property']}', value='{$style['value']}', applies=" . ( $applies ? 'YES' : 'NO' ) );
+					}
 					break;
 
-			case 'reset-element':
-				// Reset element styles apply to widgets that match the element selector
-				$applies = ( $style['element_id'] === $element_id );
-				break;
+				case 'reset-element':
+					// Reset element styles apply to widgets that match the element selector
+					$applies = ( $style['element_id'] === $element_id );
+					break;
 
 				case 'reset-complex':
 					// Complex reset styles don't apply directly to widgets
@@ -600,6 +644,20 @@ class Unified_Style_Manager {
 
 			if ( $applies ) {
 				$applicable_styles[] = $style;
+			}
+		}
+
+		// Debug final applicable styles for flex widgets
+		if ( $widget_type === 'e-flexbox' || $widget_type === 'e-div-block' ) {
+			$display_styles = array_filter( $applicable_styles, function( $s ) {
+				return $s['property'] === 'display';
+			} );
+			$flex_styles = array_filter( $applicable_styles, function( $s ) {
+				return $s['property'] === 'flex-direction';
+			} );
+
+			if ( ! empty( $display_styles ) || ! empty( $flex_styles ) ) {
+				error_log( "🔍 FILTER_RESULT: element_id='$element_id', display_styles=" . count( $display_styles ) . ', flex_styles=' . count( $flex_styles ) );
 			}
 		}
 
