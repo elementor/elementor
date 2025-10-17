@@ -8,7 +8,6 @@ use Elementor\App\Modules\ImportExportCustomization\Runners\Revert\Plugins;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Revert\Site_Settings;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Revert\Taxonomies;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Revert\Templates;
-use Elementor\App\Modules\ImportExportCustomization\Runners\Revert\Woocommerce_Settings;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Revert\Wp_Content;
 use Elementor\App\Modules\ImportExportCustomization\Utils;
 
@@ -44,7 +43,6 @@ class Revert {
 		$this->register( new Taxonomies() );
 		$this->register( new Elementor_Content() );
 		$this->register( new Wp_Content() );
-		$this->register( new Woocommerce_Settings() );
 	}
 
 	/**
