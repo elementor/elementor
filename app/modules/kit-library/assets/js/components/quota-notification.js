@@ -49,10 +49,12 @@ export default function QuotaNotification( { usagePercentage } ) {
 		if ( 'warning' === state ) {
 			return {
 				icon: 'eicon-warning-full',
-				// translators: %s: usage percentage
 				message: (
 					<>
-						<strong>{ sprintf( __( 'Website template storage is %s%% full.', 'elementor' ), Math.round( usagePercentage ) ) }</strong>
+						<strong>{
+							/* Translators: %s: usage percentage */
+							sprintf( __( 'Website template storage is %1$s%% full.', 'elementor' ), Math.round( usagePercentage ) )
+						}</strong>
 						{ ' ' }
 						{ __( 'Get more space ', 'elementor' ) }
 					</>
