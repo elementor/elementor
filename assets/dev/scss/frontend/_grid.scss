@@ -136,12 +136,12 @@
 	position: relative;
 
 	&:not(:last-child) {
-		margin-bottom: var(--kit-widget-spacing, 20px);
+		margin-block-end: var(--kit-widget-spacing, 20px);
 
 		&.elementor-widget__width-auto,
 		&.elementor-widget__width-initial,
 		&.elementor-absolute {
-			margin-bottom: 0;
+			margin-block-end: 0;
 		}
 	}
 }
@@ -312,11 +312,11 @@
 				display: inline-block;
 				width: 100%;
 				word-spacing: var(--grid-column-gap);
-				margin-bottom: calc(-1 * var(--grid-row-gap));
+				margin-block-end: calc(-1 * var(--grid-row-gap));
 
 				.elementor-grid-item {
 					display: inline-block;
-					margin-bottom: var(--grid-row-gap);
+					margin-block-end: var(--grid-row-gap);
 					word-break: break-word;
 				}
 			}
