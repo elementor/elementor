@@ -89,6 +89,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			}
 		}
 
+		if ( ! control.selectors ) {
+			return;
+		}
+
 		Object.entries( control.selectors ).forEach( ( [ selector, cssProperty ] ) => {
 			var outputCssProperty;
 
