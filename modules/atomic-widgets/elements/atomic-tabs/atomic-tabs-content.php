@@ -29,7 +29,7 @@ class Atomic_Tabs_Content extends Atomic_Element_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tabs Content', 'elementor' );
+		return esc_html__( 'Tabs content area', 'elementor' );
 	}
 
 	public function get_keywords() {

@@ -2,13 +2,11 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -29,7 +27,7 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tab Panel', 'elementor' );
+		return esc_html__( 'Tab content', 'elementor' );
 	}
 
 	public function get_keywords() {

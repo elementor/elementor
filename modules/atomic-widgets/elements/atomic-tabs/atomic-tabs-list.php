@@ -27,7 +27,7 @@ class Atomic_Tabs_List extends Atomic_Element_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tabs List', 'elementor' );
+		return esc_html__( 'Tabs menu', 'elementor' );
 	}
 
 	public function get_keywords() {
