@@ -3,7 +3,6 @@ import Grid from 'elementor-app/ui/grid/grid';
 import Card from './card';
 import FooterButtons from './layout/footer-buttons';
 import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
-import { addExperimentTrackingToUrl } from '../utils/utils';
 
 export default function GoodToGoContentA( { skipButton } ) {
 	const kitLibraryLink = elementorAppConfig.onboarding.urls.kitLibrary + '&referrer=onboarding';
@@ -47,7 +46,7 @@ export default function GoodToGoContentA( { skipButton } ) {
 					image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Site_Planner.svg' }
 					imageAlt={ __( 'Click here to go to Elementor\'s Site Planner', 'elementor' ) }
 					text={ __( 'Create a professional site in minutes using AI', 'elementor' ) }
-					link={ addExperimentTrackingToUrl( elementorAppConfig.onboarding.urls.sitePlanner, 'site-planner-step4' ) }
+					link={ elementorAppConfig.onboarding.urls.sitePlanner }
 					target="_blank"
 					clickAction={ () => {
 						OnboardingEventTracking.handleSiteStarterChoice( 'site_planner' );

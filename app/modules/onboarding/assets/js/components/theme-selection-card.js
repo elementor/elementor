@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 
 export default function ThemeSelectionCard( {
 	themeSlug,
-	label,
 	title,
 	description,
 	illustration,
@@ -43,7 +42,6 @@ export default function ThemeSelectionCard( {
 				{ illustration?.svg }
 			</div>
 			<div className="e-onboarding__theme-card-content">
-				<span className="e-onboarding__theme-card-label">{ label }</span>
 				<h3 className="e-onboarding__theme-card-title">
 					{ title }
 				</h3>
@@ -57,7 +55,6 @@ export default function ThemeSelectionCard( {
 
 ThemeSelectionCard.propTypes = {
 	themeSlug: PropTypes.string.isRequired,
-	label: PropTypes.string,
 	title: PropTypes.string.isRequired,
 	description: PropTypes.string.isRequired,
 	illustration: PropTypes.shape( {
