@@ -4,9 +4,13 @@ import widgets from '../../../enums/widgets';
 import { getElementSelector } from '../../../assets/elements-utils';
 import { expect } from '@playwright/test';
 
+<<<<<<< HEAD
 test.describe( 'Div Block tests @div-block', () => {
 	const experimentName = 'e_atomic_elements';
 
+=======
+test.describe( 'Div Block tests @div-block upd', () => {
+>>>>>>> 3a368269c3 (Internal: Sanitize branch name and title [ED-20161] (#31976))
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
