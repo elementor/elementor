@@ -41,7 +41,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		// If the current element contains dynamic values, parse these values
 		const dynamicParsedValues = this.getSettings( 'settingsModel' ).parseDynamicSettings( values, this.getSettings( 'dynamicParsing' ), styleControls );
 
-		styleControls.forEach( ( control ) => {
+		// Convert to array if it's an object
+		const styleControlsArray = Array.isArray( styleControls ) ? styleControls : Object.values( styleControls );
+
+		styleControlsArray.forEach( ( control ) => {
 			if ( control.styleFields && control.styleFields.length ) {
 				this.addRepeaterControlsStyleRules( values[ control.name ], control.styleFields, control.fields, placeholders, replacements );
 			}
