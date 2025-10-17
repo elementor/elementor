@@ -655,7 +655,7 @@ BaseElementView = BaseContainer.extend( {
 			let isContentChanged = ! hasChanged,
 				isRenderRequired = ! hasChanged;
 
-			Object.entries( settings.changedAttributes() ).forEach( ( [ settingKey, settingValue ] ) => {
+			Object.entries( settings.changedAttributes() ).forEach( ( [ settingKey ] ) => {
 				if ( '_column_size' === settingKey ) {
 					isRenderRequired = true;
 					return;
