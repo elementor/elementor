@@ -16,7 +16,7 @@
 	}
 
 	&__label {
-		color: $e-gray-900;
+		color: var(--body-color);
 		font-weight: 400;
 		white-space: nowrap;
 		font-size: 12px;
@@ -85,7 +85,7 @@
 	}
 
 	&__count {
-		color: #69727D;
+		color: var(--body-color);
 		white-space: nowrap;
 		font-size: 12px;
 	}
