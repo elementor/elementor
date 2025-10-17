@@ -16,7 +16,8 @@ import { componentsStylesProvider } from './store/components-styles-provider';
 import { loadComponentsStyles } from './store/load-components-styles';
 import { removeComponentStyles } from './store/remove-component-styles';
 import { slice } from './store/store';
-import { type Element } from './types';
+import { type Element, type ExtendedWindow } from './types';
+import { beforeSave } from './utils/before-save';
 
 const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
 
@@ -31,6 +32,8 @@ export function init() {
 		}
 		return true;
 	} );
+
+	( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;
 
 	injectTab( {
 		id: 'components',

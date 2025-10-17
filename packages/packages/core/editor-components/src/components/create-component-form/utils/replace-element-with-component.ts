@@ -2,7 +2,7 @@ import { replaceElement, type V1Element } from '@elementor/editor-elements';
 
 import { type Component } from '../../../types';
 
-export const replaceElementWithComponent = async ( element: V1Element, component: Component ) => {
+export const replaceElementWithComponent = ( element: V1Element, component: Component ) => {
 	replaceElement( {
 		currentElement: element,
 		newElement: createComponentModel( component ),
