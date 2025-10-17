@@ -363,10 +363,14 @@ export default class EditorBase extends Marionette.Application {
 			return false;
 		}
 
+		if ( ! elementData.controls ) {
+			return {};
+		}
+
 		const isInner = modelElement.get( 'isInner' ),
 			controls = {};
 
-		_.each( elementData.controls, ( controlData, controlKey ) => {
+		Object.entries( elementData.controls ).forEach( ( [ controlKey, controlData ] ) => {
 			if ( ( isInner && controlData.hide_in_inner ) || ( ! isInner && controlData.hide_in_top ) ) {
 				return;
 			}
@@ -378,7 +382,11 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	mergeControlsSettings( controls ) {
-		_.each( controls, ( controlData, controlKey ) => {
+		if ( ! controls ) {
+			return controls;
+		}
+
+		Object.entries( controls ).forEach( ( [ controlKey, controlData ] ) => {
 			controls[ controlKey ] = jQuery.extend( true, {}, this.config.controls[ controlData.type ], controlData );
 		} );
 

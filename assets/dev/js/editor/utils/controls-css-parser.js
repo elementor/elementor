@@ -41,7 +41,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		// If the current element contains dynamic values, parse these values
 		const dynamicParsedValues = this.getSettings( 'settingsModel' ).parseDynamicSettings( values, this.getSettings( 'dynamicParsing' ), styleControls );
 
-		_.each( styleControls, ( control ) => {
+		// Convert to array if it's an object
+		const styleControlsArray = Array.isArray( styleControls ) ? styleControls : Object.values( styleControls );
+
+		styleControlsArray.forEach( ( control ) => {
 			if ( control.styleFields && control.styleFields.length ) {
 				this.addRepeaterControlsStyleRules( values[ control.name ], control.styleFields, control.fields, placeholders, replacements );
 			}
@@ -89,7 +92,11 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			}
 		}
 
-		_.each( control.selectors, ( cssProperty, selector ) => {
+		if ( ! control.selectors ) {
+			return;
+		}
+
+		Object.entries( control.selectors ).forEach( ( [ selector, cssProperty ] ) => {
 			var outputCssProperty;
 
 			if ( globalKey ) {
@@ -191,7 +198,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 					matches = pureDevicePattern.exec( deviceRules );
 				}
 
-				_.each( pureDeviceRules, ( deviceRule ) => {
+				pureDeviceRules.forEach( ( deviceRule ) => {
 					if ( 'desktop' === deviceRule ) {
 						return;
 					}
@@ -203,7 +210,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				} );
 			}
 
-			_.each( placeholders, ( placeholder, index ) => {
+			placeholders.forEach( ( placeholder, index ) => {
 				// Check if it's a RegExp
 				var regexp = placeholder.source ? placeholder.source : placeholder,
 					placeholderPattern = new RegExp( regexp, 'g' );
