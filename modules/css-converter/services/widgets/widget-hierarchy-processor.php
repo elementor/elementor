@@ -273,7 +273,7 @@ class Widget_Hierarchy_Processor {
 	}
 
 	private function validate_depth_limits( $widgets, $current_depth = 0 ) {
-		$max_depth = apply_filters( 'elementor_widget_converter_max_depth', 10 );
+		$max_depth = apply_filters( 'elementor_widget_converter_max_depth', 1000 );
 
 		if ( $current_depth > $max_depth ) {
 			throw new \Exception( "Widget hierarchy exceeds maximum depth of {$max_depth}" );

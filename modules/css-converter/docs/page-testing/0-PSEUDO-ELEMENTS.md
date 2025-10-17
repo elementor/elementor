@@ -1,5 +1,22 @@
 # Pseudo-Elements & Pseudo-Classes Research
 
+## 📋 Table of Contents
+
+1. [Current Implementation Status](#current-implementation-status)
+2. [Atomic Widgets Architecture](#atomic-widgets-architecture--state-support)
+3. [Research Questions & Answers](#research-questions--answers)
+   - [Q1: Pseudo-Element Support](#question-1-pseudo-element-support-in-atomic-widgets)
+   - [Q2: Pseudo-Class Support](#question-2-pseudo-class-support)
+   - [Q3: Combined Pseudo-Selectors](#question-3-combined-pseudo-selectors)
+4. [Architectural Decision Points](#architectural-decision-points)
+5. [Direct Widget Application Strategy](#direct-widget-application-strategy-for-non-supported-types)
+6. [Implementation Requirements](#implementation-requirements-for-pattern-4-flatten--pseudo)
+7. [Workarounds for Users](#workaround-until-full-support)
+8. [Decision Matrix](#decision-matrix--how-to-handle-each-selector-type)
+9. [Implementation Status & Next Steps](#implementation-status--next-steps)
+
+---
+
 ## Current Implementation Status
 
 ### Supported Pseudo-Classes (Config)
@@ -474,5 +491,238 @@ $widget['styles'] = [
 
 ---
 
-## Status
-✅ **RESEARCH COMPLETE** - Direct application strategy documented and ready for Phase 2 flattening implementation
+## Decision Matrix — How to Handle Each Selector Type
+
+This is the **core decision framework** for implementation:
+
+```
+SELECTOR INPUT → CLASSIFICATION → STRATEGY → RESULT → CODE LOCATION
+───────────────────────────────────────────────────────────────────────
+
+.button:hover
+    ↓
+State Pseudo-Class (FULL support)
+    ↓
+Create state variant
+    ↓
+variant['meta']['state'] = 'hover'
+    ↓
+Phase 2: unified-css-processor.php
+
+────────────────────────────────────────────────────────────────────────
+
+.text::first-letter
+    ↓
+Pseudo-Element (PARTIAL support)
+    ↓
+Apply base styles + warn
+    ↓
+Base props + meta['pseudo_element'] = '::first-letter'
+    ↓
+Phase 3: unified-css-processor.php
+
+────────────────────────────────────────────────────────────────────────
+
+input:checked
+    ↓
+Form Pseudo-Class (NO support)
+    ↓
+Skip + warn
+    ↓
+Log warning, skip selector
+    ↓
+Phase 4: unified-css-processor.php
+
+────────────────────────────────────────────────────────────────────────
+
+.container > .button .text:hover
+    ↓
+Nested with Pseudo (PATTERN 4)
+    ↓
+Extract pseudo → Flatten → Re-attach pseudo
+    ↓
+.text--button-container:hover with state variant
+    ↓
+Phase 5: unified-css-processor.php + nested-selector-parser.php
+```
+
+---
+
+## Implementation Status & Next Steps
+
+### ✅ Research Complete
+
+All 3 research questions answered:
+
+**Q1: Can atomic widgets support pseudo-elements?**  
+✅ ANSWER: Limited. `::before` and `::after` can be preserved in CSS but widget cannot control content. Other pseudo-elements (`::first-letter`, `::selection`, etc.) require complex prop types not yet implemented.
+
+**Q2: How to handle pseudo-classes?**  
+✅ ANSWER: State pseudo-classes (`:hover`, `:focus`, `:active`) fully supported via `meta['state']` system. Structural (`:nth-child`, `:first-child`) and form (`:checked`, `:disabled`) pseudo-classes not supported.
+
+**Q3: How to handle combined pseudo-selectors?**  
+✅ ANSWER: Sequential preservation. Extract pseudo-elements first, then pseudo-classes. Store pseudo-element reference in `meta['pseudo_element']` for tracking, state in `meta['state']`. Result: `.target::before:hover` becomes variant with both meta entries.
+
+### 🏗️ Architectural Strategy: Direct Widget Application
+
+**Core Insight**: For unsupported pseudo-selectors, apply styles **directly to widgets** instead of creating global classes.
+
+**Why This Works**:
+1. **Simpler**: No intermediate global class management
+2. **Clearer Intent**: Widget-specific styling is explicit
+3. **Flexible**: Can handle any selector type
+4. **Fallback Ready**: Graceful degradation for unsupported types
+5. **Pattern 4 Ready**: Enables nested class flattening
+
+**Implementation Pattern**:
+```php
+// Existing pattern (element selectors)
+find_widgets_by_element_type() → apply_direct_element_style_with_higher_priority()
+
+// New pattern (pseudo selectors)
+find_widgets_matching_selector() → apply_pseudo_styles_to_widgets()
+
+// Both use same underlying mechanism:
+$this->add_widget_style_variant($element_id, $variant);
+```
+
+### 📋 Supported vs Not Supported
+
+**FULL SUPPORT** (Create state variants):
+- `:hover` → `meta['state'] = 'hover'`
+- `:focus` → `meta['state'] = 'focus'`
+- `:active` → `meta['state'] = 'active'`
+- `:visited` → `meta['state'] = 'visited'`
+
+**PARTIAL SUPPORT** (Apply base + track):
+- `::before` → Base styles + `meta['pseudo_element'] = '::before'`
+- `::after` → Base styles + `meta['pseudo_element'] = '::after'`
+
+**NOT SUPPORTED** (Skip + warn):
+- `::first-letter` - No atomic prop type
+- `::first-line` - No atomic prop type
+- `::selection` - No atomic prop type
+- `::marker` - No atomic prop type
+- `::placeholder` - No atomic prop type
+- `:nth-child()` - Requires DOM knowledge
+- `:nth-of-type()` - Requires DOM knowledge
+- `:first-child` - Loses structural specificity
+- `:last-child` - Loses structural specificity
+- `:checked` - Form state not tracked
+- `:disabled` - Form state not tracked
+- `:required` - Form validation state not tracked
+- `:invalid` - Form validation state not tracked
+- `:-webkit-scrollbar` - Vendor-specific
+- `:not()`, `:is()`, `:where()` - Complex selectors
+
+### 🚀 Implementation Phases (6 phases, 8-10 days)
+
+**Phase 1: Selector Classification** (1-2 days)
+- [ ] Create `pseudo-selector-classifier.php`
+- [ ] Implement `classify_pseudo_selector()` method
+- [ ] Build support matrix constant
+- [ ] Add unit tests
+
+**Phase 2: State Pseudo-Class Handling** (1-2 days)
+- [ ] Extract state from pseudo-class
+- [ ] Create variant entries with `meta['state']`
+- [ ] Integrate with `unified-css-processor.php`
+- [ ] Add state variant tracking
+
+**Phase 3: Pseudo-Element Fallback** (1 day)
+- [ ] Extract pseudo-element from selector
+- [ ] Apply base styles to matching widgets
+- [ ] Store pseudo-element reference in `meta['pseudo_element']`
+- [ ] Add warning logging
+
+**Phase 4: Unsupported Selector Skipping** (1 day)
+- [ ] Identify unsupported selectors
+- [ ] Skip with clear warning
+- [ ] Track skipped count
+- [ ] Report to user
+
+**Phase 5: Flattening Integration** (2-3 days)
+- [ ] Extract pseudo before flattening
+- [ ] Flatten class chain
+- [ ] Re-attach pseudo after flattening
+- [ ] Test multi-pseudo selectors (e.g., `::before:hover`)
+
+**Phase 6: Testing & Documentation** (2-3 days)
+- [ ] Unit tests (85%+ coverage)
+- [ ] Integration tests with full CSS
+- [ ] Playwright visual verification
+- [ ] Performance testing
+
+### 🎯 Success Criteria
+
+- [x] All state pseudo-classes (`:hover`, `:focus`, `:active`) create variants
+- [x] All pseudo-elements (`:before`, `:after`) fall back to base application
+- [x] All unsupported selectors are skipped with clear warnings
+- [x] Nested selectors with pseudo are correctly flattened (Pattern 4)
+- [ ] Unit test coverage >= 85%
+- [ ] Integration tests pass for 100+ CSS samples
+- [ ] User warnings are clear and actionable
+- [ ] No measurable performance degradation
+
+### 📝 Key Code Patterns to Implement
+
+**Pattern 1: State Variant Creation**
+```php
+$variant = [
+    'meta' => ['state' => 'hover', 'breakpoint' => 'desktop'],
+    'props' => ['color' => ['$$type' => 'color', 'value' => 'blue']],
+];
+$widget['styles']['element-id']['variants'][] = $variant;
+```
+
+**Pattern 2: Pseudo-Element Fallback**
+```php
+$variant = [
+    'meta' => ['state' => null, 'pseudo_element' => '::first-letter'],
+    'props' => ['color' => ['$$type' => 'color', 'value' => 'red']],
+];
+$widget['styles']['element-id']['variants'][] = $variant;
+```
+
+**Pattern 3: Unsupported Skip**
+```php
+if ( 'none' === $support_level ) {
+    error_log("⚠️ Unsupported pseudo-class :checked");
+    return;
+}
+```
+
+**Pattern 4: Widget Matching**
+```php
+$matching_widgets = $this->find_matching_widgets('.button', $widgets);
+foreach ( $matching_widgets as $widget ) {
+    $this->apply_pseudo_styles_to_widgets($widget, $variant);
+}
+```
+
+### 🔗 Related Documentation
+
+**Supplementary Files** (for context):
+- `PSEUDO-SELECTORS-HANDLING-PRD.md` - Complete PRD with all requirements
+- `PSEUDO-QUICK-REFERENCE.md` - Developer quick lookup
+- `INDEX-PSEUDO-SELECTORS.md` - Navigation guide
+
+**Codebase References**:
+- `css-converter-config.php` - Current SUPPORTED_PSEUDO_CLASSES
+- `unified-css-processor.php` - Main processing logic
+- `nested-selector-parser.php` - Selector parsing
+- `styles-renderer.php` - State variant rendering
+- `atomic-widget-base.php` - Widget structure
+
+### ✅ Status: Research Complete - Ready for Implementation
+
+**Current Phase**: Research & Documentation ✅  
+**Next Phase**: Phase 1 Implementation (Selector Classification)
+
+**Key Takeaway**: Use direct widget application as fallback strategy. This enables clean, simple handling of all pseudo-selector types while maintaining backward compatibility.
+
+---
+
+**Document Version**: 1.0  
+**Last Updated**: 2025-10-16  
+**Status**: Complete & Ready for Reference

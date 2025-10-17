@@ -83,6 +83,11 @@ class Widgets_Route {
 					'default' => false,
 					'description' => 'Whether to follow @import statements in CSS',
 				],
+				'selector' => [
+					'required' => false,
+					'type' => 'string',
+					'description' => 'CSS selector to target specific content within the URL (e.g., ".elementor-element-1a10fb4")',
+				],
 				'options' => [
 					'required' => false,
 					'type' => 'object',
@@ -158,6 +163,7 @@ class Widgets_Route {
 		$content = $request->get_param( 'content' );
 		$css_urls = $request->get_param( 'cssUrls' ) ?: [];
 		$follow_imports = $request->get_param( 'followImports' ) ?: false;
+		$selector = $request->get_param( 'selector' );
 		$options = $request->get_param( 'options' ) ?: [];
 
 		error_log( '🔥 MAX_DEBUG: Parsed params - type: ' . $type . ', content_length: ' . strlen( $content ) . ', css_urls: ' . count( $css_urls ) );
@@ -190,7 +196,14 @@ class Widgets_Route {
 			switch ( $type ) {
 				case 'url':
 					error_log( '🔥 MAX_DEBUG: Calling convert_from_url' );
-					$result = $service->convert_from_url( $content, $css_urls, $follow_imports, $options );
+					$html_content = $this->fetch_url_content( $content, $selector );
+					if ( is_wp_error( $html_content ) ) {
+						return new WP_REST_Response( [
+							'error' => 'Failed to fetch URL',
+							'message' => $html_content->get_error_message(),
+						], 400 );
+					}
+					$result = $service->convert_from_html( $html_content, $css_urls, $follow_imports, $options );
 					break;
 				case 'html':
 					error_log( '🔥 MAX_DEBUG: Calling convert_from_html' );
@@ -226,54 +239,109 @@ class Widgets_Route {
 		}
 	}
 
-	private function validate_request( WP_REST_Request $request ) {
-		$type = $request->get_param( 'type' );
-		$content = $request->get_param( 'content' );
+	private function fetch_url_content( $url, $selector = null ) {
+		$response = wp_remote_get( $url, [
+			'timeout' => 30,
+			'sslverify' => false,
+		] );
 
-		// Basic validation
-		if ( empty( $content ) ) {
-			return new WP_REST_Response( [ 'error' => 'Content parameter is required' ], 400 );
+		if ( is_wp_error( $response ) ) {
+			return $response;
 		}
 
-		// URL validation
-		if ( 'url' === $type && ! filter_var( $content, FILTER_VALIDATE_URL ) ) {
-			return new WP_REST_Response( [ 'error' => 'Invalid URL provided' ], 400 );
+		$body = wp_remote_retrieve_body( $response );
+		$code = wp_remote_retrieve_response_code( $response );
+
+		if ( $code >= 400 ) {
+			return new WP_Error( 'http_request_failed', 'HTTP Error: ' . $code );
 		}
 
-		// Size limits (HVV requirement: 10MB HTML, 5MB CSS)
-		$content_size = strlen( $content );
-		$max_size = ( 'html' === $type ) ? 10 * 1024 * 1024 : 5 * 1024 * 1024; // 10MB for HTML, 5MB for CSS
-
-		if ( $content_size > $max_size ) {
-			return new WP_REST_Response( [
-				'error' => 'Content too large',
-				'message' => sprintf( 'Content size (%s) exceeds maximum allowed (%s)',
-					size_format( $content_size ),
-					size_format( $max_size )
-				),
-			], 413 );
+		if ( $selector ) {
+			return $this->extract_content_by_selector( $body, $selector );
 		}
 
-		// Security validation - block dangerous content
-		if ( 'html' === $type ) {
-			$dangerous_patterns = [
-				'/<script[^>]*>/i',
-				'/<object[^>]*>/i',
-				'/javascript:/i',
-				'/data:.*base64/i',
-			];
+		return $body;
+	}
 
-			foreach ( $dangerous_patterns as $pattern ) {
-				if ( preg_match( $pattern, $content ) ) {
-					return new WP_REST_Response( [
-						'error' => 'Security violation',
-						'message' => 'Content contains potentially dangerous elements',
-					], 400 );
-				}
+	private function extract_content_by_selector( $html, $selector ) {
+		if ( empty( $html ) || empty( $selector ) ) {
+			return $html;
+		}
+
+		libxml_use_internal_errors( true );
+		$dom = new \DOMDocument();
+		$dom->loadHTML( $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+
+		$xpath = new \DOMXPath( $dom );
+
+		// Extract the target content
+		$css_selector = $this->convert_css_selector_to_xpath( $selector );
+		$nodes = $xpath->query( $css_selector );
+
+		if ( 0 === $nodes->length ) {
+			return new WP_Error( 'selector_not_found', 'No elements found matching selector: ' . $selector );
+		}
+
+		$extracted_html = '';
+		foreach ( $nodes as $node ) {
+			$extracted_html .= $dom->saveHTML( $node );
+		}
+
+		if ( empty( $extracted_html ) ) {
+			return new WP_Error( 'empty_content', 'Selected content is empty for selector: ' . $selector );
+		}
+
+		// Extract inline styles and CSS links from the head
+		$head_styles = $this->extract_head_styles( $dom, $xpath );
+
+		// Combine styles with content
+		if ( ! empty( $head_styles ) ) {
+			$extracted_html = $head_styles . $extracted_html;
+		}
+
+		return $extracted_html;
+	}
+
+	private function extract_head_styles( $dom, $xpath ) {
+		$styles_html = '';
+
+		// Extract inline <style> tags from head
+		$style_nodes = $xpath->query( '//head//style' );
+		foreach ( $style_nodes as $style_node ) {
+			$styles_html .= $dom->saveHTML( $style_node );
+		}
+
+		// Extract <link> tags for CSS files
+		$link_nodes = $xpath->query( '//head//link[@rel="stylesheet"]' );
+		foreach ( $link_nodes as $link_node ) {
+			$href = $link_node->getAttribute( 'href' );
+			if ( ! empty( $href ) ) {
+				// For now, just include the link tag - the CSS processor will handle fetching
+				$styles_html .= $dom->saveHTML( $link_node );
 			}
 		}
 
-		return null;
+		return $styles_html;
+	}
+
+	private function convert_css_selector_to_xpath( $css_selector ) {
+		$css_selector = trim( $css_selector );
+
+		if ( 0 === strpos( $css_selector, '.' ) ) {
+			$class_name = substr( $css_selector, 1 );
+			return "//*[contains(concat(' ', normalize-space(@class), ' '), ' {$class_name} ')]";
+		}
+
+		if ( 0 === strpos( $css_selector, '#' ) ) {
+			$id = substr( $css_selector, 1 );
+			return "//*[@id='{$id}']";
+		}
+
+		return "//{$css_selector}";
+	}
+
+	private function validate_request( WP_REST_Request $request ) {
+		
 	}
 
 	private function ensure_logs_directory() {

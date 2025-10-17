@@ -67,7 +67,7 @@ export interface DualApiTestResult {
 
 export class CssConverterHelper {
 	public readonly devToken: string;
-	private readonly RATE_LIMIT_DELAY_MS = 7000;
+	private readonly RATE_LIMIT_DELAY_MS = 1000;
 
 	constructor( devToken?: string ) {
 		this.devToken = devToken || process.env.ELEMENTOR_CSS_CONVERTER_DEV_TOKEN || 'my-dev-token';
