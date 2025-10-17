@@ -34,6 +34,9 @@ export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 
+// entrance animation control
+export { EntranceAnimationControl } from './controls/entrance-animation-control';
+
 // components
 export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
@@ -51,6 +54,10 @@ export type { SetValue, SetValueMeta } from './bound-prop-context/prop-context';
 export type { ExtendedOption, Unit, LengthUnit, AngleUnit, TimeUnit } from './utils/size-control';
 export type { ToggleControlProps } from './controls/toggle-control';
 export type { FontCategory } from './controls/font-family-control/font-family-control';
+export type { 
+  EntranceAnimationControlValue 
+} from './types/entrance-animation-control';
+export { ENTRANCE_ANIMATIONS, DURATION_OPTIONS, DURATION_VALUES } from './types/entrance-animation-control';
 
 // providers
 export { createControlReplacementsRegistry, ControlReplacementsProvider } from './control-replacements';

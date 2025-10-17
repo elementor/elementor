@@ -9,8 +9,9 @@ import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { useStateByElement } from '../hooks/use-state-by-element';
 import { SettingsTab } from './settings-tab';
 import { stickyHeaderStyles, StyleTab } from './style-tab';
+import { MotionEffectsTab } from './motion-effects-tab';
 
-type TabValue = 'settings' | 'style';
+type TabValue = 'settings' | 'style' | 'motion';
 
 export const EditingPanelTabs = () => {
 	const { element } = useElement();
@@ -45,6 +46,7 @@ const PanelTabContent = () => {
 					>
 						<Tab label={ __( 'General', 'elementor' ) } { ...getTabProps( 'settings' ) } />
 						<Tab label={ __( 'Style', 'elementor' ) } { ...getTabProps( 'style' ) } />
+						<Tab label={ __( 'Motion', 'elementor' ) } { ...getTabProps( 'motion' ) } />
 					</Tabs>
 					<Divider />
 				</Stack>
@@ -53,6 +55,9 @@ const PanelTabContent = () => {
 				</TabPanel>
 				<TabPanel { ...getTabPanelProps( 'style' ) } disablePadding>
 					<StyleTab />
+				</TabPanel>
+				<TabPanel { ...getTabPanelProps( 'motion' ) } disablePadding>
+					<MotionEffectsTab />
 				</TabPanel>
 			</Stack>
 		</ScrollProvider>
