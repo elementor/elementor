@@ -6,6 +6,8 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\Usage\Usage_Counter;
 use Elementor\Modules\AtomicWidgets\Utils as Atomic_Utils;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
@@ -374,131 +376,6 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Add atomic widget controls.
-	 *
-	 * Process atomic widget settings and styles, count changed controls.
-	 *
-	 * @param array $element_data Complete element data including settings and styles
-	 * @param Atomic_Element_Base|Atomic_Widget_Base $element_instance
-	 * @param array &$element_ref
-	 *
-	 * @return int ($changed_controls_count).
-	 */
-	private function add_atomic_controls( $element_data, $element_instance, &$element_ref ): int {
-		$changed_controls_count = 0;
-		$props_schema = $element_instance->get_props_schema();
-
-		// Process settings controls (General tab)
-		if ( isset( $element_data['settings'] ) ) {
-			foreach ( $element_data['settings'] as $prop_name => $prop_value ) {
-				if ( ! isset( $props_schema[ $prop_name ] ) ) {
-					continue;
-				}
-
-				$prop_type = $props_schema[ $prop_name ];
-
-				if ( $this->is_atomic_property_changed( $prop_value, $prop_type ) ) {
-					// Determine tab and section based on property type
-					if ( 'classes' === $prop_name ) {
-						$this->increase_controls_count( $element_ref, 'style', 'classes', 1 );
-					} else {
-						$this->increase_controls_count( $element_ref, 'general', $prop_name, 1 );
-					}
-					++$changed_controls_count;
-				}
-			}
-		}
-
-		// Process styles controls (Style tab)
-		if ( isset( $element_data['styles'] ) ) {
-			$changed_controls_count += $this->add_atomic_style_controls( $element_data['styles'], $element_ref );
-		}
-
-		return $changed_controls_count;
-	}
-
-	/**
-	 * Add atomic widget style controls.
-	 *
-	 * Process atomic widget styles data and count changed style properties.
-	 *
-	 * @param array $styles_data
-	 * @param array &$element_ref
-	 *
-	 * @return int ($changed_controls_count).
-	 */
-	private function add_atomic_style_controls( $styles_data, &$element_ref ): int {
-		$changed_controls_count = 0;
-
-		foreach ( $styles_data as $style_id => $style_definition ) {
-			if ( ! isset( $style_definition['variants'] ) || ! is_array( $style_definition['variants'] ) ) {
-				continue;
-			}
-
-			foreach ( $style_definition['variants'] as $variant ) {
-				if ( ! isset( $variant['props'] ) || ! is_array( $variant['props'] ) ) {
-					continue;
-				}
-
-				foreach ( $variant['props'] as $prop_name => $prop_value ) {
-					// Add style property directly to style tab
-					$this->increase_controls_count( $element_ref, 'style', $prop_name, 1 );
-					++$changed_controls_count;
-				}
-			}
-		}
-
-		return $changed_controls_count;
-	}
-
-	/**
-	 * Get total controls count for atomic widgets.
-	 *
-	 * Calculate the total number of available controls including both settings and styles.
-	 *
-	 * @param array $element_data
-	 * @param Atomic_Element_Base|Atomic_Widget_Base $element_instance
-	 *
-	 * @return int
-	 */
-	private function get_atomic_total_controls_count( $element_data, $element_instance ): int {
-		$props_schema = $element_instance->get_props_schema();
-		$total_count = count( $props_schema );
-
-		// Add potential style properties count
-		// For atomic widgets, we estimate style controls based on common CSS properties
-		// This is a rough estimate since style controls are dynamic
-		$common_style_properties = [
-			'font-family', 'font-size', 'font-weight', 'color', 'background', 'background-color',
-			'margin', 'padding', 'border', 'border-radius', 'width', 'height', 'display',
-			'text-align', 'line-height', 'letter-spacing', 'text-decoration'
-		];
-
-		$total_count += count( $common_style_properties );
-
-		return $total_count;
-	}
-
-	/**
-	 * Check if atomic property value differs from default.
-	 *
-	 * @param mixed $prop_value
-	 * @param object $prop_type
-	 *
-	 * @return bool
-	 */
-	private function is_atomic_property_changed( $prop_value, $prop_type ) {
-		$value = ! empty( $prop_value['value'] ) ? $prop_value['value'] : $prop_value;
-		$default_value = $prop_type->get_default();
-
-		if ( empty( $value ) ) {
-			return false;
-		}
-
-		return $value !== $default_value;
-	}
-
-	/**
 	 * Add general controls.
 	 *
 	 * Extract general controls to element ref, return clean `$settings_control`.
@@ -668,9 +545,22 @@ class Module extends BaseModule {
 				$total_controls_count = 0;
 
 				if ( Atomic_Utils::is_atomic( $element_instance ) ) {
-					$changed_controls_count = $this->add_atomic_controls( $element, $element_instance, $element_ref );
-					// For atomic widgets, count both props schema and potential style properties
-					$total_controls_count = $this->get_atomic_total_controls_count( $element, $element_instance );
+					$counter = new Usage_Counter();
+					$result = $counter->count( $element );
+
+					if ( $result ) {
+						// Apply all changed controls to the element reference
+						foreach ( $result['controls'] as $tab => $sections ) {
+							foreach ( $sections as $section => $controls ) {
+								foreach ( $controls as $control_name => $control_value ) {
+									$this->increase_controls_count( $element_ref, $tab, $section, $control_name, 1 );
+								}
+							}
+						}
+
+						$changed_controls_count = $result['changed'];
+						$total_controls_count = $result['total'];
+					}
 				} else {
 					$element_controls = $element_instance->get_controls();
 					$changed_controls_count = $this->add_controls( $settings_controls, $element_controls, $element_ref );
@@ -705,11 +595,11 @@ class Module extends BaseModule {
 
 		if ( ! empty( $data ) ) {
 			try {
-				var_dump($document->get_elements_raw_data( $data ));die();
+//				var_dump($document->get_elements_raw_data( $data ));die();
 
 				$usage = $this->get_elements_usage( $document->get_elements_raw_data( $data ) );
 
-				var_dump($usage);
+//				var_dump($usage);
 
 				$document->update_meta( self::META_KEY, $usage );
 
@@ -801,3 +691,4 @@ class Module extends BaseModule {
 		add_action( 'admin_init', [ $this, 'add_system_info_report' ], 50 );
 	}
 }
+
