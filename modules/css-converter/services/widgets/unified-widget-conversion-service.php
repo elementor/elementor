@@ -15,6 +15,7 @@ class Unified_Widget_Conversion_Service {
 	private $unified_css_processor;
 	private $widget_creator;
 	private $use_zero_defaults;
+	private $css_parser;
 	public function __construct(
 		$html_parser,
 		$widget_mapper,
@@ -27,6 +28,12 @@ class Unified_Widget_Conversion_Service {
 		$this->unified_css_processor = $unified_css_processor;
 		$this->widget_creator = $widget_creator;
 		$this->use_zero_defaults = $use_zero_defaults;
+		$this->initialize_css_parser();
+	}
+
+	private function initialize_css_parser(): void {
+		require_once __DIR__ . '/../../parsers/css-parser.php';
+		$this->css_parser = new \Elementor\Modules\CssConverter\Parsers\CssParser();
 	}
 	public function convert_from_html( $html, $css_urls = [], $follow_imports = false, $options = [] ): array {
 		$this->use_zero_defaults = true;
@@ -110,21 +117,31 @@ class Unified_Widget_Conversion_Service {
 		}
 	}
 	private function extract_all_css( string $html, array $css_urls, bool $follow_imports, array &$elements ): string {
-		$inline_css = '';
+		$css_sources = [];
+
 		preg_match_all( '/<style[^>]*>(.*?)<\/style>/is', $html, $matches );
 		if ( ! empty( $matches[1] ) ) {
-			foreach ( $matches[1] as $css_content ) {
-				$inline_css .= $css_content . "\n";
+			foreach ( $matches[1] as $index => $css_content ) {
+				$css_sources[] = [
+					'type' => 'inline_style_tag',
+					'source' => 'inline-style-' . $index,
+					'content' => $css_content,
+				];
 			}
 		}
+
 		foreach ( $elements as &$element ) {
 			if ( isset( $element['attributes']['style'] ) ) {
 				$inline_style = $element['attributes']['style'];
 				$selector = '.' . ( $element['generated_class'] ?? 'element-' . uniqid() );
-				$inline_css .= $selector . ' { ' . $inline_style . ' }' . "\n";
+				$css_sources[] = [
+					'type' => 'inline_element_style',
+					'source' => $selector,
+					'content' => $selector . ' { ' . $inline_style . ' }',
+				];
 			}
 		}
-		$external_css = '';
+
 		foreach ( $css_urls as $css_url ) {
 			$response = wp_remote_get( $css_url, [
 				'timeout' => 30,
@@ -132,8 +149,13 @@ class Unified_Widget_Conversion_Service {
 			] );
 			if ( ! is_wp_error( $response ) ) {
 				$css_content = wp_remote_retrieve_body( $response );
-				$external_css .= $css_content . "\n";
-				if ( $follow_imports && strpos( $css_content, '@import' ) !== false ) {
+				$css_sources[] = [
+					'type' => 'external_file',
+					'source' => $css_url,
+					'content' => $css_content,
+				];
+
+				if ( $follow_imports && false !== strpos( $css_content, '@import' ) ) {
 					preg_match_all( '/@import\s+(?:url\()?["\']?([^"\')]+)["\']?\)?;/i', $css_content, $import_matches );
 					if ( ! empty( $import_matches[1] ) ) {
 						foreach ( $import_matches[1] as $import_url ) {
@@ -143,22 +165,188 @@ class Unified_Widget_Conversion_Service {
 								'sslverify' => false,
 							] );
 							if ( ! is_wp_error( $import_response ) ) {
-								$external_css .= wp_remote_retrieve_body( $import_response ) . "\n";
+								$import_css = wp_remote_retrieve_body( $import_response );
+								$css_sources[] = [
+									'type' => 'imported_file',
+									'source' => $absolute_import_url,
+									'content' => $import_css,
+								];
 							}
 						}
 					}
 				}
 			}
 		}
-		return $external_css . $inline_css;
+
+		return $this->parse_css_sources_safely( $css_sources );
 	}
+
+	private function parse_css_sources_safely( array $css_sources ): string {
+		$successful_css = '';
+		$failed_sources = [];
+		$successful_count = 0;
+		$failed_count = 0;
+
+		foreach ( $css_sources as $source ) {
+			$type = $source['type'];
+			$source_name = $source['source'];
+			$content = $source['content'];
+
+			if ( empty( trim( $content ) ) ) {
+				continue;
+			}
+
+			try {
+				$cleaned_css = $this->clean_css_for_parser( $content );
+
+				if ( null !== $this->css_parser ) {
+					$test_parse = $this->css_parser->parse( $cleaned_css );
+				}
+
+				$successful_css .= $cleaned_css . "\n";
+				++$successful_count;
+			} catch ( \Exception $e ) {
+				++$failed_count;
+				$failed_sources[] = [
+					'type' => $type,
+					'source' => $source_name,
+					'error' => $e->getMessage(),
+					'size' => strlen( $content ),
+				];
+			}
+		}
+
+		if ( ! empty( $failed_sources ) ) {
+			error_log( '⚠️ CSS PARSING: ' . $successful_count . ' sources succeeded, ' . $failed_count . ' failed' );
+			foreach ( $failed_sources as $failed ) {
+				error_log( '  ❌ Failed: ' . $failed['type'] . ' - ' . $failed['source'] . ' (' . $failed['size'] . ' bytes)' );
+				error_log( '     Error: ' . $failed['error'] );
+			}
+		} else {
+			error_log( '✅ CSS PARSING: All ' . $successful_count . ' sources parsed successfully' );
+		}
+
+		return $successful_css;
+	}
+
+	private function clean_css_for_parser( string $css ): string {
+		if ( empty( $css ) ) {
+			return $css;
+		}
+
+		$css = preg_replace( '/\/\*.*?\*\//s', '', $css );
+
+		$css = $this->replace_calc_expressions( $css );
+
+		$css = $this->add_newlines_to_minified_css( $css );
+
+		$css = $this->fix_broken_property_values( $css );
+
+		$lines = explode( "\n", $css );
+		$clean_lines = [];
+		$brace_count = 0;
+
+		foreach ( $lines as $line ) {
+			$line = trim( $line );
+
+			if ( empty( $line ) ) {
+				continue;
+			}
+
+			if ( false !== strpos( $line, 'calc' ) ) {
+				$line = preg_replace( '/calc\s*\([^)]*\)/', '100%', $line );
+				$line = preg_replace( '/calc\s*\([^)]*\)/', '100%', $line );
+			}
+
+			$brace_count += substr_count( $line, '{' );
+			$brace_count -= substr_count( $line, '}' );
+
+			$brace_pos = strpos( $line, '{' );
+			if ( false !== $brace_pos ) {
+				$property_part = substr( $line, $brace_pos );
+				$open_parens = substr_count( $property_part, '(' );
+				$close_parens = substr_count( $property_part, ')' );
+
+				if ( $open_parens !== $close_parens ) {
+					$brace_count -= substr_count( $line, '{' );
+					$brace_count += substr_count( $line, '}' );
+					continue;
+				}
+			}
+
+			$clean_lines[] = $line;
+		}
+
+		while ( 0 < $brace_count ) {
+			$clean_lines[] = '}';
+			--$brace_count;
+		}
+
+		return implode( "\n", $clean_lines );
+	}
+
+	private function replace_calc_expressions( string $css ): string {
+		for ( $i = 0; $i < 5; ++$i ) {
+			$css = preg_replace( '/var\s*\([^()]*\)/', '0', $css );
+			$css = preg_replace( '/env\s*\([^()]*\)/', '0', $css );
+			$css = preg_replace( '/min\s*\([^()]*\)/', '0', $css );
+			$css = preg_replace( '/max\s*\([^()]*\)/', '100%', $css );
+			$css = preg_replace( '/clamp\s*\([^()]*\)/', '50%', $css );
+		}
+
+		for ( $i = 0; $i < 5; ++$i ) {
+			$css = preg_replace( '/calc\s*\([^()]*\)/', '100%', $css );
+		}
+
+		$css = preg_replace( '/--[^:]+:\s*[^;]*calc[^;]*;/', '', $css );
+
+		$css = preg_replace( '/\*[a-zA-Z_-]+\s*:\s*[^;]+;/', '', $css );
+
+		$css = preg_replace( '/\{\s*\}/', '', $css );
+
+		$css = preg_replace( '/:\s*100%([^;}]+)/', ': 100%;', $css );
+
+		$css = preg_replace( '/\s+/', ' ', $css );
+
+		$css = str_replace( '%)}', '%; }', $css );
+		$css = str_replace( '%).',  '%; .', $css );
+		$css = str_replace( '%)#',  '%; #', $css );
+
+		return $css;
+	}
+
+	private function fix_broken_property_values( string $css ): string {
+		$css = str_replace( "\r\n", "\n", $css );
+		$css = str_replace( "\r", "\n", $css );
+
+		$css = preg_replace( '/:\s*([^;{}\n]+)\n+\s*;/', ': $1;', $css );
+
+		$css = preg_replace( '/:\s*([^;{}\n]+)\n+\s*([^;{}\n]+);/', ': $1 $2;', $css );
+
+		return $css;
+	}
+
+	private function add_newlines_to_minified_css( string $css ): string {
+		$css = str_replace( ';}', ";\n}\n", $css );
+
+		$css = preg_replace( '/\}([.#@a-zA-Z])/', "}\n$1", $css );
+
+		$css = preg_replace( '/\}(\})/', "$1\n", $css );
+
+		$css = preg_replace( '/([^}])\s*@media/', "$1\n@media", $css );
+
+		$css = preg_replace( '/([^}])\s*@font-face/', "$1\n@font-face", $css );
+
+		return $css;
+	}
+
 	private function resolve_relative_url( string $relative_url, string $base_url ): string {
-		if ( strpos( $relative_url, 'http' ) === 0 ) {
+		if ( 0 === strpos( $relative_url, 'http' ) ) {
 			return $relative_url;
 		}
-		$base_parts = parse_url( $base_url );
+		$base_parts = wp_parse_url( $base_url );
 		$base_path = isset( $base_parts['path'] ) ? dirname( $base_parts['path'] ) : '';
-		if ( strpos( $relative_url, '/' ) === 0 ) {
+		if ( 0 === strpos( $relative_url, '/' ) ) {
 			return $base_parts['scheme'] . '://' . $base_parts['host'] . $relative_url;
 		}
 		return $base_parts['scheme'] . '://' . $base_parts['host'] . $base_path . '/' . $relative_url;

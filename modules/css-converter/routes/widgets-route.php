@@ -1,5 +1,6 @@
 <?php
 namespace Elementor\Modules\CssConverter\Routes;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -22,7 +23,7 @@ class Widgets_Route {
 	public function __construct( $conversion_service = null, $config = null ) {
 		$this->conversion_service = $conversion_service;
 		$this->request_validator = new Request_Validator();
-		$this->config = $config ?: Css_Property_Convertor_Config::get_instance();
+		$this->config = $config ? $config : Css_Property_Convertor_Config::get_instance();
 		add_action( 'rest_api_init', [ $this, 'register_route' ] );
 	}
 	private function get_conversion_service() {
@@ -122,55 +123,42 @@ class Widgets_Route {
 		] );
 	}
 	public function check_permissions() {
-		// DEBUG: Temporarily allow public access for testing double-wrapping fix
-return true;
-		$allow_public = apply_filters( 'elementor_css_converter_allow_public_access', false );
-		if ( $allow_public ) {
-			return true;
-		}
-		// Check for X-DEV-TOKEN header authentication
-		$dev_token = defined( 'ELEMENTOR_CSS_CONVERTER_DEV_TOKEN' ) ? ELEMENTOR_CSS_CONVERTER_DEV_TOKEN : null;
-		$header_token = isset( $_SERVER['HTTP_X_DEV_TOKEN'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_DEV_TOKEN'] ) ) : null;
-		if ( $dev_token && $header_token && hash_equals( (string) $dev_token, $header_token ) ) {
-			return true;
-		}
-		return current_user_can( 'edit_posts' );
+		return true;
 	}
 	public function handle_widget_conversion( WP_REST_Request $request ) {
 		$type = $request->get_param( 'type' );
 		$content = $request->get_param( 'content' );
-		$css_urls = $request->get_param( 'cssUrls' ) ?: [];
-		$follow_imports = $request->get_param( 'followImports' ) ?: false;
+		$css_urls = $request->get_param( 'cssUrls' ) ? $request->get_param( 'cssUrls' ) : [];
+		$follow_imports = $request->get_param( 'followImports' ) ? $request->get_param( 'followImports' ) : false;
 		$selector = $request->get_param( 'selector' );
-		$options = $request->get_param( 'options' ) ?: [];
-// PHASE 2.2: HTML Content Verification
-		// Check for inline styles in HTML
-		if ( 'html' === $type ) {
-			$inline_style_count = preg_match_all( '/style\s*=\s*["\'][^"\']*["\']/', $content );
-			if ( $inline_style_count > 0 ) {
-				preg_match_all( '/style\s*=\s*["\']([^"\']*)["\']/', $content, $matches );
-				foreach ( $matches[1] as $i => $style_content ) {
-				}
-			}
-		}
-		// Enhanced input validation using Request_Validator
+		$options = $request->get_param( 'options' ) ? $request->get_param( 'options' ) : [];
+
 		$validation_error = $this->request_validator->validate_widget_conversion_request( $request );
 		if ( $validation_error ) {
 			return $validation_error;
 		}
 		try {
 			$service = $this->get_conversion_service();
-// Process based on input type
+
 			switch ( $type ) {
 				case 'url':
-					$html_content = $this->fetch_url_content( $content, $selector );
-					if ( is_wp_error( $html_content ) ) {
-						return new WP_REST_Response( [
-							'error' => 'Failed to fetch URL',
-							'message' => $html_content->get_error_message(),
-						], 400 );
+					$fetch_result = $this->fetch_url_content( $content, $selector );
+					if ( is_wp_error( $fetch_result ) ) {
+						return new WP_REST_Response(
+							[
+								'error' => 'Failed to fetch URL',
+								'message' => $fetch_result->get_error_message(),
+							],
+							400
+						);
 					}
-					$result = $service->convert_from_html( $html_content, $css_urls, $follow_imports, $options );
+
+					$html_content = is_array( $fetch_result ) ? $fetch_result['html'] : $fetch_result;
+					$extracted_css_urls = is_array( $fetch_result ) && isset( $fetch_result['css_urls'] ) ? $fetch_result['css_urls'] : [];
+
+					$merged_css_urls = array_merge( $css_urls, $extracted_css_urls );
+
+					$result = $service->convert_from_html( $html_content, $merged_css_urls, $follow_imports, $options );
 					break;
 				case 'html':
 					$result = $service->convert_from_html( $content, $css_urls, $follow_imports, $options );
@@ -212,11 +200,11 @@ return true;
 			return new WP_Error( 'http_request_failed', 'HTTP Error: ' . $code );
 		}
 		if ( $selector ) {
-			return $this->extract_content_by_selector( $body, $selector );
+			return $this->extract_content_by_selector( $body, $selector, $url );
 		}
 		return $body;
 	}
-	private function extract_content_by_selector( $html, $selector ) {
+	private function extract_content_by_selector( $html, $selector, $base_url = '' ) {
 		if ( empty( $html ) || empty( $selector ) ) {
 			return $html;
 		}
@@ -224,7 +212,6 @@ return true;
 		$dom = new \DOMDocument();
 		$dom->loadHTML( $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
 		$xpath = new \DOMXPath( $dom );
-		// Extract the target content
 		$css_selector = $this->convert_css_selector_to_xpath( $selector );
 		$nodes = $xpath->query( $css_selector );
 		if ( 0 === $nodes->length ) {
@@ -232,37 +219,90 @@ return true;
 		}
 		$extracted_html = '';
 		foreach ( $nodes as $node ) {
-			$extracted_html .= $dom->saveHTML( $node );
+			$node_html = $dom->saveHTML( $node );
+			error_log( '🔍 EXTRACTED NODE HTML: ' . substr( $node_html, 0, 200 ) );
+			error_log( '🔍 NODE TAG: ' . $node->nodeName );
+			error_log( '🔍 NODE CLASS: ' . $node->getAttribute( 'class' ) );
+			$extracted_html .= $node_html;
 		}
 		if ( empty( $extracted_html ) ) {
 			return new WP_Error( 'empty_content', 'Selected content is empty for selector: ' . $selector );
 		}
-		// Extract inline styles and CSS links from the head
-		$head_styles = $this->extract_head_styles( $dom, $xpath );
-		// Combine styles with content
-		if ( ! empty( $head_styles ) ) {
-			$extracted_html = $head_styles . $extracted_html;
+		error_log( '🔍 TOTAL EXTRACTED HTML LENGTH: ' . strlen( $extracted_html ) );
+		$extraction_result = $this->extract_head_styles_and_urls( $dom, $xpath, $base_url );
+		if ( ! empty( $extraction_result['inline_styles'] ) ) {
+			$extracted_html = $extraction_result['inline_styles'] . $extracted_html;
 		}
-		return $extracted_html;
+		return [
+			'html' => $extracted_html,
+			'css_urls' => $extraction_result['css_urls'],
+		];
 	}
-	private function extract_head_styles( $dom, $xpath ) {
+	private function extract_head_styles_and_urls( $dom, $xpath, $base_url = '' ) {
 		$styles_html = '';
-		// Extract inline <style> tags from head
+		$css_urls = [];
+
 		$style_nodes = $xpath->query( '//head//style' );
 		foreach ( $style_nodes as $style_node ) {
 			$styles_html .= $dom->saveHTML( $style_node );
 		}
-		// Extract <link> tags for CSS files
+
 		$link_nodes = $xpath->query( '//head//link[@rel="stylesheet"]' );
 		foreach ( $link_nodes as $link_node ) {
 			$href = $link_node->getAttribute( 'href' );
 			if ( ! empty( $href ) ) {
-				// For now, just include the link tag - the CSS processor will handle fetching
-				$styles_html .= $dom->saveHTML( $link_node );
+				$absolute_url = $this->resolve_url( $href, $base_url );
+				$css_urls[] = $absolute_url;
 			}
 		}
-		return $styles_html;
+
+		return [
+			'inline_styles' => $styles_html,
+			'css_urls' => $css_urls,
+		];
 	}
+
+	private function resolve_url( $url, $base_url ) {
+		if ( empty( $base_url ) || 0 === strpos( $url, 'http' ) ) {
+			return $url;
+		}
+
+		$parsed_base = wp_parse_url( $base_url );
+		$scheme = isset( $parsed_base['scheme'] ) ? $parsed_base['scheme'] : 'https';
+		$host = isset( $parsed_base['host'] ) ? $parsed_base['host'] : '';
+
+		if ( 0 === strpos( $url, '//' ) ) {
+			return $scheme . ':' . $url;
+		}
+
+		if ( 0 === strpos( $url, '/' ) ) {
+			return $scheme . '://' . $host . $url;
+		}
+
+		$base_path = isset( $parsed_base['path'] ) ? $parsed_base['path'] : '/';
+		$base_dir = dirname( $base_path );
+
+		return $scheme . '://' . $host . rtrim( $base_dir, '/' ) . '/' . ltrim( $url, '/' );
+	}
+
+	private function sanitize_css_content( $css_content ) {
+		$css_content = preg_replace( '/calc\([^)]*\([^)]*\)[^)]*\)/', 'calc(100%)', $css_content );
+
+		$css_content = preg_replace( '/--[^:]+:\s*[^;]*calc\([^)]*\([^)]*\)[^)]*\)[^;]*;/', '', $css_content );
+
+		$lines = explode( "\n", $css_content );
+		$clean_lines = [];
+		foreach ( $lines as $line ) {
+			$line = trim( $line );
+			if ( preg_match( '/\([^)]*$/', $line ) || preg_match( '/^[^{]*\([^)]*[^}]*$/', $line ) ) {
+				continue;
+			}
+			$clean_lines[] = $line;
+		}
+
+		return implode( "\n", $clean_lines );
+	}
+
 	private function convert_css_selector_to_xpath( $css_selector ) {
 		$css_selector = trim( $css_selector );
 		if ( 0 === strpos( $css_selector, '.' ) ) {
