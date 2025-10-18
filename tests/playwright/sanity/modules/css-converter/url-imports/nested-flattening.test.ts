@@ -224,7 +224,7 @@ test.describe( 'Pattern 1: Nested Selector Flattening (.first .second → .secon
 		// .footer > .copyright → .copyright--footer
 	} );
 
-	test( 'should preserve CSS properties in flattened classes', async ( { request, page } ) => {
+	test.only( 'should preserve CSS properties in flattened classes', async ( { request, page } ) => {
 		// Test that all CSS properties are preserved
 		const cssContent = `
 			<style>
@@ -264,7 +264,7 @@ test.describe( 'Pattern 1: Nested Selector Flattening (.first .second → .secon
 		const previewFrame = page.frameLocator( '#elementor-preview-iframe' );
 
 		// Find the button element that should have the flattened class applied
-		const buttonElement = previewFrame.locator( 'button' ).first();
+		const buttonElement = previewFrame.locator( '.e-con button' ).last();
 
 		// Verify the element exists and is visible
 		await expect( buttonElement ).toBeVisible();

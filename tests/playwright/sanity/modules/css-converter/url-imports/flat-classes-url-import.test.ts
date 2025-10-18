@@ -66,13 +66,15 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const elements = elementorFrame.locator( '.elementor-element' );
-			await expect( elements.first() ).toBeVisible( { timeout: 10000 } );
+			// Find the actual widget that received the ID selector styles
+			// Based on debug logs, this should be the e-div-block widget with element-header ID
+			const headerWidget = elementorFrame.locator( '[data-element_type="e-div-block"]' ).first();
+			await expect( headerWidget ).toBeVisible( { timeout: 10000 } );
 
-			const header = elements.first();
-			await expect( header ).toHaveCSS( 'background-color', 'rgb(44, 62, 80)' );
-			await expect( header ).toHaveCSS( 'padding', '40px 20px' );
-			await expect( header ).toHaveCSS( 'text-align', 'center' );
+			// Verify ID selector styles are applied to the actual widget
+			await expect( headerWidget ).toHaveCSS( 'background-color', 'rgb(44, 62, 80)' );
+			await expect( headerWidget ).toHaveCSS( 'padding', '40px 20px' );
+			await expect( headerWidget ).toHaveCSS( 'text-align', 'center' );
 		} );
 
 		await test.step( 'Verify inline styles are applied to widgets', async () => {
@@ -245,11 +247,11 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			// Header has box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) from external-styles-2.css
-			const header = elementorFrame.locator( '.elementor-element' ).first();
+			// Find the actual widget that received the ID selector styles
+			const headerWidget = elementorFrame.locator( '[data-element_type="e-div-block"]' ).first();
 
 			// Check actual box-shadow format first
-			const actualBoxShadow = await header.evaluate( ( el ) => getComputedStyle( el ).boxShadow );
+			const actualBoxShadow = await headerWidget.evaluate( ( el ) => getComputedStyle( el ).boxShadow );
 
 			// THIS SHOULD PASS if box-shadow mapper is working
 			// Note: Different browsers may format box-shadow differently
@@ -265,7 +267,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 				// Header box-shadow is applied correctly
 			} else {
 				// Try the most common format
-				await expect( header ).toHaveCSS( 'box-shadow', actualBoxShadow.includes( '0px 2px 8px 0px' ) ? 'rgba(0, 0, 0, 0.1) 0px 2px 8px 0px' : 'rgba(0, 0, 0, 0.1) 2px 8px 0px 0px' );
+				await expect( headerWidget ).toHaveCSS( 'box-shadow', actualBoxShadow.includes( '0px 2px 8px 0px' ) ? 'rgba(0, 0, 0, 0.1) 0px 2px 8px 0px' : 'rgba(0, 0, 0, 0.1) 2px 8px 0px 0px' );
 			}
 		} );
 
