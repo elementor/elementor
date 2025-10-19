@@ -122,7 +122,11 @@ export const StylesInheritanceInfotip = ( {
 										item.displayLabel
 									) }
 								>
-									<Box display="flex" gap={ 0.5 } sx={ { flexWrap: 'wrap', width: '100%' } }>
+									<Box
+										display="flex"
+										gap={ 0.5 }
+										sx={ { flexWrap: 'wrap', width: '100%', alignItems: 'flex-start' } }
+									>
 										<BreakpointIcon breakpoint={ item.breakpoint } />
 										<LabelChip displayLabel={ item.displayLabel } provider={ item.provider } />
 										<ValueComponent index={ index } value={ item.value } />

@@ -33,6 +33,7 @@ export const AxisRow = ( { label, bind, startIcon, anchorRef, units, variant = '
 							units={ units }
 							variant={ variant }
 							min={ -Number.MAX_SAFE_INTEGER }
+							isRepeaterControl
 							id={ safeId }
 						/>
 					</PropKeyProvider>
