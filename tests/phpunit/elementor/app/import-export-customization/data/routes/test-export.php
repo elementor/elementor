@@ -152,15 +152,18 @@ class Test_Export extends Elementor_Test_Base {
 		$this->init_rest_api();
 		$this->act_as_admin();
 
+		$temp_file = tempnam( sys_get_temp_dir(), 'test_export' );
+		file_put_contents( $temp_file, '' );
+		chmod( $temp_file, 0000 );
+
 		$mock_module = $this->getMockBuilder( ImportExportCustomizationModule::class )
 			->onlyMethods( ['export_kit'] )
 			->getMock();
 
-		// Return a non-existent file
 		$mock_module->expects( $this->once() )
 			->method( 'export_kit' )
 			->willReturn( [
-				'file_name' => '/non/existent/file.zip',
+				'file_name' => $temp_file,
 				'manifest' => []
 			] );
 
@@ -179,8 +182,12 @@ class Test_Export extends Elementor_Test_Base {
 		$this->assertEquals( 500, $response->get_status() );
 		$data = $response->get_data();
 
-		$this->assertEquals( 'export_error', $data['data']['code'] );
-		$this->assertEquals( 'Could not read the exported file.', $data['data']['message'] );
+		$this->assertEquals( 'invalid-zip-file', $data['data']['code'] );
+		$this->assertEquals( 'export_error', $data['data']['message'] );
+
+		// Cleanup
+		chmod( $temp_file, 0644 );
+		unlink( $temp_file );
 	}
 
 	public function test_export_error_with_exception() {
@@ -194,7 +201,7 @@ class Test_Export extends Elementor_Test_Base {
 
 		$mock_module->expects( $this->once() )
 			->method( 'export_kit' )
-			->willThrowException( new \Exception( 'Export failed due to invalid data' ) );
+			->willThrowException( new \Exception( 'cloud-upload-failed' ) );
 
 		Plugin::$instance->app->add_component( 'import-export-customization', $mock_module );
 
@@ -211,8 +218,8 @@ class Test_Export extends Elementor_Test_Base {
 		$this->assertEquals( 500, $response->get_status() );
 		$data = $response->get_data();
 
-		$this->assertEquals( 'export_error', $data['data']['code'] );
-		$this->assertEquals( 'Export failed due to invalid data', $data['data']['message'] );
+		$this->assertEquals( 'cloud-upload-failed', $data['data']['code'] );
+		$this->assertEquals( 'export_error', $data['data']['message'] );
 	}
 
 	private function send_export_request( $params = [] ) {

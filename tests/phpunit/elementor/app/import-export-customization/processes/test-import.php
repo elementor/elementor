@@ -418,7 +418,7 @@ class Test_Import extends Elementor_Test_Base {
 
 		$expected_runners = [
 			'wp-content' => [
-				'custom_post_types' => [ 'tests' ],
+				'custom_post_types' => [ 'tests', 'post' ],
 			],
 		];
 		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
@@ -434,7 +434,11 @@ class Test_Import extends Elementor_Test_Base {
 
 		$import_settings = [
 			'include' => [ 'content' ],
-			'selectedCustomPostTypes' => [ 'tests' ],
+			'customization' => [
+				'content' => [
+					'customPostTypes' => [ 'post', 'tests' ],
+				],
+			],
 		];
 
 		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
@@ -484,7 +488,7 @@ class Test_Import extends Elementor_Test_Base {
 		$manifest = $import->get_manifest();
 		$expected_settings_include = [ 'templates', 'plugins', 'content', 'settings' ];
 		$expected_settings_referrer = 'local';
-		$expected_settings_selected_custom_post_types = [ 'tests', 'sectests' ];
+		$expected_settings_selected_custom_post_types = [ 'tests', 'sectests', 'post' ];
 		$expected_settings_selected_override_conditions = [];
 		$expected_settings_selected_plugins = $manifest['plugins'];
 
@@ -725,7 +729,7 @@ class Test_Import extends Elementor_Test_Base {
 		foreach ( $array_with_extra_keys as $key => $value ) {
 			if ( ! isset( $array[ $key ] ) ) {
 				unset( $array_with_extra_keys[ $key ] );
-			} else if ( is_array( $value ) ) {
+			} elseif ( is_array( $value ) ) {
 				$array_with_extra_keys[ $key ] = $this->normalize_array( $array[ $key ], $value );
 			}
 		}

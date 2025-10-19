@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Modules\AtomicWidgets\Opt_In;
 use Elementor\Plugin;
 use Elementor\Utils;
+use Elementor\Core\Utils\Api\Parse_Result;
 
 class Style_Parser {
 	const VALID_TYPES = [
@@ -215,7 +216,7 @@ class Style_Parser {
 		}
 
 		$custom_css = Utils::decode_string( $variant['custom_css']['raw'] );
-		$custom_css = sanitize_text_field( $custom_css );
+		$custom_css = sanitize_textarea_field( $custom_css );
 		$custom_css = [ 'raw' => Utils::encode_string( $custom_css ) ];
 
 		return empty( $custom_css['raw'] ) ? null : $custom_css;

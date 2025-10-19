@@ -30,6 +30,7 @@ export const ColorField = ( { value, onChange, onValidationChange }: ColorFieldP
 
 	return (
 		<UnstableColorField
+			id="color-variable-field"
 			size="tiny"
 			fullWidth
 			value={ color }
@@ -40,6 +41,14 @@ export const ColorField = ( { value, onChange, onValidationChange }: ColorFieldP
 					anchorEl: anchorRef,
 					anchorOrigin: { vertical: 'top', horizontal: 'right' },
 					transformOrigin: { vertical: 'top', horizontal: -10 },
+					slotProps: {
+						colorIndicator: {
+							size: 'inherit',
+							sx: {
+								borderRadius: 0.5,
+							},
+						},
+					},
 				},
 			} }
 		/>

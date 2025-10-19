@@ -44,6 +44,7 @@ jobs:
           VERSION_WITH_TAG="${{ steps.get-version.outputs.current_version }}-${{ github.run_number }}"
           echo "Setting version to: $VERSION_WITH_TAG"
           node scripts/version-manager/index.js set "${{ steps.get-version.outputs.current_version }}" --tag "${{ github.run_number }}"
+          echo "VERSION_WITH_TAG=$VERSION_WITH_TAG" >> $GITHUB_OUTPUT
 
       - name: Build Packages
         working-directory: packages
@@ -59,8 +60,7 @@ jobs:
 
       - name: Create Git Tag
         run: |
-          VERSION_WITH_TAG="${{ steps.get-version.outputs.current_version }}-${{ steps.build-tag.outputs.build_number }}"
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
-          git tag -a "v$VERSION_WITH_TAG" -m "Release $VERSION_WITH_TAG"
-          git push origin "v$VERSION_WITH_TAG"
+          git tag -a "v${{ steps.build-tag.outputs.VERSION_WITH_TAG }}" -m "Release ${{ steps.build-tag.outputs.VERSION_WITH_TAG }}"
+          git push origin "v${{ steps.build-tag.outputs.VERSION_WITH_TAG }}"

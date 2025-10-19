@@ -28,7 +28,7 @@ export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedV
 	const [ currentView, setCurrentView ] = useState< View >( VIEW_LIST );
 	const [ editId, setEditId ] = useState< string >( '' );
 	const { open } = usePanelActions();
-	const onSettingsAvailable = isExperimentActive( 'e_variables_settings' )
+	const onSettingsAvailable = isExperimentActive( 'e_variables_manager' )
 		? () => {
 				open();
 		  }
@@ -98,8 +98,8 @@ function RenderView( props: ViewProps ): React.ReactNode {
 
 	if ( userPermissions.canManageSettings() && props.onSettings ) {
 		handlers.onSettings = () => {
-			props.onSettings?.();
 			props.closePopover();
+			props.onSettings?.();
 		};
 	}
 

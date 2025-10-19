@@ -18,6 +18,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Api {
 
 	/**
+	 * Elementor library option key.
+	 */
+	const LIBRARY_OPTION_KEY = 'elementor_remote_info_library';
+
+	/**
 	 * Elementor feed option key.
 	 */
 	const FEED_OPTION_KEY = 'elementor_remote_info_feed_data';
@@ -219,7 +224,22 @@ class Api {
 
 		$library_data = json_decode( wp_remote_retrieve_body( $response ), true );
 
-		return empty( $library_data ) ? [] : $library_data;
+		/**
+		 * Filters the library data to allow 3rd party extending the response data.
+		 *
+		 * @since 3.32.2
+		 * @param-out array $library_data an array of templates data.
+		 */
+		$library_data = apply_filters( 'elementor/remote/library/data', $library_data );
+
+		if ( empty( $library_data ) || ! is_array( $library_data ) ) {
+			return [];
+		}
+
+		// the following update & get are a temporary measure, to allow 3rd party plugins inject more templates:
+		update_option( self::LIBRARY_OPTION_KEY, $library_data, 'no' );
+
+		return get_option( self::LIBRARY_OPTION_KEY, $library_data );
 	}
 
 	/**

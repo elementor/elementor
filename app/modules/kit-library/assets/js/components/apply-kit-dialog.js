@@ -1,15 +1,20 @@
 import { useCallback } from 'react';
 import { useNavigate } from '@reach/router';
 import { Dialog } from '@elementor/app-ui';
+import { useTracking } from '../context/tracking-context';
 
 export default function ApplyKitDialog( props ) {
 	const navigate = useNavigate();
+	const tracking = useTracking();
 
 	const startImportProcess = useCallback( ( applyAll = false ) => {
 		let url = '';
 
 		if ( elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ] ) {
 			url = `import-customization?referrer=kit-library&id=${ props.id }&file_url=${ encodeURIComponent( props.downloadLink ) }`;
+			if ( applyAll ) {
+				url += '&action_type=apply-all';
+			}
 		} else {
 			url = '/import/process' +
 				`?id=${ props.id }` +
@@ -21,8 +26,8 @@ export default function ApplyKitDialog( props ) {
 			}
 		}
 
-		navigate( url );
-	}, [ props.downloadLink, props.nonce ] );
+		tracking.trackKitdemoApplyAllOrCustomize( applyAll, () => navigate( url ) );
+	}, [ props.downloadLink, props.nonce, props.id, tracking, navigate ] );
 
 	return (
 		<Dialog

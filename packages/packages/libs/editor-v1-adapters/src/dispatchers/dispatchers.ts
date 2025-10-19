@@ -19,7 +19,7 @@ export async function runCommand( command: string, args?: object, { internal = f
 	return Promise.resolve( result );
 }
 
-export function runCommandSync( command: string, args?: object, { internal = false }: RunCommandOptions = {} ) {
+export function runCommandSync< T >( command: string, args?: object, { internal = false }: RunCommandOptions = {} ) {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
 	const run = internal ? extendedWindow.$e?.internal : extendedWindow.$e?.run;
@@ -30,7 +30,7 @@ export function runCommandSync( command: string, args?: object, { internal = fal
 		throw new Error( `\`${ runnerName }()\` is not available` );
 	}
 
-	return run( command, args );
+	return run( command, args ) as T;
 }
 
 export function openRoute( route: string ) {

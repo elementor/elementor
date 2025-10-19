@@ -36,7 +36,7 @@ class Assets_Translation_Loader {
 	 *
 	 * @see https://developer.wordpress.com/2022/01/06/wordpress-plugin-i18n-webpack-and-composer/
 	 *
-	 * @param array $handles
+	 * @param array         $handles
 	 * @param callable|null $replace_callback
 	 */
 	private static function replace_translation_path( array $handles, $replace_callback = null ) {

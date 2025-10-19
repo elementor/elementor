@@ -10,7 +10,6 @@ require $composer_autoloader_file;
 
 
 use Elementor\Autoloader;
-use Elementor\Core\Editor\Editor;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
@@ -20,10 +19,10 @@ if ( getenv( 'WP_PHPUNIT__DIR' ) ) {
 }
 
 define( 'ELEMENTOR_TESTS', true );
-define ( 'ELEMENTOR_DEBUG', true );
+define( 'ELEMENTOR_DEBUG', true );
 
 /**
- * change PLUGIN_FILE env in phpunit.xml
+ * Change PLUGIN_FILE env in phpunit.xml
  */
 define( 'PLUGIN_FILE', getenv( 'PLUGIN_FILE' ) );
 define( 'PLUGIN_FOLDER', basename( dirname( __DIR__ ) ) );
@@ -32,8 +31,8 @@ define( 'PLUGIN_PATH', PLUGIN_FOLDER . '/' . PLUGIN_FILE );
 // Activates this plugin in WordPress so it can be tested.
 $GLOBALS['wp_tests_options'] = [
 	'active_plugins' => [ PLUGIN_PATH ],
-	'template' => 'twentytwentyone',
-	'stylesheet' => 'twentytwentyone',
+	'template'       => 'twentytwentyone',
+	'stylesheet'     => 'twentytwentyone',
 ];
 
 copy_language_files( $_tests_dir );
@@ -52,7 +51,6 @@ tests_add_filter( 'shutdown', 'drop_tables', 999999 );
 require $_tests_dir . '/includes/bootstrap.php';
 require __DIR__ . '/phpunit/trait-test-upgrades.php';
 require __DIR__ . '/phpunit/trait-responsive-control-testing.php';
-require __DIR__ . '/phpunit/elementor/includes/container/traits/trait-test-container.php';
 
 require_once dirname( __DIR__ ) . '/includes/autoloader.php';
 
@@ -79,9 +77,7 @@ add_action( 'elementor/experiments/feature-registered', function ( Experiments_M
 }, 10, 2 );
 
 // Make sure the main class is running
-$instance = \Elementor\Plugin::instance();
-
-$instance->initialize_container();
+\Elementor\Plugin::instance();
 
 // Run fake actions
 do_action( 'init' );

@@ -22,6 +22,10 @@
 			border: 1px solid $platform-mid-gray;
 			margin-inline-end: 8px;
 			flex-shrink: 0;
+
+			&::after {
+				content: attr(data-item-count);
+			}
 		}
 
 		&:not(:last-child) {

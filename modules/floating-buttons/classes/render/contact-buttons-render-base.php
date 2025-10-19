@@ -163,7 +163,7 @@ abstract class Contact_Buttons_Render_Base {
 					] );
 					?>
 					<img <?php echo $this->widget->get_render_attribute_string( 'profile-image-src' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
-				<?php }; ?>
+				<?php } ?>
 			</div>
 
 			<div class="e-contact-buttons__top-bar-details">

@@ -113,7 +113,7 @@ jobs:
 
       - name: Send Slack notification
         uses: slackapi/slack-github-action@v2.0.0
-        if: failure()
+        if: ${{ failure() && steps.run-performance-check.outputs.v3-performance-median-score > 0 && steps.run-performance-check.outputs.mixed-performance-median-score > 0 }}
         env:
           RUN_ID: ${{ github.run_id }}
           ARTIFACT_ID: ${{ steps.upload-reports.outputs.artifact-id }}

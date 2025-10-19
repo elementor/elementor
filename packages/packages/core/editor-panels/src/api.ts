@@ -1,5 +1,9 @@
 import { type ComponentType } from 'react';
-import { __privateUseRouteStatus as useRouteStatus, type UseRouteStatusOptions } from '@elementor/editor-v1-adapters';
+import {
+	__privateRunCommand as runCommand,
+	__privateUseRouteStatus as useRouteStatus,
+	type UseRouteStatusOptions,
+} from '@elementor/editor-v1-adapters';
 import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 
 import { injectIntoPanels } from './location';
@@ -9,6 +13,7 @@ import { V2_PANEL } from './sync';
 export type PanelDeclaration< TOnOpenReturn = unknown > = {
 	id: string;
 	component: ComponentType;
+	isOpenPreviousElement?: boolean;
 } & UseActionsOptions< TOnOpenReturn > &
 	UseRouteStatusOptions;
 
@@ -19,16 +24,22 @@ export function createPanel< TOnOpenReturn >( {
 	onClose,
 	allowedEditModes,
 	blockOnKitRoutes,
+	isOpenPreviousElement = false,
 }: PanelDeclaration< TOnOpenReturn > ) {
 	const usePanelStatus = createUseStatus( id, {
 		allowedEditModes,
 		blockOnKitRoutes,
 	} );
 
-	const usePanelActions = createUseActions( id, usePanelStatus, {
-		onOpen,
-		onClose,
-	} );
+	const usePanelActions = createUseActions(
+		id,
+		usePanelStatus,
+		{
+			onOpen,
+			onClose,
+		},
+		isOpenPreviousElement
+	);
 
 	return {
 		panel: {
@@ -72,9 +83,11 @@ type UseActionsOptions< TOnOpenReturn > = {
 function createUseActions< TOnOpenReturn >(
 	id: PanelDeclaration[ 'id' ],
 	useStatus: UseStatus,
-	options: UseActionsOptions< TOnOpenReturn > = {}
+	options: UseActionsOptions< TOnOpenReturn > = {},
+	isOpenPreviousElement?: boolean
 ) {
 	let stateSnapshot: TOnOpenReturn | null = null;
+	let previousSelectedElement: string | null = null;
 
 	return () => {
 		const dispatch = useDispatch();
@@ -84,6 +97,10 @@ function createUseActions< TOnOpenReturn >(
 			open: async () => {
 				if ( isBlocked ) {
 					return;
+				}
+				if ( isOpenPreviousElement ) {
+					previousSelectedElement =
+						window.elementor?.selection?.getElements?.()[ 0 ]?.model.get( 'id' ) ?? null;
 				}
 
 				dispatch( slice.actions.open( id ) );
@@ -98,6 +115,14 @@ function createUseActions< TOnOpenReturn >(
 				dispatch( slice.actions.close( id ) );
 
 				options.onClose?.( stateSnapshot as TOnOpenReturn );
+
+				if ( previousSelectedElement ) {
+					try {
+						const container = window.elementor?.getContainer?.( previousSelectedElement );
+						runCommand( 'document/elements/select', { container } );
+					} catch {}
+					previousSelectedElement = null;
+				}
 			},
 		};
 	};

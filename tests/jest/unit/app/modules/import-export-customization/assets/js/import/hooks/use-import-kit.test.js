@@ -130,7 +130,7 @@ describe( 'useImportKit Hook', () => {
 		// Arrange
 		const importedData = { session: 'abc', runners: [ 'plugin1', 'plugin2' ] };
 		const includes = [ 'content' ];
-		const data = { importedData, includes };
+		const data = { importedData, includes, uploadedData: { session: 'abc' } };
 		setupContext( {
 			isProcessing: true,
 			data,
@@ -140,6 +140,12 @@ describe( 'useImportKit Hook', () => {
 			includes,
 			isProcessing: true,
 		} );
+
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			json: jest.fn().mockResolvedValue( { data: { imported_data: importedData } } ),
+		} );
+
 		// First runner
 		mockFetch.mockResolvedValueOnce( {
 			ok: true,
@@ -175,6 +181,11 @@ describe( 'useImportKit Hook', () => {
 			includes,
 			isProcessing: true,
 		} );
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			json: jest.fn().mockResolvedValue( { data: { imported_data: importedData } } ),
+		} );
+
 		// First runner fails
 		mockFetch.mockRejectedValueOnce( new Error( 'Runner error' ) );
 		// Act

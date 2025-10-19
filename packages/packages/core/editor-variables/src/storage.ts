@@ -2,6 +2,7 @@ export type TVariable = {
 	type: string;
 	label: string;
 	value: string;
+	order?: number;
 	deleted?: boolean;
 	deleted_at?: string;
 };

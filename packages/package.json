@@ -22,8 +22,7 @@
     "version:validate": "node scripts/version-manager/index.js validate",
     "version:bump": "node scripts/version-manager/index.js bump",
     "version:set": "node scripts/version-manager/index.js set",
-    "release": "npm run build && node scripts/version-manager/index.js publish",
-    "docs": "typedoc --options ./typedoc/typedoc.config.js"
+    "release": "npm run build && node scripts/version-manager/index.js publish"
   },
   "workspaces": [
     "packages/core/*",
@@ -57,7 +56,8 @@
     "eslint-plugin-unicorn": "^56.0.1",
     "glob": "^11.0.3",
     "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
+    "jest-environment-jsdom": "~29.7.0",
+    "@jest/globals": "~29.7.0",
     "knip": "^5.54.1",
     "msw": "^2.6.8",
     "prettier": "npm:wp-prettier@^3.0.3",
@@ -66,7 +66,6 @@
     "semver": "^7.7.2",
     "tsup": "^8.3.5",
     "turbo": "^2.3.3",
-    "typedoc": "^0.27.4",
     "typescript": "^5.7.2"
   },
   "overrides": {

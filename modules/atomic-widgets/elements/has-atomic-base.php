@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements;
 
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
+use Elementor\Modules\AtomicWidgets\Base\Element_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
@@ -48,21 +49,18 @@ trait Has_Atomic_Base {
 				continue;
 			}
 
-			if ( ! ( $control instanceof Atomic_Control_Base ) ) {
-				Utils::safe_throw( 'Control must be an instance of `Atomic_Control_Base`.' );
-				continue;
-			}
+			if ( ( $control instanceof Atomic_Control_Base ) ) {
+				$prop_name = $control->get_bind();
 
-			$prop_name = $control->get_bind();
+				if ( ! $prop_name ) {
+					Utils::safe_throw( 'Control is missing a bound prop from the schema.' );
+					continue;
+				}
 
-			if ( ! $prop_name ) {
-				Utils::safe_throw( 'Control is missing a bound prop from the schema.' );
-				continue;
-			}
-
-			if ( ! array_key_exists( $prop_name, $schema ) ) {
-				Utils::safe_throw( "Prop `{$prop_name}` is not defined in the schema of `{$this->get_name()}`." );
-				continue;
+				if ( ! array_key_exists( $prop_name, $schema ) ) {
+					Utils::safe_throw( "Prop `{$prop_name}` is not defined in the schema of `{$this->get_name()}`." );
+					continue;
+				}
 			}
 
 			$valid_controls[] = $control;

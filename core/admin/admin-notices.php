@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin_Notices extends Module {
 
 	const DEFAULT_EXCLUDED_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
+	const LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID = 'local_google_fonts_disabled';
 
 	private $plain_notices = [
 		'api_notice',
@@ -32,6 +33,7 @@ class Admin_Notices extends Module {
 		'site_mailer_promotion',
 		'plugin_image_optimization',
 		'ally_pages_promotion',
+		self::LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID,
 	];
 
 	private $elementor_pages_count = null;
@@ -391,8 +393,8 @@ class Admin_Notices extends Module {
 
 		$experiments = Plugin::$instance->experiments;
 		$is_all_performance_features_active = (
-			$experiments->is_feature_active( 'e_element_cache' ) &&
-			$experiments->is_feature_active( 'e_font_icon_svg' )
+			$experiments->is_feature_active( 'e_font_icon_svg' ) &&
+			$experiments->is_feature_active( 'e_optimized_markup' )
 		);
 
 		if ( $is_all_performance_features_active ) {
@@ -502,6 +504,46 @@ class Admin_Notices extends Module {
 			'button_secondary' => [
 				'text' => esc_html__( 'Learn more', 'elementor' ),
 				'url' => 'https://go.elementor.com/Formslearnmore',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
+
+		return true;
+	}
+
+	private function notice_local_google_fonts_disabled() {
+
+		if ( ! $this->is_elementor_page() && ! $this->is_elementor_admin_screen() ) {
+			return false;
+		}
+
+		if ( User::is_user_notice_viewed( self::LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID ) ) {
+			return false;
+		}
+
+		$is_local_gf_enabled = (bool) get_option( 'elementor_local_google_fonts', '0' );
+
+		if ( $is_local_gf_enabled ) {
+			return false;
+		}
+
+		$options = [
+			'title' => esc_html__( 'Important: Local Google Fonts Settings in Elementor', 'elementor' ),
+			'description' => esc_html__( 'Please note: The "Load Google Fonts Locally" feature has been disabled by default on all websites. To turn it back on, go to Elementor → Settings → Performance → Enable Load Google Fonts Locally.', 'elementor' ),
+			'id' => self::LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID,
+			'type' => '',
+			'button' => [
+				'text' => esc_html__( 'Take me there', 'elementor' ),
+				'url' => '../wp-admin/admin.php?page=elementor-settings#tab-performance',
+				'new_tab' => false,
+				'type' => 'cta',
+			],
+			'button_secondary' => [
+				'text' => esc_html__( 'Learn more', 'elementor' ),
+				'url' => 'https://go.elementor.com/wp-dash-google-fonts-locally-notice/',
 				'new_tab' => true,
 				'type' => 'cta',
 			],
@@ -872,7 +914,7 @@ class Admin_Notices extends Module {
 		set_transient( sanitize_key( $_GET['plg_campaign_name'] ), $campaign_data, 30 * DAY_IN_SECONDS );
 	}
 
-	private static function add_plg_campaign_data( $url, $campaign_data ) {
+	public static function add_plg_campaign_data( $url, $campaign_data ) {
 
 		foreach ( [ 'name', 'campaign' ] as $key ) {
 			if ( empty( $campaign_data[ $key ] ) ) {

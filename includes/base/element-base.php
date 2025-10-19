@@ -1580,7 +1580,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @param array      $data Optional. Element data. Default is an empty array.
 	 * @param array|null $args Optional. Element default arguments. Default is null.
 	 **/
-	public function __construct( array $data = [], array $args = null ) {
+	public function __construct( array $data = [], ?array $args = null ) {
 		if ( $data ) {
 			$this->is_type_instance = false;
 		} elseif ( $args ) {

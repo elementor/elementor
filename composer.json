@@ -23,18 +23,17 @@
 		"thor-juhasz/phpunit-coverage-check": "^0.3.0",
 		"spatie/phpunit-snapshot-assertions": "^4.2",
 		"humbug/php-scoper": "0.17.5",
-		"php-di/php-di": "6.4.0",
 		"twig/twig": "3.11.3"
 	},
 	"scripts": {
 		"lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",
+		"format": "vendor/bin/phpcbf --extensions=php --standard=./ruleset.xml",
 		"test": "phpunit",
 		"test:install": "bash ./bin/install-wp-tests-local.sh",
 		"coverage": "composer run coverage:test && composer run coverage:check",
 		"coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
 		"coverage:check": "phpunit-coverage-check -t 64 coverage-report/clover.xml",
 		"php-scoper": [
-			"php-scoper add-prefix --output-dir=./vendor_prefixed/dependency-injection --config=php-scoper/dependency-injection-inc.php --force",
 			"php-scoper add-prefix --output-dir=./vendor_prefixed/twig --config=php-scoper/twig-inc.php --force"
 		],
 		"post-install-cmd": [

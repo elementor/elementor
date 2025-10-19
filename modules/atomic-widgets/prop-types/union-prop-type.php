@@ -33,9 +33,14 @@ class Union_Prop_Type implements Prop_Type {
 	}
 
 	public static function create_from( Transformable_Prop_Type $prop_type ): self {
+		$dependencies = $prop_type->get_dependencies();
+
+		$prop_type->set_dependencies( [] );
+
 		return static::make()
 			->add_prop_type( $prop_type )
-			->default( $prop_type->get_default() );
+			->default( $prop_type->get_default() )
+			->set_dependencies( $dependencies );
 	}
 
 	public function get_type(): string {

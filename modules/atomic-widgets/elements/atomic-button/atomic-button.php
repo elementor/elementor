@@ -8,7 +8,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
@@ -51,7 +51,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 
 			'link' => Link_Prop_Type::make(),
 
-			'attributes' => Key_Value_Array_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make(),
 		];
 
 		return $props;
@@ -76,6 +76,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 	protected function get_settings_controls(): array {
 		return [
 			Link_Control::bind_to( 'link' )
+				->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
 				->set_label( __( 'Link', 'elementor' ) ),
 			Text_Control::bind_to( '_cssid' )
 				->set_label( __( 'ID', 'elementor' ) )

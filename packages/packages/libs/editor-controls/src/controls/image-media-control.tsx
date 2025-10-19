@@ -14,7 +14,7 @@ type ImageMediaControlProps = {
 };
 
 export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: ImageMediaControlProps ) => {
-	const { value, setValue } = useBoundProp( imageSrcPropTypeUtil );
+	const { value, setValue, propType } = useBoundProp( imageSrcPropTypeUtil );
 	const { id, url } = value ?? {};
 
 	const { data: attachment, isFetching } = useWpMediaAttachment( id?.value || null );
@@ -38,7 +38,7 @@ export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: 
 	return (
 		<ControlActions>
 			<Card variant="outlined">
-				<CardMedia image={ src } sx={ { height: 150 } }>
+				<CardMedia image={ src } sx={ { height: propType.meta.isDynamic ? 134 : 150 } }>
 					{ isFetching ? (
 						<Stack justifyContent="center" alignItems="center" width="100%" height="100%">
 							<CircularProgress />

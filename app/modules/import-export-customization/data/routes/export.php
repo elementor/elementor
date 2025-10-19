@@ -4,6 +4,8 @@ namespace Elementor\App\Modules\ImportExportCustomization\Data\Routes;
 use Elementor\Plugin;
 use Elementor\App\Modules\ImportExportCustomization\Data\Response;
 use Elementor\Utils as ElementorUtils;
+use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
+use Elementor\App\Modules\ImportExportCustomization\Processes\Import;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,6 +23,11 @@ class Export extends Base_Route {
 	}
 
 	protected function callback( $request ): \WP_REST_Response {
+		/**
+		 * @var $module ImportExportCustomizationModule
+		 */
+		$module = Plugin::$instance->app->get_component( 'import-export-customization' );
+
 		try {
 			$settings = [
 				'include' => $request->get_param( 'include' ),
@@ -35,15 +42,14 @@ class Export extends Base_Route {
 
 			$source = $settings['kitInfo']['source'];
 
-			$module = Plugin::$instance->app->get_component( 'import-export-customization' );
-
 			$export = $module->export_kit( $settings );
 
 			$file_name = $export['file_name'];
+			$file_size = filesize( $file_name );
 			$file = ElementorUtils::file_get_contents( $file_name );
 
 			if ( ! $file ) {
-				throw new \Error( 'Could not read the exported file.' );
+				throw new \Error( Import::ZIP_FILE_ERROR_KEY );
 			}
 
 			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
@@ -53,11 +59,13 @@ class Export extends Base_Route {
 				[
 					'manifest' => $export['manifest'],
 					'file' => base64_encode( $file ),
+					'media_urls' => $export['media_urls'],
 				],
 				$source,
 				$export,
 				$settings,
 				$file,
+				$file_size,
 			);
 
 			if ( is_wp_error( $result ) ) {
@@ -73,7 +81,11 @@ class Export extends Base_Route {
 				],
 			] );
 
-			return Response::error( 'export_error', $e->getMessage() );
+			if ( $module->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
+				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
+			}
+
+			return Response::error( $e->getMessage(), 'export_error' );
 		}
 	}
 

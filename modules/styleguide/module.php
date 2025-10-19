@@ -112,7 +112,7 @@ class Module extends Base_Module {
 	 *
 	 * @param $element
 	 * @param string $section_id
-	 * @param array $args
+	 * @param array  $args
 	 */
 	public function add_styleguide_enable_controls( $element, $section_id, $args ) {
 		if ( 'kit' !== $element->get_name() || ! in_array( $section_id, [ 'section_global_colors', 'section_text_style' ] ) ) {

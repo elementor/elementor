@@ -1,0 +1,45 @@
+{
+  "items": {
+    "g-123": {
+      "id": "g-123",
+      "type": "class",
+      "label": "Test1",
+      "variants": [
+        {
+          "meta": {
+            "breakpoint": "desktop",
+            "state": null
+          },
+          "props": {
+            "background": {
+              "$$type": "background",
+              "value": {
+                "color": {
+                  "$$type": "color",
+                  "value": "<script>alert()</script>"
+                }
+              }
+            },
+            "display": {
+              "$$type": "string",
+              "value": "block"
+            }
+          }
+        }
+      ]
+    },
+    "g-456": {
+      "id": "g-456",
+      "type": "class",
+      "label": "Test2",
+      "variants": []
+    }
+  },
+  "order": [
+    "g-123",
+    "g-456",
+    {},
+    true,
+    "g-456"
+  ]
+}

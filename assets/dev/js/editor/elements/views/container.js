@@ -28,6 +28,15 @@ const ContainerView = BaseElementView.extend( {
 		return Marionette.CompositeView.prototype.getChildViewContainer.apply( this, arguments );
 	},
 
+	getChildType() {
+		const allowedElementTypes = getAllElementTypes().filter( ( elType ) => elType !== 'section' && elType !== 'column' );
+
+		return [
+			...allowedElementTypes,
+			'widget',
+		];
+	},
+
 	className() {
 		const isNestedClassName = this.model.get( 'isInner' ) ? 'e-child' : 'e-parent';
 		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ isNestedClassName }`;

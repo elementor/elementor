@@ -53,19 +53,12 @@ const getBuildFiles = [
 	'vendor/autoload.php',
 	'vendor/composer/**',
 ];
-/**
- * @type {{main: {src: string[], expand: boolean, dest: string}, secondary: {src: string[], expand: boolean, dest: string}}}
- */
+
 const copy = {
 	main: {
 		src: getBuildFiles,
 		expand: true,
 		dest: 'build/'
-	},
-	secondary: {
-		src: getBuildFiles,
-		expand: true,
-		dest: '/tmp/elementor-builds/<%= pkg.version %>/'
 	}
 };
 

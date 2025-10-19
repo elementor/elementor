@@ -160,7 +160,7 @@ describe( 'EqualUnequalSizeControl', () => {
 
 		const popover = screen.getByRole( 'presentation', { hidden: true } );
 		const input = within( popover ).getAllByRole( 'spinbutton', { hidden: true } )[ 1 ];
-		fireEvent.change( input, { target: { value: 5 } } );
+		fireEvent.input( input, { target: { value: 5 } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 5, unit: 'px' } } );
@@ -202,7 +202,7 @@ describe( 'EqualUnequalSizeControl', () => {
 		renderControl( <MockControl />, { value: null, setValue, bind: mockBind, propType } );
 
 		const controlAllField = screen.getByRole( 'spinbutton' );
-		fireEvent.change( controlAllField, { target: { value: 5 } } );
+		fireEvent.input( controlAllField, { target: { value: 5 } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 5, unit: 'px' } } );
@@ -239,7 +239,7 @@ describe( 'EqualUnequalSizeControl', () => {
 
 		const popover = screen.getByRole( 'presentation', { hidden: true } );
 		const input = within( popover ).getAllByRole( 'spinbutton', { hidden: true } )[ 1 ];
-		fireEvent.change( input, { target: { value: 10 } } );
+		fireEvent.input( input, { target: { value: 10 } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( {
@@ -265,7 +265,7 @@ describe( 'EqualUnequalSizeControl', () => {
 
 		const popover = screen.getByRole( 'presentation', { hidden: true } );
 		const input = within( popover ).getAllByRole( 'spinbutton', { hidden: true } )[ 1 ];
-		fireEvent.change( input, { target: { value: 5 } } );
+		fireEvent.input( input, { target: { value: 5 } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 5, unit: 'px' } } );
@@ -294,7 +294,7 @@ describe( 'EqualUnequalSizeControl', () => {
 
 		const popover = screen.getByRole( 'presentation', { hidden: true } );
 		const input = within( popover ).getAllByRole( 'spinbutton', { hidden: true } )[ 1 ];
-		fireEvent.change( input, { target: { value: 10 } } );
+		fireEvent.input( input, { target: { value: 10 } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( {
@@ -320,7 +320,7 @@ describe( 'EqualUnequalSizeControl', () => {
 
 		const popover = screen.getByRole( 'presentation', { hidden: true } );
 		const input = within( popover ).getAllByRole( 'spinbutton', { hidden: true } )[ 1 ];
-		fireEvent.change( input, { target: { value: 5 } } );
+		fireEvent.input( input, { target: { value: 5 } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( {

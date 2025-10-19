@@ -38,7 +38,7 @@ export const RestrictedLinkInfotip: React.FC< RestrictedLinkInfotipProps > = ( {
 
 	const content = (
 		<Alert
-			severity="secondary"
+			color="secondary"
 			icon={ <InfoCircleFilledIcon /> }
 			action={
 				<AlertAction

@@ -61,7 +61,7 @@ class Test_Size_Prop_Type extends Elementor_Test_Base {
 		// Act.
 		$settings = $prop_type->get_settings();
 
-		$expected = ['px', 'em', 'rem', 'vw', 'vh', 'custom', '%', 'auto'];
+		$expected = ['px', 'em', 'rem', 'vw', 'vh', '%', 'auto'];
 
 		// Assert.
 		$this->assertEqualsCanonicalizing( $expected, $settings['available_units'] );

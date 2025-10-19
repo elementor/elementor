@@ -3,33 +3,44 @@ import mixpanel from 'mixpanel-browser';
 import { TIERS } from 'elementor-utils/tiers';
 
 export default class extends elementorModules.Module {
+	trackingEnabled = false;
 	onInit() {
 		this.config = eventsConfig;
 
+		mixpanel.init( elementorCommon.config.editor_events?.token, { persistence: 'localStorage', autocapture: false } );
+
 		if ( elementorCommon.config.editor_events?.can_send_events ) {
-			mixpanel.init( elementorCommon.config.editor_events?.token, { persistence: 'localStorage' } );
-
-			const userId = elementorCommon.config.library_connect?.user_id;
-
-			if ( userId ) {
-				mixpanel.identify( userId );
-
-				mixpanel.register( {
-					appType: 'Editor',
-				} );
-
-				mixpanel.people.set_once( {
-					$user_id: userId,
-					$last_login: new Date().toISOString(),
-					$plan_type: elementorCommon.config.library_connect?.plan_type || TIERS.free,
-				} );
-			}
+			this.enableTracking();
 		}
+	}
+
+	enableTracking() {
+		const userId = elementorCommon.config.library_connect?.user_id;
+
+		if ( userId ) {
+			mixpanel.identify( userId );
+
+			mixpanel.register( {
+				appType: 'Editor',
+			} );
+
+			mixpanel.people.set_once( {
+				$user_id: userId,
+				$last_login: new Date().toISOString(),
+				$plan_type: elementorCommon.config.library_connect?.plan_type || TIERS.free,
+			} );
+		}
+
+		this.trackingEnabled = true;
 	}
 
 	dispatchEvent( name, data ) {
 		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
 			return;
+		}
+
+		if ( ! this.trackingEnabled ) {
+			this.enableTracking();
 		}
 
 		const eventData = {

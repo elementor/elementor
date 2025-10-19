@@ -71,17 +71,18 @@
 		}
 	}
 
+	.elementor-background-video,
 	.elementor-background-video-embed {
 		max-width: none; //Stretch the background video on all section
 	}
 
-	.elementor-background-video-embed, .elementor-background-video-hosted {
-		@include absolute-center;
-	}
-
-	.elementor-background-video {
-		max-width: none;
-		@include absolute-center;
+	.elementor-background-video,
+	.elementor-background-video-embed,
+	.elementor-background-video-hosted {
+		position: absolute;
+		inset-block-start: 50%;
+		inset-inline-start: 50%;
+		transform: translate(-50%, -50%);
 	}
 
 	.elementor-background-video-hosted {
@@ -190,38 +191,6 @@
 	visibility: hidden;
 }
 
-// Alignment Classes
-.elementor-align- {
-
-	&center {
-		text-align: center;
-	}
-
-	&right {
-		text-align: right;
-	}
-
-	&left {
-		text-align: left;
-	}
-
-	&center,
-	&right,
-	&left {
-
-		.elementor-button {
-			width: auto;
-		}
-	}
-
-	&justify {
-
-		.elementor-button {
-			width: 100%;
-		}
-	}
-}
-
 .elementor-custom-embed-play {
 	@include absolute-center;
 	$elementor-custom-embed-play-icon-size: 100px;
@@ -292,7 +261,7 @@
 }
 
 @mixin button-alignment($device) {
-	.elementor-#{$device}-align- {
+	.elementor#{$device}-align- {
 
 		&center {
 			text-align: center;
@@ -324,34 +293,30 @@
 	}
 }
 
-// Alignment for Widescreen
+@include button-alignment('');
+
 @media (min-width: $screen-widescreen-min) {
-	@include button-alignment(widescreen);
+	@include button-alignment(-widescreen);
 }
 
-// Alignment for Laptop
 @media (max-width: $screen-laptop-max) {
-	@include button-alignment(laptop);
+	@include button-alignment(-laptop);
 }
 
-// Alignment for Tablet Extra
 @media (max-width: $screen-tablet-extra-max) {
-	@include button-alignment(tablet_extra);
+	@include button-alignment(-tablet_extra);
 }
 
-// Alignment for Tablet
 @media (max-width: $screen-tablet-max) {
-	@include button-alignment(tablet);
+	@include button-alignment(-tablet);
 }
 
-// Alignment for Mobile Extra
 @media (max-width: $screen-mobile-extra-max) {
-	@include button-alignment(mobile_extra);
+	@include button-alignment(-mobile_extra);
 }
 
-// Alignment for Mobile
 @media (max-width: $screen-mobile-max) {
-	@include button-alignment(mobile);
+	@include button-alignment(-mobile);
 }
 
 // Elementor Page Title

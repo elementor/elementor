@@ -6,6 +6,7 @@ import { backgroundColorOverlayTransformer } from './transformers/background-col
 import { backgroundGradientOverlayTransformer } from './transformers/background-gradient-overlay-transformer';
 import { backgroundImageOverlayTransformer } from './transformers/background-image-overlay-transformer';
 import { backgroundOverlayTransformer } from './transformers/background-overlay-transformer';
+import { colorTransformer } from './transformers/color-transformer';
 
 export function initStylesInheritanceTransformers() {
 	const originalStyleTransformers = styleTransformersRegistry.all();
@@ -28,6 +29,7 @@ export function initStylesInheritanceTransformers() {
 }
 
 function registerCustomTransformers() {
+	stylesInheritanceTransformersRegistry.register( 'color', colorTransformer );
 	stylesInheritanceTransformersRegistry.register( 'background-color-overlay', backgroundColorOverlayTransformer );
 	stylesInheritanceTransformersRegistry.register(
 		'background-gradient-overlay',

@@ -1,6 +1,11 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { ControlToggleButtonGroup, NumberControl, type ToggleButtonGroupItem } from '@elementor/editor-controls';
+import { useEffect, useMemo, useState } from 'react';
+import {
+	ControlToggleButtonGroup,
+	NumberControl,
+	type ToggleButtonGroupItem,
+	useBoundProp,
+} from '@elementor/editor-controls';
 import { type NumberPropValue } from '@elementor/editor-props';
 import { ArrowDownSmallIcon, ArrowUpSmallIcon, PencilIcon } from '@elementor/icons';
 import { Grid } from '@elementor/ui';
@@ -19,6 +24,7 @@ const ORDER_LABEL = __( 'Order', 'elementor' );
 
 export const FIRST_DEFAULT_VALUE = -99999;
 export const LAST_DEFAULT_VALUE = 99999;
+
 const FIRST = 'first';
 const LAST = 'last';
 const CUSTOM = 'custom';
@@ -50,6 +56,18 @@ const items: ToggleButtonGroupItem< GroupControlItemOption >[] = [
 ];
 
 export const FlexOrderField = () => {
+	return (
+		<StylesField bind="order" propDisplayName={ ORDER_LABEL }>
+			<UiProviders>
+				<SectionContent>
+					<FlexOrderFieldContent />
+				</SectionContent>
+			</UiProviders>
+		</StylesField>
+	);
+};
+
+function FlexOrderFieldContent() {
 	const {
 		value: order,
 		setValue: setOrder,
@@ -58,57 +76,83 @@ export const FlexOrderField = () => {
 		history: { propDisplayName: ORDER_LABEL },
 	} );
 
-	const [ groupControlValue, setGroupControlValue ] = useState( getGroupControlValue( order?.value ?? null ) );
+	const { placeholder } = useBoundProp();
+	const placeholderValue = placeholder as NumberPropValue;
+
+	const currentGroup = useMemo( () => getGroupControlValue( order?.value ?? null ), [ order ] );
+
+	const [ activeGroup, setActiveGroup ] = useState( currentGroup );
+	const [ customLocked, setCustomLocked ] = useState( false );
 
 	useEffect( () => {
-		const newGroupControlValue = getGroupControlValue( order?.value ?? null );
-		setGroupControlValue( newGroupControlValue );
-	}, [ order?.value ] );
+		if ( ! customLocked ) {
+			setActiveGroup( currentGroup );
+		}
+	}, [ currentGroup, customLocked ] );
+
+	useEffect( () => {
+		if ( order === null ) {
+			setCustomLocked( false );
+		}
+	}, [ order ] );
+
+	const groupPlaceholder = getGroupControlValue( placeholderValue?.value ?? null );
 
 	const handleToggleButtonChange = ( group: GroupControlItemOption | null ) => {
-		setGroupControlValue( group );
+		setActiveGroup( group );
+		setCustomLocked( group === CUSTOM );
 
-		if ( ! group || group === CUSTOM ) {
-			setOrder( null );
-
+		if ( CUSTOM === group ) {
+			setOrder( { $$type: 'number', value: null } );
 			return;
 		}
 
-		setOrder( { $$type: 'number', value: orderValueMap[ group ] } );
+		if ( FIRST === group ) {
+			setOrder( { $$type: 'number', value: orderValueMap[ group ] } );
+			return;
+		}
+
+		if ( LAST === group ) {
+			setOrder( { $$type: 'number', value: orderValueMap[ group ] } );
+			return;
+		}
+
+		setOrder( null );
 	};
 
+	const isCustomVisible = CUSTOM === activeGroup || CUSTOM === groupPlaceholder;
+	const orderPlaceholder = CUSTOM === groupPlaceholder ? String( placeholderValue?.value ?? null ) : '';
+
 	return (
-		<StylesField bind="order" propDisplayName={ ORDER_LABEL }>
-			<UiProviders>
-				<SectionContent>
-					<StylesFieldLayout label={ ORDER_LABEL }>
-						<ControlToggleButtonGroup
-							items={ items }
-							value={ groupControlValue }
-							onChange={ handleToggleButtonChange }
-							exclusive={ true }
-							disabled={ ! canEdit }
+		<>
+			<StylesFieldLayout label={ ORDER_LABEL }>
+				<ControlToggleButtonGroup
+					items={ items }
+					value={ activeGroup }
+					onChange={ handleToggleButtonChange }
+					exclusive={ true }
+					placeholder={ groupPlaceholder }
+					disabled={ ! canEdit }
+				/>
+			</StylesFieldLayout>
+			{ isCustomVisible && (
+				<Grid container gap={ 2 } alignItems="center" flexWrap="nowrap">
+					<Grid item xs={ 6 }>
+						<ControlLabel>{ __( 'Custom order', 'elementor' ) }</ControlLabel>
+					</Grid>
+					<Grid item xs={ 6 } sx={ { display: 'flex', justifyContent: 'end' } }>
+						<NumberControl
+							min={ FIRST_DEFAULT_VALUE + 1 }
+							max={ LAST_DEFAULT_VALUE - 1 }
+							shouldForceInt={ true }
+							placeholder={ orderPlaceholder }
 						/>
-					</StylesFieldLayout>
-					{ CUSTOM === groupControlValue && (
-						<Grid container gap={ 2 } alignItems="center" flexWrap="nowrap">
-							<Grid item xs={ 6 }>
-								<ControlLabel>{ __( 'Custom order', 'elementor' ) }</ControlLabel>
-							</Grid>
-							<Grid item xs={ 6 } sx={ { display: 'flex', justifyContent: 'end' } }>
-								<NumberControl
-									min={ FIRST_DEFAULT_VALUE + 1 }
-									max={ LAST_DEFAULT_VALUE - 1 }
-									shouldForceInt={ true }
-								/>
-							</Grid>
-						</Grid>
-					) }
-				</SectionContent>
-			</UiProviders>
-		</StylesField>
+					</Grid>
+				</Grid>
+			) }
+		</>
 	);
-};
+}
 
 const getGroupControlValue = ( order: number | null ): GroupControlItemOption | null => {
 	if ( LAST_DEFAULT_VALUE === order ) {
@@ -119,5 +163,9 @@ const getGroupControlValue = ( order: number | null ): GroupControlItemOption | 
 		return FIRST;
 	}
 
-	return 0 === order || order ? CUSTOM : null;
+	if ( null !== order ) {
+		return CUSTOM;
+	}
+
+	return null;
 };

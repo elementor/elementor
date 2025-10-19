@@ -1,6 +1,12 @@
 name: PHPUnit
 
+permissions:
+  contents: read
+
 on:
+  schedule:
+    - cron: '30 08 * * 0,1,2,3,4,5'
+  workflow_dispatch:
   pull_request:
     paths-ignore:
       - '**.md'
@@ -36,64 +42,65 @@ jobs:
             composer.+(json|lock)
             .github/**/*.yml
             install-wp-tests.sh
-  test:
-    runs-on: ubuntu-22.04
-    needs: [ 'file-diff' ]
-    if: ${{ github.event.pull_request.title == null || needs.file-diff.outputs.php_diff }}
-    strategy:
-      fail-fast: false
-      matrix:
-        wordpress_versions: ['nightly', 'latest', '6.6', '6.5']
-        php_versions: ['7.4', '8.0', '8.1', '8.2', '8.3']
-    name: PHPUnit - WordPress ${{ matrix.wordpress_versions }} - PHP version ${{ matrix.php_versions }}
-    env:
-      WP_TESTS_DIR: /tmp/wordpress-tests-lib
-      COVERAGE: ${{ matrix.php_versions >= 8.3 && matrix.wordpress_versions == 'latest' }}
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: root
-        ports:
-          - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php_versions }}
-          coverage: none
-      - name: Install Dependencies
-        run: |
-          bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:${{ job.services.mysql.ports['3306'] }} ${{ matrix.wordpress_versions }} true
-          composer update --no-interaction
-      - name: Run Tests with Coverage (latest PHP & WP)
-        if: ${{ env.COVERAGE != 'false' }}
-        run: |
-          composer run coverage
-      - name: Run Tests without Coverage
-        if: ${{ env.COVERAGE == 'false' }}
-        run: |
-          composer run test
-      - name: Run Test - Multisite
-        run: |
-          WP_MULTISITE=1
-          composer update --no-interaction
-          composer run test
+  test_pr_group:
+    uses: ./.github/workflows/phpunit-runner.yml
+    needs: [ 'file-diff' ]
+    if: ${{ (github.event_name == 'pull_request' || github.event_name == 'merge_group') && (github.event.pull_request.title == null || needs.file-diff.outputs.php_diff) }}
+    with:
+      job_name: PHPUnit (PR/Merge)
+      wordpress_versions: '["latest", "6.7", "6.6"]'
+      php_versions: '["7.4", "8.0", "8.1", "8.2", "8.3"]'
+
+  test_schedule:
+    uses: ./.github/workflows/phpunit-runner.yml
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
+    with:
+      job_name: PHPUnit (Nightly)
+      wordpress_versions: '["latest", "6.7", "6.6", "nightly"]'
+      php_versions: '["7.4", "8.0", "8.1", "8.2", "8.3", "8.4"]'
 
   test-result:
-    needs: test
-    if: ${{ always() }} # Will be run even if 'test' matrix will be skipped
+    needs: [test_pr_group, test_schedule]
+    if: ${{ always() }}
     runs-on: ubuntu-22.04
     name: PHPUnit - Test Results
     steps:
-      - name: Test status
-        run: echo "Test status is - ${{ needs.test.result }}"
-      - name: Check test matrix status
-        if: ${{ needs.test.result != 'success' && needs.test.result != 'skipped' }}
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Check stable test status
+        run: echo "Stable Test status is - ${{ needs.test_pr_group.result }}"
+      - name: Check nightly test status
+        run: echo "Nightly Test status is - ${{ needs.test_schedule.result }}"
+      - name: Send slack message
+        if: ${{ needs.test_schedule.result == 'failure' && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
+        uses: ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
+          PAYLOAD: |
+            {
+              "text": "Elementor Core: Scheduled PHPUnit tests failed - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Elementor Core: Scheduled PHPUnit tests failed - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Scheduled PHPUnit tests failed"
+                  }
+                }
+              ]
+            }
+      - name: Final Test Status Check
+        if: ${{ (needs.test_pr_group.result != 'success' && needs.test_pr_group.result != 'skipped') || (needs.test_schedule.result != 'success' && needs.test_schedule.result != 'skipped') }}
         run: exit 1

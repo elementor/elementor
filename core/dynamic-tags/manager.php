@@ -21,6 +21,8 @@ class Manager {
 
 	const DYNAMIC_SETTING_KEY = '__dynamic__';
 
+	const CONTROL_OPTION_KEYS = [ 'id', 'label' ];
+
 	private $tags_groups = [];
 
 	private $tags_info = [];
@@ -159,6 +161,44 @@ class Manager {
 		return $this->tag_to_text( $tag );
 	}
 
+	private function normalize_settings( $value ) {
+		if ( $this->is_typed_value_wrapper( $value ) ) {
+			return $this->normalize_settings( $value['value'] );
+		}
+
+		if ( $this->is_id_label_option( $value ) ) {
+			return $this->normalize_settings( $value['id'] );
+		}
+
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $v ) {
+				$value[ $k ] = $this->normalize_settings( $v );
+			}
+
+			return $value;
+		}
+
+		if ( is_object( $value ) ) {
+			return $this->normalize_settings( get_object_vars( $value ) );
+		}
+
+		return $value;
+	}
+
+	private function is_typed_value_wrapper( $value ) {
+		return is_array( $value ) && isset( $value['$$type'], $value['value'] );
+	}
+
+	private function is_id_label_option( $value ) {
+		if ( ! is_array( $value ) || ! array_key_exists( 'id', $value ) ) {
+			return false;
+		}
+
+		$keys = array_keys( $value );
+
+		return empty( array_diff( $keys, self::CONTROL_OPTION_KEYS ) );
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
@@ -178,7 +218,7 @@ class Manager {
 		$tag_class = $tag_info['class'];
 
 		return new $tag_class( [
-			'settings' => $settings,
+			'settings' => $this->normalize_settings( $settings ),
 			'id' => $tag_id,
 		] );
 	}
@@ -198,7 +238,7 @@ class Manager {
 			return null;
 		}
 
-		$tag = $this->create_tag( $tag_id, $tag_name, $settings );
+		$tag = $this->create_tag( $tag_id, $tag_name, $this->normalize_settings( $settings ) );
 
 		if ( ! $tag ) {
 			return null;
@@ -270,9 +310,9 @@ class Manager {
 	 * @access public
 	 * @deprecated 3.5.0 Use `register()` method instead.
 	 *
-	 * @param string $class
+	 * @param string $class_name
 	 */
-	public function register_tag( $class ) {
+	public function register_tag( $class_name ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 			__METHOD__,
 			'3.5.0',
@@ -280,7 +320,7 @@ class Manager {
 		);
 
 		/** @var Base_Tag $tag */
-		$instance = new $class();
+		$instance = new $class_name();
 
 		$this->register( $instance );
 	}
@@ -397,8 +437,7 @@ class Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @throws \Exception If post ID is missing.
-	 * @throws \Exception If current user don't have permissions to edit the post.
+	 * @throws \Exception If post ID is missing or current user don't have permissions to edit the post.
 	 */
 	public function ajax_render_tags( $data ) {
 		if ( empty( $data['post_id'] ) ) {

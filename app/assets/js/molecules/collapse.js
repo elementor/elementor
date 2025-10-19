@@ -18,12 +18,14 @@ export default function Collapse( props ) {
 		if ( props.isOpened !== isOpened ) {
 			setIsOpened( props.isOpened );
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ props.isOpened ] );
 
 	useEffect( () => {
 		if ( props.onChange ) {
 			props.onChange( isOpened );
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ isOpened ] );
 
 	return (
