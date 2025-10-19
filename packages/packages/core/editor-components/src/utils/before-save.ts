@@ -76,7 +76,8 @@ function shouldUpdateElement(
 	tempIdToComponentId: Map< number, number >
 ): { shouldUpdate: true; newComponentId: number } | { shouldUpdate: false; newComponentId: null } {
 	if ( element.widgetType === 'e-component' ) {
-		const currentComponentId = ( element.settings?.component as TransformablePropValue< 'component-id', number > )?.value;
+		const currentComponentId = ( element.settings?.component as TransformablePropValue< 'component-id', number > )
+			?.value;
 		if ( currentComponentId && tempIdToComponentId.has( currentComponentId ) ) {
 			return { shouldUpdate: true, newComponentId: tempIdToComponentId.get( currentComponentId ) as number };
 		}
