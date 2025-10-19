@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { createTransformer } from '@elementor/editor-canvas';
+import { type AnyTransformer, createTransformer } from '@elementor/editor-canvas';
 import { Stack } from '@elementor/ui';
 
-export const createStringToLinesTransformer = (
-	originalTransformer: ( value: string ) => string,
-	separator: string = ' '
-) => {
-	return createTransformer( ( value: string ) => {
-		const stringResult = originalTransformer( value );
+export const createStringToLinesTransformer = ( originalTransformer: AnyTransformer, separator: string = ' ' ) => {
+	return createTransformer( ( value: string, options: { key: string; signal?: AbortSignal } ) => {
+		const stringResult = originalTransformer( value, options );
 
 		if ( ! stringResult || typeof stringResult !== 'string' ) {
 			return stringResult;
