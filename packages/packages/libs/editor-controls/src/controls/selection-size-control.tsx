@@ -20,7 +20,7 @@ type SelectionSizeControlProps = {
 	sizeLabel: string;
 	selectionConfig: SelectionComponentConfig;
 	sizeConfigMap: Record< string, SizeControlConfig >;
-	avoidListeningToExternalChanges?: boolean;
+	isRepeaterControl?: boolean;
 };
 
 export const SelectionSizeControl = createControl(
@@ -29,7 +29,7 @@ export const SelectionSizeControl = createControl(
 		sizeLabel,
 		selectionConfig,
 		sizeConfigMap,
-		avoidListeningToExternalChanges = false,
+		isRepeaterControl = false,
 	}: SelectionSizeControlProps ) => {
 		const { value, setValue, propType } = useBoundProp( selectionSizePropTypeUtil );
 		const rowRef = useRef< HTMLDivElement >( null );
@@ -72,7 +72,7 @@ export const SelectionSizeControl = createControl(
 										units={ currentSizeConfig.units }
 										defaultUnit={ currentSizeConfig.defaultUnit }
 										id={ sizeFieldId }
-										isRepeaterControl={ avoidListeningToExternalChanges }
+										isRepeaterControl={ isRepeaterControl }
 									/>
 								</PropKeyProvider>
 							</Grid>

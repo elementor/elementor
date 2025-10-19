@@ -33,7 +33,7 @@ const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: stri
 				disabledItems,
 			},
 		},
-		avoidListeningToExternalChanges: true,
+		isRepeaterControl: true,
 		sizeConfigMap: {
 			...transitionProperties.reduce(
 				( acc, category ) => {
