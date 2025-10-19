@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { RepeatableControl } from '@elementor/editor-controls';
-import { interactionsPropTypeUtil } from '../../../../../libs/editor-props/src/prop-types/interactions';
+import { interactionPropTypeUtil } from '../../../../../libs/editor-props/src/prop-types/interaction';
+import { __ } from '@wordpress/i18n';
+import { TextControl } from '@elementor/editor-controls';
 
 
-const MOTION_EFFECTS_LABEL = __( 'Motion Effects', 'elementor' );
-const MOTION_EFFECT_LABEL = __( 'Motion Effect', 'elementor' );
+const MOTION_EFFECTS_LABEL = 'Motion Effects';
+const MOTION_EFFECT_LABEL = 'Motion Effects';
 
 const initialMotionEffectValue = {
 	trigger: 'scroll-into-view',
@@ -13,14 +15,17 @@ const initialMotionEffectValue = {
 	direction: 'left',
 };
 
+
+
 export const InteractionsRepeaterControl = () => {
 	return (
 		<RepeatableControl
 			label={ MOTION_EFFECTS_LABEL }
 			repeaterLabel={ MOTION_EFFECTS_LABEL }
+            propKey="interactions"
 			childControlConfig={ {
 				component: InteractionControl,
-				propTypeUtil: interactionsPropTypeUtil,
+				propTypeUtil: interactionPropTypeUtil,
 				label: MOTION_EFFECT_LABEL,
 			} }
 			initialValues={ initialMotionEffectValue }
@@ -33,8 +38,6 @@ export const InteractionsRepeaterControl = () => {
 
 const InteractionControl = () => {
 	return (
-		<div>
-			<h1>Interaction Control</h1>
-		</div>
+		<div>test interaction </div> 
 	);
 };

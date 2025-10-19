@@ -22,6 +22,7 @@ class Render_Props_Resolver extends Props_Resolver {
 
 	const CONTEXT_SETTINGS = 'settings';
 	const CONTEXT_STYLES = 'styles';
+	const CONTEXT_INTERACTIONS = 'interactions';
 
 	public static function for_styles(): self {
 		return static::instance( self::CONTEXT_STYLES );
@@ -29,6 +30,10 @@ class Render_Props_Resolver extends Props_Resolver {
 
 	public static function for_settings(): self {
 		return static::instance( self::CONTEXT_SETTINGS );
+	}
+
+	public static function for_interactions(): self {
+		return static::instance( self::CONTEXT_INTERACTIONS );
 	}
 
 	public function resolve( array $schema, array $props ): array {
