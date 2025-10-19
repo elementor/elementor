@@ -3,9 +3,9 @@ import { type ReactNode } from 'react';
 import { createTransformer } from '@elementor/editor-canvas';
 import { Stack } from '@elementor/ui';
 
-type BackgroundOverlay = ReactNode[];
+type ArrayValues = ReactNode[];
 
-export const backgroundOverlayTransformer = createTransformer( ( values: BackgroundOverlay[] ) => {
+export const arrayTransformer = createTransformer( ( values: ArrayValues[] ) => {
 	if ( ! values || values.length === 0 ) {
 		return null;
 	}
