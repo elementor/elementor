@@ -16,6 +16,8 @@ class Cloud_Kits extends Library {
 
 	const INSUFFICIENT_QUOTA_KEY = 'insufficient-quota';
 
+	const INSUFFICIENT_STORAGE_QUOTA = 'insufficient-storage-quota';
+
 	public function get_title() {
 		return esc_html__( 'Cloud Kits', 'elementor' );
 	}
@@ -46,9 +48,7 @@ class Cloud_Kits extends Library {
 		] );
 	}
 
-	public function validate_quota() {
-		$quota = $this->get_quota();
-
+	public function validate_quota( $quota ) {
 		if ( is_wp_error( $quota ) ) {
 			throw new \Error( static::FAILED_TO_FETCH_QUOTA_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
@@ -58,6 +58,22 @@ class Cloud_Kits extends Library {
 
 		if ( ! $is_unlimited && ! $has_quota ) {
 			throw new \Error( static::INSUFFICIENT_QUOTA_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+	}
+
+	public function validate_storage_quota( $intended_usage, $quota ) {
+		if ( is_wp_error( $quota ) ) {
+			throw new \Error( static::FAILED_TO_FETCH_QUOTA_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		if ( empty( $quota['storage']['currentUsage'] ) ) {
+			return;
+		}
+
+		$has_quota = $quota['storage']['currentUsage'] + $intended_usage < $quota['storage']['threshold'];
+
+		if ( ! $has_quota ) {
+			throw new \Error( static::INSUFFICIENT_STORAGE_QUOTA ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 	}
 
@@ -77,8 +93,10 @@ class Cloud_Kits extends Library {
 		];
 	}
 
-	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes, string $media_format = 'link' ) {
-		$this->validate_quota();
+	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes, string $media_format = 'link', $file_size = 0 ) {
+		$quota = $this->get_quota();
+		$this->validate_quota( $quota );
+		$this->validate_storage_quota( $file_size, $quota );
 
 		$endpoint = 'kits';
 
