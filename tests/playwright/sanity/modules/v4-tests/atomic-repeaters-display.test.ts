@@ -62,7 +62,7 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 				await editor.page.locator( '.MuiBackdrop-root' ).last().click();
 			}
 
-			const repeaterItem = editor.page.locator( '.MuiTag-button .MuiTag-content' );
+			const repeaterItem = editor.page.locator( '.MuiTag-content' );
 
 			expect( await repeaterItem.textContent() ).toContain( CUSTOM_VALUE );
 		} );
