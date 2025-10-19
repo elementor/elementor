@@ -137,7 +137,7 @@ export const DuplicateLabelDialog = ( {
 							<Alert severity="info" size="small" color="secondary">
 								<strong>{ __( 'Your designs and classes are safe.', 'elementor' ) }</strong>
 								{ __(
-									'Only the prefixes were added.Find them in Class Manager by searching',
+									'Only the prefixes were added. Find them in Class Manager by searching',
 									'elementor'
 								) }
 								<strong>{ DUP_PREFIX }</strong>
