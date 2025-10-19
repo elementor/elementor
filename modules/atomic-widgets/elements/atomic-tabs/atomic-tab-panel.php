@@ -113,7 +113,7 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 		$initial_attributes = $this->define_initial_attributes();
 
 		$active_tab = $this->get_context( Atomic_Tabs::class )['activeTab'] ?? null;
-		$is_active = $active_tab === $this->get_id();
+		$is_active = $active_tab === $this->get_atomic_setting( 'tab-id' );
 
 		$attributes = [
 			'class' => [
@@ -127,6 +127,10 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 		if ( ! $is_active ) {
 			$attributes['hidden'] = 'true';
 			$attributes['style'] = 'display: none;';
+		}
+
+		if ( ! empty( $settings['tab-id'] ) ) {
+			$attributes['data-tab-id'] = esc_attr( $settings['tab-id'] );
 		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
