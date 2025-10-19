@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type TransformFunctionsItemPropValue } from '@elementor/editor-props';
-import { ArrowsMaximizeIcon, ArrowAutofitHeightIcon, RotateClockwise2Icon, SkewXIcon } from '@elementor/icons';
+import { ArrowAutofitHeightIcon, ArrowsMaximizeIcon, RotateClockwise2Icon, SkewXIcon } from '@elementor/icons';
 
 import { TransformFunctionKeys } from './initial-values';
 
