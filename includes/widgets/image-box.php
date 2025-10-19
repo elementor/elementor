@@ -225,8 +225,12 @@ class Widget_Image_Box extends Widget_Base {
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
 					],
+					'bottom' => [
+						'title' => esc_html__( 'Bottom', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
 				],
-				'prefix_class' => 'elementor-position-',
+				'prefix_class' => 'elementor%s-position-',
 				'toggle' => false,
 				'condition' => [
 					'image[url]!' => '',
@@ -257,7 +261,7 @@ class Widget_Image_Box extends Widget_Base {
 				'toggle' => false,
 				'prefix_class' => 'elementor-vertical-align-',
 				'condition' => [
-					'position!' => 'top',
+					'position!' => [ 'top', 'bottom' ],
 				],
 			]
 		);
@@ -310,6 +314,7 @@ class Widget_Image_Box extends Widget_Base {
 					'{{WRAPPER}}.elementor-position-right .elementor-image-box-img' => 'margin-left: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}}.elementor-position-left .elementor-image-box-img' => 'margin-right: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}}.elementor-position-top .elementor-image-box-img' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}.elementor-position-bottom .elementor-image-box-img' => 'margin-top: {{SIZE}}{{UNIT}};',
 					'(mobile){{WRAPPER}} .elementor-image-box-img' => 'margin-bottom: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
