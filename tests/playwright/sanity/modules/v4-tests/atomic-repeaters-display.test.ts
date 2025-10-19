@@ -2,6 +2,8 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
 
+const CUSTOM_VALUE = 'my custom value';
+
 test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 	let wpAdmin: WpAdminPage;
 
@@ -52,9 +54,9 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 			await controlRepeaterAdditionButton.click();
 			await inputUnitButton.click();
 			await customSizeButton.click();
-			await customSizeInput.fill( 'My milkshake brings all the boys to the yard' );
+			await customSizeInput.fill( CUSTOM_VALUE );
 
-			await expect( customSizeInput ).toHaveValue( 'My milkshake brings all the boys to the yard' );
+			await expect( customSizeInput ).toHaveValue( CUSTOM_VALUE );
 
 			while ( await editor.page.locator( '.MuiBackdrop-root' ).count() ) {
 				await editor.page.locator( '.MuiBackdrop-root' ).last().click();
@@ -62,7 +64,7 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 
 			const repeaterItem = editor.page.locator( '.MuiTag-button .MuiTag-content' );
 
-			expect( await repeaterItem.textContent() ).toContain( 'My milkshake brings' );
+			expect( await repeaterItem.textContent() ).toContain( CUSTOM_VALUE );
 		} );
 	}
 } );
