@@ -10,9 +10,9 @@ import { boxShadowTransformer } from './transformers/box-shadow-transformer';
 import { colorTransformer } from './transformers/color-transformer';
 import { createRepeaterToItemsTransformer } from './transformers/repeater-to-items-transformer';
 
-const originalStyleTransformers = styleTransformersRegistry.all();
-
 export function initStylesInheritanceTransformers() {
+	const originalStyleTransformers = styleTransformersRegistry.all();
+
 	Object.entries( originalStyleTransformers ).forEach( ( [ propType, transformer ] ) => {
 		if ( excludePropTypeTransformers.has( propType ) ) {
 			return;
@@ -27,10 +27,10 @@ export function initStylesInheritanceTransformers() {
 		} )
 	);
 
-	registerCustomTransformers();
+	registerCustomTransformers( originalStyleTransformers );
 }
 
-function registerCustomTransformers() {
+function registerCustomTransformers( originalStyleTransformers: ReturnType<typeof styleTransformersRegistry.all> ) {
 	stylesInheritanceTransformersRegistry.register( 'color', colorTransformer );
 	stylesInheritanceTransformersRegistry.register( 'background-color-overlay', backgroundColorOverlayTransformer );
 	stylesInheritanceTransformersRegistry.register(
