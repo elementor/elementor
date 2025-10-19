@@ -8,11 +8,11 @@ import { backgroundGradientOverlayTransformer } from './transformers/background-
 import { backgroundImageOverlayTransformer } from './transformers/background-image-overlay-transformer';
 import { boxShadowTransformer } from './transformers/box-shadow-transformer';
 import { colorTransformer } from './transformers/color-transformer';
-import { createStringToLinesTransformer } from './transformers/string-to-lines-transformer';
+import { createRepeaterToItemsTransformer } from './transformers/repeaters-to-items-transformer';
+
+const originalStyleTransformers = styleTransformersRegistry.all();
 
 export function initStylesInheritanceTransformers() {
-	const originalStyleTransformers = styleTransformersRegistry.all();
-
 	Object.entries( originalStyleTransformers ).forEach( ( [ propType, transformer ] ) => {
 		if ( excludePropTypeTransformers.has( propType ) ) {
 			return;
@@ -31,8 +31,6 @@ export function initStylesInheritanceTransformers() {
 }
 
 function registerCustomTransformers() {
-	const originalStyleTransformers = styleTransformersRegistry.all();
-
 	stylesInheritanceTransformersRegistry.register( 'color', colorTransformer );
 	stylesInheritanceTransformersRegistry.register( 'background-color-overlay', backgroundColorOverlayTransformer );
 	stylesInheritanceTransformersRegistry.register(
@@ -44,15 +42,15 @@ function registerCustomTransformers() {
 
 	stylesInheritanceTransformersRegistry.register(
 		'filter',
-		createStringToLinesTransformer( originalStyleTransformers.filter )
+		createRepeaterToItemsTransformer( originalStyleTransformers.filter )
 	);
 	stylesInheritanceTransformersRegistry.register(
 		'backdrop-filter',
-		createStringToLinesTransformer( originalStyleTransformers[ 'backdrop-filter' ] )
+		createRepeaterToItemsTransformer( originalStyleTransformers[ 'backdrop-filter' ] )
 	);
 	stylesInheritanceTransformersRegistry.register(
 		'transition',
-		createStringToLinesTransformer( originalStyleTransformers.transition, ', ' )
+		createRepeaterToItemsTransformer( originalStyleTransformers.transition, ', ' )
 	);
 
 	[ 'background-overlay', 'box-shadow', 'transform-functions' ].forEach( ( propType ) =>

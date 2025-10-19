@@ -2,7 +2,7 @@ import * as React from 'react';
 import { type AnyTransformer, createTransformer } from '@elementor/editor-canvas';
 import { Stack } from '@elementor/ui';
 
-export const createStringToLinesTransformer = ( originalTransformer: AnyTransformer, separator: string = ' ' ) => {
+export const createRepeaterToItemsTransformer = ( originalTransformer: AnyTransformer, separator: string = ' ' ) => {
 	return createTransformer( ( value: string, options: { key: string; signal?: AbortSignal } ) => {
 		const stringResult = originalTransformer( value, options );
 
