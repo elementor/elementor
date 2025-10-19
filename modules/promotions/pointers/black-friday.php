@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+
 class Black_Friday {
 	const PROMOTION_URL = 'https://go.elementor.com/go-pro-wordpress-notice-bf-25/';
 	const ELEMENTOR_POINTER_ID = 'toplevel_page_elementor';
