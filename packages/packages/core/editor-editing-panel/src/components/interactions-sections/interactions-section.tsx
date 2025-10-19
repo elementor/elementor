@@ -11,7 +11,7 @@ const INTERACTIONS_LABEL = __( 'Interactions', 'elementor' );
 export const InteractionsSection = () => {
     return (
         <SectionContent>
-            <div>hele</div>
+            <div>Empty Interactions Section</div>
             {/* <SettingsField bind="interactions" propDisplayName={ INTERACTIONS_LABEL }>
                 <InteractionsRepeaterControl />
             </SettingsField> */}
