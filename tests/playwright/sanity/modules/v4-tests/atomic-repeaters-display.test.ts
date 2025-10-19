@@ -28,6 +28,23 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 			await editor.openV2Section( 'effects' );
 
 			const controlRepeaterAdditionButton = editor.page.getByRole( 'button', { name: `Add ${ control } item` } );
+
+			await controlRepeaterAdditionButton.click();
+			await editor.page.locator( '.MuiBackdrop-root' ).click();
+
+			const parentDiv = controlRepeaterAdditionButton.locator( '../../..' );
+			const controlName = control.trim().toLowerCase().replace( /\s+/g, '-' );
+
+			await expect.soft( parentDiv ).toHaveScreenshot( 'transform-parent-' + controlName + '.png' );
+		} );
+
+		test( `repeater control ${ control } custom size stability`, async () => {
+			const editor = await wpAdmin.openNewPage();
+			await editor.addWidget( { widgetType: 'e-heading' } );
+			await editor.v4Panel.openTab( 'style' );
+			await editor.openV2Section( 'effects' );
+
+			const controlRepeaterAdditionButton = editor.page.getByRole( 'button', { name: `Add ${ control } item` } );
 			const inputUnitButton = editor.page.locator( 'button', { hasText: /^(px|ms)$/ } ).last();
 			const customSizeButton = editor.page.locator( '.MuiPaper-root ul li .MuiListItemText-root svg' );
 			const customSizeInput = editor.page.locator( '.MuiPaper-root .MuiPaper-root .MuiPaper-root input[type="text"]' );
@@ -38,16 +55,14 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 			await customSizeInput.fill( 'My milkshake brings all the boys to the yard' );
 
 			await expect( customSizeInput ).toHaveValue( 'My milkshake brings all the boys to the yard' );
-			await customSizeInput.clear();
 
 			while ( await editor.page.locator( '.MuiBackdrop-root' ).count() ) {
 				await editor.page.locator( '.MuiBackdrop-root' ).last().click();
 			}
 
-			const parentDiv = controlRepeaterAdditionButton.locator( '../../..' );
-			const controlName = control.trim().toLowerCase().replace( /\s+/g, '-' );
+			const repeaterItem = editor.page.locator( '.MuiTag-button .MuiTag-content' );
 
-			await expect.soft( parentDiv ).toHaveScreenshot( 'transform-parent-' + controlName + '.png' );
+			expect( repeaterItem.textContent() ).toContain( 'My milkshake brings all the boys to the yard' );
 		} );
 	}
 } );
