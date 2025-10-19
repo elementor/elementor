@@ -54,7 +54,6 @@ export const DropShadowItemContent = ( { anchorEl }: { anchorEl?: HTMLElement | 
 									enablePropTypeUnits
 									defaultUnit="px"
 									isRepeaterControl
-									
 								/>
 							) }
 						</Grid>
