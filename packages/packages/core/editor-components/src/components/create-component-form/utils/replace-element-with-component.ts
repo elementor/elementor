@@ -1,8 +1,8 @@
-import { replaceElement, type V1Element } from '@elementor/editor-elements';
+import { replaceElement, type V1ElementData } from '@elementor/editor-elements';
 
 import { type Component } from '../../../types';
 
-export const replaceElementWithComponent = ( element: V1Element, component: Component ) => {
+export const replaceElementWithComponent = ( element: V1ElementData, component: Component ) => {
 	replaceElement( {
 		currentElement: element,
 		newElement: createComponentModel( component ),
