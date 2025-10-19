@@ -83,6 +83,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$component_1_id = $this->create_test_component( 'Test Component 1', $this->mock_component_1_content );
 		$component_2_id = $this->create_test_component( 'Test Component 2', $this->mock_component_2_content );
+		$component_3_id = $this->create_test_component( 'Test Component 3', $this->mock_component_2_content, 'draft' );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components' );
@@ -92,7 +93,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 200, $response->get_status() );
 		$data = $response->get_data()['data'];
 
-		$this->assertCount( 2, $data );
+		$this->assertCount( 3, $data );
 		$this->assertArrayContainsObjects(
 			[
 				[
@@ -103,36 +104,13 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'id' => $component_2_id,
 					'name' => 'Test Component 2',
 				],
+				[
+					'id' => $component_3_id,
+					'name' => 'Test Component 3',
+				],
 			],
 			$data,
 			'Should return all components'
-		);
-	}
-
-	public function test_get_components__only_returns_published_components() {
-		// Arrange
-		$this->act_as_admin();
-		$published_id = $this->create_test_component( 'Published Component', $this->mock_component_1_content );
-		$this->create_test_component( 'Draft Component', $this->mock_component_2_content, 'draft' );
-
-		// Act
-		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components' );
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 200, $response->get_status() );
-		$data = $response->get_data()['data'];
-
-		$this->assertCount( 1, $data );
-		$this->assertTrue(
-			$this->objectsMatch(
-				[
-					'id' => $published_id,
-					'name' => 'Published Component',
-				],
-				$data[0]
-			),
-			'Should return only published components'
 		);
 	}
 
@@ -227,6 +205,43 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_post_create_component__creates_draft_component_successfully() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'name' => 'New Test Component',
+			'content' => $this->mock_component_1_content,
+			'status' => 'draft',
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 201, $response->get_status() );
+		$component_id = $response->get_data()['data']['component_id'];
+		$this->assertIsInt( $component_id );
+
+		// Verify component was created
+		$post = get_post( $component_id );
+		$this->assertEquals( 'New Test Component', $post->post_title );
+		$this->assertEquals( Component_Document::TYPE, $post->post_type );
+		$this->assertEquals( 'draft', $post->post_status );
+
+		// Verify content was saved
+		$document = Plugin::$instance->documents->get( $component_id );
+		$saved_content = $document->get_elements_data();
+		$this->assertTrue(
+			$this->objectsMatch(
+				$this->mock_component_1_content,
+				$saved_content
+			),
+			'Should save component content'
+		);
+	}
+
 	public function test_post_create_component__sanitizes_component_name() {
 		// Arrange
 		$this->act_as_admin();
@@ -303,6 +318,25 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertEquals( 'rest_missing_callback_param', $response->get_data()['code'] );
 		$this->assertContains( 'content', $response->get_data()['data']['params'] );
+	}
+
+	public function test_post_create_component__fails_when_status_is_missing() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'content' => [ $this->mock_component_2_content ],
+			'name' => 'Test Component',
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_missing_callback_param', $response->get_data()['code'] );
+		$this->assertContains( 'status', $response->get_data()['data']['params'] );
 	}
 
 	public function test_post_create_component__fails_when_max_components_limit_is_reached() {
@@ -466,6 +500,26 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertEquals( 'content_validation_failed', $response->get_data()['code'] );
 		$this->assertEquals( 'Settings validation failed. link: invalid_value', $response->get_data()['message'] );
+	}
+
+	public function test_post_create_component__fails_when_status_is_invalid() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'name' => 'Test Component',
+			'content' => [ $this->mock_component_1_content ],
+			'status' => 'invalid',
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
+		$this->assertArrayHasKey( 'status', $response->get_data()['data']['params'] );
 	}
 
 	public function test_post_create_component__fails_when_reaching_max_components_limit() {
