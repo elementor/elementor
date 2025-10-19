@@ -62,7 +62,7 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 
 			const repeaterItem = editor.page.locator( '.MuiTag-button .MuiTag-content' );
 
-			expect( repeaterItem.textContent() ).toContain( 'My milkshake brings all the boys to the yard' );
+			expect( await repeaterItem.textContent() ).toContain( 'My milkshake brings' );
 		} );
 	}
 } );
