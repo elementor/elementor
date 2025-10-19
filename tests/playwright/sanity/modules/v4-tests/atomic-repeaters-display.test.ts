@@ -40,11 +40,9 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 			await expect( customSizeInput ).toHaveValue( 'My milkshake brings all the boys to the yard' );
 			await customSizeInput.clear();
 
-			const currentBackdrop = editor.page.locator( '.MuiBackdrop-root' ).last();
-
-			await currentBackdrop.click();
-			await currentBackdrop.waitFor( { state: 'detached' } );
-			await editor.page.locator( '.MuiBackdrop-root' ).last().click();
+			while ( await editor.page.locator( '.MuiBackdrop-root' ).count() ) {
+				await editor.page.locator( '.MuiBackdrop-root' ).last().click();
+			}
 
 			const parentDiv = controlRepeaterAdditionButton.locator( '../../..' );
 			const controlName = control.trim().toLowerCase().replace( /\s+/g, '-' );
