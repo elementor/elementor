@@ -30,7 +30,7 @@ export function initStylesInheritanceTransformers() {
 	registerCustomTransformers( originalStyleTransformers );
 }
 
-function registerCustomTransformers( originalStyleTransformers: ReturnType<typeof styleTransformersRegistry.all> ) {
+function registerCustomTransformers( originalStyleTransformers: ReturnType< typeof styleTransformersRegistry.all > ) {
 	stylesInheritanceTransformersRegistry.register( 'color', colorTransformer );
 	stylesInheritanceTransformersRegistry.register( 'background-color-overlay', backgroundColorOverlayTransformer );
 	stylesInheritanceTransformersRegistry.register(
