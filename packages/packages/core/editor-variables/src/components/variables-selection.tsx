@@ -18,7 +18,7 @@ import { VariablesStyledMenuList } from './ui/styled-menu-list';
 
 const SIZE = 'tiny';
 const CREATE_LABEL = __( 'Create variable', 'elementor' );
-const MANAGER_LABEL = __( 'Variable Manager', 'elementor' );
+const MANAGER_LABEL = __( 'Variables Manager', 'elementor' );
 
 type Props = {
 	closePopover: () => void;
