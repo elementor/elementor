@@ -131,6 +131,7 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 
 		if ( ! empty( $settings['tab-id'] ) ) {
 			$attributes['data-tab-id'] = esc_attr( $settings['tab-id'] );
+			$attributes['aria-labelledby'] = esc_attr( $settings['tab-id'] );
 		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
