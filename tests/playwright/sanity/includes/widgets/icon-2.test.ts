@@ -55,7 +55,6 @@ test.describe( 'Icon widget tests', () => {
 
 		// Act 2 - Add link
 		await editor.setTextControlValue( 'link', testUrl );
-		await editor.getPreviewFrame().locator( `a.elementor-icon[href="${ testUrl }"]` ).waitFor();
 
 		// Assert 2 - With link the tag becomes anchor tag
 		await test.step( 'Link anchor tag in the Editor', async () => {
