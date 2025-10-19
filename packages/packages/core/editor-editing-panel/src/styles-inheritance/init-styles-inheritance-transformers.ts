@@ -8,7 +8,7 @@ import { backgroundGradientOverlayTransformer } from './transformers/background-
 import { backgroundImageOverlayTransformer } from './transformers/background-image-overlay-transformer';
 import { boxShadowTransformer } from './transformers/box-shadow-transformer';
 import { colorTransformer } from './transformers/color-transformer';
-import { createRepeaterToItemsTransformer } from './transformers/repeaters-to-items-transformer';
+import { createRepeaterToItemsTransformer } from './transformers/repeater-to-items-transformer';
 
 const originalStyleTransformers = styleTransformersRegistry.all();
 
