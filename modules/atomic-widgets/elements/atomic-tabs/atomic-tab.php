@@ -47,7 +47,7 @@ class Atomic_Tab extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'tab-panel-id' => String_Prop_Type::make(),
+			'tab-content-id' => String_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
@@ -114,8 +114,8 @@ class Atomic_Tab extends Atomic_Element_Base {
 			],
 		];
 
-		if ( ! empty( $settings['tab-panel-id'] ) ) {
-			$attributes['aria-controls'] = esc_attr( $settings['tab-panel-id'] );
+		if ( ! empty( $settings['tab-content-id'] ) ) {
+			$attributes['aria-controls'] = esc_attr( $settings['tab-content-id'] );
 		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {

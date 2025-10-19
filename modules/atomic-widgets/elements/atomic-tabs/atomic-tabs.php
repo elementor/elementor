@@ -105,7 +105,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	protected function define_default_children() {
 		$default_tab_count = 3;
 		$tab_elements = [];
-		$tab_panel_elements = [];
+		$tab_content_elements = [];
 
 		foreach ( range( 1, $default_tab_count ) as $i ) {
 			$tab_elements[] = Atomic_Tab::generate()
@@ -115,7 +115,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				->is_locked( true )
 				->build();
 
-			$tab_panel_elements[] = Atomic_Tab_Panel::generate()
+			$tab_content_elements[] = Atomic_Tab_Content::generate()
 				->is_locked( true )
 				->editor_settings( [
 					'title' => "Tab {$i} content",
@@ -123,19 +123,19 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				->build();
 		}
 
-		$tabs_list = Atomic_Tabs_List::generate()
+		$tabs_menu = Atomic_Tabs_Menu::generate()
 			->children( $tab_elements )
 			->is_locked( true )
 			->build();
 
-		$tabs_content = Atomic_Tabs_Content::generate()
-			->children( $tab_panel_elements )
+		$tabs_content_area = Atomic_Tabs_Content_Area::generate()
+			->children( $tab_content_elements )
 			->is_locked( true )
 			->build();
 
 		return [
-			$tabs_list,
-			$tabs_content,
+			$tabs_menu,
+			$tabs_content_area,
 		];
 	}
 
