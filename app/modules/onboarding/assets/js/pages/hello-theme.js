@@ -145,7 +145,8 @@ export default function HelloTheme() {
 
 		updateState( { isHelloThemeInstalled: true } );
 
-		const themeSlug = 'hello-theme' === selectedTheme ? 'hello-elementor' : 'hello-biz';
+		const currentTheme = selectedTheme || ( ! isVariantB ? 'hello-biz' : null );
+		const themeSlug = 'hello-theme' === currentTheme ? 'hello-elementor' : 'hello-biz';
 
 		setActivateHelloThemeAjaxState( {
 			data: {
@@ -160,7 +161,8 @@ export default function HelloTheme() {
 			setIsInstalling( true );
 		}
 
-		const themeSlug = 'hello-theme' === selectedTheme ? 'hello-elementor' : 'hello-biz';
+		const currentTheme = selectedTheme || ( ! isVariantB ? 'hello-biz' : null );
+		const themeSlug = 'hello-theme' === currentTheme ? 'hello-elementor' : 'hello-biz';
 
 		wp.updates.ajax( 'install-theme', {
 			slug: themeSlug,
@@ -219,6 +221,17 @@ export default function HelloTheme() {
 		actionButton.onClick = () => {
 			if ( ! selectedTheme && isVariantB ) {
 				return;
+			}
+
+			// For non-variant B, ensure hello-biz is selected if no theme is set
+			const currentTheme = selectedTheme || ( ! isVariantB ? 'hello-biz' : null );
+
+			if ( ! currentTheme ) {
+				return;
+			}
+
+			if ( ! selectedTheme && ! isVariantB ) {
+				setSelectedTheme( 'hello-biz' );
 			}
 
 			OnboardingEventTracking.sendHelloBizContinue( state.currentStep );
