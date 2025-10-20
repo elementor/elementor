@@ -291,60 +291,186 @@ continue;
 		$matching_widget_ids = [];
 		$element_to_widget_map = $this->get_html_element_to_atomic_widget_mapping();
 		$target_widget_type = $element_to_widget_map[ $element_selector ] ?? $element_selector;
+
 		foreach ( $widgets as $widget ) {
 			$widget_tag = $widget['tag'] ?? $widget['widget_type'] ?? '';
 			$element_id = $widget['element_id'] ?? null;
 			$widget_type = $widget['widget_type'] ?? 'unknown';
-			$html_tag_from_element_id = '';
-			if ( $element_id && preg_match( '/^element-([a-z0-9]+)-\d+$/', $element_id, $matches ) ) {
-				$html_tag_from_element_id = $matches[1];
-			}
-			$widget_type_matches = ( $widget_type === $target_widget_type );
-			$tag_matches = ( $html_tag_from_element_id === $element_selector ) || ( $widget_tag === $element_selector );
-			$is_match = $element_id && $widget_type_matches && $tag_matches;
-			if ( $is_match ) {
+
+			// Try multiple matching strategies:
+			// 1. Direct tag match
+			if ( $widget_tag === $element_selector && $element_id ) {
 				$matching_widget_ids[] = $element_id;
+				if ( ! empty( $widget['children'] ) ) {
+					$child_matches = $this->find_widgets_by_element_type( $element_selector, $widget['children'] );
+					$matching_widget_ids = array_merge( $matching_widget_ids, $child_matches );
+				}
+				continue;
 			}
+
+			// 2. Widget type match (e.g., e-heading for h2)
+			if ( $widget_type === $target_widget_type && $element_id ) {
+				$matching_widget_ids[] = $element_id;
+				if ( ! empty( $widget['children'] ) ) {
+					$child_matches = $this->find_widgets_by_element_type( $element_selector, $widget['children'] );
+					$matching_widget_ids = array_merge( $matching_widget_ids, $child_matches );
+				}
+				continue;
+			}
+
+			// 3. Recurse through children
 			if ( ! empty( $widget['children'] ) ) {
 				$child_matches = $this->find_widgets_by_element_type( $element_selector, $widget['children'] );
 				$matching_widget_ids = array_merge( $matching_widget_ids, $child_matches );
 			}
 		}
-return $matching_widget_ids;
+
+		return $matching_widget_ids;
 	}
 	private function process_css_rules_for_widgets( array $rules, array $widgets ): void {
 		foreach ( $rules as $rule ) {
 			$selector = $rule['selector'];
 			$properties = $rule['properties'] ?? [];
-			if ( strpos( $selector, '#container' ) !== false ) {
-				$debug_file = WP_CONTENT_DIR . '/css-rules-debug.json';
-				$debug_data = [
-					'timestamp' => date( 'Y-m-d H:i:s' ),
-					'selector' => $selector,
-					'properties' => $properties,
-				];
-				file_put_contents( $debug_file, json_encode( $debug_data, JSON_PRETTY_PRINT ) . ",\n", FILE_APPEND );
+
+			// Log ALL selectors to see what we're getting
+			if ( strpos( $selector, 'elementor' ) !== false ) {
+				error_log( '📋 ALL SELECTOR: ' . $selector );
 			}
+
 			$this->log_rule_processing( $selector, $properties );
+
 			if ( empty( $properties ) ) {
 				continue;
 			}
+
+			// NEW: Handle nested selectors with compound classes inside
+			// Example: .elementor-1140 .element.element-14c0aa4 .heading-title
+			$is_nested_compound = $this->is_nested_selector_with_compound_classes( $selector );
+			
+			// Log ALL selectors to see what we're getting
+			if ( strpos( $selector, 'elementor-1140' ) !== false || strpos( $selector, 'heading' ) !== false ) {
+				error_log( '🔍 FOUND RELEVANT SELECTOR: ' . $selector . ' | nested+compound: ' . ( $is_nested_compound ? 'YES' : 'NO' ) );
+			}
+
+			if ( $is_nested_compound ) {
+				// Only process selectors that look like they're from the original site
+				if ( strpos( $selector, 'elementor-1140' ) !== false || strpos( $selector, 'heading' ) !== false ) {
+					error_log( '🟡 PROCESSING NESTED+COMPOUND: ' . $selector );
+					$this->apply_widget_specific_styling_for_nested_compound( $selector, $properties, $widgets );
+				} else {
+					error_log( '🚫 SKIPPING ELEMENTOR INTERNAL: ' . $selector );
+				}
+				continue;
+			}
+
 			// Apply nested selector flattening for Pattern 1
 			$processed_rule = $this->apply_nested_selector_flattening( $rule );
+
 			// Skip processing original nested rules that have been flattened
 			if ( $this->rule_was_flattened( $rule, $processed_rule ) ) {
 				// Original nested rule has been flattened into a global class
 				// Skip processing to prevent duplicate CSS output
 				continue;
 			}
+
 			$processed_selector = $processed_rule['selector'];
 			$processed_properties = $processed_rule['properties'];
 			$matched_elements = $this->find_matching_widgets( $processed_selector, $widgets );
+
 			$this->log_matched_elements( $processed_selector, $matched_elements );
+
 			if ( ! empty( $matched_elements ) ) {
 				$this->process_matched_rule( $processed_selector, $processed_properties, $matched_elements );
 			}
 		}
+	}
+
+	private function is_nested_selector_with_compound_classes( string $selector ): bool {
+		// Check for nested selector (has descendant combinator - spaces)
+		$has_nesting = strpos( $selector, ' ' ) !== false;
+
+		// Check for compound class (dot followed by another dot within the selector)
+		$has_compound = preg_match( '/\.\w+[\w-]*\.\w+/', $selector ) === 1;
+
+		return $has_nesting && $has_compound;
+	}
+
+	private function apply_widget_specific_styling_for_nested_compound(
+		string $selector,
+		array $properties,
+		array $widgets
+	): void {
+		error_log( '█████ START: Nested Compound Handler' );
+		error_log( 'SELECTOR: ' . $selector );
+		error_log( 'PROPERTIES COUNT: ' . count( $properties ) );
+
+		// Extract the target element from the end of the selector
+		// Example: .elementor-1140 .element.element-14c0aa4 .heading-title
+		//          → extract: .heading-title
+		$target_selector = $this->extract_target_selector( $selector );
+		error_log( 'EXTRACTED TARGET: ' . $target_selector );
+
+		if ( empty( $target_selector ) ) {
+			error_log( '❌ NO TARGET EXTRACTED' );
+			return;
+		}
+
+		// Find widgets matching the target selector
+		$matched_elements = $this->find_matching_widgets( $target_selector, $widgets );
+		error_log( 'MATCHED BY SELECTOR: ' . count( $matched_elements ) );
+
+		// If no widgets matched by selector and it's a direct element selector, try element type matching
+		if ( empty( $matched_elements ) && strpos( $target_selector, '.' ) !== 0 ) {
+			// Direct element selector (e.g., "p", "h2")
+			$element_type = $target_selector;
+			error_log( 'DIRECT ELEMENT TYPE: ' . $element_type );
+			
+			$matched_elements = $this->find_widgets_by_element_type( $element_type, $widgets );
+			error_log( 'MATCHED BY TYPE: ' . count( $matched_elements ) );
+			error_log( 'WIDGET IDS: ' . json_encode( $matched_elements ) );
+		}
+
+		if ( empty( $matched_elements ) ) {
+			error_log( '❌ NO WIDGETS MATCHED' );
+			return;
+		}
+
+		// Convert properties to atomic format with proper converted_property values
+		$converted_properties = $this->convert_rule_properties_to_atomic( $properties );
+		error_log( 'CONVERTED PROPERTIES: ' . count( $converted_properties ) );
+		
+		foreach ( $converted_properties as $prop ) {
+			error_log( '  - ' . $prop['property'] . ': ' . $prop['value'] . ' (converted: ' . ( isset( $prop['converted_property'] ) ? 'YES' : 'NO' ) . ')' );
+		}
+
+		error_log( 'CALLING collect_reset_styles with:' );
+		error_log( '  - selector: ' . $target_selector );
+		error_log( '  - properties: ' . count( $converted_properties ) );
+		error_log( '  - widgets: ' . json_encode( $matched_elements ) );
+
+		// Apply properties via collect_reset_styles which properly handles direct widget styling
+		$this->unified_style_manager->collect_reset_styles(
+			$target_selector,
+			$converted_properties,
+			$matched_elements,
+			true // can_apply_directly
+		);
+
+		error_log( '█████ END: Nested Compound Handler (styles collected)' );
+	}
+
+	private function extract_target_selector( string $selector ): string {
+		// Get the last part of the selector (after the last space)
+		$parts = explode( ' ', trim( $selector ) );
+
+		if ( empty( $parts ) ) {
+			return '';
+		}
+
+		// Get the last part
+		$target = end( $parts );
+
+		return ! empty( $target ) ? trim( $target ) : '';
 	}
 	private function apply_nested_selector_flattening( array $rule ): array {
 		$selector = $rule['selector'] ?? '';
@@ -371,18 +497,6 @@ return $matching_widget_ids;
 	}
 	private function process_matched_rule( string $selector, array $properties, array $matched_elements ): void {
 		$converted_properties = $this->convert_rule_properties_to_atomic( $properties );
-		if ( strpos( $selector, '#container' ) !== false ) {
-			$debug_file = WP_CONTENT_DIR . '/debug-specificity.json';
-			$debug_data = [
-				'timestamp' => date( 'Y-m-d H:i:s' ),
-				'selector' => $selector,
-				'original_properties' => $properties,
-				'converted_properties' => $converted_properties,
-				'matched_elements_count' => count( $matched_elements ),
-				'matched_element_ids' => $matched_elements,
-			];
-			file_put_contents( $debug_file, json_encode( $debug_data, JSON_PRETTY_PRINT ) . ",\n", FILE_APPEND );
-		}
 		// Route selectors with ID components to ID styles (e.g., #container, #container.box)
 		if ( strpos( $selector, '#' ) !== false ) {
 $this->unified_style_manager->collect_id_selector_styles(
@@ -906,6 +1020,9 @@ $this->unified_style_manager->collect_reset_styles(
 		$rules = [];
 		$all_rule_sets = $document->getAllRuleSets();
 		foreach ( $all_rule_sets as $index => $rule_set ) {
+			if ( ! method_exists( $rule_set, 'getSelectors' ) ) {
+				continue;
+			}
 			$selectors = $rule_set->getSelectors();
 			$declarations = $rule_set->getRules();
 			$extracted_rules = $this->extract_rules_from_selectors( $selectors, $declarations );
@@ -1161,6 +1278,12 @@ $this->unified_style_manager->collect_reset_styles(
 				$flattened_rules[] = $rule;
 				continue;
 			}
+
+			// Log selectors entering flattening
+			if ( strpos( $selector, 'elementor-1140' ) !== false || strpos( $selector, 'heading' ) !== false ) {
+				error_log( '🔍 FLATTENING INPUT: ' . $selector );
+			}
+
 			// Track classes with direct styles (e.g., ".first { ... }")
 			if ( $this->is_direct_class_selector( $selector ) ) {
 				$class_name = $this->extract_class_name_from_selector( $selector );
@@ -1168,14 +1291,23 @@ $this->unified_style_manager->collect_reset_styles(
 					$classes_with_direct_styles[] = $class_name;
 				}
 			}
+
+			// Skip flattening for nested selectors with compound classes
+			// These will be handled directly by apply_widget_specific_styling_for_nested_compound
+			if ( $this->is_nested_selector_with_compound_classes( $selector ) ) {
+				error_log( '🔄 SKIPPING FLATTENING FOR: ' . $selector );
+				$flattened_rules[] = $rule;
+				continue;
+			}
+
 			// Flatten nested selectors
 			$should_flatten = $this->flattening_service->should_flatten_selector( $selector );
-if ( $should_flatten ) {
+			if ( $should_flatten ) {
 				$flattened_rule = $this->flattening_service->flatten_css_rule( $rule );
-$flattened_rules[] = $flattened_rule;
+				$flattened_rules[] = $flattened_rule;
 				// Build class mapping from nested selector
 				$parsed = $this->parse_nested_selector_for_mapping( $selector );
-if ( $parsed && ! empty( $parsed['target_class'] ) && ! empty( $flattened_rule['global_class_id'] ) ) {
+				if ( $parsed && ! empty( $parsed['target_class'] ) && ! empty( $flattened_rule['global_class_id'] ) ) {
 					// CRITICAL FIX: For element selectors, use pseudo-class format as mapping key
 					$mapping_key = $parsed['target_class'];
 					if ( $this->is_element_tag( $parsed['target_class'] ) ) {
@@ -1184,7 +1316,7 @@ if ( $parsed && ! empty( $parsed['target_class'] ) && ! empty( $flattened_rule['
 					$class_mappings[ $mapping_key ] = $flattened_rule['global_class_id'];
 					$classes_only_in_nested[] = $mapping_key;
 				} else {
-}
+				}
 				// CRITICAL FIX: Do NOT add the original nested rule to flattened_rules
 				// The original rule should be replaced by the flattened rule, not kept alongside it
 			} else {

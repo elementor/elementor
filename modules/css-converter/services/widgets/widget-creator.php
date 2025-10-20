@@ -302,14 +302,6 @@ if ( $this->requires_link_to_button_conversion( $widget_type, $mapped_type ) ) {
 		} else {
 			$elementor_widget['elements'] = [];
 		}
-		// Debug final widget structure for flex widgets
-		if ( $mapped_type === 'e-div-block' && ! empty( $formatted_widget_data['styles'] ) ) {
-			foreach ( $formatted_widget_data['styles'] as $style_id => $style_def ) {
-				if ( isset( $style_def['variants'][0]['props']['display'] ) ) {
-
-}
-			}
-		}
 		return $elementor_widget;
 	}
 	private function map_to_elementor_widget_type( $widget_type ) {

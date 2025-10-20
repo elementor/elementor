@@ -224,7 +224,7 @@ test.describe( 'Pattern 1: Nested Selector Flattening (.first .second → .secon
 		// .footer > .copyright → .copyright--footer
 	} );
 
-	test.only( 'should preserve CSS properties in flattened classes', async ( { request, page } ) => {
+	test( 'should preserve CSS properties in flattened classes', async ( { request, page } ) => {
 		// Test that all CSS properties are preserved
 		const cssContent = `
 			<style>
