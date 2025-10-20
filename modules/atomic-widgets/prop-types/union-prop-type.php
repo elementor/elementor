@@ -134,7 +134,7 @@ class Union_Prop_Type implements Prop_Type {
 		return $this->dependencies;
 	}
 
-	private function set_required_settings( Transformable_Prop_Type $prop_type): self {
+	private function set_required_settings( Transformable_Prop_Type $prop_type ): self {
 		if ( $prop_type->get_setting( 'required', false ) ) {
 			$this->required();
 		}

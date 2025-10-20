@@ -156,7 +156,6 @@ class Test_Style_Schema extends TestCase {
 
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}
-	// test does it have its settings
 
 	public function test_augment__will_update_background_prop_type() {
 		// Arrange.
