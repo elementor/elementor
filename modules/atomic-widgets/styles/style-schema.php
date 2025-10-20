@@ -50,17 +50,17 @@ class Style_Schema {
 
 	public static function get_style_schema_with_sections(): array {
 		return [
-			'layout' => array_merge(
+			'Layout' => array_merge(
 				self::get_alignment_props(),
 				self::get_layout_props()
 			),
-			'spacing' => self::get_spacing_props(),
-			'size' => self::get_size_props(),
-			'position' => self::get_position_props(),
-			'typography' => self::get_typography_props(),
-			'background' => self::get_background_props(),
-			'border' => self::get_border_props(),
-			'effects' => self::get_effects_props(),
+			'Spacing' => self::get_spacing_props(),
+			'Size' => self::get_size_props(),
+			'Position' => self::get_position_props(),
+			'Typography' => self::get_typography_props(),
+			'Background' => self::get_background_props(),
+			'Border' => self::get_border_props(),
+			'Effects' => self::get_effects_props(),
 		];
 	}
 

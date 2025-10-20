@@ -39,8 +39,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *   // ]
  */
 class Usage_Counter {
-    const TAB_GENERAL = 'general';
-    const TAB_STYLE = 'style';
+    const TAB_GENERAL = 'General';
+    const TAB_STYLE = 'Style';
 
     public function count( array $element ): ?array {
         /**
@@ -82,6 +82,21 @@ class Usage_Counter {
 		}, []);
 	}
 
+	private function get_style_section_by_control( array $style_schema ): array {
+		$style_sections = [];
+
+		foreach ( $style_schema as $section_name => $prop ) {
+			foreach ( $prop as $prop_name => $prop_type ) {
+				$style_sections[ $prop_name ] = [
+					'section' => $section_name,
+					'prop_type' => $prop_type
+				];
+			}
+		}
+
+		return $style_sections;
+	}
+
 	private function get_changed_controls( $instance ): array {
 		$changed_controls = [];
 
@@ -92,29 +107,58 @@ class Usage_Counter {
 
 		// Check general controls
 		foreach ( $data['settings'] as $control_name => $prop_type ) {
+			// @TODO add correct classes handling
+			if ( 'classes' === $control_name ) {
+				continue;
+			}
+
 			$changed_controls[] = [
 				'tab' => self::TAB_GENERAL,
-				'section' => $control_sections[ $control_name ] ?? 'unknown',
+				'section' => $control_sections[ $control_name ] ?? 'Unknown',
 				'control' => $control_name
 			];
 		}
 
-		var_dump($changed_controls);die();
+//		var_dump($data['styles'] );die();
 
-		// Check style controls
-		$all_style_props = Style_Schema::get();
-		foreach ( $all_style_props as $style_prop_name => $style_prop_type ) {
-			if ( ! array_key_exists( 'styles', $props ) || ! array_key_exists( $style_prop_name, $props['styles'] ) ) {
-				continue;
-			}
+		$style_sections = $this->get_style_section_by_control( Style_Schema::get_style_schema_with_sections() );
 
-			$current_value = $props['styles'][ $style_prop_name ];
-			$default_value = $style_prop_type->get_default();
+		foreach ( $data['styles'] as $class ) {
+			foreach ( $class['variants'] as $variant ) {
+				foreach ( $variant['props'] as $prop_type => $prop_value ) {
+					if ( ! isset( $style_sections[ $prop_type ] ) ) {
+						continue;
+					}
 
-			if ( $current_value !== $default_value ) {
-				$changed_controls[self::TAB_STYLE][ $style_prop_name ] = $current_value;
+					if ( 'plain' === $style_sections[ $prop_type ][ 'prop_type' ]::KIND ) {
+						$changed_controls[] = [
+							'tab' => self::TAB_STYLE,
+							'section' => $style_sections[ $prop_type ][ 'section' ],
+							'control' => $prop_type,
+						];
+
+						continue;
+					}
+
+					var_dump( $style_sections[ $prop_type ][ 'prop_type' ]::KIND , $prop_value );die();
+
+					if ( is_array( $prop_value[ 'value' ] ) ) {
+						foreach ( $prop_value[ 'value' ] as $type => $value ) {
+							$changed_controls[] = [
+								'tab' => self::TAB_STYLE,
+								'section' => 'Styles',
+								'control' => $type,
+							];
+						}
+					}
+				}
 			}
 		}
+
+
+		var_dump($changed_controls);
+
+		die();
 
 		return $changed_controls;
 	}

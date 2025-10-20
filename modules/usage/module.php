@@ -548,6 +548,8 @@ class Module extends BaseModule {
 					$counter = new Usage_Counter();
 					$result = $counter->count( $element );
 
+					var_dump($element);die();
+
 					if ( $result ) {
 						// Apply all changed controls to the element reference
 						foreach ( $result['controls'] as $tab => $sections ) {
@@ -599,7 +601,7 @@ class Module extends BaseModule {
 
 				$usage = $this->get_elements_usage( $document->get_elements_raw_data( $data ) );
 
-//				var_dump($usage);
+				var_dump($usage);die();
 
 				$document->update_meta( self::META_KEY, $usage );
 
