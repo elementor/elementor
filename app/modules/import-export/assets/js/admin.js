@@ -34,21 +34,31 @@ class Admin {
 		if ( this.revertButton ) {
 			this.revertButton.addEventListener( 'click', this.onRevertButtonClick.bind( this ) );
 			this.maybeAddRevertBtnMargin();
+			this.maybeScrollToRevertButton();
 		}
 
 		this.maybeShowReferrerKitDialog();
 	}
 
-	/**
-	 * Add bottom margin to revert btn if referred from Kit library
-	 */
 	maybeAddRevertBtnMargin() {
-		const referrerKitId = new URLSearchParams( this.revertButton.href ).get( 'referrer_kit' );
-		if ( ! referrerKitId ) {
+		const urlParams = new URLSearchParams( window.location.search );
+		const shouldScroll = urlParams.get( 'scroll_to_revert' );
+
+		if ( ! shouldScroll ) {
 			return;
 		}
 
 		this.revertButton.style.marginBottom = this.calculateMargin();
+	}
+
+	maybeScrollToRevertButton() {
+		const urlParams = new URLSearchParams( window.location.search );
+		const shouldScroll = urlParams.get( 'scroll_to_revert' );
+
+		if ( ! shouldScroll ) {
+			return;
+		}
+
 		this.scrollToBottom();
 	}
 
