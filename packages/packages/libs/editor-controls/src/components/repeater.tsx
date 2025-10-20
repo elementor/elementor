@@ -204,7 +204,7 @@ export const Repeater = < T, >( {
 	};
 
 	return (
-		<SectionContent gap={ 2 }>
+		<SectionContent>
 			<Stack
 				direction="row"
 				justifyContent="start"

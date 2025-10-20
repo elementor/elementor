@@ -6,7 +6,7 @@ const createAtomicTabsModel = () => {
 			super.onElementCreate();
 
 			const tabs = this.getChildrenByType( this.get( 'elements' ), 'e-tab' );
-			const tabContents = this.getChildrenByType( this.get( 'elements' ), 'e-tab-content' );
+			const tabPanels = this.getChildrenByType( this.get( 'elements' ), 'e-tab-panel' );
 
 			const currentSettings = this.get( 'settings' ) || {};
 			currentSettings[ 'default-active-tab' ] = { $$type: 'string', value: tabs[ 0 ].id };
@@ -15,13 +15,12 @@ const createAtomicTabsModel = () => {
 
 			// TODO: maybe move this part to a dedicated "afterDefaultChildrenSet" method
 			tabs.forEach( ( tab, index ) => 	{
-				const tabContent = tabContents[ index ];
-
 				tab.settings._cssid = { $$type: 'string', value: tab.id };
-				tab.settings[ 'tab-content-id' ] = { $$type: 'string', value: tabContent.id };
+				tab.settings[ 'tab-panel-id' ] = { $$type: 'string', value: tabPanels[ index ].id };
 
-				tabContent.settings._cssid = { $$type: 'string', value: tabContent.id };
-				tabContent.settings[ 'tab-id' ] = { $$type: 'string', value: tab.id };
+				const tabPanel = tabPanels[ index ];
+				tabPanel.settings._cssid = { $$type: 'string', value: tabPanels[ index ].id };
+				tabPanel.settings[ 'tab-id' ] = { $$type: 'string', value: tab.id };
 			} );
 		}
 

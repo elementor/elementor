@@ -373,7 +373,7 @@ describe( 'removeElements', () => {
 			id: 'heading-1',
 			elType: 'widget',
 			widgetType: 'e-heading',
-			settings: { 'tab-content-id': { value: 'button-1' } },
+			settings: { 'tab-pane': { value: 'button-1' } },
 		} as unknown as V1ElementModelProps );
 		mockHeading.parent = mockParent;
 		mockHeading.view = { _index: 0 };

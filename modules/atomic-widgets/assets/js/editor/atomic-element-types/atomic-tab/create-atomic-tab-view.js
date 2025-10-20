@@ -3,10 +3,10 @@ const createAtomicTabView = () => {
 
 	return class AtomicTabView extends atomicElementBaseView {
 		attributes() {
-			const tabContentId = this.model.getSetting( 'tab-content-id' );
+			const tabPanelId = this.model.getSetting( 'tab-panel-id' );
 
-			return tabContentId?.value
-				? { 'aria-controls': tabContentId.value, ...super.attributes() }
+			return tabPanelId?.value
+				? { 'aria-controls': tabPanelId.value, ...super.attributes() }
 				: super.attributes();
 		}
 	};

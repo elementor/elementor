@@ -17,36 +17,36 @@ export type TabItem = {
 };
 
 export const TAB_ELEMENT_TYPE = 'e-tab';
-export const TAB_CONTENT_ELEMENT_TYPE = 'e-tab-content';
+export const TAB_PANEL_ELEMENT_TYPE = 'e-tab-panel';
 
 export const duplicateItem = ( { items }: { items: ItemActionPayload< TabItem > } ) => {
 	items.forEach( ( { item } ) => {
 		const tabId = item.id as string;
 
-		const { value: tabContentId } = getElementSetting< StringPropValue >( tabId, 'tab-content-id' ) ?? {};
+		const { value: tabPanelId } = getElementSetting< StringPropValue >( tabId, 'tab-panel-id' ) ?? {};
 
-		if ( ! tabContentId ) {
-			throw new Error( 'Original content ID is required for duplication' );
+		if ( ! tabPanelId ) {
+			throw new Error( 'Original panel ID is required for duplication' );
 		}
 
 		duplicateElements( {
-			elementIds: [ tabId, tabContentId ],
+			elementIds: [ tabId, tabPanelId ],
 			title: __( 'Duplicate Tab', 'elementor' ),
 			onCreate: ( duplicatedElements ) => {
 				const tab = duplicatedElements.find( ( element ) => element.originalElementId === tabId );
-				const tabContent = duplicatedElements.find( ( element ) => element.originalElementId === tabContentId );
+				const tabPanel = duplicatedElements.find( ( element ) => element.originalElementId === tabPanelId );
 
-				if ( tabContent && tab ) {
+				if ( tabPanel && tab ) {
 					updateElementSettings( {
 						withHistory: false,
 						id: tab.id,
 						props: {
-							'tab-content-id': stringPropTypeUtil.create( tabContent.id ),
+							'tab-panel-id': stringPropTypeUtil.create( tabPanel.id ),
 						},
 					} );
 					updateElementSettings( {
 						withHistory: false,
-						id: tabContent.id,
+						id: tabPanel.id,
 						props: {
 							'tab-id': stringPropTypeUtil.create( tab.id ),
 						},
@@ -59,18 +59,18 @@ export const duplicateItem = ( { items }: { items: ItemActionPayload< TabItem > 
 
 export const moveItem = ( {
 	toIndex,
-	tabsMenuId,
-	tabContentAreaId,
+	tabListId,
+	tabContentId,
 	movedElementId,
 }: {
 	toIndex: number;
-	tabsMenuId: string;
-	tabContentAreaId: string;
+	tabListId: string;
+	tabContentId: string;
 	movedElementId: string;
 } ) => {
-	const { value: tabContentId } = getElementSetting< StringPropValue >( movedElementId, 'tab-content-id' ) ?? {};
+	const { value: tabPanelId } = getElementSetting< StringPropValue >( movedElementId, 'tab-panel-id' ) ?? {};
 
-	if ( ! tabContentId ) {
+	if ( ! tabPanelId ) {
 		throw new Error( 'Required tab elements not found for reordering' );
 	}
 
@@ -79,12 +79,12 @@ export const moveItem = ( {
 		moves: [
 			{
 				elementId: movedElementId,
-				targetContainerId: tabsMenuId,
+				targetContainerId: tabListId,
 				options: { at: toIndex },
 			},
 			{
-				elementId: tabContentId,
-				targetContainerId: tabContentAreaId,
+				elementId: tabPanelId,
+				targetContainerId: tabContentId,
 				options: { at: toIndex },
 			},
 		],
@@ -96,54 +96,54 @@ export const removeItem = ( { items }: { items: ItemActionPayload< TabItem > } )
 		title: __( 'Tabs', 'elementor' ),
 		elementIds: items.flatMap( ( { item } ) => {
 			const tabId = item.id as string;
-			const { value: tabContentId } = getElementSetting< StringPropValue >( tabId, 'tab-content-id' ) ?? {};
+			const { value: panelId } = getElementSetting< StringPropValue >( tabId, 'tab-panel-id' ) ?? {};
 
-			if ( ! tabContentId ) {
-				throw new Error( 'Content ID is required' );
+			if ( ! panelId ) {
+				throw new Error( 'Pane ID is required' );
 			}
 
-			return [ tabId, tabContentId ];
+			return [ tabId, panelId ];
 		} ),
 	} );
 };
 
 export const addItem = ( {
-	tabContentAreaId,
-	tabsMenuId,
+	tabContentId,
+	tabListId,
 	items,
 }: {
-	tabContentAreaId: string;
-	tabsMenuId: string;
+	tabContentId: string;
+	tabListId: string;
 	items: ItemActionPayload< TabItem >;
 } ) => {
 	items.forEach( ( { item, index } ) => {
-		const newTabContentId = generateElementId();
+		const newTabPanelId = generateElementId();
 		const newTabId = generateElementId();
 
 		createElements( {
 			title: __( 'Tabs', 'elementor' ),
 			elements: [
 				{
-					containerId: tabContentAreaId,
+					containerId: tabContentId,
 					model: {
-						id: newTabContentId,
-						elType: TAB_CONTENT_ELEMENT_TYPE,
+						id: newTabPanelId,
+						elType: TAB_PANEL_ELEMENT_TYPE,
 						settings: {
 							'tab-id': stringPropTypeUtil.create( newTabId ),
 						},
-						editor_settings: { title: `Tab ${ index + 1 } content` },
+						editor_settings: { title: `Tab ${ index + 1 } panel` },
 					},
 				},
 				{
-					containerId: tabsMenuId,
+					containerId: tabListId,
 					model: {
 						id: newTabId,
 						elType: TAB_ELEMENT_TYPE,
 						settings: {
 							...item,
-							'tab-content-id': stringPropTypeUtil.create( newTabContentId ),
+							'tab-panel-id': stringPropTypeUtil.create( newTabPanelId ),
 						},
-						editor_settings: { title: `Tab ${ index + 1 } trigger` },
+						editor_settings: { title: `Tab ${ index + 1 }` },
 					},
 				},
 			],

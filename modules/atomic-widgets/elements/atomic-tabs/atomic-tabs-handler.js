@@ -5,7 +5,7 @@ register( {
 	uniqueId: 'e-tabs-handler',
 	callback: ( { element, signal } ) => {
 		const tabs = element.querySelectorAll( '[data-element_type="e-tab"]' );
-		const tabPanels = element.querySelectorAll( '[data-element_type="e-tab-content"]' );
+		const tabPanels = element.querySelectorAll( '[data-element_type="e-tab-panel"]' );
 
 		const setActiveTab = ( id ) => {
 			tabPanels.forEach( ( tabPanel ) => {

@@ -2,11 +2,13 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -17,23 +19,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tab_Content extends Atomic_Element_Base {
+class Atomic_Tab_Panel extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-tab-content';
+		return 'e-tab-panel';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tab-content';
+		return 'e-tab-panel';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Tab content', 'elementor' );
+		return esc_html__( 'Atomic Tab Panel', 'elementor' );
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic', 'tab', 'content', 'tabs' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'tab', 'panel', 'tabs' ];
 	}
 
 	public function get_icon() {

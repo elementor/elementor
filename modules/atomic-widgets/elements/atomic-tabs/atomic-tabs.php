@@ -29,7 +29,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Tabs', 'elementor' );
+		return esc_html__( 'Atomic Tabs', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -52,23 +52,17 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	protected function define_atomic_controls(): array {
 		return [
 			Section::make()
-				->set_label( __( 'Content', 'elementor' ) )
-				->set_id( 'content' )
-				->set_items( [
-					Tabs_Control::make()
-					->set_label( __( 'Menu items', 'elementor' ) )
-					->set_meta( [
-						'layout' => 'custom',
-					] ),
-				] ),
-			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
 				->set_items( [
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
+						->set_meta( $this->get_css_id_control_meta() ),
+					Tabs_Control::make()
+						->set_label( __( 'Menu items', 'elementor' ) )
 						->set_meta( [
-							'layout' => 'two-columns',
+							'topDivider' => true,
+							'layout' => 'custom',
 						] ),
 				] ),
 		];
@@ -105,37 +99,37 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	protected function define_default_children() {
 		$default_tab_count = 3;
 		$tab_elements = [];
-		$tab_content_elements = [];
+		$tab_panel_elements = [];
 
 		foreach ( range( 1, $default_tab_count ) as $i ) {
 			$tab_elements[] = Atomic_Tab::generate()
 				->editor_settings( [
-					'title' => "Tab {$i} trigger",
+					'title' => "Tab {$i}",
 				] )
 				->is_locked( true )
 				->build();
 
-			$tab_content_elements[] = Atomic_Tab_Content::generate()
+			$tab_panel_elements[] = Atomic_Tab_Panel::generate()
 				->is_locked( true )
 				->editor_settings( [
-					'title' => "Tab {$i} content",
+					'title' => "Tab {$i} panel",
 				] )
 				->build();
 		}
 
-		$tabs_menu = Atomic_Tabs_Menu::generate()
+		$tabs_list = Atomic_Tabs_List::generate()
 			->children( $tab_elements )
 			->is_locked( true )
 			->build();
 
-		$tabs_content_area = Atomic_Tabs_Content_Area::generate()
-			->children( $tab_content_elements )
+		$tabs_content = Atomic_Tabs_Content::generate()
+			->children( $tab_panel_elements )
 			->is_locked( true )
 			->build();
 
 		return [
-			$tabs_menu,
-			$tabs_content_area,
+			$tabs_list,
+			$tabs_content,
 		];
 	}
 
