@@ -2,19 +2,23 @@ import * as React from 'react';
 import { type DropShadowFilterPropValue, type FilterItemPropValue } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 
-export const DropShadowItemLabel = ( { value }: { value: FilterItemPropValue } ) => {
-	const { xAxis, yAxis, blur } = value.value.args.value as DropShadowFilterPropValue[ 'value' ];
+import { CUSTOM_SIZE_LABEL } from '../../size-control';
 
-	const xValue = `${ xAxis?.value?.size ?? 0 }${ xAxis?.value?.unit ?? 'px' }`;
-	const yValue = `${ yAxis?.value?.size ?? 0 }${ yAxis?.value?.unit ?? 'px' }`;
-	const blurValue = `${ blur?.value?.size ?? 10 }${ blur?.value?.unit ?? 'px' }`;
+export const DropShadowItemLabel = ( { value }: { value: FilterItemPropValue } ) => {
+	const values = value.value.args.value as DropShadowFilterPropValue[ 'value' ];
+	const keys = [ 'xAxis', 'yAxis', 'blur' ] as Array< keyof typeof values >;
+	const labels: string[] = keys.map( ( key ) =>
+		values[ key ]?.value?.unit !== 'custom'
+			? `${ values[ key ]?.value?.size ?? 0 }${ values[ key ]?.value?.unit ?? 'px' }`
+			: values[ key ]?.value?.size || CUSTOM_SIZE_LABEL
+	);
 
 	return (
 		<Box component="span">
 			<Box component="span" style={ { textTransform: 'capitalize' } }>
 				Drop shadow:
 			</Box>
-			{ `${ xValue } ${ yValue } ${ blurValue }` }
+			{ ` ${ labels.join( ' ' ) }` }
 		</Box>
 	);
 };

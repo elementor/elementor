@@ -6,8 +6,9 @@ import ThemeSelectionCard from './theme-selection-card';
 const getThemeData = () => [
 	{
 		slug: 'hello-theme',
-		title: __( 'Hello', 'elementor' ),
-		description: __( 'It\'s fast, flexible, and beginner-friendly, offering a solid foundation for customizable designs.', 'elementor' ),
+		label: __( 'Hello Theme by Elementor', 'elementor' ),
+		title: __( 'Build without limits', 'elementor' ),
+		description: __( 'A minimal theme combining speed, flexibility, and control', 'elementor' ),
 		illustration: {
 			svg: (
 				<svg width="305" height="164" viewBox="0 0 305 164" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -48,8 +49,9 @@ const getThemeData = () => [
 	},
 	{
 		slug: 'hello-biz',
-		title: __( 'Hello Biz', 'elementor' ),
-		description: __( 'It offers premium Elementor tools, and a responsive foundation for startups and portfolios.', 'elementor' ),
+		label: __( 'Hello Biz by Elementor', 'elementor' ),
+		title: __( 'Instant online presence', 'elementor' ),
+		description: __( 'A business-first theme offering smart layouts, templates, and site parts', 'elementor' ),
 		illustration: {
 			svg: (
 				<svg width="231" height="170" viewBox="0 0 231 170" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -175,17 +177,17 @@ export default function ThemeSelectionContentB( { actionButton, skipButton, noti
 
 	return (
 		<PageContentLayout
-			title={ __( 'Which theme would you like?', 'elementor' ) }
+			title={ __( 'Choose the right theme for your website', 'elementor' ) }
 			actionButton={ actionButton }
 			skipButton={ skipButton }
 			noticeState={ noticeState }
 		>
 			<div className="e-onboarding__page-content-theme-variant-b">
 				<p className="e-onboarding__theme-selection-description">
-					{ __( 'The theme delivers fast setup, intuitive tools, and business-focused widgets.', 'elementor' ) }
+					{ __( 'Hello themes provide a lightweight, Elementor-ready foundation for your site.', 'elementor' ) }
 				</p>
 				<p className="e-onboarding__theme-selection-subtitle">
-					{ __( 'You can switch your theme later on', 'elementor' ) }
+					{ __( 'You can switch your theme anytime.', 'elementor' ) }
 				</p>
 
 				<div className="e-onboarding__theme-cards">
@@ -193,6 +195,7 @@ export default function ThemeSelectionContentB( { actionButton, skipButton, noti
 						<ThemeSelectionCard
 							key={ theme.slug }
 							themeSlug={ theme.slug }
+							label={ theme.label }
 							title={ theme.title }
 							description={ theme.description }
 							illustration={ theme.illustration }
