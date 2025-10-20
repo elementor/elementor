@@ -131,7 +131,6 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 					manifest: result.data.manifest,
 				};
 
-				// Complete immediately for local export (download handled by complete page)
 				dispatch( { type: 'SET_EXPORTED_DATA', payload: kitExportData } );
 				dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
 				navigate( '/export-customization/complete' );
@@ -147,7 +146,6 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 					kit: result.data.kit,
 				} );
 
-				// Only process media for cloud exports
 				const mediaUrls = result.data.media_urls;
 				if ( mediaUrls && mediaUrls.length > 0 ) {
 					await processMedia( kitExportData, mediaUrls, result.data.kit );
