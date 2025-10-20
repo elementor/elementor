@@ -6,12 +6,14 @@ use Elementor\App\Modules\ImportExportCustomization\Data\Response;
 use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
 use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
 use Elementor\Utils as ElementorUtils;
+use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Traits\Handles_Quota_Errors;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Process_Media extends Base_Route {
+	use Handles_Quota_Errors;
 
 	protected function get_route(): string {
 		return 'process-media';
@@ -39,6 +41,7 @@ class Process_Media extends Base_Route {
 
 		$media_urls = $request->get_param( 'media_urls' );
 		$kit = $request->get_param( 'kit' );
+		$quota = null;
 
 		try {
 			if ( empty( $media_urls ) || ! is_array( $media_urls ) ) {
@@ -87,8 +90,8 @@ class Process_Media extends Base_Route {
 				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
 			}
 
-			if ( $e->getMessage() === \Elementor\Modules\CloudKitLibrary\Connect\Cloud_Kits::INSUFFICIENT_STORAGE_QUOTA ) {
-				return Response::error( \Elementor\Modules\CloudKitLibrary\Connect\Cloud_Kits::INSUFFICIENT_STORAGE_QUOTA, $e->getMessage() );
+			if ( $this->is_quota_error( $e->getMessage() ) ) {
+				return $this->get_quota_error_response( $quota, $kit );
 			}
 
 			return Response::error( ImportExportCustomizationModule::MEDIA_PROCESSING_ERROR, $e->getMessage() );

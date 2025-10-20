@@ -6,6 +6,7 @@ use Elementor\App\Modules\ImportExportCustomization\Data\Response;
 use Elementor\Utils as ElementorUtils;
 use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
 use Elementor\App\Modules\ImportExportCustomization\Processes\Import;
+use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Traits\Handles_Quota_Errors;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Export extends Base_Route {
+	use Handles_Quota_Errors;
 
 	protected function get_route(): string {
 		return 'export';
@@ -27,6 +29,7 @@ class Export extends Base_Route {
 		 * @var $module ImportExportCustomizationModule
 		 */
 		$module = Plugin::$instance->app->get_component( 'import-export-customization' );
+		$quota = null;
 
 		try {
 			$settings = [
@@ -41,6 +44,13 @@ class Export extends Base_Route {
 			$settings = array_filter( $settings );
 
 			$source = $settings['kitInfo']['source'];
+
+			if ( 'cloud' === $source ) {
+				try {
+					$cloud_kit_library_app = \Elementor\Modules\CloudKitLibrary\Module::get_app();
+					$quota = $cloud_kit_library_app->get_quota();
+				} catch ( \Exception | \Error $e ) {}
+			}
 
 			$export = $module->export_kit( $settings );
 
@@ -85,7 +95,11 @@ class Export extends Base_Route {
 				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
 			}
 
-			return Response::error( $e->getMessage(), 'export_error' );
+			if ( $this->is_quota_error( $e->getMessage() ) ) {
+				return $this->get_quota_error_response( $quota, $settings['kitInfo'] ?? [] );
+			}
+
+			return Response::error( 'export_error', $e->getMessage() );
 		}
 	}
 

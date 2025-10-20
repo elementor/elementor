@@ -113,11 +113,12 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 
 			const result = await response.json();
 
-			if ( ! response.ok ) {
-				const errorMessage = result?.data?.message || `HTTP error! with the following code: ${ result?.data?.code }`;
-				const errorCode = 408 === response?.status ? 'timeout' : result?.data?.code;
-				throw new ImportExportError( errorMessage, errorCode );
-			}
+            if ( ! response.ok ) {
+                const rawMessage = result?.data?.message;
+                const errorMessage = 'object' === typeof rawMessage ? rawMessage : ( rawMessage || `HTTP error! with the following code: ${ result?.data?.code }` );
+                const errorCode = 408 === response?.status ? 'timeout' : result?.data?.code;
+                throw new ImportExportError( errorMessage, errorCode );
+            }
 
 			const isExportLocal = 'file' === kitInfo.source && result.data && result.data.file;
 			const isExportToCloud = 'cloud' === kitInfo.source && result.data && result.data.kit;
@@ -129,29 +130,35 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 					file: result.data.file, // This is base64 encoded file data
 					manifest: result.data.manifest,
 				};
+
+				// Complete immediately for local export (download handled by complete page)
+				dispatch( { type: 'SET_EXPORTED_DATA', payload: kitExportData } );
+				dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
+				navigate( '/export-customization/complete' );
 			} else if ( isExportToCloud ) {
 				kitExportData = {
 					kit: result.data.kit,
 					manifest: result.data.manifest,
 				};
+
+				setExportedData( {
+					exportedData: kitExportData,
+					mediaUrls: result.data.media_urls,
+					kit: result.data.kit,
+				} );
+
+				// Only process media for cloud exports
+				const mediaUrls = result.data.media_urls;
+				if ( mediaUrls && mediaUrls.length > 0 ) {
+					await processMedia( kitExportData, mediaUrls, result.data.kit );
+				}
+
+				dispatch( { type: 'SET_EXPORTED_DATA', payload: kitExportData } );
+				dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
+				navigate( '/export-customization/complete' );
 			} else {
 				throw new ImportExportError( 'Invalid response format from server' );
 			}
-
-			setExportedData( {
-				exportedData: kitExportData,
-				mediaUrls: result.data.media_urls,
-				kit: result.data.kit,
-			} );
-
-			const mediaUrls = result.data.media_urls;
-			if ( mediaUrls && mediaUrls.length > 0 ) {
-				await processMedia( kitExportData, mediaUrls, result.data.kit );
-			}
-
-			dispatch( { type: 'SET_EXPORTED_DATA', payload: kitExportData } );
-			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
-			navigate( '/export-customization/complete' );
 		} catch ( err ) {
 			setStatus( STATUS_ERROR );
 			setError( err instanceof ImportExportError ? err : new ImportExportError( err.message ) );

@@ -7,6 +7,7 @@ import {
 	DialogActions,
 	Button,
 	Link as ElementorUiLink,
+	Typography,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
@@ -161,13 +162,19 @@ export const messagesContent = {
 		),
 	},
 	'insufficient-storage-quota': {
-		title: __( 'Couldn’t Export the Website Template', 'elementor' ),
+		title: __( 'Your library is full', 'elementor' ),
 		text: (
 			<>
-				{ __( 'The export failed because it will pass the maximum Website Templates storage you have available. ', 'elementor' ) }
-				<Link href="https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/" >
-					{ __( 'Upgrade now', 'elementor' ) }
-				</Link>
+				<Typography variant="h6" sx={ { mb: 2 } }>
+					[[filename]] exceeds the library size limit
+				</Typography>
+				<Typography variant="body2">
+					{ __( 'The maximum website template library size is [[maxSize]] GB. To save this file, you can either export it locally as a .zip file or get more storage by ', 'elementor' ) }
+					<Link href="https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/">
+						{ __( 'Upgrade now', 'elementor' ) }
+					</Link>
+					.
+				</Typography>
 			</>
 		),
 	},
@@ -177,10 +184,90 @@ export function ProcessingErrorDialog( {
 	error,
 	handleClose,
 	handleTryAgain,
+	handleExportAsZip,
 } ) {
 	const [ open, setOpen ] = useState( Boolean( error ) );
 	const errorType = error?.code || 'general';
 	const errorMessageContent = messagesContent[ errorType ];
+
+	const replacePlaceholderInString = ( str, placeholders ) => {
+		return str.replace( /\[\[(\w+)\]\]/g, ( match, key ) => {
+			return placeholders[ key ] ?? match;
+		} );
+	};
+
+	const replaceInReactChildren = ( children, placeholders ) => {
+		if ( typeof children === 'string' ) {
+			return replacePlaceholderInString( children, placeholders );
+		}
+
+		if ( Array.isArray( children ) ) {
+			return children.map( ( child ) => replaceInReactChildren( child, placeholders ) );
+		}
+
+		if ( children?.props ) {
+			return {
+				...children,
+				props: {
+					...children.props,
+					children: replaceInReactChildren( children.props.children, placeholders ),
+				},
+			};
+		}
+
+		return children;
+	};
+
+	const applyPlaceholders = ( text, placeholders ) => {
+		if ( ! placeholders ) {
+			return text;
+		}
+
+		if ( typeof text === 'string' ) {
+			return replacePlaceholderInString( text, placeholders );
+		}
+
+		if ( text?.props ) {
+			return {
+				...text,
+				props: {
+					...text.props,
+					children: replaceInReactChildren( text.props.children, placeholders ),
+				},
+			};
+		}
+
+		return text;
+	};
+
+	const resolveTitle = () => {
+		if ( error?.title ) {
+			return error.title;
+		}
+
+		const details = error?.details || error?.message;
+		if ( details && typeof details === 'object' && details.title ) {
+			return details.title;
+		}
+
+		return errorMessageContent.title;
+	};
+
+	const resolveText = () => {
+		const details = error?.details || error?.message;
+		const backendPlaceholders = details && typeof details === 'object' ? details.placeholders : null;
+
+		let text = errorMessageContent.text;
+		if ( details && typeof details === 'object' && details.text ) {
+			text = details.text;
+		} else if ( typeof details === 'string' && details ) {
+			if ( details !== errorType && details !== 'export_error' ) {
+				text = details;
+			}
+		}
+
+		return applyPlaceholders( text, backendPlaceholders );
+	};
 
 	const shouldRenderTryAgainButton = () => {
 		return [
@@ -200,6 +287,8 @@ export function ProcessingErrorDialog( {
 	};
 
 	const renderButtons = () => {
+		const isQuotaError = errorType === 'insufficient-storage-quota';
+
 		return (
 			<>
 				<Button
@@ -213,7 +302,19 @@ export function ProcessingErrorDialog( {
 				>
 					{ __( 'Cancel', 'elementor' ) }
 				</Button>
-				{ shouldRenderTryAgainButton( errorType ) && (
+				{ isQuotaError && handleExportAsZip && (
+					<Button
+						onClick={ () => {
+							handleExportAsZip();
+							setOpen( false );
+						} }
+						variant="contained"
+						color="primary"
+					>
+						{ __( 'Export as .zip', 'elementor' ) }
+					</Button>
+				) }
+				{ shouldRenderTryAgainButton( errorType ) && ! isQuotaError && (
 					<Button
 						data-testid="try-again-button"
 						onClick={ () => {
@@ -253,12 +354,12 @@ export function ProcessingErrorDialog( {
 		>
 			<DialogHeader onClose={ handleClose }>
 				<DialogTitle>
-					{ errorMessageContent.title }
+					{ resolveTitle() }
 				</DialogTitle>
 			</DialogHeader>
 
 			<DialogContent dividers sx={ { p: 3 } }>
-				{ errorMessageContent.text }
+				{ resolveText() }
 			</DialogContent>
 
 			<DialogActions>
@@ -272,4 +373,5 @@ ProcessingErrorDialog.propTypes = {
 	error: PropTypes.any,
 	handleClose: PropTypes.func,
 	handleTryAgain: PropTypes.func,
+	handleExportAsZip: PropTypes.func,
 };
