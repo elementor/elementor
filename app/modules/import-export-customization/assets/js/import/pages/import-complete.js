@@ -13,8 +13,11 @@ const handleDone = () => {
 
 export default function ImportComplete() {
 	const { data, isCompleted, runnersState } = useImportContext();
-	const { includes, analytics, uploadedData } = data;
+	const { includes, analytics, uploadedData, duration } = data;
 	const navigate = useNavigate();
+
+	const title = data?.uploadedData?.manifest?.title || '';
+	const kitId = data?.kitUploadParams?.id || '';
 
 	const getTemplatesSummary = useCallback( () => {
 		const templatesSummary = runnersState?.templates?.succeed_summary;
@@ -202,8 +205,11 @@ export default function ImportComplete() {
 			kit_import_plugins: includes.includes( 'plugins' ),
 			kit_import_deselected: analytics?.customization,
 			kit_description: !! uploadedData?.manifest?.description,
+			...( kitId && { kit_import_id: kitId } ),
+			...( title && { kit_import_title: title } ),
+			...( duration && { kit_import_duration: duration } ),
 		} );
-	}, [ includes, analytics, uploadedData, data ] );
+	}, [ includes, analytics, uploadedData, data, kitId, title, duration ] );
 
 	return (
 		<BaseLayout
