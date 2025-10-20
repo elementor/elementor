@@ -33,7 +33,7 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic', 'tab', 'panel', 'tabs' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'tab', 'content', 'tabs' ];
 	}
 
 	public function get_icon() {
