@@ -110,9 +110,14 @@ export default function HelloTheme() {
 
 		setHelloInstalledInOnboarding( true );
 
+		if ( isVariantB && selectedTheme ) {
+			const themeValue = 'hello-theme' === selectedTheme ? 'hello' : 'hellobiz';
+			OnboardingEventTracking.sendThemeChoiceEvent( state.currentStep, themeValue );
+		}
+
 		OnboardingEventTracking.sendStepEndState( 2 );
 		goToNextScreen();
-	}, [ getStateObjectToUpdate, goToNextScreen, noticeStateSuccess, state, updateState ] );
+	}, [ getStateObjectToUpdate, goToNextScreen, noticeStateSuccess, state, updateState, isVariantB, selectedTheme ] );
 
 	const onErrorInstallHelloTheme = () => {
 		elementorCommon.events.dispatchEvent( {
@@ -180,7 +185,9 @@ export default function HelloTheme() {
 
 		const themeValue = 'hello-theme' === themeSlug ? 'hello' : 'hellobiz';
 
-		OnboardingEventTracking.sendThemeChoiceEvent( state.currentStep, themeValue );
+		if ( ! isVariantB ) {
+			OnboardingEventTracking.sendThemeChoiceEvent( state.currentStep, themeValue );
+		}
 	};
 
 	/**
