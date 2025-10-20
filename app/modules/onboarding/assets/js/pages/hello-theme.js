@@ -31,7 +31,7 @@ export default function HelloTheme() {
 	const noticeStateSuccess = useMemo( () => ( {
 		type: 'success',
 		icon: 'eicon-check-circle-o',
-		message: __( 'Your site's got Hello theme. High-five!', 'elementor' ),
+		message: __( 'Your site\'s got Hello theme. High-five!', 'elementor' ),
 	} ), [] );
 
 	const [ noticeState, setNoticeState ] = useState( state.isHelloThemeActivated ? noticeStateSuccess : null );
