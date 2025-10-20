@@ -26,7 +26,7 @@
 
 		.e-onboarding__cards-grid {
 			justify-content: center;
-			flex-wrap: nowrap; 
+			flex-wrap: nowrap;
 		}
 
 		.e-onboarding__card {
@@ -43,5 +43,36 @@
 
 	&__good-to-go-footer {
 		justify-content: end;
+	}
+}
+
+.experiment401-variant-b {
+
+	.e-onboarding__card-image {
+		height: 112px;
+		width: auto;
+	}
+
+	.e-onboarding__switch-method-text {
+		color: $platform-darkest-gray;
+		text-align: center;
+		font-family: "DM Sans";
+		font-size: 18px;
+		font-weight: 700;
+		line-height: 150%;
+		letter-spacing: -0.18px;
+	}
+}
+
+@media screen and (min-width: 1024px) {
+	.experiment401-variant-b {
+		.e-onboarding__good-to-go-footer {
+			justify-content: center;
+		}
+
+		.e-onboarding__button-skip {
+			position: absolute;
+			inset-inline-end: 0px;
+		}
 	}
 }
