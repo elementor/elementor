@@ -156,6 +156,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
+			'x-data' => 'atomic-tabs',
 		];
 
 		if ( ! empty( $settings['default-active-tab'] ) ) {

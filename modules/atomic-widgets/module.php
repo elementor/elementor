@@ -378,6 +378,7 @@ class Module extends BaseModule {
 			} );
 
 		$assets_config_provider->load( 'frontend-handlers' );
+		$assets_config_provider->load( 'alpinejs' );
 
 		$frontend_handlers_package_config = $assets_config_provider->get( 'frontend-handlers' );
 
@@ -401,10 +402,22 @@ class Module extends BaseModule {
 			true
 		);
 
+		$alpinejs_package_config = $assets_config_provider->get( 'alpinejs' );
+
+		if ( $alpinejs_package_config ) {
+			wp_register_script(
+				$alpinejs_package_config['handle'],
+				$this->get_js_assets_url( 'packages/alpinejs/alpinejs' ),
+				$alpinejs_package_config['deps'],
+				ELEMENTOR_VERSION,
+				true
+			);
+		}
+
 		wp_register_script(
 			'elementor-tabs-handler',
 			$this->get_js_assets_url( 'tabs-handler' ),
-			[ $frontend_handlers_package_config['handle'] ],
+			[ $frontend_handlers_package_config['handle'], $alpinejs_package_config['handle']	 ],
 			ELEMENTOR_VERSION,
 			true
 		);

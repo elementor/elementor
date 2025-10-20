@@ -1,39 +1,45 @@
 import { register } from '@elementor/frontend-handlers';
+import { Alpine } from '@elementor/alpinejs';
 
 register( {
 	elementType: 'e-tabs',
 	uniqueId: 'e-tabs-handler',
-	callback: ( { element, signal } ) => {
-		const tabs = element.querySelectorAll( '[data-element_type="e-tab"]' );
-		const tabPanels = element.querySelectorAll( '[data-element_type="e-tab-panel"]' );
+	callback: () => {
+		window.Alpine = Alpine;
 
-		const setActiveTab = ( id ) => {
-			tabPanels.forEach( ( tabPanel ) => {
-				const activeTab = tabPanel.getAttribute( 'data-tab-id' ) === id;
+		Alpine.data( 'atomic-tabs', () => ( {
+			activeTab: null,
 
-				if ( activeTab ) {
-					tabPanel.style.removeProperty( 'display' );
-					tabPanel.removeAttribute( 'hidden' );
-
-					return;
+			init() {
+				const defaultActiveTab = this.$el.getAttribute( 'data-active-tab' );
+				if ( defaultActiveTab ) {
+					this.activeTab = defaultActiveTab;
 				}
+			},
 
-				tabPanel.style.display = 'none';
-				tabPanel.setAttribute( 'hidden', 'true' );
-			} );
-		};
+			tab: {
+				'@click'() {
+					const tabId = this.$el.getAttribute( 'id' );
+					this.activeTab = tabId;
+				},
+				':aria-selected'() {
+					const tabId = this.$el.getAttribute( 'id' );
+					return this.activeTab === tabId ? 'true' : 'false';
+				},
+				':tabindex'() {
+					const tabId = this.$el.getAttribute( 'id' );
+					return this.activeTab === tabId ? '0' : '-1';
+				},
+			},
 
-		const defaultActiveTab = element.getAttribute( 'data-active-tab' );
+			tabPanel: {
+				'x-show'() {
+					const tabId = this.$el.getAttribute( 'data-tab-id' );
+					return this.activeTab === tabId;
+				},
+			},
+		} ) );
 
-		setActiveTab( defaultActiveTab );
-
-		tabs.forEach( ( tab ) => {
-			const clickHandler = () => {
-				const tabId = tab.getAttribute( 'data-id' );
-				setActiveTab( tabId );
-			};
-
-			tab.addEventListener( 'click', clickHandler, { signal } );
-		} );
+		Alpine.start();
 	},
 } );
