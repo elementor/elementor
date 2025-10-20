@@ -9,37 +9,35 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Render_Context;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tab_Panel extends Atomic_Element_Base {
+class Atomic_Tabs_Content_Area extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-tab-panel';
+		return 'e-tabs-content-area';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tab-panel';
+		return 'e-tabs-content-area';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tab Panel', 'elementor' );
+		return esc_html__( 'Tabs content area', 'elementor' );
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic', 'tab', 'panel', 'tabs' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic' ];
 	}
 
 	public function get_icon() {
-		return 'eicon-layout';
+		return 'eicon-tab-content';
 	}
 
 	public function should_show_in_panel() {
@@ -50,7 +48,6 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'tab-id' => String_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
@@ -60,7 +57,11 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
-				->set_items( [] ),
+				->set_items( [
+					Text_Control::bind_to( '_cssid' )
+						->set_label( __( 'ID', 'elementor' ) )
+						->set_meta( $this->get_css_id_control_meta() ),
+				] ),
 		];
 	}
 
@@ -92,30 +93,11 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 		] );
 	}
 
-	protected function define_initial_attributes() {
-		return [
-			'role' => 'tabpanel',
-		];
-	}
-
-	protected function define_default_children() {
-		return [
-			Atomic_Paragraph::generate()
-				->settings( [
-					'text' => String_Prop_Type::generate( 'Tab Content' ),
-				] )
-				->build(),
-		];
-	}
-
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 		$initial_attributes = $this->define_initial_attributes();
-
-		$default_active_tab = Render_Context::get( Atomic_Tabs::class )['default-active-tab'] ?? null;
-		$is_active = $default_active_tab === $this->get_atomic_setting( 'tab-id' );
 
 		$attributes = [
 			'class' => [
@@ -124,18 +106,7 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			'x-bind' => 'tabPanel',
 		];
-
-		if ( ! $is_active ) {
-			$attributes['hidden'] = 'true';
-			$attributes['style'] = 'display: none;';
-		}
-
-		if ( ! empty( $settings['tab-id'] ) ) {
-			$attributes['data-tab-id'] = esc_attr( $settings['tab-id'] );
-			$attributes['aria-labelledby'] = esc_attr( $settings['tab-id'] );
-		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );

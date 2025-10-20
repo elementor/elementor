@@ -2,7 +2,6 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -12,24 +11,23 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tabs_Content extends Atomic_Element_Base {
+class Atomic_Tabs_Menu extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-tabs-content';
+		return 'e-tabs-menu';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tabs-content';
+		return 'e-tabs-menu';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tabs Content', 'elementor' );
+		return esc_html__( 'Tabs menu', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -37,7 +35,7 @@ class Atomic_Tabs_Content extends Atomic_Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-tab-content';
+		return 'eicon-tab-menu';
 	}
 
 	public function should_show_in_panel() {
@@ -66,31 +64,27 @@ class Atomic_Tabs_Content extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$display = String_Prop_Type::generate( 'block' );
+		$display = String_Prop_Type::generate( 'flex' );
+		$gap = Size_Prop_Type::generate( [
+			'size' => 10,
+			'unit' => 'px',
+		] );
+		$justify_content = String_Prop_Type::generate( 'space-between' );
+		$min_width = Size_Prop_Type::generate( [
+			'size' => 30,
+			'unit' => 'px',
+		] );
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'display', $display )
-						->add_prop( 'padding', $this->get_base_padding() )
-						->add_prop( 'min-width', $this->get_base_min_width() )
+						->add_prop( 'min-width', $min_width )
+						->add_prop( 'gap', $gap )
+						->add_prop( 'justify-content', $justify_content )
 				),
 		];
-	}
-
-	protected function get_base_padding(): array {
-		return Size_Prop_Type::generate( [
-			'size' => 10,
-			'unit' => 'px',
-		] );
-	}
-
-	protected function get_base_min_width(): array {
-		return Size_Prop_Type::generate( [
-			'size' => 30,
-			'unit' => 'px',
-		] );
 	}
 
 	protected function add_render_attributes() {
