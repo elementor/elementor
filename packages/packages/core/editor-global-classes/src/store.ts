@@ -147,6 +147,11 @@ export const slice = createSlice( {
 			customCss = customCss?.raw ? customCss : null;
 
 			if ( variant ) {
+				// edge case, sometimes the server returns an array instead of an object because of PHP array / object conversion
+				if ( Array.isArray( variant.props ) ) {
+					variant.props = {};
+				}
+
 				variant.props = mergeProps( variant.props, payload.props );
 				variant.custom_css = customCss;
 
