@@ -12,6 +12,8 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Render_Context;
+
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -112,6 +114,9 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 		$initial_attributes = $this->define_initial_attributes();
 
+		$default_active_tab = Render_Context::get( Atomic_Tabs::class )['default-active-tab'] ?? null;
+		$is_active = $default_active_tab === $this->get_atomic_setting( 'tab-id' );
+
 		$attributes = [
 			'class' => [
 				'e-con',
@@ -120,6 +125,11 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 				...( $settings['classes'] ?? [] ),
 			],
 		];
+
+		if ( ! $is_active ) {
+			$attributes['hidden'] = 'true';
+			$attributes['style'] = 'display: none;';
+		}
 
 		if ( ! empty( $settings['tab-id'] ) ) {
 			$attributes['data-tab-id'] = esc_attr( $settings['tab-id'] );
