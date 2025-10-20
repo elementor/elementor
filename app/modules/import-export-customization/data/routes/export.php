@@ -29,7 +29,6 @@ class Export extends Base_Route {
 		 * @var $module ImportExportCustomizationModule
 		 */
 		$module = Plugin::$instance->app->get_component( 'import-export-customization' );
-		$quota = null;
 
 		try {
 			$settings = [
@@ -42,15 +41,6 @@ class Export extends Base_Route {
 			];
 
 			$settings = array_filter( $settings );
-
-			$source = $settings['kitInfo']['source'];
-
-			if ( 'cloud' === $source ) {
-				try {
-					$cloud_kit_library_app = \Elementor\Modules\CloudKitLibrary\Module::get_app();
-					$quota = $cloud_kit_library_app->get_quota();
-				} catch ( \Exception | \Error $e ) {}
-			}
 
 			$export = $module->export_kit( $settings );
 
@@ -95,9 +85,20 @@ class Export extends Base_Route {
 				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
 			}
 
-			if ( $this->is_quota_error( $e->getMessage() ) ) {
-				return $this->get_quota_error_response( $quota, $settings['kitInfo'] ?? [] );
+		if ( $this->is_quota_error( $e->getMessage() ) ) {
+			$quota = null;
+			$cloud_kit_library_app = $this->get_cloud_kit_library_app();
+
+			if ( $cloud_kit_library_app ) {
+				try {
+					$quota = $cloud_kit_library_app->get_quota();
+				} catch ( \Exception | \Error $quota_error ) {
+					// Quota fetch failed, error message will use default value.
+				}
 			}
+
+			return $this->get_quota_error_response( $quota, $settings['kitInfo'] ?? [] );
+		}
 
 			return Response::error( 'export_error', $e->getMessage() );
 		}

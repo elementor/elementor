@@ -103,7 +103,7 @@ const KitListCloudItem = ( props ) => {
 	};
 
 	const cardContent = (
-		<Card 
+		<Card
 			className={ `e-kit-library__kit-item ${ isLocked ? 'e-kit-library__kit-item--locked' : '' }` }
 		>
 			<CardHeader
@@ -116,7 +116,7 @@ const KitListCloudItem = ( props ) => {
 					className="eps-card__headline"
 				>
 					{ isLocked && (
-						<Tooltip 
+						<Tooltip
 							tag="span"
 							title={ __( 'Your library is currently over the new quota. Upgrade your plan within 90 days to keep all website templates', 'elementor' ) }
 						>
@@ -146,7 +146,7 @@ const KitListCloudItem = ( props ) => {
 					<CardOverlay>
 						<Grid container direction="column" className="e-kit-library__kit-item-cloud-overlay">
 							{ isLocked ? (
-								<Tooltip 
+								<Tooltip
 									tag="span"
 									title={ __( 'Your library is currently over the new quota. Upgrade your plan within 90 days to keep all website templates', 'elementor' ) }
 								>

@@ -197,7 +197,7 @@ export function ProcessingErrorDialog( {
 	};
 
 	const replaceInReactChildren = ( children, placeholders ) => {
-		if ( typeof children === 'string' ) {
+		if ( 'string' === typeof children ) {
 			return replacePlaceholderInString( children, placeholders );
 		}
 
@@ -223,7 +223,7 @@ export function ProcessingErrorDialog( {
 			return text;
 		}
 
-		if ( typeof text === 'string' ) {
+		if ( 'string' === typeof text ) {
 			return replacePlaceholderInString( text, placeholders );
 		}
 
@@ -246,7 +246,7 @@ export function ProcessingErrorDialog( {
 		}
 
 		const details = error?.details || error?.message;
-		if ( details && typeof details === 'object' && details.title ) {
+		if ( details && 'object' === typeof details && details.title ) {
 			return details.title;
 		}
 
@@ -255,12 +255,12 @@ export function ProcessingErrorDialog( {
 
 	const resolveText = () => {
 		const details = error?.details || error?.message;
-		const backendPlaceholders = details && typeof details === 'object' ? details.placeholders : null;
+		const backendPlaceholders = details && 'object' === typeof details ? details.placeholders : null;
 
 		let text = errorMessageContent.text;
-		if ( details && typeof details === 'object' && details.text ) {
+		if ( details && 'object' === typeof details && details.text ) {
 			text = details.text;
-		} else if ( typeof details === 'string' && details ) {
+		} else if ( 'string' === typeof details && details ) {
 			if ( details !== errorType && details !== 'export_error' ) {
 				text = details;
 			}
@@ -287,7 +287,7 @@ export function ProcessingErrorDialog( {
 	};
 
 	const renderButtons = () => {
-		const isQuotaError = errorType === 'insufficient-storage-quota';
+		const isQuotaError = 'insufficient-storage-quota' === errorType;
 
 		return (
 			<>

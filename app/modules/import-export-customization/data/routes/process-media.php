@@ -23,14 +23,6 @@ class Process_Media extends Base_Route {
 		return \WP_REST_Server::CREATABLE;
 	}
 
-	protected function get_cloud_kit_library_app() {
-		try {
-			return CloudKitLibrary::get_app();
-		} catch ( \Exception | \Error $e ) {
-			return null;
-		}
-	}
-
 	protected function callback( $request ): \WP_REST_Response {
 		/**
 		 * @var $module ImportExportCustomizationModule

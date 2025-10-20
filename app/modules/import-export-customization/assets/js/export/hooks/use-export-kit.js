@@ -113,12 +113,12 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 
 			const result = await response.json();
 
-            if ( ! response.ok ) {
-                const rawMessage = result?.data?.message;
-                const errorMessage = 'object' === typeof rawMessage ? rawMessage : ( rawMessage || `HTTP error! with the following code: ${ result?.data?.code }` );
-                const errorCode = 408 === response?.status ? 'timeout' : result?.data?.code;
-                throw new ImportExportError( errorMessage, errorCode );
-            }
+			if ( ! response.ok ) {
+				const rawMessage = result?.data?.message;
+				const errorMessage = 'object' === typeof rawMessage ? rawMessage : ( rawMessage || `HTTP error! with the following code: ${ result?.data?.code }` );
+				const errorCode = 408 === response?.status ? 'timeout' : result?.data?.code;
+				throw new ImportExportError( errorMessage, errorCode );
+			}
 
 			const isExportLocal = 'file' === kitInfo.source && result.data && result.data.file;
 			const isExportToCloud = 'cloud' === kitInfo.source && result.data && result.data.kit;

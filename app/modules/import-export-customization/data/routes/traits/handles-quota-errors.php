@@ -9,8 +9,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 trait Handles_Quota_Errors {
 
+	protected function get_cloud_kit_library_app() {
+		try {
+			return \Elementor\Modules\CloudKitLibrary\Module::get_app();
+		} catch ( \Exception | \Error $e ) {
+			return null;
+		}
+	}
+
 	private function is_quota_error( $error_message ) {
-		return $error_message === \Elementor\Modules\CloudKitLibrary\Connect\Cloud_Kits::INSUFFICIENT_STORAGE_QUOTA;
+		return \Elementor\Modules\CloudKitLibrary\Connect\Cloud_Kits::INSUFFICIENT_STORAGE_QUOTA === $error_message;
 	}
 
 	private function get_quota_error_response( $quota, $kit_data ) {
