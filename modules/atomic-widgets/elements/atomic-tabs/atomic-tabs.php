@@ -147,7 +147,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
 
 		return [
-			'activeTab' => $default_active_tab,
+			'default-active-tab' => $default_active_tab,
 		];
 	}
 

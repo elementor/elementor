@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Render_Context;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -104,9 +105,9 @@ class Atomic_Tab extends Atomic_Element_Base {
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 		$initial_attributes = $this->define_initial_attributes();
-		$active_tab = $this->get_context( Atomic_Tabs::class )['activeTab'] ?? null;
+		$default_active_tab = Render_Context::get( Atomic_Tabs::class )['default-active-tab'] ?? null;
 
-		$is_active = $active_tab === $this->get_id();
+		$is_active = $default_active_tab === $this->get_id();
 
 		$attributes = [
 			'class' => [

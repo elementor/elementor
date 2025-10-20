@@ -151,19 +151,17 @@ abstract class Atomic_Element_Base extends Element_Base {
 	public function print_content() {
 		$element_context = $this->define_render_context();
 
-		if ( ! empty( $element_context ) ) {
-			Render_Context::push( static::class, $element_context );
+		$has_context = ! empty( $element_context );
+
+		if ( ! $has_context ) {
+			return parent::print_content();
 		}
+
+		Render_Context::push( static::class, $element_context );
 
 		parent::print_content();
 
-		if ( ! empty( $element_context ) ) {
-			Render_Context::pop( static::class );
-		}
-	}
-
-	protected function get_context( string $key ) {
-		return Render_Context::get( $key );
+		Render_Context::pop( static::class );
 	}
 
 	/**
