@@ -94,7 +94,7 @@ class Export extends Base_Route {
 				if ( $cloud_kit_library_app ) {
 					try {
 						$quota = $cloud_kit_library_app->get_quota();
-					} catch ( \Exception | \Error $quota_error ) {
+					} catch ( \Exception | \Error $quota_error ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 						// Quota fetch failed, error message will use default value.
 					}
 				}
@@ -102,7 +102,7 @@ class Export extends Base_Route {
 				return $this->get_quota_error_response( $quota, $settings['kitInfo'] ?? [] );
 			}
 
-			return Response::error( 'export_error', $e->getMessage() );
+			return Response::error( $e->getMessage(), 'export_error' );
 		}
 	}
 
