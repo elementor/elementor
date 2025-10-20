@@ -40,11 +40,14 @@ class Admin {
 		this.maybeShowReferrerKitDialog();
 	}
 
-	maybeAddRevertBtnMargin() {
+	shouldScrollToRevert() {
 		const urlParams = new URLSearchParams( window.location.search );
-		const shouldScroll = urlParams.get( 'scroll_to_revert' );
 
-		if ( ! shouldScroll ) {
+		return !! urlParams.get( 'scroll_to_revert' );
+	}
+
+	maybeAddRevertBtnMargin() {
+		if ( ! this.shouldScrollToRevert() ) {
 			return;
 		}
 
@@ -52,10 +55,7 @@ class Admin {
 	}
 
 	maybeScrollToRevertButton() {
-		const urlParams = new URLSearchParams( window.location.search );
-		const shouldScroll = urlParams.get( 'scroll_to_revert' );
-
-		if ( ! shouldScroll ) {
+		if ( ! this.shouldScrollToRevert() ) {
 			return;
 		}
 
