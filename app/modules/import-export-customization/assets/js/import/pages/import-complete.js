@@ -35,8 +35,8 @@ export default function ImportComplete() {
 					return null;
 				}
 
-				const title = count > 1 ? label.plural : label.single;
-				return `${ count } ${ title }`;
+				const itemTitle = count > 1 ? label.plural : label.single;
+				return `${ count } ${ itemTitle }`;
 			} ).filter( ( part ) => part !== null );
 
 		return summaryParts.length > 0 ? summaryParts.join( ' | ' ) : __( 'No templates imported', 'elementor' );
@@ -102,8 +102,8 @@ export default function ImportComplete() {
 		Object.entries( contentCounts ).forEach( ( [ docType, count ] ) => {
 			const label = summaryTitles[ docType ];
 			if ( label && count > 0 ) {
-				const title = count > 1 ? label.plural : label.single;
-				summaryParts.push( `${ count } ${ title }` );
+				const itemTitle = count > 1 ? label.plural : label.single;
+				summaryParts.push( `${ count } ${ itemTitle }` );
 			}
 		} );
 
