@@ -95,7 +95,7 @@ describe( 'ImportProcess Page', () => {
 		render( <ImportProcess /> );
 		// Assert
 		expect( screen.getByTestId( 'error-dialog' ) ).toBeTruthy();
-		expect( screen.getByText( /We couldn't download the Website Template due to technical difficulties on our part/i ) ).toBeTruthy();
+		expect( screen.getByText( 'We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact' ) ).toBeTruthy();
 	} );
 
 	it( 'navigates to /import-customization/complete when status is DONE and no error (first useEffect)', () => {

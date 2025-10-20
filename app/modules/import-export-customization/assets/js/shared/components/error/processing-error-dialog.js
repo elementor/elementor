@@ -188,7 +188,7 @@ export function ProcessingErrorDialog( {
 } ) {
 	const [ open, setOpen ] = useState( Boolean( error ) );
 	const errorType = error?.code || 'general';
-	const errorMessageContent = messagesContent[ errorType ];
+	const errorMessageContent = messagesContent[ errorType ] || messagesContent.general;
 
 	const replacePlaceholderInString = ( str, placeholders ) => {
 		return str.replace( /\[\[(\w+)\]\]/g, ( match, key ) => {
