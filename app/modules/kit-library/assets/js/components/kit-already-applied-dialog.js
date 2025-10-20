@@ -8,7 +8,6 @@ export default function KitAlreadyAppliedDialog( props ) {
 		const elementorToolsUrl = elementorAppConfig[ 'import-export' ].tools_url;
 		const url = new URL( elementorToolsUrl );
 		url.searchParams.append( 'referrer_kit', props.id );
-		url.searchParams.append( 'scroll_to_revert', '1' );
 		url.hash = 'tab-import-export-kit';
 
 		return url.toString();
