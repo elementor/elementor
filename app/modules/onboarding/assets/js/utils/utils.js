@@ -1,3 +1,5 @@
+import { OnboardingEventTracking } from './onboarding-event-tracking';
+
 /**
  * Checkboxes data.
  */
@@ -67,4 +69,50 @@ export const safeDispatchEvent = ( eventName, eventData ) => {
 	} catch ( error ) {
 		// Silently fail - don't let tracking break the user experience
 	}
+};
+
+const getTrackingExperimentName = ( internalName ) => {
+	const experimentNames = elementorAppConfig?.onboarding?.experimentNames || {};
+	const experimentId = internalName.replace( 'core_onboarding_experiment', '' );
+	return experimentNames[ experimentId ] || internalName;
+};
+
+const getActiveExperiment = () => {
+	const experimentConfigs = OnboardingEventTracking.getExperimentConfigs();
+
+	for ( const experimentId in experimentConfigs ) {
+		const config = experimentConfigs[ experimentId ];
+		const isEnabled = elementorAppConfig?.onboarding?.[ config.enabledKey ] || false;
+
+		if ( isEnabled ) {
+			const variant = localStorage.getItem( config.variantKey );
+			if ( variant ) {
+				return {
+					name: getTrackingExperimentName( config.name ),
+					variant,
+				};
+			}
+		}
+	}
+	return null;
+};
+
+export const addExperimentTrackingToUrl = ( url, buttonName = null ) => {
+	if ( ! url || typeof url !== 'string' ) {
+		return url;
+	}
+
+	const activeExperiment = getActiveExperiment();
+	if ( ! activeExperiment ) {
+		return url;
+	}
+
+	const separator = url.includes( '?' ) ? '&' : '?';
+	let trackingParams = `e_na=${ encodeURIComponent( activeExperiment.name ) }&e_va=${ encodeURIComponent( activeExperiment.variant ) }`;
+
+	if ( buttonName ) {
+		trackingParams += `&e_bu=${ encodeURIComponent( buttonName ) }`;
+	}
+
+	return url + separator + trackingParams;
 };

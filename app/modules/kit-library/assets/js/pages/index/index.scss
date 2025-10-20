@@ -16,6 +16,7 @@ $e-kit-library-sticky-search-z-index: 2;
 		z-index: $e-kit-library-sticky-search-z-index;
 		background-color: var(--app-background-color);
 		gap: spacing( 24 );
+		align-items: center;
 
 		&-search, &-sort {
 			min-width: 265px;
@@ -23,6 +24,12 @@ $e-kit-library-sticky-search-z-index: 2;
 
 		&-search {
 			flex: 1;
+		}
+
+		&-quota {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
 		}
 	}
 
