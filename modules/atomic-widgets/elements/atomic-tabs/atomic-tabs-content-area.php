@@ -17,19 +17,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tabs_Content extends Atomic_Element_Base {
+class Atomic_Tabs_Content_Area extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-tabs-content';
+		return 'e-tabs-content-area';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tabs-content';
+		return 'e-tabs-content-area';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tabs Content', 'elementor' );
+		return esc_html__( 'Tabs content area', 'elementor' );
 	}
 
 	public function get_keywords() {
