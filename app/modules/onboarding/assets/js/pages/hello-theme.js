@@ -22,7 +22,7 @@ export default function HelloTheme() {
 		},
 		[ noticeState, setNoticeState ] = useState( state.isHelloThemeActivated ? noticeStateSuccess : null ),
 		[ activeTimeouts, setActiveTimeouts ] = useState( [] ),
-		continueWithHelloThemeText = state.isHelloThemeActivated ? __( 'Next', 'elementor' ) : __( 'Continue with Hello Biz Theme', 'elementor' ),
+		continueWithHelloThemeText = state.isHelloThemeActivated ? __( 'Next', 'elementor' ) : __( 'Select theme', 'elementor' ),
 		[ actionButtonText, setActionButtonText ] = useState( continueWithHelloThemeText ),
 		navigate = useNavigate(),
 		pageId = 'hello',
@@ -173,6 +173,11 @@ export default function HelloTheme() {
 		actionButton.className = 'e-onboarding__button--processing';
 	}
 
+	if ( ! state.isHelloThemeActivated && ! selectedTheme ) {
+		actionButton.disabled = true;
+		actionButton.className = actionButton.className ? `${ actionButton.className } e-onboarding__button--disabled` : 'e-onboarding__button--disabled';
+	}
+
 	if ( state.isHelloThemeActivated ) {
 		actionButton.onClick = () => {
 			OnboardingEventTracking.sendHelloBizContinue( state.currentStep );
@@ -183,6 +188,10 @@ export default function HelloTheme() {
 		};
 	} else {
 		actionButton.onClick = () => {
+			if ( ! selectedTheme ) {
+				return;
+			}
+
 			OnboardingEventTracking.sendHelloBizContinue( state.currentStep );
 			sendNextButtonEvent();
 
@@ -298,6 +307,7 @@ export default function HelloTheme() {
 				onThemeSelect={ handleThemeSelection }
 				onThemeInstallSuccess={ onHelloThemeActivationSuccess }
 				onThemeInstallError={ onErrorInstallHelloTheme }
+				isInstalling={ isInstalling }
 			/>
 			<div className="e-onboarding__footnote">
 				{ '* ' + __( 'You can switch your theme later on', 'elementor' ) }
