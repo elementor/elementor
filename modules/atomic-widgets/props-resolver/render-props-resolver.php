@@ -22,6 +22,7 @@ class Render_Props_Resolver extends Props_Resolver {
 
 	const CONTEXT_SETTINGS = 'settings';
 	const CONTEXT_STYLES = 'styles';
+	const CONTEXT_MOTION_EFFECTS = 'motion-effects';
 
 	public static function for_styles(): self {
 		return static::instance( self::CONTEXT_STYLES );
@@ -29,6 +30,10 @@ class Render_Props_Resolver extends Props_Resolver {
 
 	public static function for_settings(): self {
 		return static::instance( self::CONTEXT_SETTINGS );
+	}
+
+	public static function for_motion_effects(): self {
+		return static::instance( self::CONTEXT_MOTION_EFFECTS );
 	}
 
 	public function resolve( array $schema, array $props ): array {

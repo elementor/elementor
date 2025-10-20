@@ -26,6 +26,7 @@ export * from './background-prop-types/background-image-position-offset';
 export * from './background-prop-types/background-image-size-scale';
 export * from './boolean';
 export * from './color-stop';
+export * from './entrance-animation';
 export * from './gradient-color-stop';
 export * from './key-value';
 export * from './position';
@@ -42,6 +43,8 @@ export * from './transform-prop-types/perspective-origin';
 export * from './filter-prop-types/filter';
 export * from './filter-prop-types/backdrop-filter';
 export * from './filter-prop-types/drop-shadow-filter';
+export * from './motion-effects';
+
 export * from './filter-prop-types/filter-functions/blur-filter';
 export * from './filter-prop-types/filter-functions/intensity-filter';
 export * from './filter-prop-types/filter-functions/color-tone-filter';

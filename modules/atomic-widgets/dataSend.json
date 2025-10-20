@@ -1,0 +1,2432 @@
+{
+    "events": [
+      {
+        "id": "e",
+        "animationType": "custom",
+        "eventTypeId": "PAGE_START",
+        "action": null,
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131c4",
+          "appliesTo": "PAGE",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131c4",
+            "appliesTo": "PAGE",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585722574057
+      },
+      {
+        "id": "e-2",
+        "animationType": "custom",
+        "eventTypeId": "PAGE_FINISH",
+        "action": {
+          "id": "",
+          "actionTypeId": "GENERAL_START_ACTION",
+          "config": {
+            "delay": 0,
+            "easing": "",
+            "duration": 0,
+            "actionListId": "a",
+            "affectedElements": {
+              
+            },
+            "playInReverse": false,
+            "autoStopEventId": "e"
+          },
+          "instant": true
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131c4",
+          "appliesTo": "PAGE",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131c4",
+            "appliesTo": "PAGE",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585722574058
+      },
+      {
+        "id": "e-3",
+        "animationType": "custom",
+        "eventTypeId": "PAGE_START",
+        "action": null,
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131cb",
+          "appliesTo": "PAGE",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131cb",
+            "appliesTo": "PAGE",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585804903077
+      },
+      {
+        "id": "e-4",
+        "animationType": "custom",
+        "eventTypeId": "PAGE_FINISH",
+        "action": {
+          "id": "",
+          "actionTypeId": "GENERAL_START_ACTION",
+          "instant": true,
+          "config": {
+            "delay": 0,
+            "easing": "",
+            "duration": 0,
+            "actionListId": "a-2",
+            "affectedElements": {
+              
+            },
+            "playInReverse": false,
+            "autoStopEventId": "e-3"
+          }
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131cb",
+          "appliesTo": "PAGE",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131cb",
+            "appliesTo": "PAGE",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585804903078
+      },
+      {
+        "id": "e-5",
+        "animationType": "custom",
+        "eventTypeId": "PAGE_START",
+        "action": null,
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131d3",
+          "appliesTo": "PAGE",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131d3",
+            "appliesTo": "PAGE",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585805094094
+      },
+      {
+        "id": "e-6",
+        "animationType": "custom",
+        "eventTypeId": "PAGE_FINISH",
+        "action": {
+          "id": "",
+          "actionTypeId": "GENERAL_START_ACTION",
+          "instant": true,
+          "config": {
+            "delay": 0,
+            "easing": "",
+            "duration": 0,
+            "actionListId": "a-2",
+            "affectedElements": {
+              
+            },
+            "playInReverse": false,
+            "autoStopEventId": "e-5"
+          }
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131d3",
+          "appliesTo": "PAGE",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131d3",
+            "appliesTo": "PAGE",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585805094094
+      },
+      {
+        "id": "e-7",
+        "animationType": "custom",
+        "eventTypeId": "PAGE_START",
+        "action": null,
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131cc",
+          "appliesTo": "PAGE",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131cc",
+            "appliesTo": "PAGE",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585805110046
+      },
+      {
+        "id": "e-8",
+        "animationType": "custom",
+        "eventTypeId": "PAGE_FINISH",
+        "action": {
+          "id": "",
+          "actionTypeId": "GENERAL_START_ACTION",
+          "instant": true,
+          "config": {
+            "delay": 0,
+            "easing": "",
+            "duration": 0,
+            "actionListId": "a-2",
+            "affectedElements": {
+              
+            },
+            "playInReverse": false,
+            "autoStopEventId": "e-7"
+          }
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131cc",
+          "appliesTo": "PAGE",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131cc",
+            "appliesTo": "PAGE",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585805110046
+      },
+      {
+        "id": "e-11",
+        "animationType": "custom",
+        "eventTypeId": "PAGE_START",
+        "action": null,
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131cf",
+          "appliesTo": "PAGE",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131cf",
+            "appliesTo": "PAGE",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585805162394
+      },
+      {
+        "id": "e-12",
+        "animationType": "custom",
+        "eventTypeId": "PAGE_FINISH",
+        "action": {
+          "id": "",
+          "actionTypeId": "GENERAL_START_ACTION",
+          "instant": true,
+          "config": {
+            "delay": 0,
+            "easing": "",
+            "duration": 0,
+            "actionListId": "a-2",
+            "affectedElements": {
+              
+            },
+            "playInReverse": false,
+            "autoStopEventId": "e-11"
+          }
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131cf",
+          "appliesTo": "PAGE",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131cf",
+            "appliesTo": "PAGE",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585805162395
+      },
+      {
+        "id": "e-13",
+        "animationType": "custom",
+        "eventTypeId": "PAGE_START",
+        "action": null,
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131d1",
+          "appliesTo": "PAGE",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131d1",
+            "appliesTo": "PAGE",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585805290509
+      },
+      {
+        "id": "e-14",
+        "animationType": "custom",
+        "eventTypeId": "PAGE_FINISH",
+        "action": {
+          "id": "",
+          "actionTypeId": "GENERAL_START_ACTION",
+          "instant": true,
+          "config": {
+            "delay": 0,
+            "easing": "",
+            "duration": 0,
+            "actionListId": "a-2",
+            "affectedElements": {
+              
+            },
+            "playInReverse": false,
+            "autoStopEventId": "e-13"
+          }
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131d1",
+          "appliesTo": "PAGE",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131d1",
+            "appliesTo": "PAGE",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585805290509
+      },
+      {
+        "id": "e-15",
+        "animationType": "custom",
+        "eventTypeId": "PAGE_START",
+        "action": null,
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131c6",
+          "appliesTo": "PAGE",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131c6",
+            "appliesTo": "PAGE",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585805310722
+      },
+      {
+        "id": "e-16",
+        "animationType": "custom",
+        "eventTypeId": "PAGE_FINISH",
+        "action": {
+          "id": "",
+          "actionTypeId": "GENERAL_START_ACTION",
+          "instant": true,
+          "config": {
+            "delay": 0,
+            "easing": "",
+            "duration": 0,
+            "actionListId": "a-2",
+            "affectedElements": {
+              
+            },
+            "playInReverse": false,
+            "autoStopEventId": "e-15"
+          }
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131c6",
+          "appliesTo": "PAGE",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131c6",
+            "appliesTo": "PAGE",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585805310723
+      },
+      {
+        "id": "e-17",
+        "animationType": "custom",
+        "eventTypeId": "NAVBAR_OPEN",
+        "action": {
+          "id": "",
+          "actionTypeId": "GENERAL_START_ACTION",
+          "instant": true,
+          "config": {
+            "delay": 0,
+            "easing": "",
+            "duration": 0,
+            "actionListId": "a-3",
+            "affectedElements": {
+              
+            },
+            "playInReverse": false,
+            "autoStopEventId": "e-18"
+          }
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "33c883c6-4afc-cc73-3bca-d2857a9d4bc2",
+          "appliesTo": "ELEMENT",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "33c883c6-4afc-cc73-3bca-d2857a9d4bc2",
+            "appliesTo": "ELEMENT",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585811143764
+      },
+      {
+        "id": "e-18",
+        "animationType": "custom",
+        "eventTypeId": "NAVBAR_CLOSE",
+        "action": {
+          "id": "",
+          "actionTypeId": "GENERAL_START_ACTION",
+          "instant": true,
+          "config": {
+            "delay": 0,
+            "easing": "",
+            "duration": 0,
+            "actionListId": "a-4",
+            "affectedElements": {
+              
+            },
+            "playInReverse": false,
+            "autoStopEventId": "e-17"
+          }
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "33c883c6-4afc-cc73-3bca-d2857a9d4bc2",
+          "appliesTo": "ELEMENT",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "33c883c6-4afc-cc73-3bca-d2857a9d4bc2",
+            "appliesTo": "ELEMENT",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585811143764
+      },
+      {
+        "id": "e-19",
+        "animationType": "custom",
+        "eventTypeId": "MOUSE_CLICK",
+        "action": {
+          "id": "",
+          "actionTypeId": "GENERAL_START_ACTION",
+          "instant": true,
+          "config": {
+            "delay": 0,
+            "easing": "",
+            "duration": 0,
+            "actionListId": "a-5",
+            "affectedElements": {
+              
+            },
+            "playInReverse": false,
+            "autoStopEventId": "e-20"
+          }
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131cc|7db248ef-cf59-12f3-a5c2-a0e29dc4299d",
+          "appliesTo": "CLASS",
+          "styleBlockIds": [
+            "5246a561-e589-3720-2401-bd89b6fca621"
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131cc|7db248ef-cf59-12f3-a5c2-a0e29dc4299d",
+            "appliesTo": "CLASS",
+            "styleBlockIds": [
+              "5246a561-e589-3720-2401-bd89b6fca621"
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585819192325
+      },
+      {
+        "id": "e-20",
+        "animationType": "custom",
+        "eventTypeId": "MOUSE_SECOND_CLICK",
+        "action": {
+          "id": "",
+          "actionTypeId": "GENERAL_START_ACTION",
+          "instant": true,
+          "config": {
+            "delay": 0,
+            "easing": "",
+            "duration": 0,
+            "actionListId": "a-6",
+            "affectedElements": {
+              
+            },
+            "playInReverse": false,
+            "autoStopEventId": "e-19"
+          }
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131cc|7db248ef-cf59-12f3-a5c2-a0e29dc4299d",
+          "appliesTo": "CLASS",
+          "styleBlockIds": [
+            "5246a561-e589-3720-2401-bd89b6fca621"
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131cc|7db248ef-cf59-12f3-a5c2-a0e29dc4299d",
+            "appliesTo": "CLASS",
+            "styleBlockIds": [
+              "5246a561-e589-3720-2401-bd89b6fca621"
+            ]
+          }
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1585819192325
+      },
+      {
+        "id": "e-21",
+        "name": "",
+        "animationType": "custom",
+        "eventTypeId": "SCROLLING_IN_VIEW",
+        "action": {
+          "id": "",
+          "actionTypeId": "GENERAL_CONTINUOUS_ACTION",
+          "instant": true,
+          "config": {
+            "actionListId": "",
+            "affectedElements": {
+              
+            }
+          }
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "id": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994761",
+          "appliesTo": "ELEMENT",
+          "styleBlockIds": [
+            
+          ]
+        },
+        "targets": [
+          {
+            "id": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994761",
+            "appliesTo": "ELEMENT",
+            "styleBlockIds": [
+              
+            ]
+          }
+        ],
+        "config": [
+          {
+            "continuousParameterGroupId": null,
+            "smoothing": 50,
+            "startsEntering": true,
+            "addStartOffset": false,
+            "addOffsetValue": 50,
+            "startsExiting": false,
+            "addEndOffset": false,
+            "endOffsetValue": 50
+          }
+        ],
+        "createdOn": 1753778717226
+      },
+      {
+        "id": "e-22",
+        "name": "",
+        "animationType": "preset",
+        "eventTypeId": "SCROLL_INTO_VIEW",
+        "action": {
+          "id": "",
+          "actionTypeId": "GROW_EFFECT",
+          "config": {
+            "actionListId": "GROW_EFFECT",
+            "autoStopEventId": "e-23"
+          },
+          "instant": false
+        },
+        "mediaQueries": [
+          "main"
+        ],
+        "target": {
+          "appliesTo": "ELEMENT",
+          "styleBlockIds": [
+            
+          ],
+          "id": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa99475c"
+        },
+        "targets": [
+          
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": 0,
+          "scrollOffsetUnit": "%",
+          "delay": 0,
+          "direction": null,
+          "effectIn": false
+        },
+        "createdOn": 1757413223087
+      },
+      {
+        "id": "e-23",
+        "name": "",
+        "animationType": "preset",
+        "eventTypeId": "SCROLL_OUT_OF_VIEW",
+        "action": {
+          "id": "",
+          "actionTypeId": "SLIDE_EFFECT",
+          "config": {
+            "actionListId": "SLIDE_EFFECT",
+            "autoStopEventId": "e-22"
+          },
+          "instant": false
+        },
+        "mediaQueries": [
+          "main"
+        ],
+        "target": {
+          "appliesTo": "ELEMENT",
+          "styleBlockIds": [
+            
+          ],
+          "id": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa99475c"
+        },
+        "targets": [
+          
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": 0,
+          "scrollOffsetUnit": "%",
+          "delay": 0,
+          "direction": "LEFT",
+          "effectIn": true
+        },
+        "createdOn": 1757413223087
+      },
+      {
+        "id": "e-24",
+        "name": "",
+        "animationType": "preset",
+        "eventTypeId": "SCROLL_INTO_VIEW",
+        "action": {
+          "id": "",
+          "actionTypeId": "FADE_EFFECT",
+          "config": {
+            "actionListId": "FADE_EFFECT",
+            "autoStopEventId": "e-25"
+          },
+          "instant": false
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "appliesTo": "ELEMENT",
+          "styleBlockIds": [
+            
+          ],
+          "id": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994759"
+        },
+        "targets": [
+          
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": 0,
+          "scrollOffsetUnit": "%",
+          "delay": 0,
+          "direction": null,
+          "effectIn": true
+        },
+        "createdOn": 1757414212424
+      },
+      {
+        "id": "e-25",
+        "name": "",
+        "animationType": "preset",
+        "eventTypeId": "SCROLL_OUT_OF_VIEW",
+        "action": {
+          "id": "",
+          "actionTypeId": "FLIP_EFFECT",
+          "config": {
+            "actionListId": "FLIP_EFFECT",
+            "autoStopEventId": "e-24"
+          },
+          "instant": false
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "appliesTo": "ELEMENT",
+          "styleBlockIds": [
+            
+          ],
+          "id": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994759"
+        },
+        "targets": [
+          
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": 0,
+          "scrollOffsetUnit": "%",
+          "delay": 0,
+          "direction": "LEFT",
+          "effectIn": true
+        },
+        "createdOn": 1757414212424
+      },
+      {
+        "id": "e-26",
+        "name": "",
+        "animationType": "preset",
+        "eventTypeId": "SCROLL_INTO_VIEW",
+        "action": {
+          "id": "",
+          "actionTypeId": "FLIP_EFFECT",
+          "config": {
+            "actionListId": "FLIP_EFFECT",
+            "autoStopEventId": "e-27"
+          },
+          "instant": false
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "appliesTo": "ELEMENT",
+          "styleBlockIds": [
+            
+          ],
+          "id": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994759"
+        },
+        "targets": [
+          
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": 0,
+          "scrollOffsetUnit": "%",
+          "delay": 0,
+          "direction": "LEFT",
+          "effectIn": true
+        },
+        "createdOn": 1757414275837
+      },
+      {
+        "id": "e-27",
+        "name": "",
+        "animationType": "preset",
+        "eventTypeId": "SCROLL_OUT_OF_VIEW",
+        "action": {
+          "id": "",
+          "actionTypeId": "JIGGLE_EFFECT",
+          "config": {
+            "actionListId": "JIGGLE_EFFECT",
+            "autoStopEventId": "e-26"
+          },
+          "instant": false
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "appliesTo": "ELEMENT",
+          "styleBlockIds": [
+            
+          ],
+          "id": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994759"
+        },
+        "targets": [
+          
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": 0,
+          "scrollOffsetUnit": "%",
+          "delay": 0,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1757414275838
+      },
+      {
+        "id": "e-28",
+        "name": "",
+        "animationType": "custom",
+        "eventTypeId": "SCROLLING_IN_VIEW",
+        "action": {
+          "id": "",
+          "actionTypeId": "GENERAL_CONTINUOUS_ACTION",
+          "config": {
+            "actionListId": "a-9",
+            "affectedElements": {
+              
+            }
+          },
+          "instant": true
+        },
+        "mediaQueries": [
+          "main",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "appliesTo": "CLASS",
+          "styleBlockIds": [
+            "114f05fe-e189-25be-5645-99639ed359c1"
+          ],
+          "id": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994759"
+        },
+        "targets": [
+          
+        ],
+        "config": [
+          {
+            "continuousParameterGroupId": "a-9-p",
+            "smoothing": 50,
+            "startsEntering": true,
+            "addStartOffset": false,
+            "addOffsetValue": 50,
+            "startsExiting": false,
+            "addEndOffset": false,
+            "endOffsetValue": 50
+          }
+        ],
+        "createdOn": 1757415893952
+      },
+      {
+        "id": "e-29",
+        "name": "",
+        "animationType": "preset",
+        "eventTypeId": "MOUSE_OVER",
+        "action": {
+          "id": "",
+          "actionTypeId": "GROW_EFFECT",
+          "config": {
+            "actionListId": "GROW_EFFECT",
+            "autoStopEventId": "e-30"
+          },
+          "instant": false
+        },
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "appliesTo": "CLASS",
+          "styleBlockIds": [
+            "114f05fe-e189-25be-5645-99639ed359c4"
+          ],
+          "id": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994761"
+        },
+        "targets": [
+          
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": 0,
+          "direction": null,
+          "effectIn": true
+        },
+        "createdOn": 1757416183963
+      },
+      {
+        "id": "e-30",
+        "name": "",
+        "animationType": "preset",
+        "eventTypeId": "MOUSE_OUT",
+        "action": null,
+        "mediaQueries": [
+          "main",
+          "medium",
+          "small",
+          "tiny"
+        ],
+        "target": {
+          "appliesTo": "CLASS",
+          "styleBlockIds": [
+            "114f05fe-e189-25be-5645-99639ed359c4"
+          ],
+          "id": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994761"
+        },
+        "targets": [
+          
+        ],
+        "config": {
+          "loop": false,
+          "playInReverse": false,
+          "scrollOffsetValue": null,
+          "scrollOffsetUnit": null,
+          "delay": null,
+          "direction": null,
+          "effectIn": null
+        },
+        "createdOn": 1757416183963
+      }
+    ],
+    "actionLists": [
+      {
+        "id": "a",
+        "title": "(LOAD) Page Load",
+        "actionItemGroups": [
+          {
+            "actionItems": [
+              {
+                "id": "a-n",
+                "actionTypeId": "TRANSFORM_MOVE",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa99475c",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "114f05fe-e189-25be-5645-99639ed359c8"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "xValue": -25,
+                  "xUnit": "PX",
+                  "yUnit": "PX",
+                  "zUnit": "PX"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-2",
+                "actionTypeId": "TRANSFORM_MOVE",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa99475e",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "114f05fe-e189-25be-5645-99639ed359c0"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "xValue": -25,
+                  "xUnit": "PX",
+                  "yUnit": "PX",
+                  "zUnit": "PX"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-3",
+                "actionTypeId": "TRANSFORM_MOVE",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994760",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "114f05fe-e189-25be-5645-99639ed359ca"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "xValue": -25,
+                  "xUnit": "PX",
+                  "yUnit": "PX",
+                  "zUnit": "PX"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-4",
+                "actionTypeId": "TRANSFORM_MOVE",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|9d4cf066-8ebc-b784-db60-5756f4a1fef4",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "1de05b60-e060-b49f-bc5c-43a17076f8e0"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "xValue": -25,
+                  "xUnit": "PX",
+                  "yUnit": "PX",
+                  "zUnit": "PX"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-10",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa99475c",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "114f05fe-e189-25be-5645-99639ed359c8"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 0,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-12",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa99475e",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "114f05fe-e189-25be-5645-99639ed359c0"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 0,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-13",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994760",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "114f05fe-e189-25be-5645-99639ed359ca"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 0,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-15",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|9d4cf066-8ebc-b784-db60-5756f4a1fef4",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "1de05b60-e060-b49f-bc5c-43a17076f8e0"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 0,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-17",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|82b57c8b-f0a5-69cb-c92e-9f88ac04c7a3",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "5c72c891-e11d-00e4-6047-fe1f6c8ab795"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 0,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-19",
+                "actionTypeId": "TRANSFORM_SCALE",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|82b57c8b-f0a5-69cb-c92e-9f88ac04c7a3",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "5c72c891-e11d-00e4-6047-fe1f6c8ab795"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "xValue": 0.95,
+                  "yValue": 0.95,
+                  "locked": true
+                },
+                "instant": false
+              }
+            ]
+          },
+          {
+            "actionItems": [
+              {
+                "id": "a-n-5",
+                "actionTypeId": "TRANSFORM_MOVE",
+                "config": {
+                  "delay": 300,
+                  "easing": "easeOut",
+                  "duration": 600,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa99475c",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "114f05fe-e189-25be-5645-99639ed359c8"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "xValue": 0,
+                  "xUnit": "PX",
+                  "yUnit": "PX",
+                  "zUnit": "PX"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-9",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 300,
+                  "easing": "easeOut",
+                  "duration": 600,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa99475c",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "114f05fe-e189-25be-5645-99639ed359c8"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 100,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-6",
+                "actionTypeId": "TRANSFORM_MOVE",
+                "config": {
+                  "delay": 600,
+                  "easing": "easeOut",
+                  "duration": 600,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa99475e",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "114f05fe-e189-25be-5645-99639ed359c0"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "xValue": 0,
+                  "xUnit": "PX",
+                  "yUnit": "PX",
+                  "zUnit": "PX"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-11",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 600,
+                  "easing": "easeOut",
+                  "duration": 600,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa99475e",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "114f05fe-e189-25be-5645-99639ed359c0"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 100,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-18",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 600,
+                  "easing": "ease",
+                  "duration": 1000,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|82b57c8b-f0a5-69cb-c92e-9f88ac04c7a3",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "5c72c891-e11d-00e4-6047-fe1f6c8ab795"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 100,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-20",
+                "actionTypeId": "TRANSFORM_SCALE",
+                "config": {
+                  "delay": 600,
+                  "easing": "ease",
+                  "duration": 1000,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|82b57c8b-f0a5-69cb-c92e-9f88ac04c7a3",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "5c72c891-e11d-00e4-6047-fe1f6c8ab795"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "xValue": 1,
+                  "yValue": 1,
+                  "locked": true
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-7",
+                "actionTypeId": "TRANSFORM_MOVE",
+                "config": {
+                  "delay": 800,
+                  "easing": "easeOut",
+                  "duration": 600,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994760",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "114f05fe-e189-25be-5645-99639ed359ca"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "xValue": 0,
+                  "xUnit": "PX",
+                  "yUnit": "PX",
+                  "zUnit": "PX"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-14",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 800,
+                  "easing": "easeOut",
+                  "duration": 600,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994760",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "114f05fe-e189-25be-5645-99639ed359ca"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 100,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-8",
+                "actionTypeId": "TRANSFORM_MOVE",
+                "config": {
+                  "delay": 1000,
+                  "easing": "easeOut",
+                  "duration": 600,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|9d4cf066-8ebc-b784-db60-5756f4a1fef4",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "1de05b60-e060-b49f-bc5c-43a17076f8e0"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "xValue": 0,
+                  "xUnit": "PX",
+                  "yUnit": "PX",
+                  "zUnit": "PX"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-n-16",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 1000,
+                  "easing": "easeOut",
+                  "duration": 600,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131c4|9d4cf066-8ebc-b784-db60-5756f4a1fef4",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "1de05b60-e060-b49f-bc5c-43a17076f8e0"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 100,
+                  "unit": "%"
+                },
+                "instant": false
+              }
+            ]
+          }
+        ],
+        "useFirstGroupAsInitialState": true,
+        "createdOn": 1585722576145
+      },
+      {
+        "id": "a-2",
+        "title": "(LOAD) Page Load [General]",
+        "actionItemGroups": [
+          {
+            "actionItems": [
+              {
+                "id": "a-2-n",
+                "actionTypeId": "TRANSFORM_MOVE",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cb|f8a1aefa-41e4-a309-bf3a-50f8e6756bf3",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "2397db38-38f3-b1e1-4447-9f5cf5811d8f"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "yValue": 25,
+                  "xUnit": "PX",
+                  "yUnit": "PX",
+                  "zUnit": "PX"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-2-n-2",
+                "actionTypeId": "TRANSFORM_MOVE",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cb|c4a6f6dd-4d71-a91c-0cec-44568785c265",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "70a9bcb0-05a0-be1f-2d2c-1c16b90cce5d"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "yValue": 45,
+                  "xUnit": "PX",
+                  "yUnit": "PX",
+                  "zUnit": "PX"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-2-n-5",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cb|f8a1aefa-41e4-a309-bf3a-50f8e6756bf3",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "2397db38-38f3-b1e1-4447-9f5cf5811d8f"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 0,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-2-n-6",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cb|c4a6f6dd-4d71-a91c-0cec-44568785c265",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "70a9bcb0-05a0-be1f-2d2c-1c16b90cce5d"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 0,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-2-n-15",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "33c883c6-4afc-cc73-3bca-d2857a9d4bc2",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "08971224-7c74-3aaa-ea34-1990e1b914a3"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 0,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-2-n-17",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cb|7cd9162f-a293-5951-53e5-2164e02ddf21",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "6d35b18c-77fc-54fc-f360-521a02715852"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 0,
+                  "unit": "%"
+                },
+                "instant": false
+              }
+            ]
+          },
+          {
+            "actionItems": [
+              {
+                "id": "a-2-n-11",
+                "actionTypeId": "TRANSFORM_MOVE",
+                "config": {
+                  "delay": 300,
+                  "easing": "easeOut",
+                  "duration": 600,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cb|f8a1aefa-41e4-a309-bf3a-50f8e6756bf3",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "2397db38-38f3-b1e1-4447-9f5cf5811d8f"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "yValue": 0,
+                  "xUnit": "PX",
+                  "yUnit": "PX",
+                  "zUnit": "PX"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-2-n-12",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 300,
+                  "easing": "easeOut",
+                  "duration": 600,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cb|f8a1aefa-41e4-a309-bf3a-50f8e6756bf3",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "2397db38-38f3-b1e1-4447-9f5cf5811d8f"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 100,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-2-n-14",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 600,
+                  "easing": "easeOut",
+                  "duration": 600,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cb|c4a6f6dd-4d71-a91c-0cec-44568785c265",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "70a9bcb0-05a0-be1f-2d2c-1c16b90cce5d"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 100,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-2-n-16",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 600,
+                  "easing": "easeOut",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "33c883c6-4afc-cc73-3bca-d2857a9d4bc2",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "08971224-7c74-3aaa-ea34-1990e1b914a3"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 100,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-2-n-13",
+                "actionTypeId": "TRANSFORM_MOVE",
+                "config": {
+                  "delay": 600,
+                  "easing": "easeOut",
+                  "duration": 600,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cb|c4a6f6dd-4d71-a91c-0cec-44568785c265",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "70a9bcb0-05a0-be1f-2d2c-1c16b90cce5d"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "yValue": 0,
+                  "xUnit": "PX",
+                  "yUnit": "PX",
+                  "zUnit": "PX"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-2-n-18",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 600,
+                  "easing": "ease",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cb|7cd9162f-a293-5951-53e5-2164e02ddf21",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "6d35b18c-77fc-54fc-f360-521a02715852"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "value": 100,
+                  "unit": "%"
+                },
+                "instant": false
+              }
+            ]
+          }
+        ],
+        "useFirstGroupAsInitialState": true,
+        "createdOn": 1585722576145
+      },
+      {
+        "id": "a-3",
+        "title": "(HOVER) Menu BG",
+        "actionItemGroups": [
+          {
+            "actionItems": [
+              {
+                "id": "a-3-n",
+                "actionTypeId": "STYLE_BACKGROUND_COLOR",
+                "config": {
+                  "delay": 0,
+                  "easing": "easeOut",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "33c883c6-4afc-cc73-3bca-d2857a9d4bc2",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "08971224-7c74-3aaa-ea34-1990e1b914a3"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "globalSwatchId": "",
+                  "rValue": 255,
+                  "bValue": 255,
+                  "gValue": 255,
+                  "aValue": 1
+                },
+                "instant": false
+              }
+            ]
+          }
+        ],
+        "useFirstGroupAsInitialState": false,
+        "createdOn": 1585811146495
+      },
+      {
+        "id": "a-4",
+        "title": "(HOVER) Menu BG [out]",
+        "actionItemGroups": [
+          {
+            "actionItems": [
+              {
+                "id": "a-4-n",
+                "actionTypeId": "STYLE_BACKGROUND_COLOR",
+                "config": {
+                  "delay": 0,
+                  "easing": "ease",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "33c883c6-4afc-cc73-3bca-d2857a9d4bc2",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "08971224-7c74-3aaa-ea34-1990e1b914a3"
+                    ],
+                    "boundaryMode": false
+                  },
+                  "globalSwatchId": "",
+                  "rValue": 255,
+                  "bValue": 255,
+                  "gValue": 255,
+                  "aValue": 0
+                },
+                "instant": false
+              }
+            ]
+          }
+        ],
+        "useFirstGroupAsInitialState": false,
+        "createdOn": 1585811146495
+      },
+      {
+        "id": "a-5",
+        "title": "(CLICK) FAQ",
+        "actionItemGroups": [
+          {
+            "actionItems": [
+              {
+                "id": "a-5-n",
+                "actionTypeId": "STYLE_SIZE",
+                "config": {
+                  "delay": 0,
+                  "easing": "ease",
+                  "duration": 400,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cc|7db248ef-cf59-12f3-a5c2-a0e29dc429a2",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "5246a561-e589-3720-2401-bd89b6fca624"
+                    ],
+                    "useEventTarget": "CHILDREN",
+                    "boundaryMode": false
+                  },
+                  "heightValue": 0,
+                  "widthUnit": "PX",
+                  "heightUnit": "PX",
+                  "locked": false
+                },
+                "instant": false
+              },
+              {
+                "id": "a-5-n-3",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 0,
+                  "easing": "",
+                  "duration": 500,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cc|2ce265d5-9bb0-c1d7-de45-66434bb8efdd",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "dc4f3332-cb77-b575-e8a0-14dfd64b92ef"
+                    ],
+                    "useEventTarget": "CHILDREN",
+                    "boundaryMode": false
+                  },
+                  "value": 50,
+                  "unit": "%"
+                },
+                "instant": false
+              }
+            ]
+          },
+          {
+            "actionItems": [
+              {
+                "id": "a-5-n-2",
+                "actionTypeId": "STYLE_SIZE",
+                "config": {
+                  "delay": 0,
+                  "easing": "ease",
+                  "duration": 400,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cc|7db248ef-cf59-12f3-a5c2-a0e29dc429a2",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "5246a561-e589-3720-2401-bd89b6fca624"
+                    ],
+                    "useEventTarget": "CHILDREN",
+                    "boundaryMode": false
+                  },
+                  "widthUnit": "PX",
+                  "heightUnit": "AUTO",
+                  "locked": false
+                },
+                "instant": false
+              },
+              {
+                "id": "a-5-n-5",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 0,
+                  "easing": "ease",
+                  "duration": 400,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cc|2ce265d5-9bb0-c1d7-de45-66434bb8efdd",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "dc4f3332-cb77-b575-e8a0-14dfd64b92ef"
+                    ],
+                    "useEventTarget": "CHILDREN",
+                    "boundaryMode": false
+                  },
+                  "value": 100,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-5-n-4",
+                "actionTypeId": "TRANSFORM_ROTATE",
+                "config": {
+                  "delay": 0,
+                  "easing": "ease",
+                  "duration": 400,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cc|2ce265d5-9bb0-c1d7-de45-66434bb8efdd",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "dc4f3332-cb77-b575-e8a0-14dfd64b92ef"
+                    ],
+                    "useEventTarget": "CHILDREN",
+                    "boundaryMode": false
+                  },
+                  "zValue": 45,
+                  "xUnit": "DEG",
+                  "yUnit": "DEG",
+                  "zUnit": "DEG"
+                },
+                "instant": false
+              }
+            ]
+          }
+        ],
+        "useFirstGroupAsInitialState": true,
+        "createdOn": 1585819252612
+      },
+      {
+        "id": "a-6",
+        "title": "(CLICK) FAQ 2",
+        "actionItemGroups": [
+          {
+            "actionItems": [
+              {
+                "id": "a-6-n",
+                "actionTypeId": "STYLE_SIZE",
+                "config": {
+                  "delay": 0,
+                  "easing": "ease",
+                  "duration": 400,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cc|7db248ef-cf59-12f3-a5c2-a0e29dc429a2",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "5246a561-e589-3720-2401-bd89b6fca624"
+                    ],
+                    "useEventTarget": "CHILDREN",
+                    "boundaryMode": false
+                  },
+                  "heightValue": 0,
+                  "widthUnit": "PX",
+                  "heightUnit": "PX",
+                  "locked": false
+                },
+                "instant": false
+              },
+              {
+                "id": "a-6-n-2",
+                "actionTypeId": "STYLE_OPACITY",
+                "config": {
+                  "delay": 0,
+                  "easing": "ease",
+                  "duration": 400,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cc|2ce265d5-9bb0-c1d7-de45-66434bb8efdd",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "dc4f3332-cb77-b575-e8a0-14dfd64b92ef"
+                    ],
+                    "useEventTarget": "CHILDREN",
+                    "boundaryMode": false
+                  },
+                  "value": 50,
+                  "unit": "%"
+                },
+                "instant": false
+              },
+              {
+                "id": "a-6-n-5",
+                "actionTypeId": "TRANSFORM_ROTATE",
+                "config": {
+                  "delay": 0,
+                  "easing": "ease",
+                  "duration": 400,
+                  "target": {
+                    "nodeId": "688888b317130513e4c131cc|2ce265d5-9bb0-c1d7-de45-66434bb8efdd",
+                    "appliesTo": "ELEMENT_CLASS",
+                    "styleBlockIds": [
+                      "dc4f3332-cb77-b575-e8a0-14dfd64b92ef"
+                    ],
+                    "useEventTarget": "CHILDREN",
+                    "boundaryMode": false
+                  },
+                  "zValue": 0,
+                  "xUnit": "DEG",
+                  "yUnit": "DEG",
+                  "zUnit": "DEG"
+                },
+                "instant": false
+              }
+            ]
+          }
+        ],
+        "useFirstGroupAsInitialState": false,
+        "createdOn": 1585819252612
+      },
+      {
+        "id": "a-7",
+        "title": "New Timed Animation",
+        "actionItemGroups": [
+          
+        ],
+        "createdOn": 1757414181975,
+        "useFirstGroupAsInitialState": false
+      },
+      {
+        "id": "a-8",
+        "title": "New Scroll Animation",
+        "continuousParameterGroups": [
+          {
+            "id": "a-8-p",
+            "type": "SCROLL_PROGRESS",
+            "parameterLabel": "Scroll",
+            "continuousActionGroups": [
+              
+            ]
+          }
+        ],
+        "createdOn": 1757415906701
+      },
+      {
+        "id": "a-9",
+        "title": "New Scroll Animation",
+        "continuousParameterGroups": [
+          {
+            "id": "a-9-p",
+            "type": "SCROLL_PROGRESS",
+            "parameterLabel": "Scroll",
+            "continuousActionGroups": [
+              
+            ]
+          }
+        ],
+        "createdOn": 1757415928615
+      }
+    ],
+    "interactions": [
+      {
+        "id": "i",
+        "interactionTypeId": "PAGE_LOAD_INTERACTION",
+        "eventIds": [
+          "e",
+          "e-2"
+        ],
+        "target": "688888b317130513e4c131c4",
+        "createdOn": 1585722574057
+      },
+      {
+        "id": "i-2",
+        "interactionTypeId": "PAGE_LOAD_INTERACTION",
+        "eventIds": [
+          "e-3",
+          "e-4"
+        ],
+        "target": "688888b317130513e4c131cb",
+        "createdOn": 1585804903077
+      },
+      {
+        "id": "i-3",
+        "interactionTypeId": "PAGE_LOAD_INTERACTION",
+        "eventIds": [
+          "e-5",
+          "e-6"
+        ],
+        "target": "688888b317130513e4c131d3",
+        "createdOn": 1585805094094
+      },
+      {
+        "id": "i-4",
+        "interactionTypeId": "PAGE_LOAD_INTERACTION",
+        "eventIds": [
+          "e-7",
+          "e-8"
+        ],
+        "target": "688888b317130513e4c131cc",
+        "createdOn": 1585805110046
+      },
+      {
+        "id": "i-6",
+        "interactionTypeId": "PAGE_LOAD_INTERACTION",
+        "eventIds": [
+          "e-11",
+          "e-12"
+        ],
+        "target": "688888b317130513e4c131cf",
+        "createdOn": 1585805162394
+      },
+      {
+        "id": "i-7",
+        "interactionTypeId": "PAGE_LOAD_INTERACTION",
+        "eventIds": [
+          "e-13",
+          "e-14"
+        ],
+        "target": "688888b317130513e4c131d1",
+        "createdOn": 1585805290508
+      },
+      {
+        "id": "i-8",
+        "interactionTypeId": "PAGE_LOAD_INTERACTION",
+        "eventIds": [
+          "e-15",
+          "e-16"
+        ],
+        "target": "688888b317130513e4c131c6",
+        "createdOn": 1585805310722
+      },
+      {
+        "id": "i-9",
+        "interactionTypeId": "NAVBAR_INTERACTION",
+        "eventIds": [
+          "e-17",
+          "e-18"
+        ],
+        "target": "33c883c6-4afc-cc73-3bca-d2857a9d4bc2",
+        "createdOn": 1585811143763
+      },
+      {
+        "id": "i-10",
+        "interactionTypeId": "MOUSE_CLICK_INTERACTION",
+        "eventIds": [
+          "e-19",
+          "e-20"
+        ],
+        "target": "688888b317130513e4c131cc|7db248ef-cf59-12f3-a5c2-a0e29dc4299d",
+        "createdOn": 1585819192324
+      },
+      {
+        "id": "i-11",
+        "interactionTypeId": "SCROLLING_IN_VIEW_INTERACTION",
+        "eventIds": [
+          "e-21"
+        ],
+        "target": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994761",
+        "createdOn": 1753778717226
+      },
+      {
+        "id": "i-12",
+        "interactionTypeId": "SCROLL_INTO_VIEW_INTERACTION",
+        "eventIds": [
+          "e-22",
+          "e-23"
+        ],
+        "target": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa99475c",
+        "createdOn": 1757413223086
+      },
+      {
+        "id": "i-13",
+        "interactionTypeId": "SCROLL_INTO_VIEW_INTERACTION",
+        "eventIds": [
+          "e-24",
+          "e-25"
+        ],
+        "target": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994759",
+        "createdOn": 1757414212424
+      },
+      {
+        "id": "i-14",
+        "interactionTypeId": "SCROLL_INTO_VIEW_INTERACTION",
+        "eventIds": [
+          "e-26",
+          "e-27"
+        ],
+        "target": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994759",
+        "createdOn": 1757414275837
+      },
+      {
+        "id": "i-15",
+        "interactionTypeId": "SCROLLING_IN_VIEW_INTERACTION",
+        "eventIds": [
+          "e-28"
+        ],
+        "target": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994759",
+        "createdOn": 1757415893949
+      },
+      {
+        "id": "i-16",
+        "interactionTypeId": "MOUSE_HOVER_INTERACTION",
+        "eventIds": [
+          "e-29",
+          "e-30"
+        ],
+        "target": "688888b317130513e4c131c4|5de3a23f-55f9-db91-c827-8849fa994761",
+        "createdOn": 1757416183962
+      }
+    ],
+    "clientAppVersion": 132,
+    "clientLeaderInstance": "1757413198363-610240",
+    "sessionId": "",
+    "pageId": "688888b317130513e4c131c4"
+  }

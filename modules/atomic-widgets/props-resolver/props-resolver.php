@@ -46,6 +46,12 @@ abstract class Props_Resolver {
 	}
 
 	protected function transform( $value, $key, Prop_Type $prop_type ) {
+		if ($key === 'entrance-animation') {
+			error_log('🔍 PROPS RESOLVER DEBUG - Key: ' . $key);
+			error_log('🔍 Raw value from DB: ' . print_r($value, true));
+			error_log('🔍 Prop type: ' . get_class($prop_type));
+			var_dump('entrance-animation RAW VALUE:', $value);
+		}
 		if ( $prop_type instanceof Union_Prop_Type ) {
 			$prop_type = $prop_type->get_prop_type( $value['$$type'] );
 
