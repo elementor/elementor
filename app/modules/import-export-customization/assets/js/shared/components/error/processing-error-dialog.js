@@ -261,7 +261,10 @@ export function ProcessingErrorDialog( {
 		if ( details && 'object' === typeof details && details.text ) {
 			text = details.text;
 		} else if ( 'string' === typeof details && details ) {
-			if ( details !== errorType && details !== 'export_error' && details !== 'import_error' ) {
+			const hasPreDefinedMessage = messagesContent[ errorType ];
+			const isPlaceholderCode = details === errorType || 'export_error' === details || 'import_error' === details;
+
+			if ( ! hasPreDefinedMessage && ! isPlaceholderCode ) {
 				text = details;
 			}
 		}
