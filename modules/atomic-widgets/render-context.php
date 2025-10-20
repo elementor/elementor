@@ -10,7 +10,7 @@ class Render_Context {
 	private static $context_stack = [];
 
 	public static function push( string $key, array $context ): void {
-		if ( ! isset( self::$context_stack[ $key ] ) ) {
+		if ( ! self::get( $key ) ) {
 			self::$context_stack[ $key ] = [];
 		}
 
@@ -28,11 +28,11 @@ class Render_Context {
 			return [];
 		}
 
-		return end( self::$context_stack[ $key ] );
+		$last_key = array_key_last( self::$context_stack[ $key ] );
+		return self::$context_stack[ $key ][ $last_key ];
 	}
 
 	public static function clear(): void {
 		self::$context_stack = [];
 	}
 }
-

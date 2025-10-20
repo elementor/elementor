@@ -210,4 +210,3 @@ trait Has_Atomic_Base {
 		);
 	}
 }
-
