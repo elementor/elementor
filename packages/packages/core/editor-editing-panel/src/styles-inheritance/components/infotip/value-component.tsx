@@ -18,6 +18,8 @@ export const ValueComponent = ( { index, value }: Props ) => {
 				textOverflow: 'ellipsis',
 				whiteSpace: 'nowrap',
 				pl: 2.5,
+				minWidth: 0,
+				maxWidth: '100%',
 			} }
 		>
 			{ value }
