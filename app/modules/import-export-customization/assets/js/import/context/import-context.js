@@ -69,7 +69,6 @@ const importReducer = ( state, { type, payload } ) => {
 				},
 			};
 		case 'SET_DURATION':
-			console.log( 'SET_DURATION', payload );
 			return { ...state, duration: payload };
 		default:
 			return state;
