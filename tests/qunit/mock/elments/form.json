@@ -2546,8 +2546,8 @@
 				}
 			},
 			"selectors": {
-				"{{WRAPPER}} .elementor-field-group": "padding-inline: calc( {{SIZE}}{{UNIT}}/2 );",
-				"{{WRAPPER}} .elementor-form-fields-wrapper": "margin-inline: calc( -{{SIZE}}{{UNIT}}/2 );"
+				"{{WRAPPER}} .elementor-field-group": "padding-right: calc( {{SIZE}}{{UNIT}}/2 ); padding-left: calc( {{SIZE}}{{UNIT}}/2 );",
+				"{{WRAPPER}} .elementor-form-fields-wrapper": "margin-left: calc( -{{SIZE}}{{UNIT}}/2 ); margin-right: calc( -{{SIZE}}{{UNIT}}/2 );"
 			},
 			"name": "column_gap"
 		},

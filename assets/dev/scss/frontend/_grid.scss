@@ -8,7 +8,8 @@
 	// Container
 	.elementor-container {
 		display: flex;
-		margin-inline: auto;
+		margin-right: auto;
+		margin-left: auto;
 		position: relative;
 
 		@media (max-width: $screen-tablet-max) {

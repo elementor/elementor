@@ -71,7 +71,8 @@
 
 		// TEMP code to override the image spacing
 		.elementor-image-box-img {
-			margin-inline: auto !important;
+			margin-left: auto !important;
+			margin-right: auto !important;
 			margin-bottom: 15px;
 		}
 	}

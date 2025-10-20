@@ -28,10 +28,12 @@
 					display: flex;
 					flex-wrap: wrap;
 					justify-content: var(--justify-content, space-between);
-					margin-inline: calc(-0.5 * var(--grid-column-gap));
+					margin-left: calc(-0.5 * var(--grid-column-gap));
+					margin-right: calc(-0.5 * var(--grid-column-gap));
 
 					&-item {
-						margin-inline: calc(0.5 * var(--grid-column-gap));
+						margin-left: calc(0.5 * var(--grid-column-gap));
+						margin-right: calc(0.5 * var(--grid-column-gap));
 					}
 				}
 			}
@@ -45,7 +47,8 @@
 
 					&,
 					&-item {
-						margin-inline: 0;
+						margin-left: 0;
+						margin-right: 0;
 					}
 				}
 			}
