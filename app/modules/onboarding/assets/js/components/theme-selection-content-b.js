@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import PageContentLayout from './layout/page-content-layout';
 import ThemeSelectionCard from './theme-selection-card';
 
@@ -107,71 +107,12 @@ const getThemeData = () => [
 	},
 ];
 
-export default function ThemeSelectionContentB( { actionButton, skipButton, noticeState, selectedTheme, onThemeSelect, onThemeInstallSuccess, onThemeInstallError } ) {
-	const [ isInstalling, setIsInstalling ] = useState( false );
-	const [ installingTheme, setInstallingTheme ] = useState( null );
-
-	const resetInstallationState = useCallback( () => {
-		setIsInstalling( false );
-		setInstallingTheme( null );
-	}, [] );
-
-	const activateTheme = useCallback( ( themeSlug ) => {
-		const themeSlugForAPI = 'hello-theme' === themeSlug ? 'hello-elementor' : 'hello-biz';
-
-		const formData = new FormData();
-		formData.append( '_nonce', elementorCommon.config.ajax.nonce );
-		formData.append( 'action', 'elementor_activate_hello_theme' );
-		formData.append( 'theme_slug', themeSlugForAPI );
-
-		fetch( elementorCommon.config.ajax.url, {
-			method: 'POST',
-			body: formData,
-		} )
-			.then( ( response ) => response.json() )
-			.then( ( data ) => {
-				resetInstallationState();
-				if ( data.success && onThemeInstallSuccess ) {
-					onThemeInstallSuccess();
-				} else if ( onThemeInstallError ) {
-					onThemeInstallError();
-				}
-			} )
-			.catch( () => {
-				resetInstallationState();
-				if ( onThemeInstallError ) {
-					onThemeInstallError();
-				}
-			} );
-	}, [ onThemeInstallSuccess, onThemeInstallError, resetInstallationState ] );
-
-	const installTheme = useCallback( ( themeSlug ) => {
-		const themeSlugForAPI = 'hello-theme' === themeSlug ? 'hello-elementor' : 'hello-biz';
-		wp.updates.ajax( 'install-theme', {
-			slug: themeSlugForAPI,
-			success: () => activateTheme( themeSlug ),
-			error: () => {
-				resetInstallationState();
-				if ( onThemeInstallError ) {
-					onThemeInstallError();
-				}
-			},
-		} );
-	}, [ activateTheme, onThemeInstallError, resetInstallationState ] );
-
-	const startThemeInstallation = useCallback( ( themeSlug ) => {
-		setIsInstalling( true );
-		setInstallingTheme( themeSlug );
-		installTheme( themeSlug );
-	}, [ installTheme ] );
-
+export default function ThemeSelectionContentB( { actionButton, skipButton, noticeState, selectedTheme, onThemeSelect, isInstalling } ) {
 	const handleThemeSelect = useCallback( ( themeSlug ) => {
 		if ( onThemeSelect ) {
 			onThemeSelect( themeSlug );
 		}
-
-		startThemeInstallation( themeSlug );
-	}, [ onThemeSelect, startThemeInstallation ] );
+	}, [ onThemeSelect ] );
 
 	const themeData = getThemeData();
 
@@ -200,7 +141,7 @@ export default function ThemeSelectionContentB( { actionButton, skipButton, noti
 							description={ theme.description }
 							illustration={ theme.illustration }
 							isSelected={ selectedTheme === theme.slug }
-							isLoading={ isInstalling && installingTheme === theme.slug }
+							isLoading={ isInstalling && selectedTheme === theme.slug }
 							onSelect={ handleThemeSelect }
 							aria-label={ `Select ${ theme.title } theme: ${ theme.description }` }
 							role="button"
@@ -219,6 +160,5 @@ ThemeSelectionContentB.propTypes = {
 	noticeState: PropTypes.object,
 	selectedTheme: PropTypes.string,
 	onThemeSelect: PropTypes.func,
-	onThemeInstallSuccess: PropTypes.func,
-	onThemeInstallError: PropTypes.func,
+	isInstalling: PropTypes.bool,
 };
