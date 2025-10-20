@@ -42,6 +42,8 @@ class Export extends Base_Route {
 
 			$settings = array_filter( $settings );
 
+			$source = $settings['kitInfo']['source'];
+
 			$export = $module->export_kit( $settings );
 
 			$file_name = $export['file_name'];
@@ -85,20 +87,20 @@ class Export extends Base_Route {
 				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
 			}
 
-		if ( $this->is_quota_error( $e->getMessage() ) ) {
-			$quota = null;
-			$cloud_kit_library_app = $this->get_cloud_kit_library_app();
+			if ( $this->is_quota_error( $e->getMessage() ) ) {
+				$quota = null;
+				$cloud_kit_library_app = $this->get_cloud_kit_library_app();
 
-			if ( $cloud_kit_library_app ) {
-				try {
-					$quota = $cloud_kit_library_app->get_quota();
-				} catch ( \Exception | \Error $quota_error ) {
-					// Quota fetch failed, error message will use default value.
+				if ( $cloud_kit_library_app ) {
+					try {
+						$quota = $cloud_kit_library_app->get_quota();
+					} catch ( \Exception | \Error $quota_error ) {
+						// Quota fetch failed, error message will use default value.
+					}
 				}
-			}
 
-			return $this->get_quota_error_response( $quota, $settings['kitInfo'] ?? [] );
-		}
+				return $this->get_quota_error_response( $quota, $settings['kitInfo'] ?? [] );
+			}
 
 			return Response::error( 'export_error', $e->getMessage() );
 		}
