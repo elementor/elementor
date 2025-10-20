@@ -25,11 +25,6 @@ class API {
 	}
 
 	public function is_experiment_enabled( string $experiment_key, $force_request = false ): bool {
-		// // return true;
-		// if ( 'updateCopyVisuals401' === $experiment_key ) {
-		// 	return true;
-		// }
-
 		$ab_testing_data = $this->get_ab_testing_data( $force_request );
 
 		return $ab_testing_data['coreOnboarding'][ $experiment_key ] ?? false;
