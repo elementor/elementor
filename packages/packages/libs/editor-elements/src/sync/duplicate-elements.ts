@@ -5,13 +5,18 @@ import { createElement } from './create-element';
 import { deleteElement } from './delete-element';
 import { duplicateElement } from './duplicate-element';
 import { getContainer } from './get-container';
-import { type V1ElementModelProps } from './types';
+import { type V1ElementModelProps, type V1ElementSettingsProps } from './types';
+
+type DuplicateElementParams = {
+	id: string;
+	cloneId: string;
+	settings: V1ElementSettingsProps;
+};
 
 type DuplicateElementsParams = {
-	elementIds: string[];
+	elements: DuplicateElementParams[];
 	title: string;
 	subtitle?: string;
-	onCreate?: ( duplicatedElements: DuplicatedElement[] ) => void;
 };
 
 type DuplicatedElement = {
@@ -30,41 +35,49 @@ type DuplicatedElementsResult = {
 export type { DuplicateElementsParams, DuplicatedElement, DuplicatedElementsResult };
 
 export const duplicateElements = ( {
-	elementIds,
+	elements,
 	title,
 	subtitle = __( 'Item duplicated', 'elementor' ),
-	onCreate,
 }: DuplicateElementsParams ): DuplicatedElementsResult => {
 	const undoableDuplicate = undoable(
 		{
-			do: ( { elementIds: elementIdsToDuplicate }: { elementIds: string[] } ): DuplicatedElementsResult => {
-				const duplicatedElements: DuplicatedElement[] = elementIdsToDuplicate.reduce( ( acc, elementId ) => {
-					const originalContainer = getContainer( elementId );
+			do: ( {
+				elements: elementsToDuplicate,
+			}: {
+				elements: DuplicateElementsParams[ 'elements' ];
+			} ): DuplicatedElementsResult => {
+				const duplicatedElements: DuplicatedElement[] = elementsToDuplicate.reduce(
+					( acc, { id, cloneId, settings } ) => {
+						const originalContainer = getContainer( id );
 
-					if ( originalContainer?.parent ) {
-						const duplicatedElement = duplicateElement( {
-							elementId,
-							options: { useHistory: false, clone: true },
-						} );
+						if ( originalContainer?.parent ) {
+							const duplicatedElement = duplicateElement( {
+								elementId: id,
+								settings,
+								options: { useHistory: false, cloneId },
+							} );
 
-						acc.push( {
-							id: duplicatedElement.id,
-							model: duplicatedElement.model.toJSON(),
-							originalElementId: elementId,
-							modelToRestore: duplicatedElement.model.toJSON(),
-							parentContainerId: duplicatedElement.parent?.id,
-							at: duplicatedElement.view?._index,
-						} );
-					}
+							acc.push( {
+								id: duplicatedElement.id,
+								model: duplicatedElement.model.toJSON(),
+								originalElementId: id,
+								modelToRestore: duplicatedElement.model.toJSON(),
+								parentContainerId: duplicatedElement.parent?.id,
+								at: duplicatedElement.view?._index,
+							} );
+						}
 
-					return acc;
-				}, [] as DuplicatedElement[] );
-
-				onCreate?.( duplicatedElements );
+						return acc;
+					},
+					[] as DuplicatedElement[]
+				);
 
 				return { duplicatedElements };
 			},
-			undo: ( _: { elementIds: string[] }, { duplicatedElements }: DuplicatedElementsResult ) => {
+			undo: (
+				_: { elements: DuplicateElementsParams[ 'elements' ] },
+				{ duplicatedElements }: DuplicatedElementsResult
+			) => {
 				// Delete duplicated elements in reverse order to avoid dependency issues
 				[ ...duplicatedElements ].reverse().forEach( ( { id } ) => {
 					deleteElement( {
@@ -74,7 +87,7 @@ export const duplicateElements = ( {
 				} );
 			},
 			redo: (
-				_: { elementIds: string[] },
+				_: { elements: DuplicateElementsParams[ 'elements' ] },
 				{ duplicatedElements: previousElements }: DuplicatedElementsResult
 			): DuplicatedElementsResult => {
 				const duplicatedElements: DuplicatedElement[] = previousElements.reduce( ( acc, previousElement ) => {
@@ -84,7 +97,6 @@ export const duplicateElements = ( {
 							model: previousElement.modelToRestore,
 							options: {
 								useHistory: false,
-								clone: false,
 								at: previousElement.at,
 							},
 						} );
@@ -102,8 +114,6 @@ export const duplicateElements = ( {
 					return acc;
 				}, [] as DuplicatedElement[] );
 
-				onCreate?.( duplicatedElements );
-
 				return { duplicatedElements };
 			},
 		},
@@ -113,5 +123,5 @@ export const duplicateElements = ( {
 		}
 	);
 
-	return undoableDuplicate( { elementIds } );
+	return undoableDuplicate( { elements } );
 };

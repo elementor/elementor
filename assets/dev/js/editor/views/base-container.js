@@ -64,6 +64,10 @@ module.exports = Marionette.CompositeView.extend( {
 
 		if ( options.clone ) {
 			newItem = this.cloneItem( newItem );
+
+			if ( options.cloneId ) {
+				newItem.id = options.cloneId;
+			}
 		}
 
 		if ( options.trigger ) {
