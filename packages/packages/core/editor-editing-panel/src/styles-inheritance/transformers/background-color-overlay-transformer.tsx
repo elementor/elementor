@@ -8,15 +8,9 @@ export type Color = {
 
 export const backgroundColorOverlayTransformer = createTransformer( ( value: Color ) => (
 	<Stack direction="row" gap={ 1 } alignItems="center">
-		<ItemIconColor value={ value } />
 		<ItemLabelColor value={ value } />
 	</Stack>
 ) );
-
-const ItemIconColor = ( { value }: { value: Color } ) => {
-	const { color } = value;
-	return <StyledUnstableColorIndicator size="inherit" component="span" value={ color } />;
-};
 
 const ItemLabelColor = ( { value: { color } }: { value: Color } ) => {
 	return <span>{ color }</span>;
