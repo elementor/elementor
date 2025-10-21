@@ -7,8 +7,9 @@ import {
 	DialogActions,
 	Button,
 	Link as ElementorUiLink,
+	Typography,
 } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 function Link( {
@@ -161,13 +162,25 @@ export const messagesContent = {
 		),
 	},
 	'insufficient-storage-quota': {
-		title: __( 'Couldn’t Export the Website Template', 'elementor' ),
-		text: (
+		title: __( 'Your library is full', 'elementor' ),
+		text: ( { filename = __( 'This file', 'elementor' ), maxSize = 0 } = {} ) => (
 			<>
-				{ __( 'The export failed because it will pass the maximum Website Templates storage you have available. ', 'elementor' ) }
-				<Link href="https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/" >
-					{ __( 'Upgrade now', 'elementor' ) }
-				</Link>
+				<Typography variant="h6" sx={ { mb: 2 } }>
+					{ sprintf( /* Translators: %s: File name */
+						__( '%s exceeds the library size limit', 'elementor' ),
+						filename,
+					) }
+				</Typography>
+				<Typography variant="body2">
+					{ sprintf( /* Translators: %s: Quota threshold in GB */
+						__( 'The maximum website template library size is %s GB. To save this file, you can either export it locally as a .zip file or get more storage by ', 'elementor' ),
+						maxSize,
+					) }
+					<Link href="https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/">
+						{ __( 'Upgrade now', 'elementor' ) }
+					</Link>
+					.
+				</Typography>
 			</>
 		),
 	},
@@ -177,10 +190,24 @@ export function ProcessingErrorDialog( {
 	error,
 	handleClose,
 	handleTryAgain,
+	handleExportAsZip,
 } ) {
 	const [ open, setOpen ] = useState( Boolean( error ) );
 	const errorType = error?.code || 'general';
 	const errorMessageContent = messagesContent[ errorType ];
+
+	const resolveText = () => {
+		const details = error?.details || error?.message;
+		const replacements = details && 'object' === typeof details ? details.replacements : null;
+
+		const text = errorMessageContent.text;
+
+		if ( 'function' === typeof text ) {
+			return text( replacements );
+		}
+
+		return text;
+	};
 
 	const shouldRenderTryAgainButton = () => {
 		return [
@@ -200,6 +227,8 @@ export function ProcessingErrorDialog( {
 	};
 
 	const renderButtons = () => {
+		const isQuotaError = 'insufficient-storage-quota' === errorType;
+
 		return (
 			<>
 				<Button
@@ -213,7 +242,19 @@ export function ProcessingErrorDialog( {
 				>
 					{ __( 'Cancel', 'elementor' ) }
 				</Button>
-				{ shouldRenderTryAgainButton( errorType ) && (
+				{ isQuotaError && handleExportAsZip && (
+					<Button
+						onClick={ () => {
+							handleExportAsZip();
+							setOpen( false );
+						} }
+						variant="contained"
+						color="primary"
+					>
+						{ __( 'Export as .zip', 'elementor' ) }
+					</Button>
+				) }
+				{ shouldRenderTryAgainButton( errorType ) && ! isQuotaError && (
 					<Button
 						data-testid="try-again-button"
 						onClick={ () => {
@@ -258,7 +299,7 @@ export function ProcessingErrorDialog( {
 			</DialogHeader>
 
 			<DialogContent dividers sx={ { p: 3 } }>
-				{ errorMessageContent.text }
+				{ resolveText() }
 			</DialogContent>
 
 			<DialogActions>
@@ -272,4 +313,5 @@ ProcessingErrorDialog.propTypes = {
 	error: PropTypes.any,
 	handleClose: PropTypes.func,
 	handleTryAgain: PropTypes.func,
+	handleExportAsZip: PropTypes.func,
 };
