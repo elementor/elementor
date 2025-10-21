@@ -5,6 +5,7 @@ namespace Elementor\Modules\Components;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
+use Elementor\Modules\Components\Document_Lock_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,10 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Components_REST_API {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'components';
+	const LOCK_DOCUMENT_TYPE_NAME = 'components';
 	const STYLES_ROUTE = 'styles';
 	const MAX_COMPONENTS = 50;
 
 	private $repository = null;
+	private $lock_manager;
 
 	public function register_hooks() {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
@@ -28,6 +31,13 @@ class Components_REST_API {
 		}
 
 		return $this->repository;
+	}
+
+	private function get_lock_manger() {
+		if(!$this->lock_manager){
+			$this->lock_manager = new Document_Lock_Manager(self::LOCK_DOCUMENT_TYPE_NAME);
+		}
+		return $this->lock_manager;
 	}
 
 	private function register_routes() {
@@ -72,6 +82,77 @@ class Components_REST_API {
 				],
 			],
 		] );
+
+		// Add lock routes
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/lock', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->lock_component( $request ) ),
+				'permission_callback' => fn() => is_user_logged_in(),
+				'args' => [
+					'componentId' => [
+						'type' => 'number',
+						'required' => true,
+						'description' => 'The component ID to unlock',
+					],
+				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/unlock', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->unlock_component( $request ) ),
+				'permission_callback' => fn() => is_user_logged_in(),
+				'args' => [
+					'componentId' => [
+						'type' => 'number',
+						'required' => true,
+						'description' => 'The component ID to unlock',
+					],
+				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/lock-status', [
+    [
+        'methods' => 'GET',
+        'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_lock_status( $request ) ),
+        'permission_callback' => fn() => is_user_logged_in(),
+        'args' => [
+            'componentId' => [
+                'type' => 'string',
+                'required' => true,
+                'description' => 'The component ID to check lock status',
+            ],
+        ],
+    ],
+	] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/is-current-user-locked', [
+			[
+				'methods' => 'GET',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->is_current_user_locked( $request ) ),
+				'permission_callback' => fn() => is_user_logged_in(),
+				'args' => [
+					'componentId' => [
+						'type' => 'string',
+						'required' => true,
+					],
+				],
+			],
+		] );
+	}
+
+	private function is_current_user_locked( \WP_REST_Request $request ) {
+		$component_id = $request->get_param( 'componentId' );
+		$current_user_id = get_current_user_id();
+		$locked_user = $this->get_lock_manger()->get_locked_user( $component_id );
+		
+		// Check if the component is locked by the current user
+		$is_current_user_locked = $locked_user && $locked_user->ID === $current_user_id;
+		
+		return Response_Builder::make( [ 'is_current_user_locked' => $is_current_user_locked ] )->build();
 	}
 
 	private function get_components() {
@@ -95,6 +176,7 @@ class Components_REST_API {
 
 		return Response_Builder::make( $styles )->build();
 	}
+
 	private function create_component( \WP_REST_Request $request ) {
 		$components = $this->get_repository()->all();
 		$components_count = $components->get_components()->count();
@@ -148,7 +230,45 @@ class Components_REST_API {
 		}
 	}
 
-	private function route_wrapper( callable $cb ) {
+	private function lock_component( \WP_REST_Request $request ) {
+		$component_id = $request->get_param( 'componentId' );
+		$success = $this->get_lock_manger()->lock_document( $component_id );
+		
+		if ( ! $success ) {
+			return Error_Builder::make( 'lock_failed' )
+				->set_status( 500 )
+				->set_message( __( 'Failed to lock component', 'elementor' ) )
+				->build();
+		}
+
+		return Response_Builder::make( [ 'locked' => true ] )->build();
+	}
+
+	private function unlock_component( \WP_REST_Request $request ) {
+		$component_id = $request->get_param( 'componentId' );
+		$success = $this->get_lock_manger()->unlock_document( $component_id );
+		
+		if ( ! $success ) {
+			return Error_Builder::make( 'unlock_failed' )
+				->set_status( 500 )
+				->set_message( __( 'Failed to unlock component', 'elementor' ) )
+				->build();
+		}
+		return Response_Builder::make( [ 'unlocked' => $success ] )->build();
+	}
+
+	private function get_lock_status( \WP_REST_Request $request ) {
+		$component_id = $request->get_param( 'componentId' );
+		$locked_user = $this->get_lock_manger()->get_locked_user( $component_id );
+
+		return Response_Builder::make( [
+			'locked' => (bool) $locked_user,
+			'locked_by_id' => $locked_user ? $locked_user->ID : null,
+			'locked_by' => $locked_user ? $locked_user->display_name : null,
+		] )->build();
+	}
+
+		private function route_wrapper( callable $cb ) {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
