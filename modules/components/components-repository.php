@@ -21,7 +21,7 @@ class Components_Repository {
 		// Components count is limited to 50, if we increase this number, we need to iterate the posts in batches.
 		$posts = get_posts( [
 			'post_type' => Component_Document::TYPE,
-			'post_status' => 'publish',
+			'post_status' => 'any',
 			'posts_per_page' => Components_REST_API::MAX_COMPONENTS,
 		] );
 
@@ -44,12 +44,12 @@ class Components_Repository {
 		return Collection::make( $components );
 	}
 
-	public function create( string $name, array $content ) {
+	public function create( string $name, array $content, string $status ) {
 		$document = Plugin::$instance->documents->create(
 			Component_Document::get_type(),
 			[
 				'post_title' => $name,
-				'post_status' => 'publish',
+				'post_status' => $status,
 			]
 		);
 

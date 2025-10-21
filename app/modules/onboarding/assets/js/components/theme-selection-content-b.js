@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import PageContentLayout from './layout/page-content-layout';
 import ThemeSelectionCard from './theme-selection-card';
 
 const getThemeData = () => [
 	{
 		slug: 'hello-theme',
-		title: __( 'Hello', 'elementor' ),
-		description: __( 'It\'s fast, flexible, and beginner-friendly, offering a solid foundation for customizable designs.', 'elementor' ),
+		label: __( 'Hello Theme by Elementor', 'elementor' ),
+		title: __( 'Build without limits', 'elementor' ),
+		description: __( 'A minimal theme combining speed, flexibility, and control', 'elementor' ),
 		illustration: {
 			svg: (
 				<svg width="305" height="164" viewBox="0 0 305 164" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -48,8 +49,9 @@ const getThemeData = () => [
 	},
 	{
 		slug: 'hello-biz',
-		title: __( 'Hello Biz', 'elementor' ),
-		description: __( 'It offers premium Elementor tools, and a responsive foundation for startups and portfolios.', 'elementor' ),
+		label: __( 'Hello Biz by Elementor', 'elementor' ),
+		title: __( 'Instant online presence', 'elementor' ),
+		description: __( 'A business-first theme offering smart layouts, templates, and site parts', 'elementor' ),
 		illustration: {
 			svg: (
 				<svg width="231" height="170" viewBox="0 0 231 170" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -105,87 +107,28 @@ const getThemeData = () => [
 	},
 ];
 
-export default function ThemeSelectionContentB( { actionButton, skipButton, noticeState, selectedTheme, onThemeSelect, onThemeInstallSuccess, onThemeInstallError } ) {
-	const [ isInstalling, setIsInstalling ] = useState( false );
-	const [ installingTheme, setInstallingTheme ] = useState( null );
-
-	const resetInstallationState = useCallback( () => {
-		setIsInstalling( false );
-		setInstallingTheme( null );
-	}, [] );
-
-	const activateTheme = useCallback( ( themeSlug ) => {
-		const themeSlugForAPI = 'hello-theme' === themeSlug ? 'hello-elementor' : 'hello-biz';
-
-		const formData = new FormData();
-		formData.append( '_nonce', elementorCommon.config.ajax.nonce );
-		formData.append( 'action', 'elementor_activate_hello_theme' );
-		formData.append( 'theme_slug', themeSlugForAPI );
-
-		fetch( elementorCommon.config.ajax.url, {
-			method: 'POST',
-			body: formData,
-		} )
-			.then( ( response ) => response.json() )
-			.then( ( data ) => {
-				resetInstallationState();
-				if ( data.success && onThemeInstallSuccess ) {
-					onThemeInstallSuccess();
-				} else if ( onThemeInstallError ) {
-					onThemeInstallError();
-				}
-			} )
-			.catch( () => {
-				resetInstallationState();
-				if ( onThemeInstallError ) {
-					onThemeInstallError();
-				}
-			} );
-	}, [ onThemeInstallSuccess, onThemeInstallError, resetInstallationState ] );
-
-	const installTheme = useCallback( ( themeSlug ) => {
-		const themeSlugForAPI = 'hello-theme' === themeSlug ? 'hello-elementor' : 'hello-biz';
-		wp.updates.ajax( 'install-theme', {
-			slug: themeSlugForAPI,
-			success: () => activateTheme( themeSlug ),
-			error: () => {
-				resetInstallationState();
-				if ( onThemeInstallError ) {
-					onThemeInstallError();
-				}
-			},
-		} );
-	}, [ activateTheme, onThemeInstallError, resetInstallationState ] );
-
-	const startThemeInstallation = useCallback( ( themeSlug ) => {
-		setIsInstalling( true );
-		setInstallingTheme( themeSlug );
-		installTheme( themeSlug );
-	}, [ installTheme ] );
-
+export default function ThemeSelectionContentB( { actionButton, skipButton, noticeState, selectedTheme, onThemeSelect, isInstalling } ) {
 	const handleThemeSelect = useCallback( ( themeSlug ) => {
 		if ( onThemeSelect ) {
 			onThemeSelect( themeSlug );
 		}
-
-		startThemeInstallation( themeSlug );
-	}, [ onThemeSelect, startThemeInstallation ] );
+	}, [ onThemeSelect ] );
 
 	const themeData = getThemeData();
 
 	return (
 		<PageContentLayout
-			title={ __( 'Which theme would you like?', 'elementor' ) }
+			title={ __( 'Choose the right theme for your website', 'elementor' ) }
 			actionButton={ actionButton }
 			skipButton={ skipButton }
 			noticeState={ noticeState }
 		>
 			<div className="e-onboarding__page-content-theme-variant-b">
 				<p className="e-onboarding__theme-selection-description">
-					{ __( 'The theme delivers fast setup, intuitive tools, and business-focused widgets.', 'elementor' ) }
+					{ __( 'Hello themes provide a lightweight, Elementor-ready foundation for your site.', 'elementor' ) }
 				</p>
 				<p className="e-onboarding__theme-selection-subtitle">
-					{ __( 'You can switch your theme later on', 'elementor' ) }
+					{ __( 'You can switch your theme anytime.', 'elementor' ) }
 				</p>
 
 				<div className="e-onboarding__theme-cards">
@@ -193,11 +136,12 @@ export default function ThemeSelectionContentB( { actionButton, skipButton, noti
 						<ThemeSelectionCard
 							key={ theme.slug }
 							themeSlug={ theme.slug }
+							label={ theme.label }
 							title={ theme.title }
 							description={ theme.description }
 							illustration={ theme.illustration }
 							isSelected={ selectedTheme === theme.slug }
-							isLoading={ isInstalling && installingTheme === theme.slug }
+							isLoading={ isInstalling && selectedTheme === theme.slug }
 							onSelect={ handleThemeSelect }
 							aria-label={ `Select ${ theme.title } theme: ${ theme.description }` }
 							role="button"
@@ -216,6 +160,5 @@ ThemeSelectionContentB.propTypes = {
 	noticeState: PropTypes.object,
 	selectedTheme: PropTypes.string,
 	onThemeSelect: PropTypes.func,
-	onThemeInstallSuccess: PropTypes.func,
-	onThemeInstallError: PropTypes.func,
+	isInstalling: PropTypes.bool,
 };

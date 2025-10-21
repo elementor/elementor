@@ -27,7 +27,7 @@ class Module extends BaseModule {
 			$connect_module->register_app( 'cloud-kits', Cloud_Kits::get_class_name() );
 		} );
 
-		add_filter( 'elementor/export/kit/export-result', [ $this, 'handle_export_kit_result' ], 10, 5 );
+		add_filter( 'elementor/export/kit/export-result', [ $this, 'handle_export_kit_result' ], 10, 6 );
 		add_filter( 'elementor/import/kit/result/cloud', [ $this, 'handle_import_kit_from_cloud' ], 10, 1 );
 		add_filter( 'elementor/import/kit_thumbnail', [ $this, 'handle_import_kit_thumbnail' ], 10, 3 );
 
@@ -70,7 +70,7 @@ class Module extends BaseModule {
 		return $thumbnail;
 	}
 
-	public function handle_export_kit_result( $result, $source, $export, $settings, $file ) {
+	public function handle_export_kit_result( $result, $source, $export, $settings, $file, $file_size ) {
 		if ( ImportExportCustomization_Module::EXPORT_SOURCE_CLOUD !== $source ) {
 			return $result;
 		}
@@ -88,6 +88,7 @@ class Module extends BaseModule {
 			$raw_screen_shot,
 			$settings['include'],
 			$settings['customization']['content']['mediaFormat'] ?? 'link',
+			$file_size,
 		);
 
 		if ( is_wp_error( $kit ) ) {

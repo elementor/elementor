@@ -8,7 +8,6 @@ test.describe( `Plugin tester tests: sections @plugin_tester_section`, () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
 		await wpAdmin.setExperiments( { container: 'inactive' } );
 		await page.close();
 	} );

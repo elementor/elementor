@@ -11,3 +11,25 @@ export function pipe( ...functions ) {
 			value,
 		);
 }
+
+/**
+ * Check if cloud kits are deactivated based on storage quota
+ *
+ * @param {Object} quotaData - The quota data from the API
+ * @return {boolean} True if deactivated, false otherwise
+ */
+export function isCloudKitsDeactivated( quotaData ) {
+	if ( ! quotaData?.storage ) {
+		return false;
+	}
+
+	const {
+		currentUsage = 0,
+		subscriptionId = '',
+	} = quotaData.storage;
+
+	const hasStorageUsage = currentUsage > 0;
+	const hasNoSubscription = '' === subscriptionId;
+
+	return hasStorageUsage && hasNoSubscription;
+}

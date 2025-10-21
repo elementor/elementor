@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import Message from '../components/message';
-import { options, setSelectedFeatureList } from '../utils/utils';
+import { options, setSelectedFeatureList, addExperimentTrackingToUrl } from '../utils/utils';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 import useButtonAction from '../utils/use-button-action';
@@ -17,13 +17,9 @@ export default function ChooseFeatures() {
 		{ state, handleAction } = useButtonAction( pageId, nextStep ),
 		actionButton = {
 			text: __( 'Upgrade Now', 'elementor' ),
-			href: elementorAppConfig.onboarding.urls.upgrade,
+			href: addExperimentTrackingToUrl( elementorAppConfig.onboarding.urls.upgrade, 'upgrade-step3' ),
 			target: '_blank',
 			onClick: () => {
-				OnboardingEventTracking.trackStepAction( 3, 'pro_features_checked', {
-					features: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
-				} );
-
 				OnboardingEventTracking.trackStepAction( 3, 'upgrade_now', {
 					pro_features_checked: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
 				} );
@@ -59,10 +55,6 @@ export default function ChooseFeatures() {
 		skipButton = {
 			text: __( 'Skip', 'elementor' ),
 			action: () => {
-				OnboardingEventTracking.trackStepAction( 3, 'pro_features_checked', {
-					features: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
-				} );
-
 				OnboardingEventTracking.trackStepAction( 3, 'skipped' );
 
 				setAjax( {
