@@ -35,8 +35,8 @@ class Components_REST_API {
 	}
 
 	private function get_lock_manger() {
-		if(!$this->lock_manager){
-			$this->lock_manager = new Document_Lock_Manager(self::LOCK_DOCUMENT_TYPE_NAME);
+		if ( ! $this->lock_manager ) {
+			$this->lock_manager = new Document_Lock_Manager( self::LOCK_DOCUMENT_TYPE_NAME );
 		}
 		return $this->lock_manager;
 	}
@@ -131,19 +131,19 @@ class Components_REST_API {
 		] );
 
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/lock-status', [
-    [
-        'methods' => 'GET',
-        'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_lock_status( $request ) ),
-        'permission_callback' => fn() => is_user_logged_in(),
-        'args' => [
-            'componentId' => [
-                'type' => 'string',
-                'required' => true,
-                'description' => 'The component ID to check lock status',
-            ],
-        ],
-    ],
-	] );
+			[
+				'methods' => 'GET',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_lock_status( $request ) ),
+				'permission_callback' => fn() => is_user_logged_in(),
+				'args' => [
+					'componentId' => [
+						'type' => 'string',
+						'required' => true,
+						'description' => 'The component ID to check lock status',
+					],
+				],
+			],
+		] );
 
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/is-current-user-locked', [
 			[
@@ -164,10 +164,10 @@ class Components_REST_API {
 		$component_id = $request->get_param( 'componentId' );
 		$current_user_id = get_current_user_id();
 		$locked_user = $this->get_lock_manger()->get_locked_user( $component_id );
-		
+
 		// Check if the component is locked by the current user
 		$is_current_user_locked = $locked_user && $locked_user->ID === $current_user_id;
-		
+
 		return Response_Builder::make( [ 'is_current_user_locked' => $is_current_user_locked ] )->build();
 	}
 
@@ -229,7 +229,7 @@ class Components_REST_API {
 	private function lock_component( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
 		$success = $this->get_lock_manger()->lock_document( $component_id );
-		
+
 		if ( ! $success ) {
 			return Error_Builder::make( 'lock_failed' )
 				->set_status( 500 )
@@ -243,7 +243,7 @@ class Components_REST_API {
 	private function unlock_component( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
 		$success = $this->get_lock_manger()->unlock_document( $component_id );
-		
+
 		if ( ! $success ) {
 			return Error_Builder::make( 'unlock_failed' )
 				->set_status( 500 )
@@ -264,7 +264,7 @@ class Components_REST_API {
 		] )->build();
 	}
 
-		private function route_wrapper( callable $cb ) {
+	private function route_wrapper( callable $cb ) {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {

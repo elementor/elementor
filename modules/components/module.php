@@ -29,7 +29,7 @@ class Module extends BaseModule {
 
 		( new Component_Styles() )->register_hooks();
 		( new Components_REST_API() )->register_hooks();
-		
+
 		// Add lock functionality
 		$this->register_lock_hooks();
 	}
@@ -52,9 +52,9 @@ class Module extends BaseModule {
 	}
 
 	private function get_lock_manager() {
-		if(!$this->lock_manager){
+		if ( ! $this->lock_manager ) {
 			$this->lock_manager = new Document_Lock_Manager( Components_REST_API::LOCK_DOCUMENT_TYPE_NAME );
-		}	
+		}
 		return $this->lock_manager;
 	}
 
@@ -67,8 +67,6 @@ class Module extends BaseModule {
 			Component_Document::TYPE,
 			Component_Document::get_class_full_name()
 		);
-
-		
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
@@ -112,8 +110,8 @@ class Module extends BaseModule {
 
 		$locked_user = $this->get_locked_user( $post_id );
 		if ( $locked_user && $locked_user->ID !== get_current_user_id() ) {
-			wp_die( 
-				sprintf( 
+			wp_die(
+				sprintf(
 					__( 'This component is currently being edited by %s. Please try again later.', 'elementor' ),
 					$locked_user->display_name
 				)
@@ -144,32 +142,31 @@ class Module extends BaseModule {
 		// Handle Elementor post lock for components
 		if ( isset( $data['elementor_post_lock']['post_ID'] ) ) {
 			$post_id = $data['elementor_post_lock']['post_ID'];
-			
+
 			if ( $this->is_component_post( $post_id ) ) {
 				$locked_user = $this->get_locked_user( $post_id );
-				
+
 				// Prevent force lock for components
 				if ( ! empty( $data['elementor_force_post_lock'] ) ) {
 					// Don't allow force lock for components
 					$response['component_locked'] = $locked_user ? $locked_user->display_name : false;
 					return $response;
 				}
-				
+
 				if ( ! $locked_user ) {
 					$this->lock_component( $post_id );
 				} else {
 					// For components, don't send locked_user - send component_locked instead
 					$response['component_locked'] = $locked_user->display_name;
 				}
-		
 			}
 		}
-		
+
 		// Handle component-specific lock
 		if ( isset( $data['elementor_component_lock']['component_id'] ) ) {
 			$component_id = $data['elementor_component_lock']['component_id'];
 			$lock_manager = $this->get_lock_manager();
-			
+
 			// Extend lock if user owns it
 			$locked_user = $lock_manager->get_locked_user( $component_id );
 			if ( $locked_user && $locked_user->ID === get_current_user_id() ) {
@@ -178,7 +175,7 @@ class Module extends BaseModule {
 				$response['component_locked'] = $locked_user ? $locked_user->display_name : false;
 			}
 		}
-		
+
 		return $response;
 	}
 
