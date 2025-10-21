@@ -294,7 +294,7 @@ class Module extends BaseModule {
 	 * @return string
 	 */
 	private function get_referrer_kit_id_from_request(): string {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Called from nonce-verified contexts or REST API with its own authentication
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Called via REST API with its own authentication
 		return sanitize_key( $_GET['referrer_kit'] ?? '' );
 	}
 
