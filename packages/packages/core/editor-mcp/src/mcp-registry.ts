@@ -67,6 +67,20 @@ export const getMCPByDomain = ( namespace: string ): MCPRegistryEntry => {
 		setMCPDescription: ( description: string ) => {
 			mcpDescriptions[ namespace ] = description;
 		},
+		getActiveChatInfo: () => {
+			const info = localStorage.getItem( 'angie_active_chat_id' );
+			if ( ! info ) {
+				return {
+					expiresAt: 0,
+					sessionId: '',
+				};
+			}
+			const rawData = JSON.parse( info );
+			return {
+				expiresAt: rawData.expiresAt as number,
+				sessionId: rawData.sessionId as string,
+			};
+		},
 	};
 };
 
@@ -75,6 +89,7 @@ export interface MCPRegistryEntry {
 		opts: ToolRegistrationOptions< T, O >
 	) => void;
 	setMCPDescription: ( description: string ) => void;
+	getActiveChatInfo: () => { sessionId: string; expiresAt: number };
 }
 
 type ToolRegistrationOptions<
