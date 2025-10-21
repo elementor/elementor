@@ -177,7 +177,7 @@ class Module extends BaseModule {
 		if ( $should_show_revert_section ) {
 			if ( ! empty( $penultimate_imported_kit ) ) {
 				$revert_text = sprintf(
-				/* translators: 1: kit title, 2: date, 3: line break, 4: kit title, 5: date. */
+					/* translators: 1: kit title, 2: date, 3: line break, 4: kit title, 5: date. */
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s %3$s and revert to the site setting that came with "%4$s" on %5$s.', 'elementor' ),
 					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
@@ -187,7 +187,7 @@ class Module extends BaseModule {
 				);
 			} else {
 				$revert_text = sprintf(
-				/* translators: 1: kit title, 2: date, 3: line break */
+					/* translators: 1: kit title, 2: date, 3: line break */
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s.%3$s Your original site settings will be restored.', 'elementor' ),
 					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
@@ -441,6 +441,9 @@ class Module extends BaseModule {
 		return $this->export->run();
 	}
 
+	/**
+	 * Handle revert kit request.
+	 */
 	public function revert_last_imported_kit(): array {
 		$this->revert = new Revert();
 		$this->revert->register_default_runners();
