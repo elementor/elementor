@@ -30,7 +30,7 @@ export async function apiRequest( { data = null, path, method = 'POST' } ) {
 	try {
 		result = await response.json();
 	} catch ( err ) {
-		const errorMessage = `Invalid JSON response: ${ err.message || err }`;
+		const errorMessage = `Invalid JSON response: ${ err?.message || String(err) }`;
 		const errorCode = HTTP_STATUS.REQUEST_TIMEOUT === response?.status ? 'timeout' : response?.status;
 		throw new ImportExportError( errorMessage, errorCode );
 	}
