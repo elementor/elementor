@@ -268,7 +268,7 @@ export class RevertKitHandler {
 			);
 		}
 
-		return defaultMessage + ' ' + __( 'Error details:', 'elementor' ) + ' ' + error.message;
+		return `${defaultMessage} ${__( 'Error details:', 'elementor' )} ${error.message}`;
 	}
 
 	isConfigurationError( message ) {
