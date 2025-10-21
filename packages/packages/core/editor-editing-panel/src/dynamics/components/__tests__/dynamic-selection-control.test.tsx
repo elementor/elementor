@@ -26,6 +26,7 @@ describe( '<DynamicSelectionControl />', () => {
 			propType: createMockPropType( { kind: 'plain' } ),
 			path: [],
 			restoreValue: jest.fn(),
+			resetValue: jest.fn(),
 		} );
 
 		jest.mocked( useDynamicTag ).mockReturnValue( {
@@ -110,6 +111,7 @@ describe( '<DynamicSelectionControl />', () => {
 			propType: createMockPropType( { kind: 'plain' } ),
 			path: [],
 			restoreValue: jest.fn(),
+			resetValue: jest.fn(),
 		} );
 		jest.mocked( usePersistDynamicValue ).mockReturnValue( [ 'My last title', jest.fn(), jest.fn() ] );
 
@@ -137,6 +139,7 @@ describe( '<DynamicSelectionControl />', () => {
 			propType: createMockPropType( { kind: 'plain' } ),
 			path: [],
 			restoreValue: jest.fn(),
+			resetValue: jest.fn(),
 		} );
 		jest.mocked( usePersistDynamicValue ).mockReturnValue( [ undefined, jest.fn(), jest.fn() ] );
 
