@@ -5,9 +5,11 @@ const createAtomicTabContentView = () => {
 		attributes() {
 			const tabId = this.model.getSetting( 'tab-id' );
 
+			const attributes = super.attributes();
+
 			return tabId?.value
-				? { 'data-tab-id': tabId.value, 'aria-labelledby': tabId.value, ...super.attributes() }
-				: super.attributes();
+				? { 'x-bind': 'tabContent', 'data-tab-id': tabId.value, ...attributes }
+				: attributes;
 		}
 	};
 };

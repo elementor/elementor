@@ -170,12 +170,8 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			'x-data' => 'atomic-tabs',
+			'x-data' => 'atomicTabs',
 		];
-
-		if ( ! empty( $settings['default-active-tab'] ) ) {
-			$attributes['data-active-tab'] = esc_attr( $settings['default-active-tab'] );
-		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );

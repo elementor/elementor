@@ -122,7 +122,7 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			'x-bind' => 'tabPanel',
+			'x-bind' => 'tabContent',
 		];
 
 		if ( ! $is_active ) {

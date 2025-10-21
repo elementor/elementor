@@ -4,18 +4,11 @@ import { Alpine } from '@elementor/alpinejs';
 register( {
 	elementType: 'e-tabs',
 	uniqueId: 'e-tabs-handler',
-	callback: () => {
+	callback: ( { element } ) => {
 		window.Alpine = Alpine;
 
-		Alpine.data( 'atomic-tabs', () => ( {
-			activeTab: null,
-
-			init() {
-				const defaultActiveTab = this.$el.getAttribute( 'data-active-tab' );
-				if ( defaultActiveTab ) {
-					this.activeTab = defaultActiveTab;
-				}
-			},
+		Alpine.data( 'atomicTabs', () => ( {
+			activeTab: element.getAttribute( 'data-active-tab' ),
 
 			tab: {
 				'@click'() {
@@ -32,7 +25,7 @@ register( {
 				},
 			},
 
-			tabPanel: {
+			tabContent: {
 				'x-show'() {
 					const tabId = this.$el.getAttribute( 'data-tab-id' );
 					return this.activeTab === tabId;
