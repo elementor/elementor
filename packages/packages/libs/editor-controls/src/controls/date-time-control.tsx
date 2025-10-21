@@ -35,21 +35,31 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
 			<ControlActions>
 				<LocalizationProvider dateAdapter={ AdapterDayjs }>
-					<PropKeyProvider bind="date">
-						<DatePicker
-							value={ stringPropTypeUtil.extract( value?.date ) || null }
-							onChange={ ( v:any ) => handleChange( { date: v } as Props, { bind: 'date' } ) }
-							disabled={ inputDisabled }
-						/>
-					</PropKeyProvider>
+					<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
+						<PropKeyProvider bind="date">
+							<DatePicker
+								value={ stringPropTypeUtil.extract( value?.date ) || null }
+								onChange={ ( v: any ) => handleChange( { date: v } as Props, { bind: 'date' } ) }
+								disabled={ inputDisabled }
+								slotProps={ {
+									textField: { size: 'tiny' },
+									openPickerButton: { size: 'tiny' },
+								} }
+							/>
+						</PropKeyProvider>
 
-					<PropKeyProvider bind="time">
-						<TimePicker
-							value={ stringPropTypeUtil.extract( value?.time ) || null }
-							onChange={ ( v:any ) => handleChange( { time: v } as Props, { bind: 'time' } ) }
-							disabled={ inputDisabled }
-						/>
-					</PropKeyProvider>
+						<PropKeyProvider bind="time">
+							<TimePicker
+								value={ stringPropTypeUtil.extract( value?.time ) || null }
+								onChange={ ( v: any ) => handleChange( { time: v } as Props, { bind: 'time' } ) }
+								disabled={ inputDisabled }
+								slotProps={ {
+									textField: { size: 'tiny' },
+									openPickerButton: { size: 'tiny' },
+								} }
+							/>
+						</PropKeyProvider>
+					</div>
 				</LocalizationProvider>
 			</ControlActions>
 		</PropProvider>
