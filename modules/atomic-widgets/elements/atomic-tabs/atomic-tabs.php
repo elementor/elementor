@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -11,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Tabs_Control;
+use Elementor\Core\Utils\Collection;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,7 +46,8 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'default-active-tab' => String_Prop_Type::make(),
+			'default-active-tab' => Number_Prop_Type::make()
+				->default( 0 ),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
@@ -55,11 +58,11 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_id( 'content' )
 				->set_items( [
-					Tabs_Control::make()
-					->set_label( __( 'Menu items', 'elementor' ) )
-					->set_meta( [
-						'layout' => 'custom',
-					] ),
+					// Tabs_Control::make()
+					// ->set_label( __( 'Menu items', 'elementor' ) )
+					// ->set_meta( [
+					// 	'layout' => 'custom',
+					// ] ),
 				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
@@ -151,9 +154,28 @@ class Atomic_Tabs extends Atomic_Element_Base {
 
 	protected function define_render_context(): array {
 		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
+		
+		$direct_children = $this->get_children();
+		$tabs_menu = $direct_children[0] ?? null;
+		$tabs_content_area = $direct_children[1] ?? null;
+		
+		$tabs_map = Collection::make( $tabs_menu ? $tabs_menu->get_children() : [] )
+			->filter( fn( $element ) => $element instanceof Atomic_Tab )
+			->map( fn( $element ) => $element->get_id() )
+			->flip()
+			->all();
+		
+		$tabs_content_map = Collection::make( $tabs_content_area ? $tabs_content_area->get_children() : [] )
+			->filter( fn( $element ) => $element instanceof Atomic_Tab_Content )
+			->map( fn( $element ) => $element->get_id() )
+			->flip()
+			->all();
 
 		return [
 			'default-active-tab' => $default_active_tab,
+			'tabs-map' => $tabs_map,
+			'tabs-content-map' => $tabs_content_map,
+			'tabs-id' => $this->get_id(),
 		];
 	}
 
@@ -171,6 +193,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				...( $settings['classes'] ?? [] ),
 			],
 			'x-data' => 'atomicTabs',
+			'data-active-tab' => $settings['default-active-tab'] ?? 0,
 		];
 
 		if ( ! empty( $settings['_cssid'] ) ) {

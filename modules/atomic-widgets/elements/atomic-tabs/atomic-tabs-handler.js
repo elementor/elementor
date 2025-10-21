@@ -12,23 +12,31 @@ register( {
 
 			tab: {
 				'@click'() {
-					const tabId = this.$el.getAttribute( 'id' );
-					this.activeTab = tabId;
+					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
+					this.activeTab = tabIndex;
 				},
 				':aria-selected'() {
-					const tabId = this.$el.getAttribute( 'id' );
-					return this.activeTab === tabId ? 'true' : 'false';
+					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
+					return this.activeTab === tabIndex ? 'true' : 'false';
 				},
 				':tabindex'() {
-					const tabId = this.$el.getAttribute( 'id' );
-					return this.activeTab === tabId ? '0' : '-1';
+					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
+					return this.activeTab === tabIndex ? '0' : '-1';
+				},
+				':aria-controls'() {
+					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
+					return `atomic-tab-content-${ tabIndex }`;
 				},
 			},
 
 			tabContent: {
 				'x-show'() {
-					const tabId = this.$el.getAttribute( 'data-tab-id' );
-					return this.activeTab === tabId;
+					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
+					return this.activeTab === tabIndex;
+				},
+				':aria-labelledby'() {
+					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
+					return `atomic-tab-${ tabIndex }`;
 				},
 			},
 		} ) );

@@ -3,13 +3,11 @@ const createAtomicTabContentView = () => {
 
 	return class AtomicTabContentView extends AtomicElementBaseView {
 		attributes() {
-			const tabId = this.model.getSetting( 'tab-id' );
+			const index = this.model.collection.indexOf( this.model );
 
 			const attributes = super.attributes();
 
-			return tabId?.value
-				? { 'x-bind': 'tabContent', 'data-tab-id': tabId.value, ...attributes }
-				: attributes;
+			return { 'x-bind': 'tabContent', 'data-tab-index': index, ...attributes };
 		}
 	};
 };

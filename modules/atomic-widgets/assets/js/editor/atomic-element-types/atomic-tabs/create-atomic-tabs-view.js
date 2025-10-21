@@ -7,9 +7,7 @@ const createAtomicTabsView = () => {
 
 			const attributes = super.attributes();
 
-			return defaultActiveTab?.value
-				? { 'x-data': 'atomicTabs', 'data-active-tab': defaultActiveTab.value, ...attributes }
-				: attributes;
+			return { 'x-data': 'atomicTabs', 'data-active-tab': defaultActiveTab.value ?? 0, ...attributes };
 		}
 	};
 };
