@@ -58,7 +58,7 @@ class Import extends Base_Route {
 				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
 			}
 
-			return Response::error( 'import_error', $e->getMessage() );
+			return Response::error( $e->getMessage(), 'import_error' );
 		}
 	}
 
