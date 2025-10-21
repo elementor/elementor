@@ -183,9 +183,15 @@ export class RevertKitHandler {
 	}
 
 	convertNameToTitle( name ) {
-		return name
+		const words = name
 			.split( RevertKitHandler.NAME_SEPARATOR_PATTERN )
-			.filter( ( word ) => word.length > 0 )
+			.filter( ( word ) => word.length > 0 );
+
+		if ( 0 === words.length ) {
+			return __( 'Your Kit', 'elementor' );
+		}
+
+		return words
 			.map( ( word ) => word[ 0 ].toUpperCase() + word.substring( 1 ) )
 			.join( ' ' );
 	}
