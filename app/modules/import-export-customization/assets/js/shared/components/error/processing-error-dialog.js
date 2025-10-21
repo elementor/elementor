@@ -194,7 +194,7 @@ export function ProcessingErrorDialog( {
 } ) {
 	const [ open, setOpen ] = useState( Boolean( error ) );
 	const errorType = error?.code || 'general';
-	const errorMessageContent = messagesContent[ errorType ] || messagesContent.general;
+	const errorMessageContent = messagesContent[ errorType ];
 
 	const resolveText = () => {
 		const details = error?.details || error?.message;
