@@ -168,7 +168,6 @@ class Widget_Creator {
 			// Update stats
 			foreach ( $css_variable_definitions as $variable_name => $variable_data ) {
 				++$this->creation_stats['variables_created'];
-				error_log( '✅ CSS VARIABLE PROCESSED: ' . $variable_name . ': ' . $variable_data['value'] );
 			}
 		} catch ( \Exception $e ) {
 			$this->creation_stats['warnings'][] = [
@@ -816,7 +815,6 @@ class Widget_Creator {
 			$value = $variable_data['value'] ?? '';
 			if ( ! empty( $value ) ) {
 				$css_rules[] = "  {$variable_name}: {$value};";
-				error_log( '🎨 CSS VARIABLE DEFINITION GENERATED: ' . $variable_name . ': ' . $value );
 			}
 		}
 
@@ -839,11 +837,9 @@ class Widget_Creator {
 					$existing_custom_css = $kit->get_settings( 'custom_css' ) ?? '';
 					$updated_custom_css = $existing_custom_css . "\n\n/* CSS Variable Definitions */\n" . $css_content;
 					$kit->update_settings( [ 'custom_css' => $updated_custom_css ] );
-					error_log( '✅ CSS VARIABLE DEFINITIONS ADDED TO ELEMENTOR CUSTOM CSS' );
 				}
 			}
 		} catch ( \Exception $e ) {
-			error_log( '⚠️ Failed to add CSS variable definitions to page: ' . $e->getMessage() );
 
 			// Fallback: Add via WordPress hook
 			add_action( 'wp_head', function() use ( $css_content ) {

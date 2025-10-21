@@ -152,19 +152,12 @@ function run_minimal_cleaning_experiment() {
 	$experiment = new Minimal_Cleaning_Experiment();
 	$results = $experiment->run_all_experiments();
 	
-	error_log( '========================================' );
-	error_log( 'CSS PARSER CAPABILITY EXPERIMENT' );
-	error_log( '========================================' );
 	
 	foreach ( $results as $category => $tests ) {
-		error_log( '' );
-		error_log( strtoupper( str_replace( '_', ' ', $category ) ) . ':' );
 		foreach ( $tests as $test_name => $result ) {
-			error_log( "  {$test_name}: {$result}" );
 		}
 	}
 	
-	error_log( '========================================' );
 	
 	return $results;
 }

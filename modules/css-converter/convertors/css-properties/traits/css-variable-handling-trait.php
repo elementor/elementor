@@ -16,7 +16,6 @@ trait Css_Variable_Handling_Trait {
 		$trimmed = trim( $value );
 
 		if ( ! $this->is_elementor_css_variable( $trimmed ) ) {
-			error_log( '⚠️  CSS Variable Handler: Non-Elementor CSS variable detected: ' . $trimmed );
 		}
 
 		return $trimmed;
@@ -26,15 +25,12 @@ trait Css_Variable_Handling_Trait {
 		$trimmed = trim( $value );
 
 		if ( ! preg_match( '/^var\s*\(\s*--[a-zA-Z0-9_-]+(?:\s*,\s*[^)]+)?\s*\)$/', $trimmed ) ) {
-			error_log( '❌ CSS Variable Handler: Invalid CSS variable syntax: ' . $trimmed );
 			return false;
 		}
 
 		if ( ! $this->is_elementor_css_variable( $trimmed ) ) {
-			error_log( '⚠️  CSS Variable Handler: Non-Elementor CSS variable (allowed but not recommended): ' . $trimmed );
 		}
 
-		error_log( '✅ CSS Variable Handler: Valid CSS variable: ' . $trimmed );
 		return true;
 	}
 

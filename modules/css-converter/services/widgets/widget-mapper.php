@@ -113,43 +113,26 @@ class Widget_Mapper {
 	public function map_elements( $elements ) {
 		$mapped_elements = [];
 
-		error_log( '🔍 WIDGET_MAPPER: Starting to map ' . count( $elements ) . ' HTML elements to widgets' );
 
 		foreach ( $elements as $element ) {
 			$mapped = $this->map_element( $element );
 			if ( $mapped ) {
 				$mapped_elements[] = $mapped;
-				error_log( '🔍 WIDGET_MAPPER: Mapped ' . ( $element['tag'] ?? 'unknown' ) . ' to ' . ( $mapped['widget_type'] ?? 'unknown' ) );
 
 				// DOUBLE NESTING DEBUG: Check for nested structure that might cause double div-blocks
 				if ( ! empty( $mapped['children'] ) ) {
-					error_log( '🔍 WIDGET_MAPPER: Widget has ' . count( $mapped['children'] ) . ' children' );
 					foreach ( $mapped['children'] as $child_index => $child ) {
 						$child_type = $child['widget_type'] ?? 'unknown';
 						$child_tag = $child['original_tag'] ?? 'unknown';
-						error_log( '🔍 WIDGET_MAPPER: - Child[' . $child_index . ']: ' . $child_tag . ' → ' . $child_type );
 						
 						// Check for problematic double div-block nesting
 						if ( $mapped['widget_type'] === 'e-div-block' && $child_type === 'e-div-block' ) {
-							error_log( '⚠️ DOUBLE_NESTING_DETECTED: Parent e-div-block contains child e-div-block' );
-							error_log( '⚠️ - Parent element: ' . json_encode( [
-								'tag' => $element['tag'] ?? 'unknown',
-								'id' => $element['attributes']['id'] ?? 'no-id',
-								'class' => $element['attributes']['class'] ?? 'no-class',
-								'content_length' => strlen( $element['content'] ?? '' )
-							] ) );
-							error_log( '⚠️ - Child element: ' . json_encode( [
-								'tag' => $child_tag,
-								'widget_type' => $child_type,
-								'element_id' => $child['element_id'] ?? 'no-id'
-							] ) );
 						}
 					}
 				}
 			}
 		}
 
-		error_log( '🔍 WIDGET_MAPPER: Finished mapping, created ' . count( $mapped_elements ) . ' widgets' );
 		return $mapped_elements;
 	}
 
@@ -195,7 +178,6 @@ class Widget_Mapper {
 		
 		// If paragraph has child elements (like <a> tags), we need to handle mixed content
 		if ( ! empty( $element['children'] ) ) {
-			error_log( '🔍 PARAGRAPH_HANDLER: Processing paragraph with ' . count( $element['children'] ) . ' children' );
 			
 			// For mixed content paragraphs, we'll create a flattened structure:
 			// Instead of: e-div-block > [e-paragraph, e-link]  
@@ -211,9 +193,6 @@ class Widget_Mapper {
 				$full_text_content = $remaining_text;
 			}
 			
-			error_log( '🔍 PARAGRAPH_HANDLER: Full text content: ' . substr( $full_text_content, 0, 50 ) . '...' );
-			error_log( '🔍 PARAGRAPH_HANDLER: Has entity issues: ' . ( strpos( $full_text_content, 'u2019' ) !== false ? 'YES' : 'NO' ) );
-			error_log( '🔍 PARAGRAPH_HANDLER: Has proper apostrophe: ' . ( strpos( $full_text_content, "'" ) !== false ? 'YES' : 'NO' ) );
 			
 			// Create the main paragraph widget with all text content
 			$paragraph_widget = [
@@ -248,9 +227,6 @@ class Widget_Mapper {
 		}
 
 		// If no children, handle as regular paragraph
-		error_log( '🔍 PARAGRAPH_HANDLER: Simple paragraph content: ' . substr( $content, 0, 50 ) . '...' );
-		error_log( '🔍 PARAGRAPH_HANDLER: Simple has entity issues: ' . ( strpos( $content, 'u2019' ) !== false ? 'YES' : 'NO' ) );
-		error_log( '🔍 PARAGRAPH_HANDLER: Simple has proper apostrophe: ' . ( strpos( $content, "'" ) !== false ? 'YES' : 'NO' ) );
 		
 		$settings = [
 			'paragraph' => $content,
@@ -286,11 +262,9 @@ class Widget_Mapper {
 				$child_type = $child_widget['widget_type'] ?? 'unknown';
 				$child_element_id = $child_widget['element_id'] ?? 'no-id';
 				
-				error_log( '🔍 DIV_BLOCK_HANDLER: Processing child widget: ' . $child_type );
 				
 				// If child widget has flatten_children flag, add its children as siblings
 				if ( ! empty( $child_widget['flatten_children'] ) && ! empty( $child_widget['children'] ) ) {
-					error_log( '🔍 DIV_BLOCK_HANDLER: Flattening ' . count( $child_widget['children'] ) . ' children from ' . $child_type );
 					
 					// Add the main widget (without its children)
 					$flattened_widget = $child_widget;
@@ -301,7 +275,6 @@ class Widget_Mapper {
 					// Add its children as siblings
 					foreach ( $child_widget['children'] as $grandchild ) {
 						$children[] = $grandchild;
-						error_log( '🔍 DIV_BLOCK_HANDLER: Added flattened child: ' . ( $grandchild['widget_type'] ?? 'unknown' ) );
 					}
 				} else {
 					// Add widget normally
@@ -309,7 +282,6 @@ class Widget_Mapper {
 				}
 			}
 			
-			error_log( '🔍 DIV_BLOCK_HANDLER: Final children count after flattening: ' . count( $children ) );
 		}
 
 		// Check if this div has text content that should be wrapped in a paragraph
@@ -450,12 +422,6 @@ class Widget_Mapper {
 		$text_content = trim( $element['content'] ?? '' );
 		$has_children = ! empty( $element['children'] );
 
-		error_log( '🔍 OPTIMIZATION_CHECK: Checking div conversion for element:' );
-		error_log( '🔍 - Tag: ' . ( $element['tag'] ?? 'unknown' ) );
-		error_log( '🔍 - ID: ' . $element_id );
-		error_log( '🔍 - Class: ' . $element_class );
-		error_log( '🔍 - Text content length: ' . strlen( $text_content ) );
-		error_log( '🔍 - Has children: ' . ( $has_children ? 'YES (' . count( $element['children'] ) . ')' : 'NO' ) );
 
 		// CRITICAL FIX: Never convert divs to direct paragraphs - always maintain e-div-block structure
 		// Only consolidate synthetic paragraphs within the div-block container
@@ -463,10 +429,6 @@ class Widget_Mapper {
 		// Check if we can consolidate synthetic paragraph children within the div-block
 		if ( $has_children && 1 === count( $element['children'] ) ) {
 			$only_child = $element['children'][0];
-			error_log( '🔍 SYNTHETIC_CHECK: Single child analysis:' );
-			error_log( '🔍 - Child tag: ' . ( $only_child['tag'] ?? 'unknown' ) );
-			error_log( '🔍 - Child has children: ' . ( empty( $only_child['children'] ) ? 'NO' : 'YES' ) );
-			error_log( '🔍 - Child has inline CSS: ' . ( empty( $only_child['inline_css'] ) ? 'NO' : 'YES' ) );
 			
 			// Check if it's a synthetic paragraph that can be consolidated
 			$is_synthetic = ( 'p' === $only_child['tag'] &&
@@ -475,17 +437,12 @@ class Widget_Mapper {
 				! empty( $only_child['synthetic'] );
 				
 			if ( $is_synthetic ) {
-				error_log( '🔍 OPTIMIZATION_RESULT: YES - Will consolidate synthetic paragraph content within e-div-block' );
-				error_log( '🔍 - Parent element ID: ' . $element_id );
-				error_log( '🔍 - Parent classes: ' . $element_class );
-				error_log( '🔍 - Synthetic flag: ' . ( ! empty( $only_child['synthetic'] ) ? 'YES' : 'NO (detected by heuristics)' ) );
 
 				return true;
 			}
 		}
 
 		// Always keep the div-block structure - no direct paragraph conversion
-		error_log( '🔍 OPTIMIZATION_RESULT: NO - Maintaining e-div-block container structure' );
 		return false;
 	}
 
@@ -508,7 +465,6 @@ class Widget_Mapper {
 					$child_content = trim( $only_child['content'] ?? '' );
 					if ( ! empty( $child_content ) ) {
 						$paragraph_content = $child_content;
-						error_log( '🔍 OPTIMIZATION: Consolidating synthetic paragraph content within e-div-block: ' . substr( $paragraph_content, 0, 50 ) . '...' );
 					}
 				}
 			}
@@ -523,7 +479,6 @@ class Widget_Mapper {
 				
 				if ( ! empty( $content_parts ) ) {
 					$paragraph_content = implode( ' ', $content_parts );
-					error_log( '🔍 OPTIMIZATION: Consolidated multiple synthetic paragraphs within e-div-block: ' . substr( $paragraph_content, 0, 50 ) . '...' );
 				}
 			}
 		}

@@ -131,8 +131,6 @@ class Html_Parser {
 			$decoded = str_replace( $unicode, $replacement, $decoded );
 		}
 		
-		error_log( '🔍 HTML_ENTITY_DECODE: Original: "' . substr( $text, 0, 50 ) . '"' );
-		error_log( '🔍 HTML_ENTITY_DECODE: Decoded: "' . substr( $decoded, 0, 50 ) . '"' );
 		
 		return $decoded;
 	}
@@ -262,12 +260,6 @@ class Html_Parser {
 		$has_children = ! empty( $element['children'] );
 		// If element has both text content and children, wrap the text in a paragraph
 		if ( $has_direct_text && $has_children ) {
-			error_log( '🔍 HTML_PARSER: Creating synthetic paragraph for mixed content element' );
-			error_log( '🔍 - Parent tag: ' . ( $element['tag'] ?? 'unknown' ) );
-			error_log( '🔍 - Parent ID: ' . ( $element['attributes']['id'] ?? 'no-id' ) );
-			error_log( '🔍 - Parent class: ' . ( $element['attributes']['class'] ?? 'no-class' ) );
-			error_log( '🔍 - Text content: "' . substr( trim( $element['content'] ), 0, 50 ) . '..."' );
-			error_log( '🔍 - Children count: ' . count( $element['children'] ) );
 			
 			// Create a paragraph element for the text content
 			// CRITICAL FIX: Only transfer flattened classes to paragraph, keep original classes on parent
@@ -282,7 +274,6 @@ class Html_Parser {
 				'synthetic' => true, // Mark as synthetic for widget mapper optimization
 			];
 			
-			error_log( '🔍 - Created synthetic paragraph with classes: ' . json_encode( $flattened_classes ) );
 			
 			// Process existing children recursively
 			$processed_children = $this->preprocess_elements_for_text_wrapping( $element['children'] );
@@ -293,10 +284,6 @@ class Html_Parser {
 			// CRITICAL FIX: Remove flattened classes from parent but keep original classes
 			$element['attributes'] = $this->remove_flattened_classes( $element['attributes'] ?? [] );
 		} elseif ( $has_direct_text && ! $has_children ) {
-			error_log( '🔍 HTML_PARSER: Creating synthetic paragraph for text-only element' );
-			error_log( '🔍 - Parent tag: ' . ( $element['tag'] ?? 'unknown' ) );
-			error_log( '🔍 - Parent ID: ' . ( $element['attributes']['id'] ?? 'no-id' ) );
-			error_log( '🔍 - Text content: "' . substr( trim( $element['content'] ), 0, 50 ) . '..."' );
 			
 			// Element has only text content - wrap it in a paragraph
 			// Transfer flattened classes to paragraph, but keep original classes on parent for ID+class selector matching
@@ -311,7 +298,6 @@ class Html_Parser {
 				'synthetic' => true, // Mark as synthetic for widget mapper optimization
 			];
 			
-			error_log( '🔍 - Created synthetic paragraph with classes: ' . json_encode( $paragraph_attributes ) );
 			
 			$element['children'] = [ $paragraph_element ];
 			$element['content'] = '';

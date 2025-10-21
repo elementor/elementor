@@ -220,15 +220,11 @@ class Widgets_Route {
 		$extracted_html = '';
 		foreach ( $nodes as $node ) {
 			$node_html = $dom->saveHTML( $node );
-			error_log( '🔍 EXTRACTED NODE HTML: ' . substr( $node_html, 0, 200 ) );
-			error_log( '🔍 NODE TAG: ' . $node->nodeName );
-			error_log( '🔍 NODE CLASS: ' . $node->getAttribute( 'class' ) );
 			$extracted_html .= $node_html;
 		}
 		if ( empty( $extracted_html ) ) {
 			return new WP_Error( 'empty_content', 'Selected content is empty for selector: ' . $selector );
 		}
-		error_log( '🔍 TOTAL EXTRACTED HTML LENGTH: ' . strlen( $extracted_html ) );
 		$extraction_result = $this->extract_head_styles_and_urls( $dom, $xpath, $base_url );
 		if ( ! empty( $extraction_result['inline_styles'] ) ) {
 			$extracted_html = $extraction_result['inline_styles'] . $extracted_html;

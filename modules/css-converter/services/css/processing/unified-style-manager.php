@@ -189,25 +189,10 @@ if ( strpos( $selector, '#text' ) !== false ) {
 				
 				// EVIDENCE: Track font-size collection
 				if ( 'font-size' === $property ) {
-					error_log( '🔍 FONT-SIZE TRACE: collect_reset_styles' );
-					error_log( '🔍 - selector: ' . $element_selector );
-					error_log( '🔍 - widget_element_id: ' . $widget_element_id );
-					error_log( '🔍 - property: ' . $property );
-					error_log( '🔍 - value: ' . $value );
-					error_log( '🔍 - converted_property: ' . json_encode( $property_data['converted_property'] ?? null ) );
-					error_log( '🔍 - can_apply_directly: ' . ( $can_apply_directly ? 'TRUE' : 'FALSE' ) );
 				}
 				
 				// DEBUG: Track font-family collection
 				if ( 'font-family' === $property ) {
-					error_log( '🔍 FONT-FAMILY TRACE: collect_reset_styles' );
-					error_log( '🔍 - selector: ' . $element_selector );
-					error_log( '🔍 - widget_element_id: ' . $widget_element_id );
-					error_log( '🔍 - property: ' . $property );
-					error_log( '🔍 - value: ' . $value );
-					error_log( '🔍 - converted_property: ' . json_encode( $property_data['converted_property'] ?? null ) );
-					error_log( '🔍 - can_apply_directly: ' . ( $can_apply_directly ? 'TRUE' : 'FALSE' ) );
-					error_log( '🔍 - Stack trace: ' . wp_debug_backtrace_summary() );
 				}
 				
 				$this->collected_styles[] = [
@@ -299,11 +284,7 @@ if ( strpos( $selector, '#text' ) !== false ) {
 			return ( $style['property'] ?? '' ) === 'font-size';
 		});
 		if ( ! empty( $font_size_styles ) ) {
-			error_log( '🔍 FONT-SIZE TRACE: resolve_styles_for_widget_legacy' );
-			error_log( '🔍 - widget_id: ' . $widget_id );
-			error_log( '🔍 - applicable font-size styles: ' . count( $font_size_styles ) );
 			foreach ( $font_size_styles as $idx => $style ) {
-				error_log( '🔍 - style[' . $idx . ']: value=' . ( $style['value'] ?? 'N/A' ) . ', specificity=' . ( $style['specificity'] ?? 'N/A' ) );
 			}
 		}
 		
@@ -318,10 +299,6 @@ if ( strpos( $selector, '#text' ) !== false ) {
 				
 				// EVIDENCE: Track font-size winner
 				if ( 'font-size' === $property ) {
-					error_log( '🔍 FONT-SIZE TRACE: winning style selected' );
-					error_log( '🔍 - value: ' . ( $winning_style['value'] ?? 'N/A' ) );
-					error_log( '🔍 - specificity: ' . ( $winning_style['specificity'] ?? 'N/A' ) );
-					error_log( '🔍 - converted_property: ' . json_encode( $winning_style['converted_property'] ?? null ) );
 				}
 			}
 		}

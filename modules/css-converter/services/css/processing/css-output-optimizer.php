@@ -162,7 +162,6 @@ class Css_Output_Optimizer {
 				if ( is_string( $value ) && strpos( $value, 'var(' ) !== false ) {
 					// Validate CSS variable syntax
 					if ( ! preg_match( '/^var\(\s*--[a-zA-Z0-9_-]+(?:\s*,\s*[^)]+)?\s*\)$/', $value ) ) {
-						error_log( '⚠️ Invalid CSS variable syntax: ' . $value . ' in ' . $selector );
 					}
 				}
 			}

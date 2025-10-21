@@ -18,8 +18,6 @@ class CSS_To_Atomic_Props_Converter {
 	public function convert_css_to_atomic_prop( string $property, $value ): ?array {
 		// DEBUG: Track font-family processing
 		if ( 'font-family' === $property ) {
-			error_log( '🔍 FONT-FAMILY IN convert_css_to_atomic_prop: ' . $property . ': ' . $value );
-			error_log( '🔍 - Stack trace: ' . wp_debug_backtrace_summary() );
 		}
 
 		if ( empty( $property ) || $value === null || $value === '' ) {
@@ -30,13 +28,11 @@ class CSS_To_Atomic_Props_Converter {
 		
 		// DEBUG: Track font-family mapper resolution
 		if ( 'font-family' === $property ) {
-			error_log( '🔍 FONT-FAMILY mapper in css-to-atomic: ' . ( $mapper ? get_class( $mapper ) : 'NULL' ) );
 		}
 		
 		if ( ! $mapper ) {
 			// DEBUG: Track font-family mapper failure
 			if ( 'font-family' === $property ) {
-				error_log( '🔍 FONT-FAMILY no mapper found in css-to-atomic' );
 			}
 			return null;
 		}
@@ -45,9 +41,7 @@ class CSS_To_Atomic_Props_Converter {
 		
 		// DEBUG: Track font-family conversion result
 		if ( 'font-family' === $property ) {
-			error_log( '🔍 FONT-FAMILY css-to-atomic result: ' . ( $result ? 'SUCCESS' : 'FAILED' ) );
 			if ( $result ) {
-				error_log( '🔍 FONT-FAMILY css-to-atomic result data: ' . json_encode( $result ) );
 			}
 		}
 		
