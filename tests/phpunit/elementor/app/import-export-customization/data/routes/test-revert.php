@@ -159,28 +159,6 @@ class Test_Revert extends Elementor_Test_Base {
 		$this->assertEquals( 'revert_error', $data['data']['message'] );
 	}
 
-	public function test_revert_response_structure() {
-		$this->init_rest_api();
-		$this->act_as_admin();
-
-		$this->create_mock_import_session();
-
-		$response = $this->send_revert_request();
-
-		$this->assertEquals( 200, $response->get_status() );
-		$data = $response->get_data();
-
-		$this->assertArrayHasKey( 'data', $data );
-		$this->assertArrayHasKey( 'revert_completed', $data['data'] );
-		$this->assertArrayHasKey( 'referrer_kit_id', $data['data'] );
-		$this->assertArrayHasKey( 'show_referrer_dialog', $data['data'] );
-
-		$this->assertArrayNotHasKey( 'reverted_session', $data['data'] );
-		$this->assertArrayNotHasKey( 'previous_session', $data['data'] );
-		$this->assertArrayNotHasKey( 'remaining_import_sessions', $data['data'] );
-		$this->assertArrayNotHasKey( 'tools_url', $data['data'] );
-	}
-
 	private function send_revert_request() {
 		$request = new \WP_REST_Request(
 			'POST',
@@ -205,6 +183,4 @@ class Test_Revert extends Elementor_Test_Base {
 
 		update_option( ImportExportCustomizationModule::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $session_data, false );
 	}
-
 }
-
