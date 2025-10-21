@@ -17,6 +17,7 @@ import {
 } from '@elementor/app-ui';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { KIT_SOURCE_MAP } from '../../../../import-export/assets/js/hooks/use-kit';
+import Tooltip from 'elementor-app/molecules/tooltip';
 
 import './kit-list-item.scss';
 
@@ -101,8 +102,10 @@ const KitListCloudItem = ( props ) => {
 		props.onDelete();
 	};
 
-	return (
-		<Card className={ `e-kit-library__kit-item ${ isLocked ? 'e-kit-library__kit-item--locked' : '' }` }>
+	const cardContent = (
+		<Card
+			className={ `e-kit-library__kit-item ${ isLocked ? 'e-kit-library__kit-item--locked' : '' }` }
+		>
 			<CardHeader
 				className="e-kit-library__kit-item-header"
 			>
@@ -112,7 +115,14 @@ const KitListCloudItem = ( props ) => {
 					variant="h5"
 					className="eps-card__headline"
 				>
-					{ isLocked && <i className="eicon-lock e-kit-library__kit-item-lock-icon" aria-hidden="true"></i> }
+					{ isLocked && (
+						<Tooltip
+							tag="span"
+							title={ __( 'Your library is currently over the new quota. Upgrade your plan within 90 days to keep all website templates', 'elementor' ) }
+						>
+							<i className="eicon-lock e-kit-library__kit-item-lock-icon" aria-hidden="true"></i>
+						</Tooltip>
+					) }
 					{ props.model.title }
 				</Heading>
 				<Button
@@ -136,7 +146,12 @@ const KitListCloudItem = ( props ) => {
 					<CardOverlay>
 						<Grid container direction="column" className="e-kit-library__kit-item-cloud-overlay">
 							{ isLocked ? (
-								<i className="eicon-lock" aria-hidden="true"></i>
+								<Tooltip
+									tag="span"
+									title={ __( 'Your library is currently over the new quota. Upgrade your plan within 90 days to keep all website templates', 'elementor' ) }
+								>
+									<i className="eicon-lock e-kit-library__kit-item-lock-icon" aria-hidden="true"></i>
+								</Tooltip>
 							) : (
 								<Button
 									className="eps-button e-kit-library__kit-item-cloud-overlay-import-button eps-button--primary eps-button--sm eps-button--contained"
@@ -159,6 +174,8 @@ const KitListCloudItem = ( props ) => {
 			</CardBody>
 		</Card>
 	);
+
+	return cardContent;
 };
 
 KitListCloudItem.propTypes = {
