@@ -84,7 +84,7 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 		restoreValue,
 		placeholder,
 		disabled,
-		// resetValue,
+		resetValue,
 	};
 }
 
