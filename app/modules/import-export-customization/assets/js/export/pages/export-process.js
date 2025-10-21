@@ -58,6 +58,11 @@ export default function ExportProcess() {
 		}
 	};
 
+	const handleExportAsZip = () => {
+		dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'file' } );
+		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
+	};
+
 	return (
 		<BaseLayout topBar={ <TopBar>{ headerContent }</TopBar> }>
 			<CenteredContent>
@@ -71,6 +76,7 @@ export default function ExportProcess() {
 							error={ error }
 							handleClose={ handleCloseError }
 							handleTryAgain={ handleTryAgain }
+							handleExportAsZip={ handleExportAsZip }
 						/>
 					) }
 				</Stack>
