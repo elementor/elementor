@@ -191,6 +191,7 @@ export class RevertKitHandler {
 	convertNameToTitle( name ) {
 		return name
 			.split( RevertKitHandler.NAME_SEPARATOR_PATTERN )
+			.filter(Boolean)
 			.map( ( word ) => word[ 0 ].toUpperCase() + word.substring( 1 ) )
 			.join( ' ' );
 	}
