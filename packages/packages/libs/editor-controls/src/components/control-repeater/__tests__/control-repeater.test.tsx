@@ -33,6 +33,7 @@ const globalUseBoundPropArgs = {
 	propType: createMockPropType.prototype,
 	path: [],
 	restoreValue: jest.fn(),
+	resetValue: jest.fn(),
 };
 
 const setValuesWrapper = ( setValues: ( value: unknown ) => void ) => {

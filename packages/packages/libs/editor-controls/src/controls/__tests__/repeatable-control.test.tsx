@@ -47,6 +47,7 @@ describe( '<RepeatableControl />', () => {
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
+			resetValue: jest.fn(),
 		} );
 
 		const props = {
@@ -91,6 +92,7 @@ describe( '<RepeatableControl />', () => {
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
+			resetValue: jest.fn(),
 		} );
 
 		const props = {
