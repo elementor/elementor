@@ -40,7 +40,8 @@ class Union_Prop_Type implements Prop_Type {
 		return static::make()
 			->add_prop_type( $prop_type )
 			->default( $prop_type->get_default() )
-			->set_dependencies( $dependencies );
+			->set_dependencies( $dependencies )
+			->set_required_settings( $prop_type );
 	}
 
 	public function get_type(): string {
@@ -131,5 +132,13 @@ class Union_Prop_Type implements Prop_Type {
 
 	public function get_dependencies(): ?array {
 		return $this->dependencies;
+	}
+
+	private function set_required_settings( Transformable_Prop_Type $prop_type ): self {
+		if ( $prop_type->get_setting( 'required', false ) ) {
+			$this->required();
+		}
+
+		return $this;
 	}
 }

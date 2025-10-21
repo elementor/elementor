@@ -56,14 +56,28 @@ class Test_Process_Media extends Elementor_Test_Base {
     }
 
     public function test_processes_valid_request() {
-        $this->init_rest_api();
         $this->act_as_admin();
+
+        $mock_route = $this->getMockBuilder( \Elementor\App\Modules\ImportExportCustomization\Data\Routes\Process_Media::class )
+            ->onlyMethods( ['get_cloud_kit_library_app'] )
+            ->getMock();
+
+        $mock_route->method( 'get_cloud_kit_library_app' )->willReturn( null );
 
         $test_image_data = $this->create_test_image();
         $test_image_url = $test_image_data['url'];
-        $test_image_path = $test_image_data['path'];
 
-        $response = $this->send_request( [ $test_image_url ] );
+        $request = new \WP_REST_Request( 'POST', '/test' );
+        $request->set_param( 'media_urls', [ $test_image_url ] );
+        $request->set_param( 'kit', [
+            'mediaUploadUrl' => 'https://example.com/upload',
+            'id' => 'test-kit-123'
+        ] );
+
+        $reflection = new \ReflectionClass( $mock_route );
+        $callback_method = $reflection->getMethod( 'callback' );
+        $callback_method->setAccessible( true );
+        $response = $callback_method->invoke( $mock_route, $request );
 
         $this->assertEquals( 200, $response->get_status() );
 

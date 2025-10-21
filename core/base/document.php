@@ -1796,9 +1796,9 @@ abstract class Document extends Controls_Stack {
 
 	/**
 	 * @since 2.1.3
-	 * @access protected
+	 * @access public
 	 */
-	protected function print_elements( $elements_data ) {
+	public function print_elements( $elements_data ) {
 		$is_element_cache_active = 'disable' !== get_option( 'elementor_element_cache_ttl', '' );
 		if ( ! $is_element_cache_active ) {
 			ob_start();
