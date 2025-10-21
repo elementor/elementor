@@ -9,7 +9,7 @@ import {
 	Link as ElementorUiLink,
 	Typography,
 } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 function Link( {
@@ -163,13 +163,19 @@ export const messagesContent = {
 	},
 	'insufficient-storage-quota': {
 		title: __( 'Your library is full', 'elementor' ),
-		text: (
+		text: ( { filename = __( 'This file', 'elementor' ), maxSize = 0 } = {} ) => (
 			<>
 				<Typography variant="h6" sx={ { mb: 2 } }>
-					[[filename]] exceeds the library size limit
+					{ sprintf( /* Translators: %s: File name */
+						__( '%s exceeds the library size limit', 'elementor' ),
+						filename,
+					) }
 				</Typography>
 				<Typography variant="body2">
-					{ __( 'The maximum website template library size is [[maxSize]] GB. To save this file, you can either export it locally as a .zip file or get more storage by ', 'elementor' ) }
+					{ sprintf( /* Translators: %s: Quota threshold in GB */
+						__( 'The maximum website template library size is %s GB. To save this file, you can either export it locally as a .zip file or get more storage by ', 'elementor' ),
+						maxSize,
+					) }
 					<Link href="https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/">
 						{ __( 'Upgrade now', 'elementor' ) }
 					</Link>
@@ -190,86 +196,17 @@ export function ProcessingErrorDialog( {
 	const errorType = error?.code || 'general';
 	const errorMessageContent = messagesContent[ errorType ] || messagesContent.general;
 
-	const replacePlaceholderInString = ( str, placeholders ) => {
-		return str.replace( /\[\[(\w+)\]\]/g, ( match, key ) => {
-			return placeholders[ key ] ?? match;
-		} );
-	};
+	const resolveText = () => {
+		const details = error?.details || error?.message;
+		const replacements = details && 'object' === typeof details ? details.replacements : null;
 
-	const replaceInReactChildren = ( children, placeholders ) => {
-		if ( 'string' === typeof children ) {
-			return replacePlaceholderInString( children, placeholders );
-		}
+		const text = errorMessageContent.text;
 
-		if ( Array.isArray( children ) ) {
-			return children.map( ( child ) => replaceInReactChildren( child, placeholders ) );
-		}
-
-		if ( children?.props ) {
-			return {
-				...children,
-				props: {
-					...children.props,
-					children: replaceInReactChildren( children.props.children, placeholders ),
-				},
-			};
-		}
-
-		return children;
-	};
-
-	const applyPlaceholders = ( text, placeholders ) => {
-		if ( ! placeholders ) {
-			return text;
-		}
-
-		if ( 'string' === typeof text ) {
-			return replacePlaceholderInString( text, placeholders );
-		}
-
-		if ( text?.props ) {
-			return {
-				...text,
-				props: {
-					...text.props,
-					children: replaceInReactChildren( text.props.children, placeholders ),
-				},
-			};
+		if ( 'function' === typeof text ) {
+			return text( replacements );
 		}
 
 		return text;
-	};
-
-	const resolveTitle = () => {
-		if ( error?.title ) {
-			return error.title;
-		}
-
-		const details = error?.details || error?.message;
-		if ( details && 'object' === typeof details && details.title ) {
-			return details.title;
-		}
-
-		return errorMessageContent.title;
-	};
-
-	const resolveText = () => {
-		const details = error?.details || error?.message;
-		const backendPlaceholders = details && 'object' === typeof details ? details.placeholders : null;
-
-		let text = errorMessageContent.text;
-		if ( details && 'object' === typeof details && details.text ) {
-			text = details.text;
-		} else if ( 'string' === typeof details && details ) {
-			const hasPreDefinedMessage = messagesContent[ errorType ];
-			const isPlaceholderCode = details === errorType || 'export_error' === details || 'import_error' === details;
-
-			if ( ! hasPreDefinedMessage && ! isPlaceholderCode ) {
-				text = details;
-			}
-		}
-
-		return applyPlaceholders( text, backendPlaceholders );
 	};
 
 	const shouldRenderTryAgainButton = () => {
@@ -357,7 +294,7 @@ export function ProcessingErrorDialog( {
 		>
 			<DialogHeader onClose={ handleClose }>
 				<DialogTitle>
-					{ resolveTitle() }
+					{ errorMessageContent.title }
 				</DialogTitle>
 			</DialogHeader>
 

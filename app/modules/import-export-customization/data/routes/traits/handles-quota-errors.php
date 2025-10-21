@@ -37,7 +37,7 @@ trait Handles_Quota_Errors {
 		return Response::error(
 			\Elementor\Modules\CloudKitLibrary\Connect\Cloud_Kits::INSUFFICIENT_STORAGE_QUOTA,
 			[
-				'placeholders' => [
+				'replacements' => [
 					'filename' => $filename,
 					'maxSize' => $max_size_gb,
 				],
