@@ -187,21 +187,21 @@ class ScreenViewTracking extends BaseTracking {
 			return;
 		}
 
-		const observer = new MutationObserver( () => {
-			const screenData = this.getScreenData();
-			if ( screenData ) {
-				this.trackScreen( screenData.screenId, screenData.screenType );
-			}
-		} );
-
 		settingsPages.forEach( ( page ) => {
-			observer.observe( page, {
-				attributes: true,
-				attributeFilter: [ 'class' ],
-			} );
+			this.addObserver(
+				page,
+				{
+					attributes: true,
+					attributeFilter: [ 'class' ],
+				},
+				() => {
+					const screenData = this.getScreenData();
+					if ( screenData ) {
+						this.trackScreen( screenData.screenId, screenData.screenType );
+					}
+				},
+			);
 		} );
-
-		this.observers.push( observer );
 	}
 
 	static attachModalTracking() {

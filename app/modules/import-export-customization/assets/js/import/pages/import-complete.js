@@ -196,20 +196,23 @@ export default function ImportComplete() {
 		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportSummary );
 	}, [] );
 
+	const kitSource = data?.kitUploadParams?.source || 'file';
+	const isFromKitsLibrary = 'kit-library' === kitSource;
+
 	useEffect( () => {
 		AppsEventTracking.sendImportKitCustomization( {
-			kit_source: data?.kitUploadParams?.source || 'file',
+			kit_source: kitSource,
 			kit_import_content: includes.includes( 'content' ),
 			kit_import_templates: includes.includes( 'templates' ),
 			kit_import_settings: includes.includes( 'settings' ),
 			kit_import_plugins: includes.includes( 'plugins' ),
 			kit_import_deselected: analytics?.customization,
 			kit_description: !! uploadedData?.manifest?.description,
-			...( kitId && { kit_import_id: kitId } ),
-			...( title && { kit_import_title: title } ),
+			...( kitId && isFromKitsLibrary && { kit_import_id: kitId } ),
+			...( title && isFromKitsLibrary && { kit_import_title: title } ),
 			...( duration && { kit_import_duration: duration } ),
 		} );
-	}, [ includes, analytics, uploadedData, data, kitId, title, duration ] );
+	}, [ includes, analytics, uploadedData, data, kitId, title, duration, kitSource, isFromKitsLibrary ] );
 
 	return (
 		<BaseLayout
