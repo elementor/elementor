@@ -34,6 +34,7 @@ describe( '<DynamicSettingsPopover />', () => {
 			propType: createMockPropType( { kind: 'object' } ),
 			path: [],
 			restoreValue: jest.fn(),
+			resetValue: jest.fn(),
 		} );
 	} );
 
