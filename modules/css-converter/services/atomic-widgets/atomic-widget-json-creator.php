@@ -83,20 +83,31 @@ class Atomic_Widget_JSON_Creator {
 			return null;
 		}
 
+		error_log( '🔍 ATOMIC_WIDGET_CREATOR: Creating container widget' );
+		error_log( '🔍 - Widget type: ' . $widget_type );
+		error_log( '🔍 - Children count: ' . count( $children ) );
+		error_log( '🔍 - Settings: ' . json_encode( $settings ) );
+
 		// Recursively create child widgets
 		$child_widgets = $this->create_child_widgets( $children );
+		
+		error_log( '🔍 - Created child widgets count: ' . count( $child_widgets ) );
 
 		try {
 			$element_builder = \Elementor\Modules\AtomicWidgets\Elements\Element_Builder::make( $widget_type );
 
-			return $element_builder
+			$result = $element_builder
 				->settings( $settings )
 				->children( $child_widgets )
 				->is_locked( false )
 				->editor_settings( [] )
 				->build();
+				
+			error_log( '🔍 ATOMIC_WIDGET_CREATOR: Container widget created successfully' );
+			return $result;
 
 		} catch ( \Exception $e ) {
+			error_log( '❌ ATOMIC_WIDGET_CREATOR: Container widget creation failed: ' . $e->getMessage() );
 			return null;
 		}
 	}

@@ -102,7 +102,39 @@ class Html_Parser {
 			// This prevents parent elements from getting text content that belongs to their children
 			// Only extract direct text nodes that are immediate children of this element
 		}
-		return trim( $text );
+		
+		// CRITICAL FIX: Decode HTML entities properly
+		// This fixes issues like 'weu2019ve' -> 'we've'
+		$decoded_text = $this->decode_html_entities( trim( $text ) );
+		
+		return $decoded_text;
+	}
+	
+	private function decode_html_entities( $text ) {
+		// First decode standard HTML entities
+		$decoded = html_entity_decode( $text, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		
+		// Handle Unicode escape sequences like u2019 that might not be properly encoded
+		// u2019 = right single quotation mark (')
+		$unicode_replacements = [
+			'u2019' => "\u{2019}", // Right single quotation mark
+			'u2018' => "\u{2018}", // Left single quotation mark  
+			'u201C' => "\u{201C}", // Left double quotation mark
+			'u201D' => "\u{201D}", // Right double quotation mark
+			'u2013' => "\u{2013}", // En dash
+			'u2014' => "\u{2014}", // Em dash
+			'u2026' => "\u{2026}", // Horizontal ellipsis
+			'u00A0' => "\u{00A0}", // Non-breaking space
+		];
+		
+		foreach ( $unicode_replacements as $unicode => $replacement ) {
+			$decoded = str_replace( $unicode, $replacement, $decoded );
+		}
+		
+		error_log( '🔍 HTML_ENTITY_DECODE: Original: "' . substr( $text, 0, 50 ) . '"' );
+		error_log( '🔍 HTML_ENTITY_DECODE: Decoded: "' . substr( $decoded, 0, 50 ) . '"' );
+		
+		return $decoded;
 	}
 	private function calculate_depth( DOMElement $element ) {
 		$depth = 0;
@@ -230,6 +262,13 @@ class Html_Parser {
 		$has_children = ! empty( $element['children'] );
 		// If element has both text content and children, wrap the text in a paragraph
 		if ( $has_direct_text && $has_children ) {
+			error_log( '🔍 HTML_PARSER: Creating synthetic paragraph for mixed content element' );
+			error_log( '🔍 - Parent tag: ' . ( $element['tag'] ?? 'unknown' ) );
+			error_log( '🔍 - Parent ID: ' . ( $element['attributes']['id'] ?? 'no-id' ) );
+			error_log( '🔍 - Parent class: ' . ( $element['attributes']['class'] ?? 'no-class' ) );
+			error_log( '🔍 - Text content: "' . substr( trim( $element['content'] ), 0, 50 ) . '..."' );
+			error_log( '🔍 - Children count: ' . count( $element['children'] ) );
+			
 			// Create a paragraph element for the text content
 			// CRITICAL FIX: Only transfer flattened classes to paragraph, keep original classes on parent
 			$flattened_classes = $this->extract_flattened_classes( $element['attributes'] ?? [] );
@@ -240,7 +279,11 @@ class Html_Parser {
 				'children' => [],
 				'depth' => $element['depth'] + 1,
 				'inline_css' => [], // Don't transfer inline CSS - keep it on the parent div
+				'synthetic' => true, // Mark as synthetic for widget mapper optimization
 			];
+			
+			error_log( '🔍 - Created synthetic paragraph with classes: ' . json_encode( $flattened_classes ) );
+			
 			// Process existing children recursively
 			$processed_children = $this->preprocess_elements_for_text_wrapping( $element['children'] );
 			// Add paragraph as first child, followed by existing children
@@ -250,6 +293,11 @@ class Html_Parser {
 			// CRITICAL FIX: Remove flattened classes from parent but keep original classes
 			$element['attributes'] = $this->remove_flattened_classes( $element['attributes'] ?? [] );
 		} elseif ( $has_direct_text && ! $has_children ) {
+			error_log( '🔍 HTML_PARSER: Creating synthetic paragraph for text-only element' );
+			error_log( '🔍 - Parent tag: ' . ( $element['tag'] ?? 'unknown' ) );
+			error_log( '🔍 - Parent ID: ' . ( $element['attributes']['id'] ?? 'no-id' ) );
+			error_log( '🔍 - Text content: "' . substr( trim( $element['content'] ), 0, 50 ) . '..."' );
+			
 			// Element has only text content - wrap it in a paragraph
 			// Transfer flattened classes to paragraph, but keep original classes on parent for ID+class selector matching
 			$paragraph_attributes = $this->extract_flattened_classes( $element['attributes'] ?? [] );
@@ -260,7 +308,11 @@ class Html_Parser {
 				'children' => [],
 				'depth' => $element['depth'] + 1,
 				'inline_css' => [], // Don't transfer inline CSS - keep it on the parent div
+				'synthetic' => true, // Mark as synthetic for widget mapper optimization
 			];
+			
+			error_log( '🔍 - Created synthetic paragraph with classes: ' . json_encode( $paragraph_attributes ) );
+			
 			$element['children'] = [ $paragraph_element ];
 			$element['content'] = '';
 			// Remove flattened classes from parent but keep original classes (including those needed for #id.class matching)

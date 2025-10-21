@@ -51,11 +51,32 @@ class Html_Class_Modifier_Service {
 	public function modify_element_classes( array $element ): array {
 		$original_classes = $this->extract_classes_from_element( $element );
 		$modified_classes = [];
+		
+		// EVIDENCE: Track if fixed classes are being processed
+		$has_fixed_class = false;
+		foreach ( $original_classes as $class ) {
+			if ( strpos( $class, 'fixed' ) !== false ) {
+				$has_fixed_class = true;
+				break;
+			}
+		}
+		if ( $has_fixed_class ) {
+			error_log( '🚨 EVIDENCE: modify_element_classes processing element with fixed class' );
+			error_log( '🚨 EVIDENCE: Original classes: ' . json_encode( $original_classes ) );
+		}
 
 		foreach ( $original_classes as $class_name ) {
 			$modified_class = $this->process_single_class( $class_name );
 			if ( null !== $modified_class ) {
 				$modified_classes[] = $modified_class;
+				
+				// EVIDENCE: Track what class was modified to what
+				if ( $class_name !== $modified_class ) {
+					error_log( '🔍 EVIDENCE: html-class-modifier-service.php:' . __LINE__ . ' - Class modified: ' . $class_name . ' -> ' . $modified_class );
+					if ( strpos( $modified_class, 'fixed' ) !== false ) {
+						error_log( '🚨 EVIDENCE: html-class-modifier-service.php:' . __LINE__ . ' - FIXED CLASS CREATED: ' . $modified_class );
+					}
+				}
 			}
 		}
 
@@ -71,8 +92,27 @@ class Html_Class_Modifier_Service {
 			}
 		}
 
-		$compound_classes = $this->apply_compound_classes( $modified_classes );
+		$compound_classes = $this->apply_compound_classes( $original_classes );
+		
+		// EVIDENCE: Track compound classes being added
+		if ( ! empty( $compound_classes ) ) {
+			error_log( '🔍 EVIDENCE: html-class-modifier-service.php:' . __LINE__ . ' - Compound classes added: ' . json_encode( $compound_classes ) );
+			foreach ( $compound_classes as $compound_class ) {
+				if ( strpos( $compound_class, 'fixed' ) !== false ) {
+					error_log( '🚨 EVIDENCE: html-class-modifier-service.php:' . __LINE__ . ' - FIXED COMPOUND CLASS: ' . $compound_class );
+				}
+			}
+		}
+		
 		$modified_classes = array_merge( $modified_classes, $compound_classes );
+
+		// EVIDENCE: Track final result if fixed classes involved
+		if ( $has_fixed_class ) {
+			error_log( '🚨 EVIDENCE: Final modified classes: ' . json_encode( $modified_classes ) );
+			$final_element = $this->update_element_with_classes( $element, $modified_classes );
+			error_log( '🚨 EVIDENCE: Final element class attribute: ' . ( $final_element['attributes']['class'] ?? 'NO CLASS ATTRIBUTE' ) );
+			return $final_element;
+		}
 
 		return $this->update_element_with_classes( $element, $modified_classes );
 	}
@@ -95,7 +135,15 @@ class Html_Class_Modifier_Service {
 		// Check if this class has a flattened mapping
 		if ( $this->mapping_service->has_mapping_for_class( $class_name ) ) {
 			// Replace with flattened class name
-			return $this->mapping_service->get_flattened_class_name( $class_name );
+			$flattened_name = $this->mapping_service->get_flattened_class_name( $class_name );
+			
+			// EVIDENCE: Track flattened mapping
+			error_log( '🔍 EVIDENCE: html-class-modifier-service.php:' . __LINE__ . ' - Flattened mapping: ' . $class_name . ' -> ' . $flattened_name );
+			if ( strpos( $flattened_name, 'fixed' ) !== false ) {
+				error_log( '🚨 EVIDENCE: html-class-modifier-service.php:' . __LINE__ . ' - FIXED FLATTENED CLASS: ' . $flattened_name );
+			}
+			
+			return $flattened_name;
 		}
 
 		// Check if this class should be kept (has direct styles)
@@ -157,7 +205,16 @@ class Html_Class_Modifier_Service {
 				continue;
 			}
 
-			if ( $this->check_compound_requirements( $widget_classes, $required_classes ) ) {
+			$matches = $this->check_compound_requirements( $widget_classes, $required_classes );
+			
+			if ( strpos( $flattened_name, 'fixed' ) !== false ) {
+				error_log( '🔍 COMPOUND CLASS CHECK: ' . $flattened_name );
+				error_log( '   Widget Classes: ' . json_encode( $widget_classes ) );
+				error_log( '   Required Classes: ' . json_encode( $required_classes ) );
+				error_log( '   Match Result: ' . ( $matches ? 'YES' : 'NO' ) );
+			}
+			
+			if ( $matches ) {
 				$compound_classes_to_add[] = $flattened_name;
 			}
 		}

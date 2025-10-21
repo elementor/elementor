@@ -1,5 +1,6 @@
 <?php
 namespace Elementor\Modules\CssConverter\Services\Widgets;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -105,7 +106,10 @@ class Widget_Creator {
 		$this->current_css_processing_result = $css_processing_result;
 		$post_id = $options['postId'] ?? null;
 		$post_type = $options['postType'] ?? 'page';
-try {
+		try {
+			if ( ! empty( $css_processing_result['css_variable_definitions'] ) ) {
+				$this->process_css_variable_definitions( $css_processing_result['css_variable_definitions'] );
+			}
 			if ( ! empty( $css_processing_result['css_variables'] ) ) {
 				$this->process_css_variables( $css_processing_result['css_variables'] );
 			}
@@ -147,6 +151,28 @@ try {
 		} catch ( \Exception $e ) {
 			$this->creation_stats['warnings'][] = [
 				'type' => 'variable_processing_failed',
+				'message' => $e->getMessage(),
+			];
+		}
+	}
+
+	private function process_css_variable_definitions( array $css_variable_definitions ) {
+		try {
+			if ( empty( $css_variable_definitions ) ) {
+				return;
+			}
+
+			// Generate CSS variable definitions and add them to the page
+			$this->generate_css_variable_definitions_css( $css_variable_definitions );
+
+			// Update stats
+			foreach ( $css_variable_definitions as $variable_name => $variable_data ) {
+				++$this->creation_stats['variables_created'];
+				error_log( '✅ CSS VARIABLE PROCESSED: ' . $variable_name . ': ' . $variable_data['value'] );
+			}
+		} catch ( \Exception $e ) {
+			$this->creation_stats['warnings'][] = [
+				'type' => 'css_variable_definitions_processing_failed',
 				'message' => $e->getMessage(),
 			];
 		}
@@ -267,7 +293,7 @@ try {
 		$widget_id = wp_generate_uuid4();
 		$mapped_type = $this->map_to_elementor_widget_type( $widget_type );
 		$formatted_widget_data = $this->create_widget_data_using_new_data_formatter( $resolved_styles, $widget, $widget_id );
-if ( $this->requires_link_to_button_conversion( $widget_type, $mapped_type ) ) {
+		if ( $this->requires_link_to_button_conversion( $widget_type, $mapped_type ) ) {
 			$settings = $this->convert_link_settings_to_button_format( $settings );
 		}
 		$final_settings = $this->merge_settings_without_style_merging( $settings, $formatted_widget_data['settings'] );
@@ -612,7 +638,7 @@ if ( $this->requires_link_to_button_conversion( $widget_type, $mapped_type ) ) {
 		try {
 			$post_id = $document->get_main_id();
 
-update_post_meta( $post_id, '_elementor_data', wp_json_encode( $elementor_elements ) );
+			update_post_meta( $post_id, '_elementor_data', wp_json_encode( $elementor_elements ) );
 			update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
 			update_post_meta( $post_id, '_elementor_template_type', 'wp-post' );
 			update_post_meta( $post_id, '_elementor_version', '3.33.0' );
@@ -620,7 +646,7 @@ update_post_meta( $post_id, '_elementor_data', wp_json_encode( $elementor_elemen
 				'elements' => $elementor_elements,
 			] );
 		} catch ( \Exception $e ) {
-throw new \Exception( 'Failed to save elements to document: ' . $e->getMessage() );
+			throw new \Exception( 'Failed to save elements to document: ' . $e->getMessage() );
 		}
 	}
 	private function get_edit_url( $post_id ) {
@@ -712,8 +738,8 @@ throw new \Exception( 'Failed to save elements to document: ' . $e->getMessage()
 		return empty( $props );
 	}
 	private function create_widget_data_using_new_data_formatter( array $resolved_styles, array $widget, string $widget_id ): array {
-$result = $this->data_formatter->format_widget_data( $resolved_styles, $widget, $widget_id );
-return $result;
+		$result = $this->data_formatter->format_widget_data( $resolved_styles, $widget, $widget_id );
+		return $result;
 	}
 	private function requires_link_to_button_conversion( string $widget_type, string $mapped_type ): bool {
 		return 'e-link' === $widget_type && 'e-button' === $mapped_type;
@@ -774,6 +800,55 @@ return $result;
 			}
 		} catch ( \Exception $e ) {
 			throw new \Exception( "Failed to save global class '{$class_name}': " . $e->getMessage() );
+		}
+	}
+
+	private function generate_css_variable_definitions_css( array $css_variable_definitions ) {
+		if ( empty( $css_variable_definitions ) ) {
+			return;
+		}
+
+		// Generate CSS with variable definitions
+		$css_rules = [];
+		$css_rules[] = 'body {';
+
+		foreach ( $css_variable_definitions as $variable_name => $variable_data ) {
+			$value = $variable_data['value'] ?? '';
+			if ( ! empty( $value ) ) {
+				$css_rules[] = "  {$variable_name}: {$value};";
+				error_log( '🎨 CSS VARIABLE DEFINITION GENERATED: ' . $variable_name . ': ' . $value );
+			}
+		}
+
+		$css_rules[] = '}';
+		$css_content = implode( "\n", $css_rules );
+
+		// Add CSS to the page via wp_add_inline_style or custom CSS
+		$this->add_css_variable_definitions_to_page( $css_content );
+	}
+
+	private function add_css_variable_definitions_to_page( string $css_content ) {
+		// Add CSS variable definitions to the page
+		// This can be done via Elementor's custom CSS or wp_add_inline_style
+
+		try {
+			// Method 1: Add to Elementor's page custom CSS
+			if ( defined( 'ELEMENTOR_VERSION' ) && \Elementor\Plugin::$instance ) {
+				$kit = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
+				if ( $kit ) {
+					$existing_custom_css = $kit->get_settings( 'custom_css' ) ?? '';
+					$updated_custom_css = $existing_custom_css . "\n\n/* CSS Variable Definitions */\n" . $css_content;
+					$kit->update_settings( [ 'custom_css' => $updated_custom_css ] );
+					error_log( '✅ CSS VARIABLE DEFINITIONS ADDED TO ELEMENTOR CUSTOM CSS' );
+				}
+			}
+		} catch ( \Exception $e ) {
+			error_log( '⚠️ Failed to add CSS variable definitions to page: ' . $e->getMessage() );
+
+			// Fallback: Add via WordPress hook
+			add_action( 'wp_head', function() use ( $css_content ) {
+				echo '<style id="elementor-css-variables">' . "\n" . $css_content . "\n" . '</style>';
+			} );
 		}
 	}
 }

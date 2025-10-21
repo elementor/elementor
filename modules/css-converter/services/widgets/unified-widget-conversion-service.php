@@ -1,11 +1,11 @@
 <?php
 namespace Elementor\Modules\CssConverter\Services\Widgets;
+
 use Elementor\Modules\CssConverter\Services\Css\Processing\Unified_Css_Processor;
+use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Output_Optimizer;
+use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -16,6 +16,8 @@ class Unified_Widget_Conversion_Service {
 	private $widget_creator;
 	private $use_zero_defaults;
 	private $css_parser;
+	private $css_output_optimizer;
+	private $property_converter;
 	public function __construct(
 		$html_parser,
 		$widget_mapper,
@@ -28,6 +30,8 @@ class Unified_Widget_Conversion_Service {
 		$this->unified_css_processor = $unified_css_processor;
 		$this->widget_creator = $widget_creator;
 		$this->use_zero_defaults = $use_zero_defaults;
+		$this->css_output_optimizer = new Css_Output_Optimizer();
+		$this->property_converter = new Css_Property_Conversion_Service();
 		$this->initialize_css_parser();
 	}
 
@@ -67,18 +71,51 @@ class Unified_Widget_Conversion_Service {
 			$reset_styles_stats = $unified_processing_result['reset_styles_stats'] ?? [];
 			$complex_reset_styles = $unified_processing_result['complex_reset_styles'] ?? [];
 			$styled_widgets = $resolved_widgets;
-			$widgets_with_resolved_styles_for_global_classes = $resolved_widgets;
+
+			// ═══════════════════════════════════════════════════════════
+			// PHASE 5: Process Nested/Flattened Classes ✅
+			// ═══════════════════════════════════════════════════════════
+			// All nested selectors have been flattened and compound classes created
+			// Flattening results and compound results are now available
+
+			// ═══════════════════════════════════════════════════════════
+			// PHASE 6: Apply ALL Resolved Classes to Widgets ✅
+			// ═══════════════════════════════════════════════════════════
+			$widgets_with_applied_classes = $this->apply_all_resolved_classes_to_widgets(
+				$resolved_widgets,
+				$unified_processing_result
+			);
+
+			$widgets_with_resolved_styles_for_global_classes = $widgets_with_applied_classes;
 			$global_classes = $this->generate_global_classes_from_css_rules( $css_class_rules );
+			$css_variable_definitions = $unified_processing_result['css_variable_definitions'] ?? [];
 			$flattened_classes = $unified_processing_result['flattened_classes'] ?? [];
+
 			if ( ! empty( $flattened_classes ) ) {
-				$global_classes = array_merge( $global_classes, $flattened_classes );
+				$filtered_flattened_classes = [];
+
+				foreach ( $flattened_classes as $class_id => $class_data ) {
+					$original_selector = $class_data['css_converter_original_selector'] ?? '';
+
+					if ( $this->is_core_elementor_flattened_selector( $original_selector ) ) {
+						continue;
+					}
+
+					if ( ! $this->has_elements_with_flattened_class( $widgets_with_applied_classes, $class_id ) ) {
+						continue;
+					}
+
+					$filtered_flattened_classes[ $class_id ] = $class_data;
+				}
+
+				$global_classes = array_merge( $global_classes, $filtered_flattened_classes );
 			}
 			$compound_classes = $unified_processing_result['compound_classes'] ?? [];
 			$compound_classes_created = $unified_processing_result['compound_classes_created'] ?? 0;
 			if ( ! empty( $global_classes ) ) {
 				$this->store_global_classes_in_kit( $global_classes, $options );
 			}
-			$creation_result = $this->create_widgets_with_resolved_styles( $widgets_with_resolved_styles_for_global_classes, $options, $global_classes, $compound_classes, $compound_classes_created );
+			$creation_result = $this->create_widgets_with_resolved_styles( $widgets_with_resolved_styles_for_global_classes, $options, $global_classes, $compound_classes, $compound_classes_created, $css_variable_definitions );
 			$conversion_log['widget_creation'] = $creation_result['stats'];
 			$widgets_created = $creation_result['widgets_created'] ?? 0;
 			$widgets_count = is_array( $widgets_created ) ? count( $widgets_created ) : (int) $widgets_created;
@@ -107,11 +144,11 @@ class Unified_Widget_Conversion_Service {
 			return $final_result;
 		} catch ( \Exception $e ) {
 			$conversion_log['errors'][] = [
-				'message' => $e->getMessage(),
-				'trace' => $e->getTraceAsString(),
+				'message' => esc_html( $e->getMessage() ),
+				'trace' => esc_html( $e->getTraceAsString() ),
 			];
 			throw new Class_Conversion_Exception(
-				'Widget conversion failed: ' . $e->getMessage(),
+				'Widget conversion failed: ' . esc_html( $e->getMessage() ),
 				0
 			);
 		}
@@ -216,16 +253,6 @@ class Unified_Widget_Conversion_Service {
 			}
 		}
 
-		if ( ! empty( $failed_sources ) ) {
-			error_log( '⚠️ CSS PARSING: ' . $successful_count . ' sources succeeded, ' . $failed_count . ' failed' );
-			foreach ( $failed_sources as $failed ) {
-				error_log( '  ❌ Failed: ' . $failed['type'] . ' - ' . $failed['source'] . ' (' . $failed['size'] . ' bytes)' );
-				error_log( '     Error: ' . $failed['error'] );
-			}
-		} else {
-			error_log( '✅ CSS PARSING: All ' . $successful_count . ' sources parsed successfully' );
-		}
-
 		return $successful_css;
 	}
 
@@ -235,6 +262,9 @@ class Unified_Widget_Conversion_Service {
 		}
 
 		$css = preg_replace( '/\/\*.*?\*\//s', '', $css );
+
+		// FILTER: Remove media queries BEFORE parsing (desktop-only CSS)
+		$css = $this->filter_out_media_queries( $css );
 
 		$css = $this->replace_calc_expressions( $css );
 
@@ -285,9 +315,78 @@ class Unified_Widget_Conversion_Service {
 		return implode( "\n", $clean_lines );
 	}
 
+	private function filter_out_media_queries( string $css ): string {
+		// Remove all @media blocks from CSS to focus on desktop-only styles
+		// Handle both formatted and minified CSS
+
+		// Method 1: Use regex to remove @media blocks (handles minified CSS)
+		$original_length = strlen( $css );
+
+		// Remove @media blocks using regex (handles nested braces correctly)
+		$css = preg_replace_callback(
+			'/@media[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/s',
+			function() {
+				return '';
+			},
+			$css
+		);
+
+		// Handle nested media queries (up to 3 levels deep)
+		for ( $i = 0; $i < 3; $i++ ) {
+			$css = preg_replace_callback(
+				'/@media[^{]*\{(?:[^{}]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\})*[^{}]*\}/s',
+				function() {
+					return '';
+				},
+				$css
+			);
+		}
+
+		$filtered_length = strlen( $css );
+		$bytes_removed = $original_length - $filtered_length;
+
+		$percentage = $original_length > 0 ? round( ( $bytes_removed / $original_length ) * 100, 1 ) : 0;
+
+		// Method 2: Line-by-line filtering for any remaining @media (fallback)
+		$filtered_css = '';
+		$lines = explode( "\n", $css );
+		$inside_media_query = false;
+		$media_brace_count = 0;
+		$filtered_count = 0;
+		$total_media_blocks = 0;
+
+		foreach ( $lines as $line_num => $line ) {
+			$trimmed = trim( $line );
+
+			if ( preg_match( '/@media\s+/', $trimmed ) ) {
+				$inside_media_query = true;
+				$media_brace_count = 0;
+				++$total_media_blocks;
+				continue;
+			}
+
+			// If we're inside a media query, track braces
+			if ( $inside_media_query ) {
+				$media_brace_count += substr_count( $line, '{' );
+				$media_brace_count -= substr_count( $line, '}' );
+
+				if ( $media_brace_count <= 0 ) {
+					$inside_media_query = false;
+					++$filtered_count;
+				}
+				continue;
+			}
+
+			// Keep non-media query lines
+			$filtered_css .= $line . "\n";
+		}
+
+		return $filtered_css;
+	}
+
 	private function replace_calc_expressions( string $css ): string {
 		for ( $i = 0; $i < 5; ++$i ) {
-			$css = preg_replace( '/var\s*\([^()]*\)/', '0', $css );
+			$css = $this->preserve_elementor_variables( $css );
 			$css = preg_replace( '/env\s*\([^()]*\)/', '0', $css );
 			$css = preg_replace( '/min\s*\([^()]*\)/', '0', $css );
 			$css = preg_replace( '/max\s*\([^()]*\)/', '100%', $css );
@@ -299,9 +398,7 @@ class Unified_Widget_Conversion_Service {
 		}
 
 		$css = preg_replace( '/--[^:]+:\s*[^;]*calc[^;]*;/', '', $css );
-
 		$css = preg_replace( '/\*[a-zA-Z_-]+\s*:\s*[^;]+;/', '', $css );
-
 		$css = preg_replace( '/\{\s*\}/', '', $css );
 
 		$css = preg_replace( '/:\s*100%([^;}]+)/', ': 100%;', $css );
@@ -309,8 +406,68 @@ class Unified_Widget_Conversion_Service {
 		$css = preg_replace( '/\s+/', ' ', $css );
 
 		$css = str_replace( '%)}', '%; }', $css );
-		$css = str_replace( '%).',  '%; .', $css );
-		$css = str_replace( '%)#',  '%; #', $css );
+		$css = str_replace( '%).', '%; .', $css );
+		$css = str_replace( '%)#', '%; #', $css );
+		$css = $this->fix_broken_css_values( $css );
+
+		return $css;
+	}
+
+	private function preserve_elementor_variables( string $css ): string {
+		$css = preg_replace_callback(
+			'/var\s*\([^()]*\)/',
+			function( $matches ) {
+				$var_call = $matches[0];
+
+				if ( preg_match( '/var\s*\(\s*(--[^,)]+)/', $var_call, $var_matches ) ) {
+					$var_name = trim( $var_matches[1] );
+
+					if ( $this->should_preserve_css_variable( $var_name ) ) {
+						return $var_call;
+					}
+				}
+
+				return ' 0';
+			},
+			$css
+		);
+
+		return $css;
+	}
+
+	private function should_preserve_css_variable( string $var_name ): bool {
+		// Always preserve Elementor global variables
+		if ( false !== strpos( $var_name, '--e-global-' ) ) {
+			return true;
+		}
+
+		if ( false !== strpos( $var_name, '--elementor-' ) ) {
+			return true;
+		}
+
+		// Preserve Elementor theme variables
+		if ( false !== strpos( $var_name, '--e-theme-' ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private function fix_broken_css_values( string $css ): string {
+		// Fix broken font-size values like "15.rem" -> "15rem"
+		$css = preg_replace( '/(\d+)\.rem\b/', '$1rem', $css );
+
+		// Fix broken spacing around var() like "0var(" -> "0 var("
+		$css = preg_replace( '/(\d+)var\(/', '$1 var(', $css );
+
+		// Convert background: none to background: transparent
+		$css = preg_replace( '/background:\s*none\s*;/', 'background: transparent;', $css );
+		$css = preg_replace( '/background-color:\s*none\s*;/', 'background-color: transparent;', $css );
+
+		// Fix other common broken values
+		$css = preg_replace( '/(\d+)\.px\b/', '$1px', $css ); // Fix "15.px" -> "15px"
+		$css = preg_replace( '/(\d+)\.em\b/', '$1em', $css ); // Fix "1.5.em" -> "1.5em"
+		$css = preg_replace( '/(\d+)\.%\b/', '$1%', $css );   // Fix "100.%" -> "100%"
 
 		return $css;
 	}
@@ -352,6 +509,49 @@ class Unified_Widget_Conversion_Service {
 		return $base_parts['scheme'] . '://' . $base_parts['host'] . $base_path . '/' . $relative_url;
 	}
 	private function generate_global_classes_from_css_rules( array $css_class_rules ): array {
+
+		// INTEGRATION POINT B: Optimize CSS rules at method start
+		if ( ! empty( $css_class_rules ) ) {
+			$optimized_rules = [];
+			foreach ( $css_class_rules as $rule ) {
+				$selector = $rule['selector'] ?? '';
+				$properties = $rule['properties'] ?? [];
+
+				// Convert properties format for optimizer
+				$properties_array = [];
+				foreach ( $properties as $prop ) {
+					$property = $prop['property'] ?? '';
+					$value = $prop['value'] ?? '';
+					if ( ! empty( $property ) && ! empty( $value ) ) {
+						$properties_array[ $property ] = $value;
+					}
+				}
+				
+				// Optimize using CSS Output Optimizer
+				$optimized_selector_rules = $this->css_output_optimizer->optimize_css_output( [
+					$selector => $properties_array
+				] );
+				
+				// Convert back to original format if not empty
+				foreach ( $optimized_selector_rules as $opt_selector => $opt_properties ) {
+					if ( ! empty( $opt_properties ) ) {
+						$converted_properties = [];
+						foreach ( $opt_properties as $property => $value ) {
+							$converted_properties[] = [
+								'property' => $property,
+								'value' => $value,
+							];
+						}
+						$optimized_rules[] = [
+							'selector' => $opt_selector,
+							'properties' => $converted_properties,
+						];
+					}
+				}
+			}
+			$css_class_rules = $optimized_rules;
+		}
+
 		$global_classes = [];
 		foreach ( $css_class_rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
@@ -363,6 +563,11 @@ class Unified_Widget_Conversion_Service {
 				continue;
 			}
 			$class_name = ltrim( $selector, '.' );
+
+			if ( $this->is_core_elementor_flattened_selector( $selector ) ) {
+				continue;
+			}
+
 			$converted_properties = [];
 			foreach ( $properties as $property_data ) {
 				$property = $property_data['property'] ?? '';
@@ -402,34 +607,14 @@ class Unified_Widget_Conversion_Service {
 		return $atomic_props;
 	}
 	private function convert_single_css_property_to_atomic_format( string $property, $value ) {
-		switch ( $property ) {
-			case 'color':
-			case 'background-color':
-				return Color_Prop_Type::make()->generate( $value );
-			case 'font-size':
-			case 'letter-spacing':
-			case 'margin':
-			case 'margin-bottom':
-			case 'margin-top':
-			case 'margin-left':
-			case 'margin-right':
-				$size_data = $this->parse_size_value( $value );
-				return Size_Prop_Type::make()->generate( $size_data );
-			case 'font-weight':
-				return String_Prop_Type::make()->generate( (string) $value );
-			case 'text-transform':
-			case 'text-decoration':
-			case 'font-style':
-				return String_Prop_Type::make()->generate( $value );
-			case 'text-shadow':
-				return String_Prop_Type::make()->generate( $value );
-			default:
-				return String_Prop_Type::make()->generate( $value );
-		}
+		return $this->property_converter->convert_property_to_v4_atomic( $property, $value );
 	}
 	private function parse_size_value( string $value ): array {
 		$size = (int) filter_var( $value, FILTER_SANITIZE_NUMBER_INT );
-		$unit = preg_replace( '/[0-9]/', '', $value ) ?: 'px';
+		$unit = preg_replace( '/[0-9]/', '', $value );
+		if ( empty( $unit ) ) {
+			$unit = 'px';
+		}
 		return [
 			'size' => $size,
 			'unit' => $unit,
@@ -441,6 +626,76 @@ class Unified_Widget_Conversion_Service {
 			$total_properties += count( $class_data['properties'] ?? [] );
 		}
 		return $total_properties;
+	}
+
+	private function is_core_elementor_flattened_selector( string $selector ): bool {
+		// List of core Elementor CSS selectors that should not become global classes
+		$core_elementor_patterns = [
+			'/\.elementor-element\.elementor-fixed/',
+			'/\.elementor-element\.elementor-absolute/',
+			'/\.elementor-element\.elementor-sticky/',
+			'/\.elementor-widget\.elementor-widget-/',
+			'/\.elementor-container\.elementor-/',
+			'/\.elementor-section\.elementor-/',
+			'/\.elementor-column\.elementor-/',
+			'/\.elementor-element\.elementor-element-/',
+			'/\.e-con\.e-/',
+			'/\.e-flex\.e-/',
+			'/\.e-con-inner>\.elementor-element\.elementor-fixed/',
+			'/\.e-con>\.elementor-element\.elementor-fixed/',
+			'/\.elementor-widget-wrap>\.elementor-element\.elementor-fixed/',
+		];
+
+		foreach ( $core_elementor_patterns as $pattern ) {
+			if ( preg_match( $pattern, $selector ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function has_elements_with_flattened_class( array $widgets, string $flattened_class_id ): bool {
+		// Check if any widget has this flattened class applied
+		foreach ( $widgets as $widget ) {
+			if ( $this->widget_has_flattened_class( $widget, $flattened_class_id ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function widget_has_flattened_class( array $widget, string $flattened_class_id ): bool {
+		// Check this widget's classes
+		$widget_classes = $this->extract_widget_classes_from_widget( $widget );
+		if ( true === in_array( $flattened_class_id, $widget_classes, true ) ) {
+			return true;
+		}
+
+		// Recursively check child widgets
+		if ( ! empty( $widget['children'] ) && is_array( $widget['children'] ) ) {
+			foreach ( $widget['children'] as $child ) {
+				if ( $this->widget_has_flattened_class( $child, $flattened_class_id ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private function extract_widget_classes_from_widget( array $widget ): array {
+		$class_attribute = $widget['attributes']['class'] ?? '';
+		if ( empty( $class_attribute ) ) {
+			return [];
+		}
+
+		// Split class attribute by spaces and filter out empty values
+		$classes = array_filter( explode( ' ', $class_attribute ), function( $class_item ) {
+			return ! empty( trim( $class_item ) );
+		});
+
+		return array_map( 'trim', $classes );
 	}
 	private function store_global_classes_in_kit( array $global_classes, array $options ): void {
 		if ( empty( $global_classes ) ) {
@@ -495,7 +750,7 @@ class Unified_Widget_Conversion_Service {
 			// Silent fail - don't block widget creation
 		}
 	}
-	private function create_widgets_with_resolved_styles( array $widgets, array $options, array $global_classes, array $compound_classes = [], int $compound_classes_created = 0 ): array {
+	private function create_widgets_with_resolved_styles( array $widgets, array $options, array $global_classes, array $compound_classes = [], int $compound_classes_created = 0, array $css_variable_definitions = [] ): array {
 		$post_id = $options['postId'] ?? null;
 		$post_type = $options['postType'] ?? 'page';
 		if ( null === $post_id ) {
@@ -525,6 +780,7 @@ class Unified_Widget_Conversion_Service {
 		$extracted_styles = $this->extract_styles_by_source_from_widgets( $widgets );
 		$css_processing_result = [
 			'global_classes' => $global_classes,
+			'css_variable_definitions' => $css_variable_definitions,
 			'widget_styles' => array_merge( $extracted_styles['css_selector_styles'], $extracted_styles['reset_element_styles'] ),
 			'element_styles' => $extracted_styles['element_styles'],
 			'id_styles' => $extracted_styles['id_styles'],
@@ -533,9 +789,10 @@ class Unified_Widget_Conversion_Service {
 				'rules_processed' => count( $global_classes ),
 				'properties_converted' => $this->count_properties_in_global_classes( $global_classes ),
 				'global_classes_created' => count( $global_classes ),
+				'css_variables_extracted' => count( $css_variable_definitions ),
 			],
 		];
-$creation_result = $this->widget_creator->create_widgets( $widgets, $css_processing_result, $options );
+		$creation_result = $this->widget_creator->create_widgets( $widgets, $css_processing_result, $options );
 		if ( isset( $creation_result['post_id'] ) && $creation_result['post_id'] ) {
 			$post_id = $creation_result['post_id'];
 		}
@@ -601,5 +858,43 @@ $creation_result = $this->widget_creator->create_widgets( $widgets, $css_process
 			'element_styles' => $element_styles,
 			'reset_element_styles' => $reset_element_styles,
 		];
+	}
+
+	private function apply_all_resolved_classes_to_widgets( array $widgets, array $unified_processing_result ): array {
+		// Get the HTML class modifier that was initialized with all the flattening and compound data
+		$html_class_modifier = $unified_processing_result['html_class_modifier'] ?? null;
+
+		if ( null === $html_class_modifier ) {
+			return $widgets;
+		}
+
+		$widgets_with_applied_classes = $this->apply_html_class_modifications_to_widgets( $widgets, $html_class_modifier );
+
+		return $widgets_with_applied_classes;
+	}
+
+	private function apply_html_class_modifications_to_widgets( array $widgets, $html_class_modifier ): array {
+		$modified_widgets = [];
+
+		foreach ( $widgets as $widget ) {
+			$modified_widget = $this->apply_html_class_modifications_recursively( $widget, $html_class_modifier );
+			$modified_widgets[] = $modified_widget;
+		}
+
+		return $modified_widgets;
+	}
+
+	private function apply_html_class_modifications_recursively( array $widget, $html_class_modifier ): array {
+		$modified_widget = $html_class_modifier->modify_element_classes( $widget );
+
+		if ( ! empty( $modified_widget['children'] ) && is_array( $modified_widget['children'] ) ) {
+			$modified_children = [];
+			foreach ( $modified_widget['children'] as $child ) {
+				$modified_children[] = $this->apply_html_class_modifications_recursively( $child, $html_class_modifier );
+			}
+			$modified_widget['children'] = $modified_children;
+		}
+
+		return $modified_widget;
 	}
 }

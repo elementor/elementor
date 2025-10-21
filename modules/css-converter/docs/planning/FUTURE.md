@@ -86,6 +86,40 @@
 
 ---
 
+## Font Family Property Support
+
+### Current Implementation
+- **Issue**: `font-family` properties are not being converted during CSS processing
+- **Impact**: Custom fonts like `"freight-text-pro", Sans-serif` are skipped during conversion
+- **Current Status**: Property conversion returns `converted: NO` for font-family
+
+### Implementation Details
+- **Status**: Not implemented
+- **Affected Selectors**: `.elementor-1140 .elementor-element.elementor-element-6d397c1`
+- **Example**: `font-family: "freight-text-pro", Sans-serif` is captured but not converted
+
+### Future Improvements
+1. **Add Font Family Property Mapper**:
+   - Create property mapper for font-family values
+   - Handle quoted font names with fallbacks
+   - Location: Property mapper conversion logic
+
+2. **Support Font Stacks**:
+   - Parse comma-separated font lists
+   - Preserve fallback fonts (Sans-serif, Serif, etc.)
+   - Handle quoted vs unquoted font names
+
+3. **Integration with Elementor Typography**:
+   - Map to Elementor's typography control format
+   - Consider custom font loading requirements
+   - Handle web fonts vs system fonts
+
+### Related Files
+- Property mapper (font-family conversion)
+- `plugins/elementor-css/modules/css-converter/services/css/processing/unified-css-processor.php`
+
+---
+
 ## Pure Unified Architecture - Next Steps
 
 ### Current Status

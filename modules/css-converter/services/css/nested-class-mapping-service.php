@@ -75,6 +75,18 @@ class Nested_Class_Mapping_Service {
 		string $target,
 		array $parsed_selector
 	): void {
+		// EVIDENCE: Track all mappings being created
+		error_log( '🔍 EVIDENCE: nested-class-mapping-service.php:' . __LINE__ . ' - Creating mapping' );
+		error_log( '🔍 EVIDENCE: - target_class: ' . $target_class );
+		error_log( '🔍 EVIDENCE: - flattened_class_name: ' . $flattened_class_name );
+		error_log( '🔍 EVIDENCE: - original_selector: ' . $original_selector );
+		error_log( '🔍 EVIDENCE: - target: ' . $target );
+		
+		if ( strpos( $flattened_class_name, 'fixed' ) !== false ) {
+			error_log( '🚨 EVIDENCE: nested-class-mapping-service.php:' . __LINE__ . ' - FIXED MAPPING CREATED!' );
+			error_log( '🚨 EVIDENCE: - Mapping ' . $target_class . ' -> ' . $flattened_class_name );
+		}
+		
 		$this->class_mappings[ $target_class ] = [
 			'original_class' => $target_class,
 			'flattened_class' => $flattened_class_name,

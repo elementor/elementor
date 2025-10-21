@@ -328,4 +328,46 @@ test.describe( 'Pattern 1: Nested Selector Flattening (.first .second → .secon
 		// Simple selectors (.simple) should NOT be flattened
 		// They should keep their original names and styles should still apply
 	} );
+
+	test( 'should remove HTML tags from flattened class names (body.loaded .loading → .loading--loaded)', async ( { request, page } ) => {
+		const cssContent = `
+			<style>
+				.loading {
+					background: rgba(0, 0, 0, 0.035);
+				}
+				body.loaded .loading {
+					background: none;
+				}
+			</style>
+			<div class="loading">Loading Content</div>
+		`;
+
+		const result: ExtendedCssConverterResponse = await helper.convertHtmlWithCss(
+			request,
+			cssContent,
+			'',
+			{ createGlobalClasses: true },
+		);
+
+		expect( result.success ).toBe( true );
+		expect( result.global_classes_created ).toBeGreaterThan( 0 );
+		expect( result.flattened_classes_created ).toBeGreaterThan( 0 );
+
+		expect( result.post_id ).toBeGreaterThan( 0 );
+		expect( result.edit_url ).toContain( 'elementor' );
+
+		await page.goto( result.edit_url );
+		await page.waitForLoadState( 'domcontentloaded' );
+
+		await page.waitForSelector( '.elementor-editor-active', { timeout: 15000 } );
+
+		const previewFrame = page.frameLocator( '#elementor-preview-iframe' );
+
+		const loadingElement = previewFrame.locator( '[class*="loading--loaded"]' ).first();
+
+		await expect( loadingElement ).toBeVisible();
+		await expect( loadingElement ).toHaveClass( /loading--loaded/ );
+
+		await expect( loadingElement ).not.toHaveClass( /loading--body-loaded/ );
+	} );
 } );

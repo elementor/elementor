@@ -162,6 +162,12 @@ class Css_Property_Conversion_Service {
 	 * @return array|null Converted property in v4 atomic format, or null if conversion failed
 	 */
 	public function convert_property_to_v4_atomic( string $property, $value ): ?array {
+		// DEBUG: Track font-family processing
+		if ( 'font-family' === $property ) {
+			error_log( '🔍 FONT-FAMILY IN convert_property_to_v4_atomic: ' . $property . ': ' . $value );
+			error_log( '🔍 - Stack trace: ' . wp_debug_backtrace_summary() );
+		}
+
 		if ( $property === 'transform' ) {
 		}
 
@@ -170,6 +176,11 @@ class Css_Property_Conversion_Service {
 		}
 
 		$mapper = $this->resolve_property_mapper_safely( $property, $value );
+
+		// DEBUG: Track font-family mapper resolution
+		if ( 'font-family' === $property ) {
+			error_log( '🔍 FONT-FAMILY mapper resolved: ' . ( $mapper ? get_class( $mapper ) : 'NULL' ) );
+		}
 
 		if ( in_array( $property, [ 'letter-spacing', 'text-transform' ], true ) ) {
 		}
@@ -180,7 +191,20 @@ class Css_Property_Conversion_Service {
 			if ( in_array( $property, [ 'letter-spacing', 'text-transform' ], true ) ) {
 			}
 
+			// DEBUG: Track font-family conversion result
+			if ( 'font-family' === $property ) {
+				error_log( '🔍 FONT-FAMILY conversion result: ' . ( $result ? 'SUCCESS' : 'FAILED' ) );
+				if ( $result ) {
+					error_log( '🔍 FONT-FAMILY result: ' . json_encode( $result ) );
+				}
+			}
+
 			return $result;
+		}
+
+		// DEBUG: Track font-family conversion failure
+		if ( 'font-family' === $property ) {
+			error_log( '🔍 FONT-FAMILY conversion failed: No v4 mapper available' );
 		}
 
 		$this->record_conversion_failure( $property, $value, 'No v4 mapper available' );

@@ -38,7 +38,7 @@ test.describe( 'Background Prop Type Integration @prop-types', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	} );
 
-	test( 'should convert background color properties', async ( { page, request } ) => {
+	test( 'should convert background color properties', async ( { page, request }, testInfo ) => {
 		const combinedCssContent = `
 			<div>
 				<p style="background-color: red;" data-test="bg-red">Red background</p>
@@ -189,6 +189,70 @@ test.describe( 'Background Prop Type Integration @prop-types', () => {
 					await test.step( 'Verify gradient is applied', async () => {
 						const backgroundImage = await frontendElement.evaluate( ( el ) => getComputedStyle( el ).backgroundImage );
 						expect( backgroundImage ).toMatch( testCase.expectedPattern );
+					} );
+				} );
+			}
+		} );
+	} );
+
+	test( 'should convert background: none to transparent', async ( { page, request } ) => {
+		const combinedCssContent = `
+			<div>
+				<p style="background: none;" data-test="bg-none">Background none</p>
+				<p style="background-color: none;" data-test="bg-color-none">Background color none</p>
+			</div>
+		`;
+
+		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
+
+		const validation = cssHelper.validateApiResult( apiResult );
+		if ( validation.shouldSkip ) {
+			test.skip( true, validation.skipReason );
+			return;
+		}
+		const editUrl = apiResult.edit_url;
+
+		await page.goto( editUrl );
+		editor = new EditorPage( page, wpAdmin.testInfo );
+		await editor.waitForPanelToLoad();
+
+		// Define test cases for background: none conversion
+		const testCases = [
+			{ index: 0, name: 'background: none', expected: 'rgba(0, 0, 0, 0)' }, // transparent
+			{ index: 1, name: 'background-color: none', expected: 'rgba(0, 0, 0, 0)' }, // transparent
+		];
+
+		// Editor verification using test cases array
+		for ( const testCase of testCases ) {
+			await test.step( `Verify ${ testCase.name } converts to transparent in editor`, async () => {
+				const elementorFrame = editor.getPreviewFrame();
+				await elementorFrame.waitForLoadState();
+
+				const element = elementorFrame.locator( 'p' ).filter( { hasText: /Background/i } ).nth( testCase.index );
+				await element.waitFor( { state: 'visible', timeout: 10000 } );
+
+				await test.step( 'Verify CSS property is transparent', async () => {
+					await expect( element ).toHaveCSS( 'background-color', testCase.expected );
+				} );
+			} );
+		}
+
+		await test.step( 'Publish page and verify background: none conversion on frontend', async () => {
+			// Save the page first
+			await editor.saveAndReloadPage();
+
+			// Get the page ID and navigate to frontend
+			const pageId = await editor.getPageId();
+			await page.goto( `/?p=${ pageId }` );
+			await page.waitForLoadState();
+
+			// Frontend verification using same test cases array
+			for ( const testCase of testCases ) {
+				await test.step( `Verify ${ testCase.name } converts to transparent on frontend`, async () => {
+					const frontendElement = page.locator( 'p' ).filter( { hasText: /Background/i } ).nth( testCase.index );
+
+					await test.step( 'Verify CSS property is transparent', async () => {
+						await expect( frontendElement ).toHaveCSS( 'background-color', testCase.expected );
 					} );
 				} );
 			}

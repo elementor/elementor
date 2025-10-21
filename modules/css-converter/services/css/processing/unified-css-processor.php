@@ -1,9 +1,11 @@
 <?php
 namespace Elementor\Modules\CssConverter\Services\Css\Processing;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 require_once __DIR__ . '/../css-selector-utils.php';
+require_once __DIR__ . '/css-output-optimizer.php';
 class Unified_Css_Processor {
 	private $css_parser;
 	private $property_converter;
@@ -12,6 +14,8 @@ class Unified_Css_Processor {
 	private $reset_style_detector;
 	private $flattening_service;
 	private $html_class_modifier;
+	private $css_variable_definitions;
+	private $css_output_optimizer;
 	public function __construct(
 		$css_parser,
 		$property_converter,
@@ -25,6 +29,8 @@ class Unified_Css_Processor {
 			$property_converter
 		);
 		$this->reset_style_detector = new Reset_Style_Detector( $specificity_calculator );
+		$this->css_variable_definitions = [];
+		$this->css_output_optimizer = new Css_Output_Optimizer();
 		$this->initialize_flattening_service();
 		$this->initialize_html_class_modifier();
 	}
@@ -48,9 +54,19 @@ class Unified_Css_Processor {
 		$css_rules = $this->parse_css_and_extract_rules( $css );
 		// Step 1.2: Flatten ALL nested selectors FIRST
 		$flattening_results = $this->flatten_all_nested_selectors( $css_rules );
-		// Step 1.3: Process compound selectors (NEW)
-		$compound_results = $this->process_compound_selectors( $css_rules );
+		// Step 1.3: Process compound selectors (NEW) - Only create global classes for selectors with matching elements
+		$compound_results = $this->process_compound_selectors( $css_rules, $widgets );
 		// Step 1.4: Initialize HTML modifier with complete flattening data
+		// EVIDENCE: Track class mappings being passed
+		error_log( '🔍 EVIDENCE: unified-css-processor.php:' . __LINE__ . ' - Initializing HTML modifier with ' . count( $flattening_results['class_mappings'] ) . ' class mappings' );
+		foreach ( $flattening_results['class_mappings'] as $original_class => $mapping ) {
+			$flattened_class = is_array( $mapping ) ? ( $mapping['flattened_class'] ?? 'N/A' ) : $mapping;
+			if ( strpos( $flattened_class, 'fixed' ) !== false ) {
+				error_log( '🚨 EVIDENCE: unified-css-processor.php:' . __LINE__ . ' - FIXED MAPPING IN FLATTENING RESULTS: ' . $original_class . ' -> ' . $flattened_class );
+				error_log( '🚨 EVIDENCE: - Full mapping data: ' . json_encode( $mapping ) );
+			}
+		}
+
 		$this->html_class_modifier->initialize_with_flattening_results(
 			$flattening_results['class_mappings'],
 			$flattening_results['classes_with_direct_styles'],
@@ -61,18 +77,16 @@ class Unified_Css_Processor {
 			$compound_results['compound_mappings']
 		);
 		// ═══════════════════════════════════════════════════════════
-		// PASS 2: HTML MODIFICATION & STYLE RESOLUTION
+		// PASS 2: STYLE RESOLUTION (CSS ANALYSIS ONLY)
 		// ═══════════════════════════════════════════════════════════
-		// Step 2.1: Apply HTML class modifications to ALL widgets (including nested ones)
-		$widgets_with_modified_classes = $this->apply_html_class_modifications( $widgets );
-		// Step 2.2: Process styles using flattened rules
+		// Step 2.1: Process styles using flattened rules (NO class modification yet)
 		$this->collect_all_styles_from_sources_with_flattened_rules(
 			$css,
-			$widgets_with_modified_classes,
+			$widgets,
 			$flattening_results['flattened_rules']
 		);
-		// Step 2.3: Resolve styles recursively
-		$resolved_widgets = $this->resolve_styles_recursively( $widgets_with_modified_classes );
+		// Step 2.2: Resolve styles recursively (NO class modification yet)
+		$resolved_widgets = $this->resolve_styles_recursively( $widgets );
 		// ═══════════════════════════════════════════════════════════
 		// PASS 3: PREPARE OUTPUT
 		// ═══════════════════════════════════════════════════════════
@@ -87,6 +101,7 @@ class Unified_Css_Processor {
 			'widgets' => $resolved_widgets,
 			'stats' => $debug_info,
 			'css_class_rules' => $css_class_rules,
+			'css_variable_definitions' => $this->css_variable_definitions,
 			'flattened_classes' => $flattening_results['flattened_classes'],
 			'flattened_classes_count' => count( $flattening_results['flattened_classes'] ),
 			'compound_classes' => $compound_results['compound_global_classes'] ?? [],
@@ -95,6 +110,10 @@ class Unified_Css_Processor {
 			'reset_styles_stats' => $reset_styles_stats,
 			'complex_reset_styles' => $complex_reset_styles,
 			'html_class_modifications' => $html_modification_summary,
+			// NEW: Pass class modification data for Phase 6 application
+			'flattening_results' => $flattening_results,
+			'compound_results' => $compound_results,
+			'html_class_modifier' => $this->html_class_modifier,
 		];
 	}
 	private function collect_all_styles_from_sources( string $css, array $widgets ): void {
@@ -227,7 +246,7 @@ class Unified_Css_Processor {
 					// Skip if widget has inline styles that would conflict
 					$widget_has_inline_styles = ! empty( $widget['attributes']['style'] ?? '' );
 					if ( $widget_has_inline_styles ) {
-continue;
+						continue;
 					}
 					$converted_properties = $this->prepare_properties_for_collection( $properties );
 					// Use widget_type for element_type so filtering works correctly
@@ -236,7 +255,7 @@ continue;
 						$converted_properties,
 						$element_id
 					);
-}
+				}
 				// Process children recursively
 				if ( ! empty( $widget['children'] ) ) {
 					$this->analyze_and_apply_direct_element_styles( [ $rule ], $widget['children'] );
@@ -346,7 +365,7 @@ continue;
 			// NEW: Handle nested selectors with compound classes inside
 			// Example: .elementor-1140 .element.element-14c0aa4 .heading-title
 			$is_nested_compound = $this->is_nested_selector_with_compound_classes( $selector );
-			
+
 			// Log ALL selectors to see what we're getting
 			if ( strpos( $selector, 'elementor-1140' ) !== false || strpos( $selector, 'heading' ) !== false ) {
 				error_log( '🔍 FOUND RELEVANT SELECTOR: ' . $selector . ' | nested+compound: ' . ( $is_nested_compound ? 'YES' : 'NO' ) );
@@ -386,11 +405,20 @@ continue;
 	}
 
 	private function is_nested_selector_with_compound_classes( string $selector ): bool {
-		// Check for nested selector (has descendant combinator - spaces)
-		$has_nesting = strpos( $selector, ' ' ) !== false;
+		// Check for nested selector (has descendant combinator - spaces OR child combinator >)
+		$has_nesting = strpos( $selector, ' ' ) !== false || strpos( $selector, '>' ) !== false;
 
 		// Check for compound class (dot followed by another dot within the selector)
 		$has_compound = preg_match( '/\.\w+[\w-]*\.\w+/', $selector ) === 1;
+
+		// EVIDENCE: Debug compound detection
+		if ( strpos( $selector, 'elementor-fixed' ) !== false ) {
+			error_log( '🔍 EVIDENCE: is_nested_selector_with_compound_classes debug (FIXED):' );
+			error_log( '🔍 EVIDENCE: - selector: ' . $selector );
+			error_log( '🔍 EVIDENCE: - has_nesting: ' . ( $has_nesting ? 'TRUE' : 'FALSE' ) );
+			error_log( '🔍 EVIDENCE: - has_compound: ' . ( $has_compound ? 'TRUE' : 'FALSE' ) );
+			error_log( '🔍 EVIDENCE: - result: ' . ( ( $has_nesting && $has_compound ) ? 'TRUE' : 'FALSE' ) );
+		}
 
 		return $has_nesting && $has_compound;
 	}
@@ -404,9 +432,21 @@ continue;
 		error_log( 'SELECTOR: ' . $selector );
 		error_log( 'PROPERTIES COUNT: ' . count( $properties ) );
 
+		// EVIDENCE: Track ALL font-size values being processed with FULL property data
+		foreach ( $properties as $idx => $prop ) {
+			if ( ( $prop['property'] ?? '' ) === 'font-size' ) {
+				error_log( '🔍 FONT-SIZE POLLUTION: Selector=' . $selector );
+				error_log( '🔍 - Value: ' . ( $prop['value'] ?? 'N/A' ) );
+				error_log( '🔍 - Original Property: ' . ( $prop['original_property'] ?? 'N/A' ) );
+				error_log( '🔍 - Original Value: ' . ( $prop['original_value'] ?? 'N/A' ) );
+				error_log( '🔍 - Property Index: ' . $idx );
+				error_log( '🔍 - Full Property Data: ' . json_encode( $prop ) );
+			}
+		}
+
 		// Extract the target element from the end of the selector
 		// Example: .elementor-1140 .element.element-14c0aa4 .heading-title
-		//          → extract: .heading-title
+		// → extract: .heading-title
 		$target_selector = $this->extract_target_selector( $selector );
 		error_log( 'EXTRACTED TARGET: ' . $target_selector );
 
@@ -424,7 +464,7 @@ continue;
 			// Direct element selector (e.g., "p", "h2")
 			$element_type = $target_selector;
 			error_log( 'DIRECT ELEMENT TYPE: ' . $element_type );
-			
+
 			$matched_elements = $this->find_widgets_by_element_type( $element_type, $widgets );
 			error_log( 'MATCHED BY TYPE: ' . count( $matched_elements ) );
 			error_log( 'WIDGET IDS: ' . json_encode( $matched_elements ) );
@@ -438,7 +478,7 @@ continue;
 		// Convert properties to atomic format with proper converted_property values
 		$converted_properties = $this->convert_rule_properties_to_atomic( $properties );
 		error_log( 'CONVERTED PROPERTIES: ' . count( $converted_properties ) );
-		
+
 		foreach ( $converted_properties as $prop ) {
 			error_log( '  - ' . $prop['property'] . ': ' . $prop['value'] . ' (converted: ' . ( isset( $prop['converted_property'] ) ? 'YES' : 'NO' ) . ')' );
 		}
@@ -499,13 +539,13 @@ continue;
 		$converted_properties = $this->convert_rule_properties_to_atomic( $properties );
 		// Route selectors with ID components to ID styles (e.g., #container, #container.box)
 		if ( strpos( $selector, '#' ) !== false ) {
-$this->unified_style_manager->collect_id_selector_styles(
+			$this->unified_style_manager->collect_id_selector_styles(
 				$selector,
 				$converted_properties,
 				$matched_elements
 			);
 		} else {
-$this->unified_style_manager->collect_css_selector_styles(
+			$this->unified_style_manager->collect_css_selector_styles(
 				$selector,
 				$converted_properties,
 				$matched_elements
@@ -678,6 +718,14 @@ $this->unified_style_manager->collect_css_selector_styles(
 		foreach ( $widgets as $widget ) {
 			$widget_id = $this->get_widget_identifier( $widget );
 			$resolved_styles = $this->unified_style_manager->resolve_styles_for_widget( $widget );
+
+			// EVIDENCE: Track font-size in resolved styles
+			if ( isset( $resolved_styles['font-size'] ) ) {
+				error_log( '🔍 FONT-SIZE TRACE: resolve_styles_recursively' );
+				error_log( '🔍 - widget_id: ' . $widget_id );
+				error_log( '🔍 - resolved font-size: ' . json_encode( $resolved_styles['font-size'] ) );
+			}
+
 			$widget['resolved_styles'] = $resolved_styles;
 			if ( ! empty( $widget['children'] ) ) {
 				$widget['children'] = $this->resolve_styles_recursively( $widget['children'] );
@@ -748,7 +796,7 @@ $this->unified_style_manager->collect_css_selector_styles(
 			// Extract only the ID part before any class selectors (e.g., "container" from "container.box")
 			$id_from_selector = strpos( $id_part, '.' ) !== false ? substr( $id_part, 0, strpos( $id_part, '.' ) ) : $id_part;
 			$matches = $html_id === $id_from_selector;
-return $matches;
+			return $matches;
 		}
 		return false;
 	}
@@ -768,7 +816,7 @@ return $matches;
 		// Check if any ancestor matches (simplified - in a real implementation, we'd check the widget hierarchy)
 		// For now, we'll assume the match is valid if the target ID matches
 		// TODO: Implement proper ancestor checking by traversing widget parents
-return true;
+		return true;
 	}
 	private function is_class_selector_match( string $selector, string $classes ): bool {
 		if ( strpos( $selector, '.' ) === 0 ) {
@@ -791,16 +839,27 @@ return true;
 				$id_matches = ( $html_id === $id_from_selector );
 				$class_matches = in_array( $class_from_selector, explode( ' ', $classes ), true );
 				$combined_match = $id_matches && $class_matches;
-return $combined_match;
+				return $combined_match;
 			}
 		}
 		if ( strpos( $selector, '.' ) !== false && strpos( $selector, '#' ) === false ) {
 			$parts = explode( '.', $selector );
 			$element_part = $parts[0];
-			$class_part = $parts[1] ?? '';
-			$element_matches = empty( $element_part ) || $element_part === $element_type;
-			$class_matches = empty( $class_part ) || in_array( $class_part, explode( ' ', $classes ), true );
-			return $element_matches && $class_matches;
+
+			if ( ! empty( $element_part ) && $element_part !== $element_type ) {
+				return false;
+			}
+
+			$required_classes = array_slice( $parts, 1 );
+			$widget_classes = explode( ' ', $classes );
+
+			foreach ( $required_classes as $required_class ) {
+				if ( ! in_array( $required_class, $widget_classes, true ) ) {
+					return false;
+				}
+			}
+
+			return true;
 		}
 		return false;
 	}
@@ -840,12 +899,12 @@ return $combined_match;
 		if ( empty( $element_rules ) ) {
 			return;
 		}
-$conflict_analysis = $this->reset_style_detector->analyze_element_selector_conflicts(
+		$conflict_analysis = $this->reset_style_detector->analyze_element_selector_conflicts(
 			$element_rules,
 			$all_rules
 		);
 		foreach ( $element_rules as $selector => $rules ) {
-$this->process_element_selector_reset_styles( $selector, $rules, $conflict_analysis, $widgets );
+			$this->process_element_selector_reset_styles( $selector, $rules, $conflict_analysis, $widgets );
 		}
 	}
 	/**
@@ -886,7 +945,7 @@ $this->process_element_selector_reset_styles( $selector, $rules, $conflict_analy
 		if ( empty( $matching_widgets ) ) {
 			return;
 		}
-$properties = [];
+		$properties = [];
 		foreach ( $rules as $rule ) {
 			if ( isset( $rule['properties'] ) && is_array( $rule['properties'] ) ) {
 				foreach ( $rule['properties'] as $property_data ) {
@@ -914,7 +973,7 @@ $properties = [];
 				];
 			}
 		}
-$this->unified_style_manager->collect_reset_styles(
+		$this->unified_style_manager->collect_reset_styles(
 			$selector,
 			$properties,
 			$matching_widgets,
@@ -1019,22 +1078,58 @@ $this->unified_style_manager->collect_reset_styles(
 	private function extract_rules_from_document( $document ): array {
 		$rules = [];
 		$all_rule_sets = $document->getAllRuleSets();
+
 		foreach ( $all_rule_sets as $index => $rule_set ) {
+
 			if ( ! method_exists( $rule_set, 'getSelectors' ) ) {
 				continue;
 			}
 			$selectors = $rule_set->getSelectors();
 			$declarations = $rule_set->getRules();
+
+			// EVIDENCE: Track the EXACT CSS text for elementor-element-6d397c1
+			$selector_strings = array_map( function( $s ) {
+				return (string) $s;
+			}, $selectors );
+			foreach ( $selector_strings as $sel_str ) {
+				if ( strpos( $sel_str, 'elementor-element-6d397c1' ) !== false ) {
+					error_log( '🔍 DESKTOP CSS RULE #' . $index . ':' );
+					error_log( '🔍 SELECTOR: ' . $sel_str );
+					error_log( '🔍 FULL CSS RULE: ' . $rule_set->__toString() );
+				}
+			}
+
+			// Extract CSS variable definitions from :root, body, and html selectors
+			$this->extract_css_variable_definitions( $selectors, $declarations );
+
 			$extracted_rules = $this->extract_rules_from_selectors( $selectors, $declarations );
 			$rules = array_merge( $rules, $extracted_rules );
 		}
 		return $rules;
 	}
+
+
 	private function extract_rules_from_selectors( array $selectors, array $declarations ): array {
 		$rules = [];
 		foreach ( $selectors as $selector_index => $selector ) {
 			$selector_string = (string) $selector;
 			$properties = $this->extract_properties_from_declarations( $declarations );
+
+			// EVIDENCE: Track selector extraction for elementor-element-6d397c1
+			if ( strpos( $selector_string, 'elementor-element-6d397c1' ) !== false ) {
+				error_log( '🔍 CSS PARSING: Extracting selector: ' . $selector_string );
+				error_log( '🔍 - Selector Index: ' . $selector_index );
+				error_log( '🔍 - Properties Count: ' . count( $properties ) );
+				error_log( '🔍 - ALL PROPERTIES: ' . json_encode( array_map( function( $p ) {
+					return $p['property'] . ': ' . $p['value'];
+				}, $properties ) ) );
+				foreach ( $properties as $prop ) {
+					if ( ( $prop['property'] ?? '' ) === 'font-size' ) {
+						error_log( '🔍 - FOUND font-size: ' . ( $prop['value'] ?? 'N/A' ) );
+					}
+				}
+			}
+
 			if ( ! empty( $properties ) ) {
 				$rules[] = [
 					'selector' => $selector_string,
@@ -1048,7 +1143,11 @@ $this->unified_style_manager->collect_reset_styles(
 		$properties = [];
 		foreach ( $declarations as $decl_index => $declaration ) {
 			if ( $this->is_valid_declaration( $declaration ) ) {
-				$properties[] = $this->create_property_from_declaration( $declaration );
+				$property = $this->create_property_from_declaration( $declaration );
+				// Skip empty properties (filtered out)
+				if ( ! empty( $property ) ) {
+					$properties[] = $property;
+				}
 			}
 		}
 		return $properties;
@@ -1060,6 +1159,15 @@ $this->unified_style_manager->collect_reset_styles(
 		$property = $declaration->getRule();
 		$value = (string) $declaration->getValue();
 		$important = method_exists( $declaration, 'getIsImportant' ) ? $declaration->getIsImportant() : false;
+
+		// FILTER: Skip font-family properties (not supported in current implementation)
+		if ( 'font-family' === $property ) {
+			error_log( '🚫 FILTERING FONT-FAMILY IN create_property_from_declaration: ' . $property . ': ' . $value );
+			error_log( '🚫 - Declaration class: ' . get_class( $declaration ) );
+			error_log( '🚫 - Stack trace: ' . wp_debug_backtrace_summary() );
+			return []; // Return empty array to skip this property
+		}
+
 		return [
 			'property' => $property,
 			'value' => $value,
@@ -1174,6 +1282,48 @@ $this->unified_style_manager->collect_reset_styles(
 				];
 			}
 		}
+
+		// INTEGRATION POINT A: Optimize CSS rules before returning
+		if ( ! empty( $css_class_rules ) ) {
+			$optimized_rules = [];
+			foreach ( $css_class_rules as $rule ) {
+				$selector = $rule['selector'];
+				$properties_array = [];
+
+				// Convert properties format for optimizer
+				foreach ( $rule['properties'] as $prop ) {
+					$property = $prop['property'] ?? '';
+					$value = $prop['value'] ?? '';
+					if ( ! empty( $property ) && ! empty( $value ) ) {
+						$properties_array[ $property ] = $value;
+					}
+				}
+				
+				// Optimize using CSS Output Optimizer
+				$optimized_selector_rules = $this->css_output_optimizer->optimize_css_output( [
+					$selector => $properties_array
+				] );
+				
+				// Convert back to original format if not empty
+				foreach ( $optimized_selector_rules as $opt_selector => $opt_properties ) {
+					if ( ! empty( $opt_properties ) ) {
+						$converted_properties = [];
+						foreach ( $opt_properties as $property => $value ) {
+							$converted_properties[] = [
+								'property' => $property,
+								'value' => $value,
+							];
+						}
+						$optimized_rules[] = [
+							'selector' => $opt_selector,
+							'properties' => $converted_properties,
+						];
+					}
+				}
+			}
+			$css_class_rules = $optimized_rules;
+		}
+
 		return $css_class_rules;
 	}
 	private function apply_html_class_modifications( array $widgets ): array {
@@ -1268,6 +1418,8 @@ $this->unified_style_manager->collect_reset_styles(
 		return $modified_widget;
 	}
 	private function flatten_all_nested_selectors( array $css_rules ): array {
+		error_log( '🔥 MAX DEBUG: flatten_all_nested_selectors called with ' . count( $css_rules ) . ' CSS rules' );
+
 		$flattened_rules = [];
 		$class_mappings = [];
 		$classes_with_direct_styles = [];
@@ -1300,6 +1452,12 @@ $this->unified_style_manager->collect_reset_styles(
 				continue;
 			}
 
+			// EVIDENCE: Check if compound detection is working for fixed selectors
+			if ( strpos( $selector, 'elementor-fixed' ) !== false ) {
+				$is_compound = $this->is_nested_selector_with_compound_classes( $selector );
+				error_log( '🔍 EVIDENCE: Compound detection for fixed selector: ' . $selector . ' -> ' . ( $is_compound ? 'TRUE' : 'FALSE' ) );
+			}
+
 			// Flatten nested selectors
 			$should_flatten = $this->flattening_service->should_flatten_selector( $selector );
 			if ( $should_flatten ) {
@@ -1313,6 +1471,16 @@ $this->unified_style_manager->collect_reset_styles(
 					if ( $this->is_element_tag( $parsed['target_class'] ) ) {
 						$mapping_key = '.' . $parsed['target_class']; // Convert "div" to ".div" for mapping key
 					}
+
+					// EVIDENCE: Track what mapping is being created
+					if ( strpos( $flattened_rule['global_class_id'], 'fixed' ) !== false ) {
+						error_log( '🚨 EVIDENCE: unified-css-processor.php:' . __LINE__ . ' - CREATING FIXED MAPPING!' );
+						error_log( '🚨 EVIDENCE: - Original selector: ' . $selector );
+						error_log( '🚨 EVIDENCE: - Mapping key: ' . $mapping_key );
+						error_log( '🚨 EVIDENCE: - Flattened class ID: ' . $flattened_rule['global_class_id'] );
+						error_log( '🚨 EVIDENCE: - Parsed target_class: ' . $parsed['target_class'] );
+					}
+
 					$class_mappings[ $mapping_key ] = $flattened_rule['global_class_id'];
 					$classes_only_in_nested[] = $mapping_key;
 				} else {
@@ -1367,7 +1535,9 @@ $this->unified_style_manager->collect_reset_styles(
 	private function is_element_tag( string $part ): bool {
 		return \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::is_element_tag( $part );
 	}
-	private function process_compound_selectors( array $css_rules ): array {
+	private function process_compound_selectors( array $css_rules, array $widgets ): array {
+		error_log( '🔥 MAX DEBUG: process_compound_selectors called with ' . count( $css_rules ) . ' CSS rules' );
+
 		$compound_global_classes = [];
 		$compound_mappings = [];
 		foreach ( $css_rules as $rule ) {
@@ -1375,13 +1545,36 @@ $this->unified_style_manager->collect_reset_styles(
 			if ( empty( $selector ) ) {
 				continue;
 			}
+
 			if ( ! \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::is_compound_class_selector( $selector ) ) {
+				continue;
+			}
+
+			// FILTER: Skip core Elementor CSS selectors to prevent creating global classes for them
+			if ( $this->is_core_elementor_selector( $selector ) ) {
+				error_log( '🚫 SKIPPING CORE ELEMENTOR SELECTOR: ' . $selector );
 				continue;
 			}
 			$classes = \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::extract_compound_classes( $selector );
 			if ( count( $classes ) < 2 ) {
 				continue;
 			}
+
+			// FILTER: Only create global classes if there are elements that have ALL required classes
+			$has_matching_elements = $this->has_elements_with_all_classes( $widgets, $classes );
+
+			// DEBUG: Log compound selector detection for fixed class
+			if ( strpos( $selector, 'fixed' ) !== false ) {
+				error_log( '🔍 COMPOUND SELECTOR DETECTED: ' . $selector );
+				error_log( '   Extracted Classes: ' . json_encode( $classes ) );
+				error_log( '   Has Matching Elements: ' . ( $has_matching_elements ? 'YES' : 'NO' ) );
+			}
+
+			if ( ! $has_matching_elements ) {
+				error_log( '🚫 SKIPPING COMPOUND CLASS: No elements have all required classes [' . implode( ', ', $classes ) . ']' );
+				continue;
+			}
+
 			$sorted_classes = $classes;
 			sort( $sorted_classes );
 			$flattened_name = \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::build_compound_flattened_name( $classes );
@@ -1400,12 +1593,90 @@ $this->unified_style_manager->collect_reset_styles(
 				'specificity' => $specificity,
 				'flattened_class' => $flattened_name,
 			];
+
+			error_log( '✅ CREATED COMPOUND CLASS: ' . $flattened_name . ' for selector: ' . $selector );
 		}
 		return [
 			'compound_global_classes' => $compound_global_classes,
 			'compound_mappings' => $compound_mappings,
 		];
 	}
+
+	private function has_elements_with_all_classes( array $widgets, array $required_classes ): bool {
+		foreach ( $widgets as $widget ) {
+			if ( $this->widget_has_all_classes( $widget, $required_classes ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function widget_has_all_classes( array $widget, array $required_classes ): bool {
+		// Check this widget's classes
+		$widget_classes = $this->extract_widget_classes( $widget );
+		if ( $this->array_contains_all_classes( $widget_classes, $required_classes ) ) {
+			return true;
+		}
+
+		// Recursively check child widgets
+		if ( ! empty( $widget['children'] ) && is_array( $widget['children'] ) ) {
+			foreach ( $widget['children'] as $child ) {
+				if ( $this->widget_has_all_classes( $child, $required_classes ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private function extract_widget_classes( array $widget ): array {
+		$class_attribute = $widget['attributes']['class'] ?? '';
+		if ( empty( $class_attribute ) ) {
+			return [];
+		}
+
+		// Split class attribute by spaces and filter out empty values
+		$classes = array_filter( explode( ' ', $class_attribute ), function( $class ) {
+			return ! empty( trim( $class ) );
+		});
+
+		return array_map( 'trim', $classes );
+	}
+
+	private function array_contains_all_classes( array $widget_classes, array $required_classes ): bool {
+		foreach ( $required_classes as $required_class ) {
+			if ( ! in_array( $required_class, $widget_classes, true ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private function is_core_elementor_selector( string $selector ): bool {
+		// List of core Elementor CSS selectors that should not become global classes
+		$core_elementor_patterns = [
+			'/\.elementor-element\.elementor-fixed/',
+			'/\.elementor-element\.elementor-absolute/',
+			'/\.elementor-element\.elementor-sticky/',
+			'/\.elementor-widget\.elementor-widget-/',
+			'/\.elementor-container\.elementor-/',
+			'/\.elementor-section\.elementor-/',
+			'/\.elementor-column\.elementor-/',
+			'/\.elementor-element\.elementor-element-/',
+			'/\.e-con\.e-/',
+			'/\.e-flex\.e-/',
+		];
+
+		foreach ( $core_elementor_patterns as $pattern ) {
+			if ( preg_match( $pattern, $selector ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private function create_global_class_from_compound(
 		string $flattened_name,
 		string $original_selector,
@@ -1413,6 +1684,15 @@ $this->unified_style_manager->collect_reset_styles(
 		int $specificity,
 		array $converted_properties
 	): array {
+		error_log( '🔥 MAX DEBUG: create_global_class_from_compound called' );
+		error_log( '🔥 MAX DEBUG: - flattened_name: ' . $flattened_name );
+		error_log( '🔥 MAX DEBUG: - original_selector: ' . $original_selector );
+		error_log( '🔥 MAX DEBUG: - required_classes: ' . json_encode( $required_classes ) );
+
+		if ( strpos( $flattened_name, 'fixed' ) !== false || strpos( $original_selector, 'fixed' ) !== false ) {
+			error_log( '🚨 MAX DEBUG: CREATING FIXED COMPOUND CLASS!' );
+			error_log( '🚨 MAX DEBUG: This should not happen with our filtering!' );
+		}
 		$atomic_props = [];
 		foreach ( $converted_properties as $prop_data ) {
 			$converted = $prop_data['converted_property'] ?? null;
@@ -1458,5 +1738,98 @@ $this->unified_style_manager->collect_reset_styles(
 			'height' => 'size',
 		];
 		return $type_map[ $prop_name ] ?? 'text';
+	}
+
+	private function extract_css_variable_definitions( array $selectors, array $declarations ): void {
+		// Check if this rule set contains CSS variable definitions
+		foreach ( $selectors as $selector ) {
+			$selector_string = (string) $selector;
+
+			// Look for :root, body, html, or other selectors that might define CSS variables
+			if ( $this->is_css_variable_definition_selector( $selector_string ) ) {
+				$this->process_css_variable_declarations( $selector_string, $declarations );
+			}
+		}
+	}
+
+	private function is_css_variable_definition_selector( string $selector ): bool {
+		$selector = trim( $selector );
+
+		// Common selectors that define CSS variables
+		$variable_definition_selectors = [
+			':root',
+			'html',
+			'body',
+			'html:root',
+			'body:root',
+		];
+
+		// Check for exact matches
+		if ( in_array( $selector, $variable_definition_selectors, true ) ) {
+			return true;
+		}
+
+		// Check for selectors that start with these patterns
+		foreach ( $variable_definition_selectors as $pattern ) {
+			if ( 0 === strpos( $selector, $pattern ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function process_css_variable_declarations( string $selector, array $declarations ): void {
+		foreach ( $declarations as $declaration ) {
+			if ( ! $this->is_valid_declaration( $declaration ) ) {
+				continue;
+			}
+
+			$property = $declaration->getRule();
+			$value = (string) $declaration->getValue();
+
+			// Check if this is a CSS variable definition (starts with --)
+			if ( 0 === strpos( $property, '--' ) ) {
+				$this->store_css_variable_definition( $property, $value, $selector );
+			}
+		}
+	}
+
+	private function store_css_variable_definition( string $variable_name, string $value, string $selector ): void {
+		// Only store Elementor global variables to avoid bloat
+		if ( $this->should_preserve_css_variable( $variable_name ) ) {
+			$this->css_variable_definitions[ $variable_name ] = [
+				'name' => $variable_name,
+				'value' => $value,
+				'selector' => $selector,
+				'source' => 'extracted_from_css',
+			];
+
+			error_log( '✅ CSS VARIABLE DEFINITION EXTRACTED: ' . $variable_name . ': ' . $value . ' (from ' . $selector . ')' );
+		} else {
+			error_log( '🔄 CSS VARIABLE SKIPPED (not Elementor global): ' . $variable_name . ': ' . $value );
+		}
+	}
+
+	private function should_preserve_css_variable( string $var_name ): bool {
+		// Always preserve Elementor global variables
+		if ( false !== strpos( $var_name, '--e-global-' ) ) {
+			return true;
+		}
+
+		if ( false !== strpos( $var_name, '--elementor-' ) ) {
+			return true;
+		}
+
+		// Preserve Elementor theme variables
+		if ( false !== strpos( $var_name, '--e-theme-' ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public function get_css_variable_definitions(): array {
+		return $this->css_variable_definitions;
 	}
 }
