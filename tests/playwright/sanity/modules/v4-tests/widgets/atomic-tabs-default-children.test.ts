@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
-import EditorPage from '../../../pages/editor-page';
+import { parallelTest as test } from '../../../../parallelTest';
+import WpAdminPage from '../../../../pages/wp-admin-page';
+import EditorPage from '../../../../pages/editor-page';
 
 test.describe( 'Atomic Tabs Default Children @atomic-widgets', () => {
 	let editor: EditorPage;
