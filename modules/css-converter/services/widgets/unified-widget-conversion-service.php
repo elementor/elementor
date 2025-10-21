@@ -113,9 +113,7 @@ class Unified_Widget_Conversion_Service {
 			}
 			$compound_classes = $unified_processing_result['compound_classes'] ?? [];
 			$compound_classes_created = $unified_processing_result['compound_classes_created'] ?? 0;
-			if ( ! empty( $global_classes ) ) {
-				$this->store_global_classes_in_kit( $global_classes, $options );
-			}
+			// Global classes are now handled by the unified service in process_global_classes_with_unified_service()
 			$creation_result = $this->create_widgets_with_resolved_styles( $widgets_with_resolved_styles_for_global_classes, $options, $global_classes, $compound_classes, $compound_classes_created, $css_variable_definitions );
 			$conversion_log['widget_creation'] = $creation_result['stats'];
 			$widgets_created = $creation_result['widgets_created'] ?? 0;
@@ -521,47 +519,6 @@ class Unified_Widget_Conversion_Service {
 
 		return [];
 	}
-	private function convert_css_properties_to_atomic_format( array $properties ): array {
-		$atomic_props = [];
-		foreach ( $properties as $property_data ) {
-			// Handle both formats: simple array and property objects
-			if ( is_array( $property_data ) && isset( $property_data['property'] ) ) {
-				$property = $property_data['property'];
-				$value = $property_data['value'];
-			} else {
-				// Legacy format: property => value
-				$property = key( $properties );
-				$value = current( $properties );
-				next( $properties );
-			}
-			$atomic_prop = $this->convert_single_css_property_to_atomic_format( $property, $value );
-			if ( $atomic_prop ) {
-				$atomic_props[ $property ] = $atomic_prop;
-			}
-		}
-		return $atomic_props;
-	}
-	private function convert_single_css_property_to_atomic_format( string $property, $value ) {
-		return $this->property_converter->convert_property_to_v4_atomic( $property, $value );
-	}
-	private function parse_size_value( string $value ): array {
-		$size = (int) filter_var( $value, FILTER_SANITIZE_NUMBER_INT );
-		$unit = preg_replace( '/[0-9]/', '', $value );
-		if ( empty( $unit ) ) {
-			$unit = 'px';
-		}
-		return [
-			'size' => $size,
-			'unit' => $unit,
-		];
-	}
-	private function count_properties_in_global_classes( array $global_classes ): int {
-		$total_properties = 0;
-		foreach ( $global_classes as $class_data ) {
-			$total_properties += count( $class_data['properties'] ?? [] );
-		}
-		return $total_properties;
-	}
 
 
 	private function has_elements_with_flattened_class( array $widgets, string $flattened_class_id ): bool {
@@ -606,60 +563,6 @@ class Unified_Widget_Conversion_Service {
 
 		return array_map( 'trim', $classes );
 	}
-	private function store_global_classes_in_kit( array $global_classes, array $options ): void {
-		if ( empty( $global_classes ) ) {
-			return;
-		}
-		try {
-			if ( ! defined( 'ELEMENTOR_VERSION' ) || ! \Elementor\Plugin::$instance ) {
-				return;
-			}
-			if ( ! \Elementor\Plugin::$instance->kits_manager ) {
-				return;
-			}
-			$active_kit = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
-			if ( ! $active_kit ) {
-				return;
-			}
-			$repository = Global_Classes_Repository::make();
-			$is_preview = isset( $options['context'] ) && 'preview' === $options['context'];
-			if ( ! $is_preview ) {
-				$is_preview = is_preview() || ( defined( 'ELEMENTOR_VERSION' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
-			}
-			$context = $is_preview ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
-			$repository->context( $context );
-			$existing = $repository->all();
-			$existing_items = $existing->get_items()->all();
-			$existing_order = $existing->get_order()->all();
-			$formatted_global_classes = [];
-			foreach ( $global_classes as $class_id => $class_data ) {
-				$properties = $class_data['properties'] ?? [];
-				$atomic_props = $this->convert_css_properties_to_atomic_format( $properties );
-				$formatted_global_classes[ $class_id ] = [
-					'id' => $class_id,
-					'label' => $class_id,
-					'type' => 'class',
-					'variants' => [
-						[
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => null,
-							],
-							'props' => $atomic_props,
-							'custom_css' => null,
-						],
-					],
-				];
-			}
-			$updated_items = array_merge( $existing_items, $formatted_global_classes );
-			$updated_order = array_merge( $existing_order, array_keys( $formatted_global_classes ) );
-			$updated_order = array_values( array_unique( $updated_order ) );
-			$repository->put( $updated_items, $updated_order );
-		} catch ( \Exception $e ) {
-			// Silent fail - don't block widget creation
-			unset( $e );
-		}
-	}
 	private function create_widgets_with_resolved_styles( array $widgets, array $options, array $global_classes, array $compound_classes = [], int $compound_classes_created = 0, array $css_variable_definitions = [] ): array {
 		$post_id = $options['postId'] ?? null;
 		$post_type = $options['postType'] ?? 'page';
@@ -697,7 +600,7 @@ class Unified_Widget_Conversion_Service {
 			'direct_widget_styles' => $extracted_styles['inline_styles'],
 			'stats' => [
 				'rules_processed' => count( $global_classes ),
-				'properties_converted' => $this->count_properties_in_global_classes( $global_classes ),
+				'properties_converted' => 0, // Now handled by unified service
 				'global_classes_created' => count( $global_classes ),
 				'css_variables_extracted' => count( $css_variable_definitions ),
 			],

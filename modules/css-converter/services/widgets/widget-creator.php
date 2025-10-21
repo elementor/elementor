@@ -113,9 +113,6 @@ class Widget_Creator {
 			if ( ! empty( $css_processing_result['css_variables'] ) ) {
 				$this->process_css_variables( $css_processing_result['css_variables'] );
 			}
-			if ( ! empty( $css_processing_result['global_classes'] ) ) {
-				$this->create_global_classes( $css_processing_result['global_classes'] );
-			}
 			$post_id = $this->ensure_post_exists( $post_id, $post_type );
 			$document = $this->get_elementor_document( $post_id );
 			$hierarchy_result = $this->hierarchy_processor->process_widget_hierarchy( $styled_widgets );
@@ -174,61 +171,6 @@ class Widget_Creator {
 				'message' => $e->getMessage(),
 			];
 		}
-	}
-	private function create_global_classes( $global_classes ) {
-		foreach ( $global_classes as $class_name => $class_data ) {
-			try {
-				$this->create_single_global_class( $class_name, $class_data );
-				++$this->creation_stats['global_classes_created'];
-			} catch ( \Exception $e ) {
-				$this->creation_stats['warnings'][] = [
-					'type' => 'global_class_creation_failed',
-					'class_name' => $class_name,
-					'message' => $e->getMessage(),
-				];
-			}
-		}
-	}
-	private function create_single_global_class( $class_name, $class_data ) {
-		if ( ! class_exists( 'Elementor\Modules\GlobalClasses\Global_Classes_Repository' ) ) {
-			throw new \Exception( 'Global Classes Repository not available' );
-		}
-		$props = $this->convert_properties_to_global_class_props( $class_data['properties'] ?? [] );
-		if ( $this->should_skip_global_class_creation_due_to_no_valid_properties( $props ) ) {
-			return;
-		}
-		$global_class_data = [
-			'id' => sanitize_title( $class_name ),
-			'label' => $class_name,
-			'type' => 'class',
-			'variants' => [
-				[
-					'meta' => [
-						'breakpoint' => 'desktop',
-						'state' => null,
-					],
-					'props' => $props,
-					'custom_css' => null,
-				],
-			],
-		];
-		$this->save_global_class_to_database( $global_class_data, $class_name );
-	}
-	private function convert_properties_to_global_class_props( $properties ) {
-		$props = [];
-		foreach ( $properties as $property_data ) {
-			if ( ! empty( $property_data['converted_property'] ) ) {
-				$converted = $property_data['converted_property'];
-				$property_key = $property_data['mapped_property'] ?? $property_data['original_property'] ?? 'unknown';
-				if ( is_array( $converted ) && isset( $converted['property'] ) && isset( $converted['value'] ) ) {
-					$atomic_value = $converted['value'];
-					$props[ $property_key ] = $atomic_value;
-				} elseif ( is_array( $converted ) ) {
-					$props[ $property_key ] = $converted;
-				}
-			}
-		}
-		return $props;
 	}
 	private function ensure_post_exists( $post_id, $post_type ) {
 		if ( $post_id ) {
@@ -421,37 +363,6 @@ class Widget_Creator {
 		$widget_id = substr( wp_generate_uuid4(), 0, 8 );
 		$hash = substr( md5( microtime() . wp_rand() ), 0, 7 );
 		return "e-{$widget_id}-{$hash}";
-	}
-	private function get_global_class_properties( $global_class_names ) {
-		$props = [];
-		if ( ! empty( $this->current_css_processing_result['global_classes'] ) ) {
-			foreach ( $global_class_names as $class_name ) {
-				if ( isset( $this->current_css_processing_result['global_classes'][ $class_name ] ) ) {
-					$global_class = $this->current_css_processing_result['global_classes'][ $class_name ];
-					if ( ! empty( $global_class['properties'] ) ) {
-						foreach ( $global_class['properties'] as $property_data ) {
-							if ( ! empty( $property_data['converted_property'] ) ) {
-								$converted = $property_data['converted_property'];
-								$property_key = $property_data['mapped_property'] ?? $property_data['original_property'] ?? 'unknown';
-								$atomic_value = $converted;
-								if ( isset( $props[ $property_key ] ) ) {
-									if ( $this->is_dimensions_prop_type( $atomic_value ) && $this->is_dimensions_prop_type( $props[ $property_key ] ) ) {
-										$props[ $property_key ] = $this->merge_dimensions_prop_types( $props[ $property_key ], $atomic_value );
-									} elseif ( $this->is_border_width_prop_type( $atomic_value ) && $this->is_border_width_prop_type( $props[ $property_key ] ) ) {
-										$props[ $property_key ] = $this->merge_border_width_prop_types( $props[ $property_key ], $atomic_value );
-									} else {
-										$props[ $property_key ] = $atomic_value;
-									}
-								} else {
-									$props[ $property_key ] = $atomic_value;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return $props;
 	}
 	private function is_dimensions_prop_type( $property ): bool {
 		return is_array( $property ) && isset( $property['$$type'] ) && 'dimensions' === $property['$$type'];
@@ -732,9 +643,6 @@ class Widget_Creator {
 			}
 		}
 	}
-	private function should_skip_global_class_creation_due_to_no_valid_properties( array $props ): bool {
-		return empty( $props );
-	}
 	private function create_widget_data_using_new_data_formatter( array $resolved_styles, array $widget, string $widget_id ): array {
 		$result = $this->data_formatter->format_widget_data( $resolved_styles, $widget, $widget_id );
 		return $result;
@@ -744,61 +652,6 @@ class Widget_Creator {
 	}
 	private function merge_settings_without_style_merging( array $settings, array $formatted_settings ): array {
 		return array_merge( $settings, $formatted_settings );
-	}
-	private function get_active_elementor_kit() {
-		return \Elementor\Plugin::$instance->kits_manager->get_active_kit();
-	}
-	private function get_current_global_classes_data( $kit, string $meta_key ): array {
-		return $kit->get_json_meta( $meta_key ) ?: [
-			'items' => [],
-			'order' => [],
-		];
-	}
-	private function class_not_in_order( string $class_id, array $order ): bool {
-		return ! in_array( $class_id, $order );
-	}
-	private function prepare_updated_global_classes_data( array $items, array $order ): array {
-		return [
-			'items' => $items,
-			'order' => $order,
-		];
-	}
-	private function save_global_classes_to_database( $kit, string $meta_key, array $updated_data ): bool {
-		return $kit->update_json_meta( $meta_key, $updated_data );
-	}
-	private function handle_database_error_if_occurred(): void {
-		global $wpdb;
-		if ( $wpdb->last_error ) {
-		}
-	}
-	private function trigger_cache_invalidation_for_global_classes( array $updated_data, array $current_data ): void {
-		do_action( 'elementor/global_classes/update', 'frontend', $updated_data, $current_data );
-	}
-	private function save_global_class_to_database( array $global_class_data, string $class_name ): void {
-		try {
-			$kit = $this->get_active_elementor_kit();
-			$meta_key = '_elementor_global_classes';
-			$current_data = $this->get_current_global_classes_data( $kit, $meta_key );
-			$items = $current_data['items'] ?? [];
-			$order = $current_data['order'] ?? [];
-			$class_id = $global_class_data['id'];
-			$items[ $class_id ] = $global_class_data;
-			if ( $this->class_not_in_order( $class_id, $order ) ) {
-				$order[] = $class_id;
-			}
-			$updated_data = $this->prepare_updated_global_classes_data( $items, $order );
-			$success = $this->save_global_classes_to_database( $kit, $meta_key, $updated_data );
-			if ( ! $success ) {
-				$this->handle_database_error_if_occurred();
-			}
-			if ( $success ) {
-				$this->trigger_cache_invalidation_for_global_classes( $updated_data, $current_data );
-			} else {
-				throw new \Exception( "Failed to update kit meta for global class '{$class_name}'" );
-			}
-		} catch ( \Exception $e ) {
-			throw new \Exception( "Failed to save global class '{$class_name}': " . $e->getMessage() );
-		}
 	}
 
 }
