@@ -38,7 +38,7 @@ export default function AccountContentB( {
 				</svg>
 			</div>
 			<p className="e-onboarding101-variant-b-description e-onboarding101-variant-b-welcome">
-				{ __( 'Welcome!', 'elementor' ) }
+				{ __( 'Welcome', 'elementor' ) }
 			</p>
 			<h1 className="e-onboarding101-variant-b-title">
 				{ __( 'Connect your account to enable your full creative workspace', 'elementor' ) }

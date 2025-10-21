@@ -6,7 +6,7 @@ import ThemeSelectionCard from './theme-selection-card';
 const getThemeData = () => [
 	{
 		slug: 'hello-theme',
-		label: __( 'Hello Theme', 'elementor' ),
+		label: __( 'Hello Theme by Elementor', 'elementor' ),
 		title: __( 'Build without limits', 'elementor' ),
 		description: __( 'A minimal theme combining speed, flexibility, and control', 'elementor' ),
 		illustration: {
@@ -49,7 +49,7 @@ const getThemeData = () => [
 	},
 	{
 		slug: 'hello-biz',
-		label: __( 'Hello Biz', 'elementor' ),
+		label: __( 'Hello Biz by Elementor', 'elementor' ),
 		title: __( 'Instant online presence', 'elementor' ),
 		description: __( 'A business-first theme offering smart layouts, templates, and site parts', 'elementor' ),
 		illustration: {
