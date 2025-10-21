@@ -1,5 +1,6 @@
 import {
 	type ControlComponent,
+	DateTimeControl,
 	HtmlTagControl,
 	ImageControl,
 	KeyValueControl,
@@ -19,6 +20,7 @@ import {
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
+	DateTimePropTypeUtil,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
@@ -41,7 +43,7 @@ export type ControlRegistry = Record<
 const controlTypes = {
 	image: { component: ImageControl, layout: 'full', propTypeUtil: imagePropTypeUtil },
 	'svg-media': { component: SvgMediaControl, layout: 'full', propTypeUtil: imageSrcPropTypeUtil },
-	text: { component: TextControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
+	text: { component: DateTimeControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	textarea: { component: TextAreaControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	size: { component: SizeControl, layout: 'two-columns', propTypeUtil: sizePropTypeUtil },
 	select: { component: SelectControlWrapper, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
@@ -54,6 +56,7 @@ const controlTypes = {
 	'key-value': { component: KeyValueControl, layout: 'full', propTypeUtil: keyValuePropTypeUtil },
 	'html-tag': { component: HtmlTagControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
+	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;
