@@ -6,3 +6,5 @@ export { init } from './init';
 export * from './mcp-registry';
 export { createSampler } from './sampler';
 export const getAngieSdk = () => getSDK();
+
+export { zodToJsonSchema } from 'zod-to-json-schema';

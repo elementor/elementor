@@ -145,12 +145,19 @@ class Style_Schema {
 				'center',
 				'end',
 				'justify',
-			] ),
+			] )->meta('llm', [
+				'propType' => 'string',
+				'description' => 'The horizontal alignment of the text content. CSS values',
+			]),
 			'font-style' => String_Prop_Type::make()->enum( [
 				'normal',
 				'italic',
 				'oblique',
-			] ),
+			] )
+			->meta('llm', [
+				'propType' => 'string',
+				'description' => 'The font style of the text content. CSS values: normal, italic, oblique',
+			]),
 			// TODO: validate text-decoration in more specific way [EDS-524]
 			'text-decoration' => String_Prop_Type::make(),
 			'text-transform' => String_Prop_Type::make()->enum( [

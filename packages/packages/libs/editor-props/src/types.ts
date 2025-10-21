@@ -26,10 +26,19 @@ export type Dependency = {
 	terms: ( DependencyTerm | Dependency )[];
 };
 
+type BasePropTypeMeta = {
+	llm?: {
+		description: string;
+		propType: string;
+		[ key: string ]: unknown;
+	};
+	[ key: string ]: unknown;
+};
+
 type BasePropType< TValue > = {
 	default?: TValue | null;
 	settings: Record< string, unknown >;
-	meta: Record< string, unknown >;
+	meta: BasePropTypeMeta;
 	dependencies?: Dependency;
 };
 

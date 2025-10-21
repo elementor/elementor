@@ -1,42 +1,26 @@
-import { getWidgetsCache } from '@elementor/editor-elements';
+import { getWidgetsCache, type V1ElementConfig } from '@elementor/editor-elements';
+import { zodToJsonSchema } from '@elementor/editor-mcp';
+import { z } from '@elementor/schema';
+
+import { getElementSchemaAsZod } from './get-element-configuration-schema';
+
+type ElTypedElementConfig = V1ElementConfig< {
+	elType?: string;
+} >;
 
 export const generateAvailableTags = (): { tag: string; description: string }[] => {
-	const cache = getWidgetsCache();
+	const cache = getWidgetsCache< ElTypedElementConfig >();
+	if ( ! cache ) {
+		return [];
+	}
 	const customTags = Object.entries( cache )
 		.filter( ( [ , widgetData ] ) => !! widgetData.atomic_controls )
 		.map( ( [ widgetType, widgetData ] ) => ( {
 			tag: `${ widgetType }`,
-			description: widgetData.elType || `A ${ widgetType } element`,
+			description: widgetData.title || widgetData.elType || `A ${ widgetType } element`,
+			configurationSchema: JSON.stringify(
+				zodToJsonSchema( z.object( getElementSchemaAsZod( widgetType ).zodSchema ) )
+			),
 		} ) );
 	return customTags;
-	return [
-		{
-			tag: 'e-flexbox',
-			description: 'A flexible container that arranges its children in a row or column layout',
-		},
-		{
-			tag: 'e-button',
-			description: 'A clickable button element',
-		},
-		{
-			tag: 'e-heading',
-			description: 'A heading element for titles and subtitles',
-		},
-		{
-			tag: 'e-paragraph',
-			description: 'A text element for paragraphs and general text content',
-		},
-		{
-			tag: 'e-divider',
-			description: 'A horizontal or vertical line used to separate content',
-		},
-		{
-			tag: 'e-image',
-			description: 'An element to display images',
-		},
-		{
-			tag: 'e-youtube',
-			description: 'An element to embed YouTube videos',
-		},
-	];
 };
