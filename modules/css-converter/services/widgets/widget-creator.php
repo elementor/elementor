@@ -162,8 +162,7 @@ class Widget_Creator {
 				return;
 			}
 
-			// Generate CSS variable definitions and add them to the page
-			$this->generate_css_variable_definitions_css( $css_variable_definitions );
+		// CSS variable definitions are now handled by Elementor's native system
 
 			// Update stats
 			foreach ( $css_variable_definitions as $variable_name => $variable_data ) {
@@ -802,49 +801,4 @@ class Widget_Creator {
 		}
 	}
 
-	private function generate_css_variable_definitions_css( array $css_variable_definitions ) {
-		if ( empty( $css_variable_definitions ) ) {
-			return;
-		}
-
-		// Generate CSS with variable definitions
-		$css_rules = [];
-		$css_rules[] = 'body {';
-
-		foreach ( $css_variable_definitions as $variable_name => $variable_data ) {
-			$value = $variable_data['value'] ?? '';
-			if ( ! empty( $value ) ) {
-				$css_rules[] = "  {$variable_name}: {$value};";
-			}
-		}
-
-		$css_rules[] = '}';
-		$css_content = implode( "\n", $css_rules );
-
-		// Add CSS to the page via wp_add_inline_style or custom CSS
-		$this->add_css_variable_definitions_to_page( $css_content );
-	}
-
-	private function add_css_variable_definitions_to_page( string $css_content ) {
-		// Add CSS variable definitions to the page
-		// This can be done via Elementor's custom CSS or wp_add_inline_style
-
-		try {
-			// Method 1: Add to Elementor's page custom CSS
-			if ( defined( 'ELEMENTOR_VERSION' ) && \Elementor\Plugin::$instance ) {
-				$kit = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
-				if ( $kit ) {
-					$existing_custom_css = $kit->get_settings( 'custom_css' ) ?? '';
-					$updated_custom_css = $existing_custom_css . "\n\n/* CSS Variable Definitions */\n" . $css_content;
-					$kit->update_settings( [ 'custom_css' => $updated_custom_css ] );
-				}
-			}
-		} catch ( \Exception $e ) {
-
-			// Fallback: Add via WordPress hook
-			add_action( 'wp_head', function() use ( $css_content ) {
-				echo '<style id="elementor-css-variables">' . "\n" . $css_content . "\n" . '</style>';
-			} );
-		}
-	}
 }

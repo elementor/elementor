@@ -22,6 +22,10 @@ class Border_Color_Property_Mapper extends Color_Atomic_Property_Mapper_Base {
 		];
 	}
 
+	public function is_supported_property( string $property ): bool {
+		return in_array( $property, $this->get_supported_properties(), true );
+	}
+
 	protected function should_process_property( string $property ): bool {
 		$individual_properties = [ 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color' ];
 		return ! in_array( $property, $individual_properties, true );

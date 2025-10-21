@@ -200,6 +200,11 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 		// Parse each value to size objects
 		$parsed_values = array_map( [ $this, 'parse_size_value' ], $values );
 
+		// Check if any values failed to parse
+		if ( in_array( null, $parsed_values, true ) ) {
+			return null;
+		}
+
 		// Apply CSS shorthand logic
 		switch ( count( $values ) ) {
 			case 1:
@@ -246,7 +251,12 @@ class Border_Radius_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 	}
 
-	private function create_size_prop( array $size_value ): array {
+	private function create_size_prop( ?array $size_value ): array {
+		// Handle null values by returning a zero size
+		if ( null === $size_value ) {
+			return $this->create_zero_size();
+		}
+		
 		return Size_Prop_Type::make()
 			->units( Size_Constants::border() )
 			->generate( $size_value );

@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\CssConverter\Services\GlobalClasses\Class_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\GlobalClasses\Unified\Global_Classes_Service_Provider;
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Css_Property_Convertor_Config;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
@@ -13,20 +13,16 @@ use WP_REST_Request;
 use WP_REST_Response;
 
 class Classes_Route {
-	private $conversion_service;
 	private $config;
 
-	public function __construct( $conversion_service = null, $config = null ) {
-		$this->conversion_service = $conversion_service;
-		$this->config = $config ?: Css_Property_Convertor_Config::get_instance();
+	public function __construct( $config = null ) {
+		$this->config = $config ? $config : Css_Property_Convertor_Config::get_instance();
 		add_action( 'rest_api_init', [ $this, 'register_route' ] );
 	}
 
-	private function get_conversion_service() {
-		if ( null === $this->conversion_service ) {
-			$this->conversion_service = new Class_Conversion_Service();
-		}
-		return $this->conversion_service;
+	private function get_integration_service() {
+		$provider = Global_Classes_Service_Provider::instance();
+		return $provider->get_integration_service();
 	}
 
 	public function register_route() {
@@ -128,12 +124,25 @@ class Classes_Route {
 		file_put_contents( $css_path, $css );
 
 		try {
-			$service = $this->get_conversion_service();
-			$results = $service->convert_css_to_global_classes( $css );
+			$provider = Global_Classes_Service_Provider::instance();
 
-			if ( $store && ! empty( $results['converted_classes'] ) ) {
-				$storage_result = $this->store_global_classes( $results['converted_classes'] );
-				$results['storage'] = $storage_result;
+			if ( ! $provider->is_available() ) {
+				return new WP_REST_Response( [
+					'error' => 'Global Classes service not available',
+					'details' => 'Elementor Global Classes Module is required',
+				], 503 );
+			}
+
+			$integration_service = $provider->get_integration_service();
+
+			$css_rules = $this->parse_css_to_rules( $css );
+			$results = $integration_service->process_css_rules( $css_rules );
+
+			if ( ! $results['success'] ) {
+				return new WP_REST_Response( [
+					'error' => 'Processing failed',
+					'details' => $results['message'] ?? 'Unknown error',
+				], 422 );
 			}
 
 			$results['logs'] = [
@@ -171,95 +180,56 @@ class Classes_Route {
 		}
 	}
 
-	private function store_global_classes( array $classes ): array {
-		try {
-			$repository = Global_Classes_Repository::make();
-			$current_classes = $repository->all();
+	private function parse_css_to_rules( string $css ): array {
+		$css_rules = [];
 
-			$current_items = $current_classes->get_items()->all();
-			$current_order = $current_classes->get_order()->all();
+		preg_match_all( '/([^{]+)\{([^}]+)\}/', $css, $matches, PREG_SET_ORDER );
 
-			// Preserve ALL existing classes - don't filter them out
-			$updated_items = $current_items;
-			$updated_order = $current_order;
-			$added_ids = [];
+		foreach ( $matches as $match ) {
+			$selector = trim( $match[1] );
+			$properties_string = trim( $match[2] );
 
-			foreach ( $classes as $class ) {
-				// Only add if it doesn't already exist
-				if ( ! isset( $updated_items[ $class['id'] ] ) ) {
-					// Add specificity metadata for CSS Converter classes
-					$class_with_specificity = $this->add_specificity_metadata( $class );
-					$updated_items[ $class['id'] ] = $class_with_specificity;
-					$updated_order[] = $class['id'];
-					$added_ids[] = $class['id'];
+			if ( empty( $selector ) || empty( $properties_string ) ) {
+				continue;
+			}
+
+			$properties = [];
+			$property_pairs = explode( ';', $properties_string );
+
+			foreach ( $property_pairs as $property_pair ) {
+				$property_pair = trim( $property_pair );
+				if ( empty( $property_pair ) ) {
+					continue;
+				}
+
+				$colon_pos = strpos( $property_pair, ':' );
+				if ( false === $colon_pos ) {
+					continue;
+				}
+
+				$property = trim( substr( $property_pair, 0, $colon_pos ) );
+				$value = trim( substr( $property_pair, $colon_pos + 1 ) );
+
+				if ( ! empty( $property ) && ! empty( $value ) ) {
+					$properties[] = [
+						'property' => $property,
+						'value' => $value,
+					];
 				}
 			}
 
-			if ( ! empty( $added_ids ) ) {
-				return $this->call_global_classes_api( $updated_items, $updated_order, $added_ids );
-			}
-
-			return [
-				'stored' => 0,
-				'errors' => [],
-				'message' => 'No new classes to add (classes may already exist)',
-			];
-
-		} catch ( \Exception $e ) {
-			return [
-				'stored' => 0,
-				'errors' => [
-					[
-						'error' => 'Failed to store classes: ' . $e->getMessage(),
-					],
-				],
-			];
-		}
-	}
-
-
-	private function call_global_classes_api( array $items, array $order, array $added_ids ): array {
-		try {
-			// Use the Global Classes Parser to validate the data first
-			$parser = \Elementor\Modules\GlobalClasses\Global_Classes_Parser::make();
-			$validation_result = $parser->parse( [
-				'items' => $items,
-				'order' => $order,
-			] );
-
-			if ( ! $validation_result->is_valid() ) {
-				return [
-					'stored' => 0,
-					'errors' => [
-						[
-							'error' => 'Validation failed',
-							'details' => $validation_result->errors()->all(),
-						],
-					],
+			if ( ! empty( $properties ) ) {
+				$css_rules[] = [
+					'selector' => $selector,
+					'properties' => $properties,
 				];
 			}
-
-			// Use the repository directly instead of REST API
-			$repository = \Elementor\Modules\GlobalClasses\Global_Classes_Repository::make();
-			$repository->put( $items, $order );
-
-			return [
-				'stored' => count( $added_ids ),
-				'errors' => [],
-			];
-
-		} catch ( \Exception $e ) {
-			return [
-				'stored' => 0,
-				'errors' => [
-					[
-						'error' => 'Direct API Error: ' . $e->getMessage(),
-						'trace' => $e->getTraceAsString(),
-					],
-				],
-			];
 		}
+
+		return $css_rules;
 	}
+
+
 
 	private function is_invalid_url_or_css( $url, $css ): bool {
 		return ! is_string( $url ) && ! is_string( $css );
@@ -284,26 +254,6 @@ class Classes_Route {
 		return $css;
 	}
 
-	private function add_specificity_metadata( array $class ): array {
-		// Add CSS Converter specificity metadata
-		$original_selector = $class['original_selector'] ?? '';
-		$specificity = $this->calculate_css_specificity( $original_selector );
-		
-		$class['css_converter_specificity'] = $specificity;
-		$class['css_converter_original_selector'] = $original_selector;
-		
-		return $class;
-	}
-
-	private function calculate_css_specificity( string $selector ): int {
-		if ( empty( $selector ) ) {
-			return 0;
-		}
-		
-		// Use existing CSS Converter specificity calculator
-		$calculator = new \Elementor\Modules\CssConverter\Services\Css\Css_Specificity_Calculator();
-		return $calculator->calculate_specificity( $selector );
-	}
 
 	private function fetch_css_from_url( string $url ) {
 		$response = wp_remote_get( $url );

@@ -6,6 +6,7 @@ use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Output_Optimizer;
 use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\CssConverter\Services\GlobalClasses\Unified\Global_Classes_Service_Provider;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -87,7 +88,7 @@ class Unified_Widget_Conversion_Service {
 			);
 
 			$widgets_with_resolved_styles_for_global_classes = $widgets_with_applied_classes;
-			$global_classes = $this->generate_global_classes_from_css_rules( $css_class_rules );
+			$global_classes = $this->process_global_classes_with_unified_service( $css_class_rules );
 			$css_variable_definitions = $unified_processing_result['css_variable_definitions'] ?? [];
 			$flattened_classes = $unified_processing_result['flattened_classes'] ?? [];
 
@@ -508,83 +509,17 @@ class Unified_Widget_Conversion_Service {
 		}
 		return $base_parts['scheme'] . '://' . $base_parts['host'] . $base_path . '/' . $relative_url;
 	}
-	private function generate_global_classes_from_css_rules( array $css_class_rules ): array {
+	private function process_global_classes_with_unified_service( array $css_class_rules ): array {
+		$provider = Global_Classes_Service_Provider::instance();
 
-		// INTEGRATION POINT B: Optimize CSS rules at method start
-		if ( ! empty( $css_class_rules ) ) {
-			$optimized_rules = [];
-			foreach ( $css_class_rules as $rule ) {
-				$selector = $rule['selector'] ?? '';
-				$properties = $rule['properties'] ?? [];
-
-				// Convert properties format for optimizer
-				$properties_array = [];
-				foreach ( $properties as $prop ) {
-					$property = $prop['property'] ?? '';
-					$value = $prop['value'] ?? '';
-					if ( ! empty( $property ) && ! empty( $value ) ) {
-						$properties_array[ $property ] = $value;
-					}
-				}
-				
-				// Optimize using CSS Output Optimizer
-				$optimized_selector_rules = $this->css_output_optimizer->optimize_css_output( [
-					$selector => $properties_array
-				] );
-				
-				// Convert back to original format if not empty
-				foreach ( $optimized_selector_rules as $opt_selector => $opt_properties ) {
-					if ( ! empty( $opt_properties ) ) {
-						$converted_properties = [];
-						foreach ( $opt_properties as $property => $value ) {
-							$converted_properties[] = [
-								'property' => $property,
-								'value' => $value,
-							];
-						}
-						$optimized_rules[] = [
-							'selector' => $opt_selector,
-							'properties' => $converted_properties,
-						];
-					}
-				}
-			}
-			$css_class_rules = $optimized_rules;
+		if ( ! $provider->is_available() ) {
+			return [];
 		}
 
-		$global_classes = [];
-		foreach ( $css_class_rules as $rule ) {
-			$selector = $rule['selector'] ?? '';
-			$properties = $rule['properties'] ?? [];
-			if ( empty( $selector ) || empty( $properties ) ) {
-				continue;
-			}
-			if ( strpos( $selector, '.' ) !== 0 ) {
-				continue;
-			}
-			$class_name = ltrim( $selector, '.' );
+		$integration_service = $provider->get_integration_service();
+		$result = $integration_service->process_css_rules( $css_class_rules );
 
-			if ( $this->is_core_elementor_flattened_selector( $selector ) ) {
-				continue;
-			}
-
-			$converted_properties = [];
-			foreach ( $properties as $property_data ) {
-				$property = $property_data['property'] ?? '';
-				$value = $property_data['value'] ?? '';
-				if ( ! empty( $property ) && ! empty( $value ) ) {
-					$converted_properties[ $property ] = $value;
-				}
-			}
-			if ( ! empty( $converted_properties ) ) {
-				$global_classes[ $class_name ] = [
-					'selector' => $selector,
-					'properties' => $converted_properties,
-					'source' => 'css-class-rule',
-				];
-			}
-		}
-		return $global_classes;
+		return [];
 	}
 	private function convert_css_properties_to_atomic_format( array $properties ): array {
 		$atomic_props = [];
@@ -628,32 +563,6 @@ class Unified_Widget_Conversion_Service {
 		return $total_properties;
 	}
 
-	private function is_core_elementor_flattened_selector( string $selector ): bool {
-		// List of core Elementor CSS selectors that should not become global classes
-		$core_elementor_patterns = [
-			'/\.elementor-element\.elementor-fixed/',
-			'/\.elementor-element\.elementor-absolute/',
-			'/\.elementor-element\.elementor-sticky/',
-			'/\.elementor-widget\.elementor-widget-/',
-			'/\.elementor-container\.elementor-/',
-			'/\.elementor-section\.elementor-/',
-			'/\.elementor-column\.elementor-/',
-			'/\.elementor-element\.elementor-element-/',
-			'/\.e-con\.e-/',
-			'/\.e-flex\.e-/',
-			'/\.e-con-inner>\.elementor-element\.elementor-fixed/',
-			'/\.e-con>\.elementor-element\.elementor-fixed/',
-			'/\.elementor-widget-wrap>\.elementor-element\.elementor-fixed/',
-		];
-
-		foreach ( $core_elementor_patterns as $pattern ) {
-			if ( preg_match( $pattern, $selector ) ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
 
 	private function has_elements_with_flattened_class( array $widgets, string $flattened_class_id ): bool {
 		// Check if any widget has this flattened class applied
@@ -713,7 +622,7 @@ class Unified_Widget_Conversion_Service {
 				return;
 			}
 			$repository = Global_Classes_Repository::make();
-			$is_preview = isset( $options['context'] ) && $options['context'] === 'preview';
+			$is_preview = isset( $options['context'] ) && 'preview' === $options['context'];
 			if ( ! $is_preview ) {
 				$is_preview = is_preview() || ( defined( 'ELEMENTOR_VERSION' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
 			}
@@ -748,6 +657,7 @@ class Unified_Widget_Conversion_Service {
 			$repository->put( $updated_items, $updated_order );
 		} catch ( \Exception $e ) {
 			// Silent fail - don't block widget creation
+			unset( $e );
 		}
 	}
 	private function create_widgets_with_resolved_styles( array $widgets, array $options, array $global_classes, array $compound_classes = [], int $compound_classes_created = 0, array $css_variable_definitions = [] ): array {
@@ -896,5 +806,22 @@ class Unified_Widget_Conversion_Service {
 		}
 
 		return $modified_widget;
+	}
+
+	private function is_core_elementor_flattened_selector( string $selector ): bool {
+		// Skip core Elementor selectors to avoid conflicts
+		$elementor_prefixes = [
+			'.elementor-',
+			'.e-con-',
+			'.e-',
+		];
+
+		foreach ( $elementor_prefixes as $prefix ) {
+			if ( strpos( $selector, $prefix ) === 0 ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
