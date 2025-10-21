@@ -4,7 +4,11 @@ const HTTP_STATUS = {
 	REQUEST_TIMEOUT: 408,
 };
 
-export async function apiRequest( { data = null, path, method = 'POST' } ) {
+const HTTP_METHODS = {
+	CREATABLE: 'POST',
+};
+
+export async function apiRequest( { data = null, path, method = HTTP_METHODS.CREATABLE } ) {
 	const baseUrl =
 		elementorAppConfig[ 'import-export-customization' ].restApiBaseUrl;
 	const requestUrl = `${ baseUrl }/${ path }`;
@@ -30,7 +34,7 @@ function getRequestOptions( method, data ) {
 		},
 	};
 
-	const shouldIncludeBody = data && ( 'POST' === method || 'PUT' === method || 'PATCH' === method );
+	const shouldIncludeBody = data && HTTP_METHODS.CREATABLE === method;
 
 	if ( ! shouldIncludeBody ) {
 		return requestOptions;

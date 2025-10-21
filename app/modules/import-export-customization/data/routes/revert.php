@@ -32,7 +32,7 @@ class Revert extends Base_Route {
 
 			return Response::success( $revert_result );
 
-		} catch ( \Error $e ) {
+		} catch ( \Error | \Exception $e ) {
 			Plugin::$instance->logger->get_logger()->error( $e->getMessage(), [
 				'meta' => [
 					'trace' => $e->getTraceAsString(),
