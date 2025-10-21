@@ -32,6 +32,7 @@ class Controller extends Base_Controller {
 				'thumbnail_url' => $kit['thumbnailUrl'],
 				'created_at' => $kit['createdAt'],
 				'updated_at' => $kit['updatedAt'],
+				'status' => isset( $kit['status'] ) ? $kit['status'] : 'active',
 			];
 		} );
 
