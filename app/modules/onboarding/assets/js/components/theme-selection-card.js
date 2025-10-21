@@ -43,7 +43,7 @@ export default function ThemeSelectionCard( {
 				{ illustration?.svg }
 			</div>
 			<div className="e-onboarding__theme-card-content">
-				<span className="e-onboarding__theme-card-label">{ label }</span>
+				<span className="e-onboarding__theme-card-label"><span>{ label }</span> by Elementor</span>
 				<h3 className="e-onboarding__theme-card-title">
 					{ title }
 				</h3>
