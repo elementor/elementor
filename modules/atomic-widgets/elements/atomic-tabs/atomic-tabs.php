@@ -155,18 +155,19 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	protected function define_render_context(): array {
 		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
 		
-		$direct_children = $this->get_children();
-		$tabs_menu = $direct_children[0] ?? null;
-		$tabs_content_area = $direct_children[1] ?? null;
+		$direct_children = Collection::make( $this->get_children() );
+		
+		$tabs_menu = $direct_children->filter( fn( $child ) => $child->get_type() === 'e-tabs-menu' )->first();
+		$tabs_content_area = $direct_children->filter( fn( $child ) => $child->get_type() === 'e-tabs-content-area' )->first();
 		
 		$tabs_map = Collection::make( $tabs_menu ? $tabs_menu->get_children() : [] )
-			->filter( fn( $element ) => $element instanceof Atomic_Tab )
+			->filter( fn( $element ) => $element->get_type() === 'e-tab' )
 			->map( fn( $element ) => $element->get_id() )
 			->flip()
 			->all();
 		
 		$tabs_content_map = Collection::make( $tabs_content_area ? $tabs_content_area->get_children() : [] )
-			->filter( fn( $element ) => $element instanceof Atomic_Tab_Content )
+			->filter( fn( $element ) => $element->get_type() === 'e-tab-content' )
 			->map( fn( $element ) => $element->get_id() )
 			->flip()
 			->all();
