@@ -46,12 +46,18 @@ export class RevertKitHandler {
 	}
 
 	handleRevertResponse( response ) {
-		if ( ! response.revert_completed ) {
-			this.handleRevertNoSessions( response );
+		const responseData = this.extractResponseData( response );
+
+		if ( ! responseData.revert_completed ) {
+			this.handleRevertNoSessions( responseData );
 			return;
 		}
 
-		this.showRevertCompletedDialog( response );
+		this.showRevertCompletedDialog( responseData );
+	}
+
+	extractResponseData( response ) {
+		return response.data || response;
 	}
 
 	showRevertCompletedDialog( response ) {
@@ -65,11 +71,11 @@ export class RevertKitHandler {
 		this.showRevertSuccessDialog();
 	}
 
-	handleRevertNoSessions( response ) {
+	handleRevertNoSessions( responseData ) {
 		elementorCommon.dialogsManager
 			.createWidget( 'alert', {
 				message:
-					response.message ||
+					responseData.message ||
 					__( 'No import sessions available to revert.', 'elementor' ),
 			} )
 			.show();
@@ -227,14 +233,46 @@ export class RevertKitHandler {
 
 	defaultSuccessHandler() {}
 
-	defaultErrorHandler() {
+	defaultErrorHandler( error ) {
+		const errorMessage = this.getErrorMessage( error );
+
 		elementorCommon.dialogsManager
 			.createWidget( 'alert', {
-				message: __(
-					'An error occurred while reverting the kit. Please try again.',
-					'elementor',
-				),
+				message: errorMessage,
 			} )
 			.show();
+	}
+
+	getErrorMessage( error ) {
+		let errorMessage = __(
+			'An error occurred while reverting the kit. Please try again.',
+			'elementor',
+		);
+
+		if ( error && error.message ) {
+			if ( this.isConfigurationError( error.message ) ) {
+				errorMessage = __(
+					'Configuration error: The import/export system is not properly configured. Please contact your administrator.',
+					'elementor',
+				);
+			} else if ( this.isNetworkError( error.message ) ) {
+				errorMessage = __(
+					'Network error: Unable to connect to the server. Please check your internet connection and try again.',
+					'elementor',
+				);
+			} else {
+				errorMessage += ' ' + __( 'Error details:', 'elementor' ) + ' ' + error.message;
+			}
+		}
+
+		return errorMessage;
+	}
+
+	isConfigurationError( message ) {
+		return message.includes( 'configuration not found' ) || message.includes( 'restApiBaseUrl is missing' );
+	}
+
+	isNetworkError( message ) {
+		return message.includes( 'fetch' ) || message.includes( 'network' );
 	}
 }
