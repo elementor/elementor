@@ -2,10 +2,6 @@ import { useState, useEffect } from 'react';
 import { IMPORT_STATUS } from '../context/import-context';
 import { ImportExportError } from '../../shared/error/import-export-error';
 
-const HTTP_STATUS = {
-	REQUEST_TIMEOUT: 408,
-};
-
 async function request( {
 	data,
 	path,
@@ -22,18 +18,10 @@ async function request( {
 		body: JSON.stringify( data ),
 	} );
 
-	let result;
-	try {
-		result = await response.json();
-	} catch ( err ) {
-		const errorMessage = `Invalid JSON response: ${ err.message || err }`;
-		const errorCode = HTTP_STATUS.REQUEST_TIMEOUT === response?.status ? 'timeout' : response?.status;
-		throw new ImportExportError( errorMessage, errorCode );
-	}
-
+	const result = await response.json();
 	if ( ! response.ok ) {
 		const errorMessage = result?.data?.message || `HTTP error! with the following code: ${ result?.data?.code }`;
-		const errorCode = HTTP_STATUS.REQUEST_TIMEOUT === response?.status ? 'timeout' : result?.data?.code;
+		const errorCode = 408 === response?.status ? 'timeout' : result?.data?.code;
 		throw new ImportExportError( errorMessage, errorCode );
 	}
 

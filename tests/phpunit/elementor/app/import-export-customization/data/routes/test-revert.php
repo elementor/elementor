@@ -146,7 +146,7 @@ class Test_Revert extends Elementor_Test_Base {
 
 		$mock_module->expects( $this->once() )
 			->method( 'revert_last_imported_kit' )
-			->willThrowException( new \Error( 'revert-error' ) );
+			->willThrowException( new \Error( 'revert_error' ) );
 
 		Plugin::$instance->app->add_component( 'import-export-customization', $mock_module );
 
@@ -155,6 +155,7 @@ class Test_Revert extends Elementor_Test_Base {
 		$this->assertEquals( 500, $response->get_status() );
 		$data = $response->get_data();
 
+		$this->assertEquals( 'revert_error', $data['data']['code'] );
 		$this->assertEquals( 'revert_error', $data['data']['message'] );
 	}
 

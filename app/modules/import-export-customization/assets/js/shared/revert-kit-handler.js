@@ -29,9 +29,9 @@ export class RevertKitHandler {
 			const referrerKitId = this.getReferrerKitId();
 			this.saveToCache( referrerKitId, activeKitName );
 
-			const response = await this.callRevertAPI();
-			this.handleRevertResponse( response );
-			this.onSuccess( response );
+			const { data } = await this.callRevertAPI();
+			this.handleRevertResponse( data );
+			this.onSuccess( data );
 		} catch ( error ) {
 			this.onError( error );
 		}
@@ -45,19 +45,13 @@ export class RevertKitHandler {
 		return result;
 	}
 
-	handleRevertResponse( response ) {
-		const responseData = this.extractResponseData( response );
-
-		if ( ! responseData.revert_completed ) {
-			this.handleRevertNoSessions( responseData );
+	handleRevertResponse( data ) {
+		if ( ! data.revert_completed ) {
+			this.handleRevertNoSessions( data );
 			return;
 		}
 
-		this.showRevertCompletedDialog( responseData );
-	}
-
-	extractResponseData( response ) {
-		return response.data || response;
+		this.showRevertCompletedDialog( data );
 	}
 
 	showRevertCompletedDialog( response ) {
@@ -191,7 +185,7 @@ export class RevertKitHandler {
 	convertNameToTitle( name ) {
 		return name
 			.split( RevertKitHandler.NAME_SEPARATOR_PATTERN )
-			.filter(Boolean)
+			.filter( ( word ) => word.length > 0 )
 			.map( ( word ) => word[ 0 ].toUpperCase() + word.substring( 1 ) )
 			.join( ' ' );
 	}
@@ -268,7 +262,7 @@ export class RevertKitHandler {
 			);
 		}
 
-		return defaultMessage + ' ' + __( 'Error details:', 'elementor' ) + ' ' + error.message;
+		return `${ defaultMessage } ${ __( 'Error details:', 'elementor' ) } ${ error.message }`;
 	}
 
 	isConfigurationError( message ) {
