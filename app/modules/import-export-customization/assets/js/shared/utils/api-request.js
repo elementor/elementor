@@ -1,5 +1,9 @@
 import { ImportExportError } from '../error/import-export-error';
 
+const HTTP_STATUS = {
+	REQUEST_TIMEOUT: 408,
+};
+
 export async function apiRequest( { data = null, path, method = 'POST' } ) {
 	const baseUrl =
 		elementorAppConfig[ 'import-export-customization' ].restApiBaseUrl;
@@ -22,13 +26,20 @@ export async function apiRequest( { data = null, path, method = 'POST' } ) {
 	}
 
 	const response = await fetch( requestUrl, requestOptions );
-	const result = await response.json();
+	let result;
+	try {
+		result = await response.json();
+	} catch ( err ) {
+		const errorMessage = `Invalid JSON response: ${ err.message || err }`;
+		const errorCode = HTTP_STATUS.REQUEST_TIMEOUT === response?.status ? 'timeout' : response?.status;
+		throw new ImportExportError( errorMessage, errorCode );
+	}
 
 	if ( ! response.ok ) {
 		const errorMessage =
 			result?.data?.message ||
 			`HTTP error! with the following code: ${ result?.data?.code }`;
-		const errorCode = 408 === response?.status ? 'timeout' : result?.data?.code;
+		const errorCode = HTTP_STATUS.REQUEST_TIMEOUT === response?.status ? 'timeout' : result?.data?.code;
 		throw new ImportExportError( errorMessage, errorCode );
 	}
 

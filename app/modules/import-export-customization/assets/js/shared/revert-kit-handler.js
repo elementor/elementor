@@ -201,7 +201,7 @@ export class RevertKitHandler {
 		}
 
 		return (
-			new URLSearchParams( this.revertButton.href ).get(
+			new URL( this.revertButton.href ).searchParams.get(
 				RevertKitHandler.URL_PARAM_REFERRER_KIT,
 			) || ''
 		);
@@ -244,28 +244,30 @@ export class RevertKitHandler {
 	}
 
 	getErrorMessage( error ) {
-		let errorMessage = __(
+		const defaultMessage = __(
 			'An error occurred while reverting the kit. Please try again.',
 			'elementor',
 		);
 
-		if ( error && error.message ) {
-			if ( this.isConfigurationError( error.message ) ) {
-				errorMessage = __(
-					'Configuration error: The import/export system is not properly configured. Please contact your administrator.',
-					'elementor',
-				);
-			} else if ( this.isNetworkError( error.message ) ) {
-				errorMessage = __(
-					'Network error: Unable to connect to the server. Please check your internet connection and try again.',
-					'elementor',
-				);
-			} else {
-				errorMessage += ' ' + __( 'Error details:', 'elementor' ) + ' ' + error.message;
-			}
+		if ( ! error || ! error.message ) {
+			return defaultMessage;
 		}
 
-		return errorMessage;
+		if ( this.isConfigurationError( error.message ) ) {
+			return __(
+				'Configuration error: The import/export system is not properly configured. Please contact your administrator.',
+				'elementor',
+			);
+		}
+
+		if ( this.isNetworkError( error.message ) ) {
+			return __(
+				'Network error: Unable to connect to the server. Please check your internet connection and try again.',
+				'elementor',
+			);
+		}
+
+		return defaultMessage + ' ' + __( 'Error details:', 'elementor' ) + ' ' + error.message;
 	}
 
 	isConfigurationError( message ) {

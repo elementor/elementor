@@ -45,7 +45,7 @@ class Revert extends Base_Route {
 				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
 			}
 
-			return Response::error( $e->getMessage(), 'revert_error' );
+			return Response::error( 'revert_error', $e->getMessage() );
 		}
 	}
 
