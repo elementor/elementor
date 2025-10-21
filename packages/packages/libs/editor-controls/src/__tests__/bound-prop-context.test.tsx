@@ -420,4 +420,36 @@ describe( 'useBoundProp', () => {
 		// Assert.
 		expect( result.current.value ).toBe( 'abc' );
 	} );
+
+	it( 'should resetValue to null and call parent setValue with bind meta', () => {
+		// Arrange.
+		const propType = createMockPropType( {
+			kind: 'object',
+			shape: {
+				key: createMockPropType( { kind: 'plain' } ),
+			},
+		} );
+
+		const value = {
+			key: stringPropTypeUtil.create( 'initial' ),
+		};
+
+		const setValue = jest.fn();
+
+		const { result } = renderHook( () => useBoundProp(), {
+			wrapper: ( { children } ) => (
+				<PropProvider value={ value } setValue={ setValue } propType={ propType }>
+					<PropKeyProvider bind="key">{ children }</PropKeyProvider>
+				</PropProvider>
+			),
+		} );
+
+		// Act.
+		act( () => {
+			result.current.resetValue();
+		} );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( { key: null }, undefined, { bind: 'key' } );
+	} );
 } );
