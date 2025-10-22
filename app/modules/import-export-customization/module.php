@@ -267,8 +267,7 @@ class Module extends BaseModule {
 
 	private function get_revert_href(): string {
 		$current_url = add_query_arg( null, null );
-		$nonced_url = wp_nonce_url( $current_url, 'elementor_revert_kit' );
-		return $this->maybe_add_referrer_param( $nonced_url );
+		return $this->maybe_add_referrer_param( $current_url );
 	}
 
 	/**

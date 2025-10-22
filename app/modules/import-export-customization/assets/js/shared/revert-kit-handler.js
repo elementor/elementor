@@ -4,10 +4,6 @@ export class RevertKitHandler {
 	static API_PATH = 'revert';
 	static DIALOG_ID = 'e-revert-kit-deleted-dialog';
 	static URL_PARAM_REFERRER_KIT = 'referrer_kit';
-	static CACHE_KEYS = {
-		REFERRER_KIT_ID: 'referrerKitId',
-		ACTIVE_KIT_NAME: 'activeKitName',
-	};
 	static KIT_DATA_KEY = 'elementor-kit-data';
 	static NAME_SEPARATOR_PATTERN = /[-_]+/;
 
@@ -95,8 +91,7 @@ export class RevertKitHandler {
 	}
 
 	createSuccessHeaderMessage() {
-		const { [ RevertKitHandler.CACHE_KEYS.ACTIVE_KIT_NAME ]: activeKitName } =
-			this.getDataFromCache();
+		const { activeKitName } = this.getDataFromCache();
 
 		/* Translators: %s: Kit name */
 		return __( '%s was successfully deleted', 'elementor' ).replace(
@@ -154,8 +149,7 @@ export class RevertKitHandler {
 	}
 
 	maybeShowReferrerKitDialog() {
-		const { [ RevertKitHandler.CACHE_KEYS.REFERRER_KIT_ID ]: referrerKitId } =
-			this.getDataFromCache();
+		const { referrerKitId } = this.getDataFromCache();
 
 		if ( undefined === referrerKitId ) {
 			return;
@@ -219,8 +213,8 @@ export class RevertKitHandler {
 		sessionStorage.setItem(
 			RevertKitHandler.KIT_DATA_KEY,
 			JSON.stringify( {
-				[ RevertKitHandler.CACHE_KEYS.REFERRER_KIT_ID ]: referrerKitId || '',
-				[ RevertKitHandler.CACHE_KEYS.ACTIVE_KIT_NAME ]: activeKitName || '',
+				referrerKitId: referrerKitId || '',
+				activeKitName: activeKitName || '',
 			} ),
 		);
 	}
