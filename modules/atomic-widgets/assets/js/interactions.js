@@ -8,9 +8,9 @@ function initInteractions() {
         return;
     }
 
-    // Get the animate function
     const animateFunc = typeof animate !== 'undefined' ? animate : window.Motion?.animate;
     const inViewFunc = typeof inView !== 'undefined' ? inView : window.Motion?.inView;
+    
     if (!inViewFunc) {
         console.error('❌ No inview function found');
         return;
@@ -23,37 +23,76 @@ function initInteractions() {
 
     console.log('✅ Animate function ready');
 
-    // Find all elements with data-interactions attribute
     const elements = document.querySelectorAll('[data-interactions]');
-    console.log(`🔍 Found ${elements.length} elements with data-interactions`);
 
-    // Animate each element
     elements.forEach((element, index) => {
         console.log(`🎬 Setting up element ${index} for scroll animation`);
         
-        // Set initial state
-        element.style.opacity = '0';
+        // Parse the data-interactions attribute
+        const interactionsData = element.getAttribute('data-interactions');
+        let interactions = [];
         
         try {
-            inViewFunc(element, () => {
-                console.log(`🎬 Animating in view ${index}`);
-                // Animate in
-                animateFunc(element, { opacity: [0, 1] }, { duration: 1, easing: 'ease-in-out' });
-                
-                // Return cleanup function for when element exits viewport
-                return () => {
-                    console.log(`🎬 Element ${index} exiting viewport`);
-                    // Reset to initial state for next entrance
-                    animateFunc(element, { opacity: [1, 0] }, { duration: 0.5, easing: 'ease-in-out' });
-                };
-            }, { 
-                root: null, // Relative to viewport
-                amount: 0.1 // Trigger when 10% visible
-            });
+            interactions = JSON.parse(interactionsData);
+            console.log(`📋 Parsed interactions for element ${index}:`, interactions);
         } catch (error) {
-            console.error(`❌ Inview failed for element ${index}:`, error);
+            console.error(`❌ Failed to parse interactions data for element ${index}:`, error);
+            return;
         }
+
+        // Process each interaction
+        interactions.forEach((interaction, interactionIndex) => {
+            const animationType = interaction.animation;
+            console.log(`🎭 Processing animation type: ${animationType}`);
+
+            // Get animation keyframes based on type
+            const keyframes = getAnimationKeyframes(animationType);
+            
+            if (!keyframes) {
+                console.warn(`⚠️ Unknown animation type: ${animationType}`);
+                return;
+            }
+
+            try {
+                inViewFunc(element, () => {
+                    console.log(`🎬 Animating ${animationType} for element ${index}, interaction ${interactionIndex}`);
+                    
+                    // Apply the animation with hardcoded options
+                    animateFunc(element, keyframes, { duration: 1, easing: 'ease-in-out' });
+                    
+                    // Return cleanup function for when element exits viewport
+                    return () => {
+                        console.log(`🎬 Element ${index} exiting viewport`);
+                        // You can add exit animations here if needed
+                    };
+                }, { 
+                    root: null, // Relative to viewport
+                    amount: 0.1 // Trigger when 10% visible
+                });
+            } catch (error) {
+                console.error(`❌ Inview failed for element ${index}, interaction ${interactionIndex}:`, error);
+            }
+        });
     });
+}
+
+/**
+ * Get animation keyframes based on animation type
+ * @param {string} animationType - The type of animation (e.g., 'fade-in-left')
+ * @returns {Object|null} Animation keyframes object
+ */
+function getAnimationKeyframes(animationType) {
+    const animations = {
+        'fade-in-left': { 
+            opacity: [0, 1], 
+            x: [-100, 0] 
+        }
+        // Add more animation types here as needed
+        // 'fade-in-right': { opacity: [0, 1], x: [100, 0] },
+        // 'fade-in-up': { opacity: [0, 1], y: [50, 0] }
+    };
+
+    return animations[animationType] || null;
 }
 
 // Initialize
