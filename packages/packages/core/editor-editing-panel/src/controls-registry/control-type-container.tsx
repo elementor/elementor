@@ -18,10 +18,22 @@ const StyledContainer = styled( Box, {
 	...getGridLayout( layout ),
 } ) );
 
-const getGridLayout = ( layout: Omit< ControlLayout, 'custom' > ) => ( {
+const getGridLayout = ( layout: ControlLayout ) => ( {
 	justifyContent: 'space-between',
-	gridTemplateColumns: {
-		full: 'minmax(0, 1fr)',
-		'two-columns': 'repeat(2, minmax(0, 1fr))',
-	}[ layout as string ],
+	...getStyleByLayout( layout ),
 } );
+
+const getStyleByLayout = ( layout: ControlLayout ) => {
+	if ( layout === 'full' ) {
+		return {
+			gridTemplateColumns: 'minmax(0, 1fr)',
+		};
+	}
+
+	if ( layout === 'two-columns' ) {
+		return {
+			alignItems: 'center',
+			gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+		};
+	}
+};
