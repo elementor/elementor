@@ -1,0 +1,183 @@
+{
+	"content": [
+		{
+			"id": "4c6ebeb2",
+			"settings": {
+				"flex_direction": "row"
+			},
+			"elements":[
+				{
+					"id":"5254ca7",
+					"elType":"widget",
+					"settings":{
+						"icon_list":[
+							{
+								"text":"List Item #1",
+								"_id":"387d5a4"
+							},
+							{
+								"text":"List Item #2",
+								"selected_icon":{
+									"value":"fas fa-times",
+									"library":"fa-solid"
+								},
+								"_id":"7422c83"
+							},
+							{
+								"text":"List Item #3",
+								"selected_icon":{
+									"value":"fas fa-dot-circle",
+									"library":"fa-solid"
+								},
+								"_id":"996edda"
+							}
+						],
+						"icon_align":"start"
+					},
+					"elements":[
+
+					],
+					"widgetType":"icon-list"
+				},
+				{
+					"id":"197a8d6",
+					"elType":"widget",
+					"settings":{
+						"icon_list":[
+							{
+								"text":"List Item #1",
+								"_id":"387d5a4"
+							},
+							{
+								"text":"List Item #2",
+								"selected_icon":{
+									"value":"fas fa-times",
+									"library":"fa-solid"
+								},
+								"_id":"7422c83"
+							},
+							{
+								"text":"List Item #3",
+								"selected_icon":{
+									"value":"fas fa-dot-circle",
+									"library":"fa-solid"
+								},
+								"_id":"996edda"
+							}
+						],
+						"icon_align":"center"
+					},
+					"elements":[
+
+					],
+					"widgetType":"icon-list"
+				},
+				{
+					"id":"6def437",
+					"elType":"widget",
+					"settings":{
+						"icon_list":[
+							{
+								"text":"List Item #1",
+								"_id":"387d5a4"
+							},
+							{
+								"text":"List Item #2",
+								"selected_icon":{
+									"value":"fas fa-times",
+									"library":"fa-solid"
+								},
+								"_id":"7422c83"
+							},
+							{
+								"text":"List Item #3",
+								"selected_icon":{
+									"value":"fas fa-dot-circle",
+									"library":"fa-solid"
+								},
+								"_id":"996edda"
+							}
+						],
+						"icon_align":"end"
+					},
+					"elements":[
+
+					],
+					"widgetType":"icon-list"
+				},
+				{
+					"id":"be97a4f",
+					"elType":"widget",
+					"settings":{
+						"icon_list":[
+							{
+								"text":"List Item #1",
+								"_id":"387d5a4"
+							},
+							{
+								"text":"List Item #2",
+								"selected_icon":{
+									"value":"fas fa-times",
+									"library":"fa-solid"
+								},
+								"_id":"7422c83"
+							},
+							{
+								"text":"List Item #3",
+								"selected_icon":{
+									"value":"fas fa-dot-circle",
+									"library":"fa-solid"
+								},
+								"_id":"996edda"
+							}
+						],
+						"icon_align":"left"
+					},
+					"elements":[
+
+					],
+					"widgetType":"icon-list"
+				},
+				{
+					"id":"f9ce3f1",
+					"elType":"widget",
+					"settings":{
+						"icon_list":[
+							{
+								"text":"List Item #1",
+								"_id":"387d5a4"
+							},
+							{
+								"text":"List Item #2",
+								"selected_icon":{
+									"value":"fas fa-times",
+									"library":"fa-solid"
+								},
+								"_id":"7422c83"
+							},
+							{
+								"text":"List Item #3",
+								"selected_icon":{
+									"value":"fas fa-dot-circle",
+									"library":"fa-solid"
+								},
+								"_id":"996edda"
+							}
+						],
+						"icon_align":"right"
+					},
+					"elements":[
+
+					],
+					"widgetType":"icon-list"
+				}
+			],
+			"isInner": false,
+			"elType": "container"
+		}
+	],
+	"page_settings": [],
+	"version": "0.4",
+	"title": "icon-list-test",
+	"type": "page"
+}
