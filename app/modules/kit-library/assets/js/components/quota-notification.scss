@@ -1,3 +1,7 @@
+:root {
+	--text-secondary: #3F444B;
+}
+
 .e-kit-library__quota-notification {
 	display: flex;
 	align-items: flex-start;
@@ -43,6 +47,7 @@
 		font-size: 13px;
 
 		span {
+			color: var(--text-secondary);
 			font-size: 13px;
 		}
 	}
@@ -51,7 +56,7 @@
 		color: inherit;
 		text-decoration: underline;
 		font-size: 13px;
-		font-weight: 500;
+		font-weight: 400;
 
 		&:hover {
 			opacity: 0.8;
