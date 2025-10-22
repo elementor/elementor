@@ -45,7 +45,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'default-active-tab' => String_Prop_Type::make()
-				->meta( 'frontend_available', true ),
+				->frontend_available(),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
