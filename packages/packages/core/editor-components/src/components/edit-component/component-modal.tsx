@@ -2,27 +2,21 @@ import * as React from 'react';
 import { type CSSProperties, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { getCanvasIframeDocument } from '@elementor/editor-canvas';
-import { __useNavigateToDocument as useNavigateToDocument } from '@elementor/editor-documents';
 import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 
 import { useElementRect } from '../../hooks/use-element-rect';
 
 type ModalProps = {
 	element: HTMLElement;
-	revertId: number;
+	onClose: () => void;
 };
-export function ComponentModal( { element, revertId }: ModalProps ) {
-	const switchToDocument = useNavigateToDocument();
+export function ComponentModal( { element, onClose }: ModalProps ) {
 	const portal = usePortal();
-
-	const resetAndClosePopup = () => {
-		switchToDocument( revertId, { mode: 'autosave', setAsInitial: false } );
-	};
 
 	useEffect( () => {
 		const handleEsc = ( event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' ) {
-				resetAndClosePopup();
+				onClose();
 			}
 		};
 		portal?.body.addEventListener( 'keydown', handleEsc );
@@ -36,10 +30,7 @@ export function ComponentModal( { element, revertId }: ModalProps ) {
 		return null;
 	}
 
-	return createPortal(
-		<BackdropSquares iframe={ portal } element={ element } onClick={ resetAndClosePopup } />,
-		portal.body
-	);
+	return createPortal( <BackdropSquares iframe={ portal } element={ element } onClick={ onClose } />, portal.body );
 }
 
 function BackdropSquares( {
