@@ -17,9 +17,7 @@ export type CreateComponentPayload = {
 
 type GetComponentResponse = Array< Component >;
 
-export type CreateComponentResponse = {
-	created: Record< number, number >;
-};
+export type CreateComponentResponse = Record< number, number >;
 
 export const getParams = ( id: number ) => ( {
 	action: 'get_document_config',

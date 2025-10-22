@@ -56,7 +56,7 @@ async function createComponents(
 
 	const map = new Map< number, number >();
 
-	Object.entries( response.created ).forEach( ( [ key, value ] ) => {
+	Object.entries( response ).forEach( ( [ key, value ] ) => {
 		map.set( Number( key ), value );
 	} );
 

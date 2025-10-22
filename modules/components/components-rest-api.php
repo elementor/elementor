@@ -73,8 +73,7 @@ class Components_REST_API {
 									'type' => 'string',
 									'required' => true,
 									'minLength' => 2,
-									'maxLength' => 50,
-									'sanitize_callback' => 'sanitize_text_field',
+									'maxLength' => 200,
 								],
 								'elements' => [
 									'type' => 'array',
@@ -130,19 +129,19 @@ class Components_REST_API {
 		}
 
 		$created = $items->map_with_keys( function ( $item ) use ( $save_status ) {
-			$name = $item['title'];
+			$name = sanitize_text_field( $item['title'] );
 			$content = $item['elements'];
 
 			$status = Document::STATUS_AUTOSAVE === $save_status
 				? Document::STATUS_DRAFT
-				: Document::STATUS_PUBLISH;
+				: $save_status;
 
 			$component_id = $this->get_repository()->create( $name, $content, $status );
 
 			return [ $item['temp_id'] => $component_id ];
 		} );
 
-		return Response_Builder::make( [ 'created' => (object) $created->all() ] )
+		return Response_Builder::make( (object) $created->all() )
 			->set_status( 201 )
 			->build();
 	}
