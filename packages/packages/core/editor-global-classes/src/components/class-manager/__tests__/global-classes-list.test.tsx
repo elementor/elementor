@@ -99,7 +99,7 @@ describe( 'GlobalClassesList', () => {
 		// Act.
 		fireEvent.input( editableField, { target: { innerText: 'New-Class-Name' } } );
 
-		fireEvent.keyDown( editableField, { key: 'Enter' } );
+		fireEvent.blur( editableField );
 
 		// Assert.
 		expect( editableField ).not.toBeInTheDocument();
@@ -167,7 +167,7 @@ describe( 'GlobalClassesList', () => {
 		// Act.
 		fireEvent.input( editableField, { target: { innerText: 'New-Class-Name' } } );
 
-		fireEvent.keyDown( editableField, { key: 'Enter' } );
+		fireEvent.blur( editableField );
 
 		// Assert.
 		expect( editableField ).not.toBeInTheDocument();
