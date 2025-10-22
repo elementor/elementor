@@ -19,7 +19,7 @@ export const onElementRender = ( {
 	}
 
 	Array.from( handlers.get( elementType )?.values() ?? [] ).forEach( ( handler ) => {
-		const settings = element.getAttribute( 'e-settings' );
+		const settings = element.getAttribute( 'data-e-settings' );
 
 		const unmount = handler( {
 			element,

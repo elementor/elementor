@@ -6,7 +6,7 @@ const createAtomicTabsView = () => {
 			const defaultActiveTab = this.model.getSetting( 'default-active-tab' );
 
 			return defaultActiveTab?.value
-				? { 'e-settings': JSON.stringify( { 'default-active-tab': defaultActiveTab.value } ), ...super.attributes() }
+				? { 'data-e-settings': JSON.stringify( { 'default-active-tab': defaultActiveTab.value } ), ...super.attributes() }
 				: super.attributes();
 		}
 	};
