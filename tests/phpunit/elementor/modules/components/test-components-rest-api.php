@@ -170,7 +170,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 	public function post_create_components_data_provider() {
 		return [
-			'Success full creation with status publish' => [
+			'Successfully created with status publish' => [
 				'input' => [
 					'status' => 'publish',
 					'items' => [
@@ -199,7 +199,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					]
 				]
 			],
-			'Success full creation with status draft' => [
+			'Successfully created with status draft' => [
 				'input' => [
 					'status' => 'draft',
 					'items' => [
@@ -218,7 +218,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					]
 				]
 			],
-			'Success full creation with status autosave' => [
+			'Successfully created with status autosave' => [
 				'input' => [
 					'status' => 'autosave',
 					'items' => [
