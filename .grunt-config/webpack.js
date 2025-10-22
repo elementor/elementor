@@ -326,6 +326,32 @@ const webpackProductionConfig = [
 			...prodSharedOptimization,
 		},
 	},
+	{
+		...prodSharedConfig,
+		output: {
+			...prodSharedConfig.output,
+			uniqueName: frontendOutputUniqueName,
+		},
+		module: frontendModuleRules,
+		plugins: [
+			new RemoveChunksPlugin( '.bundle.min.js' ),
+			...plugins,
+		],
+		name: 'frontend',
+		entry: {
+			// Clone.
+			...frontendEntries,
+		},
+		optimization: {
+			...prodSharedOptimization,
+			runtimeChunk: {
+				name: 'webpack.runtime.min',
+			},
+			splitChunks: {
+				minChunks: 2,
+			},
+		},
+	},
 ];
 
 // Adding .min suffix to production entries.
