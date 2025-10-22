@@ -1,13 +1,8 @@
 import { z } from '@elementor/schema';
 import { createPropUtils } from '../utils/create-prop-utils';
 
-// Define the interaction object schema
-const interactionSchema = z.strictObject({
-    trigger: z.string(),
-    animation: z.string(),
-    type: z.string(),
-    direction: z.string(),
-});
+// Define the interaction as a simple string schema
+const interactionSchema = z.string().default('fade-in-left');
 
 export const interactionPropTypeUtil = createPropUtils(
     'interaction',
