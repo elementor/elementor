@@ -7,15 +7,18 @@ import { type Component, type DocumentStatus } from './types';
 const BASE_URL = 'elementor/v1/components';
 
 export type CreateComponentPayload = {
-	name: string;
-	content: V1ElementData[];
 	status: DocumentStatus;
+	items: Array< {
+		temp_id: number;
+		title: string;
+		elements: V1ElementData[];
+	} >;
 };
 
 type GetComponentResponse = Array< Component >;
 
 export type CreateComponentResponse = {
-	component_id: number;
+	created: Record< number, number >;
 };
 
 export const getParams = ( id: number ) => ( {
