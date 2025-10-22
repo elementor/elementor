@@ -172,6 +172,24 @@ trait Has_Atomic_Base {
 		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
 	}
 
+	public function get_atomic_setting( string $key ) {
+		$schema = static::get_props_schema();
+
+		if ( ! isset( $schema[ $key ] ) ) {
+			return null;
+		}
+
+		$props = $this->get_settings();
+		$prop_value = $props[ $key ] ?? null;
+
+		$single_schema = [ $key => $schema[ $key ] ];
+		$single_props = [ $key => $prop_value ];
+
+		$resolved = Render_Props_Resolver::for_settings()->resolve( $single_schema, $single_props );
+
+		return $resolved[ $key ] ?? null;
+	}
+
 	private function parse_editor_settings( array $data ): array {
 		$editor_data = [];
 

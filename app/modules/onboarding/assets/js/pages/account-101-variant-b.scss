@@ -1,0 +1,217 @@
+.e-onboarding101-variant-b {
+
+        .e-app__footer,
+        .e-onboarding__steps,
+        .e-onboarding__skip-button,
+        .e-onboarding__progress-bar {
+                display: none !important;
+        }
+
+        .e-app__header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                background: white;
+                box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.04);
+        }
+
+        .e-app__content {
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+        }
+
+        .e-onboarding__content {
+                display: flex;
+                align-items: center;
+                padding-block: 7rem;
+        }
+
+        .e-onboarding__page-content {
+                max-width: 700px;
+                width: 700px;
+                text-align: center;
+                padding: 0;
+                margin: 0 auto;
+        }
+
+        .e-onboarding101-variant-b-content-layout {
+
+                .e-onboarding__image,
+                .e-onboarding__action-button,
+                .e-onboarding__skip-button {
+                        display: none;
+                }
+        }
+}
+
+.e-onboarding101-variant-b-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0px;
+        font-family: 'DM Sans', sans-serif;
+        width: 700px;
+        margin: 0 auto;
+
+        .e-onboarding101-variant-b-icon {
+                margin-bottom: 40px;
+
+                svg {
+                        width: 104px;
+                        height: 104px;
+                }
+        }
+
+        .e-onboarding101-variant-b-title {
+                font-family: 'Source Serif Pro', serif;
+                font-weight: 700;
+                font-size: 48px;
+                line-height: 1.3;
+                color: #0c0d0e;
+                margin: 0 0 10px 0;
+                width: 100%;
+                text-align: center;
+        }
+
+        .e-onboarding101-variant-b-description {
+                font-family: 'DM Sans', sans-serif;
+                font-size: 18px;
+                font-weight: 400;
+                line-height: 1.5;
+                color: #3a3f45;
+                letter-spacing: -0.18px;
+                margin: 0 0 40px 0;
+                width: 100%;
+                max-width: 600px;
+                text-align: center;
+        }
+
+        .e-onboarding101-variant-b-welcome {
+                margin-block-end: 5px;
+        }
+
+        .e-onboarding101-variant-b-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                width: 264px;
+                align-items: center;
+                margin-top: 20px;
+        }
+
+        .e-onboarding101-variant-b-button {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 48px;
+                padding: 14px 16px;
+                border-radius: 0;
+                border: none;
+                font-family: 'DM Sans', sans-serif;
+                font-weight: 500;
+                font-size: 18px;
+                line-height: 1;
+                letter-spacing: 0.18px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                white-space: nowrap;
+                width: 100%;
+                text-decoration: none;
+                box-sizing: border-box;
+
+                &--primary {
+                        background: #f3bafd;
+                        color: #0c0d0e;
+
+                        &:hover {
+                                background: #e8a5f8;
+                        }
+
+                        &:active {
+                                background: #dd90f3;
+                        }
+                }
+
+                &--secondary {
+                        background: transparent;
+                        color: #6a727c;
+                        text-decoration: underline;
+                        text-underline-position: from-font;
+
+                        &:hover {
+                                color: #232629;
+                        }
+
+                        &:active {
+                                color: #0c0d0e;
+                        }
+                }
+        }
+}
+
+@media (min-width: 1024px) {
+        .e-onboarding101-variant-b {
+
+                .e-onboarding__content {
+                        min-height: 600px;
+                }
+        }
+}
+
+@media (max-width: 768px) {
+        .e-onboarding101-variant-b {
+                .e-onboarding__page-content {
+                        padding: 20px;
+                        width: calc(100% - 40px);
+                        max-width: 700px;
+                }
+
+                .e-onboarding101-variant-b-content {
+                        width: 100%;
+                }
+
+                .e-onboarding101-variant-b-title {
+                        font-size: 36px;
+                }
+
+                .e-onboarding101-variant-b-buttons {
+                        width: 100%;
+                        max-width: 300px;
+                }
+        }
+}
+
+@media (max-width: 480px) {
+        .e-onboarding101-variant-b {
+                .e-onboarding__page-content {
+                        padding: 15px;
+                        width: calc(100% - 30px);
+                }
+
+                .e-onboarding__content {
+                        padding-block: 2rem;
+                        align-items: flex-start;
+                }
+
+                .e-onboarding101-variant-b-content {
+                        width: 100%;
+                }
+
+                .e-onboarding101-variant-b-title {
+                        font-size: 28px;
+                }
+
+                .e-onboarding101-variant-b-description {
+                        font-size: 16px;
+                }
+
+                .e-onboarding101-variant-b-buttons {
+                        width: 100%;
+                }
+        }
+}

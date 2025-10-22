@@ -16,7 +16,7 @@ import { PopoverGridContainer } from '../components/popover-grid-container';
 import { createControl } from '../create-control';
 import { ColorControl } from './color-control';
 import { SelectControl } from './select-control';
-import { SizeControl } from './size-control';
+import { CUSTOM_SIZE_LABEL, SizeControl } from './size-control';
 
 export const BoxShadowRepeaterControl = createControl( () => {
 	const { propType, value, setValue, disabled } = useBoundProp( boxShadowPropTypeUtil );
@@ -135,11 +135,19 @@ const ItemLabel = ( { value }: { value: ShadowPropValue } ) => {
 	const positionLabel = position?.value || 'outset';
 
 	const sizes = [
-		hOffsetSize + hOffsetUnit,
-		vOffsetSize + vOffsetUnit,
-		blurSize + blurUnit,
-		spreadSize + spreadUnit,
-	].join( ' ' );
+		[ hOffsetSize, hOffsetUnit ],
+		[ vOffsetSize, vOffsetUnit ],
+		[ blurSize, blurUnit ],
+		[ spreadSize, spreadUnit ],
+	]
+		.map( ( [ size, unit ] ) => {
+			if ( unit !== 'custom' ) {
+				return size + unit;
+			}
+
+			return ! size ? CUSTOM_SIZE_LABEL : size;
+		} )
+		.join( ' ' );
 
 	return (
 		<span style={ { textTransform: 'capitalize' } }>

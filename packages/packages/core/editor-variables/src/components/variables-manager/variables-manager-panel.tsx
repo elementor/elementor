@@ -47,6 +47,7 @@ export const { panel, usePanelActions } = createPanel( {
 	onClose: () => {
 		changeEditMode( 'edit' );
 	},
+	isOpenPreviousElement: true,
 } );
 
 export function VariablesManagerPanel() {

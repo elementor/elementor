@@ -6,11 +6,16 @@ import Card from '@elementor/ui/Card';
 import CardActions from '@elementor/ui/CardActions';
 import CardContent from '@elementor/ui/CardContent';
 import CardMedia from '@elementor/ui/CardMedia';
+import { trackPromoClick, getHomeScreenPath } from '../utils/promo-tracking';
 
 const Addons = ( { ...props } ) => {
 	const domain = props.adminUrl.replace( 'wp-admin/', '' );
 	const addonsArray = props.addonsData.repeater;
 	const cardsPerRow = 3 === addonsArray.length ? 3 : 2;
+
+	const handleAddonClick = ( title, url ) => {
+		trackPromoClick( title, url, getHomeScreenPath( 'addons' ) );
+	};
 
 	return (
 		<Paper elevation={ 0 } sx={ { p: 3, display: 'flex', flexDirection: 'column', gap: 2 } }>
@@ -34,7 +39,16 @@ const Addons = ( { ...props } ) => {
 										</Box>
 									</Box>
 									<CardActions sx={ { p: 0 } }>
-										<Button variant="outlined" size="small" color="promotion" href={ item.url } target={ linkTarget }>{ item.button_label }</Button>
+										<Button
+											variant="outlined"
+											size="small"
+											color="promotion"
+											href={ item.url }
+											target={ linkTarget }
+											onClick={ () => handleAddonClick( item.title, item.url ) }
+										>
+											{ item.button_label }
+										</Button>
 									</CardActions>
 								</CardContent>
 							</Card>

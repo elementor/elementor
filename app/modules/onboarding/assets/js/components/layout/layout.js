@@ -7,6 +7,7 @@ import ProgressBar from '../progress-bar/progress-bar';
 import Content from '../../../../../../assets/js/layout/content';
 import Connect from '../../utils/connect';
 import { OnboardingEventTracking } from '../../utils/onboarding-event-tracking';
+import { addExperimentTrackingToUrl } from '../../utils/utils';
 
 function getCurrentStepForTracking( pageId, currentStep ) {
 	return pageId || currentStep || 'account';
@@ -108,7 +109,7 @@ export default function Layout( props ) {
 			text: __( 'My Elementor', 'elementor' ),
 			hideText: false,
 			icon: 'eicon-user-circle-o',
-			url: 'https://my.elementor.com/websites/?utm_source=onboarding-wizard&utm_medium=wp-dash&utm_campaign=my-account&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
+			url: addExperimentTrackingToUrl( 'https://my.elementor.com/websites/?utm_source=onboarding-wizard&utm_medium=wp-dash&utm_campaign=my-account&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion, 'my-elementor-topbar' ),
 			target: '_blank',
 			onClick: () => {
 				elementorCommon.events.dispatchEvent( {
@@ -132,7 +133,7 @@ export default function Layout( props ) {
 			text: __( 'Upgrade', 'elementor' ),
 			hideText: false,
 			className: 'eps-button__go-pro-btn',
-			url: 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion,
+			url: addExperimentTrackingToUrl( 'https://elementor.com/pro/?utm_source=onboarding-wizard&utm_campaign=gopro&utm_medium=wp-dash&utm_content=top-bar&utm_term=' + elementorAppConfig.onboarding.onboardingVersion, 'upgrade-topbar' ),
 			target: '_blank',
 			elRef: setupTopbarUpgradeTracking,
 			onClick: () => {
@@ -154,7 +155,7 @@ export default function Layout( props ) {
 
 	return (
 		<div className="eps-app__lightbox">
-			<div className="eps-app e-onboarding">
+			<div className={ `eps-app e-onboarding ${ props.className || '' }` }>
 				{ ! state.isLibraryConnected &&
 					<Connect
 						buttonRef={ createAccountButton.elRef }
