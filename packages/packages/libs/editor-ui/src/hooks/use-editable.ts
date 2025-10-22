@@ -61,7 +61,7 @@ export const useEditable = ( { value, onSubmit, validation, onClick, onError }: 
 
 		if ( [ 'Enter' ].includes( event.key ) ) {
 			event.preventDefault();
-			// trigger the blur event to submit the value to avoid submitting twice.
+			// submission is invoked only on blur, to avoid issues with double-submission in certain cases
 			if ( ! error ) {
 				ref.current?.blur();
 			}
