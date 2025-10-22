@@ -62,7 +62,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
 
-		const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+		const element = elementorFrame.locator( '.e-con p' ).first();
 		await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 		await expect( element ).toHaveCSS( 'margin-block-start', '-20px' );
@@ -95,7 +95,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
 
-		const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+		const element = elementorFrame.locator( '.e-con p' ).first();
 		await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 		await expect( element ).toHaveCSS( 'margin-block-start', '10px' );
@@ -141,7 +141,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 			// Wait longer for the editor to fully load
 			await page.waitForTimeout( 3000 );
 
-			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+			const element = elementorFrame.locator( '.e-con p' ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 			// Verify that inline CSS has been converted to atomic properties
@@ -195,7 +195,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
 
-		const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+		const element = elementorFrame.locator( '.e-con p' ).first();
 		await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 		await expect( element ).toHaveCSS( 'margin-inline-start', '10px' );
@@ -228,7 +228,7 @@ test.describe( 'Margin Prop Type Integration @prop-types', () => {
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
 
-		const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+		const element = elementorFrame.locator( '.e-con p' ).first();
 		await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 		await expect( element ).toHaveCSS( 'margin-block-start', 'auto' );

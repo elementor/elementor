@@ -119,8 +119,6 @@ class Widget_Hierarchy_Processor {
 		$widget_class = $widget['attributes']['class'] ?? '';
 		
 		// DEBUG: Log widget processing input
-		error_log( "🔍 HIERARCHY_PROCESSOR DEBUG: Processing widget - Type: {$widget_type}, Class: '{$widget_class}', Depth: {$depth}" );
-		error_log( "🔍 HIERARCHY_PROCESSOR DEBUG: Widget attributes before processing: " . json_encode( $widget['attributes'] ?? [] ) );
 		
 		// Add hierarchy metadata to widget
 		$widget['hierarchy_depth'] = $depth;
@@ -139,8 +137,6 @@ class Widget_Hierarchy_Processor {
 		
 		// DEBUG: Log widget processing output
 		$widget_class_after = $widget['attributes']['class'] ?? '';
-		error_log( "🔍 HIERARCHY_PROCESSOR DEBUG: Widget attributes after processing: " . json_encode( $widget['attributes'] ?? [] ) );
-		error_log( "🔍 HIERARCHY_PROCESSOR DEBUG: Processed widget - Type: {$widget_type}, Class: '{$widget_class_after}'" );
 
 		return $widget;
 	}

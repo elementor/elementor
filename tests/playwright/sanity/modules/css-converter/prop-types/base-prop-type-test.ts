@@ -141,7 +141,7 @@ export abstract class BasePropTypeTest {
 	protected async runCssAssertions(
 		testCases: Array<{ index: number; name: string; property: string; expected: string }>,
 		page: any,
-		elementSelector: string = '.e-paragraph-base-converted'
+		elementSelector: string = '.e-con p'
 	): Promise<void> {
 		const elementorFrame = this.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
@@ -219,7 +219,7 @@ export function createPropTypeTest( config: PropTypeTestConfig ) {
 		await testInstance.runCssAssertions(
 			config.testCases,
 			page,
-			config.elementSelector || '.e-paragraph-base-converted'
+			config.elementSelector || '.e-con p'
 		);
 	} );
 }

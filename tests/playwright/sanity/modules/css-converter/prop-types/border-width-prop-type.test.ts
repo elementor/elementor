@@ -69,7 +69,7 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 		await elementorFrame.waitForLoadState();
 
 		// Test all converted paragraph elements
-		const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
+		const paragraphElements = elementorFrame.locator( '.e-con p' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 		// Test border width values
@@ -148,7 +148,7 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				const element = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( testCase.index );
+				const element = elementorFrame.locator( '.e-con p' ).nth( testCase.index );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
@@ -169,7 +169,7 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
-					const frontendElement = page.locator( '.e-paragraph-base-converted' ).nth( testCase.index );
+					const frontendElement = page.locator( '.e-con p' ).nth( testCase.index );
 
 					await test.step( 'Verify CSS property', async () => {
 						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );
@@ -223,7 +223,7 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				const element = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( testCase.index );
+				const element = elementorFrame.locator( '.e-con p' ).nth( testCase.index );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
@@ -244,8 +244,6 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
-					const frontendElement = page.locator( '.e-paragraph-base-converted' ).nth( testCase.index );
-
 					const frontendElement = page.locator( 'p' ).filter( { hasText: /border/i } ).nth( testCase.index );
 
 					await test.step( 'Verify CSS property', async () => {
@@ -277,7 +275,7 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+			const element = elementorFrame.locator( '.e-con p' ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 			// 🔍 DEBUGGING: Get all computed styles for border properties
@@ -413,7 +411,7 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+			const element = elementorFrame.locator( '.e-con p' ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 			await test.step( 'Verify border-width property', async () => {
@@ -431,7 +429,7 @@ test.describe( 'Border Width Prop Type Integration @prop-types', () => {
 			await page.waitForLoadState();
 
 			await test.step( 'Verify border-width on frontend', async () => {
-				const frontendElement = page.locator( '.e-paragraph-base-converted' ).first();
+				const frontendElement = page.locator( '.e-con p' ).first();
 				await expect( frontendElement ).toHaveCSS( 'border-width', '2px' );
 			} );
 		} );

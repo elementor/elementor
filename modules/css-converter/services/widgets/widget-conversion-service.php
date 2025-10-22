@@ -42,7 +42,6 @@ class Widget_Conversion_Service {
 		
 		// Add global CSS override for base styles when zero defaults are enabled
 		if ( $use_zero_defaults ) {
-			error_log( "🔥 CONVERSION_SERVICE: Enabling CSS converter base styles override" );
 			$this->enable_css_converter_base_styles_override();
 		}
 	}
@@ -133,13 +132,9 @@ class Widget_Conversion_Service {
 	}
 
 	public function convert_from_html( $html, $css_urls = [], $follow_imports = false, $options = [] ) {
-		error_log( "🔥 CONVERSION_SERVICE: convert_from_html called" );
-		error_log( "🔥 CONVERSION_SERVICE: HTML length = " . strlen( $html ) );
-		error_log( "🔥 CONVERSION_SERVICE: options = " . json_encode( $options ) );
 		// CSS converter always uses converted widgets with zero defaults
 		$this->use_zero_defaults = true;
 		$this->widget_creator = new Widget_Creator( $this->use_zero_defaults );
-		error_log( "🔥 CONVERSION_SERVICE: Using converted widgets with zero defaults (always enabled)" );
 		
 		$conversion_log = [
 			'start_time' => microtime( true ),
@@ -156,13 +151,11 @@ class Widget_Conversion_Service {
 		$conversion_log['parsed_elements'] = count( $elements );
 		
 		// DEBUG: Log parsed element structure
-		error_log( "WIDGET_CONVERTER_DEBUG: HTML Parser returned " . count( $elements ) . " top-level elements" );
 		foreach ( $elements as $index => $element ) {
 			$tag = $element['tag'] ?? 'unknown';
 			$has_inline_css = ! empty( $element['inline_css'] );
 			$children_count = count( $element['children'] ?? [] );
 			$class_attr = $element['attributes']['class'] ?? '';
-			error_log( "WIDGET_CONVERTER_DEBUG: Element #{$index} - Tag: {$tag}, Class: '{$class_attr}', Has inline CSS: " . ( $has_inline_css ? 'YES' : 'NO' ) . ", Children: {$children_count}" );
 			
 			// Log children structure if any
 			if ( $children_count > 0 ) {
@@ -170,7 +163,6 @@ class Widget_Conversion_Service {
 					$child_tag = $child['tag'] ?? 'unknown';
 					$child_has_inline_css = ! empty( $child['inline_css'] );
 					$child_class_attr = $child['attributes']['class'] ?? '';
-					error_log( "WIDGET_CONVERTER_DEBUG:   Child #{$child_index} - Tag: {$child_tag}, Class: '{$child_class_attr}', Has inline CSS: " . ( $child_has_inline_css ? 'YES' : 'NO' ) );
 				}
 			}
 		}
@@ -186,35 +178,26 @@ class Widget_Conversion_Service {
 		$conversion_log['css_size'] = strlen( $all_css );
 
 		// Step 4: Map HTML elements to widgets
-		error_log( "WIDGET_CONVERTER_DEBUG: Starting widget mapping for " . count( $elements ) . " elements" );
 		$mapped_widgets = $this->widget_mapper->map_elements( $elements );
 		$mapping_stats = $this->widget_mapper->get_mapping_stats( $elements );
 		$conversion_log['mapping_stats'] = $mapping_stats;
 		
 		// DEBUG: Log mapped widgets structure (can be removed in production)
-		// error_log( "WIDGET_CONVERTER_DEBUG: Mapped " . count( $mapped_widgets ) . " widgets" );
 		// foreach ( $mapped_widgets as $index => $widget ) {
 		//	$widget_type = $widget['widget_type'] ?? 'unknown';
 		//	$widget_id = $widget['attributes']['id'] ?? 'no-id';
 		//	$generated_class = $widget['generated_class'] ?? 'no-class';
-		//	error_log( "WIDGET_CONVERTER_DEBUG: Widget #{$index} - Type: {$widget_type}, ID: {$widget_id}, Generated Class: {$generated_class}" );
 		// }
 
 		// Step 5: UNIFIED CSS Processing - eliminates competition between pipelines
-		error_log( "UNIFIED_CONVERTER: Starting unified CSS processing (" . strlen( $all_css ) . " characters)" );
-		error_log( "UNIFIED_CONVERTER: Processing " . count( $mapped_widgets ) . " widgets with unified approach" );
 		
 		$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets );
 		$resolved_widgets = $unified_processing_result['widgets'];
 		$conversion_log['css_processing'] = $unified_processing_result['stats'];
 		
 		// Debug logging for unified processing result
-		error_log( "UNIFIED_CONVERTER: Unified processing completed" );
-		error_log( "UNIFIED_CONVERTER: Total styles collected: " . ( $unified_processing_result['stats']['total_styles'] ?? 0 ) );
-		error_log( "UNIFIED_CONVERTER: Styles by source: " . wp_json_encode( $unified_processing_result['stats']['by_source'] ?? [] ) );
 		
 		// Step 6: Widgets now have resolved styles - no separate CSS application needed
-		error_log( "UNIFIED_CONVERTER: Widgets have resolved styles, skipping separate CSS application" );
 		$styled_widgets = $resolved_widgets;
 		
 		// Step 6.5: Inline styles are now always processed through the optimized global classes pipeline
@@ -296,8 +279,6 @@ class Widget_Conversion_Service {
 				// DEBUG: Log element details (can be removed in production)
 				$element_tag = $element['tag'] ?? 'unknown';
 				$element_id = $element['attributes']['id'] ?? 'no-id';
-				// error_log( "WIDGET_CONVERTER_DEBUG: Processing inline CSS for element #{$element_counter} - Tag: {$element_tag}, ID: {$element_id}" );
-				// error_log( "WIDGET_CONVERTER_DEBUG: Inline CSS properties: " . wp_json_encode( array_keys( $element['inline_css'] ) ) );
 				
 				// Create a unique class name for this element
 				$class_name = 'inline-element-' . $element_counter;
@@ -310,7 +291,6 @@ class Widget_Conversion_Service {
 					$css_rules[] = "  {$property}: {$value}{$important};";
 					
 					// DEBUG: Log each property conversion (can be removed in production)
-					// error_log( "WIDGET_CONVERTER_DEBUG: Converting property: {$property} = {$value}" . ( $important ? ' !important' : '' ) );
 				}
 				
 				if ( ! empty( $css_rules ) ) {
@@ -318,7 +298,6 @@ class Widget_Conversion_Service {
 					$inline_css .= $css_rule_block;
 					
 					// DEBUG: Log generated CSS rule (can be removed in production)
-					// error_log( "WIDGET_CONVERTER_DEBUG: Generated CSS rule for {$class_name}:\n{$css_rule_block}" );
 					
 					// Store the class name in the element for later reference
 					$element['generated_class'] = $class_name;
@@ -345,7 +324,6 @@ class Widget_Conversion_Service {
 			$widget_id = $widget['attributes']['id'] ?? 'no-id';
 			$generated_class = $widget['generated_class'] ?? 'no-class';
 			
-			error_log( "WIDGET_CONVERTER_DEBUG: Applying styles to widget #{$index} - Type: {$widget_type}, ID: {$widget_id}, Generated Class: {$generated_class}" );
 			
 			$widget['applied_styles'] = $this->css_processor->apply_styles_to_widget( $widget, $css_processing_result );
 			
@@ -353,10 +331,8 @@ class Widget_Conversion_Service {
 			$applied = $widget['applied_styles'];
 			$computed_count = count( $applied['computed_styles'] ?? [] );
 			$global_classes_count = count( $applied['global_classes'] ?? [] );
-			error_log( "WIDGET_CONVERTER_DEBUG: Widget #{$index} received {$computed_count} computed styles and {$global_classes_count} global classes" );
 			
 			if ( ! empty( $applied['computed_styles'] ) ) {
-				error_log( "WIDGET_CONVERTER_DEBUG: Widget #{$index} computed styles: " . wp_json_encode( array_keys( $applied['computed_styles'] ) ) );
 			}
 			
 			// Recursively apply styles to nested children
@@ -547,12 +523,10 @@ class Widget_Conversion_Service {
 						$all_css .= $css_content . "\n";
 					}
 				} catch ( \Exception $e ) {
-					error_log( "UNIFIED_CONVERTER: Failed to fetch CSS from {$url}: " . $e->getMessage() );
 				}
 			}
 		}
 
-		error_log( "UNIFIED_CONVERTER: Extracted CSS - Style tags: " . count( $matches[1] ) . ", External URLs: " . count( $css_urls ) );
 
 		return $all_css;
 	}
@@ -572,13 +546,11 @@ class Widget_Conversion_Service {
 			
 			// Recursively prepare child widgets
 			if ( ! empty( $widget['children'] ) ) {
-				error_log( "UNIFIED_CONVERTER: Widget {$widget['widget_type']} has " . count( $widget['children'] ) . " children, preparing recursively..." );
 				$prepared_widget['children'] = $this->prepare_widgets_recursively( $widget['children'] );
 			}
 			
 			$prepared_widgets[] = $prepared_widget;
 			
-			error_log( "UNIFIED_CONVERTER: Prepared widget {$widget['widget_type']} with " . count( $resolved_styles ) . " resolved styles" );
 		}
 		
 		return $prepared_widgets;
@@ -603,7 +575,6 @@ class Widget_Conversion_Service {
 		];
 		
 		// Use the existing widget creator
-		error_log( "UNIFIED_CONVERTER: Creating widgets using existing widget creator" );
 		return $this->widget_creator->create_widgets( $styled_widgets, $css_processing_result, $options );
 	}
 
@@ -615,7 +586,6 @@ class Widget_Conversion_Service {
 			// Use the converted atomic format directly if available, otherwise fall back to raw value
 			$atomic_value = $winning_style['converted_property'] ?? $winning_style['value'];
 			
-			error_log( "UNIFIED_CONVERTER: Converting resolved style {$property}: " . wp_json_encode( $atomic_value ) );
 			
 			// 🚨 CRITICAL FIX: Extract atomic structure and use correct property name
 			if ( is_array( $atomic_value ) ) {
@@ -624,7 +594,6 @@ class Widget_Conversion_Service {
 					if ( is_array( $wrapped_value ) && isset( $wrapped_value['$$type'] ) ) {
 						// Use the wrapped property name (e.g., "margin") instead of original (e.g., "margin-left")
 						$computed_styles[ $wrapped_property ] = $wrapped_value;
-						error_log( "🚨 STYLES FIX: Unwrapped {$property} -> {$wrapped_property}: " . wp_json_encode( $wrapped_value ) );
 						break; // Only process the first wrapped property
 					}
 				}
@@ -647,11 +616,9 @@ class Widget_Conversion_Service {
 	private function enable_css_converter_base_styles_override() {
 		// Set a global flag that CSS converter is active with zero defaults
 		update_option( 'elementor_css_converter_zero_defaults_active', true );
-		error_log( "🔥 CONVERSION_SERVICE: Set global flag for CSS converter zero defaults" );
 		
 		// Invalidate atomic widget base styles cache to force regeneration
 		$this->invalidate_atomic_base_styles_cache();
-		error_log( "🔥 CONVERSION_SERVICE: Invalidated atomic widget base styles cache" );
 	}
 
 	private function invalidate_atomic_base_styles_cache() {
@@ -664,24 +631,19 @@ class Widget_Conversion_Service {
 	}
 
 	public function inject_global_base_styles_override() {
-		error_log( "🔥 GLOBAL_CSS_OVERRIDE: inject_global_base_styles_override called" );
 		
 		// Get current post ID
 		$post_id = get_the_ID();
 		if ( ! $post_id ) {
-			error_log( "🔥 GLOBAL_CSS_OVERRIDE: No post ID found, skipping CSS override" );
 			return;
 		}
 		
-		error_log( "🔥 GLOBAL_CSS_OVERRIDE: Checking post " . $post_id . " for CSS converter widgets" );
 		
 		// Check if this page has CSS converter widgets
 		if ( ! $this->page_has_css_converter_widgets( $post_id ) ) {
-			error_log( "🔥 GLOBAL_CSS_OVERRIDE: No CSS converter widgets found, skipping CSS override" );
 			return;
 		}
 		
-		error_log( "🔥 GLOBAL_CSS_OVERRIDE: CSS converter widgets found, injecting override CSS" );
 		
 		// Inject CSS to override atomic widget base styles
 		echo '<style id="css-converter-global-base-styles-override">';
@@ -690,7 +652,6 @@ class Widget_Conversion_Service {
 		echo '.elementor .e-heading { margin: revert !important; }';
 		echo '</style>';
 		
-		error_log( "🔥 GLOBAL_CSS_OVERRIDE: CSS override injected successfully" );
 	}
 
 	private function page_has_css_converter_widgets( int $post_id ): bool {
@@ -707,7 +668,6 @@ class Widget_Conversion_Service {
 		foreach ( $elements_data as $element_data ) {
 			// Check if this element has CSS converter flag
 			if ( isset( $element_data['editor_settings']['css_converter_widget'] ) && $element_data['editor_settings']['css_converter_widget'] ) {
-				error_log( "🔥 GLOBAL_CSS_OVERRIDE: Found CSS converter widget: " . ( $element_data['widgetType'] ?? 'unknown' ) );
 				return true;
 			}
 			

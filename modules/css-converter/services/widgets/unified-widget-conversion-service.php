@@ -56,22 +56,6 @@ class Unified_Widget_Conversion_Service {
 			$conversion_log['parsed_elements'] = count( $elements );
 
 			// DEBUG: Log parsed element structure with class attributes
-			error_log( "🔍 UNIFIED_SERVICE DEBUG: HTML Parser returned " . count( $elements ) . " top-level elements" );
-			foreach ( $elements as $index => $element ) {
-				$tag = $element['tag'] ?? 'unknown';
-				$class_attr = $element['attributes']['class'] ?? '';
-				$children_count = count( $element['children'] ?? [] );
-				error_log( "🔍 UNIFIED_SERVICE DEBUG: Element #{$index} - Tag: {$tag}, Class: '{$class_attr}', Children: {$children_count}" );
-				
-				// Log children structure if any
-				if ( $children_count > 0 ) {
-					foreach ( $element['children'] as $child_index => $child ) {
-						$child_tag = $child['tag'] ?? 'unknown';
-						$child_class_attr = $child['attributes']['class'] ?? '';
-						error_log( "🔍 UNIFIED_SERVICE DEBUG:   Child #{$child_index} - Tag: {$child_tag}, Class: '{$child_class_attr}'" );
-					}
-				}
-			}
 			$validation_issues = $this->html_parser->validate_html_structure( $elements, 20 );
 			if ( ! empty( $validation_issues ) ) {
 				$conversion_log['warnings'] = array_merge( $conversion_log['warnings'], $validation_issues );
@@ -529,17 +513,11 @@ class Unified_Widget_Conversion_Service {
 		$provider = Global_Classes_Service_Provider::instance();
 
 		if ( ! $provider->is_available() ) {
-			error_log( "🔍 GLOBAL_CLASSES DEBUG: Provider not available" );
 			return [];
 		}
 
 		$integration_service = $provider->get_integration_service();
-		error_log( "🔍 GLOBAL_CLASSES DEBUG: Processing " . count( $css_class_rules ) . " CSS class rules" );
-		error_log( "🔍 GLOBAL_CLASSES DEBUG: CSS class rules: " . json_encode( array_column( $css_class_rules, 'selector' ) ) );
-		
 		$result = $integration_service->process_css_rules( $css_class_rules );
-		
-		error_log( "🔍 GLOBAL_CLASSES DEBUG: Integration service result: " . json_encode( $result ) );
 
 		// FIX: The integration service registers classes but returns statistics
 		// We need to get the actual registered global classes that match our CSS rules
@@ -557,8 +535,6 @@ class Unified_Widget_Conversion_Service {
 				$existing = $repository->all();
 				$items = $existing->get_items()->all();
 				
-				error_log( "🔍 GLOBAL_CLASSES DEBUG: Retrieved " . count( $items ) . " global classes from repository" );
-				
 				// Filter to only return classes that match our CSS selectors
 				$matching_classes = [];
 				foreach ( $css_class_rules as $css_rule ) {
@@ -568,12 +544,8 @@ class Unified_Widget_Conversion_Service {
 					// Check if this class exists in the repository
 					if ( isset( $items[ $class_name ] ) ) {
 						$matching_classes[ $class_name ] = $items[ $class_name ];
-						error_log( "🔍 GLOBAL_CLASSES DEBUG: Found matching global class: " . $class_name );
 					}
 				}
-				
-				error_log( "🔍 GLOBAL_CLASSES DEBUG: Returning " . count( $matching_classes ) . " matching global classes" );
-				error_log( "🔍 GLOBAL_CLASSES DEBUG: Matching class IDs: " . json_encode( array_keys( $matching_classes ) ) );
 				
 				return $matching_classes;
 			}

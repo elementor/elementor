@@ -73,7 +73,7 @@ test.describe( 'Global Classes Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.e-heading-base-converted',
+				selector: '.e-con h1',
 				name: 'hero-title',
 				properties: {
 					color: 'rgb(238, 238, 238)',
@@ -83,7 +83,7 @@ test.describe( 'Global Classes Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.e-paragraph-base-converted',
+				selector: '.e-con p',
 				name: 'hero-subtitle',
 				properties: {
 					color: 'rgb(22, 33, 62)',

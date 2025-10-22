@@ -50,15 +50,8 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 			
 		`;
 
-		console.log( '🔍 DEBUG: Converting HTML with class-base-convertedd letter-spacing and text-transform' );
 		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
 
-		console.log( '🔍 DEBUG: API Result:', {
-			success: apiResult.success,
-			post_id: apiResult.post_id,
-			widgets_created: apiResult.widgets_created,
-			global_classes_created: apiResult.global_classes_created
-		} );
 
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
@@ -74,13 +67,13 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
-		console.log( '🔍 DEBUG: Editor loaded, testing class-base-convertedd properties' );
-
+		
+		
 		await test.step( 'Test class-base-convertedd letter-spacing and text-transform', async () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const heading = elementorFrame.locator( '.e-heading-base-converted' ).filter( { hasText: 'Ready to Get Started?' } );
+			const heading = elementorFrame.locator( '.e-con h1' ).filter( { hasText: 'Ready to Get Started?' } );
 			await heading.waitFor( { state: 'visible', timeout: 10000 } );
 
 			// Get all applied CSS rules
@@ -106,13 +99,7 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 				// Fallback
 			}
 
-			console.log( '🔍 DEBUG: Class-base-convertedd computed styles:', computedStyles );
-
-				// All attributes
-				attributes: Array.from( el.attributes ).reduce( ( acc, attr ) => {
-					acc[ attr.name ] = attr.value;
-					return acc;
-				}, {} ),
+			
 
 			// These are the assertions that were failing in the original test
 			await expect( heading ).toHaveCSS( 'letter-spacing', '1px' );
@@ -123,26 +110,34 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 			await expect( heading ).toHaveCSS( 'font-weight', '700' );
 			await expect( heading ).toHaveCSS( 'color', 'rgb(44, 62, 80)' );
 
-			console.log( '✅ SUCCESS: All class-base-convertedd properties are working correctly!' );
 		} );
 
 		await test.step( 'Test on frontend as well', async () => {
-			console.log( '🔍 DEBUG: Publishing and testing on frontend' );
 			
 			// Save the page first
 			await editor.saveAndReloadPage();
 
 			// Get the page ID and navigate to frontend
 			const pageId = await editor.getPageId();
-			console.log( '🔍 DEBUG: Navigating to frontend page ID:', pageId );
 			await page.goto( `/?p=${ pageId }` );
 			await page.waitForLoadState();
 
-			const frontendHeading = page.locator( '.e-heading-base-converted' ).filter( { hasText: 'Ready to Get Started?' } );
+			const frontendHeading = page.locator( '.e-con h1' ).filter( { hasText: 'Ready to Get Started?' } );
 
 			// Get frontend computed styles for debugging
 			const frontendStyles = await frontendHeading.evaluate( ( el ) => {
 				const styles = window.getComputedStyle( el );
+				const appliedRules = Array.from( el.ownerDocument.styleSheets )
+					.flatMap( sheet => {
+						try {
+							return Array.from( sheet.cssRules );
+						} catch {
+							return [];
+						}
+					} )
+					.filter( rule => rule.selectorText && el.matches( rule.selectorText ) )
+					.map( rule => ( { selector: rule.selectorText, cssText: rule.cssText } ) );
+
 				return {
 					text: el.textContent.trim(),
 					letterSpacing: styles.letterSpacing,
@@ -154,25 +149,31 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 					textShadow: styles.textShadow,
 					display: styles.display,
 					fontFamily: styles.fontFamily,
-				},
 
-				// Applied CSS rules
-				appliedRules,
+					// Applied CSS rules
+					appliedRules,
 
-				// Parent element info
-				parentElement: el.parentElement ? {
-					tagName: el.parentElement.tagName,
-					className: el.parentElement.className,
-					id: el.parentElement.id,
-				} : null,
+					// Parent element info
+					parentElement: el.parentElement ? {
+						tagName: el.parentElement.tagName,
+						className: el.parentElement.className,
+						id: el.parentElement.id,
+					} : null,
+				};
+			} );
 
-			console.log( '✅ SUCCESS: All class-base-convertedd properties working on frontend too!' );
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
+
+			const heading = elementorFrame.locator( '.e-con h1' ).filter( { hasText: 'Ready to Get Started?' } );
+			await heading.waitFor( { state: 'visible', timeout: 10000 } );
+
+
+			await expect( heading ).toHaveCSS( 'letter-spacing', '1px' );
+			await expect( heading ).toHaveCSS( 'text-transform', 'uppercase' );
+			await expect( heading ).toHaveCSS( 'font-size', '36px' );
+			await expect( heading ).toHaveCSS( 'font-weight', '700' );
+			await expect( heading ).toHaveCSS( 'color', 'rgb(44, 62, 80)' );
 		} );
-
-		await expect( heading ).toHaveCSS( 'letter-spacing', '1px' );
-		await expect( heading ).toHaveCSS( 'text-transform', 'uppercase' );
-		await expect( heading ).toHaveCSS( 'font-size', '36px' );
-		await expect( heading ).toHaveCSS( 'font-weight', '700' );
-		await expect( heading ).toHaveCSS( 'color', 'rgb(44, 62, 80)' );
 	} );
 } );

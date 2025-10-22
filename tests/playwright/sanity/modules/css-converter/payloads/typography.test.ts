@@ -71,7 +71,7 @@ test.describe( 'Typography Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.e-heading-base-converted:first-of-type',
+				selector: '.e-con h1:first-of-type',
 				name: 'main-heading',
 				properties: {
 					'font-size': '42px',
@@ -83,7 +83,7 @@ test.describe( 'Typography Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.e-heading-base-converted:nth-of-type(2)',
+				selector: '.e-con h1:nth-of-type(2)',
 				name: 'subheading',
 				properties: {
 					'font-size': '28px',
@@ -93,7 +93,7 @@ test.describe( 'Typography Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.e-paragraph-base-converted:first-of-type',
+				selector: '.e-con p:first-of-type',
 				name: 'paragraph',
 				properties: {
 					'font-size': '18px',
@@ -104,7 +104,7 @@ test.describe( 'Typography Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.e-paragraph-base-converted:last-of-type',
+				selector: '.e-con p:last-of-type',
 				name: 'blockquote',
 				properties: {
 					'border-left': '4px solid rgb(52, 152, 219)',

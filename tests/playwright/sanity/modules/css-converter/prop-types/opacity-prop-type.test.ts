@@ -70,7 +70,7 @@ test.describe( 'Opacity Prop Type Integration @prop-types', () => {
 		await elementorFrame.waitForLoadState();
 
 		// Test all converted paragraph elements
-		const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
+		const paragraphElements = elementorFrame.locator( '.e-con p' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 		// Test opacity values using specific text content selectors

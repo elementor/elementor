@@ -216,26 +216,21 @@ class Module extends BaseModule {
 	}
 
 	public function debug_editor_widget_loading() {
-		error_log( "🔥🔥🔥 EDITOR: Before enqueue scripts called" );
 		
 		$post_id = get_the_ID();
-		error_log( "🔥🔥🔥 EDITOR: Post ID = " . ( $post_id ?: 'N/A' ) );
 		
 		if ( ! $post_id ) {
-			error_log( "🔥🔥🔥 EDITOR: No post ID, skipping widget data check" );
 			return;
 		}
 		
 		// Check post data
 		$elementor_data = get_post_meta( $post_id, '_elementor_data', true );
 		if ( ! $elementor_data ) {
-			error_log( "🔥🔥🔥 EDITOR: No Elementor data found for post {$post_id}" );
 			return;
 		}
 		
 		$data = is_string( $elementor_data ) ? json_decode( $elementor_data, true ) : $elementor_data;
 		if ( ! $data || ! is_array( $data ) ) {
-			error_log( "🔥🔥🔥 EDITOR: Invalid Elementor data format" );
 			return;
 		}
 		
@@ -248,7 +243,6 @@ class Module extends BaseModule {
 		} );
 		
 		$unique_types = array_unique( $widget_types );
-		error_log( "🔥🔥🔥 EDITOR: Widget types in post data: " . implode( ', ', $unique_types ) );
 		
 		// Check for converted widgets
 		$converted_types = array_filter( $unique_types, function( $type ) {
@@ -256,21 +250,15 @@ class Module extends BaseModule {
 		} );
 		
 		if ( ! empty( $converted_types ) ) {
-			error_log( "🔥🔥🔥 EDITOR: CONVERTED WIDGETS FOUND IN DATA ✅" );
-			error_log( "🔥🔥🔥 EDITOR: Converted types: " . implode( ', ', $converted_types ) );
 			
 			// Verify if they're registered
 			foreach ( $converted_types as $type ) {
 				$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
 				if ( $widget ) {
-					error_log( "🔥🔥🔥 EDITOR: {$type} IS REGISTERED ✅" );
-					error_log( "🔥🔥🔥 EDITOR: Widget class = " . get_class( $widget ) );
 				} else {
-					error_log( "🔥🔥🔥 EDITOR: {$type} NOT REGISTERED ❌❌❌" );
 				}
 			}
 		} else {
-			error_log( "🔥🔥🔥 EDITOR: No converted widgets found in post data" );
 		}
 	}
 

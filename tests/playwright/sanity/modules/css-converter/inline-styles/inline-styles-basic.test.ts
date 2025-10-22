@@ -61,17 +61,17 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+			const element = elementorFrame.locator( '.e-con p' ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 			const elementClass = await element.getAttribute( 'class' );
-			expect( elementClass ).toContain( 'e-paragraph-base-converted' );
+			expect( elementClass ).toContain( 'p' );
 			expect( elementClass ).toMatch( /e-[a-f0-9-]+/ );
 		} );
 
 		await test.step( 'Verify inline style is applied', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+			const element = elementorFrame.locator( '.e-con p' ).first();
 
 			await expect( element ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
 		} );
@@ -107,7 +107,7 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const elements = elementorFrame.locator( '.e-paragraph-base-converted' );
+			const elements = elementorFrame.locator( '.e-con p' );
 			const count = await elements.count();
 			expect( count ).toBe( 3 );
 
@@ -125,13 +125,13 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 		await test.step( 'Verify each inline style is applied correctly', async () => {
 			const elementorFrame = editor.getPreviewFrame();
 
-			const redElement = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( 0 );
+			const redElement = elementorFrame.locator( '.e-con p' ).nth( 0 );
 			await expect( redElement ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
 
-			const blueElement = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( 1 );
+			const blueElement = elementorFrame.locator( '.e-con p' ).nth( 1 );
 			await expect( blueElement ).toHaveCSS( 'color', 'rgb(0, 0, 255)' );
 
-			const greenElement = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( 2 );
+			const greenElement = elementorFrame.locator( '.e-con p' ).nth( 2 );
 			await expect( greenElement ).toHaveCSS( 'color', 'rgb(0, 128, 0)' );
 		} );
 	} );
@@ -160,7 +160,7 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+			const element = elementorFrame.locator( '.e-con p' ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 			await expect( element ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
@@ -201,20 +201,20 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const heading = elementorFrame.locator( '.e-heading-base-converted' ).first();
+			const heading = elementorFrame.locator( '.e-con h1' ).first();
 			await heading.waitFor( { state: 'visible', timeout: 10000 } );
 			await expect( heading ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
 		} );
 
 		await test.step( 'Verify inline styles on p', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			const paragraph = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+			const paragraph = elementorFrame.locator( '.e-con p' ).first();
 			await expect( paragraph ).toHaveCSS( 'color', 'rgb(0, 0, 255)' );
 		} );
 
 		await test.step( 'Verify inline styles on div', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			const divBlock = elementorFrame.locator( '.e-div-block-base-converted' ).first();
+			const divBlock = elementorFrame.locator( '[data-element_type="e-div-block"]' ).first();
 			await divBlock.waitFor( { state: 'visible', timeout: 10000 } );
 			await expect( divBlock ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
 			await expect( divBlock ).toHaveCSS( 'padding', '20px' );

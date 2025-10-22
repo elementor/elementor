@@ -77,7 +77,7 @@ test.describe( 'Gap Prop Type Integration @prop-types', () => {
 
 		const elementorFrame = editor.getPreviewFrame();
 		await test.step( 'Verify gap properties are applied correctly', async () => {
-			const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
+			const paragraphElements = elementorFrame.locator( '.e-con p' );
 			await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 			await test.step( 'Verify single gap value', async () => {
@@ -168,7 +168,7 @@ test.describe( 'Gap Prop Type Integration @prop-types', () => {
 
 		const elementorFrame = editor.getPreviewFrame();
 		await test.step( 'Verify gap edge cases are applied correctly', async () => {
-			const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
+			const paragraphElements = elementorFrame.locator( '.e-con p' );
 			await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 			await test.step( 'Verify gap with converted em units', async () => {
@@ -239,7 +239,7 @@ test.describe( 'Gap Prop Type Integration @prop-types', () => {
 
 		const elementorFrame = editor.getPreviewFrame();
 		await test.step( 'Verify border: 0 and gap: 0 are converted correctly', async () => {
-			const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
+			const paragraphElements = elementorFrame.locator( '.e-con p' );
 			await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 			const element = paragraphElements.first();

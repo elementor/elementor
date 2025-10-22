@@ -108,10 +108,7 @@ export class CssConverterHelper {
 			options: defaultOptions,
 		};
 
-		console.log( '🔥🔥🔥 MAX_DEBUG: About to call CSS converter API' );
-		console.log( '🔥🔥🔥 MAX_DEBUG: URL:', '/wp-json/elementor/v2/widget-converter' );
-		console.log( '🔥🔥🔥 MAX_DEBUG: Data:', JSON.stringify( payload, null, 2 ) );
-
+		
 		const apiResponse = await request.post( '/wp-json/elementor/v2/widget-converter', {
 			headers: {
 				'X-DEV-TOKEN': this.devToken,
@@ -120,11 +117,8 @@ export class CssConverterHelper {
 			data: payload,
 		} );
 
-		console.log( '🔥🔥🔥 MAX_DEBUG: API response status:', apiResponse.status() );
-		console.log( '🔥🔥🔥 MAX_DEBUG: API response OK:', apiResponse.ok() );
 		
 		const responseJson = await apiResponse.json() as CssConverterResponse;
-		console.log( '🔥🔥🔥 MAX_DEBUG: API response body:', JSON.stringify( responseJson, null, 2 ) );
 		
 		return responseJson;
 	}

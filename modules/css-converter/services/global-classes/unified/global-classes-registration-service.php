@@ -12,11 +12,8 @@ class Global_Classes_Registration_Service {
 	const MAX_CLASSES_LIMIT = 50;
 
 	public function register_with_elementor( array $converted_classes ): array {
-		error_log( "🔍 REGISTRATION DEBUG: Starting registration with " . count( $converted_classes ) . " converted classes" );
-		error_log( "🔍 REGISTRATION DEBUG: Converted classes: " . json_encode( array_keys( $converted_classes ) ) );
 		
 		if ( ! $this->is_global_classes_available() ) {
-			error_log( "🔍 REGISTRATION DEBUG: Global Classes Module not available" );
 			return [
 				'registered' => 0,
 				'skipped' => count( $converted_classes ),
@@ -27,7 +24,6 @@ class Global_Classes_Registration_Service {
 		$repository = $this->get_global_classes_repository();
 
 		if ( ! $repository ) {
-			error_log( "🔍 REGISTRATION DEBUG: Global Classes Repository not accessible" );
 			return [
 				'registered' => 0,
 				'skipped' => count( $converted_classes ),
@@ -39,18 +35,12 @@ class Global_Classes_Registration_Service {
 		$items = $existing->get_items()->all();
 		$order = $existing->get_order()->all();
 
-		error_log( "🔍 REGISTRATION DEBUG: Found " . count( $items ) . " existing global classes" );
-		error_log( "🔍 REGISTRATION DEBUG: Existing class IDs: " . json_encode( array_keys( $items ) ) );
 
 		$existing_labels = $this->extract_existing_labels( $items );
-		error_log( "🔍 REGISTRATION DEBUG: Existing labels: " . json_encode( $existing_labels ) );
 
 		$new_classes = $this->filter_new_classes( $converted_classes, $existing_labels );
-		error_log( "🔍 REGISTRATION DEBUG: After filtering, " . count( $new_classes ) . " new classes remain" );
-		error_log( "🔍 REGISTRATION DEBUG: New classes: " . json_encode( array_keys( $new_classes ) ) );
 
 		if ( empty( $new_classes ) ) {
-			error_log( "🔍 REGISTRATION DEBUG: No new classes to register after filtering" );
 			return [
 				'registered' => 0,
 				'skipped' => count( $converted_classes ),

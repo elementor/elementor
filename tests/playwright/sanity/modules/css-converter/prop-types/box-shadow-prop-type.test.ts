@@ -91,7 +91,7 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				const element = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( testCase.index );
+				const element = elementorFrame.locator( '.e-con p' ).nth( testCase.index );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
@@ -113,7 +113,7 @@ test.describe( 'Box Shadow Prop Type Integration @prop-types', () => {
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
-					const frontendElement = page.locator( '.e-paragraph-base-converted' ).nth( testCase.index );
+					const frontendElement = page.locator( '.e-con p' ).nth( testCase.index );
 
 					await test.step( 'Verify CSS property', async () => {
 						// Use toHaveCSS with regex pattern for box-shadow verification
