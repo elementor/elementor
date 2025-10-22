@@ -266,8 +266,9 @@ class Module extends BaseModule {
 	}
 
 	private function get_revert_href(): string {
-		$current_url = add_query_arg( null, null );
-		return $this->maybe_add_referrer_param( $current_url );
+		$admin_post_url = admin_url( 'admin-post.php?action=elementor_revert_kit' );
+		$nonced_admin_post_url = wp_nonce_url( $admin_post_url, 'elementor_revert_kit' );
+		return $this->maybe_add_referrer_param( $nonced_admin_post_url );
 	}
 
 	/**
@@ -285,16 +286,6 @@ class Module extends BaseModule {
 		}
 
 		return add_query_arg( $param_name, sanitize_key( $_GET[ $param_name ] ), $href );
-	}
-
-	/**
-	 * Get referrer kit ID from current request
-	 *
-	 * @return string
-	 */
-	private function get_referrer_kit_id_from_request(): string {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Called via REST API with its own authentication
-		return sanitize_key( $_GET['referrer_kit'] ?? '' );
 	}
 
 	/**
@@ -347,8 +338,6 @@ class Module extends BaseModule {
 			'id' => $kit_id,
 		] );
 
-		$this->save_upload_session_data();
-
 		return [
 			'session' => $this->import->get_session_id(),
 			'manifest' => $this->import->get_manifest(),
@@ -393,10 +382,6 @@ class Module extends BaseModule {
 		}
 
 		return $this->import->run();
-	}
-
-	private function save_upload_session_data(): void {
-		$this->import->init_import_session();
 	}
 
 	/**
@@ -447,40 +432,36 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Handle revert kit request.
+	 * Handle revert kit ajax request.
 	 */
-	public function revert_last_imported_kit(): array {
+	public function revert_last_imported_kit() {
 		$this->revert = new Revert();
 		$this->revert->register_default_runners();
-
-		$import_sessions = Revert::get_import_sessions();
-
-		if ( empty( $import_sessions ) ) {
-			return [
-				'revert_completed' => false,
-				'message' => __( 'No import sessions available to revert.', 'elementor' ),
-				'referrer_kit_id' => $this->get_referrer_kit_id_from_request(),
-				'show_referrer_dialog' => false,
-			];
-		}
 
 		do_action( 'elementor/import-export-customization/revert-kit', $this->revert );
 
 		$this->revert->run();
+	}
 
-		$referrer_kit_id = $this->get_referrer_kit_id_from_request();
 
-		return [
-			'revert_completed' => true,
-			'referrer_kit_id' => $referrer_kit_id,
-			'show_referrer_dialog' => ! empty( $referrer_kit_id ),
-		];
+	/**
+	 * Handle revert last imported kit ajax request.
+	 */
+	public function handle_revert_last_imported_kit() {
+		check_admin_referer( 'elementor_revert_kit' );
+
+		$this->revert_last_imported_kit();
+
+		wp_safe_redirect( admin_url( 'admin.php?page=' . Tools::PAGE_ID . '#tab-import-export-kit' ) );
+		die;
 	}
 
 	/**
 	 * Register appropriate actions.
 	 */
 	private function register_actions() {
+		add_action( 'admin_post_elementor_revert_kit', [ $this, 'handle_revert_last_imported_kit' ] );
+
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 
 		$page_id = Tools::PAGE_ID;
@@ -576,21 +557,9 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'import-export-customization-admin',
 			$this->get_js_assets_url( 'import-export-customization-admin' ),
-			[ 'elementor-common', 'wp-api-fetch' ],
+			[ 'elementor-common' ],
 			ELEMENTOR_VERSION,
 			true
-		);
-
-		wp_localize_script(
-			'import-export-customization-admin',
-			'elementorAppConfig',
-			[
-				'import-export-customization' => [
-					'restApiBaseUrl' => Controller::get_base_url(),
-					'restNonce' => wp_create_nonce( 'wp_rest' ),
-					'restUrl' => rest_url(),
-				],
-			]
 		);
 	}
 
