@@ -1,5 +1,9 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
-import { CreateTemplatedElementTypeOptions, registerElementType, settingsTransformersRegistry } from '@elementor/editor-canvas';
+import {
+	type CreateTemplatedElementTypeOptions,
+	registerElementType,
+	settingsTransformersRegistry,
+} from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
@@ -21,12 +25,10 @@ import { beforeSave } from './utils/before-save';
 
 const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
 
-
-
 export function init() {
 	stylesRepository.register( componentsStylesProvider );
 	registerSlice( slice );
-	registerElementType( TYPE,(options: CreateTemplatedElementTypeOptions)=> createComponentType( options) );
+	registerElementType( TYPE, ( options: CreateTemplatedElementTypeOptions ) => createComponentType( options ) );
 	registerDataHook( 'dependency', 'editor/documents/close', ( args ) => {
 		const document = getV1CurrentDocument();
 		if ( document.config.type === COMPONENT_DOCUMENT_TYPE ) {
