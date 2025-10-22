@@ -34,10 +34,7 @@ class Components_REST_API {
 	}
 
 	private function get_lock_manger() {
-		if ( ! $this->lock_manager ) {
-			$this->lock_manager = new Document_Lock_Manager( self::LOCK_DOCUMENT_TYPE_NAME );
-		}
-		return $this->lock_manager;
+		return Module::get_lock_manager_instance();
 	}
 
 	private function register_routes() {

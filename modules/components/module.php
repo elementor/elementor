@@ -58,6 +58,16 @@ class Module extends BaseModule {
 		return $this->lock_manager;
 	}
 
+	public static function get_lock_manager_instance() {
+		static $instance = null;
+		
+		if ( $instance === null ) {
+			$instance = new Document_Lock_Manager( Components_REST_API::LOCK_DOCUMENT_TYPE_NAME );
+		}
+		
+		return $instance;
+	}
+
 	private function add_packages( $packages ) {
 		return array_merge( $packages, self::PACKAGES );
 	}
