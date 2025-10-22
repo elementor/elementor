@@ -4,10 +4,9 @@ const createAtomicTabsView = () => {
 	return class AtomicTabsView extends AtomicElementBaseView {
 		attributes() {
 			const defaultActiveTab = this.model.getSetting( 'default-active-tab' );
+            const eSettings = JSON.stringify( { 'default-active-tab': defaultActiveTab ?? 0 } );
 
-			const attributes = super.attributes();
-
-			return { 'x-data': 'atomicTabs', 'data-active-tab': defaultActiveTab.value ?? 0, ...attributes };
+			return { 'x-data': 'atomicTabs', 'data-e-settings': eSettings, ...attributes };
 		}
 	};
 };

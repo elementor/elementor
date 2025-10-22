@@ -4,11 +4,11 @@ import { Alpine } from '@elementor/alpinejs';
 register( {
 	elementType: 'e-tabs',
 	uniqueId: 'e-tabs-handler',
-	callback: ( { element } ) => {
+	callback: ( { element, settings } ) => {
 		window.Alpine = Alpine;
 
 		Alpine.data( 'atomicTabs', () => ( {
-			activeTab: element.getAttribute( 'data-active-tab' ),
+			activeTab: settings['default-active-tab'],
 
 			tab: {
 				'@click'() {
