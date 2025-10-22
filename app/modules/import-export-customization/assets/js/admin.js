@@ -1,5 +1,4 @@
 import { AppsEventTracking } from '../../../../assets/js/event-track/apps-event-tracking';
-import { RevertKitHandler } from './shared/revert-kit-handler';
 
 class Admin {
 	constructor() {
@@ -22,21 +21,6 @@ class Admin {
 		this.importButton = document.getElementById( 'elementor-import-export__import' );
 		this.exportButton = document.getElementById( 'elementor-import-export__export' );
 
-		this.initializeRevertHandler();
-		this.bindEventListeners();
-	}
-
-	initializeRevertHandler() {
-		if ( this.revertButton ) {
-			this.revertHandler = new RevertKitHandler( {
-				revertButton: this.revertButton,
-			} );
-
-			this.revertHandler.maybeShowReferrerKitDialog();
-		}
-	}
-
-	bindEventListeners() {
 		if ( this.revertButton ) {
 			this.revertButton.addEventListener( 'click', this.onRevertButtonClick.bind( this ) );
 		}
@@ -64,12 +48,8 @@ class Admin {
 		}
 	}
 
-	onRevertButtonClick( event ) {
-		event.preventDefault();
-
+	onRevertButtonClick() {
 		AppsEventTracking.sendImportExportAdminAction( 'Revert' );
-
-		this.revertHandler?.revertKit();
 	}
 
 	onExportButtonClick() {
