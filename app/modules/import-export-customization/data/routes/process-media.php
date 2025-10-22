@@ -6,12 +6,14 @@ use Elementor\App\Modules\ImportExportCustomization\Data\Response;
 use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
 use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
 use Elementor\Utils as ElementorUtils;
+use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Traits\Handles_Quota_Errors;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Process_Media extends Base_Route {
+	use Handles_Quota_Errors;
 
 	protected function get_route(): string {
 		return 'process-media';
@@ -27,10 +29,11 @@ class Process_Media extends Base_Route {
 		 */
 		$module = Plugin::$instance->app->get_component( 'import-export-customization' );
 
-		$cloud_kit_library_app = CloudKitLibrary::get_app();
+		$cloud_kit_library_app = $this->get_cloud_kit_library_app();
 
 		$media_urls = $request->get_param( 'media_urls' );
 		$kit = $request->get_param( 'kit' );
+		$quota = null;
 
 		try {
 			if ( empty( $media_urls ) || ! is_array( $media_urls ) ) {
@@ -40,15 +43,22 @@ class Process_Media extends Base_Route {
 			$media_collector = new \Elementor\TemplateLibrary\Classes\Media_Collector();
 			$zip_path = $media_collector->process_media_collection( $media_urls );
 
+			if ( $cloud_kit_library_app ) {
+				$quota = $cloud_kit_library_app->get_quota();
+				$cloud_kit_library_app->validate_storage_quota( filesize( $zip_path ), $quota );
+			}
+
 			if ( ! $zip_path ) {
 				throw new \Error( 'Failed to process media' );
 			}
 
 			$zip_file = ElementorUtils::file_get_contents( $zip_path );
 
-			$upload_success = $cloud_kit_library_app->upload_content_file( $kit['mediaUploadUrl'], $zip_file );
-
-			$cloud_kit_library_app->update_kit( $kit['id'], [ 'mediaFileId' => $upload_success ? $kit['mediaFileId'] : null ] );
+			$upload_success = false;
+			if ( $cloud_kit_library_app ) {
+				$upload_success = $cloud_kit_library_app->upload_content_file( $kit['mediaUploadUrl'], $zip_file );
+				$cloud_kit_library_app->update_kit( $kit['id'], [ 'mediaFileId' => $upload_success ? $kit['mediaFileId'] : null ] );
+			}
 
 			$media_collector->cleanup();
 
@@ -64,10 +74,16 @@ class Process_Media extends Base_Route {
 				],
 			] );
 
-			$cloud_kit_library_app->update_kit( $kit['id'], [ 'mediaFileId' => null ] );
+			if ( $cloud_kit_library_app ) {
+				$cloud_kit_library_app->update_kit( $kit['id'], [ 'mediaFileId' => null ] );
+			}
 
 			if ( $module->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
 				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
+			}
+
+			if ( $this->is_quota_error( $e->getMessage() ) ) {
+				return $this->get_quota_error_response( $quota, $kit );
 			}
 
 			return Response::error( ImportExportCustomizationModule::MEDIA_PROCESSING_ERROR, $e->getMessage() );
