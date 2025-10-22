@@ -21,9 +21,9 @@ test.describe( 'Icon List widget tests', () => {
 
 		// Assert.
 		await test.step( 'LTR layouts', async () => {
-			const iconBoxes = page.locator( '.e-con-inner' ).first();
-			await iconBoxes.waitFor();
-			await expect.soft( iconBoxes ).toHaveScreenshot( 'icon-list-items-alignment-ltr.png' );
+			const iconLists = page.locator( '.e-con-inner' ).first();
+			await iconLists.waitFor();
+			await expect.soft( iconLists ).toHaveScreenshot( 'icon-list-items-alignment-ltr.png' );
 		} );
 
 		await test.step( 'RTL layouts', async () => {
@@ -32,9 +32,9 @@ test.describe( 'Icon List widget tests', () => {
 			await editor.page.goto( `/?p=${ pageId }` );
 			await editor.page.waitForLoadState();
 
-			const iconBoxes = page.locator( '.e-con-inner' ).first();
-			await iconBoxes.waitFor();
-			await expect.soft( iconBoxes ).toHaveScreenshot( 'icon-list-items-alignment-rtl.png' );
+			const iconLists = page.locator( '.e-con-inner' ).first();
+			await iconLists.waitFor();
+			await expect.soft( iconLists ).toHaveScreenshot( 'icon-list-items-alignment-rtl.png' );
 		} );
 
 		await wpAdmin.setSiteLanguage( '' );
