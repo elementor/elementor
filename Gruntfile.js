@@ -46,7 +46,6 @@ module.exports = function( grunt ) {
 
 	grunt.registerTask( 'scripts', ( isDevMode = false ) => {
 		const tasksToRun = [];
-		isDevMode = false;
 		tasksToRun.push( isDevMode ? 'webpack:development' : 'webpack:production' );
 
 		tasksToRun.push( 'create_eicons_frontend_js_file' );
