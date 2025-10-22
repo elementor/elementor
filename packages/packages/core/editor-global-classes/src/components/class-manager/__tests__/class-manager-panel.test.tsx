@@ -390,7 +390,7 @@ describe( 'ClassManagerPanel', () => {
 		// Act.
 		fireEvent.input( editableField as Element, { target: { innerText: 'New-Class-Name' } } );
 
-		fireEvent.keyDown( editableField as Element, { key: 'Enter' } );
+		fireEvent.blur( editableField as Element );
 
 		// Assert.
 		await waitFor( () => {
