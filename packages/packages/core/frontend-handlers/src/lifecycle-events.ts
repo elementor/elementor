@@ -19,7 +19,13 @@ export const onElementRender = ( {
 	}
 
 	Array.from( handlers.get( elementType )?.values() ?? [] ).forEach( ( handler ) => {
-		const unmount = handler( { element, signal: controller.signal } );
+		const settings = element.getAttribute( 'e-settings' );
+
+		const unmount = handler( {
+			element,
+			signal: controller.signal,
+			settings: settings ? JSON.parse( settings ) : {},
+		} );
 
 		if ( typeof unmount === 'function' ) {
 			manualUnmount.push( unmount );

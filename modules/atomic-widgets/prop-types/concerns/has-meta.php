@@ -29,6 +29,12 @@ trait Has_Meta {
 		return $this;
 	}
 
+	public function set_meta( array $meta ) {
+		$this->meta = $meta;
+
+		return $this;
+	}
+
 	public function get_meta(): array {
 		return $this->meta;
 	}

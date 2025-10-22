@@ -3,7 +3,7 @@ import { register } from '@elementor/frontend-handlers';
 register( {
 	elementType: 'e-tabs',
 	uniqueId: 'e-tabs-handler',
-	callback: ( { element, signal } ) => {
+	callback: ( { element, signal, settings } ) => {
 		const tabs = element.querySelectorAll( '[data-element_type="e-tab"]' );
 		const tabPanels = element.querySelectorAll( '[data-element_type="e-tab-content"]' );
 
@@ -23,7 +23,7 @@ register( {
 			} );
 		};
 
-		const defaultActiveTab = element.getAttribute( 'data-active-tab' );
+		const defaultActiveTab = settings[ 'default-active-tab' ];
 
 		setActiveTab( defaultActiveTab );
 

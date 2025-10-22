@@ -83,7 +83,19 @@ export default function createAtomicElementBaseView( type ) {
 				...initialAttributes,
 				...customAttributes,
 				...local,
+				'e-settings': this.getFrontendAvailableSettings(),
 			};
+		},
+
+		getFrontendAvailableSettings() {
+			const propsSchema = this.model.config.atomic_props_schema;
+
+			const frontendAvailableSettings = Object.entries( propsSchema ).filter( ( [ , prop ] ) => prop.meta.frontend_available ).reduce( ( acc, [ key ] ) => {
+				acc[ key ] = this.model.getSetting( key )?.value;
+				return acc;
+			}, {} );
+
+			return JSON.stringify( frontendAvailableSettings );
 		},
 
 		// TODO: Copied from `views/column.js`.

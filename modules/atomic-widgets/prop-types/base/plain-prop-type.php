@@ -50,6 +50,12 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 		return $value;
 	}
 
+	public function frontend_available(): self {
+		$this->meta['frontend_available'] = true;
+
+		return $this;
+	}
+
 	public function jsonSerialize(): array {
 		return [
 			'kind' => static::KIND,
