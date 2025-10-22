@@ -18,14 +18,18 @@ export function EditComponent() {
 	const isLoading = useSelector( selectLoadIsPending );
 
 	const onBack = () => {
-		const [lastDocumentId, lastDocumentInstanceId] = componentsPath.current.pop() ?? [];
+		const [ lastDocumentId, lastDocumentInstanceId ] = componentsPath.current.pop() ?? [];
 
 		if ( lastDocumentId && lastDocumentInstanceId ) {
-			switchToDocument( lastDocumentId, {
-				mode: 'autosave',
-				selector: `[data-id="${ lastDocumentInstanceId }"]`,
-				setAsInitial: false,
-			}, false );
+			switchToDocument(
+				lastDocumentId,
+				{
+					mode: 'autosave',
+					selector: `[data-id="${ lastDocumentInstanceId }"]`,
+					setAsInitial: false,
+				},
+				false
+			);
 		} else {
 			switchToDocument( documentsManager.getInitialId(), { mode: 'autosave', setAsInitial: false } );
 		}
@@ -50,9 +54,7 @@ export function EditComponent() {
 
 				if (
 					current?.id &&
-					! componentsPath.current.find(
-						( [ id, iId ] ) => id === current.id && iId === instanceId
-					)
+					! componentsPath.current.find( ( [ id, iId ] ) => id === current.id && iId === instanceId )
 				) {
 					componentsPath.current.push( [ current.id, instanceId ] );
 				}

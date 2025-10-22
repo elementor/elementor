@@ -78,7 +78,7 @@ export type V1Document = {
 		} >;
 		view: {
 			el: HTMLElement;
-		}
+		};
 	};
 };
 

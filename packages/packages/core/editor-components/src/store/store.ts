@@ -110,9 +110,9 @@ export const selectUnpublishedComponents = createSelector(
 	selectUnpublishedData,
 	( unpublishedData: UnpublishedComponent[] ) => unpublishedData
 );
-export const selectComponentsObject = createSelector( 
-	selectData, 
-	selectUnpublishedData, 
+export const selectComponentsObject = createSelector(
+	selectData,
+	selectUnpublishedData,
 	( data: Component[], unpublishedData: UnpublishedComponent[] ) =>
 		data.concat( unpublishedData ).reduce< Record< ComponentId, Component > >( ( acc, component ) => {
 			acc[ component.id ] = component;
