@@ -79,6 +79,57 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 		const paragraphElements = elementorFrame.locator( '.e-con p' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
+		// Define test cases based on the HTML content
+		const testCases = [
+			{
+				textContent: 'Single value padding',
+				tests: [{ property: 'padding', expected: '20px' }]
+			},
+			{
+				textContent: 'Two values padding',
+				tests: [{ property: 'padding', expected: '20px 40px' }]
+			},
+			{
+				textContent: 'Four values padding',
+				tests: [{ property: 'padding', expected: '20px 30px 0px 10px' }]
+			},
+			{
+				textContent: 'Padding top & Margin top',
+				tests: [
+					{ property: 'padding-top', expected: '20px' },
+					{ property: 'margin-top', expected: '40px' }
+				]
+			},
+			{
+				textContent: 'Padding block start',
+				tests: [{ property: 'padding-block-start', expected: '30px' }]
+			},
+			{
+				textContent: 'Padding left',
+				tests: [{ property: 'padding-left', expected: '30px' }]
+			},
+			{
+				textContent: 'Padding inline start',
+				tests: [{ property: 'padding-inline-start', expected: '40px' }]
+			},
+			{
+				textContent: 'Padding block single',
+				tests: [{ property: 'padding-block', expected: '20px' }]
+			},
+			{
+				textContent: 'Padding block two values',
+				tests: [{ property: 'padding-block', expected: '20px 30px' }]
+			},
+			{
+				textContent: 'Padding inline single',
+				tests: [{ property: 'padding-inline', expected: '20px' }]
+			},
+			{
+				textContent: 'Padding inline two values',
+				tests: [{ property: 'padding-inline', expected: '20px 30px' }]
+			}
+		];
+
 		// Test padding values using specific text content selectors
 		for ( const testCase of testCases ) {
 			await test.step( `Verify ${ testCase.textContent }`, async () => {

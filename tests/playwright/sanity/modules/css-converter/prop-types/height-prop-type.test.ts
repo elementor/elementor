@@ -78,7 +78,7 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				const element = elementorFrame.locator( '.e-con p' ).nth( testCase.index );
+				const element = elementorFrame.locator( 'p' ).filter( { hasText: testCase.textContent } );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {

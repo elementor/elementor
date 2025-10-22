@@ -80,7 +80,7 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 				name: 'letter-spacing: 2px on h2',
 				property: 'letter-spacing',
 				expected: '2px',
-				selector: '.e-con h1'
+				selector: '.e-con h2'
 			},
 			{
 				name: 'letter-spacing: 0.5px on p',

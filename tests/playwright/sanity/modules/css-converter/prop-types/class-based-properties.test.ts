@@ -50,7 +50,7 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 			
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '' );
 
 
 		const validation = cssHelper.validateApiResult( apiResult );
@@ -73,7 +73,7 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const heading = elementorFrame.locator( '.e-con h1' ).filter( { hasText: 'Ready to Get Started?' } );
+			const heading = elementorFrame.locator( '.e-con h2' ).filter( { hasText: 'Ready to Get Started?' } );
 			await heading.waitFor( { state: 'visible', timeout: 10000 } );
 
 			// Get all applied CSS rules
@@ -122,7 +122,7 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 			await page.goto( `/?p=${ pageId }` );
 			await page.waitForLoadState();
 
-			const frontendHeading = page.locator( '.e-con h1' ).filter( { hasText: 'Ready to Get Started?' } );
+			const frontendHeading = page.locator( '.e-con h2' ).filter( { hasText: 'Ready to Get Started?' } );
 
 			// Get frontend computed styles for debugging
 			const frontendStyles = await frontendHeading.evaluate( ( el ) => {

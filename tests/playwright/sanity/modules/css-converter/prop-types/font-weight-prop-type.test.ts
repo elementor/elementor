@@ -66,10 +66,10 @@ test.describe( 'Font Weight Prop Type Integration @prop-types', () => {
 
 		// Define test cases for both editor and frontend verification
 		const testCases = [
-			{ textContent: 'Normal weight', name: 'font-weight: normal', property: 'font-weight', expected: '400' },
-			{ textContent: 'Bold weight', name: 'font-weight: bold', property: 'font-weight', expected: '700' },
-			{ textContent: 'Weight 400', name: 'font-weight: 400', property: 'font-weight', expected: '400' },
-			{ textContent: 'Weight 700', name: 'font-weight: 700', property: 'font-weight', expected: '700' },
+			{ textContent: 'Normal weight', name: 'font-weight: normal', property: 'font-weight', expected: '400', index: 0 },
+			{ textContent: 'Bold weight', name: 'font-weight: bold', property: 'font-weight', expected: '700', index: 1 },
+			{ textContent: 'Weight 400', name: 'font-weight: 400', property: 'font-weight', expected: '400', index: 2 },
+			{ textContent: 'Weight 700', name: 'font-weight: 700', property: 'font-weight', expected: '700', index: 3 },
 		];
 
 		// Editor verification using test cases array
@@ -78,7 +78,7 @@ test.describe( 'Font Weight Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				const element = elementorFrame.locator( '.e-con p' ).nth( testCase.index );
+				const element = elementorFrame.locator( 'p' ).filter( { hasText: testCase.textContent } );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
