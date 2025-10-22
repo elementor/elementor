@@ -1,4 +1,5 @@
-type Handler = < TSettings extends Record< string, unknown > = Record< string, unknown > >( params: {
+type Settings = Record< string, unknown >;
+type Handler = < TSettings extends Settings = Settings >( params: {
 	element: Element;
 	signal: AbortSignal;
 	settings: TSettings;
