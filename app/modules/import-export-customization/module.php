@@ -348,6 +348,8 @@ class Module extends BaseModule {
 			'id' => $kit_id,
 		] );
 
+		$this->save_upload_session_data();
+
 		return [
 			'session' => $this->import->get_session_id(),
 			'manifest' => $this->import->get_manifest(),
@@ -392,6 +394,10 @@ class Module extends BaseModule {
 		}
 
 		return $this->import->run();
+	}
+
+	private function save_upload_session_data(): void {
+		$this->import->init_import_session();
 	}
 
 	/**
