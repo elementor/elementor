@@ -136,7 +136,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	private function print_frontend_available_attributes() {
 		$props_schema = static::get_props_schema();
 
-		$frontend_available_settings = Collection::make($props_schema)
+		$frontend_available_settings = Collection::make( $props_schema )
 			->filter( fn( $prop_type ) => $prop_type->get_meta_item( 'frontend_available' ) )
 			->map_with_keys( fn( $prop_type, $key ) => [ $key => $this->get_atomic_setting( $key ) ] );
 
