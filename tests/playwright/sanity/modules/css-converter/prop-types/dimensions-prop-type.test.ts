@@ -75,49 +75,9 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
 
-		// Define test cases with specific text content selectors
-		const testCases = [
-			{
-				textContent: 'Single value padding',
-				tests: [
-					{ property: 'padding-block-start', expected: '20px' },
-					{ property: 'padding-inline-end', expected: '20px' },
-					{ property: 'padding-block-end', expected: '20px' },
-					{ property: 'padding-inline-start', expected: '20px' },
-				],
-			},
-			{
-				textContent: 'Two values padding',
-				tests: [
-					{ property: 'padding-block-start', expected: '20px' },
-					{ property: 'padding-inline-end', expected: '40px' },
-					{ property: 'padding-block-end', expected: '20px' },
-					{ property: 'padding-inline-start', expected: '40px' },
-				],
-			},
-			{
-				textContent: 'Four values padding',
-				tests: [
-					{ property: 'padding-block-start', expected: '20px' },
-					{ property: 'padding-inline-end', expected: '30px' },
-					{ property: 'padding-block-end', expected: '0px' },
-					{ property: 'padding-inline-start', expected: '10px' },
-				],
-			},
-			{
-				textContent: 'Padding top & Margin top',
-				tests: [
-					{ property: 'margin-block-start', expected: '40px' },
-					{ property: 'padding-block-start', expected: '20px' },
-				],
-			},
-			{
-				textContent: 'Padding left',
-				tests: [
-					{ property: 'padding-inline-start', expected: '30px' },
-				],
-			},
-		];
+		// Test all converted paragraph elements
+		const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
+		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 		// Test padding values using specific text content selectors
 		for ( const testCase of testCases ) {

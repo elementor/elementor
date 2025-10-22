@@ -80,7 +80,7 @@ test.describe( 'Spacing and Layout Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.elementor-widget-e-heading :is(h1, h2, h3, h4)',
+				selector: '.e-heading-base-converted',
 				name: 'heading',
 				properties: {
 					margin: '0px 0px 20px',
@@ -90,7 +90,7 @@ test.describe( 'Spacing and Layout Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.elementor-widget-e-paragraph p:first-of-type',
+				selector: '.e-paragraph-base-converted:first-of-type',
 				name: 'paragraph',
 				properties: {
 					margin: '15px 0px',

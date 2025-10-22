@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
+
 class Module extends BaseModule {
 	private $variables_route;
 	private $classes_route;
@@ -22,8 +23,15 @@ class Module extends BaseModule {
 		// Only initialize routes in non-test environments
 		if ( ! $this->is_test_environment() && ! $variables_route && ! $classes_route && ! $widgets_route ) {
 			$this->init_routes();
-		} else {
-}
+		}
+		
+		// Add global hooks for CSS converter base styles override
+		add_action( 'wp_head', [ $this, 'maybe_inject_base_styles_override' ], 999 );
+		add_action( 'elementor/editor/wp_head', [ $this, 'maybe_inject_base_styles_override' ], 999 );
+		add_action( 'elementor/preview/enqueue_styles', [ $this, 'maybe_inject_base_styles_override' ], 999 );
+		
+		// Add editor load debug
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'debug_editor_widget_loading' ], 5 );
 	}
 	private function is_test_environment(): bool {
 		return defined( 'WP_TESTS_DOMAIN' ) ||
@@ -176,6 +184,13 @@ class Module extends BaseModule {
 	public function set_classes_route( $classes_route ): void {
 		$this->classes_route = $classes_route;
 	}
+
+	public function maybe_inject_base_styles_override() {
+		// This method is no longer used - we're implementing base class renaming instead of CSS injection
+		// Keeping the method for backward compatibility but it does nothing
+		return;
+	}
+
 	private function page_has_css_converter_widgets( int $post_id ): bool {
 		$document = \Elementor\Plugin::$instance->documents->get( $post_id );
 		if ( ! $document ) {
@@ -199,4 +214,64 @@ class Module extends BaseModule {
 		}
 		return false;
 	}
+
+	public function debug_editor_widget_loading() {
+		error_log( "🔥🔥🔥 EDITOR: Before enqueue scripts called" );
+		
+		$post_id = get_the_ID();
+		error_log( "🔥🔥🔥 EDITOR: Post ID = " . ( $post_id ?: 'N/A' ) );
+		
+		if ( ! $post_id ) {
+			error_log( "🔥🔥🔥 EDITOR: No post ID, skipping widget data check" );
+			return;
+		}
+		
+		// Check post data
+		$elementor_data = get_post_meta( $post_id, '_elementor_data', true );
+		if ( ! $elementor_data ) {
+			error_log( "🔥🔥🔥 EDITOR: No Elementor data found for post {$post_id}" );
+			return;
+		}
+		
+		$data = is_string( $elementor_data ) ? json_decode( $elementor_data, true ) : $elementor_data;
+		if ( ! $data || ! is_array( $data ) ) {
+			error_log( "🔥🔥🔥 EDITOR: Invalid Elementor data format" );
+			return;
+		}
+		
+		// Find widget types in data
+		$widget_types = [];
+		array_walk_recursive( $data, function( $value, $key ) use ( &$widget_types ) {
+			if ( $key === 'widgetType' ) {
+				$widget_types[] = $value;
+			}
+		} );
+		
+		$unique_types = array_unique( $widget_types );
+		error_log( "🔥🔥🔥 EDITOR: Widget types in post data: " . implode( ', ', $unique_types ) );
+		
+		// Check for converted widgets
+		$converted_types = array_filter( $unique_types, function( $type ) {
+			return strpos( $type, '-converted' ) !== false;
+		} );
+		
+		if ( ! empty( $converted_types ) ) {
+			error_log( "🔥🔥🔥 EDITOR: CONVERTED WIDGETS FOUND IN DATA ✅" );
+			error_log( "🔥🔥🔥 EDITOR: Converted types: " . implode( ', ', $converted_types ) );
+			
+			// Verify if they're registered
+			foreach ( $converted_types as $type ) {
+				$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
+				if ( $widget ) {
+					error_log( "🔥🔥🔥 EDITOR: {$type} IS REGISTERED ✅" );
+					error_log( "🔥🔥🔥 EDITOR: Widget class = " . get_class( $widget ) );
+				} else {
+					error_log( "🔥🔥🔥 EDITOR: {$type} NOT REGISTERED ❌❌❌" );
+				}
+			}
+		} else {
+			error_log( "🔥🔥🔥 EDITOR: No converted widgets found in post data" );
+		}
+	}
+
 }

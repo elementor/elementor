@@ -79,7 +79,7 @@ test.describe( 'Border and Shadow Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.elementor-widget-e-heading :is(h1, h2, h3, h4)',
+				selector: '.e-heading-base-converted',
 				name: 'heading',
 				properties: {
 					color: 'rgb(52, 58, 64)',
@@ -89,7 +89,7 @@ test.describe( 'Border and Shadow Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.elementor-widget-e-paragraph p:nth-of-type(1)',
+				selector: '.e-paragraph-base-converted:nth-of-type(1)',
 				name: 'dashed-border',
 				properties: {
 					border: '1px dashed rgb(108, 117, 125)',
@@ -99,7 +99,7 @@ test.describe( 'Border and Shadow Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.elementor-widget-e-paragraph p:nth-of-type(2)',
+				selector: '.e-paragraph-base-converted:nth-of-type(2)',
 				name: 'solid-border-shadow',
 				properties: {
 					border: '3px solid rgb(40, 167, 69)',
@@ -109,7 +109,7 @@ test.describe( 'Border and Shadow Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.elementor-widget-e-paragraph p:nth-of-type(3)',
+				selector: '.e-paragraph-base-converted:nth-of-type(3)',
 				name: 'dotted-border',
 				properties: {
 					border: '2px dotted rgb(220, 53, 69)',

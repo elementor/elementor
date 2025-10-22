@@ -69,7 +69,7 @@ test.describe( 'Edge Cases Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.elementor-widget-e-heading :is(h1, h2, h3, h4)',
+				selector: '.e-heading-base-converted',
 				name: 'heading-with-extreme-weight',
 				properties: {
 					color: 'rgb(51, 51, 51)',
@@ -77,7 +77,7 @@ test.describe( 'Edge Cases Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.elementor-widget-e-paragraph p:first-of-type',
+				selector: '.e-paragraph-base-converted:first-of-type',
 				name: 'paragraph-with-negative-line-height',
 				properties: {
 					color: 'rgb(102, 102, 102)',
@@ -85,7 +85,7 @@ test.describe( 'Edge Cases Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.elementor-widget-e-paragraph p:last-of-type',
+				selector: '.e-paragraph-base-converted:last-of-type',
 				name: 'div-with-invalid-dimensions',
 				properties: {
 					'background-color': 'rgba(0, 0, 0, 0)',
@@ -115,8 +115,8 @@ test.describe( 'Edge Cases Payload Integration @payloads', () => {
 
 			await test.step( 'Check that elements are still rendered', async () => {
 				await expect( elementorFrame.locator( '.elementor-element' ).first() ).toBeVisible();
-				await expect( elementorFrame.locator( '.elementor-widget-e-heading :is(h1, h2, h3, h4)' ) ).toBeVisible();
-				await expect( elementorFrame.locator( '.elementor-widget-e-paragraph p' ).first() ).toBeVisible();
+				await expect( elementorFrame.locator( '.e-heading-base-converted' ) ).toBeVisible();
+				await expect( elementorFrame.locator( '.e-paragraph-base-converted' ).first() ).toBeVisible();
 			} );
 		} );
 

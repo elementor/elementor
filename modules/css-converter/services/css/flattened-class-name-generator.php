@@ -14,7 +14,7 @@ class Flattened_Class_Name_Generator {
 		return new self();
 	}
 
-	public function generate_flattened_class_name( array $parsed_selector ): string {
+	public function generate_flattened_class_name( array $parsed_selector, array $existing_names = [] ): string {
 		$target = $this->clean_selector_part( $parsed_selector['target'] );
 		$context = $parsed_selector['context'] ?? [];
 
@@ -23,9 +23,29 @@ class Flattened_Class_Name_Generator {
 		}
 
 		$context_string = $this->build_context_string( $context );
-		$flattened_name = $target . self::CONTEXT_SEPARATOR . $context_string;
+		$base_name = $target . self::CONTEXT_SEPARATOR . $context_string;
+		$base_name = $this->ensure_valid_css_class_name( $base_name );
 
-		return $this->ensure_valid_css_class_name( $flattened_name );
+		// CRITICAL FIX: Implement proper duplicate handling with numeric indices
+		// .first .second → second--first
+		// .first > .second → second--first-2 (if second--first already exists)
+		return $this->generate_unique_class_name( $base_name, $existing_names );
+	}
+
+	private function generate_unique_class_name( string $base_name, array $existing_names ): string {
+		// If no collision, use base name
+		if ( ! in_array( $base_name, $existing_names, true ) ) {
+			return $base_name;
+		}
+
+		// Find next available numeric suffix
+		$counter = 2; // Start with -2 (base name is implicit -1)
+		do {
+			$candidate_name = $base_name . '-' . $counter;
+			$counter++;
+		} while ( in_array( $candidate_name, $existing_names, true ) );
+
+		return $candidate_name;
 	}
 
 	private function clean_selector_part( string $part ): string {

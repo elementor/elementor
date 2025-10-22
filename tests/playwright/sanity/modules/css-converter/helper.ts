@@ -102,17 +102,15 @@ export class CssConverterHelper {
 			...options,
 		};
 
-		// If cssContent is provided, wrap HTML and CSS in style tags
-		let content = htmlContent;
-		if ( cssContent ) {
-			content = `${ htmlContent }<style>${ cssContent }</style>`;
-		}
-
 		const payload = {
 			type: 'html',
-			content,
+			content: htmlContent,
 			options: defaultOptions,
 		};
+
+		console.log( '🔥🔥🔥 MAX_DEBUG: About to call CSS converter API' );
+		console.log( '🔥🔥🔥 MAX_DEBUG: URL:', '/wp-json/elementor/v2/widget-converter' );
+		console.log( '🔥🔥🔥 MAX_DEBUG: Data:', JSON.stringify( payload, null, 2 ) );
 
 		const apiResponse = await request.post( '/wp-json/elementor/v2/widget-converter', {
 			headers: {
@@ -122,8 +120,12 @@ export class CssConverterHelper {
 			data: payload,
 		} );
 
+		console.log( '🔥🔥🔥 MAX_DEBUG: API response status:', apiResponse.status() );
+		console.log( '🔥🔥🔥 MAX_DEBUG: API response OK:', apiResponse.ok() );
+		
 		const responseJson = await apiResponse.json() as CssConverterResponse;
-
+		console.log( '🔥🔥🔥 MAX_DEBUG: API response body:', JSON.stringify( responseJson, null, 2 ) );
+		
 		return responseJson;
 	}
 

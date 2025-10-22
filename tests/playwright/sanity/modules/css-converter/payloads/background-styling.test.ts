@@ -78,7 +78,7 @@ test.describe( 'Background Styling Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.elementor-widget-e-heading :is(h1, h2, h3, h4)',
+				selector: '.e-heading-base-converted',
 				name: 'heading',
 				properties: {
 					color: 'rgb(45, 55, 72)',
@@ -95,7 +95,7 @@ test.describe( 'Background Styling Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.elementor-widget-e-paragraph p:nth-of-type(1)',
+				selector: '.e-paragraph-base-converted:nth-of-type(1)',
 				name: 'red-background',
 				properties: {
 					'background-color': 'rgb(229, 62, 62)',
@@ -106,7 +106,7 @@ test.describe( 'Background Styling Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.elementor-widget-e-paragraph p:nth-of-type(2)',
+				selector: '.e-paragraph-base-converted:nth-of-type(2)',
 				name: 'green-background',
 				properties: {
 					'background-color': 'rgb(56, 161, 105)',
@@ -117,7 +117,7 @@ test.describe( 'Background Styling Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.elementor-widget-e-paragraph p:nth-of-type(3)',
+				selector: '.e-paragraph-base-converted:nth-of-type(3)',
 				name: 'blue-background',
 				properties: {
 					'background-color': 'rgb(49, 130, 206)',
@@ -128,7 +128,7 @@ test.describe( 'Background Styling Payload Integration @payloads', () => {
 				},
 			},
 			{
-				selector: '.elementor-widget-e-paragraph p:nth-of-type(4)',
+				selector: '.e-paragraph-base-converted:nth-of-type(4)',
 				name: 'purple-background',
 				properties: {
 					'background-color': 'rgb(128, 90, 213)',

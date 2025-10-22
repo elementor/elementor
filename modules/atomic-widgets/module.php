@@ -360,6 +360,15 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		// Enqueue CSS converter base styles override
+		wp_enqueue_script(
+			'elementor-css-converter-base-styles-override',
+			plugins_url( 'modules/atomic-widgets/assets/js/editor/css-converter-base-styles-override.js', ELEMENTOR_PLUGIN_BASE ),
+			[ 'elementor-editor', 'jquery' ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	private function render_panel_category_chip() {

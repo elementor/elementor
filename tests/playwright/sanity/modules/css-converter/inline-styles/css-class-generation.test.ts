@@ -89,42 +89,21 @@ test.describe( 'CSS Class Generation @inline-styles @critical', () => {
 				console.warn( 'Preview frame did not load state' );
 			}
 
-			const element = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).first();
-			try {
-				await element.waitFor( { state: 'visible', timeout: 5000 } );
-			} catch ( e ) {
-				console.warn( 'Element not visible' );
-				return;
-			}
+			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
+			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 			const elementClass = await element.getAttribute( 'class' );
 
 			expect( elementClass ).toBeTruthy();
+			expect( elementClass ).toContain( 'e-paragraph-base-converted' );
 
 			const hasGeneratedClass = /e-[a-f0-9-]+/.test( elementClass || '' );
 			expect( hasGeneratedClass ).toBeTruthy();
 		} );
 
 		await test.step( 'Verify CSS rule exists in page', async () => {
-			let elementorFrame = editor.getPreviewFrame();
-			
-			if ( ! elementorFrame ) {
-				await page.waitForTimeout( 1000 );
-				elementorFrame = editor.getPreviewFrame();
-			}
-			
-			if ( ! elementorFrame ) {
-				console.warn( 'Preview frame not available, skipping CSS rule verification' );
-				return;
-			}
-			
-			const element = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).first();
-			try {
-				await element.waitFor( { state: 'visible', timeout: 5000 } );
-			} catch ( e ) {
-				console.warn( 'Element not visible for CSS check' );
-				return;
-			}
+			const elementorFrame = editor.getPreviewFrame();
+			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
 
 			const color = await element.evaluate( ( el ) => {
 				return window.getComputedStyle( el ).getPropertyValue( 'color' );
@@ -164,7 +143,7 @@ test.describe( 'CSS Class Generation @inline-styles @critical', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const elements = elementorFrame.locator( '.elementor-widget-e-paragraph p' );
+			const elements = elementorFrame.locator( '.e-paragraph-base-converted' );
 			const count = await elements.count();
 			expect( count ).toBe( 3 );
 
@@ -174,6 +153,7 @@ test.describe( 'CSS Class Generation @inline-styles @critical', () => {
 				const elementClass = await element.getAttribute( 'class' );
 
 				expect( elementClass ).toBeTruthy();
+				expect( elementClass ).toContain( 'e-paragraph-base-converted' );
 
 				const generatedClassMatch = elementClass?.match( /e-[a-f0-9-]+/ );
 				expect( generatedClassMatch ).toBeTruthy();
@@ -190,13 +170,13 @@ test.describe( 'CSS Class Generation @inline-styles @critical', () => {
 		await test.step( 'Verify each CSS rule is applied correctly', async () => {
 			const elementorFrame = editor.getPreviewFrame();
 
-			const element1 = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).nth( 0 );
+			const element1 = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( 0 );
 			await expect( element1 ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
 
-			const element2 = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).nth( 1 );
+			const element2 = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( 1 );
 			await expect( element2 ).toHaveCSS( 'color', 'rgb(0, 0, 255)' );
 
-			const element3 = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).nth( 2 );
+			const element3 = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( 2 );
 			await expect( element3 ).toHaveCSS( 'color', 'rgb(0, 128, 0)' );
 		} );
 	} );
@@ -225,8 +205,11 @@ test.describe( 'CSS Class Generation @inline-styles @critical', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const element = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).first();
+			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
+
+			const elementClass = await element.getAttribute( 'class' );
+			expect( elementClass ).toContain( 'e-paragraph-base-converted' );
 		} );
 	} );
 
@@ -260,7 +243,7 @@ test.describe( 'CSS Class Generation @inline-styles @critical', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const styledElement = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).nth( 1 );
+			const styledElement = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( 1 );
 			await styledElement.waitFor( { state: 'visible', timeout: 10000 } );
 
 			const elementClass = await styledElement.getAttribute( 'class' );
@@ -272,7 +255,7 @@ test.describe( 'CSS Class Generation @inline-styles @critical', () => {
 
 		await test.step( 'Verify all elements are created', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			const elements = elementorFrame.locator( '.elementor-widget-e-paragraph p' );
+			const elements = elementorFrame.locator( '.e-paragraph-base-converted' );
 			const count = await elements.count();
 			expect( count ).toBe( 3 );
 		} );

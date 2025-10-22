@@ -79,8 +79,7 @@ test.describe( 'Text Align Prop Type Integration @prop-types', () => {
 				const elementorFrame = editor.getPreviewFrame();
 				await elementorFrame.waitForLoadState();
 
-				// Use specific text content to identify each element uniquely
-				const element = elementorFrame.locator( 'p' ).filter( { hasText: testCase.textContent } );
+				const element = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( testCase.index );
 				await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 				await test.step( 'Verify CSS property', async () => {
@@ -101,8 +100,7 @@ test.describe( 'Text Align Prop Type Integration @prop-types', () => {
 			// Frontend verification using same test cases array
 			for ( const testCase of testCases ) {
 				await test.step( `Verify ${ testCase.name } on frontend`, async () => {
-					// Use specific text content to identify each element uniquely
-					const frontendElement = page.locator( 'p' ).filter( { hasText: testCase.textContent } );
+					const frontendElement = page.locator( '.e-paragraph-base-converted' ).nth( testCase.index );
 
 					await test.step( 'Verify CSS property', async () => {
 						await expect( frontendElement ).toHaveCSS( testCase.property, testCase.expected );

@@ -61,16 +61,17 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const element = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).first();
+			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 			const elementClass = await element.getAttribute( 'class' );
+			expect( elementClass ).toContain( 'e-paragraph-base-converted' );
 			expect( elementClass ).toMatch( /e-[a-f0-9-]+/ );
 		} );
 
 		await test.step( 'Verify inline style is applied', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			const element = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).first();
+			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
 
 			await expect( element ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
 		} );
@@ -106,7 +107,7 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const elements = elementorFrame.locator( '.elementor-widget-e-paragraph p' );
+			const elements = elementorFrame.locator( '.e-paragraph-base-converted' );
 			const count = await elements.count();
 			expect( count ).toBe( 3 );
 
@@ -124,13 +125,13 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 		await test.step( 'Verify each inline style is applied correctly', async () => {
 			const elementorFrame = editor.getPreviewFrame();
 
-			const redElement = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).nth( 0 );
+			const redElement = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( 0 );
 			await expect( redElement ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
 
-			const blueElement = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).nth( 1 );
+			const blueElement = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( 1 );
 			await expect( blueElement ).toHaveCSS( 'color', 'rgb(0, 0, 255)' );
 
-			const greenElement = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).nth( 2 );
+			const greenElement = elementorFrame.locator( '.e-paragraph-base-converted' ).nth( 2 );
 			await expect( greenElement ).toHaveCSS( 'color', 'rgb(0, 128, 0)' );
 		} );
 	} );
@@ -159,7 +160,7 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const element = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).first();
+			const element = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 			await expect( element ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
@@ -200,52 +201,23 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const heading = elementorFrame.locator( '.elementor-widget-e-heading :is(h1, h2, h3, h4)' ).first();
+			const heading = elementorFrame.locator( '.e-heading-base-converted' ).first();
 			await heading.waitFor( { state: 'visible', timeout: 10000 } );
 			await expect( heading ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
 		} );
 
 		await test.step( 'Verify inline styles on p', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-			const paragraph = elementorFrame.locator( '.elementor-widget-e-paragraph p' ).first();
+			const paragraph = elementorFrame.locator( '.e-paragraph-base-converted' ).first();
 			await expect( paragraph ).toHaveCSS( 'color', 'rgb(0, 0, 255)' );
 		} );
 
 		await test.step( 'Verify inline styles on div', async () => {
 			const elementorFrame = editor.getPreviewFrame();
-
-			// Find the div element with yellow background using atomic class pattern
-			// The background is applied via atomic classes, not directly on the base element
-			const divWithBackground = elementorFrame.locator( '[data-element_type="e-div-block"]' ).filter( async ( element ) => {
-				const bgColor = await element.evaluate( ( el ) => getComputedStyle( el ).backgroundColor );
-				return 'rgb(255, 255, 0)' === bgColor;
-			} );
-
-			// Alternative: Find any element with yellow background in the div block container
-			const divContainer = elementorFrame.locator( '[data-element_type="e-div-block"]' ).last(); // Use last as it's likely the inner div
-			await divContainer.waitFor( { state: 'visible', timeout: 10000 } );
-
-			// Check if this element or any of its atomic class elements have the yellow background
-			const hasYellowBackground = await divContainer.evaluate( ( el ) => {
-				const styles = getComputedStyle( el );
-				return 'rgb(255, 255, 0)' === styles.backgroundColor;
-			} );
-
-			if ( hasYellowBackground ) {
-				await expect( divContainer ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
-			} else {
-				// If not on the container, check if it's applied via atomic classes
-				const atomicElement = elementorFrame.locator( '[data-element_type="e-div-block"][class*="e-"]' ).last();
-				await expect( atomicElement ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
-			}
-
-			// Check padding on the same element
-			if ( hasYellowBackground ) {
-				await expect( divContainer ).toHaveCSS( 'padding', '20px' );
-			} else {
-				const atomicElement = elementorFrame.locator( '[data-element_type="e-div-block"][class*="e-"]' ).last();
-				await expect( atomicElement ).toHaveCSS( 'padding', '20px' );
-			}
+			const divBlock = elementorFrame.locator( '.e-div-block-base-converted' ).first();
+			await divBlock.waitFor( { state: 'visible', timeout: 10000 } );
+			await expect( divBlock ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
+			await expect( divBlock ).toHaveCSS( 'padding', '20px' );
 		} );
 	} );
 } );

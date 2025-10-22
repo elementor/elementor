@@ -10,6 +10,7 @@ class Nested_Selector_Flattening_Service {
 	private $parser;
 	private $name_generator;
 	private $flattened_classes = [];
+	private $existing_global_class_names = [];
 
 	public function __construct( 
 		Nested_Selector_Parser $parser = null,
@@ -45,7 +46,12 @@ class Nested_Selector_Flattening_Service {
 			return $rule;
 		}
 
-		$flattened_class_name = $this->name_generator->generate_flattened_class_name( $parsed_selector );
+		// CRITICAL FIX: Pass existing class names to prevent collisions (both global and current session)
+		$existing_names = array_merge( 
+			$this->existing_global_class_names, 
+			array_keys( $this->flattened_classes ) 
+		);
+		$flattened_class_name = $this->name_generator->generate_flattened_class_name( $parsed_selector, $existing_names );
 
 		// Store the flattened class for global classes creation
 		$this->flattened_classes[ $flattened_class_name ] = [
@@ -75,6 +81,11 @@ class Nested_Selector_Flattening_Service {
 
 	public function clear_flattened_classes(): void {
 		$this->flattened_classes = [];
+	}
+
+	public function set_existing_class_names( array $existing_names ): void {
+		$this->existing_global_class_names = $existing_names;
+		error_log( "🔍 COLLISION_PREVENTION DEBUG: Set " . count( $existing_names ) . " existing global class names for collision detection" );
 	}
 
 	public function get_flattened_classes_for_global_storage(): array {

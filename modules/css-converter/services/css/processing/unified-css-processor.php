@@ -88,7 +88,7 @@ class Unified_Css_Processor {
 		// PASS 3: PREPARE OUTPUT
 		// ═══════════════════════════════════════════════════════════
 		$debug_info = $this->unified_style_manager->get_debug_info();
-		$css_class_rules = $this->extract_css_class_rules_for_global_classes( $css );
+		$css_class_rules = $this->extract_css_class_rules_for_global_classes( $css, $flattening_results );
 		// Get reset styles information
 		$reset_styles_stats = $this->unified_style_manager->get_reset_styles_stats();
 		$complex_reset_styles = $this->unified_style_manager->get_complex_reset_styles();
@@ -1213,24 +1213,35 @@ class Unified_Css_Processor {
 		}
 		return ( $base_parts['scheme'] ?? 'https' ) . '://' . $base_parts['host'] . $base_path . '/' . $relative_url;
 	}
-	private function extract_css_class_rules_for_global_classes( string $css ): array {
+	private function extract_css_class_rules_for_global_classes( string $css, array $flattening_results = [] ): array {
+		// DEBUG: Check what CSS we're processing
+		error_log( "🔍 CSS_PROCESSOR DEBUG: Processing CSS: " . substr( $css, 0, 200 ) . "..." );
+		error_log( "🔍 CSS_PROCESSOR DEBUG: CSS length: " . strlen( $css ) );
+		
 		if ( empty( $css ) ) {
+			error_log( "🔍 CSS_PROCESSOR DEBUG: CSS is empty, returning empty array" );
 			return [];
 		}
 		$parsed_css = $this->css_parser->parse( $css );
 		$document = $parsed_css->get_document();
 		$all_rules = $this->extract_rules_from_document( $document );
+		
+		error_log( "🔍 CSS_PROCESSOR DEBUG: Extracted " . count( $all_rules ) . " rules from CSS" );
+		
 		$css_class_rules = [];
 		foreach ( $all_rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
 			$properties = $rule['properties'] ?? [];
 			if ( strpos( $selector, '.' ) === 0 && ! empty( $properties ) ) {
+				error_log( "🔍 CSS_PROCESSOR DEBUG: Found class rule: " . $selector . " with " . count( $properties ) . " properties" );
 				$css_class_rules[] = [
 					'selector' => $selector,
 					'properties' => $properties,
 				];
 			}
 		}
+		
+		error_log( "🔍 CSS_PROCESSOR DEBUG: Found " . count( $css_class_rules ) . " CSS class rules" );
 
 		// INTEGRATION POINT A: Optimize CSS rules before returning
 		if ( ! empty( $css_class_rules ) ) {
@@ -1273,6 +1284,27 @@ class Unified_Css_Processor {
 			$css_class_rules = $optimized_rules;
 		}
 
+		// CRITICAL FIX: Include flattened classes for global class registration
+		if ( ! empty( $flattening_results['flattened_classes'] ) ) {
+			error_log( "🔍 CSS_PROCESSOR DEBUG: Adding " . count( $flattening_results['flattened_classes'] ) . " flattened classes" );
+			
+			foreach ( $flattening_results['flattened_classes'] as $class_id => $class_data ) {
+				$properties = $class_data['properties'] ?? [];
+				if ( ! empty( $properties ) ) {
+					$css_class_rules[] = [
+						'selector' => '.' . $class_id,
+						'properties' => $properties,
+						'flattened' => true,
+						'original_selector' => $class_data['css_converter_original_selector'] ?? '',
+					];
+					error_log( "🔍 CSS_PROCESSOR DEBUG: Added flattened class: ." . $class_id . " (from " . ( $class_data['css_converter_original_selector'] ?? 'unknown' ) . ")" );
+				}
+			}
+		}
+
+		error_log( "🔍 CSS_PROCESSOR DEBUG: Final CSS class rules count: " . count( $css_class_rules ) );
+		error_log( "🔍 CSS_PROCESSOR DEBUG: Final CSS class rules selectors: " . json_encode( array_column( $css_class_rules, 'selector' ) ) );
+		
 		return $css_class_rules;
 	}
 	private function apply_html_class_modifications( array $widgets ): array {
@@ -1366,12 +1398,45 @@ class Unified_Css_Processor {
 		}
 		return $modified_widget;
 	}
+
+	private function get_existing_global_class_names(): array {
+		try {
+			if ( ! defined( 'ELEMENTOR_VERSION' ) || ! class_exists( '\Elementor\Modules\GlobalClasses\Global_Classes_Repository' ) ) {
+				return [];
+			}
+
+			$repository = \Elementor\Modules\GlobalClasses\Global_Classes_Repository::make()
+				->context( \Elementor\Modules\GlobalClasses\Global_Classes_Repository::CONTEXT_FRONTEND );
+
+			$existing = $repository->all();
+			$items = $existing->get_items()->all();
+
+			// Extract class names (labels) from existing global classes
+			$class_names = [];
+			foreach ( $items as $item ) {
+				if ( isset( $item['label'] ) ) {
+					$class_names[] = $item['label'];
+				}
+			}
+
+			error_log( "🔍 COLLISION_PREVENTION DEBUG: Found " . count( $class_names ) . " existing global class names: " . json_encode( $class_names ) );
+			return $class_names;
+
+		} catch ( \Exception $e ) {
+			error_log( "🔍 COLLISION_PREVENTION DEBUG: Failed to get existing global class names: " . $e->getMessage() );
+			return [];
+		}
+	}
 	private function flatten_all_nested_selectors( array $css_rules ): array {
 
 		$flattened_rules = [];
 		$class_mappings = [];
 		$classes_with_direct_styles = [];
 		$classes_only_in_nested = [];
+		
+		// CRITICAL FIX: Get existing global class names to prevent collisions across API calls
+		$existing_global_class_names = $this->get_existing_global_class_names();
+		$this->flattening_service->set_existing_class_names( $existing_global_class_names );
 		foreach ( $css_rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
 			if ( empty( $selector ) ) {

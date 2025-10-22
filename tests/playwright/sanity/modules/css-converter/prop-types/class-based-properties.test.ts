@@ -4,7 +4,7 @@ import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { CssConverterHelper } from '../helper';
 
-test.describe( 'Class-based Properties Test @prop-types', () => {
+test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 	let wpAdmin: WpAdminPage;
 	let editor: EditorPage;
 	let cssHelper: CssConverterHelper;
@@ -50,8 +50,14 @@ test.describe( 'Class-based Properties Test @prop-types', () => {
 			
 		`;
 
-		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
-			createGlobalClasses: true,
+		console.log( '🔍 DEBUG: Converting HTML with class-base-convertedd letter-spacing and text-transform' );
+		const apiResult = await cssHelper.convertHtmlWithCss( request, combinedCssContent, '' );
+
+		console.log( '🔍 DEBUG: API Result:', {
+			success: apiResult.success,
+			post_id: apiResult.post_id,
+			widgets_created: apiResult.widgets_created,
+			global_classes_created: apiResult.global_classes_created
 		} );
 
 		const validation = cssHelper.validateApiResult( apiResult );
@@ -68,15 +74,14 @@ test.describe( 'Class-based Properties Test @prop-types', () => {
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
-		const elementorFrame = editor.getPreviewFrame();
-		await elementorFrame.waitForLoadState();
+		console.log( '🔍 DEBUG: Editor loaded, testing class-base-convertedd properties' );
 
-		const heading = elementorFrame.locator( 'h2' ).filter( { hasText: /Ready to Get Started/i } );
-		await heading.waitFor( { state: 'visible', timeout: 10000 } );
+		await test.step( 'Test class-base-convertedd letter-spacing and text-transform', async () => {
+			const elementorFrame = editor.getPreviewFrame();
+			await elementorFrame.waitForLoadState();
 
-		// MAXIMUM DEBUG: Get ALL possible information
-		const maxDebugInfo = await heading.evaluate( ( el ) => {
-			const styles = window.getComputedStyle( el );
+			const heading = elementorFrame.locator( '.e-heading-base-converted' ).filter( { hasText: 'Ready to Get Started?' } );
+			await heading.waitFor( { state: 'visible', timeout: 10000 } );
 
 			// Get all applied CSS rules
 			const appliedRules = [];
@@ -101,13 +106,7 @@ test.describe( 'Class-based Properties Test @prop-types', () => {
 				// Fallback
 			}
 
-			return {
-				// Basic element info
-				tagName: el.tagName,
-				className: el.className,
-				textContent: el.textContent?.trim(),
-				inlineStyle: el.getAttribute( 'style' ),
-				id: el.id,
+			console.log( '🔍 DEBUG: Class-base-convertedd computed styles:', computedStyles );
 
 				// All attributes
 				attributes: Array.from( el.attributes ).reduce( ( acc, attr ) => {
@@ -115,8 +114,37 @@ test.describe( 'Class-based Properties Test @prop-types', () => {
 					return acc;
 				}, {} ),
 
-				// Computed styles (all relevant properties)
-				computedStyles: {
+			// These are the assertions that were failing in the original test
+			await expect( heading ).toHaveCSS( 'letter-spacing', '1px' );
+			await expect( heading ).toHaveCSS( 'text-transform', 'uppercase' );
+			
+			// Also test other properties to ensure they're working
+			await expect( heading ).toHaveCSS( 'font-size', '36px' );
+			await expect( heading ).toHaveCSS( 'font-weight', '700' );
+			await expect( heading ).toHaveCSS( 'color', 'rgb(44, 62, 80)' );
+
+			console.log( '✅ SUCCESS: All class-base-convertedd properties are working correctly!' );
+		} );
+
+		await test.step( 'Test on frontend as well', async () => {
+			console.log( '🔍 DEBUG: Publishing and testing on frontend' );
+			
+			// Save the page first
+			await editor.saveAndReloadPage();
+
+			// Get the page ID and navigate to frontend
+			const pageId = await editor.getPageId();
+			console.log( '🔍 DEBUG: Navigating to frontend page ID:', pageId );
+			await page.goto( `/?p=${ pageId }` );
+			await page.waitForLoadState();
+
+			const frontendHeading = page.locator( '.e-heading-base-converted' ).filter( { hasText: 'Ready to Get Started?' } );
+
+			// Get frontend computed styles for debugging
+			const frontendStyles = await frontendHeading.evaluate( ( el ) => {
+				const styles = window.getComputedStyle( el );
+				return {
+					text: el.textContent.trim(),
 					letterSpacing: styles.letterSpacing,
 					textTransform: styles.textTransform,
 					fontSize: styles.fontSize,
@@ -138,12 +166,7 @@ test.describe( 'Class-based Properties Test @prop-types', () => {
 					id: el.parentElement.id,
 				} : null,
 
-				// Document head styles
-				headStyles: Array.from( document.head.querySelectorAll( 'style' ) ).map( ( style ) => ( {
-					content: style.textContent?.substring( 0, 500 ) + '...',
-					length: style.textContent?.length || 0,
-				} ) ),
-			};
+			console.log( '✅ SUCCESS: All class-base-convertedd properties working on frontend too!' );
 		} );
 
 		await expect( heading ).toHaveCSS( 'letter-spacing', '1px' );

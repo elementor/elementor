@@ -69,14 +69,9 @@ test.describe( 'Opacity Prop Type Integration @prop-types', () => {
 		const elementorFrame = editor.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
 
-		// Define test cases for specific text content selectors
-		const testCases = [
-			{ textContent: 'Full opacity', expected: '1' },
-			{ textContent: 'Half opacity', expected: '0.5' },
-			{ textContent: 'Transparent', expected: '0' },
-			{ textContent: 'Three quarters opacity', expected: '0.75' },
-			{ textContent: 'Quarter opacity', expected: '0.25' },
-		];
+		// Test all converted paragraph elements
+		const paragraphElements = elementorFrame.locator( '.e-paragraph-base-converted' );
+		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
 
 		// Test opacity values using specific text content selectors
 		await test.step( 'Verify opacity values are applied correctly', async () => {

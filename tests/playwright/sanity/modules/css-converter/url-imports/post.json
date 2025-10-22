@@ -1,0 +1,41 @@
+[
+        {
+                "id": "23cd227",
+                "elType": "e-div-block",
+                "settings": [],
+                "elements": [
+                        {
+                                "id": "e37e08e",
+                                "elType": "e-div-block",
+                                "settings": [],
+                                "elements": [
+                                        {
+                                                "id": "94542aa",
+                                                "elType": "widget",
+                                                "settings": {
+                                                        "classes": {
+                                                                "$$type": "classes",
+                                                                "value": [
+                                                                        "g-6fc7a6b"
+                                                                ]
+                                                        }
+                                                },
+                                                "elements": [],
+                                                "widgetType": "e-heading",
+                                                "styles": [],
+                                                "editor_settings": [],
+                                                "version": "0.0"
+                                        }
+                                ],
+                                "isInner": false,
+                                "styles": [],
+                                "editor_settings": [],
+                                "version": "0.0"
+                        }
+                ],
+                "isInner": false,
+                "styles": [],
+                "editor_settings": [],
+                "version": "0.0"
+        }
+]

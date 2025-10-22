@@ -69,6 +69,11 @@ class Widget_Mapper {
 
 	public function map_element( $element ) {
 		$tag = $element['tag'];
+		$element_class = $element['attributes']['class'] ?? '';
+		
+		// DEBUG: Log element mapping input
+		error_log( "🔍 WIDGET_MAPPER DEBUG: Mapping element - Tag: {$tag}, Class: '{$element_class}'" );
+		error_log( "🔍 WIDGET_MAPPER DEBUG: Element attributes: " . json_encode( $element['attributes'] ?? [] ) );
 
 		// Check if we have a mapping for this tag
 		if ( ! isset( $this->mapping_rules[ $tag ] ) ) {
@@ -85,6 +90,11 @@ class Widget_Mapper {
 		// Call the appropriate handler
 		$handler = $this->handlers[ $widget_type ];
 		$widget = call_user_func( $handler, $element );
+		
+		// DEBUG: Log widget mapping output
+		$widget_class = $widget['attributes']['class'] ?? '';
+		error_log( "🔍 WIDGET_MAPPER DEBUG: Mapped to widget - Type: {$widget_type}, Class: '{$widget_class}'" );
+		error_log( "🔍 WIDGET_MAPPER DEBUG: Widget attributes: " . json_encode( $widget['attributes'] ?? [] ) );
 
 		// Add generated class name to widget attributes if it exists
 		if ( ! empty( $element['generated_class'] ) ) {
@@ -244,18 +254,44 @@ class Widget_Mapper {
 	}
 
 	private function handle_div_block( $element ) {
+		// DEBUG: Log entry into handle_div_block
+		$children_count = count( $element['children'] ?? [] );
+		error_log( "🔍 WIDGET_MAPPER DEBUG: handle_div_block called with {$children_count} children" );
+		
 		$element_id = $this->generate_element_id( $element );
 
 		// OPTIMIZATION: If this div only contains text content (after text wrapping),
 		// convert it directly to a paragraph widget to avoid unnecessary nesting
-		if ( $this->should_convert_div_to_paragraph( $element ) ) {
+		$should_convert = $this->should_convert_div_to_paragraph( $element );
+		error_log( "🔍 WIDGET_MAPPER DEBUG: should_convert_div_to_paragraph = " . ( $should_convert ? 'true' : 'false' ) );
+		
+		if ( $should_convert ) {
+			error_log( "🔍 WIDGET_MAPPER DEBUG: Converting div to paragraph widget (early return)" );
 			return $this->convert_div_to_paragraph_widget( $element );
 		}
+		
+		error_log( "🔍 WIDGET_MAPPER DEBUG: Proceeding with normal div-block processing" );
 
 		// Map children recursively and handle flattening
 		$children = [];
 		if ( ! empty( $element['children'] ) ) {
+			// DEBUG: Log children before mapping
+			error_log( "🔍 WIDGET_MAPPER DEBUG: handle_div_block processing " . count( $element['children'] ) . " children" );
+			foreach ( $element['children'] as $child_index => $child ) {
+				$child_tag = $child['tag'] ?? 'unknown';
+				$child_class = $child['attributes']['class'] ?? '';
+				error_log( "🔍 WIDGET_MAPPER DEBUG:   Child #{$child_index} - Tag: {$child_tag}, Class: '{$child_class}'" );
+			}
+			
 			$mapped_children = $this->map_elements( $element['children'] );
+			
+			// DEBUG: Log mapped children
+			error_log( "🔍 WIDGET_MAPPER DEBUG: handle_div_block mapped " . count( $mapped_children ) . " children" );
+			foreach ( $mapped_children as $child_index => $child_widget ) {
+				$child_type = $child_widget['widget_type'] ?? 'unknown';
+				$child_class = $child_widget['attributes']['class'] ?? '';
+				error_log( "🔍 WIDGET_MAPPER DEBUG:   Mapped Child #{$child_index} - Type: {$child_type}, Class: '{$child_class}'" );
+			}
 			
 			// CRITICAL FIX: Flatten children to prevent double nesting
 			foreach ( $mapped_children as $child_widget ) {
@@ -431,10 +467,18 @@ class Widget_Mapper {
 			$only_child = $element['children'][0];
 			
 			// Check if it's a synthetic paragraph that can be consolidated
+			// CRITICAL FIX: Don't consolidate paragraphs with class attributes - they're meaningful!
+			$has_class_attributes = ! empty( $only_child['attributes']['class'] );
 			$is_synthetic = ( 'p' === $only_child['tag'] &&
 				empty( $only_child['children'] ) &&
-				empty( $only_child['inline_css'] ) ) ||
+				empty( $only_child['inline_css'] ) &&
+				! $has_class_attributes ) ||  // Don't consolidate if it has class attributes
 				! empty( $only_child['synthetic'] );
+				
+			// DEBUG: Log synthetic detection logic
+			error_log( "🔍 WIDGET_MAPPER DEBUG: Child p tag has class: " . ( $has_class_attributes ? 'YES' : 'NO' ) );
+			error_log( "🔍 WIDGET_MAPPER DEBUG: Child class attribute: '" . ( $only_child['attributes']['class'] ?? '' ) . "'" );
+			error_log( "🔍 WIDGET_MAPPER DEBUG: is_synthetic = " . ( $is_synthetic ? 'true' : 'false' ) );
 				
 			if ( $is_synthetic ) {
 

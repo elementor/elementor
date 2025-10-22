@@ -98,12 +98,12 @@ class Widgets_Route {
 							'default' => false,
 							'description' => 'Whether to preserve HTML element IDs',
 						],
-						'createGlobalClasses' => [
-							'type' => 'boolean',
-							'default' => true,
-							'description' => 'Always creates optimized widget styles (deprecated: false option removed)',
-						],
-						'timeout' => [
+					'createGlobalClasses' => [
+						'type' => 'boolean',
+						'default' => true,
+						'description' => 'Always creates optimized widget styles (deprecated: false option removed)',
+					],
+					'timeout' => [
 							'type' => 'integer',
 							'default' => 30,
 							'minimum' => 1,
@@ -126,12 +126,38 @@ class Widgets_Route {
 		return true;
 	}
 	public function handle_widget_conversion( WP_REST_Request $request ) {
+		error_log( "🔥🔥🔥 MAX_DEBUG: handle_widget_conversion called" );
+		error_log( "🔥🔥🔥 MAX_DEBUG: Request method = " . $_SERVER['REQUEST_METHOD'] );
+		error_log( "🔥🔥🔥 MAX_DEBUG: Request URI = " . $_SERVER['REQUEST_URI'] );
+		error_log( "🔥🔥🔥 MAX_DEBUG: All params = " . json_encode( $request->get_params() ) );
+		
 		$type = $request->get_param( 'type' );
 		$content = $request->get_param( 'content' );
-		$css_urls = $request->get_param( 'cssUrls' ) ? $request->get_param( 'cssUrls' ) : [];
-		$follow_imports = $request->get_param( 'followImports' ) ? $request->get_param( 'followImports' ) : false;
-		$selector = $request->get_param( 'selector' );
-		$options = $request->get_param( 'options' ) ? $request->get_param( 'options' ) : [];
+		$css_urls = $request->get_param( 'cssUrls' ) ?: [];
+		$follow_imports = $request->get_param( 'followImports' ) ?: false;
+		$options = $request->get_param( 'options' ) ?: [];
+		
+		error_log( "🔥 STEP 3: Content length = " . strlen( $content ) );
+		error_log( "🔥 STEP 3: Options = " . json_encode( $options ) );
+		
+		// PHASE 2.2: HTML Content Verification
+		error_log( "🔍 PHASE 2.2: HTML CONTENT ANALYSIS" );
+		error_log( "Request type: " . $type );
+		error_log( "Content length: " . strlen( $content ) );
+		error_log( "Content preview (first 500 chars): " . substr( $content, 0, 500 ) );
+		
+		// Check for inline styles in HTML
+		if ( 'html' === $type ) {
+			$inline_style_count = preg_match_all( '/style\s*=\s*["\'][^"\']*["\']/', $content );
+			error_log( "Inline style attributes found: " . $inline_style_count );
+			
+			if ( $inline_style_count > 0 ) {
+				preg_match_all( '/style\s*=\s*["\']([^"\']*)["\']/', $content, $matches );
+				foreach ( $matches[1] as $i => $style_content ) {
+					error_log( "Inline style #" . ($i + 1) . ": " . $style_content );
+				}
+			}
+		}
 
 		$validation_error = $this->request_validator->validate_widget_conversion_request( $request );
 		if ( $validation_error ) {

@@ -115,6 +115,13 @@ class Widget_Hierarchy_Processor {
 	}
 
 	private function process_single_widget( $widget, $depth ) {
+		$widget_type = $widget['widget_type'] ?? 'unknown';
+		$widget_class = $widget['attributes']['class'] ?? '';
+		
+		// DEBUG: Log widget processing input
+		error_log( "🔍 HIERARCHY_PROCESSOR DEBUG: Processing widget - Type: {$widget_type}, Class: '{$widget_class}', Depth: {$depth}" );
+		error_log( "🔍 HIERARCHY_PROCESSOR DEBUG: Widget attributes before processing: " . json_encode( $widget['attributes'] ?? [] ) );
+		
 		// Add hierarchy metadata to widget
 		$widget['hierarchy_depth'] = $depth;
 		$widget['is_parent'] = ! empty( $widget['children'] );
@@ -129,6 +136,11 @@ class Widget_Hierarchy_Processor {
 		} else {
 			$widget = $this->process_child_widget( $widget );
 		}
+		
+		// DEBUG: Log widget processing output
+		$widget_class_after = $widget['attributes']['class'] ?? '';
+		error_log( "🔍 HIERARCHY_PROCESSOR DEBUG: Widget attributes after processing: " . json_encode( $widget['attributes'] ?? [] ) );
+		error_log( "🔍 HIERARCHY_PROCESSOR DEBUG: Processed widget - Type: {$widget_type}, Class: '{$widget_class_after}'" );
 
 		return $widget;
 	}
