@@ -9,13 +9,16 @@ export type ComponentEventData = {
 	trigger?: string;
 };
 
-export type ContextMenuEventOptions = Record<string, unknown> & {
+export type ContextMenuEventOptions = Record< string, unknown > & {
 	location: string;
 	secondaryLocation: string;
 	trigger: string;
 };
 
-export const getComponentEventData = ( containerElement: V1ElementData, options?: ContextMenuEventOptions ): ComponentEventData => {
+export const getComponentEventData = (
+	containerElement: V1ElementData,
+	options?: ContextMenuEventOptions
+): ComponentEventData => {
 	const { elementsCount, componentsCount } = countNestedElements( containerElement );
 
 	return {

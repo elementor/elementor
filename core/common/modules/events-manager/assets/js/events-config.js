@@ -101,6 +101,7 @@ const eventsConfig = {
 			pluginToolsTab: 'plugin_tools_tab',
 			pluginWebsiteTemplatesTab: 'plugin_website_templates_tab',
 		},
+		componentsTab: 'Components Tab',
 	},
 
 	elements: {

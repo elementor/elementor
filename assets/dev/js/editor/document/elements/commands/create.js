@@ -72,6 +72,15 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 			result = result[ 0 ];
 		}
 
+		window.dispatchEvent( new CustomEvent(
+			'elementor/editor/created-element',
+			{
+				detail: {
+					createdElement: result,
+				},
+			},
+		) );
+
 		return result;
 	}
 }

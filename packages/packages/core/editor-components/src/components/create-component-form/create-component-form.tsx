@@ -13,7 +13,11 @@ import { type ComponentFormValues } from '../../types';
 import { trackComponentEvent } from '../../utils/tracking';
 import { useForm } from './hooks/use-form';
 import { createBaseComponentSchema, createSubmitComponentSchema } from './utils/component-form-schema';
-import { type ComponentEventData, ContextMenuEventOptions, getComponentEventData } from './utils/get-component-event-data';
+import {
+	type ComponentEventData,
+	type ContextMenuEventOptions,
+	getComponentEventData,
+} from './utils/get-component-event-data';
 import { replaceElementWithComponent } from './utils/replace-element-with-component';
 
 type SaveAsComponentEventData = {
@@ -108,7 +112,7 @@ export function CreateComponentForm() {
 		setElement( null );
 		setAnchorPosition( undefined );
 	};
-	
+
 	const cancelSave = () => {
 		resetAndClosePopup();
 		trackComponentEvent( {

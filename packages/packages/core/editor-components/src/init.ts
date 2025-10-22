@@ -1,7 +1,9 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
 import { registerElementType, settingsTransformersRegistry } from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
+import { type V1Element } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
+import { TransformablePropValue } from '@elementor/editor-props';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __privateListenTo as listenTo, commandStartEvent, registerDataHook } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
@@ -18,6 +20,7 @@ import { removeComponentStyles } from './store/remove-component-styles';
 import { slice } from './store/store';
 import { type Element, type ExtendedWindow } from './types';
 import { beforeSave } from './utils/before-save';
+import { onElementCreation, trackComponentEvent } from './utils/tracking';
 
 const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
 
@@ -60,6 +63,8 @@ export function init() {
 
 		loadComponentsStyles( ( config?.elements as Element[] ) ?? [] );
 	} );
+
+	registerDataHook< [ unknown, V1Element ] >( 'after', 'document/elements/create', onElementCreation );
 
 	settingsTransformersRegistry.register( 'component-id', componentIdTransformer );
 }

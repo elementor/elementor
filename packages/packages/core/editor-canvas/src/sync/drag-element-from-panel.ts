@@ -13,7 +13,8 @@ export const startDragElementFromPanel = ( props: Omit< V1ElementModelProps, 'id
 };
 
 export const endDragElementFromPanel = () => {
-	getElementorChannels()?.panelElements?.trigger( 'element:drag:end' );
+	const a = getElementorChannels()?.panelElements?.trigger( 'element:drag:end' );
+	return a;
 };
 
 const getElementorChannels = () => {
