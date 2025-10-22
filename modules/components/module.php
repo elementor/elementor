@@ -52,19 +52,16 @@ class Module extends BaseModule {
 	}
 
 	private function get_lock_manager() {
-		if ( ! $this->lock_manager ) {
-			$this->lock_manager = new Document_Lock_Manager( Components_REST_API::LOCK_DOCUMENT_TYPE_NAME );
-		}
-		return $this->lock_manager;
+		return self::get_lock_manager_instance();
 	}
 
 	public static function get_lock_manager_instance() {
 		static $instance = null;
-		
+
 		if ( $instance === null ) {
 			$instance = new Document_Lock_Manager( Components_REST_API::LOCK_DOCUMENT_TYPE_NAME );
 		}
-		
+
 		return $instance;
 	}
 
