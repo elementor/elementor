@@ -1141,6 +1141,12 @@ class OnboardingTracker {
 				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
 				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED,
 			},
+			202: {
+				name: 'core_onboarding_experiment202',
+				enabledKey: 'isExperiment202Enabled',
+				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT202_VARIANT,
+				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT202_STARTED,
+			},
 			401: {
 				name: 'core_onboarding_experiment401',
 				enabledKey: 'isExperiment401Enabled',

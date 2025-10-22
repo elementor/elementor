@@ -6,6 +6,7 @@ import useAjax from 'elementor-app/hooks/use-ajax';
 import Layout from '../components/layout/layout';
 import ThemeSelectionContentA from '../components/theme-selection-content-a';
 import ThemeSelectionContentB from '../components/theme-selection-content-b';
+import ThemeSelectionExperiment202VariantB from '../components/theme-selection-experiment202-variant-b';
 import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../utils/onboarding-event-tracking';
 
 const getContinueButtonText = ( isHelloThemeActivated, isVariantB ) => {
@@ -43,6 +44,8 @@ export default function HelloTheme() {
 		goToNextScreen = useCallback( () => navigate( 'onboarding/' + nextStep ), [ navigate, nextStep ] ),
 		variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT ),
 		isVariantB = 'B' === variant,
+		variant202 = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT202_VARIANT ),
+		isVariant202B = 'B' === variant202,
 		continueWithHelloThemeText = getContinueButtonText( state.isHelloThemeActivated, isVariantB ),
 		[ actionButtonText, setActionButtonText ] = useState( continueWithHelloThemeText );
 
@@ -336,7 +339,12 @@ export default function HelloTheme() {
 		}
 	}, [ activateHelloThemeAjaxState.status ] );
 
-	const ContentComponent = isVariantB ? ThemeSelectionContentB : ThemeSelectionContentA;
+	let ContentComponent = ThemeSelectionContentA;
+	if ( isVariant202B ) {
+		ContentComponent = ThemeSelectionExperiment202VariantB;
+	} else if ( isVariantB ) {
+		ContentComponent = ThemeSelectionContentB;
+	}
 
 	return (
 		<Layout pageId={ pageId } nextStep={ nextStep }>
