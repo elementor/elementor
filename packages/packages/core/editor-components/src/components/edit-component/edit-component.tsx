@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { getV1DocumentsManager, type V1Document } from '@elementor/editor-documents';
 import { __useNavigateToDocument as useNavigateToDocument } from '@elementor/editor-documents';
 import { type V1Element } from '@elementor/editor-elements';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { __useSelector as useSelector } from '@elementor/store';
+import { useOnMount } from '@elementor/utils';
 
 import { selectComponentsObject, selectLoadIsPending } from '../../store/store';
 import { ComponentModal } from './component-modal';
@@ -74,16 +75,4 @@ export function EditComponent() {
 	}
 
 	return <ComponentModal element={ elementDom } onClose={ onBack } />;
-}
-
-function useOnMount( cb: () => void ) {
-	const mounted = useRef( false );
-
-	useEffect( () => {
-		if ( ! mounted.current ) {
-			mounted.current = true;
-
-			cb();
-		}
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 }

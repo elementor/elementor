@@ -19,6 +19,7 @@ export function ComponentModal( { element, onClose }: ModalProps ) {
 				onClose();
 			}
 		};
+
 		portal?.body.addEventListener( 'keydown', handleEsc );
 
 		return () => {
@@ -30,18 +31,10 @@ export function ComponentModal( { element, onClose }: ModalProps ) {
 		return null;
 	}
 
-	return createPortal( <BackdropSquares iframe={ portal } element={ element } onClick={ onClose } />, portal.body );
+	return createPortal( <Backdrop iframe={ portal } element={ element } onClick={ onClose } />, portal.body );
 }
 
-function BackdropSquares( {
-	iframe,
-	element,
-	onClick,
-}: {
-	iframe: HTMLDocument;
-	element: HTMLElement;
-	onClick: () => void;
-} ) {
+function Backdrop( { iframe, element, onClick }: { iframe: HTMLDocument; element: HTMLElement; onClick: () => void } ) {
 	const rect = useElementRect( element );
 	const backdropStyle = {
 		position: 'fixed',
