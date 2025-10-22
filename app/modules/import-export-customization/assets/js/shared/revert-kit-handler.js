@@ -11,9 +11,8 @@ export class RevertKitHandler {
 	static KIT_DATA_KEY = 'elementor-kit-data';
 	static NAME_SEPARATOR_PATTERN = /[-_]+/;
 
-	constructor( { revertButton, onSuccess, onError } = {} ) {
+	constructor( { revertButton, onError } = {} ) {
 		this.revertButton = revertButton;
-		this.onSuccess = onSuccess || this.defaultSuccessHandler.bind( this );
 		this.onError = onError || this.defaultErrorHandler.bind( this );
 	}
 
@@ -31,7 +30,6 @@ export class RevertKitHandler {
 
 			const { data } = await this.callRevertAPI();
 			this.handleRevertResponse( data );
-			this.onSuccess( data );
 		} catch ( error ) {
 			this.onError( error );
 		}
@@ -54,11 +52,11 @@ export class RevertKitHandler {
 		this.showRevertCompletedDialog( data );
 	}
 
-	showRevertCompletedDialog( response ) {
-		const shouldShowReferrerDialog = response.show_referrer_dialog && response.referrer_kit_id;
+	showRevertCompletedDialog() {
+		const referrerKitId = this.getReferrerKitId();
 
-		if ( shouldShowReferrerDialog ) {
-			this.showReferrerKitDialog( response.referrer_kit_id );
+		if ( referrerKitId ) {
+			this.showReferrerKitDialog( referrerKitId );
 			return;
 		}
 
@@ -96,18 +94,22 @@ export class RevertKitHandler {
 		} );
 	}
 
-	showRevertSuccessDialog() {
+	createSuccessHeaderMessage() {
 		const { [ RevertKitHandler.CACHE_KEYS.ACTIVE_KIT_NAME ]: activeKitName } =
 			this.getDataFromCache();
 
+		/* Translators: %s: Kit name */
+		return __( '%s was successfully deleted', 'elementor' ).replace(
+			'%s',
+			activeKitName,
+		);
+	}
+
+	showRevertSuccessDialog() {
 		elementorCommon.dialogsManager
 			.createWidget( 'confirm', {
 				id: RevertKitHandler.DIALOG_ID,
-				/* Translators: %s: Kit name */
-				headerMessage: __( '%s was successfully deleted', 'elementor' ).replace(
-					'%s',
-					activeKitName,
-				),
+				headerMessage: this.createSuccessHeaderMessage(),
 				message: __(
 					'Try a different Website Template or build your site from scratch.',
 					'elementor',
@@ -115,6 +117,9 @@ export class RevertKitHandler {
 				strings: {
 					confirm: __( 'OK', 'elementor' ),
 					cancel: __( 'Library', 'elementor' ),
+				},
+				onConfirm: () => {
+					location.reload();
 				},
 				onCancel: () => {
 					location.href = elementorImportExport.appUrl;
@@ -126,17 +131,10 @@ export class RevertKitHandler {
 	}
 
 	showReferrerKitDialog( referrerKitId ) {
-		const { [ RevertKitHandler.CACHE_KEYS.ACTIVE_KIT_NAME ]: activeKitName } =
-			this.getDataFromCache();
-
 		elementorCommon.dialogsManager
 			.createWidget( 'confirm', {
 				id: RevertKitHandler.DIALOG_ID,
-				/* Translators: %s: Kit name */
-				headerMessage: __( '%s was successfully deleted', 'elementor' ).replace(
-					'%s',
-					activeKitName,
-				),
+				headerMessage: this.createSuccessHeaderMessage(),
 				message: __( "You're ready to apply a new Kit!", 'elementor' ),
 				strings: {
 					confirm: __( 'Continue to new Kit', 'elementor' ),
@@ -145,6 +143,9 @@ export class RevertKitHandler {
 				onConfirm: () => {
 					location.href =
 						elementorImportExport.appUrl + '/preview/' + referrerKitId;
+				},
+				onCancel: () => {
+					location.reload();
 				},
 			} )
 			.show();
@@ -197,6 +198,12 @@ export class RevertKitHandler {
 	}
 
 	getReferrerKitId() {
+		const urlParams = new URLSearchParams( window.location.search );
+		const pageReferrerKit = urlParams.get( RevertKitHandler.URL_PARAM_REFERRER_KIT );
+		if ( pageReferrerKit ) {
+			return pageReferrerKit;
+		}
+
 		if ( ! this.revertButton ) {
 			return '';
 		}
@@ -232,50 +239,14 @@ export class RevertKitHandler {
 		sessionStorage.removeItem( RevertKitHandler.KIT_DATA_KEY );
 	}
 
-	defaultSuccessHandler() {}
-
-	defaultErrorHandler( error ) {
-		const errorMessage = this.getErrorMessage( error );
-
+	defaultErrorHandler() {
 		elementorCommon.dialogsManager
 			.createWidget( 'alert', {
-				message: errorMessage,
+				message: __(
+					'An error occurred while reverting the kit. Please try again.',
+					'elementor',
+				),
 			} )
 			.show();
-	}
-
-	getErrorMessage( error ) {
-		const defaultMessage = __(
-			'An error occurred while reverting the kit. Please try again.',
-			'elementor',
-		);
-
-		if ( ! error || ! error.message ) {
-			return defaultMessage;
-		}
-
-		if ( this.isConfigurationError( error.message ) ) {
-			return __(
-				'Configuration error: The import/export system is not properly configured. Please contact your administrator.',
-				'elementor',
-			);
-		}
-
-		if ( this.isNetworkError( error.message ) ) {
-			return __(
-				'Network error: Unable to connect to the server. Please check your internet connection and try again.',
-				'elementor',
-			);
-		}
-
-		return `${ defaultMessage } ${ __( 'Error details:', 'elementor' ) } ${ error.message }`;
-	}
-
-	isConfigurationError( message ) {
-		return message.includes( 'configuration not found' ) || message.includes( 'restApiBaseUrl is missing' );
-	}
-
-	isNetworkError( message ) {
-		return message.includes( 'fetch' ) || message.includes( 'network' );
 	}
 }

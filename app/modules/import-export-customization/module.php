@@ -266,9 +266,9 @@ class Module extends BaseModule {
 	}
 
 	private function get_revert_href(): string {
-		$admin_post_url = admin_url( 'admin-post.php?action=elementor_revert_kit' );
-		$nonced_admin_post_url = wp_nonce_url( $admin_post_url, 'elementor_revert_kit' );
-		return $this->maybe_add_referrer_param( $nonced_admin_post_url );
+		$current_url = add_query_arg( null, null );
+		$nonced_url = wp_nonce_url( $current_url, 'elementor_revert_kit' );
+		return $this->maybe_add_referrer_param( $nonced_url );
 	}
 
 	/**
