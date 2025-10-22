@@ -23,7 +23,31 @@ abstract class Base_Route {
 	abstract protected function callback( $request ): \WP_REST_Response;
 
 	protected function permission_callback(): callable {
-		return fn() => current_user_can( 'manage_options' );
+		return function( $request ) {
+			if ( ! current_user_can( 'manage_options' ) ) {
+				return false;
+			}
+
+			return $this->verify_nonce_from_request( $request );
+		};
+	}
+
+	private function verify_nonce_from_request( $request ): bool {
+		$header_nonce = $request->get_header( 'X-WP-Nonce' );
+		if ( ! empty( $header_nonce ) && wp_verify_nonce( $header_nonce, 'wp_rest' ) ) {
+			return true;
+		}
+
+		$param_nonce = sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ?? $_REQUEST['_nonce'] ?? '' ) );
+		if ( empty( $param_nonce ) ) {
+			return false;
+		}
+
+		if ( wp_verify_nonce( $param_nonce, 'wp_rest' ) ) {
+			return true;
+		}
+
+		return wp_verify_nonce( $param_nonce, 'elementor_admin' );
 	}
 
 	abstract protected function get_args(): array;

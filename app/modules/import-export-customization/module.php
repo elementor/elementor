@@ -576,7 +576,7 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'import-export-customization-admin',
 			$this->get_js_assets_url( 'import-export-customization-admin' ),
-			[ 'elementor-common' ],
+			[ 'elementor-common', 'wp-api-fetch' ],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -587,6 +587,8 @@ class Module extends BaseModule {
 			[
 				'import-export-customization' => [
 					'restApiBaseUrl' => Controller::get_base_url(),
+					'restNonce' => wp_create_nonce( 'wp_rest' ),
+					'restUrl' => rest_url(),
 				],
 			]
 		);

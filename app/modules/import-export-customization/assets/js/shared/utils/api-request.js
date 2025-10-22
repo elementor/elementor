@@ -1,5 +1,6 @@
 import apiFetch from '@wordpress/api-fetch';
 import { ImportExportError } from '../error/import-export-error';
+import { configureApiFetch } from './api-fetch-config';
 
 const HTTP_STATUS = {
 	REQUEST_TIMEOUT: 408,
@@ -10,12 +11,11 @@ const HTTP_METHODS = {
 };
 
 export async function apiRequest( { data = null, path, method = HTTP_METHODS.CREATABLE } ) {
-	const baseUrl = elementorAppConfig[ 'import-export-customization' ].restApiBaseUrl;
-	const fullPath = `${ baseUrl }/${ path }`;
+	configureApiFetch();
 
 	try {
 		const requestOptions = {
-			path: fullPath,
+			path: `/elementor/v1/import-export-customization/${ path }`,
 			method,
 		};
 
