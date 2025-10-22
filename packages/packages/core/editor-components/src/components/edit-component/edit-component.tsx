@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRef, useState } from 'react';
+import { type Dispatch, type MutableRefObject, type SetStateAction, useRef, useState } from 'react';
 import { getV1DocumentsManager, type V1Document } from '@elementor/editor-documents';
 import { __useNavigateToDocument as useNavigateToDocument } from '@elementor/editor-documents';
 import { type V1Element } from '@elementor/editor-elements';
@@ -11,59 +11,13 @@ import { selectComponentsObject, selectLoadIsPending } from '../../store/store';
 import { ComponentModal } from './component-modal';
 
 export function EditComponent() {
-	const documentsManager = getV1DocumentsManager();
 	const [ currentDocument, setCurrentDocument ] = useState< V1Document | null >( null );
-	const switchToDocument = useNavigateToDocument();
 	const componentsPath = useRef< [ number, string | undefined ][] >( [] );
 	const components = useSelector( selectComponentsObject );
 	const isLoading = useSelector( selectLoadIsPending );
 
-	const onBack = () => {
-		const [ lastDocumentId, lastDocumentInstanceId ] = componentsPath.current.pop() ?? [];
-
-		if ( lastDocumentId && lastDocumentInstanceId ) {
-			switchToDocument(
-				lastDocumentId,
-				{
-					mode: 'autosave',
-					selector: `[data-id="${ lastDocumentInstanceId }"]`,
-					setAsInitial: false,
-				},
-				false
-			);
-		} else {
-			switchToDocument( documentsManager.getInitialId(), { mode: 'autosave', setAsInitial: false } );
-		}
-
-		setCurrentDocument( null );
-	};
-
-	useOnMount( () => {
-		registerDataHook( 'after', 'editor/documents/attach-preview', () => {
-			const nextDocument = documentsManager.getCurrent();
-
-			if ( ! nextDocument ) {
-				return;
-			}
-
-			setCurrentDocument( ( current ) => {
-				if ( current?.id === nextDocument.id ) {
-					return current;
-				}
-
-				const instanceId = current?.container.view.el.dataset.id;
-
-				if (
-					current?.id &&
-					! componentsPath.current.find( ( [ id, iId ] ) => id === current.id && iId === instanceId )
-				) {
-					componentsPath.current.push( [ current.id, instanceId ] );
-				}
-
-				return nextDocument;
-			} );
-		} );
-	} );
+	useHandleDocumentSwitches( setCurrentDocument, componentsPath );
+	const onBack = useNavigateBack( setCurrentDocument, componentsPath );
 
 	const isComponent = ! isLoading && currentDocument ? !! components[ currentDocument.id ] : false;
 
@@ -75,4 +29,67 @@ export function EditComponent() {
 	}
 
 	return <ComponentModal element={ elementDom } onClose={ onBack } />;
+}
+
+function useHandleDocumentSwitches(
+	setDocument: Dispatch< SetStateAction< V1Document | null > >,
+	path: MutableRefObject< [ number, string | undefined ][] >
+) {
+	const documentsManager = getV1DocumentsManager();
+
+	useOnMount( () => {
+		registerDataHook( 'after', 'editor/documents/attach-preview', () => {
+			const nextDocument = documentsManager.getCurrent();
+
+			if ( ! nextDocument ) {
+				return;
+			}
+
+			setDocument( ( current: V1Document | null ) => {
+				if ( current?.id === nextDocument.id ) {
+					return current;
+				}
+
+				const instanceId = current?.container.view.el.dataset.id;
+
+				if (
+					current?.id &&
+					! path.current.find( ( [ id, iId ] ) => id === current.id && iId === instanceId )
+				) {
+					path.current.push( [ current.id, instanceId ] );
+				}
+
+				return nextDocument;
+			} );
+		} );
+	} );
+}
+
+function useNavigateBack(
+	setDocument: Dispatch< SetStateAction< V1Document | null > >,
+	path: MutableRefObject< [ number, string | undefined ][] >
+) {
+	const switchToDocument = useNavigateToDocument();
+	const documentsManager = getV1DocumentsManager();
+
+	return () => {
+		const [ lastDocumentId, lastDocumentInstanceId ] = path.current.pop() ?? [];
+
+		if ( lastDocumentId && lastDocumentInstanceId ) {
+			switchToDocument(
+				lastDocumentId,
+				{
+					mode: 'autosave',
+					selector: `[data-id="${ lastDocumentInstanceId }"]`,
+					setAsInitial: false,
+					shouldScroll: false,
+				},
+				false
+			);
+		} else {
+			switchToDocument( documentsManager.getInitialId(), { mode: 'autosave', setAsInitial: false } );
+		}
+
+		setDocument( null );
+	};
 }
