@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { EditableField } from '../../components/editable-field';
 import { useEditable } from '../use-editable';
@@ -82,6 +82,9 @@ describe( 'useEditable', () => {
 		const editableField = screen.getByRole( 'textbox' );
 		const openEditButton = screen.getByRole( 'button', { name: 'Open Edit' } );
 
+		// Mock the blur method to trigger onBlur event
+		mockBlur( editableField );
+
 		// Act.
 		fireEvent.click( openEditButton );
 
@@ -93,10 +96,10 @@ describe( 'useEditable', () => {
 		// Act.
 		fireEvent.keyDown( editableField, { key: 'Enter' } );
 
-		fireEvent.blur( editableField );
-
 		// Assert.
-		expect( onSubmit ).toHaveBeenCalledWith( newValue );
+		await waitFor( () => {
+			expect( onSubmit ).toHaveBeenCalledWith( newValue );
+		} );
 	} );
 
 	it( 'should remove the editable content attribute on blur', () => {
@@ -140,7 +143,7 @@ describe( 'useEditable', () => {
 		expect( onSubmit ).toHaveBeenCalledWith( newValue );
 	} );
 
-	it( 'should set error message id validation fails', () => {
+	it( 'should set error message id validation fails on enter, and keep the edit mode open', () => {
 		// Arrange.
 		const newValue = 'invalid-value';
 		const onSubmit = jest.fn();
@@ -173,6 +176,7 @@ describe( 'useEditable', () => {
 
 		// Assert.
 		expect( onSubmit ).not.toHaveBeenCalled();
+		expect( editableField ).toHaveAttribute( 'contentEditable', 'true' );
 	} );
 
 	it( 'should not run validation & submit if the value has not changed', () => {
@@ -213,4 +217,39 @@ describe( 'useEditable', () => {
 		// Assert.
 		expect( onSubmit ).not.toHaveBeenCalled();
 	} );
+
+	it( 'should not submit, and only close the edit mode on blur if there is an error', () => {
+		// Arrange.
+		const onSubmit = jest.fn();
+		const newValue = 'invalid-value';
+		const validation = jest.fn().mockReturnValue( 'Nope' );
+
+		render( <TestComponent value={ 'Some value' } onSubmit={ onSubmit } validation={ validation } /> );
+
+		const editableField = screen.getByRole( 'textbox' );
+		const openEditButton = screen.getByRole( 'button', { name: 'Open Edit' } );
+
+		// Act.
+		fireEvent.click( openEditButton );
+
+		fireEvent.input( editableField, { target: { innerText: newValue } } );
+
+		// Assert.
+		expect( validation ).toHaveBeenCalledWith( newValue );
+
+		// Act.
+		fireEvent.blur( editableField );
+
+		// Assert.
+		expect( onSubmit ).not.toHaveBeenCalled();
+		expect( screen.getByText( 'not-editing' ) ).toBeInTheDocument();
+	} );
 } );
+
+function mockBlur( element: HTMLElement ) {
+	const originalBlur = element.blur;
+	element.blur = jest.fn( () => {
+		originalBlur.call( element );
+		fireEvent.blur( element );
+	} );
+}
