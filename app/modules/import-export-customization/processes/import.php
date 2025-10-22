@@ -420,9 +420,8 @@ class Import {
 	 */
 	public function init_import_session( $save_instance_data = false ) {
 		$import_sessions = Utils::get_import_sessions( true );
-
 		$existing_session = $import_sessions[ $this->session_id ] ?? [];
-		
+
 		$import_sessions[ $this->session_id ] = [
 			'session_id' => $this->session_id,
 			'kit_title' => $this->manifest['title'] ?? '',
