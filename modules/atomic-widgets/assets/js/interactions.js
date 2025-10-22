@@ -10,6 +10,11 @@ function initInteractions() {
 
     // Get the animate function
     const animateFunc = typeof animate !== 'undefined' ? animate : window.Motion?.animate;
+    const inViewFunc = typeof inView !== 'undefined' ? inView : window.Motion?.inView;
+    if (!inViewFunc) {
+        console.error('❌ No inview function found');
+        return;
+    }
     
     if (!animateFunc) {
         console.error('❌ No animate function found');
@@ -24,13 +29,29 @@ function initInteractions() {
 
     // Animate each element
     elements.forEach((element, index) => {
-        console.log(`🎬 Animating element ${index}`);
+        console.log(`🎬 Setting up element ${index} for scroll animation`);
+        
+        // Set initial state
+        element.style.opacity = '0';
         
         try {
-            animateFunc(element, { opacity: [0, 1] }, { duration: 1, easing: 'ease-in-out' });
-            console.log(`✅ Animation applied to element ${index}`);
+            inViewFunc(element, () => {
+                console.log(`🎬 Animating in view ${index}`);
+                // Animate in
+                animateFunc(element, { opacity: [0, 1] }, { duration: 1, easing: 'ease-in-out' });
+                
+                // Return cleanup function for when element exits viewport
+                return () => {
+                    console.log(`🎬 Element ${index} exiting viewport`);
+                    // Reset to initial state for next entrance
+                    animateFunc(element, { opacity: [1, 0] }, { duration: 0.5, easing: 'ease-in-out' });
+                };
+            }, { 
+                root: null, // Relative to viewport
+                amount: 0.1 // Trigger when 10% visible
+            });
         } catch (error) {
-            console.error(`❌ Animation failed for element ${index}:`, error);
+            console.error(`❌ Inview failed for element ${index}:`, error);
         }
     });
 }
