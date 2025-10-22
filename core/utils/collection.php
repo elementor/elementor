@@ -492,10 +492,6 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		return true;
 	}
 
-	public function json() {
-		return json_encode( $this->items );
-	}
-
 	/**
 	 * @param mixed $offset
 	 *

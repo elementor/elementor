@@ -96,12 +96,6 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 		}, $value );
 	}
 
-	public function frontend_available(): self {
-		$this->meta['frontend_available'] = true;
-
-		return $this;
-	}
-
 	public function jsonSerialize(): array {
 		return [
 			'kind' => static::KIND,

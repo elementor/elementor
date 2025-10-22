@@ -85,7 +85,6 @@ class Dynamic_Prop_Types_Mapping {
 
 		if ( $prop_type instanceof Transformable_Prop_Type ) {
 			$union_prop_type = Union_Prop_Type::create_from( $prop_type );
-			$union_prop_type->set_meta( $prop_type->get_meta() );
 		}
 
 		$union_prop_type->add_prop_type( $dynamic_prop_type );
