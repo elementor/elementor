@@ -108,7 +108,8 @@ class Module extends BaseModule {
 		}
 
 		$locked_user = $this->get_locked_user( $post_id );
-		if ( $locked_user && $locked_user->ID !== get_current_user_id() ) {
+		if ( $locked_user && get_current_user_id() !== $locked_user->ID ) {
+			/* translators: %s: User display name */
 			return new \WP_Error( 'component_locked', sprintf( __( 'This component is currently being edited by %s. Please try again later.', 'elementor' ), $locked_user->display_name ) );
 		}
 		return true;
@@ -164,7 +165,7 @@ class Module extends BaseModule {
 
 			// Extend lock if user owns it
 			$locked_user = $lock_manager->get_locked_user( $component_id );
-			if ( $locked_user && $locked_user->ID === get_current_user_id() ) {
+			if ( $locked_user && get_current_user_id() === $locked_user->ID ) {
 				$lock_manager->extend_lock( $component_id );
 			} else {
 				$response['component_locked'] = $locked_user ? $locked_user->display_name : false;
@@ -176,8 +177,9 @@ class Module extends BaseModule {
 
 	public function heartbeat_send( $data, $screen_id ) {
 		if ( 'elementor' === $screen_id && isset( $_GET['post'] ) ) {
+			$post_id = sanitize_text_field( wp_unslash( $_GET['post'] ) );
 			$data['elementor_component_lock'] = [
-				'component_id' => $_GET['post'],
+				'component_id' => $post_id,
 			];
 		}
 		return $data;
