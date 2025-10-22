@@ -173,7 +173,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		];
 
 		if ( ! empty( $settings['default-active-tab'] ) ) {
-			$attributes['data-e-settings'] = json_encode( [ 'default-active-tab' => $settings['default-active-tab'] ] );
+			$attributes['data-e-settings'] = json_encode( [ 'default-active-tab' => esc_js( $settings['default-active-tab'] ) ] );
 		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
