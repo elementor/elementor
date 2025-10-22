@@ -58,7 +58,7 @@ class Module extends BaseModule {
 	public static function get_lock_manager_instance() {
 		static $instance = null;
 
-		if ( $instance === null ) {
+		if ( null === $instance ) {
 			$instance = new Document_Lock_Manager( Components_REST_API::LOCK_DOCUMENT_TYPE_NAME );
 		}
 
