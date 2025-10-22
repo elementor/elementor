@@ -165,7 +165,7 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
 
-			const heading = elementorFrame.locator( '.e-con h1' ).filter( { hasText: 'Ready to Get Started?' } );
+			const heading = elementorFrame.locator( '.e-con h2' ).filter( { hasText: 'Ready to Get Started?' } );
 			await heading.waitFor( { state: 'visible', timeout: 10000 } );
 
 
