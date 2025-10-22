@@ -4,7 +4,7 @@
 			"id": "4c6ebeb2",
 			"elType": "container",
 			"settings": {
-				"flex_direction": "row"
+				"flex_direction": "column"
 			},
 			"elements": [
 				{
