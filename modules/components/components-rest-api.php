@@ -5,7 +5,6 @@ namespace Elementor\Modules\Components;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
-use Elementor\Modules\Components\Document_Lock_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -19,7 +18,6 @@ class Components_REST_API {
 	const MAX_COMPONENTS = 50;
 
 	private $repository = null;
-	private $lock_manager;
 
 	public function register_hooks() {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
