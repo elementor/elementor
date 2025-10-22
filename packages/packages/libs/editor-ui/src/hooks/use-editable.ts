@@ -77,6 +77,11 @@ export const useEditable = ( { value, onSubmit, validation, onClick, onError }: 
 	};
 
 	const handleBlur = () => {
+		if ( error ) {
+			closeEditMode();
+			return;
+		}
+
 		submit( ( ref.current as HTMLElement ).innerText );
 	};
 
