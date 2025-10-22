@@ -72,9 +72,8 @@ class Module extends BaseModule {
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
 		$transformers->register( Component_Id_Prop_Type::get_key(), new Component_Id_Transformer() );
 	}
-	/**
-	 * Register lock-related hooks
-	 */
+
+
 	private function register_lock_hooks() {
 		add_action( 'elementor/editor/init', [ $this, 'lock_component_on_edit' ] );
 		add_action( 'elementor/editor/after_save', [ $this, 'unlock_component_after_save' ] );
@@ -110,13 +109,9 @@ class Module extends BaseModule {
 
 		$locked_user = $this->get_locked_user( $post_id );
 		if ( $locked_user && $locked_user->ID !== get_current_user_id() ) {
-			wp_die(
-				sprintf(
-					__( 'This component is currently being edited by %s. Please try again later.', 'elementor' ),
-					$locked_user->display_name
-				)
-			);
+			return new \WP_Error( 'component_locked', sprintf( __( 'This component is currently being edited by %s. Please try again later.', 'elementor' ), $locked_user->display_name ) );
 		}
+		return true;
 	}
 
 	public function lock_component( $post_id ) {
