@@ -72,7 +72,6 @@ if ( isset( $style_data['converted_property'] ) && is_array( $style_data['conver
 						}
 					}
 				}
-			} else {
 			}
 		}
 return $atomic_props;

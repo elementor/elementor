@@ -140,6 +140,9 @@ class Css_Specificity_Manager {
 		}
 
 		foreach ( $widget['inline_css'] as $property => $style_data ) {
+			// Convert inline style to atomic format (same as CSS rules)
+			$converted_property = $this->convert_inline_property_to_atomic( $property, $style_data['value'] );
+			
 			$all_styles[] = [
 				'property' => $property,
 				'value' => $style_data['value'],
@@ -149,8 +152,15 @@ class Css_Specificity_Manager {
 				'important' => $style_data['important'],
 				'source' => 'inline',
 				'original_property' => $property,
+				'converted_property' => $converted_property, // Add the missing converted_property field
 			];
 		}
+	}
+
+	private function convert_inline_property_to_atomic( string $property, $value ): ?array {
+		// Use the same conversion service as CSS rules
+		$conversion_service = new Css_Property_Conversion_Service();
+		return $conversion_service->convert_property_to_v4_atomic( $property, $value );
 	}
 
 	public function compute_winning_styles( array $all_styles ): array {

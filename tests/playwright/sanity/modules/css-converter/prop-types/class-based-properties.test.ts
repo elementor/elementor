@@ -46,7 +46,7 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 					text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 				}
 			</style>	
-		<h2 class="banner-title text-bold" style="color: #2c3e50;">Ready to Get Started?</h2>
+		<div><h2 class="banner-title text-bold" style="color: #2c3e50;">Ready to Get Started?</h2></div>
 			
 		`;
 
@@ -104,16 +104,14 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 			// These are the assertions that were failing in the original test
 			await expect( heading ).toHaveCSS( 'letter-spacing', '1px' );
 			await expect( heading ).toHaveCSS( 'text-transform', 'uppercase' );
-			
+
 			// Also test other properties to ensure they're working
 			await expect( heading ).toHaveCSS( 'font-size', '36px' );
 			await expect( heading ).toHaveCSS( 'font-weight', '700' );
 			await expect( heading ).toHaveCSS( 'color', 'rgb(44, 62, 80)' );
-
 		} );
 
 		await test.step( 'Test on frontend as well', async () => {
-			
 			// Save the page first
 			await editor.saveAndReloadPage();
 
@@ -122,52 +120,8 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 			await page.goto( `/?p=${ pageId }` );
 			await page.waitForLoadState();
 
-			const frontendHeading = page.locator( '.e-con h2' ).filter( { hasText: 'Ready to Get Started?' } );
-
-			// Get frontend computed styles for debugging
-			const frontendStyles = await frontendHeading.evaluate( ( el ) => {
-				const styles = window.getComputedStyle( el );
-				const appliedRules = Array.from( el.ownerDocument.styleSheets )
-					.flatMap( sheet => {
-						try {
-							return Array.from( sheet.cssRules );
-						} catch {
-							return [];
-						}
-					} )
-					.filter( rule => rule.selectorText && el.matches( rule.selectorText ) )
-					.map( rule => ( { selector: rule.selectorText, cssText: rule.cssText } ) );
-
-				return {
-					text: el.textContent.trim(),
-					letterSpacing: styles.letterSpacing,
-					textTransform: styles.textTransform,
-					fontSize: styles.fontSize,
-					fontWeight: styles.fontWeight,
-					color: styles.color,
-					marginBottom: styles.marginBottom,
-					textShadow: styles.textShadow,
-					display: styles.display,
-					fontFamily: styles.fontFamily,
-
-					// Applied CSS rules
-					appliedRules,
-
-					// Parent element info
-					parentElement: el.parentElement ? {
-						tagName: el.parentElement.tagName,
-						className: el.parentElement.className,
-						id: el.parentElement.id,
-					} : null,
-				};
-			} );
-
-			const elementorFrame = editor.getPreviewFrame();
-			await elementorFrame.waitForLoadState();
-
-			const heading = elementorFrame.locator( '.e-con h2' ).filter( { hasText: 'Ready to Get Started?' } );
+			const heading = page.locator( '.e-con h2' ).filter( { hasText: 'Ready to Get Started?' } );
 			await heading.waitFor( { state: 'visible', timeout: 10000 } );
-
 
 			await expect( heading ).toHaveCSS( 'letter-spacing', '1px' );
 			await expect( heading ).toHaveCSS( 'text-transform', 'uppercase' );

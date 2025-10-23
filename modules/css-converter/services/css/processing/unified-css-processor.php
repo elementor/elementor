@@ -47,21 +47,15 @@ class Unified_Css_Processor {
 		$this->html_class_modifier = new \Elementor\Modules\CssConverter\Services\Css\Html_Class_Modifier_Service();
 	}
 	public function process_css_and_widgets( string $css, array $widgets ): array {
-		// ═══════════════════════════════════════════════════════════
-		// PASS 1: CSS ANALYSIS & FLATTENING
-		// ═══════════════════════════════════════════════════════════
-		// Step 1.1: Parse CSS rules
+
 		$css_rules = $this->parse_css_and_extract_rules( $css );
-		// Step 1.2: Flatten ALL nested selectors FIRST
+
 		$flattening_results = $this->flatten_all_nested_selectors( $css_rules );
-		// Step 1.3: Process compound selectors (NEW) - Only create global classes for selectors with matching elements
+
 		$compound_results = $this->process_compound_selectors( $css_rules, $widgets );
-		// Step 1.4: Initialize HTML modifier with complete flattening data
-		// EVIDENCE: Track class mappings being passed
+
 		foreach ( $flattening_results['class_mappings'] as $original_class => $mapping ) {
 			$flattened_class = is_array( $mapping ) ? ( $mapping['flattened_class'] ?? 'N/A' ) : $mapping;
-			if ( strpos( $flattened_class, 'fixed' ) !== false ) {
-			}
 		}
 
 		$this->html_class_modifier->initialize_with_flattening_results(
@@ -69,31 +63,27 @@ class Unified_Css_Processor {
 			$flattening_results['classes_with_direct_styles'],
 			$flattening_results['classes_only_in_nested']
 		);
-		// Step 1.5: Initialize HTML modifier with compound selector data
+
 		$this->html_class_modifier->initialize_with_compound_results(
 			$compound_results['compound_mappings']
 		);
-		// ═══════════════════════════════════════════════════════════
-		// PASS 2: STYLE RESOLUTION (CSS ANALYSIS ONLY)
-		// ═══════════════════════════════════════════════════════════
-		// Step 2.1: Process styles using flattened rules (NO class modification yet)
+
 		$this->collect_all_styles_from_sources_with_flattened_rules(
 			$css,
 			$widgets,
 			$flattening_results['flattened_rules']
 		);
-		// Step 2.2: Resolve styles recursively (NO class modification yet)
+
 		$resolved_widgets = $this->resolve_styles_recursively( $widgets );
-		// ═══════════════════════════════════════════════════════════
-		// PASS 3: PREPARE OUTPUT
-		// ═══════════════════════════════════════════════════════════
+
 		$debug_info = $this->unified_style_manager->get_debug_info();
 		$css_class_rules = $this->extract_css_class_rules_for_global_classes( $css, $flattening_results );
-		// Get reset styles information
+
 		$reset_styles_stats = $this->unified_style_manager->get_reset_styles_stats();
 		$complex_reset_styles = $this->unified_style_manager->get_complex_reset_styles();
-		// Get HTML class modification summary
+
 		$html_modification_summary = $this->html_class_modifier->get_modification_summary();
+
 		return [
 			'widgets' => $resolved_widgets,
 			'stats' => $debug_info,
@@ -107,7 +97,6 @@ class Unified_Css_Processor {
 			'reset_styles_stats' => $reset_styles_stats,
 			'complex_reset_styles' => $complex_reset_styles,
 			'html_class_modifications' => $html_modification_summary,
-			// NEW: Pass class modification data for Phase 6 application
 			'flattening_results' => $flattening_results,
 			'compound_results' => $compound_results,
 			'html_class_modifier' => $this->html_class_modifier,
@@ -169,7 +158,7 @@ class Unified_Css_Processor {
 		$document = $parsed_css->get_document();
 		return $this->extract_rules_from_document( $document );
 	}
-	private function log_extracted_rules( array $rules ): void {
+	private function log_extracted_rules(): void {
 		$this->skip_debug_logging_for_performance();
 	}
 	private function is_simple_element_selector( string $selector ): bool {
@@ -265,8 +254,7 @@ class Unified_Css_Processor {
 		foreach ( $rules as $rule ) {
 			$selector = $rule['selector'];
 			$properties = $rule['properties'] ?? [];
-			if ( $selector === 'h1' || strpos( $selector, 'h1' ) !== false ) {
-			}
+
 			foreach ( $properties as $property_data ) {
 				$analyzer_rules[] = [
 					'selector' => $selector,
@@ -348,9 +336,6 @@ class Unified_Css_Processor {
 			$selector = $rule['selector'];
 			$properties = $rule['properties'] ?? [];
 
-			// Log ALL selectors to see what we're getting
-			if ( strpos( $selector, 'elementor' ) !== false ) {
-			}
 
 			$this->log_rule_processing( $selector, $properties );
 
@@ -362,15 +347,11 @@ class Unified_Css_Processor {
 			// Example: .elementor-1140 .element.element-14c0aa4 .heading-title
 			$is_nested_compound = $this->is_nested_selector_with_compound_classes( $selector );
 
-			// Log ALL selectors to see what we're getting
-			if ( strpos( $selector, 'elementor-1140' ) !== false || strpos( $selector, 'heading' ) !== false ) {
-			}
 
 			if ( $is_nested_compound ) {
 				// Only process selectors that look like they're from the original site
 				if ( strpos( $selector, 'elementor-1140' ) !== false || strpos( $selector, 'heading' ) !== false ) {
 					$this->apply_widget_specific_styling_for_nested_compound( $selector, $properties, $widgets );
-				} else {
 				}
 				continue;
 			}
@@ -404,9 +385,6 @@ class Unified_Css_Processor {
 		// Check for compound class (dot followed by another dot within the selector)
 		$has_compound = preg_match( '/\.\w+[\w-]*\.\w+/', $selector ) === 1;
 
-		// EVIDENCE: Debug compound detection
-		if ( strpos( $selector, 'elementor-fixed' ) !== false ) {
-		}
 
 		return $has_nesting && $has_compound;
 	}
@@ -416,12 +394,6 @@ class Unified_Css_Processor {
 		array $properties,
 		array $widgets
 	): void {
-
-		// EVIDENCE: Track ALL font-size values being processed with FULL property data
-		foreach ( $properties as $idx => $prop ) {
-			if ( ( $prop['property'] ?? '' ) === 'font-size' ) {
-			}
-		}
 
 		// Extract the target element from the end of the selector
 		// Example: .elementor-1140 .element.element-14c0aa4 .heading-title
@@ -450,9 +422,6 @@ class Unified_Css_Processor {
 		// Convert properties to atomic format with proper converted_property values
 		$converted_properties = $this->convert_rule_properties_to_atomic( $properties );
 
-		foreach ( $converted_properties as $prop ) {
-		}
-
 
 		// Apply properties via collect_reset_styles which properly handles direct widget styling
 		$this->unified_style_manager->collect_reset_styles(
@@ -461,7 +430,6 @@ class Unified_Css_Processor {
 			$matched_elements,
 			true // can_apply_directly
 		);
-
 	}
 
 	private function extract_target_selector( string $selector ): string {
@@ -494,10 +462,10 @@ class Unified_Css_Processor {
 		// 2. The selector has changed (original nested vs flattened global class)
 		return $was_flattened && $original_selector !== $processed_selector;
 	}
-	private function log_rule_processing( string $selector, array $properties ): void {
+	private function log_rule_processing(): void {
 		$this->skip_debug_logging_for_performance();
 	}
-	private function log_matched_elements( string $selector, array $matched_elements ): void {
+	private function log_matched_elements(): void {
 		$this->skip_debug_logging_for_performance();
 	}
 	private function process_matched_rule( string $selector, array $properties, array $matched_elements ): void {
@@ -549,7 +517,7 @@ class Unified_Css_Processor {
 		$this->collect_inline_styles_recursively( $widgets );
 		$this->log_inline_style_collection_complete();
 	}
-	private function log_inline_style_collection_start( array $widgets ): void {
+	private function log_inline_style_collection_start(): void {
 		$this->skip_debug_logging_for_performance();
 	}
 	private function log_inline_style_collection_complete(): void {
@@ -567,6 +535,11 @@ class Unified_Css_Processor {
 		}
 	}
 	private function log_widget_inline_processing( ?string $element_id, array $inline_css ): void {
+		// DEBUG: Log inline style processing
+		if (!empty($inline_css)) {
+			error_log("DEBUG INLINE STYLES: Processing widget {$element_id}");
+			error_log("DEBUG INLINE STYLES: CSS data: " . print_r($inline_css, true));
+		}
 		$this->skip_debug_logging_for_performance();
 	}
 	private function process_widget_inline_styles( string $element_id, array $inline_css ): void {
@@ -583,10 +556,19 @@ class Unified_Css_Processor {
 		return $inline_properties;
 	}
 	private function store_converted_inline_styles( string $element_id, array $inline_css, array $batch_converted ): void {
+		// DEBUG: Log inline style storage
+		error_log("DEBUG INLINE STYLES: Storing styles for element {$element_id}");
+		error_log("DEBUG INLINE STYLES: Batch converted: " . print_r($batch_converted, true));
+		
 		foreach ( $inline_css as $property => $property_data ) {
 			$value = $property_data['value'] ?? $property_data;
 			$important = $property_data['important'] ?? false;
 			$converted = $this->find_converted_property_in_batch( $property, $batch_converted );
+			
+			// DEBUG: Log each property conversion
+			error_log("DEBUG INLINE STYLES: Property {$property} = {$value} (important: " . ($important ? 'yes' : 'no') . ")");
+			error_log("DEBUG INLINE STYLES: Converted to: " . print_r($converted, true));
+			
 			$this->unified_style_manager->collect_inline_styles(
 				$element_id, [
 					$property => [
@@ -606,7 +588,7 @@ class Unified_Css_Processor {
 		}
 		return null;
 	}
-	private function process_child_widgets_recursively( array $widget, ?string $element_id ): void {
+	private function process_child_widgets_recursively( array $widget ): void {
 		if ( ! empty( $widget['children'] ) ) {
 			$this->collect_inline_styles_recursively( $widget['children'] );
 		}
@@ -790,7 +772,7 @@ class Unified_Css_Processor {
 		}
 		return false;
 	}
-	private function log_class_match_result( string $class_from_selector, array $widget_classes, bool $is_match ): void {
+	private function log_class_match_result(): void {
 		$this->skip_debug_logging_for_performance();
 	}
 	private function is_combined_selector_match( string $selector, string $element_type, string $classes, string $html_id ): bool {
@@ -836,7 +818,7 @@ class Unified_Css_Processor {
 			return null;
 		}
 	}
-	private function log_property_conversion_failure( string $property, \Exception $e ): void {
+	private function log_property_conversion_failure(): void {
 		$this->skip_debug_logging_for_performance();
 	}
 	private function skip_debug_logging_for_performance(): void {
@@ -968,7 +950,7 @@ class Unified_Css_Processor {
 			$conflicts
 		);
 	}
-	private function analyze_element_selector_conflicts_for_direct_styling( array $analyzer_rules ): array {
+	private function analyze_element_selector_conflicts_for_direct_styling(): array {
 		// Legacy method - now handled by collect_reset_styles
 		return [];
 	}
@@ -1073,14 +1055,6 @@ class Unified_Css_Processor {
 		foreach ( $selectors as $selector_index => $selector ) {
 			$selector_string = (string) $selector;
 			$properties = $this->extract_properties_from_declarations( $declarations );
-
-			// EVIDENCE: Track selector extraction for elementor-element-6d397c1
-			if ( strpos( $selector_string, 'elementor-element-6d397c1' ) !== false ) {
-				foreach ( $properties as $prop ) {
-					if ( ( $prop['property'] ?? '' ) === 'font-size' ) {
-					}
-				}
-			}
 
 			if ( ! empty( $properties ) ) {
 				$rules[] = [

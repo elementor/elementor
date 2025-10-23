@@ -379,10 +379,14 @@ class Widget_Creator {
 				}
 				
 				if ( ! empty( $applicable_global_classes ) ) {
-					// Apply global classes to widget settings
+					// CRITICAL FIX: Append global classes to existing classes instead of overwriting
+					// The existing classes may include the generated style class from the data formatter
+					$existing_classes = $final_settings['classes']['value'] ?? [];
+					$merged_classes = array_merge( $existing_classes, $applicable_global_classes );
+					
 					$final_settings['classes'] = [
 						'$$type' => 'classes',
-						'value' => $applicable_global_classes,
+						'value' => array_values( array_unique( $merged_classes ) ),
 					];
 				}
 			}
