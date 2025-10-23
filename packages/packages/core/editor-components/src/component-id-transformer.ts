@@ -16,7 +16,7 @@ export const componentIdTransformer = createTransformer( async ( id: number ) =>
 
 	const unpublishedComponent = unpublishedComponents.find( ( component ) => component.id === id );
 	if ( unpublishedComponent ) {
-		return structuredClone( unpublishedComponent.elements );
+		return structuredClone( unpublishedComponent.content );
 	}
 
 	const extendedWindow = window as unknown as ComponentIdTransformerWindow;
