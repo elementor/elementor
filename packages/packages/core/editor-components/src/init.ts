@@ -22,13 +22,14 @@ import { removeComponentStyles } from './store/remove-component-styles';
 import { slice } from './store/store';
 import { type Element, type ExtendedWindow } from './types';
 import { beforeSave } from './utils/before-save';
+import { openEditModeDialog } from './components/in-edit-mode';
 
 const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
 
 export function init() {
 	stylesRepository.register( componentsStylesProvider );
 	registerSlice( slice );
-	registerElementType( TYPE, ( options: CreateTemplatedElementTypeOptions ) => createComponentType( options ) );
+	registerElementType( TYPE, ( options: CreateTemplatedElementTypeOptions  ) => createComponentType( {...options,cb:openEditModeDialog} ) );
 	registerDataHook( 'dependency', 'editor/documents/close', ( args ) => {
 		const document = getV1CurrentDocument();
 		if ( document.config.type === COMPONENT_DOCUMENT_TYPE ) {

@@ -96,41 +96,41 @@ class Components_REST_API {
 		] );
 
 		// Add lock routes
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/lock', [
-			[
-				'methods' => 'POST',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->lock_component( $request ) ),
-				'permission_callback' => fn() => is_user_logged_in(),
-				'args' => [
-					'componentId' => [
-						'type' => 'number',
-						'required' => true,
-						'description' => 'The component ID to unlock',
-					],
-				],
-			],
-		] );
+		// register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/lock', [
+		// 	[
+		// 		'methods' => 'POST',
+		// 		'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->lock_component( $request ) ),
+		// 		'permission_callback' => fn() => is_user_logged_in(),
+		// 		'args' => [
+		// 			'componentId' => [
+		// 				'type' => 'number',
+		// 				'required' => true,
+		// 				'description' => 'The component ID to unlock',
+		// 			],
+		// 		],
+		// 	],
+		// ] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/unlock', [
-			[
-				'methods' => 'POST',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->unlock_component( $request ) ),
-				'permission_callback' => fn() => is_user_logged_in(),
-				'args' => [
-					'componentId' => [
-						'type' => 'number',
-						'required' => true,
-						'description' => 'The component ID to unlock',
-					],
-				],
-			],
-		] );
+		// register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/unlock', [
+		// 	[
+		// 		'methods' => 'POST',
+		// 		'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->unlock_component( $request ) ),
+		// 		'permission_callback' => fn() => is_user_logged_in(),
+		// 		'args' => [
+		// 			'componentId' => [
+		// 				'type' => 'number',
+		// 				'required' => true,
+		// 				'description' => 'The component ID to unlock',
+		// 			],
+		// 		],
+		// 	],
+		// ] );
 
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/lock-status', [
 			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_lock_status( $request ) ),
-				'permission_callback' => fn() => is_user_logged_in(),
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 				'args' => [
 					'componentId' => [
 						'type' => 'string',
@@ -140,32 +140,10 @@ class Components_REST_API {
 				],
 			],
 		] );
-
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/is-current-user-locked', [
-			[
-				'methods' => 'GET',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->is_current_user_locked( $request ) ),
-				'permission_callback' => fn() => is_user_logged_in(),
-				'args' => [
-					'componentId' => [
-						'type' => 'string',
-						'required' => true,
-					],
-				],
-			],
-		] );
+		
 	}
 
-	private function is_current_user_locked( \WP_REST_Request $request ) {
-		$component_id = $request->get_param( 'componentId' );
-		$current_user_id = get_current_user_id();
-		$locked_user = $this->get_lock_manger()->get_locked_user( $component_id );
-
-		// Check if the component is locked by the current user
-		$is_current_user_locked = $locked_user && $locked_user->ID === $current_user_id;
-
-		return Response_Builder::make( [ 'is_current_user_locked' => $is_current_user_locked ] )->build();
-	}
+	
 
 	private function get_components() {
 		$components = $this->get_repository()->all();
@@ -222,42 +200,49 @@ class Components_REST_API {
 			->build();
 	}
 
-	private function lock_component( \WP_REST_Request $request ) {
-		$component_id = $request->get_param( 'componentId' );
-		$success = $this->get_lock_manger()->lock_document( $component_id );
+	// private function lock_component( \WP_REST_Request $request ) {
+	// 	$component_id = $request->get_param( 'componentId' );
+	// 	$success = $this->get_lock_manger()->lock_document( $component_id );
 
-		if ( ! $success ) {
-			return Error_Builder::make( 'lock_failed' )
-				->set_status( 500 )
-				->set_message( __( 'Failed to lock component', 'elementor' ) )
-				->build();
-		}
+	// 	if ( ! $success ) {
+	// 		return Error_Builder::make( 'lock_failed' )
+	// 			->set_status( 500 )
+	// 			->set_message( __( 'Failed to lock component', 'elementor' ) )
+	// 			->build();
+	// 	}
 
-		return Response_Builder::make( [ 'locked' => true ] )->build();
-	}
+	// 	return Response_Builder::make( [ 'locked' => true ] )->build();
+	// }
 
-	private function unlock_component( \WP_REST_Request $request ) {
-		$component_id = $request->get_param( 'componentId' );
-		$success = $this->get_lock_manger()->unlock_document( $component_id );
+	// private function unlock_component( \WP_REST_Request $request ) {
+	// 	$component_id = $request->get_param( 'componentId' );
+	// 	$success = $this->get_lock_manger()->unlock_document( $component_id );
 
-		if ( ! $success ) {
-			return Error_Builder::make( 'unlock_failed' )
-				->set_status( 500 )
-				->set_message( __( 'Failed to unlock component', 'elementor' ) )
-				->build();
-		}
-		return Response_Builder::make( [ 'unlocked' => $success ] )->build();
-	}
+	// 	if ( ! $success ) {
+	// 		return Error_Builder::make( 'unlock_failed' )
+	// 			->set_status( 500 )
+	// 			->set_message( __( 'Failed to unlock component', 'elementor' ) )
+	// 			->build();
+	// 	}
+	// 	return Response_Builder::make( [ 'unlocked' => $success ] )->build();
+	// }
 
-	private function get_lock_status( \WP_REST_Request $request ) {
+	private function get_lock_status( \WP_REST_Request $request ) {	
 		$component_id = $request->get_param( 'componentId' );
 		$locked_user = $this->get_lock_manger()->get_locked_user( $component_id );
-
+		$is_current_user_allow_to_edit = $this->is_current_user_allow_to_edit( $component_id );
+		
 		return Response_Builder::make( [
-			'locked' => (bool) $locked_user,
-			'locked_by_id' => $locked_user ? $locked_user->ID : null,
+			'is_current_user_allow_to_edit' => $is_current_user_allow_to_edit,
 			'locked_by' => $locked_user ? $locked_user->display_name : null,
 		] )->build();
+	}
+
+	private function is_current_user_allow_to_edit( $component_id ) {
+		$current_user_id = get_current_user_id();
+		$locked_user = $this->get_lock_manger()->get_locked_user( $component_id );
+		
+		return ! $locked_user || $locked_user->ID === $current_user_id;
 	}
 
 	private function route_wrapper( callable $cb ) {

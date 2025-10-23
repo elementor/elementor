@@ -29,8 +29,12 @@ class Module extends BaseModule {
 
 		( new Component_Styles() )->register_hooks();
 		( new Components_REST_API() )->register_hooks();
-
-		// Add lock functionality
+		register_post_type( Component_Document::TYPE, [
+			'label'    => Component_Document::get_title(),
+			'labels'   => Component_Document::get_labels(),
+			'public'   => true,
+			'supports' => Component_Document::get_supported_features(),
+		] );
 		$this->register_lock_hooks();
 	}
 
@@ -59,7 +63,7 @@ class Module extends BaseModule {
 		static $instance = null;
 
 		if ( null === $instance ) {
-			$instance = new Document_Lock_Manager( Components_REST_API::LOCK_DOCUMENT_TYPE_NAME );
+			$instance = new Document_Lock_Manager();
 		}
 
 		return $instance;
@@ -74,6 +78,13 @@ class Module extends BaseModule {
 			Component_Document::TYPE,
 			Component_Document::get_class_full_name()
 		);
+
+		// register_post_type( Component_Document::TYPE, [
+		// 	'label'    => Component_Document::get_title(),
+		// 	'labels'   => Component_Document::get_labels(),
+		// 	'public'   => false,
+		// 	'supports' => Component_Document::get_supported_features(),
+		// ] );
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
@@ -97,6 +108,7 @@ class Module extends BaseModule {
 		if ( ! $this->is_component_post( $post_id ) ) {
 			return;
 		}
+
 
 		$this->lock_component( $post_id );
 	}

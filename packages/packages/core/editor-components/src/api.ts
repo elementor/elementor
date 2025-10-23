@@ -20,9 +20,8 @@ export type CreateComponentPayload = {
 };
 
 type ComponentLockStatusResponse = {
-	locked: boolean;
-	locked_by: string;
-	locked_by_id: number;
+	is_current_user_allow_to_edit: boolean;
+	locked_by?: string;
 };
 
 type GetComponentResponse = Array< Component >;
@@ -83,16 +82,11 @@ export const canSwitchDocument = async (
 	componentId: number
 ): Promise< {
 	isAllowedToSwitchDocument: boolean;
-	lockedBy: string;
+	lockedBy?: string;
 } > => {
 	const response = await apiClient.getComponentLockStatus( componentId );
-	const { locked, locked_by: lockedBy } = response.data;
-	if ( ! locked ) {
-		return { isAllowedToSwitchDocument: true, lockedBy: '' };
-	}
-
-	const isCurrentUserLocked = await apiClient.getComponentLockedUser( componentId );
-	if ( isCurrentUserLocked ) {
+	const { is_current_user_allow_to_edit, locked_by: lockedBy } = response.data;
+	if ( is_current_user_allow_to_edit ) {	
 		return { isAllowedToSwitchDocument: true, lockedBy: '' };
 	}
 	return { isAllowedToSwitchDocument: false, lockedBy };

@@ -4,27 +4,50 @@ namespace Elementor\Modules\Components;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-
+// 5 minutes
+const DEFAULT_TIME = 60 * 5;
+	
+/**
+ * Manages document locking for Elementor documents.
+ * 
+ * This class handles locking/unlocking documents to prevent multiple users
+ * from editing the same document simultaneously.
+ */
 class Document_Lock_Manager {
 	private $lock_duration;
-	private $document_type;
+	private const LOCK_USER_META = '_lock_user';
+	private const LOCK_TIME_META = '_lock_time';
 
-	public function __construct( $document_type, $lock_duration = 300 ) {
+	/**
+	 * Initialize the lock manager.
+	 * 
+	 * @param int $lock_duration Lock duration in seconds (default: 300 = 5 minutes)
+	 */
+	public function __construct( $lock_duration = DEFAULT_TIME ) {
 		$this->lock_duration = $lock_duration;
-		$this->document_type = $document_type;
 	}
 
-	public function lock_document( $component_id ) {
+	/**
+	 * Lock a document for the current user.
+	 * 
+	 * Sets both WordPress post lock and custom document lock metadata.
+	 * 
+	 * @param int $document_id The document ID to lock
+	 * @return bool True if lock was successful, false otherwise
+	 */
+	public function lock_document( $document_id ) {
 		try {
 			$user_id = get_current_user_id();
 			if ( ! function_exists( 'wp_set_post_lock' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/post.php';
 			}
 
-			wp_set_post_lock( $component_id );
+			// Set WordPress post lock
+			wp_set_post_lock( $document_id );
 
-			update_post_meta( $component_id, '_' . $this->document_type . '_lock_user', $user_id );
-			update_post_meta( $component_id, '_' . $this->document_type . '_lock_time', time() );
+			// Set custom document lock metadata
+			update_post_meta( $document_id, self::LOCK_USER_META, $user_id );
+			update_post_meta( $document_id, self::LOCK_TIME_META, time() );
 
 			return true;
 		} catch ( \Exception $e ) {
@@ -34,30 +57,51 @@ class Document_Lock_Manager {
 	}
 
 
-	public function unlock_document( $component_id ) {
-		delete_post_meta( $component_id, '_edit_lock' );
-		delete_post_meta( $component_id, '_' . $this->document_type . '_lock_user' );
-		delete_post_meta( $component_id, '_' . $this->document_type . '_lock_time' );
+	/**
+	 * Unlock a document.
+	 * 
+	 * Removes both WordPress post lock and custom document lock metadata.
+	 * 
+	 * @param int $document_id The document ID to unlock
+	 * @return bool Always returns true
+	 */
+	public function unlock_document( $document_id ) {
+		// Remove WordPress post lock
+		delete_post_meta( $document_id, '_edit_lock' );
+		
+		// Remove custom document lock metadata
+		delete_post_meta( $document_id, self::LOCK_USER_META );
+		delete_post_meta( $document_id, self::LOCK_TIME_META );
 
 		return true;
 	}
 
 
-	public function is_document_locked( $component_id ) {
+	/**
+	 * Check if a document is currently locked.
+	 * 
+	 * Also handles automatic lock expiration based on lock duration.
+	 * 
+	 * @param int $document_id The document ID to check
+	 * @return array|false Lock data array if locked, false if not locked
+	 */
+	public function is_document_locked( $document_id ) {
 		if ( ! function_exists( 'wp_check_post_lock' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/post.php';
 		}
 
-		$locked_user = wp_check_post_lock( $component_id );
+		$locked_user = wp_check_post_lock( $document_id );
 
 		if ( ! $locked_user ) {
 			return false;
 		}
 
-		$lock_time = get_post_meta( $component_id, '_' . $this->document_type . '_lock_time', true );
+		// Check if lock has expired
+		$lock_time = get_post_meta( $document_id, self::LOCK_TIME_META, true );
 
 		if ( $lock_time && ( time() - $lock_time > $this->lock_duration ) ) {
-			$this->unlock_document( $component_id );
+			// Lock has expired, automatically unlock
+			$this->unlock_document( $document_id );
 			return false;
 		}
 
@@ -68,12 +112,18 @@ class Document_Lock_Manager {
 	}
 
 
-	public function get_locked_user( $component_id ) {
+	/**
+	 * Get the user who has locked a document.
+	 * 
+	 * @param int $document_id The document ID to check
+	 * @return \WP_User|false User object if locked, false if not locked
+	 */
+	public function get_locked_user( $document_id ) {
 		if ( ! function_exists( 'wp_check_post_lock' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/post.php';
 		}
 
-		$locked_user = wp_check_post_lock( $component_id );
+			$locked_user = wp_check_post_lock( $document_id );
 
 		if ( ! $locked_user ) {
 			return false;
@@ -83,14 +133,23 @@ class Document_Lock_Manager {
 	}
 
 
-	public function extend_lock( $component_id ) {
-		$lock_data = $this->is_document_locked( $component_id );
+	/**
+	 * Extend the lock duration for a document.
+	 * 
+	 * Only works if the current user owns the lock.
+	 * 
+	 * @param int $document_id The document ID to extend lock for
+	 * @return bool True if lock was extended, false otherwise
+	 */
+	public function extend_lock( $document_id ) {
+		$lock_data = $this->is_document_locked( $document_id );
 
 		if ( ! $lock_data ) {
 			return false;
 		}
 
-		update_post_meta( $component_id, '_' . $this->document_type . '_lock_time', time() );
+		// Update lock time to extend duration
+		update_post_meta( $document_id, self::LOCK_TIME_META, time() );
 
 		return true;
 	}
