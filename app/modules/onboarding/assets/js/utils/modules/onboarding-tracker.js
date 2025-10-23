@@ -1185,9 +1185,7 @@ class OnboardingTracker {
 			return null;
 		}
 
-		const variant = Math.random() < 0.5 ? 'A' : 'B';
-		StorageManager.setString( config.variantKey, variant );
-		return variant;
+		return 'B';
 	}
 
 	sendExperimentStarted( experimentId ) {
@@ -1211,7 +1209,7 @@ class OnboardingTracker {
 
 		const eventData = {
 			'Experiment name': config.name,
-			'Variant name': 'B',
+			'Variant name': variant,
 		};
 
 		if ( EventDispatcher.canSendEvents() ) {
