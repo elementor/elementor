@@ -20,4 +20,22 @@ class Date_Time_Prop_Type extends Object_Prop_Type {
 			'time' => String_Prop_Type::make(),
 		];
 	}
+
+	public function get_default() {
+		// ערכים ידניים (לדוגמה)
+		return null;
+//		return [
+//			'$$type' => 'date-time',
+//			'value'  => [
+//				'date' => [
+//					'$$type' => 'string',
+//					'value'  => '2028-10-08'
+//				],
+//				'time' => [
+//					'$$type' => 'string',
+//					'value'  => '09:30 am'
+//				]
+//			]
+//		];
+	}
 }

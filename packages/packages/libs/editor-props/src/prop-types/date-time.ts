@@ -4,11 +4,11 @@ import { createPropUtils } from '../utils/create-prop-utils';
 import { unknownChildrenSchema } from './utils';
 
 export const DateTimePropTypeUtil = createPropUtils(
-	'key-value',
+	'date-time',
 	z.strictObject( {
 		date: unknownChildrenSchema,
 		time: unknownChildrenSchema,
 	} )
 );
 
-export type DateTimeePropValue = z.infer< typeof DateTimePropTypeUtil.schema >;
+export type DateTimePropValue = z.infer< typeof DateTimePropTypeUtil.schema >;

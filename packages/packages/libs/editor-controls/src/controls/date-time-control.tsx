@@ -24,7 +24,7 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 			...value,
 			[ field ]: {
 				$$type: 'string',
-				value: stringPropTypeUtil.extract( fieldValue ) || '',
+				value: '1234',
 			},
 		} );
 	};
@@ -44,6 +44,7 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 								slotProps={ {
 									textField: { size: 'tiny' },
 									openPickerButton: { size: 'small' },
+									openPickerIcon: { fontSize: 'tiny' },
 								} }
 							/>
 						</PropKeyProvider>
@@ -57,7 +58,8 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 								disabled={ inputDisabled }
 								slotProps={ {
 									textField: { size: 'tiny' },
-									openPickerButton: { size: 'small' },
+									openPickerButton: { color: 'small' },
+									openPickerIcon: { fontSize: 'tiny' },
 								} }
 							/>
 						</PropKeyProvider>
