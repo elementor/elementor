@@ -102,6 +102,112 @@
 				}
 			],
 			"isInner": false
+		},
+		{
+			"id": "b12e2d7",
+			"elType": "container",
+			"settings": {
+				"flex_direction": "column"
+			},
+			"elements": [
+				{
+					"id": "3dd148e",
+					"elType": "widget",
+					"widgetType": "icon-list",
+					"settings": {
+						"icon_list": [
+							{
+								"_id": "187d5a4",
+								"text": "List Item #1"
+							},
+							{
+								"_id": "287d5a4",
+								"text": "List Item #2",
+								"selected_icon": {
+									"value": "fas fa-times",
+									"library": "fa-solid"
+								}
+							},
+							{
+								"_id": "387d5a4",
+								"text": "List Item #3",
+								"selected_icon": {
+									"value": "fas fa-dot-circle",
+									"library": "fa-solid"
+								}
+							}
+						],
+						"view": "inline",
+						"icon_align": "left"
+					},
+					"elements": []
+				},
+				{
+					"id": "3dd148c",
+					"elType": "widget",
+					"widgetType": "icon-list",
+					"settings": {
+						"icon_list": [
+							{
+								"_id": "1422c83",
+								"text": "List Item #1"
+							},
+							{
+								"_id": "2422c83",
+								"text": "List Item #2",
+								"selected_icon": {
+									"value": "fas fa-times",
+									"library": "fa-solid"
+								}
+							},
+							{
+								"_id": "3422c83",
+								"text": "List Item #3",
+								"selected_icon": {
+									"value": "fas fa-dot-circle",
+									"library": "fa-solid"
+								}
+							}
+						],
+						"view": "inline",
+						"icon_align": "center"
+					},
+					"elements": []
+				},
+				{
+					"id": "3dd148b",
+					"elType": "widget",
+					"widgetType": "icon-list",
+					"settings": {
+						"icon_list": [
+							{
+								"_id": "196edda",
+								"text": "List Item #1"
+							},
+							{
+								"_id": "296edda",
+								"text": "List Item #2",
+								"selected_icon": {
+									"value": "fas fa-times",
+									"library": "fa-solid"
+								}
+							},
+							{
+								"_id": "296edda",
+								"text": "List Item #3",
+								"selected_icon": {
+									"value": "fas fa-dot-circle",
+									"library": "fa-solid"
+								}
+							}
+						],
+						"view": "inline",
+						"icon_align": "right"
+					},
+					"elements": []
+				}
+			],
+			"isInner": false
 		}
 	],
 	"page_settings": [],
