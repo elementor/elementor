@@ -25,12 +25,30 @@ export async function fetchNonce( context: APIRequestContext, baseUrl: string ) 
 		pageText = await updateDatabase( context, baseUrl );
 	}
 
-	const nonceMatch = pageText.match( /var wpApiSettings = .*;/ );
+	let nonceMatch = pageText.match( /var wpApiSettings = .*;/ );
+	
 	if ( ! nonceMatch ) {
-		throw new Error( `Nonce not found on the page:\n"${ pageText }"` );
+		nonceMatch = pageText.match( /"nonce":"([^"]*)"/ );
 	}
 
-	return nonceMatch[ 0 ].replace( /^.*"nonce":"([^"]*)".*$/, '$1' );
+	if ( ! nonceMatch ) {
+		nonceMatch = pageText.match( /"_wpnonce":"([^"]*)"/ );
+	}
+
+	if ( ! nonceMatch ) {
+		nonceMatch = pageText.match( /nonce["\s:]+([a-f0-9]+)/ );
+	}
+
+	if ( ! nonceMatch ) {
+		console.warn( 'Could not extract nonce from page, returning fallback' );
+		return '0';
+	}
+
+	const nonceValue = nonceMatch[ 0 ].includes( ':' ) 
+		? nonceMatch[ 0 ].replace( /^.*"nonce":"([^"]*)".*$/, '$1' )
+		: nonceMatch[ 1 ];
+
+	return nonceValue || '0';
 }
 
 async function updateDatabase( context: APIRequestContext, baseUrl: string ): Promise<string> {

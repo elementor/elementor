@@ -115,8 +115,8 @@ export function createTemplatedElementView( {
 					const context = {
 						id: this.model.get( 'id' ),
 						type,
-						settings,
-						base_styles: baseStylesDictionary,
+						settings: resolvedSettings,
+						base_styles: this.isCssConverterWidget() ? {} : baseStylesDictionary,
 					};
 
 					return renderer.render( templateKey, context );
@@ -129,8 +129,9 @@ export function createTemplatedElementView( {
 			this.#afterRenderTemplate();
 		}
 
-		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
-			return settings;
+		isCssConverterWidget(): boolean {
+			const editorSettings = this.model.get( 'editor_settings' ) || {};
+			return !! editorSettings?.css_converter_widget;
 		}
 
 		// Emulating the original Marionette behavior.

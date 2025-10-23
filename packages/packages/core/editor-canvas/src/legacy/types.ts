@@ -56,6 +56,8 @@ export declare class ElementView {
 
 	getContextMenuGroups(): ContextMenuGroup[];
 
+	className(): string;
+
 	/**
 	 * Templated view methods:
 	 */
@@ -103,6 +105,11 @@ type ElementModel = {
 	id: string;
 	settings: BackboneModel< Props >;
 	widgetType: string;
+	elType: string;
+	editor_settings: {
+		css_converter_widget?: boolean;
+		[key: string]: unknown;
+	};
 };
 
 type ToJSON< T > = {

@@ -1,0 +1,27 @@
+{
+        "items": {
+                "g-6fc7a6b": {
+                        "id": "g-6fc7a6b",
+                        "type": "class",
+                        "label": "color",
+                        "variants": [
+                                {
+                                        "meta": {
+                                                "breakpoint": "desktop",
+                                                "state": null
+                                        },
+                                        "props": {
+                                                "color": {
+                                                        "$$type": "color",
+                                                        "value": "#1e21b8"
+                                                }
+                                        },
+                                        "custom_css": null
+                                }
+                        ]
+                }
+        },
+        "order": [
+                "g-6fc7a6b"
+        ]
+}
