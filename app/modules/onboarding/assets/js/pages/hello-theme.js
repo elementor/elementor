@@ -9,7 +9,7 @@ import ThemeSelectionContentB from '../components/theme-selection-content-b';
 import ThemeSelectionExperiment202VariantB from '../components/theme-selection-experiment202-variant-b';
 import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../utils/onboarding-event-tracking';
 
-const getContinueButtonText = ( isHelloThemeActivated, isVariantB, isVariant202B ) => {
+const getContinueButtonText = ( isHelloThemeActivated, isVariant201B, isVariant202B ) => {
 	if ( isHelloThemeActivated ) {
 		return __( 'Next', 'elementor' );
 	}
@@ -18,7 +18,7 @@ const getContinueButtonText = ( isHelloThemeActivated, isVariantB, isVariant202B
 		return __( 'Install Hello Biz', 'elementor' );
 	}
 
-	if ( isVariantB ) {
+	if ( isVariant201B ) {
 		return __( 'Select theme', 'elementor' );
 	}
 
@@ -46,11 +46,11 @@ export default function HelloTheme() {
 		pageId = 'hello',
 		nextStep = elementorAppConfig.onboarding.experiment ? 'chooseFeatures' : 'siteName',
 		goToNextScreen = useCallback( () => navigate( 'onboarding/' + nextStep ), [ navigate, nextStep ] ),
-		variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT ),
-		isVariantB = 'B' === variant,
+		variant201 = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT ),
+		isVariant201B = 'B' === variant201,
 		variant202 = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT202_VARIANT ),
 		isVariant202B = 'B' === variant202,
-		continueWithHelloThemeText = getContinueButtonText( state.isHelloThemeActivated, isVariantB, isVariant202B ),
+		continueWithHelloThemeText = getContinueButtonText( state.isHelloThemeActivated, isVariant201B, isVariant202B ),
 		[ actionButtonText, setActionButtonText ] = useState( continueWithHelloThemeText );
 
 	/**
@@ -68,14 +68,17 @@ export default function HelloTheme() {
 			goToNextScreen();
 		}
 
-		// For non-variant B, automatically select hello-biz theme
-		if ( ! isVariantB && ! selectedTheme ) {
+		// Auto-select hello-biz when no experiment is active or when variant A is active
+		// Don't auto-select only when experiment 201 AND variant B is active
+		const shouldAutoSelectHelloBiz = ! isVariant201B && ! selectedTheme;
+
+		if ( shouldAutoSelectHelloBiz ) {
 			setSelectedTheme( 'hello-biz' );
 		}
 
 		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
 		OnboardingEventTracking.onStepLoad( 2 );
-	}, [ getStateObjectToUpdate, goToNextScreen, helloInstalledInOnboarding, pageId, state, updateState, isVariantB, selectedTheme ] );
+	}, [ getStateObjectToUpdate, goToNextScreen, helloInstalledInOnboarding, pageId, state, updateState, isVariant201B, selectedTheme ] );
 
 	const resetScreenContent = () => {
 		// Clear any active timeouts for changing the action button text during installation.
@@ -117,14 +120,14 @@ export default function HelloTheme() {
 
 		setHelloInstalledInOnboarding( true );
 
-		if ( isVariantB && selectedTheme ) {
+		if ( isVariant201B && selectedTheme ) {
 			const themeValue = 'hello-theme' === selectedTheme ? 'hello' : 'hellobiz';
 			OnboardingEventTracking.sendThemeChoiceEvent( state.currentStep, themeValue );
 		}
 
 		OnboardingEventTracking.sendStepEndState( 2 );
 		goToNextScreen();
-	}, [ getStateObjectToUpdate, goToNextScreen, noticeStateSuccess, state, updateState, isVariantB, selectedTheme ] );
+	}, [ getStateObjectToUpdate, goToNextScreen, noticeStateSuccess, state, updateState, isVariant201B, selectedTheme ] );
 
 	const onErrorInstallHelloTheme = () => {
 		elementorCommon.events.dispatchEvent( {
@@ -152,7 +155,7 @@ export default function HelloTheme() {
 
 		updateState( { isHelloThemeInstalled: true } );
 
-		const currentTheme = selectedTheme || ( ! isVariantB ? 'hello-biz' : null );
+		const currentTheme = selectedTheme || ( ! isVariant201B ? 'hello-biz' : null );
 		const themeSlug = 'hello-theme' === currentTheme ? 'hello-elementor' : 'hello-biz';
 
 		setActivateHelloThemeAjaxState( {
@@ -168,7 +171,7 @@ export default function HelloTheme() {
 			setIsInstalling( true );
 		}
 
-		const currentTheme = selectedTheme || ( ! isVariantB ? 'hello-biz' : null );
+		const currentTheme = selectedTheme || ( ! isVariant201B ? 'hello-biz' : null );
 		const themeSlug = 'hello-theme' === currentTheme ? 'hello-elementor' : 'hello-biz';
 
 		wp.updates.ajax( 'install-theme', {
@@ -194,7 +197,7 @@ export default function HelloTheme() {
 
 		const themeValue = 'hello-theme' === themeSlug ? 'hello' : 'hellobiz';
 
-		if ( ! isVariantB ) {
+		if ( ! isVariant201B ) {
 			OnboardingEventTracking.sendThemeChoiceEvent( state.currentStep, themeValue );
 		}
 	};
@@ -211,7 +214,7 @@ export default function HelloTheme() {
 		actionButton.className = 'e-onboarding__button--processing';
 	}
 
-	if ( ! state.isHelloThemeActivated && ! selectedTheme && isVariantB ) {
+	if ( ! state.isHelloThemeActivated && ! selectedTheme && isVariant201B ) {
 		actionButton.disabled = true;
 		actionButton.className = actionButton.className ? `${ actionButton.className } e-onboarding__button--disabled` : 'e-onboarding__button--disabled';
 	}
@@ -226,18 +229,18 @@ export default function HelloTheme() {
 		};
 	} else {
 		actionButton.onClick = () => {
-			if ( ! selectedTheme && isVariantB ) {
+			if ( ! selectedTheme && isVariant201B ) {
 				return;
 			}
 
 			// For non-variant B, ensure hello-biz is selected if no theme is set
-			const currentTheme = selectedTheme || ( ! isVariantB ? 'hello-biz' : null );
+			const currentTheme = selectedTheme || ( ! isVariant201B ? 'hello-biz' : null );
 
 			if ( ! currentTheme ) {
 				return;
 			}
 
-			if ( ! selectedTheme && ! isVariantB ) {
+			if ( ! selectedTheme && ! isVariant201B ) {
 				setSelectedTheme( 'hello-biz' );
 			}
 
@@ -346,7 +349,7 @@ export default function HelloTheme() {
 	let ContentComponent = ThemeSelectionContentA;
 	if ( isVariant202B ) {
 		ContentComponent = ThemeSelectionExperiment202VariantB;
-	} else if ( isVariantB ) {
+	} else if ( isVariant201B ) {
 		ContentComponent = ThemeSelectionContentB;
 	}
 
@@ -367,7 +370,7 @@ export default function HelloTheme() {
 				onThemeSelect={ handleThemeSelection }
 				onThemeInstallSuccess={ onHelloThemeActivationSuccess }
 				onThemeInstallError={ onErrorInstallHelloTheme }
-				{ ...( isVariantB && { isInstalling } ) }
+				{ ...( isVariant201B && { isInstalling } ) }
 			/>
 			<div className="e-onboarding__footnote">
 				{ __( 'You can switch your theme later on', 'elementor' ) }
