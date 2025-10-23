@@ -1,0 +1,150 @@
+.experiment202-variant-b .e-onboarding {
+
+        &__progress-bar {
+                margin-block-end: 90px;
+        }
+
+        &__page-content--experiment-202 {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                max-width: 904px;
+                margin: 0 auto;
+                padding: 0 20px;
+        }
+
+        &__page-content-header {
+                margin-bottom: 44px;
+        }
+
+        &__page-content-title {
+                font-family: 'Source Serif Pro', serif;
+                font-weight: 700;
+                font-size: 36px;
+                line-height: 1.3;
+                color: #0C0D0E;
+                margin: 0 0 10px 0;
+        }
+
+        &__page-content-subtitle {
+                font-family: 'DM Sans', sans-serif;
+                font-weight: 400;
+                font-size: 18px;
+                line-height: 1.5;
+                color: #3A3F45;
+                letter-spacing: -0.18px;
+                margin: 0;
+        }
+
+        &__features-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 60px;
+                width: 100%;
+                margin-bottom: 60px;
+        }
+
+        &__feature-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 8px;
+        }
+
+        &__feature-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 35px;
+                height: 35px;
+                margin-bottom: 8px;
+
+                svg {
+                        width: 35px;
+                        height: 35px;
+                        flex-shrink: 0;
+                }
+        }
+
+        &__feature-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+        }
+
+        &__feature-title {
+                font-family: 'DM Sans', sans-serif;
+                font-weight: 600;
+                font-size: 20px;
+                line-height: 1.5;
+                color: #3A3F45;
+                letter-spacing: -0.2px;
+                margin: 0;
+                white-space: nowrap;
+        }
+
+        &__feature-description {
+                font-family: 'DM Sans', sans-serif;
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 1.5;
+                color: #3A3F45;
+                letter-spacing: -0.14px;
+                margin: 0;
+                max-width: 260px;
+        }
+
+        &__theme-switch-note {
+                font-family: 'DM Sans', sans-serif;
+                font-weight: 600;
+                font-size: 14px;
+                line-height: 1.5;
+                color: #3A3F45;
+                letter-spacing: -0.14px;
+                margin: 24px 0 0 0;
+        }
+}
+
+@media (max-width: 768px) {
+        .experiment202-variant-b .e-onboarding {
+
+                &__page-content--experiment-202 {
+                        padding: 0 16px;
+                }
+
+                &__page-content-title {
+                        font-size: 28px;
+                }
+
+                &__features-grid {
+                        grid-template-columns: 1fr;
+                        gap: 40px;
+                        margin-bottom: 40px;
+                }
+
+                &__feature-title {
+                        font-size: 18px;
+                        white-space: normal;
+                }
+
+                &__feature-description {
+                        max-width: 100%;
+                }
+        }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+        .experiment202-variant-b .e-onboarding {
+
+                &__features-grid {
+                        gap: 40px;
+                }
+
+                &__feature-description {
+                        max-width: 220px;
+                }
+        }
+}

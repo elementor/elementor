@@ -1094,6 +1094,7 @@ class OnboardingTracker {
 		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
 			this.sendStoredStep1EventsOnStep2();
 			this.sendExperimentStarted( 201 );
+			this.sendExperimentStarted( 202 );
 		}
 
 		if ( 4 === stepNumber || 'goodToGo' === currentStep ) {
