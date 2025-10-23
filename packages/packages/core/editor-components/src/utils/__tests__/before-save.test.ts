@@ -31,32 +31,27 @@ describe( 'beforeSave', () => {
 			slice.actions.addUnpublished( {
 				id: 1000,
 				name: 'Test Component 1',
-				elements: mockComponent1Content,
+				content: mockComponent1Content,
 			} )
 		);
 		__dispatch(
 			slice.actions.addUnpublished( {
 				id: 3000,
 				name: 'Test Component 2',
-				elements: mockComponent2Content,
+				content: mockComponent2Content,
 			} )
 		);
 
 		mockCreateComponents.mockImplementation( ( payload ) => {
-			const map = new Map< number, number >( [
-				[ 1000, 1111 ],
-				[ 3000, 3333 ],
-			] );
+			switch ( payload.name ) {
+				case 'Test Component 1':
+					return Promise.resolve( { component_id: 1111 } );
+				case 'Test Component 2':
+					return Promise.resolve( { component_id: 3333 } );
 
-			return Promise.resolve(
-				payload.items.reduce< Record< number, number > >( ( acc, item ) => {
-					if ( map.has( item.temp_id ) ) {
-						acc[ item.temp_id ] = map.get( item.temp_id ) as number;
-					}
-
-					return acc;
-				}, {} )
-			);
+				default:
+					return Promise.resolve( { component_id: 0 } );
+			}
 		} );
 	};
 
@@ -84,21 +79,16 @@ describe( 'beforeSave', () => {
 			await beforeSave( { container: createMockContainer(), status: 'publish' } );
 
 			// Assert
-			expect( mockCreateComponents ).toHaveBeenCalledTimes( 1 );
+			expect( mockCreateComponents ).toHaveBeenCalledTimes( 2 );
 			expect( mockCreateComponents ).toHaveBeenCalledWith( {
+				name: 'Test Component 1',
+				content: mockComponent1Content,
 				status: 'publish',
-				items: [
-					{
-						temp_id: 3000,
-						title: 'Test Component 2',
-						elements: mockComponent2Content,
-					},
-					{
-						temp_id: 1000,
-						title: 'Test Component 1',
-						elements: mockComponent1Content,
-					},
-				],
+			} );
+			expect( mockCreateComponents ).toHaveBeenCalledWith( {
+				name: 'Test Component 2',
+				content: mockComponent2Content,
+				status: 'publish',
 			} );
 		} );
 
@@ -220,8 +210,8 @@ describe( 'beforeSave', () => {
 		it( 'should clear all unpublished components from store after successful save', async () => {
 			// Assert
 			expect( selectUnpublishedComponents( getState() ) ).toEqual( [
-				{ id: 3000, name: 'Test Component 2', elements: mockComponent2Content },
-				{ id: 1000, name: 'Test Component 1', elements: mockComponent1Content },
+				{ id: 3000, name: 'Test Component 2', content: mockComponent2Content },
+				{ id: 1000, name: 'Test Component 1', content: mockComponent1Content },
 			] );
 
 			// Act

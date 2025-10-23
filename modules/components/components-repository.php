@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Components;
 
-use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Plugin;
 use Elementor\Modules\Components\Components_REST_API;
@@ -41,7 +40,7 @@ class Components_Repository {
 			];
 		}
 
-		return Collection::make( $components );
+		return Components::make( $components );
 	}
 
 	public function create( string $name, array $content, string $status ) {
