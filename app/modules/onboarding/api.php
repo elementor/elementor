@@ -55,35 +55,4 @@ class API {
 
 		return ! empty( $posts );
 	}
-
-	public function get_experiment_variant( string $experiment_key ): ?string {
-		$experiment_number = $this->extract_experiment_number( $experiment_key );
-
-		if ( ! $experiment_number ) {
-			return null;
-		}
-
-		$post = get_posts( [
-			'title' => $experiment_number,
-			'post_type' => 'any',
-			'post_status' => 'any',
-			'numberposts' => 1,
-		] );
-
-		if ( empty( $post ) ) {
-			return null;
-		}
-
-		$post_content = $post[0]->post_content;
-
-		if ( stripos( $post_content, 'variant b' ) !== false || stripos( $post_content, 'b' ) === 0 ) {
-			return 'B';
-		}
-
-		if ( stripos( $post_content, 'variant a' ) !== false || stripos( $post_content, 'a' ) === 0 ) {
-			return 'A';
-		}
-
-		return 'B';
-	}
 }
