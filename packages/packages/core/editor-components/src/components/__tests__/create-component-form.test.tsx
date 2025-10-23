@@ -219,7 +219,7 @@ describe( 'CreateComponentForm', () => {
 				expect.objectContaining( {
 					id: expect.any( Number ),
 					name: 'My Test Component',
-					content: [ mockElement.model.toJSON( { remove: [ 'default' ] } ) ],
+					elements: [ mockElement.model.toJSON( { remove: [ 'default' ] } ) ],
 				} )
 			);
 
