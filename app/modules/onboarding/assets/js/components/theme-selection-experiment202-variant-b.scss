@@ -1,7 +1,7 @@
 .experiment202-variant-b .e-onboarding {
 
         &__progress-bar {
-                margin-block-end: 90px;
+                margin-block-end: 100px;
         }
 
         &__page-content--experiment-202 {
@@ -9,13 +9,13 @@
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
-                max-width: 904px;
+                max-width: 1000px;
                 margin: 0 auto;
                 padding: 0 20px;
         }
 
         &__page-content-header {
-                margin-bottom: 44px;
+                margin-block-end: 44px;
         }
 
         &__page-content-title {
@@ -42,7 +42,7 @@
                 grid-template-columns: repeat(3, 1fr);
                 gap: 60px;
                 width: 100%;
-                margin-bottom: 60px;
+                margin-block-end: 90px;
         }
 
         &__feature-item {
@@ -59,7 +59,7 @@
                 justify-content: center;
                 width: 35px;
                 height: 35px;
-                margin-bottom: 8px;
+                margin-block-end: 8px;
 
                 svg {
                         width: 35px;
@@ -83,7 +83,6 @@
                 color: #3A3F45;
                 letter-spacing: -0.2px;
                 margin: 0;
-                white-space: nowrap;
         }
 
         &__feature-description {
@@ -106,6 +105,34 @@
                 letter-spacing: -0.14px;
                 margin: 24px 0 0 0;
         }
+
+        &__footer {
+                display: flex;
+                justify-content: center;
+        }
+
+        &__button-skip {
+                position: absolute;
+                inset-inline-end: 0px;
+        }
+
+        &__footnote {
+                display: flex;
+                justify-self: center;
+                width: initial;
+                color: #3A3F45;
+                text-align: center;
+                font-family: "DM Sans";
+                font-size: 14px;
+                font-weight: 600;
+                line-height: 150%;
+                letter-spacing: -0.14px;
+                margin-block: 15px 60px;
+
+                &::before {
+                        content: initial;
+                }
+        }
 }
 
 @media (max-width: 768px) {
@@ -122,7 +149,7 @@
                 &__features-grid {
                         grid-template-columns: 1fr;
                         gap: 40px;
-                        margin-bottom: 40px;
+                        margin-block-end: 40px;
                 }
 
                 &__feature-title {
@@ -140,7 +167,11 @@
         .experiment202-variant-b .e-onboarding {
 
                 &__features-grid {
-                        gap: 40px;
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: center;
+                        gap: 40px 60px;
+                        margin-block-end: 40px;
                 }
 
                 &__feature-description {

@@ -370,7 +370,7 @@ export default function HelloTheme() {
 				{ ...( isVariantB && { isInstalling } ) }
 			/>
 			<div className="e-onboarding__footnote">
-				{ '* ' + __( 'You can switch your theme later on', 'elementor' ) }
+				{ __( 'You can switch your theme later on', 'elementor' ) }
 			</div>
 		</Layout>
 	);
