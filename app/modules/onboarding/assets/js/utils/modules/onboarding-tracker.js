@@ -1185,7 +1185,10 @@ class OnboardingTracker {
 			return null;
 		}
 
-		return 'B';
+		// Const variant = Math.random() < 0.5 ? 'A' : 'B';
+		const variant = 'B';
+		StorageManager.setString( config.variantKey, variant );
+		return variant;
 	}
 
 	sendExperimentStarted( experimentId ) {
