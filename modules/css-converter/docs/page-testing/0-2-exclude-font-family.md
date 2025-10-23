@@ -1,0 +1,8 @@
+  tests/playwright/sanity/modules/css-converter/font-family-exclusion/font-family-exclusion.test.ts:43:6 › Font-Family Property Exclusion › Simple Font-Family Properties - Completely Filtered Out 
+    tests/playwright/sanity/modules/css-converter/font-family-exclusion/font-family-exclusion.test.ts:92:6 › Font-Family Property Exclusion › Font-Family with CSS Variables - Variables Excluded 
+    tests/playwright/sanity/modules/css-converter/font-family-exclusion/font-family-exclusion.test.ts:138:6 › Font-Family Property Exclusion › Multiple Font-Family Declarations - All Filtered Out 
+    tests/playwright/sanity/modules/css-converter/font-family-exclusion/font-family-exclusion.test.ts:199:6 › Font-Family Property Exclusion › Font Shorthand Properties - Font-Family Part Excluded 
+    tests/playwright/sanity/modules/css-converter/font-family-exclusion/font-family-exclusion.test.ts:347:6 › Font-Family Property Exclusion › Complex Font-Family Declarations - All Variations Excluded 
+    tests/playwright/sanity/modules/css-converter/font-family-exclusion/font-family-exclusion.test.ts:402:6 › Font-Family Property Exclusion › Font-Family Mixed with Important Properties - Exclusion Preserved 
+    tests/playwright/sanity/modules/css-converter/font-family-exclusion/font-family-exclusion.test.ts:444:6 › Font-Family Property Exclusion › Font-Family Only CSS - Conversion Succeeds with No Applied Styles 
+    tests/playwright/sanity/modules/css-converter/font-family-exclusion/font-family-exclusion.test.ts:488:6 › Font-Family Property Exclusion › Font-Family in Compound Selectors - Properly Excluded 
