@@ -44,9 +44,8 @@ export const TabsControl = ( { label }: { label: string } ) => {
 	const tabList = getElementByType( element.id, TAB_MENU_ELEMENT_TYPE );
 	const tabContentArea = getElementByType( element.id, TAB_CONTENT_AREA_ELEMENT_TYPE );
 
-	const repeaterValues: RepeaterItem< TabItem >[] = tabLinks.map( ( tabLink ) => {
+	const repeaterValues: RepeaterItem< TabItem >[] = tabLinks.map( ( tabLink, index ) => {
 		const { title: titleSetting } = getElementEditorSettings( tabLink.id ) ?? {};
-		const index = tabLinks.indexOf( tabLink );
 
 		return {
 			id: tabLink.id,
@@ -69,13 +68,13 @@ export const TabsControl = ( { label }: { label: string } ) => {
 		if ( meta?.action?.type === 'remove' ) {
 			const items = meta.action.payload;
 
-			return removeItem( { items } );
+			return removeItem( { items, tabContentAreaId: tabContentArea.id } );
 		}
 
 		if ( meta?.action?.type === 'duplicate' ) {
 			const items = meta.action.payload;
 
-			return duplicateItem( { items } );
+			return duplicateItem( { items, tabContentAreaId: tabContentArea.id } );
 		}
 
 		if ( meta?.action?.type === 'reorder' ) {
@@ -86,6 +85,7 @@ export const TabsControl = ( { label }: { label: string } ) => {
 				tabsMenuId: tabList.id,
 				tabContentAreaId: tabContentArea.id,
 				movedElementId: tabLinks[ from ].id,
+				movedElementIndex: from,
 			} );
 		}
 	};

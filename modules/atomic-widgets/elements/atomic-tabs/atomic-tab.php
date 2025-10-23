@@ -121,7 +121,6 @@ class Atomic_Tab extends Atomic_Element_Base {
 				...( $settings['classes'] ?? [] ),
 			],
 			'tabindex' => $is_active ? '0' : '-1',
-			'data-tab-index' => $index,
 			'aria-selected' => $is_active ? 'true' : 'false',
 			'x-bind' => 'tab',
 			'id' => Atomic_Tabs::get_tab_id( $tabs_id, $index ),

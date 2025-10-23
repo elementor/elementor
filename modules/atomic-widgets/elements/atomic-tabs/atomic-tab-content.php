@@ -129,7 +129,6 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 			],
 			'x-bind' => 'tabContent',
 			'id' => Atomic_Tabs::get_tab_content_id( $tabs_id, $index ),
-			'data-tab-index' => $index,
 			'aria-labelledby' => Atomic_Tabs::get_tab_id( $tabs_id, $index ),
 		];
 
