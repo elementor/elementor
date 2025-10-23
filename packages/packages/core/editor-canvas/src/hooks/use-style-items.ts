@@ -2,11 +2,11 @@ import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from
 import { type BreakpointId, getBreakpoints } from '@elementor/editor-responsive';
 import { type StylesProvider, stylesRepository } from '@elementor/editor-styles-repository';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
+import { useOnMount } from '@elementor/utils';
 
 import { type RendererStyleDefinition, type StyleItem, type StyleRenderer } from '../renderers/create-styles-renderer';
 import { abortPreviousRuns } from '../utils/abort-previous-runs';
 import { signalizedProcess } from '../utils/signalized-process';
-import { useOnMount } from './use-on-mount';
 import { useStylePropResolver } from './use-style-prop-resolver';
 import { useStyleRenderer } from './use-style-renderer';
 

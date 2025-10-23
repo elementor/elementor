@@ -50,6 +50,9 @@ export function createMockDocumentData( {
 			settings: makeV1Settings( {
 				post_title: title,
 			} ),
+			view: {
+				el: document.createElement( 'div' ),
+			},
 		},
 	};
 }

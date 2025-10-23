@@ -83,6 +83,7 @@ function createComponentView( options: CreateTemplatedElementTypeOptions ): type
 				id: this.getComponentId().value,
 				selector: `[data-id="${ this.model.get( 'id' ) }"]`,
 				mode: 'autosave',
+				shouldScroll: false,
 			} );
 		}
 
