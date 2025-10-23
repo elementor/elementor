@@ -73,6 +73,11 @@
 		width: 325px;
 		text-align: center;
 
+		&::before {
+			content: '*';
+			margin-right: 5px;
+		}
+
 		a {
 			text-decoration: underline;
 			color: $platform-darker-gray;
