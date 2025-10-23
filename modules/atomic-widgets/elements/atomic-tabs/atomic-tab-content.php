@@ -113,9 +113,9 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 		$initial_attributes = $this->define_initial_attributes();
 
 		$tabs_context = Render_Context::get( Atomic_Tabs::class );
-		$default_active_tab = $tabs_context['default-active-tab'] ?? null;
-		$tabs_content_map = $tabs_context['tabs-content-map'] ?? [];
-		$tabs_id = $tabs_context['tabs-id'] ?? '';
+		$default_active_tab = $tabs_context['default-active-tab'];
+		$tabs_content_map = $tabs_context['tabs-content-map'];
+		$tabs_id = $tabs_context['tabs-id'];
 
 		$index = $tabs_content_map[$this->get_id()];
 		$is_active = $default_active_tab === $index;
