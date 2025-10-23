@@ -580,7 +580,6 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
-
 	}
 
 	protected function get_remote_kit_zip( $url ) {
