@@ -6,13 +6,14 @@ import {
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
 import { type NumberPropValue } from '@elementor/editor-props';
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
+import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+import { apiClient, canSwitchDocument } from './api';
 
 export const TYPE = 'e-component';
 
-export function createComponentType( options: CreateTemplatedElementTypeOptions ): typeof ElementType {
-	const legacyWindow = window as unknown as LegacyWindow;
+export function createComponentType(options: CreateTemplatedElementTypeOptions): typeof ElementType {
+		const legacyWindow = window as unknown as LegacyWindow;
 
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
 		getType() {
@@ -25,7 +26,8 @@ export function createComponentType( options: CreateTemplatedElementTypeOptions 
 	};
 }
 
-function createComponentView( options: CreateTemplatedElementTypeOptions ): typeof ElementView {
+
+function createComponentView( options: CreateTemplatedElementTypeOptions): typeof ElementView {
 	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow;
 
@@ -51,19 +53,19 @@ function createComponentView( options: CreateTemplatedElementTypeOptions ): type
 			childrenPlaceholder.replaceWith( buffer );
 		}
 
+
 		getComponentId() {
 			return this.options?.model?.get( 'settings' )?.get( 'component' ) as NumberPropValue;
 		}
 
 		getContextMenuGroups() {
 			const filteredGroups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
-			const componentId = this.getComponentId()?.value;
-
+			const componentId = this.getComponentId()?.value as number;
 			if ( ! componentId ) {
 				return filteredGroups;
 			}
 
-			const newGroup = {
+			const newGroup = [{
 				name: 'edit component',
 				actions: [
 					{
@@ -74,23 +76,29 @@ function createComponentView( options: CreateTemplatedElementTypeOptions ): type
 						callback: () => this.switchDocument(),
 					},
 				],
-			};
-			return [ ...filteredGroups, newGroup ];
+			}];
+			return [ ...filteredGroups,...newGroup ];
 		}
 
-		switchDocument() {
-			runCommand( 'editor/documents/switch', {
-				id: this.getComponentId().value,
-				selector: `[data-id="${ this.model.get( 'id' ) }"]`,
-				mode: 'autosave',
-			} );
+		async switchDocument() {
+			const { isAllowedToSwitchDocument } = await canSwitchDocument(this.getComponentId()?.value as number);
+			if (!isAllowedToSwitchDocument) {
+				throw new Error('You are not allowed to switch this document');
+			} else {
+				runCommand('editor/documents/switch', {
+					id: this.getComponentId()?.value as number,
+					mode: 'autosave',
+				}).then(() => {
+					apiClient.lockComponent(this.getComponentId()?.value as number);
+				});
+			}
 		}
-
+	
 		ui() {
 			return {
 				...super.ui(),
 				doubleClick: '.e-component:not(:has(.elementor-edit-area))',
-			};
+			}
 		}
 
 		events() {
