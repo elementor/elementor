@@ -16,7 +16,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_interactions';
 
 	public function get_name() {
-		return self::MODULE_NAME;;
+		return self::MODULE_NAME;
 	}
 
 	public static function get_experimental_data() {
@@ -31,7 +31,7 @@ class Module extends BaseModule {
 	}
 
 	public function is_experiment_active() {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) 
 		&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 
@@ -43,4 +43,3 @@ class Module extends BaseModule {
 		}
 	}
 }
-

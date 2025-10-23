@@ -1,16 +1,17 @@
-import * as React from 'react';
 import { Fragment } from 'react';
+import * as React from 'react';
+
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 import { useElement } from '../contexts/element-context';
 import { ScrollProvider } from '../contexts/scroll-context';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { useStateByElement } from '../hooks/use-state-by-element';
+import { InteractionsTab } from './interactions-tab';
 import { SettingsTab } from './settings-tab';
 import { stickyHeaderStyles, StyleTab } from './style-tab';
-import { InteractionsTab } from './interactions-tab';
 
 type TabValue = 'settings' | 'style' | 'interactions';
 
