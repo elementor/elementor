@@ -21,6 +21,8 @@ export const useEditable = ( { value, onSubmit, validation, onClick, onError }: 
 	};
 
 	const closeEditMode = () => {
+		ref.current?.blur();
+
 		setError( null );
 		onError?.( null );
 		setIsEditing( false );
@@ -28,7 +30,6 @@ export const useEditable = ( { value, onSubmit, validation, onClick, onError }: 
 
 	const submit = ( newValue: string ) => {
 		if ( ! isDirty( newValue ) ) {
-			closeEditMode();
 			return;
 		}
 
@@ -61,10 +62,7 @@ export const useEditable = ( { value, onSubmit, validation, onClick, onError }: 
 
 		if ( [ 'Enter' ].includes( event.key ) ) {
 			event.preventDefault();
-			// submission is invoked only on blur, to avoid issues with double-submission in certain cases
-			if ( ! error ) {
-				ref.current?.blur();
-			}
+			return submit( ( event.target as HTMLElement ).innerText );
 		}
 	};
 
@@ -76,20 +74,11 @@ export const useEditable = ( { value, onSubmit, validation, onClick, onError }: 
 		onClick?.( event );
 	};
 
-	const handleBlur = () => {
-		if ( error ) {
-			closeEditMode();
-			return;
-		}
-
-		submit( ( ref.current as HTMLElement ).innerText );
-	};
-
 	const listeners = {
 		onClick: handleClick,
 		onKeyDown: handleKeyDown,
 		onInput: onChange,
-		onBlur: handleBlur,
+		onBlur: closeEditMode,
 	} as const;
 
 	const attributes = {
