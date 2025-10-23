@@ -31,8 +31,8 @@ class Module extends BaseModule {
 	}
 
 	public function is_experiment_active() {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) 
-		&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
+			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 
 	public function __construct() {
