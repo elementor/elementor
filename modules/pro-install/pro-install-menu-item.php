@@ -202,3 +202,4 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 		wp_enqueue_script( ...$this->script_config );
 	}
 }
+
