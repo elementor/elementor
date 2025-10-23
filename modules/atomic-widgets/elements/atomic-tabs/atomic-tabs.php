@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -11,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Tabs_Control;
+use Elementor\Core\Utils\Collection;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,7 +46,8 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'default-active-tab' => String_Prop_Type::make(),
+			'default-active-tab' => Number_Prop_Type::make()
+				->default( 0 ),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
@@ -149,11 +152,41 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		return [ 'elementor-tabs-handler' ];
 	}
 
+	public static function register_handler_scripts( $assets_url, $min_suffix, $frontend_handlers_handle, $alpinejs_handle ) {
+		wp_register_script(
+			'elementor-tabs-handler',
+			"{$assets_url}js/tabs-handler{$min_suffix}.js",
+			[ $frontend_handlers_handle, $alpinejs_handle ],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
 	protected function define_render_context(): array {
 		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
+		
+		$direct_children = Collection::make( $this->get_children() );
+		
+		$tabs_menu = $direct_children->filter( fn( $child ) => $child->get_type() === 'e-tabs-menu' )->first();
+		$tabs_content_area = $direct_children->filter( fn( $child ) => $child->get_type() === 'e-tabs-content-area' )->first();
+		
+		$tabs_map = Collection::make( $tabs_menu ? $tabs_menu->get_children() : [] )
+			->filter( fn( $element ) => $element->get_type() === 'e-tab' )
+			->map( fn( $element ) => $element->get_id() )
+			->flip()
+			->all();
+		
+		$tabs_content_map = Collection::make( $tabs_content_area ? $tabs_content_area->get_children() : [] )
+			->filter( fn( $element ) => $element->get_type() === 'e-tab-content' )
+			->map( fn( $element ) => $element->get_id() )
+			->flip()
+			->all();
 
 		return [
 			'default-active-tab' => $default_active_tab,
+			'tabs-map' => $tabs_map,
+			'tabs-content-map' => $tabs_content_map,
+			'tabs-id' => $this->get_id(),
 		];
 	}
 
@@ -163,6 +196,9 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 		$initial_attributes = $this->define_initial_attributes();
 
+		$default_active_tab = $settings['default-active-tab'] ?? 0;
+		$default_active_tab_id = static::get_tab_id( $this->get_id(), $default_active_tab );
+
 		$attributes = [
 			'class' => [
 				'e-con',
@@ -170,16 +206,22 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
+			'x-data' => 'atomicTabs',
+			'data-e-settings' => json_encode( [ 'default-active-tab' => esc_js( $default_active_tab_id ) ] ),
 		];
-
-		if ( ! empty( $settings['default-active-tab'] ) ) {
-			$attributes['data-e-settings'] = json_encode( [ 'default-active-tab' => esc_js( $settings['default-active-tab'] ) ] );
-		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );
 		}
 
 		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
+	}
+	
+	public static function get_tab_id( $tabs_id, $index ) {
+		return "{$tabs_id}-tab-{$index}";
+	}
+
+	public static function get_tab_content_id( $tabs_id, $index ) {
+		return "{$tabs_id}-tab-content-{$index}";
 	}
 }
