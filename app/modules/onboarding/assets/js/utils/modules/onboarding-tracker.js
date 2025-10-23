@@ -1211,7 +1211,7 @@ class OnboardingTracker {
 
 		const eventData = {
 			'Experiment name': config.name,
-			'Variant name': 'B',
+			'Variant name': 'variant',
 		};
 
 		if ( EventDispatcher.canSendEvents() ) {
