@@ -211,6 +211,7 @@ class Import {
 		$this->manifest = $instance_data['manifest'];
 		$this->site_settings = $instance_data['site_settings'];
 
+		$this->kit_id = $instance_data['kit_id'] ?? '';
 		$this->settings_include = $instance_data['settings_include'];
 		$this->settings_referrer = $instance_data['settings_referrer'];
 		$this->settings_conflicts = $instance_data['settings_conflicts'];
@@ -415,15 +416,16 @@ class Import {
 	 */
 	public function init_import_session( $save_instance_data = false ) {
 		$import_sessions = Utils::get_import_sessions( true );
+		$existing_session = $import_sessions[ $this->session_id ] ?? [];
 
 		$import_sessions[ $this->session_id ] = [
 			'session_id' => $this->session_id,
 			'kit_title' => $this->manifest['title'] ?? '',
 			'kit_name' => $this->manifest['name'] ?? '',
-			'kit_thumbnail' => $this->get_kit_thumbnail(),
-			'kit_source' => $this->settings_referrer,
+			'kit_thumbnail' => $existing_session['kit_thumbnail'] ?? $this->get_kit_thumbnail(),
+			'kit_source' => $existing_session['kit_source'] ?? $this->settings_referrer,
 			'user_id' => get_current_user_id(),
-			'start_timestamp' => current_time( 'timestamp' ),
+			'start_timestamp' => $existing_session['start_timestamp'] ?? current_time( 'timestamp' ),
 		];
 
 		if ( $save_instance_data ) {
@@ -435,6 +437,7 @@ class Import {
 				'manifest' => $this->manifest,
 				'site_settings' => $this->site_settings,
 
+				'kit_id' => $this->kit_id,
 				'settings_include' => $this->settings_include,
 				'settings_referrer' => $this->settings_referrer,
 				'settings_conflicts' => $this->settings_conflicts,
