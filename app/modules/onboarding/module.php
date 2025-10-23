@@ -57,6 +57,16 @@ class Module extends BaseModule {
 		return $editor_assets_api->is_experiment_enabled( $experiment_key );
 	}
 
+	private function get_experiment_variant( string $experiment_key ): ?string {
+		$editor_assets_api = $this->get_editor_assets_api();
+
+		if ( null === $editor_assets_api ) {
+			return null;
+		}
+
+		return $editor_assets_api->get_experiment_variant( $experiment_key );
+	}
+
 
 	private function get_editor_assets_api(): ?API {
 		if ( null !== $this->editor_assets_api ) {
@@ -165,6 +175,11 @@ class Module extends BaseModule {
 			'isExperiment202Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202 ),
 			'isExperiment401Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_UPDATE_COPY_VISUALS ),
 			'isExperiment402Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION ),
+			'experiment101Variant' => $this->get_experiment_variant( self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS ),
+			'experiment201Variant' => $this->get_experiment_variant( self::EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ ),
+			'experiment202Variant' => $this->get_experiment_variant( self::EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202 ),
+			'experiment401Variant' => $this->get_experiment_variant( self::EXPERIMENT_UPDATE_COPY_VISUALS ),
+			'experiment402Variant' => $this->get_experiment_variant( self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION ),
 			'experimentNames' => [
 				'101' => self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS,
 				'201' => self::EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ,
@@ -528,6 +543,14 @@ class Module extends BaseModule {
 				wp_enqueue_script( 'updates' );
 				// Needed for uploading Logo from WP Media Library.
 				wp_enqueue_media();
+				// Post-based experiment variants handler
+				wp_enqueue_script( 
+					'elementor-onboarding-post-variants', 
+					plugins_url( 'assets/js/post-based-variants.js', __FILE__ ), 
+					[], 
+					ELEMENTOR_VERSION, 
+					true 
+				);
 			}
 		}, 12 );
 
