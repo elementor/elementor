@@ -52,6 +52,13 @@ class Dynamic_Tags_Module {
 			10,
 			2
 		);
+
+		add_action(
+			'elementor/atomic-widgets/styles/transformers/register',
+			fn ( $transformers, $prop_resolver ) => $this->register_transformers( $transformers, $prop_resolver ),
+			10,
+			2
+		);
 	}
 
 	private function add_atomic_dynamic_tags_to_editor_settings( $settings ) {
