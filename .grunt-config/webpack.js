@@ -180,7 +180,6 @@ const externals = [
 		'@wordpress/core-data': 'wp.coreData',
 		'@wordpress/data': 'wp.data',
 		'@wordpress/plugins': 'wp.plugins',
-		'@wordpress/api-fetch': 'wp.apiFetch',
 		'@woocommerce/admin-layout': 'wc.adminLayout',
 	},
 	// Handle tree-shaking imports for ui and icons packages (@elementor/ui/xxx) to be pointed to the external object (elementorV2.ui.xxx).
