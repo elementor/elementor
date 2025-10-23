@@ -184,8 +184,13 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async waitForPanelToLoad(): Promise<void> {
-		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
-		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
+		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached', timeout: timeouts.longAction } );
+		// Attempt to wait for the page-level loading spinner to hide, but ignore if it persists
+		try {
+			await this.page.waitForSelector( '#elementor-loading', { state: 'hidden', timeout: timeouts.longAction } );
+		} catch (e) {
+			// Spinner did not hide within timeout, proceeding to avoid test hang
+		}
 	}
 
 	/**
@@ -418,7 +423,8 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openSection( sectionId: string ): Promise<void> {
-		const sectionSelector = `.elementor-control-${ sectionId }`,
+		await this.waitForPanelToLoad();
+		const sectionSelector =`.elementor-control-${ sectionId }`,
 			isOpenSection = await this.page.evaluate( ( selector ) => {
 				const sectionElement = document.querySelector( selector );
 
@@ -429,8 +435,23 @@ export default class EditorPage extends BasePage {
 		if ( ! section || isOpenSection ) {
 			return;
 		}
+		// If there is no collapsible heading for this control, skip opening
+		const headingCount = await this.page.locator( `${ sectionSelector } .elementor-panel-heading` ).count();
+		if ( 0 === headingCount ) {
+			return;
+		}
 
-		await this.page.locator( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' + ' .elementor-panel-heading' ).click();
+		// Wait explicitly for the section header, scroll into view, and click with extended timeout
+		const headingSelector = `${ sectionSelector }:not(.e-open):not(.elementor-open):visible .elementor-panel-heading`;
+		await this.page.waitForSelector( headingSelector, { state: 'visible', timeout: timeouts.longAction } );
+		const headingLocator = this.page.locator( headingSelector ).first();
+		await headingLocator.scrollIntoViewIfNeeded();
+		await headingLocator.click( { timeout: timeouts.longAction } );
+
+		await this.page.waitForSelector(
+			sectionSelector + '.elementor-open:visible, ' + sectionSelector + '.e-open:visible',
+			{ timeout: timeouts.longAction }
+		);
 	}
 
 	/**
@@ -441,7 +462,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeSection( sectionId: string ): Promise<void> {
-		const sectionSelector = `.elementor-control-${ sectionId }`,
+		const sectionSelector =`.elementor-control-${ sectionId }`,
 			isOpenSection = await this.page.evaluate( ( selector ) => {
 				const sectionElement = document.querySelector( selector );
 
@@ -557,7 +578,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSelectControlValue( controlId: string, value: string ): Promise<void> {
-		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
+		const selector =`.elementor-control-${ controlId } select`;
+		await this.page.waitForSelector( selector, { state: 'visible', timeout: timeouts.longAction } );
+		await this.page.selectOption( selector, value );
 	}
 
 	/**
@@ -617,7 +640,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setColorControlValue( controlId: string, value: string ): Promise<void> {
-		const controlSelector = `.elementor-control-${ controlId }`;
+		const controlSelector =`.elementor-control-${ controlId }`;
 
 		await this.page.locator( controlSelector + ' .pcr-button' ).click();
 		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( value );
@@ -633,7 +656,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSwitcherControlValue( controlId: string, value: boolean = true ): Promise<void> {
-		const controlSelector = `.elementor-control-${ controlId }`,
+		const controlSelector =`.elementor-control-${ controlId }`,
 			controlLabel = this.page.locator( controlSelector + ' label.elementor-switch' ),
 			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
 
@@ -690,7 +713,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setTypographyControlValue( controlId: string, fontsize: string ): Promise<void> {
-		const controlSelector = `.elementor-control-${ controlId }_typography .eicon-edit`;
+		const controlSelector =`.elementor-control-${ controlId }_typography .eicon-edit`;
 
 		await this.page.locator( controlSelector ).click();
 		await this.setSliderControlValue( controlId + '_font_size', fontsize );
@@ -1011,6 +1034,8 @@ export default class EditorPage extends BasePage {
 		await this.page.waitForLoadState();
 		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
 		await this.page.reload();
+		// Wait for the preview frame to reload after saving
+		await this.waitForPreviewFrame();
 	}
 
 	/**

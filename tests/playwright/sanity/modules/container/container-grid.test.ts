@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import { timeouts } from '../../../config/timeouts';
 import EditorPage from '../../../pages/editor-page';
 
 test.describe( 'Container Grid tests @container', () => {
@@ -538,6 +539,8 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'On initial page load when container is not empty', async () => {
 			await editor.saveAndReloadPage();
 			await editor.waitForPanelToLoad();
+			// Wait for the empty-view placeholder to render
+			await editor.getPreviewFrame().waitForSelector( '.elementor-first-add', { state: 'visible', timeout: timeouts.longAction } );
 			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
 		} );
 	} );
