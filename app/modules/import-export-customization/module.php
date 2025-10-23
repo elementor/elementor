@@ -581,17 +581,6 @@ class Module extends BaseModule {
 			true
 		);
 
-		wp_localize_script(
-			'import-export-customization-admin',
-			'elementorAppConfig',
-			[
-				'import-export-customization' => [
-					'restApiBaseUrl' => Controller::get_base_url(),
-					'restNonce' => wp_create_nonce( 'wp_rest' ),
-					'restUrl' => rest_url(),
-				],
-			]
-		);
 	}
 
 	protected function get_remote_kit_zip( $url ) {
@@ -630,6 +619,8 @@ class Module extends BaseModule {
 			'lastImportedSession' => $this->revert->get_last_import_session(),
 			'kitPreviewNonce' => wp_create_nonce( 'kit_thumbnail' ),
 			'restApiBaseUrl' => Controller::get_base_url(),
+			'restNonce' => wp_create_nonce( 'wp_rest' ),
+			'restUrl' => rest_url(),
 			'uiTheme' => $this->get_elementor_ui_theme_preference(),
 			'exportGroups' => $this->get_export_groups(),
 			'manifestVersion' => self::FORMAT_VERSION,
