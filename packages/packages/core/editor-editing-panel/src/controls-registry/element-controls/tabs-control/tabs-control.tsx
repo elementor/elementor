@@ -25,24 +25,24 @@ import {
 	duplicateItem,
 	moveItem,
 	removeItem,
+	TAB_CONTENT_ELEMENT_TYPE,
 	TAB_ELEMENT_TYPE,
-	TAB_PANEL_ELEMENT_TYPE,
 	type TabItem,
 } from './actions';
 
-const TAB_LIST_ELEMENT_TYPE = 'e-tabs-list';
-const TAB_CONTENT_ELEMENT_TYPE = 'e-tabs-content';
+const TAB_MENU_ELEMENT_TYPE = 'e-tabs-menu';
+const TAB_CONTENT_AREA_ELEMENT_TYPE = 'e-tabs-content-area';
 
 export const TabsControl = ( { label }: { label: string } ) => {
 	const { element } = useElement();
 
 	const { [ TAB_ELEMENT_TYPE ]: tabLinks } = useElementChildren( element.id, [
 		TAB_ELEMENT_TYPE,
-		TAB_PANEL_ELEMENT_TYPE,
+		TAB_CONTENT_ELEMENT_TYPE,
 	] );
 
-	const tabList = getElementByType( element.id, TAB_LIST_ELEMENT_TYPE );
-	const tabContent = getElementByType( element.id, TAB_CONTENT_ELEMENT_TYPE );
+	const tabList = getElementByType( element.id, TAB_MENU_ELEMENT_TYPE );
+	const tabContentArea = getElementByType( element.id, TAB_CONTENT_AREA_ELEMENT_TYPE );
 
 	const repeaterValues: RepeaterItem< TabItem >[] = tabLinks.map( ( tabLink ) => {
 		const { title: titleSetting } = getElementEditorSettings( tabLink.id ) ?? {};
@@ -61,7 +61,7 @@ export const TabsControl = ( { label }: { label: string } ) => {
 		if ( meta?.action?.type === 'add' ) {
 			const items = meta.action.payload;
 
-			return addItem( { tabContentId: tabContent.id, items, tabListId: tabList.id } );
+			return addItem( { tabContentAreaId: tabContentArea.id, items, tabsMenuId: tabList.id } );
 		}
 
 		if ( meta?.action?.type === 'remove' ) {
@@ -81,8 +81,8 @@ export const TabsControl = ( { label }: { label: string } ) => {
 
 			return moveItem( {
 				toIndex: to,
-				tabListId: tabList.id,
-				tabContentId: tabContent.id,
+				tabsMenuId: tabList.id,
+				tabContentAreaId: tabContentArea.id,
 				movedElementId: tabLinks[ from ].id,
 			} );
 		}

@@ -15,7 +15,6 @@ import {
 import { UnstableGradientBox } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
-import ControlActions from '../../control-actions/control-actions';
 import { createControl } from '../../create-control';
 
 export type ColorStop = TransformablePropValue<
@@ -74,13 +73,11 @@ export const BackgroundGradientColorControl = createControl( () => {
 	};
 
 	return (
-		<ControlActions>
-			<UnstableGradientBox
-				sx={ { width: 'auto', padding: 1.5 } }
-				value={ normalizeValue() }
-				onChange={ handleChange }
-			/>
-		</ControlActions>
+		<UnstableGradientBox
+			sx={ { width: 'auto', padding: 1.5 } }
+			value={ normalizeValue() }
+			onChange={ handleChange }
+		/>
 	);
 } );
 

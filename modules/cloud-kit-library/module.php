@@ -129,7 +129,9 @@ class Module extends BaseModule {
 	}
 
 	public static function get_remote_kit_zip( $url, $file_name = 'kit.zip' ) {
-		$remote_zip_request = wp_safe_remote_get( $url );
+		$remote_zip_request = wp_safe_remote_get( $url, [
+			'timeout' => 300,
+		] );
 
 		if ( is_wp_error( $remote_zip_request ) ) {
 			Plugin::$instance->logger->get_logger()->error( $remote_zip_request->get_error_message() );
