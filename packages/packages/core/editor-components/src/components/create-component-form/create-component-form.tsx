@@ -64,7 +64,7 @@ export function CreateComponentForm() {
 				slice.actions.addUnpublished( {
 					id: tempId,
 					name: values.componentName,
-					content: [ element.element.model.toJSON( { remove: [ 'default' ] } ) ],
+					elements: [ element.element.model.toJSON( { remove: [ 'default' ] } ) ],
 				} )
 			);
 
