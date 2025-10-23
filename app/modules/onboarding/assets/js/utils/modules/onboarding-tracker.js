@@ -1094,6 +1094,7 @@ class OnboardingTracker {
 		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
 			this.sendStoredStep1EventsOnStep2();
 			this.sendExperimentStarted( 201 );
+			this.sendExperimentStarted( 202 );
 		}
 
 		if ( 4 === stepNumber || 'goodToGo' === currentStep ) {
@@ -1140,6 +1141,12 @@ class OnboardingTracker {
 				enabledKey: 'isExperiment201Enabled',
 				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
 				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED,
+			},
+			202: {
+				name: 'core_onboarding_experiment202',
+				enabledKey: 'isExperiment202Enabled',
+				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT202_VARIANT,
+				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT202_STARTED,
 			},
 			401: {
 				name: 'core_onboarding_experiment401',
