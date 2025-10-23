@@ -21,7 +21,7 @@ test.describe( 'Icon List widget tests', () => {
 
 		// Assert.
 		await test.step( 'LTR layouts', async () => {
-			const iconLists = page.locator( '.elementor-section-wrap' ).first();
+			const iconLists = page.locator( '.page-content' ).first();
 			await iconLists.waitFor();
 			await expect.soft( iconLists ).toHaveScreenshot( 'icon-list-items-alignment-ltr.png' );
 		} );
@@ -32,7 +32,7 @@ test.describe( 'Icon List widget tests', () => {
 			await editor.page.goto( `/?p=${ pageId }` );
 			await editor.page.waitForLoadState();
 
-			const iconLists = page.locator( '.elementor-section-wrap' ).first();
+			const iconLists = page.locator( '.page-content' ).first();
 			await iconLists.waitFor();
 			await expect.soft( iconLists ).toHaveScreenshot( 'icon-list-items-alignment-rtl.png' );
 		} );
