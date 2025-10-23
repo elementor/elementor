@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { isTransformable, type Props, stringPropTypeUtil } from '@elementor/editor-props';
 import { DateTimePropTypeUtil } from '@elementor/editor-props';
-import { LocalizationProvider } from '@elementor/ui';
-import DatePicker from '@elementor/ui/DatePicker';
-import TimePicker from '@elementor/ui/TimePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider, DatePicker, TimePicker } from '@elementor/ui';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
@@ -34,7 +31,7 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 	return (
 		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
 			<ControlActions>
-				<LocalizationProvider dateAdapter={ AdapterDayjs }>
+			<LocalizationProvider>
 					<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
 						<PropKeyProvider bind="date">
 							<DatePicker
@@ -43,7 +40,7 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 								disabled={ inputDisabled }
 								slotProps={ {
 									textField: { size: 'tiny' },
-									openPickerButton: { size: 'tiny' },
+									openPickerButton: { size: 'small' },
 								} }
 							/>
 						</PropKeyProvider>
@@ -55,7 +52,7 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 								disabled={ inputDisabled }
 								slotProps={ {
 									textField: { size: 'tiny' },
-									openPickerButton: { size: 'tiny' },
+									openPickerButton: { size: 'small' },
 								} }
 							/>
 						</PropKeyProvider>
