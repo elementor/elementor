@@ -12,7 +12,7 @@ import {
 	useElementChildren,
 	useElementEditorSettings,
 } from '@elementor/editor-elements';
-import { type CreateOptions, stringPropTypeUtil } from '@elementor/editor-props';
+import { type CreateOptions, numberPropTypeUtil } from '@elementor/editor-props';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, Chip, Infotip, type InfotipProps, Stack, Switch, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -46,10 +46,12 @@ export const TabsControl = ( { label }: { label: string } ) => {
 
 	const repeaterValues: RepeaterItem< TabItem >[] = tabLinks.map( ( tabLink ) => {
 		const { title: titleSetting } = getElementEditorSettings( tabLink.id ) ?? {};
+		const index = tabLinks.indexOf( tabLink );
 
 		return {
 			id: tabLink.id,
 			title: titleSetting,
+			index,
 		};
 	} );
 
@@ -124,10 +126,10 @@ const ItemLabel = ( { value }: { value: TabItem } ) => {
 };
 
 const ItemDefaultTab = ( { value }: { value: TabItem } ) => {
-	const id = value.id ?? '';
-	const { value: defaultItem } = useBoundProp( stringPropTypeUtil );
+	const index = value.index ?? 0;
+	const { value: defaultItem } = useBoundProp( numberPropTypeUtil );
 
-	const isDefault = defaultItem === id;
+	const isDefault = defaultItem === index;
 
 	if ( ! isDefault ) {
 		return null;
@@ -145,16 +147,16 @@ const ItemContent = ( { value }: { value: TabItem } ) => {
 		<Stack p={ 2 } gap={ 1.5 }>
 			<TabLabelControl elementId={ value.id } />
 			<SettingsField bind="default-active-tab" propDisplayName={ __( 'Tabs', 'elementor' ) }>
-				<DefaultTabControl elementId={ value.id } />
+				<DefaultTabControl tabIndex={ value.index ?? 0 } />
 			</SettingsField>
 		</Stack>
 	);
 };
 
-const DefaultTabControl = ( { elementId }: { elementId: string } ) => {
-	const { value, setValue } = useBoundProp( stringPropTypeUtil );
+const DefaultTabControl = ( { tabIndex }: { tabIndex: number } ) => {
+	const { value, setValue } = useBoundProp( numberPropTypeUtil );
 
-	const isDefault = value === elementId;
+	const isDefault = value === tabIndex;
 
 	return (
 		<Stack direction="row" alignItems="center" justifyContent="space-between" gap={ 2 }>
@@ -165,7 +167,7 @@ const DefaultTabControl = ( { elementId }: { elementId: string } ) => {
 					checked={ isDefault }
 					disabled={ isDefault }
 					onChange={ ( { target }: React.ChangeEvent< HTMLInputElement > ) => {
-						setValue( target.checked ? elementId : null );
+						setValue( target.checked ? tabIndex : null );
 					} }
 					inputProps={ {
 						...( isDefault ? { style: { opacity: 0, cursor: 'not-allowed' } } : {} ),

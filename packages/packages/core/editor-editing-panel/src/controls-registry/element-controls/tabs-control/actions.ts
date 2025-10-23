@@ -14,6 +14,7 @@ import { __ } from '@wordpress/i18n';
 export type TabItem = {
 	id?: string;
 	title?: string;
+	index?: number;
 };
 
 export const TAB_ELEMENT_TYPE = 'e-tab';

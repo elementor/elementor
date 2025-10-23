@@ -58,11 +58,11 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_id( 'content' )
 				->set_items( [
-					// Tabs_Control::make()
-					// ->set_label( __( 'Menu items', 'elementor' ) )
-					// ->set_meta( [
-					// 	'layout' => 'custom',
-					// ] ),
+					Tabs_Control::make()
+					->set_label( __( 'Menu items', 'elementor' ) )
+					->set_meta( [
+						'layout' => 'custom',
+					] ),
 				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
@@ -152,6 +152,16 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		return [ 'elementor-tabs-handler' ];
 	}
 
+	public static function register_handler_scripts( $assets_url, $min_suffix, $frontend_handlers_handle, $alpinejs_handle ) {
+		wp_register_script(
+			'elementor-tabs-handler',
+			"{$assets_url}js/tabs-handler{$min_suffix}.js",
+			[ $frontend_handlers_handle, $alpinejs_handle ],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
 	protected function define_render_context(): array {
 		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
 		
@@ -186,6 +196,9 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 		$initial_attributes = $this->define_initial_attributes();
 
+		$default_active_tab = $settings['default-active-tab'] ?? 0;
+		$default_active_tab_id = "{$this->get_id()}-tab-{$default_active_tab}";
+
 		$attributes = [
 			'class' => [
 				'e-con',
@@ -194,12 +207,8 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				...( $settings['classes'] ?? [] ),
 			],
 			'x-data' => 'atomicTabs',
-			'data-active-tab' => $settings['default-active-tab'] ?? 0,
+			'data-e-settings' => json_encode( [ 'default-active-tab' => esc_js( $default_active_tab_id ) ] ),
 		];
-
-		if ( ! empty( $settings['default-active-tab'] ) ) {
-			$attributes['data-e-settings'] = json_encode( [ 'default-active-tab' => esc_js( $settings['default-active-tab'] ) ] );
-		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );

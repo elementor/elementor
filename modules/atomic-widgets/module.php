@@ -4,7 +4,6 @@ namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
@@ -21,6 +20,8 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
+use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader_Factory;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Src_Transformer;
@@ -153,6 +154,7 @@ class Module extends BaseModule {
 
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
+			add_action( 'elementor/atomic-widgets/frontend/loader/scripts/register', fn ( $loader ) => $this->register_widget_handlers( $loader ) );
 			add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
 
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
@@ -372,54 +374,21 @@ class Module extends BaseModule {
 	}
 
 	private function register_frontend_scripts() {
-		$assets_config_provider = ( new Assets_Config_Provider() )
-			->set_path_resolver( function ( $name ) {
-				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
-			} );
+		$loader = Frontend_Assets_Loader_Factory::create();
+		$loader->init();
+		$loader->register_scripts();
+	}
 
-		$assets_config_provider->load( 'frontend-handlers' );
-		$assets_config_provider->load( 'alpinejs' );
+	private function register_widget_handlers( Frontend_Assets_Loader $loader ) {
+		$assets_url = $loader->get_assets_url();
+		$min_suffix = $loader->get_min_suffix();
+		$frontend_handlers_handle = $loader->get_package_handle( 'frontend-handlers' );
+		$alpinejs_handle = $loader->get_package_handle( 'alpinejs' );
 
-		$frontend_handlers_package_config = $assets_config_provider->get( 'frontend-handlers' );
+		Atomic_Youtube::register_handler_scripts( $assets_url, $min_suffix, $frontend_handlers_handle );
 
-		if ( ! $frontend_handlers_package_config ) {
-			return;
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NESTED ) ) {
+			Atomic_Tabs::register_handler_scripts( $assets_url, $min_suffix, $frontend_handlers_handle, $alpinejs_handle );
 		}
-
-		wp_register_script(
-			$frontend_handlers_package_config['handle'],
-			$this->get_js_assets_url( 'packages/frontend-handlers/frontend-handlers' ),
-			$frontend_handlers_package_config['deps'],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_register_script(
-			'elementor-youtube-handler',
-			$this->get_js_assets_url( 'youtube-handler' ),
-			[ $frontend_handlers_package_config['handle'] ],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		$alpinejs_package_config = $assets_config_provider->get( 'alpinejs' );
-
-		if ( $alpinejs_package_config ) {
-			wp_register_script(
-				$alpinejs_package_config['handle'],
-				$this->get_js_assets_url( 'packages/alpinejs/alpinejs' ),
-				$alpinejs_package_config['deps'],
-				ELEMENTOR_VERSION,
-				true
-			);
-		}
-
-		wp_register_script(
-			'elementor-tabs-handler',
-			$this->get_js_assets_url( 'tabs-handler' ),
-			[ $frontend_handlers_package_config['handle'], $alpinejs_package_config['handle']	 ],
-			ELEMENTOR_VERSION,
-			true
-		);
 	}
 }

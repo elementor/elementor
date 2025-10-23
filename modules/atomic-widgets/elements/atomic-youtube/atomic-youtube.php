@@ -116,6 +116,16 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 		return [ 'elementor-youtube-handler' ];
 	}
 
+	public static function register_handler_scripts( $assets_url, $min_suffix, $frontend_handlers_handle ) {
+		wp_register_script(
+			'elementor-youtube-handler',
+			"{$assets_url}js/youtube-handler{$min_suffix}.js",
+			[ $frontend_handlers_handle ],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
 	protected function get_templates(): array {
 		return [
 			'elementor/elements/atomic-youtube' => __DIR__ . '/atomic-youtube.html.twig',

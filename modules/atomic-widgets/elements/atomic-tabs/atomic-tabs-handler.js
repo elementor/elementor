@@ -5,42 +5,60 @@ register( {
 	elementType: 'e-tabs',
 	uniqueId: 'e-tabs-handler',
 	callback: ( { element, settings } ) => {
-		window.Alpine = Alpine;
-
 		Alpine.data( 'atomicTabs', () => ( {
-			activeTab: settings['default-active-tab'],
+			activeTab: settings[ 'default-active-tab' ],
 
 			tab: {
 				'@click'() {
-					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
-					this.activeTab = tabIndex;
+					const id = this.$el.id;
+
+					this.activeTab = id;
 				},
 				':aria-selected'() {
-					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
-					return this.activeTab === tabIndex ? 'true' : 'false';
+					const id = this.$el.id;
+
+					return this.activeTab === id ? 'true' : 'false';
 				},
 				':tabindex'() {
-					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
-					return this.activeTab === tabIndex ? '0' : '-1';
+					const id = this.$el.id;
+
+					return this.activeTab === id ? '0' : '-1';
 				},
 				':aria-controls'() {
 					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
-					return `atomic-tab-content-${ tabIndex }`;
+					const tabsId = element.dataset.id;
+
+					return `${ tabsId }-tab-content-${ tabIndex }`;
+				},
+				':id'() {
+					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
+					const tabsId = element.dataset.id;
+
+					return `${ tabsId }-tab-${ tabIndex }`;
 				},
 			},
 
 			tabContent: {
-				'x-show'() {
-					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
-					return this.activeTab === tabIndex;
-				},
 				':aria-labelledby'() {
 					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
-					return `atomic-tab-${ tabIndex }`;
+					const tabsId = element.dataset.id;
+
+					return `${ tabsId }-tab-${ tabIndex }`;
+				},
+				'x-show'() {
+					const tabId = this.$el.getAttribute( 'aria-labelledby' );
+
+					return this.activeTab === tabId;
+				},
+				':id'() {
+					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
+					const tabsId = element.dataset.id;
+
+					return `${ tabsId }-tab-content-${ tabIndex }`;
 				},
 			},
 		} ) );
 
-		Alpine.start();
+		Alpine.initTree( element );
 	},
 } );

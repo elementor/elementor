@@ -34,7 +34,6 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'store',
 		'session',
 		'twing',
-		'alpinejs',
 		'ui',
 		'utils',
 		'wp-media',
