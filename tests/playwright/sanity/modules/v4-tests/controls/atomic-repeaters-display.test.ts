@@ -1,5 +1,5 @@
-import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
+import { parallelTest as test } from '../../../../parallelTest';
+import WpAdminPage from '../../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
 
 const CUSTOM_VALUE = 'my custom value';

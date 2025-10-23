@@ -1,6 +1,6 @@
-import EditorPage from '../../../pages/editor-page';
+import EditorPage from '../../../../pages/editor-page';
 import { Page } from '@playwright/test';
-import WpAdminPage from '../../../pages/wp-admin-page';
+import WpAdminPage from '../../../../pages/wp-admin-page';
 
 export type ElementType = 'e-button' | 'e-divider' | 'e-heading' | 'e-image' | 'e-paragraph' | 'e-svg' | 'e-tabs' | 'e-youtube' |'e-div-block' | 'e-flexbox';
 export type Tag = 'div' | 'header' | 'section' | 'article' | 'aside' | 'footer'| 'a';

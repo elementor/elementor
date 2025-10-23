@@ -1,7 +1,7 @@
-import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
-import widgets from '../../../enums/widgets';
-import { getElementSelector } from '../../../assets/elements-utils';
+import { parallelTest as test } from '../../../../../parallelTest';
+import WpAdminPage from '../../../../../pages/wp-admin-page';
+import widgets from '../../../../../enums/widgets';
+import { getElementSelector } from '../../../../../assets/elements-utils';
 import { expect } from '@playwright/test';
 
 test.describe( 'Div Block tests @div-block', () => {
