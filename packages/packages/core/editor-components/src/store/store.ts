@@ -12,7 +12,7 @@ import { loadComponents } from './thunks';
 type GetComponentResponse = Component[];
 
 export type UnpublishedComponent = Component & {
-	content: V1ElementData[];
+	elements: V1ElementData[];
 };
 
 type Status = 'idle' | 'pending' | 'error';

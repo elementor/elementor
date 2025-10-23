@@ -50,7 +50,7 @@ async function createComponents(
 		items: components.map( ( component ) => ( {
 			temp_id: component.id,
 			title: component.name,
-			elements: component.content,
+			elements: component.elements,
 		} ) ),
 	} );
 

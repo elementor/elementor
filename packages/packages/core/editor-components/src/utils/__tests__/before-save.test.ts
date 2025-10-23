@@ -31,14 +31,14 @@ describe( 'beforeSave', () => {
 			slice.actions.addUnpublished( {
 				id: 1000,
 				name: 'Test Component 1',
-				content: mockComponent1Content,
+				elements: mockComponent1Content,
 			} )
 		);
 		__dispatch(
 			slice.actions.addUnpublished( {
 				id: 3000,
 				name: 'Test Component 2',
-				content: mockComponent2Content,
+				elements: mockComponent2Content,
 			} )
 		);
 
@@ -220,8 +220,8 @@ describe( 'beforeSave', () => {
 		it( 'should clear all unpublished components from store after successful save', async () => {
 			// Assert
 			expect( selectUnpublishedComponents( getState() ) ).toEqual( [
-				{ id: 3000, name: 'Test Component 2', content: mockComponent2Content },
-				{ id: 1000, name: 'Test Component 1', content: mockComponent1Content },
+				{ id: 3000, name: 'Test Component 2', elements: mockComponent2Content },
+				{ id: 1000, name: 'Test Component 1', elements: mockComponent1Content },
 			] );
 
 			// Act
