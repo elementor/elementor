@@ -8,16 +8,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Component_Mocks {
 
+	static array $component_1_data;
+	static array $component_2_data;
+	static array $invalid_component_data;
+
 	/**
 	 * Get mock data for component 1 (Header with title and image)
 	 *
 	 * @return array
 	 */
 	public static function get_component_1_data(): array {
-		$json_file = __DIR__ . '/component-1.json';
-		$json_content = file_get_contents( $json_file );
-		
-		return json_decode( $json_content, true );
+		if ( ! isset( self::$component_1_data ) ) {
+			$json_content = file_get_contents( __DIR__ . '/component-1.json' );
+
+			self::$component_1_data = json_decode( $json_content, true );
+		}
+
+		return self::$component_1_data;
 	}
 
 	/**
@@ -26,10 +33,13 @@ class Component_Mocks {
 	 * @return array
 	 */
 	public static function get_component_2_data(): array {
-		$json_file = __DIR__ . '/component-2.json';
-		$json_content = file_get_contents( $json_file );
-		
-		return json_decode( $json_content, true );
+		if ( ! isset( self::$component_2_data ) ) {
+			$json_content = file_get_contents( __DIR__ . '/component-2.json' );
+
+			self::$component_2_data = json_decode( $json_content, true );
+		}
+
+		return self::$component_2_data;
 	}
 
 	/**
@@ -38,23 +48,13 @@ class Component_Mocks {
 	 * @return array
 	 */
 	public static function get_invalid_component_data(): array {
-		$json_file = __DIR__ . '/invalid-component.json';
-		$json_content = file_get_contents( $json_file );
-		
-		return json_decode( $json_content, true );
-	}
+		if ( ! isset( self::$invalid_component_data ) ) {
+			$json_content = file_get_contents( __DIR__ . '/invalid-component.json' );
 
-	/**
-	 * Get all available mock components
-	 *
-	 * @return array
-	 */
-	public static function get_all_components(): array {
-		return [
-			'component-1' => self::get_component_1_data(),
-			'component-2' => self::get_component_2_data(),
-			'invalid-component' => self::get_invalid_component_data(),
-		];
+			self::$invalid_component_data = json_decode( $json_content, true );
+		}
+
+		return self::$invalid_component_data;
 	}
 
 	/**
