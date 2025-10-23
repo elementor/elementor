@@ -66,10 +66,10 @@ test.describe( 'Height Prop Type Integration @prop-types', () => {
 
 		// Define test cases for both editor and frontend verification
 		const testCases = [
-			{ textContent: 'Height 50px', name: 'height: 50px', property: 'height', expected: '50px' },
-			{ textContent: 'Height 100px', name: 'height: 100px', property: 'height', expected: '100px' },
-			{ textContent: 'Height 5rem', name: 'height: 5rem', property: 'height', expected: '80px' }, // 5rem = 80px typically
-			{ textContent: 'Min height 80px', name: 'min-height: 80px', property: 'min-height', expected: '80px' },
+			{ index: 0, textContent: 'Height 50px', name: 'height: 50px', property: 'height', expected: '50px' },
+			{ index: 1, textContent: 'Height 100px', name: 'height: 100px', property: 'height', expected: '100px' },
+			{ index: 2, textContent: 'Height 5rem', name: 'height: 5rem', property: 'height', expected: '80px' }, // 5rem = 80px typically
+			{ index: 3, textContent: 'Min height 80px', name: 'min-height: 80px', property: 'min-height', expected: '80px' },
 		];
 
 		// Editor verification using test cases array
