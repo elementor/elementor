@@ -62,7 +62,7 @@ const KitListItem = ( props ) => {
 										icon="eicon-external-link-square"
 										url={ promotionUrl }
 										target="_blank"
-										onClick={ () => tracking.trackKitdemoUpgradeClicked( props.model.id, props.model.title, subscriptionPlan ) }
+										onClick={ () => tracking.trackKitdemoUpgradeClicked( props.model.id, props.model.title, subscriptionPlan.label ) }
 									/>
 								)
 							}

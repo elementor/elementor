@@ -170,7 +170,7 @@ export default function ItemHeader( props ) {
 			tracking.trackKitdemoApplyClicked( props.model.id, props.model.title, props.model.accessTier );
 		},
 		onUpgrade: () => {
-			tracking.trackKitdemoUpgradeClicked( props.model.id, props.model.title, subscriptionPlan );
+			tracking.trackKitdemoUpgradeClicked( props.model.id, props.model.title, subscriptionPlan.label );
 		},
 	} );
 
