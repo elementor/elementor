@@ -108,6 +108,12 @@ trait Has_Atomic_Base {
 		return $result->unwrap();
 	}
 
+	private function parse_atomic_interactions( array $interactions ): array {
+		// For now, just return as-is without validation
+		// You can add validation logic here later
+		return $interactions;
+	}
+
 	public function get_atomic_controls() {
 		$controls = apply_filters(
 			'elementor/atomic-widgets/controls',
@@ -145,6 +151,7 @@ trait Has_Atomic_Base {
 		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
 		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
 		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
+		// $data['interactions'] = $this->parse_atomic_interactions( $data['interactions'] ?? '' ); // Add this line
 
 		return $data;
 	}
@@ -153,6 +160,7 @@ trait Has_Atomic_Base {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
 		$raw_data['styles'] = $this->styles;
+		$raw_data['interactions'] = $this->interactions; 
 		$raw_data['editor_settings'] = $this->editor_settings;
 
 		return $raw_data;

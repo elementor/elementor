@@ -58,7 +58,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 			'attributes' => Attributes_Prop_Type::make(),
 
-			'interactions' => Interactions_Prop_Type::make(),
+			'interactions' => String_Prop_Type::make(),
 		];
 
 		return $props;

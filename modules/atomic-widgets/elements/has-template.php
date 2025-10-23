@@ -19,6 +19,7 @@ trait Has_Template {
 
 		$config['twig_main_template'] = $this->get_main_template();
 		$config['twig_templates'] = $this->get_templates_contents();
+		$config['interactions'] = $this->interactions;
 
 		return $config;
 	}
@@ -40,6 +41,7 @@ trait Has_Template {
 				'type' => $this->get_name(),
 				'settings' => $this->get_atomic_settings(),
 				'base_styles' => $this->get_base_styles_dictionary(),
+				'interactions' => $this->interactions,
 			];
 
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

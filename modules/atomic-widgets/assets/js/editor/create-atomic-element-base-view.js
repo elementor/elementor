@@ -3,6 +3,8 @@ import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
 
+console.log('🚀 Atomic Element Base Model loaded')
+
 export default function createAtomicElementBaseView( type ) {
 	const AtomicElementView = BaseElementView.extend( {
 		template: Marionette.TemplateCache.get( `#tmpl-elementor-${ type }-content` ),
@@ -26,6 +28,7 @@ export default function createAtomicElementBaseView( type ) {
 
 			return Marionette.CompositeView.prototype.getChildViewContainer.apply( this, arguments );
 		},
+
 
 		getChildType() {
 			const atomicElements = Object.entries( elementor.config.elements )
@@ -51,6 +54,7 @@ export default function createAtomicElementBaseView( type ) {
 
 			return ui;
 		},
+		
 
 		attributes() {
 			const attr = BaseElementView.prototype.attributes.apply( this );
@@ -58,6 +62,13 @@ export default function createAtomicElementBaseView( type ) {
 			const cssId = this.model.getSetting( '_cssid' );
 			const customAttributes = this.model.getSetting( 'attributes' )?.value ?? [];
 			const initialAttributes = this?.model?.config?.initial_attributes ?? {};
+
+
+			const interactions = this.model.get( 'interactions' );
+			console.log('looking for interactons')
+				if ( interactions ) {
+					local['data-interactions'] = interactions;
+				}
 
 			if ( cssId ) {
 				local.id = cssId.value;
@@ -127,8 +138,19 @@ export default function createAtomicElementBaseView( type ) {
 
 			BaseElementView.prototype.renderOnChange.apply( this, settings );
 
+			if ( changed.interactions ) {
+				console.log('Interactions changed in renderOnChange:', changed.interactions);
+				const interactions = this.model.get( 'interactions' );
+				if ( interactions ) {
+					this.$el.attr( 'data-interactions', interactions );
+				} else {
+					this.$el.removeAttr( 'data-interactions' );
+				}
+				return;
+			}
+
 			if ( changed.attributes ) {
-				const preserveAttrs = [ 'id', 'class', 'href' ];
+				const preserveAttrs = [ 'id', 'class', 'href', 'data-interactions' ];
 				const $elAttrs = this.$el[ 0 ].attributes;
 				for ( let i = $elAttrs.length - 1; i >= 0; i-- ) {
 					const attrName = $elAttrs[ i ].name;
@@ -185,8 +207,13 @@ export default function createAtomicElementBaseView( type ) {
 
 		onRender() {
 			this.dispatchPreviewEvent( 'elementor/element/render' );
+			console.log('looking for interactons')
+		console.log(this.model.get( 'interactions' ))
 
 			BaseElementView.prototype.onRender.apply( this, arguments );
+
+			// Always update interactions data attribute on render
+			this.updateInteractionsAttribute();
 
 			// Defer to wait for everything to render.
 			setTimeout( () => {
@@ -598,6 +625,38 @@ export default function createAtomicElementBaseView( type ) {
 
 		isFirstElementInStructure() {
 			return 0 === this.model.collection.indexOf( this.model );
+		},
+
+		initialize() {
+			BaseElementView.prototype.initialize.apply( this, arguments );
+
+			// Listen for interactions changes
+			this.model.on( 'change:interactions', () => {
+				console.log('Interactions changed via model event');
+				const interactions = this.model.get( 'interactions' );
+				if ( interactions ) {
+					this.$el.attr( 'data-interactions', interactions );
+				} else {
+					this.$el.removeAttr( 'data-interactions' );
+				}
+			} );
+		},
+
+		updateInteractionsAttribute() {
+			console.log('=== DEBUG INTERACTIONS ===');
+			console.log('Full model attributes:', this.model.attributes);
+			console.log('Model.get(interactions):', this.model.get('interactions'));
+			console.log('Model.attributes.interactions:', this.model.attributes.interactions);
+			console.log('========================');
+
+			const interactions = this.model.get( 'interactions' );
+			if ( interactions ) {
+				console.log('Setting data-interactions:', interactions);
+				this.$el.attr( 'data-interactions', interactions );
+			} else {
+				console.log('No interactions found, removing attribute');
+				this.$el.removeAttr( 'data-interactions' );
+			}
 		},
 	} );
 

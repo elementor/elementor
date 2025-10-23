@@ -1,24 +1,25 @@
 import * as React from 'react';
-// import { motionEffectsPropTypeUtil } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
-import { SettingsField } from '../../controls-registry/settings-field';
+import { InteractionsField } from '../../controls-registry/interactions-field';
 import { SectionContent } from '../section-content';
-import { useBoundProp } from '@elementor/editor-controls';
-import { TextControl } from '@elementor/editor-controls';
-
-import { InteractionsRepeaterControl } from './interactions-repeater';
+import { InteractionsProvider } from '../../contexts/interaction-context';
+import { InteractionsInput } from './interactions-input';
 
 const INTERACTIONS_LABEL = __( 'Interactions', 'elementor' );
 
 export const InteractionsSection = () => {
-    // console.log(useBoundProp());
-    // return null;
     return (
+        // <SectionContent>
+        //     <InteractionsField bind="interactions" propDisplayName={ INTERACTIONS_LABEL }>
+        //         <TextControl
+        //             placeholder="e.g. fade-in-left"
+        //         />
+        //     </InteractionsField>
+        // </SectionContent>
         <SectionContent>
-            {/* <div>Empty Interactions Section</div> */}
-            <SettingsField bind="interactions" propDisplayName={ INTERACTIONS_LABEL }>
-                <InteractionsRepeaterControl />
-            </SettingsField>
+            <InteractionsProvider>
+                <InteractionsInput />
+            </InteractionsProvider>
         </SectionContent>
     );
 }; 

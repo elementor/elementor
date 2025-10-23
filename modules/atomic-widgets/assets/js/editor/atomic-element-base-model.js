@@ -1,52 +1,64 @@
 export default class AtomicElementBaseModel extends elementor.modules.elements.models.Element {
-	/**
-	 * Do not allow section, column or container be placed in the Atomic container.
-	 *
-	 * @param {*} childModel
-	 */
-	isValidChild( childModel ) {
-		const elType = childModel.get( 'elType' );
+    
+    // Add this method to define default attributes
+    defaults() {
+		console.log('🎯 Model defaults called'); 
+        const parentDefaults = super.defaults ? super.defaults() : {};
+        return {
+            ...parentDefaults,
+            interactions: '', 
+        };
+    }
 
-		return 'section' !== elType && 'column' !== elType;
-	}
+    /**
+     * Do not allow section, column or container be placed in the Atomic container.
+     *
+     * @param {*} childModel
+     */
+    isValidChild( childModel ) {
+        const elType = childModel.get( 'elType' );
 
-	initialize( attributes, options ) {
-		const elementType = this.get( 'elType' );
-		this.config = elementor.config.elements[ elementType ];
+        return 'section' !== elType && 'column' !== elType;
+    }
 
-		const isNewElementCreate = 0 === this.get( 'elements' ).length &&
-			$e.commands.currentTrace.includes( 'document/elements/create' );
+    initialize( attributes, options ) {
+        const elementType = this.get( 'elType' );
+        this.config = elementor.config.elements[ elementType ];
 
-		if ( isNewElementCreate ) {
-			this.onElementCreate();
-		}
+        const isNewElementCreate = 0 === this.get( 'elements' ).length &&
+            $e.commands.currentTrace.includes( 'document/elements/create' );
 
-		super.initialize( attributes, options );
-	}
+        if ( isNewElementCreate ) {
+            this.onElementCreate();
+        }
 
-	getDefaultChildren() {
-		const { default_children: defaultChildren } = this.config;
+        super.initialize( attributes, options );
+    }
 
-		return defaultChildren;
-	}
+    getDefaultChildren() {
+        const { default_children: defaultChildren } = this.config;
 
-	onElementCreate() {
-		this.set( 'elements', this.getDefaultChildren().map( ( element ) => this.buildElement( element ) ) );
-	}
+        return defaultChildren;
+    }
 
-	buildElement( element ) {
-		const id = elementorCommon.helpers.getUniqueId();
+    onElementCreate() {
+        this.set( 'elements', this.getDefaultChildren().map( ( element ) => this.buildElement( element ) ) );
+    }
 
-		const elements = ( element.elements || [] ).map( ( el ) => this.buildElement( el ) );
+    buildElement( element ) {
+        const id = elementorCommon.helpers.getUniqueId();
 
-		return {
-			elType: element.elType,
-			widgetType: element.widgetType,
-			id,
-			settings: element.settings || {},
-			elements,
-			isLocked: element.isLocked || false,
-			editor_settings: element.editor_settings || {},
-		};
-	}
+        const elements = ( element.elements || [] ).map( ( el ) => this.buildElement( el ) );
+
+        return {
+            elType: element.elType,
+            widgetType: element.widgetType,
+            id,
+            settings: element.settings || {},
+            elements,
+            isLocked: element.isLocked || false,
+            editor_settings: element.editor_settings || {},
+            interactions: element.interactions || '',
+        };
+    }
 }
