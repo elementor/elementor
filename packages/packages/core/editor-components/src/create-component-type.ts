@@ -8,11 +8,11 @@ import {
 import { type NumberPropValue } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
-import { apiClient, canSwitchDocument } from './api';
+import { canSwitchDocument } from './api';
 
 export const TYPE = 'e-component';
 
-export function createComponentType(options: CreateTemplatedElementTypeOptions): typeof ElementType {
+export function createComponentType(options: CreateTemplatedElementTypeOptions & { cb?: (lockedBy: string) => void }): typeof ElementType {
 		const legacyWindow = window as unknown as LegacyWindow;
 
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
@@ -27,7 +27,7 @@ export function createComponentType(options: CreateTemplatedElementTypeOptions):
 }
 
 
-function createComponentView( options: CreateTemplatedElementTypeOptions): typeof ElementView {
+function createComponentView( options: CreateTemplatedElementTypeOptions & { cb?: (lockedBy: string) => void }): typeof ElementView {
 	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow;
 
@@ -81,16 +81,15 @@ function createComponentView( options: CreateTemplatedElementTypeOptions): typeo
 		}
 
 		async switchDocument() {
-			const { isAllowedToSwitchDocument } = await canSwitchDocument(this.getComponentId()?.value as number);
+			const { isAllowedToSwitchDocument, lockedBy } = await canSwitchDocument(this.getComponentId()?.value as number);
 			if (!isAllowedToSwitchDocument) {
-				throw new Error('You are not allowed to switch this document');
+				options.cb?.(lockedBy || '');
 			} else {
 				runCommand('editor/documents/switch', {
 					id: this.getComponentId()?.value as number,
 					mode: 'autosave',
-				}).then(() => {
-					apiClient.lockComponent(this.getComponentId()?.value as number);
-				});
+					selector: `[data-id="${this.model.get('id')}"]`,
+				})
 			}
 		}
 	
