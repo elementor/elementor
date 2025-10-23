@@ -197,7 +197,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		$initial_attributes = $this->define_initial_attributes();
 
 		$default_active_tab = $settings['default-active-tab'] ?? 0;
-		$default_active_tab_id = "{$this->get_id()}-tab-{$default_active_tab}";
+		$default_active_tab_id = static::get_tab_id( $this->get_id(), $default_active_tab );
 
 		$attributes = [
 			'class' => [
@@ -215,5 +215,13 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		}
 
 		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
+	}
+	
+	public static function get_tab_id( $tabs_id, $index ) {
+		return "{$tabs_id}-tab-{$index}";
+	}
+
+	public static function get_tab_content_id( $tabs_id, $index ) {
+		return "{$tabs_id}-tab-content-{$index}";
 	}
 }

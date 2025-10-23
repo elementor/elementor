@@ -5,6 +5,16 @@ register( {
 	elementType: 'e-tabs',
 	uniqueId: 'e-tabs-handler',
 	callback: ( { element, settings } ) => {
+		const getTabId = ( tabIndex ) => {
+			const tabsId = element.dataset.id;
+			return `${ tabsId }-tab-${ tabIndex }`;
+		};
+
+		const getTabContentId = ( tabIndex ) => {
+			const tabsId = element.dataset.id;
+			return `${ tabsId }-tab-content-${ tabIndex }`;
+		};
+
 		Alpine.data( 'atomicTabs', () => ( {
 			activeTab: settings[ 'default-active-tab' ],
 
@@ -26,24 +36,21 @@ register( {
 				},
 				':aria-controls'() {
 					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
-					const tabsId = element.dataset.id;
 
-					return `${ tabsId }-tab-content-${ tabIndex }`;
+					return getTabContentId( tabIndex );
 				},
 				':id'() {
 					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
-					const tabsId = element.dataset.id;
 
-					return `${ tabsId }-tab-${ tabIndex }`;
+					return getTabId( tabIndex );
 				},
 			},
 
 			tabContent: {
 				':aria-labelledby'() {
 					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
-					const tabsId = element.dataset.id;
 
-					return `${ tabsId }-tab-${ tabIndex }`;
+					return getTabId( tabIndex );
 				},
 				'x-show'() {
 					const tabId = this.$el.getAttribute( 'aria-labelledby' );
@@ -52,9 +59,8 @@ register( {
 				},
 				':id'() {
 					const tabIndex = this.$el.getAttribute( 'data-tab-index' );
-					const tabsId = element.dataset.id;
 
-					return `${ tabsId }-tab-content-${ tabIndex }`;
+					return getTabContentId( tabIndex );
 				},
 			},
 		} ) );

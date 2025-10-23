@@ -128,9 +128,9 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 				...( $settings['classes'] ?? [] ),
 			],
 			'x-bind' => 'tabContent',
-			'id' => "{$tabs_id}-tab-content-{$index}",
+			'id' => Atomic_Tabs::get_tab_content_id( $tabs_id, $index ),
 			'data-tab-index' => $index,
-			'aria-labelledby' => "{$tabs_id}-tab-{$index}",
+			'aria-labelledby' => Atomic_Tabs::get_tab_id( $tabs_id, $index ),
 		];
 
 		if ( ! $is_active ) {

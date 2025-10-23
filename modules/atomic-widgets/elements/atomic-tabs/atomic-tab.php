@@ -124,8 +124,8 @@ class Atomic_Tab extends Atomic_Element_Base {
 			'data-tab-index' => $index,
 			'aria-selected' => $is_active ? 'true' : 'false',
 			'x-bind' => 'tab',
-			'id' => "{$tabs_id}-tab-{$index}",
-			'aria-controls' => "{$tabs_id}-tab-content-{$index}",
+			'id' => Atomic_Tabs::get_tab_id( $tabs_id, $index ),
+			'aria-controls' => Atomic_Tabs::get_tab_content_id( $tabs_id, $index ),
 		];
 
 		if ( ! empty( $settings['_cssid'] ) ) {
