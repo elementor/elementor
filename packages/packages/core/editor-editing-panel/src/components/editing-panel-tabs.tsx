@@ -1,6 +1,5 @@
 import { Fragment } from 'react';
 import * as React from 'react';
-
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
