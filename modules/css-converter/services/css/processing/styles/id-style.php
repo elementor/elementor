@@ -34,6 +34,3 @@ class Id_Style extends Base_Style {
 		return $this->element_id;
 	}
 }
-
-
-

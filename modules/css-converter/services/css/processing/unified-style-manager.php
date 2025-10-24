@@ -1,5 +1,6 @@
 <?php
 namespace Elementor\Modules\CssConverter\Services\Css\Processing;
+
 use Elementor\Modules\CssConverter\Services\Css\Processing\Factories\Inline_Style_Factory;
 use Elementor\Modules\CssConverter\Services\Css\Processing\Factories\Id_Style_Factory;
 use Elementor\Modules\CssConverter\Services\Css\Processing\Factories\Css_Selector_Style_Factory;
@@ -53,7 +54,7 @@ class Unified_Style_Manager {
 			$important = $style_data['important'] ?? false;
 			// Debug display and flex properties
 			if ( in_array( $property, [ 'display', 'flex-direction' ] ) ) {
-}
+			}
 			$this->collected_styles[] = [
 				'source' => 'inline',
 				'element_id' => $element_id,
@@ -85,8 +86,8 @@ class Unified_Style_Manager {
 		}
 	}
 	public function collect_id_selector_styles( string $selector, array $properties, array $matched_elements = [] ) {
-if ( strpos( $selector, '#text' ) !== false ) {
-}
+		if ( strpos( $selector, '#text' ) !== false ) {
+		}
 		foreach ( $properties as $property_data ) {
 			foreach ( $matched_elements as $element_id ) {
 				$this->collected_styles[] = [
@@ -135,7 +136,7 @@ if ( strpos( $selector, '#text' ) !== false ) {
 			$specificity = $this->calculate_element_specificity( $important );
 			// Debug display and flex properties
 			if ( in_array( $property_data['property'], [ 'display', 'flex-direction' ] ) ) {
-}
+			}
 			$this->collected_styles[] = [
 				'source' => 'element',
 				'element_type' => $element_type,
@@ -186,15 +187,15 @@ if ( strpos( $selector, '#text' ) !== false ) {
 			foreach ( $matched_widgets as $widget_element_id ) {
 				$property = $property_data['property'] ?? $property_data['original_property'];
 				$value = $property_data['value'] ?? $property_data['original_value'];
-				
+
 				// EVIDENCE: Track font-size collection
 				if ( 'font-size' === $property ) {
 				}
-				
+
 				// DEBUG: Track font-family collection
 				if ( 'font-family' === $property ) {
 				}
-				
+
 				$this->collected_styles[] = [
 					'source' => 'reset-element',
 					'selector' => $element_selector,
@@ -212,7 +213,7 @@ if ( strpos( $selector, '#text' ) !== false ) {
 				];
 			}
 		}
-}
+	}
 	/**
 	 * Collect complex reset styles that require CSS file generation
 	 *
@@ -278,7 +279,7 @@ if ( strpos( $selector, '#text' ) !== false ) {
 		$html_id = $widget['attributes']['id'] ?? 'NO_HTML_ID';
 		// Get all styles that apply to this widget
 		$applicable_styles = $this->filter_styles_for_widget( $widget );
-		
+
 		// EVIDENCE: Track font-size in applicable styles
 		$font_size_styles = array_filter( $applicable_styles, function( $style ) {
 			return ( $style['property'] ?? '' ) === 'font-size';
@@ -287,7 +288,7 @@ if ( strpos( $selector, '#text' ) !== false ) {
 			foreach ( $font_size_styles as $idx => $style ) {
 			}
 		}
-		
+
 		// Group by property
 		$by_property = $this->group_by_property( $applicable_styles );
 		// For each property, find the winning style based on specificity
@@ -296,7 +297,7 @@ if ( strpos( $selector, '#text' ) !== false ) {
 			$winning_style = $this->find_winning_style( $styles );
 			if ( $winning_style ) {
 				$winning_styles[ $property ] = $winning_style;
-				
+
 				// EVIDENCE: Track font-size winner
 				if ( 'font-size' === $property ) {
 				}
@@ -472,9 +473,9 @@ if ( strpos( $selector, '#text' ) !== false ) {
 		}
 		$property = ! empty( $styles ) ? $styles[0]->get_property() : 'unknown';
 		if ( 'background-color' === $property || 'background_color' === $property ) {
-foreach ( $styles as $idx => $style ) {
+			foreach ( $styles as $idx => $style ) {
 				$selector = method_exists( $style, 'get_selector' ) ? $style->get_selector() : 'N/A';
-}
+			}
 		}
 		usort( $styles, function( Style_Interface $a, Style_Interface $b ) {
 			if ( $a->get_specificity() !== $b->get_specificity() ) {
@@ -485,7 +486,7 @@ foreach ( $styles as $idx => $style ) {
 		if ( 'background-color' === $property || 'background_color' === $property ) {
 			$winner = $styles[0];
 			$winner_selector = method_exists( $winner, 'get_selector' ) ? $winner->get_selector() : 'N/A';
-}
+		}
 		return $styles[0];
 	}
 	private function convert_style_to_array( Style_Interface $style ): array {
@@ -524,7 +525,7 @@ foreach ( $styles as $idx => $style ) {
 					$applies = ( $style['element_id'] === $element_id );
 					// Debug inline styles for flex widgets
 					if ( ( $widget_type === 'e-flexbox' || $widget_type === 'e-div-block' ) && in_array( $style['property'], [ 'display', 'flex-direction' ] ) ) {
-}
+					}
 					break;
 				case 'id':
 					$applies = ( $html_id && $style['id'] === $html_id );
@@ -532,7 +533,7 @@ foreach ( $styles as $idx => $style ) {
 				case 'id-selector':
 					$applies = ( $style['element_id'] === $element_id );
 					if ( strpos( $style['selector'], '#text' ) !== false ) {
-}
+					}
 					break;
 				case 'css-selector':
 					$applies = ( $style['element_id'] === $element_id );
@@ -541,7 +542,7 @@ foreach ( $styles as $idx => $style ) {
 					$applies = ( $style['element_type'] === $element_type );
 					// Debug element styles for flex widgets
 					if ( ( $widget_type === 'e-flexbox' || $widget_type === 'e-div-block' ) && in_array( $style['property'], [ 'display', 'flex-direction' ] ) ) {
-}
+					}
 					break;
 				case 'reset-element':
 					// Reset element styles apply to widgets that match the element selector
@@ -569,7 +570,7 @@ foreach ( $styles as $idx => $style ) {
 				return $s['property'] === 'flex-direction';
 			} );
 			if ( ! empty( $display_styles ) || ! empty( $flex_styles ) ) {
-}
+			}
 		}
 		return $applicable_styles;
 	}

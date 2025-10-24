@@ -15,6 +15,3 @@ interface Style_Interface {
 	public function get_source(): string;
 	public function is_important(): bool;
 }
-
-
-

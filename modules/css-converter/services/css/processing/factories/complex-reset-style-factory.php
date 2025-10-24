@@ -45,6 +45,3 @@ class Complex_Reset_Style_Factory implements Style_Factory_Interface {
 		return $calculator->calculate_specificity( $selector, $important );
 	}
 }
-
-
-

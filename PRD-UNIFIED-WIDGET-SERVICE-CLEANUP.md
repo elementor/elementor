@@ -3,13 +3,39 @@
 **Status**: Draft  
 **Priority**: High  
 **Complexity**: Medium  
-**Estimated Effort**: 3-5 days
+**Estimated Effort**: 5 days (incremental implementation)  
+**Approach**: 🎯 **Registry Pattern** (Inspired by existing Property Mapper Registry)
 
 ---
 
 ## 🎯 **Executive Summary**
 
-The `Unified_Widget_Conversion_Service` currently violates separation of concerns by handling CSS extraction, parsing, cleaning, and processing - responsibilities that belong in the CSS processor layer. This PRD outlines a comprehensive refactoring to establish clear architectural boundaries and eliminate code duplication.
+The `Unified_Widget_Conversion_Service` currently violates separation of concerns by handling CSS extraction, parsing, cleaning, and processing - responsibilities that belong in the CSS processor layer. 
+
+### **Solution: Registry-Based Processor Pattern** ✅
+
+Following the **existing Property Mapper Registry pattern**, we'll implement a **CSS Processor Registry** that allows:
+- ✅ **Incremental extraction** of CSS processing logic (one processor at a time)
+- ✅ **Zero breaking changes** (each phase maintains backward compatibility)
+- ✅ **Independent testing** (each processor tested separately)
+- ✅ **Easy rollback** (can pause or revert at any phase)
+- ✅ **Future extensibility** (trivial to add new processors)
+
+### **Key Innovation** 💡
+
+Instead of a big-bang refactoring, we extract CSS processing **incrementally** using a registry pattern:
+
+```
+Phase 0: Create registry infrastructure (nothing uses it yet)
+Phase 1: Extract CSS fetching → tests pass ✅
+Phase 2: Extract CSS preprocessing → tests pass ✅
+Phase 3: Extract media query filtering → tests pass ✅
+Phase 4: Extract calc() processing → tests pass ✅
+Phase 5: Extract CSS value fixing → tests pass ✅
+Phase 6-9: Cleanup and consolidation
+```
+
+After each phase, **all tests pass** and the system works exactly as before.
 
 ---
 
@@ -1235,56 +1261,170 @@ class Widget_Conversion_Service {
 
 ---
 
-## 📋 **Implementation Checklist**
+## 📋 **Implementation Checklist (Registry Pattern Approach)** 🎯
 
-### **Phase 1: Extract CSS Processing** (Day 1-2)
-- [ ] Create `Css_Fetcher_Service`
-- [ ] Create `Css_Preprocessor_Service`
-- [ ] Update `Html_Parser` with CSS extraction methods
-- [ ] Write unit tests for new services
-- [ ] Verify services work independently
+### **Phase 0: Registry Infrastructure** (Day 1) - **NO BREAKING CHANGES**
+- [ ] Create `Css_Processor_Interface`
+- [ ] Create `Css_Processing_Context`
+- [ ] Create `Css_Processor_Registry`
+- [ ] Create `Css_Processor_Factory`
+- [ ] Write unit tests for registry infrastructure
+- [ ] Verify infrastructure works independently
+- [ ] **Result**: New infrastructure exists, nothing uses it yet ✅
 
-### **Phase 2: Update Unified CSS Processor** (Day 2-3)
-- [ ] Integrate `Css_Fetcher_Service`
-- [ ] Integrate `Css_Preprocessor_Service`
-- [ ] Add `process_css_from_html_and_widgets()` method
-- [ ] Update statistics return structure
-- [ ] Write unit tests for updated processor
-- [ ] Verify CSS processor handles all CSS concerns
+### **Phase 1: Extract CSS Fetching** (Day 1-2) - **INCREMENTAL**
+- [ ] Create `Css_Fetcher_Processor` implementing `Css_Processor_Interface`
+- [ ] Move CSS fetching logic from `Unified_Widget_Conversion_Service`
+- [ ] Register processor with priority 10 (early execution)
+- [ ] Write unit tests for CSS fetcher processor
+- [ ] Run all existing tests - should still pass ✅
+- [ ] Remove old CSS fetching code from widget service
+- [ ] **Result**: CSS fetching extracted, tests pass ✅
 
-### **Phase 3: Simplify Widget Service** (Day 3-4)
-- [ ] Remove all CSS processing methods from `Unified_Widget_Conversion_Service`
-- [ ] Remove CSS processing properties
-- [ ] Simplify `convert_from_html()` method
+### **Phase 2: Extract CSS Preprocessing** (Day 2) - **INCREMENTAL**
+- [ ] Create `Css_Preprocessor_Processor` implementing `Css_Processor_Interface`
+- [ ] Move CSS cleaning logic from `Unified_Widget_Conversion_Service`
+- [ ] Register processor with priority 20
+- [ ] Write unit tests for CSS preprocessor
+- [ ] Run all existing tests - should still pass ✅
+- [ ] Remove old CSS preprocessing code from widget service
+- [ ] **Result**: CSS preprocessing extracted, tests pass ✅
+
+### **Phase 3: Extract Media Query Filtering** (Day 2) - **INCREMENTAL**
+- [ ] Create `Media_Query_Filter_Processor` implementing `Css_Processor_Interface`
+- [ ] Move media query filtering logic
+- [ ] Register processor with priority 25
+- [ ] Write unit tests
+- [ ] Run all existing tests - should still pass ✅
+- [ ] Remove old code from widget service
+- [ ] **Result**: Media query filtering extracted, tests pass ✅
+
+### **Phase 4: Extract Calc Expression Processing** (Day 3) - **INCREMENTAL**
+- [ ] Create `Calc_Expression_Processor` implementing `Css_Processor_Interface`
+- [ ] Move calc() replacement logic
+- [ ] Register processor with priority 30
+- [ ] Write unit tests
+- [ ] Run all existing tests - should still pass ✅
+- [ ] Remove old code from widget service
+- [ ] **Result**: Calc processing extracted, tests pass ✅
+
+### **Phase 5: Extract CSS Value Fixing** (Day 3) - **INCREMENTAL**
+- [ ] Create `Css_Value_Fixer_Processor` implementing `Css_Processor_Interface`
+- [ ] Move CSS value fixing logic
+- [ ] Register processor with priority 35
+- [ ] Write unit tests
+- [ ] Run all existing tests - should still pass ✅
+- [ ] Remove old code from widget service
+- [ ] **Result**: CSS value fixing extracted, tests pass ✅
+
+### **Phase 6: Simplify Widget Service** (Day 4) - **CLEANUP**
+- [ ] Verify all CSS processing code removed
+- [ ] Remove CSS processing properties (`$css_parser`, `$css_output_optimizer`, `$property_converter`)
+- [ ] Simplify `convert_from_html()` to use processor registry
 - [ ] Simplify `create_widgets()` method
 - [ ] Remove CSS statistics extraction
 - [ ] Add `convert_from_url()` method
 - [ ] Add `convert_from_css()` method
-- [ ] Verify widget service <200 lines
+- [ ] Verify widget service <200 lines ✅
 - [ ] Write unit tests for simplified service
+- [ ] Run all existing tests - should still pass ✅
 
-### **Phase 4: Update Widget Creator** (Day 4)
+### **Phase 7: Update Widget Creator** (Day 4) - **SIMPLIFY**
 - [ ] Update `create_widgets()` interface
 - [ ] Remove style source extraction logic
 - [ ] Work directly with `resolved_styles`
 - [ ] Write unit tests for updated creator
-- [ ] Verify widget creation still works
+- [ ] Run all existing tests - should still pass ✅
+- [ ] Verify widget creation still works ✅
 
-### **Phase 5: Consolidate Services** (Day 5)
+### **Phase 8: Consolidate Services** (Day 5) - **DEPRECATION**
 - [ ] Deprecate `Widget_Conversion_Service`
 - [ ] Update all references to use `Unified_Widget_Conversion_Service`
 - [ ] Add deprecation notices
 - [ ] Update documentation
-- [ ] Run all integration tests
-- [ ] Run all Playwright tests
+- [ ] Run all integration tests ✅
+- [ ] Run all Playwright tests ✅
 
-### **Phase 6: Documentation & Cleanup** (Day 5)
+### **Phase 9: Documentation & Cleanup** (Day 5) - **FINALIZE**
 - [ ] Update architecture documentation
 - [ ] Update API documentation
 - [ ] Add migration guide
+- [ ] Document registry pattern usage
+- [ ] Add examples of creating custom processors
 - [ ] Remove debug code
 - [ ] Final code review
 - [ ] Merge to main branch
+
+---
+
+## 🎯 **Key Advantages of Registry Approach**
+
+### **1. Zero Breaking Changes**
+Each phase maintains backward compatibility:
+- Phase 0: Infrastructure added, nothing uses it
+- Phases 1-5: Extract one processor at a time, tests pass after each
+- Phase 6: Remove old code only after all processors extracted
+- Phases 7-9: Final cleanup and consolidation
+
+### **2. Incremental Testing**
+After each processor extraction:
+```bash
+# Run tests after each phase
+composer run test
+npm run test:playwright
+
+# All tests should pass ✅
+```
+
+### **3. Easy Rollback**
+If any phase fails:
+- Rollback is simple (one processor at a time)
+- Can pause at any phase
+- Can deploy partial implementation
+
+### **4. Clear Progress Tracking**
+```
+Phase 0: ✅ Infrastructure ready
+Phase 1: ✅ CSS fetching extracted (20% complete)
+Phase 2: ✅ CSS preprocessing extracted (40% complete)
+Phase 3: ✅ Media query filtering extracted (60% complete)
+Phase 4: ✅ Calc processing extracted (80% complete)
+Phase 5: ✅ CSS value fixing extracted (100% extraction complete)
+Phase 6-9: Cleanup and consolidation
+```
+
+### **5. Future Extensibility**
+Adding new processors is trivial:
+```php
+// Create new processor
+class Custom_Css_Processor implements Css_Processor_Interface {
+    public function get_processor_name(): string {
+        return 'custom_processor';
+    }
+    
+    public function get_priority(): int {
+        return 50; // Execute after standard processors
+    }
+    
+    public function process( Css_Processing_Context $context ): Css_Processing_Context {
+        // Custom processing logic
+        return $context;
+    }
+    
+    public function supports_context( Css_Processing_Context $context ): bool {
+        return true;
+    }
+    
+    public function get_statistics_keys(): array {
+        return [ 'custom_stat_1', 'custom_stat_2' ];
+    }
+}
+
+// Register it
+Css_Processor_Factory::register_processor( new Custom_Css_Processor() );
+
+// Done! No other code changes needed
+```
 
 ---
 

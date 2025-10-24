@@ -49,6 +49,3 @@ abstract class Base_Style implements Style_Interface {
 	abstract public function matches( array $widget ): bool;
 	abstract public function get_source(): string;
 }
-
-
-

@@ -6,13 +6,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 require_once __DIR__ . '/../css-selector-utils.php';
 require_once __DIR__ . '/css-output-optimizer.php';
+require_once __DIR__ . '/css-processor-factory.php';
+require_once __DIR__ . '/contracts/css-processing-context.php';
+
+use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Processor_Factory;
+use Elementor\Modules\CssConverter\Services\Css\Processing\Contracts\Css_Processing_Context;
+
 class Unified_Css_Processor {
 	private $css_parser;
 	private $property_converter;
 	private $specificity_calculator;
 	private $unified_style_manager;
 	private $reset_style_detector;
-	private $flattening_service;
 	private $html_class_modifier;
 	private $css_variable_definitions;
 	private $css_output_optimizer;
@@ -31,14 +36,7 @@ class Unified_Css_Processor {
 		$this->reset_style_detector = new Reset_Style_Detector( $specificity_calculator );
 		$this->css_variable_definitions = [];
 		$this->css_output_optimizer = new Css_Output_Optimizer();
-		$this->initialize_flattening_service();
 		$this->initialize_html_class_modifier();
-	}
-	private function initialize_flattening_service(): void {
-		require_once __DIR__ . '/../nested-selector-parser.php';
-		require_once __DIR__ . '/../flattened-class-name-generator.php';
-		require_once __DIR__ . '/../nested-selector-flattening-service.php';
-		$this->flattening_service = new \Elementor\Modules\CssConverter\Services\Css\Nested_Selector_Flattening_Service();
 	}
 	private function initialize_html_class_modifier(): void {
 		require_once __DIR__ . '/../css-class-usage-tracker.php';
@@ -50,7 +48,7 @@ class Unified_Css_Processor {
 
 		$css_rules = $this->parse_css_and_extract_rules( $css );
 
-		$flattening_results = $this->flatten_all_nested_selectors( $css_rules );
+		$flattening_results = $this->process_flattening_with_registry( $css_rules );
 
 		$compound_results = $this->process_compound_selectors( $css_rules, $widgets );
 
@@ -97,27 +95,27 @@ class Unified_Css_Processor {
 
 		$html_modification_summary = $this->html_class_modifier->get_modification_summary();
 
-	return [
-		'widgets' => $resolved_widgets,
-		'stats' => $debug_info,
-		'css_class_rules' => $css_class_rules,
-		'css_variable_definitions' => $this->css_variable_definitions,
-		'global_classes' => $global_classes_result['global_classes'],
-		'global_classes_created' => count( $global_classes_result['global_classes'] ),
-		'class_name_mappings' => $global_classes_result['class_name_mappings'],
-		'debug_duplicate_detection' => $global_classes_result['debug_duplicate_detection'] ?? null,
-		'flattened_classes' => $flattening_results['flattened_classes'],
-		'flattened_classes_count' => count( $flattening_results['flattened_classes'] ),
-		'compound_classes' => $compound_results['compound_global_classes'] ?? [],
-		'compound_classes_created' => count( $compound_results['compound_global_classes'] ?? [] ),
-		'reset_styles_detected' => $reset_styles_stats['reset_element_styles'] > 0 || $reset_styles_stats['reset_complex_styles'] > 0,
-		'reset_styles_stats' => $reset_styles_stats,
-		'complex_reset_styles' => $complex_reset_styles,
-		'html_class_modifications' => $html_modification_summary,
-		'flattening_results' => $flattening_results,
-		'compound_results' => $compound_results,
-		'html_class_modifier' => $this->html_class_modifier,
-	];
+		return [
+			'widgets' => $resolved_widgets,
+			'stats' => $debug_info,
+			'css_class_rules' => $css_class_rules,
+			'css_variable_definitions' => $this->css_variable_definitions,
+			'global_classes' => $global_classes_result['global_classes'],
+			'global_classes_created' => count( $global_classes_result['global_classes'] ),
+			'class_name_mappings' => $global_classes_result['class_name_mappings'],
+			'debug_duplicate_detection' => $global_classes_result['debug_duplicate_detection'] ?? null,
+			'flattened_classes' => $flattening_results['flattened_classes'],
+			'flattened_classes_count' => count( $flattening_results['flattened_classes'] ),
+			'compound_classes' => $compound_results['compound_global_classes'] ?? [],
+			'compound_classes_created' => count( $compound_results['compound_global_classes'] ?? [] ),
+			'reset_styles_detected' => $reset_styles_stats['reset_element_styles'] > 0 || $reset_styles_stats['reset_complex_styles'] > 0,
+			'reset_styles_stats' => $reset_styles_stats,
+			'complex_reset_styles' => $complex_reset_styles,
+			'html_class_modifications' => $html_modification_summary,
+			'flattening_results' => $flattening_results,
+			'compound_results' => $compound_results,
+			'html_class_modifier' => $this->html_class_modifier,
+		];
 	}
 	private function collect_all_styles_from_sources( string $css, array $widgets ): void {
 		$this->unified_style_manager->reset();
@@ -353,7 +351,6 @@ class Unified_Css_Processor {
 			$selector = $rule['selector'];
 			$properties = $rule['properties'] ?? [];
 
-
 			$this->log_rule_processing( $selector, $properties );
 
 			if ( empty( $properties ) ) {
@@ -364,7 +361,6 @@ class Unified_Css_Processor {
 			// Example: .elementor-1140 .element.element-14c0aa4 .heading-title
 			$is_nested_compound = $this->is_nested_selector_with_compound_classes( $selector );
 
-
 			if ( $is_nested_compound ) {
 				// Only process selectors that look like they're from the original site
 				if ( strpos( $selector, 'elementor-1140' ) !== false || strpos( $selector, 'heading' ) !== false ) {
@@ -373,15 +369,9 @@ class Unified_Css_Processor {
 				continue;
 			}
 
-			// Apply nested selector flattening for Pattern 1
-			$processed_rule = $this->apply_nested_selector_flattening( $rule );
-
-			// Skip processing original nested rules that have been flattened
-			if ( $this->rule_was_flattened( $rule, $processed_rule ) ) {
-				// Original nested rule has been flattened into a global class
-				// Skip processing to prevent duplicate CSS output
-				continue;
-			}
+			// Flattening is now handled by the registry pattern in process_flattening_with_registry()
+			// No need to apply flattening here - use the rule as-is
+			$processed_rule = $rule;
 
 			$processed_selector = $processed_rule['selector'];
 			$processed_properties = $processed_rule['properties'];
@@ -401,7 +391,6 @@ class Unified_Css_Processor {
 
 		// Check for compound class (dot followed by another dot within the selector)
 		$has_compound = preg_match( '/\.\w+[\w-]*\.\w+/', $selector ) === 1;
-
 
 		return $has_nesting && $has_compound;
 	}
@@ -439,7 +428,6 @@ class Unified_Css_Processor {
 		// Convert properties to atomic format with proper converted_property values
 		$converted_properties = $this->convert_rule_properties_to_atomic( $properties );
 
-
 		// Apply properties via collect_reset_styles which properly handles direct widget styling
 		$this->unified_style_manager->collect_reset_styles(
 			$target_selector,
@@ -461,23 +449,6 @@ class Unified_Css_Processor {
 		$target = end( $parts );
 
 		return ! empty( $target ) ? trim( $target ) : '';
-	}
-	private function apply_nested_selector_flattening( array $rule ): array {
-		$selector = $rule['selector'] ?? '';
-		if ( $this->flattening_service->should_flatten_selector( $selector ) ) {
-			return $this->flattening_service->flatten_css_rule( $rule );
-		}
-		return $rule;
-	}
-	private function rule_was_flattened( array $original_rule, array $processed_rule ): bool {
-		// Check if the rule was flattened by comparing selectors and flattened flag
-		$original_selector = $original_rule['selector'] ?? '';
-		$processed_selector = $processed_rule['selector'] ?? '';
-		$was_flattened = $processed_rule['flattened'] ?? false;
-		// Rule was flattened if:
-		// 1. The flattened flag is set to true
-		// 2. The selector has changed (original nested vs flattened global class)
-		return $was_flattened && $original_selector !== $processed_selector;
 	}
 	private function log_rule_processing(): void {
 		$this->skip_debug_logging_for_performance();
@@ -553,9 +524,9 @@ class Unified_Css_Processor {
 	}
 	private function log_widget_inline_processing( ?string $element_id, array $inline_css ): void {
 		// DEBUG: Log inline style processing
-		if (!empty($inline_css)) {
-			error_log("DEBUG INLINE STYLES: Processing widget {$element_id}");
-			error_log("DEBUG INLINE STYLES: CSS data: " . print_r($inline_css, true));
+		if ( ! empty( $inline_css ) ) {
+			error_log( "DEBUG INLINE STYLES: Processing widget {$element_id}" );
+			error_log( 'DEBUG INLINE STYLES: CSS data: ' . print_r( $inline_css, true ) );
 		}
 		$this->skip_debug_logging_for_performance();
 	}
@@ -574,18 +545,18 @@ class Unified_Css_Processor {
 	}
 	private function store_converted_inline_styles( string $element_id, array $inline_css, array $batch_converted ): void {
 		// DEBUG: Log inline style storage
-		error_log("DEBUG INLINE STYLES: Storing styles for element {$element_id}");
-		error_log("DEBUG INLINE STYLES: Batch converted: " . print_r($batch_converted, true));
-		
+		error_log( "DEBUG INLINE STYLES: Storing styles for element {$element_id}" );
+		error_log( 'DEBUG INLINE STYLES: Batch converted: ' . print_r( $batch_converted, true ) );
+
 		foreach ( $inline_css as $property => $property_data ) {
 			$value = $property_data['value'] ?? $property_data;
 			$important = $property_data['important'] ?? false;
 			$converted = $this->find_converted_property_in_batch( $property, $batch_converted );
-			
+
 			// DEBUG: Log each property conversion
-			error_log("DEBUG INLINE STYLES: Property {$property} = {$value} (important: " . ($important ? 'yes' : 'no') . ")");
-			error_log("DEBUG INLINE STYLES: Converted to: " . print_r($converted, true));
-			
+			error_log( "DEBUG INLINE STYLES: Property {$property} = {$value} (important: " . ( $important ? 'yes' : 'no' ) . ')' );
+			error_log( 'DEBUG INLINE STYLES: Converted to: ' . print_r( $converted, true ) );
+
 			$this->unified_style_manager->collect_inline_styles(
 				$element_id, [
 					$property => [
@@ -1211,7 +1182,7 @@ class Unified_Css_Processor {
 		$parsed_css = $this->css_parser->parse( $css );
 		$document = $parsed_css->get_document();
 		$all_rules = $this->extract_rules_from_document( $document );
-		
+
 		$css_class_rules = [];
 		foreach ( $all_rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
@@ -1239,12 +1210,12 @@ class Unified_Css_Processor {
 						$properties_array[ $property ] = $value;
 					}
 				}
-				
+
 				// Optimize using CSS Output Optimizer
 				$optimized_selector_rules = $this->css_output_optimizer->optimize_css_output( [
-					$selector => $properties_array
+					$selector => $properties_array,
 				] );
-				
+
 				// Convert back to original format if not empty
 				foreach ( $optimized_selector_rules as $opt_selector => $opt_properties ) {
 					if ( ! empty( $opt_properties ) ) {
@@ -1279,7 +1250,7 @@ class Unified_Css_Processor {
 				}
 			}
 		}
-		
+
 		return $css_class_rules;
 	}
 	private function apply_html_class_modifications( array $widgets ): array {
@@ -1400,119 +1371,23 @@ class Unified_Css_Processor {
 			return [];
 		}
 	}
-	private function flatten_all_nested_selectors( array $css_rules ): array {
 
-		$flattened_rules = [];
-		$class_mappings = [];
-		$classes_with_direct_styles = [];
-		$classes_only_in_nested = [];
-		
-		// CRITICAL FIX: Get existing global class names to prevent collisions across API calls
-		$existing_global_class_names = $this->get_existing_global_class_names();
-		$this->flattening_service->set_existing_class_names( $existing_global_class_names );
-		foreach ( $css_rules as $rule ) {
-			$selector = $rule['selector'] ?? '';
-			if ( empty( $selector ) ) {
-				$flattened_rules[] = $rule;
-				continue;
-			}
+	private function process_flattening_with_registry( array $css_rules ): array {
+		$context = new Css_Processing_Context();
+		$context->set_metadata( 'css_rules', $css_rules );
+		$context->set_metadata( 'existing_global_class_names', $this->get_existing_global_class_names() );
 
-			// Log selectors entering flattening
-			if ( strpos( $selector, 'elementor-1140' ) !== false || strpos( $selector, 'heading' ) !== false ) {
-			}
+		$context = Css_Processor_Factory::execute_css_processing( $context );
 
-			// Track classes with direct styles (e.g., ".first { ... }")
-			if ( $this->is_direct_class_selector( $selector ) ) {
-				$class_name = $this->extract_class_name_from_selector( $selector );
-				if ( $class_name ) {
-					$classes_with_direct_styles[] = $class_name;
-				}
-			}
-
-			// Skip flattening for nested selectors with compound classes
-			// These will be handled directly by apply_widget_specific_styling_for_nested_compound
-			if ( $this->is_nested_selector_with_compound_classes( $selector ) ) {
-				$flattened_rules[] = $rule;
-				continue;
-			}
-
-			// EVIDENCE: Check if compound detection is working for fixed selectors
-			if ( strpos( $selector, 'elementor-fixed' ) !== false ) {
-				$is_compound = $this->is_nested_selector_with_compound_classes( $selector );
-			}
-
-			// Flatten nested selectors
-			$should_flatten = $this->flattening_service->should_flatten_selector( $selector );
-			if ( $should_flatten ) {
-				$flattened_rule = $this->flattening_service->flatten_css_rule( $rule );
-				$flattened_rules[] = $flattened_rule;
-				// Build class mapping from nested selector
-				$parsed = $this->parse_nested_selector_for_mapping( $selector );
-				if ( $parsed && ! empty( $parsed['target_class'] ) && ! empty( $flattened_rule['global_class_id'] ) ) {
-					// CRITICAL FIX: For element selectors, use pseudo-class format as mapping key
-					$mapping_key = $parsed['target_class'];
-					if ( $this->is_element_tag( $parsed['target_class'] ) ) {
-						$mapping_key = '.' . $parsed['target_class']; // Convert "div" to ".div" for mapping key
-					}
-
-					// EVIDENCE: Track what mapping is being created
-					if ( strpos( $flattened_rule['global_class_id'], 'fixed' ) !== false ) {
-					}
-
-					$class_mappings[ $mapping_key ] = $flattened_rule['global_class_id'];
-					$classes_only_in_nested[] = $mapping_key;
-				} else {
-				}
-				// CRITICAL FIX: Do NOT add the original nested rule to flattened_rules
-				// The original rule should be replaced by the flattened rule, not kept alongside it
-			} else {
-				$flattened_rules[] = $rule;  // Keep as-is
-			}
-		}
-		// Remove duplicates and exclude classes that have direct styles
-		$classes_only_in_nested = array_diff(
-			array_unique( $classes_only_in_nested ),
-			$classes_with_direct_styles
-		);
 		return [
-			'flattened_rules' => $flattened_rules,
-			'class_mappings' => $class_mappings,
-			'classes_with_direct_styles' => array_unique( $classes_with_direct_styles ),
-			'classes_only_in_nested' => array_values( $classes_only_in_nested ),
-			'flattened_classes' => $this->flattening_service->get_flattened_classes_for_global_storage(),
+			'flattened_rules' => $context->get_metadata( 'flattened_rules', [] ),
+			'class_mappings' => $context->get_metadata( 'class_mappings', [] ),
+			'classes_with_direct_styles' => $context->get_metadata( 'classes_with_direct_styles', [] ),
+			'classes_only_in_nested' => $context->get_metadata( 'classes_only_in_nested', [] ),
+			'flattened_classes' => $context->get_metadata( 'flattened_classes', [] ),
 		];
 	}
-	private function is_direct_class_selector( string $selector ): bool {
-		// Check if selector is a simple class selector like ".first" or ".active"
-		// Should NOT match nested selectors like ".first .second"
-		$trimmed = trim( $selector );
-		return preg_match( '/^\.[\w-]+$/', $trimmed ) === 1;
-	}
-	private function extract_class_name_from_selector( string $selector ): ?string {
-		return \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::extract_class_name_from_selector( $selector );
-	}
-	private function parse_nested_selector_for_mapping( string $selector ): ?array {
-		// Use existing nested selector parser to get target class
-		require_once __DIR__ . '/../nested-selector-parser.php';
-		$parser = new \Elementor\Modules\CssConverter\Services\Css\Nested_Selector_Parser();
-		$parsed = $parser->parse_nested_selector( $selector );
-		if ( ! $parsed || 'simple' === $parsed['type'] ) {
-			return null;
-		}
-		$target = $parsed['target'] ?? '';
-		$target_class = $this->extract_target_class_from_parsed_target( $target );
-		return [
-			'target_class' => $target_class,
-			'context' => $parsed['context'] ?? [],
-			'type' => $parsed['type'] ?? 'unknown',
-		];
-	}
-	private function extract_target_class_from_parsed_target( string $target ): ?string {
-		return \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::extract_target_class_from_parsed_target( $target );
-	}
-	private function is_element_tag( string $part ): bool {
-		return \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::is_element_tag( $part );
-	}
+
 	private function process_compound_selectors( array $css_rules, array $widgets ): array {
 
 		$compound_global_classes = [];
@@ -1815,22 +1690,22 @@ class Unified_Css_Processor {
 		$integration_service = $provider->get_integration_service();
 		$regular_classes_result = $integration_service->process_css_rules( $css_class_rules );
 
-	$all_global_classes = $regular_classes_result['global_classes'] ?? [];
-	$class_name_mappings = $regular_classes_result['class_name_mappings'] ?? [];
-	$debug_duplicate_detection = $regular_classes_result['debug_duplicate_detection'] ?? null;
+		$all_global_classes = $regular_classes_result['global_classes'] ?? [];
+		$class_name_mappings = $regular_classes_result['class_name_mappings'] ?? [];
+		$debug_duplicate_detection = $regular_classes_result['debug_duplicate_detection'] ?? null;
 
-	// Process flattened classes (if any)
-	$flattened_classes = $flattening_results['flattened_classes'] ?? [];
-	if ( ! empty( $flattened_classes ) ) {
-		$filtered_flattened_classes = $this->filter_flattened_classes_for_widgets( $flattened_classes );
-		$all_global_classes = array_merge( $all_global_classes, $filtered_flattened_classes );
-	}
+		// Process flattened classes (if any)
+		$flattened_classes = $flattening_results['flattened_classes'] ?? [];
+		if ( ! empty( $flattened_classes ) ) {
+			$filtered_flattened_classes = $this->filter_flattened_classes_for_widgets( $flattened_classes );
+			$all_global_classes = array_merge( $all_global_classes, $filtered_flattened_classes );
+		}
 
-	return [
-		'global_classes' => $all_global_classes,
-		'class_name_mappings' => $class_name_mappings,
-		'debug_duplicate_detection' => $debug_duplicate_detection,
-	];
+		return [
+			'global_classes' => $all_global_classes,
+			'class_name_mappings' => $class_name_mappings,
+			'debug_duplicate_detection' => $debug_duplicate_detection,
+		];
 	}
 
 	/**

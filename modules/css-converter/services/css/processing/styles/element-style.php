@@ -28,6 +28,3 @@ class Element_Style extends Base_Style {
 		return $this->element_type;
 	}
 }
-
-
-

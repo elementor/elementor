@@ -9,6 +9,3 @@ interface Style_Factory_Interface {
 	public function create_styles( array $data ): array;
 	public function get_specificity_weight(): int;
 }
-
-
-

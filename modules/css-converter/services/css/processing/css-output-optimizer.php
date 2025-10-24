@@ -130,7 +130,7 @@ class Css_Output_Optimizer {
 		foreach ( $missing_selectors as $selector => $properties ) {
 			// Convert to flattened class name
 			$flattened_selector = $this->convert_to_flattened_class( $selector );
-			
+
 			if ( ! isset( $css_rules[ $flattened_selector ] ) ) {
 				$css_rules[ $flattened_selector ] = $properties;
 			}
@@ -142,7 +142,7 @@ class Css_Output_Optimizer {
 	private function convert_to_flattened_class( string $nested_selector ): string {
 		// Convert nested selector to flattened class name
 		// Example: "body.loaded .loading" -> "loading--loaded"
-		
+
 		if ( 'body.loaded .loading' === $nested_selector ) {
 			return '.loading--loaded';
 		}

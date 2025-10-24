@@ -46,6 +46,3 @@ class Reset_Element_Style_Factory implements Style_Factory_Interface {
 		return $specificity;
 	}
 }
-
-
-

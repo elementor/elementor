@@ -142,7 +142,7 @@ class Css_Specificity_Manager {
 		foreach ( $widget['inline_css'] as $property => $style_data ) {
 			// Convert inline style to atomic format (same as CSS rules)
 			$converted_property = $this->convert_inline_property_to_atomic( $property, $style_data['value'] );
-			
+
 			$all_styles[] = [
 				'property' => $property,
 				'value' => $style_data['value'],
