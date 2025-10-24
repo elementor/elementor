@@ -82,6 +82,27 @@
 	}
 }
 
+.experiment401-variant-b .e-onboarding {
+
+	&__cards-grid {
+
+		.e-onboarding__card {
+
+			&:not(:last-child) {
+				margin-inline-end: 24px;
+			}
+		}
+	}
+
+	&__card-image {
+		margin-block-end: 32px;
+	}
+
+	&__card-text-small {
+		margin-block-start: 4px;
+	}
+}
+
 @media screen and (min-width: 1024px) {
 	.experiment401-variant-b {
 		.e-onboarding__good-to-go-footer {
