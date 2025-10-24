@@ -52,6 +52,9 @@ export default function GoodToGo() {
 		if ( VARIANT_B === experiment401Variant ) {
 			return 'experiment401-variant-b';
 		}
+		if ( VARIANT_B === experiment402Variant ) {
+			return 'experiment402-variant-b';
+		}
 		return '';
 	};
 

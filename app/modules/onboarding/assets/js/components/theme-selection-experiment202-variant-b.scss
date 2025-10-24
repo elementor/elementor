@@ -15,7 +15,7 @@
         }
 
         &__page-content-header {
-                margin-block-end: 44px;
+                margin-block-end: 48px;
         }
 
         &__page-content-title {
@@ -24,7 +24,7 @@
                 font-size: 36px;
                 line-height: 1.3;
                 color: #0C0D0E;
-                margin: 0 0 10px 0;
+                margin: 0 0 20px 0;
         }
 
         &__page-content-subtitle {
@@ -127,7 +127,7 @@
                 font-weight: 600;
                 line-height: 150%;
                 letter-spacing: -0.14px;
-                margin-block: 15px 60px;
+                margin-block: 24px 60px;
 
                 &::before {
                         content: initial;

@@ -57,7 +57,6 @@ class Module extends BaseModule {
 		return $editor_assets_api->is_experiment_enabled( $experiment_key );
 	}
 
-
 	private function get_editor_assets_api(): ?API {
 		if ( null !== $this->editor_assets_api ) {
 			return $this->editor_assets_api;
