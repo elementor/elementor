@@ -798,9 +798,9 @@ class Group_Control_Background extends Group_Control_Base {
 
 		$args = $this->get_args();
 
-		foreach ( $fields as &$field ) {
+		foreach ( $fields as $field_key => &$field ) {
 			if ( isset( $field['of_type'] ) && ! in_array( $field['of_type'], $args['types'] ) ) {
-				unset( $field );
+				unset( $fields[ $field_key ] );
 			}
 		}
 
