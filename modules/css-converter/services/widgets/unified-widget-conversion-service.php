@@ -65,7 +65,9 @@ class Unified_Widget_Conversion_Service {
 			$mapped_widgets = $this->widget_mapper->map_elements( $elements );
 			$mapping_stats = $this->widget_mapper->get_mapping_stats( $elements );
 			$conversion_log['mapping_stats'] = $mapping_stats;
+
 			$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets );
+
 			$resolved_widgets = $unified_processing_result['widgets'];
 			$css_class_rules = $unified_processing_result['css_class_rules'] ?? [];
 			$flattened_classes_count = $unified_processing_result['flattened_classes_count'] ?? 0;
@@ -76,43 +78,12 @@ class Unified_Widget_Conversion_Service {
 			$styled_widgets = $resolved_widgets;
 
 			// ═══════════════════════════════════════════════════════════
-			// PHASE 5: Process Nested/Flattened Classes ✅
+			// PHASE 5: Extract processed data from unified processor ✅
 			// ═══════════════════════════════════════════════════════════
-			// All nested selectors have been flattened and compound classes created
-			// Flattening results and compound results are now available
-
-			// ═══════════════════════════════════════════════════════════
-			// PHASE 6: Apply ALL Resolved Classes to Widgets ✅
-			// ═══════════════════════════════════════════════════════════
-			$widgets_with_applied_classes = $this->apply_all_resolved_classes_to_widgets(
-				$resolved_widgets,
-				$unified_processing_result
-			);
-
-			$widgets_with_resolved_styles_for_global_classes = $widgets_with_applied_classes;
-			$global_classes = $this->process_global_classes_with_unified_service( $css_class_rules );
+			// All processing (global classes, duplicate detection, class mappings) is now complete
+			$widgets_with_resolved_styles_for_global_classes = $resolved_widgets;
+			$global_classes = $unified_processing_result['global_classes'] ?? [];
 			$css_variable_definitions = $unified_processing_result['css_variable_definitions'] ?? [];
-			$flattened_classes = $unified_processing_result['flattened_classes'] ?? [];
-
-			if ( ! empty( $flattened_classes ) ) {
-				$filtered_flattened_classes = [];
-
-				foreach ( $flattened_classes as $class_id => $class_data ) {
-					$original_selector = $class_data['css_converter_original_selector'] ?? '';
-
-					if ( $this->is_core_elementor_flattened_selector( $original_selector ) ) {
-						continue;
-					}
-
-					if ( ! $this->has_elements_with_flattened_class( $widgets_with_applied_classes, $class_id ) ) {
-						continue;
-					}
-
-					$filtered_flattened_classes[ $class_id ] = $class_data;
-				}
-
-				$global_classes = array_merge( $global_classes, $filtered_flattened_classes );
-			}
 			$compound_classes = $unified_processing_result['compound_classes'] ?? [];
 			$compound_classes_created = $unified_processing_result['compound_classes_created'] ?? 0;
 			// Global classes are now handled by the unified service in process_global_classes_with_unified_service()
@@ -125,7 +96,7 @@ class Unified_Widget_Conversion_Service {
 			$final_result = [
 				'success' => true,
 				'widgets_created' => $creation_result['widgets_created'],
-				'global_classes_created' => $creation_result['global_classes_created'],
+				'global_classes_created' => $unified_processing_result['global_classes_created'] ?? 0,
 				'variables_created' => $creation_result['variables_created'],
 				'compound_classes_created' => $creation_result['compound_classes_created'] ?? 0,
 				'compound_classes' => $creation_result['compound_classes'] ?? [],
@@ -509,94 +480,8 @@ class Unified_Widget_Conversion_Service {
 		}
 		return $base_parts['scheme'] . '://' . $base_parts['host'] . $base_path . '/' . $relative_url;
 	}
-	private function process_global_classes_with_unified_service( array $css_class_rules ): array {
-		$provider = Global_Classes_Service_Provider::instance();
-
-		if ( ! $provider->is_available() ) {
-			return [];
-		}
-
-		$integration_service = $provider->get_integration_service();
-		$result = $integration_service->process_css_rules( $css_class_rules );
-
-		// FIX: The integration service registers classes but returns statistics
-		// We need to get the actual registered global classes that match our CSS rules
-		if ( $result['success'] ) {
-			// Get the registration service to access the registered classes
-			$registration_service = $provider->get_registration_service();
-			
-			// Use reflection to access the private method temporarily
-			$reflection = new \ReflectionClass( $registration_service );
-			$repository_method = $reflection->getMethod( 'get_global_classes_repository' );
-			$repository_method->setAccessible( true );
-			$repository = $repository_method->invoke( $registration_service );
-			
-			if ( $repository ) {
-				$existing = $repository->all();
-				$items = $existing->get_items()->all();
-				
-				// Filter to only return classes that match our CSS selectors
-				$matching_classes = [];
-				foreach ( $css_class_rules as $css_rule ) {
-					$selector = $css_rule['selector'] ?? '';
-					$class_name = ltrim( $selector, '.' ); // Remove the dot from .single-class
-					
-					// Check if this class exists in the repository
-					if ( isset( $items[ $class_name ] ) ) {
-						$matching_classes[ $class_name ] = $items[ $class_name ];
-					}
-				}
-				
-				return $matching_classes;
-			}
-		}
-
-		return [];
-	}
 
 
-	private function has_elements_with_flattened_class( array $widgets, string $flattened_class_id ): bool {
-		// Check if any widget has this flattened class applied
-		foreach ( $widgets as $widget ) {
-			if ( $this->widget_has_flattened_class( $widget, $flattened_class_id ) ) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private function widget_has_flattened_class( array $widget, string $flattened_class_id ): bool {
-		// Check this widget's classes
-		$widget_classes = $this->extract_widget_classes_from_widget( $widget );
-		if ( true === in_array( $flattened_class_id, $widget_classes, true ) ) {
-			return true;
-		}
-
-		// Recursively check child widgets
-		if ( ! empty( $widget['children'] ) && is_array( $widget['children'] ) ) {
-			foreach ( $widget['children'] as $child ) {
-				if ( $this->widget_has_flattened_class( $child, $flattened_class_id ) ) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	private function extract_widget_classes_from_widget( array $widget ): array {
-		$class_attribute = $widget['attributes']['class'] ?? '';
-		if ( empty( $class_attribute ) ) {
-			return [];
-		}
-
-		// Split class attribute by spaces and filter out empty values
-		$classes = array_filter( explode( ' ', $class_attribute ), function( $class_item ) {
-			return ! empty( trim( $class_item ) );
-		});
-
-		return array_map( 'trim', $classes );
-	}
 	private function create_widgets_with_resolved_styles( array $widgets, array $options, array $global_classes, array $compound_classes = [], int $compound_classes_created = 0, array $css_variable_definitions = [] ): array {
 		$post_id = $options['postId'] ?? null;
 		$post_type = $options['postType'] ?? 'page';
@@ -707,58 +592,4 @@ class Unified_Widget_Conversion_Service {
 		];
 	}
 
-	private function apply_all_resolved_classes_to_widgets( array $widgets, array $unified_processing_result ): array {
-		// Get the HTML class modifier that was initialized with all the flattening and compound data
-		$html_class_modifier = $unified_processing_result['html_class_modifier'] ?? null;
-
-		if ( null === $html_class_modifier ) {
-			return $widgets;
-		}
-
-		$widgets_with_applied_classes = $this->apply_html_class_modifications_to_widgets( $widgets, $html_class_modifier );
-
-		return $widgets_with_applied_classes;
-	}
-
-	private function apply_html_class_modifications_to_widgets( array $widgets, $html_class_modifier ): array {
-		$modified_widgets = [];
-
-		foreach ( $widgets as $widget ) {
-			$modified_widget = $this->apply_html_class_modifications_recursively( $widget, $html_class_modifier );
-			$modified_widgets[] = $modified_widget;
-		}
-
-		return $modified_widgets;
-	}
-
-	private function apply_html_class_modifications_recursively( array $widget, $html_class_modifier ): array {
-		$modified_widget = $html_class_modifier->modify_element_classes( $widget );
-
-		if ( ! empty( $modified_widget['children'] ) && is_array( $modified_widget['children'] ) ) {
-			$modified_children = [];
-			foreach ( $modified_widget['children'] as $child ) {
-				$modified_children[] = $this->apply_html_class_modifications_recursively( $child, $html_class_modifier );
-			}
-			$modified_widget['children'] = $modified_children;
-		}
-
-		return $modified_widget;
-	}
-
-	private function is_core_elementor_flattened_selector( string $selector ): bool {
-		// Skip core Elementor selectors to avoid conflicts
-		$elementor_prefixes = [
-			'.elementor-',
-			'.e-con-',
-			'.e-',
-		];
-
-		foreach ( $elementor_prefixes as $prefix ) {
-			if ( strpos( $selector, $prefix ) === 0 ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
 }

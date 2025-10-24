@@ -10,6 +10,7 @@ class Html_Class_Modifier_Service {
 	private $usage_tracker;
 	private $mapping_service;
 	private $compound_mappings = [];
+	private $duplicate_class_mappings = [];
 
 	public function __construct(
 		Css_Class_Usage_Tracker $usage_tracker = null,
@@ -46,6 +47,10 @@ class Html_Class_Modifier_Service {
 
 	public function initialize_with_compound_results( array $compound_mappings ): void {
 		$this->compound_mappings = $compound_mappings;
+	}
+
+	public function set_duplicate_class_mappings( array $duplicate_class_mappings ): void {
+		$this->duplicate_class_mappings = $duplicate_class_mappings;
 	}
 
 	public function modify_element_classes( array $element ): array {
@@ -124,6 +129,12 @@ class Html_Class_Modifier_Service {
 	}
 
 	private function process_single_class( string $class_name ): ?string {
+		// Check if this class has a duplicate class mapping first (highest priority)
+		if ( isset( $this->duplicate_class_mappings[ $class_name ] ) ) {
+			$mapped_name = $this->duplicate_class_mappings[ $class_name ];
+			return $mapped_name;
+		}
+
 		// Check if this class has a flattened mapping
 		if ( $this->mapping_service->has_mapping_for_class( $class_name ) ) {
 			// Replace with flattened class name

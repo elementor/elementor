@@ -12,6 +12,7 @@ class Global_Classes_Registration_Service {
 	const MAX_CLASSES_LIMIT = 50;
 
 	public function register_with_elementor( array $converted_classes ): array {
+		error_log( "DUPLICATE DEBUG: register_with_elementor called with " . count( $converted_classes ) . " classes" );
 		
 		if ( ! $this->is_global_classes_available() ) {
 			return [
@@ -37,14 +38,19 @@ class Global_Classes_Registration_Service {
 
 
 		$existing_labels = $this->extract_existing_labels( $items );
+		error_log( "DUPLICATE DEBUG: Found " . count( $existing_labels ) . " existing classes: " . implode( ', ', array_slice( $existing_labels, 0, 10 ) ) );
 
-		$new_classes = $this->filter_new_classes( $converted_classes, $existing_labels );
+		$result = $this->filter_new_classes_with_duplicate_detection( $converted_classes, $existing_labels, $items );
+		$new_classes = $result['new_classes'];
+		$class_name_mappings = $result['class_name_mappings'];
 
 		if ( empty( $new_classes ) ) {
+			error_log( "DUPLICATE DEBUG: No new classes to register. Mappings: " . json_encode( $class_name_mappings ) );
 			return [
 				'registered' => 0,
 				'skipped' => count( $converted_classes ),
 				'reason' => 'All classes already exist or no valid classes',
+				'class_name_mappings' => $class_name_mappings,
 			];
 		}
 
@@ -68,12 +74,14 @@ class Global_Classes_Registration_Service {
 				'registered' => $registered,
 				'skipped' => $skipped,
 				'total_classes' => count( $items ),
+				'class_name_mappings' => $class_name_mappings,
 			];
 		} catch ( \Exception $e ) {
 			return [
 				'registered' => 0,
 				'skipped' => count( $converted_classes ),
 				'error' => 'Failed to save to repository: ' . $e->getMessage(),
+				'class_name_mappings' => $class_name_mappings,
 			];
 		}
 	}
@@ -108,22 +116,101 @@ class Global_Classes_Registration_Service {
 		return $labels;
 	}
 
-	private function filter_new_classes( array $converted_classes, array $existing_labels ): array {
+	private function filter_new_classes_with_duplicate_detection( array $converted_classes, array $existing_labels, array $existing_items ): array {
 		$new_classes = [];
+		$class_name_mappings = []; // original_name => final_name
 
 		foreach ( $converted_classes as $class_name => $class_data ) {
-			if ( in_array( $class_name, $existing_labels, true ) ) {
-				continue;
-			}
-
 			if ( empty( $class_data['atomic_props'] ) ) {
 				continue;
 			}
 
+			// Check for duplicate class name
+			if ( in_array( $class_name, $existing_labels, true ) ) {
+				// Duplicate detected - handle it
+				$final_class_name = $this->handle_duplicate_class( $class_name, $class_data, $existing_items );
+				
+				error_log( "DUPLICATE DEBUG: Class '{$class_name}' is duplicate. Final name: " . ( $final_class_name ?: 'null (reuse)' ) );
+				
+				// If we get a new name (with suffix), add it
+				if ( $final_class_name && $final_class_name !== $class_name ) {
+					$new_classes[ $final_class_name ] = $class_data;
+					$class_name_mappings[ $class_name ] = $final_class_name; // Track the mapping
+					error_log( "DUPLICATE DEBUG: Adding new class '{$final_class_name}' with mapping '{$class_name}' -> '{$final_class_name}'" );
+				} elseif ( null === $final_class_name ) {
+					// Reuse existing class - map to original name
+					$class_name_mappings[ $class_name ] = $class_name;
+					error_log( "DUPLICATE DEBUG: Reusing existing class '{$class_name}'" );
+				}
+				// If we get null or same name, skip (reuse existing)
+				continue;
+			}
+
+			// Not a duplicate, add as normal
 			$new_classes[ $class_name ] = $class_data;
+			$class_name_mappings[ $class_name ] = $class_name; // No change in name
 		}
 
-		return $new_classes;
+		return [
+			'new_classes' => $new_classes,
+			'class_name_mappings' => $class_name_mappings,
+		];
+	}
+
+	private function handle_duplicate_class( string $class_name, array $class_data, array $existing_items ): ?string {
+
+		// Find the existing class with the same name
+		if ( ! isset( $existing_items[ $class_name ] ) ) {
+			// Class doesn't exist, this shouldn't happen but handle gracefully
+			error_log( "DUPLICATE DEBUG: Class '{$class_name}' not found in existing items, returning as-is" );
+			return $class_name;
+		}
+
+		$existing_class = $existing_items[ $class_name ];
+		$existing_atomic_props = $this->extract_atomic_props( $existing_class );
+		$new_atomic_props = $class_data['atomic_props'];
+
+		error_log( "DUPLICATE DEBUG: Comparing styles for '{$class_name}'" );
+		error_log( "DUPLICATE DEBUG: Existing props: " . json_encode( $existing_atomic_props ) );
+		error_log( "DUPLICATE DEBUG: New props: " . json_encode( $new_atomic_props ) );
+
+		// Compare atomic properties
+		if ( $this->are_styles_identical( $existing_atomic_props, $new_atomic_props ) ) {
+			// Styles are identical - reuse existing class
+			error_log( "DUPLICATE DEBUG: Styles are IDENTICAL - reusing existing class" );
+			return null;
+		}
+
+		// Styles are different - create new class with suffix
+		$new_suffix = $this->find_next_available_suffix( $class_name, $existing_items );
+		error_log( "DUPLICATE DEBUG: Styles are DIFFERENT - creating new class '{$new_suffix}'" );
+		return $new_suffix;
+	}
+
+	private function extract_atomic_props( array $class_config ): array {
+		// Extract atomic props from the class config structure
+		if ( isset( $class_config['variants'][0]['props'] ) ) {
+			return $class_config['variants'][0]['props'];
+		}
+		return [];
+	}
+
+	private function are_styles_identical( array $props1, array $props2 ): bool {
+		// Normalize both arrays by sorting keys
+		ksort( $props1 );
+		ksort( $props2 );
+		
+		return $props1 === $props2;
+	}
+
+	private function find_next_available_suffix( string $base_name, array $existing_items ): string {
+		$suffix = 2;
+		
+		while ( isset( $existing_items[ $base_name . '-' . $suffix ] ) ) {
+			$suffix++;
+		}
+		
+		return $base_name . '-' . $suffix;
 	}
 
 	private function apply_classes_limit( array $new_classes, int $existing_count ): array {

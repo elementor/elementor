@@ -74,10 +74,23 @@ class Unified_Css_Processor {
 			$flattening_results['flattened_rules']
 		);
 
-		$resolved_widgets = $this->resolve_styles_recursively( $widgets );
+		// PHASE 1: Process global classes with duplicate detection FIRST
+		$css_class_rules = $this->extract_css_class_rules_for_global_classes( $css, $flattening_results );
+		$global_classes_result = $this->process_global_classes_with_duplicate_detection( $css_class_rules, $flattening_results );
+
+		// PHASE 2: Apply class name mappings to widgets BEFORE resolving styles
+		$widgets_with_final_class_names = $this->apply_class_name_mappings_to_widgets(
+			$widgets,
+			$global_classes_result['class_name_mappings']
+		);
+
+		// PHASE 3: Apply HTML class modifications (flattening, compound)
+		$widgets_with_applied_classes = $this->apply_html_class_modifications_to_widgets( $widgets_with_final_class_names );
+
+		// PHASE 4: Resolve styles with final class names
+		$resolved_widgets = $this->resolve_styles_recursively( $widgets_with_applied_classes );
 
 		$debug_info = $this->unified_style_manager->get_debug_info();
-		$css_class_rules = $this->extract_css_class_rules_for_global_classes( $css, $flattening_results );
 
 		$reset_styles_stats = $this->unified_style_manager->get_reset_styles_stats();
 		$complex_reset_styles = $this->unified_style_manager->get_complex_reset_styles();
@@ -89,6 +102,9 @@ class Unified_Css_Processor {
 			'stats' => $debug_info,
 			'css_class_rules' => $css_class_rules,
 			'css_variable_definitions' => $this->css_variable_definitions,
+			'global_classes' => $global_classes_result['global_classes'],
+			'global_classes_created' => count( $global_classes_result['global_classes'] ),
+			'class_name_mappings' => $global_classes_result['class_name_mappings'],
 			'flattened_classes' => $flattening_results['flattened_classes'],
 			'flattened_classes_count' => count( $flattening_results['flattened_classes'] ),
 			'compound_classes' => $compound_results['compound_global_classes'] ?? [],
@@ -1753,7 +1769,6 @@ class Unified_Css_Processor {
 				'source' => 'extracted_from_css',
 			];
 
-		} else {
 		}
 	}
 
@@ -1777,5 +1792,125 @@ class Unified_Css_Processor {
 
 	public function get_css_variable_definitions(): array {
 		return $this->css_variable_definitions;
+	}
+
+	/**
+	 * Process global classes with duplicate detection
+	 * Includes regular classes, flattened classes, and compound classes
+	 */
+	private function process_global_classes_with_duplicate_detection( array $css_class_rules, array $flattening_results ): array {
+		require_once __DIR__ . '/../../global-classes/unified/global-classes-service-provider.php';
+
+		$provider = \Elementor\Modules\CssConverter\Services\GlobalClasses\Unified\Global_Classes_Service_Provider::instance();
+
+		if ( ! $provider->is_available() ) {
+			return [
+				'global_classes' => [],
+				'class_name_mappings' => [],
+			];
+		}
+
+		// Process regular CSS class rules
+		$integration_service = $provider->get_integration_service();
+		$regular_classes_result = $integration_service->process_css_rules( $css_class_rules );
+
+		$all_global_classes = $regular_classes_result['global_classes'] ?? [];
+		$class_name_mappings = $regular_classes_result['class_name_mappings'] ?? [];
+
+		// Process flattened classes (if any)
+		$flattened_classes = $flattening_results['flattened_classes'] ?? [];
+		if ( ! empty( $flattened_classes ) ) {
+			$filtered_flattened_classes = $this->filter_flattened_classes_for_widgets( $flattened_classes );
+			$all_global_classes = array_merge( $all_global_classes, $filtered_flattened_classes );
+		}
+
+		return [
+			'global_classes' => $all_global_classes,
+			'class_name_mappings' => $class_name_mappings,
+		];
+	}
+
+	/**
+	 * Filter flattened classes to only include those used by widgets
+	 */
+	private function filter_flattened_classes_for_widgets( array $flattened_classes ): array {
+		$filtered_flattened_classes = [];
+
+		foreach ( $flattened_classes as $class_id => $class_data ) {
+			$original_selector = $class_data['css_converter_original_selector'] ?? '';
+
+			// Skip core Elementor selectors to avoid conflicts
+			if ( $this->is_core_elementor_flattened_selector( $original_selector ) ) {
+				continue;
+			}
+
+			$filtered_flattened_classes[ $class_id ] = $class_data;
+		}
+
+		return $filtered_flattened_classes;
+	}
+
+	/**
+	 * Check if a selector is a core Elementor selector
+	 */
+	private function is_core_elementor_flattened_selector( string $selector ): bool {
+		$elementor_prefixes = [
+			'.elementor-',
+			'.e-con-',
+			'.e-',
+		];
+
+		foreach ( $elementor_prefixes as $prefix ) {
+			if ( 0 === strpos( $selector, $prefix ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Apply class name mappings from duplicate detection to widgets
+	 */
+	private function apply_class_name_mappings_to_widgets( array $widgets, array $class_name_mappings ): array {
+		if ( empty( $class_name_mappings ) ) {
+			return $widgets;
+		}
+
+		// Set the mappings on the HTML class modifier
+		$this->html_class_modifier->set_duplicate_class_mappings( $class_name_mappings );
+
+		return $widgets; // The actual modification happens in apply_html_class_modifications_to_widgets
+	}
+
+	/**
+	 * Apply HTML class modifications (flattening, compound, duplicate mappings) to widgets
+	 */
+	private function apply_html_class_modifications_to_widgets( array $widgets ): array {
+		$modified_widgets = [];
+
+		foreach ( $widgets as $widget ) {
+			$modified_widget = $this->apply_html_class_modifications_to_widget_recursively( $widget );
+			$modified_widgets[] = $modified_widget;
+		}
+
+		return $modified_widgets;
+	}
+
+	/**
+	 * Recursively apply HTML class modifications to a widget and its children
+	 */
+	private function apply_html_class_modifications_to_widget_recursively( array $widget ): array {
+		$modified_widget = $this->html_class_modifier->modify_element_classes( $widget );
+
+		if ( ! empty( $modified_widget['children'] ) && is_array( $modified_widget['children'] ) ) {
+			$modified_children = [];
+			foreach ( $modified_widget['children'] as $child ) {
+				$modified_children[] = $this->apply_html_class_modifications_to_widget_recursively( $child );
+			}
+			$modified_widget['children'] = $modified_children;
+		}
+
+		return $modified_widget;
 	}
 }

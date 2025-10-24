@@ -62,6 +62,7 @@ class Global_Classes_Integration_Service {
 			'registered' => $result['registered'] ?? 0,
 			'skipped' => $result['skipped'] ?? 0,
 			'processing_time' => $this->calculate_processing_time( $start_time ),
+			'class_name_mappings' => $result['class_name_mappings'] ?? [],
 		];
 
 		if ( isset( $result['error'] ) ) {
