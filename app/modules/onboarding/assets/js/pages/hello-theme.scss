@@ -50,7 +50,10 @@
 			margin-block: 1px;
 
 			&:first-of-type {
-				inset-block-end: -37px;
+
+				.e-onboarding__theme-card-illustration {
+					inset-block-end: -37px;
+				}
 
 				svg {
 					width: 322px;

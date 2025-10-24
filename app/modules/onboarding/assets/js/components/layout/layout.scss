@@ -32,3 +32,18 @@
 		}
 	}
 }
+
+@media (max-width: 1100px) {
+	.e-onboarding {
+
+		&__page-content {
+
+			&-end {
+
+				img {
+					display: none;
+				}
+			}
+		}
+	}
+}
