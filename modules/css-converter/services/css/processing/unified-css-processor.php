@@ -26,6 +26,8 @@ class Unified_Css_Processor {
 		$property_converter,
 		Css_Specificity_Calculator $specificity_calculator
 	) {
+		error_log( 'DEBUG: UNIFIED CSS PROCESSOR - Constructor called' );
+		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-constructor.log', 'Constructor called at ' . date( 'Y-m-d H:i:s' ) . "\n", FILE_APPEND );
 		$this->css_parser = $css_parser;
 		$this->property_converter = $property_converter;
 		$this->specificity_calculator = $specificity_calculator;
@@ -45,36 +47,61 @@ class Unified_Css_Processor {
 		$this->html_class_modifier = new \Elementor\Modules\CssConverter\Services\Css\Html_Class_Modifier_Service();
 	}
 	public function process_css_and_widgets( string $css, array $widgets ): array {
+		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'process_css_and_widgets called at ' . date( 'Y-m-d H:i:s' ) . ' with ' . strlen( $css ) . ' chars CSS and ' . count( $widgets ) . " widgets\n", FILE_APPEND );
+		
+		error_log( 'DEBUG: MAIN PROCESSOR - ENTRY POINT - process_css_and_widgets() method called' );
+		error_log( 'DEBUG: MAIN PROCESSOR - process_css_and_widgets() called with ' . strlen( $css ) . ' chars CSS and ' . count( $widgets ) . ' widgets' );
+		
+		// TEMPORARY: Force a visible error to confirm this method is called
+		if ( strpos( $css, '.first.second' ) !== false ) {
+			error_log( 'DEBUG: MAIN PROCESSOR - COMPOUND CSS DETECTED - This should show up!' );
+			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'COMPOUND CSS DETECTED in process_css_and_widgets' . "\n", FILE_APPEND );
+		}
 
 		$css_rules = $this->parse_css_and_extract_rules( $css );
+		error_log( 'DEBUG: MAIN PROCESSOR - Parsed ' . count( $css_rules ) . ' CSS rules' );
 
-		$flattening_results = $this->process_flattening_with_registry( $css_rules );
-
-		$compound_results = $this->process_compound_selectors( $css_rules, $widgets );
+		// Process both flattening and compound selectors in the same registry pipeline
+		error_log( 'DEBUG: MAIN PROCESSOR - Calling process_css_with_unified_registry()' );
+		$processing_results = $this->process_css_with_unified_registry( $css_rules, $widgets );
+		$flattening_results = $processing_results['flattening'];
+		$compound_results = $processing_results['compound'];
+		error_log( 'DEBUG: MAIN PROCESSOR - Unified registry processing complete' );
 
 		foreach ( $flattening_results['class_mappings'] as $original_class => $mapping ) {
 			$flattened_class = is_array( $mapping ) ? ( $mapping['flattened_class'] ?? 'N/A' ) : $mapping;
 		}
 
+		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'HTML CLASS MODIFIER: Initializing with flattening results - ' . count( $flattening_results['class_mappings'] ) . ' class mappings' . "\n", FILE_APPEND );
+		
 		$this->html_class_modifier->initialize_with_flattening_results(
 			$flattening_results['class_mappings'],
 			$flattening_results['classes_with_direct_styles'],
 			$flattening_results['classes_only_in_nested']
 		);
 
+		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'HTML CLASS MODIFIER: Initializing with compound results - ' . count( $compound_results['compound_mappings'] ) . ' compound mappings' . "\n", FILE_APPEND );
+		
 		$this->html_class_modifier->initialize_with_compound_results(
 			$compound_results['compound_mappings']
 		);
 
+		// FIX: Split CSS rules to prevent duplicate styling
+		// Separate rules that should become global classes from those that should be atomic properties
+		$rule_split = $this->split_rules_for_processing( $flattening_results['flattened_rules'] );
+		$atomic_rules = $rule_split['atomic_rules'];
+		$global_class_candidate_rules = $rule_split['global_class_rules'];
+
+		// Apply atomic properties only for rules that won't become global classes
 		$this->collect_all_styles_from_sources_with_flattened_rules(
 			$css,
 			$widgets,
-			$flattening_results['flattened_rules']
+			$atomic_rules
 		);
 
 		// PHASE 1: Process global classes with duplicate detection FIRST
 		$css_class_rules = $this->extract_css_class_rules_for_global_classes( $css, $flattening_results );
-		$global_classes_result = $this->process_global_classes_with_duplicate_detection( $css_class_rules, $flattening_results );
+		$global_classes_result = $this->process_global_classes_with_duplicate_detection( $css_class_rules, $flattening_results, $compound_results );
 
 		// PHASE 2: Apply class name mappings to widgets BEFORE resolving styles
 		$widgets_with_final_class_names = $this->apply_class_name_mappings_to_widgets(
@@ -83,7 +110,9 @@ class Unified_Css_Processor {
 		);
 
 		// PHASE 3: Apply HTML class modifications (flattening, compound)
+		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'HTML CLASS MODIFIER: About to apply HTML class modifications to ' . count( $widgets_with_final_class_names ) . ' widgets' . "\n", FILE_APPEND );
 		$widgets_with_applied_classes = $this->apply_html_class_modifications_to_widgets( $widgets_with_final_class_names );
+		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'HTML CLASS MODIFIER: Applied HTML class modifications, result has ' . count( $widgets_with_applied_classes ) . ' widgets' . "\n", FILE_APPEND );
 
 		// PHASE 4: Resolve styles with final class names
 		$resolved_widgets = $this->resolve_styles_recursively( $widgets_with_applied_classes );
@@ -1372,132 +1401,46 @@ class Unified_Css_Processor {
 		}
 	}
 
-	private function process_flattening_with_registry( array $css_rules ): array {
+	private function process_css_with_unified_registry( array $css_rules, array $widgets ): array {
+		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'process_css_with_unified_registry called with ' . count( $css_rules ) . ' CSS rules and ' . count( $widgets ) . " widgets\n", FILE_APPEND );
+		
+		error_log( 'DEBUG: UNIFIED REGISTRY - Starting with ' . count( $css_rules ) . ' CSS rules and ' . count( $widgets ) . ' widgets' );
+		
+		// Create a single context with all necessary data
 		$context = new Css_Processing_Context();
 		$context->set_metadata( 'css_rules', $css_rules );
 		$context->set_metadata( 'existing_global_class_names', $this->get_existing_global_class_names() );
+		$context->set_widgets( $widgets );
 
+		error_log( 'DEBUG: UNIFIED REGISTRY - Context created, calling Css_Processor_Factory::execute_css_processing()' );
+
+		// Execute the full registry pipeline (flattening → compound)
 		$context = Css_Processor_Factory::execute_css_processing( $context );
 
+		error_log( 'DEBUG: UNIFIED REGISTRY - Factory execution complete' );
+
+		$flattened_rules = $context->get_metadata( 'flattened_rules', [] );
+		$compound_global_classes = $context->get_metadata( 'compound_global_classes', [] );
+		$compound_mappings = $context->get_metadata( 'compound_mappings', [] );
+
+		error_log( 'DEBUG: UNIFIED REGISTRY - Results: ' . count( $flattened_rules ) . ' flattened rules, ' . count( $compound_global_classes ) . ' compound classes, ' . count( $compound_mappings ) . ' compound mappings' );
+
 		return [
-			'flattened_rules' => $context->get_metadata( 'flattened_rules', [] ),
-			'class_mappings' => $context->get_metadata( 'class_mappings', [] ),
-			'classes_with_direct_styles' => $context->get_metadata( 'classes_with_direct_styles', [] ),
-			'classes_only_in_nested' => $context->get_metadata( 'classes_only_in_nested', [] ),
-			'flattened_classes' => $context->get_metadata( 'flattened_classes', [] ),
+			'flattening' => [
+				'flattened_rules' => $flattened_rules,
+				'class_mappings' => $context->get_metadata( 'class_mappings', [] ),
+				'classes_with_direct_styles' => $context->get_metadata( 'classes_with_direct_styles', [] ),
+				'classes_only_in_nested' => $context->get_metadata( 'classes_only_in_nested', [] ),
+				'flattened_classes' => $context->get_metadata( 'flattened_classes', [] ),
+			],
+			'compound' => [
+				'compound_global_classes' => $compound_global_classes,
+				'compound_mappings' => $compound_mappings,
+			],
 		];
 	}
 
-	private function process_compound_selectors( array $css_rules, array $widgets ): array {
 
-		$compound_global_classes = [];
-		$compound_mappings = [];
-		foreach ( $css_rules as $rule ) {
-			$selector = $rule['selector'] ?? '';
-			if ( empty( $selector ) ) {
-				continue;
-			}
-
-			if ( ! \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::is_compound_class_selector( $selector ) ) {
-				continue;
-			}
-
-			// FILTER: Skip core Elementor CSS selectors to prevent creating global classes for them
-			if ( $this->is_core_elementor_selector( $selector ) ) {
-				continue;
-			}
-			$classes = \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::extract_compound_classes( $selector );
-			if ( count( $classes ) < 2 ) {
-				continue;
-			}
-
-			// FILTER: Only create global classes if there are elements that have ALL required classes
-			$has_matching_elements = $this->has_elements_with_all_classes( $widgets, $classes );
-
-			// DEBUG: Log compound selector detection for fixed class
-			if ( strpos( $selector, 'fixed' ) !== false ) {
-			}
-
-			if ( ! $has_matching_elements ) {
-				continue;
-			}
-
-			$sorted_classes = $classes;
-			sort( $sorted_classes );
-			$flattened_name = \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::build_compound_flattened_name( $classes );
-			$specificity = \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::calculate_compound_specificity( $classes );
-			$converted_properties = $this->convert_rule_properties_to_atomic( $rule['properties'] ?? [] );
-			$global_class_data = $this->create_global_class_from_compound(
-				$flattened_name,
-				$selector,
-				$sorted_classes,
-				$specificity,
-				$converted_properties
-			);
-			$compound_global_classes[ $flattened_name ] = $global_class_data;
-			$compound_mappings[ $flattened_name ] = [
-				'requires' => $sorted_classes,
-				'specificity' => $specificity,
-				'flattened_class' => $flattened_name,
-			];
-
-		}
-		return [
-			'compound_global_classes' => $compound_global_classes,
-			'compound_mappings' => $compound_mappings,
-		];
-	}
-
-	private function has_elements_with_all_classes( array $widgets, array $required_classes ): bool {
-		foreach ( $widgets as $widget ) {
-			if ( $this->widget_has_all_classes( $widget, $required_classes ) ) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private function widget_has_all_classes( array $widget, array $required_classes ): bool {
-		// Check this widget's classes
-		$widget_classes = $this->extract_widget_classes( $widget );
-		if ( $this->array_contains_all_classes( $widget_classes, $required_classes ) ) {
-			return true;
-		}
-
-		// Recursively check child widgets
-		if ( ! empty( $widget['children'] ) && is_array( $widget['children'] ) ) {
-			foreach ( $widget['children'] as $child ) {
-				if ( $this->widget_has_all_classes( $child, $required_classes ) ) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	private function extract_widget_classes( array $widget ): array {
-		$class_attribute = $widget['attributes']['class'] ?? '';
-		if ( empty( $class_attribute ) ) {
-			return [];
-		}
-
-		// Split class attribute by spaces and filter out empty values
-		$classes = array_filter( explode( ' ', $class_attribute ), function( $class ) {
-			return ! empty( trim( $class ) );
-		});
-
-		return array_map( 'trim', $classes );
-	}
-
-	private function array_contains_all_classes( array $widget_classes, array $required_classes ): bool {
-		foreach ( $required_classes as $required_class ) {
-			if ( ! in_array( $required_class, $widget_classes, true ) ) {
-				return false;
-			}
-		}
-		return true;
-	}
 
 	private function is_core_elementor_selector( string $selector ): bool {
 		// List of core Elementor CSS selectors that should not become global classes
@@ -1674,7 +1617,7 @@ class Unified_Css_Processor {
 	 * Process global classes with duplicate detection
 	 * Includes regular classes, flattened classes, and compound classes
 	 */
-	private function process_global_classes_with_duplicate_detection( array $css_class_rules, array $flattening_results ): array {
+	private function process_global_classes_with_duplicate_detection( array $css_class_rules, array $flattening_results, array $compound_results = [] ): array {
 		require_once __DIR__ . '/../../global-classes/unified/global-classes-service-provider.php';
 
 		$provider = \Elementor\Modules\CssConverter\Services\GlobalClasses\Unified\Global_Classes_Service_Provider::instance();
@@ -1699,6 +1642,12 @@ class Unified_Css_Processor {
 		if ( ! empty( $flattened_classes ) ) {
 			$filtered_flattened_classes = $this->filter_flattened_classes_for_widgets( $flattened_classes );
 			$all_global_classes = array_merge( $all_global_classes, $filtered_flattened_classes );
+		}
+
+		// Process compound classes (if any)
+		$compound_classes = $compound_results['compound_global_classes'] ?? [];
+		if ( ! empty( $compound_classes ) ) {
+			$all_global_classes = array_merge( $all_global_classes, $compound_classes );
 		}
 
 		return [
@@ -1765,10 +1714,17 @@ class Unified_Css_Processor {
 	 * Apply HTML class modifications (flattening, compound, duplicate mappings) to widgets
 	 */
 	private function apply_html_class_modifications_to_widgets( array $widgets ): array {
+		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'apply_html_class_modifications_to_widgets: Processing ' . count( $widgets ) . ' widgets' . "\n", FILE_APPEND );
+		
 		$modified_widgets = [];
 
-		foreach ( $widgets as $widget ) {
+		foreach ( $widgets as $index => $widget ) {
+			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'apply_html_class_modifications_to_widgets: Processing widget ' . $index . ' with classes: ' . ( $widget['attributes']['class'] ?? 'none' ) . "\n", FILE_APPEND );
+			
 			$modified_widget = $this->apply_html_class_modifications_to_widget_recursively( $widget );
+			
+			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'apply_html_class_modifications_to_widgets: Widget ' . $index . ' after modification has classes: ' . ( $modified_widget['attributes']['class'] ?? 'none' ) . "\n", FILE_APPEND );
+			
 			$modified_widgets[] = $modified_widget;
 		}
 
@@ -1790,5 +1746,113 @@ class Unified_Css_Processor {
 		}
 
 		return $modified_widget;
+	}
+
+	/**
+	 * Split CSS rules to prevent duplicate styling
+	 *
+	 * Rules that should become global classes are excluded from atomic processing
+	 * to prevent applying the same styles twice (once as atomic properties, once as global classes)
+	 */
+	private function split_rules_for_processing( array $flattened_rules ): array {
+		$atomic_rules = [];
+		$global_class_rules = [];
+
+		foreach ( $flattened_rules as $rule ) {
+			if ( $this->should_create_global_class_for_rule( $rule ) ) {
+				$global_class_rules[] = $rule;
+			} else {
+				$atomic_rules[] = $rule;
+			}
+		}
+
+		return [
+			'atomic_rules' => $atomic_rules,
+			'global_class_rules' => $global_class_rules,
+		];
+	}
+
+	/**
+	 * Determine if a CSS rule should become a global class instead of atomic properties
+	 */
+	private function should_create_global_class_for_rule( array $rule ): bool {
+		$selector = $rule['selector'] ?? '';
+		$properties = $rule['properties'] ?? [];
+
+		// Skip empty rules
+		if ( empty( $selector ) || empty( $properties ) ) {
+			return false;
+		}
+
+		// Always create global classes for simple class selectors (.class-name)
+		if ( $this->is_simple_class_selector( $selector ) ) {
+			return true;
+		}
+
+		// Create global classes for rules with multiple properties (better for reusability)
+		if ( $this->has_multiple_properties( $rule ) ) {
+			return true;
+		}
+
+		// Create global classes for complex selectors that benefit from CSS specificity
+		if ( $this->is_complex_reusable_selector( $selector ) ) {
+			return true;
+		}
+
+		// Default to atomic properties for simple, widget-specific styles
+		return false;
+	}
+
+	/**
+	 * Check if selector is a simple class selector (.class-name)
+	 */
+	private function is_simple_class_selector( string $selector ): bool {
+		$trimmed = trim( $selector );
+
+		// Must start with a dot
+		if ( 0 !== strpos( $trimmed, '.' ) ) {
+			return false;
+		}
+
+		// Remove the leading dot
+		$class_name = substr( $trimmed, 1 );
+
+		// Should not contain spaces, combinators, or pseudo-selectors
+		if ( preg_match( '/[\s>+~:]/', $class_name ) ) {
+			return false;
+		}
+
+		// Should be a valid class name
+		return preg_match( '/^[a-zA-Z_-][a-zA-Z0-9_-]*$/', $class_name );
+	}
+
+	/**
+	 * Check if rule has multiple properties (good candidate for global class)
+	 */
+	private function has_multiple_properties( array $rule ): bool {
+		$properties = $rule['properties'] ?? [];
+		return count( $properties ) >= 3; // 3+ properties benefit from global classes
+	}
+
+	/**
+	 * Check if selector is complex and would benefit from global class treatment
+	 */
+	private function is_complex_reusable_selector( string $selector ): bool {
+		// Pseudo-selectors (:hover, :focus, etc.) benefit from global classes
+		if ( false !== strpos( $selector, ':' ) ) {
+			return true;
+		}
+
+		// Attribute selectors benefit from global classes
+		if ( false !== strpos( $selector, '[' ) ) {
+			return true;
+		}
+
+		// Complex combinators benefit from global classes
+		if ( preg_match( '/[>+~]/', $selector ) ) {
+			return true;
+		}
+
+		return false;
 	}
 }

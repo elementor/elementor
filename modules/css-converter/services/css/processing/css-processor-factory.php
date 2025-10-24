@@ -21,8 +21,18 @@ class Css_Processor_Factory {
 	}
 
 	public static function execute_css_processing( Css_Processing_Context $context ): Css_Processing_Context {
+		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'FACTORY: execute_css_processing() called' . "\n", FILE_APPEND );
+		
+		error_log( 'DEBUG: FACTORY - execute_css_processing() called' );
 		$registry = self::get_registry();
-		return $registry->execute_pipeline( $context );
+		error_log( 'DEBUG: FACTORY - Registry obtained, calling execute_pipeline()' );
+		
+		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'FACTORY: About to call registry->execute_pipeline()' . "\n", FILE_APPEND );
+		$result = $registry->execute_pipeline( $context );
+		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'FACTORY: Pipeline execution complete' . "\n", FILE_APPEND );
+		
+		error_log( 'DEBUG: FACTORY - Pipeline execution complete' );
+		return $result;
 	}
 
 	public static function register_processor( Css_Processor_Interface $processor ): void {

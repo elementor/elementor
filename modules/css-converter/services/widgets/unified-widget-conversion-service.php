@@ -66,7 +66,17 @@ class Unified_Widget_Conversion_Service {
 			$mapping_stats = $this->widget_mapper->get_mapping_stats( $elements );
 			$conversion_log['mapping_stats'] = $mapping_stats;
 
-			$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets );
+			error_log( 'DEBUG: UNIFIED SERVICE - About to call unified_css_processor->process_css_and_widgets() with ' . strlen( $all_css ) . ' chars CSS and ' . count( $mapped_widgets ) . ' widgets' );
+			error_log( 'DEBUG: UNIFIED SERVICE - unified_css_processor class: ' . get_class( $this->unified_css_processor ) );
+			error_log( 'DEBUG: UNIFIED SERVICE - unified_css_processor methods: ' . implode( ', ', get_class_methods( $this->unified_css_processor ) ) );
+			try {
+				$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets );
+				error_log( 'DEBUG: UNIFIED SERVICE - unified_css_processor->process_css_and_widgets() completed successfully' );
+			} catch ( \Exception $e ) {
+				error_log( 'DEBUG: UNIFIED SERVICE - unified_css_processor->process_css_and_widgets() FAILED: ' . $e->getMessage() );
+				error_log( 'DEBUG: UNIFIED SERVICE - Exception trace: ' . $e->getTraceAsString() );
+				throw $e;
+			}
 
 			$resolved_widgets = $unified_processing_result['widgets'];
 			$css_class_rules = $unified_processing_result['css_class_rules'] ?? [];

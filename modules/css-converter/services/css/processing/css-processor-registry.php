@@ -46,20 +46,41 @@ class Css_Processor_Registry {
 
 	public function execute_pipeline( Css_Processing_Context $context ): Css_Processing_Context {
 		$sorted_processors = $this->get_sorted_processors();
+		
+		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Executing pipeline with ' . count( $sorted_processors ) . ' processors' . "\n", FILE_APPEND );
+		
+		error_log( 'DEBUG: Registry executing pipeline with ' . count( $sorted_processors ) . ' processors' );
+		foreach ( $sorted_processors as $processor ) {
+			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Available processor: ' . $processor->get_processor_name() . "\n", FILE_APPEND );
+			error_log( 'DEBUG: Registry checking processor: ' . $processor->get_processor_name() );
+		}
 
 		foreach ( $sorted_processors as $processor ) {
+			$processor_name = $processor->get_processor_name();
+			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Processing ' . $processor_name . "\n", FILE_APPEND );
+			
+			error_log( 'DEBUG: Registry processing: ' . $processor_name );
+			
 			if ( ! $processor->supports_context( $context ) ) {
+				file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Skipping ' . $processor_name . ' - does not support context' . "\n", FILE_APPEND );
+				error_log( 'DEBUG: Registry skipping ' . $processor_name . ' - does not support context' );
 				continue;
 			}
 
+			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Executing ' . $processor_name . "\n", FILE_APPEND );
+			error_log( 'DEBUG: Registry executing: ' . $processor_name );
 			try {
 				$context = $processor->process( $context );
+				file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Completed ' . $processor_name . "\n", FILE_APPEND );
+				error_log( 'DEBUG: Registry completed: ' . $processor_name );
 			} catch ( \Exception $e ) {
-				$processor_name = $processor->get_processor_name();
+				file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Failed ' . $processor_name . ' - ' . $e->getMessage() . "\n", FILE_APPEND );
+				error_log( 'DEBUG: Registry failed: ' . $processor_name . ' - ' . $e->getMessage() );
 				throw new \Exception( "Processor '{$processor_name}' failed: " . $e->getMessage(), 0, $e );
 			}
 		}
 
+		error_log( 'DEBUG: Registry pipeline complete' );
 		return $context;
 	}
 
@@ -97,6 +118,13 @@ class Css_Processor_Registry {
 
 	private function initialize_default_processors(): void {
 		require_once __DIR__ . '/processors/nested-selector-flattening-processor.php';
+		require_once __DIR__ . '/processors/compound-class-selector-processor.php';
+		require_once __DIR__ . '/css-property-conversion-service.php';
+
 		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Nested_Selector_Flattening_Processor() );
+
+		// Create property converter for compound processor
+		$property_converter = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service();
+		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Compound_Class_Selector_Processor( $property_converter ) );
 	}
 }

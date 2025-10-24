@@ -196,6 +196,7 @@ class Global_Classes_Registration_Service {
 		$existing_atomic_props = $this->extract_atomic_props( $existing_class );
 		$new_atomic_props = $class_data['atomic_props'];
 
+
 		// Compare atomic properties
 		if ( $this->are_styles_identical( $existing_atomic_props, $new_atomic_props ) ) {
 			// Styles are identical - reuse existing class
@@ -216,11 +217,27 @@ class Global_Classes_Registration_Service {
 	}
 
 	private function are_styles_identical( array $props1, array $props2 ): bool {
-		// Normalize both arrays by sorting keys
-		ksort( $props1 );
-		ksort( $props2 );
+		// Sort both arrays recursively for consistent comparison
+		$this->sort_array_recursively( $props1 );
+		$this->sort_array_recursively( $props2 );
 		
-		return $props1 === $props2;
+		// Convert both arrays to JSON strings for deep comparison
+		$json1 = wp_json_encode( $props1 );
+		$json2 = wp_json_encode( $props2 );
+		
+		$identical = $json1 === $json2;
+		
+		
+		return $identical;
+	}
+
+	private function sort_array_recursively( array &$array ): void {
+		ksort( $array );
+		foreach ( $array as &$value ) {
+			if ( is_array( $value ) ) {
+				$this->sort_array_recursively( $value );
+			}
+		}
 	}
 
 	private function find_next_available_suffix( string $base_name, array $existing_items ): string {
