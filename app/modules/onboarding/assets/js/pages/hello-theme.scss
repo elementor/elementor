@@ -28,17 +28,17 @@
 
 		.e-onboarding__theme-cards {
 			display: flex;
-			gap: 16px;
+			gap: 24px;
 			justify-content: center;
 			flex-wrap: wrap;
-			margin-block-start: 40px;
+			margin-block-start: 48px;
 		}
 
 		.e-onboarding__theme-card {
 			background: #ffffff;
 			border: 1px solid #A9A9A9;
 			border-radius: 8px;
-			padding: 16px 25px 165px;
+			padding: 16px 25px 160px;
 			max-width: 325px;
 			min-width: 280px;
 			cursor: pointer;
@@ -48,6 +48,14 @@
 			position: relative;
 			overflow: hidden;
 			margin-block: 1px;
+
+			&:first-of-type {
+				inset-block-end: -37px;
+
+				svg {
+					width: 322px;
+				}
+			}
 
 			&::after {
 				content: '';
@@ -118,7 +126,7 @@
 			font-weight: 400;
 			line-height: 150%;
 			letter-spacing: -0.12px;
-			margin-bottom: 25px;
+			margin-block-end: 16px;
 
 			span {
 				font-weight: 600;
@@ -134,6 +142,7 @@
 			font-weight: 700;
 			line-height: 130%;
 			letter-spacing: 0.36px;
+			margin-block-end: 4px;
 		}
 
 		.e-onboarding__theme-card-description {
