@@ -68,7 +68,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 	public function test_get_components__returns_empty_array_when_no_components() {
 		// Arrange
 		$this->act_as_admin();
-		
+
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components' );
 		$response = rest_do_request( $request );
@@ -83,6 +83,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$component_1_id = $this->create_test_component( 'Test Component 1', $this->mock_component_1_content );
 		$component_2_id = $this->create_test_component( 'Test Component 2', $this->mock_component_2_content );
+		$component_3_id = $this->create_test_component( 'Test Component 3', $this->mock_component_2_content, 'draft' );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components' );
@@ -92,7 +93,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 200, $response->get_status() );
 		$data = $response->get_data()['data'];
 
-		$this->assertCount( 2, $data );
+		$this->assertCount( 3, $data );
 		$this->assertArrayContainsObjects(
 			[
 				[
@@ -103,43 +104,20 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'id' => $component_2_id,
 					'name' => 'Test Component 2',
 				],
+				[
+					'id' => $component_3_id,
+					'name' => 'Test Component 3',
+				],
 			],
 			$data,
 			'Should return all components'
 		);
 	}
 
-	public function test_get_components__only_returns_published_components() {
-		// Arrange
-		$this->act_as_admin();
-		$published_id = $this->create_test_component( 'Published Component', $this->mock_component_1_content );
-		$this->create_test_component( 'Draft Component', $this->mock_component_2_content, 'draft' );
-
-		// Act
-		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components' );
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 200, $response->get_status() );
-		$data = $response->get_data()['data'];
-
-		$this->assertCount( 1, $data );
-		$this->assertTrue(
-			$this->objectsMatch(
-				[
-					'id' => $published_id,
-					'name' => 'Published Component',
-				],
-				$data[0]
-			),
-			'Should return only published components'
-		);
-	}
-
 	public function test_get_styles__returns_empty_array_when_no_components() {
 		// Arrange
 		$this->act_as_admin();
-		
+
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/styles' );
 		$response = rest_do_request( $request );
@@ -154,7 +132,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$component_1_id = $this->create_test_component( 'Test Component 1', $this->mock_component_1_content );
 		$component_2_id = $this->create_test_component( 'Test Component 2', $this->mock_component_2_content );
-		
+
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/styles' );
 		$response = rest_do_request( $request );
@@ -167,14 +145,14 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 		// // Check styles for component 1
 		$expected_styles_1 = Component_Mocks::get_component_1_expected_styles();
-		
+
 		$this->assertArrayHasKey( $component_1_id, $data, 'Component 1 should have styles in response' );
 		$this->assertNotEmpty( $data[ $component_1_id ], 'Component 1 styles should not be empty' );
-		
+
 		$extracted_styles_1 = $data[ $component_1_id ];
-		
-		$this->assertArrayContainsObjects( 
-			array_values( $expected_styles_1 ), 
+
+		$this->assertArrayContainsObjects(
+			array_values( $expected_styles_1 ),
 			array_values( $extracted_styles_1 ),
 			'Component 1 extracted styles should contain all expected styles'
 		);
@@ -182,69 +160,134 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Check styles for component 2
 		$expected_styles_2 = Component_Mocks::get_component_2_expected_styles();
 		$extracted_styles_2 = $data[ $component_2_id ];
-		
-		$this->assertArrayContainsObjects( 
-			array_values( $expected_styles_2 ), 
+
+		$this->assertArrayContainsObjects(
+			array_values( $expected_styles_2 ),
 			array_values( $extracted_styles_2 ),
 			'Component 2 extracted styles should contain all expected styles'
 		);
 	}
 
-	public function test_post_create_component__creates_component_successfully() {
-		// Arrange
-		$this->act_as_admin();
-
-		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'name' => 'New Test Component',
-			'content' => $this->mock_component_1_content,
-		] );
-
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 201, $response->get_status() );
-		$component_id = $response->get_data()['data']['component_id'];
-		$this->assertIsInt( $component_id );
-
-		// Verify component was created
-		$post = get_post( $component_id );
-		$this->assertEquals( 'New Test Component', $post->post_title );
-		$this->assertEquals( Component_Document::TYPE, $post->post_type );
-		$this->assertEquals( 'publish', $post->post_status );
-
-		// Verify content was saved
-		$document = Plugin::$instance->documents->get( $component_id );
-		$saved_content = $document->get_elements_data();
-		$this->assertTrue(
-			$this->objectsMatch(
-				$this->mock_component_1_content,
-				$saved_content
-			),
-			'Should save component content'
-		);
+	public function post_create_components_data_provider() {
+		return [
+			'Successfully created with status publish' => [
+				'input' => [
+					'status' => 'publish',
+					'items' => [
+						[
+							'temp_id' => 100,
+							'title' => 'New Test Component 1',
+							'elements' => Component_Mocks::get_component_1_data(),
+						],
+						[
+							'temp_id' => 200,
+							'title' => 'New Test Component 2',
+							'elements' => Component_Mocks::get_component_2_data(),
+						],
+					]
+				],
+				'expected' => [
+					100 => [
+						'title' => 'New Test Component 1',
+						'content' => Component_Mocks::get_component_1_data(),
+						'status' => 'publish',
+					],
+					200 => [
+						'title' => 'New Test Component 2',
+						'content' => Component_Mocks::get_component_2_data(),
+						'status' => 'publish',
+					]
+				]
+			],
+			'Successfully created with status draft' => [
+				'input' => [
+					'status' => 'draft',
+					'items' => [
+						[
+							'temp_id' => 100,
+							'title' => 'New Test Component 1',
+							'elements' => Component_Mocks::get_component_1_data(),
+						]
+					]
+				],
+				'expected' => [
+					100 => [
+						'title' => 'New Test Component 1',
+						'content' => Component_Mocks::get_component_1_data(),
+						'status' => 'draft',
+					]
+				]
+			],
+			'Successfully created with status autosave' => [
+				'input' => [
+					'status' => 'autosave',
+					'items' => [
+						[
+							'temp_id' => 100,
+							'title' => 'New Test Component 1',
+							'elements' => Component_Mocks::get_component_1_data(),
+						]
+					]
+				],
+				'expected' => [
+					100 => [
+						'title' => 'New Test Component 1',
+						'content' => Component_Mocks::get_component_1_data(),
+						'status' => 'draft',
+					]
+				]
+			],
+			'Sanitize the title' => [
+				'input' => [
+					'status' => 'publish',
+					'items' => [
+						[
+							'temp_id' => 100,
+							'title' => '  <script>alert(1)</script>Sanitized Component ',
+							'elements' => Component_Mocks::get_component_1_data(),
+						]
+					]
+				],
+				'expected' => [
+					100 => [
+						'title' => 'Sanitized Component',
+						'content' => Component_Mocks::get_component_1_data(),
+						'status' => 'publish',
+					]
+				]
+			],
+		];
 	}
 
-	public function test_post_create_component__sanitizes_component_name() {
+	/**
+	 * @dataProvider post_create_components_data_provider
+	 */
+	public function test_post_create_components( $input, $expected ) {
 		// Arrange
 		$this->act_as_admin();
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'name' => '  <script>alert("xss")</script>Sanitized Component  ',
-			'content' => $this->mock_component_1_content,
-		] );
+		$request->set_body_params( $input );
 
 		$response = rest_do_request( $request );
 
 		// Assert
 		$this->assertEquals( 201, $response->get_status() );
-		$component_id = $response->get_data()['data']['component_id'];
 
-		$post = get_post( $component_id );
-		$this->assertEquals( 'Sanitized Component', $post->post_title );
+		$data = (array) $response->get_data()['data'];
+
+		$this->assertCount( count( $expected ), $data );
+
+		foreach ( $data as $key => $value ) {
+			$document = Plugin::$instance->documents->get( $value );
+			$current_expected = $expected[ $key ];
+
+			$this->assertEquals( Component_Document::TYPE, $document->get_type() );
+			$this->assertEquals( $current_expected['title'], $document->get_post()->post_title );
+			$this->assertEquals( $current_expected['content'], $document->get_elements_data() );
+			$this->assertEquals( $current_expected['status'], $document->get_post()->post_status );
+		}
 	}
 
 	public function test_post_create_component__fails_when_unauthorized() {
@@ -254,8 +297,14 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
 		$request->set_body_params( [
-			'name' => 'Test Component',
-			'content' => [ $this->mock_component_1_content ],
+			'status' => 'publish',
+			'items' => [
+				[
+					'temp_id' => 1,
+					'title' => 'Test Component',
+					'elements' => $this->mock_component_1_content,
+				]
+			],
 		] );
 
 		$response = rest_do_request( $request );
@@ -264,118 +313,214 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
-	public function test_post_create_component__fails_when_name_is_missing() {
+
+	public function post_create_components_fails_data_provider() {
+		return [
+			'Missing title' => [
+				'input' => [
+					'status' => 'publish',
+					'items' => [
+						[
+							'temp_id' => 1,
+							'elements' => Component_Mocks::get_component_1_data(),
+						]
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_invalid_param',
+					'errors' => [ 'items' => "title is a required property of items[0]." ],
+				],
+			],
+			'Title too short' => [
+				'input' => [
+					'status' => 'publish',
+					'items' => [
+						[
+							'temp_id' => 1,
+							'title' => 'A',
+							'elements' => Component_Mocks::get_component_1_data(),
+						]
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_invalid_param',
+					'errors' => [ 'items' => "items[0][title] must be at least 2 characters long." ],
+				],
+			],
+			'Title too long' => [
+				'input' => [
+					'status' => 'publish',
+					'items' => [
+						[
+							'temp_id' => 1,
+							'title' => str_repeat( 'A', 201 ),
+							'elements' => Component_Mocks::get_component_1_data(),
+						]
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_invalid_param',
+					'errors' => [ 'items' => "items[0][title] must be at most 200 characters long." ],
+				],
+			],
+			'Title is invalid' => [
+				'input' => [
+					'status' => 'publish',
+					'items' => [
+						[
+							'temp_id' => 1,
+							'title' => [ 'not', 'a', 'string' ],
+							'elements' => Component_Mocks::get_component_1_data(),
+						]
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_invalid_param',
+					'errors' => [ 'items' => "items[0][title] is not of type string." ],
+				],
+			],
+			'Missing elements' => [
+				'input' => [
+					'status' => 'publish',
+					'items' => [
+						[
+							'temp_id' => 1,
+							'title' => 'Test Component',
+						]
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_invalid_param',
+					'errors' => [ 'items' => "elements is a required property of items[0]." ],
+				],
+			],
+			'Elements not an array of object' => [
+				'input' => [
+					'status' => 'publish',
+					'items' => [
+						[
+							'temp_id' => 1,
+							'title' => 'Test Component',
+							'elements' => 'not-an-array',
+						]
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_invalid_param',
+					'errors' => [ 'items' => "items[0][elements][0] is not of type object." ],
+				],
+			],
+			'Elements is invalid' => [
+				'input' => [
+					'status' => 'publish',
+					'items' => [
+						[
+							'temp_id' => 1,
+							'title' => 'Test Component',
+							'elements' => Component_Mocks::get_invalid_component_data(),
+						]
+					],
+				],
+				'expected' => [
+					'status_code' => 500,
+					'code' => 'unexpected_error',
+				],
+			],
+			'Temp ID is missing' => [
+				'input' => [
+					'status' => 'publish',
+					'items' => [
+						[
+							'title' => 'Test Component',
+							'elements' => Component_Mocks::get_component_1_data(),
+						]
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_invalid_param',
+					'errors' => [ 'items' => "temp_id is a required property of items[0]." ],
+				],
+			],
+			'Temp ID not a number' => [
+				'input' => [
+					'status' => 'publish',
+					'items' => [
+						[
+							'temp_id' => 'not-a-number',
+							'title' => 'Test Component',
+							'elements' => Component_Mocks::get_component_1_data(),
+						]
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_invalid_param',
+					'errors' => [ 'items' => "items[0][temp_id] is not of type number." ],
+				],
+			],
+			'Status is missing' => [
+				'input' => [
+					'items' => [
+						[
+							'temp_id' => 1,
+							'title' => 'Test Component',
+							'elements' => Component_Mocks::get_component_1_data(),
+						]
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_missing_callback_param',
+					'errors' => [ 'status' ],
+				],
+			],
+			'Status invalid value' => [
+				'input' => [
+					'status' => 'invalid-status',
+					'items' => [
+						[
+							'temp_id' => 1,
+							'title' => 'Test Component',
+							'elements' => Component_Mocks::get_component_1_data(),
+						]
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_invalid_param',
+					'errors' => [ 'status' => "status is not one of publish, draft, and autosave." ],
+				],
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider post_create_components_fails_data_provider
+	 */
+	public function test_post_create_components__fails( $input, $expected ) {
 		// Arrange
 		$this->act_as_admin();
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'content' => [ $this->mock_component_2_content ],
-		] );
+		$request->set_body_params( $input );
 
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 400, $response->get_status() );
-		$this->assertEquals( 'rest_missing_callback_param', $response->get_data()['code'] );
-		$this->assertContains( 'name', $response->get_data()['data']['params'] );
-	}
+		$this->assertEquals( $expected['status_code'], $response->get_status() );
+		$this->assertEquals( $expected['code'], $response->get_data()['code'] );
 
-	public function test_post_create_component__fails_when_content_is_missing() {
-		// Arrange
-		$this->act_as_admin();
-
-		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'name' => 'Test Component',
-		] );
-
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 400, $response->get_status() );
-		$this->assertEquals( 'rest_missing_callback_param', $response->get_data()['code'] );
-		$this->assertContains( 'content', $response->get_data()['data']['params'] );
-	}
-
-	public function test_post_create_component__fails_when_max_components_limit_is_reached() {
-		// Arrange
-		for ( $i = 0; $i < 49; $i++ ) {
-			$this->create_test_component( 'Test Component ' . $i, $this->mock_component_1_content );
+		if ( isset( $expected['errors'] ) ) {
+			$this->assertEquals( $expected['errors'], $response->get_data()['data']['params'] );
 		}
-		
-		$this->act_as_admin();
-
-		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'name' => 'Test Component 50',
-			'content' => $this->mock_component_1_content,
-		] );
-
-		// Act - create the 50th component
-		$response = rest_do_request( $request );
-
-		// Assert - should create the 50th component successfully
-		$this->assertEquals( 201, $response->get_status() );
-		$component_id = $response->get_data()['data']['component_id'];
-
-		$post = get_post( $component_id );
-		$this->assertEquals( 'Test Component 50', $post->post_title );
-
-		// Act - create the 51st component
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'name' => 'Test Component 51',
-			'content' => $this->mock_component_1_content,
-		] );
-
-		$response = rest_do_request( $request );
-
-		// Assert - should fail on the 51st component
-		$this->assertEquals( 400, $response->get_status() );
-		$this->assertEquals( 'components_limit_exceeded', $response->get_data()['code'] );
-		$this->assertEquals( 'Components limit exceeded. Maximum allowed: 50', $response->get_data()['message'] );
-	}
-
-	public function test_post_create_component__fails_when_name_is_too_short() {
-		// Arrange
-		$this->act_as_admin();
-
-		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'name' => 'a  ',
-			'content' => [ $this->mock_component_1_content ],
-		] );
-
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 400, $response->get_status() );
-		$this->assertEquals( 'invalid_name', $response->get_data()['code'] );
-		$this->assertEquals( 'Invalid component name: name: component_name_too_short_min_2', $response->get_data()['message'] );
-	}
-
-	public function test_post_create_component__fails_when_name_is_too_long() {
-		// Arrange
-		$this->act_as_admin();
-
-		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'name' => 'a'.str_repeat('a', 51),
-			'content' => [ $this->mock_component_1_content ],
-		] );
-
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 400, $response->get_status() );
-		$this->assertEquals( 'invalid_name', $response->get_data()['code'] );
-		$this->assertEquals( 'Invalid component name: name: component_name_too_long_max_50', $response->get_data()['message'] );
 	}
 
 	public function test_post_create_component__fails_when_name_is_duplicated() {
@@ -386,97 +531,22 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
 		$request->set_body_params( [
-			'name' => 'Test Component',
-			'content' => [ $this->mock_component_1_content ],
+			'status' => 'publish',
+			'items' => [
+				[
+					'temp_id' => 1,
+					'title' => 'Test Component',
+					'elements' => $this->mock_component_1_content,
+				]
+			],
 		] );
 
 		$response = rest_do_request( $request );
 
 		// Assert
 		$this->assertEquals( 400, $response->get_status() );
-		$this->assertEquals( 'invalid_name', $response->get_data()['code'] );
-		$this->assertEquals( 'Invalid component name: name: duplicated_component_name', $response->get_data()['message'] );
-	}
-
-	public function test_post_create_component__fails_when_name_has_invalid_type() {
-		// Arrange
-		$this->act_as_admin();
-
-		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'name' => 123,
-			'content' => [ $this->mock_component_2_content ],
-		] );
-
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 400, $response->get_status() );
-		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
-		$this->assertArrayHasKey( 'name', $response->get_data()['data']['params'] );
-	}
-
-	public function test_post_create_component__fails_when_content_has_invalid_type() {
-		// Arrange
-		$this->act_as_admin();
-
-		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'name' => 'Test Component',
-			'content' => 'not-an-array',
-		] );
-
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 400, $response->get_status() );
-		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
-		$this->assertArrayHasKey( 'content', $response->get_data()['data']['params'] );
-	}
-
-	public function test_post_create_component__fails_when_content_has_invalid_structure() {
-		// Arrange
-		$this->act_as_admin();
-		
-		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'name' => 'Invalid Test Component',
-			'content' => $this->mock_invalid_component_content,
-		] );
-
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 400, $response->get_status() );
-		$this->assertEquals( 'content_validation_failed', $response->get_data()['code'] );
-		$this->assertEquals( 'Settings validation failed. link: invalid_value', $response->get_data()['message'] );
-	}
-
-	public function test_post_create_component__fails_when_reaching_max_components_limit() {
-		// Arrange
-		$this->act_as_admin();
-
-		// Create 50 components
-		for ( $i = 0; $i < 50; $i++ ) {
-			$this->create_test_component( 'Test Component ' . $i, $this->mock_component_1_content );
-		}
-
-		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'name' => 'Test Component',
-			'content' => [ $this->mock_component_1_content ],
-		] );
-
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 400, $response->get_status() );
-		$this->assertEquals( 'components_limit_exceeded', $response->get_data()['code'] );
-		$this->assertEquals( 'Components limit exceeded. Maximum allowed: 50', $response->get_data()['message'] );
+		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
+		$this->assertEquals( 'Validation failed: Component name &#039;Test Component&#039; is duplicated.', $response->get_data()['message'] );
 	}
 
 	public function test_register_routes__endpoints_exist() {
@@ -556,7 +626,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		if ( is_array( $expected ) && is_array( $actual ) ) {
 			return $this->arraysMatch( $expected, $actual );
 		}
-		
+
 		// For scalar values, use strict comparison
 		return $expected === $actual;
 	}
@@ -566,12 +636,12 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 			if ( ! array_key_exists( $key, $actual ) ) {
 				return false;
 			}
-			
+
 			if ( ! $this->objectsMatch( $expected_value, $actual[$key] ) ) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 }

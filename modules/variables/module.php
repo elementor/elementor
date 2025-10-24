@@ -57,7 +57,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Variables Manager', 'elementor' ),
 			'description' => esc_html__( 'Enable variables manager. (For this feature to work - Variables must be active)', 'elementor' ),
 			'hidden' => true,
-			'default' => ExperimentsManager::STATE_INACTIVE,
+			'default' => ExperimentsManager::STATE_ACTIVE,
 			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
 		]);
 	}

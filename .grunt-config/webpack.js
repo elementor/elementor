@@ -147,6 +147,7 @@ const entry = {
 	'e-wc-product-editor': path.resolve( __dirname, '../modules/wc-product-editor/assets/js/e-wc-product-editor.js' ),
 	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 	'cloud-library-screenshot': path.resolve( __dirname, '../modules/cloud-library/assets/js/preview/screenshot.js' ),
+	'pro-install-events': path.resolve( __dirname, '../modules/pro-install/assets/js/pro-install-events.js' ),
 };
 
 const frontendEntries = {
@@ -177,6 +178,7 @@ const externals = [
 		'@wordpress/core-data': 'wp.coreData',
 		'@wordpress/data': 'wp.data',
 		'@wordpress/plugins': 'wp.plugins',
+		'@wordpress/api-fetch': 'wp.apiFetch',
 		'@woocommerce/admin-layout': 'wc.adminLayout',
 	},
 	// Handle tree-shaking imports for ui and icons packages (@elementor/ui/xxx) to be pointed to the external object (elementorV2.ui.xxx).
