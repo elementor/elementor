@@ -28,10 +28,14 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// Await wpAdminPage.resetExperiments();
-		await page.close();
+		try {
+			const page = await browser.newPage();
+			const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+			// Await wpAdminPage.resetExperiments();
+			await page.close();
+		} catch ( error ) {
+			console.log( 'Warning: Failed to cleanup in afterAll hook:', error.message );
+		}
 	} );
 
 	test.beforeEach( async ( { page, apiRequests }, testInfo ) => {

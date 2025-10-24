@@ -97,7 +97,7 @@ class Unified_Widget_Conversion_Service {
 				'success' => true,
 				'widgets_created' => $creation_result['widgets_created'],
 				'global_classes_created' => $unified_processing_result['global_classes_created'] ?? 0,
-				'variables_created' => $creation_result['variables_created'],
+				'variables_created' => $unified_processing_result['variables_created'] ?? 0,
 				'compound_classes_created' => $creation_result['compound_classes_created'] ?? 0,
 				'compound_classes' => $creation_result['compound_classes'] ?? [],
 				'post_id' => $creation_result['post_id'],

@@ -166,23 +166,81 @@ $scoped_variables = [];
 				'value' => $value,
 			];
 		}
-		$converted = \Elementor\Modules\CssConverter\Services\Variables\Variable_Conversion_Service::convert_to_editor_variables( $normalized );
-		$results = [
-			'success' => true,
-			'variables' => $converted,
-			'rawVariables' => array_values( $raw ),
-			'stats' => [
-				'converted' => count( $converted ),
-				'extracted' => count( $raw ),
-				'skipped' => max( 0, count( $raw ) - count( $converted ) ),
-			],
-			'logs' => [
-				'css' => $css_path,
-				'variables' => $vars_path,
-			],
-		];
-		$stored_variables = $this->save_editor_variables( $converted, $update_mode );
-		$results['stored_variables'] = $stored_variables;
+		// Use new duplicate detection service
+		require_once __DIR__ . '/../services/variables/variables-service-provider.php';
+		$provider = \Elementor\Modules\CssConverter\Services\Variables\Variables_Service_Provider::instance();
+		
+		error_log( "VARIABLES ROUTE DEBUG: Provider available: " . ( $provider->is_available() ? 'YES' : 'NO' ) );
+		
+		if ( $provider->is_available() ) {
+			// Convert to CSS variable definitions format
+			$css_variable_definitions = [];
+			foreach ( $normalized as $var ) {
+				$css_variable_definitions[ $var['name'] ] = [
+					'name' => $var['name'],
+					'value' => $var['value'],
+					'source' => 'css-converter',
+					'selector' => ':root',
+				];
+			}
+			
+			// Process with duplicate detection
+			$integration_service = $provider->get_integration_service( $update_mode );
+			$variables_result = $integration_service->process_css_variables( $css_variable_definitions );
+			
+			error_log( "VARIABLES ROUTE DEBUG: Integration result: " . json_encode( $variables_result ) );
+			
+			// Apply variable name mappings to get final variable names
+			$final_variables = [];
+			$original_variables = $variables_result['variables'] ?? [];
+			$variable_name_mappings = $variables_result['variable_name_mappings'] ?? [];
+			
+			foreach ( $original_variables as $original_name => $variable_data ) {
+				$final_name = $variable_name_mappings[ $original_name ] ?? $original_name;
+				$final_variables[ $final_name ] = $variable_data;
+			}
+			
+			$results = [
+				'success' => true,
+				'variables' => $final_variables,
+				'rawVariables' => array_values( $raw ),
+				'stats' => [
+					'converted' => count( $variables_result['variables'] ?? [] ),
+					'extracted' => count( $raw ),
+					'skipped' => max( 0, count( $raw ) - count( $variables_result['variables'] ?? [] ) ),
+				],
+				'logs' => [
+					'css' => $css_path,
+					'variables' => $vars_path,
+				],
+				'stored_variables' => [
+					'created' => $variables_result['variables_created'] ?? 0,
+					'updated' => 0, // TODO: Track updates separately
+					'reused' => $variables_result['variables_reused'] ?? 0,
+					'errors' => [],
+					'update_mode' => $variables_result['update_mode'] ?? $update_mode,
+				],
+			];
+		} else {
+			// Fallback to old implementation
+			$converted = \Elementor\Modules\CssConverter\Services\Variables\Variable_Conversion_Service::convert_to_editor_variables( $normalized );
+			$results = [
+				'success' => true,
+				'variables' => $converted,
+				'rawVariables' => array_values( $raw ),
+				'stats' => [
+					'converted' => count( $converted ),
+					'extracted' => count( $raw ),
+					'skipped' => max( 0, count( $raw ) - count( $converted ) ),
+				],
+				'logs' => [
+					'css' => $css_path,
+					'variables' => $vars_path,
+				],
+			];
+			$stored_variables = $this->save_editor_variables( $converted, $update_mode );
+			$results['stored_variables'] = $stored_variables;
+		}
 		return new WP_REST_Response( $results, 200 );
 	}
 	private function is_invalid_url_or_css( $url, $css ): bool {

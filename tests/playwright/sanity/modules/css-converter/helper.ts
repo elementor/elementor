@@ -84,6 +84,7 @@ export class CssConverterHelper {
 					'X-DEV-TOKEN': this.devToken,
 					'Content-Type': 'application/json',
 				},
+				timeout: 15000,
 			} );
 		} catch ( e ) {
 			console.log( 'Reset endpoint not available, continuing...' );
@@ -115,6 +116,7 @@ export class CssConverterHelper {
 				'Content-Type': 'application/json',
 			},
 			data: payload,
+			timeout: 15000,
 		} );
 
 		
@@ -144,6 +146,7 @@ export class CssConverterHelper {
 				content: cssContent,
 				options: defaultOptions,
 			},
+			timeout: 15000,
 		} );
 
 		return await apiResponse.json() as CssConverterResponse;
@@ -174,6 +177,7 @@ export class CssConverterHelper {
 				followImports,
 				options: defaultOptions,
 			},
+			timeout: 15000,
 		} );
 
 		return await apiResponse.json() as CssConverterResponse;
@@ -193,6 +197,7 @@ export class CssConverterHelper {
 				css: cssContent,
 				store,
 			},
+			timeout: 15000,
 		} );
 
 		return await apiResponse.json() as CssClassesResponse;
@@ -212,6 +217,7 @@ export class CssConverterHelper {
 				css: cssContent,
 				update_mode: updateMode,
 			},
+			timeout: 15000,
 		} );
 
 		return await apiResponse.json();

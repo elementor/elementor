@@ -28,10 +28,14 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// Await wpAdminPage.resetExperiments();
-		await page.close();
+		try {
+			const page = await browser.newPage();
+			const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+			// Await wpAdminPage.resetExperiments();
+			await page.close();
+		} catch ( error ) {
+			console.log( 'Warning: Failed to cleanup in afterAll hook:', error.message );
+		}
 	} );
 
 	test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
@@ -74,32 +78,36 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 				name: 'letter-spacing: 1px on h1',
 				property: 'letter-spacing',
 				expected: '1px',
-				selector: '.e-con h1'
+				selector: '.e-con h1',
+				text: 'Letter spacing 1px'
 			},
 			{
 				name: 'letter-spacing: 2px on h2',
 				property: 'letter-spacing',
 				expected: '2px',
-				selector: '.e-con h2'
+				selector: '.e-con h2',
+				text: 'Letter spacing 2px'
 			},
 			{
 				name: 'letter-spacing: 0.5px on p',
 				property: 'letter-spacing',
 				expected: '0.5px',
-				selector: '.e-con p'
+				selector: '.e-con p',
+				text: 'Letter spacing 0.5px'
 			},
 			{
 				name: 'letter-spacing: 1.5px on p',
 				property: 'letter-spacing',
 				expected: '1.5px',
-				selector: '.e-con p'
+				selector: '.e-con p',
+				text: 'Letter spacing 1.5px'
 			},
 			{ 
-				index: 2, 
 				name: 'letter-spacing: 0.1em on p', 
 				property: 'letter-spacing', 
 				expected: '0.1em',
-				selector: '.e-con p'
+				selector: '.e-con p',
+				text: 'Letter spacing 0.1em'
 			},
 		];
 

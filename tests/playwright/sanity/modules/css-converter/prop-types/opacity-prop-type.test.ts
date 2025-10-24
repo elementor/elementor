@@ -28,10 +28,14 @@ test.describe( 'Opacity Prop Type Integration @prop-types', () => {
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		// Await wpAdminPage.resetExperiments();
-		await page.close();
+		try {
+			const page = await browser.newPage();
+			const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+			// Await wpAdminPage.resetExperiments();
+			await page.close();
+		} catch ( error ) {
+			console.log( 'Warning: Failed to cleanup in afterAll hook:', error.message );
+		}
 	} );
 
 	test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
@@ -72,6 +76,30 @@ test.describe( 'Opacity Prop Type Integration @prop-types', () => {
 		// Test all converted paragraph elements
 		const paragraphElements = elementorFrame.locator( '.e-con p' );
 		await paragraphElements.first().waitFor( { state: 'visible', timeout: 10000 } );
+
+		// Define test cases for opacity properties
+		const testCases = [
+			{
+				textContent: 'Full opacity',
+				expected: '1'
+			},
+			{
+				textContent: 'Half opacity',
+				expected: '0.5'
+			},
+			{
+				textContent: 'Transparent',
+				expected: '0'
+			},
+			{
+				textContent: 'Three quarters opacity',
+				expected: '0.75'
+			},
+			{
+				textContent: 'Quarter opacity',
+				expected: '0.25'
+			}
+		];
 
 		// Test opacity values using specific text content selectors
 		await test.step( 'Verify opacity values are applied correctly', async () => {

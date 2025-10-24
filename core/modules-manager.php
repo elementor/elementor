@@ -106,6 +106,7 @@ class Modules_Manager {
 			'nested-tabs',
 			'nested-accordion',
 			'container-converter',
+			'css-converter',
 			'web-cli',
 			'promotions',
 			'pro-install',

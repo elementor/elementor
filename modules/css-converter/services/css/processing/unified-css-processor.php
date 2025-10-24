@@ -78,6 +78,9 @@ class Unified_Css_Processor {
 		$css_class_rules = $this->extract_css_class_rules_for_global_classes( $css, $flattening_results );
 		$global_classes_result = $this->process_global_classes_with_duplicate_detection( $css_class_rules, $flattening_results );
 
+		// PHASE 1B: Process CSS variables with duplicate detection
+		$variables_result = $this->process_css_variables_with_duplicate_detection();
+
 		// PHASE 2: Apply class name mappings to widgets BEFORE resolving styles
 		$widgets_with_final_class_names = $this->apply_class_name_mappings_to_widgets(
 			$widgets,
@@ -105,6 +108,9 @@ class Unified_Css_Processor {
 			'global_classes' => $global_classes_result['global_classes'],
 			'global_classes_created' => count( $global_classes_result['global_classes'] ),
 			'class_name_mappings' => $global_classes_result['class_name_mappings'],
+			'variables' => $variables_result['variables'],
+			'variables_created' => $variables_result['variables_created'],
+			'variable_name_mappings' => $variables_result['variable_name_mappings'],
 			'flattened_classes' => $flattening_results['flattened_classes'],
 			'flattened_classes_count' => count( $flattening_results['flattened_classes'] ),
 			'compound_classes' => $compound_results['compound_global_classes'] ?? [],
@@ -1828,6 +1834,37 @@ class Unified_Css_Processor {
 			'global_classes' => $all_global_classes,
 			'class_name_mappings' => $class_name_mappings,
 		];
+	}
+
+	private function process_css_variables_with_duplicate_detection(): array {
+		require_once __DIR__ . '/../../variables/variables-service-provider.php';
+
+		$provider = \Elementor\Modules\CssConverter\Services\Variables\Variables_Service_Provider::instance();
+
+		if ( ! $provider->is_available() ) {
+			return [
+				'variables' => [],
+				'variables_created' => 0,
+				'variable_name_mappings' => [],
+			];
+		}
+
+		// Get CSS variable definitions extracted during parsing
+		$css_variable_definitions = $this->get_css_variable_definitions();
+
+		if ( empty( $css_variable_definitions ) ) {
+			return [
+				'variables' => [],
+				'variables_created' => 0,
+				'variable_name_mappings' => [],
+			];
+		}
+
+		// Process variables with duplicate detection
+		$integration_service = $provider->get_integration_service();
+		$variables_result = $integration_service->process_css_variables( $css_variable_definitions );
+
+		return $variables_result;
 	}
 
 	/**
