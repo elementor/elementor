@@ -170,8 +170,6 @@ $scoped_variables = [];
 		require_once __DIR__ . '/../services/variables/variables-service-provider.php';
 		$provider = \Elementor\Modules\CssConverter\Services\Variables\Variables_Service_Provider::instance();
 		
-		error_log( "VARIABLES ROUTE DEBUG: Provider available: " . ( $provider->is_available() ? 'YES' : 'NO' ) );
-		
 		if ( $provider->is_available() ) {
 			// Convert to CSS variable definitions format
 			$css_variable_definitions = [];
@@ -187,8 +185,6 @@ $scoped_variables = [];
 			// Process with duplicate detection
 			$integration_service = $provider->get_integration_service( $update_mode );
 			$variables_result = $integration_service->process_css_variables( $css_variable_definitions );
-			
-			error_log( "VARIABLES ROUTE DEBUG: Integration result: " . json_encode( $variables_result ) );
 			
 			// Apply variable name mappings to get final variable names
 			$final_variables = [];

@@ -36,6 +36,8 @@ class Global_Classes_Integration_Service {
 				'skipped' => 0,
 				'message' => 'No CSS class selectors found',
 				'processing_time' => $this->calculate_processing_time( $start_time ),
+				'global_classes' => [],
+				'class_name_mappings' => [],
 			];
 		}
 
@@ -50,20 +52,28 @@ class Global_Classes_Integration_Service {
 				'skipped' => count( $detected ),
 				'message' => 'No properties could be converted to atomic format',
 				'processing_time' => $this->calculate_processing_time( $start_time ),
+				'global_classes' => [],
+				'class_name_mappings' => [],
 			];
 		}
 
 		$result = $this->registration_service->register_with_elementor( $converted );
 
-		$final_result = [
-			'success' => ! isset( $result['error'] ),
-			'detected' => count( $detected ),
-			'converted' => count( $converted ),
-			'registered' => $result['registered'] ?? 0,
-			'skipped' => $result['skipped'] ?? 0,
-			'processing_time' => $this->calculate_processing_time( $start_time ),
-			'class_name_mappings' => $result['class_name_mappings'] ?? [],
-		];
+		// Build global_classes array with FINAL class names (after duplicate processing)
+		$class_name_mappings = $result['class_name_mappings'] ?? [];
+		$global_classes = $this->build_global_classes_with_final_names( $detected, $class_name_mappings );
+
+	$final_result = [
+		'success' => ! isset( $result['error'] ),
+		'detected' => count( $detected ),
+		'converted' => count( $converted ),
+		'registered' => $result['registered'] ?? 0,
+		'skipped' => $result['skipped'] ?? 0,
+		'processing_time' => $this->calculate_processing_time( $start_time ),
+		'class_name_mappings' => $class_name_mappings,
+		'global_classes' => $global_classes,
+		'debug_duplicate_detection' => $result['debug_duplicate_detection'] ?? null,
+	];
 
 		if ( isset( $result['error'] ) ) {
 			$final_result['error'] = $result['error'];
@@ -210,5 +220,26 @@ class Global_Classes_Integration_Service {
 		}
 
 		return $message;
+	}
+
+	private function build_global_classes_with_final_names( array $detected, array $class_name_mappings ): array {
+		$global_classes = [];
+
+		error_log( 'DEBUG DUPLICATE: Building global_classes with mappings' );
+		error_log( 'DEBUG DUPLICATE: Detected classes: ' . implode( ', ', array_keys( $detected ) ) );
+		error_log( 'DEBUG DUPLICATE: Mappings: ' . json_encode( $class_name_mappings ) );
+
+		foreach ( $detected as $original_class_name => $class_data ) {
+			$final_class_name = $class_name_mappings[ $original_class_name ] ?? $original_class_name;
+			$global_classes[ $final_class_name ] = $class_data;
+			
+			if ( $original_class_name !== $final_class_name ) {
+				error_log( "DEBUG DUPLICATE: Mapped '{$original_class_name}' -> '{$final_class_name}'" );
+			}
+		}
+
+		error_log( 'DEBUG DUPLICATE: Final global_classes keys: ' . implode( ', ', array_keys( $global_classes ) ) );
+
+		return $global_classes;
 	}
 }

@@ -67,7 +67,7 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
-		
+		// await page.pause();
 		
 		await test.step( 'Test class-base-convertedd letter-spacing and text-transform', async () => {
 			const elementorFrame = editor.getPreviewFrame();

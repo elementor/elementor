@@ -39,19 +39,29 @@ test.describe( 'Class Duplicate Detection @duplicate-detection', () => {
 			<div class="${className}"><p>First red item</p></div>
 		`;
 		
-		const firstResult = await cssHelper.convertHtmlWithCss( request, htmlFirst, '' );
-		
-		// Second conversion: .test-class-123456 with blue color (should create test-class-123456-1)
+	const firstResult = await cssHelper.convertHtmlWithCss( request, htmlFirst, '' );
+	console.log( '=== FIRST RESULT ===' );
+	console.log( 'Success:', firstResult.success );
+	console.log( 'Global classes created:', firstResult.global_classes_created );
+	console.log( 'Debug duplicate detection:', JSON.stringify( firstResult.debug_duplicate_detection, null, 2 ) );
+	
+	// Second conversion: .test-class-123456 with blue color (should create test-class-123456-1)
 		const htmlSecond = `
 			<style>
 				.${className} { color: blue; font-size: 18px; }
 			</style>
 			<div class="${className}"><p>Second blue item</p></div>
 		`;
-		
-		const secondResult = await cssHelper.convertHtmlWithCss( request, htmlSecond, '' );
-		
-		// Third conversion: .test-class-123456 with green color (should create test-class-123456-2)
+
+	const secondResult = await cssHelper.convertHtmlWithCss( request, htmlSecond, '' );
+	console.log( '=== SECOND RESULT ===' );
+	console.log( 'Success:', secondResult.success );
+	console.log( 'Global classes created:', secondResult.global_classes_created );
+	console.log( 'Global classes:', JSON.stringify( secondResult.global_classes, null, 2 ) );
+	console.log( 'Class name mappings:', JSON.stringify( secondResult.class_name_mappings, null, 2 ) );
+	console.log( 'Debug duplicate detection:', JSON.stringify( secondResult.debug_duplicate_detection, null, 2 ) );
+	
+	// Third conversion: .test-class-123456 with green color (should create test-class-123456-2)
 		const htmlThird = `
 			<style>
 				.${className} { color: green; font-size: 20px; }
@@ -102,8 +112,11 @@ test.describe( 'Class Duplicate Detection @duplicate-detection', () => {
 		
 		// Custom assertion: Second item should have suffixed class
 		const secondContainerClass = await secondContainer.getAttribute( 'class' );
+		console.log( 'Second page container classes:', secondContainerClass );
+		console.log( 'Looking for pattern:', `${className}-\\d+` );
 		const secondClassPattern = new RegExp( `\\b${className}-\\d+\\b` );
 		const hasValidSecondClass = secondClassPattern.test( secondContainerClass || '' );
+		console.log( 'Pattern test result:', hasValidSecondClass );
 		expect( hasValidSecondClass ).toBe( true );
 		const secondParagraph = editorFrame.locator( 'p' ).filter( { hasText: 'Second blue item' } );
 		await expect( secondParagraph ).toHaveCSS( 'color', 'rgb(0, 0, 255)' );

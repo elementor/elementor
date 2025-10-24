@@ -12,8 +12,6 @@ class Global_Classes_Registration_Service {
 	const MAX_CLASSES_LIMIT = 50;
 
 	public function register_with_elementor( array $converted_classes ): array {
-		error_log( "DUPLICATE DEBUG: register_with_elementor called with " . count( $converted_classes ) . " classes" );
-		
 		if ( ! $this->is_global_classes_available() ) {
 			return [
 				'registered' => 0,
@@ -37,15 +35,21 @@ class Global_Classes_Registration_Service {
 		$order = $existing->get_order()->all();
 
 
-		$existing_labels = $this->extract_existing_labels( $items );
-		error_log( "DUPLICATE DEBUG: Found " . count( $existing_labels ) . " existing classes: " . implode( ', ', array_slice( $existing_labels, 0, 10 ) ) );
+	$existing_labels = $this->extract_existing_labels( $items );
+	
+	$debug_info = [
+		'existing_labels_count' => count( $existing_labels ),
+		'existing_labels' => array_slice( $existing_labels, 0, 10 ),
+		'converting_classes' => array_keys( $converted_classes ),
+		'total_items_count' => count( $items ),
+	];
+	error_log( 'DUPLICATE TEST: ' . wp_json_encode( $debug_info ) );
 
-		$result = $this->filter_new_classes_with_duplicate_detection( $converted_classes, $existing_labels, $items );
+	$result = $this->filter_new_classes_with_duplicate_detection( $converted_classes, $existing_labels, $items );
 		$new_classes = $result['new_classes'];
 		$class_name_mappings = $result['class_name_mappings'];
 
 		if ( empty( $new_classes ) ) {
-			error_log( "DUPLICATE DEBUG: No new classes to register. Mappings: " . json_encode( $class_name_mappings ) );
 			return [
 				'registered' => 0,
 				'skipped' => count( $converted_classes ),
@@ -67,15 +71,43 @@ class Global_Classes_Registration_Service {
 			++$registered;
 		}
 
-		try {
-			$repository->put( $items, $order );
+	try {
+		// Debug: Log what we're about to save
+		$new_class_labels = array_keys( $classes_after_limit );
+		error_log( 'DUPLICATE TEST: About to save ' . count( $items ) . ' total classes' );
+		error_log( 'DUPLICATE TEST: New classes being added: ' . implode( ', ', $new_class_labels ) );
+		
+		$repository->put( $items, $order );
+		
+		// Debug: Verify data was saved by reading it back immediately
+		$verify_repository = $this->get_global_classes_repository();
+		$verify_existing = $verify_repository->all();
+		$verify_items = $verify_existing->get_items()->all();
+		$verify_labels = $this->extract_existing_labels( $verify_items );
+		error_log( 'DUPLICATE TEST: After save, repository has ' . count( $verify_labels ) . ' classes' );
+		error_log( 'DUPLICATE TEST: First 10 after save: ' . implode( ', ', array_slice( $verify_labels, 0, 10 ) ) );
+		
+		// Force clear of kit metadata cache to ensure subsequent API calls see updated data
+		// The Elementor Kit caches metadata, and we need to invalidate this specific cache
+		$kit_id = \Elementor\Plugin::$instance->kits_manager->get_active_kit()->get_id();
+		if ( $kit_id ) {
+			// Clear WordPress post meta cache for this kit
+			wp_cache_delete( $kit_id, 'post_meta' );
+			// Also try clearing the kit's internal cache
+			clean_post_cache( $kit_id );
+		}
 
-			return [
-				'registered' => $registered,
-				'skipped' => $skipped,
-				'total_classes' => count( $items ),
-				'class_name_mappings' => $class_name_mappings,
-			];
+		$debug_info['after_save_total_classes'] = count( $verify_labels );
+		$debug_info['after_save_first_10'] = array_slice( $verify_labels, 0, 10 );
+		$debug_info['new_classes_added'] = $new_class_labels;
+		
+		return [
+			'registered' => $registered,
+			'skipped' => $skipped,
+			'total_classes' => count( $items ),
+			'class_name_mappings' => $class_name_mappings,
+			'debug_duplicate_detection' => $debug_info,
+		];
 		} catch ( \Exception $e ) {
 			return [
 				'registered' => 0,
@@ -130,17 +162,13 @@ class Global_Classes_Registration_Service {
 				// Duplicate detected - handle it
 				$final_class_name = $this->handle_duplicate_class( $class_name, $class_data, $existing_items );
 				
-				error_log( "DUPLICATE DEBUG: Class '{$class_name}' is duplicate. Final name: " . ( $final_class_name ?: 'null (reuse)' ) );
-				
 				// If we get a new name (with suffix), add it
 				if ( $final_class_name && $final_class_name !== $class_name ) {
 					$new_classes[ $final_class_name ] = $class_data;
 					$class_name_mappings[ $class_name ] = $final_class_name; // Track the mapping
-					error_log( "DUPLICATE DEBUG: Adding new class '{$final_class_name}' with mapping '{$class_name}' -> '{$final_class_name}'" );
 				} elseif ( null === $final_class_name ) {
 					// Reuse existing class - map to original name
 					$class_name_mappings[ $class_name ] = $class_name;
-					error_log( "DUPLICATE DEBUG: Reusing existing class '{$class_name}'" );
 				}
 				// If we get null or same name, skip (reuse existing)
 				continue;
@@ -158,11 +186,9 @@ class Global_Classes_Registration_Service {
 	}
 
 	private function handle_duplicate_class( string $class_name, array $class_data, array $existing_items ): ?string {
-
 		// Find the existing class with the same name
 		if ( ! isset( $existing_items[ $class_name ] ) ) {
 			// Class doesn't exist, this shouldn't happen but handle gracefully
-			error_log( "DUPLICATE DEBUG: Class '{$class_name}' not found in existing items, returning as-is" );
 			return $class_name;
 		}
 
@@ -170,20 +196,14 @@ class Global_Classes_Registration_Service {
 		$existing_atomic_props = $this->extract_atomic_props( $existing_class );
 		$new_atomic_props = $class_data['atomic_props'];
 
-		error_log( "DUPLICATE DEBUG: Comparing styles for '{$class_name}'" );
-		error_log( "DUPLICATE DEBUG: Existing props: " . json_encode( $existing_atomic_props ) );
-		error_log( "DUPLICATE DEBUG: New props: " . json_encode( $new_atomic_props ) );
-
 		// Compare atomic properties
 		if ( $this->are_styles_identical( $existing_atomic_props, $new_atomic_props ) ) {
 			// Styles are identical - reuse existing class
-			error_log( "DUPLICATE DEBUG: Styles are IDENTICAL - reusing existing class" );
 			return null;
 		}
 
 		// Styles are different - create new class with suffix
 		$new_suffix = $this->find_next_available_suffix( $class_name, $existing_items );
-		error_log( "DUPLICATE DEBUG: Styles are DIFFERENT - creating new class '{$new_suffix}'" );
 		return $new_suffix;
 	}
 

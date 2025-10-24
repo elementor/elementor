@@ -93,26 +93,29 @@ class Unified_Widget_Conversion_Service {
 			$widgets_count = is_array( $widgets_created ) ? count( $widgets_created ) : (int) $widgets_created;
 			$conversion_log['end_time'] = microtime( true );
 			$conversion_log['total_time'] = $conversion_log['end_time'] - $conversion_log['start_time'];
-			$final_result = [
-				'success' => true,
-				'widgets_created' => $creation_result['widgets_created'],
-				'global_classes_created' => $unified_processing_result['global_classes_created'] ?? 0,
-				'variables_created' => $unified_processing_result['variables_created'] ?? 0,
-				'compound_classes_created' => $creation_result['compound_classes_created'] ?? 0,
-				'compound_classes' => $creation_result['compound_classes'] ?? [],
-				'post_id' => $creation_result['post_id'],
-				'edit_url' => $creation_result['edit_url'],
-				'conversion_log' => $conversion_log,
-				'warnings' => $conversion_log['warnings'],
-				'errors' => $creation_result['errors'] ?? [],
-				'flattened_classes_created' => $flattened_classes_count,
-				'reset_styles_detected' => $reset_styles_detected,
-				'element_selectors_processed' => $reset_styles_stats['reset_element_styles'] ?? 0,
-				'direct_widget_styles_applied' => $reset_styles_stats['direct_applicable_styles'] ?? 0,
-				'reset_css_file_generated' => ! empty( $complex_reset_styles ),
-				'reset_styles_stats' => $reset_styles_stats,
-				'complex_reset_styles_count' => count( $complex_reset_styles ),
-			];
+	$final_result = [
+		'success' => true,
+		'widgets_created' => $creation_result['widgets_created'],
+		'global_classes_created' => $unified_processing_result['global_classes_created'] ?? 0,
+		'global_classes' => $unified_processing_result['global_classes'] ?? [],
+		'class_name_mappings' => $unified_processing_result['class_name_mappings'] ?? [],
+		'debug_duplicate_detection' => $unified_processing_result['debug_duplicate_detection'] ?? null,
+		'variables_created' => $creation_result['variables_created'],
+		'compound_classes_created' => $creation_result['compound_classes_created'] ?? 0,
+		'compound_classes' => $creation_result['compound_classes'] ?? [],
+		'post_id' => $creation_result['post_id'],
+		'edit_url' => $creation_result['edit_url'],
+		'conversion_log' => $conversion_log,
+		'warnings' => $conversion_log['warnings'],
+		'errors' => $creation_result['errors'] ?? [],
+		'flattened_classes_created' => $flattened_classes_count,
+		'reset_styles_detected' => $reset_styles_detected,
+		'element_selectors_processed' => $reset_styles_stats['reset_element_styles'] ?? 0,
+		'direct_widget_styles_applied' => $reset_styles_stats['direct_applicable_styles'] ?? 0,
+		'reset_css_file_generated' => ! empty( $complex_reset_styles ),
+		'reset_styles_stats' => $reset_styles_stats,
+		'complex_reset_styles_count' => count( $complex_reset_styles ),
+	];
 			return $final_result;
 		} catch ( \Exception $e ) {
 			$conversion_log['errors'][] = [

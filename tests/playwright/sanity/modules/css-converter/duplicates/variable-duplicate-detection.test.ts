@@ -109,8 +109,12 @@ test.describe( 'Variable Duplicate Detection @duplicate-detection', () => {
 		} );
 
 		test( 'should create suffixed variable when value differs', async ( { request } ) => {
-			const css1 = ':root { --brand-color: #ff0000; }';
-			const css2 = ':root { --brand-color: #00ff00; }';
+			// Use unique variable name to avoid conflicts with existing variables
+			const uniqueId = Date.now();
+			const variableName = `brand-color-${uniqueId}`;
+			
+			const css1 = `:root { --${variableName}: #ff0000; }`;
+			const css2 = `:root { --${variableName}: #00ff00; }`;
 
 			const result1 = await cssHelper.convertCssVariables( request, css1 );
 			expect( result1.success ).toBe( true );

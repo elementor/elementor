@@ -78,9 +78,6 @@ class Unified_Css_Processor {
 		$css_class_rules = $this->extract_css_class_rules_for_global_classes( $css, $flattening_results );
 		$global_classes_result = $this->process_global_classes_with_duplicate_detection( $css_class_rules, $flattening_results );
 
-		// PHASE 1B: Process CSS variables with duplicate detection
-		$variables_result = $this->process_css_variables_with_duplicate_detection();
-
 		// PHASE 2: Apply class name mappings to widgets BEFORE resolving styles
 		$widgets_with_final_class_names = $this->apply_class_name_mappings_to_widgets(
 			$widgets,
@@ -100,29 +97,27 @@ class Unified_Css_Processor {
 
 		$html_modification_summary = $this->html_class_modifier->get_modification_summary();
 
-		return [
-			'widgets' => $resolved_widgets,
-			'stats' => $debug_info,
-			'css_class_rules' => $css_class_rules,
-			'css_variable_definitions' => $this->css_variable_definitions,
-			'global_classes' => $global_classes_result['global_classes'],
-			'global_classes_created' => count( $global_classes_result['global_classes'] ),
-			'class_name_mappings' => $global_classes_result['class_name_mappings'],
-			'variables' => $variables_result['variables'],
-			'variables_created' => $variables_result['variables_created'],
-			'variable_name_mappings' => $variables_result['variable_name_mappings'],
-			'flattened_classes' => $flattening_results['flattened_classes'],
-			'flattened_classes_count' => count( $flattening_results['flattened_classes'] ),
-			'compound_classes' => $compound_results['compound_global_classes'] ?? [],
-			'compound_classes_created' => count( $compound_results['compound_global_classes'] ?? [] ),
-			'reset_styles_detected' => $reset_styles_stats['reset_element_styles'] > 0 || $reset_styles_stats['reset_complex_styles'] > 0,
-			'reset_styles_stats' => $reset_styles_stats,
-			'complex_reset_styles' => $complex_reset_styles,
-			'html_class_modifications' => $html_modification_summary,
-			'flattening_results' => $flattening_results,
-			'compound_results' => $compound_results,
-			'html_class_modifier' => $this->html_class_modifier,
-		];
+	return [
+		'widgets' => $resolved_widgets,
+		'stats' => $debug_info,
+		'css_class_rules' => $css_class_rules,
+		'css_variable_definitions' => $this->css_variable_definitions,
+		'global_classes' => $global_classes_result['global_classes'],
+		'global_classes_created' => count( $global_classes_result['global_classes'] ),
+		'class_name_mappings' => $global_classes_result['class_name_mappings'],
+		'debug_duplicate_detection' => $global_classes_result['debug_duplicate_detection'] ?? null,
+		'flattened_classes' => $flattening_results['flattened_classes'],
+		'flattened_classes_count' => count( $flattening_results['flattened_classes'] ),
+		'compound_classes' => $compound_results['compound_global_classes'] ?? [],
+		'compound_classes_created' => count( $compound_results['compound_global_classes'] ?? [] ),
+		'reset_styles_detected' => $reset_styles_stats['reset_element_styles'] > 0 || $reset_styles_stats['reset_complex_styles'] > 0,
+		'reset_styles_stats' => $reset_styles_stats,
+		'complex_reset_styles' => $complex_reset_styles,
+		'html_class_modifications' => $html_modification_summary,
+		'flattening_results' => $flattening_results,
+		'compound_results' => $compound_results,
+		'html_class_modifier' => $this->html_class_modifier,
+	];
 	}
 	private function collect_all_styles_from_sources( string $css, array $widgets ): void {
 		$this->unified_style_manager->reset();
@@ -1820,51 +1815,22 @@ class Unified_Css_Processor {
 		$integration_service = $provider->get_integration_service();
 		$regular_classes_result = $integration_service->process_css_rules( $css_class_rules );
 
-		$all_global_classes = $regular_classes_result['global_classes'] ?? [];
-		$class_name_mappings = $regular_classes_result['class_name_mappings'] ?? [];
+	$all_global_classes = $regular_classes_result['global_classes'] ?? [];
+	$class_name_mappings = $regular_classes_result['class_name_mappings'] ?? [];
+	$debug_duplicate_detection = $regular_classes_result['debug_duplicate_detection'] ?? null;
 
-		// Process flattened classes (if any)
-		$flattened_classes = $flattening_results['flattened_classes'] ?? [];
-		if ( ! empty( $flattened_classes ) ) {
-			$filtered_flattened_classes = $this->filter_flattened_classes_for_widgets( $flattened_classes );
-			$all_global_classes = array_merge( $all_global_classes, $filtered_flattened_classes );
-		}
-
-		return [
-			'global_classes' => $all_global_classes,
-			'class_name_mappings' => $class_name_mappings,
-		];
+	// Process flattened classes (if any)
+	$flattened_classes = $flattening_results['flattened_classes'] ?? [];
+	if ( ! empty( $flattened_classes ) ) {
+		$filtered_flattened_classes = $this->filter_flattened_classes_for_widgets( $flattened_classes );
+		$all_global_classes = array_merge( $all_global_classes, $filtered_flattened_classes );
 	}
 
-	private function process_css_variables_with_duplicate_detection(): array {
-		require_once __DIR__ . '/../../variables/variables-service-provider.php';
-
-		$provider = \Elementor\Modules\CssConverter\Services\Variables\Variables_Service_Provider::instance();
-
-		if ( ! $provider->is_available() ) {
-			return [
-				'variables' => [],
-				'variables_created' => 0,
-				'variable_name_mappings' => [],
-			];
-		}
-
-		// Get CSS variable definitions extracted during parsing
-		$css_variable_definitions = $this->get_css_variable_definitions();
-
-		if ( empty( $css_variable_definitions ) ) {
-			return [
-				'variables' => [],
-				'variables_created' => 0,
-				'variable_name_mappings' => [],
-			];
-		}
-
-		// Process variables with duplicate detection
-		$integration_service = $provider->get_integration_service();
-		$variables_result = $integration_service->process_css_variables( $css_variable_definitions );
-
-		return $variables_result;
+	return [
+		'global_classes' => $all_global_classes,
+		'class_name_mappings' => $class_name_mappings,
+		'debug_duplicate_detection' => $debug_duplicate_detection,
+	];
 	}
 
 	/**

@@ -23,10 +23,7 @@ class Variables_Registration_Service {
 	}
 
 	public function register_with_elementor( array $converted_variables ): array {
-		error_log( "VARIABLES DEBUG: register_with_elementor called with " . count( $converted_variables ) . " variables" );
-		
 		if ( ! $this->is_variables_available() ) {
-			error_log( "VARIABLES DEBUG: Variables module not available" );
 			return [
 				'registered' => 0,
 				'skipped' => count( $converted_variables ),
@@ -45,10 +42,8 @@ class Variables_Registration_Service {
 		}
 
 		$items = $repository->variables();
-		error_log( "VARIABLES DEBUG: Found " . count( $items ) . " existing variables in repository" );
 
 		$existing_names = $this->extract_existing_names( $items );
-		error_log( "VARIABLES DEBUG: Existing variable names: " . json_encode( $existing_names ) );
 
 		$result = $this->filter_new_variables_with_duplicate_detection( $converted_variables, $existing_names, $items );
 		$new_variables = $result['new_variables'];
