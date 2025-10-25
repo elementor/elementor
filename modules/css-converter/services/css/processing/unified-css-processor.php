@@ -48,10 +48,10 @@ class Unified_Css_Processor {
 	}
 	public function process_css_and_widgets( string $css, array $widgets ): array {
 		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'process_css_and_widgets called at ' . date( 'Y-m-d H:i:s' ) . ' with ' . strlen( $css ) . ' chars CSS and ' . count( $widgets ) . " widgets\n", FILE_APPEND );
-		
+
 		error_log( 'DEBUG: MAIN PROCESSOR - ENTRY POINT - process_css_and_widgets() method called' );
 		error_log( 'DEBUG: MAIN PROCESSOR - process_css_and_widgets() called with ' . strlen( $css ) . ' chars CSS and ' . count( $widgets ) . ' widgets' );
-		
+
 		// TEMPORARY: Force a visible error to confirm this method is called
 		if ( strpos( $css, '.first.second' ) !== false ) {
 			error_log( 'DEBUG: MAIN PROCESSOR - COMPOUND CSS DETECTED - This should show up!' );
@@ -72,19 +72,11 @@ class Unified_Css_Processor {
 			$flattened_class = is_array( $mapping ) ? ( $mapping['flattened_class'] ?? 'N/A' ) : $mapping;
 		}
 
-		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'HTML CLASS MODIFIER: Initializing with flattening results - ' . count( $flattening_results['class_mappings'] ) . ' class mappings' . "\n", FILE_APPEND );
-		
-		$this->html_class_modifier->initialize_with_flattening_results(
-			$flattening_results['class_mappings'],
-			$flattening_results['classes_with_direct_styles'],
-			$flattening_results['classes_only_in_nested']
-		);
+		// Use unified modifier interface
+		$css_class_modifiers = $processing_results['css_class_modifiers'];
+		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'HTML CLASS MODIFIER: Initializing with unified modifiers - ' . count( $css_class_modifiers ) . ' modifier types' . "\n", FILE_APPEND );
 
-		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'HTML CLASS MODIFIER: Initializing with compound results - ' . count( $compound_results['compound_mappings'] ) . ' compound mappings' . "\n", FILE_APPEND );
-		
-		$this->html_class_modifier->initialize_with_compound_results(
-			$compound_results['compound_mappings']
-		);
+		$this->html_class_modifier->initialize_with_modifiers( $css_class_modifiers );
 
 		// FIX: Split CSS rules to prevent duplicate styling
 		// Separate rules that should become global classes from those that should be atomic properties
@@ -134,9 +126,10 @@ class Unified_Css_Processor {
 			'class_name_mappings' => $global_classes_result['class_name_mappings'],
 			'debug_duplicate_detection' => $global_classes_result['debug_duplicate_detection'] ?? null,
 			'flattened_classes' => $flattening_results['flattened_classes'],
-			'flattened_classes_count' => count( $flattening_results['flattened_classes'] ),
+			'flattened_classes_count' => $this->count_modifiers_by_type( $css_class_modifiers, 'flattening' ),
 			'compound_classes' => $compound_results['compound_global_classes'] ?? [],
-			'compound_classes_created' => count( $compound_results['compound_global_classes'] ?? [] ),
+			'compound_classes_created' => $this->count_modifiers_by_type( $css_class_modifiers, 'compound' ),
+			'css_class_modifiers' => $css_class_modifiers,
 			'reset_styles_detected' => $reset_styles_stats['reset_element_styles'] > 0 || $reset_styles_stats['reset_complex_styles'] > 0,
 			'reset_styles_stats' => $reset_styles_stats,
 			'complex_reset_styles' => $complex_reset_styles,
@@ -1403,9 +1396,9 @@ class Unified_Css_Processor {
 
 	private function process_css_with_unified_registry( array $css_rules, array $widgets ): array {
 		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'process_css_with_unified_registry called with ' . count( $css_rules ) . ' CSS rules and ' . count( $widgets ) . " widgets\n", FILE_APPEND );
-		
+
 		error_log( 'DEBUG: UNIFIED REGISTRY - Starting with ' . count( $css_rules ) . ' CSS rules and ' . count( $widgets ) . ' widgets' );
-		
+
 		// Create a single context with all necessary data
 		$context = new Css_Processing_Context();
 		$context->set_metadata( 'css_rules', $css_rules );
@@ -1425,10 +1418,38 @@ class Unified_Css_Processor {
 
 		error_log( 'DEBUG: UNIFIED REGISTRY - Results: ' . count( $flattened_rules ) . ' flattened rules, ' . count( $compound_global_classes ) . ' compound classes, ' . count( $compound_mappings ) . ' compound mappings' );
 
+		// Build unified modifiers array
+		$css_class_modifiers = [];
+
+		// Add flattening modifiers
+		$class_mappings = $context->get_metadata( 'class_mappings', [] );
+		if ( ! empty( $class_mappings ) ) {
+			$css_class_modifiers[] = [
+				'type' => 'flattening',
+				'mappings' => $class_mappings,
+				'metadata' => [
+					'classes_with_direct_styles' => $context->get_metadata( 'classes_with_direct_styles', [] ),
+					'classes_only_in_nested' => $context->get_metadata( 'classes_only_in_nested', [] ),
+					'flattened_classes' => $context->get_metadata( 'flattened_classes', [] ),
+				],
+			];
+		}
+
+		// Add compound modifiers
+		if ( ! empty( $compound_mappings ) ) {
+			$css_class_modifiers[] = [
+				'type' => 'compound',
+				'mappings' => $compound_mappings,
+				'metadata' => [
+					'compound_global_classes' => $compound_global_classes,
+				],
+			];
+		}
+
 		return [
 			'flattening' => [
 				'flattened_rules' => $flattened_rules,
-				'class_mappings' => $context->get_metadata( 'class_mappings', [] ),
+				'class_mappings' => $class_mappings,
 				'classes_with_direct_styles' => $context->get_metadata( 'classes_with_direct_styles', [] ),
 				'classes_only_in_nested' => $context->get_metadata( 'classes_only_in_nested', [] ),
 				'flattened_classes' => $context->get_metadata( 'flattened_classes', [] ),
@@ -1437,6 +1458,7 @@ class Unified_Css_Processor {
 				'compound_global_classes' => $compound_global_classes,
 				'compound_mappings' => $compound_mappings,
 			],
+			'css_class_modifiers' => $css_class_modifiers,
 		];
 	}
 
@@ -1715,16 +1737,16 @@ class Unified_Css_Processor {
 	 */
 	private function apply_html_class_modifications_to_widgets( array $widgets ): array {
 		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'apply_html_class_modifications_to_widgets: Processing ' . count( $widgets ) . ' widgets' . "\n", FILE_APPEND );
-		
+
 		$modified_widgets = [];
 
 		foreach ( $widgets as $index => $widget ) {
 			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'apply_html_class_modifications_to_widgets: Processing widget ' . $index . ' with classes: ' . ( $widget['attributes']['class'] ?? 'none' ) . "\n", FILE_APPEND );
-			
+
 			$modified_widget = $this->apply_html_class_modifications_to_widget_recursively( $widget );
-			
+
 			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'apply_html_class_modifications_to_widgets: Widget ' . $index . ' after modification has classes: ' . ( $modified_widget['attributes']['class'] ?? 'none' ) . "\n", FILE_APPEND );
-			
+
 			$modified_widgets[] = $modified_widget;
 		}
 
@@ -1854,5 +1876,15 @@ class Unified_Css_Processor {
 		}
 
 		return false;
+	}
+
+	private function count_modifiers_by_type( array $modifiers, string $type ): int {
+		$count = 0;
+		foreach ( $modifiers as $modifier ) {
+			if ( ( $modifier['type'] ?? '' ) === $type ) {
+				$count += count( $modifier['mappings'] ?? [] );
+			}
+		}
+		return $count;
 	}
 }

@@ -33,21 +33,78 @@ class Html_Class_Modifier_Service {
 		$this->mapping_service->build_class_mappings( $nested_selectors );
 	}
 
+	public function initialize_with_modifiers( array $modifiers ): void {
+		foreach ( $modifiers as $modifier ) {
+			$type = $modifier['type'] ?? '';
+			$mappings = $modifier['mappings'] ?? [];
+			$metadata = $modifier['metadata'] ?? [];
+
+			switch ( $type ) {
+				case 'flattening':
+					$this->apply_flattening_modifiers( $mappings, $metadata );
+					break;
+				case 'compound':
+					$this->apply_compound_modifiers( $mappings, $metadata );
+					break;
+				default:
+					$this->apply_generic_modifiers( $type, $mappings, $metadata );
+			}
+		}
+	}
+
+	private function apply_flattening_modifiers( array $mappings, array $metadata ): void {
+		$classes_with_direct_styles = $metadata['classes_with_direct_styles'] ?? [];
+		$classes_only_in_nested = $metadata['classes_only_in_nested'] ?? [];
+
+		$this->usage_tracker->initialize_with_class_lists(
+			$classes_with_direct_styles,
+			$classes_only_in_nested
+		);
+		$this->mapping_service->initialize_with_mappings( $mappings );
+	}
+
+	private function apply_compound_modifiers( array $mappings, array $metadata ): void {
+		$this->compound_mappings = $mappings;
+		error_log( 'DEBUG: HTML Class Modifier initialized with compound mappings: ' . print_r( $mappings, true ) );
+	}
+
+	private function apply_generic_modifiers( string $type, array $mappings, array $metadata ): void {
+		error_log( "DEBUG: HTML Class Modifier - Unknown modifier type '$type' with " . count( $mappings ) . ' mappings' );
+	}
+
+	/**
+	 * @deprecated Use initialize_with_modifiers() instead
+	 */
 	public function initialize_with_flattening_results(
 		array $class_mappings,
 		array $classes_with_direct_styles,
 		array $classes_only_in_nested
 	): void {
-		$this->usage_tracker->initialize_with_class_lists(
-			$classes_with_direct_styles,
-			$classes_only_in_nested
-		);
-		$this->mapping_service->initialize_with_mappings( $class_mappings );
+		$modifiers = [
+			[
+				'type' => 'flattening',
+				'mappings' => $class_mappings,
+				'metadata' => [
+					'classes_with_direct_styles' => $classes_with_direct_styles,
+					'classes_only_in_nested' => $classes_only_in_nested,
+				],
+			],
+		];
+		$this->initialize_with_modifiers( $modifiers );
 	}
 
+	/**
+	 * @deprecated Use initialize_with_modifiers() instead
+	 */
 	public function initialize_with_compound_results( array $compound_mappings ): void {
-		$this->compound_mappings = $compound_mappings;
-		error_log( 'DEBUG: HTML Class Modifier initialized with compound mappings: ' . print_r( $compound_mappings, true ) );
+		$modifiers = [
+			[
+				'type' => 'compound',
+				'mappings' => $compound_mappings,
+				'metadata' => [],
+			],
+		];
+		$this->initialize_with_modifiers( $modifiers );
 	}
 
 	public function set_duplicate_class_mappings( array $duplicate_class_mappings ): void {
@@ -57,7 +114,7 @@ class Html_Class_Modifier_Service {
 	public function modify_element_classes( array $element ): array {
 		$original_classes = $this->extract_classes_from_element( $element );
 		$modified_classes = [];
-		
+
 		// EVIDENCE: Track if fixed classes are being processed
 		$has_fixed_class = false;
 		foreach ( $original_classes as $class ) {
@@ -73,7 +130,7 @@ class Html_Class_Modifier_Service {
 			$modified_class = $this->process_single_class( $class_name );
 			if ( null !== $modified_class ) {
 				$modified_classes[] = $modified_class;
-				
+
 				// EVIDENCE: Track what class was modified to what
 				if ( $class_name !== $modified_class ) {
 					if ( strpos( $modified_class, 'fixed' ) !== false ) {
@@ -95,7 +152,7 @@ class Html_Class_Modifier_Service {
 		}
 
 		$compound_classes = $this->apply_compound_classes( $original_classes );
-		
+
 		// EVIDENCE: Track compound classes being added
 		if ( ! empty( $compound_classes ) ) {
 			foreach ( $compound_classes as $compound_class ) {
@@ -103,7 +160,7 @@ class Html_Class_Modifier_Service {
 				}
 			}
 		}
-		
+
 		$modified_classes = array_merge( $modified_classes, $compound_classes );
 
 		// EVIDENCE: Track final result if fixed classes involved
@@ -140,11 +197,11 @@ class Html_Class_Modifier_Service {
 		if ( $this->mapping_service->has_mapping_for_class( $class_name ) ) {
 			// Replace with flattened class name
 			$flattened_name = $this->mapping_service->get_flattened_class_name( $class_name );
-			
+
 			// EVIDENCE: Track flattened mapping
 			if ( strpos( $flattened_name, 'fixed' ) !== false ) {
 			}
-			
+
 			return $flattened_name;
 		}
 
@@ -202,13 +259,13 @@ class Html_Class_Modifier_Service {
 
 		error_log( 'DEBUG: apply_compound_classes called with widget_classes: ' . print_r( $widget_classes, true ) );
 		error_log( 'DEBUG: compound_mappings available: ' . print_r( $this->compound_mappings, true ) );
-		
+
 		// Debug: Show exactly what classes we're looking for vs what we have
 		foreach ( $this->compound_mappings as $flattened_name => $compound_info ) {
 			$required_classes = $compound_info['requires'] ?? [];
 			error_log( "DEBUG: Checking compound class '$flattened_name' requires: " . print_r( $required_classes, true ) );
-			error_log( "DEBUG: Widget has classes: " . implode( ', ', $widget_classes ) );
-			
+			error_log( 'DEBUG: Widget has classes: ' . implode( ', ', $widget_classes ) );
+
 			$matches = $this->check_compound_requirements( $widget_classes, $required_classes );
 			error_log( "DEBUG: Compound class '$flattened_name' matches: " . ( $matches ? 'YES' : 'NO' ) );
 		}
@@ -224,9 +281,9 @@ class Html_Class_Modifier_Service {
 			}
 
 			$matches = $this->check_compound_requirements( $widget_classes, $required_classes );
-			
+
 			error_log( "DEBUG: Compound class '$flattened_name' matches: " . ( $matches ? 'YES' : 'NO' ) );
-			
+
 			if ( $matches ) {
 				$compound_classes_to_add[] = $flattened_name;
 				error_log( "DEBUG: Added compound class: $flattened_name" );

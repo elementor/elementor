@@ -80,7 +80,8 @@ class Unified_Widget_Conversion_Service {
 
 			$resolved_widgets = $unified_processing_result['widgets'];
 			$css_class_rules = $unified_processing_result['css_class_rules'] ?? [];
-			$flattened_classes_count = $unified_processing_result['flattened_classes_count'] ?? 0;
+			$css_class_modifiers = $unified_processing_result['css_class_modifiers'] ?? [];
+			$flattened_classes_count = $this->count_modifiers_by_type( $css_class_modifiers, 'flattening' );
 			$conversion_log['css_processing'] = $unified_processing_result['stats'];
 			$reset_styles_detected = $unified_processing_result['reset_styles_detected'] ?? false;
 			$reset_styles_stats = $unified_processing_result['reset_styles_stats'] ?? [];
@@ -95,7 +96,7 @@ class Unified_Widget_Conversion_Service {
 			$global_classes = $unified_processing_result['global_classes'] ?? [];
 			$css_variable_definitions = $unified_processing_result['css_variable_definitions'] ?? [];
 			$compound_classes = $unified_processing_result['compound_classes'] ?? [];
-			$compound_classes_created = $unified_processing_result['compound_classes_created'] ?? 0;
+			$compound_classes_created = $this->count_modifiers_by_type( $css_class_modifiers, 'compound' );
 			// Global classes are now handled by the unified service in process_global_classes_with_unified_service()
 			$creation_result = $this->create_widgets_with_resolved_styles( $widgets_with_resolved_styles_for_global_classes, $options, $global_classes, $compound_classes, $compound_classes_created, $css_variable_definitions );
 			$conversion_log['widget_creation'] = $creation_result['stats'];
@@ -369,5 +370,15 @@ class Unified_Widget_Conversion_Service {
 			'element_styles' => $element_styles,
 			'reset_element_styles' => $reset_element_styles,
 		];
+	}
+
+	private function count_modifiers_by_type( array $modifiers, string $type ): int {
+		$count = 0;
+		foreach ( $modifiers as $modifier ) {
+			if ( ( $modifier['type'] ?? '' ) === $type ) {
+				$count += count( $modifier['mappings'] ?? [] );
+			}
+		}
+		return $count;
 	}
 }
