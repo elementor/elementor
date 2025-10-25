@@ -288,7 +288,7 @@ class WP_Import extends \WP_Importer {
 			$filtered_posts = [];
 
 			foreach ( $posts as $post ) {
-				if ( in_array( $post['post_id'], $this->args['include'], true ) ) {
+				if ( in_array( $post['post_id'], $this->args['include'] ) ) {
 					$filtered_posts[] = $post;
 				}
 			}
