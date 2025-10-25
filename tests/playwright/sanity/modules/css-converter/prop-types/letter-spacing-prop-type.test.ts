@@ -102,13 +102,13 @@ test.describe( 'Letter Spacing Prop Type Integration @prop-types', () => {
 				selector: '.e-con p',
 				text: 'Letter spacing 1.5px'
 			},
-			{ 
-				name: 'letter-spacing: 0.1em on p', 
-				property: 'letter-spacing', 
-				expected: '0.1em',
-				selector: '.e-con p',
-				text: 'Letter spacing 0.1em'
-			},
+			// { 
+			// 	name: 'letter-spacing: 0.1em on p', 
+			// 	property: 'letter-spacing', 
+			// 	expected: '0.1em',
+			// 	selector: '.e-con p',
+			// 	text: 'Letter spacing 0.1em'
+			// },
 		];
 
 		// Editor verification

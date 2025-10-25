@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Css_Processor_Factory {
 
 	private static $registry = null;
+	private static $processors_registered = false;
 
 	public static function get_registry(): Css_Processor_Registry {
 		if ( null === self::$registry ) {
@@ -21,18 +22,37 @@ class Css_Processor_Factory {
 	}
 
 	public static function execute_css_processing( Css_Processing_Context $context ): Css_Processing_Context {
-		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'FACTORY: execute_css_processing() called' . "\n", FILE_APPEND );
-		
-		error_log( 'DEBUG: FACTORY - execute_css_processing() called' );
 		$registry = self::get_registry();
-		error_log( 'DEBUG: FACTORY - Registry obtained, calling execute_pipeline()' );
 		
-		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'FACTORY: About to call registry->execute_pipeline()' . "\n", FILE_APPEND );
-		$result = $registry->execute_pipeline( $context );
-		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'FACTORY: Pipeline execution complete' . "\n", FILE_APPEND );
+		// Register all processors in the correct execution order (only if not already registered)
+		if ( ! self::$processors_registered ) {
+			self::register_all_processors( $registry );
+			self::$processors_registered = true;
+		}
 		
-		error_log( 'DEBUG: FACTORY - Pipeline execution complete' );
-		return $result;
+		return $registry->execute_pipeline( $context );
+	}
+
+	private static function register_all_processors( Css_Processor_Registry $registry ): void {
+		// Register processors in dependency order (relying on autoloading)
+		$processors = [
+			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Css_Parsing_Processor(),                      // 1. Parse CSS
+			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Css_Variables_Processor(),                    // 2. Extract variables
+			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Rule_Classification_Processor(),              // 3. Classify rules
+			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Nested_Selector_Flattening_Processor(),       // 4. Flatten nested selectors ✅
+			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Compound_Class_Selector_Processor(),          // 5. Process compound selectors ✅
+			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Style_Collection_Processor(),                 // 6. Collect styles
+			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Global_Classes_Processor(),                   // 7. Create global classes
+			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Html_Class_Modifier_Processor(),              // 8. Modify HTML classes
+			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Style_Resolution_Processor(),                 // 9. Resolve final styles
+		];
+
+		foreach ( $processors as $processor ) {
+			$processor_name = $processor->get_processor_name();
+			if ( ! $registry->has_processor( $processor_name ) ) {
+				$registry->register( $processor );
+			}
+		}
 	}
 
 	public static function register_processor( Css_Processor_Interface $processor ): void {
@@ -47,5 +67,6 @@ class Css_Processor_Factory {
 
 	public static function reset_registry(): void {
 		self::$registry = null;
+		self::$processors_registered = false;
 	}
 }

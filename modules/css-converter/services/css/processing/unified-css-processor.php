@@ -44,79 +44,60 @@ class Unified_Css_Processor {
 		require_once __DIR__ . '/../html-class-modifier-service.php';
 		$this->html_class_modifier = new \Elementor\Modules\CssConverter\Services\Css\Html_Class_Modifier_Service();
 	}
-	public function process_css_and_widgets( string $css, array $widgets ): array {
-		$css_rules = $this->parse_css_and_extract_rules( $css );
+	public function process_css_and_widgets( string $css, array $widgets, array $options = [] ): array {
+		// Create processing context with input data
+		$context = new Css_Processing_Context();
+		$context->set_metadata( 'css', $css );
+		$context->set_widgets( $widgets );
+		$context->set_metadata( 'options', $options );
+		$context->set_metadata( 'existing_global_class_names', $this->get_existing_global_class_names() );
 
-		// Process both flattening and compound selectors in the same registry pipeline
-		$processing_results = $this->process_css_with_unified_registry( $css_rules, $widgets );
-		$flattening_results = $processing_results['flattening'];
-		$compound_results = $processing_results['compound'];
+		// Execute the complete registry pipeline
+		$context = Css_Processor_Factory::execute_css_processing( $context );
 
-		foreach ( $flattening_results['class_mappings'] as $original_class => $mapping ) {
-			$flattened_class = is_array( $mapping ) ? ( $mapping['flattened_class'] ?? 'N/A' ) : $mapping;
-		}
+		// Extract results from context
+		$processed_widgets = $context->get_widgets();
+		$statistics = $context->get_statistics();
+		$css_class_rules = $context->get_metadata( 'css_class_rules', [] );
+		$css_variable_definitions = $context->get_metadata( 'css_variable_definitions', [] );
+		$global_classes = $context->get_metadata( 'global_classes', [] );
+		$class_name_mappings = $context->get_metadata( 'class_name_mappings', [] );
+		$debug_duplicate_detection = $context->get_metadata( 'debug_duplicate_detection' );
+		$css_class_modifiers = $context->get_metadata( 'css_class_modifiers', [] );
+		$reset_styles_stats = $context->get_metadata( 'reset_styles_stats', [] );
+		$complex_reset_styles = $context->get_metadata( 'complex_reset_styles', [] );
+		$html_class_modifications = $context->get_metadata( 'html_class_modifications', [] );
+		$html_class_modifier = $context->get_metadata( 'html_class_modifier' );
 
-		// Use unified modifier interface
-		$css_class_modifiers = $processing_results['css_class_modifiers'];
-		$this->html_class_modifier->initialize_with_modifiers( $css_class_modifiers );
-
-		// FIX: Split CSS rules to prevent duplicate styling
-		// Separate rules that should become global classes from those that should be atomic properties
-		$rule_split = $this->split_rules_for_processing( $flattening_results['flattened_rules'] );
-		$atomic_rules = $rule_split['atomic_rules'];
-		$global_class_candidate_rules = $rule_split['global_class_rules'];
-
-		// Apply atomic properties only for rules that won't become global classes
-		$this->collect_all_styles_from_sources_with_flattened_rules(
-			$css,
-			$widgets,
-			$atomic_rules
-		);
-
-		// PHASE 1: Process global classes with duplicate detection FIRST
-		$css_class_rules = $this->extract_css_class_rules_for_global_classes( $css, $flattening_results );
-		$global_classes_result = $this->process_global_classes_with_duplicate_detection( $css_class_rules, $flattening_results, $compound_results );
-
-		// PHASE 2: Apply class name mappings to widgets BEFORE resolving styles
-		$widgets_with_final_class_names = $this->apply_class_name_mappings_to_widgets(
-			$widgets,
-			$global_classes_result['class_name_mappings']
-		);
-
-		// PHASE 3: Apply HTML class modifications (flattening, compound)
-		$widgets_with_applied_classes = $this->apply_html_class_modifications_to_widgets( $widgets_with_final_class_names );
-
-		// PHASE 4: Resolve styles with final class names
-		$resolved_widgets = $this->resolve_styles_recursively( $widgets_with_applied_classes );
-
-		$debug_info = $this->unified_style_manager->get_debug_info();
-
-		$reset_styles_stats = $this->unified_style_manager->get_reset_styles_stats();
-		$complex_reset_styles = $this->unified_style_manager->get_complex_reset_styles();
-
-		$html_modification_summary = $this->html_class_modifier->get_modification_summary();
-
+		// Build legacy result format for backward compatibility
 		return [
-			'widgets' => $resolved_widgets,
-			'stats' => $debug_info,
+			'widgets' => $processed_widgets,
+			'stats' => $statistics,
 			'css_class_rules' => $css_class_rules,
-			'css_variable_definitions' => $this->css_variable_definitions,
-			'global_classes' => $global_classes_result['global_classes'],
-			'global_classes_created' => count( $global_classes_result['global_classes'] ),
-			'class_name_mappings' => $global_classes_result['class_name_mappings'],
-			'debug_duplicate_detection' => $global_classes_result['debug_duplicate_detection'] ?? null,
-			'flattened_classes' => $flattening_results['flattened_classes'],
+			'css_variable_definitions' => $css_variable_definitions,
+			'global_classes' => $global_classes,
+			'global_classes_created' => count( $global_classes ),
+			'class_name_mappings' => $class_name_mappings,
+			'debug_duplicate_detection' => $debug_duplicate_detection,
+			'flattened_classes' => $context->get_metadata( 'flattened_classes', [] ),
 			'flattened_classes_count' => $this->count_modifiers_by_type( $css_class_modifiers, 'flattening' ),
-			'compound_classes' => $compound_results['compound_global_classes'] ?? [],
+			'compound_classes' => $context->get_metadata( 'compound_global_classes', [] ),
 			'compound_classes_created' => $this->count_modifiers_by_type( $css_class_modifiers, 'compound' ),
 			'css_class_modifiers' => $css_class_modifiers,
-			'reset_styles_detected' => $reset_styles_stats['reset_element_styles'] > 0 || $reset_styles_stats['reset_complex_styles'] > 0,
+			'reset_styles_detected' => ( $reset_styles_stats['reset_element_styles'] ?? 0 ) > 0 || ( $reset_styles_stats['reset_complex_styles'] ?? 0 ) > 0,
 			'reset_styles_stats' => $reset_styles_stats,
 			'complex_reset_styles' => $complex_reset_styles,
-			'html_class_modifications' => $html_modification_summary,
-			'flattening_results' => $flattening_results,
-			'compound_results' => $compound_results,
-			'html_class_modifier' => $this->html_class_modifier,
+			'html_class_modifications' => $html_class_modifications,
+			'flattening_results' => [
+				'flattened_rules' => $context->get_metadata( 'flattened_rules', [] ),
+				'class_mappings' => $context->get_metadata( 'class_mappings', [] ),
+				'flattened_classes' => $context->get_metadata( 'flattened_classes', [] ),
+			],
+			'compound_results' => [
+				'compound_global_classes' => $context->get_metadata( 'compound_global_classes', [] ),
+				'compound_mappings' => $context->get_metadata( 'compound_mappings', [] ),
+			],
+			'html_class_modifier' => $html_class_modifier,
 		];
 	}
 	private function collect_all_styles_from_sources( string $css, array $widgets ): void {
@@ -170,10 +151,19 @@ class Unified_Css_Processor {
 	}
 	private function log_css_parsing_start( string $css, array $widgets ): void {
 	}
+	/**
+	 * @deprecated Use Css_Parsing_Processor via registry pattern instead
+	 */
 	private function parse_css_and_extract_rules( string $css ): array {
-		$parsed_css = $this->css_parser->parse( $css );
-		$document = $parsed_css->get_document();
-		return $this->extract_rules_from_document( $document );
+		// Delegate to registry pattern for backward compatibility
+		$context = new Css_Processing_Context();
+		$context->set_metadata( 'css', $css );
+
+		require_once __DIR__ . '/processors/css-parsing-processor.php';
+		$processor = new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Css_Parsing_Processor( $this->css_parser );
+		$context = $processor->process( $context );
+
+		return $context->get_metadata( 'css_rules', [] );
 	}
 	private function log_extracted_rules(): void {
 		$this->skip_debug_logging_for_performance();

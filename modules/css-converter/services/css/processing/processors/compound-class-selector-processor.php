@@ -33,11 +33,11 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 		$css_rules = $context->get_metadata( 'css_rules' );
 		$widgets = $context->get_widgets();
 
-		error_log( 'DEBUG: Compound processor supports_context() - CSS rules: ' . count( $css_rules ) . ', Widgets: ' . count( $widgets ) );
-		
+		$css_rules_count = is_array( $css_rules ) ? count( $css_rules ) : 0;
+		$widgets_count = is_array( $widgets ) ? count( $widgets ) : 0;
+
 		$supports = ! empty( $css_rules ) && ! empty( $widgets );
-		error_log( 'DEBUG: Compound processor supports_context() result: ' . ( $supports ? 'YES' : 'NO' ) );
-		
+
 		return $supports;
 	}
 
@@ -103,7 +103,6 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 		}
 
 		// Use the same global classes integration service as regular CSS classes
-		require_once __DIR__ . '/../../../global-classes/unified/global-classes-service-provider.php';
 
 		$provider = \Elementor\Modules\CssConverter\Services\GlobalClasses\Unified\Global_Classes_Service_Provider::instance();
 
@@ -135,7 +134,7 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 		foreach ( $compound_classes as $class_name => $class_data ) {
 			// Extract properties from compound class data
 			$properties = $class_data['properties'] ?? [];
-			
+
 			if ( empty( $properties ) ) {
 				continue;
 			}
@@ -390,7 +389,7 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 						$formatted_properties[ $prop['property'] ] = $prop['value'];
 					}
 				}
-				
+
 					$atomic_props = $this->property_converter->convert_properties_to_v4_atomic( $formatted_properties );
 			} catch ( \Exception $e ) {
 				// Fallback to empty props if conversion fails
@@ -442,10 +441,10 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 
 		foreach ( $compound_global_classes as $compound_class_name => $class_data ) {
 			$compound_classes = $class_data['compound_classes'] ?? [];
-			
+
 			error_log( "DEBUG: Processing compound class '$compound_class_name' with data: " . print_r( $class_data, true ) );
-			error_log( "DEBUG: Extracted compound_classes: " . print_r( $compound_classes, true ) );
-			
+			error_log( 'DEBUG: Extracted compound_classes: ' . print_r( $compound_classes, true ) );
+
 			if ( ! empty( $compound_classes ) ) {
 				$html_class_mappings[ $compound_class_name ] = [
 					'requires' => $compound_classes,

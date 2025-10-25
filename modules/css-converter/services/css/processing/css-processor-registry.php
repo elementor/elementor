@@ -88,7 +88,7 @@ class Css_Processor_Registry {
 		$processors = array_values( $this->processors );
 
 		usort( $processors, function( Css_Processor_Interface $a, Css_Processor_Interface $b ) {
-			return $a->get_priority() <=> $b->get_priority();
+			return $b->get_priority() <=> $a->get_priority(); // Sort by priority DESC (higher first)
 		});
 
 		return $processors;

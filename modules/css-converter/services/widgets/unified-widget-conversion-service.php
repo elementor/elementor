@@ -59,7 +59,7 @@ class Unified_Widget_Conversion_Service {
 			$conversion_log['css_size'] = strlen( $all_css );
 
 			try {
-				$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets );
+			$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets, $options );
 			} catch ( \Exception $e ) {
 				throw $e;
 			}
@@ -91,6 +91,7 @@ class Unified_Widget_Conversion_Service {
 			$final_result = [
 				'success' => true,
 				'widgets_created' => $creation_result['widgets_created'],
+				'widgets' => $creation_result['widgets'] ?? [], // Include widgets for tests
 				'global_classes_created' => $unified_processing_result['global_classes_created'] ?? 0,
 				'global_classes' => $unified_processing_result['global_classes'] ?? [],
 				'class_name_mappings' => $unified_processing_result['class_name_mappings'] ?? [],
@@ -182,6 +183,7 @@ class Unified_Widget_Conversion_Service {
 		$elementor_data = $creation_result['element_data'] ?? [];
 		return [
 			'widgets_created' => $creation_result['widgets_created'] ?? 0,
+			'widgets' => $creation_result['widgets'] ?? $widgets, // Include actual widgets for tests
 			'global_classes_created' => count( $global_classes ), // Use actual count since widget_creator doesn't track this anymore
 			'variables_created' => $creation_result['variables_created'] ?? 0,
 			'post_id' => $creation_result['post_id'] ?? $post_id,
