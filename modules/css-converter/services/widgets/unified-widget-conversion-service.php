@@ -2,7 +2,6 @@
 namespace Elementor\Modules\CssConverter\Services\Widgets;
 
 use Elementor\Modules\CssConverter\Services\Css\Processing\Unified_Css_Processor;
-use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Output_Optimizer;
 use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
@@ -16,8 +15,6 @@ class Unified_Widget_Conversion_Service {
 	private $unified_css_processor;
 	private $widget_creator;
 	private $use_zero_defaults;
-	private $css_parser;
-	private $css_output_optimizer;
 	private $property_converter;
 	public function __construct(
 		$html_parser,
@@ -31,14 +28,7 @@ class Unified_Widget_Conversion_Service {
 		$this->unified_css_processor = $unified_css_processor;
 		$this->widget_creator = $widget_creator;
 		$this->use_zero_defaults = $use_zero_defaults;
-		$this->css_output_optimizer = new Css_Output_Optimizer();
 		$this->property_converter = new Css_Property_Conversion_Service();
-		$this->initialize_css_parser();
-	}
-
-	private function initialize_css_parser(): void {
-		require_once __DIR__ . '/../../parsers/css-parser.php';
-		$this->css_parser = new \Elementor\Modules\CssConverter\Parsers\CssParser();
 	}
 	public function convert_from_html( $html, $css_urls = [], $follow_imports = false, $options = [] ): array {
 		$this->use_zero_defaults = true;
@@ -60,21 +50,17 @@ class Unified_Widget_Conversion_Service {
 			if ( ! empty( $validation_issues ) ) {
 				$conversion_log['warnings'] = array_merge( $conversion_log['warnings'], $validation_issues );
 			}
-			$all_css = $this->extract_all_css( $html, $css_urls, $follow_imports, $elements );
-			$conversion_log['css_size'] = strlen( $all_css );
 			$mapped_widgets = $this->widget_mapper->map_elements( $elements );
 			$mapping_stats = $this->widget_mapper->get_mapping_stats( $elements );
 			$conversion_log['mapping_stats'] = $mapping_stats;
 
-			error_log( 'DEBUG: UNIFIED SERVICE - About to call unified_css_processor->process_css_and_widgets() with ' . strlen( $all_css ) . ' chars CSS and ' . count( $mapped_widgets ) . ' widgets' );
-			error_log( 'DEBUG: UNIFIED SERVICE - unified_css_processor class: ' . get_class( $this->unified_css_processor ) );
-			error_log( 'DEBUG: UNIFIED SERVICE - unified_css_processor methods: ' . implode( ', ', get_class_methods( $this->unified_css_processor ) ) );
+			// DELEGATE CSS extraction to unified processor (proper separation of concerns)
+			$all_css = $this->unified_css_processor->extract_and_process_css_from_html_and_urls( $html, $css_urls, $follow_imports, $elements );
+			$conversion_log['css_size'] = strlen( $all_css );
+
 			try {
 				$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets );
-				error_log( 'DEBUG: UNIFIED SERVICE - unified_css_processor->process_css_and_widgets() completed successfully' );
 			} catch ( \Exception $e ) {
-				error_log( 'DEBUG: UNIFIED SERVICE - unified_css_processor->process_css_and_widgets() FAILED: ' . $e->getMessage() );
-				error_log( 'DEBUG: UNIFIED SERVICE - Exception trace: ' . $e->getTraceAsString() );
 				throw $e;
 			}
 
@@ -91,14 +77,12 @@ class Unified_Widget_Conversion_Service {
 			// ═══════════════════════════════════════════════════════════
 			// PHASE 5: Extract processed data from unified processor ✅
 			// ═══════════════════════════════════════════════════════════
-			// All processing (global classes, duplicate detection, class mappings) is now complete
+			// All processing (global classes, duplicate detection, class mappings, compound classes) is now complete
 			$widgets_with_resolved_styles_for_global_classes = $resolved_widgets;
 			$global_classes = $unified_processing_result['global_classes'] ?? [];
 			$css_variable_definitions = $unified_processing_result['css_variable_definitions'] ?? [];
-			$compound_classes = $unified_processing_result['compound_classes'] ?? [];
-			$compound_classes_created = $this->count_modifiers_by_type( $css_class_modifiers, 'compound' );
-			// Global classes are now handled by the unified service in process_global_classes_with_unified_service()
-			$creation_result = $this->create_widgets_with_resolved_styles( $widgets_with_resolved_styles_for_global_classes, $options, $global_classes, $compound_classes, $compound_classes_created, $css_variable_definitions );
+			// Compound classes are now handled entirely within the CSS processor
+			$creation_result = $this->create_widgets_with_resolved_styles( $widgets_with_resolved_styles_for_global_classes, $options, $global_classes, $css_variable_definitions );
 			$conversion_log['widget_creation'] = $creation_result['stats'];
 			$widgets_created = $creation_result['widgets_created'] ?? 0;
 			$widgets_count = is_array( $widgets_created ) ? count( $widgets_created ) : (int) $widgets_created;
@@ -112,8 +96,8 @@ class Unified_Widget_Conversion_Service {
 				'class_name_mappings' => $unified_processing_result['class_name_mappings'] ?? [],
 				'debug_duplicate_detection' => $unified_processing_result['debug_duplicate_detection'] ?? null,
 				'variables_created' => $creation_result['variables_created'],
-				'compound_classes_created' => $creation_result['compound_classes_created'] ?? 0,
-				'compound_classes' => $creation_result['compound_classes'] ?? [],
+				'compound_classes_created' => $this->count_modifiers_by_type( $css_class_modifiers, 'compound' ),
+				'compound_classes' => $unified_processing_result['compound_classes'] ?? [],
 				'post_id' => $creation_result['post_id'],
 				'edit_url' => $creation_result['edit_url'],
 				'conversion_log' => $conversion_log,
@@ -139,107 +123,6 @@ class Unified_Widget_Conversion_Service {
 			);
 		}
 	}
-	private function extract_all_css( string $html, array $css_urls, bool $follow_imports, array &$elements ): string {
-		$css_sources = [];
-
-		preg_match_all( '/<style[^>]*>(.*?)<\/style>/is', $html, $matches );
-		if ( ! empty( $matches[1] ) ) {
-			foreach ( $matches[1] as $index => $css_content ) {
-				$css_sources[] = [
-					'type' => 'inline_style_tag',
-					'source' => 'inline-style-' . $index,
-					'content' => $css_content,
-				];
-			}
-		}
-
-		foreach ( $elements as &$element ) {
-			if ( isset( $element['attributes']['style'] ) ) {
-				$inline_style = $element['attributes']['style'];
-				$selector = '.' . ( $element['generated_class'] ?? 'element-' . uniqid() );
-				$css_sources[] = [
-					'type' => 'inline_element_style',
-					'source' => $selector,
-					'content' => $selector . ' { ' . $inline_style . ' }',
-				];
-			}
-		}
-
-		foreach ( $css_urls as $css_url ) {
-			$response = wp_remote_get( $css_url, [
-				'timeout' => 30,
-				'sslverify' => false,
-			] );
-			if ( ! is_wp_error( $response ) ) {
-				$css_content = wp_remote_retrieve_body( $response );
-				$css_sources[] = [
-					'type' => 'external_file',
-					'source' => $css_url,
-					'content' => $css_content,
-				];
-
-				if ( $follow_imports && false !== strpos( $css_content, '@import' ) ) {
-					preg_match_all( '/@import\s+(?:url\()?["\']?([^"\')]+)["\']?\)?;/i', $css_content, $import_matches );
-					if ( ! empty( $import_matches[1] ) ) {
-						foreach ( $import_matches[1] as $import_url ) {
-							$absolute_import_url = $this->resolve_relative_url( $import_url, $css_url );
-							$import_response = wp_remote_get( $absolute_import_url, [
-								'timeout' => 30,
-								'sslverify' => false,
-							] );
-							if ( ! is_wp_error( $import_response ) ) {
-								$import_css = wp_remote_retrieve_body( $import_response );
-								$css_sources[] = [
-									'type' => 'imported_file',
-									'source' => $absolute_import_url,
-									'content' => $import_css,
-								];
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return $this->parse_css_sources_safely( $css_sources );
-	}
-
-	private function parse_css_sources_safely( array $css_sources ): string {
-		$successful_css = '';
-		$failed_sources = [];
-		$successful_count = 0;
-		$failed_count = 0;
-
-		foreach ( $css_sources as $source ) {
-			$type = $source['type'];
-			$source_name = $source['source'];
-			$content = $source['content'];
-
-			if ( empty( trim( $content ) ) ) {
-				continue;
-			}
-
-			try {
-				// Use raw CSS - no preprocessing (broken functionality removed)
-				if ( null !== $this->css_parser ) {
-					$test_parse = $this->css_parser->parse( $content );
-				}
-
-				$successful_css .= $content . "\n";
-				++$successful_count;
-			} catch ( \Exception $e ) {
-				++$failed_count;
-				$failed_sources[] = [
-					'type' => $type,
-					'source' => $source_name,
-					'error' => $e->getMessage(),
-					'size' => strlen( $content ),
-				];
-			}
-		}
-
-		return $successful_css;
-	}
 
 
 
@@ -249,20 +132,10 @@ class Unified_Widget_Conversion_Service {
 
 
 
-	private function resolve_relative_url( string $relative_url, string $base_url ): string {
-		if ( 0 === strpos( $relative_url, 'http' ) ) {
-			return $relative_url;
-		}
-		$base_parts = wp_parse_url( $base_url );
-		$base_path = isset( $base_parts['path'] ) ? dirname( $base_parts['path'] ) : '';
-		if ( 0 === strpos( $relative_url, '/' ) ) {
-			return $base_parts['scheme'] . '://' . $base_parts['host'] . $relative_url;
-		}
-		return $base_parts['scheme'] . '://' . $base_parts['host'] . $base_path . '/' . $relative_url;
-	}
 
 
-	private function create_widgets_with_resolved_styles( array $widgets, array $options, array $global_classes, array $compound_classes = [], int $compound_classes_created = 0, array $css_variable_definitions = [] ): array {
+
+	private function create_widgets_with_resolved_styles( array $widgets, array $options, array $global_classes, array $css_variable_definitions = [] ): array {
 		$post_id = $options['postId'] ?? null;
 		$post_type = $options['postType'] ?? 'page';
 		if ( null === $post_id ) {
@@ -277,8 +150,6 @@ class Unified_Widget_Conversion_Service {
 				'widgets_created' => 0,
 				'global_classes_created' => count( $global_classes ),
 				'variables_created' => 0,
-				'compound_classes_created' => $compound_classes_created,
-				'compound_classes' => $compound_classes,
 				'post_id' => 0,
 				'edit_url' => '',
 				'errors' => [ 'Failed to create post' ],
@@ -313,8 +184,6 @@ class Unified_Widget_Conversion_Service {
 			'widgets_created' => $creation_result['widgets_created'] ?? 0,
 			'global_classes_created' => count( $global_classes ), // Use actual count since widget_creator doesn't track this anymore
 			'variables_created' => $creation_result['variables_created'] ?? 0,
-			'compound_classes_created' => $compound_classes_created,
-			'compound_classes' => $compound_classes,
 			'post_id' => $creation_result['post_id'] ?? $post_id,
 			'edit_url' => $creation_result['edit_url'] ?? admin_url( 'post.php?post=' . $post_id . '&action=elementor' ),
 			'errors' => $creation_result['errors'] ?? [],

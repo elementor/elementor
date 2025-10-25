@@ -26,8 +26,6 @@ class Unified_Css_Processor {
 		$property_converter,
 		Css_Specificity_Calculator $specificity_calculator
 	) {
-		error_log( 'DEBUG: UNIFIED CSS PROCESSOR - Constructor called' );
-		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-constructor.log', 'Constructor called at ' . date( 'Y-m-d H:i:s' ) . "\n", FILE_APPEND );
 		$this->css_parser = $css_parser;
 		$this->property_converter = $property_converter;
 		$this->specificity_calculator = $specificity_calculator;
@@ -47,26 +45,12 @@ class Unified_Css_Processor {
 		$this->html_class_modifier = new \Elementor\Modules\CssConverter\Services\Css\Html_Class_Modifier_Service();
 	}
 	public function process_css_and_widgets( string $css, array $widgets ): array {
-		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'process_css_and_widgets called at ' . date( 'Y-m-d H:i:s' ) . ' with ' . strlen( $css ) . ' chars CSS and ' . count( $widgets ) . " widgets\n", FILE_APPEND );
-
-		error_log( 'DEBUG: MAIN PROCESSOR - ENTRY POINT - process_css_and_widgets() method called' );
-		error_log( 'DEBUG: MAIN PROCESSOR - process_css_and_widgets() called with ' . strlen( $css ) . ' chars CSS and ' . count( $widgets ) . ' widgets' );
-
-		// TEMPORARY: Force a visible error to confirm this method is called
-		if ( strpos( $css, '.first.second' ) !== false ) {
-			error_log( 'DEBUG: MAIN PROCESSOR - COMPOUND CSS DETECTED - This should show up!' );
-			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'COMPOUND CSS DETECTED in process_css_and_widgets' . "\n", FILE_APPEND );
-		}
-
 		$css_rules = $this->parse_css_and_extract_rules( $css );
-		error_log( 'DEBUG: MAIN PROCESSOR - Parsed ' . count( $css_rules ) . ' CSS rules' );
 
 		// Process both flattening and compound selectors in the same registry pipeline
-		error_log( 'DEBUG: MAIN PROCESSOR - Calling process_css_with_unified_registry()' );
 		$processing_results = $this->process_css_with_unified_registry( $css_rules, $widgets );
 		$flattening_results = $processing_results['flattening'];
 		$compound_results = $processing_results['compound'];
-		error_log( 'DEBUG: MAIN PROCESSOR - Unified registry processing complete' );
 
 		foreach ( $flattening_results['class_mappings'] as $original_class => $mapping ) {
 			$flattened_class = is_array( $mapping ) ? ( $mapping['flattened_class'] ?? 'N/A' ) : $mapping;
@@ -74,8 +58,6 @@ class Unified_Css_Processor {
 
 		// Use unified modifier interface
 		$css_class_modifiers = $processing_results['css_class_modifiers'];
-		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'HTML CLASS MODIFIER: Initializing with unified modifiers - ' . count( $css_class_modifiers ) . ' modifier types' . "\n", FILE_APPEND );
-
 		$this->html_class_modifier->initialize_with_modifiers( $css_class_modifiers );
 
 		// FIX: Split CSS rules to prevent duplicate styling
@@ -102,9 +84,7 @@ class Unified_Css_Processor {
 		);
 
 		// PHASE 3: Apply HTML class modifications (flattening, compound)
-		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'HTML CLASS MODIFIER: About to apply HTML class modifications to ' . count( $widgets_with_final_class_names ) . ' widgets' . "\n", FILE_APPEND );
 		$widgets_with_applied_classes = $this->apply_html_class_modifications_to_widgets( $widgets_with_final_class_names );
-		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'HTML CLASS MODIFIER: Applied HTML class modifications, result has ' . count( $widgets_with_applied_classes ) . ' widgets' . "\n", FILE_APPEND );
 
 		// PHASE 4: Resolve styles with final class names
 		$resolved_widgets = $this->resolve_styles_recursively( $widgets_with_applied_classes );
@@ -547,8 +527,6 @@ class Unified_Css_Processor {
 	private function log_widget_inline_processing( ?string $element_id, array $inline_css ): void {
 		// DEBUG: Log inline style processing
 		if ( ! empty( $inline_css ) ) {
-			error_log( "DEBUG INLINE STYLES: Processing widget {$element_id}" );
-			error_log( 'DEBUG INLINE STYLES: CSS data: ' . print_r( $inline_css, true ) );
 		}
 		$this->skip_debug_logging_for_performance();
 	}
@@ -567,17 +545,11 @@ class Unified_Css_Processor {
 	}
 	private function store_converted_inline_styles( string $element_id, array $inline_css, array $batch_converted ): void {
 		// DEBUG: Log inline style storage
-		error_log( "DEBUG INLINE STYLES: Storing styles for element {$element_id}" );
-		error_log( 'DEBUG INLINE STYLES: Batch converted: ' . print_r( $batch_converted, true ) );
 
 		foreach ( $inline_css as $property => $property_data ) {
 			$value = $property_data['value'] ?? $property_data;
 			$important = $property_data['important'] ?? false;
 			$converted = $this->find_converted_property_in_batch( $property, $batch_converted );
-
-			// DEBUG: Log each property conversion
-			error_log( "DEBUG INLINE STYLES: Property {$property} = {$value} (important: " . ( $important ? 'yes' : 'no' ) . ')' );
-			error_log( 'DEBUG INLINE STYLES: Converted to: ' . print_r( $converted, true ) );
 
 			$this->unified_style_manager->collect_inline_styles(
 				$element_id, [
@@ -1107,6 +1079,112 @@ class Unified_Css_Processor {
 			'important' => $important,
 		];
 	}
+	public function extract_and_process_css_from_html_and_urls( string $html, array $css_urls, bool $follow_imports, array &$elements ): string {
+		$css_sources = [];
+
+		// Extract inline <style> tags from HTML
+		preg_match_all( '/<style[^>]*>(.*?)<\/style>/is', $html, $matches );
+		if ( ! empty( $matches[1] ) ) {
+			foreach ( $matches[1] as $index => $css_content ) {
+				$css_sources[] = [
+					'type' => 'inline_style_tag',
+					'source' => 'inline-style-' . $index,
+					'content' => $css_content,
+				];
+			}
+		}
+
+		// Extract inline styles from elements and convert to CSS rules
+		foreach ( $elements as &$element ) {
+			if ( isset( $element['attributes']['style'] ) ) {
+				$inline_style = $element['attributes']['style'];
+				$selector = '.' . ( $element['generated_class'] ?? 'element-' . uniqid() );
+				$css_sources[] = [
+					'type' => 'inline_element_style',
+					'source' => $selector,
+					'content' => $selector . ' { ' . $inline_style . ' }',
+				];
+			}
+		}
+
+		// Fetch CSS from external URLs
+		foreach ( $css_urls as $css_url ) {
+			$response = wp_remote_get( $css_url, [
+				'timeout' => 30,
+				'sslverify' => false,
+			] );
+			if ( ! is_wp_error( $response ) ) {
+				$css_content = wp_remote_retrieve_body( $response );
+				$css_sources[] = [
+					'type' => 'external_file',
+					'source' => $css_url,
+					'content' => $css_content,
+				];
+
+				// Handle @import statements if requested
+				if ( $follow_imports && false !== strpos( $css_content, '@import' ) ) {
+					preg_match_all( '/@import\s+(?:url\()?["\']?([^"\')]+)["\']?\)?;/i', $css_content, $import_matches );
+					if ( ! empty( $import_matches[1] ) ) {
+						foreach ( $import_matches[1] as $import_url ) {
+							$absolute_import_url = $this->resolve_relative_url( $import_url, $css_url );
+							$import_response = wp_remote_get( $absolute_import_url, [
+								'timeout' => 30,
+								'sslverify' => false,
+							] );
+							if ( ! is_wp_error( $import_response ) ) {
+								$import_css = wp_remote_retrieve_body( $import_response );
+								$css_sources[] = [
+									'type' => 'imported_file',
+									'source' => $absolute_import_url,
+									'content' => $import_css,
+								];
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return $this->parse_css_sources_safely( $css_sources );
+	}
+
+	private function parse_css_sources_safely( array $css_sources ): string {
+		$successful_css = '';
+		$failed_sources = [];
+		$successful_count = 0;
+		$failed_count = 0;
+
+		foreach ( $css_sources as $source ) {
+			$type = $source['type'];
+			$source_name = $source['source'];
+			$content = $source['content'];
+
+			if ( empty( trim( $content ) ) ) {
+				continue;
+			}
+
+			try {
+				// Test parse CSS to ensure it's valid
+				if ( null !== $this->css_parser ) {
+					$test_parse = $this->css_parser->parse( $content );
+				}
+
+				$successful_css .= $content . "\n";
+				++$successful_count;
+			} catch ( \Exception $e ) {
+				++$failed_count;
+				$failed_sources[] = [
+					'type' => $type,
+					'source' => $source_name,
+					'error' => $e->getMessage(),
+					'size' => strlen( $content ),
+				];
+			}
+		}
+
+		return $successful_css;
+	}
+
 	public function fetch_css_from_urls( array $css_urls, bool $follow_imports = false ): array {
 		$all_css = '';
 		$fetched_urls = [];
@@ -1395,9 +1473,6 @@ class Unified_Css_Processor {
 	}
 
 	private function process_css_with_unified_registry( array $css_rules, array $widgets ): array {
-		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'process_css_with_unified_registry called with ' . count( $css_rules ) . ' CSS rules and ' . count( $widgets ) . " widgets\n", FILE_APPEND );
-
-		error_log( 'DEBUG: UNIFIED REGISTRY - Starting with ' . count( $css_rules ) . ' CSS rules and ' . count( $widgets ) . ' widgets' );
 
 		// Create a single context with all necessary data
 		$context = new Css_Processing_Context();

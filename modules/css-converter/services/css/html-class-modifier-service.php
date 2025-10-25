@@ -65,11 +65,10 @@ class Html_Class_Modifier_Service {
 
 	private function apply_compound_modifiers( array $mappings, array $metadata ): void {
 		$this->compound_mappings = $mappings;
-		error_log( 'DEBUG: HTML Class Modifier initialized with compound mappings: ' . print_r( $mappings, true ) );
 	}
 
 	private function apply_generic_modifiers( string $type, array $mappings, array $metadata ): void {
-		error_log( "DEBUG: HTML Class Modifier - Unknown modifier type '$type' with " . count( $mappings ) . ' mappings' );
+		// Future processor types can be handled here
 	}
 
 	/**
@@ -257,40 +256,20 @@ class Html_Class_Modifier_Service {
 	private function apply_compound_classes( array $widget_classes ): array {
 		$compound_classes_to_add = [];
 
-		error_log( 'DEBUG: apply_compound_classes called with widget_classes: ' . print_r( $widget_classes, true ) );
-		error_log( 'DEBUG: compound_mappings available: ' . print_r( $this->compound_mappings, true ) );
-
-		// Debug: Show exactly what classes we're looking for vs what we have
 		foreach ( $this->compound_mappings as $flattened_name => $compound_info ) {
 			$required_classes = $compound_info['requires'] ?? [];
-			error_log( "DEBUG: Checking compound class '$flattened_name' requires: " . print_r( $required_classes, true ) );
-			error_log( 'DEBUG: Widget has classes: ' . implode( ', ', $widget_classes ) );
-
-			$matches = $this->check_compound_requirements( $widget_classes, $required_classes );
-			error_log( "DEBUG: Compound class '$flattened_name' matches: " . ( $matches ? 'YES' : 'NO' ) );
-		}
-
-		foreach ( $this->compound_mappings as $flattened_name => $compound_info ) {
-			$required_classes = $compound_info['requires'] ?? [];
-
-			error_log( "DEBUG: Checking compound class '$flattened_name' requires: " . print_r( $required_classes, true ) );
 
 			if ( empty( $required_classes ) ) {
-				error_log( "DEBUG: Skipping '$flattened_name' - no required classes" );
 				continue;
 			}
 
 			$matches = $this->check_compound_requirements( $widget_classes, $required_classes );
 
-			error_log( "DEBUG: Compound class '$flattened_name' matches: " . ( $matches ? 'YES' : 'NO' ) );
-
 			if ( $matches ) {
 				$compound_classes_to_add[] = $flattened_name;
-				error_log( "DEBUG: Added compound class: $flattened_name" );
 			}
 		}
 
-		error_log( 'DEBUG: Final compound_classes_to_add: ' . print_r( $compound_classes_to_add, true ) );
 		return $compound_classes_to_add;
 	}
 
