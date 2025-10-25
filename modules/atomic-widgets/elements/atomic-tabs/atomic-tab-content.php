@@ -2,38 +2,38 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Render_Context;
+
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tab_Panel extends Atomic_Element_Base {
+class Atomic_Tab_Content extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-tab-panel';
+		return 'e-tab-content';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tab-panel';
+		return 'e-tab-content';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tab Panel', 'elementor' );
+		return esc_html__( 'Tab content', 'elementor' );
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic', 'tab', 'panel', 'tabs' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'tab', 'content', 'tabs' ];
 	}
 
 	public function get_icon() {
@@ -112,6 +112,9 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 		$initial_attributes = $this->define_initial_attributes();
 
+		$default_active_tab = Render_Context::get( Atomic_Tabs::class )['default-active-tab'] ?? null;
+		$is_active = $default_active_tab === $this->get_atomic_setting( 'tab-id' );
+
 		$attributes = [
 			'class' => [
 				'e-con',
@@ -120,6 +123,11 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 				...( $settings['classes'] ?? [] ),
 			],
 		];
+
+		if ( ! $is_active ) {
+			$attributes['hidden'] = 'true';
+			$attributes['style'] = 'display: none;';
+		}
 
 		if ( ! empty( $settings['tab-id'] ) ) {
 			$attributes['data-tab-id'] = esc_attr( $settings['tab-id'] );

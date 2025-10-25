@@ -1,14 +1,24 @@
 import { createTransformer } from '@elementor/editor-canvas';
+import { __getState as getState } from '@elementor/store';
+
+import { selectUnpublishedComponents } from './store/store';
 
 type ComponentIdTransformerWindow = Window & {
 	elementor?: {
 		documents?: {
-			request: ( id: string ) => Promise< { elements?: unknown[] } >;
+			request: ( id: number ) => Promise< { elements?: unknown[] } >;
 		};
 	};
 };
 
-export const componentIdTransformer = createTransformer( async ( id: string ) => {
+export const componentIdTransformer = createTransformer( async ( id: number ) => {
+	const unpublishedComponents = selectUnpublishedComponents( getState() );
+
+	const unpublishedComponent = unpublishedComponents.find( ( component ) => component.id === id );
+	if ( unpublishedComponent ) {
+		return structuredClone( unpublishedComponent.elements );
+	}
+
 	const extendedWindow = window as unknown as ComponentIdTransformerWindow;
 
 	const documentManager = extendedWindow.elementor?.documents;
