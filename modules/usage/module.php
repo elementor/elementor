@@ -548,20 +548,13 @@ class Module extends BaseModule {
 					$counter = new Usage_Counter();
 					$result = $counter->count( $element );
 
-					var_dump($element);die();
+					if ( $result->is_valid() ) {
+						$result->each( function( $tab, $section, $control_name ) use ( &$element_ref ) {
+							$this->increase_controls_count( $element_ref, $tab, $section, $control_name, 1 );
+						});
 
-					if ( $result ) {
-						// Apply all changed controls to the element reference
-						foreach ( $result['controls'] as $tab => $sections ) {
-							foreach ( $sections as $section => $controls ) {
-								foreach ( $controls as $control_name => $control_value ) {
-									$this->increase_controls_count( $element_ref, $tab, $section, $control_name, 1 );
-								}
-							}
-						}
-
-						$changed_controls_count = $result['changed'];
-						$total_controls_count = $result['total'];
+						$changed_controls_count = $result->get_changed_count();
+						$total_controls_count = $result->get_total();
 					}
 				} else {
 					$element_controls = $element_instance->get_controls();
@@ -597,8 +590,6 @@ class Module extends BaseModule {
 
 		if ( ! empty( $data ) ) {
 			try {
-//				var_dump($document->get_elements_raw_data( $data ));die();
-
 				$usage = $this->get_elements_usage( $document->get_elements_raw_data( $data ) );
 
 				var_dump($usage);die();

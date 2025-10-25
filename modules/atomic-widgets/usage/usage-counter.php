@@ -13,57 +13,28 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-/**
- * Usage Counter for Atomic Widgets.
- *
- * This class counts which atomic widget controls have been changed
- * from their default values.
- *
- * Usage Example:
- *
- *   $counter = new Usage_Counter();
- *   $result = $counter->count( $element_data );
- *
- *   // Result structure:
- *   // [
- *   //   'total' => 50,        // Total available controls
- *   //   'changed' => 5,       // Number of changed controls
- *   //   'controls' => [
- *   //     'general' => [
- *   //       'content' => ['title' => 'My Title', 'tag' => 'h3']
- *   //     ],
- *   //     'style' => [
- *   //       'typography' => ['color' => '#ff0000', 'font-size' => {...}]
- *   //     ]
- *   //   ]
- *   // ]
- */
 class Usage_Counter {
     const TAB_GENERAL = 'General';
     const TAB_STYLE = 'Style';
 
-    public function count( array $element ): ?array {
+    public function count( array $element ): Usage_Counter_Result {
         /**
          * @var Atomic_Widget_Base | Atomic_Element_Base $instance
          */
         $instance = Plugin::$instance->elements_manager->create_element_instance( $element );
+		$counter_result = new Usage_Counter_Result();
 
         if ( ! $instance ) {
-            return null;
+            return $counter_result;
         }
 
-//		var_dump($element);
+		$total = $this->get_total_controls_count( $instance );
+		$changed = $this->get_changed_controls( $instance );
 
-//        $controls_by_tab = $this->extract_controls_by_tab( $instance );
-        $changed_controls = $this->get_changed_controls( $instance );
-        $total_count = $this->get_total_controls_count( $instance );
-//        $changed_count = array_sum( array_map( 'count', $changed_controls ) );
+		$counter_result->set_total( $total );
+		$counter_result->set_changed( $changed );
 
-        return [
-            'total' => $total_count,
-//            'changed' => $changed_count,
-//            'controls' => $changed_controls,
-        ];
+		return $counter_result;
     }
 
 	private function get_general_section_by_control( array $atomic_controls ): array {
@@ -105,60 +76,23 @@ class Usage_Counter {
 		$control_sections = $this->get_general_section_by_control( $instance->get_atomic_controls() );
 		$data = $instance->get_data_for_save();
 
-		// Check general controls
 		foreach ( $data['settings'] as $control_name => $prop_type ) {
-			// @TODO add correct classes handling
 			if ( 'classes' === $control_name ) {
+				$changed_controls[] = [
+					'tab' => self::TAB_STYLE,
+					'section' => 'classes',
+					'control' => $control_name
+				];
+
 				continue;
 			}
 
 			$changed_controls[] = [
 				'tab' => self::TAB_GENERAL,
-				'section' => $control_sections[ $control_name ] ?? 'Unknown',
+				'section' => $control_sections[ $control_name ] ?? 'unknown',
 				'control' => $control_name
 			];
 		}
-
-//		var_dump($data['styles'] );die();
-
-		$style_sections = $this->get_style_section_by_control( Style_Schema::get_style_schema_with_sections() );
-
-		foreach ( $data['styles'] as $class ) {
-			foreach ( $class['variants'] as $variant ) {
-				foreach ( $variant['props'] as $prop_type => $prop_value ) {
-					if ( ! isset( $style_sections[ $prop_type ] ) ) {
-						continue;
-					}
-
-					if ( 'plain' === $style_sections[ $prop_type ][ 'prop_type' ]::KIND ) {
-						$changed_controls[] = [
-							'tab' => self::TAB_STYLE,
-							'section' => $style_sections[ $prop_type ][ 'section' ],
-							'control' => $prop_type,
-						];
-
-						continue;
-					}
-
-					var_dump( $style_sections[ $prop_type ][ 'prop_type' ]::KIND , $prop_value );die();
-
-					if ( is_array( $prop_value[ 'value' ] ) ) {
-						foreach ( $prop_value[ 'value' ] as $type => $value ) {
-							$changed_controls[] = [
-								'tab' => self::TAB_STYLE,
-								'section' => 'Styles',
-								'control' => $type,
-							];
-						}
-					}
-				}
-			}
-		}
-
-
-		var_dump($changed_controls);
-
-		die();
 
 		return $changed_controls;
 	}
@@ -167,8 +101,8 @@ class Usage_Counter {
         $props_schema = $instance->get_props_schema();
         $total_count = count( $props_schema );
 
-        $all_style_props = Style_Schema::get();
-        $total_count += count( $all_style_props );
+        $style_props = Style_Schema::get();
+        $total_count += count( $style_props );
 
         return $total_count;
     }
