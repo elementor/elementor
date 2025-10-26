@@ -1,14 +1,4 @@
 export default class AtomicElementBaseModel extends elementor.modules.elements.models.Element {
-    
-    // Add this method to define default attributes
-    defaults() {
-		console.log('🎯 Model defaults called'); 
-        const parentDefaults = super.defaults ? super.defaults() : {};
-        return {
-            ...parentDefaults,
-            interactions: '', 
-        };
-    }
 
     /**
      * Do not allow section, column or container be placed in the Atomic container.
@@ -46,6 +36,7 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
     }
 
     buildElement( element ) {
+		console.log('buildElement called');
         const id = elementorCommon.helpers.getUniqueId();
 
         const elements = ( element.elements || [] ).map( ( el ) => this.buildElement( el ) );
@@ -58,7 +49,6 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
             elements,
             isLocked: element.isLocked || false,
             editor_settings: element.editor_settings || {},
-            interactions: element.interactions || '',
         };
     }
 }

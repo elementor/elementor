@@ -14,7 +14,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	protected $version = '0.0';
 	protected $styles = [];
-	protected $interactions = ''; // Change back to string
+	protected $interactions = []; // Change back to string
 	protected $editor_settings = [];
 
 	public function __construct( $data = [], $args = null ) {
@@ -22,7 +22,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 		$this->version = $data['version'] ?? '0.0';
 		$this->styles = $data['styles'] ?? [];
-		$this->interactions = $data['interactions'] ?? ''; // Keep as string
+		$this->interactions = $data['interactions'] ?? []; 
 		$this->editor_settings = $data['editor_settings'] ?? [];
 	}
 
@@ -35,6 +35,19 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	public function get_initial_config() {
 		$config = parent::get_initial_config();
 		$props_schema = static::get_props_schema();
+		var_dump($this->interactions);
+		
+		// Load interactions from database if not already loaded
+		// if ( empty( $this->interactions ) ) {
+		// 	$raw_data = $this->get_raw_data();
+		// 	var_dump($raw_data);
+		// 	// $this->interactions = ( $raw_data && isset( $raw_data['interactions'] ) ) ? $raw_data['interactions'] : [];
+		// }
+		$this->interactions = [
+			'scroll-into-view'
+		];
+		
+		var_dump($this->interactions);
 
 		$config['atomic'] = true;
 		$config['atomic_controls'] = $this->get_atomic_controls();
@@ -43,6 +56,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$config['atomic_props_schema'] = $props_schema;
 		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['version'] = $this->version;
+		$config['interactions'] = $this->interactions; 
 
 		return $config;
 	}

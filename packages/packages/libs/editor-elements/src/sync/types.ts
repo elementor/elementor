@@ -52,6 +52,7 @@ export type V1ElementModelProps = {
 	elements?: V1Model< V1ElementModelProps >[];
 	settings?: V1ElementSettingsProps;
 	editor_settings?: V1ElementEditorSettingsProps;
+	interactions?: any;
 };
 
 export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {

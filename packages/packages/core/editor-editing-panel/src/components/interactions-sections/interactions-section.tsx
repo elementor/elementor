@@ -9,13 +9,6 @@ const INTERACTIONS_LABEL = __( 'Interactions', 'elementor' );
 
 export const InteractionsSection = () => {
     return (
-        // <SectionContent>
-        //     <InteractionsField bind="interactions" propDisplayName={ INTERACTIONS_LABEL }>
-        //         <TextControl
-        //             placeholder="e.g. fade-in-left"
-        //         />
-        //     </InteractionsField>
-        // </SectionContent>
         <SectionContent>
             <InteractionsProvider>
                 <InteractionsInput />

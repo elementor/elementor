@@ -108,10 +108,26 @@ trait Has_Atomic_Base {
 		return $result->unwrap();
 	}
 
-	private function parse_atomic_interactions( array $interactions ): array {
-		// For now, just return as-is without validation
-		// You can add validation logic here later
-		return $interactions;
+	private function parse_atomic_interactions( $interactions ): array {
+		// Handle empty string
+		if ( empty( $interactions ) ) {
+			return [];
+		}
+
+		// Handle JSON string
+		if ( is_string( $interactions ) ) {
+			$decoded = json_decode( $interactions, true );
+			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+				return $decoded;
+			}
+		}
+
+		// Handle array (already parsed)
+		if ( is_array( $interactions ) ) {
+			return $interactions;
+		}
+
+		return [];
 	}
 
 	public function get_atomic_controls() {
@@ -151,7 +167,15 @@ trait Has_Atomic_Base {
 		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
 		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
 		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
-		// $data['interactions'] = $this->parse_atomic_interactions( $data['interactions'] ?? '' ); // Add this line
+
+		// Load interactions from database if not in data
+		// if ( ! isset( $data['interactions'] ) || $data['interactions'] === null ) {
+		// 	$data['interactions'] = $this->interactions ?? [];
+		// }
+
+		// $data['interactions'] = $this->parse_atomic_interactions( $data['interactions'] );
+		// $this->interactions = [
+		//  'scroll-into-view'];
 
 		return $data;
 	}
@@ -160,8 +184,9 @@ trait Has_Atomic_Base {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
 		$raw_data['styles'] = $this->styles;
-		$raw_data['interactions'] = $this->interactions; 
+		$raw_data['interactions'] = $this->interactions?? [];
 		$raw_data['editor_settings'] = $this->editor_settings;
+		var_dump($this->interactions);
 
 		return $raw_data;
 	}
