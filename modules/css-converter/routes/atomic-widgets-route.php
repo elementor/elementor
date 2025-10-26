@@ -11,7 +11,7 @@ class Atomic_Widgets_Route {
 
 	private const ROUTE_NAMESPACE = 'elementor/v2';
 	private const ROUTE_BASE = 'atomic-widgets';
-	
+
 	private $conversion_service;
 
 	public function __construct() {
@@ -66,86 +66,121 @@ class Atomic_Widgets_Route {
 
 	private function get_conversion_service() {
 		if ( null === $this->conversion_service ) {
-			// Initialize the same service as the old widgets route
-			$html_parser = new \Elementor\Modules\CssConverter\Services\Css\Parsing\Html_Parser();
-			$widget_mapper = new \Elementor\Modules\CssConverter\Services\Widgets\Widget_Mapper();
-			
-			// Initialize dependencies for Unified_Css_Processor
-			$css_parser = new \Elementor\Modules\CssConverter\Parsers\CssParser();
-			$property_conversion_service = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service();
-			$specificity_calculator = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Specificity_Calculator();
-			
-			$unified_css_processor = new \Elementor\Modules\CssConverter\Services\Css\Processing\Unified_Css_Processor(
-				$css_parser,
-				$property_conversion_service,
-				$specificity_calculator
-			);
-			
-			// Use our refactored Widget_Creation_Orchestrator instead of old Widget_Creator
-			$widget_creator = new \Elementor\Modules\CssConverter\Services\Widgets\Widget_Creation_Orchestrator();
-			
-			$this->conversion_service = new \Elementor\Modules\CssConverter\Services\Widgets\Unified_Widget_Conversion_Service(
-				$html_parser,
-				$widget_mapper,
-				$unified_css_processor,
-				$widget_creator,
-				false
-			);
+			$this->conversion_service = $this->create_unified_conversion_service();
 		}
 		return $this->conversion_service;
 	}
 
-	public function convert_html_to_widgets( \WP_REST_Request $request ): \WP_REST_Response {
-		// Support both new format (html) and legacy format (content)
-		$html = $request->get_param( 'html' ) ?: $request->get_param( 'content' );
-		$css = $request->get_param( 'css' ) ?: '';
-		$type = $request->get_param( 'type' ) ?: 'html';
-		$css_urls = $request->get_param( 'cssUrls' ) ?: [];
-		$follow_imports = $request->get_param( 'followImports' ) ?: false;
-		$options = $request->get_param( 'options' ) ?: [];
+	private function create_unified_conversion_service() {
+		$html_parser = $this->create_html_parser();
+		$widget_mapper = $this->create_widget_mapper();
+		$unified_css_processor = $this->create_unified_css_processor();
+		$widget_creator = $this->create_widget_creation_orchestrator();
 
-		if ( empty( $html ) ) {
-			return new \WP_REST_Response(
-				[
-					'success' => false,
-					'error' => 'HTML content is required',
-					'code' => 'missing_html',
-				],
-				400
-			);
+		return new \Elementor\Modules\CssConverter\Services\Widgets\Unified_Widget_Conversion_Service(
+			$html_parser,
+			$widget_mapper,
+			$unified_css_processor,
+			$widget_creator,
+			false
+		);
+	}
+
+	private function create_html_parser() {
+		return new \Elementor\Modules\CssConverter\Services\Css\Parsing\Html_Parser();
+	}
+
+	private function create_widget_mapper() {
+		return new \Elementor\Modules\CssConverter\Services\Widgets\Widget_Mapper();
+	}
+
+	private function create_unified_css_processor() {
+		$css_parser = new \Elementor\Modules\CssConverter\Parsers\CssParser();
+		$property_conversion_service = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service();
+		$specificity_calculator = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Specificity_Calculator();
+
+		return new \Elementor\Modules\CssConverter\Services\Css\Processing\Unified_Css_Processor(
+			$css_parser,
+			$property_conversion_service,
+			$specificity_calculator
+		);
+	}
+
+	private function create_widget_creation_orchestrator() {
+		return new \Elementor\Modules\CssConverter\Services\Widgets\Widget_Creation_Orchestrator();
+	}
+
+	public function convert_html_to_widgets( \WP_REST_Request $request ): \WP_REST_Response {
+		$conversion_params = $this->extract_conversion_parameters( $request );
+
+		if ( empty( $conversion_params['html'] ) ) {
+			return $this->create_missing_html_error_response();
 		}
 
 		try {
 			$service = $this->get_conversion_service();
-
-			// Handle CSS embedding like the old widgets route
-			if ( ! empty( $css ) ) {
-				$html = '<html><head><style>' . $css . '</style></head><body>' . $html . '</body></html>';
-			}
-
-			// Use the same conversion method as the old widgets route
-			$result = $service->convert_from_html( $html, $css_urls, $follow_imports, $options );
+			$processed_html = $this->embed_css_if_provided( $conversion_params['html'], $conversion_params['css'] );
+			$result = $service->convert_from_html(
+				$processed_html,
+				$conversion_params['css_urls'],
+				$conversion_params['follow_imports'],
+				$conversion_params['options']
+			);
 
 			return new \WP_REST_Response( $result, 200 );
 
 		} catch ( \Exception $e ) {
-			return new \WP_REST_Response(
-				[
-					'success' => false,
-					'error' => 'Internal conversion error',
-					'message' => $e->getMessage(),
-					'code' => 'conversion_error',
-				],
-				500
-			);
+			return $this->create_conversion_error_response( $e );
 		}
+	}
+
+	private function extract_conversion_parameters( \WP_REST_Request $request ): array {
+		return [
+			'html' => $request->get_param( 'html' ) ? $request->get_param( 'html' ) : $request->get_param( 'content' ),
+			'css' => $request->get_param( 'css' ) ? $request->get_param( 'css' ) : '',
+			'type' => $request->get_param( 'type' ) ? $request->get_param( 'type' ) : 'html',
+			'css_urls' => $request->get_param( 'cssUrls' ) ? $request->get_param( 'cssUrls' ) : [],
+			'follow_imports' => $request->get_param( 'followImports' ) ? $request->get_param( 'followImports' ) : false,
+			'options' => $request->get_param( 'options' ) ? $request->get_param( 'options' ) : [],
+		];
+	}
+
+	private function create_missing_html_error_response(): \WP_REST_Response {
+		return new \WP_REST_Response(
+			[
+				'success' => false,
+				'error' => 'HTML content is required',
+				'code' => 'missing_html',
+			],
+			400
+		);
+	}
+
+	private function embed_css_if_provided( string $html, string $css ): string {
+		if ( empty( $css ) ) {
+			return $html;
+		}
+
+		return '<html><head><style>' . $css . '</style></head><body>' . $html . '</body></html>';
+	}
+
+	private function create_conversion_error_response( \Exception $e ): \WP_REST_Response {
+		return new \WP_REST_Response(
+			[
+				'success' => false,
+				'error' => 'Internal conversion error',
+				'message' => $e->getMessage(),
+				'code' => 'conversion_error',
+			],
+			500
+		);
 	}
 
 	public function convert_html_to_global_classes( \WP_REST_Request $request ): \WP_REST_Response {
 		$html = $request->get_param( 'html' );
-		$options = $request->get_param( 'options' ) ?: [];
-		$debug_mode = $request->get_param( 'debug' ) ?: false;
-		$performance_monitoring = $request->get_param( 'performance' ) ?: false;
+		$options = $request->get_param( 'options' ) ? $request->get_param( 'options' ) : [];
+		$debug_mode = $request->get_param( 'debug' ) ? $request->get_param( 'debug' ) : false;
+		$performance_monitoring = $request->get_param( 'performance' ) ? $request->get_param( 'performance' ) : false;
 
 		if ( empty( $html ) ) {
 			return new \WP_REST_Response(
@@ -179,7 +214,7 @@ class Atomic_Widgets_Route {
 		}
 	}
 
-	public function get_capabilities( \WP_REST_Request $request ): \WP_REST_Response {
+	public function get_capabilities(): \WP_REST_Response {
 		try {
 			$orchestrator = new Atomic_Widgets_Orchestrator();
 			$capabilities = $orchestrator->get_conversion_capabilities();

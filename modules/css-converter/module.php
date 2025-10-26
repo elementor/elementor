@@ -57,7 +57,6 @@ class Module extends BaseModule {
 		$this->load_required_dependencies();
 		$this->skip_global_styles_service_initialization_due_to_kit_meta_storage();
 		$this->initialize_global_classes_override();
-		// $this->initialize_widgets_route(); // Disabled - replaced by atomic widgets route
 		$this->initialize_classes_route();
 		$this->initialize_variables_route();
 		$this->initialize_atomic_widgets_route();
@@ -97,8 +96,6 @@ class Module extends BaseModule {
 			'/services/css/processing/css-property-conversion-service.php',
 			'/services/css/processing/css-processor.php',
 			'/services/widgets/widget-mapper.php',
-			'/services/widgets/widget-creator.php',
-			'/services/widgets/widget-conversion-service.php',
 			'/services/global-classes/class-conversion-service.php',
 			'/services/variables/variable-conversion-service.php',
 			'/convertors/variables/variable_convertor_interface.php',
@@ -130,18 +127,6 @@ class Module extends BaseModule {
 		if ( class_exists( '\Elementor\Modules\CssConverter\Services\Styles\CSS_Converter_Global_Classes_Override' ) ) {
 			$override_service = \Elementor\Modules\CssConverter\Services\Styles\CSS_Converter_Global_Classes_Override::make();
 			$override_service->register_hooks();
-		}
-	}
-	private function initialize_widgets_route(): void {
-		$widgets_route_file = __DIR__ . '/routes/widgets-route.php';
-		if ( ! file_exists( $widgets_route_file ) ) {
-			$this->handle_widgets_route_missing();
-			return;
-		}
-		require_once $widgets_route_file;
-		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Widgets_Route' ) ) {
-			$this->widgets_route = new \Elementor\Modules\CssConverter\Routes\Widgets_Route();
-		} else {
 		}
 	}
 	private function initialize_classes_route(): void {
@@ -178,8 +163,6 @@ class Module extends BaseModule {
 		}
 	}
 	private function handle_initialization_failure(): void {
-	}
-	private function handle_widgets_route_missing(): void {
 	}
 	private function handle_classes_route_missing(): void {
 	}
