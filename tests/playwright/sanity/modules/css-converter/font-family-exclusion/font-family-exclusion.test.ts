@@ -24,10 +24,10 @@ test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 	const page = await browser.newPage();
 	const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
-	// Enable atomic widgets experiments
 	await wpAdminPage.setExperiments( {
 		e_opt_in_v4_page: 'active',
 		e_atomic_elements: 'active',
+		e_nested_elements: 'active',
 	} );
 
 	await page.close();
