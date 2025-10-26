@@ -73,7 +73,6 @@ register( {
 				},
 				':id'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
-					console.log( index );
 
 					return getTabContentId( index );
 				},
