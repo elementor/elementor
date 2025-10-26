@@ -102,11 +102,19 @@ class Usage_Counter {
 
 		$style_props = $this->extract_props( $data['styles'] ?? [] );
 
-		if ( empty( $style_props ) ) {
+		if ( ! empty( $style_props['custom_css_props'] ) ) {
+			$changed_controls[] = [
+				'tab' => self::TAB_STYLE,
+				'section' => 'Custom CSS',
+				'control' => 'custom_css',
+			];
+		}
+
+		if ( empty( $style_props['style_props'] ) ) {
 			return $changed_controls;
 		}
 
-		foreach ( $style_props as $style_prop_name => $style_prop_value ) {
+		foreach ( $style_props['style_props'] as $style_prop_name => $style_prop_value ) {
 			$section = $this->style_sections[ $style_prop_name ]['section'] ?? 'unknown';
 			$prop_type = $this->style_sections[ $style_prop_name ]['prop_type'];
 
@@ -171,18 +179,21 @@ class Usage_Counter {
 	}
 
 	private function extract_props( array $styles ): array {
-		$variants_props = array_reduce(
-			$styles,
-			function( $carry, $style ) {
-				return array_merge(
-					$carry,
-					array_column( $style['variants'], 'props' )
-				);
-			},
-			[]
-		);
+		$style_props = [];
+		$custom_css_props = [];
 
-		return array_merge( ...$variants_props );
+
+		foreach ( $styles as $style ) {
+			foreach ( $style['variants'] as $variant ) {
+				$style_props[] = $variant['props'];
+				$custom_css_props = $variant['custom_css'];
+			}
+		}
+
+		return [
+			'style_props' => array_merge( ...$style_props ),
+			'custom_css_props' => $custom_css_props,
+		];
 	}
 
 	private function get_total_controls_count( $instance ): int {
