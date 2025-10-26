@@ -88,9 +88,6 @@ class Module extends BaseModule {
 
 
 	private function register_lock_hooks() {
-		add_action( 'elementor/editor/init', [ $this, 'lock_component_on_edit' ] );
-		add_action( 'elementor/editor/after_save', [ $this, 'unlock_component_after_save' ] );
-		add_action( 'elementor/editor/before_save', [ $this, 'check_component_lock' ] );
 		add_filter( 'heartbeat_received', [ $this, 'heartbeat_received' ], 10, 2 );
 		add_filter( 'heartbeat_send', [ $this, 'heartbeat_send' ], 10, 2 );
 	}

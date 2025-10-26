@@ -8,7 +8,7 @@ import {
 import { type NumberPropValue } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
-import { canSwitchDocument } from './api';
+import { apiClient, canSwitchDocument } from './api';
 
 export const TYPE = 'e-component';
 
@@ -53,7 +53,6 @@ function createComponentView( options: CreateTemplatedElementTypeOptions & { cb?
 			childrenPlaceholder.replaceWith( buffer );
 		}
 
-
 		getComponentId() {
 			return this.options?.model?.get( 'settings' )?.get( 'component' ) as NumberPropValue;
 		}
@@ -90,6 +89,7 @@ function createComponentView( options: CreateTemplatedElementTypeOptions & { cb?
 					mode: 'autosave',
 					selector: `[data-id="${this.model.get('id')}"]`,
 				})
+				apiClient.lockComponent(this.getComponentId()?.value as number);
 			}
 		}
 	

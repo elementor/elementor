@@ -96,35 +96,35 @@ class Components_REST_API {
 		] );
 
 		// Add lock routes
-		// register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/lock', [
-		// 	[
-		// 		'methods' => 'POST',
-		// 		'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->lock_component( $request ) ),
-		// 		'permission_callback' => fn() => is_user_logged_in(),
-		// 		'args' => [
-		// 			'componentId' => [
-		// 				'type' => 'number',
-		// 				'required' => true,
-		// 				'description' => 'The component ID to unlock',
-		// 			],
-		// 		],
-		// 	],
-		// ] );
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/lock', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->lock_component( $request ) ),
+				'permission_callback' => fn() => is_user_logged_in() && current_user_can( 'edit_posts' ),
+				'args' => [
+					'componentId' => [
+						'type' => 'number',
+						'required' => true,
+						'description' => 'The component ID to unlock',
+					],
+				],
+			],
+		] );
 
-		// register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/unlock', [
-		// 	[
-		// 		'methods' => 'POST',
-		// 		'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->unlock_component( $request ) ),
-		// 		'permission_callback' => fn() => is_user_logged_in(),
-		// 		'args' => [
-		// 			'componentId' => [
-		// 				'type' => 'number',
-		// 				'required' => true,
-		// 				'description' => 'The component ID to unlock',
-		// 			],
-		// 		],
-		// 	],
-		// ] );
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/unlock', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->unlock_component( $request ) ),
+				'permission_callback' => fn() => is_user_logged_in() && current_user_can( 'edit_posts' ),
+				'args' => [
+					'componentId' => [
+						'type' => 'number',
+						'required' => true,
+						'description' => 'The component ID to unlock',
+					],
+				],
+			],
+		] );
 
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/lock-status', [
 			[
@@ -142,8 +142,6 @@ class Components_REST_API {
 		] );
 		
 	}
-
-	
 
 	private function get_components() {
 		$components = $this->get_repository()->all();
@@ -200,32 +198,32 @@ class Components_REST_API {
 			->build();
 	}
 
-	// private function lock_component( \WP_REST_Request $request ) {
-	// 	$component_id = $request->get_param( 'componentId' );
-	// 	$success = $this->get_lock_manger()->lock_document( $component_id );
+	private function lock_component( \WP_REST_Request $request ) {
+		$component_id = $request->get_param( 'componentId' );
+		$success = $this->get_lock_manger()->lock_document( $component_id );
 
-	// 	if ( ! $success ) {
-	// 		return Error_Builder::make( 'lock_failed' )
-	// 			->set_status( 500 )
-	// 			->set_message( __( 'Failed to lock component', 'elementor' ) )
-	// 			->build();
-	// 	}
+		if ( ! $success ) {
+			return Error_Builder::make( 'lock_failed' )
+				->set_status( 500 )
+				->set_message( __( 'Failed to lock component', 'elementor' ) )
+				->build();
+		}
 
-	// 	return Response_Builder::make( [ 'locked' => true ] )->build();
-	// }
+		return Response_Builder::make( [ 'locked' => true ] )->build();
+	}
 
-	// private function unlock_component( \WP_REST_Request $request ) {
-	// 	$component_id = $request->get_param( 'componentId' );
-	// 	$success = $this->get_lock_manger()->unlock_document( $component_id );
+	private function unlock_component( \WP_REST_Request $request ) {
+		$component_id = $request->get_param( 'componentId' );
+		$success = $this->get_lock_manger()->unlock_document( $component_id );
 
-	// 	if ( ! $success ) {
-	// 		return Error_Builder::make( 'unlock_failed' )
-	// 			->set_status( 500 )
-	// 			->set_message( __( 'Failed to unlock component', 'elementor' ) )
-	// 			->build();
-	// 	}
-	// 	return Response_Builder::make( [ 'unlocked' => $success ] )->build();
-	// }
+		if ( ! $success ) {
+			return Error_Builder::make( 'unlock_failed' )
+				->set_status( 500 )
+				->set_message( __( 'Failed to unlock component', 'elementor' ) )
+				->build();
+		}
+		return Response_Builder::make( [ 'unlocked' => $success ] )->build();
+	}
 
 	private function get_lock_status( \WP_REST_Request $request ) {	
 		$component_id = $request->get_param( 'componentId' );
