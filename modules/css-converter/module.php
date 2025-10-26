@@ -1,5 +1,6 @@
 <?php
 namespace Elementor\Modules\CssConverter;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -24,12 +25,12 @@ class Module extends BaseModule {
 		if ( ! $this->is_test_environment() && ! $variables_route && ! $classes_route && ! $widgets_route ) {
 			$this->init_routes();
 		}
-		
+
 		// Add global hooks for CSS converter base styles override
 		add_action( 'wp_head', [ $this, 'maybe_inject_base_styles_override' ], 999 );
 		add_action( 'elementor/editor/wp_head', [ $this, 'maybe_inject_base_styles_override' ], 999 );
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'maybe_inject_base_styles_override' ], 999 );
-		
+
 		// Add editor load debug
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'debug_editor_widget_loading' ], 5 );
 	}
@@ -173,8 +174,7 @@ class Module extends BaseModule {
 		}
 		require_once $atomic_widgets_route_file;
 		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Atomic_Widgets_Route' ) ) {
-			$atomic_widgets_route = new \Elementor\Modules\CssConverter\Routes\Atomic_Widgets_Route();
-			$atomic_widgets_route->register_routes();
+			new \Elementor\Modules\CssConverter\Routes\Atomic_Widgets_Route();
 		}
 	}
 	private function handle_initialization_failure(): void {
@@ -229,24 +229,24 @@ class Module extends BaseModule {
 	}
 
 	public function debug_editor_widget_loading() {
-		
+
 		$post_id = get_the_ID();
-		
+
 		if ( ! $post_id ) {
 			return;
 		}
-		
+
 		// Check post data
 		$elementor_data = get_post_meta( $post_id, '_elementor_data', true );
 		if ( ! $elementor_data ) {
 			return;
 		}
-		
+
 		$data = is_string( $elementor_data ) ? json_decode( $elementor_data, true ) : $elementor_data;
 		if ( ! $data || ! is_array( $data ) ) {
 			return;
 		}
-		
+
 		// Find widget types in data
 		$widget_types = [];
 		array_walk_recursive( $data, function( $value, $key ) use ( &$widget_types ) {
@@ -254,16 +254,16 @@ class Module extends BaseModule {
 				$widget_types[] = $value;
 			}
 		} );
-		
+
 		$unique_types = array_unique( $widget_types );
-		
+
 		// Check for converted widgets
 		$converted_types = array_filter( $unique_types, function( $type ) {
 			return strpos( $type, '-converted' ) !== false;
 		} );
-		
+
 		if ( ! empty( $converted_types ) ) {
-			
+
 			// Verify if they're registered
 			foreach ( $converted_types as $type ) {
 				$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
@@ -274,5 +274,4 @@ class Module extends BaseModule {
 		} else {
 		}
 	}
-
 }

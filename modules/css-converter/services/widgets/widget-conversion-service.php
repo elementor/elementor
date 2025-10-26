@@ -12,7 +12,7 @@ use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversi
 use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Processor;
 use Elementor\Modules\CssConverter\Services\Css\Processing\Unified_Css_Processor;
 use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Specificity_Calculator;
-use Elementor\Modules\CssConverter\Services\Widgets\Widget_Creator;
+use Elementor\Modules\CssConverter\Services\Widgets\Widget_Creation_Orchestrator;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 
 class Widget_Conversion_Service {
@@ -20,7 +20,7 @@ class Widget_Conversion_Service {
 	private $widget_mapper;
 	private $property_conversion_service;
 	private $unified_css_processor;
-	private $widget_creator;
+	private $widget_orchestrator;
 	private $use_zero_defaults;
 
 	public function __construct( $use_zero_defaults = false ) {
@@ -28,7 +28,7 @@ class Widget_Conversion_Service {
 		$this->html_parser = new Html_Parser();
 		$this->widget_mapper = new Widget_Mapper();
 		$this->property_conversion_service = new Css_Property_Conversion_Service();
-		
+
 		// Initialize unified CSS processor with required dependencies
 		$css_parser = new \Elementor\Modules\CssConverter\Parsers\CssParser();
 		$specificity_calculator = new Css_Specificity_Calculator();
@@ -37,9 +37,9 @@ class Widget_Conversion_Service {
 			$this->property_conversion_service,
 			$specificity_calculator
 		);
-		
-		$this->widget_creator = new Widget_Creator( $use_zero_defaults );
-		
+
+		$this->widget_orchestrator = new Widget_Creation_Orchestrator( $use_zero_defaults );
+
 		// Add global CSS override for base styles when zero defaults are enabled
 		if ( $use_zero_defaults ) {
 			$this->enable_css_converter_base_styles_override();
@@ -49,14 +49,14 @@ class Widget_Conversion_Service {
 	public function convert_from_url( $url, $css_urls = [], $follow_imports = false, $options = [] ) {
 		// Fetch HTML from URL with timeout (HVV: 30s default)
 		$timeout = apply_filters( 'elementor_widget_converter_timeout', 30 );
-		
+
 		$response = wp_remote_get( $url, [
 			'timeout' => $timeout,
 			'user-agent' => 'Elementor Widget Converter/1.0',
 		] );
 
 		if ( is_wp_error( $response ) ) {
-			throw new Class_Conversion_Exception( 
+			throw new Class_Conversion_Exception(
 				'Failed to fetch URL: ' . $response->get_error_message(),
 				[ 'url' => $url ]
 			);
@@ -64,14 +64,17 @@ class Widget_Conversion_Service {
 
 		$status_code = wp_remote_retrieve_response_code( $response );
 		if ( $status_code !== 200 ) {
-			throw new Class_Conversion_Exception( 
+			throw new Class_Conversion_Exception(
 				'HTTP error: ' . $status_code,
-				[ 'url' => $url, 'status_code' => $status_code ]
+				[
+					'url' => $url,
+					'status_code' => $status_code,
+				]
 			);
 		}
 
 		$html = wp_remote_retrieve_body( $response );
-		
+
 		// Extract CSS URLs from HTML if not provided
 		if ( empty( $css_urls ) ) {
 			$css_urls = $this->html_parser->extract_linked_css( $html );
@@ -83,7 +86,7 @@ class Widget_Conversion_Service {
 	public function convert_from_css( $css, $css_urls = [], $follow_imports = false, $options = [] ) {
 		// For CSS-only conversion, we create a minimal HTML structure
 		// This allows us to process CSS rules and create global classes
-		
+
 		$conversion_log = [
 			'start_time' => microtime( true ),
 			'input_size' => strlen( $css ),
@@ -99,7 +102,7 @@ class Widget_Conversion_Service {
 				$css_fetch_result = $this->css_processor->fetch_css_from_urls( $css_urls, $follow_imports );
 				$all_css .= "\n" . $css_fetch_result['css'];
 			}
-			
+
 			$conversion_log['css_size'] = strlen( $all_css );
 
 			// Process CSS and create global classes (HVV: threshold = 1)
@@ -124,7 +127,7 @@ class Widget_Conversion_Service {
 				'trace' => $e->getTraceAsString(),
 			];
 
-			throw new Class_Conversion_Exception( 
+			throw new Class_Conversion_Exception(
 				'CSS conversion failed: ' . $e->getMessage(),
 				$conversion_log
 			);
@@ -135,7 +138,7 @@ class Widget_Conversion_Service {
 		// CSS converter always uses converted widgets with zero defaults
 		$this->use_zero_defaults = true;
 		$this->widget_creator = new Widget_Creator( $this->use_zero_defaults );
-		
+
 		$conversion_log = [
 			'start_time' => microtime( true ),
 			'input_size' => strlen( $html ),
@@ -146,26 +149,26 @@ class Widget_Conversion_Service {
 		];
 
 		try {
-		// Step 1: Parse HTML
-		$elements = $this->html_parser->parse( $html );
-		$conversion_log['parsed_elements'] = count( $elements );
-		
-		// DEBUG: Log parsed element structure
-		foreach ( $elements as $index => $element ) {
-			$tag = $element['tag'] ?? 'unknown';
-			$has_inline_css = ! empty( $element['inline_css'] );
-			$children_count = count( $element['children'] ?? [] );
-			$class_attr = $element['attributes']['class'] ?? '';
-			
-			// Log children structure if any
-			if ( $children_count > 0 ) {
-				foreach ( $element['children'] as $child_index => $child ) {
-					$child_tag = $child['tag'] ?? 'unknown';
-					$child_has_inline_css = ! empty( $child['inline_css'] );
-					$child_class_attr = $child['attributes']['class'] ?? '';
+			// Step 1: Parse HTML
+			$elements = $this->html_parser->parse( $html );
+			$conversion_log['parsed_elements'] = count( $elements );
+
+			// DEBUG: Log parsed element structure
+			foreach ( $elements as $index => $element ) {
+				$tag = $element['tag'] ?? 'unknown';
+				$has_inline_css = ! empty( $element['inline_css'] );
+				$children_count = count( $element['children'] ?? [] );
+				$class_attr = $element['attributes']['class'] ?? '';
+
+				// Log children structure if any
+				if ( $children_count > 0 ) {
+					foreach ( $element['children'] as $child_index => $child ) {
+						$child_tag = $child['tag'] ?? 'unknown';
+						$child_has_inline_css = ! empty( $child['inline_css'] );
+						$child_class_attr = $child['attributes']['class'] ?? '';
+					}
 				}
 			}
-		}
 
 			// Step 2: Validate HTML structure (HVV: max 20 levels depth)
 			$validation_issues = $this->html_parser->validate_html_structure( $elements, 20 );
@@ -173,35 +176,35 @@ class Widget_Conversion_Service {
 				$conversion_log['warnings'] = array_merge( $conversion_log['warnings'], $validation_issues );
 			}
 
-		// Step 3: Extract CSS only (NO inline style conversion - unified approach handles this)
-		$all_css = $this->extract_css_only( $html, $css_urls, $follow_imports );
-		$conversion_log['css_size'] = strlen( $all_css );
+			// Step 3: Extract CSS only (NO inline style conversion - unified approach handles this)
+			$all_css = $this->extract_css_only( $html, $css_urls, $follow_imports );
+			$conversion_log['css_size'] = strlen( $all_css );
 
-		// Step 4: Map HTML elements to widgets
-		$mapped_widgets = $this->widget_mapper->map_elements( $elements );
-		$mapping_stats = $this->widget_mapper->get_mapping_stats( $elements );
-		$conversion_log['mapping_stats'] = $mapping_stats;
-		
-		// DEBUG: Log mapped widgets structure (can be removed in production)
-		// foreach ( $mapped_widgets as $index => $widget ) {
-		//	$widget_type = $widget['widget_type'] ?? 'unknown';
-		//	$widget_id = $widget['attributes']['id'] ?? 'no-id';
-		//	$generated_class = $widget['generated_class'] ?? 'no-class';
-		// }
+			// Step 4: Map HTML elements to widgets
+			$mapped_widgets = $this->widget_mapper->map_elements( $elements );
+			$mapping_stats = $this->widget_mapper->get_mapping_stats( $elements );
+			$conversion_log['mapping_stats'] = $mapping_stats;
 
-		// Step 5: UNIFIED CSS Processing - eliminates competition between pipelines
-		
-		$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets );
-		$resolved_widgets = $unified_processing_result['widgets'];
-		$conversion_log['css_processing'] = $unified_processing_result['stats'];
-		
-		// Debug logging for unified processing result
-		
-		// Step 6: Widgets now have resolved styles - no separate CSS application needed
-		$styled_widgets = $resolved_widgets;
-		
-		// Step 6.5: Inline styles are now always processed through the optimized global classes pipeline
-		// The createGlobalClasses: false option has been removed for better performance and consistency
+			// DEBUG: Log mapped widgets structure (can be removed in production)
+			// foreach ( $mapped_widgets as $index => $widget ) {
+			// $widget_type = $widget['widget_type'] ?? 'unknown';
+			// $widget_id = $widget['attributes']['id'] ?? 'no-id';
+			// $generated_class = $widget['generated_class'] ?? 'no-class';
+			// }
+
+			// Step 5: UNIFIED CSS Processing - eliminates competition between pipelines
+
+			$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets );
+			$resolved_widgets = $unified_processing_result['widgets'];
+			$conversion_log['css_processing'] = $unified_processing_result['stats'];
+
+			// Debug logging for unified processing result
+
+			// Step 6: Widgets now have resolved styles - no separate CSS application needed
+			$styled_widgets = $resolved_widgets;
+
+			// Step 6.5: Inline styles are now always processed through the optimized global classes pipeline
+			// The createGlobalClasses: false option has been removed for better performance and consistency
 
 			// Step 7: Create Elementor widgets with resolved styles (unified approach)
 			$creation_result = $this->create_widgets_with_resolved_styles( $styled_widgets, $options );
@@ -228,7 +231,7 @@ class Widget_Conversion_Service {
 				'trace' => $e->getTraceAsString(),
 			];
 
-			throw new Class_Conversion_Exception( 
+			throw new Class_Conversion_Exception(
 				'Widget conversion failed: ' . $e->getMessage() . '. Log: ' . wp_json_encode( $conversion_log ),
 				0
 			);
@@ -265,7 +268,7 @@ class Widget_Conversion_Service {
 
 	private function extract_inline_css_from_elements( &$elements, &$element_counter = null ) {
 		$inline_css = '';
-		
+
 		// Initialize counter if not passed from parent call
 		if ( null === $element_counter ) {
 			$element_counter = 0;
@@ -273,38 +276,38 @@ class Widget_Conversion_Service {
 
 		foreach ( $elements as &$element ) {
 			if ( ! empty( $element['inline_css'] ) ) {
-				
-				$element_counter++;
-				
+
+				++$element_counter;
+
 				// DEBUG: Log element details (can be removed in production)
 				$element_tag = $element['tag'] ?? 'unknown';
 				$element_id = $element['attributes']['id'] ?? 'no-id';
-				
+
 				// Create a unique class name for this element
 				$class_name = 'inline-element-' . $element_counter;
-				
+
 				// Convert inline CSS to CSS rule
 				$css_rules = [];
 				foreach ( $element['inline_css'] as $property => $style_data ) {
 					$value = $style_data['value'];
 					$important = $style_data['important'] ? ' !important' : '';
 					$css_rules[] = "  {$property}: {$value}{$important};";
-					
+
 					// DEBUG: Log each property conversion (can be removed in production)
 				}
-				
+
 				if ( ! empty( $css_rules ) ) {
 					$css_rule_block = ".{$class_name} {\n" . implode( "\n", $css_rules ) . "\n}\n\n";
 					$inline_css .= $css_rule_block;
-					
+
 					// DEBUG: Log generated CSS rule (can be removed in production)
-					
+
 					// Store the class name in the element for later reference
 					$element['generated_class'] = $class_name;
 				}
 			} else {
 			}
-			
+
 			// Process child elements recursively, passing the counter by reference
 			if ( ! empty( $element['children'] ) ) {
 				$child_css = $this->extract_inline_css_from_elements( $element['children'], $element_counter );
@@ -318,23 +321,22 @@ class Widget_Conversion_Service {
 	private function apply_css_to_widgets( $widgets, $css_processing_result ) {
 		// Apply CSS styles to widgets based on specificity priority
 		// HVV requirement: !important > inline > ID > class > element
-		
+
 		foreach ( $widgets as $index => &$widget ) {
 			$widget_type = $widget['widget_type'] ?? 'unknown';
 			$widget_id = $widget['attributes']['id'] ?? 'no-id';
 			$generated_class = $widget['generated_class'] ?? 'no-class';
-			
-			
+
 			$widget['applied_styles'] = $this->css_processor->apply_styles_to_widget( $widget, $css_processing_result );
-			
+
 			// DEBUG: Log applied styles summary
 			$applied = $widget['applied_styles'];
 			$computed_count = count( $applied['computed_styles'] ?? [] );
 			$global_classes_count = count( $applied['global_classes'] ?? [] );
-			
+
 			if ( ! empty( $applied['computed_styles'] ) ) {
 			}
-			
+
 			// Recursively apply styles to nested children
 			if ( ! empty( $widget['children'] ) ) {
 				$widget['children'] = $this->apply_css_to_widgets( $widget['children'], $css_processing_result );
@@ -352,11 +354,9 @@ class Widget_Conversion_Service {
 	private function convert_inline_css_to_computed_styles( $inline_css ) {
 		// Convert inline CSS array to the computed styles format expected by widget creator
 		$computed_styles = [];
-		
-		// ✅ DEBUG: Log grouped properties
+
 		$grouped_properties = $this->group_margin_properties( $inline_css );
-		
-		// ✅ BRILLIANT SUGGESTION: Pre-group margin properties before conversion
+
 		// This way we send all margin properties together instead of individually
 		foreach ( $grouped_properties as $property_group => $properties ) {
 			if ( 'margin' === $property_group ) {
@@ -370,9 +370,9 @@ class Widget_Conversion_Service {
 				foreach ( $properties as $property => $style_data ) {
 					$value = $style_data['value'];
 					$important = $style_data['important'];
-					
+
 					$conversion_result = $this->property_conversion_service->convert_property_to_v4_atomic_with_name( $property, $value );
-					
+
 					if ( $conversion_result ) {
 						$property_name = $conversion_result['property_name'];
 						$atomic_value = $conversion_result['converted_value'];
@@ -381,7 +381,7 @@ class Widget_Conversion_Service {
 				}
 			}
 		}
-		
+
 		return $computed_styles;
 	}
 
@@ -390,16 +390,24 @@ class Widget_Conversion_Service {
 	 */
 	private function group_margin_properties( $inline_css ): array {
 		$margin_properties = [
-			'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
-			'margin-block', 'margin-block-start', 'margin-block-end',
-			'margin-inline', 'margin-inline-start', 'margin-inline-end'
+			'margin',
+			'margin-top',
+			'margin-right',
+			'margin-bottom',
+			'margin-left',
+			'margin-block',
+			'margin-block-start',
+			'margin-block-end',
+			'margin-inline',
+			'margin-inline-start',
+			'margin-inline-end',
 		];
-		
+
 		$grouped = [
 			'margin' => [],
-			'other' => []
+			'other' => [],
 		];
-		
+
 		foreach ( $inline_css as $property => $style_data ) {
 			if ( in_array( $property, $margin_properties, true ) ) {
 				$grouped['margin'][ $property ] = $style_data;
@@ -407,7 +415,7 @@ class Widget_Conversion_Service {
 				$grouped['other'][ $property ] = $style_data;
 			}
 		}
-		
+
 		return $grouped;
 	}
 
@@ -450,7 +458,7 @@ class Widget_Conversion_Service {
 			'margin-inline-start' => 'inline-start',
 			'margin-inline-end' => 'inline-end',
 		];
-		
+
 		return $mapping[ $property ] ?? null;
 	}
 
@@ -459,30 +467,45 @@ class Widget_Conversion_Service {
 	 */
 	private function parse_margin_size_value( string $value ): ?array {
 		$value = trim( $value );
-		
+
 		if ( empty( $value ) ) {
-			return [ 'size' => 0.0, 'unit' => 'px' ];
+			return [
+				'size' => 0.0,
+				'unit' => 'px',
+			];
 		}
-		
+
 		// Handle CSS keywords
-		$keywords = ['auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer'];
+		$keywords = [ 'auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer' ];
 		if ( in_array( strtolower( $value ), $keywords, true ) ) {
-			return [ 'size' => $value, 'unit' => 'custom' ];
+			return [
+				'size' => $value,
+				'unit' => 'custom',
+			];
 		}
-		
+
 		// Parse numeric value with unit
 		if ( preg_match( '/^(-?\d*\.?\d+)(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax)?$/i', $value, $matches ) ) {
 			$size = (float) $matches[1];
 			$unit = $matches[2] ?? 'px';
-			return [ 'size' => $size, 'unit' => strtolower( $unit ) ];
+			return [
+				'size' => $size,
+				'unit' => strtolower( $unit ),
+			];
 		}
-		
+
 		if ( '0' === $value ) {
-			return [ 'size' => 0.0, 'unit' => 'px' ];
+			return [
+				'size' => 0.0,
+				'unit' => 'px',
+			];
 		}
-		
+
 		// Fallback for invalid values
-		return [ 'size' => 0.0, 'unit' => 'px' ];
+		return [
+			'size' => 0.0,
+			'unit' => 'px',
+		];
 	}
 
 	/**
@@ -494,13 +517,13 @@ class Widget_Conversion_Service {
 			if ( null !== $size_data ) {
 				$result[ $logical_property ] = [
 					'$$type' => 'size',
-					'value' => $size_data
+					'value' => $size_data,
 				];
 			}
 		}
 		return [
 			'$$type' => 'dimensions',
-			'value' => $result
+			'value' => $result,
 		];
 	}
 
@@ -527,39 +550,38 @@ class Widget_Conversion_Service {
 			}
 		}
 
-
 		return $all_css;
 	}
 
 	private function prepare_widgets_recursively( array $widgets ): array {
 		$prepared_widgets = [];
-		
+
 		foreach ( $widgets as $widget ) {
 			$resolved_styles = $widget['resolved_styles'] ?? [];
-			
+
 			// Convert resolved styles to applied format
 			$applied_styles = $this->convert_resolved_styles_to_applied_format( $resolved_styles );
-			
+
 			// Add applied styles to widget (Widget Creator expects them under 'applied_styles' key)
 			$prepared_widget = $widget;
 			$prepared_widget['applied_styles'] = $applied_styles;
-			
+
 			// Recursively prepare child widgets
 			if ( ! empty( $widget['children'] ) ) {
 				$prepared_widget['children'] = $this->prepare_widgets_recursively( $widget['children'] );
 			}
-			
+
 			$prepared_widgets[] = $prepared_widget;
-			
+
 		}
-		
+
 		return $prepared_widgets;
 	}
 
 	private function create_widgets_with_resolved_styles( array $widgets_with_resolved_styles, array $options ): array {
 		// Convert widgets with resolved styles to the format expected by existing widget creator
 		$styled_widgets = $this->prepare_widgets_recursively( $widgets_with_resolved_styles );
-		
+
 		// Create a fake CSS processing result for the existing widget creator
 		$css_processing_result = [
 			'global_classes' => [],
@@ -573,20 +595,19 @@ class Widget_Conversion_Service {
 				'global_classes_created' => 0,
 			],
 		];
-		
+
 		// Use the existing widget creator
-		return $this->widget_creator->create_widgets( $styled_widgets, $css_processing_result, $options );
+		return $this->widget_orchestrator->create_widgets( $styled_widgets, $css_processing_result, $options );
 	}
 
 	private function convert_resolved_styles_to_applied_format( array $resolved_styles ): array {
 		// Convert the resolved styles back to the format expected by the existing widget creator
 		$computed_styles = [];
-		
+
 		foreach ( $resolved_styles as $property => $winning_style ) {
 			// Use the converted atomic format directly if available, otherwise fall back to raw value
 			$atomic_value = $winning_style['converted_property'] ?? $winning_style['value'];
-			
-			
+
 			// 🚨 CRITICAL FIX: Extract atomic structure and use correct property name
 			if ( is_array( $atomic_value ) ) {
 				// Check if atomic_value is wrapped (e.g., {"margin": {"$$type": "dimensions", ...}})
@@ -616,7 +637,7 @@ class Widget_Conversion_Service {
 	private function enable_css_converter_base_styles_override() {
 		// Set a global flag that CSS converter is active with zero defaults
 		update_option( 'elementor_css_converter_zero_defaults_active', true );
-		
+
 		// Invalidate atomic widget base styles cache to force regeneration
 		$this->invalidate_atomic_base_styles_cache();
 	}
@@ -625,33 +646,30 @@ class Widget_Conversion_Service {
 		// Use the same cache invalidation mechanism as Elementor core
 		$cache_validity = new \Elementor\Modules\AtomicWidgets\Cache_Validity();
 		$cache_validity->invalidate( [ 'base' ] );
-		
+
 		// Also trigger the core cache clear action to ensure all caches are cleared
 		do_action( 'elementor/core/files/clear_cache' );
 	}
 
 	public function inject_global_base_styles_override() {
-		
+
 		// Get current post ID
 		$post_id = get_the_ID();
 		if ( ! $post_id ) {
 			return;
 		}
-		
-		
+
 		// Check if this page has CSS converter widgets
 		if ( ! $this->page_has_css_converter_widgets( $post_id ) ) {
 			return;
 		}
-		
-		
+
 		// Inject CSS to override atomic widget base styles
 		echo '<style id="css-converter-global-base-styles-override">';
 		echo '/* CSS Converter: Override atomic widget base styles globally */';
 		echo '.elementor .e-paragraph { margin: revert !important; }';
 		echo '.elementor .e-heading { margin: revert !important; }';
 		echo '</style>';
-		
 	}
 
 	private function page_has_css_converter_widgets( int $post_id ): bool {
@@ -659,7 +677,7 @@ class Widget_Conversion_Service {
 		if ( ! $document ) {
 			return false;
 		}
-		
+
 		$elements_data = $document->get_elements_data();
 		return $this->traverse_elements_for_css_converter_widgets( $elements_data );
 	}
@@ -670,7 +688,7 @@ class Widget_Conversion_Service {
 			if ( isset( $element_data['editor_settings']['css_converter_widget'] ) && $element_data['editor_settings']['css_converter_widget'] ) {
 				return true;
 			}
-			
+
 			// Recursively check child elements
 			if ( isset( $element_data['elements'] ) && is_array( $element_data['elements'] ) ) {
 				if ( $this->traverse_elements_for_css_converter_widgets( $element_data['elements'] ) ) {
@@ -678,8 +696,7 @@ class Widget_Conversion_Service {
 				}
 			}
 		}
-		
+
 		return false;
 	}
-
 }

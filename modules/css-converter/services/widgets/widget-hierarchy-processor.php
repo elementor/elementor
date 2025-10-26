@@ -304,7 +304,7 @@ class Widget_Hierarchy_Processor {
 	}
 
 	private function validate_parent_can_contain_children( $parent_widget ) {
-		$container_types = [ 'e-flexbox' ];
+		$container_types = [ 'e-flexbox', 'e-div-block' ];
 
 		if ( ! in_array( $parent_widget['widget_type'], $container_types, true ) ) {
 			$this->error_log[] = [

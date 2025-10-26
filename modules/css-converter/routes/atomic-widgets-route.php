@@ -12,6 +12,10 @@ class Atomic_Widgets_Route {
 	private const ROUTE_NAMESPACE = 'elementor/v2';
 	private const ROUTE_BASE = 'atomic-widgets';
 
+	public function __construct() {
+		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
+	}
+
 	public function register_routes(): void {
 		register_rest_route(
 			self::ROUTE_NAMESPACE,

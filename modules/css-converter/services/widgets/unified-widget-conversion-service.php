@@ -10,10 +10,6 @@ use Elementor\Modules\CssConverter\Services\Stats\Conversion_Statistics_Collecto
 use Elementor\Modules\CssConverter\Services\Response\Conversion_Response_Builder;
 use Elementor\Modules\CssConverter\Services\Logging\Conversion_Logger;
 
-// Include the new extracted services
-require_once __DIR__ . '/../stats/conversion-statistics-collector.php';
-require_once __DIR__ . '/../response/conversion-response-builder.php';
-require_once __DIR__ . '/../logging/conversion-logger.php';
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -44,7 +40,7 @@ class Unified_Widget_Conversion_Service {
 		$this->widget_creator = $widget_creator;
 		$this->use_zero_defaults = $use_zero_defaults;
 		$this->property_converter = new Css_Property_Conversion_Service();
-		
+
 		// Initialize extracted services (with defaults for backward compatibility)
 		$this->statistics_collector = $statistics_collector ?? new Conversion_Statistics_Collector();
 		$this->response_builder = $response_builder ?? new Conversion_Response_Builder();
@@ -52,8 +48,8 @@ class Unified_Widget_Conversion_Service {
 	}
 	public function convert_from_html( $html, $css_urls = [], $follow_imports = false, $options = [] ): array {
 		$this->use_zero_defaults = true;
-		$this->widget_creator = new Widget_Creator( $this->use_zero_defaults );
-		
+		$this->widget_creator = new \Elementor\Modules\CssConverter\Services\Widgets\Widget_Creation_Orchestrator( $this->use_zero_defaults );
+
 		// Initialize logging
 		$conversion_log = $this->logger->start_conversion_log( $html, $css_urls );
 		$this->logger->set_options( $options );
@@ -63,7 +59,7 @@ class Unified_Widget_Conversion_Service {
 			// Log parsing and validation stats
 			$validation_issues = $this->html_parser->validate_html_structure( $elements, 20 );
 			$this->logger->add_parsing_stats( $elements, $validation_issues );
-			
+
 			$mapped_widgets = $this->widget_mapper->map_elements( $elements );
 			$mapping_stats = $this->widget_mapper->get_mapping_stats( $elements );
 			$this->logger->add_mapping_stats( $mapping_stats );
@@ -75,40 +71,40 @@ class Unified_Widget_Conversion_Service {
 			error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: Calling unified_css_processor->process_css_and_widgets' );
 			error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: CSS length: ' . strlen( $all_css ) );
 			error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: Widget count: ' . count( $mapped_widgets ) );
-			
+
 			try {
-			$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets, $options );
+				$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets, $options );
 			} catch ( \Exception $e ) {
 				error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: Exception in unified processor: ' . $e->getMessage() );
 				throw $e;
 			}
-			
+
 			error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: Unified processing completed' );
 
 			$resolved_widgets = $unified_processing_result['widgets'];
 			$global_classes = $unified_processing_result['global_classes'] ?? [];
 			$css_variable_definitions = $unified_processing_result['css_variable_definitions'] ?? [];
-			
+
 			// Create widgets with resolved styles
 			$creation_result = $this->create_widgets_with_resolved_styles( $resolved_widgets, $options, $global_classes, $css_variable_definitions );
-			
+
 			// Log CSS processing and widget creation stats
 			$this->logger->add_css_processing_stats( $unified_processing_result['stats'] ?? [] );
 			$this->logger->add_widget_creation_stats( $creation_result['stats'] ?? [] );
-			
+
 			// Collect all statistics using the statistics collector
 			$css_stats = $this->statistics_collector->collect_css_processing_stats( $unified_processing_result );
 			$widget_stats = $this->statistics_collector->collect_widget_creation_stats( $creation_result );
 			$modifier_stats = $this->statistics_collector->collect_modifier_stats( $unified_processing_result );
 			$reset_stats = $this->statistics_collector->collect_reset_styles_stats( $unified_processing_result );
 			$performance_stats = $this->statistics_collector->collect_performance_stats( $conversion_log['start_time'] );
-			
+
 			// Combine all stats
 			$all_stats = array_merge( $css_stats, $widget_stats, $modifier_stats, $reset_stats, $performance_stats );
-			
+
 			// Finalize logging
 			$conversion_log = $this->logger->finalize_log();
-			
+
 			// Build final response using response builder
 			return $this->response_builder->build_success_response( $all_stats, $conversion_log );
 		} catch ( \Exception $e ) {
@@ -237,5 +233,4 @@ class Unified_Widget_Conversion_Service {
 			'reset_element_styles' => $reset_element_styles,
 		];
 	}
-
 }
