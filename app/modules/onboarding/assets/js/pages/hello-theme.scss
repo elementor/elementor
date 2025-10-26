@@ -47,22 +47,7 @@
 			flex-direction: column;
 			position: relative;
 			overflow: hidden;
-
-			&:hover {
-				border: 2px solid #0C0D0E;
-
-				&::before {
-					content: '';
-					background: black;
-					position: absolute;
-					top: 14px;
-					left: 16px;
-					width: 20px;
-					height: 20px;
-					border-radius: 50%;
-					border: 4px solid white;
-				}
-			}
+			margin-block: 1px;
 
 			&::after {
 				content: '';
@@ -76,6 +61,25 @@
 				align-items: center;
 				justify-content: center;
 				border: 2px solid black;
+			}
+
+			&:hover,
+			&--loading,
+			&--selected {
+				border: 2px solid #0C0D0E;
+				margin-block: 0px;
+
+				&::before {
+					content: '';
+					background: black;
+					position: absolute;
+					top: 14px;
+					left: 16px;
+					width: 20px;
+					height: 20px;
+					border-radius: 50%;
+					border: 4px solid white;
+				}
 			}
 		}
 
@@ -99,22 +103,6 @@
 				max-width: 100%;
 				height: auto;
 			}
-
-			&--loading {
-				border: 2px solid #0C0D0E;
-
-				&::before {
-					content: '';
-					background: black;
-					position: absolute;
-					top: 14px;
-					left: 16px;
-					width: 20px;
-					height: 20px;
-					border-radius: 50%;
-					border: 4px solid white;
-				}
-			}
 		}
 
 		.e-onboarding__theme-card-content {
@@ -124,14 +112,18 @@
 		.e-onboarding__theme-card-label {
 			display: flex;
 			justify-content: center;
-			color: var(--text-tertiary, #69727D);
+			color: #69727D;
 			font-family: "DM Sans";
 			font-size: 12px;
-			font-style: normal;
 			font-weight: 400;
 			line-height: 150%;
 			letter-spacing: -0.12px;
 			margin-bottom: 25px;
+
+			span {
+				font-weight: 600;
+				padding-inline-end: 4px;
+			}
 		}
 
 		.e-onboarding__theme-card-title {
@@ -158,7 +150,6 @@
 
 	&__page-content:has(.e-onboarding__page-content-theme-variant-b) {
 		flex-direction: column;
-		margin-block-end: 30px;
 	}
 
 	&__page-content-start:has(.e-onboarding__page-content-theme-variant-b) {
@@ -167,15 +158,28 @@
 		flex-basis: initial;
 	}
 
-	&__content:has(.e-onboarding__page-content-theme-variant-b) {
+	&:has(.e-onboarding__page-content-theme-variant-b) {
 
-		.e-onboarding__button.e-onboarding__button-action,
+		.e-onboarding__progress-bar {
+			margin-block-end: 60px;
+		}
+
 		.e-onboarding__footnote {
-			display: none;
+			opacity: 0;
+		}
+	}
+}
+
+@media (min-width: 1024px) {
+	.e-onboarding:has(.e-onboarding__page-content-theme-variant-b) {
+
+		.e-onboarding__button-skip {
+			position: absolute;
+			inset-inline-end: 0px;
 		}
 
 		.e-onboarding__footer {
-			justify-content: flex-end;
+			justify-content: center;
 			padding-block-end: 40px;
 		}
 	}

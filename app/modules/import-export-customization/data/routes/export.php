@@ -6,6 +6,7 @@ use Elementor\App\Modules\ImportExportCustomization\Data\Response;
 use Elementor\Utils as ElementorUtils;
 use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
 use Elementor\App\Modules\ImportExportCustomization\Processes\Import;
+use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Traits\Handles_Quota_Errors;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Export extends Base_Route {
+	use Handles_Quota_Errors;
 
 	protected function get_route(): string {
 		return 'export';
@@ -83,6 +85,21 @@ class Export extends Base_Route {
 
 			if ( $module->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
 				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
+			}
+
+			if ( $this->is_quota_error( $e->getMessage() ) ) {
+				$quota = null;
+				$cloud_kit_library_app = $this->get_cloud_kit_library_app();
+
+				if ( $cloud_kit_library_app ) {
+					try {
+						$quota = $cloud_kit_library_app->get_quota();
+					} catch ( \Exception | \Error $quota_error ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+						// Quota fetch failed, error message will use default value.
+					}
+				}
+
+				return $this->get_quota_error_response( $quota, $settings['kitInfo'] ?? [] );
 			}
 
 			return Response::error( $e->getMessage(), 'export_error' );
