@@ -18,7 +18,7 @@ class Date_Time_Transformer extends Transformer_Base {
 		$date = isset( $value['date'] ) ? trim( $value['date'] ) : '';
 		$time = isset( $value['time'] ) ? trim( $value['time'] ) : '';
 
-		if ( $date === '' && $time === '' ) {
+		if ( '' === $date && '' === $time ) {
 			return '';
 		}
 
@@ -27,4 +27,3 @@ class Date_Time_Transformer extends Transformer_Base {
 		return esc_attr( $result );
 	}
 }
-

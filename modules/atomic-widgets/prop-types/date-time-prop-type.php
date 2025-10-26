@@ -1,7 +1,7 @@
 <?php
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
-use Cassandra\Date;
+
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
