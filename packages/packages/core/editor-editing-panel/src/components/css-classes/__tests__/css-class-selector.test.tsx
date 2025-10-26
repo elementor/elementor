@@ -663,7 +663,7 @@ describe( '<CssClassSelector />', () => {
 
 		// Act.
 		fireEvent.input( editableField, { target: { innerText: 'GG' } } );
-		fireEvent.keyDown( editableField, { key: 'Enter' } );
+		fireEvent.blur( editableField );
 
 		// Assert
 		await waitFor( () => {
@@ -876,7 +876,7 @@ describe( '<CssClassSelector />', () => {
 
 			// Act.
 			fireEvent.input( editableField, { target: { innerText: 'new-class-name' } } );
-			fireEvent.keyDown( editableField, { key: 'Enter' } );
+			fireEvent.blur( editableField );
 
 			// Assert
 			await waitFor( () => {

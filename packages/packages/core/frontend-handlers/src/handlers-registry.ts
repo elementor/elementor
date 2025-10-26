@@ -1,4 +1,9 @@
-type Handler = ( params: { element: Element; signal: AbortSignal } ) => ( () => void ) | undefined;
+type Settings = Record< string, unknown >;
+type Handler = < TSettings extends Settings = Settings >( params: {
+	element: Element;
+	signal: AbortSignal;
+	settings: TSettings;
+} ) => ( () => void ) | undefined;
 
 export const handlers: Map< string, Map< string, Handler > > = new Map();
 
