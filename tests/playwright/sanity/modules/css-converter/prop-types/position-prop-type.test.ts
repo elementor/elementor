@@ -218,30 +218,30 @@ test.describe( 'Position Prop Type Integration @prop-types', () => {
 
 	test( 'should convert inset-inline and inset-block shorthand properties', async ( { page, request } ) => {
 		const combinedCssContent = `
-			<div>
+			<div style="display: flex; flex-direction: column; gap: 10px; padding: 20px;">
 				<!-- inset shorthand variations (all 4 sides) -->
-				<p style="position: absolute; inset: 20px;">Inset 20px</p>
-				<p style="position: absolute; inset: 10px 30px;">Inset 10px 30px</p>
-				<p style="position: absolute; inset: 5px 15px 25px;">Inset 5px 15px 25px</p>
-				<p style="position: absolute; inset: 5px 10px 15px 20px;">Inset 5px 10px 15px 20px</p>
-				<p style="position: absolute; inset: 2em;">Inset 2em</p>
-				<p style="position: absolute; inset: -10px;">Inset -10px</p>
+				<p style="position: relative; inset: 20px; background: lightblue; margin: 0;">Inset 20px</p>
+				<p style="position: relative; inset: 10px 30px; background: lightgreen; margin: 0;">Inset 10px 30px</p>
+				<p style="position: relative; inset: 5px 15px 25px; background: lightyellow; margin: 0;">Inset 5px 15px 25px</p>
+				<p style="position: relative; inset: 5px 10px 15px 20px; background: lightcoral; margin: 0;">Inset 5px 10px 15px 20px</p>
+				<p style="position: relative; inset: 2em; background: lightpink; margin: 0;">Inset 2em</p>
+				<p style="position: relative; inset: -10px; background: lightgray; margin: 0;">Inset -10px</p>
 				
 				<!-- inset-inline variations -->
-				<p style="position: absolute; inset-inline: 20px;">Inset inline 20px</p>
-				<p style="position: absolute; inset-inline: 10px 30px;">Inset inline 10px 30px</p>
-				<p style="position: absolute; inset-inline: 2em;">Inset inline 2em</p>
-				<p style="position: absolute; inset-inline: 1rem 3rem;">Inset inline 1rem 3rem</p>
-				<p style="position: absolute; inset-inline: -10px;">Inset inline -10px</p>
-				<p style="position: absolute; inset-inline: -5px 15px;">Inset inline -5px 15px</p>
+				<p style="position: relative; inset-inline: 20px; background: lavender; margin: 0;">Inset inline 20px</p>
+				<p style="position: relative; inset-inline: 10px 30px; background: lightcyan; margin: 0;">Inset inline 10px 30px</p>
+				<p style="position: relative; inset-inline: 2em; background: lightsalmon; margin: 0;">Inset inline 2em</p>
+				<p style="position: relative; inset-inline: 1rem 3rem; background: lightsteelblue; margin: 0;">Inset inline 1rem 3rem</p>
+				<p style="position: relative; inset-inline: -10px; background: lightgoldenrodyellow; margin: 0;">Inset inline -10px</p>
+				<p style="position: relative; inset-inline: -5px 15px; background: lightseagreen; margin: 0;">Inset inline -5px 15px</p>
 				
 				<!-- inset-block variations -->
-				<p style="position: absolute; inset-block: 25px;">Inset block 25px</p>
-				<p style="position: absolute; inset-block: 15px 35px;">Inset block 15px 35px</p>
-				<p style="position: absolute; inset-block: 1.5em;">Inset block 1.5em</p>
-				<p style="position: absolute; inset-block: 2rem 4rem;">Inset block 2rem 4rem</p>
-				<p style="position: absolute; inset-block: -20px;">Inset block -20px</p>
-				<p style="position: absolute; inset-block: -10px 20px;">Inset block -10px 20px</p>
+				<p style="position: relative; inset-block: 25px; background: mistyrose; margin: 0;">Inset block 25px</p>
+				<p style="position: relative; inset-block: 15px 35px; background: peachpuff; margin: 0;">Inset block 15px 35px</p>
+				<p style="position: relative; inset-block: 1.5em; background: palegreen; margin: 0;">Inset block 1.5em</p>
+				<p style="position: relative; inset-block: 2rem 4rem; background: paleturquoise; margin: 0;">Inset block 2rem 4rem</p>
+				<p style="position: relative; inset-block: -20px; background: plum; margin: 0;">Inset block -20px</p>
+				<p style="position: relative; inset-block: -10px 20px; background: powderblue; margin: 0;">Inset block -10px 20px</p>
 			</div>
 		`;
 

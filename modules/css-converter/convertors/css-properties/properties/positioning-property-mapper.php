@@ -42,9 +42,6 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 		'inset-inline-end',
 		'inset-block-end',
 		'inset-inline-start',
-		'inset',
-		'inset-block',
-		'inset-inline',
 		'z-index',
 	];
 
@@ -70,10 +67,6 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		if ( 'z-index' === $property ) {
 			return $this->map_z_index_property( $value );
-		}
-
-		if ( in_array( $property, [ 'inset', 'inset-block', 'inset-inline' ], true ) ) {
-			return $this->map_shorthand_property( $property, $value );
 		}
 
 		return $this->map_individual_property( $property, $value );
@@ -109,20 +102,6 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return Size_Prop_Type::make()->generate( $parsed_size );
 	}
 
-	private function map_shorthand_property( string $property, $value ): ?array {
-		$parts = $this->parse_shorthand_values( $value );
-		if ( empty( $parts ) ) {
-			return null;
-		}
-
-		$first_value = $parts[0];
-		$parsed_size = $this->parse_size_value( $first_value );
-		if ( null === $parsed_size ) {
-			return null;
-		}
-
-		return Size_Prop_Type::make()->generate( $parsed_size );
-	}
 
 	private function get_logical_property_name( string $property ): string {
 		if ( 0 === strpos( $property, 'inset-' ) ) {
@@ -166,15 +145,6 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return Size_Value_Parser::parse( $value );
 	}
 
-	private function parse_shorthand_values( string $value ): array {
-		$value = trim( $value );
-		if ( empty( $value ) ) {
-			return [];
-		}
-
-		$parts = preg_split( '/\s+/', $value );
-		return array_filter( $parts );
-	}
 
 	protected function is_css_keyword( string $value ): bool {
 		$keywords = [

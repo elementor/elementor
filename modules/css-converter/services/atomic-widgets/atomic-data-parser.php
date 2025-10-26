@@ -147,16 +147,8 @@ class Atomic_Data_Parser {
 	}
 
 	private function convert_styles_to_atomic_props( array $styles ): array {
-		$atomic_props = [];
-
-		foreach ( $styles as $property => $value ) {
-			$atomic_prop = $this->props_converter->convert_css_to_atomic_prop( $property, $value );
-			if ( $atomic_prop ) {
-				$atomic_props[ $property ] = $atomic_prop;
-			}
-		}
-
-		return $atomic_props;
+		// Use batch conversion to handle shorthand properties (inset, inset-inline, inset-block, etc.)
+		return $this->props_converter->convert_multiple_css_props( $styles );
 	}
 
 	private function extract_text_content( \DOMElement $element ): string {
