@@ -45,17 +45,22 @@ async function createComponents(
 	components: UnpublishedComponent[],
 	status: DocumentStatus
 ): Promise< Map< number, number > > {
-	const tempIdToComponentId = new Map< number, number >();
-
-	const promises = components.map( ( component ) => {
-		return apiClient.create( { name: component.name, content: component.content, status } ).then( ( response ) => {
-			tempIdToComponentId.set( component.id, response.component_id );
-		} );
+	const response = await apiClient.create( {
+		status,
+		items: components.map( ( component ) => ( {
+			temp_id: component.id,
+			title: component.name,
+			elements: component.elements,
+		} ) ),
 	} );
 
-	await Promise.all( promises );
+	const map = new Map< number, number >();
 
-	return tempIdToComponentId;
+	Object.entries( response ).forEach( ( [ key, value ] ) => {
+		map.set( Number( key ), value );
+	} );
+
+	return map;
 }
 
 function updateComponentInstances( elements: V1ElementData[], tempIdToComponentId: Map< number, number > ): void {
