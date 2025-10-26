@@ -20,7 +20,6 @@ class Components_REST_API {
 	const MAX_COMPONENTS = 50;
 
 	private $repository = null;
-	private $lock_manager;
 
 	public function register_hooks() {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
