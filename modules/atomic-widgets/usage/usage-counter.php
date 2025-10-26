@@ -20,6 +20,12 @@ class Usage_Counter {
     const TAB_GENERAL = 'General';
     const TAB_STYLE = 'Style';
 
+	private array $style_sections;
+
+	public function __construct() {
+		$this->style_sections = $this->get_style_section_by_control( Style_Schema::get() );
+	}
+
     public function count( array $element ): Usage_Counter_Result {
         /**
          * @var Atomic_Widget_Base | Atomic_Element_Base $instance
@@ -95,17 +101,18 @@ class Usage_Counter {
 			];
 		}
 
-		$style_sections = $this->get_style_section_by_control( Style_Schema::get_style_schema_with_sections() );
 		$style_props = $this->extract_props( $data['styles'] ?? [] );
 
-		if ( ! empty( $style_props ) ) {
-			foreach ( $style_props as $style_prop_name => $style_prop_value ) {
-				$section = $style_sections[ $style_prop_name ][ 'section' ] ?? 'unknown';
-				$prop_type = $style_sections[ $style_prop_name ][ 'prop_type' ];
+		if ( empty( $style_props ) ) {
+			return $changed_controls;
+		}
 
-				$decomposed_props = $this->decompose_style_props( $style_prop_name, $style_prop_value, $prop_type, $section );
-				$changed_controls = array_merge( $changed_controls, $decomposed_props );
-			}
+		foreach ( $style_props as $style_prop_name => $style_prop_value ) {
+			$section = $this->style_sections[ $style_prop_name ][ 'section' ] ?? 'unknown';
+			$prop_type = $this->style_sections[ $style_prop_name ][ 'prop_type' ];
+
+			$decomposed_props = $this->decompose_style_props( $style_prop_name, $style_prop_value, $prop_type, $section );
+			$changed_controls = array_merge( $changed_controls, $decomposed_props );
 		}
 
 		return $changed_controls;

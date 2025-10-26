@@ -4,10 +4,7 @@ namespace Elementor\Modules\Usage;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Modules\AtomicWidgets\Usage\Usage_Counter;
+use Elementor\Modules\AtomicWidgets\Usage\Usage_Counter as Atomic_Usage_Counter;
 use Elementor\Modules\AtomicWidgets\Utils as Atomic_Utils;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
@@ -510,8 +507,9 @@ class Module extends BaseModule {
 	 */
 	private function get_elements_usage( $elements ) {
 		$usage = [];
+		$atomic_usage_counter = new Atomic_Usage_Counter();
 
-		Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( &$usage ) {
+		Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( &$usage, $atomic_usage_counter ) {
 			if ( empty( $element['widgetType'] ) ) {
 				$type = $element['elType'];
 				$element_instance = Plugin::$instance->elements_manager->get_element_types( $type );
@@ -545,8 +543,7 @@ class Module extends BaseModule {
 				$total_controls_count = 0;
 
 				if ( Atomic_Utils::is_atomic( $element_instance ) ) {
-					$counter = new Usage_Counter();
-					$result = $counter->count( $element );
+					$result = $atomic_usage_counter->count( $element );
 
 					if ( $result->is_valid() ) {
 						$result->each( function( $tab, $section, $control_name ) use ( &$element_ref ) {
@@ -591,8 +588,6 @@ class Module extends BaseModule {
 		if ( ! empty( $data ) ) {
 			try {
 				$usage = $this->get_elements_usage( $document->get_elements_raw_data( $data ) );
-
-				var_dump($usage);die();
 
 				$document->update_meta( self::META_KEY, $usage );
 
