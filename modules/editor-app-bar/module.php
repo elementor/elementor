@@ -17,7 +17,7 @@ class Module extends BaseModule {
 	];
 
 	const POPUP_DISMISSED_OPTION = '_elementor_structure_popup_dismissed';
-	const STRUCTURE_POPUP_TARGET_VERSION = '3.33.0';
+	const STRUCTURE_POPUP_TARGET_VERSION = '3.32.0';
 
 	public function get_name() {
 		return 'editor-app-bar';
