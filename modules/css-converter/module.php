@@ -59,6 +59,7 @@ class Module extends BaseModule {
 		$this->initialize_widgets_route();
 		$this->initialize_classes_route();
 		$this->initialize_variables_route();
+		$this->initialize_atomic_widgets_route();
 	}
 	private function can_initialize_routes(): bool {
 		return function_exists( 'error_log' ) && $this->has_required_directories();
@@ -162,6 +163,18 @@ class Module extends BaseModule {
 		require_once $variables_route_file;
 		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Variables_Route' ) ) {
 			$this->variables_route = new \Elementor\Modules\CssConverter\Routes\Variables_Route();
+		}
+	}
+
+	private function initialize_atomic_widgets_route(): void {
+		$atomic_widgets_route_file = __DIR__ . '/routes/atomic-widgets-route.php';
+		if ( ! file_exists( $atomic_widgets_route_file ) ) {
+			return;
+		}
+		require_once $atomic_widgets_route_file;
+		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Atomic_Widgets_Route' ) ) {
+			$atomic_widgets_route = new \Elementor\Modules\CssConverter\Routes\Atomic_Widgets_Route();
+			$atomic_widgets_route->register_routes();
 		}
 	}
 	private function handle_initialization_failure(): void {

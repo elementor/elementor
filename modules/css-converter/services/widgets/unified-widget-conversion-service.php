@@ -6,6 +6,15 @@ use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversi
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\CssConverter\Services\GlobalClasses\Unified\Global_Classes_Service_Provider;
+use Elementor\Modules\CssConverter\Services\Stats\Conversion_Statistics_Collector;
+use Elementor\Modules\CssConverter\Services\Response\Conversion_Response_Builder;
+use Elementor\Modules\CssConverter\Services\Logging\Conversion_Logger;
+
+// Include the new extracted services
+require_once __DIR__ . '/../stats/conversion-statistics-collector.php';
+require_once __DIR__ . '/../response/conversion-response-builder.php';
+require_once __DIR__ . '/../logging/conversion-logger.php';
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -16,12 +25,18 @@ class Unified_Widget_Conversion_Service {
 	private $widget_creator;
 	private $use_zero_defaults;
 	private $property_converter;
+	private $statistics_collector;
+	private $response_builder;
+	private $logger;
 	public function __construct(
 		$html_parser,
 		$widget_mapper,
 		$unified_css_processor,
 		$widget_creator,
-		bool $use_zero_defaults = false
+		bool $use_zero_defaults = false,
+		Conversion_Statistics_Collector $statistics_collector = null,
+		Conversion_Response_Builder $response_builder = null,
+		Conversion_Logger $logger = null
 	) {
 		$this->html_parser = $html_parser;
 		$this->widget_mapper = $widget_mapper;
@@ -29,95 +44,75 @@ class Unified_Widget_Conversion_Service {
 		$this->widget_creator = $widget_creator;
 		$this->use_zero_defaults = $use_zero_defaults;
 		$this->property_converter = new Css_Property_Conversion_Service();
+		
+		// Initialize extracted services (with defaults for backward compatibility)
+		$this->statistics_collector = $statistics_collector ?? new Conversion_Statistics_Collector();
+		$this->response_builder = $response_builder ?? new Conversion_Response_Builder();
+		$this->logger = $logger ?? new Conversion_Logger();
 	}
 	public function convert_from_html( $html, $css_urls = [], $follow_imports = false, $options = [] ): array {
 		$this->use_zero_defaults = true;
 		$this->widget_creator = new Widget_Creator( $this->use_zero_defaults );
-		$conversion_log = [
-			'start_time' => microtime( true ),
-			'input_size' => strlen( $html ),
-			'css_urls_count' => count( $css_urls ),
-			'options' => $options,
-			'warnings' => [],
-			'errors' => [],
-		];
+		
+		// Initialize logging
+		$conversion_log = $this->logger->start_conversion_log( $html, $css_urls );
+		$this->logger->set_options( $options );
 		try {
 			$elements = $this->html_parser->parse( $html );
-			$conversion_log['parsed_elements'] = count( $elements );
 
-			// DEBUG: Log parsed element structure with class attributes
+			// Log parsing and validation stats
 			$validation_issues = $this->html_parser->validate_html_structure( $elements, 20 );
-			if ( ! empty( $validation_issues ) ) {
-				$conversion_log['warnings'] = array_merge( $conversion_log['warnings'], $validation_issues );
-			}
+			$this->logger->add_parsing_stats( $elements, $validation_issues );
+			
 			$mapped_widgets = $this->widget_mapper->map_elements( $elements );
 			$mapping_stats = $this->widget_mapper->get_mapping_stats( $elements );
-			$conversion_log['mapping_stats'] = $mapping_stats;
+			$this->logger->add_mapping_stats( $mapping_stats );
 
 			// DELEGATE CSS extraction to unified processor (proper separation of concerns)
 			$all_css = $this->unified_css_processor->extract_and_process_css_from_html_and_urls( $html, $css_urls, $follow_imports, $elements );
-			$conversion_log['css_size'] = strlen( $all_css );
+			$this->logger->add_css_size( strlen( $all_css ) );
 
+			error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: Calling unified_css_processor->process_css_and_widgets' );
+			error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: CSS length: ' . strlen( $all_css ) );
+			error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: Widget count: ' . count( $mapped_widgets ) );
+			
 			try {
 			$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets, $options );
 			} catch ( \Exception $e ) {
+				error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: Exception in unified processor: ' . $e->getMessage() );
 				throw $e;
 			}
+			
+			error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: Unified processing completed' );
 
 			$resolved_widgets = $unified_processing_result['widgets'];
-			$css_class_rules = $unified_processing_result['css_class_rules'] ?? [];
-			$css_class_modifiers = $unified_processing_result['css_class_modifiers'] ?? [];
-			$flattened_classes_count = $this->count_modifiers_by_type( $css_class_modifiers, 'flattening' );
-			$conversion_log['css_processing'] = $unified_processing_result['stats'];
-			$reset_styles_detected = $unified_processing_result['reset_styles_detected'] ?? false;
-			$reset_styles_stats = $unified_processing_result['reset_styles_stats'] ?? [];
-			$complex_reset_styles = $unified_processing_result['complex_reset_styles'] ?? [];
-			$styled_widgets = $resolved_widgets;
-
-			// ═══════════════════════════════════════════════════════════
-			// PHASE 5: Extract processed data from unified processor ✅
-			// ═══════════════════════════════════════════════════════════
-			// All processing (global classes, duplicate detection, class mappings, compound classes) is now complete
-			$widgets_with_resolved_styles_for_global_classes = $resolved_widgets;
 			$global_classes = $unified_processing_result['global_classes'] ?? [];
 			$css_variable_definitions = $unified_processing_result['css_variable_definitions'] ?? [];
-			// Compound classes are now handled entirely within the CSS processor
-			$creation_result = $this->create_widgets_with_resolved_styles( $widgets_with_resolved_styles_for_global_classes, $options, $global_classes, $css_variable_definitions );
-			$conversion_log['widget_creation'] = $creation_result['stats'];
-			$widgets_created = $creation_result['widgets_created'] ?? 0;
-			$widgets_count = is_array( $widgets_created ) ? count( $widgets_created ) : (int) $widgets_created;
-			$conversion_log['end_time'] = microtime( true );
-			$conversion_log['total_time'] = $conversion_log['end_time'] - $conversion_log['start_time'];
-			$final_result = [
-				'success' => true,
-				'widgets_created' => $creation_result['widgets_created'],
-				'widgets' => $creation_result['widgets'] ?? [], // Include widgets for tests
-				'global_classes_created' => $unified_processing_result['global_classes_created'] ?? 0,
-				'global_classes' => $unified_processing_result['global_classes'] ?? [],
-				'class_name_mappings' => $unified_processing_result['class_name_mappings'] ?? [],
-				'debug_duplicate_detection' => $unified_processing_result['debug_duplicate_detection'] ?? null,
-				'variables_created' => $creation_result['variables_created'],
-				'compound_classes_created' => $this->count_modifiers_by_type( $css_class_modifiers, 'compound' ),
-				'compound_classes' => $unified_processing_result['compound_classes'] ?? [],
-				'post_id' => $creation_result['post_id'],
-				'edit_url' => $creation_result['edit_url'],
-				'conversion_log' => $conversion_log,
-				'warnings' => $conversion_log['warnings'],
-				'errors' => $creation_result['errors'] ?? [],
-				'flattened_classes_created' => $flattened_classes_count,
-				'reset_styles_detected' => $reset_styles_detected,
-				'element_selectors_processed' => $reset_styles_stats['reset_element_styles'] ?? 0,
-				'direct_widget_styles_applied' => $reset_styles_stats['direct_applicable_styles'] ?? 0,
-				'reset_css_file_generated' => ! empty( $complex_reset_styles ),
-				'reset_styles_stats' => $reset_styles_stats,
-				'complex_reset_styles_count' => count( $complex_reset_styles ),
-			];
-			return $final_result;
+			
+			// Create widgets with resolved styles
+			$creation_result = $this->create_widgets_with_resolved_styles( $resolved_widgets, $options, $global_classes, $css_variable_definitions );
+			
+			// Log CSS processing and widget creation stats
+			$this->logger->add_css_processing_stats( $unified_processing_result['stats'] ?? [] );
+			$this->logger->add_widget_creation_stats( $creation_result['stats'] ?? [] );
+			
+			// Collect all statistics using the statistics collector
+			$css_stats = $this->statistics_collector->collect_css_processing_stats( $unified_processing_result );
+			$widget_stats = $this->statistics_collector->collect_widget_creation_stats( $creation_result );
+			$modifier_stats = $this->statistics_collector->collect_modifier_stats( $unified_processing_result );
+			$reset_stats = $this->statistics_collector->collect_reset_styles_stats( $unified_processing_result );
+			$performance_stats = $this->statistics_collector->collect_performance_stats( $conversion_log['start_time'] );
+			
+			// Combine all stats
+			$all_stats = array_merge( $css_stats, $widget_stats, $modifier_stats, $reset_stats, $performance_stats );
+			
+			// Finalize logging
+			$conversion_log = $this->logger->finalize_log();
+			
+			// Build final response using response builder
+			return $this->response_builder->build_success_response( $all_stats, $conversion_log );
 		} catch ( \Exception $e ) {
-			$conversion_log['errors'][] = [
-				'message' => esc_html( $e->getMessage() ),
-				'trace' => esc_html( $e->getTraceAsString() ),
-			];
+			$this->logger->add_error( $e->getMessage(), $e->getTraceAsString() );
 			throw new Class_Conversion_Exception(
 				'Widget conversion failed: ' . esc_html( $e->getMessage() ),
 				0
@@ -243,13 +238,4 @@ class Unified_Widget_Conversion_Service {
 		];
 	}
 
-	private function count_modifiers_by_type( array $modifiers, string $type ): int {
-		$count = 0;
-		foreach ( $modifiers as $modifier ) {
-			if ( ( $modifier['type'] ?? '' ) === $type ) {
-				$count += count( $modifier['mappings'] ?? [] );
-			}
-		}
-		return $count;
-	}
 }

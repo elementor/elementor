@@ -129,9 +129,12 @@ class Widgets_Route {
 		
 		$type = $request->get_param( 'type' );
 		$content = $request->get_param( 'content' );
+		$css = $request->get_param( 'css' ) ?: '';
 		$css_urls = $request->get_param( 'cssUrls' ) ?: [];
 		$follow_imports = $request->get_param( 'followImports' ) ?: false;
 		$options = $request->get_param( 'options' ) ?: [];
+
+		error_log( 'WIDGETS_ROUTE: Received CSS parameter: ' . strlen( $css ) . ' characters' );
 
 		$validation_error = $this->request_validator->validate_widget_conversion_request( $request );
 		if ( $validation_error ) {
@@ -161,7 +164,15 @@ class Widgets_Route {
 					$result = $service->convert_from_html( $html_content, $merged_css_urls, $follow_imports, $options );
 					break;
 				case 'html':
-					$result = $service->convert_from_html( $content, $css_urls, $follow_imports, $options );
+					// If CSS is provided, embed it in the HTML
+					if ( ! empty( $css ) ) {
+						error_log( 'WIDGETS_ROUTE: Embedding CSS into HTML' );
+						// Create a complete HTML document with embedded CSS
+						$html_with_css = '<html><head><style>' . $css . '</style></head><body>' . $content . '</body></html>';
+						$result = $service->convert_from_html( $html_with_css, $css_urls, $follow_imports, $options );
+					} else {
+						$result = $service->convert_from_html( $content, $css_urls, $follow_imports, $options );
+					}
 					break;
 				case 'css':
 					// Convert CSS-only input to HTML with embedded CSS for unified processing

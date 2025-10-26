@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Modules\CssConverter\Services\AtomicWidgets;
 
-use Elementor\Modules\CssConverter\Convertors\CssProperties\Property_Mapper_Factory;
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory;
+
+require_once __DIR__ . '/../../convertors/css-properties/implementations/class-property-mapper-factory.php';
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -9,10 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class CSS_To_Atomic_Props_Converter {
 
-	private Property_Mapper_Factory $property_mapper_factory;
+	private $property_mapper_registry;
 
 	public function __construct() {
-		$this->property_mapper_factory = new Property_Mapper_Factory();
+		$this->property_mapper_registry = Class_Property_Mapper_Factory::get_registry();
 	}
 
 	public function convert_css_to_atomic_prop( string $property, $value ): ?array {
@@ -98,7 +100,7 @@ class CSS_To_Atomic_Props_Converter {
 	}
 
 	public function get_supported_properties(): array {
-		return $this->property_mapper_factory->get_supported_properties();
+		return $this->property_mapper_registry->get_supported_properties();
 	}
 
 	public function validate_atomic_prop( array $atomic_prop ): bool {
@@ -110,7 +112,7 @@ class CSS_To_Atomic_Props_Converter {
 	}
 
 	private function get_property_mapper( string $property ) {
-		return $this->property_mapper_factory->get_mapper( $property );
+		return $this->property_mapper_registry->get_mapper( $property );
 	}
 
 	private function is_dimensions_property( array $atomic_prop ): bool {

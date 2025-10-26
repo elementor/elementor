@@ -45,6 +45,9 @@ class Unified_Css_Processor {
 		$this->html_class_modifier = new \Elementor\Modules\CssConverter\Services\Css\Html_Class_Modifier_Service();
 	}
 	public function process_css_and_widgets( string $css, array $widgets, array $options = [] ): array {
+		error_log( 'UNIFIED_CSS_PROCESSOR: Starting process_css_and_widgets with ' . count( $widgets ) . ' widgets' );
+		error_log( 'UNIFIED_CSS_PROCESSOR: CSS length: ' . strlen( $css ) );
+		
 		// Create processing context with input data
 		$context = new Css_Processing_Context();
 		$context->set_metadata( 'css', $css );
@@ -52,8 +55,12 @@ class Unified_Css_Processor {
 		$context->set_metadata( 'options', $options );
 		$context->set_metadata( 'existing_global_class_names', $this->get_existing_global_class_names() );
 
+		error_log( 'UNIFIED_CSS_PROCESSOR: Calling Css_Processor_Factory::execute_css_processing' );
+		
 		// Execute the complete registry pipeline
 		$context = Css_Processor_Factory::execute_css_processing( $context );
+		
+		error_log( 'UNIFIED_CSS_PROCESSOR: Registry processing completed' );
 
 		// Extract results from context
 		$processed_widgets = $context->get_widgets();
@@ -450,20 +457,13 @@ class Unified_Css_Processor {
 	}
 	private function process_matched_rule( string $selector, array $properties, array $matched_elements ): void {
 		$converted_properties = $this->convert_rule_properties_to_atomic( $properties );
-		// Route selectors with ID components to ID styles (e.g., #container, #container.box)
-		if ( strpos( $selector, '#' ) !== false ) {
-			$this->unified_style_manager->collect_id_selector_styles(
-				$selector,
-				$converted_properties,
-				$matched_elements
-			);
-		} else {
-			$this->unified_style_manager->collect_css_selector_styles(
-				$selector,
-				$converted_properties,
-				$matched_elements
-			);
-		}
+		// ID selectors are now handled by Id_Selector_Processor in the unified registry pattern
+		// All remaining selectors are CSS class/element selectors
+		$this->unified_style_manager->collect_css_selector_styles(
+			$selector,
+			$converted_properties,
+			$matched_elements
+		);
 	}
 	private function convert_rule_properties_to_atomic( array $properties ): array {
 		$properties_to_convert = $this->expand_border_shorthand_before_property_mapper_processing( $properties );

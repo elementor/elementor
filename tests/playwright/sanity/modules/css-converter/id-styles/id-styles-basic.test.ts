@@ -43,9 +43,12 @@ test.describe( 'Basic ID Styles @id-styles', () => {
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, html, css );
 
+		console.log( 'API Result:', JSON.stringify( apiResult, null, 2 ) );
+
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
-			test.skip( true, 'Skipping due to backend property mapper issues' );
+			console.log( 'Test skipped. Reason:', validation.skipReason );
+			test.skip( true, validation.skipReason );
 			return;
 		}
 

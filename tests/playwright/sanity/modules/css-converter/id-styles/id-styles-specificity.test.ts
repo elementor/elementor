@@ -78,6 +78,8 @@ test.describe( 'ID Styles Specificity @id-styles @specificity', () => {
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, html, css );
 
+		console.log( 'Inline Style Test API Result:', JSON.stringify( apiResult, null, 2 ) );
+
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
 			test.skip( true, 'Skipping due to backend property mapper issues' );

@@ -106,6 +106,7 @@ export class CssConverterHelper {
 		const payload = {
 			type: 'html',
 			content: htmlContent,
+			css: cssContent,
 			options: defaultOptions,
 		};
 
