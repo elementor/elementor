@@ -21,15 +21,18 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 			return;
 		}
 
+		let formattedValue = '';
+
+		if ( fieldValue ) {
+			const dayjsValue = fieldValue as Dayjs;
+			formattedValue = field === 'date' ? dayjsValue.format( 'YYYY-MM-DD' ) : dayjsValue.format( 'HH:mm' );
+		}
+
 		setValue( {
 			...value,
 			[ field ]: {
 				$$type: 'string',
-				value: ( fieldValue as Dayjs | null )
-					? field === 'date'
-						? ( fieldValue as Dayjs ).format( 'YYYY-MM-DD' )
-						: ( fieldValue as Dayjs ).format( 'HH:mm' )
-					: '',
+				value: formattedValue,
 			},
 		} );
 	};
