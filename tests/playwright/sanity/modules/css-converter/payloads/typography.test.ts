@@ -41,7 +41,7 @@ test.describe( 'Typography Payload Integration @payloads', () => {
 		const htmlContent = '<div style="font-family: \'Georgia\', serif; max-width: 600px; margin: 0 auto; padding: 40px;"><h1 style="font-size: 42px; font-weight: 300; color: #2c3e50; line-height: 1.2; margin-bottom: 20px; text-align: center;">Typography Test</h1><h2 style="font-size: 28px; font-weight: 600; color: #34495e; margin: 30px 0 15px;">Subheading Style</h2><p style="font-size: 18px; line-height: 1.7; color: #555; margin-bottom: 20px; text-align: justify;">This paragraph tests various typography properties including font size, line height, color, and text alignment. It should render beautifully with proper spacing.</p><blockquote style="border-left: 4px solid #3498db; padding-left: 20px; margin: 30px 0; font-style: italic; color: #7f8c8d;">This is a styled blockquote to test border and italic text styling.</blockquote></div>';
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '', {
-			createGlobalClasses: false,
+			createGlobalClasses: true,
 		} );
 
 		const validation = cssHelper.validateApiResult( apiResult );

@@ -41,7 +41,7 @@ test.describe( 'Inline CSS Payload Integration @payloads', () => {
 		const htmlContent = '<div style="color: #ff6b6b; font-size: 24px; padding: 20px; background-color: #f8f9fa;"><h1 style="color: #2c3e50; font-weight: bold; text-align: center;">Styled Heading</h1><p style="font-size: 16px; line-height: 1.6; margin: 10px 0;">This paragraph has custom styling.</p></div>';
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, {
-			createGlobalClasses: false,
+			createGlobalClasses: true,
 		} );
 
 		const validation = cssHelper.validateApiResult( apiResult );

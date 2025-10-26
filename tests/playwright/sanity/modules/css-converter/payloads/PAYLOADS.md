@@ -2,7 +2,7 @@ Add screenshot tests for these payloads.
 
 ## ⚡ **API Simplification (Recommended)**
 
-The `createGlobalClasses: false` option has been **removed** for better performance and consistency. All conversions now use the optimized global classes pipeline, which:
+The `createGlobalClasses: true` option has been **removed** for better performance and consistency. All conversions now use the optimized global classes pipeline, which:
 
 - ✅ **Better Performance**: Single optimized conversion path
 - ✅ **More Reliable**: All CSS properties work correctly  

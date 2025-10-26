@@ -41,7 +41,7 @@ test.describe( 'Border and Shadow Payload Integration @payloads', () => {
 		const htmlContent = '<div style="padding: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"><div style="background: white; border: 2px solid #dee2e6; border-radius: 15px; padding: 30px; margin-bottom: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);"><h2 style="color: #343a40; border-bottom: 3px solid #007bff; padding-bottom: 10px; margin-bottom: 20px;">Border Styles</h2><div style="border: 1px dashed #6c757d; padding: 15px; margin: 15px 0; border-radius: 8px;">Dashed border example</div><div style="border: 3px solid #28a745; padding: 15px; margin: 15px 0; border-radius: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">Solid border with inset shadow</div><div style="border: 2px dotted #dc3545; padding: 15px; margin: 15px 0; border-radius: 8px;">Dotted border example</div></div></div>';
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '', {
-			createGlobalClasses: false,
+			createGlobalClasses: true,
 		} );
 
 		const validation = cssHelper.validateApiResult( apiResult );
