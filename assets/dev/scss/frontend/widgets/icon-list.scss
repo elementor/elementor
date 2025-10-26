@@ -15,7 +15,7 @@
 
 	.elementor-icon-list-items.elementor-inline-items {
 		display: flex;
-		flex-wrap: wrap;
+		flex-wrap: wrap;	
 		margin-inline: -8px;
 
 		.elementor-inline-item {
@@ -124,37 +124,37 @@
 			}
 		}
 
-		&.elementor#{$device}-align-start {
+		&.elementor#{$device}-align-left {
 
 			.elementor-icon-list-item {
 
 				&, a {
-					justify-content: start;
-					text-align: start;
+					justify-content: getValueByDirection(flex-start, flex-end);
+					text-align: left;
 				}
 			}
 
 			.elementor-inline-items {
-				justify-content: start;
+				justify-content: getValueByDirection(flex-start, flex-end);
 			}
 		}
 
-		&.elementor#{$device}-align-end {
+		&.elementor#{$device}-align-right {
 
 			.elementor-icon-list-item {
 
 				&, a {
-					justify-content: end;
-					text-align: end;
+					justify-content: getValueByDirection(flex-end, flex-start);
+					text-align: right;
 				}
 			}
 
 			.elementor-icon-list-items {
-				justify-content: end;
+				justify-content: getValueByDirection(flex-end, flex-start);
 			}
 		}
 
-		&:not(.elementor#{$device}-align-end) {
+		&:not(.elementor#{$device}-align-right) {
 
 			.elementor-icon-list-item {
 
@@ -164,7 +164,7 @@
 			}
 		}
 
-		&:not(.elementor#{$device}-align-start) {
+		&:not(.elementor#{$device}-align-left) {
 
 			.elementor-icon-list-item {
 
