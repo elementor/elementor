@@ -8,7 +8,7 @@ export const dateTimeTransformer = createTransformer( ( values: { date?: string;
 			if ( ! date && ! time ) {
 				return '';
 			}
-			return ( `${ date } ${ time }` ).trim();
+			return `${ date } ${ time }`.trim();
 		} )
 		.join( ' ' );
 } );
