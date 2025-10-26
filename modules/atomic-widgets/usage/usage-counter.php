@@ -182,7 +182,6 @@ class Usage_Counter {
 		$style_props = [];
 		$custom_css_props = [];
 
-
 		foreach ( $styles as $style ) {
 			foreach ( $style['variants'] as $variant ) {
 				$style_props[] = $variant['props'];
