@@ -113,7 +113,7 @@ class Components_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_lock_status( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+				'permission_callback' => fn() => get_current_user_id() > 0 && current_user_can( 'edit_posts' ),
 				'args' => [
 					'componentId' => [
 						'type' => 'string',
