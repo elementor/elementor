@@ -11,9 +11,12 @@ const UNLOCK_COMPONENT = `${ BASE_URL }/unlock`;
 const BASE_URL_LOCK_STATUS = `${ BASE_URL }/lock-status`;
 
 export type CreateComponentPayload = {
-	name: string;
-	content: V1ElementData[];
 	status: DocumentStatus;
+	items: Array< {
+		temp_id: number;
+		title: string;
+		elements: V1ElementData[];
+	} >;
 };
 
 type ComponentLockStatusResponse = {
@@ -23,9 +26,7 @@ type ComponentLockStatusResponse = {
 
 type GetComponentResponse = Array< Component >;
 
-export type CreateComponentResponse = {
-	component_id: number;
-};
+export type CreateComponentResponse = Record< number, number >;
 
 export const getParams = ( id: number ) => ( {
 	action: 'get_document_config',
