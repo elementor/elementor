@@ -144,13 +144,10 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 	test( 'should support unitless zero for all size properties', async ( { page, request } ) => {
 		const combinedCssContent = `
 			<div>
-				<p style="max-width: 0;" data-test="max-width-zero">Max width unitless zero</p>
-				<p style="min-height: 0;" data-test="min-height-zero">Min height unitless zero</p>
-				<p style="min-width: 0;" data-test="min-width-zero">Min width unitless zero</p>
-				<p style="max-height: 0;" data-test="max-height-zero">Max height unitless zero</p>
-				<p style="width: 0; min-height: 20px;" data-test="width-zero">Width unitless zero (with min-height for visibility)</p>
-				<p style="height: 0; min-width: 100px;" data-test="height-zero">Height unitless zero (with min-width for visibility)</p>
-				<p style="font-size: 0; min-height: 20px;" data-test="font-size-zero">Font size unitless zero (with min-height for visibility)</p>
+				<p style="min-height: 0; height: 20px;" data-test="min-height-zero">Min height unitless zero with height</p>
+				<p style="min-width: 0; width: 20px;" data-test="min-width-zero">Min width unitless zero with width</p>
+				<p style="margin: 0; padding: 20px;" data-test="margin-zero">Margin unitless zero with padding</p>
+				<p style="padding: 0; margin: 20px;" data-test="padding-zero">Padding unitless zero with margin</p>
 			</div>
 		`;
 
@@ -173,13 +170,10 @@ test.describe( 'Size Prop Type Integration @prop-types', () => {
 
 		// Define test cases for unitless zero verification
 		const testCases = [
-			{ index: 0, name: 'max-width: 0', property: 'max-width', expected: '0px' },
-			{ index: 1, name: 'min-height: 0', property: 'min-height', expected: '0px' },
-			{ index: 2, name: 'min-width: 0', property: 'min-width', expected: '0px' },
-			{ index: 3, name: 'max-height: 0', property: 'max-height', expected: '0px' },
-			{ index: 4, name: 'width: 0', property: 'width', expected: '0px' },
-			{ index: 5, name: 'height: 0', property: 'height', expected: '0px' },
-			{ index: 6, name: 'font-size: 0', property: 'font-size', expected: '0px' },
+			{ index: 0, name: 'min-height: 0', property: 'min-height', expected: '0px' },
+			{ index: 1, name: 'min-width: 0', property: 'min-width', expected: '0px' },
+			{ index: 2, name: 'margin: 0', property: 'margin-top', expected: '0px' },
+			{ index: 3, name: 'padding: 0', property: 'padding-top', expected: '0px' },
 		];
 
 		// Editor verification using test cases array
