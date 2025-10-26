@@ -45,16 +45,13 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Parse the border shorthand value
 		$parsed = $this->parse_border_shorthand( $value );
 		if ( null === $parsed ) {
 			return null;
 		}
 
-		// Generate multiple atomic properties from the shorthand
 		$results = [];
 
-		// Generate border-width property if width is present
 		if ( isset( $parsed['width'] ) ) {
 			$width_result = $this->create_border_width_property( $property, $parsed['width'] );
 			if ( $width_result ) {
@@ -62,7 +59,6 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 			}
 		}
 
-		// Generate border-color property if color is present
 		if ( isset( $parsed['color'] ) ) {
 			$color_result = $this->create_border_color_property( $property, $parsed['color'] );
 			if ( $color_result ) {
@@ -70,7 +66,6 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 			}
 		}
 
-		// Generate border-style property if style is present
 		if ( isset( $parsed['style'] ) ) {
 			$style_result = $this->create_border_style_property( $property, $parsed['style'] );
 			if ( $style_result ) {
@@ -78,8 +73,6 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 			}
 		}
 
-		// Return the first result for now (border-width takes priority)
-		// TODO: Support multiple property generation in the future
 		return ! empty( $results ) ? $results[0] : null;
 	}
 
@@ -103,7 +96,6 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 				continue;
 			}
 
-			// Try to identify what type of value this is
 			if ( $this->is_border_width_value( $part ) ) {
 				$result['width'] = $part;
 			} elseif ( $this->is_border_style_value( $part ) ) {
@@ -117,17 +109,14 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function is_border_width_value( string $value ): bool {
-		// Check for unitless zero (CSS allows 0 without unit)
 		if ( '0' === $value ) {
 			return true;
 		}
 
-		// Check for numeric values with units
 		if ( preg_match( '/^(\d*\.?\d+)(px|em|rem|%|vh|vw)$/i', $value ) ) {
 			return true;
 		}
 
-		// Check for keyword values
 		$keywords = [ 'thin', 'medium', 'thick' ];
 		return in_array( strtolower( $value ), $keywords, true );
 	}
@@ -149,17 +138,14 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function is_color_value( string $value ): bool {
-		// Check for hex colors
 		if ( preg_match( '/^#([0-9a-f]{3}|[0-9a-f]{6})$/i', $value ) ) {
 			return true;
 		}
 
-		// Check for rgb/rgba
 		if ( preg_match( '/^rgba?\(/i', $value ) ) {
 			return true;
 		}
 
-		// Check for named colors (basic set)
 		$named_colors = [
 			'black',
 			'white',
@@ -181,15 +167,11 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function create_border_width_property( string $original_property, string $width_value ): ?array {
-		// Parse the width value using the same logic as border-width mapper
 		$parsed_width = $this->parse_border_width_value( $width_value );
 		if ( null === $parsed_width ) {
 			return null;
 		}
 
-		// 🎯 ATOMIC SOURCE: Size_Prop_Type from atomic widgets
-		// 🚫 FALLBACK: NONE
-		// ✅ STRUCTURE: Matches atomic widget exactly
 		return [
 			'property' => 'border-width',
 			'value' => Size_Prop_Type::make()
@@ -199,9 +181,6 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function create_border_color_property( string $original_property, string $color_value ): ?array {
-		// 🎯 ATOMIC SOURCE: Color_Prop_Type from atomic widgets
-		// 🚫 FALLBACK: NONE
-		// ✅ STRUCTURE: Matches atomic widget exactly
 		return [
 			'property' => 'border-color',
 			'value' => Color_Prop_Type::make()->generate( $color_value ),
@@ -209,9 +188,6 @@ class Border_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function create_border_style_property( string $original_property, string $style_value ): ?array {
-		// 🎯 ATOMIC SOURCE: String_Prop_Type from atomic widgets
-		// 🚫 FALLBACK: NONE
-		// ✅ STRUCTURE: Matches atomic widget exactly
 		return [
 			'property' => 'border-style',
 			'value' => String_Prop_Type::make()->generate( $style_value ),

@@ -44,23 +44,19 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ALL padding properties use Dimensions_Prop_Type (original working approach)
 		$dimensions_data = $this->parse_padding_property( $property, (string) $value );
 		if ( null === $dimensions_data ) {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: All properties use Dimensions_Prop_Type
 		return Dimensions_Prop_Type::make()->generate( $dimensions_data );
 	}
 
 	public function get_v4_property_name( string $property ): string {
-		// All padding properties use 'padding' for atomic widget props
 		return 'padding';
 	}
 
 	public function get_target_property_name( string $property ): string {
-		// Use the same logic as get_v4_property_name
 		return $this->get_v4_property_name( $property );
 	}
 
@@ -80,7 +76,6 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function parse_individual_size_property( string $property, string $value ): ?array {
-		// Parse individual directional property as a simple size value
 		return $this->parse_size_value( $value );
 	}
 
@@ -130,8 +125,6 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ EDITOR PATTERN MATCH: Create complete dimensions with nulls like editor
-		// Editor creates: {"block-start": null, "block-end": {...}, "inline-start": null, "inline-end": {...}}
 		return [
 			'block-start' => $logical_side === 'block-start' ? $this->create_size_prop( $parsed_size ) : null,
 			'block-end' => $logical_side === 'block-end' ? $this->create_size_prop( $parsed_size ) : null,

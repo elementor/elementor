@@ -26,7 +26,6 @@ class Flex_Direction_Property_Mapper extends Atomic_Property_Mapper_Base {
 		'flex-direction',
 	];
 
-	// Enum values from style-schema.php lines 271-276
 	private const ALLOWED_VALUES = [
 		'row',
 		'row-reverse',
@@ -52,7 +51,6 @@ class Flex_Direction_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return String_Prop_Type::make()
 			->enum( self::ALLOWED_VALUES )
 			->generate( $flex_direction_value );
@@ -69,7 +67,6 @@ class Flex_Direction_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Validate against atomic widget enum values
 		if ( ! in_array( $value, self::ALLOWED_VALUES, true ) ) {
 			return null;
 		}

@@ -26,7 +26,6 @@ class Display_Property_Mapper extends Atomic_Property_Mapper_Base {
 		'display',
 	];
 
-	// Enum values from style-schema.php lines 259-270
 	private const ALLOWED_VALUES = [
 		'block',
 		'inline',
@@ -58,7 +57,6 @@ class Display_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return String_Prop_Type::make()
 			->enum( self::ALLOWED_VALUES )
 			->generate( $display_value );
@@ -75,7 +73,6 @@ class Display_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Validate against atomic widget enum values
 		if ( ! in_array( $value, self::ALLOWED_VALUES, true ) ) {
 			return null;
 		}

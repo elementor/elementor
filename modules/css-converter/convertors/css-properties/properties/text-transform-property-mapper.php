@@ -60,7 +60,6 @@ class Text_Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Validate against atomic widget enum values
 		if ( ! in_array( $value, self::VALID_VALUES, true ) ) {
 			return null;
 		}

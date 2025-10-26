@@ -39,7 +39,6 @@ class Font_Size_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$size_data = $this->parse_size_value( $value );
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return Size_Prop_Type::make()
 			->units( Size_Constants::typography() )
 			->generate( $size_data );

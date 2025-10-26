@@ -1,9 +1,11 @@
 <?php
 namespace Elementor\Modules\CssConverter\Services\Widgets;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-require_once __DIR__ . '/../css/css-converter-config.php';
+
+use Elementor\Modules\CssConverter\Services\Css\Css_Converter_Config;
 class Atomic_Widget_Data_Formatter {
 	public static function make(): self {
 		return new self();

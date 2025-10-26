@@ -3,7 +3,6 @@ namespace Elementor\Modules\CssConverter\Services\AtomicWidgets;
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory;
 
-require_once __DIR__ . '/../../convertors/css-properties/implementations/class-property-mapper-factory.php';
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -54,8 +53,6 @@ class CSS_To_Atomic_Props_Converter {
 		// ✅ CRITICAL FIX: Expand shorthand properties before conversion
 		// This ensures class-based CSS shorthand (like border: 1px solid #dee2e6) gets expanded
 		// to individual properties (border-width, border-style, border-color) just like inline CSS
-		require_once __DIR__ . '/../css/processing/css-shorthand-expander.php';
-
 		$expanded_properties = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $css_properties );
 
 		$atomic_props = [];

@@ -59,56 +59,46 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$value = trim( $value );
 
-		// Parse background value
 		$background_data = $this->parse_background_value( $value );
 		if ( null === $background_data ) {
 			return null;
 		}
 
-		// Return atomic prop type result directly (no property wrapper)
 		return Background_Prop_Type::make()->generate( $background_data );
 	}
 
 	private function parse_background_value( string $value ): ?array {
 		$background_data = [];
 
-		// Handle linear gradients
 		if ( $this->is_linear_gradient( $value ) ) {
 			$gradient_data = $this->parse_linear_gradient( $value );
 			if ( null !== $gradient_data ) {
-				// Background_Overlay_Prop_Type expects an array of overlay objects
 				$background_data['background-overlay'] = Background_Overlay_Prop_Type::make()->generate( [ $gradient_data ] );
 				return $background_data;
 			}
 		}
 
-		// Handle radial gradients
 		if ( $this->is_radial_gradient( $value ) ) {
 			$gradient_data = $this->parse_radial_gradient( $value );
 			if ( null !== $gradient_data ) {
-				// Background_Overlay_Prop_Type expects an array of overlay objects
 				$background_data['background-overlay'] = Background_Overlay_Prop_Type::make()->generate( [ $gradient_data ] );
 				return $background_data;
 			}
 		}
 
-		// Handle background images
 		if ( $this->is_background_image( $value ) ) {
 			$image_data = $this->parse_background_image( $value );
 			if ( null !== $image_data ) {
-				// Background_Overlay_Prop_Type expects an array of overlay objects
 				$background_data['background-overlay'] = Background_Overlay_Prop_Type::make()->generate( [ $image_data ] );
 				return $background_data;
 			}
 		}
 
-		// Handle solid colors (fallback to background-color)
 		if ( $this->is_color_value( $value ) ) {
 			$background_data['color'] = Color_Prop_Type::make()->generate( $value );
 			return $background_data;
 		}
 
-		// Handle complex background shorthand
 		$parsed_shorthand = $this->parse_background_shorthand( $value );
 		if ( null !== $parsed_shorthand ) {
 			return $parsed_shorthand;
@@ -130,17 +120,14 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function is_color_value( string $value ): bool {
-		// Check for hex colors
 		if ( str_starts_with( $value, '#' ) ) {
 			return true;
 		}
 
-		// Check for rgb/rgba/hsl/hsla
 		if ( preg_match( '/^(rgb|rgba|hsl|hsla)\s*\(/', $value ) ) {
 			return true;
 		}
 
-		// Check for named colors
 		$named_colors = [
 			'transparent',
 			'black',
@@ -173,7 +160,6 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private function parse_linear_gradient( string $value ): ?array {
 
-		// Extract gradient content
 		if ( ! preg_match( '/linear-gradient\s*\(\s*([^)]+)\s*\)/', $value, $matches ) ) {
 			return null;
 		}
@@ -186,11 +172,9 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Extract angle and stops
 		$angle = $this->extract_gradient_angle( $parts[0] );
 		$stops = $this->extract_gradient_stops_wrapped( $parts );
 
-		// Create gradient value structure
 		$gradient_value = [
 			'type' => String_Prop_Type::make()->generate( 'linear' ),
 			'angle' => Number_Prop_Type::make()->generate( $angle ),
@@ -201,7 +185,6 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function parse_radial_gradient( string $value ): ?array {
-		// Extract gradient content
 		if ( ! preg_match( '/radial-gradient\s*\(\s*([^)]+)\s*\)/', $value, $matches ) ) {
 			return null;
 		}
@@ -213,13 +196,11 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Create gradient value structure
 		$gradient_value = [
 			'type' => String_Prop_Type::make()->generate( 'radial' ),
 			'stops' => $this->extract_gradient_stops_wrapped( $parts ),
 		];
 
-		// Add positions only if it's not the default
 		$position = $this->extract_radial_position( $parts[0] );
 		if ( $position !== 'center center' ) {
 			$gradient_value['positions'] = String_Prop_Type::make()->generate( $position );
@@ -229,7 +210,6 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function parse_background_image( string $value ): ?array {
-		// Extract URL
 		if ( ! preg_match( '/url\s*\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)/', $value, $matches ) ) {
 			return null;
 		}
@@ -247,11 +227,8 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function parse_background_shorthand( string $value ): ?array {
-		// Handle complex background shorthand like:
-		// "red url('image.jpg') no-repeat center center / cover"
 		$background_data = [];
 
-		// Extract color if present
 		$color_match = null;
 		if ( preg_match( '/(#[0-9a-fA-F]{3,6}|rgba?\([^)]+\)|hsla?\([^)]+\)|[a-zA-Z]+)/', $value, $color_match ) ) {
 			if ( $this->is_color_value( $color_match[1] ) ) {
@@ -259,7 +236,6 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			}
 		}
 
-		// Extract URL if present
 		if ( preg_match( '/url\s*\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)/', $value, $url_match ) ) {
 			$image_overlay = [
 				'$$type' => 'background-image-overlay',
@@ -267,7 +243,6 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 					'url' => $url_match[1],
 				],
 			];
-			// Background_Overlay_Prop_Type expects an array of overlay objects
 			$background_data['background-overlay'] = Background_Overlay_Prop_Type::make()->generate( [ $image_overlay ] );
 		}
 
@@ -275,7 +250,6 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function split_gradient_parts( string $content ): array {
-		// Split by commas, but respect parentheses
 		$parts = [];
 		$current_part = '';
 		$paren_depth = 0;
@@ -304,12 +278,10 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function extract_gradient_angle( string $first_part ): int {
-		// Handle "to right", "45deg", etc.
 		if ( preg_match( '/(\d+)deg/', $first_part, $matches ) ) {
 			return (int) $matches[1];
 		}
 
-		// Convert directional keywords to degrees
 		$direction_map = [
 			'to right' => 90,
 			'to left' => 270,
@@ -326,7 +298,6 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function extract_radial_position( string $first_part ): string {
-		// Handle "circle", "ellipse", "circle at center", etc.
 		if ( false !== strpos( $first_part, 'at' ) ) {
 			$parts = explode( 'at', $first_part );
 			return trim( $parts[1] ?? 'center' );
@@ -338,7 +309,6 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	private function extract_gradient_stops_atomic( array $parts ): array {
 		$stops = [];
 
-		// Skip the first part if it's a direction/position
 		$start_index = $this->is_gradient_direction_or_position( $parts[0] ?? '' ) ? 1 : 0;
 
 		for ( $i = $start_index; $i < count( $parts ); $i++ ) {
@@ -349,14 +319,12 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			}
 		}
 
-		// ✅ EDITOR JSON PATTERN: Use Gradient_Color_Stop_Prop_Type for the array
 		return Gradient_Color_Stop_Prop_Type::make()->generate( $stops );
 	}
 
 	private function extract_gradient_stops_raw( array $parts ): array {
 		$stops = [];
 
-		// Skip the first part if it's a direction/position
 		$start_index = $this->is_gradient_direction_or_position( $parts[0] ?? '' ) ? 1 : 0;
 
 		for ( $i = $start_index; $i < count( $parts ); $i++ ) {
@@ -367,14 +335,12 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			}
 		}
 
-		// Return raw array for intermediate processing
 		return $stops;
 	}
 
 	private function extract_gradient_stops_wrapped( array $parts ): array {
 		$stops = [];
 
-		// Skip the first part if it's a direction/position
 		$start_index = $this->is_gradient_direction_or_position( $parts[0] ?? '' ) ? 1 : 0;
 
 		for ( $i = $start_index; $i < count( $parts ); $i++ ) {
@@ -385,14 +351,12 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			}
 		}
 
-		// Return wrapped in gradient-color-stop structure exactly like the working example
 		return Gradient_Color_Stop_Prop_Type::make()->generate( $stops );
 	}
 
 	private function extract_gradient_stops( array $parts ): array {
 		$stops = [];
 
-		// Skip the first part if it's a direction/position
 		$start_index = $this->is_gradient_direction_or_position( $parts[0] ?? '' ) ? 1 : 0;
 
 		for ( $i = $start_index; $i < count( $parts ); $i++ ) {
@@ -409,12 +373,10 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	private function is_gradient_direction_or_position( string $part ): bool {
 		$part = strtolower( trim( $part ) );
 
-		// Check for angle
 		if ( preg_match( '/\d+deg/', $part ) ) {
 			return true;
 		}
 
-		// Check for directional keywords
 		$directions = [ 'to', 'circle', 'ellipse', 'at', 'center', 'top', 'bottom', 'left', 'right' ];
 		foreach ( $directions as $direction ) {
 			if ( false !== strpos( $part, $direction ) ) {
@@ -426,7 +388,6 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function parse_gradient_stop_atomic( string $stop, int $index, int $total_stops ): ?array {
-		// Parse color stops like "red", "red 50%", "#ff0000 25%"
 		$parts = explode( ' ', trim( $stop ) );
 
 		if ( empty( $parts ) ) {
@@ -440,10 +401,8 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ EDITOR JSON PATTERN: Calculate offset as percentage (0-100)
 		$offset = $this->calculate_gradient_stop_offset( $position_str, $index, $total_stops );
 
-		// ✅ EDITOR JSON PATTERN: Use Color_Stop_Prop_Type with color and offset
 		$stop_value = [
 			'color' => Color_Prop_Type::make()->generate( $color ),
 			'offset' => Number_Prop_Type::make()->generate( $offset ),
@@ -453,7 +412,6 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function parse_gradient_stop_raw( string $stop, int $index, int $total_stops ): ?array {
-		// Parse color stops like "red", "red 50%", "#ff0000 25%"
 		$parts = explode( ' ', trim( $stop ) );
 
 		if ( empty( $parts ) ) {
@@ -467,10 +425,8 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Calculate offset as decimal (0.0-1.0)
 		$offset = $this->calculate_gradient_stop_offset( $position_str, $index, $total_stops );
 
-		// Return raw values for intermediate processing
 		return [
 			'color' => $color,
 			'offset' => $offset,
@@ -478,7 +434,6 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function parse_gradient_stop_wrapped( string $stop, int $index, int $total_stops ): ?array {
-		// Parse color stops like "red", "red 50%", "#ff0000 25%"
 		$parts = explode( ' ', trim( $stop ) );
 
 		if ( empty( $parts ) ) {
@@ -492,10 +447,8 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Calculate offset as percentage (0-100)
 		$offset = $this->calculate_gradient_stop_offset( $position_str, $index, $total_stops );
 
-		// ✅ EXACT STRUCTURE from working example: color-stop with wrapped color and offset
 		$stop_value = [
 			'color' => Color_Prop_Type::make()->generate( $color ),
 			'offset' => Number_Prop_Type::make()->generate( $offset ),
@@ -505,7 +458,6 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function parse_gradient_stop( string $stop ): ?array {
-		// Parse color stops like "red", "red 50%", "#ff0000 25%"
 		$parts = explode( ' ', trim( $stop ) );
 
 		if ( empty( $parts ) ) {
@@ -534,17 +486,14 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function calculate_gradient_stop_offset( ?string $position_str, int $index, int $total_stops ): float {
-		// If explicit position is provided (e.g., "50%")
 		if ( null !== $position_str && preg_match( '/(\d+)%/', $position_str, $matches ) ) {
 			return (float) $matches[1]; // Keep as percentage value (50% -> 50)
 		}
 
-		// ✅ ATOMIC WIDGET PATTERN: Auto-distribute stops evenly (0, 100 for 2 stops)
 		if ( $total_stops <= 1 ) {
 			return 0.0;
 		}
 
-		// Distribute evenly: first stop = 0, last stop = 100
 		return (float) ( $index / ( $total_stops - 1 ) ) * 100;
 	}
 }

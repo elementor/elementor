@@ -37,8 +37,6 @@ class Opacity_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
-		// ✅ ATTEMPT: Follow schema exactly - use percentage units as defined
 		return Size_Prop_Type::make()
 			->units( Size_Constants::opacity() )
 			->default_unit( Size_Constants::UNIT_PERCENT )
@@ -67,7 +65,6 @@ class Opacity_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$value = trim( (string) $value );
 
-		// ✅ CRITICAL FIX: Don't filter out '0' values - they are valid opacity values!
 		if ( '' === $value ) { // Only exclude truly empty strings, not '0'
 			return null;
 		}
@@ -86,7 +83,6 @@ class Opacity_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ FIXED: Keep decimal values as decimals with % unit for atomic widget compatibility
 		return [
 			'size' => $numeric_value,
 			'unit' => '%',

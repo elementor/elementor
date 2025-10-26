@@ -34,25 +34,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 	private const SUPPORTED_PROPERTIES = [
-		// Physical positioning properties
 		'top',
 		'right',
 		'bottom',
 		'left',
-		// Logical positioning properties (CSS Logical Properties Level 1)
 		'inset-block-start',
 		'inset-inline-end',
 		'inset-block-end',
 		'inset-inline-start',
-		// Shorthand logical properties
 		'inset',
 		'inset-block',
 		'inset-inline',
-		// Z-index
 		'z-index',
 	];
 
-	// Mapping from physical to logical properties
 	private const PHYSICAL_TO_LOGICAL_MAP = [
 		'top' => 'inset-block-start',
 		'right' => 'inset-inline-end',
@@ -73,32 +68,26 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Handle z-index separately as it uses Number_Prop_Type
 		if ( 'z-index' === $property ) {
 			return $this->map_z_index_property( $value );
 		}
 
-		// Handle shorthand properties
 		if ( in_array( $property, [ 'inset', 'inset-block', 'inset-inline' ], true ) ) {
 			return $this->map_shorthand_property( $property, $value );
 		}
 
-		// Handle individual positioning properties
 		return $this->map_individual_property( $property, $value );
 	}
 
 	public function get_v4_property_name( string $property ): string {
-		// Convert physical properties to logical properties for atomic widgets
 		if ( in_array( $property, [ 'top', 'right', 'bottom', 'left' ], true ) ) {
 			return $this->get_logical_property_name( $property );
 		}
 
-		// For logical properties and shorthand, return as-is
 		return $property;
 	}
 
 	public function get_target_property_name( string $property ): string {
-		// CRITICAL FIX: CSS_To_Atomic_Props_Converter calls this method
 		return $this->get_v4_property_name( $property );
 	}
 
@@ -108,7 +97,6 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Return atomic prop type directly (v2 architecture)
 		return Number_Prop_Type::make()->generate( $parsed_value );
 	}
 
@@ -118,14 +106,10 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Return atomic prop type directly (v2 architecture)
 		return Size_Prop_Type::make()->generate( $parsed_size );
 	}
 
 	private function map_shorthand_property( string $property, $value ): ?array {
-		// ✅ CRITICAL FIX: Shorthand properties should be handled by CSS_Shorthand_Expander
-		// This method should not be called for shorthand properties if the expander is working correctly
-		// For now, handle the first value only as a fallback
 		$parts = $this->parse_shorthand_values( $value );
 		if ( empty( $parts ) ) {
 			return null;
@@ -137,18 +121,14 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Return atomic prop type directly (v2 architecture)
-		// Note: This is a fallback - CSS_Shorthand_Expander should handle shorthand expansion
 		return Size_Prop_Type::make()->generate( $parsed_size );
 	}
 
 	private function get_logical_property_name( string $property ): string {
-		// If it's already a logical property, return as-is
 		if ( 0 === strpos( $property, 'inset-' ) ) {
 			return $property;
 		}
 
-		// Convert physical to logical
 		return self::PHYSICAL_TO_LOGICAL_MAP[ $property ] ?? $property;
 	}
 
@@ -163,19 +143,14 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Handle 'auto' keyword - browser default for z-index
 		if ( 'auto' === strtolower( $value ) ) {
 			return 0; // Browser treats auto as 0 for z-index
 		}
 
-		// Handle other CSS keywords
 		if ( $this->is_css_keyword( $value ) ) {
-			// For z-index, other keywords should return null
-			// as atomic widgets expect numeric values
 			return null;
 		}
 
-		// Parse numeric value (including negative values)
 		if ( is_numeric( $value ) ) {
 			return (int) $value;
 		}
@@ -197,7 +172,6 @@ class Positioning_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return [];
 		}
 
-		// Split by whitespace, handling multiple spaces
 		$parts = preg_split( '/\s+/', $value );
 		return array_filter( $parts );
 	}

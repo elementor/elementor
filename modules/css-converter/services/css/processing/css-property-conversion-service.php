@@ -59,7 +59,6 @@ class Css_Property_Conversion_Service {
 	 */
 	public function convert_properties_to_v4_atomic( array $properties ): array {
 		// ✅ CRITICAL FIX: Expand shorthand properties before conversion
-		require_once __DIR__ . '/css-shorthand-expander.php';
 
 		$expanded_properties = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $properties );
 

@@ -47,7 +47,6 @@ class Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return Size_Prop_Type::make()->generate( $parsed_value );
 	}protected function parse_width_value( $value ): ?array {
 		if ( ! is_string( $value ) ) {
@@ -60,7 +59,6 @@ class Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Handle special CSS values
 		$special_values = [
 			'auto' => [
 				'size' => '',
@@ -76,7 +74,6 @@ class Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return $special_values[ $normalized ];
 		}
 
-		// Handle fit-content(), min-content, max-content
 		if ( preg_match( '/^(fit-content|min-content|max-content)/i', $value ) ) {
 			return [
 				'size' => $value,
@@ -84,7 +81,6 @@ class Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 			];
 		}
 
-		// Handle calc() expressions
 		if ( preg_match( '/^calc\(/i', $value ) ) {
 			return [
 				'size' => $value,
@@ -92,7 +88,6 @@ class Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 			];
 		}
 
-		// Use base class size parsing for standard values
 		return $this->parse_size_value( $value );
 	}
 }

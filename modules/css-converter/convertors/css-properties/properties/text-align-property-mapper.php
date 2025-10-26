@@ -26,7 +26,6 @@ class Text_Align_Property_Mapper extends Atomic_Property_Mapper_Base {
 		'text-align',
 	];
 
-	// Enum values from style-schema.php lines 143-148
 	private const ALLOWED_VALUES = [
 		'start',
 		'center',
@@ -52,7 +51,6 @@ class Text_Align_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return String_Prop_Type::make()
 			->enum( self::ALLOWED_VALUES )
 			->generate( $text_align_value );
@@ -69,7 +67,6 @@ class Text_Align_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Map common CSS values to atomic widget enum values
 		$value_mapping = [
 			'left' => 'start',
 			'right' => 'end',
@@ -81,7 +78,6 @@ class Text_Align_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$mapped_value = $value_mapping[ $value ] ?? null;
 
-		// Validate against atomic widget enum values
 		if ( null === $mapped_value || ! in_array( $mapped_value, self::ALLOWED_VALUES, true ) ) {
 			return null;
 		}

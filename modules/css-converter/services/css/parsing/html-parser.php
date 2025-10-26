@@ -167,8 +167,6 @@ class Html_Parser {
 				];
 			}
 		}
-		// Expand shorthand properties
-		require_once __DIR__ . '/../processing/css-shorthand-expander.php';
 		$simple_styles = [];
 		foreach ( $styles as $property => $data ) {
 			$simple_styles[ $property ] = $data['value'];

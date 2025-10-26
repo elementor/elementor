@@ -23,37 +23,6 @@ class Class_Property_Mapper_Registry {
 	}
 
 	private function initialize_basic_mappers(): void {
-		// Load atomic-only enforcement classes
-		require_once __DIR__ . '/atomic-only-property-mapper-base.php';
-		require_once __DIR__ . '/atomic-only-mapper-factory.php';
-
-		// Load atomic property mappers
-		require_once __DIR__ . '/../properties/color-property-mapper.php';
-		require_once __DIR__ . '/../properties/background-color-property-mapper.php';
-		require_once __DIR__ . '/../properties/background-property-mapper.php';
-		require_once __DIR__ . '/../properties/flex-properties-mapper.php';
-		require_once __DIR__ . '/../properties/font-size-property-mapper.php';
-		require_once __DIR__ . '/../properties/margin-property-mapper.php';
-		require_once __DIR__ . '/../properties/atomic-padding-property-mapper.php';
-		require_once __DIR__ . '/../properties/width-property-mapper.php';
-		require_once __DIR__ . '/../properties/border-radius-property-mapper.php';
-		require_once __DIR__ . '/../properties/box-shadow-property-mapper.php';
-		require_once __DIR__ . '/../properties/opacity-property-mapper.php';
-		require_once __DIR__ . '/../properties/height-property-mapper.php';
-		require_once __DIR__ . '/../properties/display-property-mapper.php';
-		require_once __DIR__ . '/../properties/position-property-mapper.php';
-		require_once __DIR__ . '/../properties/flex-direction-property-mapper.php';
-		require_once __DIR__ . '/../properties/text-align-property-mapper.php';
-		require_once __DIR__ . '/../properties/font-weight-property-mapper.php';
-		require_once __DIR__ . '/../properties/border-width-property-mapper.php';
-		require_once __DIR__ . '/../properties/border-color-property-mapper.php';
-		require_once __DIR__ . '/../properties/border-style-property-mapper.php';
-		require_once __DIR__ . '/../properties/border-property-mapper.php';
-		require_once __DIR__ . '/../properties/positioning-property-mapper.php';
-		require_once __DIR__ . '/../properties/transform-property-mapper.php';
-		require_once __DIR__ . '/../properties/text-shadow-property-mapper.php';
-		require_once __DIR__ . '/../properties/letter-spacing-property-mapper.php';
-		require_once __DIR__ . '/../properties/text-transform-property-mapper.php';
 
 		// Register atomic property mappers
 		$this->mappers['color'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Color_Property_Mapper();

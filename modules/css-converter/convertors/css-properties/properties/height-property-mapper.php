@@ -43,7 +43,6 @@ class Height_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$size_data = $this->parse_size_value( $value );
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return Size_Prop_Type::make()->generate( $size_data );
 	}
 

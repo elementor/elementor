@@ -5,7 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/css-selector-utils.php';
 
 class Css_Class_Usage_Tracker {
 

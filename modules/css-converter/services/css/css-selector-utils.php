@@ -5,7 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/css-converter-config.php';
 
 class Css_Selector_Utils {
 

@@ -109,10 +109,6 @@ class Css_Processor_Registry {
 	}
 
 	private function initialize_default_processors(): void {
-		require_once __DIR__ . '/processors/nested-selector-flattening-processor.php';
-		require_once __DIR__ . '/processors/compound-class-selector-processor.php';
-		require_once __DIR__ . '/css-property-conversion-service.php';
-
 		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Nested_Selector_Flattening_Processor() );
 
 		// Create property converter for compound processor

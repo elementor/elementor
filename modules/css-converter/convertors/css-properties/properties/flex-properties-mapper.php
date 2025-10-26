@@ -54,7 +54,6 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 		'order',
 	];
 
-	// Enum values from atomic widgets style-schema.php
 	private const JUSTIFY_CONTENT_VALUES = [
 		'center',
 		'start',
@@ -172,7 +171,6 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return String_Prop_Type::make()->generate( $value );
 	}
 
@@ -181,7 +179,6 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return String_Prop_Type::make()->generate( $value );
 	}
 
@@ -190,7 +187,6 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return String_Prop_Type::make()->generate( $value );
 	}
 
@@ -199,7 +195,6 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return String_Prop_Type::make()->generate( $value );
 	}
 
@@ -208,23 +203,19 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return String_Prop_Type::make()->generate( $value );
 	}
 
 	private function map_gap_property( string $property, string $value ): ?array {
-		// Handle gap shorthand (e.g., "10px 20px" or "10px")
 		if ( 'gap' === $property && false !== strpos( $value, ' ' ) ) {
 			return $this->map_gap_shorthand( $value );
 		}
 
-		// Handle individual gap properties or single gap value
 		$parsed_size = $this->parse_size_value( $value );
 		if ( null === $parsed_size ) {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return Size_Prop_Type::make()->generate( $parsed_size );
 	}
 
@@ -243,10 +234,6 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
-		// For gap shorthand, we need to return it as a Layout_Direction_Prop_Type
-		// The Layout_Direction_Prop_Type transformer will convert this to row-gap and column-gap
-		// Each direction value must be a Size_Prop_Type structure
 		return Layout_Direction_Prop_Type::make()->generate( [
 			'row' => Size_Prop_Type::make()->generate( $row_gap ),
 			'column' => Size_Prop_Type::make()->generate( $column_gap ),
@@ -254,8 +241,6 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function map_flex_shorthand( string $value ): ?array {
-		// Handle flex shorthand: "flex-grow flex-shrink flex-basis"
-		// Common values: "1", "1 0 auto", "none", "auto", "initial"
 
 		if ( 'none' === $value ) {
 			return Flex_Prop_Type::make()->generate( [
@@ -290,7 +275,6 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 			] );
 		}
 
-		// Parse numeric or multi-value flex
 		$parts = preg_split( '/\s+/', trim( $value ) );
 		$parts = array_filter( $parts );
 
@@ -305,11 +289,9 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 			'unit' => 'custom',
 		];
 
-		// Single numeric value (flex-grow)
 		if ( 1 === count( $parts ) && is_numeric( $parts[0] ) ) {
 			$flex_grow = (float) $parts[0];
 		} elseif ( count( $parts ) >= 2 ) {
-			// Multiple values: flex-grow flex-shrink [flex-basis]
 			if ( is_numeric( $parts[0] ) ) {
 				$flex_grow = (float) $parts[0];
 			}
@@ -324,7 +306,6 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 			}
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return Flex_Prop_Type::make()->generate( [
 			'flexGrow' => $flex_grow,
 			'flexShrink' => $flex_shrink,
@@ -337,7 +318,6 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return Number_Prop_Type::make()->generate( (float) $value );
 	}
 
@@ -347,7 +327,6 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return Size_Prop_Type::make()->generate( $parsed_size );
 	}
 
@@ -356,7 +335,6 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return Number_Prop_Type::make()->generate( (int) $value );
 	}
 

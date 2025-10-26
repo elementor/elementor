@@ -38,7 +38,6 @@ class Box_Shadow_Property_Mapper extends Atomic_Property_Mapper_Base {
 		if ( null === $shadows_data ) {
 			return null;
 		}
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		$result = Box_Shadow_Prop_Type::make()->generate( $shadows_data );
 
 		return $result;

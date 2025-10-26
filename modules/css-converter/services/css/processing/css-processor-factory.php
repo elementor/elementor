@@ -35,7 +35,6 @@ class Css_Processor_Factory {
 
 	private static function register_all_processors( Css_Processor_Registry $registry ): void {
 		// Create property converter for processors that need it
-		require_once __DIR__ . '/css-property-conversion-service.php';
 		$property_converter = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service();
 
 		// Register processors in dependency order (relying on autoloading)

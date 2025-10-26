@@ -4,10 +4,6 @@ namespace Elementor\Modules\CssConverter\Services\Css\Processing;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-require_once __DIR__ . '/../css-selector-utils.php';
-require_once __DIR__ . '/css-output-optimizer.php';
-require_once __DIR__ . '/css-processor-factory.php';
-require_once __DIR__ . '/contracts/css-processing-context.php';
 
 use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Processor_Factory;
 use Elementor\Modules\CssConverter\Services\Css\Processing\Contracts\Css_Processing_Context;
@@ -39,9 +35,6 @@ class Unified_Css_Processor {
 		$this->initialize_html_class_modifier();
 	}
 	private function initialize_html_class_modifier(): void {
-		require_once __DIR__ . '/../css-class-usage-tracker.php';
-		require_once __DIR__ . '/../nested-class-mapping-service.php';
-		require_once __DIR__ . '/../html-class-modifier-service.php';
 		$this->html_class_modifier = new \Elementor\Modules\CssConverter\Services\Css\Html_Class_Modifier_Service();
 	}
 	public function process_css_and_widgets( string $css, array $widgets, array $options = [] ): array {
@@ -162,7 +155,6 @@ class Unified_Css_Processor {
 		$context = new Css_Processing_Context();
 		$context->set_metadata( 'css', $css );
 
-		require_once __DIR__ . '/processors/css-parsing-processor.php';
 		$processor = new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Css_Parsing_Processor( $this->css_parser );
 		$context = $processor->process( $context );
 
@@ -1698,8 +1690,6 @@ class Unified_Css_Processor {
 	 * Includes regular classes, flattened classes, and compound classes
 	 */
 	private function process_global_classes_with_duplicate_detection( array $css_class_rules, array $flattening_results, array $compound_results = [] ): array {
-		require_once __DIR__ . '/../../global-classes/unified/global-classes-service-provider.php';
-
 		$provider = \Elementor\Modules\CssConverter\Services\GlobalClasses\Unified\Global_Classes_Service_Provider::instance();
 
 		if ( ! $provider->is_available() ) {

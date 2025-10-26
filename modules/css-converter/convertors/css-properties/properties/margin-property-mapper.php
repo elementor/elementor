@@ -58,14 +58,10 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	public function get_v4_property_name( string $property ): string {
-		// ✅ CRITICAL FIX: All individual margin properties should map to "margin" in atomic widgets
-		// This ensures the Dimensions_Prop_Type is recognized by the atomic widgets system
 		return 'margin';
 	}
 
 	public function get_target_property_name( string $property ): string {
-		// ✅ CRITICAL FIX: Use the same logic as get_v4_property_name
-		// This ensures individual properties like 'margin-left' are stored as 'margin'
 		return $this->get_v4_property_name( $property );
 	}
 
@@ -150,8 +146,6 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ SOLUTION: Create proper Dimensions_Prop_Type structure like margin shorthand does
-		// This works because Dimensions_Prop_Type DOES have a transformer (proven by margin: 10px working)
 
 		$start_value = $this->parse_size_value( $parts[0] );
 		$end_value = $count > 1 ? $this->parse_size_value( $parts[1] ) : $start_value;
@@ -166,7 +160,6 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		];
 
 		if ( 'inline' === $axis ) {
-			// margin-inline: 10px 30px -> inline-start: 10px, inline-end: 30px
 			return $this->create_dimensions_structure([
 				'block-start' => $zero_size,
 				'inline-end' => $end_value,    // right
@@ -176,7 +169,6 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		if ( 'block' === $axis ) {
-			// margin-block: 10px 30px -> block-start: 10px, block-end: 30px
 			return $this->create_dimensions_structure([
 				'block-start' => $start_value,  // top
 				'inline-end' => $zero_size,
@@ -271,8 +263,6 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$logical_direction = $this->map_physical_to_logical( $property );
 
-		// ✅ EDITOR PATTERN MATCH: Use sparse dimensions with nulls like the working editor example
-		// The editor creates: {"block-start": null, "block-end": {...}, "inline-start": null, "inline-end": {...}}
 		$dimensions = [
 			'block-start' => $logical_direction === 'block-start' ? $size_data : null,
 			'block-end' => $logical_direction === 'block-end' ? $size_data : null,
@@ -302,8 +292,6 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$result = [];
 
 		foreach ( $dimensions as $logical_property => $size_data ) {
-			// ✅ EDITOR PATTERN MATCH: Include null values like the working editor example
-			// The editor structure includes: "block-start": null, "inline-start": null
 			if ( null !== $size_data ) {
 				$result[ $logical_property ] = $this->create_size_prop( $size_data );
 			} else {

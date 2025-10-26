@@ -277,7 +277,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 		}
 
 		// Expand shorthand properties using the CSS Shorthand Expander
-		require_once __DIR__ . '/../css-shorthand-expander.php';
 		$expanded_props = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $simple_props );
 
 

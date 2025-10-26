@@ -57,7 +57,6 @@ class Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return Dimensions_Prop_Type::make()->generate( $parsed_dimensions );
 	}private function parse_padding_dimensions( $value ): ?array {
 		if ( ! is_string( $value ) ) {

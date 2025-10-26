@@ -81,12 +81,6 @@ abstract class Atomic_Only_Property_Mapper_Base implements Property_Mapper_Inter
 		return in_array( $property, $this->get_supported_properties(), true );
 	}
 
-	// 🚫 NO OTHER METHODS ALLOWED
-	// 🚫 NO create_* methods
-	// 🚫 NO build_* methods
-	// 🚫 NO manual JSON helpers
-	// 🚫 NO fallback mechanisms
-	// 🚫 NO $$type assignment methods
 
 	/**
 	 * 🚫 ATOMIC-ONLY ENFORCEMENT: Prevent any manual JSON creation

@@ -118,7 +118,6 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 	private function parse_transform_functions( string $value ): array {
 		$functions = [];
 
-		// Match transform functions like translateX(10px), scale(1.5), rotate(45deg)
 		if ( preg_match_all( '/(\w+)\s*\(\s*([^)]+)\s*\)/i', $value, $matches, PREG_SET_ORDER ) ) {
 			foreach ( $matches as $match ) {
 				$function_name = strtolower( $match[1] );
@@ -192,7 +191,6 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 				break;
 		}
 
-		// Remove null values
 		$move_data = array_filter( $move_data, fn( $val ) => null !== $val );
 
 		return Transform_Move_Prop_Type::make()->generate( $move_data );
@@ -234,7 +232,6 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 				break;
 		}
 
-		// Remove null values
 		$scale_data = array_filter( $scale_data, fn( $val ) => null !== $val );
 
 		return Transform_Scale_Prop_Type::make()->generate( $scale_data );
@@ -264,12 +261,10 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 				$rotate_data['z'] = Size_Prop_Type::make()->generate( $this->parse_angle_value( $values[0] ?? '0deg' ) );
 				break;
 			case 'rotate3d':
-				// rotate3d(x, y, z, angle) - we'll use the angle for z-axis
 				$rotate_data['z'] = Size_Prop_Type::make()->generate( $this->parse_angle_value( $values[3] ?? '0deg' ) );
 				break;
 		}
 
-		// Remove null values
 		$rotate_data = array_filter( $rotate_data, fn( $val ) => null !== $val );
 
 		return Transform_Rotate_Prop_Type::make()->generate( $rotate_data );
@@ -299,15 +294,12 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 				break;
 		}
 
-		// Remove null values
 		$skew_data = array_filter( $skew_data, fn( $val ) => null !== $val );
 
 		return Transform_Skew_Prop_Type::make()->generate( $skew_data );
 	}
 
 	private function parse_transform_origin( $value ): ?array {
-		// For now, return null as transform-origin needs more complex parsing
-		// This would require Transform_Origin_Prop_Type implementation
 		return null;
 	}
 
@@ -327,8 +319,6 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 	}
 
 	private function parse_perspective_origin( $value ): ?array {
-		// For now, return null as perspective-origin needs more complex parsing
-		// This would require Perspective_Origin_Prop_Type implementation
 		return null;
 	}
 
@@ -345,7 +335,6 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 			];
 		}
 
-		// Default to 0 degrees
 		return [
 			'size' => 0.0,
 			'unit' => 'deg',

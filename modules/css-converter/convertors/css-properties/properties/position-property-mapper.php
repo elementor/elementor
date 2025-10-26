@@ -26,7 +26,6 @@ class Position_Property_Mapper extends Atomic_Property_Mapper_Base {
 		'position',
 	];
 
-	// Enum values from style-schema.php lines 93-99
 	private const ALLOWED_VALUES = [
 		'static',
 		'relative',
@@ -53,7 +52,6 @@ class Position_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// ✅ ATOMIC-ONLY COMPLIANCE: Pure atomic prop type return
 		return String_Prop_Type::make()
 			->enum( self::ALLOWED_VALUES )
 			->generate( $position_value );
@@ -70,7 +68,6 @@ class Position_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-		// Validate against atomic widget enum values
 		if ( ! in_array( $value, self::ALLOWED_VALUES, true ) ) {
 			return null;
 		}
