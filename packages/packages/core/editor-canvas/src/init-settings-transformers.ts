@@ -16,6 +16,6 @@ export function initSettingsTransformers() {
 		.register( 'image', imageTransformer )
 		.register( 'image-src', imageSrcTransformer )
 		.register( 'attributes', attributesTransformer )
-		// .register( 'date-time', dateTimeTransformer )
+		.register( 'date-time', dateTimeTransformer )
 		.registerFallback( plainTransformer );
 }

@@ -1,7 +1,7 @@
 <?php
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
-
+use Cassandra\Date;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
@@ -22,20 +22,6 @@ class Date_Time_Prop_Type extends Object_Prop_Type {
 	}
 
 	public function get_default() {
-		// ערכים ידניים (לדוגמה)
 		return null;
-//		return [
-//			'$$type' => 'date-time',
-//			'value'  => [
-//				'date' => [
-//					'$$type' => 'string',
-//					'value'  => '2028-10-08'
-//				],
-//				'time' => [
-//					'$$type' => 'string',
-//					'value'  => '09:30 am'
-//				]
-//			]
-//		];
 	}
 }
