@@ -139,7 +139,6 @@ class Components_REST_API {
 				],
 			],
 		] );
-		
 	}
 
 	private function get_components() {
@@ -224,11 +223,11 @@ class Components_REST_API {
 		return Response_Builder::make( [ 'unlocked' => $success ] )->build();
 	}
 
-	private function get_lock_status( \WP_REST_Request $request ) {	
+	private function get_lock_status( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
 		$locked_user = $this->get_lock_manger()->get_locked_user( $component_id );
 		$is_current_user_allow_to_edit = $this->is_current_user_allow_to_edit( $component_id );
-		
+
 		return Response_Builder::make( [
 			'is_current_user_allow_to_edit' => $is_current_user_allow_to_edit,
 			'locked_by' => $locked_user ? $locked_user->display_name : null,
@@ -238,7 +237,7 @@ class Components_REST_API {
 	private function is_current_user_allow_to_edit( $component_id ) {
 		$current_user_id = get_current_user_id();
 		$locked_user = $this->get_lock_manger()->get_locked_user( $component_id );
-		
+
 		return ! $locked_user || $locked_user->ID === $current_user_id;
 	}
 

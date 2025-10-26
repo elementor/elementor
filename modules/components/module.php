@@ -58,7 +58,7 @@ class Module extends BaseModule {
 		static $instance = null;
 
 		if ( null === $instance ) {
-			$instance = new Document_Lock_Manager(ONE_HOUR);
+			$instance = new Document_Lock_Manager( ONE_HOUR );
 		}
 
 		return $instance;
@@ -100,7 +100,6 @@ class Module extends BaseModule {
 		if ( ! $this->is_component_post( $post_id ) ) {
 			return;
 		}
-
 
 		$this->lock_component( $post_id );
 	}
