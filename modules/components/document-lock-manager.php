@@ -38,8 +38,26 @@ class Document_Lock_Manager {
 	public function lock_document( $document_id ) {
 		try {
 			$user_id = get_current_user_id();
+			
+			// Check if user is logged in
+			if ( ! $user_id ) {
+				return false;
+			}
+			
+			// Check if document exists
+			$post = get_post( $document_id );
+			if ( ! $post ) {
+				return false;
+			}
+			
+			// Ensure WordPress post lock functions are available
 			if ( ! function_exists( 'wp_set_post_lock' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/post.php';
+			}
+			
+			// Ensure WordPress admin functions are available
+			if ( ! function_exists( 'wp_set_post_lock' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/admin.php';
 			}
 
 			// Set WordPress post lock
@@ -86,27 +104,23 @@ class Document_Lock_Manager {
 	 * @return array|false Lock data array if locked, false if not locked
 	 */
 	public function is_document_locked( $document_id ) {
-		if ( ! function_exists( 'wp_check_post_lock' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/post.php';
-		}
+		// Check custom document lock metadata first
+		$lock_user = get_post_meta( $document_id, self::LOCK_USER_META, true );
+		$lock_time = get_post_meta( $document_id, self::LOCK_TIME_META, true );
 
-		$locked_user = wp_check_post_lock( $document_id );
-
-		if ( ! $locked_user ) {
+		if ( ! $lock_user || ! $lock_time ) {
 			return false;
 		}
 
 		// Check if lock has expired
-		$lock_time = get_post_meta( $document_id, self::LOCK_TIME_META, true );
-
-		if ( $lock_time && ( time() - $lock_time > $this->lock_duration ) ) {
+		if ( time() - $lock_time > $this->lock_duration ) {
 			// Lock has expired, automatically unlock
 			$this->unlock_document( $document_id );
 			return false;
 		}
 
 		return [
-			'user_id' => $locked_user,
+			'user_id' => $lock_user,
 			'timestamp' => $lock_time,
 		];
 	}
@@ -119,17 +133,13 @@ class Document_Lock_Manager {
 	 * @return \WP_User|false User object if locked, false if not locked
 	 */
 	public function get_locked_user( $document_id ) {
-		if ( ! function_exists( 'wp_check_post_lock' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/post.php';
-		}
+		$lock_data = $this->is_document_locked( $document_id );
 
-			$locked_user = wp_check_post_lock( $document_id );
-
-		if ( ! $locked_user ) {
+		if ( ! $lock_data ) {
 			return false;
 		}
 
-		return get_user_by( 'id', $locked_user );
+		return get_user_by( 'id', $lock_data['user_id'] );
 	}
 
 
