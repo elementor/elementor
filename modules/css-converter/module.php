@@ -74,95 +74,22 @@ class Module extends BaseModule {
 		return true;
 	}
 	private function load_required_dependencies(): void {
-		$required_files = $this->get_required_files();
-		foreach ( $required_files as $file ) {
-			$this->load_file_if_exists( $file );
-		}
+		// Elementor's autoloader handles all class loading automatically
+		// Only load critical files that don't follow standard naming conventions
+		$this->load_critical_dependencies();
 	}
-	private function get_required_files(): array {
-		return [
+
+	private function load_critical_dependencies(): void {
+		$critical_files = [
 			'/exceptions/class-conversion-exception.php',
-			'/exceptions/css-parse-exception.php',
+			'/exceptions/css-parse-exception.php', 
 			'/parsers/css-parser.php',
 			'/parsers/parsed-css.php',
-			'/convertors/css-properties/css-property-convertor-config.php',
-			'/convertors/css-properties/contracts/property-mapper-interface.php',
-			'/convertors/css-properties/implementations/property-mapper-base.php',
-			'/convertors/css-properties/implementations/atomic-only-property-mapper-base.php',
-			'/convertors/css-properties/implementations/atomic-only-mapper-factory.php',
-			'/convertors/css-properties/implementations/class-property-mapper-registry.php',
-			'/convertors/css-properties/implementations/class-property-mapper-factory.php',
-			'/convertors/css-properties/properties/color-property-mapper.php',
-			'/convertors/css-properties/properties/background-color-property-mapper.php',
-			'/convertors/css-properties/properties/background-property-mapper.php',
-			'/convertors/css-properties/properties/flex-properties-mapper.php',
-			'/convertors/css-properties/properties/font-size-property-mapper.php',
-			'/convertors/css-properties/properties/margin-property-mapper.php',
-			'/convertors/css-properties/properties/atomic-padding-property-mapper.php',
-			'/convertors/css-properties/properties/width-property-mapper.php',
-			'/convertors/css-properties/properties/border-radius-property-mapper.php',
-			'/convertors/css-properties/properties/box-shadow-property-mapper.php',
-			'/convertors/css-properties/properties/opacity-property-mapper.php',
-			'/convertors/css-properties/properties/height-property-mapper.php',
-			'/convertors/css-properties/properties/display-property-mapper.php',
-			'/convertors/css-properties/properties/position-property-mapper.php',
-			'/convertors/css-properties/properties/flex-direction-property-mapper.php',
-			'/convertors/css-properties/properties/text-align-property-mapper.php',
-			'/convertors/css-properties/properties/font-weight-property-mapper.php',
-			'/convertors/css-properties/properties/border-width-property-mapper.php',
-			'/convertors/css-properties/properties/border-color-property-mapper.php',
-			'/convertors/css-properties/properties/border-style-property-mapper.php',
-			'/convertors/css-properties/properties/border-property-mapper.php',
-			'/convertors/css-properties/properties/positioning-property-mapper.php',
-			'/convertors/css-properties/properties/transform-property-mapper.php',
-			'/convertors/css-properties/properties/text-shadow-property-mapper.php',
-			'/convertors/css-properties/properties/letter-spacing-property-mapper.php',
-			'/convertors/css-properties/properties/text-transform-property-mapper.php',
-			'/convertors/css-properties/properties/line-height-property-mapper.php',
-			'/convertors/css-properties/properties/text-decoration-property-mapper.php',
-			'/convertors/css-properties/properties/font-style-property-mapper.php',
-			'/convertors/css-properties/properties/word-spacing-property-mapper.php',
-			'/convertors/css-properties/properties/padding-property-mapper.php',
-			'/services/css/validation/request-validator.php',
-			'/services/css/parsing/html-parser.php',
-			'/services/css/css-converter-config.php',
-			'/services/css/css-selector-utils.php',
-			'/services/css/css-class-usage-tracker.php',
-			'/services/css/nested-selector-parser.php',
-			'/services/css/nested-class-mapping-service.php',
-			'/services/css/nested-selector-flattening-service.php',
-			'/services/css/flattened-class-name-generator.php',
-			'/services/css/html-class-modifier-service.php',
-			'/services/css/processing/css-specificity-calculator.php',
-			'/services/css/processing/css-property-conversion-service.php',
-			'/services/css/processing/css-processor.php',
-			'/services/css/processing/css-processor-factory.php',
-			'/services/css/processing/css-processor-registry.php',
-			'/services/css/processing/css-shorthand-expander.php',
-			'/services/css/processing/css-output-optimizer.php',
-			'/services/css/processing/unified-css-processor.php',
-			'/services/css/processing/unified-style-manager.php',
-			'/services/css/processing/reset-style-detector.php',
-			'/services/css/processing/contracts/css-processing-context.php',
-			'/services/css/processing/processors/css-parsing-processor.php',
-			'/services/css/processing/processors/global-classes-processor.php',
-			'/services/css/processing/processors/id-selector-processor.php',
-			'/services/css/processing/processors/rule-classification-processor.php',
-			'/services/css/processing/processors/nested-selector-flattening-processor.php',
-			'/services/css/processing/processors/compound-class-selector-processor.php',
-			'/services/widgets/widget-mapper.php',
-			'/services/global-classes/class-conversion-service.php',
-			'/services/variables/variable-conversion-service.php',
-			'/services/variables/variables-service-provider.php',
-			'/convertors/variables/variable_convertor_interface.php',
-			'/convertors/variables/convertors/abstract_variable_convertor.php',
-			'/convertors/variables/convertors/color_hex_variable_convertor.php',
-			'/convertors/variables/convertors/color_rgb_variable_convertor.php',
-			'/convertors/variables/convertors/color_rgba_variable_convertor.php',
-			'/convertors/variables/convertors/length_size_viewport_variable_convertor.php',
-			'/convertors/variables/convertors/percentage_variable_convertor.php',
-			'/convertors/variables/variable_convertor_registry.php',
 		];
+
+		foreach ( $critical_files as $file ) {
+			$this->load_file_if_exists( $file );
+		}
 	}
 	private function load_file_if_exists( string $file ): void {
 		$file_path = __DIR__ . $file;
