@@ -13,29 +13,28 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+	exit;
 }
 
 class Usage_Counter {
-    const TAB_GENERAL = 'General';
-    const TAB_STYLE = 'Style';
-
+	const TAB_GENERAL = 'General';
+	const TAB_STYLE = 'Style';
 	private array $style_sections;
 
 	public function __construct() {
 		$this->style_sections = $this->get_style_section_by_control( Style_Schema::get() );
 	}
 
-    public function count( array $element ): Usage_Counter_Result {
-        /**
-         * @var Atomic_Widget_Base | Atomic_Element_Base $instance
-         */
-        $instance = Plugin::$instance->elements_manager->create_element_instance( $element );
+	public function count( array $element ): Usage_Counter_Result {
+		/**
+		 * @var Atomic_Widget_Base | Atomic_Element_Base $instance
+		 */
+		$instance = Plugin::$instance->elements_manager->create_element_instance( $element );
 		$counter_result = new Usage_Counter_Result();
 
-        if ( ! $instance ) {
-            return $counter_result;
-        }
+		if ( ! $instance ) {
+			return $counter_result;
+		}
 
 		$total = $this->get_total_controls_count( $instance );
 		$changed = $this->get_changed_controls( $instance );
@@ -44,7 +43,7 @@ class Usage_Counter {
 		$counter_result->set_changed( $changed );
 
 		return $counter_result;
-    }
+	}
 
 	private function get_general_section_by_control( array $atomic_controls ): array {
 		return array_reduce( $atomic_controls, function( $control_sections, $section ) {
@@ -69,7 +68,7 @@ class Usage_Counter {
 			foreach ( $prop as $prop_name => $prop_type ) {
 				$style_sections[ $prop_name ] = [
 					'section' => $section_name,
-					'prop_type' => $prop_type
+					'prop_type' => $prop_type,
 				];
 			}
 		}
@@ -88,7 +87,7 @@ class Usage_Counter {
 				$changed_controls[] = [
 					'tab' => self::TAB_STYLE,
 					'section' => 'classes',
-					'control' => $control_name
+					'control' => $control_name,
 				];
 
 				continue;
@@ -97,7 +96,7 @@ class Usage_Counter {
 			$changed_controls[] = [
 				'tab' => self::TAB_GENERAL,
 				'section' => $control_sections[ $control_name ] ?? 'unknown',
-				'control' => $control_name
+				'control' => $control_name,
 			];
 		}
 
@@ -108,8 +107,8 @@ class Usage_Counter {
 		}
 
 		foreach ( $style_props as $style_prop_name => $style_prop_value ) {
-			$section = $this->style_sections[ $style_prop_name ][ 'section' ] ?? 'unknown';
-			$prop_type = $this->style_sections[ $style_prop_name ][ 'prop_type' ];
+			$section = $this->style_sections[ $style_prop_name ]['section'] ?? 'unknown';
+			$prop_type = $this->style_sections[ $style_prop_name ]['prop_type'];
 
 			$decomposed_props = $this->decompose_style_props( $style_prop_name, $style_prop_value, $prop_type, $section );
 			$changed_controls = array_merge( $changed_controls, $decomposed_props );
@@ -128,7 +127,7 @@ class Usage_Counter {
 				$changed[] = [
 					'tab' => self::TAB_STYLE,
 					'section' => $section,
-					'control' => $control_name
+					'control' => $control_name,
 				];
 
 				break;
@@ -136,7 +135,7 @@ class Usage_Counter {
 				$prop_shape = $prop_type->get_shape();
 				$object_styles = array_map( function( string $name, array $value ) use ( $prop_shape, $section, $control_name ) {
 					return $this->decompose_style_props( $name, $value, $prop_shape[ $name ], $section, $control_name );
-				}, array_keys( $style_prop[ 'value' ] ), $style_prop[ 'value' ] );
+				}, array_keys( $style_prop['value'] ), $style_prop['value'] );
 
 				$changed = array_merge( $changed, ...$object_styles );
 
@@ -144,20 +143,20 @@ class Usage_Counter {
 			case 'array':
 				/** @var Array_Prop_Type $prop_type */
 				$array_styles = array_map( function( array $value ) use ( $prop_type, $section, $control_name ) {
-					$name = $value[ '$$type' ];
+					$name = $value['$$type'];
 					$prop_shape = $prop_type->get_item_type()->get_prop_type( $name );
 
 					return $this->decompose_style_props( $name, $value, $prop_shape, $section, $control_name );
-				}, $style_prop[ 'value' ] );
+				}, $style_prop['value'] );
 
 				$changed = array_merge( $changed, ...$array_styles );
 
 				break;
 			case 'union':
 				/** @var Union_Prop_Type $prop_type */
-				$shape_type = $style_prop[ '$$type' ] ?? null;
+				$shape_type = $style_prop['$$type'] ?? null;
 				$union_prop_type = $prop_type->get_prop_type( $shape_type );
-				$filtered_union = array_filter( $style_prop[ 'value' ] );
+				$filtered_union = array_filter( $style_prop['value'] );
 
 				$union_styles = array_map( function( string $name, array $value ) use ( $prop_type, $section, $control_name, $union_prop_type ) {
 					return $this->decompose_style_props( $name, $value, $union_prop_type->get_shape_field( $name ), $section, $control_name );
@@ -186,13 +185,13 @@ class Usage_Counter {
 		return array_merge( ...$variants_props );
 	}
 
-    private function get_total_controls_count( $instance ): int {
-        $props_schema = $instance->get_props_schema();
-        $total_count = count( $props_schema );
+	private function get_total_controls_count( $instance ): int {
+		$props_schema = $instance->get_props_schema();
+		$total_count = count( $props_schema );
 
-        $style_props = Style_Schema::get();
-        $total_count += count( $style_props );
+		$style_props = Style_Schema::get();
+		$total_count += count( $style_props );
 
-        return $total_count;
-    }
+		return $total_count;
+	}
 }

@@ -679,4 +679,3 @@ class Module extends BaseModule {
 		add_action( 'admin_init', [ $this, 'add_system_info_report' ], 50 );
 	}
 }
-
