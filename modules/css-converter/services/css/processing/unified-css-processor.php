@@ -45,8 +45,6 @@ class Unified_Css_Processor {
 		$this->html_class_modifier = new \Elementor\Modules\CssConverter\Services\Css\Html_Class_Modifier_Service();
 	}
 	public function process_css_and_widgets( string $css, array $widgets, array $options = [] ): array {
-		error_log( 'UNIFIED_CSS_PROCESSOR: Starting process_css_and_widgets with ' . count( $widgets ) . ' widgets' );
-		error_log( 'UNIFIED_CSS_PROCESSOR: CSS length: ' . strlen( $css ) );
 		
 		// Create processing context with input data
 		$context = new Css_Processing_Context();
@@ -55,12 +53,10 @@ class Unified_Css_Processor {
 		$context->set_metadata( 'options', $options );
 		$context->set_metadata( 'existing_global_class_names', $this->get_existing_global_class_names() );
 
-		error_log( 'UNIFIED_CSS_PROCESSOR: Calling Css_Processor_Factory::execute_css_processing' );
 		
 		// Execute the complete registry pipeline
 		$context = Css_Processor_Factory::execute_css_processing( $context );
 		
-		error_log( 'UNIFIED_CSS_PROCESSOR: Registry processing completed' );
 
 		// Extract results from context
 		$processed_widgets = $context->get_widgets();
@@ -1470,18 +1466,15 @@ class Unified_Css_Processor {
 		$context->set_metadata( 'existing_global_class_names', $this->get_existing_global_class_names() );
 		$context->set_widgets( $widgets );
 
-		error_log( 'DEBUG: UNIFIED REGISTRY - Context created, calling Css_Processor_Factory::execute_css_processing()' );
 
 		// Execute the full registry pipeline (flattening → compound)
 		$context = Css_Processor_Factory::execute_css_processing( $context );
 
-		error_log( 'DEBUG: UNIFIED REGISTRY - Factory execution complete' );
 
 		$flattened_rules = $context->get_metadata( 'flattened_rules', [] );
 		$compound_global_classes = $context->get_metadata( 'compound_global_classes', [] );
 		$compound_mappings = $context->get_metadata( 'compound_mappings', [] );
 
-		error_log( 'DEBUG: UNIFIED REGISTRY - Results: ' . count( $flattened_rules ) . ' flattened rules, ' . count( $compound_global_classes ) . ' compound classes, ' . count( $compound_mappings ) . ' compound mappings' );
 
 		// Build unified modifiers array
 		$css_class_modifiers = [];

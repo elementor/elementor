@@ -45,10 +45,8 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$widgets = $context->get_widgets();
 
-		error_log( 'DEBUG: Compound processor process() called with ' . count( $css_rules ) . ' CSS rules and ' . count( $widgets ) . ' widgets' );
 
 		if ( empty( $css_rules ) || empty( $widgets ) ) {
-			error_log( 'DEBUG: Compound processor early return - empty css_rules or widgets' );
 			return $context;
 		}
 
@@ -437,25 +435,19 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 	private function build_html_class_mappings( array $compound_global_classes ): array {
 		$html_class_mappings = [];
 
-		error_log( 'DEBUG: build_html_class_mappings input: ' . print_r( $compound_global_classes, true ) );
 
 		foreach ( $compound_global_classes as $compound_class_name => $class_data ) {
 			$compound_classes = $class_data['compound_classes'] ?? [];
 
-			error_log( "DEBUG: Processing compound class '$compound_class_name' with data: " . print_r( $class_data, true ) );
-			error_log( 'DEBUG: Extracted compound_classes: ' . print_r( $compound_classes, true ) );
 
 			if ( ! empty( $compound_classes ) ) {
 				$html_class_mappings[ $compound_class_name ] = [
 					'requires' => $compound_classes,
 				];
-				error_log( "DEBUG: Added to HTML mappings: $compound_class_name => " . print_r( $compound_classes, true ) );
 			} else {
-				error_log( "DEBUG: Skipping '$compound_class_name' - no compound_classes found" );
 			}
 		}
 
-		error_log( 'DEBUG: Final HTML class mappings: ' . print_r( $html_class_mappings, true ) );
 		return $html_class_mappings;
 	}
 

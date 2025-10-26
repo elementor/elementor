@@ -167,7 +167,6 @@ $scoped_variables = [];
 			];
 		}
 		// Use new duplicate detection service
-		require_once __DIR__ . '/../services/variables/variables-service-provider.php';
 		$provider = \Elementor\Modules\CssConverter\Services\Variables\Variables_Service_Provider::instance();
 		
 		if ( $provider->is_available() ) {

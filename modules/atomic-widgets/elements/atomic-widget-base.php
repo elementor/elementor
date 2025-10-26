@@ -17,7 +17,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	protected $editor_settings = [];
 
 	public function __construct( $data = [], $args = null ) {
-		error_log( "🟢 LOADED: elementor-css/modules/atomic-widgets/elements/atomic-widget-base.php" );
 		parent::__construct( $data, $args );
 
 		$this->version = $data['version'] ?? '0.0';
@@ -32,9 +31,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	public function get_initial_config() {
-		error_log( "🚀🚀🚀 ELEMENTOR_CSS_MODIFIED: get_initial_config() called for " . static::get_element_type() );
-		error_log( "🚀🚀🚀 ELEMENTOR_CSS_MODIFIED: Widget ID: " . ( $this->get_id() ?? 'NO_ID' ) );
-		error_log( "🚀🚀🚀 ELEMENTOR_CSS_MODIFIED: editor_settings = " . json_encode( $this->editor_settings ?? [] ) );
 		
 		$config = parent::get_initial_config();
 		$props_schema = static::get_props_schema();
@@ -45,14 +41,12 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		
 		// CRITICAL: This is where base_styles_dictionary goes to JavaScript
 		$base_styles_dictionary = $this->get_base_styles_dictionary();
-		error_log( "🚀🚀🚀 ELEMENTOR_CSS_MODIFIED: ⭐ SENDING base_styles_dictionary to JS: " . json_encode( $base_styles_dictionary ) );
 		$config['base_styles_dictionary'] = $base_styles_dictionary;
 		
 		$config['atomic_props_schema'] = $props_schema;
 		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['version'] = $this->version;
 
-		error_log( "🚀🚀🚀 ELEMENTOR_CSS_MODIFIED: ⭐ FINAL CONFIG sent to JS editor: " . json_encode( $config ) );
 		return $config;
 	}
 

@@ -36,8 +36,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 		$id_rules = $this->extract_id_selectors( $css_rules );
 		$remaining_rules = $this->remove_id_selectors( $css_rules );
 
-		error_log( 'ID_SELECTOR_PROCESSOR: Found ' . count( $id_rules ) . ' ID rules' );
-		error_log( 'ID_SELECTOR_PROCESSOR: Processing ' . count( $widgets ) . ' widgets' );
 
 		// CRITICAL: Use the EXISTING unified style manager from context (created by Style Collection Processor)
 		// This ensures all styles (inline, ID, CSS selectors) are in the same manager for proper specificity resolution
@@ -48,7 +46,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 			throw new \Exception( 'ID_SELECTOR_PROCESSOR: No unified style manager in context. Style Collection Processor must run before ID Selector Processor.' );
 		}
 
-		error_log( 'ID_SELECTOR_PROCESSOR: Using existing unified style manager from context' );
 
 		$this->collect_id_styles_in_manager( $id_rules, $widgets, $unified_style_manager );
 
@@ -63,7 +60,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 
 		$context->add_statistic( 'id_selectors_processed', count( $id_rules ) );
 
-		error_log( 'ID_SELECTOR_PROCESSOR: Completed processing' );
 
 		return $context;
 	}
@@ -96,7 +92,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 	}
 
 	private function collect_id_styles_in_manager( array $id_rules, array $widgets, $unified_style_manager ): void {
-		error_log( 'ID_SELECTOR_PROCESSOR: Collecting ID styles in unified style manager' );
 
 		foreach ( $id_rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
@@ -112,7 +107,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 				// Collect the ID styles in the unified style manager
 				$unified_style_manager->collect_id_selector_styles( $selector, $converted_properties, $matched_elements );
 
-				error_log( "ID_SELECTOR_PROCESSOR: Collected styles for selector '$selector' on " . count( $matched_elements ) . ' elements' );
 			}
 		}
 	}
@@ -127,7 +121,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 	private function remove_id_attributes_recursively( array $widget ): array {
 		// Remove ID attribute if it exists
 		if ( isset( $widget['attributes']['id'] ) ) {
-			error_log( 'ID_SELECTOR_PROCESSOR: Removing ID attribute: ' . $widget['attributes']['id'] );
 			unset( $widget['attributes']['id'] );
 		}
 
@@ -236,7 +229,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 
 			if ( $widget_id === $target_id && $element_id ) {
 				$matched_elements[] = $element_id;
-				error_log( "ID_SELECTOR_PROCESSOR: Found descendant match with ID '$target_id', element_id: $element_id" );
 			}
 
 			// Continue searching in children
@@ -253,7 +245,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 
 			if ( $widget_id === $target_id && $element_id ) {
 				$matched_elements[] = $element_id;
-				error_log( "ID_SELECTOR_PROCESSOR: Found matching widget with ID '$target_id', element_id: $element_id" );
 			}
 
 			// Process children recursively
@@ -289,8 +280,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 		require_once __DIR__ . '/../css-shorthand-expander.php';
 		$expanded_props = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $simple_props );
 
-		error_log( 'ID_SELECTOR_PROCESSOR: Original properties: ' . json_encode( $simple_props ) );
-		error_log( 'ID_SELECTOR_PROCESSOR: Expanded properties: ' . json_encode( $expanded_props ) );
 
 		$converted_properties = [];
 

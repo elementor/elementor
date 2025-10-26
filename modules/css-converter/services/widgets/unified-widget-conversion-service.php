@@ -68,18 +68,11 @@ class Unified_Widget_Conversion_Service {
 			$all_css = $this->unified_css_processor->extract_and_process_css_from_html_and_urls( $html, $css_urls, $follow_imports, $elements );
 			$this->logger->add_css_size( strlen( $all_css ) );
 
-			error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: Calling unified_css_processor->process_css_and_widgets' );
-			error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: CSS length: ' . strlen( $all_css ) );
-			error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: Widget count: ' . count( $mapped_widgets ) );
-
-			try {
-				$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets, $options );
-			} catch ( \Exception $e ) {
-				error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: Exception in unified processor: ' . $e->getMessage() );
-				throw $e;
-			}
-
-			error_log( 'UNIFIED_WIDGET_CONVERSION_SERVICE: Unified processing completed' );
+		try {
+			$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets, $options );
+		} catch ( \Exception $e ) {
+			throw $e;
+		}
 
 			$resolved_widgets = $unified_processing_result['widgets'];
 			$global_classes = $unified_processing_result['global_classes'] ?? [];

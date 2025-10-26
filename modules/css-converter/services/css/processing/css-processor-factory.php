@@ -54,10 +54,8 @@ class Css_Processor_Factory {
 
 		foreach ( $processors as $processor ) {
 			$processor_name = $processor->get_processor_name();
-			error_log( "CSS_PROCESSOR_FACTORY: Registering processor: $processor_name" );
 			if ( ! $registry->has_processor( $processor_name ) ) {
 				$registry->register( $processor );
-				error_log( "CSS_PROCESSOR_FACTORY: Successfully registered: $processor_name" );
 			}
 		}
 	}

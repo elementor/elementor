@@ -43,7 +43,6 @@ class Global_Classes_Registration_Service {
 		'converting_classes' => array_keys( $converted_classes ),
 		'total_items_count' => count( $items ),
 	];
-	error_log( 'DUPLICATE TEST: ' . wp_json_encode( $debug_info ) );
 
 	$result = $this->filter_new_classes_with_duplicate_detection( $converted_classes, $existing_labels, $items );
 		$new_classes = $result['new_classes'];
@@ -74,8 +73,6 @@ class Global_Classes_Registration_Service {
 	try {
 		// Debug: Log what we're about to save
 		$new_class_labels = array_keys( $classes_after_limit );
-		error_log( 'DUPLICATE TEST: About to save ' . count( $items ) . ' total classes' );
-		error_log( 'DUPLICATE TEST: New classes being added: ' . implode( ', ', $new_class_labels ) );
 		
 		$repository->put( $items, $order );
 		
@@ -84,8 +81,6 @@ class Global_Classes_Registration_Service {
 		$verify_existing = $verify_repository->all();
 		$verify_items = $verify_existing->get_items()->all();
 		$verify_labels = $this->extract_existing_labels( $verify_items );
-		error_log( 'DUPLICATE TEST: After save, repository has ' . count( $verify_labels ) . ' classes' );
-		error_log( 'DUPLICATE TEST: First 10 after save: ' . implode( ', ', array_slice( $verify_labels, 0, 10 ) ) );
 		
 		// Force clear of kit metadata cache to ensure subsequent API calls see updated data
 		// The Elementor Kit caches metadata, and we need to invalidate this specific cache

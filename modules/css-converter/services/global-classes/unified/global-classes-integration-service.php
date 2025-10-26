@@ -225,20 +225,13 @@ class Global_Classes_Integration_Service {
 	private function build_global_classes_with_final_names( array $detected, array $class_name_mappings ): array {
 		$global_classes = [];
 
-		error_log( 'DEBUG DUPLICATE: Building global_classes with mappings' );
-		error_log( 'DEBUG DUPLICATE: Detected classes: ' . implode( ', ', array_keys( $detected ) ) );
-		error_log( 'DEBUG DUPLICATE: Mappings: ' . json_encode( $class_name_mappings ) );
 
 		foreach ( $detected as $original_class_name => $class_data ) {
 			$final_class_name = $class_name_mappings[ $original_class_name ] ?? $original_class_name;
 			$global_classes[ $final_class_name ] = $class_data;
 			
-			if ( $original_class_name !== $final_class_name ) {
-				error_log( "DEBUG DUPLICATE: Mapped '{$original_class_name}' -> '{$final_class_name}'" );
-			}
 		}
 
-		error_log( 'DEBUG DUPLICATE: Final global_classes keys: ' . implode( ', ', array_keys( $global_classes ) ) );
 
 		return $global_classes;
 	}

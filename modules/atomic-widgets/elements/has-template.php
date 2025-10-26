@@ -24,7 +24,6 @@ trait Has_Template {
 	}
 
 	protected function render() {
-		error_log( "🔥🔥🔥 HTMLCACHE_FIX: render() called for " . static::get_element_type() . " ID: " . $this->get_id() );
 		
 		try {
 			$renderer = Template_Renderer::instance();
@@ -38,7 +37,6 @@ trait Has_Template {
 			}
 
 			$base_styles_dict = $this->get_base_styles_dictionary();
-			error_log( "🔥🔥🔥 HTMLCACHE_FIX: base_styles_dictionary = " . json_encode( $base_styles_dict ) );
 
 			$context = [
 				'id' => $this->get_id(),
@@ -47,11 +45,9 @@ trait Has_Template {
 				'base_styles' => $base_styles_dict,
 			];
 
-			error_log( "🔥🔥🔥 HTMLCACHE_FIX: Twig context base_styles = " . json_encode( $context['base_styles'] ) );
 
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			$rendered_html = $renderer->render( $this->get_main_template(), $context );
-			error_log( "🔥🔥🔥 HTMLCACHE_FIX: Rendered HTML snippet: " . substr( $rendered_html, 0, 200 ) . "..." );
 			
 			echo $rendered_html;
 		} catch ( \Exception $e ) {
