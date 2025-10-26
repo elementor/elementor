@@ -21,7 +21,7 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 	}
 
 	public function get_priority(): int {
-		return 55; // After Style Collection (60), before Global Classes (50)
+		return 90; // After HTML modifications, before style resolution
 	}
 
 	public function supports_context( Css_Processing_Context $context ): bool {

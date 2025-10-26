@@ -32,7 +32,6 @@ class Css_Class_Usage_Tracker {
 	private function analyze_selector( string $selector ): void {
 		$selector = trim( $selector );
 
-		// Check if this is a nested selector (contains space or >)
 		if ( $this->is_nested_selector( $selector ) ) {
 			$this->track_nested_selector( $selector );
 		} else {
@@ -47,12 +46,9 @@ class Css_Class_Usage_Tracker {
 	private function track_nested_selector( string $selector ): void {
 		$this->nested_selectors[] = $selector;
 
-		// Extract all class names from nested selector
 		$class_names = $this->extract_class_names_from_selector( $selector );
 		
 		foreach ( $class_names as $class_name ) {
-			// Mark classes that appear in nested selectors
-			// These might not have direct styles
 			if ( ! isset( $this->class_usage_map[ $class_name ] ) ) {
 				$this->class_usage_map[ $class_name ] = [
 					'has_direct_styles' => false,
@@ -70,7 +66,6 @@ class Css_Class_Usage_Tracker {
 		$class_names = $this->extract_class_names_from_selector( $selector );
 		
 		foreach ( $class_names as $class_name ) {
-			// Mark classes that have direct styles
 			if ( ! isset( $this->class_usage_map[ $class_name ] ) ) {
 				$this->class_usage_map[ $class_name ] = [
 					'has_direct_styles' => true,
@@ -90,11 +85,9 @@ class Css_Class_Usage_Tracker {
 
 	public function should_keep_class( string $class_name ): bool {
 		if ( ! isset( $this->class_usage_map[ $class_name ] ) ) {
-			// Class not found in CSS - remove it
 			return false;
 		}
 
-		// Keep class if it has direct styles
 		return $this->class_usage_map[ $class_name ]['has_direct_styles'];
 	}
 
@@ -147,11 +140,8 @@ class Css_Class_Usage_Tracker {
 		array $classes_with_direct_styles, 
 		array $classes_only_in_nested 
 	): void {
-		// Clear existing data
 		$this->class_usage_map = [];
 		$this->nested_selectors = [];
-		
-		// Initialize classes with direct styles
 		foreach ( $classes_with_direct_styles as $class_name ) {
 			$this->class_usage_map[ $class_name ] = [
 				'has_direct_styles' => true,
@@ -159,7 +149,6 @@ class Css_Class_Usage_Tracker {
 			];
 		}
 		
-		// Initialize classes that only appear in nested selectors
 		foreach ( $classes_only_in_nested as $class_name ) {
 			$this->class_usage_map[ $class_name ] = [
 				'has_direct_styles' => false,

@@ -146,7 +146,6 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 			return null;
 		}
 
-
 		$start_value = $this->parse_size_value( $parts[0] );
 		$end_value = $count > 1 ? $this->parse_size_value( $parts[1] ) : $start_value;
 
@@ -264,10 +263,10 @@ class Margin_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$logical_direction = $this->map_physical_to_logical( $property );
 
 		$dimensions = [
-			'block-start' => $logical_direction === 'block-start' ? $size_data : null,
-			'block-end' => $logical_direction === 'block-end' ? $size_data : null,
-			'inline-start' => $logical_direction === 'inline-start' ? $size_data : null,
-			'inline-end' => $logical_direction === 'inline-end' ? $size_data : null,
+			'block-start' => 'block-start' === $logical_direction ? $size_data : null,
+			'block-end' => 'block-end' === $logical_direction ? $size_data : null,
+			'inline-start' => 'inline-start' === $logical_direction ? $size_data : null,
+			'inline-end' => 'inline-end' === $logical_direction ? $size_data : null,
 		];
 
 		return $this->create_dimensions_structure( $dimensions );

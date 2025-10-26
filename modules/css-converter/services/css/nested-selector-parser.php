@@ -53,13 +53,11 @@ class Nested_Selector_Parser {
 	}
 
 	private function extract_selector_parts( string $selector ): array {
-		// Handle both descendant (space) and child (>) selectors
 		$selector = preg_replace( '/\s*>\s*/', ' > ', $selector );
 		$selector = preg_replace( '/\s+/', ' ', $selector );
 
 		$parts = explode( ' ', trim( $selector ) );
 
-		// Remove empty parts and '>' symbols
 		$cleaned_parts = [];
 		foreach ( $parts as $part ) {
 			$part = trim( $part );
@@ -78,24 +76,24 @@ class Nested_Selector_Parser {
 
 		$last_part = end( $parts );
 
-		// Handle mixed element and class (e.g., "h1.title")
 		if ( $this->has_mixed_element_and_class( $last_part ) ) {
 			return $this->extract_class_from_mixed( $last_part );
 		}
 
-		// CRITICAL FIX: Handle pure element selectors (Pattern 5)
-		// Convert element tags to pseudo-class format for flattening system
 		if ( $this->is_element_tag( $last_part ) ) {
-			return '.' . $last_part; // Convert "div" to ".div", "h1" to ".h1", etc.
+			return $this->convert_element_tag_to_pseudo_class( $last_part );
 		}
 
 		return $last_part;
 	}
 
+	private function convert_element_tag_to_pseudo_class( string $element_tag ): string {
+		return '.' . $element_tag;
+	}
+
 	private function extract_context_parts( array $parts, string $target ): array {
 		$context = $parts;
 
-		// Remove the target from context
 		$last_key = array_key_last( $context );
 		if ( isset( $context[ $last_key ] ) ) {
 			unset( $context[ $last_key ] );
@@ -105,12 +103,10 @@ class Nested_Selector_Parser {
 	}
 
 	private function has_mixed_element_and_class( string $part ): bool {
-		// Check for patterns like "h1.title", "div.container", etc.
 		return preg_match( '/^[a-zA-Z][a-zA-Z0-9]*\.[a-zA-Z]/', $part );
 	}
 
 	private function extract_class_from_mixed( string $part ): string {
-		// Extract class name from "h1.title" -> ".title"
 		if ( preg_match( '/\.([a-zA-Z][a-zA-Z0-9_-]*)/', $part, $matches ) ) {
 			return '.' . $matches[1];
 		}

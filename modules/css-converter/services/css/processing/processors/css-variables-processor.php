@@ -16,7 +16,7 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 	}
 
 	public function get_priority(): int {
-		return 90; // After parsing, before classification
+		return 60; // After style collection, before global classes
 	}
 
 	public function supports_context( Css_Processing_Context $context ): bool {

@@ -28,7 +28,7 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 	}
 
 	public function get_priority(): int {
-		return 40; // After style collection, before HTML modifications
+		return 70; // After variables, before HTML modifications
 	}
 
 	public function supports_context( Css_Processing_Context $context ): bool {

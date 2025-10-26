@@ -14,7 +14,7 @@ class Rule_Classification_Processor implements Css_Processor_Interface {
 	}
 
 	public function get_priority(): int {
-		return 80; // After variables, before flattening
+		return 25; // After parsing and compound processing, before style collection
 	}
 
 	public function supports_context( Css_Processing_Context $context ): bool {

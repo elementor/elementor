@@ -28,7 +28,7 @@ class Html_Class_Modifier_Processor implements Css_Processor_Interface {
 	}
 
 	public function get_priority(): int {
-		return 30; // After global classes, before style resolution
+		return 80; // After global classes, before style resolution
 	}
 
 	public function supports_context( Css_Processing_Context $context ): bool {

@@ -51,7 +51,7 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 	}
 
 	public function get_priority(): int {
-		return 60; // After parsing and classification, before global classes
+		return 50; // After flattening and compound processing, before variables
 	}
 
 	public function supports_context( Css_Processing_Context $context ): bool {
@@ -128,6 +128,7 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		foreach ( $widgets as $widget ) {
 			$element_id = $widget['element_id'] ?? null;
 			$inline_css = $widget['inline_css'] ?? [];
+
 
 			if ( $element_id && ! empty( $inline_css ) ) {
 				$styles_collected += $this->process_widget_inline_styles( $element_id, $inline_css );
@@ -214,12 +215,20 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 	}
 
 	private function process_widget_inline_styles( string $element_id, array $inline_css ): int {
-		$styles_processed = 0;
+		$inline_properties = [];
+		foreach ( $inline_css as $property => $property_data ) {
+			$value = $property_data['value'] ?? $property_data;
+			$inline_properties[ $property ] = $value;
+		}
+
+		$batch_converted = $this->property_converter 
+			? $this->property_converter->convert_properties_to_v4_atomic( $inline_properties )
+			: [];
 
 		foreach ( $inline_css as $property => $property_data ) {
 			$value = $property_data['value'] ?? $property_data;
 			$important = $property_data['important'] ?? false;
-			$converted = $this->convert_property_if_needed( $property, $value );
+			$converted = $this->find_converted_property_in_batch( $property, $batch_converted );
 
 			$this->unified_style_manager->collect_inline_styles(
 				$element_id,
@@ -231,11 +240,89 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 					],
 				]
 			);
-
-			++$styles_processed;
 		}
 
-		return $styles_processed;
+		return count( $inline_css );
+	}
+
+	private function find_converted_property_in_batch( string $property, array $batch_converted ): ?array {
+		foreach ( $batch_converted as $atomic_property => $atomic_value ) {
+			if ( $this->is_property_source_unified( $property, $atomic_property ) ) {
+				return [ $atomic_property => $atomic_value ];
+			}
+		}
+		return null;
+	}
+
+	private function is_property_source_unified( string $css_property, string $atomic_property ): bool {
+		if ( $this->is_margin_property_mapping( $css_property, $atomic_property ) ) {
+			return true;
+		}
+		if ( $this->is_padding_property_mapping( $css_property, $atomic_property ) ) {
+			return true;
+		}
+		if ( $this->is_border_radius_property_mapping( $css_property, $atomic_property ) ) {
+			return true;
+		}
+		return $css_property === $atomic_property;
+	}
+
+	private function is_margin_property_mapping( string $css_property, string $atomic_property ): bool {
+		return 'margin' === $atomic_property && in_array(
+			$css_property,
+			[
+				'margin',
+				'margin-top',
+				'margin-right',
+				'margin-bottom',
+				'margin-left',
+				'margin-block',
+				'margin-block-start',
+				'margin-block-end',
+				'margin-inline',
+				'margin-inline-start',
+				'margin-inline-end',
+			],
+			true
+		);
+	}
+
+	private function is_padding_property_mapping( string $css_property, string $atomic_property ): bool {
+		return 'padding' === $atomic_property && in_array(
+			$css_property,
+			[
+				'padding',
+				'padding-top',
+				'padding-right',
+				'padding-bottom',
+				'padding-left',
+				'padding-block',
+				'padding-block-start',
+				'padding-block-end',
+				'padding-inline',
+				'padding-inline-start',
+				'padding-inline-end',
+			],
+			true
+		);
+	}
+
+	private function is_border_radius_property_mapping( string $css_property, string $atomic_property ): bool {
+		return 'border-radius' === $atomic_property && in_array(
+			$css_property,
+			[
+				'border-radius',
+				'border-top-left-radius',
+				'border-top-right-radius',
+				'border-bottom-right-radius',
+				'border-bottom-left-radius',
+				'border-start-start-radius',
+				'border-start-end-radius',
+				'border-end-start-radius',
+				'border-end-end-radius',
+			],
+			true
+		);
 	}
 
 	private function prepare_properties_for_collection( array $properties ): array {

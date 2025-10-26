@@ -126,10 +126,10 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		return [
-			'block-start' => $logical_side === 'block-start' ? $this->create_size_prop( $parsed_size ) : null,
-			'block-end' => $logical_side === 'block-end' ? $this->create_size_prop( $parsed_size ) : null,
-			'inline-start' => $logical_side === 'inline-start' ? $this->create_size_prop( $parsed_size ) : null,
-			'inline-end' => $logical_side === 'inline-end' ? $this->create_size_prop( $parsed_size ) : null,
+			'block-start' => 'block-start' === $logical_side ? $this->create_size_prop( $parsed_size ) : null,
+			'block-end' => 'block-end' === $logical_side ? $this->create_size_prop( $parsed_size ) : null,
+			'inline-start' => 'inline-start' === $logical_side ? $this->create_size_prop( $parsed_size ) : null,
+			'inline-end' => 'inline-end' === $logical_side ? $this->create_size_prop( $parsed_size ) : null,
 		];
 	}
 
@@ -206,7 +206,7 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 		$values = preg_split( '/\s+/', trim( $value ) );
 		$count = count( $values );
 
-		if ( $count === 1 ) {
+		if ( 1 === $count ) {
 			$parsed = $this->parse_size_value( $values[0] );
 			if ( null === $parsed ) {
 				return null;
@@ -219,7 +219,7 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 			];
 		}
 
-		if ( $count === 2 ) {
+		if ( 2 === $count ) {
 			$start = $this->parse_size_value( $values[0] );
 			$end = $this->parse_size_value( $values[1] );
 			if ( null === $start || null === $end ) {
@@ -232,6 +232,6 @@ class Atomic_Padding_Property_Mapper extends Atomic_Property_Mapper_Base {
 			];
 		}
 
-		return null; // Invalid logical shorthand
+		return null;
 	}
 }

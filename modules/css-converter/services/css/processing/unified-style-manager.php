@@ -296,7 +296,18 @@ class Unified_Style_Manager {
 		foreach ( $by_property as $property => $styles ) {
 			$winning_style = $this->find_winning_style( $styles );
 			if ( $winning_style ) {
-				$winning_styles[ $property ] = $winning_style;
+				// Map CSS property name to atomic property name
+				$atomic_property_name = $this->get_atomic_property_name( $property );
+				
+				// If multiple CSS properties map to same atomic property (e.g., padding-top and padding-block-start both map to "padding"),
+				// we need to merge them. For now, use the winning style's converted_property if available.
+				if ( isset( $winning_styles[ $atomic_property_name ] ) && isset( $winning_style['converted_property'] ) ) {
+					// Merge logic: if both have converted properties, we need to merge the atomic values
+					// For now, keep the one with higher specificity (which is the current winning_style)
+					$winning_styles[ $atomic_property_name ] = $winning_style;
+				} else {
+					$winning_styles[ $atomic_property_name ] = $winning_style;
+				}
 
 				// EVIDENCE: Track font-size winner
 				if ( 'font-size' === $property ) {
@@ -308,6 +319,131 @@ class Unified_Style_Manager {
 		$element_id = $widget['element_id'] ?? '';
 		return $winning_styles;
 	}
+	private function get_atomic_property_name( string $css_property ): string {
+		// Map CSS property names to atomic property names
+		// This handles cases like padding-block-start -> padding, margin-top -> margin, etc.
+		
+		// Padding properties (full support)
+		if ( strpos( $css_property, 'padding' ) === 0 ) {
+			return 'padding';
+		}
+		
+		// Margin properties (full support)
+		if ( strpos( $css_property, 'margin' ) === 0 ) {
+			return 'margin';
+		}
+		
+		// Position properties - each has its own atomic property name
+		$position_property_map = [
+			'top' => 'inset-block-start',
+			'right' => 'inset-inline-end', 
+			'bottom' => 'inset-block-end',
+			'left' => 'inset-inline-start',
+			'inset-block-start' => 'inset-block-start',
+			'inset-inline-end' => 'inset-inline-end',
+			'inset-block-end' => 'inset-block-end',
+			'inset-inline-start' => 'inset-inline-start',
+			'inset' => 'inset',
+			'inset-block' => 'inset-block',
+			'inset-inline' => 'inset-inline',
+			'z-index' => 'z-index',
+		];
+		if ( isset( $position_property_map[ $css_property ] ) ) {
+			return $position_property_map[ $css_property ];
+		}
+		
+		// Border-radius properties (full support)
+		if ( strpos( $css_property, 'border-radius' ) === 0 || 
+		     strpos( $css_property, 'border-top-left-radius' ) === 0 || 
+		     strpos( $css_property, 'border-top-right-radius' ) === 0 || 
+		     strpos( $css_property, 'border-bottom-left-radius' ) === 0 || 
+		     strpos( $css_property, 'border-bottom-right-radius' ) === 0 ||
+		     strpos( $css_property, 'border-start-start-radius' ) === 0 ||
+		     strpos( $css_property, 'border-start-end-radius' ) === 0 ||
+		     strpos( $css_property, 'border-end-start-radius' ) === 0 ||
+		     strpos( $css_property, 'border-end-end-radius' ) === 0 ) {
+			return 'border-radius';
+		}
+		
+		// Box-shadow properties
+		if ( strpos( $css_property, 'box-shadow' ) === 0 ) {
+			return 'box-shadow';
+		}
+		
+		// Border-width properties
+		if ( strpos( $css_property, 'border-width' ) === 0 || 
+		     strpos( $css_property, 'border-top-width' ) === 0 || 
+		     strpos( $css_property, 'border-right-width' ) === 0 || 
+		     strpos( $css_property, 'border-bottom-width' ) === 0 || 
+		     strpos( $css_property, 'border-left-width' ) === 0 ||
+		     strpos( $css_property, 'border-block-start-width' ) === 0 ||
+		     strpos( $css_property, 'border-block-end-width' ) === 0 ||
+		     strpos( $css_property, 'border-inline-start-width' ) === 0 ||
+		     strpos( $css_property, 'border-inline-end-width' ) === 0 ) {
+			return 'border-width';
+		}
+		
+		// Border-color properties
+		if ( strpos( $css_property, 'border-color' ) === 0 || 
+		     strpos( $css_property, 'border-top-color' ) === 0 || 
+		     strpos( $css_property, 'border-right-color' ) === 0 || 
+		     strpos( $css_property, 'border-bottom-color' ) === 0 || 
+		     strpos( $css_property, 'border-left-color' ) === 0 ||
+		     strpos( $css_property, 'border-block-start-color' ) === 0 ||
+		     strpos( $css_property, 'border-block-end-color' ) === 0 ||
+		     strpos( $css_property, 'border-inline-start-color' ) === 0 ||
+		     strpos( $css_property, 'border-inline-end-color' ) === 0 ) {
+			return 'border-color';
+		}
+		
+		// Border-style properties
+		if ( strpos( $css_property, 'border-style' ) === 0 || 
+		     strpos( $css_property, 'border-top-style' ) === 0 || 
+		     strpos( $css_property, 'border-right-style' ) === 0 || 
+		     strpos( $css_property, 'border-bottom-style' ) === 0 || 
+		     strpos( $css_property, 'border-left-style' ) === 0 ||
+		     strpos( $css_property, 'border-block-start-style' ) === 0 ||
+		     strpos( $css_property, 'border-block-end-style' ) === 0 ||
+		     strpos( $css_property, 'border-inline-start-style' ) === 0 ||
+		     strpos( $css_property, 'border-inline-end-style' ) === 0 ) {
+			return 'border-style';
+		}
+		
+		// Text-decoration properties
+		if ( strpos( $css_property, 'text-decoration' ) === 0 ) {
+			return 'text-decoration';
+		}
+		
+		// Transform properties
+		if ( strpos( $css_property, 'transform' ) === 0 && $css_property !== 'transform-origin' ) {
+			return 'transform';
+		}
+		
+		// Transition properties
+		if ( strpos( $css_property, 'transition' ) === 0 ) {
+			return 'transition';
+		}
+		
+		// Animation properties
+		if ( strpos( $css_property, 'animation' ) === 0 ) {
+			return 'animation';
+		}
+		
+		// Background properties
+		if ( strpos( $css_property, 'background' ) === 0 ) {
+			return 'background';
+		}
+		
+		// Font properties
+		if ( strpos( $css_property, 'font' ) === 0 && $css_property !== 'font-size' && $css_property !== 'font-weight' && $css_property !== 'font-family' ) {
+			return 'font';
+		}
+		
+		// For all other properties, use the CSS property name as-is
+		// (properties that don't have individual variants like font-size, color, etc.)
+		return $css_property;
+	}
+
 	/**
 	 * Get complex reset styles that require CSS file generation
 	 *

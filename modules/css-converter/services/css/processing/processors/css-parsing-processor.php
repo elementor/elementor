@@ -27,7 +27,7 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 	}
 
 	public function get_priority(): int {
-		return 100; // High priority - parsing should happen first
+		return 10; // First step - parsing should happen first
 	}
 
 	public function supports_context( Css_Processing_Context $context ): bool {

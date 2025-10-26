@@ -80,7 +80,7 @@ class Css_Processor_Registry {
 		$processors = array_values( $this->processors );
 
 		usort( $processors, function( Css_Processor_Interface $a, Css_Processor_Interface $b ) {
-			return $b->get_priority() <=> $a->get_priority(); // Sort by priority DESC (higher first)
+			return $a->get_priority() <=> $b->get_priority(); // Sort by priority ASC (lower first)
 		});
 
 		return $processors;
@@ -109,10 +109,37 @@ class Css_Processor_Registry {
 	}
 
 	private function initialize_default_processors(): void {
+		// Register all processors in priority order (lower numbers run first)
+		
+		// CSS Parsing (Priority 20)
+		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Css_Parsing_Processor() );
+		
+		// Rule Classification (Priority 30)
+		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Rule_Classification_Processor() );
+		
+		// Nested Selector Flattening (Priority 40)
 		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Nested_Selector_Flattening_Processor() );
-
-		// Create property converter for compound processor
+		
+		// Compound Class Selector (Priority 50)
 		$property_converter = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service();
 		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Compound_Class_Selector_Processor( $property_converter ) );
+		
+		// Style Collection (Priority 60)
+		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Style_Collection_Processor() );
+		
+		// CSS Variables (Priority 70)
+		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Css_Variables_Processor() );
+		
+		// Global Classes (Priority 80)
+		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Global_Classes_Processor() );
+		
+		// HTML Class Modifier (Priority 90)
+		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Html_Class_Modifier_Processor() );
+		
+		// ID Selector (Priority 95)
+		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Id_Selector_Processor() );
+		
+		// Style Resolution (Priority 100) - Final step
+		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Style_Resolution_Processor() );
 	}
 }

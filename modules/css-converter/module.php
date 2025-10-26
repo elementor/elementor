@@ -25,6 +25,21 @@ class Module extends BaseModule {
 		$this->register_base_styles_override_hooks();
 		$this->register_editor_debug_hooks();
 	}
+
+	private function register_base_styles_override_hooks(): void {
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_base_styles_override_script' ], 10 );
+	}
+
+	public function enqueue_base_styles_override_script(): void {
+		$plugin_file = dirname( dirname( __DIR__ ) ) . '/elementor.php';
+		wp_enqueue_script(
+			'css-converter-base-styles-override',
+			plugins_url( 'modules/atomic-widgets/assets/js/editor/css-converter-base-styles-override.js', $plugin_file ),
+			[ 'jquery', 'elementor-editor' ],
+			'1.0.0',
+			true
+		);
+	}
 	private function is_test_environment(): bool {
 		return defined( 'WP_TESTS_DOMAIN' ) ||
 				defined( 'PHPUNIT_COMPOSER_INSTALL' ) ||
@@ -104,8 +119,6 @@ class Module extends BaseModule {
 		$this->classes_route = $classes_route;
 	}
 
-	public function maybe_inject_base_styles_override() {
-	}
 
 	private function page_has_css_converter_widgets( int $post_id ): bool {
 		$document = \Elementor\Plugin::$instance->documents->get( $post_id );
@@ -167,11 +180,6 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function register_base_styles_override_hooks(): void {
-		add_action( 'wp_head', [ $this, 'maybe_inject_base_styles_override' ], 999 );
-		add_action( 'elementor/editor/wp_head', [ $this, 'maybe_inject_base_styles_override' ], 999 );
-		add_action( 'elementor/preview/enqueue_styles', [ $this, 'maybe_inject_base_styles_override' ], 999 );
-	}
 
 	private function register_editor_debug_hooks(): void {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'debug_editor_widget_loading' ], 5 );

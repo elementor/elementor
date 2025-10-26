@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
+use Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander;
 
 /**
  * CSS Property Conversion Service
@@ -59,8 +60,7 @@ class Css_Property_Conversion_Service {
 	 */
 	public function convert_properties_to_v4_atomic( array $properties ): array {
 		// ✅ CRITICAL FIX: Expand shorthand properties before conversion
-
-		$expanded_properties = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $properties );
+		$expanded_properties = CSS_Shorthand_Expander::expand_shorthand_properties( $properties );
 
 		$converted = [];
 
@@ -77,14 +77,13 @@ class Css_Property_Conversion_Service {
 			}
 
 			if ( $result && $mapper ) {
-				// Get the v4 property name
 				$v4_property_name = method_exists( $mapper, 'get_v4_property_name' )
 					? $mapper->get_v4_property_name( $property )
 					: $property;
 
-				// ✅ CRITICAL FIX: Handle margin merging to prevent overwriting
-				if ( 'margin' === $v4_property_name && isset( $converted[ $v4_property_name ] ) ) {
+				$is_dimensions_property = in_array( $v4_property_name, [ 'margin', 'padding' ], true );
 
+				if ( $is_dimensions_property && isset( $converted[ $v4_property_name ] ) ) {
 					$converted[ $v4_property_name ] = $this->merge_dimensions_values(
 						$converted[ $v4_property_name ],
 						$result

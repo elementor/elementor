@@ -14,7 +14,7 @@ class Style_Resolution_Processor implements Css_Processor_Interface {
 	}
 
 	public function get_priority(): int {
-		return 10; // Final step - lowest priority
+		return 100; // Final step - highest priority number (runs last)
 	}
 
 	public function supports_context( Css_Processing_Context $context ): bool {
@@ -68,6 +68,7 @@ class Style_Resolution_Processor implements Css_Processor_Interface {
 		foreach ( $widgets as $widget ) {
 			$widget_id = $this->get_widget_identifier( $widget );
 			$resolved_styles = $unified_style_manager->resolve_styles_for_widget( $widget );
+
 
 			$widget['resolved_styles'] = $resolved_styles;
 

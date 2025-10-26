@@ -17,9 +17,6 @@ class CSS_To_Atomic_Props_Converter {
 	}
 
 	public function convert_css_to_atomic_prop( string $property, $value ): ?array {
-		// DEBUG: Track font-family processing
-		if ( 'font-family' === $property ) {
-		}
 
 		if ( empty( $property ) || $value === null || $value === '' ) {
 			return null;
@@ -27,33 +24,19 @@ class CSS_To_Atomic_Props_Converter {
 
 		$mapper = $this->get_property_mapper( $property );
 		
-		// DEBUG: Track font-family mapper resolution
-		if ( 'font-family' === $property ) {
-		}
 		
 		if ( ! $mapper ) {
-			// DEBUG: Track font-family mapper failure
-			if ( 'font-family' === $property ) {
-			}
 			return null;
 		}
 
 		$result = $mapper->map_to_v4_atomic( $property, $value );
 		
-		// DEBUG: Track font-family conversion result
-		if ( 'font-family' === $property ) {
-			if ( $result ) {
-			}
-		}
 		
 		return $result;
 	}
 
 	public function convert_multiple_css_props( array $css_properties ): array {
-		// ✅ CRITICAL FIX: Expand shorthand properties before conversion
-		// This ensures class-based CSS shorthand (like border: 1px solid #dee2e6) gets expanded
-		// to individual properties (border-width, border-style, border-color) just like inline CSS
-		$expanded_properties = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $css_properties );
+		$expanded_properties = $this->expand_shorthand_properties_for_class_based_css( $css_properties );
 
 		$atomic_props = [];
 
@@ -63,7 +46,6 @@ class CSS_To_Atomic_Props_Converter {
 			if ( $atomic_prop ) {
 				$target_property = $this->get_target_property_name( $property );
 
-				// ✅ CRITICAL FIX: Merge dimensions properties instead of overwriting
 				if ( isset( $atomic_props[ $target_property ] ) && $this->is_dimensions_property( $atomic_prop ) ) {
 
 					$atomic_props[ $target_property ] = $this->merge_dimensions_properties(
@@ -112,27 +94,30 @@ class CSS_To_Atomic_Props_Converter {
 		return $this->property_mapper_registry->get_mapper( $property );
 	}
 
+	private function expand_shorthand_properties_for_class_based_css( array $css_properties ): array {
+		return \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $css_properties );
+	}
+
+	private function both_properties_are_dimensions_type( array $existing, array $new ): bool {
+		return $this->is_dimensions_property( $existing ) && $this->is_dimensions_property( $new );
+	}
+
 	private function is_dimensions_property( array $atomic_prop ): bool {
 		return isset( $atomic_prop['$$type'] ) && $atomic_prop['$$type'] === 'dimensions';
 	}
 
 	private function merge_dimensions_properties( array $existing, array $new ): array {
-		// Both properties should be dimensions type
-		if ( ! $this->is_dimensions_property( $existing ) || ! $this->is_dimensions_property( $new ) ) {
-			return $new; // Fallback to overwrite if not dimensions
+		if ( ! $this->both_properties_are_dimensions_type( $existing, $new ) ) {
+			return $new;
 		}
 
 		$merged_value = $existing['value'] ?? [];
 		$new_value = $new['value'] ?? [];
 
-		// Merge the directional values, preserving existing values and adding new ones
 		foreach ( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ] as $direction ) {
 			if ( isset( $new_value[ $direction ] ) && $new_value[ $direction ] !== null ) {
-				// New value takes precedence
 				$merged_value[ $direction ] = $new_value[ $direction ];
 			}
-			// Keep existing value if no new value provided
-			// Ensure all directions are present (with null if not set)
 			if ( ! isset( $merged_value[ $direction ] ) ) {
 				$merged_value[ $direction ] = null;
 			}
