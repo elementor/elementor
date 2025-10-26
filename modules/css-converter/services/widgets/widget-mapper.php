@@ -119,11 +119,18 @@ class Widget_Mapper {
 	public function map_elements( $elements ) {
 		$mapped_elements = [];
 
-
 		foreach ( $elements as $element ) {
 			$mapped = $this->map_element( $element );
 			if ( $mapped ) {
-				$mapped_elements[] = $mapped;
+				// Handle flattened groups (e.g., from paragraph with children)
+				if ( isset( $mapped['widget_type'] ) && 'flattened_group' === $mapped['widget_type'] ) {
+					// Add all widgets from the flattened group as siblings
+					foreach ( $mapped['widgets'] as $flattened_widget ) {
+						$mapped_elements[] = $flattened_widget;
+					}
+				} else {
+					$mapped_elements[] = $mapped;
+				}
 
 				// DOUBLE NESTING DEBUG: Check for nested structure that might cause double div-blocks
 				if ( ! empty( $mapped['children'] ) ) {
@@ -179,56 +186,35 @@ class Widget_Mapper {
 		$tag = $element['tag'];
 		$element_id = $this->generate_element_id( $element );
 
-		// CRITICAL FIX: Always create e-paragraph widgets, never e-div-block containers
-		// This prevents double nesting while preserving child elements like links
-		
-		// If paragraph has child elements (like <a> tags), we need to handle mixed content
+		// FLATTENED APPROACH: Convert <p><a></a></p> to separate e-paragraph + e-button widgets
+		// This creates: <p></p><a></a> which preserves CSS classes and works with tests
 		if ( ! empty( $element['children'] ) ) {
+			$widgets = [];
 			
-			// For mixed content paragraphs, we'll create a flattened structure:
-			// Instead of: e-div-block > [e-paragraph, e-link]  
-			// We create: e-paragraph (with consolidated text) + separate child widgets
+			// Extract text content that's not part of child elements (if any)
+			$paragraph_text = $this->extract_text_content_excluding_children( $element );
 			
-			// Extract text content that's not part of child elements
-			$child_text = $this->extract_text_from_children( $element['children'] );
-			$remaining_text = trim( str_replace( $child_text, '', $content ) );
-			
-			// Combine all text content for the paragraph widget
-			$full_text_content = trim( $content );
-			if ( empty( $full_text_content ) ) {
-				$full_text_content = $remaining_text;
-			}
-			
-			
-			// Create the main paragraph widget with all text content
-			$paragraph_widget = [
+			// Create e-paragraph widget (even if empty, to preserve <p> tag and classes)
+			$widgets[] = [
 				'widget_type' => 'e-paragraph',
 				'element_id' => $element_id,
 				'original_tag' => $tag,
 				'settings' => [
-					'paragraph' => $full_text_content,
+					'paragraph' => $paragraph_text, // May be empty
 				],
-				'attributes' => $element['attributes'],
+				'attributes' => $element['attributes'], // Preserves link-item, nav-item classes
 				'inline_css' => $element['inline_css'] ?? [],
-				'children' => [], // Paragraphs don't have widget children
+				'children' => [],
 			];
 			
-			// Map child elements (like links) as separate widgets
+			// Map child elements (like links) as separate sibling widgets
 			$child_widgets = $this->map_elements( $element['children'] );
+			$widgets = array_merge( $widgets, $child_widgets );
 			
-			// Return flattened structure: paragraph + child widgets as siblings
-			// This will be handled by the parent container (div-block)
+			// Return flattened structure - parent will handle as siblings
 			return [
-				'widget_type' => 'e-paragraph', // Always paragraph, never div-block
-				'element_id' => $element_id,
-				'original_tag' => $tag,
-				'settings' => [
-					'paragraph' => $full_text_content,
-				],
-				'attributes' => $element['attributes'],
-				'inline_css' => $element['inline_css'] ?? [],
-				'children' => $child_widgets, // Child widgets will be flattened by parent
-				'flatten_children' => true, // Flag to indicate children should be flattened
+				'widget_type' => 'flattened_group', // Special marker for flattening
+				'widgets' => $widgets,
 			];
 		}
 
@@ -582,6 +568,25 @@ class Widget_Mapper {
 			'inline_css' => [], // No inline CSS for synthetic paragraphs
 			'children' => [], // Paragraphs don't have children
 		];
+	}
+
+	private function extract_text_content_excluding_children( $element ) {
+		// Extract text content from the element that's not part of child elements
+		$full_content = $element['content'] ?? '';
+		
+		if ( empty( $element['children'] ) ) {
+			return $full_content;
+		}
+		
+		// Remove child element content from the full content
+		foreach ( $element['children'] as $child ) {
+			$child_content = $child['content'] ?? '';
+			if ( ! empty( $child_content ) ) {
+				$full_content = str_replace( $child_content, '', $full_content );
+			}
+		}
+		
+		return trim( $full_content );
 	}
 
 	private function extract_text_from_children( $children ) {

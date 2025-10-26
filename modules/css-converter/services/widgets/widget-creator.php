@@ -133,8 +133,8 @@ class Widget_Creator {
 	}
 
 	private function requires_link_to_button_conversion( string $widget_type, string $mapped_type ): bool {
-		// Simple implementation - convert links to buttons when mapped type is button
-		return 'a' === $widget_type && 'button' === $mapped_type;
+		// Convert e-link widgets to e-button widgets when mapped type is e-button
+		return 'e-link' === $widget_type && 'e-button' === $mapped_type;
 	}
 
 	private function merge_settings_without_style_merging( array $settings1, array $settings2 ): array {
@@ -474,6 +474,10 @@ class Widget_Creator {
 	}
 	private function convert_link_settings_to_button_format( $settings ) {
 		$button_settings = $settings;
+		
+		// DEBUG: Log the conversion process
+		error_log( 'DEBUG: convert_link_settings_to_button_format called with settings: ' . print_r( $settings, true ) );
+		
 		if ( isset( $settings['url'] ) && ! empty( $settings['url'] ) && '#' !== $settings['url'] ) {
 			$target = $settings['target'] ?? '_self';
 			$is_target_blank = ( '_blank' === $target ) ? true : null;
@@ -489,7 +493,13 @@ class Widget_Creator {
 			];
 			unset( $button_settings['url'] );
 			unset( $button_settings['target'] );
+			
+			error_log( 'DEBUG: Link property created successfully for URL: ' . $settings['url'] );
+		} else {
+			error_log( 'DEBUG: Link property NOT created. URL: ' . ( $settings['url'] ?? 'NOT SET' ) );
 		}
+		
+		error_log( 'DEBUG: Final button settings: ' . print_r( $button_settings, true ) );
 		return $button_settings;
 	}
 	private function apply_direct_element_styles_to_settings( $settings, $direct_element_styles ) {
