@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\Components\Styles;
 
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Modules\AtomicWidgets\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
 use Elementor\Modules\Components\Styles\Component_Styles;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -69,8 +69,8 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-some-widget',
 				'settings' => [
-					'component_id' => [
-						'$$type' => 'string',
+					'component' => [
+						'$$type' => 'component-id',
 						'value' => '50',
 					],
 				],
@@ -81,8 +81,8 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'component_id' => [
-						'$$type' => 'string',
+					'component' => [
+						'$$type' => 'component-id',
 						'value' => '180',
 					],
 				],
@@ -93,8 +93,8 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'component_id' => [
-						'$$type' => 'string',
+					'component' => [
+						'$$type' => 'component-id',
 						'value' => '180',
 					],
 				],
@@ -105,8 +105,8 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'component_id' => [
-						'$$type' => 'string',
+					'component' => [
+						'$$type' => 'component-id',
 						'value' => '250',
 					],
 				],
@@ -138,7 +138,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'widgetType' => 'e-component',
 				'settings' => [
 					'post_id' => [
-						'$$type' => 'string',
+						'$$type' => 'component-id',
 						'value' => '180',
 					],
 				],
@@ -166,8 +166,8 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'component_id' => [
-						'$$type' => 'string',
+					'component' => [
+						'$$type' => 'component-id',
 						'value' => '180',
 					],
 				],

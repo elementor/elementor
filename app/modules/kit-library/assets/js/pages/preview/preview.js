@@ -8,7 +8,6 @@ import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { PreviewIframe } from './preview-iframe';
 import { useLocation, useNavigate } from '@reach/router';
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import { useTracking } from '../../context/tracking-context';
 
 import './preview.scss';
@@ -48,19 +47,6 @@ function useHeaderButtons( id, kitName ) {
 	const navigate = useNavigate();
 	const tracking = useTracking();
 
-	const eventTracking = ( command, viewTypeClicked, eventType = 'click' ) => {
-		appsEventTrackingDispatch(
-			command,
-			{
-				kit_name: kitName,
-				element_position: 'app_header',
-				page_source: 'view demo',
-				view_type_clicked: viewTypeClicked,
-				event_type: eventType,
-			},
-		);
-	};
-
 	return useMemo( () => [
 		{
 			id: 'overview',
@@ -70,7 +56,6 @@ function useHeaderButtons( id, kitName ) {
 			color: 'secondary',
 			size: 'sm',
 			onClick: () => {
-				eventTracking( 'kit-library/view-overview-page', 'overview' );
 				tracking.trackKitdemoOverviewClicked( id, kitName, () => navigate( `/kit-library/overview/${ id }` ) );
 			},
 			includeHeaderBtnClass: false,
@@ -128,22 +113,8 @@ export default function Preview( props ) {
 		}
 	}, [ isIframeLoading, data, props.id, tracking ] );
 
-	const eventTracking = ( command, layout, elementPosition = null, eventType = 'click' ) => {
-		appsEventTrackingDispatch(
-			command,
-			{
-				kit_name: data.title,
-				page_source: 'view demo',
-				layout,
-				element_position: elementPosition,
-				event_type: eventType,
-			},
-		);
-	};
-
 	const onChange = ( device ) => {
 		setActiveDevice( device );
-		eventTracking( 'kit-library/responsive-controls', device, 'app_header' );
 	};
 
 	usePageTitle( {

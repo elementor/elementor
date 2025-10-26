@@ -2,11 +2,12 @@ import * as React from 'react';
 import { createMockElement, renderWithStore } from 'test-utils';
 import { getElementLabel, replaceElement, type V1Element } from '@elementor/editor-elements';
 import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
+import { __getState as getState } from '@elementor/store';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { apiClient } from '../../api';
-import { slice } from '../../store/store';
+import { selectComponents, slice } from '../../store/store';
 import { CreateComponentForm } from '../create-component-form/create-component-form';
 
 jest.mock( '@elementor/editor-elements' );
@@ -14,13 +15,11 @@ jest.mock( '../../api' );
 
 const mockGetElementLabel = jest.mocked( getElementLabel );
 
-const mockCreateComponent = jest.mocked( apiClient.create );
 const mockGetComponents = jest.mocked( apiClient.get );
 
 const mockReplaceElement = jest.mocked( replaceElement );
 
 const mockElement: V1Element = createMockElement( { model: { id: 'test-element' } } );
-const mockComponentId = 123245;
 
 describe( 'CreateComponentForm', () => {
 	let store: Store< SliceState< typeof slice > >;
@@ -73,17 +72,6 @@ describe( 'CreateComponentForm', () => {
 		};
 	};
 
-	const setupSuccessfulSave = () => {
-		mockCreateComponent.mockImplementation( async () => {
-			await new Promise( ( resolve ) => setTimeout( resolve, 100 ) );
-			return Promise.resolve( { component_id: mockComponentId } );
-		} );
-	};
-
-	const setupFailedSave = () => {
-		mockCreateComponent.mockRejectedValue( new Error( 'Creation failed' ) );
-	};
-
 	describe( 'Form Opening & Initial State', () => {
 		it( 'should not show form initially', () => {
 			// Arrange.
@@ -130,7 +118,6 @@ describe( 'CreateComponentForm', () => {
 			// Assert.
 			expect( screen.getByText( 'Component name is required.' ) ).toBeInTheDocument();
 			expect( getCreateButton() ).toBeDisabled();
-			expect( mockCreateComponent ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should disable submit when component name is only whitespace', () => {
@@ -145,7 +132,6 @@ describe( 'CreateComponentForm', () => {
 			// Assert.
 			expect( screen.getByText( 'Component name is required.' ) ).toBeInTheDocument();
 			expect( getCreateButton() ).toBeDisabled();
-			expect( mockCreateComponent ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should disable submit when component name is too short (< 2 chars)', () => {
@@ -162,7 +148,6 @@ describe( 'CreateComponentForm', () => {
 			expect(
 				screen.getByText( 'Component name is too short. Please enter at least 2 characters.' )
 			).toBeInTheDocument();
-			expect( mockCreateComponent ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should disable submit when component name is too long (> 50 chars)', () => {
@@ -219,11 +204,32 @@ describe( 'CreateComponentForm', () => {
 	} );
 
 	describe( 'Component Creation - Success Flow', () => {
-		beforeEach( () => {
-			setupSuccessfulSave();
+		it( 'should add component to local store', () => {
+			// Arrange.
+			const { openForm, fillComponentName, getCreateButton } = setupForm();
+			const spyAddUnpublished = jest.spyOn( slice.actions, 'addUnpublished' );
+			openForm();
+
+			// Act.
+			fillComponentName( 'My Test Component' );
+			fireEvent.click( getCreateButton() );
+
+			// Assert.
+			expect( spyAddUnpublished ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					id: expect.any( Number ),
+					name: 'My Test Component',
+					elements: [ mockElement.model.toJSON( { remove: [ 'default' ] } ) ],
+				} )
+			);
+
+			expect( selectComponents( getState() ) ).toEqual( [
+				{ id: expect.any( Number ), name: 'My Test Component' },
+				{ id: 123, name: 'Existing Component' },
+			] );
 		} );
 
-		xit( 'should call create component with correct parameters', async () => {
+		it( 'should replace original element with component instance', async () => {
 			// Arrange.
 			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
@@ -233,91 +239,22 @@ describe( 'CreateComponentForm', () => {
 			fireEvent.click( getCreateButton() );
 
 			// Assert.
-			await waitFor( () => {
-				expect( mockCreateComponent ).toHaveBeenCalledWith(
-					expect.objectContaining( {
-						name: 'My Test Component',
-						content: [ mockElement.model.toJSON( { remove: [ 'default' ] } ) ],
-					} )
-				);
-			} );
-		} );
-
-		it( 'should show loading state during component creation', async () => {
-			// Arrange.
-			const { openForm, fillComponentName, getCreateButton } = setupForm();
-			openForm();
-
-			// Act.
-			fillComponentName( 'My Test Component' );
-			fireEvent.click( getCreateButton() );
-
-			// Assert.
-			await waitFor( () => {
-				expect( screen.getByText( 'Creating…' ) ).toBeInTheDocument();
-			} );
-		} );
-
-		it( 'should disable buttons during loading', async () => {
-			// Arrange.
-			const { openForm, fillComponentName, getCreateButton, getCancelButton } = setupForm();
-			openForm();
-
-			// Act.
-			fillComponentName( 'My Test Component' );
-			fireEvent.click( getCreateButton() );
-
-			// Assert.
-			await waitFor(
-				() => {
-					expect( screen.queryByText( 'Create' ) ).not.toBeInTheDocument();
-				},
-				{ timeout: 1000 }
-			);
-
-			await waitFor(
-				() => {
-					expect( screen.getByText( 'Creating…' ) ).toBeDisabled();
-				},
-				{ timeout: 1000 }
-			);
-
-			await waitFor(
-				() => {
-					expect( getCancelButton() ).toBeDisabled();
-				},
-				{ timeout: 1000 }
-			);
-		} );
-
-		it( 'should call replace element with correct parameters after successful creation', async () => {
-			// Arrange.
-			const { openForm, fillComponentName, getCreateButton } = setupForm();
-			openForm();
-
-			// Act.
-			fillComponentName( 'My Test Component' );
-			fireEvent.click( getCreateButton() );
-
-			// Assert.
-			await waitFor( () => {
-				expect( mockReplaceElement ).toHaveBeenCalledWith( {
-					currentElement: mockElement,
-					newElement: {
-						elType: 'widget',
-						widgetType: 'e-component',
-						settings: {
-							component_id: {
-								$$type: 'number',
-								value: mockComponentId,
-							},
-						},
-						editor_settings: {
-							title: 'My Test Component',
+			expect( mockReplaceElement ).toHaveBeenCalledWith( {
+				currentElement: mockElement,
+				newElement: {
+					elType: 'widget',
+					widgetType: 'e-component',
+					settings: {
+						component: {
+							$$type: 'component-id',
+							value: expect.any( Number ),
 						},
 					},
-					withHistory: false,
-				} );
+					editor_settings: {
+						title: 'My Test Component',
+					},
+				},
+				withHistory: false,
 			} );
 		} );
 
@@ -353,12 +290,12 @@ describe( 'CreateComponentForm', () => {
 	} );
 
 	describe( 'Error Handling', () => {
-		beforeEach( () => {
-			setupFailedSave();
-		} );
-
-		it( 'should show error notification when creation fails', async () => {
+		it( 'should show error notification when replacing element fails', async () => {
 			// Arrange.
+			mockReplaceElement.mockImplementation( () => {
+				throw new Error( 'Failed to replace element' );
+			} );
+
 			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
 
@@ -370,24 +307,6 @@ describe( 'CreateComponentForm', () => {
 			await waitFor( () => {
 				expect( screen.getByText( 'Failed to save component. Please try again.' ) ).toBeInTheDocument();
 			} );
-		} );
-
-		it( 'should reset loading state after error', async () => {
-			// Arrange.
-			const { openForm, fillComponentName, getCreateButton } = setupForm();
-			openForm();
-
-			// Act.
-			fillComponentName( 'My Test Component' );
-			fireEvent.click( getCreateButton() );
-
-			// Assert.
-			await waitFor( () => {
-				expect( screen.queryByText( 'Creating…' ) ).not.toBeInTheDocument();
-			} );
-
-			// Assert.
-			expect( getCreateButton() ).toBeEnabled();
 		} );
 	} );
 

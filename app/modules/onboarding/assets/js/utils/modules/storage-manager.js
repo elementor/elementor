@@ -21,12 +21,24 @@ export const ONBOARDING_STORAGE_KEYS = {
 	PENDING_TOP_UPGRADE_NO_CLICK: 'elementor_onboarding_pending_top_upgrade_no_click',
 	PENDING_STEP1_CLICKED_CONNECT: 'elementor_onboarding_pending_step1_clicked_connect',
 	PENDING_STEP1_END_STATE: 'elementor_onboarding_pending_step1_end_state',
-	PENDING_EXIT_BUTTON: 'elementor_onboarding_pending_exit_button',
+	PENDING_EXIT: 'elementor_onboarding_pending_exit',
+	PENDING_AB_101_START_AS_FREE_USER: 'elementor_onboarding_pending_ab_101_start_as_free_user',
 	PENDING_TOP_UPGRADE_MOUSEOVER: 'elementor_onboarding_pending_top_upgrade_mouseover',
-	THEME_SELECTION_VARIANT: 'elementor_onboarding_theme_selection_variant',
-	THEME_SELECTION_EXPERIMENT_STARTED: 'elementor_onboarding_theme_selection_experiment_started',
-	GOOD_TO_GO_VARIANT: 'elementor_onboarding_good_to_go_variant',
-	GOOD_TO_GO_EXPERIMENT_STARTED: 'elementor_onboarding_good_to_go_experiment_started',
+	EXPERIMENT101_VARIANT: 'elementor_onboarding_experiment101_variant',
+	EXPERIMENT101_STARTED: 'elementor_onboarding_experiment101_started',
+	EXPERIMENT201_VARIANT: 'elementor_onboarding_experiment201_variant',
+	EXPERIMENT201_STARTED: 'elementor_onboarding_experiment201_started',
+	EXPERIMENT202_VARIANT: 'elementor_onboarding_experiment202_variant',
+	EXPERIMENT202_STARTED: 'elementor_onboarding_experiment202_started',
+	EXPERIMENT401_VARIANT: 'elementor_onboarding_experiment401_variant',
+	EXPERIMENT401_STARTED: 'elementor_onboarding_experiment401_started',
+	EXPERIMENT402_VARIANT: 'elementor_onboarding_experiment402_variant',
+	EXPERIMENT402_STARTED: 'elementor_onboarding_experiment402_started',
+	PENDING_EXPERIMENT_DATA: 'elementor_onboarding_pending_experiment_data',
+	STEP1_END_STATE_SENT: 'elementor_onboarding_step1_end_state_sent',
+	STEP2_END_STATE_SENT: 'elementor_onboarding_step2_end_state_sent',
+	STEP3_END_STATE_SENT: 'elementor_onboarding_step3_end_state_sent',
+	STEP4_END_STATE_SENT: 'elementor_onboarding_step4_end_state_sent',
 };
 
 export function getString( key ) {
@@ -48,8 +60,13 @@ export function getObject( key ) {
 	}
 
 	try {
-		return JSON.parse( storedString );
+		const parsed = JSON.parse( storedString );
+		if ( parsed && 'object' === typeof parsed ) {
+			return parsed;
+		}
+		return null;
 	} catch ( error ) {
+		remove( key );
 		return null;
 	}
 }
@@ -124,7 +141,8 @@ export function clearAllOnboardingData() {
 		ONBOARDING_STORAGE_KEYS.PENDING_CONNECT_STATUS,
 		ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT,
 		ONBOARDING_STORAGE_KEYS.PENDING_STEP1_END_STATE,
-		ONBOARDING_STORAGE_KEYS.PENDING_EXIT_BUTTON,
+		ONBOARDING_STORAGE_KEYS.PENDING_EXIT,
+		ONBOARDING_STORAGE_KEYS.PENDING_AB_101_START_AS_FREE_USER,
 		ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE_MOUSEOVER,
 		ONBOARDING_STORAGE_KEYS.STEP1_START_TIME,
 		ONBOARDING_STORAGE_KEYS.STEP2_START_TIME,
@@ -138,14 +156,26 @@ export function clearAllOnboardingData() {
 		const clickDataKey = `elementor_onboarding_click_${ i }_data`;
 		remove( clickDataKey );
 	}
+
+	remove( ONBOARDING_STORAGE_KEYS.STEP1_END_STATE_SENT );
+	remove( ONBOARDING_STORAGE_KEYS.STEP2_END_STATE_SENT );
+	remove( ONBOARDING_STORAGE_KEYS.STEP3_END_STATE_SENT );
+	remove( ONBOARDING_STORAGE_KEYS.STEP4_END_STATE_SENT );
 }
 
 export function clearExperimentData() {
 	const experimentKeys = [
-		ONBOARDING_STORAGE_KEYS.THEME_SELECTION_VARIANT,
-		ONBOARDING_STORAGE_KEYS.THEME_SELECTION_EXPERIMENT_STARTED,
-		ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_VARIANT,
-		ONBOARDING_STORAGE_KEYS.GOOD_TO_GO_EXPERIMENT_STARTED,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT101_STARTED,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT202_VARIANT,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT202_STARTED,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT401_VARIANT,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT401_STARTED,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT402_STARTED,
+		ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA,
 	];
 
 	clearMultiple( experimentKeys );
