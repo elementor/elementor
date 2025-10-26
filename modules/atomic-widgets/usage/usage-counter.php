@@ -125,7 +125,7 @@ class Usage_Counter {
 		return $changed_controls;
 	}
 
-	private function decompose_style_props( string $prop_name, array $style_prop, Prop_Type $prop_type, string $section, string $prefix = '' ): array {
+	private function decompose_style_props( string $prop_name, $style_prop, Prop_Type $prop_type, string $section, string $prefix = '' ): array {
 		$changed = [];
 		$control_name = $prefix ? "{$prefix}-{$prop_name}" : $prop_name;
 		$kind = $prop_type::KIND;
@@ -141,7 +141,7 @@ class Usage_Counter {
 				break;
 			case 'object':
 				$prop_shape = $prop_type->get_shape();
-				$object_styles = array_map( function( string $name, array $value ) use ( $prop_shape, $section, $control_name ) {
+				$object_styles = array_map( function( string $name, $value ) use ( $prop_shape, $section, $control_name ) {
 					return $this->decompose_style_props( $name, $value, $prop_shape[ $name ], $section, $control_name );
 				}, array_keys( $style_prop['value'] ), $style_prop['value'] );
 
