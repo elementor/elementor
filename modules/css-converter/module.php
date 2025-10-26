@@ -57,7 +57,7 @@ class Module extends BaseModule {
 		$this->load_required_dependencies();
 		$this->skip_global_styles_service_initialization_due_to_kit_meta_storage();
 		$this->initialize_global_classes_override();
-		$this->initialize_widgets_route();
+		// $this->initialize_widgets_route(); // Disabled - replaced by atomic widgets route
 		$this->initialize_classes_route();
 		$this->initialize_variables_route();
 		$this->initialize_atomic_widgets_route();

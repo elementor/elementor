@@ -11,15 +11,18 @@ class Atomic_Widgets_Route {
 
 	private const ROUTE_NAMESPACE = 'elementor/v2';
 	private const ROUTE_BASE = 'atomic-widgets';
+	
+	private $conversion_service;
 
 	public function __construct() {
+		$this->conversion_service = null; // Initialize lazily
 		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
 	}
 
 	public function register_routes(): void {
 		register_rest_route(
 			self::ROUTE_NAMESPACE,
-			'/' . self::ROUTE_BASE . '/convert',
+			'/widget-converter',
 			[
 				'methods' => \WP_REST_Server::CREATABLE,
 				'callback' => [ $this, 'convert_html_to_widgets' ],
@@ -61,12 +64,45 @@ class Atomic_Widgets_Route {
 		);
 	}
 
+	private function get_conversion_service() {
+		if ( null === $this->conversion_service ) {
+			// Initialize the same service as the old widgets route
+			$html_parser = new \Elementor\Modules\CssConverter\Services\Css\Parsing\Html_Parser();
+			$widget_mapper = new \Elementor\Modules\CssConverter\Services\Widgets\Widget_Mapper();
+			
+			// Initialize dependencies for Unified_Css_Processor
+			$css_parser = new \Elementor\Modules\CssConverter\Parsers\CssParser();
+			$property_conversion_service = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service();
+			$specificity_calculator = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Specificity_Calculator();
+			
+			$unified_css_processor = new \Elementor\Modules\CssConverter\Services\Css\Processing\Unified_Css_Processor(
+				$css_parser,
+				$property_conversion_service,
+				$specificity_calculator
+			);
+			
+			// Use our refactored Widget_Creation_Orchestrator instead of old Widget_Creator
+			$widget_creator = new \Elementor\Modules\CssConverter\Services\Widgets\Widget_Creation_Orchestrator();
+			
+			$this->conversion_service = new \Elementor\Modules\CssConverter\Services\Widgets\Unified_Widget_Conversion_Service(
+				$html_parser,
+				$widget_mapper,
+				$unified_css_processor,
+				$widget_creator,
+				false
+			);
+		}
+		return $this->conversion_service;
+	}
+
 	public function convert_html_to_widgets( \WP_REST_Request $request ): \WP_REST_Response {
-		$html = $request->get_param( 'html' );
+		// Support both new format (html) and legacy format (content)
+		$html = $request->get_param( 'html' ) ?: $request->get_param( 'content' );
+		$css = $request->get_param( 'css' ) ?: '';
+		$type = $request->get_param( 'type' ) ?: 'html';
+		$css_urls = $request->get_param( 'cssUrls' ) ?: [];
+		$follow_imports = $request->get_param( 'followImports' ) ?: false;
 		$options = $request->get_param( 'options' ) ?: [];
-		$debug_mode = $request->get_param( 'debug' ) ?: false;
-		$performance_monitoring = $request->get_param( 'performance' ) ?: false;
-		$validation = $request->get_param( 'validation' ) ?: false;
 
 		if ( empty( $html ) ) {
 			return new \WP_REST_Response(
@@ -80,24 +116,24 @@ class Atomic_Widgets_Route {
 		}
 
 		try {
-			$orchestrator = new Atomic_Widgets_Orchestrator( $debug_mode, $performance_monitoring );
+			$service = $this->get_conversion_service();
 
-			if ( $validation ) {
-				$result = $orchestrator->convert_with_validation( $html, $options );
-			} else {
-				$result = $orchestrator->convert_html_to_atomic_widgets( $html, $options );
+			// Handle CSS embedding like the old widgets route
+			if ( ! empty( $css ) ) {
+				$html = '<html><head><style>' . $css . '</style></head><body>' . $html . '</body></html>';
 			}
 
-			$status_code = $result['success'] ? 200 : 422;
+			// Use the same conversion method as the old widgets route
+			$result = $service->convert_from_html( $html, $css_urls, $follow_imports, $options );
 
-			return new \WP_REST_Response( $result, $status_code );
+			return new \WP_REST_Response( $result, 200 );
 
 		} catch ( \Exception $e ) {
 			return new \WP_REST_Response(
 				[
 					'success' => false,
 					'error' => 'Internal conversion error',
-					'message' => $debug_mode ? $e->getMessage() : 'An error occurred during conversion',
+					'message' => $e->getMessage(),
 					'code' => 'conversion_error',
 				],
 				500
@@ -227,12 +263,39 @@ class Atomic_Widgets_Route {
 
 	private function get_convert_args(): array {
 		return [
-			'html' => [
-				'required' => true,
+			'type' => [
+				'required' => false,
 				'type' => 'string',
-				'description' => 'HTML content to convert to atomic widgets',
-				'sanitize_callback' => [ $this, 'sanitize_html' ],
-				'validate_callback' => [ $this, 'validate_html_param' ],
+				'enum' => [ 'url', 'html', 'css' ],
+				'description' => 'Input type: url, html, or css',
+				'default' => 'html',
+			],
+			'content' => [
+				'required' => false,
+				'type' => 'string',
+				'description' => 'HTML content or URL to convert',
+			],
+			'html' => [
+				'required' => false,
+				'type' => 'string',
+				'description' => 'HTML content to convert (alternative to content)',
+			],
+			'css' => [
+				'required' => false,
+				'type' => 'string',
+				'description' => 'CSS content to apply to HTML',
+				'default' => '',
+			],
+			'cssUrls' => [
+				'required' => false,
+				'type' => 'array',
+				'description' => 'Array of CSS file URLs to include',
+			],
+			'followImports' => [
+				'required' => false,
+				'type' => 'boolean',
+				'default' => false,
+				'description' => 'Whether to follow @import statements in CSS',
 			],
 			'options' => [
 				'required' => false,

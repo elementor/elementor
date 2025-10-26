@@ -29,13 +29,14 @@ class Convert_Widgets_To_Elementor_Command implements Widget_Creation_Command_In
 
 	public function execute( Widget_Creation_Context $context ): Widget_Creation_Result {
 		try {
+			$elementor_elements = [];
 			$processed_widgets = $context->get_processed_widgets();
 
-			// Set CSS processing result on factories that need it
-			$this->configure_factories_with_css_result( $context->get_css_processing_result() );
+		// Set CSS processing result on factories that need it
+		$this->configure_factories_with_css_result( $context->get_css_processing_result() );
 
-			// Convert widgets hierarchically to preserve parent-child relationships
-			$elementor_elements = $this->convert_widgets_hierarchically( $processed_widgets );
+		// Convert widgets hierarchically to preserve parent-child relationships
+		$elementor_elements = $this->convert_widgets_hierarchically( $processed_widgets );
 
 			$context->set_elementor_elements( $elementor_elements );
 
