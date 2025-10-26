@@ -1,5 +1,6 @@
 import * as React from 'react';
 import type { Dayjs } from 'dayjs';
+import * as dayjs from 'dayjs';
 import { isTransformable, type Props, stringPropTypeUtil } from '@elementor/editor-props';
 import { DateTimePropTypeUtil } from '@elementor/editor-props';
 import { DatePicker, LocalizationProvider, TimePicker } from '@elementor/ui';
@@ -24,9 +25,40 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 			...value,
 			[ field ]: {
 				$$type: 'string',
-				value: '1234',
+				value: ( fieldValue as Dayjs | null )
+					? field === 'date'
+						? ( fieldValue as Dayjs ).format( 'YYYY-MM-DD' )
+						: ( fieldValue as Dayjs ).format( 'HH:mm' )
+					: '',
 			},
 		} );
+	};
+
+	const parseDateValue = ( dateStr?: string | null ): Dayjs | null => {
+		if ( ! dateStr ) {
+			return null;
+		}
+
+		const d = ( dayjs as unknown as { default: ( s?: string | number | Date ) => Dayjs } ).default( dateStr );
+
+		return d && typeof d.isValid === 'function' && d.isValid() ? d : null;
+	};
+
+	const parseTimeValue = ( timeStr?: string | null ): Dayjs | null => {
+		if ( ! timeStr ) {
+			return null;
+		}
+
+		const [ hours, minutes ] = timeStr.split( ':' );
+		const h = Number.parseInt( hours ?? '', 10 );
+		const m = Number.parseInt( minutes ?? '', 10 );
+
+		if ( Number.isNaN( h ) || Number.isNaN( m ) ) {
+			return null;
+		}
+
+		const base = ( dayjs as unknown as { default: () => Dayjs } ).default();
+		return base.hour( h ).minute( m ).second( 0 ).millisecond( 0 );
 	};
 
 	return (
@@ -36,7 +68,7 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 					<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
 						<PropKeyProvider bind="date">
 							<DatePicker
-								value={ stringPropTypeUtil.extract( value?.date ) || null }
+								value={ parseDateValue( stringPropTypeUtil.extract( value?.date ) ) }
 								onChange={ ( v: Dayjs | null ) =>
 									handleChange( { date: v } as Props, { bind: 'date' } )
 								}
@@ -51,14 +83,14 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 
 						<PropKeyProvider bind="time">
 							<TimePicker
-								value={ stringPropTypeUtil.extract( value?.time ) || null }
+								value={ parseTimeValue( stringPropTypeUtil.extract( value?.time ) ) }
 								onChange={ ( v: Dayjs | null ) =>
 									handleChange( { time: v } as Props, { bind: 'time' } )
 								}
 								disabled={ inputDisabled }
 								slotProps={ {
 									textField: { size: 'tiny' },
-									openPickerButton: { color: 'small' },
+									openPickerButton: { size: 'small' },
 									openPickerIcon: { fontSize: 'tiny' },
 								} }
 							/>
