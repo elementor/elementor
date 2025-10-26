@@ -6,6 +6,9 @@ use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Plugin;
 
@@ -71,8 +74,6 @@ class Usage_Counter {
 	private function get_changed_controls( $instance ): array {
 		$changed_controls = [];
 
-		// ['tab' => self::TAB_GENERAL, 'section' => 'content', 'control' => 'title']
-
 		$control_sections = $this->get_general_section_by_control( $instance->get_atomic_controls() );
 		$data = $instance->get_data_for_save();
 
@@ -94,7 +95,88 @@ class Usage_Counter {
 			];
 		}
 
+		$style_sections = $this->get_style_section_by_control( Style_Schema::get_style_schema_with_sections() );
+		$style_props = $this->extract_props( $data['styles'] ?? [] );
+
+		if ( ! empty( $style_props ) ) {
+			foreach ( $style_props as $style_prop_name => $style_prop_value ) {
+				$section = $style_sections[ $style_prop_name ][ 'section' ] ?? 'unknown';
+				$prop_type = $style_sections[ $style_prop_name ][ 'prop_type' ];
+
+				$decomposed_props = $this->decompose_style_props( $style_prop_name, $style_prop_value, $prop_type, $section );
+				$changed_controls = array_merge( $changed_controls, $decomposed_props );
+			}
+		}
+
 		return $changed_controls;
+	}
+
+	private function decompose_style_props( string $prop_name, array $style_prop, Prop_Type $prop_type, string $section, string $prefix = '' ): array {
+		$changed = [];
+		$control_name = $prefix ? "{$prefix}-{$prop_name}" : $prop_name;
+		$kind = $prop_type::KIND;
+
+		switch ( $kind ) {
+			case 'plain':
+				$changed[] = [
+					'tab' => self::TAB_STYLE,
+					'section' => $section,
+					'control' => $control_name
+				];
+
+				break;
+			case 'object':
+				$prop_shape = $prop_type->get_shape();
+				$object_styles = array_map( function( string $name, array $value ) use ( $prop_shape, $section, $control_name ) {
+					return $this->decompose_style_props( $name, $value, $prop_shape[ $name ], $section, $control_name );
+				}, array_keys( $style_prop[ 'value' ] ), $style_prop[ 'value' ] );
+
+				$changed = array_merge( $changed, ...$object_styles );
+
+				break;
+			case 'array':
+				/** @var Array_Prop_Type $prop_type */
+				$array_styles = array_map( function( array $value ) use ( $prop_type, $section, $control_name ) {
+					$name = $value[ '$$type' ];
+					$prop_shape = $prop_type->get_item_type()->get_prop_type( $name );
+
+					return $this->decompose_style_props( $name, $value, $prop_shape, $section, $control_name );
+				}, $style_prop[ 'value' ] );
+
+				$changed = array_merge( $changed, ...$array_styles );
+
+				break;
+			case 'union':
+				/** @var Union_Prop_Type $prop_type */
+				$shape_type = $style_prop[ '$$type' ] ?? null;
+				$union_prop_type = $prop_type->get_prop_type( $shape_type );
+				$filtered_union = array_filter( $style_prop[ 'value' ] );
+
+				$union_styles = array_map( function( string $name, array $value ) use ( $prop_type, $section, $control_name, $union_prop_type ) {
+					return $this->decompose_style_props( $name, $value, $union_prop_type->get_shape_field( $name ), $section, $control_name );
+				}, array_keys( $filtered_union ), $filtered_union );
+
+				$changed = array_merge( $changed, ...$union_styles ?? [] );
+
+				break;
+		}
+
+		return $changed;
+	}
+
+	private function extract_props( array $styles ): array {
+		$variants_props = array_reduce(
+			$styles,
+			function( $carry, $style ) {
+				return array_merge(
+					$carry,
+					array_column( $style['variants'], 'props' )
+				);
+			},
+			[]
+		);
+
+		return array_merge( ...$variants_props );
 	}
 
     private function get_total_controls_count( $instance ): int {
