@@ -19,20 +19,11 @@ class Module extends BaseModule {
 		$this->variables_route = $variables_route;
 		$this->classes_route = $classes_route;
 		$this->widgets_route = $widgets_route;
-		// Reset property mapper registry to ensure fresh instances
-		$this->reset_property_mapper_registry();
-		// Only initialize routes in non-test environments
-		if ( ! $this->is_test_environment() && ! $variables_route && ! $classes_route && ! $widgets_route ) {
-			$this->init_routes();
-		}
+		$this->ensure_fresh_property_mapper_registry();
+		$this->initialize_routes_in_non_test_environments( $variables_route, $classes_route, $widgets_route );
 
-		// Add global hooks for CSS converter base styles override
-		add_action( 'wp_head', [ $this, 'maybe_inject_base_styles_override' ], 999 );
-		add_action( 'elementor/editor/wp_head', [ $this, 'maybe_inject_base_styles_override' ], 999 );
-		add_action( 'elementor/preview/enqueue_styles', [ $this, 'maybe_inject_base_styles_override' ], 999 );
-
-		// Add editor load debug
-		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'debug_editor_widget_loading' ], 5 );
+		$this->register_base_styles_override_hooks();
+		$this->register_editor_debug_hooks();
 	}
 	private function is_test_environment(): bool {
 		return defined( 'WP_TESTS_DOMAIN' ) ||
@@ -51,105 +42,54 @@ class Module extends BaseModule {
 	}
 	private function init_routes(): void {
 		if ( ! $this->can_initialize_routes() ) {
-			$this->handle_initialization_failure();
 			return;
 		}
 		$this->load_required_dependencies();
-		$this->skip_global_styles_service_initialization_due_to_kit_meta_storage();
 		$this->initialize_global_classes_override();
 		$this->initialize_classes_route();
 		$this->initialize_variables_route();
 		$this->initialize_atomic_widgets_route();
 	}
 	private function can_initialize_routes(): bool {
-		return function_exists( 'error_log' ) && $this->has_required_directories();
-	}
-	private function has_required_directories(): bool {
-		$required_dirs = [ 'exceptions', 'parsers', 'convertors', 'services', 'routes' ];
-		foreach ( $required_dirs as $dir ) {
-			if ( ! is_dir( __DIR__ . '/' . $dir ) ) {
-				return false;
-			}
-		}
-		return true;
+		return function_exists( 'error_log' );
 	}
 	private function load_required_dependencies(): void {
-		// Elementor's autoloader handles all class loading automatically
-		// Only load critical files that don't follow standard naming conventions
+		$this->load_files_not_handled_by_elementor_autoloader();
+	}
+
+	private function load_files_not_handled_by_elementor_autoloader(): void {
 		$this->load_critical_dependencies();
 	}
 
 	private function load_critical_dependencies(): void {
 		$critical_files = [
 			'/exceptions/class-conversion-exception.php',
-			'/exceptions/css-parse-exception.php', 
+			'/exceptions/css-parse-exception.php',
 			'/parsers/css-parser.php',
 			'/parsers/parsed-css.php',
 		];
 
 		foreach ( $critical_files as $file ) {
-			$this->load_file_if_exists( $file );
+			require_once __DIR__ . $file;
 		}
-	}
-	private function load_file_if_exists( string $file ): void {
-		$file_path = __DIR__ . $file;
-		if ( file_exists( $file_path ) ) {
-			require_once $file_path;
-		}
-	}
-	private function skip_global_styles_service_initialization_due_to_kit_meta_storage(): void {
-		// Intentionally empty - CSS_Converter_Global_Styles service was removed
-		// Global classes are now stored directly in Kit meta via Global_Classes_Repository
 	}
 	private function initialize_global_classes_override(): void {
-		$override_service_file = __DIR__ . '/services/styles/css-converter-global-classes-override.php';
-		if ( ! file_exists( $override_service_file ) ) {
-			return;
-		}
-		require_once $override_service_file;
-		if ( class_exists( '\Elementor\Modules\CssConverter\Services\Styles\CSS_Converter_Global_Classes_Override' ) ) {
-			$override_service = \Elementor\Modules\CssConverter\Services\Styles\CSS_Converter_Global_Classes_Override::make();
-			$override_service->register_hooks();
-		}
+		require_once __DIR__ . '/services/styles/css-converter-global-classes-override.php';
+		$override_service = \Elementor\Modules\CssConverter\Services\Styles\CSS_Converter_Global_Classes_Override::make();
+		$override_service->register_hooks();
 	}
 	private function initialize_classes_route(): void {
-		$classes_route_file = __DIR__ . '/routes/classes-route.php';
-		if ( ! file_exists( $classes_route_file ) ) {
-			$this->handle_classes_route_missing();
-			return;
-		}
-		require_once $classes_route_file;
-		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Classes_Route' ) ) {
-			$this->classes_route = new \Elementor\Modules\CssConverter\Routes\Classes_Route();
-		}
+		require_once __DIR__ . '/routes/classes-route.php';
+		$this->classes_route = new \Elementor\Modules\CssConverter\Routes\Classes_Route();
 	}
 	private function initialize_variables_route(): void {
-		$variables_route_file = __DIR__ . '/routes/variables-route.php';
-		if ( ! file_exists( $variables_route_file ) ) {
-			$this->handle_variables_route_missing();
-			return;
-		}
-		require_once $variables_route_file;
-		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Variables_Route' ) ) {
-			$this->variables_route = new \Elementor\Modules\CssConverter\Routes\Variables_Route();
-		}
+		require_once __DIR__ . '/routes/variables-route.php';
+		$this->variables_route = new \Elementor\Modules\CssConverter\Routes\Variables_Route();
 	}
 
 	private function initialize_atomic_widgets_route(): void {
-		$atomic_widgets_route_file = __DIR__ . '/routes/atomic-widgets-route.php';
-		if ( ! file_exists( $atomic_widgets_route_file ) ) {
-			return;
-		}
-		require_once $atomic_widgets_route_file;
-		if ( class_exists( '\Elementor\Modules\CssConverter\Routes\Atomic_Widgets_Route' ) ) {
-			new \Elementor\Modules\CssConverter\Routes\Atomic_Widgets_Route();
-		}
-	}
-	private function handle_initialization_failure(): void {
-	}
-	private function handle_classes_route_missing(): void {
-	}
-	private function handle_variables_route_missing(): void {
+		require_once __DIR__ . '/routes/atomic-widgets-route.php';
+		new \Elementor\Modules\CssConverter\Routes\Atomic_Widgets_Route();
 	}
 	public function get_variables_route() {
 		return $this->variables_route;
@@ -165,9 +105,6 @@ class Module extends BaseModule {
 	}
 
 	public function maybe_inject_base_styles_override() {
-		// This method is no longer used - we're implementing base class renaming instead of CSS injection
-		// Keeping the method for backward compatibility but it does nothing
-		return;
 	}
 
 	private function page_has_css_converter_widgets( int $post_id ): bool {
@@ -180,11 +117,9 @@ class Module extends BaseModule {
 	}
 	private function traverse_elements_for_css_converter_widgets( array $elements_data ): bool {
 		foreach ( $elements_data as $element_data ) {
-			// Check if this element has CSS converter flag
-			if ( isset( $element_data['editor_settings']['css_converter_widget'] ) && $element_data['editor_settings']['css_converter_widget'] ) {
+			if ( $this->element_has_css_converter_flag( $element_data ) ) {
 				return true;
 			}
-			// Recursively check child elements
 			if ( isset( $element_data['elements'] ) && is_array( $element_data['elements'] ) ) {
 				if ( $this->traverse_elements_for_css_converter_widgets( $element_data['elements'] ) ) {
 					return true;
@@ -195,15 +130,13 @@ class Module extends BaseModule {
 	}
 
 	public function debug_editor_widget_loading() {
-
 		$post_id = get_the_ID();
 
 		if ( ! $post_id ) {
 			return;
 		}
 
-		// Check post data
-		$elementor_data = get_post_meta( $post_id, '_elementor_data', true );
+		$elementor_data = $this->get_elementor_post_data( $post_id );
 		if ( ! $elementor_data ) {
 			return;
 		}
@@ -213,31 +146,72 @@ class Module extends BaseModule {
 			return;
 		}
 
-		// Find widget types in data
-		$widget_types = [];
-		array_walk_recursive( $data, function( $value, $key ) use ( &$widget_types ) {
-			if ( $key === 'widgetType' ) {
-				$widget_types[] = $value;
-			}
-		} );
-
+		$widget_types = $this->extract_widget_types_from_data( $data );
 		$unique_types = array_unique( $widget_types );
 
-		// Check for converted widgets
-		$converted_types = array_filter( $unique_types, function( $type ) {
-			return strpos( $type, '-converted' ) !== false;
-		} );
+		$converted_types = $this->filter_converted_widget_types( $unique_types );
 
 		if ( ! empty( $converted_types ) ) {
 
-			// Verify if they're registered
-			foreach ( $converted_types as $type ) {
-				$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
-				if ( $widget ) {
-				} else {
-				}
-			}
-		} else {
+			$this->verify_converted_widgets_are_registered( $converted_types );
 		}
+	}
+
+	private function ensure_fresh_property_mapper_registry(): void {
+		$this->reset_property_mapper_registry();
+	}
+
+	private function initialize_routes_in_non_test_environments( $variables_route, $classes_route, $widgets_route ): void {
+		if ( ! $this->is_test_environment() && ! $variables_route && ! $classes_route && ! $widgets_route ) {
+			$this->init_routes();
+		}
+	}
+
+	private function register_base_styles_override_hooks(): void {
+		add_action( 'wp_head', [ $this, 'maybe_inject_base_styles_override' ], 999 );
+		add_action( 'elementor/editor/wp_head', [ $this, 'maybe_inject_base_styles_override' ], 999 );
+		add_action( 'elementor/preview/enqueue_styles', [ $this, 'maybe_inject_base_styles_override' ], 999 );
+	}
+
+	private function register_editor_debug_hooks(): void {
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'debug_editor_widget_loading' ], 5 );
+	}
+
+	private function element_has_css_converter_flag( array $element_data ): bool {
+		return isset( $element_data['editor_settings']['css_converter_widget'] ) && $element_data['editor_settings']['css_converter_widget'];
+	}
+
+	private function get_elementor_post_data( int $post_id ) {
+		return get_post_meta( $post_id, '_elementor_data', true );
+	}
+
+	private function extract_widget_types_from_data( array $data ): array {
+		$widget_types = [];
+		array_walk_recursive( $data, function( $value, $key ) use ( &$widget_types ) {
+			if ( 'widgetType' === $key ) {
+				$widget_types[] = $value;
+			}
+		} );
+		return array_unique( $widget_types );
+	}
+
+	private function filter_converted_widget_types( array $widget_types ): array {
+		return array_filter( $widget_types, function( $type ) {
+			return strpos( $type, '-converted' ) !== false;
+		} );
+	}
+
+	private function verify_converted_widgets_are_registered( array $converted_types ): void {
+		if ( empty( $converted_types ) ) {
+			return;
+		}
+
+		foreach ( $converted_types as $type ) {
+			$this->check_widget_registration( $type );
+		}
+	}
+
+	private function check_widget_registration( string $type ): void {
+		$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
 	}
 }
