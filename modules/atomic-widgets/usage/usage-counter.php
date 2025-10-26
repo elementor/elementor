@@ -22,7 +22,7 @@ class Usage_Counter {
 	private array $style_sections;
 
 	public function __construct() {
-		$this->style_sections = $this->get_style_section_by_control( Style_Schema::get() );
+		$this->style_sections = $this->get_style_section_by_control( Style_Schema::get_style_schema_with_sections() );
 	}
 
 	public function count( array $element ): Usage_Counter_Result {
