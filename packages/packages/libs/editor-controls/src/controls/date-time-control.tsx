@@ -80,7 +80,7 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 								disabled={ inputDisabled }
 								slotProps={ {
 									textField: { size: 'tiny' },
-									openPickerButton: { size: 'small' },
+									openPickerButton: { size: 'tiny' },
 									openPickerIcon: { fontSize: 'tiny' },
 								} }
 							/>
@@ -95,7 +95,7 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 								disabled={ inputDisabled }
 								slotProps={ {
 									textField: { size: 'tiny' },
-									openPickerButton: { size: 'small' },
+									openPickerButton: { size: 'tiny' },
 									openPickerIcon: { fontSize: 'tiny' },
 								} }
 							/>
