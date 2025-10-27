@@ -1,0 +1,309 @@
+<?php
+namespace Elementor\Modules\CssConverter\Services\Css\Processing\Processors;
+
+use Elementor\Modules\CssConverter\Services\Css\Processing\Contracts\Css_Processor_Interface;
+use Elementor\Modules\CssConverter\Services\Css\Processing\Contracts\Css_Processing_Context;
+use Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils;
+use Elementor\Modules\CssConverter\Services\Css\Processing\Unified_Style_Manager;
+use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Nested_Element_Selector_Processor implements Css_Processor_Interface {
+
+	const PRIORITY = 14;
+
+	private $unified_style_manager;
+	private $property_converter;
+
+	public function __construct( Unified_Style_Manager $unified_style_manager = null, Css_Property_Conversion_Service $property_converter = null ) {
+		if ( null === $unified_style_manager ) {
+			$specificity_calculator = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Specificity_Calculator();
+			$unified_style_manager = new Unified_Style_Manager( $specificity_calculator );
+		}
+
+		if ( null === $property_converter ) {
+			$property_converter = new Css_Property_Conversion_Service();
+		}
+
+		$this->unified_style_manager = $unified_style_manager;
+		$this->property_converter = $property_converter;
+	}
+
+	public function get_processor_name(): string {
+		return 'nested_element_selector';
+	}
+
+	public function get_priority(): int {
+		return self::PRIORITY;
+	}
+
+	public function supports_context( Css_Processing_Context $context ): bool {
+		$css_rules = $context->get_metadata( 'css_rules', [] );
+		$widgets = $context->get_widgets();
+
+		if ( empty( $css_rules ) || empty( $widgets ) ) {
+			return false;
+		}
+
+		foreach ( $css_rules as $rule ) {
+			$selector = $rule['selector'] ?? '';
+			if ( $this->is_nested_selector_with_element_tag( $selector ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public function process( Css_Processing_Context $context ): Css_Processing_Context {
+		$css_rules = $context->get_metadata( 'css_rules', [] );
+		$widgets = $context->get_widgets();
+
+		if ( empty( $css_rules ) || empty( $widgets ) ) {
+			return $context;
+		}
+
+		$unified_style_manager = $context->get_metadata( 'unified_style_manager' );
+
+		if ( null === $unified_style_manager ) {
+			$unified_style_manager = $this->unified_style_manager;
+			$context->set_metadata( 'unified_style_manager', $unified_style_manager );
+		}
+
+		$processed_count = 0;
+		$applied_count = 0;
+		$remaining_rules = [];
+
+		foreach ( $css_rules as $rule ) {
+			$selector = $rule['selector'] ?? '';
+			$properties = $rule['properties'] ?? [];
+
+			if ( empty( $properties ) ) {
+				$remaining_rules[] = $rule;
+				continue;
+			}
+
+			if ( ! $this->is_nested_selector_with_element_tag( $selector ) ) {
+				$remaining_rules[] = $rule;
+				continue;
+			}
+
+			error_log( 'NESTED_ELEMENT_PROCESSOR: Found element selector: ' . $selector );
+			++$processed_count;
+
+			$target_selector = $this->extract_target_selector( $selector );
+			error_log( 'NESTED_ELEMENT_PROCESSOR: Target selector: ' . $target_selector );
+
+			if ( empty( $target_selector ) ) {
+				$remaining_rules[] = $rule;
+				continue;
+			}
+
+			$matched_elements = $this->find_matching_widgets( $target_selector, $widgets );
+			error_log( 'NESTED_ELEMENT_PROCESSOR: Matched elements (by selector): ' . count( $matched_elements ) );
+
+			if ( empty( $matched_elements ) && ! $this->starts_with_class_or_id( $target_selector ) ) {
+				$element_type = $target_selector;
+				$matched_elements = $this->find_widgets_by_element_type( $element_type, $widgets );
+				error_log( 'NESTED_ELEMENT_PROCESSOR: Matched elements (by type): ' . count( $matched_elements ) );
+			}
+
+			if ( empty( $matched_elements ) ) {
+				error_log( 'NESTED_ELEMENT_PROCESSOR: No matched elements, skipping' );
+				$remaining_rules[] = $rule;
+				continue;
+			}
+
+			$converted_properties = $this->convert_rule_properties_to_atomic( $properties );
+			error_log( 'NESTED_ELEMENT_PROCESSOR: Converted properties: ' . json_encode( $converted_properties ) );
+
+			$debug_before = $unified_style_manager->get_debug_info();
+			error_log( 'NESTED_ELEMENT_PROCESSOR: Style manager has ' . count( $debug_before['collected_styles'] ?? [] ) . ' styles BEFORE collect_reset_styles' );
+
+			$unified_style_manager->collect_reset_styles(
+				$target_selector,
+				$converted_properties,
+				$matched_elements,
+				true
+			);
+
+			$debug_after = $unified_style_manager->get_debug_info();
+			error_log( 'NESTED_ELEMENT_PROCESSOR: Style manager has ' . count( $debug_after['collected_styles'] ?? [] ) . ' styles AFTER collect_reset_styles' );
+			error_log( 'NESTED_ELEMENT_PROCESSOR: Applied styles to ' . count( $matched_elements ) . ' widgets' );
+			++$applied_count;
+		}
+
+		$context->set_metadata( 'css_rules', $remaining_rules );
+
+		$context->add_statistic( 'nested_element_selectors_processed', $processed_count );
+		$context->add_statistic( 'nested_element_selectors_applied', $applied_count );
+
+		return $context;
+	}
+
+	public function get_statistics_keys(): array {
+		return [
+			'nested_element_selectors_processed',
+			'nested_element_selectors_applied',
+		];
+	}
+
+	private function is_nested_selector_with_element_tag( string $selector ): bool {
+		$has_nesting = strpos( $selector, ' ' ) !== false || strpos( $selector, '>' ) !== false;
+
+		if ( ! $has_nesting ) {
+			return false;
+		}
+
+		return $this->has_element_tag_in_last_selector_part( $selector );
+	}
+
+	private function has_element_tag_in_last_selector_part( string $selector ): bool {
+		$parts = preg_split( '/\s+/', trim( $selector ) );
+		if ( empty( $parts ) ) {
+			return false;
+		}
+
+		$last_part = end( $parts );
+		$last_part = str_replace( '>', '', $last_part );
+		$last_part = trim( $last_part );
+
+		if ( preg_match( '/^[a-zA-Z][a-zA-Z0-9]*\./', $last_part ) ) {
+			return true;
+		}
+
+		return Css_Selector_Utils::is_element_tag( $last_part );
+	}
+
+	private function extract_target_selector( string $selector ): string {
+		$parts = explode( ' ', trim( $selector ) );
+
+		if ( empty( $parts ) ) {
+			return '';
+		}
+
+		$target = end( $parts );
+
+		return ! empty( $target ) ? trim( $target ) : '';
+	}
+
+	private function starts_with_class_or_id( string $selector ): bool {
+		return 0 === strpos( $selector, '.' ) || 0 === strpos( $selector, '#' );
+	}
+
+	private function find_matching_widgets( string $selector, array $widgets ): array {
+		$matching_widget_ids = [];
+
+		foreach ( $widgets as $widget ) {
+			if ( $this->widget_matches_selector( $widget, $selector ) ) {
+				$matching_widget_ids[] = $widget['id'];
+			}
+
+			if ( ! empty( $widget['children'] ) ) {
+				$child_matches = $this->find_matching_widgets( $selector, $widget['children'] );
+				$matching_widget_ids = array_merge( $matching_widget_ids, $child_matches );
+			}
+		}
+
+		return $matching_widget_ids;
+	}
+
+	private function widget_matches_selector( array $widget, string $selector ): bool {
+		if ( 0 === strpos( $selector, '.' ) ) {
+			$class_name = ltrim( $selector, '.' );
+			$widget_classes = $this->get_widget_classes( $widget );
+			return in_array( $class_name, $widget_classes, true );
+		}
+
+		if ( 0 === strpos( $selector, '#' ) ) {
+			$id = ltrim( $selector, '#' );
+			return isset( $widget['attributes']['id'] ) && $widget['attributes']['id'] === $id;
+		}
+
+		return false;
+	}
+
+	private function get_widget_classes( array $widget ): array {
+		$classes = [];
+
+		if ( ! empty( $widget['element']['classes'] ) ) {
+			$classes = array_merge( $classes, $widget['element']['classes'] );
+		}
+
+		if ( ! empty( $widget['element']['generated_class'] ) ) {
+			$classes[] = $widget['element']['generated_class'];
+		}
+
+		if ( ! empty( $widget['element']['attributes']['class'] ) ) {
+			$attr_classes = explode( ' ', $widget['element']['attributes']['class'] );
+			$classes = array_merge( $classes, array_filter( $attr_classes ) );
+		}
+
+		if ( ! empty( $widget['attributes']['class'] ) ) {
+			$attr_classes = explode( ' ', $widget['attributes']['class'] );
+			$classes = array_merge( $classes, array_filter( $attr_classes ) );
+		}
+
+		if ( ! empty( $widget['classes'] ) ) {
+			$classes = array_merge( $classes, $widget['classes'] );
+		}
+
+		return array_unique( array_filter( $classes ) );
+	}
+
+	private function find_widgets_by_element_type( string $element_type, array $widgets ): array {
+		$matching_widget_ids = [];
+
+		foreach ( $widgets as $widget ) {
+			$widget_type = $widget['widget_type'] ?? '';
+			$original_tag = $widget['original_tag'] ?? '';
+
+			if ( $original_tag === $element_type ) {
+				error_log( 'NESTED_ELEMENT_PROCESSOR: MATCH FOUND! Widget element_id: ' . ( $widget['element_id'] ?? 'N/A' ) . ', original_tag: ' . $original_tag );
+				$matching_widget_ids[] = $widget['element_id'] ?? $widget['id'] ?? null;
+			}
+
+			if ( ! empty( $widget['children'] ) ) {
+				$child_matches = $this->find_widgets_by_element_type( $element_type, $widget['children'] );
+				$matching_widget_ids = array_merge( $matching_widget_ids, $child_matches );
+			}
+		}
+
+		return $matching_widget_ids;
+	}
+
+	private function convert_rule_properties_to_atomic( array $properties ): array {
+		$converted_properties = [];
+
+		error_log( 'NESTED_ELEMENT_PROCESSOR: convert_rule_properties_to_atomic input: ' . json_encode( $properties ) );
+
+		foreach ( $properties as $property_data ) {
+			$property = $property_data['property'] ?? '';
+			$value = $property_data['value'] ?? '';
+			$important = $property_data['important'] ?? false;
+
+			if ( empty( $property ) || empty( $value ) ) {
+				continue;
+			}
+
+			$converted = $this->property_converter->convert_property_to_v4_atomic( $property, $value );
+
+			error_log( 'NESTED_ELEMENT_PROCESSOR: Converting ' . $property . ': ' . $value . ' -> ' . json_encode( $converted ) );
+
+			$converted_properties[] = [
+				'property' => $property,
+				'value' => $value,
+				'important' => $important,
+				'converted_property' => $converted,
+			];
+		}
+
+		error_log( 'NESTED_ELEMENT_PROCESSOR: convert_rule_properties_to_atomic output count: ' . count( $converted_properties ) );
+
+		return $converted_properties;
+	}
+}
+

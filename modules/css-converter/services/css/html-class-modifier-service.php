@@ -186,22 +186,16 @@ class Html_Class_Modifier_Service {
 	}
 
 	private function process_single_class( string $class_name ): ?string {
-		// Check if this class has a duplicate class mapping first (highest priority)
+		// Check if this class has a flattened mapping first (highest priority for meaningful transformations)
+		if ( $this->mapping_service->has_mapping_for_class( $class_name ) ) {
+			$flattened_name = $this->mapping_service->get_flattened_class_name( $class_name );
+			return $flattened_name;
+		}
+		
+		// Check if this class has a duplicate class mapping (lower priority than flattening)
 		if ( isset( $this->duplicate_class_mappings[ $class_name ] ) ) {
 			$mapped_name = $this->duplicate_class_mappings[ $class_name ];
 			return $mapped_name;
-		}
-
-		// Check if this class has a flattened mapping
-		if ( $this->mapping_service->has_mapping_for_class( $class_name ) ) {
-			// Replace with flattened class name
-			$flattened_name = $this->mapping_service->get_flattened_class_name( $class_name );
-
-			// EVIDENCE: Track flattened mapping
-			if ( strpos( $flattened_name, 'fixed' ) !== false ) {
-			}
-
-			return $flattened_name;
 		}
 
 		// Check if this class should be kept (has direct styles)

@@ -24,6 +24,7 @@ class Module extends BaseModule {
 
 		$this->register_base_styles_override_hooks();
 		$this->register_editor_debug_hooks();
+		$this->initialize_css_converter_global_styles();
 	}
 
 	private function register_base_styles_override_hooks(): void {
@@ -92,6 +93,14 @@ class Module extends BaseModule {
 		require_once __DIR__ . '/services/styles/css-converter-global-classes-override.php';
 		$override_service = \Elementor\Modules\CssConverter\Services\Styles\CSS_Converter_Global_Classes_Override::make();
 		$override_service->register_hooks();
+	}
+
+	private function initialize_css_converter_global_styles(): void {
+		require_once __DIR__ . '/services/styles/css-converter-global-styles.php';
+		$css_converter_global_styles = \Elementor\Modules\CssConverter\Services\Styles\CSS_Converter_Global_Styles::make();
+		error_log( "CSS_CONVERTER_MODULE DEBUG: Initializing CSS Converter Global Styles service" );
+		$css_converter_global_styles->register_hooks();
+		error_log( "CSS_CONVERTER_MODULE DEBUG: CSS Converter Global Styles hooks registered" );
 	}
 	private function initialize_classes_route(): void {
 		require_once __DIR__ . '/routes/classes-route.php';

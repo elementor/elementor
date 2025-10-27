@@ -15,11 +15,7 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 	private const MAX_COMPOUND_CLASSES = 5;
 
 	private array $widget_class_cache = [];
-	private $property_converter;
 
-	public function __construct( $property_converter = null ) {
-		$this->property_converter = $property_converter;
-	}
 
 	public function get_processor_name(): string {
 		return self::PROCESSOR_NAME;
@@ -45,7 +41,6 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$widgets = $context->get_widgets();
 
-
 		if ( empty( $css_rules ) || empty( $widgets ) ) {
 			return $context;
 		}
@@ -53,26 +48,25 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 		// Build widget class cache for efficient lookups
 		$this->build_widget_class_cache( $widgets );
 
-		// Process compound selectors
-		$result = $this->process_compound_selectors( $css_rules, $widgets );
+		// Transform compound selectors in css_rules in-place
+		$result = $this->transform_compound_selectors_in_place( $css_rules, $widgets );
 
-		// Validate result
-		$this->validate_compound_result( $result );
 
-		// Register compound classes with Elementor (within registry pattern)
-		$registration_result = $this->register_compound_classes_with_elementor( $result['compound_global_classes'] );
+		// Update css_rules with transformed selectors
+		$context->set_metadata( 'css_rules', $result['css_rules'] );
 
-		// Store results in context
-		$context->set_metadata( 'compound_global_classes', $result['compound_global_classes'] );
-		$context->set_metadata( 'compound_mappings', $result['compound_mappings'] );
-		$context->set_metadata( 'compound_selectors_filtered', $result['filtered_count'] );
-		$context->set_metadata( 'compound_registration_result', $registration_result );
+		// Store HTML modification instructions
+		$css_class_modifiers = $context->get_metadata( 'css_class_modifiers', [] );
+		$css_class_modifiers[] = [
+			'type' => 'compound',
+			'mappings' => $result['compound_mappings'],
+		];
+		$context->set_metadata( 'css_class_modifiers', $css_class_modifiers );
+
 
 		// Add statistics
-		$context->add_statistic( 'compound_classes_created', count( $result['compound_global_classes'] ) );
-		$context->add_statistic( 'compound_classes_registered', $registration_result['registered'] ?? 0 );
+		$context->add_statistic( 'compound_selectors_transformed', $result['transformed_count'] );
 		$context->add_statistic( 'compound_selectors_processed', $result['processed_count'] );
-		$context->add_statistic( 'compound_selectors_filtered', $result['filtered_count'] );
 		$context->add_statistic( 'compound_selectors_no_match', $result['no_match_count'] );
 
 		// Clear cache
@@ -83,148 +77,85 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 
 	public function get_statistics_keys(): array {
 		return [
-			'compound_classes_created',
-			'compound_classes_registered',
+			'compound_selectors_transformed',
 			'compound_selectors_processed',
-			'compound_selectors_filtered',
 			'compound_selectors_no_match',
 		];
 	}
 
-	private function register_compound_classes_with_elementor( array $compound_classes ): array {
-		if ( empty( $compound_classes ) ) {
-			return [
-				'registered' => 0,
-				'skipped' => 0,
-				'error' => null,
-			];
-		}
-
-		// Use the same global classes integration service as regular CSS classes
-
-		$provider = \Elementor\Modules\CssConverter\Services\GlobalClasses\Unified\Global_Classes_Service_Provider::instance();
-
-		if ( ! $provider->is_available() ) {
-			return [
-				'registered' => 0,
-				'skipped' => count( $compound_classes ),
-				'error' => 'Global Classes Module not available',
-			];
-		}
-
-		// Convert compound classes to CSS rules format
-		$css_rules = $this->convert_compound_classes_to_css_rules( $compound_classes );
-
-		// Process through the same integration service as regular classes
-		$integration_service = $provider->get_integration_service();
-		$result = $integration_service->process_css_rules( $css_rules );
-
-		return [
-			'registered' => $result['registered'] ?? 0,
-			'skipped' => $result['skipped'] ?? 0,
-			'error' => $result['error'] ?? null,
-		];
-	}
-
-	private function convert_compound_classes_to_css_rules( array $compound_classes ): array {
-		$css_rules = [];
-
-		foreach ( $compound_classes as $class_name => $class_data ) {
-			// Extract properties from compound class data
-			$properties = $class_data['properties'] ?? [];
-
-			if ( empty( $properties ) ) {
-				continue;
-			}
-
-			// Create CSS rule in the format expected by the integration service
-			$css_rules[] = [
-				'selector' => '.' . $class_name,
-				'properties' => $properties,
-			];
-		}
-
-		return $css_rules;
-	}
-
-	private function process_compound_selectors( array $css_rules, array $widgets ): array {
-		$compound_global_classes = [];
+	private function transform_compound_selectors_in_place( array $css_rules, array $widgets ): array {
 		$compound_mappings = [];
 		$processed_count = 0;
-		$filtered_count = 0;
+		$transformed_count = 0;
 		$no_match_count = 0;
-
-		// Get existing class names to prevent collisions
-		$existing_names = $this->get_existing_class_names();
-		$used_names = $existing_names;
+		$used_names = [];
+		$transformed_css_rules = [];
 
 		foreach ( $css_rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
 
 			if ( empty( $selector ) ) {
+				$transformed_css_rules[] = $rule;
 				continue;
 			}
 
 			// Check if this is a compound class selector
 			if ( ! $this->is_compound_class_selector( $selector ) ) {
+				$transformed_css_rules[] = $rule;
 				continue;
 			}
 
 			++$processed_count;
 
-			// Filter core Elementor selectors
-			if ( $this->is_core_elementor_selector( $selector ) ) {
-				++$filtered_count;
-				continue;
-			}
-
 			// Extract compound classes
 			$classes = $this->extract_compound_classes( $selector );
 
 			if ( count( $classes ) < 2 ) {
+				$transformed_css_rules[] = $rule;
 				continue;
 			}
 
 			// Validate classes
 			if ( ! $this->validate_compound_classes( $classes ) ) {
+				$transformed_css_rules[] = $rule;
 				continue;
 			}
 
 			// Check if any widget has ALL required classes (uses cache)
 			if ( ! $this->has_widgets_with_all_classes( $classes ) ) {
 				++$no_match_count;
+				$transformed_css_rules[] = $rule;
 				continue;
 			}
 
-			// Create compound global class
-			$compound_result = $this->create_compound_global_class(
-				$selector,
-				$classes,
-				$rule['properties'] ?? [],
-				$used_names
-			);
+			// Generate compound class name
+			$compound_class_name = $this->generate_compound_class_name( $classes, $used_names );
 
-			if ( null === $compound_result ) {
+			if ( empty( $compound_class_name ) ) {
+				$transformed_css_rules[] = $rule;
 				continue;
 			}
 
-			// Store results
-			$compound_class_name = $compound_result['class_name'];
-			$compound_global_classes[ $compound_class_name ] = $compound_result['class_data'];
-			$compound_mappings[ $selector ] = $compound_class_name;
+			// Transform the selector in the rule: .first.second → .first-and-second
+			$transformed_rule = $rule;
+			$transformed_rule['selector'] = '.' . $compound_class_name;
+			$transformed_css_rules[] = $transformed_rule;
+
+			// Store HTML class mapping for modifier
+			$compound_mappings[ $compound_class_name ] = [
+				'requires' => $classes,
+			];
 
 			// Track used name
 			$used_names[] = $compound_class_name;
+			++$transformed_count;
 		}
 
-		// Build HTML class modifier mappings
-		$html_class_mappings = $this->build_html_class_mappings( $compound_global_classes );
-
 		return [
-			'compound_global_classes' => $compound_global_classes,
-			'compound_mappings' => $html_class_mappings,
+			'css_rules' => $transformed_css_rules,
+			'compound_mappings' => $compound_mappings,
+			'transformed_count' => $transformed_count,
 			'processed_count' => $processed_count,
-			'filtered_count' => $filtered_count,
 			'no_match_count' => $no_match_count,
 		];
 	}
@@ -368,49 +299,6 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 		return true;
 	}
 
-	private function create_compound_global_class( string $selector, array $classes, array $properties, array $used_names ): ?array {
-		// Generate compound class name
-		$compound_class_name = $this->generate_compound_class_name( $classes, $used_names );
-
-		if ( empty( $compound_class_name ) ) {
-			return null;
-		}
-
-		// Convert properties if converter is available
-		$atomic_props = [];
-		if ( $this->property_converter && ! empty( $properties ) ) {
-			try {
-				// Convert properties format from [{property: 'x', value: 'y'}] to ['x' => 'y']
-				$formatted_properties = [];
-				foreach ( $properties as $prop ) {
-					if ( isset( $prop['property'] ) && isset( $prop['value'] ) ) {
-						$formatted_properties[ $prop['property'] ] = $prop['value'];
-					}
-				}
-
-					$atomic_props = $this->property_converter->convert_properties_to_v4_atomic( $formatted_properties );
-			} catch ( \Exception $e ) {
-				// Fallback to empty props if conversion fails
-				$atomic_props = [];
-			}
-		}
-
-		// Create class data
-		$class_data = [
-			'id' => $compound_class_name,
-			'label' => $compound_class_name,
-			'original_selector' => $selector,
-			'compound_classes' => $classes,
-			'properties' => $properties,
-			'atomic_props' => $atomic_props,
-			'type' => 'compound',
-		];
-
-		return [
-			'class_name' => $compound_class_name,
-			'class_data' => $class_data,
-		];
-	}
 
 	private function generate_compound_class_name( array $classes, array $used_names ): string {
 		// Sort classes for consistent naming
@@ -430,81 +318,5 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 		}
 
 		return $final_name;
-	}
-
-	private function build_html_class_mappings( array $compound_global_classes ): array {
-		$html_class_mappings = [];
-
-
-		foreach ( $compound_global_classes as $compound_class_name => $class_data ) {
-			$compound_classes = $class_data['compound_classes'] ?? [];
-
-
-			if ( ! empty( $compound_classes ) ) {
-				$html_class_mappings[ $compound_class_name ] = [
-					'requires' => $compound_classes,
-				];
-			} else {
-			}
-		}
-
-		return $html_class_mappings;
-	}
-
-	private function is_core_elementor_selector( string $selector ): bool {
-		$core_patterns = [
-			'/\.elementor-element\.elementor-/',
-			'/\.elementor-widget\.elementor-/',
-			'/\.elementor-container\.elementor-/',
-			'/\.elementor-section\.elementor-/',
-			'/\.elementor-column\.elementor-/',
-			'/\.e-con\.e-/',
-			'/\.e-flex\.e-/',
-		];
-
-		foreach ( $core_patterns as $pattern ) {
-			if ( preg_match( $pattern, $selector ) ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private function get_existing_class_names(): array {
-		// This would typically get existing global class names from the repository
-		// For now, return empty array - this can be enhanced later
-		return [];
-	}
-
-	private function validate_compound_result( array $result ): void {
-		$required_keys = [
-			'compound_global_classes',
-			'compound_mappings',
-			'processed_count',
-			'filtered_count',
-			'no_match_count',
-		];
-
-		foreach ( $required_keys as $key ) {
-			if ( ! isset( $result[ $key ] ) ) {
-				throw new \Exception(
-					esc_html( "Compound processing result missing required key: {$key}" )
-				);
-			}
-		}
-
-		// Validate types
-		if ( ! is_array( $result['compound_global_classes'] ) ) {
-			throw new \Exception( esc_html( 'compound_global_classes must be an array' ) );
-		}
-
-		if ( ! is_array( $result['compound_mappings'] ) ) {
-			throw new \Exception( esc_html( 'compound_mappings must be an array' ) );
-		}
-
-		if ( ! is_int( $result['processed_count'] ) || $result['processed_count'] < 0 ) {
-			throw new \Exception( esc_html( 'processed_count must be a non-negative integer' ) );
-		}
 	}
 }

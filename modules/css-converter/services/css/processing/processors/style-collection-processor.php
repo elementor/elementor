@@ -51,7 +51,7 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 	}
 
 	public function get_priority(): int {
-		return 50; // After flattening and compound processing, before variables
+		return 85; // After HTML class modifications, before style resolution
 	}
 
 	public function supports_context( Css_Processing_Context $context ): bool {
@@ -65,18 +65,27 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$widgets = $context->get_widgets();
 		$css = $context->get_metadata( 'css', '' );
-		$atomic_rules = $context->get_metadata( 'atomic_rules', [] );
-		$global_class_rules = $context->get_metadata( 'global_class_rules', [] );
 
-		// Reset style manager for fresh collection
-		$this->unified_style_manager->reset();
+		$existing_style_manager = $context->get_metadata( 'unified_style_manager' );
 
-		// Collect styles from different sources
-		// Collect from both atomic rules and global class rules
-		$all_rules_for_style_collection = array_merge( $atomic_rules, $global_class_rules );
-		$css_styles_collected = $this->collect_css_styles_from_rules( $all_rules_for_style_collection, $widgets );
+		if ( null !== $existing_style_manager ) {
+			error_log( 'STYLE_COLLECTION: Using existing style manager' );
+			$this->unified_style_manager = $existing_style_manager;
+			$debug_before = $this->unified_style_manager->get_debug_info();
+			error_log( 'STYLE_COLLECTION: Existing manager has ' . count( $debug_before['collected_styles'] ?? [] ) . ' styles before collection' );
+		} else {
+			error_log( 'STYLE_COLLECTION: Creating new style manager' );
+			$this->unified_style_manager->reset();
+		}
+
+		// Collect styles from css_rules (single source of truth)
+		$css_styles_collected = $this->collect_css_styles_from_rules( $css_rules, $widgets );
 		$inline_styles_collected = $this->collect_inline_styles_from_widgets( $widgets );
 		$reset_styles_collected = $this->collect_reset_styles( $css, $widgets );
+
+		$debug_after = $this->unified_style_manager->get_debug_info();
+		error_log( 'STYLE_COLLECTION: Manager has ' . count( $debug_after['collected_styles'] ?? [] ) . ' styles after collection' );
+
 
 		// Store collection results in context
 		$context->set_metadata( 'unified_style_manager', $this->unified_style_manager );

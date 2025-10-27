@@ -38,7 +38,7 @@ class Unified_Css_Processor {
 		$this->html_class_modifier = new \Elementor\Modules\CssConverter\Services\Css\Html_Class_Modifier_Service();
 	}
 	public function process_css_and_widgets( string $css, array $widgets, array $options = [] ): array {
-		
+
 		// Create processing context with input data
 		$context = new Css_Processing_Context();
 		$context->set_metadata( 'css', $css );
@@ -46,12 +46,11 @@ class Unified_Css_Processor {
 		$context->set_metadata( 'options', $options );
 		$context->set_metadata( 'existing_global_class_names', $this->get_existing_global_class_names() );
 
-		
 		// Execute the complete registry pipeline
 		$context = Css_Processor_Factory::execute_css_processing( $context );
-		
 
 		// Extract results from context
+		// Note: global_classes already includes compound classes (merged by Global_Classes_Processor)
 		$processed_widgets = $context->get_widgets();
 		$statistics = $context->get_statistics();
 		$css_class_rules = $context->get_metadata( 'css_class_rules', [] );
@@ -75,7 +74,7 @@ class Unified_Css_Processor {
 			'global_classes_created' => count( $global_classes ),
 			'class_name_mappings' => $class_name_mappings,
 			'debug_duplicate_detection' => $debug_duplicate_detection,
-			'flattened_classes' => $context->get_metadata( 'flattened_classes', [] ),
+			'flattened_classes' => $this->get_flattened_classes_from_unified_structure( $context ),
 			'flattened_classes_count' => $this->count_modifiers_by_type( $css_class_modifiers, 'flattening' ),
 			'compound_classes' => $context->get_metadata( 'compound_global_classes', [] ),
 			'compound_classes_created' => $this->count_modifiers_by_type( $css_class_modifiers, 'compound' ),
@@ -85,9 +84,9 @@ class Unified_Css_Processor {
 			'complex_reset_styles' => $complex_reset_styles,
 			'html_class_modifications' => $html_class_modifications,
 			'flattening_results' => [
-				'flattened_rules' => $context->get_metadata( 'flattened_rules', [] ),
+				'flattened_rules' => $this->get_flattened_rules_from_unified_structure( $context ),
 				'class_mappings' => $context->get_metadata( 'class_mappings', [] ),
-				'flattened_classes' => $context->get_metadata( 'flattened_classes', [] ),
+				'flattened_classes' => $this->get_flattened_classes_from_unified_structure( $context ),
 			],
 			'compound_results' => [
 				'compound_global_classes' => $context->get_metadata( 'compound_global_classes', [] ),
@@ -96,12 +95,26 @@ class Unified_Css_Processor {
 			'html_class_modifier' => $html_class_modifier,
 		];
 	}
+
+	// ============================================================================
+	// LEGACY CODE SECTION - INACTIVE
+	// ============================================================================
+	// The methods below are marked as LEGACY and their status is unclear.
+	// They were replaced by the processor registry pattern but have not been
+	// verified as completely unused.
+	//
+	// DO NOT DELETE until verification is complete.
+	// See: plugins/elementor-css/modules/css-converter/docs/page-testing/0-0----old-code.md
+	// ============================================================================
+
+	// LEGACY: INACTIVE - Status unclear. Replaced by Style_Collection_Processor. See: 0-0----old-code.md
 	private function collect_all_styles_from_sources( string $css, array $widgets ): void {
 		$this->unified_style_manager->reset();
 		$this->collect_css_styles( $css, $widgets );
 		$this->collect_inline_styles_from_widgets( $widgets );
 		$this->collect_reset_styles( $css, $widgets );
 	}
+	// LEGACY: INACTIVE - Status unclear. Replaced by Style_Collection_Processor. See: 0-0----old-code.md
 	private function collect_all_styles_from_sources_with_flattened_rules(
 		string $css,
 		array $widgets,
@@ -112,6 +125,7 @@ class Unified_Css_Processor {
 		$this->collect_inline_styles_from_widgets( $widgets );
 		$this->collect_reset_styles( $css, $widgets );
 	}
+	// LEGACY: INACTIVE - Status unclear. See: 0-0----old-code.md
 	private function collect_css_styles_from_flattened_rules( array $flattened_rules, array $widgets ): void {
 		if ( empty( $flattened_rules ) ) {
 			return;
@@ -123,6 +137,7 @@ class Unified_Css_Processor {
 	private function log_css_parsing_start_from_rules( array $rules, array $widgets ): void {
 		// Skip debug logging for performance
 	}
+	// LEGACY: INACTIVE - Status unclear. See: 0-0----old-code.md
 	private function collect_css_styles( string $css, array $widgets ) {
 		if ( empty( $css ) ) {
 			return;
@@ -201,6 +216,7 @@ class Unified_Css_Processor {
 		}
 		return $converted_properties;
 	}
+	// LEGACY: INACTIVE - CRITICAL: Element reset styles. Status unclear. See: 0-0----old-code.md
 	private function analyze_and_apply_direct_element_styles( array $rules, array $widgets ): void {
 		foreach ( $rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
@@ -333,6 +349,7 @@ class Unified_Css_Processor {
 
 		return $matching_widget_ids;
 	}
+	// LEGACY: INACTIVE - Replaced by Nested_Element_Selector_Processor. See: 0-0----old-code.md
 	private function process_css_rules_for_widgets( array $rules, array $widgets ): void {
 		foreach ( $rules as $rule ) {
 			$selector = $rule['selector'];
@@ -348,11 +365,17 @@ class Unified_Css_Processor {
 			// Example: .elementor-1140 .element.element-14c0aa4 .heading-title
 			$is_nested_compound = $this->is_nested_selector_with_compound_classes( $selector );
 
+			// DEBUG: Log element selector detection
+			if ( strpos( $selector, 'h1' ) !== false ) {
+				error_log( 'ELEMENT SELECTOR DEBUG: Checking selector: ' . $selector );
+				error_log( 'ELEMENT SELECTOR DEBUG: is_nested_compound: ' . ( $is_nested_compound ? 'true' : 'false' ) );
+			}
+
 			if ( $is_nested_compound ) {
-				// Only process selectors that look like they're from the original site
-				if ( strpos( $selector, 'elementor-1140' ) !== false || strpos( $selector, 'heading' ) !== false ) {
-					$this->apply_widget_specific_styling_for_nested_compound( $selector, $properties, $widgets );
+				if ( strpos( $selector, 'h1' ) !== false ) {
+					error_log( 'ELEMENT SELECTOR DEBUG: Applying widget styling for: ' . $selector );
 				}
+				$this->apply_widget_specific_styling_for_nested_compound( $selector, $properties, $widgets );
 				continue;
 			}
 
@@ -373,13 +396,38 @@ class Unified_Css_Processor {
 	}
 
 	private function is_nested_selector_with_compound_classes( string $selector ): bool {
-		// Check for nested selector (has descendant combinator - spaces OR child combinator >)
 		$has_nesting = strpos( $selector, ' ' ) !== false || strpos( $selector, '>' ) !== false;
 
-		// Check for compound class (dot followed by another dot within the selector)
+		if ( ! $has_nesting ) {
+			return false;
+		}
+
 		$has_compound = preg_match( '/\.\w+[\w-]*\.\w+/', $selector ) === 1;
 
-		return $has_nesting && $has_compound;
+		if ( $has_compound ) {
+			return true;
+		}
+
+		$has_element_tag_in_last_part = $this->has_element_tag_in_last_selector_part( $selector );
+
+		return $has_element_tag_in_last_part;
+	}
+
+	private function has_element_tag_in_last_selector_part( string $selector ): bool {
+		$parts = preg_split( '/\s+/', trim( $selector ) );
+		if ( empty( $parts ) ) {
+			return false;
+		}
+
+		$last_part = end( $parts );
+		$last_part = str_replace( '>', '', $last_part );
+		$last_part = trim( $last_part );
+
+		if ( preg_match( '/^[a-zA-Z][a-zA-Z0-9]*\./', $last_part ) ) {
+			return true;
+		}
+
+		return \Elementor\Modules\CssConverter\Services\Css\Css_Selector_Utils::is_element_tag( $last_part );
 	}
 
 	private function apply_widget_specific_styling_for_nested_compound(
@@ -480,6 +528,7 @@ class Unified_Css_Processor {
 		$this->skip_debug_logging_for_performance();
 		return $result;
 	}
+	// LEGACY: INACTIVE - CRITICAL: Inline styles. Status unclear. See: 0-0----old-code.md
 	private function collect_inline_styles_from_widgets( array $widgets ) {
 		$this->log_inline_style_collection_start( $widgets );
 		$this->collect_inline_styles_recursively( $widgets );
@@ -1458,35 +1507,32 @@ class Unified_Css_Processor {
 		$context->set_metadata( 'existing_global_class_names', $this->get_existing_global_class_names() );
 		$context->set_widgets( $widgets );
 
-
 		// Execute the full registry pipeline (flattening → compound)
 		$context = Css_Processor_Factory::execute_css_processing( $context );
 
-
-		$flattened_rules = $context->get_metadata( 'flattened_rules', [] );
+		$flattened_rules = $this->get_flattened_rules_from_unified_structure( $context );
 		$compound_global_classes = $context->get_metadata( 'compound_global_classes', [] );
 		$compound_mappings = $context->get_metadata( 'compound_mappings', [] );
 
+		// Use existing modifiers created by processors
+		$css_class_modifiers = $context->get_metadata( 'css_class_modifiers', [] );
 
-		// Build unified modifiers array
-		$css_class_modifiers = [];
-
-		// Add flattening modifiers
+		// Legacy fallback: Add flattening modifiers if not already present
 		$class_mappings = $context->get_metadata( 'class_mappings', [] );
-		if ( ! empty( $class_mappings ) ) {
+		if ( ! empty( $class_mappings ) && ! $this->has_modifier_type( $css_class_modifiers, 'flattening' ) ) {
 			$css_class_modifiers[] = [
 				'type' => 'flattening',
 				'mappings' => $class_mappings,
 				'metadata' => [
 					'classes_with_direct_styles' => $context->get_metadata( 'classes_with_direct_styles', [] ),
 					'classes_only_in_nested' => $context->get_metadata( 'classes_only_in_nested', [] ),
-					'flattened_classes' => $context->get_metadata( 'flattened_classes', [] ),
+					'flattened_classes' => $this->get_flattened_classes_from_unified_structure( $context ),
 				],
 			];
 		}
 
-		// Add compound modifiers
-		if ( ! empty( $compound_mappings ) ) {
+		// Legacy fallback: Add compound modifiers if not already present
+		if ( ! empty( $compound_mappings ) && ! $this->has_modifier_type( $css_class_modifiers, 'compound' ) ) {
 			$css_class_modifiers[] = [
 				'type' => 'compound',
 				'mappings' => $compound_mappings,
@@ -1502,7 +1548,7 @@ class Unified_Css_Processor {
 				'class_mappings' => $class_mappings,
 				'classes_with_direct_styles' => $context->get_metadata( 'classes_with_direct_styles', [] ),
 				'classes_only_in_nested' => $context->get_metadata( 'classes_only_in_nested', [] ),
-				'flattened_classes' => $context->get_metadata( 'flattened_classes', [] ),
+				'flattened_classes' => $this->get_flattened_classes_from_unified_structure( $context ),
 			],
 			'compound' => [
 				'compound_global_classes' => $compound_global_classes,
@@ -1934,5 +1980,24 @@ class Unified_Css_Processor {
 			}
 		}
 		return $count;
+	}
+
+	private function has_modifier_type( array $modifiers, string $type ): bool {
+		foreach ( $modifiers as $modifier ) {
+			if ( ( $modifier['type'] ?? '' ) === $type ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function get_flattened_classes_from_unified_structure( Css_Processing_Context $context ): array {
+		$global_classes_rules = $context->get_metadata( 'global_classes_rules', [] );
+		return isset( $global_classes_rules['flattening']['classes'] ) ? $global_classes_rules['flattening']['classes'] : $context->get_metadata( 'flattened_classes', [] );
+	}
+
+	private function get_flattened_rules_from_unified_structure( Css_Processing_Context $context ): array {
+		$global_classes_rules = $context->get_metadata( 'global_classes_rules', [] );
+		return isset( $global_classes_rules['flattening']['rules'] ) ? $global_classes_rules['flattening']['rules'] : $context->get_metadata( 'flattened_rules', [] );
 	}
 }

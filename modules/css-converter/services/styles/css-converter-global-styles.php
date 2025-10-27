@@ -51,13 +51,17 @@ class CSS_Converter_Global_Styles {
 		// Extract global classes from widget data before atomic system processes styles
 		add_action(
 			'elementor/post/render',
-			[ $this, 'extract_global_classes_from_post' ],
+			function( $post_id ) {
+				$this->extract_global_classes_from_post( $post_id );
+			},
 			5 // Priority 5: Before atomic system processes post
 		);
 
 		add_action(
 			'elementor/atomic-widgets/styles/register',
-			[ $this, 'register_styles' ],
+			function( $styles_manager, $post_ids ) {
+				$this->register_styles( $styles_manager, $post_ids );
+			},
 			25, // Priority 25: After global classes (20), before local styles (30)
 			2
 		);
@@ -85,7 +89,6 @@ class CSS_Converter_Global_Styles {
 
 		if ( ! empty( $global_classes ) ) {
 			self::add_global_classes( $global_classes );
-		} else {
 		}
 	}
 
@@ -98,6 +101,7 @@ class CSS_Converter_Global_Styles {
 		foreach ( $elements_data as $element_data ) {
 			// Check if this element has CSS Converter global classes
 			if ( ! empty( $element_data['css_converter_global_classes'] ) ) {
+				error_log( "CSS_CONVERTER_GLOBAL_STYLES DEBUG: Found " . count($element_data['css_converter_global_classes']) . " global classes in element" );
 				$global_classes = array_merge( $global_classes, $element_data['css_converter_global_classes'] );
 			}
 

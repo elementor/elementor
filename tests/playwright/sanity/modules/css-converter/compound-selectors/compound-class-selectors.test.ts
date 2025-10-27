@@ -36,12 +36,15 @@ test.describe( 'Compound Class Selectors @compound-selectors', () => {
 	test( 'Scenario 1: Simple compound selector (.first.second)', async ( { request, page } ) => {
 		const htmlContent = `
 			<style>
+				.random {
+					line-height: 2;
+				}
 				.first.second {
 					color: red;
 					font-size: 16px;
 				}
 			</style>
-			<div class="first second">
+			<div class="random first second">
 				Compound Element
 			</div>
 		`;

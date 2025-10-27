@@ -11,14 +11,28 @@ class Css_Selector_Utils {
 	public static function is_element_tag( string $part ): bool {
 		$part = trim( $part );
 
-		if ( 0 === strpos( $part, '.' ) || 0 === strpos( $part, '#' ) ) {
+		if ( empty( $part ) ) {
 			return false;
 		}
 
-		$pattern = Css_Converter_Config::get_regex_pattern( 'element_tag' );
-		if ( preg_match( $pattern, $part, $matches ) ) {
-			$element = strtolower( $matches[1] );
-			return Css_Converter_Config::is_supported_html_element( $element );
+		if ( 0 === strpos( $part, '.' ) ) {
+			return false;
+		}
+
+		if ( 0 === strpos( $part, '#' ) ) {
+			return false;
+		}
+
+		if ( false !== strpos( $part, '[' ) ) {
+			return false;
+		}
+
+		if ( false !== strpos( $part, ':' ) ) {
+			return false;
+		}
+
+		if ( preg_match( '/^[a-zA-Z][a-zA-Z0-9-]*/', $part ) ) {
+			return true;
 		}
 
 		return false;

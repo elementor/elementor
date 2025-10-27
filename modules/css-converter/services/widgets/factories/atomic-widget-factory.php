@@ -71,6 +71,16 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 
 		$elementor_widget['elements'] = $widget_data['elements'] ?? [];
 
+		// Add global classes to widget styles for atomic widgets CSS output
+		$applicable_global_classes = $this->extract_applicable_global_classes( $widget_data );
+		
+		if ( ! empty( $applicable_global_classes ) ) {
+			$elementor_widget['styles'] = array_merge(
+				$elementor_widget['styles'] ?? [],
+				$this->convert_global_classes_to_styles( $applicable_global_classes )
+			);
+		}
+
 		return $elementor_widget;
 	}
 
@@ -165,5 +175,59 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 		}
 
 		return $final_settings;
+	}
+
+	private function extract_applicable_global_classes( array $widget_data ): array {
+		$global_classes = $this->css_processing_result['global_classes'] ?? [];
+		if ( empty( $global_classes ) ) {
+			return [];
+		}
+
+		$widget_classes = $widget_data['attributes']['class'] ?? '';
+		if ( empty( $widget_classes ) ) {
+			return [];
+		}
+
+		$classes_array = explode( ' ', $widget_classes );
+		$applicable_global_classes = [];
+
+		foreach ( $classes_array as $class_name ) {
+			$class_name = trim( $class_name );
+			if ( isset( $global_classes[ $class_name ] ) ) {
+				$applicable_global_classes[ $class_name ] = $global_classes[ $class_name ];
+			}
+		}
+
+		return $applicable_global_classes;
+	}
+
+	private function convert_global_classes_to_styles( array $global_classes ): array {
+		$styles = [];
+
+		foreach ( $global_classes as $class_name => $class_data ) {
+			$atomic_props = $class_data['atomic_props'] ?? [];
+			
+			if ( empty( $atomic_props ) ) {
+				continue;
+			}
+
+			// Convert to the format expected by atomic widgets system
+			$styles[ $class_name ] = [
+				'id' => $class_name,
+				'label' => $class_name,
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => $atomic_props,
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => 'normal',
+						],
+					],
+				],
+			];
+		}
+
+		return $styles;
 	}
 }

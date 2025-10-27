@@ -11,12 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Css_Processor_Registry {
 
 	private $processors = [];
-	private $initialized = false;
-
-	public function __construct() {
-		$this->initialize_default_processors();
-		$this->initialized = true;
-	}
 
 	public static function make(): self {
 		return new self();
@@ -46,9 +40,9 @@ class Css_Processor_Registry {
 
 	public function execute_pipeline( Css_Processing_Context $context ): Css_Processing_Context {
 		$sorted_processors = $this->get_sorted_processors();
-		
+
 		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Executing pipeline with ' . count( $sorted_processors ) . ' processors' . "\n", FILE_APPEND );
-		
+
 		foreach ( $sorted_processors as $processor ) {
 			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Available processor: ' . $processor->get_processor_name() . "\n", FILE_APPEND );
 		}
@@ -56,8 +50,7 @@ class Css_Processor_Registry {
 		foreach ( $sorted_processors as $processor ) {
 			$processor_name = $processor->get_processor_name();
 			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Processing ' . $processor_name . "\n", FILE_APPEND );
-			
-			
+
 			if ( ! $processor->supports_context( $context ) ) {
 				file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Skipping ' . $processor_name . ' - does not support context' . "\n", FILE_APPEND );
 				continue;
@@ -106,40 +99,5 @@ class Css_Processor_Registry {
 
 	public function get_registered_processors(): array {
 		return array_keys( $this->processors );
-	}
-
-	private function initialize_default_processors(): void {
-		// Register all processors in priority order (lower numbers run first)
-		
-		// CSS Parsing (Priority 20)
-		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Css_Parsing_Processor() );
-		
-		// Rule Classification (Priority 30)
-		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Rule_Classification_Processor() );
-		
-		// Nested Selector Flattening (Priority 40)
-		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Nested_Selector_Flattening_Processor() );
-		
-		// Compound Class Selector (Priority 50)
-		$property_converter = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service();
-		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Compound_Class_Selector_Processor( $property_converter ) );
-		
-		// Style Collection (Priority 60)
-		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Style_Collection_Processor() );
-		
-		// CSS Variables (Priority 70)
-		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Css_Variables_Processor() );
-		
-		// Global Classes (Priority 80)
-		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Global_Classes_Processor() );
-		
-		// HTML Class Modifier (Priority 90)
-		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Html_Class_Modifier_Processor() );
-		
-		// ID Selector (Priority 95)
-		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Id_Selector_Processor() );
-		
-		// Style Resolution (Priority 100) - Final step
-		$this->register( new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Style_Resolution_Processor() );
 	}
 }

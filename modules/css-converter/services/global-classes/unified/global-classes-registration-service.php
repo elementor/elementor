@@ -96,6 +96,9 @@ class Global_Classes_Registration_Service {
 		$debug_info['after_save_first_10'] = array_slice( $verify_labels, 0, 10 );
 		$debug_info['new_classes_added'] = $new_class_labels;
 		
+		// Verify classes are actually in the repository
+		$this->verify_classes_in_repository( $new_class_labels );
+		
 		return [
 			'registered' => $registered,
 			'skipped' => $skipped,
@@ -191,9 +194,9 @@ class Global_Classes_Registration_Service {
 		$existing_atomic_props = $this->extract_atomic_props( $existing_class );
 		$new_atomic_props = $class_data['atomic_props'];
 
-
 		// Compare atomic properties
-		if ( $this->are_styles_identical( $existing_atomic_props, $new_atomic_props ) ) {
+		$are_identical = $this->are_styles_identical( $existing_atomic_props, $new_atomic_props );
+		if ( $are_identical ) {
 			// Styles are identical - reuse existing class
 			return null;
 		}
@@ -360,6 +363,30 @@ class Global_Classes_Registration_Service {
 				'available' => false,
 				'error' => 'Failed to get stats: ' . $e->getMessage(),
 			];
+		}
+	}
+
+	private function verify_classes_in_repository( array $class_names ): void {
+		try {
+			$repository = $this->get_global_classes_repository();
+			if ( ! $repository ) {
+				return;
+			}
+
+			$existing = $repository->all();
+			$items = $existing->get_items()->all();
+			
+			foreach ( $class_names as $class_name ) {
+				$found = false;
+				foreach ( $items as $item_id => $item ) {
+					if ( isset( $item['label'] ) && $item['label'] === $class_name ) {
+						$found = true;
+						break;
+					}
+				}
+			}
+		} catch ( \Exception $e ) {
+			// Silent error handling
 		}
 	}
 }
