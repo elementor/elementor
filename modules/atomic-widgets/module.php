@@ -101,9 +101,6 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Query_Tr
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Interactions_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Interactions_Transformer;
-use Elementor\Modules\AtomicWidgets\PropTypes\Interaction_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -163,7 +160,6 @@ class Module extends BaseModule {
 			add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
 			add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
-			add_action( 'elementor/atomic-widgets/interactions/transformers/register', fn ( $transformers ) => $this->register_interactions_transformers( $transformers ) );
 		}
 	}
 
@@ -324,12 +320,6 @@ class Module extends BaseModule {
 		);
 	}
 
-	public function register_interactions_transformers( Transformers_Registry $transformers ) {
-		$transformers->register_fallback( new Plain_Transformer() );
-
-		$transformers->register( Interactions_Prop_Type::get_key(), new Interactions_Transformer() );
-	}
-
 	public function register_import_transformers( Transformers_Registry $transformers ) {
 		$transformers->register_fallback( new Import_Export_Plain_Transformer() );
 
@@ -373,19 +363,8 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_interactions(): void {
-		// Load Motion.js library
 		wp_enqueue_script('motion-js', plugins_url('assets/js/motion.js', __FILE__), [], '11.13.5', true);
 
-		// Load the simple motion effects handler
-		// wp_enqueue_script(
-		// 	'simple-motion-effects-handler', 
-		// 	plugins_url('assets/js/motion-effects-handler.js', __FILE__), 
-		// 	[], // No dependencies for now
-		// 	'1.0.0', 
-		// 	true
-		// );
-
-		// Keep existing for compatibility
 		wp_enqueue_script('interactions', plugins_url('assets/js/interactions.js', __FILE__), ['motion-js'], '1.0.0', true);
 	   }
 

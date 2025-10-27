@@ -11,7 +11,7 @@ import { useStateByElement } from '../hooks/use-state-by-element';
 import { InteractionsTab } from './interactions-tab';
 import { SettingsTab } from './settings-tab';
 import { stickyHeaderStyles, StyleTab } from './style-tab';
-import { InteractionsTab } from './interactions-tab';
+
 
 type TabValue = 'settings' | 'style' | 'interactions';
 
