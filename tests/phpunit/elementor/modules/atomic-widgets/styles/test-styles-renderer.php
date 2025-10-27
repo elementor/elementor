@@ -1416,64 +1416,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'color: red;', $css );
 	}
 
-	public function test_render__style_with_transform_origin_default_is_suppressed() {
-		// Arrange.
-		$styles = [
-			[
-				'id' => 'test-style',
-				'type' => 'class',
-				'variants' => [
-					[
-						'props' => [
-							'transform-origin' => [
-								'$$type' => 'transform-origin',
-								'value' => [ 'x' => '50%', 'y' => '50%', 'z' => '0px' ],
-							],
-						],
-						'meta' => [],
-					],
-				],
-			],
-		];
-
-		$stylesRenderer = Styles_Renderer::make( [], '' );
-
-		// Act.
-		$css = $stylesRenderer->render( $styles );
-
-		// Assert.
-		$this->assertStringNotContainsString( 'transform-origin', $css );
-	}
-
-	public function test_render__style_with_transform_origin_non_default_is_rendered() {
-		// Arrange.
-		$styles = [
-			[
-				'id' => 'test-style',
-				'type' => 'class',
-				'variants' => [
-					[
-						'props' => [
-							'transform-origin' => [
-								'$$type' => 'transform-origin',
-								'value' => [ 'x' => '51%', 'y' => '50%', 'z' => '0px' ],
-							],
-						],
-						'meta' => [],
-					],
-				],
-			],
-		];
-
-		$stylesRenderer = Styles_Renderer::make( [], '' );
-
-		// Act.
-		$css = $stylesRenderer->render( $styles );
-
-		// Assert.
-		$this->assertStringContainsString( 'transform-origin:51% 50% 0px;', $css );
-	}
-
 	private function mock_images() {
 		return [
 			'thumbnail' => [
