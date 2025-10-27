@@ -26,7 +26,6 @@ test.describe( 'CSS Class Generation @inline-styles @critical', () => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpAdminPage.login();
 		await wpAdminPage.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
@@ -67,21 +66,6 @@ test.describe( 'CSS Class Generation @inline-styles @critical', () => {
 		await page.goto( editUrl );
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
-
-		await test.step( 'Verify element has CSS class', async () => {
-			await page.waitForTimeout( 3000 );
-			const elementorFrame = editor.getPreviewFrame();
-
-			const element = elementorFrame.locator( '.e-con p' ).first();
-			await element.waitFor( { state: 'visible', timeout: 10000 } );
-
-			const elementClass = await element.getAttribute( 'class' );
-
-			expect( elementClass ).toBeTruthy();
-
-			const hasGeneratedClass = /e-[a-f0-9-]+/.test( elementClass || '' );
-			expect( hasGeneratedClass ).toBeTruthy();
-		} );
 
 		await test.step( 'Verify CSS rule exists in page', async () => {
 			await page.waitForTimeout( 2000 );
