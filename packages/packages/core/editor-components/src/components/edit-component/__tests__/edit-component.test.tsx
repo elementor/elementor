@@ -46,7 +46,7 @@ const MOCK_DOCUMENT_ID = 1;
 const MOCK_COMPONENT_ID = 123;
 const MOCK_NESTED_COMPONENT_ID = 456;
 
-const MOCK_DOCUMENTS = {
+const MOCK_POST_DATA = {
 	[ MOCK_DOCUMENT_ID ]: mockDocument( MOCK_DOCUMENT_ID ),
 	[ MOCK_COMPONENT_ID ]: mockDocument( MOCK_COMPONENT_ID, true ),
 	[ MOCK_NESTED_COMPONENT_ID ]: mockDocument( MOCK_NESTED_COMPONENT_ID, true ),
@@ -73,7 +73,7 @@ describe( '<EditComponent />', () => {
 		} );
 
 		jest.mocked( mockNavigateToDocument ).mockImplementation( ( id: number ) => {
-			editedDocument = MOCK_DOCUMENTS[ id as keyof typeof MOCK_DOCUMENTS ];
+			editedDocument = MOCK_POST_DATA[ id as keyof typeof MOCK_POST_DATA ];
 
 			updateCurrentDocument();
 		} );
@@ -107,19 +107,19 @@ describe( '<EditComponent />', () => {
 		jest.mocked( selectLoadIsPending ).mockReturnValue( false );
 	} );
 
-	it( 'should register data hook on mount', () => {
+	it( 'should show the modal when a component is edited', () => {
 		// Arrange.
 		renderWithStore( <EditComponent />, store );
 
 		// Act.
-		editedDocument = MOCK_DOCUMENTS[ MOCK_DOCUMENT_ID ];
+		editedDocument = MOCK_POST_DATA[ MOCK_DOCUMENT_ID ];
 		updateCurrentDocument();
 
 		// Assert.
 		expect( screen.queryByLabelText( 'mock-backdrop' ) ).not.toBeInTheDocument();
 
 		// Act.
-		editedDocument = MOCK_DOCUMENTS[ MOCK_COMPONENT_ID ];
+		editedDocument = MOCK_POST_DATA[ MOCK_COMPONENT_ID ];
 		updateCurrentDocument();
 
 		// Assert.
@@ -128,36 +128,7 @@ describe( '<EditComponent />', () => {
 
 	it( 'should close the modal when the backdrop is clicked', () => {
 		// Arrange.
-		editedDocument = MOCK_DOCUMENTS[ MOCK_DOCUMENT_ID ];
-		renderWithStore( <EditComponent />, store );
-		updateCurrentDocument();
-
-		// Assert.
-		expect( screen.queryByLabelText( 'mock-backdrop' ) ).not.toBeInTheDocument();
-
-		// Act.
-		editedDocument = MOCK_DOCUMENTS[ MOCK_COMPONENT_ID ];
-		updateCurrentDocument();
-
-		// Assert.
-		expect( screen.getByLabelText( 'mock-backdrop' ) ).toBeInTheDocument();
-
-		// Act.
-		const backdrop = screen.getByLabelText( 'mock-backdrop' );
-		fireEvent.click( backdrop );
-
-		// Assert.
-		expect( screen.queryByLabelText( 'mock-backdrop' ) ).not.toBeInTheDocument();
-		expect( mockNavigateToDocument ).toHaveBeenCalledWith( MOCK_DOCUMENT_ID, {
-			mode: 'autosave',
-			setAsInitial: false,
-			shouldScroll: false,
-		} );
-	} );
-
-	it( 'should close the modal when the backdrop is clicked, falling back to the initial doc id', () => {
-		// Arrange.
-		editedDocument = MOCK_DOCUMENTS[ MOCK_COMPONENT_ID ];
+		editedDocument = MOCK_POST_DATA[ MOCK_COMPONENT_ID ];
 		renderWithStore( <EditComponent />, store );
 		updateCurrentDocument();
 
@@ -177,9 +148,9 @@ describe( '<EditComponent />', () => {
 		} );
 	} );
 
-	it( 'should responsively go back upon backdrop clicks through components ancestry chain', async () => {
+	it( 'should responsively go back upon backdrop clicks through components ancestry chain', () => {
 		// Arrange.
-		editedDocument = MOCK_DOCUMENTS[ MOCK_DOCUMENT_ID ];
+		editedDocument = MOCK_POST_DATA[ MOCK_DOCUMENT_ID ];
 		renderWithStore( <EditComponent />, store );
 		updateCurrentDocument();
 
@@ -187,7 +158,7 @@ describe( '<EditComponent />', () => {
 		expect( screen.queryByLabelText( 'mock-backdrop' ) ).not.toBeInTheDocument();
 
 		[ MOCK_COMPONENT_ID, MOCK_NESTED_COMPONENT_ID ].forEach( ( id ) => {
-			editedDocument = MOCK_DOCUMENTS[ id as keyof typeof MOCK_DOCUMENTS ];
+			editedDocument = MOCK_POST_DATA[ id as keyof typeof MOCK_POST_DATA ];
 			updateCurrentDocument();
 
 			// Assert.
@@ -232,10 +203,15 @@ function mockDocument( id: number, isComponent: boolean = false ) {
 		} ),
 		container: {
 			view: {
-				el: {
-					dataset: isComponent ? { id } : {},
+				el: createDOMElement( {
+					tag: 'div',
+					dataset: isComponent
+						? {
+								id: id.toString(),
+						  }
+						: {},
 					children: [ createDOMElement( { tag: 'div' } ) ],
-				},
+				} ),
 			},
 		},
 	} as unknown as V1Document;
