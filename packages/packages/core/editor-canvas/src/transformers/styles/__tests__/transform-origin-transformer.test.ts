@@ -7,7 +7,7 @@ function run(val: TransformOrigin) {
             y: val.y as string,
             z: val.z as string,
         },
-        { key: 'transform-origin', signal: undefined as unknown as AbortSignal }
+        { key: 'transform-origin', signal: undefined }
     );
 }
 
