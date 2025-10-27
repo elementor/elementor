@@ -28,12 +28,6 @@ class Module extends BaseModule {
 
 		( new Component_Styles() )->register_hooks();
 		( new Components_REST_API() )->register_hooks();
-		register_post_type( Component_Document::TYPE, [
-			'label'    => Component_Document::get_title(),
-			'labels'   => Component_Document::get_labels(),
-			'public'   => true,
-			'supports' => Component_Document::get_supported_features(),
-		] );
 	}
 
 	public static function get_experimental_data() {

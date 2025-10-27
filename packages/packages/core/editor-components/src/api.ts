@@ -53,7 +53,6 @@ export const apiClient = {
 			} )
 			.then((res) => {
 				const { is_current_user_allow_to_edit, locked_by: lockedBy } = res.data.data;
-				console.log('LOG: getComponentLockStatus', {is_current_user_allow_to_edit, lockedBy});
 				return { isAllowedToSwitchDocument: is_current_user_allow_to_edit, lockedBy: lockedBy || '' };
 			} ),
 	lockComponent: async ( componentId: number ) =>
