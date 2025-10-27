@@ -235,30 +235,6 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$this->assertEmpty( get_post_meta( $document_id, '_edit_lock', true ) );
 	}
 
-	public function test_get_locked_user__returns_false_when_not_locked() {
-		// Arrange
-		$document_id = $this->test_document_ids['page'];
-
-		// Act
-		$result = $this->lock_manager->get_locked_user( $document_id );
-
-		// Assert
-		$this->assertFalse( $result, 'Should return false when document is not locked' );
-	}
-
-	public function test_get_locked_user__returns_user_when_locked() {
-		// Arrange
-		$document_id = $this->test_document_ids['page'];
-		wp_set_current_user( $this->test_user_1 );
-		$this->lock_manager->lock_document( $document_id );
-
-		// Act
-		$result = $this->lock_manager->get_locked_user( $document_id );
-
-		// Assert
-		$this->assertInstanceOf( \WP_User::class, $result, 'Should return WP_User object when locked' );
-		$this->assertEquals( $this->test_user_1, $result->ID );
-	}
 
 	public function test_extend_lock__successfully_extends_lock() {
 		// Arrange
@@ -323,9 +299,9 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$this->assertFalse( $result, 'Should reject lock attempt when document is locked by another user' );
 		
 		// Verify the lock is still owned by the first user
-		$locked_user = $this->lock_manager->get_locked_user( $document_id );
-		$this->assertInstanceOf( \WP_User::class, $locked_user, 'Document should still be locked' );
-		$this->assertEquals( $this->test_user_1, $locked_user->ID, 'Lock should still be owned by first user' );
+		$lock_data = $this->lock_manager->is_document_locked( $document_id );
+		$this->assertTrue( $lock_data['is_locked'], 'Document should still be locked' );
+		$this->assertEquals( $this->test_user_1, $lock_data['lock_user'], 'Lock should still be owned by first user' );
 	}
 
 	public function test_lock_metadata_consistency() {

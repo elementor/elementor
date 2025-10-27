@@ -224,20 +224,28 @@ class Components_REST_API {
 
 	private function get_lock_status( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
-		$locked_user = $this->get_lock_component_manager()->get_locked_user( $component_id );
+		$lock_manager = $this->get_lock_component_manager()->get_lock_manager_instance();
+		$lock_data = $lock_manager->is_document_locked( $component_id );
 		$is_current_user_allow_to_edit = $this->is_current_user_allow_to_edit( $component_id );
+
+		$locked_by = '';
+		if ( $lock_data['is_locked'] ) {
+			$locked_user = get_user_by( 'id', $lock_data['lock_user'] );
+			$locked_by = $locked_user ? $locked_user->display_name : '';
+		}
 
 		return Response_Builder::make( [
 			'is_current_user_allow_to_edit' => $is_current_user_allow_to_edit,
-			'locked_by' => $locked_user ? $locked_user->display_name : '',
+			'locked_by' => $locked_by,
 		] )->build();
 	}
 
 	private function is_current_user_allow_to_edit( $component_id ) {
 		$current_user_id = get_current_user_id();
-		$locked_user = $this->get_lock_component_manager()->get_locked_user( $component_id );
+		$lock_manager = $this->get_lock_component_manager()->get_lock_manager_instance();
+		$lock_data = $lock_manager->is_document_locked( $component_id );
 
-		return ! $locked_user || $locked_user->ID === $current_user_id;
+		return ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] === (int) $current_user_id;
 	}
 
 	private function route_wrapper( callable $cb ) {

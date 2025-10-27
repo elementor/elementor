@@ -54,7 +54,6 @@ class Document_Lock_Manager {
 				return false;
 			}
 
-			// Ensure WordPress post lock functions are available
 			if ( ! function_exists( 'wp_set_post_lock' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/post.php';
 			}
@@ -126,21 +125,6 @@ class Document_Lock_Manager {
 	}
 
 
-	/**
-	 * Get the user who has locked a document.
-	 *
-	 * @param int $document_id The document ID to check
-	 * @return \WP_User|false User object if locked, false if not locked
-	 */
-	public function get_locked_user( $document_id ) {
-		$lock_data = $this->is_document_locked( $document_id );
-
-		if ( ! $lock_data['is_locked'] ) {
-			return false;
-		}
-
-		return get_user_by( 'id', $lock_data['lock_user'] );
-	}
 
 
 	/**

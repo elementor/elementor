@@ -831,9 +831,9 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 		// Verify component is actually locked
 		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_lock_manager_instance();
-		$locked_user = $lock_manager->get_locked_user( $component_id );
-		$this->assertNotNull( $locked_user, 'Component should be locked by current user' );
-		$this->assertEquals( get_current_user_id(), $locked_user->ID, 'Component should be locked by current user' );
+		$lock_data = $lock_manager->is_document_locked( $component_id );
+		$this->assertTrue( $lock_data['is_locked'], 'Component should be locked by current user' );
+		$this->assertEquals( get_current_user_id(), $lock_data['lock_user'], 'Component should be locked by current user' );
 	}
 
 
@@ -860,8 +860,9 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertTrue( $data['unlocked'], 'Component should be unlocked' );
 
 		// Verify component is actually unlocked
-		$locked_user = $lock_manager->get_locked_user( $component_id );
-		$this->assertFalse( $locked_user, 'Component should be unlocked' );
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_lock_manager_instance();
+		$lock_data = $lock_manager->is_document_locked( $component_id );
+		$this->assertFalse( $lock_data['is_locked'], 'Component should be unlocked' );
 	}
 
 	public function test_post_unlock_component__fails_when_not_locked() {

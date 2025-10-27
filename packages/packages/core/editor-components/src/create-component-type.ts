@@ -82,9 +82,7 @@ function createComponentView( options: CreateTemplatedElementTypeOptions & { sho
 		async switchDocument() {
 			const { isAllowedToSwitchDocument, lockedBy } = await apiClient.getComponentLockStatus(this.getComponentId()?.value as number);
 
-			console.log({isAllowedToSwitchDocument, lockedBy});
-			
-			if (!isAllowedToSwitchDocument) {
+			if ( !isAllowedToSwitchDocument ) {
 				options.showLockedByModal?.(lockedBy || '');
 			} else {
 				runCommand('editor/documents/switch', {

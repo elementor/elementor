@@ -42,22 +42,18 @@ class Lock_Component_Manager {
 	}
 
 	public function unlock_component( $post_id ) {
-		$locked_user = $this->get_locked_user( $post_id );
+		$lock_manager = $this->get_lock_manager();
+		$lock_data = $lock_manager->is_document_locked( $post_id );
 		$current_user_id = get_current_user_id();
 
 		// Only allow unlocking if the current user owns the lock
-		if ( ! $locked_user || (int) $locked_user->ID !== (int) $current_user_id ) {
+		if ( ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] !== (int) $current_user_id ) {
 			return false;
 		}
 
-		$lock_manager = $this->get_lock_manager();
 		return $lock_manager->unlock_document( $post_id );
 	}
 
-	public function get_locked_user( $post_id ) {
-		$lock_manager = $this->get_lock_manager();
-		return $lock_manager->get_locked_user( $post_id );
-	}
 
 	private function is_component_post( $post_id ) {
 		return get_post_type( $post_id ) === Component_Document::TYPE;
@@ -74,10 +70,11 @@ class Lock_Component_Manager {
 			return $response;
 		}
 
-		$locked_user = $this->get_locked_user( $post_id );
+		$lock_manager = $this->get_lock_manager();
+		$lock_data = $lock_manager->is_document_locked( $post_id );
 
-		if ( $locked_user && get_current_user_id() === $locked_user->ID ) {
-			$this->get_lock_manager()->extend_lock( $post_id );
+		if ( $lock_data['is_locked'] && get_current_user_id() === (int) $lock_data['lock_user'] ) {
+			$lock_manager->extend_lock( $post_id );
 		}
 
 		return $response;
