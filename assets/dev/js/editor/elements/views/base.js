@@ -572,9 +572,15 @@ BaseElementView = BaseContainer.extend( {
 			self.$el.removeClass( control.prefix_class + previousClassValue );
 		} );
 
+		// Parse dynamic class controls so dynamic tags are evaluated when possible
+		// parseDynamicSettings will return parsed values when cache is available or
+		// request the server and trigger onServerRequestEnd to re-render when ready.
+		let parsedSettings = settings.parseDynamicSettings( settings.attributes, this.getDynamicParsingSettings(), classControls );
+
 		// Add new classes
 		_.each( classControls, ( control ) => {
-			const value = settings.attributes[ control.name ];
+			// Prefer parsed value (dynamic resolved) over raw attribute
+			const value = parsedSettings[ control.name ] ?? settings.attributes[ control.name ];
 			let classValue = value;
 
 			if ( control.classes_dictionary ) {
@@ -583,7 +589,7 @@ BaseElementView = BaseContainer.extend( {
 				}
 			}
 
-			const isVisible = elementor.helpers.isActiveControl( control, settings.attributes, settings.controls );
+			const isVisible = elementor.helpers.isActiveControl( control, parsedSettings, settings.controls );
 
 			if ( isVisible && ( classValue || 0 === classValue ) ) {
 				self.$el.addClass( control.prefix_class + classValue );
