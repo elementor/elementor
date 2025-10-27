@@ -861,7 +861,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 		// Verify component is actually unlocked
 		$locked_user = $lock_manager->get_locked_user( $component_id );
-		$this->assertNull( $locked_user, 'Component should be unlocked' );
+		$this->assertFalse( $locked_user, 'Component should be unlocked' );
 	}
 
 	public function test_post_unlock_component__succeeds_even_when_not_locked() {
