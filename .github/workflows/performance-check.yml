@@ -66,6 +66,7 @@ jobs:
             e_classes:true
           templates: |-
             templates
+          path: './tests/lighthouse/compare-templates'
 
       - name: Warm up the cache
         run: |
