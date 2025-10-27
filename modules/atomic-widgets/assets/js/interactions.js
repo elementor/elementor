@@ -1,9 +1,6 @@
-console.log('🚀 Simple interactions handler loaded');
 
 function initInteractions() {
-    // Wait for Motion.js animate function
     if (typeof animate === 'undefined' && !window.Motion?.animate) {
-        console.log('⏳ Waiting for animate function...');
         setTimeout(initInteractions, 100);
         return;
     }
@@ -11,66 +8,40 @@ function initInteractions() {
     const animateFunc = typeof animate !== 'undefined' ? animate : window.Motion?.animate;
     const inViewFunc = typeof inView !== 'undefined' ? inView : window.Motion?.inView;
     
-    if (!inViewFunc) {
-        console.error('❌ No inview function found');
+    if (!inViewFunc || !animateFunc) {
         return;
     }
     
-    if (!animateFunc) {
-        console.error('❌ No animate function found');
-        return;
-    }
-
-    console.log('✅ Animate function ready');
-
     const elements = document.querySelectorAll('[data-interactions]');
 
-    elements.forEach((element, index) => {
-        console.log(`🎬 Setting up element ${index} for scroll animation`);
-        
-        // Parse the data-interactions attribute
+    elements.forEach((element) => {
+
         const interactionsData = element.getAttribute('data-interactions');
         let interactions = [];
         
         try {
             interactions = JSON.parse(interactionsData);
-            console.log(`📋 Parsed interactions for element ${index}:`, interactions);
         } catch (error) {
-            console.error(`❌ Failed to parse interactions data for element ${index}:`, error);
             return;
         }
 
-        // Process each interaction
-        interactions.forEach((interaction, interactionIndex) => {
-            const animationType = interaction.animation;
-            console.log(`🎭 Processing animation type: ${animationType}`);
-
-            // Get animation keyframes based on type
-            const keyframes = getAnimationKeyframes(animationType);
-            
-            if (!keyframes) {
-                console.warn(`⚠️ Unknown animation type: ${animationType}`);
-                return;
-            }
-
+        interactions.forEach(() => {
             try {
                 inViewFunc(element, () => {
-                    console.log(`🎬 Animating ${animationType} for element ${index}, interaction ${interactionIndex}`);
                     
-                    // Apply the animation with hardcoded options
-                    animateFunc(element, keyframes, { duration: 1, easing: 'ease-in-out' });
+                    animateFunc(element, { 
+                        opacity: [0, 1], 
+                        x: [-100, 0] 
+                    }, { duration: 1, easing: 'ease-in-out' });
                     
-                    // Return cleanup function for when element exits viewport
-                    return () => {
-                        console.log(`🎬 Element ${index} exiting viewport`);
-                        // You can add exit animations here if needed
-                    };
+                    
+                    return () => {}
+                
                 }, { 
-                    root: null, // Relative to viewport
-                    amount: 0.1 // Trigger when 10% visible
+                    root: null, 
+                    amount: 0.1 
                 });
             } catch (error) {
-                console.error(`❌ Inview failed for element ${index}, interaction ${interactionIndex}:`, error);
             }
         });
     });
