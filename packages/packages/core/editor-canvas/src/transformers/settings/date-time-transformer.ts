@@ -5,10 +5,8 @@ export const dateTimeTransformer = createTransformer( ( values: { date?: string;
 		.map( ( value ) => {
 			const date = ( value.date || '' ).trim();
 			const time = ( value.time || '' ).trim();
-			if ( ! date && ! time ) {
-				return '';
-			}
-			return `${ date } ${ time }`.trim();
+
+			return ! date && ! time ? '' : `${ date } ${ time }`.trim();
 		} )
 		.join( ' ' );
 } );

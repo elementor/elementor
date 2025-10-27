@@ -3,11 +3,14 @@ import type { Dayjs } from 'dayjs';
 import * as dayjs from 'dayjs';
 import { isTransformable, type Props, stringPropTypeUtil } from '@elementor/editor-props';
 import { DateTimePropTypeUtil } from '@elementor/editor-props';
-import { DatePicker, LocalizationProvider, TimePicker } from '@elementor/ui';
+import { Box, DatePicker, LocalizationProvider, TimePicker } from '@elementor/ui';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
+
+const DATE_FORMAT = 'YYYY-MM-DD';
+const TIME_FORMAT = 'HH:mm';
 
 export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabled?: boolean } ) => {
 	const { value, setValue, ...propContext } = useBoundProp( DateTimePropTypeUtil );
@@ -17,15 +20,14 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 		const fieldValue = newValue[ field as 'date' | 'time' ];
 
 		if ( isTransformable( fieldValue ) ) {
-			setValue( { ...value, [ field ]: fieldValue } );
-			return;
+			return setValue( { ...value, [ field ]: fieldValue } );
 		}
 
 		let formattedValue = '';
 
 		if ( fieldValue ) {
 			const dayjsValue = fieldValue as Dayjs;
-			formattedValue = field === 'date' ? dayjsValue.format( 'YYYY-MM-DD' ) : dayjsValue.format( 'HH:mm' );
+			formattedValue = field === 'date' ? dayjsValue.format( DATE_FORMAT ) : dayjsValue.format( TIME_FORMAT );
 		}
 
 		setValue( {
@@ -68,7 +70,7 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
 			<ControlActions>
 				<LocalizationProvider>
-					<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
+					<Box display="flex" gap={1} alignItems="center">
 						<PropKeyProvider bind="date">
 							<DatePicker
 								value={ parseDateValue( stringPropTypeUtil.extract( value?.date ) ) }
@@ -98,7 +100,7 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 								} }
 							/>
 						</PropKeyProvider>
-					</div>
+					</Box>
 				</LocalizationProvider>
 			</ControlActions>
 		</PropProvider>
