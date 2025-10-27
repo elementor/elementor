@@ -81,33 +81,23 @@ describe( '<ComponentModal />', () => {
 			} );
 
 			const clipPath = backdrop.style.clipPath;
-			expect( clipPath ).toContain( `L ${ MOCK_VIEWPORT_WIDTH } 0` );
-			expect( clipPath ).toContain( `L ${ MOCK_VIEWPORT_WIDTH } ${ MOCK_VIEWPORT_HEIGHT }` );
-			expect( clipPath ).toContain( `L 0 ${ MOCK_VIEWPORT_HEIGHT }` );
-			expect( clipPath ).toContain( `M ${ MOCK_ELEMENT_X + BORDER_RADIUS } ${ MOCK_ELEMENT_Y }` );
-			expect( clipPath ).toContain(
-				`L ${ MOCK_ELEMENT_X + MOCK_ELEMENT_WIDTH - BORDER_RADIUS } ${ MOCK_ELEMENT_Y }`
-			);
-			expect( clipPath ).toContain(
-				`A ${ BORDER_RADIUS } ${ BORDER_RADIUS } 0 0 1 ${ MOCK_ELEMENT_X + MOCK_ELEMENT_WIDTH } ${
-					MOCK_ELEMENT_Y + BORDER_RADIUS
-				}`
-			);
-			expect( clipPath ).toContain(
-				`L ${ MOCK_ELEMENT_X + MOCK_ELEMENT_WIDTH } ${ MOCK_ELEMENT_Y + MOCK_ELEMENT_HEIGHT - BORDER_RADIUS }`
-			);
-			expect( clipPath ).toContain(
-				`A ${ BORDER_RADIUS } ${ BORDER_RADIUS } 0 0 1 ${
-					MOCK_ELEMENT_X + MOCK_ELEMENT_WIDTH - BORDER_RADIUS
-				} ${ MOCK_ELEMENT_Y + MOCK_ELEMENT_HEIGHT }`
-			);
-			expect( clipPath ).toContain(
-				`L ${ MOCK_ELEMENT_X + BORDER_RADIUS } ${ MOCK_ELEMENT_Y + MOCK_ELEMENT_HEIGHT }`
-			);
-			expect( clipPath ).toContain(
-				`A ${ BORDER_RADIUS } ${ BORDER_RADIUS } 0 0 1 ${ MOCK_ELEMENT_X } ${
-					MOCK_ELEMENT_Y + MOCK_ELEMENT_HEIGHT - BORDER_RADIUS
-				}`
+			expect( clipPath ).toEqual(
+				`path(evenodd, 'M 0 0 
+					L ${ MOCK_VIEWPORT_WIDTH } 0
+					L ${ MOCK_VIEWPORT_WIDTH } ${ MOCK_VIEWPORT_HEIGHT }
+					L 0 ${ MOCK_VIEWPORT_HEIGHT }
+					Z
+					M ${ MOCK_ELEMENT_X + BORDER_RADIUS } ${ MOCK_ELEMENT_Y }
+					L ${ MOCK_ELEMENT_X + MOCK_ELEMENT_WIDTH - BORDER_RADIUS } ${ MOCK_ELEMENT_Y }
+					A ${ BORDER_RADIUS } ${ BORDER_RADIUS } 0 0 1 ${ MOCK_ELEMENT_X + MOCK_ELEMENT_WIDTH } ${ MOCK_ELEMENT_Y + BORDER_RADIUS }
+					L ${ MOCK_ELEMENT_X + MOCK_ELEMENT_WIDTH } ${ MOCK_ELEMENT_Y + MOCK_ELEMENT_HEIGHT - BORDER_RADIUS }
+					A ${ BORDER_RADIUS } ${ BORDER_RADIUS } 0 0 1 ${ MOCK_ELEMENT_X + MOCK_ELEMENT_WIDTH - BORDER_RADIUS } ${ MOCK_ELEMENT_Y + MOCK_ELEMENT_HEIGHT }
+					L ${ MOCK_ELEMENT_X + BORDER_RADIUS } ${ MOCK_ELEMENT_Y + MOCK_ELEMENT_HEIGHT }
+					A ${ BORDER_RADIUS } ${ BORDER_RADIUS } 0 0 1 ${ MOCK_ELEMENT_X } ${ MOCK_ELEMENT_Y + MOCK_ELEMENT_HEIGHT - BORDER_RADIUS }
+					L ${ MOCK_ELEMENT_X } ${ MOCK_ELEMENT_Y + BORDER_RADIUS }
+					A ${ BORDER_RADIUS } ${ BORDER_RADIUS } 0 0 1 ${ MOCK_ELEMENT_X + BORDER_RADIUS } ${ MOCK_ELEMENT_Y }
+					Z'
+				)`.replace( /\s{2,}/g, ' ' )
 			);
 		} );
 
