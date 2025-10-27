@@ -78,8 +78,8 @@ class Usage_Counter {
 		return $style_sections;
 	}
 
-	private function extract_section_by_style_control( string $section_name, array $style_props ): array{
-		return array_map(function ($prop_type) use ($section_name) {
+	private function extract_section_by_style_control( string $section_name, array $style_props ): array {
+		return array_map( function ( $prop_type ) use ( $section_name ) {
 			return [
 				'section' => $section_name,
 				'prop_type' => $prop_type,
