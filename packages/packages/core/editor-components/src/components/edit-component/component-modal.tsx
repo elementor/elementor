@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { type CSSProperties, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { getCanvasIframeDocument } from '@elementor/editor-canvas';
-import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 
 import { useElementRect } from '../../hooks/use-element-rect';
+import { __ } from '@wordpress/i18n';
+import { usePortal } from '../../hooks/use-portal';
 
 type ModalProps = {
 	element: HTMLElement;
@@ -31,10 +31,10 @@ export function ComponentModal( { element, onClose }: ModalProps ) {
 		return null;
 	}
 
-	return createPortal( <Backdrop iframe={ portal } element={ element } onClick={ onClose } />, portal.body );
+	return createPortal( <Backdrop iframe={ portal } element={ element } onClose={ onClose } />, portal.body );
 }
 
-function Backdrop( { iframe, element, onClick }: { iframe: HTMLDocument; element: HTMLElement; onClick: () => void } ) {
+function Backdrop( { iframe, element, onClose }: { iframe: HTMLDocument; element: HTMLElement; onClose: () => void } ) {
 	const rect = useElementRect( element );
 	const backdropStyle = {
 		position: 'fixed',
@@ -44,32 +44,28 @@ function Backdrop( { iframe, element, onClick }: { iframe: HTMLDocument; element
 		height: '100vh',
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 		zIndex: 999,
+		pointerEvents: 'painted',
 		cursor: 'pointer',
 		clipPath: getRoundedRectPath( rect, iframe.defaultView as Window, 15 ),
-		pointerEvents: 'painted',
 	} as CSSProperties;
 
 	const handleKeyDown = ( event: React.KeyboardEvent ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();
-			onClick();
+			onClose();
 		}
 	};
 
 	return (
 		<div
 			style={ backdropStyle }
-			onClick={ onClick }
+			onClick={ onClose }
 			onKeyDown={ handleKeyDown }
 			role="button"
 			tabIndex={ 0 }
-			aria-label="Close edit component modal"
+			aria-label={ __('Exit component editing mode', 'elementor') }
 		/>
 	);
-}
-
-function usePortal() {
-	return useListenTo( commandEndEvent( 'editor/documents/attach-preview' ), () => getCanvasIframeDocument() );
 }
 
 function getRoundedRectPath( rect: DOMRect, viewport: Window, borderRadius: number ) {
@@ -95,5 +91,5 @@ function getRoundedRectPath( rect: DOMRect, viewport: Window, borderRadius: numb
     	Z'
 	)`;
 
-	return path.replace( /\s{2,}/g, '' );
+	return path.replace( /\s{2,}/g, ' ' );
 }

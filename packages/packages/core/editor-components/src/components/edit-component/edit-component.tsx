@@ -23,7 +23,7 @@ export function EditComponent() {
 
 	const widget = currentDocument?.container as V1Element;
 	const elementDom = ( widget?.view?.el?.children?.[ 0 ] ?? null ) as HTMLElement | null;
-
+	
 	if ( ! isComponent || ! elementDom ) {
 		return null;
 	}
@@ -35,9 +35,9 @@ function useHandleDocumentSwitches(
 	setDocument: Dispatch< SetStateAction< V1Document | null > >,
 	path: MutableRefObject< [ number, string | undefined ][] >
 ) {
-	const documentsManager = getV1DocumentsManager();
-
 	useOnMount( () => {
+		const documentsManager = getV1DocumentsManager();
+
 		registerDataHook( 'after', 'editor/documents/attach-preview', () => {
 			const nextDocument = documentsManager.getCurrent();
 
