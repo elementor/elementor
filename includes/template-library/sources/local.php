@@ -940,7 +940,7 @@ class Source_Local extends Source_Base {
 
 			foreach ( $extracted_files['files'] as $file_path ) {
 				// Skip macOS metadata files and folders
-				if (strpos($file_path, '__MACOSX') !== false || basename($file_path)[0] === '.') {
+				if ( strpos( $file_path, '__MACOSX' ) !== false || basename( $file_path )[0] === '.' ) {
 					continue;
 				}
 
@@ -1476,7 +1476,7 @@ class Source_Local extends Source_Base {
 	private function import_single_template( $file_path ) {
 		$data = $this->prepare_import_template_data( $file_path );
 
-		if (  is_wp_error( $data ) ) {
+		if ( is_wp_error( $data ) ) {
 			return $data;
 		}
 
