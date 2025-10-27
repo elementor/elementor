@@ -91,11 +91,9 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 				continue;
 			}
 
-			error_log( 'NESTED_ELEMENT_PROCESSOR: Found element selector: ' . $selector );
 			++$processed_count;
 
 			$target_selector = $this->extract_target_selector( $selector );
-			error_log( 'NESTED_ELEMENT_PROCESSOR: Target selector: ' . $target_selector );
 
 			if ( empty( $target_selector ) ) {
 				$remaining_rules[] = $rule;
@@ -103,25 +101,18 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 			}
 
 			$matched_elements = $this->find_matching_widgets( $target_selector, $widgets );
-			error_log( 'NESTED_ELEMENT_PROCESSOR: Matched elements (by selector): ' . count( $matched_elements ) );
 
 			if ( empty( $matched_elements ) && ! $this->starts_with_class_or_id( $target_selector ) ) {
 				$element_type = $target_selector;
 				$matched_elements = $this->find_widgets_by_element_type( $element_type, $widgets );
-				error_log( 'NESTED_ELEMENT_PROCESSOR: Matched elements (by type): ' . count( $matched_elements ) );
 			}
 
 			if ( empty( $matched_elements ) ) {
-				error_log( 'NESTED_ELEMENT_PROCESSOR: No matched elements, skipping' );
 				$remaining_rules[] = $rule;
 				continue;
 			}
 
 			$converted_properties = $this->convert_rule_properties_to_atomic( $properties );
-			error_log( 'NESTED_ELEMENT_PROCESSOR: Converted properties: ' . json_encode( $converted_properties ) );
-
-			$debug_before = $unified_style_manager->get_debug_info();
-			error_log( 'NESTED_ELEMENT_PROCESSOR: Style manager has ' . count( $debug_before['collected_styles'] ?? [] ) . ' styles BEFORE collect_reset_styles' );
 
 			$unified_style_manager->collect_reset_styles(
 				$target_selector,
@@ -130,9 +121,6 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 				true
 			);
 
-			$debug_after = $unified_style_manager->get_debug_info();
-			error_log( 'NESTED_ELEMENT_PROCESSOR: Style manager has ' . count( $debug_after['collected_styles'] ?? [] ) . ' styles AFTER collect_reset_styles' );
-			error_log( 'NESTED_ELEMENT_PROCESSOR: Applied styles to ' . count( $matched_elements ) . ' widgets' );
 			++$applied_count;
 		}
 
@@ -262,7 +250,6 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 			$original_tag = $widget['original_tag'] ?? '';
 
 			if ( $original_tag === $element_type ) {
-				error_log( 'NESTED_ELEMENT_PROCESSOR: MATCH FOUND! Widget element_id: ' . ( $widget['element_id'] ?? 'N/A' ) . ', original_tag: ' . $original_tag );
 				$matching_widget_ids[] = $widget['element_id'] ?? $widget['id'] ?? null;
 			}
 
@@ -278,8 +265,6 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 	private function convert_rule_properties_to_atomic( array $properties ): array {
 		$converted_properties = [];
 
-		error_log( 'NESTED_ELEMENT_PROCESSOR: convert_rule_properties_to_atomic input: ' . json_encode( $properties ) );
-
 		foreach ( $properties as $property_data ) {
 			$property = $property_data['property'] ?? '';
 			$value = $property_data['value'] ?? '';
@@ -291,8 +276,6 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 
 			$converted = $this->property_converter->convert_property_to_v4_atomic( $property, $value );
 
-			error_log( 'NESTED_ELEMENT_PROCESSOR: Converting ' . $property . ': ' . $value . ' -> ' . json_encode( $converted ) );
-
 			$converted_properties[] = [
 				'property' => $property,
 				'value' => $value,
@@ -301,9 +284,6 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 			];
 		}
 
-		error_log( 'NESTED_ELEMENT_PROCESSOR: convert_rule_properties_to_atomic output count: ' . count( $converted_properties ) );
-
 		return $converted_properties;
 	}
 }
-

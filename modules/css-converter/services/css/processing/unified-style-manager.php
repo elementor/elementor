@@ -183,13 +183,6 @@ class Unified_Style_Manager {
 		array $matched_widgets = [],
 		bool $can_apply_directly = true
 	) {
-		error_log( 'STYLE_MANAGER: collect_reset_styles() called' );
-		error_log( 'STYLE_MANAGER: element_selector: ' . $element_selector );
-		error_log( 'STYLE_MANAGER: properties count: ' . count( $properties ) );
-		error_log( 'STYLE_MANAGER: matched_widgets count: ' . count( $matched_widgets ) );
-		error_log( 'STYLE_MANAGER: matched_widgets: ' . json_encode( $matched_widgets ) );
-		error_log( 'STYLE_MANAGER: collected_styles before: ' . count( $this->collected_styles ) );
-		
 		foreach ( $properties as $property_data ) {
 			foreach ( $matched_widgets as $widget_element_id ) {
 				$property = $property_data['property'] ?? $property_data['original_property'];
@@ -218,11 +211,8 @@ class Unified_Style_Manager {
 					'can_apply_directly' => $can_apply_directly,
 					'order' => count( $this->collected_styles ),
 				];
-				error_log( 'STYLE_MANAGER: Added style for ' . $widget_element_id . ' - ' . $property . ': ' . $value );
 			}
 		}
-		
-		error_log( 'STYLE_MANAGER: collected_styles after: ' . count( $this->collected_styles ) );
 	}
 	/**
 	 * Collect complex reset styles that require CSS file generation

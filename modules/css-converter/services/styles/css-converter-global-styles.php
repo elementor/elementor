@@ -101,7 +101,6 @@ class CSS_Converter_Global_Styles {
 		foreach ( $elements_data as $element_data ) {
 			// Check if this element has CSS Converter global classes
 			if ( ! empty( $element_data['css_converter_global_classes'] ) ) {
-				error_log( "CSS_CONVERTER_GLOBAL_STYLES DEBUG: Found " . count($element_data['css_converter_global_classes']) . " global classes in element" );
 				$global_classes = array_merge( $global_classes, $element_data['css_converter_global_classes'] );
 			}
 

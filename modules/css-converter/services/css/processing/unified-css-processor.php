@@ -365,16 +365,7 @@ class Unified_Css_Processor {
 			// Example: .elementor-1140 .element.element-14c0aa4 .heading-title
 			$is_nested_compound = $this->is_nested_selector_with_compound_classes( $selector );
 
-			// DEBUG: Log element selector detection
-			if ( strpos( $selector, 'h1' ) !== false ) {
-				error_log( 'ELEMENT SELECTOR DEBUG: Checking selector: ' . $selector );
-				error_log( 'ELEMENT SELECTOR DEBUG: is_nested_compound: ' . ( $is_nested_compound ? 'true' : 'false' ) );
-			}
-
 			if ( $is_nested_compound ) {
-				if ( strpos( $selector, 'h1' ) !== false ) {
-					error_log( 'ELEMENT SELECTOR DEBUG: Applying widget styling for: ' . $selector );
-				}
 				$this->apply_widget_specific_styling_for_nested_compound( $selector, $properties, $widgets );
 				continue;
 			}

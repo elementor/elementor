@@ -86,6 +86,141 @@
 
 ---
 
+## Font Shorthand Support Implementation
+
+### Current Issue
+- **Problem**: Font shorthand properties (`font: italic bold 18px/1.6 "Times New Roman", serif;`) are not being expanded by CSS_Shorthand_Expander
+- **Impact**: Entire CSS rules containing font shorthand are dropped, causing other properties (color, margin, etc.) to be lost
+- **Root Cause**: `font` property is missing from the shorthand properties list in CSS_Shorthand_Expander
+
+### Implementation Plan
+
+#### Phase 1: Add Font Shorthand Recognition
+**File**: `plugins/elementor-css/modules/css-converter/services/css/processing/css-shorthand-expander.php`
+
+1. **Add 'font' to shorthand properties list**:
+   ```php
+   $shorthand_properties = [
+       'font',  // ← ADD THIS
+       'border',
+       // ... rest
+   ];
+   ```
+
+2. **Add font case to expand_shorthand method**:
+   ```php
+   case 'font':
+       return self::expand_font_shorthand( $value );
+   ```
+
+#### Phase 2: Implement Font Shorthand Expansion
+**Method**: `expand_font_shorthand( $value )`
+
+**Font Shorthand Syntax**:
+```css
+font: [font-style] [font-variant] [font-weight] [font-stretch] font-size[/line-height] font-family
+```
+
+**Implementation Strategy**:
+```php
+private static function expand_font_shorthand( $value ): array {
+    // Parse: italic bold 18px/1.6 "Times New Roman", serif
+    // Return expanded properties WITHOUT font-family (excluded)
+    return [
+        'font-style' => $parsed_style,      // italic
+        'font-weight' => $parsed_weight,    // bold  
+        'font-size' => $parsed_size,        // 18px
+        'line-height' => $parsed_line_height, // 1.6
+        // font-family is EXCLUDED here (filtered out)
+    ];
+}
+```
+
+#### Phase 3: Font-Family Exclusion Integration
+- Font shorthand expansion happens BEFORE font-family filtering
+- After expansion, existing font-family filters will remove the font-family property
+- Other properties (font-style, font-weight, font-size, line-height) will be preserved
+
+### Expected Outcomes
+**Before Fix**:
+```css
+.test { font: italic bold 18px/1.6 "Times New Roman", serif; margin: 15px; }
+```
+- ❌ Entire rule dropped (font shorthand not recognized)
+- ❌ margin: 15px lost
+- ❌ No styles applied to widget
+
+**After Fix**:
+```css
+.test { font: italic bold 18px/1.6 "Times New Roman", serif; margin: 15px; }
+```
+- ✅ Expands to: font-style: italic, font-weight: bold, font-size: 18px, line-height: 1.6, font-family: "Times New Roman", serif, margin: 15px
+- ✅ font-family filtered out: font-style: italic, font-weight: bold, font-size: 18px, line-height: 1.6, margin: 15px
+- ✅ All non-font-family properties applied to widget
+
+### Test Cases Fixed
+1. **Font Shorthand Properties - Font-Family Part Excluded**: margin: 15px will be applied
+2. **Complex Font-Family Declarations**: text-decoration and background-color will be applied
+3. **Font-Family Mixed with Important Properties**: background-color will be applied
+
+### Out of Scope (Separate Tasks)
+- **CSS Variables with Font-Family**: Will be handled in another task
+- **Font-Family Property Mapping**: Covered in "Font Family Property Support" section below
+
+### Related Files
+- `plugins/elementor-css/modules/css-converter/services/css/processing/css-shorthand-expander.php`
+- `plugins/elementor-css/tests/playwright/sanity/modules/css-converter/font-family-exclusion/font-family-exclusion.test.ts`
+
+### Implementation Status
+- **Phase 1**: ✅ In Progress - Adding font to shorthand properties list
+- **Phase 2**: 🔄 Pending - Implement expand_font_shorthand method  
+- **Phase 3**: 🔄 Pending - Test integration with font-family filtering
+
+---
+
+## Text Decoration Line Property Support
+
+### Current Issue
+- **Problem**: `text-decoration-line` CSS property is not being properly converted or applied
+- **Impact**: Text decoration styles like `underline` are not appearing in the Elementor preview
+- **Current Status**: Property conversion may be failing or property mapper doesn't recognize `text-decoration-line`
+
+### Implementation Details
+- **Status**: Not implemented
+- **Affected Properties**: 
+  - `text-decoration-line: underline`
+  - Other text-decoration-line values (overline, line-through, etc.)
+
+### Future Improvements
+1. **Add Text Decoration Property Mapper**:
+   - Create property mapper for text-decoration-line values
+   - Handle all standard values: none, underline, overline, line-through
+   - Location: Property mapper conversion logic
+
+2. **Support Text Decoration Shorthand**:
+   - Parse `text-decoration` shorthand property
+   - Extract line, style, color, and thickness components
+   - Map to appropriate Elementor typography controls
+
+3. **Integration with Elementor Typography**:
+   - Map to Elementor's text decoration controls
+   - Ensure compatibility with existing typography settings
+   - Handle browser-specific rendering differences
+
+### Test Cases Affected
+- Font-family exclusion tests that expect `text-decoration-line: underline` to be applied
+
+### Related Files
+- Property mapper (text-decoration conversion)
+- `plugins/elementor-css/tests/playwright/sanity/modules/css-converter/font-family-exclusion/font-family-exclusion.test.ts`
+
+### Implementation Status
+- **Investigation**: 🔄 Pending - Determine root cause of text-decoration-line conversion failure
+- **Property Mapper**: 🔄 Pending - Add support for text-decoration properties
+- **Testing**: 🔄 Pending - Verify text-decoration works in Elementor preview
+
+---
+
 ## Font Family Property Support
 
 ### Current Implementation

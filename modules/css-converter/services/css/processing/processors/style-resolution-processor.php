@@ -29,12 +29,8 @@ class Style_Resolution_Processor implements Css_Processor_Interface {
 		$widgets = $context->get_widgets();
 
 		if ( null === $unified_style_manager ) {
-			error_log( 'STYLE_RESOLUTION: No unified_style_manager in context!' );
 			return $context;
 		}
-
-		$debug_info = $unified_style_manager->get_debug_info();
-		error_log( 'STYLE_RESOLUTION: Style manager has ' . count( $debug_info['collected_styles'] ?? [] ) . ' collected styles' );
 
 		// Resolve styles recursively for all widgets
 		$resolved_widgets = $this->resolve_styles_recursively( $widgets, $unified_style_manager );
@@ -72,7 +68,6 @@ class Style_Resolution_Processor implements Css_Processor_Interface {
 		foreach ( $widgets as $widget ) {
 			$widget_id = $this->get_widget_identifier( $widget );
 			$resolved_styles = $unified_style_manager->resolve_styles_for_widget( $widget );
-
 
 			$widget['resolved_styles'] = $resolved_styles;
 

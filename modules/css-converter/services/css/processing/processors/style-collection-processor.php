@@ -69,12 +69,8 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		$existing_style_manager = $context->get_metadata( 'unified_style_manager' );
 
 		if ( null !== $existing_style_manager ) {
-			error_log( 'STYLE_COLLECTION: Using existing style manager' );
 			$this->unified_style_manager = $existing_style_manager;
-			$debug_before = $this->unified_style_manager->get_debug_info();
-			error_log( 'STYLE_COLLECTION: Existing manager has ' . count( $debug_before['collected_styles'] ?? [] ) . ' styles before collection' );
 		} else {
-			error_log( 'STYLE_COLLECTION: Creating new style manager' );
 			$this->unified_style_manager->reset();
 		}
 
@@ -82,10 +78,6 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		$css_styles_collected = $this->collect_css_styles_from_rules( $css_rules, $widgets );
 		$inline_styles_collected = $this->collect_inline_styles_from_widgets( $widgets );
 		$reset_styles_collected = $this->collect_reset_styles( $css, $widgets );
-
-		$debug_after = $this->unified_style_manager->get_debug_info();
-		error_log( 'STYLE_COLLECTION: Manager has ' . count( $debug_after['collected_styles'] ?? [] ) . ' styles after collection' );
-
 
 		// Store collection results in context
 		$context->set_metadata( 'unified_style_manager', $this->unified_style_manager );
@@ -137,7 +129,6 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		foreach ( $widgets as $widget ) {
 			$element_id = $widget['element_id'] ?? null;
 			$inline_css = $widget['inline_css'] ?? [];
-
 
 			if ( $element_id && ! empty( $inline_css ) ) {
 				$styles_collected += $this->process_widget_inline_styles( $element_id, $inline_css );
@@ -230,7 +221,7 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 			$inline_properties[ $property ] = $value;
 		}
 
-		$batch_converted = $this->property_converter 
+		$batch_converted = $this->property_converter
 			? $this->property_converter->convert_properties_to_v4_atomic( $inline_properties )
 			: [];
 

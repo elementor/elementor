@@ -25,6 +25,7 @@ class CSS_Shorthand_Expander {
 
 	private static function is_shorthand_property( string $property ): bool {
 		$shorthand_properties = [
+			'font',
 			'border',
 			'border-top',
 			'border-right',
@@ -49,6 +50,8 @@ class CSS_Shorthand_Expander {
 
 	private static function expand_shorthand( string $property, $value ): array {
 		switch ( $property ) {
+			case 'font':
+				return self::expand_font_shorthand( $value );
 			case 'border':
 			case 'border-top':
 			case 'border-right':
@@ -484,5 +487,147 @@ class CSS_Shorthand_Expander {
 			'inset-block-start' => $start_value,
 			'inset-block-end' => $end_value,
 		];
+	}
+
+	private static function expand_font_shorthand( $value ): array {
+		if ( ! is_string( $value ) || '' === trim( $value ) ) {
+			return [];
+		}
+
+		$value = trim( $value );
+		$expanded = [];
+
+		// Font shorthand syntax: [font-style] [font-variant] [font-weight] [font-stretch] font-size[/line-height] font-family
+		// Example: italic bold 18px/1.6 "Times New Roman", serif
+
+		// Split by spaces, but preserve quoted strings
+		$parts = self::parse_font_shorthand_parts( $value );
+
+		if ( empty( $parts ) ) {
+			return [];
+		}
+
+		$font_size_index = self::find_font_size_index( $parts );
+
+		if ( false === $font_size_index ) {
+			// No valid font-size found, return empty (font-size is required)
+			return [];
+		}
+
+		// Extract font-size and optional line-height
+		$font_size_part = $parts[ $font_size_index ];
+		if ( false !== strpos( $font_size_part, '/' ) ) {
+			// Contains line-height: 18px/1.6
+			$size_parts = explode( '/', $font_size_part, 2 );
+			$expanded['font-size'] = trim( $size_parts[0] );
+			$expanded['line-height'] = trim( $size_parts[1] );
+		} else {
+			$expanded['font-size'] = $font_size_part;
+		}
+
+		// Process parts before font-size (font-style, font-variant, font-weight, font-stretch)
+		for ( $i = 0; $i < $font_size_index; $i++ ) {
+			$part = $parts[ $i ];
+
+			if ( self::is_font_style_value( $part ) ) {
+				$expanded['font-style'] = $part;
+			} elseif ( self::is_font_weight_value( $part ) ) {
+				$expanded['font-weight'] = $part;
+			}
+			// Note: font-variant and font-stretch are less common, skipping for now
+		}
+
+		// font-family comes after font-size, but we EXCLUDE it (that's the whole point)
+		// The font-family filtering will happen elsewhere in the pipeline
+
+		return $expanded;
+	}
+
+	private static function parse_font_shorthand_parts( string $value ): array {
+		$parts = [];
+		$current = '';
+		$in_quotes = false;
+		$quote_char = '';
+
+		$value_length = strlen( $value );
+		for ( $i = 0; $i < $value_length; $i++ ) {
+			$char = $value[ $i ];
+
+			if ( ! $in_quotes && ( '"' === $char || "'" === $char ) ) {
+				$in_quotes = true;
+				$quote_char = $char;
+				$current .= $char;
+			} elseif ( $in_quotes && $char === $quote_char ) {
+				$in_quotes = false;
+				$quote_char = '';
+				$current .= $char;
+			} elseif ( ! $in_quotes && ' ' === $char ) {
+				if ( '' !== trim( $current ) ) {
+					$parts[] = trim( $current );
+					$current = '';
+				}
+			} else {
+				$current .= $char;
+			}
+		}
+
+		if ( '' !== trim( $current ) ) {
+			$parts[] = trim( $current );
+		}
+
+		return $parts;
+	}
+
+	private static function find_font_size_index( array $parts ): int {
+		// Font-size is required and comes after optional style/weight properties
+		// Look for a part that looks like a size (has px, em, rem, %, etc. or is a number)
+		$parts_count = count( $parts );
+		for ( $i = 0; $i < $parts_count; $i++ ) {
+			$part = $parts[ $i ];
+
+			// Skip quoted strings (these are likely font-family)
+			if ( ( 0 === strpos( $part, '"' ) && strlen( $part ) > 1 && '"' === substr( $part, -1 ) ) ||
+				( 0 === strpos( $part, "'" ) && strlen( $part ) > 1 && "'" === substr( $part, -1 ) ) ) {
+				continue;
+			}
+
+			// Check if this looks like a font-size
+			if ( self::is_font_size_value( $part ) ) {
+				return $i;
+			}
+		}
+
+		return false;
+	}
+
+	private static function is_font_size_value( string $value ): bool {
+		// Remove line-height part if present (18px/1.6 -> 18px)
+		$size_part = explode( '/', $value )[0];
+
+		// Check for size units
+		if ( preg_match( '/^(\d*\.?\d+)(px|em|rem|%|pt|pc|in|cm|mm|ex|ch|vw|vh|vmin|vmax)$/i', $size_part ) ) {
+			return true;
+		}
+
+		// Check for keyword sizes
+		$size_keywords = [ 'xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large', 'smaller', 'larger' ];
+		return in_array( strtolower( $size_part ), $size_keywords, true );
+	}
+
+	private static function is_font_style_value( string $value ): bool {
+		$styles = [ 'normal', 'italic', 'oblique' ];
+		return in_array( strtolower( $value ), $styles, true );
+	}
+
+	private static function is_font_weight_value( string $value ): bool {
+		// Numeric weights
+		if ( is_numeric( $value ) ) {
+			$num = (int) $value;
+			return $num >= 100 && $num <= 900 && 0 === $num % 100;
+		}
+
+		// Keyword weights
+		$weights = [ 'normal', 'bold', 'bolder', 'lighter' ];
+		return in_array( strtolower( $value ), $weights, true );
 	}
 }

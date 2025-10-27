@@ -67,7 +67,7 @@ class Module extends BaseModule {
 		$this->initialize_atomic_widgets_route();
 	}
 	private function can_initialize_routes(): bool {
-		return function_exists( 'error_log' );
+		return true;
 	}
 	private function load_required_dependencies(): void {
 		$this->load_files_not_handled_by_elementor_autoloader();
@@ -98,9 +98,7 @@ class Module extends BaseModule {
 	private function initialize_css_converter_global_styles(): void {
 		require_once __DIR__ . '/services/styles/css-converter-global-styles.php';
 		$css_converter_global_styles = \Elementor\Modules\CssConverter\Services\Styles\CSS_Converter_Global_Styles::make();
-		error_log( "CSS_CONVERTER_MODULE DEBUG: Initializing CSS Converter Global Styles service" );
 		$css_converter_global_styles->register_hooks();
-		error_log( "CSS_CONVERTER_MODULE DEBUG: CSS Converter Global Styles hooks registered" );
 	}
 	private function initialize_classes_route(): void {
 		require_once __DIR__ . '/routes/classes-route.php';
