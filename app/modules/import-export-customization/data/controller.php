@@ -6,11 +6,7 @@ use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Export;
 use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Upload;
 use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Import;
 use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Import_Runner;
-<<<<<<< HEAD
-=======
-use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Process_Media;
 use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Revert;
->>>>>>> 448af196f7 (Internal: Use the revert kit via API request [ED-21206] (#33214))
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -33,10 +29,6 @@ class Controller {
 		( new Upload() )->register_route( self::API_NAMESPACE, self::API_BASE );
 		( new Import() )->register_route( self::API_NAMESPACE, self::API_BASE );
 		( new Import_Runner() )->register_route( self::API_NAMESPACE, self::API_BASE );
-<<<<<<< HEAD
-=======
-		( new Process_Media() )->register_route( self::API_NAMESPACE, self::API_BASE );
 		( new Revert() )->register_route( self::API_NAMESPACE, self::API_BASE );
->>>>>>> 448af196f7 (Internal: Use the revert kit via API request [ED-21206] (#33214))
 	}
 }
