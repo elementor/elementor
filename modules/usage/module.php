@@ -563,7 +563,7 @@ class Module extends BaseModule {
 		return $usage;
 	}
 
-	private function get_atomic_elements_usage( array $element, array $element_ref ): int {
+	private function get_atomic_elements_usage( array $element, array &$element_ref ): int {
 		$result = $this->atomic_usage_counter->count( $element );
 		$changed_controls_count = 0;
 		$total_controls_count = 0;
