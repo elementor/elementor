@@ -6,7 +6,6 @@ use Elementor\Modules\AtomicWidgets\Image\Placeholder_Image;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Date_Time_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
@@ -43,7 +42,7 @@ class Dynamic_Tags_Converter {
 				break;
 
 			case 'date_time':
-				$prop_type = Date_Time_Prop_Type::make()
+				$prop_type = String_Prop_Type::make()
 					->default( $control['default'] ?? null );
 				break;
 

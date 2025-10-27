@@ -1,7 +1,6 @@
 import { settingsTransformersRegistry } from './settings-transformers-registry';
 import { attributesTransformer } from './transformers/settings/attributes-transformer';
 import { createClassesTransformer } from './transformers/settings/classes-transformer';
-import { dateTimeTransformer } from './transformers/settings/date-time-transformer';
 import { linkTransformer } from './transformers/settings/link-transformer';
 import { queryTransformer } from './transformers/settings/query-transformer';
 import { imageSrcTransformer } from './transformers/shared/image-src-transformer';
@@ -16,6 +15,5 @@ export function initSettingsTransformers() {
 		.register( 'image', imageTransformer )
 		.register( 'image-src', imageSrcTransformer )
 		.register( 'attributes', attributesTransformer )
-		.register( 'date-time', dateTimeTransformer )
 		.registerFallback( plainTransformer );
 }
