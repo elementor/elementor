@@ -746,7 +746,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 200, $response->get_status() );
 		$data = $response->get_data()['data'];
 		$this->assertTrue( $data['is_current_user_allow_to_edit'], 'User should be allowed to edit unlocked component' );
-		$this->assertNull( $data['locked_by'], 'Component should not be locked' );
+		$this->assertEquals( '', $data['locked_by'], 'Component should not be locked' );
 	}
 
 	public function test_get_lock_status__returns_locked_when_locked_by_other_user() {
@@ -755,7 +755,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
 		
 		// Lock component with first user
-		$lock_manager = \Elementor\Modules\Components\Module::get_lock_manager_instance();
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_lock_manager_instance();
 		$lock_manager->lock_document( $component_id );
 
 		// Switch to different user
@@ -779,7 +779,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
 		
 		// Lock component with current user
-		$lock_manager = \Elementor\Modules\Components\Module::get_lock_manager_instance();
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_lock_manager_instance();
 		$lock_manager->lock_document( $component_id );
 
 		// Act
@@ -807,7 +807,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 200, $response->get_status() );
 		$data = $response->get_data()['data'];
 		$this->assertTrue( $data['is_current_user_allow_to_edit'], 'User should be allowed to edit non-existent component' );
-		$this->assertNull( $data['locked_by'], 'Non-existent component should not be locked' );
+		$this->assertEquals( '', $data['locked_by'], 'Non-existent component should not be locked' );
 	}
 
 
@@ -830,7 +830,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertTrue( $data['locked'], 'Component should be locked' );
 
 		// Verify component is actually locked
-		$lock_manager = \Elementor\Modules\Components\Module::get_lock_manager_instance();
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_lock_manager_instance();
 		$locked_user = $lock_manager->get_locked_user( $component_id );
 		$this->assertNotNull( $locked_user, 'Component should be locked by current user' );
 		$this->assertEquals( get_current_user_id(), $locked_user->ID, 'Component should be locked by current user' );
@@ -846,7 +846,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
 		
 		// Lock component first
-		$lock_manager = \Elementor\Modules\Components\Module::get_lock_manager_instance();
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_lock_manager_instance();
 		$lock_manager->lock_document( $component_id );
 
 		// Act
@@ -864,7 +864,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertFalse( $locked_user, 'Component should be unlocked' );
 	}
 
-	public function test_post_unlock_component__succeeds_even_when_not_locked() {
+	public function test_post_unlock_component__fails_when_not_locked() {
 		// Arrange
 		$this->act_as_admin();
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
@@ -874,10 +874,10 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request->set_param( 'componentId', $component_id );
 		$response = rest_do_request( $request );
 
-		// Assert
-		$this->assertEquals( 200, $response->get_status() );
-		$data = $response->get_data()['data'];
-		$this->assertTrue( $data['unlocked'], 'Unlock should succeed even when not locked' );
+		// Assert - should fail because there's no lock to unlock
+		$this->assertEquals( 500, $response->get_status() );
+		$data = $response->get_data();
+		$this->assertEquals( 'unlock_failed', $data['code'] );
 	}
 
 
