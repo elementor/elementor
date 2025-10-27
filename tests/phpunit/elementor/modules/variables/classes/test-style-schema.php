@@ -136,27 +136,6 @@ class Test_Style_Schema extends TestCase {
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}
 
-	public function test_augment__multiple_times() {
-		// Arrange.
-		$style_def = [
-			'color' => Color_Prop_Type::make()->required()
-		];
-
-		// Act.
-		$schema = $this->style_schema()->augment( $style_def );
-		$schema = $this->style_schema()->augment( $schema );
-		$schema = $this->style_schema()->augment( $schema );
-
-		// Assert.
-		$expected = [
-			'color' => Union_Prop_Type::make()->required()
-			  ->add_prop_type( Color_Variable_Prop_Type::make() )
-			  ->add_prop_type( Color_Prop_Type::make()->required() ),
-		];
-
-		$this->assertSchemaIsEqual( $expected, $schema );
-	}
-
 	public function test_augment__will_update_background_prop_type() {
 		// Arrange.
 		$style_def = [

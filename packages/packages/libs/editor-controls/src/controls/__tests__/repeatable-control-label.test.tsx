@@ -93,7 +93,6 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
-			resetValue: jest.fn(),
 		} );
 
 		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
@@ -133,7 +132,6 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
-			resetValue: jest.fn(),
 		} );
 
 		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
@@ -173,7 +171,6 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
-			resetValue: jest.fn(),
 		} );
 
 		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
@@ -213,7 +210,6 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
-			resetValue: jest.fn(),
 		} );
 
 		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
@@ -253,7 +249,6 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
-			resetValue: jest.fn(),
 		} );
 
 		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
@@ -294,7 +289,6 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
-			resetValue: jest.fn(),
 		} );
 
 		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
@@ -335,7 +329,6 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
-			resetValue: jest.fn(),
 		} );
 
 		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
@@ -376,7 +369,6 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
-			resetValue: jest.fn(),
 		} );
 
 		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );
@@ -417,7 +409,6 @@ describe( '<RepeatableControl /> - ItemLabel with shouldShowPlaceholder logic', 
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
-			resetValue: jest.fn(),
 		} );
 
 		mockUseRepeaterContext.mockReturnValue( getMockRepeaterContext( value ) );

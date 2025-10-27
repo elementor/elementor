@@ -29,7 +29,6 @@ function createMockBoundProp( overrides: Partial< Record< string, string > > = {
 		placeholder: null as string | null | object,
 		path: [ 'background', 'color' ],
 		restoreValue: jest.fn(),
-		resetValue: jest.fn(),
 		isDisabled: jest.fn(),
 		disabled: false,
 		variableId: null,

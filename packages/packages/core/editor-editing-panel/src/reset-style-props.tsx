@@ -7,9 +7,6 @@ import { controlActionsMenu } from './controls-actions';
 
 const { registerAction } = controlActionsMenu;
 
-// TODO: BC: Only background repeater supports reset; remove this constant once all repeaters support it.
-const REPEATERS_SUPPORTED_FOR_RESET = [ 'background' ];
-
 export function initResetStyleProps() {
 	registerAction( {
 		id: 'reset-style-value',
@@ -19,18 +16,14 @@ export function initResetStyleProps() {
 
 export function useResetStyleValueProps() {
 	const isStyle = useIsStyle();
-	const { value, resetValue, path, propType } = useBoundProp();
+	const { value, setValue, path } = useBoundProp();
 
 	const isInRepeater = path?.some( ( key ) => ! isNaN( Number( key ) ) );
-	const isRepeaterTypeSupported = REPEATERS_SUPPORTED_FOR_RESET.includes( path?.[ 0 ] );
-	const isRequired = propType?.settings?.required;
-
-	const shouldShowResetForRepeater = ! isRequired && ( ! isInRepeater || isRepeaterTypeSupported );
 
 	return {
-		visible: isStyle && value !== null && value !== undefined && shouldShowResetForRepeater,
+		visible: isStyle && value !== null && value !== undefined && ! isInRepeater,
 		title: __( 'Clear', 'elementor' ),
 		icon: BrushBigIcon,
-		onClick: () => resetValue(),
+		onClick: () => setValue( null ),
 	};
 }

@@ -19,19 +19,14 @@ type UseBoundProp< TValue extends PropValue > = {
 	placeholder?: TValue;
 	path: PropKey[];
 	restoreValue: () => void;
-	resetValue: () => void;
 	isDisabled?: ( propType: PropType ) => boolean | undefined;
 	disabled?: boolean;
 };
 
-type EnhancedPropKeyContextValue< T, P > = PropKeyContextValue< T, P > & {
-	resetValue: () => void;
-};
-
-export function useBoundProp<
-	T extends PropValue = PropValue,
-	P extends PropType = PropType,
->(): EnhancedPropKeyContextValue< T, P >;
+export function useBoundProp< T extends PropValue = PropValue, P extends PropType = PropType >(): PropKeyContextValue<
+	T,
+	P
+>;
 
 export function useBoundProp< TKey extends string, TValue extends PropValue >(
 	propTypeUtil: PropTypeUtil< TKey, TValue >
@@ -46,17 +41,9 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 
 	const disabled = propKeyContext.isDisabled?.( propKeyContext.propType );
 
-	const resetValue = () => {
-		propKeyContext.setValue( null );
-	};
-
 	// allow using the hook without a propTypeUtil, with no modifications or validations.
 	if ( ! propTypeUtil ) {
-		return {
-			...propKeyContext,
-			disabled,
-			resetValue,
-		} as EnhancedPropKeyContextValue< PropValue, PropType >;
+		return { ...propKeyContext, disabled } as PropKeyContextValue< PropValue, PropType >;
 	}
 
 	function setValue( value: TValue | null, options: CreateOptions, meta?: SetValueMeta ) {
@@ -84,7 +71,6 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 		restoreValue,
 		placeholder,
 		disabled,
-		resetValue,
 	};
 }
 

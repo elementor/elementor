@@ -9,7 +9,6 @@ import { __ } from '@wordpress/i18n';
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../../bound-prop-context';
 import { ControlFormLabel } from '../../../../components/control-form-label';
 import { PopoverGridContainer } from '../../../../components/popover-grid-container';
-import ControlActions from '../../../../control-actions/control-actions';
 import { SizeControl } from '../../../size-control';
 
 type Positions =
@@ -62,23 +61,19 @@ export const BackgroundImageOverlayPosition = () => {
 						<ControlFormLabel>{ __( 'Position', 'elementor' ) }</ControlFormLabel>
 					</Grid>
 					<Grid item xs={ 6 } sx={ { display: 'flex', justifyContent: 'flex-end', overflow: 'hidden' } }>
-						<ControlActions>
-							<Select
-								fullWidth
-								size="tiny"
-								onChange={ handlePositionChange }
-								disabled={ stringPropContext.disabled }
-								value={
-									( backgroundImageOffsetContext.value ? 'custom' : stringPropContext.value ) ?? ''
-								}
-							>
-								{ backgroundPositionOptions.map( ( { label, value } ) => (
-									<MenuListItem key={ value } value={ value ?? '' }>
-										{ label }
-									</MenuListItem>
-								) ) }
-							</Select>
-						</ControlActions>
+						<Select
+							fullWidth
+							size="tiny"
+							onChange={ handlePositionChange }
+							disabled={ stringPropContext.disabled }
+							value={ ( backgroundImageOffsetContext.value ? 'custom' : stringPropContext.value ) ?? '' }
+						>
+							{ backgroundPositionOptions.map( ( { label, value } ) => (
+								<MenuListItem key={ value } value={ value ?? '' }>
+									{ label }
+								</MenuListItem>
+							) ) }
+						</Select>
 					</Grid>
 				</PopoverGridContainer>
 			</Grid>

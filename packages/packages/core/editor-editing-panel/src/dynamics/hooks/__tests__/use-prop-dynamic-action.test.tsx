@@ -133,7 +133,6 @@ const mockElementPropSchema = ( bind: string, propSchema: PropType ) => {
 		propType: propSchema,
 		path: [],
 		restoreValue: jest.fn(),
-		resetValue: jest.fn(),
 	} );
 };
 
