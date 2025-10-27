@@ -11,12 +11,12 @@ class Atomic_Widget_Data_Formatter {
 		return new self();
 	}
 	public function format_widget_data( array $resolved_styles, array $widget, string $widget_id ): array {
-// Generate atomic-style widget ID (7-char hex)
+		// Generate atomic-style widget ID (7-char hex)
 		$atomic_widget_id = $this->generate_atomic_widget_id();
 		$class_id = $this->create_atomic_style_class_name( $atomic_widget_id );
 		$atomic_props = $this->extract_atomic_props_from_resolved_styles( $resolved_styles );
-$css_classes = $this->extract_css_classes_from_widget( $widget );
-// Note: Base classes (e.g., e-heading-base) are added automatically by atomic widget Twig templates
+		$css_classes = $this->extract_css_classes_from_widget( $widget );
+		// Note: Base classes (e.g., e-heading-base) are added automatically by atomic widget Twig templates
 		// CSS Converter should only add generated style classes and user-defined classes
 		$widget_type = $widget['widget_type'] ?? 'e-div-block';
 		if ( empty( $atomic_props ) && empty( $css_classes ) ) {
@@ -58,10 +58,10 @@ $css_classes = $this->extract_css_classes_from_widget( $widget );
 	}
 	private function extract_atomic_props_from_resolved_styles( array $resolved_styles ): array {
 		$atomic_props = [];
-foreach ( $resolved_styles as $property => $style_data ) {
-if ( isset( $style_data['converted_property'] ) && is_array( $style_data['converted_property'] ) ) {
+		foreach ( $resolved_styles as $property => $style_data ) {
+			if ( isset( $style_data['converted_property'] ) && is_array( $style_data['converted_property'] ) ) {
 				$converted_property = $style_data['converted_property'];
-// Check if this is a single atomic property object (has $$type)
+				// Check if this is a single atomic property object (has $$type)
 				if ( isset( $converted_property['$$type'] ) ) {
 					$target_property = $this->get_target_property_name( $property );
 					$atomic_props[ $target_property ] = $converted_property;
@@ -76,7 +76,7 @@ if ( isset( $style_data['converted_property'] ) && is_array( $style_data['conver
 				}
 			}
 		}
-return $atomic_props;
+		return $atomic_props;
 	}
 	private function create_unified_style_definition( string $class_id, array $atomic_props ): array {
 		return [

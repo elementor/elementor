@@ -70,7 +70,7 @@ class Widget_Mapper {
 	public function map_element( $element ) {
 		$tag = $element['tag'];
 		$element_class = $element['attributes']['class'] ?? '';
-		
+
 		// DEBUG: Log element mapping input
 
 		// Check if we have a mapping for this tag
@@ -88,7 +88,7 @@ class Widget_Mapper {
 		// Call the appropriate handler
 		$handler = $this->handlers[ $widget_type ];
 		$widget = call_user_func( $handler, $element );
-		
+
 		// DEBUG: Log widget mapping output
 		$widget_class = $widget['attributes']['class'] ?? '';
 
@@ -137,7 +137,7 @@ class Widget_Mapper {
 					foreach ( $mapped['children'] as $child_index => $child ) {
 						$child_type = $child['widget_type'] ?? 'unknown';
 						$child_tag = $child['original_tag'] ?? 'unknown';
-						
+
 						// Check for problematic double div-block nesting
 						if ( $mapped['widget_type'] === 'e-div-block' && $child_type === 'e-div-block' ) {
 						}
@@ -145,6 +145,9 @@ class Widget_Mapper {
 				}
 			}
 		}
+
+		// Ensure all top-level widgets are wrapped in containers
+		$mapped_elements = $this->ensure_container_wrapper( $mapped_elements );
 
 		return $mapped_elements;
 	}
@@ -190,10 +193,10 @@ class Widget_Mapper {
 		// This creates: <p></p><a></a> which preserves CSS classes and works with tests
 		if ( ! empty( $element['children'] ) ) {
 			$widgets = [];
-			
+
 			// Extract text content that's not part of child elements (if any)
 			$paragraph_text = $this->extract_text_content_excluding_children( $element );
-			
+
 			// Create e-paragraph widget (even if empty, to preserve <p> tag and classes)
 			$widgets[] = [
 				'widget_type' => 'e-paragraph',
@@ -206,11 +209,11 @@ class Widget_Mapper {
 				'inline_css' => $element['inline_css'] ?? [],
 				'children' => [],
 			];
-			
+
 			// Map child elements (like links) as separate sibling widgets
 			$child_widgets = $this->map_elements( $element['children'] );
 			$widgets = array_merge( $widgets, $child_widgets );
-			
+
 			// Return flattened structure - parent will handle as siblings
 			return [
 				'widget_type' => 'flattened_group', // Special marker for flattening
@@ -219,7 +222,7 @@ class Widget_Mapper {
 		}
 
 		// If no children, handle as regular paragraph
-		
+
 		$settings = [
 			'paragraph' => $content,
 		];
@@ -238,17 +241,16 @@ class Widget_Mapper {
 	private function handle_div_block( $element ) {
 		// DEBUG: Log entry into handle_div_block
 		$children_count = count( $element['children'] ?? [] );
-		
+
 		$element_id = $this->generate_element_id( $element );
 
 		// OPTIMIZATION: If this div only contains text content (after text wrapping),
 		// convert it directly to a paragraph widget to avoid unnecessary nesting
 		$should_convert = $this->should_convert_div_to_paragraph( $element );
-		
+
 		if ( $should_convert ) {
 			return $this->convert_div_to_paragraph_widget( $element );
 		}
-		
 
 		// Map children recursively and handle flattening
 		$children = [];
@@ -258,30 +260,29 @@ class Widget_Mapper {
 				$child_tag = $child['tag'] ?? 'unknown';
 				$child_class = $child['attributes']['class'] ?? '';
 			}
-			
+
 			$mapped_children = $this->map_elements( $element['children'] );
-			
+
 			// DEBUG: Log mapped children
 			foreach ( $mapped_children as $child_index => $child_widget ) {
 				$child_type = $child_widget['widget_type'] ?? 'unknown';
 				$child_class = $child_widget['attributes']['class'] ?? '';
 			}
-			
+
 			// CRITICAL FIX: Flatten children to prevent double nesting
 			foreach ( $mapped_children as $child_widget ) {
 				$child_type = $child_widget['widget_type'] ?? 'unknown';
 				$child_element_id = $child_widget['element_id'] ?? 'no-id';
-				
-				
+
 				// If child widget has flatten_children flag, add its children as siblings
 				if ( ! empty( $child_widget['flatten_children'] ) && ! empty( $child_widget['children'] ) ) {
-					
+
 					// Add the main widget (without its children)
 					$flattened_widget = $child_widget;
 					unset( $flattened_widget['children'] );
 					unset( $flattened_widget['flatten_children'] );
 					$children[] = $flattened_widget;
-					
+
 					// Add its children as siblings
 					foreach ( $child_widget['children'] as $grandchild ) {
 						$children[] = $grandchild;
@@ -291,7 +292,6 @@ class Widget_Mapper {
 					$children[] = $child_widget;
 				}
 			}
-			
 		}
 
 		// Check if this div has text content that should be wrapped in a paragraph
@@ -424,7 +424,7 @@ class Widget_Mapper {
 		// Convert to paragraph ONLY if:
 		// 1. The element has only a synthetic paragraph child created by HTML parser
 		// 2. AND we want to consolidate the synthetic paragraph content into the parent div-block's paragraph widget
-		// 
+		//
 		// NOTE: We should NOT convert text-only divs to direct paragraphs as this breaks Elementor structure
 
 		$element_id = $element['attributes']['id'] ?? 'no-id';
@@ -432,25 +432,24 @@ class Widget_Mapper {
 		$text_content = trim( $element['content'] ?? '' );
 		$has_children = ! empty( $element['children'] );
 
-
 		// CRITICAL FIX: Never convert divs to direct paragraphs - always maintain e-div-block structure
 		// Only consolidate synthetic paragraphs within the div-block container
-		
+
 		// Check if we can consolidate synthetic paragraph children within the div-block
 		if ( $has_children && 1 === count( $element['children'] ) ) {
 			$only_child = $element['children'][0];
-			
+
 			// Check if it's a synthetic paragraph that can be consolidated
 			// CRITICAL FIX: Don't consolidate paragraphs with class attributes - they're meaningful!
 			$has_class_attributes = ! empty( $only_child['attributes']['class'] );
 			$is_synthetic = ( 'p' === $only_child['tag'] &&
 				empty( $only_child['children'] ) &&
 				empty( $only_child['inline_css'] ) &&
-				! $has_class_attributes ) ||  // Don't consolidate if it has class attributes
+				! $has_class_attributes ) || // Don't consolidate if it has class attributes
 				! empty( $only_child['synthetic'] );
-				
+
 			// DEBUG: Log synthetic detection logic
-				
+
 			if ( $is_synthetic ) {
 
 				return true;
@@ -464,7 +463,7 @@ class Widget_Mapper {
 	private function convert_div_to_paragraph_widget( $element ) {
 		// CRITICAL FIX: Always create e-div-block container with paragraph child
 		// Never create direct paragraph widgets - maintain proper Elementor structure
-		
+
 		$element_id = $this->generate_element_id( $element );
 
 		// Determine the text content to use from synthetic paragraph children
@@ -491,7 +490,7 @@ class Widget_Mapper {
 						$content_parts[] = trim( $child['content'] );
 					}
 				}
-				
+
 				if ( ! empty( $content_parts ) ) {
 					$paragraph_content = implode( ' ', $content_parts );
 				}
@@ -555,6 +554,40 @@ class Widget_Mapper {
 		return true;
 	}
 
+	private function ensure_container_wrapper( $widgets ) {
+		// If there's only one widget and it's already a container, return as-is
+		if ( 1 === count( $widgets ) && 'e-div-block' === $widgets[0]['widget_type'] ) {
+			return $widgets;
+		}
+
+		// If there are multiple widgets or non-container widgets, wrap them in a container
+		if ( count( $widgets ) > 1 || ! $this->is_container_widget( $widgets[0]['widget_type'] ?? '' ) ) {
+			$container_id = $this->generate_container_id();
+
+			return [
+				[
+					'widget_type' => 'e-div-block',
+					'element_id' => $container_id,
+					'original_tag' => 'div',
+					'settings' => [],
+					'attributes' => [],
+					'inline_css' => [],
+					'children' => $widgets,
+				],
+			];
+		}
+
+		return $widgets;
+	}
+
+	private function is_container_widget( $widget_type ) {
+		return in_array( $widget_type, [ 'e-div-block', 'e-flexbox' ], true );
+	}
+
+	private function generate_container_id() {
+		return 'container-' . wp_generate_uuid4();
+	}
+
 	private function create_paragraph_widget_for_text( $text_content ) {
 		// Creates a synthetic e-paragraph widget for text content found in div elements
 		// This ensures text content is properly structured and accessible
@@ -573,11 +606,11 @@ class Widget_Mapper {
 	private function extract_text_content_excluding_children( $element ) {
 		// Extract text content from the element that's not part of child elements
 		$full_content = $element['content'] ?? '';
-		
+
 		if ( empty( $element['children'] ) ) {
 			return $full_content;
 		}
-		
+
 		// Remove child element content from the full content
 		foreach ( $element['children'] as $child ) {
 			$child_content = $child['content'] ?? '';
@@ -585,7 +618,7 @@ class Widget_Mapper {
 				$full_content = str_replace( $child_content, '', $full_content );
 			}
 		}
-		
+
 		return trim( $full_content );
 	}
 

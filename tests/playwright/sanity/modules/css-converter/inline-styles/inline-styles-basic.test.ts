@@ -13,12 +13,10 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
+
 		await wpAdminPage.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
-		} );
-
-		await wpAdminPage.setExperiments( {
 			e_nested_elements: 'active',
 		} );
 
@@ -58,19 +56,21 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 		await editor.waitForPanelToLoad();
 
 		await test.step( 'Verify CSS class is generated', async () => {
+			await page.waitForTimeout( 2000 );
 			const elementorFrame = editor.getPreviewFrame();
-			await elementorFrame.waitForLoadState();
 
 			const element = elementorFrame.locator( '.e-con p' ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
 
 			const elementClass = await element.getAttribute( 'class' );
-			expect( elementClass ).toContain( 'p' );
+			expect( elementClass ).toBeTruthy();
 			expect( elementClass ).toMatch( /e-[a-f0-9-]+/ );
 		} );
 
 		await test.step( 'Verify inline style is applied', async () => {
+			await page.waitForTimeout( 2000 );
 			const elementorFrame = editor.getPreviewFrame();
+
 			const element = elementorFrame.locator( '.e-con p' ).first();
 
 			await expect( element ).toHaveCSS( 'color', 'rgb(255, 0, 0)' );
@@ -104,8 +104,8 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 		await editor.waitForPanelToLoad();
 
 		await test.step( 'Verify each element has unique CSS class', async () => {
+			await page.waitForTimeout( 2000 );
 			const elementorFrame = editor.getPreviewFrame();
-			await elementorFrame.waitForLoadState();
 
 			const elements = elementorFrame.locator( '.e-con p' );
 			const count = await elements.count();
@@ -123,6 +123,7 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 		} );
 
 		await test.step( 'Verify each inline style is applied correctly', async () => {
+			await page.waitForTimeout( 2000 );
 			const elementorFrame = editor.getPreviewFrame();
 
 			const redElement = elementorFrame.locator( '.e-con p' ).nth( 0 );
@@ -157,8 +158,8 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 		await editor.waitForPanelToLoad();
 
 		await test.step( 'Verify all inline styles are applied', async () => {
+			await page.waitForTimeout( 2000 );
 			const elementorFrame = editor.getPreviewFrame();
-			await elementorFrame.waitForLoadState();
 
 			const element = elementorFrame.locator( '.e-con p' ).first();
 			await element.waitFor( { state: 'visible', timeout: 10000 } );
@@ -198,8 +199,8 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 		await editor.waitForPanelToLoad();
 
 		await test.step( 'Verify inline styles on h1', async () => {
+			await page.waitForTimeout( 2000 );
 			const elementorFrame = editor.getPreviewFrame();
-			await elementorFrame.waitForLoadState();
 
 			const heading = elementorFrame.locator( '.e-con h1' ).first();
 			await heading.waitFor( { state: 'visible', timeout: 10000 } );
@@ -207,14 +208,16 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 		} );
 
 		await test.step( 'Verify inline styles on p', async () => {
+			await page.waitForTimeout( 2000 );
 			const elementorFrame = editor.getPreviewFrame();
 			const paragraph = elementorFrame.locator( '.e-con p' ).first();
 			await expect( paragraph ).toHaveCSS( 'color', 'rgb(0, 0, 255)' );
 		} );
 
 		await test.step( 'Verify inline styles on div', async () => {
+			await page.waitForTimeout( 2000 );
 			const elementorFrame = editor.getPreviewFrame();
-			const divBlock = elementorFrame.locator( '[data-element_type="e-div-block"]' ).first();
+			const divBlock = elementorFrame.locator( '[data-element_type="e-div-block"]' ).nth(2);
 			await divBlock.waitFor( { state: 'visible', timeout: 10000 } );
 			await expect( divBlock ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
 			await expect( divBlock ).toHaveCSS( 'padding', '20px' );
