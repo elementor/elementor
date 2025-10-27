@@ -14,6 +14,7 @@ import { __ } from '@wordpress/i18n';
 import { componentIdTransformer } from './component-id-transformer';
 import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
+import { openEditModeDialog } from './components/in-edit-mode';
 import { createComponentType, TYPE } from './create-component-type';
 import { PopulateStore } from './populate-store';
 import { componentsStylesProvider } from './store/components-styles-provider';
@@ -22,14 +23,15 @@ import { removeComponentStyles } from './store/remove-component-styles';
 import { slice } from './store/store';
 import { type Element, type ExtendedWindow } from './types';
 import { beforeSave } from './utils/before-save';
-import { openEditModeDialog } from './components/in-edit-mode';
 
 const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
 
 export function init() {
 	stylesRepository.register( componentsStylesProvider );
 	registerSlice( slice );
-	registerElementType( TYPE, ( options: CreateTemplatedElementTypeOptions  ) => createComponentType( {...options,showLockedByModal:openEditModeDialog} ) );
+	registerElementType( TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
+		createComponentType( { ...options, showLockedByModal: openEditModeDialog } )
+	);
 	registerDataHook( 'dependency', 'editor/documents/close', ( args ) => {
 		const document = getV1CurrentDocument();
 		if ( document.config.type === COMPONENT_DOCUMENT_TYPE ) {
