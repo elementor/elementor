@@ -29,7 +29,7 @@ const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
 export function init() {
 	stylesRepository.register( componentsStylesProvider );
 	registerSlice( slice );
-	registerElementType( TYPE, ( options: CreateTemplatedElementTypeOptions  ) => createComponentType( {...options,cb:openEditModeDialog} ) );
+	registerElementType( TYPE, ( options: CreateTemplatedElementTypeOptions  ) => createComponentType( {...options,showLockedByModal:openEditModeDialog} ) );
 	registerDataHook( 'dependency', 'editor/documents/close', ( args ) => {
 		const document = getV1CurrentDocument();
 		if ( document.config.type === COMPONENT_DOCUMENT_TYPE ) {

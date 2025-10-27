@@ -31,6 +31,7 @@ class Document_Lock_Manager {
 	 * Lock a document for the current user.
 	 *
 	 * Sets both WordPress post lock and custom document lock metadata.
+	 * Respects existing locks - will not override locks held by other users.
 	 *
 	 * @param int $document_id The document ID to lock
 	 * @return bool True if lock was successful, false otherwise
@@ -39,14 +40,17 @@ class Document_Lock_Manager {
 		try {
 			$user_id = get_current_user_id();
 
-			// Check if user is logged in
 			if ( ! $user_id ) {
 				return false;
 			}
 
-			// Check if document exists
 			$post = get_post( $document_id );
 			if ( ! $post ) {
+				return false;
+			}
+
+			$existing_lock = $this->is_document_locked( $document_id );
+			if ( $existing_lock['is_locked'] && (int) $existing_lock['lock_user'] !== (int) $user_id ) {
 				return false;
 			}
 
@@ -55,12 +59,10 @@ class Document_Lock_Manager {
 				require_once ABSPATH . 'wp-admin/includes/post.php';
 			}
 
-			// Ensure WordPress admin functions are available
 			if ( ! function_exists( 'wp_set_post_lock' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/admin.php';
 			}
 
-			// Set WordPress post lock
 			wp_set_post_lock( $document_id );
 
 			// Set custom document lock metadata
@@ -104,24 +106,22 @@ class Document_Lock_Manager {
 	 * @return array|false Lock data array if locked, false if not locked
 	 */
 	public function is_document_locked( $document_id ) {
-		// Check custom document lock metadata first
 		$lock_user = get_post_meta( $document_id, self::LOCK_USER_META, true );
 		$lock_time = get_post_meta( $document_id, self::LOCK_TIME_META, true );
+		$is_locked = false;
 
-		if ( ! $lock_user || ! $lock_time ) {
-			return false;
-		}
-
-		// Check if lock has expired
-		if ( time() - $lock_time > $this->lock_duration ) {
-			// Lock has expired, automatically unlock
-			$this->unlock_document( $document_id );
-			return false;
+		if ( $lock_user && $lock_time ) {
+			if ( time() - $lock_time > $this->lock_duration ) {
+				$this->unlock_document( $document_id );
+			} else {
+				$is_locked = true;
+			}
 		}
 
 		return [
-			'user_id' => $lock_user,
-			'timestamp' => $lock_time,
+			'is_locked'  => $is_locked,
+			'lock_user'  => $lock_user ? $lock_user : null,
+			'lock_time'  => $lock_time ? $lock_time : null,
 		];
 	}
 
@@ -135,11 +135,11 @@ class Document_Lock_Manager {
 	public function get_locked_user( $document_id ) {
 		$lock_data = $this->is_document_locked( $document_id );
 
-		if ( ! $lock_data ) {
+		if ( ! $lock_data['is_locked'] ) {
 			return false;
 		}
 
-		return get_user_by( 'id', $lock_data['user_id'] );
+		return get_user_by( 'id', $lock_data['lock_user'] );
 	}
 
 
@@ -152,9 +152,14 @@ class Document_Lock_Manager {
 	 * @return bool True if lock was extended, false otherwise
 	 */
 	public function extend_lock( $document_id ) {
+		$user_id = get_current_user_id();
 		$lock_data = $this->is_document_locked( $document_id );
 
-		if ( ! $lock_data ) {
+		if ( ! $lock_data['is_locked'] ) {
+			return false;
+		}
+
+		if ( (int) $lock_data['lock_user'] !== (int) $user_id ) {
 			return false;
 		}
 

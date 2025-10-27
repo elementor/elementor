@@ -8,11 +8,11 @@ import {
 import { type NumberPropValue } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
-import { apiClient, canSwitchDocument } from './api';
+import { apiClient } from './api';
 
 export const TYPE = 'e-component';
 
-export function createComponentType(options: CreateTemplatedElementTypeOptions & { cb?: (lockedBy: string) => void }): typeof ElementType {
+export function createComponentType(options: CreateTemplatedElementTypeOptions & { showLockedByModal?: (lockedBy: string) => void }): typeof ElementType {
 		const legacyWindow = window as unknown as LegacyWindow;
 
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
@@ -27,7 +27,7 @@ export function createComponentType(options: CreateTemplatedElementTypeOptions &
 }
 
 
-function createComponentView( options: CreateTemplatedElementTypeOptions & { cb?: (lockedBy: string) => void }): typeof ElementView {
+function createComponentView( options: CreateTemplatedElementTypeOptions & { showLockedByModal?: (lockedBy: string) => void }): typeof ElementView {
 	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow;
 
@@ -80,9 +80,12 @@ function createComponentView( options: CreateTemplatedElementTypeOptions & { cb?
 		}
 
 		async switchDocument() {
-			const { isAllowedToSwitchDocument, lockedBy } = await canSwitchDocument(this.getComponentId()?.value as number);
+			const { isAllowedToSwitchDocument, lockedBy } = await apiClient.getComponentLockStatus(this.getComponentId()?.value as number);
+
+			console.log({isAllowedToSwitchDocument, lockedBy});
+			
 			if (!isAllowedToSwitchDocument) {
-				options.cb?.(lockedBy || '');
+				options.showLockedByModal?.(lockedBy || '');
 			} else {
 				runCommand('editor/documents/switch', {
 					id: this.getComponentId()?.value as number,

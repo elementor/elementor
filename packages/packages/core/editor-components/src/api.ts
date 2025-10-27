@@ -5,7 +5,6 @@ import { type HttpResponse, httpService } from '@elementor/http-client';
 import { type Component, type DocumentStatus } from './types';
 
 const BASE_URL = 'elementor/v1/components';
-const BASE_URL_IS_CURRENT_USER_LOCKED = `${ BASE_URL }/is-current-user-locked`;
 const LOCK_COMPONENT = `${ BASE_URL }/lock`;
 const UNLOCK_COMPONENT = `${ BASE_URL }/unlock`;
 const BASE_URL_LOCK_STATUS = `${ BASE_URL }/lock-status`;
@@ -21,7 +20,7 @@ export type CreateComponentPayload = {
 
 type ComponentLockStatusResponse = {
 	is_current_user_allow_to_edit: boolean;
-	locked_by?: string;
+	locked_by: string;
 };
 
 type GetComponentResponse = Array< Component >;
@@ -52,18 +51,11 @@ export const apiClient = {
 					componentId,
 				},
 			} )
-			.then( ( res ) => res.data ),
-	getComponentLockedUser: async ( componentId: number ) => {
-		const response = await httpService()
-			.get< { is_current_user_locked: boolean } >( BASE_URL_IS_CURRENT_USER_LOCKED, {
-				params: {
-					componentId,
-				},
-			} )
-			.then( ( res ) => res.data );
-
-		return response.is_current_user_locked;
-	},
+			.then((res) => {
+				const { is_current_user_allow_to_edit, locked_by: lockedBy } = res.data.data;
+				console.log('LOG: getComponentLockStatus', {is_current_user_allow_to_edit, lockedBy});
+				return { isAllowedToSwitchDocument: is_current_user_allow_to_edit, lockedBy: lockedBy || '' };
+			} ),
 	lockComponent: async ( componentId: number ) =>
 		await httpService()
 			.post< { success: boolean } >( LOCK_COMPONENT, {
@@ -76,18 +68,4 @@ export const apiClient = {
 				componentId,
 			} )
 			.then( ( res ) => res.data ),
-};
-
-export const canSwitchDocument = async (
-	componentId: number
-): Promise< {
-	isAllowedToSwitchDocument: boolean;
-	lockedBy?: string;
-} > => {
-	const response = await apiClient.getComponentLockStatus( componentId );
-	const { is_current_user_allow_to_edit, locked_by: lockedBy } = response.data;
-	if ( is_current_user_allow_to_edit ) {	
-		return { isAllowedToSwitchDocument: true, lockedBy: '' };
-	}
-	return { isAllowedToSwitchDocument: false, lockedBy };
 };

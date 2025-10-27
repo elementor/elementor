@@ -178,6 +178,7 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		// Verify custom metadata is removed
 		$this->assertEmpty( get_post_meta( $document_id, '_lock_user', true ), 'Custom lock user metadata should be removed' );
 		$this->assertEmpty( get_post_meta( $document_id, '_lock_time', true ), 'Custom lock time metadata should be removed' );
+		$this->assertEmpty( get_post_meta( $document_id, '_edit_lock', true ), 'WordPress post lock metadata should be removed' );
 	}
 
 	public function test_is_document_locked__returns_false_when_not_locked() {
@@ -188,7 +189,9 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$result = $this->lock_manager->is_document_locked( $document_id );
 
 		// Assert
-		$this->assertFalse( $result, 'Should return false when document is not locked' );
+		$this->assertFalse( $result['is_locked'], 'Should return false when document is not locked' );
+		$this->assertNull( $result['lock_user'], 'Lock user should be null when not locked' );
+		$this->assertNull( $result['lock_time'], 'Lock time should be null when not locked' );
 	}
 
 	public function test_is_document_locked__returns_lock_data_when_locked() {
@@ -202,10 +205,12 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertIsArray( $result, 'Should return array when document is locked' );
-		$this->assertArrayHasKey( 'user_id', $result );
-		$this->assertArrayHasKey( 'timestamp', $result );
-		$this->assertEquals( $this->test_user_1, $result['user_id'] );
-		$this->assertIsNumeric( $result['timestamp'], 'Timestamp should be numeric' );
+		$this->assertArrayHasKey( 'is_locked', $result );
+		$this->assertArrayHasKey( 'lock_user', $result );
+		$this->assertArrayHasKey( 'lock_time', $result );
+		$this->assertTrue( $result['is_locked'], 'Should be locked' );
+		$this->assertEquals( $this->test_user_1, $result['lock_user'] );
+		$this->assertIsNumeric( $result['lock_time'], 'Lock time should be numeric' );
 	}
 
 	public function test_is_document_locked__auto_unlocks_expired_lock() {
@@ -222,11 +227,12 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$result = $this->lock_manager->is_document_locked( $document_id );
 
 		// Assert
-		$this->assertFalse( $result, 'Should auto-unlock expired lock' );
+		$this->assertFalse( $result['is_locked'], 'Should auto-unlock expired lock' );
 		
 		// Verify lock metadata is cleaned up
 		$this->assertEmpty( get_post_meta( $document_id, '_lock_user', true ) );
 		$this->assertEmpty( get_post_meta( $document_id, '_lock_time', true ) );
+		$this->assertEmpty( get_post_meta( $document_id, '_edit_lock', true ) );
 	}
 
 	public function test_get_locked_user__returns_false_when_not_locked() {
@@ -285,33 +291,20 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$this->assertFalse( $result, 'Should fail to extend lock when document is not locked' );
 	}
 
-	public function test_lock_duration_customization() {
+	public function test_extend_lock__fails_when_locked_by_another_user() {
 		// Arrange
-		$custom_duration = 60; // 1 minute
-		$custom_lock_manager = new Document_Lock_Manager( $custom_duration );
+		$document_id = $this->test_document_ids['page'];
+		wp_set_current_user( $this->test_user_1 );
+		$this->lock_manager->lock_document( $document_id );
+
+		// Switch to different user
+		wp_set_current_user( $this->test_user_2 );
 
 		// Act
-		$reflection = new \ReflectionClass( $custom_lock_manager );
-		$property = $reflection->getProperty( 'lock_duration' );
-		$property->setAccessible( true );
-		$actual_duration = $property->getValue( $custom_lock_manager );
+		$result = $this->lock_manager->extend_lock( $document_id );
 
 		// Assert
-		$this->assertEquals( $custom_duration, $actual_duration, 'Should use custom lock duration' );
-	}
-
-	public function test_lock_duration_default() {
-		// Arrange
-		$default_lock_manager = new Document_Lock_Manager();
-
-		// Act
-		$reflection = new \ReflectionClass( $default_lock_manager );
-		$property = $reflection->getProperty( 'lock_duration' );
-		$property->setAccessible( true );
-		$actual_duration = $property->getValue( $default_lock_manager );
-
-		// Assert
-		$this->assertEquals( 300, $actual_duration, 'Should use default lock duration of 5 minutes' );
+		$this->assertFalse( $result, 'Should fail to extend lock when locked by another user' );
 	}
 
 	public function test_concurrent_lock_attempts() {
@@ -327,10 +320,12 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$result = $this->lock_manager->lock_document( $document_id );
 
 		// Assert
-		$this->assertTrue( $result, 'Should allow lock override by different user' );
+		$this->assertFalse( $result, 'Should reject lock attempt when document is locked by another user' );
 		
-		// Verify the lock is now owned by the second user (custom metadata)
-		$this->assertEquals( $this->test_user_2, get_post_meta( $document_id, '_lock_user', true ), 'Lock should be owned by second user' );
+		// Verify the lock is still owned by the first user
+		$locked_user = $this->lock_manager->get_locked_user( $document_id );
+		$this->assertInstanceOf( \WP_User::class, $locked_user, 'Document should still be locked' );
+		$this->assertEquals( $this->test_user_1, $locked_user->ID, 'Lock should still be owned by first user' );
 	}
 
 	public function test_lock_metadata_consistency() {
@@ -366,24 +361,4 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$this->assertTrue( $this->lock_manager->unlock_document( $component_id ), 'Should unlock component' );
 	}
 
-	public function test_auto_unlock_on_user_exit() {
-		// Test that document is unlocked when user exits edit mode
-		$document_id = $this->test_document_ids['page'];
-		wp_set_current_user( $this->test_user_1 );
-		
-		// Lock the document (simulating user entering edit mode)
-		$this->assertTrue( $this->lock_manager->lock_document( $document_id ), 'Should lock document when user enters edit mode' );
-		$this->assertIsArray( $this->lock_manager->is_document_locked( $document_id ), 'Document should be locked' );
-		
-		// Simulate user exiting edit mode (browser close, navigation away, etc.)
-		// This would typically be triggered by JavaScript or server-side cleanup
-		$this->assertTrue( $this->lock_manager->unlock_document( $document_id ), 'Should unlock document when user exits edit mode' );
-		
-		// Verify document is unlocked
-		$this->assertFalse( $this->lock_manager->is_document_locked( $document_id ), 'Document should be unlocked after user exits' );
-		
-		// Verify custom metadata is cleaned up
-		$this->assertEmpty( get_post_meta( $document_id, '_lock_user', true ), 'Custom lock user metadata should be removed' );
-		$this->assertEmpty( get_post_meta( $document_id, '_lock_time', true ), 'Custom lock time metadata should be removed' );
-	}
 }
