@@ -14,7 +14,6 @@ use Elementor\Utils;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
-use Elementor\Core\Utils\Assets_Translation_Loader;
 
 use Elementor\App\Modules\ImportExport\Module as ImportExportModule;
 use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
@@ -264,7 +263,8 @@ class App extends BaseApp {
 
 		$this->enqueue_dark_theme_detection_script();
 
-		Assets_Translation_Loader::for_handles( [ 'elementor-app-packages', 'elementor-app' ], 'elementor' );
+		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
+		wp_set_script_translations( 'elementor-app', 'elementor' );
 
 		$this->print_config();
 	}
