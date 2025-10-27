@@ -70,7 +70,7 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
 			<ControlActions>
 				<LocalizationProvider>
-					<Box display="flex" gap={1} alignItems="center">
+					<Box display="flex" gap={ 1 } alignItems="center">
 						<PropKeyProvider bind="date">
 							<DatePicker
 								value={ parseDateValue( stringPropTypeUtil.extract( value?.date ) ) }
