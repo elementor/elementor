@@ -51,9 +51,9 @@ export const apiClient = {
 					componentId,
 				},
 			} )
-			.then((res) => {
-				const { is_current_user_allow_to_edit, locked_by: lockedBy } = res.data.data;
-				return { isAllowedToSwitchDocument: is_current_user_allow_to_edit, lockedBy: lockedBy || '' };
+			.then( ( res ) => {
+				const { is_current_user_allow_to_edit: isAllowedToSwitchDocument, locked_by: lockedBy } = res.data.data;
+				return { isAllowedToSwitchDocument, lockedBy: lockedBy || '' };
 			} ),
 	lockComponent: async ( componentId: number ) =>
 		await httpService()
