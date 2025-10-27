@@ -940,7 +940,7 @@ class Source_Local extends Source_Base {
 
 			foreach ( $extracted_files['files'] as $file_path ) {
 				// Skip macOS metadata files and folders
-				if ( strpos( $file_path, '__MACOSX' ) !== false || basename( $file_path )[0] === '.' ) {
+				if ( false !== strpos( $file_path, '__MACOSX' ) || '.' === basename( $file_path )[0] ) {
 					continue;
 				}
 
