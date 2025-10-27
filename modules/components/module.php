@@ -79,5 +79,4 @@ class Module extends BaseModule {
 
 		return $instance;
 	}
-
 }
