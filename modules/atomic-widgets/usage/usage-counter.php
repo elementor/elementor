@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -51,29 +52,39 @@ class Usage_Counter {
 				return $control_sections;
 			}
 
-			foreach ( $section->get_items() as $control ) {
-				if ( $control instanceof Atomic_Control_Base ) {
-					$control_sections[ $control->get_bind() ] = $section->get_label();
-				}
-			}
-
-			return $control_sections;
+			return array_merge( $control_sections, $this->extract_section_by_control( $section ) );
 		}, []);
+	}
+
+	private function extract_section_by_control( Section $section ): array {
+		$control_sections = [];
+
+		foreach ( $section->get_items() as $control ) {
+			if ( $control instanceof Atomic_Control_Base ) {
+				$control_sections[ $control->get_bind() ] = $section->get_label();
+			}
+		}
+
+		return $control_sections;
 	}
 
 	private function get_style_section_by_control( array $style_schema ): array {
 		$style_sections = [];
 
 		foreach ( $style_schema as $section_name => $prop ) {
-			foreach ( $prop as $prop_name => $prop_type ) {
-				$style_sections[ $prop_name ] = [
-					'section' => $section_name,
-					'prop_type' => $prop_type,
-				];
-			}
+			$style_sections = array_merge( $style_sections, $this->extract_section_by_style_control( $section_name, $prop ) );
 		}
 
 		return $style_sections;
+	}
+
+	private function extract_section_by_style_control( string $section_name, array $style_props ): array{
+		return array_map(function ($prop_type) use ($section_name) {
+			return [
+				'section' => $section_name,
+				'prop_type' => $prop_type,
+			];
+		}, $style_props);
 	}
 
 	private function get_changed_controls( $instance ): array {
@@ -130,6 +141,10 @@ class Usage_Counter {
 		$control_name = $prefix ? "{$prefix}-{$prop_name}" : $prop_name;
 		$kind = $prop_type::KIND;
 
+		if ( ! $style_prop ) {
+			return $changed;
+		}
+
 		switch ( $kind ) {
 			case 'plain':
 				$changed[] = [
@@ -140,6 +155,7 @@ class Usage_Counter {
 
 				break;
 			case 'object':
+				/** @var Object_Prop_Type $prop_type */
 				$prop_shape = $prop_type->get_shape();
 				$object_styles = array_map( function( string $name, $value ) use ( $prop_shape, $section, $control_name ) {
 					return $this->decompose_style_props( $name, $value, $prop_shape[ $name ], $section, $control_name );
@@ -162,15 +178,10 @@ class Usage_Counter {
 				break;
 			case 'union':
 				/** @var Union_Prop_Type $prop_type */
-				$shape_type = $style_prop['$$type'] ?? null;
-				$union_prop_type = $prop_type->get_prop_type( $shape_type );
-				$filtered_union = array_filter( $style_prop['value'] );
+				$union_prop_type = $prop_type->get_prop_type_from_value( $style_prop );
+				$union_styles = $this->decompose_style_props( $prop_name, $style_prop, $union_prop_type, $section, $control_name );
 
-				$union_styles = array_map( function( string $name, array $value ) use ( $prop_type, $section, $control_name, $union_prop_type ) {
-					return $this->decompose_style_props( $name, $value, $union_prop_type->get_shape_field( $name ), $section, $control_name );
-				}, array_keys( $filtered_union ), $filtered_union );
-
-				$changed = array_merge( $changed, ...$union_styles ?? [] );
+				$changed = array_merge( $changed, $union_styles );
 
 				break;
 		}
