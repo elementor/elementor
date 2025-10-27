@@ -17,13 +17,13 @@ export function EditComponent() {
 	const isLoading = useSelector( selectLoadIsPending );
 
 	useHandleDocumentSwitches( setCurrentDocument, componentsPath );
-	const onBack = useNavigateBack( setCurrentDocument, componentsPath );
+	const onBack = useNavigateBack( componentsPath );
 
 	const isComponent = ! isLoading && currentDocument ? !! components[ currentDocument.id ] : false;
 
 	const widget = currentDocument?.container as V1Element;
 	const elementDom = ( widget?.view?.el?.children?.[ 0 ] ?? null ) as HTMLElement | null;
-	
+
 	if ( ! isComponent || ! elementDom ) {
 		return null;
 	}
@@ -50,13 +50,10 @@ function useHandleDocumentSwitches(
 					return current;
 				}
 
-				const instanceId = current?.container.view.el.dataset.id;
+				const instanceId = nextDocument?.container.view.el.dataset.id;
 
-				if (
-					current?.id &&
-					! path.current.find( ( [ id, iId ] ) => id === current.id && iId === instanceId )
-				) {
-					path.current.push( [ current.id, instanceId ] );
+				if ( ! path.current.find( ( [ id ] ) => id === nextDocument.id ) ) {
+					path.current.push( [ nextDocument.id, instanceId ] );
 				}
 
 				return nextDocument;
@@ -65,15 +62,13 @@ function useHandleDocumentSwitches(
 	} );
 }
 
-function useNavigateBack(
-	setDocument: Dispatch< SetStateAction< V1Document | null > >,
-	path: MutableRefObject< [ number, string | undefined ][] >
-) {
+function useNavigateBack( path: MutableRefObject< [ number, string | undefined ][] > ) {
 	const switchToDocument = useNavigateToDocument();
 	const documentsManager = getV1DocumentsManager();
 
 	return () => {
-		const [ lastDocumentId, lastDocumentInstanceId ] = path.current.pop() ?? [];
+		path.current.pop();
+		const [ lastDocumentId, lastDocumentInstanceId ] = path.current.at( -1 ) ?? [];
 
 		if ( lastDocumentId && lastDocumentInstanceId ) {
 			switchToDocument(
@@ -87,9 +82,11 @@ function useNavigateBack(
 				false
 			);
 		} else {
-			switchToDocument( documentsManager.getInitialId(), { mode: 'autosave', setAsInitial: false } );
+			switchToDocument( documentsManager.getInitialId(), {
+				mode: 'autosave',
+				setAsInitial: false,
+				shouldScroll: false,
+			} );
 		}
-
-		setDocument( null );
 	};
 }

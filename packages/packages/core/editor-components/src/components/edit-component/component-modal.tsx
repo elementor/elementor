@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { type CSSProperties, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { __ } from '@wordpress/i18n';
 
 import { useElementRect } from '../../hooks/use-element-rect';
-import { __ } from '@wordpress/i18n';
 import { usePortal } from '../../hooks/use-portal';
 
 type ModalProps = {
@@ -63,7 +63,7 @@ function Backdrop( { iframe, element, onClose }: { iframe: HTMLDocument; element
 			onKeyDown={ handleKeyDown }
 			role="button"
 			tabIndex={ 0 }
-			aria-label={ __('Exit component editing mode', 'elementor') }
+			aria-label={ __( 'Exit component editing mode', 'elementor' ) }
 		/>
 	);
 }
