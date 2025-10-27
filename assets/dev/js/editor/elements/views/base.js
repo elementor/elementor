@@ -559,17 +559,31 @@ BaseElementView = BaseContainer.extend( {
 		const settings = self.getEditModel().get( 'settings' ),
 			classControls = settings.getClassControls();
 
+		// Remove all previous classes - Handle both raw and dynamic values to avoid leftovers 
+		const previousSettings = {
+			...settings.attributes,
+			...settings.previousAttributes(),
+		};
+		// Parse dynamic values for classes being removed to catch any leftover dynamic tokens
+		const parsedPreviousSettings = settings.parseDynamicSettings( previousSettings, this.getDynamicParsingSettings(), classControls );
+		
 		// Remove all previous classes
 		_.each( classControls, ( control ) => {
-			let previousClassValue = settings.previous( control.name );
+			// Remove both raw and parsed values to be extra safe
+			let previousRawValue = settings.previous( control.name );
+			let previousParsedValue = parsedPreviousSettings[ control.name ];
 
-			if ( control.classes_dictionary ) {
-				if ( undefined !== control.classes_dictionary[ previousClassValue ] ) {
-					previousClassValue = control.classes_dictionary[ previousClassValue ];
+			[ previousRawValue, previousParsedValue ].forEach( value => {
+				if ( value && control.classes_dictionary ) {
+					if ( undefined !== control.classes_dictionary[ value ] ) {
+						value = control.classes_dictionary[ value ];
+					}
 				}
-			}
 
-			self.$el.removeClass( control.prefix_class + previousClassValue );
+				if ( value ) {
+					self.$el.removeClass( control.prefix_class + value );
+				}
+			} );
 		} );
 
 		// Parse dynamic class controls so dynamic tags are evaluated when possible
