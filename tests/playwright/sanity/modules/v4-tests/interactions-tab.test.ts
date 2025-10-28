@@ -89,7 +89,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await interactionTag.click();
 			await page.waitForSelector( '.MuiPopover-root' );
 			await page.waitForSelector( '.MuiMenuItem-root' );
-			
+
 			const animationOption = page.locator( '.MuiMenuItem-root' ).nth( 1 );
 
 			await expect( animationOption ).toBeVisible();
@@ -106,7 +106,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			await expect( headingElement ).toBeVisible();
 			await expect( headingElement ).toHaveAttribute( 'data-interactions' );
-			
+
 			const interactionsData = await headingElement.getAttribute( 'data-interactions' );
 			expect( interactionsData ).toBeTruthy();
 		} );
