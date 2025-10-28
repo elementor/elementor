@@ -19,9 +19,8 @@ describe( 'DisplayConditionsControl', () => {
 		const button = screen.getByRole( 'button', { name: 'Display Conditions' } );
 		expect( button ).toBeInTheDocument();
 		expect( button ).toHaveAttribute( 'aria-label', 'Display Conditions' );
-		
+		// eslint-disable-next-line testing-library/no-node-access
 		const svg = button.querySelector( 'svg' );
 		expect( svg ).toBeInTheDocument();
 	} );
 } );
-

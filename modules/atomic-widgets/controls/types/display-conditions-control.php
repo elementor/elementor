@@ -12,7 +12,6 @@ class Display_Conditions_Control extends Atomic_Control_Base {
 		return 'display-conditions';
 	}
 
-
 	public function get_props(): array {
 		return [];
 	}
