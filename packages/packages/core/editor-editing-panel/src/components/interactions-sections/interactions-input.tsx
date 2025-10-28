@@ -179,7 +179,7 @@ const InteractionItem = ( {
 						<Tooltip title={ __( 'Duplicate', 'elementor' ) } placement="top">
 							<IconButton
 								size="tiny"
-								onClick={ ( e ) => {
+								onClick={ ( e: React.MouseEvent<HTMLButtonElement> ) => {
 									e.stopPropagation();
 									onDuplicate( index );
 								} }
@@ -192,7 +192,7 @@ const InteractionItem = ( {
 							<Tooltip title={ __( 'Remove', 'elementor' ) } placement="top">
 								<IconButton
 									size="tiny"
-									onClick={ ( e ) => {
+									onClick={ ( e: React.MouseEvent<HTMLButtonElement> ) => {
 										e.stopPropagation();
 										onRemove( index );
 									} }
