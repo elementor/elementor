@@ -5,42 +5,74 @@ import './quota-bar.scss';
 const QUOTA_BAR_CLASSNAME = 'e-kit-library__quota-bar';
 
 const BYTES_TO_GB = 1024 * 1024 * 1024;
+const BYTES_TO_MB = 1024 * 1024;
 
 const convertBytesToGB = ( bytes ) => {
 	return Math.round( ( bytes / BYTES_TO_GB ) * 100 ) / 100; // Round to 2 decimal places
 };
 
+const convertBytesToMB = ( bytes ) => {
+	return Math.round( ( bytes / BYTES_TO_MB ) * 100 ) / 100; // Round to 2 decimal places
+};
+
 const formatDisplayValues = ( used, total, unit ) => {
 	if ( 'B' === unit ) {
+		const totalInGB = convertBytesToGB( total );
+		const usedInGB = convertBytesToGB( used );
+		const usedInMB = convertBytesToMB( used );
+
+		if ( used === total ) {
+			return {
+				used: usedInGB,
+				usedUnit: 'GB',
+				total: totalInGB,
+				totalUnit: 'GB',
+			};
+		}
+
+		if ( usedInGB < 1 ) {
+			return {
+				used: usedInMB,
+				usedUnit: 'MB',
+				total: totalInGB,
+				totalUnit: 'GB',
+			};
+		}
+
 		return {
-			used: convertBytesToGB( used ),
-			total: convertBytesToGB( total ),
-			unit: 'GB',
+			used: usedInGB,
+			usedUnit: 'GB',
+			total: totalInGB,
+			totalUnit: 'GB',
 		};
 	}
-	return { used, total, unit };
+	return {
+		used,
+		usedUnit: unit,
+		total,
+		totalUnit: unit,
+	};
 };
 
 export default function QuotaBar( { used = 0, total = 15, unit = 'GB', label = 'Storage' } ) {
 	const displayValues = formatDisplayValues( used, total, unit );
-	const usagePercentage = Math.min( ( displayValues.used / displayValues.total ) * 100, 100 );
+
+	const usagePercentage = total > 0 ? Math.min( ( used / total ) * 100, 100 ) : 0;
 
 	const getUsageState = () => {
-		const USAGE_THRESHOLDS = [
-			{ threshold: 0, state: 'empty' },
-			{ threshold: 80, state: 'warning' },
-			{ threshold: 100, state: 'alert' },
-		];
-
 		if ( 0 === usagePercentage ) {
 			return 'empty';
 		}
 
-		const matchingThreshold = USAGE_THRESHOLDS
-			.reverse()
-			.find( ( { threshold } ) => usagePercentage >= threshold );
+		if ( usagePercentage >= 100 ) {
+			return 'alert';
+		}
 
-		return matchingThreshold ? matchingThreshold.state : 'normal';
+		if ( usagePercentage >= 80 ) {
+			return 'warning';
+		}
+
+		return 'normal';
 	};
 
 	const getProgressBarClass = () => {
@@ -74,7 +106,7 @@ export default function QuotaBar( { used = 0, total = 15, unit = 'GB', label = '
 						{ getUsageText() }
 					</Text>
 					<Text className={ `${ QUOTA_BAR_CLASSNAME }__count` } variant="xs" tag="span">
-						{ displayValues.used } { displayValues.unit } { __( 'of', 'elementor' ) } { displayValues.total } { displayValues.unit }
+						{ displayValues.used } { displayValues.usedUnit } { __( 'of', 'elementor' ) } { displayValues.total } { displayValues.totalUnit }
 					</Text>
 				</div>
 				<div className={ getProgressContainerClass() }>
