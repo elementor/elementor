@@ -413,16 +413,12 @@ class Source_Cloud extends Source_Base {
 			$items_to_save = [];
 
 			foreach ( $extracted_files['files'] as $file_path ) {
-				// Skip macOS metadata files and folders
-				if ( false !== strpos( $file_path, '__MACOSX' ) || '.' === basename( $file_path )[0] ) {
-					continue;
-				}
-
 				$prepared = $this->prepare_import_template_data( $file_path );
 
 				if ( is_wp_error( $prepared ) ) {
-					// Skip failed templates
-					continue;
+					Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+
+					return $prepared;
 				}
 
 				$items_to_save[] = $this->format_resource_item_for_create( $prepared );
