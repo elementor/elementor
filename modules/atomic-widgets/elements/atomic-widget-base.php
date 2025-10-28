@@ -14,7 +14,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	protected $version = '0.0';
 	protected $styles = [];
-	protected $interactions = []; // Change back to string
+	protected $interactions = [];
 	protected $editor_settings = [];
 
 	public function __construct( $data = [], $args = null ) {

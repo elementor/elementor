@@ -39,27 +39,15 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 		}
 
 		attributes() {
-			console.log('inside attributes' );
-			console.log('model:', this.model);
-			console.log('model keys:', Object.keys(this.model));			const baseAttributes = {
+			return {
 				...super.attributes(),
-		
+
 				// Mark the widget as atomic, so external APIs (such as the overlay layer) can reference it.
 				'data-atomic': '',
-		
+
 				// Make the wrapper is non-existent in terms of CSS to mimic the frontend DOM tree.
 				style: 'display: contents !important;',
 			};
-		
-			const interactions = (this.model as any).attributes?.interactions || [];
-			console.log('interactions', interactions);
-			if ( interactions && interactions.length > 0 ) {
-				(baseAttributes as any)['data-interactions'] = JSON.stringify( interactions );
-				console.log('Added data-interactions:', (baseAttributes as any)['data-interactions']);
-			}
-		
-			console.log('Final baseAttributes:', baseAttributes);
-			return baseAttributes;
 		}
 
 		// Removes behaviors that are not needed for atomic widgets (that are implemented in the overlay layer).
