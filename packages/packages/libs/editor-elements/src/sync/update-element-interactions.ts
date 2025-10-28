@@ -16,10 +16,8 @@ export const updateElementInteractions = ( {
         throw new Error( `Element with id ${ elementId } not found` );
     }
 
-    // Set interactions directly as array, don't merge with existing
     element.model.set( 'interactions', interactions );
 
-    // Dispatch the event that the hook is listening for
     window.dispatchEvent( new CustomEvent( 'elementor/element/update_interactions' ) );
 
     setDocumentModifiedStatus( true );

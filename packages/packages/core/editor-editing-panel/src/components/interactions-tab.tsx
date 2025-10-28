@@ -11,12 +11,19 @@ import { SessionStorageProvider } from '@elementor/session';
 export const InteractionsTab = () => {
     const { element } = useElement();
     const interactions = useElementInteractions(element.id);
-    console.log('interactions', interactions);
     
     const [showInteractions, setShowInteractions] = React.useState(false);
-    
-    const hasInteractions = interactions && Array.isArray(interactions) && interactions.length > 0;
+
+    const hasInteractions = (() => {
+        if (!interactions || typeof interactions !== 'string') return false;
         
+        try {
+            const parsed = JSON.parse(interactions);
+            return Array.isArray(parsed) && parsed.length > 0;
+        } catch {
+            return false;
+        }
+    })(); 
     const shouldShowInteractions = hasInteractions || showInteractions;
    
 	return (
