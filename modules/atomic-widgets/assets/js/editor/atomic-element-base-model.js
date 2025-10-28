@@ -35,7 +35,6 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
     }
 
     buildElement( element ) {
-		console.log('buildElement called');
         const id = elementorCommon.helpers.getUniqueId();
 
         const elements = ( element.elements || [] ).map( ( el ) => this.buildElement( el ) );
