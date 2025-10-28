@@ -1,13 +1,13 @@
 function initInteractions() {
-	if ( typeof animate === 'undefined' && !window.Motion?.animate ) {
+	if ( 'undefined' === typeof animate && ! window.Motion?.animate ) {
 		setTimeout( initInteractions, 100 );
 		return;
 	}
 
-	const animateFunc = typeof animate !== 'undefined' ? animate : window.Motion?.animate;
-	const inViewFunc = typeof inView !== 'undefined' ? inView : window.Motion?.inView;
+	const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
+	const inViewFunc = 'undefined' !== typeof inView ? inView : window.Motion?.inView;
 
-	if ( !inViewFunc || !animateFunc ) {
+	if ( ! inViewFunc || ! animateFunc ) {
 		return;
 	}
 
@@ -28,23 +28,23 @@ function initInteractions() {
 				inViewFunc( element, () => {
 					animateFunc( element, {
 						opacity: [ 0, 1 ],
-						x: [ -100, 0 ]
+						x: [ -100, 0 ],
 					}, {
 						duration: 1,
-						easing: 'ease-in-out'
+						easing: 'ease-in-out',
 					} );
 
 					return () => {};
 				}, {
 					root: null,
-					amount: 0.1
+					amount: 0.1,
 				} );
 			} catch ( error ) {}
 		} );
 	} );
 }
 
-if ( document.readyState === 'loading' ) {
+if ( 'loading' === document.readyState ) {
 	document.addEventListener( 'DOMContentLoaded', initInteractions );
 } else {
 	initInteractions();
