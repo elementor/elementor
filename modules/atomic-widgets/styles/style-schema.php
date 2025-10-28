@@ -48,6 +48,22 @@ class Style_Schema {
 		);
 	}
 
+	public static function get_style_schema_with_sections(): array {
+		return [
+			'Layout' => array_merge(
+				self::get_alignment_props(),
+				self::get_layout_props()
+			),
+			'Spacing' => self::get_spacing_props(),
+			'Size' => self::get_size_props(),
+			'Position' => self::get_position_props(),
+			'Typography' => self::get_typography_props(),
+			'Background' => self::get_background_props(),
+			'Border' => self::get_border_props(),
+			'Effects' => self::get_effects_props(),
+		];
+	}
+
 	private static function get_size_props() {
 		return [
 			'width' => Size_Prop_Type::make(),
