@@ -111,6 +111,7 @@ class Atomic_Widgets_Route {
 	}
 
 	public function convert_html_to_widgets( \WP_REST_Request $request ): \WP_REST_Response {
+		
 		$conversion_params = $this->extract_conversion_parameters( $request );
 
 		if ( empty( $conversion_params['html'] ) ) {
@@ -119,6 +120,7 @@ class Atomic_Widgets_Route {
 
 		try {
 			$service = $this->get_conversion_service();
+			
 			$processed_html = $this->embed_css_if_provided( $conversion_params['html'], $conversion_params['css'] );
 			$result = $service->convert_from_html(
 				$processed_html,
@@ -126,6 +128,7 @@ class Atomic_Widgets_Route {
 				$conversion_params['follow_imports'],
 				$conversion_params['options']
 			);
+
 
 			return new \WP_REST_Response( $result, 200 );
 
@@ -135,14 +138,56 @@ class Atomic_Widgets_Route {
 	}
 
 	private function extract_conversion_parameters( \WP_REST_Request $request ): array {
+		$type = $request->get_param( 'type' ) ? $request->get_param( 'type' ) : 'html';
+		$content = $request->get_param( 'content' );
+		$html_param = $request->get_param( 'html' );
+
+		$html = $this->resolve_html_content( $type, $content, $html_param );
+
 		return [
-			'html' => $request->get_param( 'html' ) ? $request->get_param( 'html' ) : $request->get_param( 'content' ),
+			'html' => $html,
 			'css' => $request->get_param( 'css' ) ? $request->get_param( 'css' ) : '',
-			'type' => $request->get_param( 'type' ) ? $request->get_param( 'type' ) : 'html',
+			'type' => $type,
 			'css_urls' => $request->get_param( 'cssUrls' ) ? $request->get_param( 'cssUrls' ) : [],
 			'follow_imports' => $request->get_param( 'followImports' ) ? $request->get_param( 'followImports' ) : false,
 			'options' => $request->get_param( 'options' ) ? $request->get_param( 'options' ) : [],
 		];
+	}
+
+	private function resolve_html_content( string $type, $content, $html_param ): string {
+		if ( 'url' === $type && ! empty( $content ) ) {
+			return $this->fetch_html_from_url( $content );
+		}
+
+		if ( $html_param ) {
+			return $html_param;
+		}
+
+		return $content ? $content : '';
+	}
+
+	private function fetch_html_from_url( string $url ): string {
+		$response = wp_remote_get( $url, [
+			'timeout' => 15,
+			'sslverify' => false,
+		] );
+
+		if ( is_wp_error( $response ) ) {
+			throw new \Exception( 'Failed to fetch URL: ' . esc_html( $response->get_error_message() ) );
+		}
+
+		$status_code = wp_remote_retrieve_response_code( $response );
+		if ( 200 !== $status_code ) {
+			throw new \Exception( 'URL returned HTTP status ' . esc_html( (string) $status_code ) );
+		}
+
+		$html = wp_remote_retrieve_body( $response );
+
+		if ( empty( $html ) ) {
+			throw new \Exception( 'URL returned empty response' );
+		}
+
+		return $html;
 	}
 
 	private function create_missing_html_error_response(): \WP_REST_Response {

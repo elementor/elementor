@@ -28,6 +28,8 @@ class Css_Processor_Factory {
 
 	private static function register_all_processors( Css_Processor_Registry $registry ): void {
 		$property_converter = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service();
+		$specificity_calculator = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Specificity_Calculator();
+		$reset_style_detector = new \Elementor\Modules\CssConverter\Services\Css\Processing\Reset_Style_Detector( $specificity_calculator );
 
 		$processors = [
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Css_Parsing_Processor(),
@@ -37,6 +39,7 @@ class Css_Processor_Factory {
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Nested_Element_Selector_Processor(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Compound_Class_Selector_Processor(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Style_Collection_Processor(),
+			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Reset_Styles_Processor( $reset_style_detector, $property_converter ),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Global_Classes_Processor(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Html_Class_Modifier_Processor(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Style_Resolution_Processor(),

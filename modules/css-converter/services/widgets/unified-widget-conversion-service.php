@@ -167,7 +167,7 @@ class Unified_Widget_Conversion_Service {
 		$elementor_data = $creation_result['element_data'] ?? [];
 		return [
 			'widgets_created' => $creation_result['widgets_created'] ?? 0,
-			'widgets' => $creation_result['widgets'] ?? $widgets, // Include actual widgets for tests
+			'widgets' => ! empty( $elementor_data ) ? $elementor_data : $widgets, // FIXED: Use processed widgets if available
 			'global_classes_created' => count( $global_classes ), // Use actual count since widget_creator doesn't track this anymore
 			'variables_created' => $creation_result['variables_created'] ?? 0,
 			'post_id' => $creation_result['post_id'] ?? $post_id,

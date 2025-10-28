@@ -114,12 +114,26 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 
 			$converted_properties = $this->convert_rule_properties_to_atomic( $properties );
 
-			$unified_style_manager->collect_reset_styles(
-				$target_selector,
-				$converted_properties,
-				$matched_elements,
-				true
-			);
+			// Skip simple element selectors - these are handled by Reset_Styles_Processor
+			if ( $this->is_simple_element_selector( $target_selector ) ) {
+				$remaining_rules[] = $rule;
+				continue;
+			}
+
+			// FIXED: Use collect_element_styles instead of collect_reset_styles
+			// Complex element selectors (not simple reset styles) are processed here
+			foreach ( $matched_elements as $element_id ) {
+				foreach ( $converted_properties as $property_data ) {
+					$unified_style_manager->collect_element_styles(
+						$element_id,
+						$target_selector,
+						$property_data['property'],
+						$property_data['value'],
+						$property_data['important'] ?? false,
+						$property_data['converted_property'] ?? null
+					);
+				}
+			}
 
 			++$applied_count;
 		}
@@ -285,5 +299,11 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 		}
 
 		return $converted_properties;
+	}
+
+	private function is_simple_element_selector( string $selector ): bool {
+		// Check if selector is a simple element selector (p, h1, div, etc.)
+		// These should be handled by Reset_Styles_Processor, not here
+		return preg_match( '/^[a-zA-Z][a-zA-Z0-9]*$/', trim( $selector ) );
 	}
 }

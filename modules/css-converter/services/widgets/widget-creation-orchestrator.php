@@ -28,6 +28,7 @@ class Widget_Creation_Orchestrator {
 	}
 
 	public function create_widgets( array $styled_widgets, array $css_processing_result, array $options = [] ): array {
+		
 		try {
 			$context = new Widget_Creation_Context( $styled_widgets, $css_processing_result, $options );
 
@@ -45,7 +46,7 @@ class Widget_Creation_Orchestrator {
 			$stats = $this->service_locator->get_statistics_collector();
 			$stats->merge_hierarchy_stats( $context->get_hierarchy_stats() );
 
-			return [
+			$orchestrator_result = [
 				'success' => true,
 				'post_id' => $context->get_post_id(),
 				'edit_url' => $this->service_locator->get_document_manager()->get_edit_url( $context->get_post_id() ),
@@ -56,7 +57,10 @@ class Widget_Creation_Orchestrator {
 				'hierarchy_stats' => $context->get_hierarchy_stats(),
 				'hierarchy_errors' => [],
 				'error_report' => $this->service_locator->get_error_handler()->generate_error_report(),
+				'element_data' => $context->get_elementor_elements(), // FIXED: Return the processed widgets
 			];
+			
+			return $orchestrator_result;
 		} catch ( \Exception $e ) {
 			$this->service_locator->get_statistics_collector()->add_error( [
 				'type' => 'widget_creation_failed',

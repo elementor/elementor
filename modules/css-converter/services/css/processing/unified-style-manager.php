@@ -196,21 +196,27 @@ class Unified_Style_Manager {
 				if ( 'font-family' === $property ) {
 				}
 
-				$this->collected_styles[] = [
+				$order = count( $this->collected_styles );
+				$specificity = $this->calculate_reset_element_specificity(
+					$element_selector,
+					$property_data['important'] ?? false
+				);
+				
+				$style_entry = [
 					'source' => 'reset-element',
 					'selector' => $element_selector,
 					'element_id' => $widget_element_id,
 					'property' => $property,
 					'value' => $value,
 					'important' => $property_data['important'] ?? false,
-					'specificity' => $this->calculate_reset_element_specificity(
-						$element_selector,
-						$property_data['important'] ?? false
-					),
+					'specificity' => $specificity,
 					'converted_property' => $property_data['converted_property'] ?? null,
 					'can_apply_directly' => $can_apply_directly,
-					'order' => count( $this->collected_styles ),
+					'order' => $order,
 				];
+
+
+				$this->collected_styles[] = $style_entry;
 			}
 		}
 	}
@@ -569,7 +575,13 @@ class Unified_Style_Manager {
 	 * but are processed through the unified manager for proper conflict resolution
 	 */
 	private function calculate_reset_element_specificity( string $selector, bool $important ): int {
-		$specificity = $this->specificity_calculator->calculate_specificity( $selector );
+		$base_specificity = $this->specificity_calculator->calculate_specificity( $selector );
+		
+		// Reset styles use normal CSS specificity (no artificial boost)
+		// They should be easily overridable by more specific styles
+		// CSS cascade order (external → internal → inline) handles priority
+		$specificity = $base_specificity;
+		
 		if ( $important ) {
 			$specificity += Css_Specificity_Calculator::IMPORTANT_WEIGHT;
 		}
@@ -683,6 +695,7 @@ class Unified_Style_Manager {
 				case 'reset-element':
 					// Reset element styles apply to widgets that match the element selector
 					$applies = ( $style['element_id'] === $element_id );
+					
 					break;
 				case 'reset-complex':
 					// Complex reset styles don't apply directly to widgets
@@ -725,6 +738,7 @@ class Unified_Style_Manager {
 		if ( empty( $styles ) ) {
 			return null;
 		}
+		
 		// Sort by specificity (highest first), then by order (latest first)
 		usort( $styles, function( $a, $b ) {
 			if ( $a['specificity'] !== $b['specificity'] ) {
@@ -733,6 +747,7 @@ class Unified_Style_Manager {
 			return $b['order'] - $a['order']; // Later in cascade wins
 		});
 		$winner = $styles[0];
+		
 		// Debug log the competition
 		if ( count( $styles ) > 1 ) {
 			$competitors = array_map( function( $style ) {

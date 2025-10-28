@@ -29,7 +29,20 @@
 - **Issue**: Competing pipelines with unified approach
 - **Replacement**: Use `convert_from_html()` with unified processor
 
-### 4. Old CSS Processor References
+### 4. Deprecated CSS Processing Methods in Unified_Css_Processor
+**File**: `services/css/processing/unified-css-processor.php`
+- **@deprecated 2025-10-28** Legacy Methods:
+  - `collect_all_styles_from_sources()` - Replaced by Style_Collection_Processor
+  - `collect_all_styles_from_sources_with_flattened_rules()` - Replaced by Style_Collection_Processor
+  - `collect_css_styles_from_flattened_rules()` - Replaced by Css_Parsing_Processor
+  - `collect_css_styles()` - Replaced by Css_Parsing_Processor
+  - `analyze_and_apply_direct_element_styles()` - **CRITICAL** - Replaced by Reset_Styles_Processor
+  - `process_css_rules_for_widgets()` - Replaced by Nested_Element_Selector_Processor
+  - `collect_inline_styles_from_widgets()` - **CRITICAL** - Replaced by Style_Collection_Processor
+- **Issue**: Duplicate CSS processing logic outside processor registry pattern
+- **Action**: Remove after verification that processor registry handles all cases
+
+### 5. Old CSS Processor References
 **Files with legacy Css_Processor usage**:
 - Multiple files still reference non-unified `Css_Processor` class
 - **Issue**: Creates conflicts with `Unified_Css_Processor`
@@ -37,7 +50,7 @@
 
 ## 🐛 Debug Code Pollution
 
-### 5. Extensive Debug Logging
+### 6. Extensive Debug Logging
 **Total**: 255 `error_log()` calls across 50 files
 - `services/css/processing/unified-css-processor.php` (73 calls)
 - `services/widgets/widget-mapper.php` (36 calls)
@@ -49,7 +62,7 @@
 
 ## 📄 Legacy Documentation
 
-### 6. Outdated Documentation Files
+### 7. Outdated Documentation Files
 **Analysis Documents** (can be archived):
 - `docs/unified-mapper/STEP-2-ANALYSIS.md` - Documents duplicate methods
 - `docs/unified-mapper/STEP-4-CURRENT-IMPLEMENTATION-ANALYSIS.md` - Analysis of wrong architecture
@@ -64,7 +77,7 @@
 
 ## 🧪 Legacy Test Files
 
-### 7. Deprecated Test Files
+### 8. Deprecated Test Files
 **Already Removed**:
 - ✅ `test-nested-styles-fix.php` (3 occurrences) - DELETED
 - ✅ `test-error-handling-recovery.php` (1 occurrence) - DELETED  
@@ -76,21 +89,21 @@
 
 ## 🔄 Non-Unified Patterns
 
-### 8. Manual CSS Generation
+### 9. Manual CSS Generation
 **Issue**: CSS Converter manually creates CSS instead of using Atomic Widgets
 **Files**:
 - `services/widgets/widget-creator.php` - Manual CSS structure creation
 - **Pattern**: Direct CSS string generation vs atomic widget system
 - **Replacement**: Use Atomic Widgets CSS generation
 
-### 9. Custom Widget Creation Logic
+### 10. Custom Widget Creation Logic
 **Issue**: Duplicate widget creation logic outside Atomic Widgets
 **Files**:
 - `services/widgets/widget-creator.php` - Manual widget array building
 - **Pattern**: `convert_widget_to_elementor_format()` method
 - **Replacement**: Use Atomic Widget constructors
 
-### 10. Competing Processing Pipelines
+### 11. Competing Processing Pipelines
 **Issue**: Multiple CSS processing approaches
 **Files**:
 - Legacy: Uses `Css_Processor` (old approach)
@@ -104,17 +117,23 @@
 2. ⏳ Migrate `routes/widgets-route.php` to `Unified_Widget_Conversion_Service`
 3. ⏳ Remove legacy methods from `widget-creator.php`
 
-### Phase 2: Debug Code Cleanup  
+### Phase 2: Legacy Method Cleanup
+1. ⏳ Remove deprecated methods from `unified-css-processor.php` (7 methods marked @deprecated 2025-10-28)
+2. ⏳ Verify processor registry handles all CSS processing cases
+3. ⏳ Test that Reset_Styles_Processor replaces `analyze_and_apply_direct_element_styles()`
+4. ⏳ Test that Style_Collection_Processor replaces `collect_inline_styles_from_widgets()`
+
+### Phase 3: Debug Code Cleanup  
 1. ⏳ Remove all 255 `error_log()` calls
 2. ⏳ Implement proper logging system
 3. ⏳ Clean production code
 
-### Phase 3: Documentation Cleanup
+### Phase 4: Documentation Cleanup
 1. ⏳ Archive analysis documents
 2. ⏳ Update README with unified approach only
 3. ⏳ Remove deprecated examples
 
-### Phase 4: Architecture Unification
+### Phase 5: Architecture Unification
 1. ⏳ Remove competing CSS processors
 2. ⏳ Unify all processing through `Unified_Css_Processor`
 3. ⏳ Remove manual CSS generation logic

@@ -11,11 +11,13 @@ class Atomic_Widget_Data_Formatter {
 		return new self();
 	}
 	public function format_widget_data( array $resolved_styles, array $widget, string $widget_id ): array {
+		
 		// Generate atomic-style widget ID (7-char hex)
 		$atomic_widget_id = $this->generate_atomic_widget_id();
 		$class_id = $this->create_atomic_style_class_name( $atomic_widget_id );
 		$atomic_props = $this->extract_atomic_props_from_resolved_styles( $resolved_styles );
 		$css_classes = $this->extract_css_classes_from_widget( $widget );
+		
 		// Note: Base classes (e.g., e-heading-base) are added automatically by atomic widget Twig templates
 		// CSS Converter should only add generated style classes and user-defined classes
 		$widget_type = $widget['widget_type'] ?? 'e-div-block';
@@ -31,13 +33,15 @@ class Atomic_Widget_Data_Formatter {
 		if ( ! empty( $atomic_props ) ) {
 			$css_classes[] = $class_id;
 		}
-		return [
+		$final_widget_data = [
 			'widgetType' => $widget_type,
 			'settings' => $this->format_widget_settings( $widget, $css_classes ),
 			'styles' => [
 				$class_id => $style_definition,
 			],
 		];
+		
+		return $final_widget_data;
 	}
 	public function format_global_class_data( string $class_name, array $atomic_props ): array {
 		return [
@@ -58,7 +62,9 @@ class Atomic_Widget_Data_Formatter {
 	}
 	private function extract_atomic_props_from_resolved_styles( array $resolved_styles ): array {
 		$atomic_props = [];
+		
 		foreach ( $resolved_styles as $property => $style_data ) {
+			
 			if ( isset( $style_data['converted_property'] ) && is_array( $style_data['converted_property'] ) ) {
 				$converted_property = $style_data['converted_property'];
 				// Check if this is a single atomic property object (has $$type)

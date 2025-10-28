@@ -1,0 +1,383 @@
+/* Custom Reset Styles - External CSS File 2 */
+
+/* Eric Meyer's Reset CSS v2.0 inspired styles */
+
+/* Base reset */
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+        display: block;
+}
+
+body {
+        line-height: 1;
+}
+
+ol,
+ul {
+        list-style: none;
+}
+
+blockquote,
+q {
+        quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+        content: '';
+        content: none;
+}
+
+table {
+        border-collapse: collapse;
+        border-spacing: 0;
+}
+
+/* Custom additions for testing specific reset scenarios */
+
+/* Typography resets */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+        font-weight: normal;
+        font-style: normal;
+        text-decoration: none;
+}
+
+/* Form element resets */
+input,
+textarea,
+select,
+button {
+        font-family: inherit;
+        font-size: inherit;
+        background: transparent;
+        border: none;
+        outline: none;
+        margin: 0;
+        padding: 0;
+}
+
+button {
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+}
+
+/* Link resets */
+a {
+        color: inherit;
+        text-decoration: none;
+}
+
+/* Image resets */
+img {
+        border: 0;
+        vertical-align: top;
+}
+
+/* Box model reset */
+*,
+*:before,
+*:after {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+}
+
+/* Remove default margins and padding */
+* {
+        margin: 0;
+        padding: 0;
+}
+
+/* Clear floats */
+.clearfix:after {
+        content: "";
+        display: table;
+        clear: both;
+}
+
+/* Remove list styles */
+ul,
+ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+}
+
+/* Remove default table styling */
+table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        width: 100%;
+}
+
+th,
+td {
+        padding: 0;
+        text-align: left;
+        vertical-align: top;
+}
+
+/* Remove default form styling */
+fieldset {
+        border: none;
+        margin: 0;
+        padding: 0;
+}
+
+legend {
+        padding: 0;
+}
+
+/* Remove default quote marks */
+blockquote:before,
+blockquote:after {
+        content: none;
+}
+
+/* Remove default emphasis */
+em,
+i {
+        font-style: normal;
+}
+
+strong,
+b {
+        font-weight: normal;
+}
+
+/* Remove default code styling */
+code,
+pre {
+        font-family: inherit;
+        font-size: inherit;
+}
+
+/* Remove default small styling */
+small {
+        font-size: inherit;
+}
+
+/* Remove default sub/sup positioning */
+sub,
+sup {
+        font-size: inherit;
+        line-height: inherit;
+        position: static;
+        vertical-align: baseline;
+}
+
+/* Remove default hr styling */
+hr {
+        border: none;
+        height: 0;
+        margin: 0;
+        padding: 0;
+}
+
+/* Remove default address styling */
+address {
+        font-style: normal;
+}
+
+/* Remove default abbr styling */
+abbr[title] {
+        border-bottom: none;
+        text-decoration: none;
+}
+
+/* Remove default mark styling */
+mark {
+        background: transparent;
+        color: inherit;
+}
+
+/* Remove default del/ins styling */
+del,
+ins {
+        text-decoration: none;
+}
+
+/* Remove default dfn styling */
+dfn {
+        font-style: normal;
+}
+
+/* Remove default kbd styling */
+kbd {
+        font-family: inherit;
+        font-size: inherit;
+}
+
+/* Remove default samp styling */
+samp {
+        font-family: inherit;
+        font-size: inherit;
+}
+
+/* Remove default var styling */
+var {
+        font-style: normal;
+}
+
+/* Additional utility resets */
+.no-margin {
+        margin: 0 !important;
+}
+
+.no-padding {
+        padding: 0 !important;
+}
+
+.no-border {
+        border: none !important;
+}
+
+.no-background {
+        background: none !important;
+}
+
+.no-outline {
+        outline: none !important;
+}
+
+/* Reset for specific HTML5 elements */
+article,
+aside,
+figcaption,
+figure,
+footer,
+header,
+nav,
+section {
+        display: block;
+        margin: 0;
+        padding: 0;
+}
+
+/* Reset for media elements */
+audio,
+canvas,
+video {
+        display: inline-block;
+        vertical-align: baseline;
+}
+
+/* Reset for hidden elements */
+[hidden] {
+        display: none;
+}
+
+/* Reset for template elements */
+template {
+        display: none;
+}
+

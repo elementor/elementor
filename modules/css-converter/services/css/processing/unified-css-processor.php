@@ -38,7 +38,6 @@ class Unified_Css_Processor {
 		$this->html_class_modifier = new \Elementor\Modules\CssConverter\Services\Css\Html_Class_Modifier_Service();
 	}
 	public function process_css_and_widgets( string $css, array $widgets, array $options = [] ): array {
-
 		// Create processing context with input data
 		$context = new Css_Processing_Context();
 		$context->set_metadata( 'css', $css );
@@ -107,14 +106,23 @@ class Unified_Css_Processor {
 	// See: plugins/elementor-css/modules/css-converter/docs/page-testing/0-0----old-code.md
 	// ============================================================================
 
-	// LEGACY: INACTIVE - Status unclear. Replaced by Style_Collection_Processor. See: 0-0----old-code.md
+	/**
+	 * @deprecated 2025-10-28 Replaced by Style_Collection_Processor in processor registry pattern
+	 * @see plugins/elementor-css/modules/css-converter/docs/page-testing/0-0--remove-legacy-code.md
+	 * Status: INACTIVE - Method not called, safe to remove after verification
+	 */
 	private function collect_all_styles_from_sources( string $css, array $widgets ): void {
 		$this->unified_style_manager->reset();
 		$this->collect_css_styles( $css, $widgets );
 		$this->collect_inline_styles_from_widgets( $widgets );
-		$this->collect_reset_styles( $css, $widgets );
+		// REMOVED: Reset styles now handled by Reset_Styles_Processor
+		// $this->collect_reset_styles( $css, $widgets );
 	}
-	// LEGACY: INACTIVE - Status unclear. Replaced by Style_Collection_Processor. See: 0-0----old-code.md
+	/**
+	 * @deprecated 2025-10-28 Replaced by Style_Collection_Processor in processor registry pattern
+	 * @see plugins/elementor-css/modules/css-converter/docs/page-testing/0-0--remove-legacy-code.md
+	 * Status: INACTIVE - Method not called, safe to remove after verification
+	 */
 	private function collect_all_styles_from_sources_with_flattened_rules(
 		string $css,
 		array $widgets,
@@ -123,9 +131,14 @@ class Unified_Css_Processor {
 		$this->unified_style_manager->reset();
 		$this->collect_css_styles_from_flattened_rules( $flattened_rules, $widgets );
 		$this->collect_inline_styles_from_widgets( $widgets );
-		$this->collect_reset_styles( $css, $widgets );
+		// REMOVED: Reset styles now handled by Reset_Styles_Processor
+		// $this->collect_reset_styles( $css, $widgets );
 	}
-	// LEGACY: INACTIVE - Status unclear. See: 0-0----old-code.md
+	/**
+	 * @deprecated 2025-10-28 Replaced by Css_Parsing_Processor in processor registry pattern
+	 * @see plugins/elementor-css/modules/css-converter/docs/page-testing/0-0--remove-legacy-code.md
+	 * Status: INACTIVE - Method not called, safe to remove after verification
+	 */
 	private function collect_css_styles_from_flattened_rules( array $flattened_rules, array $widgets ): void {
 		if ( empty( $flattened_rules ) ) {
 			return;
@@ -137,7 +150,11 @@ class Unified_Css_Processor {
 	private function log_css_parsing_start_from_rules( array $rules, array $widgets ): void {
 		// Skip debug logging for performance
 	}
-	// LEGACY: INACTIVE - Status unclear. See: 0-0----old-code.md
+	/**
+	 * @deprecated 2025-10-28 Replaced by Css_Parsing_Processor in processor registry pattern
+	 * @see plugins/elementor-css/modules/css-converter/docs/page-testing/0-0--remove-legacy-code.md
+	 * Status: INACTIVE - Method not called, safe to remove after verification
+	 */
 	private function collect_css_styles( string $css, array $widgets ) {
 		if ( empty( $css ) ) {
 			return;
@@ -216,7 +233,11 @@ class Unified_Css_Processor {
 		}
 		return $converted_properties;
 	}
-	// LEGACY: INACTIVE - CRITICAL: Element reset styles. Status unclear. See: 0-0----old-code.md
+	/**
+	 * @deprecated 2025-10-28 Replaced by Reset_Styles_Processor in processor registry pattern
+	 * @see plugins/elementor-css/modules/css-converter/docs/page-testing/0-0--remove-legacy-code.md
+	 * Status: CRITICAL - Handles element reset styles, replaced by Reset_Styles_Processor
+	 */
 	private function analyze_and_apply_direct_element_styles( array $rules, array $widgets ): void {
 		foreach ( $rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
@@ -349,7 +370,11 @@ class Unified_Css_Processor {
 
 		return $matching_widget_ids;
 	}
-	// LEGACY: INACTIVE - Replaced by Nested_Element_Selector_Processor. See: 0-0----old-code.md
+	/**
+	 * @deprecated 2025-10-28 Replaced by Nested_Element_Selector_Processor in processor registry pattern
+	 * @see plugins/elementor-css/modules/css-converter/docs/page-testing/0-0--remove-legacy-code.md
+	 * Status: INACTIVE - Method not called, safe to remove after verification
+	 */
 	private function process_css_rules_for_widgets( array $rules, array $widgets ): void {
 		foreach ( $rules as $rule ) {
 			$selector = $rule['selector'];
@@ -519,7 +544,11 @@ class Unified_Css_Processor {
 		$this->skip_debug_logging_for_performance();
 		return $result;
 	}
-	// LEGACY: INACTIVE - CRITICAL: Inline styles. Status unclear. See: 0-0----old-code.md
+	/**
+	 * @deprecated 2025-10-28 Replaced by Style_Collection_Processor in processor registry pattern
+	 * @see plugins/elementor-css/modules/css-converter/docs/page-testing/0-0--remove-legacy-code.md
+	 * Status: CRITICAL - Handles inline styles collection, replaced by Style_Collection_Processor
+	 */
 	private function collect_inline_styles_from_widgets( array $widgets ) {
 		$this->log_inline_style_collection_start( $widgets );
 		$this->collect_inline_styles_recursively( $widgets );
@@ -698,18 +727,6 @@ class Unified_Css_Processor {
 		$element_type = $widget['tag'] ?? $widget['widget_type'] ?? '';
 		$html_id = $widget['attributes']['id'] ?? '';
 		$classes = $widget['attributes']['class'] ?? '';
-		if ( strpos( $selector, '#container' ) !== false || strpos( $selector, '#text' ) !== false ) {
-			$debug_file = WP_CONTENT_DIR . '/widget-matching-debug.json';
-			$debug_data = [
-				'timestamp' => date( 'Y-m-d H:i:s' ),
-				'selector' => $selector,
-				'element_type' => $element_type,
-				'html_id' => $html_id,
-				'classes' => $classes,
-				'widget_full' => $widget,
-			];
-			file_put_contents( $debug_file, json_encode( $debug_data, JSON_PRETTY_PRINT ) . ",\n", FILE_APPEND );
-		}
 		$this->log_selector_matching_attempt( $selector, $element_type, $classes );
 		if ( $this->is_element_selector_match( $selector, $element_type ) ) {
 			return true;
@@ -1099,12 +1116,14 @@ class Unified_Css_Processor {
 	}
 	public function extract_and_process_css_from_html_and_urls( string $html, array $css_urls, bool $follow_imports, array &$elements ): string {
 		$css_sources = [];
+		$html_style_tags = [];
+		$inline_element_styles = [];
 
-		// Extract inline <style> tags from HTML
+		// Extract inline <style> tags from HTML (process LAST for correct cascade)
 		preg_match_all( '/<style[^>]*>(.*?)<\/style>/is', $html, $matches );
 		if ( ! empty( $matches[1] ) ) {
 			foreach ( $matches[1] as $index => $css_content ) {
-				$css_sources[] = [
+				$html_style_tags[] = [
 					'type' => 'inline_style_tag',
 					'source' => 'inline-style-' . $index,
 					'content' => $css_content,
@@ -1112,12 +1131,12 @@ class Unified_Css_Processor {
 			}
 		}
 
-		// Extract inline styles from elements and convert to CSS rules
+		// Extract inline styles from elements and convert to CSS rules (process LAST for correct cascade)
 		foreach ( $elements as &$element ) {
 			if ( isset( $element['attributes']['style'] ) ) {
 				$inline_style = $element['attributes']['style'];
 				$selector = '.' . ( $element['generated_class'] ?? 'element-' . uniqid() );
-				$css_sources[] = [
+				$inline_element_styles[] = [
 					'type' => 'inline_element_style',
 					'source' => $selector,
 					'content' => $selector . ' { ' . $inline_style . ' }',
@@ -1125,7 +1144,7 @@ class Unified_Css_Processor {
 			}
 		}
 
-		// Fetch CSS from external URLs
+		// Fetch CSS from external URLs (process FIRST for correct cascade)
 		foreach ( $css_urls as $css_url ) {
 			$response = wp_remote_get( $css_url, [
 				'timeout' => 30,
@@ -1162,6 +1181,14 @@ class Unified_Css_Processor {
 				}
 			}
 		}
+
+		// FIXED: Add HTML style tags AFTER external CSS for correct cascade priority
+		// External CSS should be overridden by HTML <style> tags
+		$css_sources = array_merge( $css_sources, $html_style_tags );
+
+		// FIXED: Add inline element styles LAST for highest priority
+		// Inline styles should override everything else
+		$css_sources = array_merge( $css_sources, $inline_element_styles );
 
 		return $this->parse_css_sources_safely( $css_sources );
 	}
@@ -1821,17 +1848,10 @@ class Unified_Css_Processor {
 	 * Apply HTML class modifications (flattening, compound, duplicate mappings) to widgets
 	 */
 	private function apply_html_class_modifications_to_widgets( array $widgets ): array {
-		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'apply_html_class_modifications_to_widgets: Processing ' . count( $widgets ) . ' widgets' . "\n", FILE_APPEND );
-
 		$modified_widgets = [];
 
-		foreach ( $widgets as $index => $widget ) {
-			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'apply_html_class_modifications_to_widgets: Processing widget ' . $index . ' with classes: ' . ( $widget['attributes']['class'] ?? 'none' ) . "\n", FILE_APPEND );
-
+		foreach ( $widgets as $widget ) {
 			$modified_widget = $this->apply_html_class_modifications_to_widget_recursively( $widget );
-
-			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'apply_html_class_modifications_to_widgets: Widget ' . $index . ' after modification has classes: ' . ( $modified_widget['attributes']['class'] ?? 'none' ) . "\n", FILE_APPEND );
-
 			$modified_widgets[] = $modified_widget;
 		}
 

@@ -41,27 +41,16 @@ class Css_Processor_Registry {
 	public function execute_pipeline( Css_Processing_Context $context ): Css_Processing_Context {
 		$sorted_processors = $this->get_sorted_processors();
 
-		file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Executing pipeline with ' . count( $sorted_processors ) . ' processors' . "\n", FILE_APPEND );
 
 		foreach ( $sorted_processors as $processor ) {
-			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Available processor: ' . $processor->get_processor_name() . "\n", FILE_APPEND );
-		}
-
-		foreach ( $sorted_processors as $processor ) {
-			$processor_name = $processor->get_processor_name();
-			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Processing ' . $processor_name . "\n", FILE_APPEND );
-
 			if ( ! $processor->supports_context( $context ) ) {
-				file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Skipping ' . $processor_name . ' - does not support context' . "\n", FILE_APPEND );
 				continue;
 			}
 
-			file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Executing ' . $processor_name . "\n", FILE_APPEND );
 			try {
 				$context = $processor->process( $context );
-				file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Completed ' . $processor_name . "\n", FILE_APPEND );
 			} catch ( \Exception $e ) {
-				file_put_contents( '/Users/janvanvlastuin1981/Local Sites/elementor/app/public/wp-content/debug-processor.log', 'REGISTRY: Failed ' . $processor_name . ' - ' . $e->getMessage() . "\n", FILE_APPEND );
+				$processor_name = $processor->get_processor_name();
 				throw new \Exception( "Processor '{$processor_name}' failed: " . $e->getMessage(), 0, $e );
 			}
 		}
