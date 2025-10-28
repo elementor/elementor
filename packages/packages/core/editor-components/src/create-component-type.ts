@@ -6,14 +6,17 @@ import {
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
 import { type NumberPropValue } from '@elementor/editor-props';
-import { __ } from '@wordpress/i18n';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+import { __ } from '@wordpress/i18n';
+
 import { apiClient } from './api';
 
 export const TYPE = 'e-component';
 
-export function createComponentType(options: CreateTemplatedElementTypeOptions & { showLockedByModal?: (lockedBy: string) => void }): typeof ElementType {
-		const legacyWindow = window as unknown as LegacyWindow;
+export function createComponentType(
+	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
+): typeof ElementType {
+	const legacyWindow = window as unknown as LegacyWindow;
 
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
 		getType() {
@@ -26,8 +29,9 @@ export function createComponentType(options: CreateTemplatedElementTypeOptions &
 	};
 }
 
-
-function createComponentView( options: CreateTemplatedElementTypeOptions & { showLockedByModal?: (lockedBy: string) => void }): typeof ElementView {
+function createComponentView(
+	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
+): typeof ElementView {
 	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow;
 
@@ -64,41 +68,45 @@ function createComponentView( options: CreateTemplatedElementTypeOptions & { sho
 				return filteredGroups;
 			}
 
-			const newGroup = [{
-				name: 'edit component',
-				actions: [
-					{
-						name: 'edit component',
-						icon: 'eicon-edit',
-						title: () => __( 'Edit Component', 'elementor' ),
-						isEnabled: () => true,
-						callback: () => this.switchDocument(),
-					},
-				],
-			}];
-			return [ ...filteredGroups,...newGroup ];
+			const newGroup = [
+				{
+					name: 'edit component',
+					actions: [
+						{
+							name: 'edit component',
+							icon: 'eicon-edit',
+							title: () => __( 'Edit Component', 'elementor' ),
+							isEnabled: () => true,
+							callback: () => this.switchDocument(),
+						},
+					],
+				},
+			];
+			return [ ...filteredGroups, ...newGroup ];
 		}
 
 		async switchDocument() {
-			const { isAllowedToSwitchDocument, lockedBy } = await apiClient.getComponentLockStatus(this.getComponentId()?.value as number);
+			const { isAllowedToSwitchDocument, lockedBy } = await apiClient.getComponentLockStatus(
+				this.getComponentId()?.value as number
+			);
 
-			if ( !isAllowedToSwitchDocument ) {
-				options.showLockedByModal?.(lockedBy || '');
+			if ( ! isAllowedToSwitchDocument ) {
+				options.showLockedByModal?.( lockedBy || '' );
 			} else {
-				runCommand('editor/documents/switch', {
+				runCommand( 'editor/documents/switch', {
 					id: this.getComponentId()?.value as number,
 					mode: 'autosave',
-					selector: `[data-id="${this.model.get('id')}"]`,
-				})
-				apiClient.lockComponent(this.getComponentId()?.value as number);
+					selector: `[data-id="${ this.model.get( 'id' ) }"]`,
+				} );
+				apiClient.lockComponent( this.getComponentId()?.value as number );
 			}
 		}
-	
+
 		ui() {
 			return {
 				...super.ui(),
 				doubleClick: '.e-component:not(:has(.elementor-edit-area))',
-			}
+			};
 		}
 
 		events() {
