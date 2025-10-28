@@ -15,8 +15,12 @@ const StructurePopupContent = ( { onClose }: { onClose: () => void } ) => {
 		extendedWindow.elementorCommon?.ajax?.addRequest?.( 'structure_popup_dismiss' ).catch( () => {} );
 	};
 
+	const stopEventPropagation = ( event: React.MouseEvent ) => {
+		event.stopPropagation();
+	};
+
 	return (
-		<Card elevation={ 0 } sx={ { maxWidth: 300 } }>
+		<Card elevation={ 0 } sx={ { maxWidth: 300 } } onClick={ stopEventPropagation }>
 			<CardContent>
 				<Typography variant="subtitle2" sx={ { mb: 2 } }>
 					{ __( 'Refreshed Top Bar layout!', 'elementor' ) }
