@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
 use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
@@ -351,7 +352,7 @@ class Widgets_Manager {
 	 *
 	 * @param string $widget_name Optional. Widget name. Default is null.
 	 *
-	 * @return Widget_Base|Widget_Base[]|null Registered widget types.
+	 * @return Widget_Base|Widget_Base[]|Atomic_Widget_Base|null Registered widget types.
 	 */
 	public function get_widget_types( $widget_name = null ) {
 		if ( is_null( $this->_widget_types ) ) {
