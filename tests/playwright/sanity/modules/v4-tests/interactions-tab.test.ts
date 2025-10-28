@@ -84,18 +84,16 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 		await test.step( 'Select animation option from dropdown', async () => {
 			const interactionTag = page.locator( '.MuiTag-root' ).first();
+
 			await expect( interactionTag ).toBeVisible();
-			
 			await interactionTag.click();
-			
 			await page.waitForSelector( '.MuiPopover-root' );
-			
 			await page.waitForSelector( '.MuiMenuItem-root' );
 			
 			const animationOption = page.locator( '.MuiMenuItem-root' ).nth( 1 );
+
 			await expect( animationOption ).toBeVisible();
 			await animationOption.click();
-			
 			await expect( interactionTag ).toContainText( 'Page Load - Fade In Left' );
 		} );
 
@@ -105,8 +103,8 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 		await test.step( 'Verify data-interactions attribute on heading', async () => {
 			const headingElement = page.locator( '.e-heading-base' ).first();
+
 			await expect( headingElement ).toBeVisible();
-			
 			await expect( headingElement ).toHaveAttribute( 'data-interactions' );
 			
 			const interactionsData = await headingElement.getAttribute( 'data-interactions' );
