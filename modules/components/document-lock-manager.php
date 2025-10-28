@@ -4,8 +4,6 @@ namespace Elementor\Modules\Components;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-// 5 minutes
-const DEFAULT_TIME = 60 * 5;
 
 /**
  * Manages document locking for Elementor documents.
@@ -14,6 +12,9 @@ const DEFAULT_TIME = 60 * 5;
  * from editing the same document simultaneously.
  */
 class Document_Lock_Manager {
+	// 5 minutes
+	const DEFAULT_TIME = 60 * 5;
+
 	private $lock_duration;
 	private const LOCK_USER_META = '_lock_user';
 	private const LOCK_TIME_META = '_lock_time';
@@ -23,7 +24,7 @@ class Document_Lock_Manager {
 	 *
 	 * @param int $lock_duration Lock duration in seconds (default: 300 = 5 minutes)
 	 */
-	public function __construct( $lock_duration = DEFAULT_TIME ) {
+	public function __construct( $lock_duration = self::DEFAULT_TIME ) {
 		$this->lock_duration = $lock_duration;
 	}
 
@@ -36,7 +37,7 @@ class Document_Lock_Manager {
 	 * @param int $document_id The document ID to lock
 	 * @return bool True if lock was successful, false otherwise
 	 */
-	public function lock_document( $document_id ) {
+	public function lock( $document_id ) {
 		try {
 			$user_id = get_current_user_id();
 
@@ -49,7 +50,7 @@ class Document_Lock_Manager {
 				return false;
 			}
 
-			$existing_lock = $this->is_document_locked( $document_id );
+			$existing_lock = $this->is_locked( $document_id );
 			if ( $existing_lock['is_locked'] && (int) $existing_lock['lock_user'] !== (int) $user_id ) {
 				return false;
 			}
@@ -84,7 +85,7 @@ class Document_Lock_Manager {
 	 * @param int $document_id The document ID to unlock
 	 * @return bool Always returns true
 	 */
-	public function unlock_document( $document_id ) {
+	public function unlock( $document_id ) {
 		// Remove WordPress post lock
 		delete_post_meta( $document_id, '_edit_lock' );
 
@@ -103,14 +104,14 @@ class Document_Lock_Manager {
 	 * @param int $document_id The document ID to check
 	 * @return array|false Lock data array if locked, false if not locked
 	 */
-	public function is_document_locked( $document_id ) {
+	public function is_locked( $document_id ) {
 		$lock_user = get_post_meta( $document_id, self::LOCK_USER_META, true );
 		$lock_time = get_post_meta( $document_id, self::LOCK_TIME_META, true );
 		$is_locked = false;
 
 		if ( $lock_user && $lock_time ) {
 			if ( time() - $lock_time > $this->lock_duration ) {
-				$this->unlock_document( $document_id );
+				$this->unlock( $document_id );
 			} else {
 				$is_locked = true;
 			}
@@ -133,7 +134,7 @@ class Document_Lock_Manager {
 	 */
 	public function extend_lock( $document_id ) {
 		$user_id = get_current_user_id();
-		$lock_data = $this->is_document_locked( $document_id );
+		$lock_data = $this->is_locked( $document_id );
 
 		if ( ! $lock_data['is_locked'] ) {
 			return false;

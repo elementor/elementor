@@ -26,7 +26,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/documents/register', fn ( $documents_manager ) => $this->register_document_type( $documents_manager ) );
 		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 
-		(new Lock_Component_Manager())->register_hooks();
+		(Lock_Component_Manager::get_instance()->register_hooks());
 		( new Component_Styles() )->register_hooks();
 		( new Components_REST_API() )->register_hooks();
 	}
@@ -69,14 +69,5 @@ class Module extends BaseModule {
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
 		$transformers->register( Component_Id_Prop_Type::get_key(), new Component_Id_Transformer() );
-	}
-
-	public static function get_lock_component_manager_instance() {
-
-		if ( null === static::$lock_component_manager_instance ) {
-			static::$lock_component_manager_instance = new Lock_Component_Manager();
-		}
-
-		return static::$lock_component_manager_instance;
 	}
 }

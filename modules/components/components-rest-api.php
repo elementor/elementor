@@ -32,12 +32,11 @@ class Components_REST_API {
 		return $this->repository;
 	}
 
+	/**
+	 * @return Lock_Component_Manager instance
+	 */
 	private function get_lock_component_manager() {
-		if ( null === $this->lock_component_manager_instance ) {
-			$this->lock_component_manager_instance = Module::get_lock_component_manager_instance();
-		}
-
-		return $this->lock_component_manager_instance;
+		return Lock_Component_Manager::get_instance();
 	}
 
 	private function register_routes() {
@@ -201,7 +200,7 @@ class Components_REST_API {
 
 	private function lock_component( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
-		$success = $this->get_lock_component_manager()->lock_component( $component_id );
+		$success = $this->get_lock_component_manager()->lock( $component_id );
 
 		if ( ! $success ) {
 			return Error_Builder::make( 'lock_failed' )
@@ -215,7 +214,7 @@ class Components_REST_API {
 
 	private function unlock_component( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
-		$success = $this->get_lock_component_manager()->unlock_component( $component_id );
+		$success = $this->get_lock_component_manager()->unlock( $component_id );
 
 		if ( ! $success ) {
 			return Error_Builder::make( 'unlock_failed' )
@@ -228,8 +227,7 @@ class Components_REST_API {
 
 	private function get_lock_status( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
-		$lock_manager = $this->get_lock_component_manager()->get_lock_manager_instance();
-		$lock_data = $lock_manager->is_document_locked( $component_id );
+		$lock_data = $this->get_lock_component_manager()->is_locked( $component_id );
 		$is_current_user_allow_to_edit = $this->is_current_user_allow_to_edit( $component_id );
 
 		$locked_by = '';
@@ -246,8 +244,7 @@ class Components_REST_API {
 
 	private function is_current_user_allow_to_edit( $component_id ) {
 		$current_user_id = get_current_user_id();
-		$lock_manager = $this->get_lock_component_manager()->get_lock_manager_instance();
-		$lock_data = $lock_manager->is_document_locked( $component_id );
+		$lock_data = $this->get_lock_component_manager()->is_locked( $component_id );
 
 		return ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] === (int) $current_user_id;
 	}

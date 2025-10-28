@@ -8,26 +8,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-const ONE_HOUR = 60 * 60;
-
-class Lock_Component_Manager {
-	private $lock_manager = null;
-
+class Lock_Component_Manager extends Document_Lock_Manager {
+	const ONE_HOUR = 60 * 60;
+	private static $instance = null;
 	public function __construct() {
-			$this->lock_manager = new Document_Lock_Manager( ONE_HOUR );
+		parent::__construct( self::ONE_HOUR );
+	}
+
+	public static function get_instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
 	}
 
 	public function register_hooks() {
 		add_filter( 'heartbeat_received', [ $this, 'heartbeat_received' ], 10, 2 );
 	}
 
-	
-	public function lock_component( $post_id ) {
-		return $this->lock_manager->lock_document( $post_id );
-	}
-
-	public function unlock_component( $post_id ) {
-		$lock_data = $this->lock_manager->is_document_locked( $post_id );
+	public function unlock( $post_id ) {
+		$lock_data = $this->is_locked( $post_id );
 		$current_user_id = get_current_user_id();
 
 		// Only allow unlocking if the current user owns the lock
@@ -35,9 +35,8 @@ class Lock_Component_Manager {
 			return false;
 		}
 
-		return $this->lock_manager->unlock_document( $post_id );
+		return parent::unlock( $post_id );
 	}
-
 
 	private function is_component_post( $post_id ) {
 		return get_post_type( $post_id ) === Component_Document::TYPE;
@@ -54,10 +53,10 @@ class Lock_Component_Manager {
 			return $response;
 		}
 
-		$lock_data = $this->lock_manager->is_document_locked( $post_id );
+		$lock_data = $this->is_locked( $post_id );
 		$current_user_id = get_current_user_id();
 		if ( $lock_data['is_locked'] && $current_user_id === (int) $lock_data['lock_user'] ) {
-			$this->lock_manager->extend_lock( $post_id );
+			$this->get_lock_manager()->extend_lock( $post_id );
 		}
 
 		return $response;
