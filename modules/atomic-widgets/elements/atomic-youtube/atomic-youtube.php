@@ -10,8 +10,10 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Display_Conditions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Display_Conditions_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -63,6 +65,8 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 			'rel' => Boolean_Prop_Type::make()->default( true ),
 
 			'attributes' => Attributes_Prop_Type::make(),
+
+			'display-conditions' => Display_Conditions_Prop_Type::make(),
 		];
 	}
 
@@ -98,6 +102,11 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 			Text_Control::bind_to( '_cssid' )
 				->set_label( __( 'ID', 'elementor' ) )
 				->set_meta( $this->get_css_id_control_meta() ),
+			Display_Conditions_Control::bind_to( 'display-conditions' )
+				->set_label( __( 'Display Conditions', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
+				] ),
 		];
 	}
 

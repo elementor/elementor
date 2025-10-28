@@ -14,6 +14,8 @@ use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manag
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Display_Conditions_Control;
+use Elementor\Modules\AtomicWidgets\PropTypes\Display_Conditions_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -63,6 +65,7 @@ class Flexbox extends Atomic_Element_Base {
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make(),
+			'display-conditions' => Display_Conditions_Prop_Type::make(),
 		];
 	}
 
@@ -112,6 +115,11 @@ class Flexbox extends Atomic_Element_Base {
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
+					Display_Conditions_Control::bind_to( 'display-conditions' )
+						->set_label( __( 'Display Conditions', 'elementor' ) )
+						->set_meta( [
+							'topDivider' => true,
+						] ),
 				] ),
 		];
 	}
