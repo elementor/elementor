@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useElementInteractions } from '@elementor/editor-elements';
-import { StarIcon } from '@elementor/icons'; // Using a working icon
+import { useElementInteractions } from '../../../../libs/editor-elements/src/hooks/use-element-interactions';
+import { SwipeIcon } from '@elementor/icons';
 import { SessionStorageProvider } from '@elementor/session';
 import { Button, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -44,7 +44,7 @@ export const InteractionsTab = () => {
 					sx={ { p: 2.5, pt: 8, pb: 5.5 } }
 					gap={ 1.5 }
 				>
-					<StarIcon fontSize="large" />
+					<SwipeIcon fontSize="large" />
 
 					<Typography align="center" variant="subtitle2">
 						{ __( 'Animate elements with Interactions', 'elementor' ) }
