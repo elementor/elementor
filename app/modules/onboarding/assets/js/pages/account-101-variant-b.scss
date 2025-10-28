@@ -154,7 +154,7 @@
         }
 }
 
-@media (min-width: 1024px) {
+@media screen and (min-width: 1024px) {
         .e-onboarding101-variant-b {
 
                 .e-onboarding__content {
@@ -163,7 +163,7 @@
         }
 }
 
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
         .e-onboarding101-variant-b {
                 .e-onboarding__page-content {
                         padding: 20px;
@@ -186,7 +186,7 @@
         }
 }
 
-@media (max-width: 480px) {
+@media screen and (max-width: 480px) {
         .e-onboarding101-variant-b {
                 .e-onboarding__page-content {
                         padding: 15px;

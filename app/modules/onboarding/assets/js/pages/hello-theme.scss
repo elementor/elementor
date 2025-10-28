@@ -38,7 +38,7 @@
 			background: #ffffff;
 			border: 1px solid #A9A9A9;
 			border-radius: 8px;
-			padding: 16px 25px 160px;
+			padding: 16px 25px 165px;
 			max-width: 325px;
 			min-width: 280px;
 			cursor: pointer;
@@ -48,17 +48,6 @@
 			position: relative;
 			overflow: hidden;
 			margin-block: 1px;
-
-			&:first-of-type {
-
-				.e-onboarding__theme-card-illustration {
-					inset-block-end: -37px;
-				}
-
-				svg {
-					width: 322px;
-				}
-			}
 
 			&::after {
 				content: '';
@@ -98,21 +87,12 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			margin-block-end: 20px;
-			min-height: 153px;
-			border-radius: 4px;
 			position: absolute;
-			inset-block-end: -40px;
-			inset-inline-start: 35px;
-			width: 100%;
+			inset-block-end: 0px;
+			width: calc(100% - 50px);
 
-			&--hello-biz {
-				inset-inline-start: 0px;
-			}
-
-			svg {
-				max-width: 100%;
-				height: auto;
+			img {
+				width: calc(100% - 80px);
 			}
 		}
 
@@ -180,19 +160,27 @@
 			opacity: 0;
 		}
 	}
+
+	&__footer {
+		justify-content: center;
+		padding-block-end: 40px;
+	}
 }
 
-@media (min-width: 1024px) {
+@media screen and (min-width: 769px) {
 	.e-onboarding:has(.e-onboarding__page-content-theme-variant-b) {
 
 		.e-onboarding__button-skip {
 			position: absolute;
-			inset-inline-end: 0px;
+			inset-inline-end: 30px;
 		}
+	}
+}
 
-		.e-onboarding__footer {
-			justify-content: center;
-			padding-block-end: 40px;
-		}
+@media screen and (max-width: 768px) {
+	.e-onboarding__footer {
+		flex-direction: column;
+		gap: 20px;
+		opacity: 1;
 	}
 }
