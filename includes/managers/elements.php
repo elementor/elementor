@@ -4,6 +4,7 @@ namespace Elementor;
 use Elementor\Includes\Elements\Container;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
