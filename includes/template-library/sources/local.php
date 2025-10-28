@@ -939,13 +939,16 @@ class Source_Local extends Source_Base {
 			}
 
 			foreach ( $extracted_files['files'] as $file_path ) {
+				// Skip macOS metadata files and folders
+				if ( false !== strpos( $file_path, '__MACOSX' ) || '.' === basename( $file_path )[0] ) {
+					continue;
+				}
+
 				$import_result = $this->import_single_template( $file_path );
 
 				if ( is_wp_error( $import_result ) ) {
-					// Delete the temporary extraction directory, since it's now not necessary.
-					Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
-
-					return $import_result;
+					// Skip failed files
+					continue;
 				}
 
 				$items[] = $import_result;
@@ -1472,6 +1475,10 @@ class Source_Local extends Source_Base {
 	 */
 	private function import_single_template( $file_path ) {
 		$data = $this->prepare_import_template_data( $file_path );
+
+		if ( is_wp_error( $data ) ) {
+			return $data;
+		}
 
 		if ( empty( $data ) ) {
 			return new \WP_Error( 'file_error', 'Invalid File' );
