@@ -11,6 +11,8 @@ export const openEditModeDialog = ( lockedBy: string ) => {
 };
 
 const EditModeDialog = ( { lockedBy }: { lockedBy: string } ) => {
+	/* translators: %s is the name of the user who is currently editing the document */
+	const content = __( '%s is currently editing this document', 'elementor' ).replace( '%s', lockedBy );
 	return (
 		<>
 			<DialogHeader logo={ false }>
@@ -18,10 +20,7 @@ const EditModeDialog = ( { lockedBy }: { lockedBy: string } ) => {
 					<Icon color="secondary">
 						<InfoCircleFilledIcon fontSize="medium" />
 					</Icon>
-					<Typography variant="subtitle1">
-						{ /* translators: %s is the name of the user who is currently editing the document */ }
-						{ __( '%s is currently editing this document', 'elementor' ).replace( '%s', lockedBy ) }
-					</Typography>
+					<Typography variant="subtitle1">{ content }</Typography>
 				</Box>
 			</DialogHeader>
 			<DialogContent>
