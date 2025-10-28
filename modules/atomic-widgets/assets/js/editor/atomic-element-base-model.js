@@ -1,5 +1,4 @@
 export default class AtomicElementBaseModel extends elementor.modules.elements.models.Element {
-
     /**
      * Do not allow section, column or container be placed in the Atomic container.
      *
