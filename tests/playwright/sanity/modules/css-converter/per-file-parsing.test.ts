@@ -68,6 +68,30 @@ test.describe('Per-File CSS Parsing', () => {
 		expect(data.widgets_created).toBeGreaterThan(0);
 	});
 
+	test('should beautify minified CSS before processing', async ({ request }) => {
+		const minifiedCss = '.btn{background-color:#007bff;border:1px solid #007bff;color:#fff;padding:10px 20px;border-radius:4px}.btn:hover{background-color:#0056b3;border-color:#004085}';
+		const response = await request.post(apiUrl, {
+			data: {
+				type: 'html',
+				content: `<button class="btn">Click me</button><style>${minifiedCss}</style>`,
+			},
+		});
+
+		expect(response.ok()).toBeTruthy();
+		const data = await response.json();
+		
+		expect(data.success).toBe(true);
+		expect(data.widgets_created).toBeGreaterThan(0);
+		
+		// Check that CSS beautification statistics are present
+		if (data.stats) {
+			expect(data.stats.css_size_bytes).toBeDefined();
+			expect(data.stats.beautified_css_size_bytes).toBeDefined();
+			// Beautified CSS should typically be larger due to formatting
+			expect(data.stats.beautified_css_size_bytes).toBeGreaterThanOrEqual(data.stats.css_size_bytes);
+		}
+	});
+
 	test('should skip at-rules gracefully', async ({ request }) => {
 		const cssWithAtRules = `
 			h1 { color: red; }

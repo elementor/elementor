@@ -37,19 +37,24 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 
 	public function process( Css_Processing_Context $context ): Css_Processing_Context {
 		$css = $context->get_metadata( 'css', '' );
-		
+
 		if ( empty( $css ) ) {
 			$context->add_statistic( 'css_rules_parsed', 0 );
 			return $context;
 		}
 
-		// Parse CSS and extract rules
-		$css_rules = $this->parse_css_and_extract_rules( $css );
-		
+		// Beautify CSS before parsing for better readability and debugging
+		$beautified_css = $this->beautify_css( $css );
+		$context->set_metadata( 'beautified_css', $beautified_css );
+
+		// Parse beautified CSS and extract rules
+		$css_rules = $this->parse_css_and_extract_rules( $beautified_css );
+
 		// Store results in context
 		$context->set_metadata( 'css_rules', $css_rules );
 		$context->add_statistic( 'css_rules_parsed', count( $css_rules ) );
 		$context->add_statistic( 'css_size_bytes', strlen( $css ) );
+		$context->add_statistic( 'beautified_css_size_bytes', strlen( $beautified_css ) );
 
 		return $context;
 	}
@@ -58,7 +63,42 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 		return [
 			'css_rules_parsed',
 			'css_size_bytes',
+			'beautified_css_size_bytes',
 		];
+	}
+
+	private function beautify_css( string $css ): string {
+		if ( empty( trim( $css ) ) ) {
+			return $css;
+		}
+
+		$original_size = strlen( $css );
+
+		try {
+			$parsed_css = $this->css_parser->parse( $css );
+			$document = $parsed_css->get_document();
+
+			$format = \Sabberworm\CSS\OutputFormat::createPretty();
+			$beautified_css = $document->render( $format );
+
+			$beautified_size = strlen( $beautified_css );
+
+			error_log( sprintf(
+				'CSS Beautifier: Successfully beautified CSS (original: %d bytes, beautified: %d bytes)',
+				$original_size,
+				$beautified_size
+			) );
+
+			return $beautified_css;
+		} catch ( \Exception $e ) {
+			error_log( sprintf(
+				'CSS Beautifier: Failed to beautify CSS (size: %d bytes). Error: %s. Falling back to original CSS.',
+				$original_size,
+				$e->getMessage()
+			) );
+
+			return $css;
+		}
 	}
 
 	private function parse_css_and_extract_rules( string $css ): array {
