@@ -4,6 +4,8 @@ namespace Elementor\Modules\Usage;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
+use Elementor\Modules\AtomicWidgets\Usage\Usage_Counter as Atomic_Usage_Counter;
+use Elementor\Modules\AtomicWidgets\Utils as Atomic_Utils;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -28,6 +30,11 @@ class Module extends BaseModule {
 	 * @var bool
 	 */
 	private $is_document_saving = false;
+
+	/**
+	 * @var Atomic_Usage_Counter
+	 */
+	private $atomic_usage_counter;
 
 	/**
 	 * Get module name.
@@ -505,6 +512,7 @@ class Module extends BaseModule {
 	 */
 	private function get_elements_usage( $elements ) {
 		$usage = [];
+		$this->atomic_usage_counter = new Atomic_Usage_Counter();
 
 		Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( &$usage ) {
 			if ( empty( $element['widgetType'] ) ) {
@@ -529,8 +537,6 @@ class Module extends BaseModule {
 				return $element;
 			}
 
-			$element_controls = $element_instance->get_controls();
-
 			if ( isset( $element['settings'] ) ) {
 				$settings_controls = $element['settings'];
 				$element_ref = &$usage[ $type ];
@@ -538,17 +544,46 @@ class Module extends BaseModule {
 				// Add dynamic values.
 				$settings_controls = $this->add_general_controls( $settings_controls, $element_ref );
 
-				$changed_controls_count = $this->add_controls( $settings_controls, $element_controls, $element_ref );
+				if ( Atomic_Utils::is_atomic( $element_instance ) ) {
+					$percent = $this->get_atomic_elements_usage( $element, $element_ref );
+				} else {
+					$element_controls = $element_instance->get_controls();
+					$changed_controls_count = $this->add_controls( $settings_controls, $element_controls, $element_ref ) ?? 0;
+					$total_controls_count = count( $element_controls ) ?? 0;
 
-				$percent = ! empty( $element_controls ) ? $changed_controls_count / ( count( $element_controls ) / 100 ) : 0;
+					$percent = $this->get_controls_usage_percent( $total_controls_count, $changed_controls_count );
+				}
 
-				$usage[ $type ] ['control_percent'] = (int) round( $percent );
+				$usage[ $type ] ['control_percent'] = $percent;
 			}
 
 			return $element;
 		} );
 
 		return $usage;
+	}
+
+	private function get_atomic_elements_usage( array $element, array &$element_ref ): int {
+		$result = $this->atomic_usage_counter->count( $element );
+		$changed_controls_count = 0;
+		$total_controls_count = 0;
+
+		if ( $result->is_valid() ) {
+			$result->each( function( $tab, $section, $control_name ) use ( &$element_ref ) {
+				$this->increase_controls_count( $element_ref, $tab, $section, $control_name, 1 );
+			});
+
+			$changed_controls_count = $result->get_changed_count();
+			$total_controls_count = $result->get_total();
+		}
+
+		return $this->get_controls_usage_percent( $total_controls_count, $changed_controls_count );
+	}
+
+	private function get_controls_usage_percent( int $total, int $changed ): int {
+		$percent = ! empty( $total ) ? $changed / ( $total / 100 ) : 0;
+
+		return (int) round( $percent );
 	}
 
 	/**
