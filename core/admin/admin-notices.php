@@ -135,14 +135,14 @@ class Admin_Notices extends Module {
 			/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text. */
 			__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
 			esc_url( $details_url ),
-			sprintf(
+			esc_attr( sprintf(
 				/* translators: %s: Elementor version. */
-				esc_attr__( 'View Elementor version %s details', 'elementor' ),
+				__( 'View Elementor version %s details', 'elementor' ),
 				$new_version
-			),
+			) ),
 			$new_version,
 			esc_url( $upgrade_url ),
-			esc_attr__( 'Update Now', 'elementor' )
+			esc_attr( esc_html__( 'Update Now', 'elementor' ) )
 		);
 
 		$options = [
