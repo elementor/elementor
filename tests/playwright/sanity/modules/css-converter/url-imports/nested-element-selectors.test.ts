@@ -40,7 +40,7 @@ test.describe( 'Pattern 5: Element Selectors (.first .second h1 → .h1--first-s
 		);
 
 		expect( result.success ).toBe( true );
-		// expect( result.global_classes_created ).toBeGreaterThan( 0 ); // Element selectors apply directly to widgets, not global classes
+		// Expect( result.global_classes_created ).toBeGreaterThan( 0 ); // Element selectors apply directly to widgets, not global classes
 		// expect( result.flattened_classes_created ).toBeGreaterThan( 0 );
 
 		// Verify successful conversion with flattened classes
@@ -194,7 +194,7 @@ test.describe( 'Pattern 5: Element Selectors (.first .second h1 → .h1--first-s
 		);
 
 		expect( result.success ).toBe( true );
-		// expect( result.global_classes_created ).toBeGreaterThan( 0 ); // Element selectors apply directly to widgets, not global classes
+		// Expect( result.global_classes_created ).toBeGreaterThan( 0 ); // Element selectors apply directly to widgets, not global classes
 		// expect( result.flattened_classes_created ).toBeGreaterThan( 0 );
 
 		// Navigate to the Elementor editor to verify DOM and CSS
@@ -246,7 +246,7 @@ test.describe( 'Pattern 5: Element Selectors (.first .second h1 → .h1--first-s
 		);
 
 		expect( result.success ).toBe( true );
-		// expect( result.global_classes_created ).toBeGreaterThan( 0 ); // Element selectors apply directly to widgets, not global classes
+		// Expect( result.global_classes_created ).toBeGreaterThan( 0 ); // Element selectors apply directly to widgets, not global classes
 		// expect( result.flattened_classes_created ).toBeGreaterThan( 0 );
 
 		// Navigate to the Elementor editor to verify DOM and CSS
@@ -318,7 +318,7 @@ test.describe( 'Pattern 5: Element Selectors (.first .second h1 → .h1--first-s
 		);
 
 		expect( result.success ).toBe( true );
-		// expect( result.global_classes_created ).toBeGreaterThan( 0 ); // Element selectors apply directly to widgets, not global classes
+		// Expect( result.global_classes_created ).toBeGreaterThan( 0 ); // Element selectors apply directly to widgets, not global classes
 		// expect( result.flattened_classes_created ).toBe( 3 ); // Element selectors are not flattened
 
 		// Navigate to the Elementor editor to verify DOM and CSS

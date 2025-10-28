@@ -94,21 +94,20 @@ test.describe( 'Compound Class Selectors @compound-selectors', () => {
 		await page.goto( apiResult.edit_url );
 		await page.waitForSelector( '#elementor-preview-iframe', { timeout: 10000 } );
 		const previewFrame = page.frameLocator( '#elementor-preview-iframe' );
-		
+
 		// DOM assertions only
 		const primaryButton = previewFrame.locator( '.btn-and-primary' );
 		await expect( primaryButton ).toBeVisible();
 		await expect( primaryButton ).toHaveText( 'Primary' );
 		await expect( primaryButton ).toHaveCSS( 'background-color', 'rgb(0, 0, 255)' );
 		await expect( primaryButton ).toHaveCSS( 'color', 'rgb(255, 255, 255)' );
-		
+
 		const secondaryButton = previewFrame.locator( '.btn-and-secondary' );
 		await expect( secondaryButton ).toBeVisible();
 		await expect( secondaryButton ).toHaveText( 'Secondary' );
 		await expect( secondaryButton ).toHaveCSS( 'background-color', 'rgb(128, 128, 128)' );
 		await expect( secondaryButton ).toHaveCSS( 'color', 'rgb(0, 0, 0)' );
 	} );
-
 
 	test( 'Scenario 3: Class missing - compound not applied', async ( { request, page } ) => {
 		const htmlContent = `
@@ -137,11 +136,11 @@ test.describe( 'Compound Class Selectors @compound-selectors', () => {
 		await page.goto( apiResult.edit_url );
 		await page.waitForSelector( '#elementor-preview-iframe', { timeout: 10000 } );
 		const previewFrame = page.frameLocator( '#elementor-preview-iframe' );
-		
+
 		// DOM assertions only
 		await expect( previewFrame.locator( '.first' ).first() ).toBeVisible();
 		await expect( previewFrame.locator( '.second' ).first() ).toBeVisible();
-		
+
 		const bothClassesElement = previewFrame.locator( '.first-and-second' );
 		await expect( bothClassesElement ).toBeVisible();
 		await expect( bothClassesElement ).toHaveText( 'Both' );
@@ -199,7 +198,7 @@ test.describe( 'Compound Class Selectors @compound-selectors', () => {
 		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '', {
 			createGlobalClasses: true,
 		} );
-		
+
 		expect( apiResult.success ).toBe( true );
 
 		await page.goto( apiResult.edit_url );
@@ -211,7 +210,6 @@ test.describe( 'Compound Class Selectors @compound-selectors', () => {
 		await expect( cardElement ).toBeVisible();
 		await expect( cardElement ).toHaveCSS( 'font-size', '18px' );
 	} );
-
 
 	test( 'Scenario 6: Compound with hyphenated class names', async ( { request, page } ) => {
 		const htmlContent = `
@@ -241,11 +239,5 @@ test.describe( 'Compound Class Selectors @compound-selectors', () => {
 		await expect( buttonElement ).toHaveCSS( 'padding', '25px 50px' );
 		await expect( buttonElement ).toHaveCSS( 'font-size', '20px' );
 	} );
-
-
-
-
-
-
 } );
 

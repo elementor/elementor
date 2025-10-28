@@ -24,7 +24,13 @@ class Global_Classes_Conversion_Service {
 				$class_data['properties']
 			);
 
+			// DEBUG: Log conversion results
+			error_log( "CSS Converter: Converting class '{$class_name}' to atomic props" );
+			error_log( "CSS Converter: Properties count: " . count( $class_data['properties'] ) );
+			error_log( "CSS Converter: Atomic props count: " . count( $atomic_props ) );
+			
 			if ( empty( $atomic_props ) ) {
+				error_log( "CSS Converter: Skipping class '{$class_name}' - no atomic props converted" );
 				continue;
 			}
 
@@ -33,6 +39,8 @@ class Global_Classes_Conversion_Service {
 				'source' => $class_data['source'],
 				'original_selector' => $class_data['selector'],
 			];
+			
+			error_log( "CSS Converter: Successfully converted class '{$class_name}'" );
 		}
 
 		return $converted_classes;

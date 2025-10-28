@@ -110,7 +110,6 @@ export class CssConverterHelper {
 			options: defaultOptions,
 		};
 
-		
 		const apiResponse = await request.post( '/wp-json/elementor/v2/widget-converter', {
 			headers: {
 				'X-DEV-TOKEN': this.devToken,
@@ -120,9 +119,8 @@ export class CssConverterHelper {
 			timeout: 15000,
 		} );
 
-		
 		const responseJson = await apiResponse.json() as CssConverterResponse;
-		
+
 		return responseJson;
 	}
 

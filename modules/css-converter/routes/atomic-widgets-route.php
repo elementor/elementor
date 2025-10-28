@@ -141,24 +141,29 @@ class Atomic_Widgets_Route {
 		$content = $request->get_param( 'content' );
 		$html_param = $request->get_param( 'html' );
 		$selector = $request->get_param( 'selector' );
+		$auto_extracted_css_urls = [];
 
-		$html = $this->resolve_html_content( $type, $content, $html_param, $selector );
+		$html = $this->resolve_html_content( $type, $content, $html_param, $selector, $auto_extracted_css_urls );
+
+		$manual_css_urls = $request->get_param( 'cssUrls' ) ? $request->get_param( 'cssUrls' ) : [];
+		$all_css_urls = array_merge( $auto_extracted_css_urls, $manual_css_urls );
 
 		return [
 			'html' => $html,
 			'css' => $request->get_param( 'css' ) ? $request->get_param( 'css' ) : '',
 			'type' => $type,
-			'css_urls' => $request->get_param( 'cssUrls' ) ? $request->get_param( 'cssUrls' ) : [],
+			'css_urls' => $all_css_urls,
 			'follow_imports' => $request->get_param( 'followImports' ) ? $request->get_param( 'followImports' ) : false,
 			'options' => $request->get_param( 'options' ) ? $request->get_param( 'options' ) : [],
 		];
 	}
 
-	private function resolve_html_content( string $type, $content, $html_param, $selector = null ): string {
+	private function resolve_html_content( string $type, $content, $html_param, $selector = null, array &$auto_extracted_css_urls = [] ): string {
 		if ( 'url' === $type && ! empty( $content ) ) {
 			$html = $this->fetch_html_from_url( $content );
 
 			if ( ! empty( $selector ) ) {
+				$auto_extracted_css_urls = $this->extract_stylesheet_urls_from_html( $html, $content );
 				return $this->extract_html_by_selector( $html, $selector );
 			}
 
@@ -232,29 +237,73 @@ class Atomic_Widgets_Route {
 	}
 
 	private function css_selector_to_xpath( string $selector ): string {
-		// Handle basic CSS selectors and convert to XPath
 		$selector = trim( $selector );
 
-		// Handle class selectors (.class-name)
-		if ( strpos( $selector, '.' ) === 0 ) {
+		if ( 0 === strpos( $selector, '.' ) ) {
 			$class_name = substr( $selector, 1 );
 			return "//*[contains(concat(' ', normalize-space(@class), ' '), ' {$class_name} ')]";
 		}
 
-		// Handle ID selectors (#id)
-		if ( strpos( $selector, '#' ) === 0 ) {
+		if ( 0 === strpos( $selector, '#' ) ) {
 			$id = substr( $selector, 1 );
 			return "//*[@id='{$id}']";
 		}
 
-		// Handle element selectors (div, p, etc.)
 		if ( preg_match( '/^[a-zA-Z][a-zA-Z0-9]*$/', $selector ) ) {
 			return "//{$selector}";
 		}
 
-		// For more complex selectors, fall back to a basic approach
-		// This is a simplified implementation - could be enhanced for more complex selectors
 		throw new \Exception( 'Complex selector "' . esc_html( $selector ) . '" not supported' );
+	}
+
+	private function extract_stylesheet_urls_from_html( string $html, string $base_url ): array {
+		$stylesheet_urls = [];
+
+		preg_match_all( '/<link[^>]+rel=["\']stylesheet["\'][^>]*href=["\']([^"\']+)["\'][^>]*>/i', $html, $link_matches );
+		if ( ! empty( $link_matches[1] ) ) {
+			foreach ( $link_matches[1] as $href ) {
+				$absolute_url = $this->resolve_relative_url( $href, $base_url );
+				$stylesheet_urls[] = $absolute_url;
+			}
+		}
+
+		preg_match_all( '/<link[^>]+href=["\']([^"\']+)["\'][^>]*rel=["\']stylesheet["\'][^>]*>/i', $html, $reversed_link_matches );
+		if ( ! empty( $reversed_link_matches[1] ) ) {
+			foreach ( $reversed_link_matches[1] as $href ) {
+				$absolute_url = $this->resolve_relative_url( $href, $base_url );
+				if ( ! in_array( $absolute_url, $stylesheet_urls, true ) ) {
+					$stylesheet_urls[] = $absolute_url;
+				}
+			}
+		}
+
+		return $stylesheet_urls;
+	}
+
+	private function resolve_relative_url( string $url, string $base_url ): string {
+		if ( preg_match( '/^https?:\/\//', $url ) ) {
+			return $url;
+		}
+
+		$parsed_base = wp_parse_url( $base_url );
+		$scheme = $parsed_base['scheme'] ?? 'https';
+		$host = $parsed_base['host'] ?? '';
+
+		if ( 0 === strpos( $url, '//' ) ) {
+			return $scheme . ':' . $url;
+		}
+
+		if ( 0 === strpos( $url, '/' ) ) {
+			return $scheme . '://' . $host . $url;
+		}
+
+		$base_path = $parsed_base['path'] ?? '/';
+		$base_directory = dirname( $base_path );
+		if ( '/' !== $base_directory ) {
+			$base_directory .= '/';
+		}
+
+		return $scheme . '://' . $host . $base_directory . $url;
 	}
 
 	private function create_missing_html_error_response(): \WP_REST_Response {

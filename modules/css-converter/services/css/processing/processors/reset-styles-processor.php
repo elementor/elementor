@@ -45,6 +45,14 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 		$widgets = $context->get_widgets();
 		$unified_style_manager = $context->get_metadata( 'unified_style_manager' );
 
+		// DEBUG: Log CSS rules before processing
+		error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: Received " . count( $css_rules ) . " CSS rules" );
+		foreach ( $css_rules as $index => $rule ) {
+			$selector = $rule['selector'] ?? 'unknown';
+			$properties_count = count( $rule['properties'] ?? [] );
+			error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: Rule #{$index}: '{$selector}' with {$properties_count} properties" );
+		}
+
 		// Create unified_style_manager if it doesn't exist (early execution)
 		if ( ! $unified_style_manager ) {
 			$unified_style_manager = new \Elementor\Modules\CssConverter\Services\Css\Processing\Unified_Style_Manager(
@@ -107,6 +115,20 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 		// This prevents other processors from processing the same rules as "element" styles
 		// which was causing H5/H6 font-weight:400 to be applied to ALL heading widgets including H1
 		$remaining_rules = $this->remove_processed_element_rules( $css_rules, $element_rules );
+		
+		// DEBUG: Log what rules are being removed
+		$removed_count = count( $css_rules ) - count( $remaining_rules );
+		error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: Removing {$removed_count} element selector rules" );
+		if ( $removed_count > 0 ) {
+			foreach ( $css_rules as $rule ) {
+				$selector = $rule['selector'] ?? 'unknown';
+				if ( isset( $element_rules[ $selector ] ) ) {
+					error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: Removing element rule: '{$selector}'" );
+				}
+			}
+		}
+		error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: After processing " . count( $remaining_rules ) . " CSS rules remain" );
+		
 		$context->set_metadata( 'css_rules', $remaining_rules );
 
 		$context->set_metadata( 'reset_styles_stats', [

@@ -75,8 +75,8 @@ test.describe( 'Nested Variables API Integration @nested-variables', () => {
 		const colorVars = body.variables.filter( ( v ) => v.name.startsWith( '--color' ) );
 		expect( colorVars.length ).toBe( 2 );
 
-		const baseColor = colorVars.find( ( v ) => v.name === '--color' );
-		const suffixedColor = colorVars.find( ( v ) => v.name === '--color-1' );
+		const baseColor = colorVars.find( ( v ) => '--color' === v.name );
+		const suffixedColor = colorVars.find( ( v ) => '--color-1' === v.name );
 
 		expect( baseColor ).toBeDefined();
 		expect( suffixedColor ).toBeDefined();
@@ -230,7 +230,7 @@ test.describe( 'Nested Variables API Integration @nested-variables', () => {
 		expect( body.success ).toBe( true );
 
 		const colorVars = body.variables.filter( ( v ) => v.name.startsWith( '--color' ) );
-		const hasColorTwo = colorVars.some( ( v ) => v.name === '--color-2' );
+		const hasColorTwo = colorVars.some( ( v ) => '--color-2' === v.name );
 		expect( hasColorTwo ).toBe( true );
 	} );
-} ); 
+} );

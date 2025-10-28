@@ -6,7 +6,7 @@ import { CssConverterHelper, CssConverterResponse } from '../helper';
 
 /**
  * Font-Family Property Exclusion Tests
- * 
+ *
  * Tests the font-family property filtering implementation to ensure:
  * 1. Font-family properties are completely filtered out during conversion
  * 2. Other CSS properties continue to work normally
@@ -39,7 +39,6 @@ test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
 } );
 
 test.describe( 'Font-Family Property Exclusion', () => {
-
 	test( 'Simple Font-Family Properties - Completely Filtered Out', async ( { page, request }, testInfo ) => {
 		const htmlContent = `
 			<style>
@@ -123,10 +122,10 @@ test.describe( 'Font-Family Property Exclusion', () => {
 		await expect( paragraph ).toBeVisible();
 
 		// Color CSS variable should work (not excluded)
-		
+
 		// Font-weight should work (not excluded)
-		await expect( paragraph ).toHaveCSS( 'font-weight', '700' ); // bold
-		
+		await expect( paragraph ).toHaveCSS( 'font-weight', '700' ); // Bold
+
 		// Margin should work (not excluded)
 
 		// Font-family CSS variable should be excluded - no specific font applied from our CSS
@@ -170,7 +169,7 @@ test.describe( 'Font-Family Property Exclusion', () => {
 		await editor.waitForPanelToLoad();
 
 		const editorFrame = editor.getPreviewFrame();
-		
+
 		// Test heading
 		const heading = editorFrame.locator( 'h1' ).filter( { hasText: /Heading with font-family/i } );
 		await expect( heading ).toBeVisible();
@@ -186,7 +185,7 @@ test.describe( 'Font-Family Property Exclusion', () => {
 		// Test special paragraph
 		const specialParagraph = editorFrame.locator( 'p' ).filter( { hasText: /Special paragraph with monospace/i } );
 		await expect( specialParagraph ).toBeVisible();
-		await expect( specialParagraph ).toHaveCSS( 'font-weight', '700' ); // bold
+		await expect( specialParagraph ).toHaveCSS( 'font-weight', '700' ); // Bold
 		await expect( specialParagraph ).toHaveCSS( 'background-color', 'rgb(248, 249, 250)' ); // #f8f9fa
 
 		// All font-family declarations should be excluded
@@ -232,18 +231,16 @@ test.describe( 'Font-Family Property Exclusion', () => {
 		await editor.waitForPanelToLoad();
 
 		const editorFrame = editor.getPreviewFrame();
-		
+
 		// Test shorthand font property
 		const shorthandParagraph = editorFrame.locator( 'p' ).filter( { hasText: /Testing font shorthand property/i } );
 		await expect( shorthandParagraph ).toBeVisible();
 		await expect( shorthandParagraph ).toHaveCSS( 'color', 'rgb(231, 76, 60)' ); // #e74c3c
-		
 
 		// Test individual font properties
 		const individualParagraph = editorFrame.locator( 'p' ).filter( { hasText: /Testing individual font properties/i } );
 		await expect( individualParagraph ).toBeVisible();
 		await expect( individualParagraph ).toHaveCSS( 'color', 'rgb(231, 76, 60)' ); // #e74c3c
-		
 
 		// Font shorthand and individual font-family should be excluded
 		// Other properties (color, margin, padding) should work
@@ -314,7 +311,7 @@ test.describe( 'Font-Family Property Exclusion', () => {
 		await editor.waitForPanelToLoad();
 
 		const editorFrame = editor.getPreviewFrame();
-		
+
 		// Test custom font class
 		const customParagraph = editorFrame.locator( 'p' ).filter( { hasText: /Custom font class/i } );
 		await expect( customParagraph ).toBeVisible();
@@ -382,7 +379,6 @@ test.describe( 'Font-Family Property Exclusion', () => {
 		await expect( paragraph ).toHaveCSS( 'color', 'rgb(46, 204, 113)' ); // #2ecc71
 		await expect( paragraph ).toHaveCSS( 'font-size', '18px' );
 		await expect( paragraph ).toHaveCSS( 'font-weight', '600' );
-		
 
 		// All font-family declarations should be excluded
 		// Note: The CSS has multiple font-family declarations which would normally override each other
@@ -423,7 +419,7 @@ test.describe( 'Font-Family Property Exclusion', () => {
 		// Important properties (non-font-family) should be applied
 		await expect( paragraph ).toHaveCSS( 'color', 'rgb(230, 126, 34)' ); // #e67e22 !important
 		await expect( paragraph ).toHaveCSS( 'font-size', '22px' ); // !important
-		await expect( paragraph ).toHaveCSS( 'font-weight', '400' ); // normal
+		await expect( paragraph ).toHaveCSS( 'font-weight', '400' ); // Normal
 
 		// Font-family should be excluded even with !important
 	} );
@@ -460,7 +456,7 @@ test.describe( 'Font-Family Property Exclusion', () => {
 		await editor.waitForPanelToLoad();
 
 		const editorFrame = editor.getPreviewFrame();
-		
+
 		// Elements should still be created and visible
 
 		const secondParagraph = editorFrame.locator( 'p' ).filter( { hasText: /Another element with only font-family CSS/i } );
@@ -504,7 +500,7 @@ test.describe( 'Font-Family Property Exclusion', () => {
 		await editor.waitForPanelToLoad();
 
 		const editorFrame = editor.getPreviewFrame();
-		
+
 		// Test compound selector header
 		const header = editorFrame.locator( 'h2' ).filter( { hasText: /Header with compound selector/i } );
 		await expect( header ).toBeVisible();
@@ -518,5 +514,4 @@ test.describe( 'Font-Family Property Exclusion', () => {
 		// Font-family in compound selectors should be excluded
 		// Other properties should work normally
 	} );
-
 } );

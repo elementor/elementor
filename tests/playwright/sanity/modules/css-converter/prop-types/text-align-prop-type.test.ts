@@ -63,7 +63,7 @@ test.describe( 'Text Align Prop Type Integration @prop-types', () => {
 		// Define test cases for both editor and frontend verification
 		// Note: left/right are converted to logical properties (start/end)
 		const testCases = [
-			{ index: 0,dataTest: 'text-align-left', textContent: 'Left aligned text', name: 'text-align: left', property: 'text-align', expected: 'start' },
+			{ index: 0, dataTest: 'text-align-left', textContent: 'Left aligned text', name: 'text-align: left', property: 'text-align', expected: 'start' },
 			{ index: 1, dataTest: 'text-align-center', textContent: 'Center aligned text', name: 'text-align: center', property: 'text-align', expected: 'center' },
 			{ index: 2, dataTest: 'text-align-right', textContent: 'Right aligned text', name: 'text-align: right', property: 'text-align', expected: 'end' },
 			{ index: 3, dataTest: 'text-align-justify', textContent: 'Justified text that should be justified across the full width of the container', name: 'text-align: justify', property: 'text-align', expected: 'justify' },

@@ -62,6 +62,14 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$widgets = $context->get_widgets();
 
+		// DEBUG: Log what this processor receives
+		error_log( "CSS PIPELINE DEBUG [NESTED_ELEMENT]: Received " . count( $css_rules ) . " CSS rules and " . count( $widgets ) . " widgets" );
+		foreach ( $css_rules as $index => $rule ) {
+			$selector = $rule['selector'] ?? 'unknown';
+			$properties_count = count( $rule['properties'] ?? [] );
+			error_log( "CSS PIPELINE DEBUG [NESTED_ELEMENT]: Rule #{$index}: '{$selector}' with {$properties_count} properties" );
+		}
+
 		if ( empty( $css_rules ) || empty( $widgets ) ) {
 			return $context;
 		}
@@ -75,19 +83,16 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 
 		$processed_count = 0;
 		$applied_count = 0;
-		$remaining_rules = [];
 
 		foreach ( $css_rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
 			$properties = $rule['properties'] ?? [];
 
 			if ( empty( $properties ) ) {
-				$remaining_rules[] = $rule;
 				continue;
 			}
 
 			if ( ! $this->is_nested_selector_with_element_tag( $selector ) ) {
-				$remaining_rules[] = $rule;
 				continue;
 			}
 
@@ -96,7 +101,6 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 			$target_selector = $this->extract_target_selector( $selector );
 
 			if ( empty( $target_selector ) ) {
-				$remaining_rules[] = $rule;
 				continue;
 			}
 
@@ -108,7 +112,6 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 			}
 
 			if ( empty( $matched_elements ) ) {
-				$remaining_rules[] = $rule;
 				continue;
 			}
 
@@ -116,7 +119,6 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 
 			// Skip simple element selectors - these are handled by Reset_Styles_Processor
 			if ( $this->is_simple_element_selector( $target_selector ) ) {
-				$remaining_rules[] = $rule;
 				continue;
 			}
 
@@ -138,7 +140,12 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 			++$applied_count;
 		}
 
-		$context->set_metadata( 'css_rules', $remaining_rules );
+		// FIXED: Don't filter CSS rules - leave them intact for other processors
+		// $context->set_metadata( 'css_rules', $remaining_rules );
+
+		// DEBUG: Log CSS rules after processing (all rules preserved)
+		error_log( "CSS PIPELINE DEBUG [NESTED_ELEMENT]: After processing " . count( $css_rules ) . " CSS rules preserved (no filtering)" );
+		error_log( "CSS PIPELINE DEBUG [NESTED_ELEMENT]: Processed {$processed_count} selectors, applied {$applied_count} selectors" );
 
 		$context->add_statistic( 'nested_element_selectors_processed', $processed_count );
 		$context->add_statistic( 'nested_element_selectors_applied', $applied_count );

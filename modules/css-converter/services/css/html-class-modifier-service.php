@@ -198,14 +198,11 @@ class Html_Class_Modifier_Service {
 			return $mapped_name;
 		}
 
-		// Check if this class should be kept (has direct styles)
-		if ( $this->usage_tracker->should_keep_class( $class_name ) ) {
-			// Keep original class name
-			return $class_name;
-		}
-
-		// Class has no styles and no mapping - remove it
-		return null;
+		// CRITICAL FIX: Always preserve original HTML classes
+		// The CSS converter should preserve all classes from the original HTML
+		// even if they don't have global styles, as they may have CSS rules
+		// that should be applied to the elements
+		return $class_name;
 	}
 
 	private function update_element_with_classes( array $element, array $classes ): array {

@@ -85,183 +85,183 @@ test.describe( 'Reset Styles Handling Tests', () => {
 			throw new Error( 'Preview iframe not found after waiting' );
 		}
 
-	// ========================================
-	// HEADING RESET STYLES (H1-H6)
-	// All heading styles from reset-styles-test-page.html <style> block
-	// ========================================
+		// ========================================
+		// HEADING RESET STYLES (H1-H6)
+		// All heading styles from reset-styles-test-page.html <style> block
+		// ========================================
 
-	// H1: font-size: 2.5rem, font-weight: 700, color: #e74c3c, margin-bottom: 1rem, line-height: 1.2
-	const h1Elements = await previewFrame.locator( 'h1' ).all();
-	let h1Element = null;
-	for ( const h1 of h1Elements ) {
-		const text = await h1.textContent();
-		if ( text?.includes( 'Main Heading' ) ) {
-			h1Element = h1;
-			break;
+		// H1: font-size: 2.5rem, font-weight: 700, color: #e74c3c, margin-bottom: 1rem, line-height: 1.2
+		const h1Elements = await previewFrame.locator( 'h1' ).all();
+		let h1Element = null;
+		for ( const h1 of h1Elements ) {
+			const text = await h1.textContent();
+			if ( text?.includes( 'Main Heading' ) ) {
+				h1Element = h1;
+				break;
+			}
 		}
-	}
-	if ( ! h1Element ) {
-		throw new Error( 'Could not find h1 element with "Main Heading" text' );
-	}
-	await expect( h1Element ).toHaveCSS( 'font-weight', '700' );
-	await expect( h1Element ).toHaveCSS( 'color', 'rgb(231, 76, 60)' );
-
-	// H2: font-size: 2rem, font-weight: 600, color: #3498db, margin-bottom: 0.8rem, line-height: 1.3
-	const h2Elements = await previewFrame.locator( 'h2' ).all();
-	let h2Element = null;
-	for ( const h2 of h2Elements ) {
-		const text = await h2.textContent();
-		if ( text?.includes( 'Secondary Heading' ) ) {
-			h2Element = h2;
-			break;
+		if ( ! h1Element ) {
+			throw new Error( 'Could not find h1 element with "Main Heading" text' );
 		}
-	}
-	if ( ! h2Element ) {
-		throw new Error( 'Could not find h2 element with "Secondary Heading" text' );
-	}
-	await expect( h2Element ).toHaveCSS( 'font-weight', '600' );
-	await expect( h2Element ).toHaveCSS( 'color', 'rgb(52, 152, 219)' );
+		await expect( h1Element ).toHaveCSS( 'font-weight', '700' );
+		await expect( h1Element ).toHaveCSS( 'color', 'rgb(231, 76, 60)' );
 
-	// H3: font-size: 1.5rem, font-weight: 500, color: #27ae60, margin-bottom: 0.6rem
-	const h3Elements = await previewFrame.locator( 'h3' ).all();
-	let h3Element = null;
-	for ( const h3 of h3Elements ) {
-		const text = await h3.textContent();
-		if ( text?.includes( 'Tertiary Heading' ) ) {
-			h3Element = h3;
-			break;
+		// H2: font-size: 2rem, font-weight: 600, color: #3498db, margin-bottom: 0.8rem, line-height: 1.3
+		const h2Elements = await previewFrame.locator( 'h2' ).all();
+		let h2Element = null;
+		for ( const h2 of h2Elements ) {
+			const text = await h2.textContent();
+			if ( text?.includes( 'Secondary Heading' ) ) {
+				h2Element = h2;
+				break;
+			}
 		}
-	}
-	if ( ! h3Element ) {
-		throw new Error( 'Could not find h3 element with "Tertiary Heading" text' );
-	}
-	await expect( h3Element ).toHaveCSS( 'font-weight', '500' );
-	await expect( h3Element ).toHaveCSS( 'color', 'rgb(39, 174, 96)' );
-
-	// H4: font-size: 1.25rem, font-weight: 500, color: #f39c12, margin-bottom: 0.5rem
-	const h4Elements = await previewFrame.locator( 'h4' ).all();
-	let h4Element = null;
-	for ( const h4 of h4Elements ) {
-		const text = await h4.textContent();
-		if ( text?.includes( 'Quaternary Heading' ) ) {
-			h4Element = h4;
-			break;
+		if ( ! h2Element ) {
+			throw new Error( 'Could not find h2 element with "Secondary Heading" text' );
 		}
-	}
-	if ( ! h4Element ) {
-		throw new Error( 'Could not find h4 element with "Quaternary Heading" text' );
-	}
-	await expect( h4Element ).toHaveCSS( 'font-weight', '500' );
-	await expect( h4Element ).toHaveCSS( 'color', 'rgb(243, 156, 18)' );
+		await expect( h2Element ).toHaveCSS( 'font-weight', '600' );
+		await expect( h2Element ).toHaveCSS( 'color', 'rgb(52, 152, 219)' );
 
-	// H5: font-size: 1.1rem, font-weight: 400, color: #9b59b6, margin-bottom: 0.4rem
-	const h5Elements = await previewFrame.locator( 'h5' ).all();
-	let h5Element = null;
-	for ( const h5 of h5Elements ) {
-		const text = await h5.textContent();
-		if ( text?.includes( 'Quinary Heading' ) ) {
-			h5Element = h5;
-			break;
+		// H3: font-size: 1.5rem, font-weight: 500, color: #27ae60, margin-bottom: 0.6rem
+		const h3Elements = await previewFrame.locator( 'h3' ).all();
+		let h3Element = null;
+		for ( const h3 of h3Elements ) {
+			const text = await h3.textContent();
+			if ( text?.includes( 'Tertiary Heading' ) ) {
+				h3Element = h3;
+				break;
+			}
 		}
-	}
-	if ( ! h5Element ) {
-		throw new Error( 'Could not find h5 element with "Quinary Heading" text' );
-	}
-	await expect( h5Element ).toHaveCSS( 'font-weight', '400' );
-	await expect( h5Element ).toHaveCSS( 'color', 'rgb(155, 89, 182)' );
-
-	// H6: font-size: 1rem, font-weight: 400, color: #34495e, margin-bottom: 0.3rem
-	const h6Elements = await previewFrame.locator( 'h6' ).all();
-	let h6Element = null;
-	for ( const h6 of h6Elements ) {
-		const text = await h6.textContent();
-		if ( text?.includes( 'Senary Heading' ) ) {
-			h6Element = h6;
-			break;
+		if ( ! h3Element ) {
+			throw new Error( 'Could not find h3 element with "Tertiary Heading" text' );
 		}
-	}
-	if ( ! h6Element ) {
-		throw new Error( 'Could not find h6 element with "Senary Heading" text' );
-	}
-	await expect( h6Element ).toHaveCSS( 'font-weight', '400' );
-	await expect( h6Element ).toHaveCSS( 'color', 'rgb(52, 73, 94)' );
+		await expect( h3Element ).toHaveCSS( 'font-weight', '500' );
+		await expect( h3Element ).toHaveCSS( 'color', 'rgb(39, 174, 96)' );
 
-	// ========================================
-	// PARAGRAPH RESET STYLES
-	// p { font-size: 1rem; line-height: 1.8; margin-bottom: 1rem; color: #2c3e50; }
-	// ========================================
-	const paragraphs = await previewFrame.locator( 'p' ).all();
-	if ( paragraphs.length > 0 ) {
-		const firstParagraph = paragraphs[0];
-		await expect( firstParagraph ).toHaveCSS( 'color', 'rgb(44, 62, 80)' );
-	}
+		// H4: font-size: 1.25rem, font-weight: 500, color: #f39c12, margin-bottom: 0.5rem
+		const h4Elements = await previewFrame.locator( 'h4' ).all();
+		let h4Element = null;
+		for ( const h4 of h4Elements ) {
+			const text = await h4.textContent();
+			if ( text?.includes( 'Quaternary Heading' ) ) {
+				h4Element = h4;
+				break;
+			}
+		}
+		if ( ! h4Element ) {
+			throw new Error( 'Could not find h4 element with "Quaternary Heading" text' );
+		}
+		await expect( h4Element ).toHaveCSS( 'font-weight', '500' );
+		await expect( h4Element ).toHaveCSS( 'color', 'rgb(243, 156, 18)' );
 
-	// ========================================
-	// LINK RESET STYLES
-	// a { color: #e67e22; text-decoration: underline; font-weight: 500; }
-	// ========================================
-	const fixtureContentLinks = await previewFrame.locator( 'a' ).filter( { hasText: 'link styles' } ).all();
-	if ( fixtureContentLinks.length > 0 ) {
-		const fixtureLink = fixtureContentLinks[0];
-		await expect( fixtureLink ).toHaveCSS( 'color', 'rgb(230, 126, 34)' );
-		await expect( fixtureLink ).toHaveCSS( 'text-decoration', /underline/ );
-		await expect( fixtureLink ).toHaveCSS( 'font-weight', '500' );
-	}
+		// H5: font-size: 1.1rem, font-weight: 400, color: #9b59b6, margin-bottom: 0.4rem
+		const h5Elements = await previewFrame.locator( 'h5' ).all();
+		let h5Element = null;
+		for ( const h5 of h5Elements ) {
+			const text = await h5.textContent();
+			if ( text?.includes( 'Quinary Heading' ) ) {
+				h5Element = h5;
+				break;
+			}
+		}
+		if ( ! h5Element ) {
+			throw new Error( 'Could not find h5 element with "Quinary Heading" text' );
+		}
+		await expect( h5Element ).toHaveCSS( 'font-weight', '400' );
+		await expect( h5Element ).toHaveCSS( 'color', 'rgb(155, 89, 182)' );
 
-	// ========================================
-	// BUTTON RESET STYLES
-	// button { background-color: #95a5a6; color: white; border: none; padding: 10px 20px; font-size: 1rem; border-radius: 4px; cursor: pointer; }
-	// ========================================
-	const fixtureButtons = await previewFrame.locator( 'button' ).filter( { hasText: 'Reset Button' } ).all();
-	if ( fixtureButtons.length > 0 ) {
-		const firstFixtureButton = fixtureButtons[0];
-		await expect( firstFixtureButton ).toHaveCSS( 'background-color', 'rgb(149, 165, 166)' );
-		await expect( firstFixtureButton ).toHaveCSS( 'color', 'rgb(255, 255, 255)' );
-		await expect( firstFixtureButton ).toHaveCSS( 'border-radius', '4px' );
-		await expect( firstFixtureButton ).toHaveCSS( 'cursor', 'pointer' );
-	}
+		// H6: font-size: 1rem, font-weight: 400, color: #34495e, margin-bottom: 0.3rem
+		const h6Elements = await previewFrame.locator( 'h6' ).all();
+		let h6Element = null;
+		for ( const h6 of h6Elements ) {
+			const text = await h6.textContent();
+			if ( text?.includes( 'Senary Heading' ) ) {
+				h6Element = h6;
+				break;
+			}
+		}
+		if ( ! h6Element ) {
+			throw new Error( 'Could not find h6 element with "Senary Heading" text' );
+		}
+		await expect( h6Element ).toHaveCSS( 'font-weight', '400' );
+		await expect( h6Element ).toHaveCSS( 'color', 'rgb(52, 73, 94)' );
 
-	// ========================================
-	// LIST RESET STYLES
-	// ul, ol { margin: 0 0 1rem 2rem; padding: 0; }
-	// li { margin-bottom: 0.5rem; }
-	// ========================================
-	const fixtureUls = await previewFrame.locator( 'ul' ).filter( { has: previewFrame.locator( 'text=List item one' ) } ).all();
-	if ( fixtureUls.length > 0 ) {
-		const fixtureUl = fixtureUls[0];
-		await expect( fixtureUl ).toHaveCSS( 'padding', '0px' );
-	}
+		// ========================================
+		// PARAGRAPH RESET STYLES
+		// p { font-size: 1rem; line-height: 1.8; margin-bottom: 1rem; color: #2c3e50; }
+		// ========================================
+		const paragraphs = await previewFrame.locator( 'p' ).all();
+		if ( paragraphs.length > 0 ) {
+			const firstParagraph = paragraphs[ 0 ];
+			await expect( firstParagraph ).toHaveCSS( 'color', 'rgb(44, 62, 80)' );
+		}
 
-	// ========================================
-	// TABLE RESET STYLES
-	// table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; }
-	// th, td { border: 1px solid #bdc3c7; padding: 8px; text-align: left; }
-	// th { background-color: #ecf0f1; font-weight: 600; }
-	// ========================================
-	const tableElements = await previewFrame.locator( 'table' ).all();
-	if ( tableElements.length > 0 ) {
-		const firstTable = tableElements[0];
-		await expect( firstTable ).toHaveCSS( 'border-collapse', 'collapse' );
-		await expect( firstTable ).toHaveCSS( 'width', '100%' );
-	}
+		// ========================================
+		// LINK RESET STYLES
+		// a { color: #e67e22; text-decoration: underline; font-weight: 500; }
+		// ========================================
+		const fixtureContentLinks = await previewFrame.locator( 'a' ).filter( { hasText: 'link styles' } ).all();
+		if ( fixtureContentLinks.length > 0 ) {
+			const fixtureLink = fixtureContentLinks[ 0 ];
+			await expect( fixtureLink ).toHaveCSS( 'color', 'rgb(230, 126, 34)' );
+			await expect( fixtureLink ).toHaveCSS( 'text-decoration', /underline/ );
+			await expect( fixtureLink ).toHaveCSS( 'font-weight', '500' );
+		}
 
-	const thElements = await previewFrame.locator( 'th' ).all();
-	if ( thElements.length > 0 ) {
-		const firstTh = thElements[0];
-		await expect( firstTh ).toHaveCSS( 'background-color', 'rgb(236, 240, 241)' );
-		await expect( firstTh ).toHaveCSS( 'font-weight', '600' );
-		await expect( firstTh ).toHaveCSS( 'padding', '8px' );
-		await expect( firstTh ).toHaveCSS( 'text-align', 'left' );
-		await expect( firstTh ).toHaveCSS( 'border', /1px solid/ );
-	}
+		// ========================================
+		// BUTTON RESET STYLES
+		// button { background-color: #95a5a6; color: white; border: none; padding: 10px 20px; font-size: 1rem; border-radius: 4px; cursor: pointer; }
+		// ========================================
+		const fixtureButtons = await previewFrame.locator( 'button' ).filter( { hasText: 'Reset Button' } ).all();
+		if ( fixtureButtons.length > 0 ) {
+			const firstFixtureButton = fixtureButtons[ 0 ];
+			await expect( firstFixtureButton ).toHaveCSS( 'background-color', 'rgb(149, 165, 166)' );
+			await expect( firstFixtureButton ).toHaveCSS( 'color', 'rgb(255, 255, 255)' );
+			await expect( firstFixtureButton ).toHaveCSS( 'border-radius', '4px' );
+			await expect( firstFixtureButton ).toHaveCSS( 'cursor', 'pointer' );
+		}
 
-	const tdElements = await previewFrame.locator( 'td' ).all();
-	if ( tdElements.length > 0 ) {
-		const firstTd = tdElements[0];
-		await expect( firstTd ).toHaveCSS( 'padding', '8px' );
-		await expect( firstTd ).toHaveCSS( 'text-align', 'left' );
-		await expect( firstTd ).toHaveCSS( 'border', /1px solid/ );
-	}
+		// ========================================
+		// LIST RESET STYLES
+		// ul, ol { margin: 0 0 1rem 2rem; padding: 0; }
+		// li { margin-bottom: 0.5rem; }
+		// ========================================
+		const fixtureUls = await previewFrame.locator( 'ul' ).filter( { has: previewFrame.locator( 'text=List item one' ) } ).all();
+		if ( fixtureUls.length > 0 ) {
+			const fixtureUl = fixtureUls[ 0 ];
+			await expect( fixtureUl ).toHaveCSS( 'padding', '0px' );
+		}
+
+		// ========================================
+		// TABLE RESET STYLES
+		// table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; }
+		// th, td { border: 1px solid #bdc3c7; padding: 8px; text-align: left; }
+		// th { background-color: #ecf0f1; font-weight: 600; }
+		// ========================================
+		const tableElements = await previewFrame.locator( 'table' ).all();
+		if ( tableElements.length > 0 ) {
+			const firstTable = tableElements[ 0 ];
+			await expect( firstTable ).toHaveCSS( 'border-collapse', 'collapse' );
+			await expect( firstTable ).toHaveCSS( 'width', '100%' );
+		}
+
+		const thElements = await previewFrame.locator( 'th' ).all();
+		if ( thElements.length > 0 ) {
+			const firstTh = thElements[ 0 ];
+			await expect( firstTh ).toHaveCSS( 'background-color', 'rgb(236, 240, 241)' );
+			await expect( firstTh ).toHaveCSS( 'font-weight', '600' );
+			await expect( firstTh ).toHaveCSS( 'padding', '8px' );
+			await expect( firstTh ).toHaveCSS( 'text-align', 'left' );
+			await expect( firstTh ).toHaveCSS( 'border', /1px solid/ );
+		}
+
+		const tdElements = await previewFrame.locator( 'td' ).all();
+		if ( tdElements.length > 0 ) {
+			const firstTd = tdElements[ 0 ];
+			await expect( firstTd ).toHaveCSS( 'padding', '8px' );
+			await expect( firstTd ).toHaveCSS( 'text-align', 'left' );
+			await expect( firstTd ).toHaveCSS( 'border', /1px solid/ );
+		}
 	} );
 
 	test( 'should handle body element reset styles', async ( { request } ) => {

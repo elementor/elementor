@@ -32,6 +32,11 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 		$widget_id = wp_generate_uuid4();
 		$mapped_type = $this->map_to_elementor_widget_type( $widget_type );
 
+		// DEBUG: Log widget data received by factory
+		$widget_classes = $widget_data['attributes']['class'] ?? '';
+		error_log( "CSS Converter: Factory received {$widget_type} widget with classes: '{$widget_classes}'" );
+		error_log( "CSS Converter: Full widget_data keys: " . implode( ', ', array_keys( $widget_data ) ) );
+
 		$formatted_widget_data = $this->data_formatter->format_widget_data( $resolved_styles, $widget_data, $widget_id );
 
 		if ( $this->requires_link_to_button_conversion( $widget_type, $mapped_type ) ) {
@@ -150,7 +155,15 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 		}
 
 		$widget_classes = $widget_data['attributes']['class'] ?? '';
+		
+		// DEBUG: Log class application process
+		$widget_type = $widget_data['widget_type'] ?? 'unknown';
+		error_log( "CSS Converter: Applying global classes to {$widget_type} widget" );
+		error_log( "CSS Converter: Widget classes found: '{$widget_classes}'" );
+		error_log( "CSS Converter: Available global classes: " . implode( ', ', array_keys( $global_classes ) ) );
+		
 		if ( empty( $widget_classes ) ) {
+			error_log( "CSS Converter: No widget classes found, skipping global class application" );
 			return $final_settings;
 		}
 
@@ -161,6 +174,9 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 			$class_name = trim( $class_name );
 			if ( isset( $global_classes[ $class_name ] ) ) {
 				$applicable_global_classes[] = $class_name;
+				error_log( "CSS Converter: Found matching global class: {$class_name}" );
+			} else {
+				error_log( "CSS Converter: No global class found for: {$class_name}" );
 			}
 		}
 
@@ -172,6 +188,10 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 				'$$type' => 'classes',
 				'value' => array_values( array_unique( $merged_classes ) ),
 			];
+			
+			error_log( "CSS Converter: Applied classes to widget: " . implode( ', ', $merged_classes ) );
+		} else {
+			error_log( "CSS Converter: No applicable global classes found" );
 		}
 
 		return $final_settings;

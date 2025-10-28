@@ -185,8 +185,17 @@ class Reset_Style_Detector {
 		$clean_selector = preg_replace( '/::?[a-zA-Z][\w-]*(\([^)]*\))?/', '', $selector );
 
 		// Check if any supported element names appear as whole words
+		// BUT exclude matches that are part of class names (after a dot)
 		foreach ( $this->supported_simple_selectors as $element ) {
-			if ( preg_match( '/\b' . preg_quote( $element, '/' ) . '\b/', $clean_selector ) ) {
+			// FIXED: Don't match element names that are part of class names
+			// Pattern explanation: 
+			// - (?<!\.) = negative lookbehind, not preceded by a dot
+			// - \b = word boundary
+			// - element name
+			// - \b = word boundary  
+			// - (?![a-zA-Z0-9_-]) = negative lookahead, not followed by class name characters
+			$pattern = '/(?<!\.)(?<![a-zA-Z0-9_-])\b' . preg_quote( $element, '/' ) . '\b(?![a-zA-Z0-9_-])/';
+			if ( preg_match( $pattern, $clean_selector ) ) {
 				return true;
 			}
 		}

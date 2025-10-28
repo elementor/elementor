@@ -77,24 +77,24 @@ test.describe( 'Opacity Prop Type Integration @prop-types', () => {
 		const testCases = [
 			{
 				textContent: 'Full opacity',
-				expected: '1'
+				expected: '1',
 			},
 			{
 				textContent: 'Half opacity',
-				expected: '0.5'
+				expected: '0.5',
 			},
 			{
 				textContent: 'Transparent',
-				expected: '0'
+				expected: '0',
 			},
 			{
 				textContent: 'Three quarters opacity',
-				expected: '0.75'
+				expected: '0.75',
 			},
 			{
 				textContent: 'Quarter opacity',
-				expected: '0.25'
-			}
+				expected: '0.25',
+			},
 		];
 
 		// Test opacity values using specific text content selectors

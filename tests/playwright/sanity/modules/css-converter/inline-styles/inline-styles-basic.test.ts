@@ -13,7 +13,6 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 		const page = await browser.newPage();
 		const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
-
 		await wpAdminPage.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
@@ -217,7 +216,7 @@ test.describe( 'Basic Inline Styles @inline-styles', () => {
 		await test.step( 'Verify inline styles on div', async () => {
 			await page.waitForTimeout( 2000 );
 			const elementorFrame = editor.getPreviewFrame();
-			const divBlock = elementorFrame.locator( '[data-element_type="e-div-block"]' ).nth(2);
+			const divBlock = elementorFrame.locator( '[data-element_type="e-div-block"]' ).nth( 2 );
 			await divBlock.waitFor( { state: 'visible', timeout: 10000 } );
 			await expect( divBlock ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
 			await expect( divBlock ).toHaveCSS( 'padding', '20px' );

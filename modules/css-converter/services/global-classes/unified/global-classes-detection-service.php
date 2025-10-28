@@ -17,17 +17,23 @@ class Global_Classes_Detection_Service {
 		foreach ( $css_rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
 
+			// DEBUG: Log all selectors being processed
+			error_log( "CSS Converter: Processing selector: '{$selector}'" );
+
 			if ( ! $this->is_valid_class_selector( $selector ) ) {
+				error_log( "CSS Converter: Skipping '{$selector}' - not a valid class selector" );
 				continue;
 			}
 
 			if ( $this->should_skip_selector( $selector ) ) {
+				error_log( "CSS Converter: Skipping '{$selector}' - should skip selector" );
 				continue;
 			}
 
 			$class_name = $this->extract_class_name( $selector );
 
 			if ( $this->is_class_name_too_long( $class_name ) ) {
+				error_log( "CSS Converter: Skipping '{$selector}' - class name too long" );
 				continue;
 			}
 
@@ -36,6 +42,8 @@ class Global_Classes_Detection_Service {
 				'properties' => $rule['properties'] ?? [],
 				'source' => 'css-converter',
 			];
+			
+			error_log( "CSS Converter: Detected class '{$class_name}' with " . count( $rule['properties'] ?? [] ) . " properties" );
 		}
 
 		return $detected_classes;

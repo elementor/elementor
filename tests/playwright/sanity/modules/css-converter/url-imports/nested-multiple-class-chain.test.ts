@@ -51,7 +51,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 		// Verify conversion was successful
 		expect( result.success ).toBe( true );
 		expect( result.global_classes_created ).toBeGreaterThan( 0 );
-		// expect( result.flattened_classes_created ).toBeGreaterThan( 0 );
+		// Expect( result.flattened_classes_created ).toBeGreaterThan( 0 );
 
 		// Verify that the conversion was successful and flattened classes were created
 		expect( result.post_id ).toBeGreaterThan( 0 );
@@ -114,7 +114,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 
 		expect( result.success ).toBe( true );
 		expect( result.global_classes_created ).toBeGreaterThan( 0 );
-		// expect( result.flattened_classes_created ).toBeGreaterThan( 0 );
+		// Expect( result.flattened_classes_created ).toBeGreaterThan( 0 );
 
 		// Verify successful conversion with flattened classes
 		expect( result.post_id ).toBeGreaterThan( 0 );
@@ -177,7 +177,7 @@ test.describe( 'Pattern 3: Multiple Class Chain Flattening (.first > .second .th
 
 		expect( result.success ).toBe( true );
 		expect( result.global_classes_created ).toBeGreaterThan( 0 );
-		// expect( result.flattened_classes_created ).toBeGreaterThan( 0 );
+		// Expect( result.flattened_classes_created ).toBeGreaterThan( 0 );
 
 		// Verify successful conversion with flattened classes
 		expect( result.post_id ).toBeGreaterThan( 0 );

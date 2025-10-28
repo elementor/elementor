@@ -26,6 +26,14 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 	public function process( Css_Processing_Context $context ): Css_Processing_Context {
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 
+		// DEBUG: Log CSS rules received by global classes processor
+		error_log( "CSS PIPELINE DEBUG [GLOBAL_CLASSES]: Received " . count( $css_rules ) . " CSS rules" );
+		foreach ( $css_rules as $index => $rule ) {
+			$selector = $rule['selector'] ?? 'unknown';
+			$properties_count = count( $rule['properties'] ?? [] );
+			error_log( "CSS PIPELINE DEBUG [GLOBAL_CLASSES]: Rule #{$index}: '{$selector}' with {$properties_count} properties" );
+		}
+
 		// Process global classes with duplicate detection
 		$global_classes_result = $this->process_global_classes_with_duplicate_detection( $css_rules );
 

@@ -6,7 +6,7 @@ import { CssConverterHelper, CssConverterResponse } from '../helper';
 
 /**
  * CSS Variables Color Handling Tests
- * 
+ *
  * Tests the CSS Variable Aware Color Prop Type implementation to ensure:
  * 1. CSS variables are properly preserved during conversion
  * 2. Color and background-color properties with CSS variables work correctly
@@ -38,7 +38,6 @@ test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
 } );
 
 test.describe( 'CSS Variables Color Handling', () => {
-
 	test( 'Elementor Global Color Variables - Preserved and Applied', async ( { page, request } ) => {
 		const htmlContent = `
 			<style>
@@ -85,7 +84,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 		// Verify CSS variables are applied correctly
 		// Note: CSS variables should resolve to their actual values in computed styles
 		await expect( paragraph ).toHaveCSS( 'color', 'rgb(0, 124, 186)' ); // --e-global-color-primary
-		
+
 		// Check the parent container for background-color
 		const container = paragraph.locator( '..' ); // Parent element
 		await expect( container ).toHaveCSS( 'background-color', 'rgb(255, 105, 0)' ); // --e-global-color-secondary
@@ -122,7 +121,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 		// CSS variables with fallbacks should either resolve to the variable value or fallback
 		// Since these are custom variables, they should fall back to the specified values
 		await expect( paragraph ).toHaveCSS( 'color', 'rgb(255, 0, 0)' ); // Fallback: #ff0000
-		
+
 		const container = paragraph.locator( '..' );
 		await expect( container ).toHaveCSS( 'background-color', 'rgba(0, 255, 0, 0.5)' ); // Fallback: rgba(0, 255, 0, 0.5)
 	} );
@@ -163,12 +162,12 @@ test.describe( 'CSS Variables Color Handling', () => {
 		await editor.waitForEditorToLoad();
 
 		const editorFrame = editor.getPreviewFrame();
-		
+
 		// Test mixed colors element
 		const mixedParagraph = editorFrame.locator( 'p' ).filter( { hasText: /Mixed CSS variables and regular colors/i } );
 		await expect( mixedParagraph ).toBeVisible();
 		await expect( mixedParagraph ).toHaveCSS( 'color', 'rgb(0, 124, 186)' ); // CSS variable
-		
+
 		const mixedContainer = mixedParagraph.locator( '..' );
 		await expect( mixedContainer ).toHaveCSS( 'background-color', 'rgb(240, 240, 240)' ); // Regular hex
 		await expect( mixedContainer ).toHaveCSS( 'border-color', 'rgb(255, 0, 0)' ); // Regular rgb
@@ -177,7 +176,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 		const regularParagraph = editorFrame.locator( 'p' ).filter( { hasText: /Regular colors only/i } );
 		await expect( regularParagraph ).toBeVisible();
 		await expect( regularParagraph ).toHaveCSS( 'color', 'rgb(51, 51, 51)' ); // Regular hex
-		
+
 		const regularContainer = regularParagraph.locator( '..' );
 		await expect( regularContainer ).toHaveCSS( 'background-color', 'rgba(0, 255, 0, 0.3)' ); // Regular rgba
 	} );
@@ -254,7 +253,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 		// Custom CSS variables should still work, but may not resolve if not defined in Elementor
 		// The test verifies that the conversion doesn't break with custom variables
 		const container = paragraph.locator( '..' );
-		
+
 		// These might resolve to the actual values or remain as CSS variables
 		// The important thing is that the conversion succeeded and elements are visible
 		await expect( paragraph ).toHaveCSS( 'color', 'rgb(255, 107, 107)' ); // --my-custom-color
@@ -297,9 +296,9 @@ test.describe( 'CSS Variables Color Handling', () => {
 
 		// Verify basic color property
 		await expect( paragraph ).toHaveCSS( 'color', 'rgb(0, 124, 186)' );
-		
+
 		const container = paragraph.locator( '..' );
-		
+
 		// Verify border color (CSS variables in border shorthand)
 		await expect( container ).toHaveCSS( 'border-color', 'rgb(0, 124, 186)' );
 		await expect( container ).toHaveCSS( 'border-width', '2px' );
@@ -343,7 +342,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 		await editor.waitForEditorToLoad();
 
 		const editorFrame = editor.getPreviewFrame();
-		
+
 		// Invalid variables should not prevent the elements from being created
 		const invalidParagraph = editorFrame.locator( 'p' ).filter( { hasText: /Testing invalid CSS variables/i } );
 		await expect( invalidParagraph ).toBeVisible();
@@ -397,16 +396,15 @@ test.describe( 'CSS Variables Color Handling', () => {
 
 		// Verify color property
 		await expect( paragraph ).toHaveCSS( 'color', 'rgb(0, 124, 186)' );
-		
+
 		const container = paragraph.locator( '..' );
-		
+
 		// Verify background-color
 		await expect( container ).toHaveCSS( 'background-color', 'rgb(255, 105, 0)' );
-		
+
 		// Verify border properties
 		await expect( container ).toHaveCSS( 'border-color', 'rgb(0, 124, 186)' ); // From border shorthand
 		await expect( container ).toHaveCSS( 'border-width', '1px' );
 		await expect( container ).toHaveCSS( 'border-style', 'solid' );
 	} );
-
 } );

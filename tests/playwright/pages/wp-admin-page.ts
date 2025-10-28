@@ -53,7 +53,7 @@ export default class WpAdminPage extends BasePage {
 	async openElementorSettings( tab: 'tab-general' | 'tab-integrations' | 'tab-advanced' | 'tab-performance' | 'tab-experiments' ): Promise<void> {
 		await this.page.goto( `/wp-admin/admin.php?page=elementor-settings#${ tab }` );
 		await this.page.waitForLoadState( 'networkidle' );
-		
+
 		try {
 			await this.page.locator( `#elementor-settings-${ tab }` ).waitFor( { timeout: 5000 } );
 		} catch ( e ) {

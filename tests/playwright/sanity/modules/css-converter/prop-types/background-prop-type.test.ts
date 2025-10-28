@@ -214,8 +214,8 @@ test.describe( 'Background Prop Type Integration @prop-types', () => {
 
 		// Define test cases for background: none conversion
 		const testCases = [
-			{ index: 0, name: 'background: none', expected: 'rgba(0, 0, 0, 0)' }, // transparent
-			{ index: 1, name: 'background-color: none', expected: 'rgba(0, 0, 0, 0)' }, // transparent
+			{ index: 0, name: 'background: none', expected: 'rgba(0, 0, 0, 0)' }, // Transparent
+			{ index: 1, name: 'background-color: none', expected: 'rgba(0, 0, 0, 0)' }, // Transparent
 		];
 
 		// Editor verification using test cases array

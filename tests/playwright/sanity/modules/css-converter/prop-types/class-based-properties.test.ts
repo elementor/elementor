@@ -52,7 +52,6 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 
 		const apiResult = await cssHelper.convertHtmlWithCss( request, htmlContent, '' );
 
-
 		const validation = cssHelper.validateApiResult( apiResult );
 		if ( validation.shouldSkip ) {
 			test.skip( true, validation.skipReason );
@@ -67,8 +66,8 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 		editor = new EditorPage( page, wpAdmin.testInfo );
 		await editor.waitForPanelToLoad();
 
-		// await page.pause();
-		
+		// Await page.pause();
+
 		await test.step( 'Test class-base-convertedd letter-spacing and text-transform', async () => {
 			const elementorFrame = editor.getPreviewFrame();
 			await elementorFrame.waitForLoadState();
@@ -98,8 +97,6 @@ test.describe( 'Class-base-convertedd Properties Test @prop-types', () => {
 			} catch ( e ) {
 				// Fallback
 			}
-
-			
 
 			// These are the assertions that were failing in the original test
 			await expect( heading ).toHaveCSS( 'letter-spacing', '1px' );

@@ -6,7 +6,7 @@ import { CssConverterHelper, CssConverterResponse } from '../helper';
 
 /**
  * HTML to Widget Conversion Structure Tests
- * 
+ *
  * Tests the HTML to widget conversion process to ensure:
  * 1. Correct widget hierarchy is created from HTML structure
  * 2. CSS classes are properly applied to widgets
@@ -38,7 +38,6 @@ test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
 } );
 
 test.describe( 'HTML to Widget Conversion Structure', () => {
-
 	test( 'Simple Div with Paragraph - Correct Widget Hierarchy', async ( { page, request } ) => {
 		const htmlContent = `
 			<style>
@@ -71,7 +70,7 @@ test.describe( 'HTML to Widget Conversion Structure', () => {
 			success: apiResult.success,
 			widgets_created: apiResult.widgets_created,
 			global_classes_created: apiResult.global_classes_created,
-			post_id: apiResult.post_id
+			post_id: apiResult.post_id,
 		}, null, 2 ) );
 
 		// Navigate to editor
@@ -103,7 +102,7 @@ test.describe( 'HTML to Widget Conversion Structure', () => {
 				tagName: el.tagName.toLowerCase(),
 				className: el.className,
 				childCount: el.children.length,
-				firstChildTagName: el.children[0]?.tagName.toLowerCase()
+				firstChildTagName: el.children[ 0 ]?.tagName.toLowerCase(),
 			};
 		} );
 
@@ -113,7 +112,7 @@ test.describe( 'HTML to Widget Conversion Structure', () => {
 			return {
 				tagName: el.tagName.toLowerCase(),
 				className: el.className,
-				textContent: el.textContent?.substring( 0, 50 )
+				textContent: el.textContent?.substring( 0, 50 ),
 			};
 		} );
 
@@ -166,7 +165,7 @@ test.describe( 'HTML to Widget Conversion Structure', () => {
 		console.log( 'Complex Structure API Result:', JSON.stringify( {
 			success: apiResult.success,
 			widgets_created: apiResult.widgets_created,
-			global_classes_created: apiResult.global_classes_created
+			global_classes_created: apiResult.global_classes_created,
 		}, null, 2 ) );
 
 		await page.goto( apiResult.edit_url );
@@ -222,7 +221,7 @@ test.describe( 'HTML to Widget Conversion Structure', () => {
 			compound_classes_created: apiResult.compound_classes_created,
 			post_id: apiResult.post_id,
 			warnings: apiResult.warnings,
-			errors: apiResult.errors
+			errors: apiResult.errors,
 		}, null, 2 ) );
 
 		expect( apiResult.success ).toBe( true );
@@ -240,13 +239,13 @@ test.describe( 'HTML to Widget Conversion Structure', () => {
 		// Find all visible elements in the converted content
 		const allElements = await editorFrame.locator( '*' ).evaluateAll( ( elements ) => {
 			return elements
-				.filter( el => el.offsetParent !== null ) // Only visible elements
-				.map( el => ( {
+				.filter( ( el ) => el.offsetParent !== null ) // Only visible elements
+				.map( ( el ) => ( {
 					tagName: el.tagName.toLowerCase(),
 					className: el.className,
 					textContent: el.textContent?.substring( 0, 100 ),
 					hasChildren: el.children.length > 0,
-					childCount: el.children.length
+					childCount: el.children.length,
 				} ) )
 				.slice( 0, 20 ); // Limit to first 20 elements for readability
 		} );
@@ -258,16 +257,16 @@ test.describe( 'HTML to Widget Conversion Structure', () => {
 			.filter( { hasText: /.+/ } ) // Elements with text content
 			.evaluateAll( ( elements ) => {
 				return elements
-					.filter( el => el.textContent && el.textContent.trim().length > 0 )
-					.map( el => ( {
+					.filter( ( el ) => el.textContent && el.textContent.trim().length > 0 )
+					.map( ( el ) => ( {
 						tagName: el.tagName.toLowerCase(),
 						className: el.className,
 						textContent: el.textContent?.trim().substring( 0, 100 ),
 						computedStyles: {
 							color: window.getComputedStyle( el ).color,
 							fontSize: window.getComputedStyle( el ).fontSize,
-							fontWeight: window.getComputedStyle( el ).fontWeight
-						}
+							fontWeight: window.getComputedStyle( el ).fontWeight,
+						},
 					} ) )
 					.slice( 0, 10 ); // Limit for readability
 			} );
@@ -277,8 +276,8 @@ test.describe( 'HTML to Widget Conversion Structure', () => {
 		// Verify at least some content is visible
 		const visibleContent = editorFrame.locator( 'p, h1, h2, h3, h4, h5, h6' ).filter( { hasText: /.+/ } );
 		const contentCount = await visibleContent.count();
-		
-		console.log( `Found ${contentCount} text elements in converted content` );
+
+		console.log( `Found ${ contentCount } text elements in converted content` );
 		expect( contentCount ).toBeGreaterThan( 0 );
 
 		// Check for expected styling from oboxthemes
@@ -294,7 +293,7 @@ test.describe( 'HTML to Widget Conversion Structure', () => {
 					fontSize: styles.fontSize,
 					fontWeight: styles.fontWeight,
 					lineHeight: styles.lineHeight,
-					fontFamily: styles.fontFamily
+					fontFamily: styles.fontFamily,
 				};
 			} );
 
@@ -329,7 +328,7 @@ test.describe( 'HTML to Widget Conversion Structure', () => {
 		console.log( 'Semantic Elements API Result:', JSON.stringify( {
 			success: apiResult.success,
 			widgets_created: apiResult.widgets_created,
-			global_classes_created: apiResult.global_classes_created
+			global_classes_created: apiResult.global_classes_created,
 		}, null, 2 ) );
 
 		await page.goto( apiResult.edit_url );
@@ -361,19 +360,19 @@ test.describe( 'HTML to Widget Conversion Structure', () => {
 		await expect( pElement ).toHaveCSS( 'font-size', '14px' );
 
 		await expect( buttonElement ).toHaveCSS( 'background-color', 'rgb(0, 124, 186)' ); // #007cba
-		await expect( buttonElement ).toHaveCSS( 'color', 'rgb(255, 255, 255)' ); // white
+		await expect( buttonElement ).toHaveCSS( 'color', 'rgb(255, 255, 255)' ); // White
 
 		// Log the widget structure for analysis
 		const widgetStructure = await editorFrame.evaluate( () => {
 			const findWidgetInfo = ( element ) => {
 				const classList = Array.from( element.classList );
-				const widgetClasses = classList.filter( cls => cls.includes( 'elementor' ) || cls.includes( 'e-' ) );
+				const widgetClasses = classList.filter( ( cls ) => cls.includes( 'elementor' ) || cls.includes( 'e-' ) );
 				return {
 					tagName: element.tagName.toLowerCase(),
 					classes: classList,
-					widgetClasses: widgetClasses,
+					widgetClasses,
 					textContent: element.textContent?.substring( 0, 50 ),
-					hasChildren: element.children.length > 0
+					hasChildren: element.children.length > 0,
 				};
 			};
 
@@ -388,7 +387,7 @@ test.describe( 'HTML to Widget Conversion Structure', () => {
 				h1: h1 ? findWidgetInfo( h1 ) : null,
 				h2: h2 ? findWidgetInfo( h2 ) : null,
 				p: p ? findWidgetInfo( p ) : null,
-				button: button ? findWidgetInfo( button ) : null
+				button: button ? findWidgetInfo( button ) : null,
 			};
 		} );
 
@@ -449,7 +448,7 @@ test.describe( 'HTML to Widget Conversion Structure', () => {
 				paragraphClasses: Array.from( el.classList ),
 				containerClasses: Array.from( container.classList ),
 				paragraphHasTextStyling: el.classList.contains( 'text-styling' ),
-				containerHasMyClass: container.classList.contains( 'my-class' )
+				containerHasMyClass: container.classList.contains( 'my-class' ),
 			};
 		} );
 
@@ -460,5 +459,4 @@ test.describe( 'HTML to Widget Conversion Structure', () => {
 		expect( elementClasses.paragraphClasses.length ).toBeGreaterThan( 0 );
 		expect( elementClasses.containerClasses.length ).toBeGreaterThan( 0 );
 	} );
-
 } );

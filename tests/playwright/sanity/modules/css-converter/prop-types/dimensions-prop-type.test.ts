@@ -79,51 +79,51 @@ test.describe( 'Dimensions Prop Type Integration @prop-types', () => {
 		const testCases = [
 			{
 				textContent: 'Single value padding',
-				tests: [{ property: 'padding', expected: '20px' }]
+				tests: [ { property: 'padding', expected: '20px' } ],
 			},
 			{
 				textContent: 'Two values padding',
-				tests: [{ property: 'padding', expected: '20px 40px' }]
+				tests: [ { property: 'padding', expected: '20px 40px' } ],
 			},
 			{
 				textContent: 'Four values padding',
-				tests: [{ property: 'padding', expected: '20px 30px 0px 10px' }]
+				tests: [ { property: 'padding', expected: '20px 30px 0px 10px' } ],
 			},
 			{
 				textContent: 'Padding top & Margin top',
 				tests: [
 					{ property: 'padding-top', expected: '20px' },
-					{ property: 'margin-top', expected: '40px' }
-				]
+					{ property: 'margin-top', expected: '40px' },
+				],
 			},
 			{
 				textContent: 'Padding block start',
-				tests: [{ property: 'padding-block-start', expected: '30px' }]
+				tests: [ { property: 'padding-block-start', expected: '30px' } ],
 			},
 			{
 				textContent: 'Padding left',
-				tests: [{ property: 'padding-left', expected: '30px' }]
+				tests: [ { property: 'padding-left', expected: '30px' } ],
 			},
 			{
 				textContent: 'Padding inline start',
-				tests: [{ property: 'padding-inline-start', expected: '40px' }]
+				tests: [ { property: 'padding-inline-start', expected: '40px' } ],
 			},
 			{
 				textContent: 'Padding block single',
-				tests: [{ property: 'padding-block', expected: '20px' }]
+				tests: [ { property: 'padding-block', expected: '20px' } ],
 			},
 			{
 				textContent: 'Padding block two values',
-				tests: [{ property: 'padding-block', expected: '20px 30px' }]
+				tests: [ { property: 'padding-block', expected: '20px 30px' } ],
 			},
 			{
 				textContent: 'Padding inline single',
-				tests: [{ property: 'padding-inline', expected: '20px' }]
+				tests: [ { property: 'padding-inline', expected: '20px' } ],
 			},
 			{
 				textContent: 'Padding inline two values',
-				tests: [{ property: 'padding-inline', expected: '20px 30px' }]
-			}
+				tests: [ { property: 'padding-inline', expected: '20px 30px' } ],
+			},
 		];
 
 		// Test padding values using specific text content selectors

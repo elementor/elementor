@@ -159,11 +159,11 @@ abstract class Atomic_Property_Mapper_Base implements Property_Mapper_Interface 
 		return null;
 	}
 
-	private function handle_unparseable_shorthand(): ?array {
+	protected function handle_unparseable_shorthand(): ?array {
 		return null;
 	}
 
-	private function handle_invalid_shorthand(): ?array {
+	protected function handle_invalid_shorthand(): ?array {
 		return null;
 	}
 }

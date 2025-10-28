@@ -226,7 +226,7 @@ test.describe( 'CSS Class Generation @inline-styles @critical', () => {
 		await test.step( 'Verify all elements are created', async () => {
 			await page.waitForTimeout( 2000 );
 			const elementorFrame = editor.getPreviewFrame();
-			
+
 			const elements = elementorFrame.locator( '.e-con p' );
 			const count = await elements.count();
 			expect( count ).toBe( 3 );

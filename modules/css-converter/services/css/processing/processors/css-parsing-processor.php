@@ -56,6 +56,14 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 		$context->add_statistic( 'css_size_bytes', strlen( $css ) );
 		$context->add_statistic( 'beautified_css_size_bytes', strlen( $beautified_css ) );
 
+		// DEBUG: Log CSS rules after parsing
+		error_log( "CSS PIPELINE DEBUG [CSS_PARSING]: Parsed " . count( $css_rules ) . " CSS rules" );
+		foreach ( $css_rules as $index => $rule ) {
+			$selector = $rule['selector'] ?? 'unknown';
+			$properties_count = count( $rule['properties'] ?? [] );
+			error_log( "CSS PIPELINE DEBUG [CSS_PARSING]: Rule #{$index}: '{$selector}' with {$properties_count} properties" );
+		}
+
 		return $context;
 	}
 
@@ -137,6 +145,9 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 		foreach ( $selectors as $selector ) {
 			$selector_string = (string) $selector;
 			$properties = $this->extract_properties_from_declarations( $declarations );
+
+			// DEBUG: Log all parsed CSS rules
+			error_log( "CSS Parser: Parsed selector '{$selector_string}' with " . count( $properties ) . " properties" );
 
 			if ( ! empty( $properties ) ) {
 				$rules[] = [

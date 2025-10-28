@@ -141,7 +141,7 @@ export abstract class BasePropTypeTest {
 	protected async runCssAssertions(
 		testCases: Array<{ index: number; name: string; property: string; expected: string }>,
 		page: any,
-		elementSelector: string = '.e-con p'
+		elementSelector: string = '.e-con p',
 	): Promise<void> {
 		const elementorFrame = this.getPreviewFrame();
 		await elementorFrame.waitForLoadState();
@@ -219,7 +219,7 @@ export function createPropTypeTest( config: PropTypeTestConfig ) {
 		await testInstance.runCssAssertions(
 			config.testCases,
 			page,
-			config.elementSelector || '.e-con p'
+			config.elementSelector || '.e-con p',
 		);
 	} );
 }

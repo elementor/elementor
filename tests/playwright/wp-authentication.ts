@@ -26,7 +26,7 @@ export async function fetchNonce( context: APIRequestContext, baseUrl: string ) 
 	}
 
 	let nonceMatch = pageText.match( /var wpApiSettings = .*;/ );
-	
+
 	if ( ! nonceMatch ) {
 		nonceMatch = pageText.match( /"nonce":"([^"]*)"/ );
 	}
@@ -44,7 +44,7 @@ export async function fetchNonce( context: APIRequestContext, baseUrl: string ) 
 		return '0';
 	}
 
-	const nonceValue = nonceMatch[ 0 ].includes( ':' ) 
+	const nonceValue = nonceMatch[ 0 ].includes( ':' )
 		? nonceMatch[ 0 ].replace( /^.*"nonce":"([^"]*)".*$/, '$1' )
 		: nonceMatch[ 1 ];
 

@@ -92,6 +92,9 @@ class Widget_Mapper {
 		// DEBUG: Log widget mapping output
 		$widget_class = $widget['attributes']['class'] ?? '';
 
+		// Preserve original HTML classes for global class application
+		$widget = $this->preserve_original_html_classes( $widget, $element );
+
 		// Add generated class name to widget attributes if it exists
 		if ( ! empty( $element['generated_class'] ) ) {
 			$widget = $this->add_generated_class_to_widget( $widget, $element['generated_class'] );
@@ -116,7 +119,47 @@ class Widget_Mapper {
 		return $widget;
 	}
 
-	public function map_elements( $elements ) {
+	private function preserve_original_html_classes( array $widget, array $element ): array {
+		$original_classes = $element['attributes']['class'] ?? '';
+		$widget_type = $widget['widget_type'] ?? 'unknown';
+		$element_tag = $element['tag'] ?? 'unknown';
+
+		// DEBUG: Log class preservation process
+		error_log( "CSS Converter: Preserving classes for {$element_tag} -> {$widget_type}" );
+		error_log( "CSS Converter: Original classes: '{$original_classes}'" );
+
+		if ( empty( $original_classes ) ) {
+			error_log( "CSS Converter: No original classes to preserve" );
+			return $widget;
+		}
+
+		if ( ! isset( $widget['attributes'] ) ) {
+			$widget['attributes'] = [];
+		}
+
+		$existing_classes = $widget['attributes']['class'] ?? '';
+
+		if ( empty( $existing_classes ) ) {
+			$widget['attributes']['class'] = $original_classes;
+		} else {
+			$combined_classes = $existing_classes . ' ' . $original_classes;
+			$unique_classes = $this->get_unique_classes( $combined_classes );
+			$widget['attributes']['class'] = implode( ' ', $unique_classes );
+		}
+
+		error_log( "CSS Converter: Final widget classes: '{$widget['attributes']['class']}'" );
+		return $widget;
+	}
+
+	private function get_unique_classes( string $class_string ): array {
+		$classes = array_filter( explode( ' ', $class_string ), function( $class_name ) {
+			return ! empty( trim( $class_name ) );
+		} );
+
+		return array_values( array_unique( array_map( 'trim', $classes ) ) );
+	}
+
+	public function map_elements( $elements, $is_top_level = true ) {
 		$mapped_elements = [];
 
 		foreach ( $elements as $element ) {
@@ -139,15 +182,20 @@ class Widget_Mapper {
 						$child_tag = $child['original_tag'] ?? 'unknown';
 
 						// Check for problematic double div-block nesting
-						if ( $mapped['widget_type'] === 'e-div-block' && $child_type === 'e-div-block' ) {
+						if ( 'e-div-block' === $mapped['widget_type'] && 'e-div-block' === $child_type ) {
+							// Log potential nesting issue for debugging
+							error_log( 'CSS Converter: Potential double div-block nesting detected' );
 						}
 					}
 				}
 			}
 		}
 
-		// Ensure all top-level widgets are wrapped in containers
-		$mapped_elements = $this->ensure_container_wrapper( $mapped_elements );
+		// FIXED: Only wrap in container at top level, not for nested children
+		// This prevents double div-block nesting when a div has multiple children
+		if ( $is_top_level ) {
+			$mapped_elements = $this->ensure_container_wrapper( $mapped_elements );
+		}
 
 		return $mapped_elements;
 	}
@@ -261,7 +309,8 @@ class Widget_Mapper {
 				$child_class = $child['attributes']['class'] ?? '';
 			}
 
-			$mapped_children = $this->map_elements( $element['children'] );
+			// FIXED: Pass false for is_top_level to prevent wrapping children in extra container
+			$mapped_children = $this->map_elements( $element['children'], false );
 
 			// DEBUG: Log mapped children
 			foreach ( $mapped_children as $child_index => $child_widget ) {
@@ -412,6 +461,9 @@ class Widget_Mapper {
 	}
 
 	private function handle_unsupported_element( $element ) {
+		// Log unsupported element for debugging
+		$element_tag = $element['tag'] ?? 'unknown';
+		error_log( "CSS Converter: Unsupported element type: {$element_tag}" );
 		// HVV Decision: Skip unsupported elements for MVP
 		// Return null to indicate this element should be skipped
 		return null;
@@ -481,9 +533,7 @@ class Widget_Mapper {
 						$paragraph_content = $child_content;
 					}
 				}
-			}
-			// Handle multiple paragraph children (new logic for synthetic paragraphs)
-			else {
+			} else {
 				$content_parts = [];
 				foreach ( $element['children'] as $child ) {
 					if ( 'p' === $child['tag'] && ! empty( $child['content'] ) ) {
@@ -516,7 +566,7 @@ class Widget_Mapper {
 			'element_id' => $element_id,
 			'original_tag' => $element['tag'], // Preserve original tag for reference
 			'settings' => [
-				'tag' => $element['tag'] !== 'div' ? $element['tag'] : null, // Only set if not default div
+				'tag' => 'div' !== $element['tag'] ? $element['tag'] : null, // Only set if not default div
 			],
 			'attributes' => $element['attributes'] ?? [], // Preserve all attributes (id, class, etc.)
 			'inline_css' => $element['inline_css'] ?? [], // Preserve all inline CSS

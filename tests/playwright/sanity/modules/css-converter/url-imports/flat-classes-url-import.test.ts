@@ -351,7 +351,7 @@ test.describe( 'HTML Import with Flat Classes @url-imports', () => {
 		await test.step( 'CRITICAL: Verify border-bottom from .link-item class', async () => {
 			// Empty paragraph elements with classes aren't fully supported in atomic widgets yet
 			test.skip( true, 'Empty paragraph elements with classes not yet supported in atomic widgets' );
-			
+
 			const elementorFrame = editor.getPreviewFrame();
 			const linkItem = elementorFrame.locator( '.link-item' ).first();
 			await expect( linkItem ).toHaveCSS( 'border-bottom', '1px solid rgb(233, 236, 239)' );
