@@ -501,7 +501,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
 
 		$items = [];
-		for ( $i = 0; $i < 50; $i++ ) {
+		for ( $i = 0; $i < 100; $i++ ) {
 			$items[ "g-$i" ] = $this->create_global_class( "g-$i" );
 		}
 
@@ -685,7 +685,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		// Check that the duplicate label was resolved
 		$response_data = $response->get_data();
-		
+
 		// The response data is nested under 'data' key
 		$this->assertArrayHasKey( 'data', $response_data );
 		$this->assertArrayHasKey( 'code', $response_data['data'] );
@@ -1161,7 +1161,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 	public function test_all__succeeds_for_logged_in_user() {
 		// Arrange
 		$this->act_as_editor();
-		
+
 		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
 
 		// Act
@@ -1176,8 +1176,8 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 	public function test_all__fails_for_non_logged_in_user() {
 		// Arrange
-		wp_set_current_user( 0 ); 
-		
+		wp_set_current_user( 0 );
+
 		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
 
 		// Act
