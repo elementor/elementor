@@ -28,6 +28,7 @@ export * from './boolean';
 export * from './color-stop';
 export * from './gradient-color-stop';
 export * from './key-value';
+export * from './date-time';
 export * from './position';
 export * from './query';
 export * from './filter-prop-types/filter';
