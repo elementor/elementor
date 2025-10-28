@@ -136,10 +136,10 @@ export const messagesContent = {
 		),
 	},
 	'error-loading-resource': {
-		title: __( 'Couldn’t “My Website Templates”', 'elementor' ),
+		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: (
 			<>
-				{ __( 'We couldn’t reach your template library due to a technical issue on our side. Please try again. If the problem continues, contact ', 'elementor' ) }
+				{ __( 'We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact ', 'elementor' ) }
 				<Link href="https://my.elementor.com/support-center/">
 					{ __( 'Support', 'elementor' ) }
 				</Link>
