@@ -23,6 +23,6 @@ export const updateElementInteractions = ( {
 	setDocumentModifiedStatus( true );
 };
 
-function setDocumentModifiedStatus( _status: boolean ) {
-	runCommandSync( 'document/save/set-is-modified', { status: true }, { internal: true } );
+function setDocumentModifiedStatus( status: boolean ) {
+	runCommandSync( 'document/save/set-is-modified', { status }, { internal: true } );
 }
