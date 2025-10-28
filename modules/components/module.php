@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	private $lock_component_manager;
+	private static $lock_component_manager_instance = null;
 	const EXPERIMENT_NAME = 'e_components';
 	const PACKAGES        = [ 'editor-components' ];
 
@@ -26,6 +26,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/documents/register', fn ( $documents_manager ) => $this->register_document_type( $documents_manager ) );
 		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 
+		(new Lock_Component_Manager())->register_hooks();
 		( new Component_Styles() )->register_hooks();
 		( new Components_REST_API() )->register_hooks();
 	}
@@ -71,12 +72,11 @@ class Module extends BaseModule {
 	}
 
 	public static function get_lock_component_manager_instance() {
-		static $instance = null;
 
-		if ( null === $instance ) {
-			$instance = new Lock_Component_Manager();
+		if ( null === static::$lock_component_manager_instance ) {
+			static::$lock_component_manager_instance = new Lock_Component_Manager();
 		}
 
-		return $instance;
+		return static::$lock_component_manager_instance;
 	}
 }

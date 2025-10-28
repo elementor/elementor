@@ -11,39 +11,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 const ONE_HOUR = 60 * 60;
 
 class Lock_Component_Manager {
-	private $lock_manager;
+	private $lock_manager = null;
 
 	public function __construct() {
-		$this->lock_manager = $this->get_lock_manager_instance();
-		$this->register_hooks();
+			$this->lock_manager = new Document_Lock_Manager( ONE_HOUR );
 	}
 
-	private function register_hooks() {
+	public function register_hooks() {
 		add_filter( 'heartbeat_received', [ $this, 'heartbeat_received' ], 10, 2 );
 	}
 
-	private function get_lock_manager() {
-		return $this->lock_manager;
-	}
-
-	public static function get_lock_manager_instance() {
-		static $instance = null;
-
-		if ( null === $instance ) {
-			$instance = new Document_Lock_Manager( ONE_HOUR );
-		}
-
-		return $instance;
-	}
-
+	
 	public function lock_component( $post_id ) {
-		$lock_manager = $this->get_lock_manager();
-		return $lock_manager->lock_document( $post_id );
+		return $this->lock_manager->lock_document( $post_id );
 	}
 
 	public function unlock_component( $post_id ) {
-		$lock_manager = $this->get_lock_manager();
-		$lock_data = $lock_manager->is_document_locked( $post_id );
+		$lock_data = $this->lock_manager->is_document_locked( $post_id );
 		$current_user_id = get_current_user_id();
 
 		// Only allow unlocking if the current user owns the lock
@@ -51,7 +35,7 @@ class Lock_Component_Manager {
 			return false;
 		}
 
-		return $lock_manager->unlock_document( $post_id );
+		return $this->lock_manager->unlock_document( $post_id );
 	}
 
 
@@ -70,11 +54,10 @@ class Lock_Component_Manager {
 			return $response;
 		}
 
-		$lock_manager = $this->get_lock_manager();
-		$lock_data = $lock_manager->is_document_locked( $post_id );
-
-		if ( $lock_data['is_locked'] && get_current_user_id() === (int) $lock_data['lock_user'] ) {
-			$lock_manager->extend_lock( $post_id );
+		$lock_data = $this->lock_manager->is_document_locked( $post_id );
+		$current_user_id = get_current_user_id();
+		if ( $lock_data['is_locked'] && $current_user_id === (int) $lock_data['lock_user'] ) {
+			$this->lock_manager->extend_lock( $post_id );
 		}
 
 		return $response;

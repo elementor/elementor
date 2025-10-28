@@ -95,7 +95,6 @@ class Document_Lock_Manager {
 		return true;
 	}
 
-
 	/**
 	 * Check if a document is currently locked.
 	 *
@@ -123,9 +122,6 @@ class Document_Lock_Manager {
 			'lock_time'  => $lock_time ? $lock_time : null,
 		];
 	}
-
-
-
 
 	/**
 	 * Extend the lock duration for a document.
