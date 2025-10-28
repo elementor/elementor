@@ -111,7 +111,7 @@ class Atomic_Widgets_Route {
 	}
 
 	public function convert_html_to_widgets( \WP_REST_Request $request ): \WP_REST_Response {
-		
+
 		$conversion_params = $this->extract_conversion_parameters( $request );
 
 		if ( empty( $conversion_params['html'] ) ) {
@@ -120,7 +120,7 @@ class Atomic_Widgets_Route {
 
 		try {
 			$service = $this->get_conversion_service();
-			
+
 			$processed_html = $this->embed_css_if_provided( $conversion_params['html'], $conversion_params['css'] );
 			$result = $service->convert_from_html(
 				$processed_html,
@@ -128,7 +128,6 @@ class Atomic_Widgets_Route {
 				$conversion_params['follow_imports'],
 				$conversion_params['options']
 			);
-
 
 			return new \WP_REST_Response( $result, 200 );
 
@@ -141,8 +140,9 @@ class Atomic_Widgets_Route {
 		$type = $request->get_param( 'type' ) ? $request->get_param( 'type' ) : 'html';
 		$content = $request->get_param( 'content' );
 		$html_param = $request->get_param( 'html' );
+		$selector = $request->get_param( 'selector' );
 
-		$html = $this->resolve_html_content( $type, $content, $html_param );
+		$html = $this->resolve_html_content( $type, $content, $html_param, $selector );
 
 		return [
 			'html' => $html,
@@ -154,9 +154,15 @@ class Atomic_Widgets_Route {
 		];
 	}
 
-	private function resolve_html_content( string $type, $content, $html_param ): string {
+	private function resolve_html_content( string $type, $content, $html_param, $selector = null ): string {
 		if ( 'url' === $type && ! empty( $content ) ) {
-			return $this->fetch_html_from_url( $content );
+			$html = $this->fetch_html_from_url( $content );
+
+			if ( ! empty( $selector ) ) {
+				return $this->extract_html_by_selector( $html, $selector );
+			}
+
+			return $html;
 		}
 
 		if ( $html_param ) {
@@ -188,6 +194,67 @@ class Atomic_Widgets_Route {
 		}
 
 		return $html;
+	}
+
+	private function extract_html_by_selector( string $html, string $selector ): string {
+		if ( empty( $selector ) ) {
+			return $html;
+		}
+
+		// Use DOMDocument to parse HTML and extract element by selector
+		$dom = new \DOMDocument();
+
+		// Suppress warnings for malformed HTML
+		$previous_use_errors = libxml_use_internal_errors( true );
+
+		// Load HTML with UTF-8 encoding
+		$dom->loadHTML( '<?xml encoding="UTF-8">' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+
+		// Restore error handling
+		libxml_use_internal_errors( $previous_use_errors );
+
+		$xpath = new \DOMXPath( $dom );
+
+		// Convert CSS selector to XPath
+		$xpath_query = $this->css_selector_to_xpath( $selector );
+
+		$nodes = $xpath->query( $xpath_query );
+
+		if ( 0 === $nodes->length ) {
+			throw new \Exception( 'Selector "' . esc_html( $selector ) . '" not found in HTML' );
+		}
+
+		// Get the first matching element
+		$element = $nodes->item( 0 );
+
+		// Return the outer HTML of the element
+		return $dom->saveHTML( $element );
+	}
+
+	private function css_selector_to_xpath( string $selector ): string {
+		// Handle basic CSS selectors and convert to XPath
+		$selector = trim( $selector );
+
+		// Handle class selectors (.class-name)
+		if ( strpos( $selector, '.' ) === 0 ) {
+			$class_name = substr( $selector, 1 );
+			return "//*[contains(concat(' ', normalize-space(@class), ' '), ' {$class_name} ')]";
+		}
+
+		// Handle ID selectors (#id)
+		if ( strpos( $selector, '#' ) === 0 ) {
+			$id = substr( $selector, 1 );
+			return "//*[@id='{$id}']";
+		}
+
+		// Handle element selectors (div, p, etc.)
+		if ( preg_match( '/^[a-zA-Z][a-zA-Z0-9]*$/', $selector ) ) {
+			return "//{$selector}";
+		}
+
+		// For more complex selectors, fall back to a basic approach
+		// This is a simplified implementation - could be enhanced for more complex selectors
+		throw new \Exception( 'Complex selector "' . esc_html( $selector ) . '" not supported' );
 	}
 
 	private function create_missing_html_error_response(): \WP_REST_Response {
