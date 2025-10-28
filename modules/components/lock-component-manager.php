@@ -56,7 +56,7 @@ class Lock_Component_Manager extends Document_Lock_Manager {
 		$lock_data = $this->is_locked( $post_id );
 		$current_user_id = get_current_user_id();
 		if ( $lock_data['is_locked'] && $current_user_id === (int) $lock_data['lock_user'] ) {
-			$this->get_lock_manager()->extend_lock( $post_id );
+			$this->extend_lock( $post_id );
 		}
 
 		return $response;

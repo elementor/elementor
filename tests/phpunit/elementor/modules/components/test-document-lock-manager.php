@@ -110,7 +110,7 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		return $document->get_main_id();
 	}
 
-	public function test_lock_document__successfully_locks_document() {
+	public function test_lock__successfully_locks_document() {
 		// Arrange
 		$document_id = $this->test_document_ids['page'];
 		wp_set_current_user( $this->test_user_1 );
@@ -121,7 +121,7 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$this->assertEquals( 'page', $post->post_type, 'Test document should be a page' );
 
 		// Act
-		$result = $this->lock_manager->lock_document( $document_id );
+		$result = $this->lock_manager->lock( $document_id );
 
 		// Assert
 		$this->assertTrue( $result, 'Should successfully lock document' );
@@ -134,19 +134,19 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		// but our custom metadata approach should work
 	}
 
-	public function test_lock_document__fails_when_no_user_logged_in() {
+	public function test_lock__fails_when_no_user_logged_in() {
 		// Arrange
 		$document_id = $this->test_document_ids['page'];
 		wp_set_current_user( 0 );
 
 		// Act
-		$result = $this->lock_manager->lock_document( $document_id );
+		$result = $this->lock_manager->lock( $document_id );
 
 		// Assert
 		$this->assertFalse( $result, 'Should fail when no user is logged in' );
 	}
 
-	public function test_lock_document__handles_exception_gracefully() {
+	public function test_lock__handles_exception_gracefully() {
 		// Arrange
 		wp_set_current_user( $this->test_user_1 );
 		
@@ -157,20 +157,20 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$this->assertNull( get_post( $invalid_document_id ), 'Invalid document should not exist' );
 		
 		// Act
-		$result = $this->lock_manager->lock_document( $invalid_document_id );
+		$result = $this->lock_manager->lock( $invalid_document_id );
 		
 		// Assert
 		$this->assertFalse( $result, 'Should handle invalid document ID gracefully' );
 	}
 
-	public function test_unlock_document__successfully_unlocks_document() {
+	public function test_unlock__successfully_unlocks_document() {
 		// Arrange
 		$document_id = $this->test_document_ids['page'];
 		wp_set_current_user( $this->test_user_1 );
-		$this->lock_manager->lock_document( $document_id );
+		$this->lock_manager->lock( $document_id );
 
 		// Act
-		$result = $this->lock_manager->unlock_document( $document_id );
+		$result = $this->lock_manager->unlock( $document_id );
 
 		// Assert
 		$this->assertTrue( $result, 'Should successfully unlock document' );
@@ -181,12 +181,12 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$this->assertEmpty( get_post_meta( $document_id, '_edit_lock', true ), 'WordPress post lock metadata should be removed' );
 	}
 
-	public function test_is_document_locked__returns_false_when_not_locked() {
+	public function test_is_locked__returns_false_when_not_locked() {
 		// Arrange
 		$document_id = $this->test_document_ids['page'];
 
 		// Act
-		$result = $this->lock_manager->is_document_locked( $document_id );
+		$result = $this->lock_manager->is_locked( $document_id );
 
 		// Assert
 		$this->assertFalse( $result['is_locked'], 'Should return false when document is not locked' );
@@ -194,14 +194,14 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$this->assertNull( $result['lock_time'], 'Lock time should be null when not locked' );
 	}
 
-	public function test_is_document_locked__returns_lock_data_when_locked() {
+	public function test_is_locked__returns_lock_data_when_locked() {
 		// Arrange
 		$document_id = $this->test_document_ids['page'];
 		wp_set_current_user( $this->test_user_1 );
-		$this->lock_manager->lock_document( $document_id );
+		$this->lock_manager->lock( $document_id );
 
 		// Act
-		$result = $this->lock_manager->is_document_locked( $document_id );
+		$result = $this->lock_manager->is_locked( $document_id );
 
 		// Assert
 		$this->assertIsArray( $result, 'Should return array when document is locked' );
@@ -213,18 +213,18 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$this->assertIsNumeric( $result['lock_time'], 'Lock time should be numeric' );
 	}
 
-	public function test_is_document_locked__auto_unlocks_expired_lock() {
+	public function test_is_locked__auto_unlocks_expired_lock() {
 		// Arrange
 		$document_id = $this->test_document_ids['page'];
 		wp_set_current_user( $this->test_user_1 );
-		$this->lock_manager->lock_document( $document_id );
+		$this->lock_manager->lock( $document_id );
 
 		// Simulate expired lock by setting old timestamp
 		$old_timestamp = time() - ( 6 * 60 ); // 6 minutes ago (beyond 5 minute default)
 		update_post_meta( $document_id, '_lock_time', $old_timestamp );
 
 		// Act
-		$result = $this->lock_manager->is_document_locked( $document_id );
+		$result = $this->lock_manager->is_locked( $document_id );
 
 		// Assert
 		$this->assertFalse( $result['is_locked'], 'Should auto-unlock expired lock' );
@@ -240,7 +240,7 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		// Arrange
 		$document_id = $this->test_document_ids['page'];
 		wp_set_current_user( $this->test_user_1 );
-		$this->lock_manager->lock_document( $document_id );
+		$this->lock_manager->lock( $document_id );
 		$original_timestamp = get_post_meta( $document_id, '_lock_time', true );
 
 		// Wait a moment to ensure timestamp difference
@@ -271,7 +271,7 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		// Arrange
 		$document_id = $this->test_document_ids['page'];
 		wp_set_current_user( $this->test_user_1 );
-		$this->lock_manager->lock_document( $document_id );
+		$this->lock_manager->lock( $document_id );
 
 		// Switch to different user
 		wp_set_current_user( $this->test_user_2 );
@@ -287,19 +287,19 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		// Arrange
 		$document_id = $this->test_document_ids['page'];
 		wp_set_current_user( $this->test_user_1 );
-		$this->lock_manager->lock_document( $document_id );
+		$this->lock_manager->lock( $document_id );
 
 		// Switch to different user
 		wp_set_current_user( $this->test_user_2 );
 
 		// Act
-		$result = $this->lock_manager->lock_document( $document_id );
+		$result = $this->lock_manager->lock( $document_id );
 
 		// Assert
 		$this->assertFalse( $result, 'Should reject lock attempt when document is locked by another user' );
 		
 		// Verify the lock is still owned by the first user
-		$lock_data = $this->lock_manager->is_document_locked( $document_id );
+		$lock_data = $this->lock_manager->is_locked( $document_id );
 		$this->assertTrue( $lock_data['is_locked'], 'Document should still be locked' );
 		$this->assertEquals( $this->test_user_1, $lock_data['lock_user'], 'Lock should still be owned by first user' );
 	}
@@ -310,7 +310,7 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		wp_set_current_user( $this->test_user_1 );
 
 		// Act
-		$this->lock_manager->lock_document( $document_id );
+		$this->lock_manager->lock( $document_id );
 
 		// Assert
 		$meta_lock_user = get_post_meta( $document_id, '_lock_user', true );
@@ -329,12 +329,12 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		wp_set_current_user( $this->test_user_1 );
 		
 		// Test post
-		$this->assertTrue( $this->lock_manager->lock_document( $post_id ), 'Should lock post' );
-		$this->assertTrue( $this->lock_manager->unlock_document( $post_id ), 'Should unlock post' );
+		$this->assertTrue( $this->lock_manager->lock( $post_id ), 'Should lock post' );
+		$this->assertTrue( $this->lock_manager->unlock( $post_id ), 'Should unlock post' );
 		
 		// Test component
-		$this->assertTrue( $this->lock_manager->lock_document( $component_id ), 'Should lock component' );
-		$this->assertTrue( $this->lock_manager->unlock_document( $component_id ), 'Should unlock component' );
+		$this->assertTrue( $this->lock_manager->lock( $component_id ), 'Should lock component' );
+		$this->assertTrue( $this->lock_manager->unlock( $component_id ), 'Should unlock component' );
 	}
 
 }

@@ -755,11 +755,12 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
 		
 		// Lock component with first user
-		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_lock_manager_instance();
-		$lock_manager->lock_document( $component_id );
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_instance();
+		$lock_manager->lock( $component_id );
 
 		// Switch to different user
-		$this->act_as_editor();
+		$admin_user_2 = $this->factory()->create_and_get_administrator_user()->ID;
+		wp_set_current_user( $admin_user_2 );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/lock-status' );
@@ -779,8 +780,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
 		
 		// Lock component with current user
-		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_lock_manager_instance();
-		$lock_manager->lock_document( $component_id );
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_instance();
+		$lock_manager->lock( $component_id );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/lock-status' );
@@ -830,8 +831,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertTrue( $data['locked'], 'Component should be locked' );
 
 		// Verify component is actually locked
-		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_lock_manager_instance();
-		$lock_data = $lock_manager->is_document_locked( $component_id );
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_instance();
+		$lock_data = $lock_manager->is_locked( $component_id );
 		$this->assertTrue( $lock_data['is_locked'], 'Component should be locked by current user' );
 		$this->assertEquals( get_current_user_id(), $lock_data['lock_user'], 'Component should be locked by current user' );
 	}
@@ -846,8 +847,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
 		
 		// Lock component first
-		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_lock_manager_instance();
-		$lock_manager->lock_document( $component_id );
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_instance();
+		$lock_manager->lock( $component_id );
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/unlock' );
@@ -860,8 +861,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertTrue( $data['unlocked'], 'Component should be unlocked' );
 
 		// Verify component is actually unlocked
-		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_lock_manager_instance();
-		$lock_data = $lock_manager->is_document_locked( $component_id );
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_instance();
+		$lock_data = $lock_manager->is_locked( $component_id );
 		$this->assertFalse( $lock_data['is_locked'], 'Component should be unlocked' );
 	}
 
