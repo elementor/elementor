@@ -13,12 +13,21 @@ class Transform_Origin_Transformer extends Transformer_Base {
 
 
 	private string $default_origin = '0px';
+	private string $default_xy = '50%';
 
 	private function get_val( ?string $val ): string {
 		return $val ?? $this->default_origin;
 	}
 
-	public function transform( $value, Props_Resolver_Context $context ): string {
-		return sprintf( '%s %s %s', $this->get_val( $value['x'] ), $this->get_val( $value['y'] ), $this->get_val( $value['z'] ) );
+	public function transform( $value, Props_Resolver_Context $context ) {
+		$x = $this->get_val( $value['x'] );
+		$y = $this->get_val( $value['y'] );
+		$z = $this->get_val( $value['z'] );
+
+		if ( $x === $this->default_xy && $y === $this->default_xy && $z === $this->default_origin ) {
+			return null;
+		}
+
+		return sprintf( '%s %s %s', $x, $y, $z );
 	}
 }
