@@ -486,7 +486,8 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		// Check that CSS processing handled specificity correctly
 		if ( result.conversion_log && result.conversion_log.css_processing ) {
 			const cssProcessing = result.conversion_log.css_processing;
-			expect( cssProcessing.by_source.inline ).toBeGreaterThan( 0 );
+			const inlineStylesCollected = cssProcessing.inline_styles_collected || 0;
+			expect( inlineStylesCollected ).toBeGreaterThan( 0 );
 		}
 
 		// Navigate to verify inline styles override reset styles
@@ -685,7 +686,9 @@ test.describe( 'Reset Styles Handling Tests', () => {
 		if ( result.conversion_log ) {
 			// Check CSS processing stats
 			expect( result.conversion_log.css_processing ).toBeTruthy();
-			expect( result.conversion_log.css_processing.total_styles ).toBeGreaterThan( 0 );
+			const cssProcessing = result.conversion_log.css_processing;
+			const totalRulesParsed = cssProcessing.css_rules_parsed || 0;
+			expect( totalRulesParsed ).toBeGreaterThan( 0 );
 
 			// Check mapping stats
 			expect( result.conversion_log.mapping_stats ).toBeTruthy();
