@@ -126,7 +126,6 @@ trait Has_Atomic_Base {
 		}
 
 		return [];
-
 	}
 
 	public function get_atomic_controls() {
@@ -175,7 +174,7 @@ trait Has_Atomic_Base {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
 		$raw_data['styles'] = $this->styles;
-		$raw_data['interactions'] = $this->interactions?? [];
+		$raw_data['interactions'] = $this->interactions ?? [];
 		$raw_data['editor_settings'] = $this->editor_settings;
 
 		return $raw_data;

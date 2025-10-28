@@ -22,7 +22,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 		$this->version = $data['version'] ?? '0.0';
 		$this->styles = $data['styles'] ?? [];
-		$this->interactions = $data['interactions'] ?? []; 
+		$this->interactions = $data['interactions'] ?? [];
 		$this->editor_settings = $data['editor_settings'] ?? [];
 	}
 

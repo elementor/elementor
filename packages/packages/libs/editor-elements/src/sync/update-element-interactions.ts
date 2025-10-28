@@ -4,25 +4,25 @@ import { type V1ElementModelProps } from '..';
 import { getContainer } from './get-container';
 
 export const updateElementInteractions = ( {
-    elementId,
-    interactions,
+	elementId,
+	interactions,
 }: {
-    elementId: string;
-    interactions: V1ElementModelProps[ 'interactions' ];
+	elementId: string;
+	interactions: V1ElementModelProps[ 'interactions' ];
 } ) => {
-    const element = getContainer( elementId );
+	const element = getContainer( elementId );
 
-    if ( ! element ) {
-        throw new Error( `Element with id ${ elementId } not found` );
-    }
+	if ( ! element ) {
+		throw new Error( `Element with id ${ elementId } not found` );
+	}
 
-    element.model.set( 'interactions', interactions );
+	element.model.set( 'interactions', interactions );
 
-    window.dispatchEvent( new CustomEvent( 'elementor/element/update_interactions' ) );
+	window.dispatchEvent( new CustomEvent( 'elementor/element/update_interactions' ) );
 
-    setDocumentModifiedStatus( true );
+	setDocumentModifiedStatus( true );
 };
 
-function setDocumentModifiedStatus( status: boolean ) {
-    runCommandSync( 'document/save/set-is-modified', { status: true }, { internal: true } );
+function setDocumentModifiedStatus( _status: boolean ) {
+	runCommandSync( 'document/save/set-is-modified', { status: true }, { internal: true } );
 }

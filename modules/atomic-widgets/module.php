@@ -366,10 +366,10 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_interactions(): void {
-		wp_enqueue_script('motion-js', plugins_url('assets/js/motion.js', __FILE__), [], '11.13.5', true);
+		wp_enqueue_script( 'motion-js', plugins_url( 'assets/js/motion.js', __FILE__ ), [], '11.13.5', true );
 
-		wp_enqueue_script('interactions', plugins_url('assets/js/interactions.js', __FILE__), ['motion-js'], '1.0.0', true);
-	   }
+		wp_enqueue_script( 'interactions', plugins_url( 'assets/js/interactions.js', __FILE__ ), [ 'motion-js' ], '1.0.0', true );
+	}
 
 	private function render_panel_category_chip() {
 		?><# if ( 'v4-elements' === name )  { #>
