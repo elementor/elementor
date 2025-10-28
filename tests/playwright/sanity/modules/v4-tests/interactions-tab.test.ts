@@ -54,4 +54,63 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect.soft( page.locator( panelSelector ) ).toHaveScreenshot( 'interactions-empty-state.png' );
 		} );
 	} );
+
+	test.only( 'Interactions functionality end-to-end test', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Add heading widget to enable interactions', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.addWidget( { widgetType: 'e-heading', container } );
+		} );
+
+		await test.step( 'Navigate to interactions tab', async () => {
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+			await expect( interactionsTab ).toHaveAttribute( 'aria-selected', 'true' );
+		} );
+
+		await test.step( 'Start adding interactions button', async () => {
+			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
+			await expect( addInteractionButton ).toBeVisible();
+			await addInteractionButton.click();
+		} );
+
+		await test.step( 'Add interaction using plus button', async () => {
+			const addInteractionButton = page.locator( '[aria-label="Add interaction"]' );
+			await expect( addInteractionButton ).toBeVisible();
+			await addInteractionButton.click();
+		} );
+
+		await test.step( 'Select animation option from dropdown', async () => {
+			const interactionTag = page.locator( '.MuiTag-root' ).first();
+			await expect( interactionTag ).toBeVisible();
+			
+			await interactionTag.click();
+			
+			await page.waitForSelector( '.MuiPopover-root' );
+			
+			await page.waitForSelector( '.MuiMenuItem-root' );
+			
+			const animationOption = page.locator( '.MuiMenuItem-root' ).nth( 1 );
+			await expect( animationOption ).toBeVisible();
+			await animationOption.click();
+			
+			await expect( interactionTag ).toContainText( 'Page Load - Fade In Left' );
+		} );
+
+		await test.step( 'Publish and view the page', async () => {
+			await editor.publishAndViewPage();
+		} );
+
+		await test.step( 'Verify data-interactions attribute on heading', async () => {
+			const headingElement = page.locator( '.e-heading-base' ).first();
+			await expect( headingElement ).toBeVisible();
+			
+			await expect( headingElement ).toHaveAttribute( 'data-interactions' );
+			
+			const interactionsData = await headingElement.getAttribute( 'data-interactions' );
+			expect( interactionsData ).toBeTruthy();
+		} );
+	} );
 } );
