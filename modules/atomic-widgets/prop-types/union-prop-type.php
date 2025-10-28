@@ -61,7 +61,7 @@ class Union_Prop_Type implements Prop_Type {
 		return $this->prop_types[ $type ] ?? null;
 	}
 
-	private function get_prop_type_from_value( $value ): ?Prop_Type {
+	public function get_prop_type_from_value( $value ): ?Prop_Type {
 		if ( isset( $value['$$type'] ) ) {
 			return $this->get_prop_type( $value['$$type'] );
 		}
