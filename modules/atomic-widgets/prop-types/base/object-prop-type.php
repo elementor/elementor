@@ -29,7 +29,10 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 
 	protected ?array $dependencies = null;
 
-	public function __construct() {
+	private bool $include_meta_schema;
+
+	public function __construct($include_meta_schema) {
+		$this->include_meta_schema = $include_meta_schema;
 		$this->shape = $this->define_shape();
 	}
 
@@ -56,8 +59,8 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	/**
 	 * @return static
 	 */
-	public static function make() {
-		return new static();
+	public static function make(bool $include_meta_schema = false) {
+		return new static($include_meta_schema);
 	}
 
 	/**

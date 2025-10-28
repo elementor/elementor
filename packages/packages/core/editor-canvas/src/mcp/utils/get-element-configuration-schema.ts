@@ -1,9 +1,9 @@
 import { getWidgetsCache } from '@elementor/editor-elements';
+import { jsonSchemaToZod, Zod as z } from '@elementor/editor-mcp';
 import { type PropType } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
-import { z } from '@elementor/schema';
 
-export const getElementSchemaAsZod = ( elementType: string ) => {
+export const getElementSchemaAsZod = ( elementType: string, omitStyles = false ) => {
 	const widgetsCache = getWidgetsCache() as NonNullable< ReturnType< typeof getWidgetsCache > >;
 	const schema = widgetsCache[ elementType ]?.atomic_props_schema;
 
@@ -12,9 +12,14 @@ export const getElementSchemaAsZod = ( elementType: string ) => {
 	}
 
 	const result = extractPropTypes( schema );
-	result._styles = z.object( buildStyleSchema() ).optional().describe( 'Style properties for the element' );
+	if ( ! omitStyles ) {
+		result._styles = z
+			.object( buildStyleSchema() )
+			.optional()
+			.describe( 'Style properties for the element, as they reflect in the final CSS' );
+	}
 	return {
-		zodSchema: result,
+		zodSchema: result as z.ZodRawShape,
 		schema,
 	};
 };
@@ -28,43 +33,42 @@ export const extractPropTypes = ( schema: Record< string, PropType > ) => {
 		}
 
 		const llmSupport = propDef.meta?.llm;
+		const description = propDef.meta?.description || propDef.meta?.llm?.description;
 
 		if ( llmSupport ) {
-			switch ( llmSupport.type ) {
-				case 'string':
-				default:
-					result[ key ] = z.string();
-					break;
+			if ( llmSupport.schema ) {
+				result[ key ] = jsonSchemaToZod( llmSupport.schema ).optional() as unknown as z.ZodTypeAny;
+			} else {
+				switch ( llmSupport.propType ) {
+					case 'number':
+						result[ key ] = z.number().optional();
+						break;
+					case 'boolean':
+						result[ key ] = z.boolean().optional();
+						break;
+					case 'string':
+					default:
+						result[ key ] = z.string().optional();
+						break;
+				}
+				if ( llmSupport.propType && Array.isArray( propDef.settings?.enum ) ) {
+					result[ key ] = z.enum( propDef.settings.enum ).optional();
+				}
 			}
 
-			if ( llmSupport.description ) {
-				result[ key ].describe( llmSupport.description );
+			if ( description ) {
+				result[ key ] = result[ key ].describe( llmSupport.description );
 			}
-
-			result[ key ].optional();
 		}
 	}
 	return result;
 };
 
 export const buildStyleSchema = () => {
-	const result: Record< string, z.ZodTypeAny > = {};
-	const styleSchema = getStylesSchema();
+	return extractPropTypes( getStylesSchema() );
+};
 
-	Object.keys( styleSchema ).forEach( ( stylePropName ) => {
-		const propDef = styleSchema[ stylePropName ];
-		if ( propDef.meta?.llm ) {
-			switch ( propDef.meta.llm.type ) {
-				case 'string':
-				default:
-					result[ stylePropName ] = z.string().optional();
-					break;
-			}
-			if ( propDef.meta.llm.description ) {
-				result[ stylePropName ].describe( propDef.meta.llm.description );
-			}
-		}
-	} );
-
+export const buildPropFromJsonSchema = ( jsonSchema: Record< string, unknown > ) => {
+	const result = jsonSchemaToZod( jsonSchema );
 	return result;
 };

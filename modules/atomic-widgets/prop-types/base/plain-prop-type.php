@@ -29,6 +29,11 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 		return new static();
 	}
 
+	public function description(string $description): self {
+		$this->meta['description'] = $description;
+		return $this;
+	}
+
 	public function get_type(): string {
 		return 'plain';
 	}

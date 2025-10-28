@@ -27,9 +27,11 @@ export type Dependency = {
 };
 
 type BasePropTypeMeta = {
+	description?: string;
 	llm?: {
 		description: string;
 		propType: string;
+		schema?: { type: 'object'; [ k: string ]: unknown };
 		[ key: string ]: unknown;
 	};
 	[ key: string ]: unknown;

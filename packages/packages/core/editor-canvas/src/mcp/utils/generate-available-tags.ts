@@ -15,12 +15,13 @@ export const generateAvailableTags = (): { tag: string; description: string }[] 
 	}
 	const customTags = Object.entries( cache )
 		.filter( ( [ , widgetData ] ) => !! widgetData.atomic_controls )
-		.map( ( [ widgetType, widgetData ] ) => ( {
-			tag: `${ widgetType }`,
-			description: widgetData.title || widgetData.elType || `A ${ widgetType } element`,
-			configurationSchema: JSON.stringify(
-				zodToJsonSchema( z.object( getElementSchemaAsZod( widgetType ).zodSchema ) )
-			),
-		} ) );
+		.map( ( [ widgetType, widgetData ] ) => {
+			const configurationSchema = getElementSchemaAsZod( widgetType, true ).zodSchema;
+			return {
+				tag: `${ widgetType }`,
+				description: widgetData.title || widgetData.elType || `A ${ widgetType } element`,
+				configurationSchema: JSON.stringify( zodToJsonSchema( z.object( configurationSchema ) ) ),
+			};
+		} );
 	return customTags;
 };

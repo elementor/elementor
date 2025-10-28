@@ -1,10 +1,12 @@
-import { type z, type ZodRawShape, type ZodTypeAny } from '@elementor/schema';
+import { type z, type z3 } from '@elementor/schema';
 import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
+
+type ZodRawShape = z3.ZodRawShape;
 
 const mcpRegistry: { [ namespace: string ]: McpServer } = {};
 const mcpDescriptions: { [ namespace: string ]: string } = {};
@@ -85,7 +87,7 @@ export const getMCPByDomain = ( namespace: string ): MCPRegistryEntry => {
 };
 
 export interface MCPRegistryEntry {
-	addTool: < T extends undefined | ZodRawShape = undefined, O extends undefined | ZodRawShape = undefined >(
+	addTool: < T extends undefined | z.ZodRawShape = undefined, O extends undefined | z.ZodRawShape = undefined >(
 		opts: ToolRegistrationOptions< T, O >
 	) => void;
 	setMCPDescription: ( description: string ) => void;
@@ -93,17 +95,17 @@ export interface MCPRegistryEntry {
 }
 
 type ToolRegistrationOptions<
-	InputArgs extends undefined | ZodRawShape = undefined,
-	OutputSchema extends undefined | ZodRawShape = undefined,
-	ExpectedOutput = OutputSchema extends ZodRawShape ? z.objectOutputType< OutputSchema, ZodTypeAny > : string,
+	InputArgs extends object | z.ZodRawShape = object,
+	OutputSchema extends undefined | z.ZodRawShape = undefined,
+	ExpectedOutput = OutputSchema extends z.ZodRawShape ? z.objectOutputType< OutputSchema, z.ZodTypeAny > : string,
 > = {
 	name: string;
 	description: string;
 	schema?: InputArgs;
 	outputSchema?: OutputSchema;
-	handler: InputArgs extends ZodRawShape
+	handler: InputArgs extends z.ZodRawShape
 		? (
-				args: z.objectOutputType< InputArgs, ZodTypeAny >,
+				args: z.objectOutputType< InputArgs, z.ZodTypeAny >,
 				extra: RequestHandlerExtra< ServerRequest, ServerNotification >
 		  ) => ExpectedOutput | Promise< ExpectedOutput >
 		: (
@@ -114,14 +116,17 @@ type ToolRegistrationOptions<
 };
 
 function createToolRegistrator( server: McpServer ) {
-	function addTool< T extends undefined | ZodRawShape = undefined, O extends undefined | ZodRawShape = undefined >(
-		opts: ToolRegistrationOptions< T, O >
-	) {
+	function addTool<
+		T extends undefined | z.ZodRawShape = undefined,
+		O extends undefined | z.ZodRawShape = undefined,
+	>( opts: ToolRegistrationOptions< T, O > ) {
+		const outputSchema = opts.outputSchema as ZodRawShape | undefined;
+		// @ts-ignore: TS is unable to infer the type here
 		const inputSchema: ZodRawShape = opts.schema ? opts.schema : {};
 		if ( isMcpRegistrationActivated ) {
 			throw new Error( 'MCP Registration is already activated. Cannot add new tools.' );
 		}
-		const toolCallback: ToolCallback< typeof inputSchema > = async function ( args, extra ) {
+		const toolCallback: ToolCallback< ZodRawShape > = async function ( args, extra ) {
 			try {
 				const invocationResult = await opts.handler( opts.schema ? args : {}, extra );
 				return {
@@ -153,7 +158,7 @@ function createToolRegistrator( server: McpServer ) {
 			{
 				description: opts.description,
 				inputSchema,
-				outputSchema: opts.outputSchema,
+				outputSchema,
 				title: opts.name,
 				annotations: {
 					destructiveHint: opts.isDestrcutive,

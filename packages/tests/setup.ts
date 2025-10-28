@@ -22,6 +22,9 @@ globalThis.ResizeObserver = class ResizeObserver {
 
 let globalOriginalProps: PropertyKey[];
 
+// disable MCP initialization during tests
+(globalThis as Record<string, unknown>).__ELEMENTOR_MCP_DISABLED__ = true;
+
 beforeEach( () => {
 	/* eslint-disable no-console */
 	// The mocks already created at `@wordpress/jest-console`

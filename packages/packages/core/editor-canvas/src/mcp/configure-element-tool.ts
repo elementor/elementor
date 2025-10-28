@@ -1,4 +1,4 @@
-import { type MCPRegistryEntry, zodToJsonSchema } from '@elementor/editor-mcp';
+import { type MCPRegistryEntry, Zod } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
 
 import { doUpdateElementProperty } from './utils/do-update-element-property';
@@ -22,17 +22,16 @@ Provide the exact tag name of the element type as it appears in the editor (e.g.
 			elementType: z.string().describe( 'The type of the element to retreive the schema' ),
 		},
 		outputSchema: {
-			schema: z.any().describe( 'The configuration schema of the element' ),
+			schema: z.any().describe( 'The configuration schema for the specified element type' ),
 		},
 		handler: async ( params ) => {
 			const { elementType } = params;
 			const { zodSchema } = getElementSchemaAsZod( elementType );
-			const schemaObject = z
-				.object( zodSchema )
-				.optional()
-				.describe( `Configuration schema for element type: ${ elementType }` );
+			const schemaObject = Zod.object( zodSchema ).describe(
+				`Configuration schema for element type: ${ elementType }`
+			);
 			return {
-				schema: zodToJsonSchema( schemaObject ),
+				schema: Zod.toJSONSchema( schemaObject ),
 			};
 		},
 	} );
@@ -42,6 +41,9 @@ Provide the exact tag name of the element type as it appears in the editor (e.g.
 		description: `Configure an existing element on the page, or retreiving the configuration schema of an element.
 
 # When to use this tool
+When a user requires to change settings in an element, such as updating text, colors, sizes, or other configurable properties.
+Check first if this element is supported by verifying if it has a configuration schema, if unsure, try first this tool.
+Prefer this tool if the content is built using the "build-html-tool" over other setting modification tools.
 Use this tool when you need to change the configuration of an existing element on the page, or when you need to retreive the configuration schema of an element.
 You can use multiple property changes at once by providing multiple entries in the propertiesToChange object.
 
@@ -50,7 +52,14 @@ Before making a change to an element, make sure you have the configuration schem
 `,
 		schema: {
 			propertiesToChange: z
-				.record( z.string().describe( 'The property name' ), z.any().describe( "The property's value" ) )
+				.record(
+					z
+						.string()
+						.describe(
+							'The property name. If nested property, provide the root property name, and the object delta only.'
+						),
+					z.any().describe( "The property's value" )
+				)
 				.describe( 'An object containing property names and their new values to be set on the element' ),
 			elementType: z.string().describe( 'The type of the element to retreive the schema' ),
 			elementId: z.string().describe( 'The unique id of the element to configure' ),

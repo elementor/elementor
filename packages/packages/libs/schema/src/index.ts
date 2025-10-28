@@ -1,3 +1,3 @@
 export type * from 'zod';
 export { z } from 'zod';
-export { z as z4 } from 'zod/v4';
+export type * as z3 from 'zod/v3';

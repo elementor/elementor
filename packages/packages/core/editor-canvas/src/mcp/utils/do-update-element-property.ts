@@ -4,7 +4,8 @@ import {
 	updateElementSettings,
 	updateElementStyle,
 } from '@elementor/editor-elements';
-import { getPropSchemaFromCache, type PropValue, stringPropTypeUtil } from '@elementor/editor-props';
+import { getPropSchemaFromCache, type PropValue } from '@elementor/editor-props';
+import { getStylesSchema } from '@elementor/editor-styles';
 
 import { getElementSchemaAsZod } from './get-element-configuration-schema';
 
@@ -17,14 +18,26 @@ type OwnParams = {
 
 export const doUpdateElementProperty = async ( params: OwnParams ) => {
 	const { elementId, propertyName, propertyValue, elementType } = params;
+
 	if ( propertyName === '_styles' ) {
 		const elementStyles = getElementStyles( elementId ) || {};
 		const styleValues: Record< string, PropValue > = {};
 		Object.keys( propertyValue as Record< string, unknown > ).forEach( ( stylePropName ) => {
-			const value = ( propertyValue as Record< string, unknown > )[ stylePropName ];
-			if ( typeof value === 'string' ) {
-				styleValues[ stylePropName ] = stringPropTypeUtil.create( value );
+			const schema = getStylesSchema();
+			const expectedType = schema[ stylePropName ]?.meta?.llm?.propType;
+
+			if ( ! expectedType ) {
+				throw new Error(
+					`Property ${ propertyName } on element type ${ params.elementType } does not support LLM configuration.`
+				);
 			}
+
+			const propUtil = getPropSchemaFromCache( expectedType );
+			if ( ! propUtil ) {
+				return;
+			}
+			const value = ( propertyValue as Record< string, unknown > )[ stylePropName ];
+			styleValues[ stylePropName ] = propUtil.create( value as PropValue );
 		} );
 		const localStyle = Object.values( elementStyles ).find( ( style ) => style.label === 'local' );
 		if ( ! localStyle ) {
@@ -33,11 +46,11 @@ export const doUpdateElementProperty = async ( params: OwnParams ) => {
 				classesProp: 'classes',
 				label: 'local',
 				meta: {
-					breakpoint: null,
+					breakpoint: 'desktop',
 					state: null,
 				},
 				props: {
-					...( propertyValue as Record< string, string > ),
+					...styleValues,
 				},
 			} );
 		} else {
@@ -46,7 +59,7 @@ export const doUpdateElementProperty = async ( params: OwnParams ) => {
 				elementId,
 				styleId,
 				meta: {
-					breakpoint: null,
+					breakpoint: 'desktop',
 					state: null,
 				},
 				props: {
@@ -56,14 +69,10 @@ export const doUpdateElementProperty = async ( params: OwnParams ) => {
 		}
 		return;
 	}
-	const { schema } = getElementSchemaAsZod( elementType );
-	if ( ! schema?.hasOwnProperty( propertyName ) ) {
-		throw new Error(
-			`Property ${ propertyName } does not exist on element type ${ params.elementType }. Use the 'get-element-configuration-schema' tool first!`
-		);
-	}
 
+	const { schema } = getElementSchemaAsZod( elementType, true );
 	const rawPropertySchema = schema[ propertyName ];
+
 	const expectedType = rawPropertySchema.meta?.llm?.propType;
 
 	if ( ! expectedType ) {
@@ -77,6 +86,12 @@ export const doUpdateElementProperty = async ( params: OwnParams ) => {
 	if ( ! propUtil ) {
 		throw new Error(
 			`No prop util found for expected type ${ expectedType } on property ${ propertyName } of element type ${ params.elementType }.`
+		);
+	}
+
+	if ( ! rawPropertySchema ) {
+		throw new Error(
+			`Property ${ propertyName } does not exist on element type ${ params.elementType }. Use the 'get-element-configuration-schema' tool first!`
 		);
 	}
 
