@@ -43,14 +43,7 @@ export const SettingsTab = () => {
 								key={ type + '.' + index }
 								defaultExpanded={ isDefaultExpanded( value.label ) }
 							>
-								{ value.items?.map( ( item ) => {
-									if ( isControl( item ) ) {
-										return <Control key={ getKey( item, element ) } control={ item } />;
-									}
-
-									// TODO: Handle 2nd level sections
-									return null;
-								} ) }
+								<SectionControls items={ value.items } element={ element } />
 							</Section>
 						);
 					}
@@ -83,6 +76,35 @@ const Control = ( { control: { value, type } }: { control: Control | ElementCont
 			<ControlLayout control={ value } layout={ layout } controlProps={ controlProps } />
 		</SettingsField>
 	);
+};
+
+const SectionControls = ( { items, element }: { items: ControlItem[]; element: Element } ) => {
+	const dcControlIndex = React.useMemo(
+		() => items.findIndex( ( item ) => ( item.value as Control[ 'value' ] )?.bind === 'display-conditions' ),
+		[ items ]
+	);
+
+	const sortedItems = React.useMemo( () => {
+		let sorted = [ ...items ];
+		if ( dcControlIndex > -1 ) {
+			const dcControl = items[ dcControlIndex ];
+			sorted = [ ...items.slice( 0, dcControlIndex ).concat( items.slice( dcControlIndex + 1 ) ), dcControl ];
+		}
+		return sorted;
+	}, [ items, dcControlIndex ] );
+
+	const rendered = React.useMemo(
+		() =>
+			sortedItems.map( ( item ) => {
+				if ( isControl( item ) ) {
+					return <Control key={ getKey( item, element ) } control={ item } />;
+				}
+				// TODO: Handle 2nd level sections
+				return null;
+			} ),
+		[ sortedItems, element ]
+	);
+	return <>{ rendered }</>;
 };
 
 const ControlLayout = ( {

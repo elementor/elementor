@@ -11,12 +11,14 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Display_Conditions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Display_Conditions_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -52,6 +54,8 @@ class Atomic_Button extends Atomic_Widget_Base {
 			'link' => Link_Prop_Type::make(),
 
 			'attributes' => Attributes_Prop_Type::make(),
+
+			'display-conditions' => Display_Conditions_Prop_Type::make(),
 		];
 
 		return $props;
@@ -81,6 +85,11 @@ class Atomic_Button extends Atomic_Widget_Base {
 			Text_Control::bind_to( '_cssid' )
 				->set_label( __( 'ID', 'elementor' ) )
 				->set_meta( $this->get_css_id_control_meta() ),
+			Display_Conditions_Control::bind_to( 'display-conditions' )
+				->set_label( __( 'Display Conditions', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
+				] ),
 		];
 	}
 

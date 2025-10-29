@@ -9,12 +9,14 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Display_Conditions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Display_Conditions_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -56,6 +58,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			'link' => Link_Prop_Type::make(),
 
 			'attributes' => Attributes_Prop_Type::make(),
+
+			'display-conditions' => Display_Conditions_Prop_Type::make(),
 		];
 
 		return $props;
@@ -116,8 +120,13 @@ class Atomic_Heading extends Atomic_Widget_Base {
 					'topDivider' => true,
 				] ),
 			Text_Control::bind_to( '_cssid' )
-			->set_label( __( 'ID', 'elementor' ) )
-			->set_meta( $this->get_css_id_control_meta() ),
+				->set_label( __( 'ID', 'elementor' ) )
+				->set_meta( $this->get_css_id_control_meta() ),
+			Display_Conditions_Control::bind_to( 'display-conditions' )
+				->set_label( __( 'Display Conditions', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
+				] ),
 		];
 	}
 

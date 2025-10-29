@@ -9,6 +9,7 @@ use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Display_Conditions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -16,6 +17,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Utils;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Display_Conditions_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -49,6 +51,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			'svg' => Image_Src_Prop_Type::make()->default_url( static::DEFAULT_SVG_URL ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make(),
+			'display-conditions' => Display_Conditions_Prop_Type::make(),
 		];
 	}
 
@@ -75,6 +78,11 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			Text_Control::bind_to( '_cssid' )
 				->set_label( __( 'ID', 'elementor' ) )
 				->set_meta( $this->get_css_id_control_meta() ),
+			Display_Conditions_Control::bind_to( 'display-conditions' )
+				->set_label( __( 'Display Conditions', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
+				] ),
 		];
 	}
 
