@@ -55,7 +55,7 @@ class Module extends BaseModule {
 	private function register_frontend_scripts() {
 		wp_register_script(
 			'motion-js',
-			ELEMENTOR_URL . 'modules/interactions/assets/js/motion.js',
+			ELEMENTOR_URL . 'assets/lib/motion.js',
 			[],
 			'11.13.5',
 			true

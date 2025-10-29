@@ -11,4 +11,3 @@ packages/**/*
 eslint-local-rules.js
 .eslintrc.js
 scripts/**
-modules/interactions/assets/js/motion.js
