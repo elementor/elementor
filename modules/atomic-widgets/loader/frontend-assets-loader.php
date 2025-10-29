@@ -87,4 +87,3 @@ class Frontend_Assets_Loader {
 		return $config ? $config['handle'] : null;
 	}
 }
-

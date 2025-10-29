@@ -27,4 +27,3 @@ class Frontend_Assets_Loader_Factory {
 		return new Frontend_Assets_Loader( $config, $assets_config_provider );
 	}
 }
-

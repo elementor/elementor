@@ -180,12 +180,12 @@ class Atomic_Tabs extends Atomic_Element_Base {
 
 	protected function define_render_context(): array {
 		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
-		
+
 		$direct_children = Collection::make( $this->get_children() );
-		
+
 		$tabs_menu = $direct_children->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_TABS_MENU )->first();
 		$tabs_content_area = $direct_children->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_TABS_CONTENT_AREA )->first();
-		
+
 		$tabs_map = $this->get_children_id_map( $tabs_menu, self::ELEMENT_TYPE_TAB );
 		$tabs_content_map = $this->get_children_id_map( $tabs_content_area, self::ELEMENT_TYPE_TAB_CONTENT );
 
@@ -223,7 +223,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 
 		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
 	}
-	
+
 	public static function get_tab_id( $tabs_id, $index ) {
 		return "{$tabs_id}-tab-{$index}";
 	}

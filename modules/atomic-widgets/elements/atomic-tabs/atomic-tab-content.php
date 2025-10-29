@@ -117,7 +117,7 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 		$tabs_content_map = $tabs_context['tabs-content-map'];
 		$tabs_id = $tabs_context['tabs-id'];
 
-		$index = $tabs_content_map[$this->get_id()];
+		$index = $tabs_content_map[ $this->get_id() ];
 		$is_active = $default_active_tab === $index;
 
 		$attributes = [

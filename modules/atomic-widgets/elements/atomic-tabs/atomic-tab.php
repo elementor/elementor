@@ -105,12 +105,12 @@ class Atomic_Tab extends Atomic_Element_Base {
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 		$initial_attributes = $this->define_initial_attributes();
 
-		$tabs_context = Render_Context::get( Atomic_Tabs::class );		
+		$tabs_context = Render_Context::get( Atomic_Tabs::class );
 		$default_active_tab = $tabs_context['default-active-tab'];
 		$tabs_map = $tabs_context['tabs-map'];
 		$tabs_id = $tabs_context['tabs-id'];
 
-		$index = $tabs_map[$this->get_id()];
+		$index = $tabs_map[ $this->get_id() ];
 		$is_active = $default_active_tab === $index;
 
 		$attributes = [
