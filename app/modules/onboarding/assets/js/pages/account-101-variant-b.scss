@@ -27,8 +27,7 @@
 
         .e-onboarding__content {
                 display: flex;
-                align-items: center;
-                padding-block: 150px;
+                padding-block-start: 150px;
         }
 
         .e-onboarding__page-content {
@@ -46,6 +45,11 @@
                 .e-onboarding__skip-button {
                         display: none;
                 }
+        }
+
+        .e-onboarding__footer {
+                justify-content: center;
+                padding-block-end: 40px;
         }
 }
 
@@ -194,8 +198,7 @@
                 }
 
                 .e-onboarding__content {
-                        padding-block: 5rem;
-                        align-items: flex-start;
+                        padding-block-start: 5rem;
                 }
 
                 .e-onboarding101-variant-b-content {

@@ -1,7 +1,7 @@
 .experiment202-variant-b .e-onboarding {
 
         &__progress-bar {
-                margin-block-end: 100px;
+                margin-block-end: 85px;
         }
 
         &__page-content--experiment-202 {
@@ -24,7 +24,7 @@
                 font-size: 36px;
                 line-height: 1.3;
                 color: #0C0D0E;
-                margin: 0 0 20px 0;
+                margin: 0 0 10px 0;
         }
 
         &__page-content-subtitle {
@@ -51,6 +51,13 @@
                 align-items: center;
                 text-align: center;
                 gap: 8px;
+
+                &:last-of-type {
+
+                        .e-onboarding__feature-description {
+                                max-width: 210px;
+                        }
+                }
         }
 
         &__feature-icon {
@@ -111,15 +118,10 @@
                 justify-content: center;
         }
 
-        &__button-skip {
-                position: absolute;
-                inset-inline-end: 0px;
-        }
-
         &__footnote {
                 display: flex;
-                justify-self: center;
-                width: initial;
+                justify-content: center;
+                width: 100%;
                 color: #3A3F45;
                 text-align: center;
                 font-family: "DM Sans";
@@ -131,6 +133,21 @@
 
                 &::before {
                         content: initial;
+                }
+        }
+
+        &__notice {
+                display: flex;
+                justify-content: center;
+        }
+}
+
+@media screen and (min-width: 769px) {
+        .experiment202-variant-b .e-onboarding {
+
+                &__button-skip {
+                        position: absolute;
+                        inset-inline-end: 30px;
                 }
         }
 }
