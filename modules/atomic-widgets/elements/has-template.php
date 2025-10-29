@@ -19,8 +19,6 @@ trait Has_Template {
 
 		$config['twig_main_template'] = $this->get_main_template();
 		$config['twig_templates'] = $this->get_templates_contents();
-		$config['interactions'] = $this->interactions;
-
 		return $config;
 	}
 
