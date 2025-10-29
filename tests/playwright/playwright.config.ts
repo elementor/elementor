@@ -22,6 +22,8 @@ export default defineConfig( {
 	testDir: './sanity',
 	timeout: timeouts.singleTest,
 	globalTimeout: timeouts.global,
+	globalSetup: require.resolve( './global-setup' ),
+	globalTeardown: require.resolve( './global-teardown' ),
 	grepInvert: /elements-regression/,
 	expect: {
 		timeout: timeouts.expect,

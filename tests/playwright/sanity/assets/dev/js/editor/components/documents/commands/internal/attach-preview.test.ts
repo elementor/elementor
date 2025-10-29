@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../../../../../../../../../parallelTest';
+import { test } from '../../../../../../../../../fixtures/coverage';
 import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
 
 test( `$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custom selector`, async ( { page, apiRequests }, testInfo ) => {

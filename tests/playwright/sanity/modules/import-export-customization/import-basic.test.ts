@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../../../parallelTest';
+import { test } from '../../../fixtures/coverage';
 import { ImportExportHelpers } from './helpers/import-export-helpers';
 
 test.describe( 'Import Export Customization - Basic Import', () => {

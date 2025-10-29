@@ -1,5 +1,5 @@
 import { expect, type Frame } from '@playwright/test';
-import { parallelTest as test } from '../../../parallelTest';
+import { test } from '../../../fixtures/coverage';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import widgets from '../../../enums/widgets';
 import EditorPage from '../../../pages/editor-page';

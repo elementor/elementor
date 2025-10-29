@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../../../parallelTest';
+import { test } from '../../../fixtures/coverage';
 import { getInSettingsTab } from './styleguide.helper';
 
 test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {

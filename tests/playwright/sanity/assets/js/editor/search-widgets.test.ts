@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../../../../parallelTest';
+import { test } from '../../../../fixtures/coverage';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
 test( 'Visible widgets should be shown in search result', async ( { page, apiRequests }, testInfo ) => {

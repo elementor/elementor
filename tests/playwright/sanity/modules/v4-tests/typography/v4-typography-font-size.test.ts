@@ -1,4 +1,4 @@
-import { parallelTest as test } from '../../../../parallelTest';
+import { test } from '../../../../fixtures/coverage';
 import { expect } from '@playwright/test';
 import { addWidgetWithOpenTypographySection, verifyFontSizeEditor, verifyFontSizeOnFrontend } from './typography-test-helpers';
 import { WIDGET_CONFIGS, FONT_SIZES, UNITS, type Unit } from './typography-constants';

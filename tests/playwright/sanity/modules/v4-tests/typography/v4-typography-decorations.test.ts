@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../../../../parallelTest';
+import { test } from '../../../../fixtures/coverage';
 import { timeouts } from '../../../../config/timeouts';
 import { addWidgetWithOpenTypographySection } from './typography-test-helpers';
 import { WIDGET_CONFIGS, TYPOGRAPHY_DECORATIONS } from './typography-constants';

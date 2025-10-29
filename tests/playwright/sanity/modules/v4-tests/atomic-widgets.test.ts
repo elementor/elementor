@@ -1,5 +1,5 @@
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { parallelTest as test } from '../../../parallelTest';
+import { test } from '../../../fixtures/coverage';
 import { BrowserContext, Page, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import EditorSelectors from '../../../selectors/editor-selectors';

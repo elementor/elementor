@@ -1,4 +1,4 @@
-import { parallelTest as test } from '../parallelTest';
+import { test } from '../fixtures/coverage';
 import { generatePluginTests } from './plugin-tester-generator';
 
 test.describe.configure( { mode: 'parallel' } );

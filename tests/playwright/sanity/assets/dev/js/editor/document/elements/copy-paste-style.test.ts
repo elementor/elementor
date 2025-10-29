@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../../../../../../../parallelTest';
+import { test } from '../../../../../../../fixtures/coverage';
 import WpAdminPage from '../../../../../../../pages/wp-admin-page';
 import ContextMenu from '../../../../../../../pages/widgets/context-menu';
 import EditorSelectors from '../../../../../../../selectors/editor-selectors';

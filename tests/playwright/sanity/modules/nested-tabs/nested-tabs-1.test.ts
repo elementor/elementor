@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test';
-import { parallelTest as test } from '../../../parallelTest';
+import { test } from '../../../fixtures/coverage';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
 import { testIconCount } from './tests/icons';

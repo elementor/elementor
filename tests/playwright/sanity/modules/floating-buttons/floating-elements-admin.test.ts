@@ -1,4 +1,4 @@
-import { parallelTest as test } from '../../../parallelTest';
+import { test } from '../../../fixtures/coverage';
 import FloatingElementPage from './floating-element-page';
 import { expect } from '@playwright/test';
 import EditorSelectors from '../../../selectors/editor-selectors';

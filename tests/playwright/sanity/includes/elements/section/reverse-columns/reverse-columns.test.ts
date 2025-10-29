@@ -1,4 +1,4 @@
-import { parallelTest as test } from '../../../../../parallelTest';
+import { test } from '../../../../../fixtures/coverage';
 import Breakpoints from '../../../../../assets/breakpoints';
 import ReverseColumns from './reverse-columns';
 import WpAdminPage from '../../../../../pages/wp-admin-page';

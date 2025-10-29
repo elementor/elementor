@@ -1,4 +1,4 @@
-import { parallelTest as test } from '../../../parallelTest';
+import { test } from '../../../fixtures/coverage';
 import { setupCompleteTestData, cleanupCreatedItems, CreatedItems } from './utils/test-seeders';
 import { ImportExportHelpers } from './helpers/import-export-helpers';
 

@@ -1,4 +1,4 @@
-import { parallelTest as test } from '../../../parallelTest';
+import { test } from '../../../fixtures/coverage';
 import { ImportExportHelpers } from './helpers/import-export-helpers';
 
 test.describe( 'Import Export Customization - Import Customization', () => {

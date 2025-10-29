@@ -1,4 +1,4 @@
-import { parallelTest as test } from '../parallelTest';
+import { test } from '../fixtures/coverage';
 import WpAdminPage from '../pages/wp-admin-page';
 import { expect } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
