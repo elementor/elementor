@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 
 import { globalClassesStylesProvider } from '../../global-classes-styles-provider';
 import { usePrefetchCssClassUsage } from '../../hooks/use-prefetch-css-class-usage';
+import { trackGlobalClassEvent } from '../../utils/tracking';
 import { usePanelActions } from './class-manager-panel';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 
@@ -35,6 +36,10 @@ export const ClassManagerButton = () => {
 		}
 
 		openPanel();
+		trackGlobalClassEvent( {
+			event: 'classManagerOpen',
+			source: 'style-panel',
+		} );
 		prefetchClassesUsage();
 	};
 

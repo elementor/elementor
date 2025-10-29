@@ -2,13 +2,26 @@ import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-doc
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __dispatch as dispatch } from '@elementor/store';
 
+import { fetchCssClassUsage } from '../../../service/css-class-usage-service';
 import { slice } from '../../store';
+import { trackGlobalClassEvent } from '../../utils/tracking';
 
 let isDeleted = false;
 
-export const deleteClass = ( id: string ) => {
-	dispatch( slice.actions.delete( id ) );
+const trackDeleteClass = async ( id: string, label: string ) => {
+	const cssClassUsage = await fetchCssClassUsage();
+	trackGlobalClassEvent( {
+		event: 'classManagerDelete',
+		classId: id,
+		classTitle: label,
+		source: 'class-manager',
+		totalInstances: cssClassUsage[ id ]?.total ?? 0,
+	} );
+};
 
+export const deleteClass = async ( id: string, label: string ) => {
+	dispatch( slice.actions.delete( id ) );
+	await trackDeleteClass( id, label );
 	isDeleted = true;
 };
 
