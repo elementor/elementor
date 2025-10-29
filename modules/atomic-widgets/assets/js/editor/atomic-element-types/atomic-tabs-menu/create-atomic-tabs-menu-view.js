@@ -13,6 +13,10 @@ const createAtomicTabsMenuView = () => {
 		onChildrenChanged() {
 			this.render();
 		}
+
+		getChildType() {
+			return [ 'e-tab', 'container' ];
+		}
 	};
 };
 

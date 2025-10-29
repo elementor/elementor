@@ -13,6 +13,10 @@ const createAtomicTabsContentAreaView = () => {
 		onChildrenChanged() {
 			this.render();
 		}
+
+		getChildType() {
+			return [ 'e-tab-content', 'container' ];
+		}
 	};
 };
 
