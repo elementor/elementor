@@ -275,10 +275,18 @@ class Documents_Manager {
 	 */
 	public function get_doc_for_frontend( $post_id ) {
 		$preview_id = (int) Utils::get_super_global_value( $_GET, 'preview_id' );
+		$is_enforce_preview = (bool) Utils::get_super_global_value( $_GET, 'preview' );
 		$is_preview = is_preview() && $post_id === $preview_id;
 		$is_nonce_verify = wp_verify_nonce( Utils::get_super_global_value( $_GET, 'preview_nonce' ), 'post_preview_' . $preview_id );
 
-		if ( ( $is_preview && $is_nonce_verify ) || Plugin::$instance->preview->is_preview_mode() ) {
+		// error_log( 'GET_DOC_FOR_FRONTEND post id: ' . $post_id );
+		// error_log( 'is_enforce_preview: ' . ( $is_enforce_preview ? 'true' : 'false' ) );
+		// error_log( 'is_preview: ' . ( $is_preview ? 'true' : 'false' ) );
+		// error_log( 'is_nonce_verify: ' . ( $is_nonce_verify ? 'true' : 'false' ) );
+		// error_log( 'is preview mode: ' . ( Plugin::$instance->preview->is_preview_mode() ? 'true' : 'false' ) );
+		// error_log('---');
+
+		if ( ( ( $is_enforce_preview || $is_preview ) && $is_nonce_verify ) || Plugin::$instance->preview->is_preview_mode() ) {
 			$document = $this->get_doc_or_auto_save( $post_id, get_current_user_id() );
 		} else {
 			$document = $this->get( $post_id );
