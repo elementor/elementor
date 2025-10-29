@@ -39,6 +39,26 @@ function createComponentView(
 			if ( settings.component ) {
 				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection( settings.component );
 
+				const setInactiveRecursively = ( model ) => {
+					const editSettings = model.get( 'editSettings' );
+
+					if ( editSettings ) {
+						editSettings.set( 'inactive', true );
+					}
+
+					const elements = model.get( 'elements' );
+
+					if ( elements ) {
+						elements.forEach( ( childModel ) => {
+							setInactiveRecursively( childModel );
+						} );
+					}
+				};
+
+				this.collection.models.forEach( ( model ) => {
+					setInactiveRecursively( model );
+				} );
+
 				settings.component = '<template data-children-placeholder></template>';
 			}
 
@@ -102,17 +122,17 @@ function createComponentView(
 			}
 		}
 
-		ui() {
-			return {
-				...super.ui(),
-				doubleClick: '.e-component:not(:has(.elementor-edit-area))',
-			};
-		}
-
 		events() {
 			return {
 				...super.events(),
-				'dblclick @ui.doubleClick': this.switchDocument,
+				dblclick: this.switchDocument,
+			};
+		}
+
+		attributes() {
+			return {
+				...super.attributes(),
+				'data-elementor-id': this.getComponentId().value,
 			};
 		}
 	};
