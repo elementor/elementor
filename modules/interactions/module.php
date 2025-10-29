@@ -42,7 +42,7 @@ class Module extends BaseModule {
 
 	public function is_experiment_active() {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
-			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+		       && Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 
 	public function __construct() {
@@ -52,8 +52,11 @@ class Module extends BaseModule {
 			return;
 		}
 
+		add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_editor_scripts' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_scripts' ] );
+		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
+		add_action( 'elementor/frontend/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
+
 	}
 
 	private function get_label( $key, $value ) {
@@ -123,6 +126,45 @@ class Module extends BaseModule {
 		];
 	}
 
+	/**
+	 * Register frontend scripts for interactions.
+	 *
+	 * @return void
+	 */
+	private function register_frontend_scripts() {
+		wp_register_script(
+			'motion-js',
+			ELEMENTOR_URL . 'assets/lib/motion.js',
+			[],
+			'11.13.5',
+			true
+		);
+
+		wp_register_script(
+			'elementor-interactions',
+			ELEMENTOR_URL . 'modules/interactions/assets/js/interactions.js',
+			[ 'motion-js' ],
+			'1.0.0',
+			true
+		);
+	}
+
+	/**
+	 * Enqueue interactions scripts.
+	 *
+	 * @return void
+	 */
+	public function enqueue_interactions(): void {
+		wp_enqueue_script( 'motion-js' );
+		wp_enqueue_script( 'elementor-interactions' );
+
+		wp_localize_script(
+			'elementor-interactions',
+			'ElementorInteractionsConfig',
+			$this->get_config()
+		);
+	}
+
 	public function enqueue_editor_scripts() {
 		wp_add_inline_script(
 			'elementor-common',
@@ -130,14 +172,5 @@ class Module extends BaseModule {
 			'before'
 		);
 	}
-
-	public function enqueue_frontend_scripts() {
-		if ( wp_script_is( 'interactions', 'enqueued' ) || wp_script_is( 'interactions', 'registered' ) ) {
-			wp_localize_script(
-				'interactions',
-				'ElementorInteractionsConfig',
-				$this->get_config()
-			);
-		}
-	}
 }
+

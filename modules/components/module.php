@@ -6,12 +6,13 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\Components\Styles\Component_Styles;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
-
+use Elementor\Modules\Components\Lock_Component_Manager;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {
+	private static $lock_component_manager_instance = null;
 	const EXPERIMENT_NAME = 'e_components';
 	const PACKAGES        = [ 'editor-components' ];
 
@@ -21,11 +22,11 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
-
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_action( 'elementor/documents/register', fn ( $documents_manager ) => $this->register_document_type( $documents_manager ) );
 		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 
+		( Lock_Component_Manager::get_instance()->register_hooks() );
 		( new Component_Styles() )->register_hooks();
 		( new Components_REST_API() )->register_hooks();
 	}
@@ -46,6 +47,7 @@ class Module extends BaseModule {
 			'Component',
 		];
 	}
+
 
 	private function add_packages( $packages ) {
 		return array_merge( $packages, self::PACKAGES );
