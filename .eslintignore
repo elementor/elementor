@@ -11,4 +11,4 @@ packages/**/*
 eslint-local-rules.js
 .eslintrc.js
 scripts/**
-modules/atomic-widgets/assets/js/motion.js
+modules/intrections/assets/js/motion.js
