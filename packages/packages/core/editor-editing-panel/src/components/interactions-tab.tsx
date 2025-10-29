@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { __ } from '@wordpress/i18n';
 import { useElementInteractions } from '@elementor/editor-elements';
 import { SwipeIcon } from '@elementor/icons';
 import { SessionStorageProvider } from '@elementor/session';
 import { Button, Stack, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { InteractionsSection } from '../components/interactions-sections/interactions-section';
 import { useElement } from '../contexts/element-context';
