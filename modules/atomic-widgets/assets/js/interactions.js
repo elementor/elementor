@@ -1,3 +1,50 @@
+const config = window.ElementorInteractionsConfig?.constants || {
+	defaultDuration: 0.3,
+	defaultDelay: 0,
+	slideDistance: 100,
+	scaleStart: 0.5,
+	easing: 'ease-in-out',
+};
+
+function getKeyframes( effect, type, direction ) {
+	const isIn = 'in' === type;
+	const keyframes = {};
+
+	keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
+
+	if ( 'scale' === effect ) {
+		keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];
+	}
+
+	if ( direction ) {
+		const distance = config.slideDistance;
+		const movement = {
+			left: { x: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
+			right: { x: isIn ? [ distance, 0 ] : [ 0, distance ] },
+			top: { y: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
+			bottom: { y: isIn ? [ distance, 0 ] : [ 0, distance ] },
+		};
+
+		Object.assign( keyframes, movement[ direction ] );
+	}
+
+	return keyframes;
+}
+
+function parseAnimationName( name ) {
+	const parts = name.split( '-' );
+
+	if ( parts.length < 3 ) {
+		return null;
+	}
+
+	return {
+		effect: parts[ 0 ],
+		type: parts[ 1 ],
+		direction: 4 === parts.length ? parts[ 2 ] : null,
+	};
+}
+
 function initInteractions() {
 	if ( 'undefined' === typeof animate && ! window.Motion?.animate ) {
 		setTimeout( initInteractions, 100 );
@@ -23,23 +70,30 @@ function initInteractions() {
 			return;
 		}
 
-		interactions.forEach( () => {
-			try {
-				inViewFunc( element, () => {
-					animateFunc( element, {
-						opacity: [ 0, 1 ],
-						x: [ -100, 0 ],
-					}, {
-						duration: 1,
-						easing: 'ease-in-out',
-					} );
+		interactions.forEach( ( interaction ) => {
+			const animationName = 'string' === typeof interaction
+				? interaction
+				: interaction?.animation?.animation_id;
 
-					return () => {};
-				}, {
-					root: null,
-					amount: 0.1,
-				} );
-			} catch ( error ) {}
+			if ( ! animationName ) {
+				return;
+			}
+
+			const animConfig = parseAnimationName( animationName );
+			if ( ! animConfig ) {
+				return;
+			}
+
+			const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+			const options = {
+				duration: config.defaultDuration,
+				delay: config.defaultDelay,
+				easing: config.easing,
+			};
+
+			inViewFunc( element, () => {
+				animateFunc( element, keyframes, options );
+			}, { amount: 0.1 } );
 		} );
 	} );
 }

@@ -18,18 +18,15 @@ import { __ } from '@wordpress/i18n';
 
 import { useInteractionsContext } from '../../contexts/interaction-context';
 
-const ANIMATION_OPTIONS = [
-	{ value: '', label: 'Select animation...' },
-	{ value: 'pageload-fade-in-left-1000-1000', label: 'Page Load - Fade In Left' },
-	{ value: 'scrollintoview-fade-in-left-1000-1000', label: 'Scroll Into View - Fade In Left' },
-	{ value: 'scrolloutofview-fade-out-right-1000-1000', label: 'Scroll Out of View - Fade Out Right' },
-	{ value: 'pageload-slide-in-up-1000-1000', label: 'Page Load - Slide In Up' },
-	{ value: 'scrollintoview-slide-in-up-1000-1000', label: 'Scroll Into View - Slide In Up' },
-	{ value: 'scrolloutofview-slide-out-down-1000-1000', label: 'Scroll Out of View - Slide Out Down' },
-	{ value: 'pageload-scale-in-1000-1000', label: 'Page Load - Scale In' },
-	{ value: 'scrollintoview-scale-in-1000-1000', label: 'Scroll Into View - Scale In' },
-	{ value: 'scrolloutofview-scale-out-1000-1000', label: 'Scroll Out of View - Scale Out' },
-];
+const getAnimationOptions = () => {
+	if ( typeof window !== 'undefined' && window.ElementorInteractionsConfig?.animationOptions ) {
+		return window.ElementorInteractionsConfig.animationOptions;
+	}
+
+	return [ { value: '', label: 'Select animation...' } ];
+};
+
+const ANIMATION_OPTIONS = getAnimationOptions();
 
 export const InteractionsInput = () => {
 	const { interactions, setInteractions } = useInteractionsContext();
