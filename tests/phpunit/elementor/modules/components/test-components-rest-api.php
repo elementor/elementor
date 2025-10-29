@@ -16,8 +16,6 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 	private $mock_component_1_content;
 	private $mock_component_2_content;
-	private $mock_invalid_component_content;
-
 
 	public function setUp(): void {
 		parent::setUp();
@@ -25,7 +23,6 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Load mock component data
 		$this->mock_component_1_content = Component_Mocks::get_component_1_data();
 		$this->mock_component_2_content = Component_Mocks::get_component_2_data();
-		$this->mock_invalid_component_content = Component_Mocks::get_invalid_component_data();
 
 		global $wp_rest_server;
 		$wp_rest_server = new \WP_REST_Server();
@@ -557,6 +554,9 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Assert
 		$this->assertArrayHasKey( '/elementor/v1/components', $routes );
 		$this->assertArrayHasKey( '/elementor/v1/components/styles', $routes );
+		$this->assertArrayHasKey( '/elementor/v1/components/lock-status', $routes );
+		$this->assertArrayHasKey( '/elementor/v1/components/lock', $routes );
+		$this->assertArrayHasKey( '/elementor/v1/components/unlock', $routes );
 
 		// Check GET method for components
 		$components_route = $routes['/elementor/v1/components'];
@@ -571,25 +571,319 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$styles_route = $routes['/elementor/v1/components/styles'];
 		$styles_get_methods = array_filter( $styles_route, fn( $route ) => in_array( 'GET', $route['methods'] ) );
 		$this->assertNotEmpty( $styles_get_methods );
+
+		// Check GET method for lock-status
+		$lock_status_route = $routes['/elementor/v1/components/lock-status'];
+		$lock_status_get_methods = array_filter( $lock_status_route, fn( $route ) => in_array( 'GET', $route['methods'] ) );
+		$this->assertNotEmpty( $lock_status_get_methods );
+
+		// Check POST method for lock
+		$lock_route = $routes['/elementor/v1/components/lock'];
+		$lock_post_methods = array_filter( $lock_route, fn( $route ) => in_array( 'POST', $route['methods'] ) );
+		$this->assertNotEmpty( $lock_post_methods );
+
+		// Check POST method for unlock
+		$unlock_route = $routes['/elementor/v1/components/unlock'];
+		$unlock_post_methods = array_filter( $unlock_route, fn( $route ) => in_array( 'POST', $route['methods'] ) );
+		$this->assertNotEmpty( $unlock_post_methods );
 	}
 
-	public function test_get_components__fails_when_unauthenticated() {
+	public function authentication_test_data_provider() {
+		return [
+			'GET components' => [
+				'method' => 'GET',
+				'endpoint' => '/elementor/v1/components',
+			],
+			'GET styles' => [
+				'method' => 'GET',
+				'endpoint' => '/elementor/v1/components/styles',
+			],
+			'GET lock-status' => [
+				'method' => 'GET',
+				'endpoint' => '/elementor/v1/components/lock-status',
+				'params' => [ 'componentId' => '123' ],
+			],
+			'POST lock' => [
+				'method' => 'POST',
+				'endpoint' => '/elementor/v1/components/lock',
+				'params' => [ 'componentId' => 123 ],
+			],
+			'POST unlock' => [
+				'method' => 'POST',
+				'endpoint' => '/elementor/v1/components/unlock',
+				'params' => [ 'componentId' => 123 ],
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider authentication_test_data_provider
+	 */
+	public function test_endpoints__fail_when_unauthenticated( $method, $endpoint, $params = [] ) {
 		// Act - no authentication
-		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components' );
+		$request = new \WP_REST_Request( $method, $endpoint );
+		foreach ( $params as $key => $value ) {
+			$request->set_param( $key, $value );
+		}
 		$response = rest_do_request( $request );
 
 		// Assert
 		$this->assertEquals( 401, $response->get_status() );
 	}
 
-	public function test_get_styles__fails_when_unauthenticated() {
-		// Act - no authentication
-		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/styles' );
+	public function permission_test_data_provider() {
+		return [
+			'GET lock-status' => [
+				'method' => 'GET',
+				'endpoint' => '/elementor/v1/components/lock-status',
+				'params' => [ 'componentId' => '123' ],
+			],
+			'POST lock' => [
+				'method' => 'POST',
+				'endpoint' => '/elementor/v1/components/lock',
+				'params' => [ 'componentId' => 123 ],
+			],
+			'POST unlock' => [
+				'method' => 'POST',
+				'endpoint' => '/elementor/v1/components/unlock',
+				'params' => [ 'componentId' => 123 ],
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider permission_test_data_provider
+	 */
+	public function test_endpoints__fail_when_insufficient_permissions( $method, $endpoint, $params = [] ) {
+		// Arrange - create a user without edit_posts capability
+		$user_id = wp_create_user( 'testuser', 'password', 'test@example.com' );
+		$user = new \WP_User( $user_id );
+		$user->remove_cap( 'edit_posts' );
+		wp_set_current_user( $user_id );
+
+		// Act
+		$request = new \WP_REST_Request( $method, $endpoint );
+		foreach ( $params as $key => $value ) {
+			$request->set_param( $key, $value );
+		}
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 401, $response->get_status() );
+		$this->assertEquals( 403, $response->get_status() );
 	}
+
+	public function parameter_validation_test_data_provider() {
+		return [
+			'GET lock-status missing componentId' => [
+				'method' => 'GET',
+				'endpoint' => '/elementor/v1/components/lock-status',
+				'params' => [],
+				'expected_status' => 400,
+				'expected_code' => 'rest_missing_callback_param',
+			],
+			'POST lock missing componentId' => [
+				'method' => 'POST',
+				'endpoint' => '/elementor/v1/components/lock',
+				'params' => [],
+				'expected_status' => 400,
+				'expected_code' => 'rest_missing_callback_param',
+			],
+			'POST unlock missing componentId' => [
+				'method' => 'POST',
+				'endpoint' => '/elementor/v1/components/unlock',
+				'params' => [],
+				'expected_status' => 400,
+				'expected_code' => 'rest_missing_callback_param',
+			],
+			'POST lock invalid componentId type' => [
+				'method' => 'POST',
+				'endpoint' => '/elementor/v1/components/lock',
+				'params' => [ 'componentId' => 'not-a-number' ],
+				'expected_status' => 400,
+				'expected_code' => 'rest_invalid_param',
+			],
+			'POST unlock invalid componentId type' => [
+				'method' => 'POST',
+				'endpoint' => '/elementor/v1/components/unlock',
+				'params' => [ 'componentId' => 'not-a-number' ],
+				'expected_status' => 400,
+				'expected_code' => 'rest_invalid_param',
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider parameter_validation_test_data_provider
+	 */
+	public function test_endpoints__fail_when_parameters_invalid( $method, $endpoint, $params, $expected_status, $expected_code ) {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( $method, $endpoint );
+		foreach ( $params as $key => $value ) {
+			$request->set_param( $key, $value );
+		}
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( $expected_status, $response->get_status() );
+		$this->assertEquals( $expected_code, $response->get_data()['code'] );
+	}
+
+	// Lock functionality tests
+	public function test_get_lock_status__returns_unlocked_when_not_locked() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/lock-status' );
+		$request->set_param( 'componentId', (string) $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertTrue( $data['is_current_user_allow_to_edit'], 'User should be allowed to edit unlocked component' );
+		$this->assertEquals( '', $data['locked_by'], 'Component should not be locked' );
+	}
+
+	public function test_get_lock_status__returns_locked_when_locked_by_other_user() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		
+		// Lock component with first user
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_instance();
+		$lock_manager->lock( $component_id );
+
+		// Switch to different user
+		$admin_user_2 = $this->factory()->create_and_get_administrator_user()->ID;
+		wp_set_current_user( $admin_user_2 );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/lock-status' );
+		$request->set_param( 'componentId', (string) $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertFalse( $data['is_current_user_allow_to_edit'], 'User should not be allowed to edit component locked by another user' );
+		$this->assertNotNull( $data['locked_by'], 'Should show who locked the component' );
+	}
+
+	public function test_get_lock_status__returns_allowed_when_locked_by_current_user() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		
+		// Lock component with current user
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_instance();
+		$lock_manager->lock( $component_id );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/lock-status' );
+		$request->set_param( 'componentId', (string) $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertTrue( $data['is_current_user_allow_to_edit'], 'User should be allowed to edit component they locked' );
+		$this->assertNotNull( $data['locked_by'], 'Should show who locked the component' );
+	}
+
+	public function test_get_lock_status__fails_when_component_not_found() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/lock-status' );
+		$request->set_param( 'componentId', '999999' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertTrue( $data['is_current_user_allow_to_edit'], 'User should be allowed to edit non-existent component' );
+		$this->assertEquals( '', $data['locked_by'], 'Non-existent component should not be locked' );
+	}
+
+
+
+
+	// Lock endpoint tests
+	public function test_post_lock_component__successfully_locks_component() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/lock' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertTrue( $data['locked'], 'Component should be locked' );
+
+		// Verify component is actually locked
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_instance();
+		$lock_data = $lock_manager->is_locked( $component_id );
+		$this->assertTrue( $lock_data['is_locked'], 'Component should be locked by current user' );
+		$this->assertEquals( get_current_user_id(), $lock_data['lock_user'], 'Component should be locked by current user' );
+	}
+
+
+
+
+	// Unlock endpoint tests
+	public function test_post_unlock_component__successfully_unlocks_component() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		
+		// Lock component first
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_instance();
+		$lock_manager->lock( $component_id );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/unlock' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertTrue( $data['unlocked'], 'Component should be unlocked' );
+
+		// Verify component is actually unlocked
+		$lock_manager = \Elementor\Modules\Components\Lock_Component_Manager::get_instance();
+		$lock_data = $lock_manager->is_locked( $component_id );
+		$this->assertFalse( $lock_data['is_locked'], 'Component should be unlocked' );
+	}
+
+	public function test_post_unlock_component__fails_when_not_locked() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+
+		// Act - try to unlock component that's not locked
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/unlock' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert - should fail because there's no lock to unlock
+		$this->assertEquals( 500, $response->get_status() );
+		$data = $response->get_data();
+		$this->assertEquals( 'unlock_failed', $data['code'] );
+	}
+
+
+
 
 	// Helpers
 	private function create_test_component( string $name, array $content, string $status = 'publish' ): int {
