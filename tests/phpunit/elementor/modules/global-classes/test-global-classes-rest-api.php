@@ -497,7 +497,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Arrange.
 		$this->act_as_admin();
 
-		// Act - send 50 items.
+		// Act - send 100 items.
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
 
 		$items = [];
@@ -520,14 +520,14 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert - should succeed.
 		$this->assertSame( 204, $response->get_status() );
 
-		// Act - send the 51st item.
-		$items[ "g-50" ] = $this->create_global_class( "g-50" );
+		// Act - send the 101st item.
+		$items[ "g-101" ] = $this->create_global_class( "g-101" );
 
 		$request->set_body_params( [
 			'items' => $items,
 			'order' => array_keys( $items ),
 			'changes' => [
-				'added' => [ 'g-50' ],
+				'added' => [ 'g-101' ],
 				'deleted' => [],
 				'modified' => [],
 			]
