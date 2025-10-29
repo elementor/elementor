@@ -82,8 +82,8 @@ public function __construct() {
 	private function generate_animation_options() {
 		$options = [
 			[
-			'value' => '',
-			'label' => __( 'Select animation...', 'elementor' )
+				'value' => '',
+				'label' => __( 'Select animation...', 'elementor' ),
 			]
 		];
 
@@ -101,7 +101,7 @@ public function __construct() {
 						);
 						$options[] = [
 							'value' => $value,
-							'label' => $label
+							'label' => $label,
 						];
 					}
 
@@ -114,7 +114,7 @@ public function __construct() {
 					);
 					$options[] = [
 						'value' => $value,
-						'label' => $label
+						'label' => $label,
 					];
 				}
 			}
