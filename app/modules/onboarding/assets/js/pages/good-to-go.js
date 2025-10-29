@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Layout from '../components/layout/layout';
 import GoodToGoContentA from '../components/good-to-go-content-a';
-import GoodToGoContentB from '../components/good-to-go-content-b';
+import GoodToGoContentExperiment402B from '../components/good-to-go-content-experiment402-b';
 import GoodToGoContentExperiment401B from '../components/good-to-go-content-experiment401-b';
 import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../utils/onboarding-event-tracking';
 
@@ -28,7 +28,7 @@ export default function GoodToGo() {
 		}
 
 		if ( VARIANT_B === experiment402Variant ) {
-			return GoodToGoContentB;
+			return GoodToGoContentExperiment402B;
 		}
 
 		return GoodToGoContentA;
