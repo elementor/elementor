@@ -21,6 +21,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Tabs extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
+	const ELEMENT_TYPE_TABS_MENU = 'e-tabs-menu';
+	const ELEMENT_TYPE_TABS_CONTENT_AREA = 'e-tabs-content-area';
+	const ELEMENT_TYPE_TAB = 'e-tab';
+	const ELEMENT_TYPE_TAB_CONTENT = 'e-tab-content';
 
 	public static function get_type() {
 		return 'e-tabs';
@@ -162,25 +166,28 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		);
 	}
 
+	private function get_children_id_map( $parent_element, $child_type ) {
+		if ( ! $parent_element ) {
+			return [];
+		}
+
+		return Collection::make( $parent_element->get_children() )
+			->filter( fn( $element ) => $element->get_type() === $child_type )
+			->map( fn( $element ) => $element->get_id() )
+			->flip()
+			->all();
+	}
+
 	protected function define_render_context(): array {
 		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
 		
 		$direct_children = Collection::make( $this->get_children() );
 		
-		$tabs_menu = $direct_children->filter( fn( $child ) => $child->get_type() === 'e-tabs-menu' )->first();
-		$tabs_content_area = $direct_children->filter( fn( $child ) => $child->get_type() === 'e-tabs-content-area' )->first();
+		$tabs_menu = $direct_children->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_TABS_MENU )->first();
+		$tabs_content_area = $direct_children->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_TABS_CONTENT_AREA )->first();
 		
-		$tabs_map = Collection::make( $tabs_menu ? $tabs_menu->get_children() : [] )
-			->filter( fn( $element ) => $element->get_type() === 'e-tab' )
-			->map( fn( $element ) => $element->get_id() )
-			->flip()
-			->all();
-		
-		$tabs_content_map = Collection::make( $tabs_content_area ? $tabs_content_area->get_children() : [] )
-			->filter( fn( $element ) => $element->get_type() === 'e-tab-content' )
-			->map( fn( $element ) => $element->get_id() )
-			->flip()
-			->all();
+		$tabs_map = $this->get_children_id_map( $tabs_menu, self::ELEMENT_TYPE_TAB );
+		$tabs_content_map = $this->get_children_id_map( $tabs_content_area, self::ELEMENT_TYPE_TAB_CONTENT );
 
 		return [
 			'default-active-tab' => $default_active_tab,
