@@ -20,6 +20,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { trackGlobalClassEvent } from '../../utils/tracking';
 import { CssClassUsageTrigger } from '../css-class-usage/components';
 import { useDeleteConfirmation } from './delete-confirmation-dialog';
 import { SortableTrigger, type SortableTriggerProps } from './sortable';
@@ -65,6 +66,15 @@ export const ClassItem = ( {
 
 	const isSelected = ( selectedCssUsage === id || selected || popupState.isOpen ) && ! disabled;
 
+	if ( isEditing ) {
+		trackGlobalClassEvent( {
+			event: 'classManagerRename',
+			classId: id,
+			oldValue: editableRef.current?.value,
+			newValue: label,
+			source: 'class-manager',
+		} );
+	}
 	return (
 		<>
 			<Stack p={ 0 }>
