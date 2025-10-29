@@ -90,19 +90,23 @@ type JQueryElement = {
 	get: ( index: number ) => HTMLElement;
 };
 
-type BackboneModel< Model extends object > = {
+export type BackboneModel< Model extends object > = {
 	get: < T extends keyof Model >( key: T ) => Model[ T ];
+	set: < T extends keyof Model >( key: T, value: Model[ T ] ) => void;
 	toJSON: () => ToJSON< Model >;
 };
 
 type BackboneCollection< Model extends object > = {
 	models: BackboneModel< Model >[];
+	forEach: ( callback: ( model: BackboneModel< Model > ) => void ) => void;
 };
 
-type ElementModel = {
+export type ElementModel = {
 	id: string;
 	settings: BackboneModel< Props >;
 	widgetType: string;
+	editSettings?: BackboneModel< { inactive?: boolean } >;
+	elements?: BackboneCollection< ElementModel >;
 };
 
 type ToJSON< T > = {

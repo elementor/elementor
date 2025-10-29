@@ -1,6 +1,8 @@
 import {
+	type BackboneModel,
 	type CreateTemplatedElementTypeOptions,
 	createTemplatedElementView,
+	type ElementModel,
 	type ElementType,
 	type ElementView,
 	type LegacyWindow,
@@ -39,25 +41,7 @@ function createComponentView(
 			if ( settings.component ) {
 				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection( settings.component );
 
-				const setInactiveRecursively = ( model ) => {
-					const editSettings = model.get( 'editSettings' );
-
-					if ( editSettings ) {
-						editSettings.set( 'inactive', true );
-					}
-
-					const elements = model.get( 'elements' );
-
-					if ( elements ) {
-						elements.forEach( ( childModel ) => {
-							setInactiveRecursively( childModel );
-						} );
-					}
-				};
-
-				this.collection.models.forEach( ( model ) => {
-					setInactiveRecursively( model );
-				} );
+				this.collection.models.forEach( setInactiveRecursively );
 
 				settings.component = '<template data-children-placeholder></template>';
 			}
@@ -136,4 +120,20 @@ function createComponentView(
 			};
 		}
 	};
+}
+
+function setInactiveRecursively( model: BackboneModel< ElementModel > ) {
+	const editSettings = model.get( 'editSettings' );
+
+	if ( editSettings ) {
+		editSettings.set( 'inactive', true );
+	}
+
+	const elements = model.get( 'elements' );
+
+	if ( elements ) {
+		elements.forEach( ( childModel ) => {
+			setInactiveRecursively( childModel );
+		} );
+	}
 }
