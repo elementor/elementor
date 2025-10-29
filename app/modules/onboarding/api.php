@@ -25,26 +25,6 @@ class API {
 	}
 
 	public function is_experiment_enabled( string $experiment_key, $force_request = false ): bool {
-		if ( 'emphasizeConnectBenefits101' === $experiment_key ) {
-			return true;
-		}
-		
-		if ( 'offerThemeChoicesHelloBiz201' === $experiment_key ) {
-			return true;
-		}
-
-		// if ( 'emphasizeThemeValueAudience202' === $experiment_key ) {
-		// 	return true;
-		// }
-
-		if ( 'updateCopyVisuals401' === $experiment_key ) {
-			return true;
-		}
-		
-		// if ( 'reduceHierarchyBlankOption402' === $experiment_key ) {
-		// 	return true;
-		// }
-		
 		$ab_testing_data = $this->get_ab_testing_data( $force_request );
 
 		return $ab_testing_data['coreOnboarding'][ $experiment_key ] ?? false;
