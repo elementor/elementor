@@ -42,10 +42,10 @@ class Module extends BaseModule {
 
 	public function is_experiment_active() {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
-		       && Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+				&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 
-	public function __construct() {
+public function __construct() {
 		parent::__construct();
 
 		if ( ! $this->is_experiment_active() ) {
@@ -56,7 +56,6 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_editor_scripts' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
 		add_action( 'elementor/frontend/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
-
 	}
 
 	private function get_label( $key, $value ) {
@@ -81,7 +80,12 @@ class Module extends BaseModule {
 	}
 
 	private function generate_animation_options() {
-		$options = [ [ 'value' => '', 'label' => __( 'Select animation...', 'elementor' ) ] ];
+		$options = [
+			[
+			'value' => '',
+			'label' => __( 'Select animation...', 'elementor' )
+			]
+		];
 
 		foreach ( self::TRIGGERS as $trigger ) {
 			foreach ( self::EFFECTS as $effect ) {
@@ -95,7 +99,10 @@ class Module extends BaseModule {
 							$this->get_label( 'type', $type ),
 							$this->get_label( 'direction', $direction )
 						);
-						$options[] = [ 'value' => $value, 'label' => $label ];
+						$options[] = [
+							'value' => $value,
+							'label' => $label
+						];
 					}
 
 					$value = "{$effect}-{$type}-{$trigger}";
@@ -105,7 +112,10 @@ class Module extends BaseModule {
 						$this->get_label( 'effect', $effect ),
 						$this->get_label( 'type', $type )
 					);
-					$options[] = [ 'value' => $value, 'label' => $label ];
+					$options[] = [
+						'value' => $value,
+						'label' => $label
+					];
 				}
 			}
 		}
@@ -173,4 +183,3 @@ class Module extends BaseModule {
 		);
 	}
 }
-
