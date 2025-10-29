@@ -18,7 +18,7 @@ import {
 	type StateWithGlobalClasses,
 } from './store';
 
-const MAX_CLASSES = 100;
+const MAX_CLASSES = 50;
 
 export const GLOBAL_CLASSES_PROVIDER_KEY = 'global-classes';
 
