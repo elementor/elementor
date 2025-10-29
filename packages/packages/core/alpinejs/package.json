@@ -20,7 +20,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/elementor/elementor.git",
-    "directory": "packages/libs/alpinejs"
+    "directory": "packages/core/alpinejs"
   },
   "bugs": {
     "url": "https://github.com/elementor/elementor/issues"

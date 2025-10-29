@@ -78,7 +78,6 @@ register( {
 				},
 			},
 		} ) );
-
-		Alpine.start();
 	},
 } );
+

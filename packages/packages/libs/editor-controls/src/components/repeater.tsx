@@ -149,7 +149,7 @@ export const Repeater = < T, >( {
 		const atPosition = 1 + index;
 
 		setItems( [ ...items.slice( 0, atPosition ), newItem, ...items.slice( atPosition ) ], undefined, {
-			action: { type: 'duplicate', payload: [ { index: atPosition, item: newItem } ] },
+			action: { type: 'duplicate', payload: [ { index, item: newItem } ] },
 		} );
 		setUniqueKeys( [ ...uniqueKeys.slice( 0, atPosition ), newKey, ...uniqueKeys.slice( atPosition ) ] );
 	};

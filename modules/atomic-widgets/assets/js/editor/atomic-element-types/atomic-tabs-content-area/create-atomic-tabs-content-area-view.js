@@ -6,7 +6,7 @@ const createAtomicTabsContentAreaView = () => {
 			super.initialize();
 
 			if ( this.collection ) {
-				this.listenTo( this.collection, 'add remove reset sort', this.onChildrenChanged );
+				this.listenTo( this.collection, 'update', this.onChildrenChanged );
 			}
 		}
 

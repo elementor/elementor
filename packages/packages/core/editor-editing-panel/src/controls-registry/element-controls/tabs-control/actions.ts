@@ -26,8 +26,8 @@ export const duplicateItem = ( {
 } ) => {
 	items.forEach( ( { item, index } ) => {
 		const tabId = item.id as string;
-		const tabContentContainer = getContainer( tabContentAreaId );
-		const tabContentId = tabContentContainer?.children?.[ index ]?.id;
+		const tabContentAreaContainer = getContainer( tabContentAreaId );
+		const tabContentId = tabContentAreaContainer?.children?.[ index ]?.id;
 
 		if ( ! tabContentId ) {
 			throw new Error( 'Original content ID is required for duplication' );
