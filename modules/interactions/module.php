@@ -78,4 +78,3 @@ class Module extends BaseModule {
 		wp_enqueue_script( 'elementor-interactions' );
 	}
 }
-

@@ -412,7 +412,7 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
-		
+
 		if ( Plugin::$instance->experiments->is_feature_active( InteractionsModule::EXPERIMENT_NAME ) ) {
 			Plugin::$instance->modules_manager->get_modules( 'interactions' )->enqueue_interactions();
 		}

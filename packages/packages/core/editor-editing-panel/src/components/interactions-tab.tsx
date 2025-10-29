@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { useElementInteractions } from '@elementor/editor-elements';
 import { SwipeIcon } from '@elementor/icons';
 import { SessionStorageProvider } from '@elementor/session';
@@ -32,13 +33,7 @@ const EmptyState = ( { onCreateInteraction }: { onCreateInteraction: () => void 
 				) }
 			</Typography>
 
-			<Button
-				variant="outlined"
-				color="secondary"
-				size="small"
-				sx={ { mt: 1 } }
-				onClick={ onCreateInteraction }
-			>
+			<Button variant="outlined" color="secondary" size="small" sx={ { mt: 1 } } onClick={ onCreateInteraction }>
 				{ __( 'Create an interaction', 'elementor' ) }
 			</Button>
 		</Stack>
@@ -72,7 +67,7 @@ export const InteractionsTab = () => {
 					<InteractionsSection />
 				</SectionsList>
 			) : (
-                <EmptyState onCreateInteraction={ () => setShowInteractions( true ) } />
+				<EmptyState onCreateInteraction={ () => setShowInteractions( true ) } />
 			) }
 		</SessionStorageProvider>
 	);
