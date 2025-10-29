@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { useElementInteractions } from '@elementor/editor-elements';
 import { SwipeIcon } from '@elementor/icons';
 import { SessionStorageProvider } from '@elementor/session';
