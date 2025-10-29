@@ -95,7 +95,7 @@ export interface MCPRegistryEntry {
 }
 
 type ToolRegistrationOptions<
-	InputArgs extends object | z.ZodRawShape = object,
+	InputArgs extends undefined | z.ZodRawShape = undefined,
 	OutputSchema extends undefined | z.ZodRawShape = undefined,
 	ExpectedOutput = OutputSchema extends z.ZodRawShape ? z.objectOutputType< OutputSchema, z.ZodTypeAny > : string,
 > = {

@@ -84,7 +84,7 @@ If you receive an error, it usually means the XML structure could not be parsed 
 # Next steps
 After the structure is built and you have the generated element Id's, it's the best time to apply global styles.
 Use the "list-global-classes" tool to get the available global styles. Go over the list and see if any name of a class suggests it fits any element in the structure you built.
-Use the "apply-global-class" tool to apply the global styles to the elements in the structure you built, if you think it is required.
+Use the "apply-globtoal-class" tool  apply the global styles to the elements in the structure you built, if you think it is required.
 
 
 

@@ -1,7 +1,8 @@
 import { getWidgetsCache } from '@elementor/editor-elements';
-import { jsonSchemaToZod, Zod as z } from '@elementor/editor-mcp';
-import { type PropType } from '@elementor/editor-props';
+import { jsonSchemaToZod, Zod as z, zodToJsonSchema } from '@elementor/editor-mcp';
+import { getPropSchemaFromCache, type PropType } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
+import { type ZodTypeAny } from '@elementor/schema';
 
 export const getElementSchemaAsZod = ( elementType: string, omitStyles = false ) => {
 	const widgetsCache = getWidgetsCache() as NonNullable< ReturnType< typeof getWidgetsCache > >;
@@ -25,7 +26,7 @@ export const getElementSchemaAsZod = ( elementType: string, omitStyles = false )
 };
 
 export const extractPropTypes = ( schema: Record< string, PropType > ) => {
-	const result: Record< string, z.ZodTypeAny > = {};
+	const result: Record< string, z.ZodTypeAny | ZodTypeAny > = {};
 	for ( const [ key, propDef ] of Object.entries( schema ) ) {
 		// skip internals
 		if ( key === '_cssid' || key === 'classes' || key === 'attributes' ) {
@@ -58,6 +59,15 @@ export const extractPropTypes = ( schema: Record< string, PropType > ) => {
 
 			if ( description ) {
 				result[ key ] = result[ key ].describe( llmSupport.description );
+			}
+		} else {
+			const propType =
+				getPropSchemaFromCache( key ) || getPropSchemaFromCache( ( propDef as { key: string } ).key );
+			if ( propType ) {
+				const { value } = propType.schema.shape;
+				// @ts-ignore
+				const asJsonSchema = zodToJsonSchema( value );
+				result[ key ] = jsonSchemaToZod( asJsonSchema.definitions || {} ).optional() as unknown as z.ZodTypeAny;
 			}
 		}
 	}
