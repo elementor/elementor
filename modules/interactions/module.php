@@ -43,6 +43,8 @@ class Module extends BaseModule {
 		}
 
 		add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
+		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
+		add_action( 'elementor/frontend/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
 	}
 
 	/**
