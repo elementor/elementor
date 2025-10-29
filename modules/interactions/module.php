@@ -41,5 +41,41 @@ class Module extends BaseModule {
 		if ( ! $this->is_experiment_active() ) {
 			return;
 		}
+
+		add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
+	}
+
+	/**
+	 * Register frontend scripts for interactions.
+	 *
+	 * @return void
+	 */
+	private function register_frontend_scripts() {
+		wp_register_script(
+			'motion-js',
+			$this->get_js_assets_url( 'motion' ),
+			[],
+			'11.13.5',
+			true
+		);
+
+		wp_register_script(
+			'elementor-interactions',
+			$this->get_js_assets_url( 'interactions' ),
+			[ 'motion-js' ],
+			'1.0.0',
+			true
+		);
+	}
+
+	/**
+	 * Enqueue interactions scripts.
+	 *
+	 * @return void
+	 */
+	public function enqueue_interactions(): void {
+		wp_enqueue_script( 'motion-js' );
+		wp_enqueue_script( 'elementor-interactions' );
 	}
 }
+

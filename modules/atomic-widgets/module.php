@@ -103,6 +103,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Query_Tr
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
+use Elementor\Modules\Interactions\Module as InteractionsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -365,12 +366,6 @@ class Module extends BaseModule {
 		);
 	}
 
-	public function enqueue_interactions(): void {
-		wp_enqueue_script( 'motion-js', plugins_url( 'assets/js/motion.js', __FILE__ ), [], '11.13.5', true );
-
-		wp_enqueue_script( 'interactions', plugins_url( 'assets/js/interactions.js', __FILE__ ), [ 'motion-js' ], '1.0.0', true );
-	}
-
 	private function render_panel_category_chip() {
 		?><# if ( 'v4-elements' === name )  { #>
 		<span class="elementor-panel-heading-category-chip">
@@ -417,6 +412,9 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
-		$this->enqueue_interactions();
+		
+		if ( Plugin::$instance->experiments->is_feature_active( InteractionsModule::EXPERIMENT_NAME ) ) {
+			Plugin::$instance->modules_manager->get_modules( 'interactions' )->enqueue_interactions();
+		}
 	}
 }
