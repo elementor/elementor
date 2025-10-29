@@ -39,6 +39,7 @@ type RepeaterItemContentProps< T > = {
 	bind: PropKey;
 	value: T;
 	collectionPropUtil?: CollectionPropUtil< T >;
+	index: number;
 };
 
 type RepeaterItemContent< T > = React.ComponentType< RepeaterItemContentProps< T > >;
@@ -80,7 +81,7 @@ type RepeaterProps< T > = {
 	disabled?: boolean;
 	itemSettings: {
 		initialValues: T;
-		Label: React.ComponentType< { value: T } >;
+		Label: React.ComponentType< { value: T; index: number } >;
 		Icon: React.ComponentType< { value: T } >;
 		Content: RepeaterItemContent< T >;
 	};
@@ -242,7 +243,7 @@ export const Repeater = < T, >( {
 									propDisabled={ value?.disabled }
 									label={
 										<RepeaterItemLabelSlot value={ value }>
-											<itemSettings.Label value={ value } />
+											<itemSettings.Label value={ value } index={ index } />
 										</RepeaterItemLabelSlot>
 									}
 									startIcon={
@@ -260,7 +261,12 @@ export const Repeater = < T, >( {
 									collectionPropUtil={ collectionPropUtil }
 								>
 									{ ( props ) => (
-										<itemSettings.Content { ...props } value={ value } bind={ String( index ) } />
+										<itemSettings.Content
+											{ ...props }
+											value={ value }
+											bind={ String( index ) }
+											index={ index }
+										/>
 									) }
 								</RepeaterItem>
 							</SortableItem>

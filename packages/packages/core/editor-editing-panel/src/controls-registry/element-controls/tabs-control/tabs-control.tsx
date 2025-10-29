@@ -108,7 +108,7 @@ export const TabsControl = ( { label }: { label: string } ) => {
 	);
 };
 
-const ItemLabel = ( { value }: { value: TabItem } ) => {
+const ItemLabel = ( { value, index }: { value: TabItem; index: number } ) => {
 	const id = value.id ?? '';
 
 	const editorSettings = useElementEditorSettings( id );
@@ -119,14 +119,13 @@ const ItemLabel = ( { value }: { value: TabItem } ) => {
 		<Stack sx={ { minHeight: 20 } } direction="row" alignItems="center" gap={ 1.5 }>
 			<span>{ elementTitle }</span>
 			<SettingsField bind="default-active-tab" propDisplayName={ __( 'Tabs', 'elementor' ) }>
-				<ItemDefaultTab value={ value } />
+				<ItemDefaultTab index={ index } />
 			</SettingsField>
 		</Stack>
 	);
 };
 
-const ItemDefaultTab = ( { value }: { value: TabItem } ) => {
-	const index = value.index ?? 0;
+const ItemDefaultTab = ( { index }: { index: number } ) => {
 	const { value: defaultItem } = useBoundProp( numberPropTypeUtil );
 
 	const isDefault = defaultItem === index;
@@ -138,7 +137,7 @@ const ItemDefaultTab = ( { value }: { value: TabItem } ) => {
 	return <Chip size="tiny" shape="rounded" label={ __( 'Default', 'elementor' ) } />;
 };
 
-const ItemContent = ( { value }: { value: TabItem } ) => {
+const ItemContent = ( { value, index }: { value: TabItem; index: number } ) => {
 	if ( ! value.id ) {
 		return null;
 	}
@@ -147,7 +146,7 @@ const ItemContent = ( { value }: { value: TabItem } ) => {
 		<Stack p={ 2 } gap={ 1.5 }>
 			<TabLabelControl elementId={ value.id } />
 			<SettingsField bind="default-active-tab" propDisplayName={ __( 'Tabs', 'elementor' ) }>
-				<DefaultTabControl tabIndex={ value.index ?? 0 } />
+				<DefaultTabControl tabIndex={ index } />
 			</SettingsField>
 		</Stack>
 	);
