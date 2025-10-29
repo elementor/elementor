@@ -107,10 +107,10 @@ class Atomic_Tab extends Atomic_Element_Base {
 
 		$tabs_context = Render_Context::get( Atomic_Tabs::class );
 		$default_active_tab = $tabs_context['default-active-tab'];
-		$tabs_map = $tabs_context['tabs-map'];
+		$get_tab_index = $tabs_context['get-tab-index'];
 		$tabs_id = $tabs_context['tabs-id'];
 
-		$index = $tabs_map[ $this->get_id() ];
+		$index = $get_tab_index( $this->get_id() );
 		$is_active = $default_active_tab === $index;
 
 		$attributes = [

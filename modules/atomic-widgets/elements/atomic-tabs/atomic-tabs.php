@@ -166,7 +166,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		);
 	}
 
-	private function get_children_id_map( $parent_element, $child_type ) {
+	private function get_filtered_children_ids( $parent_element, $child_type ) {
 		if ( ! $parent_element ) {
 			return [];
 		}
@@ -178,21 +178,31 @@ class Atomic_Tabs extends Atomic_Element_Base {
 			->all();
 	}
 
+	private function get_tab_index( $tab_id ) {
+		$direct_children = Collection::make( $this->get_children() );
+		$tabs_menu = $direct_children->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_TABS_MENU )->first();
+		
+		$tab_ids = $this->get_filtered_children_ids( $tabs_menu, self::ELEMENT_TYPE_TAB );
+	
+		return $tab_ids[ $tab_id ];
+	}
+
+	private function get_tab_content_index( $tab_content_id ) {
+		$direct_children = Collection::make( $this->get_children() );
+		$tabs_content_area = $direct_children->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_TABS_CONTENT_AREA )->first();
+		
+		$tab_content_ids = $this->get_filtered_children_ids( $tabs_content_area, self::ELEMENT_TYPE_TAB_CONTENT );
+		
+		return $tab_content_ids[ $tab_content_id ];
+	}
+
 	protected function define_render_context(): array {
 		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
-
-		$direct_children = Collection::make( $this->get_children() );
-
-		$tabs_menu = $direct_children->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_TABS_MENU )->first();
-		$tabs_content_area = $direct_children->filter( fn( $child ) => $child->get_type() === self::ELEMENT_TYPE_TABS_CONTENT_AREA )->first();
-
-		$tabs_map = $this->get_children_id_map( $tabs_menu, self::ELEMENT_TYPE_TAB );
-		$tabs_content_map = $this->get_children_id_map( $tabs_content_area, self::ELEMENT_TYPE_TAB_CONTENT );
-
+		
 		return [
 			'default-active-tab' => $default_active_tab,
-			'tabs-map' => $tabs_map,
-			'tabs-content-map' => $tabs_content_map,
+			'get-tab-index' => fn( $tab_id ) => $this->get_tab_index( $tab_id ),
+			'get-tab-content-index' => fn( $tab_content_id ) => $this->get_tab_content_index( $tab_content_id ),
 			'tabs-id' => $this->get_id(),
 		];
 	}
