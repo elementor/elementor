@@ -18,6 +18,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	protected $version = '0.0';
 	protected $styles = [];
+	protected $interactions = [];
 	protected $editor_settings = [];
 
 
@@ -26,6 +27,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 		$this->version = $data['version'] ?? '0.0';
 		$this->styles = $data['styles'] ?? [];
+		$this->interactions = $data['interactions'] ?? [];
 		$this->editor_settings = $data['editor_settings'] ?? [];
 	}
 
