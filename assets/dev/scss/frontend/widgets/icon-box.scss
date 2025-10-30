@@ -11,10 +11,9 @@
 				text-align: end;
 				flex-direction: row-reverse;
 				gap: var(--icon-box-icon-margin, 15px);
-
 			}
 
-			&:dir(rtl) .elementor-icon-box-wrapper {
+			[dir="rtl"] & .elementor-icon-box-wrapper { // BC for wrong RTL direction.
 				flex-direction: row;
 			}
 		}
@@ -27,7 +26,7 @@
 				gap: var(--icon-box-icon-margin, 15px);
 			}
 
-			&:dir(rtl) .elementor-icon-box-wrapper {
+			[dir="rtl"] & .elementor-icon-box-wrapper { // BC for wrong RTL direction.
 				flex-direction: row-reverse;
 			}
 		}
@@ -109,16 +108,5 @@
 
 	@media (max-width: $screen-mobile-max ) {
 		@include icon-position(-mobile);
-
-		&.elementor-position- {
-
-			&inline-start,
-			&inline-end {
-
-				.elementor-icon-box-icon {
-					flex-direction: column;
-				}
-			}
-		}
 	}
 }
