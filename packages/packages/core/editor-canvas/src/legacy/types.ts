@@ -40,6 +40,11 @@ export declare class ElementView {
 
 	collection: BackboneCollection< ElementModel >;
 
+	children: {
+		length: number;
+		findByIndex: ( index: number ) => ElementView;
+	};
+
 	constructor( ...args: unknown[] );
 
 	onRender( ...args: unknown[] ): void;
@@ -71,9 +76,17 @@ export declare class ElementView {
 
 	attachBuffer( collectionView: this, buffer: DocumentFragment ): void;
 
-	triggerMethod( method: string ): void;
+	triggerMethod( method: string, ...args: unknown[] ): void;
 
 	bindUIElements(): void;
+
+	_ensureViewIsIntact(): void;
+
+	_isRendering: boolean;
+
+	resetChildViewContainer(): void;
+
+	isRendered: boolean;
 
 	options?: {
 		model: BackboneModel< ElementModel >;
@@ -90,19 +103,23 @@ type JQueryElement = {
 	get: ( index: number ) => HTMLElement;
 };
 
-type BackboneModel< Model extends object > = {
+export type BackboneModel< Model extends object > = {
 	get: < T extends keyof Model >( key: T ) => Model[ T ];
+	set: < T extends keyof Model >( key: T, value: Model[ T ] ) => void;
 	toJSON: () => ToJSON< Model >;
 };
 
 type BackboneCollection< Model extends object > = {
 	models: BackboneModel< Model >[];
+	forEach: ( callback: ( model: BackboneModel< Model > ) => void ) => void;
 };
 
-type ElementModel = {
+export type ElementModel = {
 	id: string;
 	settings: BackboneModel< Props >;
 	widgetType: string;
+	editSettings?: BackboneModel< { inactive?: boolean } >;
+	elements?: BackboneCollection< ElementModel >;
 };
 
 type ToJSON< T > = {
