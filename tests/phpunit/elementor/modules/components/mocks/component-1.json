@@ -72,7 +72,8 @@
 					}
 				},
 				"editor_settings": [],
-				"version": "0.0"
+				"version": "0.0",
+				"interactions": []
 			}
 		],
 		"isInner": false,
@@ -111,5 +112,6 @@
 			}
 		},
 		"editor_settings": [],
-		"version": "0.0"
+		"version": "0.0",
+		"interactions": []
 	}]
