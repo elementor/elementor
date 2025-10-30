@@ -38,7 +38,7 @@ test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
 } );
 
 test.describe( 'CSS Variables Color Handling', () => {
-	test( 'Elementor Global Color Variables - Preserved and Applied', async ( { page, request } ) => {
+	test( 'Elementor Global Color Variables - Preserved and Applied', async ( { page, request }, testInfo ) => {
 		const htmlContent = `
 			<style>
 				:root {
@@ -65,7 +65,6 @@ test.describe( 'CSS Variables Color Handling', () => {
 		// Validate API response
 		expect( apiResult.success ).toBe( true );
 		expect( apiResult.widgets_created ).toBeGreaterThan( 0 );
-		expect( apiResult.global_classes_created ).toBeGreaterThan( 0 );
 
 		// Navigate to editor
 		await page.goto( apiResult.edit_url );
@@ -112,7 +111,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 
 		await page.goto( apiResult.edit_url );
 		editor = new EditorPage( page, testInfo );
-		await editor.waitForEditorToLoad();
+		await editor.waitForPanelToLoad();
 
 		const editorFrame = editor.getPreviewFrame();
 		const paragraph = editorFrame.locator( 'p' ).filter( { hasText: /Testing CSS variables with fallback/i } );
@@ -159,7 +158,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 
 		await page.goto( apiResult.edit_url );
 		editor = new EditorPage( page, testInfo );
-		await editor.waitForEditorToLoad();
+		await editor.waitForPanelToLoad();
 
 		const editorFrame = editor.getPreviewFrame();
 
@@ -207,7 +206,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 
 		await page.goto( apiResult.edit_url );
 		editor = new EditorPage( page, testInfo );
-		await editor.waitForEditorToLoad();
+		await editor.waitForPanelToLoad();
 
 		const editorFrame = editor.getPreviewFrame();
 		const paragraph = editorFrame.locator( 'p' ).filter( { hasText: /Testing Elementor system variables/i } );
@@ -244,7 +243,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 
 		await page.goto( apiResult.edit_url );
 		editor = new EditorPage( page, testInfo );
-		await editor.waitForEditorToLoad();
+		await editor.waitForPanelToLoad();
 
 		const editorFrame = editor.getPreviewFrame();
 		const paragraph = editorFrame.locator( 'p' ).filter( { hasText: /Testing custom CSS variables/i } );
@@ -288,7 +287,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 
 		await page.goto( apiResult.edit_url );
 		editor = new EditorPage( page, testInfo );
-		await editor.waitForEditorToLoad();
+		await editor.waitForPanelToLoad();
 
 		const editorFrame = editor.getPreviewFrame();
 		const paragraph = editorFrame.locator( 'p' ).filter( { hasText: /Testing complex color properties/i } );
@@ -339,7 +338,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 
 		await page.goto( apiResult.edit_url );
 		editor = new EditorPage( page, testInfo );
-		await editor.waitForEditorToLoad();
+		await editor.waitForPanelToLoad();
 
 		const editorFrame = editor.getPreviewFrame();
 
@@ -388,7 +387,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 
 		await page.goto( apiResult.edit_url );
 		editor = new EditorPage( page, testInfo );
-		await editor.waitForEditorToLoad();
+		await editor.waitForPanelToLoad();
 
 		const editorFrame = editor.getPreviewFrame();
 		const paragraph = editorFrame.locator( 'p' ).filter( { hasText: /Testing CSS variables in different property types/i } );

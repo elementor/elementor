@@ -195,7 +195,7 @@ $scoped_variables = [];
 				$final_variables_assoc[ $final_name ] = $variable_data;
 			}
 			
-			// Convert associative array to numeric array format expected by tests
+			// Convert to format expected by tests - associative array with variable names as keys
 			$final_variables = [];
 			foreach ( $final_variables_assoc as $var_name => $var_data ) {
 				$variable_type = $var_data['type'] ?? 'string';
@@ -204,7 +204,8 @@ $scoped_variables = [];
 				// Map variable type to test-expected format
 				$mapped_type = $this->map_internal_type_to_api_type( $variable_type, $variable_value );
 				
-				$final_variables[] = [
+				// Use variable name as key (without -- prefix for the key)
+				$final_variables[ $var_name ] = [
 					'name' => '--' . $var_name,
 					'value' => $variable_value,
 					'type' => $mapped_type,

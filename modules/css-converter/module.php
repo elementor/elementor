@@ -29,6 +29,7 @@ class Module extends BaseModule {
 
 	private function register_base_styles_override_hooks(): void {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_base_styles_override_script' ], 10 );
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_variables_reload_script' ], 10 );
 	}
 
 	public function enqueue_base_styles_override_script(): void {
@@ -36,6 +37,17 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'css-converter-base-styles-override',
 			plugins_url( 'modules/atomic-widgets/assets/js/editor/css-converter-base-styles-override.js', $plugin_file ),
+			[ 'jquery', 'elementor-editor' ],
+			'1.0.0',
+			true
+		);
+	}
+
+	public function enqueue_variables_reload_script(): void {
+		$plugin_file = dirname( dirname( __DIR__ ) ) . '/elementor.php';
+		wp_enqueue_script(
+			'css-converter-variables-reload',
+			plugins_url( 'modules/css-converter/assets/js/editor/variables-reload.js', $plugin_file ),
 			[ 'jquery', 'elementor-editor' ],
 			'1.0.0',
 			true

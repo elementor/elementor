@@ -42,7 +42,6 @@ class Variables_Registration_Service {
 		}
 
 		$items = $repository->variables();
-
 		$existing_names = $this->extract_existing_names( $items );
 
 		$result = $this->filter_new_variables_with_duplicate_detection( $converted_variables, $existing_names, $items );

@@ -49,6 +49,7 @@ class Variables_Integration_Service {
 			'variables' => $converted_variables,
 			'variables_created' => $registration_result['registered'] ?? 0,
 			'variables_reused' => $registration_result['reused'] ?? 0,
+			'reused' => $registration_result['reused'] ?? 0,
 			'variable_name_mappings' => $registration_result['variable_name_mappings'] ?? [],
 			'variables_skipped' => $registration_result['skipped'] ?? 0,
 			'update_mode' => $registration_result['update_mode'] ?? $this->update_mode,
@@ -84,7 +85,27 @@ class Variables_Integration_Service {
 		// Convert to valid Elementor variable name
 		$clean_name = sanitize_key( $clean_name );
 		
+		// Avoid conflicts with Elementor's system global colors
+		// Only prefix if this variable would conflict with existing system variables
+		if ( $this->would_conflict_with_system_variables( $clean_name ) ) {
+			// Add prefix to avoid conflict
+			$clean_name = 'css-' . $clean_name;
+		}
+		
 		return $clean_name;
+	}
+
+	private function would_conflict_with_system_variables( string $clean_name ): bool {
+		// Check if this variable name would conflict with Elementor's existing system variables
+		// These are the actual system variable names that Elementor creates by default
+		$system_variable_names = [
+			'e-global-color-primary',
+			'e-global-color-secondary', 
+			'e-global-color-text',
+			'e-global-color-accent',
+		];
+		
+		return in_array( $clean_name, $system_variable_names, true );
 	}
 
 	private function detect_variable_type( string $value ): string {
