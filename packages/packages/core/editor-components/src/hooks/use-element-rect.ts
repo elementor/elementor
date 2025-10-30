@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { throttle } from '@elementor/utils';
 
 export function useElementRect( element: HTMLElement | null ) {
 	const [ rect, setRect ] = useState< DOMRect >( new DOMRect( 0, 0, 0, 0 ) );
@@ -9,9 +10,9 @@ export function useElementRect( element: HTMLElement | null ) {
 			return;
 		}
 
-		const update = () => {
+		const update = throttle(() => {
 			setRect( element.getBoundingClientRect() );
-		};
+		}, 20);
 
 		update();
 

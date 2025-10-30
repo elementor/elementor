@@ -97,6 +97,7 @@ function createComponentView(
 					id: this.getComponentId()?.value as number,
 					mode: 'autosave',
 					selector: `[data-id="${ this.model.get( 'id' ) }"]`,
+					shouldScroll: false,
 				} );
 				apiClient.lockComponent( this.getComponentId()?.value as number );
 			}
