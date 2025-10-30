@@ -1,7 +1,7 @@
 import './card.scss';
 
 export default function CardImage( props ) {
-	const image = <img src={ props.src } alt={ props.alt } className="eps-card__image" loading="lazy" onError={ props.onError } />;
+	const image = <img src={ props.src } alt={ props.alt } className="eps-card__image" loading="lazy" />;
 
 	return (
 		<figure className={ `eps-card__figure ${ props.className }` }>
@@ -16,10 +16,8 @@ CardImage.propTypes = {
 	src: PropTypes.string.isRequired,
 	alt: PropTypes.string.isRequired,
 	children: PropTypes.any,
-	onError: PropTypes.func,
 };
 
 CardImage.defaultProps = {
 	className: '',
-	onError: () => {},
 };
