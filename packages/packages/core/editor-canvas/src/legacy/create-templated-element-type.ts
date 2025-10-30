@@ -79,6 +79,8 @@ export function createTemplatedElementView( {
 			this.render();
 		}
 
+		// Override `render` function to support async `_renderTemplate`
+		// Note that `_renderChildren` asynchronity is still NOT supported, so only the parent element rendering can be async
 		render() {
 			this.#abortController?.abort();
 			this.#abortController = new AbortController();
@@ -86,13 +88,15 @@ export function createTemplatedElementView( {
 			const process = signalizedProcess( this.#abortController.signal )
 				.then( () => this.#beforeRender() )
 				.then( () => this._renderTemplate() )
-				.then( () => this._renderChildren() ) // This will render children and should be async as well.
-				.then( () => this.#afterRender() );
+				.then( () => {
+					this._renderChildren();
+					this.#afterRender();
+				} );
 
 			return process.execute();
 		}
 
-		// Overriding Marionette original render method to inject our renderer.
+		// Overriding Marionette original `_renderTemplate` method to inject our renderer.
 		async _renderTemplate() {
 			this.triggerMethod( 'before:render:template' );
 
