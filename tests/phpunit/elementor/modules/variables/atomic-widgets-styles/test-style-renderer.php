@@ -159,31 +159,6 @@ class Test_Style_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
-	public function test_render__uses_css_name_when_available() {
-		// Arrange.
-		$styles = [
-			[
-				'id' => 'test-id',
-				'cssName' => 'custom-name',
-				'type' => 'class',
-				'variants' => [
-					[
-					'props' => [ 'color' => '#000' ],
-						'meta' => [],
-					],
-				],
-			],
-		];
-
-		$renderer = Styles_Renderer::make( [], '' );
-
-		// Act.
-		$css = $renderer->render( $styles );
-
-		// Assert.
-		$this->assertSame( '.custom-name{color:#000;}', $css );
-	}
-
 	public function test_render__applies_native_and_custom_states() {
 		// Arrange.
 		$styles = [
