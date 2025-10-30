@@ -5,7 +5,7 @@ import { useNavigate } from '@reach/router';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import Layout from '../components/layout/layout';
 import ThemeSelectionContentA from '../components/theme-selection-content-a';
-import ThemeSelectionExperiment201VariantB from '../components/theme-selection-experiment201-variant-b';
+import ThemeSelectionContentB from '../components/theme-selection-experiment201-variant-b';
 import ThemeSelectionExperiment202VariantB from '../components/theme-selection-experiment202-variant-b';
 import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../utils/onboarding-event-tracking';
 
@@ -383,7 +383,10 @@ export default function HelloTheme() {
 				{ ...( isVariant201B && { isInstalling } ) }
 			/>
 			<div className="e-onboarding__footnote">
-				{ __( 'You can switch your theme later on', 'elementor' ) }
+				{ isVariant202B
+					? __( 'You can switch your theme anytime', 'elementor' )
+					: __( 'You can switch your theme later on', 'elementor' )
+				}
 			</div>
 		</Layout>
 	);

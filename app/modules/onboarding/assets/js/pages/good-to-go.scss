@@ -82,6 +82,10 @@
 	.e-onboarding__progress-bar {
 		margin-block-end: 85px;
 	}
+
+	.e-onboarding__good-to-go-footer {
+		justify-content: center;
+	}
 }
 
 .experiment402-variant-b .e-onboarding {
@@ -126,9 +130,6 @@
 
 @media screen and (min-width: 1024px) {
 	.experiment401-variant-b {
-		.e-onboarding__good-to-go-footer {
-			justify-content: center;
-		}
 
 		.e-onboarding__button-skip {
 			position: absolute;

@@ -38,11 +38,13 @@
         }
 
         &__features-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
                 gap: 60px;
                 width: 100%;
-                margin-block-end: 150px;
+                padding-block-end: 150px;
+                min-height: 280px;
         }
 
         &__feature-item {
@@ -51,6 +53,7 @@
                 align-items: center;
                 text-align: center;
                 gap: 8px;
+                max-width: 280px;
 
                 &:last-of-type {
 
@@ -166,7 +169,7 @@
                 &__features-grid {
                         grid-template-columns: 1fr;
                         gap: 40px;
-                        margin-block-end: 40px;
+                        padding-block-end: 60px;
                 }
 
                 &__feature-title {
@@ -188,7 +191,7 @@
                         flex-wrap: wrap;
                         justify-content: center;
                         gap: 40px 60px;
-                        margin-block-end: 40px;
+                        padding-block-end: 60px;
                 }
 
                 &__feature-description {
