@@ -57,8 +57,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['default_html_tag'] = $this->define_default_html_tag();
 		$config['interactions'] = $this->interactions ?? [];
 
-		var_dump($config['interactions']);
-
 		return $config;
 	}
 
