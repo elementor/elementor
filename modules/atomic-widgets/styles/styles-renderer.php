@@ -122,9 +122,9 @@ class Styles_Renderer {
 		}
 
 		if ( isset( $variant['meta']['state'] ) ) {
-			if ( $this->is_style_definition_custom_state( $variant['meta']['state'] ) ) {
+			if ( Style_States::is_custom_state( $variant['meta']['state'] ) ) {
 				$state = '.' . $variant['meta']['state'];
-			} elseif ( $this->is_style_definition_native_state( $variant['meta']['state'] ) ) {
+			} elseif ( Style_States::is_native_state( $variant['meta']['state'] ) ) {
 				$state = ':' . $variant['meta']['state'];
 			}
 		} else {
@@ -142,13 +142,6 @@ class Styles_Renderer {
 		return $style_declaration;
 	}
 
-	private function is_style_definition_custom_state( string $state ): bool {
-		return Style_States::is_custom_state( $state );
-	}
-
-	private function is_style_definition_native_state( string $state ): bool {
-		return Style_States::is_native_state( $state );
-	}
 
 	private function props_to_css_string( array $props ): string {
 		$schema = Style_Schema::get();

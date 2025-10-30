@@ -63,7 +63,7 @@ class Atomic_Tab extends Atomic_Element_Base {
 		];
 	}
 
-	protected function define_atomic_style_states(): array {
+	protected function define_atomic_style_custom_states(): array {
 		$selected_state = Style_States::get_custom_states_map()['selected'];
 
 		return [ $selected_state ];
