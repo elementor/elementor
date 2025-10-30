@@ -101,4 +101,59 @@ class Test_Size_Prop_Type extends Elementor_Test_Base {
 		$this->assertContains( '%', $settings['available_units'] );
 	}
 
+	public function test_initial_value_with_size_prop_type() {
+		// Arrange.
+		$prop_type = Size_Prop_Type::make()->initial_value( [
+			'size' => 24,
+			'unit' => 'vh',
+		] );
+
+		// Act.
+		$result = $prop_type->get_initial_value();
+
+		$expected = [
+			'$$type' => 'size',
+			'value' => [
+				'size' => 24,
+				'unit' => 'vh',
+			],
+		];
+
+		// Assert.
+		$this->assertEquals( $expected, $result );
+	}
+
+
+	public function test_initial_value_is_included_in_json_serialization() {
+		// Arrange.
+		$prop_type = Size_Prop_Type::make()->initial_value( [
+			'size' => 32,
+			'unit' => 'rem',
+		] );
+
+		// Act.
+		$serialized = $prop_type->jsonSerialize();
+
+		$expected = [
+			'$$type' => 'size',
+			'value' => [
+				'size' => 32,
+				'unit' => 'rem',
+			],
+		];
+
+		// Assert.
+		$this->assertEquals( $expected, $serialized['initial_value'] );
+	}
+
+	public function test_initial_value_is_null_when_not_set() {
+		// Arrange.
+		$prop_type = Size_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->get_initial_value();
+
+		// Assert.
+		$this->assertNull( $result );
+	}
 }
