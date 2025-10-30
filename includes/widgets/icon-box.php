@@ -231,9 +231,6 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$start = is_rtl() ? 'right' : 'left';
-		$end = ! is_rtl() ? 'right' : 'left';
-
 		$this->add_responsive_control(
 			'position',
 			[
