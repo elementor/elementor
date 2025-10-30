@@ -1,18 +1,11 @@
 import * as React from 'react';
 import { createDOMElement, createMockDocument, renderWithStore } from 'test-utils';
-import {
-	__useNavigateToDocument as useNavigateToDocument,
-	getV1DocumentsManager,
-	type V1Document,
-} from '@elementor/editor-documents';
-import {
-	__privateRunCommand,
-	__privateRunCommand as runCommand,
-	registerDataHook,
-} from '@elementor/editor-v1-adapters';
+import { getV1DocumentsManager, type V1Document } from '@elementor/editor-documents';
+import { __privateListenTo, __privateRunCommand } from '@elementor/editor-v1-adapters';
 import { __createStore, __registerSlice as registerSlice, type SliceState, type Store } from '@elementor/store';
 import { act, fireEvent, screen } from '@testing-library/react';
 
+import { apiClient } from '../../../api';
 import { selectComponentsObject, selectLoadIsPending, slice } from '../../../store/store';
 import { EditComponent } from '../edit-component';
 
@@ -27,13 +20,12 @@ jest.mock( '../component-modal', () => ( {
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
 	__privateRunCommand: jest.fn(),
-	registerDataHook: jest.fn(),
+	__privateListenTo: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-documents', () => ( {
 	...jest.requireActual( '@elementor/editor-documents' ),
 	getV1DocumentsManager: jest.fn(),
-	__useNavigateToDocument: jest.fn(),
 } ) );
 
 jest.mock( '../../../store/store', () => ( {
@@ -41,6 +33,8 @@ jest.mock( '../../../store/store', () => ( {
 	selectComponentsObject: jest.fn(),
 	selectLoadIsPending: jest.fn(),
 } ) );
+
+jest.mock( '../../../api' );
 
 const MOCK_DOCUMENT_ID = 1;
 const MOCK_COMPONENT_ID = 123;
@@ -56,7 +50,7 @@ describe( '<EditComponent />', () => {
 	let store: Store< SliceState< typeof slice > >;
 	let editedDocument: V1Document;
 	let attachPreviewCallback: () => void;
-	const mockNavigateToDocument = jest.fn();
+	const switchDocumentCallback = jest.fn();
 
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -72,24 +66,30 @@ describe( '<EditComponent />', () => {
 			documents: {},
 		} );
 
-		jest.mocked( mockNavigateToDocument ).mockImplementation( ( id: number ) => {
+		jest.mocked( switchDocumentCallback ).mockImplementation( ( { id }: { id: number } ) => {
 			editedDocument = MOCK_POST_DATA[ id as keyof typeof MOCK_POST_DATA ];
 
 			updateCurrentDocument();
 		} );
-		jest.mocked( useNavigateToDocument ).mockImplementation( () => mockNavigateToDocument );
 
-		jest.mocked( registerDataHook ).mockImplementation( ( position, command, callback ) => {
-			if ( command === 'editor/documents/attach-preview' && position === 'after' ) {
+		jest.mocked( __privateListenTo ).mockImplementation( ( event, callback ) => {
+			event = Array.isArray( event ) ? event[ 0 ] : event;
+			if ( event.type === 'command' && event.name === 'editor/documents/attach-preview' ) {
 				attachPreviewCallback = callback as () => void;
 			}
 
 			return null as never;
 		} );
 
-		jest.mocked( __privateRunCommand ).mockImplementation( async ( command ) => {
+		jest.mocked( __privateRunCommand ).mockImplementation( async ( command, args ) => {
 			if ( command === 'editor/documents/attach-preview' ) {
 				attachPreviewCallback?.();
+
+				return;
+			}
+
+			if ( command === 'editor/documents/switch' ) {
+				switchDocumentCallback( args );
 			}
 		} );
 
@@ -124,6 +124,7 @@ describe( '<EditComponent />', () => {
 
 		// Assert.
 		expect( screen.getByLabelText( 'mock-backdrop' ) ).toBeInTheDocument();
+		expect( apiClient.lockComponent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should close the modal when the backdrop is clicked', () => {
@@ -140,12 +141,16 @@ describe( '<EditComponent />', () => {
 		fireEvent.click( backdrop );
 
 		// Assert.
-		expect( screen.queryByLabelText( 'mock-backdrop' ) ).not.toBeInTheDocument();
-		expect( mockNavigateToDocument ).toHaveBeenCalledWith( MOCK_DOCUMENT_ID, {
+		expect( switchDocumentCallback ).toHaveBeenCalledWith( {
+			id: MOCK_DOCUMENT_ID,
 			mode: 'autosave',
 			setAsInitial: false,
 			shouldScroll: false,
 		} );
+		expect( screen.queryByLabelText( 'mock-backdrop' ) ).not.toBeInTheDocument();
+
+		expect( apiClient.unlockComponent ).toHaveBeenCalledTimes( 1 );
+		expect( apiClient.unlockComponent ).toHaveBeenCalledWith( MOCK_COMPONENT_ID );
 	} );
 
 	it( 'should responsively go back upon backdrop clicks through components ancestry chain', () => {
@@ -165,22 +170,22 @@ describe( '<EditComponent />', () => {
 			expect( screen.getByLabelText( 'mock-backdrop' ) ).toBeInTheDocument();
 		} );
 
+		expect( apiClient.unlockComponent ).toHaveBeenNthCalledWith( 1, MOCK_COMPONENT_ID );
+
 		// Act.
 		let backdrop = screen.getByLabelText( 'mock-backdrop' );
 		fireEvent.click( backdrop );
 
 		// Assert.
-		expect( mockNavigateToDocument ).toHaveBeenNthCalledWith(
-			1,
-			MOCK_COMPONENT_ID,
-			{
-				mode: 'autosave',
-				selector: '[data-id="123"]',
-				setAsInitial: false,
-				shouldScroll: false,
-			},
-			false
-		);
+		expect( switchDocumentCallback ).toHaveBeenNthCalledWith( 1, {
+			id: MOCK_COMPONENT_ID,
+			mode: 'autosave',
+			selector: '[data-id="123"]',
+			setAsInitial: false,
+			shouldScroll: false,
+		} );
+
+		expect( apiClient.unlockComponent ).toHaveBeenNthCalledWith( 2, MOCK_NESTED_COMPONENT_ID );
 
 		// Act.
 		backdrop = screen.getByLabelText( 'mock-backdrop' );
@@ -188,11 +193,15 @@ describe( '<EditComponent />', () => {
 
 		// Assert.
 		expect( screen.queryByLabelText( 'mock-backdrop' ) ).not.toBeInTheDocument();
-		expect( mockNavigateToDocument ).toHaveBeenNthCalledWith( 2, MOCK_DOCUMENT_ID, {
+		expect( switchDocumentCallback ).toHaveBeenNthCalledWith( 2, {
+			id: MOCK_DOCUMENT_ID,
 			mode: 'autosave',
 			setAsInitial: false,
 			shouldScroll: false,
 		} );
+
+		expect( apiClient.unlockComponent ).toHaveBeenNthCalledWith( 3, MOCK_COMPONENT_ID );
+		expect( apiClient.unlockComponent ).toHaveBeenCalledTimes( 3 );
 	} );
 } );
 
@@ -219,6 +228,6 @@ function mockDocument( id: number, isComponent: boolean = false ) {
 
 function updateCurrentDocument() {
 	act( () => {
-		runCommand( 'editor/documents/attach-preview' );
+		__privateRunCommand( 'editor/documents/attach-preview' );
 	} );
 }

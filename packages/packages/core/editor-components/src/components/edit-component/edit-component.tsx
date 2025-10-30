@@ -1,25 +1,32 @@
 import * as React from 'react';
-import { type Dispatch, type MutableRefObject, type SetStateAction, useRef, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useState } from 'react';
 import { getV1DocumentsManager, type V1Document } from '@elementor/editor-documents';
-import { __useNavigateToDocument as useNavigateToDocument } from '@elementor/editor-documents';
 import { type V1Element } from '@elementor/editor-elements';
-import { registerDataHook } from '@elementor/editor-v1-adapters';
+import {
+	__privateListenTo as listenTo,
+	__privateRunCommand as runCommand,
+	commandEndEvent,
+} from '@elementor/editor-v1-adapters';
 import { __useSelector as useSelector } from '@elementor/store';
-import { useOnMount } from '@elementor/utils';
 
-import { selectComponentsObject, selectLoadIsPending } from '../../store/store';
+import { apiClient } from '../../api';
+import { selectComponentsObject } from '../../store/store';
 import { ComponentModal } from './component-modal';
 
-export function EditComponent() {
-	const [ currentDocument, setCurrentDocument ] = useState< V1Document | null >( null );
-	const componentsPath = useRef< [ number, string | undefined ][] >( [] );
-	const components = useSelector( selectComponentsObject );
-	const isLoading = useSelector( selectLoadIsPending );
+type DocumentsPathItem = {
+	instanceId: string | undefined;
+	document: V1Document;
+	isComponent: boolean;
+};
 
-	useHandleDocumentSwitches( setCurrentDocument, componentsPath );
+export function EditComponent() {
+	const [ componentsPath, setComponentsPath ] = useState< DocumentsPathItem[] >( [] );
+
+	useHandleDocumentSwitches( componentsPath, setComponentsPath );
 	const onBack = useNavigateBack( componentsPath );
 
-	const isComponent = ! isLoading && currentDocument ? !! components[ currentDocument.id ] : false;
+	const currentItem = componentsPath.at( -1 );
+	const { isComponent = false, document: currentDocument } = currentItem ?? {};
 
 	const widget = currentDocument?.container as V1Element;
 	const elementDom = ( widget?.view?.el?.children?.[ 0 ] ?? null ) as HTMLElement | null;
@@ -32,61 +39,68 @@ export function EditComponent() {
 }
 
 function useHandleDocumentSwitches(
-	setDocument: Dispatch< SetStateAction< V1Document | null > >,
-	path: MutableRefObject< [ number, string | undefined ][] >
+	path: DocumentsPathItem[],
+	setPath: Dispatch< SetStateAction< DocumentsPathItem[] > >
 ) {
-	useOnMount( () => {
-		const documentsManager = getV1DocumentsManager();
+	const components = useSelector( selectComponentsObject );
+	const documentsManager = getV1DocumentsManager();
 
-		registerDataHook( 'after', 'editor/documents/attach-preview', () => {
+	useEffect(() => {
+		return listenTo( commandEndEvent( 'editor/documents/attach-preview' ), () => {
+			const { document: currentDocument, isComponent: currentIsComponent } = path.at( -1 ) ?? {};
+			const { id: currentDocumentId } = currentDocument ?? {};
 			const nextDocument = documentsManager.getCurrent();
 
-			if ( ! nextDocument ) {
+			if ( ! nextDocument || nextDocument.id === currentDocumentId ) {
 				return;
 			}
 
-			setDocument( ( current: V1Document | null ) => {
-				if ( current?.id === nextDocument.id ) {
-					return current;
-				}
+			const documentIndex = path.findIndex( ( { document } ) => document.id === nextDocument.id );
 
-				const instanceId = nextDocument?.container.view.el.dataset.id;
+			if ( currentDocumentId && currentIsComponent ) {
+				apiClient.unlockComponent( currentDocumentId );
+			}
 
-				if ( ! path.current.find( ( [ id ] ) => id === nextDocument.id ) ) {
-					path.current.push( [ nextDocument.id, instanceId ] );
-				}
+			if ( documentIndex >= 0 ) {
+				setPath( path.slice( 0, documentIndex + 1 ) );
 
-				return nextDocument;
-			} );
+				return;
+			}
+
+			const instanceId = nextDocument?.container.view.el.dataset.id;
+			const newItem: DocumentsPathItem = {
+				instanceId,
+				document: nextDocument,
+				isComponent: !! components?.[ nextDocument.id ],
+			};
+
+			setPath( [ ...path, newItem ] );
 		} );
-	} );
+	}, [path, setPath] );
 }
 
-function useNavigateBack( path: MutableRefObject< [ number, string | undefined ][] > ) {
-	const switchToDocument = useNavigateToDocument();
+function useNavigateBack( path: DocumentsPathItem[] ) {
 	const documentsManager = getV1DocumentsManager();
 
-	return () => {
-		path.current.pop();
-		const [ lastDocumentId, lastDocumentInstanceId ] = path.current.at( -1 ) ?? [];
-
-		if ( lastDocumentId && lastDocumentInstanceId ) {
-			switchToDocument(
-				lastDocumentId,
-				{
-					mode: 'autosave',
-					selector: `[data-id="${ lastDocumentInstanceId }"]`,
-					setAsInitial: false,
-					shouldScroll: false,
-				},
-				false
-			);
-		} else {
-			switchToDocument( documentsManager.getInitialId(), {
+	return useCallback( () => {
+		const { document: prevDocument, instanceId: prevDocumentInstanceId } = path.at( -2 ) ?? {};
+		const { id: prevDocumentId } = prevDocument ?? {};
+		const switchToDocument = ( id: number, selector?: string ) => {
+			runCommand( 'editor/documents/switch', {
+				id,
+				selector,
 				mode: 'autosave',
 				setAsInitial: false,
 				shouldScroll: false,
 			} );
+		};
+
+		if ( prevDocumentId && prevDocumentInstanceId ) {
+			switchToDocument( prevDocumentId, `[data-id="${ prevDocumentInstanceId }"]` );
+
+			return;
 		}
-	};
+
+		switchToDocument( documentsManager.getInitialId() );
+	}, [ path, documentsManager ] );
 }

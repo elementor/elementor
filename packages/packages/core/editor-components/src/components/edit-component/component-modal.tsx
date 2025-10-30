@@ -3,15 +3,15 @@ import { type CSSProperties, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { __ } from '@wordpress/i18n';
 
+import { useCanvasDocument } from '../../hooks/use-canvas-document';
 import { useElementRect } from '../../hooks/use-element-rect';
-import { usePortal } from '../../hooks/use-portal';
 
 type ModalProps = {
 	element: HTMLElement;
 	onClose: () => void;
 };
 export function ComponentModal( { element, onClose }: ModalProps ) {
-	const portal = usePortal();
+	const canvasDocument = useCanvasDocument();
 
 	useEffect( () => {
 		const handleEsc = ( event: KeyboardEvent ) => {
@@ -20,23 +20,26 @@ export function ComponentModal( { element, onClose }: ModalProps ) {
 			}
 		};
 
-		portal?.body.addEventListener( 'keydown', handleEsc );
+		canvasDocument?.body.addEventListener( 'keydown', handleEsc );
 
 		return () => {
-			portal?.body.removeEventListener( 'keydown', handleEsc );
+			canvasDocument?.body.removeEventListener( 'keydown', handleEsc );
 		};
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ canvasDocument, onClose ] );
 
-	if ( ! portal?.body ) {
+	if ( ! canvasDocument?.body ) {
 		return null;
 	}
 
-	return createPortal( <Backdrop iframe={ portal } element={ element } onClose={ onClose } />, portal.body );
+	return createPortal(
+		<Backdrop canvas={ canvasDocument } element={ element } onClose={ onClose } />,
+		canvasDocument.body
+	);
 }
 
-function Backdrop( { iframe, element, onClose }: { iframe: HTMLDocument; element: HTMLElement; onClose: () => void } ) {
+function Backdrop( { canvas, element, onClose }: { canvas: HTMLDocument; element: HTMLElement; onClose: () => void } ) {
 	const rect = useElementRect( element );
-	const backdropStyle = {
+	const backdropStyle: CSSProperties = {
 		position: 'fixed',
 		top: 0,
 		left: 0,
@@ -46,8 +49,8 @@ function Backdrop( { iframe, element, onClose }: { iframe: HTMLDocument; element
 		zIndex: 999,
 		pointerEvents: 'painted',
 		cursor: 'pointer',
-		clipPath: getRoundedRectPath( rect, iframe.defaultView as Window, 15 ),
-	} as CSSProperties;
+		clipPath: getRoundedRectPath( rect, canvas.defaultView as Window, 15 ),
+	};
 
 	const handleKeyDown = ( event: React.KeyboardEvent ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
@@ -70,7 +73,7 @@ function Backdrop( { iframe, element, onClose }: { iframe: HTMLDocument; element
 
 function getRoundedRectPath( rect: DOMRect, viewport: Window, borderRadius: number ) {
 	const { x, y, width, height } = rect;
-	const r = Math.min( borderRadius, width / 2, height / 2 );
+	const radius = Math.min( borderRadius, width / 2, height / 2 );
 
 	const { innerWidth: vw, innerHeight: vh } = viewport;
 
@@ -79,15 +82,15 @@ function getRoundedRectPath( rect: DOMRect, viewport: Window, borderRadius: numb
 		L ${ vw } ${ vh }
 		L 0 ${ vh }
 		Z
-		M ${ x + r } ${ y }
-		L ${ x + width - r } ${ y }
-		A ${ r } ${ r } 0 0 1 ${ x + width } ${ y + r }
-		L ${ x + width } ${ y + height - r }
-		A ${ r } ${ r } 0 0 1 ${ x + width - r } ${ y + height }
-		L ${ x + r } ${ y + height }
-		A ${ r } ${ r } 0 0 1 ${ x } ${ y + height - r }
-		L ${ x } ${ y + r }
-		A ${ r } ${ r } 0 0 1 ${ x + r } ${ y }
+		M ${ x + radius } ${ y }
+		L ${ x + width - radius } ${ y }
+		A ${ radius } ${ radius } 0 0 1 ${ x + width } ${ y + radius }
+		L ${ x + width } ${ y + height - radius }
+		A ${ radius } ${ radius } 0 0 1 ${ x + width - radius } ${ y + height }
+		L ${ x + radius } ${ y + height }
+		A ${ radius } ${ radius } 0 0 1 ${ x } ${ y + height - radius }
+		L ${ x } ${ y + radius }
+		A ${ radius } ${ radius } 0 0 1 ${ x + radius } ${ y }
     	Z'
 	)`;
 
