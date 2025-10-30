@@ -53,9 +53,9 @@ class Module extends BaseModule {
 		}
 
 		add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
-		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_editor_scripts' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
 		add_action( 'elementor/frontend/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
+		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 	}
 
 	private function get_label( $key, $value ) {
@@ -175,6 +175,11 @@ class Module extends BaseModule {
 		);
 	}
 
+	/**
+	 * Enqueue editor scripts for interactions.
+	 *
+	 * @return void
+	 */
 	public function enqueue_editor_scripts() {
 		wp_add_inline_script(
 			'elementor-common',
