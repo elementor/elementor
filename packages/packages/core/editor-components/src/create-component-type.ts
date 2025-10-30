@@ -1,6 +1,8 @@
 import {
+	type BackboneModel,
 	type CreateTemplatedElementTypeOptions,
 	createTemplatedElementView,
+	type ElementModel,
 	type ElementType,
 	type ElementView,
 	type LegacyWindow,
@@ -39,10 +41,17 @@ function createComponentView(
 			if ( settings.component ) {
 				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection( settings.component );
 
+				this.collection.models.forEach( setInactiveRecursively );
+
 				settings.component = '<template data-children-placeholder></template>';
 			}
 
 			return settings;
+		}
+
+		getDomElement() {
+			// Component does not have a DOM element, so we return the first child's DOM element.
+			return this.children.findByIndex( 0 )?.getDomElement() ?? this.$el;
 		}
 
 		attachBuffer( collectionView: this, buffer: DocumentFragment ): void {
@@ -102,18 +111,34 @@ function createComponentView(
 			}
 		}
 
-		ui() {
-			return {
-				...super.ui(),
-				doubleClick: '.e-component:not(:has(.elementor-edit-area))',
-			};
-		}
-
 		events() {
 			return {
 				...super.events(),
-				'dblclick @ui.doubleClick': this.switchDocument,
+				dblclick: this.switchDocument,
+			};
+		}
+
+		attributes() {
+			return {
+				...super.attributes(),
+				'data-elementor-id': this.getComponentId().value,
 			};
 		}
 	};
+}
+
+function setInactiveRecursively( model: BackboneModel< ElementModel > ) {
+	const editSettings = model.get( 'editSettings' );
+
+	if ( editSettings ) {
+		editSettings.set( 'inactive', true );
+	}
+
+	const elements = model.get( 'elements' );
+
+	if ( elements ) {
+		elements.forEach( ( childModel ) => {
+			setInactiveRecursively( childModel );
+		} );
+	}
 }
