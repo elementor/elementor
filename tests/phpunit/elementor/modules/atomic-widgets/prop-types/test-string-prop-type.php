@@ -3,13 +3,13 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use ElementorEditorTesting\Elementor_Test_Base;
+use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_String_Prop_Type extends Elementor_Test_Base {
+class Test_String_Prop_Type extends TestCase {
 
 	public function test_enum__throws_when_not_all_values_are_strings() {
 		// Arrange.
@@ -114,11 +114,11 @@ class Test_String_Prop_Type extends Elementor_Test_Base {
 		$serialized = $prop_type->jsonSerialize();
 
 		$expected = [
-			'$type' => 'string',
+			'$$type' => 'string',
 			'value' => 'This is my initial text',
 		];
 
 		// Assert.
-		$this->assertEquals( $expected, $serialized['initial_value'] );
+		$this->assertSame( $expected, $serialized['initial_value'] );
 	}
 }

@@ -139,6 +139,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 			'settings' => (object) $this->get_settings(),
 			'shape' => (object) $this->get_shape(),
 			'dependencies' => $this->get_dependencies(),
+			'initial_value' => $this->get_initial_value(),
 		];
 	}
 

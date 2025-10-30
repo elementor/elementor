@@ -5,12 +5,13 @@ namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use ElementorEditorTesting\Elementor_Test_Base;
+use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Size_Prop_Type extends Elementor_Test_Base {
+class Test_Size_Prop_Type extends TestCase {
 
 	public function test_sanitize() {
 		// Arrange.
@@ -143,7 +144,7 @@ class Test_Size_Prop_Type extends Elementor_Test_Base {
 		];
 
 		// Assert.
-		$this->assertEquals( $expected, $serialized['initial_value'] );
+		$this->assertSame( $expected, $serialized['initial_value'] );
 	}
 
 	public function test_initial_value_is_null_when_not_set() {
