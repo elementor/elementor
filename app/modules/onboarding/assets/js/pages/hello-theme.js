@@ -5,7 +5,7 @@ import { useNavigate } from '@reach/router';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import Layout from '../components/layout/layout';
 import ThemeSelectionContentA from '../components/theme-selection-content-a';
-import ThemeSelectionContentB from '../components/theme-selection-experiment201-variant-b';
+import ThemeSelectionExperiment201VariantB from '../components/theme-selection-experiment201-variant-b';
 import ThemeSelectionExperiment202VariantB from '../components/theme-selection-experiment202-variant-b';
 import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../utils/onboarding-event-tracking';
 
@@ -360,7 +360,7 @@ export default function HelloTheme() {
 	if ( isVariant202B ) {
 		ContentComponent = ThemeSelectionExperiment202VariantB;
 	} else if ( isVariant201B ) {
-		ContentComponent = ThemeSelectionContentB;
+		ContentComponent = ThemeSelectionExperiment201VariantB;
 	}
 
 	const getLayoutClassName = () => {
