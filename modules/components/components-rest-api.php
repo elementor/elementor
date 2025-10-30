@@ -19,7 +19,6 @@ class Components_REST_API {
 	const MAX_COMPONENTS = 50;
 
 	private $repository = null;
-	private $component_lock_manager_instance = null;
 	public function register_hooks() {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
 	}
@@ -227,7 +226,7 @@ class Components_REST_API {
 
 	private function get_lock_status( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
-		$lock_data = $this->get_component_lock_manager()->is_locked( $component_id );
+		$lock_data = $this->get_component_lock_manager()->get_updated_status( $component_id );
 		$is_current_user_allow_to_edit = $this->is_current_user_allow_to_edit( $component_id );
 
 		$locked_by = '';
@@ -244,7 +243,7 @@ class Components_REST_API {
 
 	private function is_current_user_allow_to_edit( $component_id ) {
 		$current_user_id = get_current_user_id();
-		$lock_data = $this->get_component_lock_manager()->is_locked( $component_id );
+		$lock_data = $this->get_component_lock_manager()->get_updated_status( $component_id );
 
 		return ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] === (int) $current_user_id;
 	}

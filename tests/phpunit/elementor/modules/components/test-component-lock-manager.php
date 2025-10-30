@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Testing\Modules\Components;
 
-use Elementor\Modules\Components\Document_Lock_Manager;
+use Elementor\Modules\Components\Component_Lock_Manager;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Document_Lock_Manager extends Elementor_Test_Base {
+class Test_Component_Lock_Manager extends Elementor_Test_Base {
 
 	private $lock_manager;
 	private $test_user_1;
@@ -25,7 +25,7 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$this->test_user_2 = $this->factory()->create_and_get_administrator_user()->ID;
 
 		// Create lock manager instance
-		$this->lock_manager = new Document_Lock_Manager();
+		$this->lock_manager = Component_Lock_Manager::get_instance();
 
 		// Register component document type
 		Plugin::$instance->documents->register_document_type(
@@ -213,7 +213,29 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$this->assertIsNumeric( $result['lock_time'], 'Lock time should be numeric' );
 	}
 
-	
+	public function test_is_locked__auto_unlocks_expired_lock() {
+		// Arrange
+		$document_id = $this->test_document_ids['page'];
+		wp_set_current_user( $this->test_user_1 );
+		$this->lock_manager->lock( $document_id );
+
+		// Simulate expired lock by setting old timestamp
+		$old_timestamp = time() - ( 61 * 60 ); // 61 minutes ago (beyond 60 minute default)
+		update_post_meta( $document_id, '_lock_time', $old_timestamp );
+
+		// Act
+		$result = $this->lock_manager->get_updated_status( $document_id );
+
+		// Assert
+		$this->assertFalse( $result['is_locked'], 'Should auto-unlock expired lock' );
+		
+		// Verify lock metadata is cleaned up
+		$this->assertEmpty( get_post_meta( $document_id, '_lock_user', true ) );
+		$this->assertEmpty( get_post_meta( $document_id, '_lock_time', true ) );
+		$this->assertEmpty( get_post_meta( $document_id, '_edit_lock', true ) );
+	}
+
+
 	public function test_extend_lock__successfully_extends_lock() {
 		// Arrange
 		$document_id = $this->test_document_ids['page'];

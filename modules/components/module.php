@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	private static $component_lock_manager_instance = null;
 	const EXPERIMENT_NAME = 'e_components';
 	const PACKAGES        = [ 'editor-components' ];
 
