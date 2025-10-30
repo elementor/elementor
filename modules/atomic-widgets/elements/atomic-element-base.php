@@ -55,6 +55,9 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['initial_attributes'] = $this->define_initial_attributes();
 		$config['include_in_widgets_config'] = true;
 		$config['default_html_tag'] = $this->define_default_html_tag();
+		$config['interactions'] = $this->interactions ?? [];
+
+		var_dump($config['interactions']);
 
 		return $config;
 	}

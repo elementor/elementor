@@ -39,6 +39,13 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 
         const elements = ( element.elements || [] ).map( ( el ) => this.buildElement( el ) );
 
+        console.log('🔧 Atomic Model - buildElement:', {
+            elementType: element.elType,
+            elementId: id,
+            interactionsFromPHP: element.interactions,
+            interactionsType: typeof element.interactions
+        });
+
         return {
             elType: element.elType,
             widgetType: element.widgetType,
@@ -47,6 +54,7 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
             elements,
             isLocked: element.isLocked || false,
             editor_settings: element.editor_settings || {},
+            interactions: element.interactions || [],
         };
     }
 }

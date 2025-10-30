@@ -15,6 +15,14 @@ export const InteractionsProvider = ( { children }: { children: ReactNode } ) =>
 	const { element } = useElement();
 	const interactions = useElementInteractions( element.id );
 
+    React.useEffect(() => {
+		console.log('🎨 InteractionsProvider - Context Update:', {
+			elementId: element.id,
+			interactions,
+			timestamp: new Date().toISOString()
+		});
+	}, [interactions, element.id]);
+
 	const setInteractions = ( value: string ) => {
 		updateElementInteractions( {
 			elementId: element.id,
