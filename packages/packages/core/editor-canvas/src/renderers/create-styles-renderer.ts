@@ -2,8 +2,8 @@ import type { Props } from '@elementor/editor-props';
 import { type Breakpoint, type BreakpointsMap } from '@elementor/editor-responsive';
 import {
 	type CustomCss,
-	isCustomState,
-	isNativeState,
+	isClassState,
+	isPseudoState,
 	type StyleDefinition,
 	type StyleDefinitionState,
 	type StyleDefinitionType,
@@ -96,11 +96,11 @@ function createStyleWrapper( value: string = '', wrapper?: ( css: string ) => st
 				return createStyleWrapper( value, wrapper );
 			}
 
-			if ( isCustomState( state ) ) {
+			if ( isClassState( state ) ) {
 				return createStyleWrapper( `${ value }.${ state }`, wrapper );
 			}
 
-			if ( isNativeState( state ) ) {
+			if ( isPseudoState( state ) ) {
 				return createStyleWrapper( `${ value }:${ state }`, wrapper );
 			}
 

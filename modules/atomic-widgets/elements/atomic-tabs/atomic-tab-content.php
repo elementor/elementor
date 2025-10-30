@@ -66,8 +66,8 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 		];
 	}
 
-	protected function define_atomic_style_custom_states(): array {
-		$selected_state = Style_States::get_custom_states_map()['selected'];
+	protected function define_atomic_style_states(): array {
+		$selected_state = Style_States::get_class_states_map()['selected'];
 
 		return [ $selected_state ];
 	}
@@ -109,7 +109,7 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 				)
 				->add_variant(
 					Style_Variant::make()
-						->set_state( Style_States::CUSTOM_SELECTED )
+						->set_state( Style_States::SELECTED )
 						->add_prop( 'opacity', $visible_opacity )
 				),
 		];

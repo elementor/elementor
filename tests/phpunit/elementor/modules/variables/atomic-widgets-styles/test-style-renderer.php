@@ -159,7 +159,7 @@ class Test_Style_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
-	public function test_render__applies_native_and_custom_states() {
+	public function test_render__applies_pseudo_and_class_states() {
 		// Arrange.
 		$styles = [
 			[
@@ -172,7 +172,7 @@ class Test_Style_Renderer extends Elementor_Test_Base {
 					],
 					[
 					'props' => [ 'color' => '#222' ],
-						'meta' => [ 'state' => Style_States::CUSTOM_SELECTED ],
+						'meta' => [ 'state' => Style_States::SELECTED ],
 					],
 				],
 			],

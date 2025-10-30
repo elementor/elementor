@@ -122,9 +122,9 @@ class Styles_Renderer {
 		}
 
 		if ( isset( $variant['meta']['state'] ) ) {
-			if ( Style_States::is_custom_state( $variant['meta']['state'] ) ) {
+			if ( Style_States::is_class_state( $variant['meta']['state'] ) ) {
 				$state = '.' . $variant['meta']['state'];
-			} elseif ( Style_States::is_native_state( $variant['meta']['state'] ) ) {
+			} elseif ( Style_States::is_pseudo_state( $variant['meta']['state'] ) ) {
 				$state = ':' . $variant['meta']['state'];
 			}
 		} else {

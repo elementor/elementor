@@ -1,6 +1,6 @@
 import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from 'react';
 import { type BreakpointId, getBreakpoints } from '@elementor/editor-responsive';
-import { isCustomState, type StyleDefinitionCustomState } from '@elementor/editor-styles';
+import { isClassState, type StyleDefinitionClassState } from '@elementor/editor-styles';
 import { type StylesProvider, stylesRepository } from '@elementor/editor-styles-repository';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 
@@ -83,15 +83,15 @@ function sortByBreakpoint( breakpointsOrder: BreakpointId[] ) {
 
 function sortByStateType( { state: stateA }: StyleItem, { state: stateB }: StyleItem ) {
 	if (
-		isCustomState( stateA as StyleDefinitionCustomState ) &&
-		! isCustomState( stateB as StyleDefinitionCustomState )
+		isClassState( stateA as StyleDefinitionClassState ) &&
+		! isClassState( stateB as StyleDefinitionClassState )
 	) {
 		return -1;
 	}
 
 	if (
-		! isCustomState( stateA as StyleDefinitionCustomState ) &&
-		isCustomState( stateB as StyleDefinitionCustomState )
+		! isClassState( stateA as StyleDefinitionClassState ) &&
+		isClassState( stateB as StyleDefinitionClassState )
 	) {
 		return 1;
 	}

@@ -2,8 +2,8 @@ import { isValidElement, type ReactNode, useEffect, useState } from 'react';
 import { type PropsResolver } from '@elementor/editor-canvas';
 import { type PropKey } from '@elementor/editor-props';
 import {
-	isCustomState,
-	isNativeState,
+	isClassState,
+	isPseudoState,
 	type StyleDefinitionState,
 	type StyleDefinitionVariant,
 } from '@elementor/editor-styles';
@@ -82,11 +82,11 @@ export const normalizeInheritanceItem = async (
 };
 
 function getLabel( { label, state }: { label: string; state: StyleDefinitionState } ) {
-	if ( isCustomState( state ) ) {
+	if ( isClassState( state ) ) {
 		return `${ label }.${ state }`;
 	}
 
-	if ( isNativeState( state ) ) {
+	if ( isPseudoState( state ) ) {
 		return `${ label }:${ state }`;
 	}
 

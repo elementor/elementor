@@ -7,9 +7,9 @@ class Style_States {
 	const ACTIVE = 'active';
 	const FOCUS = 'focus';
 
-	const CUSTOM_SELECTED = 'e--selected';
+	const SELECTED = 'e--selected';
 
-	public static function get_native_states(): array {
+	public static function get_pseudo_states(): array {
 		return [
 			self::HOVER,
 			self::ACTIVE,
@@ -17,26 +17,26 @@ class Style_States {
 		];
 	}
 
-	public static function get_custom_states(): array {
+	public static function get_class_states(): array {
 		return [
-			self::CUSTOM_SELECTED,
+			self::SELECTED,
 		];
 	}
 
 	public static function get_valid_states(): array {
 		return [
-			...self::get_native_states(),
-			...self::get_custom_states(),
+			...self::get_pseudo_states(),
+			...self::get_class_states(),
 			null,
 		];
 	}
 
-	public static function is_native_state( string $state ): bool {
-		return in_array( $state, self::get_native_states(), true );
+	public static function is_pseudo_state( string $state ): bool {
+		return in_array( $state, self::get_pseudo_states(), true );
 	}
 
-	public static function is_custom_state( string $state ): bool {
-		return in_array( $state, self::get_custom_states(), true );
+	public static function is_class_state( string $state ): bool {
+		return in_array( $state, self::get_class_states(), true );
 	}
 
 	public static function is_valid_state( $state ): bool {
@@ -47,11 +47,11 @@ class Style_States {
 		return is_string( $state ) && in_array( $state, self::get_valid_states(), true );
 	}
 
-	public static function get_custom_states_map(): array {
+	public static function get_class_states_map(): array {
 		return [
 			'selected' => [
 				'name' => 'selected',
-				'value' => self::CUSTOM_SELECTED,
+				'value' => self::SELECTED,
 			],
 		];
 	}

@@ -78,15 +78,15 @@ export function CssClassMenu( { popupState, anchorEl, fixed }: CssClassMenuProps
 					/>
 				);
 			} ) }
-			<CustomStatesMenu closeMenu={ popupState.close } />
+			<ClassStatesMenu closeMenu={ popupState.close } />
 		</Menu>
 	);
 }
 
-function CustomStatesMenu( { closeMenu }: { closeMenu: () => void } ) {
-	const { customStates, elementTitle } = useCustomStates();
+function ClassStatesMenu( { closeMenu }: { closeMenu: () => void } ) {
+	const { elementStates, elementTitle } = useElementStates();
 
-	if ( ! customStates.length ) {
+	if ( ! elementStates.length ) {
 		return null;
 	}
 
@@ -99,7 +99,7 @@ function CustomStatesMenu( { closeMenu }: { closeMenu: () => void } ) {
 			<MenuSubheader sx={ { typography: 'caption', color: 'text.secondary', pb: 0.5, pt: 1 } }>
 				{ customTitle }
 			</MenuSubheader>
-			{ customStates.map( ( state ) => {
+			{ elementStates.map( ( state ) => {
 				return (
 					<StateMenuItem
 						key={ state.key }
@@ -113,25 +113,25 @@ function CustomStatesMenu( { closeMenu }: { closeMenu: () => void } ) {
 	);
 }
 
-const CUSTOM_STATES_MAP: Record< string, { label: string } > = {
+const CLASS_STATES_MAP: Record< string, { label: string } > = {
 	selected: {
 		label: __( 'selected', 'elementor' ),
 	},
 };
 
-export function useCustomStates() {
+export function useElementStates() {
 	const { elementType } = useElement();
 
 	const { styleStates = [] } = elementType;
 
-	const customStates = styleStates.map( ( { value, name } ) => ( {
+	const elementStates = styleStates.map( ( { value, name } ) => ( {
 		key: value,
 		value,
-		label: CUSTOM_STATES_MAP[ value ]?.label ?? name,
+		label: CLASS_STATES_MAP[ value ]?.label ?? name,
 	} ) );
 
 	return {
-		customStates,
+		elementStates,
 		elementTitle: elementType.title,
 	};
 }
