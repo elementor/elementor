@@ -231,30 +231,39 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
+		$start = is_rtl() ? 'right' : 'left';
+		$end = ! is_rtl() ? 'right' : 'left';
+
 		$this->add_responsive_control(
 			'position',
 			[
 				'label' => esc_html__( 'Icon Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'default' => 'top',
-				'mobile_default' => 'top',
+				'default' => 'block-start',
+				'mobile_default' => 'block-start',
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
-						'icon' => 'eicon-h-align-left',
+					'inline-start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => "eicon-h-align-$start",
 					],
-					'top' => [
+					'inline-end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => "eicon-h-align-$end",
+					],
+					'block-start' => [
 						'title' => esc_html__( 'Top', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
-						'icon' => 'eicon-h-align-right',
-					],
-					'bottom' => [
+					'block-end' => [
 						'title' => esc_html__( 'Bottom', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
 					],
+				],
+				'classes_dictionary' => [
+					'left' => is_rtl() ? 'inline-end' : 'inline-start',
+					'right' => is_rtl() ? 'inline-start' : 'inline-end',
+					'top' => 'block-start',
+					'bottom' => 'block-end',
 				],
 				'prefix_class' => 'elementor%s-position-',
 				'condition' => [
@@ -293,7 +302,7 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'condition' => [
 					'selected_icon[value]!' => '',
-					'position' => [ 'left', 'right' ],
+					'position' => [ 'left', 'right', 'inline-start', 'inline-end' ],
 				],
 			]
 		);

@@ -5,25 +5,25 @@
 @mixin icon-position($device) {
 	&.elementor#{$device}-position- {
 
-		&right {
+		&inline-end {
 
 			.elementor-icon-box-wrapper {
 				text-align: end;
-				flex-direction: getValueByDirection(row-reverse, row);
+				flex-direction: row-reverse;
 				gap: var(--icon-box-icon-margin, 15px);
 			}
 		}
 
-		&left {
+		&inline-start {
 
 			.elementor-icon-box-wrapper {
 				text-align: start;
-				flex-direction: getValueByDirection(row, row-reverse);
+				flex-direction: row;
 				gap: var(--icon-box-icon-margin, 15px);
 			}
 		}
 
-		&top {
+		&block-start {
 
 			.elementor-icon-box-wrapper {
 				text-align: center;
@@ -33,7 +33,7 @@
 			}
 		}
 
-		&bottom {
+		&block-end {
 
 			.elementor-icon-box-wrapper {
 				text-align: center;
@@ -103,8 +103,8 @@
 
 		&.elementor-position- {
 
-			&left,
-			&right {
+			&inline-start,
+			&inline-end {
 
 				.elementor-icon-box-icon {
 					flex-direction: column;
