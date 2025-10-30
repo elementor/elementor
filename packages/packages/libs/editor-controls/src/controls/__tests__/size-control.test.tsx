@@ -579,7 +579,10 @@ describe( 'SizeControl', () => {
 			} as unknown as RefObject< HTMLDivElement | null >;
 
 			// Act.
-			renderControl( <SizeControl units={ mockLengthUnits() } extendedOptions={ [ 'auto' ] } anchorRef={ anchorEl } />, props );
+			renderControl(
+				<SizeControl units={ mockLengthUnits() } extendedOptions={ [ 'auto' ] } anchorRef={ anchorEl } />,
+				props
+			);
 
 			const sizeInput = screen.getByRole( 'spinbutton' );
 
