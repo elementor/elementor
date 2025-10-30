@@ -47,10 +47,8 @@ class Html_Class_Modifier_Processor implements Css_Processor_Interface {
 		foreach ( $css_class_modifiers as $index => $modifier ) {
 			$type = $modifier['type'] ?? 'unknown';
 			$mappings_count = count( $modifier['mappings'] ?? [] );
-			error_log( "CSS PIPELINE DEBUG [HTML_CLASS_MODIFIER]: Modifier #{$index}: type='{$type}', mappings={$mappings_count}" );
 
 			if ( $type === 'flattening' && ! empty( $modifier['mappings'] ) ) {
-				error_log( 'CSS PIPELINE DEBUG [HTML_CLASS_MODIFIER]: Flattening mappings: ' . json_encode( $modifier['mappings'] ) );
 			}
 		}
 

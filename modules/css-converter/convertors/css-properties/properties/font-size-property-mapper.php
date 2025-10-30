@@ -66,7 +66,6 @@ class Font_Size_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		// Don't create fake defaults - return null to indicate parsing failure
 		// This allows CSS variables and other unparseable values to be handled properly
-		error_log( "CSS Converter: Cannot parse font-size value: '{$value}'" );
 		return null;
 	}
 }

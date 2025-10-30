@@ -20,11 +20,9 @@ class Global_Classes_Detection_Service
             $selector = $rule['selector'] ?? '';
 
             // DEBUG: Log all selectors being processed
-            error_log("CSS Converter: Processing selector: '{$selector}'");
 
             // SKIP compound selectors (e.g., .class1.class2) - they should not become global classes
             if ($this->is_compound_class_selector($selector) ) {
-                error_log("CSS Converter: Skipping '{$selector}' - compound selector");
                 continue;
             }
 
@@ -32,19 +30,16 @@ class Global_Classes_Detection_Service
             $class_names = $this->extract_all_class_names_from_selector($selector);
 
             if (empty($class_names) ) {
-                error_log("CSS Converter: Skipping '{$selector}' - no class names found");
                 continue;
             }
 
             // Process each class name found in the selector
             foreach ( $class_names as $class_name ) {
                 if ($this->should_skip_class_name($class_name) ) {
-                    error_log("CSS Converter: Skipping class '{$class_name}' - should skip");
                     continue;
                 }
 
                 if ($this->is_class_name_too_long($class_name) ) {
-                    error_log("CSS Converter: Skipping class '{$class_name}' - too long");
                     continue;
                 }
 
@@ -57,10 +52,8 @@ class Global_Classes_Detection_Service
                     'source' => 'css-converter',
                     ];
                     
-                    error_log("CSS Converter: Detected SIMPLE class '{$class_name}' with " . count($rule['properties'] ?? []) . " properties");
                     
                     if ( 'copy' === $class_name ) {
-                        error_log( 'CSS CONVERTER [COPY DEBUG]: SIMPLE .copy detected with properties: ' . wp_json_encode( $rule['properties'] ?? [] ) );
                     }
                 } elseif (! isset($detected_classes[ $class_name ]) ) {
                     $detected_classes[ $class_name ] = [
@@ -69,14 +62,11 @@ class Global_Classes_Detection_Service
                     'source' => 'css-converter',
                     ];
                     
-                    error_log("CSS Converter: Detected COMPLEX class '{$class_name}' from '{$selector}' with " . count($rule['properties'] ?? []) . " properties");
                     
                     if ( 'copy' === $class_name ) {
-                        error_log( 'CSS CONVERTER [COPY DEBUG]: COMPLEX copy detected from selector: ' . $selector . ' with properties: ' . wp_json_encode( $rule['properties'] ?? [] ) );
                     }
                 } else {
                     if ( 'copy' === $class_name ) {
-                        error_log( 'CSS CONVERTER [COPY DEBUG]: copy ALREADY EXISTS, skipping selector: ' . $selector );
                     }
                 }
             }
@@ -137,13 +127,11 @@ class Global_Classes_Detection_Service
         // Pattern: \.([a-zA-Z0-9_-]+) - matches .classname
         preg_match_all('/\.([a-zA-Z0-9_-]+)/', $selector, $matches);
         
-        error_log("CSS CONVERTER DEBUG [EXTRACT]: Selector '{$selector}' -> matches: " . json_encode($matches[1] ?? []));
         
         if (! empty($matches[1]) ) {
             $class_names = array_unique($matches[1]);
         }
         
-        error_log("CSS CONVERTER DEBUG [EXTRACT]: Final class names: " . implode(', ', $class_names));
         
         return $class_names;
     }
@@ -171,20 +159,15 @@ class Global_Classes_Detection_Service
         $filtered = [];
         $filtered_out_count = 0;
 
-        error_log("CSS CONVERTER DEBUG [FILTER]: Detected classes: " . implode(', ', array_keys($detected_classes)));
-        error_log("CSS CONVERTER DEBUG [FILTER]: Used classes: " . implode(', ', $used_classes));
 
         foreach ( $detected_classes as $class_name => $class_data ) {
             if (in_array($class_name, $used_classes, true) ) {
                 $filtered[ $class_name ] = $class_data;
-                error_log("CSS CONVERTER DEBUG [FILTER]: KEPT class '{$class_name}'");
             } else {
                 ++$filtered_out_count;
-                error_log("CSS CONVERTER DEBUG [FILTER]: FILTERED OUT class '{$class_name}'");
             }
         }
 
-        error_log("CSS Converter: Filtered " . count($detected_classes) . " detected classes to " . count($filtered) . " used classes ({$filtered_out_count} filtered out)");
 
         return $filtered;
     }

@@ -1123,15 +1123,6 @@ class Unified_Css_Processor {
 		preg_match_all( '/<style[^>]*>(.*?)<\/style>/is', $html, $matches );
 		if ( ! empty( $matches[1] ) ) {
 			foreach ( $matches[1] as $index => $css_content ) {
-				// DEBUG: Check if inline styles contain reset CSS
-				$has_reset_css = strpos( $css_content, 'html, body, div, span' ) !== false;
-				error_log( "INLINE_STYLE: Tag #{$index} - Size: " . strlen( $css_content ) . " bytes, Contains reset CSS: " . ( $has_reset_css ? 'YES' : 'NO' ) );
-				
-				if ( $has_reset_css ) {
-					$reset_start = strpos( $css_content, 'html, body, div, span' );
-					$reset_sample = substr( $css_content, $reset_start, 300 );
-					error_log( "INLINE_STYLE: Reset CSS found in tag #{$index}: " . $reset_sample );
-				}
 				
 				$html_style_tags[] = [
 					'type' => 'inline_style_tag',
@@ -1180,14 +1171,6 @@ class Unified_Css_Processor {
 						$found_pattern = $pattern;
 						break;
 					}
-				}
-				
-				error_log( "CSS_FETCH: {$css_url} - Size: " . strlen( $css_content ) . " bytes, Contains reset CSS: " . ( $has_reset_css ? "YES ({$found_pattern})" : 'NO' ) );
-				
-				if ( $has_reset_css ) {
-					$reset_start = strpos( $css_content, $found_pattern );
-					$reset_sample = substr( $css_content, $reset_start, 300 );
-					error_log( "CSS_FETCH: Reset CSS found in {$css_url}: " . $reset_sample );
 				}
 				
 				$css_sources[] = [
@@ -1246,12 +1229,6 @@ class Unified_Css_Processor {
 				continue;
 			}
 
-			// DEBUG: Check if this source contains reset CSS
-			$has_reset_css = strpos( $content, 'html,body,div,span' ) !== false;
-			if ( $has_reset_css ) {
-				error_log( "CSS_CONCATENATION: Source '{$source_name}' contains reset CSS" );
-			}
-
 			try {
 				// FIXED: Sanitize CSS to remove common CSS hacks before parsing
 				$sanitized_content = $this->sanitize_css_for_parsing( $content );
@@ -1263,10 +1240,6 @@ class Unified_Css_Processor {
 
 				$successful_css .= $sanitized_content . "\n";
 				++$successful_count;
-				
-				if ( $has_reset_css ) {
-					error_log( "CSS_CONCATENATION: Successfully added reset CSS from '{$source_name}'" );
-				}
 			} catch ( \Exception $e ) {
 				++$failed_count;
 				$failed_sources[] = [
@@ -1275,16 +1248,8 @@ class Unified_Css_Processor {
 					'error' => $e->getMessage(),
 					'size' => strlen( $content ),
 				];
-				
-				if ( $has_reset_css ) {
-					error_log( "CSS_CONCATENATION: FAILED to add reset CSS from '{$source_name}': " . $e->getMessage() );
-				}
 			}
 		}
-
-		// DEBUG: Check if final concatenated CSS contains reset CSS
-		$final_has_reset = strpos( $successful_css, 'html,body,div,span' ) !== false;
-		error_log( "CSS_CONCATENATION: Final CSS contains reset CSS: " . ( $final_has_reset ? 'YES' : 'NO' ) );
 
 		return $successful_css;
 	}

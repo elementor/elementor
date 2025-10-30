@@ -102,7 +102,6 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 		$overflow_styles_when_maximum_number_of_global_classes_has_been_reached = $global_classes_result['overflow_styles_when_maximum_number_of_global_classes_has_been_reached'] ?? [];
 
 		if ( ! empty( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) ) {
-			error_log( 'CSS PIPELINE DEBUG [GLOBAL_CLASSES]: ' . count( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) . ' overflow styles when maximum number of global classes has been reached will be applied directly to widgets' );
 			// Store overflow styles for direct application in Style Collection Processor
 			$context->set_metadata( 'overflow_styles_when_maximum_number_of_global_classes_has_been_reached', $overflow_styles_when_maximum_number_of_global_classes_has_been_reached );
 		}

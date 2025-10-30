@@ -72,7 +72,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 		editor = new EditorPage( page, testInfo );
 
 		// Wait for editor to load
-		await editor.waitForEditorToLoad();
+		await editor.waitForPanelToLoad();
 
 		// Get the editor frame
 		const editorFrame = editor.getPreviewFrame();
@@ -90,7 +90,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 		await expect( container ).toHaveCSS( 'background-color', 'rgb(255, 105, 0)' ); // --e-global-color-secondary
 	} );
 
-	test( 'CSS Variables with Fallback Values - Properly Handled', async ( { page, request } ) => {
+	test( 'CSS Variables with Fallback Values - Properly Handled', async ( { page, request }, testInfo ) => {
 		const htmlContent = `
 			<style>
 				.fallback-test {
@@ -126,7 +126,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 		await expect( container ).toHaveCSS( 'background-color', 'rgba(0, 255, 0, 0.5)' ); // Fallback: rgba(0, 255, 0, 0.5)
 	} );
 
-	test( 'Mixed CSS Variables and Regular Colors - Both Work Correctly', async ( { page, request } ) => {
+	test( 'Mixed CSS Variables and Regular Colors - Both Work Correctly', async ( { page, request }, testInfo ) => {
 		const htmlContent = `
 			<style>
 				:root {
@@ -181,7 +181,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 		await expect( regularContainer ).toHaveCSS( 'background-color', 'rgba(0, 255, 0, 0.3)' ); // Regular rgba
 	} );
 
-	test( 'Elementor System Variables - Properly Preserved', async ( { page, request } ) => {
+	test( 'Elementor System Variables - Properly Preserved', async ( { page, request }, testInfo ) => {
 		const htmlContent = `
 			<style>
 				:root {
@@ -218,7 +218,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 		await expect( container ).toHaveCSS( 'background-color', 'rgb(255, 255, 255)' ); // --e-theme-primary-bg
 	} );
 
-	test( 'Custom CSS Variables - Handled with Warnings', async ( { page, request } ) => {
+	test( 'Custom CSS Variables - Handled with Warnings', async ( { page, request }, testInfo ) => {
 		const htmlContent = `
 			<style>
 				:root {
@@ -260,7 +260,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 		await expect( container ).toHaveCSS( 'background-color', 'rgb(13, 110, 253)' ); // --bootstrap-primary
 	} );
 
-	test( 'Complex Color Properties with CSS Variables', async ( { page, request } ) => {
+	test( 'Complex Color Properties with CSS Variables', async ( { page, request }, testInfo ) => {
 		const htmlContent = `
 			<style>
 				:root {
@@ -309,7 +309,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 		// should not fail and basic properties should work
 	} );
 
-	test( 'Invalid CSS Variables - Gracefully Handled', async ( { page, request } ) => {
+	test( 'Invalid CSS Variables - Gracefully Handled', async ( { page, request }, testInfo ) => {
 		const htmlContent = `
 			<style>
 				.invalid-vars-test {
@@ -353,7 +353,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 		await expect( fallbackParagraph ).toHaveCSS( 'color', 'rgb(255, 0, 0)' ); // Fallback value
 	} );
 
-	test( 'CSS Variables in Different Property Types', async ( { page, request } ) => {
+	test( 'CSS Variables in Different Property Types', async ( { page, request }, testInfo ) => {
 		const htmlContent = `
 			<style>
 				:root {

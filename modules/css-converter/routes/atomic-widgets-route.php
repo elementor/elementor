@@ -280,9 +280,7 @@ class Atomic_Widgets_Route {
 			}
 		}
 
-		error_log( "CSS_URL_EXTRACTION: Found " . count( $stylesheet_urls ) . " stylesheet URLs from {$base_url}" );
 		foreach ( $stylesheet_urls as $index => $url ) {
-			error_log( "CSS_URL_EXTRACTION: [{$index}] {$url}" );
 		}
 
 		preg_match_all( '/<link[^>]+href=["\']([^"\']+)["\'][^>]*rel=["\']stylesheet["\'][^>]*>/i', $html, $reversed_link_matches );

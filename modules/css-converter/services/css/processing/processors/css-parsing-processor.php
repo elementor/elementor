@@ -45,13 +45,11 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 
 		// DEBUG: Check if reset CSS is in the raw CSS
 		$has_reset_css = strpos( $css, 'html, body, div, span' ) !== false;
-		error_log( "CSS_PARSING_PROCESSOR: Raw CSS size: " . strlen( $css ) . " bytes, contains reset CSS: " . ( $has_reset_css ? 'YES' : 'NO' ) );
 		
 		if ( $has_reset_css ) {
 			// Extract a sample of the reset CSS for debugging
 			$reset_start = strpos( $css, 'html, body, div, span' );
 			$reset_sample = substr( $css, $reset_start, 200 );
-			error_log( "CSS_PARSING_PROCESSOR: Reset CSS sample: " . $reset_sample );
 		}
 
 		// Beautify CSS before parsing for better readability and debugging
@@ -68,7 +66,6 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 		$context->add_statistic( 'beautified_css_size_bytes', strlen( $beautified_css ) );
 
 		// DEBUG: Log CSS rules after parsing
-		error_log( 'CSS PIPELINE DEBUG [CSS_PARSING]: Parsed ' . count( $css_rules ) . ' CSS rules' );
 
 		// DEBUG: Check for .loading selectors
 		$loading_selectors = [];
@@ -89,10 +86,8 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 
 			// Check for our target selectors
 			if ( $selector === $target_selector ) {
-				error_log( 'CSS_PARSING_PROCESSOR: Found target selector with ' . $properties_count . ' properties' );
 				foreach ( $rule['properties'] ?? [] as $prop ) {
 					if ( in_array( $prop['property'] ?? '', [ 'font-size', 'line-height', 'color' ], true ) ) {
-						error_log( '  ' . ( $prop['property'] ?? 'unknown' ) . ': ' . ( $prop['value'] ?? 'unknown' ) );
 					}
 				}
 			}
@@ -101,11 +96,9 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 				strpos( $selector, '.copy' ) !== false ||
 				strpos( $selector, '.loading' ) !== false ) {
 				$target_selectors_found[] = $selector;
-				error_log( "CSS PIPELINE DEBUG [CSS_PARSING]: TARGET FOUND - Rule #{$index}: '{$selector}' with {$properties_count} properties" );
 			}
 		}
 
-		error_log( 'CSS PIPELINE DEBUG [CSS_PARSING]: Found ' . count( $target_selectors_found ) . ' target selectors: ' . implode( ', ', $target_selectors_found ) );
 
 		return $context;
 	}
@@ -134,19 +127,8 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 
 			$beautified_size = strlen( $beautified_css );
 
-			error_log( sprintf(
-				'CSS Beautifier: Successfully beautified CSS (original: %d bytes, beautified: %d bytes)',
-				$original_size,
-				$beautified_size
-			) );
-
 			return $beautified_css;
 		} catch ( \Exception $e ) {
-			error_log( sprintf(
-				'CSS Beautifier: Failed to beautify CSS (size: %d bytes). Error: %s. Falling back to original CSS.',
-				$original_size,
-				$e->getMessage()
-			) );
 
 			return $css;
 		}
@@ -199,13 +181,10 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			$element_selectors = ['html', 'body', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre', 'abbr', 'address', 'cite', 'code', 'del', 'dfn', 'em', 'img', 'ins', 'kbd', 'q', 'samp', 'small', 'strong', 'sub', 'sup', 'var', 'b', 'i', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'fieldset', 'form', 'label', 'legend', 'table', 'caption', 'tbody', 'tfoot', 'thead', 'tr', 'th', 'td', 'article', 'aside', 'canvas', 'details', 'figcaption', 'figure', 'footer', 'header', 'hgroup', 'menu', 'nav', 'section', 'summary', 'time', 'mark', 'audio', 'video'];
 			
 			if ( in_array( trim( $selector_string ), $element_selectors, true ) ) {
-				error_log( "CSS Parser: *** ELEMENT SELECTOR FOUND *** '{$selector_string}' with " . count( $properties ) . " properties{$media_debug}" );
 				if ( count( $properties ) > 0 ) {
 					$property_names = array_map( function( $prop ) { return $prop['property'] ?? 'unknown'; }, $properties );
-					error_log( "CSS Parser: Element properties: " . implode( ', ', $property_names ) );
 				}
 			} else {
-				error_log( "CSS Parser: Parsed selector '{$selector_string}' with " . count( $properties ) . " properties{$media_debug}" );
 			}
 
 			if ( ! empty( $properties ) ) {
@@ -223,7 +202,6 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			} else {
 				// DEBUG: Log selectors with no properties (might be reset CSS)
 				if ( strpos( $selector_string, 'html' ) !== false || strpos( $selector_string, 'body' ) !== false ) {
-					error_log( "CSS Parser: SKIPPED selector '{$selector_string}' - NO PROPERTIES" );
 				}
 			}
 		}

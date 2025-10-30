@@ -1,22 +1,44 @@
 
 
-## css-variables/ (3 passed, 8 failed)
+## css-variables/ (0 passed, 8 failed)
 
 ### Failed Tests:
-- css-variables-color-handling.test.ts:42 - Basic CSS variables preservation
-- css-variables-color-handling.test.ts:85 - CSS variables in background properties
-- css-variables-color-handling.test.ts:127 - Nested CSS variables handling
-- css-variables-color-handling.test.ts:185 - Elementor system variables preserved
-- css-variables-color-handling.test.ts:222 - Custom CSS variables handled with warnings
-- css-variables-color-handling.test.ts:264 - Complex color properties with CSS variables
-- css-variables-color-handling.test.ts:313 - Invalid CSS variables gracefully handled
-- css-variables-color-handling.test.ts:357 - CSS variables in different property types
+- css-variables-color-handling.test.ts:41 - Elementor Global Color Variables - Preserved and Applied
+- css-variables-color-handling.test.ts:93 - CSS Variables with Fallback Values - Properly Handled
+- css-variables-color-handling.test.ts:129 - Mixed CSS Variables and Regular Colors - Both Work Correctly
+- css-variables-color-handling.test.ts:184 - Elementor System Variables - Properly Preserved
+- css-variables-color-handling.test.ts:221 - Custom CSS Variables - Handled with Warnings
+- css-variables-color-handling.test.ts:263 - Complex Color Properties with CSS Variables
+- css-variables-color-handling.test.ts:312 - Invalid CSS Variables - Gracefully Handled
+- css-variables-color-handling.test.ts:356 - CSS Variables in Different Property Types
+
+### Issues Fixed:
+- ✅ Fixed variables API response format (converted associative array to numeric array)
+- ✅ Fixed missing testInfo parameter in test functions
+- ✅ Fixed waitForEditorToLoad → waitForPanelToLoad method name
+
+### Remaining Issues:
+- ❌ CSS variables not creating global classes (global_classes_created = 0)
+- ❌ CSS variables not being applied to widgets in preview
 
 
-## variables/ (4 passed, 3 failed, 1 skipped)
+## variables/ (11 passed, 0 failed, 1 skipped)
 
-### Failed Tests:
-- nested-variables.test.ts:136 - Complex theme system with multiple scopes
-- nested-variables.test.ts:172 - Whitespace normalization in values
-- nested-variables.test.ts:221 - Suffix collision detection
+### Status: ✅ All basic issues fixed!
+
+### Previously Failed (Now Passing):
+- ✅ nested-variables.test.ts:45 - should extract and rename nested variables from CSS
+- ✅ nested-variables.test.ts:64 - should handle identical color values and reuse variables
+- ✅ nested-variables.test.ts:103 - should normalize color formats (hex to RGB)
+- ✅ nested-variables.test.ts:118 - should handle class selector variables
+- ✅ nested-variables.test.ts:136 - Complex theme system with multiple scopes
+- ✅ nested-variables.test.ts:149 - should handle empty CSS gracefully
+- ✅ nested-variables.test.ts:159 - should handle CSS with no variables
+- ✅ nested-variables.test.ts:172 - Whitespace normalization in values
+- ✅ nested-variables.test.ts:187 - should track statistics correctly
+- ✅ nested-variables.test.ts:205 - should return logs for debugging
+- ✅ nested-variables.test.ts:221 - Suffix collision detection
+
+### Skipped:
+- nested-variables.test.ts:85 - should handle media query variables as separate scope (TODO: Media Query Support)
 

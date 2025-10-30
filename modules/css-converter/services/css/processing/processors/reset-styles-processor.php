@@ -46,11 +46,9 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 		$unified_style_manager = $context->get_metadata( 'unified_style_manager' );
 
 		// DEBUG: Log CSS rules before processing
-		error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: Received " . count( $css_rules ) . " CSS rules" );
 		foreach ( $css_rules as $index => $rule ) {
 			$selector = $rule['selector'] ?? 'unknown';
 			$properties_count = count( $rule['properties'] ?? [] );
-			error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: Rule #{$index}: '{$selector}' with {$properties_count} properties" );
 		}
 
 		// Create unified_style_manager if it doesn't exist (early execution)
@@ -118,7 +116,6 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 		
 		// DEBUG: Log what rules are being removed
 		$removed_count = count( $css_rules ) - count( $remaining_rules );
-		error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: Removing {$removed_count} element selector rules" );
 		
 		// SPECIFIC DEBUG: Check if our target selectors are being removed
 		$target_selectors_removed = [];
@@ -126,24 +123,20 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 			foreach ( $css_rules as $rule ) {
 				$selector = $rule['selector'] ?? 'unknown';
 				if ( isset( $element_rules[ $selector ] ) ) {
-					error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: Removing element rule: '{$selector}'" );
 					
 					// Check if this is one of our target selectors
 					if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false || 
 						 strpos( $selector, '.copy' ) !== false || 
 						 strpos( $selector, '.loading' ) !== false ) {
 						$target_selectors_removed[] = $selector;
-						error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: WARNING - TARGET SELECTOR REMOVED: '{$selector}'" );
 					}
 				}
 			}
 		}
 		
 		if ( ! empty( $target_selectors_removed ) ) {
-			error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: CRITICAL - Removed " . count( $target_selectors_removed ) . " target selectors: " . implode( ', ', $target_selectors_removed ) );
 		}
 		
-		error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: After processing " . count( $remaining_rules ) . " CSS rules remain" );
 		
 		$context->set_metadata( 'css_rules', $remaining_rules );
 

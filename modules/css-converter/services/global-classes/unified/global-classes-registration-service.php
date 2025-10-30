@@ -274,7 +274,6 @@ class Global_Classes_Registration_Service {
 			if ( ! in_array( $class_name, $successfully_converted_classes, true ) ) {
 				$filtered_overflow[ $class_name ] = $class_data;
 			} else {
-				error_log( "CSS Converter: Excluding '{$class_name}' from overflow styles - successfully converted to global class" );
 			}
 		}
 
@@ -285,7 +284,6 @@ class Global_Classes_Registration_Service {
 		$available_slots = self::MAX_CLASSES_LIMIT - $existing_count;
 
 		if ( $available_slots <= 0 ) {
-			error_log( "CSS Converter: Global classes limit reached ({$existing_count}/" . self::MAX_CLASSES_LIMIT . '), all ' . count( $new_classes ) . ' classes will use direct application' );
 			return [
 				'classes_for_global' => [],
 				'overflow_styles_when_maximum_number_of_global_classes_has_been_reached' => $new_classes,
@@ -302,7 +300,6 @@ class Global_Classes_Registration_Service {
 		$classes_for_global = array_slice( $new_classes, 0, $available_slots, true );
 		$overflow_styles_when_maximum_number_of_global_classes_has_been_reached = array_slice( $new_classes, $available_slots, null, true );
 
-		error_log( 'CSS Converter: ' . count( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) . ' classes exceed global limit, will use direct application' );
 
 		return [
 			'classes_for_global' => $classes_for_global,

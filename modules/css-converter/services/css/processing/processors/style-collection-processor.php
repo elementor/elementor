@@ -85,7 +85,6 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 
 		if ( ! empty( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) ) {
 			$overflow_styles_when_maximum_number_of_global_classes_has_been_reached_collected = $this->collect_overflow_styles_when_maximum_number_of_global_classes_has_been_reached( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached, $widgets );
-			error_log( "CSS PIPELINE DEBUG [STYLE_COLLECTION]: Collected {$overflow_styles_when_maximum_number_of_global_classes_has_been_reached_collected} overflow styles when maximum number of global classes has been reached" );
 		}
 
 		// Store collection results in context
@@ -201,29 +200,24 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 
 	private function process_css_rule_for_widgets( string $selector, array $properties, array $widgets ): int {
 		// DEBUG: Log CSS selector processing
-		error_log( "CSS PIPELINE DEBUG [STYLE_COLLECTION]: Processing CSS selector: '{$selector}'" );
 
 		// SPECIFIC DEBUG: Track target selectors
 		if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false ||
 			strpos( $selector, '.copy' ) !== false ||
 			strpos( $selector, '.loading' ) !== false ) {
-			error_log( "CSS PIPELINE DEBUG [STYLE_COLLECTION]: TARGET SELECTOR PROCESSING: '{$selector}'" );
 		}
 
 		$converted_properties = $this->prepare_properties_for_collection( $properties );
 		$matched_elements = $this->find_matching_widgets( $selector, $widgets );
 
 		// DEBUG: Log matching results
-		error_log( "CSS PIPELINE DEBUG [STYLE_COLLECTION]: Selector '{$selector}' matched " . count( $matched_elements ) . ' elements' );
 
 		if ( ! empty( $matched_elements ) ) {
-			error_log( 'CSS PIPELINE DEBUG [STYLE_COLLECTION]: Matched elements: ' . implode( ', ', $matched_elements ) );
 
 			// SPECIFIC DEBUG: Track target selector matches
 			if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false ||
 				strpos( $selector, '.copy' ) !== false ||
 				strpos( $selector, '.loading' ) !== false ) {
-				error_log( "CSS PIPELINE DEBUG [STYLE_COLLECTION]: TARGET SELECTOR MATCHED: '{$selector}' -> " . implode( ', ', $matched_elements ) );
 			}
 
 			// Route selectors with ID components to ID styles
@@ -246,7 +240,6 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 			strpos( $selector, '.copy' ) !== false ||
 			strpos( $selector, '.loading' ) !== false ) {
 			// SPECIFIC DEBUG: Track target selector non-matches
-			error_log( "CSS PIPELINE DEBUG [STYLE_COLLECTION]: TARGET SELECTOR NO MATCH: '{$selector}'" );
 		}
 
 		return 0;
@@ -502,7 +495,6 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 
 			$styles_collected += count( $matched_widgets );
 
-			error_log( "CSS PIPELINE DEBUG [STYLE_COLLECTION]: Applied overflow class '{$class_name}' to " . count( $matched_widgets ) . ' widgets' );
 		}
 
 		return $styles_collected;

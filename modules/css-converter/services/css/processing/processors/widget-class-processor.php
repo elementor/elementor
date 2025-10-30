@@ -72,8 +72,6 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 		$context->add_statistic( 'widget_classes_processed', count( $widget_classes ) );
 		$context->add_statistic( 'widget_styles_applied', $styles_applied );
 
-		error_log( 'CSS PIPELINE DEBUG [WIDGET_CLASS]: Applied ' . $styles_applied . ' widget-specific styles from ' . count( $widget_specific_rules ) . ' rules' );
-		error_log( 'CSS PIPELINE DEBUG [WIDGET_CLASS]: Passing ' . count( $widget_classes ) . ' widget classes for HTML removal: ' . implode( ', ', array_slice( $widget_classes, 0, 5 ) ) );
 
 		return $context;
 	}
@@ -180,12 +178,10 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 
 			// DEBUG: Track target selector
 			if ( $selector === $target_selector ) {
-				error_log( 'WIDGET_CLASS_PROCESSOR: Processing target selector' );
 			}
 
 			if ( $this->should_skip_complex_selector( $selector ) ) {
 				if ( $selector === $target_selector ) {
-					error_log( 'WIDGET_CLASS_PROCESSOR: Target selector SKIPPED by should_skip_complex_selector' );
 				}
 				continue;
 			}
@@ -194,7 +190,6 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 			$selector_classes = $this->extract_classes_from_selector( $selector );
 
 			if ( $selector === $target_selector ) {
-				error_log( 'WIDGET_CLASS_PROCESSOR: Target selector classes: ' . implode( ', ', $selector_classes ) );
 			}
 
 			if ( $this->selector_contains_widget_classes( $selector_classes ) ) {
@@ -206,16 +201,13 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 				];
 
 				if ( $selector === $target_selector ) {
-					error_log( 'WIDGET_CLASS_PROCESSOR: Target selector ACCEPTED as widget rule with ' . count( $rule['properties'] ?? [] ) . ' properties' );
 					foreach ( $rule['properties'] ?? [] as $prop ) {
 						if ( in_array( $prop['property'] ?? '', ['font-size', 'line-height', 'color'] ) ) {
-							error_log( '  ' . ( $prop['property'] ?? 'unknown' ) . ': ' . ( $prop['value'] ?? 'unknown' ) );
 						}
 					}
 				}
 			} else {
 				if ( $selector === $target_selector ) {
-					error_log( 'WIDGET_CLASS_PROCESSOR: Target selector REJECTED - no widget classes found' );
 				}
 			}
 		}
@@ -275,23 +267,19 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 			$matching_widgets = $this->find_widgets_matching_selector_classes( $target_classes, $widgets );
 
 			if ( $selector === $target_selector ) {
-				error_log( 'WIDGET_CLASS_PROCESSOR: Target selector found ' . count( $matching_widgets ) . ' matching widgets' );
 			}
 
 			if ( ! empty( $matching_widgets ) ) {
 				$converted_properties = $this->convert_properties_to_atomic( $properties, $property_conversion_service );
 
 				if ( $selector === $target_selector ) {
-					error_log( 'WIDGET_CLASS_PROCESSOR: Target selector converting ' . count( $properties ) . ' properties to ' . count( $converted_properties ) . ' atomic properties' );
 					foreach ( $properties as $prop ) {
 						if ( in_array( $prop['property'] ?? '', ['font-size', 'line-height', 'color'] ) ) {
-							error_log( '  ORIGINAL: ' . ( $prop['property'] ?? 'unknown' ) . ': ' . ( $prop['value'] ?? 'unknown' ) );
 						}
 					}
 					foreach ( $converted_properties as $prop_data ) {
 						if ( in_array( $prop_data['property'] ?? '', ['font-size', 'line-height', 'color'] ) ) {
 							$converted = $prop_data['converted_property'] ?? null;
-							error_log( '  CONVERTED: ' . ( $prop_data['property'] ?? 'unknown' ) . ': ' . ( $prop_data['value'] ?? 'unknown' ) . ' -> ' . ( $converted ? 'SUCCESS' : 'FAILED' ) );
 						}
 					}
 				}
@@ -313,7 +301,6 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 				);
 				$styles_applied += count( $matching_widgets );
 
-				error_log( 'CSS PIPELINE DEBUG [WIDGET_CLASS]: Applied \'' . $selector . '\' to ' . count( $matching_widgets ) . ' widgets with classes [' . implode( ', ', $target_classes ) . ']' );
 			}
 		}
 
@@ -461,8 +448,6 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 	private function remove_processed_rules( array $css_rules, array $widget_rules ): array {
 		$processed_selectors = array_column( $widget_rules, 'selector' );
 
-		error_log( 'CSS PIPELINE DEBUG [WIDGET_CLASS]: remove_processed_rules - Total CSS rules: ' . count( $css_rules ) );
-		error_log( 'CSS PIPELINE DEBUG [WIDGET_CLASS]: remove_processed_rules - Processed selectors: ' . count( $processed_selectors ) );
 
 		$remaining_rules = [];
 		$removed_count = 0;
@@ -482,7 +467,6 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 			if ( in_array( $selector, $processed_selectors, true ) ) {
 				// Remove this rule - it was processed by Widget Class Processor
 				if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false ) {
-					error_log( 'CSS PIPELINE DEBUG [WIDGET_CLASS]: REMOVING TARGET: ' . $selector );
 				}
 				++$removed_count;
 				continue;
@@ -491,7 +475,6 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 			$remaining_rules[] = $rule;
 		}
 
-		error_log( 'CSS PIPELINE DEBUG [WIDGET_CLASS]: Removed ' . $removed_count . ' rules, ' . count( $remaining_rules ) . ' remaining' );
 
 		return $remaining_rules;
 	}

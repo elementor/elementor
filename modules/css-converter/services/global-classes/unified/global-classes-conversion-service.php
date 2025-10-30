@@ -20,20 +20,14 @@ class Global_Classes_Conversion_Service {
 		$converted_classes = [];
 
 		foreach ( $detected_classes as $class_name => $class_data ) {
-			error_log( "CSS Converter: ========== Converting class '{$class_name}' ==========" );
-			error_log( "CSS Converter: Properties: " . json_encode( $class_data['properties'] ) );
 			
 			$atomic_props = $this->convert_properties_to_atomic(
 				$class_data['properties']
 			);
 
 			// DEBUG: Log conversion results
-			error_log( "CSS Converter: Properties count: " . count( $class_data['properties'] ) );
-			error_log( "CSS Converter: Atomic props count: " . count( $atomic_props ) );
-			error_log( "CSS Converter: Atomic props: " . json_encode( $atomic_props ) );
 			
 			if ( empty( $atomic_props ) ) {
-				error_log( "CSS Converter: ❌ Skipping class '{$class_name}' - no atomic props converted" );
 				continue;
 			}
 
@@ -43,7 +37,6 @@ class Global_Classes_Conversion_Service {
 				'original_selector' => $class_data['selector'],
 			];
 			
-			error_log( "CSS Converter: ✅ Successfully converted class '{$class_name}' with " . count( $atomic_props ) . " props" );
 		}
 
 		return $converted_classes;
@@ -68,9 +61,7 @@ class Global_Classes_Conversion_Service {
 			// DEBUG: Log conversion attempts
 			if ( $converted && isset( $converted['$$type'] ) ) {
 				$atomic_props[ $property ] = $converted;
-				error_log( "CSS Converter: ✓ Converted '{$property}: {$value}' to atomic" );
 			} else {
-				error_log( "CSS Converter: ✗ Failed to convert '{$property}: {$value}' to atomic" );
 			}
 		}
 

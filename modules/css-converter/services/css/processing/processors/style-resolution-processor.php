@@ -71,37 +71,29 @@ class Style_Resolution_Processor implements Css_Processor_Interface {
 			$widget_classes = $widget['attributes']['class'] ?? '';
 			
 			// DEBUG: Log style resolution process
-			error_log( "CSS PIPELINE DEBUG [STYLE_RESOLUTION]: Resolving styles for widget: {$widget_id}" );
-			error_log( "CSS PIPELINE DEBUG [STYLE_RESOLUTION]: Element ID: {$element_id}" );
-			error_log( "CSS PIPELINE DEBUG [STYLE_RESOLUTION]: Widget classes: '{$widget_classes}'" );
 			
 			// SPECIFIC DEBUG: Track target widgets
 			if ( strpos( $widget_classes, 'elementor-element-6d397c1' ) !== false || 
 				 strpos( $widget_classes, 'copy' ) !== false || 
 				 strpos( $widget_classes, 'loading' ) !== false ) {
-				error_log( "CSS PIPELINE DEBUG [STYLE_RESOLUTION]: TARGET WIDGET FOUND: {$widget_id} with classes '{$widget_classes}'" );
 			}
 			
 			$resolved_styles = $unified_style_manager->resolve_styles_for_widget( $widget );
 
 			// DEBUG: Log resolution results
-			error_log( "CSS PIPELINE DEBUG [STYLE_RESOLUTION]: Resolved " . count( $resolved_styles ) . " styles for {$widget_id}" );
 			
 			if ( ! empty( $resolved_styles ) ) {
-				error_log( "CSS PIPELINE DEBUG [STYLE_RESOLUTION]: Resolved properties: " . implode( ', ', array_keys( $resolved_styles ) ) );
 				
 				// SPECIFIC DEBUG: Track target widget style resolution
 				if ( strpos( $widget_classes, 'elementor-element-6d397c1' ) !== false || 
 					 strpos( $widget_classes, 'copy' ) !== false || 
 					 strpos( $widget_classes, 'loading' ) !== false ) {
-					error_log( "CSS PIPELINE DEBUG [STYLE_RESOLUTION]: TARGET WIDGET STYLES RESOLVED: {$widget_id} -> " . implode( ', ', array_keys( $resolved_styles ) ) );
 				}
 			} else {
 				// SPECIFIC DEBUG: Track target widgets with no resolved styles
 				if ( strpos( $widget_classes, 'elementor-element-6d397c1' ) !== false || 
 					 strpos( $widget_classes, 'copy' ) !== false || 
 					 strpos( $widget_classes, 'loading' ) !== false ) {
-					error_log( "CSS PIPELINE DEBUG [STYLE_RESOLUTION]: TARGET WIDGET NO STYLES: {$widget_id}" );
 				}
 			}
 

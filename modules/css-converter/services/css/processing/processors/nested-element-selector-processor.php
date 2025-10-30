@@ -63,11 +63,9 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 		$widgets = $context->get_widgets();
 
 		// DEBUG: Log what this processor receives
-		error_log( "CSS PIPELINE DEBUG [NESTED_ELEMENT]: Received " . count( $css_rules ) . " CSS rules and " . count( $widgets ) . " widgets" );
 		foreach ( $css_rules as $index => $rule ) {
 			$selector = $rule['selector'] ?? 'unknown';
 			$properties_count = count( $rule['properties'] ?? [] );
-			error_log( "CSS PIPELINE DEBUG [NESTED_ELEMENT]: Rule #{$index}: '{$selector}' with {$properties_count} properties" );
 		}
 
 		if ( empty( $css_rules ) || empty( $widgets ) ) {
@@ -155,9 +153,6 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 		}
 		
 		// DEBUG: Log CSS rules after processing (all rules preserved)
-		error_log( "CSS PIPELINE DEBUG [NESTED_ELEMENT]: After processing " . count( $css_rules ) . " CSS rules preserved (no filtering)" );
-		error_log( "CSS PIPELINE DEBUG [NESTED_ELEMENT]: Processed {$processed_count} selectors, applied {$applied_count} selectors" );
-		error_log( "CSS PIPELINE DEBUG [NESTED_ELEMENT]: Target selectors remaining: " . count( $target_selectors_remaining ) . " - " . implode( ', ', $target_selectors_remaining ) );
 
 		$context->add_statistic( 'nested_element_selectors_processed', $processed_count );
 		$context->add_statistic( 'nested_element_selectors_applied', $applied_count );

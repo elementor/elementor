@@ -28,11 +28,9 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 
 		// DEBUG: Log CSS rules before processing
-		error_log( "CSS PIPELINE DEBUG [CSS_VARIABLES]: Received " . count( $css_rules ) . " CSS rules" );
 		foreach ( $css_rules as $index => $rule ) {
 			$selector = $rule['selector'] ?? 'unknown';
 			$properties_count = count( $rule['properties'] ?? [] );
-			error_log( "CSS PIPELINE DEBUG [CSS_VARIABLES]: Rule #{$index}: '{$selector}' with {$properties_count} properties" );
 		}
 
 		// Reset variable definitions for fresh processing
@@ -47,7 +45,6 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 
 		// DEBUG: Log CSS rules after processing (should be unchanged)
 		$css_rules_after = $context->get_metadata( 'css_rules', [] );
-		error_log( "CSS PIPELINE DEBUG [CSS_VARIABLES]: After processing " . count( $css_rules_after ) . " CSS rules (should be unchanged)" );
 
 		return $context;
 	}

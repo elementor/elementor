@@ -83,7 +83,6 @@ class Line_Height_Property_Mapper extends Atomic_Property_Mapper_Base {
 		}
 
 		// Don't create fake defaults - return null to indicate parsing failure
-		error_log( "CSS Converter: Cannot parse line-height value: '{$value}'" );
 		return null;
 	}
 

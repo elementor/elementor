@@ -186,13 +186,29 @@ $scoped_variables = [];
 			$variables_result = $integration_service->process_css_variables( $css_variable_definitions );
 			
 			// Apply variable name mappings to get final variable names
-			$final_variables = [];
+			$final_variables_assoc = [];
 			$original_variables = $variables_result['variables'] ?? [];
 			$variable_name_mappings = $variables_result['variable_name_mappings'] ?? [];
 			
 			foreach ( $original_variables as $original_name => $variable_data ) {
 				$final_name = $variable_name_mappings[ $original_name ] ?? $original_name;
-				$final_variables[ $final_name ] = $variable_data;
+				$final_variables_assoc[ $final_name ] = $variable_data;
+			}
+			
+			// Convert associative array to numeric array format expected by tests
+			$final_variables = [];
+			foreach ( $final_variables_assoc as $var_name => $var_data ) {
+				$variable_type = $var_data['type'] ?? 'string';
+				$variable_value = $var_data['value'] ?? '';
+				
+				// Map variable type to test-expected format
+				$mapped_type = $this->map_internal_type_to_api_type( $variable_type, $variable_value );
+				
+				$final_variables[] = [
+					'name' => '--' . $var_name,
+					'value' => $variable_value,
+					'type' => $mapped_type,
+				];
 			}
 			
 			$results = [
@@ -529,6 +545,35 @@ $scoped_variables = [];
 			default:
 				return null;
 		}
+	}
+	private function map_internal_type_to_api_type( string $internal_type, string $value ): string {
+		$value = trim( $value );
+		
+		if ( 'color' === $internal_type ) {
+			if ( preg_match( '/^#[0-9a-f]{3,6}$/i', $value ) ) {
+				return 'color-hex';
+			}
+			if ( preg_match( '/^rgba?\s*\(/i', $value ) ) {
+				return 'color-rgb';
+			}
+			if ( preg_match( '/^hsla?\s*\(/i', $value ) ) {
+				return 'color-hsl';
+			}
+			return 'color-hex';
+		}
+		
+		if ( 'size' === $internal_type ) {
+			if ( strpos( $value, '%' ) !== false ) {
+				return 'size-percentage';
+			}
+			return 'size-length-viewport';
+		}
+		
+		if ( 'font' === $internal_type ) {
+			return 'font-family';
+		}
+		
+		return $internal_type;
 	}
 	private function format_variable_label( string $css_var_name ): string {
 		return ltrim( $css_var_name, '-' );
