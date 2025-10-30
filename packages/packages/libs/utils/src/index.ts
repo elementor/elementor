@@ -5,4 +5,3 @@ export { debounce } from './debounce';
 export { encodeString, decodeString } from './encoding';
 export { hash } from './hash';
 export { useSearchState, type UseSearchStateResult } from './use-search-state';
-export { useOnMount } from './use-on-mount';
