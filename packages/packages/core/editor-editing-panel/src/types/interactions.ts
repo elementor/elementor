@@ -15,11 +15,3 @@ export interface InteractionsConfig {
 	constants: InteractionConstants;
 	animationOptions: AnimationOption[];
 }
-
-declare global {
-	interface Window {
-		ElementorInteractionsConfig?: InteractionsConfig;
-	}
-}
-
-export {};
