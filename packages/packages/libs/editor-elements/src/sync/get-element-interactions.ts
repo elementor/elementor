@@ -1,18 +1,8 @@
 import { type ElementID } from '../types';
 import { getContainer } from './get-container';
 
-export function getElementInteractions( elementId: ElementID ) {
+export const getElementInteractions = ( elementId: ElementID ): string => {
 	const container = getContainer( elementId );
-
-	const interactions = container?.model?.get( 'interactions' );
-
-	if ( typeof interactions === 'string' ) {
-		return interactions;
-	}
-
-	if ( Array.isArray( interactions ) ) {
-		return JSON.stringify( interactions );
-	}
-
-	return '';
-}
+	const raw = container?.model?.get( 'interactions' );
+	return typeof raw === 'string' ? raw : JSON.stringify( raw ?? [] );
+};
