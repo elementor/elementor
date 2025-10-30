@@ -18,6 +18,7 @@ class Document_Lock_Manager {
 	private $lock_duration;
 	private const LOCK_USER_META = '_lock_user';
 	private const LOCK_TIME_META = '_lock_time';
+	private const LOCK_EDIT_LOCK_META = '_edit_lock';
 
 	/**
 	 * Initialize the lock manager.
@@ -99,6 +100,7 @@ class Document_Lock_Manager {
 	private function remove_lock_metadata( $document_id ) {
 		delete_post_meta( $document_id, self::LOCK_USER_META );
 		delete_post_meta( $document_id, self::LOCK_TIME_META );
+		delete_post_meta( $document_id, self::LOCK_EDIT_LOCK_META );
 	}
 
 	/**
