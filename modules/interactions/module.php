@@ -45,7 +45,7 @@ class Module extends BaseModule {
 				&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 
-public function __construct() {
+	public function __construct() {
 		parent::__construct();
 
 		if ( ! $this->is_experiment_active() ) {
@@ -61,22 +61,22 @@ public function __construct() {
 	private function get_label( $key, $value ) {
 		$special_labels = [
 			'trigger' => [
-				'load' => 'Page Load',
-				'scroll-in' => 'Scroll Into View',
-				'scroll-out' => 'Scroll Out of View',
+				'load' => __( 'Page Load', 'elementor' ),
+				'scroll-in' => __( 'Scroll Into View', 'elementor' ),
+				'scroll-out' => __( 'Scroll Out of View', 'elementor' ),
 			],
 			'direction' => [
-				'top' => 'Up',
+				'top' => __( 'Up', 'elementor' ),
 			],
 		];
 
 		if ( isset( $special_labels[ $key ][ $value ] ) ) {
-			return __( $special_labels[ $key ][ $value ], 'elementor' );
+			return $special_labels[ $key ][ $value ];
 		}
 
 		$label = ucwords( str_replace( '-', ' ', $value ) );
 
-		return __( $label, 'elementor' );
+		return esc_html( $label );
 	}
 
 	private function generate_animation_options() {
@@ -84,7 +84,7 @@ public function __construct() {
 			[
 				'value' => '',
 				'label' => __( 'Select animation...', 'elementor' ),
-			]
+			],
 		];
 
 		foreach ( self::TRIGGERS as $trigger ) {
