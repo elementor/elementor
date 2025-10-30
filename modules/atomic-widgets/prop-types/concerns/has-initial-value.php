@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Has_Initial_Value {
-	protected array|null $initial_value = null;
+	protected $initial_value = null;
 
 	/**
 	 * @param $value
