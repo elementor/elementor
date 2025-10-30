@@ -52,6 +52,7 @@ export type V1ElementModelProps = {
 	elements?: V1Model< V1ElementModelProps >[];
 	settings?: V1ElementSettingsProps;
 	editor_settings?: V1ElementEditorSettingsProps;
+	interactions?: string | Array< { animation: { animation_type: string; animation_id: string } } >;
 };
 
 export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {

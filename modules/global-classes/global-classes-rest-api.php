@@ -15,7 +15,7 @@ class Global_Classes_REST_API {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'global-classes';
 	const API_BASE_USAGE = self::API_BASE . '/usage';
-	const MAX_ITEMS = 50;
+	const MAX_ITEMS = 100;
 	const LABEL_PREFIX = 'DUP_';
 	const MAX_LABEL_LENGTH = 50;
 	private $repository = null;
