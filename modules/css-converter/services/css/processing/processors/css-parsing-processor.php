@@ -43,6 +43,17 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			return $context;
 		}
 
+		// DEBUG: Check if reset CSS is in the raw CSS
+		$has_reset_css = strpos( $css, 'html, body, div, span' ) !== false;
+		error_log( "CSS_PARSING_PROCESSOR: Raw CSS size: " . strlen( $css ) . " bytes, contains reset CSS: " . ( $has_reset_css ? 'YES' : 'NO' ) );
+		
+		if ( $has_reset_css ) {
+			// Extract a sample of the reset CSS for debugging
+			$reset_start = strpos( $css, 'html, body, div, span' );
+			$reset_sample = substr( $css, $reset_start, 200 );
+			error_log( "CSS_PARSING_PROCESSOR: Reset CSS sample: " . $reset_sample );
+		}
+
 		// Beautify CSS before parsing for better readability and debugging
 		$beautified_css = $this->beautify_css( $css );
 		$context->set_metadata( 'beautified_css', $beautified_css );
@@ -57,12 +68,44 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 		$context->add_statistic( 'beautified_css_size_bytes', strlen( $beautified_css ) );
 
 		// DEBUG: Log CSS rules after parsing
-		error_log( "CSS PIPELINE DEBUG [CSS_PARSING]: Parsed " . count( $css_rules ) . " CSS rules" );
+		error_log( 'CSS PIPELINE DEBUG [CSS_PARSING]: Parsed ' . count( $css_rules ) . ' CSS rules' );
+
+		// DEBUG: Check for .loading selectors
+		$loading_selectors = [];
+		foreach ( $css_rules as $rule ) {
+			$selector = $rule['selector'] ?? '';
+			if ( false !== strpos( $selector, 'loading' ) ) {
+				$loading_selectors[] = $selector;
+			}
+		}
+		file_put_contents( '/tmp/css_parsing_debug.log', 'CSS_PARSING: Found ' . count( $loading_selectors ) . ' loading selectors: ' . implode( ', ', array_slice( $loading_selectors, 0, 10 ) ) . "\n", FILE_APPEND );
+
+		// SPECIFIC DEBUG: Track our target selectors
+		$target_selectors_found = [];
+		$target_selector = '.elementor-1140 .elementor-element.elementor-element-6d397c1';
 		foreach ( $css_rules as $index => $rule ) {
 			$selector = $rule['selector'] ?? 'unknown';
 			$properties_count = count( $rule['properties'] ?? [] );
-			error_log( "CSS PIPELINE DEBUG [CSS_PARSING]: Rule #{$index}: '{$selector}' with {$properties_count} properties" );
+
+			// Check for our target selectors
+			if ( $selector === $target_selector ) {
+				error_log( 'CSS_PARSING_PROCESSOR: Found target selector with ' . $properties_count . ' properties' );
+				foreach ( $rule['properties'] ?? [] as $prop ) {
+					if ( in_array( $prop['property'] ?? '', [ 'font-size', 'line-height', 'color' ], true ) ) {
+						error_log( '  ' . ( $prop['property'] ?? 'unknown' ) . ': ' . ( $prop['value'] ?? 'unknown' ) );
+					}
+				}
+			}
+
+			if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false ||
+				strpos( $selector, '.copy' ) !== false ||
+				strpos( $selector, '.loading' ) !== false ) {
+				$target_selectors_found[] = $selector;
+				error_log( "CSS PIPELINE DEBUG [CSS_PARSING]: TARGET FOUND - Rule #{$index}: '{$selector}' with {$properties_count} properties" );
+			}
 		}
+
+		error_log( 'CSS PIPELINE DEBUG [CSS_PARSING]: Found ' . count( $target_selectors_found ) . ' target selectors: ' . implode( ', ', $target_selectors_found ) );
 
 		return $context;
 	}
@@ -132,14 +175,17 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			$selectors = $rule_set->getSelectors();
 			$declarations = $rule_set->getRules();
 
-			$extracted_rules = $this->extract_rules_from_selectors( $selectors, $declarations );
+			// Check if this rule set is inside a media query
+			$is_media_query = $this->is_rule_set_in_media_query( $rule_set );
+
+			$extracted_rules = $this->extract_rules_from_selectors( $selectors, $declarations, $is_media_query );
 			$rules = array_merge( $rules, $extracted_rules );
 		}
 
 		return $rules;
 	}
 
-	private function extract_rules_from_selectors( array $selectors, array $declarations ): array {
+	private function extract_rules_from_selectors( array $selectors, array $declarations, bool $is_media_query = false ): array {
 		$rules = [];
 
 		foreach ( $selectors as $selector ) {
@@ -147,17 +193,74 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			$properties = $this->extract_properties_from_declarations( $declarations );
 
 			// DEBUG: Log all parsed CSS rules
-			error_log( "CSS Parser: Parsed selector '{$selector_string}' with " . count( $properties ) . " properties" );
+			$media_debug = $is_media_query ? ' [MEDIA QUERY]' : '';
+			
+			// Special debug for element selectors
+			$element_selectors = ['html', 'body', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre', 'abbr', 'address', 'cite', 'code', 'del', 'dfn', 'em', 'img', 'ins', 'kbd', 'q', 'samp', 'small', 'strong', 'sub', 'sup', 'var', 'b', 'i', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'fieldset', 'form', 'label', 'legend', 'table', 'caption', 'tbody', 'tfoot', 'thead', 'tr', 'th', 'td', 'article', 'aside', 'canvas', 'details', 'figcaption', 'figure', 'footer', 'header', 'hgroup', 'menu', 'nav', 'section', 'summary', 'time', 'mark', 'audio', 'video'];
+			
+			if ( in_array( trim( $selector_string ), $element_selectors, true ) ) {
+				error_log( "CSS Parser: *** ELEMENT SELECTOR FOUND *** '{$selector_string}' with " . count( $properties ) . " properties{$media_debug}" );
+				if ( count( $properties ) > 0 ) {
+					$property_names = array_map( function( $prop ) { return $prop['property'] ?? 'unknown'; }, $properties );
+					error_log( "CSS Parser: Element properties: " . implode( ', ', $property_names ) );
+				}
+			} else {
+				error_log( "CSS Parser: Parsed selector '{$selector_string}' with " . count( $properties ) . " properties{$media_debug}" );
+			}
 
 			if ( ! empty( $properties ) ) {
-				$rules[] = [
+				$rule = [
 					'selector' => $selector_string,
 					'properties' => $properties,
 				];
+
+				// Mark media query rules for filtering
+				if ( $is_media_query ) {
+					$rule['media_query'] = true;
+				}
+
+				$rules[] = $rule;
+			} else {
+				// DEBUG: Log selectors with no properties (might be reset CSS)
+				if ( strpos( $selector_string, 'html' ) !== false || strpos( $selector_string, 'body' ) !== false ) {
+					error_log( "CSS Parser: SKIPPED selector '{$selector_string}' - NO PROPERTIES" );
+				}
 			}
 		}
 
 		return $rules;
+	}
+
+	private function is_rule_set_in_media_query( $rule_set ): bool {
+		// Check if the rule set has a parent that is a media query
+		if ( method_exists( $rule_set, 'getParent' ) ) {
+			$parent = $rule_set->getParent();
+
+			// Walk up the parent chain to find media queries
+			while ( $parent ) {
+				// Check if parent is a media query (AtRule with media type)
+				if ( method_exists( $parent, 'atRuleName' ) && $parent->atRuleName() === 'media' ) {
+					return true;
+				}
+
+				// Check class name as fallback
+				$class_name = get_class( $parent );
+				if ( strpos( $class_name, 'Media' ) !== false || strpos( $class_name, 'AtRule' ) !== false ) {
+					// Additional check for media-specific at-rules
+					if ( method_exists( $parent, 'getRule' ) ) {
+						$rule_name = $parent->getRule();
+						if ( 'media' === $rule_name ) {
+							return true;
+						}
+					}
+				}
+
+				// Move to next parent
+				$parent = method_exists( $parent, 'getParent' ) ? $parent->getParent() : null;
+			}
+		}
+
+		return false;
 	}
 
 	private function extract_properties_from_declarations( array $declarations ): array {

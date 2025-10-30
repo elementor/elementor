@@ -34,17 +34,16 @@ class Global_Classes_Registration_Service {
 		$items = $existing->get_items()->all();
 		$order = $existing->get_order()->all();
 
+		$existing_labels = $this->extract_existing_labels( $items );
 
-	$existing_labels = $this->extract_existing_labels( $items );
-	
-	$debug_info = [
-		'existing_labels_count' => count( $existing_labels ),
-		'existing_labels' => array_slice( $existing_labels, 0, 10 ),
-		'converting_classes' => array_keys( $converted_classes ),
-		'total_items_count' => count( $items ),
-	];
+		$debug_info = [
+			'existing_labels_count' => count( $existing_labels ),
+			'existing_labels' => array_slice( $existing_labels, 0, 10 ),
+			'converting_classes' => array_keys( $converted_classes ),
+			'total_items_count' => count( $items ),
+		];
 
-	$result = $this->filter_new_classes_with_duplicate_detection( $converted_classes, $existing_labels, $items );
+		$result = $this->filter_new_classes_with_duplicate_detection( $converted_classes, $existing_labels, $items );
 		$new_classes = $result['new_classes'];
 		$class_name_mappings = $result['class_name_mappings'];
 
@@ -57,7 +56,17 @@ class Global_Classes_Registration_Service {
 			];
 		}
 
-		$classes_after_limit = $this->apply_classes_limit( $new_classes, count( $items ) );
+		$limit_result = $this->apply_classes_limit( $new_classes, count( $items ) );
+		$classes_after_limit = $limit_result['classes_for_global'];
+		$overflow_styles_when_maximum_number_of_global_classes_has_been_reached = $limit_result['overflow_styles_when_maximum_number_of_global_classes_has_been_reached'];
+
+		// CRITICAL FIX: Remove classes that were successfully converted to global classes from overflow styles
+		// This prevents duplication where a class gets both a global class AND a widget local class
+		$successfully_converted_original_classes = array_keys( $class_name_mappings );
+		$overflow_styles_when_maximum_number_of_global_classes_has_been_reached = $this->filter_out_successfully_converted_classes(
+			$overflow_styles_when_maximum_number_of_global_classes_has_been_reached,
+			$successfully_converted_original_classes
+		);
 
 		$registered = 0;
 		$skipped = count( $converted_classes ) - count( $classes_after_limit );
@@ -70,46 +79,48 @@ class Global_Classes_Registration_Service {
 			++$registered;
 		}
 
-	try {
-		// Debug: Log what we're about to save
-		$new_class_labels = array_keys( $classes_after_limit );
-		
-		$repository->put( $items, $order );
-		
-		// Debug: Verify data was saved by reading it back immediately
-		$verify_repository = $this->get_global_classes_repository();
-		$verify_existing = $verify_repository->all();
-		$verify_items = $verify_existing->get_items()->all();
-		$verify_labels = $this->extract_existing_labels( $verify_items );
-		
-		// Force clear of kit metadata cache to ensure subsequent API calls see updated data
-		// The Elementor Kit caches metadata, and we need to invalidate this specific cache
-		$kit_id = \Elementor\Plugin::$instance->kits_manager->get_active_kit()->get_id();
-		if ( $kit_id ) {
-			// Clear WordPress post meta cache for this kit
-			wp_cache_delete( $kit_id, 'post_meta' );
-			// Also try clearing the kit's internal cache
-			clean_post_cache( $kit_id );
-		}
+		try {
+			// Debug: Log what we're about to save
+			$new_class_labels = array_keys( $classes_after_limit );
 
-		$debug_info['after_save_total_classes'] = count( $verify_labels );
-		$debug_info['after_save_first_10'] = array_slice( $verify_labels, 0, 10 );
-		$debug_info['new_classes_added'] = $new_class_labels;
-		
-		// Verify classes are actually in the repository
-		$this->verify_classes_in_repository( $new_class_labels );
-		
-		return [
-			'registered' => $registered,
-			'skipped' => $skipped,
-			'total_classes' => count( $items ),
-			'class_name_mappings' => $class_name_mappings,
-			'debug_duplicate_detection' => $debug_info,
-		];
+			$repository->put( $items, $order );
+
+			// Debug: Verify data was saved by reading it back immediately
+			$verify_repository = $this->get_global_classes_repository();
+			$verify_existing = $verify_repository->all();
+			$verify_items = $verify_existing->get_items()->all();
+			$verify_labels = $this->extract_existing_labels( $verify_items );
+
+			// Force clear of kit metadata cache to ensure subsequent API calls see updated data
+			// The Elementor Kit caches metadata, and we need to invalidate this specific cache
+			$kit_id = \Elementor\Plugin::$instance->kits_manager->get_active_kit()->get_id();
+			if ( $kit_id ) {
+				// Clear WordPress post meta cache for this kit
+				wp_cache_delete( $kit_id, 'post_meta' );
+				// Also try clearing the kit's internal cache
+				clean_post_cache( $kit_id );
+			}
+
+			$debug_info['after_save_total_classes'] = count( $verify_labels );
+			$debug_info['after_save_first_10'] = array_slice( $verify_labels, 0, 10 );
+			$debug_info['new_classes_added'] = $new_class_labels;
+
+			// Verify classes are actually in the repository
+			$this->verify_classes_in_repository( $new_class_labels );
+
+			return [
+				'registered' => $registered,
+				'skipped' => $skipped,
+				'overflow_styles_when_maximum_number_of_global_classes_has_been_reached' => $overflow_styles_when_maximum_number_of_global_classes_has_been_reached,
+				'total_classes' => count( $items ),
+				'class_name_mappings' => $class_name_mappings,
+				'debug_duplicate_detection' => $debug_info,
+			];
 		} catch ( \Exception $e ) {
 			return [
 				'registered' => 0,
 				'skipped' => count( $converted_classes ),
+				'overflow_styles_when_maximum_number_of_global_classes_has_been_reached' => [],
 				'error' => 'Failed to save to repository: ' . $e->getMessage(),
 				'class_name_mappings' => $class_name_mappings,
 			];
@@ -159,7 +170,7 @@ class Global_Classes_Registration_Service {
 			if ( in_array( $class_name, $existing_labels, true ) ) {
 				// Duplicate detected - handle it
 				$final_class_name = $this->handle_duplicate_class( $class_name, $class_data, $existing_items );
-				
+
 				// If we get a new name (with suffix), add it
 				if ( $final_class_name && $final_class_name !== $class_name ) {
 					$new_classes[ $final_class_name ] = $class_data;
@@ -218,14 +229,13 @@ class Global_Classes_Registration_Service {
 		// Sort both arrays recursively for consistent comparison
 		$this->sort_array_recursively( $props1 );
 		$this->sort_array_recursively( $props2 );
-		
+
 		// Convert both arrays to JSON strings for deep comparison
 		$json1 = wp_json_encode( $props1 );
 		$json2 = wp_json_encode( $props2 );
-		
+
 		$identical = $json1 === $json2;
-		
-		
+
 		return $identical;
 	}
 
@@ -240,26 +250,64 @@ class Global_Classes_Registration_Service {
 
 	private function find_next_available_suffix( string $base_name, array $existing_items ): string {
 		$suffix = 2;
-		
+
 		while ( isset( $existing_items[ $base_name . '-' . $suffix ] ) ) {
-			$suffix++;
+			++$suffix;
 		}
-		
+
 		return $base_name . '-' . $suffix;
+	}
+
+	/**
+	 * Filter out classes that were successfully converted to global classes from overflow styles
+	 * This prevents duplication where a class gets both a global class AND a widget local class
+	 *
+	 * @param array $overflow_styles Classes that exceeded the global limit
+	 * @param array $successfully_converted_classes Original class names that were successfully converted
+	 * @return array Filtered overflow styles excluding successfully converted classes
+	 */
+	private function filter_out_successfully_converted_classes( array $overflow_styles, array $successfully_converted_classes ): array {
+		$filtered_overflow = [];
+
+		foreach ( $overflow_styles as $class_name => $class_data ) {
+			// Only include in overflow if the original class was NOT successfully converted to a global class
+			if ( ! in_array( $class_name, $successfully_converted_classes, true ) ) {
+				$filtered_overflow[ $class_name ] = $class_data;
+			} else {
+				error_log( "CSS Converter: Excluding '{$class_name}' from overflow styles - successfully converted to global class" );
+			}
+		}
+
+		return $filtered_overflow;
 	}
 
 	private function apply_classes_limit( array $new_classes, int $existing_count ): array {
 		$available_slots = self::MAX_CLASSES_LIMIT - $existing_count;
 
 		if ( $available_slots <= 0 ) {
-			return [];
+			error_log( "CSS Converter: Global classes limit reached ({$existing_count}/" . self::MAX_CLASSES_LIMIT . '), all ' . count( $new_classes ) . ' classes will use direct application' );
+			return [
+				'classes_for_global' => [],
+				'overflow_styles_when_maximum_number_of_global_classes_has_been_reached' => $new_classes,
+			];
 		}
 
 		if ( count( $new_classes ) <= $available_slots ) {
-			return $new_classes;
+			return [
+				'classes_for_global' => $new_classes,
+				'overflow_styles_when_maximum_number_of_global_classes_has_been_reached' => [],
+			];
 		}
 
-		return array_slice( $new_classes, 0, $available_slots, true );
+		$classes_for_global = array_slice( $new_classes, 0, $available_slots, true );
+		$overflow_styles_when_maximum_number_of_global_classes_has_been_reached = array_slice( $new_classes, $available_slots, null, true );
+
+		error_log( 'CSS Converter: ' . count( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) . ' classes exceed global limit, will use direct application' );
+
+		return [
+			'classes_for_global' => $classes_for_global,
+			'overflow_styles_when_maximum_number_of_global_classes_has_been_reached' => $overflow_styles_when_maximum_number_of_global_classes_has_been_reached,
+		];
 	}
 
 	private function create_class_config( string $class_name, array $atomic_props ): array {
@@ -375,7 +423,7 @@ class Global_Classes_Registration_Service {
 
 			$existing = $repository->all();
 			$items = $existing->get_items()->all();
-			
+
 			foreach ( $class_names as $class_name ) {
 				$found = false;
 				foreach ( $items as $item_id => $item ) {

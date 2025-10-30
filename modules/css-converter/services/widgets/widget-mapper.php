@@ -92,9 +92,6 @@ class Widget_Mapper {
 		// DEBUG: Log widget mapping output
 		$widget_class = $widget['attributes']['class'] ?? '';
 
-		// Preserve original HTML classes for global class application
-		$widget = $this->preserve_original_html_classes( $widget, $element );
-
 		// Add generated class name to widget attributes if it exists
 		if ( ! empty( $element['generated_class'] ) ) {
 			$widget = $this->add_generated_class_to_widget( $widget, $element['generated_class'] );
@@ -117,46 +114,6 @@ class Widget_Mapper {
 		}
 
 		return $widget;
-	}
-
-	private function preserve_original_html_classes( array $widget, array $element ): array {
-		$original_classes = $element['attributes']['class'] ?? '';
-		$widget_type = $widget['widget_type'] ?? 'unknown';
-		$element_tag = $element['tag'] ?? 'unknown';
-
-		// DEBUG: Log class preservation process
-		error_log( "CSS Converter: Preserving classes for {$element_tag} -> {$widget_type}" );
-		error_log( "CSS Converter: Original classes: '{$original_classes}'" );
-
-		if ( empty( $original_classes ) ) {
-			error_log( "CSS Converter: No original classes to preserve" );
-			return $widget;
-		}
-
-		if ( ! isset( $widget['attributes'] ) ) {
-			$widget['attributes'] = [];
-		}
-
-		$existing_classes = $widget['attributes']['class'] ?? '';
-
-		if ( empty( $existing_classes ) ) {
-			$widget['attributes']['class'] = $original_classes;
-		} else {
-			$combined_classes = $existing_classes . ' ' . $original_classes;
-			$unique_classes = $this->get_unique_classes( $combined_classes );
-			$widget['attributes']['class'] = implode( ' ', $unique_classes );
-		}
-
-		error_log( "CSS Converter: Final widget classes: '{$widget['attributes']['class']}'" );
-		return $widget;
-	}
-
-	private function get_unique_classes( string $class_string ): array {
-		$classes = array_filter( explode( ' ', $class_string ), function( $class_name ) {
-			return ! empty( trim( $class_name ) );
-		} );
-
-		return array_values( array_unique( array_map( 'trim', $classes ) ) );
 	}
 
 	public function map_elements( $elements, $is_top_level = true ) {
@@ -182,17 +139,13 @@ class Widget_Mapper {
 						$child_tag = $child['original_tag'] ?? 'unknown';
 
 						// Check for problematic double div-block nesting
-						if ( 'e-div-block' === $mapped['widget_type'] && 'e-div-block' === $child_type ) {
-							// Log potential nesting issue for debugging
-							error_log( 'CSS Converter: Potential double div-block nesting detected' );
+						if ( $mapped['widget_type'] === 'e-div-block' && $child_type === 'e-div-block' ) {
 						}
 					}
 				}
 			}
 		}
 
-		// FIXED: Only wrap in container at top level, not for nested children
-		// This prevents double div-block nesting when a div has multiple children
 		if ( $is_top_level ) {
 			$mapped_elements = $this->ensure_container_wrapper( $mapped_elements );
 		}
@@ -213,8 +166,9 @@ class Widget_Mapper {
 
 	private function handle_heading( $element ) {
 		$tag = $element['tag'];
-		$level = (int) substr( $tag, 1 ); // Extract number from h1, h2, etc.
+		$level = (int) substr( $tag, 1 );
 		$content = $element['content'] ?? '';
+		$decoded_content = $this->decode_unicode_sequences( $content );
 		$element_id = $this->generate_element_id( $element );
 
 		return [
@@ -222,13 +176,13 @@ class Widget_Mapper {
 			'element_id' => $element_id,
 			'original_tag' => $tag,
 			'settings' => [
-				'text' => $content,
+				'text' => $decoded_content,
 				'tag' => $tag,
 				'level' => $level,
 			],
 			'attributes' => $element['attributes'],
 			'inline_css' => $element['inline_css'] ?? [],
-			'children' => [], // Headings don't have widget children
+			'children' => [],
 		];
 	}
 
@@ -237,52 +191,69 @@ class Widget_Mapper {
 		$tag = $element['tag'];
 		$element_id = $this->generate_element_id( $element );
 
-		// FLATTENED APPROACH: Convert <p><a></a></p> to separate e-paragraph + e-button widgets
-		// This creates: <p></p><a></a> which preserves CSS classes and works with tests
 		if ( ! empty( $element['children'] ) ) {
 			$widgets = [];
+			$text_only_children = [ 'span', 'strong', 'em', 'b', 'i', 'u', 'small', 'mark', 'del', 'ins', 'sub', 'sup' ];
+			$children_to_keep = [];
+			$text_parts = [];
 
-			// Extract text content that's not part of child elements (if any)
-			$paragraph_text = $this->extract_text_content_excluding_children( $element );
+			$text_parts[] = $this->extract_text_content_excluding_children( $element );
 
-			// Create e-paragraph widget (even if empty, to preserve <p> tag and classes)
+			foreach ( $element['children'] as $child ) {
+				$child_tag = $child['tag'] ?? '';
+				if ( in_array( $child_tag, $text_only_children, true ) ) {
+					$child_text = $this->extract_all_text_recursively( $child );
+					if ( ! empty( trim( $child_text ) ) ) {
+						$text_parts[] = trim( $child_text );
+					}
+				} else {
+					$children_to_keep[] = $child;
+				}
+			}
+
+			$paragraph_text = implode( ' ', array_filter( $text_parts, function( $part ) {
+				return ! empty( trim( $part ) );
+			} ) );
+
+			$decoded_paragraph_text = $this->decode_unicode_sequences( trim( $paragraph_text ) );
+
 			$widgets[] = [
 				'widget_type' => 'e-paragraph',
 				'element_id' => $element_id,
 				'original_tag' => $tag,
 				'settings' => [
-					'paragraph' => $paragraph_text, // May be empty
+					'paragraph' => $decoded_paragraph_text,
 				],
-				'attributes' => $element['attributes'], // Preserves link-item, nav-item classes
+				'attributes' => $element['attributes'],
 				'inline_css' => $element['inline_css'] ?? [],
 				'children' => [],
 			];
 
-			// Map child elements (like links) as separate sibling widgets
-			$child_widgets = $this->map_elements( $element['children'] );
-			$widgets = array_merge( $widgets, $child_widgets );
+			if ( ! empty( $children_to_keep ) ) {
+				$child_widgets = $this->map_elements( $children_to_keep, false );
+				$widgets = array_merge( $widgets, $child_widgets );
+			}
 
-			// Return flattened structure - parent will handle as siblings
 			return [
-				'widget_type' => 'flattened_group', // Special marker for flattening
+				'widget_type' => 'flattened_group',
 				'widgets' => $widgets,
 			];
 		}
 
-		// If no children, handle as regular paragraph
+		$decoded_content = $this->decode_unicode_sequences( $content );
 
 		$settings = [
-			'paragraph' => $content,
+			'paragraph' => $decoded_content,
 		];
 
 		return [
 			'widget_type' => 'e-paragraph',
 			'element_id' => $element_id,
-			'original_tag' => $tag, // Preserve original tag (p, blockquote, etc.)
+			'original_tag' => $tag,
 			'settings' => $settings,
 			'attributes' => $element['attributes'],
 			'inline_css' => $element['inline_css'] ?? [],
-			'children' => [], // No children for text-only paragraphs
+			'children' => [],
 		];
 	}
 
@@ -309,7 +280,6 @@ class Widget_Mapper {
 				$child_class = $child['attributes']['class'] ?? '';
 			}
 
-			// FIXED: Pass false for is_top_level to prevent wrapping children in extra container
 			$mapped_children = $this->map_elements( $element['children'], false );
 
 			// DEBUG: Log mapped children
@@ -377,7 +347,7 @@ class Widget_Mapper {
 		// Map children recursively
 		$children = [];
 		if ( ! empty( $element['children'] ) ) {
-			$children = $this->map_elements( $element['children'] );
+			$children = $this->map_elements( $element['children'], false );
 		}
 
 		// Determine flexbox direction from CSS or default to column
@@ -402,6 +372,8 @@ class Widget_Mapper {
 	private function handle_link( $element ) {
 		$href = $element['attributes']['href'] ?? '#';
 		$target = $element['attributes']['target'] ?? '_self';
+		$content = $element['content'] ?? '';
+		$decoded_content = $this->decode_unicode_sequences( $content );
 		$element_id = $this->generate_element_id( $element );
 
 		return [
@@ -409,18 +381,20 @@ class Widget_Mapper {
 			'element_id' => $element_id,
 			'original_tag' => 'a',
 			'settings' => [
-				'text' => $element['content'],
+				'text' => $decoded_content,
 				'url' => $href,
 				'target' => $target,
 			],
 			'attributes' => $element['attributes'],
 			'inline_css' => $element['inline_css'] ?? [],
-			'children' => [], // Links don't have widget children in this context
+			'children' => [],
 		];
 	}
 
 	private function handle_button( $element ) {
 		$type = $element['attributes']['type'] ?? 'button';
+		$content = $element['content'] ?? '';
+		$decoded_content = $this->decode_unicode_sequences( $content );
 		$element_id = $this->generate_element_id( $element );
 
 		return [
@@ -428,7 +402,7 @@ class Widget_Mapper {
 			'element_id' => $element_id,
 			'original_tag' => 'button',
 			'settings' => [
-				'text' => $element['content'],
+				'text' => $decoded_content,
 				'type' => $type,
 			],
 			'attributes' => $element['attributes'],
@@ -461,9 +435,6 @@ class Widget_Mapper {
 	}
 
 	private function handle_unsupported_element( $element ) {
-		// Log unsupported element for debugging
-		$element_tag = $element['tag'] ?? 'unknown';
-		error_log( "CSS Converter: Unsupported element type: {$element_tag}" );
 		// HVV Decision: Skip unsupported elements for MVP
 		// Return null to indicate this element should be skipped
 		return null;
@@ -533,7 +504,9 @@ class Widget_Mapper {
 						$paragraph_content = $child_content;
 					}
 				}
-			} else {
+			}
+			// Handle multiple paragraph children (new logic for synthetic paragraphs)
+			else {
 				$content_parts = [];
 				foreach ( $element['children'] as $child ) {
 					if ( 'p' === $child['tag'] && ! empty( $child['content'] ) ) {
@@ -547,13 +520,15 @@ class Widget_Mapper {
 			}
 		}
 
+		$decoded_paragraph_content = $this->decode_unicode_sequences( $paragraph_content );
+
 		// Create paragraph widget as child of the e-div-block
 		$paragraph_widget = [
 			'widget_type' => 'e-paragraph',
 			'element_id' => $element_id . '-paragraph',
 			'original_tag' => 'p',
 			'settings' => [
-				'paragraph' => $paragraph_content,
+				'paragraph' => $decoded_paragraph_content,
 			],
 			'attributes' => [], // Clean paragraph widget
 			'inline_css' => [],
@@ -566,7 +541,7 @@ class Widget_Mapper {
 			'element_id' => $element_id,
 			'original_tag' => $element['tag'], // Preserve original tag for reference
 			'settings' => [
-				'tag' => 'div' !== $element['tag'] ? $element['tag'] : null, // Only set if not default div
+				'tag' => $element['tag'] !== 'div' ? $element['tag'] : null, // Only set if not default div
 			],
 			'attributes' => $element['attributes'] ?? [], // Preserve all attributes (id, class, etc.)
 			'inline_css' => $element['inline_css'] ?? [], // Preserve all inline CSS
@@ -639,29 +614,27 @@ class Widget_Mapper {
 	}
 
 	private function create_paragraph_widget_for_text( $text_content ) {
-		// Creates a synthetic e-paragraph widget for text content found in div elements
-		// This ensures text content is properly structured and accessible
+		$decoded_text = $this->decode_unicode_sequences( trim( $text_content ) );
+		
 		return [
 			'widget_type' => 'e-paragraph',
-			'original_tag' => 'p', // Synthetic paragraph
+			'original_tag' => 'p',
 			'settings' => [
-				'paragraph' => trim( $text_content ),
+				'paragraph' => $decoded_text,
 			],
-			'attributes' => [], // No attributes for synthetic paragraphs
-			'inline_css' => [], // No inline CSS for synthetic paragraphs
-			'children' => [], // Paragraphs don't have children
+			'attributes' => [],
+			'inline_css' => [],
+			'children' => [],
 		];
 	}
 
 	private function extract_text_content_excluding_children( $element ) {
-		// Extract text content from the element that's not part of child elements
 		$full_content = $element['content'] ?? '';
 
 		if ( empty( $element['children'] ) ) {
-			return $full_content;
+			return $this->decode_unicode_sequences( trim( $full_content ) );
 		}
 
-		// Remove child element content from the full content
 		foreach ( $element['children'] as $child ) {
 			$child_content = $child['content'] ?? '';
 			if ( ! empty( $child_content ) ) {
@@ -669,7 +642,7 @@ class Widget_Mapper {
 			}
 		}
 
-		return trim( $full_content );
+		return $this->decode_unicode_sequences( trim( $full_content ) );
 	}
 
 	private function extract_text_from_children( $children ) {
@@ -678,6 +651,48 @@ class Widget_Mapper {
 			$text .= ' ' . ( $child['content'] ?? '' );
 		}
 		return trim( $text );
+	}
+
+	private function extract_all_text_recursively( $element ) {
+		$text_parts = [];
+		
+		if ( ! empty( $element['content'] ) ) {
+			$decoded_content = $this->decode_unicode_sequences( trim( $element['content'] ) );
+			$text_parts[] = $decoded_content;
+		}
+		
+		if ( ! empty( $element['children'] ) ) {
+			foreach ( $element['children'] as $child ) {
+				$child_text = $this->extract_all_text_recursively( $child );
+				if ( ! empty( trim( $child_text ) ) ) {
+					$text_parts[] = trim( $child_text );
+				}
+			}
+		}
+		
+		$combined_text = implode( ' ', array_filter( $text_parts, function( $part ) {
+			return ! empty( trim( $part ) );
+		} ) );
+		
+		return $this->decode_unicode_sequences( $combined_text );
+	}
+
+	private function decode_unicode_sequences( $text ) {
+		return preg_replace_callback(
+			'/u([0-9A-Fa-f]{4})/',
+			function( $matches ) {
+				$unicode_code = hexdec( $matches[1] );
+				if ( function_exists( 'mb_chr' ) ) {
+					return mb_chr( $unicode_code, 'UTF-8' );
+				}
+				if ( class_exists( 'IntlChar' ) && method_exists( 'IntlChar', 'chr' ) ) {
+					return \IntlChar::chr( $unicode_code );
+				}
+				$hex_code = strtoupper( $matches[1] );
+				return json_decode( '"\\u' . $hex_code . '"' );
+			},
+			$text
+		);
 	}
 
 	private function determine_flex_direction( $element ) {

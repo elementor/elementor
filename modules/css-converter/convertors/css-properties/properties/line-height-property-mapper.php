@@ -31,6 +31,11 @@ class Line_Height_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$line_height_data = $this->parse_line_height_value( $value );
 
+		// If parsing failed (e.g., CSS variable), return null instead of creating invalid data
+		if ( null === $line_height_data ) {
+			return null;
+		}
+
 		return Size_Prop_Type::make()
 			->units( Size_Constants::typography() )
 			->generate( $line_height_data );
@@ -44,7 +49,7 @@ class Line_Height_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
 	}
 
-	protected function parse_line_height_value( string $value ): array {
+	protected function parse_line_height_value( string $value ): ?array {
 		$trimmed_value = trim( $value );
 
 		if ( $this->is_normal_keyword( $trimmed_value ) ) {
@@ -70,14 +75,16 @@ class Line_Height_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return is_numeric( $value );
 	}
 
-	private function parse_value_with_units_or_default( string $value ): array {
+	private function parse_value_with_units_or_default( string $value ): ?array {
 		$parsed = Size_Value_Parser::parse( $value );
 
 		if ( null !== $parsed ) {
 			return $parsed;
 		}
 
-		return $this->create_default_line_height();
+		// Don't create fake defaults - return null to indicate parsing failure
+		error_log( "CSS Converter: Cannot parse line-height value: '{$value}'" );
+		return null;
 	}
 
 	private function create_unitless_line_height( float $value ): array {
@@ -90,13 +97,6 @@ class Line_Height_Property_Mapper extends Atomic_Property_Mapper_Base {
 	private function create_normal_line_height(): array {
 		return [
 			'size' => self::NORMAL_LINE_HEIGHT_VALUE,
-			'unit' => '',
-		];
-	}
-
-	private function create_default_line_height(): array {
-		return [
-			'size' => self::DEFAULT_LINE_HEIGHT_VALUE,
 			'unit' => '',
 		];
 	}

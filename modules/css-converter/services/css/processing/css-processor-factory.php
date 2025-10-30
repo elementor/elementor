@@ -33,7 +33,9 @@ class Css_Processor_Factory {
 
 		$processors = [
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Css_Parsing_Processor(),
+			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Media_Query_Filter_Processor(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Css_Variables_Processor(),
+			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Widget_Class_Processor(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Id_Selector_Processor( $property_converter ),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Nested_Selector_Flattening_Processor(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Nested_Element_Selector_Processor(),

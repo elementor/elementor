@@ -72,7 +72,7 @@ class Html_Class_Modifier_Service {
 		if ( 'widget-classes' === $type ) {
 			$this->widget_classes_to_remove = $mappings;
 			// DEBUG: Log what classes we're set to remove
-			file_put_contents( '/tmp/html_modifier_debug.log', 'HTML Modifier received widget classes to remove: ' . implode( ', ', $mappings ) . "\n", FILE_APPEND );
+			file_put_contents( '/tmp/html_modifier_debug.log', "HTML Modifier received widget classes to remove: " . implode( ', ', $mappings ) . "\n", FILE_APPEND );
 		}
 	}
 
@@ -120,7 +120,7 @@ class Html_Class_Modifier_Service {
 		$modified_classes = [];
 
 		// DEBUG: Log original classes
-		file_put_contents( '/tmp/html_modifier_debug.log', 'HTML Modifier processing element with classes: ' . implode( ', ', $original_classes ) . "\n", FILE_APPEND );
+		file_put_contents( '/tmp/html_modifier_debug.log', "HTML Modifier processing element with classes: " . implode( ', ', $original_classes ) . "\n", FILE_APPEND );
 
 		// EVIDENCE: Track if fixed classes are being processed
 		$has_fixed_class = false;
@@ -136,13 +136,13 @@ class Html_Class_Modifier_Service {
 		foreach ( $original_classes as $class_name ) {
 			// DEBUG: Log each class being processed
 			file_put_contents( '/tmp/html_modifier_debug.log', "Processing class: {$class_name}\n", FILE_APPEND );
-
+			
 			// CRITICAL FIX: Widget class removal takes precedence over flattening
 			if ( in_array( $class_name, $this->widget_classes_to_remove, true ) ) {
 				file_put_contents( '/tmp/html_modifier_debug.log', "  -> Removed (widget class): {$class_name}\n", FILE_APPEND );
 				continue; // Skip this class entirely
 			}
-
+			
 			// FIXED: For flattening, keep BOTH original and flattened classes
 			if ( $this->mapping_service->has_mapping_for_class( $class_name ) ) {
 				// Add original class
@@ -225,7 +225,7 @@ class Html_Class_Modifier_Service {
 			$flattened_name = $this->mapping_service->get_flattened_class_name( $class_name );
 			return $flattened_name;
 		}
-
+		
 		// Check if this class has a duplicate class mapping (lower priority than flattening)
 		if ( isset( $this->duplicate_class_mappings[ $class_name ] ) ) {
 			$mapped_name = $this->duplicate_class_mappings[ $class_name ];

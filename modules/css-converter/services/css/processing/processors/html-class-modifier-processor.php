@@ -28,7 +28,7 @@ class Html_Class_Modifier_Processor implements Css_Processor_Interface {
 	}
 
 	public function get_priority(): int {
-		return 80; // After global classes, before style resolution
+		return 82; // After global classes (81), before style collection (85)
 	}
 
 	public function supports_context( Css_Processing_Context $context ): bool {
@@ -43,6 +43,16 @@ class Html_Class_Modifier_Processor implements Css_Processor_Interface {
 		$css_class_modifiers = $context->get_metadata( 'css_class_modifiers', [] );
 		$class_name_mappings = $context->get_metadata( 'class_name_mappings', [] );
 		$widgets = $context->get_widgets();
+
+		foreach ( $css_class_modifiers as $index => $modifier ) {
+			$type = $modifier['type'] ?? 'unknown';
+			$mappings_count = count( $modifier['mappings'] ?? [] );
+			error_log( "CSS PIPELINE DEBUG [HTML_CLASS_MODIFIER]: Modifier #{$index}: type='{$type}', mappings={$mappings_count}" );
+
+			if ( $type === 'flattening' && ! empty( $modifier['mappings'] ) ) {
+				error_log( 'CSS PIPELINE DEBUG [HTML_CLASS_MODIFIER]: Flattening mappings: ' . json_encode( $modifier['mappings'] ) );
+			}
+		}
 
 		// Initialize HTML class modifier with unified modifiers
 		if ( ! empty( $css_class_modifiers ) ) {

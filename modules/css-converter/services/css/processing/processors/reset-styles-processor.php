@@ -119,14 +119,30 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 		// DEBUG: Log what rules are being removed
 		$removed_count = count( $css_rules ) - count( $remaining_rules );
 		error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: Removing {$removed_count} element selector rules" );
+		
+		// SPECIFIC DEBUG: Check if our target selectors are being removed
+		$target_selectors_removed = [];
 		if ( $removed_count > 0 ) {
 			foreach ( $css_rules as $rule ) {
 				$selector = $rule['selector'] ?? 'unknown';
 				if ( isset( $element_rules[ $selector ] ) ) {
 					error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: Removing element rule: '{$selector}'" );
+					
+					// Check if this is one of our target selectors
+					if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false || 
+						 strpos( $selector, '.copy' ) !== false || 
+						 strpos( $selector, '.loading' ) !== false ) {
+						$target_selectors_removed[] = $selector;
+						error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: WARNING - TARGET SELECTOR REMOVED: '{$selector}'" );
+					}
 				}
 			}
 		}
+		
+		if ( ! empty( $target_selectors_removed ) ) {
+			error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: CRITICAL - Removed " . count( $target_selectors_removed ) . " target selectors: " . implode( ', ', $target_selectors_removed ) );
+		}
+		
 		error_log( "CSS PIPELINE DEBUG [RESET_STYLES]: After processing " . count( $remaining_rules ) . " CSS rules remain" );
 		
 		$context->set_metadata( 'css_rules', $remaining_rules );

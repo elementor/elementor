@@ -70,6 +70,11 @@ class Background_Property_Mapper extends Atomic_Property_Mapper_Base {
 	private function parse_background_value( string $value ): ?array {
 		$background_data = [];
 
+		if ( 'none' === strtolower( trim( $value ) ) ) {
+			$background_data['color'] = Color_Prop_Type::make()->generate( 'transparent' );
+			return $background_data;
+		}
+
 		if ( $this->is_linear_gradient( $value ) ) {
 			$gradient_data = $this->parse_linear_gradient( $value );
 			if ( null !== $gradient_data ) {

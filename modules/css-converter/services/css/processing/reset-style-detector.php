@@ -119,18 +119,53 @@ class Reset_Style_Detector {
 	public function extract_element_selector_rules( array $css_rules ): array {
 		$element_rules = [];
 
+		error_log( "RESET_STYLE_DETECTOR: Processing " . count( $css_rules ) . " CSS rules" );
+		
+		// Log first 10 selectors to see what we're working with
+		$sample_selectors = [];
+		for ( $i = 0; $i < min( 10, count( $css_rules ) ); $i++ ) {
+			$sample_selectors[] = $css_rules[ $i ]['selector'] ?? 'unknown';
+		}
+		error_log( "RESET_STYLE_DETECTOR: Sample selectors: " . implode( ', ', $sample_selectors ) );
+
 		foreach ( $css_rules as $rule ) {
 			$selector = trim( $rule['selector'] ?? '' );
 
-			if ( $this->is_element_selector( $selector ) ) {
-				if ( ! isset( $element_rules[ $selector ] ) ) {
-					$element_rules[ $selector ] = [];
-				}
+			// Handle comma-separated selectors (e.g., "h1, h2, h3, p, div")
+			if ( strpos( $selector, ',' ) !== false ) {
+				error_log( "RESET_STYLE_DETECTOR: Found comma-separated selector: '{$selector}'" );
+				$individual_selectors = array_map( 'trim', explode( ',', $selector ) );
+				error_log( "RESET_STYLE_DETECTOR: Split into " . count( $individual_selectors ) . " individual selectors" );
+				
+				foreach ( $individual_selectors as $individual_selector ) {
+					$is_simple = $this->is_simple_element_selector( $individual_selector );
+					error_log( "RESET_STYLE_DETECTOR: Checking '{$individual_selector}' - is_simple: " . ( $is_simple ? 'YES' : 'NO' ) );
+					
+					if ( $is_simple ) {
+						if ( ! isset( $element_rules[ $individual_selector ] ) ) {
+							$element_rules[ $individual_selector ] = [];
+						}
 
-				$element_rules[ $selector ][] = $rule;
+						// Create a new rule for this individual selector
+						$individual_rule = $rule;
+						$individual_rule['selector'] = $individual_selector;
+						$element_rules[ $individual_selector ][] = $individual_rule;
+						error_log( "RESET_STYLE_DETECTOR: Added element rule for '{$individual_selector}'" );
+					}
+				}
+			} else {
+				// Single selector - use existing logic
+				if ( $this->is_element_selector( $selector ) ) {
+					if ( ! isset( $element_rules[ $selector ] ) ) {
+						$element_rules[ $selector ] = [];
+					}
+
+					$element_rules[ $selector ][] = $rule;
+				}
 			}
 		}
 
+		error_log( "RESET_STYLE_DETECTOR: Total element rules found: " . count( $element_rules ) );
 		return $element_rules;
 	}
 
@@ -143,13 +178,10 @@ class Reset_Style_Detector {
 	public function is_element_selector( string $selector ): bool {
 		$selector = trim( $selector );
 
-		// Check for simple element selector first
-		if ( $this->is_simple_element_selector( $selector ) ) {
-			return true;
-		}
-
-		// Check for complex element selectors (contains element names)
-		return $this->contains_element_names( $selector );
+		// FIXED: ONLY accept simple element selectors (h1, p, div, etc.)
+		// NO combinations like .first p, div.class, p > span, etc.
+		// Reset styles should ONLY apply to pure element selectors
+		return $this->is_simple_element_selector( $selector );
 	}
 
 	/**

@@ -189,9 +189,11 @@ class Widget_Hierarchy_Processor {
 
 		switch ( $widget['widget_type'] ) {
 			case 'e-heading':
+				$heading_text = $widget['settings']['text'] ?? 'This is a title';
+				$decoded_text = $this->decode_unicode_sequences( $heading_text );
 				$defaults = [
-					'title' => $widget['settings']['text'] ?? 'This is a title',
-					'text' => $widget['settings']['text'] ?? 'This is a title', // Keep both for compatibility
+					'title' => $decoded_text,
+					'text' => $decoded_text,
 					'tag' => $widget['settings']['tag'] ?? 'h2',
 					'level' => $widget['settings']['level'] ?? 2,
 					'link' => null,
@@ -199,15 +201,19 @@ class Widget_Hierarchy_Processor {
 				];
 				break;
 			case 'e-paragraph':
+				$paragraph_content = $widget['settings']['paragraph'] ?? 'Type your paragraph here';
+				$decoded_paragraph = $this->decode_unicode_sequences( $paragraph_content );
 				$defaults = [
-					'paragraph' => $widget['settings']['paragraph'] ?? 'Type your paragraph here',
+					'paragraph' => $decoded_paragraph,
 					'link' => null,
 					'attributes' => null,
 				];
 				break;
 			case 'e-button':
+				$button_text = $widget['settings']['text'] ?? 'Button';
+				$decoded_button_text = $this->decode_unicode_sequences( $button_text );
 				$defaults = [
-					'text' => $widget['settings']['text'] ?? 'Button',
+					'text' => $decoded_button_text,
 					'attributes' => null,
 				];
 
@@ -235,6 +241,28 @@ class Widget_Hierarchy_Processor {
 		}
 
 		return array_merge( $defaults, $settings );
+	}
+
+	private function decode_unicode_sequences( $text ) {
+		if ( ! is_string( $text ) ) {
+			return $text;
+		}
+		
+		return preg_replace_callback(
+			'/u([0-9A-Fa-f]{4})/',
+			function( $matches ) {
+				$unicode_code = hexdec( $matches[1] );
+				if ( function_exists( 'mb_chr' ) ) {
+					return mb_chr( $unicode_code, 'UTF-8' );
+				}
+				if ( class_exists( 'IntlChar' ) && method_exists( 'IntlChar', 'chr' ) ) {
+					return \IntlChar::chr( $unicode_code );
+				}
+				$hex_code = strtoupper( $matches[1] );
+				return json_decode( '"\\u' . $hex_code . '"' );
+			},
+			$text
+		);
 	}
 
 	private function validate_widget_structure( $widget ) {

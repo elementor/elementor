@@ -111,26 +111,23 @@ class Html_Parser {
 	}
 	
 	private function decode_html_entities( $text ) {
-		// First decode standard HTML entities
 		$decoded = html_entity_decode( $text, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 		
-		// Handle Unicode escape sequences like u2019 that might not be properly encoded
-		// u2019 = right single quotation mark (')
-		$unicode_replacements = [
-			'u2019' => "\u{2019}", // Right single quotation mark
-			'u2018' => "\u{2018}", // Left single quotation mark  
-			'u201C' => "\u{201C}", // Left double quotation mark
-			'u201D' => "\u{201D}", // Right double quotation mark
-			'u2013' => "\u{2013}", // En dash
-			'u2014' => "\u{2014}", // Em dash
-			'u2026' => "\u{2026}", // Horizontal ellipsis
-			'u00A0' => "\u{00A0}", // Non-breaking space
-		];
-		
-		foreach ( $unicode_replacements as $unicode => $replacement ) {
-			$decoded = str_replace( $unicode, $replacement, $decoded );
-		}
-		
+		$decoded = preg_replace_callback(
+			'/u([0-9A-Fa-f]{4})/',
+			function( $matches ) {
+				$unicode_code = hexdec( $matches[1] );
+				if ( function_exists( 'mb_chr' ) ) {
+					return mb_chr( $unicode_code, 'UTF-8' );
+				}
+				if ( class_exists( 'IntlChar' ) && method_exists( 'IntlChar', 'chr' ) ) {
+					return \IntlChar::chr( $unicode_code );
+				}
+				$hex_code = strtoupper( $matches[1] );
+				return json_decode( '"\\u' . $hex_code . '"' );
+			},
+			$decoded
+		);
 		
 		return $decoded;
 	}
@@ -259,17 +256,16 @@ class Html_Parser {
 		// If element has both text content and children, wrap the text in a paragraph
 		if ( $has_direct_text && $has_children ) {
 			
-			// Create a paragraph element for the text content
-			// CRITICAL FIX: Only transfer flattened classes to paragraph, keep original classes on parent
 			$flattened_classes = $this->extract_flattened_classes( $element['attributes'] ?? [] );
+			$paragraph_content = $this->decode_html_entities( trim( $element['content'] ) );
 			$paragraph_element = [
 				'tag' => 'p',
-				'attributes' => $flattened_classes, // Only transfer flattened classes to paragraph
-				'content' => trim( $element['content'] ),
+				'attributes' => $flattened_classes,
+				'content' => $paragraph_content,
 				'children' => [],
 				'depth' => $element['depth'] + 1,
-				'inline_css' => [], // Don't transfer inline CSS - keep it on the parent div
-				'synthetic' => true, // Mark as synthetic for widget mapper optimization
+				'inline_css' => [],
+				'synthetic' => true,
 			];
 			
 			
@@ -283,17 +279,16 @@ class Html_Parser {
 			$element['attributes'] = $this->remove_flattened_classes( $element['attributes'] ?? [] );
 		} elseif ( $has_direct_text && ! $has_children ) {
 			
-			// Element has only text content - wrap it in a paragraph
-			// Transfer flattened classes to paragraph, but keep original classes on parent for ID+class selector matching
 			$paragraph_attributes = $this->extract_flattened_classes( $element['attributes'] ?? [] );
+			$paragraph_content = $this->decode_html_entities( trim( $element['content'] ) );
 			$paragraph_element = [
 				'tag' => 'p',
-				'attributes' => $paragraph_attributes, // Only transfer flattened classes
-				'content' => trim( $element['content'] ),
+				'attributes' => $paragraph_attributes,
+				'content' => $paragraph_content,
 				'children' => [],
 				'depth' => $element['depth'] + 1,
-				'inline_css' => [], // Don't transfer inline CSS - keep it on the parent div
-				'synthetic' => true, // Mark as synthetic for widget mapper optimization
+				'inline_css' => [],
+				'synthetic' => true,
 			];
 			
 			

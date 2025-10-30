@@ -79,11 +79,21 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		$inline_styles_collected = $this->collect_inline_styles_from_widgets( $widgets );
 		$reset_styles_collected = $this->collect_reset_styles( $css, $widgets );
 
+		// NEW: Collect overflow styles when maximum number of global classes has been reached
+		$overflow_styles_when_maximum_number_of_global_classes_has_been_reached = $context->get_metadata( 'overflow_styles_when_maximum_number_of_global_classes_has_been_reached', [] );
+		$overflow_styles_when_maximum_number_of_global_classes_has_been_reached_collected = 0;
+
+		if ( ! empty( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) ) {
+			$overflow_styles_when_maximum_number_of_global_classes_has_been_reached_collected = $this->collect_overflow_styles_when_maximum_number_of_global_classes_has_been_reached( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached, $widgets );
+			error_log( "CSS PIPELINE DEBUG [STYLE_COLLECTION]: Collected {$overflow_styles_when_maximum_number_of_global_classes_has_been_reached_collected} overflow styles when maximum number of global classes has been reached" );
+		}
+
 		// Store collection results in context
 		$context->set_metadata( 'unified_style_manager', $this->unified_style_manager );
 		$context->add_statistic( 'css_styles_collected', $css_styles_collected );
 		$context->add_statistic( 'inline_styles_collected', $inline_styles_collected );
 		$context->add_statistic( 'reset_styles_collected', $reset_styles_collected );
+		$context->add_statistic( 'overflow_styles_when_maximum_number_of_global_classes_has_been_reached_collected', $overflow_styles_when_maximum_number_of_global_classes_has_been_reached_collected );
 
 		return $context;
 	}
@@ -93,6 +103,7 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 			'css_styles_collected',
 			'inline_styles_collected',
 			'reset_styles_collected',
+			'overflow_styles_when_maximum_number_of_global_classes_has_been_reached_collected',
 		];
 	}
 
@@ -189,10 +200,32 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 	}
 
 	private function process_css_rule_for_widgets( string $selector, array $properties, array $widgets ): int {
+		// DEBUG: Log CSS selector processing
+		error_log( "CSS PIPELINE DEBUG [STYLE_COLLECTION]: Processing CSS selector: '{$selector}'" );
+
+		// SPECIFIC DEBUG: Track target selectors
+		if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false ||
+			strpos( $selector, '.copy' ) !== false ||
+			strpos( $selector, '.loading' ) !== false ) {
+			error_log( "CSS PIPELINE DEBUG [STYLE_COLLECTION]: TARGET SELECTOR PROCESSING: '{$selector}'" );
+		}
+
 		$converted_properties = $this->prepare_properties_for_collection( $properties );
 		$matched_elements = $this->find_matching_widgets( $selector, $widgets );
 
+		// DEBUG: Log matching results
+		error_log( "CSS PIPELINE DEBUG [STYLE_COLLECTION]: Selector '{$selector}' matched " . count( $matched_elements ) . ' elements' );
+
 		if ( ! empty( $matched_elements ) ) {
+			error_log( 'CSS PIPELINE DEBUG [STYLE_COLLECTION]: Matched elements: ' . implode( ', ', $matched_elements ) );
+
+			// SPECIFIC DEBUG: Track target selector matches
+			if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false ||
+				strpos( $selector, '.copy' ) !== false ||
+				strpos( $selector, '.loading' ) !== false ) {
+				error_log( "CSS PIPELINE DEBUG [STYLE_COLLECTION]: TARGET SELECTOR MATCHED: '{$selector}' -> " . implode( ', ', $matched_elements ) );
+			}
+
 			// Route selectors with ID components to ID styles
 			if ( false !== strpos( $selector, '#' ) ) {
 				$this->unified_style_manager->collect_id_selector_styles(
@@ -209,6 +242,11 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 			}
 
 			return count( $matched_elements );
+		} elseif ( strpos( $selector, 'elementor-element-6d397c1' ) !== false ||
+			strpos( $selector, '.copy' ) !== false ||
+			strpos( $selector, '.loading' ) !== false ) {
+			// SPECIFIC DEBUG: Track target selector non-matches
+			error_log( "CSS PIPELINE DEBUG [STYLE_COLLECTION]: TARGET SELECTOR NO MATCH: '{$selector}'" );
 		}
 
 		return 0;
@@ -432,5 +470,116 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		}
 
 		return false;
+	}
+
+	private function collect_overflow_styles_when_maximum_number_of_global_classes_has_been_reached( array $overflow_styles_when_maximum_number_of_global_classes_has_been_reached, array $widgets ): int {
+		$styles_collected = 0;
+
+		foreach ( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached as $class_name => $class_data ) {
+			$atomic_props = $class_data['atomic_props'] ?? [];
+
+			if ( empty( $atomic_props ) ) {
+				continue;
+			}
+
+			$matched_widgets = $this->find_widgets_with_class( $class_name, $widgets );
+
+			if ( empty( $matched_widgets ) ) {
+				continue;
+			}
+
+			$css_properties = $this->convert_atomic_props_to_css_properties( $atomic_props );
+
+			if ( empty( $css_properties ) ) {
+				continue;
+			}
+
+			$this->unified_style_manager->collect_css_selector_styles(
+				'.' . $class_name,
+				$css_properties,
+				$matched_widgets
+			);
+
+			$styles_collected += count( $matched_widgets );
+
+			error_log( "CSS PIPELINE DEBUG [STYLE_COLLECTION]: Applied overflow class '{$class_name}' to " . count( $matched_widgets ) . ' widgets' );
+		}
+
+		return $styles_collected;
+	}
+
+	private function find_widgets_with_class( string $class_name, array $widgets ): array {
+		$matched = [];
+
+		foreach ( $widgets as $widget ) {
+			$widget_classes = $widget['attributes']['class'] ?? '';
+			$classes_array = explode( ' ', $widget_classes );
+
+			if ( in_array( $class_name, $classes_array, true ) ) {
+				$element_id = $widget['element_id'] ?? null;
+				if ( $element_id ) {
+					$matched[] = $element_id;
+				}
+			}
+
+			if ( ! empty( $widget['children'] ) ) {
+				$child_matches = $this->find_widgets_with_class( $class_name, $widget['children'] );
+				$matched = array_merge( $matched, $child_matches );
+			}
+		}
+
+		return $matched;
+	}
+
+	private function convert_atomic_props_to_css_properties( array $atomic_props ): array {
+		$css_properties = [];
+
+		foreach ( $atomic_props as $prop_name => $atomic_value ) {
+			$css_property = $this->convert_single_atomic_prop_to_css( $prop_name, $atomic_value );
+
+			if ( $css_property ) {
+				$css_properties[] = [
+					'property' => $css_property['property'],
+					'value' => $css_property['value'],
+					'important' => false,
+					'converted_property' => $atomic_value,
+				];
+			}
+		}
+
+		return $css_properties;
+	}
+
+	private function convert_single_atomic_prop_to_css( string $prop_name, array $atomic_value ): ?array {
+		$type = $atomic_value['$$type'] ?? '';
+		$value = $atomic_value['value'] ?? null;
+
+		switch ( $type ) {
+			case 'color':
+				return [
+					'property' => $prop_name,
+					'value' => $value,
+				];
+
+			case 'size':
+				if ( is_array( $value ) && isset( $value['size'], $value['unit'] ) ) {
+					return [
+						'property' => $prop_name,
+						'value' => $value['size'] . $value['unit'],
+					];
+				}
+				break;
+
+			case 'background':
+				if ( is_array( $value ) && isset( $value['color'] ) ) {
+					return [
+						'property' => 'background-color',
+						'value' => $value['color']['value'] ?? $value['color'],
+					];
+				}
+				break;
+		}
+
+		return null;
 	}
 }

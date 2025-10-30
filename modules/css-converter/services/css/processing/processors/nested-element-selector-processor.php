@@ -143,9 +143,21 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 		// FIXED: Don't filter CSS rules - leave them intact for other processors
 		// $context->set_metadata( 'css_rules', $remaining_rules );
 
+		// SPECIFIC DEBUG: Check if our target selectors are still present
+		$target_selectors_remaining = [];
+		foreach ( $css_rules as $rule ) {
+			$selector = $rule['selector'] ?? 'unknown';
+			if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false || 
+				 strpos( $selector, '.copy' ) !== false || 
+				 strpos( $selector, '.loading' ) !== false ) {
+				$target_selectors_remaining[] = $selector;
+			}
+		}
+		
 		// DEBUG: Log CSS rules after processing (all rules preserved)
 		error_log( "CSS PIPELINE DEBUG [NESTED_ELEMENT]: After processing " . count( $css_rules ) . " CSS rules preserved (no filtering)" );
 		error_log( "CSS PIPELINE DEBUG [NESTED_ELEMENT]: Processed {$processed_count} selectors, applied {$applied_count} selectors" );
+		error_log( "CSS PIPELINE DEBUG [NESTED_ELEMENT]: Target selectors remaining: " . count( $target_selectors_remaining ) . " - " . implode( ', ', $target_selectors_remaining ) );
 
 		$context->add_statistic( 'nested_element_selectors_processed', $processed_count );
 		$context->add_statistic( 'nested_element_selectors_applied', $applied_count );

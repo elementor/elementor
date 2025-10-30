@@ -47,13 +47,15 @@ class Nested_Selector_Flattening_Processor implements Css_Processor_Interface {
 	public function process( Css_Processing_Context $context ): Css_Processing_Context {
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 
-		// DEBUG: Log CSS rules before processing
-		error_log( "CSS PIPELINE DEBUG [NESTED_FLATTENING]: Received " . count( $css_rules ) . " CSS rules" );
-		foreach ( $css_rules as $index => $rule ) {
-			$selector = $rule['selector'] ?? 'unknown';
-			$properties_count = count( $rule['properties'] ?? [] );
-			error_log( "CSS PIPELINE DEBUG [NESTED_FLATTENING]: Rule #{$index}: '{$selector}' with {$properties_count} properties" );
+		// DEBUG: Check for .loading selectors BEFORE flattening
+		$loading_before = [];
+		foreach ( $css_rules as $rule ) {
+			$selector = $rule['selector'] ?? '';
+			if ( false !== strpos( $selector, 'loading' ) ) {
+				$loading_before[] = $selector;
+			}
 		}
+		file_put_contents( '/tmp/flattening_debug.log', "NESTED_FLATTENING BEFORE: " . count( $loading_before ) . " loading selectors: " . implode( ', ', $loading_before ) . "\n", FILE_APPEND );
 
 		if ( empty( $css_rules ) ) {
 			return $context;
@@ -65,14 +67,15 @@ class Nested_Selector_Flattening_Processor implements Css_Processor_Interface {
 		// Update css_rules with transformed selectors
 		$context->set_metadata( 'css_rules', $result['css_rules'] );
 
-		// DEBUG: Log CSS rules after processing
-		error_log( "CSS PIPELINE DEBUG [NESTED_FLATTENING]: After processing " . count( $result['css_rules'] ) . " CSS rules" );
-		error_log( "CSS PIPELINE DEBUG [NESTED_FLATTENING]: Transformed {$result['transformed_count']} selectors, processed {$result['processed_count']} selectors" );
-		foreach ( $result['css_rules'] as $index => $rule ) {
-			$selector = $rule['selector'] ?? 'unknown';
-			$properties_count = count( $rule['properties'] ?? [] );
-			error_log( "CSS PIPELINE DEBUG [NESTED_FLATTENING]: Rule #{$index}: '{$selector}' with {$properties_count} properties" );
+		// DEBUG: Check for .loading selectors AFTER flattening
+		$loading_after = [];
+		foreach ( $result['css_rules'] as $rule ) {
+			$selector = $rule['selector'] ?? '';
+			if ( false !== strpos( $selector, 'loading' ) ) {
+				$loading_after[] = $selector;
+			}
 		}
+		file_put_contents( '/tmp/flattening_debug.log', "NESTED_FLATTENING AFTER: " . count( $loading_after ) . " loading selectors: " . implode( ', ', $loading_after ) . "\n", FILE_APPEND );
 
 		// Store HTML modification instructions
 		$css_class_modifiers = $context->get_metadata( 'css_class_modifiers', [] );

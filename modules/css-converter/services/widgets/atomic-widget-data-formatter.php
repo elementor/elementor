@@ -63,25 +63,38 @@ class Atomic_Widget_Data_Formatter {
 	private function extract_atomic_props_from_resolved_styles( array $resolved_styles ): array {
 		$atomic_props = [];
 		
+		// DEBUG: Log resolved styles processing
+		error_log( "CSS PIPELINE DEBUG [DATA_FORMATTER]: Processing " . count( $resolved_styles ) . " resolved styles" );
+		
 		foreach ( $resolved_styles as $property => $style_data ) {
+			// DEBUG: Log each style data structure
+			error_log( "CSS PIPELINE DEBUG [DATA_FORMATTER]: Property '{$property}' data: " . json_encode( $style_data ) );
 			
 			if ( isset( $style_data['converted_property'] ) && is_array( $style_data['converted_property'] ) ) {
 				$converted_property = $style_data['converted_property'];
+				error_log( "CSS PIPELINE DEBUG [DATA_FORMATTER]: Found converted_property for '{$property}': " . json_encode( $converted_property ) );
+				
 				// Check if this is a single atomic property object (has $$type)
 				if ( isset( $converted_property['$$type'] ) ) {
 					$target_property = $this->get_target_property_name( $property );
 					$atomic_props[ $target_property ] = $converted_property;
+					error_log( "CSS PIPELINE DEBUG [DATA_FORMATTER]: Added atomic prop '{$target_property}' (single format)" );
 				} else {
 					// Legacy format: converted_property contains property name as key, atomic format as value
 					foreach ( $converted_property as $prop_name => $atomic_format ) {
 						if ( isset( $atomic_format['$$type'] ) ) {
 							$target_property = $this->get_target_property_name( $prop_name );
 							$atomic_props[ $target_property ] = $atomic_format;
+							error_log( "CSS PIPELINE DEBUG [DATA_FORMATTER]: Added atomic prop '{$target_property}' (legacy format)" );
 						}
 					}
 				}
+			} else {
+				error_log( "CSS PIPELINE DEBUG [DATA_FORMATTER]: No converted_property found for '{$property}'" );
 			}
 		}
+		
+		error_log( "CSS PIPELINE DEBUG [DATA_FORMATTER]: Final atomic props count: " . count( $atomic_props ) );
 		return $atomic_props;
 	}
 	private function create_unified_style_definition( string $class_id, array $atomic_props ): array {
@@ -161,15 +174,14 @@ class Atomic_Widget_Data_Formatter {
 		return $formatted_settings;
 	}
 	private function convert_value_to_atomic_format( $value ) {
-		// If already in atomic format, return as-is
 		if ( is_array( $value ) && isset( $value['$$type'] ) ) {
 			return $value;
 		}
-		// Convert strings to atomic string format
 		if ( is_string( $value ) ) {
+			$decoded_value = $this->decode_unicode_sequences( $value );
 			return [
 				'$$type' => 'string',
-				'value' => $value,
+				'value' => $decoded_value,
 			];
 		}
 		// Convert numbers to atomic number format (for level, etc.)
@@ -179,7 +191,28 @@ class Atomic_Widget_Data_Formatter {
 				'value' => (int) $value,
 			];
 		}
-		// For null, boolean, or other types, return as-is
 		return $value;
+	}
+
+	private function decode_unicode_sequences( $text ) {
+		if ( ! is_string( $text ) ) {
+			return $text;
+		}
+		
+		return preg_replace_callback(
+			'/u([0-9A-Fa-f]{4})/',
+			function( $matches ) {
+				$unicode_code = hexdec( $matches[1] );
+				if ( function_exists( 'mb_chr' ) ) {
+					return mb_chr( $unicode_code, 'UTF-8' );
+				}
+				if ( class_exists( 'IntlChar' ) && method_exists( 'IntlChar', 'chr' ) ) {
+					return \IntlChar::chr( $unicode_code );
+				}
+				$hex_code = strtoupper( $matches[1] );
+				return json_decode( '"\\u' . $hex_code . '"' );
+			},
+			$text
+		);
 	}
 }

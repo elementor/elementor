@@ -2,132 +2,235 @@
 
 namespace Elementor\Modules\CssConverter\Services\GlobalClasses\Unified;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+if (! defined('ABSPATH') ) {
+    exit;
 }
 
-class Global_Classes_Detection_Service {
+class Global_Classes_Detection_Service
+{
 
-	const ELEMENTOR_CLASS_PREFIXES = [ 'e-con-', 'elementor-', 'e-' ];
-	const FLATTENED_CLASS_PREFIX = 'e-con-';
+    const ELEMENTOR_CLASS_PREFIXES = [ 'e-con-', 'elementor-', 'e-' ];
+    const FLATTENED_CLASS_PREFIX = 'e-con-';
 
-	public function detect_css_class_selectors( array $css_rules ): array {
-		$detected_classes = [];
+    public function detect_css_class_selectors( array $css_rules ): array
+    {
+        $detected_classes = [];
 
-		foreach ( $css_rules as $rule ) {
-			$selector = $rule['selector'] ?? '';
+        foreach ( $css_rules as $rule ) {
+            $selector = $rule['selector'] ?? '';
 
-			// DEBUG: Log all selectors being processed
-			error_log( "CSS Converter: Processing selector: '{$selector}'" );
+            // DEBUG: Log all selectors being processed
+            error_log("CSS Converter: Processing selector: '{$selector}'");
 
-			if ( ! $this->is_valid_class_selector( $selector ) ) {
-				error_log( "CSS Converter: Skipping '{$selector}' - not a valid class selector" );
-				continue;
-			}
+            // SKIP compound selectors (e.g., .class1.class2) - they should not become global classes
+            if ($this->is_compound_class_selector($selector) ) {
+                error_log("CSS Converter: Skipping '{$selector}' - compound selector");
+                continue;
+            }
 
-			if ( $this->should_skip_selector( $selector ) ) {
-				error_log( "CSS Converter: Skipping '{$selector}' - should skip selector" );
-				continue;
-			}
+            // NEW: Extract all class names from complex selectors
+            $class_names = $this->extract_all_class_names_from_selector($selector);
 
-			$class_name = $this->extract_class_name( $selector );
+            if (empty($class_names) ) {
+                error_log("CSS Converter: Skipping '{$selector}' - no class names found");
+                continue;
+            }
 
-			if ( $this->is_class_name_too_long( $class_name ) ) {
-				error_log( "CSS Converter: Skipping '{$selector}' - class name too long" );
-				continue;
-			}
+            // Process each class name found in the selector
+            foreach ( $class_names as $class_name ) {
+                if ($this->should_skip_class_name($class_name) ) {
+                    error_log("CSS Converter: Skipping class '{$class_name}' - should skip");
+                    continue;
+                }
 
-			$detected_classes[ $class_name ] = [
-				'selector' => $selector,
-				'properties' => $rule['properties'] ?? [],
-				'source' => 'css-converter',
-			];
-			
-			error_log( "CSS Converter: Detected class '{$class_name}' with " . count( $rule['properties'] ?? [] ) . " properties" );
-		}
+                if ($this->is_class_name_too_long($class_name) ) {
+                    error_log("CSS Converter: Skipping class '{$class_name}' - too long");
+                    continue;
+                }
 
-		return $detected_classes;
-	}
+                $is_simple_selector = ( '.' . $class_name === $selector );
+                
+                if ($is_simple_selector ) {
+                    $detected_classes[ $class_name ] = [
+                    'selector' => $selector,
+                    'properties' => $rule['properties'] ?? [],
+                    'source' => 'css-converter',
+                    ];
+                    
+                    error_log("CSS Converter: Detected SIMPLE class '{$class_name}' with " . count($rule['properties'] ?? []) . " properties");
+                    
+                    if ( 'copy' === $class_name ) {
+                        error_log( 'CSS CONVERTER [COPY DEBUG]: SIMPLE .copy detected with properties: ' . wp_json_encode( $rule['properties'] ?? [] ) );
+                    }
+                } elseif (! isset($detected_classes[ $class_name ]) ) {
+                    $detected_classes[ $class_name ] = [
+                    'selector' => $selector,
+                    'properties' => $rule['properties'] ?? [],
+                    'source' => 'css-converter',
+                    ];
+                    
+                    error_log("CSS Converter: Detected COMPLEX class '{$class_name}' from '{$selector}' with " . count($rule['properties'] ?? []) . " properties");
+                    
+                    if ( 'copy' === $class_name ) {
+                        error_log( 'CSS CONVERTER [COPY DEBUG]: COMPLEX copy detected from selector: ' . $selector . ' with properties: ' . wp_json_encode( $rule['properties'] ?? [] ) );
+                    }
+                } else {
+                    if ( 'copy' === $class_name ) {
+                        error_log( 'CSS CONVERTER [COPY DEBUG]: copy ALREADY EXISTS, skipping selector: ' . $selector );
+                    }
+                }
+            }
+        }
 
-	private function is_valid_class_selector( string $selector ): bool {
-		$trimmed_selector = trim( $selector );
+        return $detected_classes;
+    }
 
-		if ( empty( $trimmed_selector ) ) {
-			return false;
-		}
+    private function is_compound_class_selector( string $selector ): bool
+    {
+        $trimmed = trim($selector);
+        $parts = preg_split('/\s+/', $trimmed);
+        $first_part = $parts[0] ?? '';
+        $class_count = substr_count($first_part, '.');
+        return $class_count > 1;
+    }
 
-		if ( 0 !== strpos( $trimmed_selector, '.' ) ) {
-			return false;
-		}
+    private function is_valid_class_selector( string $selector ): bool
+    {
+        $trimmed_selector = trim($selector);
 
-		$class_name = ltrim( $trimmed_selector, '.' );
+        if (empty($trimmed_selector) ) {
+            return false;
+        }
 
-		return ! empty( $class_name );
-	}
+        if (0 !== strpos($trimmed_selector, '.') ) {
+            return false;
+        }
 
-	private function should_skip_selector( string $selector ): bool {
-		$class_name = $this->extract_class_name( $selector );
+        $class_name = ltrim($trimmed_selector, '.');
 
-		foreach ( self::ELEMENTOR_CLASS_PREFIXES as $prefix ) {
-			if ( 0 === strpos( $class_name, $prefix ) ) {
-				return true;
-			}
-		}
+        return ! empty($class_name);
+    }
 
-		return false;
-	}
+    private function should_skip_selector( string $selector ): bool
+    {
+        $class_name = $this->extract_class_name($selector);
 
-	private function extract_class_name( string $selector ): string {
-		return ltrim( trim( $selector ), '.' );
-	}
+        foreach ( self::ELEMENTOR_CLASS_PREFIXES as $prefix ) {
+            if (0 === strpos($class_name, $prefix) ) {
+                return true;
+            }
+        }
 
-	private function is_class_name_too_long( string $class_name ): bool {
-		$max_class_name_length = 50;
+        return false;
+    }
 
-		return strlen( $class_name ) > $max_class_name_length;
-	}
+    private function extract_class_name( string $selector ): string
+    {
+        return ltrim(trim($selector), '.');
+    }
 
-	public function get_detection_stats( array $css_rules ): array {
-		$total_rules = count( $css_rules );
-		$class_selectors = 0;
-		$valid_classes = 0;
-		$skipped_elementor = 0;
-		$skipped_invalid = 0;
-		$skipped_too_long = 0;
+    private function extract_all_class_names_from_selector( string $selector ): array
+    {
+        $class_names = [];
+        
+        // Use regex to find all class names in the selector
+        // Pattern: \.([a-zA-Z0-9_-]+) - matches .classname
+        preg_match_all('/\.([a-zA-Z0-9_-]+)/', $selector, $matches);
+        
+        error_log("CSS CONVERTER DEBUG [EXTRACT]: Selector '{$selector}' -> matches: " . json_encode($matches[1] ?? []));
+        
+        if (! empty($matches[1]) ) {
+            $class_names = array_unique($matches[1]);
+        }
+        
+        error_log("CSS CONVERTER DEBUG [EXTRACT]: Final class names: " . implode(', ', $class_names));
+        
+        return $class_names;
+    }
 
-		foreach ( $css_rules as $rule ) {
-			$selector = $rule['selector'] ?? '';
+    private function should_skip_class_name( string $class_name ): bool
+    {
+        foreach ( self::ELEMENTOR_CLASS_PREFIXES as $prefix ) {
+            if (0 === strpos($class_name, $prefix) ) {
+                return true;
+            }
+        }
 
-			if ( 0 === strpos( trim( $selector ), '.' ) ) {
-				++$class_selectors;
+        return false;
+    }
 
-				if ( ! $this->is_valid_class_selector( $selector ) ) {
-					++$skipped_invalid;
-					continue;
-				}
+    private function is_class_name_too_long( string $class_name ): bool
+    {
+        $max_class_name_length = 50;
 
-				if ( $this->should_skip_selector( $selector ) ) {
-					++$skipped_elementor;
-					continue;
-				}
+        return strlen($class_name) > $max_class_name_length;
+    }
 
-				$class_name = $this->extract_class_name( $selector );
-				if ( $this->is_class_name_too_long( $class_name ) ) {
-					++$skipped_too_long;
-					continue;
-				}
+    public function filter_classes_by_usage( array $detected_classes, array $used_classes ): array
+    {
+        $filtered = [];
+        $filtered_out_count = 0;
 
-				++$valid_classes;
-			}
-		}
+        error_log("CSS CONVERTER DEBUG [FILTER]: Detected classes: " . implode(', ', array_keys($detected_classes)));
+        error_log("CSS CONVERTER DEBUG [FILTER]: Used classes: " . implode(', ', $used_classes));
 
-		return [
-			'total_rules' => $total_rules,
-			'class_selectors' => $class_selectors,
-			'valid_classes' => $valid_classes,
-			'skipped_elementor' => $skipped_elementor,
-			'skipped_invalid' => $skipped_invalid,
-			'skipped_too_long' => $skipped_too_long,
-		];
-	}
+        foreach ( $detected_classes as $class_name => $class_data ) {
+            if (in_array($class_name, $used_classes, true) ) {
+                $filtered[ $class_name ] = $class_data;
+                error_log("CSS CONVERTER DEBUG [FILTER]: KEPT class '{$class_name}'");
+            } else {
+                ++$filtered_out_count;
+                error_log("CSS CONVERTER DEBUG [FILTER]: FILTERED OUT class '{$class_name}'");
+            }
+        }
+
+        error_log("CSS Converter: Filtered " . count($detected_classes) . " detected classes to " . count($filtered) . " used classes ({$filtered_out_count} filtered out)");
+
+        return $filtered;
+    }
+
+    public function get_detection_stats( array $css_rules ): array
+    {
+        $total_rules = count($css_rules);
+        $class_selectors = 0;
+        $valid_classes = 0;
+        $skipped_elementor = 0;
+        $skipped_invalid = 0;
+        $skipped_too_long = 0;
+
+        foreach ( $css_rules as $rule ) {
+            $selector = $rule['selector'] ?? '';
+
+            if (0 === strpos(trim($selector), '.') ) {
+                ++$class_selectors;
+
+                if (! $this->is_valid_class_selector($selector) ) {
+                    ++$skipped_invalid;
+                    continue;
+                }
+
+                if ($this->should_skip_selector($selector) ) {
+                    ++$skipped_elementor;
+                    continue;
+                }
+
+                $class_name = $this->extract_class_name($selector);
+                if ($this->is_class_name_too_long($class_name) ) {
+                    ++$skipped_too_long;
+                    continue;
+                }
+
+                ++$valid_classes;
+            }
+        }
+
+        return [
+        'total_rules' => $total_rules,
+        'class_selectors' => $class_selectors,
+        'valid_classes' => $valid_classes,
+        'skipped_elementor' => $skipped_elementor,
+        'skipped_invalid' => $skipped_invalid,
+        'skipped_too_long' => $skipped_too_long,
+        ];
+    }
 }

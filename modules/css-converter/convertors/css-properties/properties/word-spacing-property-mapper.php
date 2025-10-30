@@ -31,6 +31,11 @@ class Word_Spacing_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$word_spacing_data = $this->parse_word_spacing_value( $value );
 
+		// If parsing failed (e.g., CSS variable), return null instead of creating invalid data
+		if ( null === $word_spacing_data ) {
+			return null;
+		}
+
 		return Size_Prop_Type::make()
 			->units( Size_Constants::typography() )
 			->generate( $word_spacing_data );
@@ -44,7 +49,7 @@ class Word_Spacing_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
 	}
 
-	protected function parse_word_spacing_value( string $value ): array {
+	protected function parse_word_spacing_value( string $value ): ?array {
 		$trimmed_value = trim( $value );
 
 		if ( $this->is_normal_keyword( $trimmed_value ) ) {
@@ -62,24 +67,19 @@ class Word_Spacing_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return 'normal' === $value;
 	}
 
-	private function parse_value_with_units_or_default( string $value ): array {
+	private function parse_value_with_units_or_default( string $value ): ?array {
 		$parsed = Size_Value_Parser::parse( $value );
 
 		if ( null !== $parsed ) {
 			return $parsed;
 		}
 
-		return $this->create_default_word_spacing();
+		// Don't create fake defaults - return null to indicate parsing failure
+		error_log( "CSS Converter: Cannot parse word-spacing value: '{$value}'" );
+		return null;
 	}
 
 	private function create_normal_word_spacing(): array {
-		return [
-			'size' => self::NORMAL_WORD_SPACING_SIZE,
-			'unit' => self::DEFAULT_WORD_SPACING_UNIT,
-		];
-	}
-
-	private function create_default_word_spacing(): array {
 		return [
 			'size' => self::NORMAL_WORD_SPACING_SIZE,
 			'unit' => self::DEFAULT_WORD_SPACING_UNIT,

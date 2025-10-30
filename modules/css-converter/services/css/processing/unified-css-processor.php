@@ -1123,6 +1123,16 @@ class Unified_Css_Processor {
 		preg_match_all( '/<style[^>]*>(.*?)<\/style>/is', $html, $matches );
 		if ( ! empty( $matches[1] ) ) {
 			foreach ( $matches[1] as $index => $css_content ) {
+				// DEBUG: Check if inline styles contain reset CSS
+				$has_reset_css = strpos( $css_content, 'html, body, div, span' ) !== false;
+				error_log( "INLINE_STYLE: Tag #{$index} - Size: " . strlen( $css_content ) . " bytes, Contains reset CSS: " . ( $has_reset_css ? 'YES' : 'NO' ) );
+				
+				if ( $has_reset_css ) {
+					$reset_start = strpos( $css_content, 'html, body, div, span' );
+					$reset_sample = substr( $css_content, $reset_start, 300 );
+					error_log( "INLINE_STYLE: Reset CSS found in tag #{$index}: " . $reset_sample );
+				}
+				
 				$html_style_tags[] = [
 					'type' => 'inline_style_tag',
 					'source' => 'inline-style-' . $index,
@@ -1152,6 +1162,34 @@ class Unified_Css_Processor {
 			] );
 			if ( ! is_wp_error( $response ) ) {
 				$css_content = wp_remote_retrieve_body( $response );
+				
+				// DEBUG: Check if this CSS file contains reset styles (multiple patterns)
+				$reset_patterns = [
+					'html, body, div, span',
+					'html,body,div,span',
+					'html, body',
+					'margin: 0',
+					'padding: 0'
+				];
+				
+				$has_reset_css = false;
+				$found_pattern = '';
+				foreach ( $reset_patterns as $pattern ) {
+					if ( strpos( $css_content, $pattern ) !== false ) {
+						$has_reset_css = true;
+						$found_pattern = $pattern;
+						break;
+					}
+				}
+				
+				error_log( "CSS_FETCH: {$css_url} - Size: " . strlen( $css_content ) . " bytes, Contains reset CSS: " . ( $has_reset_css ? "YES ({$found_pattern})" : 'NO' ) );
+				
+				if ( $has_reset_css ) {
+					$reset_start = strpos( $css_content, $found_pattern );
+					$reset_sample = substr( $css_content, $reset_start, 300 );
+					error_log( "CSS_FETCH: Reset CSS found in {$css_url}: " . $reset_sample );
+				}
+				
 				$css_sources[] = [
 					'type' => 'external_file',
 					'source' => $css_url,
@@ -1208,14 +1246,27 @@ class Unified_Css_Processor {
 				continue;
 			}
 
+			// DEBUG: Check if this source contains reset CSS
+			$has_reset_css = strpos( $content, 'html,body,div,span' ) !== false;
+			if ( $has_reset_css ) {
+				error_log( "CSS_CONCATENATION: Source '{$source_name}' contains reset CSS" );
+			}
+
 			try {
+				// FIXED: Sanitize CSS to remove common CSS hacks before parsing
+				$sanitized_content = $this->sanitize_css_for_parsing( $content );
+				
 				// Test parse CSS to ensure it's valid
 				if ( null !== $this->css_parser ) {
-					$test_parse = $this->css_parser->parse( $content );
+					$test_parse = $this->css_parser->parse( $sanitized_content );
 				}
 
-				$successful_css .= $content . "\n";
+				$successful_css .= $sanitized_content . "\n";
 				++$successful_count;
+				
+				if ( $has_reset_css ) {
+					error_log( "CSS_CONCATENATION: Successfully added reset CSS from '{$source_name}'" );
+				}
 			} catch ( \Exception $e ) {
 				++$failed_count;
 				$failed_sources[] = [
@@ -1224,10 +1275,53 @@ class Unified_Css_Processor {
 					'error' => $e->getMessage(),
 					'size' => strlen( $content ),
 				];
+				
+				if ( $has_reset_css ) {
+					error_log( "CSS_CONCATENATION: FAILED to add reset CSS from '{$source_name}': " . $e->getMessage() );
+				}
 			}
 		}
 
+		// DEBUG: Check if final concatenated CSS contains reset CSS
+		$final_has_reset = strpos( $successful_css, 'html,body,div,span' ) !== false;
+		error_log( "CSS_CONCATENATION: Final CSS contains reset CSS: " . ( $final_has_reset ? 'YES' : 'NO' ) );
+
 		return $successful_css;
+	}
+
+	/**
+	 * Sanitize CSS to remove common CSS hacks and invalid syntax that break parsers
+	 *
+	 * @param string $css Raw CSS content
+	 * @return string Sanitized CSS content
+	 */
+	private function sanitize_css_for_parsing( string $css ): string {
+		// Remove common CSS hacks that break Sabberworm parser
+		$css_hacks_to_remove = [
+			// IE CSS hacks
+			'/\*zoom\s*:\s*[^;]+;?/i',           // *zoom: 1;
+			'/\*display\s*:\s*[^;]+;?/i',        // *display: inline;
+			'/\*width\s*:\s*[^;]+;?/i',          // *width: auto;
+			'/\*height\s*:\s*[^;]+;?/i',         // *height: 1%;
+			'/\*margin\s*:\s*[^;]+;?/i',         // *margin: 0;
+			'/\*padding\s*:\s*[^;]+;?/i',        // *padding: 0;
+			'/\*position\s*:\s*[^;]+;?/i',       // *position: relative;
+			'/\*overflow\s*:\s*[^;]+;?/i',       // *overflow: hidden;
+			
+			// Other CSS hacks
+			'/_[a-zA-Z-]+\s*:\s*[^;]+;?/i',      // _property: value;
+			'/\+[a-zA-Z-]+\s*:\s*[^;]+;?/i',     // +property: value;
+		];
+
+		foreach ( $css_hacks_to_remove as $hack_pattern ) {
+			$css = preg_replace( $hack_pattern, '', $css );
+		}
+
+		// Clean up any double semicolons or extra whitespace left by hack removal
+		$css = preg_replace( '/;+/', ';', $css );
+		$css = preg_replace( '/\s*;\s*}/', '}', $css );
+
+		return $css;
 	}
 
 	public function fetch_css_from_urls( array $css_urls, bool $follow_imports = false ): array {

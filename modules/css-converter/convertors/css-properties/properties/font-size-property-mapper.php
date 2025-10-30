@@ -39,6 +39,11 @@ class Font_Size_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$size_data = $this->parse_size_value( $value );
 
+		// If parsing failed (e.g., CSS variable), return null instead of creating invalid data
+		if ( null === $size_data ) {
+			return null;
+		}
+
 		return Size_Prop_Type::make()
 			->units( Size_Constants::typography() )
 			->generate( $size_data );
@@ -52,20 +57,16 @@ class Font_Size_Property_Mapper extends Atomic_Property_Mapper_Base {
 		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
 	}
 
-	protected function parse_size_value( string $value ): array {
+	protected function parse_size_value( string $value ): ?array {
 		$parsed = Size_Value_Parser::parse( $value );
 
 		if ( null !== $parsed ) {
 			return $parsed;
 		}
 
-		return $this->create_default_font_size();
-	}
-
-	private function create_default_font_size(): array {
-		return [
-			'size' => 16,
-			'unit' => 'px',
-		];
+		// Don't create fake defaults - return null to indicate parsing failure
+		// This allows CSS variables and other unparseable values to be handled properly
+		error_log( "CSS Converter: Cannot parse font-size value: '{$value}'" );
+		return null;
 	}
 }

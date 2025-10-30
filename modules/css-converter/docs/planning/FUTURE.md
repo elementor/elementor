@@ -47,6 +47,87 @@
 
 ---
 
+## Span Tag Content Preservation
+
+### Current Implementation
+- **Status**: ✅ Implemented (Basic functionality)
+- **Location**: `plugins/elementor-css/modules/css-converter/services/widgets/widget-mapper.php`
+- **Method**: `handle_paragraph()` and `extract_all_text_recursively()`
+
+### Current Behavior
+- **Text-only elements** (`span`, `strong`, `em`, `b`, `i`, `u`, `small`, `mark`, `del`, `ins`, `sub`, `sup`) are filtered out during conversion
+- **Text content** from these elements is preserved and merged into parent paragraph text
+- **Example**: 
+  ```html
+  <p>Text <span style="text-decoration: underline;">underlined text</span>.</p>
+  ```
+  Becomes:
+  ```php
+  'paragraph' => 'Text underlined text.'
+  ```
+- **Interactive elements** (links, buttons) remain as separate widgets
+
+### Future Improvements
+
+#### 1. CSS Style Preservation
+- **Current Limitation**: Inline styles from filtered elements (e.g., `style="text-decoration: underline;"`) are lost
+- **Future Enhancement**: Preserve styling information from filtered elements
+- **Implementation Ideas**:
+  - Convert inline styles to CSS classes
+  - Apply preserved styles to parent paragraph widget
+  - Support common text formatting: underline, bold, italic, etc.
+
+#### 2. Nested Structure Handling
+- **Current Behavior**: Works for single-level nesting (e.g., `<p><span>text</span></p>`)
+- **Future Enhancement**: Improve handling of deeply nested structures
+- **Examples**:
+  ```html
+  <p>Text <span><strong>bold <em>italic</em></strong></span>.</p>
+  ```
+  Should preserve: "Text bold italic."
+
+#### 3. Class-Based Styling Transfer
+- **Current Limitation**: CSS classes on filtered elements (e.g., `<span class="highlight">`) are not transferred
+- **Future Enhancement**: Transfer meaningful classes to parent or convert to inline styles
+- **Considerations**:
+  - Distinguish between semantic classes (should be preserved) vs presentational classes
+  - Handle class conflicts when merging styles
+
+#### 4. Rich Text Formatting Support
+- **Current Limitation**: All formatting from filtered elements is lost
+- **Future Enhancement**: Support structured text formatting in Elementor widgets
+- **Approach**:
+  - Map HTML formatting to Elementor rich text controls
+  - Support combinations: bold + italic, underline + color, etc.
+  - Consider using Elementor's rich text editor capabilities
+
+#### 5. Performance Optimization
+- **Current Implementation**: Recursive text extraction may be inefficient for very deep nesting
+- **Future Enhancement**: Optimize recursive extraction for large documents
+- **Optimization Ideas**:
+  - Cache extracted text for elements
+  - Iterative approach instead of recursive for very deep structures
+  - Batch processing for multiple elements
+
+### Related Files
+- `plugins/elementor-css/modules/css-converter/services/widgets/widget-mapper.php` - Current implementation
+- `plugins/elementor-css/modules/css-converter/services/css/parsing/html-parser.php` - HTML parsing
+
+### Test Cases
+- Basic span unwrapping: `<p>Text <span>content</span>.</p>`
+- Styled spans: `<p>Text <span style="text-decoration: underline;">underlined</span>.</p>`
+- Nested spans: `<p>Text <span><strong>bold</strong></span>.</p>`
+- Mixed content: `<p>Text <span>span</span> <a href="#">link</a>.</p>` (span unwrapped, link preserved)
+
+### Implementation Status
+- **Basic Functionality**: ✅ Complete - Text content preserved
+- **Style Preservation**: 🔄 Future - Inline styles not yet transferred
+- **Nested Structures**: ✅ Working - Recursive extraction handles nesting
+- **Class Transfer**: 🔄 Future - Classes not yet transferred
+- **Rich Text Support**: 🔄 Future - Formatting not yet preserved
+
+---
+
 ## CSS Color Keyword Support
 
 ### Current Implementation

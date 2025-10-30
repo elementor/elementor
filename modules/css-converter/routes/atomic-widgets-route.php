@@ -164,7 +164,9 @@ class Atomic_Widgets_Route {
 
 			if ( ! empty( $selector ) ) {
 				$auto_extracted_css_urls = $this->extract_stylesheet_urls_from_html( $html, $content );
-				return $this->extract_html_by_selector( $html, $selector );
+				$extracted_element = $this->extract_html_by_selector( $html, $selector );
+				$inline_styles = $this->extract_inline_style_tags( $html );
+				return $inline_styles . $extracted_element;
 			}
 
 			return $html;
@@ -256,6 +258,17 @@ class Atomic_Widgets_Route {
 		throw new \Exception( 'Complex selector "' . esc_html( $selector ) . '" not supported' );
 	}
 
+	private function extract_inline_style_tags( string $html ): string {
+		$inline_styles = '';
+		preg_match_all( '/<style[^>]*>(.*?)<\/style>/is', $html, $matches );
+		if ( ! empty( $matches[0] ) ) {
+			foreach ( $matches[0] as $style_tag ) {
+				$inline_styles .= $style_tag . "\n";
+			}
+		}
+		return $inline_styles;
+	}
+
 	private function extract_stylesheet_urls_from_html( string $html, string $base_url ): array {
 		$stylesheet_urls = [];
 
@@ -265,6 +278,11 @@ class Atomic_Widgets_Route {
 				$absolute_url = $this->resolve_relative_url( $href, $base_url );
 				$stylesheet_urls[] = $absolute_url;
 			}
+		}
+
+		error_log( "CSS_URL_EXTRACTION: Found " . count( $stylesheet_urls ) . " stylesheet URLs from {$base_url}" );
+		foreach ( $stylesheet_urls as $index => $url ) {
+			error_log( "CSS_URL_EXTRACTION: [{$index}] {$url}" );
 		}
 
 		preg_match_all( '/<link[^>]+href=["\']([^"\']+)["\'][^>]*rel=["\']stylesheet["\'][^>]*>/i', $html, $reversed_link_matches );

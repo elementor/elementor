@@ -35,7 +35,7 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 		// DEBUG: Log widget data received by factory
 		$widget_classes = $widget_data['attributes']['class'] ?? '';
 		error_log( "CSS Converter: Factory received {$widget_type} widget with classes: '{$widget_classes}'" );
-		error_log( "CSS Converter: Full widget_data keys: " . implode( ', ', array_keys( $widget_data ) ) );
+		error_log( 'CSS Converter: Full widget_data keys: ' . implode( ', ', array_keys( $widget_data ) ) );
 
 		$formatted_widget_data = $this->data_formatter->format_widget_data( $resolved_styles, $widget_data, $widget_id );
 
@@ -78,7 +78,7 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 
 		// Add global classes to widget styles for atomic widgets CSS output
 		$applicable_global_classes = $this->extract_applicable_global_classes( $widget_data );
-		
+
 		if ( ! empty( $applicable_global_classes ) ) {
 			$elementor_widget['styles'] = array_merge(
 				$elementor_widget['styles'] ?? [],
@@ -150,20 +150,23 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 
 	private function apply_global_classes( array $final_settings, array $widget_data ): array {
 		$global_classes = $this->css_processing_result['global_classes'] ?? [];
+		$class_name_mappings = $this->css_processing_result['class_name_mappings'] ?? [];
+
 		if ( empty( $global_classes ) ) {
 			return $final_settings;
 		}
 
 		$widget_classes = $widget_data['attributes']['class'] ?? '';
-		
+
 		// DEBUG: Log class application process
 		$widget_type = $widget_data['widget_type'] ?? 'unknown';
 		error_log( "CSS Converter: Applying global classes to {$widget_type} widget" );
 		error_log( "CSS Converter: Widget classes found: '{$widget_classes}'" );
-		error_log( "CSS Converter: Available global classes: " . implode( ', ', array_keys( $global_classes ) ) );
-		
+		error_log( 'CSS Converter: Available global classes: ' . implode( ', ', array_keys( $global_classes ) ) );
+		error_log( 'CSS Converter: Class name mappings: ' . json_encode( $class_name_mappings ) );
+
 		if ( empty( $widget_classes ) ) {
-			error_log( "CSS Converter: No widget classes found, skipping global class application" );
+			error_log( 'CSS Converter: No widget classes found, skipping global class application' );
 			return $final_settings;
 		}
 
@@ -172,11 +175,15 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 
 		foreach ( $classes_array as $class_name ) {
 			$class_name = trim( $class_name );
-			if ( isset( $global_classes[ $class_name ] ) ) {
-				$applicable_global_classes[] = $class_name;
-				error_log( "CSS Converter: Found matching global class: {$class_name}" );
+
+			// CRITICAL FIX: Use mapped class name if available (for duplicate detection)
+			$mapped_class_name = $class_name_mappings[ $class_name ] ?? $class_name;
+
+			if ( isset( $global_classes[ $mapped_class_name ] ) ) {
+				$applicable_global_classes[] = $mapped_class_name;
+				error_log( "CSS Converter: Found matching global class: {$class_name} -> {$mapped_class_name}" );
 			} else {
-				error_log( "CSS Converter: No global class found for: {$class_name}" );
+				error_log( "CSS Converter: No global class found for: {$class_name} (mapped: {$mapped_class_name})" );
 			}
 		}
 
@@ -188,10 +195,10 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 				'$$type' => 'classes',
 				'value' => array_values( array_unique( $merged_classes ) ),
 			];
-			
-			error_log( "CSS Converter: Applied classes to widget: " . implode( ', ', $merged_classes ) );
+
+			error_log( 'CSS Converter: Applied classes to widget: ' . implode( ', ', $merged_classes ) );
 		} else {
-			error_log( "CSS Converter: No applicable global classes found" );
+			error_log( 'CSS Converter: No applicable global classes found' );
 		}
 
 		return $final_settings;
@@ -226,7 +233,7 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 
 		foreach ( $global_classes as $class_name => $class_data ) {
 			$atomic_props = $class_data['atomic_props'] ?? [];
-			
+
 			if ( empty( $atomic_props ) ) {
 				continue;
 			}

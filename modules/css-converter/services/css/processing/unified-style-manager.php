@@ -235,6 +235,16 @@ class Unified_Style_Manager {
 		array $properties,
 		array $conflicts = []
 	) {
+		// DEBUG: Log complex reset styles collection
+		error_log( 'CSS PIPELINE DEBUG [UNIFIED_STYLE_MANAGER]: collect_complex_reset_styles called for selector: ' . $complex_selector );
+		error_log( 'CSS PIPELINE DEBUG [UNIFIED_STYLE_MANAGER]: Properties count: ' . count( $properties ) );
+		
+		// ALERT: Check if this is a widget-specific class
+		if ( strpos( $complex_selector, 'elementor-element-' ) !== false ) {
+			error_log( 'CSS PIPELINE ALERT [UNIFIED_STYLE_MANAGER]: Widget-specific class detected in complex reset styles: ' . $complex_selector );
+			error_log( 'CSS PIPELINE ALERT [UNIFIED_STYLE_MANAGER]: Stack trace: ' . wp_debug_backtrace_summary() );
+		}
+		
 		// Complex reset styles are collected but marked for CSS file generation
 		// They don't get applied directly to widgets
 		foreach ( $properties as $property_data ) {
