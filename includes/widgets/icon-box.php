@@ -244,11 +244,11 @@ class Widget_Icon_Box extends Widget_Base {
 				'options' => [
 					'inline-start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => "eicon-h-align-$start",
+						'icon' => 'eicon-h-align-left',
 					],
 					'inline-end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => "eicon-h-align-$end",
+						'icon' => 'eicon-h-align-right',
 					],
 					'block-start' => [
 						'title' => esc_html__( 'Top', 'elementor' ),
@@ -259,6 +259,7 @@ class Widget_Icon_Box extends Widget_Base {
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],
+				'classes' => 'elementor-control-start-end',
 				'classes_dictionary' => [
 					'left' => is_rtl() ? 'inline-end' : 'inline-start',
 					'right' => is_rtl() ? 'inline-start' : 'inline-end',
@@ -313,16 +314,16 @@ class Widget_Icon_Box extends Widget_Base {
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
@@ -330,6 +331,11 @@ class Widget_Icon_Box extends Widget_Base {
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
+				],
+				'classes' => 'elementor-control-start-end',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'text-align: {{VALUE}};',
 				],
