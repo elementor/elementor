@@ -1168,14 +1168,12 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
+		if ( ! this.getContainer().isEditable() ) {
+			return;
+		}
+
 		this.getDomElement().html5Draggable( {
 			onDragStart: ( e ) => {
-				if ( ! this.getContainer().isEditable() ) {
-					e.originalEvent.preventDefault();
-
-					return;
-				}
-
 				e.stopPropagation();
 
 				if ( this.getContainer().isLocked() ) {

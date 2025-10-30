@@ -49,6 +49,10 @@ function createComponentView(
 			return settings;
 		}
 
+		getDomElement() {
+			return this.children.findByIndex( 0 )?.getDomElement() ?? this.$el;
+		}
+
 		attachBuffer( collectionView: this, buffer: DocumentFragment ): void {
 			const childrenPlaceholder = collectionView.$el.find( '[data-children-placeholder]' ).get( 0 );
 

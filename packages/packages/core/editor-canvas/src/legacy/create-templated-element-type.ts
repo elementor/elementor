@@ -71,18 +71,6 @@ export function createTemplatedElementView( {
 	return class extends BaseView {
 		#abortController: AbortController | null = null;
 
-		__renderChildren: () => void;
-
-		constructor( ...args: unknown[] ) {
-			super( ...args );
-
-			// This override blocks the regular usage of `_renderChildren` method,
-			// and assigns it to another method which will be called later in the `_renderTemplate` method.
-			this.__renderChildren = this._renderChildren;
-
-			this._renderChildren = () => {};
-		}
-
 		getTemplateType() {
 			return 'twig';
 		}
@@ -91,14 +79,24 @@ export function createTemplatedElementView( {
 			this.render();
 		}
 
-		// Overriding Marionette original render method to inject our renderer.
-		async _renderTemplate() {
-			this.#beforeRenderTemplate();
-
+		render() {
 			this.#abortController?.abort();
 			this.#abortController = new AbortController();
 
 			const process = signalizedProcess( this.#abortController.signal )
+				.then( () => this.#beforeRender() )
+				.then( () => this._renderTemplate() )
+				.then( () => this._renderChildren() ) // This will render children and should be async as well.
+				.then( () => this.#afterRender() );
+
+			return process.execute();
+		}
+
+		// Overriding Marionette original render method to inject our renderer.
+		async _renderTemplate() {
+			this.triggerMethod( 'before:render:template' );
+
+			const process = signalizedProcess( this.#abortController?.signal as AbortSignal )
 				.then( ( _, signal ) => {
 					const settings = this.model.get( 'settings' ).toJSON();
 
@@ -121,27 +119,34 @@ export function createTemplatedElementView( {
 
 					return renderer.render( templateKey, context );
 				} )
-				.then( ( html ) => this.$el.html( html ) )
-				.then( () => this.__renderChildren() );
+				.then( ( html ) => this.$el.html( html ) );
 
 			await process.execute();
 
-			this.#afterRenderTemplate();
+			this.bindUIElements();
+
+			this.triggerMethod( 'render:template' );
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
 			return settings;
 		}
 
-		// Emulating the original Marionette behavior.
-		#beforeRenderTemplate() {
-			this.triggerMethod( 'before:render:template' );
+		#beforeRender() {
+			this._ensureViewIsIntact();
+
+			this._isRendering = true;
+
+			this.resetChildViewContainer();
+
+			this.triggerMethod( 'before:render', this );
 		}
 
-		#afterRenderTemplate() {
-			this.bindUIElements();
+		#afterRender() {
+			this._isRendering = false;
+			this.isRendered = true;
 
-			this.triggerMethod( 'render:template' );
+			this.triggerMethod( 'render', this );
 		}
 	};
 }

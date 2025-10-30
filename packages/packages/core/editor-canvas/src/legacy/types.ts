@@ -40,6 +40,11 @@ export declare class ElementView {
 
 	collection: BackboneCollection< ElementModel >;
 
+	children: {
+		length: number;
+		findByIndex: ( index: number ) => ElementView;
+	};
+
 	constructor( ...args: unknown[] );
 
 	onRender( ...args: unknown[] ): void;
@@ -71,9 +76,17 @@ export declare class ElementView {
 
 	attachBuffer( collectionView: this, buffer: DocumentFragment ): void;
 
-	triggerMethod( method: string ): void;
+	triggerMethod( method: string, ...args: unknown[] ): void;
 
 	bindUIElements(): void;
+
+	_ensureViewIsIntact(): void;
+
+	_isRendering: boolean;
+
+	resetChildViewContainer(): void;
+
+	isRendered: boolean;
 
 	options?: {
 		model: BackboneModel< ElementModel >;
