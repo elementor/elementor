@@ -30,7 +30,7 @@ module.exports = {
 		__: true,
 	},
 	parserOptions: {
-		ecmaVersion: 2023,
+		ecmaVersion: 2017,
 		requireConfigFile: false,
 		sourceType: 'module',
 		babelOptions: {
