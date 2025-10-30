@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Variables;
 
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
+use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\Variables\Classes\Variables;
@@ -157,4 +158,59 @@ class Test_Style_Renderer extends Elementor_Test_Base {
 		$this->assertNotEmpty( $css, 'CSS should not be empty' );
 		$this->assertMatchesSnapshot( $css );
 	}
+
+	public function test_render__uses_css_name_when_available() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-id',
+				'cssName' => 'custom-name',
+				'type' => 'class',
+				'variants' => [
+					[
+					'props' => [ 'color' => '#000' ],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$renderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $renderer->render( $styles );
+
+		// Assert.
+		$this->assertSame( '.custom-name{color:#000;}', $css );
+	}
+
+	public function test_render__applies_native_and_custom_states() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'state-test',
+				'type' => 'class',
+				'variants' => [
+					[
+					'props' => [ 'color' => '#111' ],
+						'meta' => [ 'state' => Style_States::NATIVE_HOVER ],
+					],
+					[
+					'props' => [ 'color' => '#222' ],
+						'meta' => [ 'state' => Style_States::CUSTOM_SELECTED ],
+					],
+				],
+			],
+		];
+
+		$renderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $renderer->render( $styles );
+
+		// Assert.
+		$this->assertStringContainsString( '.state-test:hover{color:#111;}', $css );
+		$this->assertStringContainsString( '.state-test.e--selected{color:#222;}', $css );
+	}
+
 }

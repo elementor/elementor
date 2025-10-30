@@ -121,7 +121,16 @@ class Styles_Renderer {
 			return '';
 		}
 
-		$state = isset( $variant['meta']['state'] ) ? ':' . $variant['meta']['state'] : '';
+		if ( isset( $variant['meta']['state'] ) ) {
+			if ( $this->is_style_definition_custom_state( $variant['meta']['state'] ) ) {
+				$state = '.' . $variant['meta']['state'];
+			} elseif ( $this->is_style_definition_native_state( $variant['meta']['state'] ) ) {
+				$state = ':' . $variant['meta']['state'];
+			}
+		} else {
+			$state = '';
+		}
+
 		$selector = $base_selector . $state;
 
 		$style_declaration = $selector . '{' . $css . $custom_css . '}';
@@ -131,6 +140,14 @@ class Styles_Renderer {
 		}
 
 		return $style_declaration;
+	}
+
+	private function is_style_definition_custom_state( string $state ): bool {
+		return Style_States::is_custom_state( $state );
+	}
+
+	private function is_style_definition_native_state( string $state ): bool {
+		return Style_States::is_native_state( $state );
 	}
 
 	private function props_to_css_string( array $props ): string {

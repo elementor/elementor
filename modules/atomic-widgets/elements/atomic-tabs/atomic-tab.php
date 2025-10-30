@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -60,6 +61,12 @@ class Atomic_Tab extends Atomic_Element_Base {
 				->set_id( 'settings' )
 				->set_items( [] ),
 		];
+	}
+
+	protected function define_atomic_style_states(): array {
+		$selected_state = Style_States::get_custom_states_map()['selected'];
+
+		return [ $selected_state ];
 	}
 
 	protected function define_base_styles(): array {

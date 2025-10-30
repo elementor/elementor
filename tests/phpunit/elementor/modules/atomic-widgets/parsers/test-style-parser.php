@@ -345,6 +345,60 @@ class Test_Style_Parser extends Elementor_Test_Base {
 		$this->assertEquals('class_name_starts_with_hyphen_digit', $result->errors()->all()[0]['error']);
 	}
 
+	public function test_parse__invalid_custom_css_is_removed_on_sanitize() {
+		// Arrange.
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => 'test-style',
+			'variants' => [
+				[
+					'meta' => [
+						'state' => null,
+						'breakpoint' => 'desktop',
+					],
+					'props' => [],
+					'custom_css' => [ 'raw' => '%%%invalid%%%' ],
+				],
+			],
+		];
+
+		// Act.
+		$result = $this->parser->parse( $style );
+		$parsed = $result->unwrap();
+
+		// Assert.
+		$this->assertTrue( $result->is_valid() );
+		$this->assertNull( $parsed['variants'][0]['custom_css'] );
+	}
+
+	public function test_parse__empty_custom_css_is_removed_on_sanitize() {
+		// Arrange.
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => 'test-style',
+			'variants' => [
+				[
+					'meta' => [
+						'state' => null,
+						'breakpoint' => 'desktop',
+					],
+					'props' => [],
+					'custom_css' => [ 'raw' => '' ],
+				],
+			],
+		];
+
+		// Act.
+		$result = $this->parser->parse( $style );
+		$parsed = $result->unwrap();
+
+		// Assert.
+		$this->assertTrue( $result->is_valid() );
+		$this->assertNull( $parsed['variants'][0]['custom_css'] );
+	}
+
     private function assert_parse_result_invalid( Parse_Result $result, array $errors ) {
         $this->assertFalse( $result->is_valid() );
 

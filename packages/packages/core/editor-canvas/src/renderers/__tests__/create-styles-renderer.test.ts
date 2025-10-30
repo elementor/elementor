@@ -112,6 +112,7 @@ describe( 'renderStyles', () => {
 				breakpoint: 'desktop',
 				id: 'test',
 				value: '.elementor-prefix .test{font-size:24px;}',
+				state: null,
 			},
 		] );
 	} );
