@@ -147,6 +147,16 @@
 	}
 }
 
+@media screen and (max-width: 1024px) {
+	.experiment401-variant-b {
+
+		.e-onboarding__good-to-go-footer {
+			flex-direction: column;
+			gap: 60px;
+		}
+	}
+}
+
 @media screen and (max-width: 768px) {
 	.e-onboarding__page-goodToGo {
 
