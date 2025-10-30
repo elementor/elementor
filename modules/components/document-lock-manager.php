@@ -96,7 +96,7 @@ class Document_Lock_Manager {
 		return true;
 	}
 
-	
+
 	private function remove_lock_metadata( $document_id ) {
 		delete_post_meta( $document_id, self::LOCK_USER_META );
 		delete_post_meta( $document_id, self::LOCK_TIME_META );
