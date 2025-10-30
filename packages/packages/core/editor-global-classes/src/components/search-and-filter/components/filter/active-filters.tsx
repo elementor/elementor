@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
 import { Chip, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import type { FilterKey } from '../../../../hooks/use-filtered-css-class-usage';
-import { trackGlobalClassEvent } from '../../../../../../editor-editing-panel/src/utils/tracking';
 import { useSearchAndFilters } from '../../context';
 import { ClearIconButton } from './clear-icon-button';
 import { filterConfig } from './filter-list';

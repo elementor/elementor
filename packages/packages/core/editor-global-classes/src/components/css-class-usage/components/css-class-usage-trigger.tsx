@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { type MouseEvent, type PropsWithChildren } from 'react';
+import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
 import { InfoAlert } from '@elementor/editor-ui';
 import { CurrentLocationIcon } from '@elementor/icons';
 import {
@@ -16,7 +17,6 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
-import { trackGlobalClassEvent } from '../../../../../editor-editing-panel/src/utils/tracking';
 import { type CssClassID } from '../types';
 import { CssClassUsagePopover } from './css-class-usage-popover';
 
