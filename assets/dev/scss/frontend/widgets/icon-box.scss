@@ -8,9 +8,14 @@
 		&inline-end {
 
 			.elementor-icon-box-wrapper {
-				text-align: start;
+				text-align: end;
 				flex-direction: row-reverse;
 				gap: var(--icon-box-icon-margin, 15px);
+
+			}
+
+			&:dir(rtl) .elementor-icon-box-wrapper {
+				flex-direction: row;
 			}
 		}
 
@@ -20,6 +25,10 @@
 				text-align: start;
 				flex-direction: row;
 				gap: var(--icon-box-icon-margin, 15px);
+			}
+
+			&:dir(rtl) .elementor-icon-box-wrapper {
+				flex-direction: row-reverse;
 			}
 		}
 
