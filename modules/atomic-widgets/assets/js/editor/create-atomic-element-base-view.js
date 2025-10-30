@@ -68,6 +68,12 @@ export default function createAtomicElementBaseView( type ) {
 			if ( href ) {
 				local.href = href;
 			}
+			console.log('inside attributes' );
+
+			const interactions = interactions = this.model.config?.interactions || [];
+			if ( interactions && interactions.length > 0 ) {
+				local['data-interactions'] = JSON.stringify( interactions );
+			}
 
 			customAttributes.forEach( ( attribute ) => {
 				const key = attribute.value?.key?.value;

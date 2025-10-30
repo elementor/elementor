@@ -12,6 +12,7 @@ import { InteractionsTab } from './interactions-tab';
 import { SettingsTab } from './settings-tab';
 import { stickyHeaderStyles, StyleTab } from './style-tab';
 
+
 type TabValue = 'settings' | 'style' | 'interactions';
 
 export const EditingPanelTabs = () => {
