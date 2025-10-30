@@ -65,8 +65,8 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 	public function get_updated_status( $post_id ) {
 		$lock_data = $this->is_locked( $post_id );
 
-		if(!$lock_data['is_locked']) {
-			if(null !== $lock_data['lock_time']) {
+		if ( ! $lock_data['is_locked'] ) {
+			if ( null !== $lock_data['lock_time'] ) {
 				parent::unlock( $post_id );
 			}
 			return [

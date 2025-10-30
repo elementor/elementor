@@ -27,7 +27,6 @@ class Document_Lock_Manager {
 	 */
 	public function __construct( $lock_duration = self::DEFAULT_TIME ) {
 		$this->lock_duration = $lock_duration;
-
 	}
 
 	/**
