@@ -1,6 +1,6 @@
-import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
-import { newUser } from '../checklist/new-user';
+import { parallelTest as test } from '../../../../parallelTest';
+import WpAdminPage from '../../../../pages/wp-admin-page';
+import { newUser } from '../../checklist/new-user';
 import { expect } from '@playwright/test';
 
 test.describe( 'Atomic button widget sanity tests @v4-tests', () => {

@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
-import { AtomicHelper, ElementType } from '../helper';
+import { AtomicHelper, ElementType } from './helper';
 
 test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependencies', () => {
 	const tests: { label: string, elementType: ElementType }[] = [
