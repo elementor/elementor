@@ -201,4 +201,28 @@ describe( 'custom_css rendering', () => {
 		// Assert.
 		expect( result[ 0 ].value ).toContain( css );
 	} );
+
+	it( 'should render class state with selector', async () => {
+		// Arrange.
+		const styleDef: RendererStyleDefinition = {
+			id: 'test',
+			type: 'class',
+			cssName: 'test',
+			label: 'Test',
+			variants: [
+				{
+					meta: { breakpoint: null, state: 'e--selected' },
+					props: {},
+					custom_css: null,
+				},
+			],
+		};
+
+		// Act.
+		const renderStyles = createStylesRenderer( { breakpoints: {} as BreakpointsMap, resolve: async () => ( {} ) } );
+		const result = await renderStyles( { styles: [ styleDef ] } );
+
+		// Assert.
+		expect( result[ 0 ].value ).toContain( '.test.e--selected{}' );
+	} );
 } );
