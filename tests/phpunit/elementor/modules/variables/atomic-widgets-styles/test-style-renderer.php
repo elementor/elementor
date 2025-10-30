@@ -193,7 +193,7 @@ class Test_Style_Renderer extends Elementor_Test_Base {
 				'variants' => [
 					[
 					'props' => [ 'color' => '#111' ],
-						'meta' => [ 'state' => Style_States::NATIVE_HOVER ],
+						'meta' => [ 'state' => Style_States::HOVER ],
 					],
 					[
 					'props' => [ 'color' => '#222' ],
