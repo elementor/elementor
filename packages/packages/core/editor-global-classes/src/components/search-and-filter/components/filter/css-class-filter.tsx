@@ -4,7 +4,7 @@ import { FilterIcon } from '@elementor/icons';
 import { bindPopover, bindToggle, Divider, Popover, ToggleButton, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { trackGlobalClassEvent } from '../../../../utils/tracking';
+import { trackGlobalClassEvent } from '../../../../../../editor-editing-panel/src/utils/tracking';
 import { useSearchAndFilters } from '../../context';
 import { ClearIconButton } from './clear-icon-button';
 import { FilterList } from './filter-list';

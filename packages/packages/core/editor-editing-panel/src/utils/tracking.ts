@@ -1,4 +1,5 @@
 import { getMixpanel } from '@elementor/mixpanel';
+
 type CssClassFilterEvent = {
 	action: 'openFilter' | 'applyFilter' | 'removeFilter' | 'clearFilter';
 	type: 'empty' | 'onThisPage' | 'unused';

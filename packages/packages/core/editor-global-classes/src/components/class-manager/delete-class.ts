@@ -1,10 +1,10 @@
 import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-documents';
+import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __dispatch as dispatch } from '@elementor/store';
 
 import { fetchCssClassUsage } from '../../../service/css-class-usage-service';
 import { slice } from '../../store';
-import { trackGlobalClassEvent } from '../../utils/tracking';
 
 let isDeleted = false;
 

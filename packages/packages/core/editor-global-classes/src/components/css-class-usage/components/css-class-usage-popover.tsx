@@ -20,7 +20,7 @@ import { Box, Chip, Divider, Icon, MenuList, Stack, styled, Tooltip, Typography 
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
-import { trackGlobalClassEvent } from '../../../utils/tracking';
+import { trackGlobalClassEvent } from '../../../../../editor-editing-panel/src/utils/tracking';
 import { type ContentType } from '../types';
 
 type CssClassUsageRecord = VirtualizedItem< 'item', string > & { docType: ContentType };

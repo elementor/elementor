@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
+import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
 import { DotsVerticalIcon } from '@elementor/icons';
@@ -20,7 +21,6 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { trackGlobalClassEvent } from '../../utils/tracking';
 import { CssClassUsageTrigger } from '../css-class-usage/components';
 import { useDeleteConfirmation } from './delete-confirmation-dialog';
 import { SortableTrigger, type SortableTriggerProps } from './sortable';

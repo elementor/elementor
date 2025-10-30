@@ -3,6 +3,7 @@ import {
 	__useActiveDocument as useActiveDocument,
 	__useActiveDocumentActions as useActiveDocumentActions,
 } from '@elementor/editor-documents';
+import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
 import { useUserStylesCapability } from '@elementor/editor-styles-repository';
 import { SaveChangesDialog, useDialog } from '@elementor/editor-ui';
 import { IconButton, Tooltip } from '@elementor/ui';
@@ -10,7 +11,6 @@ import { __ } from '@wordpress/i18n';
 
 import { globalClassesStylesProvider } from '../../global-classes-styles-provider';
 import { usePrefetchCssClassUsage } from '../../hooks/use-prefetch-css-class-usage';
-import { trackGlobalClassEvent } from '../../utils/tracking';
 import { usePanelActions } from './class-manager-panel';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 

@@ -16,7 +16,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
-import { trackGlobalClassEvent } from '../../../utils/tracking';
+import { trackGlobalClassEvent } from '../../../../../editor-editing-panel/src/utils/tracking';
 import { type CssClassID } from '../types';
 import { CssClassUsagePopover } from './css-class-usage-popover';
 

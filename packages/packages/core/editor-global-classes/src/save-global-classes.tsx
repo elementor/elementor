@@ -6,7 +6,7 @@ import { hash } from '@elementor/utils';
 import { API_ERROR_CODES, apiClient, type ApiContext } from './api';
 import { DuplicateLabelDialog } from './components/class-manager/duplicate-label-dialog';
 import { type GlobalClasses, selectData, selectFrontendInitialData, selectPreviewInitialData, slice } from './store';
-import { trackGlobalClassEvent } from './utils/tracking';
+import { trackGlobalClassEvent } from '../../editor-editing-panel/src/utils/tracking';
 
 type Options = {
 	context: ApiContext;

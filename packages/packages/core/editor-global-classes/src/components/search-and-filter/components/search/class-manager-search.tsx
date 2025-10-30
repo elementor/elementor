@@ -3,7 +3,7 @@ import { SearchIcon } from '@elementor/icons';
 import { Box, InputAdornment, Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { trackGlobalClassEvent } from '../../../../utils/tracking';
+import { trackGlobalClassEvent } from '../../../../../../editor-editing-panel/src/utils/tracking';
 import { useSearchAndFilters } from '../../context';
 
 export const ClassManagerSearch = () => {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { BrushBigIcon } from '@elementor/icons';
 import { Box, IconButton, styled, type SxProps, type Theme, Tooltip } from '@elementor/ui';
 
-import { trackGlobalClassEvent } from '../../../../utils/tracking';
+import { trackGlobalClassEvent } from '../../../../../../editor-editing-panel/src/utils/tracking';
 import { useSearchAndFilters } from '../../context';
 
 type ClearIconButtonProps = { tooltipText: React.ReactNode; sx?: SxProps< Theme >; trigger: 'menu' | 'header' };

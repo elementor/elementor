@@ -3,7 +3,7 @@ import { Checkbox, Chip, MenuItem, MenuList, Stack, Typography } from '@elemento
 import { __ } from '@wordpress/i18n';
 
 import { type FilterKey, useFilteredCssClassUsage } from '../../../../hooks/use-filtered-css-class-usage';
-import { trackGlobalClassEvent } from '../../../../utils/tracking';
+import { trackGlobalClassEvent } from '../../../../../../editor-editing-panel/src/utils/tracking';
 import { useSearchAndFilters } from '../../context';
 
 export const filterConfig: Record< FilterKey, string > = {

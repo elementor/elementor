@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
+import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import { __useDispatch as useDispatch } from '@elementor/store';
 import { List, Stack, styled, Typography, type TypographyProps } from '@elementor/ui';
@@ -9,7 +10,6 @@ import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useFilters } from '../../hooks/use-filters';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
 import { slice } from '../../store';
-import { trackGlobalClassEvent } from '../../utils/tracking';
 import { useSearchAndFilters } from '../search-and-filter/context';
 import { ClassItem } from './class-item';
 import { DeleteConfirmationProvider } from './delete-confirmation-dialog';

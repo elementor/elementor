@@ -25,5 +25,5 @@ export { usePanelActions, usePanelStatus } from './panel';
 export type { PopoverActionProps } from './popover-action';
 export { registerStyleProviderToColors } from './provider-colors-registry';
 export { stylesInheritanceTransformersRegistry } from './styles-inheritance/styles-inheritance-transformers-registry';
-
+export { trackGlobalClassEvent } from './utils/tracking';
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';
