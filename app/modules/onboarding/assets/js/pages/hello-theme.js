@@ -5,7 +5,7 @@ import { useNavigate } from '@reach/router';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import Layout from '../components/layout/layout';
 import ThemeSelectionContentA from '../components/theme-selection-content-a';
-import ThemeSelectionContentB from '../components/theme-selection-content-b';
+import ThemeSelectionExperiment201VariantB from '../components/theme-selection-experiment201-variant-b';
 import ThemeSelectionExperiment202VariantB from '../components/theme-selection-experiment202-variant-b';
 import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../utils/onboarding-event-tracking';
 
@@ -42,13 +42,13 @@ export default function HelloTheme() {
 	const [ noticeState, setNoticeState ] = useState( state.isHelloThemeActivated ? noticeStateSuccess : null );
 
 	const [ activeTimeouts, setActiveTimeouts ] = useState( [] ),
+		[ variant201, setVariant201 ] = useState( null ),
+		[ variant202, setVariant202 ] = useState( null ),
 		navigate = useNavigate(),
 		pageId = 'hello',
 		nextStep = elementorAppConfig.onboarding.experiment ? 'chooseFeatures' : 'siteName',
 		goToNextScreen = useCallback( () => navigate( 'onboarding/' + nextStep ), [ navigate, nextStep ] ),
-		variant201 = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT ),
 		isVariant201B = 'B' === variant201,
-		variant202 = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT202_VARIANT ),
 		isVariant202B = 'B' === variant202,
 		continueWithHelloThemeText = getContinueButtonText( state.isHelloThemeActivated, isVariant201B, isVariant202B ),
 		[ actionButtonText, setActionButtonText ] = useState( continueWithHelloThemeText );
@@ -68,27 +68,37 @@ export default function HelloTheme() {
 			goToNextScreen();
 		}
 
-		// Auto-select hello-biz when no experiment is active or when variant A is active
-		// Don't auto-select only when experiment 201 AND variant B is active
-		const shouldAutoSelectHelloBiz = ! isVariant201B && ! selectedTheme;
+		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
+		OnboardingEventTracking.onStepLoad( 2 );
+
+		const storedVariant201 = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT );
+		const storedVariant202 = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT202_VARIANT );
+		setVariant201( storedVariant201 );
+		setVariant202( storedVariant202 );
+
+		const currentIsVariant201B = 'B' === storedVariant201;
+
+		const shouldAutoSelectHelloBiz = ! currentIsVariant201B && ! selectedTheme;
 
 		if ( shouldAutoSelectHelloBiz ) {
 			setSelectedTheme( 'hello-biz' );
 		}
+	}, [ getStateObjectToUpdate, goToNextScreen, helloInstalledInOnboarding, pageId, state, updateState, selectedTheme ] );
 
-		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
-		OnboardingEventTracking.onStepLoad( 2 );
-	}, [ getStateObjectToUpdate, goToNextScreen, helloInstalledInOnboarding, pageId, state, updateState, isVariant201B, selectedTheme ] );
+	useEffect( () => {
+		const updatedButtonText = getContinueButtonText( state.isHelloThemeActivated, isVariant201B, isVariant202B );
+		setActionButtonText( updatedButtonText );
+	}, [ state.isHelloThemeActivated, isVariant201B, isVariant202B ] );
 
 	const resetScreenContent = () => {
-		// Clear any active timeouts for changing the action button text during installation.
 		activeTimeouts.forEach( ( timeoutID ) => clearTimeout( timeoutID ) );
 
 		setActiveTimeouts( [] );
 
 		setIsInstalling( false );
 
-		setActionButtonText( continueWithHelloThemeText );
+		const updatedButtonText = getContinueButtonText( state.isHelloThemeActivated, isVariant201B, isVariant202B );
+		setActionButtonText( updatedButtonText );
 	};
 
 	/**
@@ -350,7 +360,7 @@ export default function HelloTheme() {
 	if ( isVariant202B ) {
 		ContentComponent = ThemeSelectionExperiment202VariantB;
 	} else if ( isVariant201B ) {
-		ContentComponent = ThemeSelectionContentB;
+		ContentComponent = ThemeSelectionExperiment201VariantB;
 	}
 
 	const getLayoutClassName = () => {
