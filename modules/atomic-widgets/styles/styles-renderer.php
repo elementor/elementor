@@ -141,8 +141,8 @@ class Styles_Renderer {
 	private function get_state_with_selector( string $state ): string {
 		if ( Style_States::is_class_state( $state ) ) {
 			return '.' . $state;
-		} 
-		
+		}
+
 		if ( Style_States::is_pseudo_state( $state ) ) {
 			return ':' . $state;
 		}
