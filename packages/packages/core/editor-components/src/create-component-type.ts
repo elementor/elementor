@@ -50,6 +50,7 @@ function createComponentView(
 		}
 
 		getDomElement() {
+			// Component does not have a DOM element, so we return the first child's DOM element.
 			return this.children.findByIndex( 0 )?.getDomElement() ?? this.$el;
 		}
 
