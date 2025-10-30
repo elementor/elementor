@@ -23,7 +23,7 @@ class Module extends BaseModule {
 	const DEFAULT_DELAY = 0;
 	const SLIDE_DISTANCE = 100;
 	const SCALE_START = 0.5;
-	const EASING = 'ease-in-out';
+	const EASING = 'linear';
 
 	public function get_name() {
 		return self::MODULE_NAME;

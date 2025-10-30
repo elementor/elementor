@@ -17,16 +17,15 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { useInteractionsContext } from '../../contexts/interaction-context';
+import { type ExtendedWindow } from '../../sync/types';
 
 const getAnimationOptions = () => {
-	if ( typeof window !== 'undefined' && window.ElementorInteractionsConfig?.animationOptions ) {
-		return window.ElementorInteractionsConfig.animationOptions;
-	}
+	const extendedWindow = window as unknown as ExtendedWindow;
 
-	return [ { value: '', label: 'Select animation...' } ];
+	return extendedWindow.ElementorInteractionsConfig?.animationOptions;
 };
 
-const ANIMATION_OPTIONS = getAnimationOptions();
+const ANIMATION_OPTIONS = getAnimationOptions() || [ { value: '', label: 'Select animation...' } ];
 
 export const InteractionsInput = () => {
 	const { interactions, setInteractions } = useInteractionsContext();
