@@ -85,12 +85,12 @@ describe( 'throttle', () => {
 		expect( value ).toBe( 2 );
 		expect( throttledFn.pending() ).toBe( false );
 
-        // Act.
-        throttledFn();
+		// Act.
+		throttledFn();
 
-        // Assert.
-        expect( value ).toBe( 3 );
-        expect( throttledFn.pending() ).toBe( true );
+		// Assert.
+		expect( value ).toBe( 3 );
+		expect( throttledFn.pending() ).toBe( true );
 	} );
 
 	it( 'should cancel a throttled function', () => {
@@ -163,4 +163,3 @@ describe( 'throttle', () => {
 		expect( throttledFn.pending() ).toBe( false );
 	} );
 } );
-

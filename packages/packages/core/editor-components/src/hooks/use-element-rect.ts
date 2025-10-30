@@ -10,9 +10,9 @@ export function useElementRect( element: HTMLElement | null ) {
 			return;
 		}
 
-		const update = throttle(() => {
+		const update = throttle( () => {
 			setRect( element.getBoundingClientRect() );
-		}, 20);
+		}, 10 );
 
 		update();
 

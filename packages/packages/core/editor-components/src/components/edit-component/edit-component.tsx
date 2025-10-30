@@ -13,25 +13,24 @@ import { apiClient } from '../../api';
 import { selectComponentsObject } from '../../store/store';
 import { ComponentModal } from './component-modal';
 
-type DocumentsPathItem = {
+type ComponentsPathItem = {
 	instanceId: string | undefined;
-	document: V1Document;
-	isComponent: boolean;
+	component: V1Document;
 };
 
 export function EditComponent() {
-	const [ componentsPath, setComponentsPath ] = useState< DocumentsPathItem[] >( [] );
+	const [ componentsPath, setComponentsPath ] = useState< ComponentsPathItem[] >( [] );
 
 	useHandleDocumentSwitches( componentsPath, setComponentsPath );
 	const onBack = useNavigateBack( componentsPath );
 
 	const currentItem = componentsPath.at( -1 );
-	const { isComponent = false, document: currentDocument } = currentItem ?? {};
+	const { component: currentComponent } = currentItem ?? {};
 
-	const widget = currentDocument?.container as V1Element;
+	const widget = currentComponent?.container as V1Element;
 	const elementDom = ( widget?.view?.el?.children?.[ 0 ] ?? null ) as HTMLElement | null;
 
-	if ( ! isComponent || ! elementDom ) {
+	if ( ! elementDom ) {
 		return null;
 	}
 
@@ -39,52 +38,66 @@ export function EditComponent() {
 }
 
 function useHandleDocumentSwitches(
-	path: DocumentsPathItem[],
-	setPath: Dispatch< SetStateAction< DocumentsPathItem[] > >
+	path: ComponentsPathItem[],
+	setPath: Dispatch< SetStateAction< ComponentsPathItem[] > >
 ) {
 	const components = useSelector( selectComponentsObject );
 	const documentsManager = getV1DocumentsManager();
 
-	useEffect(() => {
-		return listenTo( commandEndEvent( 'editor/documents/attach-preview' ), () => {
-			const { document: currentDocument, isComponent: currentIsComponent } = path.at( -1 ) ?? {};
-			const { id: currentDocumentId } = currentDocument ?? {};
-			const nextDocument = documentsManager.getCurrent();
+	useEffect(
+		() =>
+			listenTo( commandEndEvent( 'editor/documents/attach-preview' ), () => {
+				const { component: currentComponent } = path.at( -1 ) ?? {};
+				const { id: currentComponentId } = currentComponent ?? {};
+				const nextDocument = documentsManager.getCurrent();
 
-			if ( ! nextDocument || nextDocument.id === currentDocumentId ) {
-				return;
-			}
+				if ( nextDocument.id === currentComponentId ) {
+					return;
+				}
 
-			const documentIndex = path.findIndex( ( { document } ) => document.id === nextDocument.id );
+				if ( currentComponentId ) {
+					apiClient.unlockComponent( currentComponentId );
+				}
 
-			if ( currentDocumentId && currentIsComponent ) {
-				apiClient.unlockComponent( currentDocumentId );
-			}
+				const isComponent = !! components?.[ nextDocument.id ];
 
-			if ( documentIndex >= 0 ) {
-				setPath( path.slice( 0, documentIndex + 1 ) );
+				if ( ! isComponent ) {
+					setPath( [] );
 
-				return;
-			}
+					return;
+				}
 
-			const instanceId = nextDocument?.container.view.el.dataset.id;
-			const newItem: DocumentsPathItem = {
-				instanceId,
-				document: nextDocument,
-				isComponent: !! components?.[ nextDocument.id ],
-			};
-
-			setPath( [ ...path, newItem ] );
-		} );
-	}, [path, setPath] );
+				setPath( getUpdatedComponentPath( path, nextDocument ) );
+			} ),
+		[ path, setPath, components, documentsManager ]
+	);
 }
 
-function useNavigateBack( path: DocumentsPathItem[] ) {
+function getUpdatedComponentPath( path: ComponentsPathItem[], nextDocument: V1Document ): ComponentsPathItem[] {
+	const componentIndex = path.findIndex( ( { component } ) => component.id === nextDocument.id );
+
+	if ( componentIndex >= 0 ) {
+		// When exiting the editing of a nested component - we in fact go back a step
+		// so we need to make sure the path is cleaned up of any newer items
+		// By doing it with the slice and not a simple pop() - we could jump to any component in the path and make sure it becomes the current one
+		return path.slice( 0, componentIndex + 1 );
+	}
+
+	return [
+		...path,
+		{
+			instanceId: nextDocument?.container.view.el.dataset.id,
+			component: nextDocument,
+		},
+	];
+}
+
+function useNavigateBack( path: ComponentsPathItem[] ) {
 	const documentsManager = getV1DocumentsManager();
 
 	return useCallback( () => {
-		const { document: prevDocument, instanceId: prevDocumentInstanceId } = path.at( -2 ) ?? {};
-		const { id: prevDocumentId } = prevDocument ?? {};
+		const { component: prevComponent, instanceId: prevComponentInstanceId } = path.at( -2 ) ?? {};
+		const { id: prevComponentId } = prevComponent ?? {};
 		const switchToDocument = ( id: number, selector?: string ) => {
 			runCommand( 'editor/documents/switch', {
 				id,
@@ -95,8 +108,8 @@ function useNavigateBack( path: DocumentsPathItem[] ) {
 			} );
 		};
 
-		if ( prevDocumentId && prevDocumentInstanceId ) {
-			switchToDocument( prevDocumentId, `[data-id="${ prevDocumentInstanceId }"]` );
+		if ( prevComponentId && prevComponentInstanceId ) {
+			switchToDocument( prevComponentId, `[data-id="${ prevComponentInstanceId }"]` );
 
 			return;
 		}

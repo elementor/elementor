@@ -37,4 +37,3 @@ export function throttle< TArgs extends any[] >( fn: ( ...args: TArgs ) => void,
 
 	return run;
 }
-

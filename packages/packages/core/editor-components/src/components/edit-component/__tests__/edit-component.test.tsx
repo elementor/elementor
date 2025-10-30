@@ -78,7 +78,7 @@ describe( '<EditComponent />', () => {
 				attachPreviewCallback = callback as () => void;
 			}
 
-			return null as never;
+			return () => {};
 		} );
 
 		jest.mocked( __privateRunCommand ).mockImplementation( async ( command, args ) => {
