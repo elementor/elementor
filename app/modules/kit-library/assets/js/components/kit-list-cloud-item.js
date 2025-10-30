@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from '@reach/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import Kit from '../models/kit';
@@ -20,6 +20,8 @@ import { KIT_SOURCE_MAP } from '../../../../import-export/assets/js/hooks/use-ki
 import Tooltip from 'elementor-app/molecules/tooltip';
 
 import './kit-list-item.scss';
+
+const PLACEHOLDER_IMAGE_SRC = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzQ1IiBoZWlnaHQ9IjMzMCIgdmlld0JveD0iMCAwIDM0NSAzMzAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzNDUiIGhlaWdodD0iMzMwIiBmaWxsPSIjRjNGOUZBIi8+CjxnIG9wYWNpdHk9IjAuMyI+CjxwYXRoIGQ9Ik0xODIuNDM3IDE0OS41NTVDMTg0LjAwOCAxNDkuNTU1IDE4NS41MTQgMTUwLjE3OSAxODYuNjI1IDE1MS4yOUMxODcuNzM2IDE1Mi40MDEgMTg4LjM2IDE1My45MDcgMTg4LjM2IDE1NS40NzlWMTc0LjQzN0MxODguMzYgMTc2LjAwOCAxODcuNzM2IDE3Ny41MTQgMTg2LjYyNSAxNzguNjI1QzE4NS41MTQgMTc5LjczNiAxODQuMDA4IDE4MC4zNiAxODIuNDM3IDE4MC4zNkgxNjMuNDc5QzE2MS45MDcgMTgwLjM2IDE2MC40MDEgMTc5LjczNiAxNTkuMjkgMTc4LjYyNUMxNTguMTc5IDE3Ny41MTQgMTU3LjU1NSAxNzYuMDA4IDE1Ny41NTUgMTc0LjQzN1YxNTUuNDc5QzE1Ny41NTUgMTUzLjkwNyAxNTguMTc5IDE1Mi40MDEgMTU5LjI5IDE1MS4yOUMxNjAuNDAxIDE1MC4xNzkgMTYxLjkwNyAxNDkuNTU1IDE2My40NzkgMTQ5LjU1NUgxODIuNDM3Wk0xNjMuNDc5IDE1MS45MjRDMTYyLjUzNiAxNTEuOTI0IDE2MS42MzIgMTUyLjI5OSAxNjAuOTY2IDE1Mi45NjZDMTYwLjI5OSAxNTMuNjMyIDE1OS45MjQgMTU0LjUzNiAxNTkuOTI0IDE1NS40NzlWMTY4LjQxNkwxNjUuODAxIDE2Mi41NEwxNjUuODE2IDE2Mi41MjRDMTY2LjcyNyAxNjEuNjQ4IDE2Ny44MjkgMTYxLjEzNSAxNjkuMDA4IDE2MS4xMzVDMTcwLjE4NyAxNjEuMTM1IDE3MS4yODggMTYxLjY0OCAxNzIuMTk5IDE2Mi41MjRMMTcyLjIxNiAxNjIuNTRMMTc2LjExNyAxNjYuNDQxTDE3Ni44NzUgMTY1LjY4NEMxNzcuNzg2IDE2NC44MDcgMTc4Ljg4NyAxNjQuMjk1IDE4MC4wNjYgMTY0LjI5NUMxODEuMjQ2IDE2NC4yOTUgMTgyLjM0NyAxNjQuODA3IDE4My4yNTggMTY1LjY4NEwxODMuMjc0IDE2NS42OTlMMTg1Ljk5MSAxNjguNDE2VjE1NS40NzlDMTg1Ljk5MSAxNTQuNTM2IDE4NS42MTYgMTUzLjYzMiAxODQuOTUgMTUyLjk2NkMxODQuMjg0IDE1Mi4yOTkgMTgzLjM3OSAxNTEuOTI0IDE4Mi40MzcgMTUxLjkyNEgxNjMuNDc5Wk0xNzcuOTAzIDE1NS44OTFDMTc5LjI2OSAxNTUuODkxIDE4MC4zNzYgMTU2Ljk5OCAxODAuMzc2IDE1OC4zNjNDMTgwLjM3NiAxNTkuNzI5IDE3OS4yNjkgMTYwLjgzNiAxNzcuOTAzIDE2MC44MzZDMTc2LjUzOCAxNjAuODM2IDE3NS40MzEgMTU5LjcyOSAxNzUuNDMxIDE1OC4zNjNDMTc1LjQzMSAxNTYuOTk4IDE3Ni41MzggMTU1Ljg5MSAxNzcuOTAzIDE1NS44OTFaIiBmaWxsPSIjNjk3MjdEIi8+CjwvZz4KPC9zdmc+Cg==';
 
 const PopoverItem = ( { className = '', icon, title, onClick } ) => {
 	const handleClick = () => {
@@ -91,8 +93,20 @@ const KitListCloudItem = ( props ) => {
 	const navigate = useNavigate();
 
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
+	const [ imageError, setImageError ] = useState( false );
 
 	const isLocked = 'locked' === props.model?.status;
+	const imageSrc = ( ! props.model.thumbnailUrl || imageError ) ? PLACEHOLDER_IMAGE_SRC : props.model.thumbnailUrl;
+
+	useEffect( () => {
+		setImageError( false );
+	}, [ props.model.thumbnailUrl ] );
+
+	const handleImageError = () => {
+		if ( props.model.thumbnailUrl && ! imageError ) {
+			setImageError( true );
+		}
+	};
 
 	const handleDelete = () => {
 		setIsPopoverOpen( false );
@@ -142,7 +156,11 @@ const KitListCloudItem = ( props ) => {
 				/>
 			</CardHeader>
 			<CardBody>
-				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
+				<CardImage
+					alt={ props.model.title }
+					src={ imageSrc }
+					onError={ handleImageError }
+				>
 					<CardOverlay>
 						<Grid container direction="column" className="e-kit-library__kit-item-cloud-overlay">
 							{ isLocked ? (
