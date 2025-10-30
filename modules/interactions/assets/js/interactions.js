@@ -91,12 +91,7 @@ function initInteractions() {
 				easing: config.easing,
 			};
 
-			try {
-				inViewFunc( element, () => {
-					animateFunc( element, keyframes, options );
-				}, { amount: 0.1 } );
-			} catch ( error ) {
-			}
+			animateFunc( element, keyframes, options );
 		} );
 	} );
 }
