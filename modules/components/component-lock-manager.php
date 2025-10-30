@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Lock_Component_Manager extends Document_Lock_Manager {
+class Component_Lock_Manager extends Document_Lock_Manager {
 	const ONE_HOUR = 60 * 60;
 	private static $instance = null;
 	public function __construct() {

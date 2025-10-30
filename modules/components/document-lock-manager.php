@@ -90,10 +90,15 @@ class Document_Lock_Manager {
 		delete_post_meta( $document_id, '_edit_lock' );
 
 		// Remove custom document lock metadata
-		delete_post_meta( $document_id, self::LOCK_USER_META );
-		delete_post_meta( $document_id, self::LOCK_TIME_META );
+		$this->remove_lock_metadata( $document_id );
 
 		return true;
+	}
+
+	
+	private function remove_lock_metadata( $document_id ) {
+		delete_post_meta( $document_id, self::LOCK_USER_META );
+		delete_post_meta( $document_id, self::LOCK_TIME_META );
 	}
 
 	/**
@@ -111,7 +116,7 @@ class Document_Lock_Manager {
 
 		if ( $lock_user && $lock_time ) {
 			if ( time() - $lock_time > $this->lock_duration ) {
-				$this->unlock( $document_id );
+				$this->remove_lock_metadata( $document_id );
 			} else {
 				$is_locked = true;
 			}

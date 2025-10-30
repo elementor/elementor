@@ -19,7 +19,7 @@ class Components_REST_API {
 	const MAX_COMPONENTS = 50;
 
 	private $repository = null;
-	private $lock_component_manager_instance = null;
+	private $component_lock_manager_instance = null;
 	public function register_hooks() {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
 	}
@@ -33,10 +33,10 @@ class Components_REST_API {
 	}
 
 	/**
-	 * @return Lock_Component_Manager instance
+	 * @return Component_Lock_Manager instance
 	 */
-	private function get_lock_component_manager() {
-		return Lock_Component_Manager::get_instance();
+	private function get_component_lock_manager() {
+		return Component_Lock_Manager::get_instance();
 	}
 
 	private function register_routes() {
@@ -200,7 +200,7 @@ class Components_REST_API {
 
 	private function lock_component( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
-		$success = $this->get_lock_component_manager()->lock( $component_id );
+		$success = $this->get_component_lock_manager()->lock( $component_id );
 
 		if ( ! $success ) {
 			return Error_Builder::make( 'lock_failed' )
@@ -214,7 +214,7 @@ class Components_REST_API {
 
 	private function unlock_component( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
-		$success = $this->get_lock_component_manager()->unlock( $component_id );
+		$success = $this->get_component_lock_manager()->unlock( $component_id );
 
 		if ( ! $success ) {
 			return Error_Builder::make( 'unlock_failed' )
@@ -227,7 +227,7 @@ class Components_REST_API {
 
 	private function get_lock_status( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
-		$lock_data = $this->get_lock_component_manager()->is_locked( $component_id );
+		$lock_data = $this->get_component_lock_manager()->is_locked( $component_id );
 		$is_current_user_allow_to_edit = $this->is_current_user_allow_to_edit( $component_id );
 
 		$locked_by = '';
@@ -244,7 +244,7 @@ class Components_REST_API {
 
 	private function is_current_user_allow_to_edit( $component_id ) {
 		$current_user_id = get_current_user_id();
-		$lock_data = $this->get_lock_component_manager()->is_locked( $component_id );
+		$lock_data = $this->get_component_lock_manager()->is_locked( $component_id );
 
 		return ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] === (int) $current_user_id;
 	}
