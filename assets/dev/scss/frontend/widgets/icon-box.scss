@@ -11,10 +11,10 @@
 				text-align: end;
 				flex-direction: row-reverse;
 				gap: var(--icon-box-icon-margin, 15px);
-			}
 
-			[dir="rtl"] & .elementor-icon-box-wrapper { // BC for wrong RTL direction.
-				flex-direction: row;
+				[dir="rtl"] & { // BC for wrong RTL direction.
+					flex-direction: row;
+				}
 			}
 		}
 
@@ -24,10 +24,10 @@
 				text-align: start;
 				flex-direction: row;
 				gap: var(--icon-box-icon-margin, 15px);
-			}
 
-			[dir="rtl"] & .elementor-icon-box-wrapper { // BC for wrong RTL direction.
-				flex-direction: row-reverse;
+				[dir="rtl"] & { // BC for wrong RTL direction.
+					flex-direction: row-reverse;
+				}
 			}
 		}
 
