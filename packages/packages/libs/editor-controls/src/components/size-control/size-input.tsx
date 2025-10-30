@@ -7,8 +7,6 @@ import ControlActions from '../../control-actions/control-actions';
 import { type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
 import { SelectionEndAdornment, TextFieldInnerSelection } from '../size-control/text-field-inner-selection';
 
-const RESTRICTED_KEYBOARD_SHORTCUT_UNITS = [ 'auto' ];
-
 type SizeInputProps = {
 	unit: Unit | ExtendedOption;
 	size: number | string;
@@ -62,9 +60,9 @@ export const SizeInput = ( {
 		unitInputBufferRef.current = updatedBuffer;
 
 		const matchedUnit =
-			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.includes( updatedBuffer ) ) ||
-			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.startsWith( newChar ) ) ||
-			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.includes( newChar ) );
+			units.find( ( u ) => u.includes( updatedBuffer ) ) ||
+			units.find( ( u ) => u.startsWith( newChar ) ) ||
+			units.find( ( u ) => u.includes( newChar ) );
 
 		if ( matchedUnit ) {
 			handleUnitChange( matchedUnit );
