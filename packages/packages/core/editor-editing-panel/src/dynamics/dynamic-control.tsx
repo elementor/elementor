@@ -3,6 +3,7 @@ import { PropKeyProvider, PropProvider, type SetValue, useBoundProp } from '@ele
 import { type PropKey } from '@elementor/editor-props';
 
 import { createTopLevelObjectType } from '../controls-registry/create-top-level-object-type';
+import { DynamicConditionalControl } from './components/dynamic-conditional-control';
 import { useDynamicTag } from './hooks/use-dynamic-tag';
 import { dynamicPropTypeUtil, type DynamicPropValue } from './utils';
 
@@ -39,7 +40,15 @@ export const DynamicControl = ( { bind, children }: DynamicControlProps ) => {
 
 	return (
 		<PropProvider propType={ propType } setValue={ setDynamicValue } value={ { [ bind ]: dynamicValue } }>
-			<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>
+			<PropKeyProvider bind={ bind }>
+				<DynamicConditionalControl
+					propType={ dynamicPropType }
+					propsSchema={ dynamicTag.props_schema }
+					dynamicSettings={ settings }
+				>
+					{ children }
+				</DynamicConditionalControl>
+			</PropKeyProvider>
 		</PropProvider>
 	);
 };

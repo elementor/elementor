@@ -14,6 +14,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	protected $version = '0.0';
 	protected $styles = [];
+	protected $interactions = [];
 	protected $editor_settings = [];
 
 	public function __construct( $data = [], $args = null ) {
@@ -21,6 +22,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 		$this->version = $data['version'] ?? '0.0';
 		$this->styles = $data['styles'] ?? [];
+		$this->interactions = $data['interactions'] ?? [];
 		$this->editor_settings = $data['editor_settings'] ?? [];
 	}
 
@@ -58,4 +60,8 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	 * @return array<string, Prop_Type>
 	 */
 	abstract protected static function define_props_schema(): array;
+
+	public static function generate() {
+		return Widget_Builder::make( static::get_element_type() );
+	}
 }

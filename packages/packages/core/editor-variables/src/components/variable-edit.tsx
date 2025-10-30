@@ -5,12 +5,13 @@ import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon, TrashIcon } from '@elementor/icons';
-import { Button, CardActions, Divider, FormHelperText, IconButton, Typography } from '@elementor/ui';
+import { Button, CardActions, Divider, FormHelperText, IconButton, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useVariableType } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
+import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { styleVariablesRepository } from '../style-variables-repository';
 import { ERROR_MESSAGES, labelHint, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
@@ -19,6 +20,7 @@ import { EDIT_CONFIRMATION_DIALOG_ID, EditConfirmationDialog } from './ui/edit-c
 import { FormField } from './ui/form-field';
 
 const SIZE = 'tiny';
+const DELETE_LABEL = __( 'Delete variable', 'elementor' );
 
 type Props = {
 	editId: string;
@@ -28,9 +30,9 @@ type Props = {
 };
 
 export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
-	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
+	const { icon: VariableIcon, valueField: ValueField, variableType } = useVariableType();
 
-	const { setValue: notifyBoundPropChange, value: assignedValue } = useBoundProp( propTypeUtil );
+	const { setVariableValue: notifyBoundPropChange, variableId } = useVariableBoundProp();
 	const { propType } = useBoundProp();
 	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( EDIT_CONFIRMATION_DIALOG_ID );
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
@@ -105,7 +107,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 	};
 
 	const maybeTriggerBoundPropChange = () => {
-		if ( editId === assignedValue ) {
+		if ( editId === variableId ) {
 			notifyBoundPropChange( editId );
 		}
 	};
@@ -126,14 +128,11 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 
 	if ( userPermissions.canDelete() ) {
 		actions.push(
-			<IconButton
-				key="delete"
-				size={ SIZE }
-				aria-label={ __( 'Delete', 'elementor' ) }
-				onClick={ handleDeleteConfirmation }
-			>
-				<TrashIcon fontSize={ SIZE } />
-			</IconButton>
+			<Tooltip key="delete" placement="top" title={ DELETE_LABEL }>
+				<IconButton size={ SIZE } onClick={ handleDeleteConfirmation } aria-label={ DELETE_LABEL }>
+					<TrashIcon fontSize={ SIZE } />
+				</IconButton>
+			</Tooltip>
 		);
 	}
 

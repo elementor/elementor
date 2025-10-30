@@ -12,6 +12,11 @@ import { FREE_TRIAL_FEATURES_NAMES } from '../../../helpers/features-enum';
 
 const ViewBackButton = ( { sx = {}, ...props } ) => {
 	const { back } = useLocation();
+	const { hideBackButton } = useGlobalSettings();
+
+	if ( hideBackButton ) {
+		return null;
+	}
 
 	return (
 		<BackButton

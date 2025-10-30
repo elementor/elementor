@@ -41,6 +41,9 @@ type BaseSizeControlProps = {
 	anchorRef?: RefObject< HTMLDivElement | null >;
 	min?: number;
 	enablePropTypeUnits?: boolean;
+	id?: string;
+	ariaLabel?: string;
+	isRepeaterControl?: boolean;
 };
 
 type LengthSizeControlProps = BaseSizeControlProps &
@@ -78,6 +81,8 @@ const defaultUnits: Record< SizeControlProps[ 'variant' ], Unit[] > = {
 	time: [ ...timeUnits ] as TimeUnit[],
 } as const;
 
+export const CUSTOM_SIZE_LABEL = 'fx';
+
 export const SizeControl = createControl(
 	( {
 		variant = 'length' as SizeControlProps[ 'variant' ],
@@ -90,6 +95,9 @@ export const SizeControl = createControl(
 		disableCustom,
 		min = 0,
 		enablePropTypeUnits = false,
+		id,
+		ariaLabel,
+		isRepeaterControl = false,
 	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
 		const {
 			value: sizeValue,
@@ -111,17 +119,7 @@ export const SizeControl = createControl(
 			external: internalState,
 			setExternal: ( newState: State | null, options, meta ) =>
 				setSizeValue( extractValueFromState( newState ), options, meta ),
-			persistWhen: ( newState ) => {
-				if ( ! newState?.unit ) {
-					return false;
-				}
-
-				if ( isUnitExtendedOption( newState.unit ) ) {
-					return newState.unit === 'auto' ? true : !! newState.custom;
-				}
-
-				return !! newState?.numeric || newState?.numeric === 0;
-			},
+			persistWhen: ( newState ) => !! extractValueFromState( newState ),
 			fallback: ( newState ) => ( {
 				unit: newState?.unit ?? actualDefaultUnit,
 				numeric: newState?.numeric ?? DEFAULT_SIZE,
@@ -130,7 +128,7 @@ export const SizeControl = createControl(
 		} );
 
 		const { size: controlSize = DEFAULT_SIZE, unit: controlUnit = actualDefaultUnit } =
-			extractValueFromState( state ) || {};
+			extractValueFromState( state, true ) || {};
 
 		const handleUnitChange = ( newUnit: Unit | ExtendedOption ) => {
 			if ( newUnit === 'custom' ) {
@@ -167,7 +165,7 @@ export const SizeControl = createControl(
 			}
 		};
 
-		useEffect( () => {
+		const handleLinkedSizeControlChanges = () => {
 			const newState = createStateFromSizeProp(
 				sizeValue,
 				state.unit === 'custom' ? state.unit : actualDefaultUnit,
@@ -192,6 +190,12 @@ export const SizeControl = createControl(
 			}
 
 			setState( newState );
+		};
+
+		useEffect( () => {
+			if ( ! isRepeaterControl ) {
+				handleLinkedSizeControlChanges();
+			}
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [ sizeValue ] );
 
@@ -219,8 +223,10 @@ export const SizeControl = createControl(
 					onClick={ onInputClick }
 					popupState={ popupState }
 					min={ min }
+					id={ id }
+					ariaLabel={ ariaLabel }
 				/>
-				{ anchorRef?.current && (
+				{ anchorRef?.current && popupState.isOpen && (
 					<TextFieldPopover
 						popupState={ popupState }
 						anchorRef={ anchorRef }
@@ -276,7 +282,7 @@ function createStateFromSizeProp(
 	};
 }
 
-function extractValueFromState( state: State | null ): SizeValue | null {
+function extractValueFromState( state: State | null, allowEmpty: boolean = false ): SizeValue | null {
 	if ( ! state ) {
 		return null;
 	}
@@ -289,6 +295,13 @@ function extractValueFromState( state: State | null ): SizeValue | null {
 
 	if ( unit === 'auto' ) {
 		return { size: '', unit };
+	}
+
+	if (
+		! allowEmpty &&
+		( ( unit === 'custom' && ! state.custom ) || ( unit !== 'custom' && ! state.numeric && state.numeric !== 0 ) )
+	) {
+		return null;
 	}
 
 	return {

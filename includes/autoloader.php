@@ -145,6 +145,8 @@ class Autoloader {
 			'Stylesheet' => 'includes/stylesheet.php',
 			'System_Info\Main' => 'includes/settings/system-info/main.php',
 			'TemplateLibrary\Classes\Import_Images' => 'includes/template-library/classes/class-import-images.php',
+			'TemplateLibrary\Classes\Media_Collector' => 'includes/template-library/classes/class-media-collector.php',
+			'TemplateLibrary\Classes\Media_Mapper' => 'includes/template-library/classes/class-media-mapper.php',
 			'TemplateLibrary\Forms\New_Template_Form' => 'includes/template-library/forms/new-template-form.php',
 			'TemplateLibrary\Manager' => 'includes/template-library/manager.php',
 			'TemplateLibrary\Source_Base' => 'includes/template-library/sources/base.php',
@@ -189,13 +191,13 @@ class Autoloader {
 	 *
 	 * Used to convert control names to class names.
 	 *
-	 * @param string $string
+	 * @param string $class_name
 	 * @param string $delimiter
 	 *
 	 * @return mixed
 	 */
-	private static function normalize_class_name( $string, $delimiter = ' ' ) {
-		return ucwords( str_replace( '-', '_', $string ), $delimiter );
+	private static function normalize_class_name( $class_name, $delimiter = ' ' ) {
+		return ucwords( str_replace( '-', '_', $class_name ), $delimiter );
 	}
 
 	/**
@@ -308,14 +310,14 @@ class Autoloader {
 	 * @access private
 	 * @static
 	 *
-	 * @param string $class Class name.
+	 * @param string $class_name Class name.
 	 */
-	private static function autoload( $class ) {
-		if ( 0 !== strpos( $class, self::$default_namespace . '\\' ) ) {
+	private static function autoload( $class_name ) {
+		if ( 0 !== strpos( $class_name, self::$default_namespace . '\\' ) ) {
 			return;
 		}
 
-		$relative_class_name = preg_replace( '/^' . self::$default_namespace . '\\\/', '', $class );
+		$relative_class_name = preg_replace( '/^' . self::$default_namespace . '\\\/', '', $class_name );
 
 		$classes_aliases = self::get_classes_aliases();
 
@@ -335,9 +337,9 @@ class Autoloader {
 		}
 
 		if ( $has_class_alias ) {
-			class_alias( $final_class_name, $class );
+			class_alias( $final_class_name, $class_name );
 
-			Utils::handle_deprecation( $class, $alias_data['version'], $final_class_name );
+			Utils::handle_deprecation( $class_name, $alias_data['version'], $final_class_name );
 		}
 	}
 }

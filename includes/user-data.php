@@ -91,9 +91,10 @@ class User_Data {
 	}
 
 	/**
-	 * @param array $param The parameter value.
+	 * @param array            $param The parameter value.
 	 * @param \WP_REST_Request $request The request object.
-	 * @param string $key The parameter key.
+	 * @param string           $key The parameter key.
+	 *
 	 * @return array|null The sanitized array or null.
 	 */
 	public static function sanitize_suppressed_messages( $param, $request, $key ) {

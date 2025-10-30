@@ -22,4 +22,5 @@ export type NormalizedVariable = {
 	key: string;
 	label: string;
 	value: string;
+	order?: number;
 };

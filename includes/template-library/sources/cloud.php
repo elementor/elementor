@@ -298,7 +298,7 @@ class Source_Cloud extends Source_Base {
 	/**
 	 * @param int $template_id
 	 * @return Document|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If the user has no permission or the post is not found.
 	 */
 	public function create_document_for_preview( int $template_id ) {
 		if ( ! current_user_can( 'edit_posts' ) ) {
@@ -413,12 +413,16 @@ class Source_Cloud extends Source_Base {
 			$items_to_save = [];
 
 			foreach ( $extracted_files['files'] as $file_path ) {
+				// Skip macOS metadata files and folders
+				if ( false !== strpos( $file_path, '__MACOSX' ) || '.' === basename( $file_path )[0] ) {
+					continue;
+				}
+
 				$prepared = $this->prepare_import_template_data( $file_path );
 
 				if ( is_wp_error( $prepared ) ) {
-					Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
-
-					return $prepared;
+					// Skip failed templates
+					continue;
 				}
 
 				$items_to_save[] = $this->format_resource_item_for_create( $prepared );

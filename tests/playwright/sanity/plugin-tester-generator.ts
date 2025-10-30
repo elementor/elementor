@@ -97,6 +97,14 @@ export const generatePluginTests = ( testType: string ) => {
 					await plusAddonTemplateModal.skipTemplatesImportIfVisible();
 				}
 
+				if ( 'wordpress-seo' === plugin.pluginName ) {
+					const gotItButton = editor.page.locator( '#yoast-introduction-editor-v2 .dialog-buttons-ok' );
+
+					if ( await gotItButton.isVisible() ) {
+						await gotItButton.click();
+					}
+				}
+
 				await editor.closeNavigatorIfOpen();
 
 				await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );

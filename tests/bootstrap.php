@@ -10,7 +10,6 @@ require $composer_autoloader_file;
 
 
 use Elementor\Autoloader;
-use Elementor\Core\Editor\Editor;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
@@ -20,10 +19,10 @@ if ( getenv( 'WP_PHPUNIT__DIR' ) ) {
 }
 
 define( 'ELEMENTOR_TESTS', true );
-define ( 'ELEMENTOR_DEBUG', true );
+define( 'ELEMENTOR_DEBUG', true );
 
 /**
- * change PLUGIN_FILE env in phpunit.xml
+ * Change PLUGIN_FILE env in phpunit.xml
  */
 define( 'PLUGIN_FILE', getenv( 'PLUGIN_FILE' ) );
 define( 'PLUGIN_FOLDER', basename( dirname( __DIR__ ) ) );
@@ -32,8 +31,8 @@ define( 'PLUGIN_PATH', PLUGIN_FOLDER . '/' . PLUGIN_FILE );
 // Activates this plugin in WordPress so it can be tested.
 $GLOBALS['wp_tests_options'] = [
 	'active_plugins' => [ PLUGIN_PATH ],
-	'template' => 'twentytwentyone',
-	'stylesheet' => 'twentytwentyone',
+	'template'       => 'twentytwentyone',
+	'stylesheet'     => 'twentytwentyone',
 ];
 
 copy_language_files( $_tests_dir );

@@ -8,14 +8,22 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 		elementor.hooks.addFilter( 'element/view', function( DefaultView, model ) {
 			const widgetType = model.get( 'widgetType' );
-			const isProWidget = elementor.config?.promotionWidgets?.find( ( item ) => widgetType === item.name );
+			const { config } = elementor;
 
-			if ( isProWidget ) {
-				return require( './widget/view' ).default;
+			const hasWidget = ( path ) => !! config[ path ].find( ( item ) => widgetType === item.name );
+
+			let isProWidget = false,
+				isIntegrationWidget = false;
+
+			if ( config?.promotionWidgets?.length ) {
+				isProWidget = hasWidget( 'promotionWidgets' );
 			}
 
-			const isIntegrationWidget = elementor.config?.integrationWidgets?.find( ( item ) => widgetType === item.name );
-			if ( isIntegrationWidget ) {
+			if ( config?.integrationWidgets?.length && ! isProWidget ) {
+				isIntegrationWidget = hasWidget( 'integrationWidgets' );
+			}
+
+			if ( isProWidget || isIntegrationWidget ) {
 				return require( './widget/view' ).default;
 			}
 
@@ -25,12 +33,16 @@ export default class Module extends elementorModules.editor.utils.Module {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior );
 	}
 
+	hasWidgetsElements( path ) {
+		return elementor.config?.[ path ]?.length;
+	}
+
 	hasPromotionWidgets() {
-		return elementor.config?.promotionWidgets && elementor.config.promotionWidgets.length;
+		return this.hasWidgetsElements( 'promotionWidgets' );
 	}
 
 	hasIntegrationWidgets() {
-		return elementor.config?.integrationWidgets && elementor.config.integrationWidgets.length;
+		return this.hasWidgetsElements( 'integrationWidgets' );
 	}
 
 	registerControlBehavior( behaviors, view ) {

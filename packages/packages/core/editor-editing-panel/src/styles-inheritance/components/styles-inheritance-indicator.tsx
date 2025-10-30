@@ -12,27 +12,20 @@ import { getStylesProviderThemeColor } from '../../utils/get-styles-provider-col
 import { type SnapshotPropValue } from '../types';
 import { getValueFromInheritanceChain } from '../utils';
 import { StylesInheritanceInfotip } from './styles-inheritance-infotip';
-
-const disabledControls = [ 'box-shadow', 'background-overlay', 'filter', 'backdrop-filter', 'transform' ];
-
-export const StylesInheritanceIndicator = () => {
-	const { path, propType } = useBoundProp();
+export const StylesInheritanceIndicator = ( {
+	customContext,
+}: {
+	customContext?: { path: string[]; propType: PropType };
+} ) => {
+	const context = useBoundProp();
+	const { path, propType } = customContext || context;
 	const inheritanceChain = useStylesInheritanceChain( path );
 
 	if ( ! path || ! inheritanceChain.length ) {
 		return null;
 	}
 
-	const isDisabled = path.some( ( pathItem ) => disabledControls.includes( pathItem ) );
-
-	return (
-		<Indicator
-			inheritanceChain={ inheritanceChain }
-			path={ path }
-			propType={ propType }
-			isDisabled={ isDisabled }
-		/>
-	);
+	return <Indicator inheritanceChain={ inheritanceChain } path={ path } propType={ propType } />;
 };
 
 type IndicatorProps = {

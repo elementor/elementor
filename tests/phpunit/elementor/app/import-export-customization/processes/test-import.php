@@ -729,7 +729,7 @@ class Test_Import extends Elementor_Test_Base {
 		foreach ( $array_with_extra_keys as $key => $value ) {
 			if ( ! isset( $array[ $key ] ) ) {
 				unset( $array_with_extra_keys[ $key ] );
-			} else if ( is_array( $value ) ) {
+			} elseif ( is_array( $value ) ) {
 				$array_with_extra_keys[ $key ] = $this->normalize_array( $array[ $key ], $value );
 			}
 		}

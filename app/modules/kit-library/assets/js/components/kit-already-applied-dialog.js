@@ -1,10 +1,14 @@
 import { Dialog } from '@elementor/app-ui';
+import { useTracking } from '../context/tracking-context';
 
 export default function KitAlreadyAppliedDialog( props ) {
+	const tracking = useTracking();
+
 	const getRemoveKitUrl = () => {
 		const elementorToolsUrl = elementorAppConfig[ 'import-export' ].tools_url;
 		const url = new URL( elementorToolsUrl );
 		url.searchParams.append( 'referrer_kit', props.id );
+		url.searchParams.append( 'scroll_to_revert', '1' );
 		url.hash = 'tab-import-export-kit';
 
 		return url.toString();
@@ -20,9 +24,11 @@ export default function KitAlreadyAppliedDialog( props ) {
 			</> }
 			approveButtonText={ __( 'Remove existing', 'elementor' ) }
 			approveButtonColor="primary"
-			approveButtonOnClick={ () => location.href = getRemoveKitUrl() }
+			approveButtonOnClick={ () => tracking.trackKitdemoApplyRemoveExisting( true, () => {
+				location.href = getRemoveKitUrl();
+			} ) }
 			dismissButtonText={ __( 'Apply anyway', 'elementor' ) }
-			dismissButtonOnClick={ props.dismissButtonOnClick }
+			dismissButtonOnClick={ () => tracking.trackKitdemoApplyRemoveExisting( false, props.dismissButtonOnClick ) }
 			onClose={ props.onClose }
 		/>
 	);

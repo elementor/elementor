@@ -6,6 +6,8 @@ log/
 *.map
 **/.env
 
+CLAUDE.md
+
 .turbo/
 .cspell/
 

@@ -48,7 +48,6 @@ export const createElements = ( {
 						model: element.model?.toJSON() || {},
 						createParams: {
 							...createParams,
-							id: elementId,
 						},
 					} );
 				} );
@@ -70,15 +69,17 @@ export const createElements = ( {
 			): CreatedElementsResult => {
 				const newElements: CreatedElement[] = [];
 
-				createdElements.forEach( ( { createParams } ) => {
+				createdElements.forEach( ( { createParams, model } ) => {
 					const element = createElement( {
-						...createParams,
+						containerId: createParams.containerId,
+						model,
 						options: { ...createParams.options, useHistory: false },
 					} );
 
 					const elementId = element.id;
 
 					const container = getContainer( elementId );
+
 					if ( container ) {
 						newElements.push( {
 							elementId,

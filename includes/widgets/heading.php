@@ -475,7 +475,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 
 		if ( Hints::is_plugin_installed( $plugin_slug ) && ! Hints::is_plugin_active( $plugin_slug ) ) {
 			$button_text = __( 'Activate Plugin', 'elementor' );
-		} else if ( Hints::is_plugin_active( $plugin_slug ) && empty( get_option( 'ea11y_access_token' ) ) ) {
+		} elseif ( Hints::is_plugin_active( $plugin_slug ) && empty( get_option( 'ea11y_access_token' ) ) ) {
 			$button_text = __( 'Connect to Ally', 'elementor' );
 			$action_url = admin_url( 'admin.php?page=accessibility-settings' );
 		}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -8,13 +8,30 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { ThemeProvider } from '@elementor/editor-ui';
+import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { ColorFilterIcon, TrashIcon, XIcon } from '@elementor/icons';
-import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
+import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
+import {
+	Alert,
+	AlertAction,
+	AlertTitle,
+	Button,
+	CloseButton,
+	Divider,
+	Infotip,
+	Stack,
+	usePopupState,
+} from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { getVariables } from '../../hooks/use-prop-variables';
+import { type ErrorResponse, type MappedError, mapServerError } from '../../utils/validations';
+import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
+import { EmptyState } from '../ui/empty-state';
+import { NoSearchResults } from '../ui/no-search-results';
+import { useAutoEdit } from './hooks/use-auto-edit';
+import { useErrorNavigation } from './hooks/use-error-navigation';
+import { useVariablesManagerState } from './hooks/use-variables-manager-state';
+import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu';
 import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
@@ -29,81 +46,302 @@ export const { panel, usePanelActions } = createPanel( {
 	onClose: () => {
 		changeEditMode( 'edit' );
 	},
+	isOpenPreviousElement: true,
 } );
 
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
-	const isDirty = false;
-	const variables = getVariables( false );
+	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
+
+	const createMenuState = usePopupState( {
+		variant: 'popover',
+	} );
+
+	const {
+		variables,
+		isDirty,
+		searchValue,
+		isSaveDisabled,
+		handleOnChange,
+		createVariable,
+		handleDeleteVariable,
+		handleSave,
+		isSaving,
+		handleSearch,
+		setIsSaving,
+		setIsSaveDisabled,
+	} = useVariablesManagerState();
+
+	const { autoEditVariableId, startAutoEdit, handleAutoEditComplete } = useAutoEdit();
+	const { createNavigationCallback, resetNavigation } = useErrorNavigation();
+
+	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
+	const [ serverError, setServerError ] = useState< MappedError | null >( null );
 
 	usePreventUnload( isDirty );
+
+	const handleClosePanel = () => {
+		if ( isDirty ) {
+			openSaveChangesDialog();
+			return;
+		}
+
+		closePanel();
+	};
+
+	const handleCreateVariable = useCallback(
+		( type: string, defaultName: string, defaultValue: string ) => {
+			const newId = createVariable( type, defaultName, defaultValue );
+			if ( newId ) {
+				startAutoEdit( newId );
+			}
+		},
+		[ createVariable, startAutoEdit ]
+	);
+
+	const handleSaveClick = async () => {
+		try {
+			setServerError( null );
+			resetNavigation();
+
+			return await handleSave();
+		} catch ( error ) {
+			const mappedError = mapServerError( error as ErrorResponse );
+			const duplicatedIds = mappedError?.action?.data?.duplicatedIds;
+
+			if ( mappedError && 'label' === mappedError.field ) {
+				if ( duplicatedIds && mappedError.action ) {
+					mappedError.action.callback = createNavigationCallback( duplicatedIds, startAutoEdit, () => {
+						setIsSaveDisabled( false );
+					} );
+				}
+
+				setServerError( mappedError );
+				setIsSaveDisabled( true );
+				resetNavigation();
+			}
+
+			return { success: false, error: mappedError };
+		} finally {
+			setIsSaving( false );
+		}
+	};
+
+	const handleDeleteVariableWithConfirmation = useCallback(
+		( itemId: string ) => {
+			handleDeleteVariable( itemId );
+			setDeleteConfirmation( null );
+		},
+		[ handleDeleteVariable ]
+	);
 
 	const menuActions = [
 		{
 			name: __( 'Delete', 'elementor' ),
 			icon: TrashIcon,
 			color: 'error.main',
-			onClick: () => {},
+			onClick: ( itemId: string ) => {
+				if ( variables[ itemId ] ) {
+					setDeleteConfirmation( { id: itemId, label: variables[ itemId ].label } );
+				}
+			},
 		},
 	];
 
+	const hasVariables = Object.values( variables ).some( ( variable ) => ! variable.deleted );
+
 	return (
 		<ThemeProvider>
-			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
-				<Panel>
-					<PanelHeader>
-						<Stack width="100%" direction="column" alignItems="center">
-							<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
-								<Stack width="100%" direction="row" gap={ 1 }>
-									<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
-										<ColorFilterIcon fontSize="inherit" />
-										{ __( 'Variable Manager', 'elementor' ) }
-									</PanelHeaderTitle>
-								</Stack>
+			<Panel>
+				<PanelHeader
+					sx={ {
+						height: 'unset',
+					} }
+				>
+					<Stack width="100%" direction="column" alignItems="center">
+						<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
+							<Stack width="100%" direction="row" gap={ 1 }>
+								<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+									<ColorFilterIcon fontSize="inherit" />
+									{ __( 'Variables Manager', 'elementor' ) }
+								</PanelHeaderTitle>
+							</Stack>
+							<Stack direction="row" gap={ 0.5 } alignItems="center">
+								<VariableManagerCreateMenu
+									onCreate={ handleCreateVariable }
+									variables={ variables }
+									menuState={ createMenuState }
+								/>
 								<CloseButton
-									sx={ { marginLeft: 'auto' } }
-									onClose={ () => {
-										closePanel();
+									aria-label="Close"
+									slotProps={ { icon: { fontSize: SIZE } } }
+									onClick={ () => {
+										handleClosePanel();
 									} }
 								/>
 							</Stack>
-							<Divider sx={ { width: '100%' } } />
 						</Stack>
-					</PanelHeader>
-					<PanelBody
-						sx={ {
-							display: 'flex',
-							flexDirection: 'column',
-							height: '100%',
+						<Stack width="100%" direction="row" gap={ 1 }>
+							<SearchField
+								sx={ {
+									display: 'flex',
+									flex: 1,
+								} }
+								placeholder={ __( 'Search', 'elementor' ) }
+								value={ searchValue }
+								onSearch={ handleSearch }
+							/>
+						</Stack>
+						<Divider sx={ { width: '100%' } } />
+					</Stack>
+				</PanelHeader>
+				<PanelBody
+					sx={ {
+						display: 'flex',
+						flexDirection: 'column',
+						height: '100%',
+					} }
+				>
+					{ hasVariables && (
+						<VariablesManagerTable
+							menuActions={ menuActions }
+							variables={ variables }
+							onChange={ handleOnChange }
+							autoEditVariableId={ autoEditVariableId }
+							onAutoEditComplete={ handleAutoEditComplete }
+							onFieldError={ setIsSaveDisabled }
+						/>
+					) }
+
+					{ ! hasVariables && searchValue && (
+						<NoSearchResults
+							searchValue={ searchValue }
+							onClear={ () => handleSearch( '' ) }
+							icon={ <ColorFilterIcon fontSize="large" /> }
+						/>
+					) }
+
+					{ ! hasVariables && ! searchValue && (
+						<EmptyState
+							title={ __( 'Create your first variable', 'elementor' ) }
+							message={ __(
+								'Variables are saved attributes that you can apply anywhere on your site.',
+								'elementor'
+							) }
+							icon={ <ColorFilterIcon fontSize="large" /> }
+							onAdd={ createMenuState.open }
+						/>
+					) }
+				</PanelBody>
+
+				<PanelFooter>
+					<Infotip
+						placement="right"
+						open={ !! serverError }
+						content={
+							serverError ? (
+								<Alert
+									severity={ serverError.severity ?? 'error' }
+									action={
+										serverError.action?.label ? (
+											<AlertAction onClick={ serverError.action.callback }>
+												{ serverError.action.label }
+											</AlertAction>
+										) : undefined
+									}
+									onClose={
+										! serverError.action?.label
+											? () => {
+													setServerError( null );
+													setIsSaveDisabled( false );
+											  }
+											: undefined
+									}
+									icon={
+										serverError.IconComponent ? (
+											<serverError.IconComponent />
+										) : (
+											<AlertTriangleFilledIcon />
+										)
+									}
+								>
+									<AlertTitle>{ serverError.message }</AlertTitle>
+									{ serverError.action?.message }
+								</Alert>
+							) : null
+						}
+						arrow={ false }
+						slotProps={ {
+							popper: {
+								modifiers: [
+									{
+										name: 'offset',
+										options: { offset: [ -10, 10 ] },
+									},
+								],
+							},
 						} }
 					>
-						<VariablesManagerTable menuActions={ menuActions } variables={ variables } />
-					</PanelBody>
-
-					<PanelFooter>
-						<Button fullWidth size="small" color="global" variant="contained" disabled={ ! isDirty }>
+						<Button
+							fullWidth
+							size="small"
+							color="global"
+							variant="contained"
+							disabled={ isSaveDisabled || ! isDirty || isSaving }
+							onClick={ handleSaveClick }
+							loading={ isSaving }
+						>
 							{ __( 'Save changes', 'elementor' ) }
 						</Button>
-					</PanelFooter>
-				</Panel>
-			</ErrorBoundary>
+					</Infotip>
+				</PanelFooter>
+			</Panel>
+
+			{ deleteConfirmation && (
+				<DeleteConfirmationDialog
+					open
+					label={ deleteConfirmation.label }
+					onConfirm={ () => handleDeleteVariableWithConfirmation( deleteConfirmation.id ) }
+					closeDialog={ () => setDeleteConfirmation( null ) }
+				/>
+			) }
+
+			{ isSaveChangesDialogOpen && (
+				<SaveChangesDialog>
+					<SaveChangesDialog.Title onClose={ closeSaveChangesDialog }>
+						{ __( 'You have unsaved changes', 'elementor' ) }
+					</SaveChangesDialog.Title>
+					<SaveChangesDialog.Content>
+						<SaveChangesDialog.ContentText>
+							{ __( 'To avoid losing your updates, save your changes before leaving.', 'elementor' ) }
+						</SaveChangesDialog.ContentText>
+					</SaveChangesDialog.Content>
+					<SaveChangesDialog.Actions
+						actions={ {
+							discard: {
+								label: __( 'Discard', 'elementor' ),
+								action: () => {
+									closeSaveChangesDialog();
+									closePanel();
+								},
+							},
+							confirm: {
+								label: __( 'Save', 'elementor' ),
+								action: async () => {
+									const result = await handleSaveClick();
+									closeSaveChangesDialog();
+									if ( result?.success ) {
+										closePanel();
+									}
+								},
+							},
+						} }
+					/>
+				</SaveChangesDialog>
+			) }
 		</ThemeProvider>
 	);
 }
-
-const CloseButton = ( { onClose, ...props }: IconButtonProps & { onClose: () => void } ) => (
-	<IconButton size="small" color="secondary" onClick={ onClose } aria-label="Close" { ...props }>
-		<XIcon fontSize="small" />
-	</IconButton>
-);
-
-const ErrorBoundaryFallback = () => (
-	<Box role="alert" sx={ { minHeight: '100%', p: 2 } }>
-		<Alert severity="error" sx={ { mb: 2, maxWidth: 400, textAlign: 'center' } }>
-			<strong>{ __( 'Something went wrong', 'elementor' ) }</strong>
-		</Alert>
-	</Box>
-);
 
 const usePreventUnload = ( isDirty: boolean ) => {
 	useEffect( () => {

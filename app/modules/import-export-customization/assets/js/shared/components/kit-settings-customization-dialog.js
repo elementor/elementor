@@ -1,11 +1,23 @@
 import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { SettingSection } from './customization-setting-section';
 import { KitCustomizationDialog } from './kit-customization-dialog';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import useContextDetection from '../hooks/use-context-detection';
+import { UpgradeVersionBanner } from './upgrade-version-banner';
+import { transformValueForAnalytics } from '../utils/analytics-transformer';
+
+const transformAnalyticsData = ( payload ) => {
+	const transformed = {};
+
+	for ( const [ key, value ] of Object.entries( payload ) ) {
+		transformed[ key ] = transformValueForAnalytics( key, value, [] );
+	}
+
+	return transformed;
+};
 
 function getInitialState( contextData, isImport ) {
 	const data = contextData.data;
@@ -18,23 +30,28 @@ function getInitialState( contextData, isImport ) {
 	return initialState;
 }
 
+function isExported( contextData ) {
+	if ( contextData?.isOldExport ) {
+		return contextData?.data?.uploadedData?.manifest?.theme;
+	}
+
+	return contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme;
+}
+
 export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
 	const { isImport, contextData } = useContextDetection();
 
 	const initialState = getInitialState( contextData, isImport );
-	const unselectedValues = useRef( data.analytics?.customization?.settings || [] );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.settings ) {
 			return {
 				...data.customization.settings,
-				hasOtherEnabledParts: true,
 			};
 		}
 
 		return {
 			theme: initialState,
-			hasOtherEnabledParts: true,
 		};
 	} );
 
@@ -43,26 +60,22 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 			if ( data.customization.settings ) {
 				setSettings( {
 					...data.customization.settings,
-					hasOtherEnabledParts: true,
 				} );
 			} else {
 				setSettings( {
 					theme: initialState,
-					hasOtherEnabledParts: true,
 				} );
 			}
 		}
 	}, [ open, data.customization.settings, data?.uploadedData, initialState ] );
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
-	}, [] );
+		if ( open ) {
+			AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+		}
+	}, [ open ] );
 
-	const handleToggleChange = ( settingKey, isChecked ) => {
-		unselectedValues.current = isChecked
-			? unselectedValues.current.filter( ( val ) => settingKey !== val )
-			: [ ...unselectedValues.current, settingKey ];
-
+	const handleToggleChange = ( settingKey ) => {
 		setSettings( ( prev ) => ( {
 			...prev,
 			[ settingKey ]: ! prev[ settingKey ],
@@ -74,18 +87,32 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 			open={ open }
 			title={ __( 'Edit settings & configurations', 'elementor' ) }
 			handleClose={ handleClose }
-			handleSaveChanges={ () => handleSaveChanges( 'settings', settings, unselectedValues.current ) }
+			handleSaveChanges={ () => {
+				const transformedAnalytics = transformAnalyticsData( settings );
+				handleSaveChanges( 'settings', settings, true, transformedAnalytics );
+			} }
 		>
-			<Stack>
-				<SettingSection
-					key="theme"
-					checked={ settings.theme }
-					title={ __( 'Theme', 'elementor' ) }
-					description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
-					settingKey="theme"
-					onSettingChange={ handleToggleChange }
-					disabled={ isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme }
-				/>
+			<Stack gap={ 2 }>
+				{ contextData?.isOldElementorVersion && (
+					<UpgradeVersionBanner />
+				) }
+				{ isImport && ! isExported( contextData ) ? (
+					<SettingSection
+						title={ __( 'Theme', 'elementor' ) }
+						settingKey="theme"
+						notExported
+					/>
+				) : (
+					<SettingSection
+						key="theme"
+						checked={ settings.theme }
+						title={ __( 'Theme', 'elementor' ) }
+						description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
+						settingKey="theme"
+						onSettingChange={ handleToggleChange }
+						disabled={ isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme }
+					/>
+				) }
 			</Stack>
 		</KitCustomizationDialog>
 	);

@@ -47,6 +47,7 @@ describe( '<RepeatableControl />', () => {
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
+			resetValue: jest.fn(),
 		} );
 
 		const props = {
@@ -59,14 +60,14 @@ describe( '<RepeatableControl />', () => {
 		renderControl(
 			<RepeatableControl
 				label="Text Items"
-				repeaterLabel="Text Items"
+				repeaterLabel="Text items"
 				childControlConfig={ childControlConfig }
 				patternLabel={ '' }
 			/>,
 			props
 		);
 
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+		const addButton = screen.getByRole( 'button', { name: /Add text items item/i } );
 		fireEvent.click( addButton );
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( {
@@ -91,6 +92,7 @@ describe( '<RepeatableControl />', () => {
 			bind: 'items',
 			path: [],
 			restoreValue: jest.fn(),
+			resetValue: jest.fn(),
 		} );
 
 		const props = {
@@ -103,13 +105,13 @@ describe( '<RepeatableControl />', () => {
 		renderControl(
 			<RepeatableControl
 				label="Number Items"
-				repeaterLabel="Number Items"
+				repeaterLabel="Number items"
 				childControlConfig={ childControlConfig }
 			/>,
 			props
 		);
 
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+		const addButton = screen.getByRole( 'button', { name: /Add number items item/i } );
 		fireEvent.click( addButton );
 
 		// Assert.
@@ -136,15 +138,15 @@ describe( '<RepeatableControl />', () => {
 		renderControl(
 			<RepeatableControl
 				label="Custom Label"
-				repeaterLabel="Custom Label"
+				repeaterLabel="Custom label"
 				childControlConfig={ childControlConfig }
 			/>,
 			props
 		);
 
 		// Assert.
-		expect( screen.getByText( 'Custom Label' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Add item' } ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Custom label' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: /Add custom label item/i } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render child control when add item button is pressed and valid config is provided', () => {
@@ -164,13 +166,13 @@ describe( '<RepeatableControl />', () => {
 		renderControl(
 			<RepeatableControl
 				label="Text Items"
-				repeaterLabel="Text Items"
+				repeaterLabel="Text items"
 				childControlConfig={ childControlConfig }
 			/>,
 			props
 		);
 
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+		const addButton = screen.getByRole( 'button', { name: /Add text items item/i } );
 		fireEvent.click( addButton );
 
 		// Assert.

@@ -40,7 +40,11 @@ export const NumberControl = createControl(
 				updatedValue = null;
 			} else {
 				const formattedValue = shouldForceInt ? +parseInt( eventValue ) : Number( eventValue );
-				updatedValue = Math.min( Math.max( formattedValue, min ), max );
+
+				updatedValue = Math.min(
+					Math.max( formattedValue, min ?? Number.MIN_SAFE_INTEGER ),
+					max ?? Number.MAX_SAFE_INTEGER
+				);
 			}
 
 			setValue( updatedValue, undefined, { validation: () => isInputValid } );

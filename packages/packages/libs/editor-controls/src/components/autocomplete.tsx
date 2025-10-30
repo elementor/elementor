@@ -30,6 +30,9 @@ export type Props = {
 	allowCustomValues?: boolean;
 	placeholder?: string;
 	minInputLength?: number;
+	startAdornment?: React.ReactNode;
+	inputProps?: Record< string, unknown >;
+	disablePortal?: boolean;
 };
 
 export const Autocomplete = forwardRef( ( props: Props, ref ) => {
@@ -41,10 +44,12 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 		placeholder = '',
 		minInputLength = 2,
 		value = '',
+		startAdornment,
+		disablePortal = true,
 		...restProps
 	} = props;
 
-	const optionKeys = _factoryFilter( value, options, minInputLength ).map( ( { id } ) => id );
+	const optionKeys = factoryFilter( value, options, minInputLength ).map( ( { id } ) => id );
 	const allowClear = !! value;
 
 	// Prevents MUI warning when freeSolo/allowCustomValues is false
@@ -54,13 +59,20 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 
 	const isValueFromOptions = typeof value === 'number' && !! findMatchingOption( options, value );
 
+	const valueLength = value?.toString()?.length ?? 0;
+	const meetsMinLength = valueLength >= minInputLength;
+	const shouldOpen = meetsMinLength && ( allowCustomValues ? optionKeys.length > 0 : true );
+
 	return (
 		<AutocompleteBase
 			{ ...restProps }
 			ref={ ref }
 			forcePopupIcon={ false }
+			disablePortal={ disablePortal }
 			disableClearable={ true } // Disabled component's auto clear icon to use our custom one instead
 			freeSolo={ allowCustomValues }
+			openOnFocus={ false }
+			open={ shouldOpen }
 			value={ value?.toString() || '' }
 			size={ 'tiny' }
 			onChange={ ( _, newValue ) => onOptionChange( Number( newValue ) ) }
@@ -87,6 +99,8 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 					allowClear={ allowClear }
 					placeholder={ placeholder }
 					hasSelectedValue={ isValueFromOptions }
+					startAdornment={ startAdornment }
+					extraInputProps={ restProps.inputProps }
 				/>
 			) }
 		/>
@@ -99,12 +113,16 @@ const TextInput = ( {
 	placeholder,
 	handleChange,
 	hasSelectedValue,
+	startAdornment,
+	extraInputProps,
 }: {
 	params: AutocompleteRenderInputParams;
 	allowClear: boolean;
 	handleChange: ( newValue: string | null ) => void;
 	placeholder: string;
 	hasSelectedValue: boolean;
+	startAdornment?: React.ReactNode;
+	extraInputProps?: Record< string, unknown >;
 } ) => {
 	const onChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		handleChange( event.target.value );
@@ -115,6 +133,7 @@ const TextInput = ( {
 			{ ...params }
 			placeholder={ placeholder }
 			onChange={ onChange }
+			inputProps={ { ...( params.inputProps ?? {} ), ...( extraInputProps ?? {} ) } }
 			sx={ {
 				'& .MuiInputBase-input': {
 					cursor: hasSelectedValue ? 'default' : undefined,
@@ -122,6 +141,11 @@ const TextInput = ( {
 			} }
 			InputProps={ {
 				...params.InputProps,
+				startAdornment: startAdornment ? (
+					<InputAdornment position="start">{ startAdornment }</InputAdornment>
+				) : (
+					params.InputProps.startAdornment
+				),
 				endAdornment: <ClearButton params={ params } allowClear={ allowClear } handleChange={ handleChange } />,
 			} }
 		/>
@@ -156,9 +180,16 @@ export function findMatchingOption(
 }
 
 export function isCategorizedOptionPool( options: FlatOption[] | CategorizedOption[] ): options is CategorizedOption[] {
-	return options.every( ( option ) => 'groupLabel' in option );
+	if ( options.length <= 1 ) {
+		return false;
+	}
+
+	const uniqueGroupLabels = new Set( options.map( ( option ) => option.groupLabel ) );
+
+	return uniqueGroupLabels.size > 1; // should not categorize options if there is only one group
 }
-function _factoryFilter< T extends FlatOption[] | CategorizedOption[] >(
+
+function factoryFilter< T extends FlatOption[] | CategorizedOption[] >(
 	newValue: string | number | null,
 	options: T,
 	minInputLength: number

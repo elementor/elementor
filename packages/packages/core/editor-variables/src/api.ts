@@ -1,11 +1,31 @@
 import { httpService } from '@elementor/http-client';
 
+import { type OperationType } from './batch-operations';
+
 const BASE_PATH = 'elementor/v1/variables';
 
 type RestoreVariablePayload = {
 	id: string;
 	label?: string;
 	value?: string;
+};
+
+export type BatchOperation = {
+	type: OperationType;
+	id?: string;
+	variable?: {
+		id?: string;
+		type?: string;
+		label?: string;
+		value?: string;
+	};
+	label?: string;
+	value?: string;
+};
+
+export type BatchPayload = {
+	watermark: number;
+	operations: BatchOperation[];
 };
 
 export const apiClient = {
@@ -45,5 +65,9 @@ export const apiClient = {
 		}
 
 		return httpService().post( BASE_PATH + '/restore', payload );
+	},
+
+	batch: ( payload: BatchPayload ) => {
+		return httpService().post( BASE_PATH + '/batch', payload );
 	},
 };

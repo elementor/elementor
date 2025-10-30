@@ -16,6 +16,10 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
@@ -24,6 +28,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Transformer
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import\Image_Src_Import_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import_Export_Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Classes_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Date_Time_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
@@ -61,6 +66,9 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Stop_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Date_Time_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Backdrop_Filter_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Gradient_Color_Stop_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
@@ -73,8 +81,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Position_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Filter_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Move_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Functions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Origin_Prop_Type;
@@ -89,10 +95,13 @@ use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Query_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -102,8 +111,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
-	const EXPERIMENT_CUSTOM_CSS = 'atomic_custom_css';
 	const EXPERIMENT_NESTED = 'e_nested_elements';
+	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -185,19 +194,19 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		] );
 
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::EXPERIMENT_CUSTOM_CSS,
-			'title' => esc_html__( 'V4 Custom CSS', 'elementor' ),
-			'description' => esc_html__( 'Create endless custom styling.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
-
 		Plugin::$instance->experiments->add_feature([
 			'name' => self::EXPERIMENT_NESTED,
 			'title' => esc_html__( 'Nested Elements', 'elementor' ),
 			'description' => esc_html__( 'Enable nested elements.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_EDITOR_MCP,
+			'title' => esc_html__( 'Editor MCP for atomic widgets', 'elementor' ),
+			'description' => esc_html__( 'Editor MCP for atomic widgets.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -237,6 +246,14 @@ class Module extends BaseModule {
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
+
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NESTED ) ) {
+			$elements_manager->register_element_type( new Atomic_Tabs() );
+			$elements_manager->register_element_type( new Atomic_Tabs_Menu() );
+			$elements_manager->register_element_type( new Atomic_Tab() );
+			$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
+			$elements_manager->register_element_type( new Atomic_Tab_Content() );
+		}
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
@@ -246,7 +263,9 @@ class Module extends BaseModule {
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
+		$transformers->register( Query_Prop_Type::get_key(), new Query_Transformer() );
 		$transformers->register( Attributes_Prop_Type::get_key(), new Attributes_Transformer() );
+		$transformers->register( Date_Time_Prop_Type::get_key(), new Date_Time_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {
@@ -380,6 +399,14 @@ class Module extends BaseModule {
 		wp_register_script(
 			'elementor-youtube-handler',
 			$this->get_js_assets_url( 'youtube-handler' ),
+			[ $frontend_handlers_package_config['handle'] ],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
+			'elementor-tabs-handler',
+			$this->get_js_assets_url( 'tabs-handler' ),
 			[ $frontend_handlers_package_config['handle'] ],
 			ELEMENTOR_VERSION,
 			true

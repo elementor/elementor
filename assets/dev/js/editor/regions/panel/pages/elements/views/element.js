@@ -51,7 +51,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	isIntegration() {
-		return this.model.get( 'integration' );
+		return !! this.model.get( 'integration' );
 	},
 
 	onRender() {
@@ -82,12 +82,16 @@ module.exports = Marionette.ItemView.extend( {
 	onMouseDown() {
 		const title = this.model.get( 'title' ),
 			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
-			isIntegration = this.isIntegration();
+			isIntegration = this.isIntegration(),
+			configPromotion = elementor.config.promotion;
 
-		let promotion = elementor.config.promotion.elements;
+		let promotion = configPromotion.elements,
+			// eslint-disable-next-line @wordpress/valid-sprintf
+			url = sprintf( promotion.action_button.url.toString(), widgetType );
 
 		if ( isIntegration ) {
-			promotion = elementor.config.promotion?.integration?.[ widgetType ];
+			promotion = configPromotion?.integration?.[ widgetType ];
+			url = promotion.action_button.url.toString().replaceAll( '&amp;', '&' );
 		}
 
 		elementor.promotion.showDialog( {
@@ -100,11 +104,11 @@ module.exports = Marionette.ItemView.extend( {
 				blockStart: '-7',
 			},
 			actionButton: {
-				// eslint-disable-next-line @wordpress/valid-sprintf
-				url: sprintf( promotion.action_button.url.toString().replaceAll( '&amp;', '&' ), widgetType ),
+				url,
 				text: promotion.action_button.text,
 				classes: promotion.action_button.classes || [ 'elementor-button', 'go-pro' ],
 			},
+			hideProTag: isIntegration,
 		} );
 	},
 
@@ -169,14 +173,29 @@ module.exports = Marionette.ItemView.extend( {
 			this.model.set( 'settings', this.model.get( 'custom' ).preset_settings );
 		}
 
+		const modelData = this.model.toJSON();
+
 		$e.run( 'preview/drop', {
 			container,
 			options: {
 				...options,
 				scrollIntoView: true,
 			},
-			model: this.model.toJSON(),
+			model: modelData,
 		} );
+
+		if ( elementorCommon?.eventsManager?.dispatchEvent ) {
+			const elType = modelData?.elType ?? '';
+			const widgetType = modelData?.widgetType ?? '';
+			const elementName = 'widget' === elType ? widgetType : elType;
+
+			elementorCommon.eventsManager.dispatchEvent( 'add_element', {
+				location: 'editor_panel',
+				element_name: elementName,
+				element_type: elType,
+				widget_type: widgetType,
+			} );
+		}
 	},
 
 	getSelectedElements() {

@@ -51,6 +51,14 @@ class Control_Media extends Control_Base_Multiple {
 		];
 	}
 
+	public function on_export( $settings ) {
+		if ( ! empty( $settings['url'] ) ) {
+			do_action( 'elementor/templates/collect_media_url', $settings['url'], $settings );
+		}
+
+		return $settings;
+	}
+
 	/**
 	 * Import media images.
 	 *
@@ -67,6 +75,17 @@ class Control_Media extends Control_Base_Multiple {
 	public function on_import( $settings ) {
 		if ( empty( $settings['url'] ) ) {
 			return $settings;
+		}
+
+		$local_file_path = \Elementor\TemplateLibrary\Classes\Media_Mapper::get_local_file_path( $settings['url'] );
+		$imported_attachment = false;
+
+		if ( $local_file_path !== $settings['url'] && file_exists( $local_file_path ) ) {
+			$imported_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import_local_file( $local_file_path );
+		}
+
+		if ( $imported_attachment ) {
+			return $imported_attachment;
 		}
 
 		$settings = Plugin::$instance->templates_manager->get_import_images_instance()->import( $settings );
@@ -470,7 +489,7 @@ class Control_Media extends Control_Base_Multiple {
 		return wp_get_attachment_image_url( $control_value['id'], $control_value['size'] );
 	}
 
-	public static function sanitise_text( $string ) {
-		return esc_attr( strip_tags( $string ) );
+	public static function sanitise_text( $text ) {
+		return esc_attr( strip_tags( $text ) );
 	}
 }

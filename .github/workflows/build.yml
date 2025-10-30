@@ -89,6 +89,8 @@ jobs:
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
+        env:
+          MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
 
       - uses: actions/upload-artifact@v4
         id: upload-artifact

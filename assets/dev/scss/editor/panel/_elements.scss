@@ -43,6 +43,10 @@
 	z-index: $first-layer;
 }
 
+#elementor-panel-elements-search-area:empty {
+	display: none;
+}
+
 #elementor-panel-elements-search-wrapper {
 	position: relative;
 }
@@ -122,7 +126,6 @@
 			> .eicon-lock {
 				color: var(--e-a-color-accent);
 			}
-
 
 			> .eicon-plug {
 				color: var(--e-a-color-info);

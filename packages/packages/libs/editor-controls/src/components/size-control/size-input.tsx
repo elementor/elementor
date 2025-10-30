@@ -21,6 +21,8 @@ type SizeInputProps = {
 	popupState: PopupState;
 	disabled?: boolean;
 	min?: number;
+	id?: string;
+	ariaLabel?: string;
 };
 
 export const SizeInput = ( {
@@ -37,6 +39,8 @@ export const SizeInput = ( {
 	popupState,
 	disabled,
 	min,
+	id,
+	ariaLabel,
 }: SizeInputProps ) => {
 	const unitInputBufferRef = useRef( '' );
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
@@ -70,6 +74,16 @@ export const SizeInput = ( {
 		'aria-haspopup': true,
 	};
 
+	const menuItemsAttributes = units.includes( 'custom' )
+		? {
+				custom: popupAttributes,
+		  }
+		: undefined;
+
+	const alternativeOptionLabels = {
+		custom: <MathFunctionIcon fontSize="tiny" />,
+	};
+
 	const InputProps = {
 		...popupAttributes,
 		readOnly: isUnitExtendedOption( unit ),
@@ -87,16 +101,8 @@ export const SizeInput = ( {
 				options={ units }
 				onClick={ handleUnitChange }
 				value={ unit }
-				alternativeOptionLabels={ {
-					custom: <MathFunctionIcon fontSize="tiny" />,
-				} }
-				menuItemsAttributes={
-					units.includes( 'custom' )
-						? {
-								custom: popupAttributes,
-						  }
-						: undefined
-				}
+				alternativeOptionLabels={ alternativeOptionLabels }
+				menuItemsAttributes={ menuItemsAttributes }
 			/>
 		),
 	};
@@ -113,8 +119,9 @@ export const SizeInput = ( {
 					onKeyUp={ handleKeyUp }
 					onBlur={ onBlur }
 					InputProps={ InputProps }
-					inputProps={ { min, step: 'any' } }
+					inputProps={ { min, step: 'any', 'aria-label': ariaLabel } }
 					isPopoverOpen={ popupState.isOpen }
+					id={ id }
 				/>
 			</Box>
 		</ControlActions>

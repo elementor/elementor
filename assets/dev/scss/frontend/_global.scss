@@ -79,7 +79,10 @@
 	.elementor-background-video,
 	.elementor-background-video-embed,
 	.elementor-background-video-hosted {
-		@include absolute-center;
+		position: absolute;
+		inset-block-start: 50%;
+		inset-inline-start: 50%;
+		transform: translate(-50%, -50%);
 	}
 
 	.elementor-background-video-hosted {

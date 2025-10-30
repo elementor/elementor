@@ -14,6 +14,7 @@ use Elementor\Utils;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
+use Elementor\Core\Utils\Assets_Translation_Loader;
 
 use Elementor\App\Modules\ImportExport\Module as ImportExportModule;
 use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
@@ -115,6 +116,7 @@ class App extends BaseApp {
 			'admin_url' => admin_url(),
 			'login_url' => wp_login_url(),
 			'base_url' => $this->get_base_url(),
+			'home_url' => home_url(),
 			'promotion' => Filtered_Promotions_Manager::get_filtered_promotion_data(
 				[ 'upgrade_url' => 'https://go.elementor.com/go-pro-theme-builder/' ],
 				'elementor/site-editor/promotion',
@@ -262,8 +264,7 @@ class App extends BaseApp {
 
 		$this->enqueue_dark_theme_detection_script();
 
-		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
-		wp_set_script_translations( 'elementor-app', 'elementor' );
+		Assets_Translation_Loader::for_handles( [ 'elementor-app-packages', 'elementor-app' ], 'elementor' );
 
 		$this->print_config();
 	}
@@ -286,8 +287,8 @@ class App extends BaseApp {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => 'import-export-customization',
 			'title' => esc_html__( 'Import/Export Customization', 'elementor' ),
-			'description' => esc_html__( 'Enable advanced customization options for import/export functionality.', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
+			'description' => esc_html__( 'Enhanced import/export for website templates. Selectively include site content, templates, and settings with advanced granular control.', 'elementor' ),
+			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
 			'default' => ExperimentsManager::STATE_ACTIVE,
 		] );
 	}

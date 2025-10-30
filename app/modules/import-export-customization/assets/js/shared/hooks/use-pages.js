@@ -70,6 +70,7 @@ export function usePages( { skipLoading = false } = {} ) {
 		if ( ! skipLoading ) {
 			fetchAllPages();
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ skipLoading ] );
 
 	return {

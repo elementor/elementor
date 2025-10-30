@@ -17,6 +17,7 @@ export function registerVariableTypes() {
 		fallbackPropTypeUtil: colorPropTypeUtil,
 		variableType: 'color',
 		startIcon: ( { value } ) => <ColorIndicator size="inherit" component="span" value={ value } />,
+		defaultValue: '#ffffff',
 	} );
 
 	registerVariableType( {
@@ -25,5 +26,6 @@ export function registerVariableTypes() {
 		propTypeUtil: fontVariablePropTypeUtil,
 		fallbackPropTypeUtil: stringPropTypeUtil,
 		variableType: 'font',
+		defaultValue: 'Roboto',
 	} );
 }

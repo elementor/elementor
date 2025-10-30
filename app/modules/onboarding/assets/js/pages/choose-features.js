@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import Message from '../components/message';
-import { options, setSelectedFeatureList } from '../utils/utils';
+import { options, setSelectedFeatureList, addExperimentTrackingToUrl } from '../utils/utils';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 import useButtonAction from '../utils/use-button-action';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function ChooseFeatures() {
 	const { setAjax } = useAjax(),
@@ -16,9 +17,13 @@ export default function ChooseFeatures() {
 		{ state, handleAction } = useButtonAction( pageId, nextStep ),
 		actionButton = {
 			text: __( 'Upgrade Now', 'elementor' ),
-			href: elementorAppConfig.onboarding.urls.upgrade,
+			href: addExperimentTrackingToUrl( elementorAppConfig.onboarding.urls.upgrade, 'upgrade-step3' ),
 			target: '_blank',
 			onClick: () => {
+				OnboardingEventTracking.trackStepAction( 3, 'upgrade_now', {
+					pro_features_checked: OnboardingEventTracking.extractSelectedFeatureKeys( selectedFeatures ),
+				} );
+
 				elementorCommon.events.dispatchEvent( {
 					event: 'next',
 					version: '',
@@ -27,6 +32,9 @@ export default function ChooseFeatures() {
 						step: state.currentStep,
 					},
 				} );
+
+				OnboardingEventTracking.sendUpgradeNowStep3( selectedFeatures, state.currentStep );
+				OnboardingEventTracking.sendStepEndState( 3 );
 
 				setAjax( {
 					data: {
@@ -47,6 +55,8 @@ export default function ChooseFeatures() {
 		skipButton = {
 			text: __( 'Skip', 'elementor' ),
 			action: () => {
+				OnboardingEventTracking.trackStepAction( 3, 'skipped' );
+
 				setAjax( {
 					data: {
 						action: 'elementor_save_onboarding_features',
@@ -71,7 +81,12 @@ export default function ChooseFeatures() {
 		} else {
 			setTierName( tiers.essential );
 		}
-	}, [ selectedFeatures ] );
+	}, [ selectedFeatures, tiers.advanced, tiers.essential ] );
+
+	useEffect( () => {
+		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
+		OnboardingEventTracking.onStepLoad( 3 );
+	}, [ state.currentStep ] );
 
 	function isFeatureSelected( features ) {
 		return !! features.advanced.length || !! features.essential.length;

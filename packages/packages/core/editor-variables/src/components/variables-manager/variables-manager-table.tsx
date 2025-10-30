@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createElement, useState } from 'react';
+import { createElement, useEffect, useRef } from 'react';
 import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { GripVerticalIcon } from '@elementor/icons';
 import {
@@ -20,37 +20,92 @@ import { __ } from '@wordpress/i18n';
 import { type TVariablesList } from '../../storage';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { LabelField } from '../fields/label-field';
-import { VariableEditMenu, type VariableManagerMenuAction } from './variable-edit-menu';
+import { VariableEditMenu, type VariableManagerMenuAction } from './ui/variable-edit-menu';
+import { VariableTableCell } from './ui/variable-table-cell';
 import { VariableEditableCell } from './variable-editable-cell';
-import { VariableTableCell } from './variable-table-cell';
 
 type Props = {
 	menuActions: VariableManagerMenuAction[];
 	variables: TVariablesList;
+	onChange: ( variables: TVariablesList ) => void;
+	autoEditVariableId?: string;
+	onAutoEditComplete?: () => void;
+	onFieldError?: ( hasError: boolean ) => void;
 };
 
-export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
-	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
-	const rows = ids.map( ( id ) => {
-		const variable = variables[ id ];
-		const variableType = getVariableType( variable.type );
+export const VariablesManagerTable = ( {
+	menuActions,
+	variables,
+	onChange: handleOnChange,
+	autoEditVariableId,
+	onAutoEditComplete,
+	onFieldError,
+}: Props ) => {
+	const tableContainerRef = useRef< HTMLDivElement >( null );
+	const variableRowRefs = useRef< Map< string, HTMLTableRowElement > >( new Map() );
 
-		return {
-			id,
-			name: variable.label,
-			value: variable.value,
-			type: variable.type,
-			...variableType,
-		};
-	} );
+	useEffect( () => {
+		if ( autoEditVariableId && tableContainerRef.current ) {
+			const rowElement = variableRowRefs.current.get( autoEditVariableId );
+			if ( rowElement ) {
+				setTimeout( () => {
+					rowElement.scrollIntoView( {
+						behavior: 'smooth',
+						block: 'center',
+						inline: 'nearest',
+					} );
+				}, 100 );
+			}
+		}
+	}, [ autoEditVariableId ] );
+
+	const handleRowRef = ( id: string ) => ( ref: HTMLTableRowElement | null ) => {
+		if ( ref ) {
+			variableRowRefs.current.set( id, ref );
+		} else {
+			variableRowRefs.current.delete( id );
+		}
+	};
+
+	const ids = Object.keys( variables ).sort( sortVariablesOrder( variables ) );
+	const rows = ids
+		.filter( ( id ) => ! variables[ id ].deleted )
+		.map( ( id ) => {
+			const variable = variables[ id ];
+			const variableType = getVariableType( variable.type );
+
+			return {
+				id,
+				type: variable.type,
+				name: variable.label,
+				value: variable.value,
+				...variableType,
+			};
+		} );
 
 	const tableSX: SxProps = {
 		minWidth: 250,
 		tableLayout: 'fixed',
 	};
 
+	const handleReorder = ( newIds: string[] ) => {
+		const updatedVariables = { ...variables };
+
+		newIds.forEach( ( id, index ) => {
+			const current = updatedVariables[ id ];
+
+			if ( ! current ) {
+				return;
+			}
+
+			updatedVariables[ id ] = Object.assign( {}, current, { order: index + 1 } );
+		} );
+
+		handleOnChange( updatedVariables );
+	};
+
 	return (
-		<TableContainer sx={ { overflow: 'initial' } }>
+		<TableContainer ref={ tableContainerRef } sx={ { overflow: 'initial' } }>
 			<Table sx={ tableSX } aria-label="Variables manager list with drag and drop reordering" stickyHeader>
 				<TableHead>
 					<TableRow>
@@ -63,7 +118,7 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 				<TableBody>
 					<UnstableSortableProvider
 						value={ ids }
-						onChange={ setIds }
+						onChange={ handleReorder }
 						variant="static"
 						restrictAxis
 						dragOverlay={ ( { children: dragOverlayChildren, ...dragOverlayProps } ) => (
@@ -85,9 +140,7 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 									isDragged,
 									dropPosition,
 									setTriggerRef,
-									isDragOverlay,
 									isSorting,
-									index,
 								}: UnstableSortableItemRenderProps ) => {
 									const showIndicationBefore = showDropIndication && dropPosition === 'before';
 									const showIndicationAfter = showDropIndication && dropPosition === 'after';
@@ -120,7 +173,6 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 												},
 											} }
 											style={ { ...itemStyle, ...triggerStyle } }
-											disableDivider={ isDragOverlay || index === rows.length - 1 }
 										>
 											<VariableTableCell noPadding width={ 10 } maxWidth={ 10 }>
 												<IconButton
@@ -136,17 +188,43 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 											<VariableTableCell>
 												<VariableEditableCell
 													initialValue={ row.name }
-													onSave={ () => {} }
+													onChange={ ( value ) => {
+														if ( value !== row.name ) {
+															handleOnChange( {
+																...variables,
+																[ row.id ]: { ...variables[ row.id ], label: value },
+															} );
+														}
+													} }
 													prefixElement={ createElement( row.icon, { fontSize: 'inherit' } ) }
-													editableElement={ ( { value, onChange } ) => (
+													editableElement={ ( {
+														value,
+														onChange,
+														onValidationChange,
+														error,
+													} ) => (
 														<LabelField
 															id={ 'variable-label-' + row.id }
 															size="tiny"
 															value={ value }
 															onChange={ onChange }
+															onErrorChange={ ( errorMsg ) => {
+																onValidationChange?.( errorMsg );
+																onFieldError?.( !! errorMsg );
+															} }
+															error={ error }
 															focusOnShow
+															selectOnShow={ autoEditVariableId === row.id }
+															showWarningInfotip={ true }
+															variables={ variables }
 														/>
 													) }
+													autoEdit={ autoEditVariableId === row.id }
+													onRowRef={ handleRowRef( row.id ) }
+													onAutoEditComplete={
+														autoEditVariableId === row.id ? onAutoEditComplete : undefined
+													}
+													fieldType="label"
 												>
 													<EllipsisWithTooltip
 														title={ row.name }
@@ -159,13 +237,42 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 											<VariableTableCell>
 												<VariableEditableCell
 													initialValue={ row.value }
-													onSave={ () => {} }
-													editableElement={ row.valueField }
+													onChange={ ( value ) => {
+														if ( value !== row.value ) {
+															handleOnChange( {
+																...variables,
+																[ row.id ]: { ...variables[ row.id ], value },
+															} );
+														}
+													} }
+													editableElement={ ( {
+														value,
+														onChange,
+														onValidationChange,
+														error,
+													} ) =>
+														row.valueField( {
+															value,
+															onChange,
+															onValidationChange: ( errorMsg ) => {
+																onValidationChange?.( errorMsg );
+																onFieldError?.( !! errorMsg );
+															},
+															error,
+														} )
+													}
+													onRowRef={ handleRowRef( row.id ) }
+													gap={ 0.25 }
+													fieldType="value"
 												>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
 													<EllipsisWithTooltip
 														title={ row.value }
-														sx={ { border: '4px solid transparent' } }
+														sx={ {
+															border: '4px solid transparent',
+															lineHeight: '1',
+															pt: 0.25,
+														} }
 													>
 														{ row.value }
 													</EllipsisWithTooltip>
@@ -182,6 +289,7 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 													<VariableEditMenu
 														menuActions={ menuActions }
 														disabled={ isSorting }
+														itemId={ row.id }
 													/>
 												</Stack>
 											</VariableTableCell>
@@ -196,3 +304,10 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 		</TableContainer>
 	);
 };
+function sortVariablesOrder( variables: TVariablesList ): ( a: string, b: string ) => number {
+	return ( a, b ) => {
+		const orderA = variables[ a ]?.order ?? Number.MAX_SAFE_INTEGER;
+		const orderB = variables[ b ]?.order ?? Number.MAX_SAFE_INTEGER;
+		return orderA - orderB;
+	};
+}

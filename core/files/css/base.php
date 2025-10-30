@@ -240,7 +240,7 @@ abstract class Base extends Base_File {
 				wp_add_inline_style( $dep, $meta['css'] );
 			}
 		} elseif ( self::CSS_STATUS_FILE === $meta['status'] ) { // Re-check if it's not empty after CSS update.
-			wp_enqueue_style( $this->get_file_handle_id(), $this->get_url(), $this->get_enqueue_dependencies(), null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			wp_enqueue_style( $this->get_file_handle_id(), $this->get_url(), $this->get_enqueue_dependencies(), null );
 		}
 
 		// Handle fonts.
@@ -549,7 +549,10 @@ abstract class Base extends Base_File {
 	 * @param array          $replacements   Replacements.
 	 * @param array          $all_controls   All controls.
 	 */
-	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
+	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, ?array $all_controls = null ) {
+		$previous_use_style_controls = Performance::is_use_style_controls();
+		Performance::set_use_style_controls( true );
+
 		if ( ! $all_controls ) {
 			$all_controls = $controls_stack->get_controls();
 		}
@@ -591,6 +594,8 @@ abstract class Base extends Base_File {
 
 			$this->add_control_style_rules( $control, $parsed_dynamic_settings, $all_controls, $placeholders, $replacements );
 		}
+
+		Performance::set_use_style_controls( $previous_use_style_controls );
 	}
 
 	/**
@@ -836,6 +841,9 @@ abstract class Base extends Base_File {
 	 * @param array          $replacements     Replacements.
 	 */
 	protected function add_repeater_control_style_rules( Controls_Stack $controls_stack, array $repeater_control, array $repeater_values, array $placeholders, array $replacements ) {
+		$previous_use_style_controls = Performance::is_use_style_controls();
+		Performance::set_use_style_controls( true );
+
 		$placeholders = array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] );
 
 		foreach ( $repeater_control['style_fields'] as $index => $item ) {
@@ -848,6 +856,8 @@ abstract class Base extends Base_File {
 				$repeater_control['fields']
 			);
 		}
+
+		Performance::set_use_style_controls( $previous_use_style_controls );
 	}
 
 	/**
@@ -862,6 +872,9 @@ abstract class Base extends Base_File {
 	 * @param string $value   The value.
 	 */
 	protected function add_dynamic_control_style_rules( array $control, $value ) {
+		$previous_use_style_controls = Performance::is_use_style_controls();
+		Performance::set_use_style_controls( true );
+
 		Plugin::$instance->dynamic_tags->parse_tags_text( $value, $control, function( $id, $name, $settings ) {
 			$tag = Plugin::$instance->dynamic_tags->create_tag( $id, $name, $settings );
 
@@ -871,6 +884,8 @@ abstract class Base extends Base_File {
 
 			$this->add_controls_stack_style_rules( $tag, $this->get_style_controls( $tag ), $tag->get_active_settings(), [ '{{WRAPPER}}' ], [ '#elementor-tag-' . $id ] );
 		} );
+
+		Performance::set_use_style_controls( $previous_use_style_controls );
 	}
 
 	private function get_selector_global_value( $control, $global_key ) {
@@ -908,7 +923,7 @@ abstract class Base extends Base_File {
 				$default_generic_fonts = Plugin::$instance->kits_manager->get_current_settings( 'default_generic_fonts' );
 
 				if ( $default_generic_fonts ) {
-					$value  .= ", $default_generic_fonts";
+					$value .= ", $default_generic_fonts";
 				}
 			}
 		} else {
@@ -918,7 +933,7 @@ abstract class Base extends Base_File {
 		return $value;
 	}
 
-	final protected function get_active_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
+	final protected function get_active_controls( Controls_Stack $controls_stack, ?array $controls = null, ?array $settings = null ) {
 		if ( ! $controls ) {
 			$controls = $controls_stack->get_controls();
 		}
@@ -946,7 +961,10 @@ abstract class Base extends Base_File {
 		return $active_controls;
 	}
 
-	final public function get_style_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
+	final public function get_style_controls( Controls_Stack $controls_stack, ?array $controls = null, ?array $settings = null ) {
+		$previous_use_style_controls = Performance::is_use_style_controls();
+		Performance::set_use_style_controls( true );
+
 		$controls = $this->get_active_controls( $controls_stack, $controls, $settings );
 
 		$style_controls = [];
@@ -974,6 +992,8 @@ abstract class Base extends Base_File {
 				$style_controls[ $control_name ] = $control;
 			}
 		}
+
+		Performance::set_use_style_controls( $previous_use_style_controls );
 
 		return $style_controls;
 	}

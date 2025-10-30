@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Render_Context;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -18,13 +18,16 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	protected $version = '0.0';
 	protected $styles = [];
+	protected $interactions = [];
 	protected $editor_settings = [];
+
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 
 		$this->version = $data['version'] ?? '0.0';
 		$this->styles = $data['styles'] ?? [];
+		$this->interactions = $data['interactions'] ?? [];
 		$this->editor_settings = $data['editor_settings'] ?? [];
 	}
 
@@ -43,13 +46,37 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['base_styles'] = $this->get_base_styles();
 		$config['version'] = $this->version;
-		$config['show_in_panel'] = true;
+		$config['show_in_panel'] = $this->should_show_in_panel();
 		$config['categories'] = [ 'v4-elements' ];
 		$config['hide_on_search'] = false;
 		$config['controls'] = [];
 		$config['keywords'] = $this->get_keywords();
+		$config['default_children'] = $this->define_default_children();
+		$config['initial_attributes'] = $this->define_initial_attributes();
+		$config['include_in_widgets_config'] = true;
+		$config['default_html_tag'] = $this->define_default_html_tag();
 
 		return $config;
+	}
+
+	protected function should_show_in_panel() {
+		return true;
+	}
+
+	protected function define_default_children() {
+		return [];
+	}
+
+	protected function define_default_html_tag() {
+		return 'div';
+	}
+
+	protected function define_initial_attributes() {
+		return [];
+	}
+
+	protected function define_render_context(): array {
+		return [];
 	}
 
 	/**
@@ -78,8 +105,9 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 */
 	protected function get_html_tag(): string {
 		$settings = $this->get_atomic_settings();
+		$default_html_tag = $this->define_default_html_tag();
 
-		return ! empty( $settings['link']['href'] ) ? 'a' : ( $settings['tag'] ?? 'div' );
+		return ! empty( $settings['link']['href'] ) ? 'a' : ( $settings['tag'] ?? $default_html_tag );
 	}
 
 	/**
@@ -99,7 +127,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 */
 	protected function print_custom_attributes() {
 		$settings = $this->get_atomic_settings();
-		$attributes = $settings['attributes'];
+		$attributes = $settings['attributes'] ?? '';
 		if ( ! empty( $attributes ) && is_string( $attributes ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo ' ' . $attributes;
@@ -120,6 +148,22 @@ abstract class Atomic_Element_Base extends Element_Base {
 		}
 
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
+	}
+
+	public function print_content() {
+		$element_context = $this->define_render_context();
+
+		$has_context = ! empty( $element_context );
+
+		if ( ! $has_context ) {
+			return parent::print_content();
+		}
+
+		Render_Context::push( static::class, $element_context );
+
+		parent::print_content();
+
+		Render_Context::pop( static::class );
 	}
 
 	/**
@@ -153,5 +197,9 @@ abstract class Atomic_Element_Base extends Element_Base {
 	protected function content_template() {
 		?>
 		<?php
+	}
+
+	public static function generate() {
+		return Element_Builder::make( static::get_type() );
 	}
 }

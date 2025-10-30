@@ -92,13 +92,8 @@ class Wp_Content extends Import_Runner_Base {
 	private function filter_post_types( $data ) {
 		$selected_custom_post_types = $data['selected_custom_post_types'];
 		$customization = $data['customization']['content'] ?? null;
-		$exclude = [];
 
-		if ( ! empty( $selected_custom_post_types ) && in_array( 'post', $selected_custom_post_types, true ) ) {
-			$exclude[] = 'post';
-		}
-
-		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types( $exclude );
+		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types( [ 'post' ] );
 
 		foreach ( $selected_custom_post_types as $custom_post_type ) {
 			if ( post_type_exists( $custom_post_type ) ) {
@@ -110,7 +105,7 @@ class Wp_Content extends Import_Runner_Base {
 
 		$post_types = apply_filters( 'elementor/import-export-customization/wp-content/post-types/customization', $post_types, $data, $customization );
 
-		$post_types = $this->force_element_to_be_last_by_value( $post_types, 'nav_menu_item' );
+		$post_types = array_unique( $this->force_element_to_be_last_by_value( $post_types, 'nav_menu_item' ) );
 
 		return $post_types;
 	}
@@ -122,18 +117,18 @@ class Wp_Content extends Import_Runner_Base {
 	}
 
 	/**
-	 * @param $array array The array we want to relocate his element.
-	 * @param $element mixed The value of the element in the array we want to shift to end of the array.
+	 * @param array $base_array The array we want to relocate his element.
+	 * @param mixed $element    The value of the element in the array we want to shift to end of the array.
 	 * @return mixed
 	 */
-	private function force_element_to_be_last_by_value( array $array, $element ) {
-		$index = array_search( $element, $array, true );
+	private function force_element_to_be_last_by_value( array $base_array, $element ) {
+		$index = array_search( $element, $base_array, true );
 
 		if ( false !== $index ) {
-			unset( $array[ $index ] );
-			$array[] = $element;
+			unset( $base_array[ $index ] );
+			$base_array[] = $element;
 		}
 
-		return $array;
+		return $base_array;
 	}
 }

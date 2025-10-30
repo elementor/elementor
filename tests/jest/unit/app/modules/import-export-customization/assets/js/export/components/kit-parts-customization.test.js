@@ -1,6 +1,30 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import ExportKitPartsSelection from 'elementor/app/modules/import-export-customization/assets/js/export/components/export-kit-parts-selection';
+
+const createQueryWrapper = () => {
+	const queryClient = new QueryClient( {
+		defaultOptions: {
+			queries: {
+				retry: false,
+			},
+		},
+	} );
+
+	const Wrapper = ( { children } ) => (
+		<QueryClientProvider client={ queryClient }>
+			{ children }
+		</QueryClientProvider>
+	);
+
+	Wrapper.propTypes = {
+		children: PropTypes.node.isRequired,
+	};
+
+	return Wrapper;
+};
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/kit-content-data', () => {
 	/**
@@ -137,7 +161,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 
 	describe( 'Component Rendering', () => {
 		it( 'should render all kit content items', () => {
-			render( <ExportKitPartsSelection /> );
+			render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			expect( screen.getByText( 'Content' ) ).toBeTruthy();
 			expect( screen.getByText( 'Templates' ) ).toBeTruthy();
@@ -155,7 +179,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 		} );
 
 		it( 'should render item descriptions with features', () => {
-			render( <ExportKitPartsSelection /> );
+			render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			expect( screen.getByText( 'Elementor Pages, Landing Pages' ) ).toBeTruthy();
 			expect( screen.getByText( 'Saved Templates, Headers' ) ).toBeTruthy();
@@ -164,14 +188,14 @@ describe( 'ExportKitPartsSelection Component', () => {
 		} );
 
 		it( 'should render checkboxes for each item', () => {
-			render( <ExportKitPartsSelection /> );
+			render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			const checkboxes = screen.getAllByRole( 'checkbox' );
 			expect( checkboxes ).toHaveLength( 4 );
 		} );
 
 		it( 'should render Edit buttons for all items', () => {
-			render( <ExportKitPartsSelection /> );
+			render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			const editButtons = screen.getAllByText( 'Edit' );
 			expect( editButtons ).toHaveLength( 4 );
@@ -188,7 +212,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 
 	describe( 'Checkbox State Management', () => {
 		it( 'should show checked state for items in includes array', () => {
-			const { container } = render( <ExportKitPartsSelection /> );
+			const { container } = render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			const contentCheckbox = getCheckboxByType( container, 'content' );
 			const templatesCheckbox = getCheckboxByType( container, 'templates' );
@@ -209,7 +233,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 				dispatch: mockDispatch,
 			} );
 
-			const { container } = render( <ExportKitPartsSelection /> );
+			const { container } = render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			const contentCheckbox = getCheckboxByType( container, 'content' );
 			const templatesCheckbox = getCheckboxByType( container, 'templates' );
@@ -230,7 +254,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 				dispatch: mockDispatch,
 			} );
 
-			const { container } = render( <ExportKitPartsSelection /> );
+			const { container } = render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			// Use data-type attributes instead of iterating through checkboxes array
 			const contentCheckbox = getCheckboxByType( container, 'content' );
@@ -252,7 +276,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 				dispatch: mockDispatch,
 			} );
 
-			const { container } = render( <ExportKitPartsSelection /> );
+			const { container } = render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			// Use data-type attributes instead of iterating through checkboxes array
 			const contentCheckbox = getCheckboxByType( container, 'content' );
@@ -269,7 +293,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 
 	describe( 'User Interactions', () => {
 		it( 'should dispatch ADD_INCLUDE when unchecked item is clicked', () => {
-			render( <ExportKitPartsSelection /> );
+			render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			const pluginsContainer = document.querySelector( '[data-type="plugins"]' );
 			const pluginsCheckbox = pluginsContainer.querySelector( 'input[type="checkbox"]' );
@@ -283,7 +307,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 		} );
 
 		it( 'should dispatch REMOVE_INCLUDE when checked item is clicked', () => {
-			render( <ExportKitPartsSelection /> );
+			render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			// Get content checkbox by data-type
 			const contentContainer = document.querySelector( '[data-type="content"]' );
@@ -298,7 +322,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 		} );
 
 		it( 'should handle multiple checkbox interactions', () => {
-			const { container } = render( <ExportKitPartsSelection /> );
+			const { container } = render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			fireEvent.click( getCheckboxByType( container, 'plugins' ) );
 			expect( mockDispatch ).toHaveBeenCalledWith( {
@@ -316,7 +340,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 		} );
 
 		it( 'should open dialog when Edit button is clicked', () => {
-			render( <ExportKitPartsSelection /> );
+			render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			const settingsEditButton = screen.getByText( 'Edit', {
 				selector: '[data-type="settings"]',
@@ -331,7 +355,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 		} );
 
 		it( 'should handle all edit buttons correctly', () => {
-			render( <ExportKitPartsSelection /> );
+			render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			const editButtons = screen.getAllByText( 'Edit' );
 			expect( editButtons ).toHaveLength( 4 );
@@ -359,7 +383,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 		} );
 
 		it( 'should close dialog when handleClose is called', () => {
-			render( <ExportKitPartsSelection /> );
+			render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			const settingsEditButton = screen.getByText( 'Edit', {
 				selector: '[data-type="settings"]',
@@ -388,7 +412,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 				dispatch: mockDispatch,
 			} );
 
-			const { container } = render( <ExportKitPartsSelection /> );
+			const { container } = render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			// Use data-type attributes instead of array indexes
 			expect( getCheckboxByType( container, 'content' ).checked ).toBe( true );
@@ -398,7 +422,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 		} );
 
 		it( 'should handle context data changes', () => {
-			const { rerender, container } = render( <ExportKitPartsSelection /> );
+			const { rerender, container } = render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			// Initially content is checked
 			expect( getCheckboxByType( container, 'content' ).checked ).toBe( true );
@@ -411,7 +435,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 				dispatch: mockDispatch,
 			} );
 
-			rerender( <ExportKitPartsSelection /> );
+			rerender( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			expect( getCheckboxByType( container, 'content' ).checked ).toBe( false );
 			expect( getCheckboxByType( container, 'templates' ).checked ).toBe( true );
@@ -456,7 +480,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 			rerender( <NewDialog open={ false } handleClose={ mockHandleClose } /> );
 		} );
 		it( 'should have dialog closed by default', () => {
-			render( <ExportKitPartsSelection /> );
+			render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			// Dialog should not be rendered when closed
 			const dialogState = screen.queryByTestId( 'dialog-open-state' );
@@ -464,7 +488,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 		} );
 
 		it( 'should maintain dialog state independently', () => {
-			render( <ExportKitPartsSelection /> );
+			render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			// Open dialog
 			const settingsEditButton = screen.getByText( 'Edit', {
@@ -483,7 +507,7 @@ describe( 'ExportKitPartsSelection Component', () => {
 		} );
 
 		it( 'should render correct dialog component for each type', () => {
-			render( <ExportKitPartsSelection /> );
+			render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			const types = [ 'content', 'templates', 'settings', 'plugins' ];
 

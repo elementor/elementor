@@ -1,5 +1,5 @@
 @import "//fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap";
-@import "//fonts.googleapis.com/css2?family=Source%20Serif%20Pro&display=swap";
+@import "//fonts.googleapis.com/css2?family=Source%20Serif%20Pro:wght@700&display=swap";
 
 .e-onboarding {
 	font-family: 'DM Sans', 'Roboto', sans-serif;
@@ -72,6 +72,11 @@
 		margin-block-start: 24px;
 		width: 325px;
 		text-align: center;
+
+		&::before {
+			content: '*';
+			margin-right: 5px;
+		}
 
 		a {
 			text-decoration: underline;

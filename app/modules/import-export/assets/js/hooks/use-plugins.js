@@ -114,6 +114,7 @@ export default function usePlugins() {
 		return () => {
 			allowResponseUpdate.current = false;
 		};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
 	return {

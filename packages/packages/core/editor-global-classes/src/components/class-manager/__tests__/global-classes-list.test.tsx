@@ -99,7 +99,7 @@ describe( 'GlobalClassesList', () => {
 		// Act.
 		fireEvent.input( editableField, { target: { innerText: 'New-Class-Name' } } );
 
-		fireEvent.keyDown( editableField, { key: 'Enter' } );
+		fireEvent.blur( editableField );
 
 		// Assert.
 		expect( editableField ).not.toBeInTheDocument();
@@ -167,7 +167,7 @@ describe( 'GlobalClassesList', () => {
 		// Act.
 		fireEvent.input( editableField, { target: { innerText: 'New-Class-Name' } } );
 
-		fireEvent.keyDown( editableField, { key: 'Enter' } );
+		fireEvent.blur( editableField );
 
 		// Assert.
 		expect( editableField ).not.toBeInTheDocument();
@@ -553,6 +553,22 @@ describe( 'GlobalClassesList', () => {
 
 	it( 'should not show sort indicator when there is only 1 class', () => {
 		mockClasses( [ { id: 'class-1', label: 'Header' } ] );
+
+		renderWithStore( <GlobalClassesList />, store );
+
+		const triggers = screen.queryAllByRole( 'button', { name: 'sort' } );
+
+		expect( triggers ).toHaveLength( 0 );
+	} );
+
+	it( 'should not show sort indicator when filters are applied', () => {
+		jest.mocked( useFilters ).mockReturnValue( [ 'class-' ] );
+
+		mockClasses( [
+			{ id: 'class-1', label: 'Header' },
+			{ id: 'class-2', label: 'Footer' },
+			{ id: 'class-3', label: 'Footer' },
+		] );
 
 		renderWithStore( <GlobalClassesList />, store );
 

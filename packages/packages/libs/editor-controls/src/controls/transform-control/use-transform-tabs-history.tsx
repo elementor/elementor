@@ -13,7 +13,7 @@ import {
 import { useTabs } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
-import { useRepeaterContext } from '../../components/unstable-repeater/context/repeater-context';
+import { useRepeaterContext } from '../../components/control-repeater/context/repeater-context';
 import { type TransformFunction, TransformFunctionKeys } from './initial-values';
 
 type InitialTransformValues = {

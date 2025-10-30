@@ -9,6 +9,7 @@ use Elementor\Modules\Library\Documents\Library_Document;
 
 class Templates extends Import_Runner_Base {
 	private $import_session_id;
+	private $import_session_metadata = [];
 
 	public static function get_name(): string {
 		return 'templates';
@@ -59,9 +60,10 @@ class Templates extends Import_Runner_Base {
 		 * @param array $result The import result structure with 'templates' key containing succeed/failed/succeed_summary.
 		 * @param array $data The full import data.
 		 * @param array|null $customization The customization settings for templates.
+		 * @param object $runner The runner instance.
 		 */
 		$customization = $data['customization']['templates'] ?? null;
-		$result = apply_filters( 'elementor/import-export-customization/import/templates_result', $result, $data, $customization );
+		$result = apply_filters( 'elementor/import-export-customization/import/templates_result', $result, $data, $customization, $this );
 
 		return $result;
 	}
@@ -131,5 +133,13 @@ class Templates extends Import_Runner_Base {
 		$this->set_session_post_meta( $document_id, $this->import_session_id );
 
 		return $document_id;
+	}
+
+	public function get_import_session_metadata(): array {
+		return $this->import_session_metadata;
+	}
+
+	public function add_import_session_metadata( $key, $metadata ) {
+		$this->import_session_metadata[ $key ] = $metadata;
 	}
 }

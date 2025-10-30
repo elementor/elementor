@@ -57,8 +57,6 @@ class Elementor_Content extends Export_Runner_Base {
 	}
 
 	private function export_elementor_post_type( $post_type, $customization ) {
-		$selected_pages = $customization['pages'] ?? null;
-
 		$manifest_data = [];
 		$files = [];
 
@@ -109,6 +107,10 @@ class Elementor_Content extends Export_Runner_Base {
 				'url' => get_permalink( $post ),
 				'terms' => $terms,
 			];
+
+			if ( isset( $post->post_parent ) && $post->post_parent > 0 ) {
+				$post_manifest_data['post_parent'] = $post->post_parent;
+			}
 
 			if ( $post->ID === $this->page_on_front_id ) {
 				$post_manifest_data['show_on_front'] = true;

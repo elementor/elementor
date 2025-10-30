@@ -62,7 +62,7 @@ trait Dimensional_Prop_Type {
 		return [ 'x', 'y', 'z' ];
 	}
 
-	protected function get_default_value_by_bind(): array {
+	protected function get_default_value_by_bind(): ?array {
 		return [
 			'size' => $this->get_default_value_size(),
 			'unit' => $this->get_default_value_unit(),

@@ -13,7 +13,7 @@ import { Dialog } from '@elementor/app-ui';
 import { useMemo, useState } from 'react';
 import { useSettingsContext } from '../context/settings-context';
 import { isTierAtLeast, TIERS } from 'elementor-utils/tiers';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { useTracking } from '../context/tracking-context';
 
 import './item-header.scss';
 
@@ -26,11 +26,12 @@ import './item-header.scss';
  * @param {Function} root0.onConnect
  * @param {Function} root0.onClick
  * @param {boolean}  root0.isApplyLoading
+ * @param {Function} root0.onUpgrade
  * @return {Object} result
  */
 function useKitCallToActionButton(
 	model,
-	{ apply, isApplyLoading, onConnect, onClick },
+	{ apply, isApplyLoading, onConnect, onClick, onUpgrade = () => {} },
 ) {
 	const { type, subscriptionPlan } = useKitCallToAction( model.accessTier );
 	const promotionUrl = useAddKitPromotionUTM(
@@ -67,6 +68,9 @@ function useKitCallToActionButton(
 				size: 'sm',
 				url: promotionUrl,
 				target: '_blank',
+				onClick: ( e ) => {
+					onUpgrade?.( e );
+				},
 				includeHeaderBtnClass: false,
 			};
 		}
@@ -95,6 +99,8 @@ function useKitCallToActionButton(
 
 export default function ItemHeader( props ) {
 	const { updateSettings } = useSettingsContext();
+	const tracking = useTracking();
+
 	const resetConnect = () => {
 		const lc = elementorCommon?.config?.library_connect;
 		if ( ! lc ) {
@@ -154,17 +160,17 @@ export default function ItemHeader( props ) {
 			onError: handleKitError,
 		} );
 
+	const { subscriptionPlan } = useKitCallToAction( props.model.accessTier );
+
 	const applyButton = useKitCallToActionButton( props.model, {
 		onConnect: () => setIsConnectDialogOpen( true ),
 		apply,
 		isApplyLoading,
 		onClick: () => {
-			return appsEventTrackingDispatch( 'kit-library/apply-kit', {
-				kit_name: props.model.title,
-				element_position: 'app_header',
-				page_source: props.pageId,
-				event_type: 'click',
-			} );
+			tracking.trackKitdemoApplyClicked( props.model.id, props.model.title, props.model.accessTier );
+		},
+		onUpgrade: () => {
+			tracking.trackKitdemoUpgradeClicked( props.model.id, props.model.title, subscriptionPlan );
 		},
 	} );
 
@@ -182,10 +188,10 @@ export default function ItemHeader( props ) {
 					return;
 				}
 
-				fetchDownloadLink( e );
+				tracking.trackKitdemoDownloadClicked( props.model.id, props.model.title, () => fetchDownloadLink( e ) );
 			},
 		};
-	}, [ isDownloadLoading, fetchDownloadLink ] );
+	}, [ isDownloadLoading, fetchDownloadLink, tracking, props.model.id, props.model.title ] );
 
 	const buttons = useMemo(
 		() => [ downloadButton, applyButton, ...props.buttons ],
@@ -255,7 +261,7 @@ export default function ItemHeader( props ) {
 				/>
 			) }
 			<Header
-				startColumn={ <HeaderBackButton { ...kitData } /> }
+				startColumn={ <HeaderBackButton { ...kitData } kitId={ props.model.id } /> }
 				centerColumn={ props.centerColumn }
 				buttons={ buttons }
 				{ ...kitData }

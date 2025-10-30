@@ -62,7 +62,26 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 	},
 
 	updatePreviewImgStyle() {
-		this.ui.previewImg.css( 'object-fit', 'contain' );
+		const img = this.ui.previewImg[ 0 ];
+
+		if ( ! img ) {
+			return;
+		}
+
+		const applyObjectFit = () => {
+			const objectFit = img.naturalHeight > 2000 ? 'cover' : 'contain';
+
+			if ( 'cover' === objectFit ) {
+				this.ui.previewImg.css( 'object-fit', 'cover' );
+				this.ui.previewImg.css( 'object-position', 'top' );
+			}
+		};
+
+		if ( img.complete && img.naturalHeight > 0 ) {
+			applyObjectFit();
+		} else {
+			img.onload = applyObjectFit;
+		}
 	},
 
 	shouldGeneratePreview() {

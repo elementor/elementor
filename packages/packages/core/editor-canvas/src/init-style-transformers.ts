@@ -62,8 +62,9 @@ export function initStyleTransformers() {
 		.register( 'transform-functions', transformFunctionsTransformer )
 		.register(
 			'transform',
-			createMultiPropsTransformer( [ 'transform-functions', 'transform-origin', 'perspective' ], ( { key } ) =>
-				key === 'transform-functions' ? 'transform' : key
+			createMultiPropsTransformer(
+				[ 'transform-functions', 'transform-origin', 'perspective', 'perspective-origin' ],
+				( { key } ) => ( key === 'transform-functions' ? 'transform' : key )
 			)
 		)
 		.register( 'transition', transitionTransformer )

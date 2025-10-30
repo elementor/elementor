@@ -1,51 +1,42 @@
 import Component from './component';
-import EmptyComponent from 'elementor-elements/views/container/empty-component';
-import Model from './atomic-element-model';
-import createAtomicElementView from './atomic-element-view';
-
-class DynamicAtomicElementType extends elementor.modules.elements.types.Base {
-	constructor( elementType, view ) {
-		super();
-		this.elementType = elementType;
-		this.view = view;
-	}
-
-	getType() {
-		return this.elementType;
-	}
-
-	getView() {
-		return this.view;
-	}
-
-	getEmptyView() {
-		return EmptyComponent;
-	}
-
-	getModel() {
-		return Model;
-	}
-}
+import AtomicElementBaseType from './atomic-element-base-type';
+import createAtomicElementViewBase from './create-atomic-element-base-view';
+import AtomicElementBaseModel from './atomic-element-base-model';
+import createDivBlockType from './atomic-element-types/create-div-block-type';
+import createFlexboxType from './atomic-element-types/create-flexbox-type';
+import createAtomicTabsType from './atomic-element-types/atomic-tabs/create-atomic-tabs-type';
+import createAtomicTabContentType from './atomic-element-types/atomic-tab-content/create-atomic-tab-content-type';
+import createAtomicTabType from './atomic-element-types/atomic-tab/create-atomic-tab-type';
+import createAtomicTabsMenuType from './atomic-element-types/create-atomic-tabs-menu-type';
+import createAtomicTabsContentAreaType from './atomic-element-types/create-atomic-tabs-content-area-type';
 
 class Module extends elementorModules.editor.utils.Module {
 	onInit() {
 		$e.components.register( new Component() );
 
-		this.registerAtomicWidgetTypes();
+		this.exposeAtomicElementClasses();
+		this.registerAtomicElements();
 	}
 
-	registerAtomicWidgetTypes() {
-		this.registerDynamicAtomicTypes();
+	exposeAtomicElementClasses() {
+		elementor.modules.elements.types.AtomicElementBase = AtomicElementBaseType;
+		elementor.modules.elements.views.createAtomicElementBase = createAtomicElementViewBase;
+		elementor.modules.elements.models.AtomicElementBase = AtomicElementBaseModel;
 	}
 
-	registerDynamicAtomicTypes() {
-		Object.entries( elementor.config.elements )
-			.filter( ( [ , element ] ) => !! element?.atomic_props_schema )
-			.forEach( ( [ elementType ] ) => {
-				const view = createAtomicElementView( elementType );
-				const dynamicType = new DynamicAtomicElementType( elementType, view );
-				elementor.elementsManager.registerElementType( dynamicType );
-			} );
+	registerAtomicElements() {
+		const nestedElementsExperiment = 'e_nested_elements';
+
+		elementor.elementsManager.registerElementType( createDivBlockType() );
+		elementor.elementsManager.registerElementType( createFlexboxType() );
+
+		if ( elementorCommon.config.experimentalFeatures[ nestedElementsExperiment ] ) {
+			elementor.elementsManager.registerElementType( createAtomicTabsType() );
+			elementor.elementsManager.registerElementType( createAtomicTabContentType() );
+			elementor.elementsManager.registerElementType( createAtomicTabType() );
+			elementor.elementsManager.registerElementType( createAtomicTabsMenuType() );
+			elementor.elementsManager.registerElementType( createAtomicTabsContentAreaType() );
+		}
 	}
 }
 
