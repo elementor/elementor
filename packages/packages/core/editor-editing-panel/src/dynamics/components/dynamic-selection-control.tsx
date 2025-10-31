@@ -85,7 +85,7 @@ export const DynamicSelectionControl = () => {
 				} }
 				{ ...bindPopover( selectionPopoverState ) }
 			>
-				<PopoverBody>
+				<PopoverBody aria-label={ __( 'Dynamic tags', 'elementor' ) }>
 					<DynamicSelection close={ selectionPopoverState.close } />
 				</PopoverBody>
 			</Popover>
@@ -104,7 +104,11 @@ export const DynamicSettingsPopover = ( { dynamicTag }: { dynamicTag: DynamicTag
 
 	return (
 		<>
-			<IconButton size={ SIZE } { ...bindTrigger( popupState ) } aria-label={ __( 'Settings', 'elementor' ) }>
+			<IconButton
+				size={ SIZE }
+				{ ...bindTrigger( popupState ) }
+				aria-label={ __( 'Dynamic settings', 'elementor' ) }
+			>
 				<SettingsIcon fontSize={ SIZE } />
 			</IconButton>
 			<Popover
@@ -117,7 +121,7 @@ export const DynamicSettingsPopover = ( { dynamicTag }: { dynamicTag: DynamicTag
 				} }
 				{ ...bindPopover( popupState ) }
 			>
-				<PopoverBody>
+				<PopoverBody aria-label={ __( 'Dynamic settings', 'elementor' ) }>
 					<PopoverHeader
 						title={ dynamicTag.label }
 						onClose={ popupState.close }
@@ -210,9 +214,19 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 	const layout = getLayout( control );
 
 	const shouldDisablePortal = control.type === 'select';
-	const controlProps = shouldDisablePortal
-		? { ...control.props, MenuProps: { ...( control.props?.MenuProps ?? {} ), disablePortal: true } }
-		: control.props;
+	const baseControlProps = shouldDisablePortal
+		? {
+				...control.props,
+				MenuProps: {
+					...( control.props?.MenuProps ?? {} ),
+					disablePortal: true,
+				},
+		  }
+		: { ...control.props };
+	const controlProps = {
+		...baseControlProps,
+		ariaLabel: control.label,
+	} as typeof baseControlProps & { ariaLabel?: string };
 	const isSwitchControl = control.type === 'switch';
 	const layoutStyleProps =
 		layout === 'two-columns'

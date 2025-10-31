@@ -17,9 +17,9 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_List;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
@@ -28,6 +28,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Transformer
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import\Image_Src_Import_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import_Export_Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Classes_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Date_Time_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
@@ -65,6 +66,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Stop_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Date_Time_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Gradient_Color_Stop_Prop_Type;
@@ -93,7 +95,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Panel;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
@@ -247,10 +249,10 @@ class Module extends BaseModule {
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NESTED ) ) {
 			$elements_manager->register_element_type( new Atomic_Tabs() );
-			$elements_manager->register_element_type( new Atomic_Tabs_List() );
+			$elements_manager->register_element_type( new Atomic_Tabs_Menu() );
 			$elements_manager->register_element_type( new Atomic_Tab() );
-			$elements_manager->register_element_type( new Atomic_Tabs_Content() );
-			$elements_manager->register_element_type( new Atomic_Tab_Panel() );
+			$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
+			$elements_manager->register_element_type( new Atomic_Tab_Content() );
 		}
 	}
 
@@ -263,6 +265,7 @@ class Module extends BaseModule {
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
 		$transformers->register( Query_Prop_Type::get_key(), new Query_Transformer() );
 		$transformers->register( Attributes_Prop_Type::get_key(), new Attributes_Transformer() );
+		$transformers->register( Date_Time_Prop_Type::get_key(), new Date_Time_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {

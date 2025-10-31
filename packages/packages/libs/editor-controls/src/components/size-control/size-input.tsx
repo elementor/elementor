@@ -7,6 +7,8 @@ import ControlActions from '../../control-actions/control-actions';
 import { type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
 import { SelectionEndAdornment, TextFieldInnerSelection } from '../size-control/text-field-inner-selection';
 
+const RESTRICTED_KEYBOARD_SHORTCUT_UNITS = [ 'auto' ];
+
 type SizeInputProps = {
 	unit: Unit | ExtendedOption;
 	size: number | string;
@@ -22,6 +24,7 @@ type SizeInputProps = {
 	disabled?: boolean;
 	min?: number;
 	id?: string;
+	ariaLabel?: string;
 };
 
 export const SizeInput = ( {
@@ -39,6 +42,7 @@ export const SizeInput = ( {
 	disabled,
 	min,
 	id,
+	ariaLabel,
 }: SizeInputProps ) => {
 	const unitInputBufferRef = useRef( '' );
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
@@ -58,9 +62,9 @@ export const SizeInput = ( {
 		unitInputBufferRef.current = updatedBuffer;
 
 		const matchedUnit =
-			units.find( ( u ) => u.includes( updatedBuffer ) ) ||
-			units.find( ( u ) => u.startsWith( newChar ) ) ||
-			units.find( ( u ) => u.includes( newChar ) );
+			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.includes( updatedBuffer ) ) ||
+			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.startsWith( newChar ) ) ||
+			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.includes( newChar ) );
 
 		if ( matchedUnit ) {
 			handleUnitChange( matchedUnit );
@@ -117,7 +121,7 @@ export const SizeInput = ( {
 					onKeyUp={ handleKeyUp }
 					onBlur={ onBlur }
 					InputProps={ InputProps }
-					inputProps={ { min, step: 'any' } }
+					inputProps={ { min, step: 'any', 'aria-label': ariaLabel } }
 					isPopoverOpen={ popupState.isOpen }
 					id={ id }
 				/>

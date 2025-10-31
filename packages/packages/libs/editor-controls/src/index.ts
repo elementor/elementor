@@ -28,11 +28,12 @@ export { RepeatableControl } from './controls/repeatable-control';
 export { KeyValueControl } from './controls/key-value-control';
 export { PositionControl } from './controls/position-control';
 export { TransformRepeaterControl } from './controls/transform-control/transform-repeater-control';
-export { TransformBaseControl } from './controls/transform-control/transform-base-control';
+export { TransformSettingsControl } from './controls/transform-control/transform-settings-control';
 export { TransitionRepeaterControl } from './controls/transition-control/transition-repeater-control';
 export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
+export { DateTimeControl } from './controls/date-time-control';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';

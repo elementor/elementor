@@ -10,7 +10,7 @@ export default function ExportProcess() {
 	const { data, dispatch, isExporting, isPending } = useExportContext();
 	const { kitInfo, includes, customization } = data;
 
-	const { status, STATUS_PROCESSING, STATUS_PROCESSING_MEDIA, STATUS_ERROR, error, exportKit } = useExportKit( {
+	const { status, STATUS_PROCESSING, STATUS_PROCESSING_MEDIA, STATUS_ERROR, error, exportKit, retryMediaProcessing, deleteKit, exportedData } = useExportKit( {
 		includes,
 		kitInfo,
 		customization,
@@ -39,10 +39,28 @@ export default function ExportProcess() {
 	);
 
 	const handleTryAgain = () => {
-		exportKit();
+		const isMediaError = 'media-processing-error' === error?.code;
+
+		if ( isMediaError ) {
+			retryMediaProcessing();
+		} else {
+			exportKit();
+		}
 	};
+
 	const handleCloseError = () => {
+		const isMediaError = 'media-processing-error' === error?.code;
+
 		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.PENDING } );
+
+		if ( isMediaError && exportedData?.kit?.id ) {
+			deleteKit( exportedData.kit.id );
+		}
+	};
+
+	const handleExportAsZip = () => {
+		dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'file' } );
+		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
 	};
 
 	return (
@@ -58,6 +76,7 @@ export default function ExportProcess() {
 							error={ error }
 							handleClose={ handleCloseError }
 							handleTryAgain={ handleTryAgain }
+							handleExportAsZip={ handleExportAsZip }
 						/>
 					) }
 				</Stack>

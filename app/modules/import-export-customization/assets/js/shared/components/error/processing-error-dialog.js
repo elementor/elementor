@@ -7,8 +7,9 @@ import {
 	DialogActions,
 	Button,
 	Link as ElementorUiLink,
+	Typography,
 } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 function Link( {
@@ -135,10 +136,10 @@ export const messagesContent = {
 		),
 	},
 	'error-loading-resource': {
-		title: __( 'Couldn’t “My Website Templates”', 'elementor' ),
+		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: (
 			<>
-				{ __( 'We couldn’t reach your template library due to a technical issue on our side. Please try again. If the problem continues, contact ', 'elementor' ) }
+				{ __( 'We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact ', 'elementor' ) }
 				<Link href="https://my.elementor.com/support-center/">
 					{ __( 'Support', 'elementor' ) }
 				</Link>
@@ -149,16 +150,64 @@ export const messagesContent = {
 			</>
 		),
 	},
+	'media-processing-error': {
+		title: __( 'Couldn’t save media files to the cloud', 'elementor' ),
+		text: (
+			<>
+				{ __( 'We ran into a problem while saving your media files to the cloud. Please try again. If the issue persists, edit the Content section and choose "Link to media" to save it as a reference. ', 'elementor' ) }
+				<Link href="https://go.elementor.com/app-import-export-common-errors">
+					{ __( 'Learn more', 'elementor' ) }
+				</Link>
+			</>
+		),
+	},
+	'insufficient-storage-quota': {
+		title: __( 'Your library is full', 'elementor' ),
+		text: ( { filename = __( 'This file', 'elementor' ), maxSize = 0 } = {} ) => (
+			<>
+				<Typography variant="h6" sx={ { mb: 2 } }>
+					{ sprintf( /* Translators: %s: File name */
+						__( '%s exceeds the library size limit', 'elementor' ),
+						filename,
+					) }
+				</Typography>
+				<Typography variant="body2">
+					{ sprintf( /* Translators: %s: Quota threshold in GB */
+						__( 'The maximum website template library size is %s GB. To save this file, you can either export it locally as a .zip file or get more storage by ', 'elementor' ),
+						maxSize,
+					) }
+					<Link href="https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/">
+						{ __( 'Upgrade now', 'elementor' ) }
+					</Link>
+					.
+				</Typography>
+			</>
+		),
+	},
 };
 
 export function ProcessingErrorDialog( {
 	error,
 	handleClose,
 	handleTryAgain,
+	handleExportAsZip,
 } ) {
 	const [ open, setOpen ] = useState( Boolean( error ) );
 	const errorType = error?.code || 'general';
 	const errorMessageContent = messagesContent[ errorType ];
+
+	const resolveText = () => {
+		const details = error?.details || error?.message;
+		const replacements = details && 'object' === typeof details ? details.replacements : null;
+
+		const text = errorMessageContent.text;
+
+		if ( 'function' === typeof text ) {
+			return text( replacements );
+		}
+
+		return text;
+	};
 
 	const shouldRenderTryAgainButton = () => {
 		return [
@@ -173,10 +222,13 @@ export function ProcessingErrorDialog( {
 			'failed-to-fetch-quota',
 			'insufficient-quota',
 			'error-loading-resource',
+			'media-processing-error',
 		].includes( errorType );
 	};
 
 	const renderButtons = () => {
+		const isQuotaError = 'insufficient-storage-quota' === errorType;
+
 		return (
 			<>
 				<Button
@@ -190,7 +242,19 @@ export function ProcessingErrorDialog( {
 				>
 					{ __( 'Cancel', 'elementor' ) }
 				</Button>
-				{ shouldRenderTryAgainButton( errorType ) && (
+				{ isQuotaError && handleExportAsZip && (
+					<Button
+						onClick={ () => {
+							handleExportAsZip();
+							setOpen( false );
+						} }
+						variant="contained"
+						color="primary"
+					>
+						{ __( 'Export as .zip', 'elementor' ) }
+					</Button>
+				) }
+				{ shouldRenderTryAgainButton( errorType ) && ! isQuotaError && (
 					<Button
 						data-testid="try-again-button"
 						onClick={ () => {
@@ -235,7 +299,7 @@ export function ProcessingErrorDialog( {
 			</DialogHeader>
 
 			<DialogContent dividers sx={ { p: 3 } }>
-				{ errorMessageContent.text }
+				{ resolveText() }
 			</DialogContent>
 
 			<DialogActions>
@@ -249,4 +313,5 @@ ProcessingErrorDialog.propTypes = {
 	error: PropTypes.any,
 	handleClose: PropTypes.func,
 	handleTryAgain: PropTypes.func,
+	handleExportAsZip: PropTypes.func,
 };

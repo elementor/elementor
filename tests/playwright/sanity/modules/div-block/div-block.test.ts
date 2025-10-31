@@ -119,7 +119,7 @@ test.describe( 'Div Block tests @div-block', () => {
 		const editor = await wpAdmin.openNewPage(),
 			divBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 
-		await editor.openV2PanelTab( 'style' );
+		await editor.v4Panel.openTab( 'style' );
 		await editor.openV2Section( 'background' );
 
 		const inputLocator = page.locator( '.MuiGrid-item:has-text("Color") + .MuiGrid-item input' );
