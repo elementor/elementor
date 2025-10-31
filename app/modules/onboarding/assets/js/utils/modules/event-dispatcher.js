@@ -1,12 +1,14 @@
 
 export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
-	HELLO_BIZ_CONTINUE: 'core_onboarding_s2_hellobiz',
 	THEME_CHOICE: 'core_onboarding_theme_choice',
+	THEME_INSTALLED: 'core_onboarding_s2_theme_installed',
+	THEME_MARKED: 'core_onboarding_s2_theme_marked',
 	CORE_ONBOARDING: 'core_onboarding',
 	CONNECT_STATUS: 'core_onboarding_connect_status',
 	STEP1_END_STATE: 'core_onboarding_s1_end_state',
 	STEP2_END_STATE: 'core_onboarding_s2_end_state',
+	STEP2_THEMES_LOADED: 'core_onboarding_s2_themes_loaded',
 	STEP3_END_STATE: 'core_onboarding_s3_end_state',
 	STEP4_END_STATE: 'core_onboarding_s4_end_state',
 	STEP4_LOADED: 'core_onboarding_s4_loaded',

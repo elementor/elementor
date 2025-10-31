@@ -364,23 +364,6 @@ class OnboardingTracker {
 		return allFeatures;
 	}
 
-	sendHelloBizContinue( stepNumber ) {
-		const numericStepNumber = this.mapPageIdToStepNumber( stepNumber ) || stepNumber;
-
-		this.trackStepAction( numericStepNumber, 'hello_biz_continue' );
-
-		if ( EventDispatcher.canSendEvents() ) {
-			return EventDispatcher.dispatchStepEvent(
-				ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE,
-				numericStepNumber,
-				ONBOARDING_STEP_NAMES.HELLO_BIZ,
-				{
-					location: 'plugin_onboarding',
-				},
-			);
-		}
-	}
-
 	sendThemeChoiceEvent( currentStep, themeValue ) {
 		this.trackStepAction( 2, 'theme_choice', {
 			theme: themeValue,
@@ -1110,6 +1093,7 @@ class OnboardingTracker {
 			this.sendStoredStep1EventsOnStep2();
 			this.sendExperimentStarted( 201 );
 			this.sendExperimentStarted( 202 );
+			this.sendStep2ThemesLoaded();
 		}
 
 		if ( 4 === stepNumber || 'goodToGo' === currentStep ) {
@@ -1117,6 +1101,47 @@ class OnboardingTracker {
 			this.sendExperimentStarted( 401 );
 			this.sendExperimentStarted( 402 );
 			this.sendStep4Loaded();
+		}
+	}
+
+	sendStep2ThemesLoaded() {
+		if ( EventDispatcher.canSendEvents() ) {
+			return EventDispatcher.dispatchStepEvent(
+				ONBOARDING_EVENTS_MAP.STEP2_THEMES_LOADED,
+				2,
+				ONBOARDING_STEP_NAMES.HELLO_BIZ,
+				{
+					location: 'plugin_onboarding',
+				},
+			);
+		}
+	}
+
+	sendThemeInstalled( theme ) {
+		if ( EventDispatcher.canSendEvents() ) {
+			return EventDispatcher.dispatchStepEvent(
+				ONBOARDING_EVENTS_MAP.THEME_INSTALLED,
+				2,
+				ONBOARDING_STEP_NAMES.HELLO_BIZ,
+				{
+					location: 'plugin_onboarding',
+					theme,
+				},
+			);
+		}
+	}
+
+	sendThemeMarked( theme ) {
+		if ( EventDispatcher.canSendEvents() ) {
+			return EventDispatcher.dispatchStepEvent(
+				ONBOARDING_EVENTS_MAP.THEME_MARKED,
+				2,
+				ONBOARDING_STEP_NAMES.HELLO_BIZ,
+				{
+					location: 'plugin_onboarding',
+					theme,
+				},
+			);
 		}
 	}
 

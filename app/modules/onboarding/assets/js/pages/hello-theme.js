@@ -135,6 +135,9 @@ export default function HelloTheme() {
 			OnboardingEventTracking.sendThemeChoiceEvent( state.currentStep, themeValue );
 		}
 
+		const installedThemeValue = selectedTheme && 'hello-theme' === selectedTheme ? 'hello' : 'hellobiz';
+		OnboardingEventTracking.sendThemeInstalled( installedThemeValue );
+
 		OnboardingEventTracking.sendStepEndState( 2 );
 		goToNextScreen();
 	}, [ getStateObjectToUpdate, goToNextScreen, noticeStateSuccess, state, updateState, isVariant201B, selectedTheme ] );
@@ -207,7 +210,9 @@ export default function HelloTheme() {
 
 		const themeValue = 'hello-theme' === themeSlug ? 'hello' : 'hellobiz';
 
-		if ( ! isVariant201B ) {
+		if ( isVariant201B ) {
+			OnboardingEventTracking.sendThemeMarked( themeValue );
+		} else {
 			OnboardingEventTracking.sendThemeChoiceEvent( state.currentStep, themeValue );
 		}
 	};
@@ -231,7 +236,6 @@ export default function HelloTheme() {
 
 	if ( state.isHelloThemeActivated ) {
 		actionButton.onClick = () => {
-			OnboardingEventTracking.sendHelloBizContinue( state.currentStep );
 			sendNextButtonEvent();
 
 			OnboardingEventTracking.sendStepEndState( 2 );
@@ -254,7 +258,6 @@ export default function HelloTheme() {
 				setSelectedTheme( 'hello-biz' );
 			}
 
-			OnboardingEventTracking.sendHelloBizContinue( state.currentStep );
 			sendNextButtonEvent();
 
 			if ( state.isHelloThemeInstalled && ! state.isHelloThemeActivated ) {
