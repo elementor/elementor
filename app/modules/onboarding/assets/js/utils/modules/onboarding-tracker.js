@@ -1086,7 +1086,12 @@ class OnboardingTracker {
 	}
 
 	sendStep2ThemesLoaded() {
+		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.STEP2_THEMES_LOADED_SENT ) ) {
+			return;
+		}
+
 		if ( EventDispatcher.canSendEvents() ) {
+			StorageManager.setString( ONBOARDING_STORAGE_KEYS.STEP2_THEMES_LOADED_SENT, 'true' );
 			return EventDispatcher.dispatchStepEvent(
 				ONBOARDING_EVENTS_MAP.STEP2_THEMES_LOADED,
 				2,
