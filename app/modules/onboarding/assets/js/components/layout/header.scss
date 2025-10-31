@@ -43,7 +43,7 @@
 			transition: 0.5s;
 
 			&:hover {
-			  	background: lighten($platform-accent, 10%)
+				background: lighten($platform-accent, 10%)
 			}
 		}
 	}
@@ -81,5 +81,14 @@
 
 	&-already-have {
 		text-decoration: underline;
+	}
+}
+
+@media screen and (max-width: 410px) {
+	.e-onboarding__header-logo {
+
+		img {
+			display: none;
+		}
 	}
 }
