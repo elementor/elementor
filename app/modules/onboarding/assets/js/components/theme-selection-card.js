@@ -40,7 +40,7 @@ export default function ThemeSelectionCard( {
 			aria-label={ ariaLabel }
 		>
 			<div className={ `e-onboarding__theme-card-illustration ${ illustration?.className || '' }` }>
-				{ illustration?.svg }
+				{ illustration?.svg || ( illustration?.src && <img src={ illustration.src } alt={ `${ title } theme illustration` } /> ) }
 			</div>
 			<div className="e-onboarding__theme-card-content">
 				<span className="e-onboarding__theme-card-label"><span>{ label }</span> by Elementor</span>
@@ -61,7 +61,8 @@ ThemeSelectionCard.propTypes = {
 	title: PropTypes.string.isRequired,
 	description: PropTypes.string.isRequired,
 	illustration: PropTypes.shape( {
-		svg: PropTypes.element.isRequired,
+		svg: PropTypes.element,
+		src: PropTypes.string,
 		className: PropTypes.string,
 	} ).isRequired,
 	isSelected: PropTypes.bool,
