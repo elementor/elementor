@@ -122,25 +122,45 @@ class ActionControlTracking extends BaseTracking {
 	}
 
 	static trackControl( element, controlType ) {
-		const controlData = this.extractControlData( element, controlType );
+		const controlIdentifier = this.extractControlIdentifier( element, controlType );
 
-		WpDashboardTracking.trackActionControl( controlData, controlType );
+		WpDashboardTracking.trackActionControl( controlIdentifier, controlType );
 	}
 
-	static extractControlData( element, controlType ) {
-		const data = {};
+	static extractControlIdentifier( element, controlType ) {
+		const text = this.extractTextFromElement( element, controlType );
+		if ( text ) {
+			return text;
+		}
 
 		const id = element.getAttribute( 'id' );
 		if ( id ) {
-			data.id = id;
+			return id;
 		}
 
 		const name = element.getAttribute( 'name' );
 		if ( name ) {
-			data.name = name;
+			return name;
 		}
 
+		if ( CONTROL_TYPES.LINK === controlType ) {
+			const href = element.getAttribute( 'href' );
+			if ( href && ! href.startsWith( '#' ) ) {
+				return href;
+			}
+		}
+
+		const classes = this.extractRelevantClasses( element );
+		if ( classes ) {
+			return classes;
+		}
+
+		return 'unknown';
+	}
+
+	static extractTextFromElement( element, controlType ) {
 		let text = '';
+
 		if ( CONTROL_TYPES.BUTTON === controlType ) {
 			text = element.value || element.textContent.trim() || element.getAttribute( 'aria-label' );
 		} else if ( CONTROL_TYPES.LINK === controlType ) {
@@ -151,33 +171,23 @@ class ActionControlTracking extends BaseTracking {
 		} else if ( CONTROL_TYPES.CHECKBOX === controlType || CONTROL_TYPES.TOGGLE === controlType || CONTROL_TYPES.RADIO === controlType ) {
 			const label = element.labels ? element.labels[ 0 ] : null;
 			text = label ? label.textContent.trim() : '';
-
-			data.checked = element.checked;
 		}
 
-		if ( text ) {
-			data.text = text;
-		}
+		return text;
+	}
 
+	static extractRelevantClasses( element ) {
 		const classes = element.className;
-		if ( classes && 'string' === typeof classes ) {
-			const relevantClasses = classes.split( ' ' ).filter( ( cls ) =>
-				cls && ! cls.startsWith( 'elementor-control-' ) && ! cls.startsWith( 'wp-' ),
-			).slice( 0, 3 );
 
-			if ( relevantClasses.length > 0 ) {
-				data.classes = relevantClasses.join( ' ' );
-			}
+		if ( ! classes || 'string' !== typeof classes ) {
+			return '';
 		}
 
-		if ( CONTROL_TYPES.LINK === controlType ) {
-			const href = element.getAttribute( 'href' );
-			if ( href && ! href.startsWith( '#' ) ) {
-				data.href = href;
-			}
-		}
+		const relevantClasses = classes.split( ' ' ).filter( ( cls ) =>
+			cls && ! cls.startsWith( 'elementor-control-' ) && ! cls.startsWith( 'wp-' ),
+		).slice( 0, 3 );
 
-		return data;
+		return relevantClasses.length > 0 ? relevantClasses.join( ' ' ) : '';
 	}
 }
 
