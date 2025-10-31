@@ -11,12 +11,18 @@ export class Switch extends $e.modules.CommandBase {
 			jQuery( '#elementor-preview-loading' ).show();
 		}
 
-		return $e.run( 'editor/documents/close', {
-			id: elementor.documents.getCurrentId(),
-			mode,
-			onClose,
-			selector: args.selector,
-		} )
+		const currentDocument = elementor.documents.getCurrent();
+
+		const closePromise = currentDocument
+			? $e.run( 'editor/documents/close', {
+				id: currentDocument.id,
+				mode,
+				onClose,
+				selector: args.selector,
+			} )
+			: Promise.resolve();
+
+		return closePromise
 			.then( () => {
 				return $e.run( 'editor/documents/open', { id, shouldScroll, shouldNavigateToDefaultRoute, selector: args.selector, setAsInitial } );
 			} )
