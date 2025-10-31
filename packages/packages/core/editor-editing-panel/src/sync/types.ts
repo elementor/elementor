@@ -1,6 +1,8 @@
 import { type ControlItem, type V1Element } from '@elementor/editor-elements';
 import { type PropsSchema } from '@elementor/editor-props';
 
+import { type InteractionsConfig } from '../types/interactions';
+
 export type SupportedFonts = 'system' | 'googlefonts' | 'custom';
 
 type EnqueueFont = ( fontFamily: string, context?: 'preview' | 'editor' ) => void;
@@ -41,4 +43,5 @@ export type ExtendedWindow = Window & {
 			is_rtl?: boolean;
 		};
 	};
+	ElementorInteractionsConfig?: InteractionsConfig;
 };
