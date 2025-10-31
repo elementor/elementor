@@ -5,7 +5,7 @@ import Button from './button';
 import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 import { addExperimentTrackingToUrl } from '../utils/utils';
 
-export default function GoodToGoContentB( { skipButton } ) {
+export default function GoodToGoContentExperiment402B( { skipButton } ) {
 	const kitLibraryLink = elementorAppConfig.onboarding.urls.kitLibrary + '&referrer=onboarding';
 
 	const handleBlankCanvasClick = ( event ) => {
@@ -63,6 +63,6 @@ export default function GoodToGoContentB( { skipButton } ) {
 	);
 }
 
-GoodToGoContentB.propTypes = {
+GoodToGoContentExperiment402B.propTypes = {
 	skipButton: PropTypes.object.isRequired,
 };
