@@ -9,6 +9,8 @@ export const ONBOARDING_EVENTS_MAP = {
 	STEP2_END_STATE: 'core_onboarding_s2_end_state',
 	STEP3_END_STATE: 'core_onboarding_s3_end_state',
 	STEP4_END_STATE: 'core_onboarding_s4_end_state',
+	STEP4_LOADED: 'core_onboarding_s4_loaded',
+	STEP4_SITE_STARTER: 'core_onboarding_s4_site_starter',
 	STEP4_RETURN_STEP4: 'core_onboarding_s4_return',
 	EDITOR_LOADED_FROM_ONBOARDING: 'editor_loaded_from_onboarding',
 	POST_ONBOARDING_1ST_CLICK: 'post_onboarding_1st_click',

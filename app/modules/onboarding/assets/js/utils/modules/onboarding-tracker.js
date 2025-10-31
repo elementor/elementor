@@ -545,7 +545,22 @@ class OnboardingTracker {
 		this.trackStepAction( 4, 'site_starter', {
 			source_type: siteStarter,
 		} );
+		this.sendStep4SiteStarter( siteStarter );
 		this.sendStepEndState( 4 );
+	}
+
+	sendStep4SiteStarter( siteStarter ) {
+		if ( EventDispatcher.canSendEvents() ) {
+			return EventDispatcher.dispatchStepEvent(
+				ONBOARDING_EVENTS_MAP.STEP4_SITE_STARTER,
+				4,
+				ONBOARDING_STEP_NAMES.SITE_STARTER,
+				{
+					location: 'plugin_onboarding',
+					site_starter: siteStarter,
+				},
+			);
+		}
 	}
 
 	checkAndSendEditorLoadedFromOnboarding() {
@@ -1101,6 +1116,20 @@ class OnboardingTracker {
 			this.checkAndSendReturnToStep4();
 			this.sendExperimentStarted( 401 );
 			this.sendExperimentStarted( 402 );
+			this.sendStep4Loaded();
+		}
+	}
+
+	sendStep4Loaded() {
+		if ( EventDispatcher.canSendEvents() ) {
+			return EventDispatcher.dispatchStepEvent(
+				ONBOARDING_EVENTS_MAP.STEP4_LOADED,
+				4,
+				ONBOARDING_STEP_NAMES.SITE_STARTER,
+				{
+					location: 'plugin_onboarding',
+				},
+			);
 		}
 	}
 
