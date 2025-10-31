@@ -27,8 +27,7 @@
 
         .e-onboarding__content {
                 display: flex;
-                align-items: center;
-                padding-block: 7rem;
+                padding-block-start: 150px;
         }
 
         .e-onboarding__page-content {
@@ -47,6 +46,11 @@
                         display: none;
                 }
         }
+
+        .e-onboarding__footer {
+                justify-content: center;
+                padding-block-end: 40px;
+        }
 }
 
 .e-onboarding101-variant-b-content {
@@ -59,7 +63,7 @@
         margin: 0 auto;
 
         .e-onboarding101-variant-b-icon {
-                margin-bottom: 40px;
+                margin-bottom: 28px;
 
                 svg {
                         width: 104px;
@@ -98,7 +102,7 @@
         .e-onboarding101-variant-b-buttons {
                 display: flex;
                 flex-direction: column;
-                gap: 12px;
+                gap: 8px;
                 width: 264px;
                 align-items: center;
                 margin-top: 20px;
@@ -154,7 +158,7 @@
         }
 }
 
-@media (min-width: 1024px) {
+@media screen and (min-width: 1024px) {
         .e-onboarding101-variant-b {
 
                 .e-onboarding__content {
@@ -163,7 +167,7 @@
         }
 }
 
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
         .e-onboarding101-variant-b {
                 .e-onboarding__page-content {
                         padding: 20px;
@@ -186,7 +190,7 @@
         }
 }
 
-@media (max-width: 480px) {
+@media screen and (max-width: 480px) {
         .e-onboarding101-variant-b {
                 .e-onboarding__page-content {
                         padding: 15px;
@@ -194,8 +198,7 @@
                 }
 
                 .e-onboarding__content {
-                        padding-block: 2rem;
-                        align-items: flex-start;
+                        padding-block-start: 5rem;
                 }
 
                 .e-onboarding101-variant-b-content {
