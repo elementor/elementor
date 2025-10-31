@@ -2,6 +2,8 @@
 	display: flex;
 	justify-content: center;
 	margin-block-end: 125px;
+	flex-wrap: wrap;
+	gap: 15px 22px;
 
 	&-item {
 		display: flex;
@@ -29,7 +31,6 @@
 		}
 
 		&:not(:last-child) {
-			margin-inline-end: 22px;
 
 			&:after {
 				font-family: 'eicons';
