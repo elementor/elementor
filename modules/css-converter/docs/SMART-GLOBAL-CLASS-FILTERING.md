@@ -443,3 +443,4 @@ private function prioritize_classes_for_global_registration( array $converted_cl
 
 
 
+

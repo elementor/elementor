@@ -31,7 +31,6 @@ class Variables_Integration_Service {
 			];
 		}
 
-		// Convert CSS variables to Elementor format
 		$converted_variables = $this->convert_css_variables_to_elementor_format( $css_variable_definitions );
 
 		if ( empty( $converted_variables ) ) {
@@ -60,52 +59,60 @@ class Variables_Integration_Service {
 		$converted = [];
 
 		foreach ( $css_variable_definitions as $var_name => $var_data ) {
-			// Remove -- prefix for Elementor variable names
 			$clean_name = $this->clean_variable_name( $var_name );
 			
-			if ( empty( $clean_name ) || empty( $var_data['value'] ) ) {
+			if ( empty( $clean_name ) ) {
 				continue;
 			}
 
-			$converted[ $clean_name ] = [
-				'type' => $this->detect_variable_type( $var_data['value'] ),
-				'value' => $var_data['value'],
-				'source' => $var_data['source'] ?? 'css-converter',
-				'selector' => $var_data['selector'] ?? ':root',
-			];
+			$is_referenced_only = empty( $var_data['value'] ) && ( $var_data['source'] ?? '' ) === 'extracted_from_reference';
+			
+			if ( empty( $var_data['value'] ) && ! $is_referenced_only ) {
+				continue;
+			}
+
+			if ( $is_referenced_only ) {
+				$placeholder_value = $this->get_placeholder_value_for_variable( $clean_name );
+				$converted[ $clean_name ] = [
+					'type' => $this->detect_variable_type( $placeholder_value ),
+					'value' => $placeholder_value,
+					'source' => 'css-converter-placeholder',
+					'selector' => $var_data['selector'] ?? ':root',
+				];
+			} else {
+				$converted[ $clean_name ] = [
+					'type' => $this->detect_variable_type( $var_data['value'] ),
+					'value' => $var_data['value'],
+					'source' => $var_data['source'] ?? 'css-converter',
+					'selector' => $var_data['selector'] ?? ':root',
+				];
+			}
 		}
 
 		return $converted;
 	}
 
-	private function clean_variable_name( string $var_name ): string {
-		// Remove -- prefix
-		$clean_name = ltrim( $var_name, '-' );
-		
-		// Convert to valid Elementor variable name
-		$clean_name = sanitize_key( $clean_name );
-		
-		// Avoid conflicts with Elementor's system global colors
-		// Only prefix if this variable would conflict with existing system variables
-		if ( $this->would_conflict_with_system_variables( $clean_name ) ) {
-			// Add prefix to avoid conflict
-			$clean_name = 'css-' . $clean_name;
+	private function get_placeholder_value_for_variable( string $var_name ): string {
+		if ( strpos( $var_name, 'color' ) !== false ) {
+			return '#000000';
 		}
 		
-		return $clean_name;
+		if ( strpos( $var_name, 'typography' ) !== false || strpos( $var_name, 'font' ) !== false ) {
+			return 'inherit';
+		}
+		
+		if ( strpos( $var_name, 'size' ) !== false || strpos( $var_name, 'width' ) !== false || strpos( $var_name, 'height' ) !== false ) {
+			return '0px';
+		}
+		
+		return 'inherit';
 	}
 
-	private function would_conflict_with_system_variables( string $clean_name ): bool {
-		// Check if this variable name would conflict with Elementor's existing system variables
-		// These are the actual system variable names that Elementor creates by default
-		$system_variable_names = [
-			'e-global-color-primary',
-			'e-global-color-secondary', 
-			'e-global-color-text',
-			'e-global-color-accent',
-		];
+	private function clean_variable_name( string $var_name ): string {
+		$clean_name = ltrim( $var_name, '-' );
+		$clean_name = sanitize_key( $clean_name );
 		
-		return in_array( $clean_name, $system_variable_names, true );
+		return $clean_name;
 	}
 
 	private function detect_variable_type( string $value ): string {

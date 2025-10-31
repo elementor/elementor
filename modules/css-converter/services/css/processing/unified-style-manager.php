@@ -130,13 +130,24 @@ class Unified_Style_Manager {
 			];
 		}
 	}
-	public function collect_element_styles( string $element_type, array $properties, string $element_id ) {
+	public function collect_element_styles( 
+		string $element_type, 
+		array $properties, 
+		string $element_id,
+		string $selector = '',
+		int $specificity = 0
+	) {
 		foreach ( $properties as $property_data ) {
 			$important = $property_data['important'] ?? false;
-			$specificity = $this->calculate_element_specificity( $important );
-			// Debug display and flex properties
-			if ( in_array( $property_data['property'], [ 'display', 'flex-direction' ] ) ) {
+			
+			// Use passed specificity if provided, otherwise calculate default
+			$final_specificity = $specificity > 0 ? $specificity : $this->calculate_element_specificity( $important );
+			
+			// Debug image widget style collection (DEBUGGING - ROOT CAUSE FOUND: CSS selector pollution)
+			if ( $element_type === 'e-image' ) {
+				// error_log( "DEBUG COLLECT IMAGE STYLE: element_type={$element_type}, element_id={$element_id}, property={$property_data['property']}, value={$property_data['value']}, selector={$selector}, specificity={$final_specificity}, converted_property=" . ( $property_data['converted_property'] ? 'YES' : 'NO' ) );
 			}
+			
 			$this->collected_styles[] = [
 				'source' => 'element',
 				'element_type' => $element_type,
@@ -144,7 +155,8 @@ class Unified_Style_Manager {
 				'property' => $property_data['property'],
 				'value' => $property_data['value'],
 				'important' => $important,
-				'specificity' => $specificity,
+				'specificity' => $final_specificity,
+				'selector' => $selector,
 				'converted_property' => $property_data['converted_property'] ?? null,
 				'order' => count( $this->collected_styles ),
 			];
@@ -264,11 +276,11 @@ class Unified_Style_Manager {
 		}
 	}
 	public function resolve_styles_for_widget( array $widget ): array {
-		// Use pure resolution with new Style objects
+		// Use pure resolution with new Style objects - this includes proper specificity resolution
 		$pure_resolved = $this->resolve_styles_for_widget_pure( $widget );
 		// Also use legacy resolution for backward compatibility
 		$legacy_resolved = $this->resolve_styles_for_widget_legacy( $widget );
-		// For now, return legacy resolution but log pure resolution for comparison
+		// Use legacy resolution as it works with our collected_styles array data
 		return $legacy_resolved;
 	}
 	public function resolve_styles_for_widget_pure( array $widget ): array {
@@ -694,6 +706,12 @@ class Unified_Style_Manager {
 					break;
 				case 'element':
 					$applies = ( $style['element_type'] === $element_type );
+					
+					// Debug image widget styles (DEBUGGING - ROOT CAUSE FOUND: CSS selector pollution)
+					if ( $element_type === 'e-image' ) {
+						// error_log( "DEBUG IMAGE STYLE: element_type={$element_type}, style_element_type={$style['element_type']}, property={$style['property']}, value={$style['value']}, applies=" . ( $applies ? 'YES' : 'NO' ) . ", selector={$style['selector']}, specificity={$style['specificity']}" );
+					}
+					
 					// Debug element styles for flex widgets
 					if ( ( $widget_type === 'e-flexbox' || $widget_type === 'e-div-block' ) && in_array( $style['property'], [ 'display', 'flex-direction' ] ) ) {
 					}
@@ -754,12 +772,21 @@ class Unified_Style_Manager {
 		});
 		$winner = $styles[0];
 		
-		// Debug log the competition
-		if ( count( $styles ) > 1 ) {
+		// DEBUG WIDTH ISSUE: Track width property competition for image widgets
+		if ( isset( $winner['element_type'] ) && $winner['element_type'] === 'e-image' && 
+			 isset( $winner['property'] ) && $winner['property'] === 'width' ) {
+			$log_file = WP_CONTENT_DIR . '/width-debug.log';
 			$competitors = array_map( function( $style ) {
-				return "{$style['source']}({$style['specificity']})";
+				return "specificity={$style['specificity']}, value={$style['value']}, selector={$style['selector']}, source={$style['source']}";
 			}, $styles );
+			file_put_contents( $log_file, date('[H:i:s] ') . "WIDTH COMPETITION for e-image:\n", FILE_APPEND );
+			foreach ( $competitors as $i => $comp ) {
+				$marker = $i === 0 ? '🏆 WINNER' : '  ';
+				file_put_contents( $log_file, "  {$marker} {$comp}\n", FILE_APPEND );
+			}
+			file_put_contents( $log_file, "\n", FILE_APPEND );
 		}
+		
 		return $winner;
 	}
 }

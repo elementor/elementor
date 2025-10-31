@@ -89,8 +89,8 @@ class Variables_Route {
 			return new WP_REST_Response( [ 'error' => 'Empty CSS' ], 422 );
 		}
 		$css = $this->remove_utf8_bom( $css );
-		// TODO: Implement saving of variables.
-		// We are logging the variables to a file for testing purposes only
+		// $css = $this->rename_elementor_css_variables( $css );
+		
 		$logs_dir = $this->ensure_logs_directory();
 		$basename = 'css-' . time();
 		$css_path = $logs_dir . '/' . $basename . '.css';
@@ -578,6 +578,10 @@ $scoped_variables = [];
 	}
 	private function format_variable_label( string $css_var_name ): string {
 		return ltrim( $css_var_name, '-' );
+	}
+
+	private function rename_elementor_css_variables( string $css ): string {
+		return preg_replace( '/--e-global-/', '--ec-global-', $css );
 	}
 	private function extract_and_rename_nested_variables( array $scoped_variables ): array {
 		$by_name = [];

@@ -27,7 +27,7 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 	}
 
 	public function get_priority(): int {
-		return 10; // First step - parsing should happen first
+		return 8; // First step - parsing should happen first
 	}
 
 	public function supports_context( Css_Processing_Context $context ): bool {
@@ -55,6 +55,16 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 		// Beautify CSS before parsing for better readability and debugging
 		$beautified_css = $this->beautify_css( $css );
 		$context->set_metadata( 'beautified_css', $beautified_css );
+		
+		$hasKitBefore = strpos( $css, '.elementor-kit-' ) !== false;
+		$hasKitAfter = strpos( $beautified_css, '.elementor-kit-' ) !== false;
+		if ( $hasKitBefore || $hasKitAfter ) {
+			error_log( "CSS Variables DEBUG: CSS beautify - had Kit selectors before: " . ( $hasKitBefore ? 'yes' : 'no' ) . ", after: " . ( $hasKitAfter ? 'yes' : 'no' ) );
+			if ( $hasKitBefore && ! $hasKitAfter ) {
+				$kitPos = strpos( $css, '.elementor-kit-' );
+				error_log( "CSS Variables DEBUG: Kit CSS lost during beautify! Sample: " . substr( $css, $kitPos, 200 ) );
+			}
+		}
 
 		// Parse beautified CSS and extract rules
 		$css_rules = $this->parse_css_and_extract_rules( $beautified_css );
@@ -65,7 +75,63 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 		$context->add_statistic( 'css_size_bytes', strlen( $css ) );
 		$context->add_statistic( 'beautified_css_size_bytes', strlen( $beautified_css ) );
 
-		// DEBUG: Log CSS rules after parsing
+		$log_file = WP_CONTENT_DIR . '/css-property-tracking.log';
+		file_put_contents( $log_file, "\n" . str_repeat( '=', 80 ) . "\n", FILE_APPEND );
+		file_put_contents( $log_file, date('[H:i:s] ') . "CSS_PARSING_PROCESSOR: Started\n", FILE_APPEND );
+		file_put_contents( $log_file, date('[H:i:s] ') . "Total CSS rules parsed: " . count( $css_rules ) . "\n", FILE_APPEND );
+
+		// DEBUG: Filter and log CSS rules matching hardcoded target patterns for debugging purposes only
+		$target_patterns = [
+			'e-con-inner',
+			'089b111',
+			'a431a3a',
+			'6aaaa11',
+			'bb20798',
+			'elementor-element-089b111',
+			'elementor-element-a431a3a',
+		];
+
+		$matching_rules = [];
+		foreach ( $css_rules as $index => $rule ) {
+			$selector = $rule['selector'] ?? '';
+			$properties = $rule['properties'] ?? [];
+			
+			foreach ( $target_patterns as $pattern ) {
+				if ( false !== strpos( $selector, $pattern ) ) {
+					$matching_rules[] = [
+						'index' => $index,
+						'selector' => $selector,
+						'properties' => $properties,
+						'property_count' => count( $properties ),
+					];
+					break;
+				}
+			}
+		}
+
+		if ( ! empty( $matching_rules ) ) {
+			file_put_contents( $log_file, date('[H:i:s] ') . "Found " . count( $matching_rules ) . " rules matching target patterns\n", FILE_APPEND );
+			foreach ( $matching_rules as $match ) {
+				$property_names = array_map( function( $prop ) {
+					return ( $prop['property'] ?? 'unknown' ) . ': ' . ( $prop['value'] ?? '' );
+				}, $match['properties'] );
+				
+				file_put_contents( $log_file, date('[H:i:s] ') . "  Rule #{$match['index']}: {$match['selector']}\n", FILE_APPEND );
+				file_put_contents( $log_file, date('[H:i:s] ') . "    Properties ({$match['property_count']}): " . implode( ', ', array_slice( $property_names, 0, 10 ) ) . "\n", FILE_APPEND );
+				
+				$css_vars_in_rule = array_filter( $match['properties'], function( $prop ) {
+					return strpos( $prop['property'] ?? '', '--' ) === 0;
+				} );
+				if ( ! empty( $css_vars_in_rule ) ) {
+					$var_names = array_map( function( $prop ) {
+						return ( $prop['property'] ?? '' ) . ': ' . ( $prop['value'] ?? '' );
+					}, $css_vars_in_rule );
+					file_put_contents( $log_file, date('[H:i:s] ') . "    CSS Variables: " . implode( ', ', $var_names ) . "\n", FILE_APPEND );
+				}
+			}
+		} else {
+			file_put_contents( $log_file, date('[H:i:s] ') . "No rules found matching target patterns\n", FILE_APPEND );
+		}
 
 		// DEBUG: Check for .loading selectors
 		$loading_selectors = [];
@@ -148,6 +214,8 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 	private function extract_rules_from_document( $document ): array {
 		$rules = [];
 		$all_rule_sets = $document->getAllRuleSets();
+		$kitRuleSets = 0;
+		$kitSelectors = [];
 
 		foreach ( $all_rule_sets as $rule_set ) {
 			if ( ! method_exists( $rule_set, 'getSelectors' ) ) {
@@ -156,12 +224,27 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 
 			$selectors = $rule_set->getSelectors();
 			$declarations = $rule_set->getRules();
+			
+			foreach ( $selectors as $sel ) {
+				$selStr = (string) $sel;
+				if ( strpos( $selStr, 'elementor-kit' ) !== false ) {
+					$kitRuleSets++;
+					$kitSelectors[] = $selStr;
+					if ( count( $kitSelectors ) <= 3 ) {
+						error_log( "CSS Variables DEBUG: Found Kit selector in document: '$selStr' with " . count( $declarations ) . " declarations" );
+					}
+				}
+			}
 
 			// Check if this rule set is inside a media query
 			$is_media_query = $this->is_rule_set_in_media_query( $rule_set );
 
 			$extracted_rules = $this->extract_rules_from_selectors( $selectors, $declarations, $is_media_query );
 			$rules = array_merge( $rules, $extracted_rules );
+		}
+		
+		if ( $kitRuleSets > 0 ) {
+			error_log( "CSS Variables DEBUG: Found $kitRuleSets Kit rule sets in document, but only " . count( array_filter( $rules, function( $r ) { return strpos( $r['selector'] ?? '', 'elementor-kit' ) !== false; } ) ) . " in extracted rules" );
 		}
 
 		return $rules;

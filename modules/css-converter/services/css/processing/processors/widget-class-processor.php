@@ -3,6 +3,7 @@ namespace Elementor\Modules\CssConverter\Services\Css\Processing\Processors;
 
 use Elementor\Modules\CssConverter\Services\Css\Processing\Contracts\Css_Processor_Interface;
 use Elementor\Modules\CssConverter\Services\Css\Processing\Contracts\Css_Processing_Context;
+use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Specificity_Calculator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,8 +18,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Widget_Class_Processor implements Css_Processor_Interface {
 
+	private $current_selector = '';
+	private $specificity_calculator;
 
 	private const WIDGET_CLASS_PREFIX = 'elementor-';
+
+	public function __construct() {
+		$this->specificity_calculator = new Css_Specificity_Calculator();
+	}
 
 	public function get_processor_name(): string {
 		return 'widget_class';
@@ -35,22 +42,80 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 	}
 
 	public function process( Css_Processing_Context $context ): Css_Processing_Context {
+		$log_file = WP_CONTENT_DIR . '/css-property-tracking.log';
+		file_put_contents( $log_file, "\n" . str_repeat( '-', 80 ) . "\n", FILE_APPEND );
+		file_put_contents( $log_file, date('[H:i:s] ') . "WIDGET_CLASS_PROCESSOR: Started\n", FILE_APPEND );
+		
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$widgets = $context->get_widgets();
+		$css_variable_definitions = $context->get_metadata( 'css_variable_definitions', [] );
+
+		file_put_contents( $log_file, date('[H:i:s] ') . "Input: CSS rules=" . count( $css_rules ) . ", widgets=" . count( $widgets ) . ", CSS variables=" . count( $css_variable_definitions ) . "\n", FILE_APPEND );
 
 		if ( empty( $css_rules ) || empty( $widgets ) ) {
+			file_put_contents( $log_file, date('[H:i:s] ') . "WARNING: Empty CSS rules or widgets, skipping\n", FILE_APPEND );
 			return $context;
 		}
 
+		// DEBUG: Filter CSS rules by specific patterns for debugging purposes only
+		// This code is for debugging and does not affect processing logic
+		$target_patterns = [ 'e-con-inner', '089b111', 'a431a3a', '6aaaa11', 'bb20798' ];
+		$relevant_rules = [];
+		foreach ( $css_rules as $rule ) {
+			$selector = $rule['selector'] ?? '';
+			foreach ( $target_patterns as $pattern ) {
+				if ( false !== strpos( $selector, $pattern ) ) {
+					$relevant_rules[] = [
+						'selector' => $selector,
+						'properties' => $rule['properties'] ?? [],
+					];
+					break;
+				}
+			}
+		}
+		
+		if ( ! empty( $relevant_rules ) ) {
+			file_put_contents( $log_file, date('[H:i:s] ') . "DEBUG: Relevant CSS rules BEFORE processing (" . count( $relevant_rules ) . "):\n", FILE_APPEND );
+			foreach ( $relevant_rules as $idx => $rule ) {
+				$props = array_map( function( $p ) { return ( $p['property'] ?? '' ) . ': ' . ( $p['value'] ?? '' ); }, $rule['properties'] );
+				file_put_contents( $log_file, date('[H:i:s] ') . "  [{$idx}] {$rule['selector']}\n", FILE_APPEND );
+				file_put_contents( $log_file, date('[H:i:s] ') . "      Props: " . implode( ', ', array_slice( $props, 0, 5 ) ) . "\n", FILE_APPEND );
+			}
+		}
+		// END DEBUG
+
+		if ( ! empty( $css_variable_definitions ) ) {
+			file_put_contents( $log_file, date('[H:i:s] ') . "CSS Variables AVAILABLE BEFORE widget class processor (" . count( $css_variable_definitions ) . "):\n", FILE_APPEND );
+			
+			// DEBUG: Filter for flexbox-related variables for debugging purposes only
+			$relevant_vars = array_filter( $css_variable_definitions, function( $var ) {
+				$name = $var['name'] ?? '';
+				return strpos( $name, 'display' ) !== false || 
+				       strpos( $name, 'flex' ) !== false || 
+				       strpos( $name, 'gap' ) !== false ||
+				       strpos( $name, 'justify' ) !== false ||
+				       strpos( $name, 'align' ) !== false;
+			} );
+			foreach ( array_slice( $relevant_vars, 0, 20 ) as $var ) {
+				file_put_contents( $log_file, date('[H:i:s] ') . "  {$var['name']}: {$var['value']}\n", FILE_APPEND );
+			}
+		}
+
 		$widget_classes = $this->extract_widget_classes_from_widgets( $widgets );
+		file_put_contents( $log_file, date('[H:i:s] ') . "Extracted widget classes (" . count( $widget_classes ) . "): " . implode( ', ', array_slice( $widget_classes, 0, 10 ) ) . "\n", FILE_APPEND );
+		
 		$widget_specific_rules = $this->extract_widget_specific_rules( $css_rules, $widget_classes );
+		file_put_contents( $log_file, date('[H:i:s] ') . "Widget-specific rules found: " . count( $widget_specific_rules ) . "\n", FILE_APPEND );
 
 		if ( empty( $widget_specific_rules ) ) {
 			return $context;
 		}
 
 		// Apply widget-specific styles directly to widgets
+		$log_file = WP_CONTENT_DIR . '/css-property-tracking.log';
+		file_put_contents( $log_file, date('[H:i:s] ') . "WIDGET_CLASS_PROCESSOR: Applying styles to widgets\n", FILE_APPEND );
 		$styles_applied = $this->apply_widget_specific_styles( $widget_specific_rules, $widgets, $context );
+		file_put_contents( $log_file, date('[H:i:s] ') . "WIDGET_CLASS_PROCESSOR: Styles applied to " . $styles_applied . " widgets\n", FILE_APPEND );
 
 		// Remove processed rules from css_rules so they don't get processed as global classes
 		$remaining_rules = $this->remove_processed_rules( $css_rules, $widget_specific_rules );
@@ -72,6 +137,12 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 		$context->add_statistic( 'widget_classes_processed', count( $widget_classes ) );
 		$context->add_statistic( 'widget_styles_applied', $styles_applied );
 
+		$widget_variable_references = $context->get_metadata( 'widget_variable_references', [] );
+		$log_file = WP_CONTENT_DIR . '/scoped-vars.log';
+		file_put_contents( $log_file, date('[H:i:s] ') . "Widget Class Processor: Extracted " . count($widget_variable_references) . " variable references from widget properties\n", FILE_APPEND );
+		if ( ! empty( $widget_variable_references ) ) {
+			file_put_contents( $log_file, date('[H:i:s] ') . "Widget variables: " . implode(', ', $widget_variable_references) . "\n", FILE_APPEND );
+		}
 
 		return $context;
 	}
@@ -120,6 +191,10 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 			return false;
 		}
 
+		if ( $this->is_selector_with_element_tag_child( $trimmed ) ) {
+			return false;
+		}
+
 		$space_parts = preg_split( '/\s+/', $trimmed );
 		if ( count( $space_parts ) > 1 ) {
 			return true;
@@ -127,6 +202,28 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 
 		if ( preg_match( '/[+~]/', $trimmed ) ) {
 			return true;
+		}
+
+		return false;
+	}
+
+	private function is_selector_with_element_tag_child( string $selector ): bool {
+		$element_tags = [ 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'span', 'div', 'section', 'article', 'aside', 'header', 'footer', 'main', 'nav', 'ul', 'ol', 'li', 'button', 'input', 'textarea', 'select', 'label', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot' ];
+
+		$parts = preg_split( '/\s+/', trim( $selector ) );
+		$last_part = end( $parts );
+
+		foreach ( $element_tags as $tag ) {
+			if ( preg_match( '/^' . preg_quote( $tag, '/' ) . '(?:[\.:\[#]|$)/', $last_part ) ) {
+				preg_match_all( '/\.([a-zA-Z0-9_-]+)/', $selector, $matches );
+				$all_classes = $matches[1] ?? [];
+
+				foreach ( $all_classes as $class ) {
+					if ( $this->is_widget_class( $class ) ) {
+						return true;
+					}
+				}
+			}
 		}
 
 		return false;
@@ -176,6 +273,9 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 		foreach ( $css_rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
 
+			// Track current selector for element-specific matching
+			$this->current_selector = $selector;
+
 			// DEBUG: Track target selector
 			if ( $selector === $target_selector ) {
 			}
@@ -193,10 +293,28 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 			}
 
 			if ( $this->selector_contains_widget_classes( $selector_classes ) ) {
+				$target_patterns = [ 'e-con-inner', '089b111', 'a431a3a', '6aaaa11', 'bb20798' ];
+				$is_relevant = false;
+				foreach ( $target_patterns as $pattern ) {
+					if ( false !== strpos( $selector, $pattern ) ) {
+						$is_relevant = true;
+						break;
+					}
+				}
+				
+				if ( $is_relevant ) {
+					$log_file = WP_CONTENT_DIR . '/css-property-tracking.log';
+					$props = array_map( function( $p ) { return ( $p['property'] ?? '' ) . ': ' . ( $p['value'] ?? '' ); }, $rule['properties'] ?? [] );
+					file_put_contents( $log_file, date('[H:i:s] ') . "WIDGET_CLASS_PROCESSOR: Found relevant rule - {$selector}\n", FILE_APPEND );
+					file_put_contents( $log_file, date('[H:i:s] ') . "  Target classes: " . implode( ', ', $selector_classes ) . "\n", FILE_APPEND );
+					file_put_contents( $log_file, date('[H:i:s] ') . "  Properties (" . count( $rule['properties'] ?? [] ) . "): " . implode( ', ', array_slice( $props, 0, 10 ) ) . "\n", FILE_APPEND );
+				}
+				
 				$widget_rules[] = [
 					'selector' => $selector,
 					'properties' => $rule['properties'] ?? [],
 					'target_classes' => $selector_classes, // FIXED: Use selector classes, not all widget classes
+					'full_selector' => $selector, // Store full selector for element-specific matching
 					'specificity' => $this->calculate_selector_specificity( $selector ),
 				];
 
@@ -216,11 +334,169 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 	}
 
 	/**
-	 * FIX #4: Replaced with new methods that work with selector classes
+	 * FIX #4: Extract target classes from selector (last part of nested selectors)
+	 * FIX: Handle selectors ending with element tags (img, h1, p, etc.)
 	 */
 	private function extract_classes_from_selector( string $selector ): array {
-		preg_match_all( '/\.([a-zA-Z0-9_-]+)/', $selector, $matches );
-		return $matches[1] ?? [];
+		$parts = preg_split( '/\s+/', trim( $selector ) );
+		$target_part = end( $parts );
+
+		$element_tags = [ 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'span', 'div', 'section', 'article', 'aside', 'header', 'footer', 'main', 'nav', 'ul', 'ol', 'li', 'button', 'input', 'textarea', 'select', 'label', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot' ];
+
+		$is_element_tag_only = false;
+
+		foreach ( $element_tags as $tag ) {
+			if ( preg_match( '/^' . preg_quote( $tag, '/' ) . '(?:[\.:\[#]|$)/', $target_part ) ) {
+				$is_element_tag_only = true;
+				break;
+			}
+		}
+
+		if ( $is_element_tag_only ) {
+			preg_match_all( '/\.([a-zA-Z0-9_-]+)/', $selector, $matches );
+			$all_classes = $matches[1] ?? [];
+
+			$widget_classes = array_filter( $all_classes, function( $class ) {
+				return $this->is_widget_class( $class );
+			} );
+
+			return array_values( $widget_classes );
+		}
+
+		preg_match_all( '/\.([a-zA-Z0-9_-]+)/', $target_part, $matches );
+		$target_classes = $matches[1] ?? [];
+
+		if ( empty( $target_classes ) ) {
+			preg_match_all( '/\.([a-zA-Z0-9_-]+)/', $selector, $matches );
+			$target_classes = $matches[1] ?? [];
+		}
+
+		return $target_classes;
+	}
+
+	private function extract_child_element_tag_from_selector( string $selector ): ?string {
+		$parts = preg_split( '/\s+/', trim( $selector ) );
+		$last_part = end( $parts );
+		
+		$element_tags = [ 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'span', 'div', 'section', 'article', 'aside', 'header', 'footer', 'main', 'nav', 'ul', 'ol', 'li', 'button', 'input', 'textarea', 'select', 'label', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot' ];
+		
+		foreach ( $element_tags as $tag ) {
+			if ( preg_match( '/^' . preg_quote( $tag, '/' ) . '(?:[\.:\[#]|$)/', $last_part ) ) {
+				return $tag;
+			}
+		}
+		
+		return null;
+	}
+
+	private function find_child_widgets_by_tag( array $parent_element_ids, string $child_tag, array $all_widgets ): array {
+		$child_widgets = [];
+		$tag_to_widget_type = [
+			'img' => 'e-image',
+			'h1' => 'e-heading',
+			'h2' => 'e-heading',
+			'h3' => 'e-heading',
+			'h4' => 'e-heading',
+			'h5' => 'e-heading',
+			'h6' => 'e-heading',
+			'p' => 'e-paragraph',
+			'a' => 'e-link',
+			'button' => 'e-button',
+		];
+		
+		$target_widget_type = $tag_to_widget_type[ $child_tag ] ?? null;
+		
+		if ( ! $target_widget_type ) {
+			return $child_widgets;
+		}
+		
+		foreach ( $parent_element_ids as $parent_element_id ) {
+			$parent_widget = $this->find_widget_by_element_id( $parent_element_id, $all_widgets );
+			
+			if ( $parent_widget && ! empty( $parent_widget['children'] ) ) {
+				$this->recursively_find_child_widgets_by_type( $parent_widget['children'], $target_widget_type, $child_widgets );
+			}
+		}
+		
+		return array_unique( $child_widgets );
+	}
+
+	private function find_widget_by_element_id( string $element_id, array $widgets ): ?array {
+		foreach ( $widgets as $widget ) {
+			if ( ( $widget['element_id'] ?? '' ) === $element_id ) {
+				return $widget;
+			}
+			
+			if ( ! empty( $widget['children'] ) ) {
+				$found = $this->find_widget_by_element_id( $element_id, $widget['children'] );
+				if ( $found ) {
+					return $found;
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	private function recursively_find_child_widgets_by_type( array $widgets, string $target_type, array &$result ): void {
+		foreach ( $widgets as $widget ) {
+			if ( ( $widget['widget_type'] ?? '' ) === $target_type ) {
+				$element_id = $widget['element_id'] ?? null;
+				if ( $element_id ) {
+					$result[] = $element_id;
+				}
+			}
+			
+			if ( ! empty( $widget['children'] ) ) {
+				$this->recursively_find_child_widgets_by_type( $widget['children'], $target_type, $result );
+			}
+		}
+	}
+
+	private function apply_styles_to_widget_atomically( 
+		string $element_id, 
+		array $converted_properties, 
+		Css_Processing_Context $context, 
+		string $child_element_tag = '',
+		string $selector = '',
+		int $specificity = 0
+	): void {
+		$unified_style_manager = $context->get_metadata( 'unified_style_manager' );
+
+		if ( ! $unified_style_manager ) {
+			return;
+		}
+
+		$tag_to_widget_type = [
+			'img' => 'e-image',
+			'h1' => 'e-heading',
+			'h2' => 'e-heading',
+			'h3' => 'e-heading',
+			'h4' => 'e-heading',
+			'h5' => 'e-heading',
+			'h6' => 'e-heading',
+			'p' => 'e-paragraph',
+			'a' => 'e-link',
+			'button' => 'e-button',
+		];
+
+		$widget_type = $tag_to_widget_type[ $child_element_tag ] ?? $child_element_tag;
+
+		foreach ( $converted_properties as $property_data ) {
+			// DEBUG WIDTH ISSUE: Track width properties from widget class processor
+			if ( ( $property_data['property'] ?? '' ) === 'width' && $widget_type === 'e-image' ) {
+				$log_file = WP_CONTENT_DIR . '/width-debug.log';
+				file_put_contents( $log_file, date('[H:i:s] ') . "WIDGET_CLASS_PROCESSOR: width={$property_data['value']}, selector={$selector}, specificity={$specificity}, widget_id={$element_id}\n", FILE_APPEND );
+			}
+			
+			$unified_style_manager->collect_element_styles(
+				$widget_type,
+				[ $property_data ],
+				$element_id,
+				$selector,
+				$specificity
+			);
+		}
 	}
 
 	private function selector_contains_widget_classes( array $selector_classes ): bool {
@@ -259,7 +535,12 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 			$selector = $rule['selector'];
 			$properties = $rule['properties'];
 			$target_classes = $rule['target_classes'] ?? [];
+			$full_selector = $rule['full_selector'] ?? $selector;
 			$target_selector = '.elementor-1140 .elementor-element.elementor-element-6d397c1';
+
+
+			// Set current selector for element-specific matching
+			$this->current_selector = $full_selector;
 
 			$matching_widgets = [];
 
@@ -270,7 +551,9 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 			}
 
 			if ( ! empty( $matching_widgets ) ) {
-				$converted_properties = $this->convert_properties_to_atomic( $properties, $property_conversion_service );
+				$this->extract_and_store_variable_references( $properties, $context );
+				
+				$converted_properties = $this->convert_properties_to_atomic( $properties, $property_conversion_service, $context );
 
 				if ( $selector === $target_selector ) {
 					foreach ( $properties as $prop ) {
@@ -284,22 +567,45 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 					}
 				}
 
-				file_put_contents( '/tmp/widget_rules_applied.log', "APPLYING RULE: {$selector}\n", FILE_APPEND );
-				file_put_contents( '/tmp/widget_rules_applied.log', '  Target classes: ' . implode( ', ', $target_classes ) . "\n", FILE_APPEND );
-				file_put_contents( '/tmp/widget_rules_applied.log', '  Properties: ' . count( $converted_properties ) . "\n", FILE_APPEND );
-				foreach ( $converted_properties as $prop_data ) {
-					$prop = $prop_data['property'] ?? '';
-					$value = $prop_data['original_value'] ?? 'unknown';
-					file_put_contents( '/tmp/widget_rules_applied.log', "    {$prop}: {$value}\n", FILE_APPEND );
-				}
-				file_put_contents( '/tmp/widget_rules_applied.log', "\n", FILE_APPEND );
+				$child_element_tag = $this->extract_child_element_tag_from_selector( $selector );
+				
+				// Calculate specificity for this selector
+				$specificity = $this->specificity_calculator->calculate_specificity( $selector );
+				
+				if ( $child_element_tag ) {
+					$child_widgets = $this->find_child_widgets_by_tag( $matching_widgets, $child_element_tag, $widgets );
+					
+					if ( ! empty( $child_widgets ) ) {
+						foreach ( $child_widgets as $child_element_id ) {
+							$this->apply_styles_to_widget_atomically( 
+								$child_element_id, 
+								$converted_properties, 
+								$context, 
+								$child_element_tag,
+								$selector,
+								$specificity
+							);
+						}
+						$styles_applied += count( $child_widgets );
+					}
+				} else {
+					file_put_contents( '/tmp/widget_rules_applied.log', "APPLYING RULE: {$selector}\n", FILE_APPEND );
+					file_put_contents( '/tmp/widget_rules_applied.log', '  Target classes: ' . implode( ', ', $target_classes ) . "\n", FILE_APPEND );
+					file_put_contents( '/tmp/widget_rules_applied.log', '  Properties: ' . count( $converted_properties ) . "\n", FILE_APPEND );
+					foreach ( $converted_properties as $prop_data ) {
+						$prop = $prop_data['property'] ?? '';
+						$value = $prop_data['original_value'] ?? 'unknown';
+						file_put_contents( '/tmp/widget_rules_applied.log', "    {$prop}: {$value}\n", FILE_APPEND );
+					}
+					file_put_contents( '/tmp/widget_rules_applied.log', "\n", FILE_APPEND );
 
-				$unified_style_manager->collect_css_selector_styles(
-					$selector,
-					$converted_properties,
-					$matching_widgets
-				);
-				$styles_applied += count( $matching_widgets );
+					$unified_style_manager->collect_css_selector_styles(
+						$selector,
+						$converted_properties,
+						$matching_widgets
+					);
+					$styles_applied += count( $matching_widgets );
+				}
 
 			}
 		}
@@ -307,21 +613,25 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 		return $styles_applied;
 	}
 
-	private function convert_properties_to_atomic( array $properties, $property_conversion_service ): array {
+	private function convert_properties_to_atomic( array $properties, $property_conversion_service, Css_Processing_Context $context ): array {
 		$converted_properties = [];
 
 		foreach ( $properties as $property_data ) {
-			$property = $property_data['property'];
-			$value = $property_data['value'];
+			$property = $property_data['property'] ?? '';
+			$value = $property_data['value'] ?? '';
 			$important = $property_data['important'] ?? false;
+
+			if ( strpos( $property, '--' ) === 0 ) {
+				continue;
+			}
 
 			$converted = $property_conversion_service->convert_property_to_v4_atomic( $property, $value );
 
 			$converted_properties[] = [
 				'property' => $property,
 				'value' => $value,
-				'original_property' => $property,
-				'original_value' => $value,
+				'original_property' => $property_data['original_property'] ?? $property,
+				'original_value' => $property_data['original_value'] ?? $value,
 				'important' => $important,
 				'converted_property' => $converted,
 			];
@@ -331,18 +641,29 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 	}
 
 	/**
-	 * FIX #2: New method to match widgets based on selector classes
+	 * FIX #2: Enhanced method to match widgets based on selector classes with element ID context
 	 */
 	private function find_widgets_matching_selector_classes( array $selector_classes, array $widgets ): array {
 		$matching_widgets = [];
 
-		// Extract element-ID-specific classes (e.g., elementor-element-1a10fb4)
-		$element_id_classes = array_filter($selector_classes, function( $class ) {
+		// For element-specific selectors, we need to extract element IDs from the FULL selector, not just target classes
+		$full_selector_classes = $this->extract_all_classes_from_full_selector( $this->current_selector ?? '' );
+		
+		// Extract element-ID-specific classes from the full selector
+		$element_id_classes = array_filter($full_selector_classes, function( $class ) {
 			return preg_match( '/^elementor-element-[a-f0-9]+$/', $class );
 		});
 
-		if ( ! empty( $element_id_classes ) ) {
-			// If selector has element ID, ONLY match widgets with that specific ID
+		// Extract target widget classes from the target part (current behavior)
+		$target_widget_classes = array_filter($selector_classes, function( $class ) {
+			return $this->is_widget_class( $class ) && !preg_match( '/^elementor-element-[a-f0-9]+$/', $class );
+		});
+
+		if ( ! empty( $element_id_classes ) && ! empty( $target_widget_classes ) ) {
+			// Element-specific targeting: find widgets with target classes inside specific elements
+			$this->find_widgets_with_element_context( $element_id_classes, $target_widget_classes, $widgets, $matching_widgets );
+		} elseif ( ! empty( $element_id_classes ) ) {
+			// If selector has element ID only, match widgets with that specific ID
 			$this->recursively_find_widgets_with_specific_element_id( $element_id_classes, $widgets, $matching_widgets );
 		} else {
 			// For generic selectors, match widgets with ALL required elementor- classes
@@ -498,4 +819,115 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 
 		return true; // All classes are widget-specific
 	}
+
+	private function extract_and_store_variable_references( array $properties, Css_Processing_Context $context ): void {
+		$widget_variable_references = $context->get_metadata( 'widget_variable_references', [] );
+		
+		foreach ( $properties as $property_data ) {
+			$value = $property_data['value'] ?? '';
+			
+			if ( empty( $value ) ) {
+				continue;
+			}
+			
+			preg_match_all( '/var\(\s*--([a-zA-Z0-9_-]+)/', $value, $matches );
+			
+			if ( ! empty( $matches[1] ) ) {
+				foreach ( $matches[1] as $var_name ) {
+					$clean_name = $this->clean_variable_name( $var_name );
+					$widget_variable_references[] = $clean_name;
+				}
+			}
+		}
+		
+		$context->set_metadata( 'widget_variable_references', array_unique( $widget_variable_references ) );
+	}
+
+	private function clean_variable_name( string $var_name ): string {
+		$clean_name = ltrim( $var_name, '-' );
+		return sanitize_key( $clean_name );
+	}
+
+
+	/**
+	 * NEW: Find widgets with target classes that are inside specific elements
+	 * For selector ".elementor-element-9856e95 .elementor-heading-title":
+	 * - Find element with ID "elementor-element-9856e95"
+	 * - Look for widgets with class "elementor-heading-title" inside that element
+	 */
+	private function find_widgets_with_element_context( array $element_id_classes, array $target_widget_classes, array $widgets, array &$matching_widgets ): void {
+		foreach ( $widgets as $widget ) {
+			$widget_classes = $this->get_widget_classes_array( $widget );
+			$element_id = $widget['element_id'] ?? null;
+
+			// Check if this widget matches any of the element IDs
+			$matches_element_id = false;
+			foreach ( $element_id_classes as $element_id_class ) {
+				if ( in_array( $element_id_class, $widget_classes, true ) ) {
+					$matches_element_id = true;
+					break;
+				}
+			}
+
+			if ( $matches_element_id ) {
+				// This widget matches the element ID, now look for target widgets in its children
+				if ( ! empty( $widget['children'] ) ) {
+					$this->find_widgets_with_target_classes_in_children( $target_widget_classes, $widget['children'], $matching_widgets );
+				}
+			}
+
+			// Recursively search in children regardless of current widget match
+			if ( ! empty( $widget['children'] ) ) {
+				$this->find_widgets_with_element_context( $element_id_classes, $target_widget_classes, $widget['children'], $matching_widgets );
+			}
+		}
+	}
+
+	/**
+	 * NEW: Find widgets with target classes in the given widget array
+	 */
+	private function find_widgets_with_target_classes_in_children( array $target_widget_classes, array $widgets, array &$matching_widgets ): void {
+		foreach ( $widgets as $widget ) {
+			$widget_classes = $this->get_widget_classes_array( $widget );
+			$element_id = $widget['element_id'] ?? null;
+
+			// Check if this widget has any of the target classes
+			$has_target_class = false;
+			foreach ( $target_widget_classes as $target_class ) {
+				if ( in_array( $target_class, $widget_classes, true ) ) {
+					$has_target_class = true;
+					break;
+				}
+			}
+
+			if ( $has_target_class && $element_id ) {
+				$matching_widgets[] = $element_id;
+			}
+
+			// Recursively search in children
+			if ( ! empty( $widget['children'] ) ) {
+				$this->find_widgets_with_target_classes_in_children( $target_widget_classes, $widget['children'], $matching_widgets );
+			}
+		}
+	}
+
+	/**
+	 * NEW: Helper method to get widget classes as array
+	 */
+	private function get_widget_classes_array( array $widget ): array {
+		$classes_string = $widget['attributes']['class'] ?? '';
+		if ( empty( $classes_string ) ) {
+			return [];
+		}
+		return array_filter( explode( ' ', $classes_string ) );
+	}
+
+	/**
+	 * NEW: Extract all classes from the full selector (not just target part)
+	 */
+	private function extract_all_classes_from_full_selector( string $selector ): array {
+		preg_match_all( '/\.([a-zA-Z0-9_-]+)/', $selector, $matches );
+		return $matches[1] ?? [];
+	}
+
 }

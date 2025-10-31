@@ -129,6 +129,12 @@ class Atomic_Widgets_Route {
 				$conversion_params['options']
 			);
 
+			$kit_css_urls = array_filter( $conversion_params['css_urls'], function( $url ) {
+				return strpos( $url, '/elementor/css/' ) !== false;
+			} );
+			$result['debug_kit_css_urls'] = array_values( $kit_css_urls );
+			$result['debug_total_css_urls'] = count( $conversion_params['css_urls'] );
+
 			return new \WP_REST_Response( $result, 200 );
 
 		} catch ( \Exception $e ) {
@@ -143,18 +149,33 @@ class Atomic_Widgets_Route {
 		$selector = $request->get_param( 'selector' );
 		$auto_extracted_css_urls = [];
 
+		error_log( "CSS Variables DEBUG: extract_conversion_parameters called with type=$type, selector=" . ( $selector ?? 'null' ) );
 		$html = $this->resolve_html_content( $type, $content, $html_param, $selector, $auto_extracted_css_urls );
 
 		$manual_css_urls = $request->get_param( 'cssUrls' ) ? $request->get_param( 'cssUrls' ) : [];
 		$all_css_urls = array_merge( $auto_extracted_css_urls, $manual_css_urls );
 
+		$kit_css_in_urls = array_filter( $all_css_urls, function( $url ) {
+			return strpos( $url, '/elementor/css/' ) !== false;
+		} );
+		if ( ! empty( $kit_css_in_urls ) ) {
+			error_log( "CSS Variables DEBUG: Found " . count( $kit_css_in_urls ) . " Kit CSS URLs in final css_urls array: " . implode( ', ', $kit_css_in_urls ) );
+		} else {
+			error_log( "CSS Variables DEBUG: NO Kit CSS URLs found in final css_urls array (total URLs: " . count( $all_css_urls ) . ")" );
+		}
+
+		$options = $request->get_param( 'options' ) ? $request->get_param( 'options' ) : [];
+		if ( ! empty( $selector ) ) {
+			$options['selector'] = $selector;
+		}
+		
 		return [
 			'html' => $html,
 			'css' => $request->get_param( 'css' ) ? $request->get_param( 'css' ) : '',
 			'type' => $type,
 			'css_urls' => $all_css_urls,
 			'follow_imports' => $request->get_param( 'followImports' ) ? $request->get_param( 'followImports' ) : false,
-			'options' => $request->get_param( 'options' ) ? $request->get_param( 'options' ) : [],
+			'options' => $options,
 		];
 	}
 
@@ -164,6 +185,24 @@ class Atomic_Widgets_Route {
 
 			if ( ! empty( $selector ) ) {
 				$auto_extracted_css_urls = $this->extract_stylesheet_urls_from_html( $html, $content );
+			} else {
+				$auto_extracted_css_urls = [];
+			}
+
+			if ( $this->is_elementor_website( $html ) ) {
+				error_log( "CSS Variables DEBUG: Elementor website detected, attempting to extract Kit CSS URL" );
+				$elementor_kit_css_url = $this->extract_elementor_kit_css_url_from_post_id( $html, $content );
+				if ( $elementor_kit_css_url && ! in_array( $elementor_kit_css_url, $auto_extracted_css_urls, true ) ) {
+					$auto_extracted_css_urls[] = $elementor_kit_css_url;
+					error_log( "CSS Variables DEBUG: Manually added Elementor Kit CSS URL: $elementor_kit_css_url" );
+				} else {
+					error_log( "CSS Variables DEBUG: Kit CSS URL extraction returned: " . ( $elementor_kit_css_url ?? 'null' ) . ", already in array: " . ( in_array( $elementor_kit_css_url, $auto_extracted_css_urls, true ) ? 'yes' : 'no' ) );
+				}
+			} else {
+				error_log( "CSS Variables DEBUG: Not an Elementor website, skipping Kit CSS extraction" );
+			}
+
+			if ( ! empty( $selector ) ) {
 				$extracted_element = $this->extract_html_by_selector( $html, $selector );
 				$inline_styles = $this->extract_inline_style_tags( $html );
 				return $inline_styles . $extracted_element;
@@ -270,6 +309,7 @@ class Atomic_Widgets_Route {
 	}
 
 	private function extract_stylesheet_urls_from_html( string $html, string $base_url ): array {
+		error_log( "CSS Variables DEBUG: extract_stylesheet_urls_from_html called with base_url: $base_url" );
 		$stylesheet_urls = [];
 
 		preg_match_all( '/<link[^>]+rel=["\']stylesheet["\'][^>]*href=["\']([^"\']+)["\'][^>]*>/i', $html, $link_matches );
@@ -278,9 +318,6 @@ class Atomic_Widgets_Route {
 				$absolute_url = $this->resolve_relative_url( $href, $base_url );
 				$stylesheet_urls[] = $absolute_url;
 			}
-		}
-
-		foreach ( $stylesheet_urls as $index => $url ) {
 		}
 
 		preg_match_all( '/<link[^>]+href=["\']([^"\']+)["\'][^>]*rel=["\']stylesheet["\'][^>]*>/i', $html, $reversed_link_matches );
@@ -293,7 +330,113 @@ class Atomic_Widgets_Route {
 			}
 		}
 
+		$elementor_kit_css = $this->extract_elementor_kit_css_urls( $html, $base_url );
+		foreach ( $elementor_kit_css as $kit_css_url ) {
+			if ( ! in_array( $kit_css_url, $stylesheet_urls, true ) ) {
+				$stylesheet_urls[] = $kit_css_url;
+			}
+		}
+
+		$elementor_kit_urls = array_filter( $stylesheet_urls, function( $url ) {
+			return strpos( $url, '/elementor/css/' ) !== false;
+		} );
+		$elementor_kit_count = count( $elementor_kit_urls );
+		
+		if ( $elementor_kit_count > 0 ) {
+			error_log( "CSS Variables DEBUG: extract_stylesheet_urls_from_html found $elementor_kit_count Elementor Kit CSS URLs out of " . count( $stylesheet_urls ) . " total URLs" );
+			foreach ( $elementor_kit_urls as $kit_url ) {
+				error_log( "CSS Variables DEBUG: Kit CSS URL: $kit_url" );
+			}
+		} else {
+			error_log( "CSS Variables DEBUG: extract_stylesheet_urls_from_html found " . count( $stylesheet_urls ) . " CSS URLs, but NO Elementor Kit CSS URLs" );
+			error_log( "CSS Variables DEBUG: Sample URLs: " . implode( ', ', array_slice( $stylesheet_urls, 0, 5 ) ) );
+		}
+
 		return $stylesheet_urls;
+	}
+
+	private function extract_elementor_kit_css_urls( string $html, string $base_url ): array {
+		$kit_css_urls = [];
+
+		preg_match_all( '/href=["\']([^"\']*\/wp-content\/uploads\/elementor\/css\/[^"\']+)["\']/i', $html, $matches );
+		if ( ! empty( $matches[1] ) ) {
+			foreach ( $matches[1] as $href ) {
+				$absolute_url = $this->resolve_relative_url( $href, $base_url );
+				if ( ! in_array( $absolute_url, $kit_css_urls, true ) ) {
+					$kit_css_urls[] = $absolute_url;
+					error_log( "CSS Variables DEBUG: Found Elementor Kit CSS URL: $absolute_url" );
+				}
+			}
+		}
+
+		$parsed_base = wp_parse_url( $base_url );
+		$host = $parsed_base['host'] ?? '';
+		$scheme = $parsed_base['scheme'] ?? 'https';
+		
+		preg_match_all( '/href=["\']([^"\']*\/elementor\/css\/[^"\']+)["\']/i', $html, $relative_matches );
+		if ( ! empty( $relative_matches[1] ) ) {
+			foreach ( $relative_matches[1] as $href ) {
+				$absolute_url = $this->resolve_relative_url( $href, $base_url );
+				if ( strpos( $absolute_url, '/elementor/css/' ) !== false && ! in_array( $absolute_url, $kit_css_urls, true ) ) {
+					$kit_css_urls[] = $absolute_url;
+					error_log( "CSS Variables DEBUG: Found Elementor Kit CSS URL (relative): $absolute_url" );
+				}
+			}
+		}
+
+		return $kit_css_urls;
+	}
+
+	private function is_elementor_website( string $html ): bool {
+		$elementor_markers = [
+			'/wp-content/uploads/elementor/css/',
+			'/wp-content/plugins/elementor/',
+			'elementor-post-',
+			'elementor-kit-',
+			'class="elementor',
+			'data-elementor',
+		];
+
+		foreach ( $elementor_markers as $marker ) {
+			if ( false !== strpos( $html, $marker ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function extract_elementor_kit_css_url_from_post_id( string $html, string $base_url ): ?string {
+		$post_id = null;
+
+		preg_match( '/id=["\']elementor-post-(\d+)-css["\']/i', $html, $id_matches );
+		if ( ! empty( $id_matches[1] ) ) {
+			$post_id = (int) $id_matches[1];
+			error_log( "CSS Variables DEBUG: Found post ID from id attribute: $post_id" );
+		}
+
+		if ( ! $post_id ) {
+			preg_match( '/\/wp-content\/uploads\/elementor\/css\/post-(\d+)\.css/i', $html, $url_matches );
+			if ( ! empty( $url_matches[1] ) ) {
+				$post_id = (int) $url_matches[1];
+				error_log( "CSS Variables DEBUG: Found post ID from URL pattern: $post_id" );
+			}
+		}
+
+		if ( ! $post_id ) {
+			error_log( "CSS Variables DEBUG: Could not extract post ID from HTML. HTML snippet: " . substr( $html, 0, 1000 ) );
+			return null;
+		}
+
+		$parsed_base = wp_parse_url( $base_url );
+		$scheme = $parsed_base['scheme'] ?? 'https';
+		$host = $parsed_base['host'] ?? '';
+
+		$kit_css_url = $scheme . '://' . $host . '/wp-content/uploads/elementor/css/post-' . $post_id . '.css';
+
+		error_log( "CSS Variables DEBUG: Extracted post ID $post_id from HTML, constructed Kit CSS URL: $kit_css_url" );
+
+		return $kit_css_url;
 	}
 
 	private function resolve_relative_url( string $url, string $base_url ): string {

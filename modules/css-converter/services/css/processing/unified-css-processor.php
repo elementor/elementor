@@ -1057,7 +1057,28 @@ class Unified_Css_Processor {
 				}
 			}
 
-			// Extract CSS variable definitions from :root, body, and html selectors
+			$selector_strings = array_map( function( $s ) {
+				return (string) $s;
+			}, $selectors );
+			
+			$hasElementorKit = false;
+			foreach ( $selector_strings as $sel_str ) {
+				if ( strpos( $sel_str, 'elementor-kit' ) !== false ) {
+					$hasElementorKit = true;
+					$varDeclarationCount = 0;
+					foreach ( $declarations as $decl ) {
+						if ( method_exists( $decl, 'getRule' ) ) {
+							$prop = $decl->getRule();
+							if ( strpos( $prop, '--' ) === 0 ) {
+								$varDeclarationCount++;
+							}
+						}
+					}
+					error_log( "CSS Variables DEBUG: Processing selector with elementor-kit: '$sel_str' with " . count( $declarations ) . " total declarations, $varDeclarationCount CSS variable declarations" );
+					break;
+				}
+			}
+			
 			$this->extract_css_variable_definitions( $selectors, $declarations );
 
 			$extracted_rules = $this->extract_rules_from_selectors( $selectors, $declarations );
@@ -1145,8 +1166,13 @@ class Unified_Css_Processor {
 			}
 		}
 
-		// Fetch CSS from external URLs (process FIRST for correct cascade)
 		foreach ( $css_urls as $css_url ) {
+			$is_elementor_kit_css = strpos( $css_url, '/elementor/css/' ) !== false;
+			
+			if ( $is_elementor_kit_css ) {
+				error_log( "CSS Variables DEBUG: Fetching Elementor Kit CSS: $css_url" );
+			}
+			
 			$response = wp_remote_get( $css_url, [
 				'timeout' => 30,
 				'sslverify' => false,
@@ -1154,7 +1180,19 @@ class Unified_Css_Processor {
 			if ( ! is_wp_error( $response ) ) {
 				$css_content = wp_remote_retrieve_body( $response );
 				
-				// DEBUG: Check if this CSS file contains reset styles (multiple patterns)
+				if ( $is_elementor_kit_css ) {
+					$has_e_global_vars = preg_match( '/--e-global-[^:]+:/', $css_content );
+					$has_ec_global_vars = preg_match( '/--ec-global-[^:]+:/', $css_content );
+					$content_size = strlen( $css_content );
+					error_log( "CSS Variables DEBUG: Elementor Kit CSS fetched: size=$content_size, has --e-global- vars: " . ( $has_e_global_vars ? 'yes' : 'no' ) . ", has --ec-global- vars: " . ( $has_ec_global_vars ? 'yes' : 'no' ) );
+					if ( $has_e_global_vars ) {
+						preg_match_all( '/(--e-global-[^:]+):\s*([^;]+);/', $css_content, $var_matches );
+						if ( ! empty( $var_matches[1] ) ) {
+							error_log( "CSS Variables DEBUG: Found " . count( $var_matches[1] ) . " --e-global- variables in Kit CSS. Sample: " . $var_matches[1][0] . " = " . $var_matches[2][0] );
+						}
+					}
+				}
+				
 				$reset_patterns = [
 					'html, body, div, span',
 					'html,body,div,span',
@@ -1230,12 +1268,25 @@ class Unified_Css_Processor {
 			}
 
 			try {
-				// FIXED: Sanitize CSS to remove common CSS hacks before parsing
 				$sanitized_content = $this->sanitize_css_for_parsing( $content );
+				// $sanitized_content = $this->rename_elementor_css_variables( $sanitized_content );
 				
-				// Test parse CSS to ensure it's valid
 				if ( null !== $this->css_parser ) {
-					$test_parse = $this->css_parser->parse( $sanitized_content );
+					try {
+						$parsed = $this->css_parser->parse( $sanitized_content );
+						$document = $parsed->get_document();
+						$format = \Sabberworm\CSS\OutputFormat::createPretty();
+						$beautified_content = $document->render( $format );
+						$sanitized_content = $beautified_content;
+					} catch ( \Exception $beautify_error ) {
+						error_log( "CSS Beautification failed for source: $source_name - " . $beautify_error->getMessage() );
+						try {
+							$test_parse = $this->css_parser->parse( $sanitized_content );
+						} catch ( \Exception $parse_error ) {
+							error_log( "CSS Parsing also failed after beautification error: " . $parse_error->getMessage() );
+							throw $parse_error;
+						}
+					}
 				}
 
 				$successful_css .= $sanitized_content . "\n";
@@ -1719,14 +1770,9 @@ class Unified_Css_Processor {
 	}
 
 	private function extract_css_variable_definitions( array $selectors, array $declarations ): void {
-		// Check if this rule set contains CSS variable definitions
 		foreach ( $selectors as $selector ) {
 			$selector_string = (string) $selector;
-
-			// Look for :root, body, html, or other selectors that might define CSS variables
-			if ( $this->is_css_variable_definition_selector( $selector_string ) ) {
-				$this->process_css_variable_declarations( $selector_string, $declarations );
-			}
+			$this->process_css_variable_declarations( $selector_string, $declarations );
 		}
 	}
 
@@ -1758,54 +1804,100 @@ class Unified_Css_Processor {
 	}
 
 	private function process_css_variable_declarations( string $selector, array $declarations ): void {
-		foreach ( $declarations as $declaration ) {
+		$isKitSelector = strpos( $selector, 'elementor-kit' ) !== false;
+		
+		if ( $isKitSelector ) {
+			error_log( "CSS Variables DEBUG: Processing Kit selector '$selector' with " . count( $declarations ) . " declarations" );
+		}
+		
+		foreach ( $declarations as $index => $declaration ) {
 			if ( ! $this->is_valid_declaration( $declaration ) ) {
+				if ( $isKitSelector ) {
+					error_log( "CSS Variables DEBUG: Declaration $index is invalid" );
+				}
 				continue;
 			}
 
 			$property = $declaration->getRule();
 			$value = (string) $declaration->getValue();
+			
+			if ( $isKitSelector && $index < 5 ) {
+				error_log( "CSS Variables DEBUG: Kit selector declaration $index: property='$property', value='" . substr( $value, 0, 50 ) . "', value_empty=" . ( empty( $value ) ? 'yes' : 'no' ) );
+			}
 
-			// Check if this is a CSS variable definition (starts with --)
 			if ( 0 === strpos( $property, '--' ) ) {
+				if ( $isKitSelector || strpos( $property, 'ec-global' ) !== false || strpos( $property, 'e-global' ) !== false ) {
+					error_log( "CSS Variables DEBUG: Found definition in selector '$selector': $property = '$value' (empty: " . ( empty( $value ) ? 'yes' : 'no' ) . ")" );
+				}
 				$this->store_css_variable_definition( $property, $value, $selector );
+			} else {
+				$this->extract_variable_references_from_value( $value, $selector );
+			}
+		}
+	}
+
+	private function extract_variable_references_from_value( string $value, string $selector ): void {
+		if ( preg_match_all( '/var\s*\(\s*(--[a-zA-Z0-9_-]+)/', $value, $matches ) ) {
+			foreach ( $matches[1] as $variable_name ) {
+				$variable_name = trim( $variable_name );
+				
+				if ( strpos( $variable_name, 'ec-global' ) !== false ) {
+					error_log( "CSS Variables DEBUG: Found reference to '$variable_name' in selector '$selector', value: $value" );
+				}
+				
+				if ( ! isset( $this->css_variable_definitions[ $variable_name ] ) ) {
+					$this->css_variable_definitions[ $variable_name ] = [
+						'name' => $variable_name,
+						'value' => '',
+						'selector' => $selector,
+						'source' => 'extracted_from_reference',
+					];
+					if ( strpos( $variable_name, 'ec-global' ) !== false ) {
+						error_log( "CSS Variables DEBUG: Created reference entry for '$variable_name' (no value yet)" );
+					}
+				}
 			}
 		}
 	}
 
 	private function store_css_variable_definition( string $variable_name, string $value, string $selector ): void {
-		// Only store Elementor global variables to avoid bloat
-		if ( $this->should_preserve_css_variable( $variable_name ) ) {
+		if ( empty( $value ) ) {
+			return;
+		}
+
+		$isEcGlobal = strpos( $variable_name, 'ec-global' ) !== false;
+
+		if ( ! isset( $this->css_variable_definitions[ $variable_name ] ) ) {
 			$this->css_variable_definitions[ $variable_name ] = [
 				'name' => $variable_name,
 				'value' => $value,
 				'selector' => $selector,
 				'source' => 'extracted_from_css',
 			];
-
+			if ( $isEcGlobal ) {
+				error_log( "CSS Variables DEBUG: Stored NEW definition for '$variable_name' = '$value' from selector '$selector'" );
+			}
+		} elseif ( empty( $this->css_variable_definitions[ $variable_name ]['value'] ) || $this->css_variable_definitions[ $variable_name ]['source'] === 'extracted_from_reference' ) {
+			$oldSource = $this->css_variable_definitions[ $variable_name ]['source'];
+			$this->css_variable_definitions[ $variable_name ]['value'] = $value;
+			$this->css_variable_definitions[ $variable_name ]['source'] = 'extracted_from_css';
+			if ( empty( $this->css_variable_definitions[ $variable_name ]['selector'] ) || $this->css_variable_definitions[ $variable_name ]['selector'] === $selector ) {
+				$this->css_variable_definitions[ $variable_name ]['selector'] = $selector;
+			}
+			if ( $isEcGlobal ) {
+				error_log( "CSS Variables DEBUG: UPDATED definition for '$variable_name' = '$value' (was: source=$oldSource, had_empty_value=" . ( empty( $this->css_variable_definitions[ $variable_name ]['value'] ) ? 'yes' : 'no' ) . ")" );
+			}
+		} elseif ( $isEcGlobal ) {
+			error_log( "CSS Variables DEBUG: Skipped storing definition for '$variable_name' (already exists with value)" );
 		}
-	}
-
-	private function should_preserve_css_variable( string $var_name ): bool {
-		// Always preserve Elementor global variables
-		if ( false !== strpos( $var_name, '--e-global-' ) ) {
-			return true;
-		}
-
-		if ( false !== strpos( $var_name, '--elementor-' ) ) {
-			return true;
-		}
-
-		// Preserve Elementor theme variables
-		if ( false !== strpos( $var_name, '--e-theme-' ) ) {
-			return true;
-		}
-
-		return false;
 	}
 
 	public function get_css_variable_definitions(): array {
 		return $this->css_variable_definitions;
+	}
+
+	private function rename_elementor_css_variables( string $css ): string {
+		return preg_replace( '/--e-global-/', '--ec-global-', $css );
 	}
 
 	/**
@@ -2071,3 +2163,4 @@ class Unified_Css_Processor {
 		return isset( $global_classes_rules['flattening']['rules'] ) ? $global_classes_rules['flattening']['rules'] : $context->get_metadata( 'flattened_rules', [] );
 	}
 }
+

@@ -62,6 +62,7 @@ class Atomic_Widget_Data_Formatter {
 	}
 	private function extract_atomic_props_from_resolved_styles( array $resolved_styles ): array {
 		$atomic_props = [];
+		
 		foreach ( $resolved_styles as $property => $style_data ) {
 			if ( isset( $style_data['converted_property'] ) && is_array( $style_data['converted_property'] ) ) {
 				$converted_property = $style_data['converted_property'];
@@ -79,6 +80,7 @@ class Atomic_Widget_Data_Formatter {
 				}
 			}
 		}
+		
 		return $atomic_props;
 	}
 	private function create_unified_style_definition( string $class_id, array $atomic_props ): array {

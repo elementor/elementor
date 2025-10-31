@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Variables_Registration_Service {
 
 	const SOURCE_CSS_CONVERTER = 'css-converter';
-	const MAX_VARIABLES_LIMIT = 50;
 	const DEFAULT_UPDATE_MODE = 'create_new';
 
 	private $update_mode;
@@ -43,6 +42,7 @@ class Variables_Registration_Service {
 
 		$items = $repository->variables();
 		$existing_names = $this->extract_existing_names( $items );
+		$non_deleted_count = $this->count_non_deleted_variables( $items );
 
 		$result = $this->filter_new_variables_with_duplicate_detection( $converted_variables, $existing_names, $items );
 		$new_variables = $result['new_variables'];
@@ -57,13 +57,26 @@ class Variables_Registration_Service {
 				'reason' => 'All variables already exist or no valid variables',
 				'variable_name_mappings' => $variable_name_mappings,
 				'update_mode' => $this->update_mode,
+				'debug' => [
+					'converted_count' => count( $converted_variables ),
+					'existing_count' => count( $existing_names ),
+					'non_deleted_count' => $non_deleted_count,
+					'limit' => \Elementor\Modules\Variables\Storage\Repository::TOTAL_VARIABLES_COUNT,
+					'available_slots' => \Elementor\Modules\Variables\Storage\Repository::TOTAL_VARIABLES_COUNT - $non_deleted_count,
+				],
 			];
 		}
 
-		$variables_after_limit = $this->apply_variables_limit( $new_variables, count( $items ) );
+		$variables_after_limit = $this->apply_variables_limit( $new_variables, $non_deleted_count );
+		
+		if ( count( $variables_after_limit ) < count( $new_variables ) ) {
+			$max_limit = \Elementor\Modules\Variables\Storage\Repository::TOTAL_VARIABLES_COUNT;
+			error_log( "Variables Registration: Limited variables from " . count( $new_variables ) . " to " . count( $variables_after_limit ) . " (available slots: " . ( $max_limit - $non_deleted_count ) . ")" );
+		}
 
 		$registered = 0;
 		$skipped = count( $converted_variables ) - count( $variables_after_limit );
+		$errors = [];
 
 		foreach ( $variables_after_limit as $variable_name => $variable_data ) {
 			$variable_config = $this->create_variable_config( $variable_name, $variable_data );
@@ -73,7 +86,13 @@ class Variables_Registration_Service {
 				$registered++;
 			} catch ( \Exception $e ) {
 				$skipped++;
+				$errors[] = "Failed to create variable '$variable_name': " . $e->getMessage();
+				error_log( "Variables Registration Error: Failed to create variable '$variable_name' - " . $e->getMessage() );
 			}
+		}
+		
+		if ( $registered === 0 && ! empty( $variables_after_limit ) ) {
+			error_log( "Variables Registration: No variables registered! Count: " . count( $variables_after_limit ) . ", Errors: " . count( $errors ) );
 		}
 
 		return [
@@ -82,6 +101,16 @@ class Variables_Registration_Service {
 			'reused' => $reused_count,
 			'variable_name_mappings' => $variable_name_mappings,
 			'update_mode' => $this->update_mode,
+			'errors' => $errors,
+			'debug' => [
+				'converted_count' => count( $converted_variables ),
+				'new_variables_count' => count( $new_variables ),
+				'after_limit_count' => count( $variables_after_limit ),
+				'existing_count' => count( $existing_names ),
+				'non_deleted_count' => $non_deleted_count,
+				'limit' => \Elementor\Modules\Variables\Storage\Repository::TOTAL_VARIABLES_COUNT,
+				'available_slots' => \Elementor\Modules\Variables\Storage\Repository::TOTAL_VARIABLES_COUNT - $non_deleted_count,
+			],
 		];
 	}
 
@@ -107,11 +136,25 @@ class Variables_Registration_Service {
 	private function extract_existing_names( array $items ): array {
 		$names = [];
 		foreach ( $items as $item_id => $item_data ) {
+			if ( isset( $item_data['deleted'] ) && $item_data['deleted'] ) {
+				continue;
+			}
 			if ( isset( $item_data['label'] ) ) {
 				$names[] = $item_data['label'];
 			}
 		}
 		return $names;
+	}
+
+	private function count_non_deleted_variables( array $items ): int {
+		$count = 0;
+		foreach ( $items as $item_id => $item_data ) {
+			if ( ! isset( $item_data['deleted'] ) || ! $item_data['deleted'] ) {
+				$count++;
+			}
+		}
+		error_log( "Variables Registration: count_non_deleted_variables - total items: " . count( $items ) . ", non-deleted: $count" );
+		return $count;
 	}
 
 	private function filter_new_variables_with_duplicate_detection( array $converted_variables, array $existing_names, array $existing_items ): array {
@@ -126,6 +169,7 @@ class Variables_Registration_Service {
 
 			// Check for duplicate variable name
 			if ( in_array( $variable_name, $existing_names, true ) ) {
+				error_log( "Variables Registration: Duplicate detected: '$variable_name' exists in repository" );
 				// Duplicate detected - handle it
 				$final_variable_name = $this->handle_duplicate_variable( $variable_name, $variable_data, $existing_items );
 				
@@ -146,6 +190,8 @@ class Variables_Registration_Service {
 			$new_variables[ $variable_name ] = $variable_data;
 			$variable_name_mappings[ $variable_name ] = $variable_name; // No change in name
 		}
+
+		error_log( "Variables Registration: filter_new_variables - converted: " . count( $converted_variables ) . ", new: " . count( $new_variables ) . ", reused: $reused_count" );
 
 		return [
 			'new_variables' => $new_variables,
@@ -169,12 +215,16 @@ class Variables_Registration_Service {
 		// Compare variable values
 		if ( $this->are_values_identical( $existing_value, $new_value ) ) {
 			// Values are identical - reuse existing variable
+			error_log( "Variables Registration: Values identical for '$variable_name': existing='$existing_value', new='$new_value'" );
 			return null;
 		}
+
+		error_log( "Variables Registration: Values different for '$variable_name': existing='$existing_value', new='$new_value', update_mode='{$this->update_mode}'" );
 
 		// Handle different update modes
 		if ( 'update' === $this->update_mode ) {
 			// Legacy mode: update existing variable in place
+			error_log( "Variables Registration: Updating existing variable '$variable_name'" );
 			$this->update_existing_variable( $existing_variable, $variable_data );
 			return null; // Don't create new, updated existing
 		}
@@ -227,9 +277,38 @@ class Variables_Registration_Service {
 	}
 
 	private function update_existing_variable( array $existing_variable, array $new_variable_data ): void {
-		// This would update the existing variable in the repository
-		// Implementation depends on the Variables Repository API
-		// For now, we'll just track that this happened
+		$repository = $this->get_variables_repository();
+		if ( ! $repository ) {
+			return;
+		}
+
+		// Find the variable ID from the existing variable data
+		$variable_id = null;
+		$items = $repository->variables();
+		
+		foreach ( $items as $item_id => $item_data ) {
+			if ( $item_data === $existing_variable ) {
+				$variable_id = $item_id;
+				break;
+			}
+		}
+
+		if ( ! $variable_id ) {
+			error_log( "Variables Registration: Could not find variable ID for update" );
+			return;
+		}
+
+		// Update the variable value in the repository
+		try {
+			$updated_data = array_merge( $existing_variable, [
+				'value' => $new_variable_data['value'],
+			] );
+			
+			$repository->update( $variable_id, $updated_data );
+			error_log( "Variables Registration: Updated variable '$variable_id' with new value: " . $new_variable_data['value'] );
+		} catch ( \Exception $e ) {
+			error_log( "Variables Registration: Failed to update variable '$variable_id': " . $e->getMessage() );
+		}
 	}
 
 	private function find_next_available_suffix( string $base_name, array $existing_items ): string {
@@ -252,7 +331,8 @@ class Variables_Registration_Service {
 	}
 
 	private function apply_variables_limit( array $new_variables, int $existing_count ): array {
-		$available_slots = self::MAX_VARIABLES_LIMIT - $existing_count;
+		$max_limit = \Elementor\Modules\Variables\Storage\Repository::TOTAL_VARIABLES_COUNT;
+		$available_slots = $max_limit - $existing_count;
 
 		if ( $available_slots <= 0 ) {
 			return [];
