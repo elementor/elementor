@@ -1,7 +1,7 @@
 .experiment202-variant-b .e-onboarding {
 
         &__progress-bar {
-                margin-block-end: 100px;
+                margin-block-end: 85px;
         }
 
         &__page-content--experiment-202 {
@@ -15,7 +15,7 @@
         }
 
         &__page-content-header {
-                margin-block-end: 44px;
+                margin-block-end: 48px;
         }
 
         &__page-content-title {
@@ -38,11 +38,13 @@
         }
 
         &__features-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
                 gap: 60px;
                 width: 100%;
-                margin-block-end: 150px;
+                padding-block-end: 150px;
+                min-height: 280px;
         }
 
         &__feature-item {
@@ -51,6 +53,14 @@
                 align-items: center;
                 text-align: center;
                 gap: 8px;
+                max-width: 280px;
+
+                &:last-of-type {
+
+                        .e-onboarding__feature-description {
+                                max-width: 210px;
+                        }
+                }
         }
 
         &__feature-icon {
@@ -111,15 +121,10 @@
                 justify-content: center;
         }
 
-        &__button-skip {
-                position: absolute;
-                inset-inline-end: 0px;
-        }
-
         &__footnote {
                 display: flex;
-                justify-self: center;
-                width: initial;
+                justify-content: center;
+                width: 100%;
                 color: #3A3F45;
                 text-align: center;
                 font-family: "DM Sans";
@@ -127,15 +132,30 @@
                 font-weight: 600;
                 line-height: 150%;
                 letter-spacing: -0.14px;
-                margin-block: 15px 60px;
+                margin-block: 24px 60px;
 
                 &::before {
                         content: initial;
                 }
         }
+
+        &__notice {
+                display: flex;
+                justify-content: center;
+        }
 }
 
-@media (max-width: 768px) {
+@media screen and (min-width: 769px) {
+        .experiment202-variant-b .e-onboarding {
+
+                &__button-skip {
+                        position: absolute;
+                        inset-inline-end: 30px;
+                }
+        }
+}
+
+@media screen and (max-width: 768px) {
         .experiment202-variant-b .e-onboarding {
 
                 &__page-content--experiment-202 {
@@ -149,7 +169,7 @@
                 &__features-grid {
                         grid-template-columns: 1fr;
                         gap: 40px;
-                        margin-block-end: 40px;
+                        padding-block-end: 60px;
                 }
 
                 &__feature-title {
@@ -171,7 +191,7 @@
                         flex-wrap: wrap;
                         justify-content: center;
                         gap: 40px 60px;
-                        margin-block-end: 40px;
+                        padding-block-end: 60px;
                 }
 
                 &__feature-description {
