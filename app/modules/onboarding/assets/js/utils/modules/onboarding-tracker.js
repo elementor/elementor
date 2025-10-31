@@ -364,25 +364,6 @@ class OnboardingTracker {
 		return allFeatures;
 	}
 
-	sendThemeChoiceEvent( currentStep, themeValue ) {
-		this.trackStepAction( 2, 'theme_choice', {
-			theme: themeValue,
-		} );
-
-		if ( EventDispatcher.canSendEvents() ) {
-			const payload = EventDispatcher.createStepEventPayload(
-				2,
-				ONBOARDING_STEP_NAMES.HELLO_BIZ,
-				{
-					location: 'plugin_onboarding',
-					trigger: 'theme_selected',
-					theme: themeValue,
-				},
-			);
-			return this.dispatchEventWithoutTrigger( ONBOARDING_EVENTS_MAP.THEME_CHOICE, payload );
-		}
-	}
-
 	sendTopUpgrade( currentStep, upgradeClicked ) {
 		const stepNumber = this.getStepNumber( currentStep );
 		if ( stepNumber ) {

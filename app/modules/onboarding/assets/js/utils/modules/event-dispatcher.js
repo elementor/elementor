@@ -1,7 +1,6 @@
 
 export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
-	THEME_CHOICE: 'core_onboarding_theme_choice',
 	THEME_INSTALLED: 'core_onboarding_s2_theme_installed',
 	THEME_MARKED: 'core_onboarding_s2_theme_marked',
 	CORE_ONBOARDING: 'core_onboarding',

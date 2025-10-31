@@ -130,11 +130,6 @@ export default function HelloTheme() {
 
 		setHelloInstalledInOnboarding( true );
 
-		if ( isVariant201B && selectedTheme ) {
-			const themeValue = 'hello-theme' === selectedTheme ? 'hello' : 'hellobiz';
-			OnboardingEventTracking.sendThemeChoiceEvent( state.currentStep, themeValue );
-		}
-
 		const installedThemeValue = selectedTheme && 'hello-theme' === selectedTheme ? 'hello' : 'hellobiz';
 		OnboardingEventTracking.sendThemeInstalled( installedThemeValue );
 
@@ -212,8 +207,6 @@ export default function HelloTheme() {
 
 		if ( isVariant201B ) {
 			OnboardingEventTracking.sendThemeMarked( themeValue );
-		} else {
-			OnboardingEventTracking.sendThemeChoiceEvent( state.currentStep, themeValue );
 		}
 	};
 
