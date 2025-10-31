@@ -32,3 +32,31 @@
 		}
 	}
 }
+
+@media screen and (max-width: 1100px) {
+	.e-onboarding {
+
+		&__page-content {
+
+			&-end {
+
+				img {
+					display: none;
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.e-onboarding {
+
+		&__page-content-section-title {
+			font-size: 28px;
+		}
+
+		&__page-content-section-text {
+			font-size: 14px;
+		}
+	}
+}
