@@ -12,7 +12,7 @@ import {
 	useElementChildren,
 	useElementEditorSettings,
 } from '@elementor/editor-elements';
-import { type CreateOptions, stringPropTypeUtil } from '@elementor/editor-props';
+import { type CreateOptions, numberPropTypeUtil } from '@elementor/editor-props';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, Chip, Infotip, type InfotipProps, Stack, Switch, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -44,12 +44,13 @@ export const TabsControl = ( { label }: { label: string } ) => {
 	const tabList = getElementByType( element.id, TAB_MENU_ELEMENT_TYPE );
 	const tabContentArea = getElementByType( element.id, TAB_CONTENT_AREA_ELEMENT_TYPE );
 
-	const repeaterValues: RepeaterItem< TabItem >[] = tabLinks.map( ( tabLink ) => {
+	const repeaterValues: RepeaterItem< TabItem >[] = tabLinks.map( ( tabLink, index ) => {
 		const { title: titleSetting } = getElementEditorSettings( tabLink.id ) ?? {};
 
 		return {
 			id: tabLink.id,
 			title: titleSetting,
+			index,
 		};
 	} );
 
@@ -67,13 +68,13 @@ export const TabsControl = ( { label }: { label: string } ) => {
 		if ( meta?.action?.type === 'remove' ) {
 			const items = meta.action.payload;
 
-			return removeItem( { items } );
+			return removeItem( { items, tabContentAreaId: tabContentArea.id } );
 		}
 
 		if ( meta?.action?.type === 'duplicate' ) {
 			const items = meta.action.payload;
 
-			return duplicateItem( { items } );
+			return duplicateItem( { items, tabContentAreaId: tabContentArea.id } );
 		}
 
 		if ( meta?.action?.type === 'reorder' ) {
@@ -84,6 +85,7 @@ export const TabsControl = ( { label }: { label: string } ) => {
 				tabsMenuId: tabList.id,
 				tabContentAreaId: tabContentArea.id,
 				movedElementId: tabLinks[ from ].id,
+				movedElementIndex: from,
 			} );
 		}
 	};
@@ -106,7 +108,7 @@ export const TabsControl = ( { label }: { label: string } ) => {
 	);
 };
 
-const ItemLabel = ( { value }: { value: TabItem } ) => {
+const ItemLabel = ( { value, index }: { value: TabItem; index: number } ) => {
 	const id = value.id ?? '';
 
 	const editorSettings = useElementEditorSettings( id );
@@ -117,17 +119,16 @@ const ItemLabel = ( { value }: { value: TabItem } ) => {
 		<Stack sx={ { minHeight: 20 } } direction="row" alignItems="center" gap={ 1.5 }>
 			<span>{ elementTitle }</span>
 			<SettingsField bind="default-active-tab" propDisplayName={ __( 'Tabs', 'elementor' ) }>
-				<ItemDefaultTab value={ value } />
+				<ItemDefaultTab index={ index } />
 			</SettingsField>
 		</Stack>
 	);
 };
 
-const ItemDefaultTab = ( { value }: { value: TabItem } ) => {
-	const id = value.id ?? '';
-	const { value: defaultItem } = useBoundProp( stringPropTypeUtil );
+const ItemDefaultTab = ( { index }: { index: number } ) => {
+	const { value: defaultItem } = useBoundProp( numberPropTypeUtil );
 
-	const isDefault = defaultItem === id;
+	const isDefault = defaultItem === index;
 
 	if ( ! isDefault ) {
 		return null;
@@ -136,7 +137,7 @@ const ItemDefaultTab = ( { value }: { value: TabItem } ) => {
 	return <Chip size="tiny" shape="rounded" label={ __( 'Default', 'elementor' ) } />;
 };
 
-const ItemContent = ( { value }: { value: TabItem } ) => {
+const ItemContent = ( { value, index }: { value: TabItem; index: number } ) => {
 	if ( ! value.id ) {
 		return null;
 	}
@@ -145,16 +146,16 @@ const ItemContent = ( { value }: { value: TabItem } ) => {
 		<Stack p={ 2 } gap={ 1.5 }>
 			<TabLabelControl elementId={ value.id } />
 			<SettingsField bind="default-active-tab" propDisplayName={ __( 'Tabs', 'elementor' ) }>
-				<DefaultTabControl elementId={ value.id } />
+				<DefaultTabControl tabIndex={ index } />
 			</SettingsField>
 		</Stack>
 	);
 };
 
-const DefaultTabControl = ( { elementId }: { elementId: string } ) => {
-	const { value, setValue } = useBoundProp( stringPropTypeUtil );
+const DefaultTabControl = ( { tabIndex }: { tabIndex: number } ) => {
+	const { value, setValue } = useBoundProp( numberPropTypeUtil );
 
-	const isDefault = value === elementId;
+	const isDefault = value === tabIndex;
 
 	return (
 		<Stack direction="row" alignItems="center" justifyContent="space-between" gap={ 2 }>
@@ -165,7 +166,7 @@ const DefaultTabControl = ( { elementId }: { elementId: string } ) => {
 					checked={ isDefault }
 					disabled={ isDefault }
 					onChange={ ( { target }: React.ChangeEvent< HTMLInputElement > ) => {
-						setValue( target.checked ? elementId : null );
+						setValue( target.checked ? tabIndex : null );
 					} }
 					inputProps={ {
 						...( isDefault ? { style: { opacity: 0, cursor: 'not-allowed' } } : {} ),
