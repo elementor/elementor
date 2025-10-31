@@ -8,6 +8,7 @@ import { WIDGET_CONFIGS, FONT_FAMILIES } from './typography-constants';
 import { DriverFactory } from '../../../../drivers/driver-factory';
 import type { EditorDriver } from '../../../../drivers/editor-driver';
 import { timeouts } from '../../../../config/timeouts';
+import { wpCli } from '../../../../assets/wp-cli';
 
 const TEST_FONTS = {
 	SYSTEM_DEFAULT: FONT_FAMILIES.system,
@@ -18,8 +19,8 @@ test.describe( 'V4 Typography Font Family Tests @v4-tests', () => {
 	let driver: EditorDriver;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests );
-		await driver.wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 	} );
 
 	test.afterAll( async () => {
