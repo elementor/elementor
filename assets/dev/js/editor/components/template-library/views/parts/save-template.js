@@ -73,6 +73,12 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary[ `${ context }Modal` ],
 		} );
 
+		elementor.templates.eventManager.sendPageViewEvent( {
+			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.sessionReplayStart,
+		} );
+
+		elementor.templates.eventManager.startSessionRecording();
+
 		const context = this.getOption( 'context' );
 
 		if ( SAVE_CONTEXTS.SAVE === context ) {

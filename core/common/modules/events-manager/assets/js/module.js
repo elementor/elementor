@@ -7,7 +7,7 @@ export default class extends elementorModules.Module {
 	onInit() {
 		this.config = eventsConfig;
 
-		mixpanel.init( elementorCommon.config.editor_events?.token, { persistence: 'localStorage', autocapture: false } );
+		mixpanel.init( elementorCommon.config.editor_events?.token, { persistence: 'localStorage', autocapture: false, record_sessions_percent: 0, record_idle_timeout_ms: 300000, record_max_ms: 300000 } );
 
 		if ( elementorCommon.config.editor_events?.can_send_events ) {
 			this.enableTracking();
@@ -60,5 +60,25 @@ export default class extends elementorModules.Module {
 				...eventData,
 			},
 		);
+	}
+
+	startSessionRecording() {
+		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
+			return;
+		}
+
+		if ( ! this.trackingEnabled ) {
+			this.enableTracking();
+		}
+
+		mixpanel.start_session_recording();
+	}
+
+	stopSessionRecording() {
+		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
+			return;
+		}
+
+		mixpanel.stop_session_recording();
 	}
 }

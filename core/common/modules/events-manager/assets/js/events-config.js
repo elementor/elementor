@@ -80,6 +80,7 @@ const eventsConfig = {
 			cloudTabUpgrade: 'Cloud Tab - Upgrade',
 			morePopup: 'Context Menu',
 			quotaBar: 'Quota Bar',
+			sessionRecordingStart: 'ctemplates_session_replay_start',
 		},
 		kitLibrary: {
 			cloudKitLibrary: 'kits_cloud_library',

@@ -150,5 +150,13 @@ export class EventManager {
 			...data,
 		} );
 	}
+
+	startSessionRecording() {
+		return elementorCommon.eventsManager.startSessionRecording();
+	}
+
+	stopSessionRecording() {
+		return elementorCommon.eventsManager.stopSessionRecording();
+	}
 }
 
