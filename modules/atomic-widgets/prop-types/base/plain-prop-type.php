@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 
-use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 
@@ -19,6 +18,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Required_Setting;
 	use Concerns\Has_Settings;
 	use Concerns\Has_Transformable_Validation;
+	use Concerns\Has_Initial_Value;
 
 	private ?array $dependencies = null;
 
@@ -58,6 +58,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 			'meta' => (object) $this->get_meta(),
 			'settings' => (object) $this->get_settings(),
 			'dependencies' => $this->get_dependencies(),
+			'initial_value' => $this->get_initial_value(),
 		];
 	}
 
