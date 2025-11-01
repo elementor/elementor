@@ -27,5 +27,12 @@ export type Element = V1ElementModelProps & {
 };
 
 export type ExtendedWindow = Window & {
-	elementorCommon: Record< string, unknown >;
+	elementorCommon: Record< string, unknown > & {
+		eventsManager: {
+			config: {
+				locations: Record< string, string >;
+				secondaryLocations: Record< string, string >;
+			};
+		};
+	};
 };

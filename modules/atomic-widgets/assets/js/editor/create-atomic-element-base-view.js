@@ -281,7 +281,7 @@ export default function createAtomicElementBaseView( type ) {
 			} );
 		},
 
-		saveAsComponent( openContextMenuEvent ) {
+		saveAsComponent( openContextMenuEvent, options ) {
 			// Calculate the absolute position where the context menu was opened.
 			const openMenuOriginalEvent = openContextMenuEvent.originalEvent;
 			const iframeRect = elementor.$preview[ 0 ].getBoundingClientRect();
@@ -294,8 +294,9 @@ export default function createAtomicElementBaseView( type ) {
 				'elementor/editor/open-save-as-component-form',
 				{
 					detail: {
-						element: elementor.getContainer( this.model.id ),
+						element: elementor.getContainer( this.model.id ).model.toJSON( { remove: [ 'default' ] } ),
 						anchorPosition,
+						options,
 					},
 				},
 			) );
@@ -374,6 +375,16 @@ export default function createAtomicElementBaseView( type ) {
 									element_type: elType,
 									widget_type: widgetType,
 								} );
+
+								if ( 'e-component' === widgetType ) {
+									const componentName = modelData?.settings?.component?.value;
+									// elementorCommon.eventsManager.dispatchEvent( 'add_component', {
+									// 	location: 'editor_panel',
+									// 	component_name: elementName,
+									// 	component_type: elType,
+									// 	widget_type: widgetType,
+									// } );
+								}
 							}
 						}
 
