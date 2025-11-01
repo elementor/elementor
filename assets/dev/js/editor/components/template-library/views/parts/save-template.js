@@ -74,7 +74,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		} );
 
 		elementor.templates.eventManager.sendPageViewEvent( {
-			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.sessionReplayStart,
+			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.sessionRecordingStart,
 		} );
 
 		elementor.templates.eventManager.startSessionRecording();
