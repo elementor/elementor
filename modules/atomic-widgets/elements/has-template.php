@@ -19,6 +19,7 @@ trait Has_Template {
 
 		$config['twig_main_template'] = $this->get_main_template();
 		$config['twig_templates'] = $this->get_templates_contents();
+
 		return $config;
 	}
 
@@ -39,7 +40,6 @@ trait Has_Template {
 				'type' => $this->get_name(),
 				'settings' => $this->get_atomic_settings(),
 				'base_styles' => $this->get_base_styles_dictionary(),
-				'interactions' => $this->get_interactions_ids(),
 			];
 
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -49,20 +49,6 @@ trait Has_Template {
 				throw $e;
 			}
 		}
-	}
-
-	public function get_interactions_ids() {
-		$animation_ids = [];
-
-		if ( ! empty( $this->interactions ) && is_array( $this->interactions ) ) {
-			foreach ( $this->interactions as $interaction ) {
-				if ( isset( $interaction['animation']['animation_id'] ) ) {
-					$animation_ids[] = $interaction['animation']['animation_id'];
-				}
-			}
-		}
-
-		return $animation_ids;
 	}
 
 	protected function get_templates_contents() {

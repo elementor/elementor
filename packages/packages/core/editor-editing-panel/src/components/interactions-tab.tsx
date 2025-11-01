@@ -1,15 +1,9 @@
 import * as React from 'react';
-import { useElementInteractions } from '@elementor/editor-elements';
 import { SwipeIcon } from '@elementor/icons';
-import { SessionStorageProvider } from '@elementor/session';
 import { Button, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { InteractionsSection } from '../components/interactions-sections/interactions-section';
-import { useElement } from '../contexts/element-context';
-import { SectionsList } from './sections-list';
-
-const EmptyState = ( { onCreateInteraction }: { onCreateInteraction: () => void } ) => {
+export const InteractionsTab = () => {
 	return (
 		<Stack
 			alignItems="center"
@@ -32,42 +26,9 @@ const EmptyState = ( { onCreateInteraction }: { onCreateInteraction: () => void 
 				) }
 			</Typography>
 
-			<Button variant="outlined" color="secondary" size="small" sx={ { mt: 1 } } onClick={ onCreateInteraction }>
+			<Button variant="outlined" color="secondary" size="small" sx={ { mt: 1 } }>
 				{ __( 'Create an interaction', 'elementor' ) }
 			</Button>
 		</Stack>
-	);
-};
-
-export const InteractionsTab = () => {
-	const { element } = useElement();
-	const interactions = useElementInteractions( element.id );
-
-	const [ showInteractions, setShowInteractions ] = React.useState( false );
-
-	const hasInteractions = ( () => {
-		if ( ! interactions || typeof interactions !== 'string' ) {
-			return false;
-		}
-
-		try {
-			const parsed = JSON.parse( interactions );
-			return Array.isArray( parsed ) && parsed.length > 0;
-		} catch {
-			return false;
-		}
-	} )();
-	const shouldShowInteractions = hasInteractions || showInteractions;
-
-	return (
-		<SessionStorageProvider prefix={ element.id }>
-			{ shouldShowInteractions ? (
-				<SectionsList>
-					<InteractionsSection />
-				</SectionsList>
-			) : (
-				<EmptyState onCreateInteraction={ () => setShowInteractions( true ) } />
-			) }
-		</SessionStorageProvider>
 	);
 };
