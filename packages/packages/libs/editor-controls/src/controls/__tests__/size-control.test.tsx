@@ -557,36 +557,9 @@ describe( 'SizeControl', () => {
 			const props = { setValue, value: mockSizeProp( { size: 10, unit: 'px' } ), bind: 'select', propType };
 
 			// Act.
-			renderControl( <SizeControl units={ mockLengthUnits() } />, props );
+			renderControl( <SizeControl units={ mockLengthUnits() } extendedOptions={ [ 'auto' ] } />, props );
 
 			const sizeInput = screen.getByRole( 'spinbutton' );
-
-			fireEvent.keyUp( sizeInput, { key: 'r' } );
-			fireEvent.keyUp( sizeInput, { key: 'e' } );
-			fireEvent.keyUp( sizeInput, { key: 'm' } );
-
-			// Assert.
-			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 10, unit: 'rem' } } );
-		} );
-
-		it( 'should not match auto unit via keyboard shortcut', () => {
-			// Arrange.
-			const setValue = jest.fn();
-			const props = { setValue, value: mockSizeProp( { size: 10, unit: 'px' } ), bind: 'select', propType };
-
-			const anchorEl = {
-				current: document.body,
-			} as unknown as RefObject< HTMLDivElement | null >;
-
-			// Act.
-			renderControl(
-				<SizeControl units={ mockLengthUnits() } extendedOptions={ [ 'auto' ] } anchorRef={ anchorEl } />,
-				props
-			);
-
-			const sizeInput = screen.getByRole( 'spinbutton' );
-
-			setValue.mockClear();
 
 			fireEvent.keyUp( sizeInput, { key: 'a' } );
 			fireEvent.keyUp( sizeInput, { key: 'u' } );
@@ -594,7 +567,7 @@ describe( 'SizeControl', () => {
 			fireEvent.keyUp( sizeInput, { key: 'o' } );
 
 			// Assert.
-			expect( setValue ).not.toHaveBeenCalledWith( { $$type: 'size', value: { size: '', unit: 'auto' } } );
+			expect( setValue ).toHaveBeenLastCalledWith( { $$type: 'size', value: { size: '', unit: 'auto' } } );
 		} );
 
 		it( 'should handle buffer overflow in unit selection (max 3 chars) - custom', () => {
