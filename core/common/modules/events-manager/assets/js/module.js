@@ -4,6 +4,8 @@ import { TIERS } from 'elementor-utils/tiers';
 
 export default class extends elementorModules.Module {
 	trackingEnabled = false;
+	sessionRecordingInProgress = false;
+
 	onInit() {
 		this.config = eventsConfig;
 
@@ -63,7 +65,7 @@ export default class extends elementorModules.Module {
 	}
 
 	startSessionRecording() {
-		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
+		if ( ! elementorCommon.config.editor_events?.can_send_events || this.sessionRecordingInProgress ) {
 			return;
 		}
 
@@ -72,13 +74,15 @@ export default class extends elementorModules.Module {
 		}
 
 		mixpanel.start_session_recording();
+		this.sessionRecordingInProgress = true;
 	}
 
 	stopSessionRecording() {
-		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
+		if ( ! elementorCommon.config.editor_events?.can_send_events || ! this.sessionRecordingInProgress ) {
 			return;
 		}
 
 		mixpanel.stop_session_recording();
+		this.sessionRecordingInProgress = false;
 	}
 }
