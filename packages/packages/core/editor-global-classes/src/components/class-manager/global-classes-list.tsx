@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
-import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
+import { useEffect, useMemo } from 'react';
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import { __useDispatch as useDispatch } from '@elementor/store';
 import { List, Stack, styled, Typography, type TypographyProps } from '@elementor/ui';
@@ -10,6 +9,7 @@ import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useFilters } from '../../hooks/use-filters';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
 import { slice } from '../../store';
+import { trackGlobalClasses } from '../../utils/tracking';
 import { useSearchAndFilters } from '../search-and-filter/context';
 import { ClassItem } from './class-item';
 import { DeleteConfirmationProvider } from './delete-confirmation-dialog';
@@ -33,7 +33,7 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 	const [ classesOrder, reorderClasses ] = useReorder( draggedItemId, setDraggedItemId, draggedItemLabel ?? '' );
 	const filteredCssClasses = useFilteredCssClasses();
 
-	React.useEffect( () => {
+	useEffect( () => {
 		const handler = ( event: KeyboardEvent ) => {
 			if ( event.key === 'z' && ( event.ctrlKey || event.metaKey ) ) {
 				event.stopImmediatePropagation();
@@ -84,8 +84,8 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 										id={ id }
 										label={ label }
 										renameClass={ ( newLabel: string ) => {
-											trackGlobalClassEvent( {
-												event: 'classManagerRename',
+											trackGlobalClasses( {
+												event: 'class_renamed',
 												classId: id,
 												oldValue: label,
 												newValue: newLabel,
@@ -152,8 +152,8 @@ const useReorder = (
 		dispatch( slice.actions.setOrder( newIds ) );
 
 		if ( draggedItemId ) {
-			trackGlobalClassEvent( {
-				event: 'classManagerReorder',
+			trackGlobalClasses( {
+				event: 'class_manager_reorder',
 				classId: draggedItemId,
 				classTitle: draggedItemLabel,
 			} );

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
-import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
 import { DotsVerticalIcon } from '@elementor/icons';
@@ -66,15 +65,6 @@ export const ClassItem = ( {
 
 	const isSelected = ( selectedCssUsage === id || selected || popupState.isOpen ) && ! disabled;
 
-	if ( isEditing ) {
-		trackGlobalClassEvent( {
-			event: 'classManagerRename',
-			classId: id,
-			oldValue: editableRef.current?.value,
-			newValue: label,
-			source: 'class-manager',
-		} );
-	}
 	return (
 		<>
 			<Stack p={ 0 }>

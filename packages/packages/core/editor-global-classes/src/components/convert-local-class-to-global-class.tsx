@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { MenuListItem } from '@elementor/editor-ui';
@@ -7,6 +6,7 @@ import { Divider } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
+import { trackGlobalClasses } from '../utils/tracking';
 
 type OwnProps = {
 	successCallback: ( _: string ) => void;
@@ -27,9 +27,10 @@ export const ConvertLocalClassToGlobalClass = ( props: OwnProps ) => {
 		const newId = globalClassesStylesProvider.actions.create?.( newClassName, localStyleData.variants );
 		if ( newId ) {
 			props.successCallback( newId );
-			trackGlobalClassEvent( {
-				source: 'converted',
+			trackGlobalClasses( {
 				classId: newId,
+				event: 'class_created',
+				source: 'converted',
 				classTitle: newClassName,
 			} );
 		}

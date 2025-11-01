@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { type MouseEvent, type PropsWithChildren } from 'react';
-import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
 import { InfoAlert } from '@elementor/editor-ui';
 import { CurrentLocationIcon } from '@elementor/icons';
 import {
@@ -17,6 +16,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
+import { trackGlobalClasses } from '../../../utils/tracking';
 import { type CssClassID } from '../types';
 import { CssClassUsagePopover } from './css-class-usage-popover';
 
@@ -34,8 +34,8 @@ export const CssClassUsageTrigger = ( { id, onClick }: { id: CssClassID; onClick
 	const WrapperComponent = total !== 0 ? TooltipWrapper : InfoAlertMessage;
 
 	const handleMouseEnter = () => {
-		trackGlobalClassEvent( {
-			event: 'classUsageHover',
+		trackGlobalClasses( {
+			event: 'class_usage_hovered',
 			classId: id,
 			usage: total,
 		} );
@@ -45,8 +45,8 @@ export const CssClassUsageTrigger = ( { id, onClick }: { id: CssClassID; onClick
 		if ( total !== 0 ) {
 			bindTrigger( cssClassUsagePopover ).onClick( e );
 			onClick( id );
-			trackGlobalClassEvent( {
-				event: 'classUsageClick',
+			trackGlobalClasses( {
+				event: 'class_usage_clicked',
 				classId: id,
 			} );
 		}

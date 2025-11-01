@@ -17,6 +17,7 @@ import {
 	slice,
 	type StateWithGlobalClasses,
 } from './store';
+import { trackGlobalClasses } from './utils/tracking';
 
 const MAX_CLASSES = 50;
 
@@ -90,6 +91,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 				} )
 			);
 		},
+		tracking: trackGlobalClasses,
 	},
 } );
 

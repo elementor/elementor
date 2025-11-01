@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
 import { PopoverBody, PopoverHeader } from '@elementor/editor-ui';
 import { FilterIcon } from '@elementor/icons';
 import { bindPopover, bindToggle, Divider, Popover, ToggleButton, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { trackGlobalClasses, type TrackingEvent } from '../../../../utils/tracking';
 import { useSearchAndFilters } from '../../context';
 import { ClearIconButton } from './clear-icon-button';
 import { FilterList } from './filter-list';
@@ -20,9 +20,9 @@ export const CssClassFilter = () => {
 
 	React.useEffect( () => {
 		if ( popupState.isOpen ) {
-			trackGlobalClassEvent( {
-				event: 'openFilter',
-			} );
+			trackGlobalClasses( {
+				event: 'class_manager_filters_opened',
+			} as TrackingEvent< 'class_manager_filters_opened' > );
 		}
 	}, [ popupState.isOpen ] );
 

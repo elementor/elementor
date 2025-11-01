@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { __useOpenDocumentInNewTab as useOpenDocumentInNewTab } from '@elementor/editor-documents';
-import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
 import {
 	EllipsisWithTooltip,
 	PopoverBody,
@@ -21,6 +20,7 @@ import { Box, Chip, Divider, Icon, MenuList, Stack, styled, Tooltip, Typography 
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
+import { trackGlobalClasses } from '../../../utils/tracking';
 import { type ContentType } from '../types';
 
 type CssClassUsageRecord = VirtualizedItem< 'item', string > & { docType: ContentType };
@@ -72,8 +72,8 @@ export const CssClassUsagePopover = ( {
 
 	const handleSelect = ( value: string ) => {
 		onNavigate( +value );
-		trackGlobalClassEvent( {
-			event: 'classUsageLocate',
+		trackGlobalClasses( {
+			event: 'class_usage_locate',
 			classId: cssClassID,
 		} );
 	};

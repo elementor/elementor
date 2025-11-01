@@ -53,8 +53,7 @@ const DeleteConfirmationDialog = ( { label, id }: DeleteConfirmationDialogProps 
 		data: { total, content },
 	} = useCssClassUsageByID( id );
 	const onConfirm = () => {
-		deleteClass( id, label );
-
+		deleteClass( id );
 		closeDialog();
 	};
 	// translators: %1: total usage count, %2: number of pages

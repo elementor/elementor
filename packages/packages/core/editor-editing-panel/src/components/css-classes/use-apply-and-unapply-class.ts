@@ -9,6 +9,7 @@ import { doApplyClasses, doGetAppliedClasses } from '../../apply-unapply-actions
 import { useClassesProp } from '../../contexts/classes-prop-context';
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
+import { trackGlobalClasses } from '../../utils/tracking/subscribe';
 
 type UndoableClassActionPayload = {
 	classId: StyleDefinitionID;
@@ -156,6 +157,10 @@ function useApply() {
 			const updatedClassesIds = [ ...appliedClasses, classIDToApply ];
 			setClasses( updatedClassesIds );
 			setActiveId( classIDToApply );
+			trackGlobalClasses( {
+				classId: classIDToApply,
+				event: 'class_applied',
+			} );
 		},
 		[ element.id, getAppliedClasses, setActiveId, setClasses ]
 	);
@@ -182,6 +187,10 @@ function useUnapply() {
 			if ( activeId === classIDToUnapply ) {
 				setActiveId( updatedClassesIds[ 0 ] ?? null );
 			}
+			trackGlobalClasses( {
+				classId: classIDToUnapply,
+				event: 'class_removed',
+			} );
 		},
 		[ activeId, element.id, getAppliedClasses, setActiveId, setClasses ]
 	);

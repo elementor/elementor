@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
 import { BrushBigIcon } from '@elementor/icons';
 import { Box, IconButton, styled, type SxProps, type Theme, Tooltip } from '@elementor/ui';
 
+import { trackGlobalClasses } from '../../../../utils/tracking';
 import { useSearchAndFilters } from '../../context';
 
 type ClearIconButtonProps = { tooltipText: React.ReactNode; sx?: SxProps< Theme >; trigger: 'menu' | 'header' };
@@ -14,8 +14,8 @@ export const ClearIconButton = ( { tooltipText, sx, trigger }: ClearIconButtonPr
 
 	const handleClearFilters = () => {
 		onClearFilter( trigger );
-		trackGlobalClassEvent( {
-			event: 'clearFilter',
+		trackGlobalClasses( {
+			event: 'class_manager_filter_cleared',
 			trigger,
 		} );
 	};

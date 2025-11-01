@@ -3,7 +3,7 @@ import { Checkbox, Chip, MenuItem, MenuList, Stack, Typography } from '@elemento
 import { __ } from '@wordpress/i18n';
 
 import { type FilterKey, useFilteredCssClassUsage } from '../../../../hooks/use-filtered-css-class-usage';
-import { trackGlobalClassEvent } from '../../../../../../editor-editing-panel/src/utils/tracking';
+import { trackGlobalClasses } from '../../../../utils/tracking';
 import { useSearchAndFilters } from '../../context';
 
 export const filterConfig: Record< FilterKey, string > = {
@@ -20,8 +20,8 @@ export const FilterList = () => {
 
 	const handleOnClick = ( value: FilterKey ) => {
 		setFilters( ( prev ) => ( { ...prev, [ value ]: ! prev[ value ] } ) );
-		trackGlobalClassEvent( {
-			event: 'filterUsed',
+		trackGlobalClasses( {
+			event: 'class_manager_filter_used',
 			action: filters[ value ] ? 'remove' : 'apply',
 			type: value,
 			trigger: 'menu',

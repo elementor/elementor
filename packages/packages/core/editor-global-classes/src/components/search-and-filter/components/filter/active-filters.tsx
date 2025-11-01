@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
 import { Chip, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import type { FilterKey } from '../../../../hooks/use-filtered-css-class-usage';
+import { trackGlobalClasses } from '../../../../utils/tracking';
 import { useSearchAndFilters } from '../../context';
 import { ClearIconButton } from './clear-icon-button';
 import { filterConfig } from './filter-list';
@@ -15,8 +15,8 @@ export const ActiveFilters = () => {
 
 	const handleRemove = ( key: FilterKey ) => {
 		setFilters( ( prev ) => ( { ...prev, [ key ]: false } ) );
-		trackGlobalClassEvent( {
-			event: 'filterUsed',
+		trackGlobalClasses( {
+			event: 'class_manager_filter_used',
 			action: 'remove',
 			type: key,
 			trigger: 'header',

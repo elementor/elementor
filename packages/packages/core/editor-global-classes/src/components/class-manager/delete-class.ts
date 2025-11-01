@@ -1,28 +1,21 @@
 import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-documents';
-import { trackGlobalClassEvent } from '@elementor/editor-editing-panel';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __dispatch as dispatch } from '@elementor/store';
 
-import { fetchCssClassUsage } from '../../../service/css-class-usage-service';
 import { slice } from '../../store';
+import { trackGlobalClasses } from '../../utils/tracking';
 
 let isDeleted = false;
 
-const trackDeleteClass = async ( id: string, label: string ) => {
-	const cssClassUsage = await fetchCssClassUsage();
-	trackGlobalClassEvent( {
-		event: 'classManagerDelete',
+export const deleteClass = async ( id: string ) => {
+	trackGlobalClasses( {
+		event: 'class_deleted',
 		classId: id,
-		classTitle: label,
-		source: 'class-manager',
-		totalInstances: cssClassUsage[ id ]?.total ?? 0,
+		runAction: () => {
+			dispatch( slice.actions.delete( id ) );
+			isDeleted = true;
+		},
 	} );
-};
-
-export const deleteClass = async ( id: string, label: string ) => {
-	dispatch( slice.actions.delete( id ) );
-	await trackDeleteClass( id, label );
-	isDeleted = true;
 };
 
 export const onDelete = async () => {

@@ -3,7 +3,7 @@ import { SearchIcon } from '@elementor/icons';
 import { Box, InputAdornment, Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { trackGlobalClassEvent } from '../../../../../../editor-editing-panel/src/utils/tracking';
+import { trackGlobalClasses, type TrackingEvent } from '../../../../utils/tracking';
 import { useSearchAndFilters } from '../../context';
 
 export const ClassManagerSearch = () => {
@@ -20,9 +20,9 @@ export const ClassManagerSearch = () => {
 					size={ 'tiny' }
 					value={ inputValue }
 					onFocus={ () => {
-						trackGlobalClassEvent( {
-							event: 'searchFocus',
-						} );
+						trackGlobalClasses( {
+							event: 'class_manager_searched',
+						} as TrackingEvent< 'class_manager_searched' > );
 					} }
 					placeholder={ __( 'Search', 'elementor' ) }
 					onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => handleChange( e.target.value ) }
