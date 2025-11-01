@@ -5,25 +5,33 @@
 @mixin icon-position($device) {
 	&.elementor#{$device}-position- {
 
-		&right {
+		&inline-end {
 
 			.elementor-icon-box-wrapper {
 				text-align: end;
-				flex-direction: getValueByDirection(row-reverse, row);
+				flex-direction: row-reverse;
 				gap: var(--icon-box-icon-margin, 15px);
+
+				[dir="rtl"] & { // BC for wrong RTL direction.
+					flex-direction: row;
+				}
 			}
 		}
 
-		&left {
+		&inline-start {
 
 			.elementor-icon-box-wrapper {
 				text-align: start;
-				flex-direction: getValueByDirection(row, row-reverse);
+				flex-direction: row;
 				gap: var(--icon-box-icon-margin, 15px);
+
+				[dir="rtl"] & { // BC for wrong RTL direction.
+					flex-direction: row-reverse;
+				}
 			}
 		}
 
-		&top {
+		&block-start {
 
 			.elementor-icon-box-wrapper {
 				text-align: center;
@@ -33,7 +41,7 @@
 			}
 		}
 
-		&bottom {
+		&block-end {
 
 			.elementor-icon-box-wrapper {
 				text-align: center;
@@ -100,16 +108,5 @@
 
 	@media (max-width: $screen-mobile-max ) {
 		@include icon-position(-mobile);
-
-		&.elementor-position- {
-
-			&left,
-			&right {
-
-				.elementor-icon-box-icon {
-					flex-direction: column;
-				}
-			}
-		}
 	}
 }
