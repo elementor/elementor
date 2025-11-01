@@ -4,7 +4,8 @@ import { dropElement, type DropElementParams } from '@elementor/editor-elements'
 import { ComponentsIcon } from '@elementor/icons';
 import { Box, ListItemButton, ListItemIcon, ListItemText, Typography } from '@elementor/ui';
 
-import { type Component } from '../../types';
+import { loadComponentsStyles } from '../../store/load-components-styles';
+import { type Component, type Element } from '../../types';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
 
@@ -15,11 +16,17 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 		addComponentToPage( componentModel );
 	};
 
+	const handleDragEnd = () => {
+		loadComponentsStyles( [ componentModel as Element ] );
+
+		endDragElementFromPanel();
+	};
+
 	return (
 		<ListItemButton
 			draggable
 			onDragStart={ () => startDragElementFromPanel( componentModel ) }
-			onDragEnd={ endDragElementFromPanel }
+			onDragEnd={ handleDragEnd }
 			shape="rounded"
 			sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }
 		>
@@ -45,6 +52,8 @@ const addComponentToPage = ( model: DropElementParams[ 'model' ] ) => {
 	if ( ! container ) {
 		throw new Error( `Can't find container to drop new component instance at` );
 	}
+
+	loadComponentsStyles( [ model as Element ] );
 
 	dropElement( {
 		containerId: container.id,

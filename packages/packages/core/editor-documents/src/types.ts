@@ -76,6 +76,9 @@ export type V1Document = {
 			post_title: string;
 			exit_to: ExitTo;
 		} >;
+		view: {
+			el: HTMLElement;
+		};
 	};
 };
 

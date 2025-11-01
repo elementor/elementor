@@ -14,6 +14,7 @@ import { __ } from '@wordpress/i18n';
 import { componentIdTransformer } from './component-id-transformer';
 import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
+import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
 import { createComponentType, TYPE } from './create-component-type';
 import { PopulateStore } from './populate-store';
@@ -56,6 +57,11 @@ export function init() {
 	injectIntoLogic( {
 		id: 'components-populate-store',
 		component: PopulateStore,
+	} );
+
+	injectIntoTop( {
+		id: 'edit-component',
+		component: EditComponent,
 	} );
 
 	listenTo( commandStartEvent( 'editor/documents/attach-preview' ), () => {
