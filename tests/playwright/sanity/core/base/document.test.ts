@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Document tests', async () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -13,9 +14,9 @@ test.describe( 'Document tests', async () => {
 
 	test( 'Converting Gutenberg page to sections columns',
 		async ( { page, apiRequests }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( { container: false } );
+			await wpCli( 'wp elementor experiments deactivate container' );
 
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			await wpAdmin.openNewWordpressPage();
 			await addElement( wpAdmin, 'list' );
 			await addElement( wpAdmin, 'heading' );

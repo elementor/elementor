@@ -2,6 +2,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, addIcon, setIconSize } from './helper';
 import { expect } from '@playwright/test';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordion', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -15,9 +16,9 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 	test( 'Nested Accordion Title Icon and Text No Overlap', async ( { browser, apiRequests }, testInfo ) => {
 		let url;
 		await test.step( 'Inline Font Icons: Off', async () => {
+			await wpCli( 'wp elementor experiments deactivate e_font_icon_svg' );
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( { e_font_icon_svg: 'inactive' } );
 			const editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -39,9 +40,9 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		} );
 
 		await test.step( 'Inline Font Icons: On', async () => {
+			await wpCli( 'wp elementor experiments activate e_font_icon_svg' );
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( { e_font_icon_svg: 'active' } );
 			const editor = await wpAdmin.openNewPage();
 
 			// Assert
