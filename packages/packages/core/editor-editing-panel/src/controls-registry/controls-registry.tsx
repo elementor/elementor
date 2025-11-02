@@ -16,6 +16,7 @@ import {
 	TextControl,
 	ToggleControl,
 	UrlControl,
+	WysiwygControl,
 } from '@elementor/editor-controls';
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
@@ -28,6 +29,7 @@ import {
 	numberPropTypeUtil,
 	type PropTypeUtil,
 	queryPropTypeUtil,
+	richTextPropTypeUtil,
 	sizePropTypeUtil,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
@@ -56,7 +58,11 @@ const controlTypes = {
 	'key-value': { component: KeyValueControl, layout: 'full', propTypeUtil: keyValuePropTypeUtil },
 	'html-tag': { component: HtmlTagControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
+<<<<<<< Updated upstream
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
+=======
+	wysiwyg: { component: WysiwygControl, layout: 'full', propTypeUtil: richTextPropTypeUtil },
+>>>>>>> Stashed changes
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

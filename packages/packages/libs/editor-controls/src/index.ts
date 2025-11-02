@@ -33,7 +33,12 @@ export { TransitionRepeaterControl } from './controls/transition-control/transit
 export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
+<<<<<<< Updated upstream
 export { DateTimeControl } from './controls/date-time-control';
+=======
+export { WysiwygControl } from './controls/wysiwyg-control';
+export { InlineEditor } from './components/inline-editor';
+>>>>>>> Stashed changes
 
 // components
 export { ControlFormLabel } from './components/control-form-label';

@@ -56,9 +56,17 @@
     "@elementor/ui": "1.36.17",
     "@elementor/utils": "3.33.0",
     "@elementor/wp-media": "3.33.0",
+<<<<<<< Updated upstream
     "@wordpress/i18n": "^5.13.0",
     "@monaco-editor/react": "^4.7.0",
     "dayjs": "^1.11.18"
+=======
+    "@monaco-editor/react": "^4.7.0",
+    "@tiptap/pm": "^3.9.1",
+    "@tiptap/react": "^3.9.1",
+    "@tiptap/starter-kit": "^3.9.1",
+    "@wordpress/i18n": "^5.13.0"
+>>>>>>> Stashed changes
   },
   "devDependencies": {
     "monaco-types": "^0.1.0",
