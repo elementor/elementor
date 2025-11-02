@@ -214,7 +214,7 @@ class Module extends BaseModule {
 		]);
 
 		Plugin::$instance->experiments->add_feature([
-			'name' => self::INLINE_EDITING,
+			'name' => self::EXPERIMENT_INLINE_EDITING,
 			'title' => esc_html__( 'V4 inline text editing', 'elementor' ),
 			'description' => esc_html__( 'New inline text editor for v4', 'elementor' ),
 			'hidden' => true,
