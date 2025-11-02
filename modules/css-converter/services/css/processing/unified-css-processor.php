@@ -56,6 +56,7 @@ class Unified_Css_Processor {
 		$css_variable_definitions = $context->get_metadata( 'css_variable_definitions', [] );
 		$global_classes = $context->get_metadata( 'global_classes', [] );
 		$class_name_mappings = $context->get_metadata( 'class_name_mappings', [] );
+		$custom_css_rules = $context->get_metadata( 'custom_css_rules', [] );
 		$debug_duplicate_detection = $context->get_metadata( 'debug_duplicate_detection' );
 		$css_class_modifiers = $context->get_metadata( 'css_class_modifiers', [] );
 		$reset_styles_stats = $context->get_metadata( 'reset_styles_stats', [] );
@@ -72,6 +73,7 @@ class Unified_Css_Processor {
 			'global_classes' => $global_classes,
 			'global_classes_created' => count( $global_classes ),
 			'class_name_mappings' => $class_name_mappings,
+			'custom_css_rules' => $custom_css_rules,
 			'debug_duplicate_detection' => $debug_duplicate_detection,
 			'flattened_classes' => $this->get_flattened_classes_from_unified_structure( $context ),
 			'flattened_classes_count' => $this->count_modifiers_by_type( $css_class_modifiers, 'flattening' ),
@@ -386,8 +388,7 @@ class Unified_Css_Processor {
 				continue;
 			}
 
-			// NEW: Handle nested selectors with compound classes inside
-			// Example: .elementor-1140 .element.element-14c0aa4 .heading-title
+			// Handle nested selectors with compound classes inside
 			$is_nested_compound = $this->is_nested_selector_with_compound_classes( $selector );
 
 			if ( $is_nested_compound ) {
@@ -453,8 +454,6 @@ class Unified_Css_Processor {
 	): void {
 
 		// Extract the target element from the end of the selector
-		// Example: .elementor-1140 .element.element-14c0aa4 .heading-title
-		// → extract: .heading-title
 		$target_selector = $this->extract_target_selector( $selector );
 
 		if ( empty( $target_selector ) ) {
@@ -1048,14 +1047,6 @@ class Unified_Css_Processor {
 			$selectors = $rule_set->getSelectors();
 			$declarations = $rule_set->getRules();
 
-			// EVIDENCE: Track the EXACT CSS text for elementor-element-6d397c1
-			$selector_strings = array_map( function( $s ) {
-				return (string) $s;
-			}, $selectors );
-			foreach ( $selector_strings as $sel_str ) {
-				if ( strpos( $sel_str, 'elementor-element-6d397c1' ) !== false ) {
-				}
-			}
 
 			$selector_strings = array_map( function( $s ) {
 				return (string) $s;
@@ -1698,7 +1689,6 @@ class Unified_Css_Processor {
 			'/\.elementor-container\.elementor-/',
 			'/\.elementor-section\.elementor-/',
 			'/\.elementor-column\.elementor-/',
-			'/\.elementor-element\.elementor-element-/',
 			'/\.e-con\.e-/',
 			'/\.e-flex\.e-/',
 		];

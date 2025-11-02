@@ -280,7 +280,12 @@ class Widget_Mapper {
 				$child_class = $child['attributes']['class'] ?? '';
 			}
 
-			$mapped_children = $this->map_elements( $element['children'], false );
+			// Filter out children that are already Elementor widgets/containers
+			$filtered_children = array_filter( $element['children'], function( $child ) {
+				return ! $this->is_elementor_widget_or_container( $child );
+			} );
+
+			$mapped_children = $this->map_elements( $filtered_children, false );
 
 			// DEBUG: Log mapped children
 			foreach ( $mapped_children as $child_index => $child_widget ) {
@@ -766,5 +771,30 @@ class Widget_Mapper {
 
 		// Remove duplicates from unsupported tags
 		$stats['unsupported_tags'] = array_unique( $stats['unsupported_tags'] );
+	}
+
+	private function is_elementor_widget_or_container( $element ): bool {
+		$class_string = $element['attributes']['class'] ?? '';
+		
+		if ( empty( $class_string ) ) {
+			return false;
+		}
+		
+		$elementor_patterns = [
+			'elementor-widget',
+			'elementor-element',
+			'e-con',
+			'elementor-section',
+			'elementor-column',
+			'elementor-container',
+		];
+		
+		foreach ( $elementor_patterns as $pattern ) {
+			if ( strpos( $class_string, $pattern ) !== false ) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

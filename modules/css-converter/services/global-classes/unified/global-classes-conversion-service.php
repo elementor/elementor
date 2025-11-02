@@ -3,6 +3,7 @@
 namespace Elementor\Modules\CssConverter\Services\GlobalClasses\Unified;
 
 use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service;
+use Elementor\Modules\CssConverter\Services\Css\Custom_Css_Collector;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -11,9 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_Classes_Conversion_Service {
 
 	private Css_Property_Conversion_Service $property_conversion_service;
+	private Custom_Css_Collector $custom_css_collector;
 
-	public function __construct( Css_Property_Conversion_Service $property_conversion_service = null ) {
-		$this->property_conversion_service = $property_conversion_service ?: new Css_Property_Conversion_Service();
+	public function __construct( Css_Property_Conversion_Service $property_conversion_service = null, Custom_Css_Collector $custom_css_collector = null ) {
+		$this->custom_css_collector = $custom_css_collector ?: new Custom_Css_Collector();
+		$this->property_conversion_service = $property_conversion_service ?: new Css_Property_Conversion_Service( $this->custom_css_collector );
 	}
 
 	public function convert_to_atomic_props( array $detected_classes ): array {
@@ -21,25 +24,61 @@ class Global_Classes_Conversion_Service {
 
 		foreach ( $detected_classes as $class_name => $class_data ) {
 			
-			$atomic_props = $this->convert_properties_to_atomic(
-				$class_data['properties']
+			$result = $this->convert_properties_to_atomic_with_fallback(
+				$class_data['properties'],
+				$class_name
 			);
 
-			// DEBUG: Log conversion results
-			
-			if ( empty( $atomic_props ) ) {
-				continue;
-			}
+			$atomic_props = $result['atomic_props'];
+			$custom_css = $result['custom_css'];
 
-			$converted_classes[ $class_name ] = [
-				'atomic_props' => $atomic_props,
-				'source' => $class_data['source'],
-				'original_selector' => $class_data['selector'],
-			];
-			
+			// Include class even if only custom CSS (no atomic props)
+			if ( ! empty( $atomic_props ) || ! empty( $custom_css ) ) {
+				$converted_classes[ $class_name ] = [
+					'atomic_props' => $atomic_props,
+					'custom_css' => $custom_css,
+					'source' => $class_data['source'],
+					'original_selector' => $class_data['selector'],
+				];
+			}
 		}
 
 		return $converted_classes;
+	}
+
+	private function convert_properties_to_atomic_with_fallback( array $properties, string $class_name ): array {
+		$atomic_props = [];
+		
+		foreach ( $properties as $property_data ) {
+			$property = $property_data['property'] ?? '';
+			$value = $property_data['value'] ?? '';
+			$important = $property_data['important'] ?? false;
+
+			if ( empty( $property ) || empty( $value ) ) {
+				continue;
+			}
+
+			$converted = $this->property_conversion_service->convert_property_with_fallback(
+				$property,
+				$value,
+				$class_name,
+				$important
+			);
+
+			if ( $converted && isset( $converted['$$type'] ) ) {
+				$atomic_props[ $property ] = $converted;
+			}
+		}
+
+		// Get custom CSS for this class
+		$custom_css = $this->custom_css_collector->has_custom_css( $class_name ) 
+			? $this->custom_css_collector->get_custom_css_for_widget( $class_name )
+			: '';
+
+		return [
+			'atomic_props' => $atomic_props,
+			'custom_css' => $custom_css,
+		];
 	}
 
 	private function convert_properties_to_atomic( array $properties ): array {

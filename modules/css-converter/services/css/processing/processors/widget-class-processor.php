@@ -197,6 +197,15 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 
 		$space_parts = preg_split( '/\s+/', $trimmed );
 		if ( count( $space_parts ) > 1 ) {
+			preg_match_all( '/\.([a-zA-Z0-9_-]+)/', $trimmed, $matches );
+			$all_classes = $matches[1] ?? [];
+			
+			foreach ( $all_classes as $class ) {
+				if ( $this->is_widget_class( $class ) ) {
+					return false;
+				}
+			}
+			
 			return true;
 		}
 
@@ -234,7 +243,6 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 			'/\.elementor-element\s+\.elementor-widget-container/',
 			'/\.elementor-element:not\(:has\(\.elementor-widget-container\)\)/',
 			'/\.elementor-widget-wrap\s*>\s*\.elementor-element/',
-			'/\.elementor-\d+\s+\.elementor-element\.elementor-element-[a-f0-9]+/',
 		];
 
 		foreach ( $patterns_to_allow as $pattern ) {
@@ -268,31 +276,20 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 
 	private function extract_widget_specific_rules( array $css_rules, array $widget_classes ): array {
 		$widget_rules = [];
-		$target_selector = '.elementor-1140 .elementor-element.elementor-element-6d397c1';
 
 		foreach ( $css_rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
 
-			// Track current selector for element-specific matching
 			$this->current_selector = $selector;
 
-			// DEBUG: Track target selector
-			if ( $selector === $target_selector ) {
-			}
-
 			if ( $this->should_skip_complex_selector( $selector ) ) {
-				if ( $selector === $target_selector ) {
-				}
 				continue;
 			}
 
-			// FIX #1: Extract classes from the selector itself, not from all widgets
 			$selector_classes = $this->extract_classes_from_selector( $selector );
 
-			if ( $selector === $target_selector ) {
-			}
-
 			if ( $this->selector_contains_widget_classes( $selector_classes ) ) {
+				
 				$target_patterns = [ 'e-con-inner', '089b111', 'a431a3a', '6aaaa11', 'bb20798' ];
 				$is_relevant = false;
 				foreach ( $target_patterns as $pattern ) {
@@ -323,9 +320,6 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 						if ( in_array( $prop['property'] ?? '', ['font-size', 'line-height', 'color'] ) ) {
 						}
 					}
-				}
-			} else {
-				if ( $selector === $target_selector ) {
 				}
 			}
 		}
@@ -528,7 +522,9 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 			$context->set_metadata( 'unified_style_manager', $unified_style_manager );
 		}
 
-		$property_conversion_service = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service();
+		$custom_css_collector = new \Elementor\Modules\CssConverter\Services\Css\Custom_Css_Collector();
+		$property_conversion_service = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service( $custom_css_collector );
+		$context->set_metadata( 'custom_css_collector', $custom_css_collector );
 		$styles_applied = 0;
 
 		foreach ( $widget_rules as $rule ) {
@@ -536,7 +532,6 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 			$properties = $rule['properties'];
 			$target_classes = $rule['target_classes'] ?? [];
 			$full_selector = $rule['full_selector'] ?? $selector;
-			$target_selector = '.elementor-1140 .elementor-element.elementor-element-6d397c1';
 
 
 			// Set current selector for element-specific matching
@@ -546,9 +541,6 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 
 			// FIX #2: Use new matching logic based on selector classes
 			$matching_widgets = $this->find_widgets_matching_selector_classes( $target_classes, $widgets );
-
-			if ( $selector === $target_selector ) {
-			}
 
 			if ( ! empty( $matching_widgets ) ) {
 				$this->extract_and_store_variable_references( $properties, $context );
@@ -615,6 +607,7 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 
 	private function convert_properties_to_atomic( array $properties, $property_conversion_service, Css_Processing_Context $context ): array {
 		$converted_properties = [];
+		$widget_id = 'widget-' . uniqid();
 
 		foreach ( $properties as $property_data ) {
 			$property = $property_data['property'] ?? '';
@@ -625,54 +618,36 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 				continue;
 			}
 
-			$converted = $property_conversion_service->convert_property_to_v4_atomic( $property, $value );
+			$converted = $property_conversion_service->convert_property_with_fallback( $property, $value, $widget_id, $important );
 
-			$converted_properties[] = [
-				'property' => $property,
-				'value' => $value,
-				'original_property' => $property_data['original_property'] ?? $property,
-				'original_value' => $property_data['original_value'] ?? $value,
-				'important' => $important,
-				'converted_property' => $converted,
-			];
+			if ( $converted !== null ) {
+				$converted_properties[] = [
+					'property' => $property,
+					'value' => $value,
+					'original_property' => $property_data['original_property'] ?? $property,
+					'original_value' => $property_data['original_value'] ?? $value,
+					'important' => $important,
+					'converted_property' => $converted,
+				];
+			}
 		}
 
 		return $converted_properties;
 	}
 
 	/**
-	 * FIX #2: Enhanced method to match widgets based on selector classes with element ID context
+	 * Simplified method to match widgets based on selector classes (page-specific logic removed)
 	 */
 	private function find_widgets_matching_selector_classes( array $selector_classes, array $widgets ): array {
 		$matching_widgets = [];
 
-		// For element-specific selectors, we need to extract element IDs from the FULL selector, not just target classes
-		$full_selector_classes = $this->extract_all_classes_from_full_selector( $this->current_selector ?? '' );
-		
-		// Extract element-ID-specific classes from the full selector
-		$element_id_classes = array_filter($full_selector_classes, function( $class ) {
-			return preg_match( '/^elementor-element-[a-f0-9]+$/', $class );
+		// Extract widget classes from selector (excluding element-specific classes)
+		$widget_classes = array_filter($selector_classes, function( $class ) {
+			return $this->is_widget_class( $class );
 		});
 
-		// Extract target widget classes from the target part (current behavior)
-		$target_widget_classes = array_filter($selector_classes, function( $class ) {
-			return $this->is_widget_class( $class ) && !preg_match( '/^elementor-element-[a-f0-9]+$/', $class );
-		});
-
-		if ( ! empty( $element_id_classes ) && ! empty( $target_widget_classes ) ) {
-			// Element-specific targeting: find widgets with target classes inside specific elements
-			$this->find_widgets_with_element_context( $element_id_classes, $target_widget_classes, $widgets, $matching_widgets );
-		} elseif ( ! empty( $element_id_classes ) ) {
-			// If selector has element ID only, match widgets with that specific ID
-			$this->recursively_find_widgets_with_specific_element_id( $element_id_classes, $widgets, $matching_widgets );
-		} else {
-			// For generic selectors, match widgets with ALL required elementor- classes
-			$elementor_classes = array_filter($selector_classes, function( $class ) {
-				return $this->is_widget_class( $class );
-			});
-			if ( ! empty( $elementor_classes ) ) {
-				$this->recursively_find_widgets_with_all_classes( $elementor_classes, $widgets, $matching_widgets );
-			}
+		if ( ! empty( $widget_classes ) ) {
+			$this->recursively_find_widgets_with_all_classes( $widget_classes, $widgets, $matching_widgets );
 		}
 
 		return $matching_widgets;
@@ -713,29 +688,6 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 		}
 	}
 
-	private function recursively_find_widgets_with_specific_element_id( array $element_id_classes, array $widgets, array &$matching_widgets ): void {
-		foreach ( $widgets as $widget ) {
-			$classes_string = $widget['attributes']['class'] ?? '';
-			if ( ! empty( $classes_string ) ) {
-				$widget_classes = explode( ' ', $classes_string );
-
-				// Check if widget has the SPECIFIC element ID class
-				foreach ( $element_id_classes as $element_id_class ) {
-					if ( in_array( $element_id_class, $widget_classes, true ) ) {
-						$element_id = $widget['element_id'] ?? null;
-						if ( $element_id ) {
-							$matching_widgets[] = $element_id;
-						}
-						break; // Found the specific element ID, no need to check others
-					}
-				}
-			}
-
-			if ( ! empty( $widget['children'] ) ) {
-				$this->recursively_find_widgets_with_specific_element_id( $element_id_classes, $widget['children'], $matching_widgets );
-			}
-		}
-	}
 
 	private function recursively_find_widgets_with_all_classes( array $required_classes, array $widgets, array &$matching_widgets ): void {
 		foreach ( $widgets as $widget ) {
@@ -779,16 +731,8 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 			// FIXED: Remove ANY rule that was processed by Widget Class Processor
 			// If we successfully applied it to widgets via widget-specific classes,
 			// we should NOT let it be processed again as a global class
-			//
-			// Example: .elementor-1140 .elementor-element.elementor-element-6d397c1
-			// - Contains .elementor-1140 (page class)
-			// - Contains .elementor-element-6d397c1 (widget class)
-			// - We applied it to the widget → REMOVE IT
-			// - Don't create a global class for it
 			if ( in_array( $selector, $processed_selectors, true ) ) {
 				// Remove this rule - it was processed by Widget Class Processor
-				if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false ) {
-				}
 				++$removed_count;
 				continue;
 			}
@@ -849,67 +793,6 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 	}
 
 
-	/**
-	 * NEW: Find widgets with target classes that are inside specific elements
-	 * For selector ".elementor-element-9856e95 .elementor-heading-title":
-	 * - Find element with ID "elementor-element-9856e95"
-	 * - Look for widgets with class "elementor-heading-title" inside that element
-	 */
-	private function find_widgets_with_element_context( array $element_id_classes, array $target_widget_classes, array $widgets, array &$matching_widgets ): void {
-		foreach ( $widgets as $widget ) {
-			$widget_classes = $this->get_widget_classes_array( $widget );
-			$element_id = $widget['element_id'] ?? null;
-
-			// Check if this widget matches any of the element IDs
-			$matches_element_id = false;
-			foreach ( $element_id_classes as $element_id_class ) {
-				if ( in_array( $element_id_class, $widget_classes, true ) ) {
-					$matches_element_id = true;
-					break;
-				}
-			}
-
-			if ( $matches_element_id ) {
-				// This widget matches the element ID, now look for target widgets in its children
-				if ( ! empty( $widget['children'] ) ) {
-					$this->find_widgets_with_target_classes_in_children( $target_widget_classes, $widget['children'], $matching_widgets );
-				}
-			}
-
-			// Recursively search in children regardless of current widget match
-			if ( ! empty( $widget['children'] ) ) {
-				$this->find_widgets_with_element_context( $element_id_classes, $target_widget_classes, $widget['children'], $matching_widgets );
-			}
-		}
-	}
-
-	/**
-	 * NEW: Find widgets with target classes in the given widget array
-	 */
-	private function find_widgets_with_target_classes_in_children( array $target_widget_classes, array $widgets, array &$matching_widgets ): void {
-		foreach ( $widgets as $widget ) {
-			$widget_classes = $this->get_widget_classes_array( $widget );
-			$element_id = $widget['element_id'] ?? null;
-
-			// Check if this widget has any of the target classes
-			$has_target_class = false;
-			foreach ( $target_widget_classes as $target_class ) {
-				if ( in_array( $target_class, $widget_classes, true ) ) {
-					$has_target_class = true;
-					break;
-				}
-			}
-
-			if ( $has_target_class && $element_id ) {
-				$matching_widgets[] = $element_id;
-			}
-
-			// Recursively search in children
-			if ( ! empty( $widget['children'] ) ) {
-				$this->find_widgets_with_target_classes_in_children( $target_widget_classes, $widget['children'], $matching_widgets );
-			}
-		}
-	}
 
 	/**
 	 * NEW: Helper method to get widget classes as array
@@ -922,12 +805,5 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 		return array_filter( explode( ' ', $classes_string ) );
 	}
 
-	/**
-	 * NEW: Extract all classes from the full selector (not just target part)
-	 */
-	private function extract_all_classes_from_full_selector( string $selector ): array {
-		preg_match_all( '/\.([a-zA-Z0-9_-]+)/', $selector, $matches );
-		return $matches[1] ?? [];
-	}
 
 }

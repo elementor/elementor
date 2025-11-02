@@ -109,6 +109,7 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 		// Store results in context
 		$context->set_metadata( 'global_classes', $global_classes_result['global_classes'] );
 		$context->set_metadata( 'class_name_mappings', $global_classes_result['class_name_mappings'] );
+		$context->set_metadata( 'custom_css_rules', $global_classes_result['custom_css_rules'] );
 		$context->set_metadata( 'debug_duplicate_detection', $global_classes_result['debug_duplicate_detection'] );
 
 		// Add statistics
@@ -194,6 +195,7 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 		return [
 			'global_classes' => $result['global_classes'] ?? [],
 			'class_name_mappings' => $result['class_name_mappings'] ?? [],
+			'custom_css_rules' => $result['custom_css_rules'] ?? [],
 			'debug_duplicate_detection' => $result['debug_duplicate_detection'] ?? null,
 		];
 	}

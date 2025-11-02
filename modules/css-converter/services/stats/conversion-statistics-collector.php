@@ -22,6 +22,7 @@ class Conversion_Statistics_Collector {
 			'global_classes_created' => $unified_processing_result['global_classes_created'] ?? 0,
 			'global_classes' => $unified_processing_result['global_classes'] ?? [],
 			'class_name_mappings' => $unified_processing_result['class_name_mappings'] ?? [],
+			'custom_css_rules' => $unified_processing_result['custom_css_rules'] ?? [],
 			'debug_duplicate_detection' => $unified_processing_result['debug_duplicate_detection'] ?? null,
 			'compound_classes' => $unified_processing_result['compound_classes'] ?? [],
 		];

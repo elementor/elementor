@@ -302,6 +302,134 @@ private static function expand_font_shorthand( $value ): array {
 
 ---
 
+## Missing CSS Property Support
+
+### Max Height Property Support
+
+#### Current Issue
+- **Problem**: `max-height` CSS property is not supported by the atomic property conversion system
+- **Impact**: `max-height: none` and other max-height values are not applied to widgets
+- **Root Cause**: Missing `Max_Height_Property_Mapper` in the property conversion system
+- **Source**: Image widget styling from `.elementor img` selector
+
+#### Implementation Plan
+- **Priority**: Medium - affects image widget sizing constraints
+- **Expected Values**: `none`, `auto`, length values (`px`, `%`, `em`, etc.)
+- **Atomic Property**: Needs new mapper for maximum height constraints
+
+### Border Properties Support
+
+#### Current Issue
+- **Problem**: Border-related CSS properties are not supported by the atomic property conversion system
+- **Impact**: Border styles from reset styles and element-specific rules are not applied
+- **Root Cause**: Missing border property mappers in the conversion system
+- **Source**: Reset styles and `.elementor img` selector rules
+
+#### Missing Properties
+1. **`border`** - Shorthand property (e.g., `border: none`)
+2. **`border-width`** - Individual width property (e.g., `border-width: 0px`)  
+3. **`border-style`** - Individual style property (e.g., `border-style: none`)
+4. **`border-radius`** - Corner radius property (e.g., `border-radius: 0px`)
+
+#### Implementation Plan
+- **Priority**: Medium - affects visual appearance of elements
+- **Expected Values**: Various border values including `none`, `solid`, length values
+- **Atomic Property**: Needs individual mappers for each border property
+
+### Vertical Align Property Support
+
+#### Current Issue
+- **Problem**: `vertical-align` CSS property is not supported by the atomic property conversion system
+- **Impact**: `vertical-align: middle` styles are extracted correctly but not applied to widgets because there's no atomic property mapper
+- **Root Cause**: Missing `Vertical_Align_Property_Mapper` in the property conversion system
+
+### Implementation Details
+- **Status**: Not implemented
+- **Affected Selectors**: `.elementor-widget-image img` and other child element selectors
+- **Evidence**: 
+  - ✅ Property extracted: `vertical-align: middle`
+  - ✅ Passed to conversion: `collect_element_styles()`
+  - ❌ Conversion result: `converted_property => ` (null/empty)
+  - ❌ Final CSS: Missing from inline styles
+
+### Implementation Plan
+
+#### Phase 1: Create Vertical Align Property Mapper
+**File**: `plugins/elementor-css/modules/css-converter/convertors/css-properties/properties/vertical-align-property-mapper.php`
+
+**Implementation**: Follow `Text_Align_Property_Mapper` pattern
+```php
+class Vertical_Align_Property_Mapper extends Base_Property_Mapper {
+    private const SUPPORTED_PROPERTIES = ['vertical-align'];
+    
+    public function map_to_v4_atomic( string $property, $value ): ?array {
+        $valid_values = ['baseline', 'top', 'middle', 'bottom', 'text-top', 'text-bottom', 'sub', 'super'];
+        
+        if ( in_array( $value, $valid_values, true ) ) {
+            return [
+                '$$type' => 'string',
+                'value' => $value,
+            ];
+        }
+        return null;
+    }
+}
+```
+
+#### Phase 2: Register Property Mapper
+**File**: `plugins/elementor-css/modules/css-converter/convertors/css-properties/implementations/class-property-mapper-registry.php`
+
+```php
+// Register atomic vertical-align mapper
+$this->mappers['vertical-align'] = new \Elementor\Modules\CssConverter\Convertors\CssProperties\Properties\Vertical_Align_Property_Mapper();
+```
+
+#### Phase 3: Add to String Prop Type Mapper
+**File**: `plugins/elementor-css/modules/css-converter/convertors/atomic-properties/prop-types/string-prop-type-mapper.php`
+
+```php
+private const SUPPORTED_PROPERTIES = [
+    'display',
+    'align-items',
+    'justify-content',
+    'text-align',
+    'vertical-align',  // ← ADD THIS
+    'text-transform',
+    // ...
+];
+```
+
+### Expected Outcomes
+**Before Fix**:
+- ✅ `.elementor-widget-image img` selector processed
+- ✅ `vertical-align: middle` extracted
+- ❌ `converted_property => ` (null) - no atomic converter
+- ❌ Missing from final CSS: `.elementor .e-xxx { display: inline-block; }`
+
+**After Fix**:
+- ✅ `.elementor-widget-image img` selector processed  
+- ✅ `vertical-align: middle` extracted
+- ✅ `converted_property => {$$type: "string", value: "middle"}`
+- ✅ Present in final CSS: `.elementor .e-xxx { display: inline-block; vertical-align: middle; }`
+
+### Test Cases
+1. **Image Widget Vertical Alignment**: `vertical-align: middle` on `img` elements
+2. **Text Element Alignment**: `vertical-align: top/bottom` on inline elements
+3. **Table Cell Alignment**: `vertical-align: baseline` on table cells
+4. **Invalid Values**: Should return null for unsupported values
+
+### Related Files
+- `plugins/elementor-css/modules/css-converter/services/css/processing/processors/widget-child-element-selector-processor.php` (working correctly)
+- `plugins/elementor-css/modules/css-converter/convertors/css-properties/properties/text-align-property-mapper.php` (reference implementation)
+
+### Implementation Status
+- **Investigation**: ✅ Complete - Root cause identified
+- **Property Mapper**: 🔄 Pending - Create Vertical_Align_Property_Mapper
+- **Registry**: 🔄 Pending - Register mapper in property registry
+- **Testing**: 🔄 Pending - Verify vertical-align works in Elementor preview
+
+---
+
 ## Font Family Property Support
 
 ### Current Implementation

@@ -123,18 +123,9 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 			foreach ( $css_rules as $rule ) {
 				$selector = $rule['selector'] ?? 'unknown';
 				if ( isset( $element_rules[ $selector ] ) ) {
-					
-					// Check if this is one of our target selectors
-					if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false || 
-						 strpos( $selector, '.copy' ) !== false || 
-						 strpos( $selector, '.loading' ) !== false ) {
-						$target_selectors_removed[] = $selector;
-					}
+					$target_selectors_removed[] = $selector;
 				}
 			}
-		}
-		
-		if ( ! empty( $target_selectors_removed ) ) {
 		}
 		
 		

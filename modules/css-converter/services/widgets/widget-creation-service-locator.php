@@ -8,13 +8,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Include required dependencies
 
 use Elementor\Modules\CssConverter\Services\Widgets\Factories\Atomic_Widget_Factory;
+use Elementor\Modules\CssConverter\Services\Css\Custom_Css_Collector;
 
 class Widget_Creation_Service_Locator {
 	private array $services = [];
 	private bool $use_zero_defaults;
+	private ?Custom_Css_Collector $custom_css_collector;
 
-	public function __construct( bool $use_zero_defaults = false ) {
+	public function __construct( bool $use_zero_defaults = false, Custom_Css_Collector $custom_css_collector = null ) {
 		$this->use_zero_defaults = $use_zero_defaults;
+		$this->custom_css_collector = $custom_css_collector;
 	}
 
 	public function get_document_manager(): Elementor_Document_Manager {
@@ -64,7 +67,7 @@ class Widget_Creation_Service_Locator {
 			$registry = new Widget_Factory_Registry();
 
 			// Register default factories
-			$atomic_factory = new Atomic_Widget_Factory( $this->use_zero_defaults );
+			$atomic_factory = new Atomic_Widget_Factory( $this->use_zero_defaults, $this->custom_css_collector );
 			$registry->register_factory( $atomic_factory );
 
 			$this->services['widget_factory_registry'] = $registry;

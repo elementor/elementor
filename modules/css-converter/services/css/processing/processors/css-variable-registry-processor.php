@@ -153,6 +153,7 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 				'selector' => $selector,
 				'specificity' => $new_specificity,
 				'source' => empty( $value ) ? 'extracted_from_reference' : 'extracted_from_css',
+				'type' => $this->classify_variable( $variable_name, $value ),
 			];
 		} elseif ( empty( $this->css_variable_definitions[ $clean_name ]['value'] ) || $this->css_variable_definitions[ $clean_name ]['source'] === 'extracted_from_reference' ) {
 			if ( ! empty( $value ) ) {
@@ -165,6 +166,7 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 			$this->css_variable_definitions[ $clean_name ]['value'] = $value;
 			$this->css_variable_definitions[ $clean_name ]['selector'] = $selector;
 			$this->css_variable_definitions[ $clean_name ]['specificity'] = $new_specificity;
+			$this->css_variable_definitions[ $clean_name ]['type'] = $this->classify_variable( $variable_name, $value );
 		}
 	}
 
@@ -225,6 +227,134 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 		}
 		
 		return $extracted;
+	}
+
+	private function classify_variable( string $var_name, string $value ): string {
+		$VARIABLE_TYPE_COLOR = 'color';
+		$VARIABLE_TYPE_FONT = 'font';
+		$VARIABLE_TYPE_SIZE = 'size';
+		$VARIABLE_TYPE_LOCAL = 'local';
+		$VARIABLE_TYPE_UNSUPPORTED = 'unsupported';
+		
+		if ( $this->is_color_variable( $var_name, $value ) ) {
+			return $VARIABLE_TYPE_COLOR;
+		}
+		
+		if ( $this->is_font_variable( $var_name, $value ) ) {
+			return $VARIABLE_TYPE_FONT;
+		}
+		
+		if ( $this->is_size_variable( $var_name, $value ) ) {
+			return $VARIABLE_TYPE_SIZE;
+		}
+		
+		if ( $this->is_local_variable( $var_name ) ) {
+			return $VARIABLE_TYPE_LOCAL;
+		}
+		
+		return $VARIABLE_TYPE_UNSUPPORTED;
+	}
+	
+	private function is_color_variable( string $var_name, string $value ): bool {
+		if ( strpos( $var_name, '--e-global-color-' ) === 0 ) {
+			return true;
+		}
+		
+		if ( $this->is_color_value( $value ) ) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private function is_font_variable( string $var_name, string $value ): bool {
+		if ( strpos( $var_name, '-font-family' ) !== false ) {
+			return true;
+		}
+		
+		if ( strpos( $var_name, '--e-global-typography-' ) === 0 && strpos( $var_name, '-font-family' ) !== false ) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private function is_size_variable( string $var_name, string $value ): bool {
+		if ( strpos( $var_name, '--e-global-size-' ) === 0 ) {
+			return true;
+		}
+		
+		if ( ! class_exists( 'ElementorPro\\Plugin' ) ) {
+			return false;
+		}
+		
+		$size_patterns = [
+			'width',
+			'height',
+			'gap',
+			'margin',
+			'padding',
+			'spacing',
+			'size',
+		];
+		
+		foreach ( $size_patterns as $pattern ) {
+			if ( strpos( $var_name, '--' . $pattern ) === 0 ) {
+				return $this->is_size_value( $value );
+			}
+		}
+		
+		return $this->is_size_value( $value );
+	}
+	
+	private function is_size_value( string $value ): bool {
+		return (bool) preg_match( '/^-?\d+\.?\d*(px|em|rem|%|vh|vw|vmin|vmax|auto)$/', trim( $value ) );
+	}
+	
+	private function is_color_value( string $value ): bool {
+		$value = trim( $value );
+		
+		if ( preg_match( '/^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/', $value ) ) {
+			return true;
+		}
+		
+		if ( preg_match( '/^rgb\s*\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/', $value ) ) {
+			return true;
+		}
+		
+		if ( preg_match( '/^rgba\s*\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/', $value ) ) {
+			return true;
+		}
+		
+		$named_colors = [
+			'red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'brown',
+			'black', 'white', 'gray', 'grey', 'transparent', 'currentColor',
+		];
+		
+		return in_array( strtolower( $value ), $named_colors, true );
+	}
+	
+	private function is_local_variable( string $var_name ): bool {
+		$local_variable_patterns = [
+			'display',
+			'flex-direction',
+			'justify-content',
+			'align-items',
+			'align-content',
+			'flex-wrap',
+			'text-align',
+			'font-weight',
+			'position',
+			'z-index',
+		];
+		
+		foreach ( $local_variable_patterns as $pattern ) {
+			if ( strpos( $var_name, '--' . $pattern ) === 0 ) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
 

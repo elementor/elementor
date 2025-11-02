@@ -182,13 +182,6 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 			$selector = $rule['selector'] ?? '';
 			$properties = $this->prepare_properties_for_collection( [ $rule ] );
 
-			// DEBUG WIDTH ISSUE: Track property extraction
-			if ( strpos( $selector, 'elementor-element-a431a3a img' ) !== false ) {
-				$log_file = WP_CONTENT_DIR . '/width-debug.log';
-				$prop_count = count( $properties );
-				$prop_list = array_map( function( $p ) { return $p['property'] . '=' . $p['value']; }, $properties );
-				file_put_contents( $log_file, date('[H:i:s] ') . "CHILD_ELEMENT_PROPERTY_EXTRACTION: selector={$selector}, properties_count={$prop_count}, properties=[" . implode( ', ', $prop_list ) . "]\n", FILE_APPEND );
-			}
 
 			if ( empty( $properties ) ) {
 				continue;
@@ -196,23 +189,6 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 
 			// Validate selector scope - only apply if parent classes exist in converted structure
 			if ( ! $this->is_selector_scope_valid( $selector, $existing_classes ) ) {
-				// DEBUG WIDTH ISSUE: Track scope validation failures
-				if ( strpos( $selector, 'elementor-element-a431a3a img' ) !== false ) {
-					$log_file = WP_CONTENT_DIR . '/width-debug.log';
-					file_put_contents( $log_file, date('[H:i:s] ') . "CHILD_ELEMENT_SCOPE_VALIDATION_FAILED: selector={$selector}\n", FILE_APPEND );
-					file_put_contents( $log_file, date('[H:i:s] ') . "  existing_classes=[" . implode( ', ', $existing_classes ) . "]\n", FILE_APPEND );
-					
-					// Extract required classes from selector for comparison
-					$parts = preg_split( '/\s+/', trim( $selector ) );
-					array_pop( $parts ); // Remove 'img'
-					$required_classes = [];
-					foreach ( $parts as $part ) {
-						if ( preg_match_all( '/\.([a-zA-Z0-9_-]+)/', $part, $matches ) ) {
-							$required_classes = array_merge( $required_classes, $matches[1] );
-						}
-					}
-					file_put_contents( $log_file, date('[H:i:s] ') . "  required_classes=[" . implode( ', ', $required_classes ) . "]\n", FILE_APPEND );
-				}
 				continue;
 			}
 
@@ -433,9 +409,7 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 		// SPECIAL CASE: Allow Elementor-specific selectors that target the original content
 		// These selectors are legitimate even if the exact classes don't exist in converted structure
 		$elementor_patterns = [
-			'elementor-1140',           // Container width class
 			'elementor-element',        // Element wrapper class
-			'elementor-element-',       // Element ID classes
 			'elementor-widget-',        // Widget type classes
 		];
 		

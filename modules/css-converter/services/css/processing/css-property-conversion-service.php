@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory;
 use Elementor\Modules\CssConverter\Exceptions\Class_Conversion_Exception;
 use Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander;
+use Elementor\Modules\CssConverter\Services\Css\Atomic_Property_Validator;
+use Elementor\Modules\CssConverter\Services\Css\Custom_Css_Collector;
 
 /**
  * CSS Property Conversion Service
@@ -18,10 +20,68 @@ use Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expande
 class Css_Property_Conversion_Service {
 	private $property_mapper_registry;
 	private $conversion_stats;
+	private $validator;
+	private $custom_css_collector;
 
-	public function __construct() {
+	public function __construct( Custom_Css_Collector $custom_css_collector = null ) {
 		$this->property_mapper_registry = Class_Property_Mapper_Factory::get_registry();
+		$this->validator = new Atomic_Property_Validator();
+		$this->custom_css_collector = $custom_css_collector ?? new Custom_Css_Collector();
 		$this->reset_stats();
+	}
+
+	/**
+	 * Convert a CSS property to atomic format with custom CSS fallback
+	 *
+	 * @param string $property CSS property name
+	 * @param string $value CSS property value
+	 * @param string $widget_id Widget ID for custom CSS collection
+	 * @param bool $important Whether the property has !important flag
+	 * @return array|null Converted property in atomic format, or null if sent to custom CSS
+	 */
+	public function convert_property_with_fallback( string $property, string $value, string $widget_id, bool $important = false ): ?array {
+		// Skip CSS variable definitions
+		if ( strpos( $property, '--' ) === 0 ) {
+			return null;
+		}
+
+		// Check if property is supported in atomic schema
+		if ( ! $this->validator->is_property_supported( $property ) ) {
+			$this->add_to_custom_css( $widget_id, $property, $value, $important, 'Property not in atomic schema' );
+			return null;
+		}
+
+		// Check if value is supported
+		if ( ! $this->validator->is_value_supported( $property, $value ) ) {
+			$reason = $this->validator->get_unsupported_reason( $property, $value );
+			$this->add_to_custom_css( $widget_id, $property, $value, $important, $reason );
+			return null;
+		}
+
+		// Try to convert using existing property mappers
+		$converted = $this->convert_property_to_v4_atomic( $property, $value );
+		
+		if ( $converted === null ) {
+			$this->add_to_custom_css( $widget_id, $property, $value, $important, 'Conversion failed' );
+			return null;
+		}
+
+		return $converted;
+	}
+
+	private function add_to_custom_css( string $widget_id, string $property, string $value, bool $important, string $reason ): void {
+		$this->custom_css_collector->add_property( $widget_id, $property, $value, $important );
+		
+		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+		file_put_contents( 
+			$tracking_log, 
+			date('[H:i:s] ') . "CSS_PROPERTY_CONVERSION: {$property}: {$value} → Custom CSS ({$reason})\n", 
+			FILE_APPEND 
+		);
+	}
+
+	public function get_custom_css_collector(): Custom_Css_Collector {
+		return $this->custom_css_collector;
 	}
 
 	/**

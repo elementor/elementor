@@ -9,16 +9,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Modules\CssConverter\Services\Widgets\Contracts\Widget_Factory_Interface;
 use Elementor\Modules\CssConverter\Services\Widgets\Atomic_Widget_Data_Formatter;
+use Elementor\Modules\CssConverter\Services\Css\Custom_Css_Collector;
 
 class Atomic_Widget_Factory implements Widget_Factory_Interface {
 	private Atomic_Widget_Data_Formatter $data_formatter;
 	private bool $use_zero_defaults;
 	private array $css_processing_result;
+	private ?Custom_Css_Collector $custom_css_collector;
 
-	public function __construct( bool $use_zero_defaults = false ) {
+	public function __construct( bool $use_zero_defaults = false, Custom_Css_Collector $custom_css_collector = null ) {
 		$this->data_formatter = Atomic_Widget_Data_Formatter::make();
 		$this->use_zero_defaults = $use_zero_defaults;
 		$this->css_processing_result = [];
+		$this->custom_css_collector = $custom_css_collector;
 	}
 
 	public function set_css_processing_result( array $css_processing_result ): void {
@@ -34,7 +37,7 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 
 		$widget_classes = $widget_data['attributes']['class'] ?? '';
 
-		$formatted_widget_data = $this->data_formatter->format_widget_data( $resolved_styles, $widget_data, $widget_id );
+		$formatted_widget_data = $this->data_formatter->format_widget_data( $resolved_styles, $widget_data, $widget_id, $this->custom_css_collector );
 
 		if ( $this->requires_link_to_button_conversion( $widget_type, $mapped_type ) ) {
 			$settings = $this->convert_link_settings_to_button_format( $settings );

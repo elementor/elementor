@@ -70,31 +70,10 @@ class Style_Resolution_Processor implements Css_Processor_Interface {
 			$element_id = $widget['element_id'] ?? 'no-element-id';
 			$widget_classes = $widget['attributes']['class'] ?? '';
 			
-			// DEBUG: Log style resolution process
-			
-			// SPECIFIC DEBUG: Track target widgets
-			if ( strpos( $widget_classes, 'elementor-element-6d397c1' ) !== false || 
-				 strpos( $widget_classes, 'copy' ) !== false || 
-				 strpos( $widget_classes, 'loading' ) !== false ) {
-			}
-			
 			$resolved_styles = $unified_style_manager->resolve_styles_for_widget( $widget );
 
-			// DEBUG: Log resolution results
-			
 			if ( ! empty( $resolved_styles ) ) {
-				
-				// SPECIFIC DEBUG: Track target widget style resolution
-				if ( strpos( $widget_classes, 'elementor-element-6d397c1' ) !== false || 
-					 strpos( $widget_classes, 'copy' ) !== false || 
-					 strpos( $widget_classes, 'loading' ) !== false ) {
-				}
-			} else {
-				// SPECIFIC DEBUG: Track target widgets with no resolved styles
-				if ( strpos( $widget_classes, 'elementor-element-6d397c1' ) !== false || 
-					 strpos( $widget_classes, 'copy' ) !== false || 
-					 strpos( $widget_classes, 'loading' ) !== false ) {
-				}
+				++$widgets_with_resolved_styles;
 			}
 
 			$widget['resolved_styles'] = $resolved_styles;

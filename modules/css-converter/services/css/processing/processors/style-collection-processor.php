@@ -199,26 +199,10 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 	}
 
 	private function process_css_rule_for_widgets( string $selector, array $properties, array $widgets ): int {
-		// DEBUG: Log CSS selector processing
-
-		// SPECIFIC DEBUG: Track target selectors
-		if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false ||
-			strpos( $selector, '.copy' ) !== false ||
-			strpos( $selector, '.loading' ) !== false ) {
-		}
-
 		$converted_properties = $this->prepare_properties_for_collection( $properties );
 		$matched_elements = $this->find_matching_widgets( $selector, $widgets );
 
-		// DEBUG: Log matching results
-
 		if ( ! empty( $matched_elements ) ) {
-
-			// SPECIFIC DEBUG: Track target selector matches
-			if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false ||
-				strpos( $selector, '.copy' ) !== false ||
-				strpos( $selector, '.loading' ) !== false ) {
-			}
 
 			// Route selectors with ID components to ID styles
 			if ( false !== strpos( $selector, '#' ) ) {
@@ -236,10 +220,6 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 			}
 
 			return count( $matched_elements );
-		} elseif ( strpos( $selector, 'elementor-element-6d397c1' ) !== false ||
-			strpos( $selector, '.copy' ) !== false ||
-			strpos( $selector, '.loading' ) !== false ) {
-			// SPECIFIC DEBUG: Track target selector non-matches
 		}
 
 		return 0;

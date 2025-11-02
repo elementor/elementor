@@ -12,13 +12,14 @@ use Elementor\Modules\CssConverter\Services\Widgets\Commands\Process_Widget_Hier
 use Elementor\Modules\CssConverter\Services\Widgets\Commands\Convert_Widgets_To_Elementor_Command;
 use Elementor\Modules\CssConverter\Services\Widgets\Commands\Save_To_Document_Command;
 use Elementor\Modules\CssConverter\Services\Widgets\Commands\Clear_Cache_Command;
+use Elementor\Modules\CssConverter\Services\Css\Custom_Css_Collector;
 
 class Widget_Creation_Orchestrator {
 	private Widget_Creation_Command_Pipeline $pipeline;
 	private Widget_Creation_Service_Locator $service_locator;
 
-	public function __construct( bool $use_zero_defaults = false ) {
-		$this->service_locator = new Widget_Creation_Service_Locator( $use_zero_defaults );
+	public function __construct( bool $use_zero_defaults = false, Custom_Css_Collector $custom_css_collector = null ) {
+		$this->service_locator = new Widget_Creation_Service_Locator( $use_zero_defaults, $custom_css_collector );
 		$this->pipeline = new Widget_Creation_Command_Pipeline();
 		$this->initialize_pipeline();
 

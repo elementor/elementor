@@ -143,26 +143,10 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 		}
 		file_put_contents( '/tmp/css_parsing_debug.log', 'CSS_PARSING: Found ' . count( $loading_selectors ) . ' loading selectors: ' . implode( ', ', array_slice( $loading_selectors, 0, 10 ) ) . "\n", FILE_APPEND );
 
-		// SPECIFIC DEBUG: Track our target selectors
-		$target_selectors_found = [];
-		$target_selector = '.elementor-1140 .elementor-element.elementor-element-6d397c1';
 		foreach ( $css_rules as $index => $rule ) {
 			$selector = $rule['selector'] ?? 'unknown';
 			$properties_count = count( $rule['properties'] ?? [] );
 
-			// Check for our target selectors
-			if ( $selector === $target_selector ) {
-				foreach ( $rule['properties'] ?? [] as $prop ) {
-					if ( in_array( $prop['property'] ?? '', [ 'font-size', 'line-height', 'color' ], true ) ) {
-					}
-				}
-			}
-
-			if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false ||
-				strpos( $selector, '.copy' ) !== false ||
-				strpos( $selector, '.loading' ) !== false ) {
-				$target_selectors_found[] = $selector;
-			}
 		}
 
 

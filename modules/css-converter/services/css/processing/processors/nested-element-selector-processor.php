@@ -141,15 +141,11 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 		// FIXED: Don't filter CSS rules - leave them intact for other processors
 		// $context->set_metadata( 'css_rules', $remaining_rules );
 
-		// SPECIFIC DEBUG: Check if our target selectors are still present
+		// DEBUG: Check if selectors are still present
 		$target_selectors_remaining = [];
 		foreach ( $css_rules as $rule ) {
 			$selector = $rule['selector'] ?? 'unknown';
-			if ( strpos( $selector, 'elementor-element-6d397c1' ) !== false || 
-				 strpos( $selector, '.copy' ) !== false || 
-				 strpos( $selector, '.loading' ) !== false ) {
-				$target_selectors_remaining[] = $selector;
-			}
+			$target_selectors_remaining[] = $selector;
 		}
 		
 		// DEBUG: Log CSS rules after processing (all rules preserved)

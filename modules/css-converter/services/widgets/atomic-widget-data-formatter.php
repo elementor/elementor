@@ -6,25 +6,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Modules\CssConverter\Services\Css\Css_Converter_Config;
+use Elementor\Modules\CssConverter\Services\Widgets\Elementor_Class_Filter;
+use Elementor\Modules\CssConverter\Services\Css\Custom_Css_Collector;
+
 class Atomic_Widget_Data_Formatter {
+	private $class_filter;
+	public function __construct() {
+		$this->class_filter = new Elementor_Class_Filter();
+	}
+
 	public static function make(): self {
 		return new self();
 	}
-	public function format_widget_data( array $resolved_styles, array $widget, string $widget_id ): array {
-		
+	public function format_widget_data( array $resolved_styles, array $widget, string $widget_id, Custom_Css_Collector $custom_css_collector = null ): array {
 		// Generate atomic-style widget ID (7-char hex)
 		$atomic_widget_id = $this->generate_atomic_widget_id();
 		$class_id = $this->create_atomic_style_class_name( $atomic_widget_id );
 		$atomic_props = $this->extract_atomic_props_from_resolved_styles( $resolved_styles );
 		$css_classes = $this->extract_css_classes_from_widget( $widget );
-		
+
 		// Note: Base classes (e.g., e-heading-base) are added automatically by atomic widget Twig templates
 		// CSS Converter should only add generated style classes and user-defined classes
 		$widget_type = $widget['widget_type'] ?? 'e-div-block';
 		if ( empty( $atomic_props ) && empty( $css_classes ) ) {
 			return [
 				'widgetType' => $widget_type,
-				'settings' => $this->format_widget_settings( $widget, $css_classes ),
+				'settings' => $this->format_widget_settings( $widget, $css_classes, $custom_css_collector, $widget_id ),
 				'styles' => [],
 			];
 		}
@@ -35,12 +42,12 @@ class Atomic_Widget_Data_Formatter {
 		}
 		$final_widget_data = [
 			'widgetType' => $widget_type,
-			'settings' => $this->format_widget_settings( $widget, $css_classes ),
+			'settings' => $this->format_widget_settings( $widget, $css_classes, $custom_css_collector, $widget_id ),
 			'styles' => [
 				$class_id => $style_definition,
 			],
 		];
-		
+
 		return $final_widget_data;
 	}
 	public function format_global_class_data( string $class_name, array $atomic_props ): array {
@@ -106,13 +113,23 @@ class Atomic_Widget_Data_Formatter {
 		$classes = $this->extract_css_classes_from_widget_attributes( $widget, $classes );
 		return $classes;
 	}
-	private function format_widget_settings( array $widget, array $css_classes ): array {
+	private function format_widget_settings( array $widget, array $css_classes, Custom_Css_Collector $custom_css_collector = null, string $widget_id = '' ): array {
 		$settings = $widget['settings'] ?? [];
 		// Convert raw settings values to atomic prop format
 		$formatted_settings = $this->convert_settings_to_atomic_format( $settings );
 		if ( ! empty( $css_classes ) ) {
 			$formatted_settings['classes'] = $this->format_css_classes_in_atomic_format( $css_classes );
 		}
+
+		// Add custom CSS if present
+		if ( $custom_css_collector && $custom_css_collector->has_custom_css( $widget_id ) ) {
+			$custom_css = $custom_css_collector->get_custom_css_for_widget( $widget_id );
+			$formatted_settings['custom-css'] = [
+				'$$type' => 'string',
+				'value' => $custom_css,
+			];
+		}
+
 		return $formatted_settings;
 	}
 	private function create_atomic_style_class_name( string $widget_id ): string {
@@ -139,7 +156,7 @@ class Atomic_Widget_Data_Formatter {
 			$class_array = explode( ' ', $class_string );
 			foreach ( $class_array as $class ) {
 				$class = trim( $class );
-				if ( ! empty( $class ) ) {
+				if ( ! empty( $class ) && $this->class_filter->should_preserve_class( $class ) ) {
 					$classes[] = $class;
 				}
 			}

@@ -74,8 +74,9 @@ class Atomic_Widgets_Route {
 	private function create_unified_conversion_service() {
 		$html_parser = $this->create_html_parser();
 		$widget_mapper = $this->create_widget_mapper();
-		$unified_css_processor = $this->create_unified_css_processor();
-		$widget_creator = $this->create_widget_creation_orchestrator();
+		$custom_css_collector = new \Elementor\Modules\CssConverter\Services\Css\Custom_Css_Collector();
+		$unified_css_processor = $this->create_unified_css_processor( $custom_css_collector );
+		$widget_creator = $this->create_widget_creation_orchestrator( $custom_css_collector );
 
 		return new \Elementor\Modules\CssConverter\Services\Widgets\Unified_Widget_Conversion_Service(
 			$html_parser,
@@ -94,9 +95,9 @@ class Atomic_Widgets_Route {
 		return new \Elementor\Modules\CssConverter\Services\Widgets\Widget_Mapper();
 	}
 
-	private function create_unified_css_processor() {
+	private function create_unified_css_processor( $custom_css_collector ) {
 		$css_parser = new \Elementor\Modules\CssConverter\Parsers\CssParser();
-		$property_conversion_service = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service();
+		$property_conversion_service = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service( $custom_css_collector );
 		$specificity_calculator = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Specificity_Calculator();
 
 		return new \Elementor\Modules\CssConverter\Services\Css\Processing\Unified_Css_Processor(
@@ -106,8 +107,8 @@ class Atomic_Widgets_Route {
 		);
 	}
 
-	private function create_widget_creation_orchestrator() {
-		return new \Elementor\Modules\CssConverter\Services\Widgets\Widget_Creation_Orchestrator();
+	private function create_widget_creation_orchestrator( $custom_css_collector ) {
+		return new \Elementor\Modules\CssConverter\Services\Widgets\Widget_Creation_Orchestrator( false, $custom_css_collector );
 	}
 
 	public function convert_html_to_widgets( \WP_REST_Request $request ): \WP_REST_Response {

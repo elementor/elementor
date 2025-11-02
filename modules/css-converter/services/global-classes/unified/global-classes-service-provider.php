@@ -40,8 +40,9 @@ class Global_Classes_Service_Provider {
 
 	public function get_conversion_service(): Global_Classes_Conversion_Service {
 		if ( ! isset( $this->services['conversion'] ) ) {
-			$property_conversion_service = $this->get_css_property_conversion_service();
-			$this->services['conversion'] = new Global_Classes_Conversion_Service( $property_conversion_service );
+			$custom_css_collector = new \Elementor\Modules\CssConverter\Services\Css\Custom_Css_Collector();
+			$property_conversion_service = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service( $custom_css_collector );
+			$this->services['conversion'] = new Global_Classes_Conversion_Service( $property_conversion_service, $custom_css_collector );
 		}
 
 		return $this->services['conversion'];

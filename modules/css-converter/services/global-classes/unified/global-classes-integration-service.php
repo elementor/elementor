@@ -62,6 +62,9 @@ class Global_Classes_Integration_Service {
 		// Build global_classes array with FINAL class names (after duplicate processing)
 		$class_name_mappings = $result['class_name_mappings'] ?? [];
 		$global_classes = $this->build_global_classes_with_final_names( $detected, $class_name_mappings );
+		
+		// Collect custom CSS from conversion service
+		$custom_css_rules = $this->collect_custom_css_rules( $converted, $class_name_mappings );
 
 	$final_result = [
 		'success' => ! isset( $result['error'] ),
@@ -72,6 +75,7 @@ class Global_Classes_Integration_Service {
 		'processing_time' => $this->calculate_processing_time( $start_time ),
 		'class_name_mappings' => $class_name_mappings,
 		'global_classes' => $global_classes,
+		'custom_css_rules' => $custom_css_rules,
 		'debug_duplicate_detection' => $result['debug_duplicate_detection'] ?? null,
 	];
 
@@ -225,14 +229,36 @@ class Global_Classes_Integration_Service {
 	private function build_global_classes_with_final_names( array $detected, array $class_name_mappings ): array {
 		$global_classes = [];
 
-
 		foreach ( $detected as $original_class_name => $class_data ) {
 			$final_class_name = $class_name_mappings[ $original_class_name ] ?? $original_class_name;
 			$global_classes[ $final_class_name ] = $class_data;
-			
 		}
 
-
 		return $global_classes;
+	}
+
+	private function collect_custom_css_rules( array $converted_classes, array $class_name_mappings ): array {
+		$custom_css_rules = [];
+
+		error_log( "CUSTOM_CSS_DEBUG: collect_custom_css_rules called with " . count( $converted_classes ) . " converted classes" );
+
+		foreach ( $converted_classes as $original_class_name => $class_data ) {
+			$custom_css = $class_data['custom_css'] ?? '';
+			
+			error_log( "CUSTOM_CSS_DEBUG: Class {$original_class_name} has custom_css: " . ( empty( $custom_css ) ? 'EMPTY' : 'YES (' . strlen( $custom_css ) . ' chars)' ) );
+			
+			if ( ! empty( $custom_css ) ) {
+				$final_class_name = $class_name_mappings[ $original_class_name ] ?? $original_class_name;
+				$custom_css_rules[ $final_class_name ] = [
+					'selector' => ".elementor .{$final_class_name}",
+					'css' => $custom_css,
+					'original_class' => $original_class_name,
+				];
+				error_log( "CUSTOM_CSS_DEBUG: Added custom CSS rule for {$final_class_name}: {$custom_css}" );
+			}
+		}
+
+		error_log( "CUSTOM_CSS_DEBUG: Returning " . count( $custom_css_rules ) . " custom CSS rules" );
+		return $custom_css_rules;
 	}
 }
