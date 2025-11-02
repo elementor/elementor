@@ -2,8 +2,6 @@ import type { Props } from '@elementor/editor-props';
 import { type Breakpoint, type BreakpointsMap } from '@elementor/editor-responsive';
 import {
 	type CustomCss,
-	isClassState,
-	isPseudoState,
 	type StyleDefinition,
 	type StyleDefinitionState,
 	type StyleDefinitionType,
@@ -11,13 +9,12 @@ import {
 import { decodeString } from '@elementor/utils';
 
 import { type PropsResolver } from './create-props-resolver';
-import { UnknownStyleStateError, UnknownStyleTypeError } from './errors';
+import { UnknownStyleTypeError } from './errors';
 
 export type StyleItem = {
 	id: string;
 	value: string;
 	breakpoint: string;
-	state: StyleDefinitionState | null;
 };
 
 export type StyleRenderer = ReturnType< typeof createStylesRenderer >;
@@ -68,7 +65,6 @@ export function createStylesRenderer( { resolve, breakpoints, selectorPrefix = '
 				id: style.id,
 				breakpoint: style?.variants[ 0 ]?.meta?.breakpoint || 'desktop',
 				value: variantsCss.join( '' ),
-				state: style?.variants[ 0 ]?.meta?.state || null,
 			};
 		} );
 
@@ -91,21 +87,9 @@ function createStyleWrapper( value: string = '', wrapper?: ( css: string ) => st
 		withPrefix: ( prefix: string ) =>
 			createStyleWrapper( [ prefix, value ].filter( Boolean ).join( ' ' ), wrapper ),
 
-		withState: ( state: StyleDefinitionState ) => {
-			if ( ! state ) {
-				return createStyleWrapper( value, wrapper );
-			}
+		withState: ( state: StyleDefinitionState ) =>
+			createStyleWrapper( state ? `${ value }:${ state }` : value, wrapper ),
 
-			if ( isClassState( state ) ) {
-				return createStyleWrapper( `${ value }.${ state }`, wrapper );
-			}
-
-			if ( isPseudoState( state ) ) {
-				return createStyleWrapper( `${ value }:${ state }`, wrapper );
-			}
-
-			throw new UnknownStyleStateError( { context: { state } } );
-		},
 		withMediaQuery: ( breakpoint: Breakpoint | null ) => {
 			if ( ! breakpoint?.type ) {
 				return createStyleWrapper( value, wrapper );

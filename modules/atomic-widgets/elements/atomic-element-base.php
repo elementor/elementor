@@ -33,10 +33,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	abstract protected function define_atomic_controls(): array;
 
-	protected function define_atomic_style_states(): array {
-		return [];
-	}
-
 	public function get_global_scripts() {
 		return [];
 	}
@@ -47,7 +43,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['atomic_props_schema'] = $props_schema;
-		$config['atomic_style_states'] = $this->define_atomic_style_states();
 		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['base_styles'] = $this->get_base_styles();
 		$config['version'] = $this->version;

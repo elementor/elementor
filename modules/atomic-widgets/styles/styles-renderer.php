@@ -121,12 +121,7 @@ class Styles_Renderer {
 			return '';
 		}
 
-		$state = '';
-
-		if ( isset( $variant['meta']['state'] ) ) {
-			$state = $this->get_state_with_selector( $variant['meta']['state'] );
-		}
-
+		$state = isset( $variant['meta']['state'] ) ? ':' . $variant['meta']['state'] : '';
 		$selector = $base_selector . $state;
 
 		$style_declaration = $selector . '{' . $css . $custom_css . '}';
@@ -137,19 +132,6 @@ class Styles_Renderer {
 
 		return $style_declaration;
 	}
-
-	private function get_state_with_selector( string $state ): string {
-		if ( Style_States::is_class_state( $state ) ) {
-			return '.' . $state;
-		}
-
-		if ( Style_States::is_pseudo_state( $state ) ) {
-			return ':' . $state;
-		}
-
-		return '';
-	}
-
 
 	private function props_to_css_string( array $props ): string {
 		$schema = Style_Schema::get();

@@ -1,6 +1,5 @@
 import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from 'react';
 import { type BreakpointId, getBreakpoints } from '@elementor/editor-responsive';
-import { isClassState, type StyleDefinitionClassState } from '@elementor/editor-styles';
 import { type StylesProvider, stylesRepository } from '@elementor/editor-styles-repository';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 
@@ -59,44 +58,18 @@ export function useStyleItems() {
 	return useMemo(
 		() =>
 			Object.values( styleItems )
-				.sort( sortByProviderPriority )
+				.sort( ( { provider: providerA }, { provider: providerB } ) => providerA.priority - providerB.priority )
 				.flatMap( ( { items } ) => items )
-				.sort( sortByStateType )
-				.sort( sortByBreakpoint( breakpointsOrder ) ),
+				.sort( ( { breakpoint: breakpointA }, { breakpoint: breakpointB } ) => {
+					return (
+						breakpointsOrder.indexOf( breakpointA as BreakpointId ) -
+						breakpointsOrder.indexOf( breakpointB as BreakpointId )
+					);
+				} ),
 		// eslint-disable-next-line
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ styleItems, breakpointsOrder.join( '-' ) ]
 	);
-}
-function sortByProviderPriority(
-	{ provider: providerA }: ProviderAndStyleItems,
-	{ provider: providerB }: ProviderAndStyleItems
-) {
-	return providerA.priority - providerB.priority;
-}
-
-function sortByBreakpoint( breakpointsOrder: BreakpointId[] ) {
-	return ( { breakpoint: breakpointA }: StyleItem, { breakpoint: breakpointB }: StyleItem ) =>
-		breakpointsOrder.indexOf( breakpointA as BreakpointId ) -
-		breakpointsOrder.indexOf( breakpointB as BreakpointId );
-}
-
-function sortByStateType( { state: stateA }: StyleItem, { state: stateB }: StyleItem ) {
-	if (
-		isClassState( stateA as StyleDefinitionClassState ) &&
-		! isClassState( stateB as StyleDefinitionClassState )
-	) {
-		return -1;
-	}
-
-	if (
-		! isClassState( stateA as StyleDefinitionClassState ) &&
-		isClassState( stateB as StyleDefinitionClassState )
-	) {
-		return 1;
-	}
-
-	return 0;
 }
 
 type CreateProviderSubscriberArgs = {

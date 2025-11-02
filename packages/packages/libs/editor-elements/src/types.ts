@@ -1,5 +1,4 @@
 import { type PropsSchema } from '@elementor/editor-props';
-import { type ClassState } from '@elementor/editor-styles';
 
 export type ElementID = string;
 
@@ -13,7 +12,6 @@ export type ElementType = {
 	controls: ControlItem[];
 	propsSchema: PropsSchema;
 	dependenciesPerTargetMapping?: Record< string, string[] >;
-	styleStates?: ClassState[];
 	title: string;
 };
 

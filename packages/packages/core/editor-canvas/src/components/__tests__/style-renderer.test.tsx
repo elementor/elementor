@@ -46,8 +46,8 @@ describe( '<StyleRenderer />', () => {
 		const mockContainer = document.createElement( 'div' );
 
 		const mockCssItems = [
-			{ id: 'style1', value: '.test { color: red; }', breakpoint: 'desktop', state: null },
-			{ id: 'style2', value: '.test2 { color: blue; }', breakpoint: 'desktop', state: null },
+			{ id: 'style1', value: '.test { color: red; }', breakpoint: 'desktop' },
+			{ id: 'style2', value: '.test2 { color: blue; }', breakpoint: 'desktop' },
 		];
 
 		const mockLinkAttrs = [

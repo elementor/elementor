@@ -9,7 +9,6 @@ import { MenuItemInfotip, MenuListItem } from '@elementor/editor-ui';
 import { bindMenu, Divider, Menu, MenuSubheader, type PopupState, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 import { type StyleDefinitionStateWithNormal } from '../../styles-inheritance/types';
 import { getTempStylesProviderThemeColor } from '../../utils/get-styles-provider-color';
@@ -21,14 +20,13 @@ import { useUnapplyClass } from './use-apply-and-unapply-class';
 type State = {
 	key: StyleDefinitionStateWithNormal;
 	value: StyleDefinitionState | null;
-	label: string;
 };
 
 const STATES: State[] = [
-	{ key: 'normal', value: null, label: __( 'normal', 'elementor' ) },
-	{ key: 'hover', value: 'hover', label: __( 'hover', 'elementor' ) },
-	{ key: 'focus', value: 'focus', label: __( 'focus', 'elementor' ) },
-	{ key: 'active', value: 'active', label: __( 'active', 'elementor' ) },
+	{ key: 'normal', value: null },
+	{ key: 'hover', value: 'hover' },
+	{ key: 'focus', value: 'focus' },
+	{ key: 'active', value: 'active' },
 ];
 
 type CssClassMenuProps = {
@@ -69,71 +67,10 @@ export function CssClassMenu( { popupState, anchorEl, fixed }: CssClassMenuProps
 				{ __( 'States', 'elementor' ) }
 			</MenuSubheader>
 			{ STATES.map( ( state ) => {
-				return (
-					<StateMenuItem
-						key={ state.key }
-						state={ state.value }
-						label={ state.label }
-						closeMenu={ popupState.close }
-					/>
-				);
+				return <StateMenuItem key={ state.key } state={ state.value } closeMenu={ popupState.close } />;
 			} ) }
-			<ClassStatesMenu closeMenu={ popupState.close } />
 		</Menu>
 	);
-}
-
-function ClassStatesMenu( { closeMenu }: { closeMenu: () => void } ) {
-	const { elementStates, elementTitle } = useElementStates();
-
-	if ( ! elementStates.length ) {
-		return null;
-	}
-
-	/* translators: %s: Element type title. */
-	const customTitle = __( '%s States', 'elementor' ).replace( '%s', elementTitle );
-
-	return (
-		<>
-			<Divider />
-			<MenuSubheader sx={ { typography: 'caption', color: 'text.secondary', pb: 0.5, pt: 1 } }>
-				{ customTitle }
-			</MenuSubheader>
-			{ elementStates.map( ( state ) => {
-				return (
-					<StateMenuItem
-						key={ state.key }
-						state={ state.value }
-						label={ state.label }
-						closeMenu={ closeMenu }
-					/>
-				);
-			} ) }
-		</>
-	);
-}
-
-const CLASS_STATES_MAP: Record< string, { label: string } > = {
-	selected: {
-		label: __( 'selected', 'elementor' ),
-	},
-};
-
-export function useElementStates() {
-	const { elementType } = useElement();
-
-	const { styleStates = [] } = elementType;
-
-	const elementStates = styleStates.map( ( { value, name } ) => ( {
-		key: value,
-		value,
-		label: CLASS_STATES_MAP[ value ]?.label ?? name,
-	} ) );
-
-	return {
-		elementStates,
-		elementTitle: elementType.title,
-	};
 }
 
 function useModifiedStates( styleId: string | null ): Partial< Record< StyleDefinitionStateWithNormal, true > > {
@@ -189,11 +126,10 @@ function getMenuItemsByProvider( {
 
 type StateMenuItemProps = {
 	state: StyleDefinitionState;
-	label: string;
 	closeMenu: () => void;
 };
 
-function StateMenuItem( { state, label, closeMenu, ...props }: StateMenuItemProps ) {
+function StateMenuItem( { state, closeMenu, ...props }: StateMenuItemProps ) {
 	const { id: styleId, provider } = useCssClass();
 	const { id: activeId, setId: setActiveId, setMetaState: setActiveMetaState, meta } = useStyle();
 	const { state: activeState } = meta;
@@ -235,7 +171,7 @@ function StateMenuItem( { state, label, closeMenu, ...props }: StateMenuItemProp
 							getColor={ getTempStylesProviderThemeColor( provider ?? '' ) }
 						/>
 					) }
-					{ label }
+					{ state ?? 'normal' }
 				</Stack>
 			</MenuItemInfotip>
 		</MenuListItem>

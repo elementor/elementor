@@ -10,13 +10,18 @@ use Elementor\Modules\AtomicWidgets\Opt_In;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Core\Utils\Api\Parse_Result;
-use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 
 class Style_Parser {
 	const VALID_TYPES = [
 		'class',
 	];
 
+	const VALID_STATES = [
+		'hover',
+		'active',
+		'focus',
+		null,
+	];
 
 	private array $schema;
 
@@ -163,7 +168,7 @@ class Style_Parser {
 			return $result;
 		}
 
-		if ( ! array_key_exists( 'state', $meta ) || ! Style_States::is_valid_state( $meta['state'] ) ) {
+		if ( ! array_key_exists( 'state', $meta ) || ! in_array( $meta['state'], self::VALID_STATES, true ) ) {
 			$result->errors()->add( 'state', 'missing_or_invalid_value' );
 
 			return $result;

@@ -23,6 +23,5 @@ export function getElementType( type: string ): ElementType | null {
 		propsSchema: elementType.atomic_props_schema,
 		dependenciesPerTargetMapping: elementType.dependencies_per_target_mapping ?? {},
 		title: elementType.title,
-		styleStates: elementType.atomic_style_states ?? [],
 	};
 }

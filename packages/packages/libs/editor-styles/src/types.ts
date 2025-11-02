@@ -1,16 +1,17 @@
 import { type Props } from '@elementor/editor-props';
 import { type BreakpointId } from '@elementor/editor-responsive';
 
-export type ClassState = {
-	name: 'selected';
-	value: 'e--selected';
-};
-
-export type StyleDefinitionPseudoState = 'hover' | 'focus' | 'active';
-
-export type StyleDefinitionClassState = ClassState[ 'value' ];
-
-export type StyleDefinitionState = null | StyleDefinitionPseudoState | StyleDefinitionClassState;
+export type StyleDefinitionState =
+	| null
+	| 'hover'
+	| 'focus'
+	| 'active'
+	| 'visited'
+	| 'disabled'
+	| 'checked'
+	| 'selected'
+	| 'hidden'
+	| 'visible';
 
 export type CustomCss = {
 	raw: string;

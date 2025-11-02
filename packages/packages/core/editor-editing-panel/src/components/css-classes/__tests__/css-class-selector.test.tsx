@@ -788,50 +788,6 @@ describe( '<CssClassSelector />', () => {
 		expect( within( focusItem ).queryByLabelText( 'Has style' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'should show element custom states and set the clicked one active', () => {
-		// Arrange.
-		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b' ] } );
-
-		const setActive = jest.fn();
-		const setActiveMetaState = jest.fn();
-
-		const elementType = createMockElementType( {
-			key: 'mock-element-type',
-			title: 'Mock Element',
-			styleStates: [ { value: 'e--selected', name: 'selected' } ],
-		} );
-
-		// Act.
-		renderWithTheme(
-			<ElementProvider element={ { id: 'mock-element', type: 'mock-element-type' } } elementType={ elementType }>
-				<ClassesPropProvider prop="my-classes">
-					<StyleProvider
-						id={ 'local' }
-						setId={ setActive }
-						meta={ { breakpoint: 'mobile', state: null } }
-						setMetaState={ setActiveMetaState }
-					>
-						<CssClassSelector />
-					</StyleProvider>
-				</ClassesPropProvider>
-			</ElementProvider>
-		);
-
-		const chipGroups = screen.getAllByRole( 'group' );
-		const chipMenuTrigger = within( chipGroups[ 0 ] ).getByLabelText( __( 'Open CSS Class Menu', 'elementor' ) );
-		fireEvent.click( chipMenuTrigger );
-
-		const menu = screen.getByRole( 'menu' );
-		expect( within( menu ).getByText( 'selected' ) ).toBeInTheDocument();
-
-		// Act.
-		fireEvent.click( within( menu ).getByText( 'selected' ) );
-
-		// Assert.
-		expect( setActive ).not.toHaveBeenCalled();
-		expect( setActiveMetaState ).toHaveBeenCalledWith( 'e--selected' );
-	} );
-
 	describe( 'Global class menu section', () => {
 		it( 'should not show global class menu items for a local class', () => {
 			// Arrange.
