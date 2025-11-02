@@ -1,4 +1,4 @@
-import { type StyleDefinitionID } from '@elementor/editor-styles';
+import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import { getMixpanel } from '@elementor/mixpanel';
 import { __getState as getState } from '@elementor/store';
 
@@ -11,7 +11,7 @@ type Event =
 	| 'class_removed'
 	| 'class_manager_filter_cleared'
 	| 'class_deleted'
-	| 'class_duplicated'
+	| 'class_publish_conflict'
 	| 'class_renamed'
 	| 'class_created'
 	| 'class_manager_searched'
@@ -21,6 +21,8 @@ type Event =
 	| 'class_manager_filter_used'
 	| 'class_usage_locate'
 	| 'class_usage_hovered'
+	| 'class_styled'
+	| 'class_state_clicked'
 	| 'class_usage_clicked';
 
 type BaseTrackingEvent< T extends Event > = {
@@ -28,49 +30,57 @@ type BaseTrackingEvent< T extends Event > = {
 };
 
 type EventMap = {
-	class_applied: {
-		classId: StyleDefinitionID;
-	};
-	class_removed: {
-		classId: StyleDefinitionID;
-	};
-	class_manager_filter_cleared: {
-		trigger: 'menu' | 'header';
+	class_created: {
+		source?: 'created' | 'converted';
+		classId?: StyleDefinitionID;
+		classTitle?: string;
 	};
 	class_deleted: {
 		classId: StyleDefinitionID;
 		runAction?: () => void;
 	};
-	class_duplicated: {
-		numOfConflicts: number;
-	};
+
 	class_renamed: {
 		classId: StyleDefinitionID;
 		oldValue: string;
 		newValue: string;
 		source: 'class-manager' | 'style-tab';
 	};
-	class_created: {
-		source?: 'created' | 'converted';
-		classId?: StyleDefinitionID;
-		classTitle?: string;
+	class_applied: {
+		classId: StyleDefinitionID;
+		classTitle: string;
+		totalInstancesAfterApply: number;
+		totalStyleProperties: number;
+		hasCostumeCss: boolean;
 	};
-	class_manager_searched: Record< string, never >;
-	class_manager_filters_opened: Record< string, never >;
-	class_manager_opened: {
-		source: 'style-panel';
-	};
-	class_manager_reorder: {
+	class_removed: {
 		classId: StyleDefinitionID;
 		classTitle: string;
 	};
+	class_styled: {
+		classId: StyleDefinitionID;
+		classTitle: string;
+		classType: 'global' | 'local';
+	};
+	class_manager_opened: {
+		source: 'style-panel';
+	};
+	class_manager_searched: Record< string, never >;
+	class_manager_filters_opened: Record< string, never >;
 	class_manager_filter_used: {
 		action: 'apply' | 'remove';
 		type: FilterKey;
 		trigger: 'menu' | 'header';
 	};
-	class_usage_locate: {
+	class_manager_filter_cleared: {
+		trigger: 'menu' | 'header';
+	};
+	class_manager_reorder: {
 		classId: StyleDefinitionID;
+		classTitle: string;
+	};
+	class_publish_conflict: {
+		numOfConflicts: number;
 	};
 	class_usage_hovered: {
 		classId: string;
@@ -79,6 +89,11 @@ type EventMap = {
 	class_usage_clicked: {
 		classId: StyleDefinitionID;
 	};
+
+	class_usage_locate: {
+		classId: StyleDefinitionID;
+	};
+	class_state_clicked: {};
 };
 
 export type TrackingEvent< T extends Event > = BaseTrackingEvent< T > & EventMap[ T ];
@@ -95,7 +110,7 @@ export const trackGlobalClasses = async < T extends Event >( payload: TrackingEv
 	const { runAction } = payload as TrackingEventWithComputed< T > & { runAction?: () => void };
 	const data = await getSanitizedData( payload );
 	if ( data ) {
-		track( data, true );
+		track( data, false );
 	}
 	runAction?.();
 };
@@ -103,9 +118,14 @@ export const trackGlobalClasses = async < T extends Event >( payload: TrackingEv
 const getSanitizedData = async < T extends Event >( payload: TrackingEvent< T > ) => {
 	switch ( payload.event ) {
 		case 'class_applied':
+			if ( 'classId' in payload && payload.classId ) {
+				const appliedInfo = await getAppliedInfo( payload.classId );
+				return { ...payload, ...appliedInfo };
+			}
+			break;
 		case 'class_removed':
 			if ( 'classId' in payload && payload.classId ) {
-				const deleteInfo = await getDeleteInformation( payload.classId );
+				const deleteInfo = await getRemovedInfo( payload.classId );
 				return { ...payload, ...deleteInfo };
 			}
 			break;
@@ -127,14 +147,21 @@ const getSanitizedData = async < T extends Event >( payload: TrackingEvent< T > 
 	}
 };
 
-const getDeleteInformation = async ( classId: StyleDefinitionID ) => {
+const getAppliedInfo = async ( classId: StyleDefinitionID ) => {
 	const { classTitle, totalStyleProperties, hasCostumeCss } = extractCssClassData( classId );
-	const totalInstancesAfterApply = await getTotalInstancesByCssClassID( classId );
+	const totalInstancesAfterApply = ( await getTotalInstancesByCssClassID( classId ) ) + 1;
 	return {
 		classTitle,
 		totalInstancesAfterApply,
 		totalStyleProperties,
 		hasCostumeCss: Boolean( hasCostumeCss ),
+	};
+};
+
+const getRemovedInfo = async ( classId: StyleDefinitionID ) => {
+	const { classTitle } = extractCssClassData( classId );
+	return {
+		classTitle,
 	};
 };
 
@@ -150,15 +177,27 @@ const track = < T extends Event >( data: TrackingEvent< T >, testing = false ) =
 	}
 
 	const name = config.names.global_classes[ data.event ];
-	dispatchEvent?.( name, {
-		...data,
-	} );
+	const { event, ...eventData } = data;
+
+	try {
+		dispatchEvent?.(name, {
+			event,
+			properties: {
+				...eventData
+			},
+		} );
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Error tracking global classes event:', error );
+	}
 };
 
 const extractCssClassData = ( classId: StyleDefinitionID ) => {
-	const cssClass = getCssClass( classId );
-
+	const cssClass: StyleDefinition = getCssClass( classId );
 	const classTitle = cssClass.label;
+	if ( ! cssClass.variants.length ) {
+		return { classTitle, totalStyleProperties: 0, hasCostumeCss: false };
+	}
 	const desktopView = cssClass.variants[ 0 ];
 	// only desktop
 	const totalStyleProperties = Object.keys( desktopView.props ).length;

@@ -14,6 +14,13 @@ import { trackGlobalClasses } from '../../utils/tracking';
 import { usePanelActions } from './class-manager-panel';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 
+const trackGlobalClassesButton = () => {
+	trackGlobalClasses( {
+		event: 'class_manager_opened',
+		source: 'style-panel',
+	} );
+};
+
 export const ClassManagerButton = () => {
 	const document = useActiveDocument();
 	const { open: openPanel } = usePanelActions();
@@ -36,6 +43,7 @@ export const ClassManagerButton = () => {
 		}
 
 		openPanel();
+		trackGlobalClassesButton();
 		trackGlobalClasses( {
 			event: 'class_manager_opened',
 			source: 'style-panel',
@@ -73,6 +81,7 @@ export const ClassManagerButton = () => {
 									await saveDocument();
 									closeSaveChangesDialog();
 									openPanel();
+									trackGlobalClassesButton();
 									prefetchClassesUsage();
 								},
 							},
