@@ -2,6 +2,7 @@ import { type ExtendedWindow } from './types';
 
 export const EXPERIMENTAL_FEATURES = {
 	// Note: Add new experimental features here as needed
+	INLINE_EDITING: 'v4-inline-text-editing',
 };
 
 export function isRouteActive( route: string ) {
