@@ -512,6 +512,7 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 	}
 
 	private function apply_widget_specific_styles( array $widget_rules, array $widgets, Css_Processing_Context $context ): int {
+		error_log( "CUSTOM_CSS_DEBUG: Widget_Class_Processor - apply_widget_specific_styles called with " . count( $widget_rules ) . " rules" );
 		$unified_style_manager = $context->get_metadata( 'unified_style_manager' );
 
 		if ( ! $unified_style_manager ) {
@@ -522,9 +523,13 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 			$context->set_metadata( 'unified_style_manager', $unified_style_manager );
 		}
 
-		$custom_css_collector = new \Elementor\Modules\CssConverter\Services\Css\Custom_Css_Collector();
+		// Use existing custom CSS collector from context, or create new one if not available
+		$custom_css_collector = $context->get_metadata( 'custom_css_collector' );
+		if ( ! $custom_css_collector ) {
+			$custom_css_collector = new \Elementor\Modules\CssConverter\Services\Css\Custom_Css_Collector();
+			$context->set_metadata( 'custom_css_collector', $custom_css_collector );
+		}
 		$property_conversion_service = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service( $custom_css_collector );
-		$context->set_metadata( 'custom_css_collector', $custom_css_collector );
 		$styles_applied = 0;
 
 		foreach ( $widget_rules as $rule ) {
@@ -545,7 +550,12 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 			if ( ! empty( $matching_widgets ) ) {
 				$this->extract_and_store_variable_references( $properties, $context );
 				
-				$converted_properties = $this->convert_properties_to_atomic( $properties, $property_conversion_service, $context );
+				// Get element ID from the first matching widget for custom CSS collection
+				$first_widget = reset( $matching_widgets );
+				$widget_element_id = $first_widget['element_id'] ?? '';
+				error_log( "CUSTOM_CSS_DEBUG: Widget_Class_Processor - first_widget keys: " . implode( ', ', array_keys( $first_widget ) ) );
+				error_log( "CUSTOM_CSS_DEBUG: Widget_Class_Processor - widget_element_id: {$widget_element_id}" );
+				$converted_properties = $this->convert_properties_to_atomic( $properties, $property_conversion_service, $context, $widget_element_id );
 
 				if ( $selector === $target_selector ) {
 					foreach ( $properties as $prop ) {
@@ -605,9 +615,9 @@ class Widget_Class_Processor implements Css_Processor_Interface {
 		return $styles_applied;
 	}
 
-	private function convert_properties_to_atomic( array $properties, $property_conversion_service, Css_Processing_Context $context ): array {
+	private function convert_properties_to_atomic( array $properties, $property_conversion_service, Css_Processing_Context $context, string $widget_element_id = '' ): array {
 		$converted_properties = [];
-		$widget_id = 'widget-' . uniqid();
+		$widget_id = ! empty( $widget_element_id ) ? $widget_element_id : 'widget-' . uniqid();
 
 		foreach ( $properties as $property_data ) {
 			$property = $property_data['property'] ?? '';

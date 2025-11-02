@@ -44,6 +44,12 @@ class Unified_Css_Processor {
 		$context->set_widgets( $widgets );
 		$context->set_metadata( 'options', $options );
 		$context->set_metadata( 'existing_global_class_names', $this->get_existing_global_class_names() );
+		
+		// Set the custom CSS collector in context so processors can use the same instance
+		if ( method_exists( $this->property_converter, 'get_custom_css_collector' ) ) {
+			$custom_css_collector = $this->property_converter->get_custom_css_collector();
+			$context->set_metadata( 'custom_css_collector', $custom_css_collector );
+		}
 
 		// Execute the complete registry pipeline
 		$context = Css_Processor_Factory::execute_css_processing( $context );

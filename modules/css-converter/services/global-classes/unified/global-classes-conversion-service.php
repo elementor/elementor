@@ -58,6 +58,7 @@ class Global_Classes_Conversion_Service {
 				continue;
 			}
 
+			error_log( "CUSTOM_CSS_DEBUG: Global_Classes_Conversion_Service - converting property={$property}, value={$value}, class_name={$class_name}" );
 			$converted = $this->property_conversion_service->convert_property_with_fallback(
 				$property,
 				$value,

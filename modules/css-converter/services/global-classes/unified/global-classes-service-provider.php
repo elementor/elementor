@@ -29,6 +29,12 @@ class Global_Classes_Service_Provider {
 	private function __construct() {
 		// Private constructor for singleton
 	}
+	
+	public function set_custom_css_collector( \Elementor\Modules\CssConverter\Services\Css\Custom_Css_Collector $collector ): void {
+		// Reset the conversion service to use the new collector
+		$property_conversion_service = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service( $collector );
+		$this->services['conversion'] = new Global_Classes_Conversion_Service( $property_conversion_service, $collector );
+	}
 
 	public function get_detection_service(): Global_Classes_Detection_Service {
 		if ( ! isset( $this->services['detection'] ) ) {

@@ -19,6 +19,7 @@ class Widget_Creation_Orchestrator {
 	private Widget_Creation_Service_Locator $service_locator;
 
 	public function __construct( bool $use_zero_defaults = false, Custom_Css_Collector $custom_css_collector = null ) {
+		error_log( "CUSTOM_CSS_DEBUG: Widget_Creation_Orchestrator constructor - collector=" . ( $custom_css_collector ? 'NOT_NULL' : 'NULL' ) );
 		$this->service_locator = new Widget_Creation_Service_Locator( $use_zero_defaults, $custom_css_collector );
 		$this->pipeline = new Widget_Creation_Command_Pipeline();
 		$this->initialize_pipeline();

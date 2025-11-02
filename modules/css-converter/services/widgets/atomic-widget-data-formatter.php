@@ -121,13 +121,37 @@ class Atomic_Widget_Data_Formatter {
 			$formatted_settings['classes'] = $this->format_css_classes_in_atomic_format( $css_classes );
 		}
 
-		// Add custom CSS if present
+		// Add custom CSS if present - check both widget ID and class names
+		$collector_id = $custom_css_collector ? 'COLLECTOR_PRESENT' : 'NULL';
+		error_log( "CUSTOM_CSS_DEBUG: format_widget_settings checking for custom CSS with widget_id={$widget_id}, collector={$collector_id}" );
+		$custom_css = '';
+		
+		// First try the widget ID
 		if ( $custom_css_collector && $custom_css_collector->has_custom_css( $widget_id ) ) {
+			error_log( "CUSTOM_CSS_DEBUG: Custom CSS found for widget_id={$widget_id}" );
 			$custom_css = $custom_css_collector->get_custom_css_for_widget( $widget_id );
-			$formatted_settings['custom-css'] = [
-				'$$type' => 'string',
-				'value' => $custom_css,
-			];
+		}
+		
+		// If not found, try the widget's class names (for global classes)
+		if ( empty( $custom_css ) && ! empty( $css_classes ) ) {
+			foreach ( $css_classes as $class_name ) {
+				if ( $custom_css_collector && $custom_css_collector->has_custom_css( $class_name ) ) {
+					error_log( "CUSTOM_CSS_DEBUG: Custom CSS found for class_name={$class_name}" );
+					$custom_css = $custom_css_collector->get_custom_css_for_widget( $class_name );
+					error_log( "CUSTOM_CSS_DEBUG: Retrieved custom_css length: " . strlen( $custom_css ) . ", content: " . substr( $custom_css, 0, 50 ) );
+					break;
+				}
+			}
+		}
+		
+		error_log( "CUSTOM_CSS_DEBUG: Final custom_css before check - length: " . strlen( $custom_css ) . ", empty: " . ( empty( $custom_css ) ? 'true' : 'false' ) );
+		
+		if ( ! empty( $custom_css ) ) {
+			// Store as plain string for legacy editor compatibility
+			$formatted_settings['custom_css'] = $custom_css;
+			error_log( "CUSTOM_CSS_DEBUG: Custom CSS SET in formatted_settings: " . substr( $custom_css, 0, 100 ) );
+		} else {
+			error_log( "CUSTOM_CSS_DEBUG: No custom CSS found for widget_id={$widget_id} or classes: " . implode( ', ', $css_classes ) );
 		}
 
 		return $formatted_settings;

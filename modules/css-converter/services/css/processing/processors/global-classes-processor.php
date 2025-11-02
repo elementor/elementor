@@ -24,6 +24,7 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 	}
 
 	public function process( Css_Processing_Context $context ): Css_Processing_Context {
+		error_log( "CUSTOM_CSS_DEBUG: Global_Classes_Processor - Starting process method" );
 		file_put_contents( '/tmp/global_classes_debug.log', "GLOBAL_CLASSES_PROCESSOR: Starting process method\n", FILE_APPEND );
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$widgets = $context->get_widgets();
@@ -36,6 +37,13 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 
 		// PHASE 2: Detect and filter CSS classes
 		$provider = \Elementor\Modules\CssConverter\Services\GlobalClasses\Unified\Global_Classes_Service_Provider::instance();
+		
+		// Set the custom CSS collector from context to ensure consistency
+		$custom_css_collector = $context->get_metadata( 'custom_css_collector' );
+		if ( $custom_css_collector ) {
+			$provider->set_custom_css_collector( $custom_css_collector );
+		}
+		
 		$detection_service = $provider->get_detection_service();
 
 		$all_detected = $detection_service->detect_css_class_selectors( $css_rules );
@@ -192,10 +200,16 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 		$integration_service = $provider->get_integration_service();
 		$result = $integration_service->process_css_rules( $css_rules );
 
+		$custom_css_rules = $result['custom_css_rules'] ?? [];
+		error_log( "CUSTOM_CSS_DEBUG: Global_Classes_Processor - custom_css_rules count: " . count( $custom_css_rules ) );
+		if ( ! empty( $custom_css_rules ) ) {
+			error_log( "CUSTOM_CSS_DEBUG: Global_Classes_Processor - custom_css_rules keys: " . implode( ', ', array_keys( $custom_css_rules ) ) );
+		}
+		
 		return [
 			'global_classes' => $result['global_classes'] ?? [],
 			'class_name_mappings' => $result['class_name_mappings'] ?? [],
-			'custom_css_rules' => $result['custom_css_rules'] ?? [],
+			'custom_css_rules' => $custom_css_rules,
 			'debug_duplicate_detection' => $result['debug_duplicate_detection'] ?? null,
 		];
 	}

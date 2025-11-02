@@ -40,6 +40,7 @@ class Css_Property_Conversion_Service {
 	 * @return array|null Converted property in atomic format, or null if sent to custom CSS
 	 */
 	public function convert_property_with_fallback( string $property, string $value, string $widget_id, bool $important = false ): ?array {
+		error_log( "CUSTOM_CSS_DEBUG: convert_property_with_fallback called with property={$property}, value={$value}, widget_id={$widget_id}" );
 		// Skip CSS variable definitions
 		if ( strpos( $property, '--' ) === 0 ) {
 			return null;
@@ -70,6 +71,7 @@ class Css_Property_Conversion_Service {
 	}
 
 	private function add_to_custom_css( string $widget_id, string $property, string $value, bool $important, string $reason ): void {
+		error_log( "CUSTOM_CSS_DEBUG: add_to_custom_css called - widget_id={$widget_id}, property={$property}, value={$value}, reason={$reason}" );
 		$this->custom_css_collector->add_property( $widget_id, $property, $value, $important );
 		
 		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';

@@ -48,8 +48,7 @@ class Unified_Widget_Conversion_Service {
 	}
 	public function convert_from_html( $html, $css_urls = [], $follow_imports = false, $options = [] ): array {
 		$this->use_zero_defaults = true;
-		$custom_css_collector = $options['custom_css_collector'] ?? null;
-		$this->widget_creator = new \Elementor\Modules\CssConverter\Services\Widgets\Widget_Creation_Orchestrator( $this->use_zero_defaults, $custom_css_collector );
+		// Use the widget creator passed in constructor instead of creating a new one
 
 		// Initialize logging
 		$conversion_log = $this->logger->start_conversion_log( $html, $css_urls );
