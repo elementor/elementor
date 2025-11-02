@@ -15,7 +15,7 @@ class Module extends BaseModule {
 	const MODULE_NAME = 'e-interactions';
 	const EXPERIMENT_NAME = 'e_interactions';
 
-	const TRIGGERS = [ 'load', 'scrollIn', 'scrollOut' ];
+	const TRIGGERS = [ 'load', 'scroll-in', 'scroll-out' ];
 	const EFFECTS = [ 'fade', 'slide', 'scale' ];
 	const TYPES = [ 'in', 'out' ];
 	const DIRECTIONS = [ 'left', 'right', 'bottom', 'top' ];
@@ -62,8 +62,8 @@ class Module extends BaseModule {
 		$special_labels = [
 			'trigger' => [
 				'load' => __( 'Page Load', 'elementor' ),
-				'scrollIn' => __( 'Scroll Into View', 'elementor' ),
-				'scrollOut' => __( 'Scroll Out of View', 'elementor' ),
+				'scroll-in' => __( 'Scroll Into View', 'elementor' ),
+				'scroll-out' => __( 'Scroll Out of View', 'elementor' ),
 			],
 			'direction' => [
 				'top' => __( 'Up', 'elementor' ),
@@ -80,13 +80,18 @@ class Module extends BaseModule {
 	}
 
 	private function generate_animation_options() {
-		$options = [];
+		$options = [
+			[
+				'value' => '',
+				'label' => __( 'Select animation...', 'elementor' ),
+			],
+		];
 
 		foreach ( self::TRIGGERS as $trigger ) {
 			foreach ( self::EFFECTS as $effect ) {
 				foreach ( self::TYPES as $type ) {
 					foreach ( self::DIRECTIONS as $direction ) {
-						$value = "{$trigger}-{$effect}-{$type}-{$direction}";
+						$value = "{$effect}-{$type}-{$direction}-{$trigger}";
 						$label = sprintf(
 							'%s - %s %s %s',
 							$this->get_label( 'trigger', $trigger ),
@@ -100,7 +105,7 @@ class Module extends BaseModule {
 						];
 					}
 
-					$value = "{$trigger}-{$effect}-{$type}-";
+					$value = "{$effect}-{$type}-{$trigger}";
 					$label = sprintf(
 						'%s - %s %s',
 						$this->get_label( 'trigger', $trigger ),
@@ -121,9 +126,6 @@ class Module extends BaseModule {
 	private function get_config() {
 		return [
 			'constants' => [
-				'triggers' => self::TRIGGERS,
-				'effects' => self::EFFECTS,
-				'directions' => self::DIRECTIONS,
 				'defaultDuration' => self::DEFAULT_DURATION,
 				'defaultDelay' => self::DEFAULT_DELAY,
 				'slideDistance' => self::SLIDE_DISTANCE,
