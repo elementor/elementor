@@ -10,28 +10,15 @@ import { SectionsList } from './sections-list';
 
 export const InteractionsTab = () => {
 	const { element } = useElement();
-	const interactions = useElementInteractions( element.id );
+	const existingInteractions = useElementInteractions( element.id );
 
-	const [ showInteractions, setShowInteractions ] = React.useState( false );
-
-	const hasInteractions = ( () => {
-		if ( ! interactions || typeof interactions !== 'string' ) {
-			return false;
-		}
-
-		try {
-			const parsed = JSON.parse( interactions );
-			return Array.isArray( parsed ) && parsed.length > 0;
-		} catch {
-			return false;
-		}
-	} )();
-
-	const shouldShowInteractions = hasInteractions || showInteractions;
+	const [ showInteractions, setShowInteractions ] = React.useState( () => {
+		return !! JSON.parse( existingInteractions || '[]' ).length;
+	} );
 
 	return (
 		<SessionStorageProvider prefix={ element.id }>
-			{ shouldShowInteractions ? (
+			{ showInteractions ? (
 				<SectionsList>
 					<InteractionsProvider>
 						<InteractionsContent />
@@ -66,7 +53,7 @@ function InteractionsContent() {
 	const selectedInteraction = React.useMemo( () => {
 		try {
 			const parsed = JSON.parse( interactions || '[]' );
-			return parsed[ 0 ]?.selectedInteraction?.animation?.animation_id || '';
+			return parsed[ 0 ]?.animation?.animation_id || '';
 		} catch {
 			return '';
 		}
