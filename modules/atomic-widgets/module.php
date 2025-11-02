@@ -30,6 +30,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import_Export_Pla
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Classes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Date_Time_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Rich_Text_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Gradient_Overlay_Transformer;
@@ -102,6 +103,7 @@ use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Query_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Rich_Text_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -265,7 +267,11 @@ class Module extends BaseModule {
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
 		$transformers->register( Query_Prop_Type::get_key(), new Query_Transformer() );
 		$transformers->register( Attributes_Prop_Type::get_key(), new Attributes_Transformer() );
+<<<<<<< Updated upstream
 		$transformers->register( Date_Time_Prop_Type::get_key(), new Date_Time_Transformer() );
+=======
+		$transformers->register( Rich_Text_Prop_Type::get_key(), new Rich_Text_Transformer() );
+>>>>>>> Stashed changes
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {

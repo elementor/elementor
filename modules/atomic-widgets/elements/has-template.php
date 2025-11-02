@@ -39,7 +39,13 @@ trait Has_Template {
 				'type' => $this->get_name(),
 				'settings' => $this->get_atomic_settings(),
 				'base_styles' => $this->get_base_styles_dictionary(),
+<<<<<<< Updated upstream
 				'interactions' => $this->get_interactions_ids(),
+=======
+				'experiments' => [
+					'wysiwyg' => true,
+				]
+>>>>>>> Stashed changes
 			];
 
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
