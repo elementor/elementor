@@ -134,27 +134,9 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		let container = this.getContainer();
+
 		if ( options.shouldWrap ) {
-			const containerExperiment = elementorCommon.config.experimentalFeatures.container;
-
-			container = $e.run( 'document/elements/create', {
-				model: {
-					elType: containerExperiment ? 'container' : 'section',
-				},
-				container,
-				columns: Number( ! containerExperiment ),
-				options: {
-					at: options.at,
-					scrollIntoView: options.scrollIntoView,
-					useHistory,
-				},
-			} );
-
-			// Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
-			if ( ! containerExperiment ) {
-				container = container.view.children.findByIndex( 0 )
-					.getContainer();
-			}
+			container = this.getWrappingContainer( container, model, options );
 		}
 
 		// Create the element in column.
@@ -169,6 +151,58 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		return widget;
+	},
+
+	getWrappingContainer( container, model, options ) {
+		const isAtomic = elementor.helpers.isAtomicWidget( model );
+
+		if ( isAtomic ) {
+			return this.getV4Container( container, options );
+		}
+
+		return this.getV3Container( container, options );
+	},
+
+	getV3Container( container, options ) {
+		const containerExperiment = elementorCommon.config.experimentalFeatures.container;
+		console.log( 'containerExperiment', containerExperiment );
+
+		console.log('columns', Number( ! containerExperiment ));
+
+		container = $e.run( 'document/elements/create', {
+			model: {
+				elType: containerExperiment ? 'container' : 'section',
+			},
+			container,
+			columns: Number( ! containerExperiment ),
+			options: {
+				at: options.at,
+				scrollIntoView: options.scrollIntoView,
+				useHistory: options?.useHistory ?? true,
+			},
+		} );
+
+		// Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
+		if ( ! containerExperiment ) {
+			container = container.view.children.findByIndex( 0 )
+				.getContainer();
+		}
+
+		return container;
+	},
+
+	getV4Container( container, options ) {
+		return $e.run( 'document/elements/create', {
+			model: {
+				elType: 'e-flexbox',
+			},
+			container,
+			options: {
+				at: options.at,
+				scrollIntoView: options.scrollIntoView,
+				useHistory: options?.useHistory ?? true,
+			},
+		} );
 	},
 
 	onDrop( event, options ) {
