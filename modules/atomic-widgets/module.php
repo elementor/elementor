@@ -113,7 +113,6 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_NESTED = 'e_nested_elements';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
-	const EXPERIMENT_INLINE_EDITING = 'v4-inline-text-editing';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -208,15 +207,6 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_EDITOR_MCP,
 			'title' => esc_html__( 'Editor MCP for atomic widgets', 'elementor' ),
 			'description' => esc_html__( 'Editor MCP for atomic widgets.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
-
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_INLINE_EDITING,
-			'title' => esc_html__( 'V4 inline text editing', 'elementor' ),
-			'description' => esc_html__( 'New inline text editor for v4', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
