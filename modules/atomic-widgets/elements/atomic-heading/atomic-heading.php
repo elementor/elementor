@@ -64,7 +64,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::INLINE_EDITING );
+		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
 
 		$control = $is_feature_active
 			? Text_Control::bind_to( 'title' )
