@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
@@ -15,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -58,14 +60,20 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
+		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Module::INLINE_EDITING );
+
+		$control = $is_feature_active
+			? Text_Control::bind_to( 'paragraph' )
+				->set_placeholder( __( 'Inline editing', 'elementor' ) )
+				->set_label( __( 'Inline editing', 'elementor' ) )
+			: Textarea_Control::bind_to( 'paragraph' )
+				->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
+				->set_label( __( 'Paragraph', 'elementor' ) );
+
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
-				->set_items( [
-					Textarea_Control::bind_to( 'paragraph' )
-						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
-						->set_label( __( 'Paragraph', 'elementor' ) ),
-				] ),
+				->set_items( [ $control ] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
