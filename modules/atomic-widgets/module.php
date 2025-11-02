@@ -113,8 +113,7 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_NESTED = 'e_nested_elements';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
-
-	const INLINE_EDITING = 'v4-inline-text-editing';
+	const EXPERIMENT_INLINE_EDITING = 'v4-inline-text-editing';
 
 	const PACKAGES = [
 		'editor-canvas',
