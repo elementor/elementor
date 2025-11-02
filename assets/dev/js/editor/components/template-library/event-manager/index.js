@@ -158,5 +158,9 @@ export class EventManager {
 	stopSessionRecording() {
 		return elementorCommon.eventsManager.stopSessionRecording();
 	}
+
+	isSessionRecordingInProgress() {
+		return elementorCommon.eventsManager.isSessionRecordingInProgress();
+	}
 }
 

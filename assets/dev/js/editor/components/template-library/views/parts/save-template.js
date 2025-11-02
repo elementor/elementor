@@ -73,11 +73,13 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary[ `${ context }Modal` ],
 		} );
 
-		elementor.templates.eventManager.sendPageViewEvent( {
-			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.sessionRecordingStart,
-		} );
-
-		elementor.templates.eventManager.startSessionRecording();
+		if ( ! elementor.templates.eventManager.isSessionRecordingInProgress() ) {
+			elementor.templates.eventManager.sendPageViewEvent( {
+				location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.sessionRecordingStart,
+			} );
+	
+			elementor.templates.eventManager.startSessionRecording();
+		}
 
 		const context = this.getOption( 'context' );
 

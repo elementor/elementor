@@ -918,6 +918,14 @@ const TemplateLibraryManager = function() {
 			options.refresh = true;
 		}
 
+		if ( 'cloud' === query.source && ! elementor.templates.eventManager.isSessionRecordingInProgress() ) {
+			elementor.templates.eventManager.sendPageViewEvent( {
+				location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.sessionRecordingStart,
+			} );
+
+			elementor.templates.eventManager.startSessionRecording();
+		}
+
 		this.setFilter( 'parent', null, query );
 
 		const loadTemplatesData = () => {
