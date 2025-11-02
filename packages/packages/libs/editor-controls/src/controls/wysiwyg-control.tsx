@@ -1,16 +1,6 @@
 import * as React from 'react';
-import { useRef } from 'react';
-import {
-	MenuButtonBold,
-	MenuButtonItalic,
-	MenuControlsContainer,
-	MenuDivider,
-	MenuSelectHeading,
-	RichTextEditor,
-	type RichTextEditorRef,
-} from 'mui-tiptap';
-import { richTextPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
-import { Button, type SxProps, TextField } from '@elementor/ui';
+import { stringPropTypeUtil } from '@elementor/editor-props';
+import { type SxProps } from '@elementor/ui';
 import StarterKit from '@tiptap/starter-kit';
 
 import { useBoundProp } from '../bound-prop-context';
@@ -121,13 +111,12 @@ export const WysiwygControl = createControl(
 		ariaLabel?: string;
 	} ) => {
 		const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
-		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => setValue( event.target.value );
-		const rteRef = useRef< RichTextEditorRef >( null );
+		const handleChange = ( value: unknown ) => setValue( value as string );
 
 		return (
 			<ControlActions>
 				<div>
-					<InlineEditor value={ value } setValue={ setValue } />
+					<InlineEditor value={ value } setValue={ handleChange } />
 				</div>
 			</ControlActions>
 		);

@@ -72,4 +72,3 @@ export {
 
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';
-export class InlineEditor {}
