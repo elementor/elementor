@@ -1,4 +1,10 @@
-const config = window.ElementorInteractionsConfig?.constants;
+const config = window.ElementorInteractionsConfig?.constants || {
+	defaultDuration: 0.3,
+	defaultDelay: 0,
+	slideDistance: 100,
+	scaleStart: 0.5,
+	easing: 'ease-in-out',
+};
 
 function getKeyframes( effect, type, direction ) {
 	const isIn = 'in' === type;
@@ -26,31 +32,17 @@ function getKeyframes( effect, type, direction ) {
 }
 
 function parseAnimationName( name ) {
-	const [ trigger, effect, type, direction ] = name.split( '-' );
-	return { trigger, effect, type, direction: direction || null };
-}
+	const parts = name.split( '-' );
 
-function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
-	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
-	const options = {
-		duration: config.defaultDuration,
-		delay: config.defaultDelay,
-		easing: config.easing,
-	};
-
-	const viewOptions = { amount: 0.1, root: null };
-
-	if ( 'scrollOut' === animConfig.trigger ) {
-		inViewFunc( element, ( info ) => {
-			if ( ! info.isIntersecting ) {
-				animateFunc( element, keyframes, options );
-			}
-		}, viewOptions );
-	} else if ( 'scrollIn' === animConfig.trigger ) {
-		inViewFunc( element, () => animateFunc( element, keyframes, options ), viewOptions );
-	} else {
-		animateFunc( element, keyframes, options );
+	if ( parts.length < 3 ) {
+		return null;
 	}
+
+	return {
+		effect: parts[ 0 ],
+		type: parts[ 1 ],
+		direction: 4 === parts.length ? parts[ 2 ] : null,
+	};
 }
 
 function initInteractions() {
@@ -83,11 +75,23 @@ function initInteractions() {
 				? interaction
 				: interaction?.animation?.animation_id;
 
-			const animConfig = animationName && parseAnimationName( animationName );
-
-			if ( animConfig ) {
-				applyAnimation( element, animConfig, animateFunc, inViewFunc );
+			if ( ! animationName ) {
+				return;
 			}
+
+			const animConfig = parseAnimationName( animationName );
+			if ( ! animConfig ) {
+				return;
+			}
+
+			const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+			const options = {
+				duration: config.defaultDuration,
+				delay: config.defaultDelay,
+				easing: config.easing,
+			};
+
+			animateFunc( element, keyframes, options );
 		} );
 	} );
 }
