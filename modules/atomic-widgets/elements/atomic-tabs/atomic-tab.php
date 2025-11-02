@@ -3,15 +3,16 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Display_Conditions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Render_Context;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Display_Conditions_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -50,6 +51,7 @@ class Atomic_Tab extends Atomic_Element_Base {
 				->default( [] ),
 			'tab-content-id' => String_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make(),
+			'display-conditions' => Display_Conditions_Prop_Type::make(),
 		];
 	}
 
@@ -58,7 +60,13 @@ class Atomic_Tab extends Atomic_Element_Base {
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
-				->set_items( [] ),
+				->set_items( [
+					Display_Conditions_Control::bind_to( 'display-conditions' )
+						->set_label( __( 'Display Conditions', 'elementor' ) )
+						->set_meta( [
+							'topDivider' => true,
+						] ),
+				] ),
 		];
 	}
 

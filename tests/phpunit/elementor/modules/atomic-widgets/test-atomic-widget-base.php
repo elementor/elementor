@@ -14,6 +14,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Display_Conditions_Prop_Type;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -37,7 +38,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
-		array_pop( $settings ); // remove common settings
+		
+		unset( $settings['_cssid'] );
+		unset( $settings['display-conditions'] );
 
 		// Assert.
 		$this->assertSame( $args['result'], $settings );
@@ -313,6 +316,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				->default_size( 'full' ),
 
 			'classes_prop' => Classes_Prop_Type::make(),
+
+			'display-conditions' => Display_Conditions_Prop_Type::make(),
 		];
 
 		$widget = $this->make_mock_widget( [
@@ -331,6 +336,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			'boolean_prop',
 			'image_prop',
 			'classes_prop',
+			'display-conditions',
 		];
 
 		$this->assertEqualSets( $keys, array_keys( $json ) );
@@ -355,6 +361,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		$test_schema = $widget::get_props_schema();
 		unset( $test_schema['_cssid'] );
+		unset( $test_schema['display-conditions'] );
 		// Act & Assert.
 		$this->assertSame( $schema, $test_schema );
 	}

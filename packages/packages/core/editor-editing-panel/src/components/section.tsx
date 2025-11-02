@@ -38,7 +38,11 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 				<Stack direction="row" alignItems="center" justifyItems="start" flexGrow={ 1 } gap={ 0.5 }>
 					<ListItemText
 						secondary={ title }
-						secondaryTypographyProps={ { color: 'text.primary', variant: 'caption', fontWeight: 'bold' } }
+						secondaryTypographyProps={ {
+							color: 'text.primary',
+							variant: 'caption',
+							fontWeight: 'bold',
+						} }
 						sx={ { flexGrow: 0, flexShrink: 1, marginInlineEnd: 1 } }
 					/>
 					{ getCollapsibleValue( titleEnd, isOpen ) }
