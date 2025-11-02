@@ -1,13 +1,8 @@
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { parallelTest as test } from '../../../parallelTest';
-import { BrowserContext, expect } from '@playwright/test';
-import EditorPage from '../../../pages/editor-page';
+import { expect } from '@playwright/test';
 
 test.describe( 'Atomic Widgets Wrapper @v4-tests', () => {
-	let editor: EditorPage;
-	let wpAdmin: WpAdminPage;
-	let context: BrowserContext;
-
 	const atomicWidgets = [
 		{ name: 'e-heading', title: 'Heading' },
 		{ name: 'e-button', title: 'Button' },
@@ -15,43 +10,43 @@ test.describe( 'Atomic Widgets Wrapper @v4-tests', () => {
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		context = await browser.newContext();
+		const context = await browser.newContext();
 		const page = await context.newPage();
-		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			e_atomic_elements: 'active',
 		} );
 		await page.close();
 	} );
 
-	test.afterAll( async () => {
+    test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
-		await context.close();
+		await page.close();
 	} );
 
 	atomicWidgets.forEach( ( widget ) => {
-		test.only( `${ widget.name } is automatically wrapped in e-flexbox when added`, async ( { page, apiRequests }, testInfo ) => {
+		test( `${ widget.name } is automatically wrapped in e-flexbox when added`, async ( { page, apiRequests }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			editor = await wpAdmin.openNewPage();
+			const editor = await wpAdmin.openNewPage();
 
-			await test.step( 'Add atomic widget to document', async () => {
-				const widgetId = await editor.addWidget( { widgetType: widget.name } );
-				const widgetSelector = editor.getWidgetSelector( widgetId );
-				const widgetElement = editor.getPreviewFrame().locator( widgetSelector );
+			let widgetElement;
 
-				await expect( widgetElement ).toBeVisible();
+			await test.step( 'Add atomic widget by clicking on panel', async () => {
+				await editor.openElementsPanel();
+				const panelWidgetButton = page.locator( `#elementor-panel-category-v4-elements .elementor-panel-category-items :text-is("${ widget.title }")` );
+				await panelWidgetButton.waitFor( { state: 'visible' } );
+				await panelWidgetButton.click();
 
-				const parentFlexboxId = await widgetElement.evaluate( ( node ) => {
-					const flexboxParent = node.closest( '[data-element_type="e-flexbox"]' );
-					return flexboxParent?.getAttribute( 'data-id' );
-				} );
+				widgetElement = editor.getPreviewFrame().locator( `[data-widget_type="${ widget.name }.default"]` ).first();
+				await widgetElement.waitFor( { state: 'visible' } );
+			} );
 
-				expect( parentFlexboxId ).toBeTruthy();
-
-				const flexboxSelector = `[data-id="${ parentFlexboxId }"]`;
-				const flexboxElement = editor.getPreviewFrame().locator( flexboxSelector );
-
-				await expect( flexboxElement ).toHaveAttribute( 'data-element_type', 'e-flexbox' );
+			await test.step( 'Verify widget is wrapped in e-flexbox', async () => {
+				const parentElement = widgetElement.locator( '..' );
+				await expect( parentElement ).toHaveAttribute( 'data-element_type', 'e-flexbox' );
 			} );
 		} );
 	} );
