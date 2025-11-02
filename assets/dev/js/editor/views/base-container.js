@@ -165,9 +165,6 @@ module.exports = Marionette.CompositeView.extend( {
 
 	getV3Container( container, options ) {
 		const containerExperiment = elementorCommon.config.experimentalFeatures.container;
-		console.log( 'containerExperiment', containerExperiment );
-
-		console.log('columns', Number( ! containerExperiment ));
 
 		container = $e.run( 'document/elements/create', {
 			model: {
