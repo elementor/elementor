@@ -34,6 +34,8 @@ export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 export { DateTimeControl } from './controls/date-time-control';
+export { WysiwygControl } from './controls/wysiwyg-control';
+export { InlineEditor } from './components/inline-editor';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
@@ -70,3 +72,4 @@ export {
 
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';
+export class InlineEditor {}

@@ -123,7 +123,42 @@ export function createTemplatedElementView( {
 
 					return renderer.render( templateKey, context );
 				} )
-				.then( ( html ) => this.$el.html( html ) );
+				.then( ( html ) => this.$el.html( html ) )
+
+				.then( ( html ) => {
+					const parser = new DOMParser();
+					const docHtml = parser.parseFromString( html, 'text/html' );
+					const parsedElement = docHtml.body.firstElementChild as HTMLElement;
+					return html;
+					if ( parsedElement?.dataset?.editable === 'true' ) {
+						const content = parsedElement.innerHTML;
+
+						this.setInlineEditing?.( true );
+
+						return {
+							wrapper: '',
+							content: html,
+						};
+					}
+
+					this.setInlineEditing?.( false );
+
+					return {
+						wrapper: html,
+						content: '',
+					};
+				} )
+				.then( ( html ) => {
+					this.$el.html( html );
+
+					// return content;
+				} )
+				// .then( ( content ) => {
+				// 	if ( this.isInlineEditing?.() ) {
+				// 		this.renderRichTextEditor?.( content );
+				// 	}
+				// } )
+				.then( () => this.__renderChildren() );
 
 			await process.execute();
 

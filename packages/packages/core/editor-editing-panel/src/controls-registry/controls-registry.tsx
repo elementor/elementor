@@ -16,6 +16,7 @@ import {
 	TextControl,
 	ToggleControl,
 	UrlControl,
+	WysiwygControl,
 } from '@elementor/editor-controls';
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
@@ -25,6 +26,7 @@ import {
 	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
+	richTextPropTypeUtil,
 	numberPropTypeUtil,
 	type PropTypeUtil,
 	queryPropTypeUtil,
@@ -57,6 +59,7 @@ const controlTypes = {
 	'html-tag': { component: HtmlTagControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
+	wysiwyg: { component: WysiwygControl, layout: 'full', propTypeUtil: richTextPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;
