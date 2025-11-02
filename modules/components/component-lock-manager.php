@@ -27,6 +27,10 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 	}
 
 	public function unlock( $post_id ) {
+		if( ! $this->is_component_post( $post_id ) ) {
+				 throw new \Exception( 'Post is not a component type' );	
+		}
+
 		$lock_data = $this->is_locked( $post_id );
 		$current_user_id = get_current_user_id();
 
@@ -63,6 +67,10 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 	}
 
 	public function get_updated_status( $post_id ) {
+		if( ! $this->is_component_post( $post_id ) ) {
+			throw new \Exception( 'Post is not a component type' );	
+		}
+
 		$lock_data = $this->is_locked( $post_id );
 
 		if ( ! $lock_data['is_locked'] ) {
@@ -83,4 +91,12 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 
 		return $lock_data;
 	}
+
+	public function lock( $document_id ) {
+	if ( ! $this->is_component_post( $document_id ) ) {
+		throw new \Exception( 'Post is not a component type' );
+	}
+
+	return parent::lock( $document_id );
+}
 }
