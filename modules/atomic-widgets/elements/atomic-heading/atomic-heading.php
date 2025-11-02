@@ -76,7 +76,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 		$content_section = Section::make()
 			->set_label( __( 'Content', 'elementor' ) )
-			->set_items( [$control] );
+			->set_items( [ $control ] );
 		return [
 			$content_section,
 			Section::make()
