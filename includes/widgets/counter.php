@@ -118,6 +118,9 @@ class Widget_Counter extends Widget_Base {
 	 * @access protected
 	 */
 	protected function register_controls() {
+		$start = is_rtl() ? 'right' : 'left';
+		$end = ! is_rtl() ? 'right' : 'left';
+
 		$this->start_controls_section(
 			'section_counter',
 			[
@@ -280,13 +283,14 @@ class Widget_Counter extends Widget_Base {
 						'title' => esc_html__( 'After', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
 					],
+
 					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => 'eicon-h-align-left',
+						'icon' => "eicon-h-align-$start",
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => 'eicon-h-align-right',
+						'icon' => "eicon-h-align-$end",
 					],
 				],
 				'selectors_dictionary' => [
@@ -298,7 +302,6 @@ class Widget_Counter extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-counter' => '{{VALUE}}',
 				],
-				'classes' => 'elementor-control-start-end',
 				'condition' => [
 					'title!' => '',
 				],
@@ -313,7 +316,7 @@ class Widget_Counter extends Widget_Base {
 				'options' => [
 					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => 'eicon-h-align-left',
+						'icon' => "eicon-h-align-$start",
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
@@ -321,11 +324,10 @@ class Widget_Counter extends Widget_Base {
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => 'eicon-h-align-right',
+						'icon' => "eicon-h-align-$end",
 					],
 				],
 				'separator' => 'before',
-				'classes' => 'elementor-control-start-end',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-title' => 'justify-content: {{VALUE}};',
 				],
@@ -388,7 +390,7 @@ class Widget_Counter extends Widget_Base {
 				'options' => [
 					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => 'eicon-h-align-left',
+						'icon' => "eicon-h-align-$start",
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
@@ -396,14 +398,13 @@ class Widget_Counter extends Widget_Base {
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => 'eicon-h-align-right',
+						'icon' => "eicon-h-align-$end",
 					],
 					'stretch' => [
 						'title' => esc_html__( 'Stretch', 'elementor' ),
 						'icon' => 'eicon-grow',
 					],
 				],
-				'classes' => 'elementor-control-start-end',
 				'selectors_dictionary' => [
 					'start' => 'text-align: {{VALUE}}; --counter-prefix-grow: 0; --counter-suffix-grow: 1; --counter-number-grow: 0;',
 					'center' => 'text-align: {{VALUE}}; --counter-prefix-grow: 1; --counter-suffix-grow: 1; --counter-number-grow: 0;',
@@ -425,7 +426,7 @@ class Widget_Counter extends Widget_Base {
 				'options' => [
 					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => 'eicon-text-align-left',
+						'icon' => "eicon-text-align-$start",
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
@@ -433,10 +434,9 @@ class Widget_Counter extends Widget_Base {
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => 'eicon-text-align-right',
+						'icon' => "eicon-text-align-$end",
 					],
 				],
-				'classes' => 'elementor-control-start-end',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-number' => 'text-align: {{VALUE}};',
 				],

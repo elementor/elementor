@@ -187,14 +187,13 @@ class Widget_Tabs extends Widget_Base {
 				'options' => [
 					'vertical' => [
 						'title' => esc_html__( 'Vertical', 'elementor' ),
-						'icon' => 'eicon-h-align-left',
+						'icon' => 'eicon-h-align-' . ( is_rtl() ? 'right' : 'left' ),
 					],
 					'horizontal' => [
 						'title' => esc_html__( 'Horizontal', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
 					],
 				],
-				'classes' => 'elementor-control-start-end',
 				'prefix_class' => 'elementor-tabs-view-',
 				'separator' => 'before',
 			]
