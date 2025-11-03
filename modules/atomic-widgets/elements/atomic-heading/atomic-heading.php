@@ -50,7 +50,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
 				->default( 'h2' ),
 
-			'title' => String_Prop_Type::make()
+			'content' => String_Prop_Type::make()
 				->default( __( 'This is a title', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
@@ -65,7 +65,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$content_section = Section::make()
 			->set_label( __( 'Content', 'elementor' ) )
 			->set_items( [
-				Textarea_Control::bind_to( 'title' )
+				Textarea_Control::bind_to( 'content' )
 				->set_placeholder( __( 'Type your title here', 'elementor' ) )
 					->set_label( __( 'Title', 'elementor' ) ),
 			] );

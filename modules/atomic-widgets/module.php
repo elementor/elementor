@@ -267,11 +267,8 @@ class Module extends BaseModule {
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
 		$transformers->register( Query_Prop_Type::get_key(), new Query_Transformer() );
 		$transformers->register( Attributes_Prop_Type::get_key(), new Attributes_Transformer() );
-<<<<<<< Updated upstream
 		$transformers->register( Date_Time_Prop_Type::get_key(), new Date_Time_Transformer() );
-=======
 		$transformers->register( Rich_Text_Prop_Type::get_key(), new Rich_Text_Transformer() );
->>>>>>> Stashed changes
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {

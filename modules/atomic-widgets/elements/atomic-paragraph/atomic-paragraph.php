@@ -47,7 +47,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'paragraph' => String_Prop_Type::make()
+			'content' => String_Prop_Type::make()
 				->default( __( 'Type your paragraph here', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
@@ -63,7 +63,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
-					WYSIWYG_Control::bind_to( 'paragraph' )
+					WYSIWYG_Control::bind_to( 'content' )
 						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
 						->set_label( __( 'Paragraph', 'elementor' ) ),
 				] ),

@@ -1,4 +1,4 @@
-{% if settings.title is not empty %}
+{% if settings.content is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
 	<{{ settings.tag | e('html_tag') }} 
 		data-id="{{ id }}" 
@@ -11,10 +11,10 @@
 	>
 	{% if settings.link.href %}
 		<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
-			{{ settings.title }}
+			{{ settings.content }}
 		</a>
 	{% else %}
-		{{ settings.title }}
+		{{ settings.content }}
 	{% endif %}
 	</{{ settings.tag | e('html_tag') }}>
 {% endif %}
