@@ -123,7 +123,7 @@ export function createTemplatedElementView( {
 
 					return renderer.render( templateKey, context );
 				} )
-				.then( ( html ) => this.$el.html( html ) )
+				.then( ( html ) => this.$el.html( html ) );
 
 			await process.execute();
 
