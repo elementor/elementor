@@ -25,7 +25,6 @@ class Link_Transformer extends Transformer_Base {
 		$destination = $value['destination'];
 		$post = is_numeric( $destination ) ? get_post( $destination ) : null;
 
-		return $post ? get_permalink( $post ) : $destination;
-
+		return $post ? $post->guid : $destination;
 	}
 }
