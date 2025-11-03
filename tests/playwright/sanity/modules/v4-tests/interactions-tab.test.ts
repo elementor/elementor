@@ -88,7 +88,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			await expect( animationOption ).toBeVisible();
 			await animationOption.click();
-			await expect( interactionTag ).toContainText( 'Page Load - Fade In Left' );
+			await expect( interactionTag ).toContainText( 'Page Load - Fade In Right' );
 		} );
 
 		await test.step( 'Publish and view the page', async () => {
