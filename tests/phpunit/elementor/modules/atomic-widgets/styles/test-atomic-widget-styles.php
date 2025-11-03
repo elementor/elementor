@@ -124,7 +124,7 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 			->willReturnCallback(function( $key, $callback ) use ( $element_1, $element_2, $element_3, $doc_1_id, $doc_2_id, $invoked_count ) {
 				switch ( $invoked_count->getInvocationCount() ) {
 					case 1:
-						$this->assertEquals( Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_1_id, $key );
+						$this->assertEquals( Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_1_id . '-' . Atomic_Widget_Styles::CONTEXT_FRONTEND, $key );
 						$this->callback( function( $callback ) use ( $element_1, $element_2, $doc_1_id ) {
 							$styles = $callback();
 
@@ -138,7 +138,7 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 						});
 						break;
 					case 2:
-						$this->assertEquals( Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_2_id, $key );
+						$this->assertEquals( Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_2_id . '-' . Atomic_Widget_Styles::CONTEXT_FRONTEND, $key );
 						$this->callback( function( $callback ) use ( $element_3, $doc_2_id ) {
 							$styles = $callback();
 							$this->assertEquals( $element_3->get_raw_data()['styles'], $styles );
@@ -203,7 +203,7 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 			->expects( $this->once() )
 			->method( 'register' )
 			->with(
-				Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_id,
+				Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_id . '-' . Atomic_Widget_Styles::CONTEXT_FRONTEND,
 				$this->callback(function( $callback ) use ( $element, $atomic_element ) {
 					$styles = $callback();
 					$expected = $atomic_element->get_raw_data()['styles'];
@@ -225,16 +225,28 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		$cache_validity = new Cache_Validity();
 
 		// Act.
-		$cache_validity->validate( [ Atomic_Widget_Styles::STYLES_KEY, $id ] );
+		$cache_validity->validate( [
+			Atomic_Widget_Styles::STYLES_KEY,
+			$id,
+			Atomic_Widget_Styles::CONTEXT_FRONTEND,
+		] );
 
 		// Assert.
-		$this->assertTrue( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id ] ) );
+		$this->assertTrue( $cache_validity->is_valid( [
+			Atomic_Widget_Styles::STYLES_KEY,
+			$id,
+			Atomic_Widget_Styles::CONTEXT_FRONTEND,
+		] ) );
 
 		// Act.
 		wp_delete_post( $id, true );
 
 		// Assert.
-		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id ] ) );
+		$this->assertFalse( $cache_validity->is_valid( [
+			Atomic_Widget_Styles::STYLES_KEY,
+			$id,
+			Atomic_Widget_Styles::CONTEXT_FRONTEND,
+		] ) );
 	}
 
 	public function test_cache_invalidation_on_global_cache_clear() {
@@ -246,10 +258,10 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		$cache_validity = new Cache_Validity();
 
 		// Act.
-		$cache_validity->validate( [ Atomic_Widget_Styles::STYLES_KEY, $id ] );
+		$cache_validity->validate( [ Atomic_Widget_Styles::STYLES_KEY, $id, Atomic_Widget_Styles::CONTEXT_FRONTEND ] );
 
 		// Assert.
-		$this->assertTrue( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id ] ) );
+		$this->assertTrue( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id, Atomic_Widget_Styles::CONTEXT_FRONTEND ] ) );
 
 		// Act.
 		do_action( 'elementor/document/after_save', $doc, [] );

@@ -50,7 +50,6 @@ class Cache_Validity {
 	 * @return void
 	 */
 	public function validate( $keys, $meta = null ): void {
-		// error_log( 'Validate cache: ' . implode( ', ', $keys ) );
 		$root = array_shift( $keys );
 		$cache_item = new Cache_Validity_Item( $root );
 
@@ -62,7 +61,6 @@ class Cache_Validity {
 	 * @return void
 	 */
 	public function invalidate( array $keys ): void {
-		// error_log( 'Invalidate cache: ' . implode( ', ', $keys ) );
 		$root = array_shift( $keys );
 		$cache_item = new Cache_Validity_Item( $root );
 

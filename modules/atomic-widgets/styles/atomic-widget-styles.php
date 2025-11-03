@@ -20,9 +20,9 @@ class Atomic_Widget_Styles {
 
 		add_action( 'elementor/document/after_save', fn( Document $document ) => $this->invalidate_cache(
 			[ $document->get_main_post()->ID ],
-			$document->get_post()->post_status === Document::STATUS_PUBLISH 
-				? Atomic_Widget_Styles::CONTEXT_FRONTEND 
-				: Atomic_Widget_Styles::CONTEXT_PREVIEW
+			$document->get_post()->post_status === Document::STATUS_PUBLISH
+				? self::CONTEXT_FRONTEND
+				: self::CONTEXT_PREVIEW
 		), 20, 2 );
 
 		add_action(
@@ -37,7 +37,7 @@ class Atomic_Widget_Styles {
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
-		$context = is_preview() ? Atomic_Widget_Styles::CONTEXT_PREVIEW : Atomic_Widget_Styles::CONTEXT_FRONTEND;
+		$context = is_preview() ? self::CONTEXT_PREVIEW : self::CONTEXT_FRONTEND;
 
 		foreach ( $post_ids as $post_id ) {
 			$get_styles = fn() => $this->parse_post_styles( $post_id );
@@ -71,18 +71,18 @@ class Atomic_Widget_Styles {
 
 	private function invalidate_cache( ?array $post_ids = null, ?string $context = null ) {
 		$cache_validity = new Cache_Validity();
-		
+
 		if ( empty( $post_ids ) ) {
 			$cache_validity->invalidate( [ self::STYLES_KEY ] );
-			
+
 			return;
 		}
-		
+
 		foreach ( $post_ids as $post_id ) {
-			$cache_validity->invalidate( 
-				null !== $context 
-					? [ self::STYLES_KEY, $post_id, $context ] 
-					: [ self::STYLES_KEY, $post_id ] 
+			$cache_validity->invalidate(
+				null !== $context
+					? [ self::STYLES_KEY, $post_id, $context ]
+					: [ self::STYLES_KEY, $post_id ]
 			);
 		}
 	}
