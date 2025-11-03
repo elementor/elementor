@@ -47,4 +47,3 @@ export * from './filter-prop-types/filter-functions/blur-filter';
 export * from './filter-prop-types/filter-functions/intensity-filter';
 export * from './filter-prop-types/filter-functions/color-tone-filter';
 export * from './filter-prop-types/filter-functions/hue-rotate-filter';
-export * from './rich-text';
