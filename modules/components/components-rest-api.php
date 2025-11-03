@@ -227,7 +227,7 @@ class Components_REST_API {
 
 	private function get_lock_status( \WP_REST_Request $request ) {
 		$component_id = (int) $request->get_param( 'componentId' );
-
+		
 		if ( ! $this->is_valid_component( $component_id ) ) {
 			return Response_Builder::make( [
 				'is_current_user_allow_to_edit' => true,
@@ -263,7 +263,7 @@ class Components_REST_API {
 
 	private function is_valid_component( $post_id ) {
 		$post = get_post( $post_id );
-
+		
 		if ( ! $post ) {
 			return false;
 		}
