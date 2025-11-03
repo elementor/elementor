@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { type ForwardedRef } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
-import { BubbleMenu, FloatingMenu } from '@tiptap/react/menus';
 import StarterKit from '@tiptap/starter-kit';
 
 export const InlineEditor = React.forwardRef(
