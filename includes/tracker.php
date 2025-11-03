@@ -588,6 +588,7 @@ class Tracker {
 			],
 			'is_first_time' => $is_first_time,
 			'install_time' => Plugin::instance()->get_install_time(),
+			'allowed_usage_time' => self::get_last_update_time(),
 		];
 
 		$site_key = Api::get_site_key();
