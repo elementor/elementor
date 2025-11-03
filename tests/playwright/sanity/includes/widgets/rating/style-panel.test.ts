@@ -2,17 +2,17 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import _path from 'path';
-import { wpCli } from '../../../../assets/wp-cli';
 
 const iconExperimentStates = [ 'inactive', 'active' ];
 
 iconExperimentStates.forEach( ( iconExperimentState ) => {
 	test.describe( `Rating style panel - Icon Experiment: ${ iconExperimentState } @rating`, () => {
-		test.beforeAll( async () => {
-			const command = 'active' === iconExperimentState
-				? 'wp elementor experiments activate e_font_icon_svg'
-				: 'wp elementor experiments deactivate e_font_icon_svg';
-			await wpCli( command );
+		test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+			const context = await browser.newContext();
+			const page = await context.newPage();
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			await wpAdmin.setExperiments( { e_font_icon_svg: 'active' === iconExperimentState } );
+			await page.close();
 		} );
 
 		test.afterAll( async ( { browser, apiRequests }, testInfo ) => {

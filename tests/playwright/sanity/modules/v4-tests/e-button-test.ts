@@ -2,14 +2,21 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { newUser } from '../checklist/new-user';
 import { expect } from '@playwright/test';
-import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 	let newTestUser: { id: string; username: string; password: string };
 
-	test.beforeAll( async ( { request, apiRequests }, testInfo ) => {
-		await wpCli( 'wp elementor experiments activate e_opt_in_v4_page e_atomic_elements' );
+	test.beforeAll( async ( { browser, apiRequests, request }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( {
+			e_opt_in_v4_page: 'active',
+			e_atomic_elements: 'active',
+		} );
+
 		newTestUser = await apiRequests.createNewUser( request, newUser );
+		await page.close();
 	} );
 
 	test.afterAll( async ( { browser, apiRequests, request }, testInfo ) => {

@@ -4,11 +4,13 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, deleteItemFromRepeater, addItemFromRepeater } from './helper';
 import _path from 'path';
 import AxeBuilder from '@axe-core/playwright';
-import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Nested Accordion tests @nested-accordion', () => {
-	test.beforeAll( async () => {
-		await wpCli( 'wp elementor experiments deactivate container nested-elements' );
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( { container: 'inactive', 'nested-elements': 'inactive' } );
+		await page.close();
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {

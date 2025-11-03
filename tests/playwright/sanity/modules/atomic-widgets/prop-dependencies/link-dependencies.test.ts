@@ -2,7 +2,6 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import { AtomicHelper, ElementType } from '../helper';
-import { wpCli } from '../../../../assets/wp-cli';
 
 test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependencies', () => {
 	const tests: { label: string, elementType: ElementType }[] = [
@@ -10,8 +9,18 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 		{ label: 'Flexbox', elementType: 'e-flexbox' },
 	];
 
-	test.beforeAll( async () => {
-		await wpCli( 'wp elementor experiments activate e_opt_in_v4_page e_atomic_elements e_nested_elements' );
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.setExperiments( {
+			e_opt_in_v4_page: 'active',
+			e_atomic_elements: 'active',
+		} );
+
+		await wpAdmin.setExperiments( {
+			e_nested_elements: 'active',
+		} );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {

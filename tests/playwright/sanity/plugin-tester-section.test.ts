@@ -1,13 +1,15 @@
 import { parallelTest as test } from '../parallelTest';
 import { generatePluginTests } from './plugin-tester-generator';
 import WpAdminPage from '../pages/wp-admin-page';
-import { wpCli } from '../assets/wp-cli';
 
 test.describe.configure( { mode: 'parallel' } );
 
 test.describe( `Plugin tester tests: sections @plugin_tester_section`, () => {
-	test.beforeAll( async () => {
-		await wpCli( 'wp elementor experiments deactivate container' );
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( { container: 'inactive' } );
+		await page.close();
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {

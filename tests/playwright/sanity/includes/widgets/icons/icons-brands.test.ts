@@ -3,7 +3,6 @@ import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import _path from 'path';
-import { wpCli } from '../../../../assets/wp-cli';
 
 test.describe( 'Icons (FA Brands)', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -17,12 +16,13 @@ test.describe( 'Icons (FA Brands)', () => {
 	for ( const status of [ 'inactive', 'active' ] ) {
 		test( `Inline Icons experiment status - ${ status }`, async ( { page, apiRequests }, testInfo ) => {
 			// Arrange.
-			await wpCli( `wp elementor experiments ${ 'active' === status ? 'activate' : 'deactivate' } e_font_icon_svg` );
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );
 			const iconsType = 'icons-brands';
 
 			// Act.
+			await wpAdmin.setExperiments( { e_font_icon_svg: status } );
+
 			await wpAdmin.openNewPage();
 			await editor.closeNavigatorIfOpen();
 

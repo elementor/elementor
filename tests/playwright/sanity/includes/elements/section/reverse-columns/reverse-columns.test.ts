@@ -2,12 +2,14 @@ import { parallelTest as test } from '../../../../../parallelTest';
 import Breakpoints from '../../../../../assets/breakpoints';
 import ReverseColumns from './reverse-columns';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
-import { wpCli } from '../../../../../assets/wp-cli';
 
 test.describe( 'Reverse Columns tests @reverse-columns', () => {
 	test.describe( 'Custom Breakpoints: Off', () => {
-		test.beforeAll( async () => {
-			await wpCli( 'wp elementor experiments deactivate container additional_custom_breakpoints' );
+		test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+			const context = await browser.newContext();
+			const page = await context.newPage();
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			await wpAdmin.setExperiments( { container: false, additional_custom_breakpoints: false } );
 		} );
 
 		test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
