@@ -1,5 +1,9 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
-import { registerElementType, settingsTransformersRegistry } from '@elementor/editor-canvas';
+import {
+	type CreateTemplatedElementTypeOptions,
+	registerElementType,
+	settingsTransformersRegistry,
+} from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
@@ -10,6 +14,7 @@ import { __ } from '@wordpress/i18n';
 import { componentIdTransformer } from './component-id-transformer';
 import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
+import { openEditModeDialog } from './components/in-edit-mode';
 import { createComponentType, TYPE } from './create-component-type';
 import { PopulateStore } from './populate-store';
 import { componentsStylesProvider } from './store/components-styles-provider';
@@ -24,7 +29,9 @@ const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
 export function init() {
 	stylesRepository.register( componentsStylesProvider );
 	registerSlice( slice );
-	registerElementType( TYPE, createComponentType );
+	registerElementType( TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
+		createComponentType( { ...options, showLockedByModal: openEditModeDialog } )
+	);
 	registerDataHook( 'dependency', 'editor/documents/close', ( args ) => {
 		const document = getV1CurrentDocument();
 		if ( document.config.type === COMPONENT_DOCUMENT_TYPE ) {
