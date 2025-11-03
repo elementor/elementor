@@ -59,6 +59,7 @@ export function createTemplatedElementView( {
 
 	const baseStylesDictionary = element.base_styles_dictionary;
 
+	// רושמים את כל תבניות ה-Twig אל הרנדרר פעם אחת עבור ה-View Class.
 	Object.entries( element.twig_templates ).forEach( ( [ key, template ] ) => {
 		renderer.register( key, template );
 	} );
@@ -80,7 +81,7 @@ export function createTemplatedElementView( {
 		}
 
 		// Override `render` function to support async `_renderTemplate`
-		// Note that `_renderChildren` asynchronity is still NOT supported, so only the parent element rendering can be async
+		// Note: `_renderChildren` asynchrony is still NOT supported; only parent element rendering can be async.
 		render() {
 			this.#abortController?.abort();
 			this.#abortController = new AbortController();
@@ -96,11 +97,12 @@ export function createTemplatedElementView( {
 			return process.execute();
 		}
 
-		// Overriding Marionette original `_renderTemplate` method to inject our renderer.
+		// Overriding Marionette original `_renderTemplate` to inject our renderer + inline editing handling.
 		async _renderTemplate() {
 			this.triggerMethod( 'before:render:template' );
 
 			const process = signalizedProcess( this.#abortController?.signal as AbortSignal )
+				// 1) שליפת settings מהמודל והרצה דרך ה-resolver (schema + transformers), ניתן לביטול עם signal.
 				.then( ( _, signal ) => {
 					const settings = this.model.get( 'settings' ).toJSON();
 
@@ -109,11 +111,12 @@ export function createTemplatedElementView( {
 						signal,
 					} );
 				} )
+				// 2) hook להרחבות/התאמות אחרי ה-resolve.
 				.then( ( settings ) => {
 					return this.afterSettingsResolve( settings );
 				} )
+				// 3) רינדור Twig לקובץ HTML לפי התבנית הראשית + קונטקסט תואם backend.
 				.then( async ( settings ) => {
-					// Same as the Backend.
 					const context = {
 						id: this.model.get( 'id' ),
 						type,
@@ -123,42 +126,32 @@ export function createTemplatedElementView( {
 
 					return renderer.render( templateKey, context );
 				} )
-				.then( ( html ) => this.$el.html( html ) )
-
+				// 4) טיפול נכון ב-inline editing:
 				.then( ( html ) => {
-					const parser = new DOMParser();
-					const docHtml = parser.parseFromString( html, 'text/html' );
-					const parsedElement = docHtml.body.firstElementChild as HTMLElement;
-					return html;
-					if ( parsedElement?.dataset?.editable === 'true' ) {
-						const content = parsedElement.innerHTML;
+					try {
+						const parser = new DOMParser();
+						const doc = parser.parseFromString( html, 'text/html' );
+						const root = doc.body.firstElementChild as HTMLElement | null;
+						const isEditable = root?.dataset?.editable === 'true';
 
-						this.setInlineEditing?.( true );
+						// עדכון מצב inline-editing (אם הנתמך קיים על ה-View).
+						( this as any ).setInlineEditing?.( !! isEditable );
 
-						return {
-							wrapper: '',
-							content: html,
-						};
+						if ( isEditable ) {
+							// מצב עריכה: לא מזריקים wrapper; מרנדרים עורך עשיר עם תוכן פנימי.
+							const content = root?.innerHTML ?? '';
+							this.$el.html( '' );
+							( this as any ).renderRichTextEditor?.( content );
+						} else {
+							// מצב רגיל: מזריקים את ה-HTML כפי שהוא.
+							this.$el.html( html );
+						}
+					} catch {
+						// אם parsing נכשל מסיבה כלשהי, נ fallback להזרקה רגילה.
+						this.$el.html( html );
+						( this as any ).setInlineEditing?.( false );
 					}
-
-					this.setInlineEditing?.( false );
-
-					return {
-						wrapper: html,
-						content: '',
-					};
-				} )
-				.then( ( html ) => {
-					this.$el.html( html );
-
-					// return content;
-				} )
-				// .then( ( content ) => {
-				// 	if ( this.isInlineEditing?.() ) {
-				// 		this.renderRichTextEditor?.( content );
-				// 	}
-				// } )
-				.then( () => this.__renderChildren() );
+				} );
 
 			await process.execute();
 
