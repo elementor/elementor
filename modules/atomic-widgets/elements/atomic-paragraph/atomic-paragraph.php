@@ -66,8 +66,8 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 		$control = $is_feature_active
 			? WYSIWYG_Control::bind_to( 'paragraph' )
-				->set_placeholder( __( 'Inline editing', 'elementor' ) )
-				->set_label( __( 'Inline editing', 'elementor' ) )
+				->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
+				->set_label( __( 'Paragraph', 'elementor' ) )
 			: Textarea_Control::bind_to( 'paragraph' )
 				->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
 				->set_label( __( 'Paragraph', 'elementor' ) );
