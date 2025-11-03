@@ -5,7 +5,6 @@ import { InlineEditor } from '@elementor/editor-controls';
 // @ts-ignore - Dynamic import for rich text editor
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
 
-console.log( 12321232123 );
 // Technically it shouldn't have a return type annotation, but for some
 // reason TypeScript can't infer the types properly when emitting DTS.
 //
@@ -61,13 +60,13 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 
 			this.#reactRoot = this.#reactRoot ?? createRoot( container );
 
-			const handleSave = ( html: string ) => {
+			const handleSave = ( html: unknown ) => {
 				const parser = new DOMParser();
-				const docHtml = parser.parseFromString( html, 'text/html' );
+				const docHtml = parser.parseFromString( html as string, 'text/html' );
 
 				this.model.get( 'settings' )?.set( 'paragraph', {
 					$$type: 'string',
-					value: docHtml.body.firstElementChild.innerHTML,
+					value: docHtml.body.firstElementChild?.innerHTML ?? '',
 				} );
 			};
 
@@ -105,7 +104,7 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 					setValue={ handleSave }
 					attributes={ getAttributes( content ) }
 					displayToolbar={ true }
-					getContainer={ () => this.$el?.[ 0 ]?.querySelector( '.inline-editing-root' ) }
+					getContainer={ () => this.$el?.get( 0 )?.querySelector( '.inline-editing-root' ) }
 				/>
 			);
 		}
@@ -119,7 +118,7 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 		}
 
 		getInitialRichTextContent(): string {
-			return ( this.model.get( 'settings' )?.get( 'paragraph' )?.value as string ) ?? '<span></span>';
+			return ( this.model.get( 'settings' )?.get( 'paragraph' ) as { value?: string } )?.value ?? '<span></span>';
 		}
 
 		parseHtmlToStructure( htmlString: string ): unknown[] {
