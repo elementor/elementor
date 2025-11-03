@@ -811,9 +811,6 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( '', $data['locked_by'], 'Non-existent component should not be locked' );
 	}
 
-
-
-
 	// Lock endpoint tests
 	public function test_post_lock_component__successfully_locks_component() {
 		// Arrange
