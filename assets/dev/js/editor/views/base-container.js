@@ -181,7 +181,7 @@ module.exports = Marionette.CompositeView.extend( {
 		} );
 
 		// Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
-		if ( ! containerExperiment ) {
+		if ( ! isContainerExperimentActive ) {
 			container = container.view.children.findByIndex( 0 )
 				.getContainer();
 		}
