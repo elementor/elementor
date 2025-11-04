@@ -30,7 +30,7 @@ import { useClassesProp } from '../../contexts/classes-prop-context';
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 import { getStylesProviderColorName } from '../../utils/get-styles-provider-color';
-import { trackGlobalClasses } from '../../utils/tracking/subscribe';
+import { trackStyles } from '../../utils/tracking/subscribe';
 import {
 	CreatableAutocomplete,
 	type CreatableAutocompleteProps,
@@ -128,13 +128,13 @@ export function CssClassSelector() {
 								if ( ! value.value ) {
 									throw new Error( `Cannot rename a class without style id` );
 								}
-								trackGlobalClasses( {
-									event: 'class_renamed',
+								trackStyles( value.provider ?? '', 'class_renamed', {
 									classId: value.value,
 									newValue: newLabel,
 									oldValue: value.label,
 									source: 'style-tab',
 								} );
+
 								return updateClassByProvider( value.provider, { label: newLabel, id: value.value } );
 							};
 
@@ -253,8 +253,7 @@ function useCreateAction() {
 
 	const create = ( classLabel: string ) => {
 		createAction( { classLabel } );
-		trackGlobalClasses( {
-			event: 'class_created',
+		trackStyles( provider.getKey(), 'class_created', {
 			source: 'created',
 			classTitle: classLabel,
 		} );

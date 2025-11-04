@@ -13,6 +13,7 @@ import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 import { type StyleDefinitionStateWithNormal } from '../../styles-inheritance/types';
 import { getTempStylesProviderThemeColor } from '../../utils/get-styles-provider-color';
+import { trackStyles } from '../../utils/tracking/subscribe';
 import { StyleIndicator } from '../style-indicator';
 import { useCssClass } from './css-class-context';
 import { LocalClassSubMenu } from './local-class-sub-menu';
@@ -138,7 +139,6 @@ export function useElementStates() {
 
 function useModifiedStates( styleId: string | null ): Partial< Record< StyleDefinitionStateWithNormal, true > > {
 	const { meta } = useStyle();
-
 	const styleDef = stylesRepository.all().find( ( style ) => style.id === styleId );
 
 	return Object.fromEntries(
@@ -218,9 +218,12 @@ function StateMenuItem( { state, label, closeMenu, ...props }: StateMenuItemProp
 				if ( ! isActive ) {
 					setActiveId( styleId );
 				}
-
+				trackStyles( provider ?? '', 'class_state_clicked', {
+					classId: styleId,
+					type: label,
+					source: styleId ? 'global' : 'local',
+				} );
 				setActiveMetaState( state );
-
 				closeMenu();
 			} }
 		>

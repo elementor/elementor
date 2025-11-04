@@ -1,11 +1,9 @@
 import { stylesRepository } from '@elementor/editor-styles-repository';
-const GLOBAL_CLASSES_PROVIDER_KEY = 'global-classes';
 
-export const trackGlobalClasses = ( ...rest: any ) => {
-	const globalClassesProvider = stylesRepository.getProviderByKey( GLOBAL_CLASSES_PROVIDER_KEY );
+export const trackStyles = ( provider: string, event: string, data: Record< string, unknown > ) => {
+	const providerInstance = stylesRepository.getProviderByKey( provider );
 
-	if ( globalClassesProvider?.actions.tracking ) {
-		const [ event, ...restData ] = rest;
-		return globalClassesProvider?.actions.tracking( event, { ...restData } );
+	if ( providerInstance?.actions.tracking ) {
+		return providerInstance?.actions.tracking( event, data );
 	}
 };

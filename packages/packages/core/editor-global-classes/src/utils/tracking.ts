@@ -93,7 +93,11 @@ type EventMap = {
 	class_usage_locate: {
 		classId: StyleDefinitionID;
 	};
-	class_state_clicked: {};
+	class_state_clicked: {
+		classId: StyleDefinitionID | null;
+		type: string;
+		source: 'global' | 'local';
+	};
 };
 
 export type TrackingEvent< T extends Event > = BaseTrackingEvent< T > & EventMap[ T ];
@@ -110,7 +114,7 @@ export const trackGlobalClasses = async < T extends Event >( payload: TrackingEv
 	const { runAction } = payload as TrackingEventWithComputed< T > & { runAction?: () => void };
 	const data = await getSanitizedData( payload );
 	if ( data ) {
-		track( data, false );
+		track( data, true );
 	}
 	runAction?.();
 };
@@ -140,6 +144,11 @@ const getSanitizedData = async < T extends Event >( payload: TrackingEvent< T > 
 				if ( 'classId' in payload && payload.classId ) {
 					return { ...payload, classTitle: getCssClass( payload.classId ).label };
 				}
+			}
+			break;
+		case 'class_state_clicked':
+			if ( 'classId' in payload && payload.classId ) {
+				return { ...payload, classTitle: getCssClass( payload.classId ).label };
 			}
 			break;
 		default:
@@ -180,10 +189,10 @@ const track = < T extends Event >( data: TrackingEvent< T >, testing = false ) =
 	const { event, ...eventData } = data;
 
 	try {
-		dispatchEvent?.(name, {
+		dispatchEvent?.( name, {
 			event,
 			properties: {
-				...eventData
+				...eventData,
 			},
 		} );
 	} catch ( error ) {
