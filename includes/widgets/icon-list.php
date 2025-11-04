@@ -253,9 +253,6 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-		$start = is_rtl() ? 'right' : 'left';
-		$end = ! is_rtl() ? 'right' : 'left';
-
 		$this->add_responsive_control(
 			'icon_align',
 			[
@@ -264,7 +261,7 @@ class Widget_Icon_List extends Widget_Base {
 				'options' => [
 					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => "eicon-h-align-$start",
+						'icon' => 'eicon-h-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
@@ -272,7 +269,7 @@ class Widget_Icon_List extends Widget_Base {
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => "eicon-h-align-$end",
+						'icon' => 'eicon-h-align-right',
 					],
 				],
 				'classes_dictionary' => [
@@ -280,6 +277,7 @@ class Widget_Icon_List extends Widget_Base {
 					'right' => is_rtl() ? 'start' : 'end',
 				],
 				'prefix_class' => 'elementor%s-align-',
+				'classes' => 'elementor-control-start-end',
 			]
 		);
 
