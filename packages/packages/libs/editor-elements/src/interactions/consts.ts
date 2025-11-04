@@ -1,0 +1,1 @@
+export const ELEMENT_INTERACTIONS_CHANGE_EVENT = 'elementor/element/interactions/change';

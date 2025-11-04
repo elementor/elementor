@@ -30,6 +30,20 @@ const ANIMATION_OPTIONS = getAnimationOptions() || [ { value: '', label: 'Select
 export const InteractionsInput = () => {
 	const { interactions, setInteractions } = useInteractionsContext();
 
+    React.useEffect(() => {
+		console.log('🎛️ InteractionsInput - Current State:', {
+			interactions,
+			parsedInteractions: (() => {
+				try {
+					return JSON.parse(interactions || '[]');
+				} catch {
+					return 'Invalid JSON';
+				}
+			})(),
+			timestamp: new Date().toISOString()
+		});
+	}, [interactions]);
+
 	const currentAnimationIds = React.useMemo( () => {
 		try {
 			const parsed = JSON.parse( interactions || '[]' );
