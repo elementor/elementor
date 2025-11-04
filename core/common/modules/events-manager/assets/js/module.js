@@ -17,6 +17,7 @@ export default class extends elementorModules.Module {
 				record_sessions_percent: 0,
 				record_idle_timeout_ms: 60000,
 				record_max_ms: 300000,
+				record_mask_text_selector: '',
 			},
 		);
 
