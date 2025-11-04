@@ -5,7 +5,7 @@ import { SessionStorageProvider } from '@elementor/session';
 
 import { useElement } from '../contexts/element-context';
 import { InteractionsProvider, useInteractionsContext } from '../contexts/interaction-context';
-import { usePopupStateContext } from '../contexts/PopupStateContex';
+import { usePopupStateContext } from '../contexts/Popup-state-contex';
 import { EmptyState } from '../interactions/components/empty-list';
 import { PredefinedInteractionsList } from '../interactions/components/interactions-list';
 import { SectionsList } from './sections-list';

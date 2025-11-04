@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 
 type PopupStateContextType = {
 	openByDefault: boolean;
@@ -6,16 +7,16 @@ type PopupStateContextType = {
 	resetDefaultOpen: () => void;
 };
 
-const PopupStateContext = React.createContext< PopupStateContextType | undefined >( undefined );
+const PopupStateContext = createContext< PopupStateContextType | undefined >( undefined );
 
 export const PopupStateProvider = ( { children }: { children: React.ReactNode } ) => {
-	const [ openByDefault, setOpenByDefault ] = React.useState( false );
+	const [ openByDefault, setOpenByDefault ] = useState( false );
 
-	const triggerDefaultOpen = React.useCallback( () => {
+	const triggerDefaultOpen = useCallback( () => {
 		setOpenByDefault( true );
 	}, [] );
 
-	const resetDefaultOpen = React.useCallback( () => {
+	const resetDefaultOpen = useCallback( () => {
 		setOpenByDefault( false );
 	}, [] );
 
@@ -27,7 +28,7 @@ export const PopupStateProvider = ( { children }: { children: React.ReactNode } 
 };
 
 export const usePopupStateContext = () => {
-	const context = React.useContext( PopupStateContext );
+	const context = useContext( PopupStateContext );
 	if ( ! context ) {
 		throw new Error( 'usePopupStateContext must be used within PopupStateProvider' );
 	}
