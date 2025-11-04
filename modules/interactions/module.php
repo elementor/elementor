@@ -19,7 +19,6 @@ class Module extends BaseModule {
 	const EFFECTS = [ 'fade', 'slide', 'scale' ];
 	const TYPES = [ 'in', 'out' ];
 	const DIRECTIONS = [ 'left', 'right', 'top', 'bottom' ];
-	const DURATIONS = [ 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 ];
 	const DEFAULT_DURATION = 300;
 	const DEFAULT_DELAY = 0;
 	const SLIDE_DISTANCE = 100;
@@ -119,10 +118,6 @@ class Module extends BaseModule {
 	private function get_config() {
 		return [
 			'constants' => [
-				'triggers' => self::TRIGGERS,
-				'effects' => self::EFFECTS,
-				'directions' => self::DIRECTIONS,
-				'durations' => self::DURATIONS,
 				'defaultDuration' => self::DEFAULT_DURATION,
 				'defaultDelay' => self::DEFAULT_DELAY,
 				'slideDistance' => self::SLIDE_DISTANCE,

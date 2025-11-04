@@ -1,5 +1,5 @@
 import { type ExtendedWindow } from '../../sync/types';
-import { type InteractionsConfig } from '../../types/interactions';
+import { type InteractionsConfig } from '../types';
 
 const DEFAULT_CONFIG: InteractionsConfig = {
 	constants: {

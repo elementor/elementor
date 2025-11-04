@@ -1,7 +1,7 @@
 import { type ControlItem, type V1Element } from '@elementor/editor-elements';
 import { type PropsSchema } from '@elementor/editor-props';
 
-import { type InteractionsConfig } from '../types/interactions';
+import { type InteractionsConfig } from '../interactions/types';
 
 export type SupportedFonts = 'system' | 'googlefonts' | 'custom';
 

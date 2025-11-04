@@ -3,7 +3,7 @@ import { ArrowDownSmallIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpSmallIcon } f
 import { Grid, ToggleButton, ToggleButtonGroup, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type FieldProps } from '../../../types/interactions';
+import { type FieldProps } from '../../types';
 
 export function Direction( { value, onChange }: FieldProps ) {
 	const availableDirections = [

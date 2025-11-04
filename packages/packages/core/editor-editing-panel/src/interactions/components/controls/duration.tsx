@@ -3,7 +3,7 @@ import { MenuListItem } from '@elementor/editor-ui';
 import { Grid, Select, type SelectChangeEvent, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type FieldProps } from '../../../types/interactions';
+import { type FieldProps } from '../../types';
 
 export function Duration( { value, onChange }: FieldProps ) {
 	const availableDurations = [
