@@ -17,15 +17,22 @@ type InlineEditorProps = {
 
 const SpanParagraph = Paragraph.extend( {
 	name: 'paragraph',
+
 	parseHTML() {
-		return [ { tag: 'p' }, { tag: 'span' } ];
+		return [
+			{ tag: 'span[data-block-paragraph]' },
+			{
+				tag: 'span',
+				getAttrs: ( el: any ) => ( ( el as HTMLElement ).style?.display === 'block' ? {} : false ),
+			},
+			{ tag: 'p' },
+		];
 	},
+
 	renderHTML( { HTMLAttributes }: { HTMLAttributes: Record< string, unknown > } ): DOMOutputSpec {
 		const existingStyle = typeof HTMLAttributes.style === 'string' ? HTMLAttributes.style : '';
-
-		const style = [ existingStyle, 'margin:0' ].filter( Boolean ).join( ';' );
-
-		return [ 'p', { ...HTMLAttributes, style }, 0 ];
+		const style = [ existingStyle, 'display:block', 'margin:0' ].filter( Boolean ).join( ';' );
+		return [ 'span', { ...HTMLAttributes, style, 'data-block-paragraph': '' }, 0 ];
 	},
 } );
 
@@ -35,16 +42,7 @@ export const InlineEditor = React.forwardRef(
 			extensions: [ StarterKit.configure( { paragraph: false } ), SpanParagraph ],
 			content: value || '',
 			onUpdate: ( { editor: ed } ) => {
-				let html = ed.getHTML();
-
-				html = html.replace( /<p>/g, '<span style="display:block">' ).replace( /<\/p>/g, '</span>' );
-
-				html = html.replace(
-					/<span style="display:block"><\/span>/g,
-					'<span style="display:block"><br></span>'
-				);
-
-				setValue( html );
+				setValue( ed.getHTML() );
 			},
 		} );
 
@@ -67,20 +65,10 @@ export const InlineEditor = React.forwardRef(
 					borderColor: 'grey.200',
 					borderRadius: '8px',
 					transition: 'border-color .2s ease, box-shadow .2s ease',
-					'&:hover': {
-						borderColor: 'black',
-					},
-					'&:focus-within': {
-						borderColor: 'black',
-						boxShadow: '0 0 0 1px black',
-					},
-					'& .ProseMirror:focus': {
-						outline: 'none',
-					},
-					'& .ProseMirror': {
-						minHeight: '70px',
-						fontSize: '12px',
-					},
+					'&:hover': { borderColor: 'black' },
+					'&:focus-within': { borderColor: 'black', boxShadow: '0 0 0 1px black' },
+					'& .ProseMirror:focus': { outline: 'none' },
+					'& .ProseMirror': { minHeight: '70px', fontSize: '12px' },
 					...sx,
 				} }
 				{ ...attributes }

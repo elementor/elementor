@@ -13,7 +13,7 @@ export const WysiwygControl = createControl( () => {
 	return (
 		<ControlActions>
 			<div>
-				<InlineEditor value={ value } setValue={ handleChange } />
+				<InlineEditor value={ value || '' } setValue={ handleChange } />
 			</div>
 		</ControlActions>
 	);
