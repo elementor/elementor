@@ -1,3 +1,4 @@
+import ContainerHelper from 'elementor-editor-utils/container-helper';
 
 /**
  * @typedef {import('elementor/assets/lib/backbone/backbone.marionette')} Marionette
@@ -164,14 +165,14 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	getV3Container( container, options ) {
-		const containerExperiment = elementorCommon.config.experimentalFeatures.container;
+		const isContainerExperimentActive = elementorCommon.config.experimentalFeatures.container;
 
 		container = $e.run( 'document/elements/create', {
 			model: {
-				elType: containerExperiment ? 'container' : 'section',
+				elType: isContainerExperimentActive ? 'container' : 'section',
 			},
 			container,
-			columns: Number( ! containerExperiment ),
+			columns: Number( ! isContainerExperimentActive ),
 			options: {
 				at: options.at,
 				scrollIntoView: options.scrollIntoView,
@@ -191,7 +192,7 @@ module.exports = Marionette.CompositeView.extend( {
 	getV4Container( container, options ) {
 		return $e.run( 'document/elements/create', {
 			model: {
-				elType: 'e-flexbox',
+				elType: ContainerHelper.V4_DEFAULT_CONTAINER_TYPE,
 			},
 			container,
 			options: {

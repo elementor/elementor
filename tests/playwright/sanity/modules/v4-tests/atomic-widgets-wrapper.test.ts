@@ -35,13 +35,7 @@ test.describe( 'Atomic Widgets Wrapper @v4-tests', () => {
 			let widgetElement;
 
 			await test.step( 'Add atomic widget by clicking on panel', async () => {
-				await editor.openElementsPanel();
-				const panelWidgetButton = page.locator( `#elementor-panel-category-v4-elements .elementor-panel-category-items :text-is("${ widget.title }")` );
-				await panelWidgetButton.waitFor( { state: 'visible' } );
-				await panelWidgetButton.click();
-
-				widgetElement = editor.getPreviewFrame().locator( `[data-widget_type="${ widget.name }.default"]` ).first();
-				await widgetElement.waitFor( { state: 'visible' } );
+				widgetElement = await editor.v4Panel.addAtomicWidget( widget.title, widget.name );
 			} );
 
 			await test.step( 'Verify widget is wrapped in e-flexbox', async () => {

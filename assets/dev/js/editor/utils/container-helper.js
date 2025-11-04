@@ -13,6 +13,7 @@ export class ContainerHelper {
 	static DIRECTION_COLUMN_REVERSED = 'column-reverse';
 	static DIRECTION_DEFAULT = this.DIRECTION_COLUMN;
 	static CONTAINER_TYPE_GRID = 'grid';
+	static V4_DEFAULT_CONTAINER_TYPE = 'e-flexbox';
 
 	/**
 	 * Create multiple container elements.
