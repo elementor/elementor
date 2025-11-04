@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { EyeIcon, XIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, IconButton, Popover, Stack, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -39,11 +40,11 @@ type InteractionListProps = {
 };
 
 function InteractionsList( { onSelectInteraction, selectedInteraction, defaultStateRef }: InteractionListProps ) {
-	const [ interactionId, setInteractionId ] = React.useState( selectedInteraction );
+	const [ interactionId, setInteractionId ] = useState( selectedInteraction );
 
-	const anchorEl = React.useRef< HTMLDivElement | null >( null );
+	const anchorEl = useRef< HTMLDivElement | null >( null );
 
-	const popupId = React.useId();
+	const popupId = useId();
 	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId: `elementor-interactions-list-${ popupId }`,
@@ -51,20 +52,20 @@ function InteractionsList( { onSelectInteraction, selectedInteraction, defaultSt
 
 	const { openByDefault, resetDefaultOpen } = usePopupStateContext();
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( interactionId ) {
 			onSelectInteraction( interactionId );
 		}
 	}, [ interactionId, onSelectInteraction ] );
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( openByDefault && anchorEl.current ) {
 			popupState.open();
 			resetDefaultOpen();
 		}
 	}, [ defaultStateRef, openByDefault, popupState, resetDefaultOpen ] );
 
-	const displayLabel = React.useMemo( () => {
+	const displayLabel = useMemo( () => {
 		return formatInteractionLabel( interactionId );
 	}, [ interactionId ] );
 

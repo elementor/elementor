@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Divider, Grid } from '@elementor/ui';
 
 import { Delay } from './controls/delay';
@@ -16,7 +17,7 @@ type InteractionDetailsProps = {
 };
 
 export const InteractionDetails = ( { interaction, onChange }: InteractionDetailsProps ) => {
-	const [ interactionDetails, setInteractionDetails ] = React.useState( () => {
+	const [ interactionDetails, setInteractionDetails ] = useState( () => {
 		const [ trigger, effect, type, direction, duration, delay ] = interaction.split( DELIMITER );
 
 		return {
@@ -29,7 +30,7 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 		};
 	} );
 
-	React.useEffect( () => {
+	useEffect( () => {
 		const newValue = Object.values( interactionDetails ).join( DELIMITER );
 		onChange( newValue );
 	}, [ interactionDetails, onChange ] );
