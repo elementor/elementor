@@ -20,4 +20,3 @@ export const Header = ( { label }: { label: string } ) => {
 		</Stack>
 	);
 };
-//nami

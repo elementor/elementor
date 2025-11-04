@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ArrowDownSmallIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpSmallIcon } from '@elementor/icons';
-import { Grid, ToggleButton, ToggleButtonGroup, Typography } from '@elementor/ui';
+import { Grid, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type FieldProps } from '../../types';
@@ -29,9 +29,11 @@ export function Direction( { value, onChange }: FieldProps ) {
 				>
 					{ availableDirections.map( ( direction ) => {
 						return (
-							<ToggleButton key={ direction.key } value={ direction.key }>
-								{ direction.icon }
-							</ToggleButton>
+							<Tooltip key={ direction.key } title={ direction.label } placement="top">
+								<ToggleButton key={ direction.key } value={ direction.key }>
+									{ direction.icon }
+								</ToggleButton>
+							</Tooltip>
 						);
 					} ) }
 				</ToggleButtonGroup>

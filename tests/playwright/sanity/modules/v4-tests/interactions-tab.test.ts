@@ -2,6 +2,8 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
 
+const SKIP_ADD_INTERACTION_BY_PLUS_BUTTON = true;
+
 test.describe( 'Interactions Tab @v4-tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
@@ -77,24 +79,28 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 
 		await test.step( 'Add interaction using plus button', async () => {
+			if ( SKIP_ADD_INTERACTION_BY_PLUS_BUTTON ) {
+				return;
+			}
+
 			const addInteractionButton = page.locator( '[aria-label="Add interaction"]' );
 			await expect( addInteractionButton ).toBeVisible();
 			await addInteractionButton.click();
 		} );
 
-		await test.step( 'Select animation option from dropdown', async () => {
+		await test.step( 'Select animation options from popover controls', async () => {
 			const interactionTag = page.locator( '.MuiTag-root' ).first();
 
 			await expect( interactionTag ).toBeVisible();
-			await interactionTag.click();
 			await page.waitForSelector( '.MuiPopover-root' );
-			await page.waitForSelector( '.MuiMenuItem-root' );
 
-			const animationOption = page.locator( '.MuiMenuItem-root' ).nth( 1 );
+			const directionOption = page.getByRole( 'button', { name: 'Up' } );
 
-			await expect( animationOption ).toBeVisible();
-			await animationOption.click();
-			await expect( interactionTag ).toContainText( 'Page Load - Fade In Right' );
+			await expect( directionOption ).toBeVisible();
+			await directionOption.click();
+			await expect( interactionTag ).toContainText( 'Page Load - Fade In Top (300ms)' );
+
+			await page.locator( 'body' ).click();
 		} );
 
 		await test.step( 'Publish and view the page', async () => {

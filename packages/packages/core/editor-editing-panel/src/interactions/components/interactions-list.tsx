@@ -11,12 +11,15 @@ type PredefinedInteractionsListProps = {
 	onSelectInteraction: ( interaction: string ) => void;
 	selectedInteraction: string;
 	onDelete?: () => void;
+	defaultState?: boolean;
+	defaultStateRef?: React.MutableRefObject< boolean | undefined >;
 };
 
 export const PredefinedInteractionsList = ( {
 	onSelectInteraction,
 	selectedInteraction,
 	onDelete,
+	defaultStateRef,
 }: PredefinedInteractionsListProps ) => {
 	return (
 		<Stack sx={ { m: 1, p: 1.5 } } gap={ 2 }>
@@ -25,6 +28,7 @@ export const PredefinedInteractionsList = ( {
 				onDelete={ () => onDelete?.() }
 				selectedInteraction={ selectedInteraction }
 				onSelectInteraction={ onSelectInteraction }
+				defaultStateRef={ defaultStateRef }
 			/>
 		</Stack>
 	);
@@ -34,9 +38,10 @@ type InteractionListProps = {
 	onDelete: () => void;
 	onSelectInteraction: ( interaction: string ) => void;
 	selectedInteraction: string;
+	defaultStateRef?: React.MutableRefObject< boolean | undefined >;
 };
 
-function InteractionsList( { onSelectInteraction, selectedInteraction }: InteractionListProps ) {
+function InteractionsList( { onSelectInteraction, selectedInteraction, defaultStateRef }: InteractionListProps ) {
 	const [ interactionId, setInteractionId ] = React.useState( selectedInteraction );
 
 	const anchorEl = React.useRef< HTMLDivElement | null >( null );
@@ -52,6 +57,13 @@ function InteractionsList( { onSelectInteraction, selectedInteraction }: Interac
 			onSelectInteraction( interactionId );
 		}
 	}, [ interactionId, onSelectInteraction ] );
+
+	React.useEffect( () => {
+		if ( defaultStateRef?.current && anchorEl.current ) {
+			popupState.open();
+			defaultStateRef.current = false;
+		}
+	}, [ defaultStateRef, popupState ] );
 
 	const displayLabel = React.useMemo( () => {
 		return formatInteractionLabel( interactionId );

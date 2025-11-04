@@ -32,4 +32,3 @@ export const EmptyState = ( { onCreateInteraction }: { onCreateInteraction: () =
 		</Stack>
 	);
 };
-//nami

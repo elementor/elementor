@@ -17,22 +17,33 @@ export const InteractionsTab = () => {
 		return !! JSON.parse( existingInteractions || '[]' ).length;
 	} );
 
+	const defaultStateRef = React.useRef( false );
+
 	return (
 		<SessionStorageProvider prefix={ element.id }>
 			{ showInteractions ? (
 				<SectionsList>
 					<InteractionsProvider>
-						<InteractionsContent />
+						<InteractionsContent defaultStateRef={ defaultStateRef } />
 					</InteractionsProvider>
 				</SectionsList>
 			) : (
-				<EmptyState onCreateInteraction={ () => setShowInteractions( true ) } />
+				<EmptyState
+					onCreateInteraction={ () => {
+						setShowInteractions( true );
+						defaultStateRef.current = true;
+					} }
+				/>
 			) }
 		</SessionStorageProvider>
 	);
 };
 
-function InteractionsContent() {
+function InteractionsContent( {
+	defaultStateRef,
+}: {
+	defaultStateRef: React.MutableRefObject< boolean | undefined >;
+} ) {
 	const { interactions, setInteractions } = useInteractionsContext();
 
 	const applyInteraction = React.useCallback(
@@ -65,6 +76,7 @@ function InteractionsContent() {
 			<PredefinedInteractionsList
 				selectedInteraction={ selectedInteraction }
 				onSelectInteraction={ applyInteraction }
+				defaultStateRef={ defaultStateRef }
 			/>
 		</SectionsList>
 	);

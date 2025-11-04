@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, ToggleButton, ToggleButtonGroup, Typography } from '@elementor/ui';
+import { Grid, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type FieldProps } from '../../types';
@@ -26,9 +26,11 @@ export function EffectType( { value, onChange }: FieldProps ) {
 				>
 					{ availableEffectTypes.map( ( effectType ) => {
 						return (
-							<ToggleButton key={ effectType.key } value={ effectType.key }>
-								{ effectType.label }
-							</ToggleButton>
+							<Tooltip key={ effectType.key } title={ effectType.label } placement="top">
+								<ToggleButton key={ effectType.key } value={ effectType.key }>
+									{ effectType.label }
+								</ToggleButton>
+							</Tooltip>
 						);
 					} ) }
 				</ToggleButtonGroup>
