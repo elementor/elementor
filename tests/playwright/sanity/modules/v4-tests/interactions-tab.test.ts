@@ -94,11 +94,29 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect( interactionTag ).toBeVisible();
 			await page.waitForSelector( '.MuiPopover-root' );
 
+			const selectOption = async ( openSelector, optionName ) => {
+				await expect( openSelector ).toBeVisible();
+				await openSelector.click();
+
+				const option = page.getByRole( 'option', { name: optionName } );
+				await expect( option ).toBeVisible();
+				await option.click();
+			};
+
+			await selectOption( page.getByText( 'Page load', { exact: true } ), 'Scroll into view' );
+			await selectOption( page.getByText( 'Fade', { exact: true } ), 'Slide' );
+			await selectOption( page.getByText( '300 MS', { exact: true } ), '100 MS' );
+
+			const effectTypeOption = page.getByRole( 'button', { name: 'Out' } );
 			const directionOption = page.getByRole( 'button', { name: 'Up' } );
+
+			await expect( effectTypeOption ).toBeVisible();
+			await effectTypeOption.click();
 
 			await expect( directionOption ).toBeVisible();
 			await directionOption.click();
-			await expect( interactionTag ).toContainText( 'Page Load - Fade In Top (300ms)' );
+
+			await expect( interactionTag ).toContainText( 'Scroll Into View - Slide Out Top (100ms)' );
 
 			await page.locator( 'body' ).click();
 		} );
@@ -118,3 +136,4 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 } );
+
