@@ -4,6 +4,7 @@ import { SessionStorageProvider } from '@elementor/session';
 
 import { useElement } from '../contexts/element-context';
 import { InteractionsProvider, useInteractionsContext } from '../contexts/interaction-context';
+import { PopupStateProvider, usePopupStateContext } from '../contexts/PopupStateContex';
 import { EmptyState } from '../interactions/components/empty-list';
 import { PredefinedInteractionsList } from '../interactions/components/interactions-list';
 import { SectionsList } from './sections-list';
@@ -12,26 +13,25 @@ export const InteractionsTab = () => {
 	const { element } = useElement();
 
 	const existingInteractions = useElementInteractions( element.id );
+	const { triggerDefaultOpen } = usePopupStateContext();
 
 	const [ showInteractions, setShowInteractions ] = React.useState( () => {
 		return !! JSON.parse( existingInteractions || '[]' ).length;
 	} );
-
-	const defaultStateRef = React.useRef( false );
 
 	return (
 		<SessionStorageProvider prefix={ element.id }>
 			{ showInteractions ? (
 				<SectionsList>
 					<InteractionsProvider>
-						<InteractionsContent defaultStateRef={ defaultStateRef } />
+						<InteractionsContent />
 					</InteractionsProvider>
 				</SectionsList>
 			) : (
 				<EmptyState
 					onCreateInteraction={ () => {
 						setShowInteractions( true );
-						defaultStateRef.current = true;
+						triggerDefaultOpen();
 					} }
 				/>
 			) }
@@ -39,11 +39,7 @@ export const InteractionsTab = () => {
 	);
 };
 
-function InteractionsContent( {
-	defaultStateRef,
-}: {
-	defaultStateRef: React.MutableRefObject< boolean | undefined >;
-} ) {
+function InteractionsContent() {
 	const { interactions, setInteractions } = useInteractionsContext();
 
 	const applyInteraction = React.useCallback(
@@ -76,7 +72,6 @@ function InteractionsContent( {
 			<PredefinedInteractionsList
 				selectedInteraction={ selectedInteraction }
 				onSelectInteraction={ applyInteraction }
-				defaultStateRef={ defaultStateRef }
 			/>
 		</SectionsList>
 	);

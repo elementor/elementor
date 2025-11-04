@@ -3,6 +3,7 @@ import { EyeIcon, XIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, IconButton, Popover, Stack, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { usePopupStateContext } from '../../contexts/PopupStateContex';
 import { formatInteractionLabel } from '../utils/format-interaction-label';
 import { Header } from './header';
 import { InteractionDetails } from './interaction-details';
@@ -11,15 +12,12 @@ type PredefinedInteractionsListProps = {
 	onSelectInteraction: ( interaction: string ) => void;
 	selectedInteraction: string;
 	onDelete?: () => void;
-	defaultState?: boolean;
-	defaultStateRef?: React.MutableRefObject< boolean | undefined >;
 };
 
 export const PredefinedInteractionsList = ( {
 	onSelectInteraction,
 	selectedInteraction,
 	onDelete,
-	defaultStateRef,
 }: PredefinedInteractionsListProps ) => {
 	return (
 		<Stack sx={ { m: 1, p: 1.5 } } gap={ 2 }>
@@ -28,7 +26,6 @@ export const PredefinedInteractionsList = ( {
 				onDelete={ () => onDelete?.() }
 				selectedInteraction={ selectedInteraction }
 				onSelectInteraction={ onSelectInteraction }
-				defaultStateRef={ defaultStateRef }
 			/>
 		</Stack>
 	);
@@ -52,6 +49,8 @@ function InteractionsList( { onSelectInteraction, selectedInteraction, defaultSt
 		popupId: `elementor-interactions-list-${ popupId }`,
 	} );
 
+	const { openByDefault, resetDefaultOpen } = usePopupStateContext();
+
 	React.useEffect( () => {
 		if ( interactionId ) {
 			onSelectInteraction( interactionId );
@@ -59,11 +58,11 @@ function InteractionsList( { onSelectInteraction, selectedInteraction, defaultSt
 	}, [ interactionId, onSelectInteraction ] );
 
 	React.useEffect( () => {
-		if ( defaultStateRef?.current && anchorEl.current ) {
+		if ( openByDefault && anchorEl.current ) {
 			popupState.open();
-			defaultStateRef.current = false;
+			resetDefaultOpen();
 		}
-	}, [ defaultStateRef, popupState ] );
+	}, [ defaultStateRef, openByDefault, popupState, resetDefaultOpen ] );
 
 	const displayLabel = React.useMemo( () => {
 		return formatInteractionLabel( interactionId );
