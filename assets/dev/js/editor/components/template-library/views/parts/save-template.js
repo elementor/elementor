@@ -444,10 +444,10 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 					offset,
 				},
 				success: ( response ) => {
-					// this.folderCollectionView.collection.add( response?.templates );
+					this.folderCollectionView.collection.add( response?.templates );
 
 					if ( this.shouldAddLoadMoreItem( response ) ) {
-						// this.addLoadMoreItem();
+						this.addLoadMoreItem();
 					}
 
 					resolve( response );
