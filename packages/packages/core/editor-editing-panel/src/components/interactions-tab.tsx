@@ -71,3 +71,41 @@ export const InteractionsTab = () => {
 		</SessionStorageProvider>
 	);
 };
+
+function InteractionsContent() {
+	const { interactions, setInteractions } = useInteractionsContext();
+
+	const applyInteraction = React.useCallback(
+		( interaction: string ) => {
+			const newInteractions = [
+				{
+					animation: {
+						animation_type: 'custom',
+						animation_id: interaction,
+					},
+				},
+			];
+
+			setInteractions( JSON.stringify( newInteractions ) );
+		},
+		[ setInteractions ]
+	);
+
+	const selectedInteraction = React.useMemo( () => {
+		try {
+			const parsed = JSON.parse( interactions || '[]' );
+			return parsed[ 0 ]?.animation?.animation_id || '';
+		} catch {
+			return '';
+		}
+	}, [ interactions ] );
+
+	return (
+		<SectionsList>
+			<PredefinedInteractionsList
+				selectedInteraction={ selectedInteraction }
+				onSelectInteraction={ applyInteraction }
+			/>
+		</SectionsList>
+	);
+}

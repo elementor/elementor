@@ -1,0 +1,38 @@
+import * as React from 'react';
+import { Grid, ToggleButton, ToggleButtonGroup, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+
+import { type FieldProps } from '../../../types/interactions';
+
+export function EffectType( { value, onChange }: FieldProps ) {
+	const availableEffectTypes = [
+		{ key: 'in', label: __( 'In', 'elementor' ) },
+		{ key: 'out', label: __( 'Out', 'elementor' ) },
+	];
+
+	return (
+		<>
+			<Grid item xs={ 12 } md={ 6 }>
+				<Typography variant="caption" color="text.secondary">
+					{ __( 'Type', 'elementor' ) }
+				</Typography>
+			</Grid>
+			<Grid item xs={ 12 } md={ 6 }>
+				<ToggleButtonGroup
+					size="tiny"
+					exclusive
+					onChange={ ( event: React.MouseEvent< HTMLElement >, newValue: string ) => onChange( newValue ) }
+					value={ value }
+				>
+					{ availableEffectTypes.map( ( effectType ) => {
+						return (
+							<ToggleButton key={ effectType.key } value={ effectType.key }>
+								{ effectType.label }
+							</ToggleButton>
+						);
+					} ) }
+				</ToggleButtonGroup>
+			</Grid>
+		</>
+	);
+}
