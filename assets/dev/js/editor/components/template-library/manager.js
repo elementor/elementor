@@ -919,9 +919,7 @@ const TemplateLibraryManager = function() {
 		}
 
 		if ( 'cloud' === query.source && ! elementor.templates.eventManager.isSessionRecordingInProgress() ) {
-			elementor.templates.eventManager.sendPageViewEvent( {
-				location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.sessionRecordingStart,
-			} );
+			elementor.templates.eventManager.sendCloudTemplatesSessionRecordingStartEvent();
 
 			elementor.templates.eventManager.startSessionRecording();
 		}
