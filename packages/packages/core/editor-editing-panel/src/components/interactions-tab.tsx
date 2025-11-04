@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useElementInteractions } from '@elementor/editor-elements';
 import { SessionStorageProvider } from '@elementor/session';
 
@@ -16,7 +16,7 @@ export const InteractionsTab = () => {
 	const existingInteractions = useElementInteractions( element.id );
 	const { triggerDefaultOpen } = usePopupStateContext();
 
-	const [ showInteractions, setShowInteractions ] = React.useState( () => {
+	const [ showInteractions, setShowInteractions ] = useState( () => {
 		return !! JSON.parse( existingInteractions || '[]' ).length;
 	} );
 
@@ -43,7 +43,7 @@ export const InteractionsTab = () => {
 function InteractionsContent() {
 	const { interactions, setInteractions } = useInteractionsContext();
 
-	const applyInteraction = React.useCallback(
+	const applyInteraction = useCallback(
 		( interaction: string ) => {
 			const newInteractions = [
 				{
