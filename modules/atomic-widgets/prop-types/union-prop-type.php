@@ -19,7 +19,7 @@ class Union_Prop_Type implements Prop_Type {
 
 	protected $default = null;
 
-	protected $initial_value= null;
+	protected $initial_value = null;
 
 	private ?array $dependencies = null;
 
