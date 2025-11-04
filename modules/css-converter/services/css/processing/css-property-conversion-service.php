@@ -39,39 +39,30 @@ class Css_Property_Conversion_Service {
 	 * @param bool $important Whether the property has !important flag
 	 * @return array|null Converted property in atomic format, or null if sent to custom CSS
 	 */
-	public function convert_property_with_fallback( string $property, string $value, string $widget_id, bool $important = false ): ?array {
-		error_log( "CUSTOM_CSS_DEBUG: convert_property_with_fallback called with property={$property}, value={$value}, widget_id={$widget_id}" );
-		// Skip CSS variable definitions
-		if ( strpos( $property, '--' ) === 0 ) {
-			return null;
-		}
-
-		// Check if property is supported in atomic schema
-		if ( ! $this->validator->is_property_supported( $property ) ) {
-			$this->add_to_custom_css( $widget_id, $property, $value, $important, 'Property not in atomic schema' );
-			return null;
-		}
-
-		// Check if value is supported
-		if ( ! $this->validator->is_value_supported( $property, $value ) ) {
-			$reason = $this->validator->get_unsupported_reason( $property, $value );
-			$this->add_to_custom_css( $widget_id, $property, $value, $important, $reason );
-			return null;
-		}
-
-		// Try to convert using existing property mappers
-		$converted = $this->convert_property_to_v4_atomic( $property, $value );
-		
-		if ( $converted === null ) {
-			$this->add_to_custom_css( $widget_id, $property, $value, $important, 'Conversion failed' );
-			return null;
-		}
-
-		return $converted;
-	}
-
 	private function add_to_custom_css( string $widget_id, string $property, string $value, bool $important, string $reason ): void {
-		error_log( "CUSTOM_CSS_DEBUG: add_to_custom_css called - widget_id={$widget_id}, property={$property}, value={$value}, reason={$reason}" );
+		// DEBUG: Track position absolute being added
+		if ( $property === 'position' && $value === 'absolute' ) {
+			$debug_file = WP_CONTENT_DIR . '/position-absolute-trace.log';
+			file_put_contents( $debug_file, "\n" . str_repeat('!', 80) . "\n", FILE_APPEND );
+			file_put_contents( $debug_file, "POSITION ABSOLUTE BEING ADDED\n", FILE_APPEND );
+			file_put_contents( $debug_file, "Time: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND );
+			file_put_contents( $debug_file, "Widget ID: {$widget_id}\n", FILE_APPEND );
+			file_put_contents( $debug_file, "Property: {$property}\n", FILE_APPEND );
+			file_put_contents( $debug_file, "Value: {$value}\n", FILE_APPEND );
+			file_put_contents( $debug_file, "Reason: {$reason}\n", FILE_APPEND );
+			
+			$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 8 );
+			file_put_contents( $debug_file, "STACK TRACE:\n", FILE_APPEND );
+			foreach ( $backtrace as $i => $trace ) {
+				$file = basename( $trace['file'] ?? 'unknown' );
+				$line = $trace['line'] ?? 'unknown';
+				$function = $trace['function'] ?? 'unknown';
+				$class = isset( $trace['class'] ) ? $trace['class'] . '::' : '';
+				file_put_contents( $debug_file, "  [{$i}] {$file}:{$line} {$class}{$function}()\n", FILE_APPEND );
+			}
+			file_put_contents( $debug_file, str_repeat('!', 80) . "\n", FILE_APPEND );
+		}
+		
 		$this->custom_css_collector->add_property( $widget_id, $property, $value, $important );
 		
 		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
@@ -221,48 +212,71 @@ class Css_Property_Conversion_Service {
 	 * @param mixed  $value CSS property value
 	 * @return array|null Converted property in v4 atomic format, or null if conversion failed
 	 */
-	public function convert_property_to_v4_atomic( string $property, $value ): ?array {
-		// DEBUG: Track font-family processing
-		if ( 'font-family' === $property ) {
+	public function convert_property_to_v4_atomic( string $property, $value, string $widget_id = null, bool $important = false ): ?array {
+		if ( strpos( $property, '--' ) === 0 ) {
+			return null;
 		}
 
-		if ( $property === 'transform' ) {
+		if ( $widget_id && $this->validator ) {
+			if ( ! $this->validator->is_property_supported( $property ) ) {
+				$this->add_to_custom_css( $widget_id, $property, $value, $important, 'Property not in atomic schema' );
+				return null;
+			}
+
+			if ( ! $this->validator->is_value_supported( $property, $value ) ) {
+				$reason = $this->validator->get_unsupported_reason( $property, $value );
+				
+				
+				$this->add_to_custom_css( $widget_id, $property, $value, $important, $reason );
+				return null;
+			}
 		}
 
-		// Add debugging for letter-spacing and text-transform
-		if ( in_array( $property, [ 'letter-spacing', 'text-transform' ], true ) ) {
-		}
+	$mapper = $this->resolve_property_mapper_safely( $property, $value );
 
-		$mapper = $this->resolve_property_mapper_safely( $property, $value );
-
-		// DEBUG: Track font-family mapper resolution
-		if ( 'font-family' === $property ) {
-		}
-
-		if ( in_array( $property, [ 'letter-spacing', 'text-transform' ], true ) ) {
-		}
-
-		if ( $this->can_convert_to_v4_atomic( $mapper ) ) {
+	if ( $this->can_convert_to_v4_atomic( $mapper ) ) {
+		try {
 			$result = $this->attempt_v4_atomic_conversion( $mapper, $property, $value );
-
-			if ( in_array( $property, [ 'letter-spacing', 'text-transform' ], true ) ) {
-			}
-
-			// DEBUG: Track font-family conversion result
-			if ( 'font-family' === $property ) {
-				if ( $result ) {
+			
+			// DEBUG: Track position absolute being converted to atomic props
+			if ( $property === 'position' && $value === 'absolute' && $result ) {
+				$debug_file = WP_CONTENT_DIR . '/position-absolute-trace.log';
+				file_put_contents( $debug_file, "\n" . str_repeat('#', 80) . "\n", FILE_APPEND );
+				file_put_contents( $debug_file, "POSITION ABSOLUTE CONVERTED TO ATOMIC PROPS\n", FILE_APPEND );
+				file_put_contents( $debug_file, "Time: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND );
+				file_put_contents( $debug_file, "Widget ID: {$widget_id}\n", FILE_APPEND );
+				file_put_contents( $debug_file, "Property: {$property}\n", FILE_APPEND );
+				file_put_contents( $debug_file, "Value: {$value}\n", FILE_APPEND );
+				file_put_contents( $debug_file, "Atomic Result: " . json_encode( $result, JSON_PRETTY_PRINT ) . "\n", FILE_APPEND );
+				
+				$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 8 );
+				file_put_contents( $debug_file, "STACK TRACE:\n", FILE_APPEND );
+				foreach ( $backtrace as $i => $trace ) {
+					$file = basename( $trace['file'] ?? 'unknown' );
+					$line = $trace['line'] ?? 'unknown';
+					$function = $trace['function'] ?? 'unknown';
+					$class = isset( $trace['class'] ) ? $trace['class'] . '::' : '';
+					file_put_contents( $debug_file, "  [{$i}] {$file}:{$line} {$class}{$function}()\n", FILE_APPEND );
 				}
+				file_put_contents( $debug_file, str_repeat('#', 80) . "\n", FILE_APPEND );
 			}
-
-			return $result;
+			
+			if ( $result ) {
+				return $result;
+			}
+		} catch ( \Exception $e ) {
+			if ( $widget_id ) {
+				$this->add_to_custom_css( $widget_id, $property, $value, $important, 'Conversion failed: ' . $e->getMessage() );
+			}
+			return null;
 		}
+	}
+	if ( $widget_id ) {
+		$this->add_to_custom_css( $widget_id, $property, $value, $important, 'No property mapper found' );
+	}
 
-		// DEBUG: Track font-family conversion failure
-		if ( 'font-family' === $property ) {
-		}
-
-		$this->record_conversion_failure( $property, $value, 'No v4 mapper available' );
-		return null;
+	$this->record_conversion_failure( $property, $value, 'No v4 mapper available' );
+	return null;
 	}
 
 	/**

@@ -12,11 +12,15 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 	private $property_converter;
 	private $unified_style_manager;
 	private $reset_style_detector;
+	private $current_selector = '';
+	private $context;
+	private $selector_matcher;
 
 	public function __construct( $property_converter = null, $unified_style_manager = null, $reset_style_detector = null ) {
 		$this->property_converter = $property_converter;
 		$this->unified_style_manager = $unified_style_manager;
 		$this->reset_style_detector = $reset_style_detector;
+		$this->selector_matcher = new \Elementor\Modules\CssConverter\Services\Css\Processing\Selector_Matcher_Engine();
 
 		if ( null === $this->property_converter ) {
 			$this->initialize_property_converter();
@@ -30,6 +34,16 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 	}
 
 	private function initialize_property_converter(): void {
+		// Try to get shared instance from context first
+		if ( $this->context ) {
+			$shared_converter = $this->context->get_metadata( 'property_converter' );
+			if ( $shared_converter ) {
+				$this->property_converter = $shared_converter;
+				return;
+			}
+		}
+		
+		// Fallback: create new instance
 		$this->property_converter = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service();
 	}
 
@@ -62,6 +76,14 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 	}
 
 	public function process( Css_Processing_Context $context ): Css_Processing_Context {
+		$this->context = $context;
+		
+		// Re-initialize property converter to use shared instance from context
+		$shared_converter = $context->get_metadata( 'property_converter' );
+		if ( $shared_converter ) {
+			$this->property_converter = $shared_converter;
+		}
+		
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$widgets = $context->get_widgets();
 		$css = $context->get_metadata( 'css', '' );
@@ -74,8 +96,8 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 			$this->unified_style_manager->reset();
 		}
 
-		// Collect styles from css_rules (single source of truth)
-		$css_styles_collected = $this->collect_css_styles_from_rules( $css_rules, $widgets );
+	// Collect styles from css_rules (single source of truth)
+	$css_styles_collected = $this->collect_css_styles_from_rules( $css_rules, $widgets, $context );
 		$inline_styles_collected = $this->collect_inline_styles_from_widgets( $widgets );
 		$reset_styles_collected = $this->collect_reset_styles( $css, $widgets );
 
@@ -106,7 +128,7 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		];
 	}
 
-	private function collect_css_styles_from_rules( array $css_rules, array $widgets ): int {
+	private function collect_css_styles_from_rules( array $css_rules, array $widgets, Css_Processing_Context $context ): int {
 		if ( empty( $css_rules ) ) {
 			return 0;
 		}
@@ -121,6 +143,15 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 				continue;
 			}
 
+			if ( $this->is_registered_global_class_selector( $selector ) ) {
+				continue;
+			}
+			
+			// Skip utility selectors that shouldn't be applied to content widgets
+			if ( $this->is_utility_selector( $selector ) ) {
+				continue;
+			}
+
 			// Analyze and apply direct element styles
 			if ( $this->is_simple_element_selector( $selector ) ) {
 				$styles_collected += $this->apply_direct_element_styles( $selector, $properties, $widgets );
@@ -131,6 +162,49 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		}
 
 		return $styles_collected;
+	}
+
+	private function is_registered_global_class_selector( string $selector ): bool {
+		if ( ! isset( $this->context ) ) {
+			return false;
+		}
+
+		$global_classes = $this->context->get_metadata( 'global_classes', [] );
+		
+		if ( empty( $global_classes ) ) {
+			return false;
+		}
+
+		if ( substr( $selector, 0, 1 ) === '.' && strpos( $selector, ' ' ) === false ) {
+			$class_name = substr( $selector, 1 );
+			return isset( $global_classes[ $class_name ] );
+		}
+
+		return false;
+	}
+	
+	private function is_utility_selector( string $selector ): bool {
+		$utility_patterns = [
+			'masonry-loading',
+			'header-overlay',
+			'close-canvas',
+			'sub-menu',
+			'children--nav',
+			'elementor-background',
+			'elementor-background-video',
+			'elementor-background-slideshow',
+			'elementor-motion-effects',
+			'screen-reader-text',
+			'elementor-screen-only',
+		];
+		
+		foreach ( $utility_patterns as $pattern ) {
+			if ( strpos( $selector, $pattern ) !== false ) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	private function collect_inline_styles_from_widgets( array $widgets ): int {
@@ -199,6 +273,8 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 	}
 
 	private function process_css_rule_for_widgets( string $selector, array $properties, array $widgets ): int {
+		$this->current_selector = $selector;
+		
 		$converted_properties = $this->prepare_properties_for_collection( $properties );
 		$matched_elements = $this->find_matching_widgets( $selector, $widgets );
 
@@ -226,15 +302,23 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 	}
 
 	private function process_widget_inline_styles( string $element_id, array $inline_css ): int {
-		$inline_properties = [];
-		foreach ( $inline_css as $property => $property_data ) {
-			$value = $property_data['value'] ?? $property_data;
-			$inline_properties[ $property ] = $value;
+		if ( empty( $inline_css ) ) {
+			return 0;
 		}
 
-		$batch_converted = $this->property_converter
-			? $this->property_converter->convert_properties_to_v4_atomic( $inline_properties )
-			: [];
+	$batch_converted = [];
+	foreach ( $inline_css as $property => $property_data ) {
+		$value = $property_data['value'] ?? $property_data;
+		$important = $property_data['important'] ?? false;
+		
+		$converted = $this->property_converter
+			? $this->property_converter->convert_property_to_v4_atomic( $property, $value, $element_id, $important )
+			: null;
+		
+		if ( $converted ) {
+			$batch_converted[ $property ] = $converted;
+		}
+	}
 
 		foreach ( $inline_css as $property => $property_data ) {
 			$value = $property_data['value'] ?? $property_data;
@@ -368,6 +452,7 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 			return null;
 		}
 
+
 		try {
 			return $this->property_converter->convert_property_to_v4_atomic( $property, $value );
 		} catch ( \Exception $e ) {
@@ -399,50 +484,23 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 	}
 
 	private function find_matching_widgets( string $selector, array $widgets ): array {
-		$matched_elements = [];
-
-		foreach ( $widgets as $widget ) {
-			$element_id = $widget['element_id'] ?? null;
-
-			if ( $this->selector_matches_widget( $selector, $widget ) && $element_id ) {
-				$matched_elements[] = $element_id;
-			}
-
-			// Recurse through children
-			if ( ! empty( $widget['children'] ) ) {
-				$nested_matches = $this->find_matching_widgets( $selector, $widget['children'] );
-				$matched_elements = array_merge( $matched_elements, $nested_matches );
-			}
+		try {
+			return $this->selector_matcher->find_matching_widgets( $selector, $widgets );
+		} catch ( \InvalidArgumentException $e ) {
+			// Skip malformed selectors gracefully
+			error_log( "Style_Collection_Processor: Skipping malformed selector '{$selector}': " . $e->getMessage() );
+			return [];
 		}
-
-		return $matched_elements;
 	}
 
 	private function selector_matches_widget( string $selector, array $widget ): bool {
-		$element_type = $widget['tag'] ?? $widget['widget_type'] ?? '';
-		$html_id = $widget['attributes']['id'] ?? '';
-		$classes = $widget['attributes']['class'] ?? '';
-
-		// Element selector match
-		if ( $selector === $element_type ) {
-			return true;
+		try {
+			return $this->selector_matcher->widget_matches_selector( $selector, $widget );
+		} catch ( \InvalidArgumentException $e ) {
+			// Skip malformed selectors gracefully
+			error_log( "Style_Collection_Processor: Skipping malformed selector '{$selector}': " . $e->getMessage() );
+			return false;
 		}
-
-		// ID selector match
-		if ( 0 === strpos( $selector, '#' ) ) {
-			$id_part = substr( $selector, 1 );
-			$id_from_selector = false !== strpos( $id_part, '.' ) ? substr( $id_part, 0, strpos( $id_part, '.' ) ) : $id_part;
-			return $html_id === $id_from_selector;
-		}
-
-		// Class selector match
-		if ( 0 === strpos( $selector, '.' ) ) {
-			$class_from_selector = substr( $selector, 1 );
-			$widget_classes = explode( ' ', $classes );
-			return in_array( $class_from_selector, $widget_classes, true );
-		}
-
-		return false;
 	}
 
 	private function collect_overflow_styles_when_maximum_number_of_global_classes_has_been_reached( array $overflow_styles_when_maximum_number_of_global_classes_has_been_reached, array $widgets ): int {

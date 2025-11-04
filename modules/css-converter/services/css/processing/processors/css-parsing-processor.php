@@ -241,34 +241,56 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			$selector_string = (string) $selector;
 			$properties = $this->extract_properties_from_declarations( $declarations );
 
-			// DEBUG: Log all parsed CSS rules
-			$media_debug = $is_media_query ? ' [MEDIA QUERY]' : '';
-			
-			// Special debug for element selectors
-			$element_selectors = ['html', 'body', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre', 'abbr', 'address', 'cite', 'code', 'del', 'dfn', 'em', 'img', 'ins', 'kbd', 'q', 'samp', 'small', 'strong', 'sub', 'sup', 'var', 'b', 'i', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'fieldset', 'form', 'label', 'legend', 'table', 'caption', 'tbody', 'tfoot', 'thead', 'tr', 'th', 'td', 'article', 'aside', 'canvas', 'details', 'figcaption', 'figure', 'footer', 'header', 'hgroup', 'menu', 'nav', 'section', 'summary', 'time', 'mark', 'audio', 'video'];
-			
-			if ( in_array( trim( $selector_string ), $element_selectors, true ) ) {
-				if ( count( $properties ) > 0 ) {
-					$property_names = array_map( function( $prop ) { return $prop['property'] ?? 'unknown'; }, $properties );
+			// CRITICAL FIX: Handle comma-separated selectors by splitting them into individual rules
+			if ( strpos( $selector_string, ',' ) !== false ) {
+				$individual_selectors = array_map( 'trim', explode( ',', $selector_string ) );
+				
+				foreach ( $individual_selectors as $individual_selector ) {
+					if ( ! empty( $individual_selector ) && ! empty( $properties ) ) {
+						$individual_rule = [
+							'selector' => $individual_selector,
+							'properties' => $properties,
+						];
+
+						// Mark media query rules for filtering
+						if ( $is_media_query ) {
+							$individual_rule['media_query'] = true;
+						}
+
+						$rules[] = $individual_rule;
+					}
 				}
 			} else {
-			}
-
-			if ( ! empty( $properties ) ) {
-				$rule = [
-					'selector' => $selector_string,
-					'properties' => $properties,
-				];
-
-				// Mark media query rules for filtering
-				if ( $is_media_query ) {
-					$rule['media_query'] = true;
+				// Single selector - use existing logic
+				// DEBUG: Log all parsed CSS rules
+				$media_debug = $is_media_query ? ' [MEDIA QUERY]' : '';
+				
+				// Special debug for element selectors
+				$element_selectors = ['html', 'body', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre', 'abbr', 'address', 'cite', 'code', 'del', 'dfn', 'em', 'img', 'ins', 'kbd', 'q', 'samp', 'small', 'strong', 'sub', 'sup', 'var', 'b', 'i', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'fieldset', 'form', 'label', 'legend', 'table', 'caption', 'tbody', 'tfoot', 'thead', 'tr', 'th', 'td', 'article', 'aside', 'canvas', 'details', 'figcaption', 'figure', 'footer', 'header', 'hgroup', 'menu', 'nav', 'section', 'summary', 'time', 'mark', 'audio', 'video'];
+				
+				if ( in_array( trim( $selector_string ), $element_selectors, true ) ) {
+					if ( count( $properties ) > 0 ) {
+						$property_names = array_map( function( $prop ) { return $prop['property'] ?? 'unknown'; }, $properties );
+					}
+				} else {
 				}
 
-				$rules[] = $rule;
-			} else {
-				// DEBUG: Log selectors with no properties (might be reset CSS)
-				if ( strpos( $selector_string, 'html' ) !== false || strpos( $selector_string, 'body' ) !== false ) {
+				if ( ! empty( $properties ) ) {
+					$rule = [
+						'selector' => $selector_string,
+						'properties' => $properties,
+					];
+
+					// Mark media query rules for filtering
+					if ( $is_media_query ) {
+						$rule['media_query'] = true;
+					}
+
+					$rules[] = $rule;
+				} else {
+					// DEBUG: Log selectors with no properties (might be reset CSS)
+					if ( strpos( $selector_string, 'html' ) !== false || strpos( $selector_string, 'body' ) !== false ) {
+					}
 				}
 			}
 		}

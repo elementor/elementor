@@ -61,8 +61,8 @@ class Width_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		$special_values = [
 			'auto' => [
-				'size' => '',
-				'unit' => 'auto',
+				'size' => 'auto',
+				'unit' => 'custom',
 			],
 			'inherit' => null, // Not supported by atomic widgets
 			'initial' => null, // Not supported by atomic widgets

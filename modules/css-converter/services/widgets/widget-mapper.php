@@ -258,9 +258,6 @@ class Widget_Mapper {
 	}
 
 	private function handle_div_block( $element ) {
-		// DEBUG: Log entry into handle_div_block
-		$children_count = count( $element['children'] ?? [] );
-
 		$element_id = $this->generate_element_id( $element );
 
 		// OPTIMIZATION: If this div only contains text content (after text wrapping),
@@ -580,13 +577,44 @@ class Widget_Mapper {
 	}
 
 	private function ensure_container_wrapper( $widgets ) {
-		// If there's only one widget and it's already a container, return as-is
+		// CRITICAL FIX: Don't create extra wrappers for already-structured content
+		// If we have a single container widget, return as-is (no extra wrapper needed)
 		if ( 1 === count( $widgets ) && 'e-div-block' === $widgets[0]['widget_type'] ) {
 			return $widgets;
 		}
 
-		// If there are multiple widgets or non-container widgets, wrap them in a container
-		if ( count( $widgets ) > 1 || ! $this->is_container_widget( $widgets[0]['widget_type'] ?? '' ) ) {
+		// CRITICAL FIX: For multiple widgets, check if they're already properly contained
+		// Don't wrap if the widgets are already direct children of a container structure
+		if ( count( $widgets ) > 1 ) {
+			// Check if all widgets are content widgets (not containers)
+			$all_content_widgets = true;
+			foreach ( $widgets as $widget ) {
+				if ( $this->is_container_widget( $widget['widget_type'] ?? '' ) ) {
+					$all_content_widgets = false;
+					break;
+				}
+			}
+			
+			// If all are content widgets, they need a container wrapper
+			if ( $all_content_widgets ) {
+				$container_id = $this->generate_container_id();
+
+				return [
+					[
+						'widget_type' => 'e-div-block',
+						'element_id' => $container_id,
+						'original_tag' => 'div',
+						'settings' => [],
+						'attributes' => [],
+						'inline_css' => [],
+						'children' => $widgets,
+					],
+				];
+			}
+		}
+
+		// For single non-container widgets, wrap them
+		if ( 1 === count( $widgets ) && ! $this->is_container_widget( $widgets[0]['widget_type'] ?? '' ) ) {
 			$container_id = $this->generate_container_id();
 
 			return [
@@ -767,4 +795,6 @@ class Widget_Mapper {
 		// Remove duplicates from unsupported tags
 		$stats['unsupported_tags'] = array_unique( $stats['unsupported_tags'] );
 	}
+
+
 }

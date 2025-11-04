@@ -288,23 +288,7 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 			return false;
 		}
 		
-		$size_patterns = [
-			'width',
-			'height',
-			'gap',
-			'margin',
-			'padding',
-			'spacing',
-			'size',
-		];
-		
-		foreach ( $size_patterns as $pattern ) {
-			if ( strpos( $var_name, '--' . $pattern ) === 0 ) {
-				return $this->is_size_value( $value );
-			}
-		}
-		
-		return $this->is_size_value( $value );
+		return false;
 	}
 	
 	private function is_size_value( string $value ): bool {
@@ -346,6 +330,41 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 			'font-weight',
 			'position',
 			'z-index',
+			'padding-top',
+			'padding-right',
+			'padding-bottom',
+			'padding-left',
+			'padding-block-start',
+			'padding-block-end',
+			'padding-inline-start',
+			'padding-inline-end',
+			'margin-top',
+			'margin-right',
+			'margin-bottom',
+			'margin-left',
+			'margin-block-start',
+			'margin-block-end',
+			'margin-inline-start',
+			'margin-inline-end',
+			'border-radius',
+			'border-top-width',
+			'border-right-width',
+			'border-bottom-width',
+			'border-left-width',
+			'border-block-start-width',
+			'border-block-end-width',
+			'border-inline-start-width',
+			'border-inline-end-width',
+			'width',
+			'height',
+			'gap',
+			'row-gap',
+			'column-gap',
+			'widgets-spacing-row',
+			'widgets-spacing-column',
+			'container-max-width',
+			'container-widget-flex-grow',
+			'background-overlay',
 		];
 		
 		foreach ( $local_variable_patterns as $pattern ) {

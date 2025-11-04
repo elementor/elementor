@@ -6,23 +6,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Modules\CssConverter\Services\Css\Css_Converter_Config;
-use Elementor\Modules\CssConverter\Services\Widgets\Elementor_Class_Filter;
 use Elementor\Modules\CssConverter\Services\Css\Custom_Css_Collector;
 
 class Atomic_Widget_Data_Formatter {
-	private $class_filter;
 	public function __construct() {
-		$this->class_filter = new Elementor_Class_Filter();
 	}
 
 	public static function make(): self {
 		return new self();
 	}
 	public function format_widget_data( array $resolved_styles, array $widget, string $widget_id, Custom_Css_Collector $custom_css_collector = null ): array {
+		error_log( "CUSTOM_CSS_DEBUG: format_widget_data - element_id=" . ($widget['element_id'] ?? 'NONE') . ", resolved_styles_count=" . count($resolved_styles) . ", inline_css_count=" . count($widget['inline_css'] ?? []) );
+		error_log( "CUSTOM_CSS_DEBUG: format_widget_data - resolved_styles keys: " . implode(', ', array_keys($resolved_styles)) );
+		
 		// Generate atomic-style widget ID (7-char hex)
 		$atomic_widget_id = $this->generate_atomic_widget_id();
 		$class_id = $this->create_atomic_style_class_name( $atomic_widget_id );
 		$atomic_props = $this->extract_atomic_props_from_resolved_styles( $resolved_styles );
+		error_log( "CUSTOM_CSS_DEBUG: format_widget_data - atomic_props count: " . count($atomic_props) );
 		$css_classes = $this->extract_css_classes_from_widget( $widget );
 
 		// Note: Base classes (e.g., e-heading-base) are added automatically by atomic widget Twig templates
@@ -35,18 +36,19 @@ class Atomic_Widget_Data_Formatter {
 				'styles' => [],
 			];
 		}
-		$style_definition = $this->create_unified_style_definition( $class_id, $atomic_props );
-		// Add the generated style class to css_classes so it gets applied to HTML
-		if ( ! empty( $atomic_props ) ) {
-			$css_classes[] = $class_id;
-		}
-		$final_widget_data = [
-			'widgetType' => $widget_type,
-			'settings' => $this->format_widget_settings( $widget, $css_classes, $custom_css_collector, $widget_id ),
-			'styles' => [
-				$class_id => $style_definition,
-			],
-		];
+	$custom_css = $this->get_custom_css_for_widget( $widget, $css_classes, $custom_css_collector, $widget_id );
+	$style_definition = $this->create_unified_style_definition( $class_id, $atomic_props, $custom_css );
+	// Add the generated style class to css_classes so it gets applied to HTML
+	if ( ! empty( $atomic_props ) ) {
+		$css_classes[] = $class_id;
+	}
+	$final_widget_data = [
+		'widgetType' => $widget_type,
+		'settings' => $this->format_widget_settings( $widget, $css_classes, $custom_css_collector, $widget_id ),
+		'styles' => [
+			$class_id => $style_definition,
+		],
+	];
 
 		return $final_widget_data;
 	}
@@ -71,6 +73,9 @@ class Atomic_Widget_Data_Formatter {
 		$atomic_props = [];
 		
 		foreach ( $resolved_styles as $property => $style_data ) {
+			$converted_value = $style_data['converted_property'] ?? 'NULL';
+			error_log( "CUSTOM_CSS_DEBUG: extract_atomic_props - property={$property}, converted_property=" . ( is_null($converted_value) ? 'NULL' : ( is_array($converted_value) ? 'ARRAY:' . json_encode($converted_value) : 'NOT_ARRAY' ) ) );
+			
 			if ( isset( $style_data['converted_property'] ) && is_array( $style_data['converted_property'] ) ) {
 				$converted_property = $style_data['converted_property'];
 				
@@ -90,7 +95,40 @@ class Atomic_Widget_Data_Formatter {
 		
 		return $atomic_props;
 	}
-	private function create_unified_style_definition( string $class_id, array $atomic_props ): array {
+	private function get_custom_css_for_widget( array $widget, array $css_classes, Custom_Css_Collector $custom_css_collector = null, string $widget_id = null ): string {
+		if ( ! $custom_css_collector ) {
+			return '';
+		}
+
+		// Check widget_id first
+		if ( $widget_id && $custom_css_collector->has_custom_css( $widget_id ) ) {
+			return $custom_css_collector->get_custom_css_for_widget( $widget_id );
+		}
+
+		// Check element_id (for inline styles)
+		$element_id = $widget['element_id'] ?? null;
+		if ( $element_id && $custom_css_collector->has_custom_css( $element_id ) ) {
+			return $custom_css_collector->get_custom_css_for_widget( $element_id );
+		}
+
+		// Check CSS classes
+		foreach ( $css_classes as $class_name ) {
+			if ( $custom_css_collector->has_custom_css( $class_name ) ) {
+				return $custom_css_collector->get_custom_css_for_widget( $class_name );
+			}
+		}
+
+		return '';
+	}
+
+	private function create_unified_style_definition( string $class_id, array $atomic_props, string $custom_css = '' ): array {
+		$custom_css_field = null;
+		if ( ! empty( $custom_css ) ) {
+			$custom_css_field = [
+				'raw' => base64_encode( $custom_css ),
+			];
+		}
+		
 		return [
 			'id' => $class_id,
 			'cssName' => $class_id,
@@ -103,7 +141,7 @@ class Atomic_Widget_Data_Formatter {
 						'state' => null,
 					],
 					'props' => $atomic_props,
-					'custom_css' => null,
+					'custom_css' => $custom_css_field,
 				],
 			],
 		];
@@ -180,7 +218,7 @@ class Atomic_Widget_Data_Formatter {
 			$class_array = explode( ' ', $class_string );
 			foreach ( $class_array as $class ) {
 				$class = trim( $class );
-				if ( ! empty( $class ) && $this->class_filter->should_preserve_class( $class ) ) {
+				if ( ! empty( $class ) ) {
 					$classes[] = $class;
 				}
 			}

@@ -70,7 +70,7 @@ class Css_Variable_Resolver implements Css_Processor_Interface {
 							$property_data['value'] = $resolved_value;
 							$property_data['resolved_from_variable'] = true;
 							$variables_resolved++;
-							file_put_contents( $tracking_log, date('[H:i:s] ') . "CSS_VARIABLE_RESOLVER: Resolved {$property}: var() -> {$resolved_value}\n", FILE_APPEND );
+							file_put_contents( $tracking_log, date('[H:i:s] ') . "CSS_VARIABLE_RESOLVER: Resolved {$property}: {$value} -> {$resolved_value} (marked as resolved)\n", FILE_APPEND );
 						}
 					} else {
 						file_put_contents( $tracking_log, date('[H:i:s] ') . "CSS_VARIABLE_RESOLVER: Preserving {$property}: {$value} (type: {$variable_type})\n", FILE_APPEND );

@@ -38,6 +38,12 @@ class Unified_Css_Processor {
 		$this->html_class_modifier = new \Elementor\Modules\CssConverter\Services\Css\Html_Class_Modifier_Service();
 	}
 	public function process_css_and_widgets( string $css, array $widgets, array $options = [] ): array {
+		$debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
+		file_put_contents( $debug_file, "\n" . str_repeat('=', 80) . "\n", FILE_APPEND );
+		file_put_contents( $debug_file, "UNIFIED CSS PROCESSOR STARTED: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND );
+		file_put_contents( $debug_file, "CSS size: " . strlen( $css ) . " bytes\n", FILE_APPEND );
+		file_put_contents( $debug_file, "Widgets count: " . count( $widgets ) . "\n", FILE_APPEND );
+		
 		// Create processing context with input data
 		$context = new Css_Processing_Context();
 		$context->set_metadata( 'css', $css );
@@ -45,14 +51,20 @@ class Unified_Css_Processor {
 		$context->set_metadata( 'options', $options );
 		$context->set_metadata( 'existing_global_class_names', $this->get_existing_global_class_names() );
 		
-		// Set the custom CSS collector in context so processors can use the same instance
-		if ( method_exists( $this->property_converter, 'get_custom_css_collector' ) ) {
-			$custom_css_collector = $this->property_converter->get_custom_css_collector();
-			$context->set_metadata( 'custom_css_collector', $custom_css_collector );
-		}
+	// Set the custom CSS collector in context so processors can use the same instance
+	if ( method_exists( $this->property_converter, 'get_custom_css_collector' ) ) {
+		$custom_css_collector = $this->property_converter->get_custom_css_collector();
+		$context->set_metadata( 'custom_css_collector', $custom_css_collector );
+		file_put_contents( $debug_file, "Custom CSS collector set in context\n", FILE_APPEND );
+	}
+	
+	// Set the shared property converter in context so all processors use the same instance
+	$context->set_metadata( 'property_converter', $this->property_converter );
 
+		file_put_contents( $debug_file, "EXECUTING REGISTRY PIPELINE...\n", FILE_APPEND );
 		// Execute the complete registry pipeline
 		$context = Css_Processor_Factory::execute_css_processing( $context );
+		file_put_contents( $debug_file, "REGISTRY PIPELINE COMPLETED\n", FILE_APPEND );
 
 		// Extract results from context
 		// Note: global_classes already includes compound classes (merged by Global_Classes_Processor)
@@ -584,7 +596,7 @@ class Unified_Css_Processor {
 	}
 	private function process_widget_inline_styles( string $element_id, array $inline_css ): void {
 		$inline_properties = $this->extract_inline_properties( $inline_css );
-		$batch_converted = $this->convert_properties_batch( $inline_properties );
+		$batch_converted = $this->convert_properties_batch( $inline_properties, $element_id, $inline_css );
 		$this->store_converted_inline_styles( $element_id, $inline_css, $batch_converted );
 	}
 	private function extract_inline_properties( array $inline_css ): array {
@@ -627,10 +639,23 @@ class Unified_Css_Processor {
 			$this->collect_inline_styles_recursively( $widget['children'] );
 		}
 	}
-	private function convert_properties_batch( array $properties ): array {
+	private function convert_properties_batch( array $properties, string $element_id = null, array $inline_css = [] ): array {
 		if ( ! $this->property_converter ) {
 			return [];
 		}
+		
+		if ( $element_id ) {
+			$converted = [];
+			foreach ( $properties as $property => $value ) {
+				$important = $inline_css[ $property ]['important'] ?? false;
+				$result = $this->property_converter->convert_property_to_v4_atomic( $property, $value, $element_id, $important );
+				if ( $result ) {
+					$converted = array_merge( $converted, $result );
+				}
+			}
+			return $converted;
+		}
+		
 		return $this->property_converter->convert_properties_to_v4_atomic( $properties );
 	}
 	private function is_property_source_unified( string $css_property, string $atomic_property ): bool {
@@ -1685,28 +1710,6 @@ class Unified_Css_Processor {
 
 
 
-	private function is_core_elementor_selector( string $selector ): bool {
-		// List of core Elementor CSS selectors that should not become global classes
-		$core_elementor_patterns = [
-			'/\.elementor-element\.elementor-fixed/',
-			'/\.elementor-element\.elementor-absolute/',
-			'/\.elementor-element\.elementor-sticky/',
-			'/\.elementor-widget\.elementor-widget-/',
-			'/\.elementor-container\.elementor-/',
-			'/\.elementor-section\.elementor-/',
-			'/\.elementor-column\.elementor-/',
-			'/\.e-con\.e-/',
-			'/\.e-flex\.e-/',
-		];
-
-		foreach ( $core_elementor_patterns as $pattern ) {
-			if ( preg_match( $pattern, $selector ) ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
 
 	private function create_global_class_from_compound(
 		string $flattened_name,

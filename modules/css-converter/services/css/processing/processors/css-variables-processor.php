@@ -41,6 +41,17 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 		file_put_contents( $tracking_log, date('[H:i:s] ') . "CSS_VARIABLES_PROCESSOR: Started (LATE - filtering/merging)\n", FILE_APPEND );
 		file_put_contents( $tracking_log, date('[H:i:s] ') . "CSS_VARIABLES_PROCESSOR: Received " . count($this->css_variable_definitions) . " variables from registry\n", FILE_APPEND );
 		
+		// CRITICAL FIX: Check if CSS rules have already been resolved by CSS Variable Resolver
+		$has_resolved_variables = $this->detect_resolved_variables_in_rules( $css_rules );
+		if ( $has_resolved_variables ) {
+			file_put_contents( $tracking_log, date('[H:i:s] ') . "CSS_VARIABLES_PROCESSOR: SKIPPING - CSS rules already contain resolved variables from CSS Variable Resolver\n", FILE_APPEND );
+			file_put_contents( $tracking_log, date('[H:i:s] ') . "CSS_VARIABLES_PROCESSOR: Preserving resolved CSS rules to prevent overwriting display:flex with var(--display)\n", FILE_APPEND );
+			
+			// Only process variable definitions, do not re-extract from CSS rules
+			$this->process_variable_definitions_only( $context, $tracking_log );
+			return $context;
+		}
+		
 		if ( empty( $this->css_variable_definitions ) ) {
 			file_put_contents( $tracking_log, date('[H:i:s] ') . "CSS_VARIABLES_PROCESSOR: WARNING - No variables from registry, performing fallback extraction\n", FILE_APPEND );
 			
@@ -868,6 +879,65 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 				error_log( "CSS Variables: No widget definition found for '$var_name' (clean: '$clean_name')" );
 			}
 		}
+	}
+
+	/**
+	 * Detect if CSS rules contain resolved variables from CSS Variable Resolver
+	 * 
+	 * This prevents overwriting resolved display:flex with unresolved var(--display)
+	 */
+	private function detect_resolved_variables_in_rules( array $css_rules ): bool {
+		foreach ( $css_rules as $rule ) {
+			$properties = $rule['properties'] ?? [];
+			
+			foreach ( $properties as $property_data ) {
+				// Check if this property was resolved from a variable
+				if ( isset( $property_data['resolved_from_variable'] ) && $property_data['resolved_from_variable'] === true ) {
+					return true;
+				}
+				
+				// Check for specific flex properties that are commonly resolved
+				$property = $property_data['property'] ?? '';
+				$value = $property_data['value'] ?? '';
+				
+				if ( in_array( $property, [ 'display', 'flex-direction', 'justify-content', 'align-items' ], true ) ) {
+					// If we have a direct value (not var()) for these properties, likely resolved
+					if ( ! empty( $value ) && strpos( $value, 'var(' ) === false ) {
+						// Additional check: look for flex values that are commonly from variables
+						if ( ( $property === 'display' && $value === 'flex' ) ||
+							 ( $property === 'justify-content' && in_array( $value, [ 'space-between', 'center', 'flex-start', 'flex-end' ], true ) ) ||
+							 ( $property === 'align-items' && in_array( $value, [ 'center', 'flex-start', 'flex-end', 'stretch' ], true ) ) ) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Process only variable definitions without re-extracting CSS rules
+	 * 
+	 * This preserves resolved CSS rules while still handling variable definitions
+	 */
+	private function process_variable_definitions_only( Css_Processing_Context $context, string $tracking_log ): void {
+		file_put_contents( $tracking_log, date('[H:i:s] ') . "CSS_VARIABLES_PROCESSOR: Processing variable definitions only (preserving resolved rules)\n", FILE_APPEND );
+		
+		// Update context with current variable definitions (no rule extraction)
+		$context->set_metadata( 'css_variable_definitions', $this->css_variable_definitions );
+		
+		// Process widget variable references if they exist
+		$widget_variable_references = $context->get_metadata( 'widget_variable_references', [] );
+		if ( ! empty( $widget_variable_references ) ) {
+			file_put_contents( $tracking_log, date('[H:i:s] ') . "CSS_VARIABLES_PROCESSOR: Processing " . count( $widget_variable_references ) . " widget variable references\n", FILE_APPEND );
+			
+			// Only merge widget variables, don't re-extract CSS rules
+			$this->merge_widget_variables_with_definitions( $widget_variable_references, [], $context );
+		}
+		
+		file_put_contents( $tracking_log, date('[H:i:s] ') . "CSS_VARIABLES_PROCESSOR: Completed (definitions only - rules preserved)\n", FILE_APPEND );
 	}
 
 }

@@ -301,7 +301,17 @@ class Atomic_Property_Validator {
 	}
 
 	private function is_valid_size_value( string $value ): bool {
-		if ( in_array( $value, [ 'auto', 'initial', 'inherit', 'unset', 'revert' ], true ) ) {
+		if ( in_array( $value, [ 'initial', 'inherit', 'unset', 'revert' ], true ) ) {
+			return false;
+		}
+		
+		// Allow 'auto' as a valid size value for dimensions
+		if ( $value === 'auto' ) {
+			return true;
+		}
+		
+		// Reject problematic minimal values that cause layout collapse
+		if ( $value === '1px' || $value === '0px' ) {
 			return false;
 		}
 

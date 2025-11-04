@@ -182,7 +182,6 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 			$selector = $rule['selector'] ?? '';
 			$properties = $this->prepare_properties_for_collection( [ $rule ] );
 
-
 			if ( empty( $properties ) ) {
 				continue;
 			}
@@ -197,17 +196,6 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 
 			// Apply styles atomically to each matching widget
 			foreach ( $matching_widgets as $widget_id ) {
-				// DEBUG WIDTH ISSUE: Track width properties from child element processor
-				$width_properties = array_filter( $properties, function( $prop ) {
-					return ( $prop['property'] ?? '' ) === 'width';
-				});
-				if ( ! empty( $width_properties ) && $widget_type === 'e-image' ) {
-					$log_file = WP_CONTENT_DIR . '/width-debug.log';
-					foreach ( $width_properties as $prop ) {
-						file_put_contents( $log_file, date('[H:i:s] ') . "CHILD_ELEMENT_PROCESSOR: width={$prop['value']}, selector={$selector}, specificity={$specificity}, widget_id={$widget_id}\n", FILE_APPEND );
-					}
-				}
-				
 				$unified_style_manager->collect_element_styles(
 					$widget_type,
 					$properties,
@@ -285,6 +273,7 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 				foreach ( $rule['properties'] as $property_data ) {
 					$property = $property_data['property'] ?? '';
 					$value = $property_data['value'] ?? '';
+
 
 					if ( empty( $property ) || empty( $value ) ) {
 						continue;

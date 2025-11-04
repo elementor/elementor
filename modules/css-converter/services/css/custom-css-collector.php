@@ -17,23 +17,61 @@ class Custom_Css_Collector {
 	}
 
 	public function add_property( string $widget_id, string $property, string $value, bool $important = false ): void {
+		
 		if ( ! isset( $this->custom_css_buffer[ $widget_id ] ) ) {
 			$this->custom_css_buffer[ $widget_id ] = [];
 		}
 
+		$property_key = $this->create_deduplicated_property_key( $property );
+		
+		if ( $this->should_override_existing_property( $widget_id, $property_key, $important ) ) {
+			$this->custom_css_buffer[ $widget_id ][ $property_key ] = [
+				'property' => $property,
+				'value' => $value,
+				'important' => $important,
+			];
+		}
+
+		file_put_contents( 
+			$this->tracking_log, 
+			date('[H:i:s] ') . "CUSTOM_CSS_COLLECTOR: Added to widget {$widget_id}: {$property}: {$value}" . ( $important ? ' !important' : '' ) . "\n", 
+			FILE_APPEND 
+		);
+	}
+
+	private function should_override_existing_property( string $widget_id, string $property_key, bool $new_important ): bool {
+		if ( ! isset( $this->custom_css_buffer[ $widget_id ][ $property_key ] ) ) {
+			return true;
+		}
+
+		$existing_important = $this->custom_css_buffer[ $widget_id ][ $property_key ]['important'] ?? false;
+		
+		if ( $new_important && ! $existing_important ) {
+			return true;
+		}
+		
+		if ( ! $new_important && $existing_important ) {
+			return false;
+		}
+		
+		return true;
+	}
+
+	private function create_deduplicated_property_key( string $property ): string {
+		return strtolower( trim( $property ) );
+	}
+
+	private function format_css_declaration_from_property_data( array $property_data ): string {
+		$property = $property_data['property'];
+		$value = $property_data['value'];
+		$important = $property_data['important'] ?? false;
+		
 		$css_declaration = $property . ': ' . $value;
 		if ( $important ) {
 			$css_declaration .= ' !important';
 		}
-
-		$this->custom_css_buffer[ $widget_id ][] = $css_declaration;
-
-		error_log( "CUSTOM_CSS_DEBUG: add_property - widget_id={$widget_id}, instance_id={$this->instance_id}, property={$property}, value={$value}" );
-		file_put_contents( 
-			$this->tracking_log, 
-			date('[H:i:s] ') . "CUSTOM_CSS_COLLECTOR: Added to widget {$widget_id}: {$css_declaration}\n", 
-			FILE_APPEND 
-		);
+		
+		return $css_declaration;
 	}
 
 	public function get_custom_css_for_widget( string $widget_id ): string {
@@ -42,7 +80,13 @@ class Custom_Css_Collector {
 			return '';
 		}
 
-		$css_declarations = $this->custom_css_buffer[ $widget_id ];
+		$property_data_array = $this->custom_css_buffer[ $widget_id ];
+		
+		$css_declarations = array_map( 
+			[ $this, 'format_css_declaration_from_property_data' ], 
+			$property_data_array 
+		);
+		
 		$formatted_css = implode( ";\n", $css_declarations );
 		
 		if ( ! empty( $formatted_css ) ) {
@@ -70,12 +114,11 @@ class Custom_Css_Collector {
 		$total_properties = 0;
 		$property_counts = [];
 
-		foreach ( $this->custom_css_buffer as $widget_id => $declarations ) {
-			$total_properties += count( $declarations );
+		foreach ( $this->custom_css_buffer as $widget_id => $property_data_array ) {
+			$total_properties += count( $property_data_array );
 			
-			foreach ( $declarations as $declaration ) {
-				$property = explode( ':', $declaration )[0];
-				$property = trim( $property );
+			foreach ( $property_data_array as $property_data ) {
+				$property = $property_data['property'];
 				$property_counts[ $property ] = ( $property_counts[ $property ] ?? 0 ) + 1;
 			}
 		}

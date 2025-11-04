@@ -68,20 +68,22 @@ class Html_Parser {
 		if ( in_array( $tag_name, [ 'script', 'style', 'meta', 'link', 'title' ], true ) ) {
 			return null;
 		}
-		$data = [
-			'tag' => $tag_name,
-			'attributes' => $this->extract_attributes( $element ),
-			'content' => $this->extract_text_content( $element ),
-			'children' => $this->extract_elements( $element ),
-			'depth' => $this->calculate_depth( $element ),
-		];
-		// Extract CSS from style attribute
-		if ( ! empty( $data['attributes']['style'] ) ) {
-			$data['inline_css'] = $this->parse_inline_css( $data['attributes']['style'] );
-		} else {
-			$data['inline_css'] = [];
-		}
-		return $data;
+	$data = [
+		'tag' => $tag_name,
+		'attributes' => $this->extract_attributes( $element ),
+		'content' => $this->extract_text_content( $element ),
+		'children' => $this->extract_elements( $element ),
+		'depth' => $this->calculate_depth( $element ),
+	];
+	// Extract CSS from style attribute
+	if ( ! empty( $data['attributes']['style'] ) ) {
+		$data['inline_css'] = $this->parse_inline_css( $data['attributes']['style'] );
+	} else {
+		$data['inline_css'] = [];
+	}
+	
+	
+	return $data;
 	}
 	private function extract_attributes( DOMElement $element ) {
 		$attributes = [];

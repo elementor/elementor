@@ -173,17 +173,33 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 		// Register with Elementor (includes overflow handling)
 		$result = $registration_service->register_with_elementor( $converted );
 
-		// Build global_classes array with FINAL class names (after duplicate processing)
-		$class_name_mappings = $result['class_name_mappings'] ?? [];
-		$global_classes = $this->build_global_classes_with_final_names( $detected_classes, $class_name_mappings );
+	// Build global_classes array with FINAL class names (after duplicate processing)
+	$class_name_mappings = $result['class_name_mappings'] ?? [];
+	$global_classes = $this->build_global_classes_with_final_names( $detected_classes, $class_name_mappings );
 
-		return [
-			'global_classes' => $global_classes,
-			'class_name_mappings' => $class_name_mappings,
-			'overflow_classes' => $result['overflow_classes'] ?? [],
-			'debug_duplicate_detection' => $result['debug_duplicate_detection'] ?? [],
-		];
+	// Collect custom CSS rules using the same logic as process_css_rules
+	$custom_css_rules = [];
+	foreach ( $converted as $original_class_name => $class_data ) {
+		$custom_css = $class_data['custom_css'] ?? '';
+		
+		if ( ! empty( $custom_css ) ) {
+			$final_class_name = $class_name_mappings[ $original_class_name ] ?? $original_class_name;
+			$custom_css_rules[ $final_class_name ] = [
+				'selector' => ".elementor .{$final_class_name}",
+				'css' => $custom_css,
+				'original_class' => $original_class_name,
+			];
+		}
 	}
+
+	return [
+		'global_classes' => $global_classes,
+		'class_name_mappings' => $class_name_mappings,
+		'overflow_classes' => $result['overflow_classes'] ?? [],
+		'custom_css_rules' => $custom_css_rules,
+		'debug_duplicate_detection' => $result['debug_duplicate_detection'] ?? [],
+	];
+}
 
 	private function process_global_classes_with_duplicate_detection( array $css_rules ): array {
 		$provider = \Elementor\Modules\CssConverter\Services\GlobalClasses\Unified\Global_Classes_Service_Provider::instance();

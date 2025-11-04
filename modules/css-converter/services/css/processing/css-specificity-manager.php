@@ -7,20 +7,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Css_Specificity_Manager {
 	private $specificity_calculator;
+	private $property_converter;
 
-	public function __construct( Css_Specificity_Calculator $specificity_calculator ) {
+	public function __construct( Css_Specificity_Calculator $specificity_calculator, $property_converter = null ) {
 		$this->specificity_calculator = $specificity_calculator;
+		$this->property_converter = $property_converter;
 	}
 
 	public function merge_all_styles_with_specificity( array $style_sources, array $widget ): array {
 		$all_styles = [];
 
-		$this->add_element_styles( $all_styles, $style_sources );
-		$this->add_direct_element_styles( $all_styles, $style_sources );
-		$this->add_class_styles( $all_styles, $style_sources, $widget );
-		$this->add_widget_styles( $all_styles, $style_sources );
-		$this->add_id_styles( $all_styles, $style_sources );
-		$this->add_inline_styles( $all_styles, $widget );
+	$this->add_element_styles( $all_styles, $style_sources );
+	$this->add_direct_element_styles( $all_styles, $style_sources );
+	$this->add_widget_styles( $all_styles, $style_sources );
+	$this->add_id_styles( $all_styles, $style_sources );
+	$this->add_inline_styles( $all_styles, $widget );
 
 		return $all_styles;
 	}
@@ -158,7 +159,13 @@ class Css_Specificity_Manager {
 	}
 
 	private function convert_inline_property_to_atomic( string $property, $value ): ?array {
-		// Use the same conversion service as CSS rules
+		// Use the shared conversion service with Custom CSS Fallback support
+		if ( $this->property_converter && method_exists( $this->property_converter, 'convert_property_with_fallback' ) ) {
+			// Use fallback system for inline styles too
+			return $this->property_converter->convert_property_with_fallback( $property, $value, 'inline-style-' . uniqid() );
+		}
+		
+		// Fallback to old method if no shared converter available
 		$conversion_service = new Css_Property_Conversion_Service();
 		return $conversion_service->convert_property_to_v4_atomic( $property, $value );
 	}

@@ -70,13 +70,9 @@ class Style_Resolution_Processor implements Css_Processor_Interface {
 			$element_id = $widget['element_id'] ?? 'no-element-id';
 			$widget_classes = $widget['attributes']['class'] ?? '';
 			
-			$resolved_styles = $unified_style_manager->resolve_styles_for_widget( $widget );
+		$resolved_styles = $unified_style_manager->resolve_styles_for_widget( $widget );
 
-			if ( ! empty( $resolved_styles ) ) {
-				++$widgets_with_resolved_styles;
-			}
-
-			$widget['resolved_styles'] = $resolved_styles;
+		$widget['resolved_styles'] = $resolved_styles;
 
 			// Recursively resolve styles for child widgets
 			if ( ! empty( $widget['children'] ) ) {
