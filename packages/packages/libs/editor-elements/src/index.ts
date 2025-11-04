@@ -70,3 +70,5 @@ export {
 export { getElementInteractions } from './sync/get-element-interactions';
 export { updateElementInteractions } from './sync/update-element-interactions';
 export { useElementInteractions } from './hooks/use-element-interactions';
+
+export { initMcp as initElementsMcp } from './mcp';
