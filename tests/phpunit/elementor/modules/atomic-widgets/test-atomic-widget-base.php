@@ -37,7 +37,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
-		array_pop( $settings ); // remove common settings
+
+		unset( $settings['_cssid'] );
+		unset( $settings['display-conditions'] );
 
 		// Assert.
 		$this->assertSame( $args['result'], $settings );
@@ -355,6 +357,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		$test_schema = $widget::get_props_schema();
 		unset( $test_schema['_cssid'] );
+		unset( $test_schema['display-conditions'] );
+		
 		// Act & Assert.
 		$this->assertSame( $schema, $test_schema );
 	}

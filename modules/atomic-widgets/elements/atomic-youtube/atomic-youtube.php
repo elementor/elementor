@@ -12,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\PropTypes\Display_Conditions\Display_Conditions_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -63,6 +64,8 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 			'rel' => Boolean_Prop_Type::make()->default( true ),
 
 			'attributes' => Attributes_Prop_Type::make(),
+
+			'display-conditions' => Display_Conditions_Prop_Type::make(),
 		];
 	}
 
