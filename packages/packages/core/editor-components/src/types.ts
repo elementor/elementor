@@ -1,4 +1,4 @@
-import { type V1ElementModelProps, type V1ElementSettingsProps } from '@elementor/editor-elements';
+import { type V1ElementData, type V1ElementModelProps, type V1ElementSettingsProps } from '@elementor/editor-elements';
 import type { StyleDefinition } from '@elementor/editor-styles';
 
 export type ComponentFormValues = {
@@ -14,7 +14,8 @@ export type Component = {
 	name: string;
 };
 
-export type DocumentStatus = 'publish' | 'draft' | 'autosave';
+export type DocumentStatus = 'publish' | 'draft';
+export type DocumentSaveStatus = DocumentStatus | 'autosave';
 
 export type Element = V1ElementModelProps & {
 	elements?: Element[];
@@ -28,4 +29,12 @@ export type Element = V1ElementModelProps & {
 
 export type ExtendedWindow = Window & {
 	elementorCommon: Record< string, unknown >;
+};
+
+export type Container = {
+	model: {
+		get: ( key: 'elements' ) => {
+			toJSON: () => V1ElementData[];
+		};
+	};
 };

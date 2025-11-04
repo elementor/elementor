@@ -8,7 +8,7 @@ import { getComponentIds } from '../utils/get-component-ids';
 import { selectStyles, slice } from './store';
 
 export async function loadComponentsStyles( elements: Element[] ) {
-	const componentIds = Array.from( new Set( getComponentIds( elements ) ) );
+	const componentIds = getComponentIds( elements );
 
 	if ( ! componentIds.length ) {
 		return;
