@@ -217,14 +217,22 @@
 	&start {
 		.elementor-field-type-submit,
 		.e-form__buttons {
-			justify-content: getValueByDirection(flex-start, flex-end);
+			justify-content: flex-start;
+
+			[dir="rtl"] & { // BC for RTL direction.
+				justify-content: flex-end;
+			}
 		}
 	}
 
 	&end {
 		.elementor-field-type-submit,
 		.e-form__buttons {
-			justify-content: getValueByDirection(flex-end, flex-start);
+			justify-content: flex-end;
+
+			[dir="rtl"] & { // BC for RTL direction.
+				justify-content: flex-start;
+			}
 		}
 	}
 
