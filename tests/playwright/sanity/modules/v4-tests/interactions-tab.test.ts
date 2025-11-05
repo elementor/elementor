@@ -2,8 +2,6 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
 
-const SKIP_ADD_INTERACTION_BY_PLUS_BUTTON = true;
-
 test.describe( 'Interactions Tab @v4-tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
@@ -74,16 +72,6 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 		await test.step( 'Start adding interactions button', async () => {
 			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
-			await expect( addInteractionButton ).toBeVisible();
-			await addInteractionButton.click();
-		} );
-
-		await test.step( 'Add interaction using plus button', async () => {
-			if ( SKIP_ADD_INTERACTION_BY_PLUS_BUTTON ) {
-				return;
-			}
-
-			const addInteractionButton = page.locator( '[aria-label="Add interaction"]' );
 			await expect( addInteractionButton ).toBeVisible();
 			await addInteractionButton.click();
 		} );

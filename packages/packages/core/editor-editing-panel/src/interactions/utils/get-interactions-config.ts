@@ -1,4 +1,3 @@
-import { type ExtendedWindow } from '../../sync/types';
 import { type InteractionsConfig } from '../types';
 
 const DEFAULT_CONFIG: InteractionsConfig = {
@@ -13,6 +12,5 @@ const DEFAULT_CONFIG: InteractionsConfig = {
 };
 
 export function getInteractionsConfig(): InteractionsConfig {
-	const extendedWindow = window as unknown as ExtendedWindow;
-	return extendedWindow.ElementorInteractionsConfig || DEFAULT_CONFIG;
+	return window.ElementorInteractionsConfig || DEFAULT_CONFIG;
 }
