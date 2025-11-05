@@ -58,17 +58,15 @@ test.describe( 'Variable Manager @v4-tests', () => {
 	test( 'Variable name validation error displays and clears in the manager', async () => {
 		const variableRow = await variablesManagerPage.createVariableFromManager( { name: 'test-variable', value: '#000000', type: 'color' } );
 		const nameField = variableRow.getByRole( 'button' ).nth( 1 );
+		await nameField.dblclick();
+		const nameInput = variableRow.getByRole( 'textbox' );
 
 		await test.step( 'Display validation error for invalid input', async () => {
-			await nameField.dblclick();
-			const nameInput = variableRow.getByRole( 'textbox' );
 			await nameInput.fill( ' ' );
 			await expect( page.getByText( 'Give your variable a name.' ) ).toBeVisible();
 		} );
 
 		await test.step( 'Clear validation error when input is fixed', async () => {
-			await nameField.dblclick();
-			const nameInput = variableRow.getByRole( 'textbox' );
 			await nameInput.fill( 'valid-variable-name' );
 			await expect( page.getByText( 'Give your variable a name.' ) ).not.toBeVisible();
 		} );
