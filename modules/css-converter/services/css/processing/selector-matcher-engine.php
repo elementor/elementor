@@ -24,19 +24,6 @@ class Selector_Matcher_Engine {
 	}
 
 	public function find_matching_widgets( string $selector, array $widgets ): array {
-		// DEBUG: Track e-con selector matching
-		if ( strpos( $selector, 'e-con' ) !== false ) {
-			$debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-			$parsed = $this->get_parsed_selector( $selector );
-			file_put_contents(
-				$debug_log,
-				date( '[H:i:s] ' ) . "SELECTOR_MATCHER: Parsing selector '{$selector}'\n" .
-				"  Parsed type: " . ( $parsed['type'] ?? 'unknown' ) . "\n" .
-				"  Parsed data: " . json_encode( $parsed ) . "\n",
-				FILE_APPEND
-			);
-		}
-		
 		return $this->find_matching_widgets_intelligently( $selector, $widgets );
 	}
 
@@ -313,36 +300,8 @@ class Selector_Matcher_Engine {
 		$widget_classes = $widget['attributes']['class'] ?? '';
 		$element_id = $widget['element_id'] ?? '';
 
-		// DEBUG: Log complex selector matching attempts for e-con
-		$debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-		if ( strpos( $widget_classes, 'e-con' ) !== false ) {
-			$target_classes = [];
-			if ( isset( $target_part['parts'] ) ) {
-				foreach ( $target_part['parts'] as $part ) {
-					if ( $part['type'] === 'class' ) {
-						$target_classes[] = $part['value'];
-					}
-				}
-			}
-			file_put_contents(
-				$debug_log,
-				date( '[H:i:s] ' ) . "COMPLEX_MATCH_TEST: Widget {$element_id} ({$widget_classes})\n" .
-				"  Target classes: " . implode( ', ', $target_classes ) . "\n",
-				FILE_APPEND
-			);
-		}
-
 		if ( ! $this->widget_matches_parsed_selector( $widget, $target_part, $all_widgets ) ) {
-			// DEBUG: Log mismatch
-			if ( strpos( $widget_classes, 'e-con' ) !== false ) {
-				file_put_contents( $debug_log, "  Result: DOES NOT MATCH target part\n", FILE_APPEND );
-			}
 			return false;
-		}
-		
-		// DEBUG: Log target part match
-		if ( strpos( $widget_classes, 'e-con' ) !== false ) {
-			file_put_contents( $debug_log, "  Result: MATCHES target part, validating chain...\n", FILE_APPEND );
 		}
 
 		if ( count( $parts ) === 1 ) {
@@ -350,11 +309,6 @@ class Selector_Matcher_Engine {
 		}
 
 		$chain_valid = $this->validate_selector_chain( $widget, $parts, $combinators, $all_widgets );
-
-		// DEBUG: Log chain validation results
-		if ( strpos( $widget_classes, 'e-con' ) !== false ) {
-			file_put_contents( $debug_log, date( '[H:i:s] ' ) . "COMPLEX_SELECTOR: Chain validation for {$element_id}: " . ( $chain_valid ? 'VALID' : 'INVALID' ) . "\n", FILE_APPEND );
-		}
 
 		return $chain_valid;
 	}
@@ -369,13 +323,6 @@ class Selector_Matcher_Engine {
 		$current_widget = $widget;
 		$parts_count = count( $parts );
 
-		// DEBUG: Log chain validation details
-		$widget_classes = $widget['attributes']['class'] ?? '';
-		if ( strpos( $widget_classes, 'e-con' ) !== false ) {
-			$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CHAIN_VALIDATION: Starting for {$element_id}, parts: " . count( $parts ) . ', combinators: ' . implode( ',', $combinators ) . "\n", FILE_APPEND );
-		}
-
 		for ( $i = $parts_count - 2; $i >= 0; $i-- ) {
 			$combinator = $combinators[ $i ] ?? ' ';
 			$required_part = $parts[ $i ];
@@ -386,12 +333,6 @@ class Selector_Matcher_Engine {
 				$required_part,
 				$all_widgets
 			);
-
-			// DEBUG: Log combinator matching results
-			if ( strpos( $widget_classes, 'e-con' ) !== false ) {
-				$found_classes = $matching_widget ? ( $matching_widget['attributes']['class'] ?? '' ) : 'NONE';
-				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CHAIN_VALIDATION: Combinator '{$combinator}' for part {$i} -> " . ( $matching_widget ? 'FOUND' : 'NOT_FOUND' ) . " ({$found_classes})\n", FILE_APPEND );
-			}
 
 			if ( ! $matching_widget ) {
 				return false;
@@ -438,14 +379,6 @@ class Selector_Matcher_Engine {
 
 	private function find_parent_matching_part( string $element_id, array $required_part ): ?array {
 		$parent = $this->navigator->find_parent( $element_id );
-
-		// DEBUG: Log parent lookup for e-con selectors
-		if ( strpos( $element_id, 'element-div' ) !== false ) {
-			$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-			$parent_classes = $parent ? ( $parent['attributes']['class'] ?? '' ) : 'NONE';
-			$parent_id = $parent ? ( $parent['element_id'] ?? '' ) : 'NONE';
-			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "PARENT_LOOKUP: Child {$element_id} -> Parent {$parent_id} ({$parent_classes})\n", FILE_APPEND );
-		}
 
 		if ( $parent && $this->widget_matches_parsed_selector( $parent, $required_part, null ) ) {
 			return $parent;
@@ -494,35 +427,9 @@ class Selector_Matcher_Engine {
 
 	private function match_compound_selector( array $widget, array $parsed_selector ): bool {
 		$parts = $parsed_selector['parts'] ?? [];
-		$widget_classes = $widget['attributes']['class'] ?? '';
-		$element_id = $widget['element_id'] ?? '';
 
-		// DEBUG: Log compound matching for e-con widgets
-		if ( strpos( $widget_classes, 'e-con' ) !== false ) {
-			$debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-			file_put_contents(
-				$debug_log,
-				date( '[H:i:s] ' ) . "COMPOUND_MATCH: Widget {$element_id} ({$widget_classes})\n" .
-				"  Testing " . count( $parts ) . " parts\n",
-				FILE_APPEND
-			);
-		}
-
-		foreach ( $parts as $index => $part ) {
-			$matches = $this->match_simple_selector( $widget, $part );
-			
-			// DEBUG: Log each part test
-			if ( strpos( $widget_classes, 'e-con' ) !== false ) {
-				$part_type = $part['type'] ?? 'unknown';
-				$part_value = $part['value'] ?? 'no-value';
-				file_put_contents(
-					$debug_log,
-					"  Part {$index}: type={$part_type}, value={$part_value} -> " . ( $matches ? 'MATCH' : 'NO MATCH' ) . "\n",
-					FILE_APPEND
-				);
-			}
-			
-			if ( ! $matches ) {
+		foreach ( $parts as $part ) {
+			if ( ! $this->match_simple_selector( $widget, $part ) ) {
 				return false;
 			}
 		}

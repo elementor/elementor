@@ -42,6 +42,7 @@ class Css_Processor_Factory {
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Media_Query_Filter_Processor(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Css_Variable_Registry_Processor(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Css_Variable_Resolver(),
+			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Container_Variable_Resolver(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Widget_Class_Processor(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Css_Variables_Processor(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Id_Selector_Processor( $property_converter ),

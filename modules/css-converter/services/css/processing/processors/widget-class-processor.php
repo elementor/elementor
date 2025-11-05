@@ -70,78 +70,13 @@ class Widget_Class_Processor implements Css_Processor_Interface
         $css_rules = $context->get_metadata('css_rules', []);
         $widgets = $context->get_widgets();
         $css_variable_definitions = $context->get_metadata('css_variable_definitions', []);
-        $debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-
-        // DEBUG: Track target rule at START
-        $target_rule_before = $this->find_target_rule_in_rules($css_rules, 'elementor-element-9856e95', 'elementor-heading-title');
-        file_put_contents(
-            $debug_log,
-            date('[H:i:s] ') . "WIDGET_CLASS_PROCESSOR START: Target rule font-weight = " .
-            ( $target_rule_before['font-weight'] ?? 'NOT_FOUND' ) . ", color = " .
-            ( $target_rule_before['color'] ?? 'NOT_FOUND' ) . "\n",
-            FILE_APPEND
-        );
 
         if (empty($css_rules) || empty($widgets) ) {
             return $context;
         }
 
         $widget_classes = $this->extract_widget_classes_from_widgets($widgets);
-        
-        // DEBUG: Show which widgets have e-con and e-con-inner classes
-        $this->debug_widget_classes_structure( $widgets, $debug_log );
-        
         $widget_specific_rules = $this->extract_widget_specific_rules($css_rules, $widget_classes);
-
-        // DEBUG: Track e-con and e-con-inner selector processing
-        foreach ( $css_rules as $rule ) {
-            $selector = $rule['selector'] ?? '';
-            if ( strpos( $selector, 'e-con' ) !== false ) {
-                $properties_debug = [];
-                foreach ( $rule['properties'] ?? [] as $prop ) {
-                    $prop_name = $prop['property'] ?? '';
-                    $prop_value = $prop['value'] ?? '';
-                    if ( $prop_name === 'display' ) {
-                        $properties_debug[] = "display: {$prop_value}";
-                    }
-                }
-                if ( ! empty( $properties_debug ) ) {
-                    file_put_contents(
-                        $debug_log,
-                        date( '[H:i:s] ' ) . "E_CON_DEBUG: Found selector '{$selector}' with " . implode( ', ', $properties_debug ) . "\n",
-                        FILE_APPEND
-                    );
-                }
-            }
-        }
-
-        // DEBUG: Check if e-con selectors are in widget_specific_rules
-        $e_con_rules_found = 0;
-        foreach ( $widget_specific_rules as $rule ) {
-            $selector = $rule['selector'] ?? '';
-            if ( strpos( $selector, 'e-con' ) !== false ) {
-                $e_con_rules_found++;
-                $properties_debug = [];
-                foreach ( $rule['properties'] ?? [] as $prop ) {
-                    $prop_name = $prop['property'] ?? '';
-                    $prop_value = $prop['value'] ?? '';
-                    if ( $prop_name === 'display' ) {
-                        $properties_debug[] = "display: {$prop_value}";
-                    }
-                }
-                file_put_contents(
-                    $debug_log,
-                    date( '[H:i:s] ' ) . "E_CON_WIDGET_RULE: Selector '{$selector}' will be processed with " . 
-                    implode( ', ', $properties_debug ) . "\n",
-                    FILE_APPEND
-                );
-            }
-        }
-        file_put_contents(
-            $debug_log,
-            date( '[H:i:s] ' ) . "E_CON_SUMMARY: Found {$e_con_rules_found} e-con rules in widget_specific_rules\n",
-            FILE_APPEND
-        );
 
         if (empty($widget_specific_rules) ) {
             return $context;
@@ -162,15 +97,6 @@ class Widget_Class_Processor implements Css_Processor_Interface
                        ( $this->is_widget_class( $class ) && ! $this->should_preserve_widget_class( $class ) );
             }
         );
-        
-        // DEBUG: Track what classes are being removed
-        file_put_contents(
-            $debug_log,
-            date( '[H:i:s] ' ) . "WIDGET_CLASS_REMOVAL: Processing class removal\n" .
-            "  All widget classes: " . implode( ', ', $widget_classes ) . "\n" .
-            "  Classes to remove: " . implode( ', ', $widget_classes_to_remove ) . "\n",
-            FILE_APPEND
-        );
 
         $css_class_modifiers = $context->get_metadata('css_class_modifiers', []);
         $css_class_modifiers[] = [
@@ -184,19 +110,6 @@ class Widget_Class_Processor implements Css_Processor_Interface
         $context->add_statistic('widget_specific_rules_found', count($widget_specific_rules));
         $context->add_statistic('widget_classes_processed', count($widget_classes));
         $context->add_statistic('widget_styles_applied', $styles_applied);
-
-        // DEBUG: Track target rule at END
-        $css_rules_after = $context->get_metadata('css_rules', []);
-        $target_rule_after = $this->find_target_rule_in_rules($css_rules_after, 'elementor-element-9856e95', 'elementor-heading-title');
-        file_put_contents(
-            $debug_log,
-            date('[H:i:s] ') . "WIDGET_CLASS_PROCESSOR END: Target rule font-weight = " .
-            ( $target_rule_after['font-weight'] ?? 'NOT_FOUND' ) . ", color = " .
-            ( $target_rule_after['color'] ?? 'NOT_FOUND' ) . "\n",
-            FILE_APPEND
-        );
-
-        $widget_variable_references = $context->get_metadata('widget_variable_references', []);
 
         return $context;
     }
@@ -375,24 +288,11 @@ class Widget_Class_Processor implements Css_Processor_Interface
     private function extract_widget_specific_rules( array $css_rules, array $widget_classes ): array
     {
         $widget_rules = [];
-        $debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
 
         foreach ( $css_rules as $rule ) {
             $selector = $rule['selector'] ?? '';
 
             $this->current_selector = $selector;
-
-            // DEBUG: Track e-con selector processing
-            $is_e_con_selector = strpos( $selector, 'e-con' ) !== false;
-            if ( $is_e_con_selector ) {
-                $skip_complex = $this->should_skip_complex_selector($selector);
-                file_put_contents(
-                    $debug_log,
-                    date( '[H:i:s] ' ) . "E_CON_EXTRACT: Selector '{$selector}'\n" .
-                    "  Skip complex: " . ( $skip_complex ? 'YES (SKIPPED)' : 'NO' ) . "\n",
-                    FILE_APPEND
-                );
-            }
 
             if ($this->should_skip_complex_selector($selector) ) {
                 continue;
@@ -400,24 +300,13 @@ class Widget_Class_Processor implements Css_Processor_Interface
 
             $selector_classes = $this->extract_classes_from_selector($selector);
 
-            // DEBUG: Track e-con selector class extraction
-            if ( $is_e_con_selector ) {
-                $has_widget_classes = $this->selector_contains_widget_classes($selector_classes);
-                file_put_contents(
-                    $debug_log,
-                    "  Extracted classes: " . implode( ', ', $selector_classes ) . "\n" .
-                    "  Has widget classes: " . ( $has_widget_classes ? 'YES (WILL PROCESS)' : 'NO (WILL SKIP)' ) . "\n",
-                    FILE_APPEND
-                );
-            }
-
             if ($this->selector_contains_widget_classes($selector_classes) ) {
 
                 $widget_rules[] = [
                 'selector' => $selector,
                 'properties' => $rule['properties'] ?? [],
-                'target_classes' => $selector_classes, // FIXED: Use selector classes, not all widget classes
-                'full_selector' => $selector, // Store full selector for element-specific matching
+                'target_classes' => $selector_classes,
+                'full_selector' => $selector,
                 'specificity' => $this->calculate_selector_specificity($selector),
                 ];
 
@@ -644,7 +533,6 @@ class Widget_Class_Processor implements Css_Processor_Interface
             $property_conversion_service = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service($custom_css_collector);
         }
         $styles_applied = 0;
-        $debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
 
         foreach ( $widget_rules as $rule ) {
             $selector = $rule['selector'];
@@ -663,30 +551,6 @@ class Widget_Class_Processor implements Css_Processor_Interface
                     $matching_element_ids = $this->selector_matcher->find_matching_widgets($selector, $widgets);
                 }
                 $matching_widgets = $this->get_widgets_by_element_ids($matching_element_ids, $widgets);
-                
-                // DEBUG: Track e-con selector matching
-                if ( strpos( $selector, 'e-con' ) !== false ) {
-                    $has_display = false;
-                    $display_value = '';
-                    foreach ( $properties as $prop ) {
-                        if ( ( $prop['property'] ?? '' ) === 'display' ) {
-                            $has_display = true;
-                            $display_value = $prop['value'] ?? '';
-                            break;
-                        }
-                    }
-                    if ( $has_display ) {
-                        file_put_contents(
-                            $debug_log,
-                            date( '[H:i:s] ' ) . "E_CON_MATCHING: Selector '{$selector}' with display: {$display_value}\n" .
-                            "  Matching widgets found: " . count( $matching_widgets ) . "\n" .
-                            "  Widget IDs: " . implode( ', ', array_map( function( $w ) {
-                                return $w['element_id'] ?? 'no-id';
-                            }, $matching_widgets ) ) . "\n",
-                            FILE_APPEND
-                        );
-                    }
-                }
             } catch ( \InvalidArgumentException $e ) {
                 // Skip malformed selectors gracefully
                 error_log("Widget_Class_Processor: Skipping malformed selector '{$selector}': " . $e->getMessage());
@@ -732,26 +596,6 @@ class Widget_Class_Processor implements Css_Processor_Interface
                         }, $matching_widgets 
                     );
                     $matched_element_ids = array_filter($matched_element_ids);
-
-                    // DEBUG: Track what we're about to store
-                    if (strpos($selector, 'elementor-element-9856e95') !== false && strpos($selector, 'elementor-heading-title') !== false ) {
-                        $debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-                        $debug_props = [];
-                        foreach ( $converted_properties as $prop ) {
-                            $prop_name = $prop['property'] ?? 'unknown';
-                            $prop_value = $prop['value'] ?? 'unknown';
-                            if (in_array($prop_name, [ 'font-weight', 'color', 'font-size' ], true) ) {
-                                $debug_props[] = "{$prop_name}: {$prop_value}";
-                            }
-                        }
-                        file_put_contents(
-                            $debug_log,
-                            date('[H:i:s] ') . "WIDGET_CLASS_PROCESSOR: About to store styles for {$selector}\n" .
-                            "  Element IDs: " . implode(', ', $matched_element_ids) . "\n" .
-                            "  Properties: " . implode(', ', $debug_props) . "\n",
-                            FILE_APPEND
-                        );
-                    }
 
                     $unified_style_manager->collect_css_selector_styles(
                         $selector,
@@ -1153,12 +997,6 @@ class Widget_Class_Processor implements Css_Processor_Interface
         return preg_match('/elementor-element-[a-f0-9]+/', $selector) === 1;
     }
 
-    private function is_e_con_inner_selector( string $selector ): bool
-    {
-        // Check if selector is .e-con>.e-con-inner or variants
-        return preg_match('/\.e-con[^>]*>\.e-con-inner/', $selector) === 1;
-    }
-
     private function find_matching_widgets_element_specific( string $selector, array $widgets ): array
     {
         // Extract element ID from selector
@@ -1168,16 +1006,6 @@ class Widget_Class_Processor implements Css_Processor_Interface
             // Extract target classes from selector (e.g., elementor-heading-title)
             $target_classes = $this->extract_classes_from_selector($selector);
             
-            // DEBUG: Track element-specific matching
-            $debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-            file_put_contents(
-                $debug_log,
-                date('[H:i:s] ') . "ELEMENT_SPECIFIC_MATCHING: Selector {$selector}\n" .
-                "  Target element ID: {$target_element_id}\n" .
-                "  Target classes: " . implode(', ', $target_classes) . "\n",
-                FILE_APPEND
-            );
-            
             // Find widgets that match BOTH the element ID AND the target classes
             $matching_element_ids = [];
             $this->find_widgets_with_element_id_and_classes($widgets, $target_element_id, $target_classes, $matching_element_ids);
@@ -1185,19 +1013,8 @@ class Widget_Class_Processor implements Css_Processor_Interface
             // FALLBACK: If no exact matches found, try matching by target classes only
             // This handles cases where original element IDs are not preserved during conversion
             if ( empty( $matching_element_ids ) && ! empty( $target_classes ) ) {
-                file_put_contents(
-                    $debug_log,
-                    "  No exact matches found, trying fallback matching by classes only\n",
-                    FILE_APPEND
-                );
                 $this->find_widgets_with_classes_only( $widgets, $target_classes, $matching_element_ids );
             }
-            
-            file_put_contents(
-                $debug_log,
-                "  Found matching widgets: " . implode(', ', $matching_element_ids) . "\n",
-                FILE_APPEND
-            );
             
             return $matching_element_ids;
         }
@@ -1207,26 +1024,9 @@ class Widget_Class_Processor implements Css_Processor_Interface
 
     private function find_widgets_with_element_id_and_classes( array $widgets, string $target_element_id, array $target_classes, array &$matching_element_ids ): void
     {
-        $debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-        
         foreach ( $widgets as $widget ) {
             $widget_classes = $widget['attributes']['class'] ?? '';
             $widget_element_id = $widget['element_id'] ?? '';
-            $widget_type = $widget['widget_type'] ?? '';
-            
-            // DEBUG: Show all heading widgets for comparison
-            if ( $widget_type === 'e-heading' ) {
-                $widget_original_id = $widget['original_element_id'] ?? 'none';
-                $widget_data_id = $widget['attributes']['data-id'] ?? 'none';
-                file_put_contents(
-                    $debug_log,
-                    "  WIDGET CHECK: {$widget_element_id} (type: {$widget_type})\n" .
-                    "    Classes: {$widget_classes}\n" .
-                    "    Original ID: {$widget_original_id}, Data ID: {$widget_data_id}\n" .
-                    "    Looking for: elementor-element-{$target_element_id} + " . implode( ', ', $target_classes ) . "\n",
-                    FILE_APPEND
-                );
-            }
             
             // CRITICAL FIX: Check widget's original element ID, not classes (classes are stripped during conversion)
             $widget_original_id = $widget['original_element_id'] ?? '';
@@ -1251,17 +1051,6 @@ class Widget_Class_Processor implements Css_Processor_Interface
                 
                 if ($has_target_classes ) {
                     $matching_element_ids[] = $widget_element_id;
-                    file_put_contents(
-                        $debug_log,
-                        "    ✅ MATCH FOUND: {$widget_element_id}\n",
-                        FILE_APPEND
-                    );
-                } else {
-                    file_put_contents(
-                        $debug_log,
-                        "    ❌ ELEMENT ID MATCH but missing target classes\n",
-                        FILE_APPEND
-                    );
                 }
             }
             
@@ -1273,12 +1062,9 @@ class Widget_Class_Processor implements Css_Processor_Interface
     }
 
     private function find_widgets_with_classes_only( array $widgets, array $target_classes, array &$matching_element_ids ): void {
-        $debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-        
         foreach ( $widgets as $widget ) {
             $widget_classes = $widget['attributes']['class'] ?? '';
             $widget_element_id = $widget['element_id'] ?? '';
-            $widget_type = $widget['widget_type'] ?? '';
             
             // Check if widget has the target classes (fallback matching)
             $has_target_classes = true;
@@ -1291,11 +1077,6 @@ class Widget_Class_Processor implements Css_Processor_Interface
             
             if ( $has_target_classes ) {
                 $matching_element_ids[] = $widget_element_id;
-                file_put_contents(
-                    $debug_log,
-                    "    ✅ FALLBACK MATCH: {$widget_element_id} (has target classes)\n",
-                    FILE_APPEND
-                );
             }
             
             // Recurse through children
@@ -1335,32 +1116,5 @@ class Widget_Class_Processor implements Css_Processor_Interface
         // Remove all other widget classes (elementor-heading-title, elementor-size-default, e-con, e-con-inner, etc.)
         // Their styles will be applied directly by Widget Class Processor before removal
         return false;
-    }
-
-    private function debug_widget_classes_structure( array $widgets, string $debug_log ): void {
-        file_put_contents( $debug_log, date( '[H:i:s] ' ) . "WIDGET_STRUCTURE_DEBUG: Widget classes structure\n", FILE_APPEND );
-        $this->debug_widget_classes_recursive( $widgets, $debug_log, 0 );
-    }
-
-    private function debug_widget_classes_recursive( array $widgets, string $debug_log, int $depth ): void {
-        $indent = str_repeat( '  ', $depth );
-        foreach ( $widgets as $widget ) {
-            $widget_type = $widget['widget_type'] ?? 'unknown';
-            $element_id = $widget['element_id'] ?? 'no-id';
-            $classes = $widget['attributes']['class'] ?? '';
-            
-            // Only show widgets with e-con or e-con-inner classes
-            if ( strpos( $classes, 'e-con' ) !== false ) {
-                file_put_contents(
-                    $debug_log,
-                    $indent . "- {$widget_type} ({$element_id}): {$classes}\n",
-                    FILE_APPEND
-                );
-            }
-            
-            if ( ! empty( $widget['children'] ) ) {
-                $this->debug_widget_classes_recursive( $widget['children'], $debug_log, $depth + 1 );
-            }
-        }
     }
 }

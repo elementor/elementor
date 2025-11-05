@@ -208,27 +208,27 @@ class Transform_Property_Mapper extends Atomic_Property_Mapper_Base {
 
 		switch ( $function_name ) {
 			case 'scale':
-				$scale_value = (float) ( $values[0] ?? 1 );
+				$scale_value = round( (float) ( $values[0] ?? 1 ), 10 );
 				$scale_data['x'] = $scale_value;
-				$scale_data['y'] = (float) ( $values[1] ?? $scale_value );
+				$scale_data['y'] = round( (float) ( $values[1] ?? $scale_value ), 10 );
 				break;
 			case 'scalex':
-				$scale_data['x'] = (float) ( $values[0] ?? 1 );
+				$scale_data['x'] = round( (float) ( $values[0] ?? 1 ), 10 );
 				$scale_data['y'] = 1.0;
 				break;
 			case 'scaley':
 				$scale_data['x'] = 1.0;
-				$scale_data['y'] = (float) ( $values[0] ?? 1 );
+				$scale_data['y'] = round( (float) ( $values[0] ?? 1 ), 10 );
 				break;
 			case 'scalez':
 				$scale_data['x'] = 1.0;
 				$scale_data['y'] = 1.0;
-				$scale_data['z'] = (float) ( $values[0] ?? 1 );
+				$scale_data['z'] = round( (float) ( $values[0] ?? 1 ), 10 );
 				break;
 			case 'scale3d':
-				$scale_data['x'] = (float) ( $values[0] ?? 1 );
-				$scale_data['y'] = (float) ( $values[1] ?? 1 );
-				$scale_data['z'] = (float) ( $values[2] ?? 1 );
+				$scale_data['x'] = round( (float) ( $values[0] ?? 1 ), 10 );
+				$scale_data['y'] = round( (float) ( $values[1] ?? 1 ), 10 );
+				$scale_data['z'] = round( (float) ( $values[2] ?? 1 ), 10 );
 				break;
 		}
 
