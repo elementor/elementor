@@ -24,8 +24,25 @@ class Atomic_Property_Validator {
 
 		$property_config = $this->supported_properties[ $property ];
 
+		if ( $property === 'align-self' ) {
+			$log_file = WP_CONTENT_DIR . '/align-self-debug.log';
+			file_put_contents( $log_file, "\n  🔍 VALIDATOR::is_value_supported()\n", FILE_APPEND );
+			file_put_contents( $log_file, "    Property: {$property}\n", FILE_APPEND );
+			file_put_contents( $log_file, "    Value to check: '{$value}'\n", FILE_APPEND );
+			file_put_contents( $log_file, "    Property type: {$property_config['type']}\n", FILE_APPEND );
+		}
+
 		if ( $property_config['type'] === 'enum' ) {
-			return in_array( $value, $property_config['values'], true );
+			$is_supported = in_array( $value, $property_config['values'], true );
+			
+			if ( $property === 'align-self' ) {
+				$log_file = WP_CONTENT_DIR . '/align-self-debug.log';
+				file_put_contents( $log_file, "    Type is ENUM - checking against allowed values...\n", FILE_APPEND );
+				file_put_contents( $log_file, "    Allowed values: " . implode( ', ', $property_config['values'] ) . "\n", FILE_APPEND );
+				file_put_contents( $log_file, "    Is '{$value}' in array? " . ( $is_supported ? 'YES ✅' : 'NO ❌' ) . "\n", FILE_APPEND );
+			}
+			
+			return $is_supported;
 		}
 
 		if ( $property_config['type'] === 'any' ) {

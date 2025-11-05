@@ -15,16 +15,37 @@ class CSS_Selector_Parser {
 	];
 
 	private const PSEUDO_CLASSES = [
-		'not', 'is', 'where', 'has', 'first-child', 'last-child', 
-		'nth-child', 'nth-last-child', 'first-of-type', 'last-of-type',
-		'nth-of-type', 'nth-last-of-type', 'only-child', 'only-of-type',
-		'empty', 'root', 'hover', 'focus', 'active', 'visited', 'link',
-		'disabled', 'enabled', 'checked', 'required', 'optional',
+		'not',
+		'is',
+		'where',
+		'has',
+		'first-child',
+		'last-child',
+		'nth-child',
+		'nth-last-child',
+		'first-of-type',
+		'last-of-type',
+		'nth-of-type',
+		'nth-last-of-type',
+		'only-child',
+		'only-of-type',
+		'empty',
+		'root',
+		'hover',
+		'focus',
+		'active',
+		'visited',
+		'link',
+		'disabled',
+		'enabled',
+		'checked',
+		'required',
+		'optional',
 	];
 
 	public function parse( string $selector ): array {
 		$selector = trim( $selector );
-		
+
 		if ( empty( $selector ) ) {
 			throw new \InvalidArgumentException( 'Empty selector provided' );
 		}
@@ -73,9 +94,9 @@ class CSS_Selector_Parser {
 			}
 
 			if ( $char === '(' ) {
-				$open_count++;
+				++$open_count;
 			} elseif ( $char === ')' ) {
-				$open_count--;
+				--$open_count;
 				if ( $open_count < 0 ) {
 					throw new \InvalidArgumentException( "Unmatched closing parenthesis in selector: '{$selector}'" );
 				}
@@ -114,9 +135,9 @@ class CSS_Selector_Parser {
 			}
 
 			if ( $char === '[' ) {
-				$open_count++;
+				++$open_count;
 			} elseif ( $char === ']' ) {
-				$open_count--;
+				--$open_count;
 				if ( $open_count < 0 ) {
 					throw new \InvalidArgumentException( 'Unmatched closing bracket in selector' );
 				}
@@ -131,10 +152,10 @@ class CSS_Selector_Parser {
 	private function parse_complex_selector( string $selector ): array {
 		$parts = [];
 		$combinators = [];
-		
+
 		$tokens = $this->tokenize_selector( $selector );
 		$current_compound = '';
-		
+
 		foreach ( $tokens as $token ) {
 			if ( $this->is_combinator( $token ) ) {
 				if ( ! empty( $current_compound ) ) {
@@ -146,7 +167,7 @@ class CSS_Selector_Parser {
 				$current_compound .= $token;
 			}
 		}
-		
+
 		if ( ! empty( $current_compound ) ) {
 			$parts[] = $this->parse_compound_selector( trim( $current_compound ) );
 		}
@@ -166,25 +187,25 @@ class CSS_Selector_Parser {
 		$quote_char = '';
 		$in_brackets = false;
 		$in_parentheses = false;
-		
+
 		$chars = str_split( $selector );
 		$length = count( $chars );
-		
+
 		for ( $i = 0; $i < $length; $i++ ) {
 			$char = $chars[ $i ];
 			$next_char = $i + 1 < $length ? $chars[ $i + 1 ] : '';
-			
+
 			if ( ! $in_quotes && ! $in_brackets && ! $in_parentheses ) {
 				if ( $char === ' ' ) {
 					if ( ! empty( $current_token ) ) {
 						$tokens[] = $current_token;
 						$current_token = '';
 					}
-					
+
 					$tokens[] = ' ';
 					continue;
 				}
-				
+
 				if ( in_array( $char, [ '>', '+', '~' ], true ) ) {
 					if ( ! empty( $current_token ) ) {
 						$tokens[] = $current_token;
@@ -194,7 +215,7 @@ class CSS_Selector_Parser {
 					continue;
 				}
 			}
-			
+
 			if ( in_array( $char, [ '"', "'" ], true ) && ! $in_brackets ) {
 				if ( ! $in_quotes ) {
 					$in_quotes = true;
@@ -204,26 +225,26 @@ class CSS_Selector_Parser {
 					$quote_char = '';
 				}
 			}
-			
+
 			if ( $char === '[' && ! $in_quotes ) {
 				$in_brackets = true;
 			} elseif ( $char === ']' && ! $in_quotes ) {
 				$in_brackets = false;
 			}
-			
+
 			if ( $char === '(' && ! $in_quotes && ! $in_brackets ) {
 				$in_parentheses = true;
 			} elseif ( $char === ')' && ! $in_quotes && ! $in_brackets ) {
 				$in_parentheses = false;
 			}
-			
+
 			$current_token .= $char;
 		}
-		
+
 		if ( ! empty( $current_token ) ) {
 			$tokens[] = $current_token;
 		}
-		
+
 		return array_filter( $tokens, function( $token ) {
 			return trim( $token ) !== '';
 		} );
@@ -236,7 +257,7 @@ class CSS_Selector_Parser {
 	private function parse_compound_selector( string $compound ): array {
 		$parts = [];
 		$remaining = $compound;
-		
+
 		while ( ! empty( $remaining ) ) {
 			$part = $this->extract_next_simple_selector( $remaining );
 			if ( $part ) {
@@ -246,11 +267,11 @@ class CSS_Selector_Parser {
 				break;
 			}
 		}
-		
+
 		if ( empty( $parts ) ) {
 			throw new \InvalidArgumentException( "Invalid compound selector: {$compound}" );
 		}
-		
+
 		return [
 			'type' => 'compound',
 			'parts' => $parts,
@@ -262,9 +283,9 @@ class CSS_Selector_Parser {
 		if ( empty( $selector ) ) {
 			return null;
 		}
-		
+
 		$first_char = $selector[0];
-		
+
 		switch ( $first_char ) {
 			case '.':
 				return $this->parse_class_selector( $selector );
@@ -290,7 +311,7 @@ class CSS_Selector_Parser {
 				'raw' => $matches[0],
 			];
 		}
-		
+
 		throw new \InvalidArgumentException( "Invalid class selector: {$selector}" );
 	}
 
@@ -302,7 +323,7 @@ class CSS_Selector_Parser {
 				'raw' => $matches[0],
 			];
 		}
-		
+
 		throw new \InvalidArgumentException( "Invalid ID selector: {$selector}" );
 	}
 
@@ -314,18 +335,18 @@ class CSS_Selector_Parser {
 				'raw' => $matches[0],
 			];
 		}
-		
+
 		throw new \InvalidArgumentException( "Invalid element selector: {$selector}" );
 	}
 
 	private function parse_attribute_selector( string $selector ): array {
 		$pattern = '/^\[([a-zA-Z0-9_-]+)(?:([\~\|\^\$\*]?=)(["\']?)([^"\'\]]*)\3)?\]/';
-		
+
 		if ( preg_match( $pattern, $selector, $matches ) ) {
 			$attribute = $matches[1];
 			$operator = $matches[2] ?? null;
 			$value = $matches[4] ?? null;
-			
+
 			return [
 				'type' => 'attribute',
 				'attribute' => $attribute,
@@ -334,7 +355,7 @@ class CSS_Selector_Parser {
 				'raw' => $matches[0],
 			];
 		}
-		
+
 		throw new \InvalidArgumentException( "Invalid attribute selector: {$selector}" );
 	}
 
@@ -343,7 +364,7 @@ class CSS_Selector_Parser {
 			$name = $matches[1];
 			$argument = isset( $matches[2] ) ? trim( $matches[2], '()' ) : null;
 			$is_element = strpos( $matches[0], '::' ) === 0;
-			
+
 			return [
 				'type' => $is_element ? 'pseudo-element' : 'pseudo-class',
 				'name' => $name,
@@ -351,13 +372,13 @@ class CSS_Selector_Parser {
 				'raw' => $matches[0],
 			];
 		}
-		
+
 		throw new \InvalidArgumentException( "Invalid pseudo selector: {$selector}" );
 	}
 
 	private function calculate_specificity( array $parts ): int {
 		$specificity = 0;
-		
+
 		foreach ( $parts as $part ) {
 			if ( $part['type'] === 'compound' ) {
 				foreach ( $part['parts'] as $simple ) {
@@ -367,7 +388,7 @@ class CSS_Selector_Parser {
 				$specificity += $this->get_simple_selector_specificity( $part );
 			}
 		}
-		
+
 		return $specificity;
 	}
 
@@ -389,7 +410,7 @@ class CSS_Selector_Parser {
 
 	public function is_simple_selector( string $selector ): bool {
 		$selector = trim( $selector );
-		
+
 		return ! preg_match( '/[\s>+~]/', $selector );
 	}
 
@@ -400,9 +421,9 @@ class CSS_Selector_Parser {
 	public function extract_classes_from_selector( string $selector ): array {
 		$parsed = $this->parse( $selector );
 		$classes = [];
-		
+
 		$this->collect_classes_from_parsed( $parsed, $classes );
-		
+
 		return array_unique( $classes );
 	}
 
@@ -426,7 +447,7 @@ class CSS_Selector_Parser {
 		if ( $parsed['type'] === 'complex' && ! empty( $parsed['parts'] ) ) {
 			return end( $parsed['parts'] );
 		}
-		
+
 		return $parsed;
 	}
 }

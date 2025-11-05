@@ -74,12 +74,28 @@ class Unified_Widget_Conversion_Service {
 			throw $e;
 		}
 
-			$resolved_widgets = $unified_processing_result['widgets'];
-			$global_classes = $unified_processing_result['global_classes'] ?? [];
-			$css_variable_definitions = $unified_processing_result['css_variable_definitions'] ?? [];
+		$resolved_widgets = $unified_processing_result['widgets'];
+		$global_classes = $unified_processing_result['global_classes'] ?? [];
+		$css_variable_definitions = $unified_processing_result['css_variable_definitions'] ?? [];
 
-			// Create widgets with resolved styles
-			$creation_result = $this->create_widgets_with_resolved_styles( $resolved_widgets, $options, $global_classes, $css_variable_definitions );
+		// DEBUG: Track widget data being passed to widget creation
+		$debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
+		foreach ( $resolved_widgets as $widget ) {
+			$widget_type = $widget['widget_type'] ?? '';
+			$element_id = $widget['element_id'] ?? '';
+			if ( $widget_type === 'e-heading' ) {
+				$widget_classes = $widget['attributes']['class'] ?? '';
+				file_put_contents(
+					$debug_log,
+					date( '[H:i:s] ' ) . "UNIFIED_CONVERSION_SERVICE: Passing {$widget_type} {$element_id} to widget creation\n" .
+					"  Widget classes: '{$widget_classes}'\n",
+					FILE_APPEND
+				);
+			}
+		}
+
+		// Create widgets with resolved styles
+		$creation_result = $this->create_widgets_with_resolved_styles( $resolved_widgets, $options, $global_classes, $css_variable_definitions );
 
 			// Log CSS processing and widget creation stats
 			$this->logger->add_css_processing_stats( $unified_processing_result['stats'] ?? [] );

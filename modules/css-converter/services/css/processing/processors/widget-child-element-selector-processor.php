@@ -32,7 +32,7 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 	public function supports_context( Css_Processing_Context $context ): bool {
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$widgets = $context->get_widgets();
-		
+
 		return ! empty( $css_rules ) && ! empty( $widgets );
 	}
 
@@ -72,7 +72,7 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 				$widgets,
 				$unified_style_manager
 			);
-			
+
 			$total_selectors_processed += count( $rules );
 			$total_styles_applied += $styles_applied;
 		}
@@ -111,7 +111,6 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 				continue;
 			}
 
-
 			if ( ! isset( $child_element_rules[ $element_tag ] ) ) {
 				$child_element_rules[ $element_tag ] = [];
 			}
@@ -127,14 +126,14 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 		// Examples: .widget img, .container p, .box button
 		// Must end with a simple element tag (no classes, IDs, pseudo-selectors)
 		$result = preg_match( '/\.[a-zA-Z0-9_-]+\s+[a-z][a-z0-9]*$/i', trim( $selector ) );
-		
+
 		// DEBUG WIDTH ISSUE: Track why selector is not matching
 		if ( strpos( $selector, 'img' ) !== false ) {
 			$log_file = WP_CONTENT_DIR . '/width-debug.log';
 			$match_status = $result ? 'MATCHES' : 'NO_MATCH';
-			file_put_contents( $log_file, date('[H:i:s] ') . "CHILD_ELEMENT_SELECTOR_CHECK: {$match_status} - {$selector}\n", FILE_APPEND );
+			file_put_contents( $log_file, date( '[H:i:s] ' ) . "CHILD_ELEMENT_SELECTOR_CHECK: {$match_status} - {$selector}\n", FILE_APPEND );
 		}
-		
+
 		return $result;
 	}
 
@@ -173,7 +172,7 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 
 		// Get widget type for this element tag
 		$widget_type = $this->get_widget_type_from_tag( $element_tag );
-		
+
 		// Extract all classes that exist in the widget structure for scope validation
 		$existing_classes = $this->extract_existing_classes_from_widgets( $widgets );
 
@@ -274,7 +273,6 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 					$property = $property_data['property'] ?? '';
 					$value = $property_data['value'] ?? '';
 
-
 					if ( empty( $property ) || empty( $value ) ) {
 						continue;
 					}
@@ -293,9 +291,9 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 		return $properties;
 	}
 
-	private function remove_processed_child_element_rules( 
-		array $css_rules, 
-		array $child_element_rules 
+	private function remove_processed_child_element_rules(
+		array $css_rules,
+		array $child_element_rules
 	): array {
 		// Collect all processed selectors
 		$processed_selectors = [];
@@ -372,7 +370,7 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 		// Example: ".elementor-widget-image img" → [".elementor-widget-image"]
 
 		$parts = preg_split( '/\s+/', trim( $selector ) );
-		
+
 		// Remove the last part (element tag) to get parent classes
 		array_pop( $parts );
 
@@ -401,7 +399,7 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 			'elementor-element',        // Element wrapper class
 			'elementor-widget-',        // Widget type classes
 		];
-		
+
 		foreach ( $required_classes as $required_class ) {
 			foreach ( $elementor_patterns as $pattern ) {
 				if ( strpos( $required_class, $pattern ) === 0 ) {

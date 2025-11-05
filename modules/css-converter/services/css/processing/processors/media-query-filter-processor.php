@@ -51,7 +51,6 @@ class Media_Query_Filter_Processor implements Css_Processor_Interface {
 		$context->add_statistic( 'media_query_rules_filtered', $bytes_removed );
 		$context->add_statistic( 'desktop_rules_remaining', $filtered_length );
 
-
 		return $context;
 	}
 
@@ -64,9 +63,9 @@ class Media_Query_Filter_Processor implements Css_Processor_Interface {
 		$reset_patterns = [
 			'/html,body,div,span[^{]*\{[^}]*\}/s',
 			'/html, body, div, span[^{]*\{[^}]*\}/s',
-			'/html,body[^{]*\{[^}]*\}/s'
+			'/html,body[^{]*\{[^}]*\}/s',
 		];
-		
+
 		foreach ( $reset_patterns as $pattern ) {
 			if ( preg_match( $pattern, $css, $matches ) ) {
 				$reset_css_rules[] = $matches[0];
@@ -132,14 +131,14 @@ class Media_Query_Filter_Processor implements Css_Processor_Interface {
 				continue;
 			}
 
-		// Keep non-media query lines
-		$filtered_css .= $line . "\n";
-	}
+			// Keep non-media query lines
+			$filtered_css .= $line . "\n";
+		}
 
-	foreach ( $reset_css_rules as $reset_rule ) {
-		$filtered_css = str_replace( '/*RESET_CSS_PLACEHOLDER*/', $reset_rule, $filtered_css );
-	}
+		foreach ( $reset_css_rules as $reset_rule ) {
+			$filtered_css = str_replace( '/*RESET_CSS_PLACEHOLDER*/', $reset_rule, $filtered_css );
+		}
 
-	return $filtered_css;
+		return $filtered_css;
 	}
 }

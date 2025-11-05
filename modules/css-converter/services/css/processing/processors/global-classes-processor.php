@@ -24,7 +24,7 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 	}
 
 	public function process( Css_Processing_Context $context ): Css_Processing_Context {
-		error_log( "CUSTOM_CSS_DEBUG: Global_Classes_Processor - Starting process method" );
+		error_log( 'CUSTOM_CSS_DEBUG: Global_Classes_Processor - Starting process method' );
 		file_put_contents( '/tmp/global_classes_debug.log', "GLOBAL_CLASSES_PROCESSOR: Starting process method\n", FILE_APPEND );
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$widgets = $context->get_widgets();
@@ -37,13 +37,13 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 
 		// PHASE 2: Detect and filter CSS classes
 		$provider = \Elementor\Modules\CssConverter\Services\GlobalClasses\Unified\Global_Classes_Service_Provider::instance();
-		
+
 		// Set the custom CSS collector from context to ensure consistency
 		$custom_css_collector = $context->get_metadata( 'custom_css_collector' );
 		if ( $custom_css_collector ) {
 			$provider->set_custom_css_collector( $custom_css_collector );
 		}
-		
+
 		$detection_service = $provider->get_detection_service();
 
 		$all_detected = $detection_service->detect_css_class_selectors( $css_rules );
@@ -173,33 +173,33 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 		// Register with Elementor (includes overflow handling)
 		$result = $registration_service->register_with_elementor( $converted );
 
-	// Build global_classes array with FINAL class names (after duplicate processing)
-	$class_name_mappings = $result['class_name_mappings'] ?? [];
-	$global_classes = $this->build_global_classes_with_final_names( $detected_classes, $class_name_mappings );
+		// Build global_classes array with FINAL class names (after duplicate processing)
+		$class_name_mappings = $result['class_name_mappings'] ?? [];
+		$global_classes = $this->build_global_classes_with_final_names( $detected_classes, $class_name_mappings );
 
-	// Collect custom CSS rules using the same logic as process_css_rules
-	$custom_css_rules = [];
-	foreach ( $converted as $original_class_name => $class_data ) {
-		$custom_css = $class_data['custom_css'] ?? '';
-		
-		if ( ! empty( $custom_css ) ) {
-			$final_class_name = $class_name_mappings[ $original_class_name ] ?? $original_class_name;
-			$custom_css_rules[ $final_class_name ] = [
-				'selector' => ".elementor .{$final_class_name}",
-				'css' => $custom_css,
-				'original_class' => $original_class_name,
-			];
+		// Collect custom CSS rules using the same logic as process_css_rules
+		$custom_css_rules = [];
+		foreach ( $converted as $original_class_name => $class_data ) {
+			$custom_css = $class_data['custom_css'] ?? '';
+
+			if ( ! empty( $custom_css ) ) {
+				$final_class_name = $class_name_mappings[ $original_class_name ] ?? $original_class_name;
+				$custom_css_rules[ $final_class_name ] = [
+					'selector' => ".elementor .{$final_class_name}",
+					'css' => $custom_css,
+					'original_class' => $original_class_name,
+				];
+			}
 		}
-	}
 
-	return [
-		'global_classes' => $global_classes,
-		'class_name_mappings' => $class_name_mappings,
-		'overflow_classes' => $result['overflow_classes'] ?? [],
-		'custom_css_rules' => $custom_css_rules,
-		'debug_duplicate_detection' => $result['debug_duplicate_detection'] ?? [],
-	];
-}
+		return [
+			'global_classes' => $global_classes,
+			'class_name_mappings' => $class_name_mappings,
+			'overflow_classes' => $result['overflow_classes'] ?? [],
+			'custom_css_rules' => $custom_css_rules,
+			'debug_duplicate_detection' => $result['debug_duplicate_detection'] ?? [],
+		];
+	}
 
 	private function process_global_classes_with_duplicate_detection( array $css_rules ): array {
 		$provider = \Elementor\Modules\CssConverter\Services\GlobalClasses\Unified\Global_Classes_Service_Provider::instance();
@@ -217,11 +217,11 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 		$result = $integration_service->process_css_rules( $css_rules );
 
 		$custom_css_rules = $result['custom_css_rules'] ?? [];
-		error_log( "CUSTOM_CSS_DEBUG: Global_Classes_Processor - custom_css_rules count: " . count( $custom_css_rules ) );
+		error_log( 'CUSTOM_CSS_DEBUG: Global_Classes_Processor - custom_css_rules count: ' . count( $custom_css_rules ) );
 		if ( ! empty( $custom_css_rules ) ) {
-			error_log( "CUSTOM_CSS_DEBUG: Global_Classes_Processor - custom_css_rules keys: " . implode( ', ', array_keys( $custom_css_rules ) ) );
+			error_log( 'CUSTOM_CSS_DEBUG: Global_Classes_Processor - custom_css_rules keys: ' . implode( ', ', array_keys( $custom_css_rules ) ) );
 		}
-		
+
 		return [
 			'global_classes' => $result['global_classes'] ?? [],
 			'class_name_mappings' => $result['class_name_mappings'] ?? [],

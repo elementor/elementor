@@ -147,7 +147,7 @@ class Nested_Element_Selector_Processor implements Css_Processor_Interface {
 			$selector = $rule['selector'] ?? 'unknown';
 			$target_selectors_remaining[] = $selector;
 		}
-		
+
 		// DEBUG: Log CSS rules after processing (all rules preserved)
 
 		$context->add_statistic( 'nested_element_selectors_processed', $processed_count );

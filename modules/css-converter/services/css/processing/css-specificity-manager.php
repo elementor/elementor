@@ -17,11 +17,11 @@ class Css_Specificity_Manager {
 	public function merge_all_styles_with_specificity( array $style_sources, array $widget ): array {
 		$all_styles = [];
 
-	$this->add_element_styles( $all_styles, $style_sources );
-	$this->add_direct_element_styles( $all_styles, $style_sources );
-	$this->add_widget_styles( $all_styles, $style_sources );
-	$this->add_id_styles( $all_styles, $style_sources );
-	$this->add_inline_styles( $all_styles, $widget );
+		$this->add_element_styles( $all_styles, $style_sources );
+		$this->add_direct_element_styles( $all_styles, $style_sources );
+		$this->add_widget_styles( $all_styles, $style_sources );
+		$this->add_id_styles( $all_styles, $style_sources );
+		$this->add_inline_styles( $all_styles, $widget );
 
 		return $all_styles;
 	}
@@ -164,7 +164,7 @@ class Css_Specificity_Manager {
 			// Use fallback system for inline styles too
 			return $this->property_converter->convert_property_with_fallback( $property, $value, 'inline-style-' . uniqid() );
 		}
-		
+
 		// Fallback to old method if no shared converter available
 		$conversion_service = new Css_Property_Conversion_Service();
 		return $conversion_service->convert_property_to_v4_atomic( $property, $value );

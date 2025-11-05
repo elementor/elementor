@@ -51,7 +51,6 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 		// Transform compound selectors in css_rules in-place
 		$result = $this->transform_compound_selectors_in_place( $css_rules, $widgets );
 
-
 		// Update css_rules with transformed selectors
 		$context->set_metadata( 'css_rules', $result['css_rules'] );
 
@@ -62,7 +61,6 @@ class Compound_Class_Selector_Processor implements Css_Processor_Interface {
 			'mappings' => $result['compound_mappings'],
 		];
 		$context->set_metadata( 'css_class_modifiers', $css_class_modifiers );
-
 
 		// Add statistics
 		$context->add_statistic( 'compound_selectors_transformed', $result['transformed_count'] );

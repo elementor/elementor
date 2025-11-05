@@ -36,6 +36,18 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 		$mapped_type = $this->map_to_elementor_widget_type( $widget_type );
 
 		$widget_classes = $widget_data['attributes']['class'] ?? '';
+		
+		// DEBUG: Track widget classes at final creation stage
+		$element_id = $widget_data['element_id'] ?? 'unknown';
+		if ( $widget_type === 'e-heading' ) {
+			$debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
+			file_put_contents(
+				$debug_log,
+				date( '[H:i:s] ' ) . "ATOMIC_WIDGET_FACTORY: Creating {$widget_type} widget {$element_id}\n" .
+				"  Widget classes from data: '{$widget_classes}'\n",
+				FILE_APPEND
+			);
+		}
 
 		$formatted_widget_data = $this->data_formatter->format_widget_data( $resolved_styles, $widget_data, $widget_id, $this->custom_css_collector );
 
@@ -45,6 +57,19 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 
 		$final_settings = array_merge( $settings, $formatted_widget_data['settings'] );
 		$final_settings = $this->apply_global_classes( $final_settings, $widget_data );
+		
+		// DEBUG: Track final settings for heading widgets
+		if ( $widget_type === 'e-heading' ) {
+			$debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
+			$classes_in_settings = isset( $final_settings['classes'] ) ? 
+				json_encode( $final_settings['classes'] ) : 'NONE';
+			file_put_contents(
+				$debug_log,
+				date( '[H:i:s] ' ) . "ATOMIC_WIDGET_FACTORY: Final settings for {$widget_type} {$element_id}\n" .
+				"  Classes in settings: {$classes_in_settings}\n",
+				FILE_APPEND
+			);
+		}
 
 		if ( 'e-div-block' === $mapped_type ) {
 			$elementor_widget = [

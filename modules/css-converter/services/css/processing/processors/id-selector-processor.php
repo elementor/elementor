@@ -36,7 +36,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 		$id_rules = $this->extract_id_selectors( $css_rules );
 		$remaining_rules = $this->remove_id_selectors( $css_rules );
 
-
 		// CRITICAL: Use the EXISTING unified style manager from context (created by Style Collection Processor)
 		// This ensures all styles (inline, ID, CSS selectors) are in the same manager for proper specificity resolution
 		$unified_style_manager = $context->get_metadata( 'unified_style_manager' );
@@ -45,7 +44,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 			// This should NEVER happen - the Style Collection Processor should have created it
 			throw new \Exception( 'ID_SELECTOR_PROCESSOR: No unified style manager in context. Style Collection Processor must run before ID Selector Processor.' );
 		}
-
 
 		$this->collect_id_styles_in_manager( $id_rules, $widgets, $unified_style_manager );
 
@@ -59,7 +57,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 		// $context->set_metadata( 'unified_style_manager', $unified_style_manager ); // ← REMOVED
 
 		$context->add_statistic( 'id_selectors_processed', count( $id_rules ) );
-
 
 		return $context;
 	}
@@ -278,7 +275,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 
 		// Expand shorthand properties using the CSS Shorthand Expander
 		$expanded_props = \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $simple_props );
-
 
 		$converted_properties = [];
 

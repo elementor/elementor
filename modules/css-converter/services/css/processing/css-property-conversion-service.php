@@ -36,21 +36,21 @@ class Css_Property_Conversion_Service {
 	 * @param string $property CSS property name
 	 * @param string $value CSS property value
 	 * @param string $widget_id Widget ID for custom CSS collection
-	 * @param bool $important Whether the property has !important flag
+	 * @param bool   $important Whether the property has !important flag
 	 * @return array|null Converted property in atomic format, or null if sent to custom CSS
 	 */
 	private function add_to_custom_css( string $widget_id, string $property, string $value, bool $important, string $reason ): void {
 		// DEBUG: Track position absolute being added
 		if ( $property === 'position' && $value === 'absolute' ) {
 			$debug_file = WP_CONTENT_DIR . '/position-absolute-trace.log';
-			file_put_contents( $debug_file, "\n" . str_repeat('!', 80) . "\n", FILE_APPEND );
+			file_put_contents( $debug_file, "\n" . str_repeat( '!', 80 ) . "\n", FILE_APPEND );
 			file_put_contents( $debug_file, "POSITION ABSOLUTE BEING ADDED\n", FILE_APPEND );
-			file_put_contents( $debug_file, "Time: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND );
+			file_put_contents( $debug_file, 'Time: ' . date( 'Y-m-d H:i:s' ) . "\n", FILE_APPEND );
 			file_put_contents( $debug_file, "Widget ID: {$widget_id}\n", FILE_APPEND );
 			file_put_contents( $debug_file, "Property: {$property}\n", FILE_APPEND );
 			file_put_contents( $debug_file, "Value: {$value}\n", FILE_APPEND );
 			file_put_contents( $debug_file, "Reason: {$reason}\n", FILE_APPEND );
-			
+
 			$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 8 );
 			file_put_contents( $debug_file, "STACK TRACE:\n", FILE_APPEND );
 			foreach ( $backtrace as $i => $trace ) {
@@ -60,16 +60,16 @@ class Css_Property_Conversion_Service {
 				$class = isset( $trace['class'] ) ? $trace['class'] . '::' : '';
 				file_put_contents( $debug_file, "  [{$i}] {$file}:{$line} {$class}{$function}()\n", FILE_APPEND );
 			}
-			file_put_contents( $debug_file, str_repeat('!', 80) . "\n", FILE_APPEND );
+			file_put_contents( $debug_file, str_repeat( '!', 80 ) . "\n", FILE_APPEND );
 		}
-		
+
 		$this->custom_css_collector->add_property( $widget_id, $property, $value, $important );
-		
+
 		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-		file_put_contents( 
-			$tracking_log, 
-			date('[H:i:s] ') . "CSS_PROPERTY_CONVERSION: {$property}: {$value} → Custom CSS ({$reason})\n", 
-			FILE_APPEND 
+		file_put_contents(
+			$tracking_log,
+			date( '[H:i:s] ' ) . "CSS_PROPERTY_CONVERSION: {$property}: {$value} → Custom CSS ({$reason})\n",
+			FILE_APPEND
 		);
 	}
 
@@ -217,66 +217,132 @@ class Css_Property_Conversion_Service {
 			return null;
 		}
 
+		if ( $property === 'align-self' ) {
+			$log_file = WP_CONTENT_DIR . '/align-self-debug.log';
+			file_put_contents( $log_file, "\n  📍 CSS_PROPERTY_CONVERSION_SERVICE::convert_property_to_v4_atomic()\n", FILE_APPEND );
+			file_put_contents( $log_file, "    Property: {$property}\n", FILE_APPEND );
+			file_put_contents( $log_file, "    Value: '{$value}'\n", FILE_APPEND );
+			file_put_contents( $log_file, '    Widget ID: ' . ( $widget_id ?? 'null' ) . "\n", FILE_APPEND );
+			file_put_contents( $log_file, '    Validator exists: ' . ( $this->validator ? 'YES' : 'NO' ) . "\n", FILE_APPEND );
+		}
+
 		if ( $widget_id && $this->validator ) {
 			if ( ! $this->validator->is_property_supported( $property ) ) {
+				if ( $property === 'align-self' ) {
+					$log_file = WP_CONTENT_DIR . '/align-self-debug.log';
+					file_put_contents( $log_file, "    ❌ VALIDATOR: Property NOT supported in atomic schema\n", FILE_APPEND );
+				}
 				$this->add_to_custom_css( $widget_id, $property, $value, $important, 'Property not in atomic schema' );
 				return null;
 			}
 
+			if ( $property === 'align-self' ) {
+				$log_file = WP_CONTENT_DIR . '/align-self-debug.log';
+				file_put_contents( $log_file, "    ✅ VALIDATOR: Property IS supported\n", FILE_APPEND );
+				file_put_contents( $log_file, "    → Checking if value '{$value}' is supported...\n", FILE_APPEND );
+			}
+
 			if ( ! $this->validator->is_value_supported( $property, $value ) ) {
 				$reason = $this->validator->get_unsupported_reason( $property, $value );
-				
-				
+
+				if ( $property === 'align-self' ) {
+					$log_file = WP_CONTENT_DIR . '/align-self-debug.log';
+					file_put_contents( $log_file, "    ❌ VALIDATOR: Value '{$value}' NOT supported\n", FILE_APPEND );
+					file_put_contents( $log_file, "    Reason: {$reason}\n", FILE_APPEND );
+					file_put_contents( $log_file, "    → Will be sent to custom CSS\n", FILE_APPEND );
+				}
+
 				$this->add_to_custom_css( $widget_id, $property, $value, $important, $reason );
 				return null;
 			}
+
+			if ( $property === 'align-self' ) {
+				$log_file = WP_CONTENT_DIR . '/align-self-debug.log';
+				file_put_contents( $log_file, "    ✅ VALIDATOR: Value '{$value}' IS supported\n", FILE_APPEND );
+			}
 		}
 
-	$mapper = $this->resolve_property_mapper_safely( $property, $value );
+		$mapper = $this->resolve_property_mapper_safely( $property, $value );
 
-	if ( $this->can_convert_to_v4_atomic( $mapper ) ) {
-		try {
-			$result = $this->attempt_v4_atomic_conversion( $mapper, $property, $value );
-			
-			// DEBUG: Track position absolute being converted to atomic props
-			if ( $property === 'position' && $value === 'absolute' && $result ) {
-				$debug_file = WP_CONTENT_DIR . '/position-absolute-trace.log';
-				file_put_contents( $debug_file, "\n" . str_repeat('#', 80) . "\n", FILE_APPEND );
-				file_put_contents( $debug_file, "POSITION ABSOLUTE CONVERTED TO ATOMIC PROPS\n", FILE_APPEND );
-				file_put_contents( $debug_file, "Time: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND );
-				file_put_contents( $debug_file, "Widget ID: {$widget_id}\n", FILE_APPEND );
-				file_put_contents( $debug_file, "Property: {$property}\n", FILE_APPEND );
-				file_put_contents( $debug_file, "Value: {$value}\n", FILE_APPEND );
-				file_put_contents( $debug_file, "Atomic Result: " . json_encode( $result, JSON_PRETTY_PRINT ) . "\n", FILE_APPEND );
-				
-				$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 8 );
-				file_put_contents( $debug_file, "STACK TRACE:\n", FILE_APPEND );
-				foreach ( $backtrace as $i => $trace ) {
-					$file = basename( $trace['file'] ?? 'unknown' );
-					$line = $trace['line'] ?? 'unknown';
-					$function = $trace['function'] ?? 'unknown';
-					$class = isset( $trace['class'] ) ? $trace['class'] . '::' : '';
-					file_put_contents( $debug_file, "  [{$i}] {$file}:{$line} {$class}{$function}()\n", FILE_APPEND );
+		if ( $property === 'align-self' ) {
+			$log_file = WP_CONTENT_DIR . '/align-self-debug.log';
+			file_put_contents( $log_file, '    Mapper resolved: ' . ( $mapper ? get_class( $mapper ) : 'NULL' ) . "\n", FILE_APPEND );
+		}
+
+		if ( $this->can_convert_to_v4_atomic( $mapper ) ) {
+			if ( $property === 'align-self' ) {
+				$log_file = WP_CONTENT_DIR . '/align-self-debug.log';
+				file_put_contents( $log_file, "    ✅ Mapper CAN convert to v4 atomic\n", FILE_APPEND );
+				file_put_contents( $log_file, "    → Attempting conversion...\n", FILE_APPEND );
+			}
+
+			try {
+				$result = $this->attempt_v4_atomic_conversion( $mapper, $property, $value );
+
+				if ( $property === 'align-self' ) {
+					$log_file = WP_CONTENT_DIR . '/align-self-debug.log';
+					if ( $result ) {
+						file_put_contents( $log_file, "    ✅ MAPPER CONVERSION SUCCESS\n", FILE_APPEND );
+						file_put_contents( $log_file, '    Result: ' . json_encode( $result, JSON_PRETTY_PRINT ) . "\n", FILE_APPEND );
+					} else {
+						file_put_contents( $log_file, "    ❌ MAPPER CONVERSION FAILED (returned null/false)\n", FILE_APPEND );
+					}
 				}
-				file_put_contents( $debug_file, str_repeat('#', 80) . "\n", FILE_APPEND );
-			}
-			
-			if ( $result ) {
-				return $result;
-			}
-		} catch ( \Exception $e ) {
-			if ( $widget_id ) {
-				$this->add_to_custom_css( $widget_id, $property, $value, $important, 'Conversion failed: ' . $e->getMessage() );
-			}
-			return null;
-		}
-	}
-	if ( $widget_id ) {
-		$this->add_to_custom_css( $widget_id, $property, $value, $important, 'No property mapper found' );
-	}
 
-	$this->record_conversion_failure( $property, $value, 'No v4 mapper available' );
-	return null;
+				// DEBUG: Track position absolute being converted to atomic props
+				if ( $property === 'position' && $value === 'absolute' && $result ) {
+					$debug_file = WP_CONTENT_DIR . '/position-absolute-trace.log';
+					file_put_contents( $debug_file, "\n" . str_repeat( '#', 80 ) . "\n", FILE_APPEND );
+					file_put_contents( $debug_file, "POSITION ABSOLUTE CONVERTED TO ATOMIC PROPS\n", FILE_APPEND );
+					file_put_contents( $debug_file, 'Time: ' . date( 'Y-m-d H:i:s' ) . "\n", FILE_APPEND );
+					file_put_contents( $debug_file, "Widget ID: {$widget_id}\n", FILE_APPEND );
+					file_put_contents( $debug_file, "Property: {$property}\n", FILE_APPEND );
+					file_put_contents( $debug_file, "Value: {$value}\n", FILE_APPEND );
+					file_put_contents( $debug_file, 'Atomic Result: ' . json_encode( $result, JSON_PRETTY_PRINT ) . "\n", FILE_APPEND );
+
+					$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 8 );
+					file_put_contents( $debug_file, "STACK TRACE:\n", FILE_APPEND );
+					foreach ( $backtrace as $i => $trace ) {
+						$file = basename( $trace['file'] ?? 'unknown' );
+						$line = $trace['line'] ?? 'unknown';
+						$function = $trace['function'] ?? 'unknown';
+						$class = isset( $trace['class'] ) ? $trace['class'] . '::' : '';
+						file_put_contents( $debug_file, "  [{$i}] {$file}:{$line} {$class}{$function}()\n", FILE_APPEND );
+					}
+					file_put_contents( $debug_file, str_repeat( '#', 80 ) . "\n", FILE_APPEND );
+				}
+
+				if ( $result ) {
+					return $result;
+				}
+			} catch ( \Exception $e ) {
+				if ( $property === 'align-self' ) {
+					$log_file = WP_CONTENT_DIR . '/align-self-debug.log';
+					file_put_contents( $log_file, '    ❌ EXCEPTION during conversion: ' . $e->getMessage() . "\n", FILE_APPEND );
+				}
+
+				if ( $widget_id ) {
+					$this->add_to_custom_css( $widget_id, $property, $value, $important, 'Conversion failed: ' . $e->getMessage() );
+				}
+				return null;
+			}
+		} elseif ( $property === 'align-self' ) {
+				$log_file = WP_CONTENT_DIR . '/align-self-debug.log';
+				file_put_contents( $log_file, "    ❌ Mapper CANNOT convert to v4 atomic\n", FILE_APPEND );
+		}
+
+		if ( $property === 'align-self' ) {
+			$log_file = WP_CONTENT_DIR . '/align-self-debug.log';
+			file_put_contents( $log_file, "    → Reached end of conversion (no result)\n", FILE_APPEND );
+			file_put_contents( $log_file, '    → ' . ( $widget_id ? 'Will be sent to custom CSS' : 'Will be dropped (no widget_id)' ) . "\n", FILE_APPEND );
+		}
+
+		if ( $widget_id ) {
+			$this->add_to_custom_css( $widget_id, $property, $value, $important, 'No property mapper found' );
+		}
+
+		$this->record_conversion_failure( $property, $value, 'No v4 mapper available' );
+		return null;
 	}
 
 	/**

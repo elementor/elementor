@@ -42,12 +42,12 @@ class Css_Processor_Registry {
 		$debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
 		$sorted_processors = $this->get_sorted_processors();
 
-		file_put_contents( $debug_file, "REGISTRY: Processing " . count( $sorted_processors ) . " processors\n", FILE_APPEND );
+		file_put_contents( $debug_file, 'REGISTRY: Processing ' . count( $sorted_processors ) . " processors\n", FILE_APPEND );
 
 		foreach ( $sorted_processors as $processor ) {
 			$processor_name = $processor->get_processor_name();
 			$priority = $processor->get_priority();
-			
+
 			if ( ! $processor->supports_context( $context ) ) {
 				file_put_contents( $debug_file, "REGISTRY: Skipping {$processor_name} (priority {$priority}) - context not supported\n", FILE_APPEND );
 				continue;

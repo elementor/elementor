@@ -42,7 +42,7 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 				return;
 			}
 		}
-		
+
 		// Fallback: create new instance
 		$this->property_converter = new \Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service();
 	}
@@ -77,13 +77,13 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 
 	public function process( Css_Processing_Context $context ): Css_Processing_Context {
 		$this->context = $context;
-		
+
 		// Re-initialize property converter to use shared instance from context
 		$shared_converter = $context->get_metadata( 'property_converter' );
 		if ( $shared_converter ) {
 			$this->property_converter = $shared_converter;
 		}
-		
+
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$widgets = $context->get_widgets();
 		$css = $context->get_metadata( 'css', '' );
@@ -96,8 +96,8 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 			$this->unified_style_manager->reset();
 		}
 
-	// Collect styles from css_rules (single source of truth)
-	$css_styles_collected = $this->collect_css_styles_from_rules( $css_rules, $widgets, $context );
+		// Collect styles from css_rules (single source of truth)
+		$css_styles_collected = $this->collect_css_styles_from_rules( $css_rules, $widgets, $context );
 		$inline_styles_collected = $this->collect_inline_styles_from_widgets( $widgets );
 		$reset_styles_collected = $this->collect_reset_styles( $css, $widgets );
 
@@ -146,7 +146,7 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 			if ( $this->is_registered_global_class_selector( $selector ) ) {
 				continue;
 			}
-			
+
 			// Skip utility selectors that shouldn't be applied to content widgets
 			if ( $this->is_utility_selector( $selector ) ) {
 				continue;
@@ -170,7 +170,7 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		}
 
 		$global_classes = $this->context->get_metadata( 'global_classes', [] );
-		
+
 		if ( empty( $global_classes ) ) {
 			return false;
 		}
@@ -182,7 +182,7 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 
 		return false;
 	}
-	
+
 	private function is_utility_selector( string $selector ): bool {
 		$utility_patterns = [
 			'masonry-loading',
@@ -197,13 +197,13 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 			'screen-reader-text',
 			'elementor-screen-only',
 		];
-		
+
 		foreach ( $utility_patterns as $pattern ) {
 			if ( strpos( $selector, $pattern ) !== false ) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -274,7 +274,7 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 
 	private function process_css_rule_for_widgets( string $selector, array $properties, array $widgets ): int {
 		$this->current_selector = $selector;
-		
+
 		$converted_properties = $this->prepare_properties_for_collection( $properties );
 		$matched_elements = $this->find_matching_widgets( $selector, $widgets );
 
@@ -306,19 +306,19 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 			return 0;
 		}
 
-	$batch_converted = [];
-	foreach ( $inline_css as $property => $property_data ) {
-		$value = $property_data['value'] ?? $property_data;
-		$important = $property_data['important'] ?? false;
-		
-		$converted = $this->property_converter
+		$batch_converted = [];
+		foreach ( $inline_css as $property => $property_data ) {
+			$value = $property_data['value'] ?? $property_data;
+			$important = $property_data['important'] ?? false;
+
+			$converted = $this->property_converter
 			? $this->property_converter->convert_property_to_v4_atomic( $property, $value, $element_id, $important )
 			: null;
-		
-		if ( $converted ) {
-			$batch_converted[ $property ] = $converted;
+
+			if ( $converted ) {
+				$batch_converted[ $property ] = $converted;
+			}
 		}
-	}
 
 		foreach ( $inline_css as $property => $property_data ) {
 			$value = $property_data['value'] ?? $property_data;
@@ -451,7 +451,6 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		if ( ! $this->property_converter ) {
 			return null;
 		}
-
 
 		try {
 			return $this->property_converter->convert_property_to_v4_atomic( $property, $value );

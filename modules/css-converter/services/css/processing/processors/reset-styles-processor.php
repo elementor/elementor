@@ -35,7 +35,7 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 	public function supports_context( Css_Processing_Context $context ): bool {
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$widgets = $context->get_widgets();
-		
+
 		// Early execution: We'll create our own unified_style_manager if needed
 		return ! empty( $css_rules ) && ! empty( $widgets );
 	}
@@ -100,7 +100,7 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 					$conflict_analysis[ $selector ] ?? [],
 					$unified_style_manager
 				);
-				$reset_complex_styles++;
+				++$reset_complex_styles;
 				$complex_reset_styles[] = [
 					'selector' => $selector,
 					'rules' => $rules,
@@ -113,10 +113,10 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 		// This prevents other processors from processing the same rules as "element" styles
 		// which was causing H5/H6 font-weight:400 to be applied to ALL heading widgets including H1
 		$remaining_rules = $this->remove_processed_element_rules( $css_rules, $element_rules );
-		
+
 		// DEBUG: Log what rules are being removed
 		$removed_count = count( $css_rules ) - count( $remaining_rules );
-		
+
 		// SPECIFIC DEBUG: Check if our target selectors are being removed
 		$target_selectors_removed = [];
 		if ( $removed_count > 0 ) {
@@ -127,8 +127,7 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 				}
 			}
 		}
-		
-		
+
 		$context->set_metadata( 'css_rules', $remaining_rules );
 
 		$context->set_metadata( 'reset_styles_stats', [
@@ -152,16 +151,16 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 
 	private function remove_processed_element_rules( array $css_rules, array $element_rules ): array {
 		$remaining_rules = [];
-		
+
 		foreach ( $css_rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
-			
+
 			// Keep rules that are NOT simple element selectors processed by this processor
 			if ( ! isset( $element_rules[ $selector ] ) ) {
 				$remaining_rules[] = $rule;
 			}
 		}
-		
+
 		return $remaining_rules;
 	}
 
@@ -183,7 +182,7 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 				foreach ( $rule['properties'] as $property_data ) {
 					$property = $property_data['property'] ?? '';
 					$value = $property_data['value'] ?? '';
-					
+
 					$converted = $this->convert_property_if_needed( $property, $value );
 					$properties[] = [
 						'property' => $property,
@@ -195,8 +194,7 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 			} elseif ( isset( $rule['property'] ) && isset( $rule['value'] ) ) {
 				$property = $rule['property'];
 				$value = $rule['value'];
-				
-				
+
 				$converted = $this->convert_property_if_needed( $property, $value );
 				$properties[] = [
 					'property' => $property,
@@ -206,8 +204,6 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 				];
 			}
 		}
-
-
 
 		$unified_style_manager->collect_reset_styles(
 			$selector,
@@ -264,7 +260,7 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 				$matching_widget_ids = array_merge( $matching_widget_ids, $child_matches );
 			}
 		}
-		
+
 		return $matching_widget_ids;
 	}
 
@@ -307,4 +303,3 @@ class Reset_Styles_Processor implements Css_Processor_Interface {
 		}
 	}
 }
-

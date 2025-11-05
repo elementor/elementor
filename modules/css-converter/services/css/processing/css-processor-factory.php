@@ -24,10 +24,10 @@ class Css_Processor_Factory {
 	public static function execute_css_processing( Css_Processing_Context $context ): Css_Processing_Context {
 		$debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
 		file_put_contents( $debug_file, "CSS_PROCESSOR_FACTORY: Starting pipeline execution\n", FILE_APPEND );
-		
+
 		$registry = self::get_registry();
 		$result = $registry->execute_pipeline( $context );
-		
+
 		file_put_contents( $debug_file, "CSS_PROCESSOR_FACTORY: Pipeline execution completed\n", FILE_APPEND );
 		return $result;
 	}

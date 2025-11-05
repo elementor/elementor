@@ -19,8 +19,15 @@ class Process_Widget_Hierarchy_Command implements Widget_Creation_Command_Interf
 
 	public function execute( Widget_Creation_Context $context ): Widget_Creation_Result {
 		try {
+			// CRITICAL FIX: Use processed widgets (with class modifications) instead of original styled widgets
+			$widgets_to_process = $context->get_processed_widgets();
+			if ( empty( $widgets_to_process ) ) {
+				// Fallback to styled widgets if no processed widgets available yet
+				$widgets_to_process = $context->get_styled_widgets();
+			}
+			
 			$hierarchy_result = $this->hierarchy_processor->process_widget_hierarchy(
-				$context->get_styled_widgets()
+				$widgets_to_process
 			);
 
 			$context->set_processed_widgets( $hierarchy_result['widgets'] );

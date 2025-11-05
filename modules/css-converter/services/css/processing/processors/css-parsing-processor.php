@@ -45,7 +45,7 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 
 		// DEBUG: Check if reset CSS is in the raw CSS
 		$has_reset_css = strpos( $css, 'html, body, div, span' ) !== false;
-		
+
 		if ( $has_reset_css ) {
 			// Extract a sample of the reset CSS for debugging
 			$reset_start = strpos( $css, 'html, body, div, span' );
@@ -55,14 +55,14 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 		// Beautify CSS before parsing for better readability and debugging
 		$beautified_css = $this->beautify_css( $css );
 		$context->set_metadata( 'beautified_css', $beautified_css );
-		
+
 		$hasKitBefore = strpos( $css, '.elementor-kit-' ) !== false;
 		$hasKitAfter = strpos( $beautified_css, '.elementor-kit-' ) !== false;
 		if ( $hasKitBefore || $hasKitAfter ) {
-			error_log( "CSS Variables DEBUG: CSS beautify - had Kit selectors before: " . ( $hasKitBefore ? 'yes' : 'no' ) . ", after: " . ( $hasKitAfter ? 'yes' : 'no' ) );
+			error_log( 'CSS Variables DEBUG: CSS beautify - had Kit selectors before: ' . ( $hasKitBefore ? 'yes' : 'no' ) . ', after: ' . ( $hasKitAfter ? 'yes' : 'no' ) );
 			if ( $hasKitBefore && ! $hasKitAfter ) {
 				$kitPos = strpos( $css, '.elementor-kit-' );
-				error_log( "CSS Variables DEBUG: Kit CSS lost during beautify! Sample: " . substr( $css, $kitPos, 200 ) );
+				error_log( 'CSS Variables DEBUG: Kit CSS lost during beautify! Sample: ' . substr( $css, $kitPos, 200 ) );
 			}
 		}
 
@@ -77,8 +77,8 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 
 		$log_file = WP_CONTENT_DIR . '/css-property-tracking.log';
 		file_put_contents( $log_file, "\n" . str_repeat( '=', 80 ) . "\n", FILE_APPEND );
-		file_put_contents( $log_file, date('[H:i:s] ') . "CSS_PARSING_PROCESSOR: Started\n", FILE_APPEND );
-		file_put_contents( $log_file, date('[H:i:s] ') . "Total CSS rules parsed: " . count( $css_rules ) . "\n", FILE_APPEND );
+		file_put_contents( $log_file, date( '[H:i:s] ' ) . "CSS_PARSING_PROCESSOR: Started\n", FILE_APPEND );
+		file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Total CSS rules parsed: ' . count( $css_rules ) . "\n", FILE_APPEND );
 
 		// DEBUG: Filter and log CSS rules matching hardcoded target patterns for debugging purposes only
 		$target_patterns = [
@@ -95,7 +95,7 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 		foreach ( $css_rules as $index => $rule ) {
 			$selector = $rule['selector'] ?? '';
 			$properties = $rule['properties'] ?? [];
-			
+
 			foreach ( $target_patterns as $pattern ) {
 				if ( false !== strpos( $selector, $pattern ) ) {
 					$matching_rules[] = [
@@ -110,15 +110,15 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 		}
 
 		if ( ! empty( $matching_rules ) ) {
-			file_put_contents( $log_file, date('[H:i:s] ') . "Found " . count( $matching_rules ) . " rules matching target patterns\n", FILE_APPEND );
+			file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Found ' . count( $matching_rules ) . " rules matching target patterns\n", FILE_APPEND );
 			foreach ( $matching_rules as $match ) {
 				$property_names = array_map( function( $prop ) {
 					return ( $prop['property'] ?? 'unknown' ) . ': ' . ( $prop['value'] ?? '' );
 				}, $match['properties'] );
-				
-				file_put_contents( $log_file, date('[H:i:s] ') . "  Rule #{$match['index']}: {$match['selector']}\n", FILE_APPEND );
-				file_put_contents( $log_file, date('[H:i:s] ') . "    Properties ({$match['property_count']}): " . implode( ', ', array_slice( $property_names, 0, 10 ) ) . "\n", FILE_APPEND );
-				
+
+				file_put_contents( $log_file, date( '[H:i:s] ' ) . "  Rule #{$match['index']}: {$match['selector']}\n", FILE_APPEND );
+				file_put_contents( $log_file, date( '[H:i:s] ' ) . "    Properties ({$match['property_count']}): " . implode( ', ', array_slice( $property_names, 0, 10 ) ) . "\n", FILE_APPEND );
+
 				$css_vars_in_rule = array_filter( $match['properties'], function( $prop ) {
 					return strpos( $prop['property'] ?? '', '--' ) === 0;
 				} );
@@ -126,11 +126,11 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 					$var_names = array_map( function( $prop ) {
 						return ( $prop['property'] ?? '' ) . ': ' . ( $prop['value'] ?? '' );
 					}, $css_vars_in_rule );
-					file_put_contents( $log_file, date('[H:i:s] ') . "    CSS Variables: " . implode( ', ', $var_names ) . "\n", FILE_APPEND );
+					file_put_contents( $log_file, date( '[H:i:s] ' ) . '    CSS Variables: ' . implode( ', ', $var_names ) . "\n", FILE_APPEND );
 				}
 			}
 		} else {
-			file_put_contents( $log_file, date('[H:i:s] ') . "No rules found matching target patterns\n", FILE_APPEND );
+			file_put_contents( $log_file, date( '[H:i:s] ' ) . "No rules found matching target patterns\n", FILE_APPEND );
 		}
 
 		// DEBUG: Check for .loading selectors
@@ -148,7 +148,6 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			$properties_count = count( $rule['properties'] ?? [] );
 
 		}
-
 
 		return $context;
 	}
@@ -208,14 +207,14 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 
 			$selectors = $rule_set->getSelectors();
 			$declarations = $rule_set->getRules();
-			
+
 			foreach ( $selectors as $sel ) {
 				$selStr = (string) $sel;
 				if ( strpos( $selStr, 'elementor-kit' ) !== false ) {
-					$kitRuleSets++;
+					++$kitRuleSets;
 					$kitSelectors[] = $selStr;
 					if ( count( $kitSelectors ) <= 3 ) {
-						error_log( "CSS Variables DEBUG: Found Kit selector in document: '$selStr' with " . count( $declarations ) . " declarations" );
+						error_log( "CSS Variables DEBUG: Found Kit selector in document: '$selStr' with " . count( $declarations ) . ' declarations' );
 					}
 				}
 			}
@@ -226,9 +225,11 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			$extracted_rules = $this->extract_rules_from_selectors( $selectors, $declarations, $is_media_query );
 			$rules = array_merge( $rules, $extracted_rules );
 		}
-		
+
 		if ( $kitRuleSets > 0 ) {
-			error_log( "CSS Variables DEBUG: Found $kitRuleSets Kit rule sets in document, but only " . count( array_filter( $rules, function( $r ) { return strpos( $r['selector'] ?? '', 'elementor-kit' ) !== false; } ) ) . " in extracted rules" );
+			error_log( "CSS Variables DEBUG: Found $kitRuleSets Kit rule sets in document, but only " . count( array_filter( $rules, function( $r ) {
+				return strpos( $r['selector'] ?? '', 'elementor-kit' ) !== false;
+			} ) ) . ' in extracted rules' );
 		}
 
 		return $rules;
@@ -244,7 +245,7 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			// CRITICAL FIX: Handle comma-separated selectors by splitting them into individual rules
 			if ( strpos( $selector_string, ',' ) !== false ) {
 				$individual_selectors = array_map( 'trim', explode( ',', $selector_string ) );
-				
+
 				foreach ( $individual_selectors as $individual_selector ) {
 					if ( ! empty( $individual_selector ) && ! empty( $properties ) ) {
 						$individual_rule = [
@@ -264,13 +265,15 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 				// Single selector - use existing logic
 				// DEBUG: Log all parsed CSS rules
 				$media_debug = $is_media_query ? ' [MEDIA QUERY]' : '';
-				
+
 				// Special debug for element selectors
-				$element_selectors = ['html', 'body', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre', 'abbr', 'address', 'cite', 'code', 'del', 'dfn', 'em', 'img', 'ins', 'kbd', 'q', 'samp', 'small', 'strong', 'sub', 'sup', 'var', 'b', 'i', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'fieldset', 'form', 'label', 'legend', 'table', 'caption', 'tbody', 'tfoot', 'thead', 'tr', 'th', 'td', 'article', 'aside', 'canvas', 'details', 'figcaption', 'figure', 'footer', 'header', 'hgroup', 'menu', 'nav', 'section', 'summary', 'time', 'mark', 'audio', 'video'];
-				
+				$element_selectors = [ 'html', 'body', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'pre', 'abbr', 'address', 'cite', 'code', 'del', 'dfn', 'em', 'img', 'ins', 'kbd', 'q', 'samp', 'small', 'strong', 'sub', 'sup', 'var', 'b', 'i', 'dl', 'dt', 'dd', 'ol', 'ul', 'li', 'fieldset', 'form', 'label', 'legend', 'table', 'caption', 'tbody', 'tfoot', 'thead', 'tr', 'th', 'td', 'article', 'aside', 'canvas', 'details', 'figcaption', 'figure', 'footer', 'header', 'hgroup', 'menu', 'nav', 'section', 'summary', 'time', 'mark', 'audio', 'video' ];
+
 				if ( in_array( trim( $selector_string ), $element_selectors, true ) ) {
 					if ( count( $properties ) > 0 ) {
-						$property_names = array_map( function( $prop ) { return $prop['property'] ?? 'unknown'; }, $properties );
+						$property_names = array_map( function( $prop ) {
+							return $prop['property'] ?? 'unknown';
+						}, $properties );
 					}
 				} else {
 				}

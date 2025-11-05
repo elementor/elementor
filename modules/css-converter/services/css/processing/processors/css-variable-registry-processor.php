@@ -28,8 +28,8 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 	public function process( Css_Processing_Context $context ): Css_Processing_Context {
 		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
 		file_put_contents( $tracking_log, "\n" . str_repeat( '=', 80 ) . "\n", FILE_APPEND );
-		file_put_contents( $tracking_log, date('[H:i:s] ') . "CSS_VARIABLE_REGISTRY_PROCESSOR: Started (EARLY)\n", FILE_APPEND );
-		
+		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CSS_VARIABLE_REGISTRY_PROCESSOR: Started (EARLY)\n", FILE_APPEND );
+
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$css = $context->get_metadata( 'css', '' );
 		$beautified_css = $context->get_metadata( 'beautified_css', '' );
@@ -37,9 +37,9 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 		$this->css_variable_definitions = [];
 
 		$variables_extracted = $this->extract_css_variable_definitions_from_rules( $css_rules );
-		
+
 		$cssToCheck = ! empty( $css ) ? $css : $beautified_css;
-		
+
 		if ( ! empty( $cssToCheck ) ) {
 			$before_kit = count( $this->css_variable_definitions );
 			$kitVariablesExtracted = $this->extract_kit_css_variables_from_raw_css( $cssToCheck );
@@ -53,28 +53,28 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 		}
 
 		$context->set_metadata( 'css_variable_definitions', $this->css_variable_definitions );
-		
-		file_put_contents( $tracking_log, date('[H:i:s] ') . "CSS_VARIABLE_REGISTRY_PROCESSOR: Extracted " . count($this->css_variable_definitions) . " variable definitions\n", FILE_APPEND );
-		
+
+		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . 'CSS_VARIABLE_REGISTRY_PROCESSOR: Extracted ' . count( $this->css_variable_definitions ) . " variable definitions\n", FILE_APPEND );
+
 		// DEBUG: Filter for flexbox-related variables for debugging purposes only
 		$relevant_vars = array_filter( $this->css_variable_definitions, function( $var ) {
 			$name = is_array( $var ) ? ( $var['name'] ?? '' ) : '';
-			return strpos( $name, 'display' ) !== false || 
-			       strpos( $name, 'flex' ) !== false || 
-			       strpos( $name, 'gap' ) !== false ||
-			       strpos( $name, 'justify' ) !== false ||
-			       strpos( $name, 'align' ) !== false;
+			return strpos( $name, 'display' ) !== false ||
+					strpos( $name, 'flex' ) !== false ||
+					strpos( $name, 'gap' ) !== false ||
+					strpos( $name, 'justify' ) !== false ||
+					strpos( $name, 'align' ) !== false;
 		} );
-		
+
 		if ( ! empty( $relevant_vars ) ) {
-			file_put_contents( $tracking_log, date('[H:i:s] ') . "CSS_VARIABLE_REGISTRY_PROCESSOR: Relevant variables (" . count( $relevant_vars ) . "):\n", FILE_APPEND );
+			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . 'CSS_VARIABLE_REGISTRY_PROCESSOR: Relevant variables (' . count( $relevant_vars ) . "):\n", FILE_APPEND );
 			foreach ( array_slice( $relevant_vars, 0, 10 ) as $var ) {
 				$name = is_array( $var ) ? ( $var['name'] ?? 'unknown' ) : 'unknown';
 				$value = is_array( $var ) ? ( $var['value'] ?? '' ) : '';
-				file_put_contents( $tracking_log, date('[H:i:s] ') . "  {$name}: {$value}\n", FILE_APPEND );
+				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "  {$name}: {$value}\n", FILE_APPEND );
 			}
 		}
-		
+
 		$context->add_statistic( 'css_variables_registered', $variables_extracted );
 
 		return $context;
@@ -122,7 +122,7 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 		if ( preg_match_all( '/var\s*\(\s*(--[a-zA-Z0-9_-]+)/', $value, $matches ) ) {
 			foreach ( $matches[1] as $variable_name ) {
 				$variable_name = trim( $variable_name );
-				
+
 				if ( ! isset( $this->css_variable_definitions[ $variable_name ] ) ) {
 					$this->store_css_variable_definition( $variable_name, '', $selector );
 					++$extracted;
@@ -134,14 +134,14 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 
 	private function store_css_variable_definition( string $variable_name, string $value, string $selector ): void {
 		$clean_name = $this->clean_variable_name( $variable_name );
-		
+
 		if ( empty( $value ) && isset( $this->css_variable_definitions[ $clean_name ] ) ) {
 			return;
 		}
 
 		$new_specificity = $this->calculate_selector_specificity( $selector );
 		$existing_specificity = 0;
-		
+
 		if ( isset( $this->css_variable_definitions[ $clean_name ] ) ) {
 			$existing_specificity = $this->calculate_selector_specificity( $this->css_variable_definitions[ $clean_name ]['selector'] );
 		}
@@ -187,18 +187,18 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 
 	private function extract_kit_css_variables_from_raw_css( string $css ): int {
 		$extracted = 0;
-		
+
 		$hasEGlobal = strpos( $css, '--e-global-' ) !== false;
-		
+
 		if ( ! $hasEGlobal ) {
 			return 0;
 		}
-		
+
 		$patterns = [
 			'/(--e-global-[a-zA-Z0-9-]+)\s*:\s*([^;]+);/',
 			'/(--e-global-[a-zA-Z0-9-]+)\s*:\s*([^}]+?)(?=\s*--e-global-|\s*})/)',
 		];
-		
+
 		$allVarMatches = [];
 		foreach ( $patterns as $pattern ) {
 			preg_match_all( $pattern, $css, $matches, PREG_SET_ORDER );
@@ -207,13 +207,13 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 				break;
 			}
 		}
-		
+
 		foreach ( $allVarMatches as $match ) {
 			$varName = trim( $match[1] );
 			$varValue = trim( $match[2] ?? '' );
-			
+
 			$clean_name = $this->clean_variable_name( $varName );
-			
+
 			if ( ! isset( $this->css_variable_definitions[ $clean_name ] ) ) {
 				$this->css_variable_definitions[ $clean_name ] = [
 					'name' => $varName,
@@ -225,7 +225,7 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 				++$extracted;
 			}
 		}
-		
+
 		return $extracted;
 	}
 
@@ -235,89 +235,101 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 		$VARIABLE_TYPE_SIZE = 'size';
 		$VARIABLE_TYPE_LOCAL = 'local';
 		$VARIABLE_TYPE_UNSUPPORTED = 'unsupported';
-		
+
 		if ( $this->is_color_variable( $var_name, $value ) ) {
 			return $VARIABLE_TYPE_COLOR;
 		}
-		
+
 		if ( $this->is_font_variable( $var_name, $value ) ) {
 			return $VARIABLE_TYPE_FONT;
 		}
-		
+
 		if ( $this->is_size_variable( $var_name, $value ) ) {
 			return $VARIABLE_TYPE_SIZE;
 		}
-		
+
 		if ( $this->is_local_variable( $var_name ) ) {
 			return $VARIABLE_TYPE_LOCAL;
 		}
-		
+
 		return $VARIABLE_TYPE_UNSUPPORTED;
 	}
-	
+
 	private function is_color_variable( string $var_name, string $value ): bool {
 		if ( strpos( $var_name, '--e-global-color-' ) === 0 ) {
 			return true;
 		}
-		
+
 		if ( $this->is_color_value( $value ) ) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	private function is_font_variable( string $var_name, string $value ): bool {
 		if ( strpos( $var_name, '-font-family' ) !== false ) {
 			return true;
 		}
-		
+
 		if ( strpos( $var_name, '--e-global-typography-' ) === 0 && strpos( $var_name, '-font-family' ) !== false ) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	private function is_size_variable( string $var_name, string $value ): bool {
 		if ( strpos( $var_name, '--e-global-size-' ) === 0 ) {
 			return true;
 		}
-		
+
 		if ( ! class_exists( 'ElementorPro\\Plugin' ) ) {
 			return false;
 		}
-		
+
 		return false;
 	}
-	
+
 	private function is_size_value( string $value ): bool {
 		return (bool) preg_match( '/^-?\d+\.?\d*(px|em|rem|%|vh|vw|vmin|vmax|auto)$/', trim( $value ) );
 	}
-	
+
 	private function is_color_value( string $value ): bool {
 		$value = trim( $value );
-		
+
 		if ( preg_match( '/^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/', $value ) ) {
 			return true;
 		}
-		
+
 		if ( preg_match( '/^rgb\s*\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/', $value ) ) {
 			return true;
 		}
-		
+
 		if ( preg_match( '/^rgba\s*\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/', $value ) ) {
 			return true;
 		}
-		
+
 		$named_colors = [
-			'red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'brown',
-			'black', 'white', 'gray', 'grey', 'transparent', 'currentColor',
+			'red',
+			'blue',
+			'green',
+			'yellow',
+			'orange',
+			'purple',
+			'pink',
+			'brown',
+			'black',
+			'white',
+			'gray',
+			'grey',
+			'transparent',
+			'currentColor',
 		];
-		
+
 		return in_array( strtolower( $value ), $named_colors, true );
 	}
-	
+
 	private function is_local_variable( string $var_name ): bool {
 		$local_variable_patterns = [
 			'display',
@@ -366,14 +378,13 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 			'container-widget-flex-grow',
 			'background-overlay',
 		];
-		
+
 		foreach ( $local_variable_patterns as $pattern ) {
 			if ( strpos( $var_name, '--' . $pattern ) === 0 ) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 }
-

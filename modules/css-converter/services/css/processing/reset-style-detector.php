@@ -119,7 +119,6 @@ class Reset_Style_Detector {
 	public function extract_element_selector_rules( array $css_rules ): array {
 		$element_rules = [];
 
-		
 		// Log first 10 selectors to see what we're working with
 		$sample_selectors = [];
 		for ( $i = 0; $i < min( 10, count( $css_rules ) ); $i++ ) {
@@ -132,10 +131,10 @@ class Reset_Style_Detector {
 			// Handle comma-separated selectors (e.g., "h1, h2, h3, p, div")
 			if ( strpos( $selector, ',' ) !== false ) {
 				$individual_selectors = array_map( 'trim', explode( ',', $selector ) );
-				
+
 				foreach ( $individual_selectors as $individual_selector ) {
 					$is_simple = $this->is_simple_element_selector( $individual_selector );
-					
+
 					if ( $is_simple ) {
 						if ( ! isset( $element_rules[ $individual_selector ] ) ) {
 							$element_rules[ $individual_selector ] = [];
@@ -213,11 +212,11 @@ class Reset_Style_Detector {
 		// BUT exclude matches that are part of class names (after a dot)
 		foreach ( $this->supported_simple_selectors as $element ) {
 			// FIXED: Don't match element names that are part of class names
-			// Pattern explanation: 
+			// Pattern explanation:
 			// - (?<!\.) = negative lookbehind, not preceded by a dot
 			// - \b = word boundary
 			// - element name
-			// - \b = word boundary  
+			// - \b = word boundary
 			// - (?![a-zA-Z0-9_-]) = negative lookahead, not followed by class name characters
 			$pattern = '/(?<!\.)(?<![a-zA-Z0-9_-])\b' . preg_quote( $element, '/' ) . '\b(?![a-zA-Z0-9_-])/';
 			if ( preg_match( $pattern, $clean_selector ) ) {

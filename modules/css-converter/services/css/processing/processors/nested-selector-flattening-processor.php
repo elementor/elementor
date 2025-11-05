@@ -55,7 +55,7 @@ class Nested_Selector_Flattening_Processor implements Css_Processor_Interface {
 				$loading_before[] = $selector;
 			}
 		}
-		file_put_contents( '/tmp/flattening_debug.log', "NESTED_FLATTENING BEFORE: " . count( $loading_before ) . " loading selectors: " . implode( ', ', $loading_before ) . "\n", FILE_APPEND );
+		file_put_contents( '/tmp/flattening_debug.log', 'NESTED_FLATTENING BEFORE: ' . count( $loading_before ) . ' loading selectors: ' . implode( ', ', $loading_before ) . "\n", FILE_APPEND );
 
 		if ( empty( $css_rules ) ) {
 			return $context;
@@ -75,7 +75,7 @@ class Nested_Selector_Flattening_Processor implements Css_Processor_Interface {
 				$loading_after[] = $selector;
 			}
 		}
-		file_put_contents( '/tmp/flattening_debug.log', "NESTED_FLATTENING AFTER: " . count( $loading_after ) . " loading selectors: " . implode( ', ', $loading_after ) . "\n", FILE_APPEND );
+		file_put_contents( '/tmp/flattening_debug.log', 'NESTED_FLATTENING AFTER: ' . count( $loading_after ) . ' loading selectors: ' . implode( ', ', $loading_after ) . "\n", FILE_APPEND );
 
 		// Store HTML modification instructions
 		$css_class_modifiers = $context->get_metadata( 'css_class_modifiers', [] );

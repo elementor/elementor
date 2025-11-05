@@ -155,8 +155,26 @@ class Atomic_Widget_Data_Formatter {
 		$settings = $widget['settings'] ?? [];
 		// Convert raw settings values to atomic prop format
 		$formatted_settings = $this->convert_settings_to_atomic_format( $settings );
+		
+		// CRITICAL FIX: Do NOT add ANY widget classes to widget settings
+		// Widget classes (elementor-*, e-con*, etc.) should be converted to direct styles by Widget Class Processor
+		// ONLY add global classes to widget settings
 		if ( ! empty( $css_classes ) ) {
-			$formatted_settings['classes'] = $this->format_css_classes_in_atomic_format( $css_classes );
+			$global_classes_only = array_filter( $css_classes, function( $class ) {
+				// Check if this is a widget class (starts with 'elementor-' or 'e-con')
+				$is_widget_class = (
+					strpos( $class, 'elementor-' ) === 0 ||
+					strpos( $class, 'e-con' ) === 0
+				);
+				
+				// Only keep classes that are NOT widget classes (i.e., only global classes)
+				return ! $is_widget_class;
+			});
+			
+			// Only add classes if we have global classes
+			if ( ! empty( $global_classes_only ) ) {
+				$formatted_settings['classes'] = $this->format_css_classes_in_atomic_format( $global_classes_only );
+			}
 		}
 
 		// Add custom CSS if present - check both widget ID and class names
@@ -213,14 +231,40 @@ class Atomic_Widget_Data_Formatter {
 		return \Elementor\Modules\CssConverter\Services\Css\Css_Converter_Config::get_mapped_property_name( $property );
 	}
 	private function extract_css_classes_from_widget_attributes( array $widget, array $classes ): array {
+		$widget_type = $widget['widget_type'] ?? '';
+		$element_id = $widget['element_id'] ?? 'unknown';
+		
 		if ( ! empty( $widget['attributes']['class'] ) ) {
 			$class_string = $widget['attributes']['class'];
 			$class_array = explode( ' ', $class_string );
+			
+			// DEBUG: Track classes being extracted for heading widgets
+			if ( $widget_type === 'e-heading' ) {
+				$debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
+				file_put_contents(
+					$debug_log,
+					date( '[H:i:s] ' ) . "ATOMIC_DATA_FORMATTER: Extracting classes for {$widget_type} {$element_id}\n" .
+					"  Class string: '{$class_string}'\n" .
+					"  Class array: " . implode( ', ', $class_array ) . "\n",
+					FILE_APPEND
+				);
+			}
+			
 			foreach ( $class_array as $class ) {
 				$class = trim( $class );
 				if ( ! empty( $class ) ) {
 					$classes[] = $class;
 				}
+			}
+		} else {
+			// DEBUG: Track when no classes found
+			if ( $widget_type === 'e-heading' ) {
+				$debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
+				file_put_contents(
+					$debug_log,
+					date( '[H:i:s] ' ) . "ATOMIC_DATA_FORMATTER: No classes found for {$widget_type} {$element_id}\n",
+					FILE_APPEND
+				);
 			}
 		}
 		return $classes;
