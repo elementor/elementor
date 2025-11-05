@@ -23,7 +23,7 @@ const SpanParagraph = Paragraph.extend( {
 			{ tag: 'span[data-block-paragraph]' },
 			{
 				tag: 'span',
-				getAttrs: ( el: any ) => ( ( el as HTMLElement ).style?.display === 'block' ? {} : false ),
+				getAttrs: ( el: Element ) => ( ( el as HTMLElement ).style?.display === 'block' ? {} : false ),
 			},
 			{ tag: 'p' },
 		];

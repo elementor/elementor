@@ -68,7 +68,7 @@ class String_Prop_Type extends Plain_Prop_Type {
 		return preg_replace_callback( '/^(\s*)(.*?)(\s*)$/', function ( $matches ) {
 			[, $leading, $value, $trailing ] = $matches;
 
-			return $leading . $value . $trailing;
+			return $leading . sanitize_text_field( $value ) . $trailing;
 		}, $value );
 	}
 }
