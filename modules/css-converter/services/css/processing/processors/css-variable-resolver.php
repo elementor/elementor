@@ -195,6 +195,17 @@ class Css_Variable_Resolver implements Css_Processor_Interface
             }
         }
 
+        if (strpos($clean_name, 'ec-global-') === 0 ) {
+            $original_name = str_replace('ec-global-', 'e-global-', $clean_name);
+            if (isset($variable_definitions[ $original_name ]) ) {
+                $var_value = $variable_definitions[ $original_name ]['value'] ?? '';
+
+                if (! empty($var_value) ) {
+                    return $var_value;
+                }
+            }
+        }
+
         return null;
     }
 
@@ -253,16 +264,14 @@ class Css_Variable_Resolver implements Css_Processor_Interface
 
     private function fetch_global_variable_from_wp( string $var_name ): ?string
     {
-        // Clean variable name (remove -- prefix, convert e-global to ec-global)
         $clean_name = ltrim($var_name, '-');
-        $clean_name = str_replace('e-global-', 'ec-global-', $clean_name);
+        $clean_name = str_replace('ec-global-', 'e-global-', $clean_name);
         
-        // Parse variable type and ID
-        if (preg_match('/ec-global-color-([a-zA-Z0-9]+)/', $clean_name, $matches) ) {
+        if (preg_match('/e-global-color-([a-zA-Z0-9]+)/', $clean_name, $matches) ) {
             return $this->fetch_global_color($matches[1]);
         }
         
-        if (preg_match('/ec-global-typography-([a-zA-Z0-9]+)-([a-z-]+)/', $clean_name, $matches) ) {
+        if (preg_match('/e-global-typography-([a-zA-Z0-9]+)-([a-z-]+)/', $clean_name, $matches) ) {
             return $this->fetch_global_typography($matches[1], $matches[2]);
         }
         

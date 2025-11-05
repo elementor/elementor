@@ -543,13 +543,9 @@ class Widget_Class_Processor implements Css_Processor_Interface
             // Set current selector for element-specific matching
             $this->current_selector = $full_selector;
 
-            // CRITICAL FIX: Use element-specific matching for element-specific selectors
+            // Use Selector_Matcher_Engine for all selector matching (handles element-specific selectors properly)
             try {
-                if ($this->is_element_specific_selector($selector) ) {
-                    $matching_element_ids = $this->find_matching_widgets_element_specific($selector, $widgets);
-                } else {
-                    $matching_element_ids = $this->selector_matcher->find_matching_widgets($selector, $widgets);
-                }
+                $matching_element_ids = $this->selector_matcher->find_matching_widgets($selector, $widgets);
                 $matching_widgets = $this->get_widgets_by_element_ids($matching_element_ids, $widgets);
             } catch ( \InvalidArgumentException $e ) {
                 // Skip malformed selectors gracefully
@@ -993,14 +989,14 @@ class Widget_Class_Processor implements Css_Processor_Interface
 
     private function is_element_specific_selector( string $selector ): bool
     {
-        // Check if selector contains elementor-element-XXXXX pattern
-        return preg_match('/elementor-element-[a-f0-9]+/', $selector) === 1;
+        // Check if selector contains elementor-element-XXXXX pattern (alphanumeric)
+        return preg_match('/elementor-element-[a-zA-Z0-9]+/', $selector) === 1;
     }
 
     private function find_matching_widgets_element_specific( string $selector, array $widgets ): array
     {
         // Extract element ID from selector
-        if (preg_match('/elementor-element-([a-f0-9]+)/', $selector, $matches) ) {
+        if (preg_match('/elementor-element-([a-zA-Z0-9]+)/', $selector, $matches) ) {
             $target_element_id = $matches[1];
             
             // Extract target classes from selector (e.g., elementor-heading-title)
@@ -1010,10 +1006,41 @@ class Widget_Class_Processor implements Css_Processor_Interface
             $matching_element_ids = [];
             $this->find_widgets_with_element_id_and_classes($widgets, $target_element_id, $target_classes, $matching_element_ids);
             
-            // FALLBACK: If no exact matches found, try matching by target classes only
-            // This handles cases where original element IDs are not preserved during conversion
+            // CRITICAL FIX: Only use class-only fallback for NON-element-specific selectors
+            // Element-specific selectors (with elementor-element-*) should NEVER fall back to class matching
+            // This prevents cross-contamination between different elements of the same type
             if ( empty( $matching_element_ids ) && ! empty( $target_classes ) ) {
-                $this->find_widgets_with_classes_only( $widgets, $target_classes, $matching_element_ids );
+                // Check if this is a truly element-specific selector
+                $has_element_id = preg_match('/elementor-element-[a-zA-Z0-9]+/', $selector);
+                
+                $debug_log = WP_CONTENT_DIR . '/element-matching-debug.log';
+                file_put_contents(
+                    $debug_log,
+                    date('[H:i:s] ') . "ELEMENT_MATCHING: Selector '{$selector}'\n" .
+                    "  Target element ID: {$target_element_id}\n" .
+                    "  Has element ID: " . ($has_element_id ? 'YES' : 'NO') . "\n" .
+                    "  Exact matches found: " . count($matching_element_ids) . "\n" .
+                    "  Will use fallback: " . ($has_element_id ? 'NO (prevented)' : 'YES') . "\n",
+                    FILE_APPEND
+                );
+                
+                if ( ! $has_element_id ) {
+                    // Only use fallback for general selectors (no element ID)
+                    $this->find_widgets_with_classes_only( $widgets, $target_classes, $matching_element_ids );
+                    file_put_contents(
+                        $debug_log,
+                        date('[H:i:s] ') . "  Fallback matches found: " . count($matching_element_ids) . "\n",
+                        FILE_APPEND
+                    );
+                } else {
+                    file_put_contents(
+                        $debug_log,
+                        date('[H:i:s] ') . "  FALLBACK PREVENTED for element-specific selector\n",
+                        FILE_APPEND
+                    );
+                }
+                // If element ID is present but no match found, return empty (no fallback)
+                // This ensures element-specific styles don't leak to other elements
             }
             
             return $matching_element_ids;
@@ -1038,6 +1065,17 @@ class Widget_Class_Processor implements Css_Processor_Interface
                 $widget_data_id === $target_element_id ||
                 strpos( $widget_classes, "elementor-element-{$target_element_id}" ) !== false
             );
+            
+            // DEBUG: Log element ID matching attempts for troubleshooting
+            if ( strpos( $widget_classes, 'elementor-element-' ) !== false ) {
+                $debug_log = WP_CONTENT_DIR . '/element-id-matching.log';
+                file_put_contents(
+                    $debug_log,
+                    date('[H:i:s] ') . "ELEMENT_ID_MATCH: target={$target_element_id}, widget_classes='{$widget_classes}', " .
+                    "original_id='{$widget_original_id}', data_id='{$widget_data_id}', matches=" . ($element_id_matches ? 'YES' : 'NO') . "\n",
+                    FILE_APPEND
+                );
+            }
             
             if ( $element_id_matches ) {
                 // Check if widget also has the target classes

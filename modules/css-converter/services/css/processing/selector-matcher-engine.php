@@ -9,18 +9,15 @@ class Selector_Matcher_Engine {
 
 	private $parser;
 	private $navigator;
-	private $pattern_detector;
 	private $parsed_selector_cache = [];
 	private const CACHE_SIZE_LIMIT = 1000;
 
 	public function __construct(
 		CSS_Selector_Parser $parser = null,
-		Widget_Tree_Navigator $navigator = null,
-		Elementor_Selector_Pattern_Detector $pattern_detector = null
+		Widget_Tree_Navigator $navigator = null
 	) {
 		$this->parser = $parser ?? new CSS_Selector_Parser();
 		$this->navigator = $navigator ?? new Widget_Tree_Navigator();
-		$this->pattern_detector = $pattern_detector ?? new Elementor_Selector_Pattern_Detector();
 	}
 
 	public function find_matching_widgets( string $selector, array $widgets ): array {
@@ -28,34 +25,12 @@ class Selector_Matcher_Engine {
 	}
 
 	/**
-	 * Intelligent widget matching with Elementor-specific pattern support
+	 * General CSS selector matching - works for any selector pattern
 	 */
 	private function find_matching_widgets_intelligently( string $selector, array $widgets ): array {
 		$this->navigator->build_widget_index( $widgets );
 
-		// Step 1: Try normal matching first
-		$matches = $this->find_matching_widgets_standard( $selector, $widgets );
-
-		if ( ! empty( $matches ) ) {
-			return $matches;
-		}
-
-		// Step 2: Detect and handle Elementor-specific patterns
-		if ( $this->pattern_detector->is_elementor_specific_selector( $selector ) ) {
-			// Check if it's a multi-part descendant selector
-			if ( $this->pattern_detector->is_multi_part_descendant_selector( $selector ) ) {
-				$matches = $this->find_widgets_by_descendant_chain( $selector, $widgets );
-			} else {
-				$matches = $this->find_widgets_by_element_id_pattern( $selector, $widgets );
-			}
-			
-			if ( ! empty( $matches ) ) {
-				return $matches;
-			}
-		}
-
-		// Step 3: Try partial matching as fallback
-		return $this->try_partial_matching( $selector, $widgets );
+		return $this->find_matching_widgets_standard( $selector, $widgets );
 	}
 
 	/**
@@ -84,165 +59,6 @@ class Selector_Matcher_Engine {
 		return array_unique( $matching_element_ids );
 	}
 
-	/**
-	 * Find widgets by Elementor element ID pattern
-	 */
-	private function find_widgets_by_element_id_pattern( string $selector, array $widgets ): array {
-		$element_ids = $this->pattern_detector->extract_element_ids_from_selector( $selector );
-
-		if ( empty( $element_ids ) ) {
-			return [];
-		}
-
-		return $this->find_widgets_by_element_ids_recursive( $element_ids, $widgets );
-	}
-
-	/**
-	 * Find widgets by descendant chain (e.g., .elementor-element-XXXXX .elementor-heading-title)
-	 */
-	private function find_widgets_by_descendant_chain( string $selector, array $widgets ): array {
-		$chain = $this->pattern_detector->extract_descendant_chain( $selector );
-		
-		if ( empty( $chain['parent_part'] ) || empty( $chain['descendant_part'] ) ) {
-			return [];
-		}
-		
-		
-		// Step 1: Find parent widgets using element ID pattern
-		$parent_matches = $this->find_widgets_by_element_id_pattern( $chain['parent_part'], $widgets );
-		
-		if ( empty( $parent_matches ) ) {
-			return [];
-		}
-		
-		// Step 2: Find descendants within those parents
-		$descendant_matches = [];
-		
-		foreach ( $parent_matches as $parent_element_id ) {
-			$parent_widget = $this->navigator->find_widget_by_id( $parent_element_id );
-			
-			if ( $parent_widget && ! empty( $parent_widget['children'] ) ) {
-				$child_matches = $this->find_descendants_matching_selector(
-					$chain['descendant_part'],
-					$parent_widget['children']
-				);
-				$descendant_matches = array_merge( $descendant_matches, $child_matches );
-			}
-		}
-		
-		return array_unique( $descendant_matches );
-	}
-
-	/**
-	 * Find descendants matching a selector within a widget tree
-	 */
-	private function find_descendants_matching_selector( string $selector, array $widgets ): array {
-		$matches = [];
-		
-		foreach ( $widgets as $widget ) {
-			$element_id = $widget['element_id'] ?? null;
-			
-			if ( $element_id && $this->widget_matches_simple_class_selector( $widget, $selector ) ) {
-				$matches[] = $element_id;
-			}
-			
-			// Recursively check children
-			if ( ! empty( $widget['children'] ) ) {
-				$child_matches = $this->find_descendants_matching_selector( $selector, $widget['children'] );
-				$matches = array_merge( $matches, $child_matches );
-			}
-		}
-		
-		return $matches;
-	}
-
-	/**
-	 * Check if widget matches a simple class selector (e.g., .elementor-heading-title)
-	 */
-	private function widget_matches_simple_class_selector( array $widget, string $selector ): bool {
-		if ( strpos( $selector, '.' ) !== 0 ) {
-			return false;
-		}
-		
-		$class_name = ltrim( $selector, '.' );
-		$widget_classes = $widget['attributes']['class'] ?? '';
-		
-		if ( empty( $widget_classes ) ) {
-			return false;
-		}
-		
-		$classes_array = preg_split( '/\s+/', trim( $widget_classes ) );
-		
-		return in_array( $class_name, $classes_array, true );
-	}
-
-	/**
-	 * Recursively find widgets by element IDs
-	 */
-	private function find_widgets_by_element_ids_recursive( array $target_element_ids, array $widgets ): array {
-		$matching_element_ids = [];
-
-		foreach ( $widgets as $widget ) {
-			$element_id = $widget['element_id'] ?? null;
-
-			if ( $element_id ) {
-				// Check if this widget's element_id corresponds to any target element ID
-				foreach ( $target_element_ids as $target_id ) {
-					if ( $this->element_id_matches_target( $element_id, $target_id ) ) {
-						$matching_element_ids[] = $element_id;
-						break;
-					}
-				}
-			}
-
-			if ( ! empty( $widget['children'] ) ) {
-				$child_matches = $this->find_widgets_by_element_ids_recursive( $target_element_ids, $widget['children'] );
-				$matching_element_ids = array_merge( $matching_element_ids, $child_matches );
-			}
-		}
-
-		return array_unique( $matching_element_ids );
-	}
-
-	/**
-	 * Check if element_id matches target pattern by examining widget classes
-	 */
-	private function element_id_matches_target( string $element_id, string $target_id ): bool {
-		// Find the widget with this element_id and check its classes
-		$widget = $this->find_widget_by_element_id( $element_id );
-
-		if ( ! $widget ) {
-			return false;
-		}
-
-		$classes = $widget['attributes']['class'] ?? '';
-
-		// Check if widget has the corresponding elementor-element-XXXXXX class
-		$target_class = 'elementor-element-' . $target_id;
-
-		return strpos( $classes, $target_class ) !== false;
-	}
-
-	/**
-	 * Find widget by element_id in the navigator's widget index
-	 */
-	private function find_widget_by_element_id( string $element_id ): ?array {
-		// Use the navigator's public method to find widget by ID
-		return $this->navigator->find_widget_by_id( $element_id );
-	}
-
-	/**
-	 * Try partial matching by using the most specific selector part
-	 */
-	private function try_partial_matching( string $selector, array $widgets ): array {
-		$target_part = $this->pattern_detector->extract_target_selector_part( $selector );
-
-		if ( $target_part !== $selector && ! empty( $target_part ) ) {
-			return $this->find_matching_widgets_standard( $target_part, $widgets );
-		}
-
-		return [];
-	}
 
 	private function find_matching_widgets_recursively( array $parsed_selector, array $widgets, array $all_widgets = null ): array {
 		$matching_element_ids = [];
@@ -459,13 +275,34 @@ class Selector_Matcher_Engine {
 	private function widget_has_class( array $widget, string $class_name ): bool {
 		$classes = $widget['attributes']['class'] ?? '';
 
-		if ( empty( $classes ) ) {
-			return false;
+		if ( ! empty( $classes ) ) {
+			$widget_classes = preg_split( '/\s+/', trim( $classes ) );
+
+			if ( in_array( $class_name, $widget_classes, true ) ) {
+				return true;
+			}
 		}
 
-		$widget_classes = preg_split( '/\s+/', trim( $classes ) );
+		$widget_type = $this->map_class_to_widget_type( $class_name );
+		if ( $widget_type && ( $widget['widget_type'] ?? '' ) === $widget_type ) {
+			return true;
+		}
 
-		return in_array( $class_name, $widget_classes, true );
+		return false;
+	}
+
+	private function map_class_to_widget_type( string $class_name ): ?string {
+		$class_to_widget_map = [
+			'elementor-heading-title' => 'e-heading',
+			'elementor-widget-heading' => 'e-heading',
+			'elementor-widget-image' => 'e-image',
+			'elementor-widget-text-editor' => 'e-paragraph',
+			'elementor-widget-button' => 'e-button',
+			'elementor-widget-link' => 'e-link',
+			'elementor-widget-text' => 'e-text',
+		];
+
+		return $class_to_widget_map[ $class_name ] ?? null;
 	}
 
 	private function widget_has_id( array $widget, string $id_value ): bool {
