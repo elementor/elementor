@@ -12,7 +12,7 @@
 				flex-direction: row-reverse;
 				gap: var(--icon-box-icon-margin, 15px);
 
-				[dir="rtl"] & { // BC for wrong RTL direction.
+				[dir="rtl"] & { // BC for RTL direction.
 					flex-direction: row;
 				}
 			}
@@ -25,7 +25,7 @@
 				flex-direction: row;
 				gap: var(--icon-box-icon-margin, 15px);
 
-				[dir="rtl"] & { // BC for wrong RTL direction.
+				[dir="rtl"] & { // BC for RTL direction.
 					flex-direction: row-reverse;
 				}
 			}
