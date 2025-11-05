@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Divider, Grid } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
-import { Delay } from './controls/delay';
 import { Direction } from './controls/direction';
-import { Duration } from './controls/duration';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
+import { TimeFrameIndicator } from './controls/time-frame-indicator';
 import { Trigger } from './controls/trigger';
 
 const DELIMITER = '-';
@@ -55,8 +55,16 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 					value={ interactionDetails.direction ?? '' }
 					onChange={ ( v ) => handleChange( 'direction', v ) }
 				/>
-				<Duration value={ interactionDetails.duration } onChange={ ( v ) => handleChange( 'duration', v ) } />
-				<Delay value={ interactionDetails.delay } onChange={ ( v ) => handleChange( 'delay', v ) } />
+				<TimeFrameIndicator
+					value={ interactionDetails.duration }
+					onChange={ ( v ) => handleChange( 'duration', v ) }
+					label={ __( 'Duration', 'elementor' ) }
+				/>
+				<TimeFrameIndicator
+					value={ interactionDetails.delay }
+					onChange={ ( v ) => handleChange( 'delay', v ) }
+					label={ __( 'Delay', 'elementor' ) }
+				/>
 			</Grid>
 		</>
 	);

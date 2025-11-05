@@ -19,4 +19,5 @@ export type InteractionsConfig = {
 export type FieldProps = {
 	value: string;
 	onChange: ( value: string ) => void;
+	label?: string;
 };
