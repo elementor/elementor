@@ -26,15 +26,22 @@ function getKeyframes( effect, type, direction ) {
 }
 
 function parseAnimationName( name ) {
-	const [ trigger, effect, type, direction ] = name.split( '-' );
-	return { trigger, effect, type, direction: direction || null };
+	const [ trigger, effect, type, direction, duration, delay ] = name.split( '-' );
+	return {
+		trigger,
+		effect,
+		type,
+		direction: direction || null,
+		duration: duration ? parseInt( duration, 10 ) : config.defaultDuration,
+		delay: delay ? parseInt( delay, 10 ) : config.defaultDelay,
+	};
 }
 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
 	const options = {
-		duration: config.defaultDuration,
-		delay: config.defaultDelay,
+		duration: animConfig.duration / 1000,
+		delay: animConfig.delay / 1000,
 		easing: config.easing,
 	};
 
