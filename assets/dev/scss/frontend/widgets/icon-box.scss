@@ -9,8 +9,12 @@
 
 			.elementor-icon-box-wrapper {
 				text-align: end;
-				flex-direction: getValueByDirection(row-reverse, row);
+				flex-direction: row-reverse;
 				gap: var(--icon-box-icon-margin, 15px);
+
+				[dir="rtl"] & { // BC for RTL direction.
+					flex-direction: row;
+				}
 			}
 		}
 
@@ -18,8 +22,12 @@
 
 			.elementor-icon-box-wrapper {
 				text-align: start;
-				flex-direction: getValueByDirection(row, row-reverse);
+				flex-direction: row;
 				gap: var(--icon-box-icon-margin, 15px);
+
+				[dir="rtl"] & { // BC for RTL direction.
+					flex-direction: row-reverse;
+				}
 			}
 		}
 
