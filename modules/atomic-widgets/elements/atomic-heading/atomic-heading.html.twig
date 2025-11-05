@@ -11,10 +11,10 @@
 	>
 	{% if settings.link.href %}
 		<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
-			{{ settings.title | raw }}
+			{{ settings.title }}
 		</a>
 	{% else %}
-		{{ settings.title | raw }}
+		{{ settings.title }}
 	{% endif %}
 	</{{ settings.tag | e('html_tag') }}>
 {% endif %}
