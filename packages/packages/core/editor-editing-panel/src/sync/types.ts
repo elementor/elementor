@@ -43,5 +43,4 @@ export type ExtendedWindow = Window & {
 			is_rtl?: boolean;
 		};
 	};
-	ElementorInteractionsConfig?: InteractionsConfig;
 };
