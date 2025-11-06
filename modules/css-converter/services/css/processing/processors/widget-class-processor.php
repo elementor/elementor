@@ -82,20 +82,46 @@ class Widget_Class_Processor implements Css_Processor_Interface
             return $context;
         }
 
+        // DEBUG: Log widget classes BEFORE CSS matching
+        $debug_log = WP_CONTENT_DIR . '/css-matching-timing-debug.log';
+        file_put_contents(
+            $debug_log,
+            date('[H:i:s] ') . "BEFORE_CSS_MATCHING: Widget classes available\n",
+            FILE_APPEND
+        );
+        $this->debug_widget_classes_recursively( $widgets, $debug_log, 0 );
+
         $styles_applied = $this->apply_widget_specific_styles($widget_specific_rules, $widgets, $context);
+
+        // DEBUG: Log widget classes AFTER CSS matching
+        file_put_contents(
+            $debug_log,
+            date('[H:i:s] ') . "AFTER_CSS_MATCHING: Styles applied: {$styles_applied}\n",
+            FILE_APPEND
+        );
 
         // Remove processed rules from css_rules so they don't get processed as global classes
         $remaining_rules = $this->remove_processed_rules($css_rules, $widget_specific_rules);
         $context->set_metadata('css_rules', $remaining_rules);
 
-        // CRITICAL FIX: Remove ALL widget classes that should not be preserved
-        // Widget classes should be converted to styles and removed from HTML
-        $widget_classes_to_remove = array_filter(
-            $widget_classes, function ( $class ) {
-                // Remove if it should be filtered OR if it's a widget class that shouldn't be preserved
-                return $this->should_filter_class( $class ) || 
-                       ( $this->is_widget_class( $class ) && ! $this->should_preserve_widget_class( $class ) );
-            }
+        // COMMENTED OUT: Hardcoded widget class removal logic
+        // This was preventing CSS selector matching from working
+        // $widget_classes_to_remove = array_filter(
+        //     $widget_classes, function ( $class ) {
+        //         return $this->is_widget_class( $class );
+        //     }
+        // );
+        
+        // SIMPLIFIED: Don't remove any classes for now - let CSS matching work
+        $widget_classes_to_remove = [];
+
+        // DEBUG: Log what classes are being removed
+        $debug_log = WP_CONTENT_DIR . '/class-removal-debug.log';
+        file_put_contents(
+            $debug_log,
+            date('[H:i:s] ') . "CLASS_REMOVAL: Removing " . count($widget_classes_to_remove) . " classes\n" .
+            "  Classes to remove: " . json_encode(array_values($widget_classes_to_remove)) . "\n",
+            FILE_APPEND
         );
 
         $css_class_modifiers = $context->get_metadata('css_class_modifiers', []);
@@ -543,10 +569,9 @@ class Widget_Class_Processor implements Css_Processor_Interface
             // Set current selector for element-specific matching
             $this->current_selector = $full_selector;
 
-            // Use Selector_Matcher_Engine for all selector matching (handles element-specific selectors properly)
-            try {
-                $matching_element_ids = $this->selector_matcher->find_matching_widgets($selector, $widgets);
-                $matching_widgets = $this->get_widgets_by_element_ids($matching_element_ids, $widgets);
+			try {
+				$matching_element_ids = $this->selector_matcher->find_matching_widgets($selector, $widgets);
+				$matching_widgets = $this->get_widgets_by_element_ids($matching_element_ids, $widgets);
             } catch ( \InvalidArgumentException $e ) {
                 // Skip malformed selectors gracefully
                 error_log("Widget_Class_Processor: Skipping malformed selector '{$selector}': " . $e->getMessage());
@@ -887,37 +912,47 @@ class Widget_Class_Processor implements Css_Processor_Interface
     }
 
     /**
-     * Check if a class should be filtered out (removed from final widgets)
-     * Keep element-specific classes for CSS targeting, filter out structural classes
+     * SIMPLIFIED: Only filter classes that are definitely not needed for CSS matching
+     * Remove hardcoded logic that was causing selector matching failures
      */
     private function should_filter_class( string $class ): bool
     {
-        // Keep e-con and e-con-inner for CSS targeting
-        if ($class === 'e-con' || $class === 'e-con-inner' ) {
-            return false;
-        }
+        // COMMENTED OUT: All hardcoded filtering logic
+        // The general widget class patterns should be sufficient
+        
+        // // Keep e-con and e-con-inner for CSS targeting
+        // if ($class === 'e-con' || $class === 'e-con-inner' ) {
+        //     return false;
+        // }
 
-        // Keep element-specific classes (elementor-element-XXXXXX) for CSS targeting
-        if (preg_match('/^elementor-element-[a-z0-9]+$/i', $class) ) {
-            return false;
-        }
+        // // Keep element-specific classes (elementor-element-XXXXXX) for CSS targeting
+        // if (preg_match('/^elementor-element-[a-z0-9]+$/i', $class) ) {
+        //     return false;
+        // }
 
-        // Keep widget-specific classes (elementor-widget-XXXXXX) for CSS targeting
-        if (preg_match('/^elementor-widget-[a-z0-9-]+$/i', $class) ) {
-            return false;
-        }
+        // // Keep widget-specific classes (elementor-widget-XXXXXX) for CSS targeting
+        // if (preg_match('/^elementor-widget-[a-z0-9-]+$/i', $class) ) {
+        //     return false;
+        // }
 
-        // Filter out other Elementor structural classes
-        foreach ( self::FILTERED_ELEMENTOR_CLASSES as $pattern ) {
-            if (strpos($class, $pattern) === 0 ) {
-                // Exception: don't filter element-specific or widget-specific classes
-                if (strpos($class, 'elementor-element-') === 0 || strpos($class, 'elementor-widget-') === 0 ) {
-                    return false;
-                }
-                return true;
-            }
-        }
+        // // Filter out page wrapper classes (elementor-1140, elementor-kit-123, etc.)
+        // // These are removed from HTML but remain available during CSS matching
+        // if ( preg_match( '/^elementor-(\d+|kit-\d+)$/i', $class ) ) {
+        //     return true;
+        // }
 
+        // // Filter out other Elementor structural classes
+        // foreach ( self::FILTERED_ELEMENTOR_CLASSES as $pattern ) {
+        //     if (strpos($class, $pattern) === 0 ) {
+        //         // Exception: don't filter element-specific or widget-specific classes
+        //         if (strpos($class, 'elementor-element-') === 0 || strpos($class, 'elementor-widget-') === 0 ) {
+        //             return false;
+        //         }
+        //         return true;
+        //     }
+        // }
+
+        // SIMPLIFIED: Don't filter anything - let CSS matching work naturally
         return false;
     }
 
@@ -987,142 +1022,6 @@ class Widget_Class_Processor implements Css_Processor_Interface
         return [];
     }
 
-    private function is_element_specific_selector( string $selector ): bool
-    {
-        // Check if selector contains elementor-element-XXXXX pattern (alphanumeric)
-        return preg_match('/elementor-element-[a-zA-Z0-9]+/', $selector) === 1;
-    }
-
-    private function find_matching_widgets_element_specific( string $selector, array $widgets ): array
-    {
-        // Extract element ID from selector
-        if (preg_match('/elementor-element-([a-zA-Z0-9]+)/', $selector, $matches) ) {
-            $target_element_id = $matches[1];
-            
-            // Extract target classes from selector (e.g., elementor-heading-title)
-            $target_classes = $this->extract_classes_from_selector($selector);
-            
-            // Find widgets that match BOTH the element ID AND the target classes
-            $matching_element_ids = [];
-            $this->find_widgets_with_element_id_and_classes($widgets, $target_element_id, $target_classes, $matching_element_ids);
-            
-            // CRITICAL FIX: Only use class-only fallback for NON-element-specific selectors
-            // Element-specific selectors (with elementor-element-*) should NEVER fall back to class matching
-            // This prevents cross-contamination between different elements of the same type
-            if ( empty( $matching_element_ids ) && ! empty( $target_classes ) ) {
-                // Check if this is a truly element-specific selector
-                $has_element_id = preg_match('/elementor-element-[a-zA-Z0-9]+/', $selector);
-                
-                $debug_log = WP_CONTENT_DIR . '/element-matching-debug.log';
-                file_put_contents(
-                    $debug_log,
-                    date('[H:i:s] ') . "ELEMENT_MATCHING: Selector '{$selector}'\n" .
-                    "  Target element ID: {$target_element_id}\n" .
-                    "  Has element ID: " . ($has_element_id ? 'YES' : 'NO') . "\n" .
-                    "  Exact matches found: " . count($matching_element_ids) . "\n" .
-                    "  Will use fallback: " . ($has_element_id ? 'NO (prevented)' : 'YES') . "\n",
-                    FILE_APPEND
-                );
-                
-                if ( ! $has_element_id ) {
-                    // Only use fallback for general selectors (no element ID)
-                    $this->find_widgets_with_classes_only( $widgets, $target_classes, $matching_element_ids );
-                    file_put_contents(
-                        $debug_log,
-                        date('[H:i:s] ') . "  Fallback matches found: " . count($matching_element_ids) . "\n",
-                        FILE_APPEND
-                    );
-                } else {
-                    file_put_contents(
-                        $debug_log,
-                        date('[H:i:s] ') . "  FALLBACK PREVENTED for element-specific selector\n",
-                        FILE_APPEND
-                    );
-                }
-                // If element ID is present but no match found, return empty (no fallback)
-                // This ensures element-specific styles don't leak to other elements
-            }
-            
-            return $matching_element_ids;
-        }
-        
-        return [];
-    }
-
-    private function find_widgets_with_element_id_and_classes( array $widgets, string $target_element_id, array $target_classes, array &$matching_element_ids ): void
-    {
-        foreach ( $widgets as $widget ) {
-            $widget_classes = $widget['attributes']['class'] ?? '';
-            $widget_element_id = $widget['element_id'] ?? '';
-            
-            // CRITICAL FIX: Check widget's original element ID, not classes (classes are stripped during conversion)
-            $widget_original_id = $widget['original_element_id'] ?? '';
-            $widget_data_id = $widget['attributes']['data-id'] ?? '';
-            
-            // Try multiple ways to match the element ID
-            $element_id_matches = ( 
-                $widget_original_id === $target_element_id ||
-                $widget_data_id === $target_element_id ||
-                strpos( $widget_classes, "elementor-element-{$target_element_id}" ) !== false
-            );
-            
-            // DEBUG: Log element ID matching attempts for troubleshooting
-            if ( strpos( $widget_classes, 'elementor-element-' ) !== false ) {
-                $debug_log = WP_CONTENT_DIR . '/element-id-matching.log';
-                file_put_contents(
-                    $debug_log,
-                    date('[H:i:s] ') . "ELEMENT_ID_MATCH: target={$target_element_id}, widget_classes='{$widget_classes}', " .
-                    "original_id='{$widget_original_id}', data_id='{$widget_data_id}', matches=" . ($element_id_matches ? 'YES' : 'NO') . "\n",
-                    FILE_APPEND
-                );
-            }
-            
-            if ( $element_id_matches ) {
-                // Check if widget also has the target classes
-                $has_target_classes = true;
-                foreach ( $target_classes as $target_class ) {
-                    if (strpos($widget_classes, $target_class) === false ) {
-                        $has_target_classes = false;
-                        break;
-                    }
-                }
-                
-                if ($has_target_classes ) {
-                    $matching_element_ids[] = $widget_element_id;
-                }
-            }
-            
-            // Recurse through children
-            if (! empty($widget['children']) ) {
-                $this->find_widgets_with_element_id_and_classes($widget['children'], $target_element_id, $target_classes, $matching_element_ids);
-            }
-        }
-    }
-
-    private function find_widgets_with_classes_only( array $widgets, array $target_classes, array &$matching_element_ids ): void {
-        foreach ( $widgets as $widget ) {
-            $widget_classes = $widget['attributes']['class'] ?? '';
-            $widget_element_id = $widget['element_id'] ?? '';
-            
-            // Check if widget has the target classes (fallback matching)
-            $has_target_classes = true;
-            foreach ( $target_classes as $target_class ) {
-                if ( strpos( $widget_classes, $target_class ) === false ) {
-                    $has_target_classes = false;
-                    break;
-                }
-            }
-            
-            if ( $has_target_classes ) {
-                $matching_element_ids[] = $widget_element_id;
-            }
-            
-            // Recurse through children
-            if ( ! empty( $widget['children'] ) ) {
-                $this->find_widgets_with_classes_only( $widget['children'], $target_classes, $matching_element_ids );
-            }
-        }
-    }
 
     private function extract_processed_widget_classes( array $widget_specific_rules ): array {
         $processed_classes = [];
@@ -1140,19 +1039,28 @@ class Widget_Class_Processor implements Css_Processor_Interface
         return array_unique( $processed_classes );
     }
 
-    private function should_preserve_widget_class( string $class ): bool {
-        // Preserve element-specific classes for CSS targeting
-        if ( preg_match( '/^elementor-element-[a-z0-9]+$/i', $class ) ) {
-            return true;
+
+    private function debug_widget_classes_recursively( array $widgets, string $debug_log, int $depth ): void {
+        $indent = str_repeat( '  ', $depth );
+        foreach ( $widgets as $widget ) {
+            $element_id = $widget['element_id'] ?? '';
+            $classes = $widget['attributes']['class'] ?? '';
+            $widget_type = $widget['widget_type'] ?? '';
+            $has_children = ! empty( $widget['children'] );
+            $children_count = count( $widget['children'] ?? [] );
+            
+            if ( strpos( $classes, 'elementor-1140' ) !== false || strpos( $classes, 'elementor-heading-title' ) !== false || $widget_type === 'e-heading' ) {
+                file_put_contents(
+                    $debug_log,
+                    "{$indent}Widget {$element_id} ({$widget_type}): '{$classes}' [children: {$children_count}]\n",
+                    FILE_APPEND
+                );
+            }
+            
+            if ( ! empty( $widget['children'] ) ) {
+                $this->debug_widget_classes_recursively( $widget['children'], $debug_log, $depth + 1 );
+            }
         }
-        
-        // Preserve widget-specific classes for CSS targeting  
-        if ( preg_match( '/^elementor-widget-[a-z0-9-]+$/i', $class ) ) {
-            return true;
-        }
-        
-        // Remove all other widget classes (elementor-heading-title, elementor-size-default, e-con, e-con-inner, etc.)
-        // Their styles will be applied directly by Widget Class Processor before removal
-        return false;
     }
 }
+

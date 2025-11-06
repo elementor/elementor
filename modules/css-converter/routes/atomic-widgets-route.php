@@ -151,7 +151,7 @@ class Atomic_Widgets_Route {
 		$auto_extracted_css_urls = [];
 
 		error_log( "CSS Variables DEBUG: extract_conversion_parameters called with type=$type, selector=" . ( $selector ?? 'null' ) );
-		$html = $this->resolve_html_content( $type, $content, $html_param, $selector, $auto_extracted_css_urls );
+		$html_result = $this->resolve_html_content( $type, $content, $html_param, $selector, $auto_extracted_css_urls );
 
 		$manual_css_urls = $request->get_param( 'cssUrls' ) ? $request->get_param( 'cssUrls' ) : [];
 		$all_css_urls = array_merge( $auto_extracted_css_urls, $manual_css_urls );
@@ -169,6 +169,20 @@ class Atomic_Widgets_Route {
 		if ( ! empty( $selector ) ) {
 			$options['selector'] = $selector;
 		}
+
+		if ( is_array( $html_result ) ) {
+			if ( isset( $html_result['full_html'] ) && isset( $html_result['selector'] ) ) {
+				// New approach: full HTML + selector for selective conversion
+				$html = $html_result['full_html'];
+				$options['conversion_selector'] = $html_result['selector'];
+			} else {
+				// Legacy approach: context classes (fallback)
+				$options['context_classes'] = $html_result['context_classes'] ?? [];
+				$html = $html_result['selected_html'];
+			}
+		} else {
+			$html = $html_result;
+		}
 		
 		return [
 			'html' => $html,
@@ -180,7 +194,7 @@ class Atomic_Widgets_Route {
 		];
 	}
 
-	private function resolve_html_content( string $type, $content, $html_param, $selector = null, array &$auto_extracted_css_urls = [] ): string {
+	private function resolve_html_content( string $type, $content, $html_param, $selector = null, array &$auto_extracted_css_urls = [] ) {
 		if ( 'url' === $type && ! empty( $content ) ) {
 			$html = $this->fetch_html_from_url( $content );
 
@@ -203,10 +217,14 @@ class Atomic_Widgets_Route {
 				error_log( "CSS Variables DEBUG: Not an Elementor website, skipping Kit CSS extraction" );
 			}
 
+			// SIMPLIFIED APPROACH: Always return full HTML for CSS context
+			// If selector provided, mark it for selective widget conversion
 			if ( ! empty( $selector ) ) {
-				$extracted_element = $this->extract_html_by_selector( $html, $selector );
 				$inline_styles = $this->extract_inline_style_tags( $html );
-				return $inline_styles . $extracted_element;
+				return [
+					'full_html' => $inline_styles . $html,
+					'selector' => $selector,
+				];
 			}
 
 			return $html;
@@ -243,9 +261,13 @@ class Atomic_Widgets_Route {
 		return $html;
 	}
 
-	private function extract_html_by_selector( string $html, string $selector ): string {
+	private function extract_html_by_selector( string $html, string $selector ): array {
 		if ( empty( $selector ) ) {
-			return $html;
+			return [
+				'selected_html' => $html,
+				'full_html' => $html,
+				'context_classes' => [],
+			];
 		}
 
 		// Use DOMDocument to parse HTML and extract element by selector
@@ -274,8 +296,32 @@ class Atomic_Widgets_Route {
 		// Get the first matching element
 		$element = $nodes->item( 0 );
 
-		// Return the outer HTML of the element
-		return $dom->saveHTML( $element );
+		// Extract ancestor classes for CSS context
+		$context_classes = $this->extract_ancestor_classes( $element );
+
+		error_log( "CONTEXT_DEBUG: Extracted " . count( $context_classes ) . " ancestor classes: " . implode( ', ', $context_classes ) );
+
+		return [
+			'selected_html' => $dom->saveHTML( $element ),
+			'full_html' => $html,
+			'context_classes' => $context_classes,
+		];
+	}
+
+	private function extract_ancestor_classes( \DOMElement $element ): array {
+		$ancestor_classes = [];
+		$current = $element->parentNode;
+
+		while ( $current && $current instanceof \DOMElement ) {
+			$class_attr = $current->getAttribute( 'class' );
+			if ( ! empty( $class_attr ) ) {
+				$classes = array_filter( explode( ' ', trim( $class_attr ) ) );
+				$ancestor_classes = array_merge( $ancestor_classes, $classes );
+			}
+			$current = $current->parentNode;
+		}
+
+		return array_unique( $ancestor_classes );
 	}
 
 	private function css_selector_to_xpath( string $selector ): string {

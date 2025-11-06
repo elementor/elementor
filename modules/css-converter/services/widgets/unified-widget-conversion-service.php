@@ -50,6 +50,8 @@ class Unified_Widget_Conversion_Service {
 		$this->use_zero_defaults = true;
 		// Use the widget creator passed in constructor instead of creating a new one
 
+		error_log( "CONTEXT_DEBUG: convert_from_html called with options: " . json_encode( array_keys( $options ) ) );
+
 		// Initialize logging
 		$conversion_log = $this->logger->start_conversion_log( $html, $css_urls );
 		$this->logger->set_options( $options );
@@ -60,7 +62,15 @@ class Unified_Widget_Conversion_Service {
 			$validation_issues = $this->html_parser->validate_html_structure( $elements, 20 );
 			$this->logger->add_parsing_stats( $elements, $validation_issues );
 
+			// SIMPLIFIED APPROACH: Always convert full HTML tree
+			// This preserves all context for CSS selector matching
 			$mapped_widgets = $this->widget_mapper->map_elements( $elements );
+			
+			$conversion_selector = $options['conversion_selector'] ?? null;
+			if ( ! empty( $conversion_selector ) ) {
+				error_log( "FULL_HTML_CONVERSION: Using full HTML with selector context: {$conversion_selector}" );
+			}
+			
 			$mapping_stats = $this->widget_mapper->get_mapping_stats( $elements );
 			$this->logger->add_mapping_stats( $mapping_stats );
 
@@ -94,8 +104,17 @@ class Unified_Widget_Conversion_Service {
 			}
 		}
 
+		// Filter widgets for output if selector was provided
+		$conversion_selector = $options['conversion_selector'] ?? null;
+		if ( ! empty( $conversion_selector ) ) {
+			$output_widgets = $this->filter_widgets_for_output( $resolved_widgets, $conversion_selector );
+			error_log( "WIDGET_FILTERING: Filtered " . count( $resolved_widgets ) . " widgets down to " . count( $output_widgets ) . " for output" );
+		} else {
+			$output_widgets = $resolved_widgets;
+		}
+
 		// Create widgets with resolved styles
-		$creation_result = $this->create_widgets_with_resolved_styles( $resolved_widgets, $options, $global_classes, $css_variable_definitions );
+		$creation_result = $this->create_widgets_with_resolved_styles( $output_widgets, $options, $global_classes, $css_variable_definitions );
 
 			// Log CSS processing and widget creation stats
 			$this->logger->add_css_processing_stats( $unified_processing_result['stats'] ?? [] );
@@ -124,6 +143,36 @@ class Unified_Widget_Conversion_Service {
 			);
 		}
 	}
+
+	private function filter_widgets_for_output( array $widgets, string $selector ): array {
+		$class_name = ltrim( $selector, '.' );
+		$target_widgets = [];
+
+		$this->find_widgets_matching_class_recursively( $widgets, $class_name, $target_widgets );
+
+		if ( empty( $target_widgets ) ) {
+			error_log( "WIDGET_FILTERING: No widgets found matching selector {$selector}, returning all widgets" );
+			return $widgets;
+		}
+
+		error_log( "WIDGET_FILTERING: Found " . count( $target_widgets ) . " widgets matching selector {$selector}" );
+		return $target_widgets;
+	}
+
+	private function find_widgets_matching_class_recursively( array $widgets, string $class_name, array &$target_widgets ): void {
+		foreach ( $widgets as $widget ) {
+			$widget_classes = $widget['attributes']['class'] ?? '';
+			
+			if ( strpos( $widget_classes, $class_name ) !== false ) {
+				$target_widgets[] = $widget;
+			}
+
+			if ( ! empty( $widget['children'] ) ) {
+				$this->find_widgets_matching_class_recursively( $widget['children'], $class_name, $target_widgets );
+			}
+		}
+	}
+
 
 
 

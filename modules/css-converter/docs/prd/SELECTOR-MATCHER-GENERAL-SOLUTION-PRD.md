@@ -129,11 +129,11 @@ if ( $this->pattern_detector->is_elementor_specific_selector( $selector ) ) {
 .elementor-1140 .elementor-element.elementor-element-14c0aa4 .elementor-heading-title
 ```
 
-**Specificity**: 
-- 1 ID (`.elementor-1140` - treated as ID in Elementor context) = 100
+**Specificity**:
+- 1 class (`.elementor-1140`) = 10
 - 2 classes (`.elementor-element`, `.elementor-element-14c0aa4`) = 20
 - 1 class (`.elementor-heading-title`) = 10
-- **Total**: 130
+- **Total**: 40
 
 #### FR5: Widget Class Filtering (Concession)
 
@@ -456,8 +456,8 @@ private function widget_matches_selector_part( array $widget, array $selector_pa
    - **Option C**: Hybrid approach
 
 2. **Page Wrapper Classes**: Should `.elementor-1140` be treated specially?
-   - **Current**: Yes, removed during matching
-   - **Proposed**: No, treat as regular class
+   - **Current**: No, treat as a regular class (specificity 10)
+   - **Policy**: Never up-rank page wrapper classes to ID specificity
 
 3. **Specificity Calculation**: How to handle Elementor's custom specificity rules?
    - **Option A**: Use standard CSS specificity

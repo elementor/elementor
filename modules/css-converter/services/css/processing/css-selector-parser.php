@@ -156,19 +156,48 @@ class CSS_Selector_Parser {
 		$tokens = $this->tokenize_selector( $selector );
 		$current_compound = '';
 
+		// Debug: Log tokens for problematic selectors
+		if ( strpos( $selector, 'elementor-1140' ) !== false && strpos( $selector, 'elementor-heading-title' ) !== false ) {
+			$debug_log = WP_CONTENT_DIR . '/selector-parsing-debug.log';
+			file_put_contents(
+				$debug_log,
+				date('[H:i:s] ') . "TOKENIZE_DEBUG: Selector '{$selector}'\n" .
+				"  Tokens: " . json_encode( $tokens ) . "\n" .
+				"  Token count: " . count( $tokens ) . "\n",
+				FILE_APPEND
+			);
+			
+			// Debug each token processing
+			foreach ( $tokens as $i => $token ) {
+				$is_comb = $this->is_combinator( $token ) ? 'YES' : 'NO';
+				file_put_contents(
+					$debug_log,
+					"  Token {$i}: '{$token}' (combinator: {$is_comb})\n",
+					FILE_APPEND
+				);
+			}
+		}
+
 		foreach ( $tokens as $token ) {
 			if ( $this->is_combinator( $token ) ) {
-				if ( ! empty( $current_compound ) ) {
+				if ( ! empty( trim( $current_compound ) ) ) {
 					$parts[] = $this->parse_compound_selector( trim( $current_compound ) );
 					$current_compound = '';
 				}
 				$combinators[] = $token;
 			} else {
-				$current_compound .= $token;
+				// Don't concatenate - each non-combinator token is a separate selector part
+				// Only accumulate if we haven't processed a combinator yet
+				if ( empty( $current_compound ) ) {
+					$current_compound = $token;
+				} else {
+					// This shouldn't happen with proper tokenization
+					$current_compound .= $token;
+				}
 			}
 		}
 
-		if ( ! empty( $current_compound ) ) {
+		if ( ! empty( trim( $current_compound ) ) ) {
 			$parts[] = $this->parse_compound_selector( trim( $current_compound ) );
 		}
 
@@ -246,12 +275,12 @@ class CSS_Selector_Parser {
 		}
 
 		return array_filter( $tokens, function( $token ) {
-			return trim( $token ) !== '';
+			return $token !== '';
 		} );
 	}
 
 	private function is_combinator( string $token ): bool {
-		return isset( self::COMBINATORS[ trim( $token ) ] );
+		return isset( self::COMBINATORS[ $token ] );
 	}
 
 	private function parse_compound_selector( string $compound ): array {

@@ -29,7 +29,6 @@ class Selector_Matcher_Engine {
 	 */
 	private function find_matching_widgets_intelligently( string $selector, array $widgets ): array {
 		$this->navigator->build_widget_index( $widgets );
-
 		return $this->find_matching_widgets_standard( $selector, $widgets );
 	}
 
@@ -116,7 +115,9 @@ class Selector_Matcher_Engine {
 		$widget_classes = $widget['attributes']['class'] ?? '';
 		$element_id = $widget['element_id'] ?? '';
 
-		if ( ! $this->widget_matches_parsed_selector( $widget, $target_part, $all_widgets ) ) {
+		$target_matches = $this->widget_matches_parsed_selector( $widget, $target_part, $all_widgets );
+		
+		if ( ! $target_matches ) {
 			return false;
 		}
 
@@ -167,7 +168,7 @@ class Selector_Matcher_Engine {
 			return null;
 		}
 
-		switch ( trim( $combinator ) ) {
+		switch ( $combinator ) {
 			case ' ':
 				return $this->find_ancestor_matching_part( $element_id, $required_part );
 			case '>':
@@ -283,26 +284,7 @@ class Selector_Matcher_Engine {
 			}
 		}
 
-		$widget_type = $this->map_class_to_widget_type( $class_name );
-		if ( $widget_type && ( $widget['widget_type'] ?? '' ) === $widget_type ) {
-			return true;
-		}
-
 		return false;
-	}
-
-	private function map_class_to_widget_type( string $class_name ): ?string {
-		$class_to_widget_map = [
-			'elementor-heading-title' => 'e-heading',
-			'elementor-widget-heading' => 'e-heading',
-			'elementor-widget-image' => 'e-image',
-			'elementor-widget-text-editor' => 'e-paragraph',
-			'elementor-widget-button' => 'e-button',
-			'elementor-widget-link' => 'e-link',
-			'elementor-widget-text' => 'e-text',
-		];
-
-		return $class_to_widget_map[ $class_name ] ?? null;
 	}
 
 	private function widget_has_id( array $widget, string $id_value ): bool {
@@ -313,30 +295,7 @@ class Selector_Matcher_Engine {
 
 	private function widget_matches_element( array $widget, string $element_name ): bool {
 		$widget_tag = $widget['tag'] ?? '';
-		$widget_type = $widget['widget_type'] ?? '';
-
-		if ( $widget_tag === $element_name ) {
-			return true;
-		}
-
-		$element_to_widget_map = [
-			'div' => [ 'e-div-block' ],
-			'p' => [ 'e-paragraph' ],
-			'h1' => [ 'e-heading' ],
-			'h2' => [ 'e-heading' ],
-			'h3' => [ 'e-heading' ],
-			'h4' => [ 'e-heading' ],
-			'h5' => [ 'e-heading' ],
-			'h6' => [ 'e-heading' ],
-			'a' => [ 'e-link' ],
-			'img' => [ 'e-image' ],
-			'button' => [ 'e-button' ],
-			'span' => [ 'e-text' ],
-		];
-
-		$mapped_widgets = $element_to_widget_map[ $element_name ] ?? [];
-
-		return in_array( $widget_type, $mapped_widgets, true );
+		return $widget_tag === $element_name;
 	}
 
 	private function widget_matches_attribute( array $widget, array $attribute_selector ): bool {
