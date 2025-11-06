@@ -379,7 +379,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( ! this.ui.foldersDropdown.is( ':visible' ) ) {
 			this.ui.foldersDropdown.show();
 		} else {
-			this.ui.foldersDropdown.hide();
+			this.hideFoldersDropdown();
 		}
 	},
 
