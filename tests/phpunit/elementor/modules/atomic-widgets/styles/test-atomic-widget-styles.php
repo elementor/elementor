@@ -379,7 +379,7 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		( new Atomic_Widget_Styles() )->register_hooks();
 		$doc = $this->factory()->documents->publish_and_get();
 		$id = $doc->get_id();
-		
+
 		$cache_validity = new Cache_Validity();
 
 		// Act.
@@ -399,7 +399,7 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 
 		// Act.
 		do_action( 'elementor/core/files/clear_cache' );
-		
+
 		// Assert.
 		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY ] ) );
 	}
