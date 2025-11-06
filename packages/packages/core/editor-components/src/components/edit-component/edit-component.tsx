@@ -17,7 +17,6 @@ type ComponentsPathItem = {
 	instanceId: string | undefined;
 	component: V1Document;
 };
-
 export function EditComponent() {
 	const [ componentsPath, setComponentsPath ] = useState< ComponentsPathItem[] >( [] );
 
@@ -28,7 +27,8 @@ export function EditComponent() {
 	const { component: currentComponent } = currentItem ?? {};
 
 	const widget = currentComponent?.container as V1Element;
-	const elementDom = ( widget?.view?.el?.children?.[ 0 ] ?? null ) as HTMLElement | null;
+	const container = ( widget?.view?.el?.children?.[ 0 ] ?? null ) as HTMLElement | null;
+	const elementDom = container?.children[ 0 ] as HTMLElement | null;
 
 	if ( ! elementDom ) {
 		return null;

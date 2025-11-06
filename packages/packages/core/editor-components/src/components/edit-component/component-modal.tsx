@@ -72,7 +72,12 @@ function Backdrop( { canvas, element, onClose }: { canvas: HTMLDocument; element
 }
 
 function getRoundedRectPath( rect: DOMRect, viewport: Window, borderRadius: number ) {
-	const { x, y, width, height } = rect;
+	const padding = borderRadius / 2;
+	const { x: originalX, y: originalY, width: originalWidth, height: originalHeight } = rect;
+	const x = originalX - padding;
+	const y = originalY - padding;
+	const width = originalWidth + 2 * padding;
+	const height = originalHeight + 2 * padding;
 	const radius = Math.min( borderRadius, width / 2, height / 2 );
 
 	const { innerWidth: vw, innerHeight: vh } = viewport;
