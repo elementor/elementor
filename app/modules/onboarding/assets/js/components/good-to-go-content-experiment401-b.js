@@ -11,7 +11,7 @@ export default function GoodToGoContentExperiment401B( { skipButton } ) {
 	return (
 		<>
 			<h1 className="e-onboarding__page-content-section-title">
-				{ __( 'Ready to build? Pick your starting point', 'elementor' ) }
+				{ __( 'All set! Choose how to start', 'elementor' ) }
 			</h1>
 			<Grid container alignItems="center" justify="space-between" className="e-onboarding__cards-grid e-onboarding__page-content">
 				<Card
