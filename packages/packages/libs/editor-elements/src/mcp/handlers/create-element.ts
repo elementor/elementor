@@ -46,9 +46,9 @@ export function handleCreateElement( {
 			label: 'local',
 			meta: { breakpoint: 'desktop', state: null },
 			props: {
-				display: 'flex',
-				flexDirection: 'row',
-				flexWrap: 'wrap',
+				display: { $$type: 'string', value: 'flex' },
+				'flex-direction': { $$type: 'string', value: 'row' },
+				'flex-wrap': { $$type: 'string', value: 'wrap' },
 			},
 		} );
 
