@@ -12,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Wysiwyg_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
@@ -52,7 +53,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
 				->default( 'h2' ),
 
-			'title' => String_Prop_Type::make()
+			'title' => Wysiwyg_Prop_Type::make()
 				->default( __( 'This is a title', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
