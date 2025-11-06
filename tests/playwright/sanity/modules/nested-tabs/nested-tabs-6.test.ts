@@ -3,13 +3,11 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
 import { clickTabByPosition, templatePath } from './helper';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_font_icon_svg: 'active' } );
-		await page.close();
+	test.beforeAll( async () => {
+		await wpCli( 'wp elementor experiments activate e_font_icon_svg' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
