@@ -13,6 +13,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Tabs_Control;
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
+use Elementor\Utils;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -156,11 +158,14 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		return [ 'elementor-tabs-handler' ];
 	}
 
-	public static function register_handler_scripts( $assets_url, $min_suffix, $frontend_handlers_handle, $alpinejs_handle ) {
+	public function register_frontend_handlers() {
+		$assets_url = ELEMENTOR_ASSETS_URL;
+		$min_suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
+
 		wp_register_script(
 			'elementor-tabs-handler',
 			"{$assets_url}js/tabs-handler{$min_suffix}.js",
-			[ $frontend_handlers_handle, $alpinejs_handle ],
+			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE, Frontend_Assets_Loader::ALPINEJS_HANDLE ],
 			ELEMENTOR_VERSION,
 			true
 		);

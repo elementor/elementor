@@ -21,7 +21,6 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
 use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
-use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader_Factory;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Src_Transformer;
@@ -156,7 +155,6 @@ class Module extends BaseModule {
 
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
-			add_action( 'elementor/atomic-widgets/frontend/loader/scripts/register', fn ( $loader ) => $this->register_widget_handlers( $loader ) );
 			add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
 
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
@@ -377,21 +375,7 @@ class Module extends BaseModule {
 	}
 
 	private function register_frontend_scripts() {
-		$loader = Frontend_Assets_Loader_Factory::create();
-		$loader->init();
+		$loader = new Frontend_Assets_Loader();
 		$loader->register_scripts();
-	}
-
-	private function register_widget_handlers( Frontend_Assets_Loader $loader ) {
-		$assets_url = $loader->get_assets_url();
-		$min_suffix = $loader->get_min_suffix();
-		$frontend_handlers_handle = $loader->get_package_handle( 'frontend-handlers' );
-		$alpinejs_handle = $loader->get_package_handle( 'alpinejs' );
-
-		Atomic_Youtube::register_handler_scripts( $assets_url, $min_suffix, $frontend_handlers_handle );
-
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NESTED ) ) {
-			Atomic_Tabs::register_handler_scripts( $assets_url, $min_suffix, $frontend_handlers_handle, $alpinejs_handle );
-		}
 	}
 }

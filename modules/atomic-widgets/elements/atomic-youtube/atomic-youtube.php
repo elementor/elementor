@@ -12,6 +12,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -116,11 +118,14 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 		return [ 'elementor-youtube-handler' ];
 	}
 
-	public static function register_handler_scripts( $assets_url, $min_suffix, $frontend_handlers_handle ) {
+	public function register_frontend_handlers() {
+		$assets_url = ELEMENTOR_ASSETS_URL;
+		$min_suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
+
 		wp_register_script(
 			'elementor-youtube-handler',
 			"{$assets_url}js/youtube-handler{$min_suffix}.js",
-			[ $frontend_handlers_handle ],
+			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE ],
 			ELEMENTOR_VERSION,
 			true
 		);
