@@ -334,15 +334,17 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		$cache_validity->validate( [
 			Atomic_Widget_Styles::STYLES_KEY,
 			$id,
-			Atomic_Widget_Styles::CONTEXT_FRONTEND,
+			Atomic_Widget_Styles::CONTEXT_PREVIEW,
 		] );
-
-		// Assert.
-		$this->assertTrue( $cache_validity->is_valid( [
+		$cache_validity->validate( [
 			Atomic_Widget_Styles::STYLES_KEY,
 			$id,
 			Atomic_Widget_Styles::CONTEXT_FRONTEND,
-		] ) );
+		] );
+		$cache_validity->validate( [
+			Atomic_Widget_Styles::STYLES_KEY,
+			$id,
+		] );
 
 		// Act.
 		wp_delete_post( $id, true );
@@ -351,7 +353,16 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		$this->assertFalse( $cache_validity->is_valid( [
 			Atomic_Widget_Styles::STYLES_KEY,
 			$id,
+			Atomic_Widget_Styles::CONTEXT_PREVIEW,
+		] ) );
+		$this->assertFalse( $cache_validity->is_valid( [
+			Atomic_Widget_Styles::STYLES_KEY,
+			$id,
 			Atomic_Widget_Styles::CONTEXT_FRONTEND,
+		] ) );
+		$this->assertFalse( $cache_validity->is_valid( [
+			Atomic_Widget_Styles::STYLES_KEY,
+			$id,
 		] ) );
 	}
 
