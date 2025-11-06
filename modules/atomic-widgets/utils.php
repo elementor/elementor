@@ -32,7 +32,7 @@ class Utils {
 
 	public static function traverse_post_elements( string $post_id, callable $callback ): void {
 		$documents = Plugin::$instance->documents;
-		$document = is_preview() ? $documents->get_doc_or_auto_save( $post_id ) : $documents->get( $post_id );
+		$document = is_preview() ? $documents->get_doc_or_auto_save( $post_id, get_current_user_id() ) : $documents->get( $post_id );
 
 		if ( ! $document ) {
 			return;
