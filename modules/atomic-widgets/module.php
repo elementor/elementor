@@ -4,7 +4,6 @@ namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
@@ -21,6 +20,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
+use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Src_Transformer;
@@ -113,7 +113,6 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_NESTED = 'e_nested_elements';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
-	const EXPERIMENT_INLINE_EDITING = 'v4-inline-text-editing';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -208,15 +207,6 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_EDITOR_MCP,
 			'title' => esc_html__( 'Editor MCP for atomic widgets', 'elementor' ),
 			'description' => esc_html__( 'Editor MCP for atomic widgets.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
-
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_INLINE_EDITING,
-			'title' => esc_html__( 'V4 inline text editing', 'elementor' ),
-			'description' => esc_html__( 'New inline text editor for v4', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -385,41 +375,7 @@ class Module extends BaseModule {
 	}
 
 	private function register_frontend_scripts() {
-		$assets_config_provider = ( new Assets_Config_Provider() )
-			->set_path_resolver( function ( $name ) {
-				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
-			} );
-
-		$assets_config_provider->load( 'frontend-handlers' );
-
-		$frontend_handlers_package_config = $assets_config_provider->get( 'frontend-handlers' );
-
-		if ( ! $frontend_handlers_package_config ) {
-			return;
-		}
-
-		wp_register_script(
-			$frontend_handlers_package_config['handle'],
-			$this->get_js_assets_url( 'packages/frontend-handlers/frontend-handlers' ),
-			$frontend_handlers_package_config['deps'],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_register_script(
-			'elementor-youtube-handler',
-			$this->get_js_assets_url( 'youtube-handler' ),
-			[ $frontend_handlers_package_config['handle'] ],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_register_script(
-			'elementor-tabs-handler',
-			$this->get_js_assets_url( 'tabs-handler' ),
-			[ $frontend_handlers_package_config['handle'] ],
-			ELEMENTOR_VERSION,
-			true
-		);
+		$loader = new Frontend_Assets_Loader();
+		$loader->register_scripts();
 	}
 }
