@@ -294,6 +294,9 @@ class Preview extends App {
 	private function enqueue_scripts() {
 		Plugin::$instance->frontend->register_scripts();
 
+		Plugin::$instance->widgets_manager->register_frontend_handlers();
+		Plugin::$instance->elements_manager->register_frontend_handlers();
+
 		Plugin::$instance->widgets_manager->enqueue_widgets_scripts();
 		Plugin::$instance->elements_manager->enqueue_elements_scripts();
 
