@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { stringPropTypeUtil } from '@elementor/editor-props';
+import { Box } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
 import { InlineEditor } from '../components/inline-editor';
@@ -12,9 +13,9 @@ export const WysiwygControl = createControl( () => {
 
 	return (
 		<ControlActions>
-			<div>
+			<Box>
 				<InlineEditor value={ value || '' } setValue={ handleChange } />
-			</div>
+			</Box>
 		</ControlActions>
 	);
 } );
