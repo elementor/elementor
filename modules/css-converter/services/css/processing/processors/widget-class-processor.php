@@ -82,23 +82,7 @@ class Widget_Class_Processor implements Css_Processor_Interface
             return $context;
         }
 
-        // DEBUG: Log widget classes BEFORE CSS matching
-        $debug_log = WP_CONTENT_DIR . '/css-matching-timing-debug.log';
-        file_put_contents(
-            $debug_log,
-            date('[H:i:s] ') . "BEFORE_CSS_MATCHING: Widget classes available\n",
-            FILE_APPEND
-        );
-        $this->debug_widget_classes_recursively( $widgets, $debug_log, 0 );
-
         $styles_applied = $this->apply_widget_specific_styles($widget_specific_rules, $widgets, $context);
-
-        // DEBUG: Log widget classes AFTER CSS matching
-        file_put_contents(
-            $debug_log,
-            date('[H:i:s] ') . "AFTER_CSS_MATCHING: Styles applied: {$styles_applied}\n",
-            FILE_APPEND
-        );
 
         // Remove processed rules from css_rules so they don't get processed as global classes
         $remaining_rules = $this->remove_processed_rules($css_rules, $widget_specific_rules);
@@ -112,17 +96,7 @@ class Widget_Class_Processor implements Css_Processor_Interface
         //     }
         // );
         
-        // SIMPLIFIED: Don't remove any classes for now - let CSS matching work
         $widget_classes_to_remove = [];
-
-        // DEBUG: Log what classes are being removed
-        $debug_log = WP_CONTENT_DIR . '/class-removal-debug.log';
-        file_put_contents(
-            $debug_log,
-            date('[H:i:s] ') . "CLASS_REMOVAL: Removing " . count($widget_classes_to_remove) . " classes\n" .
-            "  Classes to remove: " . json_encode(array_values($widget_classes_to_remove)) . "\n",
-            FILE_APPEND
-        );
 
         $css_class_modifiers = $context->get_metadata('css_class_modifiers', []);
         $css_class_modifiers[] = [
@@ -405,27 +379,8 @@ class Widget_Class_Processor implements Css_Processor_Interface
     private function find_child_widgets_by_tag( array $parent_element_ids, string $child_tag, array $all_widgets ): array
     {
         $child_widgets = [];
-        $tag_to_widget_type = [
-        'img' => 'e-image',
-        'h1' => 'e-heading',
-        'h2' => 'e-heading',
-        'h3' => 'e-heading',
-        'h4' => 'e-heading',
-        'h5' => 'e-heading',
-        'h6' => 'e-heading',
-        'p' => 'e-paragraph',
-        'a' => 'e-link',
-        'button' => 'e-button',
-        ];
-
-        $target_widget_type = $tag_to_widget_type[ $child_tag ] ?? null;
-
-        if (! $target_widget_type ) {
-            return $child_widgets;
-        }
 
         foreach ( $parent_element_ids as $parent_element_id ) {
-            // Handle both array (widget) and string (element_id) formats
             if (is_array($parent_element_id) ) {
                 $parent_widget = $parent_element_id;
             } else {
@@ -433,7 +388,7 @@ class Widget_Class_Processor implements Css_Processor_Interface
             }
 
             if ($parent_widget && ! empty($parent_widget['children']) ) {
-                $this->recursively_find_child_widgets_by_type($parent_widget['children'], $target_widget_type, $child_widgets);
+                $this->recursively_find_child_widgets_by_tag($parent_widget['children'], $child_tag, $child_widgets);
             }
         }
 
@@ -458,10 +413,11 @@ class Widget_Class_Processor implements Css_Processor_Interface
         return null;
     }
 
-    private function recursively_find_child_widgets_by_type( array $widgets, string $target_type, array &$result ): void
+    private function recursively_find_child_widgets_by_tag( array $widgets, string $target_tag, array &$result ): void
     {
         foreach ( $widgets as $widget ) {
-            if (( $widget['widget_type'] ?? '' ) === $target_type ) {
+            $widget_tag = $widget['original_tag'] ?? $widget['tag'] ?? '';
+            if ($widget_tag === $target_tag ) {
                 $element_id = $widget['element_id'] ?? null;
                 if ($element_id ) {
                     $result[] = $element_id;
@@ -469,7 +425,7 @@ class Widget_Class_Processor implements Css_Processor_Interface
             }
 
             if (! empty($widget['children']) ) {
-                $this->recursively_find_child_widgets_by_type($widget['children'], $target_type, $result);
+                $this->recursively_find_child_widgets_by_tag($widget['children'], $target_tag, $result);
             }
         }
     }
@@ -478,7 +434,7 @@ class Widget_Class_Processor implements Css_Processor_Interface
         string $element_id,
         array $converted_properties,
         Css_Processing_Context $context,
-        string $child_element_tag = '',
+        array $widgets,
         string $selector = '',
         int $specificity = 0
     ): void {
@@ -488,23 +444,14 @@ class Widget_Class_Processor implements Css_Processor_Interface
             return;
         }
 
-        $tag_to_widget_type = [
-        'img' => 'e-image',
-        'h1' => 'e-heading',
-        'h2' => 'e-heading',
-        'h3' => 'e-heading',
-        'h4' => 'e-heading',
-        'h5' => 'e-heading',
-        'h6' => 'e-heading',
-        'p' => 'e-paragraph',
-        'a' => 'e-link',
-        'button' => 'e-button',
-        ];
+        $widget = $this->find_widget_by_element_id_recursive($element_id, $widgets);
+        $widget_type = $widget['widget_type'] ?? '';
 
-        $widget_type = $tag_to_widget_type[ $child_element_tag ] ?? $child_element_tag;
+        if (empty($widget_type) ) {
+            return;
+        }
 
         foreach ( $converted_properties as $property_data ) {
-
             $unified_style_manager->collect_element_styles(
                 $widget_type,
                 [ $property_data ],
@@ -602,7 +549,7 @@ class Widget_Class_Processor implements Css_Processor_Interface
                                 $child_element_id,
                                 $converted_properties,
                                 $context,
-                                $child_element_tag,
+                                $widgets,
                                 $selector,
                                 $specificity
                             );
@@ -636,23 +583,6 @@ class Widget_Class_Processor implements Css_Processor_Interface
         $converted_properties = [];
         $widget_id = ! empty($widget_element_id) ? $widget_element_id : 'widget-' . uniqid();
 
-        $has_align_self = false;
-        foreach ( $properties as $prop_check ) {
-            if (( $prop_check['property'] ?? '' ) === 'align-self' ) {
-                $has_align_self = true;
-                break;
-            }
-        }
-
-        if ($has_align_self ) {
-            $log_file = WP_CONTENT_DIR . '/align-self-debug.log';
-            file_put_contents($log_file, "\n" . str_repeat('=', 80) . "\n", FILE_APPEND);
-            file_put_contents($log_file, date('[Y-m-d H:i:s] ') . "WIDGET_CLASS_PROCESSOR: convert_properties_to_atomic()\n", FILE_APPEND);
-            file_put_contents($log_file, "  Current selector: {$this->current_selector}\n", FILE_APPEND);
-            file_put_contents($log_file, "  Widget element ID: {$widget_element_id}\n", FILE_APPEND);
-            file_put_contents($log_file, '  Total properties: ' . count($properties) . "\n", FILE_APPEND);
-        }
-
         foreach ( $properties as $property_data ) {
             $property = $property_data['property'] ?? '';
             $value = $property_data['value'] ?? '';
@@ -662,26 +592,7 @@ class Widget_Class_Processor implements Css_Processor_Interface
                 continue;
             }
 
-            if ($property === 'align-self' ) {
-                $log_file = WP_CONTENT_DIR . '/align-self-debug.log';
-                file_put_contents($log_file, "\n  → Processing align-self property:\n", FILE_APPEND);
-                file_put_contents($log_file, "    Input value: '{$value}'\n", FILE_APPEND);
-                file_put_contents($log_file, '    Important flag: ' . ( $important ? 'true' : 'false' ) . "\n", FILE_APPEND);
-                file_put_contents($log_file, "    Widget ID: {$widget_id}\n", FILE_APPEND);
-            }
-
             $converted = $property_conversion_service->convert_property_to_v4_atomic($property, $value, $widget_id, $important);
-
-            if ($property === 'align-self' ) {
-                $log_file = WP_CONTENT_DIR . '/align-self-debug.log';
-                if ($converted !== null ) {
-                    file_put_contents($log_file, "    ✅ Conversion SUCCESS\n", FILE_APPEND);
-                    file_put_contents($log_file, '    Converted result: ' . json_encode($converted, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
-                } else {
-                    file_put_contents($log_file, "    ❌ Conversion FAILED (returned null)\n", FILE_APPEND);
-                    file_put_contents($log_file, "    Property will be DROPPED\n", FILE_APPEND);
-                }
-            }
 
             if ($converted !== null ) {
                 $converted_properties[] = [
@@ -693,13 +604,6 @@ class Widget_Class_Processor implements Css_Processor_Interface
                 'converted_property' => $converted,
                 ];
             }
-        }
-
-        if ($has_align_self ) {
-            $log_file = WP_CONTENT_DIR . '/align-self-debug.log';
-            $converted_count = count($converted_properties);
-            file_put_contents($log_file, "\n  Final result: {$converted_count} properties converted successfully\n", FILE_APPEND);
-            file_put_contents($log_file, str_repeat('=', 80) . "\n", FILE_APPEND);
         }
 
         return $converted_properties;
@@ -1040,27 +944,5 @@ class Widget_Class_Processor implements Css_Processor_Interface
     }
 
 
-    private function debug_widget_classes_recursively( array $widgets, string $debug_log, int $depth ): void {
-        $indent = str_repeat( '  ', $depth );
-        foreach ( $widgets as $widget ) {
-            $element_id = $widget['element_id'] ?? '';
-            $classes = $widget['attributes']['class'] ?? '';
-            $widget_type = $widget['widget_type'] ?? '';
-            $has_children = ! empty( $widget['children'] );
-            $children_count = count( $widget['children'] ?? [] );
-            
-            if ( strpos( $classes, 'elementor-1140' ) !== false || strpos( $classes, 'elementor-heading-title' ) !== false || $widget_type === 'e-heading' ) {
-                file_put_contents(
-                    $debug_log,
-                    "{$indent}Widget {$element_id} ({$widget_type}): '{$classes}' [children: {$children_count}]\n",
-                    FILE_APPEND
-                );
-            }
-            
-            if ( ! empty( $widget['children'] ) ) {
-                $this->debug_widget_classes_recursively( $widget['children'], $debug_log, $depth + 1 );
-            }
-        }
-    }
 }
 

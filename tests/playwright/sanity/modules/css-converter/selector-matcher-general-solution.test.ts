@@ -35,7 +35,7 @@ test.describe( 'Selector Matcher General Solution @selector-matcher', () => {
 			},
 			timeout: 60000,
 		} );
-await page.pause();
+
 		expect( response.status() ).toBe( 200 );
 		const data = await response.json();
 		expect( data.success ).toBe( true );

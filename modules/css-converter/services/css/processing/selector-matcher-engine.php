@@ -294,7 +294,7 @@ class Selector_Matcher_Engine {
 	}
 
 	private function widget_matches_element( array $widget, string $element_name ): bool {
-		$widget_tag = $widget['tag'] ?? '';
+		$widget_tag = $widget['original_tag'] ?? $widget['tag'] ?? '';
 		return $widget_tag === $element_name;
 	}
 
