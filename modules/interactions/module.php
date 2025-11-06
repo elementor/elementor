@@ -18,8 +18,8 @@ class Module extends BaseModule {
 	const TRIGGERS = [ 'load', 'scrollIn', 'scrollOut' ];
 	const EFFECTS = [ 'fade', 'slide', 'scale' ];
 	const TYPES = [ 'in', 'out' ];
-	const DIRECTIONS = [ 'left', 'right', 'bottom', 'top' ];
-	const DEFAULT_DURATION = 0.3;
+	const DIRECTIONS = [ 'left', 'right', 'top', 'bottom' ];
+	const DEFAULT_DURATION = 300;
 	const DEFAULT_DELAY = 0;
 	const SLIDE_DISTANCE = 100;
 	const SCALE_START = 0.5;
@@ -64,9 +64,6 @@ class Module extends BaseModule {
 				'load' => __( 'Page Load', 'elementor' ),
 				'scrollIn' => __( 'Scroll Into View', 'elementor' ),
 				'scrollOut' => __( 'Scroll Out of View', 'elementor' ),
-			],
-			'direction' => [
-				'top' => __( 'Up', 'elementor' ),
 			],
 		];
 
@@ -121,9 +118,6 @@ class Module extends BaseModule {
 	private function get_config() {
 		return [
 			'constants' => [
-				'triggers' => self::TRIGGERS,
-				'effects' => self::EFFECTS,
-				'directions' => self::DIRECTIONS,
 				'defaultDuration' => self::DEFAULT_DURATION,
 				'defaultDelay' => self::DEFAULT_DELAY,
 				'slideDistance' => self::SLIDE_DISTANCE,
