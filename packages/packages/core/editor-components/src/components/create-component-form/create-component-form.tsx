@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { getElementLabel, type V1Element, type V1ElementData } from '@elementor/editor-elements';
+import { getElementLabel, type V1ElementData } from '@elementor/editor-elements';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { StarIcon } from '@elementor/icons';
 import { __useDispatch as useDispatch } from '@elementor/store';

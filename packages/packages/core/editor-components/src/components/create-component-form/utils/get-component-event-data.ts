@@ -1,4 +1,4 @@
-import { V1Element, type V1ElementData } from '@elementor/editor-elements';
+import { type V1ElementData } from '@elementor/editor-elements';
 
 export type ComponentEventData = {
 	nested_elements_count: number;

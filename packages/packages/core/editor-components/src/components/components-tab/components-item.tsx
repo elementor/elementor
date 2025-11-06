@@ -6,7 +6,6 @@ import { Box, ListItemButton, ListItemIcon, ListItemText, Typography } from '@el
 
 import { type Component } from '../../types';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
-import { trackComponentEvent } from '../../utils/tracking';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
 
 export const ComponentItem = ( { component }: { component: Component } ) => {
@@ -40,15 +39,6 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 	);
 };
 
-// const addComponentEvent = ( model: DropElementParams[ 'model' ], options?: ContextMenuEventOptions ) => {
-// 	trackComponentEvent( {
-// 		action: 'instanceAdded',
-// 		instance_id
-// 		component_id
-// 		component_name
-// 	} );
-// }
-
 const addComponentToPage = ( model: DropElementParams[ 'model' ] ) => {
 	const { container, options } = getContainerForNewElement();
 
@@ -56,7 +46,7 @@ const addComponentToPage = ( model: DropElementParams[ 'model' ] ) => {
 		throw new Error( `Can't find container to drop new component instance at` );
 	}
 
-	const createdInstance = dropElement( {
+	dropElement( {
 		containerId: container.id,
 		model,
 		options: { ...options, useHistory: false, scrollIntoView: true },

@@ -12,34 +12,34 @@ type HooksMap = Record< HookType, typeof DataHook | undefined >;
 
 type HookType = 'after' | 'dependency';
 
-export type Args< T extends unknown[] = unknown[] > = T;
+export type Args = Record< string, unknown >;
 
-export declare class DataHook< T extends unknown[] = unknown[] > {
+export declare class DataHook< TArgs extends Args, TResult = unknown > {
 	getCommand(): string;
 	getId(): string;
-	apply( ...args: T ): unknown;
+	apply( args: TArgs, result?: TResult ): unknown;
 	register(): void;
 }
 
 let hookId = 0;
 
-export function registerDataHook< T extends unknown[] >(
+export function registerDataHook< TArgs extends Args, TResult = unknown >(
 	type: 'dependency',
 	command: string,
-	callback: ( ...args: T ) => boolean
-): DataHook;
+	callback: ( args: TArgs, result: TResult ) => boolean
+): DataHook< TArgs, TResult >;
 
-export function registerDataHook< T extends unknown[] >(
+export function registerDataHook< TArgs extends Args, TResult = unknown >(
 	type: 'after',
 	command: string,
-	callback: ( ...args: T ) => void | Promise< void >
-): DataHook;
+	callback: ( args: TArgs, result: TResult ) => void | Promise< void >
+): DataHook< TArgs, TResult >;
 
-export function registerDataHook< T extends unknown[] >(
+export function registerDataHook< TArgs extends Args, TResult = unknown >(
 	type: HookType,
 	command: string,
-	callback: ( ...args: T ) => unknown
-): DataHook {
+	callback: ( args: TArgs, result: TResult ) => unknown
+): DataHook< TArgs, TResult > {
 	const eWindow = window as unknown as WindowWithDataHooks;
 	const hooksClasses = eWindow.$e?.modules?.hookData;
 
@@ -56,7 +56,7 @@ export function registerDataHook< T extends unknown[] >(
 
 	const currentHookId = ++hookId;
 
-	const hook = new ( class extends HookClass {
+	const hook = new ( class extends HookClass< TArgs, TResult > {
 		getCommand() {
 			return command;
 		}
@@ -65,7 +65,7 @@ export function registerDataHook< T extends unknown[] >(
 			return `${ command }--data--${ currentHookId }`;
 		}
 
-		apply( ...args: T ) {
+		apply( ...args: [ TArgs, TResult ] ) {
 			return callback( ...args );
 		}
 	} )();
