@@ -217,7 +217,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Create revert PR on push failure
         id: create_revert_pr
-        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')) }}
+        if: ${{ false }}
         continue-on-error: true
         uses: ./.github/workflows/create-revert-pr
         with:
