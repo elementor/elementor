@@ -750,21 +750,14 @@ class OnboardingTracker {
 
 	sendAppropriateStatusEvent( status, data = null ) {
 		const hasCreateAccountAction = StorageManager.exists( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT );
-		const hasConnectAction = StorageManager.exists( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
 
 		if ( hasCreateAccountAction ) {
 			this.sendEventDirect( 'CREATE_ACCOUNT_STATUS', { status, currentStep: 1 } );
-		} else if ( hasConnectAction ) {
-			if ( data ) {
-				this.sendEventDirect( 'CONNECT_STATUS', { status, trackingOptedIn: data.tracking_opted_in, userTier: data.access_tier } );
-			} else {
-				this.sendEventDirect( 'CONNECT_STATUS', { status, trackingOptedIn: false, userTier: null } );
-			}
-		} else if ( data ) {
-			this.sendEventDirect( 'CONNECT_STATUS', { status, trackingOptedIn: data.tracking_opted_in, userTier: data.access_tier } );
-		} else {
-			this.sendEventDirect( 'CONNECT_STATUS', { status, trackingOptedIn: false, userTier: null } );
 		}
+
+		const trackingOptedIn = data?.tracking_opted_in || false;
+		const userTier = data?.access_tier || null;
+		this.sendEventDirect( 'CONNECT_STATUS', { status, trackingOptedIn, userTier } );
 	}
 
 	sendAllStoredEvents() {
