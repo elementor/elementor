@@ -446,7 +446,11 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					'contact-form-7/wp-contact-form-7': true,
 				},
 				true,
-				[],
+				{
+					'advanced-custom-fields/acf': true,
+					'contact-form-7/wp-contact-form-7': true,
+					'elementor/elementor': true,
+				},
 			);
 			expect( mockHandleClose ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -475,7 +479,11 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					'contact-form-7/wp-contact-form-7': true,
 				},
 				true,
-				[ 'advanced-custom-fields/acf' ],
+				{
+					'advanced-custom-fields/acf': false,
+					'contact-form-7/wp-contact-form-7': true,
+					'elementor/elementor': true,
+				},
 			);
 		} );
 	} );

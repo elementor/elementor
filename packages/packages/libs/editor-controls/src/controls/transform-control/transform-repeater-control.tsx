@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRef } from 'react';
 import { type PropType, transformFunctionsPropTypeUtil, transformPropTypeUtil } from '@elementor/editor-props';
 import { AdjustmentsIcon, InfoCircleFilledIcon } from '@elementor/icons';
-import { bindTrigger, Box, IconButton, type PopupState, Typography, usePopupState } from '@elementor/ui';
+import { bindTrigger, Box, IconButton, type PopupState, Tooltip, Typography, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
@@ -13,10 +13,10 @@ import { EditItemPopover } from '../../components/control-repeater/items/edit-it
 import { ControlAdornments } from '../../control-adornments/control-adornments';
 import { createControl } from '../../create-control';
 import { initialRotateValue, initialScaleValue, initialSkewValue, initialTransformValue } from './initial-values';
-import { TransformBaseControl } from './transform-base-control';
 import { TransformContent } from './transform-content';
 import { TransformIcon } from './transform-icon';
 import { TransformLabel } from './transform-label';
+import { TransformSettingsControl } from './transform-settings-control';
 
 const SIZE = 'tiny';
 
@@ -27,7 +27,7 @@ export const TransformRepeaterControl = createControl( () => {
 
 	return (
 		<PropProvider { ...context }>
-			<TransformBaseControl popupState={ popupState } anchorRef={ headerRef } />
+			<TransformSettingsControl popupState={ popupState } anchorRef={ headerRef } />
 			<PropKeyProvider bind={ 'transform-functions' }>
 				<Repeater headerRef={ headerRef } propType={ context.propType } popupState={ popupState } />
 			</PropKeyProvider>
@@ -114,10 +114,13 @@ const TransformBasePopoverTrigger = ( {
 	repeaterBindKey: string;
 } ) => {
 	const { bind } = useBoundProp();
+	const titleLabel = __( 'Transform settings', 'elementor' );
 
 	return bind !== repeaterBindKey ? null : (
-		<IconButton size={ SIZE } aria-label={ __( 'Base Transform', 'elementor' ) } { ...bindTrigger( popupState ) }>
-			<AdjustmentsIcon fontSize={ SIZE } />
-		</IconButton>
+		<Tooltip title={ titleLabel } placement="top">
+			<IconButton size={ SIZE } aria-label={ titleLabel } { ...bindTrigger( popupState ) }>
+				<AdjustmentsIcon fontSize={ SIZE } />
+			</IconButton>
+		</Tooltip>
 	);
 };

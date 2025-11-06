@@ -8,6 +8,21 @@ import { SettingSection } from './customization-setting-section';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { useKitCustomizationCustomPostTypes } from '../hooks/use-kit-customization-custom-post-types';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
+import { transformValueForAnalytics } from '../utils/analytics-transformer';
+
+const transformAnalyticsData = ( payload, customPostTypes ) => {
+	const optionsArray = [
+		{ key: 'customPostTypes', options: customPostTypes },
+	];
+
+	const transformed = {};
+
+	for ( const [ key, value ] of Object.entries( payload ) ) {
+		transformed[ key ] = transformValueForAnalytics( key, value, optionsArray );
+	}
+
+	return transformed;
+};
 
 const MEDIA_FORMAT_OPTIONS = {
 	LINK: 'link',
@@ -39,7 +54,6 @@ export function KitContentCustomizationDialog( {
 } ) {
 	const { customPostTypes } = useKitCustomizationCustomPostTypes( { data } );
 
-	const unselectedValues = useRef( data.analytics?.customization?.content || [] );
 	const alertRef = useRef( null );
 	const mediaFormatSectionRef = useRef( null );
 
@@ -217,7 +231,10 @@ export function KitContentCustomizationDialog( {
 			open={ open }
 			title={ __( 'Edit content', 'elementor' ) }
 			handleClose={ handleClose }
-			handleSaveChanges={ () => handleSaveChanges( 'content', settings, true, unselectedValues.current ) }
+			handleSaveChanges={ () => {
+				const transformedAnalytics = transformAnalyticsData( settings, customPostTypes );
+				handleSaveChanges( 'content', settings, true, transformedAnalytics );
+			} }
 		>
 			<Stack gap={ 2 }>
 				{ isOldElementorVersion && (
@@ -234,16 +251,6 @@ export function KitContentCustomizationDialog( {
 						settingKey="customPostTypes"
 						title={ __( 'Custom post types', 'elementor' ) }
 						onSettingChange={ ( selectedCustomPostTypes ) => {
-							const filteredUnselectedValues = unselectedValues.current.filter( ( value ) => ! customPostTypes.includes( value ) );
-							const isAllChecked = selectedCustomPostTypes.length === customPostTypes.length;
-
-							unselectedValues.current = isAllChecked
-								? filteredUnselectedValues.filter( ( value ) => value !== 'customPostTypes' )
-								: [
-									...filteredUnselectedValues,
-									...customPostTypes.filter( ( cpt ) => ! selectedCustomPostTypes.includes( cpt ) ).map( ( { value } ) => value ),
-									'customPostTypes',
-								];
 							handleSettingsChange( 'customPostTypes', selectedCustomPostTypes );
 						} }
 						settings={ settings.customPostTypes }

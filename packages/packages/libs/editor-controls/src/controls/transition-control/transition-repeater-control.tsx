@@ -33,6 +33,7 @@ const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: stri
 				disabledItems,
 			},
 		},
+		isRepeaterControl: true,
 		sizeConfigMap: {
 			...transitionProperties.reduce(
 				( acc, category ) => {
@@ -99,13 +100,40 @@ export const TransitionRepeaterControl = createControl(
 			[]
 		);
 
-		const { value } = useBoundProp( childArrayPropTypeUtil );
+		const { value, setValue } = useBoundProp( childArrayPropTypeUtil );
 		const disabledItems = useMemo( () => getDisabledItems( value ), [ value ] );
+
+		const allowedTransitionSet = useMemo( () => {
+			const set = new Set< string >();
+			transitionProperties.forEach( ( category ) => {
+				category.properties.forEach( ( prop ) => set.add( prop.value ) );
+			} );
+			return set;
+		}, [] );
+
+		useEffect( () => {
+			if ( ! value || value.length === 0 ) {
+				return;
+			}
+
+			const sanitized = value.filter( ( item ) => {
+				const selectionValue =
+					( item?.value?.selection?.value as { value?: { value?: string } } )?.value?.value ?? '';
+				return allowedTransitionSet.has( selectionValue );
+			} );
+
+			if ( sanitized.length !== value.length ) {
+				setValue( sanitized );
+			}
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [ allowedTransitionSet ] );
 
 		useEffect( () => {
 			recentlyUsedListGetter().then( setRecentlyUsedList );
 		}, [ recentlyUsedListGetter ] );
 
+		const allPropertiesUsed = value?.length === transitionProperties.length;
+		const isAddItemDisabled = ! currentStyleIsNormal || allPropertiesUsed;
 		return (
 			<RepeatableControl
 				label={ __( 'Transitions', 'elementor' ) }
@@ -118,7 +146,7 @@ export const TransitionRepeaterControl = createControl(
 				childControlConfig={ getChildControlConfig( recentlyUsedList, disabledItems ) }
 				propKey="transition"
 				addItemTooltipProps={ {
-					disabled: ! currentStyleIsNormal,
+					disabled: isAddItemDisabled,
 					enableTooltip: ! currentStyleIsNormal,
 					tooltipContent: disableAddItemTooltipContent,
 				} }

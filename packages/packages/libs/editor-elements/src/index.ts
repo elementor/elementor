@@ -1,6 +1,12 @@
 // types
 export * from './types';
-export type { V1Element, V1ElementModelProps, V1ElementSettingsProps, V1ElementConfig } from './sync/types';
+export type {
+	V1Element,
+	V1ElementData,
+	V1ElementModelProps,
+	V1ElementSettingsProps,
+	V1ElementConfig,
+} from './sync/types';
 
 // hooks
 export { useElementSetting, useElementSettings } from './hooks/use-element-setting';
@@ -60,3 +66,7 @@ export {
 	getLinkInLinkRestriction,
 	type LinkInLinkRestriction,
 } from './link-restriction';
+
+export { getElementInteractions } from './sync/get-element-interactions';
+export { updateElementInteractions } from './sync/update-element-interactions';
+export { useElementInteractions } from './hooks/use-element-interactions';

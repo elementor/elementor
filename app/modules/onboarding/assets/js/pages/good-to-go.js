@@ -1,56 +1,69 @@
-import Grid from 'elementor-app/ui/grid/grid';
+import { useEffect, useState } from 'react';
 import Layout from '../components/layout/layout';
-import Card from '../components/card';
-import FooterButtons from '../components/layout/footer-buttons';
+import GoodToGoContentA from '../components/good-to-go-content-a';
+import GoodToGoContentExperiment402B from '../components/good-to-go-content-experiment402-b';
+import GoodToGoContentExperiment401B from '../components/good-to-go-content-experiment401-b';
+import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../utils/onboarding-event-tracking';
+
+const VARIANT_B = 'B';
 
 export default function GoodToGo() {
-	const pageId = 'goodToGo',
-		skipButton = {
+	const pageId = 'goodToGo';
+	const [ experiment401Variant, setExperiment401Variant ] = useState( null );
+	const [ experiment402Variant, setExperiment402Variant ] = useState( null );
+
+	useEffect( () => {
+		OnboardingEventTracking.checkAndSendReturnToStep4();
+		OnboardingEventTracking.onStepLoad( 4 );
+
+		const stored401Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT401_VARIANT );
+		const stored402Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT );
+		setExperiment401Variant( stored401Variant );
+		setExperiment402Variant( stored402Variant );
+	}, [] );
+
+	const getContentComponent = () => {
+		if ( VARIANT_B === experiment401Variant ) {
+			return GoodToGoContentExperiment401B;
+		}
+
+		if ( VARIANT_B === experiment402Variant ) {
+			return GoodToGoContentExperiment402B;
+		}
+
+		return GoodToGoContentA;
+	};
+
+	const getSkipButton = () => {
+		if ( VARIANT_B === experiment402Variant ) {
+			return {
+				text: __( 'Continue with blank canvas', 'elementor' ),
+				href: elementorAppConfig.onboarding.urls.createNewPage,
+			};
+		}
+
+		return {
 			text: __( 'Skip', 'elementor' ),
 			href: elementorAppConfig.onboarding.urls.createNewPage,
-		},
-		kitLibraryLink = elementorAppConfig.onboarding.urls.kitLibrary + '&referrer=onboarding';
+		};
+	};
+
+	const getLayoutClassName = () => {
+		if ( VARIANT_B === experiment401Variant ) {
+			return 'experiment401-variant-b';
+		}
+		if ( VARIANT_B === experiment402Variant ) {
+			return 'experiment402-variant-b';
+		}
+		return '';
+	};
+
+	const ContentComponent = getContentComponent();
+	const skipButton = getSkipButton();
 
 	return (
-		<Layout pageId={ pageId }>
-			<h1 className="e-onboarding__page-content-section-title">
-				{ elementorAppConfig.onboarding.experiment
-					? __( 'Welcome aboard! What\'s next?', 'elementor' )
-					: __( 'That\'s a wrap! What\'s next?', 'elementor' ) }
-			</h1>
-			<div className="e-onboarding__page-content-section-text">
-				{ __( 'There are three ways to get started with Elementor:', 'elementor' ) }
-			</div>
-			<Grid container alignItems="center" justify="space-between" className="e-onboarding__cards-grid e-onboarding__page-content">
-				<Card
-					name="blank"
-					image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Blank_Canvas.svg' }
-					imageAlt={ __( 'Click here to create a new page and open it in Elementor Editor', 'elementor' ) }
-					text={ __( 'Edit a blank canvas with the Elementor Editor', 'elementor' ) }
-					link={ elementorAppConfig.onboarding.urls.createNewPage }
-				/>
-				<Card
-					name="template"
-					image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Library.svg' }
-					imageAlt={ __( 'Click here to go to Elementor\'s Website Templates', 'elementor' ) }
-					text={ __( 'Choose a professionally-designed template or import your own', 'elementor' ) }
-					link={ kitLibraryLink }
-					clickAction={ () => {
-						// The location is reloaded to make sure the Kit Library's state is re-created.
-						location.href = kitLibraryLink;
-						location.reload();
-					} }
-				/>
-				<Card
-					name="site-planner"
-					image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Site_Planner.svg' }
-					imageAlt={ __( 'Click here to go to Elementor\'s Site Planner', 'elementor' ) }
-					text={ __( 'Create a professional site in minutes using AI', 'elementor' ) }
-					link={ elementorAppConfig.onboarding.urls.sitePlanner }
-					target="_blank"
-				/>
-			</Grid>
-			<FooterButtons skipButton={ { ...skipButton, target: '_self' } } className="e-onboarding__good-to-go-footer" />
+		<Layout pageId={ pageId } className={ getLayoutClassName() }>
+			<ContentComponent skipButton={ skipButton } />
 		</Layout>
 	);
 }

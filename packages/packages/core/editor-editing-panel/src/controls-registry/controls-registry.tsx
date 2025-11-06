@@ -1,5 +1,6 @@
 import {
 	type ControlComponent,
+	DateTimeControl,
 	HtmlTagControl,
 	ImageControl,
 	KeyValueControl,
@@ -19,6 +20,7 @@ import {
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
+	DateTimePropTypeUtil,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
@@ -31,9 +33,8 @@ import {
 } from '@elementor/editor-props';
 
 import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../errors';
-import { TabsControl } from './element-controls/tabs-control/tabs-control';
 
-type ControlRegistry = Record<
+export type ControlRegistry = Record<
 	string,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	{ component: ControlComponent; layout: ControlLayout; propTypeUtil?: PropTypeUtil< string, any > }
@@ -55,6 +56,7 @@ const controlTypes = {
 	'key-value': { component: KeyValueControl, layout: 'full', propTypeUtil: keyValuePropTypeUtil },
 	'html-tag': { component: HtmlTagControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
+	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;
@@ -107,6 +109,3 @@ class ControlsRegistry {
 }
 
 export const controlsRegistry = new ControlsRegistry( controlTypes );
-
-// @ts-expect-error - we need to create a new control type and registry for the element controls
-controlsRegistry.register( 'tabs', TabsControl, 'full', undefined );
