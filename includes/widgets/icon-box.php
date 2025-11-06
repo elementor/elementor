@@ -328,11 +328,11 @@ class Widget_Icon_Box extends Widget_Base {
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
+				'classes' => 'elementor-control-start-end',
 				'selectors_dictionary' => [
 					'left' => is_rtl() ? 'end' : 'start',
 					'right' => is_rtl() ? 'start' : 'end',
 				],
-				'classes' => 'elementor-control-start-end',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'text-align: {{VALUE}};',
 				],

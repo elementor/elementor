@@ -40,36 +40,34 @@ test.describe( 'Variable Manager @v4-tests', () => {
 	} );
 
 	test( 'Font Variable exists after creating in panel', async ( ) => {
-		const addedFontVariable = await variablesManagerPage.addFontVariable();
-		await variablesManagerPage.openVariableManager( 'Typography', 'font-family' );
-		const variableRow = page.locator( 'tr', { hasText: addedFontVariable.name } );
+		const addedFontVariable = { name: 'test-font-variable', value: 'Arial', type: 'font' as const };
+		const variableRow = await variablesManagerPage.createVariableFromManager( addedFontVariable );
 		await expect( variableRow ).toBeVisible();
 		await expect( variableRow.getByText( addedFontVariable.value ) ).toBeVisible();
+		await expect( page.locator( '#elementor-panel' ) ).toHaveScreenshot( 'font-variable-screenshot.png' );
 	} );
-	test( 'Color Variable exists after creating in panel', async ( ) => {
-		const addedColorVariable = await variablesManagerPage.addColorVariable();
-		await variablesManagerPage.openVariableManager( 'Typography', 'text-color' );
-		const variableRow = page.locator( 'tr', { hasText: addedColorVariable.name } );
+
+	test( 'Color variable exists and screenshot', async ( ) => {
+		const addedColorVariable = { name: 'test-color-variable', value: '#000000', type: 'color' as const };
+		const variableRow = await variablesManagerPage.createVariableFromManager( addedColorVariable );
 		await expect( variableRow ).toBeVisible();
 		await expect( variableRow.getByText( addedColorVariable.value ) ).toBeVisible();
-	} );
-	test( 'Color variable screenshot test', async ( ) => {
-		await variablesManagerPage.addColorVariable();
-		await variablesManagerPage.openVariableManager( 'Typography', 'text-color' );
 		await expect( page.locator( '#elementor-panel' ) ).toHaveScreenshot( 'color-variable-screenshot.png' );
 	} );
 
 	test( 'Variable name validation error displays and clears in the manager', async () => {
-		await variablesManagerPage.createVariableFromManager( 'color' );
-		const nameField = page.getByRole( 'textbox', { name: 'Name' } );
+		const variableRow = await variablesManagerPage.createVariableFromManager( { name: 'test-variable', value: '#000000', type: 'color' } );
+		const nameField = variableRow.getByRole( 'button' ).nth( 1 );
+		await nameField.dblclick();
+		const nameInput = variableRow.getByRole( 'textbox' );
 
 		await test.step( 'Display validation error for invalid input', async () => {
-			await nameField.fill( ' ' );
+			await nameInput.fill( ' ' );
 			await expect( page.getByText( 'Give your variable a name.' ) ).toBeVisible();
 		} );
 
 		await test.step( 'Clear validation error when input is fixed', async () => {
-			await nameField.fill( 'valid-variable-name' );
+			await nameInput.fill( 'valid-variable-name' );
 			await expect( page.getByText( 'Give your variable a name.' ) ).not.toBeVisible();
 		} );
 	} );
