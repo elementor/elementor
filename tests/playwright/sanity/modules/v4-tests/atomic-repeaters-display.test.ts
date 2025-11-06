@@ -1,7 +1,6 @@
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
-import { wpCli } from '../../../assets/wp-cli';
 
 const CUSTOM_VALUE = 'my custom value';
 
@@ -9,10 +8,12 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 	let wpAdmin: WpAdminPage;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( {
+			e_atomic_elements: 'active',
+		} );
 	} );
 
 	test.afterAll( async () => {

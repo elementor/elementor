@@ -1,7 +1,6 @@
 import { parallelTest as test } from '../parallelTest';
 import { expect } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page';
-import { wpCli } from '../assets/wp-cli';
 
 async function validateGettingStartedPage( wpAdmin: WpAdminPage ) {
 	await wpAdmin.page.goto( '/wp-admin/admin.php?page=elementor-getting-started' );
@@ -26,11 +25,11 @@ test.describe( 'General Settings', () => {
 	test( 'Is visible if home is not active (default for hosting users)', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpCli( 'wp elementor experiments deactivate home_screen' );
+		await wpAdmin.setExperiments( { home_screen: false } );
 
 		// We need to navigate away
 		await validateGettingStartedPage( wpAdmin );
 		await validateGettingStartedLinkCount( wpAdmin, 1 );
-		await wpCli( 'wp elementor experiments activate home_screen' );
+		await wpAdmin.setExperiments( { home_screen: true }, true );
 	} );
 } );
