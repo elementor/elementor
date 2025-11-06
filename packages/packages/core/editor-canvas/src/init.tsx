@@ -1,7 +1,9 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
+import { init as initInteractionsRepository } from '@elementor/editor-interactions-repository';
 
 import { ClassesRename } from './components/classes-rename';
 import { ElementsOverlays } from './components/elements-overlays';
+import { InteractionsRenderer } from './components/interactions-renderer';
 import { StyleRenderer } from './components/style-renderer';
 import { initSettingsTransformers } from './init-settings-transformers';
 import { initStyleTransformers } from './init-style-transformers';
@@ -19,6 +21,8 @@ export function init() {
 
 	initSettingsTransformers();
 
+	initInteractionsRepository();
+
 	injectIntoTop( {
 		id: 'elements-overlays',
 		component: ElementsOverlays,
@@ -27,6 +31,11 @@ export function init() {
 	injectIntoTop( {
 		id: 'canvas-style-render',
 		component: StyleRenderer,
+	} );
+
+	injectIntoTop( {
+		id: 'canvas-interactions-render',
+		component: InteractionsRenderer,
 	} );
 
 	injectIntoLogic( {

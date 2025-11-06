@@ -1,6 +1,6 @@
 {
-  "name": "@elementor/editor-canvas",
-  "description": "Elementor Editor Canvas",
+  "name": "@elementor/editor-interactions-repository",
+  "description": "Elementor Editor Interactions Repository",
   "version": "3.33.0",
   "private": false,
   "author": "Elementor Team",
@@ -20,7 +20,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/elementor/elementor.git",
-    "directory": "packages/core/editor-canvas"
+    "directory": "packages/core/editor-interactions-repository"
   },
   "bugs": {
     "url": "https://github.com/elementor/elementor/issues"
@@ -32,29 +32,16 @@
     "build": "tsup --config=../../tsup.build.ts",
     "dev": "tsup --config=../../tsup.dev.ts"
   },
-  "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
   "dependencies": {
-    "@elementor/editor": "3.33.0",
-    "@elementor/editor-notifications": "3.33.0",
-    "@elementor/editor-documents": "3.33.0",
     "@elementor/editor-elements": "3.33.0",
-    "@elementor/editor-interactions-repository": "3.33.0",
-    "@elementor/editor-props": "3.33.0",
-    "@elementor/editor-responsive": "3.33.0",
-    "@elementor/editor-styles": "3.33.0",
-    "@elementor/editor-styles-repository": "3.33.0",
     "@elementor/editor-v1-adapters": "3.33.0",
-    "@elementor/twing": "3.33.0",
-    "@elementor/ui": "1.36.12",
-    "@elementor/utils": "3.33.0",
-    "@elementor/wp-media": "3.33.0",
-    "@floating-ui/react": "^0.27.5",
-    "@wordpress/i18n": "^5.13.0"
+    "@elementor/utils": "3.33.0"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
   },
   "devDependencies": {
     "tsup": "^8.3.5"
   }
 }
+
