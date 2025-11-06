@@ -6,6 +6,7 @@ import HardBreak from '@tiptap/extension-hard-break';
 import Italic from '@tiptap/extension-italic';
 import Strike from '@tiptap/extension-strike';
 import Text from '@tiptap/extension-text';
+import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 export const InlineEditor = React.forwardRef(
 	(
@@ -29,6 +30,7 @@ export const InlineEditor = React.forwardRef(
 				Bold,
 				Italic,
 				Strike,
+				Underline,
 				HardBreak.extend( {
 					addKeyboardShortcuts() {
 						return {
