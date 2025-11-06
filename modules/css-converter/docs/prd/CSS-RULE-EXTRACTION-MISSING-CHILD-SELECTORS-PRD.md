@@ -401,3 +401,4 @@ The solution requires extending the selector matching logic to recognize Element
 **Priority**: This must be fixed immediately as it causes data loss - actual styles from source sites are being lost and replaced with generic defaults.
 
 **Scope**: This affects ALL Elementor child element selectors, not just font-size. Any CSS targeting `.elementor-heading-title`, `.elementor-button-text`, etc. is currently being lost.
+

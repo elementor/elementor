@@ -175,3 +175,4 @@ private function add_virtual_ancestors( array $widgets, array $ancestor_classes 
 ## Implementation Priority
 
 **HIGH** - This is blocking CSS selector matching for targeted element extraction, which is a core use case for the widget converter API.
+

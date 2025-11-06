@@ -421,3 +421,4 @@ function parse_selector_via_api(string $selector): array {
 **Recommendation:** ✅ Improve PHP parser, ❌ Don't use JavaScript libraries  
 **Reason:** Performance + compatibility + simplicity > technical superiority
 
+

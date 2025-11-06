@@ -169,3 +169,4 @@ Revert changes to `html-parser.php` - metadata not needed.
 ✅ No e-con classes in final widget HTML (filtered out)
 ✅ Styles visible in Elementor editor Layout controls
 
+

@@ -448,3 +448,4 @@ The processor was designed with the assumption that checking class existence is 
 
 Implementing hierarchical path matching is the only reliable solution that will prevent pollution while preserving correct child element styling.
 
+

@@ -141,3 +141,4 @@ class Container_Variable_Resolver implements Css_Processor_Interface {
 		);
 	}
 }
+

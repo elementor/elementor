@@ -441,3 +441,4 @@ If issues arise:
 2. **Batch Fetching**: Get all global variables in one query
 3. **Custom Variable Support**: Handle theme-specific variables
 4. **Validation**: Ensure resolved values are valid CSS
+

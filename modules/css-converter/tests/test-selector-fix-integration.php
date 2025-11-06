@@ -265,3 +265,4 @@ class Test_Selector_Fix_Integration {
 		return $a === $b;
 	}
 }
+

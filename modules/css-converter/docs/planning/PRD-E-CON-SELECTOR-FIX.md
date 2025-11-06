@@ -209,3 +209,4 @@ foreach ($classes_to_remove as $class) {
 - Preserving e-con classes (they should be removed)
 - Supporting nested e-con structures (handle single level first)
 
+
