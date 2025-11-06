@@ -7,11 +7,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class WYSIWYG_Control extends Atomic_Control_Base {
+class Inline_Editing_Control extends Atomic_Control_Base {
 	private ?string $placeholder = null;
 
 	public function get_type(): string {
-		return 'wysiwyg';
+		return 'inline-editing';
 	}
 
 	public function set_placeholder( string $placeholder ): self {
