@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 
-import { PopupStateProvider } from '../../contexts/popup-state-contex';
+import { PopupStateProvider } from '../contexts/popup-state-contex';
 import { PredefinedInteractionsList } from '../components/interactions-list';
 import { getInteractionsConfig } from '../utils/get-interactions-config';
 

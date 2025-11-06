@@ -5,9 +5,7 @@ import { SessionStorageProvider } from '@elementor/session';
 
 import { useElement } from '../contexts/element-context';
 import { InteractionsProvider, useInteractionsContext } from '../contexts/interaction-context';
-import { usePopupStateContext } from '../contexts/popup-state-contex';
-import { EmptyState } from '../interactions/components/empty-state';
-import { PredefinedInteractionsList } from '../interactions/components/interactions-list';
+import { usePopupStateContext, EmptyState, PredefinedInteractionsList } from '@elementor/editor-interactions';
 import { SectionsList } from './sections-list';
 
 export const InteractionsTab = () => {
