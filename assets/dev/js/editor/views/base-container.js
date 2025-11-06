@@ -208,16 +208,6 @@ module.exports = Marionette.CompositeView.extend( {
 				element_type: elType,
 				widget_type: widgetType,
 			} );
-
-			if ( 'e-component' === widgetType ) {
-				const componentName = modelData?.settings?.component?.value;
-				// elementorCommon.eventsManager.dispatchEvent( 'add_component', {
-				// 	location: 'editor_panel',
-				// 	component_name: elementName,
-				// 	component_type: elType,
-				// 	widget_type: widgetType,
-				// } );
-			}
 		}
 	},
 

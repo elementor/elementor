@@ -24,8 +24,11 @@ const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
 
 export function init() {
 	stylesRepository.register( componentsStylesProvider );
+
 	registerSlice( slice );
+
 	registerElementType( TYPE, createComponentType );
+
 	registerDataHook( 'dependency', 'editor/documents/close', ( args ) => {
 		const document = getV1CurrentDocument();
 		if ( document.config.type === COMPONENT_DOCUMENT_TYPE ) {
@@ -33,6 +36,8 @@ export function init() {
 		}
 		return true;
 	} );
+
+	registerDataHook( 'after', 'document/elements/create', onElementCreation );
 
 	( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;
 
@@ -61,8 +66,6 @@ export function init() {
 
 		loadComponentsStyles( ( config?.elements as Element[] ) ?? [] );
 	} );
-
-	registerDataHook( 'after', 'document/elements/create', onElementCreation );
 
 	settingsTransformersRegistry.register( 'component-id', componentIdTransformer );
 }
