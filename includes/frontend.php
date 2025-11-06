@@ -473,7 +473,6 @@ class Frontend extends App {
 	 */
 	public function register_styles() {
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
-		$direction_suffix = is_rtl() ? '-rtl' : '';
 		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
 		/**
