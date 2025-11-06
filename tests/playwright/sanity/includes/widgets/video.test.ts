@@ -6,14 +6,11 @@ import EditorPage from '../../../pages/editor-page';
 import EditorSelectors from '../../../selectors/editor-selectors';
 import VideoWidget from '../../../pages/widgets/video';
 import videos from '../../../testData/video.json';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Video tests inside a container @video', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: true } );
-		await page.close();
+	test.beforeAll( async () => {
+		await wpCli( 'wp elementor experiments activate container' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
