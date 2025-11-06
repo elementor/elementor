@@ -437,9 +437,9 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 
 				parent::__construct( [
 					'id' => 1,
-					'settings' => $options['settings'] ?? [],
 					'controls' => $options['controls'] ?? [],
 					'props_schema' => $options['props_schema'] ?? [],
+					'settings' => $options['settings'] ?? [],
 					'styles' => $options['styles'] ?? [],
 					'elType' => 'widget',
 					'widgetType' => 'e-heading',
