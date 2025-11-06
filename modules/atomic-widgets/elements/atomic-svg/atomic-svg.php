@@ -16,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Utils;
+use Elementor\Modules\AtomicWidgets\PropTypes\Display_Conditions\Display_Conditions_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -49,6 +50,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			'svg' => Image_Src_Prop_Type::make()->default_url( static::DEFAULT_SVG_URL ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make(),
+			'display-conditions' => Display_Conditions_Prop_Type::make(),
 		];
 	}
 
