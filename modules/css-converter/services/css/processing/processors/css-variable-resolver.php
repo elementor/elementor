@@ -31,13 +31,24 @@ class Css_Variable_Resolver implements Css_Processor_Interface
     {
         $css_rules = $context->get_metadata('css_rules', []);
         $variable_definitions = $context->get_metadata('css_variable_definitions', []);
+        
+        $log_path = WP_CONTENT_DIR . '/css-variable-resolution.log';
+        $rules_count = count($css_rules);
+        $defs_count = count($variable_definitions);
+        $has_e66ebc9 = isset($variable_definitions['e-global-color-e66ebc9']);
+        file_put_contents($log_path, date('Y-m-d H:i:s') . " SUPPORTS_CONTEXT: css_rules={$rules_count}, variable_definitions={$defs_count}, has_e66ebc9=" . ($has_e66ebc9 ? 'yes' : 'no') . "\n", FILE_APPEND);
 
         // Require both css_rules and variable_definitions (populated by CSS Variable Registry at priority 9)
-        return ! empty($css_rules) && ! empty($variable_definitions);
+        $supports = ! empty($css_rules) && ! empty($variable_definitions);
+        file_put_contents($log_path, date('Y-m-d H:i:s') . " SUPPORTS_CONTEXT RESULT: " . ($supports ? 'YES' : 'NO') . "\n", FILE_APPEND);
+        return $supports;
     }
 
     public function process( Css_Processing_Context $context ): Css_Processing_Context
     {
+        $log_path = WP_CONTENT_DIR . '/css-variable-resolution.log';
+        file_put_contents($log_path, date('Y-m-d H:i:s') . " CSS_VARIABLE_RESOLVER: Starting process()\n", FILE_APPEND);
+        
         $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
         $debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
         
@@ -45,6 +56,27 @@ class Css_Variable_Resolver implements Css_Processor_Interface
         file_put_contents($tracking_log, date('[H:i:s] ') . "CSS_VARIABLE_RESOLVER: Started\n", FILE_APPEND);
 
         $css_rules = $context->get_metadata('css_rules', []);
+        
+        // DEBUG: Check what rules the resolver is processing
+        file_put_contents($log_path, date('Y-m-d H:i:s') . " CSS_VARIABLE_RESOLVER: Processing " . count($css_rules) . " rules\n", FILE_APPEND);
+        foreach ($css_rules as $i => $rule) {
+            $selector = $rule['selector'] ?? 'NO_SELECTOR';
+            $prop_count = count($rule['properties'] ?? []);
+            file_put_contents($log_path, date('Y-m-d H:i:s') . " RULE {$i}: '{$selector}' with {$prop_count} properties\n", FILE_APPEND);
+            
+            // Check if this rule has var() references
+            $has_var_refs = false;
+            foreach ($rule['properties'] ?? [] as $prop) {
+                $value = $prop['value'] ?? '';
+                if (strpos($value, 'var(') !== false) {
+                    $has_var_refs = true;
+                    file_put_contents($log_path, date('Y-m-d H:i:s') . "   VAR REF: {$prop['property']} = {$value}\n", FILE_APPEND);
+                }
+            }
+            if (!$has_var_refs && $i < 3) {
+                file_put_contents($log_path, date('Y-m-d H:i:s') . "   NO VAR REFS in rule {$i}\n", FILE_APPEND);
+            }
+        }
         $variable_definitions = $context->get_metadata('css_variable_definitions', []);
 
         // DEBUG: Track specific target rule at START
@@ -139,28 +171,6 @@ class Css_Variable_Resolver implements Css_Processor_Interface
                     return $resolved_value;
                 }
 
-                // Try WordPress fetch for global variables
-                if ($this->is_global_variable($var_name) ) {
-                    $wp_resolved = $this->fetch_global_variable_from_wp($var_name);
-                    if ($wp_resolved !== null ) {
-                        file_put_contents(
-                            $log_path,
-                            date('Y-m-d H:i:s') . " RESOLVED (WordPress): {$original_var} → {$wp_resolved}\n",
-                            FILE_APPEND
-                        );
-                        return $wp_resolved;
-                    }
-                    
-                    // Use sensible default for global variables
-                    $default_value = $this->get_global_variable_default($var_name);
-                    file_put_contents(
-                        $log_path,
-                        date('Y-m-d H:i:s') . " RESOLVED (default): {$original_var} → {$default_value}\n",
-                        FILE_APPEND
-                    );
-                    return $default_value;
-                }
-
                 // Use fallback if provided
                 if (! empty($fallback) ) {
                     file_put_contents(
@@ -185,7 +195,16 @@ class Css_Variable_Resolver implements Css_Processor_Interface
 
     private function get_variable_value( string $var_name, array $variable_definitions ): ?string
     {
-        $clean_name = ltrim($var_name, '-');
+        $clean_name = $this->clean_variable_name($var_name);
+        
+        // DEBUG: Check if e66ebc9 variable is being resolved
+        if ( strpos( $var_name, 'e66ebc9' ) !== false || strpos( $clean_name, 'e66ebc9' ) !== false ) {
+            $log_path = WP_CONTENT_DIR . '/css-variable-resolution.log';
+            $has_definition = isset( $variable_definitions[ $clean_name ] );
+            $def_value = $has_definition ? ( $variable_definitions[ $clean_name ]['value'] ?? 'EMPTY' ) : 'NOT_FOUND';
+            $total_defs = count( $variable_definitions );
+            file_put_contents( $log_path, date('Y-m-d H:i:s') . " DEBUG RESOLVE e66ebc9: var_name='{$var_name}', clean_name='{$clean_name}', has_definition=" . ($has_definition ? 'yes' : 'no') . ", value='{$def_value}', total_definitions={$total_defs}\n", FILE_APPEND );
+        }
 
         if (isset($variable_definitions[ $clean_name ]) ) {
             $var_value = $variable_definitions[ $clean_name ]['value'] ?? '';
@@ -195,18 +214,16 @@ class Css_Variable_Resolver implements Css_Processor_Interface
             }
         }
 
-        if (strpos($clean_name, 'ec-global-') === 0 ) {
-            $original_name = str_replace('ec-global-', 'e-global-', $clean_name);
-            if (isset($variable_definitions[ $original_name ]) ) {
-                $var_value = $variable_definitions[ $original_name ]['value'] ?? '';
-
-                if (! empty($var_value) ) {
-                    return $var_value;
-                }
-            }
-        }
-
         return null;
+    }
+
+    private function clean_variable_name( string $variable_name ): string
+    {
+        $clean = trim($variable_name);
+        if (0 === strpos($clean, '--') ) {
+            $clean = substr($clean, 2);
+        }
+        return $clean;
     }
 
     private function get_variable_type_from_value( string $value, array $variable_definitions ): string
@@ -221,20 +238,20 @@ class Css_Variable_Resolver implements Css_Processor_Interface
 
     private function get_variable_type( string $var_name, array $variable_definitions ): string
     {
-        $clean_name = ltrim($var_name, '-');
+        $clean_name = $this->clean_variable_name($var_name);
 
         if (isset($variable_definitions[ $clean_name ]['type']) ) {
             return $variable_definitions[ $clean_name ]['type'];
         }
 
         if ($this->is_global_variable($var_name) ) {
-            if (strpos($var_name, '--e-global-color-') === 0 || strpos($var_name, '--ec-global-color-') === 0 ) {
+            if (strpos($var_name, '--e-global-color-') === 0 ) {
                 return 'color';
             }
-            if (strpos($var_name, '--e-global-typography-') === 0 || strpos($var_name, '--ec-global-typography-') === 0 ) {
+            if (strpos($var_name, '--e-global-typography-') === 0 ) {
                 return 'font';
             }
-            if (strpos($var_name, '--e-global-size-') === 0 || strpos($var_name, '--ec-global-size-') === 0 ) {
+            if (strpos($var_name, '--e-global-size-') === 0 ) {
                 return 'size';
             }
         }
@@ -248,9 +265,6 @@ class Css_Variable_Resolver implements Css_Processor_Interface
         '--e-global-color-',
         '--e-global-typography-',
         '--e-global-size-',
-        '--ec-global-color-',
-        '--ec-global-typography-',
-        '--ec-global-size-',
         ];
 
         foreach ( $global_prefixes as $prefix ) {
@@ -262,108 +276,6 @@ class Css_Variable_Resolver implements Css_Processor_Interface
         return false;
     }
 
-    private function fetch_global_variable_from_wp( string $var_name ): ?string
-    {
-        $clean_name = ltrim($var_name, '-');
-        $clean_name = str_replace('ec-global-', 'e-global-', $clean_name);
-        
-        if (preg_match('/e-global-color-([a-zA-Z0-9]+)/', $clean_name, $matches) ) {
-            return $this->fetch_global_color($matches[1]);
-        }
-        
-        if (preg_match('/e-global-typography-([a-zA-Z0-9]+)-([a-z-]+)/', $clean_name, $matches) ) {
-            return $this->fetch_global_typography($matches[1], $matches[2]);
-        }
-        
-        return null;
-    }
-
-    private function fetch_global_color( string $color_id ): ?string
-    {
-        $kit_id = get_option('elementor_active_kit');
-        if (! $kit_id ) {
-            return null;
-        }
-        
-        $kit_settings = get_post_meta($kit_id, '_elementor_page_settings', true);
-        if (! isset($kit_settings['system_colors']) ) {
-            return null;
-        }
-        
-        foreach ( $kit_settings['system_colors'] as $color ) {
-            if ($color['_id'] === $color_id ) {
-                return $color['color'] ?? null;
-            }
-        }
-        
-        return null;
-    }
-
-    private function fetch_global_typography( string $typo_id, string $property ): ?string
-    {
-        $kit_id = get_option('elementor_active_kit');
-        if (! $kit_id ) {
-            return null;
-        }
-        
-        $kit_settings = get_post_meta($kit_id, '_elementor_page_settings', true);
-        if (! isset($kit_settings['system_typography']) ) {
-            return null;
-        }
-        
-        foreach ( $kit_settings['system_typography'] as $typo ) {
-            if ($typo['_id'] === $typo_id ) {
-                switch ( $property ) {
-                case 'font-weight':
-                    return $typo['typography_font_weight'] ?? null;
-                case 'font-size':
-                    if (isset($typo['typography_font_size']) ) {
-                        $size = $typo['typography_font_size'];
-                        return $size['size'] . ( $size['unit'] ?? 'px' );
-                    }
-                    return null;
-                case 'font-family':
-                    return $typo['typography_font_family'] ?? null;
-                case 'line-height':
-                    if (isset($typo['typography_line_height']) ) {
-                         $line_height = $typo['typography_line_height'];
-                         return $line_height['size'] . ( $line_height['unit'] ?? '' );
-                    }
-                    return null;
-                }
-            }
-        }
-        
-        return null;
-    }
-
-    private function get_global_variable_default( string $var_name ): string
-    {
-        $clean_name = ltrim($var_name, '-');
-        
-        // Color defaults
-        if (strpos($clean_name, 'global-color-') !== false ) {
-            return '#000000';  // Default to black
-        }
-        
-        // Typography defaults
-        if (strpos($clean_name, 'typography') !== false ) {
-            if (strpos($clean_name, 'font-weight') !== false ) {
-                return '400';  // Default font weight
-            }
-            if (strpos($clean_name, 'font-size') !== false ) {
-                return '16px';  // Default font size
-            }
-            if (strpos($clean_name, 'font-family') !== false ) {
-                return 'Arial, sans-serif';  // Default font family
-            }
-            if (strpos($clean_name, 'line-height') !== false ) {
-                return '1.5';  // Default line height
-            }
-        }
-        
-        return 'initial';  // CSS initial value
-    }
 
     private function find_target_rule( array $css_rules, string $element_id, string $class_name ): array
     {

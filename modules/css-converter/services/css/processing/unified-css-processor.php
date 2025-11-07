@@ -47,6 +47,17 @@ class Unified_Css_Processor
         file_put_contents($debug_file, 'UNIFIED CSS PROCESSOR STARTED: ' . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
         file_put_contents($debug_file, 'CSS size: ' . strlen($css) . " bytes\n", FILE_APPEND);
         file_put_contents($debug_file, 'Widgets count: ' . count($widgets) . "\n", FILE_APPEND);
+        
+        // STEP 1: Check if Kit CSS definitions are in input CSS
+        $has_kit_css = strpos($css, '.elementor-kit-') !== false;
+        $has_e66ebc9_def = strpos($css, '--e-global-color-e66ebc9:#222A5A') !== false;
+        file_put_contents($debug_file, "STEP 1 - INPUT CSS: hasKitCSS=$has_kit_css, hasE66ebc9Definition=$has_e66ebc9_def\n", FILE_APPEND);
+        
+        if ($has_e66ebc9_def) {
+            $pos = strpos($css, '--e-global-color-e66ebc9');
+            $sample = substr($css, max(0, $pos - 50), 150);
+            file_put_contents($debug_file, "STEP 1 - E66EBC9 FOUND: " . str_replace("\n", ' ', $sample) . "\n", FILE_APPEND);
+        }
 
         // Create processing context with input data
         $context = new Css_Processing_Context();
@@ -1372,9 +1383,8 @@ class Unified_Css_Processor
 
                 if ($is_elementor_kit_css ) {
                     $has_e_global_vars = preg_match('/--e-global-[^:]+:/', $css_content);
-                    $has_ec_global_vars = preg_match('/--ec-global-[^:]+:/', $css_content);
                     $content_size = strlen($css_content);
-                    error_log("CSS Variables DEBUG: Elementor Kit CSS fetched: size=$content_size, has --e-global- vars: " . ( $has_e_global_vars ? 'yes' : 'no' ) . ', has --ec-global- vars: ' . ( $has_ec_global_vars ? 'yes' : 'no' ));
+                    error_log("CSS Variables DEBUG: Elementor Kit CSS fetched: size=$content_size, has --e-global- vars: " . ( $has_e_global_vars ? 'yes' : 'no' ));
                     if ($has_e_global_vars ) {
                         preg_match_all('/(--e-global-[^:]+):\s*([^;]+);/', $css_content, $var_matches);
                         if (! empty($var_matches[1]) ) {
@@ -1441,7 +1451,23 @@ class Unified_Css_Processor
         // Inline styles should override everything else
         $css_sources = array_merge($css_sources, $inline_element_styles);
 
-        return $this->parse_css_sources_safely($css_sources);
+        $combined_css = $this->parse_css_sources_safely($css_sources);
+        
+        // STEP 2: Check if Kit CSS definitions survive combination
+        $debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
+        $has_kit_after_combine = strpos($combined_css, '.elementor-kit-') !== false;
+        $has_e66ebc9_after_combine = strpos($combined_css, '--e-global-color-e66ebc9:#222A5A') !== false;
+        file_put_contents($debug_file, "STEP 2 - AFTER COMBINATION: hasKitCSS=$has_kit_after_combine, hasE66ebc9Definition=$has_e66ebc9_after_combine\n", FILE_APPEND);
+        
+        if ($has_e66ebc9_after_combine) {
+            $pos = strpos($combined_css, '--e-global-color-e66ebc9');
+            $sample = substr($combined_css, max(0, $pos - 50), 150);
+            file_put_contents($debug_file, "STEP 2 - E66EBC9 SURVIVED: " . str_replace("\n", ' ', $sample) . "\n", FILE_APPEND);
+        } else {
+            file_put_contents($debug_file, "STEP 2 - E66EBC9 LOST during CSS combination\n", FILE_APPEND);
+        }
+        
+        return $combined_css;
     }
 
     private function parse_css_sources_safely( array $css_sources ): string
@@ -1450,19 +1476,33 @@ class Unified_Css_Processor
         $failed_sources = [];
         $successful_count = 0;
         $failed_count = 0;
+        
+        $debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
+        file_put_contents($debug_file, "STEP 3 - CSS SOURCES: Processing " . count($css_sources) . " sources\n", FILE_APPEND);
 
         foreach ( $css_sources as $source ) {
             $type = $source['type'];
             $source_name = $source['source'];
             $content = $source['content'];
+            
+            $is_kit_css = strpos($source_name, '/elementor/css/') !== false;
+            $has_e66ebc9 = strpos($content, '--e-global-color-e66ebc9:#222A5A') !== false;
+            
+            if ($is_kit_css || $has_e66ebc9) {
+                file_put_contents($debug_file, "STEP 3 - SOURCE: $source_name (isKit=$is_kit_css, hasE66ebc9=$has_e66ebc9, size=" . strlen($content) . ")\n", FILE_APPEND);
+            }
 
             if (empty(trim($content)) ) {
+                if ($is_kit_css) {
+                    file_put_contents($debug_file, "STEP 3 - SKIPPED: Kit CSS source is empty\n", FILE_APPEND);
+                }
                 continue;
             }
 
             try {
                 $sanitized_content = $this->sanitize_css_for_parsing($content);
-                $sanitized_content = $this->rename_elementor_css_variables($sanitized_content);
+                // REMOVED: CSS variable renaming - resolve --e-global- directly instead
+                // $sanitized_content = $this->rename_elementor_css_variables($sanitized_content);
 
                 if (null !== $this->css_parser ) {
                     try {
@@ -1470,15 +1510,25 @@ class Unified_Css_Processor
                         $document = $parsed->get_document();
                         $format = \Sabberworm\CSS\OutputFormat::createPretty();
                         $beautified_content = $document->render($format);
+                        
+                        // STEP 3: Check if beautification preserves Kit CSS
+                        if ($has_e66ebc9) {
+                            $has_e66ebc9_after_beautify = strpos($beautified_content, '--e-global-color-e66ebc9:#222A5A') !== false;
+                            file_put_contents($debug_file, "STEP 3 - BEAUTIFY: $source_name hasE66ebc9After=$has_e66ebc9_after_beautify\n", FILE_APPEND);
+                            if (!$has_e66ebc9_after_beautify) {
+                                file_put_contents($debug_file, "STEP 3 - LOST: E66ebc9 lost during beautification of $source_name\n", FILE_APPEND);
+                            }
+                        }
+                        
                         $sanitized_content = $beautified_content;
                     } catch ( \Exception $beautify_error ) {
-                        error_log("CSS Beautification failed for source: $source_name - " . $beautify_error->getMessage());
-                        try {
-                            $test_parse = $this->css_parser->parse($sanitized_content);
-                        } catch ( \Exception $parse_error ) {
-                            error_log('CSS Parsing also failed after beautification error: ' . $parse_error->getMessage());
-                            throw $parse_error;
+                        if ($has_e66ebc9) {
+                            file_put_contents($debug_file, "STEP 3 - ERROR: Beautification failed for Kit CSS $source_name: " . $beautify_error->getMessage() . "\n", FILE_APPEND);
+                            file_put_contents($debug_file, "STEP 3 - FALLBACK: Using original content for Kit CSS to preserve variables\n", FILE_APPEND);
                         }
+                        error_log("CSS Beautification failed for source: $source_name - " . $beautify_error->getMessage());
+                        // CRITICAL FIX: Keep original content if beautification fails (especially for Kit CSS)
+                        // Don't throw error - just use the sanitized content as-is
                     }
                 }
 
@@ -2018,7 +2068,7 @@ class Unified_Css_Processor
             }
 
             if (0 === strpos($property, '--') ) {
-                if ($isKitSelector || strpos($property, 'ec-global') !== false || strpos($property, 'e-global') !== false ) {
+                if ($isKitSelector || strpos($property, 'e-global') !== false ) {
                     error_log("CSS Variables DEBUG: Found definition in selector '$selector': $property = '$value' (empty: " . ( empty($value) ? 'yes' : 'no' ) . ')');
                 }
                 $this->store_css_variable_definition($property, $value, $selector);
@@ -2034,7 +2084,7 @@ class Unified_Css_Processor
             foreach ( $matches[1] as $variable_name ) {
                 $variable_name = trim($variable_name);
 
-                if (strpos($variable_name, 'ec-global') !== false ) {
+                if (strpos($variable_name, 'e-global') !== false ) {
                     error_log("CSS Variables DEBUG: Found reference to '$variable_name' in selector '$selector', value: $value");
                 }
 
@@ -2045,7 +2095,7 @@ class Unified_Css_Processor
                     'selector' => $selector,
                     'source' => 'extracted_from_reference',
                     ];
-                    if (strpos($variable_name, 'ec-global') !== false ) {
+                    if (strpos($variable_name, 'e-global') !== false ) {
                         error_log("CSS Variables DEBUG: Created reference entry for '$variable_name' (no value yet)");
                     }
                 }
@@ -2059,7 +2109,7 @@ class Unified_Css_Processor
             return;
         }
 
-        $isEcGlobal = strpos($variable_name, 'ec-global') !== false;
+        $isEGlobal = strpos($variable_name, 'e-global') !== false;
 
         if (! isset($this->css_variable_definitions[ $variable_name ]) ) {
             $this->css_variable_definitions[ $variable_name ] = [
@@ -2068,7 +2118,7 @@ class Unified_Css_Processor
             'selector' => $selector,
             'source' => 'extracted_from_css',
             ];
-            if ($isEcGlobal ) {
+            if ($isEGlobal ) {
                 error_log("CSS Variables DEBUG: Stored NEW definition for '$variable_name' = '$value' from selector '$selector'");
             }
         } elseif (empty($this->css_variable_definitions[ $variable_name ]['value']) || $this->css_variable_definitions[ $variable_name ]['source'] === 'extracted_from_reference' ) {
@@ -2078,10 +2128,10 @@ class Unified_Css_Processor
             if (empty($this->css_variable_definitions[ $variable_name ]['selector']) || $this->css_variable_definitions[ $variable_name ]['selector'] === $selector ) {
                 $this->css_variable_definitions[ $variable_name ]['selector'] = $selector;
             }
-            if ($isEcGlobal ) {
+            if ($isEGlobal ) {
                 error_log("CSS Variables DEBUG: UPDATED definition for '$variable_name' = '$value' (was: source=$oldSource, had_empty_value=" . ( empty($this->css_variable_definitions[ $variable_name ]['value']) ? 'yes' : 'no' ) . ')');
             }
-        } elseif ($isEcGlobal ) {
+        } elseif ($isEGlobal ) {
             error_log("CSS Variables DEBUG: Skipped storing definition for '$variable_name' (already exists with value)");
         }
     }
@@ -2091,22 +2141,6 @@ class Unified_Css_Processor
         return $this->css_variable_definitions;
     }
 
-    private function rename_elementor_css_variables( string $css ): string
-    {
-        $count = substr_count($css, '--e-global-');
-        $renamed = preg_replace('/--e-global-/', '--ec-global-', $css);
-        
-        if ($count > 0 ) {
-            $log_path = WP_CONTENT_DIR . '/css-variable-renaming.log';
-            file_put_contents(
-                $log_path,
-                date('Y-m-d H:i:s') . " CSS Variables: Renamed {$count} --e-global- variables to --ec-global-\n",
-                FILE_APPEND
-            );
-        }
-        
-        return $renamed;
-    }
 
     /**
      * Process global classes with duplicate detection

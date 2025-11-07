@@ -189,7 +189,7 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 			file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Sample definitions: ' . implode( ', ', $sample_defs ) . "\n", FILE_APPEND );
 
 			$ec_global_defs = array_filter( $all_def_keys, function( $key ) {
-				return strpos( $key, 'ec-global-color' ) !== false || strpos( $key, 'ec-global-typography' ) !== false;
+				return strpos( $key, 'e-global-color' ) !== false || strpos( $key, 'e-global-typography' ) !== false;
 			} );
 			file_put_contents( $log_file, date( '[H:i:s] ' ) . 'EC-global definitions found: ' . count( $ec_global_defs ) . ' (' . implode( ', ', array_slice( $ec_global_defs, 0, 10 ) ) . ")\n", FILE_APPEND );
 
@@ -515,16 +515,14 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 		file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Kit extraction: Found ' . count( $kitMatches[1] ) . " Kit selector blocks\n", FILE_APPEND );
 
 		foreach ( $kitMatches[1] as $kitIndex => $kitContent ) {
-			$renamedContent = preg_replace( '/--e-global-/', '--ec-global-', $kitContent );
-
 			$patterns = [
-				'/(--ec-global-[^:]+):\s*([^;]+?)(?=\s*--ec-global-|\s*;|\s*}|$)/',
-				'/(--ec-global-[^:}]+):\s*([^;}]+)/',
+				'/(--[a-zA-Z0-9-]+):\s*([^;]+?)(?=\s*--[a-zA-Z0-9-]+|\s*;|\s*}|$)/',
+				'/(--[a-zA-Z0-9-]+):\s*([^;}]+)/',
 			];
 
 			$varMatches = [];
 			foreach ( $patterns as $pattern ) {
-				preg_match_all( $pattern, $renamedContent, $matches, PREG_SET_ORDER );
+				preg_match_all( $pattern, $kitContent, $matches, PREG_SET_ORDER );
 				if ( ! empty( $matches ) ) {
 					$varMatches = $matches;
 					break;
@@ -594,13 +592,7 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 
 	private function clean_variable_name( string $var_name ): string {
 		$clean_name = ltrim( $var_name, '-' );
-
-		if ( str_starts_with( $clean_name, 'e-global-' ) ) {
-			$clean_name = 'ec-' . substr( $clean_name, 2 );
-		}
-
 		$clean_name = sanitize_key( $clean_name );
-
 		return $clean_name;
 	}
 

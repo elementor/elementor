@@ -41,10 +41,32 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 		$cssToCheck = ! empty( $css ) ? $css : $beautified_css;
 
 		if ( ! empty( $cssToCheck ) ) {
+			$has_e66ebc9 = strpos( $cssToCheck, 'e66ebc9' ) !== false;
+			if ( $has_e66ebc9 ) {
+				$pos = strpos( $cssToCheck, 'e66ebc9' );
+				$sample = substr( $cssToCheck, max(0, $pos - 100), 250 );
+				$sample = str_replace( "\n", ' ', $sample );
+				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG: CSS contains e66ebc9 at position $pos. Sample: " . $sample . "\n", FILE_APPEND );
+			}
+			
 			$before_kit = count( $this->css_variable_definitions );
 			$kitVariablesExtracted = $this->extract_kit_css_variables_from_raw_css( $cssToCheck );
 			$after_kit = count( $this->css_variable_definitions );
 			$variables_extracted += $kitVariablesExtracted;
+			
+			if ( $has_e66ebc9 ) {
+				$found = false;
+				foreach ( $this->css_variable_definitions as $key => $def ) {
+					if ( strpos( $key, 'e66ebc9' ) !== false ) {
+						$found = true;
+						file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG: Found e66ebc9 in definitions as key '{$key}' with value '{$def['value']}'\n", FILE_APPEND );
+					}
+				}
+				if ( ! $found ) {
+					file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG: e66ebc9 NOT found in extracted variables\n", FILE_APPEND );
+					file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG: Sample keys: " . implode(', ', array_slice(array_keys($this->css_variable_definitions), 0, 10)) . "\n", FILE_APPEND );
+				}
+			}
 		}
 
 		$existing_definitions = $context->get_metadata( 'css_variable_definitions', [] );
@@ -135,8 +157,13 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 	private function store_css_variable_definition( string $variable_name, string $value, string $selector ): void {
 		$clean_name = $this->clean_variable_name( $variable_name );
 
+		// Skip if empty value and variable already exists WITH a non-empty value
 		if ( empty( $value ) && isset( $this->css_variable_definitions[ $clean_name ] ) ) {
-			return;
+			$existing_value = $this->css_variable_definitions[ $clean_name ]['value'] ?? '';
+			if ( ! empty( $existing_value ) ) {
+				return; // Don't overwrite existing non-empty value
+			}
+			// Continue if existing value is also empty (we'll update other metadata)
 		}
 
 		$new_specificity = $this->calculate_selector_specificity( $selector );
@@ -188,33 +215,59 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 	private function extract_kit_css_variables_from_raw_css( string $css ): int {
 		$extracted = 0;
 
-		$hasEGlobal = strpos( $css, '--e-global-' ) !== false;
+		$hasVariables = strpos( $css, '--' ) !== false;
 
-		if ( ! $hasEGlobal ) {
+		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+		
+		if ( ! $hasVariables ) {
+			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG KIT: No variables found in CSS (size: " . strlen($css) . ")\n", FILE_APPEND );
 			return 0;
+		}
+		
+		// Check if CSS contains Kit selector
+		$hasKitSelector = strpos( $css, '.elementor-kit-' ) !== false;
+		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG KIT: hasVariables=true, hasKitSelector=" . ($hasKitSelector ? 'true' : 'false') . "\n", FILE_APPEND );
+		
+		if ( $hasKitSelector ) {
+			$kit_pos = strpos( $css, '.elementor-kit-' );
+			$kit_sample = substr( $css, $kit_pos, 200 );
+			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG KIT: Kit CSS found at position $kit_pos: " . str_replace("\n", ' ', $kit_sample) . "\n", FILE_APPEND );
 		}
 
 		$patterns = [
-			'/(--e-global-[a-zA-Z0-9-]+)\s*:\s*([^;]+);/',
-			'/(--e-global-[a-zA-Z0-9-]+)\s*:\s*([^}]+?)(?=\s*--e-global-|\s*})/)',
+			'/(--[a-zA-Z0-9-]+)\s*:\s*([^;]+);/',
+			'/(--[a-zA-Z0-9-]+)\s*:\s*([^}]+?)(?=\s*--[a-zA-Z0-9-]+|\s*})/)',
+			'/(--[a-zA-Z0-9-]+):([^;]+);/',
 		];
 
 		$allVarMatches = [];
-		foreach ( $patterns as $pattern ) {
+		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+		foreach ( $patterns as $pattern_idx => $pattern ) {
 			preg_match_all( $pattern, $css, $matches, PREG_SET_ORDER );
 			if ( ! empty( $matches ) ) {
-				$allVarMatches = $matches;
-				break;
+				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG KIT PATTERN $pattern_idx matched " . count($matches) . " variables\n", FILE_APPEND );
+				$allVarMatches = array_merge( $allVarMatches, $matches );
 			}
 		}
+		
+		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG KIT: Total matches = " . count($allVarMatches) . "\n", FILE_APPEND );
 
+		$e66ebc9_found = false;
 		foreach ( $allVarMatches as $match ) {
 			$varName = trim( $match[1] );
 			$varValue = trim( $match[2] ?? '' );
 
 			$clean_name = $this->clean_variable_name( $varName );
+			
+			// DEBUG: Check if this is e66ebc9
+			if ( strpos( $varName, 'e66ebc9' ) !== false || strpos( $clean_name, 'e66ebc9' ) !== false ) {
+				$e66ebc9_found = true;
+				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG EXTRACTION: Found '{$varName}' = '{$varValue}' -> clean: '{$clean_name}'\n", FILE_APPEND );
+			}
 
-			if ( ! isset( $this->css_variable_definitions[ $clean_name ] ) ) {
+			// Store variable definition, overwriting if current value is empty
+			$existing_value = $this->css_variable_definitions[ $clean_name ]['value'] ?? null;
+			if ( $existing_value === null || $existing_value === '' ) {
 				$this->css_variable_definitions[ $clean_name ] = [
 					'name' => $varName,
 					'value' => $varValue,
@@ -223,6 +276,24 @@ class Css_Variable_Registry_Processor implements Css_Processor_Interface {
 					'source' => 'extracted_from_kit_css',
 				];
 				++$extracted;
+				
+				if ( strpos( $clean_name, 'e66ebc9' ) !== false ) {
+					file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG STORED: '{$clean_name}' = '{$varValue}' (was: '{$existing_value}')\n", FILE_APPEND );
+				}
+			} else {
+				if ( strpos( $clean_name, 'e66ebc9' ) !== false ) {
+					file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG SKIPPED: '{$clean_name}' already has value '{$existing_value}' (new: '{$varValue}')\n", FILE_APPEND );
+				}
+			}
+		}
+		
+		if ( ! $e66ebc9_found ) {
+			$totalMatches = count($allVarMatches);
+			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG KIT: e66ebc9 NOT found in $totalMatches matches. First 5 matches:\n", FILE_APPEND );
+			for ( $i = 0; $i < min(5, $totalMatches); $i++ ) {
+				$sample_name = trim($allVarMatches[$i][1] ?? '');
+				$sample_value = trim($allVarMatches[$i][2] ?? '');
+				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "  Match $i: '{$sample_name}' = '{$sample_value}'\n", FILE_APPEND );
 			}
 		}
 

@@ -70,8 +70,31 @@ class Widget_Class_Processor implements Css_Processor_Interface
         $css_rules = $context->get_metadata('css_rules', []);
         $widgets = $context->get_widgets();
         $css_variable_definitions = $context->get_metadata('css_variable_definitions', []);
+        
+        $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+        $debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
+        
+        // STEP 5: Check Kit CSS rules BEFORE widget processing
+        $kit_rules_before = 0;
+        $e66ebc9_rules_before = 0;
+        foreach ( $css_rules as $rule ) {
+            $selector = $rule['selector'] ?? '';
+            if ( strpos( $selector, 'elementor-kit-' ) !== false ) {
+                $kit_rules_before++;
+                foreach ( $rule['properties'] ?? [] as $prop ) {
+                    if ( strpos( $prop['property'] ?? '', 'e66ebc9' ) !== false ) {
+                        $e66ebc9_rules_before++;
+                    }
+                }
+            }
+        }
+        file_put_contents($debug_file, "STEP 5 - WIDGET_CLASS_PROCESSOR START: {$kit_rules_before} Kit rules, {$e66ebc9_rules_before} e66ebc9 properties\n", FILE_APPEND);
+        
+        file_put_contents( $tracking_log, "\n" . str_repeat( '~', 80 ) . "\n", FILE_APPEND );
+        file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "WIDGET_CLASS_PROCESSOR: Started with " . count($css_rules) . " rules\n", FILE_APPEND );
 
         if (empty($css_rules) || empty($widgets) ) {
+            file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "WIDGET_CLASS_PROCESSOR: Skipped - empty rules or widgets\n", FILE_APPEND );
             return $context;
         }
 
@@ -79,6 +102,9 @@ class Widget_Class_Processor implements Css_Processor_Interface
         $widget_specific_rules = $this->extract_widget_specific_rules($css_rules, $widget_classes);
 
         if (empty($widget_specific_rules) ) {
+            // CRITICAL FIX: Even if no widget-specific rules, we must update context with remaining rules
+            // This ensures Kit CSS rules pass through to other processors
+            $context->set_metadata('css_rules', $css_rules);
             return $context;
         }
 
@@ -86,6 +112,23 @@ class Widget_Class_Processor implements Css_Processor_Interface
 
         // Remove processed rules from css_rules so they don't get processed as global classes
         $remaining_rules = $this->remove_processed_rules($css_rules, $widget_specific_rules);
+        
+        // STEP 5: Check Kit CSS rules AFTER widget processing
+        $kit_rules_after = 0;
+        $e66ebc9_rules_after = 0;
+        foreach ( $remaining_rules as $rule ) {
+            $selector = $rule['selector'] ?? '';
+            if ( strpos( $selector, 'elementor-kit-' ) !== false ) {
+                $kit_rules_after++;
+                foreach ( $rule['properties'] ?? [] as $prop ) {
+                    if ( strpos( $prop['property'] ?? '', 'e66ebc9' ) !== false ) {
+                        $e66ebc9_rules_after++;
+                    }
+                }
+            }
+        }
+        file_put_contents($debug_file, "STEP 5 - WIDGET_CLASS_PROCESSOR END: {$kit_rules_after} Kit rules, {$e66ebc9_rules_after} e66ebc9 properties (removed " . ($kit_rules_before - $kit_rules_after) . " Kit rules)\n", FILE_APPEND);
+        
         $context->set_metadata('css_rules', $remaining_rules);
 
         // COMMENTED OUT: Hardcoded widget class removal logic
@@ -293,12 +336,29 @@ class Widget_Class_Processor implements Css_Processor_Interface
             $selector = $rule['selector'] ?? '';
 
             $this->current_selector = $selector;
+            
+            // CRITICAL FIX: Skip Kit CSS selectors - they should be processed by CSS Variable Registry Processor, not Widget Class Processor
+            if ( strpos( $selector, 'elementor-kit-' ) !== false ) {
+                continue; // Skip Kit CSS - let it pass through to other processors
+            }
 
             if ($this->should_skip_complex_selector($selector) ) {
+                // DEBUG: Check if Kit CSS is being skipped
+                if ( strpos( $selector, 'elementor-kit-' ) !== false ) {
+                    $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+                    file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG WIDGET_CLASS: SKIPPED Kit selector '{$selector}' due to should_skip_complex_selector\n", FILE_APPEND );
+                }
                 continue;
             }
 
             $selector_classes = $this->extract_classes_from_selector($selector);
+
+            // DEBUG: Check if Kit CSS selector is being filtered out
+            if ( strpos( $selector, 'elementor-kit-' ) !== false ) {
+                $has_widget_classes = $this->selector_contains_widget_classes($selector_classes);
+                $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+                file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG WIDGET_CLASS: Kit selector '{$selector}' - has_widget_classes=" . ($has_widget_classes ? 'yes' : 'no') . ", selector_classes=" . json_encode($selector_classes) . "\n", FILE_APPEND );
+            }
 
             if ($this->selector_contains_widget_classes($selector_classes) ) {
 
