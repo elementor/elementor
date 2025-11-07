@@ -154,11 +154,16 @@ module.exports = Marionette.CompositeView.extend( {
 		return widget;
 	},
 
-	getWrappingContainer( container, model, options ) {
+	getWrappingContainer( container, model, settings ) {
 		const isAtomic = elementor.helpers.isAtomicWidget( model );
+		const options = { at: settings.at, scrollIntoView: settings.scrollIntoView, useHistory: settings?.useHistory ?? true };
 
 		if ( isAtomic ) {
-			return this.getV4Container( container, options );
+			return ContainerHelper.createContainerFromModel(
+				{ elType: ContainerHelper.V4_DEFAULT_CONTAINER_TYPE },
+				container,
+				{ options },
+			);
 		}
 
 		return this.getV3Container( container, options );
@@ -167,18 +172,11 @@ module.exports = Marionette.CompositeView.extend( {
 	getV3Container( container, options ) {
 		const isContainerExperimentActive = elementorCommon.config.experimentalFeatures.container;
 
-		container = $e.run( 'document/elements/create', {
-			model: {
-				elType: isContainerExperimentActive ? 'container' : 'section',
-			},
+		container = ContainerHelper.createContainerFromModel(
+			{ elType: isContainerExperimentActive ? 'container' : 'section' },
 			container,
-			columns: Number( ! isContainerExperimentActive ),
-			options: {
-				at: options.at,
-				scrollIntoView: options.scrollIntoView,
-				useHistory: options?.useHistory ?? true,
-			},
-		} );
+			{ columns: Number( ! isContainerExperimentActive ), options },
+		);
 
 		// Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
 		if ( ! isContainerExperimentActive ) {
@@ -187,20 +185,6 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		return container;
-	},
-
-	getV4Container( container, options ) {
-		return $e.run( 'document/elements/create', {
-			model: {
-				elType: ContainerHelper.V4_DEFAULT_CONTAINER_TYPE,
-			},
-			container,
-			options: {
-				at: options.at,
-				scrollIntoView: options.scrollIntoView,
-				useHistory: options?.useHistory ?? true,
-			},
-		} );
 	},
 
 	onDrop( event, options ) {

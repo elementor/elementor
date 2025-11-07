@@ -252,6 +252,14 @@ export class ContainerHelper {
 	static openEditMode( container ) {
 		$e.run( 'document/elements/select', { container } );
 	}
+
+	static createContainerFromModel( model, target, options = {} ) {
+		return $e.run( 'document/elements/create', {
+			model,
+			container: target,
+			...options,
+		} );
+	}
 }
 
 export default ContainerHelper;
