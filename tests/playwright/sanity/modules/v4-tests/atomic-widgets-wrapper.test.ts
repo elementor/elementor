@@ -1,6 +1,7 @@
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { parallelTest as test } from '../../../parallelTest';
 import { expect } from '@playwright/test';
+import ContextMenu from '../../../pages/widgets/context-menu';
 
 test.describe( 'Atomic Widgets Wrapper @v4-tests', () => {
 	const atomicWidgets = [
@@ -42,6 +43,39 @@ test.describe( 'Atomic Widgets Wrapper @v4-tests', () => {
 				const parentElement = widgetElement.locator( '..' );
 				await expect( parentElement ).toHaveAttribute( 'data-element_type', 'e-flexbox' );
 			} );
+		} );
+	} );
+
+	test( 'Atomic widget is automatically wrapped in e-flexbox when copy/pasted', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		const contextMenu = new ContextMenu( page, testInfo );
+
+		let widgetElement;
+		let widgetElementId;
+
+		await test.step( 'Add atomic widget by clicking on panel', async () => {
+			widgetElement = await editor.v4Panel.addAtomicWidget( 'Button', 'e-button' );
+			widgetElementId = await widgetElement.getAttribute( 'data-id' );
+			expect( widgetElementId ).toBeTruthy();
+		} );
+
+		await test.step( 'Copy the atomic widget from navigator', async () => {
+			const navigatorItem = page.locator( `#elementor-navigator .elementor-navigator__element[data-id="${ widgetElementId }"] .elementor-navigator__item` );
+			await navigatorItem.click( { button: 'right' } );
+			const copyMenuItem = page.getByRole( 'menuitem', { name: 'Copy' } );
+			await copyMenuItem.click();
+		} );
+
+		await test.step( 'Paste the atomic widget', async () => {
+			await contextMenu.pasteElement( '.elementor-add-section-inner' );
+		} );
+
+		await test.step( 'Verify pasted widget is wrapped in e-flexbox', async () => {
+			const pastedWidget = editor.getPreviewFrame().locator( '[data-widget_type="e-button.default"]' ).last();
+			await pastedWidget.waitFor( { state: 'visible' } );
+			const parentElement = pastedWidget.locator( '..' );
+			await expect( parentElement ).toHaveAttribute( 'data-element_type', 'e-flexbox' );
 		} );
 	} );
 } );
