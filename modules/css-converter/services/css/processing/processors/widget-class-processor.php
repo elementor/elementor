@@ -92,6 +92,23 @@ class Widget_Class_Processor implements Css_Processor_Interface
         
         file_put_contents( $tracking_log, "\n" . str_repeat( '~', 80 ) . "\n", FILE_APPEND );
         file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "WIDGET_CLASS_PROCESSOR: Started with " . count($css_rules) . " rules\n", FILE_APPEND );
+        
+        // DEBUG: Check if display variables are resolved in the rules we receive
+        $display_var_rules = 0;
+        $display_flex_rules = 0;
+        foreach ( $css_rules as $rule ) {
+            foreach ( $rule['properties'] ?? [] as $prop ) {
+                if ( ($prop['property'] ?? '') === 'display' ) {
+                    $value = $prop['value'] ?? '';
+                    if ( strpos( $value, 'var(--display)' ) !== false ) {
+                        $display_var_rules++;
+                    } elseif ( $value === 'flex' ) {
+                        $display_flex_rules++;
+                    }
+                }
+            }
+        }
+        file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "WIDGET_CLASS_PROCESSOR: Found {$display_var_rules} rules with 'display: var(--display)', {$display_flex_rules} rules with 'display: flex'\n", FILE_APPEND );
 
         if (empty($css_rules) || empty($widgets) ) {
             file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "WIDGET_CLASS_PROCESSOR: Skipped - empty rules or widgets\n", FILE_APPEND );
@@ -101,10 +118,27 @@ class Widget_Class_Processor implements Css_Processor_Interface
         $widget_classes = $this->extract_widget_classes_from_widgets($widgets);
         $widget_specific_rules = $this->extract_widget_specific_rules($css_rules, $widget_classes);
 
+        // DEBUG: Log widget-specific rules extraction
+        $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+        file_put_contents($tracking_log, date('[H:i:s] ') . "WIDGET_CLASS_PROCESSOR: Found " . count($widget_specific_rules) . " widget-specific rules from " . count($css_rules) . " total rules\n", FILE_APPEND);
+        file_put_contents($tracking_log, date('[H:i:s] ') . "WIDGET_CLASS_PROCESSOR: Widget classes: " . implode(', ', array_slice($widget_classes, 0, 10)) . "\n", FILE_APPEND);
+        
+        // DEBUG: Log all widget element IDs to verify widget structure
+        $all_element_ids = [];
+        $this->collect_all_element_ids_recursively( $widgets, $all_element_ids );
+        file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "WIDGET_CLASS_PROCESSOR: Root widgets: " . count($widgets) . ", All element IDs (including children): " . implode(', ', $all_element_ids) . "\n", FILE_APPEND );
+
         if (empty($widget_specific_rules) ) {
             // CRITICAL FIX: Even if no widget-specific rules, we must update context with remaining rules
             // This ensures Kit CSS rules pass through to other processors
+            file_put_contents($tracking_log, date('[H:i:s] ') . "WIDGET_CLASS_PROCESSOR: No widget-specific rules found, passing through all rules\n", FILE_APPEND);
             $context->set_metadata('css_rules', $css_rules);
+            
+            // CRITICAL FIX: Add statistics even when no rules found (for test assertions)
+            $context->add_statistic('widget_specific_rules_found', 0);
+            $context->add_statistic('widget_classes_processed', count($widget_classes));
+            $context->add_statistic('widget_styles_applied', 0);
+            
             return $context;
         }
 
@@ -579,6 +613,18 @@ class Widget_Class_Processor implements Css_Processor_Interface
 			try {
 				$matching_element_ids = $this->selector_matcher->find_matching_widgets($selector, $widgets);
 				$matching_widgets = $this->get_widgets_by_element_ids($matching_element_ids, $widgets);
+				
+				// DEBUG: Log selector matching for e-con rules
+				if ( strpos( $selector, 'e-con' ) !== false ) {
+					$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+					file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG SELECTOR MATCH: '{$selector}' found " . count($matching_widgets) . " matching widgets\n", FILE_APPEND );
+					if ( !empty($matching_widgets) ) {
+						$first_widget = reset($matching_widgets);
+						$widget_classes = $first_widget['attributes']['class'] ?? 'NO_CLASSES';
+						file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG SELECTOR MATCH: First matching widget classes: {$widget_classes}\n", FILE_APPEND );
+					}
+				}
+				
             } catch ( \InvalidArgumentException $e ) {
                 // Skip malformed selectors gracefully
                 error_log("Widget_Class_Processor: Skipping malformed selector '{$selector}': " . $e->getMessage());
@@ -625,12 +671,30 @@ class Widget_Class_Processor implements Css_Processor_Interface
                     );
                     $matched_element_ids = array_filter($matched_element_ids);
 
+                    // DEBUG: Log style application for e-con rules
+                    if ( strpos( $selector, 'e-con' ) !== false ) {
+                        $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+                        file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG STYLE APPLICATION: '{$selector}' applying " . count($converted_properties) . " properties to " . count($matched_element_ids) . " widgets\n", FILE_APPEND );
+                        foreach ( $converted_properties as $prop ) {
+                            if ( in_array($prop['property'], ['display', 'align-items', 'text-align']) ) {
+                                $debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
+                                file_put_contents( $debug_log, "STEP 4 - STYLE_APPLICATION: {$prop['property']}: {$prop['value']} to widgets: " . implode(', ', $matched_element_ids) . "\n", FILE_APPEND );
+                            }
+                        }
+                    }
+                    
                     $unified_style_manager->collect_css_selector_styles(
                         $selector,
                         $converted_properties,
                         $matched_element_ids
                     );
                     $styles_applied += count($matched_element_ids);
+                    
+                    // DEBUG: Verify styles were collected
+                    if ( strpos( $selector, 'e-con' ) !== false ) {
+                        $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+                        file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "DEBUG STYLE COLLECTION: '{$selector}' styles collected for widgets: " . implode(', ', $matched_element_ids) . "\n", FILE_APPEND );
+                    }
                 }
             }
         }
@@ -653,6 +717,16 @@ class Widget_Class_Processor implements Css_Processor_Interface
             }
 
             $converted = $property_conversion_service->convert_property_to_v4_atomic($property, $value, $widget_id, $important);
+
+            // DEBUG: Log property conversion for comparison properties
+            if ( in_array($property, ['display', 'align-items', 'text-align']) ) {
+                $debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
+                $converted_result = $converted !== null ? 'SUCCESS' : 'FAILED';
+                file_put_contents( $debug_log, "STEP 4 - PROPERTY_CONVERSION: {$property}: {$value} -> {$converted_result}\n", FILE_APPEND );
+                if ( $converted !== null ) {
+                    file_put_contents( $debug_log, "STEP 4 - CONVERTED: {$property} -> " . json_encode($converted) . "\n", FILE_APPEND );
+                }
+            }
 
             if ($converted !== null ) {
                 $converted_properties[] = [
@@ -1001,6 +1075,19 @@ class Widget_Class_Processor implements Css_Processor_Interface
         }
         
         return array_unique( $processed_classes );
+    }
+
+    private function collect_all_element_ids_recursively( array $widgets, array &$element_ids ): void {
+        foreach ( $widgets as $widget ) {
+            $element_id = $widget['element_id'] ?? null;
+            if ( $element_id ) {
+                $element_ids[] = $element_id;
+            }
+            
+            if ( ! empty( $widget['children'] ) ) {
+                $this->collect_all_element_ids_recursively( $widget['children'], $element_ids );
+            }
+        }
     }
 
 

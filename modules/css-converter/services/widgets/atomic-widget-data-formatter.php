@@ -16,8 +16,20 @@ class Atomic_Widget_Data_Formatter {
 		return new self();
 	}
 	public function format_widget_data( array $resolved_styles, array $widget, string $widget_id, Custom_Css_Collector $custom_css_collector = null ): array {
-		error_log( "CUSTOM_CSS_DEBUG: format_widget_data - element_id=" . ($widget['element_id'] ?? 'NONE') . ", resolved_styles_count=" . count($resolved_styles) . ", inline_css_count=" . count($widget['inline_css'] ?? []) );
+		$element_id = $widget['element_id'] ?? 'NONE';
+		error_log( "CUSTOM_CSS_DEBUG: format_widget_data - element_id={$element_id}, resolved_styles_count=" . count($resolved_styles) . ", inline_css_count=" . count($widget['inline_css'] ?? []) );
 		error_log( "CUSTOM_CSS_DEBUG: format_widget_data - resolved_styles keys: " . implode(', ', array_keys($resolved_styles)) );
+		
+		// DEBUG: Check for display property specifically
+		if ( in_array( $element_id, ['element-div-2', 'element-div-3', 'element-div-4'] ) ) {
+			$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+			$has_display = isset($resolved_styles['display']);
+			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "FORMAT_WIDGET_DATA: {$element_id} has_display={$has_display}, total_styles=" . count($resolved_styles) . "\n", FILE_APPEND );
+			if ( $has_display ) {
+				$display_data = json_encode($resolved_styles['display']);
+				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "FORMAT_WIDGET_DATA: {$element_id} display data: {$display_data}\n", FILE_APPEND );
+			}
+		}
 		
 		// Generate atomic-style widget ID (7-char hex)
 		$atomic_widget_id = $this->generate_atomic_widget_id();
@@ -76,12 +88,27 @@ class Atomic_Widget_Data_Formatter {
 			$converted_value = $style_data['converted_property'] ?? 'NULL';
 			error_log( "CUSTOM_CSS_DEBUG: extract_atomic_props - property={$property}, converted_property=" . ( is_null($converted_value) ? 'NULL' : ( is_array($converted_value) ? 'ARRAY:' . json_encode($converted_value) : 'NOT_ARRAY' ) ) );
 			
+			// DEBUG: Specific logging for display property
+			if ( $property === 'display' ) {
+				$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+				$element_id = $style_data['element_id'] ?? 'unknown';
+				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "EXTRACT_ATOMIC_PROPS: {$element_id} processing display property\n", FILE_APPEND );
+				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "EXTRACT_ATOMIC_PROPS: converted_property = " . json_encode($converted_value) . "\n", FILE_APPEND );
+			}
+			
 			if ( isset( $style_data['converted_property'] ) && is_array( $style_data['converted_property'] ) ) {
 				$converted_property = $style_data['converted_property'];
 				
 				if ( isset( $converted_property['$$type'] ) ) {
 					$target_property = $this->get_target_property_name( $property );
 					$atomic_props[ $target_property ] = $converted_property;
+					
+					// DEBUG: Log atomic props creation for comparison properties
+					if ( in_array($property, ['display', 'align-items', 'text-align']) ) {
+						$debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
+						$element_id = $style_data['element_id'] ?? 'unknown';
+						file_put_contents( $debug_log, "STEP 7 - ATOMIC_PROPS: {$element_id} {$property} -> {$target_property} = " . json_encode($converted_property) . "\n", FILE_APPEND );
+					}
 				} else {
 					foreach ( $converted_property as $prop_name => $atomic_format ) {
 						if ( isset( $atomic_format['$$type'] ) ) {

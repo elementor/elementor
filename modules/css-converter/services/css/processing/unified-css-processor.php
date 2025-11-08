@@ -84,6 +84,25 @@ class Unified_Css_Processor
         // Extract results from context
         // Note: global_classes already includes compound classes (merged by Global_Classes_Processor)
         $processed_widgets = $context->get_widgets();
+        
+        // DEBUG: Check widget count at final output
+        $debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
+        $all_widget_ids = [];
+        $this->collect_widget_ids_recursively( $processed_widgets, $all_widget_ids );
+        file_put_contents($debug_file, "FINAL OUTPUT: " . count($processed_widgets) . " root widgets, " . count($all_widget_ids) . " total widgets (IDs: " . implode(', ', array_slice($all_widget_ids, 0, 10)) . ")\n", FILE_APPEND);
+        
+        // DEBUG: Check if styles are preserved in the widgets
+        foreach ( $processed_widgets as $widget ) {
+            $element_id = $widget['element_id'] ?? 'unknown';
+            $styles = $widget['styles'] ?? [];
+            $style_count = 0;
+            foreach ( $styles as $style_obj ) {
+                if ( isset( $style_obj['variants'][0]['props'] ) ) {
+                    $style_count += count( $style_obj['variants'][0]['props'] );
+                }
+            }
+            file_put_contents($debug_file, "WIDGET STYLES: {$element_id} has {$style_count} applied styles\n", FILE_APPEND);
+        }
         $statistics = $context->get_statistics();
         $css_class_rules = $context->get_metadata('css_class_rules', []);
         $css_variable_definitions = $context->get_metadata('css_variable_definitions', []);
@@ -2406,6 +2425,19 @@ class Unified_Css_Processor
             }
         }
         return false;
+    }
+
+    private function collect_widget_ids_recursively( array $widgets, array &$widget_ids ): void {
+        foreach ( $widgets as $widget ) {
+            $element_id = $widget['element_id'] ?? null;
+            if ( $element_id ) {
+                $widget_ids[] = $element_id;
+            }
+            
+            if ( ! empty( $widget['children'] ) ) {
+                $this->collect_widget_ids_recursively( $widget['children'], $widget_ids );
+            }
+        }
     }
 
     private function get_flattened_classes_from_unified_structure( Css_Processing_Context $context ): array

@@ -87,6 +87,12 @@ class Unified_Style_Manager
             $base_specificity = $this->calculate_css_specificity($selector, $property_data['important'] ?? false);
             $boosted_specificity = $this->boost_specificity_for_target_element( $selector, $base_specificity );
             
+            // DEBUG: Log display property collection
+            if ( $property === 'display' ) {
+                $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+                file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "UNIFIED_STYLE_MANAGER: Collecting display: {$value} for element {$element_id} from selector '{$selector}'\n", FILE_APPEND );
+            }
+            
             $this->collected_styles[] = [
             'source' => 'css-selector',
             'selector' => $selector,
@@ -324,6 +330,14 @@ class Unified_Style_Manager
     {
         $widget_id = $this->get_widget_identifier($widget);
         $html_id = $widget['attributes']['id'] ?? 'NO_HTML_ID';
+        
+        // DEBUG: Log style resolution for specific elements
+        $element_id = $widget['element_id'] ?? 'unknown';
+        if ( in_array( $element_id, ['element-div-2', 'element-div-3'] ) ) {
+            $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+            file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "STYLE_RESOLUTION: Resolving styles for {$element_id}\n", FILE_APPEND );
+        }
+        
         // Get all styles that apply to this widget
         $applicable_styles = $this->filter_styles_for_widget($widget);
 
@@ -334,8 +348,35 @@ class Unified_Style_Manager
         $winning_styles = [];
         $duplicate_log_path = WP_CONTENT_DIR . '/css-duplicate-properties.log';
         
+        // DEBUG: Log property resolution for comparison properties
+        if ( in_array( $element_id, ['element-div-2', 'element-div-3', 'element-div-4'] ) ) {
+            $debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
+            
+            foreach ( ['display', 'align-items', 'text-align'] as $debug_property ) {
+                $property_styles = $by_property[$debug_property] ?? [];
+                file_put_contents( $debug_log, "STEP 6 - STYLE_RESOLUTION: {$element_id} has " . count($property_styles) . " {$debug_property} styles\n", FILE_APPEND );
+                
+                // Log all competing styles for this property
+                foreach ( $property_styles as $i => $style ) {
+                    $selector = $style['selector'] ?? 'no-selector';
+                    $value = $style['value'] ?? 'no-value';
+                    $specificity = $style['specificity'] ?? 0;
+                    file_put_contents( $debug_log, "STEP 6 - COMPETING_STYLE: {$element_id} {$debug_property} #{$i}: '{$selector}' = '{$value}' (specificity: {$specificity})\n", FILE_APPEND );
+                }
+            }
+        }
+        
         foreach ( $by_property as $property => $styles ) {
             $winning_style = $this->find_winning_style($styles);
+            
+            // DEBUG: Log winning styles for comparison properties
+            if ( in_array($property, ['display', 'align-items', 'text-align']) && in_array( $element_id, ['element-div-2', 'element-div-3', 'element-div-4'] ) ) {
+                $debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
+                $winning_value = $winning_style ? ($winning_style['value'] ?? 'NO_VALUE') : 'NO_WINNER';
+                $winning_selector = $winning_style ? ($winning_style['selector'] ?? 'NO_SELECTOR') : 'NO_WINNER';
+                $winning_specificity = $winning_style ? ($winning_style['specificity'] ?? 0) : 0;
+                file_put_contents( $debug_log, "STEP 6 - WINNER: {$element_id} {$property} = '{$winning_value}' from '{$winning_selector}' (specificity: {$winning_specificity})\n", FILE_APPEND );
+            }
             if ($winning_style ) {
                 // Map CSS property name to atomic property name
                 $atomic_property_name = $this->get_atomic_property_name($property);

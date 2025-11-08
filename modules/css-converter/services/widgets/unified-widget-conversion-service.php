@@ -106,15 +106,24 @@ class Unified_Widget_Conversion_Service {
 
 		// Filter widgets for output if selector was provided
 		$conversion_selector = $options['conversion_selector'] ?? null;
+		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CONVERSION_SELECTOR: Received selector = '" . ($conversion_selector ?? 'NULL') . "'\n", FILE_APPEND );
 		if ( ! empty( $conversion_selector ) ) {
+			$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "WIDGET_FILTERING: Before filtering - " . count($resolved_widgets) . " widgets\n", FILE_APPEND );
 			$output_widgets = $this->filter_widgets_for_output( $resolved_widgets, $conversion_selector );
+			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "WIDGET_FILTERING: After filtering - " . count($output_widgets) . " widgets for selector '{$conversion_selector}'\n", FILE_APPEND );
 			error_log( "WIDGET_FILTERING: Filtered " . count( $resolved_widgets ) . " widgets down to " . count( $output_widgets ) . " for output" );
 		} else {
 			$output_widgets = $resolved_widgets;
 		}
 
 		// Create widgets with resolved styles
+		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "WIDGET_CREATION: Before creation - " . count($output_widgets) . " widgets\n", FILE_APPEND );
 		$creation_result = $this->create_widgets_with_resolved_styles( $output_widgets, $options, $global_classes, $css_variable_definitions );
+		$final_widgets = $creation_result['widgets'] ?? [];
+		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "WIDGET_CREATION: After creation - " . count($final_widgets) . " widgets\n", FILE_APPEND );
 
 			// Log CSS processing and widget creation stats
 			$this->logger->add_css_processing_stats( $unified_processing_result['stats'] ?? [] );
@@ -230,6 +239,41 @@ class Unified_Widget_Conversion_Service {
 			$post_id = $creation_result['post_id'];
 		}
 		$elementor_data = $creation_result['element_data'] ?? [];
+		
+		// DEBUG: Check what elementor_data contains
+		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "ELEMENTOR_DATA: " . count($elementor_data) . " elements in elementor_data\n", FILE_APPEND );
+		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "ORIGINAL_WIDGETS: " . count($widgets) . " widgets with applied styles\n", FILE_APPEND );
+		
+		// DEBUG: Check element IDs in both datasets
+		if ( !empty($widgets) ) {
+			$widget_ids = array_map( function($w) { return $w['element_id'] ?? 'no-id'; }, $widgets );
+			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "ORIGINAL_WIDGET_IDS: " . implode(', ', $widget_ids) . "\n", FILE_APPEND );
+			
+			// Check if root widget has children
+			if ( isset($widgets[0]['children']) ) {
+				$child_count = count($widgets[0]['children']);
+				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "ROOT WIDGET HAS {$child_count} CHILDREN\n", FILE_APPEND );
+				
+				// Check if children have styles
+				foreach ( $widgets[0]['children'] as $child ) {
+					$child_id = $child['element_id'] ?? 'no-id';
+					$child_styles = $child['styles'] ?? [];
+					$style_count = 0;
+					foreach ( $child_styles as $style_obj ) {
+						if ( isset( $style_obj['variants'][0]['props'] ) ) {
+							$style_count += count( $style_obj['variants'][0]['props'] );
+						}
+					}
+					file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CHILD WIDGET {$child_id} HAS {$style_count} STYLES\n", FILE_APPEND );
+				}
+			}
+		}
+		if ( !empty($elementor_data) ) {
+			$elementor_ids = array_map( function($e) { return $e['id'] ?? ($e['element_id'] ?? 'no-id'); }, $elementor_data );
+			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "ELEMENTOR_DATA_IDS: " . implode(', ', $elementor_ids) . "\n", FILE_APPEND );
+		}
+		
 		return [
 			'widgets_created' => $creation_result['widgets_created'] ?? 0,
 			'widgets' => ! empty( $elementor_data ) ? $elementor_data : $widgets, // FIXED: Use processed widgets if available

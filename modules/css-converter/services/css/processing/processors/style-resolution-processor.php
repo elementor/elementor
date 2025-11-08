@@ -48,8 +48,31 @@ class Style_Resolution_Processor implements Css_Processor_Interface
             return $context;
         }
 
+        // DEBUG: Check if display styles are available before resolution
+        $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+        file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "STYLE_RESOLUTION_PROCESSOR: Starting resolution for " . count($widgets) . " widgets\n", FILE_APPEND );
+        
         // Resolve styles recursively for all widgets
         $resolved_widgets = $this->resolve_styles_recursively($widgets, $unified_style_manager);
+        
+        // DEBUG: Check if display styles were applied
+        foreach ( $resolved_widgets as $widget ) {
+            $element_id = $widget['element_id'] ?? 'unknown';
+            if ( in_array( $element_id, ['element-div-2', 'element-div-3'] ) ) {
+                $styles = $widget['styles'] ?? [];
+                $has_display = false;
+                foreach ( $styles as $style_obj ) {
+                    if ( isset( $style_obj['variants'][0]['props']['display'] ) ) {
+                        $display_value = $style_obj['variants'][0]['props']['display'];
+                        $has_display = true;
+                        file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "STYLE_RESOLUTION_PROCESSOR: {$element_id} resolved display: " . json_encode($display_value) . "\n", FILE_APPEND );
+                    }
+                }
+                if ( !$has_display ) {
+                    file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "STYLE_RESOLUTION_PROCESSOR: {$element_id} NO display property found\n", FILE_APPEND );
+                }
+            }
+        }
 
         // Get debug info and stats from style manager
         $debug_info = $unified_style_manager->get_debug_info();
@@ -122,6 +145,14 @@ class Style_Resolution_Processor implements Css_Processor_Interface
             $widget_classes = $widget['attributes']['class'] ?? '';
 
             $resolved_styles = $unified_style_manager->resolve_styles_for_widget($widget);
+
+            // DEBUG: Log resolved styles for specific widgets
+            if ( in_array( $element_id, ['element-div-2', 'element-div-3', 'element-div-4'] ) ) {
+                $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
+                $display_in_resolved = isset($resolved_styles['display']) ? json_encode($resolved_styles['display']) : 'NOT_FOUND';
+                file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "RESOLVE_RECURSIVELY: {$element_id} resolved_styles['display'] = {$display_in_resolved}\n", FILE_APPEND );
+                file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "RESOLVE_RECURSIVELY: {$element_id} total resolved styles = " . count($resolved_styles) . "\n", FILE_APPEND );
+            }
 
             // CRITICAL FIX: Preserve existing widget data (including modified classes) and only add resolved_styles
             $resolved_widget = $widget; // Preserve all existing data including modified attributes

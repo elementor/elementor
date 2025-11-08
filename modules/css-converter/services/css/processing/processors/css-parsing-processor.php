@@ -255,6 +255,12 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 				$selector = trim( $match[1] );
 				$declarations_block = $match[2];
 				
+				// DEBUG: Log compound selector detection
+				if ( strpos( $selector, 'e-con' ) !== false ) {
+					$debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
+					file_put_contents($debug_file, "MANUAL EXTRACTION: Found selector '{$selector}'\n", FILE_APPEND);
+				}
+				
 				// Skip @import, @media, and other @ rules for now
 				if ( strpos( $selector, '@' ) === 0 ) {
 					continue;
@@ -282,11 +288,31 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 					}
 				}
 				
-				if ( ! empty( $properties ) && ! empty( $selector ) ) {
-					$rules[] = [
-						'selector' => $selector,
-						'properties' => $properties,
-					];
+				// CRITICAL FIX: Handle compound selectors (comma-separated)
+				if ( strpos( $selector, ',' ) !== false ) {
+					$individual_selectors = array_map( 'trim', explode( ',', $selector ) );
+					
+					foreach ( $individual_selectors as $individual_selector ) {
+						if ( ! empty( $individual_selector ) && ! empty( $properties ) ) {
+							$rules[] = [
+								'selector' => $individual_selector,
+								'properties' => $properties,
+							];
+							
+							// DEBUG: Log compound selector splitting
+							if ( strpos( $individual_selector, 'e-con' ) !== false ) {
+								$debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
+								file_put_contents($debug_file, "MANUAL EXTRACTION: Split compound selector -> '{$individual_selector}'\n", FILE_APPEND);
+							}
+						}
+					}
+				} else {
+					if ( ! empty( $properties ) && ! empty( $selector ) ) {
+						$rules[] = [
+							'selector' => $selector,
+							'properties' => $properties,
+						];
+					}
 				}
 			}
 		}

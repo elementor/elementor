@@ -124,6 +124,12 @@ class Css_Variable_Resolver implements Css_Processor_Interface
                 if (strpos($value, 'var(') !== false ) {
                     $variable_type = $this->get_variable_type_from_value($value, $variable_definitions);
 
+                    // DEBUG: Track specific properties for comparison
+                    if ( in_array($property, ['display', 'align-items', 'text-align']) ) {
+                        $debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
+                        file_put_contents($debug_log, "STEP 3 - VARIABLE_RESOLVER: {$property}: {$value} (type: {$variable_type})\n", FILE_APPEND);
+                    }
+
                     // CRITICAL FIX: Process ALL variable types, not just 'local' and 'unsupported'
                     $resolved_value = $this->resolve_variable_reference($value, $variable_definitions);
                     if ($resolved_value !== $value ) {
@@ -131,8 +137,20 @@ class Css_Variable_Resolver implements Css_Processor_Interface
                         $property_data['resolved_from_variable'] = true;
                         ++$variables_resolved;
                         file_put_contents($tracking_log, date('[H:i:s] ') . "CSS_VARIABLE_RESOLVER: Resolved {$property}: {$value} -> {$resolved_value} (type: {$variable_type})\n", FILE_APPEND);
+                        
+                        // DEBUG: Track specific properties for comparison
+                        if ( in_array($property, ['display', 'align-items', 'text-align']) ) {
+                            $debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
+                            file_put_contents($debug_log, "STEP 3 - RESOLVED: {$property}: {$value} -> {$resolved_value}\n", FILE_APPEND);
+                        }
                     } else {
                         file_put_contents($tracking_log, date('[H:i:s] ') . "CSS_VARIABLE_RESOLVER: Could not resolve {$property}: {$value} (type: {$variable_type})\n", FILE_APPEND);
+                        
+                        // DEBUG: Track failed resolutions
+                        if ( in_array($property, ['display', 'align-items', 'text-align']) ) {
+                            $debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
+                            file_put_contents($debug_log, "STEP 3 - FAILED: {$property}: {$value} (type: {$variable_type})\n", FILE_APPEND);
+                        }
                     }
                 }
 
