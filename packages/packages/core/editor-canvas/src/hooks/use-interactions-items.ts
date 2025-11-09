@@ -3,7 +3,7 @@ import { registerDataHook } from '@elementor/editor-v1-adapters';
 import {
 	interactionsRepository,
 	type InteractionItem,
-} from '@elementor/editor-interactions-repository';
+} from '@elementor/editor-interactions';
 
 import { useOnMount } from './use-on-mount';
 
