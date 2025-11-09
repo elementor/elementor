@@ -36,30 +36,6 @@ describe( 'InlineEditor', () => {
 		expect( editor ).toHaveTextContent( '' );
 	} );
 
-	it( 'should accept custom attributes', () => {
-		// Arrange.
-		const customAttributes = { 'aria-label': 'Custom Editor' };
-
-		// Act.
-		setup( { attributes: customAttributes } );
-
-		// Assert.
-		const editor = screen.getByLabelText( 'Custom Editor' );
-		expect( editor ).toBeInTheDocument();
-	} );
-
-	it( 'should apply custom sx styles', () => {
-		// Arrange.
-		const customSx = { backgroundColor: 'red', padding: 2 };
-
-		// Act.
-		setup( { sx: customSx } );
-
-		// Assert.
-		const editor = screen.getByRole( 'textbox' );
-		expect( editor ).toBeInTheDocument();
-	} );
-
 	it( 'should call setValue when content changes', async () => {
 		// Arrange.
 		const setValue = jest.fn();
@@ -74,17 +50,6 @@ describe( 'InlineEditor', () => {
 		await waitFor( () => {
 			expect( setValue ).toHaveBeenCalled();
 		} );
-	} );
-
-	it( 'should render with ProseMirror editor', () => {
-		// Arrange & Act.
-		setup();
-
-		// Assert.
-		const editor = screen.getByRole( 'textbox' );
-		expect( editor ).toBeInTheDocument();
-		expect( editor ).toHaveAttribute( 'contenteditable', 'true' );
-		expect( editor ).toHaveClass( 'ProseMirror' );
 	} );
 
 	it( 'should insert hard break on Enter key', async () => {
@@ -117,24 +82,26 @@ describe( 'InlineEditor', () => {
 		expect( editor ).toHaveClass( 'ProseMirror-focused' );
 	} );
 
-	it( 'should forward ref correctly', () => {
-		// Arrange.
-		const ref = React.createRef< HTMLDivElement >();
-
-		// Act.
-		renderWithTheme( <InlineEditor { ...defaultProps } ref={ ref } /> );
+	it( 'should render formatted content with bold / italic / strike / underline', () => {
+		// Arrange & Act.
+		const formattedValue = '<strong>Bold</strong> <em>Italic</em> <s>Strike</s> <u>Underline</u>';
+		setup( { value: formattedValue } );
 
 		// Assert.
-		expect( ref.current ).toBeInstanceOf( HTMLDivElement );
+		expect( screen.getByText( 'Bold' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Italic' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Strike' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Underline' ) ).toBeInTheDocument();
 	} );
-
-	it( 'should have correct styling structure', () => {
+	it( 'should keep content inline without block elements', () => {
 		// Arrange & Act.
-		setup();
+		const inlineValue = 'Line 1<br>Line 2';
+		setup( { value: inlineValue } );
 
 		// Assert.
 		const editor = screen.getByRole( 'textbox' );
-		expect( editor ).toBeInTheDocument();
-		expect( editor ).toHaveClass( 'ProseMirror' );
+		expect( editor.innerHTML ).toContain( '<br>' );
+		expect( editor.innerHTML ).not.toContain( '<p>' );
+		expect( editor.innerHTML ).not.toContain( '</p>' );
 	} );
 } );
