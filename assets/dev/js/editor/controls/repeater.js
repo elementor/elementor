@@ -32,7 +32,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend( {
 		const elementContainer = this.getOption( 'container' );
 
 		return {
-			container: elementContainer.repeaters[ this.model.get( 'name' ) ].children[ index ],
+			container: elementContainer.repeaters[ this.model.get( 'name' ) ]?.children[ index ],
 			controlFields: this.model.get( 'fields' ),
 			titleField: this.model.get( 'title_field' ),
 			itemActions: this.model.get( 'item_actions' ),
