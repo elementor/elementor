@@ -12,14 +12,20 @@ export const ELEMENTS_INTERACTIONS_PROVIDER_KEY_PREFIX = 'document-elements-inte
 
 export const documentElementsInteractionsProvider = createInteractionsProvider( {
 	key: () => {
+		console.log( '[Interactions Provider] getKey() called' );
 		const documentId = getCurrentDocumentId();
+		console.log( '[Interactions Provider] documentId:', documentId );
 
 		if ( ! documentId ) {
 			// Return a temporary key instead of throwing to prevent errors during initialization
-			return `${ ELEMENTS_INTERACTIONS_PROVIDER_KEY_PREFIX }pending`;
+			const pendingKey = `${ ELEMENTS_INTERACTIONS_PROVIDER_KEY_PREFIX }pending`;
+			console.log( '[Interactions Provider] Returning pending key:', pendingKey );
+			return pendingKey;
 		}
 
-		return `${ ELEMENTS_INTERACTIONS_PROVIDER_KEY_PREFIX }${ documentId }`;
+		const key = `${ ELEMENTS_INTERACTIONS_PROVIDER_KEY_PREFIX }${ documentId }`;
+		console.log( '[Interactions Provider] Returning key:', key );
+		return key;
 	},
 	priority: 50,
 	subscribe: ( cb ) => {
@@ -28,7 +34,9 @@ export const documentElementsInteractionsProvider = createInteractionsProvider( 
 	},
 	actions: {
 		all: () => {
+			console.log( '[Interactions Provider] actions.all() called' );
 			const elements = getElements();
+			console.log( '[Interactions Provider] Found elements:', elements.length );
 
 			return elements
 				.filter( ( element ) => {
@@ -52,9 +60,9 @@ export const documentElementsInteractionsProvider = createInteractionsProvider( 
 				} )
 				.map( ( element ) => {
 					const interactions = getElementInteractions( element.id );
-					const settings = element.model.get( 'settings' ) ?? {};
-					const cssId = settings._cssid;
-					const dataId = ( typeof cssId === 'string' && cssId ) ? cssId : String( element.id );
+					// data-id in template is always set to element.id (from $this->get_id())
+					// So we use element.id, not _cssid (which is used for id attribute, not data-id)
+					const dataId = String( element.id );
 
 					return {
 						elementId: element.id,

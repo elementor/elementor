@@ -53,9 +53,9 @@ class Module extends BaseModule {
 		}
 
 		add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
-		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
+		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 		add_action( 'elementor/frontend/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
-		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
+		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
 	}
 
 	private function get_label( $key, $value ) {
@@ -149,6 +149,14 @@ class Module extends BaseModule {
 			'1.0.0',
 			true
 		);
+
+		wp_register_script(
+			'elementor-editor-interactions',
+			ELEMENTOR_URL . 'modules/interactions/assets/js/editor-interactions.js',
+			[ 'motion-js' ],
+			'1.0.0',
+			true
+		);
 	}
 
 	/**
@@ -177,6 +185,23 @@ class Module extends BaseModule {
 			'elementor-common',
 			'window.ElementorInteractionsConfig = ' . wp_json_encode( $this->get_config() ) . ';',
 			'before'
+		);
+	}
+
+	/**
+	 * Enqueue preview scripts for interactions (canvas iframe).
+	 *
+	 * @return void
+	 */
+	public function enqueue_preview_scripts() {
+		// Ensure motion-js and editor-interactions handler are available in preview iframe
+		wp_enqueue_script( 'motion-js' );
+		wp_enqueue_script( 'elementor-editor-interactions' );
+
+		wp_localize_script(
+			'elementor-editor-interactions',
+			'ElementorInteractionsConfig',
+			$this->get_config()
 		);
 	}
 }
