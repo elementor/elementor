@@ -100,6 +100,42 @@
 		return element;
 	}
 
+	function getAnimationTarget( element ) {
+		// For atomic widgets, the data-id is on the wrapper, but we need to animate the actual content
+		// Try to find the first meaningful child element (not just text nodes)
+		if ( ! element ) {
+			return null;
+		}
+
+		// If element has direct text content and no block children, animate the element itself
+		const hasBlockChildren = Array.from( element.children ).some( child => {
+			const style = window.getComputedStyle( child );
+			return style.display === 'block' || style.display === 'flex' || style.display === 'grid';
+		} );
+
+		// If it's a heading, button, or paragraph tag, animate it directly
+		const isContentElement = /^(h[1-6]|p|button|a|span|div)$/i.test( element.tagName );
+		
+		if ( isContentElement && ! hasBlockChildren ) {
+			return element;
+		}
+
+		// Otherwise, try to find the first meaningful child
+		// Look for direct child elements (not nested deeply)
+		const firstChild = element.firstElementChild;
+		if ( firstChild ) {
+			// If first child is a link or button, use it
+			if ( /^(a|button)$/i.test( firstChild.tagName ) ) {
+				return firstChild;
+			}
+			// Otherwise use the first child element
+			return firstChild;
+		}
+
+		// Fallback: animate the element itself
+		return element;
+	}
+
 	function applyInteractionsToElement( element, interactionsData ) {
 		const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
 
@@ -176,8 +212,15 @@
 			console.log( '[Editor Interactions Handler] Looking for element with data-id:', item.dataId );
 			const element = findElementByDataId( item.dataId );
 			if ( element ) {
-				console.log( '[Editor Interactions Handler] Found element, applying interactions:', element );
-				applyInteractionsToElement( element, item.interactions );
+				console.log( '[Editor Interactions Handler] Found element:', element );
+				// Get the actual target element to animate (might be a child)
+				const targetElement = getAnimationTarget( element );
+				console.log( '[Editor Interactions Handler] Animation target element:', targetElement );
+				if ( targetElement ) {
+					applyInteractionsToElement( targetElement, item.interactions );
+				} else {
+					console.warn( '[Editor Interactions Handler] No animation target found for element' );
+				}
 			} else {
 				console.warn( '[Editor Interactions Handler] Element not found for data-id:', item.dataId );
 			}
