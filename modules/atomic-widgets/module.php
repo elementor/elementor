@@ -113,6 +113,7 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_NESTED = 'e_nested_elements';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
+	const EXPERIMENT_INLINE_EDITING = 'v4-inline-text-editing';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -155,7 +156,7 @@ class Module extends BaseModule {
 
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
-			add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
+			add_action( 'elementor/frontend/before_register_scripts', fn () => $this->register_frontend_scripts() );
 
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
@@ -207,6 +208,15 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_EDITOR_MCP,
 			'title' => esc_html__( 'Editor MCP for atomic widgets', 'elementor' ),
 			'description' => esc_html__( 'Editor MCP for atomic widgets.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_INLINE_EDITING,
+			'title' => esc_html__( 'V4 inline text editing', 'elementor' ),
+			'description' => esc_html__( 'New inline text editor for v4', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,

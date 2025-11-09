@@ -54,4 +54,74 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect.soft( page.locator( panelSelector ) ).toHaveScreenshot( 'interactions-empty-state.png' );
 		} );
 	} );
+
+	test( 'Interactions functionality end-to-end test', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Add heading widget to enable interactions', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.addWidget( { widgetType: 'e-heading', container } );
+		} );
+
+		await test.step( 'Navigate to interactions tab', async () => {
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+			await expect( interactionsTab ).toHaveAttribute( 'aria-selected', 'true' );
+		} );
+
+		await test.step( 'Start adding interactions button', async () => {
+			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
+			await expect( addInteractionButton ).toBeVisible();
+			await addInteractionButton.click();
+		} );
+
+		await test.step( 'Select animation options from popover controls', async () => {
+			const interactionTag = page.locator( '.MuiTag-root' ).first();
+
+			await expect( interactionTag ).toBeVisible();
+			await page.waitForSelector( '.MuiPopover-root' );
+
+			const selectOption = async ( openSelector, optionName ) => {
+				await expect( openSelector ).toBeVisible();
+				await openSelector.click();
+
+				const option = page.getByRole( 'option', { name: optionName } );
+				await expect( option ).toBeVisible();
+				await option.click();
+			};
+
+			await selectOption( page.getByText( 'Page load', { exact: true } ), 'Scroll into view' );
+			await selectOption( page.getByText( 'Fade', { exact: true } ), 'Slide' );
+			await selectOption( page.getByText( '300 MS', { exact: true } ), '100 MS' );
+
+			const effectTypeOption = page.getByRole( 'button', { name: 'Out' } );
+			const directionOption = page.getByRole( 'button', { name: 'Up' } );
+
+			await expect( effectTypeOption ).toBeVisible();
+			await effectTypeOption.click();
+
+			await expect( directionOption ).toBeVisible();
+			await directionOption.click();
+
+			await expect( interactionTag ).toContainText( 'Scroll Into View - Slide Out Top (100ms)' );
+
+			await page.locator( 'body' ).click();
+		} );
+
+		await test.step( 'Publish and view the page', async () => {
+			await editor.publishAndViewPage();
+		} );
+
+		await test.step( 'Verify data-interactions attribute on heading', async () => {
+			const headingElement = page.locator( '.e-heading-base' ).first();
+
+			await expect( headingElement ).toBeVisible();
+			await expect( headingElement ).toHaveAttribute( 'data-interactions' );
+
+			const interactionsData = await headingElement.getAttribute( 'data-interactions' );
+			expect( interactionsData ).toBeTruthy();
+		} );
+	} );
 } );
+

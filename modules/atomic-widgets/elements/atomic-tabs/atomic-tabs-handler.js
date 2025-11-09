@@ -1,6 +1,8 @@
 import { register } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
 
+const SELECTED_CLASS = 'e--selected';
+
 register( {
 	elementType: 'e-tabs',
 	uniqueId: 'e-tabs-handler',
