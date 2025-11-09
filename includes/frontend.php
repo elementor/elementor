@@ -550,7 +550,7 @@ class Frontend extends App {
 
 		wp_register_style(
 			'elementor-frontend',
-			$this->get_frontend_file_url( "frontend{$direction_suffix}{$min_suffix}.css", $has_custom_breakpoints ),
+			$this->get_frontend_file_url( "frontend{$min_suffix}.css", $has_custom_breakpoints ),
 			[],
 			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
