@@ -198,7 +198,7 @@ class Module extends BaseModule {
 	private function is_valid_animation_id( $animation_id ) {
 		static $valid_ids = null;
 
-		if ( $valid_ids === null ) {
+		if ( null === $valid_ids ) {
 			$valid_ids = array_column( $this->generate_animation_options(), 'value' );
 		}
 
