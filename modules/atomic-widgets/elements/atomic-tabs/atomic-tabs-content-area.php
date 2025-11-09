@@ -66,7 +66,7 @@ class Atomic_Tabs_Content_Area extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$base_styles = [
+		$styles = [
 			'display' => String_Prop_Type::generate( 'block' ),
 		];
 
@@ -74,7 +74,7 @@ class Atomic_Tabs_Content_Area extends Atomic_Element_Base {
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_props( $base_styles )
+						->add_props( $styles )
 				),
 		];
 	}

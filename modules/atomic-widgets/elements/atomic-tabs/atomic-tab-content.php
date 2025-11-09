@@ -72,7 +72,7 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$base_styles = [
+		$styles = [
 			'display' => String_Prop_Type::generate( 'block' ),
 			'opacity' => Size_Prop_Type::generate( [
 				'size' => 0,
@@ -114,7 +114,7 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_props( $base_styles )
+						->add_props( $styles )
 				)
 				->add_variant(
 					Style_Variant::make()
@@ -128,10 +128,6 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 		return [
 			'role' => 'tabpanel',
 		];
-	}
-
-	protected function define_default_children() {
-		return [];
 	}
 
 	protected function add_render_attributes() {

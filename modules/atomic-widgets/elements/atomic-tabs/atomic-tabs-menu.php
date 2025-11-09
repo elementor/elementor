@@ -63,7 +63,7 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$base_styles = [
+		$styles = [
 			'display' => String_Prop_Type::generate( 'flex' ),
 			'justify-content' => String_Prop_Type::generate( 'center' ),
 		];
@@ -71,7 +71,7 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_props( $base_styles )
+						->add_props( $styles )
 				),
 		];
 	}

@@ -71,7 +71,7 @@ class Atomic_Tab extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$base_styles = [
+		$styles = [
 			'display' => String_Prop_Type::generate( 'block' ),
 			'cursor' => String_Prop_Type::generate( 'pointer' ),
 			'color' => Color_Prop_Type::generate( '#0C0D0E' ),
@@ -112,7 +112,7 @@ class Atomic_Tab extends Atomic_Element_Base {
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_props( $base_styles )
+						->add_props( $styles )
 				)
 				->add_variant(
 					Style_Variant::make()
