@@ -79,36 +79,50 @@ class Module extends BaseModule {
 
 	private function generate_animation_options() {
 		$options = [];
+		$durations = [ 0, 100, 200, 300, 400, 500, 750, 1000, 1250, 1500 ];
+		$delays = [ 0, 100, 200, 300, 400, 500, 750, 1000, 1250, 1500 ];
 
 		foreach ( self::TRIGGERS as $trigger ) {
 			foreach ( self::EFFECTS as $effect ) {
 				foreach ( self::TYPES as $type ) {
 					foreach ( self::DIRECTIONS as $direction ) {
-						$value = "{$trigger}-{$effect}-{$type}-{$direction}";
-						$label = sprintf(
-							'%s - %s %s %s',
-							$this->get_label( 'trigger', $trigger ),
-							$this->get_label( 'effect', $effect ),
-							$this->get_label( 'type', $type ),
-							$this->get_label( 'direction', $direction )
-						);
-						$options[] = [
-							'value' => $value,
-							'label' => $label,
-						];
+						foreach ( $durations as $duration ) {
+							foreach ( $delays as $delay ) {
+								$value = "{$trigger}-{$effect}-{$type}-{$direction}-{$duration}-{$delay}";
+								$label = sprintf(
+									'%s - %s %s %s (%dms/%dms)',
+									$this->get_label( 'trigger', $trigger ),
+									$this->get_label( 'effect', $effect ),
+									$this->get_label( 'type', $type ),
+									$this->get_label( 'direction', $direction ),
+									$duration,
+									$delay
+								);
+								$options[] = [
+									'value' => $value,
+									'label' => $label,
+								];
+							}
+						}
 					}
 
-					$value = "{$trigger}-{$effect}-{$type}-";
-					$label = sprintf(
-						'%s - %s %s',
-						$this->get_label( 'trigger', $trigger ),
-						$this->get_label( 'effect', $effect ),
-						$this->get_label( 'type', $type )
-					);
-					$options[] = [
-						'value' => $value,
-						'label' => $label,
-					];
+					foreach ( $durations as $duration ) {
+						foreach ( $delays as $delay ) {
+							$value = "{$trigger}-{$effect}-{$type}--{$duration}-{$delay}";
+							$label = sprintf(
+								'%s - %s %s (%dms/%dms)',
+								$this->get_label( 'trigger', $trigger ),
+								$this->get_label( 'effect', $effect ),
+								$this->get_label( 'type', $type ),
+								$duration,
+								$delay
+							);
+							$options[] = [
+								'value' => $value,
+								'label' => $label,
+							];
+						}
+					}
 				}
 			}
 		}
@@ -182,6 +196,12 @@ class Module extends BaseModule {
 	}
 
 	private function is_valid_animation_id( $animation_id ) {
+		static $valid_ids = null;
+
+		if ( $valid_ids === null ) {
+			$valid_ids = array_column( $this->generate_animation_options(), 'value' );
+		}
+
 		if ( ! is_string( $animation_id ) || empty( $animation_id ) ) {
 			return false;
 		}
@@ -192,34 +212,7 @@ class Module extends BaseModule {
 			return false;
 		}
 
-		$parts = explode( '-', $animation_id );
-
-		if ( count( $parts ) < 3 ) {
-			return false;
-		}
-
-		$trigger = $parts[0];
-		$effect = $parts[1];
-		$type = $parts[2];
-		$direction = $parts[3] ?? '';
-
-		if ( ! in_array( $trigger, self::TRIGGERS, true ) ) {
-			return false;
-		}
-
-		if ( ! in_array( $effect, self::EFFECTS, true ) ) {
-			return false;
-		}
-
-		if ( ! in_array( $type, self::TYPES, true ) ) {
-			return false;
-		}
-
-		if ( ! empty( $direction ) && ! in_array( $direction, self::DIRECTIONS, true ) ) {
-			return false;
-		}
-
-		return true;
+		return in_array( $animation_id, $valid_ids, true );
 	}
 
 	private function sanitize_interactions( $interactions ) {
