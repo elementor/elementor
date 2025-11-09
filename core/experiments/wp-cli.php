@@ -86,6 +86,74 @@ class Wp_Cli extends \WP_CLI_Command {
 	}
 
 	/**
+	 * Reset experiments to their default states
+	 *
+	 * ## EXAMPLES
+	 *
+	 * 1. wp elementor experiments reset
+	 *      - This will reset all experiments to their default states.
+	 * 2. wp elementor experiments reset container
+	 *      - This will reset only the Container experiment to its default state.
+	 *
+	 * @param array      $args
+	 * @param array|null $assoc_args - Arguments from WP CLI command.
+	 */
+	public function reset( $args, $assoc_args ) {
+		$experiments_manager = Plugin::instance()->experiments;
+		$is_network = $this->is_network( $assoc_args );
+
+		// If no specific experiment is provided, reset all experiments
+		if ( empty( $args[0] ) ) {
+			$features = $experiments_manager->get_features();
+			$experiments = array_keys( $features );
+		} else {
+			$experiments = $this->parse_experiments( $args[0] );
+		}
+
+		if ( ! $this->check_experiments_exist( $experiments_manager, $experiments ) ) {
+			\WP_CLI::error( 'One or more experiments do not exist' );
+		}
+
+		$success_count = 0;
+		$total_count = count( $experiments );
+
+		foreach ( $experiments as $experiment ) {
+			$feature = $experiments_manager->get_features( $experiment );
+			if ( ! $feature ) {
+				continue;
+			}
+
+			$default_state = isset( $feature['default'] ) ? $feature['default'] : Experiments_Manager::STATE_DEFAULT;
+
+			if ( $is_network ) {
+				$this->foreach_sites(
+					[ $this, 'update_experiment_state' ],
+					[ $experiment ],
+					$default_state,
+					$is_network,
+					"Experiment {$experiment} reset to default state ({$default_state})",
+					"Cannot reset experiment {$experiment}"
+				);
+			} else {
+				$this->update_experiment_state(
+					[ $experiment ],
+					$default_state,
+					$is_network,
+					"Experiment {$experiment} reset to default state ({$default_state})",
+					"Cannot reset experiment {$experiment}"
+				);
+			}
+			$success_count++;
+		}
+
+		if ( $success_count === $total_count ) {
+			\WP_CLI::success( "Successfully reset {$success_count} experiment(s) to their default states." );
+		} else {
+			\WP_CLI::warning( "Reset {$success_count} out of {$total_count} experiments." );
+		}
+	}
+
+	/**
 	 * Experiment Status
 	 *
 	 * ## EXAMPLES
