@@ -86,7 +86,7 @@ function getUpdatedComponentPath( path: ComponentsPathItem[], nextDocument: V1Do
 	return [
 		...path,
 		{
-			instanceId: nextDocument?.container.view.el.dataset.id,
+			instanceId: nextDocument?.container.view?.el?.dataset.id,
 			component: nextDocument,
 		},
 	];

@@ -108,14 +108,19 @@ function createComponentView(
 					selector: `[data-id="${ this.model.get( 'id' ) }"]`,
 					shouldScroll: false,
 				} );
-				apiClient.lockComponent( this.getComponentId()?.value as number );
 			}
+		}
+
+		handleDblClick(e: MouseEvent) {
+			e.stopPropagation();
+
+			this.switchDocument();
 		}
 
 		events() {
 			return {
 				...super.events(),
-				dblclick: this.switchDocument,
+				dblclick: this.handleDblClick,
 			};
 		}
 

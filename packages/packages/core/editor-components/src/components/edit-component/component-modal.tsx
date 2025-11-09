@@ -32,7 +32,10 @@ export function ComponentModal( { element, onClose }: ModalProps ) {
 	}
 
 	return createPortal(
-		<Backdrop canvas={ canvasDocument } element={ element } onClose={ onClose } />,
+		<>
+			<BlockEditPage />
+			<Backdrop canvas={ canvasDocument } element={ element } onClose={ onClose } />
+		</>,
 		canvasDocument.body
 	);
 }
@@ -49,7 +52,7 @@ function Backdrop( { canvas, element, onClose }: { canvas: HTMLDocument; element
 		zIndex: 999,
 		pointerEvents: 'painted',
 		cursor: 'pointer',
-		clipPath: getRoundedRectPath( rect, canvas.defaultView as Window, 15 ),
+		clipPath: getRoundedRectPath( rect, canvas.defaultView as Window, 5 ),
 	};
 
 	const handleKeyDown = ( event: React.KeyboardEvent ) => {
@@ -100,4 +103,35 @@ function getRoundedRectPath( rect: DOMRect, viewport: Window, borderRadius: numb
 	)`;
 
 	return path.replace( /\s{2,}/g, ' ' );
+}
+
+
+/**
+ * when switching to another document id, we get a document handler when hovering
+ * this functionality originates in Pro, and is intended for editing templates, e.g. header/footer
+ * in components we don't want that, so the easy way out is to prevent it of being displayed via a CSS rule
+ */
+function BlockEditPage() {
+	const blockV3DocumentHandlesStyles = `
+	.elementor-editor-active {
+		& .elementor-section-wrap.ui-sortable {
+			display: contents;
+		}
+
+		& *[data-editable-elementor-document]:not(.elementor-edit-mode):hover {
+			& .elementor-document-handle:not(.elementor-document-save-back-handle) {
+				display: none;
+
+				&::before,
+				& .elementor-document-handle__inner {
+					display: none;
+				}
+			}
+		}
+	}
+	`;
+
+	return (
+		<style data-e-style-id="e-block-v3-document-handles-styles">{ blockV3DocumentHandlesStyles }</style>
+	);
 }
