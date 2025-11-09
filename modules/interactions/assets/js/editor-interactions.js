@@ -137,48 +137,103 @@
 	}
 
 	function applyInteractionsToElement( element, interactionsData ) {
-		const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
-
-		if ( ! animateFunc ) {
-			console.warn( '[Editor Interactions Handler] animateFunc not available' );
-			return;
-		}
-
-		let interactions = [];
-
-		try {
-			interactions = JSON.parse( interactionsData );
-		} catch ( error ) {
-			console.error( '[Editor Interactions Handler] Error parsing interactions:', error );
-			return;
-		}
-
-		console.log( '[Editor Interactions Handler] Applying interactions to element:', {
+		console.log( '[Editor Interactions Handler] applyInteractionsToElement called', {
 			element,
-			interactions,
+			elementTagName: element?.tagName,
+			elementId: element?.id,
+			elementDataId: element?.getAttribute( 'data-id' ),
 			interactionsData,
 		} );
 
-		interactions.forEach( ( interaction ) => {
-			const animationName =
-				'string' === typeof interaction
-					? interaction
-					: interaction?.animation?.animation_id;
-
-			console.log( '[Editor Interactions Handler] Processing interaction:', {
-				interaction,
-				animationName,
-			} );
-
-			const animConfig = animationName && parseAnimationName( animationName );
-
-			if ( animConfig ) {
-				console.log( '[Editor Interactions Handler] Applying animation:', animConfig );
-				applyAnimation( element, animConfig, animateFunc );
-			} else {
-				console.warn( '[Editor Interactions Handler] No animConfig for:', animationName );
-			}
+		// Check for animate function
+		const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
+		
+		console.log( '[Editor Interactions Handler] animateFunc check:', {
+			hasAnimate: 'undefined' !== typeof animate,
+			hasMotionAnimate: !!window.Motion?.animate,
+			animateFunc: !!animateFunc,
 		} );
+
+		if ( ! animateFunc ) {
+			console.error( '[Editor Interactions Handler] animateFunc not available! animate:', typeof animate, 'Motion:', window.Motion );
+			// Still try to play a simple CSS animation as fallback
+			console.log( '[Editor Interactions Handler] Trying CSS animation fallback' );
+			element.style.animation = 'none';
+			setTimeout( () => {
+				element.style.animation = 'fadeInScale 0.5s ease-out';
+			}, 10 );
+			return;
+		}
+
+		// TEST: Play a hardcoded animation every time to verify the system works
+		console.log( '[Editor Interactions Handler] TEST: Playing hardcoded animation on element:', element );
+		
+		try {
+			// Store original styles to restore later
+			const originalOpacity = window.getComputedStyle( element ).opacity;
+			const originalTransform = window.getComputedStyle( element ).transform;
+			
+			// Reset element to starting state
+			element.style.opacity = '0';
+			element.style.transform = 'scale(0.2)';
+			
+			// Force a reflow to ensure styles are applied
+			element.offsetHeight;
+			
+			// Simple fade + scale animation
+			const animation = animateFunc(
+				element,
+				{
+					opacity: [ 0, 1 ],
+					scale: [ 0.2, 1 ],
+				},
+				{
+					duration: 0.5,
+					easing: 'ease-out',
+				}
+			);
+			
+			console.log( '[Editor Interactions Handler] TEST: Hardcoded animation created:', animation );
+			
+			// Clean up styles after animation completes
+			if ( animation && typeof animation.then === 'function' ) {
+				animation.then( () => {
+					element.style.opacity = '';
+					element.style.transform = '';
+				} );
+			} else {
+				setTimeout( () => {
+					element.style.opacity = '';
+					element.style.transform = '';
+				}, 500 );
+			}
+			
+		} catch ( error ) {
+			console.error( '[Editor Interactions Handler] TEST: Error applying hardcoded animation:', error );
+			console.error( '[Editor Interactions Handler] Error stack:', error.stack );
+			// Restore styles on error
+			element.style.opacity = '';
+			element.style.transform = '';
+		}
+
+		// TODO: Parse and apply actual interactions once we verify the system works
+		// let interactions = [];
+		// try {
+		// 	interactions = JSON.parse( interactionsData );
+		// } catch ( error ) {
+		// 	console.error( '[Editor Interactions Handler] Error parsing interactions:', error );
+		// 	return;
+		// }
+		// interactions.forEach( ( interaction ) => {
+		// 	const animationName =
+		// 		'string' === typeof interaction
+		// 			? interaction
+		// 			: interaction?.animation?.animation_id;
+		// 	const animConfig = animationName && parseAnimationName( animationName );
+		// 	if ( animConfig ) {
+		// 		applyAnimation( element, animConfig, animateFunc );
+		// 	}
+		// } );
 	}
 
 	let previousInteractionsData = [];
@@ -206,8 +261,9 @@
 		} );
 
 		console.log( '[Editor Interactions Handler] Changed items:', changedItems.length );
+		console.log( '[Editor Interactions Handler] Total items:', currentInteractionsData.length );
 
-		// Apply animations to changed elements
+		// Apply animations to changed elements only
 		changedItems.forEach( ( item ) => {
 			console.log( '[Editor Interactions Handler] Looking for element with data-id:', item.dataId );
 			const element = findElementByDataId( item.dataId );
