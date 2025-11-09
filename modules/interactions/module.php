@@ -56,6 +56,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
 		add_action( 'elementor/frontend/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
+		add_filter( 'elementor/document/save/data', fn ( $data ) => $this->sanitize_document_data( $data ), 10, 1 );
 	}
 
 	private function get_label( $key, $value ) {
@@ -178,5 +179,102 @@ class Module extends BaseModule {
 			'window.ElementorInteractionsConfig = ' . wp_json_encode( $this->get_config() ) . ';',
 			'before'
 		);
+	}
+
+	private function is_valid_animation_id( $animation_id ) {
+		if ( ! is_string( $animation_id ) || empty( $animation_id ) ) {
+			return false;
+		}
+
+		$sanitized_id = sanitize_text_field( $animation_id );
+
+		if ( $sanitized_id !== $animation_id ) {
+			return false;
+		}
+
+		$parts = explode( '-', $animation_id );
+
+		if ( count( $parts ) < 3 ) {
+			return false;
+		}
+
+		$trigger = $parts[0];
+		$effect = $parts[1];
+		$type = $parts[2];
+		$direction = $parts[3] ?? '';
+
+		if ( ! in_array( $trigger, self::TRIGGERS, true ) ) {
+			return false;
+		}
+
+		if ( ! in_array( $effect, self::EFFECTS, true ) ) {
+			return false;
+		}
+
+		if ( ! in_array( $type, self::TYPES, true ) ) {
+			return false;
+		}
+
+		if ( ! empty( $direction ) && ! in_array( $direction, self::DIRECTIONS, true ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function sanitize_interactions( $interactions ) {
+		if ( ! is_array( $interactions ) ) {
+			return [];
+		}
+
+		$sanitized = [];
+
+		foreach ( $interactions as $interaction ) {
+			$animation_id = null;
+
+			if ( is_string( $interaction ) ) {
+				$animation_id = $interaction;
+			} elseif ( is_array( $interaction ) && isset( $interaction['animation']['animation_id'] ) ) {
+				$animation_id = $interaction['animation']['animation_id'];
+			}
+
+			if ( $animation_id && $this->is_valid_animation_id( $animation_id ) ) {
+				$sanitized[] = $interaction;
+			}
+		}
+
+		return $sanitized;
+	}
+
+	private function sanitize_elements_interactions( $elements ) {
+		if ( ! is_array( $elements ) ) {
+			return $elements;
+		}
+
+		foreach ( $elements as &$element ) {
+			if ( isset( $element['settings']['interactions'] ) ) {
+				$element['settings']['interactions'] = $this->sanitize_interactions( $element['settings']['interactions'] );
+			}
+
+			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
+				$element['elements'] = $this->sanitize_elements_interactions( $element['elements'] );
+			}
+		}
+
+		return $elements;
+	}
+
+	/**
+	 * Sanitize document data before saving.
+	 *
+	 * @param array $data Document data to sanitize.
+	 * @return array Sanitized document data.
+	 */
+	private function sanitize_document_data( $data ) {
+		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
+			$data['elements'] = $this->sanitize_elements_interactions( $data['elements'] );
+		}
+
+		return $data;
 	}
 }
