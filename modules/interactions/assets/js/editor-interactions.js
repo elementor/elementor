@@ -198,44 +198,56 @@
 
 		console.log( '[Editor Interactions Handler] motion.dev is available' );
 
-		// Initial load
-		handleInteractionsUpdate();
+		// Watch the head for when the script tag appears (Portal injects it later)
+		const head = document.head;
+		let scriptTag = null;
+		let observer = null;
 
-		// Watch for changes to the script tag using MutationObserver
-		const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
-		console.log( '[Editor Interactions Handler] Script tag found:', scriptTag );
+		function setupObserver( tag ) {
+			if ( observer ) {
+				observer.disconnect();
+			}
 
-		if ( scriptTag ) {
-			console.log( '[Editor Interactions Handler] Setting up MutationObserver' );
-			const observer = new MutationObserver( ( mutations ) => {
+			console.log( '[Editor Interactions Handler] Setting up MutationObserver for script tag' );
+			observer = new MutationObserver( ( mutations ) => {
 				console.log( '[Editor Interactions Handler] Mutation detected:', mutations );
 				handleInteractionsUpdate();
 			} );
 
-			observer.observe( scriptTag, {
+			observer.observe( tag, {
 				childList: true,
 				characterData: true,
 				subtree: true,
 			} );
 
-			console.log( '[Editor Interactions Handler] MutationObserver set up successfully' );
+			// Initial load
+			handleInteractionsUpdate();
+		}
+
+		// Watch head for script tag to appear
+		const headObserver = new MutationObserver( () => {
+			const foundScriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+			if ( foundScriptTag && foundScriptTag !== scriptTag ) {
+				console.log( '[Editor Interactions Handler] Script tag appeared in head!' );
+				scriptTag = foundScriptTag;
+				setupObserver( scriptTag );
+				headObserver.disconnect(); // Stop watching head once we found it
+			}
+		} );
+
+		headObserver.observe( head, {
+			childList: true,  // Watch for new script tags being added
+			subtree: true,
+		} );
+
+		// Also check immediately in case it's already there
+		scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+		if ( scriptTag ) {
+			console.log( '[Editor Interactions Handler] Script tag already exists' );
+			setupObserver( scriptTag );
+			headObserver.disconnect();
 		} else {
-			console.warn( '[Editor Interactions Handler] Script tag not found, will retry...' );
-			// Retry after a short delay in case the script tag hasn't been injected yet
-			setTimeout( () => {
-				const retryScriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
-				if ( retryScriptTag ) {
-					console.log( '[Editor Interactions Handler] Script tag found on retry, setting up observer' );
-					const observer = new MutationObserver( () => {
-						handleInteractionsUpdate();
-					} );
-					observer.observe( retryScriptTag, {
-						childList: true,
-						characterData: true,
-						subtree: true,
-					} );
-				}
-			}, 500 );
+			console.log( '[Editor Interactions Handler] Script tag not found yet, watching head for it...' );
 		}
 	}
 
