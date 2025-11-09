@@ -104,7 +104,6 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspectiv
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -115,7 +114,6 @@ class Module extends BaseModule {
 	const EXPERIMENT_NESTED = 'e_nested_elements';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 	const EXPERIMENT_INLINE_EDITING = 'v4-inline-text-editing';
-
 
 	const PACKAGES = [
 		'editor-canvas',

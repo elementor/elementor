@@ -151,9 +151,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 	}
 
-	public function register_frontend_handlers() {
-		return;
-	}
+	public function register_frontend_handlers() {}
 
 	/**
 	 * Get style dependencies.

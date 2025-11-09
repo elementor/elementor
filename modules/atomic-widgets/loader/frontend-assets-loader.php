@@ -10,14 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Frontend_Assets_Loader {
 	const FRONTEND_HANDLERS_HANDLE = 'elementor-v2-frontend-handlers';
 
-	/**
-	 * @return void
-	 */
 	public function register_scripts() {
 		$this->register_package_scripts();
 
 		do_action( 'elementor/atomic-widgets/frontend/loader/scripts/register', $this );
-	}
+	} 
 
 	private function register_package_scripts() {
 		$assets_url = ELEMENTOR_ASSETS_URL;
