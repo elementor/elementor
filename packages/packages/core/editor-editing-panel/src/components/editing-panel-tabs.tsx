@@ -1,11 +1,11 @@
 import { Fragment } from 'react';
 import * as React from 'react';
+import { PopupStateProvider } from '@elementor/editor-interactions';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
-import { PopupStateProvider } from '@elementor/editor-interactions';
 import { ScrollProvider } from '../contexts/scroll-context';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { useStateByElement } from '../hooks/use-state-by-element';
